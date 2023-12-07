@@ -1,117 +1,106 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="kv1CVK1B"
-Received: from aposti.net (aposti.net [89.234.176.197])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D71F9D5C;
-	Thu,  7 Dec 2023 01:16:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1701940600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A6B6SQdEGihvdACw2JOjX599xCdZMbfkt+OCZNCmzZo=;
-	b=kv1CVK1BaxewKQIljM85WnQLkFx4xQ60+Y66II8iBPwAzvx++TIayGYDf+o1dDvQR/d/OL
-	zTDQDF5pi9lk9jsQgwu6EmqDfDXEzKSEFRsTJsY/Cr9zPWXwHx+JPF+BP92rLgshT5lPmY
-	bq9oZl1CcFo+nEuDNw6fjQ7x8ZPSvgw=
-Message-ID: <61393c2e941515612f7c4a7d66cd19f00e88ea9d.camel@crapouillou.net>
-Subject: Re: [PATCH RESEND] drm/exynos: dpi: Change connector type to DPI
-From: Paul Cercueil <paul@crapouillou.net>
-To: =?UTF-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen?= Platform
- =?UTF-8?Q?Lab=28SR=29/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90?=
- <inki.dae@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin
- Park' <kyungmin.park@samsung.com>, 'Krzysztof Kozlowski'
- <krzysztof.kozlowski@linaro.org>,  'Alim Akhtar' <alim.akhtar@samsung.com>
-Cc: 'David Airlie' <airlied@gmail.com>, 'Daniel Vetter' <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 07 Dec 2023 10:16:38 +0100
-In-Reply-To: <048a01da28b6$f84c2670$e8e47350$@samsung.com>
-References: 
-	<CGME20231206221903epcas1p2e9d90110b0f2901e3e7db86f748026f1@epcas1p2.samsung.com>
-	 <20231206221841.15685-1-paul@crapouillou.net>
-	 <048a01da28b6$f84c2670$e8e47350$@samsung.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZMLQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5UzFZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtNz8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe+rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIPdlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7Urf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KFlBwgAhlGy6nqP7O3u7q23hRW5AQ0EXQqFwQEIAMo+MgvYHsyjX3Ja4Oolg1Txzm8woj30ch2nACFCqaO0R/1kLj2VVeLrDyQUOlXx9PD6IQI4M8wy8m0sR4wV2p/g/paw7k65cjzYYLh+FdLNyO7IW
-	YXndJO+wDPi3aK/YKUYepqlP+QsmaHNYNdXEQDRKqNfJg8t0f5rfzp9ryxd1tCnbV+tG8VHQWiZXNqN7062DygSNXFUfQ0vZ3J2D4oAcIAEXTymRQ2+hr3Hf7I61KMHWeSkCvCG2decTYsHlw5Erix/jYWqVOtX0roOOLqWkqpQQJWtU+biWrAksmFmCp5fXIg1Nlg39v21xCXBGxJkxyTYuhdWyu1yDQ+LSIUAEQEAAYkBNgQYAQoAIBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsMAAoJEHPua9InSr1B4wsH/Az767YCT0FSsMNt1jkkdLCBi7nY0GTW+PLP1a4zvVqFMo/vD6uz1ZflVTUAEvcTi3VHYZrlgjcxmcGu239oruqUS8Qy/xgZBp9KF0NTWQSl1iBfVbIU5VV1vHS6r77W5x0qXgfvAUWOH4gmN3MnF01SH2zMcLiaUGF+mcwl15rHbjnT3Nu2399aSE6cep86igfCAyFUOXjYEGlJy+c6UyT+DUylpjQg0nl8MlZ/7Whg2fAU9+FALIbQYQzGlT4c71SibR9T741jnegHhlmV4WXXUD6roFt54t0MSAFSVxzG8mLcSjR2cLUJ3NIPXixYUSEn3tQhfZj07xIIjWxAYZo=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d29IBFFj"
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9139A1AD
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Dec 2023 05:33:45 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-33330a5617fso951148f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Dec 2023 05:33:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1701956024; x=1702560824; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wOjuvQ1knDsOf99mi3hFggOSmu3Whc7MN8Fp35NQ1P8=;
+        b=d29IBFFja8GOlr7TD5iaQ1dAGpzoPVT7meFpiFFPx5MK6N0VwJIBYd7EB+PxJDc4pF
+         KqAW9oPgnS5BRlOTVP6BpR9rDYzETzBB3J3qJdKM82fGOqjTg6fX7zYraeUaT7GxCQUa
+         QK1y2zxxynWuBEXYANutgdLUoYXl/KudC4/RzdKEa0ogZcmlZgdVIoZxv4gfzunrl/8h
+         6vKlMYQbYEhjdtxzAOT2c/KPpQSCytYetG7RIMk51cs+t55oMXUl3zMh+sBgkh2RwbpU
+         tFxP3IuZ0GcxY8NvvPHpNzR1H60k1+enzOjvj7bpyz0E7P+SpI9fnZMxcE/1LMN/FFWD
+         0xZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701956024; x=1702560824;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wOjuvQ1knDsOf99mi3hFggOSmu3Whc7MN8Fp35NQ1P8=;
+        b=VZImBKt99ZT6UnehhJXPQc+OCNbaoJXa8rtWJcrqKNOcd/HOPrivmf/YZjVrCjg7WX
+         9lffpa6a6gH9TfKXultJllv4aDA9BslBX/PFY3yUduVZal2uvjfENax+NH+kycJKJlIY
+         /Kv6JQAmkjErZYXwsYFTtOJa2RDcW4CpYEUJd6s9e4SsPGckLQj+PD7YxSE1ZH3s8ViN
+         KbfQv0afKVRPjZpVOL1MWR9BTzSqc4rPrFRSRuBOQQfgAumoBuS+OW35q84ljlN/zwtj
+         c6R3Ahf1LoMnhEzj+icxetYimBEPuvwJAniA1+Dfvnue1AUqWK1WFREmU1UT1WWDRtEt
+         Jc0Q==
+X-Gm-Message-State: AOJu0Yy8Z3ZxK2NU8dLvY8fLOe5ISE0M1UfPAQlMC3CYkPUjlcCjPyXj
+	JNuXqBK3FOGxyzMqalBFCNujjA==
+X-Google-Smtp-Source: AGHT+IEl9KbxTbmb8n+WvISyxYm/HTeQm70dDUbz9cfV9RUKa1Wk27SjB9FMgD9xanu+1rN8Jo3LOw==
+X-Received: by 2002:adf:ec0c:0:b0:333:2fd2:5d30 with SMTP id x12-20020adfec0c000000b003332fd25d30mr1678939wrn.98.1701956024085;
+        Thu, 07 Dec 2023 05:33:44 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id p6-20020adfcc86000000b00333371c7382sm1471548wrj.72.2023.12.07.05.33.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Dec 2023 05:33:43 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, linux-fsd@tesla.com, 
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231205092229.19135-1-krzysztof.kozlowski@linaro.org>
+References: <20231205092229.19135-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 0/6] dt-bindings: samsung: continued - add specific
+ compatibles for Tesla FSD Hi,
+Message-Id: <170195602173.92721.14927713507913101589.b4-ty@linaro.org>
+Date: Thu, 07 Dec 2023 14:33:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
-Le jeudi 07 d=C3=A9cembre 2023 =C3=A0 11:42 +0900, =EB=8C=80=EC=9D=B8=EA=B8=
-=B0/Tizen Platform
-Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90 a =C3=A9crit=C2=A0:
-> Hi Paul,
->=20
-> > -----Original Message-----
-> > From: Paul Cercueil <paul@crapouillou.net>
-> > Sent: Thursday, December 7, 2023 7:19 AM
-> > To: Inki Dae <inki.dae@samsung.com>; Seung-Woo Kim
-> > <sw0312.kim@samsung.com>; Kyungmin Park
-> > <kyungmin.park@samsung.com>;
-> > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>; Alim Akhtar
-> > <alim.akhtar@samsung.com>
-> > Cc: David Airlie <airlied@gmail.com>; Daniel Vetter
-> > <daniel@ffwll.ch>;
-> > dri-devel@lists.freedesktop.org;
-> > linux-arm-kernel@lists.infradead.org;
-> > linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Paul
-> > Cercueil <paul@crapouillou.net>
-> > Subject: [PATCH RESEND] drm/exynos: dpi: Change connector type to
-> > DPI
-> >=20
-> > When exynos_drm_dpi.c was written, DRM_MODE_CONNECTOR_DPI did not
-> > exist
-> > yet and I guess that's the reason why DRM_MODE_CONNECTOR_VGA was
-> > used as
-> > the connector type.
-> >=20
-> > However, now it makes more sense to use DRM_MODE_CONNECTOR_DPI as
-> > the
-> > connector type.
->=20
-> Sorry for late. Merged.
 
-No problem. Thank you!
+On Tue, 05 Dec 2023 10:22:23 +0100, Krzysztof Kozlowski wrote:
+> Merging
+> =======
+> I propose to take entire patchset through my tree (Samsung SoC), because:
+> 1. I already took similar work this cycle:
+>    https://lore.kernel.org/all/169997520487.6747.17671551558724027958.b4-ty@linaro.org/
+> 2. Two new SoCs are coming (Google GS101 and ExynosAutov920) and they might
+>    touch the same lines.  It is reasonable for me to take the bindings for the new
+>    SoCs, to have clean `make dtbs_check` on the new DTS.
+> 3. Having it together helps me to have clean `make dtbs_check` within my tree
+>    on the existing DTS.
+> 4. No drivers are affected by this change.
+> 
+> [...]
 
-Cheers,
--Paul
+Applied, thanks!
 
->=20
-> Thanks,
-> Inki Dae
->=20
-> >=20
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > ---
-> > =C2=A0drivers/gpu/drm/exynos/exynos_drm_dpi.c | 2 +-
-> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> > b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> > index 378e5381978f..0dc36df6ada3 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-> > @@ -101,7 +101,7 @@ static int exynos_dpi_create_connector(struct
-> > drm_encoder *encoder)
-> >=20
-> > =C2=A0	ret =3D drm_connector_init(encoder->dev, connector,
-> > =C2=A0				 &exynos_dpi_connector_funcs,
-> > -				 DRM_MODE_CONNECTOR_VGA);
-> > +				 DRM_MODE_CONNECTOR_DPI);
-> > =C2=A0	if (ret) {
-> > =C2=A0		DRM_DEV_ERROR(ctx->dev,
-> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "failed to initialize connector=
- with
-> > drm\n");
-> > --
-> > 2.42.0
-> >=20
->=20
->=20
+[1/6] dt-bindings: i2c: exynos5: add specific compatible for Tesla FSD
+      https://git.kernel.org/krzk/linux/c/7677fdbc036b93a882f660ca2484a6807e72f0be
+[2/6] dt-bindings: pwm: samsung: add specific compatible for Tesla FSD
+      https://git.kernel.org/krzk/linux/c/edb32ec3cea79b518e6af841ecb01c839818f562
+[3/6] dt-bindings: serial: samsung: add specific compatible for Tesla FSD
+      https://git.kernel.org/krzk/linux/c/921f4f1db7f5bf6798349db8a4382c032f144b98
+[4/6] dt-bindings: samsung: exynos-pmu: add specific compatible for Tesla FSD
+      https://git.kernel.org/krzk/linux/c/54772f1d61cd99ea1ed0febd4187bf24ef63bccd
+[5/6] dt-bindings: watchdog: samsung: add specific compatible for Tesla FSD
+      https://git.kernel.org/krzk/linux/c/bf1e24c5330af06b2f7f1a166a1011d8d48e8651
+[6/6] arm64: dts: fsd: add specific compatibles for Tesla FSD
+      https://git.kernel.org/krzk/linux/c/5f257922c5948c58669346d5cda371632108f266
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
