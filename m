@@ -1,142 +1,146 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s8hMNCbp"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B672DD
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Dec 2023 20:22:30 -0800 (PST)
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231207042227epoutp02a637be1fbf92af4804ef1cd11adfcae4~ecedeEuPH0213602136epoutp02K
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Dec 2023 04:22:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231207042227epoutp02a637be1fbf92af4804ef1cd11adfcae4~ecedeEuPH0213602136epoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1701922947;
-	bh=byDtsG8PKYdfs3puCh5RQJLatncS4hWBREGe2pDiuqM=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=s8hMNCbpg0msgHn0Z2ArjppgnG94lQWAWD6gjoJLBpWROmKXojUwLSa56g0Obfuo+
-	 3SJ2MAt/aenbAVSQn/esuZBOoS655NVoMLIV3X+fVXdoJNBbZQLThKP1ptxeDB6eu/
-	 QyPR6YOAm/7wWIkaBILgGDow9stLVl1OePFbPPo8=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231207042227epcas1p2669e392346d693a4e811dbbd9488dda0~ecedNY2Wx1375713757epcas1p2A;
-	Thu,  7 Dec 2023 04:22:27 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.135]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Sm1MQ3v6wz4x9Q1; Thu,  7 Dec
-	2023 04:22:26 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	99.BB.19104.F7841756; Thu,  7 Dec 2023 13:22:23 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231207042223epcas1p1e413980d991fdc9d9b413a34ab71894d~eceZaeDR01740817408epcas1p1X;
-	Thu,  7 Dec 2023 04:22:23 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231207042223epsmtrp21f5f1f415d6b52499162caa67973eace~eceZZ2DVo0939409394epsmtrp25;
-	Thu,  7 Dec 2023 04:22:23 +0000 (GMT)
-X-AuditID: b6c32a4c-80dff70000004aa0-d9-6571487faae4
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EA.D4.08817.F7841756; Thu,  7 Dec 2023 13:22:23 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.211]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231207042223epsmtip1d4f9ddbddf6d395051b485fdce2d9d63~eceZQMtBy2871628716epsmtip1W;
-	Thu,  7 Dec 2023 04:22:23 +0000 (GMT)
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL RESEND] exynos-drm-fixes
-Date: Thu,  7 Dec 2023 13:22:23 +0900
-Message-Id: <20231207042223.2473706-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.25.1
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF6A5172D
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Dec 2023 00:03:44 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rB9MF-0000KF-1w; Thu, 07 Dec 2023 09:03:43 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rB9MB-00E8hJ-Ag; Thu, 07 Dec 2023 09:03:39 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rB9MB-00Fouy-0g; Thu, 07 Dec 2023 09:03:39 +0100
+Date: Thu, 7 Dec 2023 09:03:38 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= <inki.dae@samsung.com>
+Cc: 'Inki Dae' <daeinki@gmail.com>, linux-samsung-soc@vger.kernel.org,
+	kernel@pengutronix.de, 'Jingoo Han' <jingoohan1@gmail.com>,
+	'Seung-Woo Kim' <sw0312.kim@samsung.com>,
+	'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
+	'DRI mailing list' <dri-devel@lists.freedesktop.org>,
+	'Kyungmin Park' <kyungmin.park@samsung.com>,
+	'Daniel Vetter' <daniel@ffwll.ch>,
+	'Alim Akhtar' <alim.akhtar@samsung.com>,
+	'David Airlie' <airlied@gmail.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 08/16] drm/exynos: Convert to platform remove callback
+ returning void
+Message-ID: <20231207080338.kcjx7uixxjw2axtc@pengutronix.de>
+References: <20231102165640.3307820-18-u.kleine-koenig@pengutronix.de>
+ <20231102165640.3307820-26-u.kleine-koenig@pengutronix.de>
+ <CAAQKjZOnVSaO6QHpSo_i=WgTaawTq0UFtzwTw8kQ5iHN4qiAtQ@mail.gmail.com>
+ <20231108075454.3aivzrbvtr4en22e@pengutronix.de>
+ <CGME20231128165521epcas1p4993f7d2fab0723130a4612d810d254f8@epcas1p4.samsung.com>
+ <20231128165505.wm4xs4ktycswthkt@pengutronix.de>
+ <048901da28b6$5be8e700$13bab500$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmgW69R2GqwYQGNYvecyeZLP5vm8hs
-	ceXrezaLGef3MTmweOz9toDFY/u3B6we97uPM3l83iQXwBKVbZORmpiSWqSQmpecn5KZl26r
-	5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
-	kV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ3xe2Mze8FKnorNJ38wNzCu5+pi
-	5OCQEDCR6P4j0cXIxSEksIdRouvYPRYI5xOjRNuVJijnG6NE55VprF2MnGAdJ+6cY4ZI7GWU
-	2DCvnxHC+cIocWvKNWaQKjYBVYmJK+6zgdgiQPbbSY/B4swCbhJ/lp5lAbGFBbQldj9+DxZn
-	Aao5vesp2AZeAWuJ6fdPM0Nsk5eYeek7O0RcUOLkzCcsEHPkJZq3zga7QkJgG7vE9fX72SAa
-	XCRWP1nPBGELS7w6voUdwpaS+PxuLxtEw2RGiTvXV7BAODMYJQ7/vM4IUWUssX/pZCZQ0DAL
-	aEqs36UPEVaU2Pl7LiPEZj6Jd197WCGhxyvR0SYEUaIkceziDagpEhIXlkxkgyjxkDg+XRck
-	LCQQK3Hh/WPWCYzys5C8MwvJO7MQ9i5gZF7FKJVaUJybnppsWGCom5daDo/Z5PzcTYzgpKfl
-	s4Px+/q/eocYmTgYDzFKcDArifDmnM9PFeJNSaysSi3Kjy8qzUktPsRoCgzkicxSosn5wLSb
-	VxJvaGJpYGJmZGxiYWhmqCTOG/OpPUVIID2xJDU7NbUgtQimj4mDU6qBSfnOyU+Z26b9PH7S
-	2Ck/MnvBkvcTauVbT+uol+w+XPv8mrTRk5ddDb2fhI4+Pzjn3/JH9q5++TYicjVy7jmH3zFf
-	ccz2nPV0QvWG/DkPW/8UFArPXXf21l7NtfWyCg9LkjzzN8ctnTrjlb3Utlc9zw++n7Tt19N7
-	yz+1JU1QV9B6zLC4IVv94Zbmte6PQjYkvZNnbdu06bfy4i3n5bS45upc5ZUvXc7MKaLInGNT
-	+FrwidDuo5/8cmrm5C0TORaUHZvt+W4Og7/RuhLvL41bD6mt7F+5fu+lnQzvy9LeSz392vZd
-	L+uH92cpf/nczHnnkxe0m/XKHrH88W6H3PN7l+YfPhb5VvSL+97tFz1XWt5VYinOSDTUYi4q
-	TgQAQPpLTwMEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJLMWRmVeSWpSXmKPExsWy7bCSnG69R2GqwbcLQha9504yWfzfNpHZ
-	4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCWKyyYlNSezLLVI3y6BK+P3xmb2
-	gpU8FZtP/mBuYFzP1cXIySEhYCJx4s455i5GLg4hgd2MElcab7N3MXIAJSQktmzlgDCFJQ4f
-	LoYo+cQo8f7rYWaQXjYBVYmJK+6zgdgiAuoSDy4vZASxmQU8JN7vWc0OYgsLaEvsfvwerJ4F
-	qP70rqesIDavgLXE9PunmSFukJeYeek7O0RcUOLkzCcsEHPkJZq3zmaewMg3C0lqFpLUAkam
-	VYySqQXFuem5xYYFRnmp5XrFibnFpXnpesn5uZsYwaGnpbWDcc+qD3qHGJk4GA8xSnAwK4nw
-	5pzPTxXiTUmsrEotyo8vKs1JLT7EKM3BoiTO++11b4qQQHpiSWp2ampBahFMlomDU6qBaXtG
-	0N+gA4XW55gb1rzQTdt9/oLGJZOSgqZ/b1+nWzXtOFFybnmhs+n2nH/Tkv0b83Implz6L/54
-	3cbN4vt96/+uUF/sWNrz/fzL9G8n3n9mWfz6756KrwvzGmbsNwtxf97uF+gfN1HQL/2C2DWz
-	ieeX5bxa8eNXfkP/Kv4rH/9P9rzw7sXsOds903xyVqnp3b+QWXahS2mRqqrbnKD7Qa8j+w8l
-	eIiufvyj1Zzbb8VXy88HuMNjL+nOi+7cOo9X+urRmYt00z7O2qi+pPOuVdj9G9N1Di3ltMia
-	dWJZY6exm/nFf8I1t3ZOLvr3LiH8WZOgY/Eexc/T9zE9OPbpwtFfbRUZ51+c2VTo5LVXjPmV
-	EktxRqKhFnNRcSIA2q5CDKwCAAA=
-X-CMS-MailID: 20231207042223epcas1p1e413980d991fdc9d9b413a34ab71894d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231207042223epcas1p1e413980d991fdc9d9b413a34ab71894d
-References: <CGME20231207042223epcas1p1e413980d991fdc9d9b413a34ab71894d@epcas1p1.samsung.com>
-
-Hi Dave and Daniel,
-
-   Just resending you the previous pull request[1] after resolving the build
-   warning.
-
-   [1] https://lore.kernel.org/dri-devel/20231120225537.1270358-1-inki.dae@samsung.com/
-
-   Please kindly let me know if there is any problem.
-
-Thanks,
-Inki Dae
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yutmrk2hnouit6fr"
+Content-Disposition: inline
+In-Reply-To: <048901da28b6$5be8e700$13bab500$@samsung.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
 
-The following changes since commit 33924328498e903bea74727353e5012d29653aff:
+--yutmrk2hnouit6fr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Merge tag 'drm-intel-fixes-2023-12-01-1' of git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2023-12-05 12:19:22 +1000)
+Hello Inki,
 
-are available in the Git repository at:
+On Thu, Dec 07, 2023 at 11:37:44AM +0900, =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=
+ Platform Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90 wrote:
+> Hello Uwe Kleine-K=C3=B6nig,
+>=20
+> > -----Original Message-----
+> > From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> > Sent: Wednesday, November 29, 2023 1:55 AM
+> > To: Inki Dae <daeinki@gmail.com>
+> > Cc: linux-samsung-soc@vger.kernel.org; Daniel Vetter <daniel@ffwll.ch>;
+> > Jingoo Han <jingoohan1@gmail.com>; Seung-Woo Kim <sw0312.kim@samsung.co=
+m>;
+> > Kyungmin Park <kyungmin.park@samsung.com>; DRI mailing list <dri-
+> > devel@lists.freedesktop.org>; Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org>; kernel@pengutronix.de; Alim Akhtar
+> > <alim.akhtar@samsung.com>; David Airlie <airlied@gmail.com>; linux-arm-
+> > kernel@lists.infradead.org
+> > Subject: Re: [PATCH v3 08/16] drm/exynos: Convert to platform remove
+> > callback returning void
+> >=20
+> > Hello Inki,
+> >=20
+> > On Wed, Nov 08, 2023 at 08:54:54AM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > Hello Inki,
+> > >
+> > > On Wed, Nov 08, 2023 at 01:16:18PM +0900, Inki Dae wrote:
+> > > > Sorry for late. There was a merge conflict so I fixed it manually a=
+nd
+> > > > merged. And seems your patch description is duplicated so dropped
+> > > > duplicated one.
+> > >
+> > > Ah. I have a template that generates one patch per driver. I guess th=
+is
+> > > is the result of using squash instead of fixup while putting all exyn=
+os
+> > > changes into a single patch.
+> >=20
+> > This patch didn't make it into next yet even though it's included in
+> > your exynos-drm-next branch at
+> > https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git.
+> >=20
+> > Is this on purpose?
+>=20
+> drm-exynos tree is not included in the next tree. It was previously
+> included, but it has been removed. drm-exynos tree is merged into the
+> mainline through the drm-next tree, but when the drm-next is
+> synchronized to the next tree, a conflict occurred between the
+> exynos-drm tree and the drm-next tree. Therefore, I had requested that
+> drm-exynos tree be removed from the next. Perhaps I was inexperienced
+> in managing the git tree at that time. :)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.7-rc5
+That sounds more like a reason to have your tree in next. One of the
+core motivations of next is to find inter-tree conflicts early. If such
+a conflict occurs and you only notice it when it's time to send your PR
+to drm-next (or even later) the pressure to fix the problem is higher.
 
-for you to fetch changes up to 8d1b7809684c688005706125b804e1f9792d2b1b:
+Also for patch contributors it's nice to have a "complete" next, their
+tests are more expressive then.
 
-  drm/exynos: fix a wrong error checking (2023-12-07 11:51:43 +0900)
+So I want to encourage you to readd your tree to next.
 
-----------------------------------------------------------------
-Two fixups
-- Fix a potential error pointer dereference by checking the return value
-  of exynos_drm_crtc_get_by_type() function before accessing to crtc
-  object.
-- Fix a wrong error checking in exynos_drm_dma.c modules, which was reported
-  by Dan[1]
+Best regards
+Uwe
 
-[1] https://lore.kernel.org/all/33e52277-1349-472b-a55b-ab5c3462bfcf@moroto.mountain/
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-----------------------------------------------------------------
-Inki Dae (1):
-      drm/exynos: fix a wrong error checking
+--yutmrk2hnouit6fr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Xiang Yang (1):
-      drm/exynos: fix a potential error pointer dereference
+-----BEGIN PGP SIGNATURE-----
 
- drivers/gpu/drm/exynos/exynos_drm_dma.c | 8 +++-----
- drivers/gpu/drm/exynos/exynos_hdmi.c    | 2 ++
- 2 files changed, 5 insertions(+), 5 deletions(-)
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVxfFoACgkQj4D7WH0S
+/k4ZPgf+I3pZTphATBXSUpHIry75pCQtOdLqDhFJBFNsZNkkejAEHnvPvII2IlOh
+TH0oGcBe/zqv5u8A+N6qkQeHORERWzfDg5FqNaygNz62zsPXP1i2RC25yGoWq2XK
+7G60CenU/bebpHjTzoGU5XwkWa0RvS6l64g4NFtks+IZe2Nct29UMS38F/Vuk9UW
+jB7bWf9uzG+IyhunlAWapnm9xKCL6dgrrRPTUSAfilFGV3DgNOmDH20rw79pqUsK
+QfGK/Vf68jBngma57A9Pt3I/1XsC48zV0iWKGbQVH3lyjQbekmbwWqUT996p6N2P
+jk0Pfpq8+1cyA+2Ca50k89nAXQiuRg==
+=SkA1
+-----END PGP SIGNATURE-----
+
+--yutmrk2hnouit6fr--
