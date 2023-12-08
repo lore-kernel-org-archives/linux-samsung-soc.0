@@ -1,46 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TLCtx/ti"
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB7D81723
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Dec 2023 07:43:46 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40b27726369so24013955e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Dec 2023 07:43:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sDMJ/mV1"
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9A2172A
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Dec 2023 07:43:56 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40c317723a8so11912145e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Dec 2023 07:43:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702050225; x=1702655025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMAI+5d+Pag3VgAIqCBU/gBEP7bdxCSdsl/hH/9VNjU=;
-        b=TLCtx/ti1X5YXsnMnsItcKsK0ETz5KhhLR9Qaa0i96DFNbkLwI2FUFEGDHltx2k25m
-         hpGr0l2zbFg6CDZY0MvKR1NgXAutEqMdqtKlzDYF3qAQ0vOBJ7fFgwKf1V4ZSyYFXzVG
-         qPQaaQCO+OwsU+2hQfB5oU424dnqBzK4lmNeGn+u1HDbbOu+uVClDiuuit4iumuP9XkK
-         dqHCkSYPdgAcyMRd84JDDTYbynqrWmxvTBYhimDw1yYPZlmpLlUNyGUJ0iQHrqvDBQ1x
-         UgQ8qS4sJ0D5b4q/xlIcqOkuuNwUqUvzUUOTKM6WqGT40mcrwe3z+1qK9BWWJ4KbBrSq
-         AO7w==
+        d=linaro.org; s=google; t=1702050235; x=1702655035; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gsNivX/jY8Ev/XwRm3gck9TopUHSetT5oKp5ugCi3m0=;
+        b=sDMJ/mV19mgZf3RzzjFrGPsEj1U7UtnQRz2fRMiiKvh8h3pMItadR4x7+lVPsMW5SK
+         xan1fi4y79MqkPklR+q7VaMvYL2ifShRq+8tJHRmU2ET+NhV3l6MxoRlqfMd7frjwPb0
+         MSjL+zURZYjj3N1++FXs9B8rtaoYOi54y9HnmEyJbKiTN6SHWjabpcFaNJ/A9CC/q/Be
+         9tJi0QwBWQbyAFkTkDT2IRB8Elm8ab3X8we92rq/GCHiiUZoHsWfQ6x4jzDNct22cwOv
+         PonV8K0c1OvnFUaZEDxE4FYUmeahOoWGYHVEMCfAN3ojihn2E1+wCKi7Zpyj6yYVXG5x
+         17MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702050225; x=1702655025;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMAI+5d+Pag3VgAIqCBU/gBEP7bdxCSdsl/hH/9VNjU=;
-        b=WkFJi94Uo4jyWYaXKaMNpFesvtwlo74jupJArWa/pkRVxhR3Xyr5Ui5e8gKwiZASwR
-         ChgGUg+QzuJSjJr+tkVDh1BYxis5XLzGM7RsTN6PBi7Ixc4JeQjnCpArwEpmB6p7Nu1j
-         JHF1MNdVRyU1WqO1pqTzZkxKFCH6eOQNZAXb0M6h7aSO7ZT3op5zHGvDm2mw2tFkbncI
-         xLLJAzvmhWbhWknF88jmVbGR3trT07yYE9o8pTZoz17HJ+rxmJ1lSpFjdapq/TmSRAQ5
-         SBWcLL2fhHlvYEi1fn6ydKwUBxh1XtE5axJS/e8Rz7VtZJlNhJY1u6xCSPtTEUFxi5PD
-         nGUQ==
-X-Gm-Message-State: AOJu0YxQZf6FVUH/1jL4d+eIwwhSmNvlXFYDAjpNduNWb3kYXdcXQFip
-	1QzI8ukGlkcUJruuv1X2aL0Kkg==
-X-Google-Smtp-Source: AGHT+IF9neKzPacIUvckHwFPrVgHSSnfwepq5v/156xEYpnCyOZLlSPMPJqxdVaNb8AVgN3hQB9PKA==
-X-Received: by 2002:a1c:7915:0:b0:40c:982:4974 with SMTP id l21-20020a1c7915000000b0040c09824974mr88148wme.73.1702050225392;
-        Fri, 08 Dec 2023 07:43:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702050235; x=1702655035;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gsNivX/jY8Ev/XwRm3gck9TopUHSetT5oKp5ugCi3m0=;
+        b=NvU7daylOFc+MIhuAS970X+ln+rTe6u/NygmpwZGFlN7nv7diUM5oYa9CTBJPb0weW
+         Gv6I002PDQJG7bgdbBAv4G4/iTpZSGbiBj2P4EtgS7F7U6iHHH38ya0gAvZwxHvytTs2
+         QoQi56uEX/t6dnPSIn/HtlZSAx5rI1P588JX5WhDDfqhvEPKq5UQnTqR3WHwo0+owEtg
+         OjikW91GaA01pxEEO5tTyVVx9fHRfdrlmMjNrRjntUoaHF5Wo+6SE3AsRcO9BcuzLEaO
+         En7eLam9g9RZnFKE229OaLbVfFyKQ0LUPaUeLv6oWor4aWUJkydqHP3eJ/7oxmtfllxa
+         ucxA==
+X-Gm-Message-State: AOJu0YyDp7j98X4RwpSDwpKuz3TR4131waHUNSDVIBNtZK5+B/TDu64a
+	naxSNTBoUkMZtQqaPEZJljgQPQ==
+X-Google-Smtp-Source: AGHT+IFu+3J2nfAM6Rg8b6zqZkwVlmCZ1T9sd1L0rct2VqTIr5l85o98NhV3OTmtchO+9HE5wRzqiA==
+X-Received: by 2002:a7b:cd0a:0:b0:40b:5e21:d366 with SMTP id f10-20020a7bcd0a000000b0040b5e21d366mr92621wmj.111.1702050235150;
+        Fri, 08 Dec 2023 07:43:55 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id bi12-20020a05600c3d8c00b0040b397787d3sm5448481wmb.24.2023.12.08.07.43.44
+        by smtp.gmail.com with ESMTPSA id bi12-20020a05600c3d8c00b0040b397787d3sm5448481wmb.24.2023.12.08.07.43.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Dec 2023 07:43:45 -0800 (PST)
-Message-ID: <e905fc9c-fe10-4b2f-83f4-e0e5d389b2ca@linaro.org>
-Date: Fri, 8 Dec 2023 16:43:42 +0100
+        Fri, 08 Dec 2023 07:43:54 -0800 (PST)
+Message-ID: <631fed44-ff9b-419f-a4cc-7b02cc7b4302@linaro.org>
+Date: Fri, 8 Dec 2023 16:43:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,7 +47,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] ASoC: wm0010: Convert to GPIO descriptors
+Subject: Re: [PATCH 2/5] ASoC: wm1250-ev1: Convert to GPIO descriptors
+Content-Language: en-US
 To: Linus Walleij <linus.walleij@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, Jaroslav Kysela <perex@perex.cz>,
  Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
@@ -56,8 +56,7 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org
 References: <20231208-descriptors-sound-wlf-v1-0-c4dab6f521ec@linaro.org>
- <20231208-descriptors-sound-wlf-v1-1-c4dab6f521ec@linaro.org>
-Content-Language: en-US
+ <20231208-descriptors-sound-wlf-v1-2-c4dab6f521ec@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -103,18 +102,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231208-descriptors-sound-wlf-v1-1-c4dab6f521ec@linaro.org>
+In-Reply-To: <20231208-descriptors-sound-wlf-v1-2-c4dab6f521ec@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/12/2023 11:09, Linus Walleij wrote:
-> This converts the WM0010 codec to use GPIO descriptors.
-> It's a pretty straight-forward conversion also switching over
-> the single in-tree user in the S3C Cragganmore module
-> for S3C 6410.
+> This converts the WM1250-EV1 codec to use GPIO descriptors.
+> It turns out that the platform data was only used to pass some
+> global GPIO numbers from a board file, so we get rid of this
+> and also switch over the single in-tree user in the S3C
+> Cragganmore module for S3C 6410.
+> 
+> The driver obtains two GPIO lines named OSR and master and just
+> pull them low, we leave this behaviour as it was.
 > 
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
