@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lh4HZlRj"
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C928C1723
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Dec 2023 07:44:13 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-40c0f3a7717so25196925e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Dec 2023 07:44:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c1+Iv/X0"
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E44721723
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  8 Dec 2023 07:44:21 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40c26a45b2dso12874845e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Dec 2023 07:44:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702050252; x=1702655052; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702050260; x=1702655060; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UyJTzyrrjFQ1eaFAkFF2OipSopnm2vk2L0nE9MiwPq0=;
-        b=lh4HZlRjgFkWYNb4zLc6LYvZlY+sSJerpb4aH6xIOjy5aZeBrDxQdyzn2t3iFsy3JB
-         898ffhcRxThrfWN+Ztg8IVGWHg9q3Kdfm2dDysDfblSpWbBV5wzGjZlGvP3Gkhad9rFQ
-         fRnucLzxj7HGC9o1IhxyRnhPX8SV6/W0F3N4AnGr7bWAQ5N0UV15w0s1L3pucaqHk5tv
-         Oz1BNZg1s0PXgz7TR3j192/W5zBMPD/JCGusRJNszIZTbQNqR14Oy1e+qJOQfDV3yj+H
-         Z7sI2fG5QdKGfm2QVlQqjoKg9qQmWnGzHCMj0olzuygbXkGG2EZScW1UdGnucc52RGUv
-         m39Q==
+        bh=rl8VDbM1oUsM5aeE1iNsYlBVIhPvBCeIpbCmaXnsWyA=;
+        b=c1+Iv/X06kzC1FIcRsLH2vpZRvgCt85/6aYwf23xZNXRKYN0826832/v/2wICaAaT4
+         7aYfU1UyOUl1kuMzwrpJ9SdiejEOpCTGlvyx2ajKc0PsyQ8itQWaZlr9Tj5gwaD20uap
+         6D4YKd2hA9fUj+6Yil4mdkpw49ozz3FrU0xG3vwdZgyYZSQ90HM2h4oe7gZ9x2Q2CJvf
+         9pCL5NkmpwaI+UgQctCccpwd1J58awSalSHkRNumANoTzziHe3huhKowEoxwNG8R5Njz
+         9JY5SG6x3sRtQ8wXIDkzIBp1nH6PBQxBgq3kIUUVkuW7NXhaqBZF47IaYSEXd21PQpCl
+         F9LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702050252; x=1702655052;
+        d=1e100.net; s=20230601; t=1702050260; x=1702655060;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UyJTzyrrjFQ1eaFAkFF2OipSopnm2vk2L0nE9MiwPq0=;
-        b=sOqhCH/6N1P/1pvquPFBZrZEIGxR30Z+nkEwDsfVZA3kqBJKV3XjcSJg6CrTLodg97
-         mW0eyIypcsNigpAEw7XtF/I7VGd6Uhcyvxp9WzsAKaZkoEuFum28/M2vH6vnhRdTuco7
-         LrHAisaQqMaeZKLedT6MVn2en/ooNMRIiaZUhV/1FrAdiMMXpVw6QlCENpH0VDJjpkwn
-         KOgVDMQLG62+ZUz7XEAnSI/vqhayHHsdqBLZgrf/EpV//RBHzq8CzRFGewds4Ejx35PH
-         bj+TjVpEaz0pT+XsD51WWiQCT5FCE9orTYzi6WY9PxgTZes6nWfPn0Ggq8N2N8+MoLnd
-         pVAg==
-X-Gm-Message-State: AOJu0Yx2PO1BtE1nPdDfJza+CL6mlYhitW5HBJ7ATp6NXcLq07XVfQ/H
-	NJgI714v8d0Sp04NSwIIGRBl6w==
-X-Google-Smtp-Source: AGHT+IEJt5WEFaRItiPehciJQQVgTdGjtB1MbkGjSsM2UqGx0+sdJijRSbp+twirdw6d00lmE8XaUQ==
-X-Received: by 2002:a05:600c:3d91:b0:40c:28dd:3f2f with SMTP id bi17-20020a05600c3d9100b0040c28dd3f2fmr57985wmb.135.1702050252391;
-        Fri, 08 Dec 2023 07:44:12 -0800 (PST)
+        bh=rl8VDbM1oUsM5aeE1iNsYlBVIhPvBCeIpbCmaXnsWyA=;
+        b=Gd4P1PotjqY+9qYQyLjZVAviNEBM3EX0T0TfiiTlDZ42EgoF4bR0+wr3ZyBZR7ajN8
+         WGIomuksMpO+Q0ueTtSSs0vGr8qDInSLCRpGCm7MBJ9SxjIxTVVua9/PgOjHKdcO8BXx
+         EtfA/Ytj3WWy1zybWcQuhvbJKloJIpZTfiEhg8k3o7gkQdXd/uVKOt/xoI5bxm4+iaJo
+         233j8XA1qFM4z0X7ZWRdUFSvjLoGuebMn8Q5qAWLith0TqM57a1pZjBAUtjEgKeEIjsk
+         HBROMttLkIFq8KsM8JUdGY1vEML6x7EoCznsoTVYDwwL96wxwbpjJDhTjsyQ46l/VZab
+         j4RQ==
+X-Gm-Message-State: AOJu0YxyXPhBugd7cJWbP6ZPz2NUXSqcRmNqGYKVXOfcXtvx8Zue1jXL
+	vNmfnP5t6JFfq3VH/7KrXG4Kqw==
+X-Google-Smtp-Source: AGHT+IGkFG9oiOW3rpU+a0mVsi+LXXcDAEZ6n9o3C0el7tV7c+uU2ZRjZl9X6YNx+S4OJZ6JGPm2oQ==
+X-Received: by 2002:a05:600c:3056:b0:40b:5e1f:c37f with SMTP id n22-20020a05600c305600b0040b5e1fc37fmr188573wmh.21.1702050260497;
+        Fri, 08 Dec 2023 07:44:20 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id bi12-20020a05600c3d8c00b0040b397787d3sm5448481wmb.24.2023.12.08.07.44.10
+        by smtp.gmail.com with ESMTPSA id bi12-20020a05600c3d8c00b0040b397787d3sm5448481wmb.24.2023.12.08.07.44.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Dec 2023 07:44:12 -0800 (PST)
-Message-ID: <cbe7e756-b4b6-4583-ab82-f9fc882703c6@linaro.org>
-Date: Fri, 8 Dec 2023 16:44:10 +0100
+        Fri, 08 Dec 2023 07:44:20 -0800 (PST)
+Message-ID: <e5cf9c71-5526-4f99-809f-404a8c7b0366@linaro.org>
+Date: Fri, 8 Dec 2023 16:44:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,7 +47,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] ASoC: wm5100: Convert to GPIO descriptors
+Subject: Re: [PATCH 5/5] ASoC: wm8996: Convert to GPIO descriptors
 Content-Language: en-US
 To: Linus Walleij <linus.walleij@linaro.org>,
  Alim Akhtar <alim.akhtar@samsung.com>, Jaroslav Kysela <perex@perex.cz>,
@@ -56,7 +56,7 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org
 References: <20231208-descriptors-sound-wlf-v1-0-c4dab6f521ec@linaro.org>
- <20231208-descriptors-sound-wlf-v1-4-c4dab6f521ec@linaro.org>
+ <20231208-descriptors-sound-wlf-v1-5-c4dab6f521ec@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -102,26 +102,24 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231208-descriptors-sound-wlf-v1-4-c4dab6f521ec@linaro.org>
+In-Reply-To: <20231208-descriptors-sound-wlf-v1-5-c4dab6f521ec@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/12/2023 11:09, Linus Walleij wrote:
-> This converts the WM5100 codec to use GPIO descriptors, a pretty
-> straight-forward conversion with the following peculiarities:
+> This converts the WM8996 codec to use GPIO descriptors, an a similar
+> way to WM5100.
 > 
-> - The driver is instantiating a GPIO chip named wm5100, and the
->   headphone polarity detection GPIO is lifted from there. We add
->   this to the GPIO descriptor table as well, and we can then get
->   rid of also the base address for the GPIO chip from the
->   platform data and just use dynamic numbering.
+> The driver is instantiating a GPIO chip named wm8996, and we get
+> rid of the base address for the GPIO chip from the platform data and
+> just use dynamic numbering. Move base and ngpio into the static
+> gpio_chip template.
 > 
-> - Fix up the only in-tree user which is the Cragganmore 6410
->   module.
+> Fix up the only in-tree user which is the Cragganmore 6410 module.
 > 
 > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  arch/arm/mach-s3c/mach-crag6410-module.c |  17 +++--
+>  arch/arm/mach-s3c/mach-crag6410-module.c | 14 ++++++--
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
