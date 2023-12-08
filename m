@@ -1,66 +1,118 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F7331718;
-	Thu,  7 Dec 2023 09:58:23 -0800 (PST)
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3b9d23c8bf7so820311b6e.0;
-        Thu, 07 Dec 2023 09:58:23 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDRFfJud"
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD7F012E;
+	Thu,  7 Dec 2023 20:49:31 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-67a91a373edso9988796d6.1;
+        Thu, 07 Dec 2023 20:49:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702010971; x=1702615771; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=apbHXdcSkWFBXKUAUvZ/rPX7atQuNqUO/5Wd48wSoY8=;
+        b=dDRFfJudJ4//z9Hdyhn90l5WmQO0U67/jJEwTUQAwN3+eLGRQvCf4+EJDo/DrVqs8R
+         ee3UIe5CCrrs3hmV+Yf8ePGGExxytnWed8A/0l9FIob0B9i9CPM3wdGqk1Ls+tzdiN6F
+         NK2A2l7uRAevhxGps8T2L/ldtaskiU5ih+a5IzDJlSrD0H5c6fBwGVLYvRwnR8fvyU6L
+         XQJYRTUOjIGfOB3PFb7IIDUlSVPHna7m88MA5ol5VQehhA2WNURFvYhiJIFkVBAb/kKT
+         xmHYZJUPHGrn4M8OpDW0/Ww93ucAp2Z+p1aek/iM7Nzoucd8HfE4W+KP+wlyuKjQs9r0
+         HIEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701971902; x=1702576702;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1702010971; x=1702615771;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XlGlC1SkIL9mmE58AXO5RRQ634yhMDTeXthN1KRiRhM=;
-        b=oulV3p8FKKu1N+MwwHPqu8KgOslcNAkL3l2U1hkNhCEQhnIDKEHgmWXr7RZJ8S46EI
-         ITOYSAEk4Z/PLR4NXDtMO9PeiITRrqLn+3IG3TbUlmo7FHXjB6z1nKyHE5/a9HPFRyzy
-         8tKp9VIel2Ea3fWNQgHaf3LOUS6fR4bDt/ksslyWhWOKdn5o65tsOboaa5nxcxplMRGb
-         nYIuwlxyf76ZJvDIsNaR6pgl9dAdfaQPrDj4QUIBmkWebf6VdaPDK5NlgcAY50ITW6G6
-         wY8laqR6eXehqLe3rt/0zrDQP+gOTax6M/lnwVnTMVN19NYHIneOSYooSipUvp4HFr7b
-         L4fw==
-X-Gm-Message-State: AOJu0YyKMNGpq2OUlT6gGqYKe8COqKy4af05z06ZQ4dicF+4lu+I2vL9
-	NNOtx1+6gE+uAq2zjPSPoAra5JkGrA==
-X-Google-Smtp-Source: AGHT+IHxq2Dw8sFsLLI+z4S9TgWxaf6l0cocAGF+yc2TisyC49euiJvcC1n+Yr/0HeIX18RO0y1CyA==
-X-Received: by 2002:a05:6870:390c:b0:1fa:fee1:6f1e with SMTP id b12-20020a056870390c00b001fafee16f1emr3075427oap.10.1701971902619;
-        Thu, 07 Dec 2023 09:58:22 -0800 (PST)
-Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k29-20020a05687022dd00b001fb0edac63csm58231oaf.6.2023.12.07.09.58.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 09:58:22 -0800 (PST)
-Received: (nullmailer pid 2977746 invoked by uid 1000);
-	Thu, 07 Dec 2023 17:58:20 -0000
-Date: Thu, 7 Dec 2023 11:58:20 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Nishanth Menon <nm@ti.com>, linux-mediatek@lists.infradead.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Olof Johansson <olof@lixom.net>, linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Andrew Davis <afd@ti.com>, Andrew Lunn <andrew@lunn.ch>, linux-rockchip@lists.infradead.org, 
-	Michal Simek <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Konrad Dybcio <konradybcio@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-amlogic@lists.infradead.org, 
-	Bjorn Andersson <andersson@kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
-	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	workflows@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
-	Heiko Stuebner <heiko@sntech.de>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4] docs: dt-bindings: add DTS Coding Style document
-Message-ID: <170197172648.2974247.13097453111547800548.robh@kernel.org>
-References: <20231203174622.18402-1-krzysztof.kozlowski@linaro.org>
+        bh=apbHXdcSkWFBXKUAUvZ/rPX7atQuNqUO/5Wd48wSoY8=;
+        b=kryyyhG2sO0Dgx/Junykj4U5Puw4MSDyrrRcrUZJ0EMOB09LgGqzgbt3J48hyNGW+2
+         k/6gSY20A+te7fFrlVX82g7VM9ddqUoDKy8CecfJt8EKR1dCXKz1gDhUdVLuq1Ens+Of
+         hPSWxkUvhNe/5OYiv5Kiv+CqOAN7vi9IrdPgWU6qyfgLSnanBWMJbr3VfHR0XgfYFD2q
+         efi0BhTPuChjDg7DkxAa+o0dxVEtLVLfyXcGrkCKJHo7D1JuPS++PeV0qGbsIpdgcOr5
+         OT22OZNwQjsfKDpDV/20usrJivr4yK/UJJnHhPOMxEiNW5X2LgK6pdUgVOU6djIK1M4c
+         z7xw==
+X-Gm-Message-State: AOJu0Yx7XCF1C3aON5lmdMZB7FgO5IBuaNOskU+zTFBVuqsRIQVI2bLd
+	NRajs+K4osuwuS5LFX88vx4=
+X-Google-Smtp-Source: AGHT+IHq72s0wgGAvlMpxJLJd+XXO/O95qju15WYNJhjJW585DNkO2Ri0Krk3Gye/yGNGCVuvcwysQ==
+X-Received: by 2002:ad4:56e3:0:b0:67a:a721:82ff with SMTP id cr3-20020ad456e3000000b0067aa72182ffmr3641641qvb.89.1702010970841;
+        Thu, 07 Dec 2023 20:49:30 -0800 (PST)
+Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id h10-20020a0cedaa000000b0067a22a8564fsm479353qvr.140.2023.12.07.20.49.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Dec 2023 20:49:29 -0800 (PST)
+Message-ID: <a3f24fdf-946c-4253-956d-4d345decdeb6@gmail.com>
+Date: Thu, 7 Dec 2023 20:49:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] docs: dt-bindings: add DTS Coding Style document
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: Andrew Davis <afd@ti.com>, Andrew Lunn <andrew@lunn.ch>,
+ Arnd Bergmann <arnd@arndb.de>, Bjorn Andersson <andersson@kernel.org>,
+ Chen-Yu Tsai <wens@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jonathan Corbet <corbet@lwn.net>, Michal Simek <michal.simek@amd.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Nishanth Menon <nm@ti.com>,
+ Olof Johansson <olof@lixom.net>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, Heiko Stuebner <heiko@sntech.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20231203174622.18402-1-krzysztof.kozlowski@linaro.org>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
 In-Reply-To: <20231203174622.18402-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Sun, 03 Dec 2023 18:46:22 +0100, Krzysztof Kozlowski wrote:
+
+On 12/3/2023 9:46 AM, Krzysztof Kozlowski wrote:
 > Document preferred coding style for Devicetree sources (DTS and DTSI),
 > to bring consistency among all (sub)architectures and ease in reviews.
 > 
@@ -84,64 +136,7 @@ On Sun, 03 Dec 2023 18:46:22 +0100, Krzysztof Kozlowski wrote:
 > Acked-by: Konrad Dybcio <konradybcio@kernel.org>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Merging idea: Rob/DT bindings
-> 
-> Changes in v4
-> =============
-> 1. Drop label at the top (Jon)
-> 2. Grammar fixes (Laurent, Dragan)
-> 3. "Unless a bus defines differently, unit addresses shall ..." (Rob)
-> 4. Use hex in example of dma-controller (Andrew)
-> 5. Example: soc@ -> soc@0
-> 6. Reverse points 2 and 3 in "Indentation" (Andrew)
-> 7. Use full path to coding style doc (Conor)
-> 
-> Changes in v3
-> =============
-> 1. should->shall (Angelo)
-> 2. Comments // -> /* (Angelo, Michal)
-> 3. Use imaginary example in "Order of Properties in Device Node"
->    (Angelo)
-> 4. Added paragraphs for three sections with justifications of chosen
->    style.
-> 5. Allow two style of ordering overrides in board DTS: alphabetically or
->    by order of DTSI (Rob).
-> 6. I did not incorporate feedback about, due to lack of consensus and my
->    disagreement:
->    a. SoM being DTS without DTSI in "Organizing DTSI and DTS"
-> 
-> Changes in v2
-> =============
-> 1. Hopefully incorporate entire feedback from comments:
-> a. Fix \ { => / { (Rob)
-> b. Name: dts-coding-style (Rob)
-> c. Exceptions for ordering nodes by name for Renesas and pinctrl (Geert,
->    Konrad)
-> d. Ordering properties by common/vendor (Rob)
-> e. Array entries in <> (Rob)
-> 
-> 2. New chapter: Organizing DTSI and DTS
-> 
-> 3. Several grammar fixes (missing articles)
-> 
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-amlogic@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: workflows@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
-> ---
->  .../devicetree/bindings/dts-coding-style.rst  | 196 ++++++++++++++++++
->  Documentation/devicetree/bindings/index.rst   |   1 +
->  2 files changed, 197 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dts-coding-style.rst
-> 
 
-I added the quotes as discussed and applied, thanks!
-
-Rob
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
