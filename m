@@ -1,34 +1,45 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44058628;
-	Sat,  9 Dec 2023 01:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjMf8GNz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F92FC433C8;
-	Sat,  9 Dec 2023 01:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702084080;
-	bh=kXWYA3mSxP8VzhealiNpxsyNEKB9eXotXgUvGIBgK9Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SjMf8GNzAMocyqt70R8V7uKEuoCvpCjQWbVJJU5j3q5fpD9xeKFw7+8U5fMBDS1eG
-	 TPyCshmqibzyE83uTdlebPyVwTwvsETq36qD0Z2o4ykm/P1hX9NRW9UeBQyuEgtFhD
-	 NuHI5SmdA+BT/MBc9eBn9rjqiDFYHEAzwuTgF2/yFcHrIZTYNzliVpzVoTBEaB6By0
-	 hHiUvhRl4qVayjC2378Nl/lgmf+v3S4LjLW4+FEB6uwaAT+BWXasKUcRm9fTyaIm6n
-	 SG02N+QFVwpqyrwyHRJlEhxphIwUAzoYicTbeZxkjYtH3FCPd8MW37TADkMahE0Uml
-	 MdgU8wtfSpMHg==
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org
-In-Reply-To: <20231208-descriptors-sound-wlf-v1-0-c4dab6f521ec@linaro.org>
-References: <20231208-descriptors-sound-wlf-v1-0-c4dab6f521ec@linaro.org>
-Subject: Re: [PATCH 0/5] GPIO descriptor cleanup for some Wolfson codecs
-Message-Id: <170208407816.2911119.4303388917102358684.b4-ty@kernel.org>
-Date: Sat, 09 Dec 2023 01:07:58 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N72p1EDZ"
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA8A10E
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  9 Dec 2023 14:01:38 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50bf26b677dso3138830e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Dec 2023 14:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702159297; x=1702764097; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rf6kxtFYggdfbxJYCVZWg+cgkdXOPlRkn+YTuzn4osc=;
+        b=N72p1EDZth6hevcT2+j5/ZHMOgXPnhRlIsWXjmDEppDaZYOpeBCidoV5p3AjnrtiKp
+         6wKrBaInIj4SqvgmYCC44zMXBVm/9zgfHx5/dsJP9ccvktTyQLlz+oWbeMvBJ5+5KZtr
+         jCY6vLNrbLL4DswcSoGuXo8u8TC+I8YalUrAtgujc4qSnYFl9AweR36RHorNdhc5WKts
+         EkKhBoJ2s8VTEDauciKJ8qq//dYPO6znoktndUWYgP8qfSfNaUD/y+iXxDLdQ/YGCgHf
+         WlXVdwBWA/4F4ewXWLkNnlTax1MjyWptfBFR1hpI/u0uVpXS6t4S5eagoWW7SxpX3wtJ
+         PSqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702159297; x=1702764097;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rf6kxtFYggdfbxJYCVZWg+cgkdXOPlRkn+YTuzn4osc=;
+        b=VcNn0MaTxP3B7TV4quJepwR/P+WFU61WeMlIHFV3hMIe4IBy1ie0lgXD2SKkIOCQpG
+         tg8nOmjTSIW/7kZwo1CduhQKHA8EnITCGthZIewMrNETQHbE1DRq7+nHeZZrVOvBR6/s
+         t4njJR6n4xpDmigpUjTIGcP3mOsPXmg6Nd472r6rRTg3fD8RzGRatV6x73NT/xUY6hND
+         HOLntLCshxo1q3mpXqDp6hc7VOi27beJBosubbypqo+IbqxdU5UbzZo1ZT2Hd2vrTK8V
+         Xveqq4nhrlZt0NINLcsXni59FOmNgDL53oSbUK/9OYpk12IQYOiMDApXM/CVDM3Pe8qu
+         Bxcw==
+X-Gm-Message-State: AOJu0YxtEaBZ3qGnTQ+PtnFtFdO6OdfP+ooo4CukSChk5BhHnVT1tfBy
+	soDHrAeDBdez9JdGqSu4PJuMDV9Zcd14PTKKhJo=
+X-Google-Smtp-Source: AGHT+IFBUEVjY+K4P0Zha/3JhCUnzGdXx6Cwpnkna/C2qd7ZWtdFCT0oVacrclwVM5TqPh0T2pmeTQ==
+X-Received: by 2002:a05:6512:3282:b0:50c:9e1:bf76 with SMTP id p2-20020a056512328200b0050c09e1bf76mr514417lfe.9.1702159297223;
+        Sat, 09 Dec 2023 14:01:37 -0800 (PST)
+Received: from [127.0.1.1] ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id s16-20020a056512215000b0050be73a1c27sm626098lfr.258.2023.12.09.14.01.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Dec 2023 14:01:36 -0800 (PST)
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 09 Dec 2023 23:01:27 +0100
+Subject: [PATCH] ASoC: wm1250-ev1: Fix uninitialized ret
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,51 +48,58 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+Message-Id: <20231209-descriptors-sound-wlf-v1-1-5b885ce43ae1@linaro.org>
+X-B4-Tracking: v=1; b=H4sIALbjdGUC/3WNywrCMBBFf6XM2pEmfSCu/A/pIk6m7UBJykSrU
+ vrvxoJLl+fCOXeFxCqc4FysoLxIkhgymEMBNLowMIrPDLa0lbFlg54Tqcz3qAlTfASPz6lHbsk
+ xVURtbSG7s3Ivr7177TKPkrLx3m8W811/xdOf4mKwRKq9u7V9Yw3TZZLgNB6jDtBt2/YBUB6db
+ rsAAAA=
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: patches@opensource.cirrus.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.12.4
 
-On Fri, 08 Dec 2023 11:09:24 +0100, Linus Walleij wrote:
-> This converts the remaining Wolfson ASoC codecs to
-> use GPIO descriptors.
-> 
-> These Wolfson codecs are mostly used with different
-> Samsung S3C (especially Cragganmore 6410) board files,
-> so the in-tree users are fixed up in the process.
-> 
-> [...]
+The GPIO descriptor conversion patch left an unitialized ret behind
+by mistake, fix it by getting rid of the variable altogether.
 
-Applied to
+Fixes: 10a366f36e2a ("ASoC: wm1250-ev1: Convert to GPIO descriptors")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202312090953.DiUo3mue-lkp@intel.com/
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ sound/soc/codecs/wm1250-ev1.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+diff --git a/sound/soc/codecs/wm1250-ev1.c b/sound/soc/codecs/wm1250-ev1.c
+index a2a8b2a4b19b..9fa6df48799b 100644
+--- a/sound/soc/codecs/wm1250-ev1.c
++++ b/sound/soc/codecs/wm1250-ev1.c
+@@ -129,7 +129,6 @@ static int wm1250_ev1_pdata(struct i2c_client *i2c)
+ {
+ 	struct wm1250_ev1_pdata *pdata = dev_get_platdata(&i2c->dev);
+ 	struct wm1250_priv *wm1250;
+-	int ret;
+ 
+ 	if (!pdata)
+ 		return 0;
+@@ -165,7 +164,7 @@ static int wm1250_ev1_pdata(struct i2c_client *i2c)
+ 
+ 	dev_set_drvdata(&i2c->dev, wm1250);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int wm1250_ev1_probe(struct i2c_client *i2c)
 
-Thanks!
+---
+base-commit: e0fa2154a7f46ca49105025d118261d34f7dfa7e
+change-id: 20231205-descriptors-sound-wlf-e6caec3cc642
 
-[1/5] ASoC: wm0010: Convert to GPIO descriptors
-      commit: b53d47775651aa51bb98cdeb968dedb45699d9a1
-[2/5] ASoC: wm1250-ev1: Convert to GPIO descriptors
-      commit: 10a366f36e2a2e240d9db6da90e501fa16655282
-[3/5] ASoC: wm2200: Convert to GPIO descriptors
-      commit: 0119b2a24eb592f967a2849b772887c96617ad80
-[4/5] ASoC: wm5100: Convert to GPIO descriptors
-      commit: 8563cfe39ba5d00d974df25e310fb61b5b3687e1
-[5/5] ASoC: wm8996: Convert to GPIO descriptors
-      commit: 729f02ec02ae12e5d8a53171bd37e9de56f33677
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+-- 
+Linus Walleij <linus.walleij@linaro.org>
 
