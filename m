@@ -1,105 +1,105 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMt0DB1Q"
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22190F2
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:37:37 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-5bcfc508d14so3275334a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:37:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rZDMmXth"
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36D30ED
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:39:51 -0800 (PST)
+Received: by mail-pg1-x52f.google.com with SMTP id 41be03b00d2f7-5c6bd3100fcso1927061a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702251456; x=1702856256; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702251590; x=1702856390; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ktrngxJslvgVofvGRW3XnDoVArwbSMEwYrvNDYxqRMM=;
-        b=ZMt0DB1Q5u/VunX6/Rvk8gpBiwSPBrENgKzbmODOnncUGcdkh5DCbWUhre+jDkRakt
-         CBjK8novtFlEmzpQJUQrMgiRZv5tBVPuWp4Zc3Hx9Wx70ftNBNw57ZdF5jOur/y6fNh1
-         Zo0w+91EDn7mPuWQeqK+Li0SrCfwSeH43cnajwANU+X67meTrbmqIz88Yvsl5YUYdAfw
-         wBhkGcMCqqr1y2PUoxD/qNiADxqTa3e0JSjXjfMNed/bQ/F6Tlq0hdzaoi12xiYwr1/x
-         SOCLcL6TJ08o96zDB/XxpSm803FLIpa3GwqUm28YtfyWcwZaAXCU1CyztJbKtDNHPANS
-         k4Qw==
+        bh=ZRlK8XSOgjLEALc1Z5hQNRyRQl5uMFZ8VhU8lledO9I=;
+        b=rZDMmXth+QtQs5MiTf/Iupg1yKdttYePVq4u7N8MVavGkyTOxS5jxkhOmE/CMfoYXE
+         4SKUbksEnScIqYGSBl7zsrUX8CSphCmBPM1Td14wlMToL8vsKMokfjiqiJcDWTruskrT
+         iI8+s6Prg9jeTnFg6QWtSvVo9R3ZNSRSdDvkfXFcwf+G5luK7FdlEvnkgfBVt9KwG8ia
+         6IpDl28rNur6wXFh79eJ3Tq+Rh18Sodz2RhDmw1de3RtKdcnMyio343YL6EIiuY24cUn
+         TFq4uRikU7zFOXQKdW5DMRGgpPmF5q31dP5PKzbxb49xOJ3RjSMC4XK4y3FYmZ45JqVT
+         WLQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702251456; x=1702856256;
+        d=1e100.net; s=20230601; t=1702251590; x=1702856390;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ktrngxJslvgVofvGRW3XnDoVArwbSMEwYrvNDYxqRMM=;
-        b=luRg4ilN/SHsJV0dG6vfvtCZF+MHPM6xgJNdBKsYGc4b90BUbBDtMac8MZYz6+wsPP
-         edp9zTNuEO5mtMHqJfqFBTRoSlkSaFCZ25z0ap7K642hbL2mP4oEXinUFXu1swTiJ2Wb
-         w42rqZn7myuvuI1cWW0LolN1+veDwMFSygsdb3lBUz8ZeGKdHVry5H+N3hNptSsr2LyV
-         iBhHUsp0n3HvPMYWQXHdLOgvWov28bVxfKvGbe/wyYVrONtX60QSn+RFYUJQypocaTcI
-         nd+ENykktUc1pM6w4/fiCktQi7bTaPE8KRZKNbSMu70IMXTOy/uUO/HslABOqvHuwytT
-         d1wA==
-X-Gm-Message-State: AOJu0YzKiXzCgF4+fAlfLeqYCAkh0tPTKXuClbyrWI09YtYHVG1SNZvJ
-	/GyPizwrwbSmLnEMmzKoZ1oC0nWf2EcP749cjyjNng==
-X-Google-Smtp-Source: AGHT+IGLsgr8i/Ys8RGtN0SYISZJUKEzU9RuUMU3J9K3efZNFIaGcYANt6ADR27OrFr246GC+h9HKAnCTaXxkKGU5BA=
-X-Received: by 2002:a17:90a:db08:b0:286:6cc1:7803 with SMTP id
- g8-20020a17090adb0800b002866cc17803mr2455327pjv.70.1702251456635; Sun, 10 Dec
- 2023 15:37:36 -0800 (PST)
+        bh=ZRlK8XSOgjLEALc1Z5hQNRyRQl5uMFZ8VhU8lledO9I=;
+        b=ZixjL+iHzekaAnkkZZ9keDREifhMdv+ZdeATTE2065mgltYi3YrjKShEb2FGBFWCkN
+         r3z8kZ4uZWHY9qJ/SOKm599gaz6J0f4hEmJZZC5tf1yd6UwpWQTAQzKGdF1pjCuVtGgx
+         ZMTlmdkyWkonT2Z6YW+tdwHU+EQkr939YM9GQCYDWYV1sQ/6i6eKFgXzte8frLJ6KkTG
+         VzC1fYKC8qqK34tibCVCqLYYDTeeZj8Gs5b+XWS7Cs91oXs1EAgNZzfmyc/yHaGb8LkO
+         v3YRgsf296+uhNNV6itxfpTzqzivG2e9UwU2ETWP6jp/Uk9+i2SIfVMveuzT+Q68yC3c
+         tIyQ==
+X-Gm-Message-State: AOJu0Yysvxtua9jsS2fw3WmtXQvJKYfHE6unFwPT4xAsp7oxppQLGsu9
+	HJziSvjZPuzh8lj5ydQZ7ocLegWcht9l7wp7SpvE3g==
+X-Google-Smtp-Source: AGHT+IGsxFuYOhPbXcOyI8L4TnUro7MH402Xh7LjA1I7HZsXimGjb/gGb5R5X025i0dHUk0DjPb38yxObtyCuoxUp/s=
+X-Received: by 2002:a05:6a21:998c:b0:190:228e:4c26 with SMTP id
+ ve12-20020a056a21998c00b00190228e4c26mr1570718pzb.31.1702251590680; Sun, 10
+ Dec 2023 15:39:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231209233106.147416-1-peter.griffin@linaro.org> <20231209233106.147416-16-peter.griffin@linaro.org>
-In-Reply-To: <20231209233106.147416-16-peter.griffin@linaro.org>
+References: <20231210134834.43943-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231210134834.43943-1-krzysztof.kozlowski@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Sun, 10 Dec 2023 17:37:25 -0600
-Message-ID: <CAPLW+4nUT8Nf9zC6UrAMJ_OpLNqe7JWxKy7xp1+_+emNgG4qkA@mail.gmail.com>
-Subject: Re: [PATCH v6 15/20] watchdog: s3c2410_wdt: Update QUIRK macros to
- use BIT macro
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com, soc@kernel.org, devicetree@vger.kernel.org, 
+Date: Sun, 10 Dec 2023 17:39:39 -0600
+Message-ID: <CAPLW+4nKzYLTPpTAba9X3YmeGwY_avpZoPr=Lw8Uy7ktSkH4_w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: samsung: exynos-sysreg: combine
+ exynosautov920 with other enum
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 9, 2023 at 5:31=E2=80=AFPM Peter Griffin <peter.griffin@linaro.=
-org> wrote:
+On Sun, Dec 10, 2023 at 7:48=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Update the remaining QUIRK macros to use the BIT macro.
+> No need to create a new enum every time we bring-up new SoC.
 >
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
->  drivers/watchdog/s3c2410_wdt.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 7ecb762a371d..b7a03668f743 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -107,11 +107,11 @@
->   * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debu=
-g mode.
->   * Debug mode is determined by the DBGACK CPU signal.
->   */
-> -#define QUIRK_HAS_WTCLRINT_REG                 (1 << 0)
-> -#define QUIRK_HAS_PMU_MASK_RESET               (1 << 1)
-> -#define QUIRK_HAS_PMU_RST_STAT                 (1 << 2)
-> -#define QUIRK_HAS_PMU_AUTO_DISABLE             (1 << 3)
-> -#define QUIRK_HAS_PMU_CNT_EN                   (1 << 4)
-> +#define QUIRK_HAS_WTCLRINT_REG                 BIT(0)
-> +#define QUIRK_HAS_PMU_MASK_RESET               BIT(1)
-> +#define QUIRK_HAS_PMU_RST_STAT                 BIT(2)
-> +#define QUIRK_HAS_PMU_AUTO_DISABLE             BIT(3)
-> +#define QUIRK_HAS_PMU_CNT_EN                   BIT(4)
->  #define QUIRK_HAS_DBGACK_BIT                   BIT(5)
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos=
+-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos=
+-sysreg.yaml
+> index 2de4301a467d..b00f25482fec 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg=
+.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg=
+.yaml
+> @@ -17,6 +17,8 @@ properties:
+>                - samsung,exynos3-sysreg
+>                - samsung,exynos4-sysreg
+>                - samsung,exynos5-sysreg
+> +              - samsung,exynosautov920-peric0-sysreg
+> +              - samsung,exynosautov920-peric1-sysreg
+>                - tesla,fsd-cam-sysreg
+>                - tesla,fsd-fsys0-sysreg
+>                - tesla,fsd-fsys1-sysreg
+> @@ -50,11 +52,6 @@ properties:
+>                - samsung,exynosautov9-peric1-sysreg
+>            - const: samsung,exynosautov9-sysreg
+>            - const: syscon
+> -      - items:
+> -          - enum:
+> -              - samsung,exynosautov920-peric0-sysreg
+> -              - samsung,exynosautov920-peric1-sysreg
+> -          - const: syscon
 >
->  /* These quirks require that we have a PMU register map */
+>    reg:
+>      maxItems: 1
 > --
-> 2.43.0.472.g3155946c3a-goog
+> 2.34.1
+>
 >
