@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lJTndi+i"
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B62EAF1
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:36:36 -0800 (PST)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-20292b5ca69so961021fac.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:36:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMt0DB1Q"
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22190F2
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:37:37 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-5bcfc508d14so3275334a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 15:37:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702251396; x=1702856196; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702251456; x=1702856256; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wwhdaI8XBubSIfRfAPI160DRLkTYdL3p80yUVHWP+lE=;
-        b=lJTndi+iTR1mYF+vqJ2971iNv1s0v7W1CsqA33HteKDeGoo1NLcOD/EcI6GMXSMTCe
-         DlSqcLTDBCa0DyX6YM7RxgoF7JldUTXElfAZyM5p/kBCxXUBXuw+sgkhcg86rOO1xILm
-         VQqkJlBxVWw0GNygw3FFXD7UqZ0NqkzP9Jsz3HbC4WqSGZheCwOa/FvWPu/tJCcTfhaS
-         StsNaqRrrMaYC2Vi7e9bvuyGuQT0uw86HB26rSLCcEIbLW93UMuBQfUbVmeobdk5OxCw
-         rn2/m+hVUmV9vb3AIB9Xrjrya5gSnRpjq2DQsMdI+o0I5L13mat5hum5V1C+Ik2HPryD
-         dUJA==
+        bh=ktrngxJslvgVofvGRW3XnDoVArwbSMEwYrvNDYxqRMM=;
+        b=ZMt0DB1Q5u/VunX6/Rvk8gpBiwSPBrENgKzbmODOnncUGcdkh5DCbWUhre+jDkRakt
+         CBjK8novtFlEmzpQJUQrMgiRZv5tBVPuWp4Zc3Hx9Wx70ftNBNw57ZdF5jOur/y6fNh1
+         Zo0w+91EDn7mPuWQeqK+Li0SrCfwSeH43cnajwANU+X67meTrbmqIz88Yvsl5YUYdAfw
+         wBhkGcMCqqr1y2PUoxD/qNiADxqTa3e0JSjXjfMNed/bQ/F6Tlq0hdzaoi12xiYwr1/x
+         SOCLcL6TJ08o96zDB/XxpSm803FLIpa3GwqUm28YtfyWcwZaAXCU1CyztJbKtDNHPANS
+         k4Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702251396; x=1702856196;
+        d=1e100.net; s=20230601; t=1702251456; x=1702856256;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wwhdaI8XBubSIfRfAPI160DRLkTYdL3p80yUVHWP+lE=;
-        b=GFum4D83tvVcz1E76IWKiNzFsSZeTUhTf4VuDIz0PiScjLMEpJQDR1sCPyAH3JlrRQ
-         NZG0W7w8T8H7L6+q7fpGUS5YJird5fBktyUbZoQbOLbDFccM9aZsa12STiPlimfEl7ci
-         VYpi4AiBqUpKXBGZ8mQDUFjGD7Gm11fxvClsBERubTUkJabck7i+5pOdYYy6R3xTtLWy
-         Bhi2aOJxgW09PRnOzkDxELDPbaLOzE0R8iQvaryDNBiR8Zb9Jhv2ek9N83PTfaFZYZDr
-         Ux67uDaeqT99Oil9wqLupmpDPExZnDchUoPbzl4CKazzfqCjOPI01NJxjzz6qnn/g0iV
-         eiOA==
-X-Gm-Message-State: AOJu0YwPp9yAfVRgQy2wdMa2E6dfL964TIVNFYQurM0QAd89a3ACLc/6
-	ydSs5s8Eg7OGgddESgO+p0TksQqYWZhkyzJag1EfeA==
-X-Google-Smtp-Source: AGHT+IGBq7mUtyfHbN3TWy9RKPBEUdVZWqEc908zIBJVoQI53SI1IAvfmzEwWNQNMlm9DsxGtd8LX7ARxtptPsEGI7s=
-X-Received: by 2002:a05:6870:4f13:b0:1fb:75a:de7a with SMTP id
- xi19-20020a0568704f1300b001fb075ade7amr4086371oab.104.1702251395847; Sun, 10
- Dec 2023 15:36:35 -0800 (PST)
+        bh=ktrngxJslvgVofvGRW3XnDoVArwbSMEwYrvNDYxqRMM=;
+        b=luRg4ilN/SHsJV0dG6vfvtCZF+MHPM6xgJNdBKsYGc4b90BUbBDtMac8MZYz6+wsPP
+         edp9zTNuEO5mtMHqJfqFBTRoSlkSaFCZ25z0ap7K642hbL2mP4oEXinUFXu1swTiJ2Wb
+         w42rqZn7myuvuI1cWW0LolN1+veDwMFSygsdb3lBUz8ZeGKdHVry5H+N3hNptSsr2LyV
+         iBhHUsp0n3HvPMYWQXHdLOgvWov28bVxfKvGbe/wyYVrONtX60QSn+RFYUJQypocaTcI
+         nd+ENykktUc1pM6w4/fiCktQi7bTaPE8KRZKNbSMu70IMXTOy/uUO/HslABOqvHuwytT
+         d1wA==
+X-Gm-Message-State: AOJu0YzKiXzCgF4+fAlfLeqYCAkh0tPTKXuClbyrWI09YtYHVG1SNZvJ
+	/GyPizwrwbSmLnEMmzKoZ1oC0nWf2EcP749cjyjNng==
+X-Google-Smtp-Source: AGHT+IGLsgr8i/Ys8RGtN0SYISZJUKEzU9RuUMU3J9K3efZNFIaGcYANt6ADR27OrFr246GC+h9HKAnCTaXxkKGU5BA=
+X-Received: by 2002:a17:90a:db08:b0:286:6cc1:7803 with SMTP id
+ g8-20020a17090adb0800b002866cc17803mr2455327pjv.70.1702251456635; Sun, 10 Dec
+ 2023 15:37:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231209233106.147416-1-peter.griffin@linaro.org> <20231209233106.147416-13-peter.griffin@linaro.org>
-In-Reply-To: <20231209233106.147416-13-peter.griffin@linaro.org>
+References: <20231209233106.147416-1-peter.griffin@linaro.org> <20231209233106.147416-16-peter.griffin@linaro.org>
+In-Reply-To: <20231209233106.147416-16-peter.griffin@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Sun, 10 Dec 2023 17:36:24 -0600
-Message-ID: <CAPLW+4nuYHbLuLX=HGsDz6WYtZV3P7yBEmhCXbLW2M+dF1asow@mail.gmail.com>
-Subject: Re: [PATCH v6 12/20] clk: samsung: clk-gs101: Add cmu_top, cmu_misc
- and cmu_apm support
+Date: Sun, 10 Dec 2023 17:37:25 -0600
+Message-ID: <CAPLW+4nUT8Nf9zC6UrAMJ_OpLNqe7JWxKy7xp1+_+emNgG4qkA@mail.gmail.com>
+Subject: Re: [PATCH v6 15/20] watchdog: s3c2410_wdt: Update QUIRK macros to
+ use BIT macro
 To: Peter Griffin <peter.griffin@linaro.org>
 Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
 	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
@@ -67,18 +67,39 @@ Content-Transfer-Encoding: quoted-printable
 On Sat, Dec 9, 2023 at 5:31=E2=80=AFPM Peter Griffin <peter.griffin@linaro.=
 org> wrote:
 >
-> cmu_top is the top level clock management unit which contains PLLs, muxes=
-,
-> dividers and gates that feed the other clock management units.
+> Update the remaining QUIRK macros to use the BIT macro.
 >
-> cmu_misc clocks IPs such as Watchdog and cmu_apm clocks ips part of the
-> APM module.
->
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Tested-by: Will McVicker <willmcvicker@google.com>
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-[snip]
+>  drivers/watchdog/s3c2410_wdt.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 7ecb762a371d..b7a03668f743 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -107,11 +107,11 @@
+>   * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debu=
+g mode.
+>   * Debug mode is determined by the DBGACK CPU signal.
+>   */
+> -#define QUIRK_HAS_WTCLRINT_REG                 (1 << 0)
+> -#define QUIRK_HAS_PMU_MASK_RESET               (1 << 1)
+> -#define QUIRK_HAS_PMU_RST_STAT                 (1 << 2)
+> -#define QUIRK_HAS_PMU_AUTO_DISABLE             (1 << 3)
+> -#define QUIRK_HAS_PMU_CNT_EN                   (1 << 4)
+> +#define QUIRK_HAS_WTCLRINT_REG                 BIT(0)
+> +#define QUIRK_HAS_PMU_MASK_RESET               BIT(1)
+> +#define QUIRK_HAS_PMU_RST_STAT                 BIT(2)
+> +#define QUIRK_HAS_PMU_AUTO_DISABLE             BIT(3)
+> +#define QUIRK_HAS_PMU_CNT_EN                   BIT(4)
+>  #define QUIRK_HAS_DBGACK_BIT                   BIT(5)
+>
+>  /* These quirks require that we have a PMU register map */
+> --
+> 2.43.0.472.g3155946c3a-goog
+>
