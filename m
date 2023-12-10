@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7L2S4Kp"
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A13EA
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:52:58 -0800 (PST)
-Received: by mail-oi1-x22d.google.com with SMTP id 5614622812f47-3b9e2a014e8so2321437b6e.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:52:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e1qIFHcl"
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4295FE
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:56:00 -0800 (PST)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-a1db6816177so454558366b.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:56:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702216378; x=1702821178; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702216559; x=1702821359; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=DyfZzF+pEmdCnaQqoUIXxpgj+wJsipZvikAaIUgXmqU=;
-        b=b7L2S4KpAaIrYBR1j7IT0+d7DcKfekKitSr2W8O1ba90dR8WTi8b00Ncm6tmumHkem
-         UhXNnE6eK0imhxCKUqhu+CBIunwP2cAj2GNyA/SwsA82R7J/LvUbwvyfO510fugAbiZX
-         vzZ6VURE4R9kPXTm/jUXpL2TvTSZBIuUCAx9v1SqS1cgfLp3ObR3WW7vCN2ED6kG/bPX
-         a5w8zMPqIdV17U1/q/3WRLUAjn2cgESIjjPPCQ/Npv0pvrwzHEw76RFwMtzUXrlE5tFz
-         T5BhHidHK7f5nzknr2cuu1O9datARGwVbcaPoEcN9nCqifxhSz2DM2phh+XTuC0mThKa
-         q6KQ==
+        bh=INZmx+xtGzIo4fqLOlpYenuhwexRARPngqxKA520KWo=;
+        b=e1qIFHclWF2apq2S/iu+CDi1rbgaZx7yW1BlbU7eGCVoI6ZrkLua+HzEkz/+Cmwqvm
+         gUBAORX0d/ZKHcw6V7AnGE1rgwbEqRQUsXtGRlxj/z6nK5YbFKpiAGLVKNswzmvUomVP
+         I8tQvDWiyqz93B5DdUR3EJ0CszRH5hJL1HZ45mVN0iOHllwMiJ4A/tExMhHSkGVNngl/
+         qOV2Y+9WCapNox3EE03y7mX4FU8FO9ni+lVGpYDs789d99LOjGXrEvnU0y5zcS8OjVxr
+         7MuXms6x2HYchelTPjSJ04k2kvh08maa/9TUmvx0nzUQch+86jE3y34WS0aWCIgnlZ40
+         TDkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702216378; x=1702821178;
+        d=1e100.net; s=20230601; t=1702216559; x=1702821359;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DyfZzF+pEmdCnaQqoUIXxpgj+wJsipZvikAaIUgXmqU=;
-        b=sHkYt4M+s+qqC3m4JN0eogWTJWzkP6M0kzp8yqr8YdaH2fMj3tbd1oU6K53m4rDTBq
-         aI81iALtivibRPb+nJgicjXQyy2Mv/KWIwWXrRW2OWMYTMKsSmfNhesJRUyd0nWqvxcY
-         knuSwkrv0f9GgmNm5ZCyltxCPsKdqJa0dx1rvWQBA14kO3XEI/aG2HOjInSAIY9Y9Ue0
-         /8ChIxJUoevPXBfGUtrFLPG8qS8WlMuo5v7uVa0urA04d+KAkJC43Vl3Uu52nXbhzx9p
-         XbY1iI81jUb+0gPDp+HEwXY/joap+b/L5ZVx+HEHvT2KMX4bmZ8pdpLHBO4WuJs1NRei
-         lT4A==
-X-Gm-Message-State: AOJu0YxrMki8DwqiBsu2PHttxKxAdt6RnpsXwWdkGAnLdrQ5zos1I+FT
-	ZZBpKI+Zjv0kyXBv+WD9wKvF4g==
-X-Google-Smtp-Source: AGHT+IEc1BOhnl0TdzEPP1ZWGXEY7kf7u1c43rqRtWGQXy5QT9zWwBljFRVUmZmDfObmkFTLgeboFQ==
-X-Received: by 2002:a05:6808:3c96:b0:3b8:b063:6bb6 with SMTP id gs22-20020a0568083c9600b003b8b0636bb6mr5762059oib.101.1702216378270;
-        Sun, 10 Dec 2023 05:52:58 -0800 (PST)
+        bh=INZmx+xtGzIo4fqLOlpYenuhwexRARPngqxKA520KWo=;
+        b=cbp8NbxbaT6haurE9hjV8+krePyOifBPykJ7v/n+KwptlsPmpcI8vPjuDedFujtyDA
+         ibcxovNpkMHNpwEv1u7NYp8Oh74SKYXWPXTP3mlOh813Sf09ph/zXcfQOtl/LKYRLf3b
+         rwCq64GmuGXy5RVOTQnPiwViLSMH7uCNQ0e/14fWewvA5yMMnfi1YXDKu+kcnQomSBai
+         5ZYqZ646XVYflBw2wGS15bN7tRmjZreflJUM3ARQyJ8MmzQrMkjOM7DJJPvmPbs6Eeuo
+         wosRyixoWdbFBbJ59QU3oX8NCwHFYsghxzXKajipZBicdDOd5Yr+3EJ8HSTWYj1Jcusw
+         xkbg==
+X-Gm-Message-State: AOJu0YxpN05tbktYGQQ4VxPRfnqsi81h/WMrANDAqumsrYSU3Qxr331M
+	nHaFT2fbNZhgd/1qsGY7l5ei2g==
+X-Google-Smtp-Source: AGHT+IGpcDe50EC7iA2p9jzSdwOPDhRmrUx0hnxjbE10idpJ2PGsJWW6rC82FnKLT6IippagxU6Kpg==
+X-Received: by 2002:a17:906:1003:b0:a19:a19b:4241 with SMTP id 3-20020a170906100300b00a19a19b4241mr758819ejm.172.1702216559325;
+        Sun, 10 Dec 2023 05:55:59 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id e20-20020aa78c54000000b006cb9a9ea64dsm4544874pfd.220.2023.12.10.05.52.48
+        by smtp.gmail.com with ESMTPSA id ll9-20020a170907190900b00a1da2f7c1d8sm3443093ejc.77.2023.12.10.05.55.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Dec 2023 05:52:57 -0800 (PST)
-Message-ID: <2dd2f920-a0a5-4f69-b7e6-c09c3f83eae6@linaro.org>
-Date: Sun, 10 Dec 2023 14:52:46 +0100
+        Sun, 10 Dec 2023 05:55:58 -0800 (PST)
+Message-ID: <46c9c8b4-942d-4f6f-a6cc-00158314d5e5@linaro.org>
+Date: Sun, 10 Dec 2023 14:55:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,25 +47,25 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/20] dt-bindings: arm: google: Add bindings for
- Google ARM platforms
+Subject: Re: [PATCH v6 13/20] pinctrl: samsung: Add gs101 SoC pinctrl
+ configuration
 Content-Language: en-US
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
- soc@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, robh+dt@kernel.org,
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
  krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
  conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
  s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
  linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
  olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
- cw00.choi@samsung.com, alim.akhtar@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-watchdog@vger.kernel.org, kernel-team@android.com,
- linux-serial@vger.kernel.org, Rob Herring <robh@kernel.org>
+ linux-serial@vger.kernel.org
 References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-6-peter.griffin@linaro.org>
+ <20231209233106.147416-14-peter.griffin@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,43 +111,47 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231209233106.147416-6-peter.griffin@linaro.org>
+In-Reply-To: <20231209233106.147416-14-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 10/12/2023 00:30, Peter Griffin wrote:
-> +  Likewise there are a couple of names for the actual device
-> +  - Marketing name ("Pixel 6")
-> +  - Codename ("Oriole")
-> +
-> +  Devicetrees should use the lowercased SoC ID and lowercased board codename,
-> +  e.g. gs101 and gs101-oriole.
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - description: Google Pixel 6 / Oriole
-> +        items:
-> +          - enum:
-> +              - google,gs101-oriole
-> +          - const: google,gs101
-> +
-> +  # Bootloader requires empty ect node to be present
-> +  ect:
-> +    type: object
-> +    additionalProperties: false
+> Add support for the pin-controller found on the gs101 SoC used in
+> Pixel 6 phones.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
-This is a major change, thus Rob's review should be dropped with short
-explanation.
 
-No new properties post-review.
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index 6b58ec84e34b..3834bf953178 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -468,6 +468,8 @@ static const struct of_device_id exynos_wkup_irq_ids[] = {
+>  			.data = &exynos7_wkup_irq_chip },
+>  	{ .compatible = "samsung,exynosautov9-wakeup-eint",
+>  			.data = &exynos7_wkup_irq_chip },
+> +	{ .compatible = "google,gs101-wakeup-eint",
+> +			.data = &exynos7_wkup_irq_chip },
 
-Rob,
+You don't need it.
 
-Please re-review the "ect" part. I suggested it to Peter to solve the
-bootloader requirements.
+>  	{ }
+>  };
+>  
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 79babbb39ced..b8d549fe38cb 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1321,6 +1321,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+>  		.data = &exynosautov9_of_data },
+>  	{ .compatible = "tesla,fsd-pinctrl",
+>  		.data = &fsd_of_data },
+> +	{ .compatible = "google,gs101-pinctrl",
+> +		.data = &gs101_of_data },
+
+Place it somewhere alphabetically. Probably before tesla.
+
 
 Best regards,
 Krzysztof
