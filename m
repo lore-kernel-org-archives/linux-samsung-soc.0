@@ -1,96 +1,147 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozW74SMY"
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51FF4DF
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:48:39 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3360ae2392eso2037210f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:48:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zpu7R4rk"
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF82DEA
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:49:31 -0800 (PST)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-a1da1017a09so437482766b.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 05:49:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702216118; x=1702820918; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3064XmdITzZhPjLLGnjAD2LPSNczuONCpTaBgiThtlU=;
-        b=ozW74SMYErSiAOdKNaS4fRVIHiDxvu0elJCcVpN/PSKbrJ0/mGB1DbvBEDqDfaWehb
-         W5rOUn/efJVgl4JRyGfBLpo1ASXbzCWBCn1sdcNUwam9Iej8Isuk4MRsQFcs/tZD6WPh
-         3JRolH1A2Gc4J5mibJalaSoDSuBFFeyz8ZjthpAC+ZgMRE7UdHcOeSrEJwS3tpqbye6V
-         riDklu+X/wKjt/5plIy1hd/azrCrXFFNsYXrx4lr1/ISgoOUyi4gSQ7v5ztLPtOlHY4O
-         BrpLhEwK6k5HGOveBGxjYLXwL+z/lAUCkXeijO2LutulD3QlH3BqJjf9ZLkP3M69xXd0
-         gtXw==
+        d=linaro.org; s=google; t=1702216170; x=1702820970; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=e5o7QMqT1/h/c/y4rQYTZ+85QaiS8Pwt6E28lSDw4ZY=;
+        b=Zpu7R4rkmIZodlIAqEbVZ8kMMvLFvWRl6qntvMgwyDxig0sp/3JOD0tHCsxpD/RBdw
+         jN+TA4+gHIeD/m4p/0rQGFwYF0JnevdnLRjqVwYhUpJMBS2Se0qZC2jn77xCz9NQViw6
+         oFXQg1J06N0Mo6dJkel/pIUjPKbAZ+hj4VPoN4OCpvYfcKNq8M5qj98Li56GIsMTDnbN
+         EEAFEFh3QUfxI6Jm5OEjVp0E/8PfLRCmuBmLmF0F8kKKjZCF18D/0yHowkrKjtxjHcjs
+         Qh0/YnP36hfBwrG0Ke13Fb0NrpLeyPeDUeqXTyXOJ6YmswUbJhKc5yxGIlWKJaoU/BoA
+         1y9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702216118; x=1702820918;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3064XmdITzZhPjLLGnjAD2LPSNczuONCpTaBgiThtlU=;
-        b=v5MauEFZKm1NRukGfqVwy4oRtaF800+sU/erLLoBkN+lbapUxLjbrfHXmntkjgfij4
-         MEAsP4qdAEENzcZOleR3HCPlgidsMPt+zj5tAP3P5oCWYK1zvGBDkyZcgJ8dycy6zv5t
-         RyhaTseOifTnwK3EW3RvWuY6LoHCRH4OKeZUC7mfv8bQ1tBJURq7mjlKcxewsvVv4CP3
-         U1ml1KinbPzI3d/p+Z6DPmnp34IqPt8kEHsOxqTX29pnDj5dANkm/PGO7vmaPUlJXgxs
-         dmJ6Jicd4DI0aLwEP1BgDZMBzo/F33QYutanMVHiIDcerKUCjRbTztyqXtD6htFXanlh
-         RUKA==
-X-Gm-Message-State: AOJu0YxVxtretCJ8bACeGOCwv7wDUVtpiGQ7t5qmK1o4s6mdZnJMV9x3
-	4SD4vIxVKP1iW07raeyp8EaE/g==
-X-Google-Smtp-Source: AGHT+IEYQWyFLps+8a1ktVUX5+xvwEHwYnJq6SULwm1krEw6dm0X1VeyTvwbJRq3QCqZsYXhNWCVrg==
-X-Received: by 2002:a05:600c:3107:b0:40c:2dd8:3a38 with SMTP id g7-20020a05600c310700b0040c2dd83a38mr1452502wmo.80.1702216117646;
-        Sun, 10 Dec 2023 05:48:37 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id be9-20020a05600c1e8900b0040596352951sm12062097wmb.5.2023.12.10.05.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 05:48:37 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: samsung: exynos-sysreg: combine exynosautov920 with other enum
-Date: Sun, 10 Dec 2023 14:48:34 +0100
-Message-Id: <20231210134834.43943-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1702216170; x=1702820970;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e5o7QMqT1/h/c/y4rQYTZ+85QaiS8Pwt6E28lSDw4ZY=;
+        b=Ygti1qWCPwlgvulHLn9txUNjOt9v7roTfyR9v79af8bsqLQT+3fEPEIV2RQ+LRubAo
+         58NkOHaGjyA6qQdOAVfiGLiH/zvX9TJVXhAeAZWF8us1P3nGUfL6qby6mjUMwjF1+y2U
+         eaP5wMOIGxtI7qwxg5nAZFjHl0BOfzo8maXAJdOU5MB3faQWt5CgrtlGHgBGWPep/seT
+         KtZWCM7JjUucgxSuNQMwcB35nlt+KazslkDAtsHxrcma7bon+ZeN2Mf710NBXRJUd78v
+         QoTMopQWJ+XJdYiF1u6quUp+S0IA8GJndIuEHOb0tIwWvi+lyruPQ1CT1LxY88kaZxaO
+         GCkA==
+X-Gm-Message-State: AOJu0YzEohuB1g0pYFzNglYqWhlg5bte9iKDgske38bnQYV+hmRUL+Ns
+	1lw6QZvx/6ym1t3lsAuxvkARlw==
+X-Google-Smtp-Source: AGHT+IHmKOzFti2jhtzD65YbqgtqLG5pAJ71Avs61aBrwetBhPAc9LejJ/ro9TGOsFTvc1XomzIJPQ==
+X-Received: by 2002:a17:907:38c:b0:a19:a19b:78d8 with SMTP id ss12-20020a170907038c00b00a19a19b78d8mr1298768ejb.155.1702216170240;
+        Sun, 10 Dec 2023 05:49:30 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id rm6-20020a1709076b0600b00a1f6f120b33sm3014923ejc.110.2023.12.10.05.49.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Dec 2023 05:49:29 -0800 (PST)
+Message-ID: <c2244932-cb2f-423a-bbe6-9ab2b08b9d63@linaro.org>
+Date: Sun, 10 Dec 2023 14:49:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 03/20] dt-bindings: soc: google: exynos-sysreg: add
+ dedicated SYSREG compatibles to GS101
+Content-Language: en-US
+To: Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ conor+dt@kernel.org, sboyd@kernel.org, tomasz.figa@gmail.com,
+ s.nawrocki@samsung.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ olof@lixom.net, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com
+Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ soc@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, kernel-team@android.com,
+ linux-serial@vger.kernel.org
+References: <20231209233106.147416-1-peter.griffin@linaro.org>
+ <20231209233106.147416-4-peter.griffin@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20231209233106.147416-4-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-No need to create a new enum every time we bring-up new SoC.
+On 10/12/2023 00:30, Peter Griffin wrote:
+> GS101 has three different SYSREG controllers, add dedicated
+> compatibles for them to the documentation.
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> index 2de4301a467d..127f4ffde76a 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+> @@ -22,6 +22,12 @@ properties:
+>                - tesla,fsd-fsys1-sysreg
+>                - tesla,fsd-peric-sysreg
+>            - const: syscon
+> +      - items:
+> +          - enum:
+> +              - google,gs101-apm-sysreg
+> +              - google,gs101-peric0-sysreg
+> +              - google,gs101-peric1-sysreg
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+This should be part of the first enum. No need for new list for every
+new SoC. I'll fix it while applying.
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index 2de4301a467d..b00f25482fec 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -17,6 +17,8 @@ properties:
-               - samsung,exynos3-sysreg
-               - samsung,exynos4-sysreg
-               - samsung,exynos5-sysreg
-+              - samsung,exynosautov920-peric0-sysreg
-+              - samsung,exynosautov920-peric1-sysreg
-               - tesla,fsd-cam-sysreg
-               - tesla,fsd-fsys0-sysreg
-               - tesla,fsd-fsys1-sysreg
-@@ -50,11 +52,6 @@ properties:
-               - samsung,exynosautov9-peric1-sysreg
-           - const: samsung,exynosautov9-sysreg
-           - const: syscon
--      - items:
--          - enum:
--              - samsung,exynosautov920-peric0-sysreg
--              - samsung,exynosautov920-peric1-sysreg
--          - const: syscon
- 
-   reg:
-     maxItems: 1
--- 
-2.34.1
+Best regards,
+Krzysztof
 
