@@ -1,46 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BiZ1g1Ag"
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D93F5
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:28:55 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3333131e08dso4725911f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:28:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KcBnmb+i"
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F786E4
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:34:40 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-3333a3a599fso2652388f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:34:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702279734; x=1702884534; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UE+C/ImAJWWtKpJcraHCcLhN+53RMQ1ixKOkV+MQs20=;
-        b=BiZ1g1AgrZ3XB6jCZVSlS+HD2x/7ZSizCrA3/od1m+KVmQ5J2KFRpuj+uTFPF2H7NC
-         mOE7AeIutlbifIFDnPkoeSllLOKy6LcILz620HuZ8ug2lm1x693yk4xtfbT1DGONNmiJ
-         9G1G5AF04FM3PbNGbLoqBri/BKXgoji/Zwb1d+7+DbD+rxZ0z5Ud0K3MT9DKafUd3WeS
-         g1SWP744PJCNfkDtZVJMgIAF64UdWSUtxshg7ZYef5BIvvUs+HANx3GZFi/SZMQRpEQ/
-         sN+qRe6G2Fy/iO2CjZNSTIkV6HIUjSPUxUf7C0kWJjHKXWFrskP3pIcGE6hgkBIbelQM
-         hHSw==
+        d=linaro.org; s=google; t=1702280078; x=1702884878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1B9M3ivj0hin/IwQCfivGV6M+zrF5Su1X0x53Rly3MY=;
+        b=KcBnmb+iy6bjUxPyk0ybmvWHaBHaXjohqLIq9mhPyX1p2SJDM9em15eJQ61epl5fXk
+         XGgYF7g1xEshqDb5JdJxFmPw0F9QjsBdTWW4gn9vyG/W88DV0ViD7olY6ArybpcAqFIA
+         DUWWbq3y5evcvPTZ9fO4jim89awO8/xT5r748DfZ1ihXbp1xC7n+sveDISeM9JkvdbRB
+         OUYD4o8cgmb7KWlCWmh5gzhtPEJscCt0La4dIz1grgpA8taI7VgS2qyP0JW4SD+AN1ZH
+         EmDJvdgT6HmQnc9CulpKZekZmwM1IlNYXY0BSNHwurAAZ5caZqbbXgAx7qkWz7NlIQME
+         gmyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702279734; x=1702884534;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UE+C/ImAJWWtKpJcraHCcLhN+53RMQ1ixKOkV+MQs20=;
-        b=J+ndL6Qzus15vIZpucnHOURkFtnxZAcFoJIT6yXVyRsx3qwHI47c2uHwa4O5J9mlrP
-         wSPSRrKDqnHfhYKPqifwyNBuX8KN5dl55P05Uo37xeNk1Pwo7PzGYFgyjnxVPmmnJvwU
-         c2tIZ1hyjK7a9EvnMUt8QKkfZfEBsVQ++E7JdcxbVwmp7DlDwImAsTkcrlV+C/tF4NKl
-         rsYdlFQrQvBEujbBEubybkn9VyOtCeUiikTnZbbEVqIMp4KXVlgUcEwExbD/mzzxfxvj
-         Wm55eLLwyQB+FOnIE0h4j44/CCRlQPpQGhtfAzcoiQrluU4t7niuPhuE+KqlmWuqAkxW
-         +mXw==
-X-Gm-Message-State: AOJu0Yw5/NktzrjpcGKYXEtTAHaTUIUsBb+TZZaVz1DtM0oh8GGBk4QG
-	gt/liA7SJuil26qScO4j22E0BA==
-X-Google-Smtp-Source: AGHT+IGk2ddjU7q+hO5WgUAw9jEckqekrr6p4OlkCsGKij/99xKSPfhRKgWnHHQTKjbL7cqCW0fTXw==
-X-Received: by 2002:a5d:4887:0:b0:333:2fd2:2f0a with SMTP id g7-20020a5d4887000000b003332fd22f0amr1712071wrq.131.1702279734282;
-        Sun, 10 Dec 2023 23:28:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702280078; x=1702884878;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1B9M3ivj0hin/IwQCfivGV6M+zrF5Su1X0x53Rly3MY=;
+        b=UTjjO7aiYwTDRxehRLeQG3+TxFu0o//CzTH+KaGlHCrtUhNu57QAMkaDmAktWXkGla
+         87Ecs+itGY3PXwGTdnpNm4P9lPNx7xzqznSQcS1Da25pSIDHCAiKTt85SE6yE0uDdtio
+         YwMqZOnS36JIC7X8r7XPAKzEtX0I/O2fag6MiL6C73aepP2wBWUaDnYCf+7J7deUwPyk
+         y3k4JajmJfWxkjyiT3TW505GD7zDrG7SE+1PUYXCFBL4NVPO0pnWYzxun5Q69kdblcmx
+         1rIph+Yyr5MGHI0zInStjYj1fRb5vOdr+7fTwbEYYvxGwsztZ2ESYY3DslqTREy5QgdC
+         VfYg==
+X-Gm-Message-State: AOJu0YyAEkyWWafrhxCYBnXUFxocBDoVt2aFq8FDJExqFgy3mnqxrWOn
+	rb7HD0FpebruZYyMomutNYfWYQ==
+X-Google-Smtp-Source: AGHT+IGVoJA169fh7hxs5BUnAQ4rS1b1QWUhEhKU+BJAdmClOdIaEg44LrjVk9fWAM+JY1nBcdCmDw==
+X-Received: by 2002:a05:600c:287:b0:40b:5e4a:2379 with SMTP id 7-20020a05600c028700b0040b5e4a2379mr1983548wmk.123.1702280078362;
+        Sun, 10 Dec 2023 23:34:38 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id j6-20020adfe506000000b0033339e03a60sm7857719wrm.59.2023.12.10.23.28.52
+        by smtp.gmail.com with ESMTPSA id fc17-20020a05600c525100b0040c42681fcesm5126187wmb.15.2023.12.10.23.34.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Dec 2023 23:28:53 -0800 (PST)
-Message-ID: <7a4d3873-d9df-4ecd-9b3c-c57a9209dc97@linaro.org>
-Date: Mon, 11 Dec 2023 08:28:51 +0100
+        Sun, 10 Dec 2023 23:34:37 -0800 (PST)
+Message-ID: <a441ca43-8631-4a6a-b828-6d744fce5aee@linaro.org>
+Date: Mon, 11 Dec 2023 08:34:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,6 +49,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: correct ExynosAutov920
  wake-up compatibles
+Content-Language: en-US
 To: Jaewon Kim <jaewon02.kim@samsung.com>, Tomasz Figa
  <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Alim Akhtar <alim.akhtar@samsung.com>,
@@ -60,7 +60,6 @@ To: Jaewon Kim <jaewon02.kim@samsung.com>, Tomasz Figa
 References: <CGME20231210133927epcas2p3e2633ad371b03d5ab19f9b44118fcb58@epcas2p3.samsung.com>
  <20231210133915.42112-1-krzysztof.kozlowski@linaro.org>
  <c63bd0b3-ecb2-d4c6-2147-43f19c1dcfee@samsung.com>
-Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -130,8 +129,8 @@ On 11/12/2023 03:18, Jaewon Kim wrote:
 > 
 > Reviewed-by:Jaewon Kim <jaewon02.kim@samsung.com>
 
-This is based on your patchset, because autov920 is not compatible there
-with the others.
+Please send correct tags so I won't need to manually fix them. Otherwise
+they get ignored by b4.
 
 Best regards,
 Krzysztof
