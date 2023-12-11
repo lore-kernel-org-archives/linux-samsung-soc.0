@@ -1,170 +1,105 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C9DAA1
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 04:19:48 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rCfEf-0001H0-4X; Mon, 11 Dec 2023 13:18:09 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rCfEe-00F5z5-AI; Mon, 11 Dec 2023 13:18:08 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rCfEe-000tY1-0P; Mon, 11 Dec 2023 13:18:08 +0100
-Date: Mon, 11 Dec 2023 13:18:07 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-staging@lists.linux.dev,
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-pwm@vger.kernel.org, greybus-dev@lists.linaro.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	asahi@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v4 000/115] pwm: Fix lifetime issues for pwm_chips
-Message-ID: <20231211121807.zzlgf3alcoo6lrw7@pengutronix.de>
-References: <cover.1701860672.git.u.kleine-koenig@pengutronix.de>
- <ZXM4CdJxg-XrYhkn@orome.fritz.box>
- <20231208185033.e6ty2cajcfle6dgk@pengutronix.de>
- <ZXbzcFTnDTKoZAta@orome.fritz.box>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MD71feyT"
+Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35462C4
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 04:45:29 -0800 (PST)
+Received: by mail-qv1-xf29.google.com with SMTP id 6a1803df08f44-67ac8e5566cso32615106d6.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 04:45:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702298728; x=1702903528; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ciTb8X7sSYaGOT4UWkd550gPDBthZN4x3zDDJKswrc0=;
+        b=MD71feyTXsRUpjaEAMVx1rbSYeC3aWOn2xg9RS0SC1o3UJKEIZjSiqE07xBHybts2C
+         T8IHB0QodWLqaf5ZYUOaVsX9+Mc/zKX3RgMGy7jAAqaOhN67Zw2z+wYGaojTRgMqDNZY
+         4IlM6WUV3Rr1GrZAexc1y8ayyPBlCOFAPkK5VZHdsOo9jIGQItb7yp8aWUtuk27j796L
+         5gQatQsuUrbAlsLSzN4C9WyaH13R1yRoQnqXpd+BtVaRl+bcj/eRD/gj6l7RHqO7S83y
+         kqRBTGP6YOuyr391oXgzA0uE1TubKEmxOR8xByBjzq9KMXHy59WFG7a4GD2eoq1TW9vM
+         kwug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702298728; x=1702903528;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ciTb8X7sSYaGOT4UWkd550gPDBthZN4x3zDDJKswrc0=;
+        b=mlKnEk5aSA6JHrSqrvDjlrE9Y84lJMx6vObeoscxvuWa8gxbVWz54PduCKgJIkDtqy
+         GPFSW/KUqtP/Dp+mIc9Iz4VGtj7oooSp3c3wxQlZiktUySEPol4Pfe3bDAykTO2QD/SI
+         wIAkTw+6+9EnVdpM05lRjTGnxOFRNeFn6YxlZtwkl+fRtsbqu3lxNQZMvIS2GnyGl0Dd
+         EWNLkBTitRnkHUEK7WJmLHQ3nKLQhSbOquEHv4XeaDPz+pYl7b8JOy+ajbA3DHKRH/hX
+         HUjIBNA8NE/VDlQE6dA7I42Xnzb8h5yHp+yB6aBL5wP92oio0dIxP/vC2v9XgODJCj3M
+         pnMw==
+X-Gm-Message-State: AOJu0YxsrQEB0AoQmccaxEebO3ndjW8QDnlAsnEOesQsku2BKKSklDV1
+	R0qBsZsf+1Q74X3qvpBqshY2SIZtP1FUqLv+21XC+A==
+X-Google-Smtp-Source: AGHT+IEpuGvMmwJK7KEtP0GssM6BhrUf01e5r6sZWErKY3vlOr/IGzS7HSTqH7gTZbrJhzfyaEJCH937yl3bmQukKsg=
+X-Received: by 2002:a0c:ef8a:0:b0:67a:8cf8:3fb with SMTP id
+ w10-20020a0cef8a000000b0067a8cf803fbmr5908480qvr.61.1702298728335; Mon, 11
+ Dec 2023 04:45:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yyef2a7pj6vk5dry"
-Content-Disposition: inline
-In-Reply-To: <ZXbzcFTnDTKoZAta@orome.fritz.box>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+References: <20231209233106.147416-1-peter.griffin@linaro.org>
+ <20231209233106.147416-20-peter.griffin@linaro.org> <03603f37-ec3d-456c-95a4-e543d1df4801@linaro.org>
+In-Reply-To: <03603f37-ec3d-456c-95a4-e543d1df4801@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 11 Dec 2023 12:45:16 +0000
+Message-ID: <CADrjBPr7tqdec6z_NL0EEm+G3WTUkjj_dE2Lpm+f=4hdg5BA5Q@mail.gmail.com>
+Subject: Re: [PATCH v6 19/20] arm64: dts: exynos: google: Add initial
+ Oriole/pixel 6 board support
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
+	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
+	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	soc@kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Krzysztof,
 
---yyef2a7pj6vk5dry
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 10 Dec 2023 at 14:39, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 10/12/2023 00:31, Peter Griffin wrote:
+> > Add initial board support for the Pixel 6 phone code named Oriole. This
+> > has been tested with a minimal busybox initramfs and boots to a shell.
+> >
+> > Tested-by: Will McVicker <willmcvicker@google.com>
+> > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/exynos/Makefile           |   2 +
+>
+> ...
+>
+> > +&serial_0 {
+> > +     status = "okay";
+>
+> Keep status the last
 
-Hello Thierry,
+Will fix
 
-On Mon, Dec 11, 2023 at 12:33:04PM +0100, Thierry Reding wrote:
-> On Fri, Dec 08, 2023 at 07:50:33PM +0100, Uwe Kleine-K=F6nig wrote:
-> > The TL;DR; is essentially what I already wrote in my last reply to Bart
-> > in the v3 thread[1]:
-> >=20
-> >  - My approach needs more changes to the individual drivers (which I
-> >    don't consider a relevant disadvantage given that the resulting code
-> >    is better);
-> >  - My approach works with less pointer dereferences which IMHO also
-> >    simplifies understanding the code as all relevant data is in a single
-> >    place.
-> >  - My approach has a weaker separation between the core and the lowlevel
-> >    drivers. That's ok in my book given that this doesn't complicate the
-> >    lowlevel drivers and that hiding details considerably better doesn't
-> >    work anyhow (see the drivers that need internal.h in your patch).
-> >=20
-> > For me the single allocation issue is only an added bonus. The relevant
-> > advantage of my approach is that the code is easier and (probably) more
-> > efficient.
->=20
-> I happen to disagree. I think adding pwmchip_alloc() makes things much
-> more complicated for low level drivers.
+>
+> > +     pinctrl-names = "default";
+> > +     pinctrl-0 = <&uart0_bus>;
+> > +};
+> > +
+> > +&usi_uart {
+> > +     status = "okay";
+>
+> Keep status the last
 
-Looking at e.g.
-https://lore.kernel.org/linux-pwm/2dda818b8bbbe8ba4b9df5ab54f960ff4a4f1ab5.=
-1701860672.git.u.kleine-koenig@pengutronix.de/
-I wonder where you see "much more complication". OK, there are two
-pointers now for chip and private data, but I'd call that at most a
-"mild" complication[1] which is more than balanced out by the
-simplifications in the remaining parts of that patch.
+Will fix
 
-Best regards
-Uwe
+regards,
 
-[1] I'm not sure I'd refuse someone suggesting the following patch on
-    top of today's next:
-
-	diff --git a/drivers/pwm/pwm-microchip-core.c b/drivers/pwm/pwm-microchip-=
-core.c
-	index c0c53968f3e9..d32e65914599 100644
-	--- a/drivers/pwm/pwm-microchip-core.c
-	+++ b/drivers/pwm/pwm-microchip-core.c
-	@@ -448,12 +448,14 @@ MODULE_DEVICE_TABLE(of, mchp_core_of_match);
-	 static int mchp_core_pwm_probe(struct platform_device *pdev)
-	 {
-		struct mchp_core_pwm_chip *mchp_core_pwm;
-	+	struct pwm_chip *chip;
-		struct resource *regs;
-		int ret;
-	=20
-		mchp_core_pwm =3D devm_kzalloc(&pdev->dev, sizeof(*mchp_core_pwm), GFP_KE=
-RNEL);
-		if (!mchp_core_pwm)
-			return -ENOMEM;
-	+	chip =3D &mchp_core_pwm->chip;
-	=20
-		mchp_core_pwm->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &=
-regs);
-		if (IS_ERR(mchp_core_pwm->base))
-	@@ -470,9 +472,9 @@ static int mchp_core_pwm_probe(struct platform_device =
-*pdev)
-	=20
-		mutex_init(&mchp_core_pwm->lock);
-	=20
-	-	mchp_core_pwm->chip.dev =3D &pdev->dev;
-	-	mchp_core_pwm->chip.ops =3D &mchp_core_pwm_ops;
-	-	mchp_core_pwm->chip.npwm =3D 16;
-	+	chip->dev =3D &pdev->dev;
-	+	chip->ops =3D &mchp_core_pwm_ops;
-	+	chip->npwm =3D 16;
-	=20
-		mchp_core_pwm->channel_enabled =3D readb_relaxed(mchp_core_pwm->base + MC=
-HPCOREPWM_EN(0));
-		mchp_core_pwm->channel_enabled |=3D
-	@@ -485,7 +487,7 @@ static int mchp_core_pwm_probe(struct platform_device =
-*pdev)
-		writel_relaxed(1U, mchp_core_pwm->base + MCHPCOREPWM_SYNC_UPD);
-		mchp_core_pwm->update_timestamp =3D ktime_get();
-	=20
-	-	ret =3D devm_pwmchip_add(&pdev->dev, &mchp_core_pwm->chip);
-	+	ret =3D devm_pwmchip_add(&pdev->dev, chip);
-		if (ret)
-			return dev_err_probe(&pdev->dev, ret, "Failed to add pwmchip\n");
-=20
-    With that applied before the above mentioned patch there is no
-    complication at all in my eyes.
-
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---yyef2a7pj6vk5dry
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV2/f8ACgkQj4D7WH0S
-/k7QwQgApfQEvhd6se+a8+O5GDdTfjV+EObXMDS2kvZsRHCAmatVaTePkn/Zg6Fo
-ZwGiGr9Ttfcjwf0hpLEmy7G2QP38HPZySu1f9Xo4V6NtkIvo4iPm3o60vDqF3mZM
-i+2779oY7aNOanR7E1KyDs7WfAZowpslVZ9qaXlDs6Pa1Hrz4Z7Wn6sF4gVV0SnX
-Qq2kKClfhZCuWBwwSDHS72BKOj2GRkgP32YIDH1LcEP9iemoZqFJivwMh3VGvIXv
-DocnmNO9JXrr3vx5UTcRHZfakEXbIfGOTtibtXwJDI48rHzGcXYRbYGi5B5Sssx/
-SHrVw/Ghy9VDfrcrkb+gLBfpz7JxyA==
-=RAtQ
------END PGP SIGNATURE-----
-
---yyef2a7pj6vk5dry--
+Peter
