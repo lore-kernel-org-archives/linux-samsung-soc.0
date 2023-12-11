@@ -1,59 +1,64 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BLCdW7ef"
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07DFDEB
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:36:25 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-336223afe64so434660f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:36:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YaKMIsdS"
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605B8130
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:42:12 -0800 (PST)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2c9efa1ab7fso50211361fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:42:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702280183; x=1702884983; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702280530; x=1702885330; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2YHBWFSpjhw0+JPItFiuftFwl12od6x19Q3Kp1H3E6I=;
-        b=BLCdW7efF2tjpduz+TWYaE9woLpNDYKcrX2wH+l9JJAYZ/rdYKH2CPjyRTJl6TYke/
-         eM7OwIYX7IVqwmND0ZRtX8cBrvrVaBcv5h41sto8GK/d5UfLXLmc3qt5EiUf+bd550jm
-         DVT/DpRY+IJRagODb2tGkGJSWqHTx731HO+KmJERi+aebPqiaEOAUOyFuWunzVrZJeCb
-         YdwxJBWfW8lqcNqSr3LkPQCU297oQSFteHAByRHCdQe41TetOBSTrWNJCBIPqjmnh04D
-         v7tL/J0yE8sCu2kUzCjr/GQtHSXIlfigyY61o71goOldx8JaH+kIsTViHDY3V3nEINcV
-         mBgQ==
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4wKKZxDmRdHJfZg5vgJP9rGg6SAla387qKCYSstr8Kc=;
+        b=YaKMIsdStTqdVebCXALV2nhdJ97QevgAtygQN8L9JsR+Pu2XoqY/X02wIQRPWH8XgK
+         2oDFTKvGfewKBmLUCPlqysMZGhHHSAc28RQDvf+7rIO5OLKaozy37D/6HUoBiKRy5Y04
+         X2D5C37EkVUc4uiGg+vZ+LwIB3POVK3LFrcNjg4gZqkVhkPpiKOWsh8KYXU41dWk9+qV
+         HGV1OrsCSCEKFvXYjQUMH+FcQvNcccgys17xFyL8HUi/PplSnA+oHgSmzsFhuWDFJoKc
+         agn2lY7SfhYvkVQnoDBe+9qByueHW+AeLmKmNiPezN6szQA0wsn0aLHF+asx9q4NYjI0
+         5U6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702280183; x=1702884983;
+        d=1e100.net; s=20230601; t=1702280530; x=1702885330;
         h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2YHBWFSpjhw0+JPItFiuftFwl12od6x19Q3Kp1H3E6I=;
-        b=UF9wjCHO10yq0YbovQTfukHUxgLULpgE8LrSjm7jT0dda3Y9RmdFcfiWdhGhrXsh3k
-         0tmwDfOIriyDnsyYe3FIasteyTO55dkfmzKpfJ2hnHPGWHyqZLNXpNNEFpxckuT9DdXL
-         MfLDcJYKjpvNN++KBETNX+fonhqX+9vZabolmqOCElIszt6f0F7NVx8v2UlHclFE1ux8
-         s/dnmMuutzMU9+I2Ofc7mecSHIvTOGYr7Q5kbdv58AQF9aVrY6lFi0NRLCX9zxTGTQi9
-         sUafbSIQ4LagfEo0CUb0440NGN0020xg8v6b0xTT5VU42Ooz1sP/+/b7iqunqCYYf134
-         JTVg==
-X-Gm-Message-State: AOJu0Yx12EV1ZvW1xSbupPUe+O3hleQmY3VR50CnBcmJk8SM7neg+HTz
-	uJ1lOBm9Z+/yj3c8Rj2Nm10yWA==
-X-Google-Smtp-Source: AGHT+IHK1+dJ3/6VbSmAjUHE3obgzLfsu3H2LPctpshzkB4sycS+dJ6werIvZjF7MuQxeZLkp64tiw==
-X-Received: by 2002:a05:600c:2289:b0:40c:317b:79f0 with SMTP id 9-20020a05600c228900b0040c317b79f0mr2120989wmf.140.1702280183340;
-        Sun, 10 Dec 2023 23:36:23 -0800 (PST)
+        bh=4wKKZxDmRdHJfZg5vgJP9rGg6SAla387qKCYSstr8Kc=;
+        b=ArsBAl3OctrJ7gSSbOEzSJ40l5yAxXobLm4RZHPJ5ZedK5PnqB+BUmOJr2Cbv5kxxK
+         97KwkygFwuk8qhD5cbhsbzkLe5b8EEgXQXES1n/YNfWmhpOOK8uvzAKgocQ/hEtohlH7
+         cLdoJvA9fOCd7V/AkguLQGr1R32PbEn8QaCeF00rRZY3e4I3nBO8fQR/cw/2LxvW4uQN
+         U8r9w9CgG92tSbfaN8eg0uq4n0jpfgmoKl+2Lh79Y5VEKv4umUi18eGaNwYZf6nIc9R2
+         g4S9+B3QjGiBbrn5ffnWYrBuXEcuoCQztuDeZ+evVQu3iD/yWR0UblO4X4OFOHyxN3pW
+         p9zg==
+X-Gm-Message-State: AOJu0YxRP47Gp9kwXYhpK0ILGSF7xsb67mXAw/Kkj84mc5lifNuUEuko
+	U4w8G5Hmv47fL53IId9PRAY0YQ==
+X-Google-Smtp-Source: AGHT+IHrYWva0hhXwHNZ3bFsYGJLX8JxJFGhEdf2mByN3FJTQFZBPEd4cfcnGG/i7DGktj7oYGPqaA==
+X-Received: by 2002:a2e:711:0:b0:2cc:1e7b:3612 with SMTP id 17-20020a2e0711000000b002cc1e7b3612mr329330ljh.65.1702280530479;
+        Sun, 10 Dec 2023 23:42:10 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id s10-20020a05600c45ca00b0040c3dcc36e6sm7700311wmo.47.2023.12.10.23.36.22
+        by smtp.gmail.com with ESMTPSA id s30-20020a05651c201e00b002ca0217f327sm1116269ljo.65.2023.12.10.23.42.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Dec 2023 23:36:22 -0800 (PST)
+        Sun, 10 Dec 2023 23:42:09 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Tomasz Figa <tomasz.figa@gmail.com>, 
+To: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaewon Kim <jaewon02.kim@samsung.com>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20231210133915.42112-1-krzysztof.kozlowski@linaro.org>
-References: <20231210133915.42112-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: correct ExynosAutov920
- wake-up compatibles
-Message-Id: <170228018218.6375.7978493220422861783.b4-ty@linaro.org>
-Date: Mon, 11 Dec 2023 08:36:22 +0100
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Jaewon Kim <jaewon02.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-serial@vger.kernel.org
+In-Reply-To: <20231208074527.50840-2-jaewon02.kim@samsung.com>
+References: <20231208074527.50840-1-jaewon02.kim@samsung.com>
+ <CGME20231208075020epcas2p25f18d225f91f185085078461b290cb19@epcas2p2.samsung.com>
+ <20231208074527.50840-2-jaewon02.kim@samsung.com>
+Subject: Re: (subset) [PATCH v3 1/4] arm64: dts: exynos: add initial
+ support for exynosautov920 SoC
+Message-Id: <170228052808.12030.1188300498236704832.b4-ty@linaro.org>
+Date: Mon, 11 Dec 2023 08:42:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,17 +70,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.3
 
 
-On Sun, 10 Dec 2023 14:39:15 +0100, Krzysztof Kozlowski wrote:
-> ExynosAutov920 SoC wake-up pin controller has different register layout
-> than Exynos7, thus it should not be marked as compatible.  Neither DTS
-> nor Linux driver was merged yet, so the change does not impact ABI.
+On Fri, 08 Dec 2023 16:45:24 +0900, Jaewon Kim wrote:
+> Samsung ExynosAutov920 is ARMv8-based automotive-oriented SoC.
+> It has AE(Automotive Enhanced) IPs for safety.
+>  * Cortex-A78AE 10-cores
+>  * GIC-600AE
 > 
+> This is minimal support for ExynosAutov920 SoC.
+>  * Enumerate all pinctrl nodes
+>  * Enable Chip-Id
+>  * Serial0 for console
+>  * PWM
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: pinctrl: samsung: correct ExynosAutov920 wake-up compatibles
-      https://git.kernel.org/pinctrl/samsung/c/e1564d6f93496bcea3a6b2110eb54cc08f2aca72
+[1/4] arm64: dts: exynos: add initial support for exynosautov920 SoC
+      https://git.kernel.org/krzk/linux/c/c96dab1993d247b7b05ba2fdef8f185cbbd5454e
 
 Best regards,
 -- 
