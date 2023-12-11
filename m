@@ -1,165 +1,138 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="E4ZuNcly"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C75BCD
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 18:48:19 -0800 (PST)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20231211024817epoutp01397da9ca064fe2a58310ad2631c077f7~fpxYk8nNN1562915629epoutp01f
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 02:48:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20231211024817epoutp01397da9ca064fe2a58310ad2631c077f7~fpxYk8nNN1562915629epoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702262897;
-	bh=rZejJMBuaSwsVc/aCyPlkYrHKlHgmO7Ghhnl4Zu9oB0=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=E4ZuNclykDyWzTZYG7i2med6WthYAFhuSbPjAKuMjIzpkSI4FVugjBkB4nVdD/DFL
-	 AWITUds0APoEG+ATyGa/k3cyGUxFj2q29FJ62b5Md9iML306g1DhD4jQankYkP84u+
-	 sNhz7RttqhXEmy5cJhcC6YFtfNHy0YjfZBj2SuSs=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20231211024817epcas2p387c9241c90237856d659b6dd309585c3~fpxX6attj2305223052epcas2p3z;
-	Mon, 11 Dec 2023 02:48:17 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.100]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4SpR4w3HY1z4x9Px; Mon, 11 Dec
-	2023 02:48:16 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D0.8F.09622.07876756; Mon, 11 Dec 2023 11:48:16 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20231211024815epcas2p4bab12232eb9182f4de1c1b5d7d6b4568~fpxWqpqBs0127201272epcas2p4C;
-	Mon, 11 Dec 2023 02:48:15 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231211024815epsmtrp27aabd70c6663656bcac0051fc27bfa47~fpxWjVu9O2544325443epsmtrp2E;
-	Mon, 11 Dec 2023 02:48:15 +0000 (GMT)
-X-AuditID: b6c32a46-fcdfd70000002596-1b-657678707158
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D6.3C.08755.F6876756; Mon, 11 Dec 2023 11:48:15 +0900 (KST)
-Received: from [10.229.8.168] (unknown [10.229.8.168]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231211024815epsmtip2ddbf42bdf4ab5eff4d60d8fad33b55ef~fpxWPCIz42494524945epsmtip2L;
-	Mon, 11 Dec 2023 02:48:15 +0000 (GMT)
-Message-ID: <5e5df314-e64c-4181-b9b8-0674b36898d1@samsung.com>
-Date: Mon, 11 Dec 2023 11:45:25 +0900
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BiZ1g1Ag"
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D93F5
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:28:55 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3333131e08dso4725911f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 23:28:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702279734; x=1702884534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UE+C/ImAJWWtKpJcraHCcLhN+53RMQ1ixKOkV+MQs20=;
+        b=BiZ1g1AgrZ3XB6jCZVSlS+HD2x/7ZSizCrA3/od1m+KVmQ5J2KFRpuj+uTFPF2H7NC
+         mOE7AeIutlbifIFDnPkoeSllLOKy6LcILz620HuZ8ug2lm1x693yk4xtfbT1DGONNmiJ
+         9G1G5AF04FM3PbNGbLoqBri/BKXgoji/Zwb1d+7+DbD+rxZ0z5Ud0K3MT9DKafUd3WeS
+         g1SWP744PJCNfkDtZVJMgIAF64UdWSUtxshg7ZYef5BIvvUs+HANx3GZFi/SZMQRpEQ/
+         sN+qRe6G2Fy/iO2CjZNSTIkV6HIUjSPUxUf7C0kWJjHKXWFrskP3pIcGE6hgkBIbelQM
+         hHSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702279734; x=1702884534;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UE+C/ImAJWWtKpJcraHCcLhN+53RMQ1ixKOkV+MQs20=;
+        b=J+ndL6Qzus15vIZpucnHOURkFtnxZAcFoJIT6yXVyRsx3qwHI47c2uHwa4O5J9mlrP
+         wSPSRrKDqnHfhYKPqifwyNBuX8KN5dl55P05Uo37xeNk1Pwo7PzGYFgyjnxVPmmnJvwU
+         c2tIZ1hyjK7a9EvnMUt8QKkfZfEBsVQ++E7JdcxbVwmp7DlDwImAsTkcrlV+C/tF4NKl
+         rsYdlFQrQvBEujbBEubybkn9VyOtCeUiikTnZbbEVqIMp4KXVlgUcEwExbD/mzzxfxvj
+         Wm55eLLwyQB+FOnIE0h4j44/CCRlQPpQGhtfAzcoiQrluU4t7niuPhuE+KqlmWuqAkxW
+         +mXw==
+X-Gm-Message-State: AOJu0Yw5/NktzrjpcGKYXEtTAHaTUIUsBb+TZZaVz1DtM0oh8GGBk4QG
+	gt/liA7SJuil26qScO4j22E0BA==
+X-Google-Smtp-Source: AGHT+IGk2ddjU7q+hO5WgUAw9jEckqekrr6p4OlkCsGKij/99xKSPfhRKgWnHHQTKjbL7cqCW0fTXw==
+X-Received: by 2002:a5d:4887:0:b0:333:2fd2:2f0a with SMTP id g7-20020a5d4887000000b003332fd22f0amr1712071wrq.131.1702279734282;
+        Sun, 10 Dec 2023 23:28:54 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id j6-20020adfe506000000b0033339e03a60sm7857719wrm.59.2023.12.10.23.28.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Dec 2023 23:28:53 -0800 (PST)
+Message-ID: <7a4d3873-d9df-4ecd-9b3c-c57a9209dc97@linaro.org>
+Date: Mon, 11 Dec 2023 08:28:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
-	Thunderbird/102.11.0
-Subject: Re: [PATCH v3 4/4] pinctrl: samsung: add exynosautov920 pinctrl
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: correct ExynosAutov920
+ wake-up compatibles
+To: Jaewon Kim <jaewon02.kim@samsung.com>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20231210133927epcas2p3e2633ad371b03d5ab19f9b44118fcb58@epcas2p3.samsung.com>
+ <20231210133915.42112-1-krzysztof.kozlowski@linaro.org>
+ <c63bd0b3-ecb2-d4c6-2147-43f19c1dcfee@samsung.com>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Rob Herring <robh+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester
-	Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>, Uwe Kleine-K?nig
-	<u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-In-Reply-To: <a695f62f-5d08-49d6-a0b9-9f023ad7f586@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <c63bd0b3-ecb2-d4c6-2147-43f19c1dcfee@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxz2vWuvVw3mrKBvGNFyyzDgwBaBvjhgHzZ42RZH3Ja4zQRu5VIY
-	pa29lsGGKRnhQwObTjags4DDuFA/iJShNlQHdGwQUzdH2FJFWAZsUFAmccRIYS0HG/89v4/n
-	9/w+3pfEZT4ikszXmzmTntXRxEZRV18sijcWF3GKtnkZGmvqItBFtxdDzR6vGJW3thPogT0K
-	uf3fSlDd4jcY6vhjWIyczYsA/eI6Q6CREQdADbdvYOhWa60EVbg9EtQ3UyVGT1xNIuRwBfPu
-	njoNXpIx120jEqbDcZxg7g13E8xN+0UJ4zxnZT4LKJhPOx2Ame/YkUW+W5CWx7G5nEnO6TWG
-	3Hy9Np1+7c3s/dnJKQplvDIVqWi5ni3k0mn161nxmfm64CS0vIjVWYKuLJbn6T0ZaSaDxczJ
-	8wy8OZ3mjLk6o8qYwLOFvEWvTdBz5n1KhSIxOZiYU5C3/KuDME5tKh6tPIuVgSHpCSAlIZUE
-	L7kqxCfARlJGXQNwYmoCE4xHAH7VU78a+QfAAbuXWKPMPurChYAbwNqfq1YNP4DnrlZJQllh
-	VAZsvNmAh7CIeg42NwwCwb8FDjSOi0I4gnoPVpwfXam6lWJgxxWBi1PboW+8GQvhcGoUh/7K
-	j0MCODUGoN37eKUQQe2GC+2twf5IUhoUW3zICNyd8OrsmZWGIDVDwqXHZSKhbTVsWhoHAt4K
-	p3/olAg4Es4/cK+OZoCVQ7dW/aXwSsud1fwXoe1p54oWTsXCdteeEITUs9DjEwmym2F1X0Ai
-	uMNgdaVMIMbA0S/W9hYFP/e0YQJm4ODdbvwkiLatW4pt3fC2dcPY/tdtASIH2MYZ+UItxyca
-	E/87tsZQ2AFWHnlc5jVQNzuX0AswEvQCSOJ0eFiUh+dkYblsyUecyZBtsug4vhckB09zCo+M
-	0BiCv0RvzlYmpSqSUlKUqsRkhYreHna/wp4ro7SsmSvgOCNnWuNhpDSyDIsITEZUm3fdk70a
-	Na090EVMz2GuA1/GDbfNfa1pjE/IocclC2iI7fFZgTSAyMBc/6Z3xh4mtVpekb/dUlbzwf7k
-	koN/iy7tOyjeldaPVPlSaU6R9ce2mIladWn9DeeM//SS+y/7hsLJ875o5+9v7f1pecMLZ0uj
-	3yh4Gn3nExO2o6jGP/C88rrZgJfMZoEP69R13xWTv1kv99SeFHXuljYenjjSb76/N1wVTizQ
-	NcvLdP2WSdX3Vndmd9tlcZOaydrMTB0KR5bY/OycwWeqWq1/Wsud3thhc2zPsYSYmaLjmguH
-	uxd9/dtulx89OkA+aUnNOHTk5Qvu9Kal9xeP7RTTIj6PVcbhJp79F8UGjphtBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDIsWRmVeSWpSXmKPExsWy7bCSvG5+RVmqwYJmSYsH87axWazZe47J
-	Yv6Rc6wWzYvXs1m8mytjsff1VnaLKX+WM1lsenyN1WLz/D+MFpd3zWGzuHt3FaPFjPP7mCzO
-	LO5lt2jde4Td4vCbdlaLn7vmsVis2gVUd3viZEYHIY+ds+6ye2xa1cnmcefaHjaP/XPXsHts
-	XlLv0f/XwKNvyypGj8+b5AI4orhsUlJzMstSi/TtErgy/l9fxVbwkrvifttCpgbGK5xdjJwc
-	EgImEm8/bWPuYuTiEBLYzSgxe8sPZoiEjMTyZ31sELawxP2WI6wQRS8ZJSa96mYESfAK2EnM
-	3D8DrIFFQFVi/oxTUHFBiZMzn7CA2KIC0RKrP19gBbGFBTwkNm1sZwexmQXEJW49mc8EMlRE
-	4DGzxMOp/8HOYBZ4wCixfNIjqHU/GSVmnpoCdgebgLbE9/WLgRIcHJxAq/+894CYZCbRtbWL
-	EcKWl9j+dg7zBEahWUgOmYVk4SwkLbOQtCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66X
-	nJ+7iREcwVqaOxi3r/qgd4iRiYPxEKMEB7OSCK/MkeJUId6UxMqq1KL8+KLSnNTiQ4zSHCxK
-	4rziL3pThATSE0tSs1NTC1KLYLJMHJxSDUx6h/e0z5NZm7HUuVEwTyDrzAnZng9Hnx508eIN
-	mMeqFDUjqe7IgXm/TLnaT19wbFlns9dbnPX/WZfwQ6wzmu84xvxM4Tkm+2gvZ9t8u3fnnq+e
-	Ldu7n0OjlFmtxiF1/0fFtJyVNTd/PzALVejbX1xp0xvYPz/vw0ZrlhOct54wJObeubt8qZHF
-	t3LH2myxoCkSU3KaOXZ//LZF+VjXswbtl2kXL7N/mHL+Mcuv54teC1YlszmrBUp6zblc++bF
-	dUHW4BqnTfyRoccfMepcUP2XVl/PylV081GO79PsdN9NzpuFA+SaRYMXVrddY34jPL2r5GrB
-	6nNyNcfYBCUERWbXzigVe3u8IXdFdc23V0osxRmJhlrMRcWJAHcYMg1PAwAA
-X-CMS-MailID: 20231211024815epcas2p4bab12232eb9182f4de1c1b5d7d6b4568
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231208075020epcas2p414c85e03d18327665eeff54082314b56
-References: <20231208074527.50840-1-jaewon02.kim@samsung.com>
-	<CGME20231208075020epcas2p414c85e03d18327665eeff54082314b56@epcas2p4.samsung.com>
-	<20231208074527.50840-5-jaewon02.kim@samsung.com>
-	<a695f62f-5d08-49d6-a0b9-9f023ad7f586@linaro.org>
 
-Hello Krzysztof,
-
-Thanks for your review.
-
-
-On 23. 12. 10. 22:23, Krzysztof Kozlowski wrote:
-> On 08/12/2023 08:45, Jaewon Kim wrote:
->> Add pinctrl data for ExynosAutov920 SoC.
+On 11/12/2023 03:18, Jaewon Kim wrote:
+> 
+> On 23. 12. 10. 22:39, Krzysztof Kozlowski wrote:
+>> ExynosAutov920 SoC wake-up pin controller has different register layout
+>> than Exynos7, thus it should not be marked as compatible.  Neither DTS
+>> nor Linux driver was merged yet, so the change does not impact ABI.
 >>
->> Pinctrl data for ExynosAutoV920 SoC.
->>   - GPA0,GPA1 (10): External wake up interrupt
->>   - GPQ0 (2): SPMI (PMIC I/F)
->>   - GPB0,GPB1,GPB2,GPB3,GPB4,GPB5,GPB6 (47): I2S Audio
->>   - GPH0,GPH1,GPH2,GPH3,GPH4,GPH5,GPH6,GPH8 (49): PCIE, UFS, Ethernet
->>   - GPG0,GPG1,GPG2,GPG3,GPG4,GPG5 (29): General purpose
->>   - GPP0,GPP1,GPP2,GPP3,GPP4,GPP5,GPP6,GPP7,GPP8,GPP9,GPP10 (77): USI
+>> Cc: Jaewon Kim <jaewon02.kim@samsung.com>
+>> Fixes: 904140fa4553 ("dt-bindings: pinctrl: samsung: use Exynos7 fallbacks for newer wake-up controllers")
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 >>
->> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
->> ---
-> ...
->
->
->>   /**
->>    * struct exynos_weint_data: irq specific data for all the wakeup interrupts
->>    * generated by the external wakeup interrupt controller.
->> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
->> index 362e99566919..800a2f0a026a 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
->> @@ -1324,6 +1324,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
->>   		.data = &exynosautov9_of_data },
->>   	{ .compatible = "tesla,fsd-pinctrl",
->>   		.data = &fsd_of_data },
->> +	{ .compatible = "samsung,exynosautov920-pinctrl",
->> +		.data = &exynosautov920_of_data },
-> Please put it after autov9.
+>>
+> 
+> It is reasonable.
+> 
+> I will also fix this in v4 patch.
+> 
+> 
+> Reviewed-by:Jaewon Kim <jaewon02.kim@samsung.com>
 
-Okay, I will change the order.
+This is based on your patchset, because autov920 is not compatible there
+with the others.
 
->
-> Best regards,
-> Krzysztof
->
->
->
-
-Thanks
-
-Jaewon Kim
+Best regards,
+Krzysztof
 
