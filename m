@@ -1,482 +1,170 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TSNUP2wo"
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3CB10A
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 04:17:38 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-67ab41956f8so17743206d6.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 04:17:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702297057; x=1702901857; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=weJs7F5I5VRt8s3+6YY9cKhr4E2GG1O5biwr1GlkqQU=;
-        b=TSNUP2wo1d5MBU6KMMFL0s3S4EoEL3+BCChoAglvT77QAwnxE3DeGrQVtgN3jVDCKR
-         DstIbVsrqo9TLrEejRNFc3I61rethHhcI8yQiN1FxSMhIZs31lX1RM5PfOE09Hsk5RLv
-         8Xjni1IFD5pQbg+XMLXW91QJBga4pfPs12dDzBIxTELp8opURQ2zdzKz6YAoTOUOZLxY
-         D3CHTiXEhdU2Dqm2t7Qa51ASCaxUYTvTqUF3m5xtnH5ievoKdv73f8tHvXGaLZ5z2b0q
-         GeOO/s34AOVSIyRJvtGvFsuv4/Jj+vyZLZga2Qz4mA+6SNmxgKPGZAcmiktvC17gEF9N
-         OFMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702297057; x=1702901857;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=weJs7F5I5VRt8s3+6YY9cKhr4E2GG1O5biwr1GlkqQU=;
-        b=S+4dMqul99B9GdWfQsZcsjlmAM1AwTjxFWOEg1Wmbg1LxcSAznJpn1mejgxIO27c0k
-         9bENYdkrE5vgmWutTAT4hSY33eaFZNRvNrcwzjQqkAk5ci6+rDypmlsr5WYMcULj/vYy
-         x2a5o3OgR0zjAZHsf3AROuPUobheUeO/7d48YOYyIWxd8dOoJ+f9PTku4PKZbO5ELE60
-         plY0tWszOk/eFXzblfGpN7axZYgge8dKsRnfyLX3heEryFhdgxBWpxYhxrADw+YeM4G8
-         km+ZHnNYo1ZGPK2QqrPPVxkaaSWySXEKIMRsFn45P1/qODuWty8EUJJJmyOXlsqpr8z+
-         R6Uw==
-X-Gm-Message-State: AOJu0Yw0u4j7c5IYXLYr/sjQQGvQg9/sRoi7B0mnY5FuzAVG+oIpBX9V
-	FsThrQeKqOUjmRtmuu1gh5ynZXCnugi8kKGxuuQrag==
-X-Google-Smtp-Source: AGHT+IEEvAPb45aBvYhEnydf2ATr4KwpJVQ6oTQtixyLZOWuQQh7K+G0LE24Cn38PxHgQzAjCYtj/Kf5blW1AEGbtbY=
-X-Received: by 2002:a0c:cdc8:0:b0:67a:a721:ec30 with SMTP id
- a8-20020a0ccdc8000000b0067aa721ec30mr2103392qvn.116.1702297057267; Mon, 11
- Dec 2023 04:17:37 -0800 (PST)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C9DAA1
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 04:19:48 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rCfEf-0001H0-4X; Mon, 11 Dec 2023 13:18:09 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rCfEe-00F5z5-AI; Mon, 11 Dec 2023 13:18:08 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rCfEe-000tY1-0P; Mon, 11 Dec 2023 13:18:08 +0100
+Date: Mon, 11 Dec 2023 13:18:07 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-staging@lists.linux.dev,
+	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-pwm@vger.kernel.org, greybus-dev@lists.linaro.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	asahi@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v4 000/115] pwm: Fix lifetime issues for pwm_chips
+Message-ID: <20231211121807.zzlgf3alcoo6lrw7@pengutronix.de>
+References: <cover.1701860672.git.u.kleine-koenig@pengutronix.de>
+ <ZXM4CdJxg-XrYhkn@orome.fritz.box>
+ <20231208185033.e6ty2cajcfle6dgk@pengutronix.de>
+ <ZXbzcFTnDTKoZAta@orome.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231209233106.147416-1-peter.griffin@linaro.org>
- <20231209233106.147416-19-peter.griffin@linaro.org> <8400d76b-2a04-4d60-ad6c-954dca07562f@linaro.org>
-In-Reply-To: <8400d76b-2a04-4d60-ad6c-954dca07562f@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 11 Dec 2023 12:17:25 +0000
-Message-ID: <CADrjBPotdY3guj_ZAx4pWqkkM_SDZCGRgRwJVJxM_x5BxcKSjA@mail.gmail.com>
-Subject: Re: [PATCH v6 18/20] arm64: dts: exynos: google: Add initial Google
- gs101 SoC support
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, conor+dt@kernel.org, sboyd@kernel.org, 
-	tomasz.figa@gmail.com, s.nawrocki@samsung.com, linus.walleij@linaro.org, 
-	wim@linux-watchdog.org, linux@roeck-us.net, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, gregkh@linuxfoundation.org, 
-	jirislaby@kernel.org, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	soc@kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, kernel-team@android.com, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yyef2a7pj6vk5dry"
+Content-Disposition: inline
+In-Reply-To: <ZXbzcFTnDTKoZAta@orome.fritz.box>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-Hi Krzysztof,
 
-Thanks for the review.
+--yyef2a7pj6vk5dry
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 10 Dec 2023 at 14:38, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 10/12/2023 00:31, Peter Griffin wrote:
-> > Google gs101 SoC is a ARMv8 mobile SoC found in the Pixel 6
-> > (oriole), Pixel 6a (bluejay) and Pixel 6 pro (raven) mobile
-> > phones.
-> >
-> > It features:
-> > * 4xA55 Little cluster
-> > * 2xA76 Mid cluster
-> > * 2xX1 Big cluster
-> >
->
-> ...
->
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h
-> > new file mode 100644
-> > index 000000000000..68b7bc47c91b
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h
-> > @@ -0,0 +1,33 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Pinctrl binding constants for GS101
-> > + *
-> > + * Copyright 2020-2023 Google LLC
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_PINCTRL_GS101_H__
-> > +#define __DT_BINDINGS_PINCTRL_GS101_H__
->
-> Header guards don't really match location.
+Hello Thierry,
 
-Will fix.
+On Mon, Dec 11, 2023 at 12:33:04PM +0100, Thierry Reding wrote:
+> On Fri, Dec 08, 2023 at 07:50:33PM +0100, Uwe Kleine-K=F6nig wrote:
+> > The TL;DR; is essentially what I already wrote in my last reply to Bart
+> > in the v3 thread[1]:
+> >=20
+> >  - My approach needs more changes to the individual drivers (which I
+> >    don't consider a relevant disadvantage given that the resulting code
+> >    is better);
+> >  - My approach works with less pointer dereferences which IMHO also
+> >    simplifies understanding the code as all relevant data is in a single
+> >    place.
+> >  - My approach has a weaker separation between the core and the lowlevel
+> >    drivers. That's ok in my book given that this doesn't complicate the
+> >    lowlevel drivers and that hiding details considerably better doesn't
+> >    work anyhow (see the drivers that need internal.h in your patch).
+> >=20
+> > For me the single allocation issue is only an added bonus. The relevant
+> > advantage of my approach is that the code is easier and (probably) more
+> > efficient.
+>=20
+> I happen to disagree. I think adding pwmchip_alloc() makes things much
+> more complicated for low level drivers.
 
->
-> > +
-> > +#define GS101_PIN_PULL_NONE          0
-> > +#define GS101_PIN_PULL_DOWN          1
-> > +#define GS101_PIN_PULL_UP            3
-> > +
-> > +/* Pin function in power down mode */
-> > +#define GS101_PIN_PDN_OUT0           0
-> > +#define GS101_PIN_PDN_OUT1           1
-> > +#define GS101_PIN_PDN_INPUT          2
-> > +#define GS101_PIN_PDN_PREV           3
-> > +
-> > +/* GS101 drive strengths */
-> > +#define GS101_PIN_DRV_2_5_MA         0
-> > +#define GS101_PIN_DRV_5_MA           1
-> > +#define GS101_PIN_DRV_7_5_MA         2
-> > +#define GS101_PIN_DRV_10_MA          3
-> > +
-> > +#define GS101_PIN_FUNC_INPUT         0
-> > +#define GS101_PIN_FUNC_OUTPUT                1
-> > +#define GS101_PIN_FUNC_2             2
-> > +#define GS101_PIN_FUNC_3             3
-> > +#define GS101_PIN_FUNC_EINT          0xf
-> > +
-> > +#endif /* __DT_BINDINGS_PINCTRL_GS101_H__ */
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > new file mode 100644
-> > index 000000000000..60e112d25246
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > @@ -0,0 +1,476 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * GS101 SoC
-> > + *
-> > + * Copyright 2019-2023 Google LLC
-> > + * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
-> > + */
-> > +
-> > +#include <dt-bindings/clock/google,gs101.h>
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/soc/samsung,exynos-usi.h>
-> > +
-> > +/ {
-> > +     compatible = "google,gs101";
-> > +     #address-cells = <2>;
-> > +     #size-cells = <1>;
-> > +
-> > +     interrupt-parent = <&gic>;
-> > +
-> > +     aliases {
-> > +             pinctrl0 = &pinctrl_gpio_alive;
-> > +             pinctrl1 = &pinctrl_far_alive;
-> > +             pinctrl2 = &pinctrl_gsacore;
-> > +             pinctrl3 = &pinctrl_gsactrl;
-> > +             pinctrl4 = &pinctrl_peric0;
-> > +             pinctrl5 = &pinctrl_peric1;
-> > +             pinctrl6 = &pinctrl_hsi1;
-> > +             pinctrl7 = &pinctrl_hsi2;
-> > +     };
-> > +
-> > +     pmu-0 {
-> > +             compatible = "arm,cortex-a55-pmu";
-> > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluster0>;
-> > +     };
-> > +
-> > +     pmu-1 {
-> > +             compatible = "arm,cortex-a76-pmu";
-> > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluster1>;
-> > +     };
-> > +
-> > +     pmu-2 {
-> > +             compatible = "arm,cortex-x1-pmu";
-> > +             interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH &ppi_cluster2>;
-> > +     };
-> > +
-> > +     pmu-3 {
-> > +             compatible = "arm,dsu-pmu";
-> > +             interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +             cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
-> > +                    <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
-> > +     };
->
-> Keep alphabetical order of top-level nodes. pmu should be before psci
+Looking at e.g.
+https://lore.kernel.org/linux-pwm/2dda818b8bbbe8ba4b9df5ab54f960ff4a4f1ab5.=
+1701860672.git.u.kleine-koenig@pengutronix.de/
+I wonder where you see "much more complication". OK, there are two
+pointers now for chip and private data, but I'd call that at most a
+"mild" complication[1] which is more than balanced out by the
+simplifications in the remaining parts of that patch.
 
-Will fix
+Best regards
+Uwe
 
->
-> > +
-> > +     /* TODO replace with CCF clock */
-> > +     dummy_clk: oscillator {
->
-> clock-3
+[1] I'm not sure I'd refuse someone suggesting the following patch on
+    top of today's next:
 
-Will fix
+	diff --git a/drivers/pwm/pwm-microchip-core.c b/drivers/pwm/pwm-microchip-=
+core.c
+	index c0c53968f3e9..d32e65914599 100644
+	--- a/drivers/pwm/pwm-microchip-core.c
+	+++ b/drivers/pwm/pwm-microchip-core.c
+	@@ -448,12 +448,14 @@ MODULE_DEVICE_TABLE(of, mchp_core_of_match);
+	 static int mchp_core_pwm_probe(struct platform_device *pdev)
+	 {
+		struct mchp_core_pwm_chip *mchp_core_pwm;
+	+	struct pwm_chip *chip;
+		struct resource *regs;
+		int ret;
+	=20
+		mchp_core_pwm =3D devm_kzalloc(&pdev->dev, sizeof(*mchp_core_pwm), GFP_KE=
+RNEL);
+		if (!mchp_core_pwm)
+			return -ENOMEM;
+	+	chip =3D &mchp_core_pwm->chip;
+	=20
+		mchp_core_pwm->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &=
+regs);
+		if (IS_ERR(mchp_core_pwm->base))
+	@@ -470,9 +472,9 @@ static int mchp_core_pwm_probe(struct platform_device =
+*pdev)
+	=20
+		mutex_init(&mchp_core_pwm->lock);
+	=20
+	-	mchp_core_pwm->chip.dev =3D &pdev->dev;
+	-	mchp_core_pwm->chip.ops =3D &mchp_core_pwm_ops;
+	-	mchp_core_pwm->chip.npwm =3D 16;
+	+	chip->dev =3D &pdev->dev;
+	+	chip->ops =3D &mchp_core_pwm_ops;
+	+	chip->npwm =3D 16;
+	=20
+		mchp_core_pwm->channel_enabled =3D readb_relaxed(mchp_core_pwm->base + MC=
+HPCOREPWM_EN(0));
+		mchp_core_pwm->channel_enabled |=3D
+	@@ -485,7 +487,7 @@ static int mchp_core_pwm_probe(struct platform_device =
+*pdev)
+		writel_relaxed(1U, mchp_core_pwm->base + MCHPCOREPWM_SYNC_UPD);
+		mchp_core_pwm->update_timestamp =3D ktime_get();
+	=20
+	-	ret =3D devm_pwmchip_add(&pdev->dev, &mchp_core_pwm->chip);
+	+	ret =3D devm_pwmchip_add(&pdev->dev, chip);
+		if (ret)
+			return dev_err_probe(&pdev->dev, ret, "Failed to add pwmchip\n");
+=20
+    With that applied before the above mentioned patch there is no
+    complication at all in my eyes.
 
->
-> > +             compatible = "fixed-clock";
-> > +             #clock-cells = <0>;
-> > +             clock-frequency = <12345>;
-> > +             clock-output-names = "pclk";
-> > +     };
-> > +
-> > +     cpus {
-> > +             #address-cells = <1>;
-> > +             #size-cells = <0>;
-> > +
-> > +             cpu-map {
-> > +                     cluster0 {
-> > +                             core0 {
-> > +                                     cpu = <&cpu0>;
-> > +                             };
-> > +                             core1 {
-> > +                                     cpu = <&cpu1>;
-> > +                             };
-> > +                             core2 {
-> > +                                     cpu = <&cpu2>;
-> > +                             };
-> > +                             core3 {
-> > +                                     cpu = <&cpu3>;
-> > +                             };
-> > +                     };
-> > +
-> > +                     cluster1 {
-> > +                             core0 {
-> > +                                     cpu = <&cpu4>;
-> > +                             };
-> > +                             core1 {
-> > +                                     cpu = <&cpu5>;
-> > +                             };
-> > +                     };
-> > +
-> > +                     cluster2 {
-> > +                             core0 {
-> > +                                     cpu = <&cpu6>;
-> > +                             };
-> > +                             core1 {
-> > +                                     cpu = <&cpu7>;
-> > +                             };
-> > +                     };
-> > +             };
->
-> ...
->
-> > +
-> > +     /* ect node is required to be present by bootloader */
-> > +     ect {
-> > +     };
->
-> alphabetical order
 
-Will fix
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
->
-> > +
-> > +     ext_24_5m: clock-1 {
-> > +             compatible = "fixed-clock";
-> > +             #clock-cells = <0>;
-> > +             clock-output-names = "oscclk";
-> > +     };
-> > +
-> > +     ext_200m: clock-2 {
-> > +             compatible = "fixed-clock";
-> > +             #clock-cells = <0>;
-> > +             clock-output-names = "ext-200m";
-> > +     };
-> > +
-> > +     psci {
-> > +             compatible = "arm,psci-1.0";
-> > +             method = "smc";
-> > +     };
-> > +
-> > +     reserved_memory: reserved-memory {
-> > +             #address-cells = <2>;
-> > +             #size-cells = <1>;
-> > +             ranges;
-> > +
-> > +             gsa_reserved_protected: gsa@90200000 {
-> > +                     reg = <0x0 0x90200000 0x400000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             tpu_fw_reserved: tpu-fw@93000000 {
-> > +                     reg = <0x0 0x93000000 0x1000000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             aoc_reserve: aoc@94000000 {
-> > +                     reg = <0x0 0x94000000 0x03000000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             abl_reserved: abl@f8800000 {
-> > +                     reg = <0x0 0xf8800000 0x02000000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             dss_log_reserved: dss-log-reserved@fd3f0000 {
-> > +                     reg = <0x0 0xfd3f0000 0x0000e000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             debug_kinfo_reserved: debug-kinfo-reserved@fd3fe000 {
-> > +                     reg = <0x0 0xfd3fe000 0x00001000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             bldr_log_reserved: bldr-log-reserved@fd800000 {
-> > +                     reg = <0x0 0xfd800000 0x00100000>;
-> > +                     no-map;
-> > +             };
-> > +
-> > +             bldr_log_hist_reserved: bldr-log-hist-reserved@fd900000 {
-> > +                     reg = <0x0 0xfd900000 0x00002000>;
-> > +                     no-map;
-> > +             };
-> > +     };
-> > +
-> > +     timer {
->
-> alphabetical order, so this goes to the end
+--yyef2a7pj6vk5dry
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Will fix
+-----BEGIN PGP SIGNATURE-----
 
->
-> > +             compatible = "arm,armv8-timer";
-> > +             interrupts =
-> > +                <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
-> > +                <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
-> > +                <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>,
-> > +                <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>;
-> > +             clock-frequency = <24576000>;
->
-> I don't remember if you already got Marc's wrath, so just in case: are
-> you sure it is needed?
->
-> Anyway, this is board specific, not SoC.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV2/f8ACgkQj4D7WH0S
+/k7QwQgApfQEvhd6se+a8+O5GDdTfjV+EObXMDS2kvZsRHCAmatVaTePkn/Zg6Fo
+ZwGiGr9Ttfcjwf0hpLEmy7G2QP38HPZySu1f9Xo4V6NtkIvo4iPm3o60vDqF3mZM
+i+2779oY7aNOanR7E1KyDs7WfAZowpslVZ9qaXlDs6Pa1Hrz4Z7Wn6sF4gVV0SnX
+Qq2kKClfhZCuWBwwSDHS72BKOj2GRkgP32YIDH1LcEP9iemoZqFJivwMh3VGvIXv
+DocnmNO9JXrr3vx5UTcRHZfakEXbIfGOTtibtXwJDI48rHzGcXYRbYGi5B5Sssx/
+SHrVw/Ghy9VDfrcrkb+gLBfpz7JxyA==
+=RAtQ
+-----END PGP SIGNATURE-----
 
-Will double check and if required move to the board file.
-
->
-> > +     };
-> > +
-> > +     soc: soc@0 {
-> > +             compatible = "simple-bus";
-> > +             #address-cells = <1>;
-> > +             #size-cells = <1>;
-> > +             ranges = <0x0 0x0 0x0 0x40000000>;
-> > +
-> > +             cmu_misc: clock-controller@10010000 {
-> > +                     compatible = "google,gs101-cmu-misc";
-> > +                     reg = <0x10010000 0x8000>;
-> > +                     #clock-cells = <1>;
-> > +                     clocks =  <&cmu_top CLK_DOUT_CMU_MISC_BUS>,
->
-> One space after =
-
-Will fix.
-
->
-> > +                               <&cmu_top CLK_DOUT_CMU_MISC_SSS>;
-> > +                     clock-names = "dout_cmu_misc_bus", "dout_cmu_misc_sss";
-> > +             };
-> > +
-> > +             watchdog_cl0: watchdog@10060000 {
-> > +                     compatible = "google,gs101-wdt";
-> > +                     reg = <0x10060000 0x100>;
-> > +                     interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                     clocks =
-> > +                       <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER0_PCLK>,
->
-> Join lines (clocks = <foo bar>). Same in other places.
-
-Will fix.
-
->
-> > +                       <&ext_24_5m>;
-> > +                     clock-names = "watchdog", "watchdog_src";
-> > +                     samsung,syscon-phandle = <&pmu_system_controller>;
-> > +                     samsung,cluster-index = <0>;
-> > +                     status = "disabled";
-> > +             };
-> > +
-> > +             watchdog_cl1: watchdog@10070000 {
-> > +                     compatible = "google,gs101-wdt";
-> > +                     reg = <0x10070000 0x100>;
-> > +                     interrupts = <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                     clocks =
-> > +                       <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER1_PCLK>,
-> > +                       <&ext_24_5m>;
-> > +                     clock-names = "watchdog", "watchdog_src";
-> > +                     samsung,syscon-phandle = <&pmu_system_controller>;
-> > +                     samsung,cluster-index = <1>;
-> > +                     status = "disabled";
-> > +             };
-> > +
-> > +             gic: interrupt-controller@10400000 {
-> > +                     compatible = "arm,gic-v3";
-> > +                     #interrupt-cells = <4>;
-> > +                     interrupt-controller;
-> > +                     reg = <0x10400000 0x10000>, /* GICD */
-> > +                           <0x10440000 0x100000>;/* GICR * 8 */
-> > +                     interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +
-> > +                     ppi-partitions {
-> > +                             ppi_cluster0: interrupt-partition-0 {
-> > +                                     affinity = <&cpu0 &cpu1 &cpu2 &cpu3>;
-> > +                             };
-> > +
-> > +                             ppi_cluster1: interrupt-partition-1 {
-> > +                                     affinity = <&cpu4 &cpu5>;
-> > +                             };
-> > +
-> > +                             ppi_cluster2: interrupt-partition-2 {
-> > +                                     affinity = <&cpu6 &cpu7>;
-> > +                             };
-> > +                     };
-> > +             };
-> > +
-> > +             sysreg_peric0: syscon@10820000 {
-> > +                     compatible = "google,gs101-peric0-sysreg", "syscon";
-> > +                     reg = <0x10820000 0x10000>;
-> > +             };
-> > +
-> > +             pinctrl_peric0: pinctrl@10840000 {
-> > +                     compatible = "google,gs101-pinctrl";
-> > +                     reg = <0x10840000 0x00001000>;
-> > +                     interrupts = <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +             };
-> > +
-> > +             usi_uart: usi@10a000c0 {
-> > +                     compatible = "google,gs101-usi",
-> > +                                  "samsung,exynos850-usi";
-> > +                     reg = <0x10a000c0 0x20>;
-> > +                     samsung,sysreg = <&sysreg_peric0 0x1020>;
-> > +                     samsung,mode = <USI_V2_UART>;
->
-> vendor properties go to the end, after standard properties, before status.
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst?h=dt/next&id=0d3a771610d0e155c9aa305f142f84dda5030fae#n122
-
-Will fix, and thanks for the pointer to the documentation about this.
-Much appreciated.
-
->
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <1>;
-> > +                     ranges;
-> > +                     clocks = <&dummy_clk>, <&dummy_clk>;
-> > +                     clock-names = "pclk", "ipclk";
-> > +                     status = "disabled";
-> > +
-> > +                     serial_0: serial@10a00000 {
-> > +                             compatible = "google,gs101-uart";
-> > +                             reg = <0x10a00000 0xc0>;
-> > +                             reg-io-width = <4>;
-> > +                             samsung,uart-fifosize = <256>;
->
-> Ditto
-
-Will fix.
-
->
-> > +                             interrupts = <GIC_SPI 634
-> > +                                           IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                             clocks = <&dummy_clk 0>, <&dummy_clk 0>;
-> > +                             clock-names = "uart", "clk_uart_baud0";
-> > +                             status = "disabled";
-> > +                     };
-> > +             };
->
->
-regards,
-
-Peter
+--yyef2a7pj6vk5dry--
