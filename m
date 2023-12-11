@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wT0aD8/H"
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321CE116
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 08:24:30 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-33338c47134so4434070f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 08:24:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dyNzIuvI"
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38866D2
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 08:24:33 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40c48d7a7a7so8951775e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 08:24:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702311868; x=1702916668; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702311871; x=1702916671; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OY3NZW1VVkhHi97yDb7wuKAvdZxLolGu7v09v2ECEzA=;
-        b=wT0aD8/HtvBpaEdcw7U0DHtxnpDMJO1shdxRQDV6dcSFDLRcp6K4pmxp//27OHWSKe
-         nThRUBbmLy7xu4vMSIVpUWsaQshjYUnOvnHn2vhlP2XuUuW3C3oudLemtTvZ1jQFOugG
-         ExStRb7HRebLEzwKwTDZCfvN4Ylyv6v4v02p0WAACcMNj01OZJsGguBltHIO5VnGJLBj
-         BFUw6oGU5HBJnPdwGyWD/pFQ2ow/1wlyHxeqeEu7J6VBw7GiUR2c62gdu7FE1MQwihif
-         Fgv0V6zclmFFzLWBjiLrsG7rsD2LofWi/s5K9CPzXUyBjU7GOXW3zHm/okEokJtW5+4B
-         VTIQ==
+        bh=9EoMc0LJN2cW+5Q5aC0JNLH7fMTVOl1UiwgXS6s9cls=;
+        b=dyNzIuvItkAIIYXgI53PwEWaA/B2rnTK6+oAhZwGpSFCo32olfVv8bqmBavKjrKnsQ
+         yyM0QXq5m3P+2fd/GwDpADa7/aWfhOiuUU9dE6rfaaXxUeLOYSyBvP3CqRF4kRqME3OR
+         0Zf+LE2nD3IN8fIy5PB0XxQ2YPQdzA4/tbqVIt16o2TB1AX3CcW6fOoXkhSqOdW7M+32
+         rM0kU03vis8GVTtW/wJR96l+XEVDujUBOHrZGOc8wCGjAzfEr27Jt6F0T7tnzXeJjOAW
+         N8bfOXPAiJrQoaI5kVuDwpshPnD8yyyqAFIJI9Bl6odDrmPXAy/7tGbePzADn1ObSAOw
+         DyzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702311868; x=1702916668;
+        d=1e100.net; s=20230601; t=1702311871; x=1702916671;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OY3NZW1VVkhHi97yDb7wuKAvdZxLolGu7v09v2ECEzA=;
-        b=VnI8gLh4SRekvtG56rpgSOZmbreG1eaueK697dA2/io0Vu8FDjIZOavZjzjBYhBJ+i
-         pWmDw4d2pp9ZmF0YIupgre22pu++ZK62YBwO4luOZkqMcC5nkXfDT2LSef4pIImb+fvo
-         V2cO2H8ltDZLDQSELIDePvoxi2pIYFa6YXU78f/xgTHgXqDiBXMMAj3KWFtXY4vdupI4
-         rGeKJJgwRTrcDUzJEvQtwZaBvAk4fFwTlCpLsY55aQ5F1u+TSU6zrrJZQkda+PkFiLMw
-         JtZr5yeOTBhjtuoDBnmZnFLJ0yh40IRUhMg8tulBzV9KA2sqlNIq4yIABewkFIfL2wRo
-         f2jw==
-X-Gm-Message-State: AOJu0YzbtZ/RwzLjyo9QjSjv7EU2h+OB+JLAsJp3GQCzGfX4H+wbP3O+
-	genx8CmzcDN8es9fGPNF5Hxbpw==
-X-Google-Smtp-Source: AGHT+IGh34RehzA4y7NRakQmyNCO0bWLmbphPvVU+MIJpWn33vd04o6AuYfkSllgaMbS9psWhNoYfQ==
-X-Received: by 2002:adf:ee0f:0:b0:336:1a2d:2f35 with SMTP id y15-20020adfee0f000000b003361a2d2f35mr1584505wrn.130.1702311868567;
-        Mon, 11 Dec 2023 08:24:28 -0800 (PST)
+        bh=9EoMc0LJN2cW+5Q5aC0JNLH7fMTVOl1UiwgXS6s9cls=;
+        b=QSBisOzJoX5PiOPLchvOsuYdMox5mvE2N0D2mAACB8WHeUsdr55LH1yCG1nF7WXRjI
+         Ezl5YB0qCVkDMpXFgeV2+8M6dbMCsORz2aqLQGBnA1yHFkdAlPZ0vg7F1ragl2hX/J1h
+         BYynycbFYFH3E0+U0MwthsDckR5jdkPO5HFVfJFH0rBSkLi9hUF3VrsFyePabeEsI3ov
+         fnQO23cSjaCIjCjedgblITy3+VOVat+z8D47VDqX7rxQyZyV/psnRLY0P+Qoyi/k22xf
+         RMwr/3lDGHUgyl61+YNn5cLWfvOWMhEARbApZJgmYCNqLoajDXtPEMEQFpYBm7UB5rv8
+         radQ==
+X-Gm-Message-State: AOJu0Yyq0MkD5Z03NUdfQmeTe3nkyMidFjrWCMk2MsPcXAczYdNqlJDQ
+	Ye/+SHhnVF9eH2ECKNEbSz9HXQ==
+X-Google-Smtp-Source: AGHT+IEcDXMRBChVf/ruGshwxCUUy0HpzNbE6jP+Z2Gf7NHHeS1bASus5hAj61+IVem8P/6qm/pdcg==
+X-Received: by 2002:a05:6000:1282:b0:334:b26b:4477 with SMTP id f2-20020a056000128200b00334b26b4477mr2607553wrx.25.1702311871571;
+        Mon, 11 Dec 2023 08:24:31 -0800 (PST)
 Received: from gpeter-l.lan (host-92-29-28-58.as13285.net. [92.29.28.58])
-        by smtp.gmail.com with ESMTPSA id o4-20020a5d58c4000000b0033333bee379sm8923103wrf.107.2023.12.11.08.24.27
+        by smtp.gmail.com with ESMTPSA id o4-20020a5d58c4000000b0033333bee379sm8923103wrf.107.2023.12.11.08.24.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 08:24:28 -0800 (PST)
+        Mon, 11 Dec 2023 08:24:31 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh+dt@kernel.org,
 	krzysztof.kozlowski+dt@linaro.org,
@@ -72,9 +72,9 @@ Cc: peter.griffin@linaro.org,
 	linux-watchdog@vger.kernel.org,
 	kernel-team@android.com,
 	linux-serial@vger.kernel.org
-Subject: [PATCH v7 10/16] watchdog: s3c2410_wdt: Add support for WTCON register DBGACK_MASK bit
-Date: Mon, 11 Dec 2023 16:23:25 +0000
-Message-ID: <20231211162331.435900-11-peter.griffin@linaro.org>
+Subject: [PATCH v7 12/16] watchdog: s3c2410_wdt: Add support for Google gs101 SoC
+Date: Mon, 11 Dec 2023 16:23:27 +0000
+Message-ID: <20231211162331.435900-13-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231211162331.435900-1-peter.griffin@linaro.org>
 References: <20231211162331.435900-1-peter.griffin@linaro.org>
@@ -86,95 +86,105 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The WDT uses the CPU core signal DBGACK to determine whether the SoC
-is running in debug mode or not. If the DBGACK signal is asserted and
-DBGACK_MASK bit is enabled, then WDT output and interrupt is masked
-(disabled).
+This patch adds the compatibles and drvdata for the Google
+gs101 SoC found in Pixel 6, Pixel 6a & Pixel 6 pro phones.
 
-Presence of the DBGACK_MASK bit is determined by adding a new
-QUIRK_HAS_DBGACK_BIT quirk. Also update to use BIT macro to avoid
-checkpatch --strict warnings.
+Similar to Exynos850 it has two watchdog instances, one for
+each cluster and has some control bits in PMU registers.
+
+gs101 also has the dbgack_mask bit in wtcon register, so
+we also enable QUIRK_HAS_DBGACK_BIT.
 
 Tested-by: Will McVicker <willmcvicker@google.com>
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/watchdog/s3c2410_wdt.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+ drivers/watchdog/s3c2410_wdt.c | 49 ++++++++++++++++++++++++++++++----
+ 1 file changed, 44 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 0b4bd883ff28..7ecb762a371d 100644
+index b7a03668f743..c3046610ab5d 100644
 --- a/drivers/watchdog/s3c2410_wdt.c
 +++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -9,6 +9,7 @@
-  *     (c) Copyright 1996 Alan Cox <alan@lxorguk.ukuu.org.uk>
-  */
+@@ -69,6 +69,13 @@
+ #define EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT	25
+ #define EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT	24
  
-+#include <linux/bits.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/types.h>
-@@ -34,9 +35,10 @@
- 
- #define S3C2410_WTCNT_MAXCNT	0xffff
- 
--#define S3C2410_WTCON_RSTEN	(1 << 0)
--#define S3C2410_WTCON_INTEN	(1 << 2)
--#define S3C2410_WTCON_ENABLE	(1 << 5)
-+#define S3C2410_WTCON_RSTEN		BIT(0)
-+#define S3C2410_WTCON_INTEN		BIT(2)
-+#define S3C2410_WTCON_ENABLE		BIT(5)
-+#define S3C2410_WTCON_DBGACK_MASK	BIT(16)
- 
- #define S3C2410_WTCON_DIV16	(0 << 3)
- #define S3C2410_WTCON_DIV32	(1 << 3)
-@@ -100,12 +102,17 @@
-  * %QUIRK_HAS_PMU_CNT_EN: PMU block has some register (e.g. CLUSTERx_NONCPU_OUT)
-  * with "watchdog counter enable" bit. That bit should be set to make watchdog
-  * counter running.
-+ *
-+ * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting the
-+ * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debug mode.
-+ * Debug mode is determined by the DBGACK CPU signal.
-  */
- #define QUIRK_HAS_WTCLRINT_REG			(1 << 0)
- #define QUIRK_HAS_PMU_MASK_RESET		(1 << 1)
- #define QUIRK_HAS_PMU_RST_STAT			(1 << 2)
- #define QUIRK_HAS_PMU_AUTO_DISABLE		(1 << 3)
- #define QUIRK_HAS_PMU_CNT_EN			(1 << 4)
-+#define QUIRK_HAS_DBGACK_BIT			BIT(5)
- 
- /* These quirks require that we have a PMU register map */
- #define QUIRKS_HAVE_PMUREG \
-@@ -375,6 +382,19 @@ static int s3c2410wdt_enable(struct s3c2410_wdt *wdt, bool en)
- 	return 0;
- }
- 
-+/* Disable watchdog outputs if CPU is in debug mode */
-+static void s3c2410wdt_mask_dbgack(struct s3c2410_wdt *wdt)
-+{
-+	unsigned long wtcon;
++#define GS_CLUSTER0_NONCPU_OUT			0x1220
++#define GS_CLUSTER1_NONCPU_OUT			0x1420
++#define GS_CLUSTER0_NONCPU_INT_EN		0x1244
++#define GS_CLUSTER1_NONCPU_INT_EN		0x1444
++#define GS_CLUSTER2_NONCPU_INT_EN		0x1644
++#define GS_RST_STAT_REG_OFFSET			0x3B44
 +
-+	if (!(wdt->drv_data->quirks & QUIRK_HAS_DBGACK_BIT))
-+		return;
-+
-+	wtcon = readl(wdt->reg_base + S3C2410_WTCON);
-+	wtcon |= S3C2410_WTCON_DBGACK_MASK;
-+	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
-+}
-+
- static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
- {
- 	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-@@ -700,6 +720,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
- 	wdt->wdt_device.parent = dev;
+ /**
+  * DOC: Quirk flags for different Samsung watchdog IP-cores
+  *
+@@ -270,7 +277,35 @@ static const struct s3c2410_wdt_variant drv_data_exynosautov9_cl1 = {
+ 		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN,
+ };
  
-+	s3c2410wdt_mask_dbgack(wdt);
++static const struct s3c2410_wdt_variant drv_data_gs101_cl0 = {
++	.mask_reset_reg = GS_CLUSTER0_NONCPU_INT_EN,
++	.mask_bit = 2,
++	.mask_reset_inv = true,
++	.rst_stat_reg = GS_RST_STAT_REG_OFFSET,
++	.rst_stat_bit = 0,
++	.cnt_en_reg = GS_CLUSTER0_NONCPU_OUT,
++	.cnt_en_bit = 8,
++	.quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET |
++		  QUIRK_HAS_PMU_CNT_EN | QUIRK_HAS_WTCLRINT_REG |
++		  QUIRK_HAS_DBGACK_BIT,
++};
 +
- 	/*
- 	 * If "tmr_atboot" param is non-zero, start the watchdog right now. Also
- 	 * set WDOG_HW_RUNNING bit, so that watchdog core can kick the watchdog.
++static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
++	.mask_reset_reg = GS_CLUSTER1_NONCPU_INT_EN,
++	.mask_bit = 2,
++	.mask_reset_inv = true,
++	.rst_stat_reg = GS_RST_STAT_REG_OFFSET,
++	.rst_stat_bit = 1,
++	.cnt_en_reg = GS_CLUSTER1_NONCPU_OUT,
++	.cnt_en_bit = 7,
++	.quirks = QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_MASK_RESET |
++		  QUIRK_HAS_PMU_CNT_EN | QUIRK_HAS_WTCLRINT_REG |
++		  QUIRK_HAS_DBGACK_BIT,
++};
++
+ static const struct of_device_id s3c2410_wdt_match[] = {
++	{ .compatible = "google,gs101-wdt",
++	  .data = &drv_data_gs101_cl0 },
+ 	{ .compatible = "samsung,s3c2410-wdt",
+ 	  .data = &drv_data_s3c2410 },
+ 	{ .compatible = "samsung,s3c6410-wdt",
+@@ -605,9 +640,10 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+ 	}
+ 
+ #ifdef CONFIG_OF
+-	/* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index */
++	/* Choose Exynos9 SoC family driver data w.r.t. cluster index */
+ 	if (variant == &drv_data_exynos850_cl0 ||
+-	    variant == &drv_data_exynosautov9_cl0) {
++	    variant == &drv_data_exynosautov9_cl0 ||
++	    variant == &drv_data_gs101_cl0) {
+ 		u32 index;
+ 		int err;
+ 
+@@ -620,9 +656,12 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+ 		case 0:
+ 			break;
+ 		case 1:
+-			variant = (variant == &drv_data_exynos850_cl0) ?
+-				&drv_data_exynos850_cl1 :
+-				&drv_data_exynosautov9_cl1;
++			if (variant == &drv_data_exynos850_cl0)
++				variant = &drv_data_exynos850_cl1;
++			else if (variant == &drv_data_exynosautov9_cl0)
++				variant = &drv_data_exynosautov9_cl1;
++			else if (variant == &drv_data_gs101_cl0)
++				variant = &drv_data_gs101_cl1;
+ 			break;
+ 		default:
+ 			return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
 -- 
 2.43.0.472.g3155946c3a-goog
 
