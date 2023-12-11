@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sfdCbo4M"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7E3DF
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 18:29:26 -0800 (PST)
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231211022925epoutp020f8da1819b1e57851510a1601900f1d5~fpg5sP7rJ2218422184epoutp02J
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 02:29:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231211022925epoutp020f8da1819b1e57851510a1601900f1d5~fpg5sP7rJ2218422184epoutp02J
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="olm5cH4p"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF39F5
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Dec 2023 18:41:51 -0800 (PST)
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231211024150epoutp03aa6247ec6bd3610fdee805372c61dd96~fprvnpRIt2937129371epoutp03Q
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 02:41:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231211024150epoutp03aa6247ec6bd3610fdee805372c61dd96~fprvnpRIt2937129371epoutp03Q
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702261765;
-	bh=9PZVF+Izd/fOscHxPgBInDtGjFKMvs6YTcTU/inrFa4=;
-	h=Date:Subject:To:From:In-Reply-To:References:From;
-	b=sfdCbo4MtCPRblJ/9jt2GCLxDEW96f8kJp9jq5EAB9FCjvFKtW34JVaO191dNUzWF
-	 xeAYjA15ES6iqRGmekXgujpIcd3O4DEmpkLS6SQR/g6FUiYSWA3kkxX5Bb/wFJDOPL
-	 mhBcnmUTPQ4w7H1EIVGUC81ECzQKUG1rXkPiQaus=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20231211022924epcas2p1381bb2c10e34ff95d5d9a9a677bdf61f~fpg5a_D7x1667216672epcas2p1-;
-	Mon, 11 Dec 2023 02:29:24 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.97]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4SpQg81jPsz4x9QF; Mon, 11 Dec
-	2023 02:29:24 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1E.95.08648.40476756; Mon, 11 Dec 2023 11:29:24 +0900 (KST)
+	s=mail20170921; t=1702262510;
+	bh=ZYIIjWWje1plfriKCC+pMHMU/g6sWyXy3v70HneMEnU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=olm5cH4pwDW8/26zBCFGFqnZgJqHp52Q+rvbtxRl8QG9DYUMhdXQZnyk6Qdxbt/17
+	 V5NLmUbW2KfybCpLuoBLx4aBlkggYmO1mYRbvFZ7K+n1sfR9pKCnvq3GzspO8egwfr
+	 jesZIzeRls+GpwllikHG1oG/Jzvgco80fjuIU/wI=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20231211024149epcas2p3ae1c8cf32de8a802ebafb602dc7e9e82~fprvItwP60449004490epcas2p3V;
+	Mon, 11 Dec 2023 02:41:49 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4SpQxT01jvz4x9Pr; Mon, 11 Dec
+	2023 02:41:49 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6F.C9.18994.CE676756; Mon, 11 Dec 2023 11:41:48 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231211022923epcas2p39263deafcd69ab8a00cae7c851bd4d81~fpg4dvKMh2462424624epcas2p3j;
-	Mon, 11 Dec 2023 02:29:23 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231211024148epcas2p24432804d1dfa9406cc2aa2b1623d873d~fpruCXlPl2678326783epcas2p2S;
+	Mon, 11 Dec 2023 02:41:48 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231211022923epsmtrp2042e9716f8f9b573c1ef099ec722a5c7~fpg4c_XSy1413214132epsmtrp2j;
-	Mon, 11 Dec 2023 02:29:23 +0000 (GMT)
-X-AuditID: b6c32a43-721fd700000021c8-12-657674046aeb
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	22.FA.08755.30476756; Mon, 11 Dec 2023 11:29:23 +0900 (KST)
+	20231211024148epsmtrp2e3f76147370a68a710f785ca8ddacebe~fpruBauQ_2191321913epsmtrp2T;
+	Mon, 11 Dec 2023 02:41:48 +0000 (GMT)
+X-AuditID: b6c32a4d-9f7ff70000004a32-06-657676ec9338
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	01.A6.07368.CE676756; Mon, 11 Dec 2023 11:41:48 +0900 (KST)
 Received: from [10.229.8.168] (unknown [10.229.8.168]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231211022923epsmtip1df473844cd00b069666697ad1500d674~fpg4KnSPk1130311303epsmtip1h;
-	Mon, 11 Dec 2023 02:29:23 +0000 (GMT)
-Message-ID: <df677a28-284f-4f80-afa7-9bf71bc8ce2e@samsung.com>
-Date: Mon, 11 Dec 2023 11:26:33 +0900
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20231211024148epsmtip2955336bd1de28d9bd406140ab625f089~fprts0TTc2003620036epsmtip2D;
+	Mon, 11 Dec 2023 02:41:48 +0000 (GMT)
+Message-ID: <7800ae2d-cc19-ce7c-7b3b-54016903d8ec@samsung.com>
+Date: Mon, 11 Dec 2023 11:38:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,96 +50,315 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
 	Thunderbird/102.11.0
-Subject: Re: [PATCH] dt-bindings: samsung: exynos-sysreg: combine
- exynosautov920 with other enum
+Subject: Re: [PATCH v3 3/4] pinctrl: samsung: support ExynosAuto GPIO
+ structure
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring
-	<robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Rob Herring <robh+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester
+	Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>, Uwe Kleine-K?nig
+	<u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-serial@vger.kernel.org
 From: Jaewon Kim <jaewon02.kim@samsung.com>
-In-Reply-To: <20231210134834.43943-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <421ede4c-7a96-47e0-9b82-0eb350b59c33@linaro.org>
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmuS5LSVmqwbwzXBYP5m1js1iz9xyT
-	xfwj51gt+l48ZLbY+3oru8Wmx9dYLS7vmsNmMeP8PiaL1r1H2B04PTat6mTzuHNtD5vH5iX1
-	Hn1bVjF6fN4kF8AalW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk
-	4hOg65aZA3SPkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8v
-	tcTK0MDAyBSoMCE7Y+7UlcwFs3gqtu3sZ2xg/MPRxcjJISFgIrF83jO2LkYuDiGBHYwSTRde
-	MEI4nxglHt69C5X5xijR0/mTDaZlWs8GqKq9jBKvvm6Ecl4zSkxsns0CUsUrYCfxds1lJhCb
-	RUBV4u31x8wQcUGJkzOfgNWICkRLtC67DzZVWCBJ4v/MCawgNrOAuMStJ/OZQIaKCLxmkvh2
-	+xRYgk1AW+L7+sVgNqeAi0TD9WNMEA3yEtvfzmEGaZAQ6OWQmH/6KtStLhJ3fk9mhLCFJV4d
-	38IOYUtJfH63F6omX6LtyhmoeI3ExgWXoOrtJWb93gK0jANogabE+l36IKaEgLLEkVssEGv5
-	JDoO/2WHCPNKdLQJQTSqSdyfeg5quIzEpCMrmSBsD4lD7Z9YIGE1nVFi/a+fTBMYFWYhBcss
-	JO/PQvLZLIQjFjCyrGIUSy0ozk1PTTYqMIRHd3J+7iZGcGLVct7BeGX+P71DjEwcjIcYJTiY
-	lUR4ZY4UpwrxpiRWVqUW5ccXleakFh9iNAVGzkRmKdHkfGBqzyuJNzSxNDAxMzM0NzI1MFcS
-	573XOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgWmp76Ybbi1pC7asO6HVFFgoqxykOUF5l/ehY8mf
-	LNJuVxw5smva4xN5XOU6r/ckp+fM81gZOF98ybzDHg45h3yXncpf1dJyz0Hu8k3JBc/MM856
-	s+5b/1/6YO30aQKfezuC/IR0C70fPjxz0llh34RDplzHfjYv1vXraZt2eI2hysxMw1vy8ump
-	rEWctevvhU/2e89ozHQru7Vp4csDLS1XSyTZ+CepMnvlNh2/lWNv89f8/I/LcxiuuZxTXrF+
-	18OJXMk3bn37E6Hsl73yud15vi3biqbMNS/JVnR8+PfG7R05us8/ci19p3O3MMLHYt71Z709
-	P1bv39PL8aJ/UW2uk9H7RfP13Y8/3PBoU5mrEktxRqKhFnNRcSIAte9CWDUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSnC5zSVmqwZNbShYP5m1js1iz9xyT
-	xfwj51gt+l48ZLbY+3oru8Wmx9dYLS7vmsNmMeP8PiaL1r1H2B04PTat6mTzuHNtD5vH5iX1
-	Hn1bVjF6fN4kF8AaxWWTkpqTWZZapG+XwJUxd+pK5oJZPBXbdvYzNjD+4ehi5OSQEDCRmNaz
-	gbGLkYtDSGA3o8SR5h52iISMxPJnfWwQtrDE/ZYjrBBFLxklntxezgyS4BWwk3i75jITiM0i
-	oCrx9vpjqLigxMmZT1hAbFGBaInVny+wgtjCAkkS/2dOALOZBcQlbj2ZzwQyVETgNZPEpL3t
-	7BAbpjNKdP74zwhSxSagLfF9/WKwDk4BF4mG68eYILrNJLq2djFC2PIS29/OYZ7AKDgLyfJZ
-	SJbMQtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwVGjpbmDcfuqD3qH
-	GJk4GA8xSnAwK4nwyhwpThXiTUmsrEotyo8vKs1JLT7EKM3BoiTOK/6iN0VIID2xJDU7NbUg
-	tQgmy8TBKdXAlMKYemkOm7tQ58kneRZZ6zz3L3a9cJfB3vGU8VvfrBTBbNc5T2ZKLCg15Zru
-	d4LvNgeb3cmalcn1Me5zTERmdGZ5mzh9LD2gMsX340oehvUHzuW773gy44yr86rAEzKFy7mm
-	nsh+N9tObmL5zxNZHlMlTm0XSelKLewI49oYwK+xLtFdaM6iT7c+3Jgu86jN/D3b1g5Z9rP7
-	dzjPcF4SoZs137r8jXZsVfSMbennt3DEH7R/efPZ/pJJbg/zXz12+J/Hd2pqrNGHsJs/LA2V
-	p/hz26xuy3lz8brpC42ju1PWGf++mLkgPoT9T0bW4+Pf3pwWkjjkWJ7RFFC+4EGBZtzk0v4F
-	Pxd3HzHzrq1eqsRSnJFoqMVcVJwIABBTUhkJAwAA
-X-CMS-MailID: 20231211022923epcas2p39263deafcd69ab8a00cae7c851bd4d81
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xbVRzeuff29kLGcimPnSBRuBtbxtbSEiiXSTcfbNxFSZhM4iBS7+gN
+	INA2bUHQJg4JD1nUvSDa8ejSiVKbgIXhZCtEqA6RgeACjlGojLBkwBZl3bLIw5aLyn/f78vv
+	+37n+51zCFQ0hYcR+WoDp1OzhRTuj3X175OLF0tKOOnUWALtburCaZtjGKGbncMCusLShtMP
+	G8Npx8JVIX1x5SuEtt8bF9AdzSuA/q27AaddLiugPx/pQeghyydCutLhFNL9i9UC+ll3E0Zb
+	u719d89dAC+JmO9NLiFjt36MM1PjN3Cmt9EmZDqufMh8tiplPu20AmbZ/nwakVmQlMexKk4X
+	walzNKp8da6Cei1d+aoyXi6ViWWJdAIVoWaLOAWV/Hqa+Gh+oTcJFVHCFhZ7qTRWr6diDiXp
+	NMUGLiJPozcoKE6rKtQmaCV6tkhfrM6VqDnDQZlUGhvvbXynIK9lcg1or6eU3hpvFZwGfybW
+	Aj8CknGwY3xAUAv8CRF5A8D6URvOF38BuDY4ulk8AXCwaxSrBcSGpOriDp53ADj72CLkiwUA
+	p7/5Hff5BpCH4ERdHfBhjIyCDQ7XJh8If/5iDvPhEDILVrbM4D7TIPI4NA/u99EouRNOzjUj
+	PhxMzqBwoeoDnz9KugFsHPZseOLkfvi0zSLwYT/vrMtuD8KLX4DfLTWgPgEkHxNwuvM+xgdN
+	hiOtZxAeB8EHNzuFPA6Dyw8dOI81sOr20CZvhN+axwCPD0PT350C30FRch9s647hF7ELOicx
+	fuwOWNO/KuTpAFhTJeKFe+BM3fCmeTg872xF+BYGDrTQZ0GkactOTFvCm7ZkMf0/1gwwKwjj
+	tPqiXC4nVisTq7n3/rvuHE2RHWw88+jUa2ChbVXSBxAC9AFIoFRwQLhTz4kCVGzZ+5xOo9QV
+	F3L6PhDvvZ1zaFhIjsb7T9QGpSwuURonl8sSYuOlCdTOgOnKRpWIzGUNXAHHaTndvzqE8As7
+	jWxviHxwbOmt48byyDj/3hPIl1feqE49Y9k9O/+1Yfe9vKSl2Xa7fWjvhMtYMa/oPRxlrO/K
+	kEuaZSFvr8PzPe1PnxniL9/VNsbcVM5sS5/LGnCzBXccE0NRHsGbpPtlT5TgJKm4RJxYP2vE
+	HlXnf9T3a7orqzgCDzyqzlCoWkvl85nvdv7x3NhPKaeetJTlx7mCroVIzLE2dDJU23Oq6daa
+	tafqh0sNK+Mjzmnx3l3RkTHXp1OPDZu3h7pHKyaYk4/KPdVHymeyb4ujB4EFPXhgoU7pTrbN
+	lQa+Um2jfilTLR2ZqK/JXm8PDt2WsefOiyvYojZlMDvzR9WBqftXY5aXKEyfx8qiUZ2e/Qdc
+	JM5tbwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsWy7bCSvO6bsrJUg4+dghYP5m1js1iz9xyT
+	xfwj51gtmhevZ7N4N1fGYu/rrewWU/4sZ7LY9Pgaq8Xm+X8YLS7vmsNmcffuKkaLGef3MVmc
+	WdzLbtG69wi7xeE37awWP3fNY7FYtQuo7vbEyYwOQh47Z91l99i0qpPN4861PWwe++euYffY
+	vKTeo/+vgUffllWMHp83yQVwRHHZpKTmZJalFunbJXBlLLv1j7Fgt3vF2WsrWRsYP1p2MXJw
+	SAiYSLRN4eti5OIQEtjNKHFwfQNbFyMnUFxGYvmzPihbWOJ+yxFWiKKXjBJdi56ygiR4Bewk
+	rk+dyghiswioSszZe5cNIi4ocXLmExYQW1QgWmL15wusIMuEBQIlFpzSBgkzC4hL3Hoynwlk
+	pojAY2aJh1P/M4M4zAIPGCWWT3oEte0no0Tfx1Z2kBY2AW2J7+sXg23mBNq88MFXJohRZhJd
+	W7sYIWx5ie1v5zBPYBSaheSQWUg2zkLSMgtJywJGllWMkqkFxbnpucmGBYZ5qeV6xYm5xaV5
+	6XrJ+bmbGMHxq6Wxg/He/H96hxiZOBgPMUpwMCuJ8MocKU4V4k1JrKxKLcqPLyrNSS0+xCjN
+	waIkzms4Y3aKkEB6YklqdmpqQWoRTJaJg1OqgclX9phl9DX7Ko/vIUbdklEB/+06f8nxbTwl
+	cKNvH8eXRfcqniyKKvDRVQmak+7F1xX6adJK8cUtVvETkuboRivJZ07bVHg43C9r7xGp7Ddl
+	c8RV9xawi6ZdCzgWOH3GCz/RzVMjFtb9+/8txspric2C6y88vC0rLrz+u+bvcdUGrRz1hxc+
+	fjU5tOBjhcKFt1oik+x+sbyberhs/dX6tRXcFh/iFl+1vPZs87r+2RGKfDtj1399+9ktxSzt
+	Y8UUh3vRKSuObgv3rI7f6MVuwD2N3fzFW8FlV5dx9ZpPPO76Yc4kzwXPvL98F5/8+hqT1qp7
+	bmfnb1M2XtF5c1Z0fa71IpspVX4zZhvu65xrKHxCiaU4I9FQi7moOBEAwb2xuU4DAAA=
+X-CMS-MailID: 20231211024148epcas2p24432804d1dfa9406cc2aa2b1623d873d
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231210134852epcas2p4166a413502a742b6f558d7b55bd36ae6
-References: <CGME20231210134852epcas2p4166a413502a742b6f558d7b55bd36ae6@epcas2p4.samsung.com>
-	<20231210134834.43943-1-krzysztof.kozlowski@linaro.org>
+X-CMS-RootMailID: 20231208075020epcas2p260c65fa8d33e0cd97806f065bb8a044d
+References: <20231208074527.50840-1-jaewon02.kim@samsung.com>
+	<CGME20231208075020epcas2p260c65fa8d33e0cd97806f065bb8a044d@epcas2p2.samsung.com>
+	<20231208074527.50840-4-jaewon02.kim@samsung.com>
+	<421ede4c-7a96-47e0-9b82-0eb350b59c33@linaro.org>
+
+Hello Krzysztof,
+
+Thanks to review.
 
 
-On 23. 12. 10. 22:48, Krzysztof Kozlowski wrote:
-> No need to create a new enum every time we bring-up new SoC.
+On 23. 12. 10. 22:00, Krzysztof Kozlowski wrote:
+> On 08/12/2023 08:45, Jaewon Kim wrote:
+>> New ExynosAuto series GPIO have a different register structure.
+>> In the existing Exynos series, EINT control register enumerated after
+>> a specific offset (e.g EXYNOS_GPIO_ECON_OFFSET, EXYNOS_GPIO_EMASK_OFFSET).
+>> However, from ExynosAutov920 SoC, the register that controls EINT belongs
+>> to each GPIO bank, and each GPIO bank has 0x1000 align.
+>>
+>> This is a structure to protect the GPIO bank using S2MPU in VM environment,
+>> and will only be applied in ExynosAuto series SoCs.
+>>
+>> -------------------------------------------------
+>> | original		| ExynosAutov920	|
+>> |-----------------------------------------------|
+>> | 0x0	GPIO_CON	| 0x0	GPIO_CON	|
+>> | 0x4	GPIO_DAT	| 0x4	GPIO_DAT	|
+>> | 0x8	GPIO_PUD	| 0x8	GPIO_PUD	|
+>> | 0xc	GPIO_DRV	| 0xc	GPIO_DRV	|
+>> | 0x10	GPIO_CONPDN	| 0x10	GPIO_CONPDN	|
+>> | 0x14	GPIO_PUDPDN	| 0x14	GPIO_PUDPDN	|
+>> | 0x700	EINT_CON	| 0x18	EINT_CON	|
+>> | 0x800	EINT_FLTCON	| 0x1c	EINT_FLTCON0	|
+>> | 0x900	EINT_MASK	| 0x20	EINT_FLTCON1	|
+>> | 0xa00	EINT_PEND	| 0x24	EINT_MASK	|
+>> |			| 0x28	EINT_PEND	|
+>> -------------------------------------------------
+>>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> ---
+>>   drivers/pinctrl/samsung/pinctrl-exynos.c  | 81 +++++++++++++++++++++--
+>>   drivers/pinctrl/samsung/pinctrl-exynos.h  |  1 +
+>>   drivers/pinctrl/samsung/pinctrl-samsung.c |  3 +
+>>   drivers/pinctrl/samsung/pinctrl-samsung.h | 12 ++++
+>>   4 files changed, 90 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> index 6b58ec84e34b..f798f64b1122 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> @@ -56,6 +56,9 @@ static void exynos_irq_mask(struct irq_data *irqd)
+>>   	unsigned int mask;
+>>   	unsigned long flags;
+>>   
+>> +	if (bank->eint_mask_offset)
+>> +		reg_mask = bank->pctl_offset + bank->eint_mask_offset;
+> Drop the initialization of reg_mask so:
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> else:
+> reg_mask = ...
 
-Reviewed-by: Jaewon Kim <jaewon02.kim@samsung.com>
+Okay, I will fix it in v4.
 
 
->   .../bindings/soc/samsung/samsung,exynos-sysreg.yaml        | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> index 2de4301a467d..b00f25482fec 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-> @@ -17,6 +17,8 @@ properties:
->                 - samsung,exynos3-sysreg
->                 - samsung,exynos4-sysreg
->                 - samsung,exynos5-sysreg
-> +              - samsung,exynosautov920-peric0-sysreg
-> +              - samsung,exynosautov920-peric1-sysreg
->                 - tesla,fsd-cam-sysreg
->                 - tesla,fsd-fsys0-sysreg
->                 - tesla,fsd-fsys1-sysreg
-> @@ -50,11 +52,6 @@ properties:
->                 - samsung,exynosautov9-peric1-sysreg
->             - const: samsung,exynosautov9-sysreg
->             - const: syscon
-> -      - items:
-> -          - enum:
-> -              - samsung,exynosautov920-peric0-sysreg
-> -              - samsung,exynosautov920-peric1-sysreg
-> -          - const: syscon
->   
->     reg:
->       maxItems: 1
+>> +
+>>   	raw_spin_lock_irqsave(&bank->slock, flags);
+>>   
+>>   	mask = readl(bank->eint_base + reg_mask);
+>> @@ -72,6 +75,9 @@ static void exynos_irq_ack(struct irq_data *irqd)
+>>   	struct samsung_pin_bank *bank = irq_data_get_irq_chip_data(irqd);
+>>   	unsigned long reg_pend = our_chip->eint_pend + bank->eint_offset;
+>>   
+>> +	if (bank->eint_pend_offset)
+>> +		reg_pend = bank->pctl_offset + bank->eint_pend_offset;
+>> +
+>>   	writel(1 << irqd->hwirq, bank->eint_base + reg_pend);
+>>   }
+>>   
+>> @@ -95,6 +101,9 @@ static void exynos_irq_unmask(struct irq_data *irqd)
+>>   	if (irqd_get_trigger_type(irqd) & IRQ_TYPE_LEVEL_MASK)
+>>   		exynos_irq_ack(irqd);
+>>   
+> Ditto
+I will fix it also.
+>
+>> +	if (bank->eint_mask_offset)
+>> +		reg_mask = bank->pctl_offset + bank->eint_mask_offset;
+>> +
+>>   	raw_spin_lock_irqsave(&bank->slock, flags);
+>>   
+>>   	mask = readl(bank->eint_base + reg_mask);
+>> @@ -139,6 +148,9 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
+>>   	else
+>>   		irq_set_handler_locked(irqd, handle_level_irq);
+>>   
+>
+> Ditto
+I will fix it also.
+>
+>> +	if (bank->eint_con_offset)
+>> +		reg_con = bank->pctl_offset + bank->eint_con_offset;
+>> +
+>>   	con = readl(bank->eint_base + reg_con);
+>>   	con &= ~(EXYNOS_EINT_CON_MASK << shift);
+>>   	con |= trig_type << shift;
+>> @@ -221,6 +233,18 @@ static const struct exynos_irq_chip exynos_gpio_irq_chip __initconst = {
+>>   	/* eint_wake_mask_value not used */
+>>   };
+>>   
+>> +static const struct exynos_irq_chip exynosauto_gpio_irq_chip __initconst = {
+> No related to this patch.
+>
+>> +	.chip = {
+>> +		.name = "exynosauto_gpio_irq_chip",
+>> +		.irq_unmask = exynos_irq_unmask,
+>> +		.irq_mask = exynos_irq_mask,
+>> +		.irq_ack = exynos_irq_ack,
+>> +		.irq_set_type = exynos_irq_set_type,
+>> +		.irq_request_resources = exynos_irq_request_resources,
+>> +		.irq_release_resources = exynos_irq_release_resources,
+>> +	},
+>> +};
+>> +
+>>   static int exynos_eint_irq_map(struct irq_domain *h, unsigned int virq,
+>>   					irq_hw_number_t hw)
+>>   {
+>> @@ -247,7 +271,10 @@ static irqreturn_t exynos_eint_gpio_irq(int irq, void *data)
+>>   	unsigned int svc, group, pin;
+>>   	int ret;
+>>   
+>> -	svc = readl(bank->eint_base + EXYNOS_SVC_OFFSET);
+>> +	if (bank->eint_con_offset)
+>> +		svc = readl(bank->eint_base + EXYNOSAUTO_SVC_OFFSET);
+> This belongs to the second patch. The point of this patch is only to
+> customize the offsets. There should be nothing autov920 here.
+
+Okay, I will put the irq-related changes in the v920 patch.
+
+
+>
+>
+>> +	else
+>> +		svc = readl(bank->eint_base + EXYNOS_SVC_OFFSET);
+>>   	group = EXYNOS_SVC_GROUP(svc);
+>>   	pin = svc & EXYNOS_SVC_NUM_MASK;
+>>   
+>> @@ -297,8 +324,12 @@ __init int exynos_eint_gpio_init(struct samsung_pinctrl_drv_data *d)
+>>   		if (bank->eint_type != EINT_TYPE_GPIO)
+>>   			continue;
+>>   
+>> -		bank->irq_chip = devm_kmemdup(dev, &exynos_gpio_irq_chip,
+>> -					   sizeof(*bank->irq_chip), GFP_KERNEL);
+>> +		if (bank->eint_con_offset)
+>> +			bank->irq_chip = devm_kmemdup(dev, &exynosauto_gpio_irq_chip,
+>> +						      sizeof(*bank->irq_chip), GFP_KERNEL);
+>> +		else
+>> +			bank->irq_chip = devm_kmemdup(dev, &exynos_gpio_irq_chip,
+>> +						      sizeof(*bank->irq_chip), GFP_KERNEL);
+>>   		if (!bank->irq_chip) {
+>>   			ret = -ENOMEM;
+>>   			goto err_domains;
+>> @@ -655,6 +686,19 @@ static void exynos_pinctrl_suspend_bank(
+>>   	pr_debug("%s: save    mask %#010x\n", bank->name, save->eint_mask);
+>>   }
+>>   
+>> +static void exynosauto_pinctrl_suspend_bank(struct samsung_pinctrl_drv_data *drvdata,
+>> +					    struct samsung_pin_bank *bank)
+>> +{
+>> +	struct exynos_eint_gpio_save *save = bank->soc_priv;
+>> +	void __iomem *regs = bank->eint_base;
+>> +
+>> +	save->eint_con = readl(regs + bank->pctl_offset + bank->eint_con_offset);
+>> +	save->eint_mask = readl(regs + bank->pctl_offset + bank->eint_mask_offset);
+>> +
+>> +	pr_debug("%s: save     con %#010x\n", bank->name, save->eint_con);
+>> +	pr_debug("%s: save    mask %#010x\n", bank->name, save->eint_mask);
+>> +}
+>> +
+>>   void exynos_pinctrl_suspend(struct samsung_pinctrl_drv_data *drvdata)
+>>   {
+>>   	struct samsung_pin_bank *bank = drvdata->pin_banks;
+>> @@ -662,8 +706,12 @@ void exynos_pinctrl_suspend(struct samsung_pinctrl_drv_data *drvdata)
+>>   	int i;
+>>   
+>>   	for (i = 0; i < drvdata->nr_banks; ++i, ++bank) {
+>> -		if (bank->eint_type == EINT_TYPE_GPIO)
+>> -			exynos_pinctrl_suspend_bank(drvdata, bank);
+>> +		if (bank->eint_type == EINT_TYPE_GPIO) {
+>> +			if (bank->eint_con_offset)
+>> +				exynosauto_pinctrl_suspend_bank(drvdata, bank);
+>> +			else
+>> +				exynos_pinctrl_suspend_bank(drvdata, bank);
+>> +		}
+>>   		else if (bank->eint_type == EINT_TYPE_WKUP) {
+>>   			if (!irq_chip) {
+>>   				irq_chip = bank->irq_chip;
+>> @@ -704,14 +752,33 @@ static void exynos_pinctrl_resume_bank(
+>>   						+ bank->eint_offset);
+>>   }
+>>   
+>> +static void exynosauto_pinctrl_resume_bank(struct samsung_pinctrl_drv_data *drvdata,
+>> +					   struct samsung_pin_bank *bank)
+>> +{
+>> +	struct exynos_eint_gpio_save *save = bank->soc_priv;
+>> +	void __iomem *regs = bank->eint_base;
+>> +
+>> +	pr_debug("%s:     con %#010x => %#010x\n", bank->name,
+>> +		 readl(regs + bank->pctl_offset + bank->eint_con_offset), save->eint_con);
+>> +	pr_debug("%s:    mask %#010x => %#010x\n", bank->name,
+>> +		 readl(regs + bank->pctl_offset + bank->eint_mask_offset), save->eint_mask);
+>> +
+>> +	writel(save->eint_con, regs + bank->pctl_offset + bank->eint_con_offset);
+>> +	writel(save->eint_mask, regs + bank->pctl_offset + bank->eint_mask_offset);
+>> +}
+>> +
+>>   void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+>>   {
+>>   	struct samsung_pin_bank *bank = drvdata->pin_banks;
+>>   	int i;
+>>   
+>>   	for (i = 0; i < drvdata->nr_banks; ++i, ++bank)
+>> -		if (bank->eint_type == EINT_TYPE_GPIO)
+>> -			exynos_pinctrl_resume_bank(drvdata, bank);
+>> +		if (bank->eint_type == EINT_TYPE_GPIO) {
+>> +			if (bank->eint_con_offset)
+>> +				exynosauto_pinctrl_resume_bank(drvdata, bank);
+>> +			else
+>> +				exynos_pinctrl_resume_bank(drvdata, bank);
+>> +		}
+>>   }
+>>   
+>>   static void exynos_retention_enable(struct samsung_pinctrl_drv_data *drvdata)
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+>> index 3ac52c2cf998..5049c170e958 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+>> @@ -31,6 +31,7 @@
+>>   #define EXYNOS7_WKUP_EMASK_OFFSET	0x900
+>>   #define EXYNOS7_WKUP_EPEND_OFFSET	0xA00
+>>   #define EXYNOS_SVC_OFFSET		0xB08
+>> +#define EXYNOSAUTO_SVC_OFFSET		0xF008
+> As well not related to this patch.
+>
+> Best regards,
+> Krzysztof
+>
+>
+
+Thanks
+
+Jaewon Kim
+
