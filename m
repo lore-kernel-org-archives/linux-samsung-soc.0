@@ -1,185 +1,105 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TbwLiRSc"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D01F10A;
-	Tue, 12 Dec 2023 01:31:35 -0800 (PST)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231212093134euoutp0245dd94e5990b4d8142a32097159cc707~gC6xZ0X_g1498914989euoutp02L;
-	Tue, 12 Dec 2023 09:31:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231212093134euoutp0245dd94e5990b4d8142a32097159cc707~gC6xZ0X_g1498914989euoutp02L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702373494;
-	bh=9lfAb2vSYKFJSRXZUBbgTF07y4N/2k5Hl2lKg99wS3g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TbwLiRScfRj0hLGx+XgY9pKisM8cCZ1f9aNkchvqu+zkFxiVRMKl6ycgbGoGNXvCR
-	 Ypn/khbFpQjuaois5Gb/OMNdujaVsMpetVY+sZjfs5Ylm08sm3cLCI2nd/37lPq3c0
-	 yPU8Atp6te2MZI0CWfhHw6XdkAUrg232AbUn31hQ=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231212093133eucas1p24dad27077c645000f6e7df73a31c73b0~gC6xNsHYk2201322013eucas1p2r;
-	Tue, 12 Dec 2023 09:31:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 6C.E3.09552.57828756; Tue, 12
-	Dec 2023 09:31:33 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20231212093133eucas1p1c19ba5aa058ca1e159bfd070aec0f306~gC6wzHYyC0923209232eucas1p1o;
-	Tue, 12 Dec 2023 09:31:33 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231212093133eusmtrp2cf5d936524a48067f2219bf248fa22ca~gC6wyGUFQ2501725017eusmtrp2c;
-	Tue, 12 Dec 2023 09:31:33 +0000 (GMT)
-X-AuditID: cbfec7f5-853ff70000002550-65-65782875f98f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 38.F1.09146.57828756; Tue, 12
-	Dec 2023 09:31:33 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.111]) by eusmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231212093133eusmtip142a909f67bd3e689f53855390da2c11c~gC6wl5hhl1171011710eusmtip1c;
-	Tue, 12 Dec 2023 09:31:33 +0000 (GMT)
-From: Lukasz Stelmach <l.stelmach@samsung.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Olivia Mackall <olivia@selenic.com>,  Herbert Xu
-	<herbert@gondor.apana.org.au>,  Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,  Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,  linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,  kernel@pengutronix.de
-Subject: Re: [PATCH 03/12] hwrng: exynos - Convert to platform remove
- callback returning void
-Date: Tue, 12 Dec 2023 10:31:32 +0100
-In-Reply-To: <817e91f7bb257745c0fb483037b83c1a6ba14e75.1702245873.git.u.kleine-koenig@pengutronix.de>
-	("Uwe =?utf-8?Q?Kleine-K=C3=B6nig=22's?= message of "Sun, 10 Dec 2023
-	23:12:18 +0100")
-Message-ID: <oypijdfs07937v.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OmE+tv7o"
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46B94AD
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Dec 2023 11:17:22 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-54f4f7d082cso6530660a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Dec 2023 11:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702408641; x=1703013441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q81f6tvuC/62M26cD5+zhpnHZ0bvi1DcQhgd2N8HT8g=;
+        b=OmE+tv7olRThtF0Ebt9AUAvFUI6P5OoTQuykjvT9AZS1xN4p7w2nco7R+6zGI4Z1Qy
+         UtN94WNEIhYppATJrZohER5xZUTgtYJX138MNHCVO+nvPitoF4opAG6R5s699enphIxj
+         4p46qbc0CfigrTyEn9UoD4yJUlXk1UPtbMpzkyOt7leozD+gRJZp0sk5HMc9AoZyXo09
+         i0MasLaO1Ls+8O1juy3OZKU10VSyCd+zmTvXZxOTF2BseBI/Qc0xLrlXUD9MF9bMoEAL
+         YsD+fp3zqYa5dPd+Jl0F47QKvXpAVqRVG5cuXGtoxaaXcmISZRNotmBSswjJcw2RL3zb
+         1kfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702408641; x=1703013441;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q81f6tvuC/62M26cD5+zhpnHZ0bvi1DcQhgd2N8HT8g=;
+        b=KqES1Vy8SpV9EikOLWj5JC1ns58TtqP5ghvk/hMaecLHp5/A+uMvl9NLI23mGiJbLa
+         SxgGY1xjwbQW60RZGFRcVvCfePdmwDo7bORGH5Snw2T292m64NxTHyikPJMUXhbdNLEJ
+         rYUu/cdrUvXaThxAICgjXmtow2vTtZ8l++aY1bYgBkS76NO9B0/01H8zddvD3Q1Ani8n
+         FWqwTrBTmf2osxzsBgBI0dxoKKdVm36lirA0aO9aAKUgUp1ZXpjuKOJYjmoPyLTTklUe
+         RZ0E4SjK9r5SrhwF0USHUT+ORC2+g0mPsZM7Qzymm9ygC/I6zM/q9cmo0sXiQxDXJtrZ
+         Be9Q==
+X-Gm-Message-State: AOJu0YwixV6oD71jDILzxrEhcoOGN7bI2XYS+8fyseAVDQKKdce46mdJ
+	icKqPAr2NUm2lal8eGfQcTiOLw==
+X-Google-Smtp-Source: AGHT+IErxwGD3BlZkSUookdNqWVQz7uPq0j3jdF2YUIwZl8jPuzuYHu/C9CZmUM1+hb143ssA3PhaA==
+X-Received: by 2002:a17:906:6a19:b0:9d8:78f2:7ea2 with SMTP id qw25-20020a1709066a1900b009d878f27ea2mr4682806ejc.54.1702408640691;
+        Tue, 12 Dec 2023 11:17:20 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id sf22-20020a1709078a9600b00982a92a849asm6739126ejc.91.2023.12.12.11.17.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Dec 2023 11:17:20 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	conor+dt@kernel.org,
+	sboyd@kernel.org,
+	tomasz.figa@gmail.com,
+	s.nawrocki@samsung.com,
+	linus.walleij@linaro.org,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	arnd@arndb.de,
+	olof@lixom.net,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	cw00.choi@samsung.com,
+	alim.akhtar@samsung.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	semen.protsenko@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	soc@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	kernel-team@android.com,
+	linux-serial@vger.kernel.org
+Subject: Re: (subset) [PATCH v7 09/16] pinctrl: samsung: Add gs101 SoC pinctrl configuration
+Date: Tue, 12 Dec 2023 20:17:15 +0100
+Message-Id: <170240862865.229534.3131999037082419524.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231211162331.435900-10-peter.griffin@linaro.org>
+References: <20231211162331.435900-1-peter.griffin@linaro.org> <20231211162331.435900-10-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-	protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7djP87qlGhWpBt0HdSwezNvGZtH9SsZi
-	1dSdLBZ7X29lt9j0+Bqrxf17P5ksZpzfx2Rx/0wPo8XtiZMZHTg9th1Q9bhzbQ+bx+Yl9R79
-	fw08+rasYvToe7mB0ePzJrkA9igum5TUnMyy1CJ9uwSujCONHAV3xSrmvJvJ1sC4U7iLkZND
-	QsBE4tGMSaxdjFwcQgIrGCVudu5mgXC+MEqsXf6HGaRKSOAzo8T7q+IwHVNn34IqWs4osXvZ
-	dkYI5wWjxP/j19m7GDk42AT0JNaujQAxRQTcJHrnxoGUMAvsZJJovvqQHWSQsEC8xMX+54wg
-	NouAqsS3uS/BhnIKHGCUWNhyhwUkwStgLjHpx3GwK0QFLCWOb21ng4gLSpyc+QSshlkgV2Lm
-	+TdgR0gI9HNK3Fo9lR3iVBeJQ/MmMELYwhKvjm+BistI/N85nwmioZ1RounKQlYIZwKjxOeO
-	JiaIKmuJO+d+sUHYjhLHv58Ae01CgE/ixltBiM18EpO2TWeGCPNKdLQJQVSrSKzr38MCYUtJ
-	9L5aAXWDh8Svu1uZIaG1g1HixfIdrBMYFWYheWgWkodmAY1lFtCUWL9LHyKsLbFs4WtmCNtW
-	Yt269ywLGFlXMYqnlhbnpqcWG+ellusVJ+YWl+al6yXn525iBKav0/+Of93BuOLVR71DjEwc
-	jIcYVYCaH21YfYFRiiUvPy9VSYT35I7yVCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC
-	6YklqdmpqQWpRTBZJg5OqQYmwxVrCq4pT0qT4F25mHVfY9VMd5up3dcjpJbOUfn8dsYz7qSj
-	fLPbdM0ndTB2ygQ38ewXM120/guvvdC91CmbLZjM9Sf3MnT7/5l30vvhmu/RBQaH724W9mQO
-	FyrTf9pQeiwxRar957PrxlLrNG6o1H98um5NQKj1xo1SKp5PXa4JfpK7yM3gICr2/Hfc00Vb
-	S27e7p7YfONYojW3hQ2nflz6mUWPbdvuvN928sq19HaJ/DQRd9v3v+asO2Lk5/58vY8jw9Nq
-	lw6Oy/5cjzzeRtwoucLmV96qKJddlWZ+cPbMuhfbzDlX6fpcK//RnyC2KSJT6bTo/gfb5nnX
-	Omf63oy7tN7RqGtXtHzTrEVKLMUZiYZazEXFiQAl2F0H2gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsVy+t/xu7qlGhWpBttaBCwezNvGZtH9SsZi
-	1dSdLBZ7X29lt9j0+Bqrxf17P5ksZpzfx2Rx/0wPo8XtiZMZHTg9th1Q9bhzbQ+bx+Yl9R79
-	fw08+rasYvToe7mB0ePzJrkA9ig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1DY/NYKyNT
-	JX07m5TUnMyy1CJ9uwS9jCONHAV3xSrmvJvJ1sC4U7iLkZNDQsBEYursWyxdjFwcQgJLGSVa
-	L29j7mLkAEpISaycmw5RIyzx51oXG0TNM0aJLfMvsIHUsAnoSaxdGwFiigi4SfTOjQMpYRbY
-	zSTx7dldZpBeYYF4iYv9zxlBbCGBFIlr1zawg9gsAqoS3+a+BNvLKXCAUeLSjA9gRbwC5hKT
-	fhwHaxYVsJQ4vrWdDSIuKHFy5hMWEJtZIFvi6+rnzBMYBWYhSc1CkpoFdBOzgKbE+l36EGFt
-	iWULXzND2LYS69a9Z1nAyLqKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMO62Hfu5eQfjvFcf
-	9Q4xMnEwHmJUAep8tGH1BUYplrz8vFQlEd6TO8pThXhTEiurUovy44tKc1KLDzGaAv02kVlK
-	NDkfmBDySuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqY1vY8ezzf
-	mvnpjfO/eX/d7FSNmPZihZH7ao0Z3+TWzg+be1/9TWGhQ/g/JUmnPuEbVbNeHOt9I5u+tX7q
-	nNvMQlPcZJkd511t/T3X6Fwgh9mGlwsm7DI7ub+SR2TxDLF9a9n4lC1an2ed+ZpjOvH2wyJ+
-	LrWvrWFLfTybb9iwlclZ91n4F15c2q1XeTc78olxXNHaWJN4Nu0ZM34KJZrYvMhg3WKefCL0
-	mA2v4POSx9t3XE/1zmpTsxZaePHdXheLfGN/zuLl9n/NHja2R2sK/5v6Im5R1uGYY9t5unsm
-	9lif+Kq9VfN8g5pKz+5Fpgy8lhKK6ouDNs7mNDDh8bvQ49/GyBIbOOOf5Zxjb6YqsRRnJBpq
-	MRcVJwIA+w0MlFADAAA=
-X-CMS-MailID: 20231212093133eucas1p1c19ba5aa058ca1e159bfd070aec0f306
-X-Msg-Generator: CA
-X-RootMTR: 20231212093133eucas1p1c19ba5aa058ca1e159bfd070aec0f306
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231212093133eucas1p1c19ba5aa058ca1e159bfd070aec0f306
-References: <817e91f7bb257745c0fb483037b83c1a6ba14e75.1702245873.git.u.kleine-koenig@pengutronix.de>
-	<CGME20231212093133eucas1p1c19ba5aa058ca1e159bfd070aec0f306@eucas1p1.samsung.com>
-
---=-=-=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-It was <2023-12-10 nie 23:12>, when Uwe Kleine-K=C3=B6nig wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
->
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new(), which already returns void. Eventually after all drivers
-> are converted, .remove_new() will be renamed to .remove().
->
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/char/hw_random/exynos-trng.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
 
-Acked-by: Lukasz Stelmach <l.stelmach@samsung.com>
+On Mon, 11 Dec 2023 16:23:24 +0000, Peter Griffin wrote:
+> Add support for the pin-controller found on the gs101 SoC used in
+> Pixel 6 phones.
+> 
+> 
 
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_rando=
-m/exynos-trng.c
-> index 30207b7ac5f4..0ed5d22fe667 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -173,7 +173,7 @@ static int exynos_trng_probe(struct platform_device *=
-pdev)
->  	return ret;
->  }
->=20=20
-> -static int exynos_trng_remove(struct platform_device *pdev)
-> +static void exynos_trng_remove(struct platform_device *pdev)
->  {
->  	struct exynos_trng_dev *trng =3D  platform_get_drvdata(pdev);
->=20=20
-> @@ -181,8 +181,6 @@ static int exynos_trng_remove(struct platform_device =
-*pdev)
->=20=20
->  	pm_runtime_put_sync(&pdev->dev);
->  	pm_runtime_disable(&pdev->dev);
-> -
-> -	return 0;
->  }
->=20=20
->  static int exynos_trng_suspend(struct device *dev)
-> @@ -223,7 +221,7 @@ static struct platform_driver exynos_trng_driver =3D {
->  		.of_match_table =3D exynos_trng_dt_match,
->  	},
->  	.probe =3D exynos_trng_probe,
-> -	.remove =3D exynos_trng_remove,
-> +	.remove_new =3D exynos_trng_remove,
->  };
->=20=20
->  module_platform_driver(exynos_trng_driver);
+Applied, thanks!
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+[09/16] pinctrl: samsung: Add gs101 SoC pinctrl configuration
+        https://git.kernel.org/pinctrl/samsung/c/4a8be01a1a7a030ae7b6138602d2e060cf7a0946
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAmV4KHQACgkQsK4enJil
-gBCRvQf+PyurfFZWbPslu37bFwG3yyfvKYGrFjJYjQl2baKl3uF9IRWnKIxklNqw
-FARwvOuCuSVyWJNRRAHrATFZ5wls96Pc0UU+BBExjIze+5babcF6yxAchQ/iaFj1
-gGOJzfEcLHXLZKGXOG5hYiaxf8rE4YAyu6ny1xXWkRSmE5+Q8foxCV5WFQm/M7nZ
-8bzOkGaIrpIjvFHqzAX5EWiysKqDkvH+3zZZofacSzu/mghR0dYhmwu2zzsz4S2i
-ZZ2WDOQh5rGzo9shSPlN95x7zSxIHv668dxki239m89AifAB2pdpaScoxXEGY2W2
-lvUkbzHnJnV2TZzEyDEcwejvkQy+RQ==
-=keMH
------END PGP SIGNATURE-----
---=-=-=--
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
