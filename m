@@ -1,122 +1,151 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8sy14FQ"
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8798FCE
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 21:11:39 -0800 (PST)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5d33574f64eso52982237b3.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 21:11:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0IOGF/9"
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63B1ED5
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 21:39:26 -0800 (PST)
+Received: by mail-ua1-x933.google.com with SMTP id a1e0cc1a2514c-7cac4a9c5b5so1228413241.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 21:39:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702357899; x=1702962699; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=efhztduuZIlbY8gtoUVvteotjPJzAA0l+EK879qIAA0=;
-        b=i8sy14FQ5VWVan1sB6rY7A3f6xQ1sHDXkvJoovOt35dtUebYW0+TL04iBmm8oY2qf5
-         gmql6tIW/3zhcQfHfzvcAo7HZk+1AaMkJDy5XY59kmqXNnkHjuF5AYCWbZ7/67dkpxzD
-         10hsumXD/XHadtiEv3a+b4/WgVAze0RGPaZ+9cFCdqXo37YQecMfUHKO+ohfXZnz7A5V
-         FVudVYLiXZ0rOixh7sQ7abEJQR5Cpne2RCruHlb9WzcLsXb+2eAFgNtBl+L9noxVj4C6
-         133kNkV6ORX+IFnok7znCgAJ65ggelsCgWqEp/92Yab3qSzVVK6cRuuvZEjTf7xpvSy0
-         f/3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702357899; x=1702962699;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1702359565; x=1702964365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=efhztduuZIlbY8gtoUVvteotjPJzAA0l+EK879qIAA0=;
-        b=Ibtn/bBStGCfPtCmkzIfvSvYkpJVF6WyfywPDyF7sZvAVtNhXkw1avdNawxHFVy5Zq
-         fjUhCxhkexRTIQtkO2dGE2RJPcmvq8ADfIv2QMqzIsP8ZWSv5KFX2EUUXaIpjHlD1leY
-         xhvGBpSF4l7BvGQCuuJ71PmtEhPgA+zbOrcmDosmy7SL4sAPt035GymS/8wqPJ5ZebkG
-         qacrqi9NBgGgU9tIiCox9svcC86WX4R9NK8TIME88wpfJUvsXtemJi+hCPgGhGy+q46g
-         qbC8jUg1S3JLMnVYOqWq4hcBERJyf45bdu7dsReIMlUD3NK5S9EqhiTNhn9fW+8qkd/v
-         Js4Q==
-X-Gm-Message-State: AOJu0YxZt8850xghzIvOt0Y5NnY9tU8+hoRzwv+a8sgXJ+eF4xhT5IyQ
-	FZojQnS/Kz9hBdgDkpjp7Zumt8uW9VcU6g==
-X-Google-Smtp-Source: AGHT+IH7XAeJow/VB+6EaHQqX8MAujQsj+TAU/S53+aGMo4e7wTNOPaUX+dhBGViFk9bdLu8g6ZHEg==
-X-Received: by 2002:a05:690c:2c84:b0:5e1:79fc:fe77 with SMTP id ep4-20020a05690c2c8400b005e179fcfe77mr1175848ywb.55.1702357898614;
-        Mon, 11 Dec 2023 21:11:38 -0800 (PST)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id c10-20020a170902aa4a00b001b86dd825e7sm7532011plr.108.2023.12.11.21.11.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Dec 2023 21:11:37 -0800 (PST)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date: Tue, 12 Dec 2023 14:11:34 +0900
-Message-Id: <20231212051134.48524-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+        bh=j/nfl6+GaD4Qn3MjtsV3jUS8ZLKPlwsaFZp1B5lXgg4=;
+        b=Z0IOGF/9r3pz8CEtZPaT8z2ygFvk91+XKlANK6Rrp7MVq1rKKhKDRFXwh9tHJlfS7f
+         j1R97FZQxh8QKT8/rY06j2r+BRcR0NbB1N2BGFMTaTuDWgdjlv0/YcV+JrboMJNZlGB7
+         hJTFOs7PW5FDDFxl8fsNRQFp6qIwb1pD9aoyrOwGmz17J0LyGGlbXypfOpSe0kWLN3LO
+         yX2yTvz/6SvI1PxXHYAHtsLOrdrfKayGXtSAdn/a5nkRFoGU9ve55QFSyz/vo6O3UH5h
+         nH6pMG4KmpcvBCzjQwDFEznRq2s8JFsF0IMynt/UnBB5lrb00VE/UarhYJZd0cYLlb8S
+         uAYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702359565; x=1702964365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j/nfl6+GaD4Qn3MjtsV3jUS8ZLKPlwsaFZp1B5lXgg4=;
+        b=rXgPDWq1iQUvCKCtvQGZvZnnVbXpWcU2zSKXQBIfP/hecFd6HXZevMhRHogqDR3q7W
+         EhBd3rN4j9CCw+4aFA4pvKjWKy8usUwLzakhZAkC34qiHOyW6gG5HmGEyTQjPD/7hDEk
+         NpoC9pP0Al70Nj2YqiqsSmQOFHsNB/XfPQO086Yx0rc4+qY7324RKsnqkJx9F5kyq40O
+         S4a5rQ570BHlj+KT7OgjMGKseBmDbmZ5NsUNTy+riaeQcF2yK+2Fwnu2nIUtmlAiJFhC
+         d1bWn7PQ6Ao/wspyuhgu7bCnxeV48OzCPll/g6xHI47VCHwzJ1ASIuJAtNhaY2Nd2Mf1
+         CzKg==
+X-Gm-Message-State: AOJu0YxNrWlyxTI2hb1Qcyu0+EP395kW1axHUTPdFYbwZkANuJYyvLhN
+	WNW928P+APLf1RY3Dp0Kcl2SRZGLagL71kaEMBkYhT8unSRMEw==
+X-Google-Smtp-Source: AGHT+IFuA4Vm1xOo/b5ypPGswpsFKKTLBm7xwx8r3F1B1AErinJ1oK7Hecn7PcY7E+X+v3iVTp01WBsEaCLlCnxwXU4=
+X-Received: by 2002:a1f:f809:0:b0:4b2:c6b2:5260 with SMTP id
+ w9-20020a1ff809000000b004b2c6b25260mr4273038vkh.1.1702359565475; Mon, 11 Dec
+ 2023 21:39:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20231102165640.3307820-18-u.kleine-koenig@pengutronix.de>
+ <20231102165640.3307820-26-u.kleine-koenig@pengutronix.de>
+ <CAAQKjZOnVSaO6QHpSo_i=WgTaawTq0UFtzwTw8kQ5iHN4qiAtQ@mail.gmail.com>
+ <20231108075454.3aivzrbvtr4en22e@pengutronix.de> <CGME20231128165521epcas1p4993f7d2fab0723130a4612d810d254f8@epcas1p4.samsung.com>
+ <20231128165505.wm4xs4ktycswthkt@pengutronix.de> <048901da28b6$5be8e700$13bab500$@samsung.com>
+ <20231207080338.kcjx7uixxjw2axtc@pengutronix.de>
+In-Reply-To: <20231207080338.kcjx7uixxjw2axtc@pengutronix.de>
+From: Inki Dae <daeinki@gmail.com>
+Date: Tue, 12 Dec 2023 14:38:47 +0900
+Message-ID: <CAAQKjZPxatiZG+HJeXW9UYFiSOuGD0EgvWKiOrYCuhk27x2AwQ@mail.gmail.com>
+Subject: Re: [PATCH v3 08/16] drm/exynos: Convert to platform remove callback
+ returning void
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, 
+	Jingoo Han <jingoohan1@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	DRI mailing list <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	David Airlie <airlied@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dave and Daniel,
+Hello Uwe Kleine-K=C3=B6nig,
 
-   Just one fixup to shutdown relevant issue and two cleanups.
+2023=EB=85=84 12=EC=9B=94 7=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 5:03, U=
+we Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Hello Inki,
+>
+> On Thu, Dec 07, 2023 at 11:37:44AM +0900, =EB=8C=80=EC=9D=B8=EA=B8=B0/Tiz=
+en Platform Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90 wrote:
+> > Hello Uwe Kleine-K=C3=B6nig,
+> >
+> > > -----Original Message-----
+> > > From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> > > Sent: Wednesday, November 29, 2023 1:55 AM
+> > > To: Inki Dae <daeinki@gmail.com>
+> > > Cc: linux-samsung-soc@vger.kernel.org; Daniel Vetter <daniel@ffwll.ch=
+>;
+> > > Jingoo Han <jingoohan1@gmail.com>; Seung-Woo Kim <sw0312.kim@samsung.=
+com>;
+> > > Kyungmin Park <kyungmin.park@samsung.com>; DRI mailing list <dri-
+> > > devel@lists.freedesktop.org>; Krzysztof Kozlowski
+> > > <krzysztof.kozlowski@linaro.org>; kernel@pengutronix.de; Alim Akhtar
+> > > <alim.akhtar@samsung.com>; David Airlie <airlied@gmail.com>; linux-ar=
+m-
+> > > kernel@lists.infradead.org
+> > > Subject: Re: [PATCH v3 08/16] drm/exynos: Convert to platform remove
+> > > callback returning void
+> > >
+> > > Hello Inki,
+> > >
+> > > On Wed, Nov 08, 2023 at 08:54:54AM +0100, Uwe Kleine-K=C3=B6nig wrote=
+:
+> > > > Hello Inki,
+> > > >
+> > > > On Wed, Nov 08, 2023 at 01:16:18PM +0900, Inki Dae wrote:
+> > > > > Sorry for late. There was a merge conflict so I fixed it manually=
+ and
+> > > > > merged. And seems your patch description is duplicated so dropped
+> > > > > duplicated one.
+> > > >
+> > > > Ah. I have a template that generates one patch per driver. I guess =
+this
+> > > > is the result of using squash instead of fixup while putting all ex=
+ynos
+> > > > changes into a single patch.
+> > >
+> > > This patch didn't make it into next yet even though it's included in
+> > > your exynos-drm-next branch at
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.gi=
+t.
+> > >
+> > > Is this on purpose?
+> >
+> > drm-exynos tree is not included in the next tree. It was previously
+> > included, but it has been removed. drm-exynos tree is merged into the
+> > mainline through the drm-next tree, but when the drm-next is
+> > synchronized to the next tree, a conflict occurred between the
+> > exynos-drm tree and the drm-next tree. Therefore, I had requested that
+> > drm-exynos tree be removed from the next. Perhaps I was inexperienced
+> > in managing the git tree at that time. :)
+>
+> That sounds more like a reason to have your tree in next. One of the
+> core motivations of next is to find inter-tree conflicts early. If such
+> a conflict occurs and you only notice it when it's time to send your PR
+> to drm-next (or even later) the pressure to fix the problem is higher.
+>
+> Also for patch contributors it's nice to have a "complete" next, their
+> tests are more expressive then.
+>
+> So I want to encourage you to readd your tree to next.
 
-   Please kindly let me know if there is any problem.
+Thanks for your feedback. Requested to Stephen Rothwell. :)
 
 Thanks,
 Inki Dae
 
-
-The following changes since commit a2f8994c1001cfa48483a3afa3550016a3ab0a3e:
-
-  Merge tag 'exynos-drm-next-for-v6.7-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos into exynos-drm-next (2023-12-12 13:06:29 +0900)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.8
-
-for you to fetch changes up to ead5a41c8f8a13ad7b1c9fd2d7edb1ea909b777f:
-
-  drm/exynos: dpi: Change connector type to DPI (2023-12-12 13:06:38 +0900)
-
-----------------------------------------------------------------
-One bug fix
-- Add a missing call to drm_atomic_helper_shutdown() in Exynos DRM
-driver.
-
-  This function is necessary during system shutdown and when the driver
-  is unbound. Without this function, components like panels may not shut
-  down properly, potentially leading to power issue as mentioned in the
-  kernel documentation, specially in the "driver instance overview"
-  secstion of 'drm_drv.c'.
-
-Two cleanups
-- Convert '.remove()' callback function in the Exynos DRM platform
-  driver to a version that returns void instead of an integer.
-- Change connector type of exynos_drm_dpi.c module to DPI.
-
-----------------------------------------------------------------
-Douglas Anderson (1):
-      drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
-
-Paul Cercueil (1):
-      drm/exynos: dpi: Change connector type to DPI
-
-Uwe Kleine-König (1):
-      drm/exynos: Convert to platform remove callback returning void
-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  6 ++----
- drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  6 ++----
- drivers/gpu/drm/exynos/exynos_dp.c            |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_dpi.c       |  2 +-
- drivers/gpu/drm/exynos/exynos_drm_drv.c       | 16 +++++++++++++---
- drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_mic.c       |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 ++----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  6 ++----
- drivers/gpu/drm/exynos/exynos_hdmi.c          |  6 ++----
- drivers/gpu/drm/exynos/exynos_mixer.c         |  6 ++----
- 15 files changed, 40 insertions(+), 56 deletions(-)
+>
+> Best regards
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | https://www.pengutronix.de/ =
+|
