@@ -1,177 +1,122 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PUT/0HrM"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF8439B;
-	Mon, 11 Dec 2023 15:57:17 -0800 (PST)
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231211235712epoutp02fc6492c306a0c87b00f73d2b96eaddb1~f7FS22I-N1560215602epoutp02X;
-	Mon, 11 Dec 2023 23:57:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231211235712epoutp02fc6492c306a0c87b00f73d2b96eaddb1~f7FS22I-N1560215602epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702339032;
-	bh=bBw6NK33ONaSuHSNqwie2fG1DfnIrR8z9bBcfqRccco=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=PUT/0HrMIoBxCMk8iXdgFD0X2Sg28os0ByEf6vCuabil4sWM0oFEYVseZv4lSYqGa
-	 LsccOknD0Dn8ODSwTq9QpwtT39Vp0wonnBzyqeETRPkUJk0S10LW+thNOiM5+ibXmp
-	 AU+1O/H/t6/tRSNZdApzyfnLCAzYAFg6AXeuaPOU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20231211235712epcas1p39dede76e04ae14189f0260fca7d7d07a~f7FSfcmRd2517825178epcas1p3Y;
-	Mon, 11 Dec 2023 23:57:12 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.144]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4SpzF30zJRz4x9Q1; Mon, 11 Dec
-	2023 23:57:11 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	40.C5.19104.6D1A7756; Tue, 12 Dec 2023 08:57:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20231211235710epcas1p314c62a7abccf937bd63907c3c8166efc~f7FQ4CCEp2515825158epcas1p3o;
-	Mon, 11 Dec 2023 23:57:10 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231211235710epsmtrp27050d1763a3b4c4daa8ddc76689a55d1~f7FQ2wCih2834428344epsmtrp2m;
-	Mon, 11 Dec 2023 23:57:10 +0000 (GMT)
-X-AuditID: b6c32a4c-80dff70000004aa0-47-6577a1d65ccb
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5D.68.07368.6D1A7756; Tue, 12 Dec 2023 08:57:10 +0900 (KST)
-Received: from cw00choi03 (unknown [10.113.111.106]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231211235710epsmtip18f3770cc7713786a97d3d0f4185e114d~f7FQUXaxH1746317463epsmtip1G;
-	Mon, 11 Dec 2023 23:57:10 +0000 (GMT)
-From: "Chanwoo Choi" <cw00.choi@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-	<conor+dt@kernel.org>, <sboyd@kernel.org>, <tomasz.figa@gmail.com>,
-	<s.nawrocki@samsung.com>, <linus.walleij@linaro.org>,
-	<wim@linux-watchdog.org>, <linux@roeck-us.net>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
-	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-	<alim.akhtar@samsung.com>
-Cc: <tudor.ambarus@linaro.org>, <andre.draszik@linaro.org>,
-	<semen.protsenko@linaro.org>, <saravanak@google.com>,
-	<willmcvicker@google.com>, <soc@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-watchdog@vger.kernel.org>, <kernel-team@android.com>,
-	<linux-serial@vger.kernel.org>
-In-Reply-To: <20231211162331.435900-7-peter.griffin@linaro.org>
-Subject: RE: [PATCH v7 06/16] dt-bindings: clock: google,gs101: fix
- incorrect numbering and DGB suffix
-Date: Tue, 12 Dec 2023 08:57:09 +0900
-Message-ID: <0ecc01da2c8d$c129e490$437dadb0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8sy14FQ"
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8798FCE
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 21:11:39 -0800 (PST)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5d33574f64eso52982237b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Dec 2023 21:11:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702357899; x=1702962699; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=efhztduuZIlbY8gtoUVvteotjPJzAA0l+EK879qIAA0=;
+        b=i8sy14FQ5VWVan1sB6rY7A3f6xQ1sHDXkvJoovOt35dtUebYW0+TL04iBmm8oY2qf5
+         gmql6tIW/3zhcQfHfzvcAo7HZk+1AaMkJDy5XY59kmqXNnkHjuF5AYCWbZ7/67dkpxzD
+         10hsumXD/XHadtiEv3a+b4/WgVAze0RGPaZ+9cFCdqXo37YQecMfUHKO+ohfXZnz7A5V
+         FVudVYLiXZ0rOixh7sQ7abEJQR5Cpne2RCruHlb9WzcLsXb+2eAFgNtBl+L9noxVj4C6
+         133kNkV6ORX+IFnok7znCgAJ65ggelsCgWqEp/92Yab3qSzVVK6cRuuvZEjTf7xpvSy0
+         f/3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702357899; x=1702962699;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=efhztduuZIlbY8gtoUVvteotjPJzAA0l+EK879qIAA0=;
+        b=Ibtn/bBStGCfPtCmkzIfvSvYkpJVF6WyfywPDyF7sZvAVtNhXkw1avdNawxHFVy5Zq
+         fjUhCxhkexRTIQtkO2dGE2RJPcmvq8ADfIv2QMqzIsP8ZWSv5KFX2EUUXaIpjHlD1leY
+         xhvGBpSF4l7BvGQCuuJ71PmtEhPgA+zbOrcmDosmy7SL4sAPt035GymS/8wqPJ5ZebkG
+         qacrqi9NBgGgU9tIiCox9svcC86WX4R9NK8TIME88wpfJUvsXtemJi+hCPgGhGy+q46g
+         qbC8jUg1S3JLMnVYOqWq4hcBERJyf45bdu7dsReIMlUD3NK5S9EqhiTNhn9fW+8qkd/v
+         Js4Q==
+X-Gm-Message-State: AOJu0YxZt8850xghzIvOt0Y5NnY9tU8+hoRzwv+a8sgXJ+eF4xhT5IyQ
+	FZojQnS/Kz9hBdgDkpjp7Zumt8uW9VcU6g==
+X-Google-Smtp-Source: AGHT+IH7XAeJow/VB+6EaHQqX8MAujQsj+TAU/S53+aGMo4e7wTNOPaUX+dhBGViFk9bdLu8g6ZHEg==
+X-Received: by 2002:a05:690c:2c84:b0:5e1:79fc:fe77 with SMTP id ep4-20020a05690c2c8400b005e179fcfe77mr1175848ywb.55.1702357898614;
+        Mon, 11 Dec 2023 21:11:38 -0800 (PST)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id c10-20020a170902aa4a00b001b86dd825e7sm7532011plr.108.2023.12.11.21.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 21:11:37 -0800 (PST)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date: Tue, 12 Dec 2023 14:11:34 +0900
+Message-Id: <20231212051134.48524-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQEeDlMUs+qnFg95EVUf+Z9FZqMuEwIO8XO4Aj/o0Sqx+ofWIA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xbVRz29La3hQ28KzWcIWFdjS5DCxQoHshw6hi5GZiQoeCMDhq4UkJp
-	mz4ANWbEPRgPCRsQoZPBwkTA8n6/xiiMDUTcskFR2AYWB4xZBIIbg4Itlyn/fb/vfN/vdfLj
-	YNwbbBdOvFxDqeQSmQC3Zzb3HvQUGq8kU163lxlo8nIzjhofNzCR5WI/Gy2UZQGk7xpmoOK+
-	YRY6XVqDI3ORK2pt4aHs2SkM5a3/yED1plEWWsx6wEINxesAFfx6jYGGSr9lo7Hqa2w0fWWI
-	ge4MHkWDxmUc1RZsMNHZrj426n2SxkIZBguONkbrmGgm2+oyGddxVNluTbL0+0l0ZkKMKpc2
-	ATLNbWDv8snmjmYWqb+sB+Ta84uAXBg7yybbdPfZZEm9lqyvTMfJidFOnKzQ61lkd5GeTTZc
-	PUXeu/UNi2x7msomsxsrAblc7xb28icJh6SUJJZS8Sl5jCI2Xh4XKAgJjzoSJfbzEglF/uht
-	AV8uSaQCBUGhYcLgeJl1XQJ+kkSmtVJhErVa4PnOIZVCq6H4UoVaEyiglLEypVjpoZYkqrXy
-	OA85pQkQeXl5i63C6ARpz4MLbGWjY4pxKikVtOzOAHYcSPjCkqYWdgaw53CJTgCLxywYHSwB
-	2HKpA6eDfwCs7s/DXliKh0oB/dAF4FrrPJMO5gBMvTppVXE4OPEWLHn2kc3AIyYx2JVnZ9Ng
-	hB6Dq5sTW5nsiMNwrCuVacNOhBROmsu3eCbxOlzMKcJt2IHwh+3V/Swa74EDhdNbeozYB1v+
-	+n67Iz5c/bOMRfM8eCn9HEYXfh8+HC1g2ApDIt8ejlWtsGlDELQsDbNo7AQf32zc5l3gsrkL
-	pw25AN6Zn8fooAbAuooz2+V8YPcPuQzbmBhxENa0e9L0fti2VgToLhyheSWLZZNAwgGeP8el
-	Ja/Bu5P3GTTeC0vT0vEcINDtmE23Yzbdjnl0/xcrAcxK4EIp1YlxVIxIKRLKqeT/vjxGkVgP
-	tu7JPbQVPK2xeBgAgwMMAHIwAc/BtU9NcR1iJV98SakUUSqtjFIbgNi68QuYyysxCutByjVR
-	Il9/L18/bx9fJPITCZwdhu4lUVwiTqKhEihKSale+BgcO5dURuG4wJkbohAmGTLtlPExCTdK
-	onXy/bzdAcnhP9UYuj/46jtqc5yXfCsenxl42EQWvKk9/+y97LvtsRXD3ZbstM58t2nxqONh
-	QwrgJ7XxnGqdgqOTmv7+xXRkSusXODcyN1Pce6D1WM5vhaFCc6QUKBJz43qYox+fqLPfNC3l
-	D2QOwD1uE4O1DQufPRefTnX8XK3K7vMZ3+e0Ykkxyma/No9M1UasRxuH+t0OSL0fhWTCXe03
-	J6TOp9449vPxhiBRd3mhMau36mREMOuEynfcHPfk9qOEYPdF18Jd4WXXj2dwZ6tGcvcarq+W
-	j3/4amT9HwUdJpfIgD5PYYRF1hP2KfMlAVMtlYjcMZVa8i8FxU6q2AQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0xTVxyGc+6/XpqBl9K5U8YY62JG3FYpzu3MGCUsS26yxJHhPogZ2MC1
-	GKCQVtAuY1QcVYsQhhspZVgMiuFSRUoH0lL+tEwRkdmGFMKUaQpBHOgEE8RBGaVZxrf3PL/f
-	+5zz4dC4qJmMpo+qjnFqlSJXSgmJDrc09kPfxeNcwuy4BD280EEh25N2Aq1W3xSgZ03nALI4
-	RzBkHhgh0anGVgo9rY9BNzrFqPLxIxz9tHIFQ1a/j0TPz02SqN28ApDx9x4MDTdWCND4tR4B
-	mro4jCHP0OdoaGyRQteNAQKVOQcEyD13mkQG1yqFAr42As1Urrf8YysU4u3rkoWJdPTD/V2I
-	X1gDyD8bwJPi2A5HB8laLlgA+8+rasA+Gy8TsF2mBwK2wVrIWvmzFHvf102xzRYLyfbWWwRs
-	+6USdnSwlGS7lnQCttLGA3bRGpuyJU24J4vLPVrEqXfsPSzM7p/8UVBgizgx9qhIBzpfM4Aw
-	GjIfQfNwIzAAIS1iHAB6WhxkaCCBNZ7fcAOg13MUdLs1oZ0ZAO/8VY4FOcV8ABtefh3kYuYF
-	Dvkzy1jwgDN2HI7o9GSo4QbQ52+hgtYwZh8cd+qIYI5ijkBvTQ0WzASzDT6vqt/YCWc+hfZr
-	N8lQjoS3a6eI4G04I4P6NhDEOPM27Jz/BQ89NA4uTzeRIS6GdWf1G1zMJMM/fUasCkSZNplM
-	/5tMm0ymTe0GQPBAwhVo8pR5mfICuYo7LtMo8jSFKqUsMz/PCjZ+0/b4G2DSHJC5AEYDF4A0
-	LhWHxwxoOFF4lkL7LafOz1AX5nIaF3iTJqRvhMuNdVkiRqk4xuVwXAGn/m+K0WHROux7+9Wr
-	ezOe1qWW7dvzyiZL8bRsPZDaVjrnuuXw9CrfT5p8oD15K/HQnb4rVF1i9VfqmlHzZ+9VvEVL
-	17zf/IFNxyfm/GxIbb1X+mVgd0l/SqSxb3m6L3lL8b14yimUL+3cKuku1zmaGXPsdxMv/Ky+
-	9YTXe+A6//iTXQ8zLqkjlxUV8w5YX2zvGZpaLUy//W5CX/7r/KxWX5Sf0G7PTIpbTFOF7b+c
-	TPe+FGqravX8RO1aSWzE0oDmi3Rbv69p4e6TrkGt/dcdimhMdNiLV6gaD/49f3Iu+4zNtDvt
-	/PlyOklSlHMk+uPLztMGZluxcnSn/FTbIB+xMH/3nZmY7pJqKaHJVsi342qN4l/cq8GFvAMA
-	AA==
-X-CMS-MailID: 20231211235710epcas1p314c62a7abccf937bd63907c3c8166efc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231211162506epcas1p290e6adbb82f27ebade65376f298f7fd3
-References: <20231211162331.435900-1-peter.griffin@linaro.org>
-	<CGME20231211162506epcas1p290e6adbb82f27ebade65376f298f7fd3@epcas1p2.samsung.com>
-	<20231211162331.435900-7-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi Dave and Daniel,
+
+   Just one fixup to shutdown relevant issue and two cleanups.
+
+   Please kindly let me know if there is any problem.
+
+Thanks,
+Inki Dae
 
 
+The following changes since commit a2f8994c1001cfa48483a3afa3550016a3ab0a3e:
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin@linaro.org>
-> Sent: Tuesday, December 12, 2023 1:23 AM
-> To: robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
-> mturquette@baylibre.com; conor+dt@kernel.org; sboyd@kernel.org;
-> tomasz.figa@gmail.com; s.nawrocki@samsung.com; linus.walleij@linaro.org;
-> wim@linux-watchdog.org; linux@roeck-us.net; catalin.marinas@arm.com;
-> will@kernel.org; arnd@arndb.de; olof@lixom.net;
-gregkh@linuxfoundation.org;
-> jirislaby@kernel.org; cw00.choi@samsung.com; alim.akhtar@samsung.com
-> Cc: peter.griffin@linaro.org; tudor.ambarus@linaro.org;
-> andre.draszik@linaro.org; semen.protsenko@linaro.org;
-saravanak@google.com;
-> willmcvicker@google.com; soc@kernel.org; devicetree@vger.kernel.org;
-linux-
-> arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> clk@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
-> watchdog@vger.kernel.org; kernel-team@android.com; linux-
-> serial@vger.kernel.org
-> Subject: [PATCH v7 06/16] dt-bindings: clock: google,gs101: fix incorrect
-> numbering and DGB suffix
-> 
-> 166 was skipped by mistake and two clocks:
-> * CLK_MOUT_CMU_HSI0_USBDPDGB
-> * CLK_GOUT_HSI0_USBDPDGB
-> 
-> Have an incorrect DGB ending instead of DBG.
-> 
-> This is an ABI break, but as the patch was only applied yesterday this
-header
-> has never been in an actual release so it seems better to fix this early
-than
-> ignore it.
-> 
-> Fixes: 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock
-management
-> unit bindings")
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  include/dt-bindings/clock/google,gs101.h | 118 +++++++++++------------
->  1 file changed, 59 insertions(+), 59 deletions(-)
-> 
+  Merge tag 'exynos-drm-next-for-v6.7-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos into exynos-drm-next (2023-12-12 13:06:29 +0900)
 
-(snip)
+are available in the Git repository at:
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.8
 
-Best Regards,
-Chanwoo Choi
+for you to fetch changes up to ead5a41c8f8a13ad7b1c9fd2d7edb1ea909b777f:
 
+  drm/exynos: dpi: Change connector type to DPI (2023-12-12 13:06:38 +0900)
 
+----------------------------------------------------------------
+One bug fix
+- Add a missing call to drm_atomic_helper_shutdown() in Exynos DRM
+driver.
+
+  This function is necessary during system shutdown and when the driver
+  is unbound. Without this function, components like panels may not shut
+  down properly, potentially leading to power issue as mentioned in the
+  kernel documentation, specially in the "driver instance overview"
+  secstion of 'drm_drv.c'.
+
+Two cleanups
+- Convert '.remove()' callback function in the Exynos DRM platform
+  driver to a version that returns void instead of an integer.
+- Change connector type of exynos_drm_dpi.c module to DPI.
+
+----------------------------------------------------------------
+Douglas Anderson (1):
+      drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+
+Paul Cercueil (1):
+      drm/exynos: dpi: Change connector type to DPI
+
+Uwe Kleine-König (1):
+      drm/exynos: Convert to platform remove callback returning void
+
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  6 ++----
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    |  6 ++----
+ drivers/gpu/drm/exynos/exynos_dp.c            |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c       |  2 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c       | 16 +++++++++++++---
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_mic.c       |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c    |  6 ++----
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      |  6 ++----
+ drivers/gpu/drm/exynos/exynos_hdmi.c          |  6 ++----
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  6 ++----
+ 15 files changed, 40 insertions(+), 56 deletions(-)
