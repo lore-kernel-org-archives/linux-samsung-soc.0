@@ -1,199 +1,198 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gMsfmIur"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3AA18B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 03:02:10 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231213110208epoutp0469d8377ec5969c7e5b89b3a2c4d20aa3~gXzI5mIbe0589905899epoutp04D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 11:02:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231213110208epoutp0469d8377ec5969c7e5b89b3a2c4d20aa3~gXzI5mIbe0589905899epoutp04D
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="I5JKVwPS"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4915E8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 05:43:01 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20231213134259euoutp01c416b03f42358d48bf84d282d9142b2f~gZ-k3NWlV2623026230euoutp01W
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 13:42:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20231213134259euoutp01c416b03f42358d48bf84d282d9142b2f~gZ-k3NWlV2623026230euoutp01W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702465328;
-	bh=2lm3qEVBSJdxq4/4EUzCWV6QE445bHlIbiCqwVyw6Ns=;
+	s=mail20170921; t=1702474979;
+	bh=rNqOysxNvghIHLfBsJRjXzN0I4umlYU/VpEb2iWIYhE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gMsfmIur42JVQIOh6hVFVeTsKPidfcITtpLzmTSmUG9u2JohfF2TgWAaE5eJsswD+
-	 iLns5YPln/481vK90lnZUFmBsMh+VUJCxQY4yQyaoziPpzr0zooJ2eVT5zQl8Aj3Nc
-	 YMoEsEb6f/FW3Ao/0uorv2uLy+/PuNZLbFzvCLzg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20231213110207epcas5p3e33afff16ddcd8364be6b5fa84972da2~gXzIaq4C70873008730epcas5p3b;
-	Wed, 13 Dec 2023 11:02:07 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Sqsxp2cn5z4x9Pt; Wed, 13 Dec
-	2023 11:02:06 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7D.09.09672.E2F89756; Wed, 13 Dec 2023 20:02:06 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231213081148epcas5p215061f6452b43e00dd20e5db6b50bbb9~gVea1QCbK1902219022epcas5p2t;
-	Wed, 13 Dec 2023 08:11:48 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231213081148epsmtrp1ad214c600c06faf6999d54905457e3e5~gVeatpkwc2335123351epsmtrp1n;
-	Wed, 13 Dec 2023 08:11:48 +0000 (GMT)
-X-AuditID: b6c32a4b-60bfd700000025c8-55-65798f2ec816
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	20.35.07368.44769756; Wed, 13 Dec 2023 17:11:48 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20231213081143epsmtip2b7286351edc2ff3bd11978342dc54eab~gVeWYOpzH1538715387epsmtip2P;
-	Wed, 13 Dec 2023 08:11:43 +0000 (GMT)
-From: Aakarsh Jain <aakarsh.jain@samsung.com>
-To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
-	robh+dt@kernel.org, conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
-	andi@etezian.org, gost.dev@samsung.com, alim.akhtar@samsung.com,
-	aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
-	ajaykumar.rs@samsung.com, aakarsh.jain@samsung.com, linux-fsd@tesla.com,
-	Smitha T Murthy <smithatmurthy@gmail.com>
-Subject: [Patch v6 10/10] media: s5p-mfc: DPB Count Independent of
- VIDIOC_REQBUF
-Date: Wed, 13 Dec 2023 13:41:05 +0530
-Message-Id: <20231213081105.25817-11-aakarsh.jain@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20231213081105.25817-1-aakarsh.jain@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmhq5ef2WqwZsrAhZPd8xktTjw/iCL
-	xYN529gsFv94zmRxf/FnFotDm7eyW6zZe47JYv6Rc6wWNw/sZLK4OPMui0Xfi4fMFpseX2O1
-	ePgq3OLyrjlsFj0btrJazDi/j8li7ZG77BbLNv1hsli09Qu7ReveI+wWLY1LWB1EPa4v+cTs
-	sXPWXXaPxXteMnlsWtXJ5nHn2h42j81L6j36tqxi9PjXNJfd4/MmOY9TXz+zB3BFZdtkpCam
-	pBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAP2opFCWmFMKFApI
-	LC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAwMgUqTMjO+HJbreC4
-	dMXK+b+YGhj/inUxcnJICJhITH44nb2LkYtDSGA3o8TC7RdZIJxPjBKn2w8xQjjfGCU+vPrF
-	CtOyqGs5E0RiL6PEs67/rBBOK5PEsROHgfo5ONgEdCXObs8BaRARaGSUeNxRAlLDLHCcWWLB
-	hJksIAlhgSCJz99usYHYLAKqEu83dILZvAJ2Ek+PH2aC2CYvsXrDAWYQmxMo/q5pP9hJEgI3
-	OCT+P+1nhihykfh1aQ/UecISr45vYYewpSRe9rdB2ckSjxe9hKrPkVi/ZwoLhG0vceDKHLCj
-	mQU0Jdbv0ocIy0pMPbUO7AZmAT6J3t9PoO7hldgxD8ZWk5hz5wfUWhmJw6uXMkLYHhIti7uY
-	IYEykVFi5cHPzBMY5WYhrFjAyLiKUTK1oDg3PbXYtMA4L7UcHmvJ+bmbGMHpWMt7B+OjBx/0
-	DjEycTAeYpTgYFYS4T25ozxViDclsbIqtSg/vqg0J7X4EKMpMAAnMkuJJucDM0JeSbyhiaWB
-	iZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1MfFM42xr5qmw+3JCfLP3gx4XJ
-	i/csutOQts61K2blmvsB0ftW7/L3yLb9dKNllxfzgo23Foat5Ve7c2+HrM2P3P2KUyWmcL31
-	P+vtoNb4lb/1pm4OT+z89i8qrzRUCmcfeOa5fS7H1Md1N7i8z0dJP1NVrzFemS4w1fSCpfE9
-	i5VMO2aEbjvtbeXx8VBX7Z6NdZsFk47mLz05dyrv/Px5t+7d5v8psPvoYdtjx1POH8v66nFk
-	lxbfkXc3j+29ynPofPnSCt0Yu9vT6qQ1e+/7Xd0XOSu2+NbSDclFS+39zXVU30xjEulsmrHj
-	oN6SpYHL75q2i72N+OLsYquupVHVs6pkmtDtSr6Jf5Ue7Xl2ca4SS3FGoqEWc1FxIgCGKHVp
-	UAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCLMWRmVeSWpSXmKPExsWy7bCSvK5LemWqwaRLQhZPd8xktTjw/iCL
-	xYN529gsFv94zmRxf/FnFotDm7eyW6zZe47JYv6Rc6wWNw/sZLK4OPMui0Xfi4fMFpseX2O1
-	ePgq3OLyrjlsFj0btrJazDi/j8li7ZG77BbLNv1hsli09Qu7ReveI+wWLY1LWB1EPa4v+cTs
-	sXPWXXaPxXteMnlsWtXJ5nHn2h42j81L6j36tqxi9PjXNJfd4/MmOY9TXz+zB3BFcdmkpOZk
-	lqUW6dslcGV8ua1WcFy6YuX8X0wNjH/Fuhg5OSQETCQWdS1n6mLk4hAS2M0oceVMFwtEQkbi
-	f9sxdghbWGLlv+fsEEXNTBILjywBcjg42AR0Jc5uzwGJiwi0MkpcX9kJNolZ4DazxKYJD8G6
-	hQUCJFbMeccMYrMIqEq839DJBmLzCthJPD1+mAlig7zE6g0HwGo4geLvmvYzgthCArYSy3ff
-	Zp7AyLeAkWEVo2RqQXFuem6yYYFhXmq5XnFibnFpXrpecn7uJkZwxGhp7GC8N/+f3iFGJg7G
-	Q4wSHMxKIrwnd5SnCvGmJFZWpRblxxeV5qQWH2KU5mBREuc1nDE7RUggPbEkNTs1tSC1CCbL
-	xMEp1cAk7njujs9Ktm1HDd9GhJ1tPDj7gX4wg/nZo5mqjO/cDpnYz5m34V/sy9l7PntHrHzg
-	Vbb0aOH2fzHSwdNOrjl7IdZzqfv9eYyrXpo/Ws67q2LrlgOSUR6f/+868Hz34sc7xJZPOpV3
-	d/HP4gmveKfEat/e3fzs6kn3lV+us8gs+trnWsc9q86UUcrw7us1j7RYP3q8v5vW1V1rd9DP
-	jXWKf5Xo9X/sOqvlI7ucwspi+/1PGnHILzkveP35PpN3jm9e94TmVdmrXpn60zDmi/aXbcsj
-	slZELFnZytdzbY3Zsy1Km22Ujp0/O185Ys0/uSsRf4Rvls7L+//BrmZm45vcrnrXyXuSo256
-	bzAQzsm6eEiJpTgj0VCLuag4EQCl7SCPBwMAAA==
-X-CMS-MailID: 20231213081148epcas5p215061f6452b43e00dd20e5db6b50bbb9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231213081148epcas5p215061f6452b43e00dd20e5db6b50bbb9
-References: <20231213081105.25817-1-aakarsh.jain@samsung.com>
-	<CGME20231213081148epcas5p215061f6452b43e00dd20e5db6b50bbb9@epcas5p2.samsung.com>
+	b=I5JKVwPS7NI+1MhgpjgjSIPTI4a3eGYtWevpdtFkXi3sKMEjg2cLrfB1XgKpl82GR
+	 rpDemzdMXXygLjUzEmbtTbbhhzJE7J0yNdfh7MOC54v56OP5xLoqCX8QQm2505VxeP
+	 nxMhP7Jg7W6sr02lHvkVP9wyy9qvXTjA3Q+XCSBw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20231213134258eucas1p2467ed59f8fcf4b3e7390152b93b74452~gZ-kQ0UjJ1456214562eucas1p2a;
+	Wed, 13 Dec 2023 13:42:58 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 02.EF.09552.2E4B9756; Wed, 13
+	Dec 2023 13:42:58 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231213134258eucas1p23b66a7989c326176386f4a7c619cde75~gZ-j0ryfy1461914619eucas1p2-;
+	Wed, 13 Dec 2023 13:42:58 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20231213134258eusmtrp228e258757d2a5e638dcbccaa8ccbf9b0~gZ-j0AZRU0566805668eusmtrp2K;
+	Wed, 13 Dec 2023 13:42:58 +0000 (GMT)
+X-AuditID: cbfec7f5-83dff70000002550-09-6579b4e2dcda
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8A.9E.09274.1E4B9756; Wed, 13
+	Dec 2023 13:42:58 +0000 (GMT)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20231213134257eusmtip1e480721ae417c29b1f686d762fe33c65~gZ-jMU9Zj1395513955eusmtip1X;
+	Wed, 13 Dec 2023 13:42:57 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, "Rafael J . Wysocki"
+	<rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui
+	<rui.zhang@intel.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Various Exynos targets never return to no cooling
+Date: Wed, 13 Dec 2023 14:42:34 +0100
+Message-ID: <20231213134235.1607510-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <5ad40adf-aa79-4281-9cc3-2a1e7c10a356@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7djP87qPtlSmGmybJ2/xfct1Jot5n2Ut
+	9r7eym5xedccNovPvUcYLWac38dksbCphd1i4rHJzBZrj9xlt5j7ZSqzxZOHfWwO3B5r5q1h
+	9Ng56y67x+I9L5k8Nq3qZPO4c20Pm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBl7Fpzj6lg
+	lkzFi94djA2MN8S7GDk5JARMJC5PfsfYxcjFISSwglFi85/FrBDOF0aJGZtPMUM4nxklGlfs
+	Z4RpafnxGMwWEljOKPHwVS5EUSuTxIVbT9lBEmwCBhIP3iwDs0UEVCWuXbjLAlLELDCXWaKz
+	eREbSEJYwE7i2Kk7TF2MHBwsQEW33iqBhHmBwq/3XGSCWCYvsWfRd7ASTgFriS/XBCFKBCVO
+	znzCAmIzA5U0b53NDFH+gkPi+xQpCNtFov1IEzuELSzx6vgWKFtG4v/O+VDj84GefM8CMl5C
+	oELi7kEvCNNa4uMZZhCTWUBTYv0ufYhiR4mji2exQVTwSdx4Kwixn09i0rbpzBBhXomONiGI
+	alWJ43smQZ0lLfGk5TbUSg+Jn4emsU5gVJyF5JNZSD6ZhbB3ASPzKkbx1NLi3PTUYuO81HK9
+	4sTc4tK8dL3k/NxNjMDUdPrf8a87GFe8+qh3iJGJg/EQowQHs5II78kd5alCvCmJlVWpRfnx
+	RaU5qcWHGKU5WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTLFSax5734+acOEN14HebTez
+	P7LckFLxO2l49viq+5724gqTxM5cPZ+kvt3+/w3J3rk5P8Jdf/yuy7XfcmtSgckdH7NZp5bo
+	S73vaGO62So6zf3n8uP3NllpzZ4+a+KfH/MuJpqd+n13s4jG5ON7V1k6z5t0JMvsZ2/B0f8f
+	q1fm7FWQZl16mEW9zMnipbNWIM9C/eXB65Zv6E5y/s638t+VSbGX98hY/b8lqOswf/IbzQdq
+	Z9dpy0yas0f8qivnw/DbU8ocfdQ2CQnYu+j/bo6MD7VSZdQ8Nm2Ojp5hp2lm4Otr6tXOqj7H
+	cg6+Zu58vjWi8mccC9OzC79eN9WU6EsUTAoPu8lxS4vj48t/yZxKLMUZiYZazEXFiQDavMyv
+	vAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsVy+t/xu7qPtlSmGjRsYbT4vuU6k8W8z7IW
+	e19vZbe4vGsOm8Xn3iOMFjPO72OyWNjUwm4x8dhkZou1R+6yW8z9MpXZ4snDPjYHbo8189Yw
+	euycdZfdY/Gel0wem1Z1snncubaHzaNvyypGj8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQM
+	LS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQydq25x1QwS6biRe8OxgbGG+JdjJwcEgIm
+	Ei0/HjN2MXJxCAksZZS4Mv8aG0RCWuLwlynsELawxJ9rXWwQRc1MEqfX7GQFSbAJGEg8eLMM
+	rEhEQFXi2oW7LCBFzAJLmSXeXjkGNklYwE7i2Kk7TF2MHBwsQEW33iqBhHmBwq/3XGSCWCAv
+	sWfRd7ASTgFriS/XBEHCQgI8Eq827GeEKBeUODnzCQuIzQxU3rx1NvMERoFZSFKzkKQWMDKt
+	YhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIymbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4T+4o
+	TxXiTUmsrEotyo8vKs1JLT7EaAp09URmKdHkfGA855XEG5oZmBqamFkamFqaGSuJ83oWdCQK
+	CaQnlqRmp6YWpBbB9DFxcEo1MG1LP9SlPj1liSjv3tITfpW9M0zfqsQvluv5NNFz/pTHam+t
+	T0zI5Y08ELiTd4LNH80Jch2TTq5YZaAqsN9uv4HX/z7Ds/r/GHadOdAk9WaZ7y+pfcVb+2b+
+	YdkvfDkz7e2hxn/7Oz2S5ghb/WV9PYFn5/KAuCAr3gOfgjkX25ornf38PbD5O/uqw2s7ciYf
+	49ihO5nr0S2D5bmcjXnytptMdy0RU5vVc7PQJn+u4Msaxqwz9Zw76hLb3JdbaFpahi4Q+yqx
+	p77vyW+OG7nRNQKvvKU1phcazNR/tsTrwmSv1G2iXka5X/b6au9SZdo+Zd/ig4+bE3e3doh1
+	O6+yXl5Q8nv+Zo+jjXmbDv9puq7EUpyRaKjFXFScCACiFQvJLwMAAA==
+X-CMS-MailID: 20231213134258eucas1p23b66a7989c326176386f4a7c619cde75
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231213134258eucas1p23b66a7989c326176386f4a7c619cde75
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231213134258eucas1p23b66a7989c326176386f4a7c619cde75
+References: <CGME20231213134258eucas1p23b66a7989c326176386f4a7c619cde75@eucas1p2.samsung.com>
 
-Add allocation of DPB buffers based on MFC requirement so,
-codec buffers allocations has been moved after state
-MFCINST_HEAD_PRODUCED. It is taken care that codec buffer allocation
-is performed in process context from userspace IOCTL call.
+Hi,
 
-Cc: linux-fsd@tesla.com
-Signed-off-by: Smitha T Murthy <smithatmurthy@gmail.com>
-Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
----
- .../platform/samsung/s5p-mfc/s5p_mfc_enc.c     | 18 ++----------------
- .../platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c  |  7 +++++++
- 2 files changed, 9 insertions(+), 16 deletions(-)
+> I understand your requirement for the interrupts only mode, but
+> maybe till the moment there is no fix upstream, you can enable
+> it as well?
 
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-index ae3764969473..ef8bb40b9712 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-@@ -1164,7 +1164,6 @@ static int enc_post_seq_start(struct s5p_mfc_ctx *ctx)
- 	struct s5p_mfc_dev *dev = ctx->dev;
- 	struct s5p_mfc_enc_params *p = &ctx->enc_params;
- 	struct s5p_mfc_buf *dst_mb;
--	unsigned int enc_pb_count;
+We (actually Marek and independently another coworker) had an idea how
+to solve this while still avoiding polling all the time, and it turned
+out to be quite simple to implement (PoC-quality). The idea was to run
+several cycles of polling after each interrupt. This could be done like
+this:
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 6482513bfe66..b4bffe405194 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -760,6 +760,12 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+ {
+ 	struct exynos_tmu_data *data = id;
  
- 	if (p->seq_hdr_mode == V4L2_MPEG_VIDEO_HEADER_MODE_SEPARATE) {
- 		if (!list_empty(&ctx->dst_queue)) {
-@@ -1186,10 +1185,7 @@ static int enc_post_seq_start(struct s5p_mfc_ctx *ctx)
- 			set_work_bit_irqsave(ctx);
- 		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
- 	} else {
--		enc_pb_count = s5p_mfc_hw_call(dev->mfc_ops,
--				get_enc_dpb_count, dev);
--		if (ctx->pb_count < enc_pb_count)
--			ctx->pb_count = enc_pb_count;
-+		ctx->pb_count = s5p_mfc_hw_call(dev->mfc_ops, get_enc_dpb_count, dev);
- 		if (FW_HAS_E_MIN_SCRATCH_BUF(dev)) {
- 			ctx->scratch_buf_size = s5p_mfc_hw_call(dev->mfc_ops,
- 					get_e_min_scratch_buf_size, dev);
-@@ -1564,14 +1560,6 @@ static int vidioc_reqbufs(struct file *file, void *priv,
- 		}
- 		ctx->capture_state = QUEUE_BUFS_REQUESTED;
- 
--		ret = s5p_mfc_hw_call(ctx->dev->mfc_ops,
--				alloc_codec_buffers, ctx);
--		if (ret) {
--			mfc_err("Failed to allocate encoding buffers\n");
--			reqbufs->count = 0;
--			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
--			return -ENOMEM;
--		}
- 	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
- 		if (reqbufs->count == 0) {
- 			mfc_debug(2, "Freeing buffers\n");
-@@ -1587,15 +1575,13 @@ static int vidioc_reqbufs(struct file *file, void *priv,
- 			return -EINVAL;
- 		}
- 
--		if (IS_MFCV6_PLUS(dev)) {
-+		if (IS_MFCV6_PLUS(dev) && (!IS_MFCV12(dev))) {
- 			/* Check for min encoder buffers */
- 			if (ctx->pb_count &&
- 				(reqbufs->count < ctx->pb_count)) {
- 				reqbufs->count = ctx->pb_count;
- 				mfc_debug(2, "Minimum %d output buffers needed\n",
- 						ctx->pb_count);
--			} else {
--				ctx->pb_count = reqbufs->count;
- 			}
- 		}
- 
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-index 572293f3b190..fd945211d28e 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -2110,6 +2110,13 @@ static inline int s5p_mfc_run_init_enc_buffers(struct s5p_mfc_ctx *ctx)
- 	struct s5p_mfc_dev *dev = ctx->dev;
- 	int ret;
- 
-+	ret = s5p_mfc_hw_call(ctx->dev->mfc_ops, alloc_codec_buffers, ctx);
-+	if (ret) {
-+		mfc_err("Failed to allocate encoding buffers\n");
-+		return -ENOMEM;
-+	}
-+	mfc_debug(2, "Allocated Internal Encoding Buffers\n");
++	/* TODO: would need some API */
++	mutex_lock(&data->tzd->lock);
++	data->tzd->additional_poll_reps = 10;
++	data->tzd->additional_poll_jiffies = HZ / 10;
++	mutex_unlock(&data->tzd->lock);
 +
- 	dev->curr_ctx = ctx->num;
- 	ret = s5p_mfc_set_enc_ref_buffer_v6(ctx);
- 	if (ret) {
--- 
-2.17.1
+ 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+ 
+ 	mutex_lock(&data->lock);
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index 625ba07cbe2f..c825d068402f 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -299,12 +299,24 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
+ 
+ static void monitor_thermal_zone(struct thermal_zone_device *tz)
+ {
++	unsigned long delay;
++
+ 	if (tz->mode != THERMAL_DEVICE_ENABLED)
+-		thermal_zone_device_set_polling(tz, 0);
++		delay = 0;
+ 	else if (tz->passive)
+-		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
++		delay = tz->passive_delay_jiffies;
+ 	else if (tz->polling_delay_jiffies)
+-		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
++		delay = tz->polling_delay_jiffies;
++	else
++		delay = 0; /* TODO: ??? */
++
++	if (tz->additional_poll_reps > 0) {
++		tz->additional_poll_reps -= 1;
++		if (delay == 0 || tz->additional_poll_jiffies < delay)
++			delay = tz->additional_poll_jiffies;
++	}
++
++	thermal_zone_device_set_polling(tz, delay);
+ }
+ 
+ static void handle_non_critical_trips(struct thermal_zone_device *tz,
+@@ -425,6 +437,8 @@ static void thermal_zone_device_init(struct thermal_zone_device *tz)
+ 	tz->temperature = THERMAL_TEMP_INVALID;
+ 	tz->prev_low_trip = -INT_MAX;
+ 	tz->prev_high_trip = INT_MAX;
++	tz->additional_poll_jiffies = 0;
++	tz->additional_poll_reps = 0;
+ 	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
+ 		pos->initialized = false;
+ }
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index c7190e2dfcb4..576b1f3ef25d 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -172,6 +172,8 @@ struct thermal_zone_device {
+ 	int passive;
+ 	int prev_low_trip;
+ 	int prev_high_trip;
++	int additional_poll_reps;
++	unsigned long additional_poll_jiffies;
+ 	atomic_t need_update;
+ 	struct thermal_zone_device_ops *ops;
+ 	struct thermal_zone_params *tzp;
 
+In my tests this is enough to resolve the issue consistently on both
+TM2E and XU4, both before and after my other patchset.
+
+To be honest, this is not the most elegant solution probably and it
+still doesn't really take into account the governor needs. Therefore, if
+
+> Regarding this topic, I just wanted to tell you that I had conversation
+> with Rafael & Daniel last Fri. Rafael gave me a hint to his latest work
+> in his repo regarding potentially similar race with temperature value.
+
+brings a better solution, it would be great :)
+
+Thank you!
+Mateusz
