@@ -1,71 +1,85 @@
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9D29C;
-	Wed, 13 Dec 2023 14:11:27 -0800 (PST)
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3ba2dd905f9so313433b6e.2;
-        Wed, 13 Dec 2023 14:11:27 -0800 (PST)
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E1061FEE;
+	Wed, 13 Dec 2023 14:42:20 -0800 (PST)
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6d9da137748so14541a34.1;
+        Wed, 13 Dec 2023 14:42:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702505487; x=1703110287;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AgTgho1a4LA/XjrrePxUmui9LuYj0rwstzK1KGu7248=;
-        b=IMOdCTBYRRbRReNvThP/IthfKDyEycuBWJ2p5+YXsrp6tIPSvBf1h4tn3PPsU2obm7
-         UpTMqDdTQTW5MmKHd6Wo0FCc/O6JLWLVruzay5/RxcI9R1FfbGZ3oRi6+uIAQChboBIl
-         2aKolWYZQXhD0aK3W4mTou0lyLy9JQhQN05xk+XOE7toUrc4pa8usbnqI8zNs9Ye21Dt
-         fIABmmUfThbUT0YTunzXrzJ5G3oOempjphTxm/Z+jlIC+ZnAPBn8NwTnn3XQ317CPC/x
-         kjnp3Dz97l/rSuQpycw2PVcAKZ8b8psKCN3QEucCIq8Kh47X9qKkyO4hKvFyOznEXQgw
-         hVsw==
-X-Gm-Message-State: AOJu0YyHyH+Hc8OFkS2RtWR5Zz0F8PLl4ABVbKUmEcvgplWCFFo9+5Pm
-	ZB3JHFt3pTmCiJjq1RHSCQ==
-X-Google-Smtp-Source: AGHT+IHX5L5W/V5kcRHCZGCX9tUxlzQHF1lIwCR9ERJ7ag6EqOQsYnbBD4efejagEgtQrlmcp0mZLw==
-X-Received: by 2002:a05:6808:6493:b0:3ba:667:9e4f with SMTP id fh19-20020a056808649300b003ba06679e4fmr7673479oib.113.1702505486877;
-        Wed, 13 Dec 2023 14:11:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702507339; x=1703112139;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7K59ooZxYuShhkvJvLN2CDgTZo+xPppYuqKw2W9W670=;
+        b=JFAZwRQj4q8cNTgJ6GxwJHiRiRqr+Li4RfbnyuaQZeauoqD9ruLr48ZaZgMXVGEmgu
+         4ktvPm+Rx5uhq7jqYtLZTCtS+pw9lxeRM/BdQHDmLPzS8qAhHLq8R/Luk+Ew8nIS2XLV
+         erMHbxeSe+tjZS6n20zXgcL4fmav9+x+rkbis6pKw005zWcYUX4zSHN7Ee6Ti2RuZLZr
+         ROXvrUSGdDEwl5gZN7P9HMIlz3szCrgzC7TApQgBYfCkgMMe7ztl0wYgbBc+D5rXqinE
+         dhQwIBJVC2coyipyOha9sNDTYpiiufuEiwm1duBqWbluqRNOzwxnBngJphfhWjeTKb1e
+         ttaQ==
+X-Gm-Message-State: AOJu0Yytn/FmPyNILeHIDmlGU8nSZQGkpqXKonzWp3N+31XCdTns3/ik
+	3mzTAoxQw+rqVeUwg4u8gA==
+X-Google-Smtp-Source: AGHT+IHA7v1ulJzaKFeMR6eraq3R1cvHVp0vITLPnmA4eQUScOFCp8FpxEiaB/KLNBmQMGs6sL2urQ==
+X-Received: by 2002:a05:6830:84e:b0:6d9:dac7:8703 with SMTP id g14-20020a056830084e00b006d9dac78703mr4444660ott.26.1702507339248;
+        Wed, 13 Dec 2023 14:42:19 -0800 (PST)
 Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bh20-20020a056808181400b003b83c516e62sm3102354oib.51.2023.12.13.14.11.24
+        by smtp.gmail.com with ESMTPSA id m19-20020a0568301e7300b006b9cc67386fsm2958534otr.66.2023.12.13.14.42.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 14:11:26 -0800 (PST)
-Received: (nullmailer pid 2156812 invoked by uid 1000);
-	Wed, 13 Dec 2023 22:11:24 -0000
-Date: Wed, 13 Dec 2023 16:11:24 -0600
+        Wed, 13 Dec 2023 14:42:18 -0800 (PST)
+Received: (nullmailer pid 2191688 invoked by uid 1000);
+	Wed, 13 Dec 2023 22:42:17 -0000
 From: Rob Herring <robh@kernel.org>
-To: Mark Hasemeyer <markhas@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Raul Rangel <rrangel@chromium.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Andre Przywara <andre.przywara@arm.com>, 
-	Andy Gross <agross@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Baruch Siach <baruch@tkos.co.il>, 
-	Bjorn Andersson <andersson@kernel.org>, Claudiu Beznea <claudiu.beznea@microchip.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Jesper Nilsson <jesper.nilsson@axis.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Michal Simek <michal.simek@amd.com>, 
-	Paul Barker <paul.barker@sancloud.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, cros-qcom-dts-watchers@chromium.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 2/6] arm: arm64: dts: Enable cros-ec-spi as wake source
-Message-ID: <20231213221124.GB2115075-robh@kernel.org>
-References: <20231213110009.v1.1.Ifd0903f1c351e84376d71dbdadbd43931197f5ea@changeid>
- <20231213110009.v1.2.I274b2d2255eb539cc9d251c9d65a385cc4014c79@changeid>
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: display: samsung,exynos-mixer: Fix 'regs' typo
+Date: Wed, 13 Dec 2023 16:42:01 -0600
+Message-ID: <20231213224201.2191358-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231213110009.v1.2.I274b2d2255eb539cc9d251c9d65a385cc4014c79@changeid>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Dec 13, 2023 at 11:00:20AM -0700, Mark Hasemeyer wrote:
-> The cros_ec driver currently assumes that cros-ec-spi compatible device
-> nodes are a wakeup-source even though the wakeup-source property is not
-> defined.
+The correct property name is 'reg' not 'regs'.
 
-If a device knows it is wakeup capable, why do you need a property too?
-I haven't looked closely enough, but it smells like after patch 6, these 
-properties would be required for wakeup? That would be an ABI break.
+Fixes: 68e89bb36d58 ("dt-bindings: display: samsung,exynos-mixer: convert to dtschema")
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/display/samsung/samsung,exynos-mixer.yaml      | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Rob
+diff --git a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
+index 25d53fde92e1..597c9cc6a312 100644
+--- a/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
++++ b/Documentation/devicetree/bindings/display/samsung/samsung,exynos-mixer.yaml
+@@ -85,7 +85,7 @@ allOf:
+         clocks:
+           minItems: 6
+           maxItems: 6
+-        regs:
++        reg:
+           minItems: 2
+           maxItems: 2
+ 
+@@ -99,7 +99,7 @@ allOf:
+         clocks:
+           minItems: 4
+           maxItems: 4
+-        regs:
++        reg:
+           minItems: 2
+           maxItems: 2
+ 
+@@ -116,7 +116,7 @@ allOf:
+         clocks:
+           minItems: 3
+           maxItems: 3
+-        regs:
++        reg:
+           minItems: 1
+           maxItems: 1
+ 
+-- 
+2.43.0
+
