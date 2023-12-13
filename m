@@ -1,92 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZe4Qw9D"
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A8AD5B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 06:07:06 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-50bf3efe2cbso8000551e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 06:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702476424; x=1703081224; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3mpP4FYlQiPUrh7uh0fJ6KTyN1gKE2qxwNTY74r7how=;
-        b=LZe4Qw9DSx91S8VEjP5F6O/2Mfdwcf5v5CH+yrSQeUVPbLCqxb6saLFtH0gdNDFfXF
-         6guQ0eYz9iDwRTK8DkwfeF+WCMyHyVlTQC7Gp2WHK2W1Y+2O/5a6Qn1iy7Q332DEGmwE
-         aDL2Mt6RiNoPOlICDtWxXnSqt52VcxdkQogIPKHlPGzwK/W2qcME7jEeRFLF/KNRp/ma
-         Qzg9TX7JtDxT0tcRDPJGMO1ZdfeTW7wOTTwLWqfWQDKpaboXZqgomcON1Y1XFw2iDFoz
-         9UpplhI7ogKSafB/P7D3XZRv4+D7oSmTP0n60vhqrwNritrc+K5S71z4VyzYhIG92WoY
-         +EgA==
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33293CF;
+	Wed, 13 Dec 2023 06:32:46 -0800 (PST)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6d9fdbcec6eso3521982a34.1;
+        Wed, 13 Dec 2023 06:32:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702476424; x=1703081224;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3mpP4FYlQiPUrh7uh0fJ6KTyN1gKE2qxwNTY74r7how=;
-        b=cEwWJAyh1LxX5LwlADBDmzEcCp4UHpeZyTqic3ewR1CIJ1gSyXLqpFBgOiNVlb4xq2
-         v+fHKtF9I6VqBMD4HIY7xiDM6D15P/OWTbCDrm4zsX6cbP/71OlrU0J2H/FONwuW4ixE
-         dV03ZXDJbIB0DMp21XfgU71FGioTP+qgVqJOLk5dKTc995YKRz02/QAZVOBJpRgJspEx
-         8QIvlOzyp2YFUKE0bJ4Z5C3GHupZ+16/nOpladA0HTea1kTlpeKHnOD67cnqF8QvbL2L
-         y2YtH3iC1YoFu2SZGrH+RkqoqLOxogbAjgHfSOyKzoIlZyBQRJGA9Xf1vR66sO3XgHHf
-         agzw==
-X-Gm-Message-State: AOJu0Yz6Q3QeYVXsrKuSKqSEx3OLE6tPWC+F2xP/l7saZVp4ecUeAR0/
-	4EKaYJBf1uzi3wkl8RrhLOtO3w==
-X-Google-Smtp-Source: AGHT+IHLaGkIdnxeJBM1wGEeSYqCk0pgJ7QznFWs/siqTln1+v9poui80bpgefiIR9FIPcfUgGi6ww==
-X-Received: by 2002:a05:6512:2210:b0:50c:2135:cd4e with SMTP id h16-20020a056512221000b0050c2135cd4emr2244766lfu.14.1702476424112;
-        Wed, 13 Dec 2023 06:07:04 -0800 (PST)
-Received: from krzk-bin.. ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id vk2-20020a170907cbc200b00a1f76acb08fsm7037903ejc.134.2023.12.13.06.07.01
+        d=1e100.net; s=20230601; t=1702477965; x=1703082765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z0kWneZU0gge6lamU79WOa8q8MUgTJ3s6CXlsPKbl1w=;
+        b=FyNim23zynxG3N6xA4bc/o/jLotwbc7Hb+nLUZEEgJt+IbkMPm9pQWPzqlafCkPVn9
+         Pm+S8li22NhyDP06n6OUVS+eS+25+GI3gN1BYx63X+B9Kgdgmuab/LxU+fqdNOJ8XHMa
+         wqaf+XhiRMBis7F+Mh267RDXRzAFw+IFQPsSwfiKQFul2BmzwE7uAewTos4jlYQAzrn5
+         YE/AyhY2ov162yMnaWzEnjA5YECMWrdwfx4smiGXw6nu5fdq8HuGSMmUhDOiObJhDZlO
+         9sq8HTZ4ul9TVdm9gcdMIZEgTc6IbjbN+jKgYNvLsR2xnMMTshKmH6LzH8Z5diJgEZxm
+         OJpg==
+X-Gm-Message-State: AOJu0YzmpK+Q8wjv6QTmTUrUPt/AfCQkPuY/zNlYoVWYyljn09/s6hUI
+	hF52q0Uu1p3mo2F6yP3HN/nhDAn4MA==
+X-Google-Smtp-Source: AGHT+IFWkvHfseSXYTYT3uKdOPAB8K0URkVWZMX3xZ7xanO9ooySMDAjcPKjyJvnnmKaV3WR/fUj1g==
+X-Received: by 2002:a05:6830:1b64:b0:6d9:da9f:ab2f with SMTP id d4-20020a0568301b6400b006d9da9fab2fmr7327230ote.27.1702477965392;
+        Wed, 13 Dec 2023 06:32:45 -0800 (PST)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id p26-20020a9d695a000000b006d85518ae62sm2776323oto.76.2023.12.13.06.32.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 06:07:03 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Aakarsh Jain <aakarsh.jain@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	m.szyprowski@samsung.com,
-	andrzej.hajda@intel.com,
-	mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl,
-	krzysztof.kozlowski+dt@linaro.org,
-	robh+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	andi@etezian.org,
-	gost.dev@samsung.com,
-	alim.akhtar@samsung.com,
-	aswani.reddy@samsung.com,
-	pankaj.dubey@samsung.com,
-	ajaykumar.rs@samsung.com,
-	linux-fsd@tesla.com,
-	Smitha T Murthy <smithatmurthy@gmail.com>
-Subject: Re: (subset) [Patch v5 11/11] arm64: dts: fsd: Add MFC related DT enteries
-Date: Wed, 13 Dec 2023 15:06:59 +0100
-Message-Id: <170247641057.38939.10066985368657963484.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20231206063045.97234-12-aakarsh.jain@samsung.com>
-References: <20231206063045.97234-1-aakarsh.jain@samsung.com> <CGME20231206063140epcas5p1ba86525117f4d9ec9172ae7cb18b7420@epcas5p1.samsung.com> <20231206063045.97234-12-aakarsh.jain@samsung.com>
+        Wed, 13 Dec 2023 06:32:44 -0800 (PST)
+Received: (nullmailer pid 1093516 invoked by uid 1000);
+	Wed, 13 Dec 2023 14:32:43 -0000
+Date: Wed, 13 Dec 2023 08:32:42 -0600
+From: Rob Herring <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, catalin.marinas@arm.com, s.nawrocki@samsung.com, willmcvicker@google.com, gregkh@linuxfoundation.org, linux@roeck-us.net, linux-arm-kernel@lists.infradead.org, kernel-team@android.com, olof@lixom.net, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, alim.akhtar@samsung.com, saravanak@google.com, will@kernel.org, cw00.choi@samsung.com, tudor.ambarus@linaro.org, linus.walleij@linaro.org, mturquette@baylibre.com, soc@kernel.org, conor+dt@kernel.org, wim@linux-watchdog.org, sboyd@kernel.org, robh+dt@kernel.org, devicetree@vger.kernel.org, linux-serial@vger.kernel.org, tomasz.figa@gmail.com, linux-gpio@vger.kernel.org, jirislaby@kernel.org, semen.protsenko@linaro.org, krzysztof.kozlowski+dt@linaro.org, andre.draszik@linaro.org
+Subject: Re: [PATCH v7 02/16] dt-bindings: arm: google: Add bindings for
+ Google ARM platforms
+Message-ID: <170247795662.1093374.11352509671907840697.robh@kernel.org>
+References: <20231211162331.435900-1-peter.griffin@linaro.org>
+ <20231211162331.435900-3-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231211162331.435900-3-peter.griffin@linaro.org>
 
 
-On Wed, 06 Dec 2023 12:00:45 +0530, Aakarsh Jain wrote:
-> Add MFC DT node and reserve memory node for MFC usage.
+On Mon, 11 Dec 2023 16:23:17 +0000, Peter Griffin wrote:
+> This introduces bindings and dt-schema for the Google Tensor SoCs.
+> Currently just gs101 and pixel 6 are supported.
 > 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+> @RobH I removed your 'Reviewed-by: Rob Herring <robh@kernel.org>' tag
+> as since you reviewed this I added the empty ect node. Can you please
+> do the review again?
+> 
+> x# Please enter the commit message for your changes. Lines starting
+> ---
+>  .../devicetree/bindings/arm/google.yaml       | 53 +++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
 > 
 
-Applied, thanks!
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-[11/11] arm64: dts: fsd: Add MFC related DT enteries
-        https://git.kernel.org/krzk/linux/c/a41d9b3287b1d2d737984465e6efbf09a4fb51d2
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
