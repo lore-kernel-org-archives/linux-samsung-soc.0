@@ -1,178 +1,297 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFuj6SdJ"
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5B3B12E
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 08:43:16 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id 98e67ed59e1d1-28b0cee2abaso609286a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 08:43:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xGZbKlpO"
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0007123
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 09:58:26 -0800 (PST)
+Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-35f8865cc32so2415ab.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 09:58:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702572196; x=1703176996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AWHIEYa09hnCSRRLYxrxmRkCfuGY/Q51Trzc6SpnBLw=;
-        b=yFuj6SdJhzHQiVDRC7YNgxaqoxUnrBjeV+16dPdpLgUtcLBdemEBdVnTDOPVAxnp0Y
-         ALCJrqQ24A695tlJHWxa+HsguzzhxV0BXpi31XZ1E+FvQjIx1c8GRid1ypNgoPRn7HOo
-         JcKMlt+q07qr96uHxdho/0jpc7fB4eXywI31cMgl8LRt9uFnJt8Xs0/3gWVCRfoIDgCH
-         0Tht8BMAMNTXkO9/T1lGnSPd1t0R4U/G9kcE9nDof/lUU1HvKxUIYd2sr/YCfUypIuNf
-         GStywy2QIlsFhGOdldRt/wc+NZZwMIJJXuGFLcEhWfmC5C7H7RmivXxlkNAx+NXpXPJb
-         Qatg==
+        d=google.com; s=20230601; t=1702576706; x=1703181506; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8hhXPzgTkSbGrZlVoxMVSGKEuHWo76SGrFtR2YZpAU=;
+        b=xGZbKlpO2u0cKvAWGqFmHSjb3EV1nYmRpMMA6kG0/SCMBMXGAp6bWV8OVzcCkECcty
+         LEaQDCIecag6Gccbo/Wzy7bHgsEIo9pJ1ETPxYTw4/+I8DqfAzEbBPmvtGRomXSIegfh
+         NYgd2JfxHDyyjvYsA60GReXCQBsyARo2jHJwjckE3bnGD1q+C+TMfttWqB0WqJDaHdho
+         TW6zCjF9DFIaKhw3QZk0WK01/VqFIibX0Hq6azcwIWmisqG6jSuKyzZcrDhlQPWt02b+
+         DBsSqQZosN7/8xOtx2yBm4qmdAcHyWKBCLG8rOqNkobZ5ttgcZ01J4yJq7W3iWXpJwJD
+         TUUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702572196; x=1703176996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AWHIEYa09hnCSRRLYxrxmRkCfuGY/Q51Trzc6SpnBLw=;
-        b=U0x1X+rs3yQw+Wx4+010j+RBkVmcciE6W1+By0GjHcAgOpd/brFArmrI2EyQ7CANBa
-         BMoOaDlyW2d0PoU+GExz4cLzZyuhsuyq0o/vuRSaW0y69qkihudyrIM0paBdjpidaoh4
-         5IP88BqphLwFogzPlRQCqT/Kgwzz1iIUdF7gUmAXgcGQKeawj04onapxUAMRpjfOauOC
-         Un6hZy7pFCt7Q9Z8WMZ7vUzuEYGX5iOQkfF6VIEF8MRl5IjdffnkqjobV+wt68eu9D3i
-         y19Yz3BlrrB4on8ZjJ0pll9hnPJ7neXIm85m+nny64YPqEvue8Q714xoHYkty38Usl3/
-         9djg==
-X-Gm-Message-State: AOJu0YxtGTzCWJ8CLFUUvV10YD8+cyhjbtrV9mJIptGhLzAeU/lT5CS2
-	XzsK8w70lIBAPn8joReQlzEx3lzg1lJ7okvYm1U/dQ==
-X-Google-Smtp-Source: AGHT+IE3sHyxROiMhjfefDzAoNruqBYfiJM6J3A7LkcGt1ZODtMjrMmf12UjnIx2lJL2ANOUXdxmTmRkKyRZD80Ekzk=
-X-Received: by 2002:a17:90b:3594:b0:28a:df4b:46cb with SMTP id
- mm20-20020a17090b359400b0028adf4b46cbmr2249609pjb.35.1702572196038; Thu, 14
- Dec 2023 08:43:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702576706; x=1703181506;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8hhXPzgTkSbGrZlVoxMVSGKEuHWo76SGrFtR2YZpAU=;
+        b=MYgpImCBWwmewaiiAe94qK7RQkWDVd+kwMx3occXm1x+F6YX3dggWo4ICGXsn/dWI9
+         0RTADnXsj4OdG8hMD+DfmSzKTLdV8rn+27qUfSBLG8il5Yld3jf5EimWSC0dHVgvFUsw
+         T62U08sgRYTtW1IDTfmtzQyIS6G4n60AboSjfTeBt+ZNANsd2MWaKB9ARJ8b0rNPe0/T
+         FXpG+mu9km0Q0E4Z5xfNjLHc0dkEEsZkwGCntJ3OyZyRbDH8LCN1Pqp784bdt5XOKYtE
+         3vlGskjFiMrVoUthgMACAphp6gbyxracVb511WmNBtiBwgv+Duko4sg1iSKDFWZzpZk1
+         E6vw==
+X-Gm-Message-State: AOJu0YzGTKCbiUREsr/khYveYaC6ibDnfJVnTxkKJeiGf7U4hGNqE4iE
+	UOJ8AyawV0WeE+d5QEUESRaTIw==
+X-Google-Smtp-Source: AGHT+IHmJZOc6yIjryc1hqs+mSoywAgy/Kw7JX+y+PxO7dXRpBhV7x9zJfpibywCzeGN/8UCDSSJcQ==
+X-Received: by 2002:a05:6e02:4a3:b0:35f:7497:181a with SMTP id e3-20020a056e0204a300b0035f7497181amr419773ils.2.1702576705658;
+        Thu, 14 Dec 2023 09:58:25 -0800 (PST)
+Received: from [2620:0:1008:15:740b:4c24:bdb6:a42a] ([2620:0:1008:15:740b:4c24:bdb6:a42a])
+        by smtp.gmail.com with ESMTPSA id ba1-20020a170902720100b001d09c539c95sm12769653plb.90.2023.12.14.09.58.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Dec 2023 09:58:25 -0800 (PST)
+Date: Thu, 14 Dec 2023 09:58:23 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, alim.akhtar@samsung.com, 
+    alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
+    bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, 
+    david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+    iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+    joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+    linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+    linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+    mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+    rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+    suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
+    thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
+    vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
+Subject: Re: [PATCH v2 01/10] iommu/vt-d: add wrapper functions for page
+ allocations
+In-Reply-To: <20231130201504.2322355-2-pasha.tatashin@soleen.com>
+Message-ID: <776e17af-ae25-16a0-f443-66f3972b00c0@google.com>
+References: <20231130201504.2322355-1-pasha.tatashin@soleen.com> <20231130201504.2322355-2-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-8-tudor.ambarus@linaro.org> <CAPLW+4mNjCbJ+VbKR66DFSkiXHyxdjgvwjN7azxjJQ6UxQikEw@mail.gmail.com>
- <f3d61c49-1a46-476c-b7a5-6cc6a06a33ed@linaro.org> <CAPLW+4=tyr8Pcoe6Wm0Wtmkk4udDpuAiOKy7+C+Fwa6mvt3VoQ@mail.gmail.com>
- <5de5cddd-2bab-4408-b31f-f48bef98f14c@linaro.org>
-In-Reply-To: <5de5cddd-2bab-4408-b31f-f48bef98f14c@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 14 Dec 2023 10:43:04 -0600
-Message-ID: <CAPLW+4n-S2jaVPUwKTFC_iabnDd_qDV=ZubMqhz-X9XiZzzJow@mail.gmail.com>
-Subject: Re: [PATCH 07/13] clk: samsung: gs101: mark PERIC0 IP TOP gate clock
- as critical
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: peter.griffin@linaro.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	conor+dt@kernel.org, andi.shyti@kernel.org, alim.akhtar@samsung.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, catalin.marinas@arm.com, 
-	will@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
-	cw00.choi@samsung.com, arnd@arndb.de, andre.draszik@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Dec 14, 2023 at 10:15=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linar=
-o.org> wrote:
->
->
->
-> On 12/14/23 16:09, Sam Protsenko wrote:
-> > On Thu, Dec 14, 2023 at 10:01=E2=80=AFAM Tudor Ambarus <tudor.ambarus@l=
-inaro.org> wrote:
-> >>
-> >>
-> >>
-> >> On 12/14/23 15:37, Sam Protsenko wrote:
-> >>> On Thu, Dec 14, 2023 at 4:52=E2=80=AFAM Tudor Ambarus <tudor.ambarus@=
-linaro.org> wrote:
-> >>>>
-> >>>> Testing USI8 I2C with an eeprom revealed that when the USI8 leaf clo=
-ck
-> >>>> is disabled it leads to the CMU_TOP PERIC0 IP gate clock disablement=
-,
-> >>>> which then makes the system hang. To prevent this, mark
-> >>>> CLK_GOUT_CMU_PERIC0_IP as critical. Other clocks will be marked
-> >>>> accordingly when tested.
-> >>>>
-> >>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> >>>> ---
-> >>>>  drivers/clk/samsung/clk-gs101.c | 2 +-
-> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/c=
-lk-gs101.c
-> >>>> index 3d194520b05e..08d80fca9cd6 100644
-> >>>> --- a/drivers/clk/samsung/clk-gs101.c
-> >>>> +++ b/drivers/clk/samsung/clk-gs101.c
-> >>>> @@ -1402,7 +1402,7 @@ static const struct samsung_gate_clock cmu_top=
-_gate_clks[] __initconst =3D {
-> >>>>              "mout_cmu_peric0_bus", CLK_CON_GAT_GATE_CLKCMU_PERIC0_B=
-US,
-> >>>>              21, 0, 0),
-> >>>>         GATE(CLK_GOUT_CMU_PERIC0_IP, "gout_cmu_peric0_ip", "mout_cmu=
-_peric0_ip",
-> >>>> -            CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, 0, 0),
-> >>>> +            CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, CLK_IS_CRITICAL,=
- 0),
-> >>>
-> >>> This clock doesn't seem like a leaf clock. It's also not a bus clock.
-> >>> Leaving it always running makes the whole PERIC0 CMU clocked, which
-> >>> usually should be avoided. Is it possible that the system freezes
-> >>> because some other clock (which depends on peric0_ip) gets disabled a=
-s
-> >>> a consequence of disabling peric0_ip? Maybe it's some leaf clock whic=
-h
-> >>> is not implemented yet in the clock driver? Just looks weird to me
-> >>> that the system hangs because of CMU IP clock disablement. It's
-> >>> usually something much more specific.
-> >>
-> >> The system hang happened when I tested USI8 in I2C configuration with =
-an
-> >> eeprom. After the eeprom is read the leaf gate clock that gets disable=
-d
-> >> is the one on PERIC0 (CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK). I assu=
-me
-> >> this leads to the CMU_TOP gate (CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP)
-> >> disablement which makes the system hang. Either marking the CMU_TOP ga=
-te
-> >> clock as critical (as I did in this patch) or marking the leaf PERIC0
-> >> gate clock as critical, gets rid of the system hang. Did I choose wron=
-g?
-> >>
-> >
-> > Did you already implement 100% of clocks in CMU_PERIC0? If no, there
->
-> yes.
+On Thu, 30 Nov 2023, Pasha Tatashin wrote:
 
-Ok. Are there any other CMUs (perhaps not implemented yet) which
-consume clocks from CMU_PERIC0, specifically PERIC0_IP clock or some
-clocks derived from it? If so, is there a chance some particular leaf
-clock in those CMUs actually renders the system frozen when disabled
-as a consequence of disabling PERIC0_IP, and would explain better why
-the freeze happens?
+> diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
+> new file mode 100644
+> index 000000000000..2332f807d514
+> --- /dev/null
+> +++ b/drivers/iommu/iommu-pages.h
+> @@ -0,0 +1,199 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2023, Google LLC.
+> + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> + */
+> +
+> +#ifndef __IOMMU_PAGES_H
+> +#define __IOMMU_PAGES_H
+> +
+> +#include <linux/vmstat.h>
+> +#include <linux/gfp.h>
+> +#include <linux/mm.h>
+> +
+> +/*
+> + * All page allocation that are performed in the IOMMU subsystem must use one of
+> + * the functions below.  This is necessary for the proper accounting as IOMMU
+> + * state can be rather large, i.e. multiple gigabytes in size.
+> + */
+> +
+> +/**
+> + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> + * specific NUMA node.
+> + * @nid: memory NUMA node id
 
-For now I think it's ok to have that CLK_IS_CRITICAL flag here,
-because as you said you implemented all clocks in this CMU and neither
-of those looks like a critical one. But I'd advice to add a TODO
-comment saying it's probably a temporary solution before actual leaf
-clock which leads to freeze is identified (which probably resides in
-some other not implemented yet CMU).
+NUMA_NO_NODE if no locality requirements?
 
->
-> > is a chance some other leaf clock (which is not implemented yet in
-> > your driver) gets disabled as a result of PERIC0_IP disablement, which
-> > might actually lead to that hang you observe. Usually it's some
-> > meaningful leaf clock, e.g. GIC or interconnect clocks. Please check
-> > clk-exynos850.c driver for CLK_IS_CRITICAL and CLK_IGNORE_UNUSED flags
-> > and the corresponding comments I left there, maybe it'll give you more
-> > particular idea about what to look for. Yes, making the whole CMU
-> > always running without understanding why (i.e. because of which
-> > particular leaf clock) might not be the best way of handling this
->
-> because of CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the head struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
+> +						    int order)
+> +{
+> +	struct page *pages;
 
-That's not a root cause here. And I think PERIC0_IP is neither.
+s/pages/page/ here and later in this file.
 
->
-> > issue. I might be mistaken, but at least please check if you
-> > implemented all clocks for PERIC0 first and if making some meaningful
-> > leaf clock critical makes more sense.
-> >
->
-> Thanks,
-> ta
+> +
+> +	pages = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
+> +	if (!pages)
+
+unlikely()?
+
+> +		return NULL;
+> +
+> +	return pages;
+> +}
+> +
+> +/**
+> + * __iommu_alloc_pages - allocate a zeroed page of a given order.
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the head struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
+> +{
+> +	struct page *pages;
+> +
+> +	pages = alloc_pages(gfp | __GFP_ZERO, order);
+> +	if (!pages)
+> +		return NULL;
+> +
+> +	return pages;
+> +}
+> +
+> +/**
+> + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
+> +{
+> +	return __iommu_alloc_pages_node(nid, gfp, 0);
+> +}
+> +
+> +/**
+> + * __iommu_alloc_page - allocate a zeroed page
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_page(gfp_t gfp)
+> +{
+> +	return __iommu_alloc_pages(gfp, 0);
+> +}
+> +
+> +/**
+> + * __iommu_free_pages - free page of a given order
+> + * @pages: head struct page of the page
+
+I think "pages" implies more than one page, this is just a (potentially 
+compound) page?
+
+> + * @order: page order
+> + */
+> +static inline void __iommu_free_pages(struct page *pages, int order)
+> +{
+> +	if (!pages)
+> +		return;
+> +
+> +	__free_pages(pages, order);
+> +}
+> +
+> +/**
+> + * __iommu_free_page - free page
+> + * @page: struct page of the page
+> + */
+> +static inline void __iommu_free_page(struct page *page)
+> +{
+> +	__iommu_free_pages(page, 0);
+> +}
+> +
+> +/**
+> + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> + * specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
+> +{
+> +	struct page *pages = __iommu_alloc_pages_node(nid, gfp, order);
+> +
+> +	if (!pages)
+> +		return NULL;
+> +
+> +	return page_address(pages);
+> +}
+> +
+> +/**
+> + * iommu_alloc_pages - allocate a zeroed page of a given order
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_pages(gfp_t gfp, int order)
+> +{
+> +	struct page *pages = __iommu_alloc_pages(gfp, order);
+> +
+> +	if (!pages)
+> +		return NULL;
+> +
+> +	return page_address(pages);
+> +}
+> +
+> +/**
+> + * iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
+> +{
+> +	return iommu_alloc_pages_node(nid, gfp, 0);
+> +}
+> +
+> +/**
+> + * iommu_alloc_page - allocate a zeroed page
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_page(gfp_t gfp)
+> +{
+> +	return iommu_alloc_pages(gfp, 0);
+> +}
+> +
+> +/**
+> + * iommu_free_pages - free page of a given order
+> + * @virt: virtual address of the page to be freed.
+> + * @order: page order
+> + */
+> +static inline void iommu_free_pages(void *virt, int order)
+> +{
+> +	if (!virt)
+> +		return;
+> +
+> +	__iommu_free_pages(virt_to_page(virt), order);
+> +}
+> +
+> +/**
+> + * iommu_free_page - free page
+> + * @virt: virtual address of the page to be freed.
+> + */
+> +static inline void iommu_free_page(void *virt)
+> +{
+> +	iommu_free_pages(virt, 0);
+> +}
+> +
+> +/**
+> + * iommu_free_pages_list - free a list of pages.
+> + * @pages: the head of the lru list to be freed.
+
+Document the locking requirements for this?
+
+> + */
+> +static inline void iommu_free_pages_list(struct list_head *pages)
+> +{
+> +	while (!list_empty(pages)) {
+> +		struct page *p = list_entry(pages->prev, struct page, lru);
+> +
+> +		list_del(&p->lru);
+> +		put_page(p);
+> +	}
+> +}
+> +
+> +#endif	/* __IOMMU_PAGES_H */
+> -- 
+> 2.43.0.rc2.451.g8631bc7472-goog
+> 
+> 
+> 
