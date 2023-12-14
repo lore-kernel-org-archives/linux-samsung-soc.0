@@ -1,44 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZJHvADc3"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310B5124
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 07:59:21 -0800 (PST)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231214155915euoutp02f0e297cc9ebaf43a44f3b12fd4687388~gvf2PRo000383303833euoutp02I
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231214155915euoutp02f0e297cc9ebaf43a44f3b12fd4687388~gvf2PRo000383303833euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702569555;
-	bh=t1Ri1k88YEtJXFLu4apS8OAYzivDLP6IYWLM6Hz470Q=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=ZJHvADc3B4C/FT1ThSS0qmAJenVNV4kLogS5UG1mUI6/B0tro/4SCXVGamorndpcJ
-	 n7u6Eo7Ic5yaIfUNQmnYKxHqhJuQaK43dRw/1+L5KlspmzR+tkAAW2Oc5Ef7DMQwKq
-	 kmQeHMu0P9XAxswrcpfSJr3ZWwzdZqugGatqmyQ8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20231214155915eucas1p26a90c53486421a4576d223badfb3f49b~gvf132k6v0218202182eucas1p2Q;
-	Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id CF.D9.09539.3562B756; Thu, 14
-	Dec 2023 15:59:15 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231214155915eucas1p2c518336996033a817222877b35ea4fd3~gvf1dNbqE0218202182eucas1p2N;
-	Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231214155915eusmtrp16e110281bd355ea0351c1cb636cbff39~gvf1cSySh2480424804eusmtrp1z;
-	Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
-X-AuditID: cbfec7f2-52bff70000002543-e7-657b2653c492
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 2C.7D.09146.2562B756; Thu, 14
-	Dec 2023 15:59:14 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20231214155913eusmtip1e7453cbacef6362492c4fd6cab56598d~gvf0a9H2D1522115221eusmtip1b;
-	Thu, 14 Dec 2023 15:59:13 +0000 (GMT)
-Message-ID: <699636b7-d737-4df4-92e9-43b0f52d4b99@samsung.com>
-Date: Thu, 14 Dec 2023 16:59:13 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Guk+6gL5"
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944BE10A
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 08:01:23 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-a1db6c63028so958920466b.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 08:01:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702569682; x=1703174482; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D+VFIozAF30zEgKKxFDP3drI06z9zzmO3HV6m4SuiwQ=;
+        b=Guk+6gL5FvgbClXZhAqmyYzGq5UH6OfIyUvODkVmFf4vSY3etzuNxe3FtrN7amNL04
+         iJbmutKwh+6hUZ7JmeXeaqXqTI8sdd2Bj6lpYFplcA5aJFuSnWQk0ii/jrfMdbifEcnX
+         MJMuT8B9XAOKq77C1E6lcI3zFiUh/anFfrNMt6sj7FdMIEvtpdw8zM9w7Cwej01TVWFS
+         Et7KTSugVOS4dY8Rwiadpp2X62ezw1yHN9/B1Hp5Ahy2iuMdlah+kQ1BzrZ2OyOZT1Jz
+         TKZF2a7uh/FelkBbsieLNB52aPJZdhETqALxPQYlRgUwfsoUkvo1bDNnlomKJ3QeEuXc
+         HtAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702569682; x=1703174482;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+VFIozAF30zEgKKxFDP3drI06z9zzmO3HV6m4SuiwQ=;
+        b=nVlL/SXPjS2c4ZaMXQpUccoywlDu0COBdPdgo1C3+72qZKyJ3R3O7zc7HWbKzzTcyP
+         RcUII6WJO7ILjClSqxnjjS1f/SPTCNTyuyRlPjgps9kwViq05KkAMWFB7oSi59PcEahc
+         FnxKZkyNCixCAlV+E+BWQHqpoijQlIxtCx5jljb3a0xJajPFACPGto6DIZYExNgVJ9Wy
+         P3HTezev8c5M1pyGqz640x5d2934MICjPirPC5eKZQLyomATOknjxHIeqjAw4NPfTycO
+         f2OHVpdJame9UCey5LazGOKqN+xmtAmp/0FaJOKOFcK/qJRRei+X7jtgt8XuO9Ru5Ljb
+         MEOw==
+X-Gm-Message-State: AOJu0Yx1cXjvlStPi/KP7vP132zZAOwq5iTR6Lf87CGTd0DPT6oN/fYP
+	Wuf2dv2MXCpLHvAWQw9zC0lkBA==
+X-Google-Smtp-Source: AGHT+IEMYj7NZTyAlbSayhibN+bIajeem6cYXSSO7+k3rveUzLz3uWXFda+obxiUgnN1c1X2yJymPw==
+X-Received: by 2002:a17:907:7ea1:b0:a1e:9d8b:1e7b with SMTP id qb33-20020a1709077ea100b00a1e9d8b1e7bmr6017626ejc.69.1702569682045;
+        Thu, 14 Dec 2023 08:01:22 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id ld4-20020a1709079c0400b00a1df88cc7c0sm9445638ejc.182.2023.12.14.08.01.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Dec 2023 08:01:21 -0800 (PST)
+Message-ID: <f3d61c49-1a46-476c-b7a5-6cc6a06a33ed@linaro.org>
+Date: Thu, 14 Dec 2023 16:01:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -46,130 +47,79 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/exynos: fix accidental on-stack copy of
- exynos_drm_plane
+Subject: Re: [PATCH 07/13] clk: samsung: gs101: mark PERIC0 IP TOP gate clock
+ as critical
 Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
-	<kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
-	<daniel@ffwll.ch>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <treding@nvidia.com>, Steven Price <steven.price@arm.com>,
-	Rob Herring <robh@kernel.org>, Robert Foss <rfoss@kernel.org>, Kieran
-	Bingham <kieran.bingham+renesas@ideasonboard.com>, Liviu Dudau
-	<liviu.dudau@arm.com>, Sam Ravnborg <sam@ravnborg.org>,
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20231214123237.1727428-1-arnd@kernel.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxTVxj23Ht7b9useC0oR7bQrAk4toDCzDyZhK3bXG6CPwwwWWama8Zd
-	JQLV1uIHPygQoBbBUrVCgY4wBGwIiwVKh8I2hlRxU0BgtLCURDcjjs9WFBlube/c+Pc87/s8
-	53nfN4ePi0vJCH5mznFWlSPPkpJCwj6wcic2NTqP3XFDuxXd/LUBQ9MWO4nWjAMUsnfYeOhv
-	eyWORp/Mk8joMRBoabwMoJ7HnRT6pfBPCtnuj/PQve5aElXd7cXQD5dLCWS0uPy26w4Ktax0
-	AlTQ7/dWnX9EosnVkPfDmFZLK2BWnxsB07NcTzDfmX+jmBpdNY+xWc+QzNT4dZLxlDkxpr0x
-	nykvmiOZRtMYyVR0WAHjtUXuE30mTMxgszJzWdX2pC+Eh436xKMjW04Wl6ziWmAK1QMBH9I7
-	4R+ufkIPhHwx3QJgn6kB54gPwBv2YowjXgCbF86RLy2uwS7ANZoBNFz4+V/VIoDeK+d4AZWI
-	ToLOmQEqgAk6CvbXLJNcfRO8Vf2ACODNtAR63FVBTSidCit6JrEAxulw6H7wdfDRMNqEwea7
-	TWSA4PR9HP7uHgm6SToe6mf1wVcF9C54pXuI4twS2DVbG9wC0ssC+LRmmMcN/hHUtU1gHA6F
-	M84OisOvwdvnzxKcoRTA+lUPxhEDgNqHbsCpdsOpO8/9cXx/RAz8tns7V5bBHs8cFihDOgRO
-	zG7ihgiBRvslnCuLoK5EzKmjodnZ9l/sj0MjuAFIzesOY153APO6dcz/59YDwgrCWY06W8Gq
-	43PYE3FqebZak6OI+1KZbQP+v3r7hXPJAepmFuP6AMYHfQDycWmY6JbjBCsWZchPnWZVykMq
-	TRar7gOv8glpuCgqQ8KKaYX8OHuEZY+yqpddjC+I0GKmbzaMDl4tmrgaURw3vycqEVs7kjsp
-	K+Slp5j3WxQbFzekKt9yVDbefJsau7bPkVxW3jX3/ZbNn8/VJeyadkQ+Xlj0+vIS3vXKk30V
-	mda8offeqbz3SHPyolU8dqj2YeiOUbuEyV9LCaF0Sssn6Wkw90B0oevMtfafUvTlNqdgfmOs
-	r/bi8BsL26b2wsjotHTdRP62FsnkQcOpC6LpT2Nf0RTxm2TxewuWEgYPaJvs3S+2lmCy3a//
-	JZo+ljTuSt5jfIK+aul0w16bY7Dt7GXf6PBy2scVB2PaC5JKLn0o6/0g1pzwtLpB3St51llV
-	rFESMRHWMMXpYyvPWoeF+3dq66SE+rA8/k1cpZb/A1AB3pkaBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsVy+t/xu7pBatWpBvM+GVucuL6IyeLBvG1s
-	Fn8nHWO32LZlE6vF/20TmS2ufH3PZjHp/gQWi0/Xuhkt9r7eym5xtukNu8Wmx9dYLS7vmsNm
-	MeP8PiaLA0vbWSwmzbsJ1LZnB7vFip9bGS0ajwD1zpj8ks3i9m8+BxGPNfPWMHr8/jWJ0WPv
-	twUsHjtn3WX3mN0xk9Vj06pONo871/awedzvPs7ksXlJvUdv8zs2jyXTrrJ59G1ZxejxeZNc
-	AG+Unk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsak
-	LpuCS2IVrW2/mRsYpwl3MXJySAiYSNw8tZ2xi5GLQ0hgKaPE+zPvmCESMhInpzWwQtjCEn+u
-	dbFBFL1nlJh58RATSIJXwE7i+Ktj7CA2i4CqxJHZ39gg4oISJ2c+YQGxRQXkJe7fmgFWIywQ
-	LNG39zZYL7OAuMStJ/OZQIaKCMxgkvi/qANsA7PAY2aJ/ue/wLqFBLqA1j02BbHZBAwlut52
-	gW3gFDCXWLnrAjvEJDOJrq1djBC2vMT2t3OYJzAKzUJyyCwkC2chaZmFpGUBI8sqRpHU0uLc
-	9NxiQ73ixNzi0rx0veT83E2MwCSy7djPzTsY5736qHeIkYmD8RCjBAezkgjvyR3lqUK8KYmV
-	ValF+fFFpTmpxYcYTYGhMZFZSjQ5H5jG8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1Kz
-	U1MLUotg+pg4OKUamGok4l4dVTSc8Fk2U3/vy1PtXlJ2qy39G+ZPFUx/wHzmStrs3rp1GmEW
-	r5JWq+3e9W49q3e50t8rezsP+/0rN+uu2T5j/ZIn7dvyup5l2RibCiwpOGrfu2fHpiw9NR/B
-	zovPS9o/fOTq/7IywdqOa9+PQ+3d8VFZiRWHz3Ht2vzGcbpZQsDR1WK3p89If/58eYLSGTXj
-	0+rdgvIMjo6/nZlsJati0pmS660lr9hPvyw2o7bdiPlqePmNpZXbPSo0lxY21s7Q2Xrn5bot
-	XXXGh3ZGCC5yZH528NuPC6nbRAprLXL2HTYtMJLhePtj2ZLjG398dF7+UlHv6sdOx0Pb32hs
-	0T3Yv/J/2nUf458vTiuxFGckGmoxFxUnAgAQVosAqwMAAA==
-X-CMS-MailID: 20231214155915eucas1p2c518336996033a817222877b35ea4fd3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20231214123248eucas1p1577bc2064401fce57a752234e1338f5a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20231214123248eucas1p1577bc2064401fce57a752234e1338f5a
-References: <CGME20231214123248eucas1p1577bc2064401fce57a752234e1338f5a@eucas1p1.samsung.com>
-	<20231214123237.1727428-1-arnd@kernel.org>
-
-On 14.12.2023 13:32, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> gcc rightfully complains about excessive stack usage in the fimd_win_set_pixfmt()
-> function:
->
-> drivers/gpu/drm/exynos/exynos_drm_fimd.c: In function 'fimd_win_set_pixfmt':
-> drivers/gpu/drm/exynos/exynos_drm_fimd.c:750:1: error: the frame size of 1032 bytes is larger than 1024 byte
-> drivers/gpu/drm/exynos/exynos5433_drm_decon.c: In function 'decon_win_set_pixfmt':
-> drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:1: error: the frame size of 1032 bytes is larger than 1024 bytes
->
-> There is really no reason to copy the large exynos_drm_plane
-> structure to the stack before using one of its members, so just
-> use a pointer instead.
->
-> Fixes: 6f8ee5c21722 ("drm/exynos: fimd: Make plane alpha configurable")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+ alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
+ andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-8-tudor.ambarus@linaro.org>
+ <CAPLW+4mNjCbJ+VbKR66DFSkiXHyxdjgvwjN7azxjJQ6UxQikEw@mail.gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPLW+4mNjCbJ+VbKR66DFSkiXHyxdjgvwjN7azxjJQ6UxQikEw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
+On 12/14/23 15:37, Sam Protsenko wrote:
+> On Thu, Dec 14, 2023 at 4:52 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>>
+>> Testing USI8 I2C with an eeprom revealed that when the USI8 leaf clock
+>> is disabled it leads to the CMU_TOP PERIC0 IP gate clock disablement,
+>> which then makes the system hang. To prevent this, mark
+>> CLK_GOUT_CMU_PERIC0_IP as critical. Other clocks will be marked
+>> accordingly when tested.
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  drivers/clk/samsung/clk-gs101.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+>> index 3d194520b05e..08d80fca9cd6 100644
+>> --- a/drivers/clk/samsung/clk-gs101.c
+>> +++ b/drivers/clk/samsung/clk-gs101.c
+>> @@ -1402,7 +1402,7 @@ static const struct samsung_gate_clock cmu_top_gate_clks[] __initconst = {
+>>              "mout_cmu_peric0_bus", CLK_CON_GAT_GATE_CLKCMU_PERIC0_BUS,
+>>              21, 0, 0),
+>>         GATE(CLK_GOUT_CMU_PERIC0_IP, "gout_cmu_peric0_ip", "mout_cmu_peric0_ip",
+>> -            CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, 0, 0),
+>> +            CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, CLK_IS_CRITICAL, 0),
+> 
+> This clock doesn't seem like a leaf clock. It's also not a bus clock.
+> Leaving it always running makes the whole PERIC0 CMU clocked, which
+> usually should be avoided. Is it possible that the system freezes
+> because some other clock (which depends on peric0_ip) gets disabled as
+> a consequence of disabling peric0_ip? Maybe it's some leaf clock which
+> is not implemented yet in the clock driver? Just looks weird to me
+> that the system hangs because of CMU IP clock disablement. It's
+> usually something much more specific.
 
-> ---
->   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 4 ++--
->   drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> index 4d986077738b..bce027552474 100644
-> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-> @@ -319,9 +319,9 @@ static void decon_win_set_bldmod(struct decon_context *ctx, unsigned int win,
->   static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
->   				 struct drm_framebuffer *fb)
->   {
-> -	struct exynos_drm_plane plane = ctx->planes[win];
-> +	struct exynos_drm_plane *plane = &ctx->planes[win];
->   	struct exynos_drm_plane_state *state =
-> -		to_exynos_plane_state(plane.base.state);
-> +		to_exynos_plane_state(plane->base.state);
->   	unsigned int alpha = state->base.alpha;
->   	unsigned int pixel_alpha;
->   	unsigned long val;
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 8dde7b1e9b35..5bdc246f5fad 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -661,9 +661,9 @@ static void fimd_win_set_bldmod(struct fimd_context *ctx, unsigned int win,
->   static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
->   				struct drm_framebuffer *fb, int width)
->   {
-> -	struct exynos_drm_plane plane = ctx->planes[win];
-> +	struct exynos_drm_plane *plane = &ctx->planes[win];
->   	struct exynos_drm_plane_state *state =
-> -		to_exynos_plane_state(plane.base.state);
-> +		to_exynos_plane_state(plane->base.state);
->   	uint32_t pixel_format = fb->format->format;
->   	unsigned int alpha = state->base.alpha;
->   	u32 val = WINCONx_ENWIN;
+The system hang happened when I tested USI8 in I2C configuration with an
+eeprom. After the eeprom is read the leaf gate clock that gets disabled
+is the one on PERIC0 (CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK). I assume
+this leads to the CMU_TOP gate (CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP)
+disablement which makes the system hang. Either marking the CMU_TOP gate
+clock as critical (as I did in this patch) or marking the leaf PERIC0
+gate clock as critical, gets rid of the system hang. Did I choose wrong?
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Thanks,
+ta
+> 
+>>         GATE(CLK_GOUT_CMU_PERIC1_BUS, "gout_cmu_peric1_bus",
+>>              "mout_cmu_peric1_bus", CLK_CON_GAT_GATE_CLKCMU_PERIC1_BUS,
+>>              21, 0, 0),
+>> --
+>> 2.43.0.472.g3155946c3a-goog
+>>
