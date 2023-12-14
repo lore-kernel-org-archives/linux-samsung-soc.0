@@ -1,154 +1,124 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PHnDroDb"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C46FD5
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Dec 2023 19:39:28 -0800 (PST)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20231214033926epoutp04521e8fa2b2548bc34c11ea6dc3a07aef~glZ5VV8iy0149301493epoutp04E
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:39:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20231214033926epoutp04521e8fa2b2548bc34c11ea6dc3a07aef~glZ5VV8iy0149301493epoutp04E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1702525166;
-	bh=oZGojsTaKV3z5XZlFVlJ4SAv73S6D4gkF2TIFY3/dm4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=PHnDroDb8h565gTEHnXdqOUgTRYxhCmCgHh3Ac8S9IZchLVCiOk0UDo5SiF1uRknp
-	 yhvhbCe0X/7GpIxGjwLBSSJPrXYo+GfwQGyRZiZyZ/R6cFi5n/skbQwtK2OHqLKdE4
-	 agsT9RzGVBOd5tY0JqZoKagqozbLyeINMiUDbFS0=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20231214033925epcas5p4ac2a884d47713ee69fb621954b2c9aa9~glZ4Z34eo1412614126epcas5p4h;
-	Thu, 14 Dec 2023 03:39:25 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4SrJ4W563Jz4x9Pr; Thu, 14 Dec
-	2023 03:39:23 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A6.F4.09672.BE87A756; Thu, 14 Dec 2023 12:39:23 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231214033923epcas5p206f2e64ca52b37560a9fcc176cf4ac1e~glZ2P05qk2518125181epcas5p2Q;
-	Thu, 14 Dec 2023 03:39:23 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20231214033923epsmtrp29892029d3ecd928c27d9f66e5c3657dc~glZ2O8UMT0036100361epsmtrp2c;
-	Thu, 14 Dec 2023 03:39:23 +0000 (GMT)
-X-AuditID: b6c32a4b-60bfd700000025c8-87-657a78eb02b3
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7B.6F.18939.AE87A756; Thu, 14 Dec 2023 12:39:22 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20231214033920epsmtip1a230f85910395a4e85e58253695e3ac3~glZz9GOB81650516505epsmtip1T;
-	Thu, 14 Dec 2023 03:39:20 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Rob Herring'" <robh@kernel.org>, "'Inki Dae'" <inki.dae@samsung.com>,
-	"'Seung-Woo Kim'" <sw0312.kim@samsung.com>, "'Kyungmin Park'"
-	<kyungmin.park@samsung.com>, "'Maarten Lankhorst'"
-	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
-	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'David Airlie'"
-	<airlied@gmail.com>, "'Daniel Vetter'" <daniel@ffwll.ch>, "'Krzysztof
- Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>, "'Conor Dooley'"
-	<conor+dt@kernel.org>
-Cc: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <20231213224201.2191358-1-robh@kernel.org>
-Subject: RE: [PATCH] dt-bindings: display: samsung,exynos-mixer: Fix 'regs'
- typo
-Date: Thu, 14 Dec 2023 09:09:19 +0530
-Message-ID: <007301da2e3f$20c35320$6249f960$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJi4l5FU"
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA86812A
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:52 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40c29f7b068so75230595e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702551171; x=1703155971; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6tm42FF4c3bt5Gu3FnnyW38+ClAYR6mlbk3a/l087HU=;
+        b=HJi4l5FUVWZi201yrhNpgWI99iIkM6pOcoM7CzCSKEPkDvNHWpNSNT0ZR/KHhTaISF
+         wESC+4/r+Ybjw+AkvkCDzgaG4vVD/2Bnvi4517VN/rHXXai+aOFT8uAzS3dxYv4CLk3Q
+         gaEFRdlWLaPsCn1iKejHyxQLrXxLMl65wEJQV+f93bYFnBesjO5IstdQ7ZEelICNo9Th
+         Rkhil3WMNHvNmalQWaFkPcqAC1N4qacsyX6c4krlUTzLQ5QcqS5G14ulImXsRA2WvpjE
+         76jt7Quqe0pdoQ41WM4H9my+JX+bE9eq5RjmTMU1sCgcDzvwgMKUVZm4tfoUTEWI61YJ
+         VWbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702551171; x=1703155971;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6tm42FF4c3bt5Gu3FnnyW38+ClAYR6mlbk3a/l087HU=;
+        b=m86oW59m7dCbPevV9jIIHrU+0eRAE/mNIvenPmK2L1uE/sh1qaRnjQwQwNwtaABnQh
+         B+EW+ePRr5xuyWS0W3ttuQO9FnaFitsw7VnYdScdZBX3JVP8PZYS83sv42oLUAHcEtqJ
+         FkzgjTcVO/5tW9dj82TvHNL2fzDASVedx13H8mE9eVIPnfb8Dy15t48NMcn+l4xpxMLG
+         neQp4rA+I8YL1ubc+sR6UWvDv0wSzKns1fw5ICQrKRvLSJtdEeL4+6f5vAQoJQv2OFKj
+         UGeZKYI2TzSx80n/+onj1GxKoJHeSf1R45uA60Jv6UivDkUO3VNKBgIXJvyO664C0QEb
+         s3hQ==
+X-Gm-Message-State: AOJu0Yx3+RtgXAeL3YIFvS0D2bgnzQQRmR5Q1gzfeninLxKolCRf67u2
+	ZBEjSiM9y1qM4CnTZmHBs7jjow==
+X-Google-Smtp-Source: AGHT+IFCKio55lZadUI3MBs5J+fZ9q8GCTSRx+SQFiZCVZbiGTTeCOe8TJ0CPUb0n+BSn7oBZ0NY0w==
+X-Received: by 2002:a7b:cb92:0:b0:40c:3308:3b02 with SMTP id m18-20020a7bcb92000000b0040c33083b02mr5256825wmi.99.1702551171270;
+        Thu, 14 Dec 2023 02:52:51 -0800 (PST)
+Received: from ta2.c.googlers.com.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Dec 2023 02:52:50 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: peter.griffin@linaro.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	conor+dt@kernel.org,
+	andi.shyti@kernel.org,
+	alim.akhtar@samsung.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com,
+	cw00.choi@samsung.com,
+	arnd@arndb.de,
+	semen.protsenko@linaro.org
+Cc: andre.draszik@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH 00/13] GS101 Oriole: CMU_PERIC0 support and USI updates
+Date: Thu, 14 Dec 2023 10:52:30 +0000
+Message-ID: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQGvaXTBCeAb7VPGqzttC4JYofnLoQCQk5KBsPkmauA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxjGd3pvb0uXusvXPJQESgOZ4IBWS7klwkiEeSP+gYNlbiHiHZxQ
-	Rmm73jJAs80M7UAyZ3UxWBGRaTGEBVYZFIFJQIbMANMBi3FAQWAwUXFYZDLGWq46/vu973me
-	vOc5H0LMZ5KQCHN1JmTUMVoZIcKbu8O3RN4vOojkruFQ6sZvNTyqvmOAR601WzDq/PUBPjXk
-	ekRQJ8dP4NTgYKOAOj47gVH9X8wLKPu9ET7169VKgqoY/JFHXXj8A06Zy2x8aq3dIaAqTs0R
-	VNO8hZ/oTXcsVeN0q3VUQNvrygj695F2gq7q20uPl/fy6CsXP6ePN9UB+srNQ/SiPShV9EHe
-	Dg1ispFRinRZ+uxcXU68LCUtc2dmjEquiFSoqViZVMfko3hZ0p7UyLdzte44MuknjLbA3Upl
-	WFYWnbDDqC8wIalGz5riZciQrTUoDVEsk88W6HKidMgUp5DLt8W4hQfyNJcu7jVUi4raS54Q
-	h8G88BjwEkJSCW+fbiI87EO2AXi0jToGRG7+C8A/npwWvCzaZzuIF46x8rOAW2gF8JfVHoIr
-	ZgGcblnie1QEGQkd35rXF/zIRQzO1NZingIjJwCs6FoFHpUXGQtLmy3rDl/yHVjfaF5nnAyD
-	g+ZOzMNiUg1b68b4HHvDvjNTuIcxMhi2PKjEuD1J4d/TNj7X3wzneq4LPOxHxsEbdtd6CEiu
-	CeFsyTM+Z0iCz1wdOMe+8M/eJgHHErj40BNU6GYa1vwj4doa+KC2AXD8FuwcqsQ9EowMhw1X
-	o7mxm+BXK1M8zimGpWYfTh0GSx4OPx8UCC3l5c83QMM743b+CRBi3RDMuiGYdUMY6//DqgFe
-	BwKQgc3PQWyMYbsOFb687yx9vh2sP/aIFAeYdC5EdQGeEHQBKMRkfuI+RyHyEWczxQeRUZ9p
-	LNAitgvEuE/bgkn8s/Tu36IzZSqUarlSpVIp1dtVCtlm8f2j57J9yBzGhPIQMiDjCx9P6CU5
-	zNu2Py7jTEHo0J5Tk2kfTzWWbP2sXpysCrUlL7GJ8yUfmc+XVcc1F6b6aqdHbmempi07q4vD
-	2ys7zmbF7jOffH/U9kqSxJWcIr/rdHV3vTmwrLR+yfs3uNN5aG14pn5XTEvRq4EkUUlklIY8
-	/X75sTmhwlGT0H9rbuu5moUyAl7LFU8UK34+slhKJKZ/HX9NNZfv1P/0IaN4d/dTtjXpvXuW
-	BX4D2JdyZ6lfF+zVf2Fnr8ibeq3H1z896JvCm+mqok/FEY8G28rU4EhUgGY/khy4JQ2oer1b
-	PDqb4RV06Q2UFwQ3hazixsTdlwPvrogaWkdsnWEDaifr/110z0zKStWYDGc1jCICM7LMf0VW
-	Mcd1BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsWy7bCSnO7riqpUg71OFieuL2KyWLP3HJPF
-	/20TmS3mHznHanHl63s2i0n3J7BYnD+/gd2i78VDZouzTW/YLTY9vsZqcXnXHDaLGef3MVks
-	/LiVxaKtcxmrxf89O9gtZkx+yWax5c1EVgdBj73fFrB47Jx1l91j06pONo871/awecw7Gehx
-	v/s4k8fmJfUefVtWMXpsPl3t8XmTXABXFJdNSmpOZllqkb5dAlfG0iWBBQu4KvY0f2FrYHzD
-	0cXIySEhYCJxr3s2YxcjF4eQwHZGidn9C5khEtIS1zdOYIewhSVW/nvODlH0jFFi1cXPYAk2
-	AV2JHYvb2EASIgI/mSXW7r7FAuIwCzxllHj8cg/U3A5GiamzJ7KCtHAKmEt0bIOwhQUCJBb3
-	/2IDsVkEVCXOtx0A280rYCmxc9U9VghbUOLkzCdAUzmApupJtG1kBAkzC8hLbH87B+pUBYmf
-	T5exQsTFJV4ePQJ2nYiAlcSJTV/ZJzAKz0IyaRbCpFlIJs1C0r2AkWUVo2hqQXFuem5ygaFe
-	cWJucWleul5yfu4mRnBUawXtYFy2/q/eIUYmDsZDjBIczEoivCd3lKcK8aYkVlalFuXHF5Xm
-	pBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MK2Zeft9F1uciFjU7p3vToc6+83t
-	u3Z1fVfeg7y3Hs8nzWMVYrE+c9Ll2vLFf3zVjs/1f3ec9Xpt5revxuJbWf5pzoyIbvbrEJw6
-	89zaideDDtScvjBdefnZ5s09sieCMkrSKy5fjWQvyjr84eUWdjHXmyfjuu6b+rKtfNSStM13
-	0stGTTfOjkLZ/ULe/crvXmw/fldppfedcxvYraJ3p6p83lZzvORMxBctMY6fprek9phLFUhu
-	4pQLSI30/zA94snB3ccntz7L4LrcZVRe5j7JfRnLionvX34X3+ZymmnhqcT6gz+v7Cw7UPYj
-	8bhcAHuH3ZnWCSumXHqyRCY988rWhf+TOt7kqZyZOu9/IW+eEktxRqKhFnNRcSIAzIsl8VkD
-	AAA=
-X-CMS-MailID: 20231214033923epcas5p206f2e64ca52b37560a9fcc176cf4ac1e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231213224223epcas5p31386d8403f97b986d39cd738af0ba781
-References: <CGME20231213224223epcas5p31386d8403f97b986d39cd738af0ba781@epcas5p3.samsung.com>
-	<20231213224201.2191358-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+Add support for PERIC0 clocks. Use them for USI in serial and I2C
+configurations. Tested the serial at different baudrates (115200,
+1M, 3M) and the I2C with an at24 eeprom, all went fine.
 
+Apart of the DT and defconfig changes, the patch set spans through the tty
+and clk subsystems. The expectation is that Krzysztof will apply the whole
+series through the Samsung SoC tree. If the tty and clk subsystem
+maintainers can give an acked-by or reviewed-by on the relevant patches
+that would be most appreciated!
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: Thursday, December 14, 2023 4:12 AM
-> To: Inki Dae <inki.dae@samsung.com>; Seung-Woo Kim
-> <sw0312.kim@samsung.com>; Kyungmin Park
-> <kyungmin.park@samsung.com>; Maarten Lankhorst
-> <maarten.lankhorst@linux.intel.com>; Maxime Ripard
-> <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>;
-> David Airlie <airlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch>;
-Krzysztof
-> Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley
-> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>;
-dri-devel@lists.freedesktop.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH] dt-bindings: display: samsung,exynos-mixer: Fix 'regs'
-typo
-> 
-> The correct property name is 'reg' not 'regs'.
-> 
-> Fixes: 68e89bb36d58 ("dt-bindings: display: samsung,exynos-mixer: convert
-> to dtschema")
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-Thanks,
+Thanks!
+ta
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Tudor Ambarus (13):
+  dt-bindings: clock: google,gs101: fix CMU_TOP gate clock names
+  dt-bindings: clock: google,gs101-clock: add PERIC0 clock management
+    unit
+  dt-bindings: i2c: exynos5: add google,gs101-hsi2c compatible
+  dt-bindings: serial: samsung: gs101: make reg-io-width required
+    property
+  tty: serial: samsung: add gs101 earlycon support
+  clk: samsung: gs101: add support for cmu_peric0
+  clk: samsung: gs101: mark PERIC0 IP TOP gate clock as critical
+  arm64: dts: exynos: gs101: enable cmu-peric0 clock controller
+  arm64: dts: exynos: gs101: update USI UART to use peric0 clocks
+  arm64: dts: exynos: gs101: define USI8 with I2C configuration
+  arm64: dts: exynos: gs101: enable eeprom on gs101-oriole
+  arm64: defconfig: sync with savedefconfig
+  arm64: defconfig: make at24 eeprom builtin
 
->  .../bindings/display/samsung/samsung,exynos-mixer.yaml      | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-[snip]
-> 2.43.0
+ .../bindings/clock/google,gs101-clock.yaml    |  25 +-
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml  |   1 +
+ .../bindings/serial/samsung_uart.yaml         |   4 +
+ .../boot/dts/exynos/google/gs101-oriole.dts   |  18 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi  |  52 +-
+ arch/arm64/configs/defconfig                  | 146 ++--
+ drivers/clk/samsung/clk-gs101.c               | 748 ++++++++++++++++--
+ drivers/tty/serial/samsung_tty.c              |  11 +
+ include/dt-bindings/clock/google,gs101.h      | 230 ++++--
+ 9 files changed, 980 insertions(+), 255 deletions(-)
 
+-- 
+2.43.0.472.g3155946c3a-goog
 
