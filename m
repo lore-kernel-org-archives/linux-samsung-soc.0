@@ -1,121 +1,175 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LUyqbVXO"
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F86112
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 07:55:15 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id 41be03b00d2f7-5c690c3d113so6881316a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 07:55:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702569314; x=1703174114; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F3dEU5MDIKfW+qCgC0PdqFKd7O+g3bLPZxWTXEaaam8=;
-        b=LUyqbVXObIzpamKp0fyTc+Rjv3sguhqfdpED9TmePWCZv+DQG/dqABjbEk0V9Q+uRg
-         nD0pZis1uUfhbvMV5ZpUNXnIWzvwEmssJkxnzs5vknuwPWCN1CQFOmtEBppmxh4xVxS6
-         KcrEUnjnK8ll51DompifLrq+hhtrACZorfqCrAFgGokXqwzz/3AkrYjEhKgdJLf8TKHD
-         WNqSuGRt/DTZNcxdV6vGL5bfJKU6P5WWvmwqoz12BOSNydE17EfFC/y6fSisGB7bCKks
-         uDImIVJsm27r8qyePzoYzOkSF4SS9POTHWtJC1EWaCCwdjeQhG+t67dnl1Ft3Bi+gBue
-         fr3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702569314; x=1703174114;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F3dEU5MDIKfW+qCgC0PdqFKd7O+g3bLPZxWTXEaaam8=;
-        b=Ju0J+iG7amkq5HkXVwgY/ioOo7D6zVZPtv7yY0C00tTw33Qjqyjt5+XW7FhNj93Ack
-         XIKL/94yzw+/7cvvJpRTPESbbSda3vt4nzESTp/sMPmV5vBT4Fdem9luEIfSpdlp6zyG
-         Yl1F0EMjFfPAxmBolap+s3MPKw69Cd0b5Shhn7IHnKS+jJZ9YnoCEGRXGoXtCQqFtDlD
-         /B0YB+2ycYa37hzTyuWAY7F5fxKRWrsJ1Jr4xiAcEj/DizxeWY1l1N8tcELqnSEuraLP
-         12cYbq1TGg6wE4XPsiZX2WuiJDs/Eo8yIIKYMPj7OsOHmNV/BfAOzRg+xDRkfRjJ3a5g
-         h9vQ==
-X-Gm-Message-State: AOJu0Yw6lawUp3fPWR+SWLLry1vnrOfa+EKDwc6lD7Vc0lqByT41V/9z
-	qSMfp/5Nxk0uDLBk6q0tutCsx1vEJAgD+P1A94d7ow==
-X-Google-Smtp-Source: AGHT+IGkTnLdOtrqyXltKJs1dUID0ysgTZE7BI1PV4SJTjovnObU8OGLzeMvBOaKswBq0xLjC9rksw67hcvGeMcAL24=
-X-Received: by 2002:a17:90b:948:b0:28a:e356:459b with SMTP id
- dw8-20020a17090b094800b0028ae356459bmr2009364pjb.34.1702569314569; Thu, 14
- Dec 2023 07:55:14 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZJHvADc3"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 310B5124
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 07:59:21 -0800 (PST)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20231214155915euoutp02f0e297cc9ebaf43a44f3b12fd4687388~gvf2PRo000383303833euoutp02I
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20231214155915euoutp02f0e297cc9ebaf43a44f3b12fd4687388~gvf2PRo000383303833euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1702569555;
+	bh=t1Ri1k88YEtJXFLu4apS8OAYzivDLP6IYWLM6Hz470Q=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ZJHvADc3B4C/FT1ThSS0qmAJenVNV4kLogS5UG1mUI6/B0tro/4SCXVGamorndpcJ
+	 n7u6Eo7Ic5yaIfUNQmnYKxHqhJuQaK43dRw/1+L5KlspmzR+tkAAW2Oc5Ef7DMQwKq
+	 kmQeHMu0P9XAxswrcpfSJr3ZWwzdZqugGatqmyQ8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20231214155915eucas1p26a90c53486421a4576d223badfb3f49b~gvf132k6v0218202182eucas1p2Q;
+	Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id CF.D9.09539.3562B756; Thu, 14
+	Dec 2023 15:59:15 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20231214155915eucas1p2c518336996033a817222877b35ea4fd3~gvf1dNbqE0218202182eucas1p2N;
+	Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20231214155915eusmtrp16e110281bd355ea0351c1cb636cbff39~gvf1cSySh2480424804eusmtrp1z;
+	Thu, 14 Dec 2023 15:59:15 +0000 (GMT)
+X-AuditID: cbfec7f2-52bff70000002543-e7-657b2653c492
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 2C.7D.09146.2562B756; Thu, 14
+	Dec 2023 15:59:14 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20231214155913eusmtip1e7453cbacef6362492c4fd6cab56598d~gvf0a9H2D1522115221eusmtip1b;
+	Thu, 14 Dec 2023 15:59:13 +0000 (GMT)
+Message-ID: <699636b7-d737-4df4-92e9-43b0f52d4b99@samsung.com>
+Date: Thu, 14 Dec 2023 16:59:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org> <20231214105243.3707730-12-tudor.ambarus@linaro.org>
-In-Reply-To: <20231214105243.3707730-12-tudor.ambarus@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 14 Dec 2023 09:55:03 -0600
-Message-ID: <CAPLW+4nTgam4jZ+s5m5E05jWO_kfSy=fMS0Ywp3yQEEn-UESbg@mail.gmail.com>
-Subject: Re: [PATCH 11/13] arm64: dts: exynos: gs101: enable eeprom on gs101-oriole
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, krzysztof.kozlowski+dt@linaro.org
-Cc: peter.griffin@linaro.org, robh+dt@kernel.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org, 
-	alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com, 
-	tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/exynos: fix accidental on-stack copy of
+ exynos_drm_plane
+Content-Language: en-US
+To: Arnd Bergmann <arnd@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
+	<kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <treding@nvidia.com>, Steven Price <steven.price@arm.com>,
+	Rob Herring <robh@kernel.org>, Robert Foss <rfoss@kernel.org>, Kieran
+	Bingham <kieran.bingham+renesas@ideasonboard.com>, Liviu Dudau
+	<liviu.dudau@arm.com>, Sam Ravnborg <sam@ravnborg.org>,
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20231214123237.1727428-1-arnd@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxTVxj23Ht7b9useC0oR7bQrAk4toDCzDyZhK3bXG6CPwwwWWama8Zd
+	JQLV1uIHPygQoBbBUrVCgY4wBGwIiwVKh8I2hlRxU0BgtLCURDcjjs9WFBlube/c+Pc87/s8
+	53nfN4ePi0vJCH5mznFWlSPPkpJCwj6wcic2NTqP3XFDuxXd/LUBQ9MWO4nWjAMUsnfYeOhv
+	eyWORp/Mk8joMRBoabwMoJ7HnRT6pfBPCtnuj/PQve5aElXd7cXQD5dLCWS0uPy26w4Ktax0
+	AlTQ7/dWnX9EosnVkPfDmFZLK2BWnxsB07NcTzDfmX+jmBpdNY+xWc+QzNT4dZLxlDkxpr0x
+	nykvmiOZRtMYyVR0WAHjtUXuE30mTMxgszJzWdX2pC+Eh436xKMjW04Wl6ziWmAK1QMBH9I7
+	4R+ufkIPhHwx3QJgn6kB54gPwBv2YowjXgCbF86RLy2uwS7ANZoBNFz4+V/VIoDeK+d4AZWI
+	ToLOmQEqgAk6CvbXLJNcfRO8Vf2ACODNtAR63FVBTSidCit6JrEAxulw6H7wdfDRMNqEwea7
+	TWSA4PR9HP7uHgm6SToe6mf1wVcF9C54pXuI4twS2DVbG9wC0ssC+LRmmMcN/hHUtU1gHA6F
+	M84OisOvwdvnzxKcoRTA+lUPxhEDgNqHbsCpdsOpO8/9cXx/RAz8tns7V5bBHs8cFihDOgRO
+	zG7ihgiBRvslnCuLoK5EzKmjodnZ9l/sj0MjuAFIzesOY153APO6dcz/59YDwgrCWY06W8Gq
+	43PYE3FqebZak6OI+1KZbQP+v3r7hXPJAepmFuP6AMYHfQDycWmY6JbjBCsWZchPnWZVykMq
+	TRar7gOv8glpuCgqQ8KKaYX8OHuEZY+yqpddjC+I0GKmbzaMDl4tmrgaURw3vycqEVs7kjsp
+	K+Slp5j3WxQbFzekKt9yVDbefJsau7bPkVxW3jX3/ZbNn8/VJeyadkQ+Xlj0+vIS3vXKk30V
+	mda8offeqbz3SHPyolU8dqj2YeiOUbuEyV9LCaF0Sssn6Wkw90B0oevMtfafUvTlNqdgfmOs
+	r/bi8BsL26b2wsjotHTdRP62FsnkQcOpC6LpT2Nf0RTxm2TxewuWEgYPaJvs3S+2lmCy3a//
+	JZo+ljTuSt5jfIK+aul0w16bY7Dt7GXf6PBy2scVB2PaC5JKLn0o6/0g1pzwtLpB3St51llV
+	rFESMRHWMMXpYyvPWoeF+3dq66SE+rA8/k1cpZb/A1AB3pkaBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsVy+t/xu7pBatWpBvM+GVucuL6IyeLBvG1s
+	Fn8nHWO32LZlE6vF/20TmS2ufH3PZjHp/gQWi0/Xuhkt9r7eym5xtukNu8Wmx9dYLS7vmsNm
+	MeP8PiaLA0vbWSwmzbsJ1LZnB7vFip9bGS0ajwD1zpj8ks3i9m8+BxGPNfPWMHr8/jWJ0WPv
+	twUsHjtn3WX3mN0xk9Vj06pONo871/awedzvPs7ksXlJvUdv8zs2jyXTrrJ59G1ZxejxeZNc
+	AG+Unk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsak
+	LpuCS2IVrW2/mRsYpwl3MXJySAiYSNw8tZ2xi5GLQ0hgKaPE+zPvmCESMhInpzWwQtjCEn+u
+	dbFBFL1nlJh58RATSIJXwE7i+Ktj7CA2i4CqxJHZ39gg4oISJ2c+YQGxRQXkJe7fmgFWIywQ
+	LNG39zZYL7OAuMStJ/OZQIaKCMxgkvi/qANsA7PAY2aJ/ue/wLqFBLqA1j02BbHZBAwlut52
+	gW3gFDCXWLnrAjvEJDOJrq1djBC2vMT2t3OYJzAKzUJyyCwkC2chaZmFpGUBI8sqRpHU0uLc
+	9NxiQ73ixNzi0rx0veT83E2MwCSy7djPzTsY5736qHeIkYmD8RCjBAezkgjvyR3lqUK8KYmV
+	ValF+fFFpTmpxYcYTYGhMZFZSjQ5H5jG8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1Kz
+	U1MLUotg+pg4OKUamGok4l4dVTSc8Fk2U3/vy1PtXlJ2qy39G+ZPFUx/wHzmStrs3rp1GmEW
+	r5JWq+3e9W49q3e50t8rezsP+/0rN+uu2T5j/ZIn7dvyup5l2RibCiwpOGrfu2fHpiw9NR/B
+	zovPS9o/fOTq/7IywdqOa9+PQ+3d8VFZiRWHz3Ht2vzGcbpZQsDR1WK3p89If/58eYLSGTXj
+	0+rdgvIMjo6/nZlsJati0pmS660lr9hPvyw2o7bdiPlqePmNpZXbPSo0lxY21s7Q2Xrn5bot
+	XXXGh3ZGCC5yZH528NuPC6nbRAprLXL2HTYtMJLhePtj2ZLjG398dF7+UlHv6sdOx0Pb32hs
+	0T3Yv/J/2nUf458vTiuxFGckGmoxFxUnAgAQVosAqwMAAA==
+X-CMS-MailID: 20231214155915eucas1p2c518336996033a817222877b35ea4fd3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20231214123248eucas1p1577bc2064401fce57a752234e1338f5a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20231214123248eucas1p1577bc2064401fce57a752234e1338f5a
+References: <CGME20231214123248eucas1p1577bc2064401fce57a752234e1338f5a@eucas1p1.samsung.com>
+	<20231214123237.1727428-1-arnd@kernel.org>
 
-On Thu, Dec 14, 2023 at 4:53=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
+On 14.12.2023 13:32, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Enable the eeprom found on the battery connector.
+> gcc rightfully complains about excessive stack usage in the fimd_win_set_pixfmt()
+> function:
 >
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> drivers/gpu/drm/exynos/exynos_drm_fimd.c: In function 'fimd_win_set_pixfmt':
+> drivers/gpu/drm/exynos/exynos_drm_fimd.c:750:1: error: the frame size of 1032 bytes is larger than 1024 byte
+> drivers/gpu/drm/exynos/exynos5433_drm_decon.c: In function 'decon_win_set_pixfmt':
+> drivers/gpu/drm/exynos/exynos5433_drm_decon.c:381:1: error: the frame size of 1032 bytes is larger than 1024 bytes
+>
+> There is really no reason to copy the large exynos_drm_plane
+> structure to the stack before using one of its members, so just
+> use a pointer instead.
+>
+> Fixes: 6f8ee5c21722 ("drm/exynos: fimd: Make plane alpha configurable")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+
 > ---
->  .../boot/dts/exynos/google/gs101-oriole.dts    | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>   drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 4 ++--
+>   drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 4 ++--
+>   2 files changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/ar=
-m64/boot/dts/exynos/google/gs101-oriole.dts
-> index 4a71f752200d..11b299d21c5d 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> @@ -63,6 +63,19 @@ &ext_200m {
->         clock-frequency =3D <200000000>;
->  };
->
-> +&hsi2c_8 {
-> +       pinctrl-names =3D "default";
-> +       pinctrl-0 =3D <&hsi2c8_bus>;
-> +       #address-cells =3D <1>;
-> +       #size-cells =3D <0>;
+> diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> index 4d986077738b..bce027552474 100644
+> --- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> +++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+> @@ -319,9 +319,9 @@ static void decon_win_set_bldmod(struct decon_context *ctx, unsigned int win,
+>   static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+>   				 struct drm_framebuffer *fb)
+>   {
+> -	struct exynos_drm_plane plane = ctx->planes[win];
+> +	struct exynos_drm_plane *plane = &ctx->planes[win];
+>   	struct exynos_drm_plane_state *state =
+> -		to_exynos_plane_state(plane.base.state);
+> +		to_exynos_plane_state(plane->base.state);
+>   	unsigned int alpha = state->base.alpha;
+>   	unsigned int pixel_alpha;
+>   	unsigned long val;
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 8dde7b1e9b35..5bdc246f5fad 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -661,9 +661,9 @@ static void fimd_win_set_bldmod(struct fimd_context *ctx, unsigned int win,
+>   static void fimd_win_set_pixfmt(struct fimd_context *ctx, unsigned int win,
+>   				struct drm_framebuffer *fb, int width)
+>   {
+> -	struct exynos_drm_plane plane = ctx->planes[win];
+> +	struct exynos_drm_plane *plane = &ctx->planes[win];
+>   	struct exynos_drm_plane_state *state =
+> -		to_exynos_plane_state(plane.base.state);
+> +		to_exynos_plane_state(plane->base.state);
+>   	uint32_t pixel_format = fb->format->format;
+>   	unsigned int alpha = state->base.alpha;
+>   	u32 val = WINCONx_ENWIN;
 
-Not sure if those 4 above properties belong in board's dts or in SoC's
-dtsi. Krzysztof, what do you think?
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Other than that:
-
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-> +       status =3D "okay";
-> +
-> +       eeprom: eeprom@50 {
-> +               compatible =3D "atmel,24c08";
-> +               reg =3D <0x50>;
-> +       };
-> +};
-> +
->  &pinctrl_far_alive {
->         key_voldown: key-voldown-pins {
->                 samsung,pins =3D "gpa7-3";
-> @@ -99,6 +112,11 @@ &usi_uart {
->         status =3D "okay";
->  };
->
-> +&usi8 {
-> +       samsung,mode =3D <USI_V2_I2C>;
-> +       status =3D "okay";
-> +};
-> +
->  &watchdog_cl0 {
->         timeout-sec =3D <30>;
->         status =3D "okay";
-> --
-> 2.43.0.472.g3155946c3a-goog
->
