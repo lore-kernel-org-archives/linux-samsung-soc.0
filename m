@@ -1,102 +1,104 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dUcRY+xc"
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444C1113
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:53:36 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50bdec453c8so9447692e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 03:53:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702554814; x=1703159614; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KttnO4PIiCaAGSytE92u74iuSMSOKJ5regNQ/EC5WuQ=;
-        b=dUcRY+xcez7rKlURdw2AFGWcNBBuRihJ9ggWBlAMEw9RizFwTpyX8PyDEezOXkPFub
-         Xkg/t2pA8rxDeWbxrP8RnPS5Y/2yre721nd1j/1cFbhQC+P3jrTx8ZuBn8+oeyT3NSkE
-         lxsBqMDvhPASxFGvS1IusI72EXuYJdFrSHeGhTv+cLyiPXLKZz+082IjfqZWVgxQczWa
-         Z1kx6ONvpsCF49wx1usk/VJmAMiDltXf1pn4Hh+idWI1V8CcGnQtO2s4uWwJVTnKu1XA
-         P6n8gakR5YKuPSTLNCNPqz+DUNA2XTktgPFzrhZqeTa8at/pER4a0RV4TWwBazoywj2x
-         MD8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702554814; x=1703159614;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KttnO4PIiCaAGSytE92u74iuSMSOKJ5regNQ/EC5WuQ=;
-        b=k3btz19TywrYYaKvs2GsGSs0xOHxuERcou2RAoI3U67LGdAGBDxlgS/WnQhmefakMc
-         4ImplwrE585T/XuHCm6/EPaNJgQFxym0qMeYkyqds9v9zlWRJqu60dHmdKcq5nCnkdck
-         Z8CwJZZTX863WlUyJzAUMNsN8i8RYvmzExU16cfEX45gIo1RFYk8/g0Ywd9cVvXGfBQI
-         LY+cL74oped7PiyI6mHk3zpz95WGBCeohEiLD/cO1jEL8zppnakp/KOr7JLycMPDzG88
-         54P+BgEow59qmJPhI+8j0NKCkKuxR8DF23i4c/tLlDajLZJlgF/U7c5diRA4jD65dMVq
-         93sg==
-X-Gm-Message-State: AOJu0YzGJ1mWoQzDvLge7a5uLztghnRtDoh0yqJcpsDPphqyDk9EmoOg
-	1m1Trf3qzJv+57d8DKnAEJSx/A==
-X-Google-Smtp-Source: AGHT+IFKAUpNpfuAuwpUiHGvkKtTTxlNLOoY8GwwQiOzDKup6y8DvTMvl5/GS7Uobt3Q4SD5/EbY3A==
-X-Received: by 2002:ac2:4219:0:b0:50b:f305:7802 with SMTP id y25-20020ac24219000000b0050bf3057802mr3932763lfh.129.1702554814419;
-        Thu, 14 Dec 2023 03:53:34 -0800 (PST)
-Received: from [172.30.204.158] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id y14-20020ac2446e000000b0050e1633748dsm183444lfl.206.2023.12.14.03.53.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Dec 2023 03:53:34 -0800 (PST)
-Message-ID: <2890ae71-aed0-451d-a7fb-7db30c30b72b@linaro.org>
-Date: Thu, 14 Dec 2023 12:53:30 +0100
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fuI254nT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H4hUsGCD"
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7B4BD;
+	Thu, 14 Dec 2023 04:01:45 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id E6A1D5C01FA;
+	Thu, 14 Dec 2023 07:01:44 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 14 Dec 2023 07:01:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1702555304; x=1702641704; bh=Baksf+ezVF
+	lYZ2aIOXFNfU8ikmrbeyERoCYqa6/cW4Y=; b=fuI254nTWrgEL508ZUXSr5ts7/
+	kL5NSSYQ9JyWAcH/I0aVXU+xp7FkYXP3UpSL7twuKSg9dSynv2q9ATL6UwFiQntV
+	FbjMNsWLD7EbXgwk9sK73Xev9A3NcxXYtKDIxHZ/txh1DZiFkqdYoXWYM0x0qmTx
+	VJrZKtRpdftK/xUC9+DUCsVDcEXyPP7YxVl8JYE86kybQ/bVWjzbUvoST4/OeTMK
+	dtIcHKbaotzXZ3hN9stNCbPuMbly5XG6BINTpdP1cqEY7GYer2pjiSReD4bIN7DN
+	mVJkhwR7P9s/zWjn6jBiAKr9qikX1el6R4abP+xop0BK1YVsgTWELj5R45cg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1702555304; x=1702641704; bh=Baksf+ezVFlYZ2aIOXFNfU8ikmrb
+	eyERoCYqa6/cW4Y=; b=H4hUsGCD+UIpPhvTp6EDda5x184ckDpINaoPPwYhG6Bz
+	pHrj1+s3zIJMTXmqdvx/JGqJ/hd2av7VtEQIPEm6WT++DwSy7BMNCiOWGoCPX8Pb
+	eyu9Rr7n4WLnuV7XODR4sFJzUse0N2foWWq5LZoxh7urMYi/npT7AH8G5+sJG13H
+	qKAxFJyp0e3UC1vTtvJBGJjF19LSovxJt+wS2iUU5KA/T1hxeOwqmcEQ9yws7UIT
+	ekEE1qbPICwOFcUJV8dk/8cX6od0dkCsWEOWZbUXvuSkQBkbA5LHKmah+BXF8qxB
+	7X21c47xO5o4wBJptgZc80EB191pJPTwlEwQJS0KLw==
+X-ME-Sender: <xms:p-56ZfivBsopwzJZUolzYfIwCyeb1_gUGFaQFErpr8dBiVYSiiTJ2A>
+    <xme:p-56ZcDYh5fT2_FwBR5UmjS4-ld9llEkSfj-nLAWDISM9s8emwpjly7LjXh1nMNmb
+    I8OAehJrVT-gTxOXrw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelledgfeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:p-56ZfEh9NlIyqEvfieC3ApXwdqjkVDtV84AZttHKOUhd3fY6NBbGw>
+    <xmx:p-56ZcRlgLBGG20YuLoW9BvjkhNfpbGJE4AymzTznyVL5qXxb7yVkg>
+    <xmx:p-56ZcwwDYeuLqtfeNo6KEDmz9WFiKgU7XZUFEoxj0Oj05LSun0qHQ>
+    <xmx:qO56ZZjQr8S5MbXEpxTVcjgIE1nGGY0D9mobT7rrgS1E5yJuuh1h8g>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 779C6B6008F; Thu, 14 Dec 2023 07:01:43 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1283-g327e3ec917-fm-20231207.002-g327e3ec9
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] arm: arm64: dts: Enable cros-ec-spi as wake source
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Mark Hasemeyer <markhas@chromium.org>, LKML <linux-kernel@vger.kernel.org>
-Cc: Raul Rangel <rrangel@chromium.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Andre Przywara <andre.przywara@arm.com>,
- Andy Gross <agross@kernel.org>, Baruch Siach <baruch@tkos.co.il>,
- Bjorn Andersson <andersson@kernel.org>,
- Claudiu Beznea <claudiu.beznea@microchip.com>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jesper Nilsson <jesper.nilsson@axis.com>, Jisheng Zhang
- <jszhang@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michal Simek <michal.simek@amd.com>, Paul Barker <paul.barker@sancloud.com>,
- Rob Herring <robh+dt@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- cros-qcom-dts-watchers@chromium.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20231213110009.v1.1.Ifd0903f1c351e84376d71dbdadbd43931197f5ea@changeid>
- <20231213110009.v1.2.I274b2d2255eb539cc9d251c9d65a385cc4014c79@changeid>
- <e5625051-e9e2-4a75-a11a-cf5b40606fa4@collabora.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <e5625051-e9e2-4a75-a11a-cf5b40606fa4@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: *
+Message-Id: <1938fcf1-eb5d-4723-a6c6-d2fe2c6dd1c0@app.fastmail.com>
+In-Reply-To: <20231214105243.3707730-6-tudor.ambarus@linaro.org>
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-6-tudor.ambarus@linaro.org>
+Date: Thu, 14 Dec 2023 13:01:21 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ "Peter Griffin" <peter.griffin@linaro.org>,
+ "Rob Herring" <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ andi.shyti@kernel.org, "Alim Akhtar" <alim.akhtar@samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ "Sylwester Nawrocki" <s.nawrocki@samsung.com>,
+ "Tomasz Figa" <tomasz.figa@gmail.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Sam Protsenko" <semen.protsenko@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ saravanak@google.com, "William McVicker" <willmcvicker@google.com>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Subject: Re: [PATCH 05/13] tty: serial: samsung: add gs101 earlycon support
+Content-Type: text/plain
 
+On Thu, Dec 14, 2023, at 11:52, Tudor Ambarus wrote:
+> +static int __init gs101_early_console_setup(struct earlycon_device *device,
+> +					    const char *opt)
+> +{
+> +	/* gs101 always expects MMIO32 register accesses. */
+> +	device->port.iotype = UPIO_MEM32;
+> +
+> +	return s5pv210_early_console_setup(device, opt);
+> +}
+> +
+> +OF_EARLYCON_DECLARE(gs101, "google,gs101-uart", gs101_early_console_setup);
 
+It looks like this is already done by of_setup_earlycon() based on
+the reg-io-width property. Any idea why it doesn't work with the
+normal s5pv210_early_console_setup() function?
 
-On 12/14/23 11:55, AngeloGioacchino Del Regno wrote:
-> Il 13/12/23 19:00, Mark Hasemeyer ha scritto:
->> The cros_ec driver currently assumes that cros-ec-spi compatible device
->> nodes are a wakeup-source even though the wakeup-source property is not
->> defined.
->>
->> Add the wakeup-source property to all cros-ec-spi compatible device
->> nodes to match expected behavior.
->>
->> Signed-off-by: Mark Hasemeyer <markhas@chromium.org>
-> 
-> I received only patch [2/6] - please send the entire series to the relevant
-> maintainers, as otherwise it's difficult to understand what's going on.
-> 
-> As for this patch alone:
->   1. arch/arm stuff goes to a different commit
->   2. I would prefer if you split per-arch and per-SoC.
-+1, otherwise *somebody* will get merge conflicts that - even
-if trivial - take additional time to resolve :(
-
-Konrad
+      Arnd
