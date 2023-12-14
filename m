@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vq+WAAV6"
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 244A7188
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:57 -0800 (PST)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40c3ceded81so51298365e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GO+aZo3R"
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD58123
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:55 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40c41df5577so47845885e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702551175; x=1703155975; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702551174; x=1703155974; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5mhn42nkbYNSYbqkCzR8s0q7mu4Kn3hIP/r9MxesLeo=;
-        b=vq+WAAV608iv8HAZrFaxnvrAdTtcbtsPv2IwdjqVJDQvKZBKql6afIRPZ6DtVAkSPK
-         LKUai0WaESB2APfw8jtmxLJcJyJ0LaPQ40mlsNzFPEsOiODOfJEihG6IBgr7XsHB83fL
-         FqOzDIzui+lKvj/QwtydVQsSPhK/vz8KRpllEWTXVeUALx50QFCU11OpEYIozJc34DnH
-         TEI7pHUdzJipJENCVWfLEvz0Oz20HCSn0iNiAkvy7seAMIK2yD3j4MRjEhg620k7cVxk
-         S9gCHWoB9dh9kkeXg9eNIsniDLUBqoK7MTlsuP4gYBRWEr6GhIuUAb4X8D/AmHFYHvp6
-         +GEA==
+        bh=Uni2IevXVLxWfb8CoVcIQYuHYfYSTP7QTj2/YzSprck=;
+        b=GO+aZo3RWFDSo5tZ2ULlCkNMhOx2dZxSfN30vKiOzxIBML6P8IKVVXAmpv5jsjPbLy
+         q2u6SNwmPBZWETwM1jIalirh+M3JTP6RjUAIfJE9bPp496d2J9Qqt6t4bf1hzQ3kxk+1
+         XJKgUnViYwWrZmbfev5uorBqKluIGqmhOn6r5zdL6BcZvscAmX+bU/SAmP6m/htKHFk3
+         N1pvU7FK++i54OQCgiSvqxL3/5lTOgGamfAdZld8+UO6MMj0I1OK1JgmJFP9K17d/DfP
+         XK4KtputzM8dlIE0a5h/srmgoSl8ykxswjd7GwKGAZS2Xiw++DWuP++nYdNL4WgdZ2lz
+         Xl0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702551175; x=1703155975;
+        d=1e100.net; s=20230601; t=1702551174; x=1703155974;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5mhn42nkbYNSYbqkCzR8s0q7mu4Kn3hIP/r9MxesLeo=;
-        b=nP6ILWRomjcYJoymBtCt26N1M+WaXoR/fFd4Lxo8T+37nh0NdWto4Xb08pqI7rBm6M
-         q/15ijpW37LktOYyK/DqnbkOUhMzWtfkamCYyx6SoXPN7xN80mvLxW5kZN2RHfh7WJ4I
-         AVhrl8hQrf2gM1PM+Ks1p3e+eACv4jvZjBHQxktP15SORmBdjBKMFLMvWVyfDFCOuOFk
-         jS8eeGM+8mXL5odBoQMFONScOhCcqnTLRKejDoORjJX8rcgoa9ve6fXGEg0T0hdcY+7h
-         f63JPDS4hVZSOmSaFyV6iVrAIsafiHqN850oQtxA95ZGGdI9UyVPomct5vyq2YQAM7Ep
-         CJQQ==
-X-Gm-Message-State: AOJu0YzGca4pLT5kPQSoMBRMcHuoa8hsOTQsPJf/zZ7PoyThAavdSqPo
-	TIiV0ReAP+38FQlPh9dm4jSkhg==
-X-Google-Smtp-Source: AGHT+IFSACgeuqXfGtcq1HirR8WdhU+ZvxZq6/QpHoFhVCpG7A91zn3qv3cTxTqAwHCfaUc78R5niQ==
-X-Received: by 2002:a1c:4b0b:0:b0:40b:5e21:ec37 with SMTP id y11-20020a1c4b0b000000b0040b5e21ec37mr4222759wma.105.1702551175514;
-        Thu, 14 Dec 2023 02:52:55 -0800 (PST)
+        bh=Uni2IevXVLxWfb8CoVcIQYuHYfYSTP7QTj2/YzSprck=;
+        b=WYh3E6SCOLZrOoK0J1q+sSBliCTm4uBGqG7YFYQwwizUzje9BRZCMTaDE9hLjS1ejQ
+         9puZcLU5ibU+xR/eTtN5Nv5QrQr6NXlOmw7CUnO6EX5467mcqNs90kXKZKp0gg0TMKup
+         Sf7i7xmBbpVILspMdt60qMLjYhYZpo70agHSm9IUDnGUyRb0pStNDf4HCKt7+vqh29Zp
+         uSKjuPE0X5aOK6izT7ZoNkSxAErp6CxRSHB89LJdDzKvyqPgSTfWrgPDR/Gr5fFf3OPC
+         XwjAjhA9wz2a0u+I1wf6k5IJpGgvIMEoKJTPElptZL1PADmxp7sETbK4uHyXMk4BGpwl
+         A4vw==
+X-Gm-Message-State: AOJu0YyqPL/hg0SpGiDw8iskBki7d+XFMSQN9xqJfkz1KhXRW+gxQFX3
+	RctK2mwXFpm1ljDjqKrXgm76pA==
+X-Google-Smtp-Source: AGHT+IF/dpPnC1aOyxsiIUbpq+FHwoAHeLKTjdup8H0ycPqMEYCePvIF5ZRoGWvsLq6ZxBMBrAWDWg==
+X-Received: by 2002:a05:600c:917:b0:40b:4b67:3028 with SMTP id m23-20020a05600c091700b0040b4b673028mr2492400wmp.34.1702551173928;
+        Thu, 14 Dec 2023 02:52:53 -0800 (PST)
 Received: from ta2.c.googlers.com.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.52.54
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.52.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 02:52:55 -0800 (PST)
+        Thu, 14 Dec 2023 02:52:53 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: peter.griffin@linaro.org,
 	robh+dt@kernel.org,
@@ -67,9 +67,9 @@ Cc: andre.draszik@linaro.org,
 	linux-i2c@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 04/13] dt-bindings: serial: samsung: gs101: make reg-io-width required property
-Date: Thu, 14 Dec 2023 10:52:34 +0000
-Message-ID: <20231214105243.3707730-5-tudor.ambarus@linaro.org>
+Subject: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0 clock management unit
+Date: Thu, 14 Dec 2023 10:52:32 +0000
+Message-ID: <20231214105243.3707730-3-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
 References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
@@ -81,32 +81,159 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GS101 only allows 32-bit register accesses. When using 8-bit reg
-accesses on gs101, a SError Interrupt is raised causing the system
-unusable.
-
-Make reg-io-width a required property and expect for it a value of 4.
+Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
+clock management unit.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
+ include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
+ 2 files changed, 109 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index 133259ed3a34..cc896d7e2a3d 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -143,6 +143,10 @@ allOf:
-     then:
-       required:
-         - samsung,uart-fifosize
-+        - reg-io-width
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index 3eebc03a309b..ba54c13c55bc 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -30,14 +30,15 @@ properties:
+       - google,gs101-cmu-top
+       - google,gs101-cmu-apm
+       - google,gs101-cmu-misc
++      - google,gs101-cmu-peric0
+ 
+   clocks:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 3
+ 
+   clock-names:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 3
+ 
+   "#clock-cells":
+     const: 1
+@@ -88,6 +89,26 @@ allOf:
+             - const: dout_cmu_misc_bus
+             - const: dout_cmu_misc_sss
+ 
++  - if:
 +      properties:
-+        reg-io-width:
-+          const: 4
++        compatible:
++          contains:
++            const: google,gs101-cmu-peric0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
++            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_cmu_peric0_bus
++            - const: dout_cmu_peric0_ip
++
+ additionalProperties: false
  
- unevaluatedProperties: false
+ examples:
+diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+index 21adec22387c..7d7a896416a7 100644
+--- a/include/dt-bindings/clock/google,gs101.h
++++ b/include/dt-bindings/clock/google,gs101.h
+@@ -389,4 +389,90 @@
+ #define CLK_GOUT_MISC_WDT_CLUSTER1_PCLK			73
+ #define CLK_GOUT_MISC_XIU_D_MISC_ACLK			74
  
++/* CMU_PERIC0 */
++/* CMU_PERIC0 MUX */
++#define CLK_MOUT_PERIC0_BUS_USER			1
++#define CLK_MOUT_PERIC0_I3C_USER			2
++#define CLK_MOUT_PERIC0_USI0_UART_USER			3
++#define CLK_MOUT_PERIC0_USI14_USI_USER			4
++#define CLK_MOUT_PERIC0_USI1_USI_USER			5
++#define CLK_MOUT_PERIC0_USI2_USI_USER			6
++#define CLK_MOUT_PERIC0_USI3_USI_USER			7
++#define CLK_MOUT_PERIC0_USI4_USI_USER			8
++#define CLK_MOUT_PERIC0_USI5_USI_USER			9
++#define CLK_MOUT_PERIC0_USI6_USI_USER			10
++#define CLK_MOUT_PERIC0_USI7_USI_USER			11
++#define CLK_MOUT_PERIC0_USI8_USI_USER			12
++
++/* CMU_PERIC0 Dividers */
++#define CLK_DOUT_PERIC0_I3C				13
++#define CLK_DOUT_PERIC0_USI0_UART			14
++#define CLK_DOUT_PERIC0_USI14_USI			15
++#define CLK_DOUT_PERIC0_USI1_USI			16
++#define CLK_DOUT_PERIC0_USI2_USI			17
++#define CLK_DOUT_PERIC0_USI3_USI			18
++#define CLK_DOUT_PERIC0_USI4_USI			19
++#define CLK_DOUT_PERIC0_USI5_USI			20
++#define CLK_DOUT_PERIC0_USI6_USI			21
++#define CLK_DOUT_PERIC0_USI7_USI			22
++#define CLK_DOUT_PERIC0_USI8_USI			23
++
++/* CMU_PERIC0 Gates */
++#define CLK_GOUT_PERIC0_IP				24
++#define CLK_GOUT_PERIC0_PERIC0_CMU_PERIC0_PCLK		25
++#define CLK_GOUT_PERIC0_CLK_PERIC0_OSCCLK_CLK		26
++#define CLK_GOUT_PERIC0_D_TZPC_PERIC0_PCLK		27
++#define CLK_GOUT_PERIC0_GPC_PERIC0_PCLK			28
++#define CLK_GOUT_PERIC0_GPIO_PERIC0_PCLK		29
++#define CLK_GOUT_PERIC0_LHM_AXI_P_PERIC0_I_CLK		30
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_0		31
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_1		32
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_10		33
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_11		34
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_12		35
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_13		36
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_14		37
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_15		38
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_2		39
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_3		40
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_4		41
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_5		42
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_6		43
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7		44
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_8		45
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_9		46
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_0		47
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_1		48
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_10		49
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_11		50
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_12		51
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_13		52
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_14		53
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_15		54
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_2		55
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_3		56
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_4		57
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_5		58
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_6		59
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_7		60
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_8		61
++#define CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_9		62
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0		63
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_2		64
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0		65
++#define CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_2		66
++#define CLK_GOUT_PERIC0_CLK_PERIC0_BUSP_CLK		67
++#define CLK_GOUT_PERIC0_CLK_PERIC0_I3C_CLK		68
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI0_UART_CLK	69
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI14_USI_CLK	70
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI1_USI_CLK		71
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI2_USI_CLK		72
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI3_USI_CLK		73
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI4_USI_CLK		74
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI5_USI_CLK		75
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI6_USI_CLK		76
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI7_USI_CLK		77
++#define CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK		78
++#define CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK		79
++
+ #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
 -- 
 2.43.0.472.g3155946c3a-goog
 
