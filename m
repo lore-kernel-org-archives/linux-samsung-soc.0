@@ -1,43 +1,43 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUg91Jw5"
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63550193
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:58 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-40c1e3ea2f2so77614975e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:52:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aZRo+UjP"
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD441A1
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:53:00 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-40c2308faedso81895955e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Dec 2023 02:53:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702551176; x=1703155976; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702551178; x=1703155978; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/xcopqDHmkhwhZiddcnv/4oqDnf2f2C/EfKwZNlZ0qw=;
-        b=hUg91Jw5utLpyY8E5CDdi/IaLvyeX0Y0EjDQzG/iXoXcPl49mRrpQKxyr1hIszPB90
-         K96OtV50cQ0BFgtgMjFXXvyd9y0PMBTJFqCub65yjlpfaguHH9eptI1C2VHeAUJWGF5g
-         JvDuidXOqpSolEOQu/zGoXqs/NsPiASXms+GYVj/H4rx7efIrkc9y+LgScmkUyTjAndg
-         tmepwkVmlGOSfXqm4T4JDNEHhz2ny7sf48EWaZcznpt+VaXNy/vAWIX0VluNSK/2Jnn+
-         0PtGNRfLvurQlW2YLtcrcb8lAIoJTdZJmHQ0wtPI70QelPCDQ19lyLVuw0MNY4+sdSuC
-         pHgg==
+        bh=yuS+45h2ga3aQkPKsayipRVsQ8w0E+s5uDXU4i8VrWg=;
+        b=aZRo+UjPXLgFt4whs/qPqciVYMVoliRW4Ld94w6FwAIl5U/zh+prH9DxSNaOFSObpT
+         6FgjPxNweVjcZGfdu+ZIkTlwIy2Z4vny/Ql26kDImvpbZ+KRbmPeQxiCegb47jiwhgBN
+         GIM9CJ3fQQJxExHDhQ3J0l/jhHL42At48M8NcS4ecRLSmOz+V0eQPEbnIs4QLg/EDZh3
+         4kv3L73CdLiVst6TdY3T2cy900PYSiJrfQsRvKcoqcyGlaA8L2bXo4Ksmd3vGvnQLH4h
+         W8diypSWW0UUSZrfaCQKOoACVJpPNP+To1KYsms5iTW3kzfcxnJ+IsTFNspsV5fSrD/9
+         6VFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702551176; x=1703155976;
+        d=1e100.net; s=20230601; t=1702551178; x=1703155978;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/xcopqDHmkhwhZiddcnv/4oqDnf2f2C/EfKwZNlZ0qw=;
-        b=hNIyJo2u+ZRtXZ7K3kwndwAEFgGe9QrLUkbwoWcf4zvpb2WZBk3OyDAhS9kVvxWHHi
-         8PI5r0fKqzHHDTPLNpFatoDz00J+BoCV9QZ/GgqqeEWtUIbM0/h+QEqhbo4Bse0zvM6B
-         Hn9CsI6UuCIuZgJwHJ/l47iQNU/s/6ZfYsEEeSR1oF+TfbwV/G7EmtcMRuysg4yEQXAI
-         COmGN0yoGJUe6/8GYK22LBdLCtYQ6V4IjJ9Owc4rTFGhg9W+lflYHUa8eaq7N/WpLPLE
-         1w93ffhM9IV3WN50kspBLOvGOFP4WTHsD6AuDeR5Ljy4961vBf+VwDhGSlndKCmDM3Re
-         fV1A==
-X-Gm-Message-State: AOJu0YwgUr7g+OBJMp0hKYxwMxOGC7IShwJQvEjkOuwYPl2Pu8pQMByo
-	r2im2H93XLsW4U8x+Rf/e8yJZw==
-X-Google-Smtp-Source: AGHT+IFoOjFMWtrSQgxb2NLW2t0CuX+poAGfnV283P6BxnO1HFB3lfJ/1vp1DW3s4vZF+aaQfp5C7g==
-X-Received: by 2002:a1c:7411:0:b0:40c:30f8:dcf0 with SMTP id p17-20020a1c7411000000b0040c30f8dcf0mr5564669wmc.64.1702551176443;
-        Thu, 14 Dec 2023 02:52:56 -0800 (PST)
+        bh=yuS+45h2ga3aQkPKsayipRVsQ8w0E+s5uDXU4i8VrWg=;
+        b=HfyUyG6bssW03jPkumgqLfHIjr7Z86ougcBI/AScIL4jnY7T6FjFLb3mfvqanIPSWu
+         VDaA+m8FGloC3FUeNgJmkBDXgVvvBOcwB3B9FNtwYpAtbe2GYkNfPY8Nmc+eZgh86btD
+         hT5tfNWRiUmowC4KSthKt4m+mX8I7fs2fq8HN/fhhiFeZyBw/fqIO4q9M7HhVnEomJ+G
+         EhxVlG+RyHm4OmN4UIdR3AsWWfqemUYUpyIOHMeuLLPUaPkKvFLFkR6fh5arKxeeQRO3
+         H8lMq+qzsiV1KUrtWcQgPAXND6ZilkF4rUEgy8LEHCEcpprXbaAP8nl4O/Pb83Q76H6M
+         3bJw==
+X-Gm-Message-State: AOJu0Yz34Z05+yqJpF83X/VRl+LMjiYRuqT2lw2p/2Cnj+tN0hVEXiaX
+	pMn9x6hjgYYXzrGeIrHwFhirYA==
+X-Google-Smtp-Source: AGHT+IHAGC45+JA4KfBfVBo5MvsdcmfG4HWD//LZLINpHkMirvEDnQf0FMXjRjvFzd5QesYIFv2g5g==
+X-Received: by 2002:a05:600c:2113:b0:40b:4520:45a6 with SMTP id u19-20020a05600c211300b0040b452045a6mr4416373wml.8.1702551178174;
+        Thu, 14 Dec 2023 02:52:58 -0800 (PST)
 Received: from ta2.c.googlers.com.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.52.55
+        by smtp.gmail.com with ESMTPSA id p7-20020a05600c468700b0040c420eda48sm17614854wmo.22.2023.12.14.02.52.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 02:52:55 -0800 (PST)
+        Thu, 14 Dec 2023 02:52:57 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: peter.griffin@linaro.org,
 	robh+dt@kernel.org,
@@ -67,9 +67,9 @@ Cc: andre.draszik@linaro.org,
 	linux-i2c@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 05/13] tty: serial: samsung: add gs101 earlycon support
-Date: Thu, 14 Dec 2023 10:52:35 +0000
-Message-ID: <20231214105243.3707730-6-tudor.ambarus@linaro.org>
+Subject: [PATCH 07/13] clk: samsung: gs101: mark PERIC0 IP TOP gate clock as critical
+Date: Thu, 14 Dec 2023 10:52:37 +0000
+Message-ID: <20231214105243.3707730-8-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
 References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
@@ -81,42 +81,30 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GS101 only allows 32-bit register accesses. If using 8-bit register
-accesses on gs101, a SError Interrupt is raised causing the system
-unusable.
-
-Force the reg accesses to MMIO32 regardless of the user's settings.
-This is a common practice for such earlycons (bcm2835aux, uniphier,
-lpuart32), in order to avoid crashing the kernel with a wrong early
-console definition.
+Testing USI8 I2C with an eeprom revealed that when the USI8 leaf clock
+is disabled it leads to the CMU_TOP PERIC0 IP gate clock disablement,
+which then makes the system hang. To prevent this, mark
+CLK_GOUT_CMU_PERIC0_IP as critical. Other clocks will be marked
+accordingly when tested.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/samsung/clk-gs101.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 66bd6c090ace..19cd3e6a9b6e 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2787,6 +2787,17 @@ OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos4210-uart",
- OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
- 			s5pv210_early_console_setup);
- 
-+static int __init gs101_early_console_setup(struct earlycon_device *device,
-+					    const char *opt)
-+{
-+	/* gs101 always expects MMIO32 register accesses. */
-+	device->port.iotype = UPIO_MEM32;
-+
-+	return s5pv210_early_console_setup(device, opt);
-+}
-+
-+OF_EARLYCON_DECLARE(gs101, "google,gs101-uart", gs101_early_console_setup);
-+
- /* Apple S5L */
- static int __init apple_s5l_early_console_setup(struct earlycon_device *device,
- 						const char *opt)
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index 3d194520b05e..08d80fca9cd6 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -1402,7 +1402,7 @@ static const struct samsung_gate_clock cmu_top_gate_clks[] __initconst = {
+ 	     "mout_cmu_peric0_bus", CLK_CON_GAT_GATE_CLKCMU_PERIC0_BUS,
+ 	     21, 0, 0),
+ 	GATE(CLK_GOUT_CMU_PERIC0_IP, "gout_cmu_peric0_ip", "mout_cmu_peric0_ip",
+-	     CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, 0, 0),
++	     CLK_CON_GAT_GATE_CLKCMU_PERIC0_IP, 21, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_GOUT_CMU_PERIC1_BUS, "gout_cmu_peric1_bus",
+ 	     "mout_cmu_peric1_bus", CLK_CON_GAT_GATE_CLKCMU_PERIC1_BUS,
+ 	     21, 0, 0),
 -- 
 2.43.0.472.g3155946c3a-goog
 
