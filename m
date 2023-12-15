@@ -1,16 +1,49 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A6841843;
-	Fri, 15 Dec 2023 18:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2C96C15;
-	Fri, 15 Dec 2023 10:48:40 -0800 (PST)
-Received: from [10.57.85.151] (unknown [10.57.85.151])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09F173F738;
-	Fri, 15 Dec 2023 10:47:53 -0800 (PST)
-Message-ID: <cd717e08-1f53-47c3-902d-56f4a8d80f46@arm.com>
-Date: Fri, 15 Dec 2023 18:48:57 +0000
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5327C3FE45
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 19:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g1Y2IM6G"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-9fa45e75ed9so115317366b.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 11:24:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1702668274; x=1703273074; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PoN0LEVREm4hvWDMcEGCq2IUdNzkUqW2PflUkybCDik=;
+        b=g1Y2IM6Gtu/if6TyU+mLOP6RFJczuSqnjtU7kmVFVN1RvjcfQQHp5Rly2TBLJ+E8kt
+         ykS1OJygdMyaYl+CHrV177FZzX2VjFeBBOLiFN5b1At6C6TCk2PkQBjHMoXRQYzWb7NC
+         qJsF27li+qRxJGtfOamqRnurOAxgfQnBPpO+J1teLd3SnYQFfGeq3dgEucVJbQvtMnr3
+         e2qqLhnehyWy3IzjxDCUYvwn2/i8UECc8lHpcFMhfy8y4zdtkrejY1acZIHKVaomi8Aq
+         Lo6+Av1wPydrB7qIbbayoZ+/wSQ5HbDWgYwH/CKmUzDhgKTCO1vak8er4JPHtzAmKzwI
+         tQ5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702668274; x=1703273074;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PoN0LEVREm4hvWDMcEGCq2IUdNzkUqW2PflUkybCDik=;
+        b=QOj0QL0ZUy1cddpEm2KRKFgcy4jXym1/g03L8z+7YMeFzJdJ0iYwlLbLrA7A2lfeJx
+         5u5a0IYzoYL7Xa9ZreunvSxYJdg6US3SdogVHkuYye1bx4pSM9cri97ssAbm+SX3PcBw
+         ElStRA42bl7psnuUmSyY2HaFejQP+mJQk3pK1ofu7b0WccIqNPeFveihNpE/PBpGLjoi
+         754g6UCP3HBhWLmvWhinJ2EzCu2G+mDcQ5RaD6BVMHQE/8brQcbSSEeGZEHcAv6us7Vs
+         VTgfKR+ktjw0RWJtTy+YGCQZh/mj4Qtz4vpoUPaxoqqoBOe9q43uPV6YZ7bW38zVXLxF
+         nKVQ==
+X-Gm-Message-State: AOJu0YzMySyfdGIExV4xz6GKIqnQYK9U2ghHYlAuHWxmDtey1T9kCHI4
+	kmO+Xb5mXqn+3LLSP/T1qCvQcA==
+X-Google-Smtp-Source: AGHT+IFtk5TyMdBQwNglocR5LnfgDGANECd/edeCze0GKlaunERfcr6PTnGsnjZTfowah/1ShijVmA==
+X-Received: by 2002:a17:906:10ce:b0:a19:a19a:ea9c with SMTP id v14-20020a17090610ce00b00a19a19aea9cmr6806544ejv.85.1702668274637;
+        Fri, 15 Dec 2023 11:24:34 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id tp25-20020a170907c49900b00a1f7c502736sm9814135ejc.164.2023.12.15.11.24.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Dec 2023 11:24:34 -0800 (PST)
+Message-ID: <9eedae99-cc9a-4c8f-9a09-789b686cd456@linaro.org>
+Date: Fri, 15 Dec 2023 20:24:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -18,252 +51,108 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Various Exynos targets never return to no cooling
+Subject: Re: [PATCH 01/13] dt-bindings: clock: google,gs101: fix CMU_TOP gate
+ clock names
 Content-Language: en-US
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20231213134258eucas1p23b66a7989c326176386f4a7c619cde75@eucas1p2.samsung.com>
- <20231213134235.1607510-1-m.majewski2@samsung.com>
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20231213134235.1607510-1-m.majewski2@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+ andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ arnd@arndb.de, semen.protsenko@linaro.org
+Cc: andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-2-tudor.ambarus@linaro.org>
+ <050c3119-0431-4400-9052-7a9c0ec67918@linaro.org>
+ <5e454300-f1ef-435c-8c4c-16561502196a@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <5e454300-f1ef-435c-8c4c-16561502196a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Mateusz,
-
-On 12/13/23 13:42, Mateusz Majewski wrote:
-> Hi,
+On 15/12/2023 11:23, Tudor Ambarus wrote:
+> Hi, Krzysztof,
 > 
->> I understand your requirement for the interrupts only mode, but
->> maybe till the moment there is no fix upstream, you can enable
->> it as well?
+> On 12/15/23 08:13, Krzysztof Kozlowski wrote:
+>> On 14/12/2023 11:52, Tudor Ambarus wrote:
+>>> The gs101 clock names are derived from the clock register names under
+>>> some certain rules. In particular, for the gate clocks the following is
+>>> documented and expected in the gs101 clock driver:
+>>>
+>>>   Replace CLK_CON_GAT_CLKCMU      with CLK_GOUT_CMU and gout_cmu
+>>>   Replace CLK_CON_GAT_GATE_CLKCMU with CLK_GOUT_CMU and gout_cmu
+>>>
+>>>   For gates remove _UID _BLK _IPCLKPORT and _RSTNSYNC
+>>
+>> I don't understand what it has to do with the bindings.
+>>
+>>>
+>>> The CMU TOP gate clock names missed to include the required "CMU"
+>>> differentiator which will cause name collisions with the gate clock names
+>>> of other clock units. Fix the TOP gate clock names and include "CMU" in
+>>> their name.
+>>
+>> Neither here. Clock names are not related to defines.
+>>
 > 
-> We (actually Marek and independently another coworker) had an idea how
-> to solve this while still avoiding polling all the time, and it turned
-> out to be quite simple to implement (PoC-quality). The idea was to run
-> several cycles of polling after each interrupt. This could be done like
-> this:
+> When saying "clock names" I meant the clock symbolic names that are
+> defined in the bindings, the _id passed in GATE(_id, ) if you want.
 
-That's cool PoC, if we don't find any other solution, we would have
-consider it as well. So let's try first tackle from other angle...
+Please re-phrase the commit message to say that you need to rename the
+defines in the bindings headers. If you change anything else, like clock
+names, then it should be separate patch.
 
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 6482513bfe66..b4bffe405194 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -760,6 +760,12 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
->   {
->   	struct exynos_tmu_data *data = id;
->   
-> +	/* TODO: would need some API */
-> +	mutex_lock(&data->tzd->lock);
-> +	data->tzd->additional_poll_reps = 10;
-> +	data->tzd->additional_poll_jiffies = HZ / 10;
-> +	mutex_unlock(&data->tzd->lock);
-> +
->   	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
->   
->   	mutex_lock(&data->lock);
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 625ba07cbe2f..c825d068402f 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -299,12 +299,24 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
->   
->   static void monitor_thermal_zone(struct thermal_zone_device *tz)
->   {
-> +	unsigned long delay;
-> +
->   	if (tz->mode != THERMAL_DEVICE_ENABLED)
-> -		thermal_zone_device_set_polling(tz, 0);
-> +		delay = 0;
->   	else if (tz->passive)
-> -		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
-> +		delay = tz->passive_delay_jiffies;
->   	else if (tz->polling_delay_jiffies)
-> -		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
-> +		delay = tz->polling_delay_jiffies;
-> +	else
-> +		delay = 0; /* TODO: ??? */
-> +
-> +	if (tz->additional_poll_reps > 0) {
-> +		tz->additional_poll_reps -= 1;
-> +		if (delay == 0 || tz->additional_poll_jiffies < delay)
-> +			delay = tz->additional_poll_jiffies;
-> +	}
-> +
-> +	thermal_zone_device_set_polling(tz, delay);
->   }
->   
->   static void handle_non_critical_trips(struct thermal_zone_device *tz,
-> @@ -425,6 +437,8 @@ static void thermal_zone_device_init(struct thermal_zone_device *tz)
->   	tz->temperature = THERMAL_TEMP_INVALID;
->   	tz->prev_low_trip = -INT_MAX;
->   	tz->prev_high_trip = INT_MAX;
-> +	tz->additional_poll_jiffies = 0;
-> +	tz->additional_poll_reps = 0;
->   	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
->   		pos->initialized = false;
->   }
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index c7190e2dfcb4..576b1f3ef25d 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -172,6 +172,8 @@ struct thermal_zone_device {
->   	int passive;
->   	int prev_low_trip;
->   	int prev_high_trip;
-> +	int additional_poll_reps;
-> +	unsigned long additional_poll_jiffies;
->   	atomic_t need_update;
->   	struct thermal_zone_device_ops *ops;
->   	struct thermal_zone_params *tzp;
-> 
-> In my tests this is enough to resolve the issue consistently on both
-> TM2E and XU4, both before and after my other patchset.
-> 
-> To be honest, this is not the most elegant solution probably and it
-> still doesn't really take into account the governor needs. Therefore, if
-> 
->> Regarding this topic, I just wanted to tell you that I had conversation
->> with Rafael & Daniel last Fri. Rafael gave me a hint to his latest work
->> in his repo regarding potentially similar race with temperature value.
-> 
-> brings a better solution, it would be great :)
-> 
 
-I have spent some time to better understand the machinery in those
-updates and notifications in the core and the governors. I've also
-checked the hint from Rafael about maybe similar trip & temp dance.
-(that change is in PM linux-next:
-"44844db91397 thermal: core: Add trip thresholds for trip crossing 
-detection")
 
-Unfortunately, that won't help, since in this TMU we get the
-temperature value wrong sometimes IIUC (CMIIW).
+Best regards,
+Krzysztof
 
-Are we able inside the exynos_tmu_threaded_irq() get information
-which of the 2 (3 if count critical) IRQs for low_temp, high_temp
-has triggered?
-I can see in the ->tmu_clear_irqs() we read the IRQ pending reg.
-If we are able to say which of the two temp values triggered
-that action, then thermal framework shouldn't ignore that and use
-extra features to mitigate the glitching of the temp value.
-IMO it would be correct because IRQ was triggered based on physics
-so the value that we would pass and use is valid.
-You would probably need to properly track those temp values and where
-you are with the programmed trips (some extra context in the driver).
-
-The exynos_get_temp() needs to work like today - no faking temperature,
-no filtering, etc, always report best known temp from that reg.
-Different components in thermal can read that temp e.g. sysfs.
-
-In all governors 'tz->temperature' is used, which is good (not the
-tz->ops->get_temp(). So let's try to introduce something simple:
-
-----------------------------------------8<---------------------------
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c 
-b/drivers/thermal/samsung/exynos_tmu.c
-index 667bb18205fc..345ea0836b99 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -786,8 +786,13 @@ static int exynos7_tmu_read(struct exynos_tmu_data 
-*data)
-  static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
-  {
-         struct exynos_tmu_data *data = id;
-+       int temp;
-
--       thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-+       temp = exynos_determine_temp_based_on_irq(data);
-+
-+       thermal_zone_device_update_with_temp(data->tzd,
-+                               THERMAL_EVENT_TEMP_SAMPLE,
-+                               temp);
-
-         mutex_lock(&data->lock);
-         clk_enable(data->clk);
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 9c17d35ccbbd..4cdc7b7eed1e 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -495,6 +495,43 @@ void thermal_zone_device_update(struct 
-thermal_zone_device *tz,
-  }
-  EXPORT_SYMBOL_GPL(thermal_zone_device_update);
-
-+void thermal_zone_device_update_with_temp(struct thermal_zone_device *tz,
-+                                         enum thermal_notify_event event,
-+                                         int temp)
-+{
-+       const struct thermal_trip *trip;
-+
-+       mutex_lock(&tz->lock);
-+       if (device_is_registered(&tz->device))
-+               goto unlock;
-+
-+       if (atomic_read(&in_suspend))
-+               goto unlock;
-+
-+       if (!thermal_zone_device_is_enabled(tz))
-+               goto unlock;
-+
-+       tz->last_temperature = tz->temperature;
-+       tz->temperature = temp;
-+
-+       trace_thermal_temperature(tz);
-+
-+       thermal_genl_sampling_temp(tz->id, temp);
-+
-+       __thermal_zone_set_trips(tz);
-+
-+       tz->notify_event = event;
-+
-+       for_each_trip(tz, trip)
-+               handle_thermal_trip(tz, trip);
-+
-+       monitor_thermal_zone(tz);
-+
-+unlock:
-+       mutex_unlock(&tz->lock);
-+}
-+EXPORT_SYMBOL_GPL(thermal_zone_device_update_with_temp);
-+
-  static void thermal_zone_device_check(struct work_struct *work)
-  {
-         struct thermal_zone_device *tz = container_of(work, struct
--------------------------------->8-----------------------------------
-
-There is this event not used in thermal fwk: THERMAL_EVENT_TEMP_SAMPLE,
-which could also suit here.
-
-Some extras:
-There is a callback which is used in step_wise governor:
-get_tz_trend()
-      tz->ops->get_trend()
-which is not implemented in the Exynos TMU tz. We can use it
-and provide the trend, if we still have to after this modification.
-
-Beside:
-1. This new API function should be faster on some devices, e.g.
-those which has temperature sensor attached to some slow bus
-(I have heard about temperature overhead even a few
-milli-seconds)
-2. Sounds to re-use the information from such drivers like
-this Exynos which has IRQs for particular temp value and
-can avoid 2nd reading, which might cause confusion by providing
-different value due to glitch/rounding.
-
-So I think I could justify this new API interface.
-
-Let me know what you think about this approach.
-
-Regards,
-Lukasz
