@@ -1,49 +1,49 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9212E65
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 08:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE7018AF9
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 08:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IkuL8gdH"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-55202565d48so311061a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 00:07:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wT195kW4"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a1f8510883aso48685366b.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 00:13:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702627660; x=1703232460; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1702627989; x=1703232789; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IxD/VahC2ClQ2iwWPMIUIAj7e4n1LQ8i/xcl4ceScZo=;
-        b=IkuL8gdHsOo1ykReLEththA0/6QdJYv2FQ3Vh0EpOYL2CJbiqIe7xIFHVa5CgtVkjo
-         yl8ha9Kf+XLzj/7lcPR0ezFH8XfobYwyboPL0UthyW0ITd+dgJXa9BRukjVeZCOLI0SB
-         hS9e7rQ8oGPQh0NcyZQQo9G6dv/OjSLD5kO+KbFG3ZxWnJeBNBZISS6ICFYeftiBB/np
-         yNMUv2vgW5cNPXTBvHwVbY5i4CQv5/ux5667GS8h9z6Q7UR3U3jfeZQChgaE1Le989Kl
-         AdS+/MrU8gviCRvhV+TQU9CsGZSwsrov/8TXbkL26S4ECLD+5uQb/yZ2/8a20U17Uan4
-         K5Gw==
+        bh=ILpb399KBc7xku4G86HO79HarvWPrsSYOqAB7Tb9moI=;
+        b=wT195kW49l9JbUtUGceYzrm7T4UYfScwA4+JHOBmZrPWTUqvQGjfTNtydqgjOBfFHD
+         i9q+aczzUAXj7Q2IvltmTSlQNf6x+oPEIEVtgAW64W/RljMYWc3nzAeMGu2EVP+ba35y
+         MLVFZ3YxjaJymDZdkD8DLrhtKq+FbepzDQoGnG5y0VYZ0GoMgvTuA/EEq1qcBONGmx/Y
+         XLGlJlFXNX5R6etDB0DZVa3uO5/AX9e2QzulQNiUruQGrF5jauwBjXTgHcwizcvJyd91
+         rELDMhxsMXOVkXmAdXHvAOyxvfJdqphbr/NbLr105UfhF73HBHXa8GoJUsV8FhzfSquX
+         REXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702627660; x=1703232460;
+        d=1e100.net; s=20230601; t=1702627989; x=1703232789;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IxD/VahC2ClQ2iwWPMIUIAj7e4n1LQ8i/xcl4ceScZo=;
-        b=NgP2wH3n4dav/HdB0gEpuVADtKFP3oEjC0RXQcGNmPs8uffPWoBAX/FuPOftyx14il
-         2LC1xRgSepVh1yhSiHQnSEibfHvC5RGKAnt5mB7NuA+3MjLNSb0Gp4/owhgDc7iAdBkH
-         fPjWrjbjK43zFSgyNfl4Ixeo0ItZ3cSVYQUURwwi/VBuAks+kCWhQq5E7tm7o3EOmg5Z
-         8bIXIk6hWtGoFyaLQRjg+8hQZgTvXdcskpGNePdDgXrair97z4x4Ivnvbdct1xBkYPqG
-         ucYR6J3Wjp2uukPDVAyDI7ttOd0BQroSHgYAj2RjAuSgVgK7N6ys6rYGjMoK1dFOmGny
-         Z0kg==
-X-Gm-Message-State: AOJu0Yxp9+TnSwy8GYM6ch9ifjS8OJLFbNUNob5Pags+Zikgi/Q13jg1
-	ANokpAafS8cSwcwsYQJL7od1CQ==
-X-Google-Smtp-Source: AGHT+IG9zEccBZFl5aP7IPpua8AKal9WySqOFWhLPSJEM7vjbmxr8qqS4iZT8fVNI6vEv60xIpQjmg==
-X-Received: by 2002:a50:d50b:0:b0:552:72cf:1cf6 with SMTP id u11-20020a50d50b000000b0055272cf1cf6mr1157693edi.27.1702627659874;
-        Fri, 15 Dec 2023 00:07:39 -0800 (PST)
+        bh=ILpb399KBc7xku4G86HO79HarvWPrsSYOqAB7Tb9moI=;
+        b=RN+FdDww+OI2wiI1jBxK1OAy06gx7DhWHfPetdja38/gRi6Cz8hnSUvSypgItsROtZ
+         jmk1vSt6RRh4Llg2/wC6OpdO4tTuSsM/N2pwZcELdmzsnocDZoSYDKB9HFkOphDiAmSg
+         wXgtrjXw6nM5EoWRESNH+FQ2NVg4BLR2Oapbl0JfzFxmqLj8bUJmdsqHh5DG43Baq4TW
+         L1SyS0Hh8/9NOzhRih3M6y5dzXGtrSDzyhZla1anYc0S0viMJ4pl7pQuuRhNKlHf2dG4
+         1bJA8Sj0ptn6Dw2HhzJzMOmcmQyfRnX2TRi1jM54yPvSI1rYdd537Uh4lyXYFE1DEGHw
+         fBRA==
+X-Gm-Message-State: AOJu0YyGMi1TePT26ITyhDi39e61Nnaa8c+ZLWqb5+DTiiQ6j7eXrmp5
+	sngs09+RPlkIhO1syC+axj5WHw==
+X-Google-Smtp-Source: AGHT+IHcwknaM/Q732cnvsj1kKBQ0GT/Nn0G9d2fNgqvxggtfEusc3r4hih1+hWX4SWqCsZJWbzmmg==
+X-Received: by 2002:a17:906:24e:b0:a1c:d52f:e242 with SMTP id 14-20020a170906024e00b00a1cd52fe242mr2552499ejl.271.1702627989027;
+        Fri, 15 Dec 2023 00:13:09 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id s28-20020a50ab1c000000b0054c6b50df3asm7881111edc.92.2023.12.15.00.07.37
+        by smtp.gmail.com with ESMTPSA id ts4-20020a170907c5c400b00a1cc1be1158sm10462701ejc.165.2023.12.15.00.13.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Dec 2023 00:07:39 -0800 (PST)
-Message-ID: <c9ea0e9f-05d8-4def-8c68-6604c22763b9@linaro.org>
-Date: Fri, 15 Dec 2023 09:07:36 +0100
+        Fri, 15 Dec 2023 00:13:08 -0800 (PST)
+Message-ID: <050c3119-0431-4400-9052-7a9c0ec67918@linaro.org>
+Date: Fri, 15 Dec 2023 09:13:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,24 +51,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/13] arm64: dts: exynos: gs101: enable eeprom on
- gs101-oriole
+Subject: Re: [PATCH 01/13] dt-bindings: clock: google,gs101: fix CMU_TOP gate
+ clock names
 Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, krzysztof.kozlowski+dt@linaro.org
-Cc: peter.griffin@linaro.org, robh+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
- alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
- catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
- andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+ andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, catalin.marinas@arm.com, will@kernel.org,
+ s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ arnd@arndb.de, semen.protsenko@linaro.org
+Cc: andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
  linux-serial@vger.kernel.org
 References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-12-tudor.ambarus@linaro.org>
- <CAPLW+4nTgam4jZ+s5m5E05jWO_kfSy=fMS0Ywp3yQEEn-UESbg@mail.gmail.com>
+ <20231214105243.3707730-2-tudor.ambarus@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -114,44 +113,42 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAPLW+4nTgam4jZ+s5m5E05jWO_kfSy=fMS0Ywp3yQEEn-UESbg@mail.gmail.com>
+In-Reply-To: <20231214105243.3707730-2-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 14/12/2023 16:55, Sam Protsenko wrote:
-> On Thu, Dec 14, 2023 at 4:53 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->>
->> Enable the eeprom found on the battery connector.
->>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  .../boot/dts/exynos/google/gs101-oriole.dts    | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
->> index 4a71f752200d..11b299d21c5d 100644
->> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
->> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
->> @@ -63,6 +63,19 @@ &ext_200m {
->>         clock-frequency = <200000000>;
->>  };
->>
->> +&hsi2c_8 {
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&hsi2c8_bus>;
->> +       #address-cells = <1>;
->> +       #size-cells = <0>;
+On 14/12/2023 11:52, Tudor Ambarus wrote:
+> The gs101 clock names are derived from the clock register names under
+> some certain rules. In particular, for the gate clocks the following is
+> documented and expected in the gs101 clock driver:
 > 
-> Not sure if those 4 above properties belong in board's dts or in SoC's
-> dtsi. Krzysztof, what do you think?
+>   Replace CLK_CON_GAT_CLKCMU      with CLK_GOUT_CMU and gout_cmu
+>   Replace CLK_CON_GAT_GATE_CLKCMU with CLK_GOUT_CMU and gout_cmu
+> 
+>   For gates remove _UID _BLK _IPCLKPORT and _RSTNSYNC
 
-The cells should be in DTSI, because you cannot have an enabled i2c bus
-without nodes in normal cases. The not-normal case is incomplete
-description, which does not happen here.
+I don't understand what it has to do with the bindings.
 
-The pinctrls I guess as well in DTSI, because you do not customize the
-pins in the DTS. IOW, if the pinctrl nodes are coming from shared
-pinctrl.DTSI, then pinctrl-0/names stay in DTSI as well.
+> 
+> The CMU TOP gate clock names missed to include the required "CMU"
+> differentiator which will cause name collisions with the gate clock names
+> of other clock units. Fix the TOP gate clock names and include "CMU" in
+> their name.
+
+Neither here. Clock names are not related to defines.
+
+> 
+> Fixes: 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock management unit bindings")
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  drivers/clk/samsung/clk-gs101.c          | 167 ++++++++++++-----------
+>  include/dt-bindings/clock/google,gs101.h | 144 +++++++++----------
+
+I miss the point why bindings must be changed with driver.
+
+Really, guys, we are milling the first GS101 patches for entire cycle.
+Almost 3 months. The moment I merge bindings you tell me they are wrong.
+Few days after merging them.
 
 
 Best regards,
