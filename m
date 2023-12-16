@@ -1,101 +1,84 @@
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBE356397
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 21:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="N6wBlilf"
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-20308664c13so714259fac.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Dec 2023 13:11:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1702674715; x=1703279515; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9KJ+4BbcKeSEG7077PFa7FVZHENUrxS+8ivlb7RAxY=;
-        b=N6wBlilfI55+czR8cmZ6G0UtIUVB0bXS/J8gqZ7UM8gyFPhprH55om1aQkAYd/i0ey
-         8u3McsxGkx7smNVvNhmwVXU4cSM1MQXM12tjl2Vu2s0gn0aAvZ67W7yJXfBjlyKY/qoT
-         MZEnUf7RV29cPfcPyqHiGrV+GA0/e+QFdZUcyIPg53U5I0i+dxOWo2J6l/Cq5lsKJsVC
-         trjpTAOGuNYPhDUQeR3L8e9Vrzyx0/VnySWOR0eM+nuTM/vg8xiElSOn4a9IuzBTfQ+f
-         CFl+xVEosabj7YSjngBL7c1C75lZl7pTBNFy9MyGLUXlt8XRnrKZtW8aM7zsL4g0BRvU
-         DHxQ==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1A4A0B;
+	Sat, 16 Dec 2023 00:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1f055438492so854260fac.3;
+        Fri, 15 Dec 2023 16:44:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702674715; x=1703279515;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b9KJ+4BbcKeSEG7077PFa7FVZHENUrxS+8ivlb7RAxY=;
-        b=LExCaLmViBKeiWMLaajkC9z4+4xBcFwsFzoBgY7Iph2kvkg+ugxJkFh8WTg0vr1H5/
-         F6ckttRkd6BWRRDkgflJ4OG1iW4Fu30UN5ubjvvI5g9m51UsTjBDJ9pDu+rFkOVG8qPi
-         973vTn6buWc7177VINkNR9cQHb666CxouNM0m8kWWiENhTAQTYCLrevvmEtdvpKGrYq7
-         F57WbfbDTzVRnq09ouFShL8U2BOrZfiYDeoeO0b4co4DwIpGl9FEnKXPcRyCP13jk01f
-         anjo+k7XvozD7gzrExetPJV594BYcflCy2lAcPuJv/NxSZJYUrMaP7XKcK9LfQJ6ja2Z
-         rnfw==
-X-Gm-Message-State: AOJu0YwhNut4El6oszPHy3sxrLjO3aIy0UY8VA/hJERTDKUcBYfWLhOS
-	E4Y/Otp0iDfFakziIev2cqUB/JF0UJ38Kea/G7i84w==
-X-Google-Smtp-Source: AGHT+IFHrLpndT4XCwAesdcyNwQf00aMOvX02D4/8uxdog8acvbjKfsi57jpp2aqEyynfGVCKlt0IXuLjUhCsHgb3nk=
-X-Received: by 2002:a05:6870:c09:b0:203:7ccc:b6e8 with SMTP id
- le9-20020a0568700c0900b002037cccb6e8mr1214533oab.25.1702674715317; Fri, 15
- Dec 2023 13:11:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1702687476; x=1703292276;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yCDBVhy+Wa1UFd5gjt0W6RUH305mNMdwUaXK1ehoNrI=;
+        b=Ojay8f7DndQaNeHGJhfXQy83nraxQjdGz+wjv7OWHOY9OF9ifHDQaUu7AJLn0gnP5u
+         sU45w8oUbOUfMn/4g79EidSnCBgY/q5DjCW5rV5Fjdl6gngruK5v+vRNP9x1tE7UIq2h
+         oFWit11REtL5szvzoIxf2RIk2nRyKp3z1P4KCydWj/7msP+PgBytOjmjmi58mHV9CIQu
+         jOSmImPBIF94QDaPnOq1fLBIIx755AEuiG6T9XHDFO7lBXIhKxslWnbh1riEo/st/x0A
+         RVU6YSQF4Jh4IJxBYIlWd2V8/n+/bs4N6wdrFCWHwJWrSAL7Qj9FbH42pU12OzBbtb9H
+         VmIw==
+X-Gm-Message-State: AOJu0Yy6Y1gjk50dQ7Y4869EYwpjbaRKK4YGyfpfaHCkRDODd4nSUDln
+	fHmoC0dKheLWs2p+SZoCIvU=
+X-Google-Smtp-Source: AGHT+IGqPedME8QW5t9KEziGhH1cqzOqN9FXW+QGKtYfsIrZnbHoWh63kuMMwBFOpXK4UxcJ7an9cg==
+X-Received: by 2002:a05:6358:3106:b0:170:6675:a50a with SMTP id c6-20020a056358310600b001706675a50amr14530188rwe.36.1702687476524;
+        Fri, 15 Dec 2023 16:44:36 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id st5-20020a17090b1fc500b0028b11757032sm3614383pjb.29.2023.12.15.16.44.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Dec 2023 16:44:35 -0800 (PST)
+Date: Sat, 16 Dec 2023 09:44:34 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>
+Subject: Re: [PATCH 0/3] PCI: Convert to platform remove callback returning
+ void (part II)
+Message-ID: <20231216004434.GG1570493@rocinante>
+References: <cover.1701682617.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231130201504.2322355-1-pasha.tatashin@soleen.com>
- <20231130201504.2322355-11-pasha.tatashin@soleen.com> <c0d23d3e-39e6-57af-fd38-eb1b885d7da4@google.com>
-In-Reply-To: <c0d23d3e-39e6-57af-fd38-eb1b885d7da4@google.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 15 Dec 2023 16:11:18 -0500
-Message-ID: <CA+CK2bD0Wz8mzB_BGKEYKCHRJKKVwr0CPK7OOC0tD_Sxi5Rp5g@mail.gmail.com>
-Subject: Re: [PATCH v2 10/10] iommu: account IOMMU allocated memory
-To: David Rientjes <rientjes@google.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1701682617.git.u.kleine-koenig@pengutronix.de>
 
-> > diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> > index 3f85254f3cef..e004e05a7cde 100644
-> > --- a/Documentation/admin-guide/cgroup-v2.rst
-> > +++ b/Documentation/admin-guide/cgroup-v2.rst
-> > @@ -1418,7 +1418,7 @@ PAGE_SIZE multiple when read back.
-> >         sec_pagetables
-> >               Amount of memory allocated for secondary page tables,
-> >               this currently includes KVM mmu allocations on x86
-> > -             and arm64.
-> > +             and arm64 and IOMMU page tables.
->
-> Hmm, if existing users are parsing this field and alerting when it exceeds
-> an expected value (a cloud provider, let's say), is it safe to add in a
-> whole new set of page tables?
->
-> I understand the documentation allows for it, but I think potential impact
-> on userspace would be more interesting.
+Hello,
 
-Hi David,
+> back in March I sent a series[1] with the intention to convert all of
+> drivers/pci to .remove_new(). I missed these three drivers because my
+> coccinelle script didn't handle __exit_p. (The drivers don't use
+> __exit_p in the mean time since the follwing commits:
+> 
+> 	200bddbb3f52 ("PCI: keystone: Don't discard .remove() callback")
+> 	3064ef2e88c1 ("PCI: kirin: Don't discard .remove() callback")
+> 	83a939f0fdc2 ("PCI: exynos: Don't discard .remove() callback")
+> 
+> .)
+> 
+> There are no interdependencies between these patches.
+> 
+> See commit 5c5a7680e67b ("platform: Provide a remove callback that
+> returns no value") for an extended explanation and the eventual goal.
 
-This is something that was discussed at LPC'23. I also was proposing a
-separate counter for iommu page tables, but it was noted that we
-specifically have sec_pagetables called this way to include all non
-regular CPU page tables, and we should therefore account for them
-together.
+Applied to controller/remove-void-return, thank you!
 
-Please also see this discussion from the previous version of this patch series:
-https://lore.kernel.org/all/CAJD7tkb1FqTqwONrp2nphBDkEamQtPCOFm0208H3tp0Gq2OLMQ@mail.gmail.com/
+[01/03] PCI: exynos: Convert to platform remove callback returning void
+        https://git.kernel.org/pci/pci/c/4fbd8b788258
+[02/03] PCI: keystone: Convert to platform remove callback returning void
+        https://git.kernel.org/pci/pci/c/93d61d3aa996
+[03/03] PCI: kirin: Convert to platform remove callback returning void
+        https://git.kernel.org/pci/pci/c/a5eee68931fc
 
-Pasha
+	Krzysztof
