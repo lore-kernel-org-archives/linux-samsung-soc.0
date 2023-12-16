@@ -1,84 +1,89 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1A4A0B;
-	Sat, 16 Dec 2023 00:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-1f055438492so854260fac.3;
-        Fri, 15 Dec 2023 16:44:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702687476; x=1703292276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCDBVhy+Wa1UFd5gjt0W6RUH305mNMdwUaXK1ehoNrI=;
-        b=Ojay8f7DndQaNeHGJhfXQy83nraxQjdGz+wjv7OWHOY9OF9ifHDQaUu7AJLn0gnP5u
-         sU45w8oUbOUfMn/4g79EidSnCBgY/q5DjCW5rV5Fjdl6gngruK5v+vRNP9x1tE7UIq2h
-         oFWit11REtL5szvzoIxf2RIk2nRyKp3z1P4KCydWj/7msP+PgBytOjmjmi58mHV9CIQu
-         jOSmImPBIF94QDaPnOq1fLBIIx755AEuiG6T9XHDFO7lBXIhKxslWnbh1riEo/st/x0A
-         RVU6YSQF4Jh4IJxBYIlWd2V8/n+/bs4N6wdrFCWHwJWrSAL7Qj9FbH42pU12OzBbtb9H
-         VmIw==
-X-Gm-Message-State: AOJu0Yy6Y1gjk50dQ7Y4869EYwpjbaRKK4YGyfpfaHCkRDODd4nSUDln
-	fHmoC0dKheLWs2p+SZoCIvU=
-X-Google-Smtp-Source: AGHT+IGqPedME8QW5t9KEziGhH1cqzOqN9FXW+QGKtYfsIrZnbHoWh63kuMMwBFOpXK4UxcJ7an9cg==
-X-Received: by 2002:a05:6358:3106:b0:170:6675:a50a with SMTP id c6-20020a056358310600b001706675a50amr14530188rwe.36.1702687476524;
-        Fri, 15 Dec 2023 16:44:36 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id st5-20020a17090b1fc500b0028b11757032sm3614383pjb.29.2023.12.15.16.44.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Dec 2023 16:44:35 -0800 (PST)
-Date: Sat, 16 Dec 2023 09:44:34 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7989210A00;
+	Sat, 16 Dec 2023 04:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YL6KJ4e5"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=+EMdx3GheWRvQiEGB4Br4TQx4XQJxBAp1x6hT3lQeyQ=; b=YL6KJ4e55x4O+Kl8WZPwwtm0b/
+	AX4fW15lZoXhLB8vXu/f80wqxkThRF1qIe4ZdWc8+91Mv0Py60WlGu8hTTk4mQQE8PYuhU41bzM5e
+	rrKrrx8JVgFKxl1BGwiyNkteeP7UZVHdqZJEYxmN6o+/JGa2//YfhC6EPjwSOJE7wsOjtq/iCToWT
+	0574wJZ9eXQ29ZK69pF4PR4kAQ2r9Yye2taTOh1InLeke9VtP7WGBJQJCLrvjBK2XOfBdu5QZmDaY
+	vMq09LKSEKecbJe+73sNH1Xa9+ewDX0L76Dd3uSLq/6vjiBpa90Oeelstji1ajyO3LcsDc+Mz7sNx
+	KeR7C9ww==;
+Received: from [50.53.46.231] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rEMUl-005Ox1-0D;
+	Sat, 16 Dec 2023 04:41:47 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	kernel test robot <lkp@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pci@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>
-Subject: Re: [PATCH 0/3] PCI: Convert to platform remove callback returning
- void (part II)
-Message-ID: <20231216004434.GG1570493@rocinante>
-References: <cover.1701682617.git.u.kleine-koenig@pengutronix.de>
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: fix Excess struct member description kernel-doc warnings
+Date: Fri, 15 Dec 2023 20:41:46 -0800
+Message-ID: <20231216044146.18645-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1701682617.git.u.kleine-koenig@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Delete 2 lines to prevent warnings from scripts/kernel-doc:
 
-> back in March I sent a series[1] with the intention to convert all of
-> drivers/pci to .remove_new(). I missed these three drivers because my
-> coccinelle script didn't handle __exit_p. (The drivers don't use
-> __exit_p in the mean time since the follwing commits:
-> 
-> 	200bddbb3f52 ("PCI: keystone: Don't discard .remove() callback")
-> 	3064ef2e88c1 ("PCI: kirin: Don't discard .remove() callback")
-> 	83a939f0fdc2 ("PCI: exynos: Don't discard .remove() callback")
-> 
-> .)
-> 
-> There are no interdependencies between these patches.
-> 
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
+s3c2410.c:117: warning: Excess struct member 'mtd' description in 's3c2410_nand_mtd'
+s3c2410.c:168: warning: Excess struct member 'freq_transition' description in 's3c2410_nand_info'
 
-Applied to controller/remove-void-return, thank you!
 
-[01/03] PCI: exynos: Convert to platform remove callback returning void
-        https://git.kernel.org/pci/pci/c/4fbd8b788258
-[02/03] PCI: keystone: Convert to platform remove callback returning void
-        https://git.kernel.org/pci/pci/c/93d61d3aa996
-[03/03] PCI: kirin: Convert to platform remove callback returning void
-        https://git.kernel.org/pci/pci/c/a5eee68931fc
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202312150611.EZBAQYqf-lkp@intel.com/
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ drivers/mtd/nand/raw/s3c2410.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-	Krzysztof
+diff -- a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
+--- a/drivers/mtd/nand/raw/s3c2410.c
++++ b/drivers/mtd/nand/raw/s3c2410.c
+@@ -105,7 +105,6 @@ struct s3c2410_nand_info;
+ 
+ /**
+  * struct s3c2410_nand_mtd - driver MTD structure
+- * @mtd: The MTD instance to pass to the MTD layer.
+  * @chip: The NAND chip information.
+  * @set: The platform information supplied for this set of NAND chips.
+  * @info: Link back to the hardware information.
+@@ -145,7 +144,6 @@ enum s3c_nand_clk_state {
+  * @clk_rate: The clock rate from @clk.
+  * @clk_state: The current clock state.
+  * @cpu_type: The exact type of this controller.
+- * @freq_transition: CPUFreq notifier block
+  */
+ struct s3c2410_nand_info {
+ 	/* mtd info */
