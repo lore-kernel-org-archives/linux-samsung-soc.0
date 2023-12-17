@@ -1,89 +1,102 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7989210A00;
-	Sat, 16 Dec 2023 04:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YL6KJ4e5"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=+EMdx3GheWRvQiEGB4Br4TQx4XQJxBAp1x6hT3lQeyQ=; b=YL6KJ4e55x4O+Kl8WZPwwtm0b/
-	AX4fW15lZoXhLB8vXu/f80wqxkThRF1qIe4ZdWc8+91Mv0Py60WlGu8hTTk4mQQE8PYuhU41bzM5e
-	rrKrrx8JVgFKxl1BGwiyNkteeP7UZVHdqZJEYxmN6o+/JGa2//YfhC6EPjwSOJE7wsOjtq/iCToWT
-	0574wJZ9eXQ29ZK69pF4PR4kAQ2r9Yye2taTOh1InLeke9VtP7WGBJQJCLrvjBK2XOfBdu5QZmDaY
-	vMq09LKSEKecbJe+73sNH1Xa9+ewDX0L76Dd3uSLq/6vjiBpa90Oeelstji1ajyO3LcsDc+Mz7sNx
-	KeR7C9ww==;
-Received: from [50.53.46.231] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1rEMUl-005Ox1-0D;
-	Sat, 16 Dec 2023 04:41:47 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	kernel test robot <lkp@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E701DDC0
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Dec 2023 14:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rEs9f-0006WW-9b; Sun, 17 Dec 2023 15:30:07 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rEs9e-00GUhc-2u; Sun, 17 Dec 2023 15:30:06 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rEs9d-004hzT-Pr; Sun, 17 Dec 2023 15:30:05 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: kernel@pengutronix.de,
+	Lukasz Luba <lukasz.luba@arm.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH] mtd: rawnand: fix Excess struct member description kernel-doc warnings
-Date: Fri, 15 Dec 2023 20:41:46 -0800
-Message-ID: <20231216044146.18645-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.43.0
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 10/15] memory: exynos5422-dmc: Convert to platform remove callback returning void
+Date: Sun, 17 Dec 2023 15:29:36 +0100
+Message-ID:  <167dbda286584eafec07da8c11673da07ba72362.1702822744.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <cover.1702822744.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1702822744.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2061; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=FHOjgtzRIN9XHjUcxCP7MGMz7yRB1JuZQ6LGi2PE66k=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlfwXQmW+Q6PEK4vacr/EoUiA1qF6qrGQu4k8BB 9+ceA0cHFWJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZX8F0AAKCRCPgPtYfRL+ TibiCAC1uo4RR6+/cFLGqWwewyu7CjBqgCgdaQNtmQtdcpP2BuwkSLign+vU7FxZOYvzOomdeb7 Kbha57cN1prbQpTJKp03UX5Y1TyYuVy9YkkPh+Ac2Xi2b98vREFLjfHkN36A2dnfUjLBm4v34+7 vE1YzF5TRy+eKezWaP/iCLmnv85eU9Sn5FMf6SYKYcOEWOuesQzWE+LzP4pM+h4Qsu7IkMOMtgl Hp8SNhDVJklZXTzVGDXH1qQETrw545SnVH1mjxL044eXLlp+mYtBnJhB160GOkhvLz6Z/jZmBgh 50xvY3amw2c7RHVnhGLOYfeiqWmVuYPjiebx2NauufYrlzb+
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-Delete 2 lines to prevent warnings from scripts/kernel-doc:
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-s3c2410.c:117: warning: Excess struct member 'mtd' description in 's3c2410_nand_mtd'
-s3c2410.c:168: warning: Excess struct member 'freq_transition' description in 's3c2410_nand_info'
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202312150611.EZBAQYqf-lkp@intel.com/
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/mtd/nand/raw/s3c2410.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/memory/samsung/exynos5422-dmc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff -- a/drivers/mtd/nand/raw/s3c2410.c b/drivers/mtd/nand/raw/s3c2410.c
---- a/drivers/mtd/nand/raw/s3c2410.c
-+++ b/drivers/mtd/nand/raw/s3c2410.c
-@@ -105,7 +105,6 @@ struct s3c2410_nand_info;
- 
- /**
-  * struct s3c2410_nand_mtd - driver MTD structure
-- * @mtd: The MTD instance to pass to the MTD layer.
-  * @chip: The NAND chip information.
-  * @set: The platform information supplied for this set of NAND chips.
-  * @info: Link back to the hardware information.
-@@ -145,7 +144,6 @@ enum s3c_nand_clk_state {
-  * @clk_rate: The clock rate from @clk.
-  * @clk_state: The current clock state.
-  * @cpu_type: The exact type of this controller.
-- * @freq_transition: CPUFreq notifier block
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 6d019dbd721c..da7ecd921c72 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1558,7 +1558,7 @@ static int exynos5_dmc_probe(struct platform_device *pdev)
+  * clean the device's resources. It just calls explicitly disable function for
+  * the performance counters.
   */
- struct s3c2410_nand_info {
- 	/* mtd info */
+-static int exynos5_dmc_remove(struct platform_device *pdev)
++static void exynos5_dmc_remove(struct platform_device *pdev)
+ {
+ 	struct exynos5_dmc *dmc = dev_get_drvdata(&pdev->dev);
+ 
+@@ -1569,8 +1569,6 @@ static int exynos5_dmc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(dmc->mout_bpll);
+ 	clk_disable_unprepare(dmc->fout_bpll);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id exynos5_dmc_of_match[] = {
+@@ -1581,7 +1579,7 @@ MODULE_DEVICE_TABLE(of, exynos5_dmc_of_match);
+ 
+ static struct platform_driver exynos5_dmc_platdrv = {
+ 	.probe	= exynos5_dmc_probe,
+-	.remove = exynos5_dmc_remove,
++	.remove_new = exynos5_dmc_remove,
+ 	.driver = {
+ 		.name	= "exynos5-dmc",
+ 		.of_match_table = exynos5_dmc_of_match,
+-- 
+2.42.0
+
