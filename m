@@ -1,101 +1,91 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EEA15492;
-	Mon, 18 Dec 2023 10:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42956134D5
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Dec 2023 10:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lU19BBON"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-336672406f0so597597f8f.2;
-        Mon, 18 Dec 2023 02:12:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aqKKm6Rq"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a2360b9d6d2so35083766b.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Dec 2023 02:16:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702894370; x=1703499170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6WtXLxQwCFo504IjsHi0YpiharpdePiqBc5i2KE37aE=;
-        b=lU19BBONqPBO3IApsjTmA6DMufnH/A41NV5QhRlZ/2dgfG3blokJ8MMCiiFpxCdugK
-         1pSNJ+0tM/ibODQ8o6cZ86sbzn02+67S1686raH39VKjwcrxOAS6+SaIaKDmCnzUn7Pv
-         r45+1muiXFasXAE233BgpxR9jCjVtBjWe0d5eDlTVcl93XxTBqh4ShFGxB0v0u/kUN47
-         Dzueux1IzDoPURn/WeSDiEwLKvXAzN/LPNPfnU3j+QSZLOF9wILslzyeHiuHR5v+qDV6
-         odM9WQPqf+pJ2rhWEF47ioVKmOapCjYaNKKVBhERZEpCtvOxIxkuX0LN1aqXbtL15Q5t
-         iDaw==
+        d=linaro.org; s=google; t=1702894586; x=1703499386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6T4R9okteCkjAhT9eyRdC/jbk1c6KtuDD/NaJ+LcB1s=;
+        b=aqKKm6Rqq8AP1UhsVlg4K0AaN30so0Zd1LW30XR+FlqwCzhCA4W0NuCaau9K4rmKfH
+         KXc7mgb7W9I5v61ejxV+MWkawJao1O6V5ZaEvk9PwU3Yc/LeiIyonZjkKn36pNRPWrat
+         azYaP+1DP5G1JDjKDl4FmCwZB/OR+CTc8+zd3Btm6AiHeuUugA8Z7srzru3mj156yOmQ
+         6nDjLrKfOiiYamV+Dy/h1I4Mpaq4tku1xVvoDNGMTTWFou64mcDa1WccB2+3zbYB8mBh
+         bdssQaVFOs90G1aPTlh7axh6kayrsJP3kG2UPXibJAweZBMZp1UAqy+lNp3Xtf++CQr8
+         M/1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702894370; x=1703499170;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6WtXLxQwCFo504IjsHi0YpiharpdePiqBc5i2KE37aE=;
-        b=D82ULtg9+AUnJBYZeBGX++jHBy/+oEYRMw3yvqFNa70OW7/3O0aPH0LpbfdZvq1HsO
-         EGlfTQnxg9PFk5Wv0StWbdpfOkV/O2pDeSf+llpRaovaKlnb5jxIgiV7JNtD4XzzXjaV
-         XgzJB3DtmegBSCJLWhvbPXaqEE0qbg6Ro8SJ3x6sS+KTI9bO3RtWMBuUNjSpaKuXIXxd
-         T1CI7Y/Jp1GkkHB96NQ16apZxjphZAHhYcuBmEBNu54Wnr+gfvjY82E2djsrejlcQ+xq
-         2SYHaeW3pIs6Qa1Yo2Uaf/xRHkUCsoK2iMBRSg1gA5ogHXzTwhsPiNWP5Z66rrUDVJsN
-         Amrw==
-X-Gm-Message-State: AOJu0Yy6Wz2wVn1o5OUQBZcnZUwqqHwfwC7Up39u2+EUkJfnrRch154c
-	E2b3k7gYNSk3ie8+rASgbYA=
-X-Google-Smtp-Source: AGHT+IEk0WnHrPvB6e5s1TX9Icl5DzhvBKsYduxD+/CToPTHJcdjQhGln4XwMYlycSfTpH6t5eUGow==
-X-Received: by 2002:a5d:670b:0:b0:336:4bc7:1d3d with SMTP id o11-20020a5d670b000000b003364bc71d3dmr3388761wru.57.1702894370453;
-        Mon, 18 Dec 2023 02:12:50 -0800 (PST)
-Received: from lukas-virtualBox.. ([208.127.103.55])
-        by smtp.gmail.com with ESMTPSA id j11-20020a5d564b000000b0033664ffaf5dsm3666051wrw.37.2023.12.18.02.12.49
+        d=1e100.net; s=20230601; t=1702894586; x=1703499386;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6T4R9okteCkjAhT9eyRdC/jbk1c6KtuDD/NaJ+LcB1s=;
+        b=PF07Cvze3sg1RRsGEZ/IObDoV3JjeCC6ufwKM1sQFHUXUIj1E8rMv7KZrFKqqy3CdR
+         /aZS+WWUo/2ZagAYMQ9cPw0KUSdCRo11MApgSH24AnUmndmC5CJGxRuPhY7tyKmPe3t8
+         3A/GlcFzUI7NnUEUIohaF3rQ2D8wAdwK9/ufglJ9imyhhRYVZZ01eWTtr6L8YKl2Ly2y
+         J3N8v1kel9QvkBn6D8wzOaNlPZiw3WKzJMlS6fYPe6qU25NT4Xfze9e7ehQgh8DhC620
+         ndZxHEpDl0FGSJpruox11vuUO5SHsIRKpm1fynXcaUqRFG8t1dCS7UJ8FtpsihNiESpQ
+         mAWQ==
+X-Gm-Message-State: AOJu0Yzfjck3+8kzjhzr2+3lqjCd2ITpj0+glCWdcU/qp9fpqIdDXk/w
+	EOetTv+b6IiW/KnER5+ozUNoNw==
+X-Google-Smtp-Source: AGHT+IHC5w0LaR0hZtZGoebFzWjvqDk4jLHPlKNUseyRe6YfHh7xV+cN4HpsENl4UBR0EZTA8NFZ8Q==
+X-Received: by 2002:a17:906:54f:b0:a23:5bfc:edf6 with SMTP id k15-20020a170906054f00b00a235bfcedf6mr531086eja.73.1702894586619;
+        Mon, 18 Dec 2023 02:16:26 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id tb21-20020a1709078b9500b009ad89697c86sm14131552ejc.144.2023.12.18.02.16.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Dec 2023 02:12:49 -0800 (PST)
-From: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To: Peter Griffin <peter.griffin@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT
-Date: Mon, 18 Dec 2023 11:12:25 +0100
-Message-Id: <20231218101225.27637-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 18 Dec 2023 02:16:25 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20231218101225.27637-1-lukas.bulwahn@gmail.com>
+References: <20231218101225.27637-1-lukas.bulwahn@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC
+ SUPPORT
+Message-Id: <170289458489.40214.4044639674573718307.b4-ty@linaro.org>
+Date: Mon, 18 Dec 2023 11:16:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.4
 
-Commit 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock
-management unit bindings") adds the file google,gs101.h in
-include/dt-bindings/clock/. However, commit 9d71df3e6eb7 ("MAINTAINERS:
-add entry for Google Tensor SoC") wrongly refers to the file
-google,clk-gs101.h in that directory.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+On Mon, 18 Dec 2023 11:12:25 +0100, Lukas Bulwahn wrote:
+> Commit 0a910f160638 ("dt-bindings: clock: Add Google gs101 clock
+> management unit bindings") adds the file google,gs101.h in
+> include/dt-bindings/clock/. However, commit 9d71df3e6eb7 ("MAINTAINERS:
+> add entry for Google Tensor SoC") wrongly refers to the file
+> google,clk-gs101.h in that directory.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> [...]
 
-Adjust the file entry to the actual file in GOOGLE TENSOR SoC SUPPORT.
+Applied, thanks!
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/1] MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT
+      https://git.kernel.org/krzk/linux/c/d0da0de31e1d50ff905eb8f095628eea666f8c67
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d984bd745e93..d05c81acd849 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9034,7 +9034,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
- F:	arch/arm64/boot/dts/exynos/google/
- F:	drivers/clk/samsung/clk-gs101.c
--F:	include/dt-bindings/clock/google,clk-gs101.h
-+F:	include/dt-bindings/clock/google,gs101.h
- 
- GPD POCKET FAN DRIVER
- M:	Hans de Goede <hdegoede@redhat.com>
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
