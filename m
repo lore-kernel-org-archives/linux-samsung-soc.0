@@ -1,46 +1,47 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2724B1DA2A
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 08:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865720B1F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 08:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZxmMoY3s"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-67f27b7f412so34281886d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 00:47:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wpoyvS3N"
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-67f09756761so45442876d6.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 00:47:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703062049; x=1703666849; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AkUnotLHiwUHunRMJ74rg2n/XXNGCcUjwtUyRu/WLvI=;
-        b=ZxmMoY3srabQN0piL72YR13AYRU+/OE2lth68ODEe5z8knmzqHdydud2OWyTCYBwUj
-         cuN4BoIjN0ivJ/BIgDLlrGc5v2hlsm2pQzBCeSTnDCBZ3CdROuITMqCAkiUUQr3rOjLD
-         ariS3SKTAXN5GRZretajq7/NnQcL3hqiQe8HN50Pj2IxPt6hqQDmR0gJo2lDlgGC48Jf
-         iWCdT1lslY41GQS3qlcjBjQ+e/Ua/6BrxVHENSmGdIkru+9TZyeT5q8OWo+pTjI/QbvF
-         oO2iktz5w8xBEFcKu9dXRimDgY/oZ+5QKBnXoE9ZWkowIWvuQ7pYyMYFXAL+JcStR+Do
-         JG4w==
+        d=linaro.org; s=google; t=1703062053; x=1703666853; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fpfISSmgMB3y/bVNFGA51V1qdYGXV4hc5kvcWbG5fk=;
+        b=wpoyvS3NEh7Nfldt9N4nEc9hLuYanyI7Dq8f4xCg8Q0qtxH3kwdB+HjuN2sxgqGL9n
+         hG+GaROOOWnJBXHRWhho2CTWYyn+KkOv9Kto2XjoNXP8wAdt4wMwYXmAbFdCNhEuL5Kl
+         NGWYv31N2iX0blWUU4ATVWYE9LkmVLgZFxhX8Y5VHY4ctwycxv1WyMLlUzbrQ14nW7rn
+         cQJ5jC49jI1TGbFsJoigMRKkdJGVUDhfR4VY19mIPJhdOt4zpOdoBVbHMYF/lCJyDk6J
+         hP7lubDls9eG53quE8Emvv/Nq8EKG3dYSkeHKvf5dULmBPaixk8Yt1VDO8HU+HA8nkdy
+         HAVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703062049; x=1703666849;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AkUnotLHiwUHunRMJ74rg2n/XXNGCcUjwtUyRu/WLvI=;
-        b=kRg8J1BS41GwxdY22RYfPScCa5Adk5HN45mEbWfnCxol54SztBlfEXHcBEWAnHRRsY
-         vfm6YgK/hsk6f55xLEQVSzZEHRbPZyQmbGvO3X8qH6q0x9MmthDqLFSmfyBEDpm4M4qx
-         6RlRK1r9Fdo6CAlWH8XeYFjqMIrms1+iDVjfBXhVMqgMbIrRwD25KKxJ+PRdue0p3PRK
-         OGhelbHPZIYyyaVFxRXRP+r/IKUfWq2na/qOu0msm//v8iaN2l/Rfrn6Kax5VVTIcSny
-         7oH+PFIU0S+60HSRn/1V43V+OZ5u/Yhft9LAzkEWY4lbCA7NrMXjaoNOd5kdIhzJ91+K
-         g7PQ==
-X-Gm-Message-State: AOJu0YwQqQGW0szJrWMwah0voJ16pbPKZad6AU66gPxCJ+fPy75ROLZd
-	3Ptk4h0VO/N1u3+Kmq/ZKtIWkpx24Okbp/9ktGI=
-X-Google-Smtp-Source: AGHT+IEdfszLOaIesNW+7ESBIjUWCUZ2vKw4gM2QUlrYD4MHAlBGCggMU5JjWuGySGOTJMs9kxjrng==
-X-Received: by 2002:ad4:5c6a:0:b0:67f:43f4:d058 with SMTP id i10-20020ad45c6a000000b0067f43f4d058mr5857968qvh.105.1703062048881;
-        Wed, 20 Dec 2023 00:47:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703062053; x=1703666853;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fpfISSmgMB3y/bVNFGA51V1qdYGXV4hc5kvcWbG5fk=;
+        b=n9fIazZD0reZnMlF6jpCC9BzAu/+JmygbhjpPjpvOyaHNK/fPp7EtJar/IlfSwr3mc
+         xRetMAN5qn5GBvzoS9hWStL+2zgkfB25w1wamyjsU3/vL8NmhFaR0NRRXK6CF1JT5gVv
+         TcCCG1lDHeo4YF2ClL9dGHUnuxl4RSzyz8GQCeLu/v0DmEDzZrDp+LrKKe/CMlu+oNW1
+         B5Fj9u8IDtvqTVTaS7IUejsNJbBBoJpF3SKnqXFFwLMwnV57m3HGdGwyQKZFCNrvqAuj
+         Q0ItIXUaN+WGh7m4sAtE3lQn3EjwbjbCsdiQGQ6fTRBuA16OZdz5ix84pVI4AI2SYb+X
+         QcOw==
+X-Gm-Message-State: AOJu0YxkLshwz4PgNlj8DeezfD6wT0qKmfQsLpA/1ZXO7QSF5kVEc2fU
+	xuco0kKVakc5PC+LyFApU3g1pDh0iw3lfx5p6RM=
+X-Google-Smtp-Source: AGHT+IGNSM6e3xFUqMvBQR9R3t5Cir3zM71HhCbB7/QfhmBw0kWQ/gx8kCtf/CvGDbAqdCivvEvQMQ==
+X-Received: by 2002:a05:6214:20e7:b0:67f:26f3:ca56 with SMTP id 7-20020a05621420e700b0067f26f3ca56mr10139820qvk.102.1703062052777;
+        Wed, 20 Dec 2023 00:47:32 -0800 (PST)
 Received: from krzk-bin.. ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id g18-20020a0ce752000000b0067abfe5709dsm11168847qvn.139.2023.12.20.00.47.25
+        by smtp.gmail.com with ESMTPSA id g18-20020a0ce752000000b0067abfe5709dsm11168847qvn.139.2023.12.20.00.47.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Dec 2023 00:47:28 -0800 (PST)
+        Wed, 20 Dec 2023 00:47:31 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Olof Johansson <olof@lixom.net>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -53,10 +54,12 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/2] samsung: drivers for v6.8
-Date: Wed, 20 Dec 2023 09:47:21 +0100
-Message-Id: <20231220084722.22149-1-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 2/2] arm64: dts: samsung: DTS for v6.8, part two
+Date: Wed, 20 Dec 2023 09:47:22 +0100
+Message-Id: <20231220084722.22149-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231220084722.22149-1-krzysztof.kozlowski@linaro.org>
+References: <20231220084722.22149-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,47 +70,112 @@ Content-Transfer-Encoding: 8bit
 
 Hi,
 
-Driver changes needed for Google GS101 SoC, plus usual Samsung SoC driver
-updates.
+This is second pull request for arm64 Samsung DTS. Previous (part one):
+https://lore.kernel.org/all/20231212093105.13938-1-krzysztof.kozlowski@linaro.org/
 
-This includes topic branch, see explanation in pull-request/tag.
+I did not receive any notification that you pulled in previous (part one) pull,
+thus I attach below two diffs:
+A. Against previous pull, tags/samsung-dt64-6.8
+B. Against master, v6.7-rc1
+
+This includes topic branch, see explanation in pull-request/tag. Most of the
+bindings patches affect DTS, because they include compatible-refactoring.  This
+refactoring affects new device support - ExynosAutov920 and Google GS101 -
+thus everything comes together.
 
 Best regards,
 Krzysztof
 
 
+The following changes since commit 40af852a7ca59d23ab4afd02af2623121da2f116:
+
+  Merge branch 'for-v6.8/samsung-bindings-compatibles' into next/dt64 (2023-12-11 08:41:24 +0100)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.8-2
+
+for you to fetch changes up to d0da0de31e1d50ff905eb8f095628eea666f8c67:
+
+  MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT (2023-12-18 11:15:51 +0100)
+
+----------------------------------------------------------------
+Samsung DTS ARM64 changes for v6.8, part two
+
+1. Tesla FSD: Add Multi Format Codec (MFC) device nodes, for accelerated
+   video de/encoding.
+
+2. Add initial Google Tensor GS101 SoC support. The GS101 SoC can be
+   found on Google Pixel 6 phones.  Currently the DTS brings only basic
+   support: core clock controllers, pin controllers, serial, watchdog
+   and ARM core blocks.
+
+----------------------------------------------------------------
+Aakarsh Jain (1):
+      arm64: dts: fsd: Add MFC related DT enteries
+
+Lukas Bulwahn (1):
+      MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT
+
+Peter Griffin (4):
+      dt-bindings: arm: google: Add bindings for Google ARM platforms
+      arm64: dts: exynos: google: Add initial Google gs101 SoC support
+      arm64: dts: exynos: google: Add initial Oriole/pixel 6 board support
+      MAINTAINERS: add entry for Google Tensor SoC
+
+ Documentation/devicetree/bindings/arm/google.yaml  |   53 +
+ MAINTAINERS                                        |   10 +
+ arch/arm64/boot/dts/exynos/Makefile                |    2 +
+ arch/arm64/boot/dts/exynos/google/Makefile         |    4 +
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  105 ++
+ .../boot/dts/exynos/google/gs101-pinctrl.dtsi      | 1249 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h  |   33 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  473 ++++++++
+ arch/arm64/boot/dts/tesla/fsd.dtsi                 |   21 +
+ 9 files changed, 1950 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101.dtsi
+
+
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+DIFF against master/v6.7-rc1
+----------------------------------------------------------------
 The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.8
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.8-2
 
-for you to fetch changes up to 35f32e39b4d9b436354c2a37623c393a2ac7cf87:
+for you to fetch changes up to d0da0de31e1d50ff905eb8f095628eea666f8c67:
 
-  dt-bindings: clock: google,gs101: rename CMU_TOP gate defines (2023-12-18 09:59:20 +0100)
-
-----------------------------------------------------------------
-Samsung SoC driver changes for v6.8
-
-1. Add support for Google GS101 SoC to different drivers: clock
-   controller, serial and watchdog.
-
-   The clock driver changes depend on few bindings headers, which I put
-   in a topic branch with the bindings refactoring and GS101 support,
-   therefore this this pull request includes that bindings topic branch.
-
-   The rest of the bindings topic branch is not necessary here, however
-   keeping everything together makes it easier to share between
-   branches.  The bindings topic branch is mostly refactoring all the
-   compatibles to add SoC-specific compatible followed by fallback.
-
-2. Exynos ChipID: recognize ExynosAutov920.
+  MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT (2023-12-18 11:15:51 +0100)
 
 ----------------------------------------------------------------
-Jaewon Kim (8):
-      soc: samsung: exynos-chipid: add exynosautov920 SoC support
+Samsung DTS ARM64 changes for v6.8, part two
+
+1. Tesla FSD: Add Multi Format Codec (MFC) device nodes, for accelerated
+   video de/encoding.
+
+2. Add initial Google Tensor GS101 SoC support. The GS101 SoC can be
+   found on Google Pixel 6 phones.  Currently the DTS brings only basic
+   support: core clock controllers, pin controllers, serial, watchdog
+   and ARM core blocks.
+
+----------------------------------------------------------------
+Aakarsh Jain (1):
+      arm64: dts: fsd: Add MFC related DT enteries
+
+Jaewon Kim (10):
+      arm64: dts: exynos: add gpio-key node for exynosautov9-sadk
       dt-bindings: samsung: exynos-sysreg: add exynosautov920 sysreg
       dt-bindings: samsung: exynos-pmu: add exynosautov920 compatible
       dt-bindings: samsung: usi: add exynosautov920-usi compatible
@@ -115,8 +183,10 @@ Jaewon Kim (8):
       dt-bindings: pwm: samsung: add exynosautov920 compatible
       dt-bindings: arm: samsung: Document exynosautov920 SADK board binding
       dt-bindings: hwinfo: samsung,exynos-chipid: add exynosautov920 compatible
+      arm64: dts: exynos: add initial support for exynosautov920 SoC
+      arm64: dts: exynos: add minimal support for exynosautov920 sadk board
 
-Krzysztof Kozlowski (18):
+Krzysztof Kozlowski (28):
       dt-bindings: hwinfo: samsung,exynos-chipid: add specific compatibles for existing SoC
       dt-bindings: i2c: exynos5: add specific compatibles for existing SoC
       dt-bindings: i2c: samsung,s3c2410-i2c: add specific compatibles for existing SoC
@@ -128,35 +198,39 @@ Krzysztof Kozlowski (18):
       dt-bindings: iio: samsung,exynos-adc: add specific compatibles for existing SoC
       ASoC: dt-bindings: samsung-i2s: add specific compatibles for existing SoC
       dt-bindings: pwm: samsung: add specific compatibles for existing SoC
+      arm64: dts: exynos5433: add specific compatibles to several blocks
+      arm64: dts: exynos7: add specific compatibles to several blocks
+      arm64: dts: exynos7885: add specific compatibles to several blocks
+      arm64: dts: exynos850: add specific compatibles to several blocks
+      arm64: dts: exynosautov9: add specific compatibles to several blocks
+      Merge branch 'for-v6.8/samsung-bindings-compatibles' into next/dt64
+      arm64: dts: exynos850: use Exynos7 fallbacks for pin wake-up controllers
+      arm64: dts: exynosautov9: use Exynos7 fallbacks for pin wake-up controller
       dt-bindings: i2c: exynos5: add specific compatible for Tesla FSD
       dt-bindings: pwm: samsung: add specific compatible for Tesla FSD
       dt-bindings: serial: samsung: add specific compatible for Tesla FSD
       dt-bindings: samsung: exynos-pmu: add specific compatible for Tesla FSD
       dt-bindings: watchdog: samsung: add specific compatible for Tesla FSD
+      Merge branch 'for-v6.8/samsung-bindings-compatibles' into next/dt64
+      arm64: dts: fsd: add specific compatibles for Tesla FSD
       dt-bindings: samsung: exynos-sysreg: combine exynosautov920 with other enum
-      Merge tag 'samsung-dt-bindings-refactoring-and-google-gs101-6.8' into next/drivers
+      Merge branch 'for-v6.8/samsung-bindings-compatibles' into next/dt64
 
-Peter Griffin (13):
+Lukas Bulwahn (1):
+      MAINTAINERS: adjust file entry in GOOGLE TENSOR SoC SUPPORT
+
+Peter Griffin (7):
       dt-bindings: soc: samsung: exynos-pmu: Add gs101 compatible
       dt-bindings: clock: Add Google gs101 clock management unit bindings
       dt-bindings: soc: google: exynos-sysreg: add dedicated SYSREG compatibles to GS101
-      dt-bindings: watchdog: Document Google gs101 watchdog bindings
-      dt-bindings: serial: samsung: Add google-gs101-uart compatible
-      dt-bindings: serial: samsung: Make samsung,uart-fifosize a required property
-      dt-bindings: clock: google,gs101: fix incorrect numbering and DGB suffix
-      clk: samsung: clk-pll: Add support for pll_{0516,0517,518}
-      clk: samsung: clk-gs101: Add cmu_top, cmu_misc and cmu_apm support
-      tty: serial: samsung: Add gs101 compatible and common fifoszdt_serial_drv_data
-      watchdog: s3c2410_wdt: Add support for WTCON register DBGACK_MASK bit
-      watchdog: s3c2410_wdt: Update QUIRK macros to use BIT macro
-      watchdog: s3c2410_wdt: Add support for Google gs101 SoC
+      dt-bindings: arm: google: Add bindings for Google ARM platforms
+      arm64: dts: exynos: google: Add initial Google gs101 SoC support
+      arm64: dts: exynos: google: Add initial Oriole/pixel 6 board support
+      MAINTAINERS: add entry for Google Tensor SoC
 
-Tudor Ambarus (2):
-      dt-bindings: soc: samsung: usi: add google,gs101-usi compatible
-      dt-bindings: clock: google,gs101: rename CMU_TOP gate defines
-
+ Documentation/devicetree/bindings/arm/google.yaml  |   53 +
  .../bindings/arm/samsung/samsung-boards.yaml       |    6 +
- .../bindings/clock/google,gs101-clock.yaml         |  106 +
+ .../bindings/clock/google,gs101-clock.yaml         |  106 ++
  .../devicetree/bindings/gpu/arm,mali-midgard.yaml  |    5 +
  .../bindings/hwinfo/samsung,exynos-chipid.yaml     |   18 +-
  .../devicetree/bindings/i2c/i2c-exynos5.yaml       |   11 +-
@@ -166,21 +240,39 @@ Tudor Ambarus (2):
  .../bindings/mmc/samsung,exynos-dw-mshc.yaml       |   25 +-
  .../devicetree/bindings/pwm/pwm-samsung.yaml       |    4 +
  Documentation/devicetree/bindings/rtc/s3c-rtc.yaml |    5 +
- .../devicetree/bindings/serial/samsung_uart.yaml   |   28 +-
+ .../devicetree/bindings/serial/samsung_uart.yaml   |   17 +-
  .../bindings/soc/samsung/exynos-pmu.yaml           |   10 +
- .../bindings/soc/samsung/exynos-usi.yaml           |    7 +-
+ .../bindings/soc/samsung/exynos-usi.yaml           |    6 +-
  .../soc/samsung/samsung,exynos-sysreg.yaml         |    5 +
  .../devicetree/bindings/sound/samsung-i2s.yaml     |   19 +-
- .../devicetree/bindings/watchdog/samsung-wdt.yaml  |   29 +-
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-gs101.c                    | 2518 ++++++++++++++++++++
- drivers/clk/samsung/clk-pll.c                      |    6 +
- drivers/clk/samsung/clk-pll.h                      |    3 +
- drivers/soc/samsung/exynos-chipid.c                |    1 +
- drivers/tty/serial/samsung_tty.c                   |   16 +
- drivers/watchdog/s3c2410_wdt.c                     |   85 +-
- include/dt-bindings/clock/google,gs101.h           |  392 +++
- 25 files changed, 3285 insertions(+), 68 deletions(-)
+ .../devicetree/bindings/watchdog/samsung-wdt.yaml  |   21 +-
+ MAINTAINERS                                        |   10 +
+ arch/arm64/boot/dts/exynos/Makefile                |    5 +-
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |   60 +-
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   18 +-
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi         |   45 +-
+ arch/arm64/boot/dts/exynos/exynos850.dtsi          |   40 +-
+ arch/arm64/boot/dts/exynos/exynosautov9-sadk.dts   |   51 +
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi       |   10 +-
+ .../boot/dts/exynos/exynosautov920-pinctrl.dtsi    | 1266 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts |   88 ++
+ arch/arm64/boot/dts/exynos/exynosautov920.dtsi     |  312 +++++
+ arch/arm64/boot/dts/exynos/google/Makefile         |    4 +
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  105 ++
+ .../boot/dts/exynos/google/gs101-pinctrl.dtsi      | 1249 +++++++++++++++++++
+ arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h  |   33 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  473 ++++++++
+ arch/arm64/boot/dts/tesla/fsd.dtsi                 |   53 +-
+ include/dt-bindings/clock/google,gs101.h           |  392 ++++++
+ 36 files changed, 4444 insertions(+), 134 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/google.yaml
  create mode 100644 Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
- create mode 100644 drivers/clk/samsung/clk-gs101.c
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920-sadk.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/google/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101-pinctrl.h
+ create mode 100644 arch/arm64/boot/dts/exynos/google/gs101.dtsi
  create mode 100644 include/dt-bindings/clock/google,gs101.h
