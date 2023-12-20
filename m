@@ -1,91 +1,94 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5067405FA
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Dec 2023 18:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E021CABD
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 08:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gJdvYJgy"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3365424df34so3471044f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Dec 2023 10:17:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nr1fyDZf"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40d352c826eso3903005e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 00:40:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703009834; x=1703614634; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U5+/YEXsrPbbkR396pSZpoZgLbak9X4jZQSn1ikhDZ0=;
-        b=gJdvYJgyzoF0mB5pAECEB+QJuZavOSpKucdwHc0Ty3pCCSHQ5KELOv6y+4Q4p2T5dc
-         j5Dz6ghIIzNQJ2j0UTZAkIpL+n/gQqkAUxPJEWSEgaYKB9Zg+LiHLJ+3/bF8FMXs8Dek
-         UAqGF+S3Eb4foCSUwnMwd9p1JBpbGARglj3PwmZQcOPZ8cjtD4P1pc54dNtZ+r5emU9d
-         cv5E4+j2uiywa+zPfmnZEKYYIVHWuzKDDsJoyYY16C6P5ZacNGP8PABYR5opW+QOaywV
-         I/CAbp82Vn4AYWTOejLDxv56NAHuLSeypea0IqNQXJhzWNUN+4FCV56jIRSbss/gp5qc
-         D3sQ==
+        d=linaro.org; s=google; t=1703061647; x=1703666447; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b9bCFfeXqdM2g4XB4+Gj5tpzo4H+2Jggs88xOD7WpKk=;
+        b=Nr1fyDZfQAJHhq/GHb3X/zSZnmmrCdZNiqKJv0hZi314/Me8j2V/6XBV4IyPNSZ4bl
+         oBCynSoiyJoEtoylS2Gvr/dEdFjT+EJnaEGhX3ZLlEuXY3G91WYRC+0cpqZn/J6yfgd+
+         In7zAoC5+qFmqvu9V2l4YrMSOm+9o/ba+Kj3RThrrJsaQS0oF+MbXfwKWpO7zkJkVpch
+         BNMdsI45fBe5gDdAUROcRwdENlqQ+/njIIM5N0VmKXFG+OJ6VQaUvnWZdpW2/2ymKddT
+         wH5pwG/6/R5ubX/cNLzmhdoiQs9lKlOtLO9bQrWrYM7Jl5LXztPkrWWNo8rdrWm3c3Dz
+         4/Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703009834; x=1703614634;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5+/YEXsrPbbkR396pSZpoZgLbak9X4jZQSn1ikhDZ0=;
-        b=VEC03PmeSjbdXvtP+CdRi4AyOFS5RQoTcMFoctchpUm++hzuEkso0nkXmRxS+Y6kSE
-         cxnLHzyv0J73WF5T96snCP6sphZTnhudb6JBqIiqWMz3oL/w4NwNdRopqBsxerkmUxeE
-         ViNSU5g/MzfC50tgb11LuzPf7qcTTHRAlI2ZnG376MX7BYBGQrky7tpvmkfKRw+USizo
-         MaUDyril5msUqkGHAszbux4OZaEjrwohmAabIeAp3VkY1G76ko7Im5l6xZosjmZmZuPG
-         A+nNIlaqvW8+kHVREzFQxzNp6AgvpoVT7f1H7eX70+UITj8HreshajjCdITT3P3LZCBf
-         OyoQ==
-X-Gm-Message-State: AOJu0YyHZ8sWTvco6uiPmKpW5w8Cxrh6vaM/olYH3txdvFu/smuLuO9s
-	3F0jds7otqp3nVgYCGf9o7VvMQ==
-X-Google-Smtp-Source: AGHT+IFcNDfUU2vQH560I9HCoCIGOh5tkvBA6RjgmzVGKzkXpkzHXpd7F/sDbAYIuHYfyRGowRWdsA==
-X-Received: by 2002:a5d:6c67:0:b0:336:6dd3:bfcf with SMTP id r7-20020a5d6c67000000b003366dd3bfcfmr2158204wrz.121.1703009834114;
-        Tue, 19 Dec 2023 10:17:14 -0800 (PST)
-Received: from [192.168.10.46] ([37.170.14.102])
-        by smtp.googlemail.com with ESMTPSA id d13-20020a056000114d00b00336726bcc8dsm2260162wrx.7.2023.12.19.10.17.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Dec 2023 10:17:13 -0800 (PST)
-Message-ID: <dfed0e9b-f84c-4627-9540-a240d3724f21@linaro.org>
-Date: Tue, 19 Dec 2023 19:17:11 +0100
+        d=1e100.net; s=20230601; t=1703061647; x=1703666447;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b9bCFfeXqdM2g4XB4+Gj5tpzo4H+2Jggs88xOD7WpKk=;
+        b=kEK+3acEvwUCGMSP7rtY7znaxIQFCMGCeRJCrBVBX7KoYnOxejm4ZfImAZiiF6gZKt
+         eJfD4Uujqk15FXCSbYDIJihBiKNYTWdWY0CCQ1x0B6rS/mwAbKeq5YvoTQt9q9QU1Mv8
+         WNBcA+E/krrou37emTfNfz9pEb3gcos75zcedZ/lesIehLk4BP+eBIIRp4c89XhWbbjo
+         I4RVaLIYRpqE7MARpSfn3g/ExldNyG9+xHXV+jw9onlA9GpSwQb5hkwbcMjlJb3ALrqF
+         PrWtn4MlWRYOHJS2yTdOwy6aa/vISWG459leCeKV9LrkD1FaG7snaG1nDXFyZEeOXAnT
+         AoWw==
+X-Gm-Message-State: AOJu0Yz0uQlqzSNMMt/rgiZCGyYTxV/xqzISYCuzvj9wah2IwCCyVRI1
+	Wj+pUGUUIdtPqKHOhfFehb7ucw==
+X-Google-Smtp-Source: AGHT+IFBCsvEI7sl0gIM4cI7UOtQ69eB4wNSoVXnNe2KR8F6iDEyLZVt+BYJbipCui9m8ELu2zwG2w==
+X-Received: by 2002:a05:600c:5487:b0:40b:5e59:cccf with SMTP id iv7-20020a05600c548700b0040b5e59cccfmr10901500wmb.176.1703061647018;
+        Wed, 20 Dec 2023 00:40:47 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.27])
+        by smtp.gmail.com with ESMTPSA id u7-20020a05600c138700b00405c7591b09sm6299174wmf.35.2023.12.20.00.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Dec 2023 00:40:46 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.8
+Date: Wed, 20 Dec 2023 09:40:43 +0100
+Message-Id: <20231220084043.21549-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/9] Improve Exynos thermal driver
-Content-Language: en-US
-To: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Amit Kucheria <amitk@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Dan Carpenter <dan.carpenter@linaro.org>
-References: <CGME20231201095637eucas1p25e14bd24e05ae61eb12dee18af2a1dc5@eucas1p2.samsung.com>
- <20231201095625.301884-1-m.majewski2@samsung.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20231201095625.301884-1-m.majewski2@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 01/12/2023 10:56, Mateusz Majewski wrote:
-> This work improves Exynos thermal driver in various ways. This is
-> related to the discussion in
-> https://lore.kernel.org/all/97201878-3bb8-eac5-7fac-a690322ac43a@linaro.org/
-> 
-> The primary issue being fixed is a lockdep warning, which is fixed by
-> the thermal: exynos: use set_trips patch. We also simplify the code in
-> general.
-> 
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
-Applied, thanks
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+are available in the Git repository at:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.8
 
+for you to fetch changes up to 5583e92be5c45448e6ea461e1780d46c17d14963:
+
+  clk: samsung: Improve kernel-doc comments (2023-11-16 20:46:03 +0100)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for 6.8
+
+Few kernel-doc fixes for Samsung SoC clock controllers.
+
+----------------------------------------------------------------
+Sam Protsenko (2):
+      clk: samsung: Fix kernel-doc comments
+      clk: samsung: Improve kernel-doc comments
+
+ drivers/clk/samsung/clk-cpu.h |  30 ++++----
+ drivers/clk/samsung/clk.h     | 157 +++++++++++++++++++++++-------------------
+ 2 files changed, 101 insertions(+), 86 deletions(-)
