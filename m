@@ -1,43 +1,44 @@
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE634B14E
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 23:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364864C631
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 23:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q8hr8pYq"
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7b7f2c72846so9633039f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 15:55:08 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c1Or9FTp"
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7b7d55d7717so8988439f.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 15:55:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1703116507; x=1703721307; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wqPdBL+/GuMSQccpt6uaKdYbWfswQmujpY/bP5YPpNI=;
-        b=Q8hr8pYq4FWBKc/qoEPWCGlisUvxT579O0+S7xTRUw6cEhEunxdUKX+ta5Gc9u14O/
-         LRKRHBoOcgL0kh2n53OIED0PpLHs+H0EX9n3VQfo4jul8nSkwJ/UvbbPPbMv00c35V9x
-         lW4VQtlDijHZXwOZQuj2r6ZaTqbfQUAkN1wB0=
+        d=chromium.org; s=google; t=1703116513; x=1703721313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kZeDaLYJRo5zLa/L/bxhfuH9rT1XYjT6TiTC8Trsii8=;
+        b=c1Or9FTptFd/J14gVUcRsVlsmwGZznif5GSbnzqdbbWzayd7SAhmqVt2uaXSZonXOx
+         ba4XBfFBsDD78bhinCkcL+TLH+e4wiIjDAdbqu1xE/cZIpnfiMJusBnEnnU2z+IFoLDI
+         JjH8vntTQsG0nx+LY68xNe+s/QtB5MdLnSkR0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703116507; x=1703721307;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wqPdBL+/GuMSQccpt6uaKdYbWfswQmujpY/bP5YPpNI=;
-        b=jLoApEMI6ABTQ0BQC7kC66rcpzxx5PjvFtcEtGWb4WJtjUNgQkuslxoOIc41kdYc9e
-         9TSbN8KYGaLWZ84fImOeCo5X1TOH/8BiBoPuU7yLVzo7vgatBoLAq2LLwgpa6GlrY1bI
-         4lQAdVz2Zj20BP3GrwobAYwnfAYV7/gTIXZwxljZ47S52S1XAYDl/Mj2LtcqM3YCDeOg
-         gpRNy5LGp36kXMmY1bEUvbzDgu0eTtUjO3VFQs/80TpyFuNvbTqEWjBMJi9Ccu2+zhL1
-         bISw6mrU0TBYfaJsKu/Pv+MyVKTiOnGdiGapmW28HZx3qAV9g9SfYPI+FnPe9+pUavLe
-         PAzA==
-X-Gm-Message-State: AOJu0Yy8oUn7f2Vo1QbPWlZc23YDYcJ/6MxXXmxwCIjOtacr0ZORVQQH
-	KnqHuy/DnIidnm/MiQ9Ay3VEIQ==
-X-Google-Smtp-Source: AGHT+IGvcm8Gmt6btmyTyMqXZVRSOfPvmnIP9TnUstnyKtl6UnorIC2YtaIno3O39yYnkXIJfI/h3g==
-X-Received: by 2002:a05:6602:4148:b0:7b7:b370:bd51 with SMTP id bv8-20020a056602414800b007b7b370bd51mr10520071iob.35.1703116507495;
-        Wed, 20 Dec 2023 15:55:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703116513; x=1703721313;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kZeDaLYJRo5zLa/L/bxhfuH9rT1XYjT6TiTC8Trsii8=;
+        b=QOufqU/DTAf9UixMyxlumtH9xdZh/wemRpiNh6obHJiHthTPY225Q8jb7bde/FxPYU
+         gErgtm6ZWyDdh1D5yiNtp8MIZERyoszJkcEZ989JYsYlMTz8LAX84LfTiVU5kqT2bf9U
+         atg4G8WabvOMkVqSz6GnqBXuftP6ZfRsLwBJgOpj1OZkRaPvbmeYvrL4B3v68MOGGD2b
+         Pf65W+BLc+JChz2NXaRiIkOC8WViKjv16Ur/n7Jm/00BQXH723J5UEFZK0UfkWCJsEyw
+         fbf4ld6WepAh/X8sols4r4cbGOB4K99PQmdsnPkLoy8WJZmVlVi5coeFhGTwAA9NpmQ8
+         jH6w==
+X-Gm-Message-State: AOJu0Yzgvy6sgMLyL3xZrCLkzL0ZHjUcGuaPYAmA0EJqzH7uIhQcc4Ec
+	lAKhnPrcPY8Uuk+K46R+7iwKKA==
+X-Google-Smtp-Source: AGHT+IEk8m96lV9iBV0InAWBCJf8FPF2Hlzn006lTcKeoi8vAPlF6SmDvyTGDOc2BbQymmk/iA/zow==
+X-Received: by 2002:a6b:c417:0:b0:7b7:d807:42bb with SMTP id y23-20020a6bc417000000b007b7d80742bbmr5876797ioa.41.1703116513408;
+        Wed, 20 Dec 2023 15:55:13 -0800 (PST)
 Received: from markhas1.lan (71-218-50-136.hlrn.qwest.net. [71.218.50.136])
-        by smtp.gmail.com with ESMTPSA id bp22-20020a056638441600b0046b39a6f404sm177805jab.17.2023.12.20.15.55.05
+        by smtp.gmail.com with ESMTPSA id bp22-20020a056638441600b0046b39a6f404sm177805jab.17.2023.12.20.15.55.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Dec 2023 15:55:07 -0800 (PST)
+        Wed, 20 Dec 2023 15:55:13 -0800 (PST)
 From: Mark Hasemeyer <markhas@chromium.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
@@ -50,62 +51,18 @@ Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Sudeep Holla <sudeep.holla@arm.com>,
 	Mark Hasemeyer <markhas@chromium.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Benson Leung <bleung@chromium.org>,
-	Bhanu Prakash Maiya <bhanumaiya@chromium.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	David Gow <davidgow@google.com>,
-	Enric Balletbo i Serra <eballetbo@gmail.com>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Lee Jones <lee@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Prashant Malani <pmalani@chromium.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Barnes <robbarnes@google.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Romain Perier <romain.perier@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Wei Xu <xuwei5@hisilicon.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	chrome-platform@lists.linux.dev,
-	cros-qcom-dts-watchers@chromium.org,
 	devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 00/22] Improve IRQ wake capability reporting and update the cros_ec driver to use it
-Date: Wed, 20 Dec 2023 16:54:14 -0700
-Message-ID: <20231220235459.2965548-1-markhas@chromium.org>
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 06/22] ARM: dts: samsung: exynos5420: Enable cros-ec-spi as wake source
+Date: Wed, 20 Dec 2023 16:54:20 -0700
+Message-ID: <20231220165423.v2.6.I06b059021de1bf6103e60a73211f078f2af75d17@changeid>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
+In-Reply-To: <20231220235459.2965548-1-markhas@chromium.org>
+References: <20231220235459.2965548-1-markhas@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -114,87 +71,34 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently the cros_ec driver assumes that its associated interrupt is
-wake capable. This is an incorrect assumption as some Chromebooks use a
-separate wake pin, while others overload the interrupt for wake and IO.
-This patch train updates the driver to query the underlying ACPI/DT data
-to determine whether or not the IRQ should be enabled for wake.
+The cros_ec driver currently assumes that cros-ec-spi compatible device
+nodes are a wakeup-source even though the wakeup-source property is not
+defined.
 
-Both the device tree and ACPI systems have methods for reporting IRQ
-wake capability. In device tree based systems, a node can advertise
-itself as a 'wakeup-source'. In ACPI based systems, GpioInt and
-Interrupt resource descriptors can use the 'SharedAndWake' or
-'ExclusiveAndWake' share types.
+Add the wakeup-source property to all cros-ec-spi compatible device
+nodes to match expected behavior.
 
-Some logic is added to the platform, ACPI, and DT subsystems to more
-easily pipe wakeirq information up to the driver.
+Signed-off-by: Mark Hasemeyer <markhas@chromium.org>
+---
 
 Changes in v2:
--Rebase on linux-next
--Add cover letter
--See each patch for patch specific changes
+-Split by arch/soc
 
-Mark Hasemeyer (22):
-  gpiolib: acpi: Modify acpi_dev_irq_wake_get_by() to use resource
-  i2c: acpi: Modify i2c_acpi_get_irq() to use resource
-  Documentation: devicetree: Clarify wording for wakeup-source property
-  ARM: dts: tegra: Enable cros-ec-spi as wake source
-  ARM: dts: rockchip: rk3288: Enable cros-ec-spi as wake source
-  ARM: dts: samsung: exynos5420: Enable cros-ec-spi as wake source
-  ARM: dts: samsung: exynos5800: Enable cros-ec-spi as wake source
-  arm64: dts: mediatek: mt8173: Enable cros-ec-spi as wake source
-  arm64: dts: mediatek: mt8183: Enable cros-ec-spi as wake source
-  arm64: dts: mediatek: mt8192: Enable cros-ec-spi as wake source
-  arm64: dts: mediatek: mt8195: Enable cros-ec-spi as wake source
-  arm64: dts: tegra: Enable cros-ec-spi as wake source
-  arm64: dts: qcom: sc7180: Enable cros-ec-spi as wake source
-  arm64: dts: qcom: sc7280: Enable cros-ec-spi as wake source
-  arm64: dts: qcom: sdm845: Enable cros-ec-spi as wake source
-  arm64: dts: rockchip: rk3399: Enable cros-ec-spi as wake source
-  of: irq: add wake capable bit to of_irq_resource()
-  of: irq: Add default implementation for of_irq_to_resource()
-  of: irq: Remove extern from function declarations
-  device property: Modify fwnode irq_get() to use resource
-  platform: Modify platform_get_irq_optional() to use resource
-  platform/chrome: cros_ec: Use PM subsystem to manage wakeirq
+ arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/power/wakeup-source.txt          | 18 +++--
- arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi   |  1 +
- arch/arm/boot/dts/nvidia/tegra124-venice2.dts |  1 +
- .../rockchip/rk3288-veyron-chromebook.dtsi    |  1 +
- .../boot/dts/samsung/exynos5420-peach-pit.dts |  1 +
- .../boot/dts/samsung/exynos5800-peach-pi.dts  |  1 +
- arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  1 +
- .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |  1 +
- .../boot/dts/mediatek/mt8192-asurada.dtsi     |  1 +
- .../boot/dts/mediatek/mt8195-cherry.dtsi      |  1 +
- .../arm64/boot/dts/nvidia/tegra132-norrin.dts |  1 +
- arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  1 +
- .../arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  1 +
- .../arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi |  1 +
- arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    |  1 +
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  |  1 +
- drivers/acpi/property.c                       | 11 ++-
- drivers/base/platform.c                       | 74 +++++++++++++------
- drivers/base/property.c                       | 24 +++++-
- drivers/gpio/gpiolib-acpi.c                   | 25 ++++---
- drivers/i2c/i2c-core-acpi.c                   | 38 +++++-----
- drivers/i2c/i2c-core-base.c                   |  6 +-
- drivers/i2c/i2c-core.h                        |  4 +-
- drivers/of/irq.c                              | 32 +++++++-
- drivers/of/property.c                         |  8 +-
- drivers/platform/chrome/cros_ec.c             |  9 ---
- drivers/platform/chrome/cros_ec_lpc.c         | 52 ++++++++++++-
- drivers/platform/chrome/cros_ec_spi.c         | 41 ++++++++--
- drivers/platform/chrome/cros_ec_uart.c        | 34 +++++++--
- include/linux/acpi.h                          | 23 +++---
- include/linux/fwnode.h                        |  8 +-
- include/linux/of_irq.h                        | 41 +++++-----
- include/linux/platform_data/cros_ec_proto.h   |  2 -
- include/linux/platform_device.h               |  3 +
- include/linux/property.h                      |  2 +
- 35 files changed, 328 insertions(+), 142 deletions(-)
-
+diff --git a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
+index 4e757b6e28e1c..3759742d38cac 100644
+--- a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
+@@ -967,6 +967,7 @@ cros_ec: cros-ec@0 {
+ 		reg = <0>;
+ 		spi-max-frequency = <3125000>;
+ 		google,has-vbc-nvram;
++		wakeup-source;
+ 
+ 		controller-data {
+ 			samsung,spi-feedback-delay = <1>;
 -- 
 2.43.0.472.g3155946c3a-goog
 
