@@ -1,49 +1,16 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2D520B18
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Dec 2023 07:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ymp61CRE"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40d13e4f7abso3589265e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Dec 2023 23:41:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703144484; x=1703749284; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e3H+A+A2A0Iu6R6Q5Gw3uNtOBHWeA7g0CxKvBb0xiXs=;
-        b=Ymp61CREDirdeoKjNTf8bx3n7GKSKgZlPmpbgkt0A3piCIUB7iOAuWTpL7ogaTReDO
-         MS94AtxVKjBJL/iQjnVk0vKfb1VakfxP6ndkNdFnjYYvB99/EhSLllgXWG2Gj63wwRUZ
-         WoNll6IsFfmwFrlLwu+HdHFXis2RF4XYzWnKcWtlcDqw5rysflVBWIAxMaf7dWMO6iV/
-         k//0ctxIhK9lG2CrZ6iRFPLiQsRBchAngEnI3ZPUEwE+990I2V94MPbRh/aVlV9slDfo
-         pF0ANehZ1XcKi45ppOUv9YekdgzgyYZVO5BtcpK14f/g1BmdD3yUJuuWMEdA0+7TuLLt
-         1ZaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703144484; x=1703749284;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3H+A+A2A0Iu6R6Q5Gw3uNtOBHWeA7g0CxKvBb0xiXs=;
-        b=BoNZ6JFKDl7xDm/Pcf9amnLb+er6gizlgcuIMzCIhQyN8sdpYFncZqatnkRn9ld4he
-         BsJYi876+6nqmxr9DEFrRYCBeMR0elOMO6qdLoqUtXdralNLWxf3IFfUvmIF6rwhecL6
-         k4FhDEAizxtmFuzjL5DWntdy3c3FO++SxvbsbinuXcO/WMswEBfHfCw4s+rWoBoI2Be2
-         jXhQaituYGc3Lv1HI+gPYCLqxhEihw8ipOWfBvcl7kikrIdOoeS1ZviYjgFAsHjqLIu+
-         NxrkPTgeW3CplhT2E1WTR75reJWoBsnnNUfeUZGaN6t2BWOrdK9uuobbd3JxMAfmr7Tg
-         HaKg==
-X-Gm-Message-State: AOJu0YwYFrdHzKWa843pIKce0BKn5KX5DmEuiu0Fq+wod8H37t+TbkLZ
-	GVM/T6PsuruHEzYuMJTtT1eHQA==
-X-Google-Smtp-Source: AGHT+IF0w9SH6vM+8j42w2i5q5G1YaglqA/Y2vt+0fOQwzslfJ2iApbivhzltwHxvSOIjCtSrTI+fw==
-X-Received: by 2002:a05:600c:510b:b0:40d:247f:3266 with SMTP id o11-20020a05600c510b00b0040d247f3266mr478314wms.42.1703144484020;
-        Wed, 20 Dec 2023 23:41:24 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id k8-20020a05600c1c8800b0040d376ac369sm2219698wms.40.2023.12.20.23.41.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Dec 2023 23:41:23 -0800 (PST)
-Message-ID: <db368449-f446-47e8-81b6-a11c2a872306@linaro.org>
-Date: Thu, 21 Dec 2023 07:41:21 +0000
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B49817992;
+	Thu, 21 Dec 2023 08:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 344B82F4;
+	Thu, 21 Dec 2023 00:03:58 -0800 (PST)
+Received: from [10.57.87.53] (unknown [10.57.87.53])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BA4B3F738;
+	Thu, 21 Dec 2023 00:03:10 -0800 (PST)
+Message-ID: <fe2f856b-c9c4-41b9-b569-079657b05b79@arm.com>
+Date: Thu, 21 Dec 2023 08:04:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,92 +18,113 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/13] tty: serial: samsung: add gs101 earlycon support
+Subject: Re: [PATCH 1/2] OPP: Add API to update EM after adjustment of voltage
+ for OPPs
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Arnd Bergmann <arnd@arndb.de>, Peter Griffin <peter.griffin@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- andi.shyti@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- saravanak@google.com, William McVicker <willmcvicker@google.com>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
- <20231214105243.3707730-6-tudor.ambarus@linaro.org>
- <1938fcf1-eb5d-4723-a6c6-d2fe2c6dd1c0@app.fastmail.com>
- <8808ceeb-35dc-4094-aec4-f43c7acd6174@linaro.org>
- <6962ac73-2f44-4c9e-8731-152087815454@app.fastmail.com>
- <584e036a-2ae7-4b88-a517-8f79c6baed4a@linaro.org>
- <914b634d-444c-4eae-bc7e-0f20d0629470@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <914b634d-444c-4eae-bc7e-0f20d0629470@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ dietmar.eggemann@arm.com, linux-arm-kernel@lists.infradead.org,
+ sboyd@kernel.org, nm@ti.com, linux-samsung-soc@vger.kernel.org,
+ daniel.lezcano@linaro.org, rafael@kernel.org, viresh.kumar@linaro.org,
+ krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+ m.szyprowski@samsung.com, mhiramat@kernel.org, qyousef@layalina.io,
+ wvw@google.com
+References: <20231220110339.1065505-1-lukasz.luba@arm.com>
+ <20231220110339.1065505-2-lukasz.luba@arm.com>
+ <CAB8ipk9PQbS=bjZ8F8brCfdXOgz6HUT0on2K1ZDLAaOhV9OpZw@mail.gmail.com>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAB8ipk9PQbS=bjZ8F8brCfdXOgz6HUT0on2K1ZDLAaOhV9OpZw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
 
-On 12/15/23 08:01, Krzysztof Kozlowski wrote:
-> On 14/12/2023 15:31, Tudor Ambarus wrote:
+On 12/21/23 07:28, Xuewen Yan wrote:
+> On Wed, Dec 20, 2023 at 7:02 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
 >>
+>> There are device drivers which can modify voltage values for OPPs. It
+>> could be due to the chip binning and those drivers have specific chip
+>> knowledge about this. This adjustment can happen after Energy Model is
+>> registered, thus EM can have stale data about power.
 >>
->> On 12/14/23 14:19, Arnd Bergmann wrote:
->>> On Thu, Dec 14, 2023, at 13:52, Tudor Ambarus wrote:
->>>> On 12/14/23 12:01, Arnd Bergmann wrote:
->>>>> On Thu, Dec 14, 2023, at 11:52, Tudor Ambarus wrote:
->>>>>> +static int __init gs101_early_console_setup(struct earlycon_device *device,
->>>>>
->>>>
->>>> It works if in device tree one specifies the reg-io-width property and
->>>> sets it to 4. If the reg-io-width is not specified, the iotype defaults
->>>> to UPIO_MEM causing the SError interrupt on gs101 which makes the system
->>>> unusable.
->>>
->>> In the case of incorrect DT data like a missing reg-io-width property,
->>> I would expect it to still fail once the regular console or tty takes
->>> over from earlycon.
->>>
->>>> Also, if the earlycon comes specified from the kernel params, the
->>>> of_setup_earlycon() is no longer called and the earlycon will be set
->>>> solely based on the kernel params buffer, thus allowing users to crash
->>>> the kernel on wrong earlycon definitions.
->>>
->>> But that in turn is the same as specifying any other incorrect earlycon.
+>> Introduce new API function which can be used by device driver which
+>> adjusted the voltage for OPPs. The implementation takes care about
+>> calculating needed internal details in the new EM table ('cost' field).
+>> It plugs in the new EM table to the framework so other subsystems would
+>> use the correct data.
 >>
->> I don't think you can crash the kernel if you use other earlycon as you
->> don't make accesses on the 32bit restricted bus. But I agree that if
->> using the correct earlycon name, and mmio instead mmio32, is equivalent
->> to not specifying reg-io-width in dt.
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>   drivers/opp/of.c       | 69 ++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/pm_opp.h |  6 ++++
+>>   2 files changed, 75 insertions(+)
 >>
->>>
->>>> If you think the change is fine, I can amend the commit message with the
->>>> description from above.
->>>
->>> I'm still not convinced we need a special case here when everything else
->>> just requires passing the correct data.
+>> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+>> index 81fa27599d58..992434c0b711 100644
+>> --- a/drivers/opp/of.c
+>> +++ b/drivers/opp/of.c
+>> @@ -1596,3 +1596,72 @@ int dev_pm_opp_of_register_em(struct device *dev, struct cpumask *cpus)
+>>          return ret;
+>>   }
+>>   EXPORT_SYMBOL_GPL(dev_pm_opp_of_register_em);
+>> +
+>> +/**
+>> + * dev_pm_opp_of_update_em() - Update Energy Model with new power values
+>> + * @dev                : Device for which an Energy Model has to be registered
+>> + *
+>> + * This uses the "dynamic-power-coefficient" devicetree property to calculate
+>> + * power values for EM. It uses the new adjusted voltage values known for OPPs
+>> + * which have changed after boot.
+>> + */
+>> +int dev_pm_opp_of_update_em(struct device *dev)
+>> +{
+>> +       struct em_perf_table __rcu *runtime_table;
+>> +       struct em_perf_state *table, *new_table;
+>> +       struct em_perf_domain *pd;
+>> +       int ret, table_size, i;
+>> +
+>> +       if (IS_ERR_OR_NULL(dev))
+>> +               return -EINVAL;
+>> +
+>> +       pd = em_pd_get(dev);
+>> +       if (!pd) {
+>> +               dev_warn(dev, "Couldn't find Energy Model %d\n", ret);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       runtime_table = em_allocate_table(pd);
+>> +       if (!runtime_table) {
+>> +               dev_warn(dev, "new EM allocation failed\n");
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       new_table = runtime_table->state;
+>> +
+>> +       table = em_get_table(pd);
+>> +       /* Initialize data based on older EM table */
+>> +       table_size = sizeof(struct em_perf_state) * pd->nr_perf_states;
+>> +       memcpy(new_table, table, table_size);
+>> +
+>> +       em_put_table();
+>> +
+>> +       /* Update power values which might change due to new voltage in OPPs */
+>> +       for (i = 0; i < pd->nr_perf_states; i++) {
+>> +               unsigned long freq = new_table[i].frequency;
+>> +               unsigned long power;
+>> +
+>> +               ret = _get_power(dev, &power, &freq);
+>> +               if (ret)
+>> +                       goto failed;
 > 
-> We shouldn't need any data from DT for this case, because this property
-> apparently can be inferred from the compatible. IOW, GS101 SoC requires
-> reg-io-width=4, everywhere, for each node, thus there is no need to
-> specify this property. It should be deduced from the compatible.
+> Need we use the EM_SET_ACTIVE_POWER_CB(em_cb, _get_power) and call
+> em_cb->active_power?
 > 
 
-The entire peric0/1 block requires 32 bit data widths indeed. PERIC is
-used by the Universal Serial Interface (USI) and I3C. I've checked few
-other hardware blocks and all require 32 bit data widths (G3D, TPU, TNR,
-PERIC, PDP, MFC, MCSC, IPP, HSI, GSA and I stopped here).
+No, not in this case. It's not like registration of EM, when there
+is a need to also pass the callback function. As you can see this code
+operates locally and the call _get_power() just simply gets the
+power in straight way. Later the whole 'runtime_table' is passed to the
+EM framework to 'swap' the pointers under RCU.
 
-If the reg-io-width shall be inferred from the compatible in the gs101
-case, then this patch stands. I'll update the serial driver as well.
+Thanks Xuewen for having a look at this!
 
-Thanks,
-ta
