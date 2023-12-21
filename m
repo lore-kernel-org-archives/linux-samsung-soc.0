@@ -1,208 +1,86 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7528208D6;
-	Thu, 21 Dec 2023 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B27092F4;
-	Thu, 21 Dec 2023 01:06:28 -0800 (PST)
-Received: from e129166.arm.com (unknown [10.57.87.53])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E09F03F5A1;
-	Thu, 21 Dec 2023 01:05:41 -0800 (PST)
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: linux-kernel@vger.kernel.org,
-	rafael@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	m.majewski2@samsung.com,
-	bzolnier@gmail.com,
-	m.szyprowski@samsung.com,
-	krzysztof.kozlowski@linaro.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [RFC PATCH] thermal: Add API to update framework with known temperature
-Date: Thu, 21 Dec 2023 09:06:37 +0000
-Message-Id: <20231221090637.1996394-1-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.25.1
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA9D7763F;
+	Thu, 21 Dec 2023 13:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrbMBzzc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1703166145; x=1734702145;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R6miQeV/VuHmO5eVyMe/230bW5y4XCSTO7Hh0DdH/iE=;
+  b=JrbMBzzc/E5CHeIzx3cD96HPDfSc1DQ80FRltqNSJqd+X03HHFokZnU4
+   R64hilneFtKx2EyHIBCPZGlVTSBVfH4FgxJZNiKInmIFbsDYShj04Bp6G
+   jxeecy/v08PLK1iHS/FjXDh0YIYfOxPsfQK79B7UdflmYDLbz4xjTvnNh
+   rQGZT48BpqM3bp1eTFqrud7LRxyDXGl2Smt/KUj7S3C09x4c/azUuuZI0
+   R+s1IU2olMsP6ImxWj8syY3ameFaJgMs03QmWfMDIbZJU6bRV60E13gQT
+   ugeRY2gJgUwLWv59Pnre1C69yEsz8l/vCamvcNg6XOSZ7Yl/Yc5tXpLJC
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10930"; a="393141727"
+X-IronPort-AV: E=Sophos;i="6.04,293,1695711600"; 
+   d="scan'208";a="393141727"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2023 05:42:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10930"; a="776707125"
+X-IronPort-AV: E=Sophos;i="6.04,293,1695711600"; 
+   d="scan'208";a="776707125"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2023 05:42:20 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1rGJJa-00000007rYy-0CnL;
+	Thu, 21 Dec 2023 15:42:18 +0200
+Date: Thu, 21 Dec 2023 15:42:17 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mark Hasemeyer <markhas@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, chrome-platform@lists.linux.dev,
+	cros-qcom-dts-watchers@chromium.org, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 00/22] Improve IRQ wake capability reporting and
+ update the cros_ec driver to use it
+Message-ID: <ZYRAuY1LGdD8_u5K@smile.fi.intel.com>
+References: <20231220235459.2965548-1-markhas@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231220235459.2965548-1-markhas@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Some thermal drivers support trip point interrupts. These IRQs are
-triggered when the defined temperature threshold value is reached. This
-information is enough to say what is the temperature. Therefore, create
-a new API, which allows to provide temperature value as an argument and
-avoid reading the temperature again by in the framework function. This
-would also avoid scenario when the temperature which is later read via
-update_temperature() is different than the one which triggered the IRQ.
-This issue has been reported on some mainline boards.
+On Wed, Dec 20, 2023 at 04:54:14PM -0700, Mark Hasemeyer wrote:
+> Currently the cros_ec driver assumes that its associated interrupt is
+> wake capable. This is an incorrect assumption as some Chromebooks use a
+> separate wake pin, while others overload the interrupt for wake and IO.
+> This patch train updates the driver to query the underlying ACPI/DT data
+> to determine whether or not the IRQ should be enabled for wake.
+> 
+> Both the device tree and ACPI systems have methods for reporting IRQ
+> wake capability. In device tree based systems, a node can advertise
+> itself as a 'wakeup-source'. In ACPI based systems, GpioInt and
+> Interrupt resource descriptors can use the 'SharedAndWake' or
+> 'ExclusiveAndWake' share types.
+> 
+> Some logic is added to the platform, ACPI, and DT subsystems to more
+> easily pipe wakeirq information up to the driver.
 
-It should also improve performance in such scenario, since there is no
-call to __thermal_zone_get_temp() in the code path (which might be heavy,
-when temperature sensor is connected via slow interface).
-
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
-Hi all,
-
-This is a RFC with proposal to skip reading temperature using get_temp()
-callback when calling thermal_zone_device_update() from thermal driver IRQ
-hanlder. There was a discussion [1] that reading temperature after the IRQ
-might give different value than that IRQ trip threshold was programmed. 
-
-Therefore, this proposal aims to solve the situation and feed temperature
-to the thermal fwk as an argument.
-
-Regards,
-Lukasz
-
-[1] https://lore.kernel.org/lkml/20231113130435.500353-1-m.majewski2@samsung.com/
+Just wondering if you used --histogram diff algo when preparing patches.
 
 
- drivers/thermal/thermal_core.c  | 29 ++++++++++++++++++++++++-----
- drivers/thermal/thermal_core.h  |  3 ++-
- drivers/thermal/thermal_sysfs.c |  6 ++++--
- drivers/thermal/thermal_trip.c  |  2 +-
- 4 files changed, 31 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 62979c5401c3..9f25c62bd3cd 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -417,10 +417,16 @@ static void handle_thermal_trip(struct thermal_zone_device *tz,
- 		handle_non_critical_trips(tz, trip);
- }
- 
--static void update_temperature(struct thermal_zone_device *tz)
-+static void update_temperature(struct thermal_zone_device *tz, bool read_temp,
-+			       int known_temp)
- {
- 	int temp, ret;
- 
-+	if (!read_temp) {
-+		temp = known_temp;
-+		goto set_temperature;
-+	}
-+
- 	ret = __thermal_zone_get_temp(tz, &temp);
- 	if (ret) {
- 		if (ret != -EAGAIN)
-@@ -430,6 +436,7 @@ static void update_temperature(struct thermal_zone_device *tz)
- 		return;
- 	}
- 
-+set_temperature:
- 	tz->last_temperature = tz->temperature;
- 	tz->temperature = temp;
- 
-@@ -449,7 +456,8 @@ static void thermal_zone_device_init(struct thermal_zone_device *tz)
- }
- 
- void __thermal_zone_device_update(struct thermal_zone_device *tz,
--				  enum thermal_notify_event event)
-+				  enum thermal_notify_event event,
-+				  bool read_temp, int temp)
- {
- 	struct thermal_trip *trip;
- 
-@@ -459,7 +467,7 @@ void __thermal_zone_device_update(struct thermal_zone_device *tz,
- 	if (!thermal_zone_device_is_enabled(tz))
- 		return;
- 
--	update_temperature(tz);
-+	update_temperature(tz, read_temp, temp);
- 
- 	__thermal_zone_set_trips(tz);
- 
-@@ -491,7 +499,7 @@ static int thermal_zone_device_set_mode(struct thermal_zone_device *tz,
- 	if (!ret)
- 		tz->mode = mode;
- 
--	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-+	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED, true, 0);
- 
- 	mutex_unlock(&tz->lock);
- 
-@@ -532,11 +540,22 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
- {
- 	mutex_lock(&tz->lock);
- 	if (thermal_zone_is_present(tz))
--		__thermal_zone_device_update(tz, event);
-+		__thermal_zone_device_update(tz, event, true, 0);
- 	mutex_unlock(&tz->lock);
- }
- EXPORT_SYMBOL_GPL(thermal_zone_device_update);
- 
-+void thermal_zone_device_update_with_temp(struct thermal_zone_device *tz,
-+					  enum thermal_notify_event event,
-+					  int temp)
-+{
-+	mutex_lock(&tz->lock);
-+	if (thermal_zone_is_present(tz))
-+		__thermal_zone_device_update(tz, event, false, temp);
-+	mutex_unlock(&tz->lock);
-+}
-+EXPORT_SYMBOL_GPL(thermal_zone_device_update_with_temp);
-+
- static void thermal_zone_device_check(struct work_struct *work)
- {
- 	struct thermal_zone_device *tz = container_of(work, struct
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index e6a2b6f97be8..2d73847fcfea 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -113,7 +113,8 @@ void thermal_unregister_governor(struct thermal_governor *);
- int thermal_zone_device_set_policy(struct thermal_zone_device *, char *);
- int thermal_build_list_of_policies(char *buf);
- void __thermal_zone_device_update(struct thermal_zone_device *tz,
--				  enum thermal_notify_event event);
-+				  enum thermal_notify_event event,
-+				  bool read_temp, int temp);
- void thermal_zone_device_critical_reboot(struct thermal_zone_device *tz);
- void thermal_governor_update_tz(struct thermal_zone_device *tz,
- 				enum thermal_notify_event reason);
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index 5abf6d136c24..9062545f314e 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -131,7 +131,8 @@ trip_point_temp_store(struct device *dev, struct device_attribute *attr,
- 
- 		thermal_zone_set_trip_temp(tz, trip, temp);
- 
--		__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
-+		__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED,
-+					     true, 0);
- 	}
- 
- unlock:
-@@ -256,7 +257,8 @@ emul_temp_store(struct device *dev, struct device_attribute *attr,
- 		ret = tz->ops->set_emul_temp(tz, temperature);
- 
- 	if (!ret)
--		__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-+		__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED,
-+					     true, 0);
- 
- 	mutex_unlock(&tz->lock);
- 
-diff --git a/drivers/thermal/thermal_trip.c b/drivers/thermal/thermal_trip.c
-index a1ad345c0741..77dc433e6e1c 100644
---- a/drivers/thermal/thermal_trip.c
-+++ b/drivers/thermal/thermal_trip.c
-@@ -158,7 +158,7 @@ void thermal_zone_trip_updated(struct thermal_zone_device *tz,
- 	thermal_notify_tz_trip_change(tz->id, thermal_zone_trip_id(tz, trip),
- 				      trip->type, trip->temperature,
- 				      trip->hysteresis);
--	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED);
-+	__thermal_zone_device_update(tz, THERMAL_TRIP_CHANGED, true, 0);
- }
- 
- void thermal_zone_set_trip_temp(struct thermal_zone_device *tz,
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
