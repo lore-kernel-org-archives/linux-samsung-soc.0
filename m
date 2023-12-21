@@ -1,105 +1,81 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F21A627E2
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Dec 2023 17:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DF364A8B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Dec 2023 18:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mGEwm/RV"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40c6736d10fso12861335e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Dec 2023 09:23:10 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y6lVslGM"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5e784ce9bb8so9510297b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Dec 2023 10:29:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703179388; x=1703784188; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i22B3No0hKDRA2thnA354sXFfxYXFz/BCzzibXQZGP0=;
-        b=mGEwm/RVwyGSZ+VKJw7bYLi0ossOtil9D99f+twe43hejpV3a2GF+lNiQdWqjSRuhO
-         iLAnXXuAEODpBBVb42AsiAkcVcjRkSRhZhPGtiJT2AV9jWO3J34erJvcpUnf36MP6gHG
-         YbG1wN6NimLGTL3YOd/WnTu+z77xS9GK/gR5zT+1CVG+oZgnZjaME+5FjcBfnMhdkb9Y
-         rNTBMxtBrgGWZTsW3PtodBWh2to0y/ft3FB6U0vshxD+GnZzxBalAE+Pino7M1SAwDJO
-         nbGh1rRmhK63SUgdplnOEW18ZGkzVG0bEeQ0SNMssuI9p6/vLJZRXAn86nAN4YDlQjqY
-         bg3g==
+        d=chromium.org; s=google; t=1703183399; x=1703788199; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L6oljuqvAIy93N8zvm81RWXYplalK2qFGzuO99N/A1A=;
+        b=Y6lVslGMQ3kuZvcMYNeIChpChmcHjmi8JBtjCzjZEFZC7Yq0CvVAlrTsW0s0rKEXRw
+         xwWqa8NV1xqOTKi/94GM5irZTKLP4JOVOTpi3FaiU82QQvh7hDSZFLXD/xe6WQM9A1r0
+         x2y9l6bVTUNavwKQrrD9qXlRRchzBnOulbDDU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703179388; x=1703784188;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i22B3No0hKDRA2thnA354sXFfxYXFz/BCzzibXQZGP0=;
-        b=a2/4UVLDN/7tzkvajUBCLVZ1e27srg1VbtzDVhtOaLv0lzruqVyVElJeWw9Fe6s/6p
-         t8BsZyq+YHMo1yNcy2amiPiazHFe/KaVN6PTpIX+gmavsDORGnF3OxYSMuCzlojdMzce
-         ar5DRLs+1/n645quTae+2bUy9s6QM/oU4rPcpnQwqRYFvrEEbIdjlCqcd/Pv1oEHPzAp
-         DkoTFEPvhg/bSxg7cahm1g69EL8Vo6G4EFXxXKgzTbiCXPBBStxUWTY/wrw8wbDYVBVk
-         A9yUpvH67k68eeo2XXktH/CJmUBbpEhwiX6Tg21r9gUm87cRbOt+TXBsAKZBRbd03G/H
-         MF5A==
-X-Gm-Message-State: AOJu0YzXcSjEpJLc7F6q3R9AuQtStPirOqMgYqjkchh+Oe/kaDzqwnSH
-	Jql4QkrI8diypR1A74S+zm4NYKcZAZxklQ==
-X-Google-Smtp-Source: AGHT+IEyA/eutUuLn/2fpEnt5+MBO2+vSa7TMv0Yb6eb/xpmHBxKuneGty6Us6DZGh9oY/b17V9gog==
-X-Received: by 2002:a05:600c:44c:b0:40c:6e37:3869 with SMTP id s12-20020a05600c044c00b0040c6e373869mr47559wmb.30.1703179388487;
-        Thu, 21 Dec 2023 09:23:08 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id fj8-20020a05600c0c8800b004094e565e71sm4046723wmb.23.2023.12.21.09.23.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Dec 2023 09:23:08 -0800 (PST)
-Message-ID: <c6cc6e74-6c3d-439b-8dc1-bc50a88a3d8f@linaro.org>
-Date: Thu, 21 Dec 2023 17:23:06 +0000
+        d=1e100.net; s=20230601; t=1703183399; x=1703788199;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L6oljuqvAIy93N8zvm81RWXYplalK2qFGzuO99N/A1A=;
+        b=aTAjTQfOMB3cNUMHE5b1q75SLl8dcIUlBdjK8vszyZqGACYp8ByLg6/Waf1VCgp4yU
+         uWNeyrdgEoJELCkAI2MH/RlwVR1RrjDyGGPUIiosykyte+oROW4923H0vYkA20dc9t+u
+         O3e4QAfbe8v8zwQd7B0OAG6/H1rsa0dzcqSNx7oj+Mcn1p8YIGkj6ZBaEKQv5hO+Vukz
+         5OUY1lsfqjxavkVU5fD3jSbNRpwDsQBto3qSWfNUxje8BaR3LfEeyB2q0cbNfULHBI3H
+         v1mVsFrjCR7YpbaGB3rgVPPs9OVsJLWUx/oDiBUyiTENfcFoRYEQVCZwsu+XPp10ZK4B
+         xg6g==
+X-Gm-Message-State: AOJu0Yz3nqDr3r8GxR05kq2ZIGn/Jo03AfshGzfvMMdf93anK/BDwx4R
+	SCsMF2tpxfXlkumio/RNh0qkeaMc4jE+gqUbZihx4isDsR1q
+X-Google-Smtp-Source: AGHT+IEiSrygJN7UsasZNLLekaqrAbeQ73Pp+vOq9WoBQd7rE/7pQR4T8FH5PDn+1E5Ln7pawvXptkWHT22gZYo2058=
+X-Received: by 2002:a0d:d403:0:b0:5d7:5bef:e6e6 with SMTP id
+ w3-20020a0dd403000000b005d75befe6e6mr818315ywd.31.1703183398828; Thu, 21 Dec
+ 2023 10:29:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: gs101: comply with the new
- cmu_misc clock names
-Content-Language: en-US
-To: peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org
-Cc: conor+dt@kernel.org, mturquette@baylibre.com, alim.akhtar@samsung.com,
- semen.protsenko@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com, Rob Herring <robh@kernel.org>
-References: <20231221090046.1486195-1-tudor.ambarus@linaro.org>
- <20231221090046.1486195-2-tudor.ambarus@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20231221090046.1486195-2-tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231220235459.2965548-1-markhas@chromium.org>
+ <20231220165423.v2.6.I06b059021de1bf6103e60a73211f078f2af75d17@changeid> <7199b7b7-238e-45de-96f1-0f04d0fa718d@linaro.org>
+In-Reply-To: <7199b7b7-238e-45de-96f1-0f04d0fa718d@linaro.org>
+From: Mark Hasemeyer <markhas@chromium.org>
+Date: Thu, 21 Dec 2023 11:29:47 -0700
+Message-ID: <CANg-bXD+TVHO3o6f66fJXQ7AtXxPY00TQqjvX2vwk9PyTd1ZaA@mail.gmail.com>
+Subject: Re: [PATCH v2 06/22] ARM: dts: samsung: exynos5420: Enable
+ cros-ec-spi as wake source
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Tzung-Bi Shih <tzungbi@kernel.org>, Raul Rangel <rrangel@chromium.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+> You do not need this property, if driver assumes that. Just enable it
+> unconditionally.
 
+The goal of this patch series is to change exactly that: to prevent
+the driver from unconditionally enabling the irq for wake.
+The driver works across numerous buses (spi, uart, i2c, lpc) and
+supports DT and ACPI.
+SPI+DT systems all happen to need irq wake enabled.
 
-On 12/21/23 09:00, Tudor Ambarus wrote:
-> The cmu_misc clock-names were renamed to just "bus" and "sss" because
-> naming is local to the module, so cmu_misc is implied. As the bindings
-> and the device tree have not made a release yet, comply with the
-> renamed clocks.
-> 
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index 9747cb3fa03a..d838e3a7af6e 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -289,7 +289,7 @@ cmu_misc: clock-controller@10010000 {
->  			#clock-cells = <1>;
->  			clocks = <&cmu_top CLK_DOUT_CMU_MISC_BUS>,
->  				 <&cmu_top CLK_DOUT_CMU_MISC_SSS>;
-> -			clock-names = "dout_cmu_misc_bus", "dout_cmu_misc_sss";
-> +			clock-names = "bus", "sss";
->  		};
->  
->  		watchdog_cl0: watchdog@10060000 {
+> I don't think anything from previous discussion was
+> resolved.
 
-argh, please ignore the patch set. It seems that the clock driver has to
-be updated as well:
+Which previous discussion do you mean? In v1 it was suggested to split
+up the DTS changes by arch/soc and add a cover letter (which I did).
+Wrt to the binding discussion, Sudeep said the new documentation
+wording looked good to him [1].
 
-[    0.050947] exynos_arm64_register_cmu: could not enable bus clock
-dout_cmu_misc_bus; err = -2
-[    0.052385] exynos_arm64_register_cmu: could not enable bus clock
-dout_cmu_peric0_bus; err = -2
+[1]: https://lore.kernel.org/all/ZYAjxxHcCOgDVMTQ@bogus/
