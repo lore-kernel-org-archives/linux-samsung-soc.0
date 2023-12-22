@@ -1,128 +1,106 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F562556C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 16:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406A82554C
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 16:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Acal+pj5"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40d48304efdso3968755e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 08:54:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vBhGAepk"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6d7395ab92cso1345416b3a.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 08:58:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703264084; x=1703868884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1703264317; x=1703869117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H2C5UTNIPG7mjByyTbN4UUYUJWv2TfPmtilLr3g/kHI=;
-        b=Acal+pj5ltoXwBdUReQyg/omMeFy1jj5Lxj6mhz51FAs58aI/exFwygV2ItRqsW301
-         6+vfgPxkEiNGz/weGDz4ovq0SwJtKWiCZdpgbfbPxQ2hknWsSXRxE53opZwlvKXqIslY
-         4uzUrkALoOC9r0syqwfDwN8MW/7D9MnBArpr84cH/Ym27nrSN0UiQrw7woE7QjpEMSaw
-         MPnMGcfaixVYLMM+7WqP+6rKknmcvgoczrvr9NezTvdnYWNjg88PzBw1WLqpps8sL2qU
-         AjJycwSglELdYIpdGDjCi66QXDVxe9UGzPFkbbKJYKAaurM7hF3QM0gEDiSONVSyb6CM
-         Epyw==
+        bh=jI7DM2Rll9cMWDSBkPQqYE2b+cEYdcGCt87cQ5pOFak=;
+        b=vBhGAepkHVdty1RqRHuycXporDxXn+mk8gkHGXXCvIWDBsQxXzikqQRW5b+H+DtZLx
+         oBIuBGgh9Dxm4AuGNYtMqC6YjSjncVkNW8kCefQZr3AXuIc0Dmck2mYM4xyrMCCpkqPz
+         yV2w1omnNkET7021ZYmLzHbo5Tdhz2Cq3JSZXYAMCQRbMDsLccqQGb5v3DPLPGwxw+pM
+         SALc0OltUasRxRIzopvpBqV6S/PT686+0VQChDGa40IuAkobRHCOte20WxXUSL5C9uUh
+         2ZznmrfupyEwwWu9HXUCqwp9aFXUw/kx+S9nCrX70bAemA0/bOZ3eP6LbfoVndgulUII
+         7EhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703264084; x=1703868884;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1703264317; x=1703869117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H2C5UTNIPG7mjByyTbN4UUYUJWv2TfPmtilLr3g/kHI=;
-        b=JbRNZJjhfDLxK7c1I7hHI5q3XRw+V+TOe1ML2SYsKMDudd5z7MYxgA0TsD5VvlIaUf
-         zxkZcvIyLyPLSYS9/grJTf2PF16WPWbbLY8p2EKiKP6JUd9p/4M1HfrZcH8k34or7x9y
-         VNRyMCvGOz2wwxcHBhgwVUiWNuyUwy6Jpdd9HWuhd27c9e4u4Kr8mEhgfy+cUZVcwkiK
-         PAJu5AvYl7r/2jJJL391yRJ96w4C25sZWLVj+EyTJQsfr/baBfeMrLL1KMuPRL9xjWjW
-         b/3Pr5CoxgaiTOPTUzPqypJaC9Np1a70rRFXGR/QyQFH/qO2g2cAKY4wRljE8U6ZEcOy
-         COYg==
-X-Gm-Message-State: AOJu0Yxpbw7S+5/rHROtryjjmUqr+OqttkTOjbC0qZFTDomivDrVxv7g
-	GGSiTy3gHImiLcou8UBL40T6ZhJQPMqMkw==
-X-Google-Smtp-Source: AGHT+IEDtRq/ZQw8ts0TCzkxHtm3cLI7WebPXBaKkTQlRZdi99kRrHc6ikhQl7aJvQ9Z9sqp/hNTUA==
-X-Received: by 2002:a05:600c:a686:b0:40d:39ea:1076 with SMTP id ip6-20020a05600ca68600b0040d39ea1076mr900090wmb.93.1703264083920;
-        Fri, 22 Dec 2023 08:54:43 -0800 (PST)
-Received: from gpeter-l.lan (host-78-151-55-40.as13285.net. [78.151.55.40])
-        by smtp.gmail.com with ESMTPSA id i15-20020a05600c354f00b0040d378510adsm10138520wmq.1.2023.12.22.08.54.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Dec 2023 08:54:43 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	daniel.lezcano@linaro.org,
-	tglx@linutronix.de,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	tomasz.figa@gmail.com,
-	cw00.choi@samsung.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com,
-	peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	semen.protsenko@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com
-Subject: [PATCH 2/3] clk: samsung: gs101: register cmu_misc clocks early
-Date: Fri, 22 Dec 2023 16:53:54 +0000
-Message-ID: <20231222165355.1462740-3-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-In-Reply-To: <20231222165355.1462740-1-peter.griffin@linaro.org>
-References: <20231222165355.1462740-1-peter.griffin@linaro.org>
+        bh=jI7DM2Rll9cMWDSBkPQqYE2b+cEYdcGCt87cQ5pOFak=;
+        b=DwfeGqSFUQswS/hOL4o6hOwRoOYsM2DJlv3q/20qndJ3RFKUhgybUKGiDE/p/1AV86
+         bWtN5VD8W597wxMC+Gpg4hDoXNxNg2q3f1oXFm6IzDQMoJsX6hR5In65YQYlyaY7cgjj
+         fqXRhjivoqMaBHmFrEoLloznorS5ysJDKfgEwMzo33Ri4jg+JfS4w9R6MF/+Uiey4jsj
+         De8UUZDMxCpsWY28LRgES5+KuRDZAUV5lYqElssQmpd1xvQskPdRZLXl3t0OfFTLMoqf
+         0XzCA9B6VAm30bUyfDr1dWWzt+uXxO1xDC4v6UPzKcYCTtK8by6GK6Qt/8QWYLNCWJBO
+         GJBA==
+X-Gm-Message-State: AOJu0YxaYQOSNAFlyG5G+XJDZdk04ZxYAznutn8+FSsas3n3ZWBELh5z
+	fbFk3iwFNd3z442pjApt7KnCDtSG8XLXZF5xAcEmvJRRObVDoQ==
+X-Google-Smtp-Source: AGHT+IG+9G+bRaSRG+bi095LKcnglp3HFBbGmgrz709R/imvyo51JcRThk74/BzKs4QLutx/KFYXQTYPqtSeSH6wEHw=
+X-Received: by 2002:a05:6a21:3291:b0:191:e72c:24df with SMTP id
+ yt17-20020a056a21329100b00191e72c24dfmr1464156pzb.19.1703264317421; Fri, 22
+ Dec 2023 08:58:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20231222165355.1462740-1-peter.griffin@linaro.org> <20231222165355.1462740-2-peter.griffin@linaro.org>
+In-Reply-To: <20231222165355.1462740-2-peter.griffin@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 22 Dec 2023 10:58:25 -0600
+Message-ID: <CAPLW+4mDnHXjvsqGVB4ORP1e_t5RrOf7mWqNLxJJfBhOaHO0wg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: timer: exynos4210-mct: Add
+ google,gs101-mct compatible
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	daniel.lezcano@linaro.org, tglx@linutronix.de, conor+dt@kernel.org, 
+	alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
+	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update cmu_misc so it is registered early, as it contains
-the gate which clocks the Multi Core Timer (MCT). This clock
-is required early in boot, otherwise exynos_mct will fail
-obtaining the clock.
+On Fri, Dec 22, 2023 at 10:54=E2=80=AFAM Peter Griffin <peter.griffin@linar=
+o.org> wrote:
+>
+> Add dedicated google,gs101-mct compatible to the dt-schema for
+> representing mct timer of the Google Tensor gs101 SoC.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
-Note this wasn't previously an issue as exynos_mct wasn't
-enabled.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 0964bb11657f..590119a25c18 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -2478,6 +2478,15 @@ static const struct samsung_cmu_info misc_cmu_info __initconst = {
- 	.clk_name		= "dout_cmu_misc_bus",
- };
- 
-+static void __init gs101_cmu_misc_init(struct device_node *np)
-+{
-+	exynos_arm64_register_cmu(NULL, np, &misc_cmu_info);
-+}
-+
-+/* Register CMU_MISC early, as it's needed for MCT timer */
-+CLK_OF_DECLARE(gs101_cmu_misc, "google,gs101-cmu-misc",
-+	       gs101_cmu_misc_init);
-+
- /* ---- platform_driver ----------------------------------------------------- */
- 
- static int __init gs101_cmu_probe(struct platform_device *pdev)
-@@ -2495,9 +2504,6 @@ static const struct of_device_id gs101_cmu_of_match[] = {
- 	{
- 		.compatible = "google,gs101-cmu-apm",
- 		.data = &apm_cmu_info,
--	}, {
--		.compatible = "google,gs101-cmu-misc",
--		.data = &misc_cmu_info,
- 	}, {
- 	},
- };
--- 
-2.43.0.472.g3155946c3a-goog
-
+>  .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml       | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-m=
+ct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.ya=
+ml
+> index 829bd2227f7c..774b7992a0ca 100644
+> --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+> @@ -26,6 +26,7 @@ properties:
+>        - items:
+>            - enum:
+>                - axis,artpec8-mct
+> +              - google,gs101-mct
+>                - samsung,exynos3250-mct
+>                - samsung,exynos5250-mct
+>                - samsung,exynos5260-mct
+> @@ -127,6 +128,7 @@ allOf:
+>            contains:
+>              enum:
+>                - axis,artpec8-mct
+> +              - google,gs101-mct
+>                - samsung,exynos5260-mct
+>                - samsung,exynos5420-mct
+>                - samsung,exynos5433-mct
+> --
+> 2.43.0.472.g3155946c3a-goog
+>
