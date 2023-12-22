@@ -1,120 +1,142 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB20228DB7
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 16:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CFB28DDA
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 17:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bervrMY6"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-28c17b6f91bso302579a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 08:59:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXuMzfBa"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78113481f91so132184385a.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Dec 2023 09:56:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703264388; x=1703869188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wuszQHofzpx+eEflqAJILsyJnJgQIE3F/nW1KqPO/FA=;
-        b=bervrMY65dNi6zWslUSUshNj5AGz+p5ytJ1OVWwU993J+x9JiXGeKDXsl174uvwj0X
-         HVgOTqYlMkX2FV6U+H7BLMVavKggmQJXYACY1zkSK7F63POcC+hkQUeq/PAb4xscxjuZ
-         xgqvEGIxPe6FC2hQYTG7WzgGq0P7v3mlUFXc0+9qTyO1gVkA1KA2HBe2HsYl34mB6xs+
-         Xr1FuIuVabr6EJ7sSsjgespxCmxQWTXnyJa114qQShPjuT3hIv9rcj4hItE4gN99hMlS
-         WTPLk8MLSlfHbsMmoPxuDM6eyC2qHYid2/F5PUWvFC7hxf+5PAGgoYXarjw+ZAtgUllT
-         6CjQ==
+        d=linaro.org; s=google; t=1703267797; x=1703872597; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/HhLTRm08Y43dtSXWxfZ5KzfsdQRFgDHvFFek/ks+PY=;
+        b=jXuMzfBaTId7RAsCp4Ev56iOS2JNp5+JKj6ZQaE638gKfYpCCcaFxg5qFk4LlRWafe
+         bHvZTulOcsjjYWAJhIdYY+2VQTGx0lMDVka08BndKYZUxlSuVW/wR+MW2+SvFid6rnph
+         igMWh+bHsGJTOYUwTgVq2YcmYFB4PnkRzg5wN+OLn9IVRYKnF7RtX8RYffyo2o6my7O9
+         Nc9Lsil7JtrNdIMl6HAINnFw/F+ZKxDrJu4yvkUOSduVUikPkFrXo0XM1Wlh02Kbeuy7
+         KXNePdQriKjoAsXk4qSvENUvAvO4bumZnByfzl7J6GtPgPgw4G/4Jjorsfai79aZjIQ/
+         0+IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703264388; x=1703869188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wuszQHofzpx+eEflqAJILsyJnJgQIE3F/nW1KqPO/FA=;
-        b=nBt/QqgniATEuPYL9dyKmEos7d0ffUCbwv1DBVC4lMJxVyf2poDEoB4Ea0CbSuL/P2
-         AVgpjlpaONp2zgbeWqeccx7T36WD2S6B/sG++SYdGhVSlDqZl0sOZ5FTXWpOcXpnfXpj
-         /Exa9Erbx60qnEC3A4RD1WcanPHPOdcR1VlNCBc8iVlB0l07IG8Seq5SSw23mQUuQgIa
-         N0OMIJVvj+BLq3v1Rh66G4Ucib1Dv2YPgDJNhqxvqd2KXGWoXJffE8a/c3TNXWa7baSd
-         mCJacVArtgTdOx6IXCM9VBNhUJ6n72IrXveG2CRseLOhDZn1OGhzds21P2k3bf2vBRwE
-         CmvQ==
-X-Gm-Message-State: AOJu0YxFt2Wnrtc7dEZkurxNu3zEVjp4cYpYEjE0y5VGYjSn5lKLKTks
-	037CQOtA6/+H+Hbkx9pIGSMT88Vdspp9kVIxYQEnIcR2LvXtWg==
-X-Google-Smtp-Source: AGHT+IF1XHuTpYzUp4iOd/xTGtwwth5YJnhCHTZjBMG4kuAWdGXzF7hJdHw8znlpoFdT38YluNJ2YUrJlNB9teZFkUo=
-X-Received: by 2002:a17:90a:9741:b0:288:8bdb:31c6 with SMTP id
- i1-20020a17090a974100b002888bdb31c6mr974534pjw.83.1703264388185; Fri, 22 Dec
- 2023 08:59:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703267797; x=1703872597;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/HhLTRm08Y43dtSXWxfZ5KzfsdQRFgDHvFFek/ks+PY=;
+        b=YqG/maR1O8SDKS6/V+J8pRv0MGCeWHzoaPloeqhUJ56ojGJ4LWA82rTs8XWikH2xwl
+         PESqqhiexBWf3hP5PG+SO5OeAyE77++aCYtoyacXbSixV1JjVQX8ldU6VnWmp+uVxV6A
+         lC0RD8D4WKfDPNhTQU6BRNjd3mUwX2poQNQwrEgoj/8it2wi3l7c+P2EVOa4xNz0RPdk
+         ADFwtAVVsUw7I4+TwI1Ry2g31A35Nic4l9M9DMpK0XbpgknGU0nLd7JTLqSwxso1G+hj
+         9MYHwM4wfbA6qmmJbeEf/rxMQmYB/KTDHewzbjCahfxV96y4e+dam+gHqkOBHGraPG1J
+         GbZg==
+X-Gm-Message-State: AOJu0Yx6Nd7rBps/0ku2SdCZmiLPpJglGobkFcM9ccS+zu5dSWyLVVW5
+	1Tpu9AkZP2W6GAaG1tkTf0mQ/5ogtCgMMfmu6dOtpam1/d8utg==
+X-Google-Smtp-Source: AGHT+IG9Aiis1ajE6B2jjYD+C15ieRSm6oqpOi9lEtvJS7UBbdBf4Zjd9BXZZQoWAgS4DtHb8E2xzJl/+Kil1Evx0XA=
+X-Received: by 2002:a05:6214:1301:b0:67f:f64:8dce with SMTP id
+ pn1-20020a056214130100b0067f0f648dcemr1955342qvb.108.1703267797556; Fri, 22
+ Dec 2023 09:56:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231222165355.1462740-1-peter.griffin@linaro.org> <20231222165355.1462740-4-peter.griffin@linaro.org>
-In-Reply-To: <20231222165355.1462740-4-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 22 Dec 2023 10:59:37 -0600
-Message-ID: <CAPLW+4khNwA=480_69XU5vPOY=Zw=4ytA4stF7gvRfUDCEGE5Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: exynos: gs101: define Multi Core Timer
- (MCT) node
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	daniel.lezcano@linaro.org, tglx@linutronix.de, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
-	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
-	willmcvicker@google.com
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-3-tudor.ambarus@linaro.org> <20231220150726.GA223267-robh@kernel.org>
+ <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
+In-Reply-To: <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 22 Dec 2023 17:56:26 +0000
+Message-ID: <CADrjBPpGWxidBYvEcQjv1k6QRcoJSdnJ7SK1koJpeb60V3FhKA@mail.gmail.com>
+Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
+ clock management unit
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org, 
+	andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, catalin.marinas@arm.com, will@kernel.org, 
+	s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, 
+	arnd@arndb.de, semen.protsenko@linaro.org, andre.draszik@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 22, 2023 at 10:54=E2=80=AFAM Peter Griffin <peter.griffin@linar=
-o.org> wrote:
->
-> MCT has one global timer and 8 CPU local timers. The global timer
-> can generate 4 interrupts, and each local timer can generate an
-> interrupt making 12 interrupts in total.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+Hi Tudor,
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+On Thu, 21 Dec 2023 at 07:20, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>
+>
+>
+> On 12/20/23 15:07, Rob Herring wrote:
+> > On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
+> >> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
+> >> clock management unit.
+> >>
+> >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> >> ---
+> >>  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
+> >>  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
+> >>  2 files changed, 109 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> >> index 3eebc03a309b..ba54c13c55bc 100644
+> >> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> >> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+> >> @@ -30,14 +30,15 @@ properties:
+> >>        - google,gs101-cmu-top
+> >>        - google,gs101-cmu-apm
+> >>        - google,gs101-cmu-misc
+> >> +      - google,gs101-cmu-peric0
+> >>
+> >>    clocks:
+> >>      minItems: 1
+> >> -    maxItems: 2
+> >> +    maxItems: 3
+> >>
+> >>    clock-names:
+> >>      minItems: 1
+> >> -    maxItems: 2
+> >> +    maxItems: 3
+> >>
+> >>    "#clock-cells":
+> >>      const: 1
+> >> @@ -88,6 +89,26 @@ allOf:
+> >>              - const: dout_cmu_misc_bus
+> >>              - const: dout_cmu_misc_sss
+> >>
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          contains:
+> >> +            const: google,gs101-cmu-peric0
+> >> +
+> >> +    then:
+> >> +      properties:
+> >> +        clocks:
+> >> +          items:
+> >> +            - description: External reference clock (24.576 MHz)
+> >> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
+> >> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
+> >> +
+> >> +        clock-names:
+> >> +          items:
+> >> +            - const: oscclk
+> >> +            - const: dout_cmu_peric0_bus
+> >> +            - const: dout_cmu_peric0_ip
+> >
+> > 'bus' and 'ip' are sufficient because naming is local to the module. The
+> > same is true on 'dout_cmu_misc_bus'. As that has not made a release,
+> > please fix all of them.
+> >
+>
+> Ok, will fix them shortly. Thanks, Rob!
 
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/bo=
-ot/dts/exynos/google/gs101.dtsi
-> index 9747cb3fa03a..4b09e740b58a 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -292,6 +292,26 @@ cmu_misc: clock-controller@10010000 {
->                         clock-names =3D "dout_cmu_misc_bus", "dout_cmu_mi=
-sc_sss";
->                 };
->
-> +               timer@10050000 {
-> +                       compatible =3D "google,gs101-mct",
-> +                                    "samsung,exynos4210-mct";
-> +                       reg =3D <0x10050000 0x800>;
-> +                       interrupts =3D <GIC_SPI 753 IRQ_TYPE_LEVEL_HIGH 0=
->,
-> +                                    <GIC_SPI 754 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 756 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 757 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 758 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 760 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                                    <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH 0>;
-> +                       clocks =3D <&ext_24_5m>, <&cmu_misc CLK_GOUT_MISC=
-_MCT_PCLK>;
-> +                       clock-names =3D "fin_pll", "mct";
-> +               };
-> +
->                 watchdog_cl0: watchdog@10060000 {
->                         compatible =3D "google,gs101-wdt";
->                         reg =3D <0x10060000 0x100>;
-> --
-> 2.43.0.472.g3155946c3a-goog
->
+With Robs review comments addressed feel free to add my:
+
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
