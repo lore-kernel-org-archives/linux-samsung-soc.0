@@ -1,62 +1,58 @@
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABFA10961;
-	Sat, 23 Dec 2023 16:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90E813FE2
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Dec 2023 19:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VU9iFXsu"
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6dbd00f084eso785611a34.0;
-        Sat, 23 Dec 2023 08:44:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gH582sO3"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55485e45ef9so630945a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Dec 2023 11:19:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703349860; x=1703954660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A8RrFYaQY1C1Ro1apdYiZkYhpyoj4xSq5iwP4LNvPrA=;
-        b=VU9iFXsuWB257NQGGVFHgS62WOetbLBXZX3TUgDE3//B9EmVI2h2ZShRHKtUhq6oq9
-         +vAOaVHGQKktn3snMPPEIwUNUELONOuP57YrcpQcgI4kMtegMBqz5xSOwZbz2zu5w7/y
-         wJZxhlzL31IktnkEi2y0iclZhesuFHRjR3WOO4Gx+NzSxAXyBjdek76NHH4YKnW5/HYa
-         2eC6QgZh8KlPOuzvq2q+pOqfoswrywD6NDJrYmbusbEXPbX9tvTQA4FN6Q3SwdhFmQMA
-         46CFMvVn7MRvIbE3n/jpxtKIKI5vUZL+Ys13sOLtQ8o5P1+iNy6p5FEZ9Pmv7VM00wIW
-         r1jQ==
+        d=linaro.org; s=google; t=1703359145; x=1703963945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dl+++DRdm00PXx9jJ+9cB6WjPEZdIF4coFJBY+INy5g=;
+        b=gH582sO3vvVGnFqahMl7hOz6g6iud0pu0gXIXakkJCQbwX+oXD/uuKt6ZmokPVpTaX
+         Vkp44aWlEGPwPrhQ8VavKUaDZ7vRMExPSLIDU2CSBa5mGFZ4bbaVOxvZ1BOybHUtxLbP
+         c4JIyU/Ev+JK0RDmWmw6iVRo8xUfk9uWugxlSR+2gbGV4LdLo9TkOJM2nD5KP2ibZcdA
+         Sr5Yspfcr69UxE607bDNJuL7UAG0VhFTqe6Ry0FeodVyk03tluTQjj9YfTay363BXrPc
+         ebbsgM8k9j1F0GBvLHjdHNwumYjMlVKXBZbyUA7b8cr3oZlX3fED95vpZhQIc8Ln2Pga
+         psKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703349860; x=1703954660;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A8RrFYaQY1C1Ro1apdYiZkYhpyoj4xSq5iwP4LNvPrA=;
-        b=oIp/s/Qp7rBbXcgIT0Wpq4rD/PnK0OEkEl2ogL/XIRjXoZ5eQ+blvsIzTIOXzhwkGr
-         1UX7umJJjCP3BMgLfaEB0lRtwpx65Onq5H0L/zhiGA/83ydLZmoLmXKGFnzj5sL30S+1
-         B3At+UsxSC9v1zQ3L6nBHPbZN/tHkAiSFWDqdHjbakWaG31Qdz6yUcSHTFt6WYjBiMTB
-         /2Dz7M3WzVh8478lES5F9erEFiIp9KR47p0zzJue1jqA9GTD6SDJ539/LL90v29yH7Z3
-         ixSN90o3NM3yLK7H4zQQO4fxeTGho68SockIaHYLXjtx+M7+R16RDazjF0xKyUuzl5jX
-         xUJg==
-X-Gm-Message-State: AOJu0YyRKrCol8ztOufIsht28+7oZx/6gw7qvz2imceE19Bt5rUYQ3Q2
-	NBNWIBpEaKwDE3WbYzV6Z4w=
-X-Google-Smtp-Source: AGHT+IFDvbGyOc3tMXRLa19QJHjPpfxfXv+Ma5HusaiiXVa6Dh1lSTSfLVRGla//+nCd7O5t5dyMhg==
-X-Received: by 2002:a05:6358:880b:b0:174:b7f2:51db with SMTP id hv11-20020a056358880b00b00174b7f251dbmr3599193rwb.19.1703349859773;
-        Sat, 23 Dec 2023 08:44:19 -0800 (PST)
-Received: from oslab-pc.. ([2402:f000:4:1006:809:ffff:ffff:ec29])
-        by smtp.gmail.com with ESMTPSA id l12-20020a17090a598c00b0028b8499dc80sm5475858pji.39.2023.12.23.08.44.16
+        d=1e100.net; s=20230601; t=1703359145; x=1703963945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dl+++DRdm00PXx9jJ+9cB6WjPEZdIF4coFJBY+INy5g=;
+        b=pqSDS3qZ9uWzNUH1I/jjgl0QalS6YaxYZ8tbejSwAlex0uj1QNQGoO0+WLn2CrtCbh
+         rI8VPnnkzRclx3hhj4TLrAeluCKeNpeHSD+WJs4qRH6rdOWmfVPiTnodBQsRDxhBhEci
+         Zt9LKaQrEXWR6pRThlYb638r0WS0dyVwc1jiyvH4tj444b+SUVTJNDr6RVUGbDRbfzB8
+         qTWTOQXA23X7prXLwJWa3ei1UVZgWJzwllMVwQaGJWqSxfQTQJapbwDdeYcY53+pCawM
+         h/jH2PVs38X3mMEhHFSs0/Le7OTKRaUoS76839xf2sXFBhGoT311oJcV9EJ0HSipW+Pn
+         dSuw==
+X-Gm-Message-State: AOJu0Yxjv+bHFtgQryyp6CH2QnddXvOo4nQppTC4KnbJLlHWlJLQrAcZ
+	hVYPy6rZRIt9RLjTtjwzSj1phtDx5op5pQ==
+X-Google-Smtp-Source: AGHT+IFTnnh0k8o1Ulu+wZ6pXsn6Fbgloq5p6tPXvLGXwAjvJ/OEjsTKUixyPvU+j9hVX44R89PSzw==
+X-Received: by 2002:a17:906:364d:b0:a23:3399:31c4 with SMTP id r13-20020a170906364d00b00a23339931c4mr1621067ejb.120.1703359145101;
+        Sat, 23 Dec 2023 11:19:05 -0800 (PST)
+Received: from krzk-bin.. ([78.10.206.178])
+        by smtp.gmail.com with ESMTPSA id cl2-20020a170906c4c200b00a19afc16d23sm3278613ejb.104.2023.12.23.11.19.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Dec 2023 08:44:19 -0800 (PST)
-From: Tuo Li <islituo@gmail.com>
-To: s.nawrocki@samsung.com,
-	mchehab@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org,
+        Sat, 23 Dec 2023 11:19:04 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Tuo Li <islituo@gmail.com>,
-	stable@vger.kernel.org,
-	BassCheck <bass@buaa.edu.cn>
-Subject: [PATCH] media:fimc-capture: Fix a possible data inconsistency due to a data race in fimc_subdev_set_fmt()
-Date: Sun, 24 Dec 2023 00:43:51 +0800
-Message-Id: <20231223164351.3521588-1-islituo@gmail.com>
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: samsung: constify iomem pointers
+Date: Sat, 23 Dec 2023 20:19:02 +0100
+Message-Id: <20231223191902.22857-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -66,70 +62,59 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Accesses to ctx->s_frame.width and ctx->s_frame.height should be protected
-by the lock fimc->lock to guarantee that width and height are consistent.
-Here is an example in fimc_subdev_get_fmt():
+Constify few pointers to iomem, where the destination memory is not
+modified, for code safety and readability.
 
-  struct fimc_frame *ff = &ctx->s_frame; // Alias
-  mutex_lock(&fimc->lock);
-  mf->width = ff->width;
-  mf->height = ff->height;
-
-However, ctx->s_frame.width and ctx->s_frame.height are accessed without 
-holding the lock fimc->lock in fimc_subdev_set_fmt():
-
-  mf->width = ctx->s_frame.width;
-  mf->height = ctx->s_frame.height;
-
-And thus a harmful data race can occur, which can make ctx->s_frame.width
-inconsistent with ctx->s_frame.height, if ctx->s_frame.height is updated 
-right after ctx->s_frame.width is accessed by another thread.
-
-This possible bug is found by an experimental static analysis tool
-developed by our team, BassCheck[1]. This tool analyzes the locking APIs
-to extract function pairs that can be concurrently executed, and then
-analyzes the instructions in the paired functions to identify possible
-concurrency bugs including data races and atomicity violations. The above
-possible bug is reported when our tool analyzes the source code of
-Linux 6.2.
-
-To fix this possible data race, the lock operation mutex_lock(&fimc->lock)
-is moved to the front of the accesses to these two variables. With this 
-patch applied, our tool no longer reports the bug, with the kernel 
-configuration allyesconfig for x86_64. Due to the lack of associated 
-hardware, we cannot test the patch in runtime testing, and just verify it 
-according to the code logic.
-
-[1] https://sites.google.com/view/basscheck/
-
-Fixes: 88fa8311ee36 ("[media] s5p-fimc: Add support for ISP Writeback ...")
-Signed-off-by: Tuo Li <islituo@gmail.com>
-Cc: stable@vger.kernel.org
-Reported-by: BassCheck <bass@buaa.edu.cn>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/media/platform/samsung/exynos4-is/fimc-capture.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 4 ++--
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
-index a0d43bf892e6..5c8b67f92c65 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-capture.c
-@@ -1546,6 +1546,7 @@ static int fimc_subdev_set_fmt(struct v4l2_subdev *sd,
- 	fimc_alpha_ctrl_update(ctx);
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index d3d4b5d036c8..871c1eb46ddf 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -693,7 +693,7 @@ static void exynos_pinctrl_suspend_bank(
+ 				struct samsung_pin_bank *bank)
+ {
+ 	struct exynos_eint_gpio_save *save = bank->soc_priv;
+-	void __iomem *regs = bank->eint_base;
++	const void __iomem *regs = bank->eint_base;
  
- 	fimc_capture_mark_jpeg_xfer(ctx, ffmt->color);
-+	mutex_lock(&fimc->lock);
- 	if (fmt->pad == FIMC_SD_PAD_SOURCE) {
- 		ff = &ctx->d_frame;
- 		/* Sink pads crop rectangle size */
-@@ -1555,7 +1556,6 @@ static int fimc_subdev_set_fmt(struct v4l2_subdev *sd,
- 		ff = &ctx->s_frame;
- 	}
+ 	save->eint_con = readl(regs + EXYNOS_GPIO_ECON_OFFSET
+ 						+ bank->eint_offset);
+@@ -714,7 +714,7 @@ static void exynosauto_pinctrl_suspend_bank(struct samsung_pinctrl_drv_data *drv
+ 					    struct samsung_pin_bank *bank)
+ {
+ 	struct exynos_eint_gpio_save *save = bank->soc_priv;
+-	void __iomem *regs = bank->eint_base;
++	const void __iomem *regs = bank->eint_base;
  
--	mutex_lock(&fimc->lock);
- 	set_frame_bounds(ff, mf->width, mf->height);
+ 	save->eint_con = readl(regs + bank->pctl_offset + bank->eint_con_offset);
+ 	save->eint_mask = readl(regs + bank->pctl_offset + bank->eint_mask_offset);
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index dbf38767f15f..ed07e23e0912 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -565,7 +565,7 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+ /* gpiolib gpio_get callback function */
+ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
+ {
+-	void __iomem *reg;
++	const void __iomem *reg;
+ 	u32 data;
+ 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
+ 	const struct samsung_pin_bank_type *type = bank->type;
+@@ -1204,7 +1204,7 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
  
- 	if (fmt->pad == FIMC_SD_PAD_SINK_FIFO)
+ 	for (i = 0; i < drvdata->nr_banks; i++) {
+ 		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
+-		void __iomem *reg = bank->pctl_base + bank->pctl_offset;
++		const void __iomem *reg = bank->pctl_base + bank->pctl_offset;
+ 		const u8 *offs = bank->type->reg_offset;
+ 		const u8 *widths = bank->type->fld_width;
+ 		enum pincfg_type type;
 -- 
 2.34.1
 
