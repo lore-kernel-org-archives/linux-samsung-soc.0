@@ -1,46 +1,46 @@
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2500101D0
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 21:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001D4FC0C
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 21:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lpeOmy6f"
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-35ffc781b3bso58545ab.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 13:36:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D8GClNcA"
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-36000a26f8aso26025ab.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 13:37:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1703453815; x=1704058615; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1703453845; x=1704058645; darn=vger.kernel.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Os/oPiSZBtjIUvvwHAsDtB34DNNtYdnH9WgDGcFTsds=;
-        b=lpeOmy6fVte6owUnWSfD/fUM9I0bR5k1938WxLeIibW0a3Rybp3wq+x3++mro9kkiF
-         bg5a7xrpzWEeFvYsu2gQh13pNDeaBnVoejjFdf07B8ppfHU85oB0MuXlZYm1tJo2XV4H
-         dco2tXX5yKWfojlyFuN+TiUmDiLBg2Y9wtIDvQFYKLauqqhZ3hBOqrw/IOSepv6BnTr/
-         /fCJLw2blyW0X/Jy8AJx7NbKM2jPXYmLM4S4XkeAVsWKdW2TtVjIy9Ti+8IAxqMq2xZ5
-         t6qjgYMnzPgjK4ddbEWSCGzz7DnDvJvNOZbFASGhEUDoAFOCna7qO3ci7l5dwhljMeoU
-         /bug==
+        bh=pVxyPMcJnzxVjqwUrIgqhLO2uo1Gd7uHiOR5G5u7XjE=;
+        b=D8GClNcAylxB8/4XLIU8Ozmd5YzJa6fpOQBoT1Fgmg8X3wD5QJsIn6YQC1hnZuulRM
+         JxeRVTy++c/85wd9HgT5V7HPSUC5AKhD5W2fwEDZ7u6dT1umceh2eGqRB7Hn20mqRjtN
+         +GN33hnhrcbK/eDF9i/ItoxWK+jgDB9pt0Pfyf/jIw0IUyzKCGNInQS9lV53weoc9s3R
+         3kCJZos4OryWy3XdAtEwps1dZ+iqGS7mj2FhTqtk8HD27KjQZ5SNNUJP4IbLxYllXVUF
+         Lr0OvtN/Of5lLiBrXvDGiBOEt/niJP0b+xtvdI7tFMZxfAY5W7w0nmhCwy8/JdjYAQWm
+         Yojg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703453815; x=1704058615;
+        d=1e100.net; s=20230601; t=1703453845; x=1704058645;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Os/oPiSZBtjIUvvwHAsDtB34DNNtYdnH9WgDGcFTsds=;
-        b=pTkRvO7I5oCzSORtQ2AGfiANd+sX1pc6TYjOWllxECC69Em6tga7kWcrt4LtGne9rs
-         Qsnt+eeqrztCuX2Im9j273dJd5YOGdMq/WtGNBHYqhs0FGAx09fTPGXfy5wS8hkDr8rP
-         9pAo8flBqv6kaOWzb8KeWjgbpy+ZeByiEAkBBilqE3zwVoSLZG7p4/c9HGkp01mwf9/1
-         Z5BYvXVRainm+7rq793axPoEkr3CIjQjsrfcn6rAoi7NFUhipaf3smwUiAE7RH248/UW
-         vvZ1VoCoDTLaJ2wGY1PBkupN9JGNzRVUXl6KqCDPeytUU208/IVL41Uweew8hBEErHVh
-         CRLw==
-X-Gm-Message-State: AOJu0YzFaYdqrZV7+8HnRN3tjQ6RddTkJhTZmIh53S5GawxuRDnTfTLz
-	sTLlKquiN9Ekzx3jDdChuo3YokjTpmfP
-X-Google-Smtp-Source: AGHT+IH2zcpLJWPKD+BeBsfBapGRJ4delpEMsonOf6psnFmaNZJ7wb6YGlKK2PGLdTvnRk1ktYgw3w==
-X-Received: by 2002:a92:ca8b:0:b0:35f:65d8:dd50 with SMTP id t11-20020a92ca8b000000b0035f65d8dd50mr389199ilo.18.1703453814883;
-        Sun, 24 Dec 2023 13:36:54 -0800 (PST)
+        bh=pVxyPMcJnzxVjqwUrIgqhLO2uo1Gd7uHiOR5G5u7XjE=;
+        b=cOh4bio9lj6tF8YXQJCxtfcqLS39a/EWU+1kRl1J6w0IPDGOEVTKM7BzufNrxTUBeZ
+         ekdOzuaNqUZBFudTYY3UOwEhTepQjQtypGTz6sPbsf0Va0Rmy7mgJEOBC7sywJmyFD2m
+         vwz6WX9ULezYaOmLEsWoZYk6xdAoeXj75203Gr+GbUfyOBmI74aWr+4f950gLh6j7ioZ
+         rGjXS8w2sbC0ZaKcu2ea/op7aZfPP9RDbV7ZvNwAhTEtI7kMvLixYwYwMDzktyyiqzBH
+         HH0G6t1D8XvSIXhpMduicWOJlpbu0pQJAU4zA3PzLziGVbO55mjVUSp4Q8mbAaB/BiZa
+         cYQw==
+X-Gm-Message-State: AOJu0YytCkBnM5JfhkKfpbMFWzHwAfb7XVK+uC3VRIJx1uFi7iQnPXSp
+	q8wSdgDccFLYDbq7GvnWUpJS8bikjIkW
+X-Google-Smtp-Source: AGHT+IEltSw2it/AyEQL4TJEReIP7j1yGavDmVQF3lJZLlbsuLGoO+wANiaULFEhAWOlUQIZqn8B1g==
+X-Received: by 2002:a05:6e02:1110:b0:35f:eb24:6e67 with SMTP id u16-20020a056e02111000b0035feb246e67mr189109ilk.7.1703453845125;
+        Sun, 24 Dec 2023 13:37:25 -0800 (PST)
 Received: from [2620:0:1008:15:c723:e11e:854b:ac88] ([2620:0:1008:15:c723:e11e:854b:ac88])
-        by smtp.gmail.com with ESMTPSA id y18-20020a170902b49200b001d0ce267eaesm6915344plr.250.2023.12.24.13.36.53
+        by smtp.gmail.com with ESMTPSA id x2-20020aa784c2000000b006d99cbe22f5sm3116025pfn.217.2023.12.24.13.37.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Dec 2023 13:36:54 -0800 (PST)
-Date: Sun, 24 Dec 2023 13:36:53 -0800 (PST)
+        Sun, 24 Dec 2023 13:37:24 -0800 (PST)
+Date: Sun, 24 Dec 2023 13:37:23 -0800 (PST)
 From: David Rientjes <rientjes@google.com>
 To: Pasha Tatashin <pasha.tatashin@soleen.com>
 cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
@@ -58,11 +58,11 @@ cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io,
     suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
     thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
     vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
-Subject: Re: [PATCH v2 04/10] iommu/io-pgtable-dart: use page allocation
- function provided by iommu-pages.h
-In-Reply-To: <20231130201504.2322355-5-pasha.tatashin@soleen.com>
-Message-ID: <0db8fdb5-26ee-5069-30d2-118595516926@google.com>
-References: <20231130201504.2322355-1-pasha.tatashin@soleen.com> <20231130201504.2322355-5-pasha.tatashin@soleen.com>
+Subject: Re: [PATCH v2 05/10] iommu/exynos: use page allocation function
+ provided by iommu-pages.h
+In-Reply-To: <20231130201504.2322355-6-pasha.tatashin@soleen.com>
+Message-ID: <5c2d33b4-3360-10f3-7d97-5cdcb29e4d73@google.com>
+References: <20231130201504.2322355-1-pasha.tatashin@soleen.com> <20231130201504.2322355-6-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -73,14 +73,9 @@ Content-Type: text/plain; charset=US-ASCII
 
 On Thu, 30 Nov 2023, Pasha Tatashin wrote:
 
-> Convert iommu/io-pgtable-dart.c to use the new page allocation functions
+> Convert iommu/exynos-iommu.c to use the new page allocation functions
 > provided in iommu-pages.h.
 > 
-
-... and remove unnecessary struct io_pgtable_cfg formal to 
-__dart_alloc_pages() while there :)
-
 > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Janne Grunau <j@jannau.net>
 
 Acked-by: David Rientjes <rientjes@google.com>
