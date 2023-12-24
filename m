@@ -1,47 +1,47 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6598E23D1
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 11:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EC453BA
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 11:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zUVpwJx5"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5542a7f1f3cso3254606a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 03:49:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oW8qvqqx"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-554c6ed660dso221391a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 03:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703418561; x=1704023361; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703418564; x=1704023364; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k+AICZB/3i+9hmEPe7EXcGEewYuTAI7wt2ZhMt/aXAs=;
-        b=zUVpwJx5ORGRP5+0ffSCyEPq7qG4r609b3zERmixme+gomAcQ58PLomyGJCjEY5oyN
-         NEtLBnUpBoT9mNPZYl+sD2Uhve3uXdFrobPa709DOdu76qbyKYmXw7vkFteQwo5olZ2A
-         VlwSkgnTBooebXE/F+n+yng19KBdpT8cXH/m4R+sov+mluFGCRgI3chWl9es2pPA1Z5j
-         b+PWC+PwnnftqYW7VnbsYDpwUPSk7/9BPRSIy7acUHiU4nuJlQTG0AWH759tiiI1BoMe
-         IgYxs0i3w2cCeqcKIJKCoCf4osQo/NTBY9QYZp5FI7UD1feUfcW5oOTjOX4vguNQZk7q
-         r7eg==
+        bh=PVApuuT/XfmeqHfcxDHhSC3DLyKiRm/PdGLsLnce34I=;
+        b=oW8qvqqxKIMzSfA78RPM0ykCcl3Fdq24pYtowV4bnzfUaaTbSN73FxywbF0mHhmVLM
+         UFiErkOAtUrjdalmg38/G+veVpzMr4WHxvG/GY4UimQ3QbAMiDwTum8V4FPpePoS/KD/
+         nIgX+P9lcZv993dM08qWM4HnkwhqMY5+8pPaBaGL+xorc5fLWxg6pbFAQ04wcVUYBXwT
+         lRmHK8tpqUh+RuBzJO9SOXiCRlrUWy7jjDRxJLM4xyCbvCo7bvuvGl7FSHVAMVKOVKp3
+         SMDzuLpNDBGpLP6CHnOn5HCnL3FSHDJBf8sPDyCoXO0XrfG6dxtw7Gb6UTUq44rEScuI
+         1EaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703418561; x=1704023361;
+        d=1e100.net; s=20230601; t=1703418564; x=1704023364;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k+AICZB/3i+9hmEPe7EXcGEewYuTAI7wt2ZhMt/aXAs=;
-        b=N8rd0SVabmjd4BbwEvBbbEIiBB65pSBmYjjFQM0R2rFDHjJW1kYgdaGBQJpMRpq0P3
-         Zvr7D5Zgop0zcLld43od7bWLfnf8xuN4t/9JGbc4EDjfGY6i9Ku2QdCC8fOyAyh+MAIF
-         UGrO9k/KFphUzLaLWziVGK5jzF8qfudK0JxeUUw29jbZ/E2kUEFJeNslLfY+vCacqdIw
-         UrErVm/a3UJzpWcnDZ6utgE+gW0ItcNIfgWNzpUxmjBNUL5O+rG9bc+KVtHTnRbg0QAB
-         sr4CyFP8jJMnYhXm5u7sChdceujlbAX5gpuswKP7wmqig/WQb9HT8f9mLqeI097BFdaK
-         0lLA==
-X-Gm-Message-State: AOJu0YzJWebm0g7kSWoxVNuE8trkILJnJZ0Y6y3Q2OeTG6gcXHFkZz/m
-	TwdYvd+gH0NTClYr4d7N1wYxQ52pK3oSAw==
-X-Google-Smtp-Source: AGHT+IGP4i5Vx4NxrbazqvNFKOlVMGjmeKM/kcE56oix1x4xDKdCU+tWsPzNnnKD9g8ezMl8dASzjQ==
-X-Received: by 2002:a05:6402:12d2:b0:552:e50f:524e with SMTP id k18-20020a05640212d200b00552e50f524emr2858705edx.79.1703418561604;
-        Sun, 24 Dec 2023 03:49:21 -0800 (PST)
+        bh=PVApuuT/XfmeqHfcxDHhSC3DLyKiRm/PdGLsLnce34I=;
+        b=Sn4n1pDf72FuOObIo66Mq50jvAsW9cS42UCa/EA/QH1uh7k3pI8EM4E/ERcSB1ZCYT
+         zRr60y2Dmqs7JAdAyefaSSt5KWllveLs1/1a75clvFDiHU7NBZh7SBs+PBc100c/bWrp
+         1I3svi8sqXtduj35kKPGA7mE8O/k7V2TqNOj5yEHWupbpGPJ+x0xVll0LCkZnjoQ24XH
+         FfmWYxdOR36kdiBrTgkrwDn8/labqXsn2sjtzkU4IquvP3sa5LC4MdLPOKX6ZRhPHaUK
+         vvfLcfmvfbTIcZyKl4mWo+tHXcTqRQsoipNQSbadlWOMvNayFrBz1TO+6eZg14ta4tkh
+         j15A==
+X-Gm-Message-State: AOJu0YwZWmB0iPy7t96LWakaqFCPG1EwMyepDzIpELIBb0nrbscAQ3fn
+	XJsLOO958wcUg4zAwQzfCzFsMMNLghw1nw==
+X-Google-Smtp-Source: AGHT+IFSp5WyLmasZDiWea/xPGiIp+8dCBhTbyMOmSq0YAT4xIZLu3+JOiUJwERsp97A77f1qjQThg==
+X-Received: by 2002:aa7:d40c:0:b0:554:af5e:d4ce with SMTP id z12-20020aa7d40c000000b00554af5ed4cemr1137829edq.70.1703418564133;
+        Sun, 24 Dec 2023 03:49:24 -0800 (PST)
 Received: from krzk-bin.. ([78.10.206.178])
-        by smtp.gmail.com with ESMTPSA id z23-20020aa7c657000000b0054ccac03945sm4999771edr.12.2023.12.24.03.49.19
+        by smtp.gmail.com with ESMTPSA id z23-20020aa7c657000000b0054ccac03945sm4999771edr.12.2023.12.24.03.49.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Dec 2023 03:49:20 -0800 (PST)
+        Sun, 24 Dec 2023 03:49:23 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -51,9 +51,9 @@ To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/12] media: fimc-lite: constify several pointers in function arguments
-Date: Sun, 24 Dec 2023 12:49:06 +0100
-Message-Id: <20231224114916.111433-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 04/12] media: fimc-is: drop unused fimc_vidioc_enum_fmt_mplane()
+Date: Sun, 24 Dec 2023 12:49:08 +0100
+Message-Id: <20231224114916.111433-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231224114916.111433-1-krzysztof.kozlowski@linaro.org>
 References: <20231224114916.111433-1-krzysztof.kozlowski@linaro.org>
@@ -65,98 +65,27 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Several functions do not modify pointed structure, thus the pointer can
-point to const data for additional safety and self-documenting intention
-of the function.
+Function fimc_vidioc_enum_fmt_mplane() is not defined, so drop its
+declaration from the header.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../platform/samsung/exynos4-is/fimc-lite-reg.c     | 13 +++++++------
- .../platform/samsung/exynos4-is/fimc-lite-reg.h     | 10 +++++-----
- 2 files changed, 12 insertions(+), 11 deletions(-)
+ drivers/media/platform/samsung/exynos4-is/fimc-core.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
-index 57996b4104b4..2483277a6cb0 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
-@@ -124,7 +124,7 @@ static const u32 src_pixfmt_map[8][3] = {
- };
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.h b/drivers/media/platform/samsung/exynos4-is/fimc-core.h
+index 2b0760add092..cc840e6e07a9 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-core.h
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.h
+@@ -610,8 +610,6 @@ static inline struct fimc_frame *ctx_get_frame(struct fimc_ctx *ctx,
  
- /* Set camera input pixel format and resolution */
--void flite_hw_set_source_format(struct fimc_lite *dev, struct flite_frame *f)
-+void flite_hw_set_source_format(struct fimc_lite *dev, const struct flite_frame *f)
- {
- 	u32 pixelcode = f->fmt->mbus_code;
- 	int i = ARRAY_SIZE(src_pixfmt_map);
-@@ -155,7 +155,7 @@ void flite_hw_set_source_format(struct fimc_lite *dev, struct flite_frame *f)
- }
- 
- /* Set the camera host input window offsets (cropping) */
--void flite_hw_set_window_offset(struct fimc_lite *dev, struct flite_frame *f)
-+void flite_hw_set_window_offset(struct fimc_lite *dev, const struct flite_frame *f)
- {
- 	u32 hoff2, voff2;
- 	u32 cfg;
-@@ -186,7 +186,7 @@ static void flite_hw_set_camera_port(struct fimc_lite *dev, int id)
- 
- /* Select serial or parallel bus, camera port (A,B) and set signals polarity */
- void flite_hw_set_camera_bus(struct fimc_lite *dev,
--			     struct fimc_source_info *si)
-+			     const struct fimc_source_info *si)
- {
- 	u32 cfg = readl(dev->regs + FLITE_REG_CIGCTRL);
- 	unsigned int flags = si->flags;
-@@ -226,7 +226,8 @@ static void flite_hw_set_pack12(struct fimc_lite *dev, int on)
- 	writel(cfg, dev->regs + FLITE_REG_CIODMAFMT);
- }
- 
--static void flite_hw_set_out_order(struct fimc_lite *dev, struct flite_frame *f)
-+static void flite_hw_set_out_order(struct fimc_lite *dev,
-+				   const struct flite_frame *f)
- {
- 	static const u32 pixcode[4][2] = {
- 		{ MEDIA_BUS_FMT_YUYV8_2X8, FLITE_REG_CIODMAFMT_YCBYCR },
-@@ -244,7 +245,7 @@ static void flite_hw_set_out_order(struct fimc_lite *dev, struct flite_frame *f)
- 	writel(cfg | pixcode[i][1], dev->regs + FLITE_REG_CIODMAFMT);
- }
- 
--void flite_hw_set_dma_window(struct fimc_lite *dev, struct flite_frame *f)
-+void flite_hw_set_dma_window(struct fimc_lite *dev, const struct flite_frame *f)
- {
- 	u32 cfg;
- 
-@@ -294,7 +295,7 @@ void flite_hw_mask_dma_buffer(struct fimc_lite *dev, u32 index)
- }
- 
- /* Enable/disable output DMA, set output pixel size and offsets (composition) */
--void flite_hw_set_output_dma(struct fimc_lite *dev, struct flite_frame *f,
-+void flite_hw_set_output_dma(struct fimc_lite *dev, const struct flite_frame *f,
- 			     bool enable)
- {
- 	u32 cfg = readl(dev->regs + FLITE_REG_CIGCTRL);
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.h b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.h
-index 3b8af3ce1838..c5ec36dfb2f9 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.h
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.h
-@@ -133,13 +133,13 @@ void flite_hw_set_interrupt_mask(struct fimc_lite *dev);
- void flite_hw_capture_start(struct fimc_lite *dev);
- void flite_hw_capture_stop(struct fimc_lite *dev);
- void flite_hw_set_camera_bus(struct fimc_lite *dev,
--			     struct fimc_source_info *s_info);
--void flite_hw_set_window_offset(struct fimc_lite *dev, struct flite_frame *f);
--void flite_hw_set_source_format(struct fimc_lite *dev, struct flite_frame *f);
-+			     const struct fimc_source_info *s_info);
-+void flite_hw_set_window_offset(struct fimc_lite *dev, const struct flite_frame *f);
-+void flite_hw_set_source_format(struct fimc_lite *dev, const struct flite_frame *f);
- 
--void flite_hw_set_output_dma(struct fimc_lite *dev, struct flite_frame *f,
-+void flite_hw_set_output_dma(struct fimc_lite *dev, const struct flite_frame *f,
- 			     bool enable);
--void flite_hw_set_dma_window(struct fimc_lite *dev, struct flite_frame *f);
-+void flite_hw_set_dma_window(struct fimc_lite *dev, const struct flite_frame *f);
- void flite_hw_set_test_pattern(struct fimc_lite *dev, bool on);
- void flite_hw_dump_regs(struct fimc_lite *dev, const char *label);
- void flite_hw_set_dma_buffer(struct fimc_lite *dev, struct flite_buffer *buf);
+ /* -----------------------------------------------------*/
+ /* fimc-core.c */
+-int fimc_vidioc_enum_fmt_mplane(struct file *file, void *priv,
+-				struct v4l2_fmtdesc *f);
+ int fimc_ctrls_create(struct fimc_ctx *ctx);
+ void fimc_ctrls_delete(struct fimc_ctx *ctx);
+ void fimc_ctrls_activate(struct fimc_ctx *ctx, bool active);
 -- 
 2.34.1
 
