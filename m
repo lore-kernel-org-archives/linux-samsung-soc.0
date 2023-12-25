@@ -1,174 +1,118 @@
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1241851C27;
-	Mon, 25 Dec 2023 14:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C64952F64
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Dec 2023 16:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3BhTD+n"
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-35fe9a6609eso22309285ab.2;
-        Mon, 25 Dec 2023 06:57:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703516246; x=1704121046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4aiW5+AczULkdWKgKzZEQT6Vz/ZvVOIizOQvICxQE/g=;
-        b=O3BhTD+nXxfRLRp0SNhC9BUvQJ11hl+zkNaetrg074S0GHlFqaZIiGJENFknpePeoj
-         6JMAWXi8wbz+GBdH5x8DGfFbjMUF1ymgKQrhJZbqn3LZ3KlT136nx2mMYRugzy3D1QX2
-         xoW/rZg0f5otEWmwo0yJe43TeUmNkphPel9FQZQRwh8fVxYtkFKxrolHUr+wRyPzNoUU
-         jbamt537tsE6kvxEdm15woAGxlxZ0LrOFtjA8XgHnlWdC428YVtxy/dWJFeJpZKWuV1Q
-         tbRhh2y+wEwUUxEEYCd0FWNLots3bUdHo6SRlV9M9dimPPFUnIRavQGg4bv/A8rvtPIo
-         h77Q==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9mqPlfT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1703520585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VqafsTsLWFL6NUacBRAsGtc9kpoOdr+j/kVqdz2KGps=;
+	b=D9mqPlfTwYuNJi4B6KW9virIn25oAF6KJO1DPRjL3QgxGoYi/aZvQhQ6SxaAucfl1mfkTI
+	2BhAsqnTfOgOxR+qFBkoEO02/lLWZdSG4DtRAMJ7mE1KRUKAFVGeLstdjJ6VVrBdaG+4BT
+	HC6YfH4aB8ZfJIQTKQ076gm3A3IuBSk=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-atfhyIHNNV-y_EhzEoqqZA-1; Mon, 25 Dec 2023 11:09:44 -0500
+X-MC-Unique: atfhyIHNNV-y_EhzEoqqZA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-40d5970422cso16435e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Dec 2023 08:09:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703516246; x=1704121046;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4aiW5+AczULkdWKgKzZEQT6Vz/ZvVOIizOQvICxQE/g=;
-        b=quRXolhjnKGCZWjLJpMPIn2UZMj2TmsUdeZUczt65ONMfCjcUF7TNV0Aa3mKeGWyWi
-         EbUW82fbDg4G4zWni/ejSno7vMTronTTGqgJGOndVIXgGLLS8xMOXdxpKRGXlBuqHxDG
-         n+Dc9AMQZSyFRN+q078AXni6KvlkIlZgwJIaFptBJdjaW+XlHz8JB/qsBRC8VV8s79go
-         h9QbDU9cC2HVgHf31UPKg9A5mnrj4ePZz2ZTLlznCP2fE9/F5mOjSkhmJ3BId2V9fsgv
-         sgtgDVmF87e9CkLuugoPTNqJXb2zqXje7nJX+EG1x8geBKRBljvdNmodz9lUlBdGTv0U
-         loGQ==
-X-Gm-Message-State: AOJu0YxAWBzNXPBBb0xH98o6i0xXwesf4EwbH9f+oMTdBajEvBZhaUpt
-	ObRGaJXInIjb01RiptqlwJ4=
-X-Google-Smtp-Source: AGHT+IHR5x6OhDDciEaHttITlEjCwg329MZhAHnNtogZRzuZTaztVIu7Xqz7JbIhp2UUwpc3NRKeaA==
-X-Received: by 2002:a05:6e02:b22:b0:35f:ef56:35a with SMTP id e2-20020a056e020b2200b0035fef56035amr7367417ilu.48.1703516246083;
-        Mon, 25 Dec 2023 06:57:26 -0800 (PST)
-Received: from [183.173.16.211] ([183.173.16.211])
-        by smtp.gmail.com with ESMTPSA id st14-20020a17090b1fce00b0028a4c85a55csm15962pjb.27.2023.12.25.06.57.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Dec 2023 06:57:25 -0800 (PST)
-Message-ID: <0edbd57a-cf94-4710-a20c-04d0cc43cfad@gmail.com>
-Date: Mon, 25 Dec 2023 22:57:23 +0800
+        d=1e100.net; s=20230601; t=1703520583; x=1704125383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VqafsTsLWFL6NUacBRAsGtc9kpoOdr+j/kVqdz2KGps=;
+        b=gHmGwMSUG68WduIUeHY5Oq4LT0usHTeefMHKGR7h/jQj9u/1NYKy7UASWS7rF9o9H7
+         aGvHUkc8HAageioAQ5mU6Udr/4bfIN2spLqI1w5xDNu0DKrV/Y+BZB7RjqArCIeS2/1p
+         sEsfD1fFZMBVewBhjUnq35YXjohrethV9/Sqvt9HWOqbX1/Hv9e/yvs2T2I2yEX9R7Dr
+         YAvjR4kfe2Z2UdB0lrNgViZOVnvX4zUAL66WwyiLizwZw8PVZ9cApdX9rxiwrFHjs8sB
+         vgUE+62n3n+AxO19Nzzc/euVjQzop4DYScy+rAVR7CDP5MLIFGSipQ2PH9d3bM5ulAYG
+         YJfw==
+X-Gm-Message-State: AOJu0YzI4lm8M5gVHUb0dNny31WEvxduhb/dKHVg6sD4uqndjnnf/BfM
+	qzB+tpr9dtJEjRwhdbSvR38g7UGnqoKtGLKwvjhTX6+PHWm9r3Hjz2NHjKfGJUMe/Ne0+k9voJB
+	LTdGfp55YqyPMhxkEvo42F6T05SO8hTvNkQmW+lw=
+X-Received: by 2002:a05:600c:4587:b0:40c:33be:d193 with SMTP id r7-20020a05600c458700b0040c33bed193mr4060353wmo.78.1703520582990;
+        Mon, 25 Dec 2023 08:09:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHfGGCax+SlWX/roShT1Wqm6zJg2zHkXbA4PNy8JwUTudzLUljk5TaAwhoH/7jZ8kvUv2pY7Q==
+X-Received: by 2002:a05:600c:4587:b0:40c:33be:d193 with SMTP id r7-20020a05600c458700b0040c33bed193mr4060329wmo.78.1703520582646;
+        Mon, 25 Dec 2023 08:09:42 -0800 (PST)
+Received: from redhat.com ([2a06:c701:73ef:4100:2cf6:9475:f85:181e])
+        by smtp.gmail.com with ESMTPSA id f12-20020a05600c4e8c00b0040d3db8186fsm16769282wmq.5.2023.12.25.08.09.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Dec 2023 08:09:41 -0800 (PST)
+Date: Mon, 25 Dec 2023 11:09:37 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io,
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com,
+	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net,
+	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
+	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com,
+	joro@8bytes.org, kevin.tian@intel.com,
+	krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
+	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
+	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org,
+	robin.murphy@arm.com, samuel@sholland.org,
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
+	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
+	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org,
+	will@kernel.org, yu-cheng.yu@intel.com
+Subject: Re: [PATCH 15/16] vhost-vdpa: account iommu allocations
+Message-ID: <20231225110930-mutt-send-email-mst@kernel.org>
+References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+ <20231128204938.1453583-16-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media:fimc-capture: Fix a possible data inconsistency due
- to a data race in fimc_subdev_set_fmt()
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- s.nawrocki@samsung.com, mchehab@kernel.org, alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- baijiaju1990@gmail.com, stable@vger.kernel.org, BassCheck <bass@buaa.edu.cn>
-References: <20231223164351.3521588-1-islituo@gmail.com>
- <93da765f-44c8-4023-b416-eae617d5ed74@linaro.org>
-From: Li Tuo <islituo@gmail.com>
-In-Reply-To: <93da765f-44c8-4023-b416-eae617d5ed74@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231128204938.1453583-16-pasha.tatashin@soleen.com>
 
-Hi Krzysztof,
+On Tue, Nov 28, 2023 at 08:49:37PM +0000, Pasha Tatashin wrote:
+> iommu allocations should be accounted in order to allow admins to
+> monitor and limit the amount of iommu memory.
+> 
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Thanks for your reply very much. It is very helpful.
-I am really sorry to confuse you.
 
-On 2023/12/24 18:11, Krzysztof Kozlowski wrote:
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-> On 23/12/2023 17:43, Tuo Li wrote:
->> Accesses to ctx->s_frame.width and ctx->s_frame.height should be protected
->> by the lock fimc->lock to guarantee that width and height are consistent.
->> Here is an example in fimc_subdev_get_fmt():
->>
->>    struct fimc_frame *ff = &ctx->s_frame; // Alias
->>    mutex_lock(&fimc->lock);
->>    mf->width = ff->width;
->>    mf->height = ff->height;
->>
->> However, ctx->s_frame.width and ctx->s_frame.height are accessed without
->> holding the lock fimc->lock in fimc_subdev_set_fmt():
->>
->>    mf->width = ctx->s_frame.width;
->>    mf->height = ctx->s_frame.height;
-> Other places setting parts of s_frame, like fimc_capture_try_format() or
-> fimc_capture_try_selection(), do not have mutex.
->
->> And thus a harmful data race can occur, which can make ctx->s_frame.width
-> Harmful how?
 
-The function set_frame_crop() which updates s_frame.width and
-s_frame.height is called by fimc_cap_s_selection(). fimc_cap_s_selection()
-is an ioctl function and it is likely to be able to execute concurrently
-with other functions such as fimc_subdev_set_fmt(). However, in
-fimc_subdev_set_fmt(), the accesses to s_frame.width and s_frame.height are
-not protected by the mutex lock fimc->lock.
-
-If fimc_cap_s_selection() and fimc_subdev_set_fmt() can execute
-concurrently and the execution orders is like this:
-
-1. ctx->s_frame.width is accessed and assigned to mf->width in
-    fimc_subdev_set_fmt()      Line 1552 in fimc-capture.c
-2. ctx->s_frame.width and ctx->s_frame.height is updated by
-    fimc_cap_s_selection()     Line 1329 in fimc-capture.c
-3. ctx->s_frame.height is accessed and assigned to mf->height in
-    fimc_subdev_set_fmt()      Line 1553 in fimc-capture.c
-
-The width and height assigned to mf are not coming from the same
-ctx->s_frame configuration and can cause data inconsistency.
-
-Besides, the functions fimc_subdev_set_selection() and
-fimc_subdev_set_fmt() exist in the same driver interface named
-fimc_subdev_pad_ops. Therefore, it seems that fimc_subdev_set_fmt() and
-fimc_subdev_set_selection() can also execute concurrently. However, if the
-execution order of fimc_subdev_set_selection() and fimc_subdev_set_fmt() is
-like mentioned above, a data inconsistency can also occur.
-
-I analyze this possible data race manually according to the code logic, and
-I am not sure whether all accesses to configurations such as width, height,
-f_width, and f_height should be protected by a mutex lock to make them
-consistent. I am really sorry to trouble you, and any feedback will be
-appreciated!
-
->> inconsistent with ctx->s_frame.height, if ctx->s_frame.height is updated
->> right after ctx->s_frame.width is accessed by another thread.
->>
->> This possible bug is found by an experimental static analysis tool
->> developed by our team, BassCheck[1]. This tool analyzes the locking APIs
->> to extract function pairs that can be concurrently executed, and then
->> analyzes the instructions in the paired functions to identify possible
->> concurrency bugs including data races and atomicity violations. The above
->> possible bug is reported when our tool analyzes the source code of
->> Linux 6.2.
->>
->> To fix this possible data race, the lock operation mutex_lock(&fimc->lock)
->> is moved to the front of the accesses to these two variables. With this
->> patch applied, our tool no longer reports the bug, with the kernel
->> configuration allyesconfig for x86_64. Due to the lack of associated
->> hardware, we cannot test the patch in runtime testing, and just verify it
->> according to the code logic.
-> You wrote long four paragraphs which have basically almost zero relevant
-> information, whether this locking is needed or not. Your bass
-> description is not relevant... or actually making things worse because I
-> am certain you are fixing it just to fix your report, not to fix real issue.
->
->> [1] https://sites.google.com/view/basscheck/
-> Instead provide the report.
-
-I am sorry to confuse you, and I wrote these descriptions according to
-researcher guidelines in the kernel documentation
-Documentation/process/researcher-guidelines.rst
-I will provide a more concise patch in the future.
-
->> Fixes: 88fa8311ee36 ("[media] s5p-fimc: Add support for ISP Writeback ...")
->> Signed-off-by: Tuo Li <islituo@gmail.com>
->> Cc: stable@vger.kernel.org
->> Reported-by: BassCheck <bass@buaa.edu.cn>
-> Run checkpatch, you will see the warning.
-
-Thanks for your advice. I am sorry to bother you, and I will be careful in
-the subsequent patches.
-
-> Best regards,
-> Krzysztof
->
-Sincerely,
-Tuo Li
+> ---
+>  drivers/vhost/vdpa.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+> index da7ec77cdaff..a51c69c078d9 100644
+> --- a/drivers/vhost/vdpa.c
+> +++ b/drivers/vhost/vdpa.c
+> @@ -968,7 +968,8 @@ static int vhost_vdpa_map(struct vhost_vdpa *v, struct vhost_iotlb *iotlb,
+>  			r = ops->set_map(vdpa, asid, iotlb);
+>  	} else {
+>  		r = iommu_map(v->domain, iova, pa, size,
+> -			      perm_to_iommu_flags(perm), GFP_KERNEL);
+> +			      perm_to_iommu_flags(perm),
+> +			      GFP_KERNEL_ACCOUNT);
+>  	}
+>  	if (r) {
+>  		vhost_iotlb_del_range(iotlb, iova, iova + size - 1);
+> -- 
+> 2.43.0.rc2.451.g8631bc7472-goog
 
