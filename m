@@ -1,45 +1,45 @@
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CF6524A2;
-	Mon, 25 Dec 2023 13:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B302524AC;
+	Mon, 25 Dec 2023 13:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cI3YTTXt"
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7ba7c845e1aso225638539f.2;
-        Mon, 25 Dec 2023 05:52:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RevVVwKj"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6d099d316a8so3604420b3a.0;
+        Mon, 25 Dec 2023 05:55:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703512321; x=1704117121; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1703512550; x=1704117350; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
         bh=DQDRirBfKKu4jOrue0tUkAqdRYM+XKPGLgDKcTkbvWA=;
-        b=cI3YTTXt1ENU8eMkwdtw7m8Dh9dZogOrx6uPcBLtyo+VMzt4sp/pBCo+ysqs4Gnjg5
-         hOn+HMtBH9Is1GWykcZAkEKGVF5frasNHmpWCXJm8Tx5uFKNf1CapTXqlligmO8+wrMH
-         64rNMn/4j1X0hhTkV54lVr5oVn8sAUYtonWVDsudyzGadL9Xr/Y3c0Hgna+6iKdhk7I8
-         7Pd9w1OfyAoZEklOMRIdHI21Txz4Go33nYHao8w4p2Lmdg+ZINGfRSLhLYVLo5xDn59T
-         mI5JTGqcVgTbw5d0WQaFvUdoViP/MBxBU5SBgh5NBm87KnjgD79GJ4uN05yiwO/tcx/c
-         4QnQ==
+        b=RevVVwKj6DBQlntZIWTjcNYvlfwlqNwlPLT0GAz5ETfe8gJrWmZLVZiAIOoUhnneai
+         VUt5gIDuvEhTxXLwLfZtIDwmvuJWxLlCT4AmMuZM/ZHnkxxdIbvOrklh/tayBxN25SGA
+         I4yvRJYmDxi7SAVumUFG4Il4fXKlDpekeolCy7JaacP5SR3f/VEvS94A1df7cmTbcN7d
+         NV7qPgA11gkJ2n3aGsLl4p7gckgbyXHjPKZhgxAL+sNSEzI/JTdvAPXSQ0BGGHRi2Vif
+         HYLR1XoiGtIMXToLPcaSAWK60SHlF9Nm4QNQb8NBYfAX8MgzgzqSmFDYWohTUfBbaQRf
+         aWNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703512321; x=1704117121;
+        d=1e100.net; s=20230601; t=1703512550; x=1704117350;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=DQDRirBfKKu4jOrue0tUkAqdRYM+XKPGLgDKcTkbvWA=;
-        b=Y+povrEi+VtutrkcaMUl1ZzItIuMtdMtxBiQVUNP5jIk9N5y2P0MZ7AmwO6bTQaTWQ
-         GRI7YzG+ngdhibcuFT8BN+rZMzWhns1/wAUVlVqpU1lOtAearm7vz5rJsmq/ZjuetIDR
-         VM7Ns9UfezL3xgIPYKDUPq+5BAvIPQmvk26n/bLuwIt2/K+cQ6VQh+1B8UE9rB2VyJnc
-         DCQzpnZyE8kTSbfYlnldBoenxpYx4+u7bmCmqoKlXRuhcf+aj0Volc4RV7b0eqAA2JVj
-         RuXUJS4alif4ohKnfF9n8+Y6/IOONWtEv+PJTQdEJqHEhrxXpFYVd2mnV0gaxigD1AWb
-         aCRQ==
-X-Gm-Message-State: AOJu0Yyqa4gEsfvdo5lQPZzLhboK5dZk1RfmuSy5IXOefya6PivuJWga
-	vN/iz25R6ApFEoaS7i1vE4Q=
-X-Google-Smtp-Source: AGHT+IEYgLF09i/9I2s+ydOWQU4ZE4IGPKPqYKOFoFRWMaYWMfy6iMab7ptoQkzUq/hKh7U7yFYQVQ==
-X-Received: by 2002:a6b:5a15:0:b0:7ba:b0d7:20e5 with SMTP id o21-20020a6b5a15000000b007bab0d720e5mr6741671iob.0.1703512321676;
-        Mon, 25 Dec 2023 05:52:01 -0800 (PST)
+        b=NJfBPOlLDa0PDw71MeyERFeXNal87cpZ7fC7egd4ZwvRR2Bu5uw2JdX0fi8tUAuRMz
+         D2X1lbtFVFQRY0qypiuL3YDHmAq6Zu/gV3ybj4siQ5TlzPex0R1+itcOl5cP7rIbOUQz
+         OenoCCEhMs7E0JFdVBTfK+hpKCTS7yaTRQIadZT+43jpwhaRGXCh2Hs0R5mVGDjmIKjQ
+         2gCqg2CbrIRxB9VH32+JHxa/PZDsYQPJ+dnPm49YXOzIeo4VCrtN3cMYfDTq1m0gBH/Z
+         NHtWouS5TQ6Bwoevc9LWcWTelF2Csf6OPoxLktBb2uvrTBaHJMX8WFh22QtQ/I3oxml6
+         6SPA==
+X-Gm-Message-State: AOJu0Yy+Pz8btCqXChioBW4Dvg3gayyyVA6IC0OmL7MUf2u423IGIALI
+	FKmsW9EK6ab1mijBYaLd7J4=
+X-Google-Smtp-Source: AGHT+IG59G1LSj7Se2+3+49YaCUFtV38BC2bYVSUV4Q/ViyW4rnvflyTan011DTVyVimmqJSzr+AJA==
+X-Received: by 2002:a05:6a00:2383:b0:6d9:c201:676b with SMTP id f3-20020a056a00238300b006d9c201676bmr820525pfc.24.1703512550263;
+        Mon, 25 Dec 2023 05:55:50 -0800 (PST)
 Received: from ruipeng-ThinkCentre-M730e-N010.company.local (014136220210.static.ctinets.com. [14.136.220.210])
-        by smtp.gmail.com with ESMTPSA id k4-20020aa792c4000000b006ce5da5956csm8002767pfa.24.2023.12.25.05.51.55
+        by smtp.gmail.com with ESMTPSA id e8-20020aa78c48000000b006d9b66f3d07sm2300822pfd.95.2023.12.25.05.55.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Dec 2023 05:52:01 -0800 (PST)
+        Mon, 25 Dec 2023 05:55:49 -0800 (PST)
 From: Ruipeng Qi <ruipengqi7@gmail.com>
 To: quic_mojha@quicinc.com
 Cc: agross@kernel.org,
@@ -70,11 +70,11 @@ Cc: agross@kernel.org,
 	vigneshr@ti.com,
 	qiruipeng@lixiang.com
 Subject: RESEND: Re: [Patch v6 03/12] docs: qcom: Add qualcomm minidump guide
-Date: Mon, 25 Dec 2023 21:51:53 +0800
-Message-Id: <20231225135153.1408-1-ruipengqi7@gmail.com>
+Date: Mon, 25 Dec 2023 21:55:42 +0800
+Message-Id: <20231225135542.1789-1-ruipengqi7@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <in-reply-to=1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
-References: <in-reply-to=1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
+In-Reply-To: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
+References: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
