@@ -1,187 +1,94 @@
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BE9FC1C
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 21:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B4051C47;
+	Mon, 25 Dec 2023 13:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z9mPQgBL"
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-35ffc781b3bso59915ab.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 24 Dec 2023 13:49:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsQiABlV"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33679c49fe5so3398379f8f.3;
+        Mon, 25 Dec 2023 05:25:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1703454581; x=1704059381; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0HiuPkhATpCWAkLMW05BPxTgagJyPS45hssBqZfyJY=;
-        b=z9mPQgBLpTmNdiIE+lLUIbokt+5Zsl88zuLfix0gYut1VGsyrvZEi4/UsUvsGMj6LT
-         rZAGxqUwMmsrJxrrp7BFPKcNOMyw7lY1ZvGwC0cphM6X5N0AoORQyG9Fd+Dg84e9Iwga
-         f+f74NsFtJm3OS5/pJgslIam6k6PcbhmpMKL1xx8DpiJTRMDcuQbQ7JyUlGzx7z2mGRF
-         57p2VqwBB6VhZ+I2Dsy2FyHN/+sWl3HdzaffuIB6mIEahBtEZhqFgKq5WnlQ4wFeaPGu
-         dmFoHsDQ8k2CQOoo4BwZqvabcJkg5AOM4Fe88Fy3oBpAouzAbkmnv27IbVirpdC9e20Y
-         5ijw==
+        d=gmail.com; s=20230601; t=1703510700; x=1704115500; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ncwBF96I3+wYyMTERq4e+nBDWR/IIaIfVwaDbdyJKS8=;
+        b=RsQiABlVGGePOsSz+C0sMMPTurdDxflxPoKFnzgZd2gvdrBgfDX7VkXUv6qqagnpJA
+         lCzbG3Klwd2M/0jdcM+vT46zNxW0FlS+MBf8lt+k8KKPqErBqb0NuX/2NxeTe7CHDxx6
+         O/I3vyXuGyHu32NhvVNnvPboT9vjnYkjD2mgfxCPds1/RJpzAyMBRsdOSoghcWXwQ1jH
+         ckdC3yJxwwoXSR9r9wd/4dZXXRAzl4j9HgE7TRrJHPf3TShkwGSmZaYkmFs2Zbrxuo0L
+         H2mGj3uI4sf9R3+Z7LDxE63S/b3v1zNNf7NHcFwwHmOfV1zBr/7mtxgjv03ZC0XZ6mZD
+         /yKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703454581; x=1704059381;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O0HiuPkhATpCWAkLMW05BPxTgagJyPS45hssBqZfyJY=;
-        b=SD0TpJFj56PDyglaxhi7JSSFyLffxtKO68sIMIyJMzdb6xgh645+ZsqKBig4cZFZcu
-         Gx9v1veoerEj9atcD7LkuEjSlXVfzGycLne6W7kivRLatyuanaivECXf/KZgClQ+asy3
-         66AqdJtBULAUL9gyLhYzEYJMLLQ63IqEMBsUEWlAOf/c+/m475flv8oO+aVSYAV4ONXn
-         6cnmGspMS/ALqdmi3mz4yW3kYuFVPxJO12GyKTFeC3NkN3fsBCtIkWG93oadPgjw68vi
-         PkLKWjyi39T3H5hJw0QbfecSL0Vw17iKmVfOsz09Aik6/FSJWMHeWsZ52tSDInqf0ILu
-         9aTQ==
-X-Gm-Message-State: AOJu0YwkKl2+IfJoGCvkCgmvhGdbzGdizmdqDhzOVG4LV5lFUagOmdAQ
-	kAaXRpH0vwr7bAaA21FMaUlZgG3S458/
-X-Google-Smtp-Source: AGHT+IHO1o4MpTmRsY4pG5iPw80zAps+6fJHAueY55ciRhpJtDvuIlpvxAKJ08/tY4qG55yyTyBfTQ==
-X-Received: by 2002:a05:6e02:3001:b0:35f:b200:2fb5 with SMTP id bd1-20020a056e02300100b0035fb2002fb5mr495955ilb.11.1703454581205;
-        Sun, 24 Dec 2023 13:49:41 -0800 (PST)
-Received: from [2620:0:1008:15:c723:e11e:854b:ac88] ([2620:0:1008:15:c723:e11e:854b:ac88])
-        by smtp.gmail.com with ESMTPSA id l18-20020a62be12000000b006ce95e37a40sm6824858pff.111.2023.12.24.13.49.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Dec 2023 13:49:40 -0800 (PST)
-Date: Sun, 24 Dec 2023 13:49:39 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-    asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-    cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-    dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-    iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-    joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-    linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-    linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-    mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-    rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-    suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
-    thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
-    vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
-Subject: Re: [PATCH v2 00/10] IOMMU memory observability
-In-Reply-To: <20231130201504.2322355-1-pasha.tatashin@soleen.com>
-Message-ID: <2913539c-68f1-5597-df64-99a884a60e0a@google.com>
-References: <20231130201504.2322355-1-pasha.tatashin@soleen.com>
+        d=1e100.net; s=20230601; t=1703510700; x=1704115500;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ncwBF96I3+wYyMTERq4e+nBDWR/IIaIfVwaDbdyJKS8=;
+        b=Cwi5hvAAZCIflm0DDydNfLGt4X0oTOnGaUYexhGFb3rPvj8iacnz2CeoJ5n8WPNAmj
+         AopKCCTPXTy9Vb1/Vs9X1XNtKjUaTBwP675oVsQSSeQqN3LzkQP/7wGaSm/3jpA/H3bs
+         86iz85gaVESiUw9ckuGhAmcT8lgpk5FeApi78tSm49BObVoMgajMLRUZGw3Zv75l2hdL
+         Q6J3VssKKRnyVM/kcsaxYTFeFn42SwW8+zU/9f59yl3CxiU0uVuJ24h6l/11P/D4BO5W
+         596RMOFEny4CiWOWqCMuKR7NN+V5guMe9l1l9dPEq89rtGqwjt94g0JMzmuY1WIc2OH7
+         OIUw==
+X-Gm-Message-State: AOJu0YwkMbjN3JG65qoCSwRvI0wbvi5vSWaqzEN5RsYr/G+G4YPHcMxc
+	OvgL8fTdrUMtDkXshH6d2A9vlx0+YhiULwWXxDI=
+X-Google-Smtp-Source: AGHT+IG41SCwACWV8U87qYA6+6Kcw8BMdXdgLiqNbl02y0fJ7Ng0ACLwuJ4cwq6yo6961NrTK8H6KAeOUAmB5KRkDO4=
+X-Received: by 2002:adf:fd11:0:b0:336:8ac7:4654 with SMTP id
+ e17-20020adffd11000000b003368ac74654mr3188758wrr.135.1703510699790; Mon, 25
+ Dec 2023 05:24:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: Ruipeng Qi <ruipengqi7@gmail.com>
+Date: Mon, 25 Dec 2023 21:24:48 +0800
+Message-ID: <CADHLONEODF_JiB4q9zQW3P--U68Tf4RGKne4Gt3PB9e8pz7jPA@mail.gmail.com>
+Subject: Re: [Patch v6 03/12] docs: qcom: Add qualcomm minidump guide
+To: quic_mojha@quicinc.com
+Cc: agross@kernel.org, alim.akhtar@samsung.com, andersson@kernel.org, 
+	bmasney@redhat.com, conor+dt@kernel.org, corbet@lwn.net, gpiccoli@igalia.com, 
+	keescook@chromium.org, kernel@quicinc.com, kgene@kernel.org, 
+	konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-remoteproc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	mathieu.poirier@linaro.org, matthias.bgg@gmail.com, nm@ti.com, 
+	robh+dt@kernel.org, tony.luck@intel.com, vigneshr@ti.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 30 Nov 2023, Pasha Tatashin wrote:
+On Sat, 25 Nov 2023, Mukesh Ojha wrote:
 
-> IOMMU subsystem may contain state that is in gigabytes. Majority of that
-> state is iommu page tables. Yet, there is currently, no way to observe
-> how much memory is actually used by the iommu subsystem.
-> 
-> This patch series solves this problem by adding both observability to
-> all pages that are allocated by IOMMU, and also accountability, so
-> admins can limit the amount if via cgroups.
-> 
-> The system-wide observability is using /proc/meminfo:
-> SecPageTables:    438176 kB
-> 
-> Contains IOMMU and KVM memory.
-> 
-> Per-node observability:
-> /sys/devices/system/node/nodeN/meminfo
-> Node N SecPageTables:    422204 kB
-> 
-> Contains IOMMU and KVM memory memory in the given NUMA node.
-> 
-> Per-node IOMMU only observability:
-> /sys/devices/system/node/nodeN/vmstat
-> nr_iommu_pages 105555
-> 
-> Contains number of pages IOMMU allocated in the given node.
-> 
-> Accountability: using sec_pagetables cgroup-v2 memory.stat entry.
-> 
-> With the change, iova_stress[1] stops as limit is reached:
-> 
-> # ./iova_stress
-> iova space:     0T      free memory:   497G
-> iova space:     1T      free memory:   495G
-> iova space:     2T      free memory:   493G
-> iova space:     3T      free memory:   491G
-> 
-> stops as limit is reached.
-> 
+<+How a kernel client driver can register region with minidump
+<+------------------------------------------------------------
+<+
+<+Client driver can use ``qcom_minidump_region_register`` API's to register
+<+and ``qcom_minidump_region_unregister`` to unregister their region from
+<+minidump driver.
+<+
+<+Client needs to fill their region by filling ``qcom_minidump_region``
+<+structure object which consists of the region name, region's virtual
+<+and physical address and its size.
 
-I think this is *very* useful to provide visibility into a significant 
-amount of memory that we currently cannot observe on a host.  It can help 
-to uncover bugs and shed light onto a particularly large amount of memory 
-that would otherwise be mysterious.
+Hi, Mukesh, wish you a good holiday :)
 
-Joerg, Will, Robin, I think this series would go through the 
-git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tree since it 
-depends on a common framework for all other IOMMU implementations to then 
-use?
+I have the following idea, please help me to assess whether this can be
+implemented or not. As we all know, most of the kernel objects are
+allocated by the slab sub-system.I wonder if we can dump all memory
+keeped by the slab sub-system? If so,  we got most of the kernel objects
+which will be helpful to fix problems when we run with system issues.
 
-Any concerns about this patch series?  It would be very useful for us to 
-create visibility into this memory.
+How can we do this? From the description above, I think we should
+register one region for each slab,  for each slab will have some pages,
+and the memory between each slab is non-continuous. As we all
+know, there are millions of slabs in the system, so if we dump slabs
+in this way, it will introduce a heavy overhead.
 
+I am not very familiar with qualcomm minidump, maybe my thought
+is wrong. Looking forward to your reply!
 
-Pasha: any chance of adding a selftest that can be run that will test the 
-value of nr_iommu_pages?  I could imagine in the future that a bug could 
-be introduced where either an allocation or free is done through 
-alloc_pages() directly and its paired alloc/free function now results in a 
-leak or underflow.
-
-> This series encorporates suggestions that came from the discussion
-> at LPC [2].
-> ----------------------------------------------------------------------
-> [1] https://github.com/soleen/iova_stress
-> [2] https://lpc.events/event/17/contributions/1466
-> ----------------------------------------------------------------------
-> Previous versions
-> v1: https://lore.kernel.org/all/20231128204938.1453583-1-pasha.tatashin@soleen.com
-> ----------------------------------------------------------------------
-> 
-> Pasha Tatashin (10):
->   iommu/vt-d: add wrapper functions for page allocations
->   iommu/amd: use page allocation function provided by iommu-pages.h
->   iommu/io-pgtable-arm: use page allocation function provided by
->     iommu-pages.h
->   iommu/io-pgtable-dart: use page allocation function provided by
->     iommu-pages.h
->   iommu/exynos: use page allocation function provided by iommu-pages.h
->   iommu/rockchip: use page allocation function provided by iommu-pages.h
->   iommu/sun50i: use page allocation function provided by iommu-pages.h
->   iommu/tegra-smmu: use page allocation function provided by
->     iommu-pages.h
->   iommu: observability of the IOMMU allocations
->   iommu: account IOMMU allocated memory
-> 
->  Documentation/admin-guide/cgroup-v2.rst |   2 +-
->  Documentation/filesystems/proc.rst      |   4 +-
->  drivers/iommu/amd/amd_iommu.h           |   8 -
->  drivers/iommu/amd/init.c                |  91 +++++-----
->  drivers/iommu/amd/io_pgtable.c          |  13 +-
->  drivers/iommu/amd/io_pgtable_v2.c       |  20 +-
->  drivers/iommu/amd/iommu.c               |  13 +-
->  drivers/iommu/exynos-iommu.c            |  14 +-
->  drivers/iommu/intel/dmar.c              |  10 +-
->  drivers/iommu/intel/iommu.c             |  47 ++---
->  drivers/iommu/intel/iommu.h             |   2 -
->  drivers/iommu/intel/irq_remapping.c     |  10 +-
->  drivers/iommu/intel/pasid.c             |  12 +-
->  drivers/iommu/intel/svm.c               |   7 +-
->  drivers/iommu/io-pgtable-arm.c          |   7 +-
->  drivers/iommu/io-pgtable-dart.c         |  37 ++--
->  drivers/iommu/iommu-pages.h             | 231 ++++++++++++++++++++++++
->  drivers/iommu/rockchip-iommu.c          |  14 +-
->  drivers/iommu/sun50i-iommu.c            |   7 +-
->  drivers/iommu/tegra-smmu.c              |  18 +-
->  include/linux/mmzone.h                  |   5 +-
->  mm/vmstat.c                             |   3 +
->  22 files changed, 390 insertions(+), 185 deletions(-)
->  create mode 100644 drivers/iommu/iommu-pages.h
-> 
-> -- 
-> 2.43.0.rc2.451.g8631bc7472-goog
-> 
-> 
-> 
+Best Regards
+Ruipeng
