@@ -1,49 +1,49 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F654C626
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 06:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1E34CDF6
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 09:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kbZuLVhK"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20231226063431epoutp034eef4927c03802a45ac78aeae47e8915~kTiMhI3M61051210512epoutp03i
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 06:34:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20231226063431epoutp034eef4927c03802a45ac78aeae47e8915~kTiMhI3M61051210512epoutp03i
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NZKatsOS"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20231226090318epoutp02e90e320ba2ad8caf1c2cc5b18b573ce2~kVkFyARi21228412284epoutp02G
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 09:03:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20231226090318epoutp02e90e320ba2ad8caf1c2cc5b18b573ce2~kVkFyARi21228412284epoutp02G
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1703572471;
-	bh=QTB84M50WFYIDe/+9MiAYey4svYfPT1DbPQhlDkmeEg=;
+	s=mail20170921; t=1703581398;
+	bh=lQRe+owTbimdd8Sp6N+poqTXfo6QgtFnNj5z5IZviKo=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=kbZuLVhKqJwYE/hpR5vnjGHPphn4VbfDxaEsQKATm7D8KKFDh34UWA/9rQ4Cht1AT
-	 ochOcunOOALMlw55dzxNmYJYCa9XW1ER6WSHCAbo1VBnNo+y8HFXbCQF5Qtwvb4saP
-	 wRkjBS/cSpEeF893Ii14p0bYbBEgl9VJJiJnakoc=
+	b=NZKatsOSJ5xstGkHsKkQHk8Wa4sptGRbZEM+QplYGs9PbAMBxIR9949mBO3Qf8WLd
+	 i7ufNvVywlR26qJUtODtbnS/Pgb9sVSmWdhfUDG+dCiZ92CbKVkRSu52AtCNvHuVQd
+	 6B7aVSBX3KVRAo4rP2srg3mjGbG0NlQRe77uUfmE=
 Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20231226063431epcas5p2a1d9081c0516f4d5e4d0375bc170e60b~kTiL28fQj2204722047epcas5p20;
-	Tue, 26 Dec 2023 06:34:31 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4SzlP13BZBz4x9Pp; Tue, 26 Dec
-	2023 06:34:29 +0000 (GMT)
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20231226090317epcas5p4e85595818e86b20e766b7f254c7e2007~kVkFQbmny3126531265epcas5p4n;
+	Tue, 26 Dec 2023 09:03:17 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Szphg5TLJz4x9Q1; Tue, 26 Dec
+	2023 09:03:15 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
 	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A8.F1.19369.5F37A856; Tue, 26 Dec 2023 15:34:29 +0900 (KST)
+	EA.AF.19369.3D69A856; Tue, 26 Dec 2023 18:03:15 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
 	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20231226062756epcas5p22bc39bd25d403a9bed16c220f82c4a83~kTccWazlP0679806798epcas5p21;
-	Tue, 26 Dec 2023 06:27:56 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	20231226085324epcas5p28fdb50c880752cab3e5e949f829e216f~kVbcwRGpo2527825278epcas5p2L;
+	Tue, 26 Dec 2023 08:53:24 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20231226062756epsmtrp1bf1ad9b6da87585b49f8d077f6cdf6ff~kTccVuCsa1947119471epsmtrp10;
-	Tue, 26 Dec 2023 06:27:56 +0000 (GMT)
-X-AuditID: b6c32a50-9e1ff70000004ba9-de-658a73f55bd7
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	A8.C7.18939.C627A856; Tue, 26 Dec 2023 15:27:56 +0900 (KST)
-Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip2.samsung.com
+	20231226085324epsmtrp1c575756ed28e9ae60a273c4a5b79a73d~kVbcswjw_0472704727epsmtrp1O;
+	Tue, 26 Dec 2023 08:53:24 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-de-658a96d35cab
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2D.5F.07368.4849A856; Tue, 26 Dec 2023 17:53:24 +0900 (KST)
+Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20231226062754epsmtip29f5e872132462de8780110b3955da104~kTcasjk3e0864408644epsmtip2g;
-	Tue, 26 Dec 2023 06:27:54 +0000 (GMT)
+	20231226085322epsmtip110d49d9d15d4341de41e5161909a1015~kVbbIaMr00059800598epsmtip1Z;
+	Tue, 26 Dec 2023 08:53:22 +0000 (GMT)
 From: "Aakarsh Jain" <aakarsh.jain@samsung.com>
 To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Marek
  Szyprowski'" <m.szyprowski@samsung.com>, "'Andrzej Hajda'"
@@ -51,202 +51,108 @@ To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Marek
 Cc: <linux-fsd@tesla.coma>, <linux-samsung-soc@vger.kernel.org>, "'Smitha T
  Murthy'" <smithatmurthy@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20231224-n-s5p-mfc-const-v1-9-a3b246470fe4@linaro.org>
-Subject: RE: [PATCH 09/15] media: s5p-mfc: constify s5p_mfc_fmt structures
-Date: Tue, 26 Dec 2023 11:57:53 +0530
-Message-ID: <15d401da37c4$a9dece80$fd9c6b80$@samsung.com>
+In-Reply-To: <20231224-n-s5p-mfc-const-v1-4-a3b246470fe4@linaro.org>
+Subject: RE: [PATCH 04/15] media: s5p-mfc: constify fw_name strings
+Date: Tue, 26 Dec 2023 14:23:21 +0530
+Message-ID: <15d501da37d8$fc10bd30$f4323790$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKOGlHY6WxiJqLoSx78067AznjgmAGjTMXtAfUJOwGvNpHr8A==
+Thread-Index: AQKOGlHY6WxiJqLoSx78067AznjgmAEpEv+0APqc4dOvQl7NcA==
 Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmlu7X4q5Ug7dPhC3uL/7MYrH39VZ2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmlu7laV2pBjNnaFrcX/yZxWLv663s
+	FpseX2O1WDY7yOLyrjlsFj0btrJazDi/j8li7ZG77BbLNv1hsmhpXMLqwOWxc9Zddo/Fe14y
+	eWxa1cnmcefaHjaPzUvqPfq2rGL0+Pv6FZvH501yARxR2TYZqYkpqUUKqXnJ+SmZeem2St7B
+	8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QCcqKZQl5pQChQISi4uV9O1sivJLS1IVMvKL
+	S2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzDh36xFjQyVux5MUSpgbGhdxdjJwc
+	EgImEjd+7WftYuTiEBLYwyjxau8ZdgjnE6PE5i8v2EGqhAS+MUo82BoN03Hv0kxGiKK9jBKL
+	+65CtT9nlJhxACTDycEmoC9x/1QPWEJE4ByjxLb+KUwgDrPATUaJY29mMncxcnBwCrhInFlb
+	B9IgLOAs8e/wdrB1LAKqEmubFzOD2LwClhJ/Lk1ggbAFJU7OfAJmMwvIS2x/O4cZ4iQFiZ9P
+	l7GCjBQRcJKYtd0XokRc4ujPHqiSIxwSbas4IGwXiUsbNrNA2MISr45vYYewpSRe9rdB2ckS
+	jxe9hOrNkVi/ZwpUvb3EgStzWEBWMQtoSqzfpQ8RlpWYemodE8RaPone30+YIOK8Ejvmwdhq
+	EnPu/GCFsGUkDq9eyjiBUWkWksdmIXlsFpIPZiFsW8DIsopRKrWgODc9Ndm0wFA3L7UcHuHJ
+	+bmbGMEpWCtgB+PqDX/1DjEycTAeYpTgYFYS4ZVV7EgV4k1JrKxKLcqPLyrNSS0+xGgKDO6J
+	zFKiyfnALJBXEm9oYmlgYmZmZmJpbGaoJM77unVuipBAemJJanZqakFqEUwfEwenVAOTmK+k
+	yQ79j0lSXmJqM3+3HSratuud19OM4OKOiRdMk9gMLmz5kffmVa9L4yP2Mp7u9N9CvC+vvHu7
+	WCzKrHudqt/X5DbuGarzJDK497bP3LXcVpN16e2dMrJKhuGpCVwVW2y0u7uY3h9mWVc951V9
+	VKTeKRvJDgHPOYoBuWddS59u2HT9A+eSW06rarjLPjB8FxeKU+19G2DAG/Zvx4RJkzrYT2+X
+	evSw4/IFznOVvJ95T4ft/5Pq3v3cZ5pbz/fd9m/O/+Asyfr61mL27IknTQ4YBfkfL9/QdnFn
+	oPJW866pL9b2V52VnTz5UpnKh2NWE3aoWSyfyuLhV9+UoWiQxey8Q1L0YOqbWScXH36hxFKc
+	kWioxVxUnAgAgADVmUoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSnG7LlK5Ug1tn2CzuL/7MYrH39VZ2
 	i02Pr7FaLJsdZHF51xw2i54NW1ktZpzfx2Sx9shddotlm/4wWbQ0LmF14PLYOesuu8fiPS+Z
-	PDat6mTzuHNtD5vH5iX1Hn1bVjF6/H39is3j8ya5AI6obJuM1MSU1CKF1Lzk/JTMvHRbJe/g
-	eOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBOVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnF
-	JbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZG884FezRqPh78Tx7A+N6pS5GTg4J
-	AROJpjMzGLsYuTiEBPYwSsw7dZEVJCEk8IlRYm6bC0QCyP74vIcdpqNx01wmiMRORomObZOY
-	IZznjBIP/i8Ea2cT0Je4f6qHFSQhInCOUWJb/xSwFmaBm4wSx97MZAap4hRwkfiz6iRYh7CA
-	l8TD3xfYuhg5OFgEVCV23wwGCfMKWErM+zmBFcIWlDg58wkLiM0soC2xbOFrZoiTFCR+Pl0G
-	ViMi4CSxcMltJogacYmjP3vArpMQOMAhcWLKYqgfXCT6Tt5jhLCFJV4d3wIVl5J42d8GZSdL
-	PF70EmpBjsT6PVNYIGx7iQNX5rCA3MksoCmxfpc+RFhWYuqpdVB7+SR6fz9hgojzSuyYB2Or
-	Scy584MVwpaROLx6KeMERqVZSF6bheS1WUhemIWwbQEjyypGqdSC4tz01GTTAkPdvNRyeIwn
-	5+duYgQnYa2AHYyrN/zVO8TIxMF4iFGCg1lJhFdWsSNViDclsbIqtSg/vqg0J7X4EKMpMLwn
-	MkuJJucD80BeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1MPmlp
-	S/VqXGduTNg1tfCkjcUOdfunFgqb9y73qy0WPLKCK/4+D8fbsxOEn97MebTMOc3t2r1Tl80P
-	Vif93Nq2VlpGUKb1dkmjQ+p7NeF0pde6b7XuNPIavr9YvifFfM1eP5VNwb8OyIe0ZUWHnDth
-	su8Yu8GhcMFNMxxed73X6jv1uos7wvgJV4K92uzy5ijt2c/uTD3f/f7C329THI5vb7Kb7183
-	/9xa3vN7uvvm3vt9b1avxr/7Rgt3KRjdfPapX0L16VVxN46iR4dW7QytmbClXDS4KONS2mE7
-	pjbtXG5+dTfOTf1pWS2HCu6YsYvt2CrQZaas4HPDR15Xvvhy8g/BBDutyT7yd29VzpitxFKc
-	kWioxVxUnAgANnw1BUsEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSvG5OUVeqwfN2KYv7iz+zWOx9vZXd
-	YtPja6wWy2YHWVzeNYfNomfDVlaLGef3MVmsPXKX3WLZpj9MFi2NS1gduDx2zrrL7rF4z0sm
-	j02rOtk87lzbw+axeUm9R9+WVYwef1+/YvP4vEkugCOKyyYlNSezLLVI3y6BK+P6qe1MBZ/U
-	Ktat38/cwPhSoYuRk0NCwESicdNcpi5GLg4hge2MEhPWzGOESMhI/G87xg5hC0us/PecHaLo
-	KaPEyyOT2EASbAL6EvdP9bCCJEQELjBKbNmzgA3EYRa4zyjRtWk71NyzQM6i/WCzOAVcJP6s
-	OskKYgsLeEk8/H0BqIODg0VAVWL3zWCQMK+ApcS8nxNYIWxBiZMzn7CA2MwC2hK9D1sZYexl
-	C18zQ5ynIPHz6TKwehEBJ4mFS24zQdSISxz92cM8gVF4FpJRs5CMmoVk1CwkLQsYWVYxiqYW
-	FOem5yYXGOoVJ+YWl+al6yXn525iBMegVtAOxmXr/+odYmTiYDzEKMHBrCTCK6vYkSrEm5JY
-	WZValB9fVJqTWnyIUZqDRUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXAtLo2tqbGc0rlx9b4
-	x19ke9IXPQm6M/F76vYvzh/O9Llc69RflCX97e3hvc5zp+1uPPrgqCzv36gVdy/2dVhcX7NO
-	7+3HWS9XF57p3ZCXvOa4e1XbbMYV/6PWbQ/Jla+NsLpv1GS5zCTPRLTunkGO0x/t2LSC81oP
-	n0pOueLxxbPqg3l0zffbxzfNXsJV5DzXb+cKwSZ7npcfHiUr1XT49JkZHjs8eZKys+HmoFli
-	X9rjL21jOly55Nwky06l3+eW7VCwNft9cRLzC8FjpjK14fzi0XdV1hXebo16yq9wanK+ifbm
-	p5eD5/8K0tNceXBdMPu9QzOn7y9RNLzHae8eekZ26ta/xeufHLr36yx7wwslluKMREMt5qLi
-	RADyq//SMAMAAA==
-X-CMS-MailID: 20231226062756epcas5p22bc39bd25d403a9bed16c220f82c4a83
+	PDat6mTzuHNtD5vH5iX1Hn1bVjF6/H39is3j8ya5AI4oLpuU1JzMstQifbsEroxDhz4xFnTy
+	Vix5sYSpgXEhdxcjJ4eEgInEvUszGbsYuTiEBHYzSiya+Y8ZIiEj8b/tGDuELSyx8t9zMFtI
+	4CmjxMG7JSA2m4C+xP1TPawgzSICFxgltuxZwAbiMAvcZ5To2rSdCWLsWUaJQ/OusHQxcnBw
+	CrhInFlbB9ItLOAs8e/wdrCpLAKqEmubF4Nt5hWwlPhzaQILhC0ocXLmEzCbWUBbovdhKyOE
+	LS+x/e0cqEsVJH4+XcYKMl5EwEli1nZfiBJxiaM/e5gnMArPQjJpFpJJs5BMmoWkZQEjyypG
+	ydSC4tz03GTDAsO81HK94sTc4tK8dL3k/NxNjOA41NLYwXhv/j+9Q4xMHIyHGCU4mJVEeGUV
+	O1KFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYDqhvuXW
+	n/AgRivdc97J6h9u3yp6H1G1+u/ZIHU5z4IOubKinG0cJlffLz2uLxz2K6aPP5AvWW5XRcD1
+	mO0SUs4Ksy+x+xucvH7ELs20xa3vca/xycv5iewM5wzlJ9n8luirkrsy8//Vys4Q9ceOzrZV
+	DwPSAla/l1yaLxp7wSVxkfSe0PnvpCRidnjVfqlb/i348m87yam5t52lOFocr3kHsd0wk1Zh
+	DAu9tMMtc7v69NJQ4xtlShPULe6ZcDRMuLuNrzpN5rdAdKN66of2Tdyv1eqAYXHXOlBXJZDz
+	TzDnmvNhu87IKj2+fMZEu6tkfe6l6OXMsY/LLc/ov5/jlnU2z37jdG+HtZvn/lBiKc5INNRi
+	LipOBADtgQakMgMAAA==
+X-CMS-MailID: 20231226085324epcas5p28fdb50c880752cab3e5e949f829e216f
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20231224154446epcas5p2b08000b76b8a94063b164a55e5e8a999
+X-CMS-RootMailID: 20231224154440epcas5p3c2f26174c8b32edf390629f1e829403a
 References: <20231224-n-s5p-mfc-const-v1-0-a3b246470fe4@linaro.org>
-	<CGME20231224154446epcas5p2b08000b76b8a94063b164a55e5e8a999@epcas5p2.samsung.com>
-	<20231224-n-s5p-mfc-const-v1-9-a3b246470fe4@linaro.org>
+	<CGME20231224154440epcas5p3c2f26174c8b32edf390629f1e829403a@epcas5p3.samsung.com>
+	<20231224-n-s5p-mfc-const-v1-4-a3b246470fe4@linaro.org>
 
 
 
 > -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > Sent: 24 December 2023 21:14
-> To: Marek Szyprowski <m.szyprowski=40samsung.com>; Andrzej Hajda
-> <andrzej.hajda=40intel.com>; Mauro Carvalho Chehab
-> <mchehab=40kernel.org>
-> Cc: Aakarsh Jain <aakarsh.jain=40samsung.com>; linux-fsd=40tesla.coma; li=
-nux-
-> samsung-soc=40vger.kernel.org; Smitha T Murthy
-> <smithatmurthy=40gmail.com>; linux-arm-kernel=40lists.infradead.org; linu=
-x-
-> media=40vger.kernel.org; linux-kernel=40vger.kernel.org; Krzysztof Kozlow=
-ski
-> <krzysztof.kozlowski=40linaro.org>
-> Subject: =5BPATCH 09/15=5D media: s5p-mfc: constify s5p_mfc_fmt structure=
-s
->=20
-> Static =22s5p_mfc_fmt=22 structures are not modified by the driver, so th=
-ey can
-> be made const for code safety.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> To: Marek Szyprowski <m.szyprowski@samsung.com>; Andrzej Hajda
+> <andrzej.hajda@intel.com>; Mauro Carvalho Chehab
+> <mchehab@kernel.org>
+> Cc: Aakarsh Jain <aakarsh.jain@samsung.com>; linux-fsd@tesla.coma; linux-
+> samsung-soc@vger.kernel.org; Smitha T Murthy
+> <smithatmurthy@gmail.com>; linux-arm-kernel@lists.infradead.org; linux-
+> media@vger.kernel.org; linux-kernel@vger.kernel.org; Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org>
+> Subject: [PATCH 04/15] media: s5p-mfc: constify fw_name strings
+> 
+> Constify stored pointers to firmware names for code safety.  These are not
+> modified by the driver.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h =7C 4 ++--
->  drivers/media/platform/samsung/s5p-mfc/s5p_mfc_dec.c    =7C 6 +++---
->  drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c    =7C 8 ++++----
->  3 files changed, 9 insertions(+), 9 deletions(-)
->=20
+>  drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 > diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
 > b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-> index fa556f27fa06..e9283020070e 100644
+> index 5304f42c8c72..f33a755327ef 100644
 > --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
 > +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_common.h
-> =40=40 -633,8 +633,8 =40=40 struct s5p_mfc_ctx =7B
->  	unsigned int int_err;
->  	wait_queue_head_t queue;
->=20
-> -	struct s5p_mfc_fmt *src_fmt;
-> -	struct s5p_mfc_fmt *dst_fmt;
-> +	const struct s5p_mfc_fmt *src_fmt;
-> +	const struct s5p_mfc_fmt *dst_fmt;
->=20
->  	struct vb2_queue vq_src;
->  	struct vb2_queue vq_dst;
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_dec.c
-> b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_dec.c
-> index 4dbe8792ac3d..2f664c7e9e4c 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_dec.c
-> =40=40 -27,7 +27,7 =40=40
->  =23include =22s5p_mfc_opr.h=22
->  =23include =22s5p_mfc_pm.h=22
->=20
-> -static struct s5p_mfc_fmt formats=5B=5D =3D =7B
-> +static const struct s5p_mfc_fmt formats=5B=5D =3D =7B
->  	=7B
->  		.fourcc		=3D V4L2_PIX_FMT_NV12MT_16X16,
->  		.codec_mode	=3D S5P_MFC_CODEC_NONE,
-> =40=40 -163,7 +163,7 =40=40 static struct s5p_mfc_fmt formats=5B=5D =3D =
-=7B  =23define
-> NUM_FORMATS ARRAY_SIZE(formats)
->=20
->  /* Find selected format description */
-> -static struct s5p_mfc_fmt *find_format(struct v4l2_format *f, unsigned i=
-nt
-> t)
-> +static const struct s5p_mfc_fmt *find_format(struct v4l2_format *f,
-> +unsigned int t)
->  =7B
->  	unsigned int i;
->=20
-> =40=40 -387,7 +387,7 =40=40 static int vidioc_g_fmt(struct file *file, vo=
-id *priv,
-> struct v4l2_format *f)  static int vidioc_try_fmt(struct file *file, void=
- *priv,
-> struct v4l2_format *f)  =7B
->  	struct s5p_mfc_dev *dev =3D video_drvdata(file);
-> -	struct s5p_mfc_fmt *fmt;
-> +	const struct s5p_mfc_fmt *fmt;
->=20
->  	mfc_debug(2, =22Type is %d=5Cn=22, f->type);
->  	if (f->type =3D=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) =7B diff --git
-> a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-> b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-> index 4b4c129c09e7..d6a4b9c701eb 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_enc.c
-> =40=40 -30,7 +30,7 =40=40
->  =23define DEF_SRC_FMT_ENC	V4L2_PIX_FMT_NV12M
->  =23define DEF_DST_FMT_ENC	V4L2_PIX_FMT_H264
->=20
-> -static struct s5p_mfc_fmt formats=5B=5D =3D =7B
-> +static const struct s5p_mfc_fmt formats=5B=5D =3D =7B
->  	=7B
->  		.fourcc		=3D V4L2_PIX_FMT_NV12MT_16X16,
->  		.codec_mode	=3D S5P_MFC_CODEC_NONE,
-> =40=40 -97,7 +97,7 =40=40 static struct s5p_mfc_fmt formats=5B=5D =3D =7B=
-  =7D;
->=20
->  =23define NUM_FORMATS ARRAY_SIZE(formats) -static struct s5p_mfc_fmt
-> *find_format(struct v4l2_format *f, unsigned int t)
-> +static const struct s5p_mfc_fmt *find_format(struct v4l2_format *f,
-> +unsigned int t)
->  =7B
->  	unsigned int i;
->=20
-> =40=40 -1394,7 +1394,7 =40=40 static int vidioc_g_fmt(struct file *file, =
-void *priv,
-> struct v4l2_format *f)  static int vidioc_try_fmt(struct file *file, void=
- *priv,
-> struct v4l2_format *f)  =7B
->  	struct s5p_mfc_dev *dev =3D video_drvdata(file);
-> -	struct s5p_mfc_fmt *fmt;
-> +	const struct s5p_mfc_fmt *fmt;
->  	struct v4l2_pix_format_mplane *pix_fmt_mp =3D &f->fmt.pix_mp;
->=20
->  	if (f->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) =7B =40=40 -
-> 2355,7 +2355,7 =40=40 static const struct v4l2_ioctl_ops s5p_mfc_enc_ioct=
-l_ops
-> =3D =7B
->  	.vidioc_unsubscribe_event =3D v4l2_event_unsubscribe,  =7D;
->=20
-> -static int check_vb_with_fmt(struct s5p_mfc_fmt *fmt, struct vb2_buffer
-> *vb)
-> +static int check_vb_with_fmt(const struct s5p_mfc_fmt *fmt, struct
-> +vb2_buffer *vb)
->  =7B
->  	int i;
->=20
->=20
+> @@ -227,7 +227,7 @@ struct s5p_mfc_variant {
+>  	unsigned int port_num;
+>  	u32 version_bit;
+>  	struct s5p_mfc_buf_size *buf_size;
+> -	char	*fw_name[MFC_FW_MAX_VERSIONS];
+> +	const char	*fw_name[MFC_FW_MAX_VERSIONS];
+>  	const char	*clk_names[MFC_MAX_CLOCKS];
+>  	int		num_clocks;
+>  	bool		use_clock_gating;
+> 
 > --
 > 2.34.1
 
-Reviewed-by: Aakarsh Jain <aakarsh.jain=40samsung.com>
+Reviewed-by: Aakarsh Jain <aakarsh.jain@samsung.com>
 
-Thanks=21
+Thanks!
 
