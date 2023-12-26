@@ -1,141 +1,96 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EE54CDFD
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 09:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80EB4F895
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 17:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a5+fac/o"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40d2e5e8d1dso53407345e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 01:06:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="XG8NXn4F"
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-427e8bb6778so872241cf.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Dec 2023 09:15:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703581576; x=1704186376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mw+VgX6rqCZAGRRzrtKww64vKWB9C04MKuOvSYYGa4s=;
-        b=a5+fac/oClxmGVsmJ5r8B9sHsuk00ee4As8tIjjNalHMsHUMLNoTbI1jLQplmOo24G
-         SbJazcBFbyvKTHDHkzWu8MFwbHH4g2QgWXDza59ESEtWRnfwkwIF46rv/eCC3Wcm1PCm
-         f9QV9hhc94djp5coPJbZIhT10ZfRE1z1e8/y5hl7fw07mH4pV2k0oOEjUMl+tqyWkZkL
-         DCoWs6XEP+gt/POp9u+scrJAqMn06GzWonfTmDFcDagdTxt02bthvr03MXWx4ipU7SVb
-         JS9+w91S5sQj/tweHwOOkAA0vbNUJARRJaJihMOS/wXIbZYQTTxPs6S8BBukD73+0AAQ
-         jQ+A==
+        d=soleen.com; s=google; t=1703610912; x=1704215712; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=znBescOeGDyEd/eBwZlWM7zCSH3WtYT9hTuxQY/0ciQ=;
+        b=XG8NXn4Fr+o6AFgkb7X5OPcfBqq+fpn7iaghciF2mBPh/76Z2Gl1GjtDqFoZCjWXCq
+         25dZxF+i90zFauBaUQNVn/qUPfAvXqJCdbrGfCheQf51Je/x8+jLj6NnWT8TPEV3dVSZ
+         u5LjEdKRw1h9nyn8cTp+m6kJOPOpbX3qqRN4NMpixyXeXeHoOfa/SrvpalKAo97CSmqt
+         H9HhBbupSM09x9RC8oDJEl0tkapBhgK4he/2p4f67NS3gUCmLiLqKkIlMDdtydWoaPAy
+         Qj6N0Mfr5QSSwMaMkZ9oUzjT6UXbGvupaByjQMg5+QHcGFUUXGRHUXX1MnPXAX/J3elA
+         fADw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703581576; x=1704186376;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mw+VgX6rqCZAGRRzrtKww64vKWB9C04MKuOvSYYGa4s=;
-        b=nhj/Meq3XnOI1UmP8qh3zwRMkgFdEEr6/c15oP3DG1onmErAFC2/HBDD49JMiNwvLC
-         eHQXwjFNyr5aeVpfElGVgNHmHCMcrndq4RWaBnrr0Huodx7QmCmyn9k8+crt6cara87j
-         wq8b07Zex+6BvmhPQs/K5lH/Wg7vxZEmigkaF/+tv76aWD1NFo0mxX6FzG35u9pk4Tts
-         vRDdCCy/OgZ/eBJJqqtKfyiJSi5fe6G+rJGGOJJ+q+vEtagLa7Dn2BvyF6TlmUJgEFPK
-         +Zx8MOG39GPvVznVpDjWJ+fvdf7NKy9A8rZIlFGM/Eyij296S6WMdRffOqTC39aHfGYJ
-         2K2g==
-X-Gm-Message-State: AOJu0YyM47lStStWpJCFPKNbHvfkMOS1BUWK/8iJZHxI7Sex9EvjqUo9
-	/RNQRv3cN4maHaEud1aoa84of4mXTmrMPdFVGvqf+Fp1BjY=
-X-Google-Smtp-Source: AGHT+IFYTSaAFvffZs8LIxajWYHYBvNoCA77G/7VNQcMc8466nMeN1w41mjxWXA79h/+fER61egMuw==
-X-Received: by 2002:a05:600c:5248:b0:40d:5ab6:4697 with SMTP id fc8-20020a05600c524800b0040d5ab64697mr203623wmb.267.1703581576323;
-        Tue, 26 Dec 2023 01:06:16 -0800 (PST)
-Received: from [192.168.0.22] ([78.10.206.178])
-        by smtp.gmail.com with ESMTPSA id l3-20020a170907914300b00a23640f7f23sm5539636ejs.47.2023.12.26.01.06.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Dec 2023 01:06:15 -0800 (PST)
-Message-ID: <cdb2cfb6-8385-4f4d-b49b-b04d19d4bdc0@linaro.org>
-Date: Tue, 26 Dec 2023 10:06:14 +0100
+        d=1e100.net; s=20230601; t=1703610912; x=1704215712;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=znBescOeGDyEd/eBwZlWM7zCSH3WtYT9hTuxQY/0ciQ=;
+        b=EFAeAoEvTWDf5v7TbNdU9FuQs0ZKxGi37ByB7HdI0ZaDwAFWNDsO3611KMTrYSha8K
+         cuig5GAAwtbIpew96tsUdLEHAtAD2a1v2OINeDd/VoDr+di0iZ3dcQT8v74vN/Oz+sLD
+         DiyFAbXGHeka5HU5I1PaiAFgikipEi9zkFxKiPpYOS9beWBSXB+xoWchzi0mfMLGQiaw
+         BzBDIZ3S0030CWoIUpkq19Jb7Z5YoIhNR5gW2t6RuLHtQMwvbEKVrxE7WShZrVO0TdLb
+         8swQaCyKPb2CW5Ymb+0+PFp4vPo/gm9xuyMdGAanVetC6a2Sj3o20TvdATZ0X7pIDKja
+         xB+Q==
+X-Gm-Message-State: AOJu0Yz7r5xgfK9gGwPdNxb9SoHb+AgCUmi8Y1bBfd4vGP0MOzkhw51m
+	Qb1hP8w4NrhGvxCE+ZiLgkOhOj7HlveCZ8Ne37x5qiCV6KOMDQ==
+X-Google-Smtp-Source: AGHT+IHyQ5pm+vKsp8dlt+xdHnTW6C3uPhOZpDSwoY++VClJ/nDwEbMxRN02tbeUhgBwD4pSJVi4TOSqszJhqwYmmj4=
+X-Received: by 2002:ac8:5bc2:0:b0:425:a28f:ddd8 with SMTP id
+ b2-20020ac85bc2000000b00425a28fddd8mr8563250qtb.137.1703610912560; Tue, 26
+ Dec 2023 09:15:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/15] media: s5p-mfc: drop static device variable in
- s5p_mfc_pm.c
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- 'Marek Szyprowski' <m.szyprowski@samsung.com>,
- 'Andrzej Hajda' <andrzej.hajda@intel.com>,
- 'Mauro Carvalho Chehab' <mchehab@kernel.org>
-Cc: linux-fsd@tesla.coma, linux-samsung-soc@vger.kernel.org,
- 'Smitha T Murthy' <smithatmurthy@gmail.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20231224-n-s5p-mfc-const-v1-0-a3b246470fe4@linaro.org>
- <CGME20231224154454epcas5p311d2b74fb1809bb555a442d1bce82edb@epcas5p3.samsung.com>
- <20231224-n-s5p-mfc-const-v1-15-a3b246470fe4@linaro.org>
- <15d301da37c3$cff325e0$6fd971a0$@samsung.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <15d301da37c3$cff325e0$6fd971a0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20231130201504.2322355-1-pasha.tatashin@soleen.com>
+ <20231130201504.2322355-2-pasha.tatashin@soleen.com> <776e17af-ae25-16a0-f443-66f3972b00c0@google.com>
+ <CA+CK2bA8iJ_w8CSx2Ed=d2cVSujrC0-TpO7U9j+Ow-gfk1nyfQ@mail.gmail.com> <0ba8e579-2b6f-4e9f-a38c-097694f14d3c@intel.com>
+In-Reply-To: <0ba8e579-2b6f-4e9f-a38c-097694f14d3c@intel.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 26 Dec 2023 12:14:35 -0500
+Message-ID: <CA+CK2bBGHv3f2AM999C5zoo018yzFdQpygUaPn0AVoJ7cX+Sbg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] iommu/vt-d: add wrapper functions for page allocations
+To: "Liu, Jingqi" <jingqi.liu@intel.com>
+Cc: David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jernej.skrabec@gmail.com, 
+	jonathanh@nvidia.com, joro@8bytes.org, krzysztof.kozlowski@linaro.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, 
+	m.szyprowski@samsung.com, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/12/2023 07:21, Aakarsh Jain wrote:
->> -int s5p_mfc_clock_on(void);
->> -void s5p_mfc_clock_off(void);
->> -int s5p_mfc_power_on(void);
->> -int s5p_mfc_power_off(void);
->> +int s5p_mfc_clock_on(struct s5p_mfc_dev *dev); void
->> +s5p_mfc_clock_off(struct s5p_mfc_dev *dev); int
->> s5p_mfc_power_on(struct
->> +s5p_mfc_dev *dev); int s5p_mfc_power_off(struct s5p_mfc_dev *dev);
->>
->>  #endif /* S5P_MFC_PM_H_ */
->>
->> --
->> 2.34.1
-> 
-> Reviewed-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+> >> Document the locking requirements for this?
+> >
+> > Thank you for the review. I will add info about locking requirements,
+> > in fact they are very relaxed.
+> >
+> > These pages are added to the list by unmaps or remaps operation in
+> > Intel IOMMU implementation. These calls assume that whoever is doing
+> > those operations has exclusive access to the VA range in the page
+> > table of that operation. The pages in this freelist only belong to the
+> > former page-tables from the IOVA range for those operations.
+>
+> These pages maybe be accessed concurrently by thread contexts other than
+> the IOMMU driver (such as debugfs).
 
-Pleasy kindly trim the replies from unnecessary context.  It makes it
-much easier to find new content.
+Good point regarding debugfs. While, it does not change any locking
+assumptions, for this series. It might change some design decisions
+that we need to make when freeing pages on unmaps (a separate RFC
+series that I sent). I will have to study how debugfs affect refcnt
+and mapcount, and whether we could use per-page page table locking if
+needed.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Pasha
