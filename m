@@ -1,49 +1,49 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C861F44384
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Dec 2023 11:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4253544C63
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Dec 2023 11:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RUq7OYyi"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-336c5b5c163so1010130f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Dec 2023 03:40:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oMgwFwVS"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-336f2c88361so652291f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Dec 2023 03:54:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703677234; x=1704282034; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1703678086; x=1704282886; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k8xitBfBDCof+qqntwU7d8AoHD0pzomEDNXPXqbpXvY=;
-        b=RUq7OYyid3LOvPxccQcs85ycAWMU3MI7vjsX34EzqJOsKfxAIW2PIiBQIfpeglJB9j
-         imEI/zKi6dcys2oYBxoLrVCRre4fE3mUZ4CiZpYpOG8Uq2ggKItt9nBBU8lICBBlCQs1
-         3leLbOUjEjbVUoJaKfTpK6glMNlox8CYJJjAUKaoHNGt9fYexY9LREBAaSu1/twKNnr8
-         4lYe7nyX3FOyE1JguRC9N8doaMPGVC4Em9tc2spGrRrS59B03wedTxwABQPX+5Oubr3D
-         jsZwhL233xHxk2GFmya4vZzGKuaGxXnzS4DZ2n3dt3ChHZESApar6m/DO81i/YbS2yXB
-         1x4Q==
+        bh=0rYgu3SiCaq7hrmRY3ZPE+6M1nIV7bD+FPdYLtShoxI=;
+        b=oMgwFwVS3KRWfiSHUWID6yrD72UYZpzCJ9RuLzP/UQrH8nzZpJCWYONXjDsXDwUmD1
+         FgQURwQOLlRvSup2pbVDIT3MI894pGqS7ikz/219rJJTwmwBDTZZbnZGO3/Q4hrSLtBG
+         3aM4Pnny6f3m2aOTIgxxX2RxYRN2tMv8PEYM3F5EU6PWSL52C5JLphxB6NdNhyMtdBX4
+         8FdSSubehAmezSOPo7ZCveeJCFy53wI4QU+fajrq8ijtezuxilOZ8bd8PLJymOmBQP+K
+         Fu2UDRyIh03CKwHRwHbztMrdPOBvzXK0FpWCb7uTO6zAauxfYuaRIcnte5EBDcAKhXEe
+         8TUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703677234; x=1704282034;
+        d=1e100.net; s=20230601; t=1703678086; x=1704282886;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k8xitBfBDCof+qqntwU7d8AoHD0pzomEDNXPXqbpXvY=;
-        b=Cqfb7T7MpT6NUyKeLBSJBULWMWcQOV9AS/T2kEPScwxJC6o/evyk9puC9SqxfVpwlc
-         wx8hf+5g8zMbyLOsmPylcyDpGcnXhVHVyGGy89J6u2Lww1bFoE/LTMzCWqznpc1Ly5RQ
-         VHyCEKnUIx7UboFLNIq788K4VlPoMnaz1/T06z5UHVV/qbi+Jf3A8V5mgcfrHuuRvmm0
-         ggyDIUQlF2plb4K/3pbCBjk2ci+USEnb4rF6+oFXAdGDfzA+EPgDQDOfIONDH6KGC8oX
-         UnsQE1oVHqsWpSrdFhWh3eFX+zCDXej3ZzsI1NofgdpKp/xdVnxQje4C9pXkywZwmzN2
-         Nlow==
-X-Gm-Message-State: AOJu0YznkzM+xNMFxuGJzvDDPj/CRuEW5i1fg0PVM4sTbtQtGdCcCH/m
-	SGrPt/Hm/JZwvUjQQUyrjPfCs5hugfjobA==
-X-Google-Smtp-Source: AGHT+IEA7bn2xEOrnHgvTjmO+M25nJu1oZXTYL0Vd9uaDJ3mdO29yjBGrEOxufxgaVsp9OBmYaqlqg==
-X-Received: by 2002:a05:6000:1151:b0:336:7758:957e with SMTP id d17-20020a056000115100b003367758957emr4608345wrx.25.1703677234073;
-        Wed, 27 Dec 2023 03:40:34 -0800 (PST)
+        bh=0rYgu3SiCaq7hrmRY3ZPE+6M1nIV7bD+FPdYLtShoxI=;
+        b=dRxBB7ocL1j0hzjiHISZ9Im3Txz+qlodjHo0uByjVMgaoiK95A1WSiLnNxLKGzi7L8
+         lr3ux2gt6hb0tWl/I9RV/KT+QZUi/a0jK56F/4Pu0E3q8f5RtLK73SnK4cvZiVcYFYLZ
+         F1AQoECBSvPkZm/i6JBPFZqH3hTr2PXpcQzJ0cKnr1plqW/dYi930S6ykNexF9Hie9g/
+         XYFuI97gE6KB9CStUd7wd7GWUNGaawn/mHLT9UOP3n7zHMw6Xg/NzTSnHtAM1buxcyvs
+         Rcp8IFmik/HiG11vRhGWGxxM3FuoRkACMEvS7r98LWceieKhvYQ7LzBuUxMBxhDM96Fs
+         dH0g==
+X-Gm-Message-State: AOJu0YwBzKLWb4fL/4n5whSPw7kbbE5LQLP0Sij8BBS8aqaCZLmtcmF9
+	h6zZfOgLS2f4lhGGKAz8exq8FH8LrentuA==
+X-Google-Smtp-Source: AGHT+IH/Bpfq72ECZXvYrId5FlyOJCSkpTv+QOa20SLu2UmL8/xYOljLme5HaCb9mFL14YEnyF5Ngg==
+X-Received: by 2002:a5d:4c8d:0:b0:336:5dfb:201f with SMTP id z13-20020a5d4c8d000000b003365dfb201fmr4955982wrs.34.1703678086535;
+        Wed, 27 Dec 2023 03:54:46 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id b7-20020a5d45c7000000b00336c6b77584sm5652687wrs.91.2023.12.27.03.40.32
+        by smtp.gmail.com with ESMTPSA id a15-20020adfed0f000000b00336673a4153sm14617023wro.80.2023.12.27.03.54.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Dec 2023 03:40:33 -0800 (PST)
-Message-ID: <88719b92-1d69-4571-9323-a844ffc90d7e@linaro.org>
-Date: Wed, 27 Dec 2023 12:40:31 +0100
+        Wed, 27 Dec 2023 03:54:46 -0800 (PST)
+Message-ID: <103c1d8c-314a-457e-884d-6ad67fe65e62@linaro.org>
+Date: Wed, 27 Dec 2023 12:54:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,19 +51,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: samsung: Fix typo error and extra space
+Subject: Re: [PATCH v3 07/24] ARM: dts: samsung: exynos5420: Enable
+ cros-ec-spi as wake source
 Content-Language: en-US
-To: Varada Pavani <v.pavani@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
- aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-References: <20231219115834.65720-1-v.pavani@samsung.com>
- <CGME20231219115858epcas5p469e925738bcb93ee88842fdea0f9d3f0@epcas5p4.samsung.com>
- <20231219115834.65720-2-v.pavani@samsung.com>
- <58ded02d-a5d2-40e2-b575-dc520a7553cf@linaro.org>
- <003e01da381d$ae1b4240$0a51c6c0$@samsung.com>
+To: Mark Hasemeyer <markhas@chromium.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Rob Herring <robh@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Raul Rangel <rrangel@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20231226192149.1830592-1-markhas@chromium.org>
+ <20231226122113.v3.7.I06b059021de1bf6103e60a73211f078f2af75d17@changeid>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -109,35 +111,31 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <003e01da381d$ae1b4240$0a51c6c0$@samsung.com>
+In-Reply-To: <20231226122113.v3.7.I06b059021de1bf6103e60a73211f078f2af75d17@changeid>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 26/12/2023 18:05, Varada Pavani wrote:
->> hardware
->> - * registers to acheive a fast co-oridinated rate change for all the 
->> CPU domain
->> + * registers to achieve a fast co-oridinated rate change for all the 
->> + CPU domain
->>   * clocks.
->>   *
->>   * On a rate change request for the CPU clock, the rate change is 
->> propagated @@ -181,7 +181,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
->>  	 * If the old parent clock speed is less than the clock speed of
->>  	 * the alternate parent, then it should be ensured that at no point
->>  	 * the armclk speed is more than the old_prate until the dividers are
->> -	 * set.  Also workaround the issue of the dividers being set to lower
->> +	 * set. Also workaround the issue of the dividers being set to lower
+On 26/12/2023 20:21, Mark Hasemeyer wrote:
+> The cros_ec driver currently assumes that cros-ec-spi compatible device
+> nodes are a wakeup-source even though the wakeup-source property is not
+> defined.
 > 
-> Why? The double-space is correct.
+> Some Chromebooks use a separate wake pin, while others overload the
+> interrupt for wake and IO. With the current assumption, spurious wakes
+> can occur on systems that use a separate wake pin. It is planned to
+> update the driver to no longer assume that the EC interrupt pin should
+> be enabled for wake.
 > 
-> Okay, I couldn’t see any double space at the end of the statement apart from this line and below one. So updated to have uniformity.
+> Add the wakeup-source property to all cros-ec-spi compatible device
+> nodes to signify to the driver that they should still be a valid wakeup
+> source.
+> 
+> -Commit-changes: 3
 
-Wait, there are only two statements here, so where do you expect double
-space? There is no "one space at the end of the statement".
+This looks like changelog, although a bit confusing. If it is changelog,
+then please keep it under ---.
 
-Your quoting is still not correct. Which part of above is quote of my
-message, which yours?
+I can fix it while applying, but this will be after the merge window.
 
 Best regards,
 Krzysztof
