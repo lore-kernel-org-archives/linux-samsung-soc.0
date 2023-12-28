@@ -1,50 +1,49 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78CA522B
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Dec 2023 07:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CD163AE
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Dec 2023 07:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEuqxTxj"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2cc7b9281d1so70786901fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Dec 2023 23:06:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nFWcvAHK"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40d5adef341so17024695e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Dec 2023 23:30:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703747208; x=1704352008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=WDd8I3l5mFQMqtE5PG31vdOlIyeG691Nn8RHWjODeYI=;
-        b=rEuqxTxjVvgXq4/TZBF1ReJXqU8QRBD8zb/1L2e3JMrl80d0TH5hN2vvRHdjbMv4YE
-         vVsT5N8PXF0sa+9QpaTTV7vHitdVyyKeOWoH8A5IGqa17l9WqdIgakmtQyMyjX4WwsKr
-         tdRYoKRrckMzrMa6iehUQgxhUG+Vc8M9DHfyxJ9MMYa9m5xc4UxGxdv+LDAUBkjLgMs/
-         SJ8/pAouOwYYMlg04vUqX3iUwJXvNHZeJtdFZ2Kqu4INe7PayV9jzDEImb08Yhg8BWio
-         4J7FaCnLu8reqzaxFFNOEIFUh0lMjkWeUcOhnWQCQytujO3GBYuZm13IVVQe/1q1MOl8
-         7Gog==
+        d=linaro.org; s=google; t=1703748609; x=1704353409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wXjd+4bZiZ8Ko7l3VIaHI/vJ/Lj/GLWewcbeMBNDVk4=;
+        b=nFWcvAHKBtm3TqHn3JJSrhSCW5oWHii7iLjw1U/JsnYCAkEN2rsfC0msWTEvsf+fYq
+         oT/vpo8jxRm1g/xFWhYapNEaHcyrpBQqNhNSei4jouU9E3zHLET7qz+cvKGeg8qs6IaZ
+         k0wOdh4sHDRBRaMXMGK+SQGT6M0rfA4ff18Fj2/9lNqnRZD5vXRPq5Nq+dlcaHpb8Cv4
+         SRJdGRvUH1bhSjcJOUiwJs8Z6e9pRH/ed841xuZaMuYxkjyM2g5fR1ov7DUyoxUcJO3S
+         F6FOTUiJWJZubf3jLWUgf3r6qzfsFDMg+KOqB4eA78z5zUM01SmGuS2hZtE6zaOvmQsB
+         k+LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703747208; x=1704352008;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WDd8I3l5mFQMqtE5PG31vdOlIyeG691Nn8RHWjODeYI=;
-        b=MZJxmDJrdTpirAcJV4hFJytC8EsgJx/tZdXjCPKOUsnyliaYR8h/Jw6vCQn5ToqiqC
-         VN0ltrPEAZVgZ7iFMR0t3QxRUn069IyjUbZdEO12aDyQxDz5UcNrzHJ/IKfrgKLDKlRO
-         4a0GwhFyPiKx4ydH4bTfcm78OGSuuLTEKNgtHg+wpqYF8XzpXPxaaQfNHjOlL02c20vb
-         Dj55cDJOB+FPV4aghI5Fan4uNKxA1uP+f9hVAvGWbLuINfeUdhCnw2uJxtGsO6EX06ro
-         kgazQvZSO5NkBfNWOva4avCe4AJxBhv+hz5SzEGkM9UXkcW+Qxvb75uSIuiBGsatVzOJ
-         blqw==
-X-Gm-Message-State: AOJu0Yx885okHDF7ZEOxuqH3pLFWI3xFixHMcTcBUJf4Px1cUnJXMedL
-	PFd9CmgzIlKiQZrkhmAIYXxS43YeJV8ZRw==
-X-Google-Smtp-Source: AGHT+IGXElGXL6AOCSkut4ky6PcE8vVTRaS+VMTWy1hFB+vs6iLLrK7/TFjcLXF7v0m6fhLhGpzAmw==
-X-Received: by 2002:a2e:be0f:0:b0:2cc:7dda:5fde with SMTP id z15-20020a2ebe0f000000b002cc7dda5fdemr5288783ljq.84.1703747207717;
-        Wed, 27 Dec 2023 23:06:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703748609; x=1704353409;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wXjd+4bZiZ8Ko7l3VIaHI/vJ/Lj/GLWewcbeMBNDVk4=;
+        b=fby3cKsroAYVNLlB+PE5yPSD7q17yszos7Xai2R8y52gXXj6u8zjOqpL2enoF6FbmX
+         gOjo15zu/jcvNd0osOYxZ2+EJAQLI2E+ETUpK3RMo9rsZqScRb553dF/bl/hxOD5PpM0
+         MASJKJvJODgt5qExTVomXz+KTB7IDpQJ6zCqg+UbbFqdtYUpR7WIVJYsHyzTZ3yMhMVN
+         tWi3I26bzahDcWWcsZMvKbxftqg5tbJVzyvq40/TrZD/zmTU4NnVznhJ0ko8ZfhGfHDT
+         iGDVBqhaAw8E2FVD6J5pnNn+OlADhEePkdMuFs5vS18DNIgOYXoKBYwI8yRC2NY0mL7i
+         wPCQ==
+X-Gm-Message-State: AOJu0Yx3286eGmkypG3qUAeAE+0Mv698wRwKH8G0+0axrpq7m1OEwusd
+	dHMza91ZbcIU/RNNqTSCgR/u0kSaY8brUg==
+X-Google-Smtp-Source: AGHT+IEI9RO02JQ1Wx+vbQf+CC49MIgZZB+lCDN8Kz7QN+HdlbXYiLvnleR1evrHs5pq1TrxvxaSow==
+X-Received: by 2002:a05:600c:a04:b0:40d:68a4:2bca with SMTP id z4-20020a05600c0a0400b0040d68a42bcamr103438wmp.92.1703748609166;
+        Wed, 27 Dec 2023 23:30:09 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.218.27])
-        by smtp.gmail.com with ESMTPSA id o3-20020a5d4083000000b0033674e10462sm16320576wrp.113.2023.12.27.23.06.46
+        by smtp.gmail.com with ESMTPSA id iv13-20020a05600c548d00b0040d30af488asm31459820wmb.40.2023.12.27.23.30.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Dec 2023 23:06:47 -0800 (PST)
-Message-ID: <2ba69228-f916-4c63-8b51-b9f4695a7d58@linaro.org>
-Date: Thu, 28 Dec 2023 08:06:45 +0100
+        Wed, 27 Dec 2023 23:30:08 -0800 (PST)
+Message-ID: <7b39f962-8040-48b0-8580-abf5970bfad0@linaro.org>
+Date: Thu, 28 Dec 2023 08:30:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -52,16 +51,26 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: samsung: constify iomem pointers
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20231223191902.22857-1-krzysztof.kozlowski@linaro.org>
- <CACRpkdYLXEA3D-_22jsios5-CdpC5CLxFbTUA-Z=dqTHmtH9XQ@mail.gmail.com>
+Subject: Re: [PATCH 02/13] dt-bindings: clock: google,gs101-clock: add PERIC0
+ clock management unit
 Content-Language: en-US
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+ alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
+ semen.protsenko@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
+ willmcvicker@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20231214105243.3707730-1-tudor.ambarus@linaro.org>
+ <20231214105243.3707730-3-tudor.ambarus@linaro.org>
+ <20231220150726.GA223267-robh@kernel.org>
+ <173b06ab-2518-49ee-a67f-85256bc5b6a7@linaro.org>
+ <425a228e-b2d3-4b19-9bcb-6ee1a90cd2ef@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,24 +116,114 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CACRpkdYLXEA3D-_22jsios5-CdpC5CLxFbTUA-Z=dqTHmtH9XQ@mail.gmail.com>
+In-Reply-To: <425a228e-b2d3-4b19-9bcb-6ee1a90cd2ef@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 28/12/2023 01:23, Linus Walleij wrote:
-> On Sat, Dec 23, 2023 at 8:19 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
+On 27/12/2023 13:38, Tudor Ambarus wrote:
+> Hi, Rob,
 > 
->> Constify few pointers to iomem, where the destination memory is not
->> modified, for code safety and readability.
+> On 12/21/23 07:20, Tudor Ambarus wrote:
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> On 12/20/23 15:07, Rob Herring wrote:
+>>> On Thu, Dec 14, 2023 at 10:52:32AM +0000, Tudor Ambarus wrote:
+>>>> Add dt-schema documentation for the Connectivity Peripheral 0 (PERIC0)
+>>>> clock management unit.
+>>>>
+>>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>>> ---
+>>>>  .../bindings/clock/google,gs101-clock.yaml    | 25 +++++-
+>>>>  include/dt-bindings/clock/google,gs101.h      | 86 +++++++++++++++++++
+>>>>  2 files changed, 109 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>>>> index 3eebc03a309b..ba54c13c55bc 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>>>> +++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+>>>> @@ -30,14 +30,15 @@ properties:
+>>>>        - google,gs101-cmu-top
+>>>>        - google,gs101-cmu-apm
+>>>>        - google,gs101-cmu-misc
+>>>> +      - google,gs101-cmu-peric0
+>>>>  
+>>>>    clocks:
+>>>>      minItems: 1
+>>>> -    maxItems: 2
+>>>> +    maxItems: 3
+>>>>  
+>>>>    clock-names:
+>>>>      minItems: 1
+>>>> -    maxItems: 2
+>>>> +    maxItems: 3
+>>>>  
+>>>>    "#clock-cells":
+>>>>      const: 1
+>>>> @@ -88,6 +89,26 @@ allOf:
+>>>>              - const: dout_cmu_misc_bus
+>>>>              - const: dout_cmu_misc_sss
+>>>>  
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            const: google,gs101-cmu-peric0
+>>>> +
+>>>> +    then:
+>>>> +      properties:
+>>>> +        clocks:
+>>>> +          items:
+>>>> +            - description: External reference clock (24.576 MHz)
+>>>> +            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
+>>>> +            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
+>>>> +
+>>>> +        clock-names:
+>>>> +          items:
+>>>> +            - const: oscclk
+>>>> +            - const: dout_cmu_peric0_bus
+>>>> +            - const: dout_cmu_peric0_ip
+>>>
+>>> 'bus' and 'ip' are sufficient because naming is local to the module. The 
+>>> same is true on 'dout_cmu_misc_bus'. As that has not made a release, 
+>>> please fix all of them.
+>>>
+>>
+>> Ok, will fix them shortly. Thanks, Rob!
 > 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> I tried your suggestion at
+> https://lore.kernel.org/linux-arm-kernel/c6cc6e74-6c3d-439b-8dc1-bc50a88a3d8f@linaro.org/
 > 
-> Is this something I should just apply directly at this point?
+> and we noticed that we'd have to update the clock driver as well.
+> These CMUs set the DT clock-name of the parent clock in the driver in
+> struct samsung_cmu_info::clk_name[]. The driver then tries to enable the
+> parent clock based on the clock-name in exynos_arm64_register_cmu().
+> 
+> In order to enable the parent clock of the CMU the following would be
+> needed in the driver:
+> 
+> diff --git a/drivers/clk/samsung/clk-gs101.c
+> b/drivers/clk/samsung/clk-gs101.c
+> index 68a27b78b00b..e91836ea3a98 100644
+> --- a/drivers/clk/samsung/clk-gs101.c
+> +++ b/drivers/clk/samsung/clk-gs101.c
+> @@ -2476,7 +2476,7 @@ static const struct samsung_cmu_info misc_cmu_info
+> __initconst = {
+>         .nr_clk_ids             = CLKS_NR_MISC,
+>         .clk_regs               = misc_clk_regs,
+>         .nr_clk_regs            = ARRAY_SIZE(misc_clk_regs),
+> -       .clk_name               = "dout_cmu_misc_bus",
+> +       .clk_name               = "bus",
 
-Yes, please take it.
+Yes, obviously, the names are used...
+
+The entire point was that a week ago Rob said:
+"As that has not made a release,  please fix all of them."
+but if you keep waiting, like 8 days for this simple patch, his
+statement is not true anymore.
+
+The only point was to send a fix *the next day*, so I would apply it and
+send further. You kind of solved that problem by waiting entire week for
+a simple driver and DTS change.
 
 Best regards,
 Krzysztof
