@@ -1,147 +1,100 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60F11C82
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Dec 2023 14:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7DDDF4E;
+	Mon,  1 Jan 2024 21:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQmNVloQ"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3368b1e056eso6205722f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Dec 2023 06:21:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SK2Ffkgf"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2cd08f0c12aso4018801fa.0;
+        Mon, 01 Jan 2024 13:00:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1703859693; x=1704464493; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MG3HGnk+BEY3fgKeHZy+ZsbJ2eMQ1iNRXHfdIpsUof4=;
-        b=uQmNVloQiNNo+TC5Z08DEa3UlhrAC5IE39l9ly948vrhIBu8KTylsXYDzweU6XF2n7
-         W9SIom8Octv1Aa8mSL0wleJ9tTcUb97/6KKFxxYJ4XcskN3XDh3ZO2obqm70fIaAxUn4
-         wQKLPeT+vzSpScnRmOF1qPOZ/XnLHpYQsjBNcj00Yr3qXBz7lRV9c/yIFJfClTDbDSNr
-         kb9yz0MvuypR6Os4yvbrzBPwyyzBGK0X9EW492N+FFnjrf0+6eW/8hgXmlqa1WI18rfQ
-         /S3HMVCAe1JkbpwCYbTJSRTGws6xvKxDW72T0sMXYapNVyzP3o/fb7GcP97FOcsMzA5X
-         mOvg==
+        d=gmail.com; s=20230601; t=1704142821; x=1704747621; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tqi/PFlm04D03r/uNnvI0Wh0bkXl0RaxBHMbPg2VEEE=;
+        b=SK2FfkgfGMc6kes0mgM5On2pupysxdwEu5PQVAVap0bp7Rl4728a1xbhP31+kn+lPU
+         VnXwaaurDyMiuIFuf32TAOxvlvvhGXPhK/IO+DzHtDgyG2WcgA71X4IYAuOcXG8cXLu7
+         uq69KmzCTFW5z/YVy6dMnePFEPsqmuIn2g1T7hDdz7A/X1hNEuP7VJL+VZ61+ob0xy+8
+         IBclYmRAVNzBmg08KC+WWy/Z31rYbF7VcZg626k6g1UydS47mfnr1ELSMj6zm2nlx5bj
+         XSLq6uWsEaiPc//ikRxF21zbYh+21Xo0043+tGUxKNWEBXcQDmW9IDh91oZSdvF5XGuD
+         1gYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703859693; x=1704464493;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MG3HGnk+BEY3fgKeHZy+ZsbJ2eMQ1iNRXHfdIpsUof4=;
-        b=JpI8Elmzad8Au/eJiekr9bwY3+3HxdNnKIzvBRYg3zAJJrWCEjnHnDP/hWGzUBftC+
-         ymUb5+iRSJXlL5356sN5bkiyxqO4nhh2PT94thXBvQH5NShPNwbeQEkztcamH5P0Zb9R
-         WzNeivnDJWZUt258+UXeUT/goy1yMIcPVsjQfXLAdkhTMI/tCK0Wrigv6e0Nso+wHKJW
-         VIFXkhpQN6bpKpQYGKKAqF4V6EURm+ugeUr1QoKeAQuYtxVDJzkFr8OItB2EvqqeX1YX
-         vX4xY6xMRwa5zqiBQKLpoyI4WOiP3RZ7y1+zxCaE66aOvQ+LVpIYJWRVIcFRQNCJ8ylP
-         JK4A==
-X-Gm-Message-State: AOJu0YzxmYXL7kEZWG3cdjuWml21nm50dmCHmACEhM2VHAtzkEj3yd1l
-	UJpRzUE1Ey3/aATb8o1i7jakLi5G4bS41Q==
-X-Google-Smtp-Source: AGHT+IHHSmzI1khJPusslQIOZi/UTnGxpSbZZWIOL6Cyu++MYhCAOXe1NlWHeIFyJUobv1chd8b+aA==
-X-Received: by 2002:adf:e790:0:b0:333:41a0:ef39 with SMTP id n16-20020adfe790000000b0033341a0ef39mr5897583wrm.105.1703859693054;
-        Fri, 29 Dec 2023 06:21:33 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id a18-20020a5d5712000000b003368f9ec9e0sm17131785wrv.42.2023.12.29.06.21.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Dec 2023 06:21:32 -0800 (PST)
-Message-ID: <d1b17379-84b0-465b-a30c-1a1e62d3c86a@linaro.org>
-Date: Fri, 29 Dec 2023 14:21:29 +0000
+        d=1e100.net; s=20230601; t=1704142821; x=1704747621;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tqi/PFlm04D03r/uNnvI0Wh0bkXl0RaxBHMbPg2VEEE=;
+        b=JmfWuqnmKwQ2D/hyn2k5YhPPwd9joiKHZLoL+EYHdaD3L0dKF3SJiAH5aXvco9/4hy
+         QAUmzc3a4cSnbd7dESjhw0iL9J6YukNmK3aaHPhdMgoTCYKdasezu4/NEa3NTVJOa4ex
+         oPS5lFhxWINXo9kBguKwclVd+uBmYspe58nw+l+b5oD5Mhjqp0L9Nx7GzO6YUiPD8IBy
+         5fJoXRTCNJzEWFz3x515D2kLYNLFK34QeDizQ8E6R0/+XOHUzBUDU3gN6L/JeHEuD0Q7
+         o44mzZpjNQFiGny3/gx965Miy98sMEjtRXoqauLuRay5ybhyri7g4XLq/EvrL+05l9DH
+         pEUw==
+X-Gm-Message-State: AOJu0YyUHy59FknV1YB7F2CQmM+rTCMdd0cn5mRUx30bpkRGfE7NbDSy
+	PsBqZnzGIZlMgEIXxqCrMksOUfXGZJ0=
+X-Google-Smtp-Source: AGHT+IHdudQvuC/lyGmvDLmISXErlKLgahloCNNddMPoFOYU3xXcQk081H1/xDsa1sPb7po13mCXnQ==
+X-Received: by 2002:a05:651c:2213:b0:2cc:d864:124e with SMTP id y19-20020a05651c221300b002ccd864124emr2688835ljq.18.1704142821231;
+        Mon, 01 Jan 2024 13:00:21 -0800 (PST)
+Received: from hex.my.domain (83.11.207.119.ipv4.supernova.orange.pl. [83.11.207.119])
+        by smtp.gmail.com with ESMTPSA id i15-20020a05640200cf00b0055404e08589sm15122045edu.85.2024.01.01.13.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jan 2024 13:00:20 -0800 (PST)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH 0/2] Fix panel polarity mixup in S6D7AA0 panel driver and
+ Galaxy Tab 3 8.0 DTSI
+Date: Mon, 01 Jan 2024 22:00:14 +0100
+Message-Id: <20240101-tab3-display-fixes-v1-0-887ba4dbd16b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] arm64: dts: exynos: gs101: define USI8 with I2C
- configuration
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
- sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
- alim.akhtar@samsung.com, gregkh@linuxfoundation.org, jirislaby@kernel.org,
- s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com,
- arnd@arndb.de, semen.protsenko@linaro.org
-Cc: saravanak@google.com, willmcvicker@google.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-serial@vger.kernel.org, kernel-team@android.com
-References: <20231228125805.661725-1-tudor.ambarus@linaro.org>
- <20231228125805.661725-12-tudor.ambarus@linaro.org>
- <a40b5d0dc3e151fede14aa00bcb853d1eeb8824b.camel@linaro.org>
- <387303b4-d912-480c-a50c-9f9efa386ef3@linaro.org>
-Content-Language: en-US
-In-Reply-To: <387303b4-d912-480c-a50c-9f9efa386ef3@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN4nk2UC/x3LSwqAMAwA0atI1gYaP114FXGRatSAqDQiinh3i
+ 8vHMA+YRBWDJnsgyqmm25pAeQb9zOskqEMyFK6oHDnCg0OJg9q+8I2jXmLoa/KjC56JCdK4R/l
+ D+trufT8/HwxsZAAAAA==
+To: Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1704142819; l=715;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=SZn5M9Pk6q9VjN++Ee+TessamT4rYBp1C1F4I9mxRN8=;
+ b=wBY0KIHnA5bzFetxlwqtDbP103C+pP9HM7SG3H9Q4sCCtzwiy6Erlb8Ux10uWKtZSSei3OiNV
+ 298Jx2OoZdgCOKOldtWLnCf2PijMgNEORBRuIebIOme6UuYfk2YXNB2
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
+Two small one-line patches to address a mixup in the Samsung S6D7AA0
+panel driver and the Samsung Galaxy Tab 3 8.0 board it was initially
+added for.
 
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Artur Weber (2):
+      ARM: dts: exynos4212-tab3: add samsung,invert-vclk flag to fimd
+      drm/panel: samsung-s6d7aa0: drop DRM_BUS_FLAG_DE_HIGH for lsl080al02
 
-On 12/29/23 08:04, Tudor Ambarus wrote:
-> 
-> 
-> On 12/28/23 14:04, André Draszik wrote:
->> Hi Tudor,
-> 
-> Hi!
-> 
->>
->> On Thu, 2023-12-28 at 12:58 +0000, Tudor Ambarus wrote:
->>> [...]
->>>
->>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> index 0e5b1b490b0b..c6ae33016992 100644
->>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> @@ -354,6 +354,35 @@ pinctrl_peric0: pinctrl@10840000 {
->>>  			interrupts = <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH 0>;
->>>  		};
->>>  
->>> +		usi8: usi@109700c0 {
->>> +			compatible = "google,gs101-usi",
->>> +				     "samsung,exynos850-usi";
->>> +			reg = <0x109700c0 0x20>;
->>> +			ranges;
->>> +			#address-cells = <1>;
->>> +			#size-cells = <1>;
->>> +			clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7>,
->>> +				 <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK>;
->>> +			clock-names = "pclk", "ipclk";
->>
->> Given the clock-names, shouldn't the clock indices be the other way around? Also see below.
-> 
-> You're right, they should have been the other way around! Didn't make
-> any difference at testing because the usi driver uses
-> clk_bulk_prepare_enable(), what matters is the order of clocks in the
-> i2c node, and those are fine.
-> 
->>
->>> +			samsung,sysreg = <&sysreg_peric0 0x101c>;
->>> +			status = "disabled";
->>> +
->>> +			hsi2c_8: i2c@10970000 {
->>> +				compatible = "google,gs101-hsi2c",
->>> +					     "samsung,exynosautov9-hsi2c";
->>> +				reg = <0x10970000 0xc0>;
->>> +				interrupts = <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH 0>;
->>> +				#address-cells = <1>;
->>> +				#size-cells = <0>;
->>> +				pinctrl-names = "default";
->>> +				pinctrl-0 = <&hsi2c8_bus>;
->>> +				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7>,
->>> +					 <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK>;
->>> +				clock-names = "hsi2c", "hsi2c_pclk";
->>
->> Here, pclk == CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK (which is correct, I believe), whereas
->> above pclk == CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7
->>
-> 
-> Indeed, I'll reverse the order for the USI clocks and do some more
-> testing. Thanks!
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 1 +
+ drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c  | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+---
+base-commit: 610a9b8f49fbcf1100716370d3b5f6f884a2835a
+change-id: 20240101-tab3-display-fixes-6516f0b6a1a1
 
-FYI, I reversed the order of the USI clocks, tested again with the
-eeprom at 100 KHz and 10KHz, everything went fine. I'll wait for some
-other feedback and probably submit a v3 next week.
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
 
-Cheers,
-ta
