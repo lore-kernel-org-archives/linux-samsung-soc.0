@@ -1,127 +1,211 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036421641A;
-	Tue,  2 Jan 2024 20:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0D41642D
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jan 2024 21:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gbjTlTiK"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 402IBch4007301;
-	Tue, 2 Jan 2024 20:58:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=NUPBWwzrWce/11pJJZOMDE/OxoFWKfvmYb5nB8VG/44=; b=gb
-	jTlTiKCzC1UJb+S2jxGNbrQ1GDG30RaG1WyDn3YP7ahAuZMCl5GZ7ibbYnN3P+2k
-	RUL98emA5GMMzbh/PbZ1yj+kWVBvtrCrYRKz9UGZqeeyP1s+ie3Mu+XMx4Em/XxO
-	mFoK77zV7Ia1dds7mVKAnxP+KgMa+4l3C2tXqO2bTwoyy+WHc1A6APyw9q6FPdwq
-	zCUYDvaFudWucTwuFXn3gAP7Fzs/K5XZgODjkaYQi0kDDXYA6428Om46imCIJqGU
-	p5WCQv0JI52ond5ZQEPpdSJgXsk6L84Orr3eBg+v6Ge+REsFegzHyEt7G12KYlLW
-	VqRW+03vqZSqCcGBG8TQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vcets9dfj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 02 Jan 2024 20:58:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 402KwXPC002559
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 2 Jan 2024 20:58:33 GMT
-Received: from [10.110.68.103] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 2 Jan
- 2024 12:58:31 -0800
-Message-ID: <996dacdd-428a-4098-a0de-d4a12662d302@quicinc.com>
-Date: Tue, 2 Jan 2024 12:58:30 -0800
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FXsKUh/S"
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7b7a9f90f34so534005339f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jan 2024 13:08:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1704229723; x=1704834523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C7mFJdJJR38MVoewAU3PshqnCmTUbmo4+vjrut4nXkA=;
+        b=FXsKUh/St9ROpCfBxBctElZ0B8NOZqVdhhpKFefJYaizRpZLwRtSk/hSpzpGNwADQf
+         EurbVWdvdquu7SIHdT0PKV6Ygvoc1xI3N7gLMSmXNZ1OR27sna3yytDi+Eij/TtOjzVj
+         Z7pFyGExz2c+fIdTeavtr7qLTDYYLxrN/lUzY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704229723; x=1704834523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C7mFJdJJR38MVoewAU3PshqnCmTUbmo4+vjrut4nXkA=;
+        b=hoW5xOqFHOBdBSd2/Tz5vOiFLZ2aY5tuGyv0bWAQeY9F1tVaYLtn1OgxYZYg4Cskt0
+         VCtEdYwa0vAfJN1fBMY/OKn/RpxAXm01TGP631l48yxD5P+FnK7UxKZGJw1bro80Azq7
+         o5AMWpoEhP9CGfIqwNPsO7Gfy19b5PzXBKicAXPLQS/+de3hZbtaRJaVghxGDdwPSbGN
+         LkS6w0J9VqWsXVN37V98GG1paFAKZ+1dEqQyfcfYk8u9gaJKvEzVjgTYLE7E0nBVElwS
+         UUlz0oU2VRsRF1cBlZg0jQ2RGFwBqvUPcGRLiUzlfumkrCABaoqsZOF5x0HkvEabf+iM
+         MTAQ==
+X-Gm-Message-State: AOJu0YwU33/1X1pQfIxrYeiGbjV6920fYaO/lVM214g/OaPLxuJUFgU6
+	M3peFaDxiObO5mAb69p9LTe3xzhhlxXC
+X-Google-Smtp-Source: AGHT+IH30ze8lliPJsLy0+gFPaeKunMXu0LXjX1HO6/sLENHoZmveXOqCkZRgWXN24Z3/Wl9tJipHw==
+X-Received: by 2002:a05:6602:e03:b0:7ba:a232:30fe with SMTP id gp3-20020a0566020e0300b007baa23230femr13087461iob.20.1704229723563;
+        Tue, 02 Jan 2024 13:08:43 -0800 (PST)
+Received: from markhas1.lan (71-218-50-136.hlrn.qwest.net. [71.218.50.136])
+        by smtp.gmail.com with ESMTPSA id bo18-20020a056638439200b0046993034c91sm6956978jab.77.2024.01.02.13.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jan 2024 13:08:43 -0800 (PST)
+From: Mark Hasemeyer <markhas@chromium.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Raul Rangel <rrangel@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Mark Hasemeyer <markhas@chromium.org>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Alexandre TORGUE <alexandre.torgue@st.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Baoquan He <bhe@redhat.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Benson Leung <bleung@chromium.org>,
+	Bhanu Prakash Maiya <bhanumaiya@chromium.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Len Brown <lenb@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Nick Hawkins <nick.hawkins@hpe.com>,
+	Paul Barker <paul.barker@sancloud.com>,
+	Prashant Malani <pmalani@chromium.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Barnes <robbarnes@google.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Romain Perier <romain.perier@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Takashi Iwai <tiwai@suse.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Wei Xu <xuwei5@hisilicon.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	chrome-platform@lists.linux.dev,
+	cros-qcom-dts-watchers@chromium.org,
+	devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v4 00/24] Improve IRQ wake capability reporting and update the cros_ec driver to use it
+Date: Tue,  2 Jan 2024 14:07:24 -0700
+Message-ID: <20240102210820.2604667-1-markhas@chromium.org>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/panel: samsung-s6d7aa0: drop DRM_BUS_FLAG_DE_HIGH
- for lsl080al02
-Content-Language: en-US
-To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-References: <20240101-tab3-display-fixes-v1-0-887ba4dbd16b@gmail.com>
- <20240101-tab3-display-fixes-v1-2-887ba4dbd16b@gmail.com>
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240101-tab3-display-fixes-v1-2-887ba4dbd16b@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WO5dtklJ8Xgb6m4_0rfjLf1Gmaw4sT5S
-X-Proofpoint-GUID: WO5dtklJ8Xgb6m4_0rfjLf1Gmaw4sT5S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 bulkscore=0 clxscore=1011 priorityscore=1501 spamscore=0
- lowpriorityscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2401020155
+Content-Transfer-Encoding: 8bit
 
+Currently the cros_ec driver assumes that its associated interrupt is
+wake capable. This is an incorrect assumption as some Chromebooks use a
+separate wake pin, while others overload the interrupt for wake and IO.
+This patch train updates the driver to query the underlying ACPI/DT data
+to determine whether or not the IRQ should be enabled for wake.
 
+Both the device tree and ACPI systems have methods for reporting IRQ
+wake capability. In device tree based systems, a node can advertise
+itself as a 'wakeup-source'. In ACPI based systems, GpioInt and
+Interrupt resource descriptors can use the 'SharedAndWake' or
+'ExclusiveAndWake' share types.
 
-On 1/1/2024 1:00 PM, Artur Weber wrote:
-> It turns out that I had misconfigured the device I was using the panel
-> with; the bus data polarity is not high for this panel, I had to change
-> the config on the display controller's side.
-> 
-> Fix the panel config to properly reflect its accurate settings.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+Some logic is added to the platform, ACPI, and DT subsystems to more
+easily pipe wakeirq information up to the driver.
 
-Hi Artur,
+Changes in v4:
+-Rebase on linux-next
+-See each patch for patch specific changes
 
-With Henrik's suggestion to add the Fixes tag,
+Changes in v3:
+-Rebase on linux-next
+-See each patch for patch specific changes
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Changes in v2:
+-Rebase on linux-next
+-Add cover letter
+-See each patch for patch specific changes
 
-Thanks,
+Mark Hasemeyer (24):
+  resource: Add DEFINE_RES_*_NAMED_FLAGS macro
+  gpiolib: acpi: Modify acpi_dev_irq_wake_get_by() to use resource
+  i2c: acpi: Modify i2c_acpi_get_irq() to use resource
+  dt-bindings: power: Clarify wording for wakeup-source property
+  ARM: dts: tegra: Enable cros-ec-spi as wake source
+  ARM: dts: rockchip: rk3288: Enable cros-ec-spi as wake source
+  ARM: dts: samsung: exynos5420: Enable cros-ec-spi as wake source
+  ARM: dts: samsung: exynos5800: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8173: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8183: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8192: Enable cros-ec-spi as wake source
+  arm64: dts: mediatek: mt8195: Enable cros-ec-spi as wake source
+  arm64: dts: tegra: Enable cros-ec-spi as wake source
+  arm64: dts: qcom: sc7180: Enable cros-ec-spi as wake source
+  arm64: dts: qcom: sc7280: Enable cros-ec-spi as wake source
+  arm64: dts: qcom: sdm845: Enable cros-ec-spi as wake source
+  arm64: dts: rockchip: rk3399: Enable cros-ec-spi as wake source
+  of: irq: add wake capable bit to of_irq_resource()
+  of: irq: Add default implementation for of_irq_to_resource()
+  of: irq: Remove extern from function declarations
+  device property: Modify fwnode irq_get() to use resource
+  device property: Update functions to use EXPORT_SYMBOL_GPL()
+  platform: Modify platform_get_irq_optional() to use resource
+  platform/chrome: cros_ec: Use PM subsystem to manage wakeirq
 
-Jessica Zhang
+ .../bindings/power/wakeup-source.txt          | 18 ++--
+ arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi   |  1 +
+ arch/arm/boot/dts/nvidia/tegra124-venice2.dts |  1 +
+ .../rockchip/rk3288-veyron-chromebook.dtsi    |  1 +
+ .../boot/dts/samsung/exynos5420-peach-pit.dts |  1 +
+ .../boot/dts/samsung/exynos5800-peach-pi.dts  |  1 +
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  1 +
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |  1 +
+ .../boot/dts/mediatek/mt8192-asurada.dtsi     |  1 +
+ .../boot/dts/mediatek/mt8195-cherry.dtsi      |  1 +
+ .../arm64/boot/dts/nvidia/tegra132-norrin.dts |  1 +
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  1 +
+ .../arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  1 +
+ .../arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi |  1 +
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi    |  1 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  |  1 +
+ drivers/acpi/property.c                       | 11 ++-
+ drivers/base/platform.c                       | 90 ++++++++++++-------
+ drivers/base/property.c                       | 40 ++++++---
+ drivers/gpio/gpiolib-acpi.c                   | 28 ++++--
+ drivers/i2c/i2c-core-acpi.c                   | 43 ++++-----
+ drivers/i2c/i2c-core-base.c                   |  6 +-
+ drivers/i2c/i2c-core.h                        |  4 +-
+ drivers/of/irq.c                              | 39 +++++++-
+ drivers/of/property.c                         |  8 +-
+ drivers/platform/chrome/cros_ec.c             | 48 ++++++++--
+ drivers/platform/chrome/cros_ec_lpc.c         | 40 +++++++--
+ drivers/platform/chrome/cros_ec_spi.c         | 15 ++--
+ drivers/platform/chrome/cros_ec_uart.c        | 14 ++-
+ include/linux/acpi.h                          | 25 +++---
+ include/linux/fwnode.h                        |  8 +-
+ include/linux/ioport.h                        | 20 +++--
+ include/linux/of_irq.h                        | 41 +++++----
+ include/linux/platform_data/cros_ec_proto.h   |  4 +-
+ include/linux/platform_device.h               |  3 +
+ include/linux/property.h                      |  2 +
+ 36 files changed, 350 insertions(+), 172 deletions(-)
 
-> ---
->   drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c b/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
-> index ea5a85779382..f23d8832a1ad 100644
-> --- a/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
-> +++ b/drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
-> @@ -309,7 +309,7 @@ static const struct s6d7aa0_panel_desc s6d7aa0_lsl080al02_desc = {
->   	.off_func = s6d7aa0_lsl080al02_off,
->   	.drm_mode = &s6d7aa0_lsl080al02_mode,
->   	.mode_flags = MIPI_DSI_MODE_VSYNC_FLUSH | MIPI_DSI_MODE_VIDEO_NO_HFP,
-> -	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-> +	.bus_flags = 0,
->   
->   	.has_backlight = false,
->   	.use_passwd3 = false,
-> 
-> -- 
-> 2.43.0
-> 
+-- 
+2.43.0.472.g3155946c3a-goog
+
