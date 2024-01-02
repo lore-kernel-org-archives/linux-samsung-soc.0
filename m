@@ -1,44 +1,44 @@
 Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DA31774E
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jan 2024 21:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF771798F
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jan 2024 21:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="grYAbEpE"
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7b7a9f90f34so534011439f.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jan 2024 13:08:50 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NxKC8Bg1"
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7bb0ab8e79fso312767639f.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jan 2024 13:08:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1704229729; x=1704834529; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1704229730; x=1704834530; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kFylEVwz6/jxQq1ZweDsmHVwptzQPuyXfUnhxAJ710k=;
-        b=grYAbEpEGE+CY/lcVPOfo1nBGvsxD8gVu/PNJDxGLdxkl9JO2ttuV88LTUkBL6Nvu+
-         NDF4w4L2ULGkrLijFRY+PJ9FqOQwcOwgH7o1SnrTzXrh2gfX/nI8eyCeHlWwXbJ2WXe1
-         yzIBQweyAEsgllUrhRDkcgnbHpf4Er2TQLN0g=
+        bh=Iih8S9CbSKYXK6Eu1V5z5fk9f7rCImQ6DnJQzgwRsXQ=;
+        b=NxKC8Bg1E9loB28npLQy86G1Uk0jberzz0pipqr7NQKvJ55wAfFyIo/RUlTOuhxG8u
+         jQOtXZm8zekL6yMFVXzNdqAqdEDBIxF65VbIf9DGIXLYs5Dz0n1Qr4cPnF3jb3NqdZ55
+         Sb4E+K1G9ILQM6kDWcB0LKl5Ru1vymvI/M29o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704229729; x=1704834529;
+        d=1e100.net; s=20230601; t=1704229730; x=1704834530;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kFylEVwz6/jxQq1ZweDsmHVwptzQPuyXfUnhxAJ710k=;
-        b=mdpatxVJR/5fdj+d/vknYgfEYSnK6P6rHzw6+TGj+/ewwWVcs5ZxsfYHcAld7akeiw
-         wvQ4pHlBD3NZfBh9HTJTPGW+a7k4TGGVvQVsqLsOdJ5vlawFwQB0vBrFGCzVJ5R+nF8K
-         ZgqH2Mc8B7XxYlz2TGoO6z1WpgiwpRLhSUvDWelG6YRwOKSSNigOgCdMnCFWmOGQLFd8
-         7kBLSDkE7rjjB+eEaJNsHAsseQTDY6df+IV/14sbREidLAaJFJSIl0BT/fZ7zivdZGqZ
-         rl1+RRq1FHIPt3iexhg4X2DXSNywupyWPEKZaFq1DLFNfy8fnF3hutV2+q3s2k6AhASF
-         HQRA==
-X-Gm-Message-State: AOJu0YyzLMKNbzCvK2f6hm7hB3gPYQP5J1icxNyUDiriUbLsnNPKAld9
-	V4D894CCzkU3EkO6p0+jPDrNxgeDxEfa
-X-Google-Smtp-Source: AGHT+IHEJbHth/xM3Ut15mQoMsgLsloOubZy6ZZ76RDsFpY7YTAqNzQUU9yztAFE3PAbKB9V85o07g==
-X-Received: by 2002:a6b:c342:0:b0:7bb:cc1:a3b3 with SMTP id t63-20020a6bc342000000b007bb0cc1a3b3mr7901421iof.21.1704229729647;
-        Tue, 02 Jan 2024 13:08:49 -0800 (PST)
+        bh=Iih8S9CbSKYXK6Eu1V5z5fk9f7rCImQ6DnJQzgwRsXQ=;
+        b=Z3NRnq3ouCTTUMXz1V3JFi2ZvuWCivqG3AzhyIXYT3IunG88HBllg5yVpoYL05mSsD
+         +Tf9ilxR4YIGHTBMWcXOeYM5648ii9UpWxQhF5gZtzRXNnPKBtj6+KIFxsszXE6nxIOf
+         P41g2wOR1eQAL/3J7VZfiilXevU5yB4GuL2cdBeF215Yuw4dNhftIebXsZnWQwmv98Vv
+         YFZPlnKh9OBuqCAE0iI49/6i1sDpQd/1IgKYiQzFrItZjPzf3OtqwGrP7fWr0X1z/f27
+         S8V5p5arOrYC7nXi0cWiQhCE0gUXitKeDqezctCs3hINs0z1u85y/beU5t0PMKwoBo6Y
+         Az4Q==
+X-Gm-Message-State: AOJu0Yy3SzyQb7I7uEI9HL9ub8CW3mXM9H7SGG1HDoLoNmmMDlpj/8HY
+	tX6ycWIbOkkpxAV2TtOCRa/Gi45CB4JL
+X-Google-Smtp-Source: AGHT+IEGMyFoc4xM4Z76PcN9nzKX4GmQlxsOK5XWY9+A3y0Tt67mNC5lPz5MkPwv5iXKSvpSPmJo2g==
+X-Received: by 2002:a5e:a50b:0:b0:7b7:55fc:7d4 with SMTP id 11-20020a5ea50b000000b007b755fc07d4mr24457360iog.18.1704229730619;
+        Tue, 02 Jan 2024 13:08:50 -0800 (PST)
 Received: from markhas1.lan (71-218-50-136.hlrn.qwest.net. [71.218.50.136])
         by smtp.gmail.com with ESMTPSA id bo18-20020a056638439200b0046993034c91sm6956978jab.77.2024.01.02.13.08.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jan 2024 13:08:49 -0800 (PST)
+        Tue, 02 Jan 2024 13:08:50 -0800 (PST)
 From: Mark Hasemeyer <markhas@chromium.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Sudeep Holla <sudeep.holla@arm.com>,
@@ -57,9 +57,9 @@ Cc: Sudeep Holla <sudeep.holla@arm.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v4 07/24] ARM: dts: samsung: exynos5420: Enable cros-ec-spi as wake source
-Date: Tue,  2 Jan 2024 14:07:31 -0700
-Message-ID: <20240102140734.v4.7.I06b059021de1bf6103e60a73211f078f2af75d17@changeid>
+Subject: [PATCH v4 08/24] ARM: dts: samsung: exynos5800: Enable cros-ec-spi as wake source
+Date: Tue,  2 Jan 2024 14:07:32 -0700
+Message-ID: <20240102140734.v4.8.Idc995ce08a52ba4c5fde0685118ddf2873fc8acd@changeid>
 X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
 In-Reply-To: <20240102210820.2604667-1-markhas@chromium.org>
 References: <20240102210820.2604667-1-markhas@chromium.org>
@@ -97,14 +97,14 @@ change
 Changes in v2:
 -Split by arch/soc
 
- arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts | 1 +
+ arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
-index 4e757b6e28e1c..3759742d38cac 100644
---- a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
-@@ -967,6 +967,7 @@ cros_ec: cros-ec@0 {
+diff --git a/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts b/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
+index f91bc4ae008e4..9bbbdce9103a6 100644
+--- a/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
+@@ -949,6 +949,7 @@ cros_ec: cros-ec@0 {
  		reg = <0>;
  		spi-max-frequency = <3125000>;
  		google,has-vbc-nvram;
