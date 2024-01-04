@@ -1,94 +1,143 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1257520DCC;
-	Thu,  4 Jan 2024 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 12952C15;
-	Thu,  4 Jan 2024 02:38:14 -0800 (PST)
-Received: from [10.57.88.128] (unknown [10.57.88.128])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 905143F5A1;
-	Thu,  4 Jan 2024 02:37:25 -0800 (PST)
-Message-ID: <9c1fa923-403f-4c98-b03e-37e467366284@arm.com>
-Date: Thu, 4 Jan 2024 10:38:43 +0000
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573FE241E4;
+	Thu,  4 Jan 2024 15:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Pae+nnL8";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="d4W1wAY3"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CBE9822090;
+	Thu,  4 Jan 2024 15:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1704382280; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fzC23ESDAqjrYsUUWU3jTenMnuzE0UYEATU9SXb7+hA=;
+	b=Pae+nnL8GFn/90/6MVvjWD52MleXZMEQSfyVMqUsSKCAAx6kTTQ7y/fR66ckCQIKBeUAWK
+	ZfkewmROo/43t3zJCXwA4wYyzrHCpas+/WrNiHncgarksTqf+Lw1E9AYw5YalW31ApoY+p
+	y/Ok7gnLnUEo3mCXBRa4HaaMb+5GVtI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1704382279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fzC23ESDAqjrYsUUWU3jTenMnuzE0UYEATU9SXb7+hA=;
+	b=d4W1wAY3OJtJtth1XCzoTR7umctbQgU0lYLtet8VnS+QUeM0A3AJQV+WHXCTfVtktmNHnL
+	9d5K3STBwSK115bhRlI9joaJ/AMggRm/BXcBxrrEBrOVb2hmKluJ3nUltLD//+znrx279P
+	D3ebRpFcyuqMyw7qj9a8bYKRWfjXt9Q=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11D3A13722;
+	Thu,  4 Jan 2024 15:31:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cw50A0fPlmUBUAAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Thu, 04 Jan 2024 15:31:19 +0000
+Date: Thu, 4 Jan 2024 16:31:17 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, 
+	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
+	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, iommu@lists.linux.dev, 
+	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
+	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com, 
+	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+Message-ID: <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] OPP: Add API to update EM after adjustment of voltage
- for OPPs
-Content-Language: en-US
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- dietmar.eggemann@arm.com, linux-arm-kernel@lists.infradead.org,
- sboyd@kernel.org, nm@ti.com, linux-samsung-soc@vger.kernel.org,
- daniel.lezcano@linaro.org, rafael@kernel.org,
- krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
- m.szyprowski@samsung.com, xuewen.yan94@gmail.com, mhiramat@kernel.org,
- qyousef@layalina.io, wvw@google.com
-References: <20231220110339.1065505-1-lukasz.luba@arm.com>
- <20231220110339.1065505-2-lukasz.luba@arm.com>
- <20231226051228.oe7rpgf34nwgr5ah@vireshk-i7>
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <20231226051228.oe7rpgf34nwgr5ah@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3miwvahtspdiywqu"
+Content-Disposition: inline
+In-Reply-To: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+X-Spam-Level: 
+X-Spam-Level: 
+X-Spam-Score: -0.42
+X-Rspamd-Queue-Id: CBE9822090
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=d4W1wAY3
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Bar: /
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-0.42 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	 URIBL_BLOCKED(0.00)[suse.com:dkim,soleen.com:email];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	 BAYES_HAM(-0.01)[51.19%];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	 DKIM_TRACE(0.00)[suse.com:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[44];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
+	 SIGNED_PGP(-2.00)[];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+,1:+,2:~];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[linux-foundation.org,samsung.com,rosenzweig.io,lists.linux.dev,linux.intel.com,google.com,vger.kernel.org,lwn.net,redhat.com,infradead.org,cmpxchg.org,sntech.de,gmail.com,nvidia.com,8bytes.org,linaro.org,kvack.org,lists.infradead.org,bytedance.com,marcan.st,kernel.org,arm.com,sholland.org,amd.com,svenpeter.dev,csie.org,intel.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
 
-Hi Viresh,
 
-On 12/26/23 05:12, Viresh Kumar wrote:
-> On 20-12-23, 11:03, Lukasz Luba wrote:
->> There are device drivers which can modify voltage values for OPPs. It
->> could be due to the chip binning and those drivers have specific chip
->> knowledge about this. This adjustment can happen after Energy Model is
->> registered, thus EM can have stale data about power.
->>
->> Introduce new API function which can be used by device driver which
->> adjusted the voltage for OPPs. The implementation takes care about
->> calculating needed internal details in the new EM table ('cost' field).
->> It plugs in the new EM table to the framework so other subsystems would
->> use the correct data.
->>
->> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
->> ---
->>   drivers/opp/of.c       | 69 ++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/pm_opp.h |  6 ++++
->>   2 files changed, 75 insertions(+)
->>
->> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
->> index 81fa27599d58..992434c0b711 100644
->> --- a/drivers/opp/of.c
->> +++ b/drivers/opp/of.c
->> @@ -1596,3 +1596,72 @@ int dev_pm_opp_of_register_em(struct device *dev, struct cpumask *cpus)
->>   	return ret;
->>   }
->>   EXPORT_SYMBOL_GPL(dev_pm_opp_of_register_em);
->> +
->> +/**
->> + * dev_pm_opp_of_update_em() - Update Energy Model with new power values
->> + * @dev		: Device for which an Energy Model has to be registered
->> + *
->> + * This uses the "dynamic-power-coefficient" devicetree property to calculate
->> + * power values for EM. It uses the new adjusted voltage values known for OPPs
->> + * which have changed after boot.
->> + */
->> +int dev_pm_opp_of_update_em(struct device *dev)
-> 
-> I don't see anything OPP or OF related in this function, I don't think it needs
-> to be part of the OPP core. You just want to reuse _get_power() I guess, which
-> can be exported then.
-> 
-> This should really be part of the EM core instead.
-> 
+--3miwvahtspdiywqu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you for having a look at this. OK, that makes sense.
-When I finish the EM runtime modification core features and get them
-merged, I'll continue to work on this patch set. I'll try to follow
-your comment here and export that function (with a different name
-probably).
+Hello.
+
+On Tue, Dec 26, 2023 at 08:01:55PM +0000, Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
+> This patch series solves this problem by adding both observability to
+> all pages that are allocated by IOMMU, and also accountability, so
+> admins can limit the amount if via cgroups.
+
+Maybe this is a mismatch in vocabulary what you mean by the verb
+"limit". But I don't see in the patchset that the offending pages would
+be allocated with GFP_ACCOUNT. So the result is that the pages are
+accounted (you can view the amount in memory.stat) but they are not
+subject to memcg limits.
+
+Is that what you intend?
+
 
 Regards,
-Lukasz
+Michal
+
+--3miwvahtspdiywqu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZZbPOgAKCRAGvrMr/1gc
+jk4WAQCSVaG9CWTytNlHm4t/CSbpxTWFYWcybzn/jqIJ0y0DDgEA0/XJAjN4NyF+
+F6HbClZ0bzyKHY2eGvX2UwXRtcfFPQM=
+=GWPV
+-----END PGP SIGNATURE-----
+
+--3miwvahtspdiywqu--
