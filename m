@@ -1,102 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8FD249F9;
-	Thu,  4 Jan 2024 15:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DD525561
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jan 2024 16:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VYm7NWQH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D65C433C7;
-	Thu,  4 Jan 2024 15:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1704383791;
-	bh=tQ2xGVztCOGERqBGQC3sZSgIZHy0WBG63Eyy/oqqK5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VYm7NWQHeSJTLlYxDfvefYiyhsrSrrguHmZ7Ex8ulp4rxKmhF0DqPijDwGz81qVQf
-	 f4iW4/kO00i1xHwbs0tPV8RT7yeOPPkWN9UJ+9M0yt7iJJs1oW4n8vu5cbQI4tm9Yr
-	 GxAvQ1cKZrq6lxpI8yeyo7iYMlrK4/ogZ3EEnzeM=
-Date: Thu, 4 Jan 2024 16:56:24 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: peter.griffin@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-	sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
-	alim.akhtar@samsung.com, jirislaby@kernel.org,
-	s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-	cw00.choi@samsung.com, arnd@arndb.de, semen.protsenko@linaro.org,
-	andre.draszik@linaro.org, saravanak@google.com,
-	willmcvicker@google.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2 04/12] tty: serial: samsung: prepare for different IO
- types
-Message-ID: <2024010450-heritage-variety-d72d@gregkh>
-References: <20231228125805.661725-1-tudor.ambarus@linaro.org>
- <20231228125805.661725-5-tudor.ambarus@linaro.org>
- <2024010432-taco-moneyless-53e2@gregkh>
- <a3a9df6a-4270-4076-9e9b-ce2fc7284d54@linaro.org>
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fdn/14QO"
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4283ad9e7cfso3395161cf.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Jan 2024 08:30:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1704385819; x=1704990619; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Aj4IIq0tzuh1/OdFywt45Ed5fBVp3SK/t71RwP6JXSw=;
+        b=fdn/14QOew7x0hZlqE8RvMbT+eay+t99WzcP3kxGSeb8OS5ACFhxqkeI7iB+nyafr0
+         rOuV6rmqZYe/l+tOjY/F68nb75dV/6faHMawGvHRB8Ise/ZVn0TUmrjcNnDvPpYSKK2u
+         +QXD6hqZOg+6u0V1BppZ1Urc5RWCALe2KqPFw8J3VQOjtx6mSqe/+OUnn1A9CxqXE2Rh
+         3JFRqVxezB+DuRVhlYCK/igl86QKpIhEethObsm3dCBF1m3uN1ceVfoGd3oqdi0XHpq+
+         P1ABcTzfX+8k++zN/yVvUWt5pjTlmOe+9OyrAy5cz7M2zWHcj6kYn7fmGKwoBPTTXQfY
+         VfCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704385819; x=1704990619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aj4IIq0tzuh1/OdFywt45Ed5fBVp3SK/t71RwP6JXSw=;
+        b=DtdGCSKNs87rmAgS+wRm9YAdFjQVSnb8pfoFOHpaafgpgRywnJjqjUTnqdA+0sCw14
+         HBnsH+Row9KJomyw1rItIxBVtmHBOUN//pgk3nyftEM7kdHgFLMRbtAxonEo2Vhm9j+K
+         WgAMfXzcVXarL92LNV0PnAZB+Hu7lZ8OfT0Dh4hXu97Fcxg4BIrmAiAIG6ZOpY1q5B3j
+         xRhR5LeEQlEFCY4oe8FQDWi3mUp9vDBMWdTT/alZ06cvUlrWo0WwW1SvHANcHl2XoyMB
+         0yl6y2i4DVReBfZnNeoM6/G6q0/3dKWY4Hw8mpuGWxCFQ9so4EATWdvqMSV4cKb0YQu6
+         SqXg==
+X-Gm-Message-State: AOJu0YyxyTKDxvPdeR/IYt0EU4Z2nw0JoEYLnk0Z+cbTKfmUradY1OnR
+	kvdirx+SgTOD69ofEgdNQQEhkfgGtn/Tpvc881k1zl4WAhIJGg==
+X-Google-Smtp-Source: AGHT+IHbmPwv6z7KPbpI44YRa4bYQfIXyvmSunk5ru1UyVqC5KptkTXxtDOkWoeYljsAtoXlTJC88ShSxszX3+BvyHo=
+X-Received: by 2002:ac8:5cce:0:b0:428:3602:4ad8 with SMTP id
+ s14-20020ac85cce000000b0042836024ad8mr839527qta.60.1704385819426; Thu, 04 Jan
+ 2024 08:30:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3a9df6a-4270-4076-9e9b-ce2fc7284d54@linaro.org>
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com> <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+In-Reply-To: <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 4 Jan 2024 11:29:43 -0500
+Message-ID: <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 04, 2024 at 03:41:28PM +0000, Tudor Ambarus wrote:
-> 
-> 
-> On 1/4/24 15:32, Greg KH wrote:
-> > On Thu, Dec 28, 2023 at 12:57:57PM +0000, Tudor Ambarus wrote:
-> >> GS101's Connectivity Peripheral blocks (peric0/1 blocks) which
-> >> include the I3C and USI (I2C, SPI, UART) only allow 32-bit
-> >> register accesses. If using 8-bit register accesses, a SError
-> >> Interrupt is raised causing the system unusable.
-> >>
-> >> Instead of specifying the reg-io-width = 4 everywhere, for each node,
-> >> the requirement should be deduced from the compatible.
-> >>
-> >> Prepare the samsung tty driver to allow IO types different than
-> >> UPIO_MEM. ``struct uart_port::iotype`` is an unsigned char where all
-> >> its 8 bits are exposed to uapi. We can't make NULL checks on it to
-> >> verify if it's set, thus always set it from the driver's data.
-> >>
-> >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> >> ---
-> >> v2: new patch
-> >>
-> >>  drivers/tty/serial/samsung_tty.c | 9 ++++++++-
-> >>  1 file changed, 8 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-> >> index 66bd6c090ace..97ce4b2424af 100644
-> >> --- a/drivers/tty/serial/samsung_tty.c
-> >> +++ b/drivers/tty/serial/samsung_tty.c
-> >> @@ -72,6 +72,7 @@ struct s3c24xx_uart_info {
-> >>  	const char		*name;
-> >>  	enum s3c24xx_port_type	type;
-> >>  	unsigned int		port_type;
-> >> +	unsigned char		iotype;
-> >>  	unsigned int		fifosize;
-> >>  	unsigned long		rx_fifomask;
-> >>  	unsigned long		rx_fifoshift;
-> > 
-> > Is there a reason you are trying to add unused memory spaces to this
-> > structure for no valid reason?  I don't think you could have picked a
-> > more incorrect place in there to add this :)
-> > 
-> > Please fix.
-> > 
-> 
-> Will put it after "const char *name".
+On Thu, Jan 4, 2024 at 10:31=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+> Hello.
+>
+> On Tue, Dec 26, 2023 at 08:01:55PM +0000, Pasha Tatashin <pasha.tatashin@=
+soleen.com> wrote:
+> > This patch series solves this problem by adding both observability to
+> > all pages that are allocated by IOMMU, and also accountability, so
+> > admins can limit the amount if via cgroups.
+>
+> Maybe this is a mismatch in vocabulary what you mean by the verb
+> "limit". But I don't see in the patchset that the offending pages would
+> be allocated with GFP_ACCOUNT. So the result is that the pages are
+> accounted (you can view the amount in memory.stat) but they are not
+> subject to memcg limits.
+>
+> Is that what you intend?
 
-If you do, spend some time with the tool, pahole, and see if that's
-really the best place for it or not.  Might be, might not be, but you
-should verify it please.
+Hi Michal,
 
-thanks,
+Thank you for taking a look at this. The two patches [1] [2] which add
+GFP_KERNEL_ACCOUNT were sent separate from this series at request of
+reviewers:
 
-greg k-h
+Pasha
+
+[1] https://lore.kernel.org/linux-mm/20231226182827.294158-1-pasha.tatashin=
+@soleen.com
+[2] https://lore.kernel.org/linux-mm/20231130200900.2320829-1-pasha.tatashi=
+n@soleen.com
+
+>
+>
+> Regards,
+> Michal
