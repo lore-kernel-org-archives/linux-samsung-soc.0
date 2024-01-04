@@ -1,130 +1,112 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718AC24B5E;
-	Thu,  4 Jan 2024 17:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8F45C15;
-	Thu,  4 Jan 2024 09:26:52 -0800 (PST)
-Received: from [10.57.88.128] (unknown [10.57.88.128])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B73A3F64C;
-	Thu,  4 Jan 2024 09:26:04 -0800 (PST)
-Message-ID: <7e9488da-d15e-4129-b2d8-ea4de12dd2c8@arm.com>
-Date: Thu, 4 Jan 2024 17:27:21 +0000
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7ED12C1B4
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jan 2024 19:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="F/ZnFVg7"
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-595f8f7efbbso461098eaf.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Jan 2024 11:13:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1704395583; x=1705000383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/+vYEuDAPJ/iEdESxX2pInRN4g9EPXyQ5h9FSdd/4u4=;
+        b=F/ZnFVg7p6RCRwo6c599coMU7gxw34TnRuIn9tv4NSDTLCFyNIcCycMnVBIoSBhUaf
+         5VePqzrdqqOPRKKkraOQpG8XlgFm3zjmU3ROzjemte9baJ4kCqNNrgdAqngJeCHvlLMT
+         ccN+J71GjNlNUYaCcvaMn9xh9mjC0xYx+SwN4B6qr/yTTMnZRYvNOhLp64UX+NkJd/Vy
+         YSkeOW4R3gS7ZDU8/YKly32rHGE+xlyTcPg4qLxF5bOlnB3yUbFqy9azk3VRBB7HpFXx
+         waNjhIskVtiY0gZZye1eBD20fLHFMqL1LxWwap0rGSneRmh7FVOv1Qc8SWhK/C/qEkoW
+         tynA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704395583; x=1705000383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/+vYEuDAPJ/iEdESxX2pInRN4g9EPXyQ5h9FSdd/4u4=;
+        b=YM+NJ1KS7TVyW3jspEIURb3rgLLRStgEAMgdHZWL0MfZRiM2t9q5RnnvP55aejpUHk
+         yZRgIZhFT3MZZKitKHqlxsbuvDW+9KP15Tw6mFvaDk6gukXmjy6WcqO4FWjBYQdWjxca
+         WT1W3s2qSCq7Wmi52vciqNbCjYhjN+PyLACTkFuaEYFNpwsKk05AZUGAcyiQFyHrZMRx
+         CJrexLNhRdI3jSTIpJ/VFkmhHhvb5PrdRo/t8X9YTzN1XJIr2S+UZ0pilXbRR5FFhyaK
+         LR3EmLRca9kh6FbylwQSHCZulncdCWjp6/JqSFrH2TXFmrKQi9rH1ZKIl29c15Vsf5Ap
+         XOig==
+X-Gm-Message-State: AOJu0YwuxAVQ+0Y7CliIGnlHqTQ5jyK86Q9m+4jFyGa+eu8gZRS8jL2G
+	0aOXov0ffE/T5QpjRE60AHjHoYr35+/lIpLFx3Rv4bx2ewLGvw==
+X-Google-Smtp-Source: AGHT+IF/5x1qWEeEN53jwIdamLjEry3P/nE1f12xa2taaKft/YlEJdrBP6aDzExJ1bDcrqKpemuFKkiIEAFmrNQGE5k=
+X-Received: by 2002:a05:6358:8828:b0:174:b7f2:51db with SMTP id
+ hv40-20020a056358882800b00174b7f251dbmr1188037rwb.19.1704395582852; Thu, 04
+ Jan 2024 11:13:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] OPP: Add API to update EM after adjustment of voltage
- for OPPs
-Content-Language: en-US
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- Viresh Kumar <viresh.kumar@linaro.org>,
- linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
- linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
- rafael@kernel.org, krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
- m.szyprowski@samsung.com, xuewen.yan94@gmail.com, mhiramat@kernel.org,
- qyousef@layalina.io, wvw@google.com
-References: <20231220110339.1065505-1-lukasz.luba@arm.com>
- <20231220110339.1065505-2-lukasz.luba@arm.com>
- <20231226051228.oe7rpgf34nwgr5ah@vireshk-i7>
- <9c1fa923-403f-4c98-b03e-37e467366284@arm.com>
- <a42ae8dd-383c-43c0-88b4-101303d6f548@arm.com>
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <a42ae8dd-383c-43c0-88b4-101303d6f548@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+ <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com> <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
+In-Reply-To: <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 4 Jan 2024 14:12:26 -0500
+Message-ID: <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 4, 2024 at 12:04=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+> On Thu, Jan 04, 2024 at 11:29:43AM -0500, Pasha Tatashin <pasha.tatashin@=
+soleen.com> wrote:
+> > Thank you for taking a look at this. The two patches [1] [2] which add
+> > GFP_KERNEL_ACCOUNT were sent separate from this series at request of
+> > reviewers:
+>
+> Ah, I didn't catch that.
+>
+> Though, I mean the patch 02/10 calls iommu_alloc_pages() with GFP_KERNEL
+> (and not a passed gfp from iommu_map).
+> Then patch 09/10 accounts all iommu_alloc_pages() under NR_IOMMU_PAGES.
+>
+> I think there is a difference between what's shown NR_IOMMU_PAGES and
+> what will have __GFP_ACCOUNT because of that.
+>
+> I.e. is it the intention that this difference is not subject to
+> limiting?
 
+Yes, we will have a difference between GFP_ACCOUNT and what
+NR_IOMMU_PAGES shows. GFP_ACCOUNT is set only where it makes sense to
+charge to user processes, i.e. IOMMU Page Tables, but there more IOMMU
+shared data that should not really be charged to a specific process.
+The charged and uncharged data will be visible via /proc/vmstat
+nr_iommu_pages field.
 
-On 1/4/24 17:11, Dietmar Eggemann wrote:
-> On 04/01/2024 11:38, Lukasz Luba wrote:
->> Hi Viresh,
->>
->> On 12/26/23 05:12, Viresh Kumar wrote:
->>> On 20-12-23, 11:03, Lukasz Luba wrote:
->>>> There are device drivers which can modify voltage values for OPPs. It
->>>> could be due to the chip binning and those drivers have specific chip
->>>> knowledge about this. This adjustment can happen after Energy Model is
->>>> registered, thus EM can have stale data about power.
->>>>
->>>> Introduce new API function which can be used by device driver which
->>>> adjusted the voltage for OPPs. The implementation takes care about
->>>> calculating needed internal details in the new EM table ('cost' field).
->>>> It plugs in the new EM table to the framework so other subsystems would
->>>> use the correct data.
->>>>
->>>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
->>>> ---
->>>>    drivers/opp/of.c       | 69 ++++++++++++++++++++++++++++++++++++++++++
->>>>    include/linux/pm_opp.h |  6 ++++
->>>>    2 files changed, 75 insertions(+)
->>>>
->>>> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
->>>> index 81fa27599d58..992434c0b711 100644
->>>> --- a/drivers/opp/of.c
->>>> +++ b/drivers/opp/of.c
->>>> @@ -1596,3 +1596,72 @@ int dev_pm_opp_of_register_em(struct device
->>>> *dev, struct cpumask *cpus)
->>>>        return ret;
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(dev_pm_opp_of_register_em);
->>>> +
->>>> +/**
->>>> + * dev_pm_opp_of_update_em() - Update Energy Model with new power
->>>> values
->>>> + * @dev        : Device for which an Energy Model has to be registered
->>>> + *
->>>> + * This uses the "dynamic-power-coefficient" devicetree property to
->>>> calculate
->>>> + * power values for EM. It uses the new adjusted voltage values
->>>> known for OPPs
->>>> + * which have changed after boot.
->>>> + */
->>>> +int dev_pm_opp_of_update_em(struct device *dev)
->>>
->>> I don't see anything OPP or OF related in this function, I don't think
->>> it needs
->>> to be part of the OPP core. You just want to reuse _get_power() I
->>> guess, which
->>> can be exported then.
->>>
->>> This should really be part of the EM core instead.
->>>
->>
->> Thank you for having a look at this. OK, that makes sense.
->> When I finish the EM runtime modification core features and get them
->> merged, I'll continue to work on this patch set. I'll try to follow
->> your comment here and export that function (with a different name
->> probably).
-> 
-> Just to make sure: If this is the case then you could also add
-> em_dev_compute_costs() with this new patch instead providing it with the
-> 'Introduce runtime modifiable Energy Model' patch-set?
+Pasha
 
-You're referring to the patch 22/23 [1]. Yes, it could be skipped,
-but both will go in the same merge window, so not big difference.
-I tend to agree that patch 22/23 could belong to this $subject.
-
-As soon as Rafael will merge the core runtime patches, I will
-push this small one from this $subject. So it will be in a few
-days delay (assuming I would get an Ack from Marek or Krzysztof
-for the Exynos patch).
-
-> 
-> This would keep dev_pm_opp_of_update_em() and em_dev_compute_costs()
-> together. IIRC, all the other new EM interfaces you already use with
-> your 'modifiable EM' use case: '[PATCH v5 14/23] PM: EM: Support late
-> CPUs booting and capacity adjustment'.
-> 
-> 
-> 
-
-Yes, correct, the rest of API is used (mainly from thermal/dtmp).
-
-[1] 
-https://lore.kernel.org/lkml/20240104171553.2080674-23-lukasz.luba@arm.com/
+>
+> (Note: I'm not familiar with iommu code and moreover I'm only looking at
+> the two patch sets, not the complete code applied. So you may correct my
+> reasoning.)
+>
+>
+> Thanks,
+> Michal
