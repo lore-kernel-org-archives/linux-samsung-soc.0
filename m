@@ -1,148 +1,183 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBC022F04;
-	Fri,  5 Jan 2024 09:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD1728E10
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Jan 2024 10:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LOl7umdX";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="oXf6BzBU"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C4C9D21F4F;
-	Fri,  5 Jan 2024 09:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1704445339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Hmj9D9VfyQx+ZfVXhsSYh7Uls173247uQLnYHxXG1M=;
-	b=LOl7umdXMasBBJC+adYeUl4Qi2+31gpUnZx2Dszu/570f6w9mSpa5Zj2pQL35AmskmGqPM
-	bRGrv8eW8BsoW3ia+yEWFtC0eKHgC6MUnRuXnnLFT3B0EOt4qzWhLqyTowMGBaNBPaCyEI
-	ginbt+IEW3mLW7T0tgfzQTVplxmymGQ=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1704445338; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Hmj9D9VfyQx+ZfVXhsSYh7Uls173247uQLnYHxXG1M=;
-	b=oXf6BzBUGOHvQ67mDKNH8+c9QYm0uiGfDeK4Ufa8ynqSMGwJKittfVFmT+4clTun94BiM9
-	zEnRGSQskkF33k+CycmilhUBqsV+8Aw6RSsF4gcF7o1WH7RzsB2jc/9clyNEy65noVfvVK
-	WrhQcDV6UJKqajwr2AxsXuroJXVKJpU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93371137E8;
-	Fri,  5 Jan 2024 09:02:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zoe2I5rFl2VvRgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Fri, 05 Jan 2024 09:02:18 +0000
-Date: Fri, 5 Jan 2024 10:02:17 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, 
-	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, iommu@lists.linux.dev, 
-	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
-	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com, 
-	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com
-Subject: Re: [PATCH v3 00/10] IOMMU memory observability
-Message-ID: <elsuzdcx2qpnazvz2ayzmco4ctms5ci3iet3k7ggbjt3p2pfk2@tvr3plow26oi>
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
- <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com>
- <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
- <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dOFAPwkS"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2cc7d2c1ff0so16891571fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Jan 2024 02:22:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704450169; x=1705054969; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Otn9loBBsw/UzqwebEZy3Ooa0CujzEAcJwFz8Zj1BXs=;
+        b=dOFAPwkSAsJq5YJUiju4J4fVJz0ZZ0Ky14HRIGt40H8EG8j+SXQVMFUUPmE1PGDfsd
+         wmGVc9s2cytmOHs83v1AY5GlxQqu4zXrB7ic70u71nFRkU5wVSkMRLUBpVbzM2ZHfcRy
+         gMDDroO+8usoVtxCxb9xQV/9H/Ky2W1tSOfAXxoBlX4/MrfkCmESsjnLj/NicbL8sVV4
+         cl7pgnGN63tNP8A78galhMAh9rZsobnRg1PjqGZaUp3mRMOmNOV+//cQbbmhZlledYCh
+         r1lB1AXZZDON/hnwU/8ZRrhwGGqnS33FfxNsZaxgPL7TCzXlZ0LrxoAkMxCEU90Y1F8B
+         uwKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704450169; x=1705054969;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Otn9loBBsw/UzqwebEZy3Ooa0CujzEAcJwFz8Zj1BXs=;
+        b=jf7LVfEHSmSVu2NNyFZ2mmb/ZTD+mDVFNcNlZCLRx5LQf2c35zG9sHm0ZDxTZNlg8Z
+         N/cheA1dU4ruA0T/J7CqqxssZo1yL67BNItuZXU7NxVUg4lA76+Dck/ArYmEfesDbYVd
+         SgFzoE3xz/62JyVKwOtUFnulhtiUMm3kevLe+AY/yb7YPvWL3Lr2klSSc69rND6IxM2b
+         hg5cyLYRpGjYt6CKEtYiwaTYk5qeAG4jhX9UQIUzv/1G2hP1ix/syyFnmBK1oikurdzG
+         LDcLiXOWSU8evF05KCkkIXt1EgbxzEwxm/vaPv+UTkbjYiVsX+mjd4zy1dxDhWFVBLnM
+         N55A==
+X-Gm-Message-State: AOJu0YzEFYQVKJYohg+evI35wTvLg5gvgv+87HtvGjGxIxXw6esDIzmP
+	h0h4dZKqlV1yAXE2E+dJTK+bMEQyEJkJxQ==
+X-Google-Smtp-Source: AGHT+IE2UecOtUprnsE+wTP7UJCkRZPB7fx0sJ/qDDVGHx8WV3NGtKzjOZu+swh/2+L77+HG7FmkwQ==
+X-Received: by 2002:a2e:a9a2:0:b0:2cc:6bf6:cdc6 with SMTP id x34-20020a2ea9a2000000b002cc6bf6cdc6mr1295046ljq.7.1704450169091;
+        Fri, 05 Jan 2024 02:22:49 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id ek21-20020a056402371500b0055732bd1fc0sm474638edb.82.2024.01.05.02.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jan 2024 02:22:48 -0800 (PST)
+Message-ID: <19746c85-6eff-4f63-9370-9592ad73f22c@linaro.org>
+Date: Fri, 5 Jan 2024 10:22:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p5ofvbvnu5dmxsky"
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=oXf6BzBU
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.22 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RLn3qdfh3r5akp7hsapswoh51s)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.com:+];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 SIGNED_PGP(-2.00)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+,1:+,2:~];
-	 BAYES_HAM(-0.11)[66.01%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	 URIBL_BLOCKED(0.00)[suse.com:dkim,soleen.com:email];
-	 FROM_HAS_DN(0.00)[];
-	 DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	 RCPT_COUNT_TWELVE(0.00)[44];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[linux-foundation.org,samsung.com,rosenzweig.io,lists.linux.dev,linux.intel.com,google.com,vger.kernel.org,lwn.net,redhat.com,infradead.org,cmpxchg.org,sntech.de,gmail.com,nvidia.com,8bytes.org,linaro.org,kvack.org,lists.infradead.org,bytedance.com,marcan.st,kernel.org,arm.com,sholland.org,amd.com,svenpeter.dev,csie.org,intel.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:97:from]
-X-Spam-Score: -5.22
-X-Rspamd-Queue-Id: C4C9D21F4F
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/12] tty: serial: samsung: prepare for different IO
+ types
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+ sboyd@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org,
+ alim.akhtar@samsung.com, jirislaby@kernel.org, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, arnd@arndb.de,
+ semen.protsenko@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
+ willmcvicker@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+ kernel-team@android.com
+References: <20231228125805.661725-1-tudor.ambarus@linaro.org>
+ <20231228125805.661725-5-tudor.ambarus@linaro.org>
+ <2024010432-taco-moneyless-53e2@gregkh>
+ <a3a9df6a-4270-4076-9e9b-ce2fc7284d54@linaro.org>
+ <2024010450-heritage-variety-d72d@gregkh>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <2024010450-heritage-variety-d72d@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---p5ofvbvnu5dmxsky
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Jan 04, 2024 at 02:12:26PM -0500, Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-> Yes, we will have a difference between GFP_ACCOUNT and what
-> NR_IOMMU_PAGES shows. GFP_ACCOUNT is set only where it makes sense to
-> charge to user processes, i.e. IOMMU Page Tables, but there more IOMMU
-> shared data that should not really be charged to a specific process.
+On 1/4/24 15:56, Greg KH wrote:
+> On Thu, Jan 04, 2024 at 03:41:28PM +0000, Tudor Ambarus wrote:
+>>
+>>
+>> On 1/4/24 15:32, Greg KH wrote:
+>>> On Thu, Dec 28, 2023 at 12:57:57PM +0000, Tudor Ambarus wrote:
+>>>> GS101's Connectivity Peripheral blocks (peric0/1 blocks) which
+>>>> include the I3C and USI (I2C, SPI, UART) only allow 32-bit
+>>>> register accesses. If using 8-bit register accesses, a SError
+>>>> Interrupt is raised causing the system unusable.
+>>>>
+>>>> Instead of specifying the reg-io-width = 4 everywhere, for each node,
+>>>> the requirement should be deduced from the compatible.
+>>>>
+>>>> Prepare the samsung tty driver to allow IO types different than
+>>>> UPIO_MEM. ``struct uart_port::iotype`` is an unsigned char where all
+>>>> its 8 bits are exposed to uapi. We can't make NULL checks on it to
+>>>> verify if it's set, thus always set it from the driver's data.
+>>>>
+>>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>>> ---
+>>>> v2: new patch
+>>>>
+>>>>  drivers/tty/serial/samsung_tty.c | 9 ++++++++-
+>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+>>>> index 66bd6c090ace..97ce4b2424af 100644
+>>>> --- a/drivers/tty/serial/samsung_tty.c
+>>>> +++ b/drivers/tty/serial/samsung_tty.c
+>>>> @@ -72,6 +72,7 @@ struct s3c24xx_uart_info {
+>>>>  	const char		*name;
+>>>>  	enum s3c24xx_port_type	type;
+>>>>  	unsigned int		port_type;
+>>>> +	unsigned char		iotype;
+>>>>  	unsigned int		fifosize;
+>>>>  	unsigned long		rx_fifomask;
+>>>>  	unsigned long		rx_fifoshift;
+>>>
+>>> Is there a reason you are trying to add unused memory spaces to this
+>>> structure for no valid reason?  I don't think you could have picked a
+>>> more incorrect place in there to add this :)
+>>>
+>>> Please fix.
+>>>
+>>
+>> Will put it after "const char *name".
+> 
+> If you do, spend some time with the tool, pahole, and see if that's
+> really the best place for it or not.  Might be, might not be, but you
+> should verify it please.
+> 
 
-I see. I'd suggest adding this explanation to commit 10/10 message
-(perhaps with some ballpark numbers of pages). In order to have a
-reference and understadning if someone decided to charge (and limit) all
-in the future.
+Thanks!
 
-Thanks,
-Michal
+I played with pahole a bit. For arm32 this struct is not as bad defined
+as for arm64, all members fit in the same cacheline. There are some
+holes though and 2 cachelines for arm64 where this struct needs some
+love. The best and minimum invasive change for my iotype member would be
+to put it before the "has_divslot" member, as the has_divslot bitfield
+will be combined with the previous field.
 
---p5ofvbvnu5dmxsky
-Content-Type: application/pgp-signature; name="signature.asc"
+But I think the entire struct has to be reworked and the driver
+butchered a bit so that we get to a better memory footprint and a single
+cacheline. I volunteer to do this in a separate patch set so that we
+don't block this series. I think the final struct can look as following:
 
------BEGIN PGP SIGNATURE-----
+struct s3c24xx_uart_info {
+	const char  *              name;                 /*     0     8 */
+	enum s3c24xx_port_type     type;                 /*     8     4 */
+	unsigned int               port_type;            /*    12     4 */
+	unsigned int               fifosize;             /*    16     4 */
+	u32                        rx_fifomask;          /*    20     4 */
+	u32                        rx_fifoshift;         /*    24     4 */
+	u32                        rx_fifofull;          /*    28     4 */
+	u32                        tx_fifomask;          /*    32     4 */
+	u32                        tx_fifoshift;         /*    36     4 */
+	u32                        tx_fifofull;          /*    40     4 */
+	u32                        clksel_mask;          /*    44     4 */
+	u32                        clksel_shift;         /*    48     4 */
+	u32                        ucon_mask;            /*    52     4 */
+	u8                         def_clk_sel;          /*    56     1 */
+	u8                         num_clks;             /*    57     1 */
+	u8                         iotype;               /*    58     1 */
+	u8                         has_divslot:1;        /*    59: 0  1 */
 
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZZfFiAAKCRAGvrMr/1gc
-jvXNAQC/s1r4INt0DOMzuMTQyF7r+E2pYEbj7Prf+TyU1lbn7QD/bVGBlsIv9kpI
-Hr5Fq+4l1uV/keTc7yErY9BpbizGVQ0=
-=aBiM
------END PGP SIGNATURE-----
+	/* size: 64, cachelines: 1, members: 17 */
+	/* padding: 4 */
+	/* bit_padding: 7 bits */
+};
 
---p5ofvbvnu5dmxsky--
+
+This looks a lot better than what we have now:
+	/* size: 120, cachelines: 2, members: 17 */
+	/* sum members: 105, holes: 2, sum holes: 8 */
+	/* sum bitfield members: 1 bits (0 bytes) */
+	/* padding: 4 */
+	/* bit_padding: 23 bits */
+	/* last cacheline: 56 bytes */
+
+I'll put iotype before has_divslot and then follow up with a patch set
+to clean the driver. Cheers,
+ta
