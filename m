@@ -1,112 +1,76 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211DF51037;
-	Mon,  8 Jan 2024 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8941C51037
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jan 2024 15:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xw4uyfIo"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3376ead25e1so623632f8f.3;
-        Mon, 08 Jan 2024 07:35:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i8r9Y8Gh"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-680c4475b8bso12135956d6.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jan 2024 07:36:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704728101; x=1705332901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0dSkJ2ZiJqHanlAP+HAK0y6zusm5LzCHKOPBAF01RGI=;
-        b=Xw4uyfIoslfLqcwYTa5Fp5lyDdT6ZJ+ZvZO78hDXPQ5kjj8YNUt5mKPPG4iVdUO6Xe
-         dEjjLm5gr8mgFUCzsMgoa1WxgCbq63B90vFpPse1Ag+KvOrT8YIcDhBUbutTJDpKAk7L
-         NcL4pDRNZwm99wpRiGJyxLpHp4scVAk2s47HnHbx5pMr2yus9vtVXv5y35eZBQjkg3QD
-         PCXobg/OffJNTbRkIRyj+kcfBVTSPSfpnYe3ZBYHwS+F3WeZ5Q6PB/hU+d3N0zclLNI6
-         mobOT92LM2dmIez80EjOQ41xd3ZDgmzESYeb1mMrHNRHoruwdSXG92cC7Xs1Gk4uy/Pc
-         vBXA==
+        d=linaro.org; s=google; t=1704728207; x=1705333007; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBaWBCELdQDCiINd0412kAHTBmS2ucp0dmDPH4Uxpys=;
+        b=i8r9Y8GhblDlA8C0HFbwpeNF4EoAKV/d5CygpvHbbndNf/cHBbokiR+Q5eyjdwfBHE
+         m8pV8yYDjxzE2FZQHAb/0FhWovWLso4MfNanYO5e3ZP50YIpt+I43hFyuxFbLef+WQMt
+         U5N8xVoQdla5uhw7QirAimz4IFgqkz6RjOBYJ6/gf78PUM6XE3srQ27zsCNY6u7Y5Tyl
+         R343YYlr5yw9sWA+niOjalrthuU8rbz3dVQcwu3g1Tee0UVno9nHzNHY+Ect/v1HkYGL
+         6hA+dRrgl8m2VaJkYu49K9iaBZAGjKHzy2lXYwGNkjVEIcuArM74H2Mz4uVDdw9Ey0Q8
+         897w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704728101; x=1705332901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0dSkJ2ZiJqHanlAP+HAK0y6zusm5LzCHKOPBAF01RGI=;
-        b=pto6BW95nCWoaA3MXBQbD5krY0UrsSrPNFqAeCFi9k4jWHJffjaQdug8BGrM+REGqn
-         A1h8rcHGnQ4xmgHYG5mlWvTjm40kFfX9lVVQCwrjqi2TELiCWHq6xz3KSDSJAsS8d9m/
-         4dUmOAVvyj7iGA+7Z2HWKgfwksW0ZVzv7n0bxbFhkwNfAxNiZ+6sQIG/mI+48RUQieZ5
-         Tsjon/HNtZ+kGPiUAyMatQ1AEDmUFifOwL2JoRh9xsiG89EOXgKKi4kfs1o3kpoFX+3j
-         ArQ/zqbl5UG+P3goiLd+4Rlaf4da3W43uxL/xXRe7nTo/+ematrHVTe7L9UCpugI6Dlv
-         +v/w==
-X-Gm-Message-State: AOJu0YyFA8pLD4q8tPOgOmfrRnl1y7bx2DoBfFwOvH12uSkFskUhk/cK
-	LbMfYjQZHQCaaA4swuooRhNlwKFAt2iaAb6ps5w=
-X-Google-Smtp-Source: AGHT+IEDyiUE/fCZgQ2fiflpohBhP714EYsyUDi/vkkXfWWGgss80RDHy8tK389zVkT20aui+pSoTQyf4TXc3l08ehI=
-X-Received: by 2002:adf:f0d2:0:b0:337:4c69:d6b with SMTP id
- x18-20020adff0d2000000b003374c690d6bmr1755895wro.6.1704728101148; Mon, 08 Jan
- 2024 07:35:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1704728207; x=1705333007;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jBaWBCELdQDCiINd0412kAHTBmS2ucp0dmDPH4Uxpys=;
+        b=dwMhs+vejEG8+Or9yUSj4frB6QdlvuQHxrhNDymn80dRk9rpe3yv9Yfm4caVX6LzQy
+         IvVxdXN7PgDYc47+7BizhFYMyfcipKicYEfQUdrkinWh4tR11I5PySVxh/vXpAeWXRAx
+         oB0NgGdKQgk7b/A9ydbOzSpMqN4XYG5ZVXMMLX0BONxATFMI/rTS6SNzekZPQrWGVx+X
+         CytePnNWw15M6SBDWAL4MYQFgIUIi8aJTHF7lBOFZwRjy/fYHLGmRTW9YfaOOD6Ayk/i
+         2afsTo7AfONM0XK3uomcq4h0H3iUw42NmloHtHAwGpFTk33wSU6Gg/hzc2okwheoO/8M
+         bfPA==
+X-Gm-Message-State: AOJu0YzC9Xx/ZvA8DgfSLJoQJx9WvTwDCxoujXgMUZQMhjJLWo6cLTHz
+	B7rTiyGpzjj1kHtTOcZ6Y88WE6Vp2TJqfB+iHfkETCtGgLzBOw==
+X-Google-Smtp-Source: AGHT+IH863p9DTyUG3cXWcw7QQe6quuJOFyZtJC1s1k1mesk2Eh6/H960ZPZ7GBdSUYoxKfwC2OmpJHMrbTKpMHrU9k=
+X-Received: by 2002:ad4:4ea5:0:b0:680:ce74:9523 with SMTP id
+ ed5-20020ad44ea5000000b00680ce749523mr4727352qvb.54.1704728207402; Mon, 08
+ Jan 2024 07:36:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1700864395-1479-4-git-send-email-quic_mojha@quicinc.com>
- <20231225135542.1789-1-ruipengqi7@gmail.com> <520e377d-e990-c185-4a20-07806873e506@quicinc.com>
-In-Reply-To: <520e377d-e990-c185-4a20-07806873e506@quicinc.com>
-From: Ruipeng Qi <ruipengqi7@gmail.com>
-Date: Mon, 8 Jan 2024 23:34:50 +0800
-Message-ID: <CADHLONEn4oyRFrNWEbt2mxMczyc8FrDLMzaZ7fsijzm9Y8VTBA@mail.gmail.com>
-Subject: Re: RESEND: Re: [Patch v6 03/12] docs: qcom: Add qualcomm minidump guide
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: agross@kernel.org, alim.akhtar@samsung.com, andersson@kernel.org, 
-	bmasney@redhat.com, conor+dt@kernel.org, corbet@lwn.net, gpiccoli@igalia.com, 
-	keescook@chromium.org, kernel@quicinc.com, kgene@kernel.org, 
-	konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-remoteproc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	mathieu.poirier@linaro.org, matthias.bgg@gmail.com, nm@ti.com, 
-	robh+dt@kernel.org, tony.luck@intel.com, vigneshr@ti.com, 
-	qiruipeng@lixiang.com
+References: <20231228125805.661725-1-tudor.ambarus@linaro.org> <20231228125805.661725-10-tudor.ambarus@linaro.org>
+In-Reply-To: <20231228125805.661725-10-tudor.ambarus@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 8 Jan 2024 15:36:36 +0000
+Message-ID: <CADrjBPrYkqzHQDw8aj_=cGBdrWv-j9DfnxqpswjMM+kavis0PQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] arm64: dts: exynos: gs101: enable cmu-peric0
+ clock controller
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org, 
+	andi.shyti@kernel.org, alim.akhtar@samsung.com, gregkh@linuxfoundation.org, 
+	jirislaby@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
+	cw00.choi@samsung.com, arnd@arndb.de, semen.protsenko@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-serial@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 3, 2024 at 11:27=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.com=
-> wrote:
+Hi Tudor,
+
+On Thu, 28 Dec 2023 at 12:58, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 >
+> Enable the cmu-peric0 clock controller. It feeds USI and I3c.
 >
-> One more thing, kernel part of minidump, we are calling it APSS Minidump
-> has limitation of no of entries so it will be difficult to dump
-> non-continuous regions after a certain number of registration ~200. Howev=
-er,
-> we do have a solution in downstream kernel for it like to create a big
-> CMA buffer and register this buffer with Minidump so that whatever gets
-> dumped in that buffer gets captured during crash and fill up this buffer
-> and create elf during panic. I think, similar thing you are also doing
-> with your OS-minidump.
->
-> I have just glanced into your implementation of OS-minidump, it
-> more of relying on basic concept of RAM content preserved
-> across boot and later reading it through procfs but this basic
-> stuff is common to pstore(ram) as well and pstore has file system
-> support why don't you make your driver as one of pstore record and that
-> way Qualcomm minidump also gets benefited where entire OS-minidump
-> record gets registered with Qualcomm minidump and we get this on panic
-> and you get this via pstorefs.
->
-Thanks Mukesh=EF=BC=81It is a good suggestion to move OS-minidump forward!
-By the way, I have some questions here for which I need your assistance.
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Firstly,I can reimplement OS-minidump as one of the pstore records to
-dump data. The resulting dump file would contain thousands of
-non-contiguous memory regions, each with only the virtual address and
-size recorded. As far as I know, Qualcomm's minidump can handle
-several memory regions, each with a physical address and size.
-This seems to be a difference, and I'm curious as to how you deal with
-data dumped by OS-minidump. I would really appreciate it if you could
-provide more details on your approach.
-
-Secondly, what tools do you use to analyze the dump data, and does it
-support crash tool?
-
-Lastly, is Qualcomm minidump compatible with non-Qualcomm SoCs,
-and if so, how can one use it?
-
-Best Regards
-Ruipeng Qi
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
