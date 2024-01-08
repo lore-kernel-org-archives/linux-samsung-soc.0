@@ -1,55 +1,55 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE35B46459
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jan 2024 14:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF947786
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jan 2024 14:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SGqaF2MR"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6808c3938afso17492246d6.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jan 2024 06:30:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AqQNc60X"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-680fdf7d52fso12350156d6.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jan 2024 06:34:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704724206; x=1705329006; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704724460; x=1705329260; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=us/CVEv6G9k9DQOG3dlOmhBFEblPcysaqhNz+rCQ/Uw=;
-        b=SGqaF2MRmOPcIFyxwezOastuAeBZSpsSPiC4+TsD+th6ZYdUXkzXPa7eO4zuC+7KSc
-         rFYqskt9GDrFmbcrS3lvx/edOAHGT/C1HIjfiWDGoPgl17rA+DikjMPdU2n0di7/ow1n
-         eY/4xxH6KXLW9KlLOanJOfJRngoxK8hPqV7xObOSPjZmO3WCqwbeXz2FooiL1/csJ8rX
-         9ZecwMjbpuRPv9UIVQavsCdNThaFNGz+6T/58fM9vTfUss7MJZ8ODDYzNlfkm0MmPsNX
-         DriUdpbjgc96pLtWq6iHJ9Zi2Kl2HCheG9BODvSImImUVn7DZZACIuln9aAHbJVHHR+1
-         UW+A==
+        bh=6DI+q5qLC0m4S5PldegpNVIq+GhikISQElmsTEesw/w=;
+        b=AqQNc60XX/MiguGhRC36yhDWITUPAs4zQf/W4e9Re6YcCk45J/1fPnwYmdzEpwttbN
+         cTn+zbnnCcKYm+k7s8jw3C7PPosF5s7bK2+P/RiZgmv57M2NXYSEFMc6g9n0QvdWiiU1
+         xTBUcvxI+rEXpZT6g2BsDW2z/UYbOVbr3Za+XeYJyGQ2JTznwzFz8tZo5KyoRm4Buqom
+         Hd+DEmVGlF5lsfacOxXLtyKIhdDy8kaCqoCTUuiOvZrfgXM0tObdERC0JHFiIvdxt2qZ
+         MEVnemsamXGZ6mxWwBgAnbue4oMwbnBMlSo5nmk8mMu/DrNTsfpU6o3rC1rc1JfJgXoB
+         hZUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704724206; x=1705329006;
+        d=1e100.net; s=20230601; t=1704724460; x=1705329260;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=us/CVEv6G9k9DQOG3dlOmhBFEblPcysaqhNz+rCQ/Uw=;
-        b=CDkAUov4EvQgry4giH6XEe5gatLUYJd8x6JyPi5oDRWUjpsLNBO7HG1A+ORnLouWvi
-         pxJNaaYIBVgB0aUo9g4pVtrCYJOEXjB95AZSqWQ3o5VtuNf7NEb2BQqXtcqZGJ9IXthx
-         X7nsbjkEi2i8pxBS9+9c3ASPbHSR+b77ECWx/wbDi/S8OaIltukFWp8b/hppmaapAF4S
-         Vqz4lpdqmsLELWTvRDeQTji9UtIRlJC8B7X6ixTbmqqQmCPa+7PerkF78mhLeoBCO0y+
-         lhyhk7Ky91qTDs+qLtDBtmHkMss0iVlSISG8qdY6CJEAnd256Ab2YJApJfAeiBXP3cF5
-         q2EA==
-X-Gm-Message-State: AOJu0YzPc8748y7dAga3gMa/bCwJe8GPhV5QHIX03rbunkEic1N3IJs6
-	vGh8QyhyDAAu1dPQDwPoL+LPuqonpJr4KVcxk3pPgEYLKL08PA==
-X-Google-Smtp-Source: AGHT+IFjtzhQ3BfPSDEs8Agdj1p4sk1vFjnrvq9PUoG7FKgA33cadkc0hjK10VeuHBRIfWpXwQrhgg7VCPy+lRL1XnI=
-X-Received: by 2002:ad4:5f4a:0:b0:67f:a6b6:f050 with SMTP id
- p10-20020ad45f4a000000b0067fa6b6f050mr5204636qvg.75.1704724205761; Mon, 08
- Jan 2024 06:30:05 -0800 (PST)
+        bh=6DI+q5qLC0m4S5PldegpNVIq+GhikISQElmsTEesw/w=;
+        b=GYPwX8AFLqNimL+jj+S2RrOGWM8sDh1b7zbFsTVjDc3Kv11ImKoPBlSUo0FIGiNjmv
+         0k/PyvZhcW/gkckizixPmiL00AVEXMOt/yjq2vZoHVkfi0x/ZOyh1ZqDwTbySmtcmc8W
+         gso7s7O49m4t8OoVqrkTlW6kCnFzjDY+ETB7iHbNoONoG+a2T6mAr65o03wwclm6T+lZ
+         2ZKfthHVM10LB6qxdMT05++XJF6t2fbI25glKOvBQntBztRqNL4zhPHDMgGtIPaOCrJ1
+         NWbS0cao+NtV3gSfVxILab16FwaBCvUn6VLc4/nut5jMSPVSZWJYIb6SrlEkuEYxwkcE
+         X7eg==
+X-Gm-Message-State: AOJu0YyX5L4OZwK1ySlLl9fMFjwtxFG99glu4WCm3HCqu7q96pJiDRrX
+	F28EsViAcHcccrcm7EceCo1NzKNwkhpyACFvkm6BM4pUm1shMQ==
+X-Google-Smtp-Source: AGHT+IElULHRVxMwPWLAqS1wTYQ8tyXEYos8JXKwiW8eupF+CZehujEPHiFYUOOCEgYWDpd7SlWd4g0/9Z3Fp0gzPWo=
+X-Received: by 2002:a05:6214:c63:b0:680:ca9:6700 with SMTP id
+ t3-20020a0562140c6300b006800ca96700mr5415286qvj.108.1704724460150; Mon, 08
+ Jan 2024 06:34:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231228125805.661725-1-tudor.ambarus@linaro.org> <20231228125805.661725-6-tudor.ambarus@linaro.org>
-In-Reply-To: <20231228125805.661725-6-tudor.ambarus@linaro.org>
+References: <20231228125805.661725-1-tudor.ambarus@linaro.org> <20231228125805.661725-7-tudor.ambarus@linaro.org>
+In-Reply-To: <20231228125805.661725-7-tudor.ambarus@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 8 Jan 2024 14:29:54 +0000
-Message-ID: <CADrjBPrGmi5Dq4dLM2pJDtFS6Zq72FqzvBEnu=1wbeehsODijA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] tty: serial: samsung: set UPIO_MEM32 iotype for gs101
+Date: Mon, 8 Jan 2024 14:34:08 +0000
+Message-ID: <CADrjBPpkBe4FsTHMOnQ-RLBjDCFM_QW8QZ0uVn35aX_9uiuo1A@mail.gmail.com>
+Subject: Re: [PATCH v2 06/12] tty: serial: samsung: add gs101 earlycon support
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
 	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org, 
@@ -67,22 +67,52 @@ Hi Tudor,
 
 On Thu, 28 Dec 2023 at 12:58, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 >
-> GS101's Connectivity Peripheral blocks (peric0/1 blocks) which
-> include the I3C and USI (I2C, SPI, UART) only allow 32-bit
-> register accesses.
->
-> Instead of specifying the reg-io-width = 4 everywhere, for each node,
-> the requirement should be deduced from the compatible.
->
-> Infer UPIO_MEM32 iotype from the "google,gs101-uart" compatible.
-> Update the uart info name to be GS101 specific in order to
-> differentiate from the other exynos platforms. All the other settings
-> are not changed.
->
-> exynos_fifoszdt_serial_drv_data was replaced by gs101_serial_drv_data
-> because the iotype restriction is gs101 specific and there was no other
-> user of exynos_fifoszdt_serial_drv_data.
+> The entire bus (PERIC) on which the GS101 serial resides only allows
+> 32-bit register accesses. The reg-io-width dt property is disallowed
+> for the "google,gs101-uart" compatible and instead the iotype is
+> inferred from the compatible. Always set UPIO_MEM32 iotype for the
+> gs101 earlycon.
 >
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
+That's a nice addition to avoid folks shooting themselves in the foot
+when enabling earlycon.
+
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+
+
+
+
+
+
+> ---
+> v2: update commit message
+>
+>  drivers/tty/serial/samsung_tty.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+> index 938127179acf..2fbaaf0e756b 100644
+> --- a/drivers/tty/serial/samsung_tty.c
+> +++ b/drivers/tty/serial/samsung_tty.c
+> @@ -2812,6 +2812,17 @@ OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos4210-uart",
+>  OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
+>                         s5pv210_early_console_setup);
+>
+> +static int __init gs101_early_console_setup(struct earlycon_device *device,
+> +                                           const char *opt)
+> +{
+> +       /* gs101 always expects MMIO32 register accesses. */
+> +       device->port.iotype = UPIO_MEM32;
+> +
+> +       return s5pv210_early_console_setup(device, opt);
+> +}
+> +
+> +OF_EARLYCON_DECLARE(gs101, "google,gs101-uart", gs101_early_console_setup);
+> +
+>  /* Apple S5L */
+>  static int __init apple_s5l_early_console_setup(struct earlycon_device *device,
+>                                                 const char *opt)
+> --
+> 2.43.0.472.g3155946c3a-goog
+>
