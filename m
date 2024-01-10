@@ -1,140 +1,129 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B320D482F3
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 10:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0D047A4F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 11:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQE4ccSf"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e4f692d06so9991325e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 02:21:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704882082; x=1705486882; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ummHx1igHBI+mPkPK31ezfxthw+Jgvbj/YdjUw2HyQ4=;
-        b=CQE4ccSfqXSc+BhOt4XrXWba/QxpMhZcLYvTEBkWHsowNrLyZafLJZiZjDESoDRhCg
-         lJWf127dheRmWez0fjaKfQ5AthFF9NyuDbrWkn3x+c6oz2i3WiJvTrUkVLNjxx5tHE84
-         2KQaxpgKa64pgc/et4xsC19sx9A7TalzxcJ7cSx9wjIXyvTf9ANde+uq3dBuoa0fpFJB
-         HAHIIt/dGldVMlYQl9qsGnJjG2NZXX2sOKN8leHy8HKyWgD53Q79emymHzQKWpn7IRTv
-         gbw54kXDNSnjapn1r8t55M3e6dlSqI9aysM85ZxNaGlzpJijWevQhrC5RUSC46KoI9SK
-         nmrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704882082; x=1705486882;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ummHx1igHBI+mPkPK31ezfxthw+Jgvbj/YdjUw2HyQ4=;
-        b=XuWXbtZBiVju6/uVh7rlL6sbJx3pM4GV42orMF5VapIBgftrzneP5LHY2nfytRQd/V
-         ggWNh9k14OeKEzbhB2J1paSrc8DDAabDyrQL3uCNWsXfIePvK1RHg7ybgt2PmItZ26bE
-         G0U2jcrESuXGo5MOQJ1eaVXvnisShr63pCFpoGQQBRsWS90hTulBiVlDPQ2t4zmJoY0z
-         1YwvTs3Ak6NdkbDgHU9RJW7QkbWxKj8xjFsahvOi3bBLX/GQhWB1RnLMIVuVg6b/5Siq
-         +0s5KdI8J6SIhr+KrkOvYRKCllmIFQc/L9940a34pAZNY3Dw8QKFOr6Vs9qaA16An6dC
-         i/mQ==
-X-Gm-Message-State: AOJu0YwOTvbKabPtNxLdG3iJDfme0ilx33ZcXV8HV10I2ewEMceQIw2i
-	jxK84KZCB+UC7pZAx+AjMCt5VHCSzc1PTA==
-X-Google-Smtp-Source: AGHT+IG0xYD6noOiAF06pJmAKPKFGS5k9kf0z5T6NNAMgrhXlZB3r2GVRIKB+IrSXxoBiSdSWW9UzA==
-X-Received: by 2002:a7b:ce99:0:b0:40d:88b8:1bd1 with SMTP id q25-20020a7bce99000000b0040d88b81bd1mr525747wmj.185.1704882082174;
-        Wed, 10 Jan 2024 02:21:22 -0800 (PST)
-Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id j7-20020a05600c190700b0040e52cac976sm1625302wmq.29.2024.01.10.02.21.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jan 2024 02:21:21 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	andre.draszik@linaro.org,
-	peter.griffin@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 18/18] tty: serial: samsung: shrink memory footprint of ``struct s3c24xx_uart_info``
-Date: Wed, 10 Jan 2024 10:21:02 +0000
-Message-ID: <20240110102102.61587-19-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-In-Reply-To: <20240110102102.61587-1-tudor.ambarus@linaro.org>
-References: <20240110102102.61587-1-tudor.ambarus@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cwML7bh5"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240110111708epoutp01e896a2cf293741712f375ccab64a7bb3~o_EOYX8g-1357613576epoutp018
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 11:17:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240110111708epoutp01e896a2cf293741712f375ccab64a7bb3~o_EOYX8g-1357613576epoutp018
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1704885428;
+	bh=VNQFld5uD/GfuHVgTJABTKIG7Jx2ishsDZrK5Wsb3xY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=cwML7bh5qYFIN0dgC+jT4h/cPVV6VIV0dzcsxcKmmp0vj3wttvl4fUMloveq2es3F
+	 55fj8D+qoJNtJ7ZfF5CTBejdSx7u1W6P7lQYUh31HFFU1pbffjzeYOLq//+psLVouE
+	 gA84N+yFnff1fLcCTJR0JXQ1yYM2bRcvKdgArMew=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240110111707epcas5p29a60808bf7c6f7e6af5bd63fd479e48f~o_ENsIrdo0161401614epcas5p22;
+	Wed, 10 Jan 2024 11:17:07 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4T94y92jY7z4x9Pv; Wed, 10 Jan
+	2024 11:17:05 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	39.3F.19369.1BC7E956; Wed, 10 Jan 2024 20:17:05 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240110110143epcas5p2692ec3cbabfdaf2c3387b5a98f072943~o92w6AU3Y1257212572epcas5p2B;
+	Wed, 10 Jan 2024 11:01:43 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240110110143epsmtrp2f3a51c10d6599f76e6b9b3f26c2cd4a9~o92wzdbIx2407724077epsmtrp2q;
+	Wed, 10 Jan 2024 11:01:43 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-1f-659e7cb148f3
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	46.50.18939.6197E956; Wed, 10 Jan 2024 20:01:42 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240110110140epsmtip1235f38c9714739f034de29f3b12ede6c~o92uYBmfZ2758127581epsmtip1d;
+	Wed, 10 Jan 2024 11:01:40 +0000 (GMT)
+From: Shradha Todi <shradha.t@samsung.com>
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, jingoohan1@gmail.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	manivannan.sadhasivam@linaro.org, Shradha Todi <shradha.t@samsung.com>
+Subject: [PATCH v3 0/2] Add helper function to get and enable all bulk
+ clocks
+Date: Wed, 10 Jan 2024 16:31:13 +0530
+Message-Id: <20240110110115.56270-1-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmpu7GmnmpBlPmClo8mLeNzWJJU4bF
+	ii8z2S32vt7KbtHQ85vVYtPja6wWH3vusVpc3jWHzeLsvONsFjPO72OyODR1L6NFy58WFou1
+	R+6yW9xt6WS1uHjK1eL/nh3sFv+ubWSx6D1c6yDkcfnaRWaP9zda2T12zrrL7rFgU6nHplWd
+	bB53ru1h83hyZTqTx+Yl9R59W1YxenzeJBfAFZVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9q
+	ZmCoa2hpYa6kkJeYm2qr5OIToOuWmQP0kZJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1
+	ICWnwKRArzgxt7g0L10vL7XEytDAwMgUqDAhO+PWxNOsBXPZKmZtes/awPiXpYuRk0NCwERi
+	8ZanQDYXh5DAHkaJX6feMEM4nxglLt1pZ4Jz3h9pZINpeXT5DStEYiejxJF/+6GqWpkkLrx/
+	yQpSxSagJdH4tQtslojAYkaJWzs2g7UwC5xgkjh6dhsjSJWwgL/E/V3X2EFsFgFVicbLfWBx
+	XgEriV0zX7FC7JOXWL3hANgkCYGZHBJbN02But1F4uehHcwQtrDEq+Nb2CFsKYnP7/ZCHZsu
+	sXLzDKiaHIlvm5cwQdj2EgeuzAGawwF0kabE+l36EGFZiamn1oGVMAvwSfT+fgJVziuxYx6M
+	rSzx5e8eqBMkJeYduwx1p4dEx4+ZYDVCArESrV9OME1glJ2FsGEBI+MqRqnUguLc9NRk0wJD
+	3bzUcnhkJefnbmIEJ1atgB2Mqzf81TvEyMTBeIhRgoNZSYRX4fOcVCHelMTKqtSi/Pii0pzU
+	4kOMpsBAm8gsJZqcD0zteSXxhiaWBiZmZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFx
+	cEo1MDH3uHcttV6t/ior5ce/jUvZpp3QrFWL2/dhp/K5RW+9Qp9vTFNtS77Zb3VT20MxtaP8
+	7qnT2cnx8g92656Q8vzO1mW1f/lM8bppKtWX7DU+sq+2WrO246ehQj47k9s0ibZn8hkGAVMO
+	921gttisHKKv+2ZB8KnPF9axpM+7vepN8+9wvweLFSZopt09bH11Q/Z2VRbWDRssP/QsPaHr
+	mq6d0WXhbL/qgc6+CWeMfa5ZBt5/f/r/VoGleR2NHB6nlmyd3bAu5ImVG/86i3Pf41Oivpjw
+	7lMt/NN8wnLO+38fmi/peSSWFi9QWBDrMmmBMPdjJ5sy+39rFzJ/n9LVlWy16OLqxlWBdnun
+	ZDjyhSixFGckGmoxFxUnAgCgilTbNQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSnK5Y5bxUg793LS0ezNvGZrGkKcNi
+	xZeZ7BZ7X29lt2jo+c1qsenxNVaLjz33WC0u75rDZnF23nE2ixnn9zFZHJq6l9Gi5U8Li8Xa
+	I3fZLe62dLJaXDzlavF/zw52i3/XNrJY9B6udRDyuHztIrPH+xut7B47Z91l91iwqdRj06pO
+	No871/aweTy5Mp3JY/OSeo++LasYPT5vkgvgiuKySUnNySxLLdK3S+DKuDXxNGvBXLaKWZve
+	szYw/mXpYuTkkBAwkXh0+Q1rFyMXh5DAdkaJpefvsEIkJCU+X1zHBGELS6z895wdoqiZSeLu
+	wy5GkASbgJZE49cuZpCEiMByRomfJ58ygTjMAjeYJBob57KDVAkL+ErMPDMfbB+LgKpE4+U+
+	sG5eASuJXTNfQa2Tl1i94QDzBEaeBYwMqxhFUwuKc9NzkwsM9YoTc4tL89L1kvNzNzGCA1sr
+	aAfjsvV/9Q4xMnEwHmKU4GBWEuFV+DwnVYg3JbGyKrUoP76oNCe1+BCjNAeLkjivck5nipBA
+	emJJanZqakFqEUyWiYNTqoFp0/lnfH/u+HPwK3vdbeyZOmnL3n+vI4r5XO6+u8r4wdNCb+WB
+	v327nmx5sLnmXWnSE3vxk5s6ZSNea1denz5zvZzn03/rHR5/nRDZfvBZ7pzd1zrs1k/LXp9z
+	oozr7638Vs0ryulu5ZvUFD6qTPmlb8/jqNn5TDBlXaZb9NqvHNOEltnxq/7dHWaVdn/rPqHJ
+	U9dlndyp2FWeO0un/uifD5Vbsy8u+F7v/ODRxNtKkV2dsvxt07OLXmTa84lfZY6ctyHl5sul
+	Ts785zs07JxnTdSsYuswq+w+/9s597hj/Hmhhk0r6iOmCG4qK7DPlf7xqyfIRC0n/t3sY2dS
+	1id3OEz85Pw5rJ4vKY1dXldPiaU4I9FQi7moOBEA7z/GrtsCAAA=
+X-CMS-MailID: 20240110110143epcas5p2692ec3cbabfdaf2c3387b5a98f072943
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240110110143epcas5p2692ec3cbabfdaf2c3387b5a98f072943
+References: <CGME20240110110143epcas5p2692ec3cbabfdaf2c3387b5a98f072943@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Use u32 for the members of ``struct s3c24xx_uart_info`` that are used
-for register interactions. The purpose of these members becomes clearer.
+Create a managed API wrapper to get all the bulk clocks and enable them
+as it is a very common practice in many drivers. The second patch uses
+this API to adapt to clk_bulk_* APIs.
+v1:
+ - https://lore.kernel.org/lkml/20231009062216.6729-1-shradha.t@samsung.com/
+v2:
+ - https://lore.kernel.org/lkml/20231115065621.27014-1-shradha.t@samsung.com/
+ - Addressed Manivannan's comments to improve patch
 
-The greater benefit of this change is that it also reduces the memory
-footprint of the struct, allowing 64-bit architectures to use a
-single cacheline for the entire struct.
+Shradha Todi (2):
+  clk: Provide managed helper to get and enable bulk clocks
+  PCI: exynos: Adapt to clk_bulk_* APIs
 
-struct s3c24xx_uart_info {
-	const char  *              name;                 /*     0     8 */
-	enum s3c24xx_port_type     type;                 /*     8     4 */
-	unsigned int               port_type;            /*    12     4 */
-	unsigned int               fifosize;             /*    16     4 */
-	u32                        rx_fifomask;          /*    20     4 */
-	u32                        rx_fifoshift;         /*    24     4 */
-	u32                        rx_fifofull;          /*    28     4 */
-	u32                        tx_fifomask;          /*    32     4 */
-	u32                        tx_fifoshift;         /*    36     4 */
-	u32                        tx_fifofull;          /*    40     4 */
-	u32                        clksel_mask;          /*    44     4 */
-	u32                        clksel_shift;         /*    48     4 */
-	u32                        ucon_mask;            /*    52     4 */
-	u8                         def_clk_sel;          /*    56     1 */
-	u8                         num_clks;             /*    57     1 */
-	u8                         iotype;               /*    58     1 */
-	u8                         has_divslot:1;        /*    59: 0  1 */
+ drivers/clk/clk-devres.c                | 41 ++++++++++++++++++
+ drivers/pci/controller/dwc/pci-exynos.c | 55 +++----------------------
+ include/linux/clk.h                     | 25 +++++++++++
+ 3 files changed, 71 insertions(+), 50 deletions(-)
 
-	/* size: 64, cachelines: 1, members: 17 */
-	/* padding: 4 */
-	/* bit_padding: 7 bits */
-};
-
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/tty/serial/samsung_tty.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 598d9fe7a492..40dceb41acb7 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -75,15 +75,15 @@ struct s3c24xx_uart_info {
- 	enum s3c24xx_port_type	type;
- 	unsigned int		port_type;
- 	unsigned int		fifosize;
--	unsigned long		rx_fifomask;
--	unsigned long		rx_fifoshift;
--	unsigned long		rx_fifofull;
--	unsigned long		tx_fifomask;
--	unsigned long		tx_fifoshift;
--	unsigned long		tx_fifofull;
--	unsigned long		clksel_mask;
--	unsigned long		clksel_shift;
--	unsigned long		ucon_mask;
-+	u32			rx_fifomask;
-+	u32			rx_fifoshift;
-+	u32			rx_fifofull;
-+	u32			tx_fifomask;
-+	u32			tx_fifoshift;
-+	u32			tx_fifofull;
-+	u32			clksel_mask;
-+	u32			clksel_shift;
-+	u32			ucon_mask;
- 	u8			def_clk_sel;
- 	u8			num_clks;
- 	u8			iotype;
 -- 
-2.43.0.472.g3155946c3a-goog
+2.17.1
 
