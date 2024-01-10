@@ -1,49 +1,49 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8D03E468
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 08:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC923FB3C
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 08:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FdFNcFdS"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e461c1f5bso33140215e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 00:07:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SvQQ0u8D"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e43e489e4so43064365e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 00:08:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704874026; x=1705478826; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704874083; x=1705478883; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HTfx7fRg1lmYXBm9+wpJ+Z0x7xUNYWnyycMG9l7W2tE=;
-        b=FdFNcFdSLTC5ePtBlyDcEapFf3viaf+aW1lOmlaoG23jt46fPObkL+KfQl0wE5ifSG
-         e8GD/97U9Q9EvHvWAryC6vVo0AbC/m1K5pfYdMPS6T4T8XsyoQ8se4UScUP1vSctFLC8
-         xTKGQF7juV/I7u4Ct6hqousBLJETp5N2eOJXdLZNO+n21Qfpahee0R7vqWsFsFSrPHuv
-         HEilXwqjW45nTVOi0LojSPye148hV9ijBoR5wy/1FJcoxZuVfobWPuwNyPLe/q5TEkry
-         mCYsCUB8MYL0Dd6YXdb3qr5gZiOK+ttcD/vazbsOQkWIHsPwxXWUakYLIId0AhgCpiCh
-         ea7g==
+        bh=18onmT8kvZ7gg4EOu5RWr8v/3MvP/Hv+MH9CkNR/0WY=;
+        b=SvQQ0u8DT0Khjm1B9Sg1Um6uqICVm4Ak/cN3DahJnyumn9La+ksYU8OkS0KQYar25A
+         r60pcX9PAJEmWfWpbIFZxRbBkYmuRLRcbgL0HTfl2o9UzEG242iYyP22sxXuHUFopqZM
+         ijCKr25M4HOaotYRc4Q+vM3tv1WnVb/hPY4hdm0HDc+Bdo3Xk03kYxPSTnDuUFSO3IQh
+         DE+r3p/Y+gnw7Qk9EOcPHTC2wl3TyDRKZagU9GUgoyADP135Nh34QGtIP7s+A3upcoyR
+         wnONrybBO3jBw/4WFzEJ0VQPeNohcSGLJLRUXvtDa0z2cGZH5NnqbsgZ4tuaWi1o6utP
+         jisw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704874026; x=1705478826;
+        d=1e100.net; s=20230601; t=1704874083; x=1705478883;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HTfx7fRg1lmYXBm9+wpJ+Z0x7xUNYWnyycMG9l7W2tE=;
-        b=AAAomY0kpMrcL8aV00tQECZUrfl0TvOQp9KMg3MHLXItFsMdch74d1STstzrUMDg0z
-         pHHxw3E53IOBrm+3a+0x309/9rsI+G/kbSR96vghrdnThPb1uVZCPlSODUbX54IxbB4P
-         cFqH6a/ILpZRBCAkcUXhuVC38MMPBksz3rhJ+QvBSyCfgcZdhFre6pmqxA4K7dfX+aIZ
-         E+w7s8gh4ZoO+ubKIBPITVSJhvsI9g2Dx2x832IzW/FpfFVU+/+qXnvnStpPcL28pHCM
-         jYSkd2ZQZ7AfGWhAR6Yb9c2af7lpzraaERwCQ0lRoLhQm5XZ97ghfw/2gQNzjzNYXFOr
-         x0Sg==
-X-Gm-Message-State: AOJu0YyJYkEUl5M0bl3cm8ofktpbK1f/3A57V2am89l/BQUClRQdLfnR
-	sKPbz641xncnj1acE5BtWybGxkdDy9msqg==
-X-Google-Smtp-Source: AGHT+IGGcINgXf9nQQs321VsNIQxesuRGjpXfWijnuA+XSxDAKXbBcRh2x3E/HSR60yRRKadFYXgaQ==
-X-Received: by 2002:a05:600c:28f:b0:40e:52ed:f7ad with SMTP id 15-20020a05600c028f00b0040e52edf7admr287234wmk.170.1704874026519;
-        Wed, 10 Jan 2024 00:07:06 -0800 (PST)
+        bh=18onmT8kvZ7gg4EOu5RWr8v/3MvP/Hv+MH9CkNR/0WY=;
+        b=VQjzxXcTayY4Jk3EIPcif8c3syPAAU/ZhKUGsDrFiRlLjbq0HDGgO+vMQXIssn/YnV
+         Q95idUaFKZ7Tkdo0zOigZsvQL3U2pyVPcwjaCnGLgu+fK8X8RFoWXADeaG5MdX5q05cz
+         HBad60FFjPldIedzN1bzG/GBLEjXeY9mAmZJ790zapbLRjGduRxjQkUfCSzUTJVxUw4q
+         cW468mQ5P3bgpw0h5Kcj8L+CVp6mQlu4WNnB3j70l3UNFTBCqworZlQ7841t6QIxs+vG
+         eqhu/mLQZDGlL3UA/ZbANE2cIMNKjkLf3zUu+VWogoK8OONQ6KAfRYI9ffkxKtjlc07+
+         6cHg==
+X-Gm-Message-State: AOJu0YwWKY0tL1vXa/WyZdS7W8tqWzCXEpi3ayNHMms4poZghVkXJqoA
+	KoWJRaCBiaUgCP2DMBUAE7cTvEqCXbZmAQ==
+X-Google-Smtp-Source: AGHT+IEnEoMK6jAgo0ZVcM/+QdcenMiKU/9mNLBH5UAdGVviCbrl39mjLQPfkwPq/0mL+v6OHi7lKQ==
+X-Received: by 2002:a05:600c:3155:b0:40d:aa42:b4cb with SMTP id h21-20020a05600c315500b0040daa42b4cbmr363750wmo.171.1704874083693;
+        Wed, 10 Jan 2024 00:08:03 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id bh21-20020a05600c3d1500b0040d987aae3esm1233597wmb.13.2024.01.10.00.07.02
+        by smtp.gmail.com with ESMTPSA id bh21-20020a05600c3d1500b0040d987aae3esm1233597wmb.13.2024.01.10.00.08.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 00:07:05 -0800 (PST)
-Message-ID: <d60bb962-9d54-43cd-befd-2ed2fc09db26@linaro.org>
-Date: Wed, 10 Jan 2024 09:07:02 +0100
+        Wed, 10 Jan 2024 00:08:02 -0800 (PST)
+Message-ID: <f2a8d55e-2048-4d81-92dc-4533dc02a604@linaro.org>
+Date: Wed, 10 Jan 2024 09:08:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/12] tty: serial: samsung: prepare for different IO
- types
+Subject: Re: [PATCH v3 05/12] tty: serial: samsung: set UPIO_MEM32 iotype for
+ gs101
 Content-Language: en-US
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
  krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org
@@ -65,7 +65,7 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
  linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
  andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com
 References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-5-tudor.ambarus@linaro.org>
+ <20240109125814.3691033-6-tudor.ambarus@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,28 +111,23 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240109125814.3691033-5-tudor.ambarus@linaro.org>
+In-Reply-To: <20240109125814.3691033-6-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/01/2024 13:58, Tudor Ambarus wrote:
 > GS101's Connectivity Peripheral blocks (peric0/1 blocks) which
 > include the I3C and USI (I2C, SPI, UART) only allow 32-bit
-> register accesses. If using 8-bit register accesses, a SError
-> Interrupt is raised causing the system unusable.
+> register accesses.
 > 
 > Instead of specifying the reg-io-width = 4 everywhere, for each node,
 > the requirement should be deduced from the compatible.
 > 
-> Prepare the samsung tty driver to allow IO types different than
-> UPIO_MEM. ``struct uart_port::iotype`` is an unsigned char where all
-> its 8 bits are exposed to uapi. We can't make NULL checks on it to
-> verify if it's set, thus always set it from the driver's data.
-> Use u8 for the ``iotype`` member of ``struct s3c24xx_uart_info`` to
-> emphasize that the iotype is an 8 bit mask.
+> Infer UPIO_MEM32 iotype from the "google,gs101-uart" compatible.
+> Update the uart info name to be GS101 specific in order to
+> differentiate from the other exynos platforms. All the other settings
+> are not changed.
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
