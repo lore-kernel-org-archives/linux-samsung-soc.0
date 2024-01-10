@@ -1,49 +1,49 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311C3A8EB
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 08:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8D03E468
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 08:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hm2Ob1A2"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e55c885d7so4718525e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 00:06:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FdFNcFdS"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e461c1f5bso33140215e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 00:07:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704873988; x=1705478788; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704874026; x=1705478826; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+aIOTiCLKymfY7zaUooJrmbBSPplf+LY6QL20P1MwCY=;
-        b=Hm2Ob1A2hHQvayo8moFUOgB9mGUzD2F92x3jfUXCzk5MpkebsJD+Dad6O3tfOCJR46
-         lNnzyRSDSsqsBvc3pJn62euf85qsyNeaXIeftdRfDCmW92sn1E/YHlWkIS2i33u2J+fR
-         x3S4tBolMEewvtu2FDvmAcCfnzLopENFfjbTm/LZB95O6+KP9Sz84+k3k5fCjCg7tv/Z
-         nvOICFw57ClWXmhWMpyUCGeL1tiZ+MeeZx7PmCwCO1Tzcb2pVKNTnzePbZu0u4ZGOxOa
-         XFoHRJsdfmltGzoMAQ9jpzPVqHGH2f+TtTOD7hDOA7lAsnScM0m2g7yYOuTu5xRnR8aG
-         suBQ==
+        bh=HTfx7fRg1lmYXBm9+wpJ+Z0x7xUNYWnyycMG9l7W2tE=;
+        b=FdFNcFdSLTC5ePtBlyDcEapFf3viaf+aW1lOmlaoG23jt46fPObkL+KfQl0wE5ifSG
+         e8GD/97U9Q9EvHvWAryC6vVo0AbC/m1K5pfYdMPS6T4T8XsyoQ8se4UScUP1vSctFLC8
+         xTKGQF7juV/I7u4Ct6hqousBLJETp5N2eOJXdLZNO+n21Qfpahee0R7vqWsFsFSrPHuv
+         HEilXwqjW45nTVOi0LojSPye148hV9ijBoR5wy/1FJcoxZuVfobWPuwNyPLe/q5TEkry
+         mCYsCUB8MYL0Dd6YXdb3qr5gZiOK+ttcD/vazbsOQkWIHsPwxXWUakYLIId0AhgCpiCh
+         ea7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704873988; x=1705478788;
+        d=1e100.net; s=20230601; t=1704874026; x=1705478826;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+aIOTiCLKymfY7zaUooJrmbBSPplf+LY6QL20P1MwCY=;
-        b=M8c/E8SAZRXaP85Bp2le3tEWXoWjNEQvsLGW2REmR9amouUkLWygPYFcUO+d5Jsm2s
-         e3EkOUnTe9C7c8yhNvh02KRSSN2RGubeqEJYLu8FNkIEz/cE7O7rUq6bBAg9xSPTrLMd
-         gyWBVIjCi5m28x7HgZR7udqU572WcteEnQPZg6i0eB15Z23rHN70FA2TokqGVKezC6RV
-         71i7ryJbcDolmGoV2InRxyFBLVQgMG+0m6f8xkUIJ0pATb5nk/JU6toD4AmNDr1PGwiw
-         Xeiqewm1o7XH/o6HrGr0QeJMmIfdJoNYO991Rudod1d+Z8l9n0VaGi7pIRpA0iEC/wkT
-         rSHw==
-X-Gm-Message-State: AOJu0YzMpDdaR3LNWQu1CNU2la1FMC8QYNaahmNx6HBR7s+FXn74W8mK
-	9PxLd84CGyHNpqj9tTu2XFon0Rtvsnb3lw==
-X-Google-Smtp-Source: AGHT+IG6f7Z3hU+jmRGpoBeaimLxCz6eYyCSf+MXlncxkp23qdhwp68Q+rpylJi9KD910zX2WLF4qA==
-X-Received: by 2002:a05:600c:3f9b:b0:40e:546f:f373 with SMTP id fs27-20020a05600c3f9b00b0040e546ff373mr288726wmb.91.1704873988102;
-        Wed, 10 Jan 2024 00:06:28 -0800 (PST)
+        bh=HTfx7fRg1lmYXBm9+wpJ+Z0x7xUNYWnyycMG9l7W2tE=;
+        b=AAAomY0kpMrcL8aV00tQECZUrfl0TvOQp9KMg3MHLXItFsMdch74d1STstzrUMDg0z
+         pHHxw3E53IOBrm+3a+0x309/9rsI+G/kbSR96vghrdnThPb1uVZCPlSODUbX54IxbB4P
+         cFqH6a/ILpZRBCAkcUXhuVC38MMPBksz3rhJ+QvBSyCfgcZdhFre6pmqxA4K7dfX+aIZ
+         E+w7s8gh4ZoO+ubKIBPITVSJhvsI9g2Dx2x832IzW/FpfFVU+/+qXnvnStpPcL28pHCM
+         jYSkd2ZQZ7AfGWhAR6Yb9c2af7lpzraaERwCQ0lRoLhQm5XZ97ghfw/2gQNzjzNYXFOr
+         x0Sg==
+X-Gm-Message-State: AOJu0YyJYkEUl5M0bl3cm8ofktpbK1f/3A57V2am89l/BQUClRQdLfnR
+	sKPbz641xncnj1acE5BtWybGxkdDy9msqg==
+X-Google-Smtp-Source: AGHT+IGGcINgXf9nQQs321VsNIQxesuRGjpXfWijnuA+XSxDAKXbBcRh2x3E/HSR60yRRKadFYXgaQ==
+X-Received: by 2002:a05:600c:28f:b0:40e:52ed:f7ad with SMTP id 15-20020a05600c028f00b0040e52edf7admr287234wmk.170.1704874026519;
+        Wed, 10 Jan 2024 00:07:06 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id bh21-20020a05600c3d1500b0040d987aae3esm1233597wmb.13.2024.01.10.00.06.24
+        by smtp.gmail.com with ESMTPSA id bh21-20020a05600c3d1500b0040d987aae3esm1233597wmb.13.2024.01.10.00.07.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 00:06:26 -0800 (PST)
-Message-ID: <5d24a5da-e4cd-4d32-ba2b-8e91cfc7dced@linaro.org>
-Date: Wed, 10 Jan 2024 09:06:23 +0100
+        Wed, 10 Jan 2024 00:07:05 -0800 (PST)
+Message-ID: <d60bb962-9d54-43cd-befd-2ed2fc09db26@linaro.org>
+Date: Wed, 10 Jan 2024 09:07:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/12] dt-bindings: serial: samsung: do not allow
- reg-io-width for gs101
+Subject: Re: [PATCH v3 04/12] tty: serial: samsung: prepare for different IO
+ types
 Content-Language: en-US
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
  krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org
@@ -65,7 +65,7 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
  linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
  andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com
 References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-4-tudor.ambarus@linaro.org>
+ <20240109125814.3691033-5-tudor.ambarus@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,29 +111,30 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240109125814.3691033-4-tudor.ambarus@linaro.org>
+In-Reply-To: <20240109125814.3691033-5-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/01/2024 13:58, Tudor Ambarus wrote:
-> All gs101 serial ports are restricted to 32-bit register accesses.
-> This requirement will be inferred from the compatible. Do not allow
-> the reg-io-width property for the google,gs101-uart compatible.
+> GS101's Connectivity Peripheral blocks (peric0/1 blocks) which
+> include the I3C and USI (I2C, SPI, UART) only allow 32-bit
+> register accesses. If using 8-bit register accesses, a SError
+> Interrupt is raised causing the system unusable.
 > 
-> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Instead of specifying the reg-io-width = 4 everywhere, for each node,
+> the requirement should be deduced from the compatible.
+> 
+> Prepare the samsung tty driver to allow IO types different than
+> UPIO_MEM. ``struct uart_port::iotype`` is an unsigned char where all
+> its 8 bits are exposed to uapi. We can't make NULL checks on it to
+> verify if it's set, thus always set it from the driver's data.
+> Use u8 for the ``iotype`` member of ``struct s3c24xx_uart_info`` to
+> emphasize that the iotype is an 8 bit mask.
+> 
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
-> v3: collect Peter's R-b tag
-> v2: new patch
-> 
-
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Please split the serial patches into separate patchset and send them
-usual way, so Greg can pick them up. GS101 was merged, thus this is not
-initial submission anymore.
 
 Best regards,
 Krzysztof
