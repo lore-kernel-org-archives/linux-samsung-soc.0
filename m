@@ -1,49 +1,49 @@
 Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29023E470
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 08:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311C3A8EB
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 08:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T8Sa6Bgx"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e5770d34fso2024355e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 00:02:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hm2Ob1A2"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e55c885d7so4718525e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jan 2024 00:06:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704873773; x=1705478573; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1704873988; x=1705478788; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xYiCKzMbCiV7Iv5PpjCp1Kz+vWWccsrpd8/ewS0uAuE=;
-        b=T8Sa6BgxoVMc82tlMHtd7YcbEtgo0OO4gnK0iSAyuMPC37WWDkSxYiU/br1fKJYiNp
-         kTw5oDZRajOR/h03weOf3twtX0J+h1NdW3fWSOSOh914XogGYy/fnXBxp+eMqjeVYxsS
-         umcBfhA2aJiAK4ibdyxBLENzbkLS3wZwN4pv+zGe5PZniEvvTfv1ZSRXAIcQ1hAl8Dii
-         svPMcTdgiDSvKq8jX7gIKRdLCgdrEuH+f2sz8iF3QAZJZm3N4eRmBBLTGmmljUbnxIop
-         7ymhtT/CV2XsL6RVp2vsMye74syF8kGzIxPh3wAgH/08DUKiS0i/3/Iby8h2iTtKl24W
-         xanw==
+        bh=+aIOTiCLKymfY7zaUooJrmbBSPplf+LY6QL20P1MwCY=;
+        b=Hm2Ob1A2hHQvayo8moFUOgB9mGUzD2F92x3jfUXCzk5MpkebsJD+Dad6O3tfOCJR46
+         lNnzyRSDSsqsBvc3pJn62euf85qsyNeaXIeftdRfDCmW92sn1E/YHlWkIS2i33u2J+fR
+         x3S4tBolMEewvtu2FDvmAcCfnzLopENFfjbTm/LZB95O6+KP9Sz84+k3k5fCjCg7tv/Z
+         nvOICFw57ClWXmhWMpyUCGeL1tiZ+MeeZx7PmCwCO1Tzcb2pVKNTnzePbZu0u4ZGOxOa
+         XFoHRJsdfmltGzoMAQ9jpzPVqHGH2f+TtTOD7hDOA7lAsnScM0m2g7yYOuTu5xRnR8aG
+         suBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704873773; x=1705478573;
+        d=1e100.net; s=20230601; t=1704873988; x=1705478788;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYiCKzMbCiV7Iv5PpjCp1Kz+vWWccsrpd8/ewS0uAuE=;
-        b=WWS7G1mYPgRe32eZ8CEcYuFQBE6frTyikeYwaVDerdg31c9jrY8s9qJInS6IN6plTj
-         wu8GArRmHFlYG0BgZ9prMOxuLN8030tNP0IzdBbu5MiFMcEzvdmO+HW+fSiIr6narCxd
-         +lZd2Ea6n3o8SU2mfsE8uqMaglJnneeMqIlJ62l+5H93jPXaTPtHRYms0buqwVISd6Km
-         lsBhMHhvumBm+GOWgJKO6IOw+3J8B4OP3twd/aalx4JY12mskHROlE38H4Yy9TQ6zQ17
-         Vl/J8e4qrh6caARN7bZNtxpCt0FL+0dXGhkFhzPtaSL/PgoAhEmeHmurIhP0kow0jdL9
-         78iQ==
-X-Gm-Message-State: AOJu0YzZP05GFlOCTtQQINHsLcP+kClYiDCxNO4FOxcNPAJQnqN6o5rr
-	jOi5Q007nUnx4/Nnu1YKUlBFaTsV3lZRoA==
-X-Google-Smtp-Source: AGHT+IERlAq8OlCchW637hYzbIGUGCyjH6rE8EdhNN3zfMhyWWfUXULX2FzBQR6BG45bD7ayH7u0VQ==
-X-Received: by 2002:a05:600c:4e54:b0:40e:5702:f8fd with SMTP id e20-20020a05600c4e5400b0040e5702f8fdmr212800wmq.137.1704873772899;
-        Wed, 10 Jan 2024 00:02:52 -0800 (PST)
+        bh=+aIOTiCLKymfY7zaUooJrmbBSPplf+LY6QL20P1MwCY=;
+        b=M8c/E8SAZRXaP85Bp2le3tEWXoWjNEQvsLGW2REmR9amouUkLWygPYFcUO+d5Jsm2s
+         e3EkOUnTe9C7c8yhNvh02KRSSN2RGubeqEJYLu8FNkIEz/cE7O7rUq6bBAg9xSPTrLMd
+         gyWBVIjCi5m28x7HgZR7udqU572WcteEnQPZg6i0eB15Z23rHN70FA2TokqGVKezC6RV
+         71i7ryJbcDolmGoV2InRxyFBLVQgMG+0m6f8xkUIJ0pATb5nk/JU6toD4AmNDr1PGwiw
+         Xeiqewm1o7XH/o6HrGr0QeJMmIfdJoNYO991Rudod1d+Z8l9n0VaGi7pIRpA0iEC/wkT
+         rSHw==
+X-Gm-Message-State: AOJu0YzMpDdaR3LNWQu1CNU2la1FMC8QYNaahmNx6HBR7s+FXn74W8mK
+	9PxLd84CGyHNpqj9tTu2XFon0Rtvsnb3lw==
+X-Google-Smtp-Source: AGHT+IG6f7Z3hU+jmRGpoBeaimLxCz6eYyCSf+MXlncxkp23qdhwp68Q+rpylJi9KD910zX2WLF4qA==
+X-Received: by 2002:a05:600c:3f9b:b0:40e:546f:f373 with SMTP id fs27-20020a05600c3f9b00b0040e546ff373mr288726wmb.91.1704873988102;
+        Wed, 10 Jan 2024 00:06:28 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.223.112])
-        by smtp.gmail.com with ESMTPSA id p16-20020a05600c469000b0040e39cbf2a4sm1223887wmo.42.2024.01.10.00.02.49
+        by smtp.gmail.com with ESMTPSA id bh21-20020a05600c3d1500b0040d987aae3esm1233597wmb.13.2024.01.10.00.06.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jan 2024 00:02:52 -0800 (PST)
-Message-ID: <00f8af6a-3221-4e81-b0fa-e42ba384541b@linaro.org>
-Date: Wed, 10 Jan 2024 09:02:48 +0100
+        Wed, 10 Jan 2024 00:06:26 -0800 (PST)
+Message-ID: <5d24a5da-e4cd-4d32-ba2b-8e91cfc7dced@linaro.org>
+Date: Wed, 10 Jan 2024 09:06:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/12] dt-bindings: i2c: exynos5: add
- google,gs101-hsi2c compatible
+Subject: Re: [PATCH v3 03/12] dt-bindings: serial: samsung: do not allow
+ reg-io-width for gs101
 Content-Language: en-US
 To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
  krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org
@@ -63,11 +63,9 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
  linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
- Wolfram Sang <wsa@kernel.org>, Rob Herring <robh@kernel.org>,
- Sam Protsenko <semen.protsenko@linaro.org>
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com
 References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-3-tudor.ambarus@linaro.org>
+ <20240109125814.3691033-4-tudor.ambarus@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -113,19 +111,29 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240109125814.3691033-3-tudor.ambarus@linaro.org>
+In-Reply-To: <20240109125814.3691033-4-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/01/2024 13:58, Tudor Ambarus wrote:
-> Add google,gs101-hsi2c dedicated compatible for representing
-> I2C of Google GS101 SoC.
+> All gs101 serial ports are restricted to 32-bit register accesses.
+> This requirement will be inferred from the compatible. Do not allow
+> the reg-io-width property for the google,gs101-uart compatible.
 > 
-> Acked-by: Wolfram Sang <wsa@kernel.org>
+> Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+> v3: collect Peter's R-b tag
+> v2: new patch
+> 
 
-OK, I will take it but in general this should not go via SoC tree, but
-I2C. GS101 was already merged, so please send all your future
-submissions regular way.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Please split the serial patches into separate patchset and send them
+usual way, so Greg can pick them up. GS101 was merged, thus this is not
+initial submission anymore.
 
 Best regards,
 Krzysztof
