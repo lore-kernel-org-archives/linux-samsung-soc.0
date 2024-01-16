@@ -1,168 +1,223 @@
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A641CFBC
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jan 2024 19:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D920821A1A;
+	Tue, 16 Jan 2024 19:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705432462; cv=none; b=RN1xvPE9WMDFTMwfJSgAusZdI/UE3rj74QhEPnOn+Uk0XP/JEZXWVvJA1OPxZGz3WsX1vpX2t/vowa6jOjRRg0PKlNw+AMPtgf4GntN7tK1GvJlaCh6UzAjOpPpgHvdtyPPPnEkzT8HGpJyX/qPAmC2+2+TRq3K0s+WjnecMx6Q=
+	t=1705434198; cv=none; b=RYVZroGl95dIPGF95tv92TXLF0YHYzzWaHbvXMPsxM2rED//mUjyuF6zCIBt7XDT3lJTN+hYZ5UrifLXUy2JFx7sjRqZC0OocL6EzVo5+WwRLagxGeYDORqBZJ8ZjpZon7RPI6KAtdeMSMKnF51KMxAq/hYe8rMO4Zxl4LiFYYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705432462; c=relaxed/simple;
-	bh=tHHMfsJONdhC8WZ79Hn2TbqMaaYO3Ty1FU6Un8zRB9U=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
-	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding; b=kEdqhnIjiyEToaQuPlt5GML+F4N6jxlE3HtO/2DFCyksAX9tZkq86FsO4zbNPIGLeo8LobTMAuq+kfxdWgTPRRjjevspuK/7Tj993oP4O1+YQ9WGQbwCjUbwje//4LjV2a0IFQzaWD+TUXSBbUqT8eiGeGAYLkyefydlz6tLBVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G+umYIXv; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1705434198; c=relaxed/simple;
+	bh=biU0qBk/I+LaCJLWDiaFheSahqmBYKM+VUTWIWw1ClA=;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:X-stable:
+	 X-Patchwork-Hint:X-stable-base:Content-Transfer-Encoding; b=c9lO30MA/X/3ETfaTqXPwXkC7ThN5XTCct7XLyvrAbBK0VoLRQUHFye+0sS4m3cH8NwL7IXcJvfmwGwO3jTHugf34MwGPRgtUQhDkNKMrAm7+qw9HwcM/6IxL4oC0sF9vk5bNNOgXhHCKeyZXXw+xIHHgk+gKdz2aJNvpJwrXws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wm83Hd+V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G+umYIXv"
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-53fa455cd94so3918577a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jan 2024 11:14:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705432459; x=1706037259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wu2EkuxtCd7101cuYwG04c7XmYy7BgrOiun/4NaPNYc=;
-        b=G+umYIXv+70+dKnaPOxlgIjfmZldYkPdE2cb6ow7I1Pupu588wjm6j8GKH48acpR/P
-         c17wdayEPHGRgIKFXZRESgc14vGnMK6UpEG5mVjDbivBHAzKvRBbSXZWUnRRHNU2MlJX
-         BkN8dERy3VDiKks1MbmKYhpggmJFHIW7lE57er2HfFrqg57RADR3KZa6xOlxxgtubMQc
-         2wK07cXv9Xh4otDAM1WxBSG6yXjIJWtZdYReD1OF0/egfa2hAJOM4yrEukI+tA0rOlsw
-         a2srUZywxfMbkEiaTnH7j+asYm2q/cDjJ0eZZWyn6rqaChxQwXrP8HpiJGkz5tbx3bpZ
-         HhIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705432459; x=1706037259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wu2EkuxtCd7101cuYwG04c7XmYy7BgrOiun/4NaPNYc=;
-        b=d2TlLsMJ59VYNxr7i6qsfwmkiM23hFQkKD75Mo/B6vU3EGzoi8pehVpsmpc6v+G6LP
-         PliZTaqZR7SFJdkaF7mkfqrEedPVRj7dKGiVuttJYB9lQTJXHvJy8GXoc5q5Tddp1Pmx
-         Qt8guGlBp3YRea6SJ1yCaDs/SdhHz5LDPyCpmNWyVIq/7FatpKjxqdQX8YVO78+XP/+m
-         vDSljyJDqJX6X/Y6KiJyggkDTj7NNnl636m4mx9RBYlnAKP5SjrQO6TapoQRqoNwbhj8
-         u8gp8EfcdHAslCK5+8kH2CrLC25UzKHOMwdC8UxPsbhIX+NGYuWAUEbxvTCr1C1UJfCn
-         iULQ==
-X-Gm-Message-State: AOJu0YzzF8TvK6a0RlY4JYVj291kn8BkUZmy0Xi2Ov2LgRlVAREISYHi
-	T2S2JCen8/uvsCJd3DBbklQmcSNsE94qTtJivbOZQ8ASpBUh+A==
-X-Google-Smtp-Source: AGHT+IH3VMyhy/DermA3tnDW8MMuf27J1wox02DOvvLMsVMpzyMtJM6CWMatLrTLAkbtcnzi4+GCFz3fiTExoM57pAw=
-X-Received: by 2002:a17:90a:744c:b0:28c:6720:9ed4 with SMTP id
- o12-20020a17090a744c00b0028c67209ed4mr4470646pjk.16.1705432459291; Tue, 16
- Jan 2024 11:14:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wm83Hd+V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C93C43390;
+	Tue, 16 Jan 2024 19:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705434197;
+	bh=biU0qBk/I+LaCJLWDiaFheSahqmBYKM+VUTWIWw1ClA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Wm83Hd+V7izR3CkAbNPi5DIgWn5d5lX8xpqRrCqoUptEMa9FyqVBaZODBoW72CQMU
+	 Ewh13lOQBTe1nJm3CKtjA9ls4aaE42pUzCglu836f7Ww3Jr3vL1Eg8T9Ein79ZcxjP
+	 IcBGF186PHhNeUG7qfRiJP1HlxiFc/xwAId5ryP85tM4H5u9h2/UNBPa5V8sSqhQD9
+	 Bj3HE9Gd+5anY7D5Bp9ODqvn3pePg6y+ivy8AwkxkiqfT4xqDNU/WY9RBT+T6aNhaW
+	 +Pv1440D+U6BLnZiL0aShnppSg1ize9dPoQ7gsotGiUBolH3iOdrxz2ll2FT3oQyzl
+	 ZZFR35TqSkskA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.7 017/108] ARM: dts: samsung: exynos4: fix camera unit addresses/ranges
+Date: Tue, 16 Jan 2024 14:38:43 -0500
+Message-ID: <20240116194225.250921-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240116194225.250921-1-sashal@kernel.org>
+References: <20240116194225.250921-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240110102102.61587-1-tudor.ambarus@linaro.org> <20240110102102.61587-19-tudor.ambarus@linaro.org>
-In-Reply-To: <20240110102102.61587-19-tudor.ambarus@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 16 Jan 2024 13:14:08 -0600
-Message-ID: <CAPLW+4mPB+uPssLLMXsdZ6Pj4V38FJg6N93PEhcXSZ1yUwkANA@mail.gmail.com>
-Subject: Re: [PATCH 18/18] tty: serial: samsung: shrink memory footprint of
- ``struct s3c24xx_uart_info``
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
-	willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.7
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 10, 2024 at 4:26=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
-> Use u32 for the members of ``struct s3c24xx_uart_info`` that are used
-> for register interactions. The purpose of these members becomes clearer.
->
-> The greater benefit of this change is that it also reduces the memory
-> footprint of the struct, allowing 64-bit architectures to use a
-> single cacheline for the entire struct.
->
-> struct s3c24xx_uart_info {
->         const char  *              name;                 /*     0     8 *=
-/
->         enum s3c24xx_port_type     type;                 /*     8     4 *=
-/
->         unsigned int               port_type;            /*    12     4 *=
-/
->         unsigned int               fifosize;             /*    16     4 *=
-/
->         u32                        rx_fifomask;          /*    20     4 *=
-/
->         u32                        rx_fifoshift;         /*    24     4 *=
-/
->         u32                        rx_fifofull;          /*    28     4 *=
-/
->         u32                        tx_fifomask;          /*    32     4 *=
-/
->         u32                        tx_fifoshift;         /*    36     4 *=
-/
->         u32                        tx_fifofull;          /*    40     4 *=
-/
->         u32                        clksel_mask;          /*    44     4 *=
-/
->         u32                        clksel_shift;         /*    48     4 *=
-/
->         u32                        ucon_mask;            /*    52     4 *=
-/
->         u8                         def_clk_sel;          /*    56     1 *=
-/
->         u8                         num_clks;             /*    57     1 *=
-/
->         u8                         iotype;               /*    58     1 *=
-/
->         u8                         has_divslot:1;        /*    59: 0  1 *=
-/
->
->         /* size: 64, cachelines: 1, members: 17 */
->         /* padding: 4 */
->         /* bit_padding: 7 bits */
-> };
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+[ Upstream commit ba2a45a48503665f7e8eeec51f8b40456566b0cd ]
 
->  drivers/tty/serial/samsung_tty.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsun=
-g_tty.c
-> index 598d9fe7a492..40dceb41acb7 100644
-> --- a/drivers/tty/serial/samsung_tty.c
-> +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -75,15 +75,15 @@ struct s3c24xx_uart_info {
->         enum s3c24xx_port_type  type;
->         unsigned int            port_type;
->         unsigned int            fifosize;
-> -       unsigned long           rx_fifomask;
-> -       unsigned long           rx_fifoshift;
-> -       unsigned long           rx_fifofull;
-> -       unsigned long           tx_fifomask;
-> -       unsigned long           tx_fifoshift;
-> -       unsigned long           tx_fifofull;
-> -       unsigned long           clksel_mask;
-> -       unsigned long           clksel_shift;
-> -       unsigned long           ucon_mask;
-> +       u32                     rx_fifomask;
-> +       u32                     rx_fifoshift;
-> +       u32                     rx_fifofull;
-> +       u32                     tx_fifomask;
-> +       u32                     tx_fifoshift;
-> +       u32                     tx_fifofull;
-> +       u32                     clksel_mask;
-> +       u32                     clksel_shift;
-> +       u32                     ucon_mask;
->         u8                      def_clk_sel;
->         u8                      num_clks;
->         u8                      iotype;
-> --
-> 2.43.0.472.g3155946c3a-goog
->
->
+The camera node has both unit address and children within the same bus
+mapping, thus needs proper ranges property to fix dtc W=1 warnings:
+
+  Warning (unit_address_vs_reg): /soc/camera@11800000: node has a unit name, but no reg or ranges property
+  Warning (simple_bus_reg): /soc/camera@11800000: missing or empty reg/ranges property
+
+Subtract 0x11800000 from all its children nodes.  No functional impact
+expected.
+
+Link: https://lore.kernel.org/r/20230722121719.150094-2-krzysztof.kozlowski@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/samsung/exynos4.dtsi    | 26 +++++++++++------------
+ arch/arm/boot/dts/samsung/exynos4x12.dtsi | 17 ++++++++-------
+ 2 files changed, 22 insertions(+), 21 deletions(-)
+
+diff --git a/arch/arm/boot/dts/samsung/exynos4.dtsi b/arch/arm/boot/dts/samsung/exynos4.dtsi
+index f775b9377a38..7f981b5c0d64 100644
+--- a/arch/arm/boot/dts/samsung/exynos4.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4.dtsi
+@@ -203,16 +203,16 @@ dsi_0: dsi@11c80000 {
+ 
+ 		camera: camera@11800000 {
+ 			compatible = "samsung,fimc";
++			ranges = <0x0 0x11800000 0xa0000>;
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "cam_a_clkout", "cam_b_clkout";
+-			ranges;
+ 
+-			fimc_0: fimc@11800000 {
++			fimc_0: fimc@0 {
+ 				compatible = "samsung,exynos4210-fimc";
+-				reg = <0x11800000 0x1000>;
++				reg = <0x0 0x1000>;
+ 				interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clock CLK_FIMC0>,
+ 					 <&clock CLK_SCLK_FIMC0>;
+@@ -223,9 +223,9 @@ fimc_0: fimc@11800000 {
+ 				status = "disabled";
+ 			};
+ 
+-			fimc_1: fimc@11810000 {
++			fimc_1: fimc@10000 {
+ 				compatible = "samsung,exynos4210-fimc";
+-				reg = <0x11810000 0x1000>;
++				reg = <0x00010000 0x1000>;
+ 				interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clock CLK_FIMC1>,
+ 					 <&clock CLK_SCLK_FIMC1>;
+@@ -236,9 +236,9 @@ fimc_1: fimc@11810000 {
+ 				status = "disabled";
+ 			};
+ 
+-			fimc_2: fimc@11820000 {
++			fimc_2: fimc@20000 {
+ 				compatible = "samsung,exynos4210-fimc";
+-				reg = <0x11820000 0x1000>;
++				reg = <0x00020000 0x1000>;
+ 				interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clock CLK_FIMC2>,
+ 					 <&clock CLK_SCLK_FIMC2>;
+@@ -249,9 +249,9 @@ fimc_2: fimc@11820000 {
+ 				status = "disabled";
+ 			};
+ 
+-			fimc_3: fimc@11830000 {
++			fimc_3: fimc@30000 {
+ 				compatible = "samsung,exynos4210-fimc";
+-				reg = <0x11830000 0x1000>;
++				reg = <0x00030000 0x1000>;
+ 				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clock CLK_FIMC3>,
+ 					 <&clock CLK_SCLK_FIMC3>;
+@@ -262,9 +262,9 @@ fimc_3: fimc@11830000 {
+ 				status = "disabled";
+ 			};
+ 
+-			csis_0: csis@11880000 {
++			csis_0: csis@80000 {
+ 				compatible = "samsung,exynos4210-csis";
+-				reg = <0x11880000 0x4000>;
++				reg = <0x00080000 0x4000>;
+ 				interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clock CLK_CSIS0>,
+ 					 <&clock CLK_SCLK_CSIS0>;
+@@ -278,9 +278,9 @@ csis_0: csis@11880000 {
+ 				#size-cells = <0>;
+ 			};
+ 
+-			csis_1: csis@11890000 {
++			csis_1: csis@90000 {
+ 				compatible = "samsung,exynos4210-csis";
+-				reg = <0x11890000 0x4000>;
++				reg = <0x00090000 0x4000>;
+ 				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clock CLK_CSIS1>,
+ 					 <&clock CLK_SCLK_CSIS1>;
+diff --git a/arch/arm/boot/dts/samsung/exynos4x12.dtsi b/arch/arm/boot/dts/samsung/exynos4x12.dtsi
+index 84c1db221c98..83d9d0a0a617 100644
+--- a/arch/arm/boot/dts/samsung/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4x12.dtsi
+@@ -451,14 +451,15 @@ &combiner {
+ };
+ 
+ &camera {
++	ranges = <0x0 0x11800000 0xba1000>;
+ 	clocks = <&clock CLK_SCLK_CAM0>, <&clock CLK_SCLK_CAM1>,
+ 		 <&clock CLK_PIXELASYNCM0>, <&clock CLK_PIXELASYNCM1>;
+ 	clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
+ 
+ 	/* fimc_[0-3] are configured outside, under phandles */
+-	fimc_lite_0: fimc-lite@12390000 {
++	fimc_lite_0: fimc-lite@b90000 {
+ 		compatible = "samsung,exynos4212-fimc-lite";
+-		reg = <0x12390000 0x1000>;
++		reg = <0x00b90000 0x1000>;
+ 		interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+ 		power-domains = <&pd_isp>;
+ 		clocks = <&isp_clock CLK_ISP_FIMC_LITE0>;
+@@ -467,9 +468,9 @@ fimc_lite_0: fimc-lite@12390000 {
+ 		status = "disabled";
+ 	};
+ 
+-	fimc_lite_1: fimc-lite@123a0000 {
++	fimc_lite_1: fimc-lite@ba0000 {
+ 		compatible = "samsung,exynos4212-fimc-lite";
+-		reg = <0x123a0000 0x1000>;
++		reg = <0x00ba0000 0x1000>;
+ 		interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+ 		power-domains = <&pd_isp>;
+ 		clocks = <&isp_clock CLK_ISP_FIMC_LITE1>;
+@@ -478,9 +479,9 @@ fimc_lite_1: fimc-lite@123a0000 {
+ 		status = "disabled";
+ 	};
+ 
+-	fimc_is: fimc-is@12000000 {
++	fimc_is: fimc-is@800000 {
+ 		compatible = "samsung,exynos4212-fimc-is";
+-		reg = <0x12000000 0x260000>;
++		reg = <0x00800000 0x260000>;
+ 		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+ 		power-domains = <&pd_isp>;
+@@ -525,9 +526,9 @@ pmu@10020000 {
+ 			reg = <0x10020000 0x3000>;
+ 		};
+ 
+-		i2c1_isp: i2c-isp@12140000 {
++		i2c1_isp: i2c-isp@940000 {
+ 			compatible = "samsung,exynos4212-i2c-isp";
+-			reg = <0x12140000 0x100>;
++			reg = <0x00940000 0x100>;
+ 			clocks = <&isp_clock CLK_ISP_I2C1_ISP>;
+ 			clock-names = "i2c_isp";
+ 			#address-cells = <1>;
+-- 
+2.43.0
+
