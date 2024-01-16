@@ -1,68 +1,68 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E501D537
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jan 2024 19:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A641CFBC
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jan 2024 19:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705432209; cv=none; b=VqxxgFRW1XKT386wtqys+KcOnUGg6YduISKkfO//2MTvMg93ilvbqRloNpux4e1sCBfdwaQ1utLxhpxL4sppXYAAchTkcCxSjAls2k0a6YGbExbeggLIFdP6g5SCepqp1dbeZtqbyuMmi9JFCgjDw4gx2oVO3j/G3wBENeiW8wc=
+	t=1705432462; cv=none; b=RN1xvPE9WMDFTMwfJSgAusZdI/UE3rj74QhEPnOn+Uk0XP/JEZXWVvJA1OPxZGz3WsX1vpX2t/vowa6jOjRRg0PKlNw+AMPtgf4GntN7tK1GvJlaCh6UzAjOpPpgHvdtyPPPnEkzT8HGpJyX/qPAmC2+2+TRq3K0s+WjnecMx6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705432209; c=relaxed/simple;
-	bh=rALMQ6XXG9dziiepCqWCR21j+a94URXQ8uh5FX0SSLg=;
+	s=arc-20240116; t=1705432462; c=relaxed/simple;
+	bh=tHHMfsJONdhC8WZ79Hn2TbqMaaYO3Ty1FU6Un8zRB9U=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
 	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding; b=tmBeSDt9myXWzkimZgHDbsX1F3jn/ud+KZ3FIL1SDvlJwDgf9PgUAH63QIDZxPZMfxuvZKainSDYq5C0Lmj8zu/Hm4GUlhEe14RrGzXZIdyBY9ACmpAyQskorOHF8aQlgfSXbXF874hrlSMfXHJI3U3P0R83XaAX0/awJREafPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oVQsqe17; arc=none smtp.client-ip=209.85.215.175
+	 Content-Type:Content-Transfer-Encoding; b=kEdqhnIjiyEToaQuPlt5GML+F4N6jxlE3HtO/2DFCyksAX9tZkq86FsO4zbNPIGLeo8LobTMAuq+kfxdWgTPRRjjevspuK/7Tj993oP4O1+YQ9WGQbwCjUbwje//4LjV2a0IFQzaWD+TUXSBbUqT8eiGeGAYLkyefydlz6tLBVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G+umYIXv; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oVQsqe17"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5ca29c131ebso7672480a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jan 2024 11:10:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G+umYIXv"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-53fa455cd94so3918577a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Jan 2024 11:14:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705432208; x=1706037008; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705432459; x=1706037259; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9VKjWaZrVRn8CuoQYZouG8IgnSq7lMknhIStXH4ydpI=;
-        b=oVQsqe17SkkxV5N3uy9/c32dY16pCphpLKHxAClrYC3pjjYhBqTyJbYwnlupc1Sa2S
-         g3xMHuX3nj6bNZYLyhxXT6LdWNcBi1V9HRMBW+6ojJVNNpPMJNQKwgpQaQy7hxIfIbrZ
-         cSN6Bx6042YJeXaUn9GOiPzH1cPcznpFTV7Vot3fwwgZ4A6bo1xL2odX3RD0J/fcD9br
-         Y1howSkiXoGYKAGQ2jJ+n4NTEte861XhLCzyb1TJxBLHUcAphwgbzKZ9oZHsgbfpfYbB
-         YeK/Ryu1xqor+2ZDqinWr92+U5hzXxVec37eAZBczMKQQOfQ3iPIGwxy6PsT2mvEHzqQ
-         /HFA==
+        bh=wu2EkuxtCd7101cuYwG04c7XmYy7BgrOiun/4NaPNYc=;
+        b=G+umYIXv+70+dKnaPOxlgIjfmZldYkPdE2cb6ow7I1Pupu588wjm6j8GKH48acpR/P
+         c17wdayEPHGRgIKFXZRESgc14vGnMK6UpEG5mVjDbivBHAzKvRBbSXZWUnRRHNU2MlJX
+         BkN8dERy3VDiKks1MbmKYhpggmJFHIW7lE57er2HfFrqg57RADR3KZa6xOlxxgtubMQc
+         2wK07cXv9Xh4otDAM1WxBSG6yXjIJWtZdYReD1OF0/egfa2hAJOM4yrEukI+tA0rOlsw
+         a2srUZywxfMbkEiaTnH7j+asYm2q/cDjJ0eZZWyn6rqaChxQwXrP8HpiJGkz5tbx3bpZ
+         HhIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705432208; x=1706037008;
+        d=1e100.net; s=20230601; t=1705432459; x=1706037259;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9VKjWaZrVRn8CuoQYZouG8IgnSq7lMknhIStXH4ydpI=;
-        b=HcbvINQM0Gq20+rJS115pi4NPpM3IZis+5g52x7O9YfkBaFGbWfLiJCBcSa11raohl
-         skVCqZtvdFND64gdKmJEdO7bWHCE8bVTZo39/abf8kr6JDDoADU4rLGsieG6pxldUlMI
-         gQGiuB9+kKZMRY6kptl4dbn/rd6+AG0jnfeGULutZ9dtcxvSvf6xXduIUCsWpYFRw7hy
-         BBKUETqhoNbKYDkLCDM3STNPzNCUyDGZJaw3+Rh+n/UuVd2ucb5Tp2xj1Z9bU/6nVBmx
-         5r7ZIpXb6cV4JZa4dbc8SFBxNh8KH+nENI8/XJyUcJ/pMzGIMR9MvkovoWatTWPA0ZbR
-         RoDA==
-X-Gm-Message-State: AOJu0Yymzcq6a7Y8Du1m9g5G14ySdjn6C9gtMdtiMhZbVv8R0QQtqrbL
-	XWn8EtLeU17lbScdugJiXRaEbHxxyxT3o/CmGbyDh/b9yYYexw==
-X-Google-Smtp-Source: AGHT+IHrIsM7g2wUFvRv13G9yYY8kYsRAIXMkE/xYYkt6tYTPdI5u+rE+aU63z1jH/mOoUM1mfu4KkzcNwSSOJSi4nc=
-X-Received: by 2002:a17:90a:1c90:b0:28e:2784:9827 with SMTP id
- t16-20020a17090a1c9000b0028e27849827mr3223147pjt.17.1705432207870; Tue, 16
- Jan 2024 11:10:07 -0800 (PST)
+        bh=wu2EkuxtCd7101cuYwG04c7XmYy7BgrOiun/4NaPNYc=;
+        b=d2TlLsMJ59VYNxr7i6qsfwmkiM23hFQkKD75Mo/B6vU3EGzoi8pehVpsmpc6v+G6LP
+         PliZTaqZR7SFJdkaF7mkfqrEedPVRj7dKGiVuttJYB9lQTJXHvJy8GXoc5q5Tddp1Pmx
+         Qt8guGlBp3YRea6SJ1yCaDs/SdhHz5LDPyCpmNWyVIq/7FatpKjxqdQX8YVO78+XP/+m
+         vDSljyJDqJX6X/Y6KiJyggkDTj7NNnl636m4mx9RBYlnAKP5SjrQO6TapoQRqoNwbhj8
+         u8gp8EfcdHAslCK5+8kH2CrLC25UzKHOMwdC8UxPsbhIX+NGYuWAUEbxvTCr1C1UJfCn
+         iULQ==
+X-Gm-Message-State: AOJu0YzzF8TvK6a0RlY4JYVj291kn8BkUZmy0Xi2Ov2LgRlVAREISYHi
+	T2S2JCen8/uvsCJd3DBbklQmcSNsE94qTtJivbOZQ8ASpBUh+A==
+X-Google-Smtp-Source: AGHT+IH3VMyhy/DermA3tnDW8MMuf27J1wox02DOvvLMsVMpzyMtJM6CWMatLrTLAkbtcnzi4+GCFz3fiTExoM57pAw=
+X-Received: by 2002:a17:90a:744c:b0:28c:6720:9ed4 with SMTP id
+ o12-20020a17090a744c00b0028c67209ed4mr4470646pjk.16.1705432459291; Tue, 16
+ Jan 2024 11:14:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240110102102.61587-1-tudor.ambarus@linaro.org> <20240110102102.61587-17-tudor.ambarus@linaro.org>
-In-Reply-To: <20240110102102.61587-17-tudor.ambarus@linaro.org>
+References: <20240110102102.61587-1-tudor.ambarus@linaro.org> <20240110102102.61587-19-tudor.ambarus@linaro.org>
+In-Reply-To: <20240110102102.61587-19-tudor.ambarus@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 16 Jan 2024 13:09:56 -0600
-Message-ID: <CAPLW+4kndXo9Ab2PL3fts9pJNhhitX3Sr=V2b8mS4cArov4Tog@mail.gmail.com>
-Subject: Re: [PATCH 16/18] tty: serial: samsung: shrink the clock selection to
- 8 clocks
+Date: Tue, 16 Jan 2024 13:14:08 -0600
+Message-ID: <CAPLW+4mPB+uPssLLMXsdZ6Pj4V38FJg6N93PEhcXSZ1yUwkANA@mail.gmail.com>
+Subject: Re: [PATCH 18/18] tty: serial: samsung: shrink memory footprint of
+ ``struct s3c24xx_uart_info``
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
 	gregkh@linuxfoundation.org, jirislaby@kernel.org, 
@@ -73,126 +73,95 @@ Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 10, 2024 at 4:25=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+On Wed, Jan 10, 2024 at 4:26=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
 .org> wrote:
 >
-> <linux/serial_s3c.h> provides a clock selection pool of maximum 4 clocks.
-
-Then maybe it makes sense to turn those two field into 4-bit bit
-fields? More importantly, what particular problem does this patch
-solve, is this optimization really needed, and why? I'm not saying
-it's not needed, just that commit message might've been more verbose
-about this.
-
-> Update the driver to consider a pool selection of maximum 8 clocks. The
-> final scope is to reduce the memory footprint of
-> ``struct s3c24xx_uart_info``.
+> Use u32 for the members of ``struct s3c24xx_uart_info`` that are used
+> for register interactions. The purpose of these members becomes clearer.
+>
+> The greater benefit of this change is that it also reduces the memory
+> footprint of the struct, allowing 64-bit architectures to use a
+> single cacheline for the entire struct.
+>
+> struct s3c24xx_uart_info {
+>         const char  *              name;                 /*     0     8 *=
+/
+>         enum s3c24xx_port_type     type;                 /*     8     4 *=
+/
+>         unsigned int               port_type;            /*    12     4 *=
+/
+>         unsigned int               fifosize;             /*    16     4 *=
+/
+>         u32                        rx_fifomask;          /*    20     4 *=
+/
+>         u32                        rx_fifoshift;         /*    24     4 *=
+/
+>         u32                        rx_fifofull;          /*    28     4 *=
+/
+>         u32                        tx_fifomask;          /*    32     4 *=
+/
+>         u32                        tx_fifoshift;         /*    36     4 *=
+/
+>         u32                        tx_fifofull;          /*    40     4 *=
+/
+>         u32                        clksel_mask;          /*    44     4 *=
+/
+>         u32                        clksel_shift;         /*    48     4 *=
+/
+>         u32                        ucon_mask;            /*    52     4 *=
+/
+>         u8                         def_clk_sel;          /*    56     1 *=
+/
+>         u8                         num_clks;             /*    57     1 *=
+/
+>         u8                         iotype;               /*    58     1 *=
+/
+>         u8                         has_divslot:1;        /*    59: 0  1 *=
+/
+>
+>         /* size: 64, cachelines: 1, members: 17 */
+>         /* padding: 4 */
+>         /* bit_padding: 7 bits */
+> };
 >
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  drivers/tty/serial/samsung_tty.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+>  drivers/tty/serial/samsung_tty.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 >
 > diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsun=
 g_tty.c
-> index 436739cf9225..5df2bcebf9fb 100644
+> index 598d9fe7a492..40dceb41acb7 100644
 > --- a/drivers/tty/serial/samsung_tty.c
 > +++ b/drivers/tty/serial/samsung_tty.c
-> @@ -81,11 +81,11 @@ struct s3c24xx_uart_info {
->         unsigned long           tx_fifomask;
->         unsigned long           tx_fifoshift;
->         unsigned long           tx_fifofull;
-> -       unsigned int            def_clk_sel;
-> -       unsigned long           num_clks;
->         unsigned long           clksel_mask;
->         unsigned long           clksel_shift;
->         unsigned long           ucon_mask;
-> +       u8                      def_clk_sel;
-> +       u8                      num_clks;
+> @@ -75,15 +75,15 @@ struct s3c24xx_uart_info {
+>         enum s3c24xx_port_type  type;
+>         unsigned int            port_type;
+>         unsigned int            fifosize;
+> -       unsigned long           rx_fifomask;
+> -       unsigned long           rx_fifoshift;
+> -       unsigned long           rx_fifofull;
+> -       unsigned long           tx_fifomask;
+> -       unsigned long           tx_fifoshift;
+> -       unsigned long           tx_fifofull;
+> -       unsigned long           clksel_mask;
+> -       unsigned long           clksel_shift;
+> -       unsigned long           ucon_mask;
+> +       u32                     rx_fifomask;
+> +       u32                     rx_fifoshift;
+> +       u32                     rx_fifofull;
+> +       u32                     tx_fifomask;
+> +       u32                     tx_fifoshift;
+> +       u32                     tx_fifofull;
+> +       u32                     clksel_mask;
+> +       u32                     clksel_shift;
+> +       u32                     ucon_mask;
+>         u8                      def_clk_sel;
+>         u8                      num_clks;
 >         u8                      iotype;
->
->         /* uart port features */
-> @@ -1339,7 +1339,7 @@ static void s3c24xx_serial_pm(struct uart_port *por=
-t, unsigned int level,
->
->  #define MAX_CLK_NAME_LENGTH 15
->
-> -static inline int s3c24xx_serial_getsource(struct uart_port *port)
-> +static inline u8 s3c24xx_serial_getsource(struct uart_port *port)
->  {
->         const struct s3c24xx_uart_info *info =3D s3c24xx_port_to_info(por=
-t);
->         u32 ucon;
-> @@ -1352,8 +1352,7 @@ static inline int s3c24xx_serial_getsource(struct u=
-art_port *port)
->         return ucon >> info->clksel_shift;
->  }
->
-> -static void s3c24xx_serial_setsource(struct uart_port *port,
-> -                       unsigned int clk_sel)
-> +static void s3c24xx_serial_setsource(struct uart_port *port, u8 clk_sel)
->  {
->         const struct s3c24xx_uart_info *info =3D s3c24xx_port_to_info(por=
-t);
->         u32 ucon;
-> @@ -1372,14 +1371,15 @@ static void s3c24xx_serial_setsource(struct uart_=
-port *port,
->
->  static unsigned int s3c24xx_serial_getclk(struct s3c24xx_uart_port *ourp=
-ort,
->                         unsigned int req_baud, struct clk **best_clk,
-> -                       unsigned int *clk_num)
-> +                       u8 *clk_num)
->  {
->         const struct s3c24xx_uart_info *info =3D ourport->info;
->         struct clk *clk;
->         unsigned long rate;
-> -       unsigned int cnt, baud, quot, best_quot =3D 0;
-> +       unsigned int baud, quot, best_quot =3D 0;
->         char clkname[MAX_CLK_NAME_LENGTH];
->         int calc_deviation, deviation =3D (1 << 30) - 1;
-> +       u8 cnt;
->
->         for (cnt =3D 0; cnt < info->num_clks; cnt++) {
->                 /* Keep selected clock if provided */
-> @@ -1472,9 +1472,10 @@ static void s3c24xx_serial_set_termios(struct uart=
-_port *port,
->         struct s3c24xx_uart_port *ourport =3D to_ourport(port);
->         struct clk *clk =3D ERR_PTR(-EINVAL);
->         unsigned long flags;
-> -       unsigned int baud, quot, clk_sel =3D 0;
-> +       unsigned int baud, quot;
->         unsigned int udivslot =3D 0;
->         u32 ulcon, umcon;
-> +       u8 clk_sel =3D 0;
->
->         /*
->          * We don't support modem control lines.
-> @@ -1775,10 +1776,9 @@ static int s3c24xx_serial_enable_baudclk(struct s3=
-c24xx_uart_port *ourport)
->         struct device *dev =3D ourport->port.dev;
->         const struct s3c24xx_uart_info *info =3D ourport->info;
->         char clk_name[MAX_CLK_NAME_LENGTH];
-> -       unsigned int clk_sel;
->         struct clk *clk;
-> -       int clk_num;
->         int ret;
-> +       u8 clk_sel, clk_num;
->
->         clk_sel =3D ourport->cfg->clk_sel ? : info->def_clk_sel;
->         for (clk_num =3D 0; clk_num < info->num_clks; clk_num++) {
-> @@ -2286,9 +2286,9 @@ s3c24xx_serial_get_options(struct uart_port *port, =
-int *baud,
->  {
->         struct clk *clk;
->         unsigned long rate;
-> -       unsigned int clk_sel;
->         u32 ulcon, ucon, ubrdiv;
->         char clk_name[MAX_CLK_NAME_LENGTH];
-> +       u8 clk_sel;
->
->         ulcon  =3D rd_regl(port, S3C2410_ULCON);
->         ucon   =3D rd_regl(port, S3C2410_UCON);
 > --
 > 2.43.0.472.g3155946c3a-goog
 >
