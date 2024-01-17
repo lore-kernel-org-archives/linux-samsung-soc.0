@@ -1,147 +1,168 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733A12232F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 16:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BB0224DC
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 16:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705507962; cv=none; b=PcInxV+Lq8dc0zQygp90bdsgMCA6m6X36vscr6NQx/DAUYAXvkfVRHtwQo1b1Bq5+Py/iYUWD3cR/0AP9ObblfEuf5qm7R+YU+G/ztWS/qDS2Y9vzyQ4V8L1fTkBGcUb835BGp52DJBb+srTtdYCdbgjldUvDvUFeKXsN4kPTf8=
+	t=1705508675; cv=none; b=K6SBOHmBYcrBQGtBmDkvz7LgZYrPLUb209f81XONL6Mz5wK5EHTyu/1tfghFGFIDyS7DRgXyU9jf9UzT1VOnYImeB3+ksQ76vTEpeqIZGsBjdwS0qZYRLbmkpFXCaXBhFQ88CNRNj7yKqc4dLRoAQKYh5IQ5HoFUK6bdBhIWuN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705507962; c=relaxed/simple;
-	bh=8pP0pZPXq9lZ9dnBrsfOtWnZOB8bSmDCi9SgbNW5rUo=;
+	s=arc-20240116; t=1705508675; c=relaxed/simple;
+	bh=KDVs34GO4s0SScwRMhG5UBy1Y/fJQT5iPNFWwNG4myA=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
 	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding; b=sc2VXVjeUTA1gM9fupjxyt6FXXWwFLwwpb/bBqC2BcJa2MB3TZ6+Cw9iaKaX4Z9qiR4ss0OLExUnBPyO2J79w26CuX/fjIhvT86iZ1szpuAa0hUuSNAxfhtYwfaqnK5zJjBPsEe+VbUex914ICNy9rq8pL/4wrlj/J7qZv/bDi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JudPH6LG; arc=none smtp.client-ip=209.85.216.41
+	 Content-Type:Content-Transfer-Encoding; b=QIhnaeYwgLpFa5uQ7q6afhRpJU1dfE0z6t2U3BSp60gZt/+w9sBYrMCJehT+usCRUOOdXuguoduMc/9fKrmCZu4Qu/GIFMg8v5sjZRFlgSRXGDjHNLL6Du4qib098Gic7rhR+JH8AVrAMqxI61U+IGTNoNhs3bsyU7XtZ+X+3kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FlFdFUpd; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JudPH6LG"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-28e718874e1so1465609a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 08:12:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FlFdFUpd"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-28beb1d946fso9351141a91.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 08:24:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705507960; x=1706112760; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705508673; x=1706113473; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jk8D0Nm+lCIPdeHpzzgYKxBrrf41aydV20z4eqYwd98=;
-        b=JudPH6LGCguUfKWawcHItX0TIf5GaMifO+Pmr5BpH/eC30pBOFoBFDKI7tEbzRKYzA
-         l0cymWyTn0rCazRG4340ngCpVJuB+Qwdsk2g7XpKC2Y1rZC9YzwRdN5Sk0qTTuMkVsgF
-         Q+mVXWk5bZtGFLXsuB28uvSGUQCCSDa7kHPqtyMwz3uLw2D23YVnWyB6xBUrvDzC1fwS
-         vkitQ1LMWvUaUEUPfgAb/OQnA3obn605LbtDqUre4+KmR4+DKtDo+4iF2v8J+ryITfWe
-         mXolKQasPFfVx6knkr2J3aokRA7wzsn3QWee2tTC6zhfdN1MZvBLYEHADxa44oDctZ8M
-         /12w==
+        bh=ZeZx3Fscyt/CJrkTAocFhl3YvJexR8kYpcsaIA6PI2A=;
+        b=FlFdFUpdsXYtlwKvPuG5ssao0qXdobRxEMTwBEbArLKInQzwFo4Wrkr97EAoygHyAW
+         t9zf3ukStIM/7m/+KraH63v3P/nIDTs5+HNy9RwtPUoVdr0SgdEYyzPGooQWsbBDXlOx
+         BCNf3qPZ7Q8x4gVz3Ka6dzhD2IRxPqkBSPQ410ng1XngudQZa0wCPEgfpdfPKrESWang
+         3uyVPJvnwmeUuawLKYAK+J3xtH8OWRbvNa01ex8ge8T5POcb7lfE0VbqU3wFWHlTVWG3
+         qPzs76VaHOZKo2lggGCqr0Zk369QaVvgHdJfCkAQdCNTei2iS3r2fv/ojSnlEh5TnLZb
+         NkRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705507960; x=1706112760;
+        d=1e100.net; s=20230601; t=1705508673; x=1706113473;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jk8D0Nm+lCIPdeHpzzgYKxBrrf41aydV20z4eqYwd98=;
-        b=HQkKodTkSS/PAo13tHKODMXGkyOKCqLLzlx0q7q9oaKZ9A5LWOu6IJzm5psKQHXmnh
-         mMaSKYzYGvOul1BHtcCew+cUUl40RnAy+0ABfYphe/c8ahAhIot5SZOyJuvywkL+gJcC
-         HMqrWlkyCVIcydDm6HI+Jwy0G8DuRv/c+7Vy8SKGTzu60JcMAnkJIg6/SRQ33gNSXR/H
-         viHBSpa63KhxFVDI52GwhdvelD81dcAro3QU3x0jo02isJJAI0RMSdtbdicZe21TEG94
-         TU7BGOWGz5OsUn8w/PE5fjYNV4Uc6dlwqVT5A5dThtuMhLToV3yUURam5+sPich/me6E
-         NbWQ==
-X-Gm-Message-State: AOJu0YzDK0Mv1V66aqWBstVeD7gY4oyhOzXQS6yNk9/ccadPEk5y2G6I
-	g8B4VLC1Rx0Fx3HlCAHWQMhPC6yL+PKjLs47jTCR4qqavInpGw==
-X-Google-Smtp-Source: AGHT+IGiZ4uEBbqIjMDXfsMXnz11sRVC/bQ5Oy8wG+iTZ84rVi+dz2Q7JsKCe8gGwF4rw5cYilSbWmGASlzgfWzJxsA=
-X-Received: by 2002:a17:90a:6e01:b0:290:727:edf3 with SMTP id
- b1-20020a17090a6e0100b002900727edf3mr504146pjk.28.1705507959829; Wed, 17 Jan
- 2024 08:12:39 -0800 (PST)
+        bh=ZeZx3Fscyt/CJrkTAocFhl3YvJexR8kYpcsaIA6PI2A=;
+        b=uuXL8wcR8CHuugur/f34EwYHRbQrR30IrtjINjVHVbXlxv5sI79/lutLoS10HvIp63
+         Cdm2LO0stKAJDhcma7QQYbtGx9eA+DZzJ1oObM4yeNBFufnwF1w1LxC3mC/Illuh3qMs
+         Ia+Oi5ag1nLdVm7vbmNAfCy4HPFmzIzeXPF5NyOZ3j3WgpilpGNzLbfRiY2rrrHkhUgd
+         hErMOqxDSKlZpSCBrtYEZz+QmiIU2RtPKj7SkziQucM7NqO4RTcb6sxKgrGk+q4utVmg
+         u+KhClLTRoBQ7oQgGOQVmtiHPSB4RLQjTKg83YV1VCV+Fxw4tH5vol03+G0H6ANwkLTr
+         BgVw==
+X-Gm-Message-State: AOJu0Yyau5oXpRm2SUwFa5u8YG+POS/bpk+1gd7j5y8+ZiDBH2DRGJtV
+	tinYWmMfKQfl+sdV0mC7wvS2BmdN7WicWxK1zV2SdFgR9rvV1mnzCpuoPUSA
+X-Google-Smtp-Source: AGHT+IFSn9Nb3Hxdtjn1d44gSRgGrasRJb+KhplONzjBJL4xcy6PVKp6I6qSQuNWAq9mX7JvOUdmjLipam5tAGAc/Fg=
+X-Received: by 2002:a17:90b:3594:b0:28f:eeb1:198c with SMTP id
+ mm20-20020a17090b359400b0028feeb1198cmr1606818pjb.11.1705508672837; Wed, 17
+ Jan 2024 08:24:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-12-tudor.ambarus@linaro.org> <CAPLW+4=U9DBmwgxyWz3cy=V-Ui7s2Z9um4xbEuyax1o=0zB_NA@mail.gmail.com>
- <c72ca8b2-55a6-4ec7-8013-0a563d6dcdfe@linaro.org>
-In-Reply-To: <c72ca8b2-55a6-4ec7-8013-0a563d6dcdfe@linaro.org>
+References: <20240110102102.61587-1-tudor.ambarus@linaro.org>
+ <20240110102102.61587-12-tudor.ambarus@linaro.org> <CAPLW+4mKBwsc9VLrGTd2k6d0n-K9TZAjH6M8trcK3Av8TQ2Ngg@mail.gmail.com>
+ <6b6b1512-18a2-48bd-b284-8f4deff84309@linaro.org>
+In-Reply-To: <6b6b1512-18a2-48bd-b284-8f4deff84309@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 17 Jan 2024 10:12:28 -0600
-Message-ID: <CAPLW+4k9TTcp9p3dUOVpx2M-YGy+_V1p3Q3zdBvTcCqw9ytsDA@mail.gmail.com>
-Subject: Re: [PATCH v3 11/12] arm64: dts: exynos: gs101: define USI8 with I2C configuration
+Date: Wed, 17 Jan 2024 10:24:21 -0600
+Message-ID: <CAPLW+4=k-hrJP5oDVG9+-XmAbNhpRoe-jnjphkk0dnbEH=r9vw@mail.gmail.com>
+Subject: Re: [PATCH 11/18] tty: serial: samsung: don't compare with zero an if
+ (bitwise expression)
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
-	gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh+dt@kernel.org, conor+dt@kernel.org, andi.shyti@kernel.org, 
-	alim.akhtar@samsung.com, jirislaby@kernel.org, s.nawrocki@samsung.com, 
-	tomasz.figa@gmail.com, cw00.choi@samsung.com, 
+Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org, andre.draszik@linaro.org, 
-	kernel-team@android.com, willmcvicker@google.com
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
+	willmcvicker@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 17, 2024 at 9:08=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+On Wed, Jan 17, 2024 at 9:41=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
 .org> wrote:
 >
 >
 >
-> On 1/16/24 18:03, Sam Protsenko wrote:
-> >> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
-> >> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
-> >> selection of the protocol is intentionally left for the board dts file=
-.
+> On 1/16/24 18:38, Sam Protsenko wrote:
+> > On Wed, Jan 10, 2024 at 4:24=E2=80=AFAM Tudor Ambarus <tudor.ambarus@li=
+naro.org> wrote:
+> >>
+> >> Since an if tests the numeric value of an expression, certain coding
+> >> shortcuts can be used. The most obvious one is writing
+> >>     if (expression)
+> >> instead of
+> >>     if (expression !=3D 0)
+> >>
+> >> Since our case is a bitwise expression, it's more natural and clear to
+> >> use the ``if (expression)`` shortcut.
+> >
+> > Maybe the author of this code:
+> >
+> >     (ufstat & info->tx_fifomask) !=3D 0
+> >
+> > just wanted to outline (logically) that the result of this bitwise
+> > operation produces FIFO length, which he checks to have non-zero
+> > length? Mechanically of course it doesn't matter much, and I guess
+>
+> that's a bitwise AND with the fifo mask to check if the fifo is empty or
+> not, it doesn't care about the length, just if the fifo is empty. IOW if
+> any of those bits are set, the fifo is not empty. I think not comparing
+> with zero explicitly is better. At the same time I'm fine dropping the
+> patch as well. So please tell me if you want me to reword the commit
+> message or drop the patch entirely.
+>
+
+I'm not opposed to this patch, just don't have any preference in this
+case. But the patch is ok with me.
+
+> > everyone can understand what's going on there even without '!=3D 0'
+> > part. But it looks quite intentional to me, because in the same 'if'
+> > block the author uses this as well:
+> >
+> >     (ufstat & info->tx_fifofull)
+>
+> tx_fifofull is just a bit in the register, in my case BIT(24). If that
+> bit is one, the fifo is full. Not comparing with zero is fine here, as
+> we're interested just in that bit/flag.
+>
+> >
+> > without any comparison operators.
+> >
 > >>
 > >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > >> ---
-> >> v3: reorder usi8 clock order (thanks Andre'!). Did not make any
-> >> difference at testing as the usi driver treats the clocks in bulk.
-> >> v2:
-> >> - identify and use gate clocks instead of dividers
-> >> - move cells and pinctrl properties from dts to dtsi
-> >> - move IRQ type constant on the previous line
+> >>  drivers/tty/serial/samsung_tty.c | 3 +--
+> >>  1 file changed, 1 insertion(+), 2 deletions(-)
 > >>
-> >>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 29 +++++++++++++++++++=
-+
-> >>  1 file changed, 29 insertions(+)
+> >> diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/sam=
+sung_tty.c
+> >> index dbbe6b8e3ceb..f2413da14b1d 100644
+> >> --- a/drivers/tty/serial/samsung_tty.c
+> >> +++ b/drivers/tty/serial/samsung_tty.c
+> >> @@ -988,8 +988,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct=
+ uart_port *port)
+> >>         u32 ufcon =3D rd_regl(port, S3C2410_UFCON);
 > >>
-> >> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64=
-/boot/dts/exynos/google/gs101.dtsi
-> >> index 6aa25cc4676e..f14a24628d04 100644
-> >> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> >> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> >> @@ -352,6 +352,35 @@ pinctrl_peric0: pinctrl@10840000 {
-> >>                         interrupts =3D <GIC_SPI 625 IRQ_TYPE_LEVEL_HIG=
-H 0>;
-> >>                 };
-> >>
-> >> +               usi8: usi@109700c0 {
-> >> +                       compatible =3D "google,gs101-usi",
-> >> +                                    "samsung,exynos850-usi";
-> >> +                       reg =3D <0x109700c0 0x20>;
-> >> +                       ranges;
-> >> +                       #address-cells =3D <1>;
-> >> +                       #size-cells =3D <1>;
-> >> +                       clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PE=
-RIC0_USI8_USI_CLK>,
-> >> +                                <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_T=
-OP0_IPCLK_7>;
-> >> +                       clock-names =3D "pclk", "ipclk";
-> >> +                       samsung,sysreg =3D <&sysreg_peric0 0x101c>;
-> > I'd also add samsung,mode for the "default" USI mode here, just to
-> > avoid providing it later in the board's dts. But that's a matter of
-> > taste I guess.
+> >>         if (ufcon & S3C2410_UFCON_FIFOMODE) {
+> >> -               if ((ufstat & info->tx_fifomask) !=3D 0 ||
+> >> -                   (ufstat & info->tx_fifofull))
+> >> +               if ((ufstat & info->tx_fifomask) || (ufstat & info->tx=
+_fifofull))
+> >
+> > Does this line fit into 80 characters? If no, please rework it so it
+>
+> it fits
+>
+
+Just checked, and it's 1 character off (so it has length of 81
+characters). I know it's not a strong rule in kernel anymore, but I
+like it personally. If you are going to fix that, be free to add:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+> > does. I guess it's also possible to get rid of superfluous braces
+> > there, but then the code might look confusing, and I'm not sure if
+> > checkpatch would be ok with that.
 > >
 >
-> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
-> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
-> selection of the protocol is intentionally left for the board dts file.
+> I find it better with the braces.
 >
-> I wanted to emphasize that USI8 doesn't have any HW defaults and its
-> mode must be chosen by each particular board.
->
-> I mentioned the same in the commit message, please tell if you feel it
-> needs updating.
->
-
-No, thanks, everything LGTM, I already added my R-b tag above.
-
-> Cheers,
+> Thanks!
 > ta
