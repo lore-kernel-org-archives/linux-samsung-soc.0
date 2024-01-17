@@ -1,55 +1,55 @@
 Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB2822319
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 16:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733A12232F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 16:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705507911; cv=none; b=YL6/k+txZyF+D+/FGWZHC1/5S4kl8U1vQVmZbyouaGp4J3K1QUZSjtRMJmM5w8M0v8aP2aPYRLGCvY5hd+EHkKx5IDRGP8jrYw6IJr65FjWb7asiXULpTls3mM1d27mb8B5N5pS9aSCi0o/3emaGaZ0pVKOUjWThTFaGZsGs37k=
+	t=1705507962; cv=none; b=PcInxV+Lq8dc0zQygp90bdsgMCA6m6X36vscr6NQx/DAUYAXvkfVRHtwQo1b1Bq5+Py/iYUWD3cR/0AP9ObblfEuf5qm7R+YU+G/ztWS/qDS2Y9vzyQ4V8L1fTkBGcUb835BGp52DJBb+srTtdYCdbgjldUvDvUFeKXsN4kPTf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705507911; c=relaxed/simple;
-	bh=dQUa+ynEVxPBJ1mLZg+emq2IoeEU/beREy4ePffoRTA=;
+	s=arc-20240116; t=1705507962; c=relaxed/simple;
+	bh=8pP0pZPXq9lZ9dnBrsfOtWnZOB8bSmDCi9SgbNW5rUo=;
 	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
 	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding; b=OLoocv25dhqqxCZyPMKfvKujHTc0OJgVr1kew1RUGPo5nmuvHG8uaT6Wou7xht6Hwy/s3Cua4mo85ljs3KOtiyzCFXw0lxawTXYM5HljvGVFG29PGFCb6d2ZctIQuxgmJY1snmMALfaMXaiH10V66fAmpQTfy/LewjgiysHZCVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VJtyq7rU; arc=none smtp.client-ip=209.85.216.41
+	 Content-Type:Content-Transfer-Encoding; b=sc2VXVjeUTA1gM9fupjxyt6FXXWwFLwwpb/bBqC2BcJa2MB3TZ6+Cw9iaKaX4Z9qiR4ss0OLExUnBPyO2J79w26CuX/fjIhvT86iZ1szpuAa0hUuSNAxfhtYwfaqnK5zJjBPsEe+VbUex914ICNy9rq8pL/4wrlj/J7qZv/bDi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JudPH6LG; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VJtyq7rU"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-28e7a750025so1358790a91.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 08:11:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JudPH6LG"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-28e718874e1so1465609a91.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Jan 2024 08:12:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705507908; x=1706112708; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705507960; x=1706112760; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=drJWjvb+yQYbOubeqxcSCSSS8No8nI+honzyTfQXeuM=;
-        b=VJtyq7rUFgrt0k2pMwGAT+VOygyyxm79vszaYbcwAgera96aijYqrtjXp+EON8HxyI
-         0Q8EotMW5THkk7NSzy1hH0bkPwY7zP1onEnCygKFE9ZMlH1vlR3/9wSiB+gVXOc3nUfA
-         BVgF499nHkHUV73Pxn89sBn/Rrfq39fFfmw4Krq7iO9C97QXC+PmYOEmm+GyJaSvWIhT
-         flJXKq5a77K3Th0q4nx6YNvYF7sazyRhBULlovkqNqXQ6YIRNIY745T1oiVjYhDfslEJ
-         lipBiQQLznPFMvdajPT+/oSKYrfdW+QeLvQviFlIcAG5x1m3eVsDL+pfaEiAbpRRuvKZ
-         10dw==
+        bh=jk8D0Nm+lCIPdeHpzzgYKxBrrf41aydV20z4eqYwd98=;
+        b=JudPH6LGCguUfKWawcHItX0TIf5GaMifO+Pmr5BpH/eC30pBOFoBFDKI7tEbzRKYzA
+         l0cymWyTn0rCazRG4340ngCpVJuB+Qwdsk2g7XpKC2Y1rZC9YzwRdN5Sk0qTTuMkVsgF
+         Q+mVXWk5bZtGFLXsuB28uvSGUQCCSDa7kHPqtyMwz3uLw2D23YVnWyB6xBUrvDzC1fwS
+         vkitQ1LMWvUaUEUPfgAb/OQnA3obn605LbtDqUre4+KmR4+DKtDo+4iF2v8J+ryITfWe
+         mXolKQasPFfVx6knkr2J3aokRA7wzsn3QWee2tTC6zhfdN1MZvBLYEHADxa44oDctZ8M
+         /12w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705507908; x=1706112708;
+        d=1e100.net; s=20230601; t=1705507960; x=1706112760;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=drJWjvb+yQYbOubeqxcSCSSS8No8nI+honzyTfQXeuM=;
-        b=KbCYAs3ed3uLtr3PM7NWadh/Y6BN5eWXF6q54sjHoNiFqDuaBu8Nk5ahEADy3rQ77e
-         VGliG02tkh/mErCtFCpUhCRkyayEgMNSdd+2pgTGdujWFdzEhCao83DVj9nNN49xYoKk
-         LTga5uizHPf4V1AOzdoveYYYNPU+ReS2J1P0gl5Rju0436WvxrpspFFKFrz7Ahs4kV5+
-         ehTEuO2l8ZsghCcVuQSWL/BopFl8n0F1b/XqoANqrsPZElvwcmMPuFkarZ+UleBU9J76
-         Skg+8MpO3cGRPmpSJ/Mv+DMQIifWhtCvQhoMKSlHEd7vNzQ+o0FGAo9onqQGg5jTnsZW
-         AxsA==
-X-Gm-Message-State: AOJu0YzgINJO9bKj1q80Vk32xSa+XkiI4qxV/26lSNLOBXZ+B3YOI63T
-	ayZBDXmO2NUrsn9g7l8zHUgvE+NWMTOpdB0od2l20uhEpujr6w==
-X-Google-Smtp-Source: AGHT+IF/BkPqfcI7s6qu0WKHY8iBQUPv+9/611flmwtBk2+/CmUzDdGw9MwVL258kmnYaNPMuijP+jQO6OHgZTgpXiA=
-X-Received: by 2002:a17:90b:1996:b0:28e:2d7e:7cd6 with SMTP id
- mv22-20020a17090b199600b0028e2d7e7cd6mr3076285pjb.14.1705507907883; Wed, 17
- Jan 2024 08:11:47 -0800 (PST)
+        bh=jk8D0Nm+lCIPdeHpzzgYKxBrrf41aydV20z4eqYwd98=;
+        b=HQkKodTkSS/PAo13tHKODMXGkyOKCqLLzlx0q7q9oaKZ9A5LWOu6IJzm5psKQHXmnh
+         mMaSKYzYGvOul1BHtcCew+cUUl40RnAy+0ABfYphe/c8ahAhIot5SZOyJuvywkL+gJcC
+         HMqrWlkyCVIcydDm6HI+Jwy0G8DuRv/c+7Vy8SKGTzu60JcMAnkJIg6/SRQ33gNSXR/H
+         viHBSpa63KhxFVDI52GwhdvelD81dcAro3QU3x0jo02isJJAI0RMSdtbdicZe21TEG94
+         TU7BGOWGz5OsUn8w/PE5fjYNV4Uc6dlwqVT5A5dThtuMhLToV3yUURam5+sPich/me6E
+         NbWQ==
+X-Gm-Message-State: AOJu0YzDK0Mv1V66aqWBstVeD7gY4oyhOzXQS6yNk9/ccadPEk5y2G6I
+	g8B4VLC1Rx0Fx3HlCAHWQMhPC6yL+PKjLs47jTCR4qqavInpGw==
+X-Google-Smtp-Source: AGHT+IGiZ4uEBbqIjMDXfsMXnz11sRVC/bQ5Oy8wG+iTZ84rVi+dz2Q7JsKCe8gGwF4rw5cYilSbWmGASlzgfWzJxsA=
+X-Received: by 2002:a17:90a:6e01:b0:290:727:edf3 with SMTP id
+ b1-20020a17090a6e0100b002900727edf3mr504146pjk.28.1705507959829; Wed, 17 Jan
+ 2024 08:12:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -57,13 +57,13 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240109125814.3691033-1-tudor.ambarus@linaro.org>
- <20240109125814.3691033-8-tudor.ambarus@linaro.org> <CAPLW+4=y12fBf47v_HKfBdHTsQJfWo2cwBuFosUKo3xPBqcKJw@mail.gmail.com>
- <f394e372-dbfd-4fd5-b5c8-23c383cb6cf2@linaro.org>
-In-Reply-To: <f394e372-dbfd-4fd5-b5c8-23c383cb6cf2@linaro.org>
+ <20240109125814.3691033-12-tudor.ambarus@linaro.org> <CAPLW+4=U9DBmwgxyWz3cy=V-Ui7s2Z9um4xbEuyax1o=0zB_NA@mail.gmail.com>
+ <c72ca8b2-55a6-4ec7-8013-0a563d6dcdfe@linaro.org>
+In-Reply-To: <c72ca8b2-55a6-4ec7-8013-0a563d6dcdfe@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 17 Jan 2024 10:11:36 -0600
-Message-ID: <CAPLW+4nc1GDJHZ=-+R1+aEAMzoU_OpAX37Ke84qqg66xbjC9eA@mail.gmail.com>
-Subject: Re: [PATCH v3 07/12] clk: samsung: gs101: add support for cmu_peric0
+Date: Wed, 17 Jan 2024 10:12:28 -0600
+Message-ID: <CAPLW+4k9TTcp9p3dUOVpx2M-YGy+_V1p3Q3zdBvTcCqw9ytsDA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/12] arm64: dts: exynos: gs101: define USI8 with I2C configuration
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
 	gregkh@linuxfoundation.org, mturquette@baylibre.com, sboyd@kernel.org, 
@@ -78,79 +78,70 @@ Cc: peter.griffin@linaro.org, krzysztof.kozlowski+dt@linaro.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 17, 2024 at 8:49=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+On Wed, Jan 17, 2024 at 9:08=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
 .org> wrote:
 >
-> Hi, Sam,
 >
-> Thanks for reviewing the series!
 >
-> On 1/16/24 17:42, Sam Protsenko wrote:
->
-> cut
->
-> >> Few clocks are marked as critical because when either of them is
-> >> disabled, the system hangs even if their clock parents are enabled.
+> On 1/16/24 18:03, Sam Protsenko wrote:
+> >> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
+> >> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
+> >> selection of the protocol is intentionally left for the board dts file=
+.
 > >>
-> >> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 > >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > >> ---
-> cut
+> >> v3: reorder usi8 clock order (thanks Andre'!). Did not make any
+> >> difference at testing as the usi driver treats the clocks in bulk.
+> >> v2:
+> >> - identify and use gate clocks instead of dividers
+> >> - move cells and pinctrl properties from dts to dtsi
+> >> - move IRQ type constant on the previous line
 > >>
-> >> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk=
--gs101.c
-> >> index 782993951fff..f3f0f5feb28d 100644
-> >> --- a/drivers/clk/samsung/clk-gs101.c
-> >> +++ b/drivers/clk/samsung/clk-gs101.c
->
-> cut
->
-> >> +static const struct samsung_gate_clock peric0_gate_clks[] __initconst=
- =3D {
-> >> +       /* Disabling this clock makes the system hang. Mark the clock =
-as critical. */
-> >> +       GATE(CLK_GOUT_PERIC0_PERIC0_CMU_PERIC0_PCLK,
-> >> +            "gout_peric0_peric0_cmu_peric0_pclk", "mout_peric0_bus_us=
-er",
-> >> +            CLK_CON_GAT_CLK_BLK_PERIC0_UID_PERIC0_CMU_PERIC0_IPCLKPOR=
-T_PCLK,
-> >> +            21, CLK_IS_CRITICAL, 0),
-> > Why not just CLK_IGNORE_UNUSED? As I understand this gate clock can be
->
-> When either of the clocks that I marked as critical is disabled, the
-> system hangs, even if their clock parent is enabled. I tested this by
-> enabling the clock debugfs with write permissions. I prepared-enabled
-> the parent clock to increase their user count so that when the child
-> gets disabled to not disable the parent as well. When disabling the
-> child the system hung, even if its parent was enabled. Thus I considered
-> that the child is critical. I mentioned this in the commit message as
-> well. Please tell if get this wrong.
->
-
-Ok, if you already tested this particular clock with CLK_IGNORE_UNUSED
-and it didn't help:
-
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-> > used to disable PCLK (bus clock) provided to the whole CMU_PERIC0.
-> > Aren't there any valid cases for disabling this clock, like during
-> > some PM transitions? For Exynos850 clock driver I marked all clocks of
->
-> They aren't, because if one switches off any of these clocks that are
-> marked as critical, the system hangs and it will not be able to resume.
->
-> > this kind as CLK_IGNORE_UNUSED and it works fine. In other words: I'd
-> > say CLK_IS_CRITICAL flag is more "strong" than CLK_IGNORE_UNUSED, and
-> > requires better and more specific explanation, to make sure we are not
-> > abusing it. And I'm not sure this is the case.
->
-> Is the explanation from the commit message enough?
+> >>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 29 +++++++++++++++++++=
++
+> >>  1 file changed, 29 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64=
+/boot/dts/exynos/google/gs101.dtsi
+> >> index 6aa25cc4676e..f14a24628d04 100644
+> >> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> >> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> >> @@ -352,6 +352,35 @@ pinctrl_peric0: pinctrl@10840000 {
+> >>                         interrupts =3D <GIC_SPI 625 IRQ_TYPE_LEVEL_HIG=
+H 0>;
+> >>                 };
+> >>
+> >> +               usi8: usi@109700c0 {
+> >> +                       compatible =3D "google,gs101-usi",
+> >> +                                    "samsung,exynos850-usi";
+> >> +                       reg =3D <0x109700c0 0x20>;
+> >> +                       ranges;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <1>;
+> >> +                       clocks =3D <&cmu_peric0 CLK_GOUT_PERIC0_CLK_PE=
+RIC0_USI8_USI_CLK>,
+> >> +                                <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_T=
+OP0_IPCLK_7>;
+> >> +                       clock-names =3D "pclk", "ipclk";
+> >> +                       samsung,sysreg =3D <&sysreg_peric0 0x101c>;
+> > I'd also add samsung,mode for the "default" USI mode here, just to
+> > avoid providing it later in the board's dts. But that's a matter of
+> > taste I guess.
 > >
-> > The same goes for the rest of clocks marked as CLK_IS_CRITICAL in this
-> > patch. Please check if maybe using CLK_IGNORE_UNUSED makes sense for
-> > any of those as well.
 >
-> I've already checked and all behave as described above.
+> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
+> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
+> selection of the protocol is intentionally left for the board dts file.
 >
-> Thanks,
+> I wanted to emphasize that USI8 doesn't have any HW defaults and its
+> mode must be chosen by each particular board.
+>
+> I mentioned the same in the commit message, please tell if you feel it
+> needs updating.
+>
+
+No, thanks, everything LGTM, I already added my R-b tag above.
+
+> Cheers,
 > ta
