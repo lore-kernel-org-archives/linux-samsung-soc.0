@@ -1,56 +1,56 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B561950A7A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C705101E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705661150; cv=none; b=MKsLPkDPKQE1by5B92LEvEy6oZheFFmp0+oYxj7+DEJJIrj4d1EXa8W34Z6UzDXlwk/p+KX/E0ksmydBe2Jnc1tqUnNRbkq/04rIbWzy6I79XL982gArPPqFgRi/8kgKdG0yA0K9F0X7y7/fqENM+HJMemZnrdEQz3zY+zH0OtA=
+	t=1705661150; cv=none; b=W34ofqBlEzUlsJLSx2kKpQjjVfcC9YGdKPF0pFWZ7ivaCyL/Xwy3pXkKS9etvkEwnHr4jMBbxCwfHZPBK7YjwENhxfJL4s1GVLQ+K5azL+08Yf8MeOAj5UTonyto9NF7OhDIaBC+e6d/xzMByHIVqrSeLXh+ly5dOYf15kIQy60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1705661150; c=relaxed/simple;
-	bh=0rvm+ZfAvB34/Bb8MmtN/eXQ/wWDxr8HdRasaolA49E=;
+	bh=YE3UMIIxQ6MMF0Ha1oOA8mHquJPAns0Jxr3xCN4fzZE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CJxE1aoNVG17jmUEptsc5vV7bHKZaawHquvu+0MlBknF4S2c8/jVQRKA/WUXTLTJFJ2qyxqapBIKOe9zjbN0iSVqLdOJFNblLp3i86Blu7gdBUWDviq+WIQf+p3uWsux0OczbAferG/a56uKfc/e/grDFp6TqsE+EDGNM1eLftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=si/6tQey; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version; b=CrxYZbpIQsnuWX/t5yhnn0SFms97md/DFIa1mLBEc3pAK16UNt5Nu7L9A0NTfcBhbPIthAY2Djqy/JoMNPKQo+ZF6zk7AaOinP8RIwI/7gqsvC8Os7WM5dvkA3txo0wczv7cJ/4mZ+FyqyUzjdHBh+xmS7341xHBxyMDZuflhgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U1SbTumB; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="si/6tQey"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40e490c2115so10454465e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U1SbTumB"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2cd853c159eso7786751fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705661146; x=1706265946; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705661147; x=1706265947; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ecEUv9cB/C4rgpKZf48XubyCx93neS07LHrZaWe0W9s=;
-        b=si/6tQeyPq6LIimqvEt8VzUpZuHxFU85yfnK+W3rx6Rrk3rhvxg2NQ+BWjGZhdeBHO
-         foZfEoTHuad9Plp48UYuJryDZjyrAFOBLQuFL3GZrr3kv6AJyMUe9a/BWBffWOIXPWNY
-         nY6XXayP0SQLe5CP6wX1wx2BJy/qrz2v8Z2XRcIxz7CrcwNWhzfWU6jFZmys/v2pPCze
-         poeBzNeJjjHS5FAAoC3ekwjm2BC7EXOzyCogqj6GqqQ56R2Mq4Rzl0I1DPzZvN2Ft1Ol
-         q8wd2Lg+KF8MEfixrMag5ntOAqrtcmTesf6XMBtAb10dhk+GubO4x8XWVSGWKVUNdY4x
-         Pr/A==
+        bh=Dam+ysOKHmekRdWT+0A8uvWFAbklzxZhnxZqNV/mEds=;
+        b=U1SbTumBsQaZprp5gtw2jAVt25pZXzWQkZhBYeAiFS9Y/hVHuZ8ttXt+Z+meR+woTb
+         tOWgh1MuYenKQOXbNDD8uRId6Is7GAj58i+p213rVhqgsYUmnbtm9+fvAp4UsrKnFMPK
+         PJrHHdE4u04OInVtpu3T4Pb8T6z3lfiQXDPKLk9UkA+mv4agyWNIyci8LFHeBsHZAXvk
+         Pk5Rs9GTwIqyqAd2FmgokeGLUpqm48R6oRma1IBODWvdsEbczcxGTwxz6JjBJuWUyI/H
+         YTPMiJG3dP0cBGtP/OBtGTD62ghlpJtfnHkmdmNcwEZvJrNiIWADnPQBB9zIf6y/t/qZ
+         i3fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705661146; x=1706265946;
+        d=1e100.net; s=20230601; t=1705661147; x=1706265947;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ecEUv9cB/C4rgpKZf48XubyCx93neS07LHrZaWe0W9s=;
-        b=I2hlXAkrRKUq4uenO8mtR4jOpnJ+8symOcvhaHCFZiN0D13WjNEqa3EdYMVtNTu8o8
-         dknAJGd+SAuL14jdxDPeMlSQr+zlJ0xsdhbZYetZ3Tsf4uhS9XX41LxUJ6kN8fNpyYrH
-         BgFN54KAAJktBwn0bgJvsKBMZtj8xLYQVcL2zLL3CA4JE9+fBy7cF747Mfg1FYKkz1pV
-         ZFDdp8z+o/thnCB9iI4/guo8pIGY7jNXl+Z/PBf6iiZLGZ5e2FAAFEr98tm1NRJdAif0
-         lKCyU4DwlBB4nY+dQbvKLGRneyDVuiYjrpkiVlljFpYH5KI2vhBnqeK3zTGvWcGpNqez
-         C8Hw==
-X-Gm-Message-State: AOJu0YwlallknWSz+AK2UEzsLFTnKWa05RK8K1YwkdLkHdEmUOsF2V0V
-	s8Ya06IiXP8jMYTjMZv8OImQ1oMh36fPmipic3sncbquVArZ3BamF7Smyh+u0FU=
-X-Google-Smtp-Source: AGHT+IFYdU7YgMMRHC+DrUKA5MwlIsxGfbocGuG9y6jEGdz2VaUXMw579pgtjEfWCwn+GLZjJgGcDw==
-X-Received: by 2002:a05:600c:6b0e:b0:40e:4ad9:90df with SMTP id jn14-20020a05600c6b0e00b0040e4ad990dfmr428957wmb.158.1705661146233;
-        Fri, 19 Jan 2024 02:45:46 -0800 (PST)
+        bh=Dam+ysOKHmekRdWT+0A8uvWFAbklzxZhnxZqNV/mEds=;
+        b=nUax8EBG+/CDgL3ltdttbLced0QzM6iL3agNKhKIEBWWii7/K9wsUnuK9h3QUU77sh
+         tMjZK6MC1xX6ZCLOGjsCYe2N2uyVM23CRWmTc0B1fsFK+dlBHgG98YkKkn82N2XqPFm6
+         +NP4YL+cGpTX6QzTP1RaWqcVXt1EgTxda22Nhh5jpUl+VuCC1LLwGIsrmYP0XG8AaW7E
+         cozvCwUTbA6rk8yiBYCnB0bbpbPlGfuV96mLS1RtluBoHuwv6GrSfTR18qOZfPCfIMKN
+         +GuPR7c5ISR31kNHsJv1ymGKLGSuv0L02orOKg91/d5Q0szcfaFsC7PJ+ZRaKTA6h0CP
+         ae4Q==
+X-Gm-Message-State: AOJu0Yw9y0+8vN0/BbESmfFqASATU35W1us5w9wAueofvfjBDbhwyuPJ
+	bV2J2qZJ2zFF0gyJ78yUuYTzbAziNztHKRY+UTBkReVb2EVpKmAClmEK0NW7qak=
+X-Google-Smtp-Source: AGHT+IGXPpDJDvPliaArYGtaldjiGJwnoOPpIjme4o/zZGILHZV61MCszFmCgh4t0thzE2a5w6utjg==
+X-Received: by 2002:a05:6512:ac2:b0:50e:7b0d:5b66 with SMTP id n2-20020a0565120ac200b0050e7b0d5b66mr742328lfu.73.1705661147229;
+        Fri, 19 Jan 2024 02:45:47 -0800 (PST)
 Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.45
+        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 02:45:45 -0800 (PST)
+        Fri, 19 Jan 2024 02:45:46 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org,
@@ -69,9 +69,9 @@ Cc: alim.akhtar@samsung.com,
 	semen.protsenko@linaro.org,
 	willmcvicker@google.com,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 18/19] tty: serial: samsung: change has_divslot type to bool
-Date: Fri, 19 Jan 2024 10:45:25 +0000
-Message-ID: <20240119104526.1221243-19-tudor.ambarus@linaro.org>
+Subject: [PATCH v2 19/19] tty: serial: samsung: shrink memory footprint of ``struct s3c24xx_uart_info``
+Date: Fri, 19 Jan 2024 10:45:26 +0000
+Message-ID: <20240119104526.1221243-20-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
 References: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
@@ -83,76 +83,71 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since the driver was introduced the port features flags never extended.
-As we don't expect more flags soon that would bypass the first
-cacheline of ``struct s3c24xx_uart_info``, change the type of
-``has_divslot`` to bool. Bitfields operations incur performance penalty
-when set or read as compared to direct types.
+Use u32 for the members of ``struct s3c24xx_uart_info`` that are used
+for register interactions. The purpose of these members becomes clearer.
 
+The greater benefit of this change is that it also reduces the memory
+footprint of the struct, allowing 64-bit architectures to use a
+single cacheline for the entire struct.
+
+struct s3c24xx_uart_info {
+	const char  *              name;                 /*     0     8 */
+	enum s3c24xx_port_type     type;                 /*     8     4 */
+	unsigned int               port_type;            /*    12     4 */
+	unsigned int               fifosize;             /*    16     4 */
+	u32                        rx_fifomask;          /*    20     4 */
+	u32                        rx_fifoshift;         /*    24     4 */
+	u32                        rx_fifofull;          /*    28     4 */
+	u32                        tx_fifomask;          /*    32     4 */
+	u32                        tx_fifoshift;         /*    36     4 */
+	u32                        tx_fifofull;          /*    40     4 */
+	u32                        clksel_mask;          /*    44     4 */
+	u32                        clksel_shift;         /*    48     4 */
+	u32                        ucon_mask;            /*    52     4 */
+	u8                         def_clk_sel;          /*    56     1 */
+	u8                         num_clks;             /*    57     1 */
+	u8                         iotype;               /*    58     1 */
+	bool                       has_divslot;          /*    59     1 */
+
+	/* size: 64, cachelines: 1, members: 17 */
+	/* padding: 4 */
+};
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/tty/serial/samsung_tty.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index c429029c0207..0a03df44211d 100644
+index 0a03df44211d..fcc675603b14 100644
 --- a/drivers/tty/serial/samsung_tty.c
 +++ b/drivers/tty/serial/samsung_tty.c
-@@ -89,8 +89,7 @@ struct s3c24xx_uart_info {
+@@ -75,15 +75,15 @@ struct s3c24xx_uart_info {
+ 	enum s3c24xx_port_type	type;
+ 	unsigned int		port_type;
+ 	unsigned int		fifosize;
+-	unsigned long		rx_fifomask;
+-	unsigned long		rx_fifoshift;
+-	unsigned long		rx_fifofull;
+-	unsigned long		tx_fifomask;
+-	unsigned long		tx_fifoshift;
+-	unsigned long		tx_fifofull;
+-	unsigned long		clksel_mask;
+-	unsigned long		clksel_shift;
+-	unsigned long		ucon_mask;
++	u32			rx_fifomask;
++	u32			rx_fifoshift;
++	u32			rx_fifofull;
++	u32			tx_fifomask;
++	u32			tx_fifoshift;
++	u32			tx_fifofull;
++	u32			clksel_mask;
++	u32			clksel_shift;
++	u32			ucon_mask;
+ 	u8			def_clk_sel;
+ 	u8			num_clks;
  	u8			iotype;
- 
- 	/* uart port features */
--
--	unsigned int		has_divslot:1;
-+	bool			has_divslot;
- };
- 
- struct s3c24xx_serial_drv_data {
-@@ -2400,7 +2399,7 @@ static const struct s3c24xx_serial_drv_data s3c6400_serial_drv_data = {
- 		.port_type	= PORT_S3C6400,
- 		.iotype		= UPIO_MEM,
- 		.fifosize	= 64,
--		.has_divslot	= 1,
-+		.has_divslot	= true,
- 		.rx_fifomask	= S3C2440_UFSTAT_RXMASK,
- 		.rx_fifoshift	= S3C2440_UFSTAT_RXSHIFT,
- 		.rx_fifofull	= S3C2440_UFSTAT_RXFULL,
-@@ -2429,7 +2428,7 @@ static const struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
- 		.type		= TYPE_S3C6400,
- 		.port_type	= PORT_S3C6400,
- 		.iotype		= UPIO_MEM,
--		.has_divslot	= 1,
-+		.has_divslot	= true,
- 		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,
- 		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,
- 		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,
-@@ -2459,7 +2458,7 @@ static const struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
- 		.type		= TYPE_S3C6400,			\
- 		.port_type	= PORT_S3C6400,			\
- 		.iotype		= UPIO_MEM,			\
--		.has_divslot	= 1,				\
-+		.has_divslot	= true,				\
- 		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,	\
- 		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,	\
- 		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,	\
-@@ -2498,7 +2497,7 @@ static const struct s3c24xx_serial_drv_data gs101_serial_drv_data = {
- 		.type		= TYPE_S3C6400,
- 		.port_type	= PORT_S3C6400,
- 		.iotype		= UPIO_MEM32,
--		.has_divslot	= 1,
-+		.has_divslot	= true,
- 		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,
- 		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,
- 		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,
-@@ -2569,7 +2568,7 @@ static const struct s3c24xx_serial_drv_data artpec8_serial_drv_data = {
- 		.port_type	= PORT_S3C6400,
- 		.iotype		= UPIO_MEM,
- 		.fifosize	= 64,
--		.has_divslot	= 1,
-+		.has_divslot	= true,
- 		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,
- 		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,
- 		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
