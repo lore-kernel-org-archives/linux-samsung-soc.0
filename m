@@ -1,56 +1,56 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D83E4F1E7
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C054F20A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705661144; cv=none; b=CXBFXcTTTqB8n+viV1zolIBs4Tje1NNqsjE7n1wxvmNLboNMXPoSfGe4GAgDIKXWkrPmR+XgBEUFyaB89omspGvY03xcePqjUFp7GJhxlV0S6pl5r9U5981cmIj+RvoU6oazx/xg1E1FP5PIT2oGMEyzGXttC/ckyBxSTqgrJw0=
+	t=1705661145; cv=none; b=BmAZncZelGguEiCSpas47I5g4DKM50xnWqrsqu130Y5AbIPt32XJIB1pEWphuXLqpouAcxxiuQSaLsI9YehyayYNngI8MsTy23jMCIfEZYHpVQ7Fy6rlNxBHlZHAAMd5KzFzJvOUkW9a0oGPhpkzDbn7OcmClpJ/oaXMlteB/ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705661144; c=relaxed/simple;
-	bh=yyPxa+2O3PUiMwwg0ga5y4EkBLkh+hUE/RHLPR2apyE=;
+	s=arc-20240116; t=1705661145; c=relaxed/simple;
+	bh=PJRlGWR9ZTwdang5eUW69ySWLQO09PGgtwAiOHlslcs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lSpX3BkMEdSBHbMSEN8GPPD+5Aa04cV9aYA5IdpsaOBGyvF3BNWMpyUbdHiFfyQ0yCnqsKAAjtG2sFvVXnW9Zm6fhxuemgMSRqqvHIea0iZVZ19RE9F+bpgmE2AK8EtgbH/hxua85NN/4tsEqWiQXC3uiBuVh70ttTLSaXrCCm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JkDcVPQU; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=mQxZIHIN3wEHofwTvDgYOSkcXq8INMrFzEhzW3uj3T7fE5EWdBzfOYvLEAIWKqINTz8d4aS0bdAq/Tk52w4kI2Bf/yF9OljwFYBwV9uyIpB9DO6xm6unIRi+ZLS+iPR+eMU3efBc1U+vda2SK7ltoVXLSkI9DyyuW6rrTAFd2Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zgrsbOfY; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JkDcVPQU"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40e884de7b9so7949335e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zgrsbOfY"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e80046246so3595765e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705661141; x=1706265941; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705661142; x=1706265942; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BKtqqOLjqJGdMtonI4P5mEMTKVliGwJ+zwCnWH5C8bk=;
-        b=JkDcVPQUrStKHVzWG+vOilni6QBhiBU2uCIY8gzHTHgveta/kDtaGwKlMF4M2sO5PM
-         ovB+p//Zu0E8y7pylMIxXIiPmor+3VYg0US9fv9bUk/m9bVu87pEdfAJAiod6oCWoV1H
-         ye6g+zgQhwa5iXZMX+OyUQ8auH1Hjt1ijKspPrsQcOLWIslq5lGUD4BMf7lie28l9JJ5
-         Pzly8bf2rpTltcGZSnr0/XmJtfK6C+PgFKAdJCRCwYpTHp/LmFuci1EAZvMYHhQvfofO
-         mJQ9I518tZfwEeIFr9iv8xAly/1i0BnfWvxlnepqXUlhfouWo9advrOCOvMhvj1OCbXR
-         guxg==
+        bh=aNVrIVfmeLqNWh0q32FnE3SCbDOH2rJsoikX7ZaHXN8=;
+        b=zgrsbOfYBPrTGC3LDVa2Q18oTeIHW7uzteY10Xs/Ew2aA66P1Rabe8xBEFL5DC/vSs
+         Lg1IKIXUU91TzOqtO36LN1w0CMOzff0hp6iUhYtaRAndGRZcrvupK+yktsKgqCLqjH4V
+         tQlG5agQqS3j+WWP0WyOfNSEuYeEDiNNexGu+VrWV2fGz0BZqiV6V7JOCQjarYJr//PS
+         acDovLMq7T4Cz4WE1ZrUFCPeZ/Xzb8KIIHs43HTp7hkMUL6E3CqNaqtJQ3KrIBf2D6Jn
+         UH9SkwBU2kR74oG1IH0oTnZOrEHd/rpxmnshkA0HueiOqdYeP1HmkapIQ03YfeVXpVNZ
+         j/Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705661141; x=1706265941;
+        d=1e100.net; s=20230601; t=1705661142; x=1706265942;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BKtqqOLjqJGdMtonI4P5mEMTKVliGwJ+zwCnWH5C8bk=;
-        b=JfO3ELAb2zple9MVJXr6NhtCPxQzql9k0U4Ok/yeK7hgH4+xLFTIKZBludoW6HUqqS
-         Ep419ag30CsspvZ29TTsOd4mBusMxNcS/OW4H46kZS1JQ7b4IrPexSJ9vCGpgfjb/QhC
-         7c1Xc+gwobMJ+HO5C9+2L/YZ7b7p2ZgPrXOd36SmMMeraEtI4aBqcCYrxnCsYtjIrwop
-         wRtmFxfQUO4lXJKE6n1sR82FFu8u1AbIRlgetmOZoTl7sKcpDS47+0F4esYfdaScWh3J
-         r342AH5wvTQqSZpSaQnfH18h2ywNZyY6mBRu90lhZqtvcX56jw0TI8c9O2iuOzeyFi59
-         tZcA==
-X-Gm-Message-State: AOJu0YwslcJDzshb0HEcgzV2Bxx2cUBS47GU9uGisERWyIfbyJUWnYcC
-	zSGyha5nAQE4Akj0w93BmwLAYiSlfScjR+vb4g4b191vxVC0ON8rvI7vYUGdNCc=
-X-Google-Smtp-Source: AGHT+IG4Y1qsP7t7ylEa/vU+m005rweLwKBMwyulcKNBD5OybDrKdZCdyTNr5tSCDvcQkIt7aSdNiA==
-X-Received: by 2002:a05:600c:5116:b0:40e:86c0:1d16 with SMTP id o22-20020a05600c511600b0040e86c01d16mr1301827wms.150.1705661141695;
-        Fri, 19 Jan 2024 02:45:41 -0800 (PST)
+        bh=aNVrIVfmeLqNWh0q32FnE3SCbDOH2rJsoikX7ZaHXN8=;
+        b=W0seEQj13/oX5DcMsijvk3I/JV8l4pPDIie4eeigEICEegpDTlVq5T4q0KAyaS+JnY
+         LuN6gJoMdRue9nO2+xS3zTN4Cgj7ETnYP4yE93uLZFNgznDtH67pxbk83pAETBSd4aNw
+         lk6WglyBkUT253WTj41V+l1dp/vItWYc8Z5QTGXx3I+ZBuo43MePN/q4Ku4D2jK/XDt4
+         y9QKRKj2+p/A8bmcYnv5pUBvOcNcyOXsyGZiDBa7ZVJlq8Gdico7xMXxriagRXTKwHQz
+         iOvFWlUlsry/fHPnouQVK+gLR9AYWMtcjEe6YAqAMs19zfxUdwP+vIcNIg1CStN02zqd
+         qaGA==
+X-Gm-Message-State: AOJu0YypMjW3nlfmvUNd4mE33zi6epTwc/KzLVJX5rmd73e0lC2sdykp
+	WsXc8UejZ3WstfQe8/TXCjztUDDaIti11Ko3DkEqUdL6IhHwt2iyg/+h7TfNWVk=
+X-Google-Smtp-Source: AGHT+IG1Zs80+jewlD9VzzkTPw9eOk7A/qP/u9l55zJeijZCyenfdFg/MX5eIVS2ZxYAe9I/6F6bSg==
+X-Received: by 2002:a05:600c:1392:b0:40e:360b:e3e1 with SMTP id u18-20020a05600c139200b0040e360be3e1mr497918wmf.13.1705661142682;
+        Fri, 19 Jan 2024 02:45:42 -0800 (PST)
 Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.40
+        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 02:45:40 -0800 (PST)
+        Fri, 19 Jan 2024 02:45:41 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org,
@@ -69,9 +69,9 @@ Cc: alim.akhtar@samsung.com,
 	semen.protsenko@linaro.org,
 	willmcvicker@google.com,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 13/19] tty: serial: samsung: don't compare with zero an if (bitwise expression)
-Date: Fri, 19 Jan 2024 10:45:20 +0000
-Message-ID: <20240119104526.1221243-14-tudor.ambarus@linaro.org>
+Subject: [PATCH v2 14/19] tty: serial: samsung: return bool for s3c24xx_serial_txempty_nofifo()
+Date: Fri, 19 Jan 2024 10:45:21 +0000
+Message-ID: <20240119104526.1221243-15-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
 References: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
@@ -83,29 +83,38 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The bitwise AND with the fifo mask is used to check if the fifo is empty
-or not, it doesn't care about the length, thus the comparison with zero
-is implicit. Rely on the implicit comparison instead.
+s3c24xx_serial_txempty_nofifo() returned either 0 or BIT(2), which is
+counterintuitive. Make the method return bool, and return true when TX
+is empty and false otherwise.
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/samsung_tty.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index f8a8b459a86b..333ffa3a76a3 100644
+index 333ffa3a76a3..90d697def5c7 100644
 --- a/drivers/tty/serial/samsung_tty.c
 +++ b/drivers/tty/serial/samsung_tty.c
-@@ -988,7 +988,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
- 	u32 ufcon = rd_regl(port, S3C2410_UFCON);
+@@ -236,7 +236,7 @@ static inline const char *s3c24xx_serial_portname(const struct uart_port *port)
+ 	return to_platform_device(port->dev)->name;
+ }
  
- 	if (ufcon & S3C2410_UFCON_FIFOMODE) {
--		if ((ufstat & info->tx_fifomask) != 0 ||
-+		if ((ufstat & info->tx_fifomask) ||
- 		    (ufstat & info->tx_fifofull))
- 			return 0;
- 		return TIOCSER_TEMT;
+-static int s3c24xx_serial_txempty_nofifo(const struct uart_port *port)
++static bool s3c24xx_serial_txempty_nofifo(const struct uart_port *port)
+ {
+ 	return rd_regl(port, S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXE;
+ }
+@@ -782,7 +782,7 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
+ 		ch = rd_reg(port, S3C2410_URXH);
+ 
+ 		if (port->flags & UPF_CONS_FLOW) {
+-			int txe = s3c24xx_serial_txempty_nofifo(port);
++			bool txe = s3c24xx_serial_txempty_nofifo(port);
+ 
+ 			if (ourport->rx_enabled) {
+ 				if (!txe) {
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
