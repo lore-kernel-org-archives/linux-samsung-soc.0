@@ -1,44 +1,58 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34423C468;
-	Fri, 19 Jan 2024 09:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686A12CA7
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705658071; cv=none; b=uTVp2cng/lo9gqRH155tDH4+xSOkIJ4E5/sSWRn+LLLE82GQLiYbRJ7D8/R0wt3j1ygLeluVSmAWuuP4PLa/VR8j+migbSpkNgV6QR1a7W4SO6DE7O2j/BLOOa+tM6b7B/O8eYfpz+hZDQ/yibnKNTpe7Y7XKqZujzYyUZWoafU=
+	t=1705658550; cv=none; b=B/2cNDenOiTPBlnn2ZSnWLzYzH9uc6ZTF2nehkXA3TPnSCDr32gdt+OI7fcH4v4RUHp95T9jhiP/XGin1nH/dQwMTvM2nODwShoVrCeiI8q7hktQlk6EASh8jFznr+AB7fyrlqKnVg++4eCr0VVacQ1DGdpWW6IJSRNANavgorM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705658071; c=relaxed/simple;
-	bh=EB0bUOQlvPA/fCvOblwDxowvrUR0HWoPxyYiiE+lV6U=;
+	s=arc-20240116; t=1705658550; c=relaxed/simple;
+	bh=Oj2CWRRWRkWFo+LwN0xtbddwuHvv8HJWOBKZdtyRrro=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IzJmmG80zNU57gdw8iUQus2iGwe6KG1zIGF78u7USN2QDe9EsKhdl+gvYn/vNX9P92lRCEdwsHzIDk56xePq4gXsK9Q8Jx6WFqDu52bca3DSiGhGhds3ESc1wd6/9np7sCBLrxfAq2wwsJb3CUJ8J98L364Wi/5Q1IdLXIRjdjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e86a9fc4bso7166075e9.2;
-        Fri, 19 Jan 2024 01:54:29 -0800 (PST)
+	 In-Reply-To:Content-Type; b=Ya8Sk7GNK143TOna8i7s1NURUSmCHnH+ZSXdZ1JU3fjLYdGFoQc5VKB4a9TUy0UVdDuq0QMnto+ToFZnX27BivFDwSHImMzIjT7QWA5D5QtcWcy7ybgcO5bSZf8QpjpT8ofrTXH+tvfJx/0V4Hukd4A1HepFjap5lA9xxg2ZL3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cC68A+lR; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cC68A+lR"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a27733ae1dfso53721766b.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:02:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1705658547; x=1706263347; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AgZff7xJLSEE1id9lwt/xdG/y/Qq+0QfwaWVyXYtpWY=;
+        b=cC68A+lRjHmL6u0lXWO9RK0w8jmu0p9knkNBuRoiHxVuPwjCXWwzeV+ajcBLoPvkOS
+         bQ3VFtB6qExv9F0MS6DMmIPqz+nVS+MMTvK5fD161H5j+dHTzF0GePMEnU9JvkpkETgE
+         70vVFA04N6XN3+/BQNlB1XdRtSdAUZ5jQgzfcbXgWQZVEH8kKA08af0k5fIeNKsEiITv
+         Tt8Lumf4L4QsX8Kii34KElvMzhMwmQhVejbRzBRFLOqPrPLT1gYkm3DsrdlcnCIUWUxz
+         2rvOk5lEmsK/NuRxrjTRX+Y7VpB8SovoGewB85kYn+9uvHc3JktZ9IKtUvOC1UvqWiAb
+         Ipgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705658068; x=1706262868;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1705658547; x=1706263347;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KhS55GkeN1MML94r02ZTRN7Q0q493tFZV5aLoz32KaU=;
-        b=nO/xU8bin4+TgBwBDWWP0KiyarDxAjniUBr5OxT1II2yGe9FnVrRhdx5ol7J/VkO7K
-         pafdo1oVB/KBo3OMPLEOYQCJuwNWVP8SgPWON0uHr1ze2ysl2JoonSuJdVDctVMHcvSd
-         dUQPUM+ld35HrmBFdfC7tJH4fdl9bEX9GK5KVcr4UvRVOq5KLCRk5YYl0OJEIPrq65bv
-         VB6hKyvY6Y+rSOEhNPHo/Tt7d3fo1qGnslfKP/m7ExYeyj412KggV3Wh7XzEJoWr0cpE
-         X0awqF7u8rTi0Ba+dVZZGc0knnVN00YhZatog29sDnVtEa/UBn7BX5IYi/8pXSg3ka0F
-         Exhw==
-X-Gm-Message-State: AOJu0YyoCUOu/xt4n3z8e7DsDm2nRzLTS70H5kWDO3WEJYjVQFwKjbAP
-	q2UKI3/2/dkIXGiCs1BN94S+YzWZgcB11SiW5ED94GKHi8Ik5hbZ
-X-Google-Smtp-Source: AGHT+IF/HDQIEWtDT6IvTDCHqb2oiXrFws6SF+Qqn3/6yTi0XH8IS1zXK7pSewpaGHn7XnNPAJEhSw==
-X-Received: by 2002:a05:600c:b47:b0:40e:95a7:cd3e with SMTP id k7-20020a05600c0b4700b0040e95a7cd3emr1050752wmr.79.1705658067711;
-        Fri, 19 Jan 2024 01:54:27 -0800 (PST)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:59? ([2a0b:e7c0:0:107::aaaa:59])
-        by smtp.gmail.com with ESMTPSA id o9-20020adfe809000000b00337bf81e06bsm6053961wrm.48.2024.01.19.01.54.26
+        bh=AgZff7xJLSEE1id9lwt/xdG/y/Qq+0QfwaWVyXYtpWY=;
+        b=gnvD79eqyiaa5fRDS51czL4DiazjV3WBXrKyOoFPiJq62kg+lI4ZgRqJHi5npO6SRK
+         xaVt1qf5RYsQiBM4EIN7P2x/SM1Qwc5WN5xbj54aNsBP8HYrBxuUbJLh+qTlcFxqrTCK
+         7vK6nW/PNKJXuwaF3L2BuIrNjCliWachYICBJS9i2+EWITYTMC9m6xWRRRCtch94qhdL
+         5+klh/3KXzXcbrBIXbZUAWI6m66nM2Vczc4984NcdsOut2laIqjsRA6gXm02b94iKsUC
+         leqEn0+8bsHCUr07vg0tPZfiHia5bA/lRMonSzMb2QStDnN5euyCBrQUhIQNaymYzo+3
+         uIVQ==
+X-Gm-Message-State: AOJu0YzX+V0cObt40nbQUkZc8Wbd3ree58kiFfOX4WAOf3C6nobzRfmy
+	ftqm6o9VxDzY5HCy58oHLAncOCYcHmIL7GlDWlVwLNexH9l5aCAGf8tC2EWFBec=
+X-Google-Smtp-Source: AGHT+IH3hrSRgqjsIjrRjJE6rvR05Yg3dSlZbAAOv/Cqb6KZ+EaqMYyJPHfW+KG/alUHVseO61EdLQ==
+X-Received: by 2002:a17:907:9849:b0:a2e:8379:489d with SMTP id jj9-20020a170907984900b00a2e8379489dmr704850ejc.292.1705658547511;
+        Fri, 19 Jan 2024 02:02:27 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id c3-20020a17090654c300b00a2a2426728bsm10179252ejp.178.2024.01.19.02.02.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jan 2024 01:54:27 -0800 (PST)
-Message-ID: <96e3d7e9-737b-484e-bc94-e95533f06ca7@kernel.org>
-Date: Fri, 19 Jan 2024 10:54:26 +0100
+        Fri, 19 Jan 2024 02:02:27 -0800 (PST)
+Message-ID: <98b87792-4919-4152-8ccc-b8a731cdfd55@linaro.org>
+Date: Fri, 19 Jan 2024 10:02:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -49,7 +63,7 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 17/18] tty: serial: samsung: shrink port feature flags to
  u8
 Content-Language: en-US
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+To: Jiri Slaby <jirislaby@kernel.org>,
  Sam Protsenko <semen.protsenko@linaro.org>
 Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
  gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
@@ -62,99 +76,64 @@ References: <20240110102102.61587-1-tudor.ambarus@linaro.org>
  <76e1dc42-cabe-4925-8aa1-c8f733fb36a2@linaro.org>
  <8f3f85d0-866e-4e5a-8177-05c26c08b278@kernel.org>
  <842d36c7-9452-431f-95c4-ff114484d201@linaro.org>
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <842d36c7-9452-431f-95c4-ff114484d201@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <96e3d7e9-737b-484e-bc94-e95533f06ca7@kernel.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <96e3d7e9-737b-484e-bc94-e95533f06ca7@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 19. 01. 24, 10:43, Tudor Ambarus wrote:
->>> If using unsigned int the bitfied is combined with the previous u8
->>> fields, whereas if using u8 the bitfield will be independently defined.
->>> So no benefit in terms of memory footprint, it's just a cosmetic change
->>> to align the bitfield with the previous u8 fields. Allowing u32 for just
->>> a bit can be misleading as one would ask itself where are the other
->>> bits. Between a u32 bitfield and a bool a u8 bitfield seems like a good
->>> compromise.
+
+On 1/19/24 09:54, Jiri Slaby wrote:
+> Hi,
+> 
+> On 19. 01. 24, 10:43, Tudor Ambarus wrote:
+>>>> If using unsigned int the bitfied is combined with the previous u8
+>>>> fields, whereas if using u8 the bitfield will be independently defined.
+>>>> So no benefit in terms of memory footprint, it's just a cosmetic change
+>>>> to align the bitfield with the previous u8 fields. Allowing u32 for
+>>>> just
+>>>> a bit can be misleading as one would ask itself where are the other
+>>>> bits. Between a u32 bitfield and a bool a u8 bitfield seems like a good
+>>>> compromise.
+>>>
+>>> Why? What's wrong with bool? bitfields have terrible semantics wrt
+>>> atomic writes for example.
+>>>
 >>
->> Why? What's wrong with bool? bitfields have terrible semantics wrt
->> atomic writes for example.
+>> Bool occupies a byte and if more port features will ever be added we'll
+>> occupy more bytes. Here's how the structure will look like with a bool:
 >>
+>> struct s3c24xx_uart_info {
+>>     const char  *              name;                 /*     0     8 */
+>>     enum s3c24xx_port_type     type;                 /*     8     4 */
+>>     unsigned int               port_type;            /*    12     4 */
+>>     unsigned int               fifosize;             /*    16     4 */
+>>     u32                        rx_fifomask;          /*    20     4 */
+>>     u32                        rx_fifoshift;         /*    24     4 */
+>>     u32                        rx_fifofull;          /*    28     4 */
+>>     u32                        tx_fifomask;          /*    32     4 */
+>>     u32                        tx_fifoshift;         /*    36     4 */
+>>     u32                        tx_fifofull;          /*    40     4 */
+>>     u32                        clksel_mask;          /*    44     4 */
+>>     u32                        clksel_shift;         /*    48     4 */
+>>     u32                        ucon_mask;            /*    52     4 */
+>>     u8                         def_clk_sel;          /*    56     1 */
+>>     u8                         num_clks;             /*    57     1 */
+>>     u8                         iotype;               /*    58     1 */
+>>     bool                       has_divslot;          /*    59     1 */
+>>
+>>     /* size: 64, cachelines: 1, members: 17 */
+>>     /* padding: 4 */
+>> };
+>>
+>> What's your preference?
 > 
-> Bool occupies a byte and if more port features will ever be added we'll
-> occupy more bytes. Here's how the structure will look like with a bool:
+> bool :).
 > 
-> struct s3c24xx_uart_info {
-> 	const char  *              name;                 /*     0     8 */
-> 	enum s3c24xx_port_type     type;                 /*     8     4 */
-> 	unsigned int               port_type;            /*    12     4 */
-> 	unsigned int               fifosize;             /*    16     4 */
-> 	u32                        rx_fifomask;          /*    20     4 */
-> 	u32                        rx_fifoshift;         /*    24     4 */
-> 	u32                        rx_fifofull;          /*    28     4 */
-> 	u32                        tx_fifomask;          /*    32     4 */
-> 	u32                        tx_fifoshift;         /*    36     4 */
-> 	u32                        tx_fifofull;          /*    40     4 */
-> 	u32                        clksel_mask;          /*    44     4 */
-> 	u32                        clksel_shift;         /*    48     4 */
-> 	u32                        ucon_mask;            /*    52     4 */
-> 	u8                         def_clk_sel;          /*    56     1 */
-> 	u8                         num_clks;             /*    57     1 */
-> 	u8                         iotype;               /*    58     1 */
-> 	bool                       has_divslot;          /*    59     1 */
-> 
-> 	/* size: 64, cachelines: 1, members: 17 */
-> 	/* padding: 4 */
-> };
-> 
-> What's your preference?
+I'm fine with a bool too as since the introduction of this driver we
+have just this flag, it's unlikey to have 4 more soon to bypass the
+first cacheline. Will change to bool.
 
-bool :).
-
--- 
-js
-suse labs
-
+Cheers,
+ta
