@@ -1,56 +1,56 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6884D135
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E857C4D5B0
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705661141; cv=none; b=dzlSzzWhCkYejso4r6jQFrrlgTPSLFFcODurtnFv3SSS2YhVPHREbD1Tc1A/XKnd54PDk1VrSnb2gf2h1oonUnYRPdFnrp/dhIe/tt054rsbUjQiMLd8fKPKNmlLe11GdUJRu+REm78nbFtnUXKd6BSoGFDTrvOs+5MSC0xpXsM=
+	t=1705661141; cv=none; b=R8vsdQb0EJ0ZWCtJzPv/vYgZ8IU3FsY3RIb9y9tcEXjE+MA8uAuZo2/qNrNg/oKEs5xvKQKreU+bNho5nRTINE3Sh8RQiwKOmvBEsRFAF8I82gR7mmKWhLL4TR9NXdNuWjRgR15g+JOKPR9flHqMOt74JH9/7IuPcsscwJEG9t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1705661141; c=relaxed/simple;
-	bh=oEYUcOy19JcxG6WXptwvlTUqdV/Cr+vl3K7z1gXFbpw=;
+	bh=9bJVEIeoTaJjZ61pXNxm06VhyRFtHsguVO+YA5dDTxA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VK+DCwVlqawenNP07PHPwq4KZcQcngluutlFklWlDnitYtlmd1LUTMGEbWxdK2KU8ziGKe4pOIytZfYIFo7Ck8Ois64K+hlriKYBWRK6DgGF4/Wp4nJSk9rzwTGCFROH4MvNSscAXXkh3U3/6gIvcHStKmX36Rc3oI66nAOoVJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1h1Iocs; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=qVuaTgjBcXwUohaph/xmtSh5Kv4vDVXeB4D5N0je04SmqcqRwiXMAqe0zTvvVbBq2xEPQFT6DfV2drJinviKnQ2V0evB75rMEG8tvxHsgTK7DAm2tPE2FiU5ZiVdz0M5cWVWjHa0k6+QdolqqTxowQ8jqF5MGJj3b0WB3x+AyJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UcswlJwa; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1h1Iocs"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e913e3f03so7062565e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UcswlJwa"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e9ef9853bso1969005e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705661137; x=1706265937; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705661138; x=1706265938; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=draq2LBr3rh1hsqpn+xELW8VPhSh6bMilJxVO89mlwc=;
-        b=l1h1IocsTOTGdlOQJe84x3IbnwLm2iB2j7LJn5FB4Pibp8Mop8bOIBKSEANH67jjX7
-         ygY1zSd25caagYGFV/VNRL7JCOIbGHTF2fXThlN5GImLwHnVh+8u31NNe98qlqCAd+Q4
-         g0UEIKUhD6IllYIo7Z+VYoDBwFp+eZotv8jegf7AIOGFPT5W53yAsbqkdh8huV/kxfng
-         EuTSr92MAfnn0tJXiUt7/z+AsbrwGtDigdb0iRwPU0eOKep2Kt65mDzCQSY9RFUI+ifV
-         tJnZKr5px653PYILJH7+U0+S62dAX35Y83h7TbGYEJtkiGduk+ATvRBIrVTrl23LMiS3
-         6hkg==
+        bh=hQ40aSkF8Aok0dVvTVGIVu4hOfQge6DrOyhL11J8cEA=;
+        b=UcswlJwaiFT3zrykl1Bu9Lwuas2/c9fMlRJaid0u9KnPLpMflbyR+YeEe9Up9d2+qY
+         BbbZl2msg6jDCjMjd58e6Ef8Kdyt3bEVFEqkvdIHn268s9hGyFxfNTmpDZqrtlOADHU9
+         8tWWvBGQSyFNGjGqpTdzEuuYVv8al/EIGJXQZa+rEIrbHY28UYIOl7rWTogaI8cM2ogT
+         TUiydUQtVyRXbUMXy4HvyxdPF6il4m+xpsVdYENap9g6KH/KqARQYC9pJ4CD7rSEQUBZ
+         jN7MvtiqcCxPzpMqZcy5iXOADdj4lJTDWijHD4QBFZxzTsnXlfJpJH5ntvAiM/AE5Ld4
+         4iRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705661137; x=1706265937;
+        d=1e100.net; s=20230601; t=1705661138; x=1706265938;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=draq2LBr3rh1hsqpn+xELW8VPhSh6bMilJxVO89mlwc=;
-        b=UYO5SgwdmXr0DGd/i2dvUZPGdai0/tJm8nB+VmOMX51a3QNZAzNQEBA0HOtHMw1VP9
-         8b68A+wdafq19AH9yaqamyGIxE7UGyNN0R7VVaFknTi1hBI9uIuIucSI3s8NiaJSfw+0
-         S30mRq3HXYhaOeQPI+2w57tLkMEy+DTaWpo5ydHuEEGYgpX90dnorIMwHaA4lj1sbdbm
-         4Vq6F58gHPTXCR6d6dNecg1pJSNAwuL1M5DC+XgiT7Eba4R1m7vtbSPW2K/X7SZb6L1v
-         syMtbAC713Um7Q6sO48/XHcWgpUiJ9NaZ+MurnoLy0y+6dvS3PMbJxH9D33A2BllG9SN
-         ZrJg==
-X-Gm-Message-State: AOJu0YzoXe+yez5Q1K6BrNhxfy5DJReTV1oYI8OmLygRjKQ3WCobZXo2
-	b7NF2Mi/G4hGVvKVeUMbQizz+NpnjGqWXkduxW0RmlcDEP7mlEvunY6jhStwjzQ=
-X-Google-Smtp-Source: AGHT+IGpcApyIWJFtLX0iIOlhoAeQ17PNEjsoOdq7qV3HI9GzWTu3avyi91tcVAFJS0Xme35Yc5gZg==
-X-Received: by 2002:a05:600c:524a:b0:40d:8815:afff with SMTP id fc10-20020a05600c524a00b0040d8815afffmr1597586wmb.39.1705661136915;
-        Fri, 19 Jan 2024 02:45:36 -0800 (PST)
+        bh=hQ40aSkF8Aok0dVvTVGIVu4hOfQge6DrOyhL11J8cEA=;
+        b=kcQ9oYLs8GoBairvHJjbDpKJH3S8qo+W4bINWTqdOVw9dLSPqmQMHrrdFwsmmelsFl
+         PLUN/FkKfrV/IvqVPi4Qvw8ycmweJF+P3aRBDZRnPTMtldE5QZHYX69WPL8xzApFmAfQ
+         CbuOJBR82QbIBs5nXHH1WNbEnhnbl2sAtWgz7cMNtZ4IoyCCecT+V3bqRSGHC3Z6Ck29
+         VgDR83c/AiUAb/L5PVcwOzyVvBjeHH4QVPPrt8ALgJLWSdmb4ubkSXwURzw/MPHw43iV
+         O8M8MfS0/7iv3eA3G03F2/wrgwRnt+jtRWfZ+uH9J+PQXw3Vh9OA5IriJWYL7JSB/hFl
+         gD6A==
+X-Gm-Message-State: AOJu0Yw0eEc/fKR3MaAXTXvuPD/V6b22D8gtXGoXQflqtSknnD0fzqL+
+	ovT/TAb2fWLigA0R8VltAgP9hk1EeFiYIlGcNRExWoAn0dg2bYkUkpG+oKo84d8=
+X-Google-Smtp-Source: AGHT+IFB56z75wwv61vkNgNKZ52ys1BI0PMljalI5CjTRNffvDMu2NmbxLRBYtutQlkZKDjxtS4Jcg==
+X-Received: by 2002:a7b:c8d3:0:b0:40e:873b:cf73 with SMTP id f19-20020a7bc8d3000000b0040e873bcf73mr452698wml.54.1705661138275;
+        Fri, 19 Jan 2024 02:45:38 -0800 (PST)
 Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.35
+        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 02:45:36 -0800 (PST)
+        Fri, 19 Jan 2024 02:45:37 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org,
@@ -69,9 +69,9 @@ Cc: alim.akhtar@samsung.com,
 	semen.protsenko@linaro.org,
 	willmcvicker@google.com,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 08/19] tty: serial: samsung: use u32 for register interactions
-Date: Fri, 19 Jan 2024 10:45:15 +0000
-Message-ID: <20240119104526.1221243-9-tudor.ambarus@linaro.org>
+Subject: [PATCH v2 09/19] tty: serial: samsung: remove braces on single statement block
+Date: Fri, 19 Jan 2024 10:45:16 +0000
+Message-ID: <20240119104526.1221243-10-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
 References: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
@@ -83,344 +83,30 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All registers of the IP have 32 bits. Use u32 variables when reading
-or writing from/to the registers. The purpose of those variables becomes
-clearer.
+Braces {} are not necessary for single statement blocks.
+Remove braces on single statement block.
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 79 ++++++++++++++++----------------
- 1 file changed, 39 insertions(+), 40 deletions(-)
+ drivers/tty/serial/samsung_tty.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index b9b91ff6a1d7..8b396c950933 100644
+index 8b396c950933..303b67498c65 100644
 --- a/drivers/tty/serial/samsung_tty.c
 +++ b/drivers/tty/serial/samsung_tty.c
-@@ -199,7 +199,7 @@ static void wr_reg(const struct uart_port *port, u32 reg, u32 val)
- /* Byte-order aware bit setting/clearing functions. */
- 
- static inline void s3c24xx_set_bit(const struct uart_port *port, int idx,
--				   unsigned int reg)
-+				   u32 reg)
+@@ -2061,9 +2061,8 @@ static void s3c24xx_serial_remove(struct platform_device *dev)
  {
- 	unsigned long flags;
- 	u32 val;
-@@ -212,7 +212,7 @@ static inline void s3c24xx_set_bit(const struct uart_port *port, int idx,
+ 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
+ 
+-	if (port) {
++	if (port)
+ 		uart_remove_one_port(&s3c24xx_uart_drv, port);
+-	}
+ 
+ 	uart_unregister_driver(&s3c24xx_uart_drv);
  }
- 
- static inline void s3c24xx_clear_bit(const struct uart_port *port, int idx,
--				     unsigned int reg)
-+				     u32 reg)
- {
- 	unsigned long flags;
- 	u32 val;
-@@ -245,8 +245,8 @@ static void s3c24xx_serial_rx_enable(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 	unsigned long flags;
--	unsigned int ucon, ufcon;
- 	int count = 10000;
-+	u32 ucon, ufcon;
- 
- 	uart_port_lock_irqsave(port, &flags);
- 
-@@ -269,7 +269,7 @@ static void s3c24xx_serial_rx_disable(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 	unsigned long flags;
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	uart_port_lock_irqsave(port, &flags);
- 
-@@ -591,7 +591,7 @@ static inline const struct s3c2410_uartcfg
- }
- 
- static int s3c24xx_serial_rx_fifocnt(const struct s3c24xx_uart_port *ourport,
--				     unsigned long ufstat)
-+				     u32 ufstat)
- {
- 	const struct s3c24xx_uart_info *info = ourport->info;
- 
-@@ -663,7 +663,7 @@ static void s3c64xx_start_rx_dma(struct s3c24xx_uart_port *ourport)
- static void enable_rx_dma(struct s3c24xx_uart_port *ourport)
- {
- 	struct uart_port *port = &ourport->port;
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	/* set Rx mode to DMA mode */
- 	ucon = rd_regl(port, S3C2410_UCON);
-@@ -686,7 +686,7 @@ static void enable_rx_dma(struct s3c24xx_uart_port *ourport)
- static void enable_rx_pio(struct s3c24xx_uart_port *ourport)
- {
- 	struct uart_port *port = &ourport->port;
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	/* set Rx mode to DMA mode */
- 	ucon = rd_regl(port, S3C2410_UCON);
-@@ -711,13 +711,14 @@ static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport);
- 
- static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
- {
--	unsigned int utrstat, received;
- 	struct s3c24xx_uart_port *ourport = dev_id;
- 	struct uart_port *port = &ourport->port;
- 	struct s3c24xx_uart_dma *dma = ourport->dma;
- 	struct tty_struct *tty = tty_port_tty_get(&ourport->port.state->port);
- 	struct tty_port *t = &port->state->port;
- 	struct dma_tx_state state;
-+	unsigned int received;
-+	u32 utrstat;
- 
- 	utrstat = rd_regl(port, S3C2410_UTRSTAT);
- 	rd_regl(port, S3C2410_UFSTAT);
-@@ -759,9 +760,9 @@ static irqreturn_t s3c24xx_serial_rx_chars_dma(void *dev_id)
- static void s3c24xx_serial_rx_drain_fifo(struct s3c24xx_uart_port *ourport)
- {
- 	struct uart_port *port = &ourport->port;
--	unsigned int ufcon, ufstat, uerstat;
- 	unsigned int fifocnt = 0;
- 	int max_count = port->fifosize;
-+	u32 ufcon, ufstat, uerstat;
- 	u8 ch, flag;
- 
- 	while (max_count-- > 0) {
-@@ -945,7 +946,7 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- {
- 	const struct s3c24xx_uart_port *ourport = id;
- 	const struct uart_port *port = &ourport->port;
--	unsigned int pend = rd_regl(port, S3C64XX_UINTP);
-+	u32 pend = rd_regl(port, S3C64XX_UINTP);
- 	irqreturn_t ret = IRQ_HANDLED;
- 
- 	if (pend & S3C64XX_UINTM_RXD_MSK) {
-@@ -964,7 +965,7 @@ static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- {
- 	const struct s3c24xx_uart_port *ourport = id;
- 	const struct uart_port *port = &ourport->port;
--	unsigned int pend = rd_regl(port, S3C2410_UTRSTAT);
-+	u32 pend = rd_regl(port, S3C2410_UTRSTAT);
- 	irqreturn_t ret = IRQ_NONE;
- 
- 	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO)) {
-@@ -983,8 +984,8 @@ static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
- {
- 	const struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
--	unsigned long ufstat = rd_regl(port, S3C2410_UFSTAT);
--	unsigned long ufcon = rd_regl(port, S3C2410_UFCON);
-+	u32 ufstat = rd_regl(port, S3C2410_UFSTAT);
-+	u32 ufcon = rd_regl(port, S3C2410_UFCON);
- 
- 	if (ufcon & S3C2410_UFCON_FIFOMODE) {
- 		if ((ufstat & info->tx_fifomask) != 0 ||
-@@ -999,7 +1000,7 @@ static unsigned int s3c24xx_serial_tx_empty(struct uart_port *port)
- /* no modem control lines */
- static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
- {
--	unsigned int umstat = rd_reg(port, S3C2410_UMSTAT);
-+	u32 umstat = rd_reg(port, S3C2410_UMSTAT);
- 
- 	if (umstat & S3C2410_UMSTAT_CTS)
- 		return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
-@@ -1009,8 +1010,8 @@ static unsigned int s3c24xx_serial_get_mctrl(struct uart_port *port)
- 
- static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
- {
--	unsigned int umcon = rd_regl(port, S3C2410_UMCON);
--	unsigned int ucon = rd_regl(port, S3C2410_UCON);
-+	u32 umcon = rd_regl(port, S3C2410_UMCON);
-+	u32 ucon = rd_regl(port, S3C2410_UCON);
- 
- 	if (mctrl & TIOCM_RTS)
- 		umcon |= S3C2410_UMCOM_RTS_LOW;
-@@ -1030,7 +1031,7 @@ static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned int mctrl)
- static void s3c24xx_serial_break_ctl(struct uart_port *port, int break_state)
- {
- 	unsigned long flags;
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	uart_port_lock_irqsave(port, &flags);
- 
-@@ -1188,7 +1189,7 @@ static void apple_s5l_serial_shutdown(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	ucon = rd_regl(port, S3C2410_UCON);
- 	ucon &= ~(APPLE_S5L_UCON_TXTHRESH_ENA_MSK |
-@@ -1214,7 +1215,7 @@ static int s3c64xx_serial_startup(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 	unsigned long flags;
--	unsigned int ufcon;
-+	u32 ufcon;
- 	int ret;
- 
- 	wr_regl(port, S3C64XX_UINTM, 0xf);
-@@ -1259,7 +1260,7 @@ static int apple_s5l_serial_startup(struct uart_port *port)
- {
- 	struct s3c24xx_uart_port *ourport = to_ourport(port);
- 	unsigned long flags;
--	unsigned int ufcon;
-+	u32 ufcon;
- 	int ret;
- 
- 	wr_regl(port, S3C2410_UTRSTAT, APPLE_S5L_UTRSTAT_ALL_FLAGS);
-@@ -1344,7 +1345,7 @@ static void s3c24xx_serial_pm(struct uart_port *port, unsigned int level,
- static inline int s3c24xx_serial_getsource(struct uart_port *port)
- {
- 	const struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	if (info->num_clks == 1)
- 		return 0;
-@@ -1358,7 +1359,7 @@ static void s3c24xx_serial_setsource(struct uart_port *port,
- 			unsigned int clk_sel)
- {
- 	const struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
--	unsigned int ucon;
-+	u32 ucon;
- 
- 	if (info->num_clks == 1)
- 		return;
-@@ -1475,9 +1476,8 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 	struct clk *clk = ERR_PTR(-EINVAL);
- 	unsigned long flags;
- 	unsigned int baud, quot, clk_sel = 0;
--	unsigned int ulcon;
--	unsigned int umcon;
- 	unsigned int udivslot = 0;
-+	u32 ulcon, umcon;
- 
- 	/*
- 	 * We don't support modem control lines.
-@@ -1759,7 +1759,7 @@ static void s3c24xx_serial_resetport(struct uart_port *port,
- 				     const struct s3c2410_uartcfg *cfg)
- {
- 	const struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
--	unsigned long ucon = rd_regl(port, S3C2410_UCON);
-+	u32 ucon = rd_regl(port, S3C2410_UCON);
- 
- 	ucon &= (info->clksel_mask | info->ucon_mask);
- 	wr_regl(port, S3C2410_UCON, ucon | cfg->ucon);
-@@ -1905,7 +1905,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 		wr_regl(port, S3C64XX_UINTSP, 0xf);
- 		break;
- 	case TYPE_APPLE_S5L: {
--		unsigned int ucon;
-+		u32 ucon;
- 
- 		ucon = rd_regl(port, S3C2410_UCON);
- 		ucon &= ~(APPLE_S5L_UCON_TXTHRESH_ENA_MSK |
-@@ -2109,7 +2109,7 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 		/* restore IRQ mask */
- 		switch (ourport->info->type) {
- 		case TYPE_S3C6400: {
--			unsigned int uintm = 0xf;
-+			u32 uintm = 0xf;
- 
- 			if (ourport->tx_enabled)
- 				uintm &= ~S3C64XX_UINTM_TXD_MSK;
-@@ -2125,7 +2125,7 @@ static int s3c24xx_serial_resume_noirq(struct device *dev)
- 			break;
- 		}
- 		case TYPE_APPLE_S5L: {
--			unsigned int ucon;
-+			u32 ucon;
- 			int ret;
- 
- 			ret = clk_prepare_enable(ourport->clk);
-@@ -2187,10 +2187,10 @@ static const struct dev_pm_ops s3c24xx_serial_pm_ops = {
- static struct uart_port *cons_uart;
- 
- static int
--s3c24xx_serial_console_txrdy(struct uart_port *port, unsigned int ufcon)
-+s3c24xx_serial_console_txrdy(struct uart_port *port, u32 ufcon)
- {
- 	const struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
--	unsigned long ufstat, utrstat;
-+	u32 ufstat, utrstat;
- 
- 	if (ufcon & S3C2410_UFCON_FIFOMODE) {
- 		/* fifo mode - check amount of data in fifo registers... */
-@@ -2206,7 +2206,7 @@ s3c24xx_serial_console_txrdy(struct uart_port *port, unsigned int ufcon)
- }
- 
- static bool
--s3c24xx_port_configured(unsigned int ucon)
-+s3c24xx_port_configured(u32 ucon)
- {
- 	/* consider the serial port configured if the tx/rx mode set */
- 	return (ucon & 0xf) != 0;
-@@ -2221,7 +2221,7 @@ s3c24xx_port_configured(unsigned int ucon)
- static int s3c24xx_serial_get_poll_char(struct uart_port *port)
- {
- 	const struct s3c24xx_uart_port *ourport = to_ourport(port);
--	unsigned int ufstat;
-+	u32 ufstat;
- 
- 	ufstat = rd_regl(port, S3C2410_UFSTAT);
- 	if (s3c24xx_serial_rx_fifocnt(ourport, ufstat) == 0)
-@@ -2233,8 +2233,8 @@ static int s3c24xx_serial_get_poll_char(struct uart_port *port)
- static void s3c24xx_serial_put_poll_char(struct uart_port *port,
- 		unsigned char c)
- {
--	unsigned int ufcon = rd_regl(port, S3C2410_UFCON);
--	unsigned int ucon = rd_regl(port, S3C2410_UCON);
-+	u32 ufcon = rd_regl(port, S3C2410_UFCON);
-+	u32 ucon = rd_regl(port, S3C2410_UCON);
- 
- 	/* not possible to xmit on unconfigured port */
- 	if (!s3c24xx_port_configured(ucon))
-@@ -2250,7 +2250,7 @@ static void s3c24xx_serial_put_poll_char(struct uart_port *port,
- static void
- s3c24xx_serial_console_putchar(struct uart_port *port, unsigned char ch)
- {
--	unsigned int ufcon = rd_regl(port, S3C2410_UFCON);
-+	u32 ufcon = rd_regl(port, S3C2410_UFCON);
- 
- 	while (!s3c24xx_serial_console_txrdy(port, ufcon))
- 		cpu_relax();
-@@ -2261,7 +2261,7 @@ static void
- s3c24xx_serial_console_write(struct console *co, const char *s,
- 			     unsigned int count)
- {
--	unsigned int ucon = rd_regl(cons_uart, S3C2410_UCON);
-+	u32 ucon = rd_regl(cons_uart, S3C2410_UCON);
- 	unsigned long flags;
- 	bool locked = true;
- 
-@@ -2288,11 +2288,9 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
- 			   int *parity, int *bits)
- {
- 	struct clk *clk;
--	unsigned int ulcon;
--	unsigned int ucon;
--	unsigned int ubrdiv;
- 	unsigned long rate;
- 	unsigned int clk_sel;
-+	u32 ulcon, ucon, ubrdiv;
- 	char clk_name[MAX_CLK_NAME_LENGTH];
- 
- 	ulcon  = rd_regl(port, S3C2410_ULCON);
-@@ -2742,7 +2740,8 @@ static int samsung_early_read(struct console *con, char *s, unsigned int n)
- {
- 	struct earlycon_device *dev = con->data;
- 	const struct samsung_early_console_data *data = dev->port.private_data;
--	int ch, ufstat, num_read = 0;
-+	int num_read = 0;
-+	u32 ch, ufstat;
- 
- 	while (num_read < n) {
- 		ufstat = rd_regl(&dev->port, S3C2410_UFSTAT);
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
