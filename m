@@ -1,56 +1,56 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE274F60F
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E214F89A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 10:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705661146; cv=none; b=hxfrlbpn1LjLrzlXPOFPfzsNNr17vs5POuVG0yyKwbctcDr60bFHuYvsyxMs12gsdNrRXp6+B8ibZzLPg6q9KzaRUgGxKrYyT7bLL/NYlsiiS+xHW+aoXPwDfUrqw73RjeAKDwJPzoL+LVHqW3ONq70TL42CutQdSfpmAD4LrZI=
+	t=1705661147; cv=none; b=rG2tAQ9W+5/wsnp4ndt2MjbPsaVpHWGH5+KY2FJG3r3z914kgjCr8tkWZjNzMZIwzNgE9vtMqBY0FIBgO1vcRV7w3OF7HI3Mo+ypcGd//Yc6Anj1EmZXJYQua3SDHhI5uYlDTFl1w3gPR2rilHBKA2nk4V4JSUimctbz1DGP0os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705661146; c=relaxed/simple;
-	bh=DbG5Dzt9yOAH99wR1SSFZ8H0AX8ETQYpfNiE1aMGRCo=;
+	s=arc-20240116; t=1705661147; c=relaxed/simple;
+	bh=RBHphks9zozUQ6IZv2fw5WHYcbPHqrdUfQWDhKEBAjQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KKOKCToIrKAMIyiEcwBzDtmnzpHwVm3dn2sj7sAJqh1nnJzyClfa34AN3YqUWTdVTeNdwnHAoT1LakL08P+EvOMiSEC0q+zTzYdiQYT4vEQ7VcpJTTkWmO5h1K7wz+QRVsfwxU8K3OJA6ScY76UFKkDE1Qjc7blCKII0cS/lSUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vZ0v5my9; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=FL6jZEVeqSZV+rrxFU0uZ06DDpS+MO0vix62dawdKqL5uvWHn+hzfWEkype4NvMA9VKBy7Xhx4GNpYxAmWYGsDEh3yEOejLEZMkL0wq0tUrTOgxcs5YUj5lCMtvLMKkqAbMYUbWcoiqKB8YP9sUM9wclAZjiTUu9r2VzFN4BLG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YI7l/tdk; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vZ0v5my9"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e60e137aaso6723885e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YI7l/tdk"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40e586a62f7so7079125e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Jan 2024 02:45:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705661143; x=1706265943; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705661144; x=1706265944; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xja7r4IqoFurQHPVGT/1DVUThNq/9DBjzzyZqX4X0B8=;
-        b=vZ0v5my9c3i9KH2cXnZnD7wklTAQkcYI1JsLnETV0At/QE6usSoByXZWV+zInt6xtt
-         T0OhsKmuVDgY8Re87xdGH8IQuIUSpSFot6KP6uWDAiePIzFkisjhFOc0z7ElXm/z4TVU
-         bf5aYZhK7QiwgIHjOJNTPN/s0/mPspu6ebOm8hg787WrpjZi3wygWvEP7b77KDE2HIWi
-         4QImxoGV0Wwrfy+vuMEm/QUbpSR73RjhnJ4yU5ZPZO6v9yAPVqmAhu9mBdYhPk/MrNas
-         albTfQpX6OHlA3/fEfyqxQQFDTKfzjFSwuh6Ikrt99co2AmOeNIp7QsJMcWQqJ8kT1b/
-         vxFA==
+        bh=jN+fQndYHigW1BmW4SX4atdBHvISKmx6Ya22q2f2b7k=;
+        b=YI7l/tdkzhYhHUgGzJ20OwGX3J/xxMwf0mAFL6UJO/cPeX+8XLmG3h3F0sV63jJ+fe
+         0QZlPhqlgZwwQUObMnB26D9Y/kFrfXbwzbPp9LNR17NjN1eJF2L9o+UC76zhAaBJ5Omm
+         ykwOQ+bISJ79lWa7TxiFH5M3uX+PxEClzJZJqaseU6mo/zHxT30wU8vZaQ1txnJfUgqO
+         CjcHdER20E7sGI3ao88rCgShYrQ06utgg55/3lTgqS0d3Ko+MaI5zrJpKLd4FVp3UBNe
+         MOia6kejw/o/QEjsIjw5nvwlh8vjRGcXUT2eLFAOlx2JLbH85TbWcmLPLN2/nsaUsSoK
+         9Wmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705661143; x=1706265943;
+        d=1e100.net; s=20230601; t=1705661144; x=1706265944;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Xja7r4IqoFurQHPVGT/1DVUThNq/9DBjzzyZqX4X0B8=;
-        b=EZ2rX4dBpESUhkA+y6sXT0/OY96kAGsc9t636j+85eCsqHyJbukeH4Kut5XrBsPH5r
-         e3vRPzCoGny/1j0Mx/UNRQxufrOvrpYoK/wrjUZYS/0RTWD+kIbgSlpTO2VogrGUSwk/
-         vX+ox7w/Fx2XWJhrmZBoK5fW1GInz5EOhZSogNZA4Qbgzuax/RIfl1L/HpaF0hq4rQfa
-         H5kSYg1E+SdE2WU19fY5eJ5deKXVHZ3bXXnnAr218w/oCn64rlJgTMCPSnS3ZTsxRdwy
-         Md9a+nt44ugwruvNvFQChjjDErcZnjHSs4q1BtuOW9bxBQU/bo1fgwGG4WEohLM7g6kP
-         JmJw==
-X-Gm-Message-State: AOJu0YwvEGO1g+0swTse+T99OJFHrrBf0wHWTdmL2Yk3EnmtwdjRuKuU
-	9hCY0tFrd+0TSyEoxMaqngK6eUYQLNJC8zHBdlFYxbR8uEudX4OsLHzqK8kqxQ8=
-X-Google-Smtp-Source: AGHT+IH2PpdF1uUhaQRfj7t0SInB7+ZgNuwheiqs3dl7+iJuzGY08czS9RbIuf9b+VH9MlmAEuFIsA==
-X-Received: by 2002:a05:600c:4ab0:b0:40e:37dc:2dd5 with SMTP id b48-20020a05600c4ab000b0040e37dc2dd5mr1306935wmp.135.1705661143501;
-        Fri, 19 Jan 2024 02:45:43 -0800 (PST)
+        bh=jN+fQndYHigW1BmW4SX4atdBHvISKmx6Ya22q2f2b7k=;
+        b=BrZic3wSNU2dZ6PIi7KB/Rze3ArNQfjr1nBSpulhmd84pf2LEAFzIk7JDFw1T4tlvq
+         ycRcgM+nyy6+941/1aUPNGTTKuDt0nww9OpgJjySRBchBNx71edF8PtVHtctWunPcP6m
+         W8idJyGKYRJaPW05znnoKOkHU+TH5qoKC5g446+AaLPn4MmR118EEV7Zxy1K/iWU0mQh
+         A80TY39lsKfaNkjim5IDFb4Eg6+mQ7+t7pV4TUrvdhGzO1w2I1Z/DvcBKM3dAoT+ibKd
+         vCXa1CSd7eyH543RdhZaoAFTX3mvEofvDMY8glsXJmTas97cf2yueXIP8wyWAH5dBoVJ
+         FD9g==
+X-Gm-Message-State: AOJu0YzojJJthsh6+lFDJB2BMFk40I82gu7eWCeGDBF6vLb8eCRe5VCw
+	sibzYZJRD4T0QYKzlc3t04MGm5+IgkGHPOcKipfiPvZQrMxxX2Tf6yHv/VeDsPs=
+X-Google-Smtp-Source: AGHT+IESCI0xwQtlxycw4w9Pp/Uibs8E4kCALIGxSJJOl9KNU6Y0tZTNZnEhjSdZQgdmVkwjxlMlKQ==
+X-Received: by 2002:a7b:c4c5:0:b0:40e:4576:53f7 with SMTP id g5-20020a7bc4c5000000b0040e457653f7mr1371128wmk.49.1705661144272;
+        Fri, 19 Jan 2024 02:45:44 -0800 (PST)
 Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.42
+        by smtp.gmail.com with ESMTPSA id fm16-20020a05600c0c1000b0040ea10178f3sm77470wmb.21.2024.01.19.02.45.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jan 2024 02:45:42 -0800 (PST)
+        Fri, 19 Jan 2024 02:45:43 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org,
@@ -69,9 +69,9 @@ Cc: alim.akhtar@samsung.com,
 	semen.protsenko@linaro.org,
 	willmcvicker@google.com,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 15/19] tty: serial: samsung: return bool for s3c24xx_serial_console_txrdy()
-Date: Fri, 19 Jan 2024 10:45:22 +0000
-Message-ID: <20240119104526.1221243-16-tudor.ambarus@linaro.org>
+Subject: [PATCH v2 16/19] tty: serial: samsung: change return type for s3c24xx_serial_rx_fifocnt()
+Date: Fri, 19 Jan 2024 10:45:23 +0000
+Message-ID: <20240119104526.1221243-17-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
 References: <20240119104526.1221243-1-tudor.ambarus@linaro.org>
@@ -83,44 +83,31 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-s3c24xx_serial_console_txrdy() returned just 0 or 1 to indicate whether
-the TX is empty or not. Change its return type to bool.
+Change the return type of the s3c24xx_serial_rx_fifocnt() method to
+``unsigned int`` as the method only returns the fifo size and does not
+handle error codes.
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/samsung_tty.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index 90d697def5c7..bdc81ab4af91 100644
+index bdc81ab4af91..149f618e22ce 100644
 --- a/drivers/tty/serial/samsung_tty.c
 +++ b/drivers/tty/serial/samsung_tty.c
-@@ -2184,7 +2184,7 @@ static const struct dev_pm_ops s3c24xx_serial_pm_ops = {
- 
- static struct uart_port *cons_uart;
- 
--static int
-+static bool
- s3c24xx_serial_console_txrdy(struct uart_port *port, u32 ufcon)
- {
- 	const struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
-@@ -2194,13 +2194,13 @@ s3c24xx_serial_console_txrdy(struct uart_port *port, u32 ufcon)
- 		/* fifo mode - check amount of data in fifo registers... */
- 
- 		ufstat = rd_regl(port, S3C2410_UFSTAT);
--		return (ufstat & info->tx_fifofull) ? 0 : 1;
-+		return !(ufstat & info->tx_fifofull);
- 	}
- 
- 	/* in non-fifo mode, we go and use the tx buffer empty */
- 
- 	utrstat = rd_regl(port, S3C2410_UTRSTAT);
--	return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 : 0;
-+	return utrstat & S3C2410_UTRSTAT_TXE;
+@@ -590,8 +590,8 @@ static inline const struct s3c2410_uartcfg
+ 	return ourport->cfg;
  }
  
- static bool
+-static int s3c24xx_serial_rx_fifocnt(const struct s3c24xx_uart_port *ourport,
+-				     u32 ufstat)
++static unsigned int
++s3c24xx_serial_rx_fifocnt(const struct s3c24xx_uart_port *ourport, u32 ufstat)
+ {
+ 	const struct s3c24xx_uart_info *info = ourport->info;
+ 
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
