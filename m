@@ -1,56 +1,56 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E01495C9
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7844B5A2
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705964258; cv=none; b=D/OFY3IFqNJTyt/rk9sFiqDi43ghi2QionPJww6jZDv6zbCVA5IoRnL0LROcfoOO3rOVkiAi/DtYpm2HDjhGLpVQeNtDEJJi3RDDrXH/4ElGjwGGReeS2svv8rjwDYmp07hr+xLpFJroJhcRqg7szYkxfERW0uDuhD0Ck5iwZ3Q=
+	t=1705964261; cv=none; b=A23Gm2RN2A3awHylaj5z0n1rbtLX1zkgbHYc3CZeurgKFLIjsrj1NUAyf7wdP3DIEti5kaNo7jgsyM8UMqrVXEvMBn3MlXzIjf4zs3JHWZNGTIeh3amhIogW9jw8PoMnSBft1MirPusIoBqoiTcQblzo1j4i21hG0+qWcrhMIZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705964258; c=relaxed/simple;
-	bh=ZgVtAIKrhtdCLGsKgWlIaERKd0KusdG4ZWad/DmmfvI=;
+	s=arc-20240116; t=1705964261; c=relaxed/simple;
+	bh=t8ZhB9Hu7K4Ql69piBPtPrEhaMrRJa2GJ7YXvafwt4A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=diNgID8nVusf05LRkgXpVHXOI2mj+O8gUZzDGZnq1pQrmYJ2BtXkG1FY1+lfVQv3iexkSKdvKdCdCTX+/XoBBsKgxxGkzpjDOkQVSANg9hHCM+9/oth2vyd1MEHpAxt9E6F1QRXeHj5B/6mJCsuc5lmUCIVeRAg5/PxWcuJ5ppE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WQhmuVoa; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=kUKfsSeUzCuZ93SWpNlVy8W7sX+EupVfGTjTiywDipwZnPjPFeN8Gns8E6kKgJ5/L9tDbDmRstYt5bsAeMNIMcTZ0D2JF3PxM7C0wSOjXy9bUSUrkUJkOTn/uXdo2SNC/2zqKWOELgrs10YqcYCOWSXF1Ja5hr/JsCFh97q1Ixo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PqEfn9aQ; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WQhmuVoa"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40e60e137aaso41196495e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PqEfn9aQ"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40eacb4bfa0so16649405e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705964255; x=1706569055; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705964258; x=1706569058; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7y+1O2dDRcam6iTMZXdaVDgBYCAnl5nZ5iJ12xvO9iQ=;
-        b=WQhmuVoarWFIGtqtGwscjgHLusKzOTmo7CZPnJ3x6zaPkP+FRhKGGgvnR5v6gc9crx
-         ZlVGVQ1k72+2OqS5KNyXOS3mhKQdTeUGTWgeT1KEnGud12Gr9TE0kQhJ6Ou5h+VJRt84
-         odcjzIkD4qenZk+nNiVFtlXMaGDHdJgi0VWk7McGLgoTNtZPzjjjyvL6kD43rAjV54Ro
-         KyYYk50UdefbRF856JC5c2qnLORX1hqHoDoMUlhZ9zykgCDS5u77P49k3xSX/k3diMq0
-         JO+gJzS3KOnSjf8rnFh5CEHiG1S8zbUp7TkPbg40x+PN0CPyNqW3ZD/moSmqddDoB/1H
-         g1Bg==
+        bh=9+yXcHZUiMblwUqkt8towiLq/bcfaAns/f7tUicypCM=;
+        b=PqEfn9aQMDjMpVjxcwU3m06SInZctx95KFmBTKBsntncoscyHDc2lliCVayNpxOYQQ
+         SnUEnO6h/F9bl26o4vmJUAbbewhFPTnJ5YybFJYUC83L0RUIswVo3MBNhhYt/fWyPlL+
+         HcyAhfzlNdTng9JeUiraWKSWJ1tbi//VRhnXxGc773QVcIxczQKJuHQfD/BgjGgnKMcn
+         uVAYpVymfpBIRn5Kj6bbwowYemvkNzgaiRuzl0X/iJGbjrBN3ls8xOXcmIk60hgX/Eyq
+         vB1sp/akhwPkY5bKsuA8zxAyxlqgLRbRFPIpHA6duuUl1Yw0vr24hJA86lbWCcxX90Wo
+         lrKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705964255; x=1706569055;
+        d=1e100.net; s=20230601; t=1705964258; x=1706569058;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7y+1O2dDRcam6iTMZXdaVDgBYCAnl5nZ5iJ12xvO9iQ=;
-        b=S9whDxzK0DQFzwfVAEzojdwagHZbivUeZxn2ZwZuNCkik1zSk20vd8QxwaLWzGzBLX
-         o836PhRQdssHIDqAxR4ktnfzmu7znwy72QfjKE0hqcJ4IiJhGxdNoss9QTaixruG9X6y
-         tBUiUzSMqsyLvl6kBPPWQZkZcVJqAPe5yjuIoffjbxOpSmofygi4BM7rEC624v5ORrjj
-         IoTqoD5GxqWauRwT5sNJ8wK7zibaoJiM7MCgNzzzkHZqxa2oic+KkJv8nWm1p/KiNNyP
-         U/VGfd4of18HtKLIlmG/Su3ilutC/n2i0s4CiqyrzjOKBEJSAyhEM2ED97LJbrK3rJjB
-         dThA==
-X-Gm-Message-State: AOJu0Yzf14UAkmvCkeb2E04BCu446U6g09SkbTTcPIoCSPuQuREueqzi
-	aOfFrk3KYPElaENcLg9Ft/EMRWcBj6M4ojsg4xk+8TKgaC1tSHlZwJrHf8bY7ow=
-X-Google-Smtp-Source: AGHT+IHqRrOEHIHhSifFZN302yhKTakQXstI0NxfnOUmXlruuoJ4Ui4e3EJWHkPdJKGLM3ndNTcg/w==
-X-Received: by 2002:a05:600c:5107:b0:40e:4782:fea7 with SMTP id o7-20020a05600c510700b0040e4782fea7mr2785067wms.180.1705964255173;
-        Mon, 22 Jan 2024 14:57:35 -0800 (PST)
+        bh=9+yXcHZUiMblwUqkt8towiLq/bcfaAns/f7tUicypCM=;
+        b=TVLv43QtYDLS4Q2bqPPuPjrKV5oENZmjvbQOzF9JVzax2t+HXHOMfclYaIez/dbDal
+         QfM6IVS8xhJBWIL/E2lntv0zEmBtZTvFyMUWKINzZyPCz+w96gXd1djNQNTQzHIResOg
+         D+aHLwulw/slW+m4Q5r467/oaQjwnffzFgncrXrE8Eqw+6NCLE8MkeT911bUC+jR8cdi
+         nUFZWd0jSYdv8ykWmY7UKz2bQfPqFJSP6Vp236aCNAlLS87LaEaOULMvdbQwHmeQ3t73
+         03HNhlgSC4GqiFzNa03Qr8NYyKuyY2hVRGCjpdv1sjvXvmgdg2t+d1FKXBblFjYGBFsa
+         qcEA==
+X-Gm-Message-State: AOJu0YwlQFv7vliWfbY0d8v91NPFIqKjGwcQ3VE41ONkPNj9ylyz/r8A
+	kzy3qMMauUMWs7ZeRD/+P6iVxbOqM/CIUdxrAaxKcsLeUB1l5T8Hi+duydz9fzU=
+X-Google-Smtp-Source: AGHT+IGTxTra3oeT53FfIH97Y2Gx41002Oxx5G+brDmtK77zTRluoeyF5o89lKBl/s6gRCsv7yvONw==
+X-Received: by 2002:a05:600c:1ca6:b0:40e:b0a1:b96e with SMTP id k38-20020a05600c1ca600b0040eb0a1b96emr676113wms.69.1705964258092;
+        Mon, 22 Jan 2024 14:57:38 -0800 (PST)
 Received: from gpeter-l.lan (host-92-18-76-30.as13285.net. [92.18.76.30])
-        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.33
+        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 14:57:34 -0800 (PST)
+        Mon, 22 Jan 2024 14:57:37 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: arnd@arndb.de,
 	robh+dt@kernel.org,
@@ -74,9 +74,9 @@ Cc: kernel-team@android.com,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 6/9] arm64: dts: exynos850: remove deprecated samsung,syscon-phandle
-Date: Mon, 22 Jan 2024 22:57:07 +0000
-Message-ID: <20240122225710.1952066-7-peter.griffin@linaro.org>
+Subject: [PATCH 8/9] ARM: dts: samsung: exynos4: remove deprecated samsung,syscon-phandle
+Date: Mon, 22 Jan 2024 22:57:09 +0000
+Message-ID: <20240122225710.1952066-9-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240122225710.1952066-1-peter.griffin@linaro.org>
 References: <20240122225710.1952066-1-peter.griffin@linaro.org>
@@ -89,33 +89,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 samsung,syscon-phandle is no longer used by the Samsung watchdog driver
-to access PMU registers and is deprecated.
+to access PMU registers.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/samsung/exynos4x12.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index da3f4a791e68..6d4789c77a1c 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -216,7 +216,6 @@ watchdog_cl0: watchdog@10050000 {
- 			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cmu_peri CLK_GOUT_WDT0_PCLK>, <&oscclk>;
- 			clock-names = "watchdog", "watchdog_src";
+diff --git a/arch/arm/boot/dts/samsung/exynos4x12.dtsi b/arch/arm/boot/dts/samsung/exynos4x12.dtsi
+index b4b5e769145b..0fea32616c89 100644
+--- a/arch/arm/boot/dts/samsung/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4x12.dtsi
+@@ -311,7 +311,6 @@ watchdog: watchdog@10060000 {
+ 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_WDT>;
+ 			clock-names = "watchdog";
 -			samsung,syscon-phandle = <&pmu_system_controller>;
- 			samsung,cluster-index = <0>;
- 			status = "disabled";
  		};
-@@ -227,7 +226,6 @@ watchdog_cl1: watchdog@10060000 {
- 			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cmu_peri CLK_GOUT_WDT1_PCLK>, <&oscclk>;
- 			clock-names = "watchdog", "watchdog_src";
--			samsung,syscon-phandle = <&pmu_system_controller>;
- 			samsung,cluster-index = <1>;
- 			status = "disabled";
- 		};
+ 
+ 		adc: adc@126c0000 {
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
