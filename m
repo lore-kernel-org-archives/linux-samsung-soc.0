@@ -1,56 +1,56 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372CC381C0
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0231347A4B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705964255; cv=none; b=GcZUJNehlKdixW49//Yl+codecdN7cXjlolCiHBRsPCuRJCtHkb3PSt7v/DzodQSonbHWlgziiTsrHRdnfznGl7gnvuPE8ALV4KpJCWXMEcQW6XErJxcdclgEPcQg3IsnZ0h/CEXQFj+njo5GNqNJrMkHna7zDZd/y8GkARVxVY=
+	t=1705964256; cv=none; b=slmWS0VHd9s1TO339qTvZ4l+cHaQE47dYqXitJp9vNFu1LaAJDBr6+1uLFU+5YDOhpk0hQuMW82JOnYsS9VsLMmrcaP1WElUqU0fnqPCrsXEp4opi96GMJMOjiRonWP9iFbPM5RxxQ8vJmbqpcLeMWutUCEP31dKtz+VWf5JH3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705964255; c=relaxed/simple;
-	bh=BoHzIuF9/gjqWNPMlzNp4FmNG1UNGUTagv+K3rRO0Hs=;
+	s=arc-20240116; t=1705964256; c=relaxed/simple;
+	bh=NU25j/nRSRJjYdR9Xkbm95iBy1+9quhbyDaHdu07SNc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qYJ5GHEEkRj8e4m2YfHMKd1px4uNA3H8fM8bRKJFdp/nxL8XzvryLTcNYrjxLsyPE2u3XcP+tWy6mIR865Z86nV/deoBDw2hcTbNlIgSdTV1TPtzqxNoyM/l20bjvNBdWm81dNYxCkw40+cv0AgG5kX8yp5s5um1OJ/hJ6/D+mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mcmFjQTl; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version; b=aVmLOWb19eLCderdUdjcxwvpaXfPvtSwXHPmeFfJq+Y1bDncws1SWJ9Ka8FSYuJeC+4rUODDwN+NBDphSrBqpjUxl51/x9mViDaeDlY4EJHO7sGcuZ4mEY1b+2Bjw0CVALLzHtogIuKFRZYkwVB+ddEZpdqIXkaitOV0ksLztXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uQYLpdmd; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mcmFjQTl"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40eacb4bfa0so16648805e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQYLpdmd"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3392291b21bso3156625f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705964251; x=1706569051; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705964253; x=1706569053; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y4bTzUw+MKMULDVrOGqPlspEn1WsvCRNgroEJ1fsBHQ=;
-        b=mcmFjQTlw5O3sD4pXK8wVxzni0TDCUA8+MWev8ndkjg4jzx6W5Cptz/p2dQUnBvg3i
-         q1tDBpRcYP7XeKkuR2itCEICt7WTXgJQSwgtgFLZs656hVK5GmA9IIp5aVj2F0Tah6uB
-         Ou9efJEBz/GvO6t2nUnNX0BfPCjJUtbAId+6Wfw9/c9rqJ5KViEsAemrqDJetfLqs6v4
-         5Z1FLep+pbSo4wuFN0A6IIeNS/HVYCBAnPrvEmQ2Fe/fI0NMPt+fLC6Lf0I7qvM/ErF8
-         05VWBqdMYJ83d4NBmXeOBfgc2rhqas5rbCpB5EZH/zTGIjkvZj/7mTius1P6J/abPYGR
-         6tqQ==
+        bh=pJbJnRKpWToFu2q+V6O7FlsxtcgPK6P8cGRt1rv+n50=;
+        b=uQYLpdmdMVOzzWipAtTQ459d+DbOM3ZuixH/tzo2gFJ4sj15tsIs6nlNHNcL5A7//7
+         yaxdYwtGdqQzmYqFqDZk9/h8y35ZiYcqFeeW0g8sQ2Aa3tYNaZBxOUYIAu4kpVZg9rga
+         r33t3Cd7Yd1QoYs8tagh1vrX20KOYBzTs5kvW8X0RYV4jE2M+KPrSzIBLRy0/d3mHZeR
+         GQ7ifuTLDJEWD8JW1/tTBdkriGHkBCpQ6qjbRrociOQjnYqB6t2cLiJpeH8v+BeW9OwD
+         JRQPBBHa6pg2vcMa9IFaSyq25bbHpU1DgLlE5ikapiIA2htHyNi6lYf/CAmqCA/CdY5d
+         R8AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705964251; x=1706569051;
+        d=1e100.net; s=20230601; t=1705964253; x=1706569053;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y4bTzUw+MKMULDVrOGqPlspEn1WsvCRNgroEJ1fsBHQ=;
-        b=j8/rTuRDm2uw9/1BfzIN4rxy8SNDMEtwrC9Mf9CvHVhH2zPWKrwYggD1QXEYm2kOtw
-         Eam7zbRfdr2pamy9W1NuJvkOG2gNbCeg1Fa03VK1nGJA9Dw43B6C75IejYKHJ9/pB29d
-         qnyBqGCYtQzGDdrPEy51gl/v4Qhs5NvIlG1exHmyWr4dvZQQFAg1eOVJMFXAKyqwfMwo
-         zB79WjPKjS3Rdg6cwN+jvwOwGs5A6WwC1nW5mAC6GgCi4KHucZO2j4uzRceK5ytTd3iY
-         e6GbdujEAr8XgYQFsiJ4FobkTJfvoWheAvPdpLWPDZwAG6b9AeUQKLP1aO5yjlS8r7pK
-         LZQw==
-X-Gm-Message-State: AOJu0Ywf+FXiyGgAZbRgDW1BY/jGfArEJMK83OE6Cnl0Bm23KTCPrwUo
-	Ut5QyeqRNCP+ObJ9NlFSnsmvTtosUwW/fRdaV7c377UeYQR/RS4nGfL9OsC8Big=
-X-Google-Smtp-Source: AGHT+IETd2PX8JmJBxIqCh7S7rWJGs2+2BZQchWv4xtVboyS/6Q+VsUVSnmnkjvLrWfcHXbLQv6r8g==
-X-Received: by 2002:a7b:cd0e:0:b0:40d:3dd7:46f8 with SMTP id f14-20020a7bcd0e000000b0040d3dd746f8mr2773352wmj.127.1705964251630;
-        Mon, 22 Jan 2024 14:57:31 -0800 (PST)
+        bh=pJbJnRKpWToFu2q+V6O7FlsxtcgPK6P8cGRt1rv+n50=;
+        b=hbDvJSZdozVfRrV6/DqLpQQw2xv5bsJnItH9pfa3b8wCcIz0k0I9Sc+9snbAxDrGdS
+         0qTGYIoH0BcLIMhDzswjoibGMgu3uI+ZUeXMH8Aprsq65OfbwyAvyxHAlb7kZXwFtTKq
+         HcJkViKHWJXX5sZvqgDlpcnT6JO4CAD0OdLDOGfBfd3Zvz4d9OHWH1jXyuZjqcfGAk6I
+         bnybM6BK/nKg636HdCPJl3fgtlxX2ogCn4VhwR/P4dCXWKGCQNUdlO8B0S2APaB5aguy
+         +8pGOvnEKNigk7Mwyn9EbpCwGVa0zrFj3cVEWlExgUJxVNJGkycz3p4XNU56jtzlEMPu
+         gCow==
+X-Gm-Message-State: AOJu0YyY7h1YrqfbDqkr/K0fmaGlxA+Q53A8dM/Bm8SIS2+BHucojBoT
+	xdFT0jf7XAAn/SwmsZSZDmds9zejCH7YY+8aKe+C9XjKBqRobhh0Obe0x9ZhIFc=
+X-Google-Smtp-Source: AGHT+IG/jFOxju1LtglICeFEljCYH82Da8abwgt9uhjEC3EDk+nmoQu4sACeu8Vd9SIMCqy6XTt4bg==
+X-Received: by 2002:a05:600c:ace:b0:40e:46b2:24da with SMTP id c14-20020a05600c0ace00b0040e46b224damr2627569wmr.71.1705964253325;
+        Mon, 22 Jan 2024 14:57:33 -0800 (PST)
 Received: from gpeter-l.lan (host-92-18-76-30.as13285.net. [92.18.76.30])
-        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.30
+        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 14:57:30 -0800 (PST)
+        Mon, 22 Jan 2024 14:57:32 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: arnd@arndb.de,
 	robh+dt@kernel.org,
@@ -74,9 +74,9 @@ Cc: kernel-team@android.com,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 4/9] arm64: dts: fsd: remove deprecated samsung,syscon-phandle
-Date: Mon, 22 Jan 2024 22:57:05 +0000
-Message-ID: <20240122225710.1952066-5-peter.griffin@linaro.org>
+Subject: [PATCH 5/9] arm64: dts: exynosautov9: remove deprecated samsung,syscon-phandle
+Date: Mon, 22 Jan 2024 22:57:06 +0000
+Message-ID: <20240122225710.1952066-6-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240122225710.1952066-1-peter.griffin@linaro.org>
 References: <20240122225710.1952066-1-peter.griffin@linaro.org>
@@ -93,37 +93,29 @@ to access PMU registers.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- arch/arm64/boot/dts/tesla/fsd.dtsi | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index aaffb50b8b60..9b55e44c1db0 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -625,7 +625,6 @@ watchdog_0: watchdog@100a0000 {
- 			compatible = "tesla,fsd-wdt", "samsung,exynos7-wdt";
- 			reg = <0x0 0x100a0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>;
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+index c871a2f49fda..94c8d68fe92c 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov9.dtsi
+@@ -1551,7 +1551,6 @@ watchdog_cl0: watchdog@10050000 {
+ 			interrupts = <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cmu_peris CLK_GOUT_WDT_CLUSTER0>, <&xtcxo>;
+ 			clock-names = "watchdog", "watchdog_src";
 -			samsung,syscon-phandle = <&pmu_system_controller>;
- 			clocks = <&fin_pll>;
- 			clock-names = "watchdog";
+ 			samsung,cluster-index = <0>;
  		};
-@@ -634,7 +633,6 @@ watchdog_1: watchdog@100b0000 {
- 			compatible = "tesla,fsd-wdt", "samsung,exynos7-wdt";
- 			reg = <0x0 0x100b0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>;
+ 
+@@ -1561,7 +1560,6 @@ watchdog_cl1: watchdog@10060000 {
+ 			interrupts = <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cmu_peris CLK_GOUT_WDT_CLUSTER1>, <&xtcxo>;
+ 			clock-names = "watchdog", "watchdog_src";
 -			samsung,syscon-phandle = <&pmu_system_controller>;
- 			clocks = <&fin_pll>;
- 			clock-names = "watchdog";
+ 			samsung,cluster-index = <1>;
  		};
-@@ -643,7 +641,6 @@ watchdog_2: watchdog@100c0000 {
- 			compatible = "tesla,fsd-wdt", "samsung,exynos7-wdt";
- 			reg = <0x0 0x100c0000 0x0 0x100>;
- 			interrupts = <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>;
--			samsung,syscon-phandle = <&pmu_system_controller>;
- 			clocks = <&fin_pll>;
- 			clock-names = "watchdog";
- 		};
+ 
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
