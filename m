@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4324D14A0AF;
-	Mon, 22 Jan 2024 15:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406C9152DED;
+	Mon, 22 Jan 2024 15:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936654; cv=none; b=RtcwQ+fu3rFEy9do0gZNUmooMstVWhDavvWr09XuhyAOQjUjFG7HE3xpvAJAfWxLiGkdVUDR4/TJPPHOCmOqCDhe48xGFMkPV7queL70fxtGj/KJnVjlH3rG4lEyb+gYLC4YblUMGlXCLxIQ9UQ9uzGpA3egizzLfi+2TtQQnUs=
+	t=1705936734; cv=none; b=s7AaMjubkJ1b6rRHftz0akp4xhMCHI1bx3E5qD2yEGIri6Ui+XxJwYYJuNRI2FG6GBBwoA33j1tTRtuaIbTSY93lttlk3wl/3dbzzO9iC+f+uCG4DclbTki4RyNtD/6SjebDt8zcIsnyTN0krcK2jBLHVTneLVUaJ3XgTGrq2Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936654; c=relaxed/simple;
-	bh=m4imxFRZt25zC2Urbe8GKOg0hrIgMjvUofILJlrACMc=;
+	s=arc-20240116; t=1705936734; c=relaxed/simple;
+	bh=9vp3fgTAMOlr5CFsOf+b2POkJmPdWdYEmPmQKvjJkQI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ILIAOFuQ6+sWwfdjGLQ4yC6+3nJXssx4TnV/DWcfEbCVF57YYBwAN7BGNqh2euwk7IqPVSkPYWbyoTcjP3VBc1klV+XOYjzEk3nEWB+LR63AT/4UY+xWST+SCuk9D6VlHuWMNXS/VHcYsBJjIWf5+akhnia4n6CxYUcjDNLMV00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4GnO1x9; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Fciwa3hRbW7KUQgVFfruNC3kRdB/SNcO8/TYmULB2IsigRQkleF53mL9FRdxhPtxxsTcBxafL8tLPSEND9VB7o4K04/SXSgr8Nv84W2/Kb4IDQnKCjEpIrHqIGnBkXMXp6d6mogS4BarkYo7l2B03KzX0LsA6NxyyXKKUIUm5do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uq+lDxcW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4GnO1x9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC80C433A6;
-	Mon, 22 Jan 2024 15:17:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uq+lDxcW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 549E2C433F1;
+	Mon, 22 Jan 2024 15:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936654;
-	bh=m4imxFRZt25zC2Urbe8GKOg0hrIgMjvUofILJlrACMc=;
+	s=k20201202; t=1705936734;
+	bh=9vp3fgTAMOlr5CFsOf+b2POkJmPdWdYEmPmQKvjJkQI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d4GnO1x9xVbGNZL2zSfAengBgWHLeAVgBeMnchAIEyPikmCtP9D+2iqhJajqLDxaT
-	 MbmdTi8Q0STt+RhUDUQ8ssyEsWu695e3vv/ROsH70I7uHpowFONeYEVIT2k4OphXAw
-	 fI2kmLWfmVGH4BIRbA7djV5yRltGtKfOyr2kLLWbKq+mntZQWe55ITVBIESWH0wWeF
-	 ZqgCMSnoMDtaN8HXMQe3UBt+ZnRZdBCciMZm+/z8MsYoJNeFeLz+26pmRcM+TUn2Nh
-	 DivO9pB3DDKj52HUuMPyEwKbBzyoYvwlB1w0Dy7ish45HuXFxuMjACUZ1M+QlDwZEs
-	 biMQ9VKLajAxQ==
+	b=uq+lDxcWD7cO6pOdmwbFfRx8Vb+Qlo8hN0QTCwAXGRKs81plrd88B+ptRhnKMhWLO
+	 Mm34D+3R67V11nO5lLg5XRpq5hsUU6HwV1gSe8p0Vn7xgXOxKy2bSPXjxjbfOFIarE
+	 F4xgaJ30/6ZC9cvVkm51IGHrbaT5E/t3vP+RaUz/d4OtPLxHsaL3Hxs2xRJQMG0bo/
+	 Fy2gyykzkEJoxxPfMKkiIOYJEbTlIPvRdidOCoREMotUQ5IS+NYJmqTjoGBQyzqFhR
+	 y2F8BD+GejxIGunvp/G2wqRK+l1wPzYfhpGQBD9lzXufTmBk9PgWwThw1Gpp9TV34L
+	 OmSzg0eXu78rQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -42,12 +42,12 @@ Cc: Douglas Anderson <dianders@chromium.org>,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 15/24] drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
-Date: Mon, 22 Jan 2024 10:16:29 -0500
-Message-ID: <20240122151659.997085-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 14/23] drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+Date: Mon, 22 Jan 2024 10:17:54 -0500
+Message-ID: <20240122151823.997644-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122151659.997085-1-sashal@kernel.org>
-References: <20240122151659.997085-1-sashal@kernel.org>
+In-Reply-To: <20240122151823.997644-1-sashal@kernel.org>
+References: <20240122151823.997644-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.267
+X-stable-base: Linux 4.19.305
 Content-Transfer-Encoding: 8bit
 
 From: Douglas Anderson <dianders@chromium.org>
@@ -99,18 +99,18 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index ba0f868b2477..29577a7eaea8 100644
+index b599f74692e5..db09e2055c86 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -346,6 +346,7 @@ static int exynos_drm_bind(struct device *dev)
- 	drm_mode_config_cleanup(drm);
- 	exynos_drm_cleanup_dma(drm);
+@@ -410,6 +410,7 @@ static int exynos_drm_bind(struct device *dev)
+ 	drm_release_iommu_mapping(drm);
+ err_free_private:
  	kfree(private);
 +	dev_set_drvdata(dev, NULL);
  err_free_drm:
  	drm_dev_put(drm);
  
-@@ -360,6 +361,7 @@ static void exynos_drm_unbind(struct device *dev)
+@@ -424,6 +425,7 @@ static void exynos_drm_unbind(struct device *dev)
  
  	exynos_drm_fbdev_fini(drm);
  	drm_kms_helper_poll_fini(drm);
@@ -118,7 +118,7 @@ index ba0f868b2477..29577a7eaea8 100644
  
  	component_unbind_all(drm->dev, drm);
  	drm_mode_config_cleanup(drm);
-@@ -397,9 +399,18 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
+@@ -461,9 +463,18 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
  	return 0;
  }
  
