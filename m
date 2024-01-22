@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC23134757;
-	Mon, 22 Jan 2024 15:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAFA141980;
+	Mon, 22 Jan 2024 15:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936438; cv=none; b=XDjcN1DB+ndUOyaMS68fMgBsTLQdMxmMYefT6LK5P143YsbJqCKh/VaFnC23tzMcfK24Ab3r1pKUGPKk+uEFuWBOpwzmkf7uQEtIvB7iG6zUCw20y5wMPmwcVnNvDPX7xERAhKiCwA6MLLYnpR3XDK7HbgOVCaFSI0I+vK4z6lk=
+	t=1705936569; cv=none; b=DoetiUJFLTPil69Xh5A0uIIgFWMZ3u4kulFmKH0KJAUqmeCffdiJXPs+UG7MNizkzVMjKmMJw+DzihDnyKlaQls1bbLMmZbDL2eOladaD0cXmWWv9z8cfcj3L15Z0YY7H4b/G2JMkVqJOrZeSgHaiHe5SQYWNAzbTlOM+qo231o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936438; c=relaxed/simple;
-	bh=rSjd9MKreWuuHvMenlbZstvmP/HBubXF4I+J6BQiMKo=;
+	s=arc-20240116; t=1705936569; c=relaxed/simple;
+	bh=7ymwXNGG0MIgq6ANk7aPoOI1mIBUYuqEXp/Eq48HczM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mb06kAr8Rj0JJt3U6cW9HgPufhn/cpNMxnzUqHn0KSKXBgN1225YzkudYNUVMqVGK0bY0xU07Ol3lKPSdzWI9Vn/opP1lPkwD4YMxeol8WJkOMqEuQWOb05ZDtlFN2TBc3b5lelstiQeqNL7NHMRmm9algR2KfF3syliGIVZbg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJXvupg6; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=tyrn3e6+JP3es9EqqsiPHYC8LO49fpPceHSlhSWUmIeS80dAqBEbn8UC4Cs98TWQqPd3PK+0vnsvsPTe5sAju4294sdNOX+TKciq6kq5gE78u8+93FMeocko3PVrMZ+LRwCueBVLGmakOwY9Hwah2RxbJSKTWXu6omcLeTudmvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pjzgl7Vi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJXvupg6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59502C43390;
-	Mon, 22 Jan 2024 15:13:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pjzgl7Vi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F468C433C7;
+	Mon, 22 Jan 2024 15:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936437;
-	bh=rSjd9MKreWuuHvMenlbZstvmP/HBubXF4I+J6BQiMKo=;
+	s=k20201202; t=1705936569;
+	bh=7ymwXNGG0MIgq6ANk7aPoOI1mIBUYuqEXp/Eq48HczM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HJXvupg6zPAOFKdNbm38OqTrZmKl19dI2DozChGWzNGKtsPxgKAhpH0PAf2ZIeAw8
-	 HtN/K0xoJaKHsbg7lD26oUYnPTPIDlf/GiZVEhO+aoK2r9O8xTUXWK/+WIWHydM/Qp
-	 k7rUgRCL7EaI2HfwhV7QS+bfH8iAHPWIV2MmurVXtWjixXtMj+QFtqla82BALWnlft
-	 xx2WM3azbLv2TJOXIfbMGLb6tswLFCF0HYfVYh1gX3dsG3YyX4qBsAlfRQUlzaKnD2
-	 ONqaa1Wk7ahfbt7xoBvWS1R3P+gXUvSfc/7YK4BuPc0CEx98DCBGDqewpSQbxCGS3/
-	 vSn0AzT3kw5BQ==
+	b=Pjzgl7Viyam+E+65S8r4aibAjW0y8yz7B5JgUQmnbRlWxiFIGtK/1KAnjzc4AEcO5
+	 RsnesdLaFGAnutPKTPKwSAunCM5czlGeG7xVcPQP6Zv3BDuiVrf/i6S/TXWVYlS5B3
+	 63hJgGnNI8PNOkAKPLOTNN/FUqCJb7qjdB5TwIorAUTyOMPb+M4Ay3PvMcqv88OR+X
+	 eiFApzXFQgIuMaOq3XqU7uwACRlj+/KO8vcSRwiQc0X1Sd1w6gaKxpDV7mvsYE7lv+
+	 xNg4ndjppx429nPKay3MHQAD4XgIr5Jirx1JNSj667wN8hxRaclJ68lBJIB5Xayu5v
+	 rBQPTfxFpJs3Q==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -42,12 +42,12 @@ Cc: Douglas Anderson <dianders@chromium.org>,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 21/35] drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
-Date: Mon, 22 Jan 2024 10:12:18 -0500
-Message-ID: <20240122151302.995456-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 19/28] drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+Date: Mon, 22 Jan 2024 10:14:45 -0500
+Message-ID: <20240122151521.996443-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122151302.995456-1-sashal@kernel.org>
-References: <20240122151302.995456-1-sashal@kernel.org>
+In-Reply-To: <20240122151521.996443-1-sashal@kernel.org>
+References: <20240122151521.996443-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.147
+X-stable-base: Linux 5.10.208
 Content-Transfer-Encoding: 8bit
 
 From: Douglas Anderson <dianders@chromium.org>
@@ -99,10 +99,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index d8f1cf4d6b69..2a7f96237f95 100644
+index dbd80f1e4c78..7e13c1550083 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -324,6 +324,7 @@ static int exynos_drm_bind(struct device *dev)
+@@ -344,6 +344,7 @@ static int exynos_drm_bind(struct device *dev)
  	drm_mode_config_cleanup(drm);
  	exynos_drm_cleanup_dma(drm);
  	kfree(private);
@@ -110,7 +110,7 @@ index d8f1cf4d6b69..2a7f96237f95 100644
  err_free_drm:
  	drm_dev_put(drm);
  
-@@ -338,6 +339,7 @@ static void exynos_drm_unbind(struct device *dev)
+@@ -358,6 +359,7 @@ static void exynos_drm_unbind(struct device *dev)
  
  	exynos_drm_fbdev_fini(drm);
  	drm_kms_helper_poll_fini(drm);
@@ -118,7 +118,7 @@ index d8f1cf4d6b69..2a7f96237f95 100644
  
  	component_unbind_all(drm->dev, drm);
  	drm_mode_config_cleanup(drm);
-@@ -375,9 +377,18 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
+@@ -395,9 +397,18 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
  	return 0;
  }
  
