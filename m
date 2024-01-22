@@ -1,97 +1,142 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929AD3CF47
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 12:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E525674A;
+	Mon, 22 Jan 2024 14:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705926060; cv=none; b=TPyOXfXB6rohyWkaXH9QgYPcEX68YcWcEQ5U6UDmLJ6qK4NA3D/0C8lJgW1JgjlSj6WChGil8CeSZCtUCRrT984moI3Z8lI6aVI/NHdwQp06mfqjmha1y/u8txxZvNH+Z52LM3yz8sIl6biBltmA3jMeStywPMRUbMp0Bl/NA64=
+	t=1705935517; cv=none; b=qu/EfkaoCIdVpOjAxf3QkHGHJ9ODhtcT4NYKKs3v3+H3/RlP7igA2ieI77S8omh7IQRTeaSNtdZ95Wpo0kEup5ENcZQ0m4x1/qGvxn26PU04maxgWZ7wnMYsh1WqZN3IyXbE/rmcuth3sDQ4FreDbZIRPG+ucQ+Kz6ocZXsKFrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705926060; c=relaxed/simple;
-	bh=YZ1z2j1kI4ddtowX/6pc2qFb6DJElIuVdVyPI0aRULs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=i7VbqzDYya1DGYumZN3ALICpJUGmlX8HKpefXuePfMSuCkovCueVdjC4Ti+1cKwVcbPhdDTaZD0RZR+twwZ6mu7dRziy1CHJ00i4jBPT83PZSF521mPca++qk47J/P0Fwg+62InybHQEGI8be0n5VVBbjK1AZz3NhrrJXuNOSjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IaObIRu2; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705935517; c=relaxed/simple;
+	bh=jtO6UF+XHw8oFtbNzzs5I5mOWLfh1gzjsh/xhUz5oy4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=L+KxqsubjQ+6k16Rl5H1T6ghh2K+55fSsEAAtpQCFbSwcpi/s9CGabXxkl2V3WMb0RW1RTZgVe4kBZsTmrfFIbpbHwQ0pgZEhOuuGNJavli4jmhxZN0nLKfVCvlQwoB83wfjhyG7iJcH1vBKNjwlFxaymHQ35BaqhQGLSf0taqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0JsRr0G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IaObIRu2"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-337d58942c9so3347468f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 04:20:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705926057; x=1706530857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kABQclCWxHgPnu9QJU5EL2/wY8bNoLCbrJHvsKEUK0g=;
-        b=IaObIRu2LGHDgBjnVeOjxwqm2b5YccPLyvTxj1G16DYPhRyhEMEkJN1wWToBIjpYy2
-         Glf64g2ijuCgXNjrA6VYzE8Eva9guW15yCdBR+t/o4R1VyFDF6GSuZ6dG+FFihuLxYz1
-         gnlAYQbMOu9sWzjyBSwLYBvjwrGUFzdr5l/LQEZXmu//7bp+uijA/bJZkIfAJuoqYEDW
-         fKprjcjkFJZRdoHY5TSJf296I6BB96HtTLwkdmktn4gIFUj2TztSEyc7g7DQiAqwoDx2
-         IwZzqauTGZidfT2w6oKjymJEBovlFPW7EhxXqultjXu6CO2GmgQya1KDWshqUfpPa/9M
-         kl5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705926057; x=1706530857;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kABQclCWxHgPnu9QJU5EL2/wY8bNoLCbrJHvsKEUK0g=;
-        b=KbwxlKWm3z8pKnosVjnxC5C9RtD0VvEDT7iaRQ6OvaH6hxOCEJqtF7s6vPrtCRYXH0
-         Nvtfx+qW9DUAmq4TFbUNMSuHx2gtSTwVyaMnL82/MYHeR8A9vODPxRmKko2QtRkaTz9Y
-         eJwkulf70B3NECn4R6rwG3C2nT5tF0Ofm34rq6T7I5U0ykmYRnznOGGD/33WzrFXttNS
-         6VwzJFDEpX7Af6OZJwVni/WYKrDvVPukqpZ0s4ERwnKtC1P+jsxTCC/GOwG74+LYdIvE
-         3hTS5MfR+U6YKueHeqVSbXmm3Efb5raGQZ5ES1kzJ2qk/p+atbLwhy4mSSARK17iJvfG
-         GG0w==
-X-Gm-Message-State: AOJu0YwpPXKThJkXGvwyf1/8JBSNSRW//KpWzkJ9Bpy6DHjhrzH7KtHd
-	+B0IDP4t1PgHaxDv6wcjbLTnVYSIrpjXTGaCDlz2D/N+Bvt6xU+wHRlQgD4muYQ=
-X-Google-Smtp-Source: AGHT+IFhqjuIwtg+QmXyJ4f9r6mNt1zxG6VLayec6ocn6/EHmN5XOjRCUa+vR9FMXnsULV8fzYl/Dg==
-X-Received: by 2002:a05:600c:4d02:b0:40e:49bd:a2ba with SMTP id u2-20020a05600c4d0200b0040e49bda2bamr2368821wmp.86.1705926056443;
-        Mon, 22 Jan 2024 04:20:56 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id a17-20020a5d5091000000b003392d3dcf6dsm4585801wrt.0.2024.01.22.04.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 04:20:55 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
- cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
- semen.protsenko@linaro.org, willmcvicker@google.com, 
- kernel-team@android.com
-In-Reply-To: <20240122114113.2582612-1-tudor.ambarus@linaro.org>
-References: <20240122114113.2582612-1-tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v5] clk: samsung: gs101: add support for cmu_peric0
-Message-Id: <170592605426.49653.1635174301896899185.b4-ty@linaro.org>
-Date: Mon, 22 Jan 2024 13:20:54 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0JsRr0G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 890CCC43394;
+	Mon, 22 Jan 2024 14:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705935517;
+	bh=jtO6UF+XHw8oFtbNzzs5I5mOWLfh1gzjsh/xhUz5oy4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=f0JsRr0GzwEy5Zb2C2Zf0zXfYjVQBaZNqJUkduf1vP0RJgxYT10ODilV5kY4FwCDZ
+	 NSyIEM/Q9pIFwgaRYJDyqIm74Usx8jLzm1ECHKzrHbIIIdkG901mMH03RAbnZlDv6+
+	 g9ODKkluxI2mHEyFG67eiPs3bmfH6n2wOlSxEluGf/mCq5iT4Rl/DIuVymGQRQKX/n
+	 NX2tO7Ua1ZxhUGEw16BWf7uINnThJ/kj+Jl4tJT523DyJznmy+5YvOYvh3lAojjX/k
+	 rftqUqnfVywzWbPLzuv9TY7YMfhPE/uLlNmxmnIvKocveu7kU49LKqiPVRqAHG/+Ug
+	 okn/1hD8ZB4LA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Inki Dae <inki.dae@samsung.com>,
+	Sasha Levin <sashal@kernel.org>,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	krzysztof.kozlowski@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.7 44/88] drm/exynos: Call drm_atomic_helper_shutdown() at shutdown/unbind time
+Date: Mon, 22 Jan 2024 09:51:17 -0500
+Message-ID: <20240122145608.990137-44-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240122145608.990137-1-sashal@kernel.org>
+References: <20240122145608.990137-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.7.1
+Content-Transfer-Encoding: 8bit
 
+From: Douglas Anderson <dianders@chromium.org>
 
-On Mon, 22 Jan 2024 11:41:13 +0000, Tudor Ambarus wrote:
-> CMU_PERIC0 is the clock management unit used for the peric0 block which
-> is used for USI and I3C. Add support for all cmu_peric0 clocks but
-> CLK_GOUT_PERIC0_IP (not enough info in the datasheet).
-> 
-> Few clocks are marked as critical because when either of them is
-> disabled, the system hangs even if their clock parents are enabled.
-> 
-> [...]
+[ Upstream commit 16ac5b21b31b439f03cdf44c153c5f5af94fb3eb ]
 
-Applied, thanks!
+Based on grepping through the source code this driver appears to be
+missing a call to drm_atomic_helper_shutdown() at system shutdown time
+and at driver unbind time. Among other things, this means that if a
+panel is in use that it won't be cleanly powered off at system
+shutdown time.
 
-[1/1] clk: samsung: gs101: add support for cmu_peric0
-      https://git.kernel.org/krzk/linux/c/4bd800aaf96f880d45b1a28b2f78549a0f5a3a1c
+The fact that we should call drm_atomic_helper_shutdown() in the case
+of OS shutdown/restart and at driver remove (or unbind) time comes
+straight out of the kernel doc "driver instance overview" in
+drm_drv.c.
 
-Best regards,
+A few notes about this fix:
+- When adding drm_atomic_helper_shutdown() to the unbind path, I added
+  it after drm_kms_helper_poll_fini() since that's when other drivers
+  seemed to have it.
+- Technically with a previous patch, ("drm/atomic-helper:
+  drm_atomic_helper_shutdown(NULL) should be a noop"), we don't
+  actually need to check to see if our "drm" pointer is NULL before
+  calling drm_atomic_helper_shutdown(). We'll leave the "if" test in,
+  though, so that this patch can land without any dependencies. It
+  could potentially be removed later.
+- This patch also makes sure to set the drvdata to NULL in the case of
+  bind errors to make sure that shutdown can't access freed data.
+
+Suggested-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 8399256cb5c9..5380fb6c55ae 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -300,6 +300,7 @@ static int exynos_drm_bind(struct device *dev)
+ 	drm_mode_config_cleanup(drm);
+ 	exynos_drm_cleanup_dma(drm);
+ 	kfree(private);
++	dev_set_drvdata(dev, NULL);
+ err_free_drm:
+ 	drm_dev_put(drm);
+ 
+@@ -313,6 +314,7 @@ static void exynos_drm_unbind(struct device *dev)
+ 	drm_dev_unregister(drm);
+ 
+ 	drm_kms_helper_poll_fini(drm);
++	drm_atomic_helper_shutdown(drm);
+ 
+ 	component_unbind_all(drm->dev, drm);
+ 	drm_mode_config_cleanup(drm);
+@@ -350,9 +352,18 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static void exynos_drm_platform_shutdown(struct platform_device *pdev)
++{
++	struct drm_device *drm = platform_get_drvdata(pdev);
++
++	if (drm)
++		drm_atomic_helper_shutdown(drm);
++}
++
+ static struct platform_driver exynos_drm_platform_driver = {
+ 	.probe	= exynos_drm_platform_probe,
+ 	.remove	= exynos_drm_platform_remove,
++	.shutdown = exynos_drm_platform_shutdown,
+ 	.driver	= {
+ 		.name	= "exynos-drm",
+ 		.pm	= &exynos_drm_pm_ops,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
