@@ -1,56 +1,56 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBE36AFA
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372CC381C0
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705964253; cv=none; b=hX2ofUaQCpsqO+fHQ+9TeJKZQ0jkcSb+CI1ToKPuI7qKcZ4MRH7M4Q3Bt0Zc1an1yOO9mxGxlNm0dn+bGDZnR7NodK2K6+sTxG9+88m5Int3Ny4VeMJqgTsmk/upyrwgvqsLYpHVzvQoklq7C+ZTBpkcF6slsUO8CyTdzW3jwyA=
+	t=1705964255; cv=none; b=GcZUJNehlKdixW49//Yl+codecdN7cXjlolCiHBRsPCuRJCtHkb3PSt7v/DzodQSonbHWlgziiTsrHRdnfznGl7gnvuPE8ALV4KpJCWXMEcQW6XErJxcdclgEPcQg3IsnZ0h/CEXQFj+njo5GNqNJrMkHna7zDZd/y8GkARVxVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705964253; c=relaxed/simple;
-	bh=TuBVgmZfnG0mMLHEI5U7ypuOjfhXKu49qHs3tpLT0vo=;
+	s=arc-20240116; t=1705964255; c=relaxed/simple;
+	bh=BoHzIuF9/gjqWNPMlzNp4FmNG1UNGUTagv+K3rRO0Hs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q5itO0FueWxHM2ofGBXCVcqmTju7wnq7/mjUhrgZ+r8Dq61gyuRmkRxeDa/S14YP4Io/2pGmS/5E30rKcX5D9D7NL/mJpm5P+endIEzZbyrFMnrr4lwQX0XuyNuoRu/OhY1dCII5MBnIgTAnVIMR/JMcHYdx8s3MKJsZ+tbXxGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjBMRG8c; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=qYJ5GHEEkRj8e4m2YfHMKd1px4uNA3H8fM8bRKJFdp/nxL8XzvryLTcNYrjxLsyPE2u3XcP+tWy6mIR865Z86nV/deoBDw2hcTbNlIgSdTV1TPtzqxNoyM/l20bjvNBdWm81dNYxCkw40+cv0AgG5kX8yp5s5um1OJ/hJ6/D+mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mcmFjQTl; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjBMRG8c"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-40ea5653f6bso31326255e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mcmFjQTl"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40eacb4bfa0so16648805e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705964250; x=1706569050; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705964251; x=1706569051; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6FqWPcvKSS7CcnQxWq48tyQK+WttnuMBOHrnCab1foM=;
-        b=xjBMRG8cFZMUNGiL9+BBiqRqHXP2QZakrxFf57bZuR50Ps+yKxelU9hmBQD62WL0oU
-         NwRiALSvaRQF9EAKRazUsTXyGmW8lQS0PByL4VS1ADhyKGDjjQ8551yISCLswBsJVqMP
-         9F8KBHgSK/bKUN3Ad1mOEW55eh2BD3kiYXEaY+Honngm307B/4EDlNw8nrNb6ekTonJo
-         UGOWEM+H+IdiF4AKMN/wfkLAdlZbyLyRLacm7VN1tZrDwKnm3XjnRKrYzsGsyB+7Dk97
-         LnLvQKEmxtZjBB7T6xr5iFiN3b8cMIfQgYXEVuWlNM9gyrGJpxXKLQEbK9Nun7BaCjLv
-         RrTQ==
+        bh=y4bTzUw+MKMULDVrOGqPlspEn1WsvCRNgroEJ1fsBHQ=;
+        b=mcmFjQTlw5O3sD4pXK8wVxzni0TDCUA8+MWev8ndkjg4jzx6W5Cptz/p2dQUnBvg3i
+         q1tDBpRcYP7XeKkuR2itCEICt7WTXgJQSwgtgFLZs656hVK5GmA9IIp5aVj2F0Tah6uB
+         Ou9efJEBz/GvO6t2nUnNX0BfPCjJUtbAId+6Wfw9/c9rqJ5KViEsAemrqDJetfLqs6v4
+         5Z1FLep+pbSo4wuFN0A6IIeNS/HVYCBAnPrvEmQ2Fe/fI0NMPt+fLC6Lf0I7qvM/ErF8
+         05VWBqdMYJ83d4NBmXeOBfgc2rhqas5rbCpB5EZH/zTGIjkvZj/7mTius1P6J/abPYGR
+         6tqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705964250; x=1706569050;
+        d=1e100.net; s=20230601; t=1705964251; x=1706569051;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6FqWPcvKSS7CcnQxWq48tyQK+WttnuMBOHrnCab1foM=;
-        b=htxFOyjHpnlp0OpzwPgOm0tBHlQ4Fw/InzH3J3G8fduVLTd/1PA3ngOFSq1oPCYQ9A
-         Pvy/wcxPRSs975uhruhuUJHNx0RCi6sdUDVLJQuRCvIeVwGNNRqkqyHj0A5WtlRs94rL
-         04V1/Gujxmi17Crb26PqT9tTf8ZTXGN9ITUy/D1htpUPsIkwkRXJ3OwG93wfPZTy0TXv
-         NAGtxmMEvfUJAF5CPGkBsQI65hLMcLdFvAzApFyEdU1tx08ResYw6rf5TSwvXyrb4Q61
-         lN/gbb+kadDwksIpFxGl0ivkC0JFxJY/m08M/ETqQiFecJD2w8jLpcvalnbiyPDNhy06
-         GPXg==
-X-Gm-Message-State: AOJu0YyMbbsidCFO3GsuHq7Il8zc69GZ+BsGCV4VuSNufuOlta8CAhfQ
-	UskvJyCnorUJzPy4v6V8/fn8lRwNVekIWbO7U3Ts36TO5UBpH3PjIO30DgcnPCU=
-X-Google-Smtp-Source: AGHT+IFVp5bondQHuVzFk5BJaKLGt9zO8qcyy0zmeAUnCD2ZRppWHTFxrYhp4xosKiVATUsaz4JnFg==
-X-Received: by 2002:a05:600c:1986:b0:40e:7d8f:6b1a with SMTP id t6-20020a05600c198600b0040e7d8f6b1amr2710279wmq.5.1705964250159;
-        Mon, 22 Jan 2024 14:57:30 -0800 (PST)
+        bh=y4bTzUw+MKMULDVrOGqPlspEn1WsvCRNgroEJ1fsBHQ=;
+        b=j8/rTuRDm2uw9/1BfzIN4rxy8SNDMEtwrC9Mf9CvHVhH2zPWKrwYggD1QXEYm2kOtw
+         Eam7zbRfdr2pamy9W1NuJvkOG2gNbCeg1Fa03VK1nGJA9Dw43B6C75IejYKHJ9/pB29d
+         qnyBqGCYtQzGDdrPEy51gl/v4Qhs5NvIlG1exHmyWr4dvZQQFAg1eOVJMFXAKyqwfMwo
+         zB79WjPKjS3Rdg6cwN+jvwOwGs5A6WwC1nW5mAC6GgCi4KHucZO2j4uzRceK5ytTd3iY
+         e6GbdujEAr8XgYQFsiJ4FobkTJfvoWheAvPdpLWPDZwAG6b9AeUQKLP1aO5yjlS8r7pK
+         LZQw==
+X-Gm-Message-State: AOJu0Ywf+FXiyGgAZbRgDW1BY/jGfArEJMK83OE6Cnl0Bm23KTCPrwUo
+	Ut5QyeqRNCP+ObJ9NlFSnsmvTtosUwW/fRdaV7c377UeYQR/RS4nGfL9OsC8Big=
+X-Google-Smtp-Source: AGHT+IETd2PX8JmJBxIqCh7S7rWJGs2+2BZQchWv4xtVboyS/6Q+VsUVSnmnkjvLrWfcHXbLQv6r8g==
+X-Received: by 2002:a7b:cd0e:0:b0:40d:3dd7:46f8 with SMTP id f14-20020a7bcd0e000000b0040d3dd746f8mr2773352wmj.127.1705964251630;
+        Mon, 22 Jan 2024 14:57:31 -0800 (PST)
 Received: from gpeter-l.lan (host-92-18-76-30.as13285.net. [92.18.76.30])
-        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.28
+        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 14:57:29 -0800 (PST)
+        Mon, 22 Jan 2024 14:57:30 -0800 (PST)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: arnd@arndb.de,
 	robh+dt@kernel.org,
@@ -74,9 +74,9 @@ Cc: kernel-team@android.com,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 3/9] watchdog: s3c2410_wdt: update to use new exynos_pmu_*() apis
-Date: Mon, 22 Jan 2024 22:57:04 +0000
-Message-ID: <20240122225710.1952066-4-peter.griffin@linaro.org>
+Subject: [PATCH 4/9] arm64: dts: fsd: remove deprecated samsung,syscon-phandle
+Date: Mon, 22 Jan 2024 22:57:05 +0000
+Message-ID: <20240122225710.1952066-5-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240122225710.1952066-1-peter.griffin@linaro.org>
 References: <20240122225710.1952066-1-peter.griffin@linaro.org>
@@ -88,110 +88,42 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of obtaining the PMU regmap directly use the new exynos_pmu_*()
-APIs. The exynos_pmu_ APIs allow support of newer Exynos SoCs that have
-atomic set/clear bit hardware and platforms where the PMU registers can
-only be accessed via SMC call.
-
-As all platforms that have PMU registers use these new APIs, remove the
-syscon regmap lookup code, as it is now redundant.
+samsung,syscon-phandle is no longer used by the Samsung watchdog driver
+to access PMU registers.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/watchdog/Kconfig       |  1 +
- drivers/watchdog/s3c2410_wdt.c | 25 +++++++++----------------
- 2 files changed, 10 insertions(+), 16 deletions(-)
+ arch/arm64/boot/dts/tesla/fsd.dtsi | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 7d22051b15a2..b3e90e1ddf14 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -513,6 +513,7 @@ config S3C2410_WATCHDOG
- 	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	select WATCHDOG_CORE
- 	select MFD_SYSCON if ARCH_EXYNOS
-+	select EXYNOS_PMU
- 	help
- 	  Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
- 	  SoCs. This will reboot the system when the timer expires with
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 349d30462c8c..fd3a9ce870a0 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -28,6 +28,8 @@
- #include <linux/regmap.h>
- #include <linux/delay.h>
- 
-+#include <linux/soc/samsung/exynos-pmu.h>
-+
- #define S3C2410_WTCON		0x00
- #define S3C2410_WTDAT		0x04
- #define S3C2410_WTCNT		0x08
-@@ -187,7 +189,6 @@ struct s3c2410_wdt {
- 	struct watchdog_device	wdt_device;
- 	struct notifier_block	freq_transition;
- 	const struct s3c2410_wdt_variant *drv_data;
--	struct regmap *pmureg;
- };
- 
- static const struct s3c2410_wdt_variant drv_data_s3c2410 = {
-@@ -355,8 +356,8 @@ static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
- 	const u32 val = mask ? mask_val : 0;
- 	int ret;
- 
--	ret = regmap_update_bits(wdt->pmureg, wdt->drv_data->disable_reg,
--				 mask_val, val);
-+	ret = exynos_pmu_update(wdt->drv_data->disable_reg,
-+				mask_val, val);
- 	if (ret < 0)
- 		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
- 
-@@ -370,8 +371,8 @@ static int s3c2410wdt_mask_wdt_reset(struct s3c2410_wdt *wdt, bool mask)
- 	const u32 val = (mask ^ val_inv) ? mask_val : 0;
- 	int ret;
- 
--	ret = regmap_update_bits(wdt->pmureg, wdt->drv_data->mask_reset_reg,
--				 mask_val, val);
-+	ret = exynos_pmu_update(wdt->drv_data->mask_reset_reg,
-+				mask_val, val);
- 	if (ret < 0)
- 		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
- 
-@@ -384,8 +385,8 @@ static int s3c2410wdt_enable_counter(struct s3c2410_wdt *wdt, bool en)
- 	const u32 val = en ? mask_val : 0;
- 	int ret;
- 
--	ret = regmap_update_bits(wdt->pmureg, wdt->drv_data->cnt_en_reg,
--				 mask_val, val);
-+	ret = exynos_pmu_update(wdt->drv_data->cnt_en_reg,
-+				mask_val, val);
- 	if (ret < 0)
- 		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
- 
-@@ -617,7 +618,7 @@ static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
- 	if (!(wdt->drv_data->quirks & QUIRK_HAS_PMU_RST_STAT))
- 		return 0;
- 
--	ret = regmap_read(wdt->pmureg, wdt->drv_data->rst_stat_reg, &rst_stat);
-+	ret = exynos_pmu_read(wdt->drv_data->rst_stat_reg, &rst_stat);
- 	if (ret)
- 		dev_warn(wdt->dev, "Couldn't get RST_STAT register\n");
- 	else if (rst_stat & BIT(wdt->drv_data->rst_stat_bit))
-@@ -698,14 +699,6 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
--		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
--						"samsung,syscon-phandle");
--		if (IS_ERR(wdt->pmureg))
--			return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
--					     "syscon regmap lookup failed.\n");
--	}
--
- 	wdt_irq = platform_get_irq(pdev, 0);
- 	if (wdt_irq < 0)
- 		return wdt_irq;
+diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
+index aaffb50b8b60..9b55e44c1db0 100644
+--- a/arch/arm64/boot/dts/tesla/fsd.dtsi
++++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
+@@ -625,7 +625,6 @@ watchdog_0: watchdog@100a0000 {
+ 			compatible = "tesla,fsd-wdt", "samsung,exynos7-wdt";
+ 			reg = <0x0 0x100a0000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>;
+-			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			clocks = <&fin_pll>;
+ 			clock-names = "watchdog";
+ 		};
+@@ -634,7 +633,6 @@ watchdog_1: watchdog@100b0000 {
+ 			compatible = "tesla,fsd-wdt", "samsung,exynos7-wdt";
+ 			reg = <0x0 0x100b0000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>;
+-			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			clocks = <&fin_pll>;
+ 			clock-names = "watchdog";
+ 		};
+@@ -643,7 +641,6 @@ watchdog_2: watchdog@100c0000 {
+ 			compatible = "tesla,fsd-wdt", "samsung,exynos7-wdt";
+ 			reg = <0x0 0x100c0000 0x0 0x100>;
+ 			interrupts = <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>;
+-			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			clocks = <&fin_pll>;
+ 			clock-names = "watchdog";
+ 		};
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
