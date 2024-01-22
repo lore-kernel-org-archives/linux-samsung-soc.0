@@ -1,57 +1,57 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2284120C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 11:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E5A41235
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 11:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705922117; cv=none; b=nET1Mm22tCCugnmYgOdNBlR6ujLM36yHASG4rcRH5Hf+lzQnUqGHblxK16eoNk6P9AjaKVeUYZ8Pp8Gm1B7LeR8kzI80GnLYJ164nLGT80bLTMUFUREch/69xyGb0Mfyf5A1MfXMpGr0oKYimFp/3g4pvJ/IGscxo2s0jHscjW0=
+	t=1705922119; cv=none; b=BskR1MWu2piWRedtzTsUllpkJse9UJMGOxjWOUanQPtgWuC1NmKAAfIpad2juMd5P5uELAug2rX7Cex/YDG6ejUe5a8NTZAa5PuxfTUSLssSP9+pEie96AWpaklvuY7QC7pIXp7IYeVdvggKYXlLWckXmXwHx2aYATXeaGv0M2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705922117; c=relaxed/simple;
-	bh=g71pOkF0q/D18ZOmtU7U8XWrY0ImCsg2nS7oXJFuYTM=;
+	s=arc-20240116; t=1705922119; c=relaxed/simple;
+	bh=sBhXk0iAvmnXKdKuq3EM3icTN0+ZEsMN1H17Lp5WitQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TEIKys5V7y/mUoaGe9Us+MvNY9RwZjazPa3t15SwFWqd7rA1TC6ar6pMa4iabHaJG0HxywZXeOJfsququhRW5Fghd5ROp3IRMjC++BODZy1KdzaK1/A9Hqit8rCS+2LGyEvssi6EgzeUicG24sPFOessXswjuzzQrq2hb5b3I3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VR6voqr/; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version:Content-Type; b=auEZ+gLhG8yR5s1W+p5FUgHdz4FV2dNzq7Hp/p5+fyEL4T7CbtzmhChphUbIpsZ9zguxkoDP5UvM7+nbQVphF89bjFqvUOdISfQQ813BNqzXq/UEQzRYCBfP7hV85FWTC6X7pW6R+LG9+Pjk+Wup8UuH3cDnLZc4/W2iztgWaiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZhLTcjv; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VR6voqr/"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-558f523c072so3548593a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 03:15:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZhLTcjv"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55a9008c185so2757708a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 03:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705922114; x=1706526914; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1705922115; x=1706526915; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=18VyJIfEtiBUv58CrrtMAEX1dmGY5zrSQPkQzP0Kc4g=;
-        b=VR6voqr/+necgvFihMKG+kzlldJZMmXifhR7aQkQqnI8olWtQu1SqgUcgoya6bAK6u
-         wP706N6ESeHt5RI4wrZxzlJHm4v3XhqE3XKyT224q03mJoUOdaEIpKYkAgAoihlgetA+
-         kh4DZs6+dyGzI5PGLKj3f89OAcX7dNqHEZc6Ernk4V+oss1yY2KgguSKJ0mEh9WQT4mt
-         zQhcgg8vDuQwExO7sdH26roM4IjNW2rYtUAsJ3aEDvzQObWZx7Qw1aVpb1MBP1R3tB0V
-         +trWKsHBprdppX51hACw+yLvPi9zZw5EbZOF/Lb37CzEnvtKkfnG+OvRcuTYZgsE6D3f
-         ex8Q==
+        bh=QYvtByBMmibUCUZcFilpUEWd0hC7XPo/IrPVWnAuEF8=;
+        b=UZhLTcjvE0ZAg/jfoS95HWO04R80AF2ndbV/z4y9WRbDLkD7Gl7YXWzPcjqWX+ETP6
+         OscKhDb3C4BI5RyYtsZeupENOm91YG6rGp6KJNRdPUDRNapn6lXP9echW9P+TrI5JIix
+         +CkzSdLHHm5Q4xnzIzX1bMB0qz0afSGVWr/GKCqS5DNKKnNMJ8qgaCL/+yU84j6V7Jj4
+         CDucigVg3JTmy+w/JUJz9YGRcbAd0Yba0guEumTsVsL78Ptb+IADQys/J8Zc+wYKm6eZ
+         JVJUQ+VIaTs5cRavYcXHYSaYo7BV1VS9DCaJNroaWvA+ARszYDhzlnmbFX8vubSzsh5f
+         xU5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705922114; x=1706526914;
+        d=1e100.net; s=20230601; t=1705922115; x=1706526915;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=18VyJIfEtiBUv58CrrtMAEX1dmGY5zrSQPkQzP0Kc4g=;
-        b=mzNjAHfySJIhk53LRRcpUNhGOEmygnqiDfnUSYsWcQFIxNDOOkhX8fWVpNLHoNowYL
-         wR6sbqFCgoDop1TgqOMDaFl/0Z/OH1sR8S1EnGHnz75ZusKyYxggcdhsmXpQ1z48ugjN
-         xSIt0NSem+HroLHDKCN40Q27mEccLiLsQ4CefL7VbPQst9U2mpZOQ0t6jk7fT8uZMDIi
-         46LJgOrAH1+wBTLrdoQYEcFVnghpUCvyZ5yJUzIIpfJHzzxL463oz87YkJBasfEc/mOb
-         k7GAZ4efynKsr/8/jGzDcNir7qo+3rw2QHXyKL5ZTPva5WLJZQkhWoskW3Ye340bs6Pt
-         WhGw==
-X-Gm-Message-State: AOJu0YwKe1JWDbtparr3IyRIfs3FXMY8vp+NBsl3DA2ogZtgVi0bk9QD
-	o+Rt8HcPmJexTPfwz7dmiRKEaeJY3DPgaFaaUCadY7yjvPiOjWhHuTNI8AVktyCZnT5luj6tr04
-	70xw=
-X-Google-Smtp-Source: AGHT+IF072wtLDVuFhLz/laKC/3DyZTIFY+Nv3wRPhqhHWN3bhVDacXtc1jka+JGAi1z5WbEVcDOMQ==
-X-Received: by 2002:a05:6402:31ad:b0:55b:397c:3019 with SMTP id dj13-20020a05640231ad00b0055b397c3019mr877760edb.1.1705922113962;
-        Mon, 22 Jan 2024 03:15:13 -0800 (PST)
+        bh=QYvtByBMmibUCUZcFilpUEWd0hC7XPo/IrPVWnAuEF8=;
+        b=pTpWHMxA0YbDJN62+9xUTaaFz177wV6WT5gB9uKrDMApQIEsybUGZB9KKaax/jFDJB
+         i14cN32TSNIaGnt65tAMZ6U/bypraOUSrXTq0/+1+ki6qqi5veiHLr09azN8wK93Q07s
+         24TTzODFbtkt5/Ul/QsIblwzhvvQnAU3SYJg+/CF1QdIICN9f5TB5tUNVJFKoheEqirT
+         EjJrpVsxroWYLhtAWr8VgYSzjbGjAJQ3d0/wLfcJZOxsF4Wabt+izm4NoUhUs/KNOzHa
+         1fNJ+Z7dbK5MhXLUND6RvBWeZzy9mLk0euq9y9+eeuDxLqScqbtDkHtJTTMAkCF9gkmU
+         Q1fg==
+X-Gm-Message-State: AOJu0YxwsYaX1zZNupNwEWD8dt9EUSBNh/aQZh27onNBeP2Lu9KaoQce
+	thu/hpeZTLQ8FGjUMf3YwpfWmM/ZuYMgmXROJax263JB6UrMrXFJPR5qw4umI/FVyQjDeS/TNeU
+	AF3Y=
+X-Google-Smtp-Source: AGHT+IEZONRRWwPg55Bl6j+qg9gT2tMH2N7hRshFExy3U+WwV/uEC+1jiGK+QgUlbmP5FuFEZwo/rg==
+X-Received: by 2002:aa7:d750:0:b0:559:b1b0:4437 with SMTP id a16-20020aa7d750000000b00559b1b04437mr5881853eds.5.1705922115799;
+        Mon, 22 Jan 2024 03:15:15 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id h27-20020a056402095b00b0055c643f4f8asm179422edz.32.2024.01.22.03.15.12
+        by smtp.gmail.com with ESMTPSA id h27-20020a056402095b00b0055c643f4f8asm179422edz.32.2024.01.22.03.15.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 03:15:13 -0800 (PST)
+        Mon, 22 Jan 2024 03:15:15 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
  daniel.lezcano@linaro.org, tglx@linutronix.de, conor+dt@kernel.org, 
@@ -63,13 +63,13 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, kernel-team@android.com, 
  tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
  semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com
-In-Reply-To: <20231222165355.1462740-4-peter.griffin@linaro.org>
+In-Reply-To: <20231222165355.1462740-3-peter.griffin@linaro.org>
 References: <20231222165355.1462740-1-peter.griffin@linaro.org>
- <20231222165355.1462740-4-peter.griffin@linaro.org>
-Subject: Re: (subset) [PATCH 3/3] arm64: dts: exynos: gs101: define Multi
- Core Timer (MCT) node
-Message-Id: <170592211238.45273.922705807227687587.b4-ty@linaro.org>
-Date: Mon, 22 Jan 2024 12:15:12 +0100
+ <20231222165355.1462740-3-peter.griffin@linaro.org>
+Subject: Re: (subset) [PATCH 2/3] clk: samsung: gs101: register cmu_misc
+ clocks early
+Message-Id: <170592211404.45273.11848415644684146235.b4-ty@linaro.org>
+Date: Mon, 22 Jan 2024 12:15:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -81,17 +81,21 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.4
 
 
-On Fri, 22 Dec 2023 16:53:55 +0000, Peter Griffin wrote:
-> MCT has one global timer and 8 CPU local timers. The global timer
-> can generate 4 interrupts, and each local timer can generate an
-> interrupt making 12 interrupts in total.
+On Fri, 22 Dec 2023 16:53:54 +0000, Peter Griffin wrote:
+> Update cmu_misc so it is registered early, as it contains
+> the gate which clocks the Multi Core Timer (MCT). This clock
+> is required early in boot, otherwise exynos_mct will fail
+> obtaining the clock.
 > 
+> Note this wasn't previously an issue as exynos_mct wasn't
+> enabled.
 > 
+> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: exynos: gs101: define Multi Core Timer (MCT) node
-      https://git.kernel.org/krzk/linux/c/2b1b22054a8240e8e806d872b6fc361611f9c7a2
+[2/3] clk: samsung: gs101: register cmu_misc clocks early
+      https://git.kernel.org/krzk/linux/c/163cd42fc49081964e0fc6f0b1e94b6b50eb85f5
 
 Best regards,
 -- 
