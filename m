@@ -1,58 +1,58 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E4A57338
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 08:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40CE58AB5
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 08:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705998111; cv=none; b=PntFsNfXlc533EpwVsrbCREAJNxAHumo2xpJIrP7G7fAoCBActw2PTlxPc3+hUaKAjRRO05KT3GE9ZGyzFIzHW1RSVwM2h5Vj0Mrm5sKvXvjvLPyFW6B0RchMrPNar8bMxCLbIr1vpil3H709wcXDTINiUPPgfGTRgyXumWrdFk=
+	t=1705998855; cv=none; b=PW6IDFqo/evjntVmUZfk+FMsLmgFA1U2nqncZQzupkhNM3/awUmQkck/rdZGL/UEyDLDrJAYVPgce2bNIVl4X5j2qjwrdLjXJ/HClRnC7G37urJEZ/QSaV9bdU6cvZSPa/RMjOHbgKPngI6R0HALbngvzNOr8XmiYetBe6VBWLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705998111; c=relaxed/simple;
-	bh=yLmCf3LZn4vpBl6Mi3X/E4/QwFaBbTAwx3SO0oARWpE=;
+	s=arc-20240116; t=1705998855; c=relaxed/simple;
+	bh=5ExUUjVENReZ6nNNRQd1DhQ3Hrey0IKfdVg+0g3aZWY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aOl7EHelgXqjQHOmCYzlBofqTHA8aZmpgf4wYj/QGOjpMcNn5U0j7ns8COcpIE9YUVi67DpuLtyMwu0Lw3oEp23VERcp+JCa1JUom72SFHpTApzEItEn+zWbOMiQRJea+EE5W/6x8gtrafgQoKVZCNNRuiWL8DiA3b4+lWWbMxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WtTViEB1; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:Content-Type; b=KiDKxYkgTotyTl1iFVl5GNh9+3I1in3ArNR5vvXwg8gRNGnn/HmjEyTJsSiTk5YsEpoRR1w7yIKTevU53DIsb0KXjyHnM+cpUyZ3YCEGqLi1JeSkV8Yxhqp1mxUgdgFEzBsSsOx3Ee77YP0zjjOmbls5KuAf6YSydE6P+ZL4oO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zuyIwmHD; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WtTViEB1"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-337d5480a6aso3841888f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 00:21:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zuyIwmHD"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3392b045e0aso2409515f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 00:34:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705998108; x=1706602908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1705998852; x=1706603652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zhs/3EXWuNywd5myI2R42csthImnPa9FJe9iZYIsfrA=;
-        b=WtTViEB1j+0E5AzBwH0m5FlcIqcTIXjOtIp6GP72G8A8jf8sE8Q84736oGM6GMDM8r
-         E5XhDeto7dH/z9hFl189iEeZUGZuCrr2MLllH8bmBUiAr+HZXig/3v3/K9UYqOHhhUWc
-         RojB55CMh+2hwQefzwPXdayPjT4p/53UiL9mhG3hXMjvlxN6wqclMbn2kKeZQ+bPAWK1
-         swGnk6ataniKii90vkyZrp5zuxRoVIkL3XO3Xeoc4F0ua7ZT/XspeamiCF+XEtBtURaM
-         9wBfFR4qkvCLWE5OZiS11J5QQrO6BrgjNfITlfcAL5xPGUUjUINTGtncFEqHTnUlmmsE
-         fsDw==
+        bh=XO+dw9hjpAkz16g21i5T858l1Se4V6/Q5rPys97A/CY=;
+        b=zuyIwmHDGzcq0ae5Kwp2KgNkIWzvxtyKB0u5hSsz24q9m3u9ewZ0uU7Xpz0xSi6xbW
+         1VD2ODQhWy+KhAYBgiPnEykslwdymn2q3cKTdLzvCk7KuAK5Im80tJND/o/rtts6Xal3
+         /mzUrtF+J3/a5JDtJvXcs5+jfqSK69BMcTf1eksUv3Qekxq+/xfgbXjT969Bv+yxfVEF
+         inevkKCBl38OnWdU/OYDy51uGICtI69QkkK1X5+3PLk4md55liWcGXtBT3pky/Wlh/V6
+         1wX6rGwBxg9BnMyhMs62pARrGnaBZ0R5rObXSQK0ZoqHGcZdHnGFudKT18Sbuph9WoHF
+         w3tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705998108; x=1706602908;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1705998852; x=1706603652;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zhs/3EXWuNywd5myI2R42csthImnPa9FJe9iZYIsfrA=;
-        b=XbpDZPcMbYCqXCy42qe05APQmxpjwgYV/8d/4NpSkhvYIjwpUnvRsqANcMSobE1JbH
-         ldS16PC99h6E1wmX5QcHRMrRqr8Jo9EIoZAzv6lZAo9BXMTdrgSkTskSnoM5QYOli+aE
-         DuVDhT8JziCjpjNcZLL3z67Q8TZIlZOBOYsCb4snrbwSwRFPLwa8QwN3jivyo+msH7m+
-         dR8MJo2xdIIVfnLj5pCP4GZD+BobbPoInNH2pnDRxmza7qLE3UhYq42ZcQ+6zBcU1hno
-         Pci3G5RrlxSmIBkTH1p1xvAjmOtDeo1/nuAqzWIi6bl7/HmdZB0KC4eQ4T0zcY0ieHBh
-         IKFg==
-X-Gm-Message-State: AOJu0Yzp4Jn1g0zKjIBrCFqorCXqjcOA3WxwuYulrAzldWgnyZl3ZzEf
-	kqYZhutyXsjAsdgeCMKUJtBL3fvDaN65sWC+aOz844DFOvwtXM6i7hteE0YQ5Xk=
-X-Google-Smtp-Source: AGHT+IFMNKBfaxHkYhIDB96hpHah0NfQUDbzn+gQCywMAWzaKl5qJMw4Fbz2etGtoM+OwlUljrSozw==
-X-Received: by 2002:a05:6000:18cc:b0:337:610f:56f7 with SMTP id w12-20020a05600018cc00b00337610f56f7mr3269725wrq.127.1705998108301;
-        Tue, 23 Jan 2024 00:21:48 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id h10-20020adff4ca000000b0033925aa222dsm8715975wrp.57.2024.01.23.00.21.47
+        bh=XO+dw9hjpAkz16g21i5T858l1Se4V6/Q5rPys97A/CY=;
+        b=OrY5H9L7RNtpzlw6zHMjsrf2tGyl47f7ezVcu9Sab9wR7DZxXwPgsH9eZYrmlJgyN9
+         FcSwJybVV/9QCGDBqjBkQdGdFLIVEhPrSV/SBaSHHX+WhftwwveITLgCQ/9m+l01RUXc
+         itJ6SX50N6LFr9bLHy7LsHRdjVX8U7mNL/yW4yR/IH7oD2IfQEPYrLUn5BWucLUheJFm
+         T6eA4jfhMhPynjH1eYDgzQgXHk8QIeTBnYE3P8VSZ8hrnk+zVVeldr/PIJIv2TqKuOrU
+         rpXLTnb1TVuyuPTZVkJ/4F5Ez20z0kCx9tZe5ZIZTzLvwYLuIHdOfzXCDGhhzH0RrFjk
+         SpqA==
+X-Gm-Message-State: AOJu0YzZFrdfzkM2zd8BvqaHtmjYyT06maW70/CgU7NlcD5sDBMa2WlU
+	YpvsQLc31VukK6w2QEDo/meGpB5RsGfYISvLP5ZKOWyIIx/EqwG+ySALtuh9k4g=
+X-Google-Smtp-Source: AGHT+IGrCAgTgEAukfsy/q0uXDaS3k3nOqy0ClJGMMZBpBzpyjTKUPVawtgMdG2hAzicgJ1/u0atxw==
+X-Received: by 2002:a05:6000:905:b0:339:359c:11c0 with SMTP id cw5-20020a056000090500b00339359c11c0mr1889379wrb.37.1705998852085;
+        Tue, 23 Jan 2024 00:34:12 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id x8-20020a5d4448000000b0033925e94c89sm8687254wrr.12.2024.01.23.00.34.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 00:21:47 -0800 (PST)
-Message-ID: <05d8a712-a527-4892-aee1-4b52c21c3d32@linaro.org>
-Date: Tue, 23 Jan 2024 09:21:46 +0100
+        Tue, 23 Jan 2024 00:34:11 -0800 (PST)
+Message-ID: <6ddbf20c-6929-4cb0-9fdb-570cc7170b9c@linaro.org>
+Date: Tue, 23 Jan 2024 08:34:09 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -60,81 +60,52 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Fix spelling mistake in
- 'tesla,fsd-clock.yaml'
+Subject: Re: [PATCH v4 7/8] arm64: dts: exynos: gs101: define USI8 with I2C
+ configuration
 Content-Language: en-US
-To: Varada Pavani <v.pavani@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: andi.shyti@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
- aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-References: <CGME20231219115856epcas5p371abeb4264f60309e597b90954e6d58c@epcas5p3.samsung.com>
- <20231219115834.65720-1-v.pavani@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231219115834.65720-1-v.pavani@samsung.com>
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ andre.draszik@linaro.org, semen.protsenko@linaro.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
+ <20240119111132.1290455-8-tudor.ambarus@linaro.org>
+ <9d12f4f9-1892-48f3-b8d1-8f59788cc91d@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <9d12f4f9-1892-48f3-b8d1-8f59788cc91d@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/12/2023 12:58, Varada Pavani wrote:
-> Fix typo 'inteernal' to 'internal' in 'Documentation/devicetree/
-> bindings/clock/tesla,fsd-clock.yaml'.
+
+
+On 1/23/24 07:52, Krzysztof Kozlowski wrote:
+> On 19/01/2024 12:11, Tudor Ambarus wrote:
+>> USI8 I2C is used to communicate with an eeprom found on the battery
+>> connector. Define USI8 in I2C configuration.
+>>
+>> USI8 CONFIG register comes with a 0x0 reset value, meaning that USI8
+>> doesn't have a default protocol (I2C, SPI, UART) at reset. Thus the
+>> selection of the protocol is intentionally left for the board dts file.
 > 
-> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
-> ---
->  Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> ... and dropped, because this patch does not build:
+> https://krzk.eu/#/builders/29/builds/3869
+> and I missed weird dependency mentioned in cover letter:
+> 
+> "This patch set shall be queued after the cmu_misc clock name fixes from:"
+> 
+> Sorry, this cannot work like that. DTS for new features cannot build
+> depend on driver changes.
 
-Applied with subject fixed.
+No worries. What shall I do so that you re-consider the dropped patches?
+I'm not yet familiar with your release management, but I guess that if
+you submit your "fixes-clk" branch for integration into v6.8-rc2, and
+then merge v6.8-rc2 into your "next/dt64", you'll then be able to queue
+the dropped patches as well.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching.
-
-Best regards,
-Krzysztof
-
+Thanks,
+ta
