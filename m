@@ -1,144 +1,136 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3696121
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 07:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0A88C04;
+	Tue, 23 Jan 2024 08:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705996450; cv=none; b=i0jsImJOkDQoEcf/fxA3tUQqsFiBKDPEMkt42AFwKrzfS80yraH9zhi1mvbOEoOcffQ/l59YyyBbBxFrmnteSgFbWhDyM7rvZP2X+MbYuK0KrHKkiFIrWpOoXPJEWhCya/Kuk8yUb3s6/kf3vlGV8Exq4tVYquD6O++r9k7MovM=
+	t=1705997466; cv=none; b=GbQPPWo9mDNAd4aFTLvL4VZMOOpJsFTPgNZyA20QmZNQ1Puvl2fkkwpLWs0IM7C6fn3aM2ZMyTs09fngI7bJ0+1DLX5CfWAt/vwFYeeIEpdQPYmZeOCY5zIyT+2x4UAOEvQ25WH/O8jkCjKe0USXdvX1F6viwOqs+qQhl9DtdQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705996450; c=relaxed/simple;
-	bh=tBedCUbIDi7cJALz8lSeQBwe+VGtSCa0w1XsjaYRfzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=twSIxv7eKg2NXcbXCoZ/4tqQ0gwNALBHEUM8q0zGj7gOqSliDxTYjtH6ht7iDfXxukujVlk+E4j99eGbiwRn7zRr2vhCrQMKMc88HIuZHxYXPG3QEsXvy6MIhv/jLgEFYj3iuJzMOzTCr0dTGQp/ZKHqK9GGqXyjQP37qWyDZzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rxEONhGT; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705997466; c=relaxed/simple;
+	bh=bPCy7tEnsrV1/R4RxhVq/TTlUTKFwD4Yndpfv5J8heY=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=SwnmK8jG/f4Pgq2WmZIkcPpTNwosod6ofreJhQluBrecPkQKHsLZzp3B9RH+dUtB3TRMxKBdn0ZnZqapFay/IUa0juUpfi7zQKt486cwWx/02YGbsn+GGkR9hYrbUfq0ndAmeYLHcF41O+7+qk5jcXkQP0b2abftkpC/Lv7UbTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kb9tyox9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ikD6gGQq; arc=none smtp.client-ip=64.147.123.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rxEONhGT"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40eb2f3935eso7572595e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 23:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705996447; x=1706601247; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CfgHqLSG+kbIYFl/TKr0M3FGr205aNe5wCYQPgU7e6g=;
-        b=rxEONhGTPWYbuXN9d0P5aF0g4OaI/YA0bthzAFQLzjm3apxFmYSGEjwaKSSxGPzGwW
-         JsCxdbuHaBFhMySGb0KbIj3elMXcvIF2wRzAmN+yxjNRxaFNMMpq9eVGv/x3L0o8aj0q
-         RFF9Afi4snewc5zxr0cm38Ow4/SKMC6XFzxyH73TDJa6tWujnTCiC1y3NrFHe+dnopAI
-         XsnsC+ggEd7odpme93YORM/zX1KjDp1gB5J6wnNFTLEVUXAW0n319qwcowvGGDR7Ols8
-         tB7+px/6vaV+TClEwfrxXYmtMDUqNGaofIfwyhgVpHfriq0Sxr/sBUwc1WN60Li2VSXW
-         cjOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705996447; x=1706601247;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CfgHqLSG+kbIYFl/TKr0M3FGr205aNe5wCYQPgU7e6g=;
-        b=qyKGUPS4x4v1rO9Gc90kWs/8CXCn+gea+hR5+/VI1iYMWl+qnP6H/6o99RUFob3ocR
-         EhOZj6lkPaLMAMZZoaZZhsI9yyvkvLT4UVYjUzsrLm+p4Hqij4p8gLPwO9N/IOW6x9CM
-         xrnaN/zoARlb258sIybxEWV9fGm3HU4R8CIArevLYj628KeW8y8xcNzBZku+gohtS4vk
-         Eiz1AiAcChUUcd+cTBr/f+HNTo+zqIU0KTexwJoW55unnZ1mepU3jJ7gU7IP1qrM/hYN
-         OfD8XsU/wbSWZGgSdaSZ4hUWQVTfEg0FEqQLxDATS+Pne6qukyPFkPTTxKfesRBzJy11
-         FeCA==
-X-Gm-Message-State: AOJu0YwD3YTBXSrKp0IDd2cHj38qUflWK0bEvTWa/wsPygfARDwOi1X6
-	Bl7v3GfP5YLImS7/NbpDMLqjRR6h4S46NGs1A2a4+WTRHmTeIyZE6y76KRtxnCA=
-X-Google-Smtp-Source: AGHT+IHyMx08HfAIrd4A6qIuCbAsUgXRxlH9n7hQifYqmSGq2OJCSKSW1PCH2zqRw3u5loabHLdwIQ==
-X-Received: by 2002:a05:600c:210a:b0:40e:b178:40ac with SMTP id u10-20020a05600c210a00b0040eb17840acmr264357wml.156.1705996447549;
-        Mon, 22 Jan 2024 23:54:07 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id v2-20020a5d4a42000000b003392b1ebf5csm7591526wrs.59.2024.01.22.23.54.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jan 2024 23:54:07 -0800 (PST)
-Message-ID: <b7ee9d75-6647-4708-8d49-2cef8912395f@linaro.org>
-Date: Tue, 23 Jan 2024 08:54:04 +0100
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kb9tyox9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ikD6gGQq"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id E7E053200AC7;
+	Tue, 23 Jan 2024 03:10:58 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 23 Jan 2024 03:11:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1705997458; x=1706083858; bh=8GW7Ys4hJn
+	ST61kBAZS3rGpqnAP7hlhrw5R1Bh3T8ww=; b=kb9tyox9sC8LX4vvUW6Cl3tie5
+	GEjSeraUi+YDFtWxtzz1dBB49Q7snKx7PRapGHnK559ubVuRf+diSA3Fcxjwwofy
+	rL67E17qTnu8kSkyE/1e2wubWQtNHWPvO3utGUGRB9N830o5EVYv/j51C+4WzhHV
+	+PMSADJ5M5qeMIrC+1EF9NWx+tE8+3O0KCXPWW/hPKHbjVloSoHWcDwzezmghDIW
+	KK+qnjoMW0zNOc8lFmTMYW9Xuu4rhiBDwPJHH9iHU5KjapShGBbCjOm0zEzkhYMw
+	KlLEWBcgflzfCdvv7diRxCR0HQNq6VbywNA1/VIhYHGg4jmMLdDvdTNfEIBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1705997458; x=1706083858; bh=8GW7Ys4hJnST61kBAZS3rGpqnAP7
+	hlhrw5R1Bh3T8ww=; b=ikD6gGQqdQQJgaZWnkOFLIu9nGcs8/pDgiQd4NCc0cx6
+	qvYTCMhGlRUm72OQo1KFjzQBa8QHWi/vQm1bBHW3mSfVDrDslDAH0BVB8sedNQSe
+	y9mKr8t6lOc9a/rvxFEkD2z3jtT2orFeZtmCvGO5cnBFZ4V3+fqgNyRUHqsUSFMJ
+	KvU+zPtA1R9AgGtVOIFJbKnzfnqTn8dLDw5Gmr46d6JpMe3CZSRtlzjxz962PVS8
+	h9VRcL2wJ4ISaPX1xGEWiiYEOTwkvcAqXh1qZzjLGqg4Hk6BS+E1rIgm+tYTD882
+	0v798k4YNR+UNv74FNPurqeb93NW+JFHhRMQAUfLzg==
+X-ME-Sender: <xms:knSvZePcH4JgvX9k-cJ9tI41EuG6ee5eNwMt7mF0cvxRBBQeXTdlvg>
+    <xme:knSvZc8aP8vVIbDKZKdWvrTpCPJvU4gCDPEcPgjkZd7ApeDUcXETPg4yDNm_uGcF-
+    UBxkLNYIIgkLDI1gFs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdekjedguddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:knSvZVS8KGzEADrrHfFT_wlfw5OYuTbaf89tuySLNIwM4X-1fATWpQ>
+    <xmx:knSvZesT32AOqITVP8J6Ym-UoB2W3vyvyoRH_ubIOXmV3cWhZuFw8Q>
+    <xmx:knSvZWdhyA0vc3SZH-Dz39ckd3oPpeihZpxhn6deDveDKoZOwPDmaw>
+    <xmx:knSvZZUmNfn7ZkduDwUNZsN58HMFGk43W7hVZKZxQ8lj293vkdh3WQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E487FB6008D; Tue, 23 Jan 2024 03:10:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-119-ga8b98d1bd8-fm-20240108.001-ga8b98d1b
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] arm64: dts: exynos: gs101: update USI UART to use
- peric0 clocks
-Content-Language: en-US
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: andi.shyti@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- andre.draszik@linaro.org, semen.protsenko@linaro.org,
- willmcvicker@google.com, kernel-team@android.com
-References: <20240119111132.1290455-1-tudor.ambarus@linaro.org>
- <20240119111132.1290455-7-tudor.ambarus@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240119111132.1290455-7-tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <dd8402e7-f8cc-4ddd-a748-e176b6b534a9@app.fastmail.com>
+In-Reply-To: <20240122225710.1952066-3-peter.griffin@linaro.org>
+References: <20240122225710.1952066-1-peter.griffin@linaro.org>
+ <20240122225710.1952066-3-peter.griffin@linaro.org>
+Date: Tue, 23 Jan 2024 09:10:36 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Griffin" <peter.griffin@linaro.org>,
+ "Rob Herring" <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
+ "Guenter Roeck" <linux@roeck-us.net>,
+ "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, jaewon02.kim@samsung.com,
+ chanho61.park@samsung.com, "Sam Protsenko" <semen.protsenko@linaro.org>
+Cc: kernel-team@android.com, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ saravanak@google.com, "William McVicker" <willmcvicker@google.com>,
+ linux-fsd@tesla.com, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/9] soc: samsung: exynos-pmu: Add exynos_pmu_update/read/write
+ APIs and SoC quirks
+Content-Type: text/plain
 
-On 19/01/2024 12:11, Tudor Ambarus wrote:
-> Get rid of the dummy clock and start using the cmu_peric0 clocks
-> for the usi_uart and serial_0 nodes.
-> 
-> Tested the serial at 115200, 1000000 and 3000000 baudrates,
-> everthing went fine.
-> 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+On Mon, Jan 22, 2024, at 23:57, Peter Griffin wrote:
 
-This also fails to build (and also cannot depend on driver changes
-because it is a new DTS).
+> --- a/include/linux/soc/samsung/exynos-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-pmu.h
+> @@ -21,11 +21,39 @@ enum sys_powerdown {
+>  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+>  #ifdef CONFIG_EXYNOS_PMU
+>  extern struct regmap *exynos_get_pmu_regmap(void);
+> +extern int exynos_pmu_update_bits(unsigned int offset, unsigned int 
+> mask,
+> +				  unsigned int val);
+> +extern int exynos_pmu_update(unsigned int offset, unsigned int mask,
+> +			     unsigned int val);
+> +extern int exynos_pmu_write(unsigned int offset, unsigned int val);
+> +extern int exynos_pmu_read(unsigned int offset, unsigned int *val);
+>  #else
+>  static inline struct regmap *exynos_get_pmu_regmap(void)
+>  {
+>  	return ERR_PTR(-ENODEV);
+>  }
+> +
+> +static inline int exynos_pmu_update_bits(unsigned int offset, unsigned 
+> int mask,
+> +					 unsigned int val);
+> +{
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +
+> +static inline int exynos_pmu_update(unsigned int offset, unsigned int 
+> mask,
+> +				    unsigned int val);
+> +{
+> +	return ERR_PTR(-ENODEV);
+> +}
 
-Dropped.
+This won't build since you have the wrong return type.
+I would suggest you just remove the #ifdef check entirely
+and instead require drivers using this to have correct
+dependencies.
 
-Best regards,
-Krzysztof
-
+    Arnd
