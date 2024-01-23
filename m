@@ -1,113 +1,107 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ED44BA91
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 22:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B738B524C1;
+	Tue, 23 Jan 2024 07:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705964264; cv=none; b=Z571LKkdyUg0ZFvoPnWuB/q+dkudAjH3bTDXa3Wr6so2+kt9e9use+8rO5aayz8I9rpWTDTnI55QB741KS1d+je6SMghTkHza6EFLWWI7FbA8p/oMFIrIpIunUQX6NQGoV16Uqsh30fuHT3XrXHMcil9vW4CL7fZ3kr/Z4tBJq8=
+	t=1705995738; cv=none; b=utRpUWO72Vo0LSog4nRPs6L4VNLRAS3YtjgXTeVUbRkGPawKvd7wlhyFZka6uC5mNynR7II5A14l2KVDAo/C9/nTpvn71qDXGA0BFiProDsVPBAcA6vJ74Hhwd88CxnjkvAeZagH1/DH+EQ4/JpLs9iTmDv+7E/hCy/FK+YCgqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705964264; c=relaxed/simple;
-	bh=6Fww45r8KMq9qH9gjFBGszYrLznUeDKKB4S+eDk2dqU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bl9M6ghenfw6Ww+Sud7rr+LiXsNvxo5PVDeTBWkyE5viF4UndKhNFoyIqmh/X9nztfASF7Lgr1aXNMjjEsmeKosV+lkBfIMSkUYoRecLvYKOakmprd4ZOS4ZCCtfxTnqZhT9W9JhFq+jA4SL8f6OwXsEQZMeaIAIuLt49/ZXRWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jKiFJ1GC; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1705995738; c=relaxed/simple;
+	bh=N3TW6zn4ZfdYvjpm3OAQvfUfaRC4b/dOkQACq0ilcGg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=m+cHmIWggsCrVPJPI5fMj4O/ejmCxvcgi4PmVJBdVOV221ARDwZSaqh179OHu91oA6qu+eh5L4tJK+TVz5SPPCWbA5nEnBlD7PDMYfjwJmO6HFr7DXq8IoijikDZPVTDiwjKUYxz6JuyvZjDreQJenmbYQ9HRYOEABpk5tQ6daE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ETPCV5Db; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X43E6IJx; arc=none smtp.client-ip=64.147.123.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jKiFJ1GC"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e80046264so47533625e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jan 2024 14:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1705964260; x=1706569060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yR0AO5T3Lm52GetAuhWGDlBbvPmAefipWgZrjsJSJcM=;
-        b=jKiFJ1GCKKlFtDaECgZa64YK1ExR9aWypvp9vvl5lhUd3K49tl7R+MojlpME9pL3kq
-         kw8ZdngSy98q2b2gXYSYMe8q27mIlvuHx6AuErBItlaEVq7tNhQDYianBmVG3OqxIaBw
-         gQ9G1Ls1UhJ0gP25eqJT5lh2JyYYXJTcdb8AC1aIzgfHb78kaIhG4CP+J8lojdYa7hkP
-         UhO6PqcWlXyAzRb68oBZfnI5SOC582eMaQ8GRL06xtO7EgB2Urtv70hFKDsAKHnURPM0
-         JO2ahBDkOViF8pBzCm0/tBNkketXwBEvDzynQpYUCC3DM+vnmUDQokXnaCUYU8UdLxlv
-         CdsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705964260; x=1706569060;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yR0AO5T3Lm52GetAuhWGDlBbvPmAefipWgZrjsJSJcM=;
-        b=pJpqhtzrIoLhZwRKm7uOBYMmq5a34DNhtLO9EcFJ1WjaMc/qLbpmFhUn0wVaeSmSOm
-         qtYbg96bjj39JfJx2WXlednfywVLCkFapXnLlpfNYZrWaeiacSU7sRGw250d980kvpvF
-         jSra4gLRQFd3XeAn2f9wXbxJovCA09dRkYAe0zJRkTnzfR3eIIFYDNU13jUtQw1/avVo
-         5xdtX2RshTob75IFdTapW85NT5452+lrghGStBn05EA2PNAWhqr0syWpdKnhUuQtYmBe
-         8dTeTOwA0sJuYeTy81c8I+nRR0s4Mx/EuHxCT9jH2sH5TL6UCy5Obme8JWaxbXgsUXFW
-         cF3w==
-X-Gm-Message-State: AOJu0YzrGBYH1kw9v7Fyqpwb5i9BfdEw9+1TUvv45su/79Is3KHdyhK0
-	AVU6D/6KysLshqTU8Ve8WRl8cueAOqJh2J68sobpBnjhpZqcuwfbjRgZvGLpgMc=
-X-Google-Smtp-Source: AGHT+IE/3oSYmQaHmUVIEZrmPeRaKj7ezaMnrpX2IRhfyS/TY5XiBAOhqPClwNkExF4LwyWJ4DWvjA==
-X-Received: by 2002:a05:600c:a43:b0:40e:62aa:fa7b with SMTP id c3-20020a05600c0a4300b0040e62aafa7bmr2887046wmq.111.1705964260529;
-        Mon, 22 Jan 2024 14:57:40 -0800 (PST)
-Received: from gpeter-l.lan (host-92-18-76-30.as13285.net. [92.18.76.30])
-        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e89ff10f5sm19776847wmb.1.2024.01.22.14.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 14:57:38 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: arnd@arndb.de,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	linux@roeck-us.net,
-	wim@linux-watchdog.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	jaewon02.kim@samsung.com,
-	chanho61.park@samsung.com,
-	semen.protsenko@linaro.org
-Cc: kernel-team@android.com,
-	peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	linux-fsd@tesla.com,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 9/9] ARM: dts: exynos5250: remove deprecated samsung,syscon-phandle
-Date: Mon, 22 Jan 2024 22:57:10 +0000
-Message-ID: <20240122225710.1952066-10-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-In-Reply-To: <20240122225710.1952066-1-peter.griffin@linaro.org>
-References: <20240122225710.1952066-1-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ETPCV5Db";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X43E6IJx"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 22A333200A11;
+	Tue, 23 Jan 2024 02:42:14 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 23 Jan 2024 02:42:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1705995733; x=1706082133; bh=RoP6Oowyfa
+	kcL2hCR2YmRvMj2I53sJwl/XC2owMPac4=; b=ETPCV5Dbvaeiax1xIxSYocns3z
+	Sv5dnbBStOh30fCXi9YTp6OhRR/8oQbH53ssci+0ajDOv9MpXl7Urx4TQ5z5WTP+
+	7RfUhlBwgppuA6oMMYsbS8OCesggLNal0grGiVkyWrejPwemaQLZFklXHjSIdnnm
+	UAEj/X48dLFJaTy+uS09RGys0Q9IqmZZaqR63qgrvmhwW5W2VWpTPilguU9+agfT
+	lbGPoC7uOmS3Bjq4B29QBNpOTnaewG4mVb90MwOUWUh5En9OUdAWT+6gL3ya8AjY
+	8BhQHivSTigUMPk6ER+BOi1klO7JuhCPUngfGx/KD1dr5H4z0MJ9dsLC9AOw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1705995733; x=1706082133; bh=RoP6OowyfakcL2hCR2YmRvMj2I53
+	sJwl/XC2owMPac4=; b=X43E6IJxmuP7RoKL7P4ADximZCFFUKgVGHB9Ke1wYWfO
+	v3rQcfUwcttBJP34M2pfj73EBOoSmq59lV7uW954tHxanXsAL3pqLMIEi68QrBr8
+	sX5No5GAnnEjhDAtOAWk6XOZClCeZBr5lKmh8V9GqGNjjmWMiwNoUoO8IJW5oG7o
+	C5fKXfaWFyh7k9R1MgTTp8ujfDmCvmEo2pTas4cudaWngXa2skpel6rIinLQd3o+
+	Np7y6IgBN/x+nBKImgbHJ9oN5xqpE2Lu3DMxsxgmKDrffXlpG7oXTCIZPuAIf4gx
+	S6z6TPX/IUTTIjrAahvJ5fqGDncICiGgpuiQDHr/+Q==
+X-ME-Sender: <xms:1G2vZcRGCSzpE1Y4IqXgsIa5YItPYcO9LnUYmTq6AU1xbdyeUY_FDQ>
+    <xme:1G2vZZxVLZJ_nYm4er2bEp7JwJBMya50VXPKoTalMakwVK_DDimYHO_yV5MRs6fK-
+    njZkltXrh7tBEUIHBk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdekjedguddtkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:1G2vZZ3zZyNWaat5GwzQwwZaPQ6Gm0FF6GDhTGAw0YWcNgXSsxss7g>
+    <xmx:1G2vZQA0wXdtGG9httF2Uhdk6ulIyiVs6UTP7phZB-Kcx9B7KITgsw>
+    <xmx:1G2vZVjoPr4Kw7Cq-p5Q_S-SXt1MKCo55A8G7WDe-yDyNXc6gOJVYw>
+    <xmx:1W2vZeZgAhE6DwDrqYPlFJEBH85HlU1kpBIPF16VUyJLGlZFFKz4Ag>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A1E39B6008F; Tue, 23 Jan 2024 02:42:12 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-119-ga8b98d1bd8-fm-20240108.001-ga8b98d1b
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <da24d929-408c-4ce9-9f84-4b2e73e3f107@app.fastmail.com>
+In-Reply-To: <20240122225710.1952066-10-peter.griffin@linaro.org>
+References: <20240122225710.1952066-1-peter.griffin@linaro.org>
+ <20240122225710.1952066-10-peter.griffin@linaro.org>
+Date: Tue, 23 Jan 2024 08:41:52 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Griffin" <peter.griffin@linaro.org>,
+ "Rob Herring" <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
+ "Guenter Roeck" <linux@roeck-us.net>,
+ "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, jaewon02.kim@samsung.com,
+ chanho61.park@samsung.com, "Sam Protsenko" <semen.protsenko@linaro.org>
+Cc: kernel-team@android.com, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ saravanak@google.com, "William McVicker" <willmcvicker@google.com>,
+ linux-fsd@tesla.com, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 9/9] ARM: dts: exynos5250: remove deprecated samsung,syscon-phandle
+Content-Type: text/plain
 
-samsung,syscon-phandle is no longer used by the Samsung watchdog driver
-to access PMU registers.
+On Mon, Jan 22, 2024, at 23:57, Peter Griffin wrote:
+> samsung,syscon-phandle is no longer used by the Samsung watchdog driver
+> to access PMU registers.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/samsung/exynos5250.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+Can you mention the driver commit that led to the property no
+longer being required? Since this change would break compatibility
+with older kernels, I would want to make sure that at least a
+couple of years have passed since then to give users an upgrade
+path.
 
-diff --git a/arch/arm/boot/dts/samsung/exynos5250.dtsi b/arch/arm/boot/dts/samsung/exynos5250.dtsi
-index 99c84bebf25a..2bbeb0f0d898 100644
---- a/arch/arm/boot/dts/samsung/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos5250.dtsi
-@@ -312,7 +312,6 @@ watchdog@101d0000 {
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_WDT>;
- 			clock-names = "watchdog";
--			samsung,syscon-phandle = <&pmu_system_controller>;
- 		};
- 
- 		mfc: codec@11000000 {
--- 
-2.43.0.429.g432eaa2c6b-goog
-
+      Arnd
