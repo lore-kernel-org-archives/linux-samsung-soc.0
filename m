@@ -1,108 +1,136 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5285C64
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 19:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7602538DF4
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 21:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706038122; cv=none; b=WBZug1UD+3UvIXLuuflLDhVGYNXDBvIH+0T208AlVy9EBLLJim+al8Y6BhtLsEU9JqGxpXKEClhmvaKMNr/mYoLqWpReHy2UM00x5kHhUmbNJ9/pOPDgjNEiER5RryZqWASHOG5Akki11ert40pl9G9yhW1OqLuedZmYBB3JhAs=
+	t=1706045383; cv=none; b=qzXodLDoULuUzE1tGA1WtmdA772zDw5YtcsFRti9tx98CfJsLixAA2PKkvGdVEfZJqqubEcBzZ6PVzSBjQLjbpmGgXfEYgrf9vzB4VM2LT5YwRSLYZOP0GaY10jYtN2nt3+jLyVP/WpnYygSJSGplYEGxwDyEx7Vfe8+EWqEGww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706038122; c=relaxed/simple;
-	bh=z635edAjEZRLK9uYsv6D75GltoeAuq2T8K98RgKsohU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KWX9Cb6K0GD1OosinZygPWjnBow5tboiFp8x7aLr45Wwduehz3U59jKbKQuPA5WPdDkN4q422btDJRsMZTTwNsMulRjEOMlvdDw3OLhzf8duWcS/48UaGdeOv5HtEjEZY+M2VKUWKd3mubPSG6Yp4u4sj0o9O8GGCl5LvTJifO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XH87orin; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1706045383; c=relaxed/simple;
+	bh=sINYbXEH1qJH0gpRv8KVFye65WquQpM8MGdYM8M3HlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bA8tQlOHrUe1NMkJtwohZuvUyUpE4qFRfAfmJnj8O/gFP2rEJwgbtgjw/prMSQuh8un3MmWkugO9ln9fCyYLP6nfRAQr9ULBZKlm6lMYvP82ekBCLAlkfK06PbuMG77REfJuS7/zDBTxnybsPFajqEOHBs0cH+XiOIGTMozRdm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hqJrzDMq; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XH87orin"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6dd7b525cd6so795576b3a.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 11:28:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hqJrzDMq"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40e86a9fc4bso61959605e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 13:29:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706038120; x=1706642920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m4fx2jRa6XWdzoBOQRFudfhQ7Cys5tOUHx4aJsazh8w=;
-        b=XH87orin++yohiMfBwAoFVV9WdBMKy+twg/U6p/3DyC9KKTOU2Ux3eLbdMfNgfkODT
-         ppj7MvP0UEPdg6jEE5yAgZJvT/XXOtMm2ElKwrRwEkVaArOZLozQ8ORNwNgs8bDa8asU
-         /rn+q+Ke3bT8gefXTQ+LrLW55JQhv4q1x7wguM/Vwu9Whh0g7jpL5Zt7xDaOWe8L6bz5
-         cNisxXxI0IQgX4RWq2IQgPrBOrWWzqV4tOTLOOfjyQv/6vsOetesi3H3EwmHWBlNyngt
-         vtoakd+H+8kUbkC5yVFqV+TzKZ+SL2E7oviXIw6OHpzBZKwcyBDRRyJBRaSo9Qp9hGap
-         A3Jg==
+        d=linaro.org; s=google; t=1706045380; x=1706650180; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GBKF+Xtw8nNf8Z3k8KrFF4LUUxKcX4saG2T7m2Shp8E=;
+        b=hqJrzDMqJcjKEKbcOqDXzfS/5J+IlPBCiTUUI17s3Nxp8p2SkUFAKz9bZ4iQondxSy
+         y1LpcdoZekIKyl5wI3sahcG87FG/rmWL6ZgHzsUAs880kIgzMkdid+fBhdGxRqYvjYvw
+         SxPyErxhqTU1RBO2TsTvVk/8/gWJjHK8qhWK2rOuq3rCCOfiuNpiruV4Uwbmi+Ln7C0U
+         6eNxhonz/aupkzHhtRk8YeXVSjDNhRwn0cXFbY15YOyj2eCysYJbbMVJopl/k2wO8DXw
+         tJNl6H05Ymxe3tjn/lg4C5Z/SmsFpXmXJ1Q9gbj0PMyC/ozDiroD2eYD5ujVMH2BtZvO
+         L18w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706038120; x=1706642920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m4fx2jRa6XWdzoBOQRFudfhQ7Cys5tOUHx4aJsazh8w=;
-        b=v8/pG75xCH/OvIyjSkMxWsFrnho9F39ytSG9fN3Uef8uj4NVqOZiYEqEiZGo1cIA8p
-         FUoH2wJ8FFDtZEF+ndNdlkQ/prqAtNMPbL+pgIppNFB+tLf+gdVDpPoDSdaADi2aaMqf
-         8VBjBY9A/fiftJaaOfdbvfiuGolbZz3XcQBv+elqwps6BoC2B5Bf0OEQsasgoqRad//n
-         ac11BE8B5orFY8FHVq7y2j3DDMXWPkT/8+YU90R4Xr8c5VKyhXpmZNG3IXgA6F8TaThG
-         Wgi9cKee/lWLxosM3XQbJkg8UknkiNAM0KeeeYiQjnDUYu7e7WHgObtiba8NN3S0Ai2J
-         Jthg==
-X-Gm-Message-State: AOJu0Yyhh4RTVigHZKm8ALUK6vXebSlcM1HZKIgwq7MHuoFJlbFTWekB
-	HFklqna1jlIXBEyr9i1YcfAWa7YYjMEGh7hFX5QEGGtOSHZj7tWBHlpsVyorrJHUthURiu80rX7
-	Dp73fO6wc9n0hjyWIDXTiS0jNT/Lalql1G0ohhw==
-X-Google-Smtp-Source: AGHT+IE4pMdlHZBzRIybtPg+syPs+PySUc9Nk1uvLXRsfE7U/0t69O5o5wVcE/JsP6QewXSBCaO+EnVOVMCLRSuJrjI=
-X-Received: by 2002:a05:6a00:460e:b0:6da:bceb:3990 with SMTP id
- ko14-20020a056a00460e00b006dabceb3990mr3781418pfb.53.1706038119921; Tue, 23
- Jan 2024 11:28:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706045380; x=1706650180;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GBKF+Xtw8nNf8Z3k8KrFF4LUUxKcX4saG2T7m2Shp8E=;
+        b=Z1PEsa87A3QrMA3YTwqnGj6Gilk1WAza514xOpsLlw2b+AKWEB1BeizoPmdQrp6Ese
+         uqeogAxDppWd0NF4Cw6zaUoEwa/BF/tNz6UqfDWIMCAMRmAl0lFilG8mu2Bt+2oCP0bm
+         LScpvESUflbJ6dJmJ4k9aUZKu/5b1QyYWy+3hPkI0a8bMlxqUbbYbVHXMiVyRWlAmUyO
+         4Etp3D2U+TSAIt7ppMCGSsS4aqGrJXoxuYLQefnys2sVkR/trMDJyDHu5N02uPe/V+IE
+         eMok/9Xoyl6e9iNthvQV9urZq01zYv8tubVAFPbnq59o2Cs280bfiOH7E/zqsDIUcURg
+         D3Fg==
+X-Gm-Message-State: AOJu0YyG6qz4pa5M14EUXCAM6tOxjm3XpeOs9TKhFBZo6n2yp5YMM79L
+	OUIWKZRytu/etrKpEf78sblYkKPpYIBXBE4gwyHwX5Z1Qia8YiFM7iv6Z9+bGho=
+X-Google-Smtp-Source: AGHT+IE3sTASROr2k3nuLgN9SLWF1S8/C6fwfapcWIMBQGvJ9+yhe6rs+MtnmTIsL3U7DUr5jB7H7Q==
+X-Received: by 2002:a05:600c:54d1:b0:40e:671e:5406 with SMTP id iw17-20020a05600c54d100b0040e671e5406mr503719wmb.80.1706045379570;
+        Tue, 23 Jan 2024 13:29:39 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.215.66])
+        by smtp.gmail.com with ESMTPSA id t5-20020a05600c450500b0040d6d755c90sm43768183wmo.42.2024.01.23.13.29.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 13:29:39 -0800 (PST)
+Message-ID: <101fda87-7ee6-45ea-8103-7158ff92b848@linaro.org>
+Date: Tue, 23 Jan 2024 22:29:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240123153421.715951-1-tudor.ambarus@linaro.org> <20240123153421.715951-17-tudor.ambarus@linaro.org>
-In-Reply-To: <20240123153421.715951-17-tudor.ambarus@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 23 Jan 2024 13:28:28 -0600
-Message-ID: <CAPLW+4k-5vdkBNdewTgG72iAr0oLv1zXncnmx-qy6diJqQMNDg@mail.gmail.com>
-Subject: Re: [PATCH 16/21] spi: s3c64xx: add missing blank line after declaration
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, arnd@arndb.de, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arch@vger.kernel.org, andre.draszik@linaro.org, 
-	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/21] spi: dt-bindings: samsung: add google,gs101-spi
+ compatible
+Content-Language: en-US
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, broonie@kernel.org,
+ andi.shyti@kernel.org, arnd@arndb.de
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arch@vger.kernel.org, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, semen.protsenko@linaro.org,
+ kernel-team@android.com, willmcvicker@google.com
+References: <20240123153421.715951-1-tudor.ambarus@linaro.org>
+ <20240123153421.715951-2-tudor.ambarus@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240123153421.715951-2-tudor.ambarus@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 23, 2024 at 9:34=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
-> Add missing blank line after declaration. Move initialization in the
-> body of the function.
->
+On 23/01/2024 16:34, Tudor Ambarus wrote:
+> Add "google,gs101-spi" dedicated compatible for representing SPI of
+> Google GS101 SoC.
+> 
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/spi/spi-s3c64xx.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index f5474f3b3920..2abf5994080a 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1273,8 +1273,9 @@ static int s3c64xx_spi_suspend(struct device *dev)
->  {
->         struct spi_controller *host =3D dev_get_drvdata(dev);
->         struct s3c64xx_spi_driver_data *sdd =3D spi_controller_get_devdat=
-a(host);
-> +       int ret;
->
-> -       int ret =3D spi_controller_suspend(host);
-> +       ret =3D spi_controller_suspend(host);
 
-Why not just moving the empty line below the declaration block,
-keeping the initialization on the variable declaration line?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->         if (ret)
->                 return ret;
->
-> --
-> 2.43.0.429.g432eaa2c6b-goog
->
+Best regards,
+Krzysztof
+
