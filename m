@@ -1,90 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94509537EB;
-	Tue, 23 Jan 2024 22:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5368465
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 03:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706049749; cv=none; b=IW2bLHto8Nd+bREnDfLJvThcC2vYe9DE2yx6L9IrYwzXOXpiHtfLH1kUs39OFMMCv2k9tpHWYduNZl6FSaHgUamqSzJoNQLExts3lmcjA/YTOPKaPWah665m7JQ2GBjZr+Qc4EhN9EBmvtOpcSVdhXZLqRHq9/x2ZqQhuX2/0ds=
+	t=1706067497; cv=none; b=VG1TSBus6G/QlLheKfSYE+t9ctzWVs+w8/dK8vtkR5DsxOtU0le0PL0xlHCkxi/ZbslsKouLLkAAGKR0x5UrWGKQKL12mHsWCEXexvf+65mBlI+jiBKnz0PoBdOCQ93ad56HWoygOruzYx1MFQacOmzgZPJOzb0oyPP0D3yucuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706049749; c=relaxed/simple;
-	bh=biXAVYcjtB4l+Tb2LCVqxC+KBOGSGLcFg5kB6FJ3hpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MwrUn4FKT7J57MbcJ3+6Gy8eszlTvkL53wbDdn/c8M+iXXulnZKZ2r4jRvEJpGoX3nAzK+j95n55AomCLAiO0fEcKmOW/vdYZBL77/hsGCWs3/6BJSXd1KxD2uauq9XP6k3W2RSyqUj1/r//gl9CW+YdUkHvAMTsYB1gpG50yHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTIMOXnK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706067497; c=relaxed/simple;
+	bh=gHY6Za4YB2YEjW4eFUsAvZWAPhx8MO1yOAHtuYxr1Y0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=idcsInZBLbSzqq4vjLtSBkMixh8JsvdgmVQGYesrH4aShxHzk7T/fXHJ85W4xfbxErIwf17FAJjB0k7dkjA9Zccqb9RTYU+V/eurr9ZDJee3SNTJ3XijL//50penyomRbpK+dAC+PvFNXt0DoswwCouxNS/PZydKieHRVH1uGa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vAXnxluH; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTIMOXnK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ED3CC433C7;
-	Tue, 23 Jan 2024 22:42:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706049749;
-	bh=biXAVYcjtB4l+Tb2LCVqxC+KBOGSGLcFg5kB6FJ3hpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WTIMOXnKab9MmvXd5ioHSuHjwgZPb6WRB9x+IgUDGIaWvdYblLgVg6UWtoBM7R23l
-	 Tvp3wb9ze24X/V/IRHw5Ttnk6H5b+pQIlE7kpAyZEXBMn/8BOjObIck24zJOtuVT9o
-	 J5JSlY60Lqtuw+Yk9IFHfyjOn2GOepCE+i2etPRItDbHafX7u8gQVz2nyXkJJhc8Wg
-	 4sK0vh886wSVgW8FMurAyegJ1gc22AGbaucrOF54pf1Hhs4DaxKIWeU+iZGRUtguv2
-	 qxIr3LY3YhzfVO2dREEaOCFEhnFGJv8Sq+tbPj2nFJVZicX9POZMOzEEqaTdvLHeAV
-	 c0Q2SvzblOqDg==
-Date: Tue, 23 Jan 2024 22:42:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, arnd@arndb.de,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	semen.protsenko@linaro.org, kernel-team@android.com,
-	willmcvicker@google.com
-Subject: Re: [PATCH 05/21] spi: s3c64xx: explicitly include <linux/bits.h>
-Message-ID: <6cfc5715-a4b8-41b4-ad82-95f9519301d0@sirena.org.uk>
-References: <20240123153421.715951-1-tudor.ambarus@linaro.org>
- <20240123153421.715951-6-tudor.ambarus@linaro.org>
- <kmijvv53j67l6lgndgrybj6iaup6pyrvzklkre6th4rcnrsrqo@ie5ji4nutbcd>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vAXnxluH"
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-428405a0205so85741cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jan 2024 19:38:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1706067493; x=1706672293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tdMLjM3xmQX96Y3bdJuN/STfPj4rBI4cOGcM5vMcyR8=;
+        b=vAXnxluH+jfAw0sZ2evuV3GmDQvMJNJKRDJdorN1jP6pI18KXLY0z2LBRjNzEJ+2Hb
+         15LAZpsEAHKz+guokMS2/ZN4NDsUpqp7jRF9fVn9oBXcM1MieQ0GC70TYgyNITA3bxSb
+         kJJhdaVzM6pQs+wfcKWbUDuruRxBEbDx3O4E3B9h8x3fkOjG8qIgOZrk5aVUTjyE3M93
+         n2BKNEHGBWjmBQ2aH3MnrJDd7mdu5c/YjZPKCaSZ7gQfQE7PD0d1eFXuWbYlZxRN4u0I
+         9Ns13MYE6jduQwdeZBYWkUpW2yln/rJbl5dnGNewAorvxzpgo0fMq4ZVE4Thn5opdgPg
+         3A6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706067493; x=1706672293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tdMLjM3xmQX96Y3bdJuN/STfPj4rBI4cOGcM5vMcyR8=;
+        b=YVyw7aSq3yhUctbjkKL+4ggQjMWW/OIQfrr3LbZuU8FssELv8JjrP3DuRsDx28hgQj
+         gK1PsXBve91dx6hx4vTeh4iXc9AuCfJrqhOk+RDPiDTn7lnM1lph0BXAuCm2dhGEXv1k
+         rg1z+qb3cOdJJ5mebc/AbGfiks0Oi4bzbHkMqJVdSHDD91M+TqcHUBX/LBkyj+cpPl2m
+         qIkL76eEQRjdBRXWb3nQVi5Y45o6+DdrrmKCuMMl21/BejpPMs7nAImfJLAWV8i/rdPu
+         VZLXlq438gQHvDC4uF7kPSIeIKKy8u9FinpbT/ZT4/D2Eoqv4FqMCPOOx5GMrZj8Xq19
+         Pyrg==
+X-Gm-Message-State: AOJu0Yzs/4GxtC1mXclW4fXYkERboneT/DTId+3Oi4gw8/W6Q/TdrVkt
+	wVfZnz/o4E7HHyEKrdSsNRH5VhOofc+OVBLoicz0lyoXDjQdzdfrIZuOUYCiS4HS4p9m4oCffC4
+	ncTqGVR/loO6hb3TXTzT9rufuD2oiWoHUO8OW
+X-Google-Smtp-Source: AGHT+IE1Esjv9/sVBDPl96cvpbPyXYWnTPZ9UtZldeJovkf65bcpcTqobEEXS2u1smk5x7ftPB0iqtjG//qQwnu2PZY=
+X-Received: by 2002:a05:622a:17cf:b0:429:c9cc:daa5 with SMTP id
+ u15-20020a05622a17cf00b00429c9ccdaa5mr18599qtk.23.1706067493350; Tue, 23 Jan
+ 2024 19:38:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CdYcJZPEcogqNf8N"
-Content-Disposition: inline
-In-Reply-To: <kmijvv53j67l6lgndgrybj6iaup6pyrvzklkre6th4rcnrsrqo@ie5ji4nutbcd>
-X-Cookie: Stay together, drag each other down.
+References: <20240122225710.1952066-1-peter.griffin@linaro.org>
+ <20240122225710.1952066-4-peter.griffin@linaro.org> <da30a68a-e29f-45c8-aa73-02955255a457@linaro.org>
+ <CADrjBPor5tMY4r0jOy7GH36auCU7dWn6Qn4ct89bsSMW4vAQOA@mail.gmail.com> <6c72a521-1048-42eb-ac74-d8f718a90723@linaro.org>
+In-Reply-To: <6c72a521-1048-42eb-ac74-d8f718a90723@linaro.org>
+From: Saravana Kannan <saravanak@google.com>
+Date: Tue, 23 Jan 2024 19:37:34 -0800
+Message-ID: <CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com>
+Subject: Re: [PATCH 3/9] watchdog: s3c2410_wdt: update to use new
+ exynos_pmu_*() apis
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, arnd@arndb.de, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, linux@roeck-us.net, wim@linux-watchdog.org, 
+	conor+dt@kernel.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
+	chanho61.park@samsung.com, semen.protsenko@linaro.org, 
+	kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	willmcvicker@google.com, linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jan 23, 2024 at 10:12=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 23/01/2024 18:30, Peter Griffin wrote:
+> >>>               dev_warn(wdt->dev, "Couldn't get RST_STAT register\n");
+> >>>       else if (rst_stat & BIT(wdt->drv_data->rst_stat_bit))
+> >>> @@ -698,14 +699,6 @@ static int s3c2410wdt_probe(struct platform_devi=
+ce *pdev)
+> >>>       if (ret)
+> >>>               return ret;
+> >>>
+> >>> -     if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+> >>> -             wdt->pmureg =3D syscon_regmap_lookup_by_phandle(dev->of=
+_node,
+> >>> -                                             "samsung,syscon-phandle=
+");
+> >>> -             if (IS_ERR(wdt->pmureg))
+> >>> -                     return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
+> >>> -                                          "syscon regmap lookup fail=
+ed.\n");
+> >>
+> >>
+> >> Continuing topic from the binding: I don't see how you handle probe
+> >> deferral, suspend ordering.
+> >
+> > The current implementation is simply relying on exynos-pmu being
+> > postcore_initcall level.
+> >
+> > I was just looking around for any existing Linux APIs that could be a
+> > more robust solution. It looks like
+> >
+> > of_parse_phandle()
+> > and
+> > of_find_device_by_node();
+> >
+> > Are often used to solve this type of probe deferral issue between
+> > devices. Is that what you would recommend using? Or is there something
+> > even better?
+>
+> I think you should keep the phandle and then set device link based on
+> of_find_device_by_node(). This would actually improve the code, because
+> syscon_regmap_lookup_by_phandle() does not create device links.
 
---CdYcJZPEcogqNf8N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I kinda agree with this. Just because we no longer use a syscon API to
+find the PMU register address doesn't mean the WDT doesn't depend on
+the PMU.
 
-On Tue, Jan 23, 2024 at 11:28:31PM +0100, Andi Shyti wrote:
-> On Tue, Jan 23, 2024 at 03:34:04PM +0000, Tudor Ambarus wrote:
+However, I think we should move to a generic "syscon" property. Then I
+can add support for "syscon" property to fw_devlink and then things
+will just work in terms of probe ordering, suspend/resume and also
+showing the dependency in DT even if you don't use the syscon APIs.
 
-> > +#include <linux/bits.h>
+Side note 1:
 
-> I don't see why this should be included. Are there cases when
-> not having bits.h produces any compilation error?
+I think we really should officially document a generic syscon DT
+property similar to how we have a generic "clocks" or "dmas" property.
+Then we can have a syscon_get_regmap() that's like so:
 
-It is good practice to directly include all headers used, it avoids
-implicit dependencies and spurious breakage if someone rearranges
-headers and causes the implicit include to vanish.
+struct regmap *syscon_get_regmap(struct device *dev)
+{
+        return syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
+}
 
---CdYcJZPEcogqNf8N
-Content-Type: application/pgp-signature; name="signature.asc"
+Instead of every device defining its own bespoke DT property to do the
+exact same thing. I did a quick "back of the envelope" grep on this
+and I get about 143 unique properties just to get the syscon regmap.
+$ git grep -A1 syscon_regmap_lookup_by_phandle | grep '"' | sed -e
+'s/^[^"]*//' -e 's/"[^"]*$/"/' | sort | uniq | wc -l
+143
 
------BEGIN PGP SIGNATURE-----
+Side note 2:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmWwQKkACgkQJNaLcl1U
-h9CGdwf/WB+c1bNFLr9Mw/Bud7/dT7qG4Xs2wsTPTbTW9o1Ygf6DSRdeMNf22+i5
-Bk3vgNREsSMYemyPugTQEP7T+dURYDU4LmwwL2YpEjoC/KfqoLxw+3SitZ8RLJS3
-me3TNi5biT1j6qZlItY70x76X6REQ4jDs6odxfxvqLlApxp2mb4XXkNT96Oanfx4
-uHbNrYgjnDsdNj8HQkdTF52OAtXAzQFhqmArmbXlJwNyS9e6rEsAa5leZY1cibPA
-MNHfbJy1hH1PReX7xPuYEKBGBZTUskdW9wICJHcdz6m2Gp6+48lxibDLUdqk0Ex1
-ERfpukg31HlmJpbbbD4p3jHSuglE+A==
-=dKfr
------END PGP SIGNATURE-----
+How are we making sure that it's the exynos-pmu driver that ends up
+probing the PMU and not the generic syscon driver? Both of these are
+platform drivers. And the exynos PMU device lists both the exynos
+compatible string and the syscon property. Is it purely a link order
+coincidence?
 
---CdYcJZPEcogqNf8N--
+-Saravana
