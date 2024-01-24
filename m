@@ -1,54 +1,53 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253BA18E0E
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 10:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3E518E11
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 10:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706090561; cv=none; b=nE98MqphvmqKUOrg5OIw//3rgEMi8qHXTk2W0rq0d96bja60w8lHCAqeQu0GpNmzqVKjnwMJMgvBlwGDVu8YbTfwsCLmzmTpJxa8Tu0BQDi3l9Rv1Gp7K25oYcGu+AhWcSJUr52m+tXh1o2Gnom/P442QMTFOYxSKC6CJG9MUMc=
+	t=1706091681; cv=none; b=mwIns2DGZCRTIwcE2cCbSlTq0Kk7pDpbt74lCOqmqdNS+LLDqpnOk6OXxgh/gA8H9oey8G1FQETFxrZfN1RQAsWed5pNBRyQluD8/MFbzJO3la0LvrqlJ1r98dt2WgeCp+fezcw0FX+y8upVKIhr5+HS3Dk0hS7Sz5iWnfIQ2Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706090561; c=relaxed/simple;
-	bh=eZb8KsVdKCKnn8GCgoqYmSVfuu/Q0go0ckHPs8r4gHo=;
+	s=arc-20240116; t=1706091681; c=relaxed/simple;
+	bh=ewX7gY72o0cl/yYtspnOPfn5OfSuWve6SbfDlOaK0u4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WBWvgW5Ovl0tfjnfpuv4xpYbChI1rWOOzO+6oME8XA4ev/0ZUfG3TBvk76aq/UtDhbdiYeeM41cfnWMYDZktJflMhY82py3UMh9LyToAjxOO1d5m6i68p0GP/I43EtItggQFA3Jdw2UG2eMcZf9/tUSYv9s9fvaIyKM5zqDIe34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CTZ1JlSz; arc=none smtp.client-ip=209.85.210.48
+	 To:Cc:Content-Type; b=DNihxwywP4NerIEnvSKZfo633OwTwRvg3yy+q8D5ZUhzLzFMEnFFmAjhTXXsockxzpIU1TGq/WD89bIqC5zzbv8dsqTRnFDTbJMRn5UpnIWuqgyIqxz/tMySiRK8E28GeUPrvaNBYFeR1UrnHVbAzbEbnAkg98swlipDRzrvXgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hCMnp+bB; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CTZ1JlSz"
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6e0af93fdaaso4670444a34.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 02:02:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hCMnp+bB"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc371b04559so1730166276.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 02:21:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706090559; x=1706695359; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yUpwH1vvlbubZBmKYelxmGkgmJALQKDTM110+USmxN4=;
-        b=CTZ1JlSzmYzjW/1gSgdcic0Rofquz1rTBIhY4ClIHvHBhe6TG2uLDpolg2+eNbQTpV
-         YZdSjloomPoZccsNH16ltOmkIRusBP/mds7dp6pvlpF6x9newN11amR7eIn+3dC2cLI6
-         R7mi73lny74n82ZDmEVoheuOW1kauPqm8+f1755CG65kR3s/RhMPIaW26Ym72OrOHNOU
-         Umv3vThfXvBPYVQR4IMuyhTxNPdYuOoggI8FEaertHZTfxjNiBJgcz0VVMdoRQSWL7xu
-         YhYxw9eDzGYRvaY79lsCfvqScYAPKQtqs4CorlNR5+StMSyM+YavfKERuo17xo2lJFCB
-         sgkg==
+        d=linaro.org; s=google; t=1706091678; x=1706696478; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oahrr0zPn7dyTHABN+YgjB62XpZ+3yBv/LwJfePBLo0=;
+        b=hCMnp+bBiLITDg/sLLkPFHu+Thcyva66Ve2kaglOP9lRu2AoY5ZVF/E1iCtcP4P41k
+         nyccSxaoxN3Ym3YL5xPCvicX3b6E2We1BoCRsBxazoTTj0newp95SNpgBZwzkqTq/rK9
+         5zzoPlYy7Z5sOkSquetM/YhdREcGum/clcYOWkV8/f1pQ7uszClp+o2yqpnPGqQko5Cp
+         2WqjyBoFLAhihKusRdWHe7diY0DIK4W1TFWWQ9GU2h1jqHWW3rwmbi/QrU49UoyZ15xe
+         nJ53Q1lClK4Te5HJi8C9BcPwrU8Ao/sbF6GFaVnSIr/OUsfDg6W1IcN1v0BLTb21nhHq
+         UNDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706090559; x=1706695359;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yUpwH1vvlbubZBmKYelxmGkgmJALQKDTM110+USmxN4=;
-        b=n/6N3GrGDGRg9lqVo56TrhwRNh8ZgUCJ7nPN0F6FB0uusSnr9oDDM4QbzpNJ3eTGX3
-         1dRzgefJ9gg3fWcGIUsEsDmqx2t0Xt5iXoE8CoaDGBRUiktqEdGu/unGm7/YQVUyYHf+
-         BjItV8AMEm3Kw+IELWVFRst5CYkfWp/dw9FKgtNHu8KSXgkAMGbO/ZpP4btk8F/n0wT/
-         +ybx5PfmllunUfIyoV6mIvMFudXTwJJ4wUn1ed9lLC/SyFnxbHVlWBQBiWRbEZkana3j
-         xt78wf6wUc1jgmeVv2Y8C+9Tp0ezjJhZy92Y4bClBxh1uNfQO871NmBSWgeM6rX+oTKI
-         tKpg==
-X-Gm-Message-State: AOJu0YzPW74nVyS42bdKvv49fxy+aR7ZSuhtD+JJ+PFXDnWo4QV4p/0C
-	VaL5s64ZhH3ny0m6q+i8r8vzE0UOZTniVwl/6HwKRUqeZwVkXtJgbSXNmgkHEAk7ZPAEv6kYZXo
-	GECh9yFts89mNc5RdV1WqsukCZErImn9KKmPqOQ==
-X-Google-Smtp-Source: AGHT+IE79HSwfv0oyaKG/O5pd/o2yGI9NCIYgU09VQo436h6rDnZM1AO/HGfrAmwLFfRmFGKRkbG+6cW5fHWetbuYc8=
-X-Received: by 2002:a9d:6305:0:b0:6dd:eb93:5b20 with SMTP id
- q5-20020a9d6305000000b006ddeb935b20mr1341915otk.21.1706090559206; Wed, 24 Jan
- 2024 02:02:39 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706091678; x=1706696478;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oahrr0zPn7dyTHABN+YgjB62XpZ+3yBv/LwJfePBLo0=;
+        b=IbK/CZu1MhQ5byhO24o6VWfzoPoHrFNGT8jl0BMzFv9QFVeWhDSznEO0Pc6AQ61mwK
+         TbffxoXJwrFYNUZJusWAAgtxS+WLVr8aEcj2238gMmMQjofzMCfwxgbd3W2laHDP9RJe
+         ffgznTG0ZSsB/UH1NiKWLJwbqKe0ivQtAEl57pY7ZLiHdsoYGEOUGIZMbny67Hd18Din
+         6kzLI94RQRIc/ejiFCuy/iserfUxqr55+fJqx9E08jWgefomHg/uzk66k6tRKwCyp4IM
+         GkkAXkd+gux7GzSU8YZ8OiKHHa11X9DPmk39/K4dAUA40t6IqS38Hm1RhzFYZ7/X4p3a
+         Kw8g==
+X-Gm-Message-State: AOJu0YzLuCH3lacqGl0ScWoaOFv/nT+gWiMb21AhzvcRMaO9xyBX33UB
+	IIT27oYzj4Z7fwaLlvCnqHm3oP9txjVjqRJcGkWcrAooL+pLhDPAJRndLm6DPcDNt4CQ+78eRNk
+	At44etIbO27JARoBY0/ln+4SFwtFqi/zRm7CRaw==
+X-Google-Smtp-Source: AGHT+IGVtGg/WkPzc49U9WuM15rlSuAsDRUaw6mcw+yY8QDg2i3KDIhJyIoiFrhlnelKM6n+BFEPpnW1/A4dbXsMEAc=
+X-Received: by 2002:a25:c402:0:b0:dbf:6240:d8a8 with SMTP id
+ u2-20020a25c402000000b00dbf6240d8a8mr457643ybf.17.1706091677756; Wed, 24 Jan
+ 2024 02:21:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,100 +55,73 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240122225710.1952066-1-peter.griffin@linaro.org>
- <20240122225710.1952066-3-peter.griffin@linaro.org> <CAPLW+4=G5YiTZaZ5k=H1YciUwOEjKSF0w9Hd8rwymA71UmJnRQ@mail.gmail.com>
-In-Reply-To: <CAPLW+4=G5YiTZaZ5k=H1YciUwOEjKSF0w9Hd8rwymA71UmJnRQ@mail.gmail.com>
+ <20240122225710.1952066-3-peter.griffin@linaro.org> <dd8402e7-f8cc-4ddd-a748-e176b6b534a9@app.fastmail.com>
+In-Reply-To: <dd8402e7-f8cc-4ddd-a748-e176b6b534a9@app.fastmail.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 24 Jan 2024 10:02:27 +0000
-Message-ID: <CADrjBPqbToXYUBx=reE5_W4U4aUUJRFs+FC5AHsrQ6mRYB9iAA@mail.gmail.com>
+Date: Wed, 24 Jan 2024 10:21:05 +0000
+Message-ID: <CADrjBPpchS0NdqS-mRmmatOksGHc4KdRniJXGDPTS1z73eU9kA@mail.gmail.com>
 Subject: Re: [PATCH 2/9] soc: samsung: exynos-pmu: Add exynos_pmu_update/read/write
  APIs and SoC quirks
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: arnd@arndb.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux@roeck-us.net, wim@linux-watchdog.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, jaewon02.kim@samsung.com, chanho61.park@samsung.com, 
-	kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com, linux-fsd@tesla.com, 
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Rob Herring <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org, 
+	Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, jaewon02.kim@samsung.com, 
+	chanho61.park@samsung.com, Sam Protsenko <semen.protsenko@linaro.org>, 
+	kernel-team@android.com, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	saravanak@google.com, William McVicker <willmcvicker@google.com>, linux-fsd@tesla.com, 
 	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Sam,
+Hi Arnd,
 
-Thanks for the review feedback.
-
-On Tue, 23 Jan 2024 at 18:56, Sam Protsenko <semen.protsenko@linaro.org> wr=
-ote:
+On Tue, 23 Jan 2024 at 08:11, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Mon, Jan 22, 2024 at 4:57=E2=80=AFPM Peter Griffin <peter.griffin@lina=
-ro.org> wrote:
-> >
-> > Newer Exynos SoCs have atomic set/clear bit hardware for PMU registers =
-as
-> > these registers can be accessed by multiple masters. Some platforms als=
-o
-> > protect the PMU registers for security hardening reasons so they can't =
-be
-> > written by normal world and are only write acessible in el3 via a SMC c=
-all.
-> >
-> > Add support for both of these usecases using SoC specific quirks that a=
-re
-> > determined from the DT compatible string.
-> >
-> > Drivers which need to read and write PMU registers should now use these
-> > new exynos_pmu_*() APIs instead of obtaining a regmap using
-> > syscon_regmap_lookup_by_phandle()
-> >
-> > Depending on the SoC specific quirks, the exynos_pmu_*() APIs will acce=
-ss
-> > the PMU register in the appropriate way.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/soc/samsung/exynos-pmu.c       | 209 ++++++++++++++++++++++++-
-> >  drivers/soc/samsung/exynos-pmu.h       |   4 +
-> >  include/linux/soc/samsung/exynos-pmu.h |  28 ++++
-> >  3 files changed, 234 insertions(+), 7 deletions(-)
-> >
+> On Mon, Jan 22, 2024, at 23:57, Peter Griffin wrote:
 >
-> [snip]
->
+> > --- a/include/linux/soc/samsung/exynos-pmu.h
+> > +++ b/include/linux/soc/samsung/exynos-pmu.h
+> > @@ -21,11 +21,39 @@ enum sys_powerdown {
+> >  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+> >  #ifdef CONFIG_EXYNOS_PMU
+> >  extern struct regmap *exynos_get_pmu_regmap(void);
+> > +extern int exynos_pmu_update_bits(unsigned int offset, unsigned int
+> > mask,
+> > +                               unsigned int val);
+> > +extern int exynos_pmu_update(unsigned int offset, unsigned int mask,
+> > +                          unsigned int val);
+> > +extern int exynos_pmu_write(unsigned int offset, unsigned int val);
+> > +extern int exynos_pmu_read(unsigned int offset, unsigned int *val);
+> >  #else
+> >  static inline struct regmap *exynos_get_pmu_regmap(void)
+> >  {
+> >       return ERR_PTR(-ENODEV);
+> >  }
 > > +
-> > +int exynos_pmu_update_bits(unsigned int offset, unsigned int mask,
-> > +                          unsigned int val)
+> > +static inline int exynos_pmu_update_bits(unsigned int offset, unsigned
+> > int mask,
+> > +                                      unsigned int val);
 > > +{
-> > +       if (pmu_context->pmu_data &&
-> > +           pmu_context->pmu_data->quirks & QUIRK_PMU_ALIVE_WRITE_SEC)
-> > +               return rmw_priv_reg(pmu_context->pmu_base_pa + offset,
-> > +                                   mask, val);
-> > +
-> > +       return regmap_update_bits(pmu_context->pmureg, offset, mask, va=
-l);
+> > +     return ERR_PTR(-ENODEV);
 > > +}
-> > +EXPORT_SYMBOL(exynos_pmu_update_bits);
 > > +
+> > +static inline int exynos_pmu_update(unsigned int offset, unsigned int
+> > mask,
+> > +                                 unsigned int val);
+> > +{
+> > +     return ERR_PTR(-ENODEV);
+> > +}
 >
-> This seems a bit hacky, from the design perspective. This way the user
-> will have to worry about things like driver dependencies, making sure
-> everything is instantiated in a correct order, etc. It also hides the
-> details otherwise visible through "syscon-phandle" property in the
-> device tree.
+> This won't build since you have the wrong return type.
+> I would suggest you just remove the #ifdef check entirely
+> and instead require drivers using this to have correct
+> dependencies.
 
-In v2 I will keep the phandle to pmu_system_controller in DT, and add
-some -EPROBE_DEFER logic (See my email with Krzysztof).
+Whoops, will fix it in v2. We need those stubs for platforms like
+ARCH_S3C64XX that don't have a PMU but use some of the same drivers.
 
-> Can we instead rework it by overriding regmap
-> implementation for Exynos specifics, and then continue to use it in
-> the leaf drivers via "syscon-phandle" property?
-
-I did look at that possibility first, as like you say it would avoid
-updating the leaf drivers to use the new API. Unfortunately a SMC
-backend to regmap was already tried and nacked upstream pretty hard.
-See here https://lore.kernel.org/lkml/20210723163759.GI5221@sirena.org.uk/T=
-/
-
-regards,
+Thanks,
 
 Peter.
