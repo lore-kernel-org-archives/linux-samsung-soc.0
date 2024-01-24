@@ -1,319 +1,147 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D5812E56
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 10:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FF459B6F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 11:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706092892; cv=none; b=SGQUI5k5ZgjN7Pgz7b2NkQAez0l6t7z108r1hn1j/DnSNjlvm4iQvxjqXX9sEqOJr8mpDAfOhCzV1NSVC8DX4Q8IsWze1xrDICzfNA/GR6P0M7CVw4+vH7ebP1L7lD5DZHeFMxJVt6Vu308SxH6ThlPXnkKgpKt8ecvNZDbWPgc=
+	t=1706096865; cv=none; b=SIkZwR+5udA/DIgAz0BPjkZlbtGA0M5glfJDHr9vCVMRbLGQTyuJLzaMb6J0yZlmRCuALjBkKcBcoA+P2u75XT749hWQGVfAy4HLzAL7R4pnesOwOWQ6bAeR3FryneZqrhJjCX632PkQOjo8ZVRtFRN3GIQRx3jpHVEkVMeFwpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706092892; c=relaxed/simple;
-	bh=7t/ckmKzHlheLjok9vFG6UB4uGApUEbePlDwZjvDVW8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jgwxANMNmVw5rG3RWjHoCXZ9fWEPlT+Lam8KRDA5vdFFEW0P97JTP5b5LzH9daYFWoavXg+UHbkmonQUNtfVdFBbYAyhzpqJ+dYQOnEssyrD62cu70O1NTPXVUxBMO1OyoPfuXW1RWgigDkC+mBt2nmMQBVqKS7xs/9Sz+Wj+Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mA366/0k; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706096865; c=relaxed/simple;
+	bh=dwUFUgXnc97o1JhfPJM4lmSZq785hcoEF4F3egx8Bq4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=hHx91DHRvhcTqNxZr5FmzasvkjeACreZthdEdGsSzKYZ5ZUwd2MiOBQLfa0lz0bjebqUR8HNu+5CLt1L4BQ/PYFKbB3yg4p1vIsIKdd9w7yBnbcTc+NyMtsHEkazxsKOIiuaM084SjR+A+KEaw6Ei0b3JmUUPmS1iNGOQcSb86M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZQPhwcOO; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mA366/0k"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-783195e57c7so338143285a.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 02:41:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706092889; x=1706697689; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QiROMXXFXODb7L7UjqjyOxVrJ4ER2WDfQ75RZrjuQlI=;
-        b=mA366/0ksJC0dQX2JHwhMLRJylFBdvGyv1ItB3e3OH9GbRQ9gyzGcULbpvo+xAXevb
-         1eLrG/neangBb+WrW9Pvu7HqoyAJLLC/KsVVYrSWgD62/1nv+wD8sePOxT/AU3NG+G8+
-         N1zzgbbJNInpCErcRWL0Q+bhIhX87F8kOGCLLZ22+ETBfXgF84wzbRfAd1KrugGWDYa3
-         kwzXsYTOL0k0NhuT+o5Y3lRDB/9y6HYAH613TUUvsvn/Z4CwKM+0wbgsbW75PfaFpknX
-         NItTrQC9QOUlean2GDdo+M9mV3WoCoOe6gUWlsaoxw60RDUAYXt/CxtCKIbhrG34IXnR
-         tUBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706092889; x=1706697689;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QiROMXXFXODb7L7UjqjyOxVrJ4ER2WDfQ75RZrjuQlI=;
-        b=fT6/qJxC4Q037GMclD3vsZPE2+RsFFBlN9xkY7PkHndS/eHNszdXHNktx9HRI9lFer
-         Er6Bz9CMF9HHYjZGR5WafImf076rkXCP1cYN8zaGlT5tcHa4ZwgjIULXlXNJfpzFFP4R
-         hV/rYAqWSQFSBAMtskxI0W4L8CkQg8bmcWoQHv1vUl5JTIVgdenRSoKKZZl9nGFm9ryT
-         nfKyPQ7VhM59pLhn30nEVZMhxl4TmNqRC0c+Cc+0FL9NHIX0/vpaHU62CwHLkFqvrrpF
-         KItDMSY6nNx2my2GAQAtEb/9KGMb+SNR/NOmq2RiVWPbHpYHxZvWeUlYAorEGlsJgMps
-         vTNg==
-X-Gm-Message-State: AOJu0YxfQp/0s+ctp9tmF5kcG7u7CNSbIQqm9Tio4DZUZitFo66JX6B+
-	MDCEl2Hd9vNX77A+VQQ9yi6mdSLpSSEEJs3EDasp94vYVfVClnN+21tMECXMruYWOuevYnmLJzH
-	0OykhpgXMpLZzGNn8HDoZgR0nWdHrdGJB2ov5Vw==
-X-Google-Smtp-Source: AGHT+IFdsL92eDpEceUPy/NWPdnUioo8kum7OltCPI/0zSDnxL1Kdg86w6Gpzo+sJQrbnoYeqGoisoDoMIBXSecc9ys=
-X-Received: by 2002:ad4:5ce7:0:b0:686:309e:14d2 with SMTP id
- iv7-20020ad45ce7000000b00686309e14d2mr3021783qvb.119.1706092889057; Wed, 24
- Jan 2024 02:41:29 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZQPhwcOO"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240124114740epoutp025f3ce5707dc8bd1d278e16382a44d11d~tRg42hoxQ2639026390epoutp02f
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jan 2024 11:47:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240124114740epoutp025f3ce5707dc8bd1d278e16382a44d11d~tRg42hoxQ2639026390epoutp02f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706096860;
+	bh=FAgkRhdAC59JFAtm6cZa0lcuph+thmUnykW5y5DcQUI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ZQPhwcOOfJhIjaSXLhqK2zJoqczs0rv2migJCof/kn3ULLzW8g0KCQYcFiCl24kGr
+	 uQUujZUwy26sFlTqUSfNSSB09LOAnXeUEl5JrqQwmhnA3N3t4owtlU5n8jucRMlSI/
+	 qoZeie0nFR4yq6jC7TUg6KVlsgTyPgUEnJHxS4jQ=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240124114740epcas5p13e64a477aeab25808dfb39ee2f01be06~tRg4XzjGz0304803048epcas5p1s;
+	Wed, 24 Jan 2024 11:47:40 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4TKhyy3jbvz4x9Pv; Wed, 24 Jan
+	2024 11:47:38 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	11.D5.19369.AD8F0B56; Wed, 24 Jan 2024 20:47:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1~tQkx79-pI2047220472epcas5p47;
+	Wed, 24 Jan 2024 10:38:50 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240124103850epsmtrp126601239072c5bb26298f097af4e18d4~tQkx6KDW32198721987epsmtrp1T;
+	Wed, 24 Jan 2024 10:38:50 +0000 (GMT)
+X-AuditID: b6c32a50-c99ff70000004ba9-ff-65b0f8da8882
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	04.6C.08817.9B8E0B56; Wed, 24 Jan 2024 19:38:49 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240124103847epsmtip26853ef4be44a9903676df0f3deffbbfd~tQkvY2buE0212502125epsmtip2q;
+	Wed, 24 Jan 2024 10:38:47 +0000 (GMT)
+From: Shradha Todi <shradha.t@samsung.com>
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, jingoohan1@gmail.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com, Shradha Todi
+	<shradha.t@samsung.com>
+Subject: [PATCH v4 0/2] Add helper function to get and enable all bulk
+ clocks
+Date: Wed, 24 Jan 2024 16:08:36 +0530
+Message-Id: <20240124103838.32478-1-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKJsWRmVeSWpSXmKPExsWy7bCmpu6tHxtSDT7cEbN4MG8bm8WSpgyL
+	FV9mslvsfb2V3aKh5zerxabH11gtPvbcY7W4vGsOm8XZecfZLGac38dkcWjqXkaLlj8tLBZr
+	j9xlt7jb0slqcfGUq8WirV/YLf7v2cFu8e/aRhaL3sO1DsIel69dZPZ4f6OV3WPnrLvsHgs2
+	lXpsWtXJ5nHn2h42jydXpjN5bF5S79G3ZRWjx+dNcgFcUdk2GamJKalFCql5yfkpmXnptkre
+	wfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBvKSmUJeaUAoUCEouLlfTtbIryS0tSFTLy
+	i0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyMw7828Ja8JCz4tmrlAbGD+xdjJwc
+	EgImElOamtm6GLk4hAT2MErcOtXNBOF8YpQ48e4wO4TzjVFiVuNTli5GDrCWr1v9IOJ7GSX+
+	fullgXBamSQ+7uoCm8smoCXR+LWLGSQhIrAYaO6OzawgDrPAEyaJJTf+soBUCQv4Szw5uo8V
+	xGYRUJX4ufwzWDevgJXE1O2f2SAulJdYveEA2CQJgbUcEh3Nk6ESLhKf9r9lgrCFJV4d3wL1
+	kpTEy/42KDtdYuXmGcwQdo7Et81LoOrtJQ5cmQP2D7OApsT6XfoQYVmJqafWgZUwC/BJ9P5+
+	AlXOK7FjHoytLPHl7x4WCFtSYt6xy6wQtofEjLfTwGqEBGIlFixuZZ/AKDsLYcMCRsZVjFKp
+	BcW56anJpgWGunmp5fCoSs7P3cQITq9aATsYV2/4q3eIkYmD8RCjBAezkgjvDcl1qUK8KYmV
+	ValF+fFFpTmpxYcYTYGBNpFZSjQ5H5jg80riDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnN
+	Tk0tSC2C6WPi4JRqYOrwDwhQVk6sj0hu0bSWLltwNcQ+/X3p/ocbemoqnF6+v787SLNI+/XT
+	uYe+7LT5Zm/tI3Wl7LjhsicGy9/1XTv508nvlujUmdH3+TYvFQniV1u9zeXegbDwqFuOb+yO
+	7ebNeqLi0VR7Mq4t4a192Ly3BVrVc3cvcI13n37p8TyB28t1LwWdty+Lm7KkZq5brkCFlEtd
+	fS7Ldwmh4xu4P/VKPXhx9PYb1fNXAnz7sp9NtV4RMWnOSutPkZ51IVcfC7Guk8oy7dO90rz8
+	hvXCj4wZOxvE1X6vfO8lvknni5jwec/N+5ddmXGzw4v36f+vK0WNfL2f9fxrN+t/WXvGePFG
+	jV7937w8Umax7zq5LJRYijMSDbWYi4oTAd8/t8c4BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsWy7bCSvO7OFxtSDS7ssbJ4MG8bm8WSpgyL
+	FV9mslvsfb2V3aKh5zerxabH11gtPvbcY7W4vGsOm8XZecfZLGac38dkcWjqXkaLlj8tLBZr
+	j9xlt7jb0slqcfGUq8WirV/YLf7v2cFu8e/aRhaL3sO1DsIel69dZPZ4f6OV3WPnrLvsHgs2
+	lXpsWtXJ5nHn2h42jydXpjN5bF5S79G3ZRWjx+dNcgFcUVw2Kak5mWWpRfp2CVwZB/5tYS14
+	yFnx7FVKA+MH9i5GDg4JAROJr1v9uhi5OIQEdjNKzH14gqWLkRMoLinx+eI6JghbWGLlv+fs
+	EEXNTBLt/w6wgSTYBLQkGr92MYMkRASWM0r8PPmUCcRhFvjCJDHp4S4mkBXCAr4SJ2+VgjSw
+	CKhK/Fz+mR3E5hWwkpi6/TMbxAZ5idUbDjBPYORZwMiwilEytaA4Nz232LDAKC+1XK84Mbe4
+	NC9dLzk/dxMjOMi1tHYw7ln1Qe8QIxMH4yFGCQ5mJRHeG5LrUoV4UxIrq1KL8uOLSnNSiw8x
+	SnOwKInzfnvdmyIkkJ5YkpqdmlqQWgSTZeLglGpg0s75XbaO4/P+SR94++7fz1pySv3WzRXN
+	99QXM1qFSc4MVfHjv/KDIYWj6sad6F19UrKJf/K2pgRbnrvy5BVXYlX7jcrSCIkVf9wPfdhZ
+	NC0t9PexdfLPHz5fbppvqXxFeIGyoJ/4+80c4eu6GpLXd6wyTPWMYOd9Pbn4u1fx3J/WZad+
+	+gc9eTZvWlDkosQdOrKNG2WnNnhsalrou3nxsp3M9+7YNAWI/uVPOZ11+912xn98+ZrXN+1M
+	M68u/SKzNPnlRg7WWTOyFn29e80p6fgqm2u5Gb+mHPbx5T33nLe6uDZta59p06Rl7QXmUm2m
+	Cwx/Xnjw7njk++W/Pk/YZq11ZZH2waMc+3Vqv12Z+EeJpTgj0VCLuag4EQAt8+rK4QIAAA==
+X-CMS-MailID: 20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1
+References: <CGME20240124103850epcas5p48fcb1e92172efd246b8292a294740dd1@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240122225710.1952066-1-peter.griffin@linaro.org>
- <20240122225710.1952066-3-peter.griffin@linaro.org> <26b9a75c-3721-4d7a-985e-772d9f67e6d5@linaro.org>
-In-Reply-To: <26b9a75c-3721-4d7a-985e-772d9f67e6d5@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 24 Jan 2024 10:41:16 +0000
-Message-ID: <CADrjBPqTqe+HDN_ye41sR_yJgnUXOWwkZsQyujptPPfzg+EBeg@mail.gmail.com>
-Subject: Re: [PATCH 2/9] soc: samsung: exynos-pmu: Add exynos_pmu_update/read/write
- APIs and SoC quirks
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: arnd@arndb.de, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	linux@roeck-us.net, wim@linux-watchdog.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, jaewon02.kim@samsung.com, chanho61.park@samsung.com, 
-	semen.protsenko@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
+Create a managed API wrapper to get all the bulk clocks and enable them
+as it is a very common practice in many drivers. The second patch uses
+this API to adapt to clk_bulk_* APIs in the exynos driver.
+v1:
+ - https://lore.kernel.org/lkml/20231009062216.6729-1-shradha.t@samsung.com/
+v2:
+ - https://lore.kernel.org/lkml/20231115065621.27014-1-shradha.t@samsung.com/
+ - Addressed Manivannan's comments to improve patch
+v3:
+ - https://lore.kernel.org/all/20240110110115.56270-1-shradha.t@samsung.com/
+ - Took Marek's suggestion to make a common bulk clk wrapper and use it in
+   the exynos driver
+v4:
+ - Addressed Alim and Manivannan's comments
+ - Changed enabled->enable and disabled->disable in function name
+ - Remove num_clks out parameter as it is not required by user
+ - Removed exit callback and used function name directly in release
 
-Thanks for the review feedback.
+Shradha Todi (2):
+  clk: Provide managed helper to get and enable bulk clocks
+  PCI: exynos: Adapt to clk_bulk_* APIs
 
-On Tue, 23 Jan 2024 at 11:17, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 22/01/2024 23:57, Peter Griffin wrote:
-> > Newer Exynos SoCs have atomic set/clear bit hardware for PMU registers as
-> > these registers can be accessed by multiple masters. Some platforms also
-> > protect the PMU registers for security hardening reasons so they can't be
-> > written by normal world and are only write acessible in el3 via a SMC call.
->
->
-> Typo? accessible?
+ drivers/clk/clk-devres.c                | 40 ++++++++++++++++++
+ drivers/pci/controller/dwc/pci-exynos.c | 54 ++-----------------------
+ include/linux/clk.h                     | 24 +++++++++++
+ 3 files changed, 68 insertions(+), 50 deletions(-)
 
-Will fix in v2.
->
-> >
-> > Add support for both of these usecases using SoC specific quirks that are
-> > determined from the DT compatible string.>
-> > Drivers which need to read and write PMU registers should now use these
-> > new exynos_pmu_*() APIs instead of obtaining a regmap using
-> > syscon_regmap_lookup_by_phandle()
-> >
-> > Depending on the SoC specific quirks, the exynos_pmu_*() APIs will access
-> > the PMU register in the appropriate way.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  drivers/soc/samsung/exynos-pmu.c       | 209 ++++++++++++++++++++++++-
-> >  drivers/soc/samsung/exynos-pmu.h       |   4 +
-> >  include/linux/soc/samsung/exynos-pmu.h |  28 ++++
-> >  3 files changed, 234 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> > index 250537d7cfd6..e9e933ede568 100644
-> > --- a/drivers/soc/samsung/exynos-pmu.c
-> > +++ b/drivers/soc/samsung/exynos-pmu.c
-> > @@ -5,6 +5,7 @@
-> >  //
-> >  // Exynos - CPU PMU(Power Management Unit) support
-> >
-> > +#include <linux/arm-smccc.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_address.h>
-> >  #include <linux/mfd/core.h>
-> > @@ -12,29 +13,204 @@
-> >  #include <linux/of_platform.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/delay.h>
-> > +#include <linux/regmap.h>
-> >
-> >  #include <linux/soc/samsung/exynos-regs-pmu.h>
-> >  #include <linux/soc/samsung/exynos-pmu.h>
-> >
-> >  #include "exynos-pmu.h"
-> >
-> > +/**
-> > + * DOC: Quirk flags for different Exynos PMU IP-cores
-> > + *
-> > + * This driver supports multiple Exynos based SoCs, each of which might have a
-> > + * different set of registers and features supported.
-> > + *
-> > + * Quirk flags described below serve the purpose of telling the driver about
-> > + * mentioned SoC traits, and can be specified in driver data for each particular
-> > + * supported device.
-> > + *
-> > + * %QUIRK_HAS_ATOMIC_BITSETHW: PMU IP has special atomic bit set/clear HW
-> > + * to protect against PMU registers being accessed from multiple bus masters.
-> > + *
-> > + * %QUIRK_PMU_ALIVE_WRITE_SEC: PMU registers are *not* write accesible from
-> > + * normal world. This is found on some SoCs as a security hardening measure. PMU
-> > + * registers on these SoCs can only be written via a SMC call and registers are
-> > + * checked by EL3 firmware against an allowlist before the write can procede.
-> > + * Note: This quirk should only be set for platforms whose el3 firmware
-> > + * implements the TENSOR_SMC_PMU_SEC_REG interface below.
-> > + */
-> > +
-> > +#define QUIRK_HAS_ATOMIC_BITSETHW            BIT(0)
-> > +#define QUIRK_PMU_ALIVE_WRITE_SEC            BIT(1)
-> > +
-> > +#define PMUALIVE_MASK GENMASK(14, 0)
-> > +
-> >  struct exynos_pmu_context {
-> >       struct device *dev;
-> >       const struct exynos_pmu_data *pmu_data;
-> > +     struct regmap *pmureg;
-> > +     void __iomem *pmu_base_addr;
-> > +     phys_addr_t pmu_base_pa;
-> > +     /* protect PMU reg atomic update operations */
-> > +     spinlock_t update_lock;
-> >  };
-> >
-> > -void __iomem *pmu_base_addr;
-> >  static struct exynos_pmu_context *pmu_context;
-> >
-> > +/*
-> > + * Some SoCs are configured so that PMU_ALIVE registers can only be written
-> > + * from el3. As Linux needs to write some of these registers, the following
-> > + * SMC register read/write/read,write,modify interface is used.
-> > + *
-> > + * Note: This SMC interface is known to be implemented on gs101 and derivative
-> > + * SoCs.
-> > + */
-> > +#define TENSOR_SMC_PMU_SEC_REG                       (0x82000504)
-> > +#define TENSOR_PMUREG_READ                   0
-> > +#define TENSOR_PMUREG_WRITE                  1
-> > +#define TENSOR_PMUREG_RMW                    2
->
-> These are tensor specific...
->
-> > +
-> > +int set_priv_reg(phys_addr_t reg, u32 val)
->
-> ...but this not...
->
-> > +{
-> > +     struct arm_smccc_res res;
-> > +
-> > +     arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG,
->
-> ... and this is again.
->
-> Some naming should be clarified, e.g. tensor specific functions should
-> have some prefix as well, e.g. tensor_writel(), tensor_cmpxchg() or
-> something similar.
+-- 
+2.17.1
 
-Noted. I will add a tensor prefix on these two functions as well in v2.
-
->
->
-> > +                   reg,
-> > +                   TENSOR_PMUREG_WRITE,
-> > +                   val, 0, 0, 0, 0, &res);
-> > +
-> > +     if (res.a0)
-> > +             pr_warn("%s(): SMC failed: %lu\n", __func__, res.a0);
-> > +
-> > +     return (int)res.a0;
-> > +}
-> > +
-> > +int rmw_priv_reg(phys_addr_t reg, u32 mask, u32 val)
-> > +{
-> > +     struct arm_smccc_res res;
-> > +
-> > +     arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG,
-> > +                   reg,
-> > +                   TENSOR_PMUREG_RMW,
-> > +                   mask, val, 0, 0, 0, &res);
-> > +
-> > +     if (res.a0)
-> > +             pr_warn("%s(): SMC failed: %lu\n", __func__, res.a0);
-> > +
-> > +     return (int)res.a0;
-> > +}
-> > +
-> > +/*
-> > + * For SoCs that have set/clear bit hardware (as indicated by
-> > + * QUIRK_HAS_ATOMIC_BITSETHW) this function can be used when
-> > + * the PMU register will be accessed by multiple masters.
-> > + *
-> > + * For example, to set bits 13:8 in PMU reg offset 0x3e80
-> > + * exynos_pmu_set_bit_atomic(0x3e80, 0x3f00, 0x3f00);
-> > + *
-> > + * To clear bits 13:8 in PMU offset 0x3e80
-> > + * exynos_pmu_set_bit_atomic(0x3e80, 0x0, 0x3f00);
-> > + */
-> > +static inline void exynos_pmu_set_bit_atomic(unsigned int offset,
-> > +                                          u32 val, u32 mask)
-> > +{
-> > +     unsigned long flags;
-> > +     unsigned int i;
-> > +
-> > +     spin_lock_irqsave(&pmu_context->update_lock, flags);
-> > +     for (i = 0; i < 32; i++) {
-> > +             if (mask & BIT(i)) {
-> > +                     if (val & BIT(i)) {
-> > +                             offset |= 0xc000;
-> > +                             pmu_raw_writel(i, offset);
-> > +                     } else {
-> > +                             offset |= 0x8000;
-> > +                             pmu_raw_writel(i, offset);
-> > +                     }
-> > +             }
-> > +     }
-> > +     spin_unlock_irqrestore(&pmu_context->update_lock, flags);
-> > +}
-> > +
-> > +int exynos_pmu_update_bits(unsigned int offset, unsigned int mask,
-> > +                        unsigned int val)
-> > +{
-> > +     if (pmu_context->pmu_data &&
-> > +         pmu_context->pmu_data->quirks & QUIRK_PMU_ALIVE_WRITE_SEC)
-> > +             return rmw_priv_reg(pmu_context->pmu_base_pa + offset,
-> > +                                 mask, val);
-> > +
-> > +     return regmap_update_bits(pmu_context->pmureg, offset, mask, val);
-> > +}
-> > +EXPORT_SYMBOL(exynos_pmu_update_bits);
->
-> You need kerneldoc for all exported functions.
->
-> Also, EXPORT_SYMBOL_GPL
-
-Will fix both in v2.
-
->
-> > +
-> >  void pmu_raw_writel(u32 val, u32 offset)
-> >  {
-> > -     writel_relaxed(val, pmu_base_addr + offset);
-> > +     if (pmu_context->pmu_data &&
-> > +         pmu_context->pmu_data->quirks & QUIRK_PMU_ALIVE_WRITE_SEC)
-> > +             return (void)set_priv_reg(pmu_context->pmu_base_pa + offset,
-> > +                                       val);
-> > +
-> > +     return writel_relaxed(val, pmu_context->pmu_base_addr + offset);
-> >  }
-> >
->
-> ...
->
-> > diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
-> > index 1c652ffd79b4..570c6e4dc8c3 100644
-> > --- a/drivers/soc/samsung/exynos-pmu.h
-> > +++ b/drivers/soc/samsung/exynos-pmu.h
-> > @@ -25,8 +25,12 @@ struct exynos_pmu_data {
-> >       void (*pmu_init)(void);
-> >       void (*powerdown_conf)(enum sys_powerdown);
-> >       void (*powerdown_conf_extra)(enum sys_powerdown);
-> > +     u32 quirks;
-> >  };
-> >
-> > +int set_priv_reg(phys_addr_t reg, u32 val);
-> > +int rmw_priv_reg(phys_addr_t reg, u32 mask, u32 val);
->
-> Why these are in the header?
-
-Will fix in v2.
-
-regards,
-
-Peter.
