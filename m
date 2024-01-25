@@ -1,56 +1,57 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6626A823BB
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904EB86ADF
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194233; cv=none; b=ZwB6cPcmuLEexSVi8DSNiwPG8H3h6AiamCyteLIShWzQj2N5BSjo5D6rCHNMYNUIuluqK7G8HYZDjAGYt+KSVUG44/dROLEnNrrQ6W/mmRZDI86P/oDKeK/jVWxnxH7avHf1m/Xcp1IrHZIr+TYqdfa1Y0MxvlvgXJ7QsojJMVo=
+	t=1706194233; cv=none; b=XlqlN2ZiGwRB6KZSC+8jqo2jPTLJQGZ9D6wwsfyAaaXivn/zUmNHxwn/jlFj5nUsui9GDK9C2pLM34cqCq0ma1oVKCb2t//vzIFaPIszAcQcp4ly38/vMYrlxD8RB+50Dcg7e2luLCow/RM/0PEttKp7nk92ok+Rzo+qSRIY39o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706194233; c=relaxed/simple;
-	bh=U4kxxxoIs3/ayRfB8zDyK6XoFk+619l1Mat98X/4pcA=;
+	bh=ky++lUpjV2xM2yr5R8NgpgcPYQ2XfXR8n2IS4sf5ezM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RT9IOP762VcziT5A1kxR/QcahOLun+Odj6iUn0GaOO/HL8pGdg/atXVzq6UItMAn4dkdXWyik3bzZ+ixl+ruiYLubEWGAN3MnXOPTJb/16VWqCtdotrXzQ2HSkcT1o92CsajXbXEdcL5Z1c7ni4U6vQzwnWOSxcIEu8Ns7SNWzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vdnKvbuK; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=VBJtWUr62CaY9vWiV/KLb6l+2tv3Ov2+NXTwBUxYrkp8FjCbgllDS3ZhMjgk9uSN2yU9JKtXUnUhFxV9WnEd2cSoMBgw/e4pZ9T/DXAaOfWI8FwrvOdFe6ToLAKU47+gNwiJUT9vQCOGMnr0v627zABEwE8Hk/Hs+El2zegJrr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TmiF/IpX; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vdnKvbuK"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-40ed218ed1eso6223815e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:50:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmiF/IpX"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40eb033c1b0so50900455e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:50:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706194228; x=1706799028; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706194227; x=1706799027; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vB6EsopWvtU420AL/iiMUAA67gMzrjWCXd94V6Ahudo=;
-        b=vdnKvbuK3saMsbm5vqdQdGJBo2nfkm7ftV5HyDZ2ATcnL5EfvhHdqn7TUAiPdG1mzU
-         srkkovV2f74WX3thfGJ+Vy1vy3bM+IGaRQo5Bnz3AIiM/UaFLz+GhqdoFcXMK3lILNVR
-         SR4EDp+ZRjIRzc7yw8FnT+NzPnihaBP1/Bi1Z+4IywD/a4JnGsEzVnAdks2MNQwjbH8m
-         J580kk2g87p57QISih5Euumlr5hmJi9ElrT6pHvzzUF0PSF/KPfUvTFeQ35UIxxI+Hiq
-         R8leFv1M/UnsjwsZkKsE3EdrD9RuA8obz5wsGXEL4DHhGPeUCy7TlhuS7/3GQ8OA3Srs
-         PFVA==
+        bh=FCsZDfh5Q5K/DwuAunrdWzuUCnvHISTW4ss32NHF9x0=;
+        b=TmiF/IpX82/+fZtReS65al6nyoIPbF+9gOTJy/uf03WRKAwroyl+mHFPkd/bcZElIU
+         vq1eurdLj7biNPfJyDPcFk0LkZjHSmDaQUOQdWqjx//IkDIkv7dHghniA5wI3XotMKpM
+         SP/cOW6ABt91oyFYWYl/zABPiIHMvUEx4OAzT90oSz0QzZ+tSybNi25VtbG0vhBGUdT3
+         KyDe7QDzHNdS13owh9M39+nRsY6EdsOQ0HnWaB+3gJDvxJ7T8GtjpIQXiv+9I9UoDmUC
+         7gw20vQi2Z46I8a08zYcf2aR52zuFsUvaiBBNFfLPWJn81oKVbY+bIUIymjaJVDXI/1O
+         YZLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706194228; x=1706799028;
+        d=1e100.net; s=20230601; t=1706194227; x=1706799027;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vB6EsopWvtU420AL/iiMUAA67gMzrjWCXd94V6Ahudo=;
-        b=bANvbK+vV8KO7h6qlRz+74wdAGaxKY2HxnetGbpyidywYxIZU4g4LG44JCulMzMaVu
-         T0QiiZC7kQX3Wbmg5FgTf0B/hwNtS4XvmSUz/hJjUFTf4BzuXkVytzF3iYwqVDExSJlm
-         X3LYbn/r8N9zEs90S6PZEuGCVCj5Am/TgKYj5F0LVNiVIwt30XHhbgkF+02p2EdOCN+v
-         szJvDkT0xqapyGYIJotCBE6LDPk+IfJsN/OFJjLOV4RocCKINVFr7E6P5ptqQ+d/pz3D
-         gPJBCnArDRlPaRJD/jSZ9+2QwnuW9kzUZfTIcQ+1MXB1VozwHBV6pPgCSVxSIfFGDyt2
-         cCFA==
-X-Gm-Message-State: AOJu0YyjpSKIrtxzZp8q3+HY8wjLj8Ffsziprc90eVTbQzpEGEceav7O
-	28060qpkwTIr/393HM+O0hPgXJNnStL4TJIjmxg8+G1d0SXxQmOIF9/n5LP2kuU=
-X-Google-Smtp-Source: AGHT+IH50gAERtgiD46ap88LMn5K0NCn8Ty3RrpGCSOxNifjs/kTKouYIk3wNzU2y3BB26EWVSG7AQ==
-X-Received: by 2002:a05:600c:9:b0:40e:59d2:354d with SMTP id g9-20020a05600c000900b0040e59d2354dmr592880wmc.151.1706194228286;
-        Thu, 25 Jan 2024 06:50:28 -0800 (PST)
-Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id v17-20020a05600c471100b0040d91fa270fsm2875875wmo.36.2024.01.25.06.50.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=FCsZDfh5Q5K/DwuAunrdWzuUCnvHISTW4ss32NHF9x0=;
+        b=aVlRj0eUvq7E4CuR8jcDjdEd7/6QwnruaI1ulFtNzMxg8ESMOA7XR1LpxrZEPMG+M1
+         uudXyZNoxxA7E9ILV1oKW4ZSBX05KHC1o1jQK2h0ZdVe19GJZCsLcU70Iab4sjLSU02k
+         DPJgXOhOuPCs7QgeZAc/1GEBZhBuNNeiehQ8osTc2FGZrfowOvi8kmttbvth7P6DZ+xT
+         izPIBB3MHyVTFMaj8nUPbD1JTcqKJJbgJXdQ51oDv1W8I9RDij+wygHfyFVa0g7YjkDt
+         w793WzkdvxVw7+Xmo2idjZ7lqE55aGplOz1HcI4EiIEMmWvXaJaKzN8eZWaRTlTXCEnl
+         cyYA==
+X-Gm-Message-State: AOJu0YzSHEx7OIfwtvz/aH/MV+dnVcUZKmS6wAfTcQRHoNWkRjUMD0Fp
+	kHFPnSw29LiPlSHysZ4NahSl6slYFZ+4SyM4g9txbNIgHc9rv5Jmp9+d9q/nmAi0Tp0OXgRzOT7
+	zhvc=
+X-Google-Smtp-Source: AGHT+IGh12BcHV/dAPX9rARaa3uM3thpkF0/DbdSBRI+KmJZrJjj10wwGpQaaYX5IgM25eGiIJcLTg==
+X-Received: by 2002:a05:600c:418a:b0:40e:4ac1:8609 with SMTP id p10-20020a05600c418a00b0040e4ac18609mr575275wmh.86.1706194227540;
         Thu, 25 Jan 2024 06:50:27 -0800 (PST)
+Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id v17-20020a05600c471100b0040d91fa270fsm2875875wmo.36.2024.01.25.06.50.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jan 2024 06:50:26 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: broonie@kernel.org,
 	andi.shyti@kernel.org,
@@ -71,9 +72,9 @@ Cc: robh+dt@kernel.org,
 	kernel-team@android.com,
 	willmcvicker@google.com,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 20/28] spi: s3c64xx: add support for inferring fifosize from the compatible
-Date: Thu, 25 Jan 2024 14:49:58 +0000
-Message-ID: <20240125145007.748295-21-tudor.ambarus@linaro.org>
+Subject: [PATCH v2 19/28] spi: s3c64xx: downgrade dev_warn to dev_dbg for optional dt props
+Date: Thu, 25 Jan 2024 14:49:57 +0000
+Message-ID: <20240125145007.748295-20-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240125145007.748295-1-tudor.ambarus@linaro.org>
 References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
@@ -85,98 +86,35 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The IP supports FIFO sizes from 8 to 256 bytes. The SoC that uses the IP
-dictates the FIFO depth configuration. Add support for inferring the
-FIFO size from the compatible for those SoCs that use the same FIFO
-depth across all the instances of the SPI IP. Parsing of a device tree
-property to determine the FIFO size for the SoCs that use different FIFO
-sizes for different instances of the SPI IP will be added in a further
-patch.
-
-The scope of this patch is to break the dependency chain between the
-device tree SPI alias, the fifo_lvl_mask value and the FIFO size from
-the driver.
+"samsung,spi-src-clk" and "num-cs" are optional dt properties. Downgrade
+the message from warning to debug message.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- drivers/spi/spi-s3c64xx.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index fc5fffc019e0..5a93ed4125b0 100644
+index 692ccb7828f8..fc5fffc019e0 100644
 --- a/drivers/spi/spi-s3c64xx.c
 +++ b/drivers/spi/spi-s3c64xx.c
-@@ -132,6 +132,7 @@ struct s3c64xx_spi_dma_data {
-  * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
-  * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
-  * @clk_div: Internal clock divider
-+ * @fifosize: size of the FIFO
-  * @quirks: Bitmask of known quirks
-  * @high_speed: True, if the controller supports HIGH_SPEED_EN bit.
-  * @clk_from_cmu: True, if the controller does not include a clock mux and
-@@ -150,6 +151,7 @@ struct s3c64xx_spi_port_config {
- 	int	tx_st_done;
- 	int	quirks;
- 	int	clk_div;
-+	unsigned int fifosize;
- 	bool	high_speed;
- 	bool	clk_from_cmu;
- 	bool	clk_ioclk;
-@@ -176,6 +178,7 @@ struct s3c64xx_spi_port_config {
-  * @tx_dma: Local transmit DMA data (e.g. chan and direction)
-  * @port_conf: Local SPI port configuration data
-  * @port_id: Port identification number
-+ * @fifosize: size of the FIFO
-  */
- struct s3c64xx_spi_driver_data {
- 	void __iomem                    *regs;
-@@ -195,6 +198,7 @@ struct s3c64xx_spi_driver_data {
- 	struct s3c64xx_spi_dma_data	tx_dma;
- 	const struct s3c64xx_spi_port_config	*port_conf;
- 	unsigned int			port_id;
-+	unsigned int			fifosize;
- };
+@@ -1071,14 +1071,14 @@ static struct s3c64xx_spi_info *s3c64xx_spi_parse_dt(struct device *dev)
+ 		return ERR_PTR(-ENOMEM);
  
- static void s3c64xx_flush_fifo(struct s3c64xx_spi_driver_data *sdd)
-@@ -404,7 +408,7 @@ static bool s3c64xx_spi_can_dma(struct spi_controller *host,
- 	struct s3c64xx_spi_driver_data *sdd = spi_controller_get_devdata(host);
- 
- 	if (sdd->rx_dma.ch && sdd->tx_dma.ch)
--		return xfer->len > FIFO_DEPTH(sdd);
-+		return xfer->len > sdd->fifosize;
- 
- 	return false;
- }
-@@ -702,7 +706,7 @@ static int s3c64xx_spi_transfer_one(struct spi_controller *host,
- 				    struct spi_transfer *xfer)
- {
- 	struct s3c64xx_spi_driver_data *sdd = spi_controller_get_devdata(host);
--	const unsigned int fifo_len = FIFO_DEPTH(sdd);
-+	const unsigned int fifo_len = sdd->fifosize;
- 	const void *tx_buf = NULL;
- 	void *rx_buf = NULL;
- 	int target_len = 0, origin_len = 0;
-@@ -1154,6 +1158,11 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		sdd->port_id = pdev->id;
+ 	if (of_property_read_u32(dev->of_node, "samsung,spi-src-clk", &temp)) {
+-		dev_warn(dev, "spi bus clock parent not specified, using clock at index 0 as parent\n");
++		dev_dbg(dev, "spi bus clock parent not specified, using clock at index 0 as parent\n");
+ 		sci->src_clk_nr = 0;
+ 	} else {
+ 		sci->src_clk_nr = temp;
  	}
  
-+	if (sdd->port_conf->fifosize)
-+		sdd->fifosize = sdd->port_conf->fifosize;
-+	else
-+		sdd->fifosize = FIFO_DEPTH(sdd);
-+
- 	sdd->cur_bpw = 8;
- 
- 	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
-@@ -1243,7 +1252,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d with %d Targets attached\n",
- 					sdd->port_id, host->num_chipselect);
- 	dev_dbg(&pdev->dev, "\tIOmem=[%pR]\tFIFO %dbytes\n",
--					mem_res, FIFO_DEPTH(sdd));
-+		mem_res, sdd->fifosize);
- 
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
+ 	if (of_property_read_u32(dev->of_node, "num-cs", &temp)) {
+-		dev_warn(dev, "number of chip select lines not specified, assuming 1 chip select line\n");
++		dev_dbg(dev, "number of chip select lines not specified, assuming 1 chip select line\n");
+ 		sci->num_cs = 1;
+ 	} else {
+ 		sci->num_cs = temp;
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
