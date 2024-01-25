@@ -1,128 +1,176 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01AC5B5D3;
-	Thu, 25 Jan 2024 14:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19DE6EB78
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706192081; cv=none; b=lGVWNjeLYCZo+dH4/FUaF3uNtu7SKGH49ejT2b6JdL9fnWR5qwGmBvuUPMqtJtRM+hhHWZp9hHsuucqifrhDhglDixzEWlFXMBJpg6AzMZOG8hVBXcph6OqK3RGwrtvsSaTva6Bm707z/DytK31ohaeSjCcqqZSwb+czhwcSlrc=
+	t=1706194215; cv=none; b=s9ZaaGSibQhDq9VAH/1gUhkcPAe/L/cgDRLaeHsWDlrwyNGj2oinINTQiGsJcHfFPmImYt6WpIPrVhz4GvOlOe4SI6zs5MuxEVFmHQxyVSrOEzehpDsMc8SqHnJhjGG1eEE6krN9DNk/jRS7UHNOqQlPxUFX4FxhFs1YVWBz2IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706192081; c=relaxed/simple;
-	bh=xuWotEzSelSVBqWujYKbIOXX960an6aLcCPwqSUkjtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tuhY37Y1Q0s291OOZVZY8I/LCr+s92HoPZ28EIeFJOnG1jhSuxVj+7fqAP8vHMs3NPPUevdXBUD93k2KfSsmakanmLptsjTD1sXkYeu8RpRc8pRT0j24HuOQoWlkxBZ2LghapMWAJDhNixpQ2yhH+22GGbdmftEQIue9rWIQtvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nSMrqxBc; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1706194215; c=relaxed/simple;
+	bh=Q0ynWyqlB+TEhw6MG3HTpcZ4T0RZOvGsOvLniQtNrzE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mti3YE9wQKPoT25pLkLLkQJyCGEdvOdEgc4Y0XwHTXNXuEvD6HsGyyjK77LhD6elaeXcpasLVXhDOS4cUIPIXiD9+jZ+SIIyenh+y5IZzbpGai1CH+Pon4VNSWpq6mBQ3T9UCytWfMqEG7qNfNPX/uwEayTCMRRHQQH9JnLZINc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CIqZLFcg; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nSMrqxBc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1706192078;
-	bh=xuWotEzSelSVBqWujYKbIOXX960an6aLcCPwqSUkjtM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nSMrqxBc5B0zoxSh7oM+5Fjyr3Ev/UxHPkW05LIh9tqvVs8PD+gCaNAqlz5QsrhBH
-	 HbSRK9bawmsg86dsQH2IjMpDCUePRyRF5oM8aEVzAti4uMMz1HRIpPYLi32u2KBQJ+
-	 AliVBErnUM3jUPU81ZHJPCNYmhPMgUeAyPCVcAL4Hih1LBsQ2CGmIALnpwgLpButSL
-	 rbFGcAbYC6BY3TnD/ujgbQgo1zc9++xbkTUK6KOdcjliB5wx4T3j9bIncv2DioZft3
-	 9ALNYJlMlexd763yE/DkmWdIt93ZLBCvhepEUEmz9UsnHPTMiD95fyECCAAuyLjyhN
-	 8xG5LCL5+b38A==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3B7E43782057;
-	Thu, 25 Jan 2024 14:14:35 +0000 (UTC)
-Message-ID: <4079a650-74a6-49bc-87a9-c5729fb6e8d1@collabora.com>
-Date: Thu, 25 Jan 2024 15:14:35 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CIqZLFcg"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-33937dd1b43so3269033f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:50:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706194211; x=1706799011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ZI/5KwC+xCytuTFH+W+O2jy1GV4Q+e+HfUN4cLRoNQ=;
+        b=CIqZLFcgStI76l5gK60XB9FOirDUKaEc+dBxdcFYGFCNWAAXXzM0pSoFMUL5nViQfc
+         Ezv+kXdCJFk11rkDi3oVOvZd4PwQwaPgOCI2P6rFsot6/Y5h5fFzxWZ3rJVZk3xxX3+r
+         u11M/A+boLvDERrtQk5fMfGrTZ/Ov64geFky2TA48/YnlkC0VZbmi1ylWzXs7pcz7/Cg
+         IlLjsyVytN6Zw1EECIzQ+OF+P+x/t5vFgasO1ZlPh0hKaUmIW46hTGIzVCJXtNFhXGYo
+         ZnK9xCH/0/ZrjLgpvgqKjCJ1EjMTuJZAURH5JiFBTDiWTxz06zEFKCLLXPoXQuoHMJfs
+         0Ppg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706194211; x=1706799011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ZI/5KwC+xCytuTFH+W+O2jy1GV4Q+e+HfUN4cLRoNQ=;
+        b=IG/PBqdeb84ms9YGbqW9uv/SCGAIvfVfnXooK8Ez/90XWAi1Ns3iCDnr5wR43wcL80
+         65Os+Tt12qM+CKj5MAWEC+lLrsHklbN3NNyyo08EY8582+sI1gwSJpN4Z+flhKPt6PlF
+         3FB5oWBUlig70v+k92zMW9bhdq2t7CzqWYJav9tqzKnHNNgJK9sLYcxd4q/FpG127Wwt
+         73o8gJ/hDrO9UZGfojRyJ8tuyP5dEtrm83ICzPydjD3qY225Xb9OkN+76lcxItmSmj3Y
+         CGGgK1gH+w2AarDG9S8p2cX8FFtw9cJ//X9ZFy8fRYpa1hu91SoREMUh6aQi5p0fPcPu
+         O7iA==
+X-Gm-Message-State: AOJu0YypyupNvKiVj/pKpJ4Z7qswq3n5WLiLydLIVLifPFwQAbSKdFrO
+	aO+vrofxY6U7tBswYN6h/EnvGZaoS2YKLCoF5/HVx0cFvJpBGjQaZutXoN4OLzE=
+X-Google-Smtp-Source: AGHT+IErX2MgfpP0Fe4RLqMkR9jYxbhETFvxJ2DoDmgkGrm1I0WK2BsVFDTJMWeO23FcBD4LNFaINA==
+X-Received: by 2002:adf:f28f:0:b0:337:c6ee:204a with SMTP id k15-20020adff28f000000b00337c6ee204amr824782wro.93.1706194210889;
+        Thu, 25 Jan 2024 06:50:10 -0800 (PST)
+Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id v17-20020a05600c471100b0040d91fa270fsm2875875wmo.36.2024.01.25.06.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jan 2024 06:50:10 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: broonie@kernel.org,
+	andi.shyti@kernel.org,
+	arnd@arndb.de
+Cc: robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	alim.akhtar@samsung.com,
+	linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	andre.draszik@linaro.org,
+	peter.griffin@linaro.org,
+	semen.protsenko@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v2 00/28] spi: s3c64xx: winter cleanup and gs101 support
+Date: Thu, 25 Jan 2024 14:49:38 +0000
+Message-ID: <20240125145007.748295-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 003/111] pwm: Provide a macro to get the parent device
- of a given chip
-Content-Language: en-US
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- linux-pwm@vger.kernel.org, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Benson Leung <bleung@chromium.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Paul Cercueil <paul@crapouillou.net>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Guenter Roeck
- <groeck@chromium.org>, chrome-platform@lists.linux.dev,
- Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
- linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-sunxi@lists.linux.dev, Douglas Anderson <dianders@chromium.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org,
- greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev
-References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
- <1cae6f73264ab313205eaa9483251f7aaf259cb4.1706182805.git.u.kleine-koenig@pengutronix.de>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <1cae6f73264ab313205eaa9483251f7aaf259cb4.1706182805.git.u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 25/01/24 13:08, Uwe Kleine-König ha scritto:
-> Currently a pwm_chip stores in its struct device *dev member a pointer
-> to the parent device. Preparing a change that embeds a full struct
-> device in struct pwm_chip, this accessor macro should be used in all
-> drivers directly accessing chip->dev now. This way struct pwm_chip and
-> this macro can be changed without having to touch all drivers in the
-> same change set.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Hi,
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Special attention is needed for:
+``asm-generic/io.h: add iowrite{8,16}_32 accessors``
+as it's not under SPI's umbrella.
 
-> ---
->   include/linux/pwm.h | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index 8ffe9ae7a23a..d7966918f301 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -289,6 +289,11 @@ struct pwm_chip {
->   	struct pwm_device *pwms;
->   };
->   
-> +static inline struct device *pwmchip_parent(struct pwm_chip *chip)
-> +{
-> +	return chip->dev;
-> +}
-> +
->   #if IS_ENABLED(CONFIG_PWM)
->   /* PWM user APIs */
->   int pwm_apply_might_sleep(struct pwm_device *pwm, const struct pwm_state *state);
+If the accessors are fine, I expect they'll be queued either to the
+SPI tree or to the ASM header files tree, but by providing an immutable
+tag, so that the other tree can merge them too.
 
+The spi dt-bindings patches can be queued through the SPI tree, but
+they'll need an immutable tag too. They'll be needed in the samsung tree
+as I'll follow with patches for the samsung device trees to use the
+"samsung,spi-fifosize" property.
 
+The patch set cleans a bit the driver and adds support for gs101 SPI.
+For the cleaning part, I removed the unfortunate dependency between the
+SPI of_alias and the fifo_lvl_mask array from the driver.  The SPI
+of_alias was used as an index into the fifo_lvl_mask to determine the
+FIFO depth of the SPI node. Changing the alias ID into the device tree
+would make the driver choose a wrong FIFO size configuration, if not
+accessing past the fifo_lvl_mask array boundaries. Not specifying an SPI
+alias would make the driver fail to probe, which is wrong too.
+
+Apart of the SPI patches, I added support for iowrite{8,16}_32 accessors
+in asm-generic/io.h. This will allow devices that require 32 bits
+register accesses to write data in chunks of 8 or 16 bits (a typical use
+case is SPI, where clients can request transfers in words of 8 bits for
+example). GS101 only allows 32bit register accesses otherwise it raisses
+a Serror Interrupt and hangs the system, thus the accessors are needed
+here.
+
+The first 3 patches are fixes and they are intentionally put at the
+beginning of the series so that they can be easily queued to the stable
+kernels.
+
+The SPI patches were tested with the spi-loopback-test on the gs101
+controller.
+
+Thanks!
+ta
+
+Changes in v2:
+- move fixes at the beginning of the series so that they can be queued
+  easily to the stable kernels.
+- break the dependency between the SPI of_alias, the fifo_lvl_mask and
+  the FIFO depth. Provide alternatives to either infer the FIFO size
+  from the compatible, where the SoC uses the same FIFO size for all the
+  instances of the IP, or by using the "samsung,spi-fifosize" dt
+  property, where the SoC uses different FIFO sizes for the instances of
+  the IP.
+- split patches or other cosmetic changes, collect R-b tags.
+
+Tudor Ambarus (28):
+  spi: s3c64xx: explicitly include <linux/io.h>
+  spi: s3c64xx: explicitly include <linux/bits.h>
+  spi: s3c64xx: avoid possible negative array index
+  spi: dt-bindings: samsung: add google,gs101-spi compatible
+  spi: dt-bindings: samsung: add samsung,spi-fifosize property
+  spi: s3c64xx: sort headers alphabetically
+  spi: s3c64xx: remove unneeded (void *) casts in of_match_table
+  spi: s3c64xx: remove else after return
+  spi: s3c64xx: use bitfield access macros
+  spi: s3c64xx: use full mask for {RX, TX}_FIFO_LVL
+  spi: s3c64xx: move common code outside if else
+  spi: s3c64xx: check return code of dmaengine_slave_config()
+  spi: s3c64xx: propagate the dma_submit_error() error code
+  spi: s3c64xx: rename prepare_dma() to s3c64xx_prepare_dma()
+  spi: s3c64xx: return ETIMEDOUT for wait_for_completion_timeout()
+  spi: s3c64xx: simplify s3c64xx_wait_for_pio()
+  spi: s3c64xx: drop blank line between declarations
+  spi: s3c64xx: fix typo, s/configuartion/configuration
+  spi: s3c64xx: downgrade dev_warn to dev_dbg for optional dt props
+  spi: s3c64xx: add support for inferring fifosize from the compatible
+  spi: s3c64xx: infer fifosize from the compatible
+  spi: s3c64xx: drop dependency on of_alias where possible
+  spi: s3c64xx: retrieve the FIFO size from the device tree
+  spi: s3c64xx: mark fifo_lvl_mask as deprecated
+  asm-generic/io.h: add iowrite{8,16}_32 accessors
+  spi: s3c64xx: add iowrite{8,16}_32_rep accessors
+  spi: s3c64xx: add support for google,gs101-spi
+  MAINTAINERS: add Tudor Ambarus as R for the samsung SPI driver
+
+ .../devicetree/bindings/spi/samsung,spi.yaml  |   6 +
+ MAINTAINERS                                   |   1 +
+ drivers/spi/spi-s3c64xx.c                     | 530 ++++++++++--------
+ include/asm-generic/io.h                      |  50 ++
+ include/asm-generic/iomap.h                   |   2 +
+ 5 files changed, 345 insertions(+), 244 deletions(-)
+
+-- 
+2.43.0.429.g432eaa2c6b-goog
 
