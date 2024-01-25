@@ -1,116 +1,170 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0738A1339B5
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 19:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4C01339B5
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 19:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706209276; cv=none; b=H3JC+R4MIRA9tvbMvHIIxYCWnLaQfYvqOJveysPqjJAncOnKNZ3Kr3NGH8YUG2qy4Htco9VxRF2E4haoeFXy3tvfpelP3J2kU+uU5DfqYSaLE3xNTKigpRpF8SOYCHNHDvx3e4RHm5T4JWhKpG8n05D8fELfAUOdHFrEh7eDL4I=
+	t=1706209474; cv=none; b=N8IM37J1d5A/m6utjbvrj8XsEWj9VAUBwM2IWSFmacv4gwdzz7JCTMjqCChAh+d3RwfIOkvaaDCNhh3rCICOxRHsX/SMaGYNPS4LNYpoTXYCQWBzUhszb3zYFaKXHcxsiHL3CdwfOc2azzGOyD6Crhs32eoCeBoxODtisT6oL24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706209276; c=relaxed/simple;
-	bh=3l+IaiZHZv/Fe8lERi3/HFhALnFg+BculQ2om86Od/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TN0DmCpKtuU4yu7VfjROMDZCUxlguxzD5goM7IlGh5oW5Kjy6ZrY7kPbkBcMZDKlAiIXG5X+lVOIRit/BFGT1F96McMbKcrGb5AfhKvQDq8nvkIp2ZiBhnK3BW3R+/epgX6rserjHjU8QfQQR0hSBYZ7xNiIw5jt72jmW2mRu2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WfxGMDUj; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1706209474; c=relaxed/simple;
+	bh=kyz7VN/4ZcUerMlxwf3NWPLVw11KuWBrkD6c9Je0eew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VhJ5fq2dugX/0baDWnUdka+h49PSdXJTvzGy5TLo5Z2MIJMQA4u/wpQ9+4651dOcZOWzTAkKXMAqhVC1VDVk96lqyL2vIi/hjg+uRrY0vnFtIkgfp0xr7T1uWCv23QsHWCpRrTk4yArfH1rnYAiRuNo768XWCzperf3A97RGLxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZaJP7JCo; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WfxGMDUj"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3394446205dso2649842f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 11:01:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZaJP7JCo"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-290b219a60cso3037170a91.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 11:04:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706209273; x=1706814073; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dmN7I+9NF0wxlajdSp9I8HACKLWc2WQole+/PqyLTmw=;
-        b=WfxGMDUj+jiNXnGj1RT38BlkPxJee9iNE+6rdI3wnr8lM1bTxwVBkVXMGTIqKEhs4A
-         hrXSCzLOlaSeTEOe/Fot0dA6O9WnnSU5t6vQ8ZuJ1BLPOdQe9YwpevrLnEZ+yPFhu9YI
-         0nOB4TjRcUgQMWPX2+uTNBpr08MKkoBf+m+ZbROe188Ryq26eZMqmSKr0TBxg55/9m/f
-         VP0wQTBtiPEOD0YMqDBvCSYliYXEqHfAEPHcrldFHFw3gDnLZkDnv8uOid1vgw6W8uRM
-         Z1BRM0l9+5nK67mNe4ax+8rze1pN94TFfTy0UoIX7HIMHSAKik28K8sRGsKADCGfIaY4
-         rQIw==
+        d=linaro.org; s=google; t=1706209472; x=1706814272; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wmh1WjBejQi02ZPJBsuRfWlQ6TdlM/kcPPZwBwZbKTI=;
+        b=ZaJP7JCoksK9xmxs3TW8E55u1+gmSRRj+9KhpQJVKrhQ3P0NKojfHvg8lYd1mID3Gt
+         g827fEqPOuGOBCrIsQHuceUPTryDjcKkKPe3CI/+9N4kPOdW707osLI3qqMwPZK5zHNj
+         cXhVGUaG1rRpoS//cZDP4cOr0GPh7QVs26tO3/gBjkXZG6IGsYcmb3OUkb8M+lgCWmrm
+         0AAUgVDFlkCXE0pepJpkrtwMcMQSnZ2CbSkBlxUKOdT99WHreWI88Oei+aO/B4cMZTJB
+         PIFrfITALKtsEg9JaJbw8MTEOhLGj/hy+tlRcTQlKReL/tZcBFGdLClbD8RAixPHPE7a
+         oAgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706209273; x=1706814073;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmN7I+9NF0wxlajdSp9I8HACKLWc2WQole+/PqyLTmw=;
-        b=ashjrbDC5PMToWISSKl+0eb5f+a0IfmJjgcwrVT32RBrjiRFJ9flcIvE+R+LK7Jt3r
-         L1VreZHFGeq6QhfPsrRDee4ywlCIQn4AiwScsW+6PlB4hMHWy9jPiN6tH3Ezqy0pXJTs
-         L02jmvYqaNFMSBlmW72DPKA8tFo3JrI6X/arryq7eAbLPvBRfx0GAdrePmMxzZVGcqK7
-         wT/z/rmROZkEdK2ISLiY0V56R40wwq819D1qLvBK+7cumn7812o2UCKX8+k6+tYu8bWt
-         uuYlwr6OZw5y+f2n4N2HU7VKK/FRbmW/q7DYVI5YG41hivEn4gh1hsvNtfqC2gLtlfn6
-         lZuQ==
-X-Gm-Message-State: AOJu0Yz8rNyxKoH5T9uu/+W7xotniBTByWyiBZPYuTt8OlpYJtIM/Pm8
-	GlQPayerKmWGV4nHmQXILL1pA8XFLpOTGejrHQuMtLKmlZDNQIKQPvF0JZ4oMw8=
-X-Google-Smtp-Source: AGHT+IHC7Mstw0DGiNo4tWtWCkZLvrWPOabFhDIsnvgtLlwTRPhqhBdNAB3jnq5GXT72VzereEQh0w==
-X-Received: by 2002:a5d:5689:0:b0:337:c6be:7737 with SMTP id f9-20020a5d5689000000b00337c6be7737mr154375wrv.48.1706209273304;
-        Thu, 25 Jan 2024 11:01:13 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id l8-20020a5d5608000000b003392bcd6c48sm13097531wrv.79.2024.01.25.11.01.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jan 2024 11:01:12 -0800 (PST)
-Message-ID: <96f9306f-3445-484b-bd3c-82e708681f1b@linaro.org>
-Date: Thu, 25 Jan 2024 19:01:10 +0000
+        d=1e100.net; s=20230601; t=1706209472; x=1706814272;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wmh1WjBejQi02ZPJBsuRfWlQ6TdlM/kcPPZwBwZbKTI=;
+        b=dx02HqbvzwBPZNURRuQ+/azHaEEmBcxP+77klc9uRj/XSqr4CjxselgqjNM+dnPQu7
+         6F5d20O/eRVrYAUr9asRqFFxi14VfYZZTrw11kt7bBmfZq1ZBkAOQ6X/FWdWXUEMlgfq
+         UOkMa6xWqDub0cKSQIGjPs7LPyNmRbkzKe1fpkHzuxcSXIlLArIdyCylhflbC1pu3Qke
+         8vAMC9TJfK5+AE8gEeV8ZSpN+zbw6sufVHj7dVCynCse/wj8ssHJO/JXDeL6vvhc0/nX
+         BVRpEWeej7mLMa3Uq8TKacAhsUrdjjuBXotwetiKlV4uiHMobrHmzjfSDDCcjs8P4Bmx
+         E8VQ==
+X-Gm-Message-State: AOJu0YyDGGSTIl2LoyZDT6Y3CO2BPvc10YgfkRBPClvzPv4K25+D5WuV
+	DpWSuTb06mQyPQdStybrp8+ado6dvqyKgzwibsPfLb7e7eCITFup62IH0GXEFa0I7yW9XbokhBE
+	tQuXLIuy0XW3pfj+7LYveTbc7OohPqbdCkCtlDg==
+X-Google-Smtp-Source: AGHT+IG6YlwnSeWpwQZCjQC/4bwVfXO3ZLqyr7wz2ahkS1E5zXvVRkZg7RSC50vQwXZpquzQdqmKHy32ABLJfpuTPnM=
+X-Received: by 2002:a17:90b:912:b0:286:8dd6:db65 with SMTP id
+ bo18-20020a17090b091200b002868dd6db65mr57262pjb.91.1706209471761; Thu, 25 Jan
+ 2024 11:04:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/28] spi: dt-bindings: samsung: add
- samsung,spi-fifosize property
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-Cc: andi.shyti@kernel.org, arnd@arndb.de, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arch@vger.kernel.org, andre.draszik@linaro.org,
- peter.griffin@linaro.org, semen.protsenko@linaro.org,
- kernel-team@android.com, willmcvicker@google.com
-References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
- <20240125145007.748295-6-tudor.ambarus@linaro.org>
- <7ef86704-3e40-4d39-a69d-a30719c96660@sirena.org.uk>
- <1c58deef-bc0f-4889-bf40-54168ce9ff7c@linaro.org>
- <55af5d4a-7bc9-4ae7-88c5-5acae4666450@sirena.org.uk>
- <f2ec664b-cd67-4cae-9c0d-5a435c72f121@linaro.org>
- <f44d5c58-234d-45ec-8027-47df079e2f16@sirena.org.uk>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <f44d5c58-234d-45ec-8027-47df079e2f16@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240125145007.748295-1-tudor.ambarus@linaro.org> <20240125145007.748295-8-tudor.ambarus@linaro.org>
+In-Reply-To: <20240125145007.748295-8-tudor.ambarus@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 25 Jan 2024 13:04:20 -0600
+Message-ID: <CAPLW+4kGGtG2BxeN0wRXMD5M2TR+eMUHZpL2KDaEFubBCP7jdg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/28] spi: s3c64xx: remove unneeded (void *) casts in of_match_table
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: broonie@kernel.org, andi.shyti@kernel.org, arnd@arndb.de, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arch@vger.kernel.org, andre.draszik@linaro.org, 
+	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 25, 2024 at 8:50=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+>
+> of_device_id::data is an opaque pointer. No explicit cast is needed.
+> Remove unneeded (void *) casts in of_match_table. While here align the
+> compatible and data members.
+>
+> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  drivers/spi/spi-s3c64xx.c | 45 +++++++++++++++++++++++----------------
+>  1 file changed, 27 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 230fda2b3417..137faf9f2697 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -1511,32 +1511,41 @@ static const struct platform_device_id s3c64xx_sp=
+i_driver_ids[] =3D {
+>  };
+>
+>  static const struct of_device_id s3c64xx_spi_dt_match[] =3D {
+> -       { .compatible =3D "samsung,s3c2443-spi",
+> -                       .data =3D (void *)&s3c2443_spi_port_config,
 
+I support removing (void *) cast. But this new braces style:
 
-On 1/25/24 17:45, Mark Brown wrote:
-> On Thu, Jan 25, 2024 at 05:30:53PM +0000, Tudor Ambarus wrote:
->> On 1/25/24 17:26, Mark Brown wrote:
-> 
->>> OK, so just the compatible is enough information then?
-> 
->> For gs101, yes. All the gs101 SPI instances are configured with 64 bytes
->> FIFO depths. So instead of specifying the FIFO depth for each SPI node,
->> we can infer the FIFO depth from the compatible.
-> 
-> But this is needed for other SoCs?  This change is scattered through a
+      },
+      {
 
-There are SoCs that have multiple instances of the SPI IP, and they
-configure them with different FIFO depths. See
-"samsung,exynosautov9-spi" for example: SPI0, SPI1, and SPI6 are
-configured by the SoC to use 256 bytes FIFO depths, while all the other
-8 SPI instances use 64 bytes FIFOs. I tried to explain the entire logic
-of the series in another reply, see it here:
-https://lore.kernel.org/linux-arm-kernel/40ba9481-4aea-4a72-87bd-c2db319be069@linaro.org/T/#u
+seems to bloat the code a bit. For my taste, having something like },
+{ on the same line would be more compact, and more canonical so to
+speak. Or even preserving the existing style would be ok too, for that
+matter.
 
-> very large series which does multiple things so it's a bit difficult to
-> follow what's going on here.
+Assuming the braces style is fixed, you can add:
 
-Sorry, I was afraid that this might happen. I agree, I'll split tomorrow
-this patch set in 3 smaller sets:
-1/ dumb cleaning patches
-2/ heavy lifting cleaning patches
-3/ gs101 addition
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+> +       {
+> +               .compatible =3D "samsung,s3c2443-spi",
+> +               .data =3D &s3c2443_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,s3c6410-spi",
+> -                       .data =3D (void *)&s3c6410_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,s3c6410-spi",
+> +               .data =3D &s3c6410_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,s5pv210-spi",
+> -                       .data =3D (void *)&s5pv210_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,s5pv210-spi",
+> +               .data =3D &s5pv210_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,exynos4210-spi",
+> -                       .data =3D (void *)&exynos4_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,exynos4210-spi",
+> +               .data =3D &exynos4_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,exynos7-spi",
+> -                       .data =3D (void *)&exynos7_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,exynos7-spi",
+> +               .data =3D &exynos7_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,exynos5433-spi",
+> -                       .data =3D (void *)&exynos5433_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,exynos5433-spi",
+> +               .data =3D &exynos5433_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,exynos850-spi",
+> -                       .data =3D (void *)&exynos850_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,exynos850-spi",
+> +               .data =3D &exynos850_spi_port_config,
+>         },
+> -       { .compatible =3D "samsung,exynosautov9-spi",
+> -                       .data =3D (void *)&exynosautov9_spi_port_config,
+> +       {
+> +               .compatible =3D "samsung,exynosautov9-spi",
+> +               .data =3D &exynosautov9_spi_port_config,
+>         },
+> -       { .compatible =3D "tesla,fsd-spi",
+> -                       .data =3D (void *)&fsd_spi_port_config,
+> +       {
+> +               .compatible =3D "tesla,fsd-spi",
+> +               .data =3D &fsd_spi_port_config,
+>         },
+>         { },
+>  };
+> --
+> 2.43.0.429.g432eaa2c6b-goog
+>
