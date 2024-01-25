@@ -1,56 +1,56 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC8B7319E
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BAF6EB7B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706194218; cv=none; b=mdQBFV9r9z5ktDlnnUJNiFzwZ6tdsx30KulW9znRjBexG/oWVQtSZ2edRay4yxlpxpTgOiUv6CK/Iwol+7C+5AhEzvJJOSwR4AM3b3cI6nLx1rUGaPZv/XUANXWcKSehooQuozR+dbsLpB8dOV6cqa+DS0e8SSQDH5oGK5On14E=
+	t=1706194220; cv=none; b=KOhd8hV43OPdjL87bwzMPm4HK+wXo7W6EGRNT3khwMfgpZ7m47J287TKj1Cm2QQFJ2axE1ZDZc3sj9sIo+XtsSxryswHBFtE2JRwVCa6CGdxm4KmO+mnThJDczkxnnQciOQQSExuC2F79UZraRxfVpodrXA8meTpSiN2RL5yEQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706194218; c=relaxed/simple;
-	bh=HUS+pk9N92y7YBQl1ZH9U+K4lAXt5pbyiE0NqzVBDmw=;
+	s=arc-20240116; t=1706194220; c=relaxed/simple;
+	bh=wja4sjDZUzyEJmTYDZeNeJO4ez4z4bixbTFjT7SJ0h8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fvRqMukJX/UQO8kspoGhvuLLSjUR0+rjzgkoxUhcj/o6CzfFnLYp3E2R4H8GGtLyKFVPHmsWk3dUF8hMBZYaaP99jS/jGLbFdr5PSGpaTm0qzOcBA54di6tnAaNycO0iRd6k99pf4UesCwIPA43egrfBhQBF5iYfWMsWNlA4RWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V4dykocY; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=FlhGcdGLSeST2H7RdwPaVuW/UQ9Uco6vuvl5w8xQ0Q/9uMx0N2YBV6Z+SoznqXhGEYdQSueV/lHKwysbcB/MQnLS+f4Xo0s7eUoU9moVduN+XZIoLRVlJ1ThOYs+1hX4JcBbvmvhiVbf/Kz3+fwfTZKzcykAwmhETEVlG31D/zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NBTOpaF7; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V4dykocY"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3392b045e0aso4646053f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:50:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NBTOpaF7"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40e7e2e04f0so74513345e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:50:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706194215; x=1706799015; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706194216; x=1706799016; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7RbS7SdUaAw1K/g37Ed+dGAKWi2x8GPreQeT5KyvnlQ=;
-        b=V4dykocYyNiq/b404iwjiGVNGxpPEcxyPahcaPuBwOuNqhWN8R1e+JCpmY7RQ04qeB
-         lm05XVAZDP0n+uBQ7y7ZQbimlaXIF4YABCWW4t/CMe56MwPI7THCrZEHrex2ToE1B/eS
-         hcyqzDkFWJiUq+6GU11pJiERa2s7rNa3mRLexhCjfYBpPBhKW0pDE23GGMHueHrJ8BKg
-         xjCZd5eZzy6g73DR4Ulq8bn7ZqPBLbkF43hAKtmxZ5Lm9TpWk5Obit0+aSWDwkANsne/
-         0FqcVAD1J343oDazgNUHv4svlDDGUmSCfxMLWLCBtM7Pn0KqESuGibgiKCk1fA4BsTQ/
-         J5fg==
+        bh=g2zGHL3l4HfFHILf65OAbwjVhYLd59O+yJnAHxlD6UM=;
+        b=NBTOpaF7eeh0TPXlKqetNLy4En7VUv01JEA7geLtjIlbJ5KIpDYfy59qRgp2uedpLj
+         V4SlkiZkPENc/uyHDmbAiBv5w85hniRZp2ysZS+d4U0go2g760lXxETKdNCfcIvDZJq7
+         XUjDf/MPVb125HZ6beZyonNQ2LrA/MAtj9HlzX/Hh9SIpoXacLsKKEsWa/YWBQqDc/Eh
+         m/ChNf1OFOFvI7aClLQ3agVREUk7CRO+8r+uVRdtjBjqplYv4rIaMUCgG5GknWk0mUHV
+         CRNmVHs13Kc9Fzbi+BGuwqsz7LOTk53n0ikZjQuJOJ70/8+N0DjInJ4qBuCm0Lqf6hWA
+         WGpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706194215; x=1706799015;
+        d=1e100.net; s=20230601; t=1706194216; x=1706799016;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7RbS7SdUaAw1K/g37Ed+dGAKWi2x8GPreQeT5KyvnlQ=;
-        b=HNOhe0x/1uS37IxcNl5c8Cexs4g2vL6Tu7hpwrahETRQWWx8M0rMnl19IYTqNZkGal
-         8RzRhLqm/0DI9OBFKT0IZnyI0H7uHpsFkN+qZjYtUUhhWlmMY2b3PBLRV9EL2MeUReXV
-         899UaqAOIl4P2Syu3ZEx9zd0Welce9Ylep6Lq+hvQGs8hkKW/1OeetMkg94/cw7i/fQd
-         QcDXLfwZaJkGj2tuvHH8pgm/dpAHKTK4SbIweoggFRq8jLL/23/m/k5VIEeFP/H+TElv
-         Vl7mSAUj2bN5uyo9JpYU47g3HFkboeufvhKmXs1hbSy2T5JYBWvCu+xpbuJxjOSyGWr+
-         cCZg==
-X-Gm-Message-State: AOJu0Yx/t2KQaaWWydOtmKcHMCgoH+8WA9+YzpUrYx0TSXO5mxiOCXtz
-	6AjDBXbXSxkKDO6BQKKQl2Sj0kMKSKdEDwlonz3A5EMh5T9IqnBmgSvKtZP94yc=
-X-Google-Smtp-Source: AGHT+IF3rsjwZxEnfNF6i1Zh7SUR5ZRZ73j3LOKjqeaRMZmPLsyBw6tsN1pEQ9sr6wHSVaZZSQO7zQ==
-X-Received: by 2002:a05:600c:1c99:b0:40e:cc93:2f6b with SMTP id k25-20020a05600c1c9900b0040ecc932f6bmr604869wms.151.1706194214900;
-        Thu, 25 Jan 2024 06:50:14 -0800 (PST)
+        bh=g2zGHL3l4HfFHILf65OAbwjVhYLd59O+yJnAHxlD6UM=;
+        b=YyBXSQDELYBRSR8uuwN2NTy1vFRfWE80NAAGFBXOi1vsgAiPiEq038h5gbOcKALRjx
+         ESl4ozgj+AMPwYH806gnEfqSw0N76mesuAL2O/DYMLJmQS5dR6eLmOSsBY4DjtWI+hgW
+         UMr6FSX0wIZFoZSwyJel+J1WuJGkkNxVWrg6AzFMvD8PmPkalEltSDZ5Qsn5/ArJHMA5
+         M4JheKbWwuHXdj0WBOjtdvmynqovF3vTyL8aZq/ISsrsY4hWlCk8vD2myhTFWEXjB/j/
+         GyE+9vjjWkSrLDJym6i5O94dz9sdKUhrVxwDszGV6nbMKno7trbcFklgcq3xHt4dszbY
+         YoyQ==
+X-Gm-Message-State: AOJu0YxIyGJMhA6KlQa50+khMefo0DIKBhgGoe+cTrDRzCD5cC3AVEVz
+	QqSAlOdVE0MMP67G7FyrllGr7rGptL2v+RWd/pW6bDC9sa30CPP9C2/9nNYRX7E=
+X-Google-Smtp-Source: AGHT+IEJ1CIdTrTRD4BA8d8gYFgNBWkIAgKqFXH8Q364GdBqOQzM962Dg8TpAX/PiqTFyXyRbfeI3Q==
+X-Received: by 2002:a05:600c:17d0:b0:40e:5562:bcda with SMTP id y16-20020a05600c17d000b0040e5562bcdamr513612wmo.155.1706194215945;
+        Thu, 25 Jan 2024 06:50:15 -0800 (PST)
 Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
         by smtp.gmail.com with ESMTPSA id v17-20020a05600c471100b0040d91fa270fsm2875875wmo.36.2024.01.25.06.50.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jan 2024 06:50:14 -0800 (PST)
+        Thu, 25 Jan 2024 06:50:15 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 To: broonie@kernel.org,
 	andi.shyti@kernel.org,
@@ -71,9 +71,9 @@ Cc: robh+dt@kernel.org,
 	kernel-team@android.com,
 	willmcvicker@google.com,
 	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 05/28] spi: dt-bindings: samsung: add samsung,spi-fifosize property
-Date: Thu, 25 Jan 2024 14:49:43 +0000
-Message-ID: <20240125145007.748295-6-tudor.ambarus@linaro.org>
+Subject: [PATCH v2 06/28] spi: s3c64xx: sort headers alphabetically
+Date: Thu, 25 Jan 2024 14:49:44 +0000
+Message-ID: <20240125145007.748295-7-tudor.ambarus@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240125145007.748295-1-tudor.ambarus@linaro.org>
 References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
@@ -85,31 +85,46 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Up to now the SPI alias was used as an index into an array defined in
-the SPI driver to determine the SPI FIFO size. Drop the dependency on
-the SPI alias and allow the SPI nodes to specify their SPI FIFO size.
+Sorting headers alphabetically helps locating duplicates,
+and makes it easier to figure out where to insert new headers.
 
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- Documentation/devicetree/bindings/spi/samsung,spi.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/spi/spi-s3c64xx.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-index 2f0a0835ecfb..4ad5b8fe57aa 100644
---- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-+++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-@@ -72,6 +72,11 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index c3176a510643..230fda2b3417 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -4,20 +4,19 @@
+ //      Jaswinder Singh <jassi.brar@samsung.com>
  
-+  samsung,spi-fifosize:
-+    description: The fifo size supported by the SPI instance.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [64, 256]
-+
- required:
-   - compatible
-   - clocks
+ #include <linux/bits.h>
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/interrupt.h>
+-#include <linux/delay.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_data/spi-s3c64xx.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
+-#include <linux/of.h>
+-
+-#include <linux/platform_data/spi-s3c64xx.h>
+ 
+ #define MAX_SPI_PORTS		12
+ #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
