@@ -1,89 +1,131 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAD960265
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 14:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A736633F8;
+	Thu, 25 Jan 2024 14:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706191833; cv=none; b=t4+IE2chMdBr2FJXiJ7qLvUk07Y3yNICUI33iZOB2EkXJ9BYbBhzdNHy0c12jF6zaJkKrG+m0Ko6NFflxpLjVnLEUxgXoDr42hlUiP+NwaQOSm7ckdrwyUJ8aXToLZEF1juyhPTfQFZzMz9lLQIEu1qyIZduGf3eF8FcntDDoG8=
+	t=1706192041; cv=none; b=cm+YKZ9nzaOSbvq4sqL43zQbIMsCqzDGyFcnfVW+4CvQZECA9LFYCNvyuz9+RyQuX/ZPDiL9zwEL+WF3rwyo6DOBzb7OHOx35C5H9ZUHbmrAOk6V0krZ4XIYhlKlJYShAvsi6b1nEKYD/v3txn6pBExJICNSLYhGxVIadyV90bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706191833; c=relaxed/simple;
-	bh=GFWuoyj6kM7mp555UokZjvMLSAMuQRKEdo1HvImE3Ag=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h8ePyxEOYDlgriO13FzwrlRKTI7J+fWT44ElJ76DJQauG/XEHzCTRHQGaqnEgTFv4gxo+fCgCtcykaQ427R8SFevgh5LSdslm2XF1JtwQ2vdc69imJTeuCsPNLMG5S73mjRckDq6PhYEGr19MvMPWclUiggCCYn+rrgUT50t8eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=My6ult1q; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706192041; c=relaxed/simple;
+	bh=d4gPRqPHjfmhjeJ5lkxi1RqQCKJtueD+jrxScUh4RN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dINQval1UOAWI94+RQcQh4edw9Q5gZCyCa5P4dvvAu4bWmjtLUO4T7KXTHAVQJsTefqr6JDZJfzAKBzGNl6NunISfgoCGpOUlKk5NnRQVxMVn9IHJQzrvIWxmw5nlN5hqjkQjccGUsHhCyQ9RgIQxBrPjbqFxicmIlStPQ4bkKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d8iPRvhK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="My6ult1q"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40ed2333c8fso6771285e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 06:10:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706191830; x=1706796630; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GFWuoyj6kM7mp555UokZjvMLSAMuQRKEdo1HvImE3Ag=;
-        b=My6ult1qxuHJC4zQbM+ddki4s3sam6r+Z7V/qGRxai///ckiTozhu8R57mNR+nTd3w
-         iEG8uM08ypE+wrOSgNdDAwUg0rqKUqLw7tWvNL/fV2ABQcLtbY+XmevQA/UacWzROHwP
-         VvB+OvyiJK5UmrU/lvYkNi0ufqHpWn1rKhUS9Wk8+Yz90egnJ2v5p+SFxeLTKBUz4RpE
-         iz+pAHEi+Tw5J/mTdPT0u9miPN0nykAA1KfX75vZnJugVUs1vojIQTyMSNJwVZMpWWJQ
-         PcT+uql/bQTkMbEj754Z6iSi2o8JhJy+jB+L36OkS7P3Eo4X/TxdFFXFUvpAoGfMYpMG
-         crVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706191830; x=1706796630;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GFWuoyj6kM7mp555UokZjvMLSAMuQRKEdo1HvImE3Ag=;
-        b=IRcbdH7M1w/6E6GJTKW5KqNrGykH/MfoEFjSZfgG1jDFYBRrfcaarnwQMEvsbWmJWi
-         Y3564qRERHkee0EcL+Bn37zt+7t0iK4JMRteDxuQFFP0ilKVwAah7FzFIWqOKxfl7zi+
-         EVVZvmrQtq5vQ7wuKghAQsTA7TICJw1mFtL84uW4/Gg2GfWe4iZ1m9yCSbQgrsIw/c5Z
-         SEj0zIKaaifeRlL2a0M5SWIYa78ugVG4ETw3QJiZmgg8fV9r89Z2aMwxBsPGsn+OBF2E
-         G6Zao6xi4hrmwVDawvMfrkVcd/womCZar0wh4UE8EvDIpPQWkIslZe6nBzBaCIQSgAnn
-         tWfw==
-X-Gm-Message-State: AOJu0Yw740+vXhXTW3OvE3af1sRmTwWdl+Qy9NoN461CA1Zm4VOzRuk7
-	qyUUu+GT2Xp4ucGFcM3lz9hIwXzkCdnG3aNd6XTO/YJf69whJ1Rr59S3Y3/SSYg=
-X-Google-Smtp-Source: AGHT+IGRsQ095n/697hTcPYLtlxQazA8W1CfVIDPw5ka1a4U1RywC5HxBmgzKgKf82JR6cjwd/lP8g==
-X-Received: by 2002:a05:600c:19c7:b0:40d:5cd2:5027 with SMTP id u7-20020a05600c19c700b0040d5cd25027mr532830wmq.61.1706191829992;
-        Thu, 25 Jan 2024 06:10:29 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id t10-20020a05600c450a00b0040d8ff79fd8sm2781090wmo.7.2024.01.25.06.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jan 2024 06:10:29 -0800 (PST)
-Message-ID: <9a8bf6f17a0f8b4e31a6d59c1adb735823f579aa.camel@linaro.org>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: gs101: sysreg_peric1 needs a
- clock
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: linux-kernel@vger.kernel.org, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com,  peter.griffin@linaro.org
-Cc: kernel-team@android.com, tudor.ambarus@linaro.org,
- willmcvicker@google.com,  daniel.lezcano@linaro.org, tglx@linutronix.de,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-Date: Thu, 25 Jan 2024 14:10:28 +0000
-In-Reply-To: <20240125140139.3616119-2-andre.draszik@linaro.org>
-References: <20240125140139.3616119-1-andre.draszik@linaro.org>
-	 <20240125140139.3616119-2-andre.draszik@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.1-1 
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d8iPRvhK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1706192037;
+	bh=d4gPRqPHjfmhjeJ5lkxi1RqQCKJtueD+jrxScUh4RN8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d8iPRvhKJPa25vYvNn3p7VCNREGUSvpjp/LMg5lqfGUi0fM0w56/kd5EhWPvZrH10
+	 z5Xio98iangqywdMMYeb3D9MMpb8H/cOd//urNx3hoVuf0pN++fNMxXVhZQnoxcAJI
+	 6RT+HKgg4csflhdazllRZMqBwum/QPPU6v2bUobXAj7YiCkKyS4HKCMoZCU3x6ZOfe
+	 dvovRFm3EUp0Rzjkwnn//c5FQYu2HTGaaQ4XA5mgV/w1KeXpglcGqCoAA8qikUzbZ+
+	 OQe+iR+6Yy3GlSmDuWjoGMmkYCNAKTM5iGRNl0KPNh/l5iE4zI15a9jeDGR0iozFdn
+	 006geVieTmE5w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D60B937820BC;
+	Thu, 25 Jan 2024 14:13:51 +0000 (UTC)
+Message-ID: <74e203b0-aacd-4a87-aa7b-53bd689fd893@collabora.com>
+Date: Thu, 25 Jan 2024 15:13:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 039/111] pwm: Provide wrappers for storing and getting
+ driver private data
+Content-Language: en-US
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ linux-pwm@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Alexander Shiyan <shc_work@mail.ru>, Benson Leung <bleung@chromium.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Paul Cercueil <paul@crapouillou.net>, Vladimir Zapolskiy <vz@mleia.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Michael Walle <mwalle@kernel.org>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Hammer Hsieh <hammerh0314@gmail.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Sean Anderson <sean.anderson@seco.com>, Michal Simek <michal.simek@amd.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Anjelique Melendez <quic_amelende@quicinc.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Lu Hongfei <luhongfei@vivo.com>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>, Luca Weiss <luca@z3ntu.xyz>,
+ Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@pengutronix.de, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ linux-rpi-kernel@lists.infradead.org, Guenter Roeck <groeck@chromium.org>,
+ chrome-platform@lists.linux.dev, Fabio Estevam <festevam@gmail.com>,
+ NXP Linux Team <linux-imx@nxp.com>, linux-mips@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, greybus-dev@lists.linaro.org,
+ linux-staging@lists.linux.dev
+References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
+ <1c873808bfc93ab51f49be799334dee6e8ab398a.1706182805.git.u.kleine-koenig@pengutronix.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <1c873808bfc93ab51f49be799334dee6e8ab398a.1706182805.git.u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> [PATCH v2] arm64: dts: exynos: gs101: sysreg_peric0 needs a clock
+Il 25/01/24 13:09, Uwe Kleine-König ha scritto:
+> These functions are useful to store and query driver private data a
+> After struct pwm_chip got its own struct device, this can make use of
+> dev_get_drvdata() and dev_set_drvdata() on that device.  These functions
+> are required already now to convert drivers to pwmchip_alloc() which
+> must happen before changing pwm_chip::dev.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Sorry for copy/paste error in the subject :-(
-
-I've sent an update in https://lore.kernel.org/all/20240125140644.3617587-1=
--andre.draszik@linaro.org/
-
-Cheers,
-Andre'
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
