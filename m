@@ -1,132 +1,160 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E451F137C2E
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 20:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5C11386B9
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 20:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706215534; cv=none; b=dHynnLsLHeBOCYtX3O8tiKLbra6B263vmTOUi8HpJM26Ka0q6WqJD0iot2OvqmHYMyME/BMUT80f18MyzBTWXmb9IM4biWgcjsycNULeq2jkeDMEE8G+UPArZC61oB3R3xj6b+rq4bY6S0rwHgfrfuSQfmBCIRg3thxhghdwwGw=
+	t=1706216107; cv=none; b=nqKWAilaods6iBPmhhOMzilaG5rN4kQtokGMidvQCvuD8QpD9SfHTCGJIsH9lShM2u3rytZsc9HLYVoNEuZnuSkbijq6cJz1/1hliyT3Lf9GsKUnkaT4nGD/02jCu+uGujUlsFsug5bRpuZAAP9ibHm94N7rPVBCpbDt+XS0auc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706215534; c=relaxed/simple;
-	bh=u4m3rhslZrR5Hsot++6wdzU0ej58tjNpwhODKsqQKLI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IIoqaByq9tJe+lIi0N1FwOgQXneNwYE/Q/OBRDMrkeJ1MT7MzjO3lFcp03urRlL/Jel957h93mvJvFgM+AjSdiTvk2Z5ir/ZoHdYAK9Naal6W6o7HaiTDUutZTy1AmwFb4jNd3l/XKZwQQ6Cl2CIWRwUceh6HnGA6MjlBdpZjbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oPrPCEg4; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oPrPCEg4"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-29036dc3a63so3320057a91.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jan 2024 12:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706215532; x=1706820332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OjdvfWOMZIbIKqDPk6c3LehvDX9fVj7yu1ffjzs1Y4w=;
-        b=oPrPCEg49l26MN0w4JTS7mulcbHu3czWBt/DEPdZz4u7jJZTrUcTNgU/6cgGTaN3bw
-         T8bymBfZqrLedtX42si++VVzS0pA2fIxQHz29gfHuqOXEhPmCnAPojItVhRrpWkscn/Y
-         C/E/v5DRWFAODZXkEwUNAqnNqnSw3P8iBZHYqfIgPZ7t77FMSj3f3NxCelhiLJIjWtjn
-         VDQS9+ZyNTsby7YkTFAG68yObCiBCR5nTNM4GMrvhO1vMCkQjb0Y3ewa0MqqO1kSrxr+
-         IM6YQEfGjj5reuKQafnSkUkZc2E0dqAs/L4+Jj/zJ/MKquO3LsCQi7fPGs3gPMNcw7Am
-         YUCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706215532; x=1706820332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OjdvfWOMZIbIKqDPk6c3LehvDX9fVj7yu1ffjzs1Y4w=;
-        b=rNBs2VNfwyELUdFK5QA37AGXWnYa/dy7GNoDr0X/+vCZ2fYhfb0cc900jSOtpydZh9
-         FUVfl5a1lf9RzPM4WJWtEXIcHf2Mk0vhxxH35SqZKQDU/7d1YFyRbcbetEnANxBwBR+J
-         i7yRX1nMBGX/+gFb85iRobEMSAC9d/5xVkUc6GNCFImpwOa5K/XMLHsNjWrP1lCaw84i
-         afUX8kmUxxN53+f5txdeierUY1pkrIsQyGPopcDIhmAZuJz8kaqakg6/oZa2trTLPg8B
-         C2ErRIKF3/VOxJYGg0Z1DIo2QuJLae4H1uLgKng+nQociUFnDcPPotCon+F9RlfuDxQv
-         lfvw==
-X-Gm-Message-State: AOJu0YzRbB3FJIyHZeU9Dk0/hDa+aGoek68UR2Ir91FSHZH3AFHGogM/
-	EvE2DbAv8or7iMMJJHxRWPJxZk4vijIVQXlWYOdpAvceud/0PnmzwT+UTehYVeOSaNuihK1B/yr
-	2UeGavVVvkX77adh1K6+snhU6cB3gfBvYCvowlg==
-X-Google-Smtp-Source: AGHT+IFofqibqxuDjtddSx6QluMZVRpw+2AXJrlPUc7U34sNPQ9cpNct34ReKCCPsxw5hwiOFV0+l3LKSUbE88X6ZwI=
-X-Received: by 2002:a17:90a:1a08:b0:292:6b51:6bb with SMTP id
- 8-20020a17090a1a0800b002926b5106bbmr262488pjk.0.1706215532174; Thu, 25 Jan
- 2024 12:45:32 -0800 (PST)
+	s=arc-20240116; t=1706216107; c=relaxed/simple;
+	bh=fO99f0ePHKbHwUdZm/bw6zGu6VRhR6QSAqZmTpdRvPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7tzod+uNsFBbhUukAxuYUEkAfQIb4qoGqIAzTwn7gfDfo/L2Zxlj4Ur+Ej12UF+polDTMQyxrGxyPE4GfxbgN892Pdb87j7zC05mkdpM+Pe5XBQTeBp97makH0Pu3NKfrD/pg/xqWeKVkSFkK6NlrgpEsMAUwV/Bg+bSNzqCz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rT6kK-0000q6-2e; Thu, 25 Jan 2024 21:54:48 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rT6kE-002MbB-Qk; Thu, 25 Jan 2024 21:54:42 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rT6kE-0088NE-2C;
+	Thu, 25 Jan 2024 21:54:42 +0100
+Date: Thu, 25 Jan 2024 21:54:42 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Douglas Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, dri-devel@lists.freedesktop.org, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Paul Cercueil <paul@crapouillou.net>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	linux-amlogic@lists.infradead.org, Guenter Roeck <groeck@chromium.org>, 
+	linux-riscv@lists.infradead.org, David Airlie <airlied@gmail.com>, 
+	linux-stm32@st-md-mailman.stormreply.com, Jerome Brunet <jbrunet@baylibre.com>, 
+	chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
+	Robert Foss <rfoss@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-staging@lists.linux.dev, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, NXP Linux Team <linux-imx@nxp.com>, linux-mips@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-pwm@vger.kernel.org, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ray Jui <rjui@broadcom.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Johan Hovold <johan@kernel.org>, Maxime Ripard <mripard@kernel.org>, greybus-dev@lists.linaro.org, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, linux-mediatek@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, Fabio Estevam <festevam@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Benson Leung <bleung@chromium.org>, kernel@pengutronix.de, 
+	linux-arm-kernel@lists.infradead.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Alex Elder <elder@kernel.org>, Scott Branden <sbranden@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v5 003/111] pwm: Provide a macro to get the parent device
+ of a given chip
+Message-ID: <h4l5ki3mvayfmfb73jnrokmxu3p2ewutihx4rytefmpce7bcxq@nhsyy2fw6fds>
+References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
+ <1cae6f73264ab313205eaa9483251f7aaf259cb4.1706182805.git.u.kleine-koenig@pengutronix.de>
+ <c89cbecf-253d-4a2c-8782-304b7b620175@broadcom.com>
+ <e3xeos2rtfydqj3hz3ql7xkon3aa3aingww7q5lpb3xa4arqrs@6jgwfrgay4le>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240125145007.748295-1-tudor.ambarus@linaro.org> <20240125145007.748295-28-tudor.ambarus@linaro.org>
-In-Reply-To: <20240125145007.748295-28-tudor.ambarus@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 25 Jan 2024 14:45:21 -0600
-Message-ID: <CAPLW+4kTDxvRuCvg8TO8QFQiTUfrvzEavX=Cx2QVRZ=SnRLrOg@mail.gmail.com>
-Subject: Re: [PATCH v2 27/28] spi: s3c64xx: add support for google,gs101-spi
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, arnd@arndb.de, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arch@vger.kernel.org, andre.draszik@linaro.org, 
-	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2cxtxp6sbv6wwe5j"
+Content-Disposition: inline
+In-Reply-To: <e3xeos2rtfydqj3hz3ql7xkon3aa3aingww7q5lpb3xa4arqrs@6jgwfrgay4le>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+
+
+--2cxtxp6sbv6wwe5j
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 25, 2024 at 8:50=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
-> Add support for GS101 SPI. All the SPI nodes on GS101 have 64 bytes
-> FIFOs, infer the FIFO size from the compatible. GS101 allows just 32bit
-> register accesses, otherwise a Serror Interrupt is raised. Do the write
-> reg accesses in 32 bits.
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/spi/spi-s3c64xx.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 35a2d5554dfd..e887be6955a0 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1501,6 +1501,18 @@ static const struct s3c64xx_spi_port_config exynos=
-autov9_spi_port_config =3D {
->         .quirks         =3D S3C64XX_SPI_QUIRK_CS_AUTO,
->  };
->
-> +static const struct s3c64xx_spi_port_config gs101_spi_port_config =3D {
-> +       .fifosize       =3D 64,
-> +       .rx_lvl_offset  =3D 15,
-> +       .tx_st_done     =3D 25,
-> +       .clk_div        =3D 4,
-> +       .high_speed     =3D true,
-> +       .clk_from_cmu   =3D true,
-> +       .has_loopback   =3D true,
-> +       .use_32bit_io   =3D true,
-> +       .quirks         =3D S3C64XX_SPI_QUIRK_CS_AUTO,
-> +};
-> +
->  static const struct s3c64xx_spi_port_config fsd_spi_port_config =3D {
->         .fifosize       =3D 64,
->         .rx_lvl_offset  =3D 15,
-> @@ -1556,6 +1568,10 @@ static const struct of_device_id s3c64xx_spi_dt_ma=
-tch[] =3D {
->                 .compatible =3D "samsung,exynosautov9-spi",
->                 .data =3D &exynosautov9_spi_port_config,
->         },
-> +       {
+On Thu, Jan 25, 2024 at 09:29:37PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Thu, Jan 25, 2024 at 11:32:47AM -0800, Florian Fainelli wrote:
+> > On 1/25/24 04:08, Uwe Kleine-K=F6nig wrote:
+> > > Currently a pwm_chip stores in its struct device *dev member a pointer
+> > > to the parent device. Preparing a change that embeds a full struct
+> > > device in struct pwm_chip, this accessor macro should be used in all
+> > > drivers directly accessing chip->dev now. This way struct pwm_chip and
+> > > this macro can be changed without having to touch all drivers in the
+> > > same change set.
+> > >=20
+> > > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> >=20
+> > Nit: this is not a macro but an inline function.
+>=20
+> Oh right, it used to be a macro, but I changed that. I made the commit
+> log read:
+>=20
+>     pwm: Provide an inline function to get the parent device of a given c=
+hip
+>=20
+>     Currently a pwm_chip stores in its struct device *dev member a pointer
+>     to the parent device. Preparing a change that embeds a full struct
+>     device in struct pwm_chip, this accessor function should be used in a=
+ll
+>     drivers directly accessing chip->dev now. This way struct pwm_chip and
+>     this new function can be changed without having to touch all drivers =
+in
+>     the same change set.
 
-As I mentioned before, this braces style looks too bloated to me.
-Other than that:
+While looking into further feedback, I noticed I did the same mistake in
+all the patches that convert the drivers to use this function. I did
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+	git filter-branch --msg-filter 'sed "s/Make use of pwmchip_parent() macro/=
+Make use of pwmchip_parent() accessor/; s/commit as struct pwm_chip::dev, u=
+se the macro/commit as struct pwm_chip::dev, use the accessor/; s/provided =
+for exactly this purpose./function provided for exactly this purpose./"' li=
+nus/master..
 
-> +               .compatible =3D "google,gs101-spi",
-> +               .data =3D &gs101_spi_port_config,
-> +       },
->         {
->                 .compatible =3D "tesla,fsd-spi",
->                 .data =3D &fsd_spi_port_config,
-> --
-> 2.43.0.429.g432eaa2c6b-goog
->
+on my branch to make the typical commit log read:
+
+	pwm: atmel: Make use of pwmchip_parent() accessor
+=09
+	struct pwm_chip::dev is about to change. To not have to touch this
+	driver in the same commit as struct pwm_chip::dev, use the accessor
+	function provided for exactly this purpose.
+
+I wont resend the whole series if this is the only change to it.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--2cxtxp6sbv6wwe5j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmWyypEACgkQj4D7WH0S
+/k5psggAul+UfI+G8dHEaH2KDgkBUUlYZUwuEaOFluY8XF2KWBYgzrV6GTSkw5wT
+Me32hGYPzkH5GThVge4EwflIY6st1Dpe7hApskZcERowT4iaqpLmRhMLJSfbNFFL
+TKdck+IYqa1cFxKcnCqPr5UHCx9DR2zJulclKHey+IaAQbbiSZ7PXqTliJidSqA4
+gcZdCllP/NksXCjwuu7f3ffFYfT4eD4biOf/g24aQx4AkSSB/1xPNtYnwHwe9U7Q
+NfCN0EtnmSN3qHIMZQ0v8PHGjfE/VvFR+cIRqaher18JI/FRZFfNPMhT1hniO7vh
+qGInsEnK5ClF+KhK7XpBNiDRRAyXtw==
+=6bo9
+-----END PGP SIGNATURE-----
+
+--2cxtxp6sbv6wwe5j--
