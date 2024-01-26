@@ -1,103 +1,110 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6365C12B7C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 12:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373871CD11
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 14:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706270512; cv=none; b=p1YIktm9MJFWlhHG4V8E6vstBge6zB8vmNL7mrhZYLRoSE3o8/WDWIj1glWj64nNGM6VGJhmUy9ibxsfOXwsTRMPPPUjtInuJLiffM4HpQzft40+5Mt24hiMjNYeUjjsBzGe26GiN+li5NLFwpkS/OhQdS//LjSSC/h6vRYyqfc=
+	t=1706278298; cv=none; b=TCN1oWdIRvC+G5dKzAmKXNYVqFvGucDjLqhNy8wY92DcXy9KIbLigo+iBYot+qA0m0vs4YxidCG580TyD+szAZ9rqfHprftPEnC3utHs8x6zVx78DHcngrLmfEzrANmesHajaGksddNuxn94TWLVUm4myaP2Xu2USWAKRFmdetw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706270512; c=relaxed/simple;
-	bh=kShe0DR8dUkgLXM5V6sGEm+PEs6rP3fBIoBIPjAcbZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UqCJyqQF8oi87f1stOmeCpHhKFnebLCUJ4MV21YNgbmJiAqPdvIsT1LlMRGrz5KE0zyKGoEJVrUZW2Xymz75q9WzIVq++U9Th0JS0JKqncPu538jxZN9FY3p7aXUHB0CG66Fen6V5gEkwZ7K2br1UORk8GxvoqqYa2OWlqXIP64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PMljS02p; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706278298; c=relaxed/simple;
+	bh=ORG3PUk6hJ36HaK8k6qEbN0RT3bBtPF5EOuhqaMjupo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=KOgI2vpHssIXCvOG0Jg1E76QHhdch9ExVyTez7JCBPBDI6IXGZQGj8dPlLe0BVVk5PtSICi7fKV5JD1EzgJ4khQ90KpWG5bvmwWuI0rLjAWD8gMtgQglUtWqsm3Hzi0h/5f2MFIB6T84a3VZUhSw1eqL8sYzD1OvpMSabwW7hLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTdk/O+6; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PMljS02p"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3394dc2ae23so417074f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 04:01:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTdk/O+6"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6ddd19552e6so218864b3a.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 06:11:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706270508; x=1706875308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1706278295; x=1706883095; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J+Pi2YmSmh0tvF2dcIDzb/GRIdLqeCZP6pnn7Oxmq98=;
-        b=PMljS02prBnMtZudnzEXUH0bZR0Bb7Gwu/CA8vZM/YNcavFFe9cFGFAiViUigrHwZP
-         r2xZBTy7FZ3vbwrr5wsSr8y03kiiQmaH1nPlaPJDNCJPM7/sq0+Jct0LuUbA0Tx+zNy3
-         kncPfMcBvUNVj80vSDE8ZxTQLNZumIvhrAAx2ceelj8PEJHTmnB/9wElsh/4MABSF4TU
-         RoxVGSZjOo6kt+jjbaD675FnZaND9IRRx7nYnR6bvz+fXhulkydH14CFdmCERbCBxmKI
-         UFD81Dsrh4sOYoBVma/ikE1BH0Lz/PW7lmKzL05+0K3FPO1BmBP2k9WXXH4dKR19P2MX
-         RCSA==
+        bh=5DQlVzK5S0SZ8xLgogJiclZtODcnjOBeJZwV+6P0khw=;
+        b=MTdk/O+69hu84nEYQ3HgLUt+i9NdOwplWTN12khPVcyrYF59PRvPPvJ4VRaVqSMcO3
+         djrqBXuxGC0I1Wz24VNvdC2WodL2prwluiHqNy1pUp9EpNc7bVlEC/PiLvQqbzJqdUOC
+         y/cMDX1e02/Y0Noi6V2jSsMUl1k0vynoo8UVrPrcctQEKvbb8iblSKYwBYK0YO8YQ19T
+         2EHnwEiLevrrUYp3ViN93KtN2ML25ypQT9Uq9tfUOy173hbzIW9fWIy7lZTRyBzIXUsW
+         shK+FrnJIe5+4dKtbxIJ2HCoJTJT6JReASsJ/S448Tjbo8fcRrPTJ5pX8JRzAKtGGiQK
+         6X2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706270508; x=1706875308;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+Pi2YmSmh0tvF2dcIDzb/GRIdLqeCZP6pnn7Oxmq98=;
-        b=e4mCFN20uFshTlLdFTnTumbfp4EIgIgS98YtKmUpzVkruJQKO8FSS0CnTrkQsV03Ew
-         ooR0hYm0/ZpheYK9BtwNG7zEbWsl2gwIxgrLvNR5J1M/C0aF0MVgj/5Zarxy+xtWKUfV
-         fbXdt1iyHX32L70txapWVwPWtUxupijywUI3lWn+p6BrtSlqjY/oXziLhZlM8W8fbm6a
-         nYdwIhRb/3e+VyxzH109d+8rF45/Bq60sXfQ27h/++rjRtmkGnaIGhY/ICQP9eQxp6V5
-         ilFzAokVRx5xbctop2gF7ZxYhudWoa7v7eg/5YfyZwCX63XaK1x78nPFCZGIjbYuqfWd
-         2t5Q==
-X-Gm-Message-State: AOJu0YwVVWVPmlWleY8QY8rkZA3nZRDpDWiw4DJzLEDxd1lKhsE4NKJo
-	bOeEkJwdIBBcd0EzWbOZjpbqQ2eZFCyGkKKqmHTkBV1XGKomuCk8teD3WdQqIx8=
-X-Google-Smtp-Source: AGHT+IEmxXOASS0axvOu7+6RVFmpWTwW27YnOeCzd/HHx1xonmd2dr/AtGzOQl4fXJuA7S8D2VezUA==
-X-Received: by 2002:a5d:6e87:0:b0:337:6d95:da5d with SMTP id k7-20020a5d6e87000000b003376d95da5dmr647325wrz.90.1706270508701;
-        Fri, 26 Jan 2024 04:01:48 -0800 (PST)
-Received: from krzk-bin.. ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id ch21-20020a170906c2d500b00a317346a353sm554207ejb.123.2024.01.26.04.01.47
+        d=1e100.net; s=20230601; t=1706278295; x=1706883095;
+        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5DQlVzK5S0SZ8xLgogJiclZtODcnjOBeJZwV+6P0khw=;
+        b=Wy9yoMe/w74QiFc/u0XG/bAW0DPV7I7FUV/0ho5HDTvthzSPu2jgoSJunJPe3EGJKu
+         2qc8ItLVkKGgG/8oJNhdQX6AX8wgoe/Yuz3z/RXdwo6l36bjOufEGpwITawTJ/o3VW9G
+         IYrueiAi8UORn8VRmdDGkdOhN88lD13yMcvjROwtHyg3Vk/E1Gp65ChU9rHMoCzRiJnv
+         XDBTGwDfAtLEMZKfkehnnFL3eMkzfNOwF9YJ3q9lNOGjxs56xgQsngDeledUOQ+lFfW3
+         Ugh1vE45pvT8ha/7nil70pwGIBpvUbTT8SMzUzwcTQNnM+5QSQdb32kygsrfnpHN9guc
+         U9LQ==
+X-Gm-Message-State: AOJu0Ywh5as3FmLg80kHvqWOP9DNNbbtO+mHc3fsxXfcG+pVYyCQ2mfz
+	6PqHa1KcotFUydsWjYZcnkxh5Zj0iN5NsLApVAk3PpKRq/aQuoh+
+X-Google-Smtp-Source: AGHT+IGnlmTXNCkdfD8LAjE9foXlMwyd/et0ZdQ5i7Uirv391URClm3cosbQwHR39kAlKZ6YiZ2FMw==
+X-Received: by 2002:aa7:9dde:0:b0:6dd:a118:9082 with SMTP id g30-20020aa79dde000000b006dda1189082mr1508080pfq.29.1706278295303;
+        Fri, 26 Jan 2024 06:11:35 -0800 (PST)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id gu7-20020a056a004e4700b006db105027basm1125511pfb.50.2024.01.26.06.11.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 04:01:48 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	peter.griffin@linaro.org,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com,
-	tudor.ambarus@linaro.org,
-	willmcvicker@google.com,
-	daniel.lezcano@linaro.org,
-	tglx@linutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+        Fri, 26 Jan 2024 06:11:35 -0800 (PST)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: samsung: exynos-sysreg: gs101-peric0 requires a clock
-Date: Fri, 26 Jan 2024 13:01:45 +0100
-Message-Id: <170627049274.55566.6787133378915980124.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240126115517.1751971-1-andre.draszik@linaro.org>
-References: <20240126115517.1751971-1-andre.draszik@linaro.org>
+Subject: [GIT PULL] drm-misc-fixes
+Date: Fri, 26 Jan 2024 23:11:30 +0900
+Message-Id: <20240126141130.15512-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+
+Hi Dave and Daniel,
+
+   Just one regression fixup to samsung-dsim.c module.
+
+   I attempted a pull request on the drm-misc tree but encountered
+   a permission issue. In response to this, I've created an issue[1]
+   on gitlab.freedesktop.org.
+
+   Therefore, I added the drm-misc tree as a remote to the drm-exynos tree.
+   This pull request is based on the latest drm-misc-fixes branch of
+   the drm-misc tree.
 
 
-On Fri, 26 Jan 2024 11:55:16 +0000, André Draszik wrote:
-> ... otherwise it won't be accessible.
-> 
-> Update the schema to make this obvious.
-> 
-> 
+   Please kindly let me know if there is any problem.
 
-Applied, thanks!
+Thanks,
+Inki Dae
 
-[1/2] dt-bindings: samsung: exynos-sysreg: gs101-peric0 requires a clock
-      https://git.kernel.org/krzk/linux/c/38c9ce091a4bd0ff272438131424e98ea0e3906d
-[2/2] arm64: dts: exynos: gs101: sysreg_peric0 needs a clock
-      https://git.kernel.org/krzk/linux/c/ca487bc2776e6b2465fcddb0a0fc121c0ff7b118
+[1] https://gitlab.freedesktop.org/freedesktop/freedesktop/-/issues/1151
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The following changes since commit 27d19268cf394f2c78db732be0cb31852eeadb0a:
+
+  accel/ivpu: Improve recovery and reset support (2024-01-25 10:17:37 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/drm-misc-fixes-for-v6.8-rc2
+
+for you to fetch changes up to ff3d5d04db07e5374758baa7e877fde8d683ebab:
+
+  drm: bridge: samsung-dsim: Don't use FORCE_STOP_STATE (2024-01-26 22:48:47 +0900)
+
+----------------------------------------------------------------
+One regression fixup to samsung-dsim.c module
+- The FORCE_STOP_STATE bit is ineffective for forcing DSI link into LP-11 mode,
+  causing timing issues and potential bridge failures.
+  This patch reverts previous commits and corrects this issue.
+
+----------------------------------------------------------------
+Michael Walle (1):
+      drm: bridge: samsung-dsim: Don't use FORCE_STOP_STATE
+
+ drivers/gpu/drm/bridge/samsung-dsim.c | 32 ++------------------------------
+ 1 file changed, 2 insertions(+), 30 deletions(-)
