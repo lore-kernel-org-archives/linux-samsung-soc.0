@@ -1,96 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A68241E5;
-	Fri, 26 Jan 2024 21:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A911156756;
+	Fri, 26 Jan 2024 23:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.55.52.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706303956; cv=none; b=ME1UivnNzPAJvpZ5zi8ExsD+cOQrHTi50s0ka6DYX7SfKvsBHjp63Nm1cyl03B9Rj443R8W8rxbJwF5KtQszXsfPU4RRjr+jZpsjLAqbpSk0Yopm7NLrWoD1xu4VF7klTZNPWclJ7Pb0p9OlbPP1GhR+ZrNG8dvJTHnrWgia7lM=
+	t=1706310464; cv=none; b=LWJZEbvSZF1eGZ6pGPrzTXM5WtB1ynEwoM8DYUA3g6hjn2cEVtXAFwQZjxjziNU/D6ReN/x99yNlG92Ff81vgPsuaDisQiyfV1F67EJj/dZknqiRmBQ2pNeZ7Zsb+MGh3UW3QgVBhAUhbvOPM/PvFhnEEyR4U9y3F1NlrJTPr1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706303956; c=relaxed/simple;
-	bh=QAmhzRN9Gx5RRTwBMINr0tSQKWvpM2+7nYt4uq/mnFU=;
+	s=arc-20240116; t=1706310464; c=relaxed/simple;
+	bh=CCBlNiRHutaSOIy4eCuqmtmhS4a3fOQYcAmNjzl5BgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbZ0gkNuAakTO5zFMEbqFd0gnpDVSUZTr4Yu7yfyz0nAuYWy8ob/7tce4v0mlcSPNFNBGc9HgkOyJDFgm9j+zukUBK2ak93yYwGPA/It/qsSvBwWTM+T+mrORIiJqtYR9+0RbhgYBbd1z6377WIVrURm5c4uGcroXaiAgTrpeYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HtO1CxMm; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=hl9Rg7v6YINaPvTTaLHVkvJU9PDokWj12wbjALT25ZBhO9ZJbYY+j73DIUFTEPgWeladA4x+mhXZIFM0w8xtjGNHTVzVRyIdJSUcXaePsRRXcOYKnXe8XFrSdN2A4bx5RBzokS4j07CGfmA1yrlVbou14ebj46+BwOiZRHQPMtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K2wz7WX2; arc=none smtp.client-ip=192.55.52.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HtO1CxMm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F4D9C433F1;
-	Fri, 26 Jan 2024 21:19:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706303955;
-	bh=QAmhzRN9Gx5RRTwBMINr0tSQKWvpM2+7nYt4uq/mnFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HtO1CxMm/dTj6BxsdRp2VlOcmN4qRo3PsXFYQywV8xlyPCpJzy+8A01s8s0vBpxHj
-	 VWlMKMvjTuXziTD4IfTEm862VYZOfPfZ16kI9/qgf/IgnJjmL+FMxdM0r95Q5ZI7O3
-	 Pbk99uRXUn3FUGjqjSnWa+jWeaGep7Ipk5uwYM3PIsd77PhhNy8fO1Oc2bIZt0vYuH
-	 HX8P3PIIY2iNxwMfnjQVnk0sNqMSefKsYs5bEsT6L5GOMqWXO2TZg8qdvEulmBZMXX
-	 isyelBBpWE6Sr1rz7gTFVLAPKkzB/OAzN0Tquc9TwA6fIezfEqr7sryZtj/qyG2S4X
-	 MiYe/oVeKQTPQ==
-Date: Fri, 26 Jan 2024 21:19:09 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, krzysztof.kozlowski+dt@linaro.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-spi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K2wz7WX2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706310462; x=1737846462;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CCBlNiRHutaSOIy4eCuqmtmhS4a3fOQYcAmNjzl5BgY=;
+  b=K2wz7WX2a69IRzJFOaANDD2mv0IPNXiEyg2n+uDOeK3mtCMV53dkW3yy
+   D63VgC5WlCxkHIsvz7rq/GLGru9ZSomi2RJExK8oAT3ERZUYGw34zGxYp
+   UPpKS6KGxbLDBkYJzNZWbOJfpLdDpDcNlXAtO31eGr7GQJWb//d1MunCB
+   qlt7G6aPNUYn71DT9udD2Ya5uLGZ3YbbHQYkK+Wd9f2xbw29dIvpxKqaR
+   NrbMYB/GE+kWmrWypA644mGAiQfXlM9vp1ms5RcSp5UwoV8cFqJ8OrPoP
+   9b9dPm2h7quHt70BNkNtTHvYM8PQ75DVC27CUl96W6JHdKU7+qzWXAOg0
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="399760656"
+X-IronPort-AV: E=Sophos;i="6.05,220,1701158400"; 
+   d="scan'208";a="399760656"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2024 15:07:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="930501808"
+X-IronPort-AV: E=Sophos;i="6.05,220,1701158400"; 
+   d="scan'208";a="930501808"
+Received: from lkp-server01.sh.intel.com (HELO 370188f8dc87) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Jan 2024 15:07:36 -0800
+Received: from kbuild by 370188f8dc87 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rTVIM-0001R4-1N;
+	Fri, 26 Jan 2024 23:07:34 +0000
+Date: Sat, 27 Jan 2024 07:07:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Griffin <peter.griffin@linaro.org>, arnd@arndb.de,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	linux@roeck-us.net, wim@linux-watchdog.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, jaewon02.kim@samsung.com,
+	chanho61.park@samsung.com, semen.protsenko@linaro.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	kernel-team@android.com, peter.griffin@linaro.org,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	saravanak@google.com, willmcvicker@google.com, linux-fsd@tesla.com,
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>, kernel-team@android.com,
-	William McVicker <willmcvicker@google.com>
-Subject: Re: [PATCH v2 23/28] spi: s3c64xx: retrieve the FIFO size from the
- device tree
-Message-ID: <0c4a90f0-b40e-41e8-8950-16863cbd4c07@sirena.org.uk>
-References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
- <20240125145007.748295-24-tudor.ambarus@linaro.org>
- <1e117c5c-1e82-47ae-82f4-cdcf0a087f5f@sirena.org.uk>
- <CAPLW+4kTUmG=uPQadJC5pyfDvydvr1dKnJY6UxQva2Ch-x7v3g@mail.gmail.com>
- <e4b76c3d-f710-4b32-aa30-23cb54346d15@app.fastmail.com>
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/9] soc: samsung: exynos-pmu: Add
+ exynos_pmu_update/read/write APIs and SoC quirks
+Message-ID: <202401270633.VorEna6q-lkp@intel.com>
+References: <20240122225710.1952066-3-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PNVF8uZx8MQjuD9w"
-Content-Disposition: inline
-In-Reply-To: <e4b76c3d-f710-4b32-aa30-23cb54346d15@app.fastmail.com>
-X-Cookie: Excellent day to have a rotten day.
-
-
---PNVF8uZx8MQjuD9w
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240122225710.1952066-3-peter.griffin@linaro.org>
 
-On Fri, Jan 26, 2024 at 09:16:53PM +0100, Arnd Bergmann wrote:
+Hi Peter,
 
-> That sounds like the same bug as in the serial port driver,
-> by assuming that the alias values in the devicetree have
-> a particular meaning in identifying instances. This immediately
-> breaks when there is a dtb file that does not use the same
-> alias values, e.g. because it only needs some of the SPI
-> ports.
+kernel test robot noticed the following build errors:
 
-It'll be the result of a conversion from board files where that was a
-normal way of doing things.
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on robh/for-next soc/for-next linus/master v6.8-rc1 next-20240125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---PNVF8uZx8MQjuD9w
-Content-Type: application/pgp-signature; name="signature.asc"
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-watchdog-samsung-wdt-deprecate-samsung-syscon-phandle/20240123-070052
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240122225710.1952066-3-peter.griffin%40linaro.org
+patch subject: [PATCH 2/9] soc: samsung: exynos-pmu: Add exynos_pmu_update/read/write APIs and SoC quirks
+config: x86_64-buildonly-randconfig-006-20240126 (https://download.01.org/0day-ci/archive/20240127/202401270633.VorEna6q-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240127/202401270633.VorEna6q-lkp@intel.com/reproduce)
 
------BEGIN PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401270633.VorEna6q-lkp@intel.com/
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmW0IcwACgkQJNaLcl1U
-h9B/SAf/S9EZ2RMGzQoioDEZX27gnXJCqSurY1TDyT6aGYEKEfM95MwWi1cAiUI/
-uBwUMJ3a3d2V+0vpL/xoXLpUYU/sr1CfbmvpE71M5U429GMemLZrzUqUFmWNfQYC
-kJgUakh6v9/Yzd6jGBD4oIU6XYtcfiX46m/qSeIuIde1miqRUeR/vlZpZ8264YEB
-q4xjWlNbErInSJa7bt/srm2e4OCrjlsM7UwRyeTUfRCZ6Mh20VsiCN9o7iwPAOjD
-hqOVvIdRQad2iIG/UXxv1Yrswy0/BN5urIpxolQmx1pxDFzTLdw7LSareKjBqUvI
-dgVm6/5De7gMVkQTciuwAtijMaT4bw==
-=U2OJ
------END PGP SIGNATURE-----
+All errors (new ones prefixed by >>):
 
---PNVF8uZx8MQjuD9w--
+   In file included from drivers/pinctrl/samsung/pinctrl-exynos.c:27:
+>> include/linux/soc/samsung/exynos-pmu.h:38:1: error: expected identifier or '('
+      38 | {
+         | ^
+   include/linux/soc/samsung/exynos-pmu.h:44:1: error: expected identifier or '('
+      44 | {
+         | ^
+>> include/linux/soc/samsung/exynos-pmu.h:50:9: error: incompatible pointer to integer conversion returning 'void *' from a function with result type 'int' [-Wint-conversion]
+      50 |         return ERR_PTR(-ENODEV);
+         |                ^~~~~~~~~~~~~~~~
+   include/linux/soc/samsung/exynos-pmu.h:55:9: error: incompatible pointer to integer conversion returning 'void *' from a function with result type 'int' [-Wint-conversion]
+      55 |         return ERR_PTR(-ENODEV);
+         |                ^~~~~~~~~~~~~~~~
+   4 errors generated.
+
+
+vim +38 include/linux/soc/samsung/exynos-pmu.h
+
+    35	
+    36	static inline int exynos_pmu_update_bits(unsigned int offset, unsigned int mask,
+    37						 unsigned int val);
+  > 38	{
+    39		return ERR_PTR(-ENODEV);
+    40	}
+    41	
+    42	static inline int exynos_pmu_update(unsigned int offset, unsigned int mask,
+    43					    unsigned int val);
+    44	{
+    45		return ERR_PTR(-ENODEV);
+    46	}
+    47	
+    48	static inline int exynos_pmu_write(unsigned int offset, unsigned int val)
+    49	{
+  > 50		return ERR_PTR(-ENODEV);
+    51	}
+    52	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
