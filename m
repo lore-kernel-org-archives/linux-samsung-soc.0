@@ -1,56 +1,56 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5D65A79E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81E15B217
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706310973; cv=none; b=uBvFyzwXx9MzN5S3yDSVLZwKNsr1UplAEOmhcOS/yJBP9kGRfb0VA2PW2FQWlSOTTLXyRMAIHc67XOGZT50NzFYamSZn1667wWQJbm89tJPVVh+x/OOxSwTpcaSugkk+Z5VzLBYO0z9MZEiK65Ho2IuIvVQ82BJHnt0j4c2HJc0=
+	t=1706310974; cv=none; b=JPoTrEeMbgrdDCeBTLqexH/jqzDLkmPNC6lsxT9LNSGJGSZgqk7NlmK7ndNSYXQFBte0jua/5jpFt0OPZymTnsntJL/zNXoxHRFsD/JSxMSHCQEUG89mXFIVxdAiBR/xvdEgIlgiXVnMCClbq54tKIL7PfMs7TMcuf17ci8mdQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706310973; c=relaxed/simple;
-	bh=hr4nOBWgTYWfAz3nDinorGAmbEpHqgT37FFxq902g4c=;
+	s=arc-20240116; t=1706310974; c=relaxed/simple;
+	bh=uKwiWzeO0xFAMIWvpeHxHonS+sA78lVm8Pf7e/oU4ns=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UNeGJCHHk7gambuVPLId0ZtADUlkIAi8YWwVjkD7I5trslJgQd+oXsIbKtagDjBrMtYzX848+VhDI+k/hkczNAanmQObp1TyyeKLCpH6RM3Mtna9+JVZNeraoPD+EC3bvlBpe+huhpm05Gkmw23tRAlR4uPq8AAS+1/g/vUamkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fiGiKXw8; arc=none smtp.client-ip=209.85.222.171
+	 In-Reply-To:To:Cc; b=NJQ0+NR3WPP1TiDMX6dx+a83EpGCidDv2E+otLhe2jBSC7ZDM2YrEb6a4oHiVW+ug71mtiAjsz52LRyX2n1PPtvGakND075iZjdFr70/9VCDBgf8bDGzpPxgalC1WiMB6U8Z3ioGMJU09YWdgQzPnpvm7IzhzSW2GGA32JPFvU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZpkHrIYg; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fiGiKXw8"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-783d84ecb13so69865785a.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:11 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZpkHrIYg"
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-783cd245ec0so73626585a.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706310970; x=1706915770; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1706310971; x=1706915771; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wJ0m3P4movTLz/Nvfo+j871i2YxzmvzYNu3X7u/7SQ8=;
-        b=fiGiKXw85GcJfODCS3rqqFmxeJHozVJjTD+dUpX/6E4whOb6N1Opi/fF9c4Kpxevn3
-         ERoIOY/PBDzDrcbrc1YuoX4b5rRK/c+R9XAo1ZzpuR6Cdkdw4jA+bFay/PC+oLkwnUXO
-         08P99AYN3EJsW5wEdHbCec3U5ad7qd2XTRzS8=
+        bh=0dgr7uAnKOP7T5XfeX17z97swkwNkCZ42zeC6YgDi/s=;
+        b=ZpkHrIYgvrgSSRwCjIODgfyT521vqnUhVzVOlxSw4FbJDpqdPaGv9O0Iv81ilqsOQX
+         KoT6Wy5Elfh9UaCVc3jN4rYeM0bhQXEHscM0ws4aumCcC/S2uxTGU5xEBYnUq0SSx0uI
+         316FhRwj/pMp/ng4WzjalFS86CKPO8woAaUXI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706310970; x=1706915770;
+        d=1e100.net; s=20230601; t=1706310971; x=1706915771;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wJ0m3P4movTLz/Nvfo+j871i2YxzmvzYNu3X7u/7SQ8=;
-        b=QVXzqIIGqyITj3VirB2wrhhPXt2bMAa8qKu+RXTdH04Y/5jS0ZQvdTcwEWsvXlbMPb
-         7UNHeCeKzeCC+uqyxFnK02XLxjkP2BOsSsx2GiSNQ/Dw8kbl/3BaHvVr9sxBSwTQK55r
-         jfpYdqeuEf1by03yxwIhwmZtREkDScRS7hN8pwZ/66N23XzPWbLBMB0KsuyAvP20pn0F
-         znYSZGZTzEVem5fKu+pxd6f2p1EsKAFoGXYdF8fJKVRD2Owrk8EHb4Jgqne0Na8PTxUE
-         gcPO6Sq2fzSc5hPP8nvoxza0Npk5T9RjSuP0YoSzjzamVq6+eTiyMBQ4XsgQ8HxPQz9H
-         PjhA==
-X-Gm-Message-State: AOJu0YyhPUmMdRk4dV8ydtMDvqPyIUN1tVQi0TGSpqzKrFMaD4OBoe9j
-	aKO9Z8+lg4d4t7IReNwbxMbT3gkmg6KHKNVwyQhP02KJ++8HPJgheRWZkTcjvQ==
-X-Google-Smtp-Source: AGHT+IHAmNfItdlyJWsZ1GtS50XKPZcd4sgiZnzEdRhsQ66Nd+BshXmAy/d7aAGqJVN+Us+VU1C3UA==
-X-Received: by 2002:a05:620a:148c:b0:783:89f2:d9f5 with SMTP id w12-20020a05620a148c00b0078389f2d9f5mr495965qkj.104.1706310970554;
-        Fri, 26 Jan 2024 15:16:10 -0800 (PST)
+        bh=0dgr7uAnKOP7T5XfeX17z97swkwNkCZ42zeC6YgDi/s=;
+        b=TCWX3WgxhnW89Chl4Fzi8l/Yy88WoHTJrtK3uyzWkEMT7rZdDZWS5incQGlaXFVf5Y
+         7Wo/t6v4zd6Hyoe6qVlVJwjtSOmPSpnQxKhDnAVldi67o+V3Y/4j10cbps+3YLX8BuTd
+         1VK1YYdF5d54bnZJ+0MT1t23HVUJrB0Cgk0tbioTxo5nlHSq2rouNmsGrM9hBTvU+49y
+         E26L784zWh4wbPr46alNiL3Uvy9bsS3HkSftjOsR3X/ur9kWvXGMpV+DnwNb1LZnx6ZQ
+         3LTH0L9iyESMx9QRLXBdEXF8eB2DEqDF2RIXh4BWNU7QEsHK7kVg5/fllniX43OV3pnk
+         3Shw==
+X-Gm-Message-State: AOJu0Yxzl0mYjCLmT0gEhBtWT3xd8Ea6X9tkO3S9PKS1VtaWi8viXK5N
+	K7wwji21j3K/0cvbeOx1oj7YaxZI9HAT0zZbmERdsol8aD492rrVZ5a9pvBwfg==
+X-Google-Smtp-Source: AGHT+IHsMkOc7Y1zxu9ngxPBQ4/Ve5FRbTtg/VBTpnZVoIwUFy4DQtcLLUh2LbUFnAzoTvCw0KH84Q==
+X-Received: by 2002:ae9:e917:0:b0:783:4dfb:11ae with SMTP id x23-20020ae9e917000000b007834dfb11aemr522337qkf.63.1706310971522;
+        Fri, 26 Jan 2024 15:16:11 -0800 (PST)
 Received: from denia.c.googlers.com (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.09
+        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 15:16:09 -0800 (PST)
+        Fri, 26 Jan 2024 15:16:11 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 26 Jan 2024 23:16:04 +0000
-Subject: [PATCH 05/17] media: pci: dt315.h: Fix kerneldoc
+Date: Fri, 26 Jan 2024 23:16:05 +0000
+Subject: [PATCH 06/17] media: i2c: css-quirk.h: Fix kerneldoc
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240126-gix-mtk-warnings-v1-5-eed7865fce18@chromium.org>
+Message-Id: <20240126-gix-mtk-warnings-v1-6-eed7865fce18@chromium.org>
 References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
 In-Reply-To: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
 To: Tiffany Lin <tiffany.lin@mediatek.com>, 
@@ -97,25 +97,38 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.3
 
-The field is gone, remove it.
+Kerneldoc does not seem to understand that embed doc:
+drivers/media/i2c/ccs/ccs-quirk.h:50: warning: Excess struct member 'write' description in 'ccs_quirk'
+drivers/media/i2c/ccs/ccs-quirk.h:50: warning: Excess struct member 'reg' description in 'ccs_quirk'
+drivers/media/i2c/ccs/ccs-quirk.h:50: warning: Excess struct member 'val' description in 'ccs_quirk'
+
+Convert into a standard doc.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/pci/dt3155/dt3155.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/i2c/ccs/ccs-quirk.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/dt3155/dt3155.h b/drivers/media/pci/dt3155/dt3155.h
-index c9ce79cb5566..ce1835d9691e 100644
---- a/drivers/media/pci/dt3155/dt3155.h
-+++ b/drivers/media/pci/dt3155/dt3155.h
-@@ -162,7 +162,6 @@
-  * @height:		frame height
-  * @input:		current input
-  * @sequence:		frame counter
-- * @stats:		statistics structure
-  * @regs:		local copy of mmio base register
-  * @csr2:		local copy of csr2 register
-  * @config:		local copy of config register
+diff --git a/drivers/media/i2c/ccs/ccs-quirk.h b/drivers/media/i2c/ccs/ccs-quirk.h
+index 0b1a64958d71..392c97109617 100644
+--- a/drivers/media/i2c/ccs/ccs-quirk.h
++++ b/drivers/media/i2c/ccs/ccs-quirk.h
+@@ -28,11 +28,11 @@ struct ccs_sensor;
+  * @reg_access: Register access quirk. The quirk may divert the access
+  *		to another register, or no register at all.
+  *
+- *		@write: Is this read (false) or write (true) access?
+- *		@reg: Pointer to the register to access
+- *		@value: Register value, set by the caller on write, or
++ *		-write: Is this read (false) or write (true) access?
++ *		-reg:   Pointer to the register to access
++ *		-val:   Register value, set by the caller on write, or
+  *			by the quirk on read
+- *		@return: 0 on success, -ENOIOCTLCMD if no register
++ *		-return: 0 on success, -ENOIOCTLCMD if no register
+  *			 access may be done by the caller (default read
+  *			 value is zero), else negative error code on error
+  * @flags: Quirk flags
 
 -- 
 2.43.0.429.g432eaa2c6b-goog
