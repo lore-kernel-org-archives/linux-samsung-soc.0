@@ -1,56 +1,56 @@
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E1B5A7A2
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7335B5A4
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706310972; cv=none; b=OeHhLUiHJ0e9uDBwv+y3+KhAEZwKe/pZRvTU5m5TA+Xu1+FBRWSIaUcZ03tXFKheOI5Bs73RJDXmMeIwqXXGuQ8ZHY03txf07kujjfkde6WjM4Cww4GmWzzVtCHR3P7jMA0VUSOQu0vgwl4UoTr/pjPYhgOJdNlNA9RXkUV4Aho=
+	t=1706310972; cv=none; b=L0JAo2T2FRsIKmGhUNnrUtbVbek22dCk8oqJJDQuQszwmNwTRhZY52ZX/ML9QjcVs/LMWG4yC1+qNRAT82flVzV+R37RZVQGTm/Zs7vqh0SBE1EI+f1PEUgPKqGm74GyMuPyeGFInrDWpM8SOTTEpWV9ViCABnqeqSYQzJfRGg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706310972; c=relaxed/simple;
-	bh=l9cPmoT/bWbvsJfq8x1RTaIe5o9qG8C0R9ya897fz3Y=;
+	bh=EP0SiOYhVfFPOJvzK23HYaQLWx/3epVW9BeNm+8xVNY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sJHZOyqxGiSfUMFwZjEyhVTZf8IjA06+xJB/85/0MDUeUnPbnXsQ64WFmn3mpWQ4hYAsQcH/edWFFgrTnygh7PHUhu/PKJfyEccjSNMV5Sl7R1t21X6dB14/hivuxGnBCw/df1BSw7qgY6CEuAiBivbJkNp8T5DAeeRw7HpkoQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E0PImluj; arc=none smtp.client-ip=209.85.222.173
+	 In-Reply-To:To:Cc; b=tihDwhj1VjJHr+zqjsrY0ig8r28eFEGy3FMY6pr2dxGWub6X+wOOGB32Gwu0HRKkyaFNsyNWfcfwR5xcoSlZB+GOGOCy+AJNjMSBzLTAzhkAS19aRiQPrtFfOKiSJKzuOaf5fy6Tbun93DA/HUqw6CSvORu8btWzbklCnelYwRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PzOVBiA5; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E0PImluj"
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-783d4b3ad96so78735485a.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:08 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PzOVBiA5"
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-78104f6f692so76952585a.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706310968; x=1706915768; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1706310969; x=1706915769; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QQhDPXykohcFJW0qtm5EHtuEzwLA0yzgLshaZoliDrY=;
-        b=E0PImlujKieADqQR6p2TtSt8HXExhPEc7NuUnPza2sZo1Wecc0QMNXlgGFVVFS4/Rs
-         CCRRhhK+eNUHJuEYmHjdUWQGlPdDC64dV5iUZfi5edeSjaY6qAP8bPACB62JYQe0h7/e
-         lJ2LMRa++Lwtk+PngbSGeJlFdL2geGh09b56U=
+        bh=K8jNV9DHXsOFSE/nzIDQ0aFfd3NfLzQF84gBDTm9ggE=;
+        b=PzOVBiA5d0ucwiOX/m3P3yrqDLdlDLueuF2aSHjbVTyi05Zx9SRNqa1njfGGfkF4ZP
+         RonMbFPdhQ9NlF3LAdwZaBEsPT6TlgoYVSfpET0Y3YGfLKTvbBWX5VYAahfcRChLSgov
+         PvDCx5NGYjtBfeYzsVco6q2MB6ktViByV4twQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706310968; x=1706915768;
+        d=1e100.net; s=20230601; t=1706310969; x=1706915769;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QQhDPXykohcFJW0qtm5EHtuEzwLA0yzgLshaZoliDrY=;
-        b=ewYXL8ikbg0fOCev29luT3Ydn4ctgoMhRTg5MCPl5MBBdx0Yi+ZMran/kUHeOrYF90
-         vGcF45IeAi/82f017TrDe2bMJvdCwUqEHRIRWX3ZD8WGZzO9B2WzBFHqqkzJpiuGPfaD
-         rKafJqc72ZOPu3SXe6OeW8V7BkyC+Lk2zaTtwKe+emVb4J9uw3PCsamIEaAUYa+RtJBC
-         B4rc4q4+CfJtAvRfkZOPnp+wUoF/twyvK6PU1p4q+6TEQFWF4/BuQ24TzBO+PiRqlc7l
-         eyEf2YAUDcyPwr25KMypOosNtxPr9XDAqOEx6KR0aHHFg9HXHY+5/v/qb8ukNkr9ojKo
-         IU8w==
-X-Gm-Message-State: AOJu0YycByKdO/nYjf/Yf737KvykdyWVEWL4JPltGnUnRS/Ju/enr9dn
-	ReLjdB/tXo7vQYKm8pGK/UAX8CX+GPPn0OsBX49RLxWAPLTEgIPQCR2kXZHjfQ==
-X-Google-Smtp-Source: AGHT+IEYax7waeMsYzBi1V5anUAE9029IxFY99+NqU01WUd1yOqmYKRjKVGaw0nUqApkIUGiDbz6Vw==
-X-Received: by 2002:a05:620a:19aa:b0:783:e3be:9bb5 with SMTP id bm42-20020a05620a19aa00b00783e3be9bb5mr52250qkb.21.1706310968110;
-        Fri, 26 Jan 2024 15:16:08 -0800 (PST)
+        bh=K8jNV9DHXsOFSE/nzIDQ0aFfd3NfLzQF84gBDTm9ggE=;
+        b=a7QbAVrmT4YQ7bpDiGMd3N4Gmw79PepfvEx+XVdOmF+41goqk9XGhCPN/JcHf/zdaM
+         hbPgR4ZANaJO3lrYxozQMJ4OAD/OyjB2sk89mW2uYntjTDX6lJ61LqySHognOXKSYtUy
+         JhTWSjlOHrtyl2PGi+Os3uk3OEUYh382deJTTST1yZDSqG+7cKWiegLQUZzrJCJe93R0
+         MWtUBzX7v0/Rlm+PLpK0rDVzFlVh03OARklTU3J2fd0Gan17mOeYaeNH3Ju1UnbpNF/t
+         gSYgBQgMetmFU0sUjD82eo9vy/GzJSYvRaXHbgl1Nl6kLZJSgMdaJMXC2DmpJSqtlNub
+         0DWA==
+X-Gm-Message-State: AOJu0Yx292k1qC7iPZTWy/N8nj6CptWYz2cfKwE1WEPVHNsDEm8zdxrv
+	6brF0qjJnVgCUEd8CFBd16wC40I/qDwbw34+Viyw4hZreR7lDyuaMnbNtShAkw==
+X-Google-Smtp-Source: AGHT+IHzyRuPGLIU9IzlEEdTKBGXo6/9Uou4vY0QASKHiYYbaa5Xmk9tSWpjCG3cIXB1RJj/V/BCqQ==
+X-Received: by 2002:a05:620a:28c8:b0:783:8d63:f3b2 with SMTP id l8-20020a05620a28c800b007838d63f3b2mr1010002qkp.54.1706310969221;
+        Fri, 26 Jan 2024 15:16:09 -0800 (PST)
 Received: from denia.c.googlers.com (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.06
+        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 15:16:07 -0800 (PST)
+        Fri, 26 Jan 2024 15:16:08 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 26 Jan 2024 23:16:02 +0000
-Subject: [PATCH 03/17] media: media-entity.h: Fix kerneldoc
+Date: Fri, 26 Jan 2024 23:16:03 +0000
+Subject: [PATCH 04/17] media: cec.h: Fix kerneldoc
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240126-gix-mtk-warnings-v1-3-eed7865fce18@chromium.org>
+Message-Id: <20240126-gix-mtk-warnings-v1-4-eed7865fce18@chromium.org>
 References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
 In-Reply-To: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
 To: Tiffany Lin <tiffany.lin@mediatek.com>, 
@@ -97,27 +97,25 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.3
 
-The fields seems to be documented twice.
+The fields are gone, remove their documentation.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- include/media/media-entity.h | 4 ----
- 1 file changed, 4 deletions(-)
+ include/media/cec.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index 2b6cd343ee9e..c79176ed6299 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -337,10 +337,6 @@ enum media_entity_type {
-  * @info.dev:	Contains device major and minor info.
-  * @info.dev.major: device node major, if the device is a devnode.
-  * @info.dev.minor: device node minor, if the device is a devnode.
-- * @major:	Devnode major number (zero if not applicable). Kept just
-- *		for backward compatibility.
-- * @minor:	Devnode minor number (zero if not applicable). Kept just
-- *		for backward compatibility.
-  *
-  * .. note::
+diff --git a/include/media/cec.h b/include/media/cec.h
+index d77982685116..10c9cf6058b7 100644
+--- a/include/media/cec.h
++++ b/include/media/cec.h
+@@ -224,8 +224,6 @@ struct cec_adap_ops {
+  * @notifier:		CEC notifier
+  * @pin:		CEC pin status struct
+  * @cec_dir:		debugfs cec directory
+- * @status_file:	debugfs cec status file
+- * @error_inj_file:	debugfs cec error injection file
+  * @sequence:		transmit sequence counter
+  * @input_phys:		remote control input_phys name
   *
 
 -- 
