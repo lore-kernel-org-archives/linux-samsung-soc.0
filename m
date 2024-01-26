@@ -1,56 +1,56 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB8B5787E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E1B5A7A2
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706310969; cv=none; b=GeoGn5RoyMbTD/PA4gW03hD7YdjU6cyPkQXzN7IQkVd9YoJqLEm/i1FqHAKGVLG3TLIg1+Xp0lb6CMMvC6dOr0CBm7yqsxdHdcl1HEXb6Khk+G9EQEcMmX6AAM3Fr4UUitOArHOJMrp/2BcR9pLau/7go9JL8mRFOGVonPGX0oQ=
+	t=1706310972; cv=none; b=OeHhLUiHJ0e9uDBwv+y3+KhAEZwKe/pZRvTU5m5TA+Xu1+FBRWSIaUcZ03tXFKheOI5Bs73RJDXmMeIwqXXGuQ8ZHY03txf07kujjfkde6WjM4Cww4GmWzzVtCHR3P7jMA0VUSOQu0vgwl4UoTr/pjPYhgOJdNlNA9RXkUV4Aho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706310969; c=relaxed/simple;
-	bh=GhTHyKYpLdDQHYJccb0YJVMX/ipsIOS1bQVmw69ltqg=;
+	s=arc-20240116; t=1706310972; c=relaxed/simple;
+	bh=l9cPmoT/bWbvsJfq8x1RTaIe5o9qG8C0R9ya897fz3Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Kl519/7BH6pjjmnei3vH+2seUZVfu4nkIbhSjcfPuu/rbXTUbx2r6PaOPo6OmuB7pfJ/cHX3laQUNgGKu1quD9nnW9XqrlNsRvJfbU9HUk7Tkac1xXQRHrkOvLrv6s5uJOi3drKc9T8SVXafjDC6KzcW+h6swP78z0gXC/ezKyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oJy1CgN5; arc=none smtp.client-ip=209.85.222.169
+	 In-Reply-To:To:Cc; b=sJHZOyqxGiSfUMFwZjEyhVTZf8IjA06+xJB/85/0MDUeUnPbnXsQ64WFmn3mpWQ4hYAsQcH/edWFFgrTnygh7PHUhu/PKJfyEccjSNMV5Sl7R1t21X6dB14/hivuxGnBCw/df1BSw7qgY6CEuAiBivbJkNp8T5DAeeRw7HpkoQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E0PImluj; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oJy1CgN5"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7838d13395dso63859185a.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:07 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E0PImluj"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-783d4b3ad96so78735485a.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706310967; x=1706915767; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1706310968; x=1706915768; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yKZ2I0FgT+c8VUKnt1mK+wIxC1JMtHjQ/OWMUKXoVdE=;
-        b=oJy1CgN5SfIPKCq2tLKWxaPB6qqAKJWMa6hqD9Yll3zok5+sRpZrVGcbtkXNd8UvdX
-         DVe6c1FlYpsPEgrV0Chs/KZ8SWgh4gucLbuyqgMslF8GEHY0uD5HAbchlODpClFlZ1ox
-         9B+kYSxpU0sDUwAM2kYXHofhZvgjVetm+oGTQ=
+        bh=QQhDPXykohcFJW0qtm5EHtuEzwLA0yzgLshaZoliDrY=;
+        b=E0PImlujKieADqQR6p2TtSt8HXExhPEc7NuUnPza2sZo1Wecc0QMNXlgGFVVFS4/Rs
+         CCRRhhK+eNUHJuEYmHjdUWQGlPdDC64dV5iUZfi5edeSjaY6qAP8bPACB62JYQe0h7/e
+         lJ2LMRa++Lwtk+PngbSGeJlFdL2geGh09b56U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706310967; x=1706915767;
+        d=1e100.net; s=20230601; t=1706310968; x=1706915768;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yKZ2I0FgT+c8VUKnt1mK+wIxC1JMtHjQ/OWMUKXoVdE=;
-        b=mJZKF/ryYKceL2bRHOE5d9j1tVOmQWV6JK5x6A0nuQw5YyRTmiOKZwdfpGmx0dyH66
-         5VOMWHZxHvsWfIfWSiWzN5BZwegFc+pNVV7jSfF7ueiEodZJ7ODl2Jxr6U7srfvdvTXl
-         o/ShWQKu7miydM4fotEQ3dt3wMjSGn+UT0KxH5AWbcqrw9LurTccv0sKxhmIVsp5oE/Z
-         BBX1alfEJfJ1/jEK7BCJq9vD751p8nUlqqxM4eZm75XWKyntITmr+KbI51A+BoznTgXo
-         xWlsqomDt8hAJrWA6wxuUeCoELJbx5H2XX1trHQqTRabS8ylja4NYhIGaDIBVfCcdGO5
-         HCGg==
-X-Gm-Message-State: AOJu0YxzJXYxg070vUVgBMffs6wdcFuRqi349gyb6Vh8jkSNpZ3NjI6O
-	7/LokhI7cuKK20A9ThIzQUubhNg+pY89P+1F4TfDP55AYJgmvmovPZ2vn2DgKw==
-X-Google-Smtp-Source: AGHT+IGfaDanel4bAe+Gm4pPjfl4j2bUb1CcCFTzpsa5FCnRkAwIXhqbnMbyXrNSHptz1QBTZemCAg==
-X-Received: by 2002:a05:620a:3888:b0:783:3cee:425a with SMTP id qp8-20020a05620a388800b007833cee425amr491959qkn.141.1706310966713;
-        Fri, 26 Jan 2024 15:16:06 -0800 (PST)
+        bh=QQhDPXykohcFJW0qtm5EHtuEzwLA0yzgLshaZoliDrY=;
+        b=ewYXL8ikbg0fOCev29luT3Ydn4ctgoMhRTg5MCPl5MBBdx0Yi+ZMran/kUHeOrYF90
+         vGcF45IeAi/82f017TrDe2bMJvdCwUqEHRIRWX3ZD8WGZzO9B2WzBFHqqkzJpiuGPfaD
+         rKafJqc72ZOPu3SXe6OeW8V7BkyC+Lk2zaTtwKe+emVb4J9uw3PCsamIEaAUYa+RtJBC
+         B4rc4q4+CfJtAvRfkZOPnp+wUoF/twyvK6PU1p4q+6TEQFWF4/BuQ24TzBO+PiRqlc7l
+         eyEf2YAUDcyPwr25KMypOosNtxPr9XDAqOEx6KR0aHHFg9HXHY+5/v/qb8ukNkr9ojKo
+         IU8w==
+X-Gm-Message-State: AOJu0YycByKdO/nYjf/Yf737KvykdyWVEWL4JPltGnUnRS/Ju/enr9dn
+	ReLjdB/tXo7vQYKm8pGK/UAX8CX+GPPn0OsBX49RLxWAPLTEgIPQCR2kXZHjfQ==
+X-Google-Smtp-Source: AGHT+IEYax7waeMsYzBi1V5anUAE9029IxFY99+NqU01WUd1yOqmYKRjKVGaw0nUqApkIUGiDbz6Vw==
+X-Received: by 2002:a05:620a:19aa:b0:783:e3be:9bb5 with SMTP id bm42-20020a05620a19aa00b00783e3be9bb5mr52250qkb.21.1706310968110;
+        Fri, 26 Jan 2024 15:16:08 -0800 (PST)
 Received: from denia.c.googlers.com (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.05
+        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 15:16:05 -0800 (PST)
+        Fri, 26 Jan 2024 15:16:07 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 26 Jan 2024 23:16:01 +0000
-Subject: [PATCH 02/17] media: videodev2.h: Fix kerneldoc
+Date: Fri, 26 Jan 2024 23:16:02 +0000
+Subject: [PATCH 03/17] media: media-entity.h: Fix kerneldoc
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240126-gix-mtk-warnings-v1-2-eed7865fce18@chromium.org>
+Message-Id: <20240126-gix-mtk-warnings-v1-3-eed7865fce18@chromium.org>
 References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
 In-Reply-To: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
 To: Tiffany Lin <tiffany.lin@mediatek.com>, 
@@ -97,79 +97,28 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.3
 
-Named nested unions need their prefix:
-https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#nested-structs-unions
+The fields seems to be documented twice.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- include/uapi/linux/videodev2.h | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ include/media/media-entity.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 68e7ac178cc2..a8015e5e7fa4 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -1041,13 +1041,13 @@ struct v4l2_requestbuffers {
-  * struct v4l2_plane - plane info for multi-planar buffers
-  * @bytesused:		number of bytes occupied by data in the plane (payload)
-  * @length:		size of this plane (NOT the payload) in bytes
-- * @mem_offset:		when memory in the associated struct v4l2_buffer is
-+ * @m.mem_offset:	when memory in the associated struct v4l2_buffer is
-  *			V4L2_MEMORY_MMAP, equals the offset from the start of
-  *			the device memory for this plane (or is a "cookie" that
-  *			should be passed to mmap() called on the video node)
-- * @userptr:		when memory is V4L2_MEMORY_USERPTR, a userspace pointer
-+ * @m.userptr:		when memory is V4L2_MEMORY_USERPTR, a userspace pointer
-  *			pointing to this plane
-- * @fd:			when memory is V4L2_MEMORY_DMABUF, a userspace file
-+ * @m.fd:		when memory is V4L2_MEMORY_DMABUF, a userspace file
-  *			descriptor associated with this plane
-  * @m:			union of @mem_offset, @userptr and @fd
-  * @data_offset:	offset in the plane to the start of data; usually 0,
-@@ -1085,14 +1085,14 @@ struct v4l2_plane {
-  * @sequence:	sequence count of this frame
-  * @memory:	enum v4l2_memory; the method, in which the actual video data is
-  *		passed
-- * @offset:	for non-multiplanar buffers with memory == V4L2_MEMORY_MMAP;
-+ * @m.offset:	for non-multiplanar buffers with memory == V4L2_MEMORY_MMAP;
-  *		offset from the start of the device memory for this plane,
-  *		(or a "cookie" that should be passed to mmap() as offset)
-- * @userptr:	for non-multiplanar buffers with memory == V4L2_MEMORY_USERPTR;
-+ * @m.userptr:	for non-multiplanar buffers with memory == V4L2_MEMORY_USERPTR;
-  *		a userspace pointer pointing to this buffer
-- * @fd:		for non-multiplanar buffers with memory == V4L2_MEMORY_DMABUF;
-+ * @m.fd:		for non-multiplanar buffers with memory == V4L2_MEMORY_DMABUF;
-  *		a userspace file descriptor associated with this buffer
-- * @planes:	for multiplanar buffers; userspace pointer to the array of plane
-+ * @m.planes:	for multiplanar buffers; userspace pointer to the array of plane
-  *		info structs for this buffer
-  * @m:		union of @offset, @userptr, @planes and @fd
-  * @length:	size in bytes of the buffer (NOT its payload) for single-plane
-@@ -2423,15 +2423,15 @@ struct v4l2_meta_format {
- 
- /**
-  * struct v4l2_format - stream data format
-- * @type:	enum v4l2_buf_type; type of the data stream
-- * @pix:	definition of an image format
-- * @pix_mp:	definition of a multiplanar image format
-- * @win:	definition of an overlaid image
-- * @vbi:	raw VBI capture or output parameters
-- * @sliced:	sliced VBI capture or output parameters
-- * @raw_data:	placeholder for future extensions and custom formats
-- * @fmt:	union of @pix, @pix_mp, @win, @vbi, @sliced, @sdr, @meta
-- *		and @raw_data
-+ * @type:		enum v4l2_buf_type; type of the data stream
-+ * @fmt.pix:		definition of an image format
-+ * @fmt.pix_mp:		definition of a multiplanar image format
-+ * @fmt.win:		definition of an overlaid image
-+ * @fmt.vbi:		raw VBI capture or output parameters
-+ * @fmt.sliced:		sliced VBI capture or output parameters
-+ * @fmt.raw_data:	placeholder for future extensions and custom formats
-+ * @fmt:		union of @pix, @pix_mp, @win, @vbi, @sliced, @sdr,
-+ *			@meta and @raw_data
-  */
- struct v4l2_format {
- 	__u32	 type;
+diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+index 2b6cd343ee9e..c79176ed6299 100644
+--- a/include/media/media-entity.h
++++ b/include/media/media-entity.h
+@@ -337,10 +337,6 @@ enum media_entity_type {
+  * @info.dev:	Contains device major and minor info.
+  * @info.dev.major: device node major, if the device is a devnode.
+  * @info.dev.minor: device node minor, if the device is a devnode.
+- * @major:	Devnode major number (zero if not applicable). Kept just
+- *		for backward compatibility.
+- * @minor:	Devnode minor number (zero if not applicable). Kept just
+- *		for backward compatibility.
+  *
+  * .. note::
+  *
 
 -- 
 2.43.0.429.g432eaa2c6b-goog
