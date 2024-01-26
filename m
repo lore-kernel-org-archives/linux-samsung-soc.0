@@ -1,119 +1,164 @@
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4421D54B;
-	Fri, 26 Jan 2024 17:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B648D1DA23
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 17:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706288711; cv=none; b=aP64nYi6COeJldGhi6DVyqe2ZFbrrQ6ZNtnAYIiPPJP/ftqVy2PE44+p9FobqaAi1m+mGCc265v6xra/TYCMN3dtRXdtuuIOUyv2Ujju/HA5euJiVgKSwhITlyq9MUSyG83r/jDBuY/L72bvLi2aHBQufwMNN/mMx9PfSAApBe4=
+	t=1706289153; cv=none; b=pGe6hntRIgWWMJIeiQn6JKUTBiL5P2PF1eriNu6dnXvSjxr8qVYdMHpcsckz94D0wot8TMupV9r5/FfUqnm6M5nm97+f3i38MDf0tV8KFAcTFLcZ/mwDxeSMGuYBOKXlk/0OthKxABi+/u7bdhShOvUhNvWSfTGKk80TDXvj59k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706288711; c=relaxed/simple;
-	bh=B2eTgBCFVQKRYm7Y4FhNIecDMa1S3RJPllkOTJs5j3E=;
+	s=arc-20240116; t=1706289153; c=relaxed/simple;
+	bh=COb4jLeIk3Yc6EinXHh+ryEulfnYvk9LPJq7bo9yaf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ls42hD7vyJ56axJNXbNFyYmZwwEiLpgsagA0faFWvowAsjYaf97hK0S/ElCInr7eGJZ+1ztvK1E1rVC/Klme1em44Yju7Lgt3i/vVXyQ/l5HTxNPkJC8Nz3h+xljTEFJCI2a0TUmmra3JbkSeuUtnPy5Er4cwgPDYtdFXY3s8qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=An4ezcik; arc=none smtp.client-ip=134.134.136.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="An4ezcik"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706288709; x=1737824709;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=B2eTgBCFVQKRYm7Y4FhNIecDMa1S3RJPllkOTJs5j3E=;
-  b=An4ezcikvMXYQbN5MQWuLr+t6fu80AA3MZFlnxhoiegDkebB84/+FN82
-   L0kIf9eBPvdj9HLw8whejN6Vojgb9M+yZrOkrDDBCTP8QSrJFsjkaeNT5
-   9UlCTGYvJfbZ+5NGZC96mI9oWJhA19FAiXpBVZt1n5Jvl6uS8nBsW/q4y
-   FwUFvAYos66P59vxpYOvL0ebyA2ImbsIltxVtArL8dd1OYVoP4Kq13Un9
-   +zp9iOggZoYd3p3nRJgIbcA6hEeOrr+s1BA5pkbziGg3U6uRT1e74FvnC
-   nakF6Kb0fDfYzZZnZbmqcPXZ0izKl0LEfWcXEJ2GepB7abmuj0/wmfxcc
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="392954082"
-X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
-   d="scan'208";a="392954082"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2024 09:05:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
-   d="scan'208";a="21432338"
-Received: from lkp-server01.sh.intel.com (HELO 370188f8dc87) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 26 Jan 2024 09:05:01 -0800
-Received: from kbuild by 370188f8dc87 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rTPdT-0001Dy-0X;
-	Fri, 26 Jan 2024 17:04:59 +0000
-Date: Sat, 27 Jan 2024 01:04:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, arnd@arndb.de,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	linux@roeck-us.net, wim@linux-watchdog.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com, jaewon02.kim@samsung.com,
-	chanho61.park@samsung.com, semen.protsenko@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kernel-team@android.com, peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	saravanak@google.com, willmcvicker@google.com, linux-fsd@tesla.com,
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 3/9] watchdog: s3c2410_wdt: update to use new
- exynos_pmu_*() apis
-Message-ID: <202401270001.630IWRta-lkp@intel.com>
-References: <20240122225710.1952066-4-peter.griffin@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvicaXvKN24SuZWKAd3oScrz4rAeTGdkvSJWo5ysIS09FD4CeilYX56eRecEE6VYrTzQoI2Pzt2pivNyLx4a2u2AD4C9KQkO1+vbZ4Sqoh1rwj/oq1mng22J3WwL74BO2cOlc2ecMHs3MNa5mNd0GafS5dI8X2yLjGuGArXNb6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rTPjB-0003h4-L9; Fri, 26 Jan 2024 18:10:53 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rTPiw-002YFi-JY; Fri, 26 Jan 2024 18:10:38 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rTPiw-008oFN-1F;
+	Fri, 26 Jan 2024 18:10:38 +0100
+Date: Fri, 26 Jan 2024 18:10:38 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Alex Elder <elder@ieee.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	James Clark <james.clark@arm.com>, linux-pwm@vger.kernel.org, Hector Martin <marcan@marcan.st>, 
+	Sven Peter <sven@svenpeter.dev>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, 
+	Benson Leung <bleung@chromium.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Paul Cercueil <paul@crapouillou.net>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Michael Walle <mwalle@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Hammer Hsieh <hammerh0314@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
+	Sean Anderson <sean.anderson@seco.com>, Michal Simek <michal.simek@amd.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	Anjelique Melendez <quic_amelende@quicinc.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Lu Hongfei <luhongfei@vivo.com>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+	Luca Weiss <luca@z3ntu.xyz>, Johan Hovold <johan@kernel.org>, 
+	Douglas Anderson <dianders@chromium.org>, linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	platform-driver-x86@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Guenter Roeck <groeck@chromium.org>, 
+	linux-riscv@lists.infradead.org, Fabio Estevam <festevam@gmail.com>, 
+	linux-stm32@st-md-mailman.stormreply.com, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Jerome Brunet <jbrunet@baylibre.com>, chrome-platform@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-rockchip@lists.infradead.org, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, NXP Linux Team <linux-imx@nxp.com>, linux-leds@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, Jonas Karlman <jonas@kwiboo.se>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, greybus-dev@lists.linaro.org, linux-mips@vger.kernel.org, 
+	asahi@lists.linux.dev, kernel@pengutronix.de
+Subject: Re: [PATCH v5 040/111] pwm: Provide devm_pwmchip_alloc() function
+Message-ID: <zjt3r6z5ilpffh26qidwp3axpnvfkwcrwanrtjjm2kscpdovuz@ppcrdlhmqiqq>
+References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
+ <f59b1a4a8d6fba65e4d3e8698310c9cb1d4c43ce.1706182805.git.u.kleine-koenig@pengutronix.de>
+ <db05fb6a-2ea5-4e00-ac03-adc1897d96de@ieee.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b26sjadvk3fz44v6"
 Content-Disposition: inline
-In-Reply-To: <20240122225710.1952066-4-peter.griffin@linaro.org>
-
-Hi Peter,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on krzk/for-next]
-[also build test ERROR on robh/for-next soc/for-next linus/master v6.8-rc1 next-20240125]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-watchdog-samsung-wdt-deprecate-samsung-syscon-phandle/20240123-070052
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240122225710.1952066-4-peter.griffin%40linaro.org
-patch subject: [PATCH 3/9] watchdog: s3c2410_wdt: update to use new exynos_pmu_*() apis
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240127/202401270001.630IWRta-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240127/202401270001.630IWRta-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202401270001.630IWRta-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/soc/samsung/exynos5420-pmu.c:12:10: fatal error: 'asm/cputype.h' file not found
-      12 | #include <asm/cputype.h>
-         |          ^~~~~~~~~~~~~~~
-   1 error generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for EXYNOS_PMU
-   Depends on [n]: SOC_SAMSUNG [=y] && (ARCH_EXYNOS || (ARM || ARM64) && COMPILE_TEST [=y])
-   Selected by [y]:
-   - S3C2410_WATCHDOG [=y] && WATCHDOG [=y] && (ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST [=y])
+In-Reply-To: <db05fb6a-2ea5-4e00-ac03-adc1897d96de@ieee.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
 
-vim +12 drivers/soc/samsung/exynos5420-pmu.c
+--b26sjadvk3fz44v6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-92c4bf04735130 arch/arm/mach-exynos/exynos5420-pmu.c Pankaj Dubey 2015-12-18  11  
-92c4bf04735130 arch/arm/mach-exynos/exynos5420-pmu.c Pankaj Dubey 2015-12-18 @12  #include <asm/cputype.h>
-92c4bf04735130 arch/arm/mach-exynos/exynos5420-pmu.c Pankaj Dubey 2015-12-18  13  
+Hello Alex,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Jan 26, 2024 at 08:56:33AM -0600, Alex Elder wrote:
+> On 1/25/24 6:09 AM, Uwe Kleine-K=F6nig wrote:
+> > This function allocates a struct pwm_chip and driver data. Compared to
+> > the status quo the split into pwm_chip and driver data is new, otherwise
+> > it doesn't change anything relevant (yet).
+> >=20
+> > The intention is that after all drivers are switched to use this
+> > allocation function, its possible to add a struct device to struct
+> > pwm_chip to properly track the latter's lifetime without touching all
+> > drivers again. Proper lifetime tracking is a necessary precondition to
+> > introduce character device support for PWMs (that implements atomic
+> > setting and doesn't suffer from the sysfs overhead of the /sys/class/pwm
+> > userspace support).
+> >=20
+> > The new function pwmchip_priv() (obviously?) only works for chips
+> > allocated with devm_pwmchip_alloc().
+>=20
+> I think this looks good.  Two questions:
+> - Should you explicitly align the private data?  Or do you believe
+>   the default alignment (currently pointer size aligned) is adequate?
+
+I'm not aware of a requirement for a higher order alignment (but I might
+well miss something). I did my tests on arm, nothing exploded there.
+Maybe the conservative approach of asserting the same alignment as
+kmalloc would be a good idea. I'll think and research about that.
+
+iio uses ARCH_DMA_MINALIGN, net uses 32 (NETDEV_ALIGN).
+
+> - Is there a non-devres version of the allocation function?
+
+Patch #109 introduces a non-devres variant. As it's not used it's a
+static function though. Can easily be changed is a use case pops up.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--b26sjadvk3fz44v6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmWz540ACgkQj4D7WH0S
+/k4oQwf+Nnq9bGZWZrbCQsHJYB54zfZt1whu2kQgdRMIQzT8HP7NadKhFCqs3Ob6
+5xwIwbIpdczrpzHM25+5ZrTBiH5oSQ/Si0YMzglndL8Tm59GEJxcKoorYpDNplJR
+xHL2owB7VgG87fFIvSCe163biS2vI/gIjAGvL9bpzcSH62Eq7EO3APk7Hx+h7d9e
+QHLzzUmpN9JlrzYOhKE7Pu7/iVFPNqNb7FQtAOnamXe0kRLs05649mgdJ9q30gS8
+imf9reDedsSG7sHM5NjtZpBQpF9H3vulzuGbH2MH2jNDLjtcpvUXUZpfijLN69iQ
+GqSwNOqcwcXljLsP1A1wM8snNwzi/A==
+=cXfD
+-----END PGP SIGNATURE-----
+
+--b26sjadvk3fz44v6--
