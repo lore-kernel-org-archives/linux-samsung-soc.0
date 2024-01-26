@@ -1,54 +1,54 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2166224FA
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 19:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0F51DA24
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 19:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706298051; cv=none; b=dr6GzphGbMhbdK6hdIEZtfaM4DeBfsfIltUXu3SfALWuSvxgdPAxEeQhiS5diwbi5TjwkwCgwBR82hP1fDvnNpxRnKP+xVm8mIbVTqari08cHP7TP2TwhI053BS1k/e2mv9cygwkfz2884PVRIduw+F4xZ3C0nGTISI7zKwkDyY=
+	t=1706298930; cv=none; b=Vhx8tMhcZbIZlFI2T7LENGEIYj1OA0JYUcyJABADPxwZydwn16PtTbjDtT7gPmdXG7i3CIjxN2nsAuhVUf6YL1ZwBCqDxP1CcR2JxJQUzeozPJVc9aCMVtS+VblZqZ71yEDgKqpsGECfXyW+Jy1+4Y0K5erBjOaTsH6xiOKcVuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706298051; c=relaxed/simple;
-	bh=OBj1MQ83FFOJOJoro90yvy1KezyhRGXOLXp4aKhIJAI=;
+	s=arc-20240116; t=1706298930; c=relaxed/simple;
+	bh=2+Mnpq5M1TmHpvvq2JcoFPCJIYA7dRmmpp/zPWcspWo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b7r6V47Bpx5N22+PlbKvcKTamklsqRnCld1OF2vNPRk16v/Q1FSqnGGK7RQT2rBNlaeJ0C2wec4mIikS11HukGsqkyo3wJGMd9S9xzm45629ZzwInPo4whTH0GwI08rSz73OQbaCY4vHwWudvhSsP9hZyYonRNKrYxqhfLjFa7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b9XTMAEZ; arc=none smtp.client-ip=209.85.210.178
+	 To:Cc:Content-Type; b=fCFwByPIkNI/kElmErPXIKepKUkXL2DXzrVByrYT6WuuddMd8AA3/0WVd9HVD93oydImS/tolHTrDHhJqFSOlHFFjlNZ5ZGHcfuBEmZY9k5UvKhzNqoGI9hMLk8T3X8tX9U4goG54g35Y+Pto5JqaEFz3qJD46/sF/RUtqGCgSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ul4jqA5V; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9XTMAEZ"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6de070a4cadso464197b3a.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 11:40:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ul4jqA5V"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6de0ba30994so266908b3a.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 11:55:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706298048; x=1706902848; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706298927; x=1706903727; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IBbDvP0t0aTfbdb0HiCNofP6pAFpkV6GyeXeCF9Dz+g=;
-        b=b9XTMAEZEi4xfew5FbLUpnFrl2/v2yCC9CEARW4JjrVbQB71ZS7HfzojwBaWwlRL3i
-         o/lEp9arS7b5VsensJZBbvzqJKm2Pc1EU4AZ7wXFl5fjCuNNhZgA2k8rtLjRzP+SZnBA
-         YyMzx9EpkhXPHjQDRwt6SdMTcMztNoO6iOkUFJA4r1eVLfkUDyaEdHsFUe+Z1BEo4y85
-         9TinB+HSYsunGCBG/6TlJHz0BU0myzjII7eGehOj6DaDjazlj8dHyD1E60XJvYhZ9+5T
-         FKCU3CKAb/xuiFGLBZkmOmfvxDwHNHawuEchwsK5/pS54MkjGhLFiEXGfau/17M1fsbk
-         ZuBQ==
+        bh=tgVLV7ILUXV6plhvsfHg8kvJr4geR1tUsOVTbhlRqhA=;
+        b=ul4jqA5VKXVzz3OqTLPrOeH7mrci/D2KSN8egU6d/xxxlSDYcQyz+ifj9kjnPxPNq+
+         UcQQzEIGrYQnYuV0McIaSvysZ05Qp3vSLqM9y2LKQJP/QLkF1hGW8qeWofHihBIpPPcz
+         gCQb2Z2QLQ+UMUCcaD3UCfneB7VNSbZBBUaezcMCMFsaMDB46sJuo9Y/NAckMosbe39t
+         fXl4u3aqv+svlYaE2atw4XSo1cpGfQDKTx9u8rbDaOFinaujEj9SbXds6MlQC1NLnhKD
+         WeuEHWGDKAIFvr4F81zX/SY0jtODhfJA0tzCtTHj0pZZZyaLJnftpV+PZwFiGNy2bYVA
+         Un7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706298048; x=1706902848;
+        d=1e100.net; s=20230601; t=1706298927; x=1706903727;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IBbDvP0t0aTfbdb0HiCNofP6pAFpkV6GyeXeCF9Dz+g=;
-        b=BkTarUZrolEgT0Y8fMA9PkNvumLk2aMbt2lmoFLbkIZef8QVBHnUkqF8UMdUPPk3bS
-         EDkwv+Ala0QVgN4/lBkx+vropOSbel7/blHvpQw/U4QacZscDWhC2/VK3bEHWM/yIm2A
-         DgR8GX6ShYhhOLlgXRoEvOigqAoBKZ6uDgZ+U8eCQEzDsu2GkvR+hEfMJRr1ETJtlymY
-         HDLDIhEI49YglUesy6+so4RSTbUrJWdmwNg8lorkwnxCZa78+RpSKZRLlWgMRzMqZPeL
-         6xit/RaGC+7VVDoK9CntriqzvcCjHibM0Q51OvKpSPgZelD4YV/pM2mIyTF4C9tVw7/m
-         BZ/Q==
-X-Gm-Message-State: AOJu0YwfvJFyfudzALB1mO/+KEMSaB0D3oxc6nvb6FyUwW5VXMHbL66Y
-	3Y96xy6YAYLMFuJeFWDts3zVUMx5DsSnYsJAQ1JILi5iTt+4XvZW5SQ1NoQrELje6DgiBspwutP
-	cq68YhsEGQSe4MosykFQM3JERD9F7Lj8jUWkO0A==
-X-Google-Smtp-Source: AGHT+IEMMgoTsBz+FBptiMPa1pqE4iSooChOPZ0bqJTF6Z9PIPSATEYE9Y7LOnEFRlmJSEKdIL5mxk5heq+bSm7H+OE=
-X-Received: by 2002:a05:6a00:b51:b0:6dd:7b96:b4b7 with SMTP id
- p17-20020a056a000b5100b006dd7b96b4b7mr378122pfo.41.1706298048159; Fri, 26 Jan
- 2024 11:40:48 -0800 (PST)
+        bh=tgVLV7ILUXV6plhvsfHg8kvJr4geR1tUsOVTbhlRqhA=;
+        b=NdgAD9E5ksElS+eyFPzwxK5hrMjthpjf7W8dpBHyCj1l1XQeO8Drz7wKoUbuEPOHUE
+         jSNcHIAG2Q3wSFc9s372ZT2mXtXWVpkEh9oi25+2iBOcj7/bDOfl7jFUAkr4oxfRcokK
+         Cks0qWMCNAWOVxV22xcrDCpi/1rFCHw/4yjazLOS0wElnhkDwznahrfx1iKAaO+FgePj
+         wK2XSRMlg3YdqZ+RkV57VhLxXSaaV+b+jO/KxThb1r9wAl+3NSCjSC/xK0N0upRYv02r
+         lDA7smtie0SQwoHVeBE7MYSpLWpOKZzQbpKAwdP0frWTLir+AUJWcIxVlC9Nfna6G8S4
+         OMiQ==
+X-Gm-Message-State: AOJu0YxOVYEv3TezhM7mpW7XIEg209Gn0PpW4eP+kOLcJ9OinAPt7dn3
+	RylOuN+sLdeMy5s22/g5jUyfB/+Zn2yk+ksNBynyrxsm01RkFGDdp7TAay3+IRu+2/zhi2F4v8g
+	biRUxQMpbgQaxnp7P8F0H8rttmAyrJ2iKMEBijg==
+X-Google-Smtp-Source: AGHT+IF4iydsZkMvpCgm0ty66tZIGvdesf18VuJVzD0djZrB1NCToxAc0H5npBMQOmf+WXehhv2hYW+e9IaFx1r7kjM=
+X-Received: by 2002:a05:6a00:1d8e:b0:6db:c5fe:df39 with SMTP id
+ z14-20020a056a001d8e00b006dbc5fedf39mr443978pfw.31.1706298927034; Fri, 26 Jan
+ 2024 11:55:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -56,15 +56,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
- <20240125145007.748295-8-tudor.ambarus@linaro.org> <CAPLW+4kGGtG2BxeN0wRXMD5M2TR+eMUHZpL2KDaEFubBCP7jdg@mail.gmail.com>
- <cad69841-9ca2-45af-9db2-4c4aced63d5e@linaro.org>
-In-Reply-To: <cad69841-9ca2-45af-9db2-4c4aced63d5e@linaro.org>
+ <20240125145007.748295-10-tudor.ambarus@linaro.org> <CAPLW+4mDM2aJdPwPRKt9yLtwx5zEHwBr6OSyYbGgZU7w9OiYkg@mail.gmail.com>
+ <ee4107c3-1141-45ab-874c-03474d8ec18d@linaro.org>
+In-Reply-To: <ee4107c3-1141-45ab-874c-03474d8ec18d@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jan 2024 13:40:36 -0600
-Message-ID: <CAPLW+4mJ5BxwhKwi2Z2pMOu1D0N0KaaW7=C1sZ0PV51iOHSw8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 07/28] spi: s3c64xx: remove unneeded (void *) casts in of_match_table
+Date: Fri, 26 Jan 2024 13:55:15 -0600
+Message-ID: <CAPLW+4=pM=gY1bypGNhKmcftLFHWBMUZ7=JitMj_3TaxLF672A@mail.gmail.com>
+Subject: Re: [PATCH v2 09/28] spi: s3c64xx: use bitfield access macros
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, arnd@arndb.de, 
+Cc: Mark Brown <broonie@kernel.org>, andi.shyti@kernel.org, arnd@arndb.de, 
 	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
 	alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
 	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
@@ -74,137 +74,85 @@ Cc: broonie@kernel.org, andi.shyti@kernel.org, arnd@arndb.de,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 26, 2024 at 2:24=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+On Fri, Jan 26, 2024 at 2:49=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
 .org> wrote:
 >
-> Thanks for the review feedback, Sam, great catches so far!
 >
-> On 1/25/24 19:04, Sam Protsenko wrote:
+>
+> On 1/25/24 19:50, Sam Protsenko wrote:
 > > On Thu, Jan 25, 2024 at 8:50=E2=80=AFAM Tudor Ambarus <tudor.ambarus@li=
 naro.org> wrote:
 > >>
-> >> of_device_id::data is an opaque pointer. No explicit cast is needed.
-> >> Remove unneeded (void *) casts in of_match_table. While here align the
-> >> compatible and data members.
+> >> Use the bitfield access macros in order to clean and to make the drive=
+r
+> >> easier to read.
 > >>
-> >> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 > >> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > >> ---
-> >>  drivers/spi/spi-s3c64xx.c | 45 +++++++++++++++++++++++---------------=
+> >>  drivers/spi/spi-s3c64xx.c | 196 +++++++++++++++++++------------------=
 -
-> >>  1 file changed, 27 insertions(+), 18 deletions(-)
+> >>  1 file changed, 99 insertions(+), 97 deletions(-)
 > >>
 > >> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> >> index 230fda2b3417..137faf9f2697 100644
+> >> index 1e44b24f6401..d046810da51f 100644
 > >> --- a/drivers/spi/spi-s3c64xx.c
 > >> +++ b/drivers/spi/spi-s3c64xx.c
-> >> @@ -1511,32 +1511,41 @@ static const struct platform_device_id s3c64xx=
-_spi_driver_ids[] =3D {
-> >>  };
-> >>
-> >>  static const struct of_device_id s3c64xx_spi_dt_match[] =3D {
-> >> -       { .compatible =3D "samsung,s3c2443-spi",
-> >> -                       .data =3D (void *)&s3c2443_spi_port_config,
+> >> @@ -4,6 +4,7 @@
+>
+> cut
+>
+> >> +#define S3C64XX_SPI_PSR_MASK                   GENMASK(15, 0)
 > >
-> > I support removing (void *) cast. But this new braces style:
+> > But it was 0xff (7:0) originally, and here you extend it up to 15:0.
+>
+> this is a bug from my side, I'll fix it, thanks!
+>
+> cut
+>
+> >>         default:
+> >> -               val |=3D S3C64XX_SPI_MODE_BUS_TSZ_BYTE;
+> >> -               val |=3D S3C64XX_SPI_MODE_CH_TSZ_BYTE;
+> >> +               val |=3D FIELD_PREP(S3C64XX_SPI_MODE_BUS_TSZ_MASK,
+> >> +                                 S3C64XX_SPI_MODE_BUS_TSZ_BYTE) |
+> >> +                      FIELD_PREP(S3C64XX_SPI_MODE_CH_TSZ_MASK,
+> >> +                                 S3C64XX_SPI_MODE_CH_TSZ_BYTE);
 > >
-> >       },
-> >       {
+> > I don't know. Maybe it's me, but using this FIELD_PREP() macro seems
+> > to only making the code harder to read. At least in cases like this. I
+> > would vote against its usage, to keep the code compact and easy to
+> > read.
 >
-> this style was there before my patch.
-> >
-> > seems to bloat the code a bit. For my taste, having something like },
-> > { on the same line would be more compact, and more canonical so to
+> I saw Andi complained about this too, maybe Mark can chime in.
 >
-> I don't lean towards neither of the styles, I'm ok with both
->
-> > speak. Or even preserving the existing style would be ok too, for that
-> > matter.
-> >
->
-> seeing .compatible and .data unaligned hurt my eyes and I think that
-> aligning them while dropping the cast is fine. I don't really want to do
-> the style change unless you, Andi or Mark insist. Would you please come
-> with a patch on top if you really want them changed?
->
+> To me this is not a matter of taste, it's how it should be done. In this
 
-But that would completely undermine the whole point of the review? I'd
-prefer this style:
+Sure. But if you think it has to be done, I suggest it's done taking
+next things into the account:
+  1. It shouldn't make code harder to read
+  2. Preferably stick to canonical ways of doing things
+  3. IMHO patches like this *must* be tested thoroughly on different
+boards with different test-cases, to make sure there are no
+regressions. Because the benefits of cleanups are not that great, as I
+see it, but we are risking to break some hardware/software combination
+unintentionally while doing those cleanups. It's a good idea to
+describe how it was tested in commit message or PATCH #0. Just my
+$.02.
 
-... =3D {
-    {
-        .compatible =3D
-        .data =3D
-    }, {
-        .compatible =3D
-        .data =3D
-    },
-    { /* sentinel */ },
-};
+For (1) and (2): I noticed a lot of drivers are carrying additional
+helper functions for read/write operations, to keep things tidy and
+functional at the same time. Another mechanism that comes into mind is
+regmap, though I'm not sure if it's needed for such low-level entities
+as bus drivers. Also I think Andi has a point about FIELD_PREP and how
+that can be handled.
 
-That seems more canonical to me, and more compact too, with no
-contradictions to your preference about alignment too. But that's only
-my opinion, as a reviewer.
-
-> > Assuming the braces style is fixed, you can add:
-> >
-> > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >
-> >> +       {
-> >> +               .compatible =3D "samsung,s3c2443-spi",
-> >> +               .data =3D &s3c2443_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,s3c6410-spi",
-> >> -                       .data =3D (void *)&s3c6410_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "samsung,s3c6410-spi",
-> >> +               .data =3D &s3c6410_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,s5pv210-spi",
-> >> -                       .data =3D (void *)&s5pv210_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "samsung,s5pv210-spi",
-> >> +               .data =3D &s5pv210_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,exynos4210-spi",
-> >> -                       .data =3D (void *)&exynos4_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "samsung,exynos4210-spi",
-> >> +               .data =3D &exynos4_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,exynos7-spi",
-> >> -                       .data =3D (void *)&exynos7_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "samsung,exynos7-spi",
-> >> +               .data =3D &exynos7_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,exynos5433-spi",
-> >> -                       .data =3D (void *)&exynos5433_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "samsung,exynos5433-spi",
-> >> +               .data =3D &exynos5433_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,exynos850-spi",
-> >> -                       .data =3D (void *)&exynos850_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "samsung,exynos850-spi",
-> >> +               .data =3D &exynos850_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "samsung,exynosautov9-spi",
-> >> -                       .data =3D (void *)&exynosautov9_spi_port_confi=
-g,
-> >> +       {
-> >> +               .compatible =3D "samsung,exynosautov9-spi",
-> >> +               .data =3D &exynosautov9_spi_port_config,
-> >>         },
-> >> -       { .compatible =3D "tesla,fsd-spi",
-> >> -                       .data =3D (void *)&fsd_spi_port_config,
-> >> +       {
-> >> +               .compatible =3D "tesla,fsd-spi",
-> >> +               .data =3D &fsd_spi_port_config,
-> >>         },
-> >>         { },
-> >>  };
-> >> --
-> >> 2.43.0.429.g432eaa2c6b-goog
-> >>
+> particular case you have more lines when using FIELD_PREP because the
+> mask starts from bit 0. If the mask ever changes for new IPs then you'd
+> have to hack the code, whereas if using FIELD_PREP you just have to
+> update the mask field, something like:
+>
+>         FIELD_PREP(drv_prv_data->whatever_reg.field_mask,
+>                    S3C64XX_SPI_MODE_CH_TSZ_BYTE);
+>
+> Thus it makes the code generic and more friendly for new IP additions.
+> And I have to admit I like it better too. I know from the start that
+> we're dealing with register fields and not some internal driver mask.
