@@ -1,189 +1,210 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9232DD29B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 08:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CFD1C2A6;
+	Fri, 26 Jan 2024 08:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706257466; cv=none; b=MGH5GzI3MMXNghFBpceUFEY7efNoNHAglF46U1+1MjLI/FcnHMVY23ceUQ0KN+MpA7A7pPGlCBJtudnIjb5wYlrPVOwGU0qEgxKbRRuLsVtEVcsgFSH3KeQexRAmb3GOIPg2RDKW4aSzkOu6EXGOjmMh5CQDSPy665d3kmxns60=
+	t=1706258598; cv=none; b=dSk9Fv7LhUeoc2RJHxxBzt+ZLSQ/SZSGW44M9vTiJu7GBz6qjcwZre+nStUDATttwo6KbnfatzP+ell4saA5/Dt+rfvn6QFzBXD44a9Q+XTjSSJi7nkZEV4hhzOSSJeQtMWyo8Xime9xstHmnQRzcrp0vQ0NV6f7w6jKhr/UnAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706257466; c=relaxed/simple;
-	bh=PRiN7e2outscEnHnnIc+xjLsVlsduMoJoGpra6YYkPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IwdB11Vk8s3qA4DKgoWInpBi2+qjSdyyNEV/QLYEUfE3wkr7SwEFMilbhOyjF4IYJV4KSRdy44ur0bsh2rjkJRS/fJ2j3i7B2z6ddXoRzm7SmwbO5OeKznvPehPZsBT3yLtQzANyPQh8ISgmWD31wcN3XSsRy1i7Ty3MLXwxBig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B873oe1t; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706258598; c=relaxed/simple;
+	bh=oF5B98tG35oUypgTR8kLKZMFEniob38hECdwFh7l1QQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJv+h7TZWTqtEc8qeuJx/LH7O6nHRkjLx5sONVj+btuhUSHlKupaFwO+Rh4Lk6eOnQ3KDFitcca7jEJNnZMWdRav+1lnpsdmmfV4CI7n32jTARC2c1K7L/euTnyc9YuYnNcq5YuHNrgxnuR7Gj770TB4w8RqiSbDjztyVbPWraM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3GHN50V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B873oe1t"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-40ed2333c8fso1745965e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 00:24:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706257463; x=1706862263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=shyCezrNB7XdCB+Nwxl8E09WYma+GSqW2YNffaervI0=;
-        b=B873oe1tzF/5GiyOO0gZ3paixuF7K0XQLCCt+ZasiNLGrsmrXm69tm8cXnds6cus08
-         rdGu/R95pKsq6z0Jw5bnNL31qkvRLvtOqs3qOUtSecym1Wu2GQufl55U8zD7q8WK2Chh
-         AghhZpL6lAUZvRj1HtN76d5zgZgo/lol8XVXgqAqsSrHb0tocwWti9wxtzQ0Uqh0n/ZJ
-         kjztQl28Ph7/+HCr9lvg+kjofAlwiQj63z/KnXwel+6s3wO5oGbc4PgkNXwpfGTp4kVj
-         0ZMzK63/5FQORlHGWZFbTGI6FT/WJ3d5clHTgkP3IFm2S3bQzQSz6ixEWhnUF10A3hMN
-         Vgng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706257463; x=1706862263;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=shyCezrNB7XdCB+Nwxl8E09WYma+GSqW2YNffaervI0=;
-        b=WeOUcV8NR3yeH12o5Ftm4ujSmIVINvq/K6BT01TO68IfNzfvGaZ7LNvHuqN414y8sw
-         756P6wFyPJxh5TB1HCdCRZh/Q2ErXdadqgSp89n41XT5WsH3965PDZEDSopZVSI8BhkZ
-         R/m0WEsXdIl3XrSviv4rQ1xa4OG03UFrdRiCSI8EJF3SUoRcCtL9jjWUbM4RnHnaGNcy
-         cvT9DPCQoYHi0quG6LlFg4PpollGiF9vEXXAFMtdjrDckOwsxsDMaLzvS7pQi5YPE1zn
-         6Td2t3qC3E1vnzDMIX5pjlURx2tWokg0yJl9NO2xnkt5oAQHa1lIQdLlgE9IYUYs8+6W
-         ErxQ==
-X-Gm-Message-State: AOJu0YxnOULZLYhnFF3K3mM9wg+qpgYv2rDefVe/J1YsdaF/gXla2KPQ
-	52PFHQnhw62vH+Z/719wJyi4lxEIfPlsVBNseNkOFXVm/OOw4pwdzfXuE0kHFbw=
-X-Google-Smtp-Source: AGHT+IF8TECZcCCPFmI7NyjhLaU1SCuZ0j6JwuqK/IVgmHR7p9cOEyfu9nM+Qt9p7KtLUq18bPrGPA==
-X-Received: by 2002:a05:600c:213:b0:40e:4d65:59c7 with SMTP id 19-20020a05600c021300b0040e4d6559c7mr587695wmi.244.1706257462826;
-        Fri, 26 Jan 2024 00:24:22 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id fa26-20020a05600c519a00b0040e4746d80fsm1129109wmb.19.2024.01.26.00.24.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jan 2024 00:24:22 -0800 (PST)
-Message-ID: <cad69841-9ca2-45af-9db2-4c4aced63d5e@linaro.org>
-Date: Fri, 26 Jan 2024 08:24:19 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3GHN50V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602D4C43390;
+	Fri, 26 Jan 2024 08:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706258597;
+	bh=oF5B98tG35oUypgTR8kLKZMFEniob38hECdwFh7l1QQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H3GHN50VuE1DHNfCijXJC7+XCojgFCv2Nw+68NOngbB7oeLYFAyR/QpNPDD6Opuiu
+	 lhdOSkh7lOsjYGr+aI3qY6V671pKlUvyIGsOuGGzyYUVJqxsqBPeUEM1Fn0q/6ZB74
+	 7X9xC/3zvNK0i84Y+C1CnBLXYC5GbkCuPOHd4GYBTQvZEqICAAIw4X5Usf3A9CjHbZ
+	 KIajHUBfH1QnMC1fYx7trdyBOcQDIC4d/NSP/WgI2yRE5A0APmazNjcdXny6AjnTJn
+	 pVjdwC8U3nFwSpLEpfJ5qRo1bZ79o43izJldYZNv0wpeH3EORSUq45F1b2H2zPSddc
+	 SyhrXixVM0K/Q==
+Date: Fri, 26 Jan 2024 08:43:09 +0000
+From: Lee Jones <lee@kernel.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>, arnd@arndb.de,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	linux@roeck-us.net, wim@linux-watchdog.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, jaewon02.kim@samsung.com,
+	chanho61.park@samsung.com, semen.protsenko@linaro.org,
+	kernel-team@android.com, tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org, willmcvicker@google.com,
+	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 3/9] watchdog: s3c2410_wdt: update to use new
+ exynos_pmu_*() apis
+Message-ID: <20240126084309.GM74950@google.com>
+References: <20240122225710.1952066-4-peter.griffin@linaro.org>
+ <da30a68a-e29f-45c8-aa73-02955255a457@linaro.org>
+ <CADrjBPor5tMY4r0jOy7GH36auCU7dWn6Qn4ct89bsSMW4vAQOA@mail.gmail.com>
+ <6c72a521-1048-42eb-ac74-d8f718a90723@linaro.org>
+ <CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com>
+ <f4d3aa5a-e01d-4ef3-8004-b6eac4461184@linaro.org>
+ <CAGETcx_HGcuGQTO11tzX0EvnuLEaKYc4vBse1CRP0JwPqMJdQQ@mail.gmail.com>
+ <04411aaf-6f2c-4f43-83b4-aa0741ccd25f@linaro.org>
+ <20240125114606.GA1327902@google.com>
+ <CAGETcx8r_+_B0S3VJ6_66+dgAOusN_pt_=pmgoa-r8TUY7quPA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/28] spi: s3c64xx: remove unneeded (void *) casts in
- of_match_table
-Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, arnd@arndb.de,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arch@vger.kernel.org, andre.draszik@linaro.org,
- peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
-References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
- <20240125145007.748295-8-tudor.ambarus@linaro.org>
- <CAPLW+4kGGtG2BxeN0wRXMD5M2TR+eMUHZpL2KDaEFubBCP7jdg@mail.gmail.com>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CAPLW+4kGGtG2BxeN0wRXMD5M2TR+eMUHZpL2KDaEFubBCP7jdg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGETcx8r_+_B0S3VJ6_66+dgAOusN_pt_=pmgoa-r8TUY7quPA@mail.gmail.com>
 
-Thanks for the review feedback, Sam, great catches so far!
+On Thu, 25 Jan 2024, Saravana Kannan wrote:
 
-On 1/25/24 19:04, Sam Protsenko wrote:
-> On Thu, Jan 25, 2024 at 8:50 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->>
->> of_device_id::data is an opaque pointer. No explicit cast is needed.
->> Remove unneeded (void *) casts in of_match_table. While here align the
->> compatible and data members.
->>
->> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  drivers/spi/spi-s3c64xx.c | 45 +++++++++++++++++++++++----------------
->>  1 file changed, 27 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
->> index 230fda2b3417..137faf9f2697 100644
->> --- a/drivers/spi/spi-s3c64xx.c
->> +++ b/drivers/spi/spi-s3c64xx.c
->> @@ -1511,32 +1511,41 @@ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
->>  };
->>
->>  static const struct of_device_id s3c64xx_spi_dt_match[] = {
->> -       { .compatible = "samsung,s3c2443-spi",
->> -                       .data = (void *)&s3c2443_spi_port_config,
+> On Thu, Jan 25, 2024 at 3:46 AM Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Thu, 25 Jan 2024, Krzysztof Kozlowski wrote:
+> >
+> > > On 24/01/2024 22:27, Saravana Kannan wrote:
+> > > > On Tue, Jan 23, 2024 at 10:27 PM Krzysztof Kozlowski
+> > > > <krzysztof.kozlowski@linaro.org> wrote:
+> > > >>
+> > > >> On 24/01/2024 04:37, Saravana Kannan wrote:
+> > > >>> On Tue, Jan 23, 2024 at 10:12 AM Krzysztof Kozlowski
+> > > >>> <krzysztof.kozlowski@linaro.org> wrote:
+> > > >>>>
+> > > >>>> On 23/01/2024 18:30, Peter Griffin wrote:
+> > > >>>>>>>               dev_warn(wdt->dev, "Couldn't get RST_STAT register\n");
+> > > >>>>>>>       else if (rst_stat & BIT(wdt->drv_data->rst_stat_bit))
+> > > >>>>>>> @@ -698,14 +699,6 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> > > >>>>>>>       if (ret)
+> > > >>>>>>>               return ret;
+> > > >>>>>>>
+> > > >>>>>>> -     if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+> > > >>>>>>> -             wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+> > > >>>>>>> -                                             "samsung,syscon-phandle");
+> > > >>>>>>> -             if (IS_ERR(wdt->pmureg))
+> > > >>>>>>> -                     return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
+> > > >>>>>>> -                                          "syscon regmap lookup failed.\n");
+> > > >>>>>>
+> > > >>>>>>
+> > > >>>>>> Continuing topic from the binding: I don't see how you handle probe
+> > > >>>>>> deferral, suspend ordering.
+> > > >>>>>
+> > > >>>>> The current implementation is simply relying on exynos-pmu being
+> > > >>>>> postcore_initcall level.
+> > > >>>>>
+> > > >>>>> I was just looking around for any existing Linux APIs that could be a
+> > > >>>>> more robust solution. It looks like
+> > > >>>>>
+> > > >>>>> of_parse_phandle()
+> > > >>>>> and
+> > > >>>>> of_find_device_by_node();
+> > > >>>>>
+> > > >>>>> Are often used to solve this type of probe deferral issue between
+> > > >>>>> devices. Is that what you would recommend using? Or is there something
+> > > >>>>> even better?
+> > > >>>>
+> > > >>>> I think you should keep the phandle and then set device link based on
+> > > >>>> of_find_device_by_node(). This would actually improve the code, because
+> > > >>>> syscon_regmap_lookup_by_phandle() does not create device links.
+> > > >>>
+> > > >>> I kinda agree with this. Just because we no longer use a syscon API to
+> > > >>> find the PMU register address doesn't mean the WDT doesn't depend on
+> > > >>> the PMU.
+> > > >>>
+> > > >>> However, I think we should move to a generic "syscon" property. Then I
+> > > >>> can add support for "syscon" property to fw_devlink and then things
+> > > >>> will just work in terms of probe ordering, suspend/resume and also
+> > > >>> showing the dependency in DT even if you don't use the syscon APIs.
+> > > >>>
+> > > >>> Side note 1:
+> > > >>>
+> > > >>> I think we really should officially document a generic syscon DT
+> > > >>> property similar to how we have a generic "clocks" or "dmas" property.
+> > > >>> Then we can have a syscon_get_regmap() that's like so:
+> > > >>>
+> > > >>> struct regmap *syscon_get_regmap(struct device *dev)
+> > > >>> {
+> > > >>>         return syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
+> > > >>> }
+> > > >>>
+> > > >>> Instead of every device defining its own bespoke DT property to do the
+> > > >>> exact same thing. I did a quick "back of the envelope" grep on this
+> > > >>> and I get about 143 unique properties just to get the syscon regmap.
+> > > >>> $ git grep -A1 syscon_regmap_lookup_by_phandle | grep '"' | sed -e
+> > > >>> 's/^[^"]*//' -e 's/"[^"]*$/"/' | sort | uniq | wc -l
+> > > >>> 143
+> > > >>
+> > > >> Sorry, generic "syscon" property won't fly with DT maintainers, because
+> > > >> there is no such thing as syscon in any of hardware.
+> > > >
+> > > > Then why do we allow a "syscon" compatible string and nodes? If the
+> > >
+> > > To bind Linux drivers.
+> > >
+> > > > "syscon" property isn't clear enough, we can make it something like
+> > > > gpios and have it be <whatever>-syscon or have syscon-names property
+> > > > if you want to give it a name.
+> > >
+> > > This could work.
+> >
+> > I'm not opposed to this idea.  The issue you'll have is keeping the
+> > kernel backwards compatible with older DTBs, thus this solution may only
+> > be possible for newly created bindings.  More than happy to be proven
+> > wrong here though.
 > 
-> I support removing (void *) cast. But this new braces style:
+> You are right about backwards compatibility. Technically, we might be
+> able to fix up the DT at runtime (by keeping a list of those 143
+> property names) to maintain backward compatibility, but I'm not
+> suggesting that.
 > 
->       },
->       {
+> We can leave the existing ones as is, but we can at least use the new
+> property going forward to make dependencies easier to track and handle
 
-this style was there before my patch.
+Automatic tracking and device linking sounds like a worthwhile endeavour.
+
+> -Saravana
+
+I nearly stopped reading here.
+
+> > > >>> How are we making sure that it's the exynos-pmu driver that ends up
+> > > >>> probing the PMU and not the generic syscon driver? Both of these are
+> > > >>> platform drivers. And the exynos PMU device lists both the exynos
+> > > >>> compatible string and the syscon property. Is it purely a link order
+> > > >>> coincidence?
+> > > >>
+> > > >> initcall ordering
+> > > >
+> > > > Both these drivers usr postcore_initcall(). So it's purely because
+> > > > soc/ is listed earlier in drivers/Makefile than mfd/. And as soon as
+> > >
+> > > Oh... great :/.
+> >
+> > Agree.
+> >
+> > Even using initcalls for ordering is fragile.  Relying on the
+> > lexicographical order of a directory / filename structure is akin to
+> > rolling a dice.  It would be far nicer if you are able to find a more
+> > robust method of ensuring load order e.g. dynamically poking at
+> > hardware and / or utilising -EPROBE_DEFER.
 > 
-> seems to bloat the code a bit. For my taste, having something like },
-> { on the same line would be more compact, and more canonical so to
+> Let me dig in to see if all the existing examples of listing syscon in
+> compatible AND have a different driver that needs to probe it always
+> list syscon as a secondary compatible string. In that case, we might
+> be able to make the syscon driver only match with the device it it's
+> the first entry in the compatible string.
 
-I don't lean towards neither of the styles, I'm ok with both
+If using clever or non-obvious means by which to ensure correct
+ordering, I would suggest putting in place very obvious
+documentation/commentary verbosely describing the aim and method.
 
-> speak. Or even preserving the existing style would be ok too, for that
-> matter.
-> 
-
-seeing .compatible and .data unaligned hurt my eyes and I think that
-aligning them while dropping the cast is fine. I don't really want to do
-the style change unless you, Andi or Mark insist. Would you please come
-with a patch on top if you really want them changed?
-
-> Assuming the braces style is fixed, you can add:
-> 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> 
->> +       {
->> +               .compatible = "samsung,s3c2443-spi",
->> +               .data = &s3c2443_spi_port_config,
->>         },
->> -       { .compatible = "samsung,s3c6410-spi",
->> -                       .data = (void *)&s3c6410_spi_port_config,
->> +       {
->> +               .compatible = "samsung,s3c6410-spi",
->> +               .data = &s3c6410_spi_port_config,
->>         },
->> -       { .compatible = "samsung,s5pv210-spi",
->> -                       .data = (void *)&s5pv210_spi_port_config,
->> +       {
->> +               .compatible = "samsung,s5pv210-spi",
->> +               .data = &s5pv210_spi_port_config,
->>         },
->> -       { .compatible = "samsung,exynos4210-spi",
->> -                       .data = (void *)&exynos4_spi_port_config,
->> +       {
->> +               .compatible = "samsung,exynos4210-spi",
->> +               .data = &exynos4_spi_port_config,
->>         },
->> -       { .compatible = "samsung,exynos7-spi",
->> -                       .data = (void *)&exynos7_spi_port_config,
->> +       {
->> +               .compatible = "samsung,exynos7-spi",
->> +               .data = &exynos7_spi_port_config,
->>         },
->> -       { .compatible = "samsung,exynos5433-spi",
->> -                       .data = (void *)&exynos5433_spi_port_config,
->> +       {
->> +               .compatible = "samsung,exynos5433-spi",
->> +               .data = &exynos5433_spi_port_config,
->>         },
->> -       { .compatible = "samsung,exynos850-spi",
->> -                       .data = (void *)&exynos850_spi_port_config,
->> +       {
->> +               .compatible = "samsung,exynos850-spi",
->> +               .data = &exynos850_spi_port_config,
->>         },
->> -       { .compatible = "samsung,exynosautov9-spi",
->> -                       .data = (void *)&exynosautov9_spi_port_config,
->> +       {
->> +               .compatible = "samsung,exynosautov9-spi",
->> +               .data = &exynosautov9_spi_port_config,
->>         },
->> -       { .compatible = "tesla,fsd-spi",
->> -                       .data = (void *)&fsd_spi_port_config,
->> +       {
->> +               .compatible = "tesla,fsd-spi",
->> +               .data = &fsd_spi_port_config,
->>         },
->>         { },
->>  };
->> --
->> 2.43.0.429.g432eaa2c6b-goog
->>
+-- 
+Lee Jones [李琼斯]
