@@ -1,164 +1,129 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B648D1DA23
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 17:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9855E1EB24
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 17:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706289153; cv=none; b=pGe6hntRIgWWMJIeiQn6JKUTBiL5P2PF1eriNu6dnXvSjxr8qVYdMHpcsckz94D0wot8TMupV9r5/FfUqnm6M5nm97+f3i38MDf0tV8KFAcTFLcZ/mwDxeSMGuYBOKXlk/0OthKxABi+/u7bdhShOvUhNvWSfTGKk80TDXvj59k=
+	t=1706289352; cv=none; b=Vh8jJF2hZFEYEcfc4bApH0PYNlnOZiUHLuXqvWTJI4bFGeXjV+BkTsYQ9+HqRwbnrXUpYKb0C6QIW3tWr83Q1ZkoA+AUuC/Opz9bSkvrhLbs1DK6UZBlqZ1wMXxhkYti6HLLH2j0DPqZSN5t4P/0c6Cg6rLKe3K8RoAlUgTnI6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706289153; c=relaxed/simple;
-	bh=COb4jLeIk3Yc6EinXHh+ryEulfnYvk9LPJq7bo9yaf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvicaXvKN24SuZWKAd3oScrz4rAeTGdkvSJWo5ysIS09FD4CeilYX56eRecEE6VYrTzQoI2Pzt2pivNyLx4a2u2AD4C9KQkO1+vbZ4Sqoh1rwj/oq1mng22J3WwL74BO2cOlc2ecMHs3MNa5mNd0GafS5dI8X2yLjGuGArXNb6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rTPjB-0003h4-L9; Fri, 26 Jan 2024 18:10:53 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rTPiw-002YFi-JY; Fri, 26 Jan 2024 18:10:38 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rTPiw-008oFN-1F;
-	Fri, 26 Jan 2024 18:10:38 +0100
-Date: Fri, 26 Jan 2024 18:10:38 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Alex Elder <elder@ieee.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	James Clark <james.clark@arm.com>, linux-pwm@vger.kernel.org, Hector Martin <marcan@marcan.st>, 
-	Sven Peter <sven@svenpeter.dev>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, 
-	Benson Leung <bleung@chromium.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Paul Cercueil <paul@crapouillou.net>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Hans de Goede <hdegoede@redhat.com>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Michael Walle <mwalle@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Hammer Hsieh <hammerh0314@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
-	Sean Anderson <sean.anderson@seco.com>, Michal Simek <michal.simek@amd.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Anjelique Melendez <quic_amelende@quicinc.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Lu Hongfei <luhongfei@vivo.com>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
-	Luca Weiss <luca@z3ntu.xyz>, Johan Hovold <johan@kernel.org>, 
-	Douglas Anderson <dianders@chromium.org>, linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	platform-driver-x86@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Guenter Roeck <groeck@chromium.org>, 
-	linux-riscv@lists.infradead.org, Fabio Estevam <festevam@gmail.com>, 
-	linux-stm32@st-md-mailman.stormreply.com, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Jerome Brunet <jbrunet@baylibre.com>, chrome-platform@lists.linux.dev, 
-	linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-rockchip@lists.infradead.org, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, NXP Linux Team <linux-imx@nxp.com>, linux-leds@vger.kernel.org, 
-	linux-sunxi@lists.linux.dev, Jonas Karlman <jonas@kwiboo.se>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, greybus-dev@lists.linaro.org, linux-mips@vger.kernel.org, 
-	asahi@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v5 040/111] pwm: Provide devm_pwmchip_alloc() function
-Message-ID: <zjt3r6z5ilpffh26qidwp3axpnvfkwcrwanrtjjm2kscpdovuz@ppcrdlhmqiqq>
-References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
- <f59b1a4a8d6fba65e4d3e8698310c9cb1d4c43ce.1706182805.git.u.kleine-koenig@pengutronix.de>
- <db05fb6a-2ea5-4e00-ac03-adc1897d96de@ieee.org>
+	s=arc-20240116; t=1706289352; c=relaxed/simple;
+	bh=rydS2tXXKitlQ9ghWn8wXSHPCF7jrvQvSqSu0kQ0T3M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pxhA82SaiHu3IhmwdhHWjBYXnP6TNoH9FB1p1d3yziD1AwlZI/wVArJv1vMNPvrSekCDL9pbrBEJRw7GRbnZST2b3mvYnjBeK5T6zU5D84HivoPlsLcj5Xm4ZRyZwTsCGrvEfc5cUsAHwpEGF0HyucSvSvQ0HZdbGDWfxZmyerY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wYcGaIIv; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wYcGaIIv"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-40eccf4a91dso9314505e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 09:15:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706289349; x=1706894149; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBQadJTQmd+rp5iQVTCEPm0E+5bcMf5aFRFa6IDttrs=;
+        b=wYcGaIIvFmyjnSYHxdTH/QCG9gYPfHFIuREZ93By7qny8de7z2A6glFU3V/mT+G247
+         VHh1XvUW/ALFxRmWleCS2M54cJNqLZASDZhGqIdJu9rptiEdUCfE6c2vvwpRUHnS3ANZ
+         /dxV2VswlW89LBHg4yMyDB6VJ/IYK6IifMu9WUoRDnzEgAcgNhBt/qeQkA7JECy4OE1R
+         m9FNkEZiSnjHIU1+FG7bPkvdoKD5MhgG3SMKsqA4IP20fmTqvOTWDmutwUm8W6wT58+z
+         PMO7dJSWwpZxd1Y131fnrK/i9Tr8dvdQbfiENBSCHav6P8pCCvf3Vp0Hnq2FnqJM3MF2
+         3Ijg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706289349; x=1706894149;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hBQadJTQmd+rp5iQVTCEPm0E+5bcMf5aFRFa6IDttrs=;
+        b=veOvrIs96QUFcFHBNV84dPYr5oDbMtYH5w6dDVZ9HARK/5urISKmekx9rGrIlAa+W9
+         7XqGrHjne5uz740nE8z6zBIbNCw5nEjzm2ip9WA4e0VXTPWrGR4AAMnonzkg2uF/Fva1
+         GFAiyeZq9CMQeLBssi0zUKgrpY8BnaSGDWIBhNg8ukGQRNLEUkdby3zFOb+K3gaQRt30
+         wJbWgdQHppJyf0pSZl4bNaTT8iQSAqMgLl0z9DbMy0xY7b9D82cv9BoKJiVeHsxKXGKu
+         +/GxGZYaUijdRlZ4dKB2ejkrqoES33O92gMUuPfBCWSOTNmX4wUAt7osSmNlUmEzW/Fc
+         OPUQ==
+X-Gm-Message-State: AOJu0YyKJ9Q0ZjCVRYRpO7d9lveYVjHRtrXCkL+vWwhteDIRGnuZtWVx
+	hedTb6trpX2ee6D6wZKSEyIvXSKFgiDBVxpYY6EU42dz0izFE2Qu22CLw2TYeUgBJMcIyEbx8gB
+	2
+X-Google-Smtp-Source: AGHT+IGRkC4wroA/6kPAgQvjykcxN7dPJ1nl0UjHKakeWfw1B7pvhfAxB8IyBSSZAdHdlBym1L3+0Q==
+X-Received: by 2002:a05:600c:45c5:b0:40e:e025:8d4e with SMTP id s5-20020a05600c45c500b0040ee0258d4emr91907wmo.27.1706289348701;
+        Fri, 26 Jan 2024 09:15:48 -0800 (PST)
+Received: from ta2.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id k10-20020a05600c1c8a00b0040e451fd602sm6287286wms.33.2024.01.26.09.15.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 09:15:48 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: broonie@kernel.org,
+	andi.shyti@kernel.org,
+	semen.protsenko@linaro.org
+Cc: krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com,
+	jassi.brar@samsung.com,
+	linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org,
+	peter.griffin@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v3 00/17] spi: s3c64xx: straightforward cleanup
+Date: Fri, 26 Jan 2024 17:15:28 +0000
+Message-ID: <20240126171546.1233172-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b26sjadvk3fz44v6"
-Content-Disposition: inline
-In-Reply-To: <db05fb6a-2ea5-4e00-ac03-adc1897d96de@ieee.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+Straightforward patches that clean the driver. Just compiled tested.
 
---b26sjadvk3fz44v6
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stands up just the patch that updates the driver to use the bitfield
+access macros. The bit operations shall be identical after the patch.
+Sam and Andi have some concerns on whether using the bitfield access
+macros are just a matter of taste, or they are actually necessary.
+I think they are necessary. Here are the concerns/discussions:
+https://lore.kernel.org/linux-arm-kernel/ee4107c3-1141-45ab-874c-03474d8ec18d@linaro.org/
+https://lore.kernel.org/linux-arm-kernel/ri7gerw4ov4jnmmkhtumhhtgfgxtr6kpsopdxjlx6fylbqznna@3qgvejyhjirw/
 
-Hello Alex,
+Cheers,
+ta
 
-On Fri, Jan 26, 2024 at 08:56:33AM -0600, Alex Elder wrote:
-> On 1/25/24 6:09 AM, Uwe Kleine-K=F6nig wrote:
-> > This function allocates a struct pwm_chip and driver data. Compared to
-> > the status quo the split into pwm_chip and driver data is new, otherwise
-> > it doesn't change anything relevant (yet).
-> >=20
-> > The intention is that after all drivers are switched to use this
-> > allocation function, its possible to add a struct device to struct
-> > pwm_chip to properly track the latter's lifetime without touching all
-> > drivers again. Proper lifetime tracking is a necessary precondition to
-> > introduce character device support for PWMs (that implements atomic
-> > setting and doesn't suffer from the sysfs overhead of the /sys/class/pwm
-> > userspace support).
-> >=20
-> > The new function pwmchip_priv() (obviously?) only works for chips
-> > allocated with devm_pwmchip_alloc().
->=20
-> I think this looks good.  Two questions:
-> - Should you explicitly align the private data?  Or do you believe
->   the default alignment (currently pointer size aligned) is adequate?
+v3:
+- reworked the bitfied access macros patch so that the bit operations
+  are the same as before the patch. Fix S3C64XX_SPI_PSR_MASK value,
+  drop S3C64XX_SPI_CS_NSC_CNT_MASK.
+- add a new patches to explicitly remove a duplicated definition and to
+  drop a superfluous bitwise NOT operation.
+- collect R-b tags
 
-I'm not aware of a requirement for a higher order alignment (but I might
-well miss something). I did my tests on arm, nothing exploded there.
-Maybe the conservative approach of asserting the same alignment as
-kmalloc would be a good idea. I'll think and research about that.
+v2:
+https://lore.kernel.org/linux-arm-kernel/36a664b1-666d-4fc4-90d9-35b42e56973d@linaro.org/
 
-iio uses ARCH_DMA_MINALIGN, net uses 32 (NETDEV_ALIGN).
+Tudor Ambarus (17):
+  spi: s3c64xx: explicitly include <linux/io.h>
+  spi: s3c64xx: explicitly include <linux/bits.h>
+  spi: s3c64xx: avoid possible negative array index
+  spi: s3c64xx: fix typo, s/configuartion/configuration
+  spi: s3c64xx: sort headers alphabetically
+  spi: s3c64xx: remove unneeded (void *) casts in of_match_table
+  spi: s3c64xx: remove else after return
+  spi: s3c64xx: move common code outside if else
+  spi: s3c64xx: check return code of dmaengine_slave_config()
+  spi: s3c64xx: propagate the dma_submit_error() error code
+  spi: s3c64xx: rename prepare_dma() to s3c64xx_prepare_dma()
+  spi: s3c64xx: return ETIMEDOUT for wait_for_completion_timeout()
+  spi: s3c64xx: drop blank line between declarations
+  spi: s3c64xx: downgrade dev_warn to dev_dbg for optional dt props
+  spi: s3c64xx: remove duplicated definition
+  spi: s3c64xx: drop a superfluous bitwise NOT operation
+  spi: s3c64xx: use bitfield access macros
 
-> - Is there a non-devres version of the allocation function?
+ drivers/spi/spi-s3c64xx.c | 298 ++++++++++++++++++++------------------
+ 1 file changed, 158 insertions(+), 140 deletions(-)
 
-Patch #109 introduces a non-devres variant. As it's not used it's a
-static function though. Can easily be changed is a use case pops up.
+-- 
+2.43.0.429.g432eaa2c6b-goog
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---b26sjadvk3fz44v6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmWz540ACgkQj4D7WH0S
-/k4oQwf+Nnq9bGZWZrbCQsHJYB54zfZt1whu2kQgdRMIQzT8HP7NadKhFCqs3Ob6
-5xwIwbIpdczrpzHM25+5ZrTBiH5oSQ/Si0YMzglndL8Tm59GEJxcKoorYpDNplJR
-xHL2owB7VgG87fFIvSCe163biS2vI/gIjAGvL9bpzcSH62Eq7EO3APk7Hx+h7d9e
-QHLzzUmpN9JlrzYOhKE7Pu7/iVFPNqNb7FQtAOnamXe0kRLs05649mgdJ9q30gS8
-imf9reDedsSG7sHM5NjtZpBQpF9H3vulzuGbH2MH2jNDLjtcpvUXUZpfijLN69iQ
-GqSwNOqcwcXljLsP1A1wM8snNwzi/A==
-=cXfD
------END PGP SIGNATURE-----
-
---b26sjadvk3fz44v6--
