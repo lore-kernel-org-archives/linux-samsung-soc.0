@@ -1,156 +1,113 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D8C62A0D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 23:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05C0630
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 00:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706310986; cv=none; b=fgZb1wOdq5lzhBI8E0gwuHCXLxAbXb3zlK9SxDsCNlf7PxFPzQnt7t7Gn8Au99wkAMQAm8NThTQHfJyepNTIuqC5j0wYt1vVaUiLK6NnPLE05cHRB/pxOHdEmsOwz6h8zD+PjqftJCk7y1S7Hzjo3DAwZAZvf2T7hdGzTfTOunY=
+	t=1706314784; cv=none; b=DRrnHSiRprHU4uoIW86XWZ4ABWFKnHaAjenAT8YfXGHGSUpbd2pYM9ljjEffvFRRewuF8y6QlQZGMI7ikUDgnWb00CGeOMTL0mHro0JoAyonhtsYJ9T6YegmAICOOck6xk/Z+1y/wIH0XEQOsNVsdaN4UnpHcSEBC2cAOjheJ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706310986; c=relaxed/simple;
-	bh=3a/r7kXdAIFtktUyOV8TMLOQckxM8aU1T8MlUOBhuxg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hlYF886X2ccwQTN5DnwqsCMZvmvWlJwRW6Scr0VY7Qx8PJPpM/VMmt/o19J2x3+A2yBuTIL8JqXtlHpgcPptD3Pod7nppgYspndJdK9YvnpY9G4UB5QRd1zG2SHutOE5iVKGXL9vva2oX9OEmS57m/9GWU3ei25/Wkrxif+AD0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l6pzT6fi; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1706314784; c=relaxed/simple;
+	bh=c7iK9Q9i+/5KtbjjQ/B86HiRg6utBMxubkhs/C/qBEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gqi4dNcEfAVNEO2CSsL/ulJQyW91i8qoK6QwIJnPEhm6xEiNft18XxrN7q/9GL5exy6i3BJTxOrRQUy7GZ/VJ2nblKDobWRMj0IKgdG0lAwUk4hGhFfBjn5e8eEox4seAvMmiTH05rDKtRyDEIMAyMUqFZMbwJiZtrmHwamVI3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ajlb2/23; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l6pzT6fi"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-783cbc38a78so62474485a.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 15:16:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ajlb2/23"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a271a28aeb4so82954166b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 16:19:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706310983; x=1706915783; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mtltgslBdQHae+oLD1399tQsPexikCLm+b/oIxSwL94=;
-        b=l6pzT6fiQre9odpIZATrtgsshg4nH0dv4jI7iWbvVve7/y8ej97RVaZAbruMZD0pSu
-         B1WrPPkVG8OazVZ5fOMdinRIfskfwkL+35PAKDYHJHka/PQkwiggwB2lp7erSeiw49zn
-         Ugr+lr9r2rK/FoUdl8b2zxcprozmtlRXpE930=
+        d=linaro.org; s=google; t=1706314780; x=1706919580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/Rm0yYDXOMu68wV8GexASxsNK6lcu3pWifwK+J3GEg=;
+        b=ajlb2/23tvb/6s+91Mu7wtxth3Evb0cqF/86MJou4CjUGOLJBikgYLRQu3CMJMA2bA
+         3L9q6gSK8VVzY2/YL2S+24sqabt53VhdVUj10EetXXQIXbpQ2lvehyB7s4FGdWCQ+QZ9
+         BR3lu4haE3GlLtQnLegJn3jBkXHq9ZhzLXxMJ1yN3oZhtJYxfvo/6JwxLT/X/FZK8qjR
+         gq9e9fUW5ta/YsA+R8nJ2Bq+bYCM3Z0B/ubdeQwj18m+a5CJGDpdqL8bqBD87zZDsqPB
+         /6NqPfcdWpDuAlLXTGWQbYe7chIUr+0BDwkmGsCUd+4HJgGjXvy75E0J+qsZFrrzY/g3
+         9jqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706310983; x=1706915783;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1706314780; x=1706919580;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mtltgslBdQHae+oLD1399tQsPexikCLm+b/oIxSwL94=;
-        b=VLu5SCxXzkHJ1OIUwYyh8DvcAMaL3t/FkyzQZs0dg4UqdxRvfCxrpAh9VzvCyKVRF3
-         RgTRWq3yMMZZrYHkygQau2IlodlQ0RHHkXMZD7knz0Konhgp3HUrXALvXJbcDy5IncWo
-         ZTMwfd4UeOL6GACaa1Plj1Ws9mSKUoJn+WU3yhZF5YF8KSB26ynM6bru6eGyqAJM15rN
-         cASdPX2NGGj7Cp0BCLwTzRVIuvCYZ2ajJ2bq5sDJ/PHFY5ui9koBXYA3GmgSwManhsaZ
-         ioC0Ela0ag2WtwxjLi/B0qDRihu//9lgGVfwJJOeKzshif3ndN7fxadswkrG23wzg4uz
-         EyNA==
-X-Gm-Message-State: AOJu0YwhnP/TbWxXN6pyomcqHI+5Im1nPcJWQALXE4O4n3W33vtBzMYw
-	Xy8Mc9xtd9oSyuPiQNWNrClocbdvRI0ltPpFvgNK4HSyC7FiHYz9HjhcvD0HxA==
-X-Google-Smtp-Source: AGHT+IFr6+3pqj0JMsLxQ2GW7atIeRCtD6HJIvow5am3DYJqsXSoZPigBa/gFlr3DGsp4f3R3YcSBQ==
-X-Received: by 2002:a05:620a:618e:b0:783:4cbd:9ed7 with SMTP id or14-20020a05620a618e00b007834cbd9ed7mr711408qkn.38.1706310983521;
-        Fri, 26 Jan 2024 15:16:23 -0800 (PST)
-Received: from denia.c.googlers.com (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id m4-20020a05620a290400b00783de3ddf5esm507358qkp.70.2024.01.26.15.16.22
+        bh=R/Rm0yYDXOMu68wV8GexASxsNK6lcu3pWifwK+J3GEg=;
+        b=KHMUILSxlOAS1+aVWpGnpdt6Ew/IBqG8Y2OFRTd6U00HyJMaVLv9pKbId6NhqMyOHy
+         vHx0WP09iQVkUD7jWaXK59ugk9VbOxNAhuat8mujdxv9DwdXX59ehLFSl/PNEKW3jf1F
+         u4SoD4ZVfuLZ48WIIk0yNR6vgRNTomCyDkEiLGhThowF65RxI+f29SgPGmMNl0GMDbQp
+         R8xZYAIk5lCqtY/PgqMQQKg24mqyejY6NUYWKU4GXGF4ORHjILxLY/YiUzkqKgSWmcIf
+         cliuqbt2b+X2pdkVJjPXD9hNlcHzzGSc0rnHKGXd4D9BC8ZTBJaNhcGwNT2tEnndUZbf
+         SptA==
+X-Gm-Message-State: AOJu0YztopTGBnS1+sahjZF6ZXQLcA6YnHh17yW2VmebetrzLqpEsxe1
+	mRXTkO2px4ts6VWXET5MJ4l4TXz+MltnPVpfggP90CdIiVLEjq23a2nsJ4hLNN8=
+X-Google-Smtp-Source: AGHT+IHLOaiuHvoFTH+gfWrR6r9blUug2B/0DbKBGkdsAnqaaQUsJ3oQnpIIzDIfgkkkW6+UsehFug==
+X-Received: by 2002:a17:906:470a:b0:a34:e324:c8d5 with SMTP id y10-20020a170906470a00b00a34e324c8d5mr309303ejq.33.1706314780146;
+        Fri, 26 Jan 2024 16:19:40 -0800 (PST)
+Received: from puffmais.c.googlers.com.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
+        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b00a339d705a10sm1141359ejb.80.2024.01.26.16.19.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 15:16:23 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 26 Jan 2024 23:16:16 +0000
-Subject: [PATCH 17/17] linux: v4l2-vp9.h: Fix kerneldoc
+        Fri, 26 Jan 2024 16:19:39 -0800 (PST)
+From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+To: peter.griffin@linaro.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@android.com,
+	tudor.ambarus@linaro.org,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com,
+	tomasz.figa@gmail.com,
+	cw00.choi@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/9] clk: samsung: gs-101: drop extra empty line
+Date: Sat, 27 Jan 2024 00:19:05 +0000
+Message-ID: <20240127001926.495769-2-andre.draszik@linaro.org>
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
+In-Reply-To: <20240127001926.495769-1-andre.draszik@linaro.org>
+References: <20240127001926.495769-1-andre.draszik@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240126-gix-mtk-warnings-v1-17-eed7865fce18@chromium.org>
-References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
-In-Reply-To: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
-To: Tiffany Lin <tiffany.lin@mediatek.com>, 
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
- Yunfei Dong <yunfei.dong@mediatek.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Hans Verkuil <hverkuil@xs4all.nl>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- Bin Liu <bin.liu@mediatek.com>, 
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
- Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-amlogic@lists.infradead.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Kerneldoc cannot understand arrays defined like
-v4l2_frame_symbol_counts.
+There is an extra empty line here which doesn't exist in any of the
+other cmu code blocks in this file.
 
-Adding an asterisk to the name does do the trick.
+Drop it to align cmu_top with the rest of the file.
 
-Disable the kerneldoc notation for now, it is already ignored:
-https://docs.kernel.org/search.html?q=v4l2_vp9_frame_symbol_counts
-
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'partition' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'skip' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'intra_inter' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'tx32p' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'tx16p' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'tx8p' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'y_mode' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'uv_mode' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'comp' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'comp_ref' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'single_ref' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'mv_mode' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'filter' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'mv_joint' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'sign' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'classes' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'class0' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'bits' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'class0_fp' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'fp' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'class0_hp' description in 'v4l2_vp9_frame_symbol_counts'
-include/media/v4l2-vp9.h:144: warning: Excess struct member 'hp' description in 'v4l2_vp9_frame_symbol_counts'
-
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- include/media/v4l2-vp9.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-gs101.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/include/media/v4l2-vp9.h b/include/media/v4l2-vp9.h
-index 05478ad6d4ab..f0d80273bd61 100644
---- a/include/media/v4l2-vp9.h
-+++ b/include/media/v4l2-vp9.h
-@@ -83,7 +83,11 @@ struct v4l2_vp9_frame_context {
- 	struct v4l2_vp9_frame_mv_context mv;
- };
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index 4a0520e825b6..27debbafdce4 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -25,7 +25,6 @@
+ /* ---- CMU_TOP ------------------------------------------------------------- */
  
--/**
-+/*
-+ * NOTE: This is not a kerneldoc, because the (*name) notation confuses the
-+ *	 parser.
-+ */
-+/*
-  * struct v4l2_vp9_frame_symbol_counts - pointers to arrays of symbol counts
-  *
-  * @partition: partition counts.
-
+ /* Register Offset definitions for CMU_TOP (0x1e080000) */
+-
+ #define PLL_LOCKTIME_PLL_SHARED0			0x0000
+ #define PLL_LOCKTIME_PLL_SHARED1			0x0004
+ #define PLL_LOCKTIME_PLL_SHARED2			0x0008
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
