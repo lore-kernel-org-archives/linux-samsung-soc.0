@@ -1,112 +1,110 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E5A111B5
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 03:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36EFC111BD
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 03:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706326725; cv=none; b=oLSerNFr24uBsxLKbfgO68SMVimnzMT7XHYTvrRCWg3vdBDaXNAio5Tu9mfToTm61uCfhzIsYCDerMuKycl0HX7e0/fgATUmgI8Dn/DaPGCrBSo+d0/vzZwSoZC+NG+VOxiomcdz9NtgU0mFZhqtfY0qxsiTAq9Gd06tJnDsV6o=
+	t=1706326924; cv=none; b=m0iyMuTkrUE5ZKfk7+YZkD8oduuPpemUcWlx1n+/F+ggSRzLvAE+ZNi2h5yJOUNI/jOf3PzYbTqiOXe9wWvzB7y2JKCA61fJrL+15si1V+aBvdN6gWLGhsgRhueKCr0eJv920So7i+uX+DoUKK2vyjabjl9hAdQd7n+5k2RQACU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706326725; c=relaxed/simple;
-	bh=ptRvofd1XSyL64ByZHUaDprHNiV0o1rEa53gEIm7ko8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VJTp6hlFyYZpg6Bq203E23EZYrz28FcJHUKx8uA54RPJ4VAD5C7f0/NbW5DccM4R/CX0wdBP1t+DDWN3iRUBQ1N+MIIdutque32Enbg8BoFvmxr58YKuhhoh4joWFp5Vlz6vYzqC2oXdxZrlJebOFrbs31SQvM6rVPdL9UFWOPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HWvBCTQW; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1706326924; c=relaxed/simple;
+	bh=lb4hr4lMqP3scqChZNMDEfqWIZNF2leBBfvxB83oB+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TbdGCiW/JEhbsDUoEuajHktfpv+0VENREBsKexzYL4mHeXsy1lYwKMH3+aHd3JYaFmrkEI9O/tRBxSTl+kYzpAmU77eqQ8tMI5toJajxRav7Ysct5278vxKOvdB9Az+erQN0odhPlxR9dvTwYRyPO5kX/LjTKB3INHfIGuMPc+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hs+7tYIH; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWvBCTQW"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-783cd245ec0so88923785a.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 19:38:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hs+7tYIH"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-55d2d9fe0e0so878266a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 19:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706326722; x=1706931522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I3+lSaV5k4Dfkc53Op2tvfbF0vHcLdK/yHeAoCK2Liw=;
-        b=HWvBCTQWShdP0MzEScLNIYWez2JgxH2X2iflY9i0ZC4PF5usnuzS2Ww+YMMqsDlNnO
-         pjf3s7meCi/g1JnW4PiovqVRQgQu4zzxHaxe3SuWHslBO/0DSbKnF2t+PDCSiKcEjt8z
-         9f0/PxElx2aMRQr5zCuEbQ/Os6gcaNFMW2HV9MbmJB7PrAeX9MJhTXmUEJTvB1dA0JPv
-         sYcYTIQ1QtCGRACu2FBxfaORUtVDgWZEHdjgG8z6uncPijGZHXksVK1T/so3ClxCsqsn
-         Gc9m/wajC0n6NvCYML50wxmSHxmTfQLaVNFFU/SgGJFWNKDmLFfo8s1X0fe3nVverzVI
-         xBFw==
+        d=linaro.org; s=google; t=1706326921; x=1706931721; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pOaGnis+Iczt522Hal+qxBb9QflnEHJoe8ZkGJ5fs+8=;
+        b=hs+7tYIHl2NUGuPTxTqkHCAC4bWgoUs0kMPIodUa0juUFJAI3YnBS7WdA0yxbnIH0n
+         ql/3RcGdxdvvg+Nw5V6S2R3LjrJeGncmFl9fqA7TLwh70MN+Bbj2Clj8V6Dh9qMi+GqM
+         pWcD/FFVYbaUryboDWP+KizB8Stb0URtduTJCGGOtxLZ6G2R157z/gpswZkfava/WhGo
+         GjDN9ICmKz6WgVYQfIy1/kzUpzWF8qOY1GuSavPlC9kIcjPi29/aeiSsmob4Z4eB8D1N
+         jXigkwPiHyXgUgnlbx0ndlK6ZYA5qCpTCz682tPZKBEoZfKj7rQ7S5yy18b5pN2+Fof+
+         QGrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706326722; x=1706931522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I3+lSaV5k4Dfkc53Op2tvfbF0vHcLdK/yHeAoCK2Liw=;
-        b=v/BMlLbNFhxmTzTHQp/yBcvh/lCMaS5bMb5Fk5IW++HzW8pqqpPCSLak2hp02vPqc+
-         Ak/To5mKWYGRdCEHEYY/6LIC0uZ8mc4C+0pX+qANJDPchcLF7eSiwxBuUiU+lndTxZ8u
-         2/264sEHzMKkUdTmBGdtwpGJ1GfGpafwNabDjPI1lwDIbq5T555k2/Aj/uGqH61txIns
-         NuQNiBKjnkj6LgBDxyu7YjiMDl6RIBOALbeYMkwhdH9RyAhvp+jC7Ml7uPtA+sZ6hUby
-         DUKDQilGWyWwDDMz2dBsHm37vtGkmNcG4UlSpHg20S/c49T/64VJ2ux0houvl8qj168X
-         DHGg==
-X-Gm-Message-State: AOJu0Yyrvamqodhk1ZSfLT9H0NZUuu0B0C2LD7bGx3rvLe09J9kq9Ky1
-	cS7pTc6vVwNo3vRrJZqBV0jwwE/kgVks2BM9i2tRUxLR81IhjwDSeRBB8NigKGDd2ONpHf1l5kt
-	eTB+M338izeoNAEXku9ZQRQhAT72gFtNMgmapNw==
-X-Google-Smtp-Source: AGHT+IGMqouLo1o+ccPzY5vjpHB4grmiMzGREKYTDFUgW1x4VF9zcneNjf49KACEqgsJZVxW7u7GEfa/a763D0Awua8=
-X-Received: by 2002:a05:620a:4441:b0:783:b9e4:8b4f with SMTP id
- w1-20020a05620a444100b00783b9e48b4fmr1081283qkp.31.1706326722307; Fri, 26 Jan
- 2024 19:38:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706326921; x=1706931721;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pOaGnis+Iczt522Hal+qxBb9QflnEHJoe8ZkGJ5fs+8=;
+        b=FJKZ5O/c20Zr6qAn7XsFUQ6Dju1Xpzl5gyHzbOLFG3CCh+UWEK9m5vsudEN7d7aT+A
+         ZbFBYMdXsWUAqfEohjWbxPA+6tXp6D7Tz4mxYD7SfCp/9S+dB8IYOwNlpczXShOqTb/D
+         E5BawqMg0A2N9twcpZC5dEj0Qh5+LGPUV0cdnN/jNybgQxcfm42cm/Qe2CX8y0MqX1GB
+         /bi/uRJSTxkvfPcjTFO822T8xGdrbMSZrIouRL1znlVRm16NRVJpFre7uQc+RHdKwBks
+         KOevSu0zGCil62e66UYvExG/z6GFKOEow10BqzvBg8kg2303yyP3uiguRaS2oOE5efew
+         dfXw==
+X-Gm-Message-State: AOJu0Yz/7B9p1hqYZsa0RDvVQ5RQJOImCr3PPPG44b2OLLT7IS+2rPIp
+	n7RUaM+Yu1eOmdC1a5T2dmiM1dxm+/7Cbi76ZqYFENcozv1tE1NePfZvok5HeQE=
+X-Google-Smtp-Source: AGHT+IEDPqs41iSlO3HsrWI3i1zfR5ULd1vOfwLy0lNUfcY9YPvicY9qMn4CJXQs/kBe94SL0YF9dg==
+X-Received: by 2002:a17:906:acb:b0:a31:1907:2fe8 with SMTP id z11-20020a1709060acb00b00a3119072fe8mr439718ejf.48.1706326921280;
+        Fri, 26 Jan 2024 19:42:01 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id vg10-20020a170907d30a00b00a3522154450sm572518ejc.12.2024.01.26.19.41.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jan 2024 19:42:00 -0800 (PST)
+Message-ID: <81f3d9cd-4efd-44de-8230-3c40af10972a@linaro.org>
+Date: Sat, 27 Jan 2024 03:41:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/17] spi: s3c64xx: remove unneeded (void *) casts in
+ of_match_table
+Content-Language: en-US
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: broonie@kernel.org, andi.shyti@kernel.org,
+ krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+ jassi.brar@samsung.com, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
 References: <20240126171546.1233172-1-tudor.ambarus@linaro.org>
- <20240126171546.1233172-18-tudor.ambarus@linaro.org> <CAPLW+4nL6D7R88Q_kJjAT-bWTFBk8a=FT0vL+fyRgxaDeSyhNw@mail.gmail.com>
- <b5ecacaa-8ccc-4588-b3be-4b5f85813909@linaro.org>
-In-Reply-To: <b5ecacaa-8ccc-4588-b3be-4b5f85813909@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jan 2024 21:38:31 -0600
-Message-ID: <CAPLW+4nN--gG9XsOu6a-mo5vcM-GycRrhPQFOtNidfVTM=KonQ@mail.gmail.com>
-Subject: Re: [PATCH v3 17/17] spi: s3c64xx: use bitfield access macros
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, krzysztof.kozlowski@linaro.org, 
-	alim.akhtar@samsung.com, jassi.brar@samsung.com, linux-spi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
-	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20240126171546.1233172-7-tudor.ambarus@linaro.org>
+ <CAPLW+4n3U99cm0Bv5XhceXyEtp4pTh1TWjtB1ci+f2fO+i1_ag@mail.gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPLW+4n3U99cm0Bv5XhceXyEtp4pTh1TWjtB1ci+f2fO+i1_ag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 26, 2024 at 9:23=E2=80=AFPM Tudor Ambarus <tudor.ambarus@linaro=
-.org> wrote:
->
-> Hi, Sam,
->
-> Thanks for the review feedback!
->
-> On 1/26/24 20:12, Sam Protsenko wrote:
-> >> -               val |=3D S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD;
-> >> -               val |=3D S3C64XX_SPI_MODE_CH_TSZ_HALFWORD;
-> >> +               val |=3D FIELD_PREP(S3C64XX_SPI_MODE_BUS_TSZ_MASK,
-> >> +                                 S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD) |
-> >> +                      FIELD_PREP(S3C64XX_SPI_MODE_CH_TSZ_MASK,
-> >> +                                 S3C64XX_SPI_MODE_CH_TSZ_HALFWORD);
-> > Two people complained it makes the code harder to read. Yet it's not
-> > addressed in v3. Please see my comments for your previous submission
-> > explaining what can be done, and also Andi's comment on that matter.
->
-> I kept these intentionally. Please read my reply on that matter or the
-> cover letter to this patch set.
->
+Hi, Sam,
 
-I read it. But still don't like it :) I'm sure it's possible to do
-this modification, but at the same time keep the code clean an easy to
-read. The code above -- I don't like at all, sorry. It was much better
-before this patch, IMHO.
+Thanks for the review feedback.
 
-> > Also I think new patch series are being submitted a bit too fast,
-> > people might not have enough time to provide the review.
->
-> This patch set contains patches that are already reviewed or too simple
-> to being lagged.
->
+On 1/26/24 20:17, Sam Protsenko wrote:
+>>  static const struct of_device_id s3c64xx_spi_dt_match[] = {
+>> -       { .compatible = "samsung,s3c2443-spi",
+>> -                       .data = (void *)&s3c2443_spi_port_config,
+>> +       {
+>> +               .compatible = "samsung,s3c2443-spi",
+>> +               .data = &s3c2443_spi_port_config,
+>>         },
+>> -       { .compatible = "samsung,s3c6410-spi",
+>> -                       .data = (void *)&s3c6410_spi_port_config,
+>> +       {
+> The braces style is not fixed. Yet that's a style patch, which on one
+> hand fixes the issue (unnecessary void * cast), but OTOH brings
+> another issue (non-canonical braces placement). Please see my comments
+> for your previous submission.
 
-Ok, agreed.
+I've read your email and replied there that the braces were one on top
+of the other even before my patch and since I don't have a preference on
+whether to choose a style or the other, I kept the style as it were.
 
-> Cheers,
-> ta
+But I learnt my lesson. Mark can ignore this path when applying and I'll
+submit a new version of the patch where I'll refrain myself making
+alignments or changing the style.
+
+Cheers,
+ta
