@@ -1,69 +1,58 @@
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E5D1E86C;
-	Sat, 27 Jan 2024 09:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706349430; cv=pass; b=oZJjePR3Gp7yfLfe97N+B8dXMAe/U23JT8BOmftyBc8YBsAscqKcw6aMbfr6onK0ALw+2sBNDqr+iKxVMoepxwX7PkByHSGcXPKBdE4jKZvLfawtum2EyydmOqwlMktvHjzQorKg1U/Qq9X5kkZsdXsl7WPxzGDqBbl332OC3po=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706349430; c=relaxed/simple;
-	bh=BYB6jC3aI2xiPrDsSv3GPmsr+ClEbamMjWpzzNbk00E=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627D61E539;
+	Sat, 27 Jan 2024 18:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.31
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706381189; cv=none; b=fYeoEyoCT24F3CNzdKL1OhdD4I5pe6bWovytrb6T6DspwA2iRuta6bq3QadvZAOi4VfOWEeMEcbao2vae07SxlLyOZ1kOjrmR827vVjzg+88NpFcgNJI1z1vc/fBiLmILPSt3+aIxOupvpn15yLO69BgsB40XGQJrXXaCM+VSQ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706381189; c=relaxed/simple;
+	bh=EYPyaz87RkOJljahQF8funE2XdsGXXg6gukJ+v+90GA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEdLMv6RW3cZk1Hu1JG63O62T1CRK1Nj+urC7JDyEbKDB7XusxbHL0lmTMrf1fzh+v3Cxxn+mRQ2qplrdy4sydX6xA5Wu4toAxqOXglcKh2aKt6rcNimtanKKequXeEgUI/GgjS23gEoNwzjJOgBwQGW9aBdlLi19HlqS4FPDqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=NhI2acQ1; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6w2M1LxCpbjeYr4jWEAtQ/edM4MsQWR5++57xh8TOPIIXsahHkYx+Gw5ylgoCQRrwWE6/xIDVtI0N5CyO/0NFF8/fGDv3I/aOL9oDF1S7AUuPqjwDTtKHjRPLVfkVuLQk+MAp7w7fpV3db32xzl8L/5OjX9szsPNrmmL8sMhS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G5ToPuYY; arc=none smtp.client-ip=134.134.136.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="NhI2acQ1"
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4TMVN020rqzyPp;
-	Sat, 27 Jan 2024 11:57:04 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1706349424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UAj93A+QldIc2BlOVJOBkygnNhIiKNVEocFWLbjrq44=;
-	b=NhI2acQ1O4J7xZMn0vxDy8AsXgy5iOSZLbslZXaEFG7Lm3WiP4d9HQgxKlv9pKIZXqfitW
-	JX54ndZ8TEsE+QpN/C6fy01whRVK9LqnhbRyzMZUQO5WFLzLYxisKWkTDJx/d8rmHa8Gvi
-	TaVyx/W7YDoo8w1ZFsPJSIGVTE0b6Bg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1706349424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UAj93A+QldIc2BlOVJOBkygnNhIiKNVEocFWLbjrq44=;
-	b=m5Afe8MEqZqYfQ7DsoCfsbTinjVAmnmLBU8rNzuv9udyXlHrhZXaS3mEOQHJOqcmiewyzF
-	fRgYXOHQjzUTOWlujiymp1Wte6IdetR83dQuN86Ib4/u8wHyoha75sp28/u+e7dkWZFHBk
-	fj/dpnp2t7MzQU1oXNFueKAnW3dOws4=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1706349424; a=rsa-sha256; cv=none;
-	b=cuM4Wm24bJ+zli7jFhPml/vGiMkLf7Mx4y1JSql7NWzDMObPe8xmwGI1sk58uB95Yih6lJ
-	AFsCph2L2PqQDvxd3l2qDs9GVbhsaUZRTB28h1qM7+iUeEJhxm0LUcY0hRcw/XsV+j8DYu
-	NZ/tFKPGsRG853g4AKokaRvVeYY6DdI=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 9319C634C93;
-	Sat, 27 Jan 2024 11:57:03 +0200 (EET)
-Date: Sat, 27 Jan 2024 09:57:03 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Tiffany Lin <tiffany.lin@mediatek.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G5ToPuYY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706381187; x=1737917187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EYPyaz87RkOJljahQF8funE2XdsGXXg6gukJ+v+90GA=;
+  b=G5ToPuYYxcVxXz6dt/DHtNh8u+OppP0v6ZkV3L3wSubDGUyozIWTbadN
+   4tW8MXFsBGS+hY7vjk5BFSuVleIiy88nlOi0QuTCemdsU4y2Jrw3q2Kpd
+   4txMhKh+gP44vIu4ciUCoF/lGjFpIXfpwyfFUpbcrq0uj0+qXYwIfNzdE
+   QuTr7aRMQ2dIB6soWSuAzgUF/ohTyGPqQFalsXlxlj5z6M9+AFQLGYagk
+   4wwmLBisVqomIoaEqDjQFS9a4LgMuYy1aaYfpD2hLWpvn1FJ1zHq5LAei
+   L38h+eiyXbd0Zt724yKGyXtpbWTcmtX0reCy1orQ45sDJkM04WH3trMAf
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10966"; a="466977459"
+X-IronPort-AV: E=Sophos;i="6.05,220,1701158400"; 
+   d="scan'208";a="466977459"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2024 10:46:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10966"; a="910649621"
+X-IronPort-AV: E=Sophos;i="6.05,220,1701158400"; 
+   d="scan'208";a="910649621"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2024 10:46:16 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 4755F11FB1F;
+	Sat, 27 Jan 2024 20:40:25 +0200 (EET)
+Date: Sat, 27 Jan 2024 18:40:25 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
 	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
 	Yunfei Dong <yunfei.dong@mediatek.com>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
 	Hans Verkuil <hverkuil@xs4all.nl>,
@@ -94,10 +83,11 @@ Cc: Tiffany Lin <tiffany.lin@mediatek.com>,
 	linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
 	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 17/17] linux: v4l2-vp9.h: Fix kerneldoc
-Message-ID: <ZbTTb-SdK-EubGdc@valkosipuli.retiisi.eu>
+Subject: Re: [PATCH 03/17] media: media-entity.h: Fix kerneldoc
+Message-ID: <ZbVOGaw-8qU2QNle@kekkonen.localdomain>
 References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
- <20240126-gix-mtk-warnings-v1-17-eed7865fce18@chromium.org>
+ <20240126-gix-mtk-warnings-v1-3-eed7865fce18@chromium.org>
+ <e6b72dff-911e-4923-9996-b3b7db36fb8e@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -106,23 +96,96 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240126-gix-mtk-warnings-v1-17-eed7865fce18@chromium.org>
+In-Reply-To: <e6b72dff-911e-4923-9996-b3b7db36fb8e@infradead.org>
 
-Hi Ricardo,
+Hi Randy,
 
-On Fri, Jan 26, 2024 at 11:16:16PM +0000, Ricardo Ribalda wrote:
-> Kerneldoc cannot understand arrays defined like
-> v4l2_frame_symbol_counts.
+On Fri, Jan 26, 2024 at 05:51:06PM -0800, Randy Dunlap wrote:
 > 
-> Adding an asterisk to the name does do the trick.
 > 
-> Disable the kerneldoc notation for now, it is already ignored:
-> https://docs.kernel.org/search.html?q=v4l2_vp9_frame_symbol_counts
+> On 1/26/24 15:16, Ricardo Ribalda wrote:
+> > The fields seems to be documented twice.
+> > 
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  include/media/media-entity.h | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> > index 2b6cd343ee9e..c79176ed6299 100644
+> > --- a/include/media/media-entity.h
+> > +++ b/include/media/media-entity.h
+> > @@ -337,10 +337,6 @@ enum media_entity_type {
+> >   * @info.dev:	Contains device major and minor info.
+> >   * @info.dev.major: device node major, if the device is a devnode.
+> >   * @info.dev.minor: device node minor, if the device is a devnode.
+> > - * @major:	Devnode major number (zero if not applicable). Kept just
+> > - *		for backward compatibility.
+> > - * @minor:	Devnode minor number (zero if not applicable). Kept just
+> > - *		for backward compatibility.
+> >   *
+> >   * .. note::
+> >   *
+> > 
+> 
+> I'd say that this is correct based on
+> https://patchwork.kernel.org/project/linux-media/patch/20231223050707.14091-1-rdunlap@infradead.org/
+> 
+> 
+> Hans, can you please explain this message from you, on 2024-Jan-22, that
+> I cannot find in the media patchwork:
 
-Wouldn't it be nicer to fix kerneldoc instead? It might not be difficult at
-all.
+It's in linuxtv.org Patchwork here
+<URL:https://patchwork.linuxtv.org/project/linux-media/patch/20231223050707.14091-1-rdunlap@infradead.org/>
+and also in the media stage tree (as indicated by the state) but not yet in
+master AFAIU.
 
-Feel free to, but I can also give it a try.
+> 
+> 
+> Subject: [git:media_stage/master] media: media-entity.h: fix Excess kernel-doc description warnings
+> 
+> 
+> 
+> This is an automatic generated email to let you know that the following patch were queued:
+> 
+> Subject: media: media-entity.h: fix Excess kernel-doc description warnings
+> Author:  Randy Dunlap <rdunlap@infradead.org>
+> Date:    Fri Dec 22 21:07:07 2023 -0800
+> 
+> Remove the @major: and @minor: lines to prevent the kernel-doc warnings:
+> 
+> include/media/media-entity.h:376: warning: Excess struct member 'major' description in 'media_entity'
+> include/media/media-entity.h:376: warning: Excess struct member 'minor' description in 'media_entity'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> 
+>  include/media/media-entity.h | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> ---
+> 
+> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> index 2b6cd343ee9e..c79176ed6299 100644
+> --- a/include/media/media-entity.h
+> +++ b/include/media/media-entity.h
+> @@ -337,10 +337,6 @@ enum media_entity_type {
+>   * @info.dev:	Contains device major and minor info.
+>   * @info.dev.major: device node major, if the device is a devnode.
+>   * @info.dev.minor: device node minor, if the device is a devnode.
+> - * @major:	Devnode major number (zero if not applicable). Kept just
+> - *		for backward compatibility.
+> - * @minor:	Devnode minor number (zero if not applicable). Kept just
+> - *		for backward compatibility.
+>   *
+>   * .. note::
+>   *
+> 
+> 
+> 
+> Thanks.
 
 -- 
 Regards,
