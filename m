@@ -1,56 +1,56 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EED20F0
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 00:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF57815AE
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 00:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706314789; cv=none; b=cMELkHan/JWYXk9UCsZVUzfomqK/s//eCMUp//AAOj9y0Yja9cysKdWnK2/FSH947XVyR5hI5OBPV67OUSRH5X0ri5Aod3ZKJYX9Rx2KXl70RoKEHMkGvZCG7QlMXD6bRQb6WmTV4ESP6EIUNS6dnSdYThfLn7bK8sKJsTW2myA=
+	t=1706314789; cv=none; b=JknC7aGssjL2AfA6uAP90HiId55bkVhheJZDWimbkMbnaYcQgg7J35ywh9GUhAyQUb3HszHIJ3EM7/elmRJzYkRykj3ZfXaQSlnzLWUpXlp95V8trDLOIQvIHKMBsZxKre/UWvBWqDsyDOyXp4SQq1OpPOg5dZfg/2jm/nl2/FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706314789; c=relaxed/simple;
-	bh=uTi26V2MzJtJNZVNk17iXxL86RmaAHxtWr8TzutnTS4=;
+	bh=SRaoY6Wy5mREGBPRLeiPUUSrZarGUQsXs633eSkifMk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oJMOqrDg/RlCpJH7gg2xHVhL2vvIq79FKRuTA8MXeC2En16yek5sGn6K0KF5D2/j110y9eDka9QqkSe1E2iTDPK1tQ+eE1YK54Yb97FYnwFKjArdK1yeu0GTZHvk21puP4/oNWYhu/0EWob/49hNnUCfSSeB1hhXsIrCnUxS70c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JWk1iTHz; arc=none smtp.client-ip=209.85.167.45
+	 MIME-Version:Content-Type; b=ksxLvYYjvE5HMr5eqqjIIdbv3Zg/A67nVxr+NSfSDYkDDat7oesBs4a59xgP63B2noB6B1NtRmOFAngFCWhBHmvYcA7osgKSifQaBiDfYjlzaMFZCtGUMyGiDfySf7a8zb5kCRHKLYiqZ2xp2blP9KcJTVnclDwedfCJm9FkxfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z5vteu3N; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JWk1iTHz"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51028acdcf0so1075384e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 16:19:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z5vteu3N"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a26fa294e56so98715666b.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 16:19:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706314784; x=1706919584; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706314782; x=1706919582; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RijGLQFZHcqv92gTLyle4UGWg8cGZKgYkgyYQE7GkCw=;
-        b=JWk1iTHzJzpglp6l5Ay3dUG9fjksSE5ZItlFnPVNkkwUuzq7y8r5N41VM3RW//NM2n
-         690WtqLbGJahlImP19V9N7V85pFjDipX5V1ldh2Rimt2A6jkxobMrUl44hItci0KBRyT
-         yI7btL0D+LRv3f62FOvSQk93ZV/EOkyXuZKbh3kbaiMfYWQybltZ65ZxYQnaqqsgb087
-         icuffZZHBbzZIr6frqG82Wnk8XdTNTzH5Irid1laafN2YK8ykGtqFFQlVqoutQ9V5U0b
-         LdO7Ro+wjd50RsKRAWa/kAvTXpff+l35vwY+ywigo9jh0/DBnQrF++eweihV+ItK0gaB
-         S+GA==
+        bh=72FI1Gr7K77cw7b0NtV82bnbC4R0Os+Pre+olDdbzEQ=;
+        b=Z5vteu3NWLMbaFTrA44z1MUI7x28cDl1ABzweSWx/0bafdEgM7KGP/VP5g6eUilx5E
+         5ch6064w7k4SezG0qyhikZt0mecw3cZBwZz5mo7O5dqQdu3UpfFz2Gba0znEfzvJcslt
+         7nMIyiyJXa6E1iwGwOB8Q5DFt9dgriyqRCE7BfQrpYM2F5sRqG2xndygaaQEldfP5GbH
+         pqjeQxDNeuyFLZ9Rc/wMVBtWNqz0FqXy1TN63BJrFXiEy19pBBTC1w/a64OhtRhZVFyo
+         AL0zATsHoTg0xNw5LxfXnTlQtYg1NmlhSLC7/8/rtzraKVmsD5u4UzNuRIW5/qdcQuF9
+         Kt9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706314784; x=1706919584;
+        d=1e100.net; s=20230601; t=1706314782; x=1706919582;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RijGLQFZHcqv92gTLyle4UGWg8cGZKgYkgyYQE7GkCw=;
-        b=v+HbYGFXQbg5GzV6LnG+1cGAWVDUfFes4+K8mXrwQ4fVlpRT1lnCOKJ7QQm5die67c
-         SBxuoIof7jhkgGqYKjE3G9nXnN89S8I4g7hC4KYcs7fbmbQ4nOSQCOe7xgIEWO8/aLsi
-         f8sN2aTQ4VGoBPkeUCkcNFkyb9iwvrFk9/ttiNVipudLvM4f7buY9gxJOk6ewvlHE8b2
-         rIVgV+IFWwYoxrfTAouQDb96PlYs+uKuie9bPf1oBny0OnAbedWfLvWTHvowodhggLW3
-         Orc5m6pvgRxzV6AcG4WWQinERmTG6PZI6nSFq/xckchWJJqB6Fg4rwGBRIOLNGtaiwU8
-         W14g==
-X-Gm-Message-State: AOJu0YxebfrAkwITmeIkUJEcLMPAxRzQhY19LHjGPHBz/QfbYObGF2ED
-	E0ZpMugtuyC4T2PsF6H7rlyo0sxoyzQCMD6rAJNoBdjXg6lf7/rJN3UcsgnT++I=
-X-Google-Smtp-Source: AGHT+IHXhvQ39nd+PSqqSqJd/nBtIFloGi99hX7CfKfchouqertJrL/Z5QqUIu501Bbs0iC6wDC36A==
-X-Received: by 2002:a19:4f53:0:b0:510:d4a:d367 with SMTP id a19-20020a194f53000000b005100d4ad367mr270843lfk.2.1706314784131;
-        Fri, 26 Jan 2024 16:19:44 -0800 (PST)
+        bh=72FI1Gr7K77cw7b0NtV82bnbC4R0Os+Pre+olDdbzEQ=;
+        b=dKS5a7ok0bnIfG7kzKyDtPjPkTcWY04ybhbz3H1yiVQLIOpxvJiuG9/h1YR7HtEDiu
+         WzoeXxoOn9qUfy8p4c08pA7R6NNtuMaHpjio6GR8cTKjJjnzKNGBr0aeXb8TU0+6GT3N
+         AKnVrR2yaup0oPsKZg5A2jLlZ1zIpgGFMbE7szVoqSv25EdzetEHFFsOymxprbE8nPwt
+         hbedtwli4qN6RLzIJyk26TF3Dt4O5KoCn0WSz4XkJO3R4tItHzc8HPMm0M7fS7yEkJsD
+         5szlatJH4btKWgZgiS7v3I+RELbjUU3EdeRX5xl9HE7qOVI5P2h4U1a7GO0TnLvafd4Z
+         7XZA==
+X-Gm-Message-State: AOJu0YxIbFbETRU1rN23N76AvIqnvMM8TgRpnSYykYWP64k3BsYjnna4
+	zXm3rv5sI/FYjox1rBPKFaMayfz2MMLMijJvtA73Xw48xULoWLaMycNFN9tEA9A=
+X-Google-Smtp-Source: AGHT+IENxC5NzltrZvHqg5cPuaM1cJlF4edDxysfXqaJmLH/0P2mdMA5f7sFpZvo3B8zspiigKme0Q==
+X-Received: by 2002:a17:906:a001:b0:a30:70fd:7749 with SMTP id p1-20020a170906a00100b00a3070fd7749mr307520ejy.47.1706314782668;
+        Fri, 26 Jan 2024 16:19:42 -0800 (PST)
 Received: from puffmais.c.googlers.com.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
-        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b00a339d705a10sm1141359ejb.80.2024.01.26.16.19.43
+        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b00a339d705a10sm1141359ejb.80.2024.01.26.16.19.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 16:19:43 -0800 (PST)
+        Fri, 26 Jan 2024 16:19:42 -0800 (PST)
 From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
 To: peter.griffin@linaro.org,
 	mturquette@baylibre.com,
@@ -71,9 +71,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 9/9] clk: samsung: gs101: don't CLK_IGNORE_UNUSED peric1_sysreg clock
-Date: Sat, 27 Jan 2024 00:19:13 +0000
-Message-ID: <20240127001926.495769-10-andre.draszik@linaro.org>
+Subject: [PATCH 6/9] arm64: dts: exynos: gs101: enable i2c bus 12 on gs101-oriole
+Date: Sat, 27 Jan 2024 00:19:10 +0000
+Message-ID: <20240127001926.495769-7-andre.draszik@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240127001926.495769-1-andre.draszik@linaro.org>
 References: <20240127001926.495769-1-andre.draszik@linaro.org>
@@ -86,27 +86,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Now that we have hooked it up in the DTS, we can drop the
-CLK_IGNORE_UNUSED from here.
+This bus has various USB-related devices attached to it.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/clk/samsung/clk-gs101.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 7f6c3b52d9ff..d55ed64d0e29 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -3393,7 +3393,7 @@ static const struct samsung_gate_clock peric1_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK,
- 	     "gout_peric1_sysreg_peric1_pclk", "mout_peric1_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC1_UID_SYSREG_PERIC1_IPCLKPORT_PCLK,
--	     21, CLK_IGNORE_UNUSED, 0),
-+	     21, 0, 0),
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index cb4d17339b6b..c8f6b955cd4e 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -72,6 +72,10 @@ eeprom: eeprom@50 {
+ 	};
  };
  
- static const struct samsung_cmu_info peric1_cmu_info __initconst = {
++&hsi2c_12 {
++	status = "okay";
++};
++
+ &pinctrl_far_alive {
+ 	key_voldown: key-voldown-pins {
+ 		samsung,pins = "gpa7-3";
+@@ -113,6 +117,11 @@ &usi8 {
+ 	status = "okay";
+ };
+ 
++&usi12 {
++	samsung,mode = <USI_V2_I2C>;
++	status = "okay";
++};
++
+ &watchdog_cl0 {
+ 	timeout-sec = <30>;
+ 	status = "okay";
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
