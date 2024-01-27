@@ -1,56 +1,56 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805BB646
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 00:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58917D3
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jan 2024 00:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706314786; cv=none; b=MRc996hnNvJCbQlFiUH0p7wzcgXIBiccGHErcZCvDBj2fgmUpSj0V6fehxBjfUx+C6OgB2HfHG7926iQ2zsJXgIGT1RMcgF4YcKGNDUzNJxXpHTMKzksiF6W1K8ltUzVmSbKA9lueKgtQmsZSqsN7Wn6OpFt5+vszLjNDwNrQU0=
+	t=1706314788; cv=none; b=YEJfszLPlNbCboToF1Bxa39f5vnMB+hi0eGC7quS0YYjnLtCVKIJq00y0Pbs99Lmz0sdoOXv0IX9kYx8/2SqLfx3pykMFmHuMgZ18P6jZWsFytrSY9vrg6X1nUQJI+jVfhe2ImwLvx9kxcseepFpmlGN0eWlrzsIEi2FPzHv4Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706314786; c=relaxed/simple;
-	bh=jp5kEimJsjYfgtuFMsOGibm6XOIeHyfBe7bn/uul4fQ=;
+	s=arc-20240116; t=1706314788; c=relaxed/simple;
+	bh=QCBcVoNTtEzs8YaN7v2UFqWn/6iZ4/+D+SQWJIRaEgo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H8Ltkyh87nnT+kO1K78Na2fu8YYv7bIxvElIIpV62f283U587ShC5+xwapD7zTDfzDXXt1MZPldMqONf2rI7MWrYbydW5C0XI8jTKPI+DUBM4Wya7Dc30HVvxLOiqjHbIxqlj0cOi9oghbga+UKhs3v6gvt6J4QepeeFbO6Aprs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xN/GTbVy; arc=none smtp.client-ip=209.85.218.41
+	 MIME-Version:Content-Type; b=QUd7p7ZqQcHUZzM4f7Ts61OwerabgEOJ8RyHzzHguMgMHFFHhdWAWwjBCJbOAuhNJc4tYZa1NnH7YSL6Q4LVoKb2RPoPtF0Ee+MkyIU86WA6KtHHrigkl4movE4zRwzWcemTv9sdrGrDFyZVGZYUpIrq9MMN1iDiWaj8L03fRrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F7eOMz9N; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xN/GTbVy"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a352c91457bso48270866b.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 16:19:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7eOMz9N"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a2f79e79f0cso81016566b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jan 2024 16:19:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706314780; x=1706919580; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706314783; x=1706919583; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9GMtCOeVfjSK/zqbH7Ovl4SBKIiLkYNK3+k76zW7vmE=;
-        b=xN/GTbVyVsWFPpzqpLvg3rjifWenYJd3t3zTQyROqrHZH7AryzBJ1zZxblRd6ARNf/
-         L1Ly8urSbe/QC9umjQkFwloITcRWJrMWLmCEWEvAgvFb+B1zL6IXXJReVBmELgIPLRL0
-         mxt6wxMi8/A1hVzk1gC/AMxGdJ0KLbi7mb/+wEbNV0xafhQvD6Ky7P3MC/y0QyAU/qir
-         wVjw56DcSPnpoxb6SjGaRJHwXK70ZEiTh2GNtta3fnAyMhxBFu8c4440xzLNq4od9dek
-         hm6oL9703BAKBk92QPOudk/ZyH2vjeJGAv1fv7X2mZ2G8Xlkff5NZyLG6wKRaSkVobtk
-         3kcQ==
+        bh=yUTiJvJqAJFqpZq0PlR/xTJQ+sgK5+j4/7Vro1qj7Vg=;
+        b=F7eOMz9NEri2UlbOPGhUwpOyHWK+0PAmepVVUkLdq2R/yqFgWDMITwtrD9fSwddTy/
+         doxvJWOPsQaL0ut/vuHpD3Qa5/S6Cqq+06sKqJTo59Y1p1IlwVQm5YbQhlg8XcpPkrJI
+         VV/l+OEyAyF962DzVDRyq/JOXsmCRUJZNj9mFrsSGVyBAr84vcYdlEJuB1GPLtBYd0Lt
+         vGzXgkh0WE/RrG7rEUUWJUvXwn3oPSpuTvX5msvC8yitHLHHNoCcEvHEY2zcjsmDWU23
+         emgOvxjqISTlr9NrEaSaOfOfCYHGP/IjyJfgeh8fQSQqehaUraZRp9GPw2mDi36Ypnd8
+         cdbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706314780; x=1706919580;
+        d=1e100.net; s=20230601; t=1706314783; x=1706919583;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9GMtCOeVfjSK/zqbH7Ovl4SBKIiLkYNK3+k76zW7vmE=;
-        b=G3Uil4+tfqyHxRq57NSQcxT4jcK1Jw1BKOY28PuGPws32OLFyW3JbL5iPDPMbkrnc7
-         7eT1ezglyac+UAl3GhBjsYR8VeShvEX6hsciEpNwdiRe5Dx0LzAIZPf9xTIpVq8UoET+
-         FJliFaLZ4K1JC0OUqTVjy8cHn+pSVTDeT2KsZldn4BTF8h/VUGdTMcATo7Uk12K3mz4+
-         hF7Lw6vUfHx98IrTrLo2uq6szZYO5Lxj02N43Lh4iU5xm7/tL1X1rSPk0FwVH6i+vqNi
-         pcWgMIjg0B1MDXSNr7qHYPUNMzeAOoJaGehlF9KoSOqip8qhZJ+Xa0jyTAv5OmA9hFwz
-         5qag==
-X-Gm-Message-State: AOJu0YwRWH3vZUr0tQiPmvSm7A3uW7PVNccV1TP0jby1XJy5US7VqbGD
-	K+k1axxmQfFcXeQHTKSjGs4R/o/+sq5j797iTyaAZRqUKehfq+2jeq5/bHqigeI=
-X-Google-Smtp-Source: AGHT+IG2WP2WKeyxIDxsZCfcyZ3xyjxcNe8pOV7zh4JAnzFKFhxijVYV8KLle5cicvW6rhxoDUag0Q==
-X-Received: by 2002:a17:906:4ad0:b0:a35:3718:997c with SMTP id u16-20020a1709064ad000b00a353718997cmr320284ejt.28.1706314780672;
-        Fri, 26 Jan 2024 16:19:40 -0800 (PST)
+        bh=yUTiJvJqAJFqpZq0PlR/xTJQ+sgK5+j4/7Vro1qj7Vg=;
+        b=A9oOOGxXrB5yYhU8ZG9/e3I1Fytrn/ImcucG/lJewrPd8Fv8WIf2FHnpc0NbcCkfTG
+         O+XFFJ0MzTwZRb5srxbp5tJltANB6Vw0dY8zNYPsG9C3AB5JwLlE+OlCkYVuqhR/Mwma
+         wCwVSV8rNTEeyEfzoJ9PQ1KjDlgzk/a88/X/CZNmLpEMMcZdbKHnAXezlASUjV58lJrN
+         j7oNcLQPDvJkL1y+CG20o+s/W1hjTE+UMGgo3Xh0os/cbokcfhhMZ5pKUxx8bGi0luHa
+         ACL1k3Gw7k9hnvOLEGOdwLhOciv7JvvACE0ms4tdE0+GWMV3sxxvHa8rlF0kco87mA4v
+         H5zw==
+X-Gm-Message-State: AOJu0YxXgvu7u94BOiwWiWz8CW0QBu9Ahx4LudwQkKQTXg8oermo0GTU
+	kbdMQHWGhHZo/ioy9RSKi57r36Gn79/C5GfyNACAxQpiWvuUVmumEW9388KADG0=
+X-Google-Smtp-Source: AGHT+IGkm39NfF0E/k3smX/KQGkNB8Zdyio6Yz3gDcfCSJPUy7NuuFl2uvO0Un5oFOG2oyg/lgq0ag==
+X-Received: by 2002:a17:906:a456:b0:a31:7ed9:973b with SMTP id cb22-20020a170906a45600b00a317ed9973bmr289912ejb.65.1706314783163;
+        Fri, 26 Jan 2024 16:19:43 -0800 (PST)
 Received: from puffmais.c.googlers.com.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
-        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b00a339d705a10sm1141359ejb.80.2024.01.26.16.19.40
+        by smtp.gmail.com with ESMTPSA id x16-20020a170906135000b00a339d705a10sm1141359ejb.80.2024.01.26.16.19.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 16:19:40 -0800 (PST)
+        Fri, 26 Jan 2024 16:19:42 -0800 (PST)
 From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
 To: peter.griffin@linaro.org,
 	mturquette@baylibre.com,
@@ -71,9 +71,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH 2/9] dt-bindings: clock: google,gs101-clock: add PERIC1 clock management unit
-Date: Sat, 27 Jan 2024 00:19:06 +0000
-Message-ID: <20240127001926.495769-3-andre.draszik@linaro.org>
+Subject: [PATCH 7/9] dt-bindings: samsung: exynos-sysreg: gs101-peric1 requires a clock
+Date: Sat, 27 Jan 2024 00:19:11 +0000
+Message-ID: <20240127001926.495769-8-andre.draszik@linaro.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240127001926.495769-1-andre.draszik@linaro.org>
 References: <20240127001926.495769-1-andre.draszik@linaro.org>
@@ -86,133 +86,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add dt-schema documentation and clock IDs for the Connectivity
-Peripheral 1 (PERIC1) clock management unit.
+Otherwise it won't be accessible.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
 ---
-Note for future reference: To ensure consistent naming throughout this
-file, the IDs have been derived from the data sheet using the
-following, with the expectation for all future additions to this file
-to use the same:
-    sed \
-        -e 's|^PLL_LOCKTIME_PLL_\([^_]\+\)|CLK_FOUT_\1_PLL|' \
-        \
-        -e 's|^PLL_CON0_MUX_CLKCMU_\([^_]\+\)_|CLK_MOUT_\1_|' \
-        -e 's|^PLL_CON0_PLL_\(.*\)|CLK_MOUT_PLL_\1|' \
-        -e 's|^CLK_CON_MUX_MUX_CLK_\(.*\)|CLK_MOUT_\1|' \
-        -e '/^PLL_CON[1-4]_[^_]\+_/d' \
-        -e '/^[^_]\+_CMU_[^_]\+_CONTROLLER_OPTION/d' \
-        -e '/^CLKOUT_CON_BLK_[^_]\+_CMU_[^_]\+_CLKOUT0/d' \
-        \
-        -e 's|_IPCLKPORT||' \
-        -e 's|_RSTNSYNC||' \
-        \
-        -e 's|^CLK_CON_DIV_DIV_CLK_\([^_]\+\)_|CLK_DOUT_\1_|' \
-        \
-        -e 's|^CLK_CON_BUF_CLKBUF_\([^_]\+\)_|CLK_GOUT_\1_|' \
-        -e 's|^CLK_CON_GAT_CLK_BLK_\([^_]\+\)_UID_|CLK_GOUT_\1_|' \
-        -e 's|^CLK_GOUT_[^_]\+_[^_]\+_CMU_\([^_]\+\)_PCLK$|CLK_GOUT_\1_PCLK|' \
-        -e 's|^CLK_CON_GAT_GOUT_BLK_\([^_]\+\)_UID_|CLK_GOUT_\1_|' \
-        -e 's|^CLK_CON_GAT_CLK_\([^_]\+\)_\(.*\)|CLK_GOUT_\1_CLK_\1_\2|' \
-        \
-        -e '/^\(DMYQCH\|PCH\|QCH\|QUEUE\)_/d'
----
- .../bindings/clock/google,gs101-clock.yaml    |  9 ++--
- include/dt-bindings/clock/google,gs101.h      | 48 +++++++++++++++++++
- 2 files changed, 54 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml   | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-index 03698cdecf7a..1d2bcea41c85 100644
---- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-@@ -31,6 +31,7 @@ properties:
-       - google,gs101-cmu-apm
-       - google,gs101-cmu-misc
-       - google,gs101-cmu-peric0
-+      - google,gs101-cmu-peric1
- 
-   clocks:
-     minItems: 1
-@@ -93,15 +94,17 @@ allOf:
-       properties:
-         compatible:
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index 33d837ae4f45..c0c6ce8fc786 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -73,6 +73,7 @@ allOf:
            contains:
--            const: google,gs101-cmu-peric0
-+            enum:
-+              - google,gs101-cmu-peric0
-+              - google,gs101-cmu-peric1
- 
-     then:
-       properties:
-         clocks:
-           items:
-             - description: External reference clock (24.576 MHz)
--            - description: Connectivity Peripheral 0 bus clock (from CMU_TOP)
--            - description: Connectivity Peripheral 0 IP clock (from CMU_TOP)
-+            - description: Connectivity Peripheral 0/1 bus clock (from CMU_TOP)
-+            - description: Connectivity Peripheral 0/1 IP clock (from CMU_TOP)
- 
-         clock-names:
-           items:
-diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
-index 64e6bdc6359c..3dac3577788a 100644
---- a/include/dt-bindings/clock/google,gs101.h
-+++ b/include/dt-bindings/clock/google,gs101.h
-@@ -470,4 +470,52 @@
- #define CLK_GOUT_PERIC0_CLK_PERIC0_USI8_USI_CLK		78
- #define CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK		79
- 
-+/* CMU_PERIC1 */
-+#define CLK_MOUT_PERIC1_BUS_USER			1
-+#define CLK_MOUT_PERIC1_I3C_USER			2
-+#define CLK_MOUT_PERIC1_USI0_USI_USER			3
-+#define CLK_MOUT_PERIC1_USI10_USI_USER			4
-+#define CLK_MOUT_PERIC1_USI11_USI_USER			5
-+#define CLK_MOUT_PERIC1_USI12_USI_USER			6
-+#define CLK_MOUT_PERIC1_USI13_USI_USER			7
-+#define CLK_MOUT_PERIC1_USI9_USI_USER			8
-+#define CLK_DOUT_PERIC1_I3C				9
-+#define CLK_DOUT_PERIC1_USI0_USI			10
-+#define CLK_DOUT_PERIC1_USI10_USI			11
-+#define CLK_DOUT_PERIC1_USI11_USI			12
-+#define CLK_DOUT_PERIC1_USI12_USI			13
-+#define CLK_DOUT_PERIC1_USI13_USI			14
-+#define CLK_DOUT_PERIC1_USI9_USI			15
-+#define CLK_GOUT_PERIC1_IP				16
-+#define CLK_GOUT_PERIC1_PCLK				17
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_I3C_CLK		18
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_OSCCLK_CLK		19
-+#define CLK_GOUT_PERIC1_D_TZPC_PERIC1_PCLK		20
-+#define CLK_GOUT_PERIC1_GPC_PERIC1_PCLK			21
-+#define CLK_GOUT_PERIC1_GPIO_PERIC1_PCLK		22
-+#define CLK_GOUT_PERIC1_LHM_AXI_P_PERIC1_I_CLK		23
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_1		24
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_2		25
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_3		26
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_4		27
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5		28
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_6		29
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_8		30
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_1		31
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_15		32
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_2		33
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_3		34
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_4		35
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5		36
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_6		37
-+#define CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_8		38
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_BUSP_CLK		39
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_USI0_USI_CLK		40
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_USI10_USI_CLK	41
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_USI11_USI_CLK	42
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_USI12_USI_CLK	43
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_USI13_USI_CLK	44
-+#define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
-+#define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
-+
- #endif /* _DT_BINDINGS_CLOCK_GOOGLE_GS101_H */
+             enum:
+               - google,gs101-peric0-sysreg
++              - google,gs101-peric1-sysreg
+               - samsung,exynos850-cmgp-sysreg
+               - samsung,exynos850-peri-sysreg
+               - samsung,exynos850-sysreg
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
