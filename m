@@ -1,115 +1,80 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786EE28F5;
-	Sat, 27 Jan 2024 22:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17441EB29;
+	Sun, 28 Jan 2024 11:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706394246; cv=none; b=eAum37vTq9eBYtE0bir/FH4TICdkUBsQ0WnlAIb1ohDc/xSa4InMYxGYde5nkyvN/LRfiaZ4OKvw+aw7/RAeWOxcvhasISNxX+wtIin2izg6c/ea2sGQ1VEnmT+JMJr2ctm/XAprunPtnOJm+b76SOy7DV0dznwm4DFqWgtqX8o=
+	t=1706439687; cv=none; b=beHcnUJgHuwHMojO0k+EvudNgzDLIEikNHgVUzpsvvmUg14SKUx8rONg1AVOdoMQTFEno1sZ+SABs9yZ5cWBlXOzSROSeqXsIr1xg938p1bVHbPu2WcketHu1hWjS0IfxSlvapNo4RQVWMLHQ5u95JoEzHLkGzOTnAjuJcWWbgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706394246; c=relaxed/simple;
-	bh=azbsrdWbk2C26uZOQ5sAP8smp6+BEZ6Gbu0+jZMGf8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNOZtY61ZBJttkGg/YjsMGqCjG8fWEsNKWiFLbm0iAny+Z41GYZyzcXntR3h70Xm0k2rwf48Wp8UrN/dEE4XvDqF/4PZvnbBKlwHpycGajBkQa5sNevNasnhfSO/jRJW/hM0cX5kghnkbBtcD0xQp24QZ2t+Js6VOUND9bh9pEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OBYlnWeo; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1706439687; c=relaxed/simple;
+	bh=5srCU8mALld93XXZWkuO9wczxnN7Mp+AiQKKleufIJY=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=rwOfOLc3St7J5m69Q2K50nggWfiydnOqYr5Rb0IvRDFrPwyW7RWsvUR1M5JO4qg7elUgiPKlj64SamdozKZFuRqF6OhJOBsJzPrvLg4nvmomQO/ZuZaqdVsOhU+nmLvCgCym5z+dfixZf+vguxx36pjYJqvzu8HdwpzownEOu90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RkhbdvRH reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OBYlnWeo"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=3gsupESMPkziY7RvwVM4+Lok//ky5hAjMzILggxl/WI=; b=OBYlnWeovgCRQyZ+WyVtTNrzxI
-	fikMs0uOYHhz6eX8sA9lT9CgNOHvr2DEuVBQU1zHPjErDeRAnqZfVIRaHcUyLsFkE9VnQeM9JzqLn
-	vclF2P3w5ohAG5S/czHEQFf5wXIrZlWaO1vFvpkeNRikpgZ+XElot+o4U2j8spsZJF3p5ydpFLf3P
-	z8A4OvNAPv+jExc8c2mQaIt5L/D1G5LvQwHLBxa1k5PHvM/1uNjSPtCLnz3oG8PS3rs6IBxkrOm0Q
-	0j8f5urhMupL/N+MzjHDTTGvREZ/MqCb8tf2uUHtM27KjUFHG9QYxqWhvt3e5kn8I6kpOcOK0JhB6
-	voCtAq3Q==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rTr5i-00000008IVq-2AZl;
-	Sat, 27 Jan 2024 22:23:58 +0000
-Message-ID: <9f3b5e25-3d41-4c1f-a8be-788f617f4d58@infradead.org>
-Date: Sat, 27 Jan 2024 14:23:57 -0800
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RkhbdvRH"
+Received: from pendragon.ideasonboard.com (aztw-30-b2-v4wan-166917-cust845.vm26.cable.virginm.net [82.37.23.78])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0639A3D9;
+	Sun, 28 Jan 2024 11:59:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1706439599;
+	bh=5srCU8mALld93XXZWkuO9wczxnN7Mp+AiQKKleufIJY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=RkhbdvRHlz1v8jg4VujoVEvuFFQwER/Of6VU8hgYvGxSJ6sauMOpigUM9jwIZggbM
+	 ovsTDbzG216rVaHmdrHBTfja6Y/1kngp8TZl25L/sIL9hjrprl+/lEEC7ofAXjaoqi
+	 ogP2fskaRCqFSgwLOtdxTIoWzpGtryil4ewfj2mk=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/17] media: staging: meson: Fix kerneldoc
-Content-Language: en-US
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Hans Verkuil <hverkuil@xs4all.nl>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Bin Liu <bin.liu@mediatek.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
- Tianshu Qiu <tian.shu.qiu@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-amlogic@lists.infradead.org
-References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
- <20240126-gix-mtk-warnings-v1-16-eed7865fce18@chromium.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240126-gix-mtk-warnings-v1-16-eed7865fce18@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240126-gix-mtk-warnings-v1-7-eed7865fce18@chromium.org>
+References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org> <20240126-gix-mtk-warnings-v1-7-eed7865fce18@chromium.org>
+Subject: Re: [PATCH 07/17] media: i2c: adv748: Fix kerneldoc
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, linux-amlogic@lists.infradead.org, Ricardo Ribalda <ribalda@chromium.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Andrzej Hajda <andrzej.hajda@intel.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bin Liu <bin.liu@mediatek.com>, Bingbu Cao <bingbu.cao@intel.com>, Bjorn Andersson <andersson@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Hans Verkuil <hverkuil@xs4all.nl>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zab
+ el <p.zabel@pengutronix.de>, Ricardo Ribalda <ribalda@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, Tiffany Lin <tiffany.lin@mediatek.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, Yunfei Dong <yunfei.dong@mediatek.com>
+Date: Sun, 28 Jan 2024 11:01:13 +0000
+Message-ID: <170643967334.1879520.13311953581412781310@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
+Quoting Ricardo Ribalda (2024-01-26 23:16:06)
+> The field is gone, remove the documentation.
 
+Looking at 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
+confims it was never added. Must have been an old leftover when I
+upstreamed.
 
-On 1/26/24 15:16, Ricardo Ribalda wrote:
-> Remove documentation from missing field.
-> 
+Thanks for the fix.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
 > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
- 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Thanks.
-
 > ---
->  drivers/staging/media/meson/vdec/vdec.h | 1 -
+>  drivers/media/i2c/adv748x/adv748x.h | 1 -
 >  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/meson/vdec/vdec.h b/drivers/staging/media/meson/vdec/vdec.h
-> index 0906b8fb5cc6..258685177700 100644
-> --- a/drivers/staging/media/meson/vdec/vdec.h
-> +++ b/drivers/staging/media/meson/vdec/vdec.h
-> @@ -101,7 +101,6 @@ struct amvdec_core {
->   * @conf_esparser: mandatory call to let the vdec configure the ESPARSER
->   * @vififo_level: mandatory call to get the current amount of data
->   *		  in the VIFIFO
-> - * @use_offsets: mandatory call. Returns 1 if the VDEC supports vififo offsets
->   */
->  struct amvdec_ops {
->  	int (*start)(struct amvdec_session *sess);
-> 
-
--- 
-#Randy
+>=20
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv7=
+48x/adv748x.h
+> index 6f90f78f58cf..d2b5e722e997 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -173,7 +173,6 @@ struct adv748x_afe {
+>   *
+>   * @endpoints:         parsed device node endpoints for each port
+>   *
+> - * @i2c_addresses:     I2C Page addresses
+>   * @i2c_clients:       I2C clients for the page accesses
+>   * @regmap:            regmap configuration pages.
+>   *
+>=20
+> --=20
+> 2.43.0.429.g432eaa2c6b-goog
+>
