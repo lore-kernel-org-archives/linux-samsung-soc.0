@@ -1,136 +1,143 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99AC6F099
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 19:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341525644E
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 19:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706556054; cv=none; b=sAHn6NaWy4ahtQeAEkhlWF1izLEZ/19575TD5oHqmkchvcrBr3vVoFKtRfrRwsYjN3EQ55C7QvmcxLLCW/alTjYie/BcCz8b9sC8Nbqu1q3Ctlqyj9iH9biau30VFYEBjwzw2l7ciIZ1kJMY91ra3/nZVlsY3QJfDnwdgGcD0iI=
+	t=1706557172; cv=none; b=MylyeQ5eEHbg8IpiiGoNXw+3CCTEMuD0yREU0fiSSstshyZwlIT+1CMmMu4kzvBYjt57za3H24+VwpdtFZUcc1nIi9EqiUBWds1UR7U6c4nwf4jHQ7jEtQZ3fI2E/RKlCrikk45j9/LH901uPzVazyIjl0IUQCzoj/7kRCjfMlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706556054; c=relaxed/simple;
-	bh=JvbWfOz11vNiFRX0wX7ECmpupNbMxltE2NEJ+NK26YE=;
+	s=arc-20240116; t=1706557172; c=relaxed/simple;
+	bh=DdjBawn+WSbP73IbOFM9d1u/5ppo1GsvtgaQyIJe3kA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HGPFRLjy8ZOO0Fsp/rPE68g4fv2oWo+3OlXj3XVtoGyIdsIolXcp6BfGERtOaw880l9XZ+yYkzyyQp2aaWIK4rZTiAnIbxTow+8a9RhvoP4lA6egCa/W67hQsZPCB2Hvg5/xloz7jaE9ecXxo8CIXyPsSk0UtkMKCHhjcqINCeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xzd/H3Xg; arc=none smtp.client-ip=209.85.210.177
+	 To:Cc:Content-Type; b=OUWknla8y5JwrtxWbJ+mRoAUejAoe57PityjDF9kFqL61fMDFKJOsHXGaXuUY2ltv3mTmuyRz6I36E8zIyzGN8woJCTuF8w4+N32ODOPDEQIf0+CHI4EDaF+lJrFFgBe6wa27S9mbnjW+iGrdIMp3weDvb6voVzjoA0OFGbjrS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VtpYXJ1/; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xzd/H3Xg"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6ddc1fad6ddso2644856b3a.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 11:20:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VtpYXJ1/"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-28bec6ae0ffso1370238a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 11:39:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706556052; x=1707160852; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706557170; x=1707161970; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nIeL+ClHde5Q0WzDNwjmOu8VjZIU0zrITXV3DaJ0q2I=;
-        b=Xzd/H3XgGlDjYlu8FfjjiEInVw51TK2rHCsbuQHe1NeluwgOGEJUHaeuxtFc1Jj1aS
-         /Bo8GbZVNgJ/Ga8uFsxH/XoZht2+Y5AvSEPM4pC3OM+uNSnSk3MJY9awP4KC0sqZBpR/
-         7vAO3ZevW6U/njj37tlOpJZjBz3afTo90AcqBncn0iSBtS9AmP4KXLBhyXo43BVwtx7b
-         h5L7WrwjDpnjsxrIADEnzO/hfEbLkzbvznMC8vdgeD+hFmsEP0vxOLZh91/RN6vQdJWR
-         p4MClD+0K3PYnWouFV/+aSREFVdh0AeJdi2AudMpV/9B9/Zq5iXn0/S/+cdRy+7gFPeZ
-         ryrA==
+        bh=RgJSsvdPN9rhZ08JgxNFLNGNMYP1B2o2EInR2eAPHu4=;
+        b=VtpYXJ1/ZRt/yp49dW4z6pUVLe3ZWJKWNLNL0/cMzEf6n/TAU93Url4568BdQGsqf7
+         TlIiXAbeXpC6zoeOHdJ+YF3KLlwQ74mldGsv+T6JACo8V4YebiWbCtbP00cOsI2fq2gm
+         42qOYFbhqsbPem5S8OU6SAiWdoGe/afuHtXaSbcU42qIDj+rj3aKO9iP3pYTNV4L2Wc9
+         qS+7eEdJ1YeT1WmRTwQNjdkgOLNtQgzLO3f5f3bI8zZ5Ba/4i9c64FjHCv3Bv+kfEcGz
+         EJioCr3w2i6oT1gF4DLK0i7DRV5VQHi2xwAxYNzmtWakYiHT3npeIsPXHc+0+12QKGV2
+         bbwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706556052; x=1707160852;
+        d=1e100.net; s=20230601; t=1706557170; x=1707161970;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nIeL+ClHde5Q0WzDNwjmOu8VjZIU0zrITXV3DaJ0q2I=;
-        b=sKt1IJrhQoFyjyuPlZR0LzjnZzEMoRJBjC1wtiRHL+slJSduE+2Iq6eWphkgB8HEN9
-         1WqsXXmbEmbiD/coIV7fUyziWgaj+6iKyR/FnaJic8RMT3gdXN3VuNVU0zRCxx9IURFP
-         81C0uBfp5NIU/9hvtgffu81ZH34rFMqIkC0q4RonGaS+Q7DpCgTJngU60fPmUr+WrsyS
-         J6McPb4Vk6u+iKv7BxUG6snPyu2cAnGZZn7cSlGjq9c6bHyiVCnZT39KoxUXTJ0tqkev
-         xPbgooE3wDRopy9VNzdv1qqrP7vomxzdzJpR/9FfksPBgOFC4EyNdc51V2wJllTzhN3M
-         Ittg==
-X-Gm-Message-State: AOJu0YwSt2CzxDjKtz8lx9+rSBHUQmVPbtDOyM9/lf30i728olIQqvuV
-	xBKsQUXygaF2IaILBNe9AOBOvS95id1cSAusL7TtZWa0n9T+l4TpWSmuGMZVMiJkJ5phjH7g+Jn
-	wfA3YZs1xKFmr66Duk3M7ISKYwJBh/FsSuu4J2g==
-X-Google-Smtp-Source: AGHT+IHOCPSaT+Nkr7VPs0AUYEN3NLE/Qj5EVmTGejdhU8hk4hJznc8UDvcuF7xGLhc3uOMKc9yfKfo97PeJPSw9pUo=
-X-Received: by 2002:a05:6a00:1883:b0:6de:1d0b:b3cb with SMTP id
- x3-20020a056a00188300b006de1d0bb3cbmr4136434pfh.0.1706556051945; Mon, 29 Jan
- 2024 11:20:51 -0800 (PST)
+        bh=RgJSsvdPN9rhZ08JgxNFLNGNMYP1B2o2EInR2eAPHu4=;
+        b=HIyQ7CEbLzoL46qQsc/wTsf7Vfjg1nCunZatTjajyAxL1QcKKG/zTWVmvT882mz5Xi
+         luvrUB8hluQMEM92ENKjCn5IDedjOggoRTgflRmSN+XWCYy/WA7g9GgRhqN+ZafnFknI
+         UvKPpRhpYlWsbd5wToKX5Ii4DWv0DQSB2diO1WwXPPzjGiZqfAs+0XLZsLUV+m+jz3N5
+         7vXRD4ccEmnd56Wpq5MkqQLKuwmmrgdpmGLAmFvlFostiSHuJwICrVHOkDh5ZMKlOZpx
+         30nCOQFWfya43MKWP46yDEZTsAwFnhq9Y2Q2SareTuuyxbwt/2uAHzZdV+ktXMlV3+xa
+         NorQ==
+X-Gm-Message-State: AOJu0YzfzOMnAizWTBFRJUlZQWbBMVoxpdGc55O581bZyPxY8BC5cwG/
+	3uawL7mFlk1ZSFBM2zV6V5Uk5EsGH7eEjdATiN56c+RdTc5OszubRDEMhYUrZaro3fduMN7dO+D
+	Fjpqnjb7nJDtajvrBKO1svgp/oNizBwgXm2f2JQ==
+X-Google-Smtp-Source: AGHT+IEgdu86+Co4qB4dzLyczwio5jTXVoOkQOgXXDxxwDGsQ2JRtKicpNB4tv/xIxP28PzmDJpfogixr7XAVMD0CiM=
+X-Received: by 2002:a17:90a:cc04:b0:28f:fa54:eb30 with SMTP id
+ b4-20020a17090acc0400b0028ffa54eb30mr2782484pju.37.1706557169830; Mon, 29 Jan
+ 2024 11:39:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129174703.1175426-1-andre.draszik@linaro.org> <20240129174703.1175426-8-andre.draszik@linaro.org>
-In-Reply-To: <20240129174703.1175426-8-andre.draszik@linaro.org>
+References: <20240125013858.3986-1-semen.protsenko@linaro.org>
+ <20240125013858.3986-4-semen.protsenko@linaro.org> <1b27fa0d-5dc8-497f-ab17-76d82c2aaf40@linaro.org>
+In-Reply-To: <1b27fa0d-5dc8-497f-ab17-76d82c2aaf40@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 29 Jan 2024 13:20:40 -0600
-Message-ID: <CAPLW+4kRcozGqXEZZpEZVrhwD2VJA3Og+LA+2J3tOc9tGLKj8w@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] arm64: dts: exynos: gs101: enable i2c bus 12 on gs101-oriole
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	tudor.ambarus@linaro.org, willmcvicker@google.com, alim.akhtar@samsung.com, 
-	s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Date: Mon, 29 Jan 2024 13:39:18 -0600
+Message-ID: <CAPLW+4ntySsQVA5u4TNWuc0KCbhQY61XcsBqC=O8GRoXmS_NYA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add SPI nodes for Exynos850
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 29, 2024 at 11:47=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@=
-linaro.org> wrote:
+On Mon, Jan 29, 2024 at 11:51=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linar=
+o.org> wrote:
 >
-> This bus has three USB-related devices attached to it:
->     0x25: Maxim 77759 Type-C port controller
->     0x35: Maxim 20339EWB Surge protection IC
->     0x36: Maxim 77759 Fuel gauge
->     0x57: NXP PCA9468 Battery charger
->     0x66: Maxim 77759 PMIC
->     0x69: Maxim 77759 Charger
-> where the Maxim 77759 has multiple i2c slave addresses.
 >
-> These don't have (upstream) Linux drivers yet, but nevertheless we can
-> enable the bus so as to allow working on them (and to make i2cdetect /
-> i2cdump / etc. work).
 >
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> On 1/25/24 01:38, Sam Protsenko wrote:
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boo=
+t/dts/exynos/exynos850.dtsi
+> > index 618bc674896e..ca257da74b50 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> > @@ -738,6 +738,24 @@ usi_spi_0: usi@139400c0 {
+> >                                <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
+> >                       clock-names =3D "pclk", "ipclk";
+> >                       status =3D "disabled";
+> > +
+> > +                     spi_0: spi@13940000 {
+> > +                             compatible =3D "samsung,exynos850-spi";
+> > +                             reg =3D <0x13940000 0x30>;
+> > +                             interrupts =3D <GIC_SPI 221 IRQ_TYPE_LEVE=
+L_HIGH>;
+> > +                             pinctrl-0 =3D <&spi0_pins>;
+> > +                             pinctrl-names =3D "default";
+> > +                             clocks =3D <&cmu_peri CLK_GOUT_SPI0_IPCLK=
+>,
+> > +                                      <&cmu_peri CLK_GOUT_SPI0_PCLK>;
+> > +                             clock-names =3D "spi_busclk0", "spi";
+> > +                             samsung,spi-src-clk =3D <0>;
 >
-> ---
+> this optional property
+>
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+The reason this property is provided here despite being optional, is
+to avoid corresponding dev_warn() message from spi-s3c64xx.c driver:
 
-> v2:
-> * add short summary of devices attached to this bus & add TODO
-> * collect Reviewed-by: tags
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+        if (of_property_read_u32(dev->of_node, "samsung,spi-src-clk", &temp=
+)) {
+            dev_warn(dev, "spi bus clock parent not specified, using
+clock at index 0 as parent\n");
+
+The same usage (samsung,spi-src-clk =3D <0>) can be encountered in
+multiple other Exynos dts in arch/arm/ and arch/arm64/, and it's also
+used in bindings example. Probably for the same reason explained
+above. Even if dev_warn() is removed in the driver, I guess the older
+kernels will still print it if spi-src-clk is omitted. So I'd like to
+keep it here.
+
+> > +                             dmas =3D <&pdma0 5>, <&pdma0 4>;
+> > +                             dma-names =3D "tx", "rx";
+> > +                             num-cs =3D <1>;
 >
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/ar=
-m64/boot/dts/exynos/google/gs101-oriole.dts
-> index cb4d17339b6b..6ccade2c8cb4 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-> @@ -72,6 +72,11 @@ eeprom: eeprom@50 {
->         };
->  };
+> and this one, are already defaults in the driver. Shall you remove them?
 >
-> +&hsi2c_12 {
-> +       status =3D "okay";
-> +       /* TODO: add the devices once drivers exist */
-> +};
-> +
->  &pinctrl_far_alive {
->         key_voldown: key-voldown-pins {
->                 samsung,pins =3D "gpa7-3";
-> @@ -113,6 +118,11 @@ &usi8 {
->         status =3D "okay";
->  };
->
-> +&usi12 {
-> +       samsung,mode =3D <USI_V2_I2C>;
-> +       status =3D "okay";
-> +};
-> +
->  &watchdog_cl0 {
->         timeout-sec =3D <30>;
->         status =3D "okay";
-> --
-> 2.43.0.429.g432eaa2c6b-goog
->
+
+For exactly the same reasoning as stated above, I'd like to keep this
+here to keep dmesg clean and tidy. Otherwise it prints this warning:
+
+        if (of_property_read_u32(dev->of_node, "num-cs", &temp)) {
+            dev_warn(dev, "number of chip select lines not specified,
+assuming 1 chip select line\n");
+
+And even if the warning is removed in the driver, older kernels will
+still print it.
+
+> > +                             #address-cells =3D <1>;
+> > +                             #size-cells =3D <0>;
+> > +                             status =3D "disabled";
+> > +                     };
+> >               };
