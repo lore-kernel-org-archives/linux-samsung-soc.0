@@ -1,80 +1,231 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17441EB29;
-	Sun, 28 Jan 2024 11:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D148E4EB23
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 06:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706439687; cv=none; b=beHcnUJgHuwHMojO0k+EvudNgzDLIEikNHgVUzpsvvmUg14SKUx8rONg1AVOdoMQTFEno1sZ+SABs9yZ5cWBlXOzSROSeqXsIr1xg938p1bVHbPu2WcketHu1hWjS0IfxSlvapNo4RQVWMLHQ5u95JoEzHLkGzOTnAjuJcWWbgQ=
+	t=1706511302; cv=none; b=NjJ0clXuuM+Vu9lqaGhs3YLUZTWRJYP9+BDfQ5Mq6paEY2/1xsfOkKwc9XxEzuNpeVv9ysr9eXBiNjduYRAFpLwn6SZGhxSxezAW7TRi477baNQsoaTM2AaE2d9zTz54tc6mvCwbeh3NzpgOt9OP8/Epop6ipssHALb4Ml+7ujQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706439687; c=relaxed/simple;
-	bh=5srCU8mALld93XXZWkuO9wczxnN7Mp+AiQKKleufIJY=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=rwOfOLc3St7J5m69Q2K50nggWfiydnOqYr5Rb0IvRDFrPwyW7RWsvUR1M5JO4qg7elUgiPKlj64SamdozKZFuRqF6OhJOBsJzPrvLg4nvmomQO/ZuZaqdVsOhU+nmLvCgCym5z+dfixZf+vguxx36pjYJqvzu8HdwpzownEOu90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=fail (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RkhbdvRH reason="signature verification failed"; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1706511302; c=relaxed/simple;
+	bh=2EPa0U+VukGXPRNbsZYJGUNCbNggov8QmdEi5cf3Kko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYY6dRf7BCC2QT1mP6eDRkVJmKw8ykejorRXT1brcUwuaijcjPN6knkjnZNiFeBvebDH3t6Lg6VnGvyIJjeVx3d+0OyHH+ccfrIpuFEdv2wPYBGxBux2cl8c3K4KtZ2CO20CXmwdl/M55V6PHZaqDnrvmWdrCKL9O6RfBJ/+wTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yXCeIgja; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RkhbdvRH"
-Received: from pendragon.ideasonboard.com (aztw-30-b2-v4wan-166917-cust845.vm26.cable.virginm.net [82.37.23.78])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0639A3D9;
-	Sun, 28 Jan 2024 11:59:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1706439599;
-	bh=5srCU8mALld93XXZWkuO9wczxnN7Mp+AiQKKleufIJY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=RkhbdvRHlz1v8jg4VujoVEvuFFQwER/Of6VU8hgYvGxSJ6sauMOpigUM9jwIZggbM
-	 ovsTDbzG216rVaHmdrHBTfja6Y/1kngp8TZl25L/sIL9hjrprl+/lEEC7ofAXjaoqi
-	 ogP2fskaRCqFSgwLOtdxTIoWzpGtryil4ewfj2mk=
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yXCeIgja"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-429fc7a1eacso27860131cf.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Jan 2024 22:55:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706511300; x=1707116100; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=s1hxnPoh6daX0WjU31FuHTB7nYnSeoBVwHLBpFGzZZE=;
+        b=yXCeIgja1BeZkXGrCxSjIQFQTKha3rrK7ldC39PtRrQfCWas1NYafGEkgQ6VaLhZrT
+         ncXNQRL/9U4QNTYdBzsbBSyrKH6IkB1/FPn0JUuKNAe4mtHwnj4fgyw8fvD6ICUuVohP
+         JhTvrUoPVXOUCK+GH8GTv1cmA8npbkz6TcRMIeEq+MewxcStyRMHW6AuYBqY3IrM1kBE
+         pGFi8wckNS7jMO4FPFY9jhO3Kj3l2UMVe7FJsg5tjByPIj+AD3eS8altVt3cZHVcQyOF
+         L3/x9/OEHoFskp6aNg7Q5C5wc7DKLrMGlFdYEoVApo4nlMtWYgQuA8e48EywXFyq1cjO
+         1l9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706511300; x=1707116100;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s1hxnPoh6daX0WjU31FuHTB7nYnSeoBVwHLBpFGzZZE=;
+        b=vECoA9sgTjYDPu3Ot91Ox6ImRGKYlF8p2Uwd4uPYUHxSrBGuHzVGkY1cjL9I/7WAi9
+         v4YbnLck5AL4y4T6nRz4BUB4+5AtKGfJbE74dUAIQj6Hkl/d4zXJVqeGNsZtvXY9jbnj
+         VngphmmOD6/dBqw9xsuT9sC0WFE8ZaxWJ1CkS46RBQMw64HluQDoWyirlIU7EdcwYHO6
+         RkP6VmiLiay3nAPmR2ZZ/Oc+74LnbgQzV/tbti5QB9qv5+m5HpeT3iXbCdBFHuAXHdNP
+         6+CMF9DroljRfVx8rVd3iCXh36t2q2hTIkI7sp+nDQzgx6jc4QfZSsG6iQP8DfVdcDC4
+         DZuQ==
+X-Gm-Message-State: AOJu0Yzb7iv14MMTBMEP7hNjIq9iA3R2lS5eOePVEiWfyaifsyGJ8eYx
+	4lad0RWNU3Rxh8gAMEKAF7ogT2OT7X8bYr0EjI7PIfjcQmh1TW3kffDwcC9bpw==
+X-Google-Smtp-Source: AGHT+IHwfQa7OVYQ7eqwRmxrB+cXFuJ+tQWWagggVHZdoSqnHID39moNiRd92Sd4lXHtYQce6W0czA==
+X-Received: by 2002:ac8:7f4c:0:b0:42a:9b63:7828 with SMTP id g12-20020ac87f4c000000b0042a9b637828mr2844845qtk.68.1706511299804;
+        Sun, 28 Jan 2024 22:54:59 -0800 (PST)
+Received: from thinkpad ([117.193.214.109])
+        by smtp.gmail.com with ESMTPSA id cb27-20020a05622a1f9b00b004283695a39bsm1356146qtb.94.2024.01.28.22.54.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jan 2024 22:54:59 -0800 (PST)
+Date: Mon, 29 Jan 2024 12:24:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	pankaj.dubey@samsung.com
+Subject: Re: [PATCH v4 1/2] clk: Provide managed helper to get and enable
+ bulk clocks
+Message-ID: <20240129065448.GC2971@thinkpad>
+References: <20240124103838.32478-1-shradha.t@samsung.com>
+ <CGME20240124103855epcas5p27400bd95df42f36b9547a4e28aa26f5d@epcas5p2.samsung.com>
+ <20240124103838.32478-2-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240126-gix-mtk-warnings-v1-7-eed7865fce18@chromium.org>
-References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org> <20240126-gix-mtk-warnings-v1-7-eed7865fce18@chromium.org>
-Subject: Re: [PATCH 07/17] media: i2c: adv748: Fix kerneldoc
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev, linux-amlogic@lists.infradead.org, Ricardo Ribalda <ribalda@chromium.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Andrzej Hajda <andrzej.hajda@intel.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bin Liu <bin.liu@mediatek.com>, Bingbu Cao <bingbu.cao@intel.com>, Bjorn Andersson <andersson@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, Hans Verkuil <hverkuil@xs4all.nl>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Matthias Brugger <matthias.bgg@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zab
- el <p.zabel@pengutronix.de>, Ricardo Ribalda <ribalda@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, Tiffany Lin <tiffany.lin@mediatek.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, Yunfei Dong <yunfei.dong@mediatek.com>
-Date: Sun, 28 Jan 2024 11:01:13 +0000
-Message-ID: <170643967334.1879520.13311953581412781310@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240124103838.32478-2-shradha.t@samsung.com>
 
-Quoting Ricardo Ribalda (2024-01-26 23:16:06)
-> The field is gone, remove the documentation.
-
-Looking at 3e89586a64df ("media: i2c: adv748x: add adv748x driver")
-confims it was never added. Must have been an old leftover when I
-upstreamed.
-
-Thanks for the fix.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+On Wed, Jan 24, 2024 at 04:08:37PM +0530, Shradha Todi wrote:
+> Provide a managed devm_clk_bulk* wrapper to get and enable all
+> bulk clocks in order to simplify drivers that keeps all clocks
+> enabled for the time of driver operation.
+> 
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 > ---
->  drivers/media/i2c/adv748x/adv748x.h | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv7=
-48x/adv748x.h
-> index 6f90f78f58cf..d2b5e722e997 100644
-> --- a/drivers/media/i2c/adv748x/adv748x.h
-> +++ b/drivers/media/i2c/adv748x/adv748x.h
-> @@ -173,7 +173,6 @@ struct adv748x_afe {
->   *
->   * @endpoints:         parsed device node endpoints for each port
->   *
-> - * @i2c_addresses:     I2C Page addresses
->   * @i2c_clients:       I2C clients for the page accesses
->   * @regmap:            regmap configuration pages.
->   *
->=20
-> --=20
-> 2.43.0.429.g432eaa2c6b-goog
->
+>  drivers/clk/clk-devres.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>  include/linux/clk.h      | 24 ++++++++++++++++++++++++
+>  2 files changed, 64 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index 4fb4fd4b06bd..cbbd2cc339c3 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -182,6 +182,46 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
+>  
+> +static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
+> +{
+> +	struct clk_bulk_devres *devres = res;
+> +
+> +	clk_bulk_disable_unprepare(devres->num_clks, devres->clks);
+> +	clk_bulk_put_all(devres->num_clks, devres->clks);
+> +}
+> +
+> +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> +					      struct clk_bulk_data **clks)
+> +{
+> +	struct clk_bulk_devres *devres;
+> +	int ret;
+> +
+> +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
+> +			      sizeof(*devres), GFP_KERNEL);
+> +	if (!devres)
+> +		return -ENOMEM;
+> +
+> +	ret = clk_bulk_get_all(dev, &devres->clks);
+> +	if (ret > 0) {
+> +		*clks = devres->clks;
+> +		devres->num_clks = ret;
+> +	} else {
+> +		devres_free(devres);
+> +		return ret;
+> +	}
+
+How about:
+
+	ret = clk_bulk_get_all(dev, &devres->clks);
+	if (ret <= 0) {
+		devres_free(devres);
+		return ret;
+	}
+
+	*clks = devres->clks;
+	devres->num_clks = ret;
+
+Even though this patch follows the pattern used by the rest of the APIs in the
+driver, IMO above makes it more readable.
+
+> +
+> +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
+> +	if (!ret) {
+> +		devres_add(dev, devres);
+> +	} else {
+> +		clk_bulk_put_all(devres->num_clks, devres->clks);
+> +		devres_free(devres);
+> +	}
+> +
+
+Same as above:
+
+	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
+	if (ret) {
+		clk_bulk_put_all(devres->num_clks, devres->clks);
+		devres_free(devres);
+		return ret;
+	}
+
+	devres_add(dev, devres);
+
+> +	return ret;
+
+	return 0;
+
+> +}
+> +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+> +
+>  static int devm_clk_match(struct device *dev, void *res, void *data)
+>  {
+>  	struct clk **c = res;
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 1ef013324237..a005e709b7bd 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -438,6 +438,23 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
+>  int __must_check devm_clk_bulk_get_all(struct device *dev,
+>  				       struct clk_bulk_data **clks);
+>  
+> +/**
+> + * devm_clk_bulk_get_all_enable - managed get multiple clk consumers and
+> + *				  enable all clks
+
+"Get and enable all clocks of the consumer (managed)"
+
+> + * @dev: device for clock "consumer"
+> + * @clks: pointer to the clk_bulk_data table of consumer
+> + *
+> + * Returns success (0) or negative errno.
+> + *
+> + * This helper function allows drivers to get several clk
+
+"This helper function allows drivers to get all clocks of the consumer and
+enables them..."
+
+- Mani
+
+> + * consumers and enable all of them in one operation with management.
+> + * The clks will automatically be disabled and freed when the device
+> + * is unbound.
+> + */
+> +
+> +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> +					      struct clk_bulk_data **clks);
+> +
+>  /**
+>   * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+>   * @dev: device for clock "consumer"
+> @@ -960,6 +977,13 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
+>  	return 0;
+>  }
+>  
+> +static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> +						struct clk_bulk_data **clks)
+> +{
+> +
+> +	return 0;
+> +}
+> +
+>  static inline struct clk *devm_get_clk_from_child(struct device *dev,
+>  				struct device_node *np, const char *con_id)
+>  {
+> -- 
+> 2.17.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
