@@ -1,59 +1,58 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8102676C87
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 17:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4899C3F9CF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 17:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706550668; cv=none; b=hm8zUgS7O8kfba/J53QnYGLPKqrgeuvvmcSi0m+laC219BNqptXoGdTZSXfRr2IOMXDVgsZrH8iVGJqJpc2ItaKGvOptrTxzULw5t+YXh0iVyTy8geIq3+HWPSL5lZTkaQRgmDCbZIN39kps0AgJuYaKBQZtt3ln3hxhjX6fbDE=
+	t=1706551182; cv=none; b=XGd505O6EDTSZaYjx9Y6Y/Y+r9QRBcwtZZ5LhJiDy5689YISD4rBfaypsSKssipPl4zAMkJAsUPSVPRCNUthvXYuIRdC+9U11piRoirZcBpg62zO2zx2ziS9X2p8EPi1ArJx6Di95Wf/+1Fulbl9aSE1YjC4HBgJf6wr9t1zhJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706550668; c=relaxed/simple;
-	bh=WVcPxlPoFZbcDre4Mz58FOn74ovoHGfqo6wpm82JGa8=;
+	s=arc-20240116; t=1706551182; c=relaxed/simple;
+	bh=WdFE5G28qXw91+L/5jczJ22evdDNgsN+116WMT64VSg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I9YKndnbh+IjQdGtOawlA0D1KSa1fcxpiZDP+j2Cd1LzYYzx5x6x1kEFv/ZHwZdCmwUoe2wDzLrLfMXbBle54n7I/69jqB+bA1FWMCBdU9OgP6E00wggzwfKUSWMElGFtVfTCLo6U+TLgzqkv1GZoqeuftSzTECWW9R7WGtr+iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PvF516rY; arc=none smtp.client-ip=209.85.218.49
+	 In-Reply-To:Content-Type; b=sIALmB85yAHvisdqm+DnxdxDFS89hNy9xxUXmrhopr4w0anODWG7RWJAcz3DQDenQHJZ2Pr+EbIjPGo2Ne+jAYbGJiT/1Ep/6YECTOyqQovTwgmjTseHdO37l1iuLHJ0rBy02DWMf896F3DIbrBBMiQcMZhb4yzaoGDxCuLj0Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OhJOoi/A; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PvF516rY"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a35b32bd055so152022766b.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 09:51:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OhJOoi/A"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a3566c0309fso216210566b.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 09:59:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706550665; x=1707155465; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706551179; x=1707155979; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=S8toqIrvYZfogfXp6ps9M0ZWOkca7q4FBajUFTEMNOg=;
-        b=PvF516rYvG8hEsceo69hKYqnt0nWVJffLiaZC1LB9GJrIOf9jruAPeIYNA+YeNNLbF
-         FHf2tmkenmpA7ZjrrP92rgMQDqsUsy3UZxSBR85wkqi+R0FoCJ9eKkUQ0ntEywboZucl
-         dcoJciqgYJ3gvyVX8MCuEuP7wU8Fh3Z92ZiTk0Pn8vwIdxBfHdsStJ5VwicU2wpruSOm
-         uYgDr4Mcdff6SlgqVPPfsj9DQXSler4cKeW4u6z8q34sQtY6YEWMASyQUCisXJ7cu9/D
-         wKbfnHELYHmHm2dQ7c/GoM/INo1dqrmlTuLVgmKC0Ii+Fqc20pI0191X28GDgpWWR2Ft
-         +rsg==
+        bh=EduC/u1ISeMAo6EudIFVFUKWN5Hqy6PJTVRFHHs3oCM=;
+        b=OhJOoi/Ase69h8hEUoTLqDqNpscKZC88bdQrjJQqLOfvgWO+cy8Uw+L+DJ3Lj75Xsj
+         fNa+NP1pC3H0AGS6lBE1fHCAJYHXQFpPag32pAxJdrslPnh2M5R1MAinrDQKnMPhjm4Y
+         m09mQE75SSwNVagJAqYEMeIEHvWCwvBHMPDOCDVV007EIycvPacehgu87q/aHfLH65TN
+         jxpFxSNXJIGPVeEEDf7AF2k7WzTc7mjilsAVIqjbVoGCiWpaJKecr9RJcO8A2sjooJBJ
+         eHJkYwoTXP/rC7boK0mfcXQrx7gDQK4qRd01jwcEFjYkP2r8CfwSrvmVvGa/4F5YpToh
+         8ENw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706550665; x=1707155465;
+        d=1e100.net; s=20230601; t=1706551179; x=1707155979;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S8toqIrvYZfogfXp6ps9M0ZWOkca7q4FBajUFTEMNOg=;
-        b=iPbwv/ilIEMSqMNY4Q1hzoXQnEsaNtR1A8O4hHVxFZmaLmvOUZqKWUpBzOAqjeEHtu
-         Sxf/wzVrbCLkNx43JhaUCm18X+YPv/ax3nhNHFjOtyk623cTG6lA5A3JPTjGbBhkWONj
-         usiyggPWaL4LH0BwA5+035S0/RGRY/CPlJFZoVtrlNM7xOUNaNfdAMoyrJlWUV/+WfVm
-         yQssAqgQyjhJJ05ur3trgf7V2gQCldgcTg3dtwoMOE0awE5wc8WQTPrB9+xO7Luv0GOW
-         4s2ETfEL8AnDaGefBHVGzAe+p5zlWGd7N7YHH580w7Jof+bbElavdHjoVgGGSJXYVzBs
-         HmLw==
-X-Gm-Message-State: AOJu0YzKNPLGVMnsq5y0nzX+SSvs2Ss4JvRYnsshtIh4jr2ofKbMtFOG
-	WRgHlekZq7tD0Fr6aNdMgqEPVy2oxYGc6BKLnJxol0WH9McuZ5Du3O3BhBY/sGgKU7GTs09Dfmn
-	C
-X-Google-Smtp-Source: AGHT+IFN5WBqjuCZ0LLHJN0gA/j+3nth/Q8T+OUkfqR3MYT3a8tAWCiirKOA/twxv2J6LBgopZdYNw==
-X-Received: by 2002:a17:906:81d0:b0:a28:d1f9:976 with SMTP id e16-20020a17090681d000b00a28d1f90976mr5009746ejx.65.1706550664785;
-        Mon, 29 Jan 2024 09:51:04 -0800 (PST)
+        bh=EduC/u1ISeMAo6EudIFVFUKWN5Hqy6PJTVRFHHs3oCM=;
+        b=UPj4WjK5k67dS2cQgdSLFsZttMV/O3zBuSN77ldjjLxZx+xbDEf2CHYnP5b+olj3dp
+         ACJwUwHfmbsvnKCCZa2tCZIHih+/Lb30gbaWLgunDkcvBNqav3B92g6A3lifjcA6i4c1
+         aXPco6KDJsSfiarCVaVnxUJQeijQuuG5uLt8g3l5Ca240UUL8okSdtmdiR3yJDlJMH5l
+         ahxvOxgph6aqxnDrhKGa47Y3pvgVE17LrrSdOhhy3QcCoA/S0PsntVAQqpQEPS4DCyt1
+         mvrTYZM/h0FxW88Wm44kGS9hFT7BPb7PBhD5cvk39IH43OVaJWBt0w5fYu5ys7ub1hih
+         dj4g==
+X-Gm-Message-State: AOJu0YxALcDAwf26BqQuwWvOQZLLiiqmVw7BkSWZa8IQVm7XQSh0QbF8
+	BKS+6Grxo44Y02QWNbXv7N7Pl068vCgJ3ivqA5ewo1yaS89yjaQm+0ID9n5H1LM=
+X-Google-Smtp-Source: AGHT+IEzv8qsRZ10vsBI4VJJ9TZr1g1+ImxJzul/w+UUW58owJdgCXBMoGnQlYGYgpyx/hyrawdszA==
+X-Received: by 2002:a17:906:5613:b0:a35:cd14:4147 with SMTP id f19-20020a170906561300b00a35cd144147mr1867189ejq.24.1706551179451;
+        Mon, 29 Jan 2024 09:59:39 -0800 (PST)
 Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id pk27-20020a170906d7bb00b00a35242f5976sm3371315ejb.164.2024.01.29.09.51.03
+        by smtp.gmail.com with ESMTPSA id rg9-20020a1709076b8900b00a354e4d3449sm2834896ejc.120.2024.01.29.09.59.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 09:51:04 -0800 (PST)
-Message-ID: <1b27fa0d-5dc8-497f-ab17-76d82c2aaf40@linaro.org>
-Date: Mon, 29 Jan 2024 17:51:02 +0000
+        Mon, 29 Jan 2024 09:59:39 -0800 (PST)
+Message-ID: <6877683f-6018-4b29-a378-3a04c7b7f838@linaro.org>
+Date: Mon, 29 Jan 2024 17:59:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,57 +60,59 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add SPI nodes for Exynos850
+Subject: Re: [PATCH v3 17/17] spi: s3c64xx: use bitfield access macros
 Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240125013858.3986-1-semen.protsenko@linaro.org>
- <20240125013858.3986-4-semen.protsenko@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, andi.shyti@kernel.org,
+ krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+ jassi.brar@samsung.com, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
+References: <20240126171546.1233172-1-tudor.ambarus@linaro.org>
+ <20240126171546.1233172-18-tudor.ambarus@linaro.org>
+ <CAPLW+4nL6D7R88Q_kJjAT-bWTFBk8a=FT0vL+fyRgxaDeSyhNw@mail.gmail.com>
+ <b5ecacaa-8ccc-4588-b3be-4b5f85813909@linaro.org>
+ <CAPLW+4nN--gG9XsOu6a-mo5vcM-GycRrhPQFOtNidfVTM=KonQ@mail.gmail.com>
+ <facbcbf3-7dba-43a1-b4fe-ac77b5bef545@linaro.org>
+ <56f81e10-86b7-4bd6-938c-e2e9acd6a755@sirena.org.uk>
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240125013858.3986-4-semen.protsenko@linaro.org>
+In-Reply-To: <56f81e10-86b7-4bd6-938c-e2e9acd6a755@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 1/25/24 01:38, Sam Protsenko wrote:
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> index 618bc674896e..ca257da74b50 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> @@ -738,6 +738,24 @@ usi_spi_0: usi@139400c0 {
->  				 <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
->  			clock-names = "pclk", "ipclk";
->  			status = "disabled";
-> +
-> +			spi_0: spi@13940000 {
-> +				compatible = "samsung,exynos850-spi";
-> +				reg = <0x13940000 0x30>;
-> +				interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-> +				pinctrl-0 = <&spi0_pins>;
-> +				pinctrl-names = "default";
-> +				clocks = <&cmu_peri CLK_GOUT_SPI0_IPCLK>,
-> +					 <&cmu_peri CLK_GOUT_SPI0_PCLK>;
-> +				clock-names = "spi_busclk0", "spi";
-> +				samsung,spi-src-clk = <0>;
+On 1/29/24 16:42, Mark Brown wrote:
+> On Sat, Jan 27, 2024 at 03:44:24AM +0000, Tudor Ambarus wrote:
+>> On 1/27/24 03:38, Sam Protsenko wrote:
+> 
+>>>>>> -               val |= S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD;
+>>>>>> -               val |= S3C64XX_SPI_MODE_CH_TSZ_HALFWORD;
+>>>>>> +               val |= FIELD_PREP(S3C64XX_SPI_MODE_BUS_TSZ_MASK,
+>>>>>> +                                 S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD) |
+>>>>>> +                      FIELD_PREP(S3C64XX_SPI_MODE_CH_TSZ_MASK,
+>>>>>> +                                 S3C64XX_SPI_MODE_CH_TSZ_HALFWORD);
+> 
+>>>>> Two people complained it makes the code harder to read. Yet it's not
+>>>>> addressed in v3. Please see my comments for your previous submission
+>>>>> explaining what can be done, and also Andi's comment on that matter.
+> 
+>>>> I kept these intentionally. Please read my reply on that matter or the
+>>>> cover letter to this patch set.
+> 
+>>> I read it. But still don't like it 🙂 I'm sure it's possible to do
+>>> this modification, but at the same time keep the code clean an easy to
+>>> read. The code above -- I don't like at all, sorry. It was much better
+>>> before this patch, IMHO.
+> 
+>> Yeah, I guess Mark will tip the scale.
+> 
+> All other things being equal I tend to try not to get too involved with
+> minor coding style stuff in drivers.  People do seem to like
+> FIELD_PREP() but I have a hard time getting *too* excited.
 
-this optional property
-
-> +				dmas = <&pdma0 5>, <&pdma0 4>;
-> +				dma-names = "tx", "rx";
-> +				num-cs = <1>;
-
-and this one, are already defaults in the driver. Shall you remove them?
-
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				status = "disabled";
-> +			};
->  		};
+Ok, I'll remove FIELD_PREP. Would you please consider the other patches,
+all are simple. There's another "controversy" on 6/17. You can ignore
+that as well maybe, and I'll resend it where I refrain myself to just
+removing the cast.
