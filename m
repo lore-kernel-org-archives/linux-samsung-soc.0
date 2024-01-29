@@ -1,118 +1,234 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4899C3F9CF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 17:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F1C335B5
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 19:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706551182; cv=none; b=XGd505O6EDTSZaYjx9Y6Y/Y+r9QRBcwtZZ5LhJiDy5689YISD4rBfaypsSKssipPl4zAMkJAsUPSVPRCNUthvXYuIRdC+9U11piRoirZcBpg62zO2zx2ziS9X2p8EPi1ArJx6Di95Wf/+1Fulbl9aSE1YjC4HBgJf6wr9t1zhJg=
+	t=1706555791; cv=none; b=f7OPB6ZcWYsfiQeB2w8l19t/LxrvuQi3ftPtN+drjDQkzNdCgl7vV+EVm7gbxgbOZyWXlDkv5L2BDr4+QfUZiUbRZMC9nAKp9Zg4OHsGTKXYV7387F+97+5Pt+eV0E0/GSKS5GaDZqLnnv0CTi5UwP/qVomy4omMIxLp0QU3fOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706551182; c=relaxed/simple;
-	bh=WdFE5G28qXw91+L/5jczJ22evdDNgsN+116WMT64VSg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sIALmB85yAHvisdqm+DnxdxDFS89hNy9xxUXmrhopr4w0anODWG7RWJAcz3DQDenQHJZ2Pr+EbIjPGo2Ne+jAYbGJiT/1Ep/6YECTOyqQovTwgmjTseHdO37l1iuLHJ0rBy02DWMf896F3DIbrBBMiQcMZhb4yzaoGDxCuLj0Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OhJOoi/A; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1706555791; c=relaxed/simple;
+	bh=Qayk4ythZqaRbfuOzKrPm9wdDeQ7kDu33Z22nbx/cgo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dKwAvr/8K0xeBNeCpU0vRZ4ypmyMOt9oQjkVcVpHPI8gITOvbzJbLWRpxYqyH5J1e68SVlqGfGdzJTb4FGn4JqutoyqD8/89zApEPx23tqtEQ1A+86eN5I2gu+rjbSh9/x3WNBgM+MErOEHgTea4yt9Hcvch8DbJ0uDH03OAc6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YebaDAKh; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OhJOoi/A"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a3566c0309fso216210566b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 09:59:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YebaDAKh"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5d4d15ec7c5so2487664a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 11:16:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706551179; x=1707155979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EduC/u1ISeMAo6EudIFVFUKWN5Hqy6PJTVRFHHs3oCM=;
-        b=OhJOoi/Ase69h8hEUoTLqDqNpscKZC88bdQrjJQqLOfvgWO+cy8Uw+L+DJ3Lj75Xsj
-         fNa+NP1pC3H0AGS6lBE1fHCAJYHXQFpPag32pAxJdrslPnh2M5R1MAinrDQKnMPhjm4Y
-         m09mQE75SSwNVagJAqYEMeIEHvWCwvBHMPDOCDVV007EIycvPacehgu87q/aHfLH65TN
-         jxpFxSNXJIGPVeEEDf7AF2k7WzTc7mjilsAVIqjbVoGCiWpaJKecr9RJcO8A2sjooJBJ
-         eHJkYwoTXP/rC7boK0mfcXQrx7gDQK4qRd01jwcEFjYkP2r8CfwSrvmVvGa/4F5YpToh
-         8ENw==
+        d=linaro.org; s=google; t=1706555787; x=1707160587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=we14nktryRJy2wvi6XVLgSirq+hDUDJitZ06Eruhqe0=;
+        b=YebaDAKhe4fCjHGyx5SmchouOSJfHFGcq/cDNQJ7HvXtwn2MYgUXPWX4hHmQaE7gtY
+         a8m/K10KSHKhuNbq/RgvvpNjyVsyKg7cz3S4KWjlfOig7OMnJaR/Q64d1+Ececo/BXLa
+         YsJaI07kcU4l+/UvQpkyGJWVCTqkCiRLRRJzrAg4igbp+Mrkh1DTS7nyk8XxMEqNgzOF
+         dgJMoYFzaUHVDQMXlkQvZfSzyrSKspDPwVfzb9Dq4zjTBBUOgAonvBEQhi4A5uYpxQ3X
+         golVVYGKXRJHgqHmt8+utkWEG4fINV0y7XFDYngqCoT5QI5e3lPxoFCvbjh112vHZb07
+         3RVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706551179; x=1707155979;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EduC/u1ISeMAo6EudIFVFUKWN5Hqy6PJTVRFHHs3oCM=;
-        b=UPj4WjK5k67dS2cQgdSLFsZttMV/O3zBuSN77ldjjLxZx+xbDEf2CHYnP5b+olj3dp
-         ACJwUwHfmbsvnKCCZa2tCZIHih+/Lb30gbaWLgunDkcvBNqav3B92g6A3lifjcA6i4c1
-         aXPco6KDJsSfiarCVaVnxUJQeijQuuG5uLt8g3l5Ca240UUL8okSdtmdiR3yJDlJMH5l
-         ahxvOxgph6aqxnDrhKGa47Y3pvgVE17LrrSdOhhy3QcCoA/S0PsntVAQqpQEPS4DCyt1
-         mvrTYZM/h0FxW88Wm44kGS9hFT7BPb7PBhD5cvk39IH43OVaJWBt0w5fYu5ys7ub1hih
-         dj4g==
-X-Gm-Message-State: AOJu0YxALcDAwf26BqQuwWvOQZLLiiqmVw7BkSWZa8IQVm7XQSh0QbF8
-	BKS+6Grxo44Y02QWNbXv7N7Pl068vCgJ3ivqA5ewo1yaS89yjaQm+0ID9n5H1LM=
-X-Google-Smtp-Source: AGHT+IEzv8qsRZ10vsBI4VJJ9TZr1g1+ImxJzul/w+UUW58owJdgCXBMoGnQlYGYgpyx/hyrawdszA==
-X-Received: by 2002:a17:906:5613:b0:a35:cd14:4147 with SMTP id f19-20020a170906561300b00a35cd144147mr1867189ejq.24.1706551179451;
-        Mon, 29 Jan 2024 09:59:39 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id rg9-20020a1709076b8900b00a354e4d3449sm2834896ejc.120.2024.01.29.09.59.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 09:59:39 -0800 (PST)
-Message-ID: <6877683f-6018-4b29-a378-3a04c7b7f838@linaro.org>
-Date: Mon, 29 Jan 2024 17:59:37 +0000
+        d=1e100.net; s=20230601; t=1706555787; x=1707160587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=we14nktryRJy2wvi6XVLgSirq+hDUDJitZ06Eruhqe0=;
+        b=ao5EVe7UIRBs6a4BaBjcgQU/gIWoOizyJVk7lUXoG5CWNM/ALQJGnP97qkHYdJznRS
+         G/iuy6lsYsRD/cQRTq/gmzgLphuzOUn8ZXXLxBcPYVvmaCsYaDnqzdLJaYF2A9//ejK1
+         Z4BOV203cO6MU5scpZJarOxwjsc4vOGCOOLycc5QJHicuYu1pcbZVKpuLKJGghH5Ayy3
+         6ArTgBXyy9dDvVPe3mYly44/qZfaFx+bjTFOuEKQ7B909KqtOYUwaXP65Li+Qizy1EeF
+         uNTXvmOOqX9hgSwmBnkqtIl3EJTBYoQ1uLsjQvyfZ/j3aa6GLZdAC91UTs86Fi1exZUA
+         HKmQ==
+X-Gm-Message-State: AOJu0YwiFF3FmCYQzaIQ7U1yy2l+gQQ/CTsYkAmliPhI/x6jUK96VCvj
+	o+m6TIqBWH308iR9DOoGl32s4q7GT2LkT+0XT0VUpnD5z/X7ZrhDI5TzNbo8VYZigKEJgdsMwU6
+	2vDEfCu5U144UZK5Fjf6/V7ehZk4ln62/ndmMdw==
+X-Google-Smtp-Source: AGHT+IETcxJeom82cOjcjhkTNG+N6vPXPjaw3ncehNOVSjCswTqHGZvADR2UV+/I/BOd70NRgztfNVdIZx+uB/myjEI=
+X-Received: by 2002:a05:6a21:2d8c:b0:19c:a0d4:bc93 with SMTP id
+ ty12-20020a056a212d8c00b0019ca0d4bc93mr4213894pzb.31.1706555787440; Mon, 29
+ Jan 2024 11:16:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 17/17] spi: s3c64xx: use bitfield access macros
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>, andi.shyti@kernel.org,
- krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
- jassi.brar@samsung.com, linux-spi@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, andre.draszik@linaro.org,
- peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
-References: <20240126171546.1233172-1-tudor.ambarus@linaro.org>
- <20240126171546.1233172-18-tudor.ambarus@linaro.org>
- <CAPLW+4nL6D7R88Q_kJjAT-bWTFBk8a=FT0vL+fyRgxaDeSyhNw@mail.gmail.com>
- <b5ecacaa-8ccc-4588-b3be-4b5f85813909@linaro.org>
- <CAPLW+4nN--gG9XsOu6a-mo5vcM-GycRrhPQFOtNidfVTM=KonQ@mail.gmail.com>
- <facbcbf3-7dba-43a1-b4fe-ac77b5bef545@linaro.org>
- <56f81e10-86b7-4bd6-938c-e2e9acd6a755@sirena.org.uk>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <56f81e10-86b7-4bd6-938c-e2e9acd6a755@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240127003607.501086-1-andre.draszik@linaro.org>
+ <20240127003607.501086-6-andre.draszik@linaro.org> <CAPLW+4mL1gb_R8PhKaMhwOUTa0GDqat_9W=348ScYj+hBarQJg@mail.gmail.com>
+ <d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org>
+In-Reply-To: <d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 29 Jan 2024 13:16:16 -0600
+Message-ID: <CAPLW+4kSka+twSoZmQeMsh3RWermrGG-wyENrr14AmX3zZ2eqA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] clk: samsung: gs101: don't mark non-essential clocks
+ as critical
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	tudor.ambarus@linaro.org, willmcvicker@google.com, alim.akhtar@samsung.com, 
+	s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jan 29, 2024 at 8:37=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
+>
+> Hi Sam,
+>
+> On Fri, 2024-01-26 at 21:30 -0600, Sam Protsenko wrote:
+> > On Fri, Jan 26, 2024 at 6:37=E2=80=AFPM Andr=C3=A9 Draszik <andre.drasz=
+ik@linaro.org> wrote:
+> >
+> > >
+> > > Note that this commit has the side-effect of causing earlycon to stop
+> > > to work sometime into the boot for two reasons:
+> > >     * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to b=
+e
+> > >       running, but because earlycon doesn't deal with clocks that
+> > >       parent will be disabled when none of the other drivers that
+> > >       actually deal with clocks correctly require it to be running an=
+d
+> > >       the real serial driver (which does deal with clocks) hasn't tak=
+en
+> > >       over yet
+> >
+> > That's weird. Doesn't your bootloader setup serial clocks properly?
+> > AFAIU, earlycon should rely on everything already configured in
+> > bootloader.
+>
+> I tried to explain that above, but let me try again...
+>
+> The console UART, and I2C bus 8 are on the same cmu_peric0 controller, an=
+d
+> that cmu_peric0 has two clocks coming from cmu_top, ip and bus. For I2C8 =
+& UART
+> to work, both of these clocks from cmu_top need to to be on as they are t=
+he
+> parent of the i2c8-(ip|pclk) and uart-(ip|pclk) each.
+>
+> The bootloader leaves those clocks running, yes. So earlycon works (for a
+> while).
+>
+> At some point into the boot, one of two things happens:
+> 1) Linux will load the i2c driver. That driver does clock handling
+> (correctly), it will initialise and then it has nothing to do, therefore =
+it
+> disables cmu_peric0's i2c8 ip and pclk clocks. Because at that stage noth=
+ing
+> appears to be using the cmu_peric0's ip clock (the real serial driver has=
+n't
+> initialised yet), Linux decides to also disable the parent ip clock comin=
+g
+> from cmu_top.
+>
+> At this stage, the earlycon driver stops working, as the parent ip clock =
+of
+> the uart ip clock is not running any more. No serial output can be observ=
+ed
+> from this stage onwards. I think what is probably happening is that the
+> console uart FIFO doesn't get emptied anymore, and earlycon will simply w=
+ait
+> forever for space to become available in the FIFO (but I didn't debug thi=
+s).
+>
+> Anyway, the boot doesn't progress, the system appears to hang. In any cas=
+e it's
+> not usable as we have no other means of using it at this stage (network /
+> usb / display etc.).
+>
+> 2) Alternatively, the UART driver will load at this stage. Again, it will
+> tweak the clocks and after probe it will leave its clocks disabled. The
+> serial console driver hasn't taken over at this stage and earlycon is sti=
+ll
+> active. Again, the system will hang, because IP and PCLK have been disabl=
+ed
+> by the UART driver. Once the serial console is enabled, clocks are being
+> enabled again, but because earlycon is still waiting for progress, the
+> boot doesn't progress past disabling ip and pclk. It never gets to enabli=
+ng
+> the serial console (re-enabling the clocks).
+>
+> So in both cases we get some output from earlycon, but the system hangs o=
+nce
+> the first consumer driver of an IP attached to cmu_peric0 has completed
+> probing.
+>
+>
+>
+> > >     * hand-over between earlycon and serial driver appears to be
+> > >       fragile and clocks get enabled and disabled a few times, which
+> > >       also causes register access to hang while earlycon is still
+> > >       active
+> > > Nonetheless we shouldn't keep these clocks running unconditionally ju=
+st
+> > > for earlycon. Clocks should be disabled where possible. If earlycon i=
+s
+> > > required in the future, e.g. for debug, this commit can simply be
+> > > reverted (locally!).
+> >
+> > That sounds... not ideal. The ability to enable earlycon just by
+> > adding some string to bootargs can be very useful for developers.
+> > Maybe just make those clocks CLK_IGNORE_UNUSED, if that keeps earlycon
+> > functional? With corresponding comments of course.
+>
+> CLK_IGNORE_UNUSED doesn't help in this case, the i2c and uart drivers wil=
+l load
+> and probe before earlycon gets disabled and as part of their probing disa=
+ble
+> the cmu_top ip clock going to cmu_peric0
+>
+> If earlycon is not enabled in kernel command line, everything works fine,=
+ the
+> kernel buffers its messages and once the real serial console driver start=
+s,
+> all messages since boot are being printed.
+>
+> Other than keeping it as CLK_IS_CRITICAL, there is no way that I can see =
+to
+> way to make the hand-over from earlycon to the real serial driver work in
+> all cases.
+>
+> They are not critical clocks for the system, though, so it's wrong to alw=
+ays
+> keep them running unconditionally.
+>
+> We are past a stage where earlycon is generally required.
+>
+> If it's required for some local development, people can revert this patch=
+ locally.
+>
 
+That sounds reasonable. But I wonder if that bit (about making this
+clock CLK_IS_CRITICAL to make earlycon functional) can be documented
+somewhere. Perhaps in the serial driver (earlycon function), or
+somewhere in device tree bindings? Because otherwise it might remain
+an arcane knowledge and people won't be able to use earlycon later.
+Anyways, for this patch:
 
-On 1/29/24 16:42, Mark Brown wrote:
-> On Sat, Jan 27, 2024 at 03:44:24AM +0000, Tudor Ambarus wrote:
->> On 1/27/24 03:38, Sam Protsenko wrote:
-> 
->>>>>> -               val |= S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD;
->>>>>> -               val |= S3C64XX_SPI_MODE_CH_TSZ_HALFWORD;
->>>>>> +               val |= FIELD_PREP(S3C64XX_SPI_MODE_BUS_TSZ_MASK,
->>>>>> +                                 S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD) |
->>>>>> +                      FIELD_PREP(S3C64XX_SPI_MODE_CH_TSZ_MASK,
->>>>>> +                                 S3C64XX_SPI_MODE_CH_TSZ_HALFWORD);
-> 
->>>>> Two people complained it makes the code harder to read. Yet it's not
->>>>> addressed in v3. Please see my comments for your previous submission
->>>>> explaining what can be done, and also Andi's comment on that matter.
-> 
->>>> I kept these intentionally. Please read my reply on that matter or the
->>>> cover letter to this patch set.
-> 
->>> I read it. But still don't like it 🙂 I'm sure it's possible to do
->>> this modification, but at the same time keep the code clean an easy to
->>> read. The code above -- I don't like at all, sorry. It was much better
->>> before this patch, IMHO.
-> 
->> Yeah, I guess Mark will tip the scale.
-> 
-> All other things being equal I tend to try not to get too involved with
-> minor coding style stuff in drivers.  People do seem to like
-> FIELD_PREP() but I have a hard time getting *too* excited.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Ok, I'll remove FIELD_PREP. Would you please consider the other patches,
-all are simple. There's another "controversy" on 6/17. You can ignore
-that as well maybe, and I'll resend it where I refrain myself to just
-removing the cast.
+and if you think it makes sense to document the bit above, please do.
+
+>
+> BTW, downstream doesn't suffer from this problem because downstream uses =
+ACG
+> throughout and clocks are enabled automatically in hardware as required.
+>
+
+Yes, using QCH clocks (HWACG) seems like a correct way to fix this,
+and would be nice to have otherwise. Alas, it doesn't seems very easy
+to implement, and should probably be based on top of regular clock
+driver anyway. I thought about it for a while, but never came up with
+particular ideas on how to implement HWACG support in Samsung CCF
+framework properly.
+
+>
+> Cheers,
+> Andre'
+>
