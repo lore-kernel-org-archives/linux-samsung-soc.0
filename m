@@ -1,143 +1,150 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31483159563
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 21:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D3D159589
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 22:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706563167; cv=none; b=BwbQwMkap3aFo03rU5bMtW4NqnRvI9BdVlbWx/OPnDHbOBczIZk9yhgPx3NH/L2gPdQF8ZuBRt754/Trn+OysSb7YJQENs8M4tIx/IIK2BZPmIowIXqytE7dfh5YRJ7nWeqyaPvZpMypz1dMDran0t7hG+971nkrrXRbwsUJvNs=
+	t=1706567142; cv=none; b=lkDzjaKsyZkjwREE7C59B0oQ6+qw/C+TJPQPhXC8YGHUQc7daznCyqwigsxM+iqJLaD7zyg7THtQGMzU13mLHV8zxInWIME5cZxg9ut7b9saL6mtq5hijmqRK2dsWsH3pWtVqhzwvQJVm8vBAwyk8oKQYLPr8uijXjABMI1NxMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706563167; c=relaxed/simple;
-	bh=N/dTvAXukJJ3gcdpKEbrdzFSZE0mfVmJtWEBs7Wr1pM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ot8l1s1SIZIjItyVWGeF5ZCYNyJlVXeYGsNaW94ZT+RziJ5mDUhZMfWgQJ7cHQ6F1RYaFT7ezC9LU6oVoncXAhoxeycOHJoypsYCFfvemzPAf1b/SDT7VdEyyJ0r5VI8SlHWacZFZ9IRxvpvz00I07EJALVupHn3c074RZGh2r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WZc/IIkI; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706567142; c=relaxed/simple;
+	bh=9WFxEDtj6oqii1H2ZC+yUNwxmBiIaPxWMCAeynATpXo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sqxr0PTNthFchrYkkyRHX++n0fNMXxAmLppihd/kME4ZP2lu15e8s7kZyD1EH40TFD+h2H1aMZpV2D4Xie/KroM7W8V5xOpHXs+cqycOt2VrI7DC02r86H0L2Q/EFHuy0MBUls9Cv+FBJSyjNwXXemSed+z3d9gm/3kZOj3qH8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SSbb6sj/; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZc/IIkI"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40e80046264so43111875e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 13:19:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SSbb6sj/"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-42a88ad0813so87871cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 14:25:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706563164; x=1707167964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1706567139; x=1707171939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z9S0cbpz+w0Ro+UeWqvavBY4QIBfmENEBk/Ib6o78C0=;
-        b=WZc/IIkIqjwgtKKvlgBXT/Bft6YF1xHxevLo1ti3rMzyHyFXm1wC4bR/T2Ye6GR2IH
-         Klk93wXU6xu/HMHdluV36naKQMvpU5ZkgCptO39ibAFlpDN8GX1ogc/hEU3si6w2K1Jt
-         wCVzQk+cuC8mSBbBNhp8WjPxEL5YtU0H7szvpkWBdLQDru5RTZI35m+4Ie02LFaPteoh
-         lyd+ew1w/aAJKugFxtVstVBNC7vp/Q+fBZhlRqTdqMugN33v/iFHMwiaD/Bmr/Gm05RW
-         1OpoyA0FVVAZ4hqsSqjGkMcNbLV5o3mJWVM5Ko5wuAVVh+luOxugRpkdgd500gmMOR7n
-         VC/A==
+        bh=4mdCPUKoIVhBRVBAt+UHLaSJZg2VQOPHD/VbN5Tg7Oc=;
+        b=SSbb6sj/sNzQYrd4jl/5aK7V/5YJD0d3HzDooAVqfMbYWfBtRkmxexSVu0IiiA0RoU
+         851Gws+eFc/GjQQ4ueSKacGs53mQtUsnj3RZDzi/7pyeJKopRfTbX2FvQjMyzLj8L/HB
+         KScw0OsB/I9T5ZQukQyuN4HTVH0ZEySVagWLg8m5Sma8xvNACoGnFoyJ+F7DJeqRNADA
+         t+MB9MOWePHJHFaSw2Y0RQdmjyjO19Iv12FcHn0duWXc1glht8EEIio8pyJwvP9vd4hO
+         g4kSpkKZqEVCYZkKF0rOG9oLmOGO601aLgwgOS3tJcH/FoE8Qmz2eoHEzBU6VZFowc6U
+         2FzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706563164; x=1707167964;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1706567139; x=1707171939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z9S0cbpz+w0Ro+UeWqvavBY4QIBfmENEBk/Ib6o78C0=;
-        b=A/CgzJf0g5ouhyzr8yX5oAR8JeKEzE5FKabFekQ7dKyKnciwElvopGbAEY5CtVUKhz
-         oNMHG4cvOmxv5HNq4KMmHYSU6sttkv3jEUq/YdRzMBWbYPFS1Ka6trb6+YiDje9SydAH
-         SixOZviCAeiMHMlUxShBF0BLFMPSkmSu3sn1Uq9DHSt2LZBTRM5wP9PPzrWhuv6VRrCs
-         GmqgTORK3ZAI0qsDVimlv8OViSVaw4TWJcZ3p933PmqMUQKbL1xqyteJynQQi2WovViV
-         Yq3OX1njPEdrRmWn8u7SV01B9O3EbaM4WgtQ4zG7xpka/8c5dGSckbcGQcW4Zojv6TKt
-         0MoQ==
-X-Gm-Message-State: AOJu0YxWpNCkNGze6tpfp2WC7Ue+xWhyTaEVPKVzn5nqRtKmLDheJSSM
-	3D+VVhQLmN/o6AmZPTSMd3uJex6qPuAs1h7MtVrUNY1i2PvLH5NMsGhIDFytdoM=
-X-Google-Smtp-Source: AGHT+IGRgk5GtfOJQyRiGtbxBlTIlUTAyVf6cU6RUUU54aSsEc2ZIIRYWl3+Pb5eH74+lrAfwBsHyA==
-X-Received: by 2002:a05:600c:ad0:b0:40e:779f:416 with SMTP id c16-20020a05600c0ad000b0040e779f0416mr6409689wmr.2.1706563164594;
-        Mon, 29 Jan 2024 13:19:24 -0800 (PST)
-Received: from gpeter-l.lan (host-92-21-139-67.as13285.net. [92.21.139.67])
-        by smtp.gmail.com with ESMTPSA id iv16-20020a05600c549000b0040e3635ca65sm15126928wmb.2.2024.01.29.13.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 13:19:24 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: arnd@arndb.de,
-	krzysztof.kozlowski@linaro.org,
-	linux@roeck-us.net,
-	wim@linux-watchdog.org,
-	alim.akhtar@samsung.com,
-	jaewon02.kim@samsung.com,
-	semen.protsenko@linaro.org
-Cc: kernel-team@android.com,
-	peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	linux-fsd@tesla.com,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 2/2] watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle() for PMU regs
-Date: Mon, 29 Jan 2024 21:19:12 +0000
-Message-ID: <20240129211912.3068411-3-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-In-Reply-To: <20240129211912.3068411-1-peter.griffin@linaro.org>
-References: <20240129211912.3068411-1-peter.griffin@linaro.org>
+        bh=4mdCPUKoIVhBRVBAt+UHLaSJZg2VQOPHD/VbN5Tg7Oc=;
+        b=oFGDPFBVpZnWF/QN5LTF8M1xXAeRtGK/1GbMbI6jbIiA/GBbFy+CRT7uMYWMEoP5vi
+         LsHvghLRbV8AWVZW1WCZEHr5P8qd1vw9Zp7SQ916jKhB70wqPPeoxih4egbv4C69jbtc
+         byIJiud50BdYOSy5kbKIpwkuvo30mNc7WYp6fZtFUzxEnFr0cWQX1c6zOeJsYa2tXOCJ
+         Ux9g8fOdorL4WK8oMS9DJzEJp7jMQsASNJLM0sRCeOwGl01+zMS0HYTmbmfrgX08ZQzH
+         cDEN7+kO6REf1oJ7xJlGU0QpYxXp1SE/5wDB3uortmSKMq9brnWjZi7JSYWamGTnTwWH
+         t3Sw==
+X-Gm-Message-State: AOJu0YwH5qHL0yoQ2bsCazbL1vALGVwT2DqMqpcSTillEenpujieLBG/
+	SFqmFSkrr02L2cRbFtfMCjyBW4B9KvoPu9uhRkOgfMtulMQM8hh8zvcslibj4ghKisjpp36keEs
+	w3y6+rOOeBoNw5GXzH695r73zcVvY4h41MI0a
+X-Google-Smtp-Source: AGHT+IEKPLC8FP3KN5kmdAvJzmMvRg7tW3fa6XSk1BQM5ezj9Lc933d0Ukw4+BUisvUPJGQh3OC952raVMhPdnBJjxs=
+X-Received: by 2002:ac8:5c43:0:b0:42a:a9c7:271f with SMTP id
+ j3-20020ac85c43000000b0042aa9c7271fmr25035qtj.11.1706567139419; Mon, 29 Jan
+ 2024 14:25:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240129211912.3068411-1-peter.griffin@linaro.org> <20240129211912.3068411-3-peter.griffin@linaro.org>
+In-Reply-To: <20240129211912.3068411-3-peter.griffin@linaro.org>
+From: Saravana Kannan <saravanak@google.com>
+Date: Mon, 29 Jan 2024 14:25:03 -0800
+Message-ID: <CAGETcx8UsseQAHc76QaMxgMUe7cwajZVdYLA2uwpZxF90RLjJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle()
+ for PMU regs
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
+	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
+	semen.protsenko@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, willmcvicker@google.com, linux-fsd@tesla.com, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Obtain the PMU regmap using the new API added to exynos-pmu driver rather
-than syscon_regmap_lookup_by_phandle(). As this driver no longer depends
-on mfd syscon remove that header and Kconfig dependency.
+On Mon, Jan 29, 2024 at 1:19=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
+>
+> Obtain the PMU regmap using the new API added to exynos-pmu driver rather
+> than syscon_regmap_lookup_by_phandle(). As this driver no longer depends
+> on mfd syscon remove that header and Kconfig dependency.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  drivers/watchdog/Kconfig       | 1 -
+>  drivers/watchdog/s3c2410_wdt.c | 9 +++++----
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 7d22051b15a2..d78fe7137799 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -512,7 +512,6 @@ config S3C2410_WATCHDOG
+>         tristate "S3C6410/S5Pv210/Exynos Watchdog"
+>         depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE=
+_TEST
+>         select WATCHDOG_CORE
+> -       select MFD_SYSCON if ARCH_EXYNOS
+>         help
+>           Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
+>           SoCs. This will reboot the system when the timer expires with
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 349d30462c8c..a1e2682c7e57 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -24,9 +24,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> -#include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/delay.h>
+> +#include <linux/soc/samsung/exynos-pmu.h>
+>
+>  #define S3C2410_WTCON          0x00
+>  #define S3C2410_WTDAT          0x04
+> @@ -699,11 +699,12 @@ static int s3c2410wdt_probe(struct platform_device =
+*pdev)
+>                 return ret;
+>
+>         if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+> -               wdt->pmureg =3D syscon_regmap_lookup_by_phandle(dev->of_n=
+ode,
+> -                                               "samsung,syscon-phandle")=
+;
+> +
+> +               wdt->pmureg =3D exynos_get_pmu_regmap_by_phandle(dev->of_=
+node,
+> +                                                "samsung,syscon-phandle"=
+);
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/watchdog/Kconfig       | 1 -
- drivers/watchdog/s3c2410_wdt.c | 9 +++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+IIUC, the exynos PMU driver is registering a regmap interface with
+regmap framework. So, can't we get the remap from the framework
+instead of directly talking to the PMU driver?
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 7d22051b15a2..d78fe7137799 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -512,7 +512,6 @@ config S3C2410_WATCHDOG
- 	tristate "S3C6410/S5Pv210/Exynos Watchdog"
- 	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	select WATCHDOG_CORE
--	select MFD_SYSCON if ARCH_EXYNOS
- 	help
- 	  Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
- 	  SoCs. This will reboot the system when the timer expires with
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 349d30462c8c..a1e2682c7e57 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -24,9 +24,9 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
--#include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/delay.h>
-+#include <linux/soc/samsung/exynos-pmu.h>
- 
- #define S3C2410_WTCON		0x00
- #define S3C2410_WTDAT		0x04
-@@ -699,11 +699,12 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
--		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
--						"samsung,syscon-phandle");
-+
-+		wdt->pmureg = exynos_get_pmu_regmap_by_phandle(dev->of_node,
-+						 "samsung,syscon-phandle");
- 		if (IS_ERR(wdt->pmureg))
- 			return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
--					     "syscon regmap lookup failed.\n");
-+					     "PMU regmap lookup failed.\n");
- 	}
- 
- 	wdt_irq = platform_get_irq(pdev, 0);
--- 
-2.43.0.429.g432eaa2c6b-goog
+-Saravana
 
+>                 if (IS_ERR(wdt->pmureg))
+>                         return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
+> -                                            "syscon regmap lookup failed=
+.\n");
+> +                                            "PMU regmap lookup failed.\n=
+");
+>         }
+>
+>         wdt_irq =3D platform_get_irq(pdev, 0);
+> --
+> 2.43.0.429.g432eaa2c6b-goog
+>
