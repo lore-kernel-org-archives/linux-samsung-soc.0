@@ -1,200 +1,108 @@
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8324D5AC
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 06:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1605A54BFD
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 09:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706511541; cv=none; b=S/793u8APq+lljYbmHS8fdRJ/kBPWE/sK5pzKbR3FGRNacRVyUnV7j4JeK4SuTXTKk9W9hZBhdSPPhG2MHI0RmFLoZhRy6AuS9ZrySgral5M06JccfWTj6o4qixBWaJLSutxcoKDCYDIkbNxRlN0yRbR1s5TvIfmjtNXUMLbXts=
+	t=1706519673; cv=none; b=GmRg5LbE+Dm4cFy/IJb+CQ3D4sUDtLzOtFaNrLoq8E3/YlpW5iOOukncs+dnyoOB73dyLg2NzKMAy6p9zpcJpW/UQNqCTUkgy7LngBhZCI5JKlEce8c5bJKS19EyPweVM0MAL3T62KCaE/ZTSEPU5/riYFpavE7yXFj6ULs2KCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706511541; c=relaxed/simple;
-	bh=OXQjh4lioyfB8StO1nZmX9WLl+HFNIwwqGc1GR4QKLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuR9eqMHGcJEu9EAMy188R9zzLCsMD+U9PAMeTess+VB6ABHARIyCJyfk/s0PFicpYqhNYDDnMRrn3hHB1EObneMvIVpl1xkEliJTVaRMwWI0707PBEawJNU1tV91HXmL2+ZIlvsqLPJLZigUtqcxxSoaND87cOVdQInQf7+tH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=opHhLT04; arc=none smtp.client-ip=209.85.219.48
+	s=arc-20240116; t=1706519673; c=relaxed/simple;
+	bh=vuRFhnAb0QvxdIswU7JMO3BMfaGNmH0kJhYkDLBQUeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YwLKAkAwucLZbo3wANLc9XLe8XO6bj5/uTWgVghzFQF+8q74n7ixhNjtsYfT5S3PF0DjSepjD8DmRXlls/3cBjJNKRi5gJ+4yMktC7gxP0CjtpLjqNFjOx0r329wT0mtPT2Lat/cImZYyUHdsrMrTHWndVD5+h2o2wjVy67yW8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jlJYNiyT; arc=none smtp.client-ip=209.85.222.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="opHhLT04"
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-686a92a8661so19730276d6.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Jan 2024 22:59:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jlJYNiyT"
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-783e22a16d4so102705185a.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 01:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706511539; x=1707116339; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FwYcxzBqqOvegvaMhu9gdP9KfDlhUbugGliFvDojZT0=;
-        b=opHhLT04j6jEhDUQl0KHkf/NtUUOganAu5SufZ4EcaVb+b1qeUJESAkdFv4DLoQXKf
-         nGENClORkAfKnCFlaDfPbwhGyoDNk6S3CKnBqXRPDs2MnftDOVSW3Gu54rCH08NyGJnr
-         o6aoTsEPfcew7aMpO/LS1OFOMIoaZJ4D+Gkb+3lsgQh4oPMw0HSXtbKi12aJuX8Mu2Ob
-         0GwFpz9lJgHUOI1BrYyizJH5pThiOfwuvpRDYbumyJ8e31jQbmSgyHbwSsBYcJHPoeUq
-         9PyivYDtgOk5KHMPuDV1s+e5/LLpdXJcvnO6ruYxXGbruETOcXxtJ2gxoS4N7VWWzLKy
-         Kd0A==
+        d=linaro.org; s=google; t=1706519670; x=1707124470; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mIls3X+c7u3FdSJgCYO346X8vHVfzQy7RDRpONBzCs8=;
+        b=jlJYNiyTVvtCtg+W42yTvBOR+eF7IDtXW19YrGQoYR0fz9hYHWLMTooGXy68RIDP4O
+         9L7diEFLbNwW8nEBkDTPXGR7SnXPSpb2dMhVcz1D5no8zUvizefhkfAmVYrsQKYs6gQm
+         0UrZxQD7bHWBg0on7Ew3ftl+YiZ1ToVuQazzemK20U23e/fSi31AGCdeZqxepDoB4Yxo
+         0grg5qzjVXXFl7lARcVN5qbqAU1T0AZHDYiQtZcDIsHQJnqkrWLeTXFhHrwROPR4CYhW
+         OiHoiO2RN8E5nepxFGIAn7rEBFydbg1mP4UjVPKn8DeFPxvYbY6+46yD6V0I1Rwzp6JH
+         y6Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706511539; x=1707116339;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FwYcxzBqqOvegvaMhu9gdP9KfDlhUbugGliFvDojZT0=;
-        b=NMKj8MHjEjiLDqSW7S0s+2NFJROL/CPCg5WpeLb1uILgNtmD/OyfR+Y8h5wICFqLZB
-         NzAiH5EkjHZ0HigDpyVEhnkacU8Tsl13srQuG52YjPPU/aMKRTdk5F3W4dwJ/1eqyPYo
-         /Sh+oEW5v5N96A1dtO9CbuV/hehbo0zyccBfaRoQGSCBw79OxVW5xkcmORhIpXc7WZxw
-         PIhuFvLdmPOjrFfTtMrfGbXd+xMBEreo/mMKr7SffwS5XcPtH8+779nmaLLyXKzT/9eP
-         lL5iiZfcPl6j2Dc40jTj5T9JDvXrmaKU1Qq4Q16xm9+4KgX4xyq5lhhGlnVAMLL03Nh3
-         80YQ==
-X-Gm-Message-State: AOJu0Ywmt+g2Wl0DSvKPnvsL6dZkuED71qz3xZPAjnvA7rO1dC+nd9Zo
-	FOAOpZnSbtJ2Nkx4LEOHqPBkksqutitqG9TuX1MtdUD1BGimQqE0N/YkytrSWg==
-X-Google-Smtp-Source: AGHT+IH5SRvoNClvm0mfYs/inH/IxKkrY8a8G5cj2l07JgqvnKPSvqgPdo+o6ckTisfvK8pj9GlW0g==
-X-Received: by 2002:ad4:5c47:0:b0:686:acd7:ea95 with SMTP id a7-20020ad45c47000000b00686acd7ea95mr7107306qva.71.1706511539120;
-        Sun, 28 Jan 2024 22:58:59 -0800 (PST)
-Received: from thinkpad ([117.193.214.109])
-        by smtp.gmail.com with ESMTPSA id h4-20020a0cd804000000b006869dae6edbsm3124426qvj.77.2024.01.28.22.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Jan 2024 22:58:58 -0800 (PST)
-Date: Mon, 29 Jan 2024 12:28:46 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-	linux@armlinux.org.uk, m.szyprowski@samsung.com,
-	pankaj.dubey@samsung.com
-Subject: Re: [PATCH v4 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
-Message-ID: <20240129065846.GD2971@thinkpad>
-References: <20240124103838.32478-1-shradha.t@samsung.com>
- <CGME20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8@epcas5p3.samsung.com>
- <20240124103838.32478-3-shradha.t@samsung.com>
+        d=1e100.net; s=20230601; t=1706519670; x=1707124470;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mIls3X+c7u3FdSJgCYO346X8vHVfzQy7RDRpONBzCs8=;
+        b=AV6t8B0XKg2j1tzdg/gls36fIFxORMuUVC4pJrM2G0mICmtwmpDpj+7i9SyMSNXvPv
+         2SWUVu5cVjTQ2M/Q3K5+fxA6jgINfWmPbfq71b9FiOJy6+O4T5d6OaXo3yQl1qHF2Ut7
+         BQetZ0VJ+4nylD3YU+Jue8cX9dxhAU0ZkUwjJbPDzvfbvkHnfVx9KZ7kCpgbq/s+LqPK
+         XQ21WdpHvsSvgK7+FVAZFlvwQeO2QPwKu5fZ1beyHoga1qR0z3SOXTCkSI/Y7fRY31NZ
+         MCHwPogQIT5+m5EKnm2DCd99PABuNDOterloTw8R9+bAbWK8CBGwrfdbaiTDHQ0HuiBr
+         gokA==
+X-Gm-Message-State: AOJu0YyKo9vNkVEenJojLOXL58kUGW+Ip2VMBBFaldW0s7FO3n78rM5r
+	cAvpzTMY+L5SV39JdvmHaOQn0FWJqY6mOsbGU2HNeg0vLnjId8xo64GnkN6IVKgYZj9U/MkDu7h
+	/51a9BavBJ/Tncj3g6dfY6z8juG0nvu/xFfAr1w==
+X-Google-Smtp-Source: AGHT+IFOcIWuTItyZKqMTQd4K9HAAjevtLTdNnIelgtBGxUq4gOyJJ5yPRFVzaiTjsZLBGg/m4xqzyKcXshN7qzswkE=
+X-Received: by 2002:a05:6214:1927:b0:68c:4523:cb74 with SMTP id
+ es7-20020a056214192700b0068c4523cb74mr2758364qvb.21.1706519670005; Mon, 29
+ Jan 2024 01:14:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240124103838.32478-3-shradha.t@samsung.com>
+References: <20240127001926.495769-1-andre.draszik@linaro.org> <20240127001926.495769-2-andre.draszik@linaro.org>
+In-Reply-To: <20240127001926.495769-2-andre.draszik@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 29 Jan 2024 09:14:18 +0000
+Message-ID: <CADrjBPpOrxczkLxeo7QpaOGy31SUriKUQmQe9QcRQKniEXg99g@mail.gmail.com>
+Subject: Re: [PATCH 1/9] clk: samsung: gs-101: drop extra empty line
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	tudor.ambarus@linaro.org, willmcvicker@google.com, semen.protsenko@linaro.org, 
+	alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, 
+	cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 24, 2024 at 04:08:38PM +0530, Shradha Todi wrote:
-> There is no need to hardcode the clock info in the driver as driver can
-> rely on the devicetree to supply the clocks required for the functioning
-> of the peripheral. Get rid of the static clock info and obtain the
-> platform supplied clocks. All the clocks supplied is obtained and enabled
-> using the devm_clk_bulk_get_all_enable() API.
-> 
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
+On Sat, 27 Jan 2024 at 00:19, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+>
+> There is an extra empty line here which doesn't exist in any of the
+> other cmu code blocks in this file.
+>
+> Drop it to align cmu_top with the rest of the file.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
->  drivers/pci/controller/dwc/pci-exynos.c | 54 ++-----------------------
->  1 file changed, 4 insertions(+), 50 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-> index ec5611005566..3234eb5be1fb 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> @@ -54,43 +54,11 @@
->  struct exynos_pcie {
->  	struct dw_pcie			pci;
->  	void __iomem			*elbi_base;
-> -	struct clk			*clk;
-> -	struct clk			*bus_clk;
-> +	struct clk_bulk_data		*clks;
->  	struct phy			*phy;
->  	struct regulator_bulk_data	supplies[2];
->  };
->  
-> -static int exynos_pcie_init_clk_resources(struct exynos_pcie *ep)
-> -{
-> -	struct device *dev = ep->pci.dev;
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(ep->clk);
-> -	if (ret) {
-> -		dev_err(dev, "cannot enable pcie rc clock");
-> -		return ret;
-> -	}
-> -
-> -	ret = clk_prepare_enable(ep->bus_clk);
-> -	if (ret) {
-> -		dev_err(dev, "cannot enable pcie bus clock");
-> -		goto err_bus_clk;
-> -	}
-> -
-> -	return 0;
-> -
-> -err_bus_clk:
-> -	clk_disable_unprepare(ep->clk);
-> -
-> -	return ret;
-> -}
-> -
-> -static void exynos_pcie_deinit_clk_resources(struct exynos_pcie *ep)
-> -{
-> -	clk_disable_unprepare(ep->bus_clk);
-> -	clk_disable_unprepare(ep->clk);
-> -}
-> -
->  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
->  {
->  	writel(val, base + reg);
-> @@ -332,17 +300,9 @@ static int exynos_pcie_probe(struct platform_device *pdev)
->  	if (IS_ERR(ep->elbi_base))
->  		return PTR_ERR(ep->elbi_base);
->  
-> -	ep->clk = devm_clk_get(dev, "pcie");
-> -	if (IS_ERR(ep->clk)) {
-> -		dev_err(dev, "Failed to get pcie rc clock\n");
-> -		return PTR_ERR(ep->clk);
-> -	}
-> -
-> -	ep->bus_clk = devm_clk_get(dev, "pcie_bus");
-> -	if (IS_ERR(ep->bus_clk)) {
-> -		dev_err(dev, "Failed to get pcie bus clock\n");
-> -		return PTR_ERR(ep->bus_clk);
-> -	}
-> +	ret = devm_clk_bulk_get_all_enable(dev, &ep->clks);
-> +	if (ret < 0)
-> +		return ret;
->  
->  	ep->supplies[0].supply = "vdd18";
->  	ep->supplies[1].supply = "vdd10";
-> @@ -351,10 +311,6 @@ static int exynos_pcie_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	ret = exynos_pcie_init_clk_resources(ep);
-> -	if (ret)
-> -		return ret;
-> -
->  	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
->  	if (ret)
->  		return ret;
-> @@ -369,7 +325,6 @@ static int exynos_pcie_probe(struct platform_device *pdev)
->  
->  fail_probe:
->  	phy_exit(ep->phy);
-> -	exynos_pcie_deinit_clk_resources(ep);
->  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->  
->  	return ret;
-> @@ -383,7 +338,6 @@ static int __exit exynos_pcie_remove(struct platform_device *pdev)
->  	exynos_pcie_assert_core_reset(ep);
->  	phy_power_off(ep->phy);
->  	phy_exit(ep->phy);
-> -	exynos_pcie_deinit_clk_resources(ep);
->  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->  
->  	return 0;
-> -- 
-> 2.17.1
-> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+
+>  drivers/clk/samsung/clk-gs101.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
+101.c
+> index 4a0520e825b6..27debbafdce4 100644
+> --- a/drivers/clk/samsung/clk-gs101.c
+> +++ b/drivers/clk/samsung/clk-gs101.c
+> @@ -25,7 +25,6 @@
+>  /* ---- CMU_TOP --------------------------------------------------------=
+----- */
+>
+>  /* Register Offset definitions for CMU_TOP (0x1e080000) */
+> -
+>  #define PLL_LOCKTIME_PLL_SHARED0                       0x0000
+>  #define PLL_LOCKTIME_PLL_SHARED1                       0x0004
+>  #define PLL_LOCKTIME_PLL_SHARED2                       0x0008
+> --
+> 2.43.0.429.g432eaa2c6b-goog
+>
