@@ -1,58 +1,58 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C26E66B42
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 15:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20174156985
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 16:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706542787; cv=none; b=HAwNMYL+8hJ1FEsUdwD+14BqmlpvjAD65TZBU4zy8xXPtlQDHIRhGTUv3Bz22cAURuXweU4Rz19j2Z41wj5RlGNm8/IqDj80ASjQ/0xHbVCDnGFT7MewnbFy+dp5q1NMRmLGZbYmzAEXV07FB2TWSkjFCxrx3r52hzSVInpSbws=
+	t=1706546003; cv=none; b=MOhP1MuykooDxucUkc3oxp5bJbTclcCeeO6+Sw6+31Dt6PzW0mXPH4teQ28OH8q7UiUv9FLuCWFeKZNi3c+KFcUG/kckz5Pc4jffChaITjXW3WXpvasniKQZr72mO5jcDpHECh6Gq01SZoAaam599TJi8PPuWqVD+IYf0K47YRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706542787; c=relaxed/simple;
-	bh=n9nCPEsYfSINBzdyiWwPDZaTjNh9Nu8piVjbdDNZNaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pN+WFYW1sIa9O0wq9IosdADQeUAFbpvcOpDWUcczfkNxSofcgTyxhEDPZX08y1IeMLZedkl6uPdGp1u7hAeVQFWhmzC8ZEmq6y8GOa4iZT7oDIXV6N7gTgdvM5edlQ+re2Ww4O5/KFmxvX+3Se02ZPlz0RFliSwj6toBMTJK2zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sm+GMl2y; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1706546003; c=relaxed/simple;
+	bh=RbYijDpPVVCJap+th+HFTbm3g0/fwzh/E0PyKIP7Z8I=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FXFz3GPllveRwWkllaNsU76wEyUtlgjOSXKfhkFt++/mZ6PxNZTSDq80fUS04BU9VD5v9jL5/473kH8zrYzXy4EZF6818aBrHIzTEJHlUyTeAjtiRhVN3FAcFkko7zafQzr28P9xhzI1lCH72saDEmygjXA9CjNcoEwPU1gCGGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qGyzyaS+; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sm+GMl2y"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2d7e2e7fe0so544094066b.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 07:39:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qGyzyaS+"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2cf4fafa386so30499691fa.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 08:33:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706542783; x=1707147583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1706546000; x=1707150800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wkgPevqiSgLEurIHYt9EjLvopYwvRhZn075Iur8KFvo=;
-        b=Sm+GMl2y8tOGKqYtPVNOq1jhjqwyPwwO/T18UJfhyBgXSDiSAss9BLVfivLp9M74dk
-         voA+ol+TiiQ+aPTKom52KOsOWQXMHveQezNi7JWSTpNYpyBVMKAA1mFgG+LBB/vHnpU4
-         AQCzcwGIIC85dmB9NFTNRmWmNbnGJ7edS+HdhjOJB4mmn6kZe5oNORF9Vqk6APBoWj4z
-         x96LVpdu4fVkRZ8i7Fnc6beOthBoktgmy4STV+hDYVRSfDTIJ3qXc/kGhM128ibZb8RI
-         +0/bvxWEW8c6hLCSh7IXmVvNlTOslBlSCrnakkG8PRJhZnrdc+3qA4WduqvY2qHCWAm2
-         DCtg==
+        bh=yYsUavmWV+6BfBH3yu3ngTFUF3L9esmHz5FzVfYvcmg=;
+        b=qGyzyaS+kyWR+pZEsV9LFoCBiJZTBeFsoETw5LnzeigL38d7tJuMkpCBjgDpl7hnx8
+         wQVhysdRxgPYCyjiBAQ2xeY1cVdwjDrTSnxJs3nyHZqpIYpAnutiowS1hSEmH38rjuuA
+         pAjusI0aK9Xyfq4LOzNwMYfkXms8l6tM6SJEzu9ldScR8njLbOFQf0Jox3TkFEYD8O6f
+         dg+byEX6qb5hhkDS9EGsb6uaSIlJeBms36I/icxhhfUd3l35ncxZdw1KhVJAzG7b0grU
+         /b0aKr5zXICS/gZKkuaCkx4OaLv5nUf5qNxj02HM6HHbv7vYW1qCOH0EvBUZiPgKSuSn
+         yNWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706542783; x=1707147583;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1706546000; x=1707150800;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wkgPevqiSgLEurIHYt9EjLvopYwvRhZn075Iur8KFvo=;
-        b=hVc7zZxn1U/Mag2ZpKGO1hGUgn5KoSOT689PqMFQkOFqlgafQYYtyO7xfRN9BuF48P
-         JsS7BOuo3VqFuN3YeLZuvp9su6MItR01JsySH+IvfENyVF0vdrATvQrtaEBtVDst81lv
-         8yzO6nr+VW7O9CGItA40O/r7ro6IpWAL/J0SAdAbJjCMtsOT7kHqPSI0Wpu8BUvBeyZT
-         DHgRd0n576PWczLDU/PHpalAwysb/7utnbL+HvivpgVT0W5EQGMVg42cw1Duyc8CG+LM
-         iLgIAjkQ3jAqEfvUt1inOAC27C0iFxi2igKkaDB9Cq8pjObM6PjPT7+KrVISgH9wSSIE
-         CRWQ==
-X-Gm-Message-State: AOJu0YyEjEHy9Rwq5ZLNF+f8O9iTslNow8iNv+JfYDGu8ikBmAJvDTMb
-	o9HRmh+bAjnfOLQ942greWFt2/HkV2WMlUw3yjmCXV8FTEnzl0oQKTuG5KD0nxE=
-X-Google-Smtp-Source: AGHT+IFYdid04IRF9e/VP+vofbM/pi1HxoRfriJJXvBTTWK5vVVNdrOFgdHvYkqQr5MJ2VEfT5XIwQ==
-X-Received: by 2002:a17:906:31c8:b0:a27:5fd1:791f with SMTP id f8-20020a17090631c800b00a275fd1791fmr7553364ejf.0.1706542783559;
-        Mon, 29 Jan 2024 07:39:43 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id wb1-20020a170907d50100b00a3549e9cc45sm2802574ejc.88.2024.01.29.07.39.41
+        bh=yYsUavmWV+6BfBH3yu3ngTFUF3L9esmHz5FzVfYvcmg=;
+        b=A/C5dVQKgLB9ztkIVLtFtGYCe87E93BenkIbBa/YpAQmxyFsp6EQvrU+SQNJz4q5T9
+         zWIXgkOF+EnnTih3EaiL5wEWiIe3V2pBoO8cGB5UQ3G41utrcTscJphHDrMIIeidZoJU
+         sSVhPFo59wQWoPL/3lL6h2OTGuh28m6w91TPEhshLwRmAG9Wf6nXfdvgsW0LQj4QCz0F
+         UMpcZQXq0K4ouX24G9z5nBdTUvj6iRfuzM6mmd/iH4bPXHdQtkg1z4hup9RaKA8zG1zv
+         8yf+whH6Ksl7FgUwkiIlBV4tMv6g6/65xGHCg/UcGyK5fo6vIUFCBAwz+Zu0AidraaeU
+         Mfdg==
+X-Gm-Message-State: AOJu0Yw4NFE0phfFIB6K040s8XEEA60v5aP88KXVv1FiMf2vm2f+Ki6G
+	qJ7hftdPJ7W9tkycQCZ4V6/ccmokMSnNWlwYY+JNsApdgkkgsEYtrPGe/0WWR10=
+X-Google-Smtp-Source: AGHT+IH+05/t+GD++Fm4xFiAjxPfYadf/7tiraj4U+n+W6gTozYIsXgXGJnWAj6dePSqJIAtmsSeVQ==
+X-Received: by 2002:a2e:740d:0:b0:2d0:417a:80f2 with SMTP id p13-20020a2e740d000000b002d0417a80f2mr2809772ljc.2.1706546000074;
+        Mon, 29 Jan 2024 08:33:20 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id em2-20020a056402364200b0055ec051ab49sm2642169edb.6.2024.01.29.08.33.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 07:39:43 -0800 (PST)
-Message-ID: <e25b28f7-5f32-4b37-b898-294d50adaf8d@linaro.org>
-Date: Mon, 29 Jan 2024 16:39:41 +0100
+        Mon, 29 Jan 2024 08:33:19 -0800 (PST)
+Message-ID: <49d187f5-3c37-4c3b-a2f5-52dd805e84ee@linaro.org>
+Date: Mon, 29 Jan 2024 16:33:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -60,81 +60,58 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] clk: samsung: gs101: don't CLK_IGNORE_UNUSED
- peric1_sysreg clock
+Subject: Re: [PATCH 3/5] arm64: dts: exynos: gs101: use correct clocks for
+ usi8
 Content-Language: en-US
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240127001926.495769-1-andre.draszik@linaro.org>
- <20240127001926.495769-10-andre.draszik@linaro.org>
- <74b63fd9-bf7a-4a88-bfa9-a975a4f12bca@linaro.org>
- <7d42f80acf7c8bd3882f5ac253a761c71de2034c.camel@linaro.org>
- <e845e0fa-846c-4f26-9d8c-79eccae72cc2@linaro.org>
- <7537f9d4c49a5f3891dba4a8f68ee7332f045cc5.camel@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <7537f9d4c49a5f3891dba4a8f68ee7332f045cc5.camel@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com,
+ willmcvicker@google.com, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240127003607.501086-1-andre.draszik@linaro.org>
+ <20240127003607.501086-4-andre.draszik@linaro.org>
+ <CAPLW+4m0137jfMROYE_Lv915U+y0CK7M4dieHULOG90Z8XctQQ@mail.gmail.com>
+ <b801e6b2-dfdf-4776-b90a-83780982b142@linaro.org>
+In-Reply-To: <b801e6b2-dfdf-4776-b90a-83780982b142@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 29/01/2024 16:21, André Draszik wrote:
-> On Mon, 2024-01-29 at 15:08 +0100, Krzysztof Kozlowski wrote:
->> For this case #9 must be squashed with #3. #4 with #9.
+
+
+On 1/27/24 04:00, Tudor Ambarus wrote:
+>>> Wrong pclk clocks have been used in this usi8 instance here. For USI
+>>> and I2C, we need the ipclk and pclk, where pclk is the bus clock.
+>>> Without it, nothing can work.
+>> Empty line is missing here?
+>>
+>>> It is unclear what exactly is using USI8_USI_CLK, but it is not
+>>> required for the IP to be operational at this stage, while pclk is.
+>> From [1] it looks like DIV_CLK_PERIC0_USI8_USI is a common parrent for
+>> these two leaf gate clocks:
+>>   1. GOUT_BLK_PERIC0_UID_RSTNSYNC_CLK_PERIC0_USI8_USI_IPCLKPORT_CLK
+>>   2. GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_IPCLK_7
+>>
+>> So IIUC, you replace clock #1 with clock #2 in this patch? If so, I
+> No, GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_IPCLK_7 is already used by
+> IPCLK, the one that controls the clock frequency.
 > 
-> Will do as you suggest, Krzysztof (I think you meant #4 with #8).
+> So I understand Andre' replaces a child of the USI8 with something else.
+> 
+> I don't think this works. We shall at least test it. I tested my usi8
+> patches with the eeprom that's populated on the battery connector. I'll
+> sync with Andre' offline and redo the tests on Monday.
 
-Yes, indeed, the DTS patches.
+Andre' is right, I messed up the bus clocks for USI. I tested the IPCLK,
+the one that feeds USI clients, but I failed to correctly test the bus
+clock. I retested by removing the clk_ignore_unused bootargs param and
+verified that the patch is correct.
 
-Best regards,
-Krzysztof
-
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
