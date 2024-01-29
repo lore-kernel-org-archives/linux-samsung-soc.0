@@ -1,92 +1,110 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B913156977
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 16:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F449664D2;
+	Mon, 29 Jan 2024 16:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706546373; cv=none; b=rDqx/1RSUCz5W+Kh12173KE6M2RLWesCdVfS0IuDIQjlyvxbAT0w4P37BOr1eof2d6mBrH5jUMDkrLSfRc7JqH3Esp+KDgK62kLI7+Ogomq/9U0iu+f8n0SpD6NfMRKhPAO18Z0clMeWbR9QUO2fgTzPxTLPBy/jtAbrrnOxEks=
+	t=1706546548; cv=none; b=g6c3Wtr3RfXWnAlH0wVIpkT0gwvqzkYhTHeLPrB2Nb4eMxQp7plg2tPuAjaoqvaHlzdHO+QvYGcwFYLheCVPUaL4qiOyohtHtv7uSMnXBH9RNtdEBBU6HI1sQAfzunuj1HAULM9pD6AelqwU/jo3cYdHpY+A8OUDcF+Sf54+9DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706546373; c=relaxed/simple;
-	bh=FHWcQrg6EPFEvmqH0eQBPKt2FvYxr1H8cD66r4DY7e8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jV28YcZLCrsYnb/MXjWT92buJP51t0p51JHwj482PFRm24h1jr7B83iv14ltyY+3ArSlfpU8QEBUVeS6p4MWQNn3RZ91SdoxZ2IZwueNqNEn01mwwYP6ItBy2sydBLA/hblTsNe93oXwSl1ZLBVfgXPogXdISWBCBkAYBxouhHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F1K5H5Ua; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706546548; c=relaxed/simple;
+	bh=g3GyVwVm9A2ORsU6HtbjS2gjCOf/orJ2eMhSmwsWz5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uee9VI0jtfJENcl8RtDxp6CwrTdDJnO7EQ3/v2W61XluLD9+N1p/jZWy1IF7DOL0HQe7mb7hLXcvP9fVlY8Wp3xwb3BqyL2RSJQGlgWe/8NjPwNVN0f8YvbVfIIqkOTEbW4CInATbNqIlWoItN0cVpLqKceiIkqybqmsbGTHd6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe2Ru7KI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F1K5H5Ua"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-55ee686b5d5so1940988a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 08:39:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706546370; x=1707151170; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FHWcQrg6EPFEvmqH0eQBPKt2FvYxr1H8cD66r4DY7e8=;
-        b=F1K5H5UapKoSNF5GUgOX+j38iOj2vhhZz10491sXdIKaKohFfnIM5rUDr1QH/XOX0p
-         m+qF5X/ZuqAahZa+cvjnP7/twJVj4jirpv0iaspI8PFszai28fFR0Tek5d5x1mBYyhEq
-         uZuff2MloW6GExb/MAaR+TQR0AZUYCAC0A5LEWPpkv9O2Q+vSFVkJ/XnnmvXywlBmQco
-         o+J9e2Gi9mInp7Rb8ePqYvbvmIY3DoMJ0cBxBvFN+KkxvuvHfwYnkRhjsLX9MdsIfLJo
-         vGhyYl+2OoPe1AeQoxmTTWd/2Zh1t+UfQT2RPWHcKipfwAa/A97nSSL4AOoKmnYcyr/m
-         dOjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706546370; x=1707151170;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FHWcQrg6EPFEvmqH0eQBPKt2FvYxr1H8cD66r4DY7e8=;
-        b=ObKYRMsKLMaQNBA4G8/Anwd43x4NKi9wUUfoG2Zi8jyub64zGVkPi2dX/EJ11PKXNw
-         SxVl/56cCy1UG2l5tDoXcMrtKD5VsJCodIzCfFCn5z3byDFhNjT6ofIG9kReVz36THJs
-         m7IxOV7VBdZsq8Y03QqUgH5QlSrhvlUt3zYu6+qd8kTPdE0viZ2ozEay1wj0DTX1CLVF
-         RfbRy58NEfawxxOyWJeXBm+PyLoDniWn2GGH7+AfVyRiRgB6LnunHxwdJYTwkxR3fMoN
-         DashNggEiqJgP4mX0zsryz6jzIAXQp+ghas8hKuDO66L5K7n4bq8WYTvymzRvVloGwMd
-         7x6g==
-X-Gm-Message-State: AOJu0YyZrtZpJcPThXLD/dYK7coxk/ds0V70AZW0byV9y8MB1PYtJS0S
-	ZnSlYC3USmyWwfiqBc5L41X1nVr/79LPrx+kSXwU10KUdouv91jNPP2+I8V/AWE=
-X-Google-Smtp-Source: AGHT+IHveaykAe2Gia9VkRGdUa1J0oM6GKhDfkmqjb4vj/R4B7VKKzRhqxrMC0YQ1JIZV/AEwS61uw==
-X-Received: by 2002:aa7:c311:0:b0:55e:d846:ab4b with SMTP id l17-20020aa7c311000000b0055ed846ab4bmr2834528edq.20.1706546370544;
-        Mon, 29 Jan 2024 08:39:30 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id n17-20020aa7c791000000b0055f283314e1sm328438eds.43.2024.01.29.08.39.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 08:39:29 -0800 (PST)
-Message-ID: <0de3af8f-8f12-4246-81ea-3a3a2982983f@linaro.org>
-Date: Mon, 29 Jan 2024 16:39:28 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe2Ru7KI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5F0C433C7;
+	Mon, 29 Jan 2024 16:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706546547;
+	bh=g3GyVwVm9A2ORsU6HtbjS2gjCOf/orJ2eMhSmwsWz5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xe2Ru7KIOUinWP3vGIcfmWHxSKIc8ljP+Bo10KK2EP+LOP+j/KpzGbkU2rKfYmKTJ
+	 JNjralO0DsqImisealJ0UWoUZxEvmKGHJ4OdyITG2hjbkEGK8Hs4f12Qui2oNAGzIP
+	 XDXF0xF7IvynwXTQet/C3LjS5tgDX1DBaTMox181pNbyudIAfJO8SrSZ8Xk5GnjrdV
+	 yJ4QDN2Tf/IoQfmREozaubTVFcBhKmAy3+OY6oRXKteoNcMBXCV+T1MRihnq+WS/nc
+	 RdHiNSu1acggs1ARXjOaRS00WpqbHWFuhqlUi41Z2nIJPhfYYsXedGCXomewS4ody2
+	 ZX/PnZaJ8P05g==
+Date: Mon, 29 Jan 2024 16:42:22 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, andi.shyti@kernel.org,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	jassi.brar@samsung.com, linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org, peter.griffin@linaro.org,
+	kernel-team@android.com, willmcvicker@google.com
+Subject: Re: [PATCH v3 17/17] spi: s3c64xx: use bitfield access macros
+Message-ID: <56f81e10-86b7-4bd6-938c-e2e9acd6a755@sirena.org.uk>
+References: <20240126171546.1233172-1-tudor.ambarus@linaro.org>
+ <20240126171546.1233172-18-tudor.ambarus@linaro.org>
+ <CAPLW+4nL6D7R88Q_kJjAT-bWTFBk8a=FT0vL+fyRgxaDeSyhNw@mail.gmail.com>
+ <b5ecacaa-8ccc-4588-b3be-4b5f85813909@linaro.org>
+ <CAPLW+4nN--gG9XsOu6a-mo5vcM-GycRrhPQFOtNidfVTM=KonQ@mail.gmail.com>
+ <facbcbf3-7dba-43a1-b4fe-ac77b5bef545@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: exynos: gs101: use correct clocks for
- usi_uart
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- willmcvicker@google.com, semen.protsenko@linaro.org,
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240127003607.501086-1-andre.draszik@linaro.org>
- <20240127003607.501086-5-andre.draszik@linaro.org>
- <6ccf359a-faeb-485b-8047-fa61bb1a3fc8@linaro.org>
-In-Reply-To: <6ccf359a-faeb-485b-8047-fa61bb1a3fc8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DaUgeyoITWwGHbnv"
+Content-Disposition: inline
+In-Reply-To: <facbcbf3-7dba-43a1-b4fe-ac77b5bef545@linaro.org>
+X-Cookie: Jenkinson's Law:
 
 
+--DaUgeyoITWwGHbnv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 1/27/24 04:03, Tudor Ambarus wrote:
-> We'll
-> come back on this matter on Monday.
+On Sat, Jan 27, 2024 at 03:44:24AM +0000, Tudor Ambarus wrote:
+> On 1/27/24 03:38, Sam Protsenko wrote:
 
-I tested (correctly this time) and the patch is good:
+> >>>> -               val |=3D S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD;
+> >>>> -               val |=3D S3C64XX_SPI_MODE_CH_TSZ_HALFWORD;
+> >>>> +               val |=3D FIELD_PREP(S3C64XX_SPI_MODE_BUS_TSZ_MASK,
+> >>>> +                                 S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD)=
+ |
+> >>>> +                      FIELD_PREP(S3C64XX_SPI_MODE_CH_TSZ_MASK,
+> >>>> +                                 S3C64XX_SPI_MODE_CH_TSZ_HALFWORD);
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Tested-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> >>> Two people complained it makes the code harder to read. Yet it's not
+> >>> addressed in v3. Please see my comments for your previous submission
+> >>> explaining what can be done, and also Andi's comment on that matter.
+
+> >> I kept these intentionally. Please read my reply on that matter or the
+> >> cover letter to this patch set.
+
+> > I read it. But still don't like it =F0=9F=99=82 I'm sure it's possible =
+to do
+> > this modification, but at the same time keep the code clean an easy to
+> > read. The code above -- I don't like at all, sorry. It was much better
+> > before this patch, IMHO.
+
+> Yeah, I guess Mark will tip the scale.
+
+All other things being equal I tend to try not to get too involved with
+minor coding style stuff in drivers.  People do seem to like
+FIELD_PREP() but I have a hard time getting *too* excited.
+
+--DaUgeyoITWwGHbnv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmW31W0ACgkQJNaLcl1U
+h9D1sgf+LsNlBetwedyUQFVkLWeD2/eL+pfYu8FM0WZj/O6r4MV2XRHnCBXfL473
+NLaB0yLgsgtPb86HqHYBS2btNVBJK4PFOcLChFITzvAUc/1VQGEeS7ZCcUF3BNA9
+3wqAL3YScnNgFBDTT4Mr/jis+phwYukz8uC+ThBVRFUMQhe/ujrL6yJJAxFjf1Nd
+gyAVOQvDDL6FmlGVrUg//dAddncv7HXiXDKv0cLqdtqYKMF7MTBRABw+Cc55NryM
+aXw3zjIItX9v4bGy5YB0PcoB0QaOlQaM8UXZ9mxPItbY1AAw6IJzVarKCZUg66HG
+9stVfnJhiRnXanRUk/YMGyVbYKT4Cg==
+=GxVd
+-----END PGP SIGNATURE-----
+
+--DaUgeyoITWwGHbnv--
