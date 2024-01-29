@@ -1,216 +1,206 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC6265BA4
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 14:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3A71487DA
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 14:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706537340; cv=none; b=c4+zzxSyvxkEUnRfFeEBZsuOtcELSjWN0mkyMuXtDLQkqv0v/aKG8YvL0fgXDpbC1htxr0PIJYydiW9VGYVNsBXi/TgHQvrluhVSTSN1kOaEm+bN9+I/nExQevLcax3JyyYRTHxXfBPJAuBlgUMNgq9zzfddAvVouXVfiJIpMyI=
+	t=1706539078; cv=none; b=ev1TSYiuavN8r40IoTPJWa8IUOZejzG9h94zHa3LRCjZAxF4c1c18F6M4RhKmreHSjGfEBBu7u6AsaeVCxijzgbP1KuoQZsZDN0Mqz5HC0szNLaR5efcLRAmz11YHMcMUqYwSri91YX4mICfeGMC70sNOtuaCmxBhXrlc+2G9CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706537340; c=relaxed/simple;
-	bh=HtYjkNfO0ttjXsrkH7dPynQ41tr74rYvKIjBqd2n8JY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rK3aSXbJ9787dtjWeqrfxa6reJoMoSIAIZqoL8XzOhhyuAWvUXBh+kJL9Mm+usygOwvXmlknpOL03WUZaSXRAagU9vsnCKqzGQG4aR+4kKIl7pCaHCBe+A3tn7qtlKKhoOtc7T7CNFC6EDy5pEAenpsgboUbvjZTzB79qMKMohI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=owA51J+8; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1706539078; c=relaxed/simple;
+	bh=SmWaA/jXBIlPgwAcnJn6HDF5NUaZECMDSYWUbzda9r8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=a+zydCwsTBQ4HfV9/vjXianpukHPcAoavr2iFiBXGTDpH5HG7DoxdDDnyLMGYIiAJeY1uUB/9z45sJPsfN/wYrQZLOyYWbX/XSnxKemNqxD3DQGeNL1Rb5TEYlIltPXxBi9stxSgssq8G57U1LDr6nsQ8ELcrccSDOjlPJl4DqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=El8Q78qb; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="owA51J+8"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55eece07a75so1526403a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 06:08:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="El8Q78qb"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40e60e135a7so26356375e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 06:37:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706537336; x=1707142136; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EVgC9ndqR/MuNvywM9xT1vFd5Ob7Ho0ot1L+E3kxXno=;
-        b=owA51J+8tR8TFxLkY9+hx9AB7DUIgBxa9b5iSc3kJraQs9z/+mD68fsPHsq/hHsyBZ
-         qB/7MI52zSnJSJJZh+I540RdubV536vB4oopsJ0RmCUPaPTn1/OMwImTvpu1JMS0YoPk
-         MmmFvskgg9MPG66y8ng0EvsygefegYqO5Sor7fwa1JiMchO99xAYGpqnzZ68/NDi0nGV
-         Nya5hDiQHzDSDJeoo1DLC7J3Y/wYaxZYswXBRuvOlAC5j7cO/zv3Mloi4X+qDgYMKqCi
-         sKv5pyp8ds+nP2ujcXMWtug+XiECMVEHAKm8LF6aV8Et6duhQEtoPoV1zm211WkKA5tj
-         pt3g==
+        d=linaro.org; s=google; t=1706539074; x=1707143874; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SmWaA/jXBIlPgwAcnJn6HDF5NUaZECMDSYWUbzda9r8=;
+        b=El8Q78qbjmyOVCC4xkZZ4quoatMRN7ejL0miRg2KVswoomaRcJu0qW3x6LaeCr0+iT
+         mAIqA9ZOf845bjZ5SeKtzbjGjeyQV0ee3indEK2UH3jVVJewTRI8MrywK9uCtc82bc91
+         B6vJLp1kswzhewyq2YHV6SBj938Ol5B/QQHL+2RQnQUf31OhQCAJfvIjl6m4ylfl7ta7
+         q2PyJeefcHwJaSwXs6wK53vI9U8jZv0mhjXAEK3clOFgmdVHf2Aewx/wWoLfz33mChKI
+         ZwTUsFtLYhki/xJmi/JmgOMKW4IUERXll87J/0+RFsWpzN+kqIJS1FXHJgKRAdppGfmb
+         IyQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706537336; x=1707142136;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EVgC9ndqR/MuNvywM9xT1vFd5Ob7Ho0ot1L+E3kxXno=;
-        b=DtjNSwUOj8EjaiOuhtI/q6x8KzHrjnPdpp8gDAlC3vPzneOWOaxtxg4LLf+ZOXkED1
-         hCXtuD24Cfi1VOMCp1WwFLBljkQefP2PpXqJNYOSjGIE9yY0QxBDiL9tegB+6MRbo/2+
-         F6asZ7bMIU9zDVlsXQE8PSX9U+M6WFu+jKA9hyDezgPJ2mro/n5+FKSs/CgD7BCOvkQQ
-         qRlak3HMyp2RAEH59azJmJzffWTCXSzBlK2phCNvhwsqCj929AIwR4IDJZurvmJIp1T3
-         taRQoChAAzQ47UHVxuwVbaMQDVUJ0XF8HYHYTG384MvzLBp+7vbN/XvuXHnh2wZYSQKE
-         uwQQ==
-X-Gm-Message-State: AOJu0YwSxLunsBAPPbzguLxOuY2I1LMW1X6bLpTWWMobAogVnGmHAtan
-	YmoTkpfbyQpr8xmMrGdeQeFfTtaZ9+rj//ACXiKQMhTWXUWWaaxIr7Njil4ZRis=
-X-Google-Smtp-Source: AGHT+IEfmPLWaM2gz4IcNgfV12bxmfh2h9gb4skOekbcic5q/Q27us3TWRKuRn+sdBiOj3uyGQwyWg==
-X-Received: by 2002:a17:906:a013:b0:a34:96e9:f46c with SMTP id p19-20020a170906a01300b00a3496e9f46cmr4382352ejy.31.1706537335396;
-        Mon, 29 Jan 2024 06:08:55 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id i21-20020a170906a29500b00a35d7b6cb3fsm677384ejz.95.2024.01.29.06.08.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 06:08:54 -0800 (PST)
-Message-ID: <e845e0fa-846c-4f26-9d8c-79eccae72cc2@linaro.org>
-Date: Mon, 29 Jan 2024 15:08:53 +0100
+        d=1e100.net; s=20230601; t=1706539074; x=1707143874;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SmWaA/jXBIlPgwAcnJn6HDF5NUaZECMDSYWUbzda9r8=;
+        b=mSYQLsqrd4lJ9LYLwbcUkSdTCYKOm70RUm3e8GyHldEoqWgozTUWHBjVzUDKJ/aIQ2
+         yNuhSMWdYbinxbgCiLjK/zV2YlKGOChoFA6ytUWWsxD/3qUITL9NVNxHnPC1Y5IOUWTT
+         NOI6QFVqKwiXo+xFDdCgLYySDJ6GPYaLzm9MIc9X+8NHJBdH5V4Nr1tVr/JWDuVqNtEz
+         34Av7heopvTKDVE9CwES3jwGAFv8iY/DlKzuCPvMab9iRSFJgJHRT8WWpkIc3qcXMW3t
+         PT4Ex0dGNwgW0Fn0r6DK3Q8OM0957jVyTF3hkILEG4QlybwMX+/RqRGN6VkWE52ND4wY
+         AzWA==
+X-Gm-Message-State: AOJu0YzF0vdl6ZoPqIvolEeahJRrMCpQOKAfAQxXPPr5ey+LkMSP8+ZD
+	mWs/GZhweo5oAxbGFDM5EI9bbsx1srb7ONYLNyfS9GI0WT7qZpAPmqLZ51aCvZc=
+X-Google-Smtp-Source: AGHT+IFlhYu+Wi9LgAtOmfbOEKRnmv6zUQNGWbIWu5r4mGku1fc+uQFrXI3/gxZ2Vg9uB2zaQSX1sA==
+X-Received: by 2002:a05:600c:20d3:b0:40e:ac8f:e6c with SMTP id y19-20020a05600c20d300b0040eac8f0e6cmr6041047wmm.30.1706539074163;
+        Mon, 29 Jan 2024 06:37:54 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id cl10-20020a5d5f0a000000b0033aeb20f5b8sm3906577wrb.13.2024.01.29.06.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jan 2024 06:37:53 -0800 (PST)
+Message-ID: <d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org>
+Subject: Re: [PATCH 5/5] clk: samsung: gs101: don't mark non-essential
+ clocks as critical
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: peter.griffin@linaro.org, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@android.com,
+ tudor.ambarus@linaro.org,  willmcvicker@google.com,
+ alim.akhtar@samsung.com, s.nawrocki@samsung.com,  tomasz.figa@gmail.com,
+ cw00.choi@samsung.com, mturquette@baylibre.com,  sboyd@kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Mon, 29 Jan 2024 14:37:52 +0000
+In-Reply-To: <CAPLW+4mL1gb_R8PhKaMhwOUTa0GDqat_9W=348ScYj+hBarQJg@mail.gmail.com>
+References: <20240127003607.501086-1-andre.draszik@linaro.org>
+	 <20240127003607.501086-6-andre.draszik@linaro.org>
+	 <CAPLW+4mL1gb_R8PhKaMhwOUTa0GDqat_9W=348ScYj+hBarQJg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.1-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] clk: samsung: gs101: don't CLK_IGNORE_UNUSED
- peric1_sysreg clock
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
- tomasz.figa@gmail.com, cw00.choi@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240127001926.495769-1-andre.draszik@linaro.org>
- <20240127001926.495769-10-andre.draszik@linaro.org>
- <74b63fd9-bf7a-4a88-bfa9-a975a4f12bca@linaro.org>
- <7d42f80acf7c8bd3882f5ac253a761c71de2034c.camel@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <7d42f80acf7c8bd3882f5ac253a761c71de2034c.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 29/01/2024 14:47, André Draszik wrote:
-> Hi Krzysztof,
-> 
-> On Mon, 2024-01-29 at 12:03 +0100, Krzysztof Kozlowski wrote:
->> On 27/01/2024 01:19, André Draszik wrote:
->>> Now that we have hooked it up in the DTS, we can drop the
->>
->> Your driver patch cannot depend on DTS. Not for a new platform. I am
->> repeating this all the time last days...
->>
->>> CLK_IGNORE_UNUSED from here.
->>>
->>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
->>> ---
->>>  drivers/clk/samsung/clk-gs101.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
->>> index 7f6c3b52d9ff..d55ed64d0e29 100644
->>> --- a/drivers/clk/samsung/clk-gs101.c
->>> +++ b/drivers/clk/samsung/clk-gs101.c
->>> @@ -3393,7 +3393,7 @@ static const struct samsung_gate_clock peric1_gate_clks[] __initconst = {
->>>  	GATE(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK,
->>>  	     "gout_peric1_sysreg_peric1_pclk", "mout_peric1_bus_user",
->>>  	     CLK_CON_GAT_GOUT_BLK_PERIC1_UID_SYSREG_PERIC1_IPCLKPORT_PCLK,
->>> -	     21, CLK_IGNORE_UNUSED, 0),
->>
->> I don't understand. You just added this clock in this patchset. This
->> means that your patch #3 is incorrect.
-> 
-> In patch #3 I'm hooking up all the clocks to Linux. If I don't CLK_IGNORE_UNUSED
-> for the 'sysreg' pclk in patch #3, then it'll hang on loading drivers that
-> require sysreg access (because Linux disabled the clock).
+Hi Sam,
 
-Then add clk_ignore_unused to cmdline. That's anyway recommended for
-development platforms without full clock and pd description
-(pd_ignore_unused). Not mentioning that we might default to
-clk_ignore_unused at some point soon.
+On Fri, 2024-01-26 at 21:30 -0600, Sam Protsenko wrote:
+> On Fri, Jan 26, 2024 at 6:37=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik=
+@linaro.org> wrote:
+>=20
+> >=20
+> > Note that this commit has the side-effect of causing earlycon to stop
+> > to work sometime into the boot for two reasons:
+> > =C2=A0=C2=A0=C2=A0 * peric0_top1_ipclk_0 requires its parent gout_cmu_p=
+eric0_ip to be
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 running, but because earlycon doesn't de=
+al with clocks that
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 parent will be disabled when none of the=
+ other drivers that
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 actually deal with clocks correctly requ=
+ire it to be running and
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the real serial driver (which does deal =
+with clocks) hasn't taken
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 over yet
+>=20
+> That's weird. Doesn't your bootloader setup serial clocks properly?
+> AFAIU, earlycon should rely on everything already configured in
+> bootloader.
 
-> 
-> I can not change patch #8 to come between 2 and 3 either, because at that stage
-> neither the clock nor the DT node reference &cmu_peric1 actually exist, and the
-> clock and can't be claimed by sysreg.
+I tried to explain that above, but let me try again...
 
-At the point of me applying this patch, there will be no DTS node
-either. This ordering fixes nothing.
+The console UART, and I2C bus 8 are on the same cmu_peric0 controller, and
+that cmu_peric0 has two clocks coming from cmu_top, ip and bus. For I2C8 & =
+UART
+to work, both of these clocks from cmu_top need to to be on as they are the
+parent of the i2c8-(ip|pclk) and uart-(ip|pclk) each.
 
-> 
-> Since we can not mix DT and driver changes in the same commit, I can not merge
-> patches #3 and #4 and #8 either.
-> 
-> I had to do it this way so that the platform always boots for every commit to keep
-> things bisectable.
+The bootloader leaves those clocks running, yes. So earlycon works (for a
+while).
 
-But it is not bisectable - you did not fix anything. You can try by
-yourself:
-# git checkout drivers
-# git am patch #1, #2, #3 and #9
-# git checkout dt
-# git am patch #4, #5, #6, #7, #8
+At some point into the boot, one of two things happens:
+1) Linux will load the i2c driver. That driver does clock handling
+(correctly), it will initialise and then it has nothing to do, therefore it
+disables cmu_peric0's i2c8 ip and pclk clocks. Because at that stage nothin=
+g
+appears to be using the cmu_peric0's ip clock (the real serial driver hasn'=
+t
+initialised yet), Linux decides to also disable the parent ip clock coming
+from cmu_top.
 
-and now try to bisect it. You will have the same problems you try to
-avoid. So what is solved by this ordering? Nothing.
+At this stage, the earlycon driver stops working, as the parent ip clock of
+the uart ip clock is not running any more. No serial output can be observed
+from this stage onwards. I think what is probably happening is that the
+console uart FIFO doesn't get emptied anymore, and earlycon will simply wai=
+t
+forever for space to become available in the FIFO (but I didn't debug this)=
+.
+
+Anyway, the boot doesn't progress, the system appears to hang. In any case =
+it's
+not usable as we have no other means of using it at this stage (network /
+usb / display etc.).
+
+2) Alternatively, the UART driver will load at this stage. Again, it will
+tweak the clocks and after probe it will leave its clocks disabled. The
+serial console driver hasn't taken over at this stage and earlycon is still
+active. Again, the system will hang, because IP and PCLK have been disabled
+by the UART driver. Once the serial console is enabled, clocks are being
+enabled again, but because earlycon is still waiting for progress, the
+boot doesn't progress past disabling ip and pclk. It never gets to enabling
+the serial console (re-enabling the clocks).
+
+So in both cases we get some output from earlycon, but the system hangs onc=
+e
+the first consumer driver of an IP attached to cmu_peric0 has completed
+probing.
 
 
-> 
-> Alternatively, I could merge patches #4 and #8 (but that seems wrong to me), or
-> drop patches #7, #8 and #9 from this series and apply it later in the -rc phase?
 
-Probably the mistake was done in the way how you upstream things: adding
-sysreg syscon without its clocks.
+> > =C2=A0=C2=A0=C2=A0 * hand-over between earlycon and serial driver appea=
+rs to be
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fragile and clocks get enabled and disab=
+led a few times, which
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 also causes register access to hang whil=
+e earlycon is still
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 active
+> > Nonetheless we shouldn't keep these clocks running unconditionally just
+> > for earlycon. Clocks should be disabled where possible. If earlycon is
+> > required in the future, e.g. for debug, this commit can simply be
+> > reverted (locally!).
+>=20
+> That sounds... not ideal. The ability to enable earlycon just by
+> adding some string to bootargs can be very useful for developers.
+> Maybe just make those clocks CLK_IGNORE_UNUSED, if that keeps earlycon
+> functional? With corresponding comments of course.
 
-Additionally:
-1. Disabling unused clocks is current OS policy, so why the policy
-should affect DTS and driver ordering?
-2. This is platform did not receive a release kernel, so glitches are okay.
+CLK_IGNORE_UNUSED doesn't help in this case, the i2c and uart drivers will =
+load
+and probe before earlycon gets disabled and as part of their probing disabl=
+e
+the cmu_top ip clock going to cmu_peric0
 
-For this case #9 must be squashed with #3. #4 with #9.
+If earlycon is not enabled in kernel command line, everything works fine, t=
+he
+kernel buffers its messages and once the real serial console driver starts,
+all messages since boot are being printed.
 
-> 
-> 
-> Is there a better way that you have in mind that we're missing, that keeps things
-> atomic and bootable/bisectable? 
+Other than keeping it as CLK_IS_CRITICAL, there is no way that I can see to
+way to make the hand-over from earlycon to the real serial driver work in
+all cases.
+
+They are not critical clocks for the system, though, so it's wrong to alway=
+s
+keep them running unconditionally.
+
+We are past a stage where earlycon is generally required.
+
+If it's required for some local development, people can revert this patch l=
+ocally.
 
 
-Best regards,
-Krzysztof
+BTW, downstream doesn't suffer from this problem because downstream uses AC=
+G
+throughout and clocks are enabled automatically in hardware as required.
+
+
+Cheers,
+Andre'
 
