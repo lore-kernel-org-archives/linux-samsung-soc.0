@@ -1,66 +1,66 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4BB54FB0
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 09:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBD6027B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 09:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706520016; cv=none; b=BCwOMjSOkHGcNQpbglQRDIU6bQI0dgp6lRQ8dpYzNQ4NiWzOl0Xxdlu8RahK1fNc+27bni/qbsiyZEgv/pa1YX4K1JcrI0+qq4RbgJx0o/lKJr9srht2nnwzLEA/b5mDhgOtmK2NgFbjDGs3e6vn5LXB4k1ce7ArqoO+MCwIT2M=
+	t=1706520503; cv=none; b=JAGzyk3m9+7zNiUopCn9/150J+wdicRDkEejQW9Sb/RimPDmVnKP5zZkmPxVs9PhbKrHEMTXh+5+TZyyiNxoTG0hyQkP1XVqdFxj0B4fqw0XJaP7KiMls+3WfTSqp6DfQvOOJU3MTueoeEk/0l4dk/mVMy32Ga5cEtZRS7GW9co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706520016; c=relaxed/simple;
-	bh=eT5M4PGPIMeg2fCeb3Yf5untV7QcKJ3QzLrXE3MWYzY=;
+	s=arc-20240116; t=1706520503; c=relaxed/simple;
+	bh=fqIQss9YrlmVdaiZwyyrl0wDsFJ+mHTn4IZB8IBL3MA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PVLw4AcJJVOvLFckm56majzNOh3r7Yw8QQrZJmYcIPHjZuUNXs9D4tzYpcAvKW+8xwP0v5qN3TS0A9t1zPMU0dShxerdlwZ0lpPzwNc1iWbL6cKhCv4vCT5XkqBBmMT0fs2NGULNzJehdK8Z/Vzmy50IKCy5ujS5ncVUXTd4Ijc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LPW1/iaD; arc=none smtp.client-ip=209.85.219.41
+	 To:Cc:Content-Type; b=JXKaRKC7cuM4LCEb5H+c7rBFgEJnvY6jAHx97C0FiA6gyYRjqA1wnFJGgL+lm73j97fPVYotkxl3RnUhmIVz7tMRaqZr/yBTEovbtaTxwb29KIqZEcLeRnk3EKWDOdCxR8poFau9xrgXHEtiUnn+RUJnoqGt9B6KpkqGabmhnGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UAqxeE3C; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LPW1/iaD"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-68c495ba558so7978426d6.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 01:20:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UAqxeE3C"
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-783f0994eeeso84320985a.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jan 2024 01:28:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706520013; x=1707124813; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1706520500; x=1707125300; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V5TI2xWX4WSWXGwvH1ONQ6nW9xXje+suf2TwS23YzRU=;
-        b=LPW1/iaDTzn1rIddldewPpgEmBxbGqcC/6Qo5JfMGo8JX6T8aDQnj1rIvlMOGxfHsi
-         a9nXI+8U+cYpvZm41EpAEIaH9iny0opaw/ufXJ34UJaLCCGy14GBDeq6mO0lDEq7Im+z
-         QA0F2qmVuATze4E73sV1j1EoDHOT5U3l1X2x2ya8QkhigTAV0LB9xfXDyBkEdLAH4nVf
-         6FP57GlANmc78co/sLwWt1wSp1aeMsHTR5AA+9ct7bhqIyHoe1wkQLMcw1puBiBpUAnP
-         tj2a48rM0E343lkn6Mm3rFKtqzEDUr4A6jeGacjMq0wHi0ZxnDuRG4BFjc6S5rQG8Keb
-         SCmg==
+        bh=4q8db41yY87l7MxKvbYpo3+xjJtcNE9e9gSZAUqcvLs=;
+        b=UAqxeE3C1ZxyM2d2BcPUz99YFgY/WnpE58yTZkT2naebUlL7SubL8kkSiabXMf0TCL
+         2jBd2kmLxdmLs5nJVLW6okr+qCnMXLfqLaUmuLkjD0WIJc7PvvPQi2LItnGUqM2Cid4M
+         JEmOAq9lMYPdVa1C48P3/ZLqm9EKNuQJr5bQlNJR7JZhNAfRb6aeALC0SaFap2AFPCKx
+         6YL50Fk2DykjfGJ/2iy1EJM63y8s7H9G384FOvboiqe5DFOCChe6g8rEcsbGYrMDPQCy
+         EJqH7aHMuAPxIhsehOi9HyZBwkPd+aUcOZ64yknNFWtt3lvM6HTPbqOSUcaBTDbSnfBR
+         VIIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706520013; x=1707124813;
+        d=1e100.net; s=20230601; t=1706520500; x=1707125300;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V5TI2xWX4WSWXGwvH1ONQ6nW9xXje+suf2TwS23YzRU=;
-        b=cHjb3HZ24yU2stgJeAMU28Oh9b6YZHO5z1uxn8Z5EyWHky2/KgCoDJzuXhJOinFugm
-         bdna+Ad4fjOccYXw1HQV62+ckosKoNp+sXoMbapvLA3ygDRhFi9ivy3puvPDJFCk6WQu
-         fHIm/n76y0o4lvX2z53KxNNZEjqbu3zCuFilX5QCDDeLGJq4QQcaBtTK7LIFyhFnnIx6
-         gcbN+WD3ayOwKzx61Fnr4pxtNVlsnpyEA0Dc3WPX9M/Z5naiu2HSmKviA84ePWqjF9mE
-         udSQiShDwyoZvgrry36qDXyTadfCWpeTEZmsQk5/xkObi5hoUGTGP75abALyoiLtVXab
-         2sQA==
-X-Gm-Message-State: AOJu0YxazlM5Yu+bmrlrTeUvXbxQ+NFPRjIiIga/h9LhCb8gm4uPdgO3
-	vSLuGvNsrmFdeOpUqF8RIkcdjurU+YvdOE3Ot3UO5MK/UamvQDOJHBeZhBUR9Nod2vtnCxDKWHE
-	RVgS3eoQ2DRVXTWc/pPB680xs9Kr2Zq1LM/NO2g==
-X-Google-Smtp-Source: AGHT+IFgpJ8Pszt1MimvP0F6oYcpgps7CfEr4UpP5ROpsZKjeuq5nM0vRM/7HXvHUbqgAhUsYY/FjFO0TS7neZFlXRg=
-X-Received: by 2002:a05:6214:528d:b0:68c:4f44:159d with SMTP id
- kj13-20020a056214528d00b0068c4f44159dmr1497734qvb.30.1706520012762; Mon, 29
- Jan 2024 01:20:12 -0800 (PST)
+        bh=4q8db41yY87l7MxKvbYpo3+xjJtcNE9e9gSZAUqcvLs=;
+        b=I6PdKqphCKHbfgc669U8sgzKi0O7+fl7lFQ26SU5kWISQAvMS9xaGzQ72U5UMvT5Na
+         HYhgAtMx+tTqF4IAm6YGEHoiY5AN6ntFaUKeBs8e0SEc1bz3epZGoeuyiFVOsAaRHNos
+         cv3OO0VJYARytgghtJdwlNkG88w1v6mQ1Kzqr/2aRn579FeTzXnT40cfX9imjM3OiRM1
+         HlOJh5BtcEqRgMv+w1zmAOms7x22lKic0sxnn4Ib5rW5/3v4zs4yld9v9jwqhQDBV+6C
+         JznfJal+nXiDSx3nvgAaUVgfkN/s9Ly7G7ck3mvpbMP+LfVyXkdl1pjcg4YpiUL14xYA
+         SYbg==
+X-Gm-Message-State: AOJu0Yz3HpgZZvDjEGP8azFcFtNVahSmt94rzxN0x7ZtAE1JQOZmjaQu
+	NSkQT6tuhxzhkZMEc62HaOR0wdsUFQVQXilN4sJEo+Fon9YZsJqhHFBZfNO9LI3YeJ08JwhH4x1
+	EQrLZNGp4obXQUr2AUeIHvCRrBdwvT1OQYnpQ9g==
+X-Google-Smtp-Source: AGHT+IGYFxZ7DGE0AfRt4ew5dYvWGTQXLN6eczBCd27vBSvEmlBwqJjbpYwEvVAfNowUSbRibLTBmiPYXnGcFr6dY2E=
+X-Received: by 2002:a05:6214:2a87:b0:68c:5337:b717 with SMTP id
+ jr7-20020a0562142a8700b0068c5337b717mr677358qvb.18.1706520500069; Mon, 29 Jan
+ 2024 01:28:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240127001926.495769-1-andre.draszik@linaro.org> <20240127001926.495769-5-andre.draszik@linaro.org>
-In-Reply-To: <20240127001926.495769-5-andre.draszik@linaro.org>
+References: <20240127001926.495769-1-andre.draszik@linaro.org> <20240127001926.495769-7-andre.draszik@linaro.org>
+In-Reply-To: <20240127001926.495769-7-andre.draszik@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 29 Jan 2024 09:20:01 +0000
-Message-ID: <CADrjBPrB1asSBxLe9wEfjbaNcEqz_3sXEu_3zfv=fTSk65o2sg@mail.gmail.com>
-Subject: Re: [PATCH 4/9] arm64: dts: exynos: gs101: enable cmu-peric1 clock controller
+Date: Mon, 29 Jan 2024 09:28:07 +0000
+Message-ID: <CADrjBPoTPzWo10VvFX1m83q72xqzR_y83TZ4JSFgK+YtyaRsPA@mail.gmail.com>
+Subject: Re: [PATCH 6/9] arm64: dts: exynos: gs101: enable i2c bus 12 on gs101-oriole
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, 
 	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
@@ -76,40 +76,48 @@ Content-Transfer-Encoding: quoted-printable
 On Sat, 27 Jan 2024 at 00:19, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
  wrote:
 >
-> Enable the cmu-peric1 clock controller. It feeds additional USI, I3C
-> and PWM interfaces / busses.
+> This bus has various USB-related devices attached to it.
 >
 > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
 
+As Sam said, you could be a bit more verbose on what those USB devices
+are on the bus as they aren't enabled in this series. But apart from
+that
+
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/bo=
-ot/dts/exynos/google/gs101.dtsi
-> index aaac04df5e65..5088c81fd6aa 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -429,6 +429,16 @@ serial_0: serial@10a00000 {
->                         };
->                 };
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/ar=
+m64/boot/dts/exynos/google/gs101-oriole.dts
+> index cb4d17339b6b..c8f6b955cd4e 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> @@ -72,6 +72,10 @@ eeprom: eeprom@50 {
+>         };
+>  };
 >
-> +               cmu_peric1: clock-controller@10c00000 {
-> +                       compatible =3D "google,gs101-cmu-peric1";
-> +                       reg =3D <0x10c00000 0x4000>;
-> +                       #clock-cells =3D <1>;
-> +                       clocks =3D <&ext_24_5m>,
-> +                                <&cmu_top CLK_DOUT_CMU_PERIC1_BUS>,
-> +                                <&cmu_top CLK_DOUT_CMU_PERIC1_IP>;
-> +                       clock-names =3D "oscclk", "bus", "ip";
-> +               };
+> +&hsi2c_12 {
+> +       status =3D "okay";
+> +};
 > +
->                 sysreg_peric1: syscon@10c20000 {
->                         compatible =3D "google,gs101-peric1-sysreg", "sys=
-con";
->                         reg =3D <0x10c20000 0x10000>;
+>  &pinctrl_far_alive {
+>         key_voldown: key-voldown-pins {
+>                 samsung,pins =3D "gpa7-3";
+> @@ -113,6 +117,11 @@ &usi8 {
+>         status =3D "okay";
+>  };
+>
+> +&usi12 {
+> +       samsung,mode =3D <USI_V2_I2C>;
+> +       status =3D "okay";
+> +};
+> +
+>  &watchdog_cl0 {
+>         timeout-sec =3D <30>;
+>         status =3D "okay";
 > --
 > 2.43.0.429.g432eaa2c6b-goog
 >
