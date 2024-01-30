@@ -1,36 +1,36 @@
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BBF69D35
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 20:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A4D6E2AA
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 20:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706647272; cv=none; b=kthH1z81dXBqrBqHNJ7CFe1bjwLCxnzojVbpEELjGITQjjC5sYo5TSEgJRQbBdiOQ5PYnbmryxMPANOzsVBMLUoIRnVIXkEl/ccaTIUMQ+N49R7p1vfcB1xQKkezLE4JtBIngJeWeUYWvFTMkUesctuLfP6DfkLt1QE4zo8pY1g=
+	t=1706647273; cv=none; b=GZsIvvzPFXMTuLmyAKuO1fvBsq1aX2qjCOqmo8+PFdyYWl8h2hTw3+O6da/3Ec/9Ndn48njNNARORFmphuvlvJ4mJUmOASnxEaFALnzafyBvgSjIkzsKagOINXKxeXQHlXVp+fn38HS/P0PxOaJr6cd7dzva0ihaBnHLTVoJSsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706647272; c=relaxed/simple;
-	bh=DekZO0aq9lhra3tRrH0719xH/gp0/UNZvHm7ULmUiGI=;
+	s=arc-20240116; t=1706647273; c=relaxed/simple;
+	bh=+RHfIOYCokHUptccyiBZRvuJnCzYabw0CvXOcn+k8r8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qI2v8Hj3WPmzywNzVdR8KszwkR86EexIQGa+J6iVMAZOMgdDMXa7O4rAspy9IdvaXt/Nj+Q33Q5LMyHyRWJHpmkeZ6BGHH23oVfxqMWG8yeWGheV5sqQ9yMOEpSxiL+Hkyy4xB3QiZQoCo9Mk/WgCSyGwj8H3wD9HQtT52ikH+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=Fk+cn2h5; arc=none smtp.client-ip=91.218.175.182
+	 In-Reply-To:To:Cc; b=N2QVBwlu6ULB5XaIGa59PYbC/CchJtVLDEI717/0vthbAJvvijFga3KSQjGcLFDnCI7OkVWkfZOMAgUiy+Xm5cnld7bHej/CJhstaQ3m+4tfjhDou+nEpcOBY7MB/dr4IfPHdE7k3gRUBk3B8dRVjd22v6LPXyz79PQGHYGGtG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=Aq0UQlvz; arc=none smtp.client-ip=91.218.175.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="Fk+cn2h5"
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="Aq0UQlvz"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1706647268;
+	t=1706647270;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DG7tf3ZanPe0jMuzI6Bk8fkwCRX7z/OicBYBzmzPw1s=;
-	b=Fk+cn2h5CmKdF/qu38riedRwlSYujz/5llH+xmJxnsEDcgmNS47b9PEqdDCZhtcpj6004P
-	GE0Akg7c018Kgt4yQZv//EdMQadw4R/QhV0KbO7EkVNT8k+popqri+266nWCbu9IgEn/SI
-	9a5LvrhejqreyjpBv6sjSWMekoWbxLQ=
+	bh=y9OzBq6gWd0BJFvSgtjPyJwiO3ruOjewsWTRko4LLnY=;
+	b=Aq0UQlvzNFD11kaNf3XHOfH/iW849kODjaOMj1v2yq3LLab8Mq3U+lkWK1AWAThc5HTzkc
+	9G4kGMgpB6IquqkxcO5bYfwFFxxhE0M2Wnk2EG3NtoWVDIwSBsBZWgvuyl7CVgRN2/QGcM
+	hLti9PLufMHq6Tf56sDcpP9MHv/4T94=
 From: Henrik Grimler <henrik@grimler.se>
-Date: Tue, 30 Jan 2024 21:40:39 +0100
-Subject: [PATCH 1/3] ARM: dts: samsung: exynos5420-galaxy-tab-common: sort
- node properties
+Date: Tue, 30 Jan 2024 21:40:41 +0100
+Subject: [PATCH 3/3] ARM: dts: samsung: exynos5420-galaxy-tab-common:
+ decrease available memory
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -39,7 +39,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240130-galaxy-tab-s-cleanup-v1-1-d4e17857241d@grimler.se>
+Message-Id: <20240130-galaxy-tab-s-cleanup-v1-3-d4e17857241d@grimler.se>
 References: <20240130-galaxy-tab-s-cleanup-v1-0-d4e17857241d@grimler.se>
 In-Reply-To: <20240130-galaxy-tab-s-cleanup-v1-0-d4e17857241d@grimler.se>
 To: Rob Herring <robh+dt@kernel.org>, 
@@ -49,121 +49,49 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  ~postmarketos/upstreaming@lists.sr.ht
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2728; i=henrik@grimler.se;
- h=from:subject:message-id; bh=DekZO0aq9lhra3tRrH0719xH/gp0/UNZvHm7ULmUiGI=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBluV7adNmpL0JxNeL0p04b/DnyOK6UU6hBN48Sd
- osGQ9v6Oc2JATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCZble2gAKCRCwB25JC3Fh
- a6SbB/9GyZCxy38ia8XCTbbUIC7Zhq+QX+yYPzOynkJjx4ujULXY4n7Qud22b4uGUzKUD6N7Htc
- 2oKtBJzqSPk7Gt7B7jYGAfZBpjqb5d9cjIWPkLPmfwzQNgF7aJCILH7au65kBlPrc2d+AvlnUex
- q4qh5xGwRgjb+mN6o7O/FSkVtVQEZhr6BZ1P7mBcSrdVVe/3bb3tiw8xmwfNu1IFi9RDFhYFfTn
- gg3Rg3NQU+Dz4OYU10J4i0Z1ZQxNmzMdr1B42G4cP8rYVUMdEB3e0zkxLnZNbdWgiM+FiqgDRWk
- Tw9bS3doVlsi3dOHWPhsfBqNxHDyaWCBf4G8PaAxbNZn+t8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1202; i=henrik@grimler.se;
+ h=from:subject:message-id; bh=+RHfIOYCokHUptccyiBZRvuJnCzYabw0CvXOcn+k8r8=;
+ b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBluV7fF6B01N24dpZiM46HwWy7QO86eVRtTi+9c
+ Y6KjRqW2yiJATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCZble3wAKCRCwB25JC3Fh
+ a8mwCADBSJIa2AFfO1WD6mWg8Brz+Yftzi3+6+Nwh7oTvciF7eaqquXG5yqubm18N8J9CRtxBuD
+ UtYFZKUfDnE68P1FWNiGywdvNJ6bV6aVPaDeM4wsD4eG7zF4Wl5QCxzjoM1WYs9hkOe+2HTbEpN
+ aTto0cpgaLNi1yrFuJbVCdwFbVFdMbmm5dvP61/eGCYtnhKCDb5FmzE+SnoszjaIgxOStr2a0kp
+ Tu5kSLVs/Bb8J80waAvzNzZc0JK/Zeh9Q15dwrlk2phBIBz+6Sly1t+R8np+h+5FY2Mdcrv+Nyq
+ 6nM58l94DK86gXpjXdA1lkK++x4dq/1WskIxNu1cQMYcvdTh
 X-Developer-Key: i=henrik@grimler.se; a=openpgp;
  fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
 X-Migadu-Flow: FLOW_OUT
 
-Sort all node properties according to dts coding style guidelines, to
-make dtsi easier to follow.
+The last 6 MiB are used by trustzone firmware, and cannot be used by
+Linux.  Currently we are saved by that the proprietary bootloader
+(sboot) passes available memory to kernel through ATAG_MEM.  Change
+memory range in any case so that we do not have to rely on ATAG_MEM.
 
 Signed-off-by: Henrik Grimler <henrik@grimler.se>
+
 ---
- .../dts/samsung/exynos5420-galaxy-tab-common.dtsi  | 23 +++++++++++-----------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+
+Similar fix was applied for the exynos5422 odroids in commit
+6591a02e17e6 ("ARM: dts: reduce total RAM by 22 MiB for
+exynos5422-odroidxu3"):
+https://lore.kernel.org/all/1421842972-25807-1-git-send-email-m.szyprowski@samsung.com/
+---
+ arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi b/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi
-index f525b2f5e4e0..0c1aeafc025b 100644
+index d569fac29b18..ac929e282c84 100644
 --- a/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi
 +++ b/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi
-@@ -103,8 +103,8 @@ &cpu4 {
- };
+@@ -40,7 +40,7 @@ chosen {
  
- &gpu {
--	status = "okay";
- 	mali-supply = <&buck4_reg>;
-+	status = "okay";
- };
+ 	memory@20000000 {
+ 		device_type = "memory";
+-		reg = <0x20000000 0xc0000000>;
++		reg = <0x20000000 0xbfa00000>;
+ 	};
  
- &hsi2c_7 {
-@@ -113,11 +113,10 @@ &hsi2c_7 {
- 	pmic@66 {
- 		compatible = "samsung,s2mps11-pmic";
- 		reg = <0x66>;
--
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
--		pinctrl-names = "default";
- 		pinctrl-0 = <&s2mps11_irq>;
-+		pinctrl-names = "default";
- 
- 		s2mps11_osc: clocks {
- 			compatible = "samsung,s2mps11-clk";
-@@ -605,7 +604,6 @@ &mixer {
- 
- /* Internal storage */
- &mmc_0 {
--	status = "okay";
- 	bus-width = <8>;
- 	cap-mmc-highspeed;
- 	card-detect-delay = <200>;
-@@ -614,27 +612,28 @@ &mmc_0 {
- 	non-removable;
- 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
- 	pinctrl-names = "default";
-+	vqmmc-supply = <&ldo3_reg>;
- 	samsung,dw-mshc-ciu-div = <3>;
- 	samsung,dw-mshc-ddr-timing = <0 2>;
- 	samsung,dw-mshc-sdr-timing = <0 4>;
--	vqmmc-supply = <&ldo3_reg>;
-+	status = "okay";
- };
- 
- /* External sdcard */
- &mmc_2 {
--	status = "okay";
- 	bus-width = <4>;
- 	cap-sd-highspeed;
- 	card-detect-delay = <200>;
- 	cd-gpios = <&gpx2 4 GPIO_ACTIVE_LOW>;
- 	pinctrl-0 = <&sd2_clk &sd2_cmd &mmc2_cd &sd2_bus1 &sd2_bus4>;
- 	pinctrl-names = "default";
--	samsung,dw-mshc-ciu-div = <3>;
--	samsung,dw-mshc-ddr-timing = <0 2>;
--	samsung,dw-mshc-sdr-timing = <0 4>;
- 	sd-uhs-sdr50;
- 	vmmc-supply = <&ldo19_reg>;
- 	vqmmc-supply = <&ldo13_reg>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	status = "okay";
- };
- 
- &pinctrl_0 {
-@@ -652,9 +651,9 @@ s2mps11_irq: s2mps11-irq-pins {
- };
- 
- &rtc {
--	status = "okay";
- 	clocks = <&clock CLK_RTC>, <&s2mps11_osc S2MPS11_CLK_AP>;
- 	clock-names = "rtc", "rtc_src";
-+	status = "okay";
- };
- 
- &tmu_cpu0 {
-@@ -686,11 +685,11 @@ &usbdrd_dwc3_1 {
- };
- 
- &usbdrd3_0 {
--	vdd33-supply = <&ldo9_reg>;
- 	vdd10-supply = <&ldo11_reg>;
-+	vdd33-supply = <&ldo9_reg>;
- };
- 
- &usbdrd3_1 {
--	vdd33-supply = <&ldo9_reg>;
- 	vdd10-supply = <&ldo11_reg>;
-+	vdd33-supply = <&ldo9_reg>;
- };
+ 	firmware@2073000 {
 
 -- 
 2.30.2
