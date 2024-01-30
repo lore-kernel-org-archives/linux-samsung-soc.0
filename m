@@ -1,109 +1,129 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE6467E85
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ADB6A35F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 12:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706608504; cv=none; b=LPrAbAYzQRmukI6bvrz+xkr/do1wDbEaT+igf98d19v5LrmLaYl6MbEsEKdcYqACuwC/O+3SLXwndTGYc5524fXVWcRVXTfQ026a73y4IyIGJGB81APXn7mN83WxJXkGm0lob+zdjXZIX0dxPK7a5dFp5eW8n3P7HFcpR2EhcaI=
+	t=1706619588; cv=none; b=ZtlYC51Azyu2vfGlgROS5V5743mOs4cLKxgbYJT2dAyTk678W67oS5USBK8owoYKMNj3ng5ew0Y2DU4QxbJj2bpuFV92zrBP4qP9v1SlYbcANMdL9OQNxzdgKBgZTbK+In29pZ9jIsWG2M3OXZDDoKLlPslJ/G+lNaYe384n0EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706608504; c=relaxed/simple;
-	bh=GfBdeJzGb3Dr+4DHZv3lavSCQwPmP/68TQMZyct44Rk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ofM03fiTacaf0LxOVMRPK1OQPA+ZkFxRe0x9C2TM+ei5X3NgEZQmYUlOD7pZa7KRFTuZGRqYhGipE6PLFr2gAkXFRlW0IwoLkm7+2E6ZO1w6Bhu0tTScJWwXO9dZZszwBhW0founal6s/dgWZE4lIbHNdaasCej1NpEVJKwQk+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K/KGaXWQ; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1706619588; c=relaxed/simple;
+	bh=llKIpxzlNFJiUk8PY5b3Z3fCFrJxXebr98TkLhVix6c=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=sXpLjRTUp9WIEEj6pfZkp+w43fWJF/KINDid40+sXn41epwLu3Q14boP2CI/I3YebCURPdE5Pr27WUEs8JqP6eAcfcHDV0I1TaGXx4vBIVVl3LsOyVBhuMoNlKcEDNCPZoQXjRWXOJwxtgVoIz2Z1GDAQCrncnHzGT1EY7EwfSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fU6IjAxN; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K/KGaXWQ"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-40e76626170so41999595e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 01:55:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706608501; x=1707213301; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jeMbeD/uNn8B0S2W7XkIfdcJDUpQv994E+HPOf4FW6M=;
-        b=K/KGaXWQcJx5zyGhPJGKxmjFVxZLxP7NADo/t2yHW10WubTJakqlfMrJvZiGRzT7kq
-         4nQ1xet+uR3epVqsUj+4XdKqVz6Yil0+3Nc4z2h01Cq71Xc/gotBNveMBTB5tY7rbHeJ
-         EJRl++0Bczn73RmALoVorLenShYS5yhQF8SrjM+fILtwfW8UlIiKo0Fzjf+djviCuHW4
-         MlRuA7sRwkWVsduefU4nViI5/zOFX9wAdXEfKy9KFTRXXrMySZhFstPsB1NM/4VJXIjf
-         1vMooIHKrFiQNWACp15G5pYzwkdh5RXNiRmvcZ5YKji9Vn9wHIi/bo+EuevEEyPye5BI
-         mdXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706608501; x=1707213301;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jeMbeD/uNn8B0S2W7XkIfdcJDUpQv994E+HPOf4FW6M=;
-        b=SfZe0tN2A5ttv9Jq3LX3ElcaFtQCbwD18qPVSnyEL/DDJIrI0YPM4pLg9x9ga6TX7d
-         6X6O9e4uecScWEq1z1OTpwIpXSFjZ5YOOk/vFsdtCRxV9IUpuLLj1BFW7BDUIpCeKVrH
-         84zXhrOR885OTZYV0hUy7PI7zotY3VNMicz1Q14DGewYmkDQOQfubqvQuVJc3ZDeiKJC
-         33EhYY+GWSaz/LFgmOxnhlA4/35A/AlZ6SjkYa+XDor+UAEryj+OlQP05r9OtIfuhi4O
-         l4zYPeyGg0qWhmfFc0JIyZvVRBULmewUqDVfCt8mIP2OQRUUqKk0uCqgtdiVveWuom02
-         sCPw==
-X-Gm-Message-State: AOJu0Yz9kUstHlwKVnjJhtGJVUCoMgxD7fm0GHC7KyEASy3qekl5kn+C
-	TheQEQARlrjxs3+34jUmUzFM/8nLFe/62qlG6Ow7aqZMzSvh4L/bYYBgqIA4Ujo=
-X-Google-Smtp-Source: AGHT+IF92jgiXA3xKHufpbtgSPJbMRgX2vYkkXiWhwHoCA53f8jLGKT698ChHJQx170BU5WnhsFzzg==
-X-Received: by 2002:a05:600c:4f06:b0:40f:afbf:804b with SMTP id l6-20020a05600c4f0600b0040fafbf804bmr75754wmq.22.1706608501360;
-        Tue, 30 Jan 2024 01:55:01 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id bn7-20020a056000060700b0033946c0f9e7sm10388135wrb.17.2024.01.30.01.55.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 01:55:01 -0800 (PST)
-Message-ID: <beadeaae-d740-47b7-9de3-3be7d9fbc586@linaro.org>
-Date: Tue, 30 Jan 2024 10:55:00 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fU6IjAxN"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240130125939epoutp0457e09eb23f387b58a3a1b0c40454f356~vIXcWNwkT1884418844epoutp04Z
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 12:59:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240130125939epoutp0457e09eb23f387b58a3a1b0c40454f356~vIXcWNwkT1884418844epoutp04Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706619579;
+	bh=86uf5cHblxYzJLM1VjZACQcgiuV34NFC+LyTgR1BKi0=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=fU6IjAxNhaNVoL0dcG9yfloQY4KoDhGzATrGw8o7tpb1z25WZ/4wrV8N42AHUiXnc
+	 JKeTEoXbxeeFbGey/QoOljQ1350q/Rq+0M85BW6+lMXjGyjQ7Qtm6b9K6RUHVTX4ap
+	 6htqun4h5XfRQfvSUn+xUqLR8KDqvg9oezbr+XZY=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240130125938epcas5p27117a2b65534244744c3e07e26ecc13f~vIXbvpSQ82295622956epcas5p22;
+	Tue, 30 Jan 2024 12:59:38 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4TPQHD6C8kz4x9Pr; Tue, 30 Jan
+	2024 12:59:36 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5F.0F.10009.8B2F8B56; Tue, 30 Jan 2024 21:59:36 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240130125754epcas5p2edd5cc52dc58add09299d3aa5985a9fd~vIV7QCMa91230812308epcas5p22;
+	Tue, 30 Jan 2024 12:57:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240130125754epsmtrp2e12576e79ff1cc8625f64e1057826356~vIV7PB6Nn0742507425epsmtrp2j;
+	Tue, 30 Jan 2024 12:57:54 +0000 (GMT)
+X-AuditID: b6c32a4a-ff1ff70000002719-cd-65b8f2b8df94
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7A.C1.08755.252F8B56; Tue, 30 Jan 2024 21:57:54 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240130125752epsmtip148d450aa6a46e8e5e6576d0cffcc96bd~vIV4u265V0502605026epsmtip1C;
+	Tue, 30 Jan 2024 12:57:52 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	robh+dt@kernel.org, conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
+	andi@etezian.org, gost.dev@samsung.com, alim.akhtar@samsung.com,
+	pankaj.dubey@samsung.com, aakarsh.jain@samsung.com
+Subject: [PATCH] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
+Date: Tue, 30 Jan 2024 18:27:48 +0530
+Message-Id: <20240130125748.54194-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSf0wTZxjH895dr6dJl1tB966BrdyGC7BCC6U7pkwZxNw2XdjMNsMi0LQn
+	Rfrj1isC2xJ1C+pwot1GIhbZ5NcMWIsVpLCWYUtk6oDMYecIOB0wLSZzoRXRmTnqwfbf9/3m
+	833e93neh0CldlxGlJptrNWsNVL4SuxsIClZ4ZnzsMpvD6joGU+9iL7eeBanmxduIvRvzWGM
+	PukbQeivB0dE9K8DvQj9U/0kRtfeuoHS7qmgiP65rwGnP+/sFtFHRvsR2jk4Kabb3A8Ruqk7
+	IqarfYPiDU8yv7TMoUyzN4Qw7vbPcGYi6MWZMy27mNqudsCE3c8wF++GxflEQdk6A6vVs1Y5
+	a9ZZ9KXmkmzqjS1FuUWZGqVKocqiX6LkZq2JzabyNuUrNpYaF9ug5Du1xvJFK1/L81TaK+us
+	lnIbKzdYeFs2xXJ6I6fmUnmtiS83l6SaWdvLKqUyPXMRLC4zND24g3FOrPJK4Di2G8yiNWAF
+	AUk1POEPgRqwkpCS3wHYNzaOCYc5AHuHxkVRSkrOAzg5altOhB0TuAD5APzEPbSUqEbgFy47
+	UgMIAicVcLjHGA3EknsAnNpvizIoOYrA1umFx1VjSAZO1oXwKI+RifD3+wlRW0Jmw3D4mli4
+	7FnY0TmARrOQtBNwwH8ZjfKQzIMHWt4TmBg4O9S1xMtg+E8fLmgdnGoKLbVphC7vV5ig18OB
+	sQYsWgYlk6CrL02w42HdxVNIVKPkE/Dg39OI4Eugp3FZr4ENE8LrIRkHAx2tQNAMdLr3ioVZ
+	bYNzP5xGDoP4o//f8A0A7eBpluNNJSyfyaWb2Yr/vklnMbnB491Mft0Dblz/K9UPEAL4ASRQ
+	KlZyP6mblUr02qoPWaulyFpuZHk/yFycmB2VrdJZFpfbbCtSqbOUao1Go87K0KiopyS3q4/p
+	pWSJ1saWsSzHWpdzCLFCths5s3aalV/jHp03DU+1N94kMjbnpL0petdRwmzTUBXcg6odzbff
+	eic3VO+bjkvThFzS7R9ELn258+ON6ck5m77vH5ZdyI3RrI5L3Gd3rW3rybo6grs4M/68+urY
+	1jadZ399MGXzhnuODl/iQy6nMrK9K7H7xPyrJ3WBvMKCYGUhP/0j9GXuiVvV8s9HzjvqyPk1
+	PZEX5K1vf1p10HvX6XB7swK36mZnIufyZYrsQ3pFv/qYIbZ23/jxU6sv181qUtbPJAw/9+Kj
+	vfP3XnOoLojwii0mLNx67v3O+DhCrdqx61D5QkbhFU9xwtE/gl002tt+JOWSd6tTVJA7N1VM
+	BpynCyiMN2hVyaiV1/4LXsDzLCQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSnG7Qpx2pBm3v9Sye7pjJavFg3jY2
+	i8U/njNZ3F/8mcVizd5zTBbzj5xjtbh5YCeTxcWZd1ks+l48ZLbY9Pgaq8XlXXPYLHo2bGW1
+	mHF+H5PF2iN32S2WbfrDZLFo6xd2i9a9R9gdBD2uL/nE7LF4z0smj02rOtk87lzbw+axeUm9
+	R9+WVYwenzfJeZz6+pk9gCOKyyYlNSezLLVI3y6BK2PRr/csBWtZKq4eXsjSwPiKuYuRk0NC
+	wETi8+w7bF2MXBxCArsZJZ71bGeCSMhI/G87xg5hC0us/PecHaKomUniTk8fUBEHB5uArsTZ
+	7TkgcRGBVkaJ6ys7mUAcZoH7TBJP1+4DmyQs4CFxd+pLNpAGFgFViUc/FUHCvAK2Ep8/34Na
+	IC+xesMB5gmMPAsYGVYxSqYWFOem5xYbFhjmpZbrFSfmFpfmpesl5+duYgSHsZbmDsbtqz7o
+	HWJk4mA8xCjBwawkwvtTc2uqEG9KYmVValF+fFFpTmrxIUZpDhYlcV7xF70pQgLpiSWp2amp
+	BalFMFkmDk6pBibBfxMrzkrOarFfpuNl16TBy6H+yuT7r/S8eBb+FUv5bwo1l7/gNDuy2/Xz
+	hu9dbV1/K+x7N5xZrcRQL1STFRmh5fzKOeKbzIxHUy/e89x5xeGi1VpVwUOOv9ZNWLjqr3r8
+	xx0tO15MED3qXvVG/M63tZsbjJZP5pc4JnTa6nlY2J2H33ftZrnlJ8hlO3uGubthEc/jjav+
+	KpU4uSyzeZVy87HJDvu9lp1Bhv4cwXs1XBnTD/97VXWL5ZnxrCknN1/ZeTNgen24uYvaTEar
+	h3dWzPmccodHXaX+hHLKmlfzxI/8OnLy6IVrOv+z37TOWPj79IPTPP0BE0ReK9Z/jf1yY/2V
+	XIlZ5v83/rwTsnTyAiWW4oxEQy3mouJEAGdDD3LSAgAA
+X-CMS-MailID: 20240130125754epcas5p2edd5cc52dc58add09299d3aa5985a9fd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240130125754epcas5p2edd5cc52dc58add09299d3aa5985a9fd
+References: <CGME20240130125754epcas5p2edd5cc52dc58add09299d3aa5985a9fd@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: timer: exynos4210-mct: Add
- google,gs101-mct compatible
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, tglx@linutronix.de, conor+dt@kernel.org,
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- semen.protsenko@linaro.org, saravanak@google.com, willmcvicker@google.com
-References: <20231222165355.1462740-1-peter.griffin@linaro.org>
- <20231222165355.1462740-2-peter.griffin@linaro.org>
- <e4288d81-cd0c-41cf-989f-85ce10d5904e@linaro.org>
- <bc643c81-ba84-48e9-8805-a27ca8d9acc5@linaro.org>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <bc643c81-ba84-48e9-8805-a27ca8d9acc5@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 30/01/2024 08:33, Krzysztof Kozlowski wrote:
-> On 22/01/2024 13:11, Daniel Lezcano wrote:
->> On 22/12/2023 17:53, Peter Griffin wrote:
->>> Add dedicated google,gs101-mct compatible to the dt-schema for
->>> representing mct timer of the Google Tensor gs101 SoC.
->>>
->>
->> Applied, thanks
-> 
-> Daniel,
-> You a week ago that this was applied, but I still do not see the patch
-> in linux-next. Can you double check?
+Commit "538af6e5856b" which convert s5p-mfc bindings to
+json-schema is already merged. Remove "s5p-mfc.txt" file.
 
-It is applied, but I did not pushed the branch. It is done now, it 
-should appear in linux-next soon.
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+---
+ Documentation/devicetree/bindings/media/s5p-mfc.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-Thanks for the head up
-
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+deleted file mode 100644
+index e69de29bb2d1..000000000000
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.17.1
 
