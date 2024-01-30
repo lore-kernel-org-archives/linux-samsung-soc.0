@@ -1,156 +1,114 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DE17EF0A
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 23:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE9D79950
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 23:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706655706; cv=none; b=ezDDYG0Ths9GwTo1nQ8LCprwYmlVPLcNva5nNQGdGjOuaMSp9G0kBhHARq+O7rMzvz9LG6dvdKUUeXl4AuWtI/icPCoL855txhQxq7nxix2HB3csAs16nPeQRQti5yNo944GbFlZIyoH2cmCKKrwZiROS8rsAatsgATq32qK0Do=
+	t=1706657857; cv=none; b=azmBWA8hAaMjjOLevhmoNe/iDDlf7m8KzHTmi6s3y9aH9E3bhxLvXL8QBWCRJATNox5Gfm2Rbi0Gp+d12jmRXiThDNEYxN/9AlrNPH9KdOxxcAaatiR+LRbZ6Ph7Gw3jxQy19+s6AvVxAaFAcR2GA0D/SRueHmhoDlfnsj3KZl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706655706; c=relaxed/simple;
-	bh=BhXfGyAPv4SiBtMKJ3yf878gVc2hoptHT3pniLDIM20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaM42YV7Gp5YW/ZBW4JbdBS5QGNLBDPC1/UGHiaOuyNqQIrUvgolHZNC+NI6ZiVH0YXCpSuBbGZh3WDTxbBYgrFAdyn89FckTG3PhvXpEf/KhdJTBfkJyojCrloWkxbnPnxGyFUCNixgalRWD+4KldihDRzS9AIdC19C2fvfzbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RpRd5lvT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1706657857; c=relaxed/simple;
+	bh=1s19bgggjYqjahoc37BYPQjaNkY0EJv/JXA/THdndYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j5H/KtUuu3UVuGWK8AG4qf//0P8sOu90FqhpR9sYuZkLxcYAhRLtI3iqqOACju31lUz1bnaHnrDEtaFafe8Y3nnwOG4Ga7iDhZJCRIdbHB8t8iTFO40s74lh4djj8nf9O3UXsz3qrrEa45nzgsDEhDa/v62SkJx0oukKHD5PCSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tMZlGmcD; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RpRd5lvT"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1d8d8bb7628so64265ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 15:01:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tMZlGmcD"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a36597a3104so54210766b.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 15:37:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706655704; x=1707260504; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=InqSXSTpbT1eiS6unjbH+Gd3bGvOKOKvltW4HzECThc=;
-        b=RpRd5lvTS00wy3JtmBLu9dGD33xQ6OX28VGFno/GYwlLFxiLuQIkSCk0GMHBNkZVWY
-         VOUBK2wbqtwbt/1DQQAd0h37ksNJRlAW0BXFCENY8yUlLx405/7aIOwP0HwWADBv6ATm
-         +/fb11FDGSXR1tadTGuhoKPHajzkGNjR5rb4UOIg7dlLhZTJXdpDcI8WdL4R1eo5+XbU
-         0VFyToz6gWr9sP9VZMXVykIKxgcoVbt9rdzpHs2yxSX5aLaXK2Sz8+6RdWO1vXz9TaEI
-         25HaovjgmSdPOCeddIFnsJHneNDXJMATFcjaSxYzZo4T6v9rbAkyn1ThlH3ebBHI716C
-         /GVw==
+        d=linaro.org; s=google; t=1706657853; x=1707262653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gsxL/I99xpEvCIDVwY097FiG8G++5DelyKefubwrp9s=;
+        b=tMZlGmcDEvVipqDGLA8Baj+4Fx+MHVV7OYXcTinPrBr/k0MX9ZWMwPRQOwehx67pn/
+         jHA2pv7mcXWWYc31xN309oWRKS1wcpYRR24OpFmzyVWM0PqXGb3FVxoXLaPX8dU7uGzR
+         vyElFZCUZLo+odsJ7sSjvPFMDb3sBYVt4UuVwm21VrE1EToXIXXQeBmGI9OtfHMhYAPr
+         5/8v0cBhNhKxqsm6hXjkwvfCjaDI2opyBdpk88EkmjS9Ug61BlriY79RBsnOOA6JOg79
+         Qw3RWNfPla1+PvTA4cxrvY1gJqMc91fqYkdEWomKNEjAa1OTbtO47zHQB23dn+EwBOAb
+         8eWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706655704; x=1707260504;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=InqSXSTpbT1eiS6unjbH+Gd3bGvOKOKvltW4HzECThc=;
-        b=FkHHavt4+pwuccDX/WBz9vp25d6bNmGsB3C7okkiVPes9wVGEN7opQU9rD4DoEzfmN
-         Nc5ZhaHCdlb3LW2xm3YYIBVemDJy6uWCMgwNVvWzGeS4vzrnBReQRfAFjgFyuSx3juq8
-         tVGOpUct4WuAIzvElTAsej2b5ZoENZJUv+ItubZPlBtXCYdUWhJXfIkrELaMvCIfncd4
-         MiR7lLRJ+hXaSzfkyWOMZfyRZz1JEAEWw2hVZ54+ia6oPqYwkC6SelBj8ctJkep0CW7R
-         37VGlJGm4I4CN8+PVkR88uHmb/CtdqQpM22BO7rk3j1O0SEVglmira3MmTM4sD0rVlWA
-         6v5w==
-X-Gm-Message-State: AOJu0YyB3C0PEsBHGeFm7hxRuD6aGOe75QkqDplKN90nL5uJd+UxCtT2
-	ydZKyF2cgDThUqqnlHzs8B2Wh6IigsfGj8mvpm0DU3kwLMN/wgXOaAtvxAPS0Q==
-X-Google-Smtp-Source: AGHT+IHHlfMmJN3TbbAqe9NgDhqGhzDl2uuy1MggUp8v8ebeUy6kOFXJOYClhwrKxKJuMakJW6TItQ==
-X-Received: by 2002:a17:902:c943:b0:1d5:78d5:760b with SMTP id i3-20020a170902c94300b001d578d5760bmr389018pla.10.1706655703427;
-        Tue, 30 Jan 2024 15:01:43 -0800 (PST)
-Received: from google.com (69.8.247.35.bc.googleusercontent.com. [35.247.8.69])
-        by smtp.gmail.com with ESMTPSA id iz3-20020a170902ef8300b001d8e974ed2fsm3827918plb.284.2024.01.30.15.01.42
+        d=1e100.net; s=20230601; t=1706657853; x=1707262653;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gsxL/I99xpEvCIDVwY097FiG8G++5DelyKefubwrp9s=;
+        b=DGvgGy5KyL6iGV/ze1AOtKgXI5Xzx7f6VgTnj+FE9sN6GZ9V+HweN0lZqZg1kyIKfD
+         b8Vv2Ptg88CRwf4Sw6fSK9J/ubp4qhBuR+ucA2znqo6D9ENzxULTxNYmoEHyYv04ucA9
+         SKhe8TJwqdvrkyp5qM6lyTWI1ShQ89rhqk1x1ZJzXIGzxvYo5v/2uoaUEbRk4VMmYWuu
+         YyLdGQVTA/ypvrS859ii+u3Q5YEpRyVXliklcPOW1mWy6/aOmvtJuEJKxoKex+Jnrm7z
+         gHBkRV4XPglBp7zq1khmGHRFiSTVx3d2Wfsaw4mOF75YbjaXTXlkYpWJlLJl+NGFENof
+         WqxA==
+X-Gm-Message-State: AOJu0YxhpN9x4ZSVEUxNr1dpBCBDrqVhdT+3KKxIfLYFtNSVTPHsCA+z
+	Boz0VV/BDjkN5cMubHYQ7teeyy9cuHvBf4iA3anOWwHBvVllNc4X4zFiIBVSfQ4=
+X-Google-Smtp-Source: AGHT+IExlGe+3KAgx9wd47PjYqPJmrXUI3Bi+ipxi1Or9XP82qWolc5r13mu2jTYPFQBAHAN37+EiA==
+X-Received: by 2002:a17:907:10db:b0:a31:8a51:67df with SMTP id rv27-20020a17090710db00b00a318a5167dfmr7027211ejb.9.1706657852290;
+        Tue, 30 Jan 2024 15:37:32 -0800 (PST)
+Received: from puffmais.c.googlers.com.com (94.189.141.34.bc.googleusercontent.com. [34.141.189.94])
+        by smtp.gmail.com with ESMTPSA id hw18-20020a170907a0d200b00a3600d7c2fbsm1676507ejc.176.2024.01.30.15.37.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 15:01:42 -0800 (PST)
-Date: Tue, 30 Jan 2024 15:01:39 -0800
-From: William McVicker <willmcvicker@google.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, tudor.ambarus@linaro.org,
-	semen.protsenko@linaro.org, alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com, tomasz.figa@gmail.com,
-	cw00.choi@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] arm64: dts: exynos: gs101: define USI12 with I2C
- configuration
-Message-ID: <Zbl_01J_T6FoNZPy@google.com>
-References: <20240129174703.1175426-1-andre.draszik@linaro.org>
- <20240129174703.1175426-7-andre.draszik@linaro.org>
+        Tue, 30 Jan 2024 15:37:31 -0800 (PST)
+From: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+To: peter.griffin@linaro.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@android.com,
+	tudor.ambarus@linaro.org,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH] arm64: dts: exynos: gs101: add stable i2c aliases for gs101-oriole
+Date: Tue, 30 Jan 2024 23:37:00 +0000
+Message-ID: <20240130233700.2287442-1-andre.draszik@linaro.org>
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240129174703.1175426-7-andre.draszik@linaro.org>
 
-Hi Andre,
+Now that we have more than i2c interface, add aliases to ensure
+deterministic bus number assignment.
 
-On 01/29/2024, André Draszik wrote:
-> On the gs101-oriole board, i2c bus 12 has various USB-related
-> controllers attached to it.
-> 
-> Note the selection of the USI protocol is intentionally left for the
-> board dts file.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> 
-> ---
-> v2:
-> * reorder pinctrl-0 & pinctrl-names
-> * collect Reviewed-by: tags
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 30 ++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index e1bcf490309a..9876ecae0ad8 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -451,6 +451,36 @@ pinctrl_peric1: pinctrl@10c40000 {
->  			interrupts = <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH 0>;
->  		};
->  
-> +		usi12: usi@10d500c0 {
-> +			compatible = "google,gs101-usi",
-> +				     "samsung,exynos850-usi";
-> +			reg = <0x10d500c0 0x20>;
-> +			ranges;
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5>,
-> +				 <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5>;
-> +			clock-names = "pclk", "ipclk";
-> +			samsung,sysreg = <&sysreg_peric1 0x1010>;
-> +			samsung,mode = <USI_V2_NONE>;
-> +			status = "disabled";
-> +
-> +			hsi2c_12: i2c@10d50000 {
-> +				compatible = "google,gs101-hsi2c",
-> +					     "samsung,exynosautov9-hsi2c";
-> +				reg = <0x10d50000 0xc0>;
-> +				interrupts = <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH 0>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				pinctrl-0 = <&hsi2c12_bus>;
-> +				pinctrl-names = "default";
-> +				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5>,
-> +					 <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5>;
-> +				clock-names = "hsi2c", "hsi2c_pclk";
-> +				status = "disabled";
-> +			};
+So as to keep compatibility with existing Pixel userspace builds, use
+the same bus numbers for hsi2c_8 and hsi2c_12 as the downstream
+drivers with the intention to eventually add all the earlier busses as
+well.
 
-Can you include the i2c aliases for hsi2c_12 and hsi2c_8 (added by Tudor
-previously)? This will ensure userspace compatibility with the existing Pixel
-userspace builds.
+Suggested-by: Will McVicker <willmcvicker@google.com>
+Signed-off-by: AndrÃ© Draszik <andre.draszik@linaro.org>
 
-Feel free to do so in a follow-up patch, but I'd prefer the aliases get
-included in the same kernel release that these devices were added in (v6.9).
+---
+Note, this patch should only be applied after series
+"[PATCH v3 0/7] gs101 oriole: peripheral block 1 (peric1) and i2c12 support"
+https://lore.kernel.org/all/20240129174703.1175426-1-andre.draszik@linaro.org/
+---
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Will
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 6ccade2c8cb4..23314ed78c96 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -18,6 +18,8 @@ / {
+ 	compatible = "google,gs101-oriole", "google,gs101";
+ 
+ 	aliases {
++		i2c7 = &hsi2c_8;
++		i2c8 = &hsi2c_12;
+ 		serial0 = &serial_0;
+ 	};
+ 
+-- 
+2.43.0.429.g432eaa2c6b-goog
 
-> +		};
-> +
->  		pinctrl_hsi1: pinctrl@11840000 {
->  			compatible = "google,gs101-pinctrl";
->  			reg = <0x11840000 0x00001000>;
-> -- 
-> 2.43.0.429.g432eaa2c6b-goog
-> 
