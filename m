@@ -1,84 +1,88 @@
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E935C5E0
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 20:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE25E7BAE9;
+	Tue, 30 Jan 2024 22:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706647273; cv=none; b=Be9wa6JYtKKQ9lTLLFfr/G8OLQhEhfcAxDh9pEKBJDnKW8Hs99v0WPAcIvj9P27dOHw8liVx1j6etnrjDrCr98nocNztEZLvi1H6gKBo0v/GR/jfdCdrAkgqWUwvyRXfSqQA72z+WscNmIkb+ZluRkr0Sr5UJsmCmolHmdqhKUo=
+	t=1706653539; cv=none; b=qMSIlZ27qWQ+WtMu/Hex9FeITmTShIJ4LpN3yIPZYK91OIwITd3ObwlHzT3i6wRqrQb+oonbd10JFv0ufMpp3X1/m3h2C5OCDZJFKotlNGAHMktS+FqP8squECtL6s796W8CsnJlPv9bdIU2VrCnYGO83iB0w/BJpkFlx8LPn5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706647273; c=relaxed/simple;
-	bh=8PzOVgfO3wYB39pdWO/JXBhwi39Pfy0F/N4Vo5QOofk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nolYZ1/6DICL+nauuZ/malcf4+5CMFQUsjvQZ0YvhhHI9EAOoAXPv3DKQRvIUtk7W/Ob8dUWsbBaI9HmeEeEFlF6u6jQ7Da7TUWsmuSPOUnhNlMRVsta+TG0ms1rfm6a5gV/giyfMaMSOTiN3eu+OgGlfV9WYoEwK5dHXTz+5mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=FC4OJL2W; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1706653539; c=relaxed/simple;
+	bh=rti7mztnsIyooNfSUewv1B47KEAqojy4aPd6GMveyvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gb1BM/xoYIqevLnkece06GMYHEEUFAFne5IyI2VUmrvhdGL+bnDjeBaABIWZK6XU3Tof0ueUaMMoTco6Npph1AXMXeZ7sqOKURlIi8jBhs89hJhLets3FqjUR2se2ruWU/rOTEPm2GyrfeDAUJspDL/4GTmQ6duQLmUcr0bRVGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fO00VUs/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="FC4OJL2W"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1706647267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zM7gBsHINXnI27rsymf8P8R4h9e6Mdp280o+IUjJVAg=;
-	b=FC4OJL2W0OlB6UiFqqT/dU9xmaeZLBVHl8nvuR4+KSY/yhn4lljmeD7pb2OYqd3UdP3a4x
-	Rw3m+6jTHovIgY5gi2+I69E+6MPEUhpaZqpRQzXhKw0rg67kzGdq8M613ia6QmKNy+g5ij
-	c4GfNeac//l8QGhTOTeUunE7r+TwqsY=
-From: Henrik Grimler <henrik@grimler.se>
-Subject: [PATCH 0/3] ARM: dts: samsung: enable wifi and cleanup
- exynos5420-galaxy-tab dts'es
-Date: Tue, 30 Jan 2024 21:40:38 +0100
-Message-Id: <20240130-galaxy-tab-s-cleanup-v1-0-d4e17857241d@grimler.se>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fO00VUs/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE7FC433C7;
+	Tue, 30 Jan 2024 22:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706653539;
+	bh=rti7mztnsIyooNfSUewv1B47KEAqojy4aPd6GMveyvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fO00VUs/gI+wGkwjc7jhpJr7obyerwaweKgya4sJydDpMHVoKb7EhVRPXdC5Q1f6i
+	 fECcU0vEJBELW/NhZlaWocrbjP2U+uEJ6kRlcGBDfN3ZMvHYVFhekB4wM+dJwNh0Xm
+	 IaXlGii3VZFl0y0R7Wj3oybOq+r1VVjafJxEUSmY//0/z1JmrsMxAl+kiyRzAH3Jm3
+	 yICd5+m5x5mjfZU2/x1SdI1nRrPz3GTTU6kJDSxD8m1/Xu/Cs8HrQqGaAKx35AFxEn
+	 5LnX51uzCTqXHb0fC5XueWQiBwc5pBL4R8b43w8B5M0bh0vqHS6FTZ1dnRqqvwmDZI
+	 lQ7knF2lwQMFA==
+Date: Tue, 30 Jan 2024 16:25:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andi.shyti@kernel.org, arnd@arndb.de,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org, andre.draszik@linaro.org,
+	peter.griffin@linaro.org, semen.protsenko@linaro.org,
+	kernel-team@android.com, willmcvicker@google.com
+Subject: Re: [PATCH v2 05/28] spi: dt-bindings: samsung: add
+ samsung,spi-fifosize property
+Message-ID: <20240130222536.GA2523173-robh@kernel.org>
+References: <20240125145007.748295-1-tudor.ambarus@linaro.org>
+ <20240125145007.748295-6-tudor.ambarus@linaro.org>
+ <7ef86704-3e40-4d39-a69d-a30719c96660@sirena.org.uk>
+ <1c58deef-bc0f-4889-bf40-54168ce9ff7c@linaro.org>
+ <55af5d4a-7bc9-4ae7-88c5-5acae4666450@sirena.org.uk>
+ <f2ec664b-cd67-4cae-9c0d-5a435c72f121@linaro.org>
+ <f44d5c58-234d-45ec-8027-47df079e2f16@sirena.org.uk>
+ <96f9306f-3445-484b-bd3c-82e708681f1b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAMZeuWUC/x3MQQ5AMBBA0avIrE3SlgiuIhZDB5NISYsQ6d01l
- m/x/wuBvXCANnvB8yVBNpeg8wzGhdzMKDYZjDKFNlrhTCvdDx40YMBxZXLnjrq01NSDKSpVQUp
- 3z5Pc/7brY/wAAioH+WYAAAA=
-To: Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht
-X-Developer-Signature: v=1; a=openpgp-sha256; l=801; i=henrik@grimler.se;
- h=from:subject:message-id; bh=8PzOVgfO3wYB39pdWO/JXBhwi39Pfy0F/N4Vo5QOofk=;
- b=owEBbQGS/pANAwAKAbAHbkkLcWFrAcsmYgBluV7Xk4LCCoPprjBcTUUwoIzGMRjLWqm7OFuFo
- OjZ9CvfbG2JATMEAAEKAB0WIQQsfymul4kfZBmp4s2wB25JC3FhawUCZble1wAKCRCwB25JC3Fh
- a+4PB/sEz0E2++WHDYxoieAhRX4HhGfXaJqxdUkx6PZIv5HwcgGLq4pWzPzHO8kNITDuy2UEOM0
- KOFtASUcssb5KH1iwpCxAln4xADwEp8aF/THd3YT/KQVAV15Q1NWzKXPGrPKuf218LQazraFtH9
- zGIYVlehy16XXpolm2CrR/BQ/Ypj//2KwKjfRztCyVsV5LAqk2k/MP/bFAb1Lg4VV868iHwGg/3
- 9dmf25g+NdIHZIWwUNgbCuki3GxwlNRHX8cefFi/QeRkUhNyww6gO33EiaZDC0ZDkNHwsm3UpOT
- k5b+J+CEeKUfYxcrCvgkY2b2cJK9tXYlikpu+tm1WhNGBjGK
-X-Developer-Key: i=henrik@grimler.se; a=openpgp;
- fpr=2C7F29AE97891F6419A9E2CDB0076E490B71616B
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96f9306f-3445-484b-bd3c-82e708681f1b@linaro.org>
 
-Describe wifi node for exynos5420-chagall-wifi and
-exynos5420-klimt-wifi, and cleanup their dtsi to accurately describe
-available memory and adhere to the DTS Coding Style document.
+On Thu, Jan 25, 2024 at 07:01:10PM +0000, Tudor Ambarus wrote:
+> 
+> 
+> On 1/25/24 17:45, Mark Brown wrote:
+> > On Thu, Jan 25, 2024 at 05:30:53PM +0000, Tudor Ambarus wrote:
+> >> On 1/25/24 17:26, Mark Brown wrote:
+> > 
+> >>> OK, so just the compatible is enough information then?
+> > 
+> >> For gs101, yes. All the gs101 SPI instances are configured with 64 bytes
+> >> FIFO depths. So instead of specifying the FIFO depth for each SPI node,
+> >> we can infer the FIFO depth from the compatible.
+> > 
+> > But this is needed for other SoCs?  This change is scattered through a
+> 
+> There are SoCs that have multiple instances of the SPI IP, and they
+> configure them with different FIFO depths. See
+> "samsung,exynosautov9-spi" for example: SPI0, SPI1, and SPI6 are
+> configured by the SoC to use 256 bytes FIFO depths, while all the other
+> 8 SPI instances use 64 bytes FIFOs. I tried to explain the entire logic
+> of the series in another reply, see it here:
+> https://lore.kernel.org/linux-arm-kernel/40ba9481-4aea-4a72-87bd-c2db319be069@linaro.org/T/#u
 
-Signed-off-by: Henrik Grimler <henrik@grimler.se>
----
-Henrik Grimler (3):
-      ARM: dts: samsung: exynos5420-galaxy-tab-common: sort node properties
-      ARM: dts: samsung: exynos5420-galaxy-tab-common: add wifi node
-      ARM: dts: samsung: exynos5420-galaxy-tab-common: decrease available memory
+We have some common properties for fifo size. In fact, there was just a 
+discussion recently on Samsung UART (Is that the same block?) about 
+this. So if you do use a property here, use a common one.
 
- .../dts/samsung/exynos5420-galaxy-tab-common.dtsi  | 57 +++++++++++++++++-----
- 1 file changed, 44 insertions(+), 13 deletions(-)
----
-base-commit: 497b447cf89b87c8fb0d0b27994258ed18ac355e
-change-id: 20231210-galaxy-tab-s-cleanup-14da98b23606
-
-Best regards,
--- 
-Henrik Grimler <henrik@grimler.se>
-
+Rob
