@@ -1,229 +1,103 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20AD7E56C;
-	Wed, 31 Jan 2024 11:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7F613A253;
+	Wed, 31 Jan 2024 20:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706699437; cv=none; b=LA573Lw/M/cK5FyJU4j+RwFj/56f6ZzYKbMYuTDyo0674pHrGj6KIiHgN1LM7318QWHPuqiHB6wk6cq92QOcuNx2nNwokdYbitm0eHJkOvfUeIAYNKOPbfoL+jRyj01SYneUJzldvKpUAgKbR1rGuI66ZOV28x4XWYmjpQNu4p8=
+	t=1706732863; cv=none; b=M6XW2IvS1p6va5jEkgaGsLsWNXMdJR449LxbPnySEiGQWUpJgTTpIto3fAsE7j+uTJDoMlOeuAJ01GI0+JSXPPy98ZD6wf2cTw89zRQaoGKLCRIwqM7EsazcqCU/F8Yh75jmC9TfrXJGzUPs9vtB8wWsFRb1TrkW5NNPmcqrNgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706699437; c=relaxed/simple;
-	bh=F8ej+RfKy5uRlP3BtIE6c20cYRN6falVBUA+PQCrR74=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t6FoGmIGdDV4uP/aMXZgb2uJXlileuZFrhR248FURipnQsxFn1zs6OJ4D5Azer5WxOKFTzREmPuT1+bv1IsE393lfGdvE0q1UD08q/01L2t92uktR7JWwVWYmt713Bhewqxnbb8779Qnh98D2RFowT7p+KX0drqA/Z6AbAoTdqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aUpOyNr1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1706732863; c=relaxed/simple;
+	bh=o4LWX1QqdvcuKm42rwyAjt5dQ0L091nMtX/7m3/qv4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TyWQgi2/ZKFtf3XBAnUaP4ywYco0JMp4Aq6wtJHktboZ8vm49rRXPDMsNKF4UmN4vmMxmIN7XtQH7RzFGXIeR+lXxzFpkCKB4iRlFb201OnNM/whzUJDBrut96s1eiqCnv1uw2vAceSORFkd/7vC4g7jmtzUeYBd42BAwqaSpr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/K0u7dQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aUpOyNr1"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40V7eFb9008867;
-	Wed, 31 Jan 2024 11:10:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	qcppdkim1; bh=OdVX0vbjRwNHZr0+EmbFNFjxgdY3hDawnsBgwICg6LI=; b=aU
-	pOyNr1ek2cy1DsCeLuVXm/m8B4KMcSxQgBqilrk9fB4zrDzjtTaFtKmwrasF1M8F
-	TawRcIueETHIdvaho0n6noFkZ3c3KSkkpso5FOPTDYQVTo4ZWqw4qQndw2PCUz8J
-	T0DTNJXSFdW04ZaBQ7xSdECksYjmRYvs5Vnc7T/zyIFAo+SjIM/VbW2d8iX1dl54
-	LfW3A0eb1ONq2gw/Khl+93DmD6p4tLlWMNwNeaaCClS+X84aWo7V94TqKTWS9TIF
-	vb21ZXcLhPdNHSxoETLVbEAowFcXbAXe0eFvc+rT3AoC/deGlno41qNod+s83jh+
-	nXDMgrHc+2GQhxlUO15g==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vyj148ey8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jan 2024 11:10:12 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40VBABK1030025
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jan 2024 11:10:11 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 31 Jan 2024 03:10:02 -0800
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: <corbet@lwn.net>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>, <vigneshr@ti.com>,
-        <nm@ti.com>, <matthias.bgg@gmail.com>, <kgene@kernel.org>,
-        <alim.akhtar@samsung.com>, <bmasney@redhat.com>
-CC: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [PATCH v8 10/10] soc: qcom: register ramoops region with APSS minidump
-Date: Wed, 31 Jan 2024 16:38:37 +0530
-Message-ID: <20240131110837.14218-11-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.43.0.254.ga26002b62827
-In-Reply-To: <20240131110837.14218-1-quic_mojha@quicinc.com>
-References: <20240131110837.14218-1-quic_mojha@quicinc.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/K0u7dQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D824C43394;
+	Wed, 31 Jan 2024 20:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706732862;
+	bh=o4LWX1QqdvcuKm42rwyAjt5dQ0L091nMtX/7m3/qv4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B/K0u7dQiQ0WRMecYYvGkfuzdJArN830oC7oigZVoByXeSVTI3yP+dU71JyNAydTP
+	 IziVC0qOA6AIGDzxu618i0t/di3iVaIWpwQ0Jl7qCmyJMph5zVgvKqH4IFA2M1BygL
+	 4NXlY4eWgIm0l+aS9CSYFe54gKdaRJyLChKITRzqCfLNuVzMwIRFik3vZy+LT4Z6ep
+	 Qzjob3FP3N7Ok2j8qL3XJyNd4+dA5VdHANfd0GfqeLX6M8jxWxmvS6TK5CJcrOLH0K
+	 VjSaZCMd0mEKJ5FWPQ87UQyraHD/MavQEFLL1iAn6m/0KatbQcrZ4oTae+GFffFlWQ
+	 XQCAJXDJ1suIw==
+Date: Wed, 31 Jan 2024 14:27:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+	tudor.ambarus@linaro.org, robh+dt@kernel.org,
+	kernel-team@android.com, semen.protsenko@linaro.org,
+	tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org,
+	krzysztof.kozlowski+dt@linaro.org, willmcvicker@google.com,
+	linux-kernel@vger.kernel.org, conor+dt@kernel.org, sboyd@kernel.org,
+	peter.griffin@linaro.org, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, cw00.choi@samsung.com,
+	mturquette@baylibre.com, s.nawrocki@samsung.com
+Subject: Re: [PATCH v3 2/7] dt-bindings: clock: google,gs101-clock: add
+ PERIC1 clock management unit
+Message-ID: <170673286013.2244602.4094888678732735903.robh@kernel.org>
+References: <20240129174703.1175426-1-andre.draszik@linaro.org>
+ <20240129174703.1175426-3-andre.draszik@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SehR-QhgzFHfMbNc2djop_zP3H8JOB0F
-X-Proofpoint-ORIG-GUID: SehR-QhgzFHfMbNc2djop_zP3H8JOB0F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-31_06,2024-01-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401190000 definitions=main-2401310085
+In-Reply-To: <20240129174703.1175426-3-andre.draszik@linaro.org>
 
-Register ramoops region with APSS minidump via ramoops
-info notifier so that these region gets captured on
-system crash.
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- drivers/soc/qcom/qcom_minidump.c | 84 ++++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+On Mon, 29 Jan 2024 17:46:01 +0000, André Draszik wrote:
+> Add dt-schema documentation and clock IDs for the Connectivity
+> Peripheral 1 (PERIC1) clock management unit.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> 
+> ---
+> v2: collect Reviewed-by: tags
+> 
+> Note for future reference: To ensure consistent naming throughout this
+> file, the IDs have been derived from the data sheet using the
+> following, with the expectation for all future additions to this file
+> to use the same:
+>     sed \
+>         -e 's|^PLL_LOCKTIME_PLL_\([^_]\+\)|CLK_FOUT_\1_PLL|' \
+>         \
+>         -e 's|^PLL_CON0_MUX_CLKCMU_\([^_]\+\)_|CLK_MOUT_\1_|' \
+>         -e 's|^PLL_CON0_PLL_\(.*\)|CLK_MOUT_PLL_\1|' \
+>         -e 's|^CLK_CON_MUX_MUX_CLK_\(.*\)|CLK_MOUT_\1|' \
+>         -e '/^PLL_CON[1-4]_[^_]\+_/d' \
+>         -e '/^[^_]\+_CMU_[^_]\+_CONTROLLER_OPTION/d' \
+>         -e '/^CLKOUT_CON_BLK_[^_]\+_CMU_[^_]\+_CLKOUT0/d' \
+>         \
+>         -e 's|_IPCLKPORT||' \
+>         -e 's|_RSTNSYNC||' \
+>         \
+>         -e 's|^CLK_CON_DIV_DIV_CLK_\([^_]\+\)_|CLK_DOUT_\1_|' \
+>         \
+>         -e 's|^CLK_CON_BUF_CLKBUF_\([^_]\+\)_|CLK_GOUT_\1_|' \
+>         -e 's|^CLK_CON_GAT_CLK_BLK_\([^_]\+\)_UID_|CLK_GOUT_\1_|' \
+>         -e 's|^CLK_GOUT_[^_]\+_[^_]\+_CMU_\([^_]\+\)_PCLK$|CLK_GOUT_\1_PCLK|' \
+>         -e 's|^CLK_CON_GAT_GOUT_BLK_\([^_]\+\)_UID_|CLK_GOUT_\1_|' \
+>         -e 's|^CLK_CON_GAT_CLK_\([^_]\+\)_\(.*\)|CLK_GOUT_\1_CLK_\1_\2|' \
+>         \
+>         -e '/^\(DMYQCH\|PCH\|QCH\|QUEUE\)_/d'
+> ---
+>  .../bindings/clock/google,gs101-clock.yaml    |  9 ++--
+>  include/dt-bindings/clock/google,gs101.h      | 48 +++++++++++++++++++
+>  2 files changed, 54 insertions(+), 3 deletions(-)
+> 
 
-diff --git a/drivers/soc/qcom/qcom_minidump.c b/drivers/soc/qcom/qcom_minidump.c
-index c0f76a51d0e8..7ca43d938b13 100644
---- a/drivers/soc/qcom/qcom_minidump.c
-+++ b/drivers/soc/qcom/qcom_minidump.c
-@@ -18,8 +18,10 @@
- #include <linux/mutex.h>
- #include <linux/platform_device.h>
- #include <linux/printk.h>
-+#include <linux/pstore_ram.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/string.h>
-+#include <linux/workqueue.h>
- #include <soc/qcom/qcom_minidump.h>
- 
- #include "qcom_minidump_internal.h"
-@@ -56,12 +58,22 @@ struct minidump_elfhdr {
-  * @dev: Minidump backend device
-  * @apss_data: APSS driver data
-  * @md_lock: Lock to protect access to APSS minidump table
-+ * @work: Minidump work for any required execution in process context.
-+ * @nb_cookie: Save the cookie, will be used for unregistering the callback.
-  */
- struct minidump {
- 	struct minidump_elfhdr	 elf;
- 	struct device		 *dev;
- 	struct minidump_ss_data	 *apss_data;
- 	struct mutex		 md_lock;
-+	struct work_struct	 work;
-+	void			 *nb_cookie;
-+};
-+
-+static LIST_HEAD(apss_md_rlist);
-+struct md_region_list {
-+	struct qcom_minidump_region md_region;
-+	struct list_head list;
- };
- 
- /*
-@@ -530,6 +542,58 @@ static int qcom_apss_md_table_init(struct minidump *md,
- 	return 0;
- }
- 
-+static int register_ramoops_region(const char *name, int id, void *vaddr,
-+				   phys_addr_t paddr, size_t size)
-+{
-+	struct qcom_minidump_region *md_region;
-+	struct md_region_list *mdr_list;
-+	int ret;
-+
-+	mdr_list = kzalloc(sizeof(*mdr_list), GFP_KERNEL);
-+	if (!mdr_list)
-+		return -ENOMEM;
-+
-+	md_region = &mdr_list->md_region;
-+	scnprintf(md_region->name, sizeof(md_region->name), "K%s%d", name, id);
-+	md_region->virt_addr = vaddr;
-+	md_region->phys_addr = paddr;
-+	md_region->size = size;
-+	ret = qcom_minidump_region_register(md_region);
-+	if (ret < 0) {
-+		pr_err("failed to register region in minidump: err: %d\n", ret);
-+		return ret;
-+	}
-+
-+	list_add(&mdr_list->list, &apss_md_rlist);
-+
-+	return 0;
-+}
-+
-+static void register_ramoops_minidump_cb(struct work_struct *work)
-+{
-+	struct minidump *md = container_of(work, struct minidump, work);
-+
-+	md->nb_cookie = register_ramoops_info_notifier(register_ramoops_region);
-+	if (IS_ERR_OR_NULL(md->nb_cookie)) {
-+		pr_err("Fail to register ramoops info notifier\n");
-+		md->nb_cookie = NULL;
-+	}
-+}
-+
-+static void qcom_ramoops_minidump_unregister(void)
-+{
-+	struct md_region_list *mdr_list;
-+	struct md_region_list *tmp;
-+
-+	list_for_each_entry_safe(mdr_list, tmp, &apss_md_rlist, list) {
-+		struct qcom_minidump_region *region;
-+
-+		region = &mdr_list->md_region;
-+		qcom_minidump_region_unregister(region);
-+		list_del(&mdr_list->list);
-+	}
-+}
-+
- static void qcom_apss_md_table_exit(struct minidump_ss_data *mdss_data)
- {
- 	memset(mdss_data->md_ss_toc, cpu_to_le32(0), sizeof(*mdss_data->md_ss_toc));
-@@ -575,6 +639,22 @@ static int qcom_apss_minidump_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, md);
- 
-+	/*
-+	 * Use separate context for registering ramoops region via workqueue
-+	 * as minidump probe can get called in same context of platform device
-+	 * register call from smem driver and further call to qcom_smem_minidump_ready()
-+	 * can return -EPROBE_DEFER as __smem->minidump is not yet initialized because
-+	 * of same context and it can only initialized after return from probe.
-+	 *
-+	 * qcom_apss_minidump_probe()
-+	 *   register_ramoops_minidump_cb()
-+	 *     register_ramoops_region()
-+	 *       qcom_minidump_region_register()
-+	 *         qcom_smem_minidump_ready()
-+	 */
-+	INIT_WORK(&md->work, register_ramoops_minidump_cb);
-+	schedule_work(&md->work);
-+
- 	return ret;
- }
- 
-@@ -582,6 +662,10 @@ static void qcom_apss_minidump_remove(struct platform_device *pdev)
- {
- 	struct minidump *md = platform_get_drvdata(pdev);
- 
-+	flush_work(&md->work);
-+	qcom_ramoops_minidump_unregister();
-+	if (md->nb_cookie)
-+		unregister_ramoops_info_notifier(md->nb_cookie);
- 	qcom_apss_md_table_exit(md->apss_data);
- }
- 
--- 
-2.43.0.254.ga26002b62827
+Reviewed-by: Rob Herring <robh@kernel.org>
 
