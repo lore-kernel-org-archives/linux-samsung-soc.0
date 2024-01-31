@@ -1,267 +1,394 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2098.outbound.protection.outlook.com [40.107.113.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ABB3D556
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jan 2024 05:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706677521; cv=none; b=MvILRilE5e/dAVCdAWayJjOh/tGbMXW99uNlCe8ed1YOCTTZdWFYBF2aMjD0Zidkj9dynObEDMzzUvGWgN7qqaLqIeeJVZOQMos0xLDC+/08OxTWKpAw5dUjHB14C6ktueK/0SxsqGAY3/cXCHFWjdRNQFPZ2VNqx392jNQ3isU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C543D547;
+	Wed, 31 Jan 2024 05:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706677521; cv=fail; b=Yhdd1HvqeMTUcPI9fknJusadK8QqHDzsNeL+Hdxk51z1wb6pzA0qa/MDQF/L0nD3sPp0XNdU6KEhYh6IXz0QjFP+lm4d/D27Ma9ya0uRP9RGORP/fsj2Q/K9F3eqE6Jte6E/s2sshCwveMY/cJ62dG4C7tEeBg8+RHvlu+KD8lQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706677521; c=relaxed/simple;
-	bh=n2Tq6bEYRktcu0UZ4ZDAI8v/i2S9seIWoTbtVHKBVp4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=AzYLRjB/cFRqzmGFvy8CfRVWjm3MyuDE/9xzI0eGqgeKDElv4IfxlxAwzA5XKV3ZYAuAXlqnGt+nTwe4jFW7Wpuv1CtLeCHTDN8nj1qQqiwqHk+5d/ykTV+CgrWTgzxCxjLVSF6VWIqq0s3aUi+MzE5x9E+96xlXBlbby9HxvQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DecoXf+h; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	bh=jyswaY2wEnowBh7alcyEOtjxy2Vcjt9t0eWSOcbUkkg=;
+	h=Message-ID:From:To:Cc:In-Reply-To:References:Subject:Content-Type:
+	 Date:MIME-Version; b=l1tgY4lejWAH2bYNhTFryfgoVNoNKSOEkgECUjbxcvN9984pBkN/Ay6MXsGUTL30Lc/iP1SDJBQ2RnaqpEsZwGBYVGgJmvlIb2J9ZkUcJnl32INQO0kp3eF74GHYToLr2sto8pSjIg43Josst8myUZ/8jQBMoUcTyel+TV+Lanc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=i3xggJMA; arc=fail smtp.client-ip=40.107.113.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DecoXf+h"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240131050516epoutp03579a7fba05b81881e11cb0d9dd3ec57d~vVijDcQvd2191521915epoutp03S
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jan 2024 05:05:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240131050516epoutp03579a7fba05b81881e11cb0d9dd3ec57d~vVijDcQvd2191521915epoutp03S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1706677516;
-	bh=qL3Ay4Pba21ebKmLP4wgOqqtjTV7NsQxQZC9542ZZjY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=DecoXf+hQ/1V8f4MuFlF9yo32Dbk2T/9Z5muRsTIVYMSCgPBtWWjCMInWaF7/FNPJ
-	 tgiDxgf3AJed02x519mN5FUHlK1cvEcn0GmLVoNg5O55yv3/XRGWUaAajHYoYfmqiY
-	 8lKooD6FW7HM0H+od1QGLmDClVXCRQEhbGtFMows=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240131050516epcas5p47d8730317828176765d0897f441b7e6e~vViiq6zJ30567105671epcas5p4U;
-	Wed, 31 Jan 2024 05:05:16 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4TPqjQ3n3kz4x9Pw; Wed, 31 Jan
-	2024 05:05:14 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BA.59.08567.A05D9B56; Wed, 31 Jan 2024 14:05:14 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240131050514epcas5p4be8d9e13921fd986fe4575a0e6b1357c~vVigf2yS90107301073epcas5p48;
-	Wed, 31 Jan 2024 05:05:14 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240131050514epsmtrp2abde2bb514eebfd5e4158a59666f7af3~vVigdBfIQ0572005720epsmtrp2E;
-	Wed, 31 Jan 2024 05:05:14 +0000 (GMT)
-X-AuditID: b6c32a44-617fd70000002177-41-65b9d50a5e2e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	24.A0.08817.905D9B56; Wed, 31 Jan 2024 14:05:13 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240131050511epsmtip154775cf4996d87fa587c78df7e8f1ced~vVidxnqFt2072320723epsmtip1O;
-	Wed, 31 Jan 2024 05:05:11 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Shradha Todi'" <shradha.t@samsung.com>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <jingoohan1@gmail.com>,
-	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-	<bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
-	<linux@armlinux.org.uk>, <m.szyprowski@samsung.com>,
-	<manivannan.sadhasivam@linaro.org>, <pankaj.dubey@samsung.com>
-In-Reply-To: <20240124103838.32478-3-shradha.t@samsung.com>
-Subject: RE: [PATCH v4 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
-Date: Wed, 31 Jan 2024 10:35:10 +0530
-Message-ID: <009c01da5403$12b926d0$382b7470$@samsung.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="i3xggJMA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LFX4TLibtpgyxXP2xT0wXnHiZPMvUKqeEz0cKDGAqPkfSOR2nURLc132YnIl0SXgfx3sKZifmF3/dTCh9y1zjh8SFZQsKB3SHkM1/+LIr3KGwb4NuUD6NGJsx6MDJE1FGEqBFqoehu8J6DVB1kIo1lDdxhV4oPKlpIeUzTAAixG69F+OIhos7lAzmQCDqt2um25DMnDFyZDhqLe9Rl4Ak8+k99cZttIcCKm64ZtOAyWvcaUBkvCiEe5Nvwf5IkN/PsSqU7PY8Xeegf0E2xpc124d8KbAs8yGDhF8ISgUGlFc4G1Woaj7AdTSMls9EjU1LsMGUD6xoNkkIxbpZ6tV8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GVCSpQ6Gm13JFsk4yudxcp9izZkrD44WheCtk80q3Wk=;
+ b=lA6ONlPZ/yjGaxfQJ9pyeOIxhxfAFF91Cfsgc36BjVIwKKHUwjJlF55kjUsIx3gD3FcdXEUZbFuRvW3zfCN58CtApTMvrpm3iW6Vm3jBdyCj2XOr0KZjJHljwsYkj08iHIVu5tyQMMffSbHRl0BPC8gZfKDdPxibHlOwtAH0FF6HQrjcl5H0j8g5ydhC7Pq7qlZIymSmTLSxJtNzC42wCLi+o11ygenTn49NKApoVRDuyEWicrcnFtvMd2Tt9wjL4gaKA+aQUTugnym2mxEDbMVVp1muAhXRD1kYgqTlb4YYiBWepmGxSbg5qkUUS5A3iQanl7nqUDqgSVz6I6vt8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GVCSpQ6Gm13JFsk4yudxcp9izZkrD44WheCtk80q3Wk=;
+ b=i3xggJMAmSAvzRuDGmR2EF0JG/1B0Uy96n3OhnlSdlBcJdqtwEyxVLZfcbTqpDaS49wwSQzle7Hgucvdakbm9VkDbCiV8HLoRe/XVLt5QIGhCbuDpPXrEcHgRqG9HjqV8CLDFxHOUtrJxoCIk/JRLSt2UMIGZD6ZQHUUiRnbNtE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYCPR01MB8341.jpnprd01.prod.outlook.com
+ (2603:1096:400:15c::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.23; Wed, 31 Jan
+ 2024 05:05:14 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::ce8:8f5e:99a0:aba4]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::ce8:8f5e:99a0:aba4%2]) with mapi id 15.20.7249.023; Wed, 31 Jan 2024
+ 05:05:14 +0000
+Message-ID: <87jznq6qk6.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,	"Lad,  Prabhakar"
+ <prabhakar.csengg@gmail.com>,	=?ISO-8859-1?Q?=22Niklas_S=C3=B6derlund=22?=
+ <niklas.soderlund+renesas@ragnatech.se>,	=?ISO-8859-1?Q?=22Uwe_Kleine-K?=
+ =?ISO-8859-1?Q?=C3=B6nig=22?= <u.kleine-koenig@pengutronix.de>,	Abhinav
+ Kumar <quic_abhinavk@quicinc.com>,	Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>,	Alexander Stein
+ <alexander.stein@ew.tq-group.com>,	Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,	Alexandre Torgue
+ <alexandre.torgue@foss.st.com>,	Alexey Brodkin <abrodkin@synopsys.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,	Andy Gross <agross@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,	Bjorn Andersson
+ <andersson@kernel.org>,	Claudiu Beznea <claudiu.beznea@tuxon.dev>,	Daniel
+ Vetter <daniel@ffwll.ch>,	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	David Airlie <airlied@gmail.com>,	Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>,	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Emma Anholt <emma@anholt.net>,	Eugen Hristev
+ <eugen.hristev@collabora.com>,	Florian Fainelli
+ <florian.fainelli@broadcom.com>,	Frank Rowand <frowand.list@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,	Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>,	Helge Deller <deller@gmx.de>,	Hugues Fruchet
+ <hugues.fruchet@foss.st.com>,	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Jacopo Mondi <jacopo@jmondi.org>,	James Clark <james.clark@arm.com>,
+	Jaroslav Kysela <perex@perex.cz>,	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Hilman <khilman@baylibre.com>,	Kieran Bingham
+ <kieran.bingham+renesas@ideasonboard.com>,	Kieran Bingham
+ <kieran.bingham@ideasonboard.com>,	Konrad Dybcio
+ <konrad.dybcio@linaro.org>,	Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>,	Laurent Pinchart
+ <laurent.pinchart+renesas@ideasonboard.com>,	Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>,	Liam Girdwood <lgirdwood@gmail.com>,
+	Liu Ying <victor.liu@nxp.com>,	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,	Marek Vasut
+ <marex@denx.de>,	Mark Brown <broonie@kernel.org>,	Mauro Carvalho Chehab
+ <mchehab@kernel.org>,	Maxime Coquelin <mcoquelin.stm32@gmail.com>,	Maxime
+ Ripard <mripard@kernel.org>,	Michael Tretter <m.tretter@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>,	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,	Neil Armstrong
+ <neil.armstrong@linaro.org>,	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,	Philipp Zabel
+ <p.zabel@pengutronix.de>,	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,	Rob Clark
+ <robdclark@gmail.com>,	Rob Herring <robh+dt@kernel.org>,	Robert Foss
+ <rfoss@kernel.org>,	Russell King <linux@armlinux.org.uk>,	Sakari Ailus
+ <sakari.ailus@linux.intel.com>,	Saravana Kannan <saravanak@google.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,	Shawn Guo <shawnguo@kernel.org>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,	Stefan Agner
+ <stefan@agner.ch>,	Suzuki K Poulose <suzuki.poulose@arm.com>,	Sylwester
+ Nawrocki <s.nawrocki@samsung.com>,	Takashi Iwai <tiwai@suse.com>,	Thierry
+ Reding <thierry.reding@gmail.com>,	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tim Harvey <tharvey@gateworks.com>,	Todor Tomov <todor.too@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,	Yannick Fertre
+ <yannick.fertre@foss.st.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Leo Yan <leo.yan@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Sean Paul <sean@poorly.run>,
+	Tom Rix <trix@redhat.com>,
+	coresight@lists.linaro.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org,
+	llvm@lists.linux.dev
+In-Reply-To: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
+References: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v3 03/24] of: property: rename of_graph_get_next_endpoint() to of_graph_get_next_device_endpoint()
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 31 Jan 2024 05:05:13 +0000
+X-ClientProxiedBy: TY2PR01CA0023.jpnprd01.prod.outlook.com
+ (2603:1096:404:a::35) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIcpPks/WB953w72Rl3v8cfkz9jJgIOwv9MAllxpn6wS3ptMA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xbZRjG+XoHxZwVyD6KznIMYzCBVgocBmyDgTvKEjDEJZooO6EnlFBO
-	m152M5uddMxdQEDIRhmTFsKwyBiFymWwAbsgIEHCVnDKlJuZI4AbWDAwsO3ZlP9+7/c+T57v
-	/S48Jn+GI+BlURpSRRFylOPB+v52UGCIx4M2UmT8yg+r/kKG1S6VcbHOWSsX011YZWOWKRsb
-	e3rhERsbab/MwQav9HKwS0M3GVhPaSfA9Gt6FlZ/Z5yLjevPsrHh/iTMZF3iYhsdrVxs3dbI
-	wvJvn9jLx0dsw0x8Yew0F28zjHPxSosWt5jPcvBfbR0cfPr+RQbeVP05XtBsBviiZVuqx8fZ
-	sTKSkJIqIUllKKRZVGYcmpyWvi89IlIkDhFHY1GokCJyyDg08UBqyLtZcsdEqPAwIdc6llIJ
-	tRoN2x2rUmg1pFCmUGviUFIplSslylA1kaPWUpmhFKnZJRaJ3olwCA9lyyYry5nKDfTo4q1B
-	hg48f/0ccOdBRAJHbd3AyXzkBoB9E0dpfgbgpFV6Dng42A5g6e/lnJeGurZGNt3oBHD5+R8c
-	ungMoGFqiOtUcZAQ2FqV52p4I6MALi2bWc6CidxgwLn2FVegOxIDJ6t7mE72QuLhY/vXLmYh
-	AdB0a4TtZE8kGhaUDrBo3gL7yqZdzER2whrjLJPekxD+M1Pj0nsjCXChto5Da7bCP+/e4TqD
-	IbLBg7PFl1i0IRGWjAy8MHvBJ73NXJoFcHG+02HmORiHpjUBvSyDc1cbAM17YNf9yyynhIkE
-	wYb2MDrqNZi/Os2gnZ7wyzw+rQ6AufMPXoT6waLz59k04zDP/oRTCPwNmwYzbBrMsGkAw/9h
-	lYBlBr6kUp2TSWZEKMUUeeS/+85Q5FiA670HJ7aCsW/WQ3sAgwd6AOQxUW/Pb7e1kXxPKXHs
-	OKlSpKu0clLdAyIcp13EFPhkKBwfhtKkiyXRIklkZKQkOjxSjG71nD1dIeUjmYSGzCZJJal6
-	6WPw3AU6hq95vWqitj9+/MdjQabc7Vla4Z78h7+EBM4UuX04vvdwxILeS1xQfBN/76mv36Dg
-	4FsnT5bsC89utK4kdu3W/vATdQ33f9acNCNJfVNwKD1+LbG7cAXvqCqLsjE+6Ky2G4dMxrdb
-	djwK3tFb6nY9bCgZpNUn7S/W/XWxrXG95VURNexjuZISc0Qyub0ld3VN98oJ6mdtytjDxYnC
-	Nz4rqbib0Tyv/7RVMFATk7M8F+7vZp/L3WUt6K0/OFNo/u5UH9tny73QhWKiXldR3tFckHYm
-	wNiYMBp44NTfpoCm/pSue1PvD8+zric07LzKLpo1dp+5Vpf8CRFrbtKjvx2Xy6LsH+1HWWoZ
-	IQ5mqtTEv6KRjfJ4BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCSnC7n1Z2pBveuWFksacqwWPFlJrvF
-	3tdb2S0aen6zWmx6fI3V4mPPPVaLy7vmsFmcnXeczWLG+X1MFoem7mW0aPnTwmKx9shddou7
-	LZ2sFhdPuVos2vqF3eL/nh3sFv+ubWSx6D1c6yDkcfnaRWaP9zda2T12zrrL7rFgU6nHplWd
-	bB53ru1h83hyZTqTx+Yl9R59W1YxenzeJBfAFcVlk5Kak1mWWqRvl8CVcaBpCWvBLcWKfZ+2
-	MjcwXpPuYuTkkBAwkVi9cyNrFyMXh5DAbkaJ5n+TmSES0hLXN05gh7CFJVb+e84OUfSMUWLS
-	/yZGkASbgK7EjsVtbCAJEYG7jBKNy/+AdTALnGSSmDdfBW7ssgNnWEASnALWEo+WHAJbISzg
-	KPHiG8Q6FgFViUX7L7OC2LwClhJ9U0+zQNiCEidnPmGBGKot0fuwlRHGXrbwNdSpChI/ny4D
-	6xURcJJ4v2I1G0SNuMTLo0fYJzAKz0IyahaSUbOQjJqFpGUBI8sqRsnUguLc9NxiwwKjvNRy
-	veLE3OLSvHS95PzcTYzgSNfS2sG4Z9UHvUOMTByMhxglOJiVRHhXyu1MFeJNSaysSi3Kjy8q
-	zUktPsQozcGiJM777XVvipBAemJJanZqakFqEUyWiYNTqoEpwiLDRv6GcOpx0cLzq4rPmv/Q
-	e7L03ILZVu2bL9jURavcFHbZNoeNdwlPuMb/jQ+6GWo1v4QfmlOQqXx+4tbmP+eUzM8ph37d
-	FqrK61x+mPN1WOFPqYTbfKbrgxddPSPe5S7S98n0S+Pv0w9+VJVKuq5u5N3I8vfPwxlBX851
-	O9pP5ro6aZpj5IWZvrIlHR7rjxuGaFdmX9Hc0TtRn/HX3+BnRuJ+0ctfvs2a0javRVuk/MnD
-	k7aiBseyDvseqN378wpjqPMr9YkH7uwJMXSN2HhRPaN+qsChffGuLdtuaQfOijeSPRkQ1K5c
-	eVlU7/Fjpg9eez768x9nenNtg9/x88cjL5n9u5Z1XLdWuZpDiaU4I9FQi7moOBEAYH66VWMD
-	AAA=
-X-CMS-MailID: 20240131050514epcas5p4be8d9e13921fd986fe4575a0e6b1357c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8
-References: <20240124103838.32478-1-shradha.t@samsung.com>
-	<CGME20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8@epcas5p3.samsung.com>
-	<20240124103838.32478-3-shradha.t@samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYCPR01MB8341:EE_
+X-MS-Office365-Filtering-Correlation-Id: 29980f97-1af4-43e0-e3e6-08dc221a35ad
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	tNCfMt2rVvIvnhrk0CfwGnYl6Fcx5wi5leYgkzk4ZMS4cmuq9VyNO6bnUDuwaekzmIsMUh9jL9mH0XKa+2IPE6D1iVIfz8yA/A/e9GCrlv5RQR0q0v1IhY3LMJm23G7sCg9C5T+2BIQNykiyXicCQPkjzDXFBoroW2IkTgXMibWFxWfSjKvb0bZ33uOfcKgeqI6vnPv8LVEwx3QMEVpC0iYHnpHsxc0Yoq7FVyjUmimrE2ZCCvnrGvar4yTyhUOz21n+0B5H+stBXqeXl/fDjRc3Ta1l2H4F07Qv15oCcuWzxHBDRCIDR0T6NI9LK168jN+ybdo53r3KclYSdlq3C5NBiwXFo96Fzos/IUcO46VmuRQsNlJBx0c5dZT2oIQJKN9QSUKAN0kuYAYSfaKZLwHoU2Sj565ZaWJB+/7pr+desmG5/9DBGPCK+JmEm132hrY9By2QHo4u4+JwgkiboyuNknHRKhmE2wYIZ/lllqErUsz4MCm+JmAXCC4onms50D0ZSvBo0+AWnPgWQlroeTVKyKAWCRKjZ9GeRXj4VeQHSbBBQXECZ+/kIk4ITAEF1J7TTVbPaGV+QLOB55BH8OwAbiB5B163wylNd4/UxSBW9E5YLw4b7NX1/MVUpjDGFv2pLo6J+/GCj0gioe/6TA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(136003)(366004)(376002)(39860400002)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(1191002)(66476007)(8936002)(4326008)(8676002)(7366002)(5660300002)(2906002)(7416002)(7276002)(86362001)(7406005)(110136005)(66946007)(7336002)(316002)(38350700005)(36756003)(54906003)(38100700002)(66556008)(478600001)(52116002)(6506007)(6512007)(6486002)(83380400001)(26005)(41300700001)(921011)(2616005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PbFn/JVHmH9FGEWy0j/dBIlNiuoPXsCC7Kq6IQ8XKcad6yP13wDbMeH0bVbu?=
+ =?us-ascii?Q?oq9zwWqIi4EmUrIJrRf5k7TyYgDgg+mJjQQavooPAiCmiu67m5xvzY+8yxV3?=
+ =?us-ascii?Q?s5x6mZS9v1nCa/mAkfvlusblNp6mxfDgZUl2Y9cbcDx21BAlIE8bDPfN6Wlj?=
+ =?us-ascii?Q?t8cqgzikookGk9mouZ8XqW8R+V4im9n2+22H/5HYXP+K7wz+JZH5odfNRxK1?=
+ =?us-ascii?Q?jptIcOHuudMqmRUelqpAOWPc3t2batAKDhTULgomOUEU4/ZmHdXe8L2KqKj5?=
+ =?us-ascii?Q?bUAUnbIBy7xHxuoZX5CLWM0wd+aHIPYO+LL7sb9VLcP970+1GKZigA9CMEHp?=
+ =?us-ascii?Q?uD3+gcKxirnFy81fmltEqjs8Ews2w1wtwMOi2qak1P5x86N9CKl70+wgpU7t?=
+ =?us-ascii?Q?EA3AwHQDq9ZYeT+SVs1Y8M7JlnNbzmeK3gYDoNZ+Cxv80xQ+myKbWTCFed5J?=
+ =?us-ascii?Q?8cUC0WF/Fg9S22zTvxGtt4/IAgrLixvI5TA9vS08W63eLFnsHpodOdW/mTne?=
+ =?us-ascii?Q?HuBgwkXQX0et/+Jc87EINutKbbu3OjHb1JNNYgGEfTeGRcF4IC28Cp+Z7khI?=
+ =?us-ascii?Q?OZKOL96ix4LeMkcY/Bzd2/syQFn6BUINoBncO8rvsY/Ta0zyymMa+uIFQ6ox?=
+ =?us-ascii?Q?VCxRW7qV5UixVZMy48uv/0sUULudPWvFFS5waUibCihoDOmTGVAPjv8v86WX?=
+ =?us-ascii?Q?rlt2VWNA/zyfchl3M3mg3Z9Nd0uAmtAYERBwnVDVRfQHoG/EldcBl4wDD7Kh?=
+ =?us-ascii?Q?vnA6bXpt0JwkdBcHRh+zSKRSECqPLJxhWmmcX46Qiko0Y2FjmCN/VwWQqAGJ?=
+ =?us-ascii?Q?VbiTAzy0A1fsJWacNDX7bMHBCKqDxq0Qix/T7mdiuFrkbpDwE8ZOLBZ8nzv+?=
+ =?us-ascii?Q?/1VgtabliNV31iiwBY1PpRDr0JrtFKqzDQp48XPa2pAdUwDJ6BzwgdTK97iQ?=
+ =?us-ascii?Q?3iJIPFF9047eNDnlrnggEfxx/NQSPceiKU451QC9OEjx8RuP0O14r0ZYgbIC?=
+ =?us-ascii?Q?9ESVpH58vXL8b1S3neRcThVBM4cmCixJqZVkV6kl0LJWGgJxQrIvVLsVnFcR?=
+ =?us-ascii?Q?2ghWxesgRYejuwKLrLhMG04B6BjspqdoTMAIohXM6KPI+e5DuiUE5ila4kSf?=
+ =?us-ascii?Q?GUZRNvg3mAD+d4F0AU9lqQZBX7B+BxbbKo9qSTqOG7CIUYJHtUZxE1n8eEJX?=
+ =?us-ascii?Q?vcN0BmCgJ7JwTljNj58C/evX0GynHx0matxBpWALPmTP/nYbxS2KRz/AYGEf?=
+ =?us-ascii?Q?1w/eJ7w2agpAz4DIOMql+9b2255RX1+ZTIo4W695WlvcTKXqsN/StGUUJ73b?=
+ =?us-ascii?Q?iWvvXud13GMNqbJUTo9Lp8Ze6cobgH1XR9wdfTWwfFXH9jI4zRAh/C+Kwqm8?=
+ =?us-ascii?Q?Tn5kG5x+dVc+zD+lVD7lz2ZX3oTLCBVm28rDebnxB+lgWsH0ClytZA18AKC8?=
+ =?us-ascii?Q?AtLb8irbWvYBMMyx5+A7Iq/H2ugexfTQPG9g5CT+vnsX/2dolgvtJPiqVw75?=
+ =?us-ascii?Q?ID8wLoQTOODYGrT66FhygZ/YSJ9bu9IFruwDCTlU/dIZahMtWY8PBbij4jLT?=
+ =?us-ascii?Q?L+hu4ojNtGNRQUEJ2Zo3uwzBWIsPj1B2FofsJTGzRBvw3XzvXamKlgRc+/Ia?=
+ =?us-ascii?Q?VT+iJJhvhTzXLVKpIIXn874=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 29980f97-1af4-43e0-e3e6-08dc221a35ad
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2024 05:05:14.5926
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ttaYoRAqWdkLLa7gGHzwcvTo4Hyxd+l66+ybjg1qgkR9GgCW7VRVScBycGjkhM2EIwgsf9j47RDiR/Gc6zeW1bGZX7wSBKy4J/suHchl7YyJAVCBv8CdCJurbQM3XrpG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8341
 
-Hello Shradha
+Current of_graph_get_next_endpoint() will get next endpoint.
 
-> -----Original Message-----
-> From: Shradha Todi <shradha.t=40samsung.com>
-> Sent: Wednesday, January 24, 2024 4:09 PM
-> To: linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
-> pci=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-sams=
-ung-
-> soc=40vger.kernel.org
-> Cc: mturquette=40baylibre.com; sboyd=40kernel.org; jingoohan1=40gmail.com=
-;
-> lpieralisi=40kernel.org; kw=40linux.com; robh=40kernel.org;
-> bhelgaas=40google.com; krzysztof.kozlowski=40linaro.org;
-> alim.akhtar=40samsung.com; linux=40armlinux.org.uk;
-> m.szyprowski=40samsung.com; manivannan.sadhasivam=40linaro.org;
-> pankaj.dubey=40samsung.com; Shradha Todi <shradha.t=40samsung.com>
-> Subject: =5BPATCH v4 2/2=5D PCI: exynos: Adapt to clk_bulk_* APIs
->=20
-> There is no need to hardcode the clock info in the driver as driver can r=
-ely on
-> the devicetree to supply the clocks required for the functioning of the
-> peripheral. Get rid of the static clock info and obtain the platform supp=
-lied
-> clocks. All the clocks supplied is obtained and enabled using the
-> devm_clk_bulk_get_all_enable() API.
->=20
-> Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+	ports {
+		port@0 {
+			endpoint@0 {...};
+(A)			endpoint@1 {...};
+		};
+		port@1 {
+(B)			endpoint {...};
+		};
+		...
+	};
 
->  drivers/pci/controller/dwc/pci-exynos.c =7C 54 ++-----------------------
->  1 file changed, 4 insertions(+), 50 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c
-> b/drivers/pci/controller/dwc/pci-exynos.c
-> index ec5611005566..3234eb5be1fb 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> =40=40 -54,43 +54,11 =40=40
->  struct exynos_pcie =7B
->  	struct dw_pcie			pci;
->  	void __iomem			*elbi_base;
-> -	struct clk			*clk;
-> -	struct clk			*bus_clk;
-> +	struct clk_bulk_data		*clks;
->  	struct phy			*phy;
->  	struct regulator_bulk_data	supplies=5B2=5D;
->  =7D;
->=20
-> -static int exynos_pcie_init_clk_resources(struct exynos_pcie *ep) -=7B
-> -	struct device *dev =3D ep->pci.dev;
-> -	int ret;
-> -
-> -	ret =3D clk_prepare_enable(ep->clk);
-> -	if (ret) =7B
-> -		dev_err(dev, =22cannot enable pcie rc clock=22);
-> -		return ret;
-> -	=7D
-> -
-> -	ret =3D clk_prepare_enable(ep->bus_clk);
-> -	if (ret) =7B
-> -		dev_err(dev, =22cannot enable pcie bus clock=22);
-> -		goto err_bus_clk;
-> -	=7D
-> -
-> -	return 0;
-> -
-> -err_bus_clk:
-> -	clk_disable_unprepare(ep->clk);
-> -
-> -	return ret;
-> -=7D
-> -
-> -static void exynos_pcie_deinit_clk_resources(struct exynos_pcie *ep) -=
-=7B
-> -	clk_disable_unprepare(ep->bus_clk);
-> -	clk_disable_unprepare(ep->clk);
-> -=7D
-> -
->  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)  =
-=7B
->  	writel(val, base + reg);
-> =40=40 -332,17 +300,9 =40=40 static int exynos_pcie_probe(struct platform=
-_device
-> *pdev)
->  	if (IS_ERR(ep->elbi_base))
->  		return PTR_ERR(ep->elbi_base);
->=20
-> -	ep->clk =3D devm_clk_get(dev, =22pcie=22);
-> -	if (IS_ERR(ep->clk)) =7B
-> -		dev_err(dev, =22Failed to get pcie rc clock=5Cn=22);
-> -		return PTR_ERR(ep->clk);
-> -	=7D
-> -
-> -	ep->bus_clk =3D devm_clk_get(dev, =22pcie_bus=22);
-> -	if (IS_ERR(ep->bus_clk)) =7B
-> -		dev_err(dev, =22Failed to get pcie bus clock=5Cn=22);
-> -		return PTR_ERR(ep->bus_clk);
-> -	=7D
-> +	ret =3D devm_clk_bulk_get_all_enable(dev, &ep->clks);
-> +	if (ret < 0)
-> +		return ret;
->=20
->  	ep->supplies=5B0=5D.supply =3D =22vdd18=22;
->  	ep->supplies=5B1=5D.supply =3D =22vdd10=22;
-> =40=40 -351,10 +311,6 =40=40 static int exynos_pcie_probe(struct platform=
-_device
-> *pdev)
->  	if (ret)
->  		return ret;
->=20
-> -	ret =3D exynos_pcie_init_clk_resources(ep);
-> -	if (ret)
-> -		return ret;
-> -
->  	ret =3D regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep-
-> >supplies);
->  	if (ret)
->  		return ret;
-> =40=40 -369,7 +325,6 =40=40 static int exynos_pcie_probe(struct platform_=
-device
-> *pdev)
->=20
->  fail_probe:
->  	phy_exit(ep->phy);
-> -	exynos_pcie_deinit_clk_resources(ep);
->  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->=20
->  	return ret;
-> =40=40 -383,7 +338,6 =40=40 static int __exit exynos_pcie_remove(struct
-> platform_device *pdev)
->  	exynos_pcie_assert_core_reset(ep);
->  	phy_power_off(ep->phy);
->  	phy_exit(ep->phy);
-> -	exynos_pcie_deinit_clk_resources(ep);
->  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
->=20
->  	return 0;
-> --
-> 2.17.1
+If it reached to end of port (A), it will get next endpoint from next
+port (B). This behavior is not intuitive to user. User assume it return
+NULL after (A) from this function name.
 
+This function gets "endpoint" from "device" one after another instead
+of "port". So let's rename related functions as
+
+of_graph_get_next_endpoint()  -> of_graph_get_next_device_endpoint()
+of_graph_get_endpoint_count() -> of_graph_get_device_endpoint_count()
+for_each_endpoint_of_node()   -> for_each_device_endpoint_of_node()
+
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ .clang-format            |  2 +-
+ drivers/of/property.c    | 24 +++++++++++++-----------
+ include/linux/of_graph.h | 23 ++++++++++++++---------
+ 3 files changed, 28 insertions(+), 21 deletions(-)
+
+diff --git a/.clang-format b/.clang-format
+index 0bbb1991defe..e8ca6d577073 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -231,6 +231,7 @@ ForEachMacros:
+   - 'for_each_dedup_cand'
+   - 'for_each_dev_addr'
+   - 'for_each_dev_scope'
++  - 'for_each_device_endpoint_of_node'
+   - 'for_each_dma_cap_mask'
+   - 'for_each_dpcm_be'
+   - 'for_each_dpcm_be_rollback'
+@@ -243,7 +244,6 @@ ForEachMacros:
+   - 'for_each_element'
+   - 'for_each_element_extid'
+   - 'for_each_element_id'
+-  - 'for_each_endpoint_of_node'
+   - 'for_each_event'
+   - 'for_each_event_tps'
+   - 'for_each_evictable_lru'
+diff --git a/drivers/of/property.c b/drivers/of/property.c
+index 25d73409aeee..007729d66972 100644
+--- a/drivers/of/property.c
++++ b/drivers/of/property.c
+@@ -632,15 +632,17 @@ struct device_node *of_graph_get_port_by_id(struct device_node *parent, u32 id)
+ EXPORT_SYMBOL(of_graph_get_port_by_id);
+ 
+ /**
+- * of_graph_get_next_endpoint() - get next endpoint node
++ * of_graph_get_next_device_endpoint() - get next endpoint node. If it reached to end of the port,
++ * it gets next endpoint from next port.
++ *
+  * @parent: pointer to the parent device node
+  * @prev: previous endpoint node, or NULL to get first
+  *
+  * Return: An 'endpoint' node pointer with refcount incremented. Refcount
+  * of the passed @prev node is decremented.
+  */
+-struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
+-					struct device_node *prev)
++struct device_node *of_graph_get_next_device_endpoint(const struct device_node *parent,
++						      struct device_node *prev)
+ {
+ 	struct device_node *endpoint;
+ 	struct device_node *port;
+@@ -696,7 +698,7 @@ struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
+ 		} while (!of_node_name_eq(port, "port"));
+ 	}
+ }
+-EXPORT_SYMBOL(of_graph_get_next_endpoint);
++EXPORT_SYMBOL(of_graph_get_next_device_endpoint);
+ 
+ /**
+  * of_graph_get_endpoint_by_regs() - get endpoint node of specific identifiers
+@@ -714,7 +716,7 @@ struct device_node *of_graph_get_endpoint_by_regs(
+ 	struct of_endpoint endpoint;
+ 	struct device_node *node = NULL;
+ 
+-	for_each_endpoint_of_node(parent, node) {
++	for_each_device_endpoint_of_node(parent, node) {
+ 		of_graph_parse_endpoint(node, &endpoint);
+ 		if (((port_reg == -1) || (endpoint.port == port_reg)) &&
+ 			((reg == -1) || (endpoint.id == reg)))
+@@ -812,22 +814,22 @@ struct device_node *of_graph_get_remote_port(const struct device_node *node)
+ EXPORT_SYMBOL(of_graph_get_remote_port);
+ 
+ /**
+- * of_graph_get_endpoint_count() - get count of endpoint
++ * of_graph_get_device_endpoint_count() - get count of endpoint
+  * @np: pointer to the parent device node
+  *
+  * Return: count of endpoint of this device node
+  */
+-unsigned int of_graph_get_endpoint_count(const struct device_node *np)
++unsigned int of_graph_get_device_endpoint_count(const struct device_node *np)
+ {
+ 	struct device_node *endpoint;
+ 	int num = 0;
+ 
+-	for_each_endpoint_of_node(np, endpoint)
++	for_each_device_endpoint_of_node(np, endpoint)
+ 		num++;
+ 
+ 	return num;
+ }
+-EXPORT_SYMBOL(of_graph_get_endpoint_count);
++EXPORT_SYMBOL(of_graph_get_device_endpoint_count);
+ 
+ /**
+  * of_graph_get_remote_node() - get remote parent device_node for given port/endpoint
+@@ -1017,8 +1019,8 @@ static struct fwnode_handle *
+ of_fwnode_graph_get_next_endpoint(const struct fwnode_handle *fwnode,
+ 				  struct fwnode_handle *prev)
+ {
+-	return of_fwnode_handle(of_graph_get_next_endpoint(to_of_node(fwnode),
+-							   to_of_node(prev)));
++	return of_fwnode_handle(of_graph_get_next_device_endpoint(to_of_node(fwnode),
++								  to_of_node(prev)));
+ }
+ 
+ static struct fwnode_handle *
+diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
+index a4bea62bfa29..80b7a579e96a 100644
+--- a/include/linux/of_graph.h
++++ b/include/linux/of_graph.h
+@@ -26,25 +26,30 @@ struct of_endpoint {
+ 	const struct device_node *local_node;
+ };
+ 
++/* REMOVE ME */
++#define of_graph_get_next_endpoint(parent, previous) of_graph_get_next_device_endpoint(parent, previous)
++#define for_each_endpoint_of_node(parent, child) for_each_device_endpoint_of_node(parent, child)
++#define of_graph_get_endpoint_count(np) of_graph_get_device_endpoint_count(np)
++
+ /**
+- * for_each_endpoint_of_node - iterate over every endpoint in a device node
++ * for_each_device_endpoint_of_node - iterate over every endpoint in a device node
+  * @parent: parent device node containing ports and endpoints
+  * @child: loop variable pointing to the current endpoint node
+  *
+  * When breaking out of the loop, of_node_put(child) has to be called manually.
+  */
+-#define for_each_endpoint_of_node(parent, child) \
+-	for (child = of_graph_get_next_endpoint(parent, NULL); child != NULL; \
+-	     child = of_graph_get_next_endpoint(parent, child))
++#define for_each_device_endpoint_of_node(parent, child) \
++	for (child = of_graph_get_next_device_endpoint(parent, NULL); child != NULL; \
++	     child = of_graph_get_next_device_endpoint(parent, child))
+ 
+ #ifdef CONFIG_OF
+ bool of_graph_is_present(const struct device_node *node);
+ int of_graph_parse_endpoint(const struct device_node *node,
+ 				struct of_endpoint *endpoint);
+-unsigned int of_graph_get_endpoint_count(const struct device_node *np);
++unsigned int of_graph_get_device_endpoint_count(const struct device_node *np);
+ struct device_node *of_graph_get_port_by_id(struct device_node *node, u32 id);
+-struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
+-					struct device_node *previous);
++struct device_node *of_graph_get_next_device_endpoint(const struct device_node *parent,
++						      struct device_node *previous);
+ struct device_node *of_graph_get_endpoint_by_regs(
+ 		const struct device_node *parent, int port_reg, int reg);
+ struct device_node *of_graph_get_remote_endpoint(
+@@ -68,7 +73,7 @@ static inline int of_graph_parse_endpoint(const struct device_node *node,
+ 	return -ENOSYS;
+ }
+ 
+-static inline unsigned int of_graph_get_endpoint_count(const struct device_node *np)
++static inline unsigned int of_graph_get_device_endpoint_count(const struct device_node *np)
+ {
+ 	return 0;
+ }
+@@ -79,7 +84,7 @@ static inline struct device_node *of_graph_get_port_by_id(
+ 	return NULL;
+ }
+ 
+-static inline struct device_node *of_graph_get_next_endpoint(
++static inline struct device_node *of_graph_get_next_device_endpoint(
+ 					const struct device_node *parent,
+ 					struct device_node *previous)
+ {
+-- 
+2.25.1
 
