@@ -1,60 +1,59 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CBE537F8
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jan 2024 07:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D994458138
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jan 2024 07:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706685434; cv=none; b=Tq8xAI2mzEHzrm7wQ0zwCHV8K0JOVTIZTMR1Q3M0yDvx6dqdqmh+HvNorFj+k0h9Peiz0Vk/fDNyGjvyHk7VJ0g8SJBrxMFeMO2POqeW1wmMJuskl07uqNEknXYe/hleDfESAl9VGi16x/cs1czD+ar9Q+7+28Pklry7zJPpXrY=
+	t=1706685585; cv=none; b=XONv4asae21iXyJZn+I2powzMm9x1Nx0bLDtdnn2iXvfrxzDfjl2wU/sWeJ1tx0gLMtGg6aJM+UAlrm40dFDcUyJhy+PH8eeTs3cjUTZwF3zEO3tmJzMfUF5MQr7/Xm0MuZ97cWD2Gv4otdiGG4UrU+5rSw/0ouN6XNAlLexUmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706685434; c=relaxed/simple;
-	bh=52mzFLWAFvVzRxI56r6tpAuhNOUFxIvuX6pgMmHBP6A=;
+	s=arc-20240116; t=1706685585; c=relaxed/simple;
+	bh=eZ+l+wLYJ2MeDMddYNHMwdCwUGTL0/3u/r/f3w7FWCQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l2MsLypzOIYwnoi1Y04Qe2d4+v+SBY3QCCug/wFg9abOB8XpmerIyMdAFANQ5+yHSVuiBuIlJUfJw9FwE1CcR93Z1rGDPmWiHgwFqDbPe4YeFfrq9SSuvHSThVYKqhuvhJohx/XRAM9XHQ042qxTaK3u/Ra77mqiOYcJhIGaJdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rvD+F+qU; arc=none smtp.client-ip=209.85.222.180
+	 In-Reply-To:Content-Type; b=Py67xyn8ItRSxKSZ2XmuagZikYA0iTFGqYQqC9IFPtOVP7Ae/oAUI5eOw/0R6WETMpa5Lq8Q28c2mKcUT7nD4bC3tg4SWtdvLcfTpeD12fNcxUvWFLhx5l/a+l1Ag9FNvhX81J19YIE33MQIsxgCNsDZa6dYjG02b90PoVcgJ9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pect7BMu; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rvD+F+qU"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-783f49811b2so221101985a.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 23:17:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pect7BMu"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a3604697d63so318635466b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jan 2024 23:19:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706685432; x=1707290232; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lJNMWA8oodJOdlBVGCcwoi584OUVTTefrAGCMewFxPA=;
-        b=rvD+F+qU1YrqHlWVGVRjh3gcCizcm3TIkk/cF6QOC+m5eGD539yA0vo9c8XtRoV+rq
-         xgNuy/htti5A/asFbu1JWQeXFkIvLN98v5tlMCMYDEkZoJDaTLBdL0mCbqkKrhN/cepf
-         QJxdGPLPo0A1YKHdvm3fjmGBIyQiAnFkM3rtf8rRHJB3c8VMPMbahj/SoXJvxJgVQVLd
-         /2uGlgimVsZR4M2f3twT2oaALzuK/rvfRLqHK6Vt8COD18UP7KSWjmSVcPr413ml/leZ
-         /zUNp+eYUhDj8tDkPry0fpcXxhSaPtGrgJyEm+LB8RcSUWDGZXooJ6fja5quxeZTWaKw
-         zXAg==
+        d=linaro.org; s=google; t=1706685582; x=1707290382; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KUU5ZoGCbRyIKRX82P6J3FpHavAE7JR3VdNwhkZXt4A=;
+        b=pect7BMuIciNjXTb+zfpmkV8GX7b7vsTw3RdCAOHQT+cLeU6hPuzVwyTAqKr5XnoNv
+         fn6LFVf3/rZ3HNcYrsWUVGPc5FO1hdMCZBXDSDgossgdDTP1N2i6cVQpP6wVMjo8C4Iv
+         o+bsNJncb/W1r7gZ71opsbLlaROkvVoxQgNzcedBRPYW9yd3H1hhTJndCMIlY9uOcVkO
+         2to8ZkVoizKMw0h8f2uCOlKOIPgCIUQRi83Ty9B/Ii/JspI86HOVwx3TxUH834UOZRbe
+         waEiXvGwhUZJ066aTOulkRTgQj4q86RpZHerpLRN2c2x+9CRHhN7PNroi2euUiyxMxYn
+         NOlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706685432; x=1707290232;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lJNMWA8oodJOdlBVGCcwoi584OUVTTefrAGCMewFxPA=;
-        b=Nkt6fRh4lTrCL2NB3pKo0EmGzVZPtzdt5MbI2Fg6nGhV4fFRHjoRPi6mCltAQYU8wr
-         5yKkkRWFQXLW/dlfKFllJEZCj2xYzAUjy0S6YvEjJ6YO399aNKyk9RG9yfj3yPmF2fjh
-         Fc4/YiKSLNwJj19c7r6mSy8X8vGOZXAbMhk3sD8yu/EYwskIp+1ugfI/T7EocuXMhkZV
-         pTZMsxZBm3x3uNxcWWL+RsbHqGEAREHKRoKZBKq/JmdfOj4gnN0eXmqZnRHYKN/bPxwC
-         yJ36x3jm9+UkX+Fs1lxvjfDqF10SA/I4y0RU8r6aSLpJgKw+BKwOa1/UlR7eiFjqUBAa
-         Ce6g==
-X-Gm-Message-State: AOJu0YyBmZWKLwG2IML41k8fp/CnpVxO76cm5uyMK8dOwj9ucWPFtPoA
-	KR6AUki8my9+Jp/rSkTLGyeNdutV8c5PIym6vj3uYwbt3/tHA3oVJ4DURHBwnGk=
-X-Google-Smtp-Source: AGHT+IHjInEn6XUTctkkJNMJ3raenJfOAafSvuVd9wPAH4LejKdHhu9F5KDMhgsewRgOV1BqmmVEgA==
-X-Received: by 2002:a05:6214:3114:b0:68c:6d8a:70e9 with SMTP id ks20-20020a056214311400b0068c6d8a70e9mr787941qvb.2.1706685431683;
-        Tue, 30 Jan 2024 23:17:11 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWK6O+t7W0CmybXUWgh6zXrTgYm2+YMX+q2YfDAltJe/PzA5+9e6prnfnbpF4zqW89aWGZaAAY0st4tD+CBtv9Eh3OoPgdxYnu0ZsECN/GtJCB7NrJI/INo1GWuOF8q0kyH4PL8DNnBduu8wLIYpW7Uq+hNRcw7x6nYfXwK7eIFKj9eo3jawGDmJaUq6vfsvqea6oi9JmYO+0fFoNXgZv161Qdknj6f2/HwqkQRnjUP4uKZGjoC3M/Y4J11zIMoSNP/u/LqmgNv7wzgSwCNGZTh7VKKB6sY9VEku5i8H7fOTAeMDcPdUesFbJeMHNngvgP92QfbjTETlDTKYrgg7XV4oTmQMEDomAzJY/uMF26UN+am5uIcLvY+55UOuyY+WRKgmtYbkvCzuBUf4h+mV4tj6j3LGEkDbaA30+LBEqy0I4IgH36gpfnorO6nyoEdrxSn7bmeN47Le7XoGwtRmxH+NJl3FTDkeBOVbosTdAPcFbbH5sO3f5ffAOreTBeI/pTeK4byVP2k+N3VPipjLBkXzFyp1L2PVYFFHxS3lsKTPl+GOgt9ExTt0TnhdulJOEP0PfpTBE+XZd4DlhM=
+        d=1e100.net; s=20230601; t=1706685582; x=1707290382;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KUU5ZoGCbRyIKRX82P6J3FpHavAE7JR3VdNwhkZXt4A=;
+        b=PB7Bsu2t8N9pKoypnTgOBWqOYtR4GVyE0iuy3qa3i9E1w+7aKts6xUvQB42qIEx9Wa
+         ty/+lEoudinC9CO3eZ2k5LmxHkQ6lHEWQFLDvJrdDLIDP3y+BGEUKxWgAwMNGcv8xwPl
+         Ho7RSHejwTtUvBZswe47rZUpMyU0O0q3i2mXvlG9BUM++fUvS0jk4f06+zu/ENVpnQBD
+         hfT5xMxR9qWaBVxNn4aFoLHwTvwGIEbq+PZHvftFIzpEdjooWqH47aD+x/mLJQDKe1x+
+         gLxQ/y+F0N1MPMvF4G4R/Rn2HJeZQjSnQfNeKzre08/P5vgMGGXAcKWU72yVPXm2rXwF
+         Yyfw==
+X-Gm-Message-State: AOJu0Yzi12jfdjLlbhsbIbyMNgxNcHT8ObXzatHyxjUlSdO1allbT52s
+	sIcIxUJtIqt5FUrzgPjyNj+asyz3TRN632qq/mjRMXcR9KdqIzj2tZVy1mhEBMM=
+X-Google-Smtp-Source: AGHT+IFPqlMSfu3cp6otULlKJfAcpttJPDZ5Z9teZIomxyVXxBpafaf8B7ByOKjyEiTca0+Q8re+tA==
+X-Received: by 2002:a17:906:11d7:b0:a31:805b:4172 with SMTP id o23-20020a17090611d700b00a31805b4172mr464623eja.9.1706685582003;
+        Tue, 30 Jan 2024 23:19:42 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVyIVbRNfdYv2GFprKZHsR4lg4A/z5JIvSC6nU8j9cZwWg5roTHwNsnWdIUpDI1Pp0s4/pNjm3FINYBi0MLFHS6+YOGD07TbSwylGmAotFW91dMrWNPaDwAjMQ+iU0Q31wcdb5xmQ2BTrpitwBVN01VpzAqHVuA4xaeBSlzJmJ7FgWiTEqGAvf/Cxu21YWVGaacoRuZAVmXh0H6sMBmtTha6EHg5wZQPGGNc9oNq00hCpfUJZA42T7pugO7gQKhP1yjKKhVnSrEb/I25INYmmlYm7StCki/tvRjhMK1PrNZhr+Ewrfgwye0O/guJxxGkcbG+S5IIOex0MFUl9Bu2bkU3lxHptrF9DhVmjxeuteFgC3W7PqpLPeLvnBfoQYXL86sjdB6yT4GgOcYY5KnPI2YlVBJbq+KegiVR68=
 Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id y29-20020a05620a09dd00b0078445f63dc4sm978318qky.60.2024.01.30.23.17.07
+        by smtp.gmail.com with ESMTPSA id ck15-20020a170906c44f00b00a35ec7eddfesm2316959ejb.50.2024.01.30.23.19.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jan 2024 23:17:10 -0800 (PST)
-Message-ID: <4f013386-6e38-4aa0-916f-d38e8ce5cec3@linaro.org>
-Date: Wed, 31 Jan 2024 08:17:05 +0100
+        Tue, 30 Jan 2024 23:19:41 -0800 (PST)
+Message-ID: <a04aa883-d9b8-480b-a9df-8c31bef1165c@linaro.org>
+Date: Wed, 31 Jan 2024 08:19:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,21 +61,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
- robh+dt@kernel.org, conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
- andi@etezian.org, gost.dev@samsung.com, alim.akhtar@samsung.com,
- pankaj.dubey@samsung.com
-References: <CGME20240130125754epcas5p2edd5cc52dc58add09299d3aa5985a9fd@epcas5p2.samsung.com>
- <20240130125748.54194-1-aakarsh.jain@samsung.com>
- <9a8cb901-8021-42a3-a13b-bae10a645011@linaro.org>
- <bb6e3546-a596-4748-92d9-7cfc1f5e2db1@linaro.org>
- <010301da540b$accfe490$066fadb0$@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: samsung: exynos5420-galaxy-tab-common: sort
+ node properties
 Content-Language: en-US
+To: Henrik Grimler <henrik@grimler.se>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240130-galaxy-tab-s-cleanup-v1-0-d4e17857241d@grimler.se>
+ <20240130-galaxy-tab-s-cleanup-v1-1-d4e17857241d@grimler.se>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -122,44 +118,33 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <010301da540b$accfe490$066fadb0$@samsung.com>
+In-Reply-To: <20240130-galaxy-tab-s-cleanup-v1-1-d4e17857241d@grimler.se>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/01/2024 07:06, Aakarsh Jain wrote:
+On 30/01/2024 21:40, Henrik Grimler wrote:
+> Sort all node properties according to dts coding style guidelines, to
+> make dtsi easier to follow.
 > 
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+>  .../dts/samsung/exynos5420-galaxy-tab-common.dtsi  | 23 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 12 deletions(-)
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Sent: 30 January 2024 19:57
->> To: Aakarsh Jain <aakarsh.jain@samsung.com>; linux-arm-
->> kernel@lists.infradead.org; linux-media@vger.kernel.org; linux-
->> kernel@vger.kernel.org; devicetree@vger.kernel.org
->> Cc: m.szyprowski@samsung.com; andrzej.hajda@intel.com;
->> mchehab@kernel.org; hverkuil-cisco@xs4all.nl;
->> krzysztof.kozlowski+dt@linaro.org; robh+dt@kernel.org;
->> conor+dt@kernel.org; linux-samsung-soc@vger.kernel.org;
->> andi@etezian.org; gost.dev@samsung.com; alim.akhtar@samsung.com;
->> pankaj.dubey@samsung.com
->> Subject: Re: [PATCH] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
->> binding
->>
->> On 30/01/2024 15:25, Krzysztof Kozlowski wrote:
->>> On 30/01/2024 13:57, Aakarsh Jain wrote:
->>>> Commit "538af6e5856b" which convert s5p-mfc bindings to
->>>
->>> Please run scripts/checkpatch.pl and fix reported warnings. Some
->>> warnings can be ignored, but the code here looks like it needs a fix.
->>> Feel free to get in touch if the warning is not clear.
->>>
-> I am getting below warning while running scripts/checkpatch.pl on this patch
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #18:
-> deleted file mode 100644
-> 
-> total: 0 errors, 1 warnings, 0 lines checked
+> diff --git a/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi b/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi
+> index f525b2f5e4e0..0c1aeafc025b 100644
+> --- a/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos5420-galaxy-tab-common.dtsi
+> @@ -103,8 +103,8 @@ &cpu4 {
+>  };
+>  
+>  &gpu {
+> -	status = "okay";
+>  	mali-supply = <&buck4_reg>;
+> +	status = "okay";
 
-This one can be ignored, but your commit syntax does not look right.
+Such changes should come from a tool, but since we do not have them, I
+don't want to bother with properties re-shuffling.
 
 Best regards,
 Krzysztof
