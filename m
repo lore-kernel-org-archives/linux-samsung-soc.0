@@ -1,246 +1,267 @@
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2123.outbound.protection.outlook.com [40.107.113.123])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004963D3A0;
-	Wed, 31 Jan 2024 05:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706677513; cv=fail; b=bEbuwUQ+ZxwaZ7M9l6Jr3Bli6FBEmu44tW4mOxf7eyh4KvTsgWVTLTIgJcJ5NR1dMtYEcYhPicQaDnVoy/SIO2wOvhlvZytsHPLP9kzdsUFM5Tdn+NuxCUZuT+4HPfByrTm25vv54B2XMTFGsBE7cOSR0YZsUVskGcUPrRcaEUw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706677513; c=relaxed/simple;
-	bh=q/2gWB3BSiFx2K7BCPl9u8XwRhuyLCAGsFxKUstuHUQ=;
-	h=Message-ID:From:To:Cc:In-Reply-To:References:Subject:Content-Type:
-	 Date:MIME-Version; b=HwWpqOWx+Mw86F47cjmgbZ5tbGqV0gto3A2jPaROjP+P/dXjBHCZ9AhKHpwLOV/bRtoqwob7kK/dkayNmOLsWQxBJSJ7eEgTR561fiwSVzGqjemdgMSTGRTtiulXP69M4+CsbrcWhWeXNBgrK4SkjnL7qZiqVBRb8I6tS1usDLI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=pfdxCoAf; arc=fail smtp.client-ip=40.107.113.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ABB3D556
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jan 2024 05:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706677521; cv=none; b=MvILRilE5e/dAVCdAWayJjOh/tGbMXW99uNlCe8ed1YOCTTZdWFYBF2aMjD0Zidkj9dynObEDMzzUvGWgN7qqaLqIeeJVZOQMos0xLDC+/08OxTWKpAw5dUjHB14C6ktueK/0SxsqGAY3/cXCHFWjdRNQFPZ2VNqx392jNQ3isU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706677521; c=relaxed/simple;
+	bh=n2Tq6bEYRktcu0UZ4ZDAI8v/i2S9seIWoTbtVHKBVp4=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=AzYLRjB/cFRqzmGFvy8CfRVWjm3MyuDE/9xzI0eGqgeKDElv4IfxlxAwzA5XKV3ZYAuAXlqnGt+nTwe4jFW7Wpuv1CtLeCHTDN8nj1qQqiwqHk+5d/ykTV+CgrWTgzxCxjLVSF6VWIqq0s3aUi+MzE5x9E+96xlXBlbby9HxvQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=DecoXf+h; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="pfdxCoAf"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ux7cdCW7SXwnB2JH5AK0jQsVHGQm6ya6vxX0uz+mNFDyDDnyOeKinNpi3oAo9mhu9O+ctTDJNuB9ZXoKLk/6JqejfAlpYAdqRZL2cSeaHBEs9g9jUF9cHpR8a6xxKMIakzBuZg0uhUgHGAUmADw1ibQysx545Tx3TQ07Wdd3u4imoRPay88bb44G1B8g1qebykNEMRIfFjwuSYKSx/DygD75owmSkaenYW7fl5Fiqrz7PLfyCITcXf+bA32VtJ3H3Pe0oALZ6jJzdtjWJGelXLHi/LmhBpx73x1ugltGhauj6P9CBla5BAhuarP8hqqfAf83gJlTKjvw4sZ8c9JXNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4BBD+2hwCWKVV0Gz4IKCygXmCLUzJwjGIsg2wpasMU8=;
- b=gIKFUDJC9LLtXhf1FFbzWS5sAQ1UBro4f2C01+7leiJOIEaypt7gfiXVQ7q2tCWwTTfZrDgVE0JsBgTGrD70PJoTBve6AKqtEkhjTnN3ySj/QH17Oq4pALLLqEWq4XbzJaAEf0YTlMNftWHsomJxvgm/33VMl/ftt7HtpnfNW7idyGYMzJw2wyY4L+8n4zjNoBcO2dqq/c541Sj07ozH+6ta7nJpay+YBICx6H0foRyLeFv7n6ssMlricxi/bF7/DymjBCiet3NUR8vjfAi7i1SG6p4RYcpqaaMDBMdGO6EZBSxw7a+5MRv6GkVsP+ajEw6ngA4Brf02jltLyMGZLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4BBD+2hwCWKVV0Gz4IKCygXmCLUzJwjGIsg2wpasMU8=;
- b=pfdxCoAfhcM4LZC974RTOUv8zAuytN/U3lcpsH5SS6SrIrHcB/Ha3i4rO8EZavjayOkC+Y/rnFKlDSaGEiqAmDaLZoMyZiqI4hgg4rfjy013zDlsRulGbRGw81UdLOyMsBXBpu8FJjA2HA4GHi2e6+Y2SU1pVgofIiKR+C9iR5c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYCPR01MB8341.jpnprd01.prod.outlook.com
- (2603:1096:400:15c::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.23; Wed, 31 Jan
- 2024 05:05:06 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::ce8:8f5e:99a0:aba4]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::ce8:8f5e:99a0:aba4%2]) with mapi id 15.20.7249.023; Wed, 31 Jan 2024
- 05:05:06 +0000
-Message-ID: <87le866qke.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,	"Lad,  Prabhakar"
- <prabhakar.csengg@gmail.com>,	=?ISO-8859-1?Q?=22Niklas_S=C3=B6derlund=22?=
- <niklas.soderlund+renesas@ragnatech.se>,	=?ISO-8859-1?Q?=22Uwe_Kleine-K?=
- =?ISO-8859-1?Q?=C3=B6nig=22?= <u.kleine-koenig@pengutronix.de>,	Abhinav
- Kumar <quic_abhinavk@quicinc.com>,	Alexander Shishkin
- <alexander.shishkin@linux.intel.com>,	Alexander Stein
- <alexander.stein@ew.tq-group.com>,	Alexandre Belloni
- <alexandre.belloni@bootlin.com>,	Alexandre Torgue
- <alexandre.torgue@foss.st.com>,	Alexey Brodkin <abrodkin@synopsys.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,	Andy Gross <agross@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,	Bjorn Andersson
- <andersson@kernel.org>,	Claudiu Beznea <claudiu.beznea@tuxon.dev>,	Daniel
- Vetter <daniel@ffwll.ch>,	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	David Airlie <airlied@gmail.com>,	Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>,	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Emma Anholt <emma@anholt.net>,	Eugen Hristev
- <eugen.hristev@collabora.com>,	Florian Fainelli
- <florian.fainelli@broadcom.com>,	Frank Rowand <frowand.list@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,	Hans Verkuil
- <hverkuil-cisco@xs4all.nl>,	Helge Deller <deller@gmx.de>,	Hugues Fruchet
- <hugues.fruchet@foss.st.com>,	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Jacopo Mondi <jacopo@jmondi.org>,	James Clark <james.clark@arm.com>,
-	Jaroslav Kysela <perex@perex.cz>,	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kevin Hilman <khilman@baylibre.com>,	Kieran Bingham
- <kieran.bingham+renesas@ideasonboard.com>,	Kieran Bingham
- <kieran.bingham@ideasonboard.com>,	Konrad Dybcio
- <konrad.dybcio@linaro.org>,	Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>,	Laurent Pinchart
- <laurent.pinchart+renesas@ideasonboard.com>,	Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,	Liam Girdwood <lgirdwood@gmail.com>,
-	Liu Ying <victor.liu@nxp.com>,	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,	Marek Vasut
- <marex@denx.de>,	Mark Brown <broonie@kernel.org>,	Mauro Carvalho Chehab
- <mchehab@kernel.org>,	Maxime Coquelin <mcoquelin.stm32@gmail.com>,	Maxime
- Ripard <mripard@kernel.org>,	Michael Tretter <m.tretter@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,	Neil Armstrong
- <neil.armstrong@linaro.org>,	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,	Philipp Zabel
- <p.zabel@pengutronix.de>,	Philippe Cornu <philippe.cornu@foss.st.com>,
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,	Rob Clark
- <robdclark@gmail.com>,	Rob Herring <robh+dt@kernel.org>,	Robert Foss
- <rfoss@kernel.org>,	Russell King <linux@armlinux.org.uk>,	Sakari Ailus
- <sakari.ailus@linux.intel.com>,	Saravana Kannan <saravanak@google.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,	Shawn Guo <shawnguo@kernel.org>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,	Stefan Agner
- <stefan@agner.ch>,	Suzuki K Poulose <suzuki.poulose@arm.com>,	Sylwester
- Nawrocki <s.nawrocki@samsung.com>,	Takashi Iwai <tiwai@suse.com>,	Thierry
- Reding <thierry.reding@gmail.com>,	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tim Harvey <tharvey@gateworks.com>,	Todor Tomov <todor.too@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,	Yannick Fertre
- <yannick.fertre@foss.st.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Leo Yan <leo.yan@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Sean Paul <sean@poorly.run>,
-	Tom Rix <trix@redhat.com>,
-	coresight@lists.linaro.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org,
-	llvm@lists.linux.dev
-In-Reply-To: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
-References: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v3 02/24] of: property: use unsigned int return on of_graph_get_endpoint_count()
-User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Wed, 31 Jan 2024 05:05:05 +0000
-X-ClientProxiedBy: TYCP301CA0073.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::11) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DecoXf+h"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240131050516epoutp03579a7fba05b81881e11cb0d9dd3ec57d~vVijDcQvd2191521915epoutp03S
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jan 2024 05:05:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240131050516epoutp03579a7fba05b81881e11cb0d9dd3ec57d~vVijDcQvd2191521915epoutp03S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706677516;
+	bh=qL3Ay4Pba21ebKmLP4wgOqqtjTV7NsQxQZC9542ZZjY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=DecoXf+hQ/1V8f4MuFlF9yo32Dbk2T/9Z5muRsTIVYMSCgPBtWWjCMInWaF7/FNPJ
+	 tgiDxgf3AJed02x519mN5FUHlK1cvEcn0GmLVoNg5O55yv3/XRGWUaAajHYoYfmqiY
+	 8lKooD6FW7HM0H+od1QGLmDClVXCRQEhbGtFMows=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240131050516epcas5p47d8730317828176765d0897f441b7e6e~vViiq6zJ30567105671epcas5p4U;
+	Wed, 31 Jan 2024 05:05:16 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4TPqjQ3n3kz4x9Pw; Wed, 31 Jan
+	2024 05:05:14 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BA.59.08567.A05D9B56; Wed, 31 Jan 2024 14:05:14 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240131050514epcas5p4be8d9e13921fd986fe4575a0e6b1357c~vVigf2yS90107301073epcas5p48;
+	Wed, 31 Jan 2024 05:05:14 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240131050514epsmtrp2abde2bb514eebfd5e4158a59666f7af3~vVigdBfIQ0572005720epsmtrp2E;
+	Wed, 31 Jan 2024 05:05:14 +0000 (GMT)
+X-AuditID: b6c32a44-617fd70000002177-41-65b9d50a5e2e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	24.A0.08817.905D9B56; Wed, 31 Jan 2024 14:05:13 +0900 (KST)
+Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240131050511epsmtip154775cf4996d87fa587c78df7e8f1ced~vVidxnqFt2072320723epsmtip1O;
+	Wed, 31 Jan 2024 05:05:11 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Shradha Todi'" <shradha.t@samsung.com>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
+Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <jingoohan1@gmail.com>,
+	<lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+	<bhelgaas@google.com>, <krzysztof.kozlowski@linaro.org>,
+	<linux@armlinux.org.uk>, <m.szyprowski@samsung.com>,
+	<manivannan.sadhasivam@linaro.org>, <pankaj.dubey@samsung.com>
+In-Reply-To: <20240124103838.32478-3-shradha.t@samsung.com>
+Subject: RE: [PATCH v4 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
+Date: Wed, 31 Jan 2024 10:35:10 +0530
+Message-ID: <009c01da5403$12b926d0$382b7470$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYCPR01MB8341:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54eb8ee5-9a86-403c-eb57-08dc221a30b0
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	I/Jyk3TXrfJNe6reGT2TRj7Xj9qCFxsmignr/N8Ov4NBMkI27vs8GqeGeYwKKmCxJxZNwQU1rTUoufC6ImSTIKFK7J8x++FMFYdAqDBxEzs4TXXo3o7n8QtxcI/FOa/CB17Q7/iLo0+sNcv44rIZMKAvpIksE7cxmhg+/8n6lRLo/9J2sJ074zkX6XWtmufpg2gf1vXx4XFpeKKRTGcWsHBxROIQgxJENDxgsdKzMw0aBkiplVZYuShFNy78kV1nn6XI8oiHYxrZqvffgnGU39KzbhO4sDvW+lxPJ0fml5YGwBsyn4E3Uad5M/dF01S5kYf6vHF+TWsLGt3bhK9/akIdCR5QRNlu7An8a6hCZ9GVk0L+zZodRwEyYRSTrQCZHfFvAKo9lIGqY41eNKO11pC7wpwFQVqLeEXAslVHaNFv7kWji1S1cY8zPAFF8vmZqgdnk4nC/unmL7yZUmHk26+itNJTTxZ2M5reBApetCBYC1wvKWBGvxPoPeDg3DJr1ILPv7DitNTD57AKpT/GVm8Wi+4IwMBtpUY/BVgVfW8Kyoo1dIqFpbVMmOxHdb8d4w4lojxLM0QnASCnHZ+Ep+quqkQlbcHN3S2gI4fxb+LJktLX8Za5+HuJ04zJQFZRKVbI+rPETjkFvXPOINmmrg==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(136003)(366004)(376002)(39860400002)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(1191002)(66476007)(8936002)(4326008)(8676002)(7366002)(5660300002)(2906002)(7416002)(7276002)(86362001)(7406005)(110136005)(66946007)(7336002)(316002)(38350700005)(36756003)(54906003)(38100700002)(66556008)(478600001)(52116002)(6506007)(6512007)(6486002)(83380400001)(26005)(41300700001)(921011)(2616005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8o30qwN5U3fXTlNzMAwuVpWNFrgq00eCuOZGmQaSvmkLXIt3WbGjHu8DIeC3?=
- =?us-ascii?Q?GZi0uQtBkbrzLm036hc862kFxgKsZ8AN+Rgof8OlvO4ysMv+FJdgvspdX+Ym?=
- =?us-ascii?Q?zfiK+IdHLUxJrzdASUf5MLjauYaUOSFCNcyVB3p9KzkvgpALV7Hh0/bH4rnB?=
- =?us-ascii?Q?qVbi0+TAKATC6Tq0Re/IurVvk24IKamUBrt1cw2MqTAlTRRytqat5vNqQ8Ku?=
- =?us-ascii?Q?Vg7GerRuw7Jw6ff1QeskQ1NfqxBWDVeuEZkGWlBsW03Sy79u8D0CuHf9ynqH?=
- =?us-ascii?Q?MWe4aG3Tv5lg+c5tY5ob//SVU6DYX1lx6eXe4jZtw0e6ggZt4EgU1YKsfNWP?=
- =?us-ascii?Q?dbkthIDcC7TqTKShzv/X/k6bZrRf4EqQwfYOYkjwnyUZwXWI+/WFM3/iJVhg?=
- =?us-ascii?Q?Eqr3XLhQgVEgCrav2KKUo28lRbQiGTEKhIP9oHoIoSRxipo4NrVTiM7xYiwX?=
- =?us-ascii?Q?DsgFR/itvplGC90ZbyTDc9huYWXv4JzqSM6ah/xMLntLBIm946GB/L8qsapB?=
- =?us-ascii?Q?+qqxBVbNI86fGFl1H8MCwQHpZFPV0SLTjmIPNweF7Y5W6DxjWKYnBNBnv99g?=
- =?us-ascii?Q?r9V5sma/Rg0ipJ5/MBu1s0DahJkaYUv7Oedk6tfm5UaS+U2bXiOVYhdqnW9v?=
- =?us-ascii?Q?2D6M8NXSZNPHjHoaKhtw8RtQtYeT2kyvxTbVSjIhCmKBpmHPECEKM/XhFp1x?=
- =?us-ascii?Q?L3zNXqW8V3JZ++LLuahb9ivTkcpWE6pkCivd9T4o9VdCutEovdCdBmN3imq8?=
- =?us-ascii?Q?68VsmtFlKKED3Naa+GpF42fmH3rO7GSE+sk0yCk8JgdSKEt21VS0tNIShO5x?=
- =?us-ascii?Q?gDhCevET+dI7WFu/5xol295mqN+Z5IEFPvZ1RjnHLYM98gX6jjW44/VMobCA?=
- =?us-ascii?Q?X61DzjfKXWwGIbshXB6HG2M8fkwEDdwko1UKVlydThj/FYWTWrYtcxUcRs44?=
- =?us-ascii?Q?RNTxpLaSWSw75+G0lfJzlVwcnviI/RW+N76Jf2wLcVYiO4mi06uZnhA6Jijt?=
- =?us-ascii?Q?3/F+PXJVrWbB7FyWNb4pgyWnv1qplS9qvc6I3cbf+qsk6aDzCHgaY0cV1JjK?=
- =?us-ascii?Q?SYE/bCFmmBzj/k0UsU5oUOs9OHbwXg9Ha255pXMVwlX0k2sY32tjPvncBpf3?=
- =?us-ascii?Q?Wm67LsSNqpQJhcXsFC72mfcKn7dod8jysIm5+fcXF74PAmn15im8QnS4rkku?=
- =?us-ascii?Q?OZt7in84kPb+gTXLq6Vgx5Ne5csTRRzR4OadPZxRhnSKNDulyy+0mW2swTVl?=
- =?us-ascii?Q?98eeFoasuR1idg/K1equIaNE8XTbiOWLSx0kkI51NYuF7mLwPVH7td9/JzJ4?=
- =?us-ascii?Q?PwDRuZX2z4Iga2hnhKTHXw5J3NjSjUhkAKZ1JUfIiCwygUnOnbpXkxLxP87g?=
- =?us-ascii?Q?8jqoxm58BuzGZ/06OfpFancQTUvX0uDa7cv1JkBV0cBk4J5DjaZtE4Vl6vdx?=
- =?us-ascii?Q?L5nTc+Fr/xSfxmCFvZaKImzdqMk9+c4ZtNN6ha6Dc5kdFmoDU+0sRFgLnuzo?=
- =?us-ascii?Q?ZzSOSQN0WpEZS06thzNu3eQWSq1r3/lz1tfYqV9m13c0HVDjVca3tnmoJLkl?=
- =?us-ascii?Q?e8GJ6RmAZKqe2SkjHfUF7dQLh2dPRpUepCQ4Aa7px1nNVXZi3SsDp/RmcYff?=
- =?us-ascii?Q?J/rJ/mHdozWKau3pxvEblo0=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54eb8ee5-9a86-403c-eb57-08dc221a30b0
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2024 05:05:06.2162
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BOYJbIOamretAgYnOA7un0mI37FcLhvoEzNTGg5LCaxpQ+Knu6N5nXAA/LcMVNWhSXlsK+uRZJfdhopUoOO3NpcNdztxsbQ6kNulrqPsqX1+aIuKxIWRyIS2AfrbxD1K
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8341
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIcpPks/WB953w72Rl3v8cfkz9jJgIOwv9MAllxpn6wS3ptMA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xbZRjG+XoHxZwVyD6KznIMYzCBVgocBmyDgTvKEjDEJZooO6EnlFBO
+	m152M5uddMxdQEDIRhmTFsKwyBiFymWwAbsgIEHCVnDKlJuZI4AbWDAwsO3ZlP9+7/c+T57v
+	/S48Jn+GI+BlURpSRRFylOPB+v52UGCIx4M2UmT8yg+r/kKG1S6VcbHOWSsX011YZWOWKRsb
+	e3rhERsbab/MwQav9HKwS0M3GVhPaSfA9Gt6FlZ/Z5yLjevPsrHh/iTMZF3iYhsdrVxs3dbI
+	wvJvn9jLx0dsw0x8Yew0F28zjHPxSosWt5jPcvBfbR0cfPr+RQbeVP05XtBsBviiZVuqx8fZ
+	sTKSkJIqIUllKKRZVGYcmpyWvi89IlIkDhFHY1GokCJyyDg08UBqyLtZcsdEqPAwIdc6llIJ
+	tRoN2x2rUmg1pFCmUGviUFIplSslylA1kaPWUpmhFKnZJRaJ3olwCA9lyyYry5nKDfTo4q1B
+	hg48f/0ccOdBRAJHbd3AyXzkBoB9E0dpfgbgpFV6Dng42A5g6e/lnJeGurZGNt3oBHD5+R8c
+	ungMoGFqiOtUcZAQ2FqV52p4I6MALi2bWc6CidxgwLn2FVegOxIDJ6t7mE72QuLhY/vXLmYh
+	AdB0a4TtZE8kGhaUDrBo3gL7yqZdzER2whrjLJPekxD+M1Pj0nsjCXChto5Da7bCP+/e4TqD
+	IbLBg7PFl1i0IRGWjAy8MHvBJ73NXJoFcHG+02HmORiHpjUBvSyDc1cbAM17YNf9yyynhIkE
+	wYb2MDrqNZi/Os2gnZ7wyzw+rQ6AufMPXoT6waLz59k04zDP/oRTCPwNmwYzbBrMsGkAw/9h
+	lYBlBr6kUp2TSWZEKMUUeeS/+85Q5FiA670HJ7aCsW/WQ3sAgwd6AOQxUW/Pb7e1kXxPKXHs
+	OKlSpKu0clLdAyIcp13EFPhkKBwfhtKkiyXRIklkZKQkOjxSjG71nD1dIeUjmYSGzCZJJal6
+	6WPw3AU6hq95vWqitj9+/MdjQabc7Vla4Z78h7+EBM4UuX04vvdwxILeS1xQfBN/76mv36Dg
+	4FsnT5bsC89utK4kdu3W/vATdQ33f9acNCNJfVNwKD1+LbG7cAXvqCqLsjE+6Ky2G4dMxrdb
+	djwK3tFb6nY9bCgZpNUn7S/W/XWxrXG95VURNexjuZISc0Qyub0ld3VN98oJ6mdtytjDxYnC
+	Nz4rqbib0Tyv/7RVMFATk7M8F+7vZp/L3WUt6K0/OFNo/u5UH9tny73QhWKiXldR3tFckHYm
+	wNiYMBp44NTfpoCm/pSue1PvD8+zric07LzKLpo1dp+5Vpf8CRFrbtKjvx2Xy6LsH+1HWWoZ
+	IQ5mqtTEv6KRjfJ4BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCSnC7n1Z2pBveuWFksacqwWPFlJrvF
+	3tdb2S0aen6zWmx6fI3V4mPPPVaLy7vmsFmcnXeczWLG+X1MFoem7mW0aPnTwmKx9shddou7
+	LZ2sFhdPuVos2vqF3eL/nh3sFv+ubWSx6D1c6yDkcfnaRWaP9zda2T12zrrL7rFgU6nHplWd
+	bB53ru1h83hyZTqTx+Yl9R59W1YxenzeJBfAFcVlk5Kak1mWWqRvl8CVcaBpCWvBLcWKfZ+2
+	MjcwXpPuYuTkkBAwkVi9cyNrFyMXh5DAbkaJ5n+TmSES0hLXN05gh7CFJVb+e84OUfSMUWLS
+	/yZGkASbgK7EjsVtbCAJEYG7jBKNy/+AdTALnGSSmDdfBW7ssgNnWEASnALWEo+WHAJbISzg
+	KPHiG8Q6FgFViUX7L7OC2LwClhJ9U0+zQNiCEidnPmGBGKot0fuwlRHGXrbwNdSpChI/ny4D
+	6xURcJJ4v2I1G0SNuMTLo0fYJzAKz0IyahaSUbOQjJqFpGUBI8sqRsnUguLc9NxiwwKjvNRy
+	veLE3OLSvHS95PzcTYzgSNfS2sG4Z9UHvUOMTByMhxglOJiVRHhXyu1MFeJNSaysSi3Kjy8q
+	zUktPsQozcGiJM777XVvipBAemJJanZqakFqEUyWiYNTqoEpwiLDRv6GcOpx0cLzq4rPmv/Q
+	e7L03ILZVu2bL9jURavcFHbZNoeNdwlPuMb/jQ+6GWo1v4QfmlOQqXx+4tbmP+eUzM8ph37d
+	FqrK61x+mPN1WOFPqYTbfKbrgxddPSPe5S7S98n0S+Pv0w9+VJVKuq5u5N3I8vfPwxlBX851
+	O9pP5ro6aZpj5IWZvrIlHR7rjxuGaFdmX9Hc0TtRn/HX3+BnRuJ+0ctfvs2a0javRVuk/MnD
+	k7aiBseyDvseqN378wpjqPMr9YkH7uwJMXSN2HhRPaN+qsChffGuLdtuaQfOijeSPRkQ1K5c
+	eVlU7/Fjpg9eez768x9nenNtg9/x88cjL5n9u5Z1XLdWuZpDiaU4I9FQi7moOBEAYH66VWMD
+	AAA=
+X-CMS-MailID: 20240131050514epcas5p4be8d9e13921fd986fe4575a0e6b1357c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8
+References: <20240124103838.32478-1-shradha.t@samsung.com>
+	<CGME20240124103858epcas5p3d96cdbe8a6c8f31ccc934025411a09b8@epcas5p3.samsung.com>
+	<20240124103838.32478-3-shradha.t@samsung.com>
 
-The return type and the variable of of_graph_get_endpoint_count()
-should be unsigned. Tidyup it.
+Hello Shradha
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
----
- drivers/of/property.c    | 2 +-
- include/linux/of_graph.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> -----Original Message-----
+> From: Shradha Todi <shradha.t=40samsung.com>
+> Sent: Wednesday, January 24, 2024 4:09 PM
+> To: linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-
+> pci=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-sams=
+ung-
+> soc=40vger.kernel.org
+> Cc: mturquette=40baylibre.com; sboyd=40kernel.org; jingoohan1=40gmail.com=
+;
+> lpieralisi=40kernel.org; kw=40linux.com; robh=40kernel.org;
+> bhelgaas=40google.com; krzysztof.kozlowski=40linaro.org;
+> alim.akhtar=40samsung.com; linux=40armlinux.org.uk;
+> m.szyprowski=40samsung.com; manivannan.sadhasivam=40linaro.org;
+> pankaj.dubey=40samsung.com; Shradha Todi <shradha.t=40samsung.com>
+> Subject: =5BPATCH v4 2/2=5D PCI: exynos: Adapt to clk_bulk_* APIs
+>=20
+> There is no need to hardcode the clock info in the driver as driver can r=
+ely on
+> the devicetree to supply the clocks required for the functioning of the
+> peripheral. Get rid of the static clock info and obtain the platform supp=
+lied
+> clocks. All the clocks supplied is obtained and enabled using the
+> devm_clk_bulk_get_all_enable() API.
+>=20
+> Signed-off-by: Shradha Todi <shradha.t=40samsung.com>
+> ---
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 4e879faa1710..25d73409aeee 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -817,7 +817,7 @@ EXPORT_SYMBOL(of_graph_get_remote_port);
-  *
-  * Return: count of endpoint of this device node
-  */
--int of_graph_get_endpoint_count(const struct device_node *np)
-+unsigned int of_graph_get_endpoint_count(const struct device_node *np)
- {
- 	struct device_node *endpoint;
- 	int num = 0;
-diff --git a/include/linux/of_graph.h b/include/linux/of_graph.h
-index 4d7756087b6b..a4bea62bfa29 100644
---- a/include/linux/of_graph.h
-+++ b/include/linux/of_graph.h
-@@ -41,7 +41,7 @@ struct of_endpoint {
- bool of_graph_is_present(const struct device_node *node);
- int of_graph_parse_endpoint(const struct device_node *node,
- 				struct of_endpoint *endpoint);
--int of_graph_get_endpoint_count(const struct device_node *np);
-+unsigned int of_graph_get_endpoint_count(const struct device_node *np);
- struct device_node *of_graph_get_port_by_id(struct device_node *node, u32 id);
- struct device_node *of_graph_get_next_endpoint(const struct device_node *parent,
- 					struct device_node *previous);
-@@ -68,7 +68,7 @@ static inline int of_graph_parse_endpoint(const struct device_node *node,
- 	return -ENOSYS;
- }
- 
--static inline int of_graph_get_endpoint_count(const struct device_node *np)
-+static inline unsigned int of_graph_get_endpoint_count(const struct device_node *np)
- {
- 	return 0;
- }
--- 
-2.25.1
+>  drivers/pci/controller/dwc/pci-exynos.c =7C 54 ++-----------------------
+>  1 file changed, 4 insertions(+), 50 deletions(-)
+>=20
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c
+> b/drivers/pci/controller/dwc/pci-exynos.c
+> index ec5611005566..3234eb5be1fb 100644
+> --- a/drivers/pci/controller/dwc/pci-exynos.c
+> +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> =40=40 -54,43 +54,11 =40=40
+>  struct exynos_pcie =7B
+>  	struct dw_pcie			pci;
+>  	void __iomem			*elbi_base;
+> -	struct clk			*clk;
+> -	struct clk			*bus_clk;
+> +	struct clk_bulk_data		*clks;
+>  	struct phy			*phy;
+>  	struct regulator_bulk_data	supplies=5B2=5D;
+>  =7D;
+>=20
+> -static int exynos_pcie_init_clk_resources(struct exynos_pcie *ep) -=7B
+> -	struct device *dev =3D ep->pci.dev;
+> -	int ret;
+> -
+> -	ret =3D clk_prepare_enable(ep->clk);
+> -	if (ret) =7B
+> -		dev_err(dev, =22cannot enable pcie rc clock=22);
+> -		return ret;
+> -	=7D
+> -
+> -	ret =3D clk_prepare_enable(ep->bus_clk);
+> -	if (ret) =7B
+> -		dev_err(dev, =22cannot enable pcie bus clock=22);
+> -		goto err_bus_clk;
+> -	=7D
+> -
+> -	return 0;
+> -
+> -err_bus_clk:
+> -	clk_disable_unprepare(ep->clk);
+> -
+> -	return ret;
+> -=7D
+> -
+> -static void exynos_pcie_deinit_clk_resources(struct exynos_pcie *ep) -=
+=7B
+> -	clk_disable_unprepare(ep->bus_clk);
+> -	clk_disable_unprepare(ep->clk);
+> -=7D
+> -
+>  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)  =
+=7B
+>  	writel(val, base + reg);
+> =40=40 -332,17 +300,9 =40=40 static int exynos_pcie_probe(struct platform=
+_device
+> *pdev)
+>  	if (IS_ERR(ep->elbi_base))
+>  		return PTR_ERR(ep->elbi_base);
+>=20
+> -	ep->clk =3D devm_clk_get(dev, =22pcie=22);
+> -	if (IS_ERR(ep->clk)) =7B
+> -		dev_err(dev, =22Failed to get pcie rc clock=5Cn=22);
+> -		return PTR_ERR(ep->clk);
+> -	=7D
+> -
+> -	ep->bus_clk =3D devm_clk_get(dev, =22pcie_bus=22);
+> -	if (IS_ERR(ep->bus_clk)) =7B
+> -		dev_err(dev, =22Failed to get pcie bus clock=5Cn=22);
+> -		return PTR_ERR(ep->bus_clk);
+> -	=7D
+> +	ret =3D devm_clk_bulk_get_all_enable(dev, &ep->clks);
+> +	if (ret < 0)
+> +		return ret;
+>=20
+>  	ep->supplies=5B0=5D.supply =3D =22vdd18=22;
+>  	ep->supplies=5B1=5D.supply =3D =22vdd10=22;
+> =40=40 -351,10 +311,6 =40=40 static int exynos_pcie_probe(struct platform=
+_device
+> *pdev)
+>  	if (ret)
+>  		return ret;
+>=20
+> -	ret =3D exynos_pcie_init_clk_resources(ep);
+> -	if (ret)
+> -		return ret;
+> -
+>  	ret =3D regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep-
+> >supplies);
+>  	if (ret)
+>  		return ret;
+> =40=40 -369,7 +325,6 =40=40 static int exynos_pcie_probe(struct platform_=
+device
+> *pdev)
+>=20
+>  fail_probe:
+>  	phy_exit(ep->phy);
+> -	exynos_pcie_deinit_clk_resources(ep);
+>  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+>=20
+>  	return ret;
+> =40=40 -383,7 +338,6 =40=40 static int __exit exynos_pcie_remove(struct
+> platform_device *pdev)
+>  	exynos_pcie_assert_core_reset(ep);
+>  	phy_power_off(ep->phy);
+>  	phy_exit(ep->phy);
+> -	exynos_pcie_deinit_clk_resources(ep);
+>  	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+>=20
+>  	return 0;
+> --
+> 2.17.1
+
 
