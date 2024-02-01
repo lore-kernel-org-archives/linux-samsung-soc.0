@@ -1,130 +1,126 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBA05D492
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AABD626B0
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Feb 2024 15:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706797337; cv=none; b=lZRQ8NeMyp2eeP0VyDHpaesnnfpyeWVh5jUFfMpfARsWl+KnrBSgHlZ4VoK/Ou+xwxTBbkAPp89KLoXDvTsabFWuGkAybFXu6QdI3JgxPS4lsyVHOfOFoYQXxhh2ol5SSLySQ0fh9qeLPEioMNY64wzJtDtdXMa/aeo59blP1nA=
+	t=1706801023; cv=none; b=KJS6RnPVM8m7upAT4MfSCoiM4h+DqIm8U4omCUdbPFzXonDRCIBmMRtQcbB9Q+duiohMrO/hFLZ9H6Cxk7GW5lcVYMyD+Kd5C3MAszEpphJL97mGmzkmr0+QZEkKrIRam/96LyqaeSHzi6WpRTkIkGEO46Fj5IpF+J+DCAGKhD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706797337; c=relaxed/simple;
-	bh=1O1AOTNGsQX+i0nDTY1kz81nsRaOmNyTqRoqQQPcBeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rVg4F7GPzrYxHzoEWlg/4J+vdU5fhr/fOy9Z6qn/I/vLdJWS4M8MJl685cy8zUAWKakss05CX58M83ySyMRTVytRMEGj1KT4TiEVVD7Wgw95zij2mu8XsvzUhM1j494RJgTjH7d3vda0i/LkvEOn8DxL9VFbfQuo/VlP6T6G7nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o1L1I5hC; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1706801023; c=relaxed/simple;
+	bh=PMSkrVfo4wCCBmsgQRZ5v3SqCDRO5S+47GIBIeR9PvM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uQoMZOKSfhpTQRLN4Rc6XKMHtG2iPvtAU/pPLKkZRjkDoNtjzgIc3C2aRin047T7+OmFJ9tCkhWhnNPsKHqx65CtvX9bpwxz3DvkdZVuXYZgf6hOF4WsKclsdeYQGyllPMdDBuqzAwfl7q0LmLvzv6L7qihNeQH4bIGdficGte0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cv3YHO2q; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o1L1I5hC"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5ce942efda5so768366a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Feb 2024 06:22:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cv3YHO2q"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40e80046264so9445605e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Feb 2024 07:23:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706797335; x=1707402135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R6RqxSYIRPivOTJEnlw3gOkIIa+Ul1PRzCUBYhNeDdQ=;
-        b=o1L1I5hChL71yecrcBoh/i5TxnGFN48SlTa6ffMxWpNnn/Vts3idVS64/7dP191Dea
-         DiYTTjTBCDA76pnMxDDZ0DcmGrBC73q3aL8yIEgYqgooHk5jXEGB6cCxLVFPWtObxgaP
-         v8UnQmGJQoH5A6CKa6dQ6Mhzyg4wYoghW3FRXDic/G56aAdwh5N0ErQ9mDSI45B7jy0P
-         9po+smAMAzRODYtTQgAUK7mFb0TBaS8clJdiFmeMqkggELfeEeO+b5NeB7+Jv6z0w+QX
-         DwFtB4b0WCl9/5GdJ/IcIP11HYHNVshU7DSU43QBVjQ0BK9Dru1nyux75FjOqsizqZ+c
-         Ko3A==
+        d=linaro.org; s=google; t=1706801019; x=1707405819; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PMSkrVfo4wCCBmsgQRZ5v3SqCDRO5S+47GIBIeR9PvM=;
+        b=Cv3YHO2qnBmigGCP8Xv/tjBczT4dE29eLL1j+R9uAWt1IyzvNFHI8zf3iePr5n0D/V
+         Jikeirzkahkdm9nvdk7Be3Z4VrvcLRCXt0SE3YxY/Xg6QzbycRDW/yP5Et5109lUr9DM
+         k6Sr7dLlKHsoaKHD/kqnC99rDiSKLGHB0v8q0y8CWNJ9vFqv6BfQ37sUds6QtRnMyJdf
+         X0X+QzA0VOn4qKrOmJ8xuOW7LMjeGczE03/SjQ4K/IP9Bdp2M8VmPmikB26hAaU1CgRp
+         z+DKxZcDFd2OFVR/SNywrjuYOEQY0eYKhmMsI4ht1rwNLl6W9qmnm7b44fH+XRVbVN/v
+         2KuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706797335; x=1707402135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R6RqxSYIRPivOTJEnlw3gOkIIa+Ul1PRzCUBYhNeDdQ=;
-        b=IDRndy4oHTzPCWD4G9c/JtMk3j/UxCZpqm7aZt4kFdJbWs3cuJ2+Zjgqq7XBtVkdHd
-         gNh1St+WbuzXHSO1AfILPm3QWxUtvF4MPzYi8FxPeXX/iY6oy2Bpc7c9142M2mYdTLyJ
-         b4BXJ6dyZC6EhkW67iqED+Dz3tOn0s0UxtUe+UI+F92zHtDOpF0h87pgkUagkXL+VK9A
-         UNZ5JYpQDdkOL2uB2u9vLVum6hRsPk/wZYHKq0Kh/Yh7kKyA0MkmGe2/7ucUj1vMReeN
-         H6ItfRXEgfp0S1CUpmq8xnQh35M/fJk9jmnz+z9QmwTzKUTh2CXyGGV2NBanAa6eN9M8
-         tWSQ==
-X-Gm-Message-State: AOJu0YyFV9VwucoqbCXbKWR6B/HSIk+tFMxiNaCovk2msK6z0mKt+Qfg
-	H0lbTSD7bL1QrKgjZ56vHt8gKFYP9/aBWUAZcmSg3bkUL9L4DPon2u+Mk8lHPBoSiup3arZgXRN
-	Y1ZoglFel9dGI97s5mZ1I3YQLd6isxyHUhEBB7g==
-X-Google-Smtp-Source: AGHT+IErbFgMVG98pJg/oaehaHSpsB61MD2tROFlx7fdPd5hSbz2EsbFIOcbXTPEqNs8GfN7zqAzP9yPfu+IfMDWtSA=
-X-Received: by 2002:a05:6a20:c526:b0:19c:74d1:b314 with SMTP id
- gm38-20020a056a20c52600b0019c74d1b314mr1891047pzb.17.1706797335445; Thu, 01
- Feb 2024 06:22:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706801019; x=1707405819;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PMSkrVfo4wCCBmsgQRZ5v3SqCDRO5S+47GIBIeR9PvM=;
+        b=sf+mRD/Iat23l7QTbQXdvurkAix0LCdfolti1LV3Nd9xxlRtZJl3oK7F+3jBr8QXvl
+         P+CBoHl7C6EoEnzNIeEX4QnZN5QpVL3qWsZ/jTZFEt+L77Exeu+by94RnbKo4rPWRL1J
+         b3hkGFdxX59SK7HpWTPtFuM2XEizHVrg9yOTHRXLU1NdGa1SPij7prf10jbWOS/UI73v
+         nkuaGvxH33lhFXN/eXTvQXnrY178qnMPxGkv2Gn7JQHwu6ulcq0pYRyGJBCKudJfJR4V
+         DUG1Fg7gGFJgUFEx9uJCwNqRTE8K73hioT2gsm2VM6oagEPLHfgEaKYYM8mFWubD8Ox+
+         TJJA==
+X-Gm-Message-State: AOJu0Yw3O8XuSb/K0hRQxnuLNoWvWz5SX0JYlbnfTpf9fjfQR57ukTW+
+	mjLnUBpTGT7R72hKCoTcbSnOoqp2jo4tjjFZOd4gFbFnUCTdwFKWUYrG2UJwLJU=
+X-Google-Smtp-Source: AGHT+IFodjNDyMaCtYuTqV48vhgStAruvNKrxCZcjt1dAxjJZdOwQCmscUUIOnKz7B5yumA8IslNvg==
+X-Received: by 2002:a05:600c:4e8f:b0:40e:f15e:10a8 with SMTP id f15-20020a05600c4e8f00b0040ef15e10a8mr4135288wmq.27.1706801019449;
+        Thu, 01 Feb 2024 07:23:39 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWL0d7Ugr++UEHsJvIKxBYZi9F1A+/6aubU+Ro8eXX5vxRO+mg9PgqLH/KrlyrNxir73EU5QsKivnH8EPMWDirtNVQGVZQp/dFNwJcT8Pput4S6nynwJVCnKwrwvgR8gZ+sHoE+dGXvEcAUZ5tQuiMDb1ZNN5FuGDvpCPs/BJDWg3v8OffzNMQVhA91yTqpyM5BKqBVhY+8i4RMPl7VgagIAszO8VMZKAaqgrGTA2rvNU3PzMy+NegVU3ivUBzi1OzpztrmjK+qNWtwZRKXiIZmhbb5zJ/pkIsMQMbqUVQlsQto6x+ZawSrPYgZURyjlAaTpD0PnmGRouCpwcSDEY0ZAxF71Eu34Q+drwcNiHVHriAzjMvimHcTHFv+Bsrr8XRzxiRrKrz12thShte6WF4KORgdjfO31VfCkanLtx0DOXUINNrqTjJ5wTLzmhpiwQxxLkcCbNTKzJ+ria7oJvPOv43Djp6jgM0kNDI7nG3Fwps2+aj/qvEb6ycT3uxNj2YFKxwtSEva+tTznbThnS8tcAyaQCvt+iI0oZnzwOyi8oP+IzVXH9VJjEj2fv1ATjWYczhMbNwGThcxB2KRYV+SIeMFP2ihcf0NOwCZNFA6i+6cW8qSJuXHhhPo+R1MXpiNDBI=
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id f6-20020a7bc8c6000000b0040e621feca9sm4651115wml.17.2024.02.01.07.23.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Feb 2024 07:23:38 -0800 (PST)
+Message-ID: <5d696d79d453c6b77f4ebc2d91256e4de6cd5ef5.camel@linaro.org>
+Subject: Re: [PATCH v2 5/6] clk: samsung: gs101: don't mark non-essential
+ clocks as critical
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+ tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org,  alim.akhtar@samsung.com,
+ s.nawrocki@samsung.com, tomasz.figa@gmail.com,  cw00.choi@samsung.com,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Thu, 01 Feb 2024 15:23:37 +0000
+In-Reply-To: <8dfab6a9-f9d1-46c2-8bd1-6ead4b26fbe1@linaro.org>
+References: <20240130093812.1746512-1-andre.draszik@linaro.org>
+	 <20240130093812.1746512-6-andre.draszik@linaro.org>
+	 <8dfab6a9-f9d1-46c2-8bd1-6ead4b26fbe1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.1-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240125013858.3986-1-semen.protsenko@linaro.org>
- <20240125013858.3986-4-semen.protsenko@linaro.org> <cd9ca36f-84f6-4cc7-bc1e-a4c5781d2bf2@linaro.org>
-In-Reply-To: <cd9ca36f-84f6-4cc7-bc1e-a4c5781d2bf2@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 1 Feb 2024 08:22:04 -0600
-Message-ID: <CAPLW+4ke9AJ_7FkmqTsT7kQv3TWYW0_G2rc=RsSGVFuvX2qi-w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add SPI nodes for Exynos850
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 1, 2024 at 4:31=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 25/01/2024 02:38, Sam Protsenko wrote:
-> > Some USI blocks can be configured as SPI controllers. Add corresponding
-> > SPI nodes to Exynos850 SoC device tree.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> > Changes in v2:
-> >   - Sorted pinctrl properties properly
-> >
-> >  arch/arm64/boot/dts/exynos/exynos850.dtsi | 54 +++++++++++++++++++++++
-> >  1 file changed, 54 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boo=
-t/dts/exynos/exynos850.dtsi
-> > index 618bc674896e..ca257da74b50 100644
-> > --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> > @@ -738,6 +738,24 @@ usi_spi_0: usi@139400c0 {
-> >                                <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
-> >                       clock-names =3D "pclk", "ipclk";
-> >                       status =3D "disabled";
-> > +
-> > +                     spi_0: spi@13940000 {
-> > +                             compatible =3D "samsung,exynos850-spi";
-> > +                             reg =3D <0x13940000 0x30>;
-> > +                             interrupts =3D <GIC_SPI 221 IRQ_TYPE_LEVE=
-L_HIGH>;
-> > +                             pinctrl-0 =3D <&spi0_pins>;
-> > +                             pinctrl-names =3D "default";
-> > +                             clocks =3D <&cmu_peri CLK_GOUT_SPI0_IPCLK=
->,
-> > +                                      <&cmu_peri CLK_GOUT_SPI0_PCLK>;
-> > +                             clock-names =3D "spi_busclk0", "spi";
-> > +                             samsung,spi-src-clk =3D <0>;
-> > +                             dmas =3D <&pdma0 5>, <&pdma0 4>;
-> > +                             dma-names =3D "tx", "rx";
-> > +                             num-cs =3D <1>;
->
-> For the future: please keep properties sorted by name, so clocks+name,
-> dmas+name, interrupts, pinctrl+name, more-or-less matching DTS coding
-> style. address/size cells can go to the end.
->
+Hi Krzysztof,
 
-Noted, thanks! So IIUC, basically follow the order of properties
-described at [1], but keep the standard/common properties block
-sorted, and then keep vendor properties sorted, right?
+On Thu, 2024-02-01 at 11:02 +0100, Krzysztof Kozlowski wrote:
+> On 30/01/2024 10:36, Andr=C3=A9 Draszik wrote:
+> > The peric0_top1_ipclk_0 and peric0_top1_pclk_0 are the clocks going to
+> > peric0/uart_usi, with pclk being the bus clock. Without pclk running,
+> > any bus access will hang.
+> > Unfortunately, in commit d97b6c902a40 ("arm64: dts: exynos: gs101:
+> > update USI UART to use peric0 clocks") the gs101 DT ended up specifying
+> > an incorrect pclk in the respective node and instead the two clocks
+> > here were marked as critical.
+> >=20
+> > We have fixed the gs101 DT and can therefore drop this incorrect
+> > work-around here, the uart driver will claim these clocks as needed.
+>=20
+> How did you fixed the DTS? Which commit did it? Are we going back to
+> basics of driver changes depending on DTS?
 
-[1] Documentation/devicetree/bindings/dts-coding-style.rst
+Sorry if the description isn't clear.
 
-> Best regards,
-> Krzysztof
->
+a) these clocks are not critical for the system to work, and this patch fix=
+es that.
+b) the initial DTSI for gs101 used incorrect clocks for the serial, and it =
+didn't
+work. The work-around was to specify these clocks here as critical instead.=
+ Patch
+#4 in this series has corrected the DTSI.
+
+So there is no dependency between the DTS update and the driver update here=
+ as such,
+no new properties, or otherwise.
+
+That said, now that b) above has been fixed (in patch #4), it is OK to mark=
+ these
+clocks as non-critical without any ill effects. That's all that is happenin=
+g. I was
+merely referencing that in the commit message.
+
+I can rephrase things if you wish.
+
+
+Cheers,
+Andre'
+
