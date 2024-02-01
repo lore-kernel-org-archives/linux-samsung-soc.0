@@ -1,155 +1,149 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B3515CD54
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Feb 2024 11:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D4D8664B
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Feb 2024 12:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706788609; cv=none; b=mDYjhjAQ9zXJKGHuMicAmbWq3EK93aSYibExKVn+SO1XWKoQQXoHg8is+idRbu6yTipCh2G31D5VcPski/O/IgxoaWuhdZJ3P6qt90IrXjCw2cwD2E2YuEeEnoE77XcOsCilIby2jWkBiyrDAVJvDE1KkUaiTz8k6B4XfT7+TO4=
+	t=1706791922; cv=none; b=NHIpFiCtOliMuEMxoXUgH8l5hT2LL3BnhshyuxJKydLJ+3f56zVf06kcCymfX+xPY+d3Q3KbEJMINJscJAf7upLsurDWe61F56XxcDCoSxk8IIVDBJn/QbhgTMJgOgeqGg+cwi8W4STG9CS1VmOgP1goXg3yWGbwIzskcV3YVWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706788609; c=relaxed/simple;
-	bh=RfmXQyvEyel69xPdhImaszos039ws3Lu/IQlwJQIF3g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Aw6nYx9F1dFEe+pdasmgCHdJ9j0rTYT7mFMR8/hPsihcMjMZkBTlbeTa0Jv3TudVXhhiMH3+v/JkDu4/mLRMCmB4GpFBTZz+gJofiYq9NzGvuog743yhJ45v/nD56VTPV2eKQu4xv0CPHNJecXG8lHbWH47Edus19UIeB9m94rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=evldtosh; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1706791922; c=relaxed/simple;
+	bh=h2mSKtqOnzsmGzhW1noP9srYgl4twW8yuazPvZGHQ6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VL2fxEWgSEA8B6Z42M6CsxxYYtXyt+AlsZyho0iilaFW3oRSKR95dLKB8J9cmLgvRi6orohL4QNk++6NqKRdWq/rhQZPyEbIibHOVGV1N5eVbkahibDUv1OfIlYkD9aJoAodxilByN5WeEHWAXUaoUaEIkuL3d1Fv/iLJGYroW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i7H6xVNk; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="evldtosh"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40e5afc18f5so7103805e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Feb 2024 03:56:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7H6xVNk"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6818f3cf00aso4725536d6.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Feb 2024 04:51:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706788606; x=1707393406; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UzaWP/6dtk16YfMVdAvaDfLCxRKNmuhmg2gmErctQc8=;
-        b=evldtoshW45feD2aPb3OoYeqnFY2GG4gHjyEAeHCZf1bIdHal9vqOr8PcPTGVYEHZo
-         WUMsM3kgtKbLZV/H6Gw1CquJoDP4jB5iUkaMLCpczB7TYVInXofmg162yIsTutfi+yV0
-         IaGZyUk2pP7YYzBxnDKVVQbRzsfqJ/R3cXY6w3nICiU0KpBcEr+h5pRRU/g1ss7Adk45
-         bLDiRIxh4ac0bkKrS5/ZeIcSgThMKzww0HKPSqbgbeueOfERToOc2EUKll0XAHc+OXJG
-         YO5nUm5C/ErAaws2IDc6trEDW86HxbMkKFbGrY6PCdEFLuvui87MG5KqpQ2iHQsr9XIY
-         iUnQ==
+        d=linaro.org; s=google; t=1706791919; x=1707396719; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=weoByurLTD5f879C/MSz1GGLsfMhdIMFAUH5IcvF+Gs=;
+        b=i7H6xVNkYm8BW1ju1fdxFuKQiKHVVxTS7pPQfCKPoSJpU24q6jiMfBolr41QPkhIt0
+         r2NTD2rrZxnJPv1x/TXcrEkR07NFXRy0bE7s8E95naCFdTymGzqtRmd8geAlJfS1wKH8
+         zxRv0l9ip3Mc73rugtNsuedK696R2ntFGnmu4cjqVmfTxYPNoGJPp8I5QvmYD2oS6PM3
+         Yzm3YoJKdc1D2l53uHFXc9dNtr7Lg3lENr1UDPjoTJsoNhXFp5Vsznf8sNAp80Z823yN
+         2Svhz2PHdzDb4RWhTrn0huhXZHizELjwiBx2zJKd8QwqXJD9MKrymx216HSSzA2JK4CE
+         MdQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706788606; x=1707393406;
-        h=content-transfer-encoding:in-reply-to:autocrypt:references:cc:to
-         :from:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1706791919; x=1707396719;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UzaWP/6dtk16YfMVdAvaDfLCxRKNmuhmg2gmErctQc8=;
-        b=Przon53UuoFNuqLdI+Pidm8BnkJnRVebyMMIuOAUqBmB7ODrkYQq7xfrql8okS655q
-         D7uv9851h761d2YaQcqHxGfQFIcOnUwSckH6aVqz5stf72e9nKppei+1Gl+jP9vG54ow
-         rVG5ThuhpRqZGd6wDdZmT5OhyzAcgyPKbFY1jCNDcq9bQgYELJdxVDQBC0AqEsGtkgYZ
-         GJZbR/oWDM9uetcOuYfU80vvHxAVkKuZqw0HqczGAaH/nQnrapEKzVkw6xVY9Bi9Jubz
-         evTraYcoZqBx1OPOX/Z4QkHOQSyqEoEf1wH29uJ64ZZqmjPA8apJCvVQnjFVj8L8GzUG
-         kUrw==
-X-Gm-Message-State: AOJu0YwFbrMYZ+551rYr9ScGn2V6RvOLdNlK4CwTM5O53KHpPhlpEqz8
-	PALRe8BllKuA5RZN7WVj5goyQJ8gjxBFJU+ibSbZ5bALdcPjkKjJcpfsSPxSj8M=
-X-Google-Smtp-Source: AGHT+IH3xQv15i/rUEPOTbg1xkEyQ/z+dTi//c+Mo/pC9to5fm/kXZccoS2X8OLxv+GC/rXP2Zn1VA==
-X-Received: by 2002:a05:600c:1c06:b0:40e:46b6:bc48 with SMTP id j6-20020a05600c1c0600b0040e46b6bc48mr1586219wms.41.1706788605859;
-        Thu, 01 Feb 2024 03:56:45 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUSbCo4GSIJ1EQ1Lh5Gndw9BXaoOrip1LEEj+lfkbP2EfE33NOZRz2cNqppVBEzOouSsaqfrqyuZy3fRFCSATxZdil1v/qESdp3mxpdptGNsjnuyjlpdtH2eyuT3mL7xDifDMQMd+JlYOlA+VJStnVmd8xq1yszvx202pCmd5HqfBG5QOt4oIdsn07ZC3+Cdc98tOzRZVC4Cc5GA4ra3dNADbxtBAyV8e5Ns7RyRSeOlIzKylhmaKfjjh63U5GfF9wBi8xHkE3CO9hdT/olr8y7geZ/tggYHQKRQHVn1gL/uS1ib0sDvrFoNx/iZCMlMCqheIxRFzzZBWFkch1JMS/Xvb+PzydzGxH2ELstLlpOhTPIyuLjQGGZ4iKuU+aVT11rq3RI4aOHxiFdwwh1s2ry/xSvZ9GxsSk2Ubb/u8ZwsKllCjnVDFN2D5gxuJLJ7tTUCBytUTxP8b+eZpbjhLX5bMJcMF1nQV+fi8V4Zd36pg==
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id e6-20020a05600c448600b0040efb490814sm4141897wmo.27.2024.02.01.03.56.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Feb 2024 03:56:45 -0800 (PST)
-Message-ID: <4c2c425b-3ddd-4484-98cf-3f7768c94e82@linaro.org>
-Date: Thu, 1 Feb 2024 12:56:43 +0100
+        bh=weoByurLTD5f879C/MSz1GGLsfMhdIMFAUH5IcvF+Gs=;
+        b=e/XX3XIpFzl/eYhMKxWTlRY0ICf9mRmUkqT0sij+/ljSwxfzjmk+lZ73UW42TIpbr5
+         O22hOemxzakbviRWJLfSLDWeO71Xj6urgWYlQhlwD1emsa7oTJKdEfGj42dkeF8ouFP6
+         Ej5nplkkFM6WWMGGa9WmmNdJf//zBUTwA2VbIqUtqsr3si/YAOBFuCtRdGfepHv7A9yx
+         lWKuqdxO8Uam72DjkMoAdHSNbdGF0zX3/dBWXAQSwlFh8v7UlQyoBjjDgMw7QHs/Ko62
+         yqPicumoj1JDBvmIQTPIVmKXpcE2IoYB+h8RGaYkTMVGKpX+iVJcXaXFzmGQ1H7Ng/m8
+         /e9A==
+X-Gm-Message-State: AOJu0YyIDwJVZeq8YtwcXsZFPBHUkGD+X8KP08+5gTmR/bx718h1K8US
+	JsjXfrLd7vXbtwguid8vGEbpa3CkCILB2U/EgUbr8EnaPLBFeAGv8fFCMe/CQU1V7fFa3BlY513
+	ve9e1AkJwHERAcpg0tn90DI1wOaoFL1lrZWk4vg==
+X-Google-Smtp-Source: AGHT+IHgSoknuuzS25Fpw49ZLC4Y8bfK4zoT8o2iXaPQVImDDvoLvfleUoohLl84R97TiX7NmQhLUmMcGlCRfQ0KQaA=
+X-Received: by 2002:a05:6214:1c4e:b0:686:261a:76a0 with SMTP id
+ if14-20020a0562141c4e00b00686261a76a0mr6259620qvb.52.1706791918775; Thu, 01
+ Feb 2024 04:51:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v2 3/3] arm64: dts: exynos: Add SPI nodes for
- Exynos850
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240125013858.3986-1-semen.protsenko@linaro.org>
- <20240125013858.3986-4-semen.protsenko@linaro.org>
- <170678377409.179918.13077326172475089482.b4-ty@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <170678377409.179918.13077326172475089482.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240129211912.3068411-1-peter.griffin@linaro.org>
+ <20240129211912.3068411-2-peter.griffin@linaro.org> <fb530eb8-e32b-4faf-81f3-efc334ebf241@linaro.org>
+In-Reply-To: <fb530eb8-e32b-4faf-81f3-efc334ebf241@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 1 Feb 2024 12:51:47 +0000
+Message-ID: <CADrjBPoQmTRsFYRtxBxdvAoKK816O8XN3=hOJ3vBt8wbbbk-=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] soc: samsung: exynos-pmu: Add regmap support for
+ SoCs that protect PMU regs
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: arnd@arndb.de, linux@roeck-us.net, wim@linux-watchdog.org, 
+	alim.akhtar@samsung.com, jaewon02.kim@samsung.com, semen.protsenko@linaro.org, 
+	kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com, linux-fsd@tesla.com, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/02/2024 11:36, Krzysztof Kozlowski wrote:
-> 
-> On Wed, 24 Jan 2024 19:38:58 -0600, Sam Protsenko wrote:
->> Some USI blocks can be configured as SPI controllers. Add corresponding
->> SPI nodes to Exynos850 SoC device tree.
->>
->>
-> 
-> Applied, thanks!
-> 
-> [3/3] arm64: dts: exynos: Add SPI nodes for Exynos850
->       https://git.kernel.org/krzk/linux/c/98473b0d78caa5502b7eee05553ee168f0b0b424
+Hi Krzysztof,
 
-And dropped. You did not test it.
+On Tue, 30 Jan 2024 at 16:01, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 29/01/2024 22:19, Peter Griffin wrote:
+> > Some Exynos based SoCs like Tensor gs101 protect the PMU registers for
+> > security hardening reasons so that they are only accessible in el3 via an
+> > SMC call.
+> >
+> > As most Exynos drivers that need to write PMU registers currently obtain a
+> > regmap via syscon (phys, pinctrl, watchdog). Support for the above usecase
+> > is implemented in this driver using a custom regmap similar to syscon to
+> > handle the SMC call. Platforms that don't secure PMU registers, get a mmio
+> > regmap like before. As regmaps abstract out the underlying register access
+> > changes to the leaf drivers are minimal.
+> >
+> > A new API exynos_get_pmu_regmap_by_phandle() is provided for leaf drivers
+> > that currently use syscon_regmap_lookup_by_phandle(). This also handles
+> > deferred probing.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  drivers/soc/samsung/exynos-pmu.c       | 227 ++++++++++++++++++++++++-
+> >  include/linux/soc/samsung/exynos-pmu.h |  10 ++
+> >  2 files changed, 236 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> > index 250537d7cfd6..7bcc144e53a2 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.c
+> > +++ b/drivers/soc/samsung/exynos-pmu.c
+> > @@ -5,6 +5,7 @@
+> >  //
+> >  // Exynos - CPU PMU(Power Management Unit) support
+> >
+> > +#include <linux/arm-smccc.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_address.h>
+> >  #include <linux/mfd/core.h>
+> > @@ -12,20 +13,159 @@
+> >  #include <linux/of_platform.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/regmap.h>
+> >
+> >  #include <linux/soc/samsung/exynos-regs-pmu.h>
+> >  #include <linux/soc/samsung/exynos-pmu.h>
+> >
+> >  #include "exynos-pmu.h"
+> >
+> > +static struct platform_driver exynos_pmu_driver;
+>
+> I don't understand why do you need it. You can have only one
+> pmu_context. The moment you probe second one, previous becomes invalid.
+>
+> I guess you want to parse phandle and check if just in case if it points
+> to the right device, but still the original code is not ready for two
+> PMU devices. I say either this problem should be solved entirely,
+> allowing two devices, or just compare device node from phandle with
+> device node of exynos_pmu_context->dev and return -EINVAL on mismatches.
 
-For some time, all Samsung SoCs and its variants are expected not to
-introduce any new `dtbs_check W=1` warnings. Several platforms, like all
-ARM64 Samsung SoCs, have already zero warnings, thus for such platforms
-it is extra easy for the submitter to validate DTS before posting a
-patch. The patch briefly looks like it is not conforming to this rule.
-Please confirm that you tested your patch and it does not introduce any
-new warnings (linux-next is decisive here).
+Apologies I didn't answer your original question. This wasn't about
+having partial support for multiple pmu devices. It is being used by
+driver_find_device_by_of_node() in exynos_get_pmu_regmap_by_phandle()
+to determine that the exynos-pmu device has probed and therefore a
+pmu_context exists and a regmap has been created and can be returned
+to the caller (as opposed to doing a -EPROBE_DEFER).
 
-Best regards,
-Krzysztof
+Is there some better/other API you recommend for this purpose? Just
+checking pmu_context directly seems racy, so I don't think we should
+do that.
 
+Peter
+
+[...]
