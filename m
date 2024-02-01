@@ -1,107 +1,130 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336C35D47F;
-	Thu,  1 Feb 2024 14:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBA05D492
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Feb 2024 14:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706796228; cv=none; b=bn5gOoAB7tYsiYnilJqezBqYnoDdn+KNiquJ86ydAe1g1J34Fuk99tEzDr61De7cnvYmd8FeDrQrgpOwXK67ztw4ETfvO82fVTRhcfMHHLc3tJh88LJYF6A54g7uoISWv22b5Z+tZqI8fxTJjNjTEq2H6oVilf7uZSImaCRxBts=
+	t=1706797337; cv=none; b=lZRQ8NeMyp2eeP0VyDHpaesnnfpyeWVh5jUFfMpfARsWl+KnrBSgHlZ4VoK/Ou+xwxTBbkAPp89KLoXDvTsabFWuGkAybFXu6QdI3JgxPS4lsyVHOfOFoYQXxhh2ol5SSLySQ0fh9qeLPEioMNY64wzJtDtdXMa/aeo59blP1nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706796228; c=relaxed/simple;
-	bh=jo0lrXCr+ByQjN7lNIgf3/5HMNYXX9RLoXwcL4UFG68=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bsZS98wTZJrF5M3Ylsx+mtz12Zmrxczdqv5cGWjMmQFZxNfKKx7/wX+91JHbwimsUkTjwCTMgigNB8r8wGYCFaqygVeQYZOIHGHK2+SOK3FwyNlwSOfk4qYYFz4M09xgDQWqSZ3s4F3PvGPDND1aWz9Ow0ofbgBFCqtV9xxc928=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOu2A/5Z; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1706797337; c=relaxed/simple;
+	bh=1O1AOTNGsQX+i0nDTY1kz81nsRaOmNyTqRoqQQPcBeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rVg4F7GPzrYxHzoEWlg/4J+vdU5fhr/fOy9Z6qn/I/vLdJWS4M8MJl685cy8zUAWKakss05CX58M83ySyMRTVytRMEGj1KT4TiEVVD7Wgw95zij2mu8XsvzUhM1j494RJgTjH7d3vda0i/LkvEOn8DxL9VFbfQuo/VlP6T6G7nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o1L1I5hC; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOu2A/5Z"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6dddee3ba13so645251b3a.1;
-        Thu, 01 Feb 2024 06:03:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o1L1I5hC"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5ce942efda5so768366a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Feb 2024 06:22:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706796225; x=1707401025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RiE5Onayz6cyE5+MyLfFrdqfq7HqpeSLCHp3c1TdnJ4=;
-        b=LOu2A/5ZTD7qUurQ9Frp3pfBg9rTB2WpbaVf9Bf4OY5qTe7Lb+6hxLn1CebWPFuk8z
-         +DNsjANNNLb0NaG6Adgf3/Z6H1ugS7y6ilxLVcAhhXB6sfPHa1WI3zUOZBe4t4JVtFfq
-         JQ6fjz2uYdWLq1DWBgFsqwiEfKWKvbS2Aez1d+YE5vtx9rzYewWZj3NBBaWASBWw7srL
-         Okq1uqA5z20uk4WeuuywO89Al85fsL5J7bvzHINVwx8bv57ghgh58ZIV9YOuBKDXyfvl
-         Ja/x4CJS1xWKPBRjd5NKkLzp9MRnUoWqb5jMkjwI7lA8HkTpyDDfMt/AKabt4+SYLaxT
-         LWqg==
+        d=linaro.org; s=google; t=1706797335; x=1707402135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R6RqxSYIRPivOTJEnlw3gOkIIa+Ul1PRzCUBYhNeDdQ=;
+        b=o1L1I5hChL71yecrcBoh/i5TxnGFN48SlTa6ffMxWpNnn/Vts3idVS64/7dP191Dea
+         DiYTTjTBCDA76pnMxDDZ0DcmGrBC73q3aL8yIEgYqgooHk5jXEGB6cCxLVFPWtObxgaP
+         v8UnQmGJQoH5A6CKa6dQ6Mhzyg4wYoghW3FRXDic/G56aAdwh5N0ErQ9mDSI45B7jy0P
+         9po+smAMAzRODYtTQgAUK7mFb0TBaS8clJdiFmeMqkggELfeEeO+b5NeB7+Jv6z0w+QX
+         DwFtB4b0WCl9/5GdJ/IcIP11HYHNVshU7DSU43QBVjQ0BK9Dru1nyux75FjOqsizqZ+c
+         Ko3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706796225; x=1707401025;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RiE5Onayz6cyE5+MyLfFrdqfq7HqpeSLCHp3c1TdnJ4=;
-        b=Cyt7eoxkc+FFzLyaBa5V4Cgdpws7HrBna269doqj2MPFrEE1o9XkPn8U52F6kk6F/L
-         5P2KcGpEJB3mY1NEUjDn6LZf12r0ncYR2zorhSX98C4IGRJ3B0OInUFatBHnyad2qM9i
-         xk7W2KhD2vt7IG8ZkBHXU8niYKzY+3mfjqgi6UIZloOrUBzh+qJXtAiyWZ2Rj8BkinbS
-         YJabDml2iM4iC6ZDkofmc5dpooVh/lbpLcRGFB9l6qfWm1uF/6H5HMRh/Dwsr7kVtn+b
-         2nxUlxqJsvaD5QFoGkokMYZvrc6rkPvqkXdIkM7RKZ+A7ArTQWdhRj9yt2mNedhgUBze
-         8MRQ==
-X-Gm-Message-State: AOJu0Yz3oWbrPcRoUcs656VaQr2lmHVG5ICqcRxM2zRCUXmkKf0gkniS
-	jYsMKxbyeeB9r/KvQaMsvMpBdM6HGywP9F9JJbOB87GppwiAECUoGV2vqrlUAOQ=
-X-Google-Smtp-Source: AGHT+IEXOMtth7Vcaoi9vKZ25QuQJIIReWzUToo5//Tpyww2+VbtLIAH6lnQ8JReO/6qUxJ+gEgkDg==
-X-Received: by 2002:a05:6a00:1ca1:b0:6dd:da40:948d with SMTP id y33-20020a056a001ca100b006ddda40948dmr5448587pfw.25.1706796225384;
-        Thu, 01 Feb 2024 06:03:45 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWYdMpnY2InEs7uHYKz+la0wznH/ZEKH9EFQHr5pJyjvybbtBC/TjiPBcLBatTAjHeq0TKWpMXUCC4k7QU2hYUzsJf6+PX0qechE0OozEIoM05UpaMuRxTCrX0Zde7U59YIjF8V42Cf6Z38xASMnJdbRh3e3OAVyhZKDqo5iy1ofmbLXESjpdeXbRbEMCTauxnwOklavH2b1/jm+A/nVsfs62jBOX0MWZqPibm3EHVwqPLPrzPx6J8FSEi7+9sToFn/cPcTM9nSK3LLD42KjI9+FQ==
-Received: from penguin.lxd (133-32-135-143.east.xps.vectant.ne.jp. [133.32.135.143])
-        by smtp.gmail.com with ESMTPSA id l23-20020a62be17000000b006dfebfd0481sm1169171pff.7.2024.02.01.06.03.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Feb 2024 06:03:44 -0800 (PST)
-From: Tomasz Figa <tomasz.figa@gmail.com>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers),
-	linux-kernel@vger.kernel.org (open list),
-	Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH] MAINTAINERS: Remove Tomasz from Samsung clock and pinctrl entries
-Date: Thu,  1 Feb 2024 23:01:34 +0900
-Message-Id: <20240201140134.4345-1-tomasz.figa@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1706797335; x=1707402135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R6RqxSYIRPivOTJEnlw3gOkIIa+Ul1PRzCUBYhNeDdQ=;
+        b=IDRndy4oHTzPCWD4G9c/JtMk3j/UxCZpqm7aZt4kFdJbWs3cuJ2+Zjgqq7XBtVkdHd
+         gNh1St+WbuzXHSO1AfILPm3QWxUtvF4MPzYi8FxPeXX/iY6oy2Bpc7c9142M2mYdTLyJ
+         b4BXJ6dyZC6EhkW67iqED+Dz3tOn0s0UxtUe+UI+F92zHtDOpF0h87pgkUagkXL+VK9A
+         UNZ5JYpQDdkOL2uB2u9vLVum6hRsPk/wZYHKq0Kh/Yh7kKyA0MkmGe2/7ucUj1vMReeN
+         H6ItfRXEgfp0S1CUpmq8xnQh35M/fJk9jmnz+z9QmwTzKUTh2CXyGGV2NBanAa6eN9M8
+         tWSQ==
+X-Gm-Message-State: AOJu0YyFV9VwucoqbCXbKWR6B/HSIk+tFMxiNaCovk2msK6z0mKt+Qfg
+	H0lbTSD7bL1QrKgjZ56vHt8gKFYP9/aBWUAZcmSg3bkUL9L4DPon2u+Mk8lHPBoSiup3arZgXRN
+	Y1ZoglFel9dGI97s5mZ1I3YQLd6isxyHUhEBB7g==
+X-Google-Smtp-Source: AGHT+IErbFgMVG98pJg/oaehaHSpsB61MD2tROFlx7fdPd5hSbz2EsbFIOcbXTPEqNs8GfN7zqAzP9yPfu+IfMDWtSA=
+X-Received: by 2002:a05:6a20:c526:b0:19c:74d1:b314 with SMTP id
+ gm38-20020a056a20c52600b0019c74d1b314mr1891047pzb.17.1706797335445; Thu, 01
+ Feb 2024 06:22:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240125013858.3986-1-semen.protsenko@linaro.org>
+ <20240125013858.3986-4-semen.protsenko@linaro.org> <cd9ca36f-84f6-4cc7-bc1e-a4c5781d2bf2@linaro.org>
+In-Reply-To: <cd9ca36f-84f6-4cc7-bc1e-a4c5781d2bf2@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Thu, 1 Feb 2024 08:22:04 -0600
+Message-ID: <CAPLW+4ke9AJ_7FkmqTsT7kQv3TWYW0_G2rc=RsSGVFuvX2qi-w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: Add SPI nodes for Exynos850
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I have been no longer at Samsung for a long time, the platforms
-that I am knowledgable about (S3C24xx, S3C64xx, Exynos 4) are no longer
-relevant and we have people with better capabilities as maintainers
-already, so let me remove myself. Thanks for the nice collaboration
-everyone!
+On Thu, Feb 1, 2024 at 4:31=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 25/01/2024 02:38, Sam Protsenko wrote:
+> > Some USI blocks can be configured as SPI controllers. Add corresponding
+> > SPI nodes to Exynos850 SoC device tree.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Changes in v2:
+> >   - Sorted pinctrl properties properly
+> >
+> >  arch/arm64/boot/dts/exynos/exynos850.dtsi | 54 +++++++++++++++++++++++
+> >  1 file changed, 54 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boo=
+t/dts/exynos/exynos850.dtsi
+> > index 618bc674896e..ca257da74b50 100644
+> > --- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+> > @@ -738,6 +738,24 @@ usi_spi_0: usi@139400c0 {
+> >                                <&cmu_peri CLK_GOUT_SPI0_IPCLK>;
+> >                       clock-names =3D "pclk", "ipclk";
+> >                       status =3D "disabled";
+> > +
+> > +                     spi_0: spi@13940000 {
+> > +                             compatible =3D "samsung,exynos850-spi";
+> > +                             reg =3D <0x13940000 0x30>;
+> > +                             interrupts =3D <GIC_SPI 221 IRQ_TYPE_LEVE=
+L_HIGH>;
+> > +                             pinctrl-0 =3D <&spi0_pins>;
+> > +                             pinctrl-names =3D "default";
+> > +                             clocks =3D <&cmu_peri CLK_GOUT_SPI0_IPCLK=
+>,
+> > +                                      <&cmu_peri CLK_GOUT_SPI0_PCLK>;
+> > +                             clock-names =3D "spi_busclk0", "spi";
+> > +                             samsung,spi-src-clk =3D <0>;
+> > +                             dmas =3D <&pdma0 5>, <&pdma0 4>;
+> > +                             dma-names =3D "tx", "rx";
+> > +                             num-cs =3D <1>;
+>
+> For the future: please keep properties sorted by name, so clocks+name,
+> dmas+name, interrupts, pinctrl+name, more-or-less matching DTS coding
+> style. address/size cells can go to the end.
+>
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- MAINTAINERS | 2 --
- 1 file changed, 2 deletions(-)
+Noted, thanks! So IIUC, basically follow the order of properties
+described at [1], but keep the standard/common properties block
+sorted, and then keep vendor properties sorted, right?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 61117c3afa80..7f550edab68e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17343,7 +17343,6 @@ F:	Documentation/devicetree/bindings/pinctrl/renesas,*
- F:	drivers/pinctrl/renesas/
- 
- PIN CONTROLLER - SAMSUNG
--M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
-@@ -19392,7 +19391,6 @@ F:	drivers/media/platform/samsung/exynos4-is/
- SAMSUNG SOC CLOCK DRIVERS
- M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
--M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
- L:	linux-samsung-soc@vger.kernel.org
--- 
-2.39.2
+[1] Documentation/devicetree/bindings/dts-coding-style.rst
 
+> Best regards,
+> Krzysztof
+>
