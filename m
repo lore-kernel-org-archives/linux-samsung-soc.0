@@ -1,155 +1,156 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F3314AD34;
-	Fri,  2 Feb 2024 18:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28ABD6127
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Feb 2024 02:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706896890; cv=none; b=logxrat8pwAF1SZli5sHKNK9C7Lm4mBRVUjkxgg3MuI26ISwueUBJngfaaXIkYtw1X3QIHI3DZSxddkmRq6SwAwmEZec0n0rbE7kFynbHFtlcg43b/tKQ8IPxfd4Ju2/iFRf5y04UYKr8u+4RnEQydc+z/gwCVFbvup3RzRqnNo=
+	t=1706926866; cv=none; b=kaEpx7iQQVQUw/DWW4hzxol11a7ZwDTMhcbrGPzK108x72V+HhHVpuVD2LQi/eE5WCLUo9FiBq4TB2GI07NMu/GIeXQUYlkbZnQKFOUTPShaUaClhkGSWD7QYtu3yxk+Fef3peamfqABLJRMO2bjwWQS03nc/n+CEFoT2EmW+jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706896890; c=relaxed/simple;
-	bh=nG1c1Dr5WvvpIPOp3w+4a7YAysmZsyzWk5n7RoQZn3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X1hA/hS3+2RzRZLpQY6fShoYf0qF5fCLvisNaPlKT/1En+fsNBGJtFgj4TGWUMEOf5uq1RQGzZcvakkb71gW1IrwnNjw2zljPGaIX1ZpPGgewGyVF9ydaZ8mXPrPwQGO5kPsbPdpKrdwfLk5c412eHGlufrU6EajFE2g++r986g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDE2D19F0;
-	Fri,  2 Feb 2024 10:02:08 -0800 (PST)
-Received: from [10.57.9.194] (unknown [10.57.9.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CBEC3F762;
-	Fri,  2 Feb 2024 10:01:11 -0800 (PST)
-Message-ID: <128e2760-6346-4c56-982b-42357a391ee4@arm.com>
-Date: Fri, 2 Feb 2024 18:01:02 +0000
+	s=arc-20240116; t=1706926866; c=relaxed/simple;
+	bh=wPUk1BPhWZU4IVetHCywU4mKyGrBFvnVln1QytgmoUQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=h/mIGGMUnSxEatJ98OzIcPufWyJmFXkyqoSwSk8QIZnT2Qw+WL/YfggDxyZpG1U/0FQabtxs/UcjCk/gAKgmbVzRWvLRlX53//IrX015F+TbvDlhyEDHic87WMTErVkftkZTipFkOXLdbQop95NDb6dljmGdaVWtW6b6BzAvy94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CjL1dJsd; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CjL1dJsd"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240203022056epoutp01e4fa43cda108d10de7cc343ce7e46dc5~wOO6cOanR0212402124epoutp01X
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Feb 2024 02:20:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240203022056epoutp01e4fa43cda108d10de7cc343ce7e46dc5~wOO6cOanR0212402124epoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1706926856;
+	bh=VKWOrraSGT+Gzd2NQjMMwCtPcf85H8O4/u9KpUJECSg=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=CjL1dJsdRZ3NKEh8TMsCUnpw5c+vgfe1igpulgJSZOzhK8FIPoCu/az9UGCmUkuxm
+	 9HA3mc0FKdhRM3uFexhl8jl9Y8U1toKJP/FPBgtDYfTtDCobK6+58kqM07uP683jGi
+	 kCB+ku1mu0jbdXIzXU7Z/H5keyRqlo8CqL9xq+AA=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240203022055epcas5p2ff1cb017c7ea0a608c725fc0a6238787~wOO6CSq8Q0473604736epcas5p2q;
+	Sat,  3 Feb 2024 02:20:55 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4TRbwQ1dWPz4x9Ps; Sat,  3 Feb
+	2024 02:20:54 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5A.A2.19369.603ADB56; Sat,  3 Feb 2024 11:20:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240202212456epcas5p15589813cd79526e9d0c444082e2f0e51~wKMe2a4fu2319923199epcas5p1c;
+	Fri,  2 Feb 2024 21:24:56 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240202212456epsmtrp225338eb9a31b5ce02096033e4d2a6fea~wKMe1srJ10549205492epsmtrp2Z;
+	Fri,  2 Feb 2024 21:24:56 +0000 (GMT)
+X-AuditID: b6c32a50-9e1ff70000004ba9-2e-65bda3061007
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0B.43.18939.8AD5DB56; Sat,  3 Feb 2024 06:24:56 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240202212455epsmtip1c148fc79a26232a10e5b2b1a89409868~wKMdBvRWu2776927769epsmtip1C;
+	Fri,  2 Feb 2024 21:24:54 +0000 (GMT)
+From: Tamseel Shams <m.shams@samsung.com>
+To: alim.akhtar@samsung.com, linux-fsd@tesla.com, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Tamseel Shams <m.shams@samsung.com>
+Subject: [PATCH 1/2] serial: samsung: honor fifosize from dts at first
+Date: Sat,  3 Feb 2024 02:54:47 +0530
+Message-Id: <20240202212448.74840-1-m.shams@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRmVeSWpSXmKPExsWy7bCmhi7b4r2pBs3XOC0ezNvGZrFm7zkm
+	i/lHzrFaNC9ez2bxbq6MRd+Lh8wWmx5fY7V4+Crc4vKuOWwWM87vY7I4s7iX3eJu62J2i9a9
+	R9gdeD02repk87hzbQ+bx/65a9g9Ni+p9+jbsorR41/TXHaPz5vkAtijsm0yUhNTUosUUvOS
+	81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgG5VUihLzCkFCgUkFhcr6dvZ
+	FOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnzNtkVLCIp+LF7LQG
+	xq1cXYycHBICJhKtN66xdTFycQgJ7GGUWHP3MyOE84lR4t+eOcxwzs1bU1m7GDnAWhr2B0HE
+	dzJK/O/bxAThtDJJbJ68kw2kiE1AU+L4eW6QuIjAJkaJaVPfgk1iFjjDKHGhYz0zyHJhATeJ
+	/rnLwGwWAVWJ30/3sILYvAIWEhO3nWCEOFBeYvWGA2DNEgL32CV2r+9ghUi4SCxYc58ZwhaW
+	eHV8CzuELSXx+d1eNgg7XWLuw14mCLtAYtmu71A19hIHrsxhAbmUGejS9bv0IcKyElNPrQMr
+	Zxbgk+j9/QSqlVdixzwYW1Hi/+5+qDHiEu9WTIE6x0PiwA8IW0ggVmLjwXOsExhlZyFsWMDI
+	uIpRKrWgODc9Ndm0wFA3L7UcHlHJ+bmbGMFJUCtgB+PqDX/1DjEycTAeYpTgYFYS4Z0gvDdV
+	iDclsbIqtSg/vqg0J7X4EKMpMNAmMkuJJucD03BeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC
+	6YklqdmpqQWpRTB9TBycUg1M4b2+Bixhfya/2F8lOyfRcFXgPunXLDeMjeQf5p7WvHrqXPkE
+	SbfmK5PXb9m3z0RW7GFP5JmtAX72T1YH1zC5iJ6+/32B1eXp+6vu+51+PE9BWGLvlyUPbkYv
+	UL7z8KWC2FEd19T85R2d1exGh1hEmbz27fprUOPp9XLHK9dpQpf8py3lD/y83+PId/uo8uac
+	BKdYh8f1peF3Nu5ZevaT3gOGj5JcTS+D7jtMf5hyn+ePUSj3DhWDoj5TkRk6G6Rmi7xZFDmP
+	9fWEczYR8xSDeKf92l66OknbfuZvq0WLZom6nLrfmf/L/o1k1d/wXe0x5VN/fUpLlGXQNOHW
+	TZrgFrBiyeIYV/umzH7LFv0mJZbijERDLeai4kQAzgomOgsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHLMWRmVeSWpSXmKPExsWy7bCSnO6K2L2pBo3TzSwezNvGZrFm7zkm
+	i/lHzrFaNC9ez2bxbq6MRd+Lh8wWmx5fY7V4+Crc4vKuOWwWM87vY7I4s7iX3eJu62J2i9a9
+	R9gdeD02repk87hzbQ+bx/65a9g9Ni+p9+jbsorR41/TXHaPz5vkAtijuGxSUnMyy1KL9O0S
+	uDLmbTIqWMRT8WJ2WgPjVq4uRg4OCQETiYb9QV2MXBxCAtsZJR4tfcvWxcgJFBeXmPZrPyOE
+	LSyx8t9zdoiiZiaJP3vvsIA0swloShw/zw0SFxHYxShx/1gbK4jDLHCJUeL1x5+sIN3CAm4S
+	/XOXMYPYLAKqEr+f7gGL8wpYSEzcdgJqg7zE6g0HmCcw8ixgZFjFKJpaUJybnptcYKhXnJhb
+	XJqXrpecn7uJERyEWkE7GJet/6t3iJGJg/EQowQHs5II7wThvalCvCmJlVWpRfnxRaU5qcWH
+	GKU5WJTEeZVzOlOEBNITS1KzU1MLUotgskwcnFINTAWuN32+SZ32a78qvrytWafj5ZyN/H6+
+	D+Q+cVo9+KbYOFW8ya27QL+nLju/Szi3+Ninuwr3ij/lJzucKemd/7XE+9zMBUqrC3j9ymoK
+	Z9pM8/39zHyDQtNdz/4rMhk3PeUf5wsYmOYd+CYbXvKbd33Kby+27t1a1w9uCIme4nPsv3/p
+	OdYQHZWMf8vOv/cV9fo+daFAq0RZzIdHt4+Ueuof/PGfeb7dGUf55YdS7f13185KY5WbttDw
+	TrG/e1zISqUzsyoT7y912z/Zuu5g+oILl1deSjlx+XD7/xs8fRWL+VuuartvmmT/NNq6UW/m
+	Zr1vDV0m7+/Yizh/qFYLcl63T5Sz7NXEwEcsR3yClViKMxINtZiLihMBVCpzwLECAAA=
+X-CMS-MailID: 20240202212456epcas5p15589813cd79526e9d0c444082e2f0e51
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240202212456epcas5p15589813cd79526e9d0c444082e2f0e51
+References: <CGME20240202212456epcas5p15589813cd79526e9d0c444082e2f0e51@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/24] hwtracing: switch to use
- of_graph_get_next_device_endpoint()
-Content-Language: en-GB
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
- =?UTF-8?Q?Niklas_S=C3=83=C2=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=83=C2=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alexey Brodkin <abrodkin@synopsys.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Andy Gross <agross@kernel.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, Bjorn Andersson
- <andersson@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Daniel Vetter <daniel@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Emma Anholt <emma@anholt.net>,
- Eugen Hristev <eugen.hristev@collabora.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Frank Rowand <frowand.list@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Helge Deller <deller@gmx.de>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jacopo Mondi <jacopo+renesas@jmondi.org>, Jacopo Mondi <jacopo@jmondi.org>,
- James Clark <james.clark@arm.com>, Jaroslav Kysela <perex@perex.cz>,
- Jonathan Hunter <jonathanh@nvidia.com>, Kevin Hilman <khilman@baylibre.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Liu Ying <victor.liu@nxp.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Marek Vasut <marex@denx.de>, Mark Brown <broonie@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Maxime Ripard <mripard@kernel.org>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Michal Simek <michal.simek@amd.com>, Miguel Ojeda <ojeda@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Philippe Cornu <philippe.cornu@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Rob Clark <robdclark@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Saravana Kannan <saravanak@google.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sowjanya Komatineni <skomatineni@nvidia.com>, Stefan Agner
- <stefan@agner.ch>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tim Harvey <tharvey@gateworks.com>,
- Todor Tomov <todor.too@gmail.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Yannick Fertre <yannick.fertre@foss.st.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Fabio Estevam
- <festevam@gmail.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Jonas Karlman <jonas@kwiboo.se>,
- Leo Yan <leo.yan@linaro.org>, Marijn Suijten
- <marijn.suijten@somainline.org>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Mike Leach <mike.leach@linaro.org>, Sam Ravnborg <sam@ravnborg.org>,
- Sean Paul <sean@poorly.run>, Tom Rix <trix@redhat.com>,
- coresight@lists.linaro.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
- linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
- linux-tegra@vger.kernel.org, llvm@lists.linux.dev
-References: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
- <87cyti6qj8.wl-kuninori.morimoto.gx@renesas.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <87cyti6qj8.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 31/01/2024 05:05, Kuninori Morimoto wrote:
-> of_graph_get_next_endpoint() is now renamed to
-> of_graph_get_next_device_endpoint(). Switch to it.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->   drivers/hwtracing/coresight/coresight-platform.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> index 9d550f5697fa..944b2e66c04e 100644
-> --- a/drivers/hwtracing/coresight/coresight-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> @@ -275,7 +275,7 @@ static int of_get_coresight_platform_data(struct device *dev,
->   	 */
->   	if (!parent) {
->   		/*
-> -		 * Avoid warnings in of_graph_get_next_endpoint()
-> +		 * Avoid warnings in of_graph_get_next_device_endpoint()
->   		 * if the device doesn't have any graph connections
->   		 */
->   		if (!of_graph_is_present(node))
-> @@ -286,7 +286,7 @@ static int of_get_coresight_platform_data(struct device *dev,
->   	}
->   
->   	/* Iterate through each output port to discover topology */
-> -	while ((ep = of_graph_get_next_endpoint(parent, ep))) {
-> +	while ((ep = of_graph_get_next_device_endpoint(parent, ep))) {
->   		/*
->   		 * Legacy binding mixes input/output ports under the
->   		 * same parent. So, skip the input ports if we are dealing
+Currently for platforms which passes UART fifosize from DT gets
+override by local driver structure "s3c24xx_serial_drv_data",
+which is not indentded. Change the code to honor fifosize from
+device tree at first.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+---
+ drivers/tty/serial/samsung_tty.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index 71d17d804fda..e4c4c9f4f9b0 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -1990,8 +1990,7 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (np) {
+-		of_property_read_u32(np,
+-			"samsung,uart-fifosize", &ourport->port.fifosize);
++		ret = of_property_read_u32(np, "samsung,uart-fifosize", &ourport->port.fifosize);
+ 
+ 		if (of_property_read_u32(np, "reg-io-width", &prop) == 0) {
+ 			switch (prop) {
+@@ -2009,10 +2008,13 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	if (ourport->drv_data->fifosize[index])
+-		ourport->port.fifosize = ourport->drv_data->fifosize[index];
+-	else if (ourport->info->fifosize)
+-		ourport->port.fifosize = ourport->info->fifosize;
++	if (ret) {
++		if (ourport->drv_data->fifosize[index])
++			ourport->port.fifosize = ourport->drv_data->fifosize[index];
++		else if (ourport->info->fifosize)
++			ourport->port.fifosize = ourport->info->fifosize;
++	}
++
+ 	ourport->port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_SAMSUNG_CONSOLE);
+ 
+ 	/*
+-- 
+2.17.1
 
