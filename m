@@ -1,146 +1,126 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792246FD5
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Feb 2024 02:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAC22261A;
+	Sun,  4 Feb 2024 14:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706926873; cv=none; b=mv5L3ExGY8R+ympSVESmu6MVzhjF4LCM0EnYzf5gBuIYaejQcMbc+VoIL3LDkLiw4NQ5izwOoXz/rcckKDQBeP4VaoeonzrXfXYis9rudhDq0pwbYc9MlsJvDvNCY6ROYoLkGfSmLcE7wys2LtqVEycZmTZJmoQYZhYQbgsejuM=
+	t=1707057970; cv=none; b=smKfu9WZjiugZqX167sRBsXKi85OM5Lcuecpb2MoR6CLdemEMhLalXd2Vf6IJPahKw2p4lLvwNsRrRedv0DnThPQ6JRnRmyM1RAyKBKCaWCxb6YIwFaKpULZH2JrKIHfIRvgILeIAk9GoBqupvQHawU3iFTwnx21QbJnlgbJj5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706926873; c=relaxed/simple;
-	bh=MFOE+nUaSwDTYdIw9JQlFvPuda2tfFqnXYWlhZRBQXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=Dn++tn/ojL1EnfzVLL33/+a3UHSCMCQ8sjQC5hvf+scLmrBoB4hzKJY/e8lvY2eR6F0hU0ZXTXr/d40jb/AJY9LWk3Lo0lHtC6ezl4TmN1oJF4Tau2BipJiI5Rv0PzXEIAkGHsmgMJilLyRMUZrykrVW9+I3IAR0VF8cVOoVNN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Z7eg7EEI; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1707057970; c=relaxed/simple;
+	bh=TWVQeUtiEPT92Q9WFLCYcqlWO1GeqNeUCsVF+Eq2Hw0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fBUSIpdvxeFd577AQA6yNR29K9chNi7Vz4kiCpZrHtFcGaHsFO86RblkBtEOkIE/cZM+l7lwLDZiuMQoQTBV8bs/vaqedOs3lCpfSkd6E9T4WOE2ZKbABMckpmLJGIVFCiRPFccztfx+v+36s5MvdNF5mtXUI9K9vZrTncSTIQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=fail (0-bit key) header.d=marliere.net header.i=@marliere.net header.b=EU//pie3 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marliere.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Z7eg7EEI"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240203022109epoutp014a4c091d0ba83c7ae52e4498e7b6d80e~wOPGvZyP80214502145epoutp01V
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Feb 2024 02:21:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240203022109epoutp014a4c091d0ba83c7ae52e4498e7b6d80e~wOPGvZyP80214502145epoutp01V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1706926869;
-	bh=rTfeTZ1ggn+RSJzom8PUIzN6CDAju1vOdXUC/7MJkyo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Z7eg7EEIlK/mhLhTPJolRKNed07EJdR+lp40BnruGQIGEB9pw3t7q2D2hEsst3avh
-	 NhySbkh1qKjU9thDKpyT8OmcGWnr0ISBfRok6XXTHSHxXNaxVp9lm58wRwWUq2CQw6
-	 NLBV4S1rDlxJDyG2jKHBOwB2RVmN8xjeV+sidu/Y=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240203022108epcas5p231f876cc1c931ed688c54c4274e2434f~wOPFaRoUJ1637916379epcas5p2E;
-	Sat,  3 Feb 2024 02:21:08 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4TRbwf6LwKz4x9Pq; Sat,  3 Feb
-	2024 02:21:06 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	86.37.08567.213ADB56; Sat,  3 Feb 2024 11:21:06 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240202212459epcas5p2e1703c35ebe9302ac5b2f3d3fcd853c0~wKMgv5ky52407524075epcas5p2x;
-	Fri,  2 Feb 2024 21:24:59 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240202212459epsmtrp21812ca3f066d52542904ed328fd6ca46~wKMgvGfhC0549205492epsmtrp2a;
-	Fri,  2 Feb 2024 21:24:59 +0000 (GMT)
-X-AuditID: b6c32a44-3abff70000002177-0a-65bda3128b3b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	46.6F.08817.AAD5DB56; Sat,  3 Feb 2024 06:24:58 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240202212457epsmtip1d30d18afeb2388fde8b116ce91299907~wKMe7cwip2723127231epsmtip1g;
-	Fri,  2 Feb 2024 21:24:56 +0000 (GMT)
-From: Tamseel Shams <m.shams@samsung.com>
-To: alim.akhtar@samsung.com, linux-fsd@tesla.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, Tamseel Shams <m.shams@samsung.com>
-Subject: [PATCH 2/2] arm64: dts: fsd: Add fifosize for UART in Device Tree
-Date: Sat,  3 Feb 2024 02:54:48 +0530
-Message-Id: <20240202212448.74840-2-m.shams@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240202212448.74840-1-m.shams@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdlhTS1do8d5Ug+lzdS0ezNvGZrFm7zkm
-	i/lHzrFaNC9ez2bxbq6MRd+Lh8wWmx5fY7V4+Crc4vKuOWwWM87vY7I4s7iX3eJu62J2i9a9
-	R9gdeD02repk87hzbQ+bx/65a9g9Ni+p9+jbsorR41/TXHaPz5vkAtijsm0yUhNTUosUUvOS
-	81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgG5VUihLzCkFCgUkFhcr6dvZ
-	FOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnnF92kK2gl72iafMt
-	lgbGO6xdjJwcEgImEvs6m4FsLg4hgd2MEruaDzFCOJ8YJTqfbmCCcL4xSjRfPsoM07Lq8jeo
-	lr2MEpev7oVqaWWS+P9jIpDDwcEmoClx/Dw3SFxEYBOjxLSpb5lBHGaBM4wSFzrWM4MUCQt4
-	SZxp4gaZyiKgKjF180w2EJtXwEKibUEv1DZ5idUbDoDZnAKWEqdnHWUHmSMh8JddYsmrT0wQ
-	RS4SzxtOQn0kLPHq+BZ2CFtK4vO7vWwQdrrE3Ie9UPUFEst2fYeqsZc4cGUOC8g9zEBHr9+l
-	DxGWlZh6ah1YObMAn0Tv7ydQrbwSO+bB2IoS/3f3Q40Rl3i3YgrUCR4Sd9dthAZdD6PEtf63
-	TBMY5WYhrFjAyLiKUTK1oDg3PTXZtMAwL7UcHm3J+bmbGMEJUstlB+ON+f/0DjEycTAeYpTg
-	YFYS4Z0gvDdViDclsbIqtSg/vqg0J7X4EKMpMAAnMkuJJucDU3ReSbyhiaWBiZmZmYmlsZmh
-	kjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1Mp4oObGdKunfDb7WqrdTjJ89vlTWtjO/3XZPv
-	pnrg9cnHns/Fbtw9fKvmj/xVvl8v7GdYHD5ztd+6Z3fFTJG1Zas+n5nec2rba6tTP2U8Zf4+
-	OuZ1O6DScVvUxfxzDVe5HVdyPdcSDbpWVzZJSWhvgf0LKb7WpbHJhXODa6fezlaOqrgYYxG9
-	WOe+zO3Vv6YsFbn9heni9g/TVb8c0Ji4NcKjYbeXxu33bUkLKtVnKB69MVdGhXmC1otZsl1H
-	jnLJMjk6W3+sMZD54cJ7+ZX2It8nXXEBWRy3Xr4/HXu+3XWK9c+7sRPsH3zyvzjxRu0/U7sr
-	xjodXY9Ko05smOijuvEn07v3+uVfVO5JcPzYv1+JpTgj0VCLuag4EQBEWKTsGQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDLMWRmVeSWpSXmKPExsWy7bCSnO6q2L2pBsu3m1s8mLeNzWLN3nNM
-	FvOPnGO1aF68ns3i3VwZi74XD5ktNj2+xmrx8FW4xeVdc9gsZpzfx2RxZnEvu8Xd1sXsFq17
-	j7A78HpsWtXJ5nHn2h42j/1z17B7bF5S79G3ZRWjx7+muewenzfJBbBHcdmkpOZklqUW6dsl
-	cGWcX3aQraCXvaJp8y2WBsY7rF2MnBwSAiYSqy5/A7K5OIQEdjNKbH3TC5UQl5j2az8jhC0s
-	sfLfc3aIomYmiaWvFgA5HBxsApoSx89zg8RFBHYxStw/1gY2iVngEqPE648/WUGKhAW8JM40
-	cYMMYhFQlZi6eSYbiM0rYCHRtqCXGWKBvMTqDQfAbE4BS4nTs46yg9hCQDXPLz9gncDIt4CR
-	YRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnAAa2ntYNyz6oPeIUYmDsZDjBIczEoi
-	vBOE96YK8aYkVlalFuXHF5XmpBYfYpTmYFES5/32ujdFSCA9sSQ1OzW1ILUIJsvEwSnVwHSe
-	4Z+O5XGm1q/eK59eYDpg9uZv+34nuY8MUou3aZU9tpxy5cCm2vvPL0VlZZ2M5FQ5x3LjUINU
-	G9OfpJ8PherSduR2Wl51Ytp8y2Gvyv9Kv8K711jOGQhd/GCj+v+Ri+SC7KWdKV+Nks4IWudK
-	rfZNYWUQPL39s3SdV0OUZ346f0lyvVuNukrFfSeV9Az97iqfH3+5r7+Z4WRpobXmw7c7NsZz
-	trV/OSZg5jn3ql2QSFFkzZYm2wOmOkKNQa1XhLqY6sV1W37xr9m8sl+tTVX35fIgP8HabCa+
-	WQ05vwTFTxfYG2e6lkzomd5u+srr6s81GlufK+2JF3z/7GacV7zH7GsS7zMP73AoDZ2lxFKc
-	kWioxVxUnAgAvM6sY88CAAA=
-X-CMS-MailID: 20240202212459epcas5p2e1703c35ebe9302ac5b2f3d3fcd853c0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240202212459epcas5p2e1703c35ebe9302ac5b2f3d3fcd853c0
-References: <20240202212448.74840-1-m.shams@samsung.com>
-	<CGME20240202212459epcas5p2e1703c35ebe9302ac5b2f3d3fcd853c0@epcas5p2.samsung.com>
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=marliere.net header.i=@marliere.net header.b="EU//pie3"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1d74045c463so28049345ad.3;
+        Sun, 04 Feb 2024 06:46:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707057968; x=1707662768;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:dkim-signature:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LxUHnqUEPBSaX51F80aw+Y1xnfr/HMwfRHXCkVCiw9c=;
+        b=peCBEHydlhZTbsdV8QVa9Qui44s0wKvqf4pDyO2cDlMLaQK43ezsmEq9LWnVX+wIQ8
+         5l8OUfms0ixWV1L1ZoThOCchHTcgGkf6UrOmq6AnkNpQdKYWh1u9dUtubOvqCpghDExS
+         hUj4WOpkdQoZ03sfXdri6nqqZC5OaoBX7zdd5Eja2fxUtnJn6VXyBxJHmEfdegDcrLRY
+         Bka5WJoOAGGIModqQmnevl+lj+8QYbjgBFiBvuWg07mBLVFaMVRufNnRmZ59SSP5g7Ri
+         BZVONrRJHdJW620a+JY/VjlqRXes/RhA2sJMQ7rTNVc8s/bWK9KbQx5PH32zxyJJ19lc
+         rn8w==
+X-Gm-Message-State: AOJu0YwFqRvkVNsLEj7acll+cSnaDUCWhw5Rtp17Tqa1wGPNe44HsQOu
+	GR2FUqRSAcDt16I0XQvod8Z/joCkA6s9UhzJZki4tVfZTEA6C6CYiF5+jt4un0IP9w==
+X-Google-Smtp-Source: AGHT+IGrN35WwWpYwA6OESCT5Z92IvT0vnKTv1mTmLvxqim49d4BcPjrIvL+3J/3C2yVEI5tVYAO4A==
+X-Received: by 2002:a17:902:d507:b0:1d9:b3d7:fc44 with SMTP id b7-20020a170902d50700b001d9b3d7fc44mr608214plg.22.1707057968102;
+        Sun, 04 Feb 2024 06:46:08 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCW4PvKWxfPp7ft2WZBUrXD4BRE//gsp70J/CIEzrCI6OFphBI909zD3GjphHjgyF7BZEhYuZUM5HBWrj0KCgKwQ7/LuRNh88k3pVgqW2ga4bCqbHe+00m2mrh8VLLObxpaEeRiNnW1y1gnnRTeYvGf8Rg0oRu3CwNCo/nQQY8NojQEXZeBy4Fte27mWXHMedHPQ7tg+GdWr/pG8Iiab/g1EStIkP/zPs+wU6amKMhN0v3ApXu904/HPqyIkwcmtizW5jmG/
+Received: from mail.marliere.net ([24.199.118.162])
+        by smtp.gmail.com with ESMTPSA id jz6-20020a170903430600b001d9af77893esm544875plb.58.2024.02.04.06.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Feb 2024 06:46:07 -0800 (PST)
+From: "Ricardo B. Marliere" <ricardo@marliere.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
+	s=2023; t=1707057966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LxUHnqUEPBSaX51F80aw+Y1xnfr/HMwfRHXCkVCiw9c=;
+	b=EU//pie39SpE58nNs8n1tU61aO+mH++EMkffUZu8sIURu3/RejTO5i716ZMRuBe7p2BdjE
+	3aTbv8PNIMoivL7by1mhmrO8r5WMc0ylCTaOzijDYYxOMySV1Ak7zDXDhsrSjKuMJk+PJx
+	Rqxmz1Sb3HeV4Lp1rmDBORgAKXpqBQxRuglWu938dsUQQHyzlh0Hkf+uVl+KVDaa5edCPn
+	ppDYfGj9FYOyi8mtRxyzsrRSNFoQlsO9kJMc+ViCY0pygnO/U80GEdUIA5Xvfg04dso8om
+	Mnd4MBnnzZ87er3A4I7H/C4CJUB0SgbXI2TvlgMiYJ4hB6LkuyBeSetstaBDdA==
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
+Date: Sun, 04 Feb 2024 11:46:21 -0300
+Subject: [PATCH] arm: s3c64xx: make s3c64xx_subsys const
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240204-bus_cleanup-arm-v1-1-41d651dd8411@marliere.net>
+X-B4-Tracking: v=1; b=H4sIADyjv2UC/x3MQQqAIBBA0avErBPMpKirRITZVANl4WAE4t2Tl
+ m/xfwRGT8jQFxE8PsR0uYyqLMDuxm0oaMkGJZWWSmoxB57sgcaFWxh/irqrWqmxaXC1kKvb40r
+ vfxzGlD4q7CcnYQAAAA==
+To: Russell King <linux@armlinux.org.uk>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Ricardo B. Marliere" <ricardo@marliere.net>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1088; i=ricardo@marliere.net;
+ h=from:subject:message-id; bh=TWVQeUtiEPT92Q9WFLCYcqlWO1GeqNeUCsVF+Eq2Hw0=;
+ b=owEBbQKS/ZANAwAKAckLinxjhlimAcsmYgBlv6NL04YUdv87nqZBycEDz7SB3sDXKzwFaVZO0
+ I7aNzihEzuJAjMEAAEKAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZb+jSwAKCRDJC4p8Y4ZY
+ psuQEACMM0dV32IBqOoFJrhbusS34rxjU7sJeq1mUvbeIFw1cem3UMh/tShfAtM6DfOOuSFJPrE
+ YXfdbuvizEYHOZPuvrwbiXvP+dB79Doa0ynBIt/u3ulznesssgfyIKeBQev4hkVs0wUl2EyHad+
+ HYXsiLji8wA51mcWTzmiFOY+PksQwXI4FeqiDOPJ60OMRogy1n0NaaNAuRa6a1phjzt1Hw8VXpg
+ DnX7gIqlE85iyTGcIHsWXaFMhAKlFNHT0XzPHd0t5+A6vHdR4+wDdF2E1MK/NaTEQddPfHRL7/D
+ c5QEedkaORIx6fdmUdPFAia4JHdgIjMJ/g3/580nxkXxkl596pwIrKnsw29EovKkGCSs7zcImZu
+ vJ/shKPU3+a/cAOrwLt+g9g5roZpsugvNEjqSvalAxSj7GcMM3hYwyRFM/9W1MA+AailMbj1a+m
+ NR0iYEp+p/j09dlomssFPZx+svySwVSRmwx497kABPJkN24a3Zgd+1xmxZpNvI6F2xHcZJMLfOL
+ 3jUlcKSp4kPrHRYrlerNPZVZorV+z2eYGE/uAygiHW/EbmZyR9tU+L1Le++vTcjNlCq7TbR4fZT
+ KA0QTdBuPUcOvX1x/aCnvCKruUfv3+CdWtDgPwIVKPo98oS0GTJdbleCEsRhH/A52OhiY/QSqMT
+ yHxuyAJzDHQKfIQ==
+X-Developer-Key: i=ricardo@marliere.net; a=openpgp;
+ fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
-UART in FSD SoC has fifosize of 64 bytes.
-Set fifosize as 64 bytes for UART from Device Tree.
+Now that the driver core can properly handle constant struct bus_type,
+move the s3c64xx_subsys variable to be a constant structure as well,
+placing it into read-only memory which can not be modified at runtime.
 
-Signed-off-by: Tamseel Shams <m.shams@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
 ---
- arch/arm64/boot/dts/tesla/fsd.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/mach-s3c/s3c64xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index aaffb50b8b60..047a83cee603 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -601,6 +601,7 @@
- 			clocks = <&clock_peric PERIC_PCLK_UART0>,
- 				 <&clock_peric PERIC_SCLK_UART0>;
- 			clock-names = "uart", "clk_uart_baud0";
-+			samsung,uart-fifosize = <64>;
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/mach-s3c/s3c64xx.c b/arch/arm/mach-s3c/s3c64xx.c
+index 9f9717874d67..6c70ea7f2931 100644
+--- a/arch/arm/mach-s3c/s3c64xx.c
++++ b/arch/arm/mach-s3c/s3c64xx.c
+@@ -149,7 +149,7 @@ static struct map_desc s3c_iodesc[] __initdata = {
+ 	},
+ };
  
-@@ -613,6 +614,7 @@
- 			clocks = <&clock_peric PERIC_PCLK_UART1>,
- 				 <&clock_peric PERIC_SCLK_UART1>;
- 			clock-names = "uart", "clk_uart_baud0";
-+			samsung,uart-fifosize = <64>;
- 			status = "disabled";
- 		};
- 
+-static struct bus_type s3c64xx_subsys = {
++static const struct bus_type s3c64xx_subsys = {
+ 	.name		= "s3c64xx-core",
+ 	.dev_name	= "s3c64xx-core",
+ };
+
+---
+base-commit: 8f5b7dbc644d6217a2fd35cb82594b215818eb16
+change-id: 20240204-bus_cleanup-arm-391704e66efc
+
+Best regards,
 -- 
-2.17.1
+Ricardo B. Marliere <ricardo@marliere.net>
 
