@@ -1,80 +1,158 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBDA2D03B
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Feb 2024 15:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0192E635;
+	Mon,  5 Feb 2024 15:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707146901; cv=none; b=hRyQgp3BnYY8TzAk2cFRWf/xYMeKGh2RFW4b7c8v1cPE8feJD2kNcFTIMcRgL2uTAaot83tm4IPiGkQhNzAhCKZpQqTzHK+FZFN8wztwBjhaRPZmW9b5a+Yj+QpuP4AQ4CYQQIFb2VWX/aBDqJUbTSrivQbtR5Ta/gqShRv4KxU=
+	t=1707147577; cv=none; b=GlsZ3RzGHimavFg5EzmyFpA+XoZc/c29Vu8P+ZeHj3cTN6AcPOEpNEBwvVnFJXDvWQxZoGrG3O8v0NpczRgCJAZcs5m2IVW1bppjacMXPqoJHnPIb19v0xY7xdZmjP1iR0BDMA4lA34lB3+hbszKQAV69TE1PRnaAH/GZdhP20I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707146901; c=relaxed/simple;
-	bh=sDRyLlC3gWqMVU08yPO/L/S4ZvFI/bD4jpF5C0pvcss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=odcvDywirpiBVcNpmUiaoaL80HAD8fqPSyvWaCSya6WWyFFQotXB25QQ8aQNSPcx9pqK9ap/RaX/v/5uXh5W2X+c7XhW97WA7DlLqkp4SwdJ6oowouRBb8hy7FCjcSgQZvUg9dECctZgMzHfOczOvr9Lnih2VnG5zv9LWVWQI4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L3yjfe70; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707147577; c=relaxed/simple;
+	bh=Rv8CV7EZj9twbDgExrfO0rqgaNqI6EazAjEyAvqafJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xh4EnYX4vxwkOzHcOCSa/3NPxB52LR2vDjF4Wl5GmTKP1mscvN1OPvJYzWqnoMhfYpmMj37ldO31sXnI5JBKSQfgshLw0+QgWcu0vYeTeFTyXrZwfqzhPI0MdZdrYdmc6sEFQohLEVoeQfrcNitw7E3oxoz5/9ad9wgfGwiSvVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XSKqBAGJ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L3yjfe70"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-55790581457so6352232a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Feb 2024 07:28:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707146897; x=1707751697; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sDRyLlC3gWqMVU08yPO/L/S4ZvFI/bD4jpF5C0pvcss=;
-        b=L3yjfe708OVoJaMTw+YHmQm6WG891A5Wo+0TLwqIDoDB9PI6r1DaaqNlJqnzAZWxki
-         43YatYJD9YGeKj0kWW+2dPk26KjztHzX+ZDXV3IksLUnbzE31h4sRntWEup/w80+lTrK
-         n+5ibOKnddHB0CaLj1pdl30BIYo03fBWj/eMGzgOEDGS3M+NjUwtrP9xdvWKaC66e5W0
-         m/nEgS99/NgfAWAtBrxPtR1lNB5X5ZQHY0WS9P4Vv5yKUcyEInokdYQb6a8MFOAOJJtf
-         LPFD4Ck7WE+A+TvKfZ3y2888tpfzSBVtXPCepnAxgj3ZmxMu1MyzK2FtZsEVGhHjtnbb
-         zk9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707146897; x=1707751697;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sDRyLlC3gWqMVU08yPO/L/S4ZvFI/bD4jpF5C0pvcss=;
-        b=ahdN3c7kv2bZ5h1TkkiJ1KAQ25Qt1IxEVpCDclhODB6tlfeBxCbOZ8zQWb//oK5ilA
-         Uo9Q15DIqklqFMPw6oeiT2daTJ7AcXmi9fMIc+SnvhnCNmRwmbWBdQuIgzGXnRMtH24w
-         oPh6KYu9hGizMQGS0qlzTdmnvCh7JGP3Fiw7UEhWiO0rfNyA+JeHbZrgFTv1oXi51FU4
-         ukh6gQutW1mhuOMt9OR4qvmzkwiGABpE8h42zIF7FnWGH0dvQf9VtND62mbSzNP5sLRg
-         HgsgAmkrubdOQsRySAK6xaUeDVufTT2PRwlrEz8iPlEFb+xorQDKlIE5kGfmu73SbPRm
-         L5cw==
-X-Gm-Message-State: AOJu0Yw4rH6MciF//loVS3fOAuEovEVG/p/fST9wXhWr5EtTxXdZ5tqi
-	ts600aTf7LCsNRWt8BJn8rLAYizIS0gsiWdh7uxnOx3DoDjmf1krc7rWDBa7pVasWwKvsF6DQ8g
-	MIUE14RTO2XqtHz9bQw8RWmW9s7/GGILcY4OKdw==
-X-Google-Smtp-Source: AGHT+IGIbSdPg2kJtN19Mb0Xsv1cjow8kPEkOEIXkMaPHkzoWnTMAKzZWW0SuSwM277zl/168CsT5ROoYE/L2t/1/LA=
-X-Received: by 2002:a05:6402:545:b0:55f:a1af:a1eb with SMTP id
- i5-20020a056402054500b0055fa1afa1ebmr4776963edx.23.1707146897552; Mon, 05 Feb
- 2024 07:28:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XSKqBAGJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707147576; x=1738683576;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Rv8CV7EZj9twbDgExrfO0rqgaNqI6EazAjEyAvqafJ0=;
+  b=XSKqBAGJZV6zCROXf4SDEQcqsTtwpA4TTPxY7wz0KD+8uzebasq4Aj4o
+   oXxj2RXl/09ECfITYIvn9S3ONr6ilAHGzo2DgZoiK5ITnR77fkI69oqH/
+   zMor1LsRfhMykBfZLosG0M9Che+6asbvLInZEIj/T85hhnNwCjMbnuBDR
+   EHNrNQBUAwQsk330orzkM3I6iE93gR/+bFrv6BGc0v7oRILYrENq7KVLz
+   ne2tr3sTbapsBQkpgFZNTkh87yKnoGb37Llp/lWVFGVyFAuupXg5dOQIe
+   9Nz0whGdTbGjAoeo4BCIk5ayPm/RWk8rLjR8GOMPEkMRNDwnK6bphM1m2
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10975"; a="17966630"
+X-IronPort-AV: E=Sophos;i="6.05,245,1701158400"; 
+   d="scan'208";a="17966630"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 07:39:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,245,1701158400"; 
+   d="scan'208";a="31830670"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 07:39:25 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id B935D11FADC;
+	Mon,  5 Feb 2024 12:53:10 +0200 (EET)
+Date: Mon, 5 Feb 2024 10:53:10 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Bin Liu <bin.liu@mediatek.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-amlogic@lists.infradead.org,
+	Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH 17/17] linux: v4l2-vp9.h: Fix kerneldoc
+Message-ID: <ZcC-FjF5pJUKz9Ir@kekkonen.localdomain>
+References: <20240126-gix-mtk-warnings-v1-0-eed7865fce18@chromium.org>
+ <20240126-gix-mtk-warnings-v1-17-eed7865fce18@chromium.org>
+ <ZbTTb-SdK-EubGdc@valkosipuli.retiisi.eu>
+ <201ae1d1-1e03-40e2-9cc4-49df70abb8da@xs4all.nl>
+ <8f3bab1f-8697-40c0-91f2-de934b4b9ddb@infradead.org>
+ <e565f8bd-19d2-4574-8c6d-5573733a8185@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205124513.447875-1-tudor.ambarus@linaro.org> <20240205124513.447875-6-tudor.ambarus@linaro.org>
-In-Reply-To: <20240205124513.447875-6-tudor.ambarus@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 5 Feb 2024 15:28:05 +0000
-Message-ID: <CADrjBPqv2O+au=MOxCoaLAAuQqOPTL7QDKcmEUUWgfAXbuWmAw@mail.gmail.com>
-Subject: Re: [PATCH v4 05/16] spi: s3c64xx: sort headers alphabetically
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, semen.protsenko@linaro.org, 
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e565f8bd-19d2-4574-8c6d-5573733a8185@xs4all.nl>
 
-On Mon, 5 Feb 2024 at 12:45, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
-> Sorting headers alphabetically helps locating duplicates,
-> and makes it easier to figure out where to insert new headers.
->
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
+Hi Hans,
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+On Mon, Feb 05, 2024 at 11:44:13AM +0100, Hans Verkuil wrote:
+> On 05/02/2024 11:39, Randy Dunlap wrote:
+> > 
+> > 
+> > On 2/5/24 02:29, Hans Verkuil wrote:
+> >> On 27/01/2024 10:57, Sakari Ailus wrote:
+> >>> Hi Ricardo,
+> >>>
+> >>> On Fri, Jan 26, 2024 at 11:16:16PM +0000, Ricardo Ribalda wrote:
+> >>>> Kerneldoc cannot understand arrays defined like
+> >>>> v4l2_frame_symbol_counts.
+> >>>>
+> >>>> Adding an asterisk to the name does do the trick.
+> >>>>
+> >>>> Disable the kerneldoc notation for now, it is already ignored:
+> >>>> https://docs.kernel.org/search.html?q=v4l2_vp9_frame_symbol_counts
+> >>>
+> >>> Wouldn't it be nicer to fix kerneldoc instead? It might not be difficult at
+> >>> all.
+> >>>
+> >>> Feel free to, but I can also give it a try.
+> >>>
+> >>
+> >> It would be nice to have this fixed in kerneldoc itself. I'm holding this
+> >> patch back for two weeks to see if someone wants to work on kerneldoc.
+> >>
+> >> If not, then I'll take this anyway to fix the noise in our build.
+> >>
+> >> Note that while this header is indeed ignored in the documentation, that
+> >> is really more a bug and it would be nice to actually include this header
+> >> somewhere in our documentation. So fixing these kerneldoc warnings one way
+> >> or another is something that we should do.
+> >>
+> > 
+> > It's just waiting for Jon to apply it: (from Sakari)
+> > 
+> > https://lore.kernel.org/all/20240131084934.191226-1-sakari.ailus@linux.intel.com/
+> 
+> Ah, that patch was CCed to me but not to linux-media, and I only searched linux-media
+> for it so I missed it. Good news that this is fixed in the right place.
+
+My bad, somehow I missed linux-media from the distribution. :-(
+
+> 
+> I marked this 17/17 patch as Obsoleted in patchwork.
+
+Thank you!
+
+-- 
+Regards,
+
+Sakari Ailus
