@@ -1,136 +1,175 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBB737709
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Feb 2024 15:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C865D3FE54;
+	Mon,  5 Feb 2024 16:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707148405; cv=none; b=aZP2CgipmwEda8ocVy9rNl993xMYu7EamDJmMDKmRE8ewBpmVdCB5ZUqykCOXvB5Uun9l5Hck7DhzmTZwqJyq7GATGvH6Y/4P8Q4EKaCq17JWv4YO4ZdHo4BWis6rMLj1ZUBDlM4UPndHVeybcWOnO+78J1G29UKDnzbwWj71i0=
+	t=1707152122; cv=none; b=nIMEgsST0yfmnalMi2G0NQCrAdkqN1UyigsmawSr9F331/XItNXtgIvzNIfeK6CxPW4seSVRnb9EWKL0bvDw/+SxiT5vQrEMbN+B2oAl/V1kbXLlNPQ1K3hoLpaGxaD2WTf8tyYVRdCiLnaoPF3v/5Yv0WS+D3yjAf+NB00CaCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707148405; c=relaxed/simple;
-	bh=Tj/tSyznD6niSn67AzAu0cOFqdiubGqC2gQgO7+0PPg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cAxFe/hUanMzaY8tGL85EituX3McQ/9DZIZgcepxAa4uB6eb4wDqy/d1+6yOZXlWE7byeevQ0NyyjPJXsDg2DdIn+xmbqZvgwnoDPcAaKKkzoxtLOJrhwOQQHENWSLIlqHiYSc78n3crDL/Y+VdegYg5IUo/D9phUdNqco3Oh9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iP4sVD7h; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707152122; c=relaxed/simple;
+	bh=sVWDGae8We/GTqGu3KZXsI4ao8GOXiioemxExEsLxqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhhDLcpWtO+goVeU9SsbuIwSaKsrpYvvA8BswlZSaf5Nqb/gGJh7O4ky9lutcZYsaeJsLhY7NtaiyDVnrY4jKFBs4YSNnTk+mN1h1z3G+StxvG43zgHmFb8ViC3yxSE9XhyxA0LMIX6u/p3Mrj6n2PpMi7sLsUCTjp170VDg9i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4NzN+xx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iP4sVD7h"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5cf2d73a183so3983047a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Feb 2024 07:53:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707148403; x=1707753203; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yKMXANMb2L0d4cSkguf2jw1WiTCcS41jyvz5JuSTL3Q=;
-        b=iP4sVD7h7Lpr2wvcPYz6y0GbWFJelJ3+aAe3FeRtzyWsY0/c0j2zUtFOEKclalXZ09
-         q282t57sGhCT52qVfKCNm4cl61+tdCGlDuVQytigyLcgoaIb5oxqZi005reA1RJfFcma
-         dd3ginGfpxwH0can8qIXe0CgRifQrPZ5+bDxXRS2KikU5AXlfgKy/mQNjx5TLiDPmCfH
-         hfCKG8nfmoCf3MlL4k0OjheUoLR3mPV8NDnuvRrr3wU6o4LhUkWmN+0iFQvpP+5aGr6J
-         a+zjndPPIhWWzBhOf5H0gwBxrpQ9GaQodusiyFpYy8I5ImPvfzN+mZJIuYw65zus5c98
-         nQCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707148403; x=1707753203;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yKMXANMb2L0d4cSkguf2jw1WiTCcS41jyvz5JuSTL3Q=;
-        b=nwd+lnK4QX47N3liUvfNdf9IfJiZYQ9ZqPvzbTdox23400qh44nVens3pB6BrOgddD
-         AhG+oKsbwniSfUMmMN6uP0nsr4/Bfg5EpzD6vrTB/nGJuiji4pMefBRdTtuPGCnTrUY4
-         Vytk6iqXpzISURBMkgEpZbSUhFyHv3jjaTBKxAAUMmGmkAdowcwz4I+STEEJ7mrGUm/H
-         hxbMPbJ0SkIy7R7BcuLGS/KEGfqZFzCuagx5+Go0BAcHTCdN1eRN+i4N2ehFaK6fkgnQ
-         mq8q/Ac+7RWZyCcHlTXNotMp6qvLSW6tDKeCtDFkYIoE0MSLvh+DSBdcXrDddsKvC4Cs
-         inFQ==
-X-Gm-Message-State: AOJu0YxvfCLVeXLYFGG+0iaJiZfiE5QiXhDFgeN5QhoOXqMHDQasZSDW
-	0ixkVBf/7oZRQHB22GSKWwu65Y9aoBhyaLCBN+LQFvNyRNr7waQxnTVqSIQ6RuaybonPk6qY6jS
-	2+uSKo/W/zH3db02VdQm4OOXxesM/cVDvlRxG4w==
-X-Google-Smtp-Source: AGHT+IGiQ8mgXBzzUxrLOOHInjCHEUGgvmdllRmofPYa6NtB9hGeupI8S22TOVaYwtQCQLIyLsSLsY86I4vrGeoUsvs=
-X-Received: by 2002:a05:6a20:c891:b0:19e:4ae5:730f with SMTP id
- hb17-20020a056a20c89100b0019e4ae5730fmr57615pzb.30.1707148402893; Mon, 05 Feb
- 2024 07:53:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4NzN+xx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FFCAC433B1;
+	Mon,  5 Feb 2024 16:55:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707152121;
+	bh=sVWDGae8We/GTqGu3KZXsI4ao8GOXiioemxExEsLxqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V4NzN+xxV2kwpgpmvzwCZPjJxe0p8svapOJGajeWjpEEriWr006tLpAtpBBcG14NI
+	 l7fHkZZTCCS2aZun+9xT18fkoZ/FMtKy9LlDCrv1uFwhHjeK2n19B4nBN7o649VSjD
+	 kYGKpO0o3BwY+Ahh0TeOWYCXz8+otRo3yXnErLJRN29uNdXJLWcsE4UEYU9xBrYL0Y
+	 5EBIyjafRZpDVbbOWCUrKL9UVViaDMskAXZEUX2zUclSY3mEzo3VIqcDhKNa3FKHrK
+	 rehOGq4a9IDtDYOiom3YhLrNbFEjmM7KUgyXugv+FwASEWfoMD6zmOeVRIwz7AMYR2
+	 3iJTbqU63Gc+A==
+Date: Mon, 5 Feb 2024 16:55:17 +0000
+From: Rob Herring <robh@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	"Lad,  Prabhakar" <prabhakar.csengg@gmail.com>,
+	=?iso-8859-1?Q?=22Niklas_S=C3=B6derlund=22?= <niklas.soderlund+renesas@ragnatech.se>,
+	=?iso-8859-1?Q?=22Uwe_Kleine-K=C3=B6nig=22?= <u.kleine-koenig@pengutronix.de>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Andy Gross <agross@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Emma Anholt <emma@anholt.net>,
+	Eugen Hristev <eugen.hristev@collabora.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Helge Deller <deller@gmx.de>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Jacopo Mondi <jacopo@jmondi.org>, James Clark <james.clark@arm.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Liu Ying <victor.liu@nxp.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Marek Vasut <marex@denx.de>, Mark Brown <broonie@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Todor Tomov <todor.too@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Leo Yan <leo.yan@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Mike Leach <mike.leach@linaro.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Sean Paul <sean@poorly.run>, Tom Rix <trix@redhat.com>,
+	coresight@lists.linaro.org, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3 05/24] media: i2c: switch to use
+ of_graph_get_next_device_endpoint()
+Message-ID: <20240205165517.GA3486840-robh@kernel.org>
+References: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
+ <87h6iu6qjs.wl-kuninori.morimoto.gx@renesas.com>
+ <20240202174941.GA310089-robh@kernel.org>
+ <875xz3n6ag.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205124513.447875-1-tudor.ambarus@linaro.org> <20240205124513.447875-7-tudor.ambarus@linaro.org>
-In-Reply-To: <20240205124513.447875-7-tudor.ambarus@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 5 Feb 2024 09:53:11 -0600
-Message-ID: <CAPLW+4=S7+ur0Csd-qQcEBo2_Z3Dy9ZtarYY0=jYhY33kc4WDA@mail.gmail.com>
-Subject: Re: [PATCH v4 06/16] spi: s3c64xx: remove unneeded (void *) casts in of_match_table
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org, krzysztof.kozlowski@linaro.org, 
-	alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
-	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875xz3n6ag.wl-kuninori.morimoto.gx@renesas.com>
 
-On Mon, Feb 5, 2024 at 6:45=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro.=
-org> wrote:
->
-> of_device_id::data is an opaque pointer. No explicit cast is needed.
-> Remove unneeded (void *) casts in of_match_table.
->
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
+On Sun, Feb 04, 2024 at 11:44:39PM +0000, Kuninori Morimoto wrote:
+> 
+> Hi Rob
+> 
+> > This is assuming there's just 1 port and 1 endpoint, but let's be 
+> > specific as the bindings are (first endpoint on port 0):
+> > 
+> > of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
+> > 
+> > Note we could ask for endpoint 0 here, but the bindings generally allow 
+> > for more than 1.
+> > 
+> > I imagine most of the other cases here are the same.
+> 
+> I will do it on new patch-set
+> 
+> > > -	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
+> > > +	for_each_device_endpoint_of_node(state->dev->of_node, ep_np) {
+> > 
+> > I would skip the rename.
+> 
+> It is needed to avoid confuse, because new function will add
+> another endpoint loop.
+> 
+> see
+> https://lore.kernel.org/r/20240131100701.754a95ee@booty
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+I've read the threads already and think you should skip the rename. Just 
+put 'port' in the name of the new one. That and taking a port number 
+param should be enough distinction.
 
->  drivers/spi/spi-s3c64xx.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index ccb700312d64..807270ec3c8a 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1512,31 +1512,31 @@ static const struct platform_device_id s3c64xx_sp=
-i_driver_ids[] =3D {
->
->  static const struct of_device_id s3c64xx_spi_dt_match[] =3D {
->         { .compatible =3D "samsung,s3c2443-spi",
-> -                       .data =3D (void *)&s3c2443_spi_port_config,
-> +                       .data =3D &s3c2443_spi_port_config,
->         },
->         { .compatible =3D "samsung,s3c6410-spi",
-> -                       .data =3D (void *)&s3c6410_spi_port_config,
-> +                       .data =3D &s3c6410_spi_port_config,
->         },
->         { .compatible =3D "samsung,s5pv210-spi",
-> -                       .data =3D (void *)&s5pv210_spi_port_config,
-> +                       .data =3D &s5pv210_spi_port_config,
->         },
->         { .compatible =3D "samsung,exynos4210-spi",
-> -                       .data =3D (void *)&exynos4_spi_port_config,
-> +                       .data =3D &exynos4_spi_port_config,
->         },
->         { .compatible =3D "samsung,exynos7-spi",
-> -                       .data =3D (void *)&exynos7_spi_port_config,
-> +                       .data =3D &exynos7_spi_port_config,
->         },
->         { .compatible =3D "samsung,exynos5433-spi",
-> -                       .data =3D (void *)&exynos5433_spi_port_config,
-> +                       .data =3D &exynos5433_spi_port_config,
->         },
->         { .compatible =3D "samsung,exynos850-spi",
-> -                       .data =3D (void *)&exynos850_spi_port_config,
-> +                       .data =3D &exynos850_spi_port_config,
->         },
->         { .compatible =3D "samsung,exynosautov9-spi",
-> -                       .data =3D (void *)&exynosautov9_spi_port_config,
-> +                       .data =3D &exynosautov9_spi_port_config,
->         },
->         { .compatible =3D "tesla,fsd-spi",
-> -                       .data =3D (void *)&fsd_spi_port_config,
-> +                       .data =3D &fsd_spi_port_config,
->         },
->         { },
->  };
-> --
-> 2.43.0.594.gd9cf4e227d-goog
->
+Rob
