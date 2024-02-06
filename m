@@ -1,289 +1,109 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D0B4A3E;
-	Tue,  6 Feb 2024 16:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D526EC142
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 17:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707237873; cv=none; b=kxT6shNlYuWGEFjvqQvFIIr/v+BT0Ou3lWnBmtDXzZ9QGIXjDozGK1o7T2rsvNxvjS2r6EgdtAb+/Lz1uk7ff/J/pGTJ5MQSCE2Frn6cRel0yMdrinkUKAwRhy3MuoKrgUf2tH1TqX+2+MB3Pz1T0JU1L/AVQaulEYKNB0z1CxA=
+	t=1707239367; cv=none; b=Cjk9QCjevKPb6wUZ6o08f9sO3rV89i9ve3Lmk43Cp4si6JbEXjLWq7O/A9oyAiO0iEl/TvFm6fIsbzU42W9vCsadRlDdvZKbsqkpEA9RkT1WjZECc7UPbQInbZfCfjsr+RVtIMxKMVQSEp7tXytR19Qhh5UUN8K9TWsj0qTRP2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707237873; c=relaxed/simple;
-	bh=K6G7EqF6aigFxEzvt49ggiwTXwmHFHPviNYyVpcqf74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZsZF4DIqkygqo5VqnKKjp4t8jTxs92dxo1v/hSzA1S8tV/HFV/yYAtVuXjwkJYpkNm5N1lG06TIY5RSqapzSGFLvyGNXG8rqHghjA6k0KjLGrDVqgMFKHtJsc8w1uMlJFhgcHyVsquADxUm/yyuxtiuPCfGSseTbGU3US7EI1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cw1+savb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1707239367; c=relaxed/simple;
+	bh=0EieyPtEmeSMltYruz2A6U+bwbzON2iXw+4HfvXnItY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oy5UbjW9ERmhS5oOwbwRQSCe7VHWrBubGrHfDhC/r+REaQSFLPPCpq03809x6J1TNectlYH+sNcYNlBUQFbU6RbdHwrktByu92MBxcZlIyqh0peLtVXE7EGjGuL2TZ6RfYF8KwZsifP0C8GB+AquHBI5ZK922pEsR+9oS/pKv7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cvtQo8T8; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cw1+savb"
-Received: from pendragon.ideasonboard.com (117.145-247-81.adsl-dyn.isp.belgacom.be [81.247.145.117])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC30C74A;
-	Tue,  6 Feb 2024 17:43:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1707237785;
-	bh=K6G7EqF6aigFxEzvt49ggiwTXwmHFHPviNYyVpcqf74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cw1+savbvw/X4hlFF49bIw9MtlsD9RU5N4r4Oq3JDohk83TQVv/CsvPp/lJ8RCyrR
-	 TYKlOwlWfdqjs8IbmUDw2IwG0uliy504d51XqHGImWfnERiyRyvGA9Qy+ASaUlNk6R
-	 hV5XbBSmp5c2qqNeoHRAUihJllk0Cntj6i3/w1W8=
-Date: Tue, 6 Feb 2024 18:44:29 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: "Lad,  Prabhakar" <prabhakar.csengg@gmail.com>,
-	=?utf-8?Q?=22Uwe_Kleine-K=C3=B6nig=22?= <u.kleine-koenig@pengutronix.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	David Airlie <airlied@gmail.com>,
-	Eugen Hristev <eugen.hristev@collabora.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Helge Deller <deller@gmx.de>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jacopo Mondi <jacopo@jmondi.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tim Harvey <tharvey@gateworks.com>, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 4/4] video: fbdev: replace of_graph_get_next_endpoint()
-Message-ID: <20240206164429.GD2827@pendragon.ideasonboard.com>
-References: <87ttmmnvzh.wl-kuninori.morimoto.gx@renesas.com>
- <87o7cunvwv.wl-kuninori.morimoto.gx@renesas.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cvtQo8T8"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-42a029c8e62so34832171cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 09:09:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707239364; x=1707844164; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaRuha1gDvtrSGMJylytHACa/uRhLhdcQLoNWLwXvEg=;
+        b=cvtQo8T80W5LVJ7VH3Cr/+lGcJ1yX8GJSthUkhHbZNV7SWgFI581oe4i3glyJCybJz
+         S4wbSydkpFDZJeLwKRIHmEs2liD90GEsbjHpQajQ9+NeeYT1SlruzO+9uKUPzvDkQ+fh
+         k36hpIZX0gaOuA1u3zK+Q7L6RArppjgz/lBe+vaF0Qb5uEMRWZtyVBSVi3TaXADhViBf
+         OILptN0B80akQpAuJ6eJqr5qG7HAIi76kZ/tMgPdYCg40GD7KtPa6zJDOooxSUHsBPBI
+         2w++Q0g/JrUvedfBXkr6p1tJS43OYQ1QyusvYdERI7kG8aD8jw/qm+t1j6tNFBcP/Pz1
+         syfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707239364; x=1707844164;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eaRuha1gDvtrSGMJylytHACa/uRhLhdcQLoNWLwXvEg=;
+        b=KcTutagE4hYlz/GumIuS4JwatNW3E2Cc87eUlu+zFDbJnssUdr0n4onTJi4vQJhhAq
+         P80w6OnCHLhXmuc9QUXNMGxMljFmNOX6vUU5VngH6RXc1onkwl2VzxuczfpkVMFooPYT
+         obbIRa7JgsQItVGobNyvFDB48jD9YPKXjzOepjHGTUg+rhGmj2gllRCURJSZ3VQCXTHy
+         4Pw8vXG6nw34Zr8iG1GfACUhNMgBIthGwdy7VynM2HT/QAuFKe4ROXJ0z/9yCQ+U3HvH
+         iTpE+04MB81RmXN5ZCgJ4pVz0Z1VTkeES3ossX/OjfVplwEePAV3gTo+gbwYmUOVc4wa
+         nGpg==
+X-Gm-Message-State: AOJu0Yz57qZJ3YiIpW2lN/S5dLHJJ9pr9ouZ3AneQjjzHy12QSimHi65
+	fvwVbdticZGQbM5ui73oDu2iD1+Lzs9NFdGL6ebaGtset96Y1jGT7RQ3L4uFWebiFckr6NNnocA
+	MfkCMiUWKQDI1rsuqpsR65bURUAr0eCFEdoZqRw==
+X-Google-Smtp-Source: AGHT+IFK0tMbvl0m87OZHruT25x7q72Vq8nHs2218fyQ7IZnpxxFhuILKrb84JS2+vEza93dcueE/3S8kBQcxTn4ggc=
+X-Received: by 2002:a0c:9c8e:0:b0:686:acfd:9e07 with SMTP id
+ i14-20020a0c9c8e000000b00686acfd9e07mr2756577qvf.32.1707239364698; Tue, 06
+ Feb 2024 09:09:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87o7cunvwv.wl-kuninori.morimoto.gx@renesas.com>
+References: <20240206034502.GA175333@sol.localdomain>
+In-Reply-To: <20240206034502.GA175333@sol.localdomain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 6 Feb 2024 17:09:13 +0000
+Message-ID: <CADrjBPpw4f-GW+dxQMTP4HEhVjEJ19g=eAsYLdzXzzFkTmcVbA@mail.gmail.com>
+Subject: Re: UFS storage support for Tensor/GS101?
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Will McVicker <willmcvicker@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Morimoto-san,
+Hi Eric,
 
-Thank you for the patch.
++ Will
 
-On Tue, Feb 06, 2024 at 02:55:45AM +0000, Kuninori Morimoto wrote:
-> From DT point of view, in general, drivers should be asking for a
-> specific port number because their function is fixed in the binding.
-> 
-> of_graph_get_next_endpoint() doesn't match to this concept.
-> 
-> Simply replace
-> 
-> 	- of_graph_get_next_endpoint(xxx, NULL);
-> 	+ of_graph_get_endpoint_by_regs(xxx, 0, -1);
-> 
-> Link: https://lore.kernel.org/r/20240202174941.GA310089-robh@kernel.org
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->  drivers/video/fbdev/amba-clcd.c               |  2 +-
->  drivers/video/fbdev/omap2/omapfb/dss/dsi.c    |  3 ++-
->  drivers/video/fbdev/omap2/omapfb/dss/dss-of.c | 20 +------------------
->  drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c  |  3 ++-
->  drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c  |  3 ++-
->  drivers/video/fbdev/omap2/omapfb/dss/venc.c   |  3 ++-
->  drivers/video/fbdev/pxafb.c                   |  2 +-
->  include/video/omapfb_dss.h                    |  3 ---
->  8 files changed, 11 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/amba-clcd.c b/drivers/video/fbdev/amba-clcd.c
-> index 0399db369e70..2371b204cfd2 100644
-> --- a/drivers/video/fbdev/amba-clcd.c
-> +++ b/drivers/video/fbdev/amba-clcd.c
+On Tue, 6 Feb 2024 at 03:45, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Hi Peter!  Thanks for all the hard work you've been doing on upstreaming support
+> for Tensor/GS101.  I've tested that the latest upstream kernel is now able to
+> boot to a serial console on Pixel 6.
 
-This driver has been deleted in v6.8-rc1.
+Thanks for testing :)
+>
+> I'm wondering if you have any plans to upstream support for the UFS storage on
+> that platform?  It should be able to use the already-upstream
+> drivers/ufs/host/ufs-exynos.c driver, but changes may be required; I'm not sure
+> how many.  I'm interested in this mainly because I'd like to upstream some
+> patches related to inline encryption, and that depends on UFS storage working.
+>
+> I'm interested in helping with this, but I wanted to check to see if you know
+> about any existing plans first.
 
-> @@ -691,7 +691,7 @@ static int clcdfb_of_init_display(struct clcd_fb *fb)
->  	/*
->  	 * Fetch the panel endpoint.
->  	 */
-> -	endpoint = of_graph_get_next_endpoint(fb->dev->dev.of_node, NULL);
-> +	endpoint = of_graph_get_endpoint_by_regs(fb->dev->dev.of_node, 0, -1);
->  	if (!endpoint)
->  		return -ENODEV;
->  
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dsi.c b/drivers/video/fbdev/omap2/omapfb/dss/dsi.c
-> index b7eb17a16ec4..1f13bcf73da5 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/dsi.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/dsi.c
-> @@ -28,6 +28,7 @@
->  #include <linux/debugfs.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/of.h>
-> +#include <linux/of_graph.h>
->  #include <linux/of_platform.h>
->  #include <linux/component.h>
->  
-> @@ -5079,7 +5080,7 @@ static int dsi_probe_of(struct platform_device *pdev)
->  	struct device_node *ep;
->  	struct omap_dsi_pin_config pin_cfg;
->  
-> -	ep = omapdss_of_get_first_endpoint(node);
-> +	ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->  	if (!ep)
->  		return 0;
->  
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c b/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c
-> index 0282d4eef139..14965a3fd05b 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c
-> @@ -130,24 +130,6 @@ static struct device_node *omapdss_of_get_remote_port(const struct device_node *
->  	return np;
->  }
->  
-> -struct device_node *
-> -omapdss_of_get_first_endpoint(const struct device_node *parent)
-> -{
-> -	struct device_node *port, *ep;
-> -
-> -	port = omapdss_of_get_next_port(parent, NULL);
-> -
-> -	if (!port)
-> -		return NULL;
-> -
-> -	ep = omapdss_of_get_next_endpoint(port, NULL);
-> -
-> -	of_node_put(port);
-> -
-> -	return ep;
-> -}
-> -EXPORT_SYMBOL_GPL(omapdss_of_get_first_endpoint);
-> -
+We certainly want to add support for UFS upstream, and if you can help
+out with enabling it that would be great! It would free us up to work
+on enabling something else in parallel. From a first pass analysis of
+the downstream UFS code it looks like ufs phy driver likely needs the
+most attention.
 
-I *think* replacing omapdss_of_get_first_endpoint() with
-of_graph_get_endpoint_by_regs(0, -1) is functionally equivalent in all
-cases, but a confirmation from Tomi would be nice. I wonder if it
-wouldn't be time to drop the fbdev driver though...
+The last UFS dependency (that I'm aware of) that is missing currently
+is clock support for cmu_hsi2 (which I was planning on working on as
+my next task). Also the UFS phy accesses PMU registers so that will
+require my exynos-pmu [1] series but that is hopefully close to being
+merged.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+So I think we are quite close to having all the UFS dependencies in
+place. Shall I ping you once I have some code for cmu_hsi2, and
+hopefully that should be enough for you to start working on the UFS
+driver and phy?
 
->  struct omap_dss_device *
->  omapdss_of_find_source_for_first_ep(struct device_node *node)
->  {
-> @@ -155,7 +137,7 @@ omapdss_of_find_source_for_first_ep(struct device_node *node)
->  	struct device_node *src_port;
->  	struct omap_dss_device *src;
->  
-> -	ep = omapdss_of_get_first_endpoint(node);
-> +	ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->  	if (!ep)
->  		return ERR_PTR(-EINVAL);
->  
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c
-> index f05b4e35a842..8f407ec134dc 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c
-> @@ -20,6 +20,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/clk.h>
->  #include <linux/of.h>
-> +#include <linux/of_graph.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/component.h>
->  #include <video/omapfb_dss.h>
-> @@ -529,7 +530,7 @@ static int hdmi_probe_of(struct platform_device *pdev)
->  	struct device_node *ep;
->  	int r;
->  
-> -	ep = omapdss_of_get_first_endpoint(node);
-> +	ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->  	if (!ep)
->  		return 0;
->  
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c b/drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c
-> index 03292945b1d4..4ad219f522b9 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c
-> @@ -25,6 +25,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/clk.h>
->  #include <linux/of.h>
-> +#include <linux/of_graph.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/component.h>
->  #include <video/omapfb_dss.h>
-> @@ -561,7 +562,7 @@ static int hdmi_probe_of(struct platform_device *pdev)
->  	struct device_node *ep;
->  	int r;
->  
-> -	ep = omapdss_of_get_first_endpoint(node);
-> +	ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->  	if (!ep)
->  		return 0;
->  
-> diff --git a/drivers/video/fbdev/omap2/omapfb/dss/venc.c b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
-> index c9d40e28a06f..0bd80d3b8f1b 100644
-> --- a/drivers/video/fbdev/omap2/omapfb/dss/venc.c
-> +++ b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
-> @@ -24,6 +24,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/of.h>
-> +#include <linux/of_graph.h>
->  #include <linux/component.h>
->  
->  #include <video/omapfb_dss.h>
-> @@ -764,7 +765,7 @@ static int venc_probe_of(struct platform_device *pdev)
->  	u32 channels;
->  	int r;
->  
-> -	ep = omapdss_of_get_first_endpoint(node);
-> +	ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->  	if (!ep)
->  		return 0;
->  
-> diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
-> index fa943612c4e2..2ef56fa28aff 100644
-> --- a/drivers/video/fbdev/pxafb.c
-> +++ b/drivers/video/fbdev/pxafb.c
-> @@ -2171,7 +2171,7 @@ static int of_get_pxafb_mode_info(struct device *dev,
->  	u32 bus_width;
->  	int ret, i;
->  
-> -	np = of_graph_get_next_endpoint(dev->of_node, NULL);
-> +	np = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
->  	if (!np) {
->  		dev_err(dev, "could not find endpoint\n");
->  		return -EINVAL;
-> diff --git a/include/video/omapfb_dss.h b/include/video/omapfb_dss.h
-> index e8eaac2cb7b8..a8c0c3eeeb5b 100644
-> --- a/include/video/omapfb_dss.h
-> +++ b/include/video/omapfb_dss.h
-> @@ -819,9 +819,6 @@ struct device_node *
->  omapdss_of_get_next_endpoint(const struct device_node *parent,
->  			     struct device_node *prev);
->  
-> -struct device_node *
-> -omapdss_of_get_first_endpoint(const struct device_node *parent);
-> -
->  struct omap_dss_device *
->  omapdss_of_find_source_for_first_ep(struct device_node *node);
->  #else
+Thanks,
 
--- 
-Regards,
+Peter
 
-Laurent Pinchart
+[1] https://lkml.org/lkml/2024/2/2/795
