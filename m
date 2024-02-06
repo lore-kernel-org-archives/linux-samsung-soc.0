@@ -1,59 +1,59 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607BA12E1C0
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 10:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D50412E1D8
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 10:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707214419; cv=none; b=WCKt3z+zpwSBHFKah9QZJa81G4E7q7z6IXsOGP7S597oxVN9nZgJQszjL0S5cY93Zadus+AiSYeTsFptRlxMZHtSLWt0UfGfL5vmetQ7ZPwxBa4u88PNk+6B2NsiW4aurRM4x86dOzTFRA3KqsVv63qj6NNvlkJXqXdYl+gjHek=
+	t=1707214595; cv=none; b=Wk8XMFC0ILHTp3LTqLRsyL0/RnjiZ376AsREcACSDPY6SlZxXF6dJlgpbenr1A0QNT5B9e9F+LRefO66Hua1axUP9gcqEjyF9r7rW3WQyjAymrOQyKRx2czq8/ttOnVgjP2TTImvncEfScLf7AhzCGlfy2Av4phrgBCzcSClfCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707214419; c=relaxed/simple;
-	bh=ES5DulenbO2jNzgXEvkVALHaZcmMMTTNwhTpxCi7ykk=;
+	s=arc-20240116; t=1707214595; c=relaxed/simple;
+	bh=x2iUZ9ZpFCei+ZnX2UaQKKpnNNBJpfw5hIourg0N3S4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SGwzNBNT156fbhq2PQ69lNaYGqp+H6GyDKd63nphpyPHCLB8j3tTZ7j3U6skzxY7tVfxp6nxFFIsjdcEUsGGq8uB1wb/D+zha/OzAZrLQRMCL+xa+zrkbrQzRUC0CWjs7PBCPMqoG3tqniUNcBnS22hv0uGfOo791tt7wS5QTLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OIGtq8VF; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:Content-Type; b=A9Gq5RsIr3xIDMc0k3cdVXjv3xPGDDxrjYa7t5+6XjHz2ZOlA4zTq4+uaD2TW+JJyYQgm/MWeyzeHI/38hz7X07mDmu7LT6d/CW9FpovIoj6VR687c6HO4iDPGoY36TydKTE8wAHkUZehXGP3GKiu9NNfEVrzX1b/kfV8tSjmok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Db/hn3jj; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OIGtq8VF"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5114c05806eso1058936e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 02:13:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Db/hn3jj"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-33b13332ca7so3330181f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 02:16:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707214415; x=1707819215; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707214591; x=1707819391; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4TauOb4HWAK+0/oVOi1TP0gSxUqaGVxDXkZkXlGvmMI=;
-        b=OIGtq8VFpK1hAEQ+98OUwuNxv01fMoRDqYFF1iQA3vIJhJ79klH3/QWckwWrR0kyAx
-         NT14x2RK8+1VNDxGN2evooe+7cCmn49U+S0ju30ZQ4cTtjL44H/t2LEBedKyV7Nkp+/r
-         KhWuE28o9jqW2bO0mhIA8z8J52zY2GwbDVUVgl1I8eYKVmWSRJORVvNjYUsto5S1mBsI
-         9KcHF0X4n8OPoabF2uol1XfkzcQS4gdoN4zQRnhZfTHYPQqhi4zwmH6PDzFUFeYDGaDW
-         fS/43orF5nhGCLSNUlUIXWWJWTaTBW/DTy1pYmqqbBk+jz9yt5y/oY1T5sI+jXBGGYoN
-         kYRw==
+        bh=aq6XzKlQizFSqz/9bIKgOoSzkVTFHxQWd9dvc/XQNm4=;
+        b=Db/hn3jjXSRBj8iEoXySI8HA5ZdbkpSh+ObZSug7V8MnPmUuxKrc/lcREUeWEqbik0
+         LEn+3WVwWmhVKQakpJuPMIMUs5wRp36IoMqLSU4nl8BisD49NXdHgugipOCMsxX1k2h2
+         7hOf/TMBlWXqTP+UlX9mIZLAS03I1K7oauc5Ytr1Dax9FtVBJFW9Y/N7OUjgKhdmhz4c
+         MUPc5qgTzzE07/Rqi8CFx4xVOsuVrfOj0BVP4aX59PvBKH3feNVPiTbYXy0iGNaRRW4V
+         ZWsDMlBIhTS+TyWFHP5rQFot5Htph9zFsGYiGSw3YRYy5ZIJxSZVXe5P/S2FYZmspr+l
+         xHOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707214415; x=1707819215;
+        d=1e100.net; s=20230601; t=1707214591; x=1707819391;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4TauOb4HWAK+0/oVOi1TP0gSxUqaGVxDXkZkXlGvmMI=;
-        b=eUlCORSghNEoxXYay5xpc1W8PTdNmo0yzI1m0mbDTfMcOOG6Feidm8KkNg+95fqLX3
-         Ui4Fg7CGY4V+l0MjRbngSYrgrPgWQjoyLNrRN8+ioK/+MkjCYW2fHfJRMPUU6tyJtNd9
-         YqEqZ2Ro+oPIyS5HYbGLfrAIgXaO8w7qMYooPiXqIeghWIU8qhmLBtqgpeMOu2M+XbQ5
-         H+1QFlxzf8m8c58TbxyT4Wz+TF1I6hb3N+hU/82MvxmJG8bQavSrd4WCpu9EHI1UI+Bp
-         ye0T9XcNu8hfdWVQ42gMiid0XkaUl9zyskg+EgMIqunXTfDWy5gD4ZLyu9083Vaj8QTd
-         oqWg==
-X-Gm-Message-State: AOJu0Yzam5nz14YpxdysOkox9zvZOnkzl+IUdit64390uvJVriKU3++R
-	j0ZHIy/jhgcTHPAHuiDK1wApeQ9TNhcwnT+PfkHRdLlNypJ2zq5xGaknWJtVD8g=
-X-Google-Smtp-Source: AGHT+IECd+tPDV8Ho5+Rq6CRF89fOpY9JOCpM1FHCbpH2BySf7oEQKM8dwlrbShMUitQuI84SXd3+g==
-X-Received: by 2002:a05:6512:1248:b0:511:5ff3:bd91 with SMTP id fb8-20020a056512124800b005115ff3bd91mr907076lfb.69.1707214415361;
-        Tue, 06 Feb 2024 02:13:35 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWMOCT+WeCpXwCwC+tguk9v8O+HUYh1uRrStg1Y9vebrN8l7qyqr6DTkxJ21jleoB4qTmBbiphxUseKtYHwdueekgb/vQxA/bJuJw2ZAHPh4ojgeCi/Z+CCfsVWWw4JRX9nshMtjuKwqPbp1gDuWZ+bydqHesaTkLr/Xs9/2JmXxHkpG+JCG3gzyKOvgcr6pR1zOX7Lug4F+3kTjBYAbPhUJwC8eanZPqYN9Y6CjR1NRVtRQ8eWzMlcMu09EW0LLxF+SWf/iHz9b6vAsQx2Pv+/ka1Nhwv59uTqHITWOWNZX0JwF2HDP33qUe8VaKFmkOuq6ybKcqYOOLVpBmwP2JdLjGbX0SOCaf2/6HqZoPEsdHd2W8IaV4px5GrFcy/j7G5mUFYxRbu4/6EeIuFTM9MyukVG2gDXPxBnuawk2mbTU5q9sFhWErqfqbvXWON5JRLAGCWA8ZxtAZutK3YEbe4WvPjP+R6GlTOwfO9jdnC6bf4M7zZyYUn2KYjK3ZlVvhLYhn2+LjEFiRcoKnghSoIerRsKmCEtqtqa0WQ7Yjhc1mzo6M6Ll20YoQH400134404X9I8KFMy5rXZRIwhbTJ6RfVnqpCOEyuPAi+vVdHAzH4BXw==
+        bh=aq6XzKlQizFSqz/9bIKgOoSzkVTFHxQWd9dvc/XQNm4=;
+        b=jxHNkVqRvP/1Jk+QwAGsMCNCvwXXohmxhir9N8EBcxBinxvEEJldSbUrJeJBZ6qfRv
+         hQY2vXlnnL5BLb0P0YGCtzWnCMkMbs5GdyeCSTuucr0Kt2IhVjjgNG/OkdVtBgfWMJrk
+         YdV00cRkYPquogIGrjam4IfIwSv9tGKxpr8ZuGezgYrdkwR6hjX+DHi9HYkkJoAJIKbk
+         JREDoNksQhQUn17fJkeoMc5uP5YsL0EsEEcoEaXdA9v3l/sOYDALtYr6yan7L1/GJp4Q
+         jc5PlxvmLh6skZVKZctdHHbDfD2MO2Qf33+rcjnYpxBG+UcQ7U4ssUFu92D8QAB8rOsn
+         apxw==
+X-Gm-Message-State: AOJu0Yw1nL5+brIrhhTB1owErZyHLLvaSatwuhnvbswxDX+aY3/FG1ep
+	6a1OVIKjQiG5zFhNTOlb1CG/03IZ7Sti/DQfnsNHPaQitPOhRk+UM5P38LbIduY=
+X-Google-Smtp-Source: AGHT+IGtbG+spCM18LdwypKJoz7pmjNAGxrKZUDqQW3xYricixE43MshdkeM/tdIEZbWzKhbLeSeaw==
+X-Received: by 2002:a5d:6da2:0:b0:33b:48ee:87f8 with SMTP id u2-20020a5d6da2000000b0033b48ee87f8mr650350wrs.29.1707214591617;
+        Tue, 06 Feb 2024 02:16:31 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXwHDjJrKKVl8qdw45m+9nT5h0fwPKOQtdtkRNC2vQPFh0XqEKROGB6pr33nugxDtulBPs+nABM4RvnoKx1QPrFWd7dbYZI6fzr58yI6Tha8vn4VsTZNGBvsq+6DxK5BXZyLhLVQTykzUPveKtxW7lWvs4GeVKRI+aOqGffGrg1lIPG+VIT4qum7hvKulTR/OQTMtYnEfoO1wZABzghYaRGkXBLtJITX6tL+0dECER5EwJBsUIAnZsLtoxmzxAdlFpyQ2vWfK7Oq4xZoWG5d5Vo35QuL1AjDVsym5mHCjWLx66Af3/H7fcaatx7M02wLm3ks6eu0l1KlHOfWPdvZK4Pask5nTZUckUgW1zhehhHXPUJXpuw4Fr3VfmU+iq4RxTkNL7SvZU7Q3Zy8R/Jvfly49trnOio8mgLsp8=
 Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id f17-20020a05600c4e9100b0040ec66021a7sm1484053wmq.1.2024.02.06.02.13.32
+        by smtp.gmail.com with ESMTPSA id o9-20020a5d6849000000b0033affaade9csm1719403wrw.68.2024.02.06.02.16.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Feb 2024 02:13:34 -0800 (PST)
-Message-ID: <4c648128-8f87-46b0-a38d-31700d0f0e8d@linaro.org>
-Date: Tue, 6 Feb 2024 11:13:32 +0100
+        Tue, 06 Feb 2024 02:16:31 -0800 (PST)
+Message-ID: <0f207210-07c9-41d1-ad80-11429cbc7cfe@linaro.org>
+Date: Tue, 6 Feb 2024 11:16:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,18 +61,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] arm64: dts: exynos: gs101: add chipid node
+Subject: Re: [PATCH 2/3] ARM: dts: samsung: exynos5420-galaxy-tab-common: add
+ wifi node
 Content-Language: en-US
-To: Alexey Klimov <alexey.klimov@linaro.org>, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, semen.protsenko@linaro.org,
- peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+To: Henrik Grimler <henrik@grimler.se>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, klimov.linux@gmail.com,
- kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- saravanak@google.com, willmcvicker@google.com, arnd@arndb.de
-References: <20240201172224.574238-1-alexey.klimov@linaro.org>
- <20240201172224.574238-2-alexey.klimov@linaro.org>
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240130-galaxy-tab-s-cleanup-v1-0-d4e17857241d@grimler.se>
+ <20240130-galaxy-tab-s-cleanup-v1-2-d4e17857241d@grimler.se>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -118,30 +118,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240201172224.574238-2-alexey.klimov@linaro.org>
+In-Reply-To: <20240130-galaxy-tab-s-cleanup-v1-2-d4e17857241d@grimler.se>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/02/2024 18:22, Alexey Klimov wrote:
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+On 30/01/2024 21:40, Henrik Grimler wrote:
+> By using brcm/brcmfmac4354-sdio.bin from linux-firmware together with
+> nvram.txt from vendor firmware wifi works well on the chagall-wifi and
+> klimt-lte.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index d838e3a7af6e..156fec2575bc 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -283,6 +283,11 @@ soc: soc@0 {
->  		#size-cells = <1>;
->  		ranges = <0x0 0x0 0x0 0x40000000>;
->  
-> +		chipid@10000000 {
-> +			compatible = "google,gs101-chipid";
-> +			reg = <0x10000000 0xd000>;
+> Signed-off-by: Henrik Grimler <henrik@grimler.se>
+> ---
+>  .../dts/samsung/exynos5420-galaxy-tab-common.dtsi  | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 
-ChipID has size around 0x20 or 0x30, not 0xd000. Maybe you are defining
-some other device like OTP?
+This does not apply, maybe because I skipped patch #1. Please resend.
 
 Best regards,
 Krzysztof
