@@ -1,66 +1,66 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D82DF49
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 18:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71291200BA
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 18:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707242581; cv=none; b=NuQ7UrTxemNtHtxl56oOD5VMDETf9jPm2yj2g53/2co3zBx5CGa8TQD/nhM+Rc7gccS29F7c8Bu9tu3ch01KGL7IVlPvxV3KcHogr6qC4HilpGdFR8Nyyx8LCGRZrDkQfl5lExmyBPSGb+mhpQb5/TUPDtf4p+yvklXZCR1bttU=
+	t=1707245066; cv=none; b=RzpzSBVFOkB8dLillOiQWds/k8ZELDNMV0H3GlSqjtTzUWv/7T2D2+eSH4ZUBAwXXewz7nFsEMjCfocE89icqKgXYhNMEtHZEO6LEnPRBUlmrP+OuN4ZMKRFniQ+FEf2uGorLMJUhLdVVj0ToqSMNQ8Wkebz71LyxHATE17LqO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707242581; c=relaxed/simple;
-	bh=1yNqz1LOap9ZaBzHogIYacCcSiFZ5EweLDYC8VgK/dw=;
+	s=arc-20240116; t=1707245066; c=relaxed/simple;
+	bh=4VPwghyLKyIokpPsf/9skodjSJIC1F4FYH1tensC6Aw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ndF50RV5NELN2f1TiPgdjDgUIggZ5daY7sYdspvuvW6OZaw3u+YfRUMtg2EX1GV7nlf5xwfFUAeyR8MXSXibSe0LXuXH+RRndDF7CWJvXERwofWn/Gylr/kJmGDbe5CMZokLMGu2+X7khm3DOCUuawHuOdDiOZwWO55mRGQ4Xpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6f1/fmW; arc=none smtp.client-ip=209.85.216.50
+	 To:Cc:Content-Type; b=J99cfmRtsAP4QbdMCmqSCAcq4Znqdfv8xs0dRUzXGAiowEMDcA00tWcHiv5dZBarOlixWSJhlqerO8PzYidn0+rNO5Ip5kh3gVP0dov+QiuVJV9gHVIFHq5xvBRoWRpDMei/UURXkXyTfjw2HNxfpXYY50e+G5DF6reIOQhGSxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jA7hZxgs; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6f1/fmW"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-296a5863237so703556a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 10:02:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jA7hZxgs"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2906bcae4feso4616732a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 10:44:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707242579; x=1707847379; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707245064; x=1707849864; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3M2ibsuTrnhL6GB8ozyWnRVc+0A6pszuE1w54INDDgI=;
-        b=q6f1/fmW5OjpA/cQAfS9luL+yIsfsf0bjgYkJV/dJNlaoL+rvycUsVNDsnIQxi35pX
-         LdT4MLfd2jK/lJdgkyyHRkgZFEvtY8nRAKhsvHzwY1KAFoEUCU9SPYhCrulYCuUwj7A+
-         fU86QdS0ZQOSRWsXmaJKUPktVYxbSud9o1818tqE9c7+AodOYeyHvyQby7fK0nVHL+bb
-         L8VwVAYjP/IvgRF+V6MmIaB3pJTJpIwmc4zqEoL4J2HS55WP2CXh9xoc4UNA7eHnsqgX
-         q939jswgicnXyQPRsxyd5RkjxQt249tehn7U1O1DXR/cINSm83Hg0qfh3efWgTBFpXHV
-         kDVQ==
+        bh=+bMG0kuBwMQCEUIv0B0FpnFBvMPqYtZh5SEjjp7Kx7o=;
+        b=jA7hZxgsvJHREu1UlqF8g9sqstb4zrDl4XspKRyUTU4n5oNS1lBes13so62Skm06uW
+         R8bAqWA762CMOXUckoGQNa/q0hDt6kalOIQEFR4r4aYUsxs859KKwtR4ffX9PQCnKv/2
+         gTDWHjgX3XBt8d3erMeSK6W+zmmij9TbsE+aY5+ICrm6U+PjgEhCh9xh/3jnrX//zJ11
+         VxqfauGEXuy8EEcgE8+bE8Wa6N9JI03OomVsShuB43Me/PPEXpeua8BCz9b9AVEnzinK
+         bFt4mTIYGtuL1p0rFRM9zrPNK7gdaFu1XWBpfzYsoq4zhPpeO85VTWpWsbI/lc00KLzv
+         bkww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707242579; x=1707847379;
+        d=1e100.net; s=20230601; t=1707245064; x=1707849864;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3M2ibsuTrnhL6GB8ozyWnRVc+0A6pszuE1w54INDDgI=;
-        b=trJuoyeFqJ0zoDy6y+o4U3Fu5XKvs/H1TtWsR+rAUxtuk9VvPOWaBKSY6uzSSsWdF+
-         x5P1GcwPdTtaXL2ad8HYl8vukiiQAwndRRHCV509zlXM8vn4TI5lDTpCIoo/lVMS0C3a
-         ObMtgRUa2+6L5fVtYuzB0A/83I1o+0WwkPS9iyAr6PYgXbGGl8tTL97f/Z46SuIJAfXH
-         1Hts9YEEUliZd+oqjL6vocqfoifGA3DAyawrtRHjM+o3Y/FzJhNelJIuiLM7RHNAox2W
-         fl2DizU/+wZGWWOiSrNZfgzhc32b5TrFu+FT02ge20PtHQXR8IfPSBUyclK4QwceEyex
-         R3UQ==
-X-Gm-Message-State: AOJu0YzJPDzhXFUhuVymqyFETIJrw4ZSG4pInJ0oUuOOjl73bvqRlnP8
-	dsQMMHFcBwVFwLfYOMw3t3Cs4MLLUF6aA/iBS2inoLQLQVjQpJOXxj3vvXURx6PFxehqb8BqbZd
-	oIAO9CV8Bd3mT4V5PrZSDC9/Xd662u5IZJ22PFA==
-X-Google-Smtp-Source: AGHT+IEc3tTD5EyVI03jK3qG4wLOPOwpQ10oPtADyz7X2jUcQIhcGUtJY2M8zQAg2KCaamMiS6UT8QItv6PneOqQsKw=
-X-Received: by 2002:a17:90b:4b50:b0:296:a68b:d2e1 with SMTP id
- mi16-20020a17090b4b5000b00296a68bd2e1mr254385pjb.15.1707242579459; Tue, 06
- Feb 2024 10:02:59 -0800 (PST)
+        bh=+bMG0kuBwMQCEUIv0B0FpnFBvMPqYtZh5SEjjp7Kx7o=;
+        b=Wx7kSfD+VXvJfs38Fsyvh0T3E/tOBCK7Lm+Zht8wKkId7P2kPAqTJUqQsLSGm0/a0p
+         c78urWgZHy6StV7Si/BT0sPFUhyvwctiavY4cO6zBq4ZiW1a3P+AnHXkUw4Z7wEYHbQt
+         /7y3sSQkiJYRI4H3GsYZQuXs1sCpswF9VZLOVJPAwSTAWzTGH8bMQHG1WOaWCWMxEO+k
+         WX7XT5pZbUQIUAqpWRLqVmGluh5+hMfXr3CFnMcvMeA4nty8J06zFxgloUKS+ymsTXZZ
+         arAT9yYlXUk/3N1Me83hpmi/eYodEDQGnUHTbPI09xVPnCHzT6Mqev3WpeP93+f+HFU4
+         M5WQ==
+X-Gm-Message-State: AOJu0YzxEqW/scyNkedrCprpYv1W8vk4zfq3/yMHRvwZN3jDk35TD0B3
+	hJ6FREItY0EZg7Ggqiv17/tp1ep9fx11FfZ90zU+cpphOHgDyi2kHtRZfk5qJ7/dvzB7GQUAwLl
+	a6znv7rkDeMjyyuLXXDnf6GgLg78Q/39vnfKTZg==
+X-Google-Smtp-Source: AGHT+IE1M9jGPWeVmzaj4xWfBVBRIZdNjHRf3o+XRIOAWaTnt4AKWsQCW3sG2JWW7haM1Di4pWWbAXjzVZtz44ZpflE=
+X-Received: by 2002:a17:90b:3598:b0:296:235b:20b with SMTP id
+ mm24-20020a17090b359800b00296235b020bmr401263pjb.29.1707245064629; Tue, 06
+ Feb 2024 10:44:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240206085238.1208256-1-tudor.ambarus@linaro.org> <20240206085238.1208256-2-tudor.ambarus@linaro.org>
-In-Reply-To: <20240206085238.1208256-2-tudor.ambarus@linaro.org>
+References: <20240206085238.1208256-1-tudor.ambarus@linaro.org> <20240206085238.1208256-4-tudor.ambarus@linaro.org>
+In-Reply-To: <20240206085238.1208256-4-tudor.ambarus@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 6 Feb 2024 12:02:48 -0600
-Message-ID: <CAPLW+4=Xd+B=ZncqPgU4qaJ8zY8JJvJZApdUW_v0w6yr2cy9Sg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] spi: s3c64xx: explicitly include <linux/types.h>
+Date: Tue, 6 Feb 2024 12:44:13 -0600
+Message-ID: <CAPLW+4k+FkuNwsyvWH54gcLz0YFmh8OmvOWt_LdQvELRXMvOTQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] spi: s3c64xx: add s3c64xx_iowrite{8,16}_32_rep accessors
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: broonie@kernel.org, andi.shyti@kernel.org, krzysztof.kozlowski@linaro.org, 
 	alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
@@ -74,39 +74,154 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, Feb 6, 2024 at 2:52=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro.=
 org> wrote:
 >
-> The driver uses u32 and relies on an implicit inclusion of
-> <linux/types.h>.
+> Allow SoCs that require 32 bits register accesses to write data in
+> chunks of 8 or 16 bits. One SoC that requires 32 bit register accesses
+> is the google gs101. The operation is rare, thus open code it in the
+> driver rather than making it generic (through asm-generic/io.h)
 >
-> It is good practice to directly include all headers used, it avoids
-> implicit dependencies and spurious breakage if someone rearranges
-> headers and causes the implicit include to vanish.
->
-> Include the missing header.
->
-> Fixes: 230d42d422e7 ("spi: Add s3c64xx SPI Controller driver")
-
-Not sure if Fixes tag is needed here.
-
 > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  drivers/spi/spi-s3c64xx.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/spi/spi-s3c64xx.c | 70 +++++++++++++++++++++++++++++++--------
+>  1 file changed, 56 insertions(+), 14 deletions(-)
 >
 > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 72c35dbe53b2..c15ca6a910dc 100644
+> index c15ca6a910dc..cb45ad615f3d 100644
 > --- a/drivers/spi/spi-s3c64xx.c
 > +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -17,6 +17,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/spi/spi.h>
-> +#include <linux/types.h>
+> @@ -142,6 +142,7 @@ struct s3c64xx_spi_dma_data {
+>   *     prescaler unit.
+>   * @clk_ioclk: True if clock is present on this device
+>   * @has_loopback: True if loopback mode can be supported
+> + * @use_32bit_io: True if the SoC allows just 32-bit register accesses.
 
-Is this really needed for the further patches in this series?
+A matter of taste, but: just -> only.
 
+>   *
+>   * The Samsung s3c64xx SPI controller are used on various Samsung SoC's =
+but
+>   * differ in some aspects such as the size of the fifo and spi bus clock
+> @@ -158,6 +159,7 @@ struct s3c64xx_spi_port_config {
+>         bool    clk_from_cmu;
+>         bool    clk_ioclk;
+>         bool    has_loopback;
+> +       bool    use_32bit_io;
+>  };
 >
->  #define MAX_SPI_PORTS          12
->  #define S3C64XX_SPI_QUIRK_CS_AUTO      (1 << 1)
+>  /**
+> @@ -412,6 +414,59 @@ static bool s3c64xx_spi_can_dma(struct spi_controlle=
+r *host,
+>         return false;
+>  }
+>
+> +static void s3c64xx_iowrite8_32_rep(volatile void __iomem *addr,
+> +                                   const void *buffer, unsigned int coun=
+t)
+> +{
+> +       if (count) {
+> +               const u8 *buf =3D buffer;
+> +
+> +               do {
+> +                       __raw_writel(*buf++, addr);
+> +               } while (--count);
+> +       }
+
+How about:
+
+    while (count--)
+        __raw_writel(*buf++, addr);
+
+This way "if" condition is not needed. The same goes for the function below=
+.
+
+> +}
+> +
+> +static void s3c64xx_iowrite16_32_rep(volatile void __iomem *addr,
+> +                                    const void *buffer, unsigned int cou=
+nt)
+> +{
+> +       if (count) {
+> +               const u16 *buf =3D buffer;
+> +
+> +               do {
+> +                       __raw_writel(*buf++, addr);
+> +               } while (--count);
+> +       }
+> +}
+> +
+> +static void s3c64xx_iowrite_rep(const struct s3c64xx_spi_driver_data *sd=
+d,
+> +                               struct spi_transfer *xfer)
+> +{
+> +       void __iomem *regs =3D sdd->regs;
+
+Suggest declaring aliases here, like this:
+
+    void __iomem *addr =3D sdd->regs + S3C64XX_SPI_TX_DATA;
+    const void *buf =3D xfer->tx_buf;
+    unsigned int len =3D xfer->len;
+
+Using those in the code below makes it more compact and easier to read.
+
+> +
+> +       switch (sdd->cur_bpw) {
+> +       case 32:
+> +               iowrite32_rep(regs + S3C64XX_SPI_TX_DATA,
+> +                             xfer->tx_buf, xfer->len / 4);
+> +               break;
+> +       case 16:
+> +               if (sdd->port_conf->use_32bit_io)
+> +                       s3c64xx_iowrite16_32_rep(regs + S3C64XX_SPI_TX_DA=
+TA,
+> +                                                xfer->tx_buf, xfer->len =
+/ 2);
+> +               else
+> +                       iowrite16_rep(regs + S3C64XX_SPI_TX_DATA,
+> +                                     xfer->tx_buf, xfer->len / 2);
+> +               break;
+> +       default:
+> +               if (sdd->port_conf->use_32bit_io)
+> +                       s3c64xx_iowrite8_32_rep(regs + S3C64XX_SPI_TX_DAT=
+A,
+> +                                               xfer->tx_buf, xfer->len);
+> +               else
+> +                       iowrite8_rep(regs + S3C64XX_SPI_TX_DATA,
+> +                                    xfer->tx_buf, xfer->len);
+> +               break;
+> +       }
+> +}
+> +
+>  static int s3c64xx_enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+>                                     struct spi_transfer *xfer, int dma_mo=
+de)
+>  {
+> @@ -445,20 +500,7 @@ static int s3c64xx_enable_datapath(struct s3c64xx_sp=
+i_driver_data *sdd,
+>                         modecfg |=3D S3C64XX_SPI_MODE_TXDMA_ON;
+>                         ret =3D s3c64xx_prepare_dma(&sdd->tx_dma, &xfer->=
+tx_sg);
+>                 } else {
+> -                       switch (sdd->cur_bpw) {
+> -                       case 32:
+> -                               iowrite32_rep(regs + S3C64XX_SPI_TX_DATA,
+> -                                       xfer->tx_buf, xfer->len / 4);
+> -                               break;
+> -                       case 16:
+> -                               iowrite16_rep(regs + S3C64XX_SPI_TX_DATA,
+> -                                       xfer->tx_buf, xfer->len / 2);
+> -                               break;
+> -                       default:
+> -                               iowrite8_rep(regs + S3C64XX_SPI_TX_DATA,
+> -                                       xfer->tx_buf, xfer->len);
+> -                               break;
+> -                       }
+> +                       s3c64xx_iowrite_rep(sdd, xfer);
+
+This extraction (with no functional change yet) could've been a
+preceding separate patch, preparing things for this rework.
+
+>                 }
+>         }
+>
 > --
 > 2.43.0.594.gd9cf4e227d-goog
 >
