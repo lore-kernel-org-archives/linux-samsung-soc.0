@@ -1,325 +1,637 @@
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078B643AB2
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 14:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED72A130E30
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 15:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707230762; cv=none; b=tup9fRVaB0o+EQw+cI8boi45NjldcOuWNsdDAlzzL/Az4y0Tc4DuWO1btVfeUK1rlVlGVuszPordY1lpkJ9o/Ok5ACI8huoBMUz02yG3Wux9iiNFC4elAjr/Ahld1GuKAmTZ71XFuEU7cI++cj2DvNNt6xmCLXtNFPCrSSbNFcE=
+	t=1707235015; cv=none; b=NKOXI50es3HJ5QEzF93KAGs0Q+hGU/s8iZ7dUqCujaNU9vRIqJLNOx7lspxDoo9qz+UhmeKiSE3O3LtfmbOyfIARxtm81+WdpPwCaVB2fH6k24UB5cDVUeO+2WgQxsGRiCk18NQx0lWAshOasEMphkjTfsGKaVUnhKyBbqQA6rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707230762; c=relaxed/simple;
-	bh=008NZlIIKKcRbZtY8WBgHmga9ePdRnsihK5UNUmHyPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iEXCuweR5ITb+iihfzhZpX6Kir8TUMEMx00HYmXrgzr7sY2yBQnIEFLw6WqzLz5yrTsIXM6gdbUo74RxRX2SZX8QgneO6QFOYNdRQFdqHEPxA0MfQ9fDpaUANJHnwBzLgRDHBE5/mV8sFvig3KApH1WR3SXsjSapJdHalw9r3Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=kFXpchdr; arc=none smtp.client-ip=195.121.94.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+	s=arc-20240116; t=1707235015; c=relaxed/simple;
+	bh=hcnRWbYRwOSqHk002c9kotwOL7cYJtXPGdPu/Tyleq4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y7x0v4yrSQVNsZ2+gGkHLZQDvA0DTB1av5IkC/JoWR69eUTUFaMpUKIzo1uN5E+xD8ehZn15btNVQNjmKfAAp5Rk1/cMqxaINeZ6ieVWWZb2DWiBxzII/8wAKOGukW2EDMa58g9nR/xzAAV+TsDef39F2hfnfyMZC8s0UYvP1lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D8gjlWlR; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="kFXpchdr"
-X-KPN-MessageId: 4568c7c9-c4fe-11ee-a95f-005056abbe64
-Received: from smtp.kpnmail.nl (unknown [10.31.155.39])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id 4568c7c9-c4fe-11ee-a95f-005056abbe64;
-	Tue, 06 Feb 2024 15:44:46 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D8gjlWlR"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-68c427136b0so27304016d6.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 07:56:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=content-type:from:to:subject:mime-version:date:message-id;
-	bh=sVhg6tYMRf/3ZgsSwv4ezK1ZnRtWNigTMohOSfmrdrE=;
-	b=kFXpchdrx+O53J8720yZPPvK1ytij006qCuLoTG3gApM9Cdp4+puc/qoV5SKXKNuv6lI7wfMlIsYG
-	 7Im1VLd2ePLDn0oCfoboaZRykl3Oa1mpINk3G5BlRZb9LmUrP15DXRBvawOh0m703mxnGtAakWaoWI
-	 OzJOYupc21hp3US9QlZOdPLHMAS/h9Lvq9mPq/y8IZ7JKsLgbSCr4xXcMpxxeClGr3FpTYgQh3xm+w
-	 /lwDLmqMZMGOHjzknJiKMK39WmliYMGQf7jyCVIsoq0m0pCZ+J4NU9d59juC3Zrfa7cAPnCDY4LW+a
-	 D0P2Dwp/Xz4KaUY39LXtRnJ/MukLSgg==
-X-KPN-MID: 33|jA6uH9xZgY1knbeKSi6dhq/1oOne2U8bpKIfge1alGbmiWw4WtZRL/JrdrTtnHN
- 7Bs0IK6MayUV9ZziGAXmUz8VwwxLoQDVWspwFsUV8srA=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|rcDDLhX3Pfqvt4pErGfwvkDsq0AYsFBHimHVqPC05g52A/YFh5ohXgVG1DNg/PT
- DpGkua0lo4qtTk/w7m3A0EQ==
-Received: from [10.47.75.249] (unknown [173.38.220.58])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id 456b66ec-c4fe-11ee-a7ca-005056ab7447;
-	Tue, 06 Feb 2024 15:44:47 +0100 (CET)
-Message-ID: <9d1e99b0-892d-4a72-a9b3-886b8ed094b0@xs4all.nl>
-Date: Tue, 6 Feb 2024 15:44:45 +0100
+        d=linaro.org; s=google; t=1707235011; x=1707839811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=teFCdIN1/38ZQJ7TM5uLrqELZ67nou7BTJ2vhyrwL+E=;
+        b=D8gjlWlRcTSNskA0Phin9HG0u+5kxOd0HWNg+m8MD5EjfTcTNiQ8+BdmYQOODuF99U
+         hUNoVvrOePWZgpK9czfGGnftk7retlqpsIlN1QHBQPmu2Ov1WelKQqF+ovv1gs3iHlSl
+         L7DT9kzU3Q2vbcq6y1QFnzTxSTpw3KqdTHwrKVg4MJaThdcBCy+C5ySRZSooS9MgP8Sd
+         jGdoS/4/54SZexccFHvADwg0/XmwfLjdbth7ElijyGP0msM9xEkMVFr6fapFvCcWydTK
+         d2XU2rFoXSaQti6AOgf1BCBFtwWyV9fDtoN5HStHd5Lu8uPab4g9RQyQsM48P3DG/lfn
+         HPOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707235011; x=1707839811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=teFCdIN1/38ZQJ7TM5uLrqELZ67nou7BTJ2vhyrwL+E=;
+        b=YqigA8QxTw1rUp2B42STVin5N7CxWLvbhmyqXlFkn9yrPFkj0dYrbl2hW0ISS9OmIV
+         GmULtBem0/roURuUE9gni2k4BtSUCRJ0qZU3GgLWcBULpKWId8DWlAT3lPiTvWAWsK6V
+         AkmYCwVaVJXvFbzMcmdG9E7SmsqfVT97Vy+o11VNOe4hdNKBvlWLSRO2VfeMIZ3URp0k
+         jtswm1kBGBuhU9HnQzncHbXy7lWrK8XxY5ujTZc4Ejw9xDFcNMPzajkkzbWMKeoCdLkL
+         Puk7nGupXniU0PDSocYRzpCYw6msn8S0mMPV1m0imobQSQz2q79w3nOBrSV7uqcWBUdo
+         G43A==
+X-Gm-Message-State: AOJu0Yx/Ph5mkDHe+yZNAbn3pCuMieTeR0Ka9g2BguG0h1LX4NPKzDT5
+	yHv566If06U91qZmor0xxNy9ZK1b5/yXgMacxufyxy4MOPsKqDSzWVVsunQosislenTf+OvIc7o
+	0Q//5a1SZzjDeYXbvS9vUP5m+NhPWiIIHo6JyBA==
+X-Google-Smtp-Source: AGHT+IEAOkJygRnR2vqgPJYGvM2ij3dPkOEY1847GvMuBNjDobmrg9H7RVPXArjHM2L2VMHZcYaZ+LYEV89MzQad9KQ=
+X-Received: by 2002:a0c:9c0c:0:b0:68c:b646:acf7 with SMTP id
+ v12-20020a0c9c0c000000b0068cb646acf7mr1354567qve.38.1707235010662; Tue, 06
+ Feb 2024 07:56:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] media: i2c: replace of_graph_get_next_endpoint()
-Content-Language: en-US
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alexey Brodkin <abrodkin@synopsys.com>, Alim Akhtar
- <alim.akhtar@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Daniel Vetter <daniel@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- David Airlie <airlied@gmail.com>, Eugen Hristev
- <eugen.hristev@collabora.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Helge Deller <deller@gmx.de>, Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jacopo Mondi <jacopo@jmondi.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Russell King <linux@armlinux.org.uk>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Sam Ravnborg
- <sam@ravnborg.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tim Harvey <tharvey@gateworks.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-fbdev@vger.kernel.org, linux-media@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <87ttmmnvzh.wl-kuninori.morimoto.gx@renesas.com>
- <87r0hqnvxc.wl-kuninori.morimoto.gx@renesas.com>
- <20240206134155.GB2827@pendragon.ideasonboard.com>
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240206134155.GB2827@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240202145731.4082033-1-peter.griffin@linaro.org>
+ <20240202145731.4082033-2-peter.griffin@linaro.org> <CAPLW+4=Cm36Q311Y7mCGgm+3fe5NNNc5XhNSMkbigTG2BVCTpA@mail.gmail.com>
+In-Reply-To: <CAPLW+4=Cm36Q311Y7mCGgm+3fe5NNNc5XhNSMkbigTG2BVCTpA@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 6 Feb 2024 15:56:39 +0000
+Message-ID: <CADrjBPqT=F+MALssnWsMa1E1RcPN7Sz8s+HfEZRU3pSgPO+z6w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] soc: samsung: exynos-pmu: Add regmap support for
+ SoCs that protect PMU regs
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
+	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
+	kernel-team@android.com, alexey.klimov@linaro.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/6/24 14:41, Laurent Pinchart wrote:
-> Hi Morimoto-san,
-> 
-> (Adding Krzysztof Hałasa)
-> 
-> Thank you for the patch.
-> 
-> On Tue, Feb 06, 2024 at 02:55:27AM +0000, Kuninori Morimoto wrote:
->> From DT point of view, in general, drivers should be asking for a
->> specific port number because their function is fixed in the binding.
->>
->> of_graph_get_next_endpoint() doesn't match to this concept.
->>
->> Simply replace
->>
->> 	- of_graph_get_next_endpoint(xxx, NULL);
->> 	+ of_graph_get_endpoint_by_regs(xxx, 0, -1);
->>
->> Link: https://lore.kernel.org/r/20240202174941.GA310089-robh@kernel.org
->> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> ---
->>  drivers/media/i2c/adv7343.c              | 2 +-
->>  drivers/media/i2c/adv7604.c              | 2 +-
->>  drivers/media/i2c/mt9p031.c              | 2 +-
->>  drivers/media/i2c/mt9v032.c              | 2 +-
->>  drivers/media/i2c/ov2659.c               | 2 +-
->>  drivers/media/i2c/ov5645.c               | 2 +-
->>  drivers/media/i2c/ov5647.c               | 2 +-
->>  drivers/media/i2c/s5c73m3/s5c73m3-core.c | 2 +-
->>  drivers/media/i2c/s5k5baf.c              | 2 +-
->>  drivers/media/i2c/tc358743.c             | 2 +-
->>  drivers/media/i2c/tda1997x.c             | 2 +-
->>  drivers/media/i2c/tvp514x.c              | 2 +-
->>  drivers/media/i2c/tvp7002.c              | 2 +-
->>  13 files changed, 13 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/media/i2c/adv7343.c b/drivers/media/i2c/adv7343.c
->> index ff21cd4744d3..4fbe4e18570e 100644
->> --- a/drivers/media/i2c/adv7343.c
->> +++ b/drivers/media/i2c/adv7343.c
->> @@ -403,7 +403,7 @@ adv7343_get_pdata(struct i2c_client *client)
->>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
->>  		return client->dev.platform_data;
->>  
->> -	np = of_graph_get_next_endpoint(client->dev.of_node, NULL);
->> +	np = of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
->>  	if (!np)
->>  		return NULL;
->>  
->> diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
->> index b202a85fbeaa..dcfdbb975473 100644
->> --- a/drivers/media/i2c/adv7604.c
->> +++ b/drivers/media/i2c/adv7604.c
->> @@ -3205,7 +3205,7 @@ static int adv76xx_parse_dt(struct adv76xx_state *state)
->>  	np = state->i2c_clients[ADV76XX_PAGE_IO]->dev.of_node;
->>  
->>  	/* Parse the endpoint. */
->> -	endpoint = of_graph_get_next_endpoint(np, NULL);
->> +	endpoint = of_graph_get_endpoint_by_regs(np, 0, -1);
-> 
-> I think this should be port 1 for the adv7611 and port2 for the adv7612.
-> The adv7610 may need to use port 1 too, but the bindings likely need to
-> be updated.
-> 
-> Hans, Krzysztof, any opinion ?
+Hi Sam,
 
-It looks like it. But I suspect the code never worked. The endpoint parsing
-is only needed if a specific mbus type is used (i.e., not 'UNKNOWN'), and
-I don't think that is used in the device trees in the kernel. So everything
-silently falls back to UNKNOWN and some default bus config that 'just works' (tm).
+Thanks for the great review feedback.
 
-I'm pretty sure this code is wrong, but nobody ever noticed. Changing it
-to the new code just makes it bug-compatible :-)
+On Fri, 2 Feb 2024 at 17:35, Sam Protsenko <semen.protsenko@linaro.org> wro=
+te:
+>
+> On Fri, Feb 2, 2024 at 8:57=E2=80=AFAM Peter Griffin <peter.griffin@linar=
+o.org> wrote:
+> >
+> > Some Exynos based SoCs like Tensor gs101 protect the PMU registers for
+> > security hardening reasons so that they are only write accessible in el=
+3
+> > via an SMC call.
+> >
+> > As most Exynos drivers that need to write PMU registers currently obtai=
+n a
+> > regmap via syscon (phys, pinctrl, watchdog). Support for the above usec=
+ase
+> > is implemented in this driver using a custom regmap similar to syscon t=
+o
+> > handle the SMC call. Platforms that don't secure PMU registers, get a m=
+mio
+> > regmap like before. As regmaps abstract out the underlying register acc=
+ess
+> > changes to the leaf drivers are minimal.
+> >
+> > A new API exynos_get_pmu_regmap_by_phandle() is provided for leaf drive=
+rs
+> > that currently use syscon_regmap_lookup_by_phandle(). This also handles
+> > deferred probing.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> > Changes since v2
+> >  - Add select REGMAP to Kconfig
+> >  - Add constant for SET/CLEAR bits
+> >  - Replace kerneldoc with one line comment
+> >  - Fix kerneldoc for EXPORT_SYMBOL_GPL funcs
+> >  - remove superflous extern keyword
+> >  - dev_err_probe() on probe error
+> >  - shorten regmcfg name
+> >  - no compatibles inside probe, use match data
+> >  - don't mix declarations with/without initializations
+> >  - tensor_sec_reg_read() use mmio to avoid access restrictions
+> >  - Collect up Reviewed-by
+> >  - const for regmap_config structs
+> > ---
+> >  drivers/soc/samsung/Kconfig            |   1 +
+> >  drivers/soc/samsung/exynos-pmu.c       | 233 ++++++++++++++++++++++++-
+> >  drivers/soc/samsung/exynos-pmu.h       |   1 +
+> >  include/linux/soc/samsung/exynos-pmu.h |  11 +-
+> >  4 files changed, 241 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> > index 27ec99af77e3..1a5dfdc978dc 100644
+> > --- a/drivers/soc/samsung/Kconfig
+> > +++ b/drivers/soc/samsung/Kconfig
+> > @@ -42,6 +42,7 @@ config EXYNOS_PMU
+> >         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> >         select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
+> >         select MFD_CORE
+> > +       select REGMAP_MMIO
+> >
+> >  # There is no need to enable these drivers for ARMv8
+> >  config EXYNOS_PMU_ARM_DRIVERS
+> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exy=
+nos-pmu.c
+> > index 250537d7cfd6..adf3549370d6 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.c
+> > +++ b/drivers/soc/samsung/exynos-pmu.c
+> > @@ -5,6 +5,7 @@
+> >  //
+> >  // Exynos - CPU PMU(Power Management Unit) support
+> >
+> > +#include <linux/arm-smccc.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_address.h>
+> >  #include <linux/mfd/core.h>
+> > @@ -12,19 +13,130 @@
+> >  #include <linux/of_platform.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/regmap.h>
+> >
+> >  #include <linux/soc/samsung/exynos-regs-pmu.h>
+> >  #include <linux/soc/samsung/exynos-pmu.h>
+> >
+> >  #include "exynos-pmu.h"
+> >
+> > +#define PMUALIVE_MASK GENMASK(14, 0)
+>
+> Are you sure it's not GENMASK(13, 0)?
 
-Ideally someone would have to actually test this, perhaps with one of those
-Renesas boards. While I do have one, it got bricked after I attempted a
-u-boot update :-(
+Yes, you're right, mask should be 0x3fff.
 
-Regards,
+> Because SET_BITS has bit #14
+> set, which overlaps with bit #14 from PMUALIVE_MASK, when being added
+> in tensor_set_bit_atomic().
+>
+> This also can be aligned with below definitions.
 
-	Hans
+Will update alignment
+>
+> > +#define SET_BITS       0xc000
+> > +#define CLEAR_BITS     0x8000
+>
+> All 3 above values seem to be gs101 specific. At least I can't find
+> any similar atomic registers in Exynos850 TRM, in PMU block. So I'd
+> suggest also adding TENSOR_ prefix to those to make it clear and to
+> prevent possible naming conflicts in future.
 
-> 
->>  	if (!endpoint)
->>  		return -EINVAL;
->>  
->> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
->> index 348f1e1098fb..c57a0d436421 100644
->> --- a/drivers/media/i2c/mt9p031.c
->> +++ b/drivers/media/i2c/mt9p031.c
->> @@ -1080,7 +1080,7 @@ mt9p031_get_pdata(struct i2c_client *client)
->>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
->>  		return client->dev.platform_data;
->>  
->> -	np = of_graph_get_next_endpoint(client->dev.of_node, NULL);
->> +	np = of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
->>  	if (!np)
->>  		return NULL;
->>  
->> diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
->> index 1c6f6cea1204..14d277680fa2 100644
->> --- a/drivers/media/i2c/mt9v032.c
->> +++ b/drivers/media/i2c/mt9v032.c
->> @@ -1008,7 +1008,7 @@ mt9v032_get_pdata(struct i2c_client *client)
->>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
->>  		return client->dev.platform_data;
->>  
->> -	np = of_graph_get_next_endpoint(client->dev.of_node, NULL);
->> +	np = of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
->>  	if (!np)
->>  		return NULL;
->>  
->> diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
->> index 2c3dbe164eb6..edea62a02320 100644
->> --- a/drivers/media/i2c/ov2659.c
->> +++ b/drivers/media/i2c/ov2659.c
->> @@ -1388,7 +1388,7 @@ ov2659_get_pdata(struct i2c_client *client)
->>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
->>  		return client->dev.platform_data;
->>  
->> -	endpoint = of_graph_get_next_endpoint(client->dev.of_node, NULL);
->> +	endpoint = of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
->>  	if (!endpoint)
->>  		return NULL;
->>  
->> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
->> index a70db7e601a4..31d214bd4a83 100644
->> --- a/drivers/media/i2c/ov5645.c
->> +++ b/drivers/media/i2c/ov5645.c
->> @@ -1053,7 +1053,7 @@ static int ov5645_probe(struct i2c_client *client)
->>  	ov5645->i2c_client = client;
->>  	ov5645->dev = dev;
->>  
->> -	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
->> +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
->>  	if (!endpoint) {
->>  		dev_err(dev, "endpoint node not found\n");
->>  		return -EINVAL;
->> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
->> index dcfe3129c63a..beab2813c672 100644
->> --- a/drivers/media/i2c/ov5647.c
->> +++ b/drivers/media/i2c/ov5647.c
->> @@ -1363,7 +1363,7 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
->>  	struct device_node *ep;
->>  	int ret;
->>  
->> -	ep = of_graph_get_next_endpoint(np, NULL);
->> +	ep = of_graph_get_endpoint_by_regs(np, 0, -1);
->>  	if (!ep)
->>  		return -EINVAL;
->>  
->> diff --git a/drivers/media/i2c/s5c73m3/s5c73m3-core.c b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
->> index ed5b10731a14..aaec5f64f31a 100644
->> --- a/drivers/media/i2c/s5c73m3/s5c73m3-core.c
->> +++ b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
->> @@ -1555,7 +1555,7 @@ static int s5c73m3_get_dt_data(struct s5c73m3 *state)
->>  				     "failed to request gpio S5C73M3_RST\n");
->>  	gpiod_set_consumer_name(state->reset, "S5C73M3_RST");
->>  
->> -	node_ep = of_graph_get_next_endpoint(node, NULL);
->> +	node_ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->>  	if (!node_ep) {
->>  		dev_warn(dev, "no endpoint defined for node: %pOF\n", node);
->>  		return 0;
->> diff --git a/drivers/media/i2c/s5k5baf.c b/drivers/media/i2c/s5k5baf.c
->> index 67da2045f543..af7e49e6cc5b 100644
->> --- a/drivers/media/i2c/s5k5baf.c
->> +++ b/drivers/media/i2c/s5k5baf.c
->> @@ -1836,7 +1836,7 @@ static int s5k5baf_parse_device_node(struct s5k5baf *state, struct device *dev)
->>  			 state->mclk_frequency);
->>  	}
->>  
->> -	node_ep = of_graph_get_next_endpoint(node, NULL);
->> +	node_ep = of_graph_get_endpoint_by_regs(node, 0, -1);
->>  	if (!node_ep) {
->>  		dev_err(dev, "no endpoint defined at node %pOF\n", node);
->>  		return -EINVAL;
->> diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
->> index 2785935da497..872e802cdfbe 100644
->> --- a/drivers/media/i2c/tc358743.c
->> +++ b/drivers/media/i2c/tc358743.c
->> @@ -1895,7 +1895,7 @@ static int tc358743_probe_of(struct tc358743_state *state)
->>  		return dev_err_probe(dev, PTR_ERR(refclk),
->>  				     "failed to get refclk\n");
->>  
->> -	ep = of_graph_get_next_endpoint(dev->of_node, NULL);
->> +	ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
->>  	if (!ep) {
->>  		dev_err(dev, "missing endpoint node\n");
->>  		return -EINVAL;
->> diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
->> index 325e99125941..662efd5e69b9 100644
->> --- a/drivers/media/i2c/tda1997x.c
->> +++ b/drivers/media/i2c/tda1997x.c
->> @@ -2307,7 +2307,7 @@ static int tda1997x_parse_dt(struct tda1997x_state *state)
->>  	pdata->vidout_sel_de = DE_FREF_SEL_DE_VHREF;
->>  
->>  	np = state->client->dev.of_node;
->> -	ep = of_graph_get_next_endpoint(np, NULL);
->> +	ep = of_graph_get_endpoint_by_regs(np, 0, -1);
->>  	if (!ep)
->>  		return -EINVAL;
->>  
->> diff --git a/drivers/media/i2c/tvp514x.c b/drivers/media/i2c/tvp514x.c
->> index c37f605cb75f..b1630a6c396b 100644
->> --- a/drivers/media/i2c/tvp514x.c
->> +++ b/drivers/media/i2c/tvp514x.c
->> @@ -988,7 +988,7 @@ tvp514x_get_pdata(struct i2c_client *client)
->>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
->>  		return client->dev.platform_data;
->>  
->> -	endpoint = of_graph_get_next_endpoint(client->dev.of_node, NULL);
->> +	endpoint = of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
->>  	if (!endpoint)
->>  		return NULL;
->>  
->> diff --git a/drivers/media/i2c/tvp7002.c b/drivers/media/i2c/tvp7002.c
->> index a2d7bc799849..8e58ce400df2 100644
->> --- a/drivers/media/i2c/tvp7002.c
->> +++ b/drivers/media/i2c/tvp7002.c
->> @@ -893,7 +893,7 @@ tvp7002_get_pdata(struct i2c_client *client)
->>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
->>  		return client->dev.platform_data;
->>  
->> -	endpoint = of_graph_get_next_endpoint(client->dev.of_node, NULL);
->> +	endpoint = of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
->>  	if (!endpoint)
->>  		return NULL;
->>  
-> 
+Sure, I can add a Tensor prefix. Unfortunately these atomic registers
+aren't mentioned anywhere in gs101 TRM's either, so it is a bit of a
+nature study :( It was implemented and used in the downstream drivers
+though (and doesn't look to be implemented downstream for exynos850,
+so you're likely correct it doesn't have it.). I tried to check some
+other downstream product tree's, I found the hardware looks to exist
+on Exynos 9820 [1]. But I think we can update the name if somebody
+tries to upstream that platform in the future.
 
+[1] https://github.com/PixelOS-Devices/kernel_samsung_exynos9820/blob/thirt=
+een/drivers/soc/samsung/exynos-pmu.c#L32
+
+>
+> Also, not sure if it makes things better, but FWIW:
+>
+>     #define CLEAR_BITS     BIT(15)
+>     #define SET_BITS       (BIT(15) | BIT(14))
+
+I agree that would make it clearer.
+
+>
+> Just to show that those two bits don't overlap with PMUALIVE_MASK (if
+> it can be fixed to 13:0), and show their relation. If I understand
+> correctly what's going on anyway.
+
+I think you've understood what's happening here perfectly
+
+>
+> > +
+> > +#define TENSOR_SMC_PMU_SEC_REG         0x82000504
+> > +#define TENSOR_PMUREG_READ             0
+> > +#define TENSOR_PMUREG_WRITE            1
+> > +#define TENSOR_PMUREG_RMW              2
+> > +
+> >  struct exynos_pmu_context {
+> >         struct device *dev;
+> >         const struct exynos_pmu_data *pmu_data;
+> > +       struct regmap *pmureg;
+> >  };
+> >
+> >  void __iomem *pmu_base_addr;
+> >  static struct exynos_pmu_context *pmu_context;
+> > +static struct platform_driver exynos_pmu_driver;
+>
+> Just an idea: maybe add a comment saying it's a forward declaration,
+> and the variable is assigned below, as it might be confusing. Not sure
+> if it's worth it though.
+>
+> > +
+> > +/*
+> > + * Tensor SoCs are configured so that PMU_ALIVE registers can only be =
+written
+> > + * from EL3, but are still read accessible. As Linux needs to write so=
+me of
+> > + * these registers, the following functions are provided and exposed v=
+ia
+> > + * regmap.
+> > + *
+> > + * Note: This SMC interface is known to be implemented on gs101 and de=
+rivative
+> > + * SoCs.
+> > + */
+> > +
+> > +/* Write to a protected PMU register. */
+> > +static int tensor_sec_reg_write(void *base, unsigned int reg, unsigned=
+ int val)
+> > +{
+> > +       struct arm_smccc_res res;
+> > +       unsigned long pmu_base =3D (unsigned long)base;
+> > +
+> > +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> > +                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
+> > +
+> > +       /* returns -EINVAL if access isn't allowed or 0 */
+> > +       if (res.a0)
+> > +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0=
+);
+> > +
+> > +       return (int)res.a0;
+> > +}
+> > +
+> > +/* Read/Modify/Write a protected PMU register. */
+> > +static int tensor_sec_reg_rmw(void *base, unsigned int reg,
+> > +                             unsigned int mask, unsigned int val)
+> > +{
+> > +       struct arm_smccc_res res;
+> > +       unsigned long pmu_base =3D (unsigned long)base;
+> > +
+> > +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> > +                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
+> > +
+> > +       /* returns -EINVAL if access isn't allowed or 0*/
+> > +       if (res.a0)
+> > +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0=
+);
+> > +
+> > +       return (int)res.a0;
+> > +}
+> > +
+> > +/*
+> > + * Read a protected PMU register. All PMU registers can be read by Lin=
+ux.
+> > + * Note: The SMC read register is not used, as only registers that can=
+ be
+> > + * written are readable via SMC.
+> > + */
+> > +static int tensor_sec_reg_read(void *base, unsigned int reg, unsigned =
+int *val)
+> > +{
+> > +       *val =3D pmu_raw_readl(reg);
+> > +       return 0;
+> > +}
+> > +
+> > +/*
+> > + * For SoCs that have set/clear bit hardware this function can be used=
+ when
+> > + * the PMU register will be accessed by multiple masters.
+> > + *
+> > + * For example, to set bits 13:8 in PMU reg offset 0x3e80
+> > + * tensor_set_bit_atomic(0x3e80, 0x3f00, 0x3f00);
+> > + *
+> > + * To clear bits 13:8 in PMU offset 0x3e80
+> > + * tensor_set_bit_atomic(0x3e80, 0x0, 0x3f00);
+> > + */
+> > +static inline int tensor_set_bit_atomic(void *ctx, unsigned int offset=
+,
+>
+> set_bit -> set_bits?
+
+Will change
+
+>
+> > +                                       u32 val, u32 mask)
+> > +{
+> > +       int ret;
+> > +       unsigned int i;
+> > +
+> > +       for (i =3D 0; i < 32; i++) {
+> > +               if (mask & BIT(i)) {
+>
+> Maybe replace it with:
+>
+>     if (!(mask & BIT(i)))
+>         continue;
+>
+> to reduce the indentation level?
+
+Will do
+
+>
+> > +                       if (val & BIT(i))
+> > +                               offset |=3D SET_BITS;
+> > +                       else
+> > +                               offset |=3D CLEAR_BITS;
+>
+> What if someone calls this functions like this:
+>
+>     tensor_set_bit_atomic(0x3e80, 0x100, 0x3f00);
+>
+> which means "set bit #8, and clear bits 13:9). But because the offset
+> variable will hold SET_BITS set during bit #8 handling, bits 13:9 are
+> also going to be set, effectively making that call act like
+> tensor_set_bit_atomic(0x3e80, 0x3f00, 0x3f00) instead. So I'd add
+> something like:
+>
+>     offset &=3D ~SET_BITS;
+>
+> before doing |=3D operations.
+
+Good catch! Will fix in v4
+
+>
+> > +
+> > +                       ret =3D tensor_sec_reg_write(ctx, offset, i);
+> > +                       if (ret)
+> > +                               goto out;
+>
+> Maybe remove "out" and just do return ret here?
+
+Will update
+
+>
+> > +               }
+> > +       }
+> > +out:
+> > +       return ret;
+> > +}
+> > +
+> > +static int tensor_sec_update_bits(void *ctx, unsigned int reg,
+> > +                                 unsigned int mask, unsigned int val)
+> > +{
+> > +       /*
+> > +        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3F=
+FF)
+> > +        * as the target registers can be accessed by multiple masters.
+> > +        */
+> > +       if (reg > PMUALIVE_MASK)
+> > +               return tensor_sec_reg_rmw(ctx, reg, mask, val);
+> > +
+> > +       return tensor_set_bit_atomic(ctx, reg, val, mask);
+> > +}
+> >
+> >  void pmu_raw_writel(u32 val, u32 offset)
+> >  {
+> > @@ -75,11 +187,41 @@ void exynos_sys_powerdown_conf(enum sys_powerdown =
+mode)
+> >  #define exynos_pmu_data_arm_ptr(data)  NULL
+> >  #endif
+> >
+> > +static const struct regmap_config regmap_smccfg =3D {
+> > +       .name =3D "pmu_regs",
+> > +       .reg_bits =3D 32,
+> > +       .reg_stride =3D 4,
+> > +       .val_bits =3D 32,
+> > +       .fast_io =3D true,
+> > +       .use_single_read =3D true,
+> > +       .use_single_write =3D true,
+> > +       .reg_read =3D tensor_sec_reg_read,
+> > +       .reg_write =3D tensor_sec_reg_write,
+> > +       .reg_update_bits =3D tensor_sec_update_bits,
+> > +};
+> > +
+> > +static const struct regmap_config regmap_mmiocfg =3D {
+> > +       .name =3D "pmu_regs",
+> > +       .reg_bits =3D 32,
+> > +       .reg_stride =3D 4,
+> > +       .val_bits =3D 32,
+> > +       .fast_io =3D true,
+> > +       .use_single_read =3D true,
+> > +       .use_single_write =3D true,
+> > +};
+> > +
+> > +static const struct exynos_pmu_data gs101_pmu_data =3D {
+> > +       .pmu_secure =3D true
+> > +};
+> > +
+> >  /*
+> >   * PMU platform driver and devicetree bindings.
+> >   */
+> >  static const struct of_device_id exynos_pmu_of_device_ids[] =3D {
+> >         {
+> > +               .compatible =3D "google,gs101-pmu",
+> > +               .data =3D &gs101_pmu_data,
+> > +       }, {
+> >                 .compatible =3D "samsung,exynos3250-pmu",
+> >                 .data =3D exynos_pmu_data_arm_ptr(exynos3250_pmu_data),
+> >         }, {
+> > @@ -113,19 +255,73 @@ static const struct mfd_cell exynos_pmu_devs[] =
+=3D {
+> >         { .name =3D "exynos-clkout", },
+> >  };
+> >
+> > +/**
+> > + * exynos_get_pmu_regmap() - Obtain pmureg regmap
+> > + *
+> > + * Find the pmureg regmap previously configured in probe() and return =
+regmap
+> > + * pointer.
+> > + *
+> > + * Return: A pointer to regmap if found or ERR_PTR error value.
+> > + */
+> >  struct regmap *exynos_get_pmu_regmap(void)
+> >  {
+> >         struct device_node *np =3D of_find_matching_node(NULL,
+> >                                                       exynos_pmu_of_dev=
+ice_ids);
+> >         if (np)
+> > -               return syscon_node_to_regmap(np);
+> > +               return exynos_get_pmu_regmap_by_phandle(np, NULL);
+> >         return ERR_PTR(-ENODEV);
+> >  }
+> >  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap);
+> >
+> > +/**
+> > + * exynos_get_pmu_regmap_by_phandle() - Obtain pmureg regmap via phand=
+le
+> > + * @np: Pointer to device's Device Tree node
+> > + * @property: Device Tree property name which references the pmu
+> > + *
+> > + * Find the pmureg regmap previously configured in probe() and return =
+regmap
+> > + * pointer.
+> > + *
+> > + * Return: A pointer to regmap if found or ERR_PTR error value.
+> > + */
+> > +struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np=
+,
+> > +                                               const char *property)
+> > +{
+> > +       struct device *dev;
+> > +       struct exynos_pmu_context *ctx;
+> > +       struct device_node *pmu_np;
+> > +
+> > +       if (property)
+> > +               pmu_np =3D of_parse_phandle(np, property, 0);
+> > +       else
+> > +               pmu_np =3D np;
+> > +
+> > +       if (!pmu_np)
+> > +               return ERR_PTR(-ENODEV);
+> > +
+> > +       /*
+> > +        * Determine if exynos-pmu device has probed and therefore regm=
+ap
+> > +        * has been created and can be returned to the caller. Otherwis=
+e we
+> > +        * return -EPROBE_DEFER.
+> > +        */
+> > +       dev =3D driver_find_device_by_of_node(&exynos_pmu_driver.driver=
+,
+> > +                                           (void *)pmu_np);
+> > +
+> > +       of_node_put(pmu_np);
+> > +       if (!dev)
+> > +               return ERR_PTR(-EPROBE_DEFER);
+> > +
+> > +       ctx =3D dev_get_drvdata(dev);
+> > +
+> > +       return ctx->pmureg;
+> > +}
+> > +EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+> > +
+> >  static int exynos_pmu_probe(struct platform_device *pdev)
+> >  {
+> >         struct device *dev =3D &pdev->dev;
+> > +       struct regmap_config pmu_regmcfg;
+> > +       struct regmap *regmap;
+> > +       struct resource *res;
+> >         int ret;
+> >
+> >         pmu_base_addr =3D devm_platform_ioremap_resource(pdev, 0);
+> > @@ -133,13 +329,42 @@ static int exynos_pmu_probe(struct platform_devic=
+e *pdev)
+> >                 return PTR_ERR(pmu_base_addr);
+> >
+> >         pmu_context =3D devm_kzalloc(&pdev->dev,
+> > -                       sizeof(struct exynos_pmu_context),
+> > -                       GFP_KERNEL);
+> > +                                  sizeof(struct exynos_pmu_context),
+> > +                                  GFP_KERNEL);
+> >         if (!pmu_context)
+> >                 return -ENOMEM;
+> > -       pmu_context->dev =3D dev;
+> > +
+> > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       if (!res)
+> > +               return -ENODEV;
+> > +
+> >         pmu_context->pmu_data =3D of_device_get_match_data(dev);
+> >
+> > +       /* For SoCs that secure PMU register writes use custom regmap *=
+/
+> > +       if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_secure)=
+ {
+> > +               pmu_regmcfg =3D regmap_smccfg;
+> > +               pmu_regmcfg.max_register =3D resource_size(res) -
+> > +                                          pmu_regmcfg.reg_stride;
+> > +               /* Need physical address for SMC call */
+> > +               regmap =3D devm_regmap_init(dev, NULL,
+> > +                                         (void *)(uintptr_t)res->start=
+,
+> > +                                         &pmu_regmcfg);
+> > +       } else {
+> > +               /* all other SoCs use a MMIO regmap */
+>
+> Suggest starting with a capital letter, for consistency with previous com=
+ments.
+
+Will update
+
+>
+> > +               pmu_regmcfg =3D regmap_mmiocfg;
+> > +               pmu_regmcfg.max_register =3D resource_size(res) -
+> > +                                          pmu_regmcfg.reg_stride;
+> > +               regmap =3D devm_regmap_init_mmio(dev, pmu_base_addr,
+> > +                                              &pmu_regmcfg);
+> > +       }
+> > +
+> > +       if (IS_ERR(regmap))
+> > +               dev_err_probe(&pdev->dev, PTR_ERR(regmap),
+> > +                             "regmap init failed\n");
+>
+> Why not "return dev_err_probe()"? Is it ok to continue with no regmap cre=
+ated?
+
+That should have been return dev_err_probe. Will fix
+
+Peter
+
+
+
+>
+> > +
+> > +       pmu_context->pmureg =3D regmap;
+> > +       pmu_context->dev =3D dev;
+> > +
+> >         if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
+> >                 pmu_context->pmu_data->pmu_init();
+> >
+> > diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exy=
+nos-pmu.h
+> > index 1c652ffd79b4..0a49a2c9a08e 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.h
+> > +++ b/drivers/soc/samsung/exynos-pmu.h
+> > @@ -21,6 +21,7 @@ struct exynos_pmu_conf {
+> >  struct exynos_pmu_data {
+> >         const struct exynos_pmu_conf *pmu_config;
+> >         const struct exynos_pmu_conf *pmu_config_extra;
+> > +       bool pmu_secure;
+> >
+> >         void (*pmu_init)(void);
+> >         void (*powerdown_conf)(enum sys_powerdown);
+> > diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc=
+/samsung/exynos-pmu.h
+> > index a4f5516cc956..406ed73614fd 100644
+> > --- a/include/linux/soc/samsung/exynos-pmu.h
+> > +++ b/include/linux/soc/samsung/exynos-pmu.h
+> > @@ -20,12 +20,21 @@ enum sys_powerdown {
+> >
+> >  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+> >  #ifdef CONFIG_EXYNOS_PMU
+> > -extern struct regmap *exynos_get_pmu_regmap(void);
+> > +struct regmap *exynos_get_pmu_regmap(void);
+> > +
+>
+> Usually empty line delimeter is not needed in cases like that.
+>
+> > +struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np=
+,
+> > +                                               const char *property);
+> >  #else
+> >  static inline struct regmap *exynos_get_pmu_regmap(void)
+> >  {
+> >         return ERR_PTR(-ENODEV);
+> >  }
+> > +
+> > +static inline struct regmap *exynos_get_pmu_regmap_by_phandle(struct d=
+evice_node *np,
+> > +                                                             const cha=
+r *property)
+> > +{
+> > +       return ERR_PTR(-ENODEV);
+> > +}
+> >  #endif
+> >
+> >  #endif /* __LINUX_SOC_EXYNOS_PMU_H */
+> > --
+> > 2.43.0.594.gd9cf4e227d-goog
+> >
