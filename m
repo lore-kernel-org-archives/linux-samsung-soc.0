@@ -1,141 +1,106 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AD312D75B
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 08:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9413E12D74A
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Feb 2024 09:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707209574; cv=none; b=PfrsfbmqV5c095+uaouiICOV6X8D+QU2Ra7qvu/RR74OxLMCVB8yf557xfGiLUNiUle1METF7r3f/Ikor+ZcT/M+28yhhun26+Sv5IoU7KnxqrSMZvbPNaW/vlg7Km0ebcQNyOcXwNG8iYzyuk5qXiKxy9MmNsex7VUy3G6U9Es=
+	t=1707213378; cv=none; b=qvB7IbF0XIWodbQWcNx5e23fFXi+IcylmZ5Bpn4wdqwSAFM4unJMbG6borpOg3JFsgqcpymuLRHQPDkMbea5O+9gRwd89yCjx0GQKeokqGtzziuU7A/357Y4NKuXtj8EZfT446w4+6xSOSdjVpDjVq/WrfQbIS0WdzRJ+SauMUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707209574; c=relaxed/simple;
-	bh=vL9XGX/qXOFd69mq78FHNcCXv1VBdvoclaPktVPZJqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TYLSDc05/siOeOufBWgK7qIkMiqnHNfJWP90Fo0FzzYhvr7mHO6rVrIVxnARZYPV0Vns34jdu3rkxWSVTquOTMMc82lDe9LJBGNg3W70fXjuZJHZfSIIqwRW5TqZwA16z4ULSTMb22gVV4KQLNx74u+MgtsKbW+0inyj12FCxy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZXBi6tlO; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1707213378; c=relaxed/simple;
+	bh=pwU543wkEC4pEjHTs+niRFnjN9ZiwdPq48b+x0FBCPI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fQpNNorYBGgxcxyDVQ3Yat/JH8+1FsBoAXPt85Qqg+9vG7M0k7LlC0RYOrW3vFLMWUYgZc+z+M7fYJwy3by7jfVr3RnPSyVNy5Ban2ribrVcmYIPkz/Wmy8V8GzJuGpKnHhxgsULeQZmx6d4aRi37QmZpvOjYGjSBwLeDPHzd+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dNw332XI; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZXBi6tlO"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-33b2960ff60so175396f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 00:52:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dNw332XI"
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-783e22a16d4so28450585a.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 01:56:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707209571; x=1707814371; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vgk20b1Z6sAxu7dsDANnrkj2LKv2bPazc+HqZKqdJoY=;
-        b=ZXBi6tlO7hHW7YCiGhJQ23I4SfO2Fwt52JzSrUY7JF0JY5+KEMTaB6jRbBj0LItTzz
-         JEmU6phkM6t0el78BWCNtZSadXR94VXpooXgscf47N/r5ZwPi6CAvdQYm7m5U72C8vU1
-         bEdzKKFQ1w7ywYGf6xocWwLiedt+1iYo5FnP66ltk3MgQ8YLEEQMU893jI2TjFneks95
-         xsFPp/EvG/tKfdal+Fgm6GqtQBFRojBCxjnW1b0TKbGy7yhtIBQyUC9iHVy62BIIL0K6
-         7Y/gu8nVpg9RiTX5EXnIDOywIOrcQj1h9N0WMp3mrveWPhA8KfRq/lCqO/Oms2naQ2XD
-         b4zQ==
+        d=linaro.org; s=google; t=1707213375; x=1707818175; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMShq1kVjIqxhVRjaGYU4SJMpzxmIaFIwT3PC41eekc=;
+        b=dNw332XIaoEHTnyiiMk3asBU5CHbddzHvxKV9wLeuItnrU4cNtduoGyNdd36GEdJkC
+         K3CnLNDrnykRWlRm+USnYor2iY2Vw9p/MFMAG7BigFgvXnXDpN9atbjihgFjITDKxVVp
+         GWbd14Jh3My/BF7yOQoUkXkjXdRc2gzqQ9TVlYgiLwM/MiVYRF6QO4sodB3OBjFT9H+h
+         ZoI7kqDAj+LWDk4LtUU8S3adz+M4yzXfndyXVVnsh1QnDMdj4ap14jREpBZ5X/GYzYvv
+         IPfP5CrbYFXq+GhE1IVc66+guvIGAusPwA7q8SKNU5B6cccyiK2yRITHySeD1SrHWE7i
+         CRiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707209571; x=1707814371;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vgk20b1Z6sAxu7dsDANnrkj2LKv2bPazc+HqZKqdJoY=;
-        b=ha+/NjgCmDF9vO5uUNsYw1pcZuOc094UGmZFbWcDhE40sNwsHpnE79r3HqI1hs5TuY
-         zAflGbbStCTXgTPLh4PqKrnz43C6mdiehaOIF9u+HXOqBDj0xpMcVVuw8aewUKPm2/r2
-         qBFaATwCkJTxN+tAyJN5gGzXLV9tGefhL2hIIlheFydgpgOSpHMAZuMaBGtR3t3KWijd
-         b21pzSQwOl12EFAKH+9WVg7ZakWIP2/1wNHI1p7HqmkXIKvpS6JVBioE8fTlRERl/4nY
-         DtZXZD5rXlAZ0u20FWfuRMYQmqzNv+a37a5M7Jg/8II15JFlSWg9AhyrdgVDSL5RBliW
-         V0rg==
-X-Gm-Message-State: AOJu0Yyh2804lH2u5w3u6nWdJ7ZbJtrXy1VEL4LGmV/7QeO584gKclZ9
-	XDWz6BBnwVaTnIMcJxhFdjU4U5L75bvM8voy0reHAsQcIz4BmZEjAD1ucbuNWWQ=
-X-Google-Smtp-Source: AGHT+IFxujVssWEiqmgO6bi09eUeCSXUTDLiXgomG617SNK7Y2jrytsLzsqe8YugL4+0WqsUaUGoRg==
-X-Received: by 2002:a5d:444a:0:b0:33b:3aa7:3b80 with SMTP id x10-20020a5d444a000000b0033b3aa73b80mr735235wrr.15.1707209570962;
-        Tue, 06 Feb 2024 00:52:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWiauRuBcFvG8IhewBVIQJKg4NAHxVG6ayQFJPqsd+Sz1L+Z6KUJ/ke/7A2Jp1CzjZetiLMuh7F6Qxt/B2+5Ah9FFrn8saFp1ldnZtCFkCvnwgNhwWQbZ3fI14qQeAGnBjVt5FfYpBPyk8XUo8MyUDwqWKFqTSRk6qFuurmI8ezF9D+HevlhKyOtk+DnCUDkQzyBqj/nun6RK9jn8SZEUmvdNzwCZpb28PCo0W5wgki3ekC6td0taN99bUDT0dLmRjpobe/6GKuvaZK9RNqCV3a2j/yEuSDsLHGdaIo0GyQbn+FB7rNp5YkMdnNpOtoaiEUjCO4Mh8P6THC7YqYSSEgwXLDpEwUzfK3rxEz0KKJ5e8MHAmhWUwDomSo8qpLwSSau85/ZEBUzCmrm6dH3nEZ4LqGZzQkPhD9yzsG+d5fwlyd+4Lzj5MHonbDDel6ZRWeg12ZebHQRm+5svNxpUH+wlJvUoKUJPpqG7ymqNlxOwhZgkasUdym3Smsjt6O51Psw8Ewm/ILlj94zWT/pYIflr//PN+2HsFTkFX+0qcap8D2bSOxCuztnISU41DDs4cGsWC8M/qBAoykebwoEnDlsw==
-Received: from ta2.c.googlers.com.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id z10-20020a05600c078a00b0040fe078fb03sm1221591wmo.32.2024.02.06.00.52.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 00:52:49 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: broonie@kernel.org,
-	andi.shyti@kernel.org,
-	semen.protsenko@linaro.org
-Cc: krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org,
-	peter.griffin@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	robh+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 4/4] spi: s3c64xx: add support for google,gs101-spi
-Date: Tue,  6 Feb 2024 08:52:38 +0000
-Message-ID: <20240206085238.1208256-5-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
-In-Reply-To: <20240206085238.1208256-1-tudor.ambarus@linaro.org>
-References: <20240206085238.1208256-1-tudor.ambarus@linaro.org>
+        d=1e100.net; s=20230601; t=1707213375; x=1707818175;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CMShq1kVjIqxhVRjaGYU4SJMpzxmIaFIwT3PC41eekc=;
+        b=ONev7xYeJ3JZCSufb8moZ8xvjWycY13Joyg4V9ekUcuTAZILt+v2KN6sKZZaWryPc/
+         TVrrg0lr2hIcRNl7AR+/7sWZQXxx/5jFkIRbe6VnJQ6a7fFPxG5w7S7NW8Qcxxnldu9Q
+         wW3XGCGUNSsQgaPc5efaSt8Z24pjWI+yRIpoPfDZCIKwD7UwEYtG025ennGKHOlVpZJG
+         uAYng033vSUPV6kkXQcz9uogWU4PUGLHgRTw55G0/TRbBAsmn7rhiJcdvVkTJIL6sCgw
+         FIpW0WDt16x/Prq/mma+ctL8H9Ehun4mqSCrMK2YYNZQtUULRGoMOAUcFCHMl8V8M790
+         r1sw==
+X-Gm-Message-State: AOJu0YzS3WfsEpglko27M0lT8qgNvsn+ADrGMZ2GjvWVu0s5ygd/3pF5
+	femi8Ek0nAwy/RKxmv0e5eR1Zyw1GgaiDoRhiTwo9ACiiZ4QsQWTuZjewFQdCk0jX9rvKX3rjf7
+	dirOt8szSYH/j5LtZnaHfhe+Df0HNPZOJeyxMyg==
+X-Google-Smtp-Source: AGHT+IFSdhPP6seqkN3QxA7HFQZjJlBC9D2/9kKIGZd292r7UcQK8SRWFqqkFkZYfhENYbBAeL3ygtD/3krIkOa2XD8=
+X-Received: by 2002:a0c:dc09:0:b0:682:bfd0:d79e with SMTP id
+ s9-20020a0cdc09000000b00682bfd0d79emr4046715qvk.27.1707213375539; Tue, 06 Feb
+ 2024 01:56:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240206085238.1208256-1-tudor.ambarus@linaro.org> <20240206085238.1208256-2-tudor.ambarus@linaro.org>
+In-Reply-To: <20240206085238.1208256-2-tudor.ambarus@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 6 Feb 2024 09:56:04 +0000
+Message-ID: <CADrjBPr7AjCOi_sgzpJWRmKdyYkgB8Vcw0HW-e4VKUVh_yT6wA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] spi: s3c64xx: explicitly include <linux/types.h>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: broonie@kernel.org, andi.shyti@kernel.org, semen.protsenko@linaro.org, 
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
+	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+	robh+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for GS101 SPI. GS101 integrates 16 SPI nodes, all with 64
-bytes FIFOs. GS101 allows just 32 bit register accesses, otherwise a
-Serror Interrupt is raised. Do the write reg accesses in 32 bits.
+On Tue, 6 Feb 2024 at 08:52, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>
+> The driver uses u32 and relies on an implicit inclusion of
+> <linux/types.h>.
+>
+> It is good practice to directly include all headers used, it avoids
+> implicit dependencies and spurious breakage if someone rearranges
+> headers and causes the implicit include to vanish.
+>
+> Include the missing header.
+>
+> Fixes: 230d42d422e7 ("spi: Add s3c64xx SPI Controller driver")
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/spi/spi-s3c64xx.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index cb45ad615f3d..9ad0d513fb30 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -19,7 +19,7 @@
- #include <linux/spi/spi.h>
- #include <linux/types.h>
- 
--#define MAX_SPI_PORTS		12
-+#define MAX_SPI_PORTS		16
- #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
- #define AUTOSUSPEND_TIMEOUT	2000
- 
-@@ -1538,6 +1538,19 @@ static const struct s3c64xx_spi_port_config fsd_spi_port_config = {
- 	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
- };
- 
-+static const struct s3c64xx_spi_port_config gs101_spi_port_config = {
-+	.fifo_lvl_mask	= { 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f,
-+			    0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f},
-+	.rx_lvl_offset	= 15,
-+	.tx_st_done	= 25,
-+	.clk_div	= 4,
-+	.high_speed	= true,
-+	.clk_from_cmu	= true,
-+	.has_loopback	= true,
-+	.use_32bit_io	= true,
-+	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
-+};
-+
- static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
- 	{
- 		.name		= "s3c2443-spi",
-@@ -1550,6 +1563,9 @@ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
- };
- 
- static const struct of_device_id s3c64xx_spi_dt_match[] = {
-+	{ .compatible = "google,gs101-spi",
-+			.data = &gs101_spi_port_config,
-+	},
- 	{ .compatible = "samsung,s3c2443-spi",
- 			.data = &s3c2443_spi_port_config,
- 	},
--- 
-2.43.0.594.gd9cf4e227d-goog
-
+>  drivers/spi/spi-s3c64xx.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 72c35dbe53b2..c15ca6a910dc 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/spi/spi.h>
+> +#include <linux/types.h>
+>
+>  #define MAX_SPI_PORTS          12
+>  #define S3C64XX_SPI_QUIRK_CS_AUTO      (1 << 1)
+> --
+> 2.43.0.594.gd9cf4e227d-goog
+>
