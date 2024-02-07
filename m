@@ -1,83 +1,94 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B551F947
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 07:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A125241EC;
+	Wed,  7 Feb 2024 09:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707292370; cv=none; b=sin5+DLvlZSV7rdmel2g5OGyffqFfO1hjA4EVsgcuaczNj+Pls/8AKac6a0Jbt1E+ltV0+cRhs4k7/rPY3Gs+iwyjH0bxk0jg6WjQjIzC1vFEjP5LWdhEhUFcPCsiuzGwwwvDYqDJcB6nWe+uyfQFqDJ5gLnB0fguejIJN6f2DM=
+	t=1707299887; cv=none; b=AB2JlL8WAKwJJDnnZKOjVe4BIbEmBhqAnkC4cZt1dVXCHLSx17S9Vs5suVh7/PfvhQ3YQVYcFxerWpCypB28IBDZC776jkKdpaHvodpuytV+VZIgSg8CvhKhRRTTmJ+4iAUL1XijTnPzzhJK8H4m3HvcC5Qha2xUz+C3vB927n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707292370; c=relaxed/simple;
-	bh=JlVEwPHVfMeMwvk0a6YivuZGsYLF2ha+DYx2BYky9oc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mu+5oC0oJXGQMyH0gbF98ZFnjAaWSwfO1Oh2sQmFuiGQSZLLEDmvcPvGzH8BLZaPOCo7SpURo8YYngxMedkyJy5hUFEHZ0RiQ6mvWgtD9ZIVSV7Zh7mvTvy/BqaId6/0lv25mkI1C2CQqo8oD1gTyBvEL8ag2tjOOcWNse62l40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lKElovff; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707299887; c=relaxed/simple;
+	bh=wV4t+TSND3aQwWB//g0FpRipGWaFuN/cSUTO/bj6Lfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Figxoz632BDeRAO8mRYABKCa+I3bl+oygajNFxDxI/TWd9PJKz5L12IqlaYX6UnlfZyQbyFNz7nl4wtmq0ul/U5YZ8MjULKQClZjrj4bRewaIY851VwR0pF/yReGlrGkoJDoja4FAbHmed71PaY8n104LPnYlbNxjmpI5b7rXxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RQv7rCyY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lKElovff"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40fe79f199bso2320045e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Feb 2024 23:52:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707292367; x=1707897167; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JlVEwPHVfMeMwvk0a6YivuZGsYLF2ha+DYx2BYky9oc=;
-        b=lKElovff0vgtcK9ygg4mlcEhNnu0w6mouQYeS3+n22k0+jn1SEa1snq+MCpF7553mK
-         kpum02oki5hudIE/Fgsc2yFOpxO8usijizZekGhcKWR0qP4zvhc0eTssx2XGs178PuRB
-         l10GAvrxCGRCKbrIrbwg07ZIB39MmggIZq0cXiT4JJsQB6MCawvQaYPhNRPq2H+iQtZy
-         VBge9x05rwE2YDph8lrIGhLjnMjfpdIWGLJ3HNn24dJmtt4IhWewSwpnl7q5SXrt+YJU
-         Pkw67+sBheKN5uMlAlxK3fEgm8peth1HYg1TsK3g5PzdyeqxK4xQbze+1zkkcj/ydSUe
-         4HRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707292367; x=1707897167;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JlVEwPHVfMeMwvk0a6YivuZGsYLF2ha+DYx2BYky9oc=;
-        b=iImsLpPTJpjxL91UN3K48nwg8YHwtkOoHnw5dbeQoH8h2dEXaJWTAdMDRI5t3XCCsV
-         hX5WrAt90TEmKoMUusQ4pmvCW15aIWUzRyzHhIxjLWe1bgkhZl/47+shIzyT9LegDkWw
-         oMGUeM1/wWPkkYsexdUG+K+p3zC3w1e4tOSI6HicKwwlsPfbkc9dstM4jAmzcSmwi9YT
-         P+Fmke+r0nowp9ofevrz9xnj6d739eixeNQaSfmwesQDFZDhw9C+RrsNWTBo6/ritgXu
-         dPFg/2TnYeLuQk0F30sI0tw/Us03u0PDED0fO+KX/L4/xHrXcKSn8wNvyDMr6uHIKksu
-         f7Zg==
-X-Gm-Message-State: AOJu0Yw3eWtGTiyUN0YBjEx+g1jJ8ix6hfamqFC97fO1e5z68mC5fq8N
-	EXqAlwJ6p8laNc2w+ImUXbPQLZYWwak8/BwvD0g82h9Y3eVjcGiBOKbgP4pxxEw=
-X-Google-Smtp-Source: AGHT+IHeSiwuGNsTeFQbBrGKw2OEON10xV5chvkbSmAO8n1HwgW5d5GXc8gOG4sH3GEYneCzi4DeVA==
-X-Received: by 2002:a05:600c:12c2:b0:40e:55ca:5a48 with SMTP id v2-20020a05600c12c200b0040e55ca5a48mr3987735wmd.16.1707292367508;
-        Tue, 06 Feb 2024 23:52:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWA8UreBGYKheyKusCdvRcTpT+JSdj5LcovOrXKohjQ1Vyql9hm9ip/dwl46vCFoUQCIszW/M3Yudtvi+PX+K684YheHnas9oqUn+7bime0DJeb0UvkK6BqAq86sgJwyKfs7yVlE9g2/+j/6fJlHWKlJZ4EEfwo/R03B3F+RXaSpSHfVQLUsGfRJyARTYXvG3reBFxVgAgkt4G9FcTxq48ZA3O6jaR5jjERUM+sDaGbcLrJWFJwhjd2S08Cwf2Y9rhdJixAcsam6dj2Trg5sn3dl9GOGZ+GU/gguj4gC/kL5KHG1oZmoMy7dCnBKesdovYH1M7UQGYl6Qgq0pfUy0r9XsYRrEWiQAYT2ojVUKdGM7fmRB8fJCH7mw8WWHySrvNTND7z45jQ8zlCmbfrJNDaHdwhxKfVNnlK1YpxzmHkCxU1oBVOPs13jhscDbjXW5fbXihBFnUkDDppgxFqEsZHB8Y=
-Received: from [192.168.0.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id l37-20020a05600c1d2500b0040ee8765901sm1164739wms.43.2024.02.06.23.52.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Feb 2024 23:52:47 -0800 (PST)
-Message-ID: <555a3600-8669-4733-b89c-ec0b5c6a2c6e@linaro.org>
-Date: Wed, 7 Feb 2024 07:52:45 +0000
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RQv7rCyY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15CAFC433F1;
+	Wed,  7 Feb 2024 09:58:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1707299886;
+	bh=wV4t+TSND3aQwWB//g0FpRipGWaFuN/cSUTO/bj6Lfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RQv7rCyY3Lpq/ls6oq1P/7fnZ2CWi96WgiX0PDRmDhFbw4ZkVlM5RV6YWh15aRasR
+	 p/3HRNangZPfyyJ6aAU7ZAewYrH092dNzML+xjm8+YYPwwQvceNlrV9Jj1UyUw7vDz
+	 W6LhnWpWLgPxNKx3wlNXtGOwbiFWI9la7kImNPSg=
+Date: Wed, 7 Feb 2024 09:58:03 +0000
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>, broonie@kernel.org,
+	andi.shyti@kernel.org, krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org, peter.griffin@linaro.org,
+	kernel-team@android.com, willmcvicker@google.com,
+	robh+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] spi: s3c64xx: explicitly include <linux/types.h>
+Message-ID: <2024020741-repaint-nastiness-9f8d@gregkh>
+References: <20240206085238.1208256-1-tudor.ambarus@linaro.org>
+ <20240206085238.1208256-2-tudor.ambarus@linaro.org>
+ <CAPLW+4=Xd+B=ZncqPgU4qaJ8zY8JJvJZApdUW_v0w6yr2cy9Sg@mail.gmail.com>
+ <16a5e423-1111-49ff-ad6c-b0bb89a4879a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/16] spi: s3c64xx: straightforward cleanup
-Content-Language: en-US
-To: broonie@kernel.org, andi.shyti@kernel.org, semen.protsenko@linaro.org
-Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com,
- willmcvicker@google.com
-References: <20240205124513.447875-1-tudor.ambarus@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240205124513.447875-1-tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16a5e423-1111-49ff-ad6c-b0bb89a4879a@linaro.org>
 
-Hi, Mark,
+On Wed, Feb 07, 2024 at 06:20:56AM +0000, Tudor Ambarus wrote:
+> 
+> 
+> On 2/6/24 18:02, Sam Protsenko wrote:
+> > On Tue, Feb 6, 2024 at 2:52 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+> >>
+> >> The driver uses u32 and relies on an implicit inclusion of
+> >> <linux/types.h>.
+> >>
+> >> It is good practice to directly include all headers used, it avoids
+> >> implicit dependencies and spurious breakage if someone rearranges
+> >> headers and causes the implicit include to vanish.
+> >>
+> >> Include the missing header.
+> >>
+> >> Fixes: 230d42d422e7 ("spi: Add s3c64xx SPI Controller driver")
+> > 
+> > Not sure if Fixes tag is needed here.
+> 
+> We have already talked about this. If a patch that causes the implicit
+> include to vanish is backported to stable, it will reveal the missing
+> header here and will result in backporting this patch as well.
 
-Please don't queue this yet, I'll come up with the gs101 patches first,
-as Sam suggests. I'll then add this patch set on top of gs101.
+So worry about this then, not now.
 
-ta
+> So, as a
+> good practice let's allow this patch to be queued to stable, it will
+> avoid possible compilation errors.
+
+"possible" does not mean "needed".
+
+Please only tag stuff that you know is needed, if the stable developers
+break things, they can fix it up when it happens.
+
+Adding .h includes is not a fixes: thing unless it actually fixes
+something in Linus's tree, otherwise it's an abuse of the tag.  Please
+don't do that.
+
+thanks,
+
+greg k-h
