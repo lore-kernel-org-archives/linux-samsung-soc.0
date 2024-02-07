@@ -1,113 +1,92 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD24D5C619
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 12:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F735A0F1;
+	Wed,  7 Feb 2024 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707307499; cv=none; b=mLgtaMLN5AxehNDqT+Bt2C9kZVwHQTzBeiq4EhC7edUh9/wxwtTOeSx6jon5BGP5hvWIQq3YRukhnzr4g08ED2OnjAwy3R0l+9AiPCVeMTzxg3EZQlSUS9GsSuzmMYF4CRzAV1YFi5b6QaASItFZzUYtlCCEdNUttvQ4yrBgCaI=
+	t=1707311678; cv=none; b=UaUCHlnC6V+Hnn8GD+0EC5k1K8afCptELrXyBdbhNjmbjgx8B9i2vTpyYUJXUTjO8L+pdNtQ64FnVWBCrE58gGD61mSkxkW9tN+GpjBYYPoEAVGrcKeXUPeEXObuq+ZmohtaZ3cIkcBEmr3Lw5MihIJloUcc0mysbGTNA39egSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707307499; c=relaxed/simple;
-	bh=ckulXwazTQx7hzX1rzxZLEmGDEusbVQn7uqk6rAXD60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RB3y3rs88x6SOlMjAZqWat+2Vv66ZTk9bYLB1VyCQthRSTqAh7URc0xz/YtRsgy15XesQ1avqZfWyxVbxPwpCtugg/HBrOCP4YYYVkkk6B6oJuCSnwvxb1Phf7UPcGpS7g16IXEtKgHP5mQsXaO44XovzdqTu1PJ6om/tnjxetQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mT5v4Ocz; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mT5v4Ocz"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-33b0e5d1e89so484028f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 04:04:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707307495; x=1707912295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MUmZIG7rbdoejZJeYccC+uC3nddcIt5ul4UQ/BCMGCc=;
-        b=mT5v4Oczlh8E6ZPv+NMOSRtCA/6I+kf2+RHgdjQjupbQgqts1wH0FDeYHzzijk8abc
-         FzZUBxoml8gMKq8041w0xGhasVn55I4SgVIPds8Vei/l8qEmw4x3v2YDV/rtjoXl+MZU
-         DN2i4m36kCKnIHltCTyeC0+3KJNN+zKuh2adY5O9lwlTdXu/fFwTOuedcXGhNcqJd1HS
-         5HYSOw5IQ7JQ7eWf1bBxUfm9iO5nYj6FffK8ycAk7/ySpS3O8P3Y6F4z7bmovOzTpy3Z
-         Pfsy8KacguRNYy7hPqbpMAQPyFjen9JJ7yckwLWkhaadTGYEIY7mdzAvqSkXOa6y7YnN
-         KEIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707307495; x=1707912295;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MUmZIG7rbdoejZJeYccC+uC3nddcIt5ul4UQ/BCMGCc=;
-        b=ufWxUo1lByK0eIdjjPJ9+72sUAZMgWjDjMd9JIL6QEvOB2q4D+Vlw4hBfeCKS16pSk
-         XER6Q7pgoM4+tVBBVKQ1cdKVX0M6q42Z28UlaW4LLvtQXgw7ke8Xcl5Ah3zAgg2FQbBp
-         Uhdhq3wULEivJ40RDVl+KAC5l4XBVpOrD+lDJHJPGTLGJCSuP3NMEAZs4RUsgSMDYqW7
-         CK1aaA+DfV6CaeSsobmZ2BG9oZ+tpoOMSL+/G+G5j0AIfwKtUVZz2RSkB12RGlmki1Gk
-         6LX+k6gmU3uvkSONzuN8Nds5Xus/LVm6yLnZGKRMxffFqgKwQTwbB2sjMqGQUGWhslM+
-         pB4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUqU3HY+VyA7Gpqxb4iu6pOeG4a8F4BXnfKY4/kfU5KCS/Xvg6R9QS5ckDaWve+ai23bX/TAIg3zhJkOWOv7DsAWSjAx4basuU9KwhS2kVN/jI=
-X-Gm-Message-State: AOJu0YxpQzFGDp40EUW7UnhhlaXQ95rBn4VOOdamhnqPJYg3KSo/+KEU
-	saqAJYi9uNXUz/jlglGLeOOVWSDvlYLQgIiLhfp4i4sAMZw9kVOBvxOFMXnm1Lc=
-X-Google-Smtp-Source: AGHT+IFD11KuiTyToxxU7V5ynwF5qtWYXKNpZ+ojCpcavXuhHfNCiW/EREgR8+OsmdJvTBADWjVmyQ==
-X-Received: by 2002:adf:ef04:0:b0:33a:ecd6:1c71 with SMTP id e4-20020adfef04000000b0033aecd61c71mr3025707wro.56.1707307495029;
-        Wed, 07 Feb 2024 04:04:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVYQvziI5mjEusSUaPhP14qhlm9p6zZIwfAk9T60Ma8Qt9fo0WfkTkJE5aFzp5O0QnfJ9FsuPRg5L3EWDvoHxvS1u2LIHGmb9+GaXZGkalH96i1KuSzJ2PHrFzC1Z9ZSG7ULlemCcI4HWyUgGHyxfI3p31aAQqC4KUwNvA4YRmsxASse05A+LOIXIxFW4wCuE5svHwtKBbHzek3At+QYTTmMnk5w9CivZkq9eYHcGU6dz4YznaGGNPH2iqZUnhPV/9SUexh9ATwMobHeHQjWeF9zlVTKItiotmBwHDCmDLPO5JWYkbfXb3fBTuKNtqc+7cdVxKhtr7N3teqFKtgHMx3CGHIj9NE3WYL+3szXb0N16BXyfWYXWKfSOLdfklfCCoCvuHHNydQwU7AitaevZyAS6vS2Mi5M1rtscaMdFlZoFMcfQyBNq5YTx6/QNEqQ3EnUEkfNT8JRcSL6UZBlge+a104Zc/3rABjxGaZSyyqJ84lPqBhJRAU9D6BAA==
-Received: from ta2.c.googlers.com.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id d15-20020a5d644f000000b0033b44a349e1sm1349967wrw.38.2024.02.07.04.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 04:04:54 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: broonie@kernel.org,
-	andi.shyti@kernel.org,
-	semen.protsenko@linaro.org
-Cc: krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org,
-	peter.griffin@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v5 17/17] spi: s3c64xx: drop a superfluous bitwise NOT operation
-Date: Wed,  7 Feb 2024 12:04:31 +0000
-Message-ID: <20240207120431.2766269-18-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.43.0.687.g38aa6559b0-goog
-In-Reply-To: <20240207120431.2766269-1-tudor.ambarus@linaro.org>
-References: <20240207120431.2766269-1-tudor.ambarus@linaro.org>
+	s=arc-20240116; t=1707311678; c=relaxed/simple;
+	bh=49JTY3sNMNqzNRYaGD0Us16tlkRQVcvuPjaeHDJ9xuc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FEG5Y9u5Te5MVJPnJ9QTzwBsF7yTauhw42mubV8J0fApSqwr0dITyOavU0285/m3XKk5q3HjcOMgsE3j4mOJUcJMgjmg4nevDWkft7wbhF2wCeGa4giZbeH30R/Rgv5jfunh0kgYohLvzN6WwseCA1qz3P0jPkY/2CiZoIJR9yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 9C86DC3F2A7D;
+	Wed,  7 Feb 2024 14:14:33 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 9C86DC3F2A7D
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,  Kuninori Morimoto
+ <kuninori.morimoto.gx@renesas.com>,  "Lad, Prabhakar"
+ <prabhakar.csengg@gmail.com>,  Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>,  Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,  Alexandre Torgue
+ <alexandre.torgue@foss.st.com>,  Alexey Brodkin <abrodkin@synopsys.com>,
+  Alim Akhtar <alim.akhtar@samsung.com>,  Andrzej Hajda
+ <andrzej.hajda@intel.com>,  Biju Das <biju.das.jz@bp.renesas.com>,
+  Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Daniel Vetter <daniel@ffwll.ch>,  Dave
+ Stevenson <dave.stevenson@raspberrypi.com>,  David Airlie
+ <airlied@gmail.com>,  Eugen Hristev <eugen.hristev@collabora.com>,
+  Florian Fainelli <florian.fainelli@broadcom.com>,  Helge Deller
+ <deller@gmx.de>,  Hugues Fruchet <hugues.fruchet@foss.st.com>,  Jacopo
+ Mondi <jacopo@jmondi.org>,  Jessica Zhang <quic_jesszhan@quicinc.com>,
+  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+  Maxime Ripard <mripard@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Nicolas Ferre <nicolas.ferre@microchip.com>,
+  Russell King <linux@armlinux.org.uk>,  Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Sam Ravnborg <sam@ravnborg.org>,
+  Sylwester Nawrocki <s.nawrocki@samsung.com>,  Thomas Zimmermann
+ <tzimmermann@suse.de>,  Tim Harvey <tharvey@gateworks.com>,
+  dri-devel@lists.freedesktop.org,  linux-arm-kernel@lists.infradead.org,
+  linux-fbdev@vger.kernel.org,  linux-media@vger.kernel.org,
+  linux-omap@vger.kernel.org,  linux-rpi-kernel@lists.infradead.org,
+  linux-samsung-soc@vger.kernel.org,
+  linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 2/4] media: i2c: replace of_graph_get_next_endpoint()
+In-Reply-To: <9d1e99b0-892d-4a72-a9b3-886b8ed094b0@xs4all.nl> (Hans Verkuil's
+	message of "Tue, 6 Feb 2024 15:44:45 +0100")
+References: <87ttmmnvzh.wl-kuninori.morimoto.gx@renesas.com>
+	<87r0hqnvxc.wl-kuninori.morimoto.gx@renesas.com>
+	<20240206134155.GB2827@pendragon.ideasonboard.com>
+	<9d1e99b0-892d-4a72-a9b3-886b8ed094b0@xs4all.nl>
+Sender: khalasa@piap.pl
+Date: Wed, 07 Feb 2024 14:14:33 +0100
+Message-ID: <m3eddoza9y.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-KLMS-Rule-ID: 3
+X-KLMS-Message-Action: skipped
+X-KLMS-AntiSpam-Status: not scanned, whitelist
+X-KLMS-AntiPhishing: not scanned, whitelist
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, not scanned, whitelist
 
-val &= ~mask;
-val |= mask;
+Hans,
 
-is equivalent to:
-val |= mask;
+Hans Verkuil <hverkuil-cisco@xs4all.nl> writes:
 
-Drop the superfluous bitwise NOT operation.
+> Ideally someone would have to actually test this, perhaps with one of tho=
+se
+> Renesas boards. While I do have one, it got bricked after I attempted a
+> u-boot update :-(
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/spi/spi-s3c64xx.c | 1 -
- 1 file changed, 1 deletion(-)
+May be reversible, though.
+--=20
+Krzysztof "Chris" Ha=C5=82asa
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index b618efba0509..6f29dca68491 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1129,7 +1129,6 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd)
- 
- 	val = readl(regs + S3C64XX_SPI_MODE_CFG);
- 	val &= ~S3C64XX_SPI_MODE_4BURST;
--	val &= ~(S3C64XX_SPI_MAX_TRAILCNT << S3C64XX_SPI_TRAILCNT_OFF);
- 	val |= (S3C64XX_SPI_MAX_TRAILCNT << S3C64XX_SPI_TRAILCNT_OFF);
- 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
- 
--- 
-2.43.0.687.g38aa6559b0-goog
-
+Sie=C4=87 Badawcza =C5=81ukasiewicz
+Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+Al. Jerozolimskie 202, 02-486 Warszawa
