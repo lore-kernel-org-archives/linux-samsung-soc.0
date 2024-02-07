@@ -1,60 +1,60 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896077E76F
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 14:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0572C250F3
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 15:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707317305; cv=none; b=emuGi1/gqezrCbL4/0H4brFjpbz3zadS9041pm0zxrz1+Qez9/a4VvPyIJvy18KnlEnXzjKvDBUa0tONIsMFWDOQ9C2/5/ltKvkpQPfGvveOB/qqxulDhTzcxKIfWlbCnDKmgnyIGEcafdLbx2BfCRSSRizazqkgXttTUZs8jYs=
+	t=1707318328; cv=none; b=V/dWxcvTZCdQF+jK0AZzGF1Y6byzmozieKZGc4n9FaKpQn0QElP385wOpbiuYfDU5J27fnSJOnu+TYK9a/wSuJIUTf3aJFIxXGB6lQvA+yXkZGCC9fxgy/X6CopY27cFPsX4VpKjAVmVUp1u7Yb6edsRPRY3TGZmfftTU2ZLzoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707317305; c=relaxed/simple;
-	bh=TG3Gw2URrbzNYz4gRkIWZjCBPa9SJfm7IeLSghIRzEc=;
+	s=arc-20240116; t=1707318328; c=relaxed/simple;
+	bh=nQCqZN1M7jS6nlAFAJeHjMhCCAzl4s0EU+vsfwTbNFw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iXq2yafeLNw9FZNrXUPafRy9Flg8yvDsHDWfQeq+4nE4oH9iHZS+AZ3U4dvOFrOMb1PMn63cYkSScAJ4tSsxePp3ACDS3Wy8Kuj7AlssEZugC0w90SAz7YC5PAE/hcn5azJysKERZo0xI4ZrGYvxyRwOawLEQ+xSpxYgsLMJjCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZLZX1m/u; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:Content-Type; b=JrKCfH3EDevjDy68mM2k498OB6Zn544geT37IP1f7pyPhUiy3lyVKZhLEzu23O8WTSM+jN+Pd4iQsR9emitbAmLfD9HKAWUxCcSYiZTlg1zhwwPqtz1TWSCmY6wRTPtRpLP0WgBcD1ohY+hFLIlMWRbD9RaX4pBcAC3nG5z+bWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mTjmrwb8; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZLZX1m/u"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40f02b8d176so6056825e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 06:48:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mTjmrwb8"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40ef3f351d2so10847255e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 07:05:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707317302; x=1707922102; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TjrnaMfjtaIdIMxZWoxjKFFoCN4X5eE097h6HkqsF+Y=;
-        b=ZLZX1m/uNPPzBfubNX0ZQmSXI3qTUnfJenUR2Q/hsOlkOYrrtzlPSAeEu2YzZmMLb+
-         AnSNLDbrrFqbvjt36kqGuf/XezZlwpvf8fabsB3TRzMkzgG4rO6k5OcmXiKPzyfaTCPQ
-         lajm3/P9H+57gfgIry89hwKTr7PX7qMFQDcQpHEOai/trJ7WA5ZMoYyFqvKVAd90db13
-         RR6bptRYp97lpiDzgFwnB31PnahY5M1URLaUMSyCPKjkDmWy+aBeOrS+TkhzVptTchpn
-         Pa8IGhZe5QkzPvjbvBi0B9Y8AZjgUzYhqkRCw5CBMzIgZzvYb3sNd5VttsPMvKqWQkiM
-         KhJw==
+        d=linaro.org; s=google; t=1707318325; x=1707923125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QfJNW7Px5n93mi1+mThAoBi6YIbkzwJpqqJDpysXpAA=;
+        b=mTjmrwb8v7qnae5xgPqEUJw9cgT0wL12YPUW8zRDcN5JFL2jXUFk8XCbrpQKbpuJQi
+         4UcI1S5+SI25skg4Wu2ZU6zn3ozma2n0t9DXII0WQjG6pTISdCG0ShEHocRlCG7jMJrk
+         vfyJ5ly2eig7lOgYepA6AhLOpEClwCATOJQTuNHGBEu6NPxNP6oH6fWjB8FDzQf6Upt4
+         Hld/HpoLZ6DQKwCIf6iMYoo4elF6tMgWAfwwP1hhVESFYRKMJHv4yG6acqgaRPg90HOk
+         8//T5WrOmyBVDmAqDXedW5sDf+/91YUCzBABUUZLjjj/5FsE2bbWfnZ7TTkqdomqi+Ms
+         l9Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707317302; x=1707922102;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TjrnaMfjtaIdIMxZWoxjKFFoCN4X5eE097h6HkqsF+Y=;
-        b=hF/oLfzSNM5TKxXNuuvn4SuRLWZYzHqpTqRCSAiM9GIjrETkNxomryOcm32euo8y6h
-         e00DXPtzP92M9yjCSbdWsvzzwecqqZ78WNJmXbkkhrvTYSCy7HhVGL8y5w67TKbULT/T
-         vfIPCq4eT1MTQ7yvx28juLFBi1baUuHCii9AXOuNpfFo9nlWTIiP1sURCscz2OwtZmQt
-         tM+oFawChb/hNxO4xs2x843SvGbAjfp9DKQf5KZRngfkK10EnBoadmqGgB4sULeXZk9G
-         B3S1KEjwVTkDoYKqV8Wyz9l6LY8zJ5jhPjmzXmw/i+YSO22xesITr6xqr/mfosuLPr14
-         h3SQ==
-X-Gm-Message-State: AOJu0YwQHECpuUcR3nZRj5aHxR9zkeLcCKcWGsVnguKBEYrZMf6zflES
-	sNkKomy7zHtQlwfnzGbofzqoD3FmqOjQrA/lPbZKRdXTdRo4A44vZ+d5/JdDdeE=
-X-Google-Smtp-Source: AGHT+IGh8sXcNQjqiVsv9lLCBPY7A8Ao3cTvDIxAoj/rq2WKA4j7B3aKawxRDyUlkMTSZBLCDv2YWg==
-X-Received: by 2002:a05:600c:1ca6:b0:40e:b195:6bdb with SMTP id k38-20020a05600c1ca600b0040eb1956bdbmr5187499wms.2.1707317301725;
-        Wed, 07 Feb 2024 06:48:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVr47OU9QJl84wqhieyiA7SQq/5jQEWYK8EGQjYIYZhlVII6geGc/M8BoVUFjokxeIvxWFIKDLcQpTgleT5Ppaajcnv1g7ZvlYlkvzN17Cedy6f8aRvB3ePmLfjV2vedna3vmXy/22FSQCf1rf8sc+05Ea7CZXH/Hvy+xI4h/xPIAlwzfT4qIxvhOucqWAs5qpkp3TzlckrOYJpeEiJnOrYM5hzt6R9/8AfFZsTjk3w1MpeVU4mrcJVU6JmpCdIyuO5CBC1tDC+tQcHbIgQPyNyDM7YLRD6CwMhLyjPcz0aGUcXnYMyDBOMAHiVmWx0H1IUyWbQAG3ecIN395x0GITI/RfkSqNgjtumXh/vlKErAsycLpSnDLgvfmZXfu9hoV7PGMvOMAroa1vr7fK1D4SswobOdezb4B/DtPCqWSTcv+Gvoi5g1SdGMNkcTcVsXgFBJ5EE6Lb8jeK/w8Tb7dVhQj/A+yEao2nm2bh2MggVYIgTp5P2ObDl+dOSvxaE2voMebJJqHaeyYiDp++E2tIYydQw9y5396r9wude4o46hR4Ee6PS9MatfuryGpRcYMPSybP4zHnpYQZlFcmgmDnQ8QTp5Uo5rwTSCKwJcgB14PUzVy25z9JAHbDtKGw=
+        d=1e100.net; s=20230601; t=1707318325; x=1707923125;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QfJNW7Px5n93mi1+mThAoBi6YIbkzwJpqqJDpysXpAA=;
+        b=AV68M2kamCkrN8Z6j0y9ti4tw79MKL108seteABFO2loAgkHdqygGMLpWwYgvR6qoz
+         4ePEDdGElKmtKUsREpmWCqPeqZO5fU2TUU7bEsXwNt3FkWWxA+ydIAHkgeq6jBgZaJq+
+         gScltHhIsqFNNaeN2Lfsyt7j0cmlTY+yZ3UPYkNFoDcgjITvYmpCFM+QA5uKU8n/VpN8
+         BLEgP9jg/oyKJVIODT3ncguPe5gZJRkYnsqnd4pon+dgDJDwAS7Oqw0SqamX3DBAzFe2
+         8RSHwQ6D3YEn77mOZ2X9HyrsPfGTJbMcxCF9Mw8Ne9ql8RCouTPfTwFUYEfnPyUbAfw6
+         eCUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwzdldlyZH1QpgIuXZlAJ6YG1zb2aQ40/8aXogedBYQdKquC/IMtZlKuQmHj/4gbRm3eTFaT0/1dcub1T9x38ZlMU14LOcRvISb4zdWnTIQg=
+X-Gm-Message-State: AOJu0YztSuuBMMuFD+o2xx+gqcGSWBW6BGWJFYxAUj7QaOU55MSNAtrR
+	3YqvtnzuMgIwIqE0XKFDs5wikfW3RLqxwcgoeJH0TyOa/UkTi4pQrywW7UVcTng=
+X-Google-Smtp-Source: AGHT+IFTDgu16oVML/Aqbv2KuuaJF8P+GWtWTG0DfBhJu/HgdFG03HXMmc43fVWoL4GwFrVEeV9y2Q==
+X-Received: by 2002:a05:600c:4f51:b0:40e:9fd3:6b75 with SMTP id m17-20020a05600c4f5100b0040e9fd36b75mr4928012wmq.2.1707318325142;
+        Wed, 07 Feb 2024 07:05:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXUOxf7oHZlTfRSgNMPwMCjSGvD9EvX0EIiPGHbnxACdKX/QJS+vQT1+h2a8OBO/b9zEFwFYXxiF4lTjZkTsz3125PQFJo3POv9LDU4IejfnpQ80y9LaWv3Ac8jRCndehjXvroNgprMqVF2IID8GvzvDs9erVZhPL7NRSRNc3OBPa36LUv9sRKPyAi1qvNiBKtPTq3Rn1iuicNlTjwPRRmflo4pkgXSBgriSbqTUkaScYPAml0pj9AXRSvqpHmT6XaZ/EE2rgvgvtP/B8HzK9JWxcKath7dbRAfjJf4XvMJiQZihwgmdTL5wX4VxoyXh9nqP+eh6c/8GXx41HJnJqfodYr9HZML/yXWvkOCvLKYc+Y0lRJzOETTerzs6UNYSuVGOZAjR9Tuba3jeYdm0qtUBngYjHZjaj9WKWmC5CUUaPpljh50Qv/rCHSkoJG8aJGAU4ZcDKfQE91Vn3VZyfh9Azl6m3K+ZJcKezyxQlY5gTC2u9EJGrORGQt5+5+Uyhn8mCZaAqavzucoPYlIZbhREhiMiNkTAsIc50T4202z6+dKrLGi8PlMB0P0YhRsO+BVd6yRX4zU2lPADq14ks65rOBkMqRVd2b5S2X82/iLbiahxcFo
 Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id o14-20020a05600c4fce00b0040fdd7cbc8dsm5518023wmq.47.2024.02.07.06.48.19
+        by smtp.gmail.com with ESMTPSA id a11-20020a05600c348b00b0040e541ddcb1sm2373509wmq.33.2024.02.07.07.05.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Feb 2024 06:48:21 -0800 (PST)
-Message-ID: <d367bd65-605e-44b7-9400-acd463dec0b6@linaro.org>
-Date: Wed, 7 Feb 2024 15:48:18 +0100
+        Wed, 07 Feb 2024 07:05:24 -0800 (PST)
+Message-ID: <b7fbbf3e-1e53-46a9-b26c-8acb5f9ccde7@linaro.org>
+Date: Wed, 7 Feb 2024 16:05:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,24 +62,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] soc: samsung: exynos-pmu: Add regmap support for
- SoCs that protect PMU regs
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: arnd@arndb.de, linux@roeck-us.net, wim@linux-watchdog.org,
- alim.akhtar@samsung.com, jaewon02.kim@samsung.com,
- semen.protsenko@linaro.org, kernel-team@android.com,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
- willmcvicker@google.com, linux-fsd@tesla.com,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240129211912.3068411-1-peter.griffin@linaro.org>
- <20240129211912.3068411-2-peter.griffin@linaro.org>
- <fb530eb8-e32b-4faf-81f3-efc334ebf241@linaro.org>
- <CADrjBPoQmTRsFYRtxBxdvAoKK816O8XN3=hOJ3vBt8wbbbk-=Q@mail.gmail.com>
- <99828589-c0b5-456d-b250-6ad3e6085a91@linaro.org>
- <CADrjBPrWH8uFrFmn_CZpr+fAnPrzbDT4i9XuMXJqKfzeouPpKg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] arm64: dts: exynos: gs101: add chipid node
 Content-Language: en-US
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, semen.protsenko@linaro.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, klimov.linux@gmail.com,
+ kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+ saravanak@google.com, willmcvicker@google.com, arnd@arndb.de
+References: <20240201172224.574238-1-alexey.klimov@linaro.org>
+ <20240201172224.574238-2-alexey.klimov@linaro.org>
+ <CADrjBPpqHx1uoVZCYDX51kW+JdOr_-+4oryOjXcUMFkmLGTBLw@mail.gmail.com>
+ <b199ba24-403b-44fa-b807-9b98f9e98913@linaro.org>
+ <CADrjBPpNukp+YQ0AmsZAE1f=MEk_auPPZit=tV8gk4szQ8MqRg@mail.gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -125,72 +122,105 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPrWH8uFrFmn_CZpr+fAnPrzbDT4i9XuMXJqKfzeouPpKg@mail.gmail.com>
+In-Reply-To: <CADrjBPpNukp+YQ0AmsZAE1f=MEk_auPPZit=tV8gk4szQ8MqRg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/02/2024 12:42, Peter Griffin wrote:
->>>>>  #include <linux/soc/samsung/exynos-regs-pmu.h>
->>>>>  #include <linux/soc/samsung/exynos-pmu.h>
->>>>>
->>>>>  #include "exynos-pmu.h"
->>>>>
->>>>> +static struct platform_driver exynos_pmu_driver;
->>>>
->>>> I don't understand why do you need it. You can have only one
->>>> pmu_context. The moment you probe second one, previous becomes invalid.
->>>>
->>>> I guess you want to parse phandle and check if just in case if it points
->>>> to the right device, but still the original code is not ready for two
->>>> PMU devices. I say either this problem should be solved entirely,
->>>> allowing two devices, or just compare device node from phandle with
->>>> device node of exynos_pmu_context->dev and return -EINVAL on mismatches.
->>>
->>> Apologies I didn't answer your original question. This wasn't about
->>> having partial support for multiple pmu devices. It is being used by
->>> driver_find_device_by_of_node() in exynos_get_pmu_regmap_by_phandle()
->>> to determine that the exynos-pmu device has probed and therefore a
->>> pmu_context exists and a regmap has been created and can be returned
->>> to the caller (as opposed to doing a -EPROBE_DEFER).
->>>
->>> Is there some better/other API you recommend for this purpose? Just
->>> checking pmu_context directly seems racy, so I don't think we should
->>> do that.
+On 07/02/2024 15:11, Peter Griffin wrote:
+> Hi Krzysztof,
+> 
+> Thanks for your feedback.
+> 
+> On Tue, 6 Feb 2024 at 10:10, Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
 >>
->> Hm, I don't quite get why you cannot use of_find_device_by_node()?
+>> On 05/02/2024 15:36, Peter Griffin wrote:
+>>> Hi Alexey & Krysztof,
+>>>
+>>> On Thu, 1 Feb 2024 at 17:22, Alexey Klimov <alexey.klimov@linaro.org> wrote:
+>>>>
+>>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+>>>> ---
+>>>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>>>> index d838e3a7af6e..156fec2575bc 100644
+>>>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>>>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>>>> @@ -283,6 +283,11 @@ soc: soc@0 {
+>>>>                 #size-cells = <1>;
+>>>>                 ranges = <0x0 0x0 0x0 0x40000000>;
+>>>>
+>>>> +               chipid@10000000 {
+>>>> +                       compatible = "google,gs101-chipid";
+>>>> +                       reg = <0x10000000 0xd000>;
+>>>> +               };
+>>>> +
+>>>
+>>> I was wondering about the 0xd000 size here, as most upstream platforms
+>>> use a chipid size of 0x100 or 0x24. I see the downstream gs101 kernel
+>>> also uses 0xd000. Looking a bit more, that is because gs-chipid.c also
+>>> has support for dumping other areas of the OTP SFR bank like asv table
+>>> (offset 0x9000) hpm_asv (offset 0xa000) and hw_tune (0xc000).
+>>>
+>>> I checked Exynos850 and that also has ASV tables at those same offsets
+>>> above, but it currently uses a chipid size of 0x100 upstream.
+>>> Exynos-asv.c driver is part of exynos-chipid.c upstream so it seems
+>>> reasonable to have the increased size including those SFR registers.
+>>> Currently exynos-asv.c driver only supports Exynos5422 upstream.
+>>>
+>>> @Krzysztof - From a process PoV what is the best/correct thing to do
+>>> here? Have the increased size in DT that includes ASV parts of the OTP
+>>> bank from the get-go?
+>>
+>> ChipID so far had only size of 0x30 or something like that. What you
+>> refer to does not look like old ChipID but full blown OTP, which also
+>> includes ChipID.
 > 
-> of_find_device_by_node() returns a platform_device, even if the driver
-> hasn't probed. Whereas driver_find_device_by_of_node() iterates
-> devices bound to a driver.
-> 
-> If using of_find_device_by_node() API I could check the result of
-> platform_get_drvdata(), and -EPROBE_DEFER if NULL (that pattern seems
-> to be used by a few drivers). But that AFAIK only guarantees you
-> reached the platform_set_drvdata() call in your driver probe()
-> function, not that it has completed.
+> OK so in some previous Exynos SoCs chipid had its own separate memory
+> mapped SFRs as well as being present in the OTP area?
 
-All drivers, except two, use of_find_device_by_node(), so basically you
-claim they are all broken. If that's true, the core API and these
-drivers should be fixed, instead of implementing here entirely different
-pattern.
-
-of_find_device_by_node() goes via platform_bus_type->sp->klist_devices
-and devices are added to the list in device_add() after
-bus_probe_device(dev), regardless of its success. Therefore after
-successful first probe, you will have the same result.
-
+None of the Exynos I know, have OTP area. There was only chipid. It
+seems that few newer designs come with OTP, in entirely separate address
+space. Exynos850 looks like the first which comes with integrated chipid
+into OTP, so OTP is not separate address.
 
 > 
-> IMHO the drivers using driver_find_device_by_of_node() for probe
-> deferral are doing it more robustly than those using
-> of_find_device_by_node()  and checking if platform_get_drvdata() is
-> NULL.
+>>  Although I am not entirely sure about that, either.
+>> Depends whether they share clocks, for example.
+> 
+> This address is the OTP area, and I can't see chipid regs mentioned
+> anywhere else in the memory map other than OTP. Unfortunately there
+> are lots of separate docs for different IP blocks, so it isn't just a
+> case of searching a giant SoC TRM pdf.
+> 
+> e850 though looks to be the same (the address defined in DT is the otp
+> area), that is one large PDF and the chipid regs aren't mentioned
+> anywhere else, Given the chipid reg offset is the same (0x10000000)
+> for exynosautov9.dtsi, exynosautov920.dtsi, exynos850.dtsi, exynos7885
+> and exynos5433 I suspect this could be the same for all those SoCs as
+> well.
+> 
+>>
+>> I don't have any GS101 information so I don't know what's there. It
+>> seems you ask me to give you decision based on guessing... If you have
+>> one block, so if there is OTP, which contains ChipID, then define OTP.
+> 
+> I believe there is one block that contains ChipID, therefore based on
+> the above info we should define full OTP size?
+> 
+>> Not ChipID+OTP.
+>>
+>> I think Exynos850 DTSI is wrong here. That's OTP block, not ChipID.
+> 
+> Yes agreed, and quite possibly the other Exynos SoCs as well.
 
-Some are checking dev->driver, but this also looks buggy, because it is
-called before actual drv->probe().
-
-OK, let's go with this method. I dislike the difference from everyone
-else, but it seems everyone else is doing it wrong. :(
+If ChipID and OTP are in the same block (in OTP), then assume they both
+might need the same clocks or some other resources. Therefore we should
+not model them as two separate device nodes ChipID and OTP. Instead
+there should be one device node with entire OTP address space, which
+should not use ChipID compatible to avoid confusion.
 
 Best regards,
 Krzysztof
