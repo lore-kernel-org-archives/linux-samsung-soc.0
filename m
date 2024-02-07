@@ -1,204 +1,147 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C386ADB
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 17:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A30C83A16
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 18:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707327686; cv=none; b=Fxn59jkWPRdoJruKbSz7OPT6MSQ35CfSLgLWeViSK5cvejSMhXYoj0z6fyiKDvdkbGdRsfjGDWusfJKflABjCn8eGXSlGN7tzGHP6LD36/JbOfj8D+2gIBmPj/Lp/gbFTRpgIx0MDMO6iouB7EGUq3JdJZOciW0Gc6YLKQfcaxM=
+	t=1707329068; cv=none; b=RcqpFqWzr599Ln6gnorfX1RtPncVzf7jtwXbI60S0GeL304nRWNOMS7KspV24rvQWyjphGzUDvAERgA4a3U44sWYhmZ0+4k936nGUcRvj6W5Ckf1p/FTtPTTtZrctZaWuSvuaMDSNoSAW1fUSFuWo6R+YApfErMeYZGTX/T9s84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707327686; c=relaxed/simple;
-	bh=PHns6xqLyHWVS2RFXaEsGlNTnkb0vFPfE2pekEJ/kfI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cVjNBNITOW2mTi3ZVVvwEQwxmRxsgqhhYjf16I8CqIyZdJZz8b/IlAWLgbEg/ud2mJ7XEh+/9tD4JKnJPjwHfQ6C7Trmxa6lUocsDTWZ2XViYyLwjaUf6etO9WsZvHksNROj7ZC4Lcp9FNbS+bcnaGElH0ztzV7hV1nJARbrJ54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=arnOFxU5 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+	s=arc-20240116; t=1707329068; c=relaxed/simple;
+	bh=YPMOvZH55fB37dDiim6APGore/9mGwNNUnY4uRV464E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPML96V6DmSLKqqWGDJNffSnIaEO0fWHBETT6Kc61D3jGYWrgYKiD1/MgGhgcJVKWxvzZxJ0QLiy7cXvkS79zTfwTLCYIgSS2811JYWYX8qcSjyyex0Mx42Aa345fAD6S7YXlufcOxXnQCexfQdYFhQ+fKy5oJ89B5UOga36WC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zs0BNLh6; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="arnOFxU5"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-783d4b3a026so49337785a.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 09:41:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zs0BNLh6"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1d5ce88b51cso11645ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 10:04:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1707327680; x=1707932480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HrRTSlkta7nD8c1SJPx3AxPn1tn9y9LkFmhcOlF4lks=;
-        b=arnOFxU5cn85jYFGkJUyCJxEvYG2g4lb29V0lw7lYx6dhVbOMMj1ZJLlqlx++DPplJ
-         iilZAVjOvPgm///IjM6he5GyyUZ7k3FcvE1QswXro+J9VEWwR1FGRxzCU6YM1IfibVR4
-         YrLd3Uzl+fzzLH/OijQWbSNVnurl9YVsX9kotUtzYq11B+3sbIrdtPD1c3vE8qIvxeHj
-         m3+G8hf4JtneUetc3xoxy4KLQzIMQFKKPE2tnD4nga1XRdrJaxP8+zoWuFrqGuEs9wgn
-         vDi7CaXbMmWjW5JPft9hlCObEl5wpy78Zo/G3gbKEUbekgswPzzmphP7LisVOoqurr6t
-         8Tnw==
+        d=google.com; s=20230601; t=1707329067; x=1707933867; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwVhLzZGxow3qxlf4scZQzQkeVQyNuXvArPW2Vnm55I=;
+        b=zs0BNLh6ZAdZcUyMLhAeYIYcWNSWLjEODSghKq5dr26AeVdSfWuCBhvb9qSUcwzEW0
+         fu0gDQWAJCf8SfRj1oqCHyVnWEKKIfPasamVqFLEQ7/AQqfaNp612VsUFV5hhXl81/Bw
+         bf0rmABjg+ro8MYyEE2ZohD5rtupr97gKV5TNyZgPgX63t0+8vt/VSsHdFIj4dSKdcsW
+         avetJzblyP31Z3InluFlY31/ej+3iM3FX1VdWXIrBiYUwYMtO9+rtk2dTb1nmp0A+PdP
+         xSJRksztGf4OqHgWR3ngB4cJx9cM7PuVnwlqEb18Wkz4gKrZ6Ebh/S1KFXQd+Oh2Pf9L
+         gLLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707327680; x=1707932480;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HrRTSlkta7nD8c1SJPx3AxPn1tn9y9LkFmhcOlF4lks=;
-        b=bJOkHqbDQkCCox+Z+m75qnhXF5aOBfgoSip7HSJJEqQq97uLGwy7qa4yltIkBVx8QG
-         BfAaXIb53LKhBG1bAYFpgkETbcQ66GmNQ7OQb8dy+ZCu3fOGMeAP8LZC9KriIy3AFXrs
-         i2em/FhtdVvRqzhx/fhwa18pn2wMyGaXsEHJD40pPibI8fjPiVf3yVVvttwCvvZ3miMr
-         t/3XwthlzlRSyLiYwFtpUSoPupcNe7eXUrGkvbC8O9wPnUx5ajwcCk6t+rZ3MRTLntDE
-         ciC9QqUvImOoBFu2uCgJT+k4evJSu911+Wf882TyvMroZr7oZNyKXACd6+OLtUANjxhd
-         ts6g==
-X-Gm-Message-State: AOJu0Yy9nKJaWp2BIjKmt1KFtG1/xH/pybmr2P9NlHiZCt0WASNQuJHL
-	SiOe1XV+6TsK8JqMZVi4eIYNQVe+dRqcoe8or+sobYjp/mgDnaOVtixqQUe5JQE=
-X-Google-Smtp-Source: AGHT+IHhb+pueaISZV6Y8tJp2t2CFo0mWlpmACo7IYuyoV1N2oy7KZrIG0XVhtVG+SmB5cwuhpqy+Q==
-X-Received: by 2002:a05:620a:12c8:b0:785:3887:de18 with SMTP id e8-20020a05620a12c800b007853887de18mr6401324qkl.65.1707327679899;
-        Wed, 07 Feb 2024 09:41:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCDfKWFIl6QUubNKHOK+J/TQZfBk6GOATQV7+UROelHHizxj2bMScNb5yjy+7wEKvrKAVO938EhFK3MDp4QvVuIEMns3aJNEfZ4lLhVczSUx4hYdn3X7Qx8HTpAiobpDi+dY9UU0JFYWP3sxFQVS1xxl7fcBVSx0blttAqIQWkGbtG/8OFxy5YJX+xNhtsJb3t9pvZsef+YcrlQh+9z7K1HEh5YIvRBqpPod3dD8oKW9DDybH9+3HAaHHBY8iiIHdHyvvhg/Qqh/tY8U66rdo6r4QvsxgmBFMyxznrxlOPKUwMUFVhM2YvFghVr6hKgb6KzPzIvg28q6LrAw8lD7weD0eI2MrfirCmooqnAA/zgK7D0KurMOIDpabn9VkUHuhE88OEKQ8h62/Wa2gdcl4YDdMkJY4DDjELGulQmsDVBCrUtil9loYc5aX8Gh2jq/ztHo3kv5ymJnfZ/h7e7WZdfaZvxSbUL64wc23AYR/EczgayCdZpmGXX2jQE3/KPfSIPAL6DXV6qvHIwUWL4vG18mc7tiVYDE//uM4hJo7eMbISiBgH4sundju5RQWqxyjeA3VcVHj+VPU4vBDpsrZVdnHRZeaGTV3rwC8oZXb19D/7KR1Wm7euJ76N5bgFnA7vjZhfsEp+F03DZsEUpCkkLYMsxrQWrLbAZIy488QP+Zdz41QqcwwktLByJIdIxAeRSxHxin8RRSgrxaqXRKius9NFl4oDbRCD6svZoHMd4UnX0vfYrQ0s8umvFi83/7gbRVCzXY4TP8NJFByhRuhTVTALB1EBu6ny+PtNXEQLdFexeijpQwT5/ahI+mpZ9ajMM7oM3At8FGk5pnU/BL1Nonz5Y8fjdV6tPG/C5Zk6RhURg9qAf+9R8Omad1eFWXxT9K6yqaix3pq9xGAZ8o3pF+xFI149xhPQNCmvLnHRgEmJUeIIm7boC4KgdrC5bBoaux
- c6ozrLySOAxoy5JAAUBKnlhPctpWnwmvtfHeBXAM+mRt1+c/cu3MhP0MSUMt9WZHns3r/985c1KNIPq0blR6t+yh5SOQk7YDqh0wPxUpt4Kax6NjryE1iCgR1+E5QeDElNdAVf+hiKcPe5+DO4dGivJK8C2DQW1E5U+dX94X2hiWwHcHd0IHOFqpQBMw3MYyXVibLuxNZq6E5ml+47r+bMOyL/Bqfi3ViLUhztHQ6nikGjlZcsJYY7JUssc0W5vg58IiiHspK92+rwN2jGd4sH3ALx4bgyCF0SF9flcBEtXUjRUNSmob4ETrVkz7HKMS7If6nnJcyM0Vbo0UMoOZmd5knYt1xz+hu+YULQesXnetGwV4BBbVo0WA5dRc2eIzIsQXmdql1aXqiSjGCn5mug3+d3TEVV9PvmDpKEou6WN731U4KQNAZjHoQUf6UFZNlFysQJQPL4NE73c76duMdmUXiGxzZFehKgNvB7y4Wu+1/j
-Received: from soleen.c.googlers.com.com (249.240.85.34.bc.googleusercontent.com. [34.85.240.249])
-        by smtp.gmail.com with ESMTPSA id e10-20020a37db0a000000b007854018044bsm696310qki.134.2024.02.07.09.41.18
+        d=1e100.net; s=20230601; t=1707329067; x=1707933867;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwVhLzZGxow3qxlf4scZQzQkeVQyNuXvArPW2Vnm55I=;
+        b=dYcVJOXCMOoCmhO7oxc4xQKbAv71cw1S10cWDB0zeb5nmrAYgdfzFYIZb4cSStgWXH
+         sFnyXfwPpDFjD9jhLyTzxVjQ+O1ObMy6vLXVpxtNUq/zFqru+6VK1nN4Ed9O/krlIRzr
+         eYAACC2/3fRsN/Z3fByT3CigutMI/4wP/OJn5yQ9gD9+yGS3uukeHyYwBeh3r0FL7rkO
+         E1bFoNFD7L8T/IYzV9E2GtKwLjJnisWodShuL4diLY1AbBvPJoqODL3Oh+pxvLXLIlhC
+         c/vosbSWCx3VS/yiShTmxxS3qjL+GZ+rYc5g8l24o3du6IVL6Xk81/qaYa2DPU4eejOm
+         5h5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXaNf9oIrByQw22PXqVRVrg4nJJZLiCAt0D8glgckkv7EQaBtqWCRBMxC0VvDjOgwjymssc64dA+CvjXw4azMMQjAmRTSEqe8cJaRGOO5V4en8=
+X-Gm-Message-State: AOJu0YwsnEvqqBM+9huKKtKZa1it1XI6i0pkPF3TS6Dc/KPqA6KCdoiX
+	lpi71uI4yhRXMKzyR1XCYWUCydR3lbSlGV8/EldmEe+eyqDv9lE02Opia1+e6vrsx0vb0OB6lYp
+	J6w==
+X-Google-Smtp-Source: AGHT+IElGE49IyyE5HMUb70U4NBFH9z5Thr9D2OHUdaBGGuMDRpYd0PG8AHfES1Gt/LVsGvQpFaPRg==
+X-Received: by 2002:a17:902:db08:b0:1d9:795a:6495 with SMTP id m8-20020a170902db0800b001d9795a6495mr200060plx.8.1707329066465;
+        Wed, 07 Feb 2024 10:04:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWRqFZCI5QVt1iMW5cB+eU6N9p6niKleuQLjUZSG2COtjHmnZzCCjG6GYci3e3T+qbBfHUEk8aBVcj6NulrECZ1lCpfYvomgyfpL+vA0nx4WZjb80R1r0dy2ZLi0sAkZA6JqUnZGtO+S6Drcqp5nNKWL0sCrw2/BLJd0Cm2+5U=
+Received: from google.com (69.8.247.35.bc.googleusercontent.com. [35.247.8.69])
+        by smtp.gmail.com with ESMTPSA id nh12-20020a17090b364c00b002969d5db646sm4370835pjb.9.2024.02.07.10.04.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 09:41:19 -0800 (PST)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io,
-	asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com,
-	bhelgaas@google.com,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	dwmw2@infradead.org,
-	hannes@cmpxchg.org,
-	heiko@sntech.de,
-	iommu@lists.linux.dev,
-	jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com,
-	joro@8bytes.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	lizefan.x@bytedance.com,
-	marcan@marcan.st,
-	mhiramat@kernel.org,
-	m.szyprowski@samsung.com,
-	pasha.tatashin@soleen.com,
-	paulmck@kernel.org,
-	rdunlap@infradead.org,
-	robin.murphy@arm.com,
-	samuel@sholland.org,
-	suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev,
-	thierry.reding@gmail.com,
-	tj@kernel.org,
-	tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com,
-	wens@csie.org,
-	will@kernel.org,
-	yu-cheng.yu@intel.com,
-	rientjes@google.com,
-	bagasdotme@gmail.com,
-	mkoutny@suse.com
-Subject: [PATCH v4 10/10] iommu: account IOMMU allocated memory
-Date: Wed,  7 Feb 2024 17:41:02 +0000
-Message-ID: <20240207174102.1486130-11-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
-In-Reply-To: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
+        Wed, 07 Feb 2024 10:04:25 -0800 (PST)
+Date: Wed, 7 Feb 2024 10:04:22 -0800
+From: William McVicker <willmcvicker@google.com>
+To: Eric Biggers <ebiggers@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com
+Subject: Re: UFS storage support for Tensor/GS101?
+Message-ID: <ZcPGJo-NsOgZAQI5@google.com>
+References: <20240206034502.GA175333@sol.localdomain>
+ <CADrjBPpw4f-GW+dxQMTP4HEhVjEJ19g=eAsYLdzXzzFkTmcVbA@mail.gmail.com>
+ <20240207015234.GD35324@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240207015234.GD35324@sol.localdomain>
 
-In order to be able to limit the amount of memory that is allocated
-by IOMMU subsystem, the memory must be accounted.
+On 02/06/2024, Eric Biggers wrote:
+> Hi Peter,
+> 
+> On Tue, Feb 06, 2024 at 05:09:13PM +0000, Peter Griffin wrote:
+> > Hi Eric,
+> > 
+> > + Will
+> > 
+> > On Tue, 6 Feb 2024 at 03:45, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > Hi Peter!  Thanks for all the hard work you've been doing on upstreaming support
+> > > for Tensor/GS101.  I've tested that the latest upstream kernel is now able to
+> > > boot to a serial console on Pixel 6.
+> > 
+> > Thanks for testing :)
+> > >
+> > > I'm wondering if you have any plans to upstream support for the UFS storage on
+> > > that platform?  It should be able to use the already-upstream
+> > > drivers/ufs/host/ufs-exynos.c driver, but changes may be required; I'm not sure
+> > > how many.  I'm interested in this mainly because I'd like to upstream some
+> > > patches related to inline encryption, and that depends on UFS storage working.
+> > >
+> > > I'm interested in helping with this, but I wanted to check to see if you know
+> > > about any existing plans first.
+> > 
+> > We certainly want to add support for UFS upstream, and if you can help
+> > out with enabling it that would be great! It would free us up to work
+> > on enabling something else in parallel. From a first pass analysis of
+> > the downstream UFS code it looks like ufs phy driver likely needs the
+> > most attention.
+> > 
+> > The last UFS dependency (that I'm aware of) that is missing currently
+> > is clock support for cmu_hsi2 (which I was planning on working on as
+> > my next task). Also the UFS phy accesses PMU registers so that will
+> > require my exynos-pmu [1] series but that is hopefully close to being
+> > merged.
+> > 
+> > So I think we are quite close to having all the UFS dependencies in
+> > place. Shall I ping you once I have some code for cmu_hsi2, and
+> > hopefully that should be enough for you to start working on the UFS
+> > driver and phy?
+> > 
+> > Thanks,
+> > 
+> > Peter
+> 
+> Yes, let me know as soon as you have some code for cmu_hsi2, and I'll try to get
+> UFS working.  I don't know how hard it will be, though, so it's possible I'll
+> need help from others.
+> 
+> Thanks,
+> 
+> - Eric
 
-Account IOMMU as part of the secondary pagetables as it was discussed
-at LPC.
++Bart
 
-The value of SecPageTables now contains mmeory allocation by IOMMU
-and KVM.
+Hi Eric,
 
-There is a difference between GFP_ACCOUNT and what NR_IOMMU_PAGES shows.
-GFP_ACCOUNT is set only where it makes sense to charge to user
-processes, i.e. IOMMU Page Tables, but there more IOMMU shared data
-that should not really be charged to a specific process.
+Thanks for reaching out! I was planning on sending a message to you and Bart
+once the UFS dependencies that Peter mentioned were close to landing. We would
+love to have your help!
 
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 2 +-
- Documentation/filesystems/proc.rst      | 4 ++--
- drivers/iommu/iommu-pages.h             | 2 ++
- include/linux/mmzone.h                  | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+Bart,
+I know you mentiond in the past that you looked into upstreaming the Pixel UFS
+driver but were blocked on it's dependencies. Have you had a chance to see what
+has landed for gs101 upstream thus far? It would be great if you could provide
+feedback on your findings! And please let us know if you're interested in
+collaborating with us on upstreaming the gs101 UFS bits.
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 17e6e9565156..15f80fea8df7 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1432,7 +1432,7 @@ PAGE_SIZE multiple when read back.
- 	  sec_pagetables
- 		Amount of memory allocated for secondary page tables,
- 		this currently includes KVM mmu allocations on x86
--		and arm64.
-+		and arm64 and IOMMU page tables.
- 
- 	  percpu (npn)
- 		Amount of memory used for storing per-cpu kernel
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 104c6d047d9b..604b2dccdc5a 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -1110,8 +1110,8 @@ KernelStack
- PageTables
-               Memory consumed by userspace page tables
- SecPageTables
--              Memory consumed by secondary page tables, this currently
--              currently includes KVM mmu allocations on x86 and arm64.
-+              Memory consumed by secondary page tables, this currently includes
-+              KVM mmu and IOMMU allocations on x86 and arm64.
- NFS_Unstable
-               Always zero. Previous counted pages which had been written to
-               the server, but has not been committed to stable storage.
-diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-index 7336f976b641..e3eb93857a73 100644
---- a/drivers/iommu/iommu-pages.h
-+++ b/drivers/iommu/iommu-pages.h
-@@ -27,6 +27,7 @@ static inline void __iommu_alloc_account(struct page *page, int order)
- 	const long pgcnt = 1l << order;
- 
- 	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, pgcnt);
-+	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, pgcnt);
- }
- 
- /**
-@@ -39,6 +40,7 @@ static inline void __iommu_free_account(struct page *page, int order)
- 	const long pgcnt = 1l << order;
- 
- 	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, -pgcnt);
-+	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, -pgcnt);
- }
- 
- /**
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index bb6bc504915a..a18edcf12d53 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -202,7 +202,7 @@ enum node_stat_item {
- 	NR_KERNEL_SCS_KB,	/* measured in KiB */
- #endif
- 	NR_PAGETABLE,		/* used for pagetables */
--	NR_SECONDARY_PAGETABLE, /* secondary pagetables, e.g. KVM pagetables */
-+	NR_SECONDARY_PAGETABLE, /* secondary pagetables, KVM & IOMMU */
- #ifdef CONFIG_IOMMU_SUPPORT
- 	NR_IOMMU_PAGES,		/* # of pages allocated by IOMMU */
- #endif
--- 
-2.43.0.594.gd9cf4e227d-goog
-
+Thanks,
+Will
