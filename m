@@ -1,60 +1,59 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0572C250F3
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 15:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B397F474
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 15:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707318328; cv=none; b=V/dWxcvTZCdQF+jK0AZzGF1Y6byzmozieKZGc4n9FaKpQn0QElP385wOpbiuYfDU5J27fnSJOnu+TYK9a/wSuJIUTf3aJFIxXGB6lQvA+yXkZGCC9fxgy/X6CopY27cFPsX4VpKjAVmVUp1u7Yb6edsRPRY3TGZmfftTU2ZLzoc=
+	t=1707319405; cv=none; b=twPzVaYNx/wS6YEUKbOCaHIedB0nw3dbnnSTfDMR2jj7LmmdeepyMeU6DJlbVyPNV6KRZ0gBzV8BvhMsQaJfLtIkP55B6QTimLQJ6OUG/8yGDzlP1hseE4woqemKF7s7luX6jIEpSuWt8OD7GNFTE9NFGMVagHbyuGm8dTDLai0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707318328; c=relaxed/simple;
-	bh=nQCqZN1M7jS6nlAFAJeHjMhCCAzl4s0EU+vsfwTbNFw=;
+	s=arc-20240116; t=1707319405; c=relaxed/simple;
+	bh=D1nHBy9BTEGJ6f8wgI2PA54FXtxwvMIUT6iWGXX6YOQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JrKCfH3EDevjDy68mM2k498OB6Zn544geT37IP1f7pyPhUiy3lyVKZhLEzu23O8WTSM+jN+Pd4iQsR9emitbAmLfD9HKAWUxCcSYiZTlg1zhwwPqtz1TWSCmY6wRTPtRpLP0WgBcD1ohY+hFLIlMWRbD9RaX4pBcAC3nG5z+bWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mTjmrwb8; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:Content-Type; b=oPOJbehx+ULAfon9EFoASL68pRqIJYnAQP34mpudOMdxGG+fm4zQuLdouNcycsTQ2Fnz4JLImxrWq+zTNFHFUxKATRCOwj4BYawI3Me3DpT4cZFyOPCiGQOYRgxuLumkLjChgjBje22qUpL+eMg1r0zDSWqMVeOYgVRbGBH7HUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YQUmnG+x; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mTjmrwb8"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40ef3f351d2so10847255e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 07:05:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQUmnG+x"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4101d096c92so3548815e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 07:23:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707318325; x=1707923125; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707319401; x=1707924201; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QfJNW7Px5n93mi1+mThAoBi6YIbkzwJpqqJDpysXpAA=;
-        b=mTjmrwb8v7qnae5xgPqEUJw9cgT0wL12YPUW8zRDcN5JFL2jXUFk8XCbrpQKbpuJQi
-         4UcI1S5+SI25skg4Wu2ZU6zn3ozma2n0t9DXII0WQjG6pTISdCG0ShEHocRlCG7jMJrk
-         vfyJ5ly2eig7lOgYepA6AhLOpEClwCATOJQTuNHGBEu6NPxNP6oH6fWjB8FDzQf6Upt4
-         Hld/HpoLZ6DQKwCIf6iMYoo4elF6tMgWAfwwP1hhVESFYRKMJHv4yG6acqgaRPg90HOk
-         8//T5WrOmyBVDmAqDXedW5sDf+/91YUCzBABUUZLjjj/5FsE2bbWfnZ7TTkqdomqi+Ms
-         l9Qw==
+        bh=mCvQlP1u/ahMkxnt3s+kY4WBZy5d0gK0JV7DH+GWHro=;
+        b=YQUmnG+xPxfjgPc1fZOyCPdUSG5gWG+pQ+cELWXQYiKQC4yzcgt02BnF/6tRRYczqG
+         XoSnnL0PnSKvxQLTcA0l9d54t73570VDiKfxVsZyk09V4icjuUYRWsnI9iw6jI8F5NRf
+         uCBQNkYND7QABEBg+ywLH2n0gpnTGcCRSMg7VFXyzoqGNrjJt6QD0pZGCAL+mZdi1WbP
+         e5EPeglkqxKnP7kt353NH4TS128SRXmVGlToa6AtLhUl2tnhSZ4k22IBa71Vr/KYnYDn
+         Q2K4R64MEvYUBxHPsmaKXx+IkPHU61gAp/0NkAfglkOGPfEbgVkLhUlc4nIykvzT+5qD
+         o8lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707318325; x=1707923125;
+        d=1e100.net; s=20230601; t=1707319401; x=1707924201;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QfJNW7Px5n93mi1+mThAoBi6YIbkzwJpqqJDpysXpAA=;
-        b=AV68M2kamCkrN8Z6j0y9ti4tw79MKL108seteABFO2loAgkHdqygGMLpWwYgvR6qoz
-         4ePEDdGElKmtKUsREpmWCqPeqZO5fU2TUU7bEsXwNt3FkWWxA+ydIAHkgeq6jBgZaJq+
-         gScltHhIsqFNNaeN2Lfsyt7j0cmlTY+yZ3UPYkNFoDcgjITvYmpCFM+QA5uKU8n/VpN8
-         BLEgP9jg/oyKJVIODT3ncguPe5gZJRkYnsqnd4pon+dgDJDwAS7Oqw0SqamX3DBAzFe2
-         8RSHwQ6D3YEn77mOZ2X9HyrsPfGTJbMcxCF9Mw8Ne9ql8RCouTPfTwFUYEfnPyUbAfw6
-         eCUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYwzdldlyZH1QpgIuXZlAJ6YG1zb2aQ40/8aXogedBYQdKquC/IMtZlKuQmHj/4gbRm3eTFaT0/1dcub1T9x38ZlMU14LOcRvISb4zdWnTIQg=
-X-Gm-Message-State: AOJu0YztSuuBMMuFD+o2xx+gqcGSWBW6BGWJFYxAUj7QaOU55MSNAtrR
-	3YqvtnzuMgIwIqE0XKFDs5wikfW3RLqxwcgoeJH0TyOa/UkTi4pQrywW7UVcTng=
-X-Google-Smtp-Source: AGHT+IFTDgu16oVML/Aqbv2KuuaJF8P+GWtWTG0DfBhJu/HgdFG03HXMmc43fVWoL4GwFrVEeV9y2Q==
-X-Received: by 2002:a05:600c:4f51:b0:40e:9fd3:6b75 with SMTP id m17-20020a05600c4f5100b0040e9fd36b75mr4928012wmq.2.1707318325142;
-        Wed, 07 Feb 2024 07:05:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXUOxf7oHZlTfRSgNMPwMCjSGvD9EvX0EIiPGHbnxACdKX/QJS+vQT1+h2a8OBO/b9zEFwFYXxiF4lTjZkTsz3125PQFJo3POv9LDU4IejfnpQ80y9LaWv3Ac8jRCndehjXvroNgprMqVF2IID8GvzvDs9erVZhPL7NRSRNc3OBPa36LUv9sRKPyAi1qvNiBKtPTq3Rn1iuicNlTjwPRRmflo4pkgXSBgriSbqTUkaScYPAml0pj9AXRSvqpHmT6XaZ/EE2rgvgvtP/B8HzK9JWxcKath7dbRAfjJf4XvMJiQZihwgmdTL5wX4VxoyXh9nqP+eh6c/8GXx41HJnJqfodYr9HZML/yXWvkOCvLKYc+Y0lRJzOETTerzs6UNYSuVGOZAjR9Tuba3jeYdm0qtUBngYjHZjaj9WKWmC5CUUaPpljh50Qv/rCHSkoJG8aJGAU4ZcDKfQE91Vn3VZyfh9Azl6m3K+ZJcKezyxQlY5gTC2u9EJGrORGQt5+5+Uyhn8mCZaAqavzucoPYlIZbhREhiMiNkTAsIc50T4202z6+dKrLGi8PlMB0P0YhRsO+BVd6yRX4zU2lPADq14ks65rOBkMqRVd2b5S2X82/iLbiahxcFo
+        bh=mCvQlP1u/ahMkxnt3s+kY4WBZy5d0gK0JV7DH+GWHro=;
+        b=HhJzWCgIjYtyjWC5Ce5V7JXpsprnS5SwLYtJMKqaNv1AR16J3g3L0PqBWKFhwhG9U2
+         S5bWYXP6lO/ndhQhk3sbFV4/R/AtKxf1WRwGn+ORVHRZgtYdeSgm5BW/4pDTsGXyBk6z
+         kRXAF+9pTYQnTvMHRKilIgQQ09jXG/b60NbMdeuaACbJMY9BO//2EK9DjjBomFNtlwxo
+         oQ1opQoJ4JQY2t3U6oIugmlaCA+uaNVCt4sWp1hUThnuWN50RMfvVPYdjdPOyqrIx/gn
+         NylryY6A8QNzPTPhucds6mmROv1pDgb60mk7MrexktQX2sLhDLMrOUx6mtQ5TkD8jCUM
+         KPFA==
+X-Gm-Message-State: AOJu0Yxyg/VcokYmVrLt5dkaviQivmkvRpgCsf2HTOcvWFW1t/p544Dl
+	o0HaWCjYuC+6Euo82XhgWN0aSUQ7icWn2Ofn7JOpEy/yjXXk3/oQekDNuZLtlr0=
+X-Google-Smtp-Source: AGHT+IGNjyyB9/HI9xRkpYscVCCwB8DaNJjgYqtNY3P+rNPe1NY5dOlwlyA00QbTwbWNcMXClESO1A==
+X-Received: by 2002:a05:600c:5198:b0:40f:eb8c:71b4 with SMTP id fa24-20020a05600c519800b0040feb8c71b4mr3703239wmb.15.1707319401403;
+        Wed, 07 Feb 2024 07:23:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWXDwo7H10qk/Re+HBBozFGkmpsK1Tyk/vJlHWPjxrhHeQORyYoFdTMgFa74InYKeAoQkHeVrninH1RWyWSkDXcxFBzKmbBq8KldAKaUHbEZVbItHJvLu3ihvpE+hcgmpP5yh3I4et3YFFk8t0XEqP+0bL/5UE67OeRUTy51YWbbfP8neqaFyKXweJVzaywHaq0tZAf+Y88ABsN56tRettYbTKGIXaeU7EhMNsJJssxRKPMJvn61ZpA7wgQEOd2hE0MLBjOLq6VlJKnEmgaurCHHJLx3RgDztmP5Qlr+ZEjGpQlm+nbfKr5Us7b3GCFvJB7Hui9zacrunpjhojPup03wGynY1s0WzNwq/Lbb6Ri5Hvuwnvh1WAxo482wnHLNjCm7CzugbP5zckSY36GaZq6O15GgbPRMLn44N2HFabQM1ssWUgi6sP1Q7+vr+oAJaVe8NbDzSAUuZB93dd20+dnj+nrcELNlhHJ2jlNV6z0AxohVP1gRmisjefOqDbSpvqqsbf036zZvZoJeEkSNREwD99LbD0+taOYJBKMDe5aO1k8XJr7s0VihUsxk1ye8kVE3QJyhs5MSvwmG+9LgKuF1Ki6KJgZdE+MvXHso+giaJP36+rE+bOygTadKkRCNA4CtLeNhjEyG73GJyLh+QugGcDaDvfbud1/OSmFg6qSga7CCVOFig==
 Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id a11-20020a05600c348b00b0040e541ddcb1sm2373509wmq.33.2024.02.07.07.05.23
+        by smtp.gmail.com with ESMTPSA id b7-20020a05600010c700b0033b459e8f60sm1723604wrx.18.2024.02.07.07.23.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Feb 2024 07:05:24 -0800 (PST)
-Message-ID: <b7fbbf3e-1e53-46a9-b26c-8acb5f9ccde7@linaro.org>
-Date: Wed, 7 Feb 2024 16:05:22 +0100
+        Wed, 07 Feb 2024 07:23:20 -0800 (PST)
+Message-ID: <6feff535-d9d7-4f4c-8e7c-956c4bba1713@linaro.org>
+Date: Wed, 7 Feb 2024 16:23:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,21 +61,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] arm64: dts: exynos: gs101: add chipid node
+Subject: Re: [PATCH v3 0/7] gs101 oriole: peripheral block 1 (peric1) and
+ i2c12 support
 Content-Language: en-US
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: Alexey Klimov <alexey.klimov@linaro.org>, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, semen.protsenko@linaro.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, klimov.linux@gmail.com,
- kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- saravanak@google.com, willmcvicker@google.com, arnd@arndb.de
-References: <20240201172224.574238-1-alexey.klimov@linaro.org>
- <20240201172224.574238-2-alexey.klimov@linaro.org>
- <CADrjBPpqHx1uoVZCYDX51kW+JdOr_-+4oryOjXcUMFkmLGTBLw@mail.gmail.com>
- <b199ba24-403b-44fa-b807-9b98f9e98913@linaro.org>
- <CADrjBPpNukp+YQ0AmsZAE1f=MEk_auPPZit=tV8gk4szQ8MqRg@mail.gmail.com>
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ peter.griffin@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+ tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+ tomasz.figa@gmail.com, cw00.choi@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240201161258.1013664-1-andre.draszik@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -122,105 +119,35 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPpNukp+YQ0AmsZAE1f=MEk_auPPZit=tV8gk4szQ8MqRg@mail.gmail.com>
+In-Reply-To: <20240201161258.1013664-1-andre.draszik@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/02/2024 15:11, Peter Griffin wrote:
-> Hi Krzysztof,
+On 01/02/2024 17:11, André Draszik wrote:
+> Hi,
 > 
-> Thanks for your feedback.
+> This patch series implements support for the 2nd connectivity
+> peripheral block on gs101.
+> This block contains an additional 6 USI, 1 I3C and 1 PWM
+> interfaces/busses.
 > 
-> On Tue, 6 Feb 2024 at 10:10, Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 05/02/2024 15:36, Peter Griffin wrote:
->>> Hi Alexey & Krysztof,
->>>
->>> On Thu, 1 Feb 2024 at 17:22, Alexey Klimov <alexey.klimov@linaro.org> wrote:
->>>>
->>>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->>>> ---
->>>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 5 +++++
->>>>  1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>>> index d838e3a7af6e..156fec2575bc 100644
->>>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>>> @@ -283,6 +283,11 @@ soc: soc@0 {
->>>>                 #size-cells = <1>;
->>>>                 ranges = <0x0 0x0 0x0 0x40000000>;
->>>>
->>>> +               chipid@10000000 {
->>>> +                       compatible = "google,gs101-chipid";
->>>> +                       reg = <0x10000000 0xd000>;
->>>> +               };
->>>> +
->>>
->>> I was wondering about the 0xd000 size here, as most upstream platforms
->>> use a chipid size of 0x100 or 0x24. I see the downstream gs101 kernel
->>> also uses 0xd000. Looking a bit more, that is because gs-chipid.c also
->>> has support for dumping other areas of the OTP SFR bank like asv table
->>> (offset 0x9000) hpm_asv (offset 0xa000) and hw_tune (0xc000).
->>>
->>> I checked Exynos850 and that also has ASV tables at those same offsets
->>> above, but it currently uses a chipid size of 0x100 upstream.
->>> Exynos-asv.c driver is part of exynos-chipid.c upstream so it seems
->>> reasonable to have the increased size including those SFR registers.
->>> Currently exynos-asv.c driver only supports Exynos5422 upstream.
->>>
->>> @Krzysztof - From a process PoV what is the best/correct thing to do
->>> here? Have the increased size in DT that includes ASV parts of the OTP
->>> bank from the get-go?
->>
->> ChipID so far had only size of 0x30 or something like that. What you
->> refer to does not look like old ChipID but full blown OTP, which also
->> includes ChipID.
+> i2cdetect shows all expected devices on the one i2c bus that this patch
+> series enables.
+> Everything that's in scope in this series works also without the
+> clk_ignore_unused kernel command line argument.
 > 
-> OK so in some previous Exynos SoCs chipid had its own separate memory
-> mapped SFRs as well as being present in the OTP area?
+> While working on this, I noticed the existing peric0 support for gs101
+> has a couple issues. That explains why there are differences compared
+> to it and a separate patch series has been sent to fix up peric0
+> support.
+> 
+> Cheers,
+> Andre'
+> 
+> Changes in v3:
+> - drop samsung,mode = <USI_V2_NONE> default assignment in patch #6
 
-None of the Exynos I know, have OTP area. There was only chipid. It
-seems that few newer designs come with OTP, in entirely separate address
-space. Exynos850 looks like the first which comes with integrated chipid
-into OTP, so OTP is not separate address.
-
-> 
->>  Although I am not entirely sure about that, either.
->> Depends whether they share clocks, for example.
-> 
-> This address is the OTP area, and I can't see chipid regs mentioned
-> anywhere else in the memory map other than OTP. Unfortunately there
-> are lots of separate docs for different IP blocks, so it isn't just a
-> case of searching a giant SoC TRM pdf.
-> 
-> e850 though looks to be the same (the address defined in DT is the otp
-> area), that is one large PDF and the chipid regs aren't mentioned
-> anywhere else, Given the chipid reg offset is the same (0x10000000)
-> for exynosautov9.dtsi, exynosautov920.dtsi, exynos850.dtsi, exynos7885
-> and exynos5433 I suspect this could be the same for all those SoCs as
-> well.
-> 
->>
->> I don't have any GS101 information so I don't know what's there. It
->> seems you ask me to give you decision based on guessing... If you have
->> one block, so if there is OTP, which contains ChipID, then define OTP.
-> 
-> I believe there is one block that contains ChipID, therefore based on
-> the above info we should define full OTP size?
-> 
->> Not ChipID+OTP.
->>
->> I think Exynos850 DTSI is wrong here. That's OTP block, not ChipID.
-> 
-> Yes agreed, and quite possibly the other Exynos SoCs as well.
-
-If ChipID and OTP are in the same block (in OTP), then assume they both
-might need the same clocks or some other resources. Therefore we should
-not model them as two separate device nodes ChipID and OTP. Instead
-there should be one device node with entire OTP address space, which
-should not use ChipID compatible to avoid confusion.
+I am confused. I have "another" v3 with different changelog.
 
 Best regards,
 Krzysztof
