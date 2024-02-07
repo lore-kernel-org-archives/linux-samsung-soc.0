@@ -1,142 +1,178 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED19E1A587
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 11:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23928250F2
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Feb 2024 11:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707304526; cv=none; b=HBYda/qWGO+Wu2KoJk1E9a2tz21DpRzXVVq992WDimFaq1T8lwzk1Gyro3MNoBhqh+YJjAvcOXE560mpmwey//c835AJh7oGvrl2Jyf1UqMYU29qulzd4E52dGUgdfPxdT4QgAenCVBgiqudzbSDF1YU0IT7GNdHO99A2cdhAMw=
+	t=1707306138; cv=none; b=kmU77IDcL2BQnZcXpLLZN68G4NA//hw1J9cBtJgR+it8+fIQ9H9z2ULH+yiO8c7ke8YEZ9w91mvS2myCDHUJMP7Ub+vjOWtmdiCXBVmu/F9lLZ/hSJLlU0kHuTSlVQupvFbJDVhtxyYMsUDGpihbucjQjmq+tDXZHNBjWb0VlSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707304526; c=relaxed/simple;
-	bh=OIO0Jdw0rKx9pnTeOXamc0BX8ibgMh/GcNFiiLOTq8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZqnT8/fKjZZRREkKTtr/OXlwHK6uoY+l231m1dFUL9SHrr3QK/6HJ04Xl7NIl9v9DsN1ykj8T/MtGAxlkCHM31suUjQFO4IGg4XWjLsxU0xim0DHQNf6F9StAveJmwbS9/c1nTjswVkHtuQfYdjxsALnzlhuY24nVEl2LAXVpDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z7PjOecY; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1707306138; c=relaxed/simple;
+	bh=yXMP0S/lszIS82Cm3HVooHmFHezs5svv3J4mLhiJ6Bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AiY8fZBVZTv1ySBDlSAoaqMlnr1N9jo5OXfkDTwGtblDYt6igUcwSgeO9i/wu3U9rD+l8D9p1fwMflU4lmx7SKhqdjiV9dvKuQo3k4xUfI2IAAWJBJ7qCwrk4nfaxP1H8p7hMaP+R9IB6dl+mzw6f6FRiGoO0Yr0eaYiH0yXqGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QOzWSE12; arc=none smtp.client-ip=209.85.217.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z7PjOecY"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5116588189aso834786e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 03:15:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QOzWSE12"
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-46d336f8081so94082137.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Feb 2024 03:42:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707304523; x=1707909323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dn0uxZFDo6NWePr2qdwdP08ijlsAxDoEPw964FSIz1A=;
-        b=z7PjOecYXXm+kVZFx6anxNnMBzFt5PK7acSZ4Wb13Vso1G7nBAJZfb7efH6+pXUASC
-         3hdCYABBkHNvj7YpLGM9Whr7S7qplprKiMot4Z/Pv5oF3hKjjCC1J1Jc68amaE0iolTV
-         AsAGV3D3Al0nu0Uh0Q6eXCYe7klY0dEXDN4q7YHX9PTrd1ZHkdLlBgXF8l9jLsCKD3Yc
-         dqM04hj7BgWzgphc4iducJcwhlZICTptuF3Y1/a/GWZGTxBGm3wmt4ZHzQyKSTLnEQTO
-         G4NoHpCCL5emR5TVwGuJJvAIcuJoj7xCZd5NGQwJveE9V09+zOvTsO6Mik5rYB78jjRT
-         zI4Q==
+        d=linaro.org; s=google; t=1707306135; x=1707910935; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mDRI0QBrap0H2clNIo68wfgCeGsVyFFKlUnFyl+O8Oc=;
+        b=QOzWSE12voIqeyO/a4pMbo0EmmfnQqAspa+MUnvkSVl+eNCu2cmoD8nK7SmRAOeu5M
+         Wd/3Q3bw6x1Xrv3+Bx/Y/vCNzYzY9WmY3PSEMMT5HfAaqZ8/SzNpVIuQn87AgG30jmao
+         egXjdJ2khLyXeF1uWiZ7uZ/OG+5Z8wsYHSG7h6IJTPQyHFH+gGKmlCLll+L+s+EUTG/u
+         Xw/j0rD8mOY4bedHwxgHChVyHRyyTBrrIKGg5uUyg3ySs1FKHO87H20Lxt/ERqCw/0iR
+         F0Flv+syVxiBX57frV5ItsLgcm92k9FvEY2F9wTAebJBGAapg/Krl1PjpiVeTRjlZWnw
+         KVzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707304523; x=1707909323;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dn0uxZFDo6NWePr2qdwdP08ijlsAxDoEPw964FSIz1A=;
-        b=q+QWC0uLliCOyXeaTtGNIPPzZV+yh9JRIChpgP2welPOL/cwsN6OcnZfNVc+IYIN9t
-         wY5RaeOQjeICy7GBAU9pSy5oCLzM1gUPa/pcbzRScRZ16wPWZntMf6URvCnsbnoMBwge
-         9AF/c2YDlX9mOX1iJEYrbRAGzWcvtg/vKkGnJifAfm8oNGEHDpwWdrVgL1shjuTRakJC
-         Rl7WgWakrm1v25PODM3QSvdXEe5xlgQ20idS8wdgyKDdzpURaF7KlZkL9V4dAe7s8/ma
-         DSfHvzxaXI0RTcLcBPoBaM8OtPCPN42CQgyli41fXNtTtt+dN4ODVc3ktsK1273gQcbN
-         uRxQ==
-X-Gm-Message-State: AOJu0Yxl4Cgv69ZpOzdugtl+A8yCgtj0JuVZfvz0F6J9EPZzLtY9wMba
-	wGwhhfpUkUphCBYj5D8zIfwW2II+8yGiodVggrpSTZcOMpQW7UQdOYWMevqyfCM=
-X-Google-Smtp-Source: AGHT+IE5eIKLuUmb8h+vJQhTopUxE+vxpnmBvmCs+6cqfMZAcpiMEAKVIc99ZTC/OMFtO9lArP2XLw==
-X-Received: by 2002:a19:f80a:0:b0:511:5e49:766 with SMTP id a10-20020a19f80a000000b005115e490766mr3055134lff.23.1707304523154;
-        Wed, 07 Feb 2024 03:15:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWpHmBFshfk+OSUXB7ANNEbw1MqbQNWZ1mwdFgbfeK2iC+AXM8eorwCeMYn6Qk77+424RjJ4E7ST0wUsphxqtaN4qo+VFdiEgSheX4t1LqFECen46n0V7MHAhqv4BUlrmCZICQRZdDA23T5iQWfsJtKJLDwoXSk5Z73VJDuhOwH9xL79Bs8GtSnqU+EwuUM3uQ8Xrf59laCDWiQCCiPEWpU6hS3m1/ag4kNIcmEgXQuDu103ECJC/afRpf8IIDuNqfSXRCJW639Zhv730GM4m4EgAcBRtzlfxoXuMagO7Pp2twztw4u7RNL/7BD5rKgDeKbDPj7Ws0a+x223wUqbMOO2byVhNXsNPI/pDNxb3n8zUrrHUTKlGFcZpyFtppRP9TKDUfv/IxZ4Vi7J32S+5OB+XiaDbU0M1RzNbIlEsdVGWEzYu5JOj6y3bwz6xyFRC46AyshRTpHg9dk1JvpzcSX9eULRFzrejotGkif+etjoANhVgRpvAZ8AMHCTbbK+EPyXaR7WA3i4G8s3SENMOjoR+oJ2FH9gH3xLMYZBdeO2i1r22TQULwWZH5lLEThSob/74OD+55soHL4ffGRKeCY9w==
-Received: from ta2.c.googlers.com.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id l14-20020a05600c4f0e00b0040ec8330c8asm4983260wmq.39.2024.02.07.03.15.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 03:15:21 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: broonie@kernel.org,
-	andi.shyti@kernel.org,
-	semen.protsenko@linaro.org
-Cc: krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org,
-	peter.griffin@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	robh+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 4/4] spi: s3c64xx: add support for google,gs101-spi
-Date: Wed,  7 Feb 2024 11:15:16 +0000
-Message-ID: <20240207111516.2563218-5-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.43.0.687.g38aa6559b0-goog
-In-Reply-To: <20240207111516.2563218-1-tudor.ambarus@linaro.org>
-References: <20240207111516.2563218-1-tudor.ambarus@linaro.org>
+        d=1e100.net; s=20230601; t=1707306135; x=1707910935;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mDRI0QBrap0H2clNIo68wfgCeGsVyFFKlUnFyl+O8Oc=;
+        b=PeMrBI7ZSHgbXW59Abon45LSNLHr9wg7Y5bpDs9a/OiKHq1rH+3QQHxas369nocCNt
+         xhvhNsReaxK3Hjd/Hb7pYsnfjRIwUdwfEhhdPuwfRG2AGAhGjFcjngKzjpnc2z5NFb0m
+         S964ipGaevxmS1dbjvzADbvU0L7qYh9Vpo92+X/t6VyIarkB4CapjLYPGiN7YX3/8E3s
+         fnBNW5obO3kH2guk9YNHTv32LPcRVs3hHUUOASC8lSWoS42dmXmmAbhd/8ekZvIrTaR/
+         Bs7IRfJRakF3roMZXPF88h8E9itGz7qFe/AYLmtC5EEI/X/c81YX80N/bygIzH0zZ9Ty
+         hspw==
+X-Gm-Message-State: AOJu0YxfunqI/S6q12oEEPQbTemkR5isLlPUFez+RZVGCMKAmlNrVUzI
+	peCcPdI5Ws4VGhDZZlpP5W2smdmMuf2rCM73kPtHW0h0IC7UlHw+aOk0FxtjfFb00knLnI/+Iay
+	LWp/IGNiPuU+CN0sQg+/pkgVT3PBavFFke/MKXw==
+X-Google-Smtp-Source: AGHT+IHoMW8WW+GpljHTnzFyz3kSgmn7XI5t1uaHPVo5k3VCt1621bR0+WnHEryNiztIQSbbTGgK2JIA0gGHVkMneKQ=
+X-Received: by 2002:a05:6102:3231:b0:46d:1c65:bc13 with SMTP id
+ x17-20020a056102323100b0046d1c65bc13mr2322228vsf.24.1707306134913; Wed, 07
+ Feb 2024 03:42:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240129211912.3068411-1-peter.griffin@linaro.org>
+ <20240129211912.3068411-2-peter.griffin@linaro.org> <fb530eb8-e32b-4faf-81f3-efc334ebf241@linaro.org>
+ <CADrjBPoQmTRsFYRtxBxdvAoKK816O8XN3=hOJ3vBt8wbbbk-=Q@mail.gmail.com> <99828589-c0b5-456d-b250-6ad3e6085a91@linaro.org>
+In-Reply-To: <99828589-c0b5-456d-b250-6ad3e6085a91@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 7 Feb 2024 11:42:03 +0000
+Message-ID: <CADrjBPrWH8uFrFmn_CZpr+fAnPrzbDT4i9XuMXJqKfzeouPpKg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] soc: samsung: exynos-pmu: Add regmap support for
+ SoCs that protect PMU regs
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: arnd@arndb.de, linux@roeck-us.net, wim@linux-watchdog.org, 
+	alim.akhtar@samsung.com, jaewon02.kim@samsung.com, semen.protsenko@linaro.org, 
+	kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com, linux-fsd@tesla.com, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for GS101 SPI. GS101 integrates 16 SPI nodes, all with 64
-bytes FIFOs. GS101 allows just 32 bit register accesses, otherwise a
-Serror Interrupt is raised. Do the write reg accesses in 32 bits.
+Hi Krzysztof,
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/spi/spi-s3c64xx.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+Thanks for your review feedback.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 014fcc933c90..7ab3f3c2e9aa 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -17,7 +17,7 @@
- 
- #include <linux/platform_data/spi-s3c64xx.h>
- 
--#define MAX_SPI_PORTS		12
-+#define MAX_SPI_PORTS		16
- #define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
- #define AUTOSUSPEND_TIMEOUT	2000
- 
-@@ -1534,6 +1534,19 @@ static const struct s3c64xx_spi_port_config fsd_spi_port_config = {
- 	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
- };
- 
-+static const struct s3c64xx_spi_port_config gs101_spi_port_config = {
-+	.fifo_lvl_mask	= { 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f,
-+			    0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f, 0x7f},
-+	.rx_lvl_offset	= 15,
-+	.tx_st_done	= 25,
-+	.clk_div	= 4,
-+	.high_speed	= true,
-+	.clk_from_cmu	= true,
-+	.has_loopback	= true,
-+	.use_32bit_io	= true,
-+	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
-+};
-+
- static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
- 	{
- 		.name		= "s3c2443-spi",
-@@ -1546,6 +1559,9 @@ static const struct platform_device_id s3c64xx_spi_driver_ids[] = {
- };
- 
- static const struct of_device_id s3c64xx_spi_dt_match[] = {
-+	{ .compatible = "google,gs101-spi",
-+			.data = &gs101_spi_port_config,
-+	},
- 	{ .compatible = "samsung,s3c2443-spi",
- 			.data = (void *)&s3c2443_spi_port_config,
- 	},
--- 
-2.43.0.687.g38aa6559b0-goog
+On Mon, 5 Feb 2024 at 13:13, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 01/02/2024 13:51, Peter Griffin wrote:
+> > Hi Krzysztof,
+> >
+> > On Tue, 30 Jan 2024 at 16:01, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> On 29/01/2024 22:19, Peter Griffin wrote:
+> >>> Some Exynos based SoCs like Tensor gs101 protect the PMU registers for
+> >>> security hardening reasons so that they are only accessible in el3 via an
+> >>> SMC call.
+> >>>
+> >>> As most Exynos drivers that need to write PMU registers currently obtain a
+> >>> regmap via syscon (phys, pinctrl, watchdog). Support for the above usecase
+> >>> is implemented in this driver using a custom regmap similar to syscon to
+> >>> handle the SMC call. Platforms that don't secure PMU registers, get a mmio
+> >>> regmap like before. As regmaps abstract out the underlying register access
+> >>> changes to the leaf drivers are minimal.
+> >>>
+> >>> A new API exynos_get_pmu_regmap_by_phandle() is provided for leaf drivers
+> >>> that currently use syscon_regmap_lookup_by_phandle(). This also handles
+> >>> deferred probing.
+> >>>
+> >>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> >>> ---
+> >>>  drivers/soc/samsung/exynos-pmu.c       | 227 ++++++++++++++++++++++++-
+> >>>  include/linux/soc/samsung/exynos-pmu.h |  10 ++
+> >>>  2 files changed, 236 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> >>> index 250537d7cfd6..7bcc144e53a2 100644
+> >>> --- a/drivers/soc/samsung/exynos-pmu.c
+> >>> +++ b/drivers/soc/samsung/exynos-pmu.c
+> >>> @@ -5,6 +5,7 @@
+> >>>  //
+> >>>  // Exynos - CPU PMU(Power Management Unit) support
+> >>>
+> >>> +#include <linux/arm-smccc.h>
+> >>>  #include <linux/of.h>
+> >>>  #include <linux/of_address.h>
+> >>>  #include <linux/mfd/core.h>
+> >>> @@ -12,20 +13,159 @@
+> >>>  #include <linux/of_platform.h>
+> >>>  #include <linux/platform_device.h>
+> >>>  #include <linux/delay.h>
+> >>> +#include <linux/regmap.h>
+> >>>
+> >>>  #include <linux/soc/samsung/exynos-regs-pmu.h>
+> >>>  #include <linux/soc/samsung/exynos-pmu.h>
+> >>>
+> >>>  #include "exynos-pmu.h"
+> >>>
+> >>> +static struct platform_driver exynos_pmu_driver;
+> >>
+> >> I don't understand why do you need it. You can have only one
+> >> pmu_context. The moment you probe second one, previous becomes invalid.
+> >>
+> >> I guess you want to parse phandle and check if just in case if it points
+> >> to the right device, but still the original code is not ready for two
+> >> PMU devices. I say either this problem should be solved entirely,
+> >> allowing two devices, or just compare device node from phandle with
+> >> device node of exynos_pmu_context->dev and return -EINVAL on mismatches.
+> >
+> > Apologies I didn't answer your original question. This wasn't about
+> > having partial support for multiple pmu devices. It is being used by
+> > driver_find_device_by_of_node() in exynos_get_pmu_regmap_by_phandle()
+> > to determine that the exynos-pmu device has probed and therefore a
+> > pmu_context exists and a regmap has been created and can be returned
+> > to the caller (as opposed to doing a -EPROBE_DEFER).
+> >
+> > Is there some better/other API you recommend for this purpose? Just
+> > checking pmu_context directly seems racy, so I don't think we should
+> > do that.
+>
+> Hm, I don't quite get why you cannot use of_find_device_by_node()?
 
+of_find_device_by_node() returns a platform_device, even if the driver
+hasn't probed. Whereas driver_find_device_by_of_node() iterates
+devices bound to a driver.
+
+If using of_find_device_by_node() API I could check the result of
+platform_get_drvdata(), and -EPROBE_DEFER if NULL (that pattern seems
+to be used by a few drivers). But that AFAIK only guarantees you
+reached the platform_set_drvdata() call in your driver probe()
+function, not that it has completed.
+
+IMHO the drivers using driver_find_device_by_of_node() for probe
+deferral are doing it more robustly than those using
+of_find_device_by_node()  and checking if platform_get_drvdata() is
+NULL.
+
+Or is there some other way you had in mind of using
+of_find_device_by_node() I've not thought of to implement this?
+
+Thanks,
+
+Peter.
