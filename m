@@ -1,100 +1,177 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD526A335
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Feb 2024 08:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C85776901
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Feb 2024 10:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707379726; cv=none; b=lcyq4OqwoCLtJyTdcv7eOMI559tpAT/bpLhzvQ+Nnn8IlfrzMsId4eqfxx0Hjs73EsK2h2HOiuuzUsPzSjt4+TWviBHDARRPDfMyuG0HbqsPrLr4cSBqF3OPUAphvJgsetjlO4pbkGMfUB14zNatEehsTrifNcu//AKJQCmphG0=
+	t=1707389569; cv=none; b=B5KRSKnaa6U8tOJhqTM2fo8xKrYDpsHcPcCFcnjBTyMOQ8LQjaMjxGoI+cTqaKq2TLkc2NJf/fUnG2nes2wAXqHP3EK2BiwsyMDG22fKP3Ap/+kSPqS5MvhxTFmQLorrR4BuSbr7Egw5JZfFa4Pfss3mHdtnMSFm/LAI0ZcfTbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707379726; c=relaxed/simple;
-	bh=fd8o5HgLLb9xxGgOAt425TU4zZoNTb1DKaJucS6kv3w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sYCpzy9Ro7g7tmm3CQ8bNGZadWau1B8FxvrTJkEEZZWkrW9w6CkV+S5bqQaZePAMi2KUxyqnHwjc0opgCJdewPYDc+KZCAMx/1kXV02CcqGL53bBk/gr+q0SzA5MfgS4Ue8WHPtawpWcAXUZGlhJMA4qLv0nZMwrzw3einsoj6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WTyukh7R; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1707389569; c=relaxed/simple;
+	bh=+ifZekRvDModjrZr9ApFYUpDKplDQ6MJNn7whDRcbdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zov5Xa6t2tHn/LmIPskGzHl2k1O2en+kSG//s5GS64+Qtq810yp3gt5BzrqWcuIoV8u9AICR+EJRZeOEHB3gwb9bs2Th3/btrFGDNIJUqU3FflEIwC3U7z5iiMPR2sLDNqWsML5QK4xsm2TUk5Ldp85Zurgo2OyC0Xlit58t5e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T/mJ8J8F; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WTyukh7R"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-33b0e5d1e89so1264603f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Feb 2024 00:08:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T/mJ8J8F"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33b535c5d0fso723454f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Feb 2024 02:52:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707379722; x=1707984522; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Toj79ymKzNIKiZBdlDcH6ZznHrVcAbCsKACfCBNCkOo=;
-        b=WTyukh7R5DexTdE7YO/jt96CMoKpW5qbjok3n/GloCpTZr1EME7YUYacT75wTsPpO3
-         l/ljU1N0KQXfyBtYZiPPRo8TSrXxBlvOOn/0nf5VdFpiDDAMkSitvicDR4jWc0Z7sPN/
-         QTyHfyBYXK01VW2gWtpiHZi1Mb999BnZzFR7zlQi0Psmzxgp77mciiwowj27qGRpyAT2
-         0A+cc3tzgthb/lYP85eqvMLBaY2Agck38p+CY0ZW4AsKQo+JwiXbcGhbpghtme0BR+oO
-         XLfkH1fr+/6idyq/VbelxtvQ7NLS/FtbVPdkGw9MFqFeNTt07LvoqFLvGU9BEbGXcPnH
-         wmFA==
+        d=linaro.org; s=google; t=1707389566; x=1707994366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULymJuwmD+Lr46QJ71fk24DGc1du2NJ/zYZWiE1O5UM=;
+        b=T/mJ8J8Frannm3s3QiRhLyEnK2rbjSEIJ0pJk3FHXPjj/0ZV4Ms6GTyXgpi0CIc7ee
+         LeYVWAcgMh1PRkrAcyCUo3a9qhlB1jAt1NubPf0FyTzlK0LdH3YC9dv9dXx3HvP6L5Bk
+         LrufGX1MXiLNXB6DjfP4jpKODSN678CSgzoJ9Ys+AQVp7/BrN3fR9L0fHPL6EQ/XODrk
+         gJpt+GvjGgO3MxRJqkvDAZNz7y0dazG41SGvnsje57wpIu2Z/W9yNpmOECp5y4dN4IqE
+         EC1CnMyz5rLHa1UEjuifHDMzQ91RoW805HdLUPqTKM+Q5Q+whEsGjNIMT8xeb2JPQDwA
+         Ic5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707379722; x=1707984522;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Toj79ymKzNIKiZBdlDcH6ZznHrVcAbCsKACfCBNCkOo=;
-        b=iypYuQgG1GdcvjYFvsfL0/IC91kTu0ceMf9i9u/WMXImH7n/in6k7gQ+Q/PZJBrIap
-         d3aAKPSdBkgy2A63aaRJD5N6QTpNHZp6tjYjFy6Cc6f1O0u+/pPcHYftKKtqiZ0EthoY
-         gEyOBSupfSmIfT+b4D07rLP0c6Ugs5CZpLMluFa3ga1X8svQth46oR2Dknv65Yy8HdZS
-         CsXIhfoXUs2ZCOKiSGOIfka2LLXQZZABRRrZzopW9icfRFr2IWj6Y1ZuOl1kIn5WIy8N
-         VNq3+f0wyKw17eclIvuxqVR4qGc1i9mLt5lZRTshmT+lwBIity/X3acvLsLpRLZACBX7
-         oJGw==
-X-Gm-Message-State: AOJu0YxzAHIJjr5BM6RvmnnMXODXPO3uOK2kLFbSkdSkoxH7zkeA+fRA
-	Cvz/GPYgtjqMeJv/tkehBi00UR9onDl+7nPaX9k2rS7Ixp9Pr/QofG3ie9FqZTA=
-X-Google-Smtp-Source: AGHT+IGTTlIUWS2U4hnjFra03OBr2NF6ysl00pLA3hZpRrUPSIeOwzQjZJKyK1JHXdu8va9R6ZadKw==
-X-Received: by 2002:a5d:64eb:0:b0:33b:48ee:8a31 with SMTP id g11-20020a5d64eb000000b0033b48ee8a31mr6571911wri.13.1707379722682;
-        Thu, 08 Feb 2024 00:08:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWSI+ny4D3Pz9fHERhXgGGh6e3HzBn0krV3BWtF8I64DZUDa+GBovZraZbO88NiQ0/rsfc1+lMJ9UmMyMSF5ZXzwUba5Dn+7UzdPnXPcNPZWXvtgQ7G9CiSF1pk4sTqP55+TTXK4oWTqyjxnCSAzlLQOTqGVZWMRTy0ePm6tfirY/mUj8T/Dhv0sko70NwNXQMnkKcGMY64OniHq6ixE1gIaK9bVJm/2Dsu/WsNwV/FcTtz/UGLm9GCcCixHTdlbYjJFFIPFQu/ljr6KRZhSqtX79KrcIFeqU4KCmDZZmG10e/Od563kDbMMUQjFzBYINP5xqB/H8vnx9cibL99zQZDmCUivJftCriJ/bdPgJcYMN9ygbfcDmapeQVeH7fWU1KgyrNGITvF+Cy5jRezZ4g1OWmPFZNLZBTEVYw+VhxzUuuHaY3jfEEz13ntBBZKva3aznb+wR7ldjDCFUhfgOBXT5xpRsuXSKHrW779xRaONtXnku4jCd440JY=
-Received: from [127.0.1.1] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id m3-20020a056000024300b0033b2799815csm3065421wrz.86.2024.02.08.00.08.40
+        d=1e100.net; s=20230601; t=1707389566; x=1707994366;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ULymJuwmD+Lr46QJ71fk24DGc1du2NJ/zYZWiE1O5UM=;
+        b=PGwEyzNkli1549/Msrboj1E0BeXJ5sMnPrx8lx2333T+5ENz/kYWA4mvRLgYq93k/g
+         5ypcdCtXR5MVqf8z6iWIV+1yJkIeIHulxftDNCeU2nzeEOEVzLiRCBjmEHlcYW9BG1AG
+         O+FJjvid8TuPuNCaKLYUfTn6XizzZUh3y5Gr8swdoFLRdIsmZ9fJjxGKXQE/oCGQoY7C
+         c6hZ9Em55femf9DRiC3Pmxff70rh0nQxqudJjLV10gGVZ+5/HK1Gc4o41oFPekWhXiuv
+         wrsArmvqDtSmSBWKWxZfAJsLAx6ZDAxvzBCbhOkcY2K1pw2DM1yMM8DhN1y4jXOyGGHT
+         +iDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTyHDwXEKjTjyR9kdrMhCdUNQfphbjhNL9x4wrTIwf9Mqoopn1NWjps9YsNS0XkjxLpKXECnxbqeJmZQl5qslQsY5bC7FQL5RyIOsKRWjDLf0=
+X-Gm-Message-State: AOJu0Yz0jOChoA+Rtl3VpzdBsxf9isaiVrChra9EYqUEb0s+4YCJURcl
+	Jr5i/p0CJHpolLZ3nPG8vchWj1hlcESSs79tJLy5noFHpDCKOeDCLSVmZYlQ7xs=
+X-Google-Smtp-Source: AGHT+IHSQ/eekp3xo5+hhK7tiyrNeOIKtbM+FLiPFEeiXtdBsZ1zWPFLxSafr6BJGZfZPPirQp7H1A==
+X-Received: by 2002:a5d:47a2:0:b0:33b:4965:cccc with SMTP id 2-20020a5d47a2000000b0033b4965ccccmr7610614wrb.46.1707389566390;
+        Thu, 08 Feb 2024 02:52:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUJIbt/XSD2As4nymbMxlVRelZyipTS1wVsTFu8DBkc/dckLnWGCGYNUCbsJJNOS1v8In6Oze72UR2p65kmuAUVT7sqNUB4LtXA+iugolWQS0izth50/oxD6kA2ZqbF7B9PwZyJntm2tgoO/C6RODAcerOfLhYlXfsFsDgGLXmu9tA8PzsPqETodCQtxgOD9Qon//74uDbSxdDGA3MigiNOg5dsttNkb054VJzoNZDqSZ2kLnXIqQkkuWUQVpOv8cwX4ITRbDCVC5kwzTnXfi1hgyPZ+XD6tkLei/4W/3NmmTY4rcKRgKD0RaPvB6pz4rY=
+Received: from krzk-bin.. ([178.197.222.62])
+        by smtp.gmail.com with ESMTPSA id q13-20020adff50d000000b0033b4d603e13sm3319416wro.51.2024.02.08.02.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Feb 2024 00:08:41 -0800 (PST)
+        Thu, 08 Feb 2024 02:52:46 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: peter.griffin@linaro.org, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
- tudor.ambarus@linaro.org, willmcvicker@google.com, 
- semen.protsenko@linaro.org, alim.akhtar@samsung.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240130233700.2287442-1-andre.draszik@linaro.org>
-References: <20240130233700.2287442-1-andre.draszik@linaro.org>
-Subject: Re: [PATCH] arm64: dts: exynos: gs101: add stable i2c aliases for
- gs101-oriole
-Message-Id: <170737972037.52344.9107022607101399076.b4-ty@linaro.org>
-Date: Thu, 08 Feb 2024 09:08:40 +0100
+To: Peter Griffin <peter.griffin@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] arm64: dts: exynos: gs101: minor whitespace cleanup
+Date: Thu,  8 Feb 2024 11:52:43 +0100
+Message-Id: <20240208105243.128875-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
 
+The DTS code coding style expects exactly one space before '{' and
+around '=' characters.
 
-On Tue, 30 Jan 2024 23:37:00 +0000, André Draszik wrote:
-> Now that we have more than i2c interface, add aliases to ensure
-> deterministic bus number assignment.
-> 
-> So as to keep compatibility with existing Pixel userspace builds, use
-> the same bus numbers for hsi2c_8 and hsi2c_12 as the downstream
-> drivers with the intention to eventually add all the earlier busses as
-> well.
-> 
-> [...]
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../boot/dts/exynos/google/gs101-pinctrl.dtsi    |  2 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi     | 16 ++++++++--------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-Applied, thanks!
-
-[1/1] arm64: dts: exynos: gs101: add stable i2c aliases for gs101-oriole
-      https://git.kernel.org/krzk/linux/c/72ccd925dcbd2ad6935a4874679b6cf5b3de7156
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
+index e6a9776d4d62..a675f822acec 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101-pinctrl.dtsi
+@@ -251,7 +251,7 @@ gph1: gph1-gpio-bank {
+ 		#interrupt-cells = <2>;
+ 	};
+ 
+-	pcie0_clkreq: pcie0-clkreq-pins{
++	pcie0_clkreq: pcie0-clkreq-pins {
+ 		samsung,pins = "gph0-1";
+ 		samsung,pin-function = <GS101_PIN_FUNC_2>;
+ 		samsung,pin-pud = <GS101_PIN_PULL_UP>;
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index c7a9e81d23b9..80cc933cca3d 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -73,7 +73,7 @@ cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0000>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&ANANKE_CPU_SLEEP>;
++			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <250>;
+ 			dynamic-power-coefficient = <70>;
+ 		};
+@@ -83,7 +83,7 @@ cpu1: cpu@100 {
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0100>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&ANANKE_CPU_SLEEP>;
++			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <250>;
+ 			dynamic-power-coefficient = <70>;
+ 		};
+@@ -93,7 +93,7 @@ cpu2: cpu@200 {
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0200>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&ANANKE_CPU_SLEEP>;
++			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <250>;
+ 			dynamic-power-coefficient = <70>;
+ 		};
+@@ -103,7 +103,7 @@ cpu3: cpu@300 {
+ 			compatible = "arm,cortex-a55";
+ 			reg = <0x0300>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&ANANKE_CPU_SLEEP>;
++			cpu-idle-states = <&ANANKE_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <250>;
+ 			dynamic-power-coefficient = <70>;
+ 		};
+@@ -113,7 +113,7 @@ cpu4: cpu@400 {
+ 			compatible = "arm,cortex-a76";
+ 			reg = <0x0400>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&ENYO_CPU_SLEEP>;
++			cpu-idle-states = <&ENYO_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <620>;
+ 			dynamic-power-coefficient = <284>;
+ 		};
+@@ -123,7 +123,7 @@ cpu5: cpu@500 {
+ 			compatible = "arm,cortex-a76";
+ 			reg = <0x0500>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&ENYO_CPU_SLEEP>;
++			cpu-idle-states = <&ENYO_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <620>;
+ 			dynamic-power-coefficient = <284>;
+ 		};
+@@ -133,7 +133,7 @@ cpu6: cpu@600 {
+ 			compatible = "arm,cortex-x1";
+ 			reg = <0x0600>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&HERA_CPU_SLEEP>;
++			cpu-idle-states = <&HERA_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <1024>;
+ 			dynamic-power-coefficient = <650>;
+ 		};
+@@ -143,7 +143,7 @@ cpu7: cpu@700 {
+ 			compatible = "arm,cortex-x1";
+ 			reg = <0x0700>;
+ 			enable-method = "psci";
+-			cpu-idle-states =  <&HERA_CPU_SLEEP>;
++			cpu-idle-states = <&HERA_CPU_SLEEP>;
+ 			capacity-dmips-mhz = <1024>;
+ 			dynamic-power-coefficient = <650>;
+ 		};
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.34.1
 
