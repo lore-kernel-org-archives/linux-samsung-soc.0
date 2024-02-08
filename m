@@ -1,81 +1,101 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2F8200AE
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Feb 2024 18:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A9C50240;
+	Thu,  8 Feb 2024 21:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707417772; cv=none; b=UivO3mRcju+1ydYXX2Jebew8uEF7n0BsgX9VHkxTMpqCQSGTgqC+liSq5fkmpWKAtV29XZ/o1gdkPpj5wigntReeUJoEPm3XaycIzafHx4J5OvTjTL9bsUf91ODB8ajvtGCdmftkcUERB3vWG/fKyQOPKETE4SW/gaRqiiwljoE=
+	t=1707427319; cv=none; b=SGtCbgKXs8gc5k4MuTzBLYyGQtIjK+xqgLQrRWFj29KNgOmUGHs4JGQRMPUrTv8BCwBHDETDgQFu37muvmDW9md4FBCkZ6aSSf0rdrwHHxMAdIxc39noZADv2hu1vED0vBMvrgRI0wWHiwrtqSlSM6Fwr9sW+d2+XJt+7WOzu8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707417772; c=relaxed/simple;
-	bh=LjWKC4FgKErYbA5m+BAGEdZhUfZWEtslt5I3yi/qufY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=FPUSDPiut3fQ1288nqWVxx5AK/0WHYWL6/OolNO8+Ge+B3PFpTX1yQGZt9WXbhnQX2k0U8+wGNIqzE7MZ8fjZHH1f4nML8wKhSrJW4b/KUz/cw+a/uzX2s9LDplqheoqZIc/XpbyFiaouVU9KxFqJ9/cnkjjvYkcQMzVElVtvtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E30Ut004; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1707427319; c=relaxed/simple;
+	bh=7kFefmY9OkruYvpC22qfl6iaCiaO242TM4HTYdl5UDw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HkXcgmwe5oAkRf4CNnDE1qDlSnMHxOaRoJD0RZtwSRT7xWtFK1Pvf9m/2m1yU6vk5j4RFbZo9jdi2uxsqqvnBIurjRP6Lip0IcNlO4lzss4DiHIeGj8Bf4/wO2ivXfPqW145RpMjrdJy5JkFnGFra85wRZfZEka6IFDiifr0wQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b41Wji/P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E30Ut004"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-56002e7118dso297037a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Feb 2024 10:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707417769; x=1708022569; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=t6PQ5AqWVezsrngLP+KCv3nSnPdNr4bX5OhiIjOdlUI=;
-        b=E30Ut004frvAV9ihywkcIzeDOdiZ64uIWgIVEqWu6Wd5GXtU688uxnDRZ0PC7X47WL
-         Xhnhk79bQpWZeli/8/zGxHsj4acsuG4A6XDXm70BeClLdctxeHVqGOqfrsNq+wxhTIFH
-         uXfYc+mZacqwPK8pDy/jg/jYMkNFUhJzHsS2pXQUZN7tKuef2BlCui/OTQhuziOEqdx2
-         xeA3hqYv0qE+IyEPGTXZPsG7bpGa93z+iZXYq57sjSr22ud5wxyN9NQkl0EYTpbLPvsJ
-         2r4vUpIHwtgyVa30rtzWgbGiJFWg1nIb8cVv0sxulKROd+tmdGd0s9ZuiEbq19/y3BDZ
-         6wQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707417769; x=1708022569;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t6PQ5AqWVezsrngLP+KCv3nSnPdNr4bX5OhiIjOdlUI=;
-        b=TOcTJs11zNGLzJjV6kX2PAnpkjnVEJzR7mgbNMwKwntUxzKcOj1gHw6n1nL46P0SOO
-         /q3NyH1+YxhMacd1ivDE8hffK+e0sbQm5zAZaSty5cZjTOTAO2WBytGW/t6bJZXh8eip
-         3up2eB2AC8L46rKR8Tn5uVL1i97LgFkG00Z1v5rqCvKyj3FmySMNwA5GRqVWSQRfOgv8
-         xyGKvXzU+FCRdIOisG6fE2HWgw0J/pVVnSw2jQBqR837BiWIu552vv2+w2RIqGgETOGO
-         UhGW8ANTCgsszzcDK1cIMxykN09Fn61yJia2MqsY6NQ+jnC9JbFJdHVMm0nVRMznJ0Nu
-         qqpg==
-X-Gm-Message-State: AOJu0YyfD/FwFWiWwJYvwGY82Ao1Mpf0LU5UcaizMMauMCvy0XcE9V1m
-	M6ycuI5eqAh6Tfsi70b3OlbziCgMl7hGmLqOdAySCGv3mqWgNPWb1EPS2s2bjlTWgUW4Lc36e5Z
-	obdLjARYJTSFnYFJfKzwbTGjPS3xGCD70oE38jaWUGTAzqY1aUHl6IcU=
-X-Google-Smtp-Source: AGHT+IHAAsWefPdiaZwJjAsjSBPamm0mOa143vCMxq+h5D8nb2cj5pO9HuqAdFTzY9Vty8PvPr5584JckCwCrvZPF/g=
-X-Received: by 2002:a50:fc0e:0:b0:561:206:4995 with SMTP id
- i14-20020a50fc0e000000b0056102064995mr54920edr.38.1707417769045; Thu, 08 Feb
- 2024 10:42:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b41Wji/P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D29FC43390;
+	Thu,  8 Feb 2024 21:21:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707427319;
+	bh=7kFefmY9OkruYvpC22qfl6iaCiaO242TM4HTYdl5UDw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=b41Wji/PSSGxOAp7tKK8Kd4OM532AlOMLT7ZaIXaY4g+XaOVdPWb8KrgOXWQmvPQx
+	 dLE4r494hLgqrBFkVjCAmrLTkXfEFNxKdqmTOkBFYdxIj+YMoqu+okQ8nPJ6CKxW22
+	 tiWpCCkDHhEHhh2cSyqljk9gosEddjLiODxvLo6RwLO0KEs38SrX60CLEv0Z7jSbsM
+	 fc7kjPazyMo5mbAaThm5jfwKZVllAQxpGJ9zvBGTwlw91jYEkTkozDNaLbO8XqO5s+
+	 uJKcmOOmvo48G9wuH+VqsISlVyQjkG/yIl1S5N1s+cjlA8P6Re2lDZSjLoqQoU8s4g
+	 HKIOvBEK1hIwQ==
+From: Mark Brown <broonie@kernel.org>
+To: andi.shyti@kernel.org, semen.protsenko@linaro.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
+ linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
+ willmcvicker@google.com, robh+dt@kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240207111516.2563218-1-tudor.ambarus@linaro.org>
+References: <20240207111516.2563218-1-tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v2 0/4] spi: s3c64xx: add support for google,gs101-spi
+Message-Id: <170742731537.2266792.3851016361229293846.b4-ty@kernel.org>
+Date: Thu, 08 Feb 2024 21:21:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Seth Jenkins <sethjenkins@google.com>
-Date: Thu, 8 Feb 2024 13:42:38 -0500
-Message-ID: <CALxfFW7nSev3UmgdOpc_Sai52yGo3NSO2iNQ=p5Xi4O=cPRAQg@mail.gmail.com>
-Subject: Users of exynos drm driver
-To: inki.dae@samsung.com, sw0312.kim@samsung.com, airlied@gmail.com, 
-	kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-0438c
 
-Hi, my name is Seth and I'm a member of the Google Project Zero
-security research team,
+On Wed, 07 Feb 2024 11:15:12 +0000, Tudor Ambarus wrote:
+> This applies on Mark's for-next branch. It can be queued before the
+> simple cleanup patches.
+> 
+> v2:
+> - drop the include linux/types.h patch
+> - patch 2 is a preparation step as per Sam's suggestion
+> - contrary to Sam's suggestion, I kept the style for the
+>   s3c64xx_iowrite{8,16}_32_rep() methods, to be consistent with the
+>   generic implementations from asm-generic/io.h.
+> - s/just/only
+> - collect R-b tags.
+> 
+> [...]
 
-I'm presently looking at the upstream code present in
-drivers/gpu/drm/exynos, enabled by kernel config CONFIG_DRM_EXYNOS. It
-appears to be well-maintained and regularly patched, but despite my
-best efforts I have had difficulty tracking down the end-users of this
-driver. I have not been able to find any recent examples of this
-driver being compiled into kernels Android devices or Samsung Smart
-TV's (based on Samsung's open source repositories). I've also not been
-able to find any modern open-source codebases that utilize the ioctls
-exposed by this driver.
+Applied to
 
-I was hoping you may be able to point me towards modern usage of this
-driver - I assume it's present in kernels compiled for some subset of
-Exynos socs and in lieu of  the CONFIG_DRM_SAMSUNG_DPU code? What
-kernels/end-devices would that be?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Thank you!
+Thanks!
+
+[1/4] spi: dt-bindings: samsung: add google,gs101-spi compatible
+      commit: ff690e75d64b0ca119adbfc3bd0b444bc1d0a1c5
+[2/4] spi: s3c64xx: prepare for a different flavor of iowrite rep
+      commit: 80d3204a3b1dbef570ed29d4d375e4d6922da82d
+[3/4] spi: s3c64xx: add s3c64xx_iowrite{8,16}_32_rep accessors
+      commit: b7bafb9f54fc4609ff84ecd633f918f6f973f471
+[4/4] spi: s3c64xx: add support for google,gs101-spi
+      commit: 0f0212558bc9e33fad4148d3f44745a367076b20
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
