@@ -1,93 +1,137 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFB6657C5
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 07:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B977815C0
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 10:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707463778; cv=none; b=BGikrTCB7VBAQ2hZ8RHQlq8HQBZlFFyDAxmUSNfwRRqV5nbXY9z5Ph6tYR2/f/clK09kQ00K/PRiYYJnZcVOHVRoSAW/pvau0ZDRDmPk0AN1Sr+qoNwFw8Qv0fM1erEJA6cfQxkJOuYsZjabAlDnYE6NL0PvLhIjuxOmcL2b/UY=
+	t=1707474950; cv=none; b=BxaOCtD2JY2MEiTuwKZcHEQjNPJhp7/iMtuRfdTf3VIct56y0yPdhcgichVZO2tWYrYnR9TjFYtR+2JL918WoHd8FDf1DWW2B2hEd+bPHRBeBbLVuPAP1hpXJuQtUCWAXioBdZ1hWuhHtRFoEVVf9O3vCLQhdROwNDSBdGuXQh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707463778; c=relaxed/simple;
-	bh=W6QV1F5OZdUlqW/SY1DByMknSuiUmFQ6MYwYVErpvZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hUsODL862vU5EvI1+SV8dfFgdLr2AumWGaRH/TUl88efn8DdVnl+7O4HFNCdXVYp2ZAbmE/r+7IKkgqv8o0MtJzFsPrH98Y4z3hhw0GkSm3LMLdnYoXmhi6gtidSFauN6ByperKlH4XtPLg6kPrpmSS8rCa+ZA1CbxMyHXBm698=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=trpZPYTp; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1707474950; c=relaxed/simple;
+	bh=Mh1E9PeJjOSqtWbFh8Fz3144DuBxk5lGa2WIC0FhKC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sswQ/GleH6COEFIR5MSFoJnmjuVdY+GmSrt38S/EIe8WX4LByvs7rSK7onquHEPYZ5vwWWtL6P0JaREI7E7vqlxh6o12l8CFedBsZyOn4ydwwmrB4rS5j6NX8wofBO/BUejdDGRDKmMPSTYSr2882/ly0RqkyHr6s8tTmhHLrME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yy4r/7GI; arc=none smtp.client-ip=209.85.217.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="trpZPYTp"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-339289fead2so296195f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Feb 2024 23:29:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yy4r/7GI"
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-46d37c74f53so192219137.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Feb 2024 02:35:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707463774; x=1708068574; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lH09KwUmvRJm+9gd5yEmEWslMg47ivyjsgyBYqEU8qM=;
-        b=trpZPYTp/GR90lTpuMva1/eawaCwRUssPg/HuZ/CwvkXEpBoE5IORMDyNGAKTxIcne
-         +C2Uz8LL2GVsY+Po2MDkhNpwPTp+ThbhxulDKwILgSGf8SGU9Mphh9rYg1lzs7HFRsLX
-         x1ge0Ml3FdScg0sE+y+R46AZPS15m1v6Z1vV27vL/jkBLHYH07tts9aWNNK65JkL9kZL
-         HYBRo4At9V8UeekezxjiOKA3E5f4vjlOc0ye34iOaXw4q+O+55p+zfw/9qY9OAFFS34L
-         4mqtDJudmLfKGy8646MqhXYwbZYK5N8sykZ7Ebq7l/eG9LaKBO26NojxUZCHPu1CXMZV
-         y0bA==
+        d=linaro.org; s=google; t=1707474946; x=1708079746; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C0AaPX0aZcuXGu3S0z1IdEkLhaMcgiZgBjdGD9S23tA=;
+        b=Yy4r/7GIDScXh0YKhQ+K+7/UDlksVqIZSC/3XkNdbh0jR2n0ivk7AHz/vCdahltYA4
+         nCl5kpQR628ANHMInbKrsuUNAJ0IeRJhHTWGJ5lRptaPLZBUY3CDpsUQ4IBW13yKlghC
+         hNGOXAv11z/5BFoYVWKG3kVtOfzPudNQVxcZWOijsha4n7r8k1HkKZhoFeQvHZ98vKGA
+         Ljoue7aHfqoGt+FUtm4ATV3Lwdhp0g6zRni9txWfXP6i/xF+PKdCA7wJthN4FGZmFy+0
+         Rap9p7qieMK1M2hts5nf8R2IDie/DRgbKdySYqJRcpLoBPd6RTwaZ4rgDLi45DeqACou
+         ZW4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707463774; x=1708068574;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lH09KwUmvRJm+9gd5yEmEWslMg47ivyjsgyBYqEU8qM=;
-        b=iZSgVhupMkunTQGGrozEbeR6GcSGCYIGc48XYKBNDrqZ3wfsbQsgWSI1sppUVpIFsf
-         TFHktdh9GRym8MS+cE2hUl97cOKK47iS28ILKw2X14znVmZt5gTmXzY5j0uG21MS9ieb
-         rEwJVSWQ7AmrHJKFxfmMlvw5jMbY5OT5V25ZwqaG4e+kX81EkbT33nVCHry+WT2obbuJ
-         lOtLtGfsiEaAwBFBHBe+rVMWDH1D5svKPMgICAnEp5lwf/KT0gidyVZ25UcBVomqeD/d
-         n/IsNPsrcBnSWpEKSAYzawxanfMjsrZ+Vy7vYN+raE7edptjZ+uFcXmAdZcBJjk3j6na
-         ZJjw==
-X-Gm-Message-State: AOJu0Yz9G1K7Yos7BfGq5bEHLY3bt8mCsvsm9vqFmBxiHxer8HPT44T+
-	q+aiTWaN/T24m/NvTSi5s2nCcOIwM4BUlkx4QMF/E6EVYU37U6poKfAMiFgYMxw=
-X-Google-Smtp-Source: AGHT+IF+fiyjc2z/X/cVa0KX6WTDzvImZ41KjIv5u/T6NEuXieOHvVuqQ0plf0W3pkHkZw5aAPSxAA==
-X-Received: by 2002:a5d:6a51:0:b0:33b:45f7:636b with SMTP id t17-20020a5d6a51000000b0033b45f7636bmr452067wrw.22.1707463773812;
-        Thu, 08 Feb 2024 23:29:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWuq7Va3emGJe5IAatx3ATyenu9yuBn3x6EWEmQ1x6qrHfv1jjx88hWvzth50CDrREpGNNe1yxK9tewl9/GQ6p6b4bQPqfyxSx6sNZEkd4RqVCJecxhuM9JSeDCgpUGZ6CiU+EnzvIruudYUguCtEGGRvlPKKTc4P4mfhCvbgOxDVucwuk9aKclBpM6DmtnlJCyQq4MO6mZYo1nePkK38mkqAsIfb6qTCGry/F9bYiE/cgghDCPLQ3gOW3oC/pIb9NWl9k7JLMmkA8yTo7cpxvDl++kOn0T2pWogYdzDklhB/NJSf+U1qjYjScYuhXZx5PXD1SSy/j21880Pmo+zVZc0g==
-Received: from [127.0.1.1] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id c5-20020adfef45000000b0033b4719eb6esm1084936wrp.27.2024.02.08.23.29.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Feb 2024 23:29:33 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: alim.akhtar@samsung.com, linux-fsd@tesla.com, robh+dt@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
- Tamseel Shams <m.shams@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240205082625.39259-1-m.shams@samsung.com>
-References: <CGME20240205082631epcas5p170b45d20431bfe0b9410caf470216e92@epcas5p1.samsung.com>
- <20240205082625.39259-1-m.shams@samsung.com>
-Subject: Re: [PATCH v2] arm64: dts: fsd: Add fifosize for UART in Device
- Tree
-Message-Id: <170746377270.4997.2411756438071063883.b4-ty@linaro.org>
-Date: Fri, 09 Feb 2024 08:29:32 +0100
+        d=1e100.net; s=20230601; t=1707474946; x=1708079746;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C0AaPX0aZcuXGu3S0z1IdEkLhaMcgiZgBjdGD9S23tA=;
+        b=lYnC9tlqv2nGOz+ucvlmXu4mzbOsSiHESzTgENlY2ohlMqZNkmug+5Hl/1WMh3G1rF
+         2qkXw/0RLmiL+qR6GkQpdoTA4L7TjvN/PLA5L8HDcYTq443xTcP8hwJ5O19LVF5slr2B
+         WDqF9RN4aHWrtSSBiVHTeAsE7bsaRoxRs56sisyTj3Os5ZtEwAfforkZywD6pBLBMfj+
+         yiGWLCIqY72Vo00kJMmlyx9SslEblM1I0tIcStPIvAdHOkukyOPssTTpHu6JoVMezTe7
+         DuQIQYAKwUdkEPvWxzVeQjmwONaCRraJVKYrOPVQJjXamtafZy/4GhKT+zcmHVgVAFm1
+         2vNA==
+X-Gm-Message-State: AOJu0YxXkgoVs7brp24XveZhgA8bD98MClu6D9xFH+UbKL9HX8cMNCiw
+	XOJsNStzzwrrK7EZb1Jxfo5zkmOvfcP0CrSYYO+hIvHxS3WR0bCw0MXxdbCl4++0g1bzmHg+qq6
+	a1QieHlMdcreAWOOjajaUnXTZJKNabiK39faFgQ==
+X-Google-Smtp-Source: AGHT+IFp9wZFp7PGu0RcR1uD2IpDXLMQRWQla3gRj8qRezXJyFyxHkmQv5rHnuraGHJB+dMlsRycHuckgzpTuB99yYs=
+X-Received: by 2002:a05:6102:ccb:b0:46c:fb37:393b with SMTP id
+ g11-20020a0561020ccb00b0046cfb37393bmr1104868vst.11.1707474946599; Fri, 09
+ Feb 2024 02:35:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+References: <20240208161700.268570-1-peter.griffin@linaro.org> <20240208161700.268570-3-peter.griffin@linaro.org>
+In-Reply-To: <20240208161700.268570-3-peter.griffin@linaro.org>
+From: Alexey Klimov <alexey.klimov@linaro.org>
+Date: Fri, 9 Feb 2024 10:35:35 +0000
+Message-ID: <CANgGJDoaxDLxPBxc=2kFO+omF8FcTf_3et1=J3h1BF8X27XbaQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle()
+ for PMU regs
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
+	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
+	semen.protsenko@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 8 Feb 2024 at 16:21, Peter Griffin <peter.griffin@linaro.org> wrote:
+>
+> Obtain the PMU regmap using the new API added to exynos-pmu driver rather
+> than syscon_regmap_lookup_by_phandle(). As this driver no longer depends
+> on mfd syscon remove that header and Kconfig dependency.
+>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-On Mon, 05 Feb 2024 13:56:25 +0530, Tamseel Shams wrote:
-> UART in FSD SoC has fifosize of 64 bytes.
-> Set fifosize as 64 bytes for UART from Device Tree.
-> 
-> 
+Tested-by: Alexey Klimov <alexey.klimov@linaro.org>
 
-Applied, thanks!
+Tested on odroid xu3 (exynos5422). Watchdog works as expected and can
+reset the system.
 
-[1/1] arm64: dts: fsd: Add fifosize for UART in Device Tree
-      https://git.kernel.org/krzk/linux/c/3197329072f0ed2b1272af98ad4299a290036f65
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+> ---
+>  drivers/watchdog/Kconfig       | 1 -
+>  drivers/watchdog/s3c2410_wdt.c | 8 ++++----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 7d22051b15a2..d78fe7137799 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -512,7 +512,6 @@ config S3C2410_WATCHDOG
+>         tristate "S3C6410/S5Pv210/Exynos Watchdog"
+>         depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+>         select WATCHDOG_CORE
+> -       select MFD_SYSCON if ARCH_EXYNOS
+>         help
+>           Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
+>           SoCs. This will reboot the system when the timer expires with
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index 349d30462c8c..686cf544d0ae 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -24,9 +24,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> -#include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/delay.h>
+> +#include <linux/soc/samsung/exynos-pmu.h>
+>
+>  #define S3C2410_WTCON          0x00
+>  #define S3C2410_WTDAT          0x04
+> @@ -699,11 +699,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+>                 return ret;
+>
+>         if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+> -               wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+> -                                               "samsung,syscon-phandle");
+> +               wdt->pmureg = exynos_get_pmu_regmap_by_phandle(dev->of_node,
+> +                                                "samsung,syscon-phandle");
+>                 if (IS_ERR(wdt->pmureg))
+>                         return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
+> -                                            "syscon regmap lookup failed.\n");
+> +                                            "PMU regmap lookup failed.\n");
+>         }
+>
+>         wdt_irq = platform_get_irq(pdev, 0);
+> --
+> 2.43.0.594.gd9cf4e227d-goog
+>
