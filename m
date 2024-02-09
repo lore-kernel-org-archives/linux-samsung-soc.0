@@ -1,100 +1,176 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2060F83CA6
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 19:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0630E6AA1
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 20:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707505324; cv=none; b=Pclm2BOafTMMToRYeg7SPwo3m7n5C7b05Zs82eZxC9eNdmw7bj33PtVs3sqCUMVlhu1NxDqteUnYlDgLR/c8iW7oCn+73KAnyNXs6NVflqF1meuui9k6URb4c1d/wIOlfqNN/1Iu6M4F/qSwe2lM5Oam1FMWfG75wPYB/Xnct0k=
+	t=1707511433; cv=none; b=e0Ojfy/WrU/vByYE9FQ8HE4823+Ow5choJxC3TKFjOP9EQPm6KCa4C1lGgyTYAJNBW5T6QbeRUTicUaCwSZ+ucYuF9Qf7VUh05gV+KumOW+qi0YQCu9V9GcUJujZXA4CYpRzBYpXc2FrIgW5kdaf8G9mhDcXKlAm4c6nYlKC8nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707505324; c=relaxed/simple;
-	bh=r2GAPlcgJGDaQINPFrlt1R7Ny0c1Ad/P9P2yI23KbDE=;
+	s=arc-20240116; t=1707511433; c=relaxed/simple;
+	bh=qPNWxsczTO7GV0dPUZcGSpqspC6V0iFjVzyRpKvq3X4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rV3PCXgCm12DjtWK7m+LrCBTlB+cOMproR//+7ZpwFJaSTpVxoGqmhTdg0QhbKcIorwDPzWF/dYDiJGWoEF4GC3z+qBcH1UWHTx6VWYMAU4Oka1rVW14UAlT4AypHbrFSvoLUHTjmItYPoocjWxzgERjFNoCtM/hx9/ZeGjdtmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=YrISHW17 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+	 To:Cc:Content-Type; b=ryXVOSZwLb3Y15IjZT/648h7I0YClD8jNlA3KXWzniHb7wL/OEqDMeohGeRhdNhBhB+btSgTq12AhkKp2ftEAz+LSj1ZHu5BJbgUoip4/Ie0927+/yJTCkVlqqaoRFinwDj3bJhA++rrAqn9KSV2oZD3O7UEqACenxymFjM8KYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hBCLSj6+; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="YrISHW17"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-42c2998d3a3so9593031cf.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Feb 2024 11:02:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hBCLSj6+"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e06d2180b0so1125554b3a.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Feb 2024 12:43:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1707505321; x=1708110121; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1707511430; x=1708116230; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r2GAPlcgJGDaQINPFrlt1R7Ny0c1Ad/P9P2yI23KbDE=;
-        b=YrISHW17lCS/ho4//b4p9TqA8m5OjeuDgKDgXz2T9RvjLqJMDjuxgIo0sijLNlnvbw
-         vlbxBsbVIkA1cbwtLh9in9xFo1B4OsJA0GK8KZWWdHvOBSe5wPtvUL146w7QRZY9MQGr
-         NEW5JhuUvu2EeSXDCMubEXBxZWE+NnF6BbEMvRNFUugYnfCRkJrf80B6e9HDwpGNXcsU
-         PKEXQrVV6iloQuodAuf5jDgLu7zt+VWUHsH4xY31Z4+MZkdqqrszFzl1HE58BU0sqGjE
-         XjYLaGRX9jwOCKgEY1Q8HKkMLe12wEj+BgZXxmorOV5bUdfuVgOPnV2+qch5gHTJV4g5
-         u0VQ==
+        bh=TPuCellk6eYqVa9MX4sdjQ9QAgJeGQ/IRRQj+Cyjbi4=;
+        b=hBCLSj6+KkCwY6z4Bem+NZf8NX7cLp7odVe+/pn50irSaIJBADd9zXwnSimt+S0fpG
+         pEeUt3vO6tvxHVTA1KZiJzfnnCwxt6BCX3xF7t+hVnKsnpp7ymtUmtV7N6vovPr8ZJqM
+         ux8vAAPDpSL2Vi2fyTbgFy4T8R0Q+Iarh9PUjSVFzs4AAwfXA9kfyyEam0LDxnEQnBb2
+         5w+IVcJ+uFyZiKGeJo4KzwBWSvPRNfSl+gw+r+7RXRAOOqCGtRECDrhCnyHynKXNVO6x
+         bUTm2RmZDMtbvsDufxQsL57ixM8Ps8weq8G8Qrm18Pwtvi9Wul1ZGPsozeI1S2TlfUIG
+         Rktg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707505321; x=1708110121;
+        d=1e100.net; s=20230601; t=1707511430; x=1708116230;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r2GAPlcgJGDaQINPFrlt1R7Ny0c1Ad/P9P2yI23KbDE=;
-        b=E5EdM9/ZS3W4yYeYknuDiQuyxsBaB3UUBUTmCOEBNGLCvXhcOb1rLRY6j+65wqAFSF
-         msBKetCCI5v41gXGjunl7BeLk1TBR4I8aWzYHAMu0CJpqz8tfI6tBeWQfrtC/utu3Ekm
-         tWH6eV1in7MFCibGXVaI53KOVnYTPsu550WwkFAW8z06b/Kvb35q5/b9E8jG/1/2uo3F
-         wO+Pt5yEofsELWUc52AW28r29n/NL0esLnWGn0iwiDCVtCCVl8xHNtOhRuUNaMs9RGPu
-         oOrtWAI4l7mVs+9K2qEIHSwO6obnrs++7EFI5mbKCD0LkJhL5R+CeSAmFfRjbkD7H5l2
-         ZZlw==
-X-Gm-Message-State: AOJu0YwU1Fowl0UO0NIrtpMGiQwPwWhoELtx5leRrkY1vWm+RwhLL0ub
-	YiWcEZbr3iWmcpIL72jSyp02rT4eiHZRUyA9vJuW9KwVPtYjxYzMJ4rkWdlX6UUuXPPWJDSbV4e
-	HHA2BLr7rJxNwKqmLZvm0brDFWBqYfXu2qck1Mg==
-X-Google-Smtp-Source: AGHT+IH7/mZBjs2EjvojqcpcvFrKDkqXbLzePQwHXjWI3pjuKzeuKKYp6aDXpqli+cr6MKqGXO43wFaJScoTxBnZMCE=
-X-Received: by 2002:ac8:5e51:0:b0:42c:5f0e:6411 with SMTP id
- i17-20020ac85e51000000b0042c5f0e6411mr85445qtx.25.1707505320844; Fri, 09 Feb
- 2024 11:02:00 -0800 (PST)
+        bh=TPuCellk6eYqVa9MX4sdjQ9QAgJeGQ/IRRQj+Cyjbi4=;
+        b=c7NiHe8w+r//TTLkyXhuMYIfKWAQE/AK+AOJbb0Z4dqCK2dYmAddkCNTZG1wVKTIhN
+         P2tffOZx63j42IRrGPUxz8HwzsGf0DyRwTrrGgKBdrq97aiqSBQq4uD4eUy92ToOfljy
+         7tfjaJnhtKpEkreAV1Riomao+DFEGjkNRLYoGQVDN9Qb2xVMoUjpSfIYdDOCUHSaq5LX
+         SiigGRIE0rG48Hb/xvtZqbBl7AlVGDVZLKW/mXMJKiKiBFrHuamDVHtTyS11+M7YOX4f
+         0EFEY8qMBkG7eTb5pqU+40Ryfvyx7oTw27TUqwXxbv8M52bjPBKKBuldMtXM8KzxgpUj
+         cXsw==
+X-Gm-Message-State: AOJu0Yz8a6g1AMJlm1U8pInyiwpcfQxyOKzaR+D7DQYuW/P2CPShjb+W
+	BvFGUn5JN0wu3py3EO3FETBOAa2ew5gH+sNCYR9U95aeZe3J4FtqKchg3+u1T8NrnTZlVnxCwvA
+	k15f8sBZ5822/LisHWn1n96lv9KN7lGGchEE+wA==
+X-Google-Smtp-Source: AGHT+IHxT2vJWHBnr83Rt4mszpZUd9Y5Ux1o49kC7wAXkigzdHXT6Hl72EkvyTIEPZvAAUlI5pSHbZleyvFADVLIDDc=
+X-Received: by 2002:a05:6a21:3a41:b0:19e:bc68:3c72 with SMTP id
+ zu1-20020a056a213a4100b0019ebc683c72mr289248pzb.28.1707511430323; Fri, 09 Feb
+ 2024 12:43:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
- <20240207174102.1486130-8-pasha.tatashin@soleen.com> <2718393.mvXUDI8C0e@jernej-laptop>
-In-Reply-To: <2718393.mvXUDI8C0e@jernej-laptop>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 9 Feb 2024 14:01:24 -0500
-Message-ID: <CA+CK2bBqzd4imzKxGJVUn3SkvDBPk_=CLA1Fm05kz3DqSE2gpA@mail.gmail.com>
-Subject: Re: [PATCH v4 07/10] iommu/sun50i: use page allocation function
- provided by iommu-pages.h
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jonathanh@nvidia.com, joro@8bytes.org, 
-	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com, 
-	bagasdotme@gmail.com, mkoutny@suse.com
+References: <20240208161700.268570-1-peter.griffin@linaro.org> <20240208161700.268570-3-peter.griffin@linaro.org>
+In-Reply-To: <20240208161700.268570-3-peter.griffin@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 9 Feb 2024 14:43:39 -0600
+Message-ID: <CAPLW+4n6e2SQSMSAQ66U09JhYRc7gqkwBqU2LOg_=Z2Aqdd4cw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle()
+ for PMU regs
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
+	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
+	alexey.klimov@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 9, 2024 at 5:55=E2=80=AFAM Jernej =C5=A0krabec <jernej.skrabec@=
-gmail.com> wrote:
+On Thu, Feb 8, 2024 at 10:21=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
 >
-> Dne sreda, 07. februar 2024 ob 18:40:59 CET je Pasha Tatashin napisal(a):
-> > Convert iommu/sun50i-iommu.c to use the new page allocation functions
-> > provided in iommu-pages.h.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > Acked-by: David Rientjes <rientjes@google.com>
-> > Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Obtain the PMU regmap using the new API added to exynos-pmu driver rather
+> than syscon_regmap_lookup_by_phandle(). As this driver no longer depends
+> on mfd syscon remove that header and Kconfig dependency.
 >
-> Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
 
-Thank you,
-Pasha
+Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Tested on my E850-96 board (Exynos850 chip) with Debian rootfs. Test proced=
+ure:
+
+1. Added this to /chosen node in dts:
+
+    bootargs =3D "s3c2410_wdt.tmr_atboot=3D1 s3c2410_wdt.nowayout=3D1
+s3c2410_wdt.soft_noboot=3D0";
+
+2. Check if watchdogs are active:
+
+    # dmesg | grep watchdog
+    [    1.488149] s3c2410-wdt 10050000.watchdog: starting watchdog timer
+    [    1.489003] s3c2410-wdt 10050000.watchdog: watchdog active,
+reset enabled, irq disabled
+    [    1.496928] s3c2410-wdt 10060000.watchdog: starting watchdog timer
+    [    1.502984] s3c2410-wdt 10060000.watchdog: watchdog active,
+reset enabled, irq disabled
+
+3. Generate a panic to cause wdt reset:
+
+    #  echo c > /proc/sysrq-trigger
+
+In 15 seconds (wdt timeout) reboot happens, and bootloader shows this
+message for the reboot reason:
+
+    Watchdog or Warm Reset Detected
+
+That proves regmap works fine with this patch. Otherwise reboot wouldn't ha=
+ppen.
+
+>  drivers/watchdog/Kconfig       | 1 -
+>  drivers/watchdog/s3c2410_wdt.c | 8 ++++----
+>  2 files changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 7d22051b15a2..d78fe7137799 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -512,7 +512,6 @@ config S3C2410_WATCHDOG
+>         tristate "S3C6410/S5Pv210/Exynos Watchdog"
+>         depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE=
+_TEST
+>         select WATCHDOG_CORE
+> -       select MFD_SYSCON if ARCH_EXYNOS
+>         help
+>           Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
+>           SoCs. This will reboot the system when the timer expires with
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 349d30462c8c..686cf544d0ae 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -24,9 +24,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> -#include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/delay.h>
+> +#include <linux/soc/samsung/exynos-pmu.h>
+>
+>  #define S3C2410_WTCON          0x00
+>  #define S3C2410_WTDAT          0x04
+> @@ -699,11 +699,11 @@ static int s3c2410wdt_probe(struct platform_device =
+*pdev)
+>                 return ret;
+>
+>         if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
+> -               wdt->pmureg =3D syscon_regmap_lookup_by_phandle(dev->of_n=
+ode,
+> -                                               "samsung,syscon-phandle")=
+;
+> +               wdt->pmureg =3D exynos_get_pmu_regmap_by_phandle(dev->of_=
+node,
+> +                                                "samsung,syscon-phandle"=
+);
+>                 if (IS_ERR(wdt->pmureg))
+>                         return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
+> -                                            "syscon regmap lookup failed=
+.\n");
+> +                                            "PMU regmap lookup failed.\n=
+");
+>         }
+>
+>         wdt_irq =3D platform_get_irq(pdev, 0);
+> --
+> 2.43.0.594.gd9cf4e227d-goog
+>
