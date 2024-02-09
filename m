@@ -1,25 +1,59 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9163C1E487;
-	Fri,  9 Feb 2024 13:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF184D11B
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 13:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707486273; cv=none; b=rOzSdRK74HWJATeBOOsmLIRQibFEhUQqG5AWZLhcfy6x0AvhSM1R8f07LUnNGoXQOWhIB1u+9+iogqcPn9o9rxbt0JzOjEHlY7iRsqzqrE+gnDnWHeydw+4GnnY3JLlVsyfgHnJsbR3Z3pUMlLrdghFMFdaY1Nid6mFqnCSKnMI=
+	t=1707487023; cv=none; b=ov8rxiOqr07O+e9WVlIrPUWqlPwIXLWh8RrsqTd+Y0wwqE9NYrQO+ylu7HjYd0kXzM+NYlSMD/4K7yNTRwYrDzehUGEIIVUCq86pQDkHqo47LEfg3J0zYObPrVj0UcDaQBN4qLT4OIEtPv5PWHShds8lrJWgsSV07tih4DO/qgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707486273; c=relaxed/simple;
-	bh=IgoMaZM9kw0Wpb/KvMD5/2YbdK7ysD6H6KO4z/h6t3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GRwhBcmNdbztbLvfU4ZBAvyrnWm9cP5u4UEQPreprYqaBW+cgY+zOqdsjzj9AcFQAyCiQoj3omwYDhuxhpdOS3P8/lCGKFogKNLE4K4pfeNY7pGrzVapY1BLHIMgAZfYrMdEa8cms1ab+/3Yn7L2VOFOCPpqNBKac98e442OQCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9D9BDA7;
-	Fri,  9 Feb 2024 05:45:09 -0800 (PST)
-Received: from [10.57.47.119] (unknown [10.57.47.119])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B0283F762;
-	Fri,  9 Feb 2024 05:44:21 -0800 (PST)
-Message-ID: <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
-Date: Fri, 9 Feb 2024 13:44:20 +0000
+	s=arc-20240116; t=1707487023; c=relaxed/simple;
+	bh=z//pvBUqkHmpGmPuuH/kfHX3N6YFwziHPsYCpVYzl3w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=st1FbVRgBINQle7E9dvYlvC/JA8ERj1NdUIExfiOnjDj60ZyharH24QrxK+CZ7ouapxuawyNYoeJ/ShSNRgr86Vr1e/nkB6d9ZDrhfSqde6t7cvvry01W0ZdU9MDJ3v/eM6NX9nQFncRnFaH6gv+WVMQc5lEzEJEjj+IRvR6cOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CASDjK63; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CASDjK63"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40fd72f7125so8264135e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Feb 2024 05:57:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707487019; x=1708091819; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wzAUr8FZtB/gqQ92jmcp3rLgsmu5bcmcfB5ZKvPCTAo=;
+        b=CASDjK63gSugYxkyXrq3Rn719zQWps2hSdkGj31ZFiXul12AeQ2SRIsEfl42yhVO6B
+         mHbu90LrfCnJt66pVYWoaklAuwRIVU/WLjNftpR9RldxNJPWDK68nqmBfvMRYxrYcF8X
+         U492hL7H1CWbB3h0FhLaNxIos13JAFlSfkR8qEaeQoz93HmFwUqIKydwg6MKvMoHVOu3
+         yJcBNxs+pczk4ctpJQCRQOu1k8CzV7vjt6xoxLcdQbd+wUkdr5CTTrt/x6X4KreU/a2e
+         sJvGqWs9Tpur6p63mI+dhKX8bT8M3OJvrVkAECDlFNMvGVW9kkb11mQBTVS2gOW1S3H/
+         ErdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707487019; x=1708091819;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wzAUr8FZtB/gqQ92jmcp3rLgsmu5bcmcfB5ZKvPCTAo=;
+        b=N3uLxkXE2XmoRBlpOb8HA2v4TdoxLj/z1kpss+y6K7SBEQi6YEEgmAVnJb6m/FbToP
+         z6ePsuUzOcO6zy6Gfi+xaOJtq63E+aiqFy1jI60GFodNunwe86HvwWkqPPA9MhohsCLh
+         ddqetFVsKmJA4BuJcE99nWptIQx/zD+C3bpud84EZt0pUdN9gszh5Y/Gj6DhHuBranTV
+         AzmW/mcHQKas36E5NwmqE+AfZAOaU9szES7Jvrmcb6wvJXHa20DSsURWMkyLtsUrOsMa
+         J4bUM16uWFjHFkrKnsfNGKkw3yIVVJIr93W9eOxgqrrD39qmjVfPJTiNi/qKjzjfOOPm
+         CnFQ==
+X-Gm-Message-State: AOJu0Yxijt14KMz4uMaskTqyEo1k2Qd5M4NbcomX0eYdRXKdpLsNpDuq
+	NyOaUNejDXv479wKUGgTh0h6KNC9E4GktUSG7ep/3P+Glg5XqwzuwizQ0cxqwKM=
+X-Google-Smtp-Source: AGHT+IEQLdyh2jCb+lCGrI2nNjyBAeHm6ekGsfjlzmDpZwXFB+7GiDDq9gKjNYS8MsJewo5AjV1XJQ==
+X-Received: by 2002:a05:600c:3d0b:b0:40e:fb4c:801d with SMTP id bh11-20020a05600c3d0b00b0040efb4c801dmr1298142wmb.13.1707487019031;
+        Fri, 09 Feb 2024 05:56:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWqzdyXPQpxuboeQxrzdVEqFAjU+CVslIikEPsUW2QQfQZXYGuwwroNabViw65p+INrxFkbWKR4aLNysYn8znZWXwpiPcZJhXQaN7r82SfEfo0susUG3IoLcRzoDavxVp48t9pbrchLcyp33CQYXUs72wdhHr6E919JKxuFxf1Y5GK+pwuXg5WbNj+IM1MrLEd2nVo0n7pCdhrO+SqUMyx6AzjDFNQM/b7uW3hYlqPMkzTB075tJxSxm77z3ZY3iYGOV1dcWPqynNKaNnhNOdfL4YFhPpAJ108SgjTkKFagnCnQ1w8PWv4Pnwp1v3EcFDUKZBFN1hZmVQKRM9DgUagyNtMW7qrW+ygkR+Fa0gTeLqBL5ojuKKu7GtZm9jqg9DwD1amfLWFicbQMRLh1kcjQwzxWoadTmlA68oxQ18XQJZZ2p1tdOCKfzXZ+uZy+sP4EKQ83pcq/DGViab3cFG4/5t/C5Nk/WlxfIZIa1y9+PuqYrCc9nOd61vfneEXo/GgCL7V0TFxFHwmeZIX3pvUt3gek9gg26DCKiG0qiNIx6+CkFP4q5OyWQbppcum6/EBm7VKwrlOu5ojo2Jx6AwyQ1aqHZNHycjcKaGD4Fvww7jINzjl5/nc=
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id m6-20020a05600c3b0600b0040e9d507424sm789392wms.5.2024.02.09.05.56.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Feb 2024 05:56:58 -0800 (PST)
+Message-ID: <c2b08463-cb13-4e9b-8797-8ebcf1047f66@linaro.org>
+Date: Fri, 9 Feb 2024 13:56:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -27,285 +61,99 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page
- allocations
-Content-Language: en-GB
-To: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
- alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev,
- baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org,
- corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
- heiko@sntech.de, iommu@lists.linux.dev, jernej.skrabec@gmail.com,
- jonathanh@nvidia.com, joro@8bytes.org, krzysztof.kozlowski@linaro.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org,
- m.szyprowski@samsung.com, paulmck@kernel.org, rdunlap@infradead.org,
- samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
- thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
- vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com,
- rientjes@google.com, bagasdotme@gmail.com, mkoutny@suse.com
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
- <20240207174102.1486130-2-pasha.tatashin@soleen.com>
-From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20240207174102.1486130-2-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 01/12] spi: dt-bindings: introduce the ``fifo-depth``
+ property
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: broonie@kernel.org, robh@kernel.org, andi.shyti@kernel.org,
+ semen.protsenko@linaro.org, krzysztof.kozlowski@linaro.org,
+ alim.akhtar@samsung.com, linux-spi@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, arnd@arndb.de
+References: <20240208135045.3728927-1-tudor.ambarus@linaro.org>
+ <20240208135045.3728927-2-tudor.ambarus@linaro.org>
+ <20240208-grating-legwarmer-0a04cfb04d61@spud>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240208-grating-legwarmer-0a04cfb04d61@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024-02-07 5:40 pm, Pasha Tatashin wrote:
-[...]> diff --git a/drivers/iommu/iommu-pages.h 
-b/drivers/iommu/iommu-pages.h
-> new file mode 100644
-> index 000000000000..c412d0aaa399
-> --- /dev/null
-> +++ b/drivers/iommu/iommu-pages.h
-> @@ -0,0 +1,204 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2024, Google LLC.
-> + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> + */
-> +
-> +#ifndef __IOMMU_PAGES_H
-> +#define __IOMMU_PAGES_H
-> +
-> +#include <linux/vmstat.h>
-> +#include <linux/gfp.h>
-> +#include <linux/mm.h>
-> +
-> +/*
-> + * All page allocation that are performed in the IOMMU subsystem must use one of
 
-"All page allocations" is too broad; As before, this is only about 
-pagetable allocations, or I guess for the full nuance, allocations of 
-pagetables and other per-iommu_domain configuration structures which are 
-reasonable to report as "pagetables" to userspace.
++ Geert
 
-> + * the functions below.  This is necessary for the proper accounting as IOMMU
-> + * state can be rather large, i.e. multiple gigabytes in size.
-> + */
-> +
-> +/**
-> + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
-> + * specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the head struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
-> +						    int order)
-> +{
-> +	struct page *page;
-> +
-> +	page = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	return page;
-> +}
+On 2/8/24 18:24, Conor Dooley wrote:
+> On Thu, Feb 08, 2024 at 01:50:34PM +0000, Tudor Ambarus wrote:
+>> There are instances of the same IP that are configured by the integrator
+>> with different FIFO depths. Introduce the fifo-depth property to allow
+>> such nodes to specify their FIFO depth.
+>>
+>> We haven't seen SPI IPs with different FIFO depths for RX and TX, thus
+>> introduce a single property.
+> 
+> Some citation attached to this would be nice. "We haven't seen" offers
+> no detail as to what IPs that allow this sort of configuration of FIFO
+> size that you have actually checked.
+> 
+> I went and checked our IP that we use in FPGA fabric, which has a
+> configurable fifo depth. It only has a single knob for both RX and TX
+> FIFOs. The Xilinx xps spi core also has configurable FIFOs, but again RX
+> and TX sizes are tied there. At least that's a sample size of three.
+> 
+> One of our guys is working on support for the IP I just mentioned and
+> would be defining a vendor property for this, so
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> 
 
-All 3 invocations of this only use the returned struct page to trivially 
-derive page_address(), so we really don't need it; just clean up these 
-callsites a bit more.
+Thanks, Conor. I had in mind that SPI has a shift register and it's
+improbable to have different FIFO depths for RX and TX. At least I don't
+see how it would work, I guess it will use the minimum depth between the
+two?
 
-> +
-> +/**
-> + * __iommu_alloc_pages - allocate a zeroed page of a given order.
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the head struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
-> +{
-> +	struct page *page;
-> +
-> +	page = alloc_pages(gfp | __GFP_ZERO, order);
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	return page;
-> +}
+I grepped by "fifo" in the spi bindings and I now see that renesas is
+using dedicated properties for RX and TX, but I think that there too the
+FIFOs have the same depths. Looking into drivers/spi/spi-sh-msiof.c I
+see that the of_device_id.data contains 64 bytes FIFOs for RX and TX,
+regardless of the compatible.
 
-Same for the single invocation of this one.
+Geert, any idea if the FIFO depths can differ for RX and TX in
+spi-sh-msiof.c?
 
-> +
-> +/**
-> + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
-> +{
-> +	return __iommu_alloc_pages_node(nid, gfp, 0);
-> +}
+Anyway, even if there are such imbalanced architectures, I guess we can
+consider them when/if they appear? (add rx/tx-fifo-depth dt properties)
 
-There are no users of this at all.
+Cheers,
+ta
 
-> +
-> +/**
-> + * __iommu_alloc_page - allocate a zeroed page
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_page(gfp_t gfp)
-> +{
-> +	return __iommu_alloc_pages(gfp, 0);
-> +}
-> +
-> +/**
-> + * __iommu_free_pages - free page of a given order
-> + * @page: head struct page of the page
-> + * @order: page order
-> + */
-> +static inline void __iommu_free_pages(struct page *page, int order)
-> +{
-> +	if (!page)
-> +		return;
-> +
-> +	__free_pages(page, order);
-> +}
-> +
-> +/**
-> + * __iommu_free_page - free page
-> + * @page: struct page of the page
-> + */
-> +static inline void __iommu_free_page(struct page *page)
-> +{
-> +	__iommu_free_pages(page, 0);
-> +}
 
-Beyond one more trivial Intel cleanup for __iommu_alloc_pages(), these 3 
-are then only used by tegra-smmu, so honestly I'd be inclined to just 
-open-code there page_address()/virt_to_page() conversions as appropriate 
-there (once again I think the whole thing could in fact be refactored to 
-not use struct pages at all because all it's ever ultimately doing with 
-them is page_address(), but that would be a bigger job so definitely 
-out-of-scope for this series).
-
-> +
-> +/**
-> + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
-> + * specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
-> +{
-> +	struct page *page = __iommu_alloc_pages_node(nid, gfp, order);
-> +
-> +	if (unlikely(!page))
-> +		return NULL;
-
-As a general point I'd prefer to fold these checks into the accounting 
-function itself rather than repeat them all over.
-
-> +
-> +	return page_address(page);
-> +}
-> +
-> +/**
-> + * iommu_alloc_pages - allocate a zeroed page of a given order
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_pages(gfp_t gfp, int order)
-> +{
-> +	struct page *page = __iommu_alloc_pages(gfp, order);
-> +
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	return page_address(page);
-> +}
-> +
-> +/**
-> + * iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
-> +{
-> +	return iommu_alloc_pages_node(nid, gfp, 0);
-> +}
-
-TBH I'm not entirely convinced that saving 4 characters per invocation 
-times 11 invocations makes this wrapper worthwhile :/
-
-> +
-> +/**
-> + * iommu_alloc_page - allocate a zeroed page
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_page(gfp_t gfp)
-> +{
-> +	return iommu_alloc_pages(gfp, 0);
-> +}
-> +
-> +/**
-> + * iommu_free_pages - free page of a given order
-> + * @virt: virtual address of the page to be freed.
-> + * @order: page order
-> + */
-> +static inline void iommu_free_pages(void *virt, int order)
-> +{
-> +	if (!virt)
-> +		return;
-> +
-> +	__iommu_free_pages(virt_to_page(virt), order);
-> +}
-> +
-> +/**
-> + * iommu_free_page - free page
-> + * @virt: virtual address of the page to be freed.
-> + */
-> +static inline void iommu_free_page(void *virt)
-> +{
-> +	iommu_free_pages(virt, 0);
-> +}
-> +
-> +/**
-> + * iommu_free_pages_list - free a list of pages.
-> + * @page: the head of the lru list to be freed.
-> + *
-> + * There are no locking requirement for these pages, as they are going to be
-> + * put on a free list as soon as refcount reaches 0. Pages are put on this LRU
-> + * list once they are removed from the IOMMU page tables. However, they can
-> + * still be access through debugfs.
-> + */
-> +static inline void iommu_free_pages_list(struct list_head *page)
-
-Nit: I'd be inclined to call this iommu_put_pages_list for consistency.
-
-> +{
-> +	while (!list_empty(page)) {
-> +		struct page *p = list_entry(page->prev, struct page, lru);
-> +
-> +		list_del(&p->lru);
-> +		put_page(p);
-> +	}
-> +}
-
-I realise now you've also missed the common freelist freeing sites in 
-iommu-dma.
-
-Thanks,
-Robin.
-
-> +
-> +#endif	/* __IOMMU_PAGES_H */
+----
+$ git grep fifo Documentation/devicetree/bindings/spi/
+Documentation/devicetree/bindings/spi/atmel,at91rm9200-spi.yaml:
+atmel,fifo-size:
+Documentation/devicetree/bindings/spi/atmel,at91rm9200-spi.yaml:
+atmel,fifo-size = <32>;
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:
+cdns,fifo-depth:
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:
+cdns,fifo-depth:
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:  cdns,fifo-depth:
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:  cdns,fifo-width:
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:  - cdns,fifo-depth
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:  - cdns,fifo-width
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:
+cdns,fifo-depth = <128>;
+Documentation/devicetree/bindings/spi/cdns,qspi-nor.yaml:
+cdns,fifo-width = <4>;
+Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+renesas,tx-fifo-size:
+Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+Override the default TX fifo size.  Unit is words.  Ignored if 0.
+Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+renesas,rx-fifo-size:
+Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+Override the default RX fifo size.  Unit is words.  Ignored if 0.
+Documentation/devicetree/bindings/spi/spi-sifive.yaml:  sifive,fifo-depth:
+Documentation/devicetree/bindings/spi/spi-sifive.yaml:
+sifive,fifo-depth = <8>;
