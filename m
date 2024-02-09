@@ -1,44 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEF350A65;
-	Thu,  8 Feb 2024 21:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DF7657BA
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 07:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707427323; cv=none; b=J56YF63pLnw+44TTU6wYm89YAQbVZwIAymDffdTFJxqDmwzDwLkSsk65P2Hx9aUHdUmDfi8RZWG7jkk+n0ek7HeBge/5vRxsXEE4nJa4QSIfOKwA/TmsJ4EWCMI55sJf7jd45cGXKcmwyrDRBx1rE4Mh1b1ZgDf/jVguSAVGLz4=
+	t=1707463776; cv=none; b=dn9sGbvDsosMrdPoEG9aI7uacyXfN0ZXtblfsogdmu1NM275CgeWF4xY9258VQxM/0a8fKtPhWkJSND58m7trJJA0OsAVSuvYVPvRVI9/4+8dWsSE+0jHIxjmYFb9HR7rQEQUmOfh8yx9sAMPVh5qea0vjuROR4VqJcko0EQmo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707427323; c=relaxed/simple;
-	bh=hlfpOMjc2wHCb6Aasa8/yJSIz1ydkU62jVYWKmYJOYM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c/P/CmnUT0RWOaO9TcwfNMrcX37+GvuYyZNWHQAXkKqVak0lrvlsxfPv4AkrSXY3JwpnlUG6TmLBVb+4HOd7qsPVVKKPabTQht4iOQSD9GhRSYg5mwgzE657F67W6VlaBuzk3pEBov7gcoNS7Jx/sHDJ9D5hYCvaspP2cYR4vio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5OKxmLY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707463776; c=relaxed/simple;
+	bh=AgbsIvu0jxBk2WSTp2ODk82zoG3G2bVRhIz8ZYaly6s=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cuYDEbQyd6U334/8jJnSo/sDxcM3+VwhEp0ZvJExRC+V2iLT6hVTowhd6tAWGxhVtxdPkZZoa1acPYTtwq01ZhiiB+gjOSc+Ayf8Jl90TY5RtlW2MLhC2/I/FXuMwXHJfNMHIsCreIp8a29CMMzT5paAwYKZI2x7fWIvTgXNAcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pYskFGxJ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5OKxmLY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC19C433A6;
-	Thu,  8 Feb 2024 21:21:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707427322;
-	bh=hlfpOMjc2wHCb6Aasa8/yJSIz1ydkU62jVYWKmYJOYM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=O5OKxmLYLEudCIe7Yg2TblxtmFgf8ULom/2gSuiwAHBZJcnCoiCc+LVgnua4YRLmE
-	 vhsMqIhgW2o2p3hVqA2omJ7tXAs+os8h/ftymFs96HLXrMEA4YCRiIb4j2Wj1eS0Wz
-	 jBFWC4B3izNw30D2ZjMfrpvCyel47TMOYSD75TVWp9EbjxAPSUWhPmM4PvBXdDwOB/
-	 18378drKDCeLikDtFHzKpeAPKWk94w81wqqVlChaz6xOc7qZGSFrDh+nfJGMZ06O1N
-	 wYPGQRfFj05oIeYwWoF6LoaIt2EtjEaHKc/j+q386brH1Ow3wiAaH65pTmiKRMMbGW
-	 kyDs/wM4LlxYg==
-From: Mark Brown <broonie@kernel.org>
-To: andi.shyti@kernel.org, semen.protsenko@linaro.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
- willmcvicker@google.com
-In-Reply-To: <20240207120431.2766269-1-tudor.ambarus@linaro.org>
-References: <20240207120431.2766269-1-tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v5 00/17] spi: s3c64xx: straightforward cleanup
-Message-Id: <170742731939.2266792.15383830101755255462.b4-ty@kernel.org>
-Date: Thu, 08 Feb 2024 21:21:59 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pYskFGxJ"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-337d05b8942so289293f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Feb 2024 23:29:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707463772; x=1708068572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2o+G27tuHSzFtV1VEFRsDJZj27f9BKeouixsOON0/Pw=;
+        b=pYskFGxJlu5Q3nsJovmMyZbOraB8ugWibJPCP+YC9F3Z2j0e0EaNau9lAy3XP28czg
+         ukt0S46It75D6bJGuz3rJlE2Hql/OoWGAEe4wQq0uRL8LbO50UBxPe1fhBPV9gUH8G3A
+         FJHtW11W1lkK4HWMwGG7dybWaz1jG0gR/fgEk6bXgHtCRu6V+OLl9BOhOaL70x79IYFM
+         GixjR8t9YGpmjsTD1xchPzp1fqWhWidy2AWBQvBb1O0uDPjDjrZqcv3vTnbmOVG8PS4p
+         8JQfPhre2CY7vQtW6YI2xs1YM0SBZ3NEBWn0DfDf6m0DI/X4GZMMtpWSxtmQ8M09Ppe8
+         96NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707463772; x=1708068572;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2o+G27tuHSzFtV1VEFRsDJZj27f9BKeouixsOON0/Pw=;
+        b=ZkxGYA+YGZVFUGYVJdlsiDk8mkeJZz5RpncnfDuUCRXI4ZCOcnRyEXDCAwrkEI17HE
+         /ioDcE61HOHOEeSKKDhr25XOIhRCXEaqEwrabrR4QdHkxwl1EbSkkMoQJZqNyiW1OV6k
+         cgVOWLsimRcadK/qSw+CWep0SLjfX08zC6f1girc78i8nDYrv0MhebQa/1x2dLYFjNHM
+         4/DsVM1ofE+LWCcgAy+MVgJ61dGSuv8WF3Nk/SsNn1tu7xVMO/WBjnz3rhsxBByn3jil
+         IRngZ/emQmPZ/Ebu81gUTxrFBLn7nOMmnTkuRQNu2bycLgoMgF/5MJs0B0POPcSj3uJm
+         hYsA==
+X-Gm-Message-State: AOJu0YwUF5jGr8N1/fudeErrb1PUjgUkBtJPMRWiZWuRXPovRZY+/+fS
+	R4OuGHOma8r+fxcoARTPvRZMVf1VRXBjUf/iPkuVrsdkpb1akxSRpKaNsWPynCs=
+X-Google-Smtp-Source: AGHT+IGiPc5nkM2zPWLY107xKsup1vFnqdp30R3I78ncJp8MnFC+VkECVuUw6DhGBKujEcyWHh8z0w==
+X-Received: by 2002:a5d:64cd:0:b0:33b:65f9:20ec with SMTP id f13-20020a5d64cd000000b0033b65f920ecmr465290wri.21.1707463772444;
+        Thu, 08 Feb 2024 23:29:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW/4sNXwo6KngFY+PAeu0oNwTHReu0pXi2BI6qhTwQTKj2hhZbDAjijWlYCn399BtQ3uFGZ1DPf8RF/C3YgEhvfAF0Zf8ddyWINZeblrODAiNZqSrqpjXC3yWjyMeLBbNUoouNKiDhIwHXefRiIKjgj4ZWMfDlunmo1CyQn9neFkCMLHrAgIogxKo6fVGkKjXWDYmmJjuMU/SKmo4TaO46p/XhYMtScpOrgIumaty1zqCra8BCZzWVmrGuh+OcNbvZDAH8isVM+oprB0qnLBK7VmJBiA90VcUdzaCTAsJXnUXJaZVCoeHdJzfeb12ujpLxItC8vq8CLrzkIJ7xAypKiyKsAayHxf8tpjLcWvE/e7F1nI2hnAZ0uwJ2fmLIACtrliCIE0vu3wrEqJ5EAu5Eb2qnL
+Received: from [127.0.1.1] ([178.197.222.62])
+        by smtp.gmail.com with ESMTPSA id c5-20020adfef45000000b0033b4719eb6esm1084936wrp.27.2024.02.08.23.29.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Feb 2024 23:29:32 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240208105243.128875-1-krzysztof.kozlowski@linaro.org>
+References: <20240208105243.128875-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] arm64: dts: exynos: gs101: minor whitespace cleanup
+Message-Id: <170746377133.4997.4404186295778440756.b4-ty@linaro.org>
+Date: Fri, 09 Feb 2024 08:29:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -47,84 +72,21 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+X-Mailer: b4 0.12.4
 
-On Wed, 07 Feb 2024 12:04:14 +0000, Tudor Ambarus wrote:
-> The patch set has no dependency although Sam prefers to have this simple
-> cleanup queued after the gs101 patches from:
-> https://lore.kernel.org/linux-spi/20240207111516.2563218-1-tudor.ambarus@linaro.org/
+
+On Thu, 08 Feb 2024 11:52:43 +0100, Krzysztof Kozlowski wrote:
+> The DTS code coding style expects exactly one space before '{' and
+> around '=' characters.
 > 
-> Tested with gs101-spi.
 > 
-> Changes in v5:
-> - don't abuse the Fixes tag, it was wrongly used for:
->     - explicit header inclusions
->     - possible negative array index fix, which is just a posibility,
->       it never happened
->     - typo fix
-> - reorder patches, sort headers then explicitly include the missing ones
-> - new patch: "spi: s3c64xx: explicitly include <linux/types.h>"
-> - collect R-b tags
-> 
-> [...]
 
-Applied to
+Applied, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+[1/1] arm64: dts: exynos: gs101: minor whitespace cleanup
+      https://git.kernel.org/krzk/linux/c/28fafd554d233ef2344ee4a8709175b69bc93787
 
-Thanks!
-
-[01/17] spi: s3c64xx: sort headers alphabetically
-        commit: a77ce80f63f06d7ae933c332ed77c79136fa69b0
-[02/17] spi: s3c64xx: explicitly include <linux/io.h>
-        commit: 42a9ac378d918176e17592cbe79d8b0606f951e4
-[03/17] spi: s3c64xx: explicitly include <linux/bits.h>
-        commit: 4568fa574fcef3811a8140702979f076ef0f5bc0
-[04/17] spi: s3c64xx: explicitly include <linux/types.h>
-        commit: 7256d6bdd4fe0eac6d4bcd138c3d87f95f79c750
-[05/17] spi: s3c64xx: avoid possible negative array index
-        commit: a336d41bbea51e11e3e4f56bd3877a535c077129
-[06/17] spi: s3c64xx: fix typo, s/configuartion/configuration
-        commit: 97b63f4707046b2ef99d077dd4d333c3acca06ae
-[07/17] spi: s3c64xx: remove unneeded (void *) casts in of_match_table
-        commit: 271f18816b3ba2f75785660e427c16585b7302f2
-[08/17] spi: s3c64xx: remove else after return
-        commit: 9d47e411f4d636519a8d26587928d34cf52c0c1f
-[09/17] spi: s3c64xx: move common code outside if else
-        commit: 5d7f4f4367079992c7a1bb1654ffea87ddc82be8
-[10/17] spi: s3c64xx: check return code of dmaengine_slave_config()
-        commit: e9c49effde70fb4b10d0ad9c94b69fe6314fc608
-[11/17] spi: s3c64xx: propagate the dma_submit_error() error code
-        commit: 60dc8d342e933097eb82db5859edcac9077a6db5
-[12/17] spi: s3c64xx: rename prepare_dma() to s3c64xx_prepare_dma()
-        commit: 4c6452050530b741daf108de0c02cd2299f8f5d1
-[13/17] spi: s3c64xx: return ETIMEDOUT for wait_for_completion_timeout()
-        commit: 1a234accc93191a3a73eb4cc264abb6d79d63430
-[14/17] spi: s3c64xx: drop blank line between declarations
-        commit: 91a9b8e6b63eeb3634e736a4b65ae536c08155b2
-[15/17] spi: s3c64xx: downgrade dev_warn to dev_dbg for optional dt props
-        commit: f186d34071fb2a7db7249b09d5e1796b18b37d7d
-[16/17] spi: s3c64xx: remove duplicated definition
-        commit: eb8096c30ad07e6201830816e398b3ad603cc096
-[17/17] spi: s3c64xx: drop a superfluous bitwise NOT operation
-        commit: acd6c7b1d2765fd30b7d7487aff50dc824db314e
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
