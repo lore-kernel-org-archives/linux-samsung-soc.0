@@ -1,130 +1,142 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F366F06C
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  9 Feb 2024 15:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A1E762DC;
+	Fri,  9 Feb 2024 16:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707491977; cv=none; b=YW+1oZaVCPDDYkWefP+SIKJWjZaVHrP/UVzTqEyKex1rRMPwMknqko5XJ2PDV4XTYwO0ZWSLT6KV/n5KpjfZHKJH7BGUlAmfobeYGR9BO3Le7WLZfSqR6DOzOypfLpeaB5b9mm4HdKx74X9EQPSPUOMRjCHCW4KiFELYOe18FnA=
+	t=1707495682; cv=none; b=PKfHJxRK46u30m67pdZAseZOkePpwQG4aljmUj6OznIXaIapjgz9H1hn3RZ60vsuHB7F41LUk+YicSHNqkECBfEH0l6Q3eJcaVeGzMtHy5sejSXdU5ArDkDBZ3+rc83H2DD8azCmYcy9qZ5/inRB/ZUvL94aVmci68K9vOhW4UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707491977; c=relaxed/simple;
-	bh=eicFE24E2v83UgvSx/21HwdVSLPvUclZ8hDg9gz+Ifg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kq5B1CUYibvtcNKlbNBztOJa2qKSqclG3KpDdrqIIxocgtPfHvu/7oyEPBHPB4EjmjOlY456fKZze9Eqj2hjkhVm5hzVoDXD6c68zCfppzDXe57dNUKA81wC5zVKGRxdlXBgCo57VmQvIafkSR4SHvTXKqtUIJMNARhYOCvCeY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j4e8/vBi; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707495682; c=relaxed/simple;
+	bh=6P50JpMWtNawcrLYmSC8txcAEjCecYqddP8IbfkgA3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DU4jvsMYkelaMw2YbOFP6EW6QDMJw9yAkvXJqW2gquirDgAtXM2Dut1AhVoXyT6eWDPLu3sLH9BJ1tXO6acxkpF2PG/f9JzoSMi1wWeyfclXrkq8sTTUD98dy6mir7g6aQh1T3IVNiBhBmPyNgnpbcxN5zBSd7GxlpIg+QgeWA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hF2EIiWr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j4e8/vBi"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-21920f89441so552663fac.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Feb 2024 07:19:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707491975; x=1708096775; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VMsj7PALpNEPLf6iF4Dtv8Du3TIV+N98OxOoenWPal4=;
-        b=j4e8/vBiZgO1Y8VAoVpYaWkU42pyQZ0X1W2jk8ay5a+YQ/KcLIgGloag/APL6SedIg
-         5mYvDf7n4kx+1uWDerNUhA3fE1PoI0Ibb7W5KEghoDGzw4EZ01l2h7yfK0JuiVv3Lj6q
-         i/COOAd12jCcdhd1LVNun1WyvG0JyWX0g8tUAXth0zG56G6BS98ez0TS5Rg9LWO6tNIh
-         DYXyE5U+QUrQOy2XOkdrqbKbjkOfNxY3wwUJO3YCWNw85W7E9meCF3XJs31UTWv1OznJ
-         VNVhKAOGlxdtIzd7bZ2j+mUQ+IMSjparGc2RoklbuxArBIYcpPwvt+jFykq43rXUITld
-         MVTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707491975; x=1708096775;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VMsj7PALpNEPLf6iF4Dtv8Du3TIV+N98OxOoenWPal4=;
-        b=xPOsg+GQCoVLrk1siVUjuQhzxvBpTVwdhzLvfheQyK401gmW1i3lyaNi69soTEG/Fs
-         +lbKSNQXgAz9PpCKtzBohXUU28zR4ctlXrHleoKxS//Gt/PJNqIDGS+TPNk83BB4gFKL
-         ll4ZaeLNMZ8DNM+Q8QFcqWcJ0Cc91hzGLrw28YGjmV3uOr8drLTN68/82BSQIdK/vODW
-         KTcTIjmcMQ7CgY6SSZPWSIt4xTSyP/CEOpjPPR0WAq6+WhUwjqZK3kQkgnExbjhQGGzM
-         NwMsTXp7o/ilF1vIU9xoskiV4Amq6cW3ax/BnotnM9cdbeaxhMzAbO3A9voxV6YaWKM/
-         yAKg==
-X-Gm-Message-State: AOJu0YzcR2qsdUQ/uXS777wtMZg3vCsSp34bsCBRXfpswcwxi/0OEAik
-	Zj6UWLKvca3szioRIFvaYoeoWUfZr661i3sXyvQ6qw3rz59Lt8896/dqvid1nGm0/IlPNXTBPV0
-	vg7t+P134lFoFKpP6sCubXaiQSwA7WQ2volySEQ==
-X-Google-Smtp-Source: AGHT+IF0dIOHBU71xLJmPjDOFo0UjOkdUUwP49pCiNub3OkD2jd3EAMo4qvPH0D8UIF5eqpiNOnWVLUITyl5ZvYltFI=
-X-Received: by 2002:a05:6870:8093:b0:219:2259:b961 with SMTP id
- q19-20020a056870809300b002192259b961mr2186589oab.46.1707491974990; Fri, 09
- Feb 2024 07:19:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hF2EIiWr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FEDAC433C7;
+	Fri,  9 Feb 2024 16:21:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707495682;
+	bh=6P50JpMWtNawcrLYmSC8txcAEjCecYqddP8IbfkgA3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hF2EIiWrjPw+Pd13noyfJM2a0X3wBpj11gmQh5LXNvhwZuwyiaUALxiZPyJA3noAe
+	 SAyXo43AQs97YOuyh7+2k+q3sEej2tDUHKexse0N7KFS9AfyI23QEEO9tqqsbFYIKh
+	 rq7OdTgGF5FNILD6DMgYbltC0kmMHKxHuOdvgdZmMZo8s1fWBvg62sORYZW0bp8Msz
+	 io6TzO/hyZN/4jMNEy0vnTjt6Pjx62ZzL4dXSZl+aYkY8a15YwAUTvPAPdp45gaIxh
+	 fUPr+MaFUWlwdvSkXeiScC569n27Us+ziXK24iDYRBYUw9t9w42xY1Ne4c9q0BD/PH
+	 YiTiBj/THVklw==
+Date: Fri, 9 Feb 2024 16:21:16 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, broonie@kernel.org,
+	robh@kernel.org, andi.shyti@kernel.org, semen.protsenko@linaro.org,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org, peter.griffin@linaro.org,
+	kernel-team@android.com, willmcvicker@google.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, arnd@arndb.de
+Subject: Re: [PATCH 01/12] spi: dt-bindings: introduce the ``fifo-depth``
+ property
+Message-ID: <20240209-chest-sleet-a119fc3d4243@spud>
+References: <20240208135045.3728927-1-tudor.ambarus@linaro.org>
+ <20240208135045.3728927-2-tudor.ambarus@linaro.org>
+ <20240208-grating-legwarmer-0a04cfb04d61@spud>
+ <c2b08463-cb13-4e9b-8797-8ebcf1047f66@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208161700.268570-1-peter.griffin@linaro.org>
- <20240208161700.268570-2-peter.griffin@linaro.org> <CANgGJDpJX+ji1U3SN+2Q21FyckFQhmwb-Z2Qcx4-+GQ2ijmfCg@mail.gmail.com>
-In-Reply-To: <CANgGJDpJX+ji1U3SN+2Q21FyckFQhmwb-Z2Qcx4-+GQ2ijmfCg@mail.gmail.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 9 Feb 2024 15:19:23 +0000
-Message-ID: <CADrjBPqaUQXjkXLN8JagjF=HG6moXTRMULzKU93BCGo5iAqi-A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] soc: samsung: exynos-pmu: Add regmap support for
- SoCs that protect PMU regs
-To: Alexey Klimov <alexey.klimov@linaro.org>
-Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
-	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
-	semen.protsenko@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Alexey,
-
-On Fri, 9 Feb 2024 at 14:52, Alexey Klimov <alexey.klimov@linaro.org> wrote:
->
-> On Thu, 8 Feb 2024 at 16:21, Peter Griffin <peter.griffin@linaro.org> wrote:
-> >
-> > Some Exynos based SoCs like Tensor gs101 protect the PMU registers for
-> > security hardening reasons so that they are only write accessible in el3
-> > via an SMC call.
-> >
-> > As most Exynos drivers that need to write PMU registers currently obtain a
-> > regmap via syscon (phys, pinctrl, watchdog). Support for the above usecase
-> > is implemented in this driver using a custom regmap similar to syscon to
-> > handle the SMC call. Platforms that don't secure PMU registers, get a mmio
-> > regmap like before. As regmaps abstract out the underlying register access
-> > changes to the leaf drivers are minimal.
-> >
-> > A new API exynos_get_pmu_regmap_by_phandle() is provided for leaf drivers
-> > that currently use syscon_regmap_lookup_by_phandle(). This also handles
-> > deferred probing.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->
-> Tested-by: Alexey Klimov <alexey.klimov@linaro.org>
-
-Thanks for testing this on odroid xu3 hardware!
-
->
-> Apparently it seems tested-by should be provided for both patches. This was
-> also tested on odroid xu3 and I also have WIP code that depends on this
-> SMC-based regmap. No issues are observed and behaves as expected.
->
-> > ---
-> > Changes since v3:
-> >  - Fix PMUALIVE_MASK
-> >  - Add TENSOR_ prefix
-> >  - clear SET_BITS bits on each loop iteration
-> >  - change set_bit to set_bits in func name
-> >  - Fix some alignment
-> >  - Add missing return on dev_err_probe
-> >  - Reduce indentation in loop
->
-> I no longer see the compilation warning related to struct device_node declared
-> inside parameter list with v4, I guess one line change addition in exynos-pmu.h
-> does the job.
-
-I added a forward declaration in the header to get rid of that
-compiler warning in v4, but it's not explicitly mentioned in the above
-changelog.
-
-Thanks,
-
-Peter.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AYm2FyfJMLjy9NNH"
+Content-Disposition: inline
+In-Reply-To: <c2b08463-cb13-4e9b-8797-8ebcf1047f66@linaro.org>
 
 
-Peter
+--AYm2FyfJMLjy9NNH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Feb 09, 2024 at 01:56:56PM +0000, Tudor Ambarus wrote:
+>=20
+> + Geert
+>=20
+> On 2/8/24 18:24, Conor Dooley wrote:
+> > On Thu, Feb 08, 2024 at 01:50:34PM +0000, Tudor Ambarus wrote:
+> >> There are instances of the same IP that are configured by the integrat=
+or
+> >> with different FIFO depths. Introduce the fifo-depth property to allow
+> >> such nodes to specify their FIFO depth.
+> >>
+> >> We haven't seen SPI IPs with different FIFO depths for RX and TX, thus
+> >> introduce a single property.
+> >=20
+> > Some citation attached to this would be nice. "We haven't seen" offers
+> > no detail as to what IPs that allow this sort of configuration of FIFO
+> > size that you have actually checked.
+> >=20
+> > I went and checked our IP that we use in FPGA fabric, which has a
+> > configurable fifo depth. It only has a single knob for both RX and TX
+> > FIFOs. The Xilinx xps spi core also has configurable FIFOs, but again RX
+> > and TX sizes are tied there. At least that's a sample size of three.
+> >=20
+> > One of our guys is working on support for the IP I just mentioned and
+> > would be defining a vendor property for this, so
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+>=20
+> Thanks, Conor. I had in mind that SPI has a shift register and it's
+> improbable to have different FIFO depths for RX and TX.
+
+IDK, but I've learned to expect the unexpectable, especially when it
+comes to the IPs intended for use in FPGAs.
+
+> At least I don't
+> see how it would work, I guess it will use the minimum depth between the
+> two?
+
+I'm not really sure how it would work other than that in the general
+case, but some use case specific configuration could work, but I do
+agree that it is
+
+> I grepped by "fifo" in the spi bindings and I now see that renesas is
+> using dedicated properties for RX and TX, but I think that there too the
+> FIFOs have the same depths. Looking into drivers/spi/spi-sh-msiof.c I
+> see that the of_device_id.data contains 64 bytes FIFOs for RX and TX,
+> regardless of the compatible.
+>=20
+> Geert, any idea if the FIFO depths can differ for RX and TX in
+> spi-sh-msiof.c?
+>=20
+> Anyway, even if there are such imbalanced architectures, I guess we can
+> consider them when/if they appear? (add rx/tx-fifo-depth dt properties)
+
+I think so.
+
+> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+> Override the default TX fifo size.  Unit is words.  Ignored if 0.
+> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+> renesas,rx-fifo-size:
+> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+> Override the default RX fifo size.  Unit is words.  Ignored if 0.
+
+These renesas ones seemed interesting at first glance due to these
+comments, but what's missed by grep the is "deprecated" marking on
+these. They seem to have been replaced by soc-specific compatibles.
+
+--AYm2FyfJMLjy9NNH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZcZQ+wAKCRB4tDGHoIJi
+0tCHAQC+UahOjFrFh4KmlxoZGj3mhl0GhMgYnpK4Y008NNbSKwD7BWwhfjMZ1Zk1
+UZE3Fa1Tubov+aQxuH2m9T+rmex3fQg=
+=PHwh
+-----END PGP SIGNATURE-----
+
+--AYm2FyfJMLjy9NNH--
