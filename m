@@ -1,109 +1,220 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C823A1B5
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 11:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA183BB23
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 12:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707738783; cv=none; b=peW+t5OZXyeFXDqz+vuA80Aw8er8KplThyJ0LzAbeFXZBYKdyfxZXHPVn+eEtdaR2oTmBhZNEfD0w2htw+KhoMJ9FihWoXTosfOt7YSLQYwM/q9Kcc478HOV/JuMYujEccWqSF+T+uP9A65AuA9dvTOjhXUMonew1/LWCfMAZFY=
+	t=1707739321; cv=none; b=TwNge1Ta8YJ48pdZAsYWZOmdRqN3GRrs29w329ojigjpz9EBQZVCLEfWeWA2BV/8U97ARJ5Es+vz5S4xwZz3p/YQ/f6HqEeQfTjwc7I9vbRsEMHY95RiWJ8iroFR/fDMkB7CuetAcEPNZVj7ZSITHF25YMUNEwMymn4F0UOlzHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707738783; c=relaxed/simple;
-	bh=tgUf5cDe1cofW3YFvCaUyA8/If+CvXqWCB5051w11lI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QJnoR4pDidmQ2/mDEUerjT4+MlKbzzy4otZLUdsyR3kVutkKqEqIFOErLTshHcGfYvv+nTXlrZ7b89MXMMs9xB0DJx8V/8pq5MyhEQaDYuqrR/ESI0mE8GHPb4fP3m3jdTN2IhKWC3pFBsiXmgZT1gm95db8IP5bUOsjfiYtTsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SgEROgKo; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1707739321; c=relaxed/simple;
+	bh=6jOThHeHLJcV7xo9OpIo5+QWwr5tWK5FlUO10NVx9Iw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XAT5lc/j395fXBUoekr/C6S1dyGixnsAvRSi/nEjYQlm+RWeGRKfHAi1P5k3uTbWsr8HRsPVAFI1rT+FTxlvFKxADtv82MGETW26Rr+tP0VgtzlJluJAeGtnXEEiu7Qn6FG3Azmh5c7ww2P2qac4FzHRlQ7R4D3uQNxfZ4HnrKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TUKuyoTm; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SgEROgKo"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3392b045e0aso2126058f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 03:53:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TUKuyoTm"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-410c1ebf5e4so8223175e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 04:01:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707738779; x=1708343579; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tgUf5cDe1cofW3YFvCaUyA8/If+CvXqWCB5051w11lI=;
-        b=SgEROgKoO3Ev4uEh4durKAdmTUH3DXLpzpQ4RyE3OC1TqPryQ3Cp2XJNZmlI/QXwgz
-         lTtAKVqs5KRcvy88GroeQrwIPt7TL+kiCKUj4h5OVHW9UVc4MarcYXDnCnaT/nBqbRt1
-         k/oGGBPtXWbVEsY5g1q4y4EUvweajUuiwZwYB6qWYRyjhUytzg8MYexvDr+SbwGIwY6w
-         dV1gPhV9gJqCgLcx8EOmDZTxedNty485ob8NlUlgl91JWDymIDkC0iCz+8t+2iyngBaK
-         QwSy8/CDvcxTR+NXkGaZFlQcbrYUMljL93rxpVWuo01OkRrs/cN7sROItQcMdAtAoakT
-         2jtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707738779; x=1708343579;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1707739318; x=1708344118; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tgUf5cDe1cofW3YFvCaUyA8/If+CvXqWCB5051w11lI=;
-        b=KWDdAOHk9a5+ztr8DzjQsZJt/wER1nY+jNX6P0v8Vxr0tA6r9aaSSObf85+L52EyrP
-         50pmUcjfYYoUtC9hvLLR5rlgLmoZQBF4tS134/3Car+H31U5FYYaz0YU0UdaDLDAqd/w
-         efZYiyAcemCzxaWegpYP0kcAy/0cSwn/a2HevQqcFC51IeG3YtKGQb3Fbb89LKw2n5pU
-         A3/T0kiudXhBn415kGOyxk5SU6s7+vuT9CONEgiujLoXeB+T8jHnMmcvp+K+IJYNLU71
-         APVPelBsY/DkWO0gO30QRZashUpWeIrwe4xClxutarqmNlDFpEGMJyJqSBfor3EAwFwN
-         PK1Q==
-X-Gm-Message-State: AOJu0Yy7TC++HBsZ+Gl18IHQiPO2M2iYfw3Ikehs+CZEAXzCtyfE2FC5
-	Skd/uc3X+DvKuKqWqRUI8/hLlsfTp8Vk+T9Hlqs3vhHbYerl3KhwpqGXgUlnLUI=
-X-Google-Smtp-Source: AGHT+IHGfFETrL+9eMxIcQwLoov5Z9W8uA0l3Njtm5thKhrjvaxgrYH0De47HjFqToa/3yr0zt0+MQ==
-X-Received: by 2002:a5d:61c6:0:b0:33a:ed5b:3a30 with SMTP id q6-20020a5d61c6000000b0033aed5b3a30mr4324980wrv.68.1707738779650;
-        Mon, 12 Feb 2024 03:52:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUcruLJqNG90kGvtTv/QfdF8SsnaUAT7kIHoVhJBBdzt4dZQFXOJU9x3KjlMbxe8BnuCWqoKTZTAPnngAj1Rl9WRIFlTo/LDj26oowkY+456oPfSAk/j58Y1QIMUhT7qDKfjQRle52WIsG6vnfOQFgFOioZtJ/OBt3OW6Xtp3FX+V5feTTyUSN367ZRNQIHtLWIerGA98zF9zB7J5vT3P9XDOa/7cZlbQossO7NrxP75+ET7EgCVS+qINYyVQfyQ0C/VhE2GepwyUQWP6AyGy2XCfVfOpOlWQh0648DRPK9glYDOrCGEyS87ERuCSJ6b4qp8476lCYslLlPivZgnJK/8ppoXOzxnYiBOpOuhXlqID7b1qfnLx7J/JwyE4Dl0kt3W68iieUQdbUEuONkqtpS6lh5gJNxKqZHMlO2ZtAPNss9qSk/svQK8yafCXoC5tiuwmW4b7tO
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id dv5-20020a0560000d8500b0033b483d1abcsm6576312wrb.53.2024.02.12.03.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 03:52:59 -0800 (PST)
-Message-ID: <0ad3082c50e21a74de41ca9908bd53b72e1f1a9c.camel@linaro.org>
-Subject: Re: [PATCH] arm64: dts: exynos: gs101: add stable i2c aliases for
- gs101-oriole
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org,  conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
- tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org,  alim.akhtar@samsung.com,
- linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org
-Date: Mon, 12 Feb 2024 11:52:58 +0000
-In-Reply-To: <67a6564a-00bb-461d-b7eb-ca169df6d251@linaro.org>
-References: <20240130233700.2287442-1-andre.draszik@linaro.org>
-	 <170737972037.52344.9107022607101399076.b4-ty@linaro.org>
-	 <5972b6a4ae8669e2a9e872278b740b182217906b.camel@linaro.org>
-	 <dce39e15-32a8-482c-8751-af4a133f82d2@linaro.org>
-	 <c16c1f18a8c6f33a608618d4ccf7d8c8dbb6f88b.camel@linaro.org>
-	 <67a6564a-00bb-461d-b7eb-ca169df6d251@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.1-1 
+        bh=2RfW1yKu6VnzD6W1R22Wk491SAkADnMhexZ9bi5hjB4=;
+        b=TUKuyoTm97uvp9AKQF6SFjw3obviG9XkjE01cAyYtTIvK3z4C/SAeBoUkjI8eRnHfw
+         +qVDCTnMGpaA/AljD0ZJ/z3Va05RhAIkhZ7fTY/xILR25iZBMxbGAOz3KpWP+HaFfN+x
+         xone2qVamYYPaUGQrmjPoijMHn1lzU0HpAb4kkpnUt8fPKNY3CEhR35ssf4yTuWF6zql
+         qdkO340+oD4CYRoexr1XOkQsm1vSrWP154Ofe9anvyFGSwvUGfHuzW5oJG0W1WtsLSY2
+         VqJZOARN62oLqjbnaDSGzeMBPqyFrro2lQyrFKGI2k2YoNmCEDd36sQaJ0YbZ7uIV6lw
+         raSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707739318; x=1708344118;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2RfW1yKu6VnzD6W1R22Wk491SAkADnMhexZ9bi5hjB4=;
+        b=fYnDSn0wcml0rSNbbl7jZaOwronHElyxfN420yyZ4zKq/xZSv2Drnjd5hCaJy7vpEL
+         F9Q5SkndK5UtUMjODYToqcsvP5YCIIeHNBCF+Ct2zXTG4yWSn/gx6uW2S644vlhhxZmb
+         cHJwunDiynxyUvleRsh75QiP1gAd63JvBalUXB+++aFV3yebTNlhjxFYWFxXsJnIuQsx
+         2AJTTuPSW8+Yj8A2A69v/y+suMn1zYlOks0NjlpdQOEV/it7OUZzXxBtChW6N1ipSbqz
+         sj1ioUhmI41tI+S6BYIsbdEyFk5+9kRd5GqAJ47WLTwEPC20Ym2FKqSm0dQe4hMovCu0
+         BqCQ==
+X-Gm-Message-State: AOJu0Yyxhg9yYs+2MkGaL9BL3v7cwa2+J3pypCtUtsLuuZh74ocwFKcP
+	goAETcZehTfg2we+mQO7LBORVoTJKPU7wxCPGxhs8eAlc0uWS5TSRTYSuodObDE=
+X-Google-Smtp-Source: AGHT+IEFctiL0oXp51EPgUWe8Fnt/DqYywvQmm4QP+S5XyApNLGmpHMXsexg4n8EThYzpEZzhKOBjA==
+X-Received: by 2002:a5d:55cc:0:b0:33b:60cb:c3ad with SMTP id i12-20020a5d55cc000000b0033b60cbc3admr5740831wrw.41.1707739317996;
+        Mon, 12 Feb 2024 04:01:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVl8AaJjjM+8NdAfmzeYbuNmlVemAz2z+06wOIVJbkD+bj1sxVNF/sLtMO30dKeBFYuVydqVE4it6e4wFtU7FJVvenMwolV7md9o00r/A1Bu59Xb55Ti4qN0U+ccT3otk4QwKcdX/D/PKFo3hh8LVsk6g7KCZgZWoE/Sz8PpHveL4pnVTx2m+qamA4BYn4AUCgHIxQ7b0YznjQYfK359EPlRA3ObLqqyomvDNH8tTohNZWS3KclTmaQt8v3e5HIeusMB4oNKYOBbNyBHSn08RPgf/bG3TbfCO4wXo4cwiFWMAqiNty2nb7k+SvqEhObTGHxWSbHx7sLTITH3FMQhBgK7t8XZefO3sk7NfEs+UxPnsHpGmJTiqNDU5hPnDgYiAuOVZ/IDr24I9PF+Uz4zoIzt2HLgy32TY4EVoXWpkhaTS4mJ7UjmUXH5qmrn7NrEbqm036wWwfnykB9XIJ6nlupm7mlC07Tz6tNJlJSWiLLM0+NjwH81MRKTzuGEmMln2szRuodsi+RyCsqUOIlg6cV0/YvUyic8+nkyykiCea+hCq46ICecidpTcMC24ufCqIHavzEp0M2QDN2SRo11lJAfL4J3luLfy0sEW0D4oCYeJku
+Received: from [192.168.2.107] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id n14-20020a056000170e00b0033b5b5033b9sm6709452wrc.18.2024.02.12.04.01.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Feb 2024 04:01:55 -0800 (PST)
+Message-ID: <b7051bea-8197-4338-a089-5e5fff540ac5@linaro.org>
+Date: Mon, 12 Feb 2024 12:01:54 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/12] spi: dt-bindings: introduce the ``fifo-depth``
+ property
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Conor Dooley <conor@kernel.org>, broonie@kernel.org, robh@kernel.org,
+ andi.shyti@kernel.org, semen.protsenko@linaro.org,
+ krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+ linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ arnd@arndb.de
+References: <20240208135045.3728927-1-tudor.ambarus@linaro.org>
+ <20240208135045.3728927-2-tudor.ambarus@linaro.org>
+ <20240208-grating-legwarmer-0a04cfb04d61@spud>
+ <c2b08463-cb13-4e9b-8797-8ebcf1047f66@linaro.org>
+ <20240209-chest-sleet-a119fc3d4243@spud>
+ <0ac8d573-6486-458d-afb9-090b5f8d4a21@linaro.org>
+ <CAMuHMdXEKecx-wQCSzqmRr6af2AUOnoFhfD2JLx28n8OYnvzGw@mail.gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAMuHMdXEKecx-wQCSzqmRr6af2AUOnoFhfD2JLx28n8OYnvzGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-02-12 at 12:40 +0100, Krzysztof Kozlowski wrote:
-> On 12/02/2024 12:30, Andr=C3=A9 Draszik wrote:
-> > On Mon, 2024-02-12 at 12:18 +0100, Krzysztof Kozlowski wrote:
-> > > I can drop it, but the actual problem is that what if downstream keep=
-s
-> > > changing aliases? They can do it...
-> >=20
-> > We won't care at that stage, downstream should have no reason to divert=
- from
-> > upstream for numbering at some point in the future.
->=20
-> What do you mean by "no reason"? The reason is they can do whatever they
-> want. Some project leader says: "I want this" and they will do it. They
-> won't care about our upstream choice at all.
->=20
-> And then what, you change it again?
-
-As I said above, we won't care if downstream changes again at that stage, s=
-o
-no, I wouldn't plan on changing again.
 
 
-Cheers,
-Andre'
+On 2/12/24 10:38, Geert Uytterhoeven wrote:
+> Hi Tudor,
 
+Hi, Geert!
+
+> 
+> On Fri, Feb 9, 2024 at 5:55 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>> On 2/9/24 16:21, Conor Dooley wrote:
+>>> On Fri, Feb 09, 2024 at 01:56:56PM +0000, Tudor Ambarus wrote:
+>>>> On 2/8/24 18:24, Conor Dooley wrote:
+>>>>> On Thu, Feb 08, 2024 at 01:50:34PM +0000, Tudor Ambarus wrote:
+>>>>>> There are instances of the same IP that are configured by the integrator
+>>>>>> with different FIFO depths. Introduce the fifo-depth property to allow
+>>>>>> such nodes to specify their FIFO depth.
+>>>>>>
+>>>>>> We haven't seen SPI IPs with different FIFO depths for RX and TX, thus
+>>>>>> introduce a single property.
+>>>>>
+>>>>> Some citation attached to this would be nice. "We haven't seen" offers
+>>>>> no detail as to what IPs that allow this sort of configuration of FIFO
+>>>>> size that you have actually checked.
+>>>>>
+>>>>> I went and checked our IP that we use in FPGA fabric, which has a
+>>>>> configurable fifo depth. It only has a single knob for both RX and TX
+>>>>> FIFOs. The Xilinx xps spi core also has configurable FIFOs, but again RX
+>>>>> and TX sizes are tied there. At least that's a sample size of three.
+>>>>>
+>>>>> One of our guys is working on support for the IP I just mentioned and
+>>>>> would be defining a vendor property for this, so
+>>>>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>>>>>
+>>>>
+>>>> Thanks, Conor. I had in mind that SPI has a shift register and it's
+>>>> improbable to have different FIFO depths for RX and TX.
+>>>
+>>> IDK, but I've learned to expect the unexpectable, especially when it
+>>> comes to the IPs intended for use in FPGAs.
+>>>
+>>>> At least I don't
+>>>> see how it would work, I guess it will use the minimum depth between the
+>>>> two?
+>>>
+>>> I'm not really sure how it would work other than that in the general
+>>> case, but some use case specific configuration could work, but I do
+>>> agree that it is
+>>>
+>>>> I grepped by "fifo" in the spi bindings and I now see that renesas is
+>>>> using dedicated properties for RX and TX, but I think that there too the
+>>>> FIFOs have the same depths. Looking into drivers/spi/spi-sh-msiof.c I
+>>>> see that the of_device_id.data contains 64 bytes FIFOs for RX and TX,
+>>>> regardless of the compatible.
+>>>>
+>>>> Geert, any idea if the FIFO depths can differ for RX and TX in
+>>>> spi-sh-msiof.c?
+> 
+> See my other email
+> https://lore.kernel.org/all/CAMuHMdU_Hx9PLmHf2Xm1KKTy_OF-TeCv7SzmA5CZWz+PLkbAGA@mail.gmail.com
+> 
+
+I saw the response, thanks again!
+
+> Note that at one point we did have 64/256 in the driver, but that was
+> changed in commit fe78d0b7691c0274 ("spi: sh-msiof: Fix FIFO size to
+> 64 word from 256 word").  Diving into the discussion around that patch,
+> there seem to be two factors at play:
+>   1. Actual FIFO size,
+>   2. Maximum transfer size per block
+>      (up to 2 blocks on R-Car, up to 4 blocks on SH(-Mobile)).
+> As the driver supports only a single block, it should be limited to
+> 64 on R-Car Gen2/3.  R-Car Gen4 claims to have widened the register
+> bit field for the maximum transfer size per block, so 256 might be
+> possible there...
+
+Got it.
+
+> 
+>>>> Anyway, even if there are such imbalanced architectures, I guess we can
+>>>> consider them when/if they appear? (add rx/tx-fifo-depth dt properties)
+>>>
+>>> I think so.
+>>>
+>>>> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+>>>> Override the default TX fifo size.  Unit is words.  Ignored if 0.
+>>>> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+>>>> renesas,rx-fifo-size:
+>>>> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
+>>>> Override the default RX fifo size.  Unit is words.  Ignored if 0.
+>>>
+>>> These renesas ones seemed interesting at first glance due to these
+>>> comments, but what's missed by grep the is "deprecated" marking on
+>>> these. They seem to have been replaced by soc-specific compatibles.
+>>
+>> In the driver the renesas,{rx,tx}-fifo-size properties still have the
+>> highest priority:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/tree/drivers/spi/spi-sh-msiof.c#n1350
+>>
+>> Maybe something for Geert, as I see he was the one marking these
+>> properties as deprecated. I guess he forgot to update the driver.
+>>
+>> Anyway, I think we shall be fine, even if we don't hear from Geert.
+> 
+> The renesas,{rx,tx}-fifo-size properties date back to the early days
+> of DT an ARM, when it was assumed that slightly different versions of
+> IP cores could be handled well using a single common compatible value,
+> and properties describing the (few) differences.  The pitfall here
+> is the "few differences": too many times people discovered later that
+> there were more differences, needing more properties, and complicating
+> backwards-compatibility.
+> 
+> Hence the handling of different FIFO sizes was moved to the driver based
+> on compatible values, and the renesas,{rx,tx}-fifo-size properties were
+> deprecated.  See commit beb74bb0875579c4 ("spi: sh-msiof: Add support
+> for R-Car H2 and M2"), which shows that there were more changes
+> needed than the anticipated FIFO sizes.  And more were added later,
+> see later additions to sh_msiof_chipdata.
+> 
+> So unless it is meant for a configurable synthesizable IP core, where
+> this is a documented parameter of the IP core, I advise against
+> specifying the FIFO size(s) in DT.
+> 
+
+I guess I get it now. You marked those properties as deprecated so that
+users stop using them and rely on the driver based compatible values,
+but at the same time you allowed the devicetree properties to have a
+higher priority than the driver based compatible values in case one
+really wants/needs to use the dt properties. I don't have a preference
+here, I guess it's fine.
+
+Thanks for the explanations!
+ta
