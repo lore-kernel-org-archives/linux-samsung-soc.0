@@ -1,98 +1,105 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B8439846
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 11:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823D517BBF;
+	Mon, 12 Feb 2024 11:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707737455; cv=none; b=Un/YFiKraJEQ/DAF37SFzpqAdNvqCC9/gy5QZF16mge0zBbR9fkXrowAhJ6tW2oMNG6IV/Ze3XH7s5gV8Jn1TyXgaJbajtsughw/XegiYpH91zkEZ0yCT5wAIPl5xw2e6185RWH+XTf2fQa5Tt8hXvvG1MdnrrMVrnDFGBTyy4k=
+	t=1707737679; cv=none; b=YAZYOXM6yM2WA6lLvjLdmFKJGcMXU5/iSJdEqAQuWZqri/+W8A1a+9Ei/jIK92YslYScW13tXAJ5L8lHVZIa3Mc7sXYEGoMdTXfDYdQzQQIlsxg9/wlUW05aQpx6eA1NFoLJ3G6MZVO7HOObrk9bLJCV5FfLEpaKMXsrn1hq24w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707737455; c=relaxed/simple;
-	bh=LPMIqh1VHEOTDl5Eo/vKu/zemXhlISnHcMKmfvKZ7Ak=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hyomm1L5i7FQPrNyZ/DTiv8c39gZcksrG0SpsQJp0RMO4iv21Y6dHY8i1v3U2eSXNuDhBEi7nqgdrobrFy9liHzps47NNQ2Xnzd5wWOb4D7oZ06GyVB8f+gYUMnqaXDS28JGt98zUGr/SEgHnsczGvRoyr9UteVDxKi+SeZtINE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hsi2vccb; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707737679; c=relaxed/simple;
+	bh=+XJ4iIEBqUjS9rfMfrR/tT09YLEg7EFIO91ieWhj9s8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7ZTwFe5BAuZJfibktgWDqEw1wI+mJD2QdHpuLcExvvJbTmXqSGGUNlcsdeEXHyKnDhQ7O1T/Y6+ON55oz9PEhgldakzAxdC6YFhg723GZ+MdDqNFNwwOdifx4bYmJ37FOc9Gzrlnd1dItpB5y/dPAL5G1uWiAHn1B8GeM5639o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=FFR+E5OW; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hsi2vccb"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-410fbf07602so2004215e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 03:30:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707737452; x=1708342252; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=L1JBAqPmAtCPzMf4N3r+gYLkv/oFoGEnBHp1/HY8rf8=;
-        b=hsi2vccbBpT3YsrDbEJsZ382QG3fe9RuQouM+v+xDz0YEBYgbTD3bCZhdRIXncNCrf
-         P5pTkBKcyPc2aedqhhOpi+f4wF953tG4QiSJJvEWKrr/T3H74UQgTxDh8ZpP7xVf3oBG
-         NQGPIKZryb2soqOElarlKXGSyjrauUJE2wle6yElaSvOpVw03mtFqAckGTNRVH+MPXAB
-         u+yjX3CkRcAafhotjzPprowTPPqfQcPw1/vy0xIazUjI5lkUCO2UlCY55+maqFpbjBPG
-         JsMRAk/cxjtJxJ508PXCibkQcq8eO3Xvccsegxsm1qndRywJpHhOkPr8ky6dXM5JY1Fd
-         NTMg==
+	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="FFR+E5OW"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-296c2b74448so1639963a91.0;
+        Mon, 12 Feb 2024 03:34:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707737452; x=1708342252;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L1JBAqPmAtCPzMf4N3r+gYLkv/oFoGEnBHp1/HY8rf8=;
-        b=LwE5vkK2fNA3JoWQ5udIGSUvW4ksuh7qi2S4TigkbOLKX07KPH47SJ40DjW1QXhVA2
-         JUJBsTik9LyQ5x/ih/UESIkL/klPZDezxwmARUwdESi5lHmsKqLY2GXbYhdHvRKGzxTv
-         BV0J4TOe5DsipB20ZXFgkeUCvabe2N4Xk+QfrI+6g9cs+5jMv9/sRGCRt6EKDncKviXb
-         XIEPX+GhcmFTCPbbrPR6zA2f3zCmK4gkAElQ7rq6cB4kV61tCUTlWa22pV9HLLAzBG+7
-         nRCzTIWcl5Yx2qgkunJ9DnoBT6d9YbyeraZ+kU3mqrn4yz8wufEqXaT2WIhcpJKbLijb
-         dKLA==
-X-Gm-Message-State: AOJu0YzT+RPiZqx49Jld3x4ABtTg36ImbtbywwfUSydi7X6AAElZlM5U
-	MBbDb94ZH2jJa6tTXMjPC+8ECwhENkuCLshZYK178hiQivYKH3N9QkOdRGZTBjI=
-X-Google-Smtp-Source: AGHT+IHdx0JzzCZmSy7yxwzinADCptkAdd4W9Bm4mX6JgJse7TtWyzAf3q4skGt4Rm8w5yc4PdIwng==
-X-Received: by 2002:a05:600c:6008:b0:410:d877:2478 with SMTP id az8-20020a05600c600800b00410d8772478mr1811401wmb.11.1707737451826;
-        Mon, 12 Feb 2024 03:30:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXA6PneBzm4rfxP4667/oJD89tL4v62bD730YafDLqMtw2WyLNrqUbasxNDR/23Ix4Fw5QVP2UqR/H92NKxdP0m1kysdiYAMhs1FoPZlDGGrKwVaxtLlrrT9aFaK0o03vk3/6TZqOHOkwFgdK04pxdwKiXnFpS7kXFXsWBVKJsWUm4C26mJe0NfxgXbGmbmzC3ieuUtUn6lWUDGv9P98Ld8pZSACwY5yoTvqqVp1S1vAPlMLEfjumkQ29mf8dcfc8eh0gOV1Jm7SeI9xe0vyxm/reNQsdcL5a46kDQ5xj7k+XYRV++cVbw37Aa17s/mnhN06sY/0Dlm/H4Ea7Z4Q6b5C4bbFwb8nvZQQsiW4U53LCqMW06BaNWcrwHcmkpBp50U/XXlwYVmn2SOngGKtznlwfNxFU9oRWAqW9Y7YiRDBkIYoBmDGm1FQEuznvGmq9G6KE7cDSsY
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id bd27-20020a05600c1f1b00b00410d3b8c4c1sm2786066wmb.31.2024.02.12.03.30.50
+        d=1e100.net; s=20230601; t=1707737678; x=1708342478;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:dkim-signature:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BHr+sPH30ZpkHimGFKF7fIzLaf2Wa3xLSn4lodorOgw=;
+        b=tTTtMhhNq27+NuYgqUgb3YGRVF1gi+Kb7yWGCeKFCC0c1mIbHNG4R98qnplde9+qyU
+         q/YUZUK9xaWxUwhL5DokW+TdgFPHUqHRCUlciK1a+n4cuSZEowWUsOzRjpXGekwLom9D
+         NQBa2Mo45aJO8l62mFfMqMNUaf4MwBx7G6WcHIvMQvr/YaN0QnxSeRjo8wk/tbwzHitM
+         Dpz9v3qm4SUKVw0XY+khqU9xFipN9TP5s7sbNR9DSPcnxIqFJNuI0/xMQ4vEmfP7fP8C
+         eOD4i7F8JlKFStMHve0j8wtHXrBC5CoOIMHeNwZc4whUIR5g3UnPeKqlK1CKjctBDLYk
+         S92A==
+X-Gm-Message-State: AOJu0YxZCWAhH3owuv0j+EbbsicjwjRvzhd7jauPy72TVfA3YRaPRGBp
+	dsF+w4BE50izb3KXwgJ4+j9OjR3DRexvOWEuW0tNihgVzUK3SeYT
+X-Google-Smtp-Source: AGHT+IFcjned3aWW/71vRpIDv7m9xHgfCWh/1Ov0arnczjWZg6K6wB+0NhXNLJuOurjb+ZV3qlHvbA==
+X-Received: by 2002:a17:90b:46d0:b0:296:4844:78c6 with SMTP id jx16-20020a17090b46d000b00296484478c6mr3430412pjb.7.1707737677692;
+        Mon, 12 Feb 2024 03:34:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU8QIS3ziUbJTb8bKdmsCVLE205UIedoiM1HGzjM9xTY/i+1ddrqPG/Piud8QKM6tpHPF5/4DvOMsOsN93lOHagtRxhTUm2dxFQl1LVn5bx3ALpN5qSd/KC8+KpC1Uszeyn2H2olwi6b0RUUHSRSZMXdZ5uuEOBUZRwdSJx+rfmDT9rEhqYf3oxxAFYS9pXuMwQT5hLWvG0PTtTo3d6zsbw39b7xqofdiLArrrEMxpXuzlygIGZCg7DHxMvAZV/uWM4SCWOmPp1lA==
+Received: from mail.marliere.net ([24.199.118.162])
+        by smtp.gmail.com with ESMTPSA id si13-20020a17090b528d00b002966dbf4d82sm280483pjb.26.2024.02.12.03.34.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 03:30:51 -0800 (PST)
-Message-ID: <c16c1f18a8c6f33a608618d4ccf7d8c8dbb6f88b.camel@linaro.org>
-Subject: Re: [PATCH] arm64: dts: exynos: gs101: add stable i2c aliases for
- gs101-oriole
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- peter.griffin@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org,  conor+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
- tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org,  alim.akhtar@samsung.com,
- linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org
-Date: Mon, 12 Feb 2024 11:30:50 +0000
-In-Reply-To: <dce39e15-32a8-482c-8751-af4a133f82d2@linaro.org>
-References: <20240130233700.2287442-1-andre.draszik@linaro.org>
-	 <170737972037.52344.9107022607101399076.b4-ty@linaro.org>
-	 <5972b6a4ae8669e2a9e872278b740b182217906b.camel@linaro.org>
-	 <dce39e15-32a8-482c-8751-af4a133f82d2@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.1-1 
+        Mon, 12 Feb 2024 03:34:37 -0800 (PST)
+Date: Mon, 12 Feb 2024 08:35:14 -0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
+	s=2024; t=1707737675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BHr+sPH30ZpkHimGFKF7fIzLaf2Wa3xLSn4lodorOgw=;
+	b=FFR+E5OW3S7ddXw51MjoaPzs6rMzW4/KHlLaYM39+n1mnT0qQmubbjjDPiZ4kuhwa4ebeu
+	XKJPLxxq5XNoQwFiSkZnWI289npTov7fC9W32cZehWQkHPaImG0TpGf3tI7P5y3HXx24zT
+	uputgzAv5TfqgRWNNzZ1dFykWXjv6aUVgG39uvJSp+QmrRVofW8PhkT+YkzXF7Qnw3tkDv
+	+X2lQYR4tUUYnGYuOBEmHvoV/9SSrklCFNmCZlwFvqAjzG0UylDeZm3ggqT4oY6UayCDGA
+	I0qCBSw4W1baEZeSYJtq44aZ8+rUh14jcMWIqNRA/RraaeFds5lHb90uHcN0PA==
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
+From: "Ricardo B. Marliere" <ricardo@marliere.net>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
+	Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2] ARM: s3c64xx: make s3c6410_subsys const
+Message-ID: <2ezdr4px2tfzpn7ut63wdtmcb2roid4d6kpl654wwmfvkemhpq@k5hpjz74q4ho>
+References: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
+ <b7726526-0b0a-4d3d-bf05-b1065d361cc2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7726526-0b0a-4d3d-bf05-b1065d361cc2@linaro.org>
 
-On Mon, 2024-02-12 at 12:18 +0100, Krzysztof Kozlowski wrote:
-> I can drop it, but the actual problem is that what if downstream keeps
-> changing aliases? They can do it...
+Hi Krzysztof,
 
-We won't care at that stage, downstream should have no reason to divert fro=
-m
-upstream for numbering at some point in the future.
+On 12 Feb 08:31, Krzysztof Kozlowski wrote:
+> On 11/02/2024 16:57, Ricardo B. Marliere wrote:
+> > Since commit d492cc2573a0 ("driver core: device.h: make struct bus_type
+> > a const *"), the driver core can properly handle constant struct
+> > bus_type, move the s3c6410_subsys variable to be a constant structure as
+> > well, placing it into read-only memory which can not be modified at
+> > runtime.
+> > 
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
+> > ---
+> 
+> I just noticed you sent quite the same change for the same subarch.
+> Please perform changes all at once. Squashed.
 
->  The aliases are not there to match
-> with downstream, but to have stable interface matching SCHEMATICS.
+Yes, sorry about that. The reason for this is that I initially started
+splitting up this commit into proper submissions:
 
-Except the schematics don't refer to the i2c busses by number.
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git/commit/?h=bus_cleanup&id=26105f537f0c60eacfeb430abd2e05d7ddcdd8aa
 
-Cheers,
-Andre'
+And only after that I started grepping the tree for the other users.
 
+> 
+> Best regards,
+> Krzysztof
+> 
