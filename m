@@ -1,138 +1,97 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786D77468
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 07:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD68313FF1
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 08:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707723080; cv=none; b=qhMY6u7FseXfVxvLF62AYwCAA3oE9gCxq01lapBd633ualy6+pl5ktlFb8MHrqexBQs5VQQr/cMuLfaJ1sJozoILnCfDpYAkZ7YMjRg5/b77fYbUr6bSW7C6V2ZRPCWODx1IkbtJT5g2ROnHlANW3fA7VASLOPEPYXm3eaqN9WY=
+	t=1707724863; cv=none; b=CVzhjPdfW0cg4dAIsMSscUoX/qYqdu5oD6YBCLT/uQFLo1iVhNFl+oP8nIvH34DfXkFnBRCw+bTdGAu+qejMUNezzHiD85SBLh23g+z+qJXGium2yLNqE0kOzCvHC6bwJ8v+LrmPMwNy19De9xpkg6UDakU2U3CjWCzLIDBBgvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707723080; c=relaxed/simple;
-	bh=nw5jsh6DLxcro34EWTNgqNj+TF9LR3XE1X+cfRK2wCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUS/v8Xh4lJ2xI87ze+KVGpWadumwr93oaAVi7VkyXMQGwa2miqV+4HqB8qsEdl3coZUAvQrF3jgtStQ41noV3z14WZ65L40A+Lz33vggY6xup4EPE/l+OL4UmDm+wcNhushuS+1SnMuzu+JY//2OtuOGrlWBEP6bIVxnmKsIu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fdmLEvrA; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1707724863; c=relaxed/simple;
+	bh=bgv5RdC77n/PTT/J371lb6F7hPd7oWmVCVjSctYXnWM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZVVErggkaAEyVl0qC3WKTOsinruQKHY19nXohdk24oSsNpfGWg3OpPTKqk2RVZFH5zWOapcQjEXI2ah6RV54mbe3lt28EOM5KUJryhyRZNJ0Z1XCTnTA7nU2Y2Uo80JkhJmCbC+dAI9PLkVYDZ7xXRyV4O6zuqup2yM78w/xT5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n1GFIS8a; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fdmLEvrA"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-410ee8ed663so896845e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Feb 2024 23:31:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n1GFIS8a"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2cf1fd1cc5bso36004621fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 00:01:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707723076; x=1708327876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jS2mp67+TTcdfHEF0i7Lkkf6JiH3JGIEMkEQyAmniQw=;
-        b=fdmLEvrADi/ec6m+MlIEG8i4fc/Jp3b9W+3MmAJiAjOmN9GObZRySWbwRsVzUzFvr7
-         5+eqVfd6FwUQo2+WfIisvuMWHSw5bksmaIEaojhtiN0+lAVyv2nSJHvp2m5HrkIURvgw
-         H/Y1Y8hkoeXzW/TkNAil2leXQYFQKrP0EkwJJlH8HpofiTgLOMkZ33m88vP/P0mSFDEm
-         rZMVP94HkYjHC7+/l9TuNcha2M1S9fOf+Y+v9Iu5fTM8S3famVJGBwW20RPgJrH00VH/
-         VqF36oCsKuzhiYqIoxk3+yMAa8RpTxvuW86+SpsYu0ddFInIcVK+CXRJ19ZmCx9+W90l
-         I3ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707723076; x=1708327876;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1707724860; x=1708329660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jS2mp67+TTcdfHEF0i7Lkkf6JiH3JGIEMkEQyAmniQw=;
-        b=KceQUN0VioW8C0kHePwjsvTuHVZ8PruedNhLj2V6++6z4IWotvBrYkcW7CNZcKbzZg
-         RHodoALTnGCVy7eEszWUpENjgM7PpvTkY9xtw/ceYeIL4uUIBXpiKddwzbViiuT93eEo
-         i4HsZ6Y5yVD70Vn0Ev0ymHOcoze84uqPn3kUWRHuqh5MS4yuyTQ5ee9qWWbwN6CUE12K
-         h+zdo+UUKeeYtVwvl5AdXCVx81uXGuoO6XYRbTeuVsTpXrZzx7sjetlSoHvOA/F6VVOk
-         0loKy/qFAso0xNy3g0LYKi7AJNZj1/Ipn02MryD7WzteHipRxwmMCVAW4Xv5ycuCfMls
-         5uZA==
-X-Gm-Message-State: AOJu0Yy76IqLLSBs4m8UBLJrZaRXgAsBYLSaChP6G6CpAJAdJqbInSYg
-	LlJh8WAKDoFi6l6tKIkH3f/9NF4yqHEF5mh5A7i1xqpvnc3eniaWV4TvzM/8oK4=
-X-Google-Smtp-Source: AGHT+IGinZD/S6dstgb41nxMt3v7DIHfzGUQ+DPhnFk4tiwYdpiRxLHMYj1MvdqeyAKOu+R/5npD8A==
-X-Received: by 2002:a05:600c:310f:b0:410:f582:6675 with SMTP id g15-20020a05600c310f00b00410f5826675mr272998wmo.26.1707723075672;
-        Sun, 11 Feb 2024 23:31:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWhK/RnPFnOehJo3yRrxyufYFNurxi4Q62ky07SVK6LZBZaS1K1Eocu0GeUvU45KJisSvtz0ILnBdu7JpyuOrN84qxB+pLswj9rRbinLYE20pDHzRDyIqbjkWW23ydCXmZm8OLYBX9PLvBWMTi6fs8Ywnya1rbdr4ayff7C998Nz4mvEuNQidcQv8g+SYS3gnrgCIGBZDrOQtpjdhZDG0e8eRYvETm/kLyzgOfcgCV3gmeCOTS7yCWKGq4Z
-Received: from [192.168.1.20] ([178.197.223.6])
-        by smtp.gmail.com with ESMTPSA id d16-20020a05600c34d000b0040fdb244485sm7801137wmq.40.2024.02.11.23.31.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Feb 2024 23:31:15 -0800 (PST)
-Message-ID: <b7726526-0b0a-4d3d-bf05-b1065d361cc2@linaro.org>
-Date: Mon, 12 Feb 2024 08:31:13 +0100
+        bh=wHvXGwviFkH/t0WncAdojj7zBVQIStnGPAIN9rB+ikY=;
+        b=n1GFIS8aIF+yt05dMykBnB8amBIHLGBGPiFOx8H+iQVsuWfmimQZ5jPWjqFeOE0wMg
+         28b0yuZnfF6Rm+l76cqypSIuqUh8AFbzJ0xpwvtOB3pmh35eHhVvC+Q+Y+3SzWay3D1D
+         8Ggb1ysi+gptwwvl9eC8sjZvUUjA3CMP37N9D8qC4w5RL1cRGi2tGao36uOv+Q5eomNX
+         KqZowvyNxtm1WQLo9aDorvuxBsv7mjkIr25uOe2943rZ0SF+j6/1KSKcHVNJRmvcETmh
+         4CV7nwEWxi9GstuQldlXatFnwtW8FEkaQOVd7G+ZfVqVXqk0JdhK3ewLsZJ4d6UGel9p
+         UtLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707724860; x=1708329660;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wHvXGwviFkH/t0WncAdojj7zBVQIStnGPAIN9rB+ikY=;
+        b=rXv0RWVD68GmxkUMs2+VHdHUqZVSqtIQi6Pa5B6TQ++5bRMcCjRVw/sJHz4OjmSmjE
+         dUQ7QIzSBClfmsaSPC12wSi2ur5Bs5dG7XaY3ZhB+Lh1EBNmmA1OwLgNA+Tk1WfdW2nm
+         kvuaPOUlYEmllZjoMOVuMPiKYRvCslSJnv43v6Ju9atNIto+ItQbMwdGRTttNBs8/75R
+         /8m/cUr6Gq86+LjT/aUvBGgzX4JbOPtGqSP990gBmfhJkXAD4NOe4cRpN73gAtVs3EjO
+         HIOhhRU26VUN01X85KoJEWEZpcGqKDhWe95zUuB7eHgMDzbRfzOowuY72R+hvj97vmn/
+         WyyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzrhGsU0+E1sjcGR4Wk8qGmaGie4zLwew7BhbPe5SwF7j0ePBJiv+9pqFpcQNqLe271kYjOYCTqV8KKYgMjP9o6wr1jMnU3EL4FQ0hD0L/wT0=
+X-Gm-Message-State: AOJu0Yyf6InJzWuLg0PRtK8jXz+2rVNKqaZdmeUd9Wt74riKWlo8Z+I8
+	xkbJod/tlh+2iFex54jmc3Di5lLQNDcHfxggNN/HLbfhWOt9uLdO5WmGEVkIoVY=
+X-Google-Smtp-Source: AGHT+IEOUip9Mfu7SWwu7DiRZPOo1T4hbkFaQCvsdxfTEnT6DqFQGp+WtTXerXpUdHVySOE0+14mtg==
+X-Received: by 2002:a2e:91c9:0:b0:2d0:e0cc:7865 with SMTP id u9-20020a2e91c9000000b002d0e0cc7865mr3534647ljg.43.1707724859882;
+        Mon, 12 Feb 2024 00:00:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVVgpiYXorB3X/EWxB3hse9pm60pVWCUp88yliSb4p/J4bCT4xuKU7dVVVpDLzhaXlhjRL1FNKMJteyxB+wiqPz6UwZE4rItNKVmNf6yyJkOg0b+EIa/2R6j5C332LN6VO+wPxim7fL3dYVSFC2fFkKYQY/ABPP8K1j8RjOqJd4lxa77TwIkjAW3MDZfvmD/5kkye3Q+UMbv1FZ7cQcN0cQtrsJgfqwQDTRcdBU4TJw9DTMzNnxzEv6
+Received: from [127.0.1.1] ([178.197.223.6])
+        by smtp.gmail.com with ESMTPSA id x9-20020a2e3109000000b002d0ceefd3e9sm1315818ljx.99.2024.02.12.00.00.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Feb 2024 00:00:59 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "Ricardo B. Marliere" <ricardo@marliere.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In-Reply-To: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
+References: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
+Subject: Re: [PATCH v2] ARM: s3c64xx: make s3c6410_subsys const
+Message-Id: <170772485844.8549.14056972492264035636.b4-ty@linaro.org>
+Date: Mon, 12 Feb 2024 09:00:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: s3c64xx: make s3c6410_subsys const
-To: "Ricardo B. Marliere" <ricardo@marliere.net>,
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.4
 
-On 11/02/2024 16:57, Ricardo B. Marliere wrote:
+
+On Sun, 11 Feb 2024 12:57:09 -0300, Ricardo B. Marliere wrote:
 > Since commit d492cc2573a0 ("driver core: device.h: make struct bus_type
 > a const *"), the driver core can properly handle constant struct
 > bus_type, move the s3c6410_subsys variable to be a constant structure as
 > well, placing it into read-only memory which can not be modified at
 > runtime.
 > 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
-> ---
+> 
+> [...]
 
-I just noticed you sent quite the same change for the same subarch.
-Please perform changes all at once. Squashed.
+Applied, thanks!
+
+[1/1] ARM: s3c64xx: make s3c6410_subsys const
+      https://git.kernel.org/krzk/linux/c/a3891621d4a0783ae178d6f2845517e3dd571dd4
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
