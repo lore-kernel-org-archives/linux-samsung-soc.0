@@ -1,59 +1,60 @@
 Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA183BB23
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 12:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1093C496
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 12:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707739321; cv=none; b=TwNge1Ta8YJ48pdZAsYWZOmdRqN3GRrs29w329ojigjpz9EBQZVCLEfWeWA2BV/8U97ARJ5Es+vz5S4xwZz3p/YQ/f6HqEeQfTjwc7I9vbRsEMHY95RiWJ8iroFR/fDMkB7CuetAcEPNZVj7ZSITHF25YMUNEwMymn4F0UOlzHI=
+	t=1707739708; cv=none; b=lozL4KpiClkt+bJghpfhwpjfZxyjErq999IghnhQb/j1QFD1pZoPi5Buh7Xe+Hcj4b3VKp2D5jCJJr749yy3Pu1hADrhj2vv86AeIe7edZ3nOIkRUa9G9wr7FI5PzTLPFIHKkFXZr9BonU43TAW4pNRt37BiXUPLGlpkhp1KVQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707739321; c=relaxed/simple;
-	bh=6jOThHeHLJcV7xo9OpIo5+QWwr5tWK5FlUO10NVx9Iw=;
+	s=arc-20240116; t=1707739708; c=relaxed/simple;
+	bh=G/RpwQuFCmSFbsICul5XB6NnsfTiR0OGobJvtsvzI2U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XAT5lc/j395fXBUoekr/C6S1dyGixnsAvRSi/nEjYQlm+RWeGRKfHAi1P5k3uTbWsr8HRsPVAFI1rT+FTxlvFKxADtv82MGETW26Rr+tP0VgtzlJluJAeGtnXEEiu7Qn6FG3Azmh5c7ww2P2qac4FzHRlQ7R4D3uQNxfZ4HnrKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TUKuyoTm; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:Content-Type; b=Yib+VFchKM8kPS/tYXtnxXeDx+ITyhhcMrWXY1SfM+PFbj4TJGeEYzMH+CpRbHWAWQcCCmj+3GL1zO2FnkDWdR6gXE556vAp8nCG8F07Y+mzNm3r/papqtv1M5eg4mlA6JZ2vib9WMQaAXqIFaVMnlpu17MWnZ8hJ+hHEj11u8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j8kh5B4y; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TUKuyoTm"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-410c1ebf5e4so8223175e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 04:01:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j8kh5B4y"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41097f9a9a4so12600165e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 04:08:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707739318; x=1708344118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1707739704; x=1708344504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2RfW1yKu6VnzD6W1R22Wk491SAkADnMhexZ9bi5hjB4=;
-        b=TUKuyoTm97uvp9AKQF6SFjw3obviG9XkjE01cAyYtTIvK3z4C/SAeBoUkjI8eRnHfw
-         +qVDCTnMGpaA/AljD0ZJ/z3Va05RhAIkhZ7fTY/xILR25iZBMxbGAOz3KpWP+HaFfN+x
-         xone2qVamYYPaUGQrmjPoijMHn1lzU0HpAb4kkpnUt8fPKNY3CEhR35ssf4yTuWF6zql
-         qdkO340+oD4CYRoexr1XOkQsm1vSrWP154Ofe9anvyFGSwvUGfHuzW5oJG0W1WtsLSY2
-         VqJZOARN62oLqjbnaDSGzeMBPqyFrro2lQyrFKGI2k2YoNmCEDd36sQaJ0YbZ7uIV6lw
-         raSQ==
+        bh=1G1t7l9qmGi/Hd8UOFcNwxIiY9XyvUG9RMcV3bH24D8=;
+        b=j8kh5B4yqqAXI5WBosfUBksCQV1XgkJ9w9jsOH8WF89IG1X7C0ILRHiwYfE2ErZw7n
+         tYsP/9im0fVmU2WZEWVc9Vko/zlBtPJR5Qj7cOfrpYmtA4H0Cl8I+wx7+uGkoocWPorr
+         0G7eSuVHpFvbayXfuf69LrgO18pwSF6hor4Xm4MrFNuycFewQ2LsTHFXXz5ZHEqdVVzL
+         u+rGe8iZUPMW+5lPtfgThZHHEdUdasqeTYmlMAJkRCIVg0LoLisFjNaIi4UJBd7RxWb+
+         IGywsY9hcaEgZIUhDM75uKv1inN2yJ0X8TGTedPYygLgp4W6K25Bia5spTB+9X8yCxrV
+         M6tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707739318; x=1708344118;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1707739704; x=1708344504;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RfW1yKu6VnzD6W1R22Wk491SAkADnMhexZ9bi5hjB4=;
-        b=fYnDSn0wcml0rSNbbl7jZaOwronHElyxfN420yyZ4zKq/xZSv2Drnjd5hCaJy7vpEL
-         F9Q5SkndK5UtUMjODYToqcsvP5YCIIeHNBCF+Ct2zXTG4yWSn/gx6uW2S644vlhhxZmb
-         cHJwunDiynxyUvleRsh75QiP1gAd63JvBalUXB+++aFV3yebTNlhjxFYWFxXsJnIuQsx
-         2AJTTuPSW8+Yj8A2A69v/y+suMn1zYlOks0NjlpdQOEV/it7OUZzXxBtChW6N1ipSbqz
-         sj1ioUhmI41tI+S6BYIsbdEyFk5+9kRd5GqAJ47WLTwEPC20Ym2FKqSm0dQe4hMovCu0
-         BqCQ==
-X-Gm-Message-State: AOJu0Yyxhg9yYs+2MkGaL9BL3v7cwa2+J3pypCtUtsLuuZh74ocwFKcP
-	goAETcZehTfg2we+mQO7LBORVoTJKPU7wxCPGxhs8eAlc0uWS5TSRTYSuodObDE=
-X-Google-Smtp-Source: AGHT+IEFctiL0oXp51EPgUWe8Fnt/DqYywvQmm4QP+S5XyApNLGmpHMXsexg4n8EThYzpEZzhKOBjA==
-X-Received: by 2002:a5d:55cc:0:b0:33b:60cb:c3ad with SMTP id i12-20020a5d55cc000000b0033b60cbc3admr5740831wrw.41.1707739317996;
-        Mon, 12 Feb 2024 04:01:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVl8AaJjjM+8NdAfmzeYbuNmlVemAz2z+06wOIVJbkD+bj1sxVNF/sLtMO30dKeBFYuVydqVE4it6e4wFtU7FJVvenMwolV7md9o00r/A1Bu59Xb55Ti4qN0U+ccT3otk4QwKcdX/D/PKFo3hh8LVsk6g7KCZgZWoE/Sz8PpHveL4pnVTx2m+qamA4BYn4AUCgHIxQ7b0YznjQYfK359EPlRA3ObLqqyomvDNH8tTohNZWS3KclTmaQt8v3e5HIeusMB4oNKYOBbNyBHSn08RPgf/bG3TbfCO4wXo4cwiFWMAqiNty2nb7k+SvqEhObTGHxWSbHx7sLTITH3FMQhBgK7t8XZefO3sk7NfEs+UxPnsHpGmJTiqNDU5hPnDgYiAuOVZ/IDr24I9PF+Uz4zoIzt2HLgy32TY4EVoXWpkhaTS4mJ7UjmUXH5qmrn7NrEbqm036wWwfnykB9XIJ6nlupm7mlC07Tz6tNJlJSWiLLM0+NjwH81MRKTzuGEmMln2szRuodsi+RyCsqUOIlg6cV0/YvUyic8+nkyykiCea+hCq46ICecidpTcMC24ufCqIHavzEp0M2QDN2SRo11lJAfL4J3luLfy0sEW0D4oCYeJku
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id n14-20020a056000170e00b0033b5b5033b9sm6709452wrc.18.2024.02.12.04.01.54
+        bh=1G1t7l9qmGi/Hd8UOFcNwxIiY9XyvUG9RMcV3bH24D8=;
+        b=T4oOH5UJnZFnVrXJvdKoYuRAo9Ira7MI0XMUa21alhja5OdCijZ1o2jR0HYdUjLja2
+         2zMy4bwfc8E2ciRJHJdieMH9072Uovfbds6a7b03IjkrCTfU9YTpw2tpoa/dcZpvtt+D
+         QquiEeyX0/vBomW8xmLubJz142rNQjtyMGEW5Qqb7ZXGdLysktfxsxxSyEEmmdAlMwUp
+         f6pafwKI/Vd9qlC1kY/D6JAOhl2GZf55FEMtN3YB6KjZW2I1FLi9M5YSUCUglKKnDXv9
+         GQaohs8+ailfJBeXARfiJmwTwyPzOhus6jc4TTw+3A+XEBpNS7kHAKkDUfoSRjIjHQmu
+         VRyQ==
+X-Gm-Message-State: AOJu0YwNKfdj68Sl2S2nZ1pM9p12yANl4YMsPTtDHVe75HrSoYNw91vf
+	lSutD2iqWfNbsVo08xSca56FuJcQy56g2zxF7+5nBCnukmNmjQctU4qnF7wlPRUn0ZF0XuTjQ7R
+	U
+X-Google-Smtp-Source: AGHT+IEl6G1AQapW7wbS/ikI2aUuKt5YdNVEUHw7ptPSvAFt5fyPApOBSdjDSDlNEqHgNTrpL8sr5Q==
+X-Received: by 2002:a05:600c:1547:b0:410:c25d:38fe with SMTP id f7-20020a05600c154700b00410c25d38femr2495380wmg.28.1707739704625;
+        Mon, 12 Feb 2024 04:08:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVgyPMjnH5p7/RKVEhKq5YFq/NyaBubgIe8MED5tD3HUhUvArELRjZKkztXxcFi5cXLIz/jpJK+++ZAYMXFxXAgWfd7aAYgVp5V6A220H2F0pW6AdfGTDcfbdEm1i6BQ6tHGRrDw/jZXdc68beA2WzX2y0Z1/6LzavkZCNBt/otNFaOOXv2Wwn+ZCNATCN67jjYQOwSGNE3JSdUtLPzGE6Y4b0aUWyMRSeCAAO3VRZ6Ih1Ydzh6OnVL5FEFSgGq9TuRlSKc73NRQjUl2lqUuYDKuqfmiPNR6IKvLw2iqCcWwOKB8yMjJTNQOT0MDpDyvbIdTbVNi3LYXg+y54AKe8lUsOpiHC2lbPuv1FoMqaicizImfwj8qnhX+rDe7ZocJsXK6YjbA3mcw/9EhEV1hfB4O2AUgrR6H2gLL3ECxLv9Z6+DaStgtdqFqsKlaDrqWICOwzdKJQYhJNxU1y7Y5TGjFwalbFLtfWtGkLTfohSaItK0ab4K5F17mvQ=
+Received: from [192.168.1.20] ([178.197.223.6])
+        by smtp.gmail.com with ESMTPSA id bx31-20020a5d5b1f000000b0033b5ee36963sm6711656wrb.23.2024.02.12.04.07.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Feb 2024 04:01:55 -0800 (PST)
-Message-ID: <b7051bea-8197-4338-a089-5e5fff540ac5@linaro.org>
-Date: Mon, 12 Feb 2024 12:01:54 +0000
+        Mon, 12 Feb 2024 04:08:00 -0800 (PST)
+Message-ID: <b6ec1d0e-e35c-4917-871b-049efcb2ea22@linaro.org>
+Date: Mon, 12 Feb 2024 13:07:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,160 +62,107 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] spi: dt-bindings: introduce the ``fifo-depth``
- property
+Subject: Re: [PATCH] arm64: dts: exynos: gs101: add stable i2c aliases for
+ gs101-oriole
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Conor Dooley <conor@kernel.org>, broonie@kernel.org, robh@kernel.org,
- andi.shyti@kernel.org, semen.protsenko@linaro.org,
- krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com,
- willmcvicker@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
- arnd@arndb.de
-References: <20240208135045.3728927-1-tudor.ambarus@linaro.org>
- <20240208135045.3728927-2-tudor.ambarus@linaro.org>
- <20240208-grating-legwarmer-0a04cfb04d61@spud>
- <c2b08463-cb13-4e9b-8797-8ebcf1047f66@linaro.org>
- <20240209-chest-sleet-a119fc3d4243@spud>
- <0ac8d573-6486-458d-afb9-090b5f8d4a21@linaro.org>
- <CAMuHMdXEKecx-wQCSzqmRr6af2AUOnoFhfD2JLx28n8OYnvzGw@mail.gmail.com>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CAMuHMdXEKecx-wQCSzqmRr6af2AUOnoFhfD2JLx28n8OYnvzGw@mail.gmail.com>
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
+ tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, alim.akhtar@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240130233700.2287442-1-andre.draszik@linaro.org>
+ <170737972037.52344.9107022607101399076.b4-ty@linaro.org>
+ <5972b6a4ae8669e2a9e872278b740b182217906b.camel@linaro.org>
+ <dce39e15-32a8-482c-8751-af4a133f82d2@linaro.org>
+ <c16c1f18a8c6f33a608618d4ccf7d8c8dbb6f88b.camel@linaro.org>
+ <67a6564a-00bb-461d-b7eb-ca169df6d251@linaro.org>
+ <0ad3082c50e21a74de41ca9908bd53b72e1f1a9c.camel@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <0ad3082c50e21a74de41ca9908bd53b72e1f1a9c.camel@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 2/12/24 10:38, Geert Uytterhoeven wrote:
-> Hi Tudor,
-
-Hi, Geert!
-
-> 
-> On Fri, Feb 9, 2024 at 5:55 PM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->> On 2/9/24 16:21, Conor Dooley wrote:
->>> On Fri, Feb 09, 2024 at 01:56:56PM +0000, Tudor Ambarus wrote:
->>>> On 2/8/24 18:24, Conor Dooley wrote:
->>>>> On Thu, Feb 08, 2024 at 01:50:34PM +0000, Tudor Ambarus wrote:
->>>>>> There are instances of the same IP that are configured by the integrator
->>>>>> with different FIFO depths. Introduce the fifo-depth property to allow
->>>>>> such nodes to specify their FIFO depth.
->>>>>>
->>>>>> We haven't seen SPI IPs with different FIFO depths for RX and TX, thus
->>>>>> introduce a single property.
->>>>>
->>>>> Some citation attached to this would be nice. "We haven't seen" offers
->>>>> no detail as to what IPs that allow this sort of configuration of FIFO
->>>>> size that you have actually checked.
->>>>>
->>>>> I went and checked our IP that we use in FPGA fabric, which has a
->>>>> configurable fifo depth. It only has a single knob for both RX and TX
->>>>> FIFOs. The Xilinx xps spi core also has configurable FIFOs, but again RX
->>>>> and TX sizes are tied there. At least that's a sample size of three.
->>>>>
->>>>> One of our guys is working on support for the IP I just mentioned and
->>>>> would be defining a vendor property for this, so
->>>>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->>>>>
->>>>
->>>> Thanks, Conor. I had in mind that SPI has a shift register and it's
->>>> improbable to have different FIFO depths for RX and TX.
+On 12/02/2024 12:52, André Draszik wrote:
+> On Mon, 2024-02-12 at 12:40 +0100, Krzysztof Kozlowski wrote:
+>> On 12/02/2024 12:30, André Draszik wrote:
+>>> On Mon, 2024-02-12 at 12:18 +0100, Krzysztof Kozlowski wrote:
+>>>> I can drop it, but the actual problem is that what if downstream keeps
+>>>> changing aliases? They can do it...
 >>>
->>> IDK, but I've learned to expect the unexpectable, especially when it
->>> comes to the IPs intended for use in FPGAs.
->>>
->>>> At least I don't
->>>> see how it would work, I guess it will use the minimum depth between the
->>>> two?
->>>
->>> I'm not really sure how it would work other than that in the general
->>> case, but some use case specific configuration could work, but I do
->>> agree that it is
->>>
->>>> I grepped by "fifo" in the spi bindings and I now see that renesas is
->>>> using dedicated properties for RX and TX, but I think that there too the
->>>> FIFOs have the same depths. Looking into drivers/spi/spi-sh-msiof.c I
->>>> see that the of_device_id.data contains 64 bytes FIFOs for RX and TX,
->>>> regardless of the compatible.
->>>>
->>>> Geert, any idea if the FIFO depths can differ for RX and TX in
->>>> spi-sh-msiof.c?
-> 
-> See my other email
-> https://lore.kernel.org/all/CAMuHMdU_Hx9PLmHf2Xm1KKTy_OF-TeCv7SzmA5CZWz+PLkbAGA@mail.gmail.com
-> 
-
-I saw the response, thanks again!
-
-> Note that at one point we did have 64/256 in the driver, but that was
-> changed in commit fe78d0b7691c0274 ("spi: sh-msiof: Fix FIFO size to
-> 64 word from 256 word").  Diving into the discussion around that patch,
-> there seem to be two factors at play:
->   1. Actual FIFO size,
->   2. Maximum transfer size per block
->      (up to 2 blocks on R-Car, up to 4 blocks on SH(-Mobile)).
-> As the driver supports only a single block, it should be limited to
-> 64 on R-Car Gen2/3.  R-Car Gen4 claims to have widened the register
-> bit field for the maximum transfer size per block, so 256 might be
-> possible there...
-
-Got it.
-
-> 
->>>> Anyway, even if there are such imbalanced architectures, I guess we can
->>>> consider them when/if they appear? (add rx/tx-fifo-depth dt properties)
->>>
->>> I think so.
->>>
->>>> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
->>>> Override the default TX fifo size.  Unit is words.  Ignored if 0.
->>>> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
->>>> renesas,rx-fifo-size:
->>>> Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml:
->>>> Override the default RX fifo size.  Unit is words.  Ignored if 0.
->>>
->>> These renesas ones seemed interesting at first glance due to these
->>> comments, but what's missed by grep the is "deprecated" marking on
->>> these. They seem to have been replaced by soc-specific compatibles.
+>>> We won't care at that stage, downstream should have no reason to divert from
+>>> upstream for numbering at some point in the future.
 >>
->> In the driver the renesas,{rx,tx}-fifo-size properties still have the
->> highest priority:
+>> What do you mean by "no reason"? The reason is they can do whatever they
+>> want. Some project leader says: "I want this" and they will do it. They
+>> won't care about our upstream choice at all.
 >>
->> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/tree/drivers/spi/spi-sh-msiof.c#n1350
->>
->> Maybe something for Geert, as I see he was the one marking these
->> properties as deprecated. I guess he forgot to update the driver.
->>
->> Anyway, I think we shall be fine, even if we don't hear from Geert.
+>> And then what, you change it again?
 > 
-> The renesas,{rx,tx}-fifo-size properties date back to the early days
-> of DT an ARM, when it was assumed that slightly different versions of
-> IP cores could be handled well using a single common compatible value,
-> and properties describing the (few) differences.  The pitfall here
-> is the "few differences": too many times people discovered later that
-> there were more differences, needing more properties, and complicating
-> backwards-compatibility.
-> 
-> Hence the handling of different FIFO sizes was moved to the driver based
-> on compatible values, and the renesas,{rx,tx}-fifo-size properties were
-> deprecated.  See commit beb74bb0875579c4 ("spi: sh-msiof: Add support
-> for R-Car H2 and M2"), which shows that there were more changes
-> needed than the anticipated FIFO sizes.  And more were added later,
-> see later additions to sh_msiof_chipdata.
-> 
-> So unless it is meant for a configurable synthesizable IP core, where
-> this is a documented parameter of the IP core, I advise against
-> specifying the FIFO size(s) in DT.
-> 
+> As I said above, we won't care if downstream changes again at that stage, so
+> no, I wouldn't plan on changing again.
 
-I guess I get it now. You marked those properties as deprecated so that
-users stop using them and rely on the driver based compatible values,
-but at the same time you allowed the devicetree properties to have a
-higher priority than the driver based compatible values in case one
-really wants/needs to use the dt properties. I don't have a preference
-here, I guess it's fine.
+Then I am lost. What stage are you thinking? What differs between now
+and let's say 1 month for the GS101 which was released more than three
+years ago?
 
-Thanks for the explanations!
-ta
+BTW, the aliases I see in downstream DTS (gs101-usi.dtsi) - since
+beginning up to Android 14 are:
+
+                hsi2c8 = &hsi2c_8;
+                hsi2c9 = &hsi2c_9;
+                hsi2c10 = &hsi2c_10;
+                hsi2c11 = &hsi2c_11;
+                hsi2c12 = &hsi2c_12;
+
+They were set like this in 2020 and never changed afterwards.
+
+Best regards,
+Krzysztof
+
