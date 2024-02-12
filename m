@@ -1,97 +1,113 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD68313FF1
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 08:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACFF17C6C
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 10:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707724863; cv=none; b=CVzhjPdfW0cg4dAIsMSscUoX/qYqdu5oD6YBCLT/uQFLo1iVhNFl+oP8nIvH34DfXkFnBRCw+bTdGAu+qejMUNezzHiD85SBLh23g+z+qJXGium2yLNqE0kOzCvHC6bwJ8v+LrmPMwNy19De9xpkg6UDakU2U3CjWCzLIDBBgvg=
+	t=1707733074; cv=none; b=TlZTrNwD01SO8f7WLRC+G65oyNYJULDl0/NkjYrfaZQMb2Lq5lOen3X5ga1Sq2sPPnRTUhb04mZMrdTrOn5U68Xe9ON6+ZX4s2UjrHE3H56ehAKIYCMWQHF3P0aFC8e737HgJTaU3ykejjJGHJg8PATZvMJhdBbpdkLy4f2IBeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707724863; c=relaxed/simple;
-	bh=bgv5RdC77n/PTT/J371lb6F7hPd7oWmVCVjSctYXnWM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZVVErggkaAEyVl0qC3WKTOsinruQKHY19nXohdk24oSsNpfGWg3OpPTKqk2RVZFH5zWOapcQjEXI2ah6RV54mbe3lt28EOM5KUJryhyRZNJ0Z1XCTnTA7nU2Y2Uo80JkhJmCbC+dAI9PLkVYDZ7xXRyV4O6zuqup2yM78w/xT5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n1GFIS8a; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1707733074; c=relaxed/simple;
+	bh=8tSF0jlKqaYoudnTGmjGNrNMBoIoz9p0dEXgVzrpIhQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m72+CXW+wwA81LnVKgwW7mXtfFaKhFiVQ8BhtQ/+QD2tMFi8txlCu+V0GZNF7kIKqHITQNIYo57gGUH4RhHU2qhrbi9WwuN+3UCsYeZlEt/UTnEHDitAxeofq+K/PZ5c1DtMCpLNe4SMUKYFJ3K4FZAxAT+R4yTJ1L1NdH9b0U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y6QFCcFb; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n1GFIS8a"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2cf1fd1cc5bso36004621fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 00:01:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y6QFCcFb"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3392b12dd21so1838773f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Feb 2024 02:17:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707724860; x=1708329660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wHvXGwviFkH/t0WncAdojj7zBVQIStnGPAIN9rB+ikY=;
-        b=n1GFIS8aIF+yt05dMykBnB8amBIHLGBGPiFOx8H+iQVsuWfmimQZ5jPWjqFeOE0wMg
-         28b0yuZnfF6Rm+l76cqypSIuqUh8AFbzJ0xpwvtOB3pmh35eHhVvC+Q+Y+3SzWay3D1D
-         8Ggb1ysi+gptwwvl9eC8sjZvUUjA3CMP37N9D8qC4w5RL1cRGi2tGao36uOv+Q5eomNX
-         KqZowvyNxtm1WQLo9aDorvuxBsv7mjkIr25uOe2943rZ0SF+j6/1KSKcHVNJRmvcETmh
-         4CV7nwEWxi9GstuQldlXatFnwtW8FEkaQOVd7G+ZfVqVXqk0JdhK3ewLsZJ4d6UGel9p
-         UtLw==
+        d=linaro.org; s=google; t=1707733071; x=1708337871; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8tSF0jlKqaYoudnTGmjGNrNMBoIoz9p0dEXgVzrpIhQ=;
+        b=Y6QFCcFb6aIC1V4CAChXY9MKXionRmZAhL+8H7v+61GquWmWm0JzYmLExg1MMrz159
+         A8IKg/4dNjgA2fYMWtI/F3yq+J+6acvMAPSnhWz4zxPAD6VzCibzcg1vig0DZBdc/ip9
+         bgK8vjQolVjIzU3GuT2YEnO5Bvgqv8po1v/mBXeici5zHKQ4/6pjyz9ZeznHCgh4nrT3
+         4Rx0tHoA2ZrpU9t6ZmMdpYjEIz22jwyFHQ+DM/ZtinFaSxzZF6Ma64Jamo7PTY4cfS1L
+         1zOPQL2ANHmxgvnw+sbIV+6geGmWu7KVTHZwP2wYpmatp7spQxAlOdQZYssHJthVzVku
+         9aOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707724860; x=1708329660;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wHvXGwviFkH/t0WncAdojj7zBVQIStnGPAIN9rB+ikY=;
-        b=rXv0RWVD68GmxkUMs2+VHdHUqZVSqtIQi6Pa5B6TQ++5bRMcCjRVw/sJHz4OjmSmjE
-         dUQ7QIzSBClfmsaSPC12wSi2ur5Bs5dG7XaY3ZhB+Lh1EBNmmA1OwLgNA+Tk1WfdW2nm
-         kvuaPOUlYEmllZjoMOVuMPiKYRvCslSJnv43v6Ju9atNIto+ItQbMwdGRTttNBs8/75R
-         /8m/cUr6Gq86+LjT/aUvBGgzX4JbOPtGqSP990gBmfhJkXAD4NOe4cRpN73gAtVs3EjO
-         HIOhhRU26VUN01X85KoJEWEZpcGqKDhWe95zUuB7eHgMDzbRfzOowuY72R+hvj97vmn/
-         WyyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzrhGsU0+E1sjcGR4Wk8qGmaGie4zLwew7BhbPe5SwF7j0ePBJiv+9pqFpcQNqLe271kYjOYCTqV8KKYgMjP9o6wr1jMnU3EL4FQ0hD0L/wT0=
-X-Gm-Message-State: AOJu0Yyf6InJzWuLg0PRtK8jXz+2rVNKqaZdmeUd9Wt74riKWlo8Z+I8
-	xkbJod/tlh+2iFex54jmc3Di5lLQNDcHfxggNN/HLbfhWOt9uLdO5WmGEVkIoVY=
-X-Google-Smtp-Source: AGHT+IEOUip9Mfu7SWwu7DiRZPOo1T4hbkFaQCvsdxfTEnT6DqFQGp+WtTXerXpUdHVySOE0+14mtg==
-X-Received: by 2002:a2e:91c9:0:b0:2d0:e0cc:7865 with SMTP id u9-20020a2e91c9000000b002d0e0cc7865mr3534647ljg.43.1707724859882;
-        Mon, 12 Feb 2024 00:00:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVVgpiYXorB3X/EWxB3hse9pm60pVWCUp88yliSb4p/J4bCT4xuKU7dVVVpDLzhaXlhjRL1FNKMJteyxB+wiqPz6UwZE4rItNKVmNf6yyJkOg0b+EIa/2R6j5C332LN6VO+wPxim7fL3dYVSFC2fFkKYQY/ABPP8K1j8RjOqJd4lxa77TwIkjAW3MDZfvmD/5kkye3Q+UMbv1FZ7cQcN0cQtrsJgfqwQDTRcdBU4TJw9DTMzNnxzEv6
-Received: from [127.0.1.1] ([178.197.223.6])
-        by smtp.gmail.com with ESMTPSA id x9-20020a2e3109000000b002d0ceefd3e9sm1315818ljx.99.2024.02.12.00.00.58
+        d=1e100.net; s=20230601; t=1707733071; x=1708337871;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8tSF0jlKqaYoudnTGmjGNrNMBoIoz9p0dEXgVzrpIhQ=;
+        b=FH7zTNJoxiX/s45Vl2ULj6CqAj5YFmaGZPIvMuKw9wRp2tlYyNcy4XbvNLUKwhW211
+         OgsqIDvZpRmIBuOt1JZPhIATnIrDgnaVx5xypHA1KDYH4uXarw9ZPS0XdW4Ho2LBVkcO
+         TpPFFFywKzK1QUxGfoaFhQLPb7EzVc2qDvNLt/NpMJ/5cRgZhvgFOxedgahhoCZwMZSf
+         9RNeywLHxxIEceea5YVyq6uGPz+9BbBNduG/XD6d/z7QEVx/6AlJfwpBeLQIBWaQMSGf
+         ispuAvP5q7U9/jbUnxAq+yRuT5fLRPk5v9HXHxJUmY933MLHd2EGqfMb+si7cbTxQdZZ
+         og4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOTgHYWHTWQMAWojMzMBEWKjuzIStPd+AyIhewDQ2rtpwGfaTgrJdHV84gRI5kJTnNhcWz1yDAByH+78vHKWIGYxDjGgRqeoWkstDFYDHDPiI=
+X-Gm-Message-State: AOJu0YxSSHx79pyU8TrVmeLXEI0kW0sUW4ry7FQzNRSHgZEqsmZmyBZN
+	ISuF5mXlO27w3xYhyE6yO1/3gwRgo8pTdyk5WUDl0+1x2Cd9Yc4fvPS/yxpZvDM=
+X-Google-Smtp-Source: AGHT+IFcf82HXcacp3V+HVrWbXaP9rjPPjK8qFH+9DGIcSX8OpZbtxgBhGvuHv7p+wPMLEO+M4T7xA==
+X-Received: by 2002:a5d:4a04:0:b0:33b:615a:19b7 with SMTP id m4-20020a5d4a04000000b0033b615a19b7mr4595435wrq.22.1707733069963;
+        Mon, 12 Feb 2024 02:17:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW+mm3KiRPo1HXNV7b+yhiuRyD7lE2xoiezMnzudmmH7NuHMH6anZGcme3J8GlP3/ouVSGng246HS1MWVzwnlSPN9z8+WLvnCG7VjyyY6Zwugr6TlTpFTB+tBo0PTp4BLpl66F2mA+iJk8M14/s/IxLhh0/VfLi+Qz6YS9NQuU/+N0TtoOkY5jLmgf1ySssHf2NHr+V0KcALj1951KvYnBQpE/VkvNfGQZWdmIZQK9EUU5coOL8lQcgFFyd8mehZACtSi1P1SiTHCNMJnq7Ce3deP5K3sWjiAc/V7g7vwVvDossPGPEuQNW7F1QmkcZsHYbdzw7SYyTEDi4kPbjP3kRGH20vIqa6OylHF1TOqnVc92I3OSQjX38inx4Q8VIjLyMNwjUTIus0OFdLTdzEKXA8nd7WIUD7Z+iLV/mDY/oIbHHG/xGuaFs5anUjIF5brT5B9ViFzWj
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id u7-20020a056000038700b0033b72aa93b5sm5744635wrf.89.2024.02.12.02.17.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 00:00:59 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "Ricardo B. Marliere" <ricardo@marliere.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-In-Reply-To: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
-References: <20240211-bus_cleanup-arm-v2-1-3de9e8af7cbd@marliere.net>
-Subject: Re: [PATCH v2] ARM: s3c64xx: make s3c6410_subsys const
-Message-Id: <170772485844.8549.14056972492264035636.b4-ty@linaro.org>
-Date: Mon, 12 Feb 2024 09:00:58 +0100
+        Mon, 12 Feb 2024 02:17:49 -0800 (PST)
+Message-ID: <5972b6a4ae8669e2a9e872278b740b182217906b.camel@linaro.org>
+Subject: Re: [PATCH] arm64: dts: exynos: gs101: add stable i2c aliases for
+ gs101-oriole
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org,  conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+ tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org,  alim.akhtar@samsung.com,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Mon, 12 Feb 2024 10:17:48 +0000
+In-Reply-To: <170737972037.52344.9107022607101399076.b4-ty@linaro.org>
+References: <20240130233700.2287442-1-andre.draszik@linaro.org>
+	 <170737972037.52344.9107022607101399076.b4-ty@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.1-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+
+Hi Krzysztof,
+
+On Thu, 2024-02-08 at 09:08 +0100, Krzysztof Kozlowski wrote:
+>=20
+> On Tue, 30 Jan 2024 23:37:00 +0000, Andr=C3=A9 Draszik wrote:
+> > Now that we have more than i2c interface, add aliases to ensure
+> > deterministic bus number assignment.
+> >=20
+> > So as to keep compatibility with existing Pixel userspace builds, use
+> > the same bus numbers for hsi2c_8 and hsi2c_12 as the downstream
+> > drivers with the intention to eventually add all the earlier busses as
+> > well.
+> >=20
+> > [...]
+>=20
+> Applied, thanks!
+>=20
+> [1/1] arm64: dts: exynos: gs101: add stable i2c aliases for gs101-oriole
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 https://git.kernel.org/krzk/linux/c/72ccd9=
+25dcbd2ad6935a4874679b6cf5b3de7156
+
+Is it too late to ask for this patch to be dropped please? It appears
+downstream has just changed all their aliases on Friday, whereas the
+point of this patch was to keep things aligned.
+
+I won't post anything similar until we start integrating with Android/AOSP
+at some point in the future.
 
 
-On Sun, 11 Feb 2024 12:57:09 -0300, Ricardo B. Marliere wrote:
-> Since commit d492cc2573a0 ("driver core: device.h: make struct bus_type
-> a const *"), the driver core can properly handle constant struct
-> bus_type, move the s3c6410_subsys variable to be a constant structure as
-> well, placing it into read-only memory which can not be modified at
-> runtime.
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] ARM: s3c64xx: make s3c6410_subsys const
-      https://git.kernel.org/krzk/linux/c/a3891621d4a0783ae178d6f2845517e3dd571dd4
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks,
+Andre'
 
