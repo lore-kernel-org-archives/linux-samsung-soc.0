@@ -1,56 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9DF55784;
-	Tue, 13 Feb 2024 13:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752455769;
+	Tue, 13 Feb 2024 13:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707829943; cv=none; b=QSvvzPCgh9NEKzhmEoL4YKzy6PB76P1rcL6edUZPji/tBP/I8KHytw7DURkPqTrVc262XrPQamixx57N1P9CmDuJtQvuX8EUINPea67u1bYeT7jmkQOkRaJFtIV+dV1hhmbpokt1z3JArp6eutqB8z7R3cz7zbFbbQyuX6LIUn0=
+	t=1707830048; cv=none; b=Q2Y9rQjg891Tz1Zl9olfhbn79NbDUInEsDI6a5czK0FYGPSlpF6YYuBvubPwqAuDhvAsEiFRHKhsSiOKfVUfM8TGxVCKLBhpl+qbhTM1yikIK7l23+mGMcYXQy3gfOJvpkShfa7GMvbj1RQnQbDIGo6ovIu5VP27qS9+RWasMWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707829943; c=relaxed/simple;
-	bh=0xP8I+Qej1cBpPDnNiDZJmh7/DqD49joD1ERj3DvfKk=;
+	s=arc-20240116; t=1707830048; c=relaxed/simple;
+	bh=+vPxa+J/7hvWU17r1zp1OBnxkzfzLxPHNrKMEj/0zHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fY7av0wuYZHZgIEfs4H1OVltkgaPv2W1/EFweAyiTDgtpUxV1RieadKubrlth2Fq0PmYAQGUWwBLSJAzUkFKBYGtSgiYvsU3AaB9txG2TQAXwIdtrqAtF1zP74llHWPPE8zZjwYi1PE3JVMtcCJzVf6K5cusT5wNXm9ubar+hU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCIC4VOm; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeXfIlCS7QOucrDNNoJNLSOuZ2NGNKcJxComBqtapZDbHP8yDeSg8jc6dHo7ovPZrT3u7FFnL7WItqje0AUw4uiYmNT1ujiu2/PBJNCRBjKuJass6SdlzGkOsWUkVs82zefmSun+zBEfnPuCvihx+FINryv14au8/6ZrZX67rt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAMkzeJy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCIC4VOm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8FFC433C7;
-	Tue, 13 Feb 2024 13:12:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAMkzeJy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7880AC433C7;
+	Tue, 13 Feb 2024 13:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707829942;
-	bh=0xP8I+Qej1cBpPDnNiDZJmh7/DqD49joD1ERj3DvfKk=;
+	s=k20201202; t=1707830047;
+	bh=+vPxa+J/7hvWU17r1zp1OBnxkzfzLxPHNrKMEj/0zHM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCIC4VOmOV8x0JsCqVrhzsGXz5txq4HxyFPJQRNTQh3KKT2Il8RF8+xeahTD5vCl5
-	 Kektsz/mfJ/JF35E4m5MMed5MRfMr6AfYG18l3OHogPx0QMHtC27U91R9ksMBhJ7LC
-	 QrvfK3L/7OQ2iqeglywl+CEqt2Kk1nqFfANGVdzwrbq09GCHd1PFvhMsW+yndJN2EI
-	 7AKa7uQuypabSxDDmx7RIiGt05YBvnxfcDyb7e4cAzPNfO0Its8Aro6czQ6i5gQbBA
-	 2KpPkjnKmYQ164gn/9NIeHWvTjE9mVJFzcMrCxOJS/SnPSYLIExFrgWV58G9p+7QNg
-	 Scf3fQWeQ5fiA==
-Date: Tue, 13 Feb 2024 13:12:11 +0000
-From: Will Deacon <will@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io, asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com, bhelgaas@google.com,
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com, joro@8bytes.org,
-	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
-	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
-	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
-	samuel@sholland.org, suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org,
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org,
-	yu-cheng.yu@intel.com, rientjes@google.com
-Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
-Message-ID: <20240213131210.GA28926@willie-the-truck>
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <20231226200205.562565-11-pasha.tatashin@soleen.com>
+	b=BAMkzeJy/N+tXl6fJq0i5v/9/D7xKPiPfkk8frxKtzxqgTm6cNqAPXlx5mpeMynZm
+	 O9LaDS26HkHo1o+t2sBfTVm+PnNvnkWI50/XnL1Kg63X0Xq1zjET1euoaLzUHi+Cdz
+	 eIVwTGN4SZig9BQKzob5vpyCYpRCRf2WFQQBmfXsHtWDZUTTiQmeKK4vrjq41z+NNt
+	 1U3GluvfX5JtfgQ4lc87G1cxIkquX+8eG3Yl0RRwdSwZJkl99IdksbSsYM76WTfCbQ
+	 JLw9i612XyMWFhObBP4mCagDCE8XRZCOd2unYxJ+ThKA7CRPiaLdTpL/LPediFjNRp
+	 enjhVdi+75UnQ==
+Date: Tue, 13 Feb 2024 07:14:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: broonie@kernel.org, andi.shyti@kernel.org,
+	krzysztof.kozlowski@linaro.org, semen.protsenko@linaro.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com,
+	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org, peter.griffin@linaro.org,
+	kernel-team@android.com, willmcvicker@google.com,
+	devicetree@vger.kernel.org, arnd@arndb.de
+Subject: Re: [PATCH v2 01/12] spi: dt-bindings: introduce FIFO depth
+ properties
+Message-ID: <20240213131405.GA1047438-robh@kernel.org>
+References: <20240212140331.915498-1-tudor.ambarus@linaro.org>
+ <20240212140331.915498-2-tudor.ambarus@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -59,58 +50,27 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231226200205.562565-11-pasha.tatashin@soleen.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240212140331.915498-2-tudor.ambarus@linaro.org>
 
-Hi Pasha,
-
-On Tue, Dec 26, 2023 at 08:02:05PM +0000, Pasha Tatashin wrote:
-> In order to be able to limit the amount of memory that is allocated
-> by IOMMU subsystem, the memory must be accounted.
+On Mon, Feb 12, 2024 at 02:03:20PM +0000, Tudor Ambarus wrote:
+> There are SPI IPs that can be configured by the integrator with a
+> specific FIFO depth depending on the system's capabilities. For example,
+> the samsung USI SPI IP can be configured by the integrator with a TX/RX
+> FIFO from 8 byte to 256 bytes.
 > 
-> Account IOMMU as part of the secondary pagetables as it was discussed
-> at LPC.
+> Introduce the ``fifo-depth`` property for such instances of IPs where the
+> same FIFO depth is used for both RX and TX. Introduce ``rx-fifo-depth``
+> and ``tx-fifo-depth`` properties for cases where the RX FIFO depth is
+> different from the TX FIFO depth.
 > 
-> The value of SecPageTables now contains mmeory allocation by IOMMU
-> and KVM.
+> Make the dedicated RX/TX properties dependent on each other and mutual
+> exclusive with the other.
 > 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  Documentation/admin-guide/cgroup-v2.rst | 2 +-
->  Documentation/filesystems/proc.rst      | 4 ++--
->  drivers/iommu/iommu-pages.h             | 2 ++
->  include/linux/mmzone.h                  | 2 +-
->  4 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index 3f85254f3cef..e004e05a7cde 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1418,7 +1418,7 @@ PAGE_SIZE multiple when read back.
->  	  sec_pagetables
->  		Amount of memory allocated for secondary page tables,
->  		this currently includes KVM mmu allocations on x86
-> -		and arm64.
-> +		and arm64 and IOMMU page tables.
->  
->  	  percpu (npn)
->  		Amount of memory used for storing per-cpu kernel
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 49ef12df631b..86f137a9b66b 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -1110,8 +1110,8 @@ KernelStack
->  PageTables
->                Memory consumed by userspace page tables
->  SecPageTables
-> -              Memory consumed by secondary page tables, this currently
-> -              currently includes KVM mmu allocations on x86 and arm64.
-> +              Memory consumed by secondary page tables, this currently includes
-> +              KVM mmu and IOMMU allocations on x86 and arm64.
+>  .../bindings/spi/spi-controller.yaml          | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 
-While I can see the value in this for IOMMU mappings managed by VFIO,
-doesn't this end up conflating that with the normal case of DMA domains?
-For systems that e.g. rely on an IOMMU for functional host DMA, it seems
-wrong to subject that to accounting constraints.
+With the indentation fixed,
 
-Will
+Reviewed-by: Rob Herring <robh@kernel.org>
