@@ -1,76 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752455769;
-	Tue, 13 Feb 2024 13:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1A657873
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 14:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707830048; cv=none; b=Q2Y9rQjg891Tz1Zl9olfhbn79NbDUInEsDI6a5czK0FYGPSlpF6YYuBvubPwqAuDhvAsEiFRHKhsSiOKfVUfM8TGxVCKLBhpl+qbhTM1yikIK7l23+mGMcYXQy3gfOJvpkShfa7GMvbj1RQnQbDIGo6ovIu5VP27qS9+RWasMWY=
+	t=1707833965; cv=none; b=M3WT3vEjWdciem8ijO7Kw+MtMyV6zuTojL7rXf8nsw5HGkidF9piKk2rNjFRZb2OE1ciovw4NvCoeTvIErzFVA+BNaY5jz1KGJgOKjIukE/OgeuOOIcoFL7m/aX9DI3UwNLNeG7EKHBU/b0GQOJ46mdilCp22YDWz5goLZyKfw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707830048; c=relaxed/simple;
-	bh=+vPxa+J/7hvWU17r1zp1OBnxkzfzLxPHNrKMEj/0zHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NeXfIlCS7QOucrDNNoJNLSOuZ2NGNKcJxComBqtapZDbHP8yDeSg8jc6dHo7ovPZrT3u7FFnL7WItqje0AUw4uiYmNT1ujiu2/PBJNCRBjKuJass6SdlzGkOsWUkVs82zefmSun+zBEfnPuCvihx+FINryv14au8/6ZrZX67rt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BAMkzeJy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707833965; c=relaxed/simple;
+	bh=XLMbgpPxKs6nZIg4i0hUeBHypGjLhHRIJjFph+4LgWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=DkHLHuJBF3xSBxIVU//YWe2kkLw9OuWW15fKDKVN0PjPnr1kT2c7dJE+l5rXqlHuuwdKlMxGKxQBR+wKB68yay5xWhbHQGOESLLXUUr8SPZgDTyyvLZo9m5lLOi69K9jTkCSBLxLoVIHT6Ha+KdG9CykI2OoVZg4jxa6Lcl5f7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ue+Uhuca; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAMkzeJy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7880AC433C7;
-	Tue, 13 Feb 2024 13:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707830047;
-	bh=+vPxa+J/7hvWU17r1zp1OBnxkzfzLxPHNrKMEj/0zHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BAMkzeJy/N+tXl6fJq0i5v/9/D7xKPiPfkk8frxKtzxqgTm6cNqAPXlx5mpeMynZm
-	 O9LaDS26HkHo1o+t2sBfTVm+PnNvnkWI50/XnL1Kg63X0Xq1zjET1euoaLzUHi+Cdz
-	 eIVwTGN4SZig9BQKzob5vpyCYpRCRf2WFQQBmfXsHtWDZUTTiQmeKK4vrjq41z+NNt
-	 1U3GluvfX5JtfgQ4lc87G1cxIkquX+8eG3Yl0RRwdSwZJkl99IdksbSsYM76WTfCbQ
-	 JLw9i612XyMWFhObBP4mCagDCE8XRZCOd2unYxJ+ThKA7CRPiaLdTpL/LPediFjNRp
-	 enjhVdi+75UnQ==
-Date: Tue, 13 Feb 2024 07:14:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, andi.shyti@kernel.org,
-	krzysztof.kozlowski@linaro.org, semen.protsenko@linaro.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	kernel-team@android.com, willmcvicker@google.com,
-	devicetree@vger.kernel.org, arnd@arndb.de
-Subject: Re: [PATCH v2 01/12] spi: dt-bindings: introduce FIFO depth
- properties
-Message-ID: <20240213131405.GA1047438-robh@kernel.org>
-References: <20240212140331.915498-1-tudor.ambarus@linaro.org>
- <20240212140331.915498-2-tudor.ambarus@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ue+Uhuca"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240213141914epoutp0468921e240b2f92a6ae183b282f3ab5a3~zce7YCCm00385503855epoutp04q
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 14:19:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240213141914epoutp0468921e240b2f92a6ae183b282f3ab5a3~zce7YCCm00385503855epoutp04q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1707833954;
+	bh=uILFgGO0TM9PDxvRkmFO/3dPB4/T//4OL4gPS7QNllw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ue+Uhuca/wLmQi4G071TYruMRnW8bEVwID4ah81qVvnInKrMKRN3sC1EQNL1ICoL1
+	 vRk4//z6D6lB2tuT+KTYllE8hTtxZz+wnphDOZJnFbHyauggHE1ecr2YeB+ijRodYM
+	 hUu6yH26HYEcNQDtG96bK9uYgoJPndvCSamFhOow=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240213141913epcas5p398960dbe2c122016560562ecd5e53139~zce6zbWgn0171201712epcas5p3f;
+	Tue, 13 Feb 2024 14:19:13 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4TZ3Nb4bPKz4x9Pv; Tue, 13 Feb
+	2024 14:19:11 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0E.80.08567.C5A7BC56; Tue, 13 Feb 2024 23:19:08 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240213132759epcas5p4896fd9d0b1af7762ff98ae9e586492dc~zbyMHWueF2842628426epcas5p4e;
+	Tue, 13 Feb 2024 13:27:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240213132759epsmtrp242439ce4bb944f565b3f71b978c01e1a~zbyMGZctb2153621536epsmtrp2J;
+	Tue, 13 Feb 2024 13:27:59 +0000 (GMT)
+X-AuditID: b6c32a44-3abff70000002177-44-65cb7a5c2184
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F4.C1.08755.F5E6BC56; Tue, 13 Feb 2024 22:27:59 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240213132757epsmtip1dea7f6a38eea4362c023f4a38a4e1b8e~zbyJZdfoC1530215302epsmtip1N;
+	Tue, 13 Feb 2024 13:27:56 +0000 (GMT)
+From: Shradha Todi <shradha.t@samsung.com>
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: mturquette@baylibre.com, sboyd@kernel.org, jingoohan1@gmail.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com,
+	gost.dev@samsung.com, Shradha Todi <shradha.t@samsung.com>
+Subject: [PATCH v5 0/2] Add helper function to get and enable all bulk
+ clocks
+Date: Tue, 13 Feb 2024 18:57:49 +0530
+Message-Id: <20240213132751.46813-1-shradha.t@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJJsWRmVeSWpSXmKPExsWy7bCmpm5M1elUg8NvVC0ezNvGZrGkKcPi
+	5oGdTBYrvsxkt9j7eiu7RUPPb1aLTY+vsVp87LnHanF51xw2i7PzjrNZzDi/j8ni0NS9jBYt
+	f1pYLNYeuctucbelk9Xi4ilXi0Vbv7Bb/N+zg93i37WNLBa9h2sdRDwuX7vI7PH+Riu7x85Z
+	d9k9Fmwq9di0qpPN4861PWweT65MZ/LYvKTeo2/LKkaPz5vkAriism0yUhNTUosUUvOS81My
+	89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgH5TUihLzCkFCgUkFhcr6dvZFOWX
+	lqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnnH85ibXgEVdF648ZrA2M
+	jzm6GDk5JARMJJa+ucfaxcjFISSwm1Gipe0dM4TziVHi15TPUJlvjBKPGvYxwrR0XNnHBmIL
+	CexllJg/TxmiqJVJ4vTt9SwgCTYBLYnGr11go0QEFjNK3NqxGWwUs8AvJol9jZuYQKqEBfwl
+	Jj6+BjaKRUBVYsapD6wgNq+AlcS5xdPYIdbJS6zecABskoTAWg6JX+v7WSASLhIHz/WwQtjC
+	Eq+Ob4FqkJL4/G4vG4SdLrFy8wxmCDtH4tvmJUwQtr3EgStzgOZwAF2kKbF+lz5EWFZi6ql1
+	YCXMAnwSvb+fQJXzSuyYB2MrS3z5uwfqBEmJeccus4KMkRDwkJg5LQkSKrEStzbPY5zAKDsL
+	YcECRsZVjJKpBcW56anJpgWGeanl8JhKzs/dxAhOs1ouOxhvzP+nd4iRiYPxEKMEB7OSCO+l
+	GSdShXhTEiurUovy44tKc1KLDzGaAoNsIrOUaHI+MNHnlcQbmlgamJiZmZlYGpsZKonzvm6d
+	myIkkJ5YkpqdmlqQWgTTx8TBKdXAtDI+MPnorEUylo/q22/7pm4M2tSvFDPtkXCwWq3P3w7x
+	p7WMgpoVtsZW516fTjavefRirqTVguVCN7S3+EZG7vXPvrjBe82WbfMmPOSo2FzMuiJjz+/K
+	9Px/HKxzzP9ukxApfPLu01QfRZ18pghzo9pVZUd1ZnL0GjDy2cfGdWn7lvNZmcxI0xfUzlq9
+	2yzFt7M7MrcyxSbUWNzm2Oos7lU8065LGwld23Lby6bCR/BB2MNDuxqy/CtZPHS+vfFIuVsY
+	UNB2atLOrGveH53977z/Zey62L3PfMaabumns48cqVn3Ys+dO0puXGcjrt3yn9TovuvJfjPv
+	u2u1fk8XT97wVjqlf5tbGsOdU3uUWIozEg21mIuKEwHmIJ28PAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSnG583ulUg6Nr9SwezNvGZrGkKcPi
+	5oGdTBYrvsxkt9j7eiu7RUPPb1aLTY+vsVp87LnHanF51xw2i7PzjrNZzDi/j8ni0NS9jBYt
+	f1pYLNYeuctucbelk9Xi4ilXi0Vbv7Bb/N+zg93i37WNLBa9h2sdRDwuX7vI7PH+Riu7x85Z
+	d9k9Fmwq9di0qpPN4861PWweT65MZ/LYvKTeo2/LKkaPz5vkAriiuGxSUnMyy1KL9O0SuDLO
+	v5zEWvCIq6L1xwzWBsbHHF2MnBwSAiYSHVf2sYHYQgK7GSW2HFaAiEtKfL64jgnCFpZY+e85
+	excjF1BNM5NE58J7jCAJNgEticavXcwgCRGB5YwSP08+BetgFuhhljjQGgJiCwv4Sqz9e5wF
+	xGYRUJWYceoDK4jNK2AlcW7xNHaIDfISqzccYJ7AyLOAkWEVo2RqQXFuem6xYYFhXmq5XnFi
+	bnFpXrpecn7uJkZwwGtp7mDcvuqD3iFGJg7GQ4wSHMxKIryXZpxIFeJNSaysSi3Kjy8qzUkt
+	PsQozcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cCUE6o4Xdx6fVFQSWOoV7nNoWVrau4Y
+	7H+9+NklhUNq1/X1xBb5bpLNCV/8o7Tx1Ev5uXJiHOETFhw6k5J3/o78h9Pn+/QWFLqLVq4s
+	mrNIjHvLIxO99EtKX/wmbzV4ccr0sldzyN+83JUT570qVzlyVDijNePwsg6pOrdzCVtOnfNQ
+	kzfq21Ozx2jTp48K9+8Gf29Ztajx9fSi0qVbNU+Gf73m4zvvkdrDurkvqgvzHnaGHJm4Lr7/
+	/wnD60sae1lE8+W5vnTsWi5zWP9+0/bn52o2cKivUXkV9JgtydHUSjIwmHWbr46i9YEaK56Y
+	FUHzI1ZPYGWU4kjiEr0StTTtRrzG8tYJzn80WCSWixUosRRnJBpqMRcVJwIA49QBgOcCAAA=
+X-CMS-MailID: 20240213132759epcas5p4896fd9d0b1af7762ff98ae9e586492dc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240213132759epcas5p4896fd9d0b1af7762ff98ae9e586492dc
+References: <CGME20240213132759epcas5p4896fd9d0b1af7762ff98ae9e586492dc@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240212140331.915498-2-tudor.ambarus@linaro.org>
 
-On Mon, Feb 12, 2024 at 02:03:20PM +0000, Tudor Ambarus wrote:
-> There are SPI IPs that can be configured by the integrator with a
-> specific FIFO depth depending on the system's capabilities. For example,
-> the samsung USI SPI IP can be configured by the integrator with a TX/RX
-> FIFO from 8 byte to 256 bytes.
-> 
-> Introduce the ``fifo-depth`` property for such instances of IPs where the
-> same FIFO depth is used for both RX and TX. Introduce ``rx-fifo-depth``
-> and ``tx-fifo-depth`` properties for cases where the RX FIFO depth is
-> different from the TX FIFO depth.
-> 
-> Make the dedicated RX/TX properties dependent on each other and mutual
-> exclusive with the other.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../bindings/spi/spi-controller.yaml          | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
+Create a managed API wrapper to get all the bulk clocks and enable them
+as it is a very common practice in many drivers. The second patch uses
+this API to adapt to clk_bulk_* APIs in the exynos driver.
+v1:
+ - https://lore.kernel.org/lkml/20231009062216.6729-1-shradha.t@samsung.com/
+v2:
+ - https://lore.kernel.org/lkml/20231115065621.27014-1-shradha.t@samsung.com/
+ - Addressed Manivannan's comments to improve patch
+v3:
+ - https://lore.kernel.org/all/20240110110115.56270-1-shradha.t@samsung.com/
+ - Took Marek's suggestion to make a common bulk clk wrapper and use it in
+   the exynos driver
+v4:
+ - https://lore.kernel.org/all/20240124103838.32478-1-shradha.t@samsung.com/
+ - Addressed Alim and Manivannan's comments
+ - Changed enabled->enable and disabled->disable in function name
+ - Remove num_clks out parameter as it is not required by user
+ - Removed exit callback and used function name directly in release
+v5:
+ - Rephrased comments for better readability
 
-With the indentation fixed,
+Shradha Todi (2):
+  clk: Provide managed helper to get and enable bulk clocks
+  PCI: exynos: Adapt to clk_bulk_* APIs
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ drivers/clk/clk-devres.c                | 40 ++++++++++++++++++
+ drivers/pci/controller/dwc/pci-exynos.c | 54 ++-----------------------
+ include/linux/clk.h                     | 23 +++++++++++
+ 3 files changed, 67 insertions(+), 50 deletions(-)
+
+-- 
+2.17.1
+
