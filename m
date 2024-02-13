@@ -1,100 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7412B12E52;
-	Mon, 12 Feb 2024 15:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4251E497
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 08:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707752162; cv=none; b=briSRRigTR+upQ0gxfs4kDRd84wjGCi12aNOmu45VuUOopV1dt5dHNMdqVIgbVqxje0bQWhXJZYloaeKsVBRWvw5hl0UEDwVTBBJKg5CvRdG4dUWHBDB4W4qI4nISPViP4po2Q1A07/PcgsJd/YRI/V+ekntbbW9ebkJeX7KC+Q=
+	t=1707812179; cv=none; b=HjtVJBKfaQALeoH76zMToGVFKzDO01awKVMzCtVdmlhzSV4d9sbgCtHRv6IWR7pfYQgtm1QlVehNM+sOaN50wCrVGyqFZ9uFflSJF+WutgMMMPIoLqJDmmTWj1qHTv00G19zVjfWzqK8zOvGuijRwU34pu1eOFdBmiIv81KCaME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707752162; c=relaxed/simple;
-	bh=OsnsW5WMX5bnFUSUa6rJ6/poLxq4vFG7wdQg2ic2Pu0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=W2XeTpBtiLI29EYUs674STltuOOjCkJUx49+KrcGC7SbEPzeehDfuyvkW+V31Vtkqj9jFPxvIRy55yMmxVYkL/KES9l1urb9VGTmW3okmeI6axgcC9CiHi0e07I16MtxSS6SbXmUSyEr3kBFHJPnLNQc01aYlLTSe9NphIA7n58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/dWWajb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707812179; c=relaxed/simple;
+	bh=U2Y+Kr0bMWSXAxm+KD/WY4ZomXjGBgW7nt3qNovWZek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rQkBqln4bx9XmeMQ/3TjA6vT+epzs0yMKXmM1OdUnnMGwUAs2m0ZbSdpLRQKfMXsqyYvr15dv1MKctCewI1QL4N9jI/+DJum/8nepZVaHigZL6A/HkFITyZ1qigqU3qIhY+8HJIOUMG2Ad16roRyYM6Szb/9dTILCnrp4xmdlGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A3s39C6k; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/dWWajb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C17C433F1;
-	Mon, 12 Feb 2024 15:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707752162;
-	bh=OsnsW5WMX5bnFUSUa6rJ6/poLxq4vFG7wdQg2ic2Pu0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=N/dWWajbDJ9QTuLpoEYTptaUAKUENXuJaUe3gpaNVcA6bsOGfLV/U22ZYa0f88SWj
-	 dYd2HHaE26EA2GfcfvV/0CSTnPsLrketIfchZ79AhNqvnGbTtkUR2fzcwalVW4J3AV
-	 /3FD0vn9/ArjW0o2rwzLgUMgViFTTSPPgj2j3YI69uVX/yXppOE81gI87WFUXz0TKH
-	 k90XarTGrdTq8VhQXB8dbyF3VpIo/yRrGbqUl4L7O7ryEONyLdUQmFbrqocjsyagsF
-	 Db3KRK/E8C782V5a/ByQD7efy4w3Y0YTfcSoLeOewM+VYURaZQ2VYSjonVWR0RixSF
-	 V6UGS5M7CX0wA==
-Date: Mon, 12 Feb 2024 09:36:00 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3s39C6k"
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-785d5fa8169so139386085a.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 00:16:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707812177; x=1708416977; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YKJQkExMKM9CelsaTo12mwlgC53OjDZqQ7+f/ZWjGZo=;
+        b=A3s39C6kbUDQXi7XLUq7MC4bsJ17k9vRCBOZNYDxXLrdqhY0bCA46jiqgTbBQBsXtd
+         T52abosp/ABRzppd9+Y9XR6za1Pku0xoO9hxo15lt9k+HYuhAo7vq4kni9uSkkpJf8ZI
+         AtZgoZCgBISDllAc6JoNFgJwmM7SGKWNtn8h1cGbF3SI0cloVoDxb7jzS4g8TxVzD9Xp
+         abEY4URwisOGKpWal3HOpuzmR7aIHZUBTqGVWapFINDg+XwS5mKi0MXYfTbQhTwRfd+2
+         ne3bVOXOplQVkhHzbyaR3CIVbpAUNP3+iFI0zpZF2iEA7WA9eS78wRrZIxQsyDDRQ6Ow
+         v1sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707812177; x=1708416977;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKJQkExMKM9CelsaTo12mwlgC53OjDZqQ7+f/ZWjGZo=;
+        b=m7czcQMnOtkLCSOidsUVG+NkNyHV+zeu5uIqXrzZdEZxcoYeaxPNkJ5bWGA11VTdHy
+         sqvJlGnI+1hdGwJNM4CMuHU+eGPsCUWs4O06gU7/Jn/MaSqTHwBcZ+kDqkozecFS9w4e
+         jg/dzzblYPw9pxZpAwslEIEXr3NHFfTRzJROkyh7YeUSNNWdvJd1hXxJgNFXJbdu3Tez
+         3ZKIzT0zDFcgFZgKq2lwlLewfoI8TJQUEh7CE3rS+AuEFnygMABH5ImasfBxl9Kh5+6h
+         EhnybtGaHxgitAlPKh6j1LtLM1DLxVvhdqwos5vhDh2OlSXovAcKY19szn2Xxiq6Kg8K
+         Ag3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmRMdNzsOz40eizRpOpETXzngD3P8qlkAW19vcaq9R5vIK4Ua2z6r6tBEmnhvJ2uSFwhGH8GqVtxQ7WrZrKSxxkvnnS2BJA1BryWz3dOy3wBc=
+X-Gm-Message-State: AOJu0YzkFGdiEwrgF74m6ZmCPDg0X73vSDnNgQYblFnNftD+AEfAHzzA
+	qftmGrSpvM4kMriU2chElaM5Qx9QV3Q7/Q2Vmo9v2yjRenDIHtGbojBLD1EZUnI=
+X-Google-Smtp-Source: AGHT+IG6jo1lxsF+ClvpfvbjDv99ccu77l6Z35LSDCMmP9ugZtjW0POcLsQdhQYXMhWGIicalHcSqQ==
+X-Received: by 2002:a05:620a:4556:b0:787:15df:39c0 with SMTP id u22-20020a05620a455600b0078715df39c0mr3056929qkp.71.1707812176946;
+        Tue, 13 Feb 2024 00:16:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUyVnVykstms9WOryasekInAxzKUDAPpQfoa7J7EpCrGx2aCT+4wbDQfnfbuzm7Q20r8FubRrythtMzBZbYGsiNAhlNP9MIGlM38yTIonLlo94enyvgLENRmxS8K6EX4sfxEsKwi4AvjFhwg8LIJ9Slg9NEPno5tyAfmRJOpz/RZQgQ1yrChbVxn1kpwVB+8jhxTSQ8/juzqPR/L+liz8EYgykssvGlUIlAIUVb2nRfLcOsuemnqpsX1eTZ0b0Aj5jrh4ProArEDBJA8DPhga+YujkKwlxTGsp1yjpNLIU94M8+L4d/ESy6yg5mKS5Q/9xcHC+mXXXuittp3oaC0oTt8+SbW7UTd3sLwLFFtimUsahSibArupZa3BlhFhdHx4Makp8VnParFTNbzB5n5DmPtJZoMHPojzENPtabQKhC0VTp7x6c+0dBsi6z3fc85K2VyApVxFZZtorEntbj2vwHVMvVmeFPbG35UZPuu63dZxmECd3RJR28ChKJFUHNlQZSpwvdORYqLnm5DHGkMC7bxKC2kOuxyJn/FvAapJoSkLMEpStFSMpScQxqiPu9HNHxfIujweG/1PoWw1h6KRFi8t+1sbx2OA==
+Received: from [192.168.2.173] ([79.115.63.202])
+        by smtp.gmail.com with ESMTPSA id t14-20020a05620a034e00b00786e8e0f8f7sm926281qkm.3.2024.02.13.00.16.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Feb 2024 00:16:16 -0800 (PST)
+Message-ID: <1d6e104d-6833-48c5-b95d-8f10617cd5c5@linaro.org>
+Date: Tue, 13 Feb 2024 10:16:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, andre.draszik@linaro.org, 
- willmcvicker@google.com, andi.shyti@kernel.org, alim.akhtar@samsung.com, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org, 
- semen.protsenko@linaro.org, devicetree@vger.kernel.org, 
- peter.griffin@linaro.org, broonie@kernel.org
-In-Reply-To: <20240212140331.915498-2-tudor.ambarus@linaro.org>
-References: <20240212140331.915498-1-tudor.ambarus@linaro.org>
- <20240212140331.915498-2-tudor.ambarus@linaro.org>
-Message-Id: <170775215967.605422.1424850912641172864.robh@kernel.org>
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 01/12] spi: dt-bindings: introduce FIFO depth
  properties
+To: Rob Herring <robh@kernel.org>
+Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, andi.shyti@kernel.org, alim.akhtar@samsung.com,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+ conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
+ semen.protsenko@linaro.org, devicetree@vger.kernel.org,
+ peter.griffin@linaro.org, broonie@kernel.org
+References: <20240212140331.915498-1-tudor.ambarus@linaro.org>
+ <20240212140331.915498-2-tudor.ambarus@linaro.org>
+ <170775215967.605422.1424850912641172864.robh@kernel.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Content-Language: en-US
+In-Reply-To: <170775215967.605422.1424850912641172864.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Mon, 12 Feb 2024 14:03:20 +0000, Tudor Ambarus wrote:
-> There are SPI IPs that can be configured by the integrator with a
-> specific FIFO depth depending on the system's capabilities. For example,
-> the samsung USI SPI IP can be configured by the integrator with a TX/RX
-> FIFO from 8 byte to 256 bytes.
+
+On 12.02.2024 17:36, Rob Herring wrote:
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
 > 
-> Introduce the ``fifo-depth`` property for such instances of IPs where the
-> same FIFO depth is used for both RX and TX. Introduce ``rx-fifo-depth``
-> and ``tx-fifo-depth`` properties for cases where the RX FIFO depth is
-> different from the TX FIFO depth.
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/spi/spi-controller.yaml:152:9: 
+> [warning] wrong indentation: expected 6 but found 8 (indentation)
+> ./Documentation/devicetree/bindings/spi/spi-controller.yaml:156:9: 
+> [warning] wrong indentation: expected 6 but found 8 (indentation)
 > 
-> Make the dedicated RX/TX properties dependent on each other and mutual
-> exclusive with the other.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../bindings/spi/spi-controller.yaml          | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
+> dtschema/dtc warnings/errors:
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+oh, the horror, I missed these. I'll re-check and resend.
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/spi/spi-controller.yaml:152:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
-./Documentation/devicetree/bindings/spi/spi-controller.yaml:156:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240212140331.915498-2-tudor.ambarus@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks,
+ta
