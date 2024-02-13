@@ -1,101 +1,67 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CF15DF26
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 15:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6322C7491;
+	Tue, 13 Feb 2024 16:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707839133; cv=none; b=LvWA/B4fC/bPb8dVN9TQi1n6tKfTdELlZlcVkW/hKjEQHTLADUWuu6OrGxX+6w/gqr+8u4peM7qRlu3q/vVa+8DaiS6k1/VHNcuTpu1is2LyUPX4b5yQxDwlFXqIubz9tVjY+A8coznsqF+dIxKIl1zttEgb5PUa/5TLpJLsspg=
+	t=1707841858; cv=none; b=lQnVjDlIra8FbE179ryOzYEM2xttIaxX6nB03kH/wp9ikdSULUvjF3uG+uxvbN4/j8WEqqUQNrGMymgF7Qx6jOsGHgujXS/f6CHkVPyIo7HvN5BsWDubdx/VwzEiH3932oPznWr+g65838FTGF+QbHdGPihBZ6wa57ThgqcQZmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707839133; c=relaxed/simple;
-	bh=Mb7cfkVoTPe9SpFqQPiRQCgZRgp43WdceLq+nhIl53M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qUZZr80vE5iFWrsFtCsSwwlmeNDQI4G2t7x63PghucZfUOGRgnkgA3PBTea9tD+77mMteMInGmjYjPRHqp06M9fWoQi8csX138deMePiKA2OmSl1U510dLXOrOm3/GTozAWE4o+5OLuROlpm0eQrydQMEGt1ipOS+rNTrNYFsbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=Vmj1mmLQ reason="key not found in DNS"; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+	s=arc-20240116; t=1707841858; c=relaxed/simple;
+	bh=M+iSkQzlFvKqKVdIDb0KbYwtekmltOd8aXuh0uIB/co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrokOPcb5qwK1NKpGo1kVmKa6mSEQoBxMIOqSgR9wh9hgAs38D4bGIjQLNH5QgrYwW8fH8J7hBxGks6Rfy/HpDhpQMT5Joj/nWQi5cdY/dOvhs9nzsttEVHiaXx5Uxub9Cc+LuEYL1XHxBClTmjsBpn/osOtn7XNwnHhePiShmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGbC2s9/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="Vmj1mmLQ"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-785d5705681so188477485a.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 07:45:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1707839131; x=1708443931; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
-        b=Vmj1mmLQ4yhugjb/lPfx3+kxHd1E/h0Kv5YjC6n1verDh8bforL8WJmTrmhqdYgyPX
-         56y9RZo1Mc5U/mF8FPCurWhd+rExv7UZueNkedhf/F3UMF4+TPDSL5z8wNhEeajGsva1
-         RCpTP8BbUJksyQEqy8waWFK14wWRVqePBgqfNsbDvyEJP5lN8zOpVxyRtyXGGxCqS9c+
-         eqSxQH/KlzMgGlgL+X73aBsTzO3bzsCM6zp8Bgti1AKInfQCsdy01WaodSCDPOx/76N3
-         k9pq74Hhw6oeQhYWQr/K8cMbwAzbnEL8K3HilA2scUgyGNxbQVBZCq4/4ORbpCYcCO5L
-         CfOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707839131; x=1708443931;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
-        b=qpevdWnP2rlU+JhMSXo7BGmue4tBH8nFLHqdYPOaYHOSRondzc0NLdI0bkkm/SaiwX
-         2dnW9mLcD1dwtsQAeuHToxTeXYiM/uox4UZAacQgSA6W8UdRRcRflal+KgpylFulY6Tz
-         nlHaeDgqZs+Zqo9TkCoWvLr8WT618ekrfyXa3vM6miJXNXe5gcOpf5QazNVmONH01zdf
-         TGpVcZMOitYSpZGdQXnAz2siDPcCc0nLgUW/XIyL5tW059EsTr4fFUThUv0hShbsDl7k
-         bRhWx8dUPK5wKUEyIWNJMXBDjBM0gWMjjZk7c9qRBdUB9WzyfWXWfie29nBJgrpZAef+
-         j11g==
-X-Gm-Message-State: AOJu0YzDHLP23nByfjSKjSOxzOlV6v9DP4ZVl4mrwEFCwhXQyl0W+t0J
-	n2sLKq6IZ2BiuCPybu6G8nNH9MsxXPIXGwQ2OMpXI2EhlcCIdwR3AVzYp4RwlPbSgLBzqiOGelh
-	UAsm4Vl02jZSwMkZn6NuioT5kE3QZ0f0XOUVVDg==
-X-Google-Smtp-Source: AGHT+IFqChznTFjr/EeidSN571ZA0nQfVJvF+Fp0E+Y2flaP6eNCXc4z1s3ADkdtr1CrUfrPgpTF+9pex3Z052b1w5U=
-X-Received: by 2002:a05:620a:618b:b0:787:1db5:f0de with SMTP id
- or11-20020a05620a618b00b007871db5f0demr2991955qkn.26.1707839131046; Tue, 13
- Feb 2024 07:45:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGbC2s9/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7628C433C7;
+	Tue, 13 Feb 2024 16:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707841857;
+	bh=M+iSkQzlFvKqKVdIDb0KbYwtekmltOd8aXuh0uIB/co=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qGbC2s9/34KrvzdF2opEnNBqHmFpoCBeeJ5TpzKvEu4eOYaq9VObtJAqzXpUvh8gd
+	 /EXxH3lec5MXI9BLsBE9PA8ynrhhV9r54uZ+2Eeb27sQxEdaFceGZY3FyyZBvdZn7e
+	 S28ni/aizs8SKJC4ec+q35QiW2LvEpoVMdBpUIyjEIUqlxR6chrFOcXR1i5/6G01qC
+	 Dt9Z964Rn51vqFAJ0/i0EE0retrWpnb1Du0cEk68RiRo0WqPp5yTL/ALGvd8+2p2mR
+	 AmbJRk01uxBA9COfFdpY3MhgBRkfd2QdFxt7rxkPLSNo26iTqcxSJXFB7OjFu2iSfe
+	 m/uisfECjRnDw==
+Date: Tue, 13 Feb 2024 10:30:55 -0600
+From: Rob Herring <robh@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-scsi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Avri Altman <avri.altman@wdc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: ufs: samsung,exynos-ufs: Add size
+ constraints on "samsung,sysreg"
+Message-ID: <170784184808.1480991.12030700618297062106.robh@kernel.org>
+References: <20240124190733.1554314-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
-In-Reply-To: <20240213131210.GA28926@willie-the-truck>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 13 Feb 2024 10:44:53 -0500
-Message-ID: <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
-To: Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240124190733.1554314-1-robh@kernel.org>
 
-> >  SecPageTables
-> > -              Memory consumed by secondary page tables, this currently
-> > -              currently includes KVM mmu allocations on x86 and arm64.
-> > +              Memory consumed by secondary page tables, this currently includes
-> > +              KVM mmu and IOMMU allocations on x86 and arm64.
 
-Hi Will,
+On Wed, 24 Jan 2024 13:07:33 -0600, Rob Herring wrote:
+> The 'phandle-array' type is a bit ambiguous. It can be either just an
+> array of phandles or an array of phandles plus args. "samsung,sysreg" is
+> the latter and needs to be constrained to a single entry with a phandle and
+> offset.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/ufs/samsung,exynos-ufs.yaml      | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
 
-> While I can see the value in this for IOMMU mappings managed by VFIO,
-> doesn't this end up conflating that with the normal case of DMA domains?
-> For systems that e.g. rely on an IOMMU for functional host DMA, it seems
-> wrong to subject that to accounting constraints.
+Applied, thanks!
 
-The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
-is passed to the iommu mapping functions. We do that from the vfio,
-iommufd, and vhost. Without this flag, the memory useage is reported
-in /proc/meminfo as part of  SecPageTables field, but not constrained
-in cgroup.
-
-Pasha
