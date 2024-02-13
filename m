@@ -1,101 +1,134 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4251E497
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 08:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1321B7F1
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 08:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707812179; cv=none; b=HjtVJBKfaQALeoH76zMToGVFKzDO01awKVMzCtVdmlhzSV4d9sbgCtHRv6IWR7pfYQgtm1QlVehNM+sOaN50wCrVGyqFZ9uFflSJF+WutgMMMPIoLqJDmmTWj1qHTv00G19zVjfWzqK8zOvGuijRwU34pu1eOFdBmiIv81KCaME=
+	t=1707812375; cv=none; b=FoHzZ8nRXU3L32dI92soRvabcwQhF+NTjfNmB3/FCOuzcPDU3ENHpVs04qy5jUjFmGwjXKvwW53pGhMs8WMc4aM+Jbwm3YEvXPDWsw4tJ7j41nm1NxWKy8waqXqWl77wq9/uzal7GUkbvfCZZmdPepyvoAqe7huXtr1JZbzzdG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707812179; c=relaxed/simple;
-	bh=U2Y+Kr0bMWSXAxm+KD/WY4ZomXjGBgW7nt3qNovWZek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQkBqln4bx9XmeMQ/3TjA6vT+epzs0yMKXmM1OdUnnMGwUAs2m0ZbSdpLRQKfMXsqyYvr15dv1MKctCewI1QL4N9jI/+DJum/8nepZVaHigZL6A/HkFITyZ1qigqU3qIhY+8HJIOUMG2Ad16roRyYM6Szb/9dTILCnrp4xmdlGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A3s39C6k; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707812375; c=relaxed/simple;
+	bh=a9KpPEigrsX1iLMABeTlXtvEaBlx5SwQTXXvUiczMB0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=sa5jrE37BR/VoOPevzivUeI9J4X5QQS+mNKMw4Yf2B2coEWhRemFpto3IuXJyBFiqIMZGYBXPwLTy9tBaMXxbc5/hlIMaa1CgPudHyTs+1JNpDWvhAbRVHMB5WHLS89K2uEBZYgNqq7HTbfHYiu5e8u8hAAwwt3CWr6FPnah1R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n45jA2m5; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A3s39C6k"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-785d5fa8169so139386085a.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 00:16:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707812177; x=1708416977; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YKJQkExMKM9CelsaTo12mwlgC53OjDZqQ7+f/ZWjGZo=;
-        b=A3s39C6kbUDQXi7XLUq7MC4bsJ17k9vRCBOZNYDxXLrdqhY0bCA46jiqgTbBQBsXtd
-         T52abosp/ABRzppd9+Y9XR6za1Pku0xoO9hxo15lt9k+HYuhAo7vq4kni9uSkkpJf8ZI
-         AtZgoZCgBISDllAc6JoNFgJwmM7SGKWNtn8h1cGbF3SI0cloVoDxb7jzS4g8TxVzD9Xp
-         abEY4URwisOGKpWal3HOpuzmR7aIHZUBTqGVWapFINDg+XwS5mKi0MXYfTbQhTwRfd+2
-         ne3bVOXOplQVkhHzbyaR3CIVbpAUNP3+iFI0zpZF2iEA7WA9eS78wRrZIxQsyDDRQ6Ow
-         v1sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707812177; x=1708416977;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YKJQkExMKM9CelsaTo12mwlgC53OjDZqQ7+f/ZWjGZo=;
-        b=m7czcQMnOtkLCSOidsUVG+NkNyHV+zeu5uIqXrzZdEZxcoYeaxPNkJ5bWGA11VTdHy
-         sqvJlGnI+1hdGwJNM4CMuHU+eGPsCUWs4O06gU7/Jn/MaSqTHwBcZ+kDqkozecFS9w4e
-         jg/dzzblYPw9pxZpAwslEIEXr3NHFfTRzJROkyh7YeUSNNWdvJd1hXxJgNFXJbdu3Tez
-         3ZKIzT0zDFcgFZgKq2lwlLewfoI8TJQUEh7CE3rS+AuEFnygMABH5ImasfBxl9Kh5+6h
-         EhnybtGaHxgitAlPKh6j1LtLM1DLxVvhdqwos5vhDh2OlSXovAcKY19szn2Xxiq6Kg8K
-         Ag3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmRMdNzsOz40eizRpOpETXzngD3P8qlkAW19vcaq9R5vIK4Ua2z6r6tBEmnhvJ2uSFwhGH8GqVtxQ7WrZrKSxxkvnnS2BJA1BryWz3dOy3wBc=
-X-Gm-Message-State: AOJu0YzkFGdiEwrgF74m6ZmCPDg0X73vSDnNgQYblFnNftD+AEfAHzzA
-	qftmGrSpvM4kMriU2chElaM5Qx9QV3Q7/Q2Vmo9v2yjRenDIHtGbojBLD1EZUnI=
-X-Google-Smtp-Source: AGHT+IG6jo1lxsF+ClvpfvbjDv99ccu77l6Z35LSDCMmP9ugZtjW0POcLsQdhQYXMhWGIicalHcSqQ==
-X-Received: by 2002:a05:620a:4556:b0:787:15df:39c0 with SMTP id u22-20020a05620a455600b0078715df39c0mr3056929qkp.71.1707812176946;
-        Tue, 13 Feb 2024 00:16:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUyVnVykstms9WOryasekInAxzKUDAPpQfoa7J7EpCrGx2aCT+4wbDQfnfbuzm7Q20r8FubRrythtMzBZbYGsiNAhlNP9MIGlM38yTIonLlo94enyvgLENRmxS8K6EX4sfxEsKwi4AvjFhwg8LIJ9Slg9NEPno5tyAfmRJOpz/RZQgQ1yrChbVxn1kpwVB+8jhxTSQ8/juzqPR/L+liz8EYgykssvGlUIlAIUVb2nRfLcOsuemnqpsX1eTZ0b0Aj5jrh4ProArEDBJA8DPhga+YujkKwlxTGsp1yjpNLIU94M8+L4d/ESy6yg5mKS5Q/9xcHC+mXXXuittp3oaC0oTt8+SbW7UTd3sLwLFFtimUsahSibArupZa3BlhFhdHx4Makp8VnParFTNbzB5n5DmPtJZoMHPojzENPtabQKhC0VTp7x6c+0dBsi6z3fc85K2VyApVxFZZtorEntbj2vwHVMvVmeFPbG35UZPuu63dZxmECd3RJR28ChKJFUHNlQZSpwvdORYqLnm5DHGkMC7bxKC2kOuxyJn/FvAapJoSkLMEpStFSMpScQxqiPu9HNHxfIujweG/1PoWw1h6KRFi8t+1sbx2OA==
-Received: from [192.168.2.173] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id t14-20020a05620a034e00b00786e8e0f8f7sm926281qkm.3.2024.02.13.00.16.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Feb 2024 00:16:16 -0800 (PST)
-Message-ID: <1d6e104d-6833-48c5-b95d-8f10617cd5c5@linaro.org>
-Date: Tue, 13 Feb 2024 10:16:11 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n45jA2m5"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240213081929epoutp04cc979d313dc788bf0e181cfd54e50230~zXk03blBO3169131691epoutp04d
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Feb 2024 08:19:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240213081929epoutp04cc979d313dc788bf0e181cfd54e50230~zXk03blBO3169131691epoutp04d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1707812369;
+	bh=H1tmDljItywEqFTrCeVCWWEvSW1ptNZPOJ2e9OZtBDU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=n45jA2m5Khgp+gF6RFYFySgSlZT9CDOxAOUd4ycn9dYHvn7FygcCV9OEL4NqevpOH
+	 JsOGGtvhe6DUebUjL5GEhy4TTaQCfnsHLWnHsBMQHtJIUaZAt8PGh8Nvdxzkcr9yLm
+	 0lFnNhsHM6MF5Na8YatpJi20iO09915MH0DHvyT4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240213081928epcas5p335b1317d210ea234c717440690a8224d~zXk0Zpb9U1947019470epcas5p3-;
+	Tue, 13 Feb 2024 08:19:28 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4TYvPW1Rzyz4x9Pw; Tue, 13 Feb
+	2024 08:19:27 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8B.49.10009.F062BC56; Tue, 13 Feb 2024 17:19:27 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240213045739epcas5p49f28920efda3cb80351b1fcae580b21e~zU0mg__Ak3076530765epcas5p4j;
+	Tue, 13 Feb 2024 04:57:39 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240213045739epsmtrp195d85b4c2bfb9a6608a56432f75f2021~zU0mf7ZVQ2138221382epsmtrp1U;
+	Tue, 13 Feb 2024 04:57:39 +0000 (GMT)
+X-AuditID: b6c32a4a-261fd70000002719-78-65cb260f034a
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4D.0C.07368.3C6FAC56; Tue, 13 Feb 2024 13:57:39 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240213045736epsmtip1f0d0b60a43c700a19890074823abd3b6~zU0kNhaz_0854708547epsmtip1E;
+	Tue, 13 Feb 2024 04:57:36 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-samsung-soc@vger.kernel.org, andi@etezian.org, gost.dev@samsung.com,
+	alim.akhtar@samsung.com, pankaj.dubey@samsung.com, aakarsh.jain@samsung.com
+Subject: [Patch v2] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
+Date: Tue, 13 Feb 2024 10:27:33 +0530
+Message-Id: <20240213045733.63876-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmui6/2ulUg7aDHBZPd8xktXgwbxub
+	xeIfz5ks7i/+zGKxZu85Jov5R86xWtw8sJPJ4uLMuywWfS8eMltsenyN1eLyrjlsFj0btrJa
+	zDi/j8li7ZG77BbLNv1hsli09Qu7ReveI+wOgh7Xl3xi9li85yWTx6ZVnWwed67tYfPYvKTe
+	o2/LKkaPz5vkPE59/cwewBGVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCX
+	mJtqq+TiE6DrlpkD9IaSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4
+	NC9dLy+1xMrQwMDIFKgwITtj4Y60gn2sFfPerGdrYHzK0sXIySEhYCJx9csU1i5GLg4hgd2M
+	Esc33IRyPjFKXL+5jQXC+cYo0fhzJSNMy6OpF5kgEnsZJTbdPcoO4bQySZyc8J65i5GDg01A
+	V+Ls9hyQBhGBRkaJxx0lIDazwHkmiQudKSC2sIC3xLX1D9lBbBYBVYldzw4zg9i8ArYS06Zf
+	YodYJi+xesMBZpD5EgK9HBLX2s5DHe4iMXvfMWYIW1ji1fEtUA1SEi/726DsZInHi15C1eRI
+	rN8zBarXXuLAlTksIHcyC2hKrN+lDxGWlZh6ah0TxJ18Er2/nzBBxHkldsyDsdUk5tz5wQph
+	y0gcXr0UGigeEi3vH4KtEhKIldh/9S7bBEbZWQgbFjAyrmKUTC0ozk1PLTYtMMpLLYfHU3J+
+	7iZGcOLU8trB+PDBB71DjEwcjIcYJTiYlUR4L804kSrEm5JYWZValB9fVJqTWnyI0RQYZhOZ
+	pUST84GpO68k3tDE0sDEzMzMxNLYzFBJnPd169wUIYH0xJLU7NTUgtQimD4mDk6pBqZtsjzT
+	OzgvM76/aWrY7LSFsckhPJKxwP2nS4fP+nzGTzf8lhw0v3Rst96SuY35sfYKS/gmLCzyP8c2
+	U3zve+0/n/T0Gdjv3eza9ajReYvETOdfz7c6fvlYz1tx4n9e/IH29nshJ3b6GioGqaVM2rtg
+	qbhSVfzHhTNM3v+QuRX8UF//9j1/b0Xvuv3NSnc/n3RbyK5Uv9zA7O3h0zyRnZf9K3gPH+0w
+	Efr990ue5eWury+3my4PvVQrzl3Kkr/nyjGOFZdFz+ioei1k7DAyXrJG76GFjdSarbPP2ymu
+	qQtymL9sxQP+/6b6k06n3rrxf9Kmay2y2f/uVe7d7sD24+WtXZnyNktqsv53yZR3Gv9WYinO
+	SDTUYi4qTgQAlmfW9iUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSnO7hb6dSDS7ME7R4umMmq8WDedvY
+	LBb/eM5kcX/xZxaLNXvPMVnMP3KO1eLmgZ1MFhdn3mWx6HvxkNli0+NrrBaXd81hs+jZsJXV
+	Ysb5fUwWa4/cZbdYtukPk8WirV/YLVr3HmF3EPS4vuQTs8fiPS+ZPDat6mTzuHNtD5vH5iX1
+	Hn1bVjF6fN4k53Hq62f2AI4oLpuU1JzMstQifbsEroyFO9IK9rFWzHuznq2B8SlLFyMnh4SA
+	icSjqReZuhi5OIQEdjNKdL7bBpWQkfjfdowdwhaWWPnvOTtEUTOTxMab+4E6ODjYBHQlzm7P
+	AYmLCLQySlxf2Qk2iVngPpPElYm3WUG6hQW8Ja6tfwg2iUVAVWLXs8PMIDavgK3EtOmXoDbI
+	S6zecIB5AiPPAkaGVYySqQXFuem5yYYFhnmp5XrFibnFpXnpesn5uZsYwWGspbGD8d78f3qH
+	GJk4GA8xSnAwK4nwXppxIlWINyWxsiq1KD++qDQntfgQozQHi5I4r+GM2SlCAumJJanZqakF
+	qUUwWSYOTqkGJuUJE7kuvcjiX8GapGAVZWNzl+eHYOujiOIjBdOfKpSVvjaQ//86htf52M6d
+	RbxnLJ9GrUirTUqYwVb8pT1vxYvYhv7Nwga9iWfe6TvJR71zUTCp3a3FP0H0dz1n8JGaLqfP
+	LNnGKZE7BC6f0ma6mj2nfs+UpE+60hv+LvZcueLwl9dKsd86lS0WVBZaVad0lmQcer52UsLC
+	zsdLTRtvuvrVCbLbqSn0b4vVWPB489LerGnvzuc7avMder51jf/XYsvJUn/V7LsvyWs58GUr
+	mDzpn33JtLjd/sZX/9zZr+ITfk9plr05J+kkB/vFHQ6//77L+seyumvRmxtnmB9NmtS1Wzg0
+	vzj2a8KxM85KSizFGYmGWsxFxYkAY8iUUNICAAA=
+X-CMS-MailID: 20240213045739epcas5p49f28920efda3cb80351b1fcae580b21e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240213045739epcas5p49f28920efda3cb80351b1fcae580b21e
+References: <CGME20240213045739epcas5p49f28920efda3cb80351b1fcae580b21e@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] spi: dt-bindings: introduce FIFO depth
- properties
-To: Rob Herring <robh@kernel.org>
-Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, andre.draszik@linaro.org,
- willmcvicker@google.com, andi.shyti@kernel.org, alim.akhtar@samsung.com,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
- conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
- semen.protsenko@linaro.org, devicetree@vger.kernel.org,
- peter.griffin@linaro.org, broonie@kernel.org
-References: <20240212140331.915498-1-tudor.ambarus@linaro.org>
- <20240212140331.915498-2-tudor.ambarus@linaro.org>
- <170775215967.605422.1424850912641172864.robh@kernel.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Content-Language: en-US
-In-Reply-To: <170775215967.605422.1424850912641172864.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+commit "538af6e5856b" which convert s5p-mfc bindings to
+json-schema is already merged. Remove "s5p-mfc.txt" file.
 
+Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert
+bindings to json-schema")
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+---
+changelog:
+v1->v2
+Add Fixes tag suggested by Krzysztof
+ Documentation/devicetree/bindings/media/s5p-mfc.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-On 12.02.2024 17:36, Rob Herring wrote:
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/spi/spi-controller.yaml:152:9: 
-> [warning] wrong indentation: expected 6 but found 8 (indentation)
-> ./Documentation/devicetree/bindings/spi/spi-controller.yaml:156:9: 
-> [warning] wrong indentation: expected 6 but found 8 (indentation)
-> 
-> dtschema/dtc warnings/errors:
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+deleted file mode 100644
+index e69de29bb2d1..000000000000
+-- 
+2.17.1
 
-oh, the horror, I missed these. I'll re-check and resend.
-
-Thanks,
-ta
