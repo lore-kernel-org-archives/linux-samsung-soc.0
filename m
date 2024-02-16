@@ -1,258 +1,173 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C260017C76;
-	Fri, 16 Feb 2024 07:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E6177A0F;
+	Fri, 16 Feb 2024 11:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708069346; cv=none; b=X/hJ3QWc5oh6aHjesOpTWWjhbgrvXDUQpVC3luD73B6qcknRB6Y0Th4S/TFQXmBNIIHD2sbL76NEtshHaZsX2k2RElZJZ6UyCa/c+Q8CQdG4bzvAo3fpVwJS53ZR+TFSApedzSh1vHHvVtHHVbgOivGNZGpucXYeIjQ7weA5eTs=
+	t=1708083069; cv=none; b=oezQtxR0uD9jH3JvskO0g/NdQmdBYAN29IXuBQnMxHlVv+qSqpA22LhYKH5MgRFOPlOF6Il6dCwXTOnmC2KEpVEVSvk8EerCW0CAiisR/OchWYLEiaQC04HyZLc6IbyO42lQrTTts7AapyGW5YpMQe/RByo3W3l2yZaSQcOC8dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708069346; c=relaxed/simple;
-	bh=WVzVo94cjOJUH5Yy0UJb0/1D1AALm0kE4w3zgqTVFfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E04JOSwQw9WvyXgS8oDaG4DHU8QBpqKxoJ3GIc5CgMV0PNQJGS2V45qh6K2ndLN3IljfKjWrhaqeO1Shiu3NCyqlaClh9mog1gcbxLxypV5210aMPsH1XxA6CZuCsiiYtKhb0ozekBjV55bwgl4UrlpzVp9jzbEUws5mPxy6AAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=irYxqIcO; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1708083069; c=relaxed/simple;
+	bh=TJamkMeETVXAU6QkC7A8Ognn1K46paOc5DcsQ8n28aw=;
+	h=Content-Type:Mime-Version:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=XzmrKjQRZOec6rh2gb7oBdGCxZ38GWR2zMLQ2SIde2jwNqNCs8uzNKGNo2Edk3zJdJPcP7KMA1Qu9oc73atmjQ0+hZ9ZS2Odz76Wb9F7oxTarZa3+jVHDEhzc363mvWWEfznw0AFQPsVx1mA4DxtBVfY1h/omUq5R20vyNZimXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Li7BNrv4; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="irYxqIcO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708069344; x=1739605344;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WVzVo94cjOJUH5Yy0UJb0/1D1AALm0kE4w3zgqTVFfg=;
-  b=irYxqIcOsES2/dPUhia1XyS4uGw8GDksnBkJQXCuCbkn5FnwRJnts6qZ
-   lEnPRtOrjeAozpRLC8gdvsHXiXehXalKg0ge+Fxjluf72MTEi7/C0BWsz
-   xPBEIE5HC3h5k8zOcLE544q/Uw2bmmxaMhkNmVQhokwtqLJAh2k3doTZK
-   sJfM85KumrQhthEKw2F/9cLw5MUqYBEG4DAabxW7CK6/PkEJ9mSOPZtDU
-   A97Rqp7Szdl57la7UeTeVlIE4FE4jtDxH+4mtlD7R3/Ls+P3SHfWwVz4+
-   F5wT62aRyWmwK2uWaQuU6qVgb33aP1NJJ1pEiTLOaZFDVbJcVApI+u5Tb
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10985"; a="5159207"
-X-IronPort-AV: E=Sophos;i="6.06,164,1705392000"; 
-   d="scan'208";a="5159207"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2024 23:42:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10985"; a="912319542"
-X-IronPort-AV: E=Sophos;i="6.06,164,1705392000"; 
-   d="scan'208";a="912319542"
-Received: from lkp-server02.sh.intel.com (HELO 3c78fa4d504c) ([10.239.97.151])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Feb 2024 23:42:18 -0800
-Received: from kbuild by 3c78fa4d504c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rasrQ-00014i-1u;
-	Fri, 16 Feb 2024 07:42:16 +0000
-Date: Fri, 16 Feb 2024 15:41:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, broonie@kernel.org,
-	robh@kernel.org, andi.shyti@kernel.org,
-	krzysztof.kozlowski@linaro.org, semen.protsenko@linaro.org,
-	conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	kernel-team@android.com, willmcvicker@google.com,
-	devicetree@vger.kernel.org, arnd@arndb.de,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v2 01/12] spi: dt-bindings: introduce FIFO depth
- properties
-Message-ID: <202402161543.5JdIODY4-lkp@intel.com>
-References: <20240212140331.915498-2-tudor.ambarus@linaro.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Li7BNrv4"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3d0d26182dso206566966b.1;
+        Fri, 16 Feb 2024 03:31:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708083066; x=1708687866; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CeAZhE7j4dRyX+kzFFWa3n1YxsCqKudIIvx3LQHUXoE=;
+        b=Li7BNrv4q2VI1du3vLMHylWl+JrA2qipZETw4SN4+vUVBuNPKSjd5z6/lNiR7wheSv
+         iO5qUaI2J7kr4hmtwe8j8OkuuJGtv3tLEFj5SFWioRpD87ZA1clL04MS3TdGNAqONT3d
+         pYCPOIGg4pRCAkmAb0YYu4VVzy5OnOuoFvfRXOFxvFhWs6IIu0ZRETsMvGatD2TO5WVm
+         EV0y5U+5oM2BIKR5BBy4GOa0p5pKiD+8zEozt9i6zgvYhJcZhB/fE6uw29W1+ChmVqSS
+         9RwAlIF5sXrMf3+9AjhkPhTxGIC+rOq52q5xkdcTojQTj+3pPJ4Qc5JWrwfwRHzEWfry
+         urlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708083066; x=1708687866;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CeAZhE7j4dRyX+kzFFWa3n1YxsCqKudIIvx3LQHUXoE=;
+        b=HB4uwJy2GXndECz0I5tr6hWmOGszGILrMRVQvvddr3SlEoVo88S+ONhqldcXRcWrD/
+         PpQwpu/RhiZGgdjVn6qhuHINrHcd3GajlD4Yn7PyrACG1q/SB1OaNGsBxmdLz+7dT5rw
+         CwBuWFB9x833vKQy+wclCdZjse1crIBA7tUBU0+XVmtM73WuyA7wnfIKOmurxdrew4jg
+         28oQwn92UNnxWILAdF+89dvbIKRUJhHJAMVbigCVNJgNm+6yBWoV0DgtV3U0QouS6svl
+         jUbaJ8CKiow3nOVcn2br9qTp6LJxiIEbnCRO+qe/kbxzyLqk1br23eec0YAvRPsjdzOR
+         CtWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmtOjIKyEoPepZk5Th/qwGodhpfIaHIvqUXNXUSZafs26h/Eju4Xmzxep9kWIZ8SXiFMYnHpQ7jXlCpPhBD1xwR77HU1aegOlljShBrgQ4EFvpt2TMWQytq18nE7BFoyjxmhXjMZa2FLN5RiqJq0++3M0BUNZRfLdWesCZokCorhavWVJ76AFQGpWdz4xUtfHtx3ozyNdflu0wGjIRW2BVZ2qyhbqzY2pPLupo7Q5sInLOKhHJTRapC4hiYE7RFqhKrbHU4Jh+xMm89ejTI72yr29KusSFqhdno3hJTWE6gtFy2jhOzxi+7ct/ITKnlR/2FVagnoqIWZr9oB0fEtLdMHFftUkyHsMqd3qpF8Z6yaDEfrHBegWRbGI=
+X-Gm-Message-State: AOJu0YySID0z82NQ5rnZS7KVunKsbfhiRr/4cV0TIGR/CVwvf2RfkHdP
+	/ruX/beMCmxrvfWMVVvO2if7sSHazbvFZH9mArmmWE5VmT7bueM3
+X-Google-Smtp-Source: AGHT+IGXWz97gD5gN+VSAVL7iY1zPTDMUokWZgtmUOJLcJDV64j1IaqQ0abnS0651OrxU9XfbwlwlQ==
+X-Received: by 2002:a17:906:11cc:b0:a3d:2cd0:c17a with SMTP id o12-20020a17090611cc00b00a3d2cd0c17amr3351354eja.58.1708083065855;
+        Fri, 16 Feb 2024 03:31:05 -0800 (PST)
+Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ts4-20020a170907c5c400b00a3df003b6a9sm242282ejc.119.2024.02.16.03.31.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Feb 2024 03:31:05 -0800 (PST)
+Content-Type: multipart/signed;
+ boundary=b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240212140331.915498-2-tudor.ambarus@linaro.org>
+Mime-Version: 1.0
+Date: Fri, 16 Feb 2024 12:31:03 +0100
+Message-Id: <CZ6GWUQ73SSL.6HP29PU9Q7R@gmail.com>
+To: "Mark Hasemeyer" <markhas@chromium.org>, "LKML"
+ <linux-kernel@vger.kernel.org>
+Cc: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>, "Sudeep
+ Holla" <sudeep.holla@arm.com>, "Andy Shevchenko"
+ <andriy.shevchenko@intel.com>, "Raul Rangel" <rrangel@chromium.org>,
+ "Tzung-Bi Shih" <tzungbi@kernel.org>, "AKASHI Takahiro"
+ <takahiro.akashi@linaro.org>, "Alexandre TORGUE" <alexandre.torgue@st.com>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>, "Andre Przywara"
+ <andre.przywara@arm.com>, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, "Baoquan He"
+ <bhe@redhat.com>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Benson Leung"
+ <bleung@chromium.org>, "Bhanu Prakash Maiya" <bhanumaiya@chromium.org>,
+ "Bjorn Andersson" <andersson@kernel.org>, "Chen-Yu Tsai"
+ <wenst@chromium.org>, "Conor Dooley" <conor+dt@kernel.org>, "Daniel Scally"
+ <djrscally@gmail.com>, "David Gow" <davidgow@google.com>, "Enric Balletbo i
+ Serra" <eballetbo@gmail.com>, "Frank Rowand" <frowand.list@gmail.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Guenter Roeck"
+ <groeck@chromium.org>, "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
+ "Heiko Stuebner" <heiko@sntech.de>, "Jonathan Hunter"
+ <jonathanh@nvidia.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Len
+ Brown" <lenb@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Manivannan Sadhasivam" <mani@kernel.org>, "Mark Brown"
+ <broonie@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>, "Michal
+ Simek" <michal.simek@amd.com>, "Mika Westerberg"
+ <mika.westerberg@linux.intel.com>, "Nick Hawkins" <nick.hawkins@hpe.com>,
+ "Prashant Malani" <pmalani@chromium.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Rob Barnes" <robbarnes@google.com>, "Rob Herring"
+ <robh+dt@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "Stephen Boyd" <swboyd@chromium.org>, "Takashi Iwai" <tiwai@suse.de>, "Tony
+ Lindgren" <tony@atomide.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, "Wolfram Sang" <wsa@kernel.org>,
+ <chrome-platform@lists.linux.dev>, <cros-qcom-dts-watchers@chromium.org>,
+ <devicetree@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 00/24] Improve IRQ wake capability reporting and
+ update the cros_ec driver to use it
+From: "Thierry Reding" <thierry.reding@gmail.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <20231226192149.1830592-1-markhas@chromium.org>
+In-Reply-To: <20231226192149.1830592-1-markhas@chromium.org>
 
-Hi Tudor,
+--b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-kernel test robot noticed the following build warnings:
+On Tue Dec 26, 2023 at 8:21 PM CET, Mark Hasemeyer wrote:
+> Currently the cros_ec driver assumes that its associated interrupt is
+> wake capable. This is an incorrect assumption as some Chromebooks use a
+> separate wake pin, while others overload the interrupt for wake and IO.
+> This patch train updates the driver to query the underlying ACPI/DT data
+> to determine whether or not the IRQ should be enabled for wake.
+>
+> Both the device tree and ACPI systems have methods for reporting IRQ
+> wake capability. In device tree based systems, a node can advertise
+> itself as a 'wakeup-source'. In ACPI based systems, GpioInt and
+> Interrupt resource descriptors can use the 'SharedAndWake' or
+> 'ExclusiveAndWake' share types.
+>
+> Some logic is added to the platform, ACPI, and DT subsystems to more
+> easily pipe wakeirq information up to the driver.
+>
+> Changes in v3:
+> -Rebase on linux-next
+> -See each patch for patch specific changes
+>
+> Changes in v2:
+> -Rebase on linux-next
+> -Add cover letter
+> -See each patch for patch specific changes
+>
+> Mark Hasemeyer (24):
+[...]
+>   ARM: dts: tegra: Enable cros-ec-spi as wake source
+[...]
+>   arm64: dts: tegra: Enable cros-ec-spi as wake source
+[...]
 
-[auto build test WARNING on broonie-spi/for-next]
-[also build test WARNING on robh/for-next linus/master v6.8-rc4 next-20240216]
-[cannot apply to krzk/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Both patches applied, thanks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tudor-Ambarus/spi-dt-bindings-introduce-FIFO-depth-properties/20240212-221427
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-patch link:    https://lore.kernel.org/r/20240212140331.915498-2-tudor.ambarus%40linaro.org
-patch subject: [PATCH v2 01/12] spi: dt-bindings: introduce FIFO depth properties
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240216/202402161543.5JdIODY4-lkp@intel.com/reproduce)
+Thierry
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202402161543.5JdIODY4-lkp@intel.com/
+--b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa
+Content-Type: application/pgp-signature; name="signature.asc"
 
-dtcheck warnings: (new ones prefixed by >>)
->> Documentation/devicetree/bindings/spi/spi-controller.yaml:152:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
-   Documentation/devicetree/bindings/spi/spi-controller.yaml:156:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
+-----BEGIN PGP SIGNATURE-----
 
-vim +152 Documentation/devicetree/bindings/spi/spi-controller.yaml
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXPR3kACgkQ3SOs138+
+s6FXyA//QEgOaLPJMLtFwzEUNlO0/8MF3SAbMW7kCkEt3S3OMXQ3wtyOeIC3nlyN
+zwxSqhOzC1I/qdbqdnc5ejbrPWB/9d6ohPyc45vT19QAS79mc9nB2ZQm3AoVlPaA
+HGQhrtMEx6KRBu+GjS9Sz9YQjBftSWl/kr8oAwXOs6wtg2m06tfm00LF3bVFLQEu
+aTZ1Jal4+fIpK0OK/yz/yhczCMQCbVnKBClkwuoKQWJpxh7z/xYCY2Gm50VD4sN7
+F60KcEQzW8DfY5dGd1eT9oY7UqqA+yoRDGNN7KNYYurFPoEL6jZqvSts1J26pp4u
+MjFQS2jY6bjbQFR0RRUwwjPRRmUXRcGpW3qHN/+ajof0pXgRa/rWnthIB2boTs4Q
+uApu3k81kwLXVgZZh9YRXCwcYf8sgMo7Qj849I8e5vRi/MuL6jwKyU7P8SwRrWRd
+xIY0v+EKupY6iDvxPApV4b5Mw8gyxbRO6Kcm5Ep7Z8DBCeCr+g3iZFHVUXpG3vll
+PjwZW9bC+U9kcn/W5qoJrdKqGFAsaqks7fzWoIBIX5rVNbNSNZpG7Dwi/EeNUmak
+T5tJqIr3VbtsNd0ni6f42Efs9z/m0vsUKL6H5mGZoX3oTGXvzO91XF2gfFMEqOO9
+8cxE1rJREy1F73S7VZWOE46nyNPlsD6qm5+fApxvV3eKGRO5wfU=
+=fOyD
+-----END PGP SIGNATURE-----
 
-     8	
-     9	maintainers:
-    10	  - Mark Brown <broonie@kernel.org>
-    11	
-    12	description: |
-    13	  SPI busses can be described with a node for the SPI controller device
-    14	  and a set of child nodes for each SPI slave on the bus. The system SPI
-    15	  controller may be described for use in SPI master mode or in SPI slave mode,
-    16	  but not for both at the same time.
-    17	
-    18	properties:
-    19	  $nodename:
-    20	    pattern: "^spi(@.*|-([0-9]|[1-9][0-9]+))?$"
-    21	
-    22	  "#address-cells":
-    23	    enum: [0, 1]
-    24	
-    25	  "#size-cells":
-    26	    const: 0
-    27	
-    28	  cs-gpios:
-    29	    description: |
-    30	      GPIOs used as chip selects.
-    31	      If that property is used, the number of chip selects will be
-    32	      increased automatically with max(cs-gpios, hardware chip selects).
-    33	
-    34	      So if, for example, the controller has 4 CS lines, and the
-    35	      cs-gpios looks like this
-    36	        cs-gpios = <&gpio1 0 0>, <0>, <&gpio1 1 0>, <&gpio1 2 0>;
-    37	
-    38	      Then it should be configured so that num_chipselect = 4, with
-    39	      the following mapping
-    40	        cs0 : &gpio1 0 0
-    41	        cs1 : native
-    42	        cs2 : &gpio1 1 0
-    43	        cs3 : &gpio1 2 0
-    44	
-    45	      The second flag of a gpio descriptor can be GPIO_ACTIVE_HIGH (0)
-    46	      or GPIO_ACTIVE_LOW(1). Legacy device trees often use 0.
-    47	
-    48	      There is a special rule set for combining the second flag of an
-    49	      cs-gpio with the optional spi-cs-high flag for SPI slaves.
-    50	
-    51	      Each table entry defines how the CS pin is to be physically
-    52	      driven (not considering potential gpio inversions by pinmux):
-    53	
-    54	      device node     | cs-gpio       | CS pin state active | Note
-    55	      ================+===============+=====================+=====
-    56	      spi-cs-high     | -             | H                   |
-    57	      -               | -             | L                   |
-    58	      spi-cs-high     | ACTIVE_HIGH   | H                   |
-    59	      -               | ACTIVE_HIGH   | L                   | 1
-    60	      spi-cs-high     | ACTIVE_LOW    | H                   | 2
-    61	      -               | ACTIVE_LOW    | L                   |
-    62	
-    63	      Notes:
-    64	      1) Should print a warning about polarity inversion.
-    65	         Here it would be wise to avoid and define the gpio as
-    66	         ACTIVE_LOW.
-    67	      2) Should print a warning about polarity inversion
-    68	         because ACTIVE_LOW is overridden by spi-cs-high.
-    69	         Should be generally avoided and be replaced by
-    70	         spi-cs-high + ACTIVE_HIGH.
-    71	
-    72	  fifo-depth:
-    73	    $ref: /schemas/types.yaml#/definitions/uint32
-    74	    description:
-    75	      Size of the RX and TX data FIFOs in bytes.
-    76	
-    77	  rx-fifo-depth:
-    78	    $ref: /schemas/types.yaml#/definitions/uint32
-    79	    description:
-    80	      Size of the RX data FIFO in bytes.
-    81	
-    82	  tx-fifo-depth:
-    83	    $ref: /schemas/types.yaml#/definitions/uint32
-    84	    description:
-    85	      Size of the TX data FIFO in bytes.
-    86	
-    87	  num-cs:
-    88	    $ref: /schemas/types.yaml#/definitions/uint32
-    89	    description:
-    90	      Total number of chip selects.
-    91	
-    92	  spi-slave:
-    93	    $ref: /schemas/types.yaml#/definitions/flag
-    94	    description:
-    95	      The SPI controller acts as a slave, instead of a master.
-    96	
-    97	  slave:
-    98	    type: object
-    99	
-   100	    properties:
-   101	      compatible:
-   102	        description:
-   103	          Compatible of the SPI device.
-   104	
-   105	    required:
-   106	      - compatible
-   107	
-   108	patternProperties:
-   109	  "^.*@[0-9a-f]+$":
-   110	    type: object
-   111	    $ref: spi-peripheral-props.yaml
-   112	    additionalProperties: true
-   113	
-   114	    properties:
-   115	      spi-3wire:
-   116	        $ref: /schemas/types.yaml#/definitions/flag
-   117	        description:
-   118	          The device requires 3-wire mode.
-   119	
-   120	      spi-cpha:
-   121	        $ref: /schemas/types.yaml#/definitions/flag
-   122	        description:
-   123	          The device requires shifted clock phase (CPHA) mode.
-   124	
-   125	      spi-cpol:
-   126	        $ref: /schemas/types.yaml#/definitions/flag
-   127	        description:
-   128	          The device requires inverse clock polarity (CPOL) mode.
-   129	
-   130	    required:
-   131	      - compatible
-   132	      - reg
-   133	
-   134	dependencies:
-   135	  rx-fifo-depth: [ tx-fifo-depth ]
-   136	  tx-fifo-depth: [ rx-fifo-depth ]
-   137	
-   138	allOf:
-   139	  - if:
-   140	      not:
-   141	        required:
-   142	          - spi-slave
-   143	    then:
-   144	      properties:
-   145	        "#address-cells":
-   146	          const: 1
-   147	    else:
-   148	      properties:
-   149	        "#address-cells":
-   150	          const: 0
-   151	  - not:
- > 152	        required:
-   153	          - fifo-depth
-   154	          - rx-fifo-depth
-   155	  - not:
-   156	        required:
-   157	          - fifo-depth
-   158	          - tx-fifo-depth
-   159	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa--
