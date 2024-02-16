@@ -1,164 +1,127 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6335712C526
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 13:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCF412C54F
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 14:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708091979; cv=none; b=TOvBFDKb9N3vsUTCMWnh5KKB/WwS9G+v5bQD5mEYNZe9cMfyA+OLgxeMCDiU+dlNe88Oo5HcNnnEiI6EDMYYOrDJflzNCZqjeWRApwUoAsr4dTJlnHDW7FJW7PTV4KaRmnCoVw7LpxgmW77/23HfOwrIOovvDIgGgoDaivPcOKg=
+	t=1708092297; cv=none; b=r4gOMoPZ4+sCwr7a5O4xEYQHJKnSfSO2cCM9LumSupWi4iEbuj2Hk18+8Osmvfa++YelOjTZV6uRPE/WdMP1AxheQVWXrU/oOm37mSRqLs55e84Iup/t7MJiRYv7e103fNueN+vBV2qJw8MpP5+nK/kUMuiN9gcgFYi8rGW+N+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708091979; c=relaxed/simple;
-	bh=nsn4WJyRYAoqJRBTL08AOljR5I6y9oPXYZMXhI3sWy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n5iD6MB2seKSPg54zel3Qs1nUCNeuzln2jigpp/eUSjaTLkYFSZIPHQV4nHQ6NFW8mHNwioPdo0IqzVcVBPBx+A6CtIE9K1PWh7lH7UkFDmAUtjM8cftvwc+Cu/cNI5cdNHgS+jwUiAU8cgGgcmOgHaZvaZz8MOBoaxLvBQdlJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JAX2HCzv; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1708092297; c=relaxed/simple;
+	bh=uMXzwh5LI98M06E5LlPIWoA0Gxr0PUNOn3He28YGDe8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KSUk1kdTNYsuRkCG97Y47gnS4Ocq2jpRbewfkCCe7OELr7UWcYnRCnUuIHhl95zrd7y0jPwqb6uitgaADCXC5h+P0wX7Vp8fZsngu8Oqm+GEcjjFqLB+ji4yqpkEWdGSKwH0SzpHvFYclBqSBokFfoXuN4aac7CkDrLhZjRyOBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PNrOYDpG; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JAX2HCzv"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-511acd26c2bso2980060e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 05:59:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PNrOYDpG"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-511acd26befso2659460e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 06:04:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708091975; x=1708696775; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D71EMsChqgpWpjB7V99sJeSePiQX0x6TadQ9r4L5xnM=;
-        b=JAX2HCzvMpgXCFxSvbEWfHeSHG/dTNpwzvKjjLs320eMrm8vpXlXmDOk9LRQ2HzFyv
-         2BGtSjhiQWPZ7u3B8GKM1I2REQcr8tm+CWj45jeC/BmMUMXpzi2caVFc/2FC2K7kJJwM
-         3unXqdQyMgYGB834zxLzh5/F2QrrwI7vLkH+m2KY9+sq0+uW5+qDIBP/TZQ+uXpgsr/b
-         +Ac9z3D7B57Jg4elRjGcscFcVE9mRiTQomul8Jorl/tU1qNzl9VQE6gVmyE9lrypzz0s
-         lCW+9rHLgvXJr/9Oyzo0f2SINUUHq/NkPlWI8eihIYMUpF8W/IlOxAbouKPhkRaSzdw1
-         B9sQ==
+        d=linaro.org; s=google; t=1708092293; x=1708697093; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bFFOnkuhdy25mEzIkoji6xOLVUrxNj5AoQeuBe9eLH4=;
+        b=PNrOYDpG9YuORqGKV8MCfkdCgr0wHJG+cWbFuo/IFiTyvhxJINZtqWGXr7/AEYpk0p
+         ogGagbVAEw+HjOTIIfrxCebfPAt+JCh98ifRLD/u+mgz+wA4REZVeG0ZbMj0fomLM29l
+         Z96NhC0rx2ooW9mGVL9AxN66stolSrvgXtmc8+OLvYIkdGqgCIfSctXpmhiCrY8pUzY4
+         04XGwjvQKdD4wkKdR4DIZYaPOqJr7vnE8Lztkx1LkAzp8vH3xHWzF8rZtNxJOeFTmzsx
+         ZMzNnBywEgsl552FuHY1cxD5+2M9XVSocilCCZGZljq93aveMw6MaPGxK2QIaegKNbd/
+         LDtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708091975; x=1708696775;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D71EMsChqgpWpjB7V99sJeSePiQX0x6TadQ9r4L5xnM=;
-        b=s9/E1Sig1kRpm7LwhcfBC+LUG6D/a736IezK0LkxQ7fDXVix7K4EQluJmO4dkRNl1e
-         yEJtG9dWpalJXle5aHvSwodixP5io5IfklIp71G4fMhIcG0ehSOPNQyKyOzpvdgPM0hq
-         fKgh4hjXTjjyHDXlkYJZp8y2xTeh5L1nYEw35PbeAzFRMMoHubTQ42ZA+865FQP5/7oK
-         SKL+kUr4acXSUotM82bR8y6i1wPNuB3kQvwIUP5rQez8AckrtQIBjLm5GDJ0x894eoBs
-         6/Fk+YpMaNoUTsObzxM+V4K0LtawbLHlGq1fxGTSJj9n9HnaAP6z8Lc5QY/KuxC29wyp
-         UKWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqTuFMZl5udZfeoIYIVY1/xerJR5GFe3hmqDtgqw9ZeKXMGlgQMnUfNewiOV3JdLlzGWCe8aHowcxaju08q1IKm+6sqEbUwIcc3tRNCbOvFn0=
-X-Gm-Message-State: AOJu0Yx1VCkjQ0kL97PDWF1TEO0vOPVg/IR06BCoMtLwDlMjXbIsawmI
-	ZQ0z1HI9nly5xL1WxkW6DSfajUhUqkjHmU/XDc8sv4l8NN67dSR8u9IJOGL4JjCvsH2NeZgiKa6
-	3
-X-Google-Smtp-Source: AGHT+IH4ptRMDqJC5CCka/JZVENyvQZCuvbn0+TGGHCLfiuBWb1kx7jW5WGPQuoncr9DcsPtbOvZdg==
-X-Received: by 2002:a05:6512:1589:b0:511:a803:c952 with SMTP id bp9-20020a056512158900b00511a803c952mr4621043lfb.0.1708091975432;
-        Fri, 16 Feb 2024 05:59:35 -0800 (PST)
-Received: from [192.168.0.22] ([78.10.207.130])
-        by smtp.gmail.com with ESMTPSA id tj10-20020a170907c24a00b00a3dd52e7539sm644395ejc.60.2024.02.16.05.59.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 05:59:34 -0800 (PST)
-Message-ID: <41e371f1-96f4-45c0-9f65-81ed6924b325@linaro.org>
-Date: Fri, 16 Feb 2024 14:59:33 +0100
+        d=1e100.net; s=20230601; t=1708092293; x=1708697093;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bFFOnkuhdy25mEzIkoji6xOLVUrxNj5AoQeuBe9eLH4=;
+        b=VJa6BrstLLs3dnz9MEGU8YjNyudunwNFo/YfRwRFGpdXA8NIgXP47cALxJWq0bpT/r
+         oqn75d8olRwxMc2rt2K+jjG2SKEXIT8/F59z8+Coz2X9c9UDBQaJZub13j4Rvcgo9EgL
+         YbUfi683V0GxrXw+vyeBfgNCHsNcCNbP5VYuRYRfYbrcMrMAKg6O0AyRLy52tH0qTZG6
+         5gJ499sGRvBBpBnRnWgPzqDMWncncHPJPfkEfQJ55tqpQa20QKP6dPzdu8X1I7DDRF3e
+         z4OwDuGLKNKSV5GKISeweqBkfb5OqmZUjr3pVTQ4a/vZJd1fqh7beAgUxviSIXElbncw
+         cDIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtHZ2NgWjPsEV5ca8dlhSl7ZYxDhNx+YCjuJ9DYKe/RLuBGnGsyoYudBn9mqYohGuSBjK+btM7L4ohIc0KuYxjtxU1OF7rNzD1pOrtUBPtqcw=
+X-Gm-Message-State: AOJu0YwU5jjo8jmzRtmDhSLSJJJmVHFoeaot1OvpEOi4qj99gFresYGK
+	olM9rSGcjRe0KbTXO4TN1M+Adh/5BIiw6F6XKAKmukzJDeP801EauHQ+olQpbvY=
+X-Google-Smtp-Source: AGHT+IE+1C4hULCImLj3jDWXQQ09a49vFqD6OoQ+yregE7p2ail5vYnmur2AvfavYdCsKkS65YKc/g==
+X-Received: by 2002:ac2:5585:0:b0:511:8581:4352 with SMTP id v5-20020ac25585000000b0051185814352mr3468228lfg.34.1708092293128;
+        Fri, 16 Feb 2024 06:04:53 -0800 (PST)
+Received: from ta2.c.googlers.com.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
+        by smtp.gmail.com with ESMTPSA id az5-20020a05600c600500b0040e4733aecbsm2516628wmb.15.2024.02.16.06.04.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Feb 2024 06:04:52 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org,
+	conor+dt@kernel.org
+Cc: alim.akhtar@samsung.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	broonie@kernel.org,
+	andi.shyti@kernel.org,
+	semen.protsenko@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	andre.draszik@linaro.org,
+	peter.griffin@linaro.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v2 0/7] ARM: dts: samsung: specify the SPI FIFO depth
+Date: Fri, 16 Feb 2024 14:04:42 +0000
+Message-ID: <20240216140449.2564625-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] interconnect: constify of_phandle_args in xlate
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Georgi Djakov <djakov@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-References: <20240216135236.129878-1-krzysztof.kozlowski@linaro.org>
- <488cc7dc-f45a-4c9e-b572-e4a6b3202e3e@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <488cc7dc-f45a-4c9e-b572-e4a6b3202e3e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/02/2024 14:55, Konrad Dybcio wrote:
-> On 16.02.2024 14:52, Krzysztof Kozlowski wrote:
->> The xlate callbacks are supposed to translate of_phandle_args to proper
->> provider without modifying the of_phandle_args.  Make the argument
->> pointer to const for code safety and readability.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  drivers/gpio/gpiolib-of.c              |  2 +-
->>  drivers/interconnect/core.c            |  4 ++--
->>  drivers/interconnect/qcom/icc-common.c |  3 ++-
->>  drivers/interconnect/qcom/icc-common.h |  3 ++-
->>  drivers/interconnect/samsung/exynos.c  |  2 +-
->>  drivers/memory/tegra/mc.c              |  2 +-
->>  drivers/memory/tegra/tegra124-emc.c    |  2 +-
->>  drivers/memory/tegra/tegra124.c        |  2 +-
->>  drivers/memory/tegra/tegra186-emc.c    |  2 +-
->>  drivers/memory/tegra/tegra20-emc.c     |  2 +-
->>  drivers/memory/tegra/tegra20.c         |  2 +-
->>  drivers/memory/tegra/tegra30-emc.c     |  2 +-
->>  drivers/memory/tegra/tegra30.c         |  2 +-
->>  include/linux/interconnect-provider.h  | 11 ++++++-----
->>  include/soc/tegra/mc.h                 |  7 ++++---
-> 
-> Ended up being a bit wider than just icc..
-> 
-> Looks sane apart from that
+Bindings patch sent but not yet integrated:
+https://lore.kernel.org/linux-spi/20240216070555.2483977-2-tudor.ambarus@linaro.org/
 
-Tegra memory controllers are also interconnect providers, so two subsystems.
+Up to now the SPI alias was used as an index into an array defined in
+the SPI driver to determine the SPI FIFO depth. Drop the dependency on
+the SPI alias and specify the SPI FIFO depth directly into the SPI node.
 
-This patch should go via interconnect tree.
+Update all the device trees that have instances of the SPI IP with
+different FIFO depths.
 
-Best regards,
-Krzysztof
+For the SoCs where all the SPI instances have the same FIFO depth (like
+gs101 and exynos850), the FIFO depth is inferred from the compatible.
+Similar SoCs shall do the same.
+
+v2:
+- use "fifo-depth" property (instead of "samsung,spi-fifosize")
+- update commit messages
+- reorder patches. Last is using common sense for determining the FIFO
+  depth. The nodes are not enabled in any device tree, thus upstream
+  will be fine even if comon sense fails. I guess we can update the
+  device tree later on if needed. Or we can just drop the last patch. 
+
+v1:
+https://lore.kernel.org/linux-spi/20240125151630.753318-1-tudor.ambarus@linaro.org/
+
+Tudor Ambarus (7):
+  ARM: dts: samsung: exynos3250: specify the SPI FIFO depth
+  ARM: dts: samsung: exynos4: specify the SPI FIFO depth
+  ARM: dts: samsung: exynos5250: specify the SPI FIFO depth
+  ARM: dts: samsung: exynos5420: specify the SPI FIFO depth
+  ARM: dts: samsung: exynos5433: specify the SPI FIFO depth
+  ARM: dts: samsung: exynosautov9: specify the SPI FIFO depth
+  ARM: dts: samsung: s5pv210: specify the SPI FIFO depth
+
+ arch/arm/boot/dts/samsung/exynos3250.dtsi    |  2 ++
+ arch/arm/boot/dts/samsung/exynos4.dtsi       |  3 +++
+ arch/arm/boot/dts/samsung/exynos5250.dtsi    |  3 +++
+ arch/arm/boot/dts/samsung/exynos5420.dtsi    |  3 +++
+ arch/arm/boot/dts/samsung/s5pv210.dtsi       |  2 ++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi   |  5 +++++
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi | 12 ++++++++++++
+ 7 files changed, 30 insertions(+)
+
+-- 
+2.44.0.rc0.258.g7320e95886-goog
 
