@@ -1,80 +1,96 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B878F12C7F0
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 14:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A5D12EBD3
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 14:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708092305; cv=none; b=ONxzFB7T+kqU5vIQ2ZWOMAyhtvO5RX9910NttFObq99ksZ2YPLnH6YyFm9uH5hew+S1cwP1g37vgS1FFXKiA9Acj8u9EDH7BTmRyq4RRNbO6JDpbfctn5s7Lf+4MqDyQCYnHDYj2MgBcmZL98z86IUuqv7VxXEw5ZVwdAvIiQSI=
+	t=1708094435; cv=none; b=GJThqHDWT7DSXiu4UwZ9XMglASpHwzzqWfGIn35Wu0RabINJYvlaQXFGw/7hT5QmbAnTBGIlHAo60SR4CePOvXchD0KbiqbZ2A+4vpGmwlCIC7ob/wIFj7sFRaG8fnvW8SnK+C0gogj0QsPMhdPy6dHEFWzwLDw7Zwt1Kaj6eYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708092305; c=relaxed/simple;
-	bh=S9ObBQzYVuHAYhxgjzcEipyH1kHqp28U2gCU0ebksac=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RRi8Z3BFbgTX0r9E4A7CFWghyzDEkbcIboOGMYXlwy5sgAZrnfOnc04DA6pl2xXqGLbAQ/RVj6hRzK0GpKXPnEhjvke6ugmOOGBrHGlOcmBXhdj2LcdNh8E6PO+s7QVr/reVhmZSjdK0tV9+3z2oq2AVx6KRe2RM7kEQjNBZ7Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ihkqir4E; arc=none smtp.client-ip=209.85.208.169
+	s=arc-20240116; t=1708094435; c=relaxed/simple;
+	bh=VhhgxqgxNna3VDXzGb+u29de1zzuvgOHxd0eRr4Za/8=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=AC4kjSUEZVflTeWyNEnvIS8utMYBNRJ5brYV1ZELiWx5zEe4bmDWFcWMkduayk4E6PvUZ+i3yh4d2/WlDEnmYeFmnRR+LNt1zA+IVeRTSj6yS9FyYn5T3bKD69VrC6d3J15YrSqHK5OhyHETZWdwePF6DcDgyl0lW/KOE8O44eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C6vRSD4J; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ihkqir4E"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2d0c7e6b240so28063761fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 06:05:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C6vRSD4J"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a2f79e79f0cso316920366b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 06:40:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708092302; x=1708697102; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/v2msNXgl5RHuPphj5KBMCkDajVznlUfP/afxgplpAs=;
-        b=ihkqir4EE6LrbjtNcLzGe8tVPa+DL8XkHK+nkWOni/JWcdzvhhWazNqoqJWDXZuLSR
-         UVTEVP5DcMaetAYRg/0JwmcxTxs7By2kuLRoGbsb2V8FBsrwCYkTKVrT/VhWFL9kVlZh
-         xZXV+0CaK4oH9tcWk3cN6aWftodpBq14Xo/XBjm2fVAF/GQbiZG/0Kex2qYKhcj1K5C9
-         YzVOcmS9kXD8krnABm1UxdyT9fO38SiFadHQeQ1rt1jGDADgURLjCPz8zA1WT5kZ9pZB
-         ycREtgsgxaA1PytzPnEoO1RGP6HbuGtGqRBJT5X4A+xvhu0hV2L6zQdUTLBAlXdq2Zsh
-         urKA==
+        d=linaro.org; s=google; t=1708094432; x=1708699232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZRC42YbuNYRdIwcaj+US8j1sKLD+6CzDw3sU7mb37/4=;
+        b=C6vRSD4JJq5VeMpEP/qRigg9X6R76yWVZMsOrj+Tc1BoLlL99PJRhdXCL7JfIyG5GX
+         jCqYQWrKDtOxbjTqzp6frBGY01m/xc0MIHJ5tsq7llV9AxClh/BJH1UexH15Fbrn6jj/
+         1ta6q/qIsSOO8XZIMNWh3LjtVanF5H6mCeRsxOzxGNcxH3e7ydzkfp880eOUEdcqf/Zi
+         0DrgV7iwPy6YcfTijX46hkS8bSz5xioYPguXBptI40L1ZCfSNdNvbfBkvMuN/Y7Vzkkp
+         nYTbWV4wGHkvdigTBChx/xitB18De9uMjTYTUWAgwfE3ZLMkJcLp7kbAfmc3JXapjIGO
+         laUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708092302; x=1708697102;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/v2msNXgl5RHuPphj5KBMCkDajVznlUfP/afxgplpAs=;
-        b=gh7kuBupeGGsaSuDKIjpBrZ/8eRBOMxeP7lqlLGRHUMDIjM67bXtnYCILBQ1bROj/U
-         CvdXEE6gP/80lpHK1yOXN3rZY/SdF5g62UyQl/BOuiA9igS9kWUEdjWXQsh4niESTFHK
-         G4AUc6xTGl9/uXMAhJVt9AWya/R93gh5787q6MMjE1I2S3xw1PA3hC8L+H9Imqmt/1rQ
-         IHxgyJ+IkUwJ64qzCRvIJvoaexcLd4+tTLapGjqZgIatourtSdjz5SR/hM3MJyXlWwyF
-         g8kVDH5W7mgg2qLWq98qIYUoXthqj8W6si2KTU0IIRtwpQhPaV0iRMBzcubVu77C6uqG
-         GgZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpKj35NlAOTVhCQw/N5lrNjXCUf8e7Jm90sRN0ox2qPwi7DJh/wkQQTvyyJK1jMWpl22vqBkC7+Irm2nhZKQDTPJGlNSo+f5URNCn3eoaU3cc=
-X-Gm-Message-State: AOJu0YxO8h7bY00g9PyCJgrNAVVMVByvekljCqAEVWGTnbOaqM6XNUD1
-	ShNXT+yIPGNkgOjTpqeRqYpNF37RBU5TsZvgBqDbO7wd5O1F8TpDJk8gIGobH40=
-X-Google-Smtp-Source: AGHT+IHLhKN55xXNcr4Qf+H/L/Y6F/cf4HESGkjS3taK4mPtI0tOKK3/xuOIFtwCp9VREBhceA/Qog==
-X-Received: by 2002:a05:651c:2116:b0:2d1:1cc8:6ea5 with SMTP id a22-20020a05651c211600b002d11cc86ea5mr4073121ljq.5.1708092301998;
-        Fri, 16 Feb 2024 06:05:01 -0800 (PST)
-Received: from ta2.c.googlers.com.com (105.168.195.35.bc.googleusercontent.com. [35.195.168.105])
-        by smtp.gmail.com with ESMTPSA id az5-20020a05600c600500b0040e4733aecbsm2516628wmb.15.2024.02.16.06.05.00
+        d=1e100.net; s=20230601; t=1708094432; x=1708699232;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZRC42YbuNYRdIwcaj+US8j1sKLD+6CzDw3sU7mb37/4=;
+        b=jW7fWLNJRNXsi56b7l6wYinbh3NVvDFgu1rqQ4p7M+D65HyupFUCKEmlnmyQYHYnO4
+         iz7+++RjqkX+i6GSebdVYKSCYmFZjJNpyJ9AUDppOEJ9LEIIb6wpc6+5zVxm/BXd1bdD
+         T8Kbi63IpR7lcwm/A5xQpk5RakIWUFIFR/xbhLKwkCDIJsdsh1Qu+dQWHMOdhULkgr/f
+         9mF4vfUYIaoyogzuoGBJaK/Z9bLspYQKzc7lkpLXGN6N01Ppsh2rHgHW8JibZeCg++kZ
+         p3o26wK3GeUiRCcFHu71ZQKs4pUeQ9OuSbvScUVW3UEM6skOZ8UHqgPJks1rvKM9jPg3
+         w4FA==
+X-Forwarded-Encrypted: i=1; AJvYcCXiDoYiE/KgMGVAUeSxq5atpnng0MN+dunXtfsqDpAIZKwPqfaM8yAsMxDOKdYdLEIM76s3MEIlHJHDI20tfMGWDV11VZyKsBrRQS9cxwPQ3is=
+X-Gm-Message-State: AOJu0YyCoTUwqA/YUvJKzdivvHqmukLeZ1ST/zAOyGwxIA9FtzAVzJsP
+	0nN+pfbmIZ/ZTo1b46BOzCSkK5Hf5x73ppQ38jpCGFDLXoyZomvn/ROLqorA6u4=
+X-Google-Smtp-Source: AGHT+IHf//9yt3eTnyw6VXgXdUG6tjNHVGPCN0at0VvNZn01LUmWCi7a4swsg2sOshpZkHrmmM9UNA==
+X-Received: by 2002:a17:906:185a:b0:a3d:994a:791d with SMTP id w26-20020a170906185a00b00a3d994a791dmr3667044eje.59.1708094432164;
+        Fri, 16 Feb 2024 06:40:32 -0800 (PST)
+Received: from krzk-bin.. ([78.10.207.130])
+        by smtp.gmail.com with ESMTPSA id a8-20020a170906670800b00a3ce3c5b2a4sm1592942ejp.195.2024.02.16.06.40.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Feb 2024 06:05:00 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: krzysztof.kozlowski+dt@linaro.org,
-	robh@kernel.org,
-	conor+dt@kernel.org
-Cc: alim.akhtar@samsung.com,
-	devicetree@vger.kernel.org,
+        Fri, 16 Feb 2024 06:40:31 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	asahi@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	broonie@kernel.org,
-	andi.shyti@kernel.org,
-	semen.protsenko@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	andre.draszik@linaro.org,
-	peter.griffin@linaro.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH v2 7/7] ARM: dts: samsung: s5pv210: specify the SPI FIFO depth
-Date: Fri, 16 Feb 2024 14:04:49 +0000
-Message-ID: <20240216140449.2564625-8-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
-In-Reply-To: <20240216140449.2564625-1-tudor.ambarus@linaro.org>
-References: <20240216140449.2564625-1-tudor.ambarus@linaro.org>
+	linux-arm-msm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH 1/4] iommu: constify pointer to bus_type
+Date: Fri, 16 Feb 2024 15:40:24 +0100
+Message-Id: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -83,40 +99,55 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Up to now the SPI alias was used as an index into an array defined in
-the SPI driver to determine the SPI FIFO depth. Drop the dependency on
-the SPI alias and specify the SPI FIFO depth directly into the SPI node.
+Make pointer to bus_type a pointer to const for code safety.
 
-The SPI nodes defined in s5pv210.dtsi are not enabled in any board file.
-No SPI aliases are defined, thus choose the FIFO depth using common
-sense: index 0 of the array for spi0, and index 1 for spi1.
-No functional change expected.
-
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/samsung/s5pv210.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/iommu-priv.h | 5 +++--
+ drivers/iommu/iommu.c      | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/samsung/s5pv210.dtsi b/arch/arm/boot/dts/samsung/s5pv210.dtsi
-index ed560c9a3aa1..3eba870db73f 100644
---- a/arch/arm/boot/dts/samsung/s5pv210.dtsi
-+++ b/arch/arm/boot/dts/samsung/s5pv210.dtsi
-@@ -161,6 +161,7 @@ spi0: spi@e1300000 {
- 			pinctrl-0 = <&spi0_bus>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			fifo-depth = <256>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/iommu/iommu-priv.h b/drivers/iommu/iommu-priv.h
+index 2024a2313348..5f731d994803 100644
+--- a/drivers/iommu/iommu-priv.h
++++ b/drivers/iommu/iommu-priv.h
+@@ -21,10 +21,11 @@ int iommu_group_replace_domain(struct iommu_group *group,
+ 			       struct iommu_domain *new_domain);
  
-@@ -177,6 +178,7 @@ spi1: spi@e1400000 {
- 			pinctrl-0 = <&spi1_bus>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			fifo-depth = <64>;
- 			status = "disabled";
- 		};
+ int iommu_device_register_bus(struct iommu_device *iommu,
+-			      const struct iommu_ops *ops, struct bus_type *bus,
++			      const struct iommu_ops *ops,
++			      const struct bus_type *bus,
+ 			      struct notifier_block *nb);
+ void iommu_device_unregister_bus(struct iommu_device *iommu,
+-				 struct bus_type *bus,
++				 const struct bus_type *bus,
+ 				 struct notifier_block *nb);
  
+ #endif /* __LINUX_IOMMU_PRIV_H */
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index d14413916f93..170329a085b8 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -291,7 +291,7 @@ EXPORT_SYMBOL_GPL(iommu_device_unregister);
+ 
+ #if IS_ENABLED(CONFIG_IOMMUFD_TEST)
+ void iommu_device_unregister_bus(struct iommu_device *iommu,
+-				 struct bus_type *bus,
++				 const struct bus_type *bus,
+ 				 struct notifier_block *nb)
+ {
+ 	bus_unregister_notifier(bus, nb);
+@@ -305,7 +305,8 @@ EXPORT_SYMBOL_GPL(iommu_device_unregister_bus);
+  * some memory to hold a notifier_block.
+  */
+ int iommu_device_register_bus(struct iommu_device *iommu,
+-			      const struct iommu_ops *ops, struct bus_type *bus,
++			      const struct iommu_ops *ops,
++			      const struct bus_type *bus,
+ 			      struct notifier_block *nb)
+ {
+ 	int err;
 -- 
-2.44.0.rc0.258.g7320e95886-goog
+2.34.1
 
