@@ -1,156 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0351E131E5C;
-	Fri, 16 Feb 2024 19:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E74137C4E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 19:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708112728; cv=none; b=Be0DEp+4o67rA32aewCq8sGK3kgTR97Iz3xINGcZkXegYoVGyye9KPCJ6qJc91ZvWGuNIK8kw7JtnUEdcQFVO0WqxRZy2+qXMBs1/fJLWHWhuxXmT2ULwcsEGR4D9i6uj9BybCZ2bzIvYRllOsw/2KCpCeYBx/+QPhclAaH5/uU=
+	t=1708112921; cv=none; b=AlMrsarW6LWePBL1G9PV+eUrWI12VQl4Q0CYahW7empiyZCU9S5ky6Gm1CWOylCvv3nNkFAi/35Mg5AQ8xqMEsW6sFj6SwbxJooXb7cPevFcaVXi1MhkQG8ZYvlY/GhJh7Afntl9DEvkOWxRxNwNsDTo+82ZgNYsLN7hRDjYFnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708112728; c=relaxed/simple;
-	bh=tqwc6T+xaDrSoJ/oKHMoZkMeHNS09xS6tDHD68G0Pqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqFR0ffJKmuMe1VQFNTuAoNam7vnUPYBQyllp4J0JafhlwVIBUOs49TyTh0AurkD/mizzGe0u7TyKvI78F4pS88v55bteCyZBt7EDM7d+5/GpgtM835/ewViBtazkEq8oPEXBD0bCg5+VX1/b6k3fwXjZgzdhESTdCoXhJwM4B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSthxwfz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708112921; c=relaxed/simple;
+	bh=m2Wvv0O31LwrnCQdUKYEs3sNTTEexlxilQS/jlCfnew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nVtbJCMX7loztu8DlJaZvsMDSNoSOgNAEkjnFyt5BoEI71Q/mqHeHab6vfHcbA9jkXiVGvKLqmVkTsHv1vOMi7Mgyg8NqmWhyjrgnbe0yTUsJ6xh6JktMFbJq53TvmJ4N8IrfXJ6Ipmx+KGPtbnX264fLVOlhvkwRaDRIBvR63Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=YX/jXwaF; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSthxwfz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38F73C433F1;
-	Fri, 16 Feb 2024 19:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708112727;
-	bh=tqwc6T+xaDrSoJ/oKHMoZkMeHNS09xS6tDHD68G0Pqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OSthxwfzP8UF7Asm4mhUGEEh6VIXs5Sbc7/xGMGiTkUWzliJRCbm40YECPFdF+1Pd
-	 7f2dobBHAikc0GSck7Sf1t/5jshXXHzR4krknNNdbij0MF2euTb8+UU5+kJW2nYcZ3
-	 3V7cGC6naFozTVdOWzBzH9WI0f4bp6bkrvIP5CXPrcWLUcTcFvkn/B3Tf7RM6Bfs/O
-	 pf/+QMYMG87HgPq60wb3g8JyuDa2qU0E0LOJY1yncZgxs+jQQntJQlPnQth85qiKGf
-	 Cxa3XY+zfUBSHbRmptaINGY5795Y/3bKrVznUs71qlOhPRo1ABeD0FTcLONf3Ia2oD
-	 AAUm002kTOsjw==
-Date: Fri, 16 Feb 2024 19:45:21 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: broonie@kernel.org, robh@kernel.org, andi.shyti@kernel.org,
-	krzysztof.kozlowski@linaro.org, semen.protsenko@linaro.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com,
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	kernel-team@android.com, willmcvicker@google.com,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 01/12] spi: dt-bindings: introduce FIFO depth
- properties
-Message-ID: <20240216-malt-alumni-4939546e1e2c@spud>
-References: <20240216070555.2483977-1-tudor.ambarus@linaro.org>
- <20240216070555.2483977-2-tudor.ambarus@linaro.org>
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="YX/jXwaF"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-511ac701428so2947098e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 11:48:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708112917; x=1708717717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XMO1uzBf5Ipo+B8nJFhezHnHhPZI6cIYH4qqZglP7mw=;
+        b=YX/jXwaFS/hB9HhbzEkfX8cSH4LyyWANTm6daW/jaTDSixVYXYJ8kZXl3XHjLa3Rq5
+         iUU7aAFL94+s6iHS0CLve1DvbxMa9hUYM1/71ifPsUJaQtqPisbfE2CAyc63oAFT5TYc
+         basuhP0hUoEqMIyhM6lAWzzOrGne74JlZevCrQ6aEqmeEOZOLPD92I6Q1VECKXoj7181
+         cJsP3MdtZsEMuJnK5kLDEp6U40o4AFqha5hdIx6sII//n8rmeQswx6ppCWitx/d/slrB
+         JV0e12TJmGqbB/jOQHav8Aj3G/UvLeAdBikf7bajKfSKPmyGdPqrTYRIVQcx46M0HIHQ
+         E2lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708112917; x=1708717717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XMO1uzBf5Ipo+B8nJFhezHnHhPZI6cIYH4qqZglP7mw=;
+        b=g/7Ji/1sG1dUYjfrOdJLJzjADrVDNR5JvKd7C2p/9yvl6nkRMbv4x5fpQHsPFfgXlx
+         7ekJbgT9MShdMH8R7RnT1D4hr9YbRjI5Y4DtaSZ09pbd5Ln6NtsoaTyhYp2o6eOU8SUN
+         M9qwoqjNUbDSwx1DOsMX4TrIb0Uv/NxE3iB7bxt2/k9OhZl7RI/QpWEFy25BGVcvsC/u
+         Il6nkiheFgSyvD9sHAnmNy71iewFqGN9IrXQAuGw374bj6lRwU2zUB89thwPHYj0SHVc
+         qRv5hlGMYHBPfZ5r5uIJKj3obyQ1Q5Uj/3b/li1f8ZVKh/PpLUAGDBpwuFC0PY0w8K8O
+         Se+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWK6IvUg7paYDqg61KC7QYFhhmBDDmHDQqSkcE838gKtvhaSoIMxcHTj6S3+hi/PsiDb/DD88hdJtbiR8zjPA9mKaH5zlrrcmGLs+LiEs8J8o=
+X-Gm-Message-State: AOJu0YxWZxvnkz+EDRF0plJQ10cnAENMpkfspcnYqnJaVL37BzQ4MpIO
+	SwTq/YqG6itFjJvovuKZ6Wzyo7FhyZVFt18tp4MXzg+KOfx9GjcmXHC0RT8ROrX7GL0B1s2OHPv
+	/l48RtV7DL/Au+FajgCTdIrtU7xEYRuhnBDdjcQ==
+X-Google-Smtp-Source: AGHT+IEiJLDM3GyyGWObGaRCyMN7MxvgX2HQgceLg5ERcIU76EjTibg8tg0F0e6PZPfErw11n01+i2wIipIreSPlOTo=
+X-Received: by 2002:ac2:5bd1:0:b0:511:a021:220a with SMTP id
+ u17-20020ac25bd1000000b00511a021220amr4183994lfn.21.1708112917508; Fri, 16
+ Feb 2024 11:48:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UgE4bvCQW0vdLD16"
-Content-Disposition: inline
-In-Reply-To: <20240216070555.2483977-2-tudor.ambarus@linaro.org>
-
-
---UgE4bvCQW0vdLD16
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
+ <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com> <20240216175752.GB2374@willie-the-truck>
+In-Reply-To: <20240216175752.GB2374@willie-the-truck>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 16 Feb 2024 14:48:00 -0500
+Message-ID: <CA+CK2bDURTkZFo9uE9Bgfrz-NwgXqo4SAzLOW6Jb35M+eqUEaA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
+To: Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 16, 2024 at 07:05:44AM +0000, Tudor Ambarus wrote:
-> There are SPI IPs that can be configured by the integrator with a
-> specific FIFO depth depending on the system's capabilities. For example,
-> the samsung USI SPI IP can be configured by the integrator with a TX/RX
-> FIFO from 8 byte to 256 bytes.
->=20
-> Introduce the ``fifo-depth`` property for such instances of IPs where the
-> same FIFO depth is used for both RX and TX. Introduce ``rx-fifo-depth``
-> and ``tx-fifo-depth`` properties for cases where the RX FIFO depth is
-> different from the TX FIFO depth.
->=20
-> Make the dedicated RX/TX properties dependent on each other and mutual
-> exclusive with the other.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+On Fri, Feb 16, 2024 at 12:58=E2=80=AFPM Will Deacon <will@kernel.org> wrot=
+e:
+>
+> On Tue, Feb 13, 2024 at 10:44:53AM -0500, Pasha Tatashin wrote:
+> > > >  SecPageTables
+> > > > -              Memory consumed by secondary page tables, this curre=
+ntly
+> > > > -              currently includes KVM mmu allocations on x86 and ar=
+m64.
+> > > > +              Memory consumed by secondary page tables, this curre=
+ntly includes
+> > > > +              KVM mmu and IOMMU allocations on x86 and arm64.
+> >
+> > Hi Will,
+> >
+> > > While I can see the value in this for IOMMU mappings managed by VFIO,
+> > > doesn't this end up conflating that with the normal case of DMA domai=
+ns?
+> > > For systems that e.g. rely on an IOMMU for functional host DMA, it se=
+ems
+> > > wrong to subject that to accounting constraints.
+> >
+> > The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
+> > is passed to the iommu mapping functions. We do that from the vfio,
+> > iommufd, and vhost. Without this flag, the memory useage is reported
+> > in /proc/meminfo as part of  SecPageTables field, but not constrained
+> > in cgroup.
+>
+> Thanks, Pasha, that explanation makes sense. I still find it bizarre to
+> include IOMMU allocations from the DMA API in SecPageTables though, and
+> I worry that it will confuse people who are using that metric as a way
+> to get a feeling for how much memory is being used by KVM's secondary
+> page-tables. As an extreme example, having a non-zero SecPageTables count
+> without KVM even compiled in is pretty bizarre.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+I agree; I also prefer a new field in /proc/meminfo named
+'IOMMUPageTables'. This is what I proposed at LPC, but I was asked to
+reuse the existing 'SecPageTables' field instead. The rationale was
+that 'secondary' implies not only KVM page tables, but any other
+non-regular page tables.
 
-Cheers,
-Conor.
+I would appreciate the opinion of IOMMU maintainers on this: is it
+preferable to bundle the information with 'SecPageTables' or maintain
+a separate field?
 
-> ---
->  .../bindings/spi/spi-controller.yaml          | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/=
-Documentation/devicetree/bindings/spi/spi-controller.yaml
-> index 524f6fe8c27b..093150c0cb87 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> @@ -69,6 +69,21 @@ properties:
->           Should be generally avoided and be replaced by
->           spi-cs-high + ACTIVE_HIGH.
-> =20
-> +  fifo-depth:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Size of the RX and TX data FIFOs in bytes.
-> +
-> +  rx-fifo-depth:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Size of the RX data FIFO in bytes.
-> +
-> +  tx-fifo-depth:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      Size of the TX data FIFO in bytes.
-> +
->    num-cs:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
-> @@ -116,6 +131,10 @@ patternProperties:
->        - compatible
->        - reg
-> =20
-> +dependencies:
-> +  rx-fifo-depth: [ tx-fifo-depth ]
-> +  tx-fifo-depth: [ rx-fifo-depth ]
-> +
->  allOf:
->    - if:
->        not:
-> @@ -129,6 +148,14 @@ allOf:
->        properties:
->          "#address-cells":
->            const: 0
-> +  - not:
-> +      required:
-> +        - fifo-depth
-> +        - rx-fifo-depth
-> +  - not:
-> +      required:
-> +        - fifo-depth
-> +        - tx-fifo-depth
-> =20
->  additionalProperties: true
-> =20
-> --=20
-> 2.44.0.rc0.258.g7320e95886-goog
->=20
-
---UgE4bvCQW0vdLD16
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZc+7UQAKCRB4tDGHoIJi
-0iPGAP42/u4o62bH9auA0cpLbFQfJuRnboyt+bRlmjYajrt1AwEA9cNTkOvx7XFk
-wTlq8tEDLeLBdKNu/omg8lshMNWcsg8=
-=Adys
------END PGP SIGNATURE-----
-
---UgE4bvCQW0vdLD16--
+Pasha
