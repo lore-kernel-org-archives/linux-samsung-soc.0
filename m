@@ -1,131 +1,234 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E74137C4E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 19:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827CF133423
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 22:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708112921; cv=none; b=AlMrsarW6LWePBL1G9PV+eUrWI12VQl4Q0CYahW7empiyZCU9S5ky6Gm1CWOylCvv3nNkFAi/35Mg5AQ8xqMEsW6sFj6SwbxJooXb7cPevFcaVXi1MhkQG8ZYvlY/GhJh7Afntl9DEvkOWxRxNwNsDTo+82ZgNYsLN7hRDjYFnY=
+	t=1708122769; cv=none; b=BnGxTMg/r8LDgSvQWWXDYN6Qh8fmoQRoFN1N35rTCea6u4RAmBbys4Bn5L+NeVn1/kZWMIThbdXhIPeq2Fx5wnUdj5/pOshc2cMhM7NJK3niLqdGkQP5KCJSlFxYksybzH1hqbVDaKTfOsRLl0x3grLc7p23CdG4qF5SwdqClpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708112921; c=relaxed/simple;
-	bh=m2Wvv0O31LwrnCQdUKYEs3sNTTEexlxilQS/jlCfnew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nVtbJCMX7loztu8DlJaZvsMDSNoSOgNAEkjnFyt5BoEI71Q/mqHeHab6vfHcbA9jkXiVGvKLqmVkTsHv1vOMi7Mgyg8NqmWhyjrgnbe0yTUsJ6xh6JktMFbJq53TvmJ4N8IrfXJ6Ipmx+KGPtbnX264fLVOlhvkwRaDRIBvR63Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=YX/jXwaF; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	s=arc-20240116; t=1708122769; c=relaxed/simple;
+	bh=ku6VSMwio83DtGsAZETFAIVDDL/5/fD1fkCL9iTm1sM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SEqWiVy9CrF7zuvodmSVvDKrYUYhR9hjcYW0rfcjyJt/po7ijQ31q3H3b3J3mvnjcM1IG56STrbeokbEoIcAr9nLkmDQ2C46uKZhjvoqRPiqz2elf+lXPIA9Eawdm9OGqtzIEReWNoTeye2ivVUIX93kt3yoXuZZMLcSo4Bc7so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Enk4v12D; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="YX/jXwaF"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-511ac701428so2947098e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 11:48:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Enk4v12D"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6dc36e501e1so1649327a34.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Feb 2024 14:32:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708112917; x=1708717717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1708122766; x=1708727566; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XMO1uzBf5Ipo+B8nJFhezHnHhPZI6cIYH4qqZglP7mw=;
-        b=YX/jXwaFS/hB9HhbzEkfX8cSH4LyyWANTm6daW/jaTDSixVYXYJ8kZXl3XHjLa3Rq5
-         iUU7aAFL94+s6iHS0CLve1DvbxMa9hUYM1/71ifPsUJaQtqPisbfE2CAyc63oAFT5TYc
-         basuhP0hUoEqMIyhM6lAWzzOrGne74JlZevCrQ6aEqmeEOZOLPD92I6Q1VECKXoj7181
-         cJsP3MdtZsEMuJnK5kLDEp6U40o4AFqha5hdIx6sII//n8rmeQswx6ppCWitx/d/slrB
-         JV0e12TJmGqbB/jOQHav8Aj3G/UvLeAdBikf7bajKfSKPmyGdPqrTYRIVQcx46M0HIHQ
-         E2lA==
+        bh=Bvsfav+nL4sYpB4KGZGKljNCHaZWKG3pZvV4LqQ31bA=;
+        b=Enk4v12D5bhxug0A5MSAC+3zdnH21VGgpHJpxFDeOdekvRZIWGZfkRkKRGhW0w1z9v
+         YLHlVRGodtZcLN/n6zov1l2C4JN9kauaRdkdYds8ntp42EVFT4dHwZGHAyVtZOko2m10
+         o5qgNh6jQf/J/QPOgKiaByK4hWZQI0J1TgsYkJ4BwcUy2dNoLPSWAORqEivSZ062+2LG
+         S6DLIGZtTlx+6AAvFr479SVJnxD7H+F5N+KxAzpFRbwyUHYumidybZM2k4rrIXTT7J47
+         mNs2+BQuwWzrkIECdIJk8PHLlKNKEkONMxk9Xw3Lu+hkoRCHj+BNoI/D4T9TmoJzrgtZ
+         yWCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708112917; x=1708717717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1708122766; x=1708727566;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XMO1uzBf5Ipo+B8nJFhezHnHhPZI6cIYH4qqZglP7mw=;
-        b=g/7Ji/1sG1dUYjfrOdJLJzjADrVDNR5JvKd7C2p/9yvl6nkRMbv4x5fpQHsPFfgXlx
-         7ekJbgT9MShdMH8R7RnT1D4hr9YbRjI5Y4DtaSZ09pbd5Ln6NtsoaTyhYp2o6eOU8SUN
-         M9qwoqjNUbDSwx1DOsMX4TrIb0Uv/NxE3iB7bxt2/k9OhZl7RI/QpWEFy25BGVcvsC/u
-         Il6nkiheFgSyvD9sHAnmNy71iewFqGN9IrXQAuGw374bj6lRwU2zUB89thwPHYj0SHVc
-         qRv5hlGMYHBPfZ5r5uIJKj3obyQ1Q5Uj/3b/li1f8ZVKh/PpLUAGDBpwuFC0PY0w8K8O
-         Se+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUWK6IvUg7paYDqg61KC7QYFhhmBDDmHDQqSkcE838gKtvhaSoIMxcHTj6S3+hi/PsiDb/DD88hdJtbiR8zjPA9mKaH5zlrrcmGLs+LiEs8J8o=
-X-Gm-Message-State: AOJu0YxWZxvnkz+EDRF0plJQ10cnAENMpkfspcnYqnJaVL37BzQ4MpIO
-	SwTq/YqG6itFjJvovuKZ6Wzyo7FhyZVFt18tp4MXzg+KOfx9GjcmXHC0RT8ROrX7GL0B1s2OHPv
-	/l48RtV7DL/Au+FajgCTdIrtU7xEYRuhnBDdjcQ==
-X-Google-Smtp-Source: AGHT+IEiJLDM3GyyGWObGaRCyMN7MxvgX2HQgceLg5ERcIU76EjTibg8tg0F0e6PZPfErw11n01+i2wIipIreSPlOTo=
-X-Received: by 2002:ac2:5bd1:0:b0:511:a021:220a with SMTP id
- u17-20020ac25bd1000000b00511a021220amr4183994lfn.21.1708112917508; Fri, 16
- Feb 2024 11:48:37 -0800 (PST)
+        bh=Bvsfav+nL4sYpB4KGZGKljNCHaZWKG3pZvV4LqQ31bA=;
+        b=HImGW9eq4W+Nn8TBCO9Xa0xnlxxUULdj2EpngkC0VboxoQsCi/j0/Eyqv+56xMX3KF
+         ++iksdDFyrcEgjfrefp7zqx7kinGbzBRpibW7dY16mZAgitP8bZlUdytzSk9j2TZS0rz
+         5yAAV2+rmrNpmBi1uzC80DraRzqexb7LfcbvWxoU+nWdExCirXhVuf2AArhAyHpPtgCn
+         cwlFrGLGTbAaov3EawsP1GEgLM+jP/P2eDtoGqGe0SW0X514B2EFM22brvG1OLjUP61k
+         nVJMTMpp60HnQK/Ns5fS/R8mmiPCgFS6hmDbeE6njNM4FSlDNz66hyKdcq6Ei/ATyDXZ
+         3ZpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBNatly6UsBOrBmY/lDEXkbAN8LRP0Xp7Lkga/BcEJ6pkEiLFZi/BgJi3Ln8nLWZ3K20BdqD5EHINIDOXiJ3By4WzSl75IEw3KX0NXJwLGmjw=
+X-Gm-Message-State: AOJu0YxiYfnzyqPrtGkYDUPb/JBh/ewWrv31wafBpcJMsBKWfapVKFjU
+	5gbtGjM3lhdIDAbP9KYlMFVTdD3xmGDhtWXqxC87YS1OGsagq+irwCcHKx90GE0=
+X-Google-Smtp-Source: AGHT+IFJKSlBLkHVFNOYrhkwPUESYeVtC3s7eHYrTfB8gdFfprT/xAHfYUMpKwe8nk4pBbw4D4DbNQ==
+X-Received: by 2002:a05:6830:3103:b0:6e4:3c38:fb80 with SMTP id b3-20020a056830310300b006e43c38fb80mr2630072ots.10.1708122766570;
+        Fri, 16 Feb 2024 14:32:46 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id dq20-20020a0568300ed400b006e2e8cb4da6sm141962otb.16.2024.02.16.14.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Feb 2024 14:32:46 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 01/16] dt-bindings: clock: exynos850: Add CMU_CPUCLK0 and CMU_CPUCL1
+Date: Fri, 16 Feb 2024 16:32:30 -0600
+Message-Id: <20240216223245.12273-2-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240216223245.12273-1-semen.protsenko@linaro.org>
+References: <20240216223245.12273-1-semen.protsenko@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
- <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com> <20240216175752.GB2374@willie-the-truck>
-In-Reply-To: <20240216175752.GB2374@willie-the-truck>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 16 Feb 2024 14:48:00 -0500
-Message-ID: <CA+CK2bDURTkZFo9uE9Bgfrz-NwgXqo4SAzLOW6Jb35M+eqUEaA@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
-To: Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 16, 2024 at 12:58=E2=80=AFPM Will Deacon <will@kernel.org> wrot=
-e:
->
-> On Tue, Feb 13, 2024 at 10:44:53AM -0500, Pasha Tatashin wrote:
-> > > >  SecPageTables
-> > > > -              Memory consumed by secondary page tables, this curre=
-ntly
-> > > > -              currently includes KVM mmu allocations on x86 and ar=
-m64.
-> > > > +              Memory consumed by secondary page tables, this curre=
-ntly includes
-> > > > +              KVM mmu and IOMMU allocations on x86 and arm64.
-> >
-> > Hi Will,
-> >
-> > > While I can see the value in this for IOMMU mappings managed by VFIO,
-> > > doesn't this end up conflating that with the normal case of DMA domai=
-ns?
-> > > For systems that e.g. rely on an IOMMU for functional host DMA, it se=
-ems
-> > > wrong to subject that to accounting constraints.
-> >
-> > The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
-> > is passed to the iommu mapping functions. We do that from the vfio,
-> > iommufd, and vhost. Without this flag, the memory useage is reported
-> > in /proc/meminfo as part of  SecPageTables field, but not constrained
-> > in cgroup.
->
-> Thanks, Pasha, that explanation makes sense. I still find it bizarre to
-> include IOMMU allocations from the DMA API in SecPageTables though, and
-> I worry that it will confuse people who are using that metric as a way
-> to get a feeling for how much memory is being used by KVM's secondary
-> page-tables. As an extreme example, having a non-zero SecPageTables count
-> without KVM even compiled in is pretty bizarre.
+Document CPU clock management unit compatibles and add corresponding
+clock indices. Exynos850 has two CPU clusters (CL0 and CL1), each
+containing 4 Cortex-A55 cores. CPU PLLs are generating main CPU clocks
+for each cluster, and there are alternate ("switch") clocks that can be
+used temporarily while re-configuring the PLL for the new rate. ACLK,
+ATCLK, PCLKDBG and PERIPHCLK clocks are driving corresponding buses.
+CLK_CLUSTERx_SCLK are actual leaf CPU clocks and should be used to
+change CPU rates. Also some CoreSight clocks can be derived from
+DBG_USER (debug clock).
 
-I agree; I also prefer a new field in /proc/meminfo named
-'IOMMUPageTables'. This is what I proposed at LPC, but I was asked to
-reuse the existing 'SecPageTables' field instead. The rationale was
-that 'secondary' implies not only KVM page tables, but any other
-non-regular page tables.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ .../clock/samsung,exynos850-clock.yaml        | 42 +++++++++++++++
+ include/dt-bindings/clock/exynos850.h         | 54 +++++++++++++++++++
+ 2 files changed, 96 insertions(+)
 
-I would appreciate the opinion of IOMMU maintainers on this: is it
-preferable to bundle the information with 'SecPageTables' or maintain
-a separate field?
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+index c752c8985a53..cdc5ded59fe5 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+@@ -36,6 +36,8 @@ properties:
+       - samsung,exynos850-cmu-aud
+       - samsung,exynos850-cmu-cmgp
+       - samsung,exynos850-cmu-core
++      - samsung,exynos850-cmu-cpucl0
++      - samsung,exynos850-cmu-cpucl1
+       - samsung,exynos850-cmu-dpu
+       - samsung,exynos850-cmu-g3d
+       - samsung,exynos850-cmu-hsi
+@@ -152,6 +154,46 @@ allOf:
+             - const: dout_core_mmc_embd
+             - const: dout_core_sss
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-cpucl0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CPUCL0 switch clock (from CMU_TOP)
++            - description: CPUCL0 debug clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_cpucl0_switch
++            - const: dout_cpucl0_dbg
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-cpucl1
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CPUCL1 switch clock (from CMU_TOP)
++            - description: CPUCL1 debug clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_cpucl1_switch
++            - const: dout_cpucl1_dbg
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+index bc15108aa3c2..7666241520f8 100644
+--- a/include/dt-bindings/clock/exynos850.h
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -88,6 +88,18 @@
+ #define CLK_MOUT_G3D_SWITCH		76
+ #define CLK_GOUT_G3D_SWITCH		77
+ #define CLK_DOUT_G3D_SWITCH		78
++#define CLK_MOUT_CPUCL0_DBG		79
++#define CLK_MOUT_CPUCL0_SWITCH		80
++#define CLK_GOUT_CPUCL0_DBG		81
++#define CLK_GOUT_CPUCL0_SWITCH		82
++#define CLK_DOUT_CPUCL0_DBG		83
++#define CLK_DOUT_CPUCL0_SWITCH		84
++#define CLK_MOUT_CPUCL1_DBG		85
++#define CLK_MOUT_CPUCL1_SWITCH		86
++#define CLK_GOUT_CPUCL1_DBG		87
++#define CLK_GOUT_CPUCL1_SWITCH		88
++#define CLK_DOUT_CPUCL1_DBG		89
++#define CLK_DOUT_CPUCL1_SWITCH		90
+ 
+ /* CMU_APM */
+ #define CLK_RCO_I3C_PMIC		1
+@@ -195,6 +207,48 @@
+ #define CLK_GOUT_CMGP_USI1_PCLK		14
+ #define CLK_GOUT_SYSREG_CMGP_PCLK	15
+ 
++/* CMU_CPUCL0 */
++#define CLK_FOUT_CPUCL0_PLL		1
++#define CLK_MOUT_PLL_CPUCL0		2
++#define CLK_MOUT_CPUCL0_SWITCH_USER	3
++#define CLK_MOUT_CPUCL0_DBG_USER	4
++#define CLK_MOUT_CPUCL0_PLL		5
++#define CLK_DOUT_CPUCL0_CPU		6
++#define CLK_DOUT_CPUCL0_CMUREF		7
++#define CLK_DOUT_CPUCL0_PCLK		8
++#define CLK_DOUT_CLUSTER0_ACLK		9
++#define CLK_DOUT_CLUSTER0_ATCLK		10
++#define CLK_DOUT_CLUSTER0_PCLKDBG	11
++#define CLK_DOUT_CLUSTER0_PERIPHCLK	12
++#define CLK_GOUT_CLUSTER0_ATCLK		13
++#define CLK_GOUT_CLUSTER0_PCLK		14
++#define CLK_GOUT_CLUSTER0_PERIPHCLK	15
++#define CLK_GOUT_CLUSTER0_SCLK		16
++#define CLK_GOUT_CPUCL0_CMU_CPUCL0_PCLK	17
++#define CLK_GOUT_CLUSTER0_CPU		18
++#define CLK_CLUSTER0_SCLK		19
++
++/* CMU_CPUCL1 */
++#define CLK_FOUT_CPUCL1_PLL		1
++#define CLK_MOUT_PLL_CPUCL1		2
++#define CLK_MOUT_CPUCL1_SWITCH_USER	3
++#define CLK_MOUT_CPUCL1_DBG_USER	4
++#define CLK_MOUT_CPUCL1_PLL		5
++#define CLK_DOUT_CPUCL1_CPU		6
++#define CLK_DOUT_CPUCL1_CMUREF		7
++#define CLK_DOUT_CPUCL1_PCLK		8
++#define CLK_DOUT_CLUSTER1_ACLK		9
++#define CLK_DOUT_CLUSTER1_ATCLK		10
++#define CLK_DOUT_CLUSTER1_PCLKDBG	11
++#define CLK_DOUT_CLUSTER1_PERIPHCLK	12
++#define CLK_GOUT_CLUSTER1_ATCLK		13
++#define CLK_GOUT_CLUSTER1_PCLK		14
++#define CLK_GOUT_CLUSTER1_PERIPHCLK	15
++#define CLK_GOUT_CLUSTER1_SCLK		16
++#define CLK_GOUT_CPUCL1_CMU_CPUCL1_PCLK	17
++#define CLK_GOUT_CLUSTER1_CPU		18
++#define CLK_CLUSTER1_SCLK		19
++
+ /* CMU_G3D */
+ #define CLK_FOUT_G3D_PLL		1
+ #define CLK_MOUT_G3D_PLL		2
+-- 
+2.39.2
 
-Pasha
