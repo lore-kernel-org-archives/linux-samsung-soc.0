@@ -1,57 +1,57 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E56EB7E
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Feb 2024 18:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC756F093
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Feb 2024 18:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708280512; cv=none; b=eWYHN/IS37XLjlk59WVqiwMtryXKtDc3zya8/kZHLXXh8SXxg0F8eR7PmW0wVpkjjBVlp/jPq6qc0cSRRUDsvuAkrcKxzPrHFILChmhfN3jiaF/GA7rRRPokIiSmCpzaHIZFZxAIlWN//s2ElTNl9msRXFvGVfb1PGOO94JGQHA=
+	t=1708280513; cv=none; b=KOX3WaUsruuwoBrS29izglirMW30xuYXTyOW7tv3l7xX5EAAFW6whEhul4l3Lx1IhoZeQSj0MlneE3fwPbRFTDWpreyYD9gh6LJVzctufeUsifsZQWwPjw8jDq+Mq4lKJ5gjLCZmfGi/RtMEN4rxZOaFvRKWUhOadV/BYnABqVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708280512; c=relaxed/simple;
-	bh=5b3Ax3VyVKSo04rdS6XGi1aGBOyKWPLhlxPxlJG1Cs8=;
+	s=arc-20240116; t=1708280513; c=relaxed/simple;
+	bh=YlcJjgqG+KY+nDkBNXqVqzCZnS4bJbaRlFsl8ki2188=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VlC5NoDL9ZYuLCOuwTas6r/FoibPrl1soNjJ3oU1fmLQUyUf38htrJLeWKQ0+ahl8fSKrE3w3I1LPVLLTNyCdTPtU/K8ynxgFW2NVnQoroG2+obK5qU32t5lD9qJ8hnbCa41ZolpDZMjyNhHnq17xnCLJwKcsn6pZ0MQ3tTbto0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BJZlpWV+; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version:Content-Type; b=DSWXXohKG5KeQqi4Mtv/HbxxyQX4KvGeOE2e9kqzmGI7mTp+AqozGWnmCNBvq7S8D+wzVy/bP8mBSVQBiV33A6U4OwNcewnvnUDdH1SXDET3EnpLlAvqfr606x4QPFCswW+ANNlBjCWAMhbb6MgmfjUF1afHxNrKmJ6riQq37ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L1MhpMHs; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BJZlpWV+"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33d066f8239so1632019f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Feb 2024 10:21:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L1MhpMHs"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-33d0a7f2424so1979854f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Feb 2024 10:21:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708280508; x=1708885308; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708280510; x=1708885310; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wgBUvsJh7J3bbNyhiGiF4j3z5FqJ0WMiX5JDP4IiaR8=;
-        b=BJZlpWV+8rLY/e1SlzCUU/F8R2eRbo9JoGEXm2mykaLU7tgt8SlMQD7SQzoFAD/6oh
-         SFlqti0zAw1qLx8SwVQgkebJsiHmgpIkVpV7LyAoHONLL7NKOGKjPIAiskWdZ8tvXIuW
-         CnczSmUwiGDeuB5jNzbrGpdMdLx5digXVNsD79nvmrMYn98vrbKKW43be6Lc+otn2O4o
-         fLF0yVj1Lt+jjKz4sAbQ80rg4dLHQt5Et0u4D2/gSWjy6zsuzUyHyP4Aanensnsdv4nu
-         BhkiWTSuzTHL0Nftz01YzSnpju7Nz77IPBn5iinyd+guZ4RxVCWuFqPjunnQS8soXHAR
-         d8Wg==
+        bh=NJeQ4s/dF1xmsrXWqyzJPeUB9FNDeuqtjlU/RMGfQnM=;
+        b=L1MhpMHsa2mJIJAgla3AKX178Ird7TZMxf90i6Q/z1AgnE6h2vJuW86lMCWWVaij4R
+         v5/7C3PrhY8MGOU37ckarMxklFgf8xGqChtwJomensVGpovleCRqR3du4YgBwcEJYda6
+         TDY6TAJUrtqSGyypi8DnOEgBGZaK8mJTUc5N/wWsYCi2Q5G9CWqu+pdnI9fF86GZm+AS
+         jVmR5Ukx9FJvUBOzUDibBqRABlXcuG/MBZEmMycdVcIWUbMtsDnYAZI4g4QYS9v+UQ4T
+         MiFOhvRf8WiFWEfvjmGoFHAfecuwIRjfwNSb4KB0ukc2XT9s4gG2lRFKGq+KVcspL4hO
+         UcIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708280508; x=1708885308;
+        d=1e100.net; s=20230601; t=1708280510; x=1708885310;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wgBUvsJh7J3bbNyhiGiF4j3z5FqJ0WMiX5JDP4IiaR8=;
-        b=qP7KMN7aP0LiP2gKXAhi5EU2xKr/YEPP4D7tTewWME23atZG+uYrjyyqXGkRpUshFI
-         7nnm9etZvT/ruXVLMDfkd+VO6xwmdoXFRKK+dnWCOU6BlrnVimB4bF288qbPNiK0aY6H
-         Zo5a5YHaHB15y1t4j7vggW/HhWxTV+uYZ3wJzwdTRumGYPpzFFhbN6OF+00nL8QZ6u8p
-         6EyCzwRKuXIQLNdGwBV9HaIwQB/41Q6+DhdzQEwlQ4ZWScv8Oc6y/M8NcON0C3qA1nk/
-         JvMXCWrF4a7JNcHhvzckOY3t2RP/k5sT4o+sR4D5KGM05+CSpi0bQS+nYTYYgJPN3HQF
-         CrXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhigOOtN7nK91E4N1fW3bgEeBbJKUZFUYtYgR9OGrkFkUd4pjRMCCDJwqTUy99lsavXTVFj3NDD3NxkD5+jTSUw/BcRiE7+1uj0L1CxTDwAKk=
-X-Gm-Message-State: AOJu0Yw0hoXgpDTPbpsk3LN9FZTL0spTrAKGMpNBjLhGtUqjGzRrmGCm
-	Wvs2eI4k8aJV6UHHDIm0fd+X+4KXZ6w/urTPGf5KaSkd8rRdHK3A8PnfyTLsYOM=
-X-Google-Smtp-Source: AGHT+IEMWzddT4jRRM3mO0QYTgawsI5pX0vK8dPJPiXyovwwBFb00vCi6jL6NpInJqDKlgAVNajVuA==
-X-Received: by 2002:adf:f352:0:b0:33d:1145:8787 with SMTP id e18-20020adff352000000b0033d11458787mr6409743wrp.25.1708280508015;
-        Sun, 18 Feb 2024 10:21:48 -0800 (PST)
+        bh=NJeQ4s/dF1xmsrXWqyzJPeUB9FNDeuqtjlU/RMGfQnM=;
+        b=YyCYHkbHk3gcN+EdIURDc/51bfGE6uuqVt4zLNUwAt4GD0PqigUbGs/mYKSmaydKCb
+         5JrvS1GlwrpzrrwdLSz8MUIYLdTR8+PLSLGND3RlmJ1cDMwfMnLPAajEiwiDtsCDe8hd
+         jOnLjijFTjLCYbp5fE/qhzCq6wnDqN2iEk1BJqVF66dZf2uEwBhs7A15TcswC5IN9+jj
+         1cAeu7fJsAOoPlG1ZuKayuuSuY5VXlN1dEKX7S9LRfaIUVs1y0sqCaYtJOqCU7MFhJPb
+         aY2wQZe6txJzm+xwUnXNv/vkUut/RbWgoPkLCa4ddx627ozP66ZQgIOzveSQ7vEFOKff
+         Pw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUQmYkJbSUzPyc9/h0MxswmCE/y8NW63dmsB/9iQOLnheKFtJeIkPNf/GtoPaU/9FduXsxWY7XLKQ9L0xGf0WywQgIokrAP9XGmF0Ne4dWO53Y=
+X-Gm-Message-State: AOJu0YwueOzwVPQwpySI9UEXLBsL3Ek6WSEEwCZiXmVRbEELiJGNc810
+	xNKeN1z2ebC1qMdv/NgJBxOR+oo5ZFKeU2+W7XH2ScJpLv7hCpJrB0eo+iihLBo=
+X-Google-Smtp-Source: AGHT+IFGBwlBDblusdfCCYJ6QOIzpX9Y/EbyxKJg0nx5peFXbTPuSanMLt+OiKKeIiEY8GGMt5q+Zw==
+X-Received: by 2002:a5d:430d:0:b0:33b:65b3:e51b with SMTP id h13-20020a5d430d000000b0033b65b3e51bmr7725445wrq.48.1708280509886;
+        Sun, 18 Feb 2024 10:21:49 -0800 (PST)
 Received: from krzk-bin.. ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id s3-20020a5d4ec3000000b0033ce06c303csm7867116wrv.40.2024.02.18.10.21.45
+        by smtp.gmail.com with ESMTPSA id s3-20020a5d4ec3000000b0033ce06c303csm7867116wrv.40.2024.02.18.10.21.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Feb 2024 10:21:47 -0800 (PST)
+        Sun, 18 Feb 2024 10:21:49 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Olof Johansson <olof@lixom.net>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -64,9 +64,9 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 2/4] arm64: dts: samsung: exynos and google for v6.9
-Date: Sun, 18 Feb 2024 19:21:39 +0100
-Message-Id: <20240218182141.31213-2-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 3/4] ARM: dts: samsung: for v6.9
+Date: Sun, 18 Feb 2024 19:21:40 +0100
+Message-Id: <20240218182141.31213-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240218182141.31213-1-krzysztof.kozlowski@linaro.org>
 References: <20240218182141.31213-1-krzysztof.kozlowski@linaro.org>
@@ -85,65 +85,45 @@ The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt64-6.9
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-6.9
 
-for you to fetch changes up to 0791f541ff42f0ba7301f8caa7f3ab257284dc8f:
+for you to fetch changes up to 60f1164e21cc04666d23b63e1153af74e7a5650d:
 
-  arm64: dts: fsd: Add fifosize for UART in Device Tree (2024-02-12 14:21:29 +0100)
-
-----------------------------------------------------------------
-Samsung DTS ARM64 changes for v6.9
-
-Mostly work around Google GS101 SoC and Pixel phone (Oriole) adding
-support for:
-
-1. Multi Core Timer (MCT) clocksource.
-2. Several clock controllers (DTS and DT bindings) and use new clocks in
-   several other device nodes.
-3. More serial-interface instances: USI8 and USI12 with I2C.
-
-Exynos850:
-1. SPI and DMA controllers (PL330).
+  ARM: dts: samsung: exynos5420-galaxy-tab-common: add wifi node (2024-02-07 16:22:01 +0100)
 
 ----------------------------------------------------------------
-André Draszik (7):
-      arm64: dts: exynos: gs101: sysreg_peric0 needs a clock
-      arm64: dts: exynos: gs101: use correct clocks for usi8
-      arm64: dts: exynos: gs101: use correct clocks for usi_uart
-      dt-bindings: clock: google,gs101-clock: add PERIC1 clock management unit
-      arm64: dts: exynos: gs101: enable cmu-peric1 clock controller
-      arm64: dts: exynos: gs101: define USI12 with I2C configuration
-      arm64: dts: exynos: gs101: enable i2c bus 12 on gs101-oriole
+Samsung DTS ARM changes for v6.9
 
-Krzysztof Kozlowski (2):
-      Merge tag 'samsung-dt-bindings-clk-6.9-3' into next/dt64
-      arm64: dts: exynos: gs101: minor whitespace cleanup
+1. Disable thermal polling by Linux in Eynos5422 Odroid XU3 boards,
+   because drivers implement now proper dynamic trip points management.
 
-Peter Griffin (1):
-      arm64: dts: exynos: gs101: define Multi Core Timer (MCT) node
+2. Mark crosc-ec-spi in Peach Pi and Peach Pit as wake-up source, to
+   reflect the hardware capabilities.
 
-Sam Protsenko (3):
-      dt-bindings: clock: exynos850: Add PDMA clocks
-      arm64: dts: exynos: Add PDMA node for Exynos850
-      arm64: dts: exynos: Add SPI nodes for Exynos850
+3. Samsung P4 Note (Exynos4412): add accelerometer.
 
-Tamseel Shams (1):
-      arm64: dts: fsd: Add fifosize for UART in Device Tree
+4. Samsung Galaxy Tab (Exynos5420):
+   - Reduce available RAM to avoid conflict with TrustZone.
+   - Add WiFi on MMC.
 
-Tudor Ambarus (6):
-      dt-bindings: clock: google,gs101-clock: add PERIC0 clock management unit
-      arm64: dts: exynos: gs101: remove reg-io-width from serial
-      arm64: dts: exynos: gs101: enable cmu-peric0 clock controller
-      arm64: dts: exynos: gs101: update USI UART to use peric0 clocks
-      arm64: dts: exynos: gs101: define USI8 with I2C configuration
-      arm64: dts: exynos: gs101: enable eeprom on gs101-oriole
+----------------------------------------------------------------
+Henrik Grimler (2):
+      ARM: dts: samsung: exynos5420-galaxy-tab: decrease available memory
+      ARM: dts: samsung: exynos5420-galaxy-tab-common: add wifi node
 
- .../bindings/clock/google,gs101-clock.yaml         |  28 ++++-
- arch/arm64/boot/dts/exynos/exynos850.dtsi          |  64 ++++++++++
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  24 ++++
- .../boot/dts/exynos/google/gs101-pinctrl.dtsi      |   2 +-
- arch/arm64/boot/dts/exynos/google/gs101.dtsi       | 131 ++++++++++++++++++---
- arch/arm64/boot/dts/tesla/fsd.dtsi                 |   2 +
- include/dt-bindings/clock/exynos850.h              |   2 +
- include/dt-bindings/clock/google,gs101.h           | 129 ++++++++++++++++++++
- 8 files changed, 360 insertions(+), 22 deletions(-)
+Mark Hasemeyer (2):
+      ARM: dts: samsung: exynos5420-peach: Enable cros-ec-spi as wake source
+      ARM: dts: samsung: exynos5800-peach: Enable cros-ec-spi as wake source
+
+Martin Jücker (1):
+      ARM: dts: samsung: exynos4412-p4note: add accelerometer and gyro to p4note
+
+Mateusz Majewski (1):
+      ARM: dts: samsung: exynos5422-odroidxu3: disable thermal polling
+
+ arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi   | 51 ++++++++++++++++++++++
+ .../dts/samsung/exynos5420-galaxy-tab-common.dtsi  | 34 ++++++++++++++-
+ arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts |  1 +
+ .../dts/samsung/exynos5422-odroidxu3-common.dtsi   | 16 +++----
+ arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts  |  1 +
+ 5 files changed, 91 insertions(+), 12 deletions(-)
