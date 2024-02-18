@@ -1,96 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA724CA6B;
-	Sun, 18 Feb 2024 09:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5DE2D04A
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Feb 2024 10:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708248682; cv=none; b=CEmw/Us7EvkkYrGHlu0PadFiAxliUP0bNVYL84TKpZv+esndDI9bpxv4wZww91VNijMXwVlbXShWNKD6XxzNv+ylPvxpcYWSqJy9NAUp6wuAYc+yh7fxeDrmntGiQ60gkzH1hTn3nK4EvT+tu5HSIqQ1DIshJ8Kh/NxStvT4njI=
+	t=1708251900; cv=none; b=Ntka8SvgUGX5dRxIoQVVMaiQygqYp1JbXZspqoTCuHqbCe0Lk7BlAa0Pz1ljHEdSPutiF29EWbo2Rz0hCTiHJ8lzCmgh5PhIcMDItPi21up36LtuRkrDb7cRz2xz3r+xuRhZVMEKkvvyQkrxYJLZfn8xgX0b2r7M7o0CNS/xpz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708248682; c=relaxed/simple;
-	bh=H/OSay05+csAHwBP0A3xim8Jfufbq4gn0ZbQ5TgLGOo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rGSV4ZuDzUys3nfkt6j1WTifmbq+0Hg9908NM82Mt0XRbuJl6jwFudJYPE1Ir2+GuSUGrMHAMzmyV2Egb6R5SeptxawyXkS9F+yb/tosmFrBt7ozpLu7khJZP/Rh0FsaNged27DFsC7DzLE0GKeIeSgoBncwvgxDTaPdiPnSUPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JqLT55/j; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1708251900; c=relaxed/simple;
+	bh=7T65f/Wd63Ks1lufnUN/PWkHZ5lS3y7W0WH/QysgGms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5JFgb3UwADIG5O3Q4Qxc5OZPhREQS2jx002US9+bqAdoNNRk7Jwz2vnMn3HmvKvDL+J7+C1iqgqmaN/gXsGCbIPr0t9Gn+q0FnIYC3SpqyYZohMMfTzMCMkUpjLZk9s9pE8W5wus0VxCnRYuxc+/Q6AZ46jMKEHbIf+WLj/mC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=POmXrPzV; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JqLT55/j"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708248679; x=1739784679;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=H/OSay05+csAHwBP0A3xim8Jfufbq4gn0ZbQ5TgLGOo=;
-  b=JqLT55/jGf/mUSf/KMB9jcH+qdN2G2FOxnvgQwGg+kLgaDuxDe8yXCRL
-   LAp/HjSkJw96zBbYKjq5gX02GSDGRGR+kxWc+2CjKlqm3zXnzGleF6mdH
-   JYOvAVBBAA0vDZ8XepE8C7UsoMnPhP/LelOO+rB3da/g1ttVI+Q3IRGat
-   jTzTU/wLexgSQM7R90612dhYoHZWDbovy3SizmHpLRz52mjxEYwEq6P2P
-   RhEdz15kphhFj8ukkG9i/JYNWQVY57Zhgpc83uQOr7QFWc5k5jl+Xd0Un
-   GnCfjzJ4boz62YSnNKMYefz0ZEtJComBoBPzKWhXXcJWkteizNEJdUhLr
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10987"; a="2200303"
-X-IronPort-AV: E=Sophos;i="6.06,168,1705392000"; 
-   d="scan'208";a="2200303"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2024 01:31:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10987"; a="912682691"
-X-IronPort-AV: E=Sophos;i="6.06,168,1705392000"; 
-   d="scan'208";a="912682691"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.209.212]) ([10.254.209.212])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2024 01:31:09 -0800
-Message-ID: <7b18a339-d0e3-4347-a20b-8fca9bbc7eb4@linux.intel.com>
-Date: Sun, 18 Feb 2024 17:31:06 +0800
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="POmXrPzV"
+Date: Sun, 18 Feb 2024 11:24:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1708251893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Q6gteFXLuw2xa9qiBWiKUaLv3oz6lEnepe4NxbB9Vs=;
+	b=POmXrPzVyqbX9+lwS3g3MVsM1gkzEC6PGkcdMmTbGjf5yrQqoVeEAEoDS4EJZiuikXJKfd
+	1vWGINMT2dD/TMkzn6/SakwIOj1swc3zbVfj/gXijUECLRdfA7pjr8CBm/Tb4DkQjDtQYi
+	OW/n+aog7oheGUfApsczc9y54aCsUcc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH] ARM: dts: exynos4212-tab3: limit usable memory range
+Message-ID: <20240218102449.GA7577@grimlerstat.localdomain>
+References: <20240217-tab3-limit-usable-memory-range-v1-1-49cc9c86a5cc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com
-Subject: Re: [PATCH 1/4] iommu: constify pointer to bus_type
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Rob Clark <robdclark@gmail.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Heiko Stuebner <heiko@sntech.de>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy
- <vdumpa@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, virtualization@lists.linux.dev
-References: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240217-tab3-limit-usable-memory-range-v1-1-49cc9c86a5cc@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/2/16 22:40, Krzysztof Kozlowski wrote:
-> Make pointer to bus_type a pointer to const for code safety.
+Hi Artur,
+
+On Sat, Feb 17, 2024 at 08:02:47PM +0100, Artur Weber wrote:
+> The stock bootloader on the Samsung Galaxy Tab 3 8.0 provides an
+> incorrect available memory range over ATAG_MEM. Limit the usable
+> memory in the DTS to prevent it from doing so, without having to
+> disable ATAG support.
 > 
-> Signed-off-by: Krzysztof Kozlowski<krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->   drivers/iommu/iommu-priv.h | 5 +++--
->   drivers/iommu/iommu.c      | 5 +++--
->   2 files changed, 6 insertions(+), 4 deletions(-)
+>  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> index e5254e32aa8f..9bc05961577d 100644
+> --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> @@ -45,6 +45,12 @@ chosen {
+>  		/* Default S-BOOT bootloader loads initramfs here */
+>  		linux,initrd-start = <0x42000000>;
+>  		linux,initrd-end = <0x42800000>;
+> +
+> +		/*
+> +		 * Stock bootloader provides incorrect memory size in ATAG_MEM;
+> +		 * override it here
+> +		 */
+> +		linux,usable-memory-range = <0x40000000 0x3fc00000>;
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Maybe it would make sense to set the memory reg to
+<0x40000000 0x60000000> (1.5 GiB) and move the comment about last
+512(/516) MiB being weird/broken here instead.  It looks a bit weird
+that the memory range and usable-memory-range are identical, and device tree
+should describe hardware, which technically has 1.5 GiB RAM.
 
-Best regards,
-baolu
+From a functional point of view it does not really matter, so in any case:
+Reviewed-by: Henrik Grimler <henrik@grimler.se>
+
+>  	};
+>  
+>  	firmware@204f000 {
+> 
+> ---
+> base-commit: 0f1dd5e91e2ba3990143645faff2bcce2d99778e
+> change-id: 20240217-tab3-limit-usable-memory-range-1d1ffa8dc44d
+> 
+> Best regards,
+> -- 
+> Artur Weber <aweber.kernel@gmail.com>
+> 
