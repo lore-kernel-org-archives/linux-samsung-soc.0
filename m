@@ -1,169 +1,402 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A10167E79
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 12:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F281E6A00F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 13:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708431493; cv=none; b=NbXeGD9wpM49F/TSb8CBfk0OnulGP12RitVGsZpnxsEad5DTkRkcUJ/k1K101rAKuvB28L+eOsK2sw1wF8Hhz70JA+mav6GXOOABeJ+Hqz/fkq92fSu9GaVj6CJeUb9LDh+UAiKXGMqT3kjxyBbi4B9XrGAyPunzRLoMopRe2cg=
+	t=1708435251; cv=none; b=Fa5zfVfzelsMLzIOpslrdaX+SV+GpmbTStaTltRufS2LomxoJk7X9/Sqdyp2HTckuIvINa0MwDiw2bLOjLoiKcz0j5UNFuwwvcCRW9kfBaEwTja9/Z8YVlSQRz/Lkho8f4sIi5MQ+sU2r5I7rRXXr2R6gI6WSlwyAvc+tnkLUIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708431493; c=relaxed/simple;
-	bh=FyNYzT8EV/tDwSUKQpoe9xy1MnakgX8mWChybUQAYz4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=XX2EsIzw6FGk3hvr2ORmkUrMz2yasit5KbXRZq4FOcRIl2PXpgtpUvHna1ehy4ZNb1bMqfFvv2Hn0edEHyif64y/bOkbQfudIvVXMSVi+JyCnFBeObCig+e6ohTD+UdbC9Kt9uV58Ol3eDAPlDuUYQ6CTNq2aphf9yKDivDt624=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=RpNK2xzW; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1708435251; c=relaxed/simple;
+	bh=AzES946XJIoeKOfWXh7Y99KFaeGFmJOweba4tNi0w1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EdEpkJaQVvEvgTyfpxCIplVGdKOtVasl3mRMHTrMN8baEFdQHoOUjsbp07r1uLy6Z9SX4yb9GQjtTIRt6joSralEqCrk/eOCpNrOl2y1KxOaZJRX+npWseMdgoVDn4UkTqlRI0X6oWiNyVbUB4KzLCj+fb//76ux+hOwcBFd0jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZJ0Lt2q; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RpNK2xzW"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240220121808epoutp01003f0ed2ed1bcda884097a70c2ae4a4a~1kWMnsOyB1016910169epoutp01d
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 12:18:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240220121808epoutp01003f0ed2ed1bcda884097a70c2ae4a4a~1kWMnsOyB1016910169epoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1708431488;
-	bh=FyNYzT8EV/tDwSUKQpoe9xy1MnakgX8mWChybUQAYz4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=RpNK2xzWiCsMyVnPhMpq52sMpwZwQ3oJNX9hE7jY9iAJY3C8DdZ6qIXPNiStaKwLt
-	 1tgAUceJqBTuMCOBYk+X4cz5WA5BQtfmJsZoqQ+YgfKDnRWpnvhZW+ZnGU/uZbpfkY
-	 puJBoJZyBzPt1BtsvBXLx40LWheaNeIhW8XHgD0E=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240220121808epcas5p45507e0d247b7228e8b5b784223425b7e~1kWMMqAXs2515225152epcas5p4a;
-	Tue, 20 Feb 2024 12:18:08 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4TfJMd6vLKz4x9Pr; Tue, 20 Feb
-	2024 12:18:05 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	23.D9.09672.D7894D56; Tue, 20 Feb 2024 21:18:05 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240220121804epcas5p3f01e75b1089af1edf6db4ee3ea3a5efa~1kWJGqsyX3231832318epcas5p3F;
-	Tue, 20 Feb 2024 12:18:04 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240220121804epsmtrp2a62d16806647f420afad909b08430dc1~1kWJE7VzD0477204772epsmtrp2c;
-	Tue, 20 Feb 2024 12:18:04 +0000 (GMT)
-X-AuditID: b6c32a4b-39fff700000025c8-e9-65d4987dce4d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	58.85.08817.C7894D56; Tue, 20 Feb 2024 21:18:04 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240220121802epsmtip2c274177845b43966e4d2735153498c4d~1kWG__oCO2982329823epsmtip2_;
-	Tue, 20 Feb 2024 12:18:02 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Georgi
- Djakov'" <djakov@kernel.org>, "'Bjorn Andersson'" <andersson@kernel.org>,
-	"'Konrad Dybcio'" <konrad.dybcio@linaro.org>, "'Sylwester	Nawrocki'"
-	<s.nawrocki@samsung.com>, =?utf-8?Q?'Artur_=C5=9Awigo=C5=84'?=
-	<a.swigon@samsung.com>, "'Thierry Reding'" <thierry.reding@gmail.com>,
-	"'Jonathan Hunter'" <jonathanh@nvidia.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>
-Cc: "'Thierry Reding'" <treding@nvidia.com>
-In-Reply-To: <20240220072213.35779-1-krzysztof.kozlowski@linaro.org>
-Subject: RE: [PATCH v2] interconnect: constify of_phandle_args in xlate
-Date: Tue, 20 Feb 2024 17:48:01 +0530
-Message-ID: <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZJ0Lt2q"
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c15bfa17b2so916430b6e.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 05:20:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708435249; x=1709040049; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WP+3iL6xb/RVVeTHHQMqfvj9HZcG1WEGgQ50AkstGdo=;
+        b=yZJ0Lt2qQVvGSmPGS22BJivIJAiOlBtO52bVhSuW2bvEOvNyHTwYQdsFP9IlXsURnl
+         fIqTRPpbGMrpB2/+gOMD7L904dqOMiT1sOrvtDHSTOdwY1qVdxEgtcrQjOQdyFSVwcUE
+         QmlMhkRFZWaCEdWLBkTPzqNoY5A6FxasXqCxsYxMjJhOI68F2F8s8CHrL7ZU/4jmyiMY
+         8JAso2u/2WtPfMMf9fa8EvuEgOJpp4KcwzAyD10f55eJOdxb+POMYFSqxPi1uFaeYuOU
+         x8ALytAXjM8kDOc1yo6+90YIv2cCRGBqgmGQtXe064RABlvNBuc17zfUzWkt95yA75In
+         DhaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708435249; x=1709040049;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WP+3iL6xb/RVVeTHHQMqfvj9HZcG1WEGgQ50AkstGdo=;
+        b=vVy+veps6mL7oKVLXAeq8UX/UbTHqxbqHtFYgA4zPRkpF9mPvwZaEn1Mmil7asNPgC
+         9CXhgVY2cuJuky5H0aojRRiCbPAa12EMae2pDfAj8dAdUi6u/OShXZWGwfiGhRhOC123
+         GyUuL/iJRqFPHSKx3s4rGvgEeLEf4rHUu9Q3icIb40zemonFLsOZWRbrKcMqJNPJbx/j
+         FvFAdWsvNlOAmrgy8dQcAY2K91wCW6ydUzoFx41X/2+ori408695F4Qbc//wY8AnW5XA
+         m6CfcdbYgW7Xuk/wP8Rb6AUKOx/WvcC6DMGmmgvrBg5HVr/fZutG6ytJr7Q476ZekY8K
+         3gVg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/fw/MZh3rjYrKniz6WF1xzDka+5JQeodO86azSkHdjOtTwv7KPoBMKFXtQBE8QuLyWQGzRrx8g0xKqB68Mw39JEgJAemyOHFYfvPgbCoieVE=
+X-Gm-Message-State: AOJu0YyBt01NH+tMhHgojsdq+Eqf191pH1xVMmNN8aDwDgXhlcx4WB06
+	0IRlhlz4fh/3j0DirK+JnRI81MWGKO51gY1zv4cuqxFuxQ22ycy9U/G5hAqXRqdzH3J3QUl59ww
+	VecsoXhcDl+K/nWMhokHCkiG3RTqLNwUeM5ffMg==
+X-Google-Smtp-Source: AGHT+IH6YHYON/cS3zVfm4L6/D3K+zW0MCNLmnL1KIAGoMwmU2wJPkMMTzZ+P1kUiag2Po5m+zZ30FhRHWlUGNOiv+s=
+X-Received: by 2002:aca:d0f:0:b0:3c0:4ac4:d7f1 with SMTP id
+ 15-20020aca0d0f000000b003c04ac4d7f1mr12737522oin.35.1708435248949; Tue, 20
+ Feb 2024 05:20:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240219204238.356942-1-peter.griffin@linaro.org>
+ <20240219204238.356942-2-peter.griffin@linaro.org> <CAPLW+4nOq_62rBhwRUf0RW0zTiGa+-Zpt+FLcTa87biX8Nq-BA@mail.gmail.com>
+In-Reply-To: <CAPLW+4nOq_62rBhwRUf0RW0zTiGa+-Zpt+FLcTa87biX8Nq-BA@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 20 Feb 2024 13:20:37 +0000
+Message-ID: <CADrjBPrMC4Zh1yOzfPZ81bfnkz5BG9MktPpgny9r3F0x8mekxw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] soc: samsung: exynos-pmu: Add regmap support for
+ SoCs that protect PMU regs
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
+	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
+	alexey.klimov@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLQP0hpybpPMp0Wp7r3CvZ4KlHU5QIjg6hJrxZRFBA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOJsWRmVeSWpSXmKPExsWy7bCmum7tjCupBt+PG1vcn9fKaLGtw8bi
-	2a1GNouWWYtYLDomb2ex2Pt6K7vFpsfXWC0m7j/LbnF51xw2i8+9RxgtZpzfx2TR+WUWm8Xh
-	N+2sFj93zWOxuP2bz4HfY+esu+wem1Z1snncubaHzWPzknqP3uZ3bB59W1YxenzeJBfAHpVt
-	k5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0tZJCWWJO
-	KVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKRArzgxt7g0L10vL7XEytDAwMgUqDAhO+P0
-	6Y8sBd8lKlp2r2BtYGyV6GLk5JAQMJG4vOE6G4gtJLCbUaJvV2oXIxeQ/YlRYvnlZUwQzjdG
-	id2zvrLCdPx7MpMdIrGXUeLhw1/MEM4LRolHx3oYQarYBHQldixuYwNJiAjcZ5H4saIXrJ1Z
-	QFviyNMbQO0cHJwCLhIXH8WAmMIC7hJdC6RBKlgEVCXmf58AVs0rYCkx/8xqJghbUOLkzCcs
-	MFOWLXzNDHGQgsTPp8vA6kUErCR2Hb7KCFEjLvHy6BGwQyUErnBIPD/2mQWiwUViy9xmqG+E
-	JV4d38IOYUtJfH63lw3kHgkBD4lFf6QgwhkSb5evZ4Sw7SUOXJnDAlLCLKApsX6XPsQqPone
-	30+YIDp5JTrahCCqVSWa312FWiotMbG7G2qph0TbvkcsExgVZyF5bBaSx2YheWAWwrIFjCyr
-	GCVTC4pz01OLTQuM81LL4bGdnJ+7iRGcorW8dzA+evBB7xAjEwfjIUYJDmYlEV6W8iupQrwp
-	iZVVqUX58UWlOanFhxhNgaE9kVlKNDkfmCXySuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8s
-	Sc1OTS1ILYLpY+LglGpg2uBuxeh2f3pHpmmrzbSP9S3745aeLfZbktEcpeiR5/kz5GDBfEFe
-	nY/fs4tyZA/fNvk8icdgyZqbtSGiWRGHHu6W3p375DPnZ/9qUYkbZ8ruL1swr5WPv71Vb+Wj
-	o90v3zY+bD/k4N23UuDRH//78+/WON3dvagxc/KuJMWDDw+KrIq480w1qlzyxxHhjX2lbiz1
-	PE/yYixjIsLZJ9T733/s5CgdPZ9/ioO4XcHWX9NNnPrV7eL466XfN3R9txU44Cn50Xzvn6n/
-	z2/NL9q+wWz6Ya+UuxXrTarkGhXTG1+zz38sEqTpMnXRm9mLvFuv/Nj5vU2ttUmmsr7xwt5F
-	dsJx+j53GYt+m5rw/G5QYinOSDTUYi4qTgQAQaaPGloEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsWy7bCSvG7NjCupBn/eG1rcn9fKaLGtw8bi
-	2a1GNouWWYtYLDomb2ex2Pt6K7vFpsfXWC0m7j/LbnF51xw2i8+9RxgtZpzfx2TR+WUWm8Xh
-	N+2sFj93zWOxuP2bz4HfY+esu+wem1Z1snncubaHzWPzknqP3uZ3bB59W1YxenzeJBfAHsVl
-	k5Kak1mWWqRvl8CV8WsVZ8EjwYqVV3qZGhhP83UxcnJICJhI/Hsyk72LkYtDSGA3o8S5z69Z
-	IBLSEtc3TmCHsIUlVv57DmYLCTxjlOjaIQRiswnoSuxY3MYG0iwi8JJFYv/mJawgCWYBbYkj
-	T29ATZ3KKLH47HqgKg4OTgEXiYuPYkBMYQF3ia4F0iDlLAKqEvO/TwBr5RWwlJh/ZjUThC0o
-	cXLmExaYkU9vPoWzly18zQxxm4LEz6fLwHpFBKwkdh2+yghRIy7x8ugR9gmMwrOQjJqFZNQs
-	JKNmIWlZwMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOFK1tHYw7ln1Qe8QIxMH
-	4yFGCQ5mJRFelvIrqUK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73uTRESSE8sSc1OTS1ILYLJ
-	MnFwSjUwLb0cbfizqpLjzl3DF8+OZX/xKpJSeyW7483UXR9qb5x/0CzvenVdyYbQjDWbv4S+
-	5o/liC6cpbNYNvA895UkgxO7wrZY6HIt64iP6v8Y2rT8X979CapsVw6d/yE7zUihXdlJN+CN
-	l+Hdp5fYb7lm+eq+ZlsicfBOW9zhfTcKWIS4alYvzcjc/u/XqlP33Rv+u4VPPibvvbvNLjL3
-	U3JM6yWXOiaRNxdeZjtUWru+Fw3xWMj491OKSv2i/W0X37Ux8/j3WM+KUQqcP9f5fE6fxZ+d
-	K0xWPmtL8//p2cCt52E1qzm/gct/ueuVtau8OZYV5y650vXGs7pRZZpTluLjXr1qiyPsD+Ru
-	xyyJ0FRVYinOSDTUYi4qTgQA33CUyEMDAAA=
-X-CMS-MailID: 20240220121804epcas5p3f01e75b1089af1edf6db4ee3ea3a5efa
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240220072224epcas5p4ff60556b0b5632abfc44d2b8ad932b8f
-References: <CGME20240220072224epcas5p4ff60556b0b5632abfc44d2b8ad932b8f@epcas5p4.samsung.com>
-	<20240220072213.35779-1-krzysztof.kozlowski@linaro.org>
 
+Hi Sam,
 
+On Mon, 19 Feb 2024 at 23:06, Sam Protsenko <semen.protsenko@linaro.org> wr=
+ote:
+>
+> On Mon, Feb 19, 2024 at 2:42=E2=80=AFPM Peter Griffin <peter.griffin@lina=
+ro.org> wrote:
+> >
+> > Some Exynos based SoCs like Tensor gs101 protect the PMU registers for
+> > security hardening reasons so that they are only write accessible in el=
+3
+> > via an SMC call.
+> >
+> > As most Exynos drivers that need to write PMU registers currently obtai=
+n a
+> > regmap via syscon (phys, pinctrl, watchdog). Support for the above usec=
+ase
+> > is implemented in this driver using a custom regmap similar to syscon t=
+o
+> > handle the SMC call. Platforms that don't secure PMU registers, get a m=
+mio
+> > regmap like before. As regmaps abstract out the underlying register acc=
+ess
+> > changes to the leaf drivers are minimal.
+> >
+> > A new API exynos_get_pmu_regmap_by_phandle() is provided for leaf drive=
+rs
+> > that currently use syscon_regmap_lookup_by_phandle(). This also handles
+> > deferred probing.
+> >
+> > Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Tested-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> > Changes since v4:
+> >  - Use same argument names as in struct regmap_config
+> >  - Remove inline keyword and rely on compiler
+> >  - Update kerneldoc wording
+> >  - property -> propname argument rename
+> >  - reverse Xmas tree
+> >  - Only call of_node_put() when of_parse_phandle is called
+> >  - Collect tags
+> >
+> > Changes since v3:
+> >  - Fix PMUALIVE_MASK
+> >  - Add TENSOR_ prefix
+> >  - clear SET_BITS bits on each loop iteration
+> >  - change set_bit to set_bits in func name
+> >  - Fix some alignment
+> >  - Add missing return on dev_err_probe
+> >  - Reduce indentation in loop
+> >
+> > Changes since v2
+> >  - Add select REGMAP to Kconfig
+> >  - Add constant for SET/CLEAR bits
+> >  - Replace kerneldoc with one line comment
+> >  - Fix kerneldoc for EXPORT_SYMBOL_GPL funcs
+> >  - remove superfluous extern keyword
+> >  - dev_err_probe() on probe error
+> >  - shorten regmcfg name
+> >  - no compatibles inside probe, use match data
+> >  - don't mix declarations with/without initializations
+> >  - tensor_sec_reg_read() use mmio to avoid access restrictions
+> >  - Collect up Reviewed-by
+> >  - const for regmap_config structs
+> > ---
+> >  drivers/soc/samsung/Kconfig            |   1 +
+> >  drivers/soc/samsung/exynos-pmu.c       | 235 ++++++++++++++++++++++++-
+> >  drivers/soc/samsung/exynos-pmu.h       |   1 +
+> >  include/linux/soc/samsung/exynos-pmu.h |  11 +-
+> >  4 files changed, 245 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> > index 27ec99af77e3..1a5dfdc978dc 100644
+> > --- a/drivers/soc/samsung/Kconfig
+> > +++ b/drivers/soc/samsung/Kconfig
+> > @@ -42,6 +42,7 @@ config EXYNOS_PMU
+> >         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
+> >         select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
+> >         select MFD_CORE
+> > +       select REGMAP_MMIO
+> >
+> >  # There is no need to enable these drivers for ARMv8
+> >  config EXYNOS_PMU_ARM_DRIVERS
+> > diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exy=
+nos-pmu.c
+> > index 250537d7cfd6..d6ae8025fdb4 100644
+> > --- a/drivers/soc/samsung/exynos-pmu.c
+> > +++ b/drivers/soc/samsung/exynos-pmu.c
+> > @@ -5,6 +5,7 @@
+> >  //
+> >  // Exynos - CPU PMU(Power Management Unit) support
+> >
+> > +#include <linux/arm-smccc.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_address.h>
+> >  #include <linux/mfd/core.h>
+> > @@ -12,19 +13,134 @@
+> >  #include <linux/of_platform.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/delay.h>
+> > +#include <linux/regmap.h>
+> >
+> >  #include <linux/soc/samsung/exynos-regs-pmu.h>
+> >  #include <linux/soc/samsung/exynos-pmu.h>
+> >
+> >  #include "exynos-pmu.h"
+> >
+> > +#define PMUALIVE_MASK                  GENMASK(13, 0)
+> > +#define TENSOR_SET_BITS                        (BIT(15) | BIT(14))
+> > +#define TENSOR_CLR_BITS                        BIT(15)
+> > +#define TENSOR_SMC_PMU_SEC_REG         0x82000504
+> > +#define TENSOR_PMUREG_READ             0
+> > +#define TENSOR_PMUREG_WRITE            1
+> > +#define TENSOR_PMUREG_RMW              2
+> > +
+> >  struct exynos_pmu_context {
+> >         struct device *dev;
+> >         const struct exynos_pmu_data *pmu_data;
+> > +       struct regmap *pmureg;
+> >  };
+> >
+> >  void __iomem *pmu_base_addr;
+> >  static struct exynos_pmu_context *pmu_context;
+> > +/* forward declaration */
+> > +static struct platform_driver exynos_pmu_driver;
+> > +
+> > +/*
+> > + * Tensor SoCs are configured so that PMU_ALIVE registers can only be =
+written
+> > + * from EL3, but are still read accessible. As Linux needs to write so=
+me of
+> > + * these registers, the following functions are provided and exposed v=
+ia
+> > + * regmap.
+> > + *
+> > + * Note: This SMC interface is known to be implemented on gs101 and de=
+rivative
+> > + * SoCs.
+> > + */
+> > +
+> > +/* Write to a protected PMU register. */
+> > +static int tensor_sec_reg_write(void *context, unsigned int reg,
+> > +                               unsigned int val)
+> > +{
+> > +       struct arm_smccc_res res;
+> > +       unsigned long pmu_base =3D (unsigned long)context;
+> > +
+> > +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> > +                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
+> > +
+> > +       /* returns -EINVAL if access isn't allowed or 0 */
+> > +       if (res.a0)
+> > +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0=
+);
+> > +
+> > +       return (int)res.a0;
+> > +}
+> > +
+> > +/* Read/Modify/Write a protected PMU register. */
+> > +static int tensor_sec_reg_rmw(void *context, unsigned int reg,
+> > +                             unsigned int mask, unsigned int val)
+> > +{
+> > +       struct arm_smccc_res res;
+> > +       unsigned long pmu_base =3D (unsigned long)context;
+> > +
+> > +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> > +                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
+> > +
+> > +       /* returns -EINVAL if access isn't allowed or 0 */
+> > +       if (res.a0)
+> > +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0=
+);
+> > +
+> > +       return (int)res.a0;
+> > +}
+> > +
+> > +/*
+> > + * Read a protected PMU register. All PMU registers can be read by Lin=
+ux.
+> > + * Note: The SMC read register is not used, as only registers that can=
+ be
+> > + * written are readable via SMC.
+> > + */
+> > +static int tensor_sec_reg_read(void *context, unsigned int reg,
+> > +                              unsigned int *val)
+> > +{
+> > +       *val =3D pmu_raw_readl(reg);
+> > +       return 0;
+> > +}
+> > +
+> > +/*
+> > + * For SoCs that have set/clear bit hardware this function can be used=
+ when
+> > + * the PMU register will be accessed by multiple masters.
+> > + *
+> > + * For example, to set bits 13:8 in PMU reg offset 0x3e80
+> > + * tensor_set_bits_atomic(ctx, 0x3e80, 0x3f00, 0x3f00);
+> > + *
+> > + * Set bit 8, and clear bits 13:9 PMU reg offset 0x3e80
+> > + * tensor_set_bits_atomic(0x3e80, 0x100, 0x3f00);
+> > + */
+> > +static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 =
+val,
+> > +                                 u32 mask)
+> > +{
+> > +       int ret;
+> > +       unsigned int i;
+> > +
+> > +       for (i =3D 0; i < 32; i++) {
+> > +               if (!(mask & BIT(i)))
+> > +                       continue;
+> > +
+> > +               offset &=3D ~TENSOR_SET_BITS;
+> > +
+> > +               if (val & BIT(i))
+> > +                       offset |=3D TENSOR_SET_BITS;
+> > +               else
+> > +                       offset |=3D TENSOR_CLR_BITS;
+> > +
+> > +               ret =3D tensor_sec_reg_write(ctx, offset, i);
+> > +               if (ret)
+> > +                       return ret;
+> > +       }
+> > +       return ret;
+> > +}
+> > +
+> > +static int tensor_sec_update_bits(void *ctx, unsigned int reg,
+> > +                                 unsigned int mask, unsigned int val)
+> > +{
+> > +       /*
+> > +        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3F=
+FF)
+> > +        * as the target registers can be accessed by multiple masters.
+> > +        */
+> > +       if (reg > PMUALIVE_MASK)
+> > +               return tensor_sec_reg_rmw(ctx, reg, mask, val);
+> > +
+> > +       return tensor_set_bits_atomic(ctx, reg, val, mask);
+> > +}
+> >
+> >  void pmu_raw_writel(u32 val, u32 offset)
+> >  {
+> > @@ -75,11 +191,41 @@ void exynos_sys_powerdown_conf(enum sys_powerdown =
+mode)
+> >  #define exynos_pmu_data_arm_ptr(data)  NULL
+> >  #endif
+> >
+> > +static const struct regmap_config regmap_smccfg =3D {
+> > +       .name =3D "pmu_regs",
+> > +       .reg_bits =3D 32,
+> > +       .reg_stride =3D 4,
+> > +       .val_bits =3D 32,
+> > +       .fast_io =3D true,
+> > +       .use_single_read =3D true,
+> > +       .use_single_write =3D true,
+> > +       .reg_read =3D tensor_sec_reg_read,
+> > +       .reg_write =3D tensor_sec_reg_write,
+> > +       .reg_update_bits =3D tensor_sec_update_bits,
+> > +};
+> > +
+> > +static const struct regmap_config regmap_mmiocfg =3D {
+> > +       .name =3D "pmu_regs",
+> > +       .reg_bits =3D 32,
+> > +       .reg_stride =3D 4,
+> > +       .val_bits =3D 32,
+> > +       .fast_io =3D true,
+> > +       .use_single_read =3D true,
+> > +       .use_single_write =3D true,
+> > +};
+> > +
+> > +static const struct exynos_pmu_data gs101_pmu_data =3D {
+> > +       .pmu_secure =3D true
+> > +};
+> > +
+> >  /*
+> >   * PMU platform driver and devicetree bindings.
+> >   */
+> >  static const struct of_device_id exynos_pmu_of_device_ids[] =3D {
+> >         {
+> > +               .compatible =3D "google,gs101-pmu",
+> > +               .data =3D &gs101_pmu_data,
+> > +       }, {
+> >                 .compatible =3D "samsung,exynos3250-pmu",
+> >                 .data =3D exynos_pmu_data_arm_ptr(exynos3250_pmu_data),
+> >         }, {
+> > @@ -113,19 +259,75 @@ static const struct mfd_cell exynos_pmu_devs[] =
+=3D {
+> >         { .name =3D "exynos-clkout", },
+> >  };
+> >
+> > +/**
+> > + * exynos_get_pmu_regmap() - Obtain pmureg regmap
+> > + *
+> > + * Find the pmureg regmap previously configured in probe() and return =
+regmap
+> > + * pointer.
+> > + *
+> > + * Return: A pointer to regmap if found or ERR_PTR error value.
+> > + */
+> >  struct regmap *exynos_get_pmu_regmap(void)
+> >  {
+> >         struct device_node *np =3D of_find_matching_node(NULL,
+> >                                                       exynos_pmu_of_dev=
+ice_ids);
+> >         if (np)
+> > -               return syscon_node_to_regmap(np);
+> > +               return exynos_get_pmu_regmap_by_phandle(np, NULL);
+> >         return ERR_PTR(-ENODEV);
+> >  }
+> >  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap);
+> >
+> > +/**
+> > + * exynos_get_pmu_regmap_by_phandle() - Obtain pmureg regmap via phand=
+le
+> > + * @np: Device node holding PMU phandle property
+> > + * @property: Name of property holding phandle value
+>
+> This doesn't match the actual param name.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> Sent: Tuesday, February 20, 2024 12:52 PM
-> To: Georgi Djakov <djakov=40kernel.org>; Bjorn Andersson
-> <andersson=40kernel.org>; Konrad Dybcio <konrad.dybcio=40linaro.org>;
-> Sylwester Nawrocki <s.nawrocki=40samsung.com>; Artur =C5=9Awigo=C5=84=0D=
-=0A>=20<a.swigon=40samsung.com>;=20Krzysztof=20Kozlowski=0D=0A>=20<krzyszto=
-f.kozlowski=40linaro.org>;=20Alim=20Akhtar=0D=0A>=20<alim.akhtar=40samsung.=
-com>;=20Thierry=20Reding=20<thierry.reding=40gmail.com>;=0D=0A>=20Jonathan=
-=20Hunter=20<jonathanh=40nvidia.com>;=20linux-pm=40vger.kernel.org;=0D=0A>=
-=20linux-kernel=40vger.kernel.org;=20linux-arm-msm=40vger.kernel.org;=20lin=
-ux-=0D=0A>=20samsung-soc=40vger.kernel.org;=20linux-arm-kernel=40lists.infr=
-adead.org;=20linux-=0D=0A>=20tegra=40vger.kernel.org=0D=0A>=20Cc:=20Thierry=
-=20Reding=20<treding=40nvidia.com>=0D=0A>=20Subject:=20=5BPATCH=20v2=5D=20i=
-nterconnect:=20constify=20of_phandle_args=20in=20xlate=0D=0A>=20=0D=0A>=20T=
-he=20xlate=20callbacks=20are=20supposed=20to=20translate=20of_phandle_args=
-=20to=20proper=0D=0A>=20provider=20without=20modifying=20the=20of_phandle_a=
-rgs.=20=20Make=20the=20argument=0D=0A>=20pointer=20to=20const=20for=20code=
-=20safety=20and=20readability.=0D=0A>=20=0D=0A>=20Acked-by:=20Konrad=20Dybc=
-io=20<konrad.dybcio=40linaro.org>=0D=0A>=20Acked-by:=20Thierry=20Reding=20<=
-treding=40nvidia.com>=20=23=20Tegra=0D=0A>=20Signed-off-by:=20Krzysztof=20K=
-ozlowski=20<krzysztof.kozlowski=40linaro.org>=0D=0A>=20=0D=0A>=20---=0D=0A>=
-=20=0D=0A>=20Changes=20in=20v2:=0D=0A>=201.=20Drop=20unrelated=20gpiolib=20=
-changes=20(Konrad,=20Thierry).=0D=0A>=202.=20Add=20tags.=0D=0A>=20---=0D=0A=
->=20=20drivers/interconnect/core.c=20=20=20=20=20=20=20=20=20=20=20=20=7C=
-=20=204=20++--=0D=0A>=20=20drivers/interconnect/qcom/icc-common.c=20=7C=20=
-=203=20++-=0D=0A>=20drivers/interconnect/qcom/icc-common.h=20=7C=20=203=20+=
-+-=0D=0A>=20drivers/interconnect/samsung/exynos.c=20=20=7C=20=202=20+-=0D=
-=0A>=20=20drivers/memory/tegra/mc.c=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/tegra/tegra124-emc.c=20=20=20=
-=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/tegra/tegra124.c=20=20=20=20=
-=20=20=20=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/tegra/tegra186-emc.c=
-=20=20=20=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/tegra/tegra20-emc.c=
-=20=20=20=20=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/tegra/tegra20.c=
-=20=20=20=20=20=20=20=20=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/tegra=
-/tegra30-emc.c=20=20=20=20=20=7C=20=202=20+-=0D=0A>=20=20drivers/memory/teg=
-ra/tegra30.c=20=20=20=20=20=20=20=20=20=7C=20=202=20+-=0D=0A>=20=20include/=
-linux/interconnect-provider.h=20=20=7C=2011=20++++++-----=0D=0A>=20=20inclu=
-de/soc/tegra/mc.h=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=7C=20=
-=207=20++++---=0D=0A>=20=2014=20files=20changed,=2025=20insertions(+),=2021=
-=20deletions(-)=0D=0A>=20=0D=0A=0D=0AFor=20Samsung/Exynos=0D=0AReviewed-by:=
-=20Alim=20Akhtar=20<alim.akhtar=40samsung.com>=0D=0A.=0D=0A.=0D=0A=5Bsnip=
-=5D=0D=0A>=20--=0D=0A>=202.34.1=0D=0A=0D=0A=0D=0A
+Doh, I missed the kerneldoc comment in the renaming from property ->
+propname. I will send a v6 in a moment with this fixed
+
+Peter.
