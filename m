@@ -1,531 +1,213 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2084.outbound.protection.outlook.com [40.107.113.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAC45226
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Feb 2024 23:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708383965; cv=none; b=YLk/cTF5lt2lZIK5Xk/9Zm0C9vb/5Dnf+GzmC2eFLjwmOl70EFQ97QXCiGG7NF5qvbn/6eyXpgFhdf9Zs07BR/Yamvc4YoUVLzag4n4waES/8ls/muTtR+SglclTBXuK9JEEDZMU2ngbftApd3juSEA0bytGgqlY02xu+hXjwyM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708383965; c=relaxed/simple;
-	bh=p86UMxwvMHWplV7hAuPocjvT4OFzoMgJO/dd6G2KmZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i0HBg9ayNcA7ZxwxoVaMPwGSP53KtvTGD+YegHOGzeuxVTje638BYtgns4sIFAx/ak8TtqP4yvnP20TI4SRM2CfN0n3aDoEIEG1+Lso65K8ikRApzSSvICddbZuGgUB2gpJXA1Yl4lMD+ORJptSCwGxq2EtQe9HzIT45L1td+qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IIT44/DT; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2EFBF4;
+	Tue, 20 Feb 2024 01:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708391644; cv=fail; b=POj7BNJDkBDn57mhtqGCiIPUthBD73kUKNyHc2gu9BKbZUavzjL7ab9tIUsGtcftf9Ov3p0X415ile3IPHUkFDO77b3/APj+2+qpj6fymVaoWjHEzr7hAWP3xY/V/wcKbDs59oAVoT4T3AjrWN+JjuRhdLVSpN7kxx9W7uZErBY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708391644; c=relaxed/simple;
+	bh=YRpjD1vhr6/apzz93wNmFNjKkhcpKm74mj46reh7ai4=;
+	h=Message-ID:To:From:Subject:Content-Type:Date:MIME-Version; b=Z7j3N9RLh4vhLgzGE83r6HiMKal/PPCIl0/9WXvMjTDy+/wXJetPrvVJyyBKdBmTTUdVI1ktqM5c773fvRZvzY5mXc/eO6hbKOBiT3au7kkSkIzoN8PnCgXbU4V5swSiRYCmczrezGPsoIrpC4wonCrZGETIvDVNHRe+wHxpsJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=fzN0LOKc; arc=fail smtp.client-ip=40.107.113.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIT44/DT"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1d934c8f8f7so46123185ad.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Feb 2024 15:06:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708383962; x=1708988762; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCYUHWgj4tBlKPHDy7d0RJI2GMM1SdpVrxzwn2/Ye0w=;
-        b=IIT44/DTbMIB/dP7fejQNV57CtdCCwTQLAHvBtbWDQnUxJy65tx+33gMVFFyJmJ7KC
-         ctE/JfkdwhMTCVDfien/MoD1Q6WkAxOKq6KJXfzYqcEQ/cVblyMi9/wwq2VSBo9fchw7
-         p9TfwQkBUro7B4SNFOs7BVCZh50RuT2GEoR4ikB/9w4mkFXm6zgiuIxnMJRUS2IgHF4r
-         a3yF9WpOsGLlS/3DaCF1TywToWZf3UvARwqDWat6udbuCxz+dUCznQupmG4vQQGjlx9z
-         KpnQNSKL1hph0EvDCP5llDfMHmZeTbVezSsV8JLA6O2XKDv/LKr3vUFzzBVj2KZcJcyA
-         cGyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708383962; x=1708988762;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCYUHWgj4tBlKPHDy7d0RJI2GMM1SdpVrxzwn2/Ye0w=;
-        b=iw4i22Nvj1fvno/pkE8kgpGjolP+U09q2FJmMM20P+KnSutl4Rpfzpg9g8ztu1K+BM
-         O2a2NFVCco7IGrma9NHCFbmoB6w2XXZe8jiBWT3XgsA4O0UFO0J/RyP2SVoy/kWJW1x/
-         FRFLaLGtO7uDI2YodbFnEe8IGBWqZB+5Rv+7CejmWd08qLpk3aE4dUY9dx33duDzr9HB
-         Pd+WpxOBl1O+et1SnasmjHbjl2zXT28uhn17xBvk7IuV8HlEz0gf6e95RIxPYARgm4QO
-         /Faof/kvmbGgnIwhJorLwgArTvHSn+Qfjpwug5IVLkvVjnHOF5y5QNmb9aKF0mJWoKUO
-         1cyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVj15Fjys1v4dTfGVFstOzN4e78CyvTFGHwS8w9iHKJKhB882NN5UKNj7+smiY40JpdPO53b6SW4uiuqI4Tr2hTrLvmUW6povjcUgt/P1QNccU=
-X-Gm-Message-State: AOJu0YyixdW6Cj0EqD38ABftt7H9oVQtmDs+3ichtwpbbS8OhIm62xXn
-	swpQ55zNqSHkRCSJqLeAxKSLZBHyPrKAojSJ2aclI8Qohych2cfMyuPDBq6cGNv6mqzrPFL5WJQ
-	bamKhHO7c6dLEyJLXRKkq4osMHuolw3MCmFWyDA==
-X-Google-Smtp-Source: AGHT+IFqb+8be/+0ICnzL42ojWojSNSJ0vyWc/vop+iOw0f72aE1TTGE+s53VnsJEff9vnuyiTecUimJC2SPA8Zkgyg=
-X-Received: by 2002:a17:902:ba94:b0:1d9:a890:e72f with SMTP id
- k20-20020a170902ba9400b001d9a890e72fmr10642789pls.50.1708383962189; Mon, 19
- Feb 2024 15:06:02 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="fzN0LOKc"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nTxHxJtaxA8sa+G4g43fbu0XvvXcF7jNVXzxDX3I+EUIisaqzbUzIEre4Uou5LjEidXb/Y1xCVt8L9OgkTFM/HTlsi0lt082sV1PuofHuACSOw5TKE+SxT8UD7gSQm6ByntFosQG0xn6BOcwGqzJMuPaTrQlH1gp8yBrXxxY67e6wfoXVeFx3lel80gg0gPlUAdYZxoLJww5ni3E76LoIpEKWoryG2lEt5pLVZJWs6Hz/NidP11tNFOuo94OPgc1zPrYNbzRAFmeS6/FMYcvsIPJzVtvcriXuQpN5/nvd9/Sqxsp9G1q8xFzHRUkvPNAt1UhtvR7vAQaKoSfHpxyeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1s0I5LH7+wq5eXtbHjAN0c5fw6/2Na9YnGXIeaB7fzg=;
+ b=eM98Xoqn8H3LyRXWsh7hL8hpJwWHUdsx0BhwE3KJ2kB0lDsgtU7maqh1Q06DwyjfaKprnFo8+y7FB87Yo2fd+BV/6AscphILcvPvDa/U9pj4Q6nf0lEFNIWx+zaJvHYO2b++OxMHOdrSpNaC5E5kfhFsCBnA2s3ONza0xu+aq5zv6NqVyE1YI444JmWpv4HqccEAMINDSmXxwAXvkqLkIgG4BouQgZOJaHRjHEhqKHmfMRfjj5ogcFRn1hvQ/uM1VLHRtRtp+zR8G+prqbDFO31nSEG3AvHcLJ2LYZc0dKMDWacCa8e8vAU+wYgnsjLCgTVrbdbuEcXWY2u2Q/Q71g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1s0I5LH7+wq5eXtbHjAN0c5fw6/2Na9YnGXIeaB7fzg=;
+ b=fzN0LOKc5CO8CsyQgxSCt8RLHU7hnQFIdq16sQZTeze6EBLO0fLVtb2ajd0+enKIucdoPD5MD4uMCcpjoRNeTzFzVyu8dU7esfkbrQ7qUM3W7G1hwW1JZhMPwcrYkZ9bIlWWFC9sB2BX76CBMk5ZM4jQrfUwSqDrXZIytT6x+J4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by OS3PR01MB5621.jpnprd01.prod.outlook.com
+ (2603:1096:604:c1::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.39; Tue, 20 Feb
+ 2024 01:13:57 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::4d0b:6738:dc2b:51c8]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::4d0b:6738:dc2b:51c8%6]) with mapi id 15.20.7292.029; Tue, 20 Feb 2024
+ 01:13:57 +0000
+Message-ID: <874je4kkdn.wl-kuninori.morimoto.gx@renesas.com>
+To: "Lad,  Prabhakar" <prabhakar.csengg@gmail.com>, =?ISO-8859-1?Q?=22Uwe_?=
+ =?ISO-8859-1?Q?Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, Alain
+ Volmat <alain.volmat@foss.st.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Alexey Brodkin <abrodkin@synopsys.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, David Airlie <airlied@gmail.com>, Eugen
+ Hristev <eugen.hristev@collabora.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Helge Deller <deller@gmx.de>, Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jacopo Mondi <jacopo@jmondi.org>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime
+ Ripard <mripard@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Sam Ravnborg <sam@ravnborg.org>, Sylwester
+ Nawrocki <s.nawrocki@samsung.com>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Tim Harvey <tharvey@gateworks.com>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v2 resend 0/4] of: replace of_graph_get_next_endpoint()
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 20 Feb 2024 01:13:56 +0000
+X-ClientProxiedBy: TY2PR02CA0001.apcprd02.prod.outlook.com
+ (2603:1096:404:56::13) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240219204238.356942-1-peter.griffin@linaro.org> <20240219204238.356942-2-peter.griffin@linaro.org>
-In-Reply-To: <20240219204238.356942-2-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 19 Feb 2024 17:05:50 -0600
-Message-ID: <CAPLW+4nOq_62rBhwRUf0RW0zTiGa+-Zpt+FLcTa87biX8Nq-BA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] soc: samsung: exynos-pmu: Add regmap support for
- SoCs that protect PMU regs
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: arnd@arndb.de, krzysztof.kozlowski@linaro.org, linux@roeck-us.net, 
-	wim@linux-watchdog.org, alim.akhtar@samsung.com, jaewon02.kim@samsung.com, 
-	alexey.klimov@linaro.org, kernel-team@android.com, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	linux-fsd@tesla.com, linux-watchdog@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS3PR01MB5621:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e267491-5dfb-4d21-391f-08dc31b13675
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	cGP/19dofZfMWjPj3zfzTotAyY8ajTJKzBRZcgeUwepBpkVpk7uelp7DUgZNegoxqPuEwTI/LxLmBf9MQHW0HfCGMOhFEwPyinHuwBJkWa0Yfj5cq1kUvPmLe+U/E4duooEzjAteCR2zSx1NhBkqpzTRZ8UDb31uPiqQTZrT58vmzuqNYWWR4hNrXMunJBM9vN49qbgLCxCTh0jWgVBaoRfLX5dDGvSNi+2VhdjMzc3391wS2apNsW+F5GTtVCAwrkRosJh+e4USQvlxPFqXz5fTVcyxXPp7w6401clemux5Y1ni4ZjZT+QpJFf13XrzvlIO0vwXy1d2IDa6xhovJHYM2qvQICKWV9gzOsVz2ydd/dGX2ff/sZhqx3PZyv3NL8QoSwNmH8XEK8K/SDv7Ce1Aci/ge50aTeZUtlDIMJ2j+EEYqCUJJT1eopwsIcdVKBVyYjvYWdvvVm+cAWUcI87ZL6gyFdSxEeRnJTLIU9H2SeA7MGOaPGvQO/yPIqq4vnWIOO6gkedLYKpA/dKMBjosqGjgKmZfcCERk876dSrqdnhVXEt7rvOT93CjU/ajeIBxGVE0zkWtt7gt7/YYgS439c0bVimL3Gwt106SvgYN2kjvCqfcDLE5pB4LqlN8
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(921011)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ay1QPguOQz5AL1ebYNqioZy0IpzIDgRUPedehTSiG+ZQlXjviWoQc6yCRgNx?=
+ =?us-ascii?Q?XFPsTTO0cuwGF/fGhiw6QtbTgcWLU71eKJBR4idTpYUqgrpMLxoJGWVG964v?=
+ =?us-ascii?Q?F2tu55rwi3GttoLsaM+9XgMdYvYeBpHst97PE9POrxhwsH49iOkpFtSL8K1t?=
+ =?us-ascii?Q?Jg1EKtcAP0gP0rP5fOcIwMTQmwW11HRgjGNHspTBdnTPV34SVdq+G+AYRi5j?=
+ =?us-ascii?Q?kVJfvH2fDwSN+ob0t+OWw9jqRbLn0UbFF+JQHv2M+PhO/6Cbe/orZfJLlphU?=
+ =?us-ascii?Q?ohC1w1lUm44UxhSelhvVOj2gPVWljSj8+qz+d7nm1r4eP/NM27zU6BWKQHkY?=
+ =?us-ascii?Q?IUrCPUkloz6ObcOC1DeyjgNE3/fzOyQI/utMJYIc//tphezPU9vHwSFNIkRK?=
+ =?us-ascii?Q?5ePFc0BMc4lWDPO2b+8UgF+mZ8TGgATKDZc1wUX+/2jdhxbsHFVmpjqmq3U+?=
+ =?us-ascii?Q?f4dH6/lyOrAAc8kJQeAOmiIATunTjz0gYUemORl8TpnIM4M+B6LMY8/zbgic?=
+ =?us-ascii?Q?/SvGX72vDgntim2biBYexQ4lE3b1Lhs/rWgl7Ych9yOn3/CA9pBPu6/ZZfzb?=
+ =?us-ascii?Q?cAjFRpH0b4ien24qN/jd/JYcR1Z9mGpPIKFJ+fqDB/lTuadLFvaVpiGEIybL?=
+ =?us-ascii?Q?8hBbGQf4UQ9h5i/VXdgyQCuvbzv5Z2GhVwg4svcBBKwQa2Ra9/XBjL34eQik?=
+ =?us-ascii?Q?bvIJ+P+QtLIIbT7VCoyPZKLmw6MfEVPMimaquoAk99fSNdgw/i22TJXZNaGB?=
+ =?us-ascii?Q?PydcodfUEau0TkRO0N0FISiyQDcIeLnRYHA/SGj6BWevlEpwQwtr7+vpQHRf?=
+ =?us-ascii?Q?kyktAZkuNfO+nNx+nkv95lQsPOii6rO7ZYSdkaBAQL59xmuOQAGfVvp696sB?=
+ =?us-ascii?Q?aIKFskhrWT1E9z/rWJFp4sv+kCZ+VT1Ya6gpX7M99ft3pKfxOx1axosnIl9W?=
+ =?us-ascii?Q?gee0Cz9oSbZFuEXn84dQUEVYG9LLXTCe0JcAAG6+I62/HY3bJCxZ+72jWoja?=
+ =?us-ascii?Q?nuCh4G73pm4Jud4VK1qxnbvCGnC+oCnQazhTuqnhIANdGjWPCGTINbW9X13w?=
+ =?us-ascii?Q?rJ80STBz+8txWUzXRX55ggqhKusS14ou1Vtt1gyhlNuCtJdNbxTSmBWVi4fP?=
+ =?us-ascii?Q?7juZolYTdEKc6NX8v2R4+fs90JlGvPNp9wbxWS8Su3vnjQpZxw+AB3ODHRTR?=
+ =?us-ascii?Q?zQVe8pdmwJHo0xiHjq8RqhIEWOvnLZfc6mDYT9J+T/GB4E8nEfY+b0+QBlMV?=
+ =?us-ascii?Q?adO2H+YZD5kHCglTxPo4KASfeJ1ozM9oD7HGOX6gMcXihsvczgUROY4wGLEo?=
+ =?us-ascii?Q?sWx2haKtI3/3fUUwXeHq3oSTdNO1cK0BdcOVf4VJmd/t9jSPla94aUh2PMiw?=
+ =?us-ascii?Q?RjeeNdv1J0FV6VNL0JRqYqGUoYNj1pubpTf/V0dSQuzWA19+yVJe8xBysGiQ?=
+ =?us-ascii?Q?Vnjbv4WawV2VqK5JYsn0/kZFlS3Hc6pgz68nJeQ3YEuVY6gXVCbaRekk7WDe?=
+ =?us-ascii?Q?4wHKO5izxV8dJ1f2HiOzm1xIMDRjThHH+tJOHLB9vRyVMVFWbY1xelTaHtaE?=
+ =?us-ascii?Q?uWGzVEtAN/0kWeVXjYlG3Inpd4kgw+kPg2MEeJ3Z+2m5LfXs3u3kPMmE1Jwk?=
+ =?us-ascii?Q?JW5zu1DDgS8B0BwhrFqjA24=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e267491-5dfb-4d21-391f-08dc31b13675
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 01:13:57.3910
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JhaBo6Ov5BvJLLwCuO7Z3rV7yjJFojB2au9vCS1CLJZA+7KkGNkyfUIosdxck90uUBXMaYKvePyKNzeefJR4ufimaITqbgGAuJBAH7keFpkwLQU5oYyCz9SXfdjhjv2K
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB5621
 
-On Mon, Feb 19, 2024 at 2:42=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> Some Exynos based SoCs like Tensor gs101 protect the PMU registers for
-> security hardening reasons so that they are only write accessible in el3
-> via an SMC call.
->
-> As most Exynos drivers that need to write PMU registers currently obtain =
-a
-> regmap via syscon (phys, pinctrl, watchdog). Support for the above usecas=
-e
-> is implemented in this driver using a custom regmap similar to syscon to
-> handle the SMC call. Platforms that don't secure PMU registers, get a mmi=
-o
-> regmap like before. As regmaps abstract out the underlying register acces=
-s
-> changes to the leaf drivers are minimal.
->
-> A new API exynos_get_pmu_regmap_by_phandle() is provided for leaf drivers
-> that currently use syscon_regmap_lookup_by_phandle(). This also handles
-> deferred probing.
->
-> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Tested-by: Alexey Klimov <alexey.klimov@linaro.org>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> Changes since v4:
->  - Use same argument names as in struct regmap_config
->  - Remove inline keyword and rely on compiler
->  - Update kerneldoc wording
->  - property -> propname argument rename
->  - reverse Xmas tree
->  - Only call of_node_put() when of_parse_phandle is called
->  - Collect tags
->
-> Changes since v3:
->  - Fix PMUALIVE_MASK
->  - Add TENSOR_ prefix
->  - clear SET_BITS bits on each loop iteration
->  - change set_bit to set_bits in func name
->  - Fix some alignment
->  - Add missing return on dev_err_probe
->  - Reduce indentation in loop
->
-> Changes since v2
->  - Add select REGMAP to Kconfig
->  - Add constant for SET/CLEAR bits
->  - Replace kerneldoc with one line comment
->  - Fix kerneldoc for EXPORT_SYMBOL_GPL funcs
->  - remove superfluous extern keyword
->  - dev_err_probe() on probe error
->  - shorten regmcfg name
->  - no compatibles inside probe, use match data
->  - don't mix declarations with/without initializations
->  - tensor_sec_reg_read() use mmio to avoid access restrictions
->  - Collect up Reviewed-by
->  - const for regmap_config structs
-> ---
->  drivers/soc/samsung/Kconfig            |   1 +
->  drivers/soc/samsung/exynos-pmu.c       | 235 ++++++++++++++++++++++++-
->  drivers/soc/samsung/exynos-pmu.h       |   1 +
->  include/linux/soc/samsung/exynos-pmu.h |  11 +-
->  4 files changed, 245 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> index 27ec99af77e3..1a5dfdc978dc 100644
-> --- a/drivers/soc/samsung/Kconfig
-> +++ b/drivers/soc/samsung/Kconfig
-> @@ -42,6 +42,7 @@ config EXYNOS_PMU
->         depends on ARCH_EXYNOS || ((ARM || ARM64) && COMPILE_TEST)
->         select EXYNOS_PMU_ARM_DRIVERS if ARM && ARCH_EXYNOS
->         select MFD_CORE
-> +       select REGMAP_MMIO
->
->  # There is no need to enable these drivers for ARMv8
->  config EXYNOS_PMU_ARM_DRIVERS
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exyno=
-s-pmu.c
-> index 250537d7cfd6..d6ae8025fdb4 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -5,6 +5,7 @@
->  //
->  // Exynos - CPU PMU(Power Management Unit) support
->
-> +#include <linux/arm-smccc.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/mfd/core.h>
-> @@ -12,19 +13,134 @@
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/delay.h>
-> +#include <linux/regmap.h>
->
->  #include <linux/soc/samsung/exynos-regs-pmu.h>
->  #include <linux/soc/samsung/exynos-pmu.h>
->
->  #include "exynos-pmu.h"
->
-> +#define PMUALIVE_MASK                  GENMASK(13, 0)
-> +#define TENSOR_SET_BITS                        (BIT(15) | BIT(14))
-> +#define TENSOR_CLR_BITS                        BIT(15)
-> +#define TENSOR_SMC_PMU_SEC_REG         0x82000504
-> +#define TENSOR_PMUREG_READ             0
-> +#define TENSOR_PMUREG_WRITE            1
-> +#define TENSOR_PMUREG_RMW              2
-> +
->  struct exynos_pmu_context {
->         struct device *dev;
->         const struct exynos_pmu_data *pmu_data;
-> +       struct regmap *pmureg;
->  };
->
->  void __iomem *pmu_base_addr;
->  static struct exynos_pmu_context *pmu_context;
-> +/* forward declaration */
-> +static struct platform_driver exynos_pmu_driver;
-> +
-> +/*
-> + * Tensor SoCs are configured so that PMU_ALIVE registers can only be wr=
-itten
-> + * from EL3, but are still read accessible. As Linux needs to write some=
- of
-> + * these registers, the following functions are provided and exposed via
-> + * regmap.
-> + *
-> + * Note: This SMC interface is known to be implemented on gs101 and deri=
-vative
-> + * SoCs.
-> + */
-> +
-> +/* Write to a protected PMU register. */
-> +static int tensor_sec_reg_write(void *context, unsigned int reg,
-> +                               unsigned int val)
-> +{
-> +       struct arm_smccc_res res;
-> +       unsigned long pmu_base =3D (unsigned long)context;
-> +
-> +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
-> +                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
-> +
-> +       /* returns -EINVAL if access isn't allowed or 0 */
-> +       if (res.a0)
-> +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
-> +
-> +       return (int)res.a0;
-> +}
-> +
-> +/* Read/Modify/Write a protected PMU register. */
-> +static int tensor_sec_reg_rmw(void *context, unsigned int reg,
-> +                             unsigned int mask, unsigned int val)
-> +{
-> +       struct arm_smccc_res res;
-> +       unsigned long pmu_base =3D (unsigned long)context;
-> +
-> +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
-> +                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
-> +
-> +       /* returns -EINVAL if access isn't allowed or 0 */
-> +       if (res.a0)
-> +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
-> +
-> +       return (int)res.a0;
-> +}
-> +
-> +/*
-> + * Read a protected PMU register. All PMU registers can be read by Linux=
-.
-> + * Note: The SMC read register is not used, as only registers that can b=
-e
-> + * written are readable via SMC.
-> + */
-> +static int tensor_sec_reg_read(void *context, unsigned int reg,
-> +                              unsigned int *val)
-> +{
-> +       *val =3D pmu_raw_readl(reg);
-> +       return 0;
-> +}
-> +
-> +/*
-> + * For SoCs that have set/clear bit hardware this function can be used w=
-hen
-> + * the PMU register will be accessed by multiple masters.
-> + *
-> + * For example, to set bits 13:8 in PMU reg offset 0x3e80
-> + * tensor_set_bits_atomic(ctx, 0x3e80, 0x3f00, 0x3f00);
-> + *
-> + * Set bit 8, and clear bits 13:9 PMU reg offset 0x3e80
-> + * tensor_set_bits_atomic(0x3e80, 0x100, 0x3f00);
-> + */
-> +static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 va=
-l,
-> +                                 u32 mask)
-> +{
-> +       int ret;
-> +       unsigned int i;
-> +
-> +       for (i =3D 0; i < 32; i++) {
-> +               if (!(mask & BIT(i)))
-> +                       continue;
-> +
-> +               offset &=3D ~TENSOR_SET_BITS;
-> +
-> +               if (val & BIT(i))
-> +                       offset |=3D TENSOR_SET_BITS;
-> +               else
-> +                       offset |=3D TENSOR_CLR_BITS;
-> +
-> +               ret =3D tensor_sec_reg_write(ctx, offset, i);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +       return ret;
-> +}
-> +
-> +static int tensor_sec_update_bits(void *ctx, unsigned int reg,
-> +                                 unsigned int mask, unsigned int val)
-> +{
-> +       /*
-> +        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF=
-)
-> +        * as the target registers can be accessed by multiple masters.
-> +        */
-> +       if (reg > PMUALIVE_MASK)
-> +               return tensor_sec_reg_rmw(ctx, reg, mask, val);
-> +
-> +       return tensor_set_bits_atomic(ctx, reg, val, mask);
-> +}
->
->  void pmu_raw_writel(u32 val, u32 offset)
->  {
-> @@ -75,11 +191,41 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mo=
-de)
->  #define exynos_pmu_data_arm_ptr(data)  NULL
->  #endif
->
-> +static const struct regmap_config regmap_smccfg =3D {
-> +       .name =3D "pmu_regs",
-> +       .reg_bits =3D 32,
-> +       .reg_stride =3D 4,
-> +       .val_bits =3D 32,
-> +       .fast_io =3D true,
-> +       .use_single_read =3D true,
-> +       .use_single_write =3D true,
-> +       .reg_read =3D tensor_sec_reg_read,
-> +       .reg_write =3D tensor_sec_reg_write,
-> +       .reg_update_bits =3D tensor_sec_update_bits,
-> +};
-> +
-> +static const struct regmap_config regmap_mmiocfg =3D {
-> +       .name =3D "pmu_regs",
-> +       .reg_bits =3D 32,
-> +       .reg_stride =3D 4,
-> +       .val_bits =3D 32,
-> +       .fast_io =3D true,
-> +       .use_single_read =3D true,
-> +       .use_single_write =3D true,
-> +};
-> +
-> +static const struct exynos_pmu_data gs101_pmu_data =3D {
-> +       .pmu_secure =3D true
-> +};
-> +
->  /*
->   * PMU platform driver and devicetree bindings.
->   */
->  static const struct of_device_id exynos_pmu_of_device_ids[] =3D {
->         {
-> +               .compatible =3D "google,gs101-pmu",
-> +               .data =3D &gs101_pmu_data,
-> +       }, {
->                 .compatible =3D "samsung,exynos3250-pmu",
->                 .data =3D exynos_pmu_data_arm_ptr(exynos3250_pmu_data),
->         }, {
-> @@ -113,19 +259,75 @@ static const struct mfd_cell exynos_pmu_devs[] =3D =
-{
->         { .name =3D "exynos-clkout", },
->  };
->
-> +/**
-> + * exynos_get_pmu_regmap() - Obtain pmureg regmap
-> + *
-> + * Find the pmureg regmap previously configured in probe() and return re=
-gmap
-> + * pointer.
-> + *
-> + * Return: A pointer to regmap if found or ERR_PTR error value.
-> + */
->  struct regmap *exynos_get_pmu_regmap(void)
->  {
->         struct device_node *np =3D of_find_matching_node(NULL,
->                                                       exynos_pmu_of_devic=
-e_ids);
->         if (np)
-> -               return syscon_node_to_regmap(np);
-> +               return exynos_get_pmu_regmap_by_phandle(np, NULL);
->         return ERR_PTR(-ENODEV);
->  }
->  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap);
->
-> +/**
-> + * exynos_get_pmu_regmap_by_phandle() - Obtain pmureg regmap via phandle
-> + * @np: Device node holding PMU phandle property
-> + * @property: Name of property holding phandle value
 
-This doesn't match the actual param name.
+Hi Rob
 
-> + *
-> + * Find the pmureg regmap previously configured in probe() and return re=
-gmap
-> + * pointer.
-> + *
-> + * Return: A pointer to regmap if found or ERR_PTR error value.
-> + */
-> +struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
-> +                                               const char *propname)
-> +{
-> +       struct exynos_pmu_context *ctx;
-> +       struct device_node *pmu_np;
-> +       struct device *dev;
-> +
-> +       if (propname)
-> +               pmu_np =3D of_parse_phandle(np, propname, 0);
-> +       else
-> +               pmu_np =3D np;
-> +
-> +       if (!pmu_np)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       /*
-> +        * Determine if exynos-pmu device has probed and therefore regmap
-> +        * has been created and can be returned to the caller. Otherwise =
-we
-> +        * return -EPROBE_DEFER.
-> +        */
-> +       dev =3D driver_find_device_by_of_node(&exynos_pmu_driver.driver,
-> +                                           (void *)pmu_np);
-> +
-> +       if (propname)
-> +               of_node_put(pmu_np);
-> +
-> +       if (!dev)
-> +               return ERR_PTR(-EPROBE_DEFER);
-> +
-> +       ctx =3D dev_get_drvdata(dev);
-> +
-> +       return ctx->pmureg;
-> +}
-> +EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
-> +
->  static int exynos_pmu_probe(struct platform_device *pdev)
->  {
->         struct device *dev =3D &pdev->dev;
-> +       struct regmap_config pmu_regmcfg;
-> +       struct regmap *regmap;
-> +       struct resource *res;
->         int ret;
->
->         pmu_base_addr =3D devm_platform_ioremap_resource(pdev, 0);
-> @@ -137,9 +339,38 @@ static int exynos_pmu_probe(struct platform_device *=
-pdev)
->                         GFP_KERNEL);
->         if (!pmu_context)
->                 return -ENOMEM;
-> -       pmu_context->dev =3D dev;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res)
-> +               return -ENODEV;
-> +
->         pmu_context->pmu_data =3D of_device_get_match_data(dev);
->
-> +       /* For SoCs that secure PMU register writes use custom regmap */
-> +       if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_secure) {
-> +               pmu_regmcfg =3D regmap_smccfg;
-> +               pmu_regmcfg.max_register =3D resource_size(res) -
-> +                                          pmu_regmcfg.reg_stride;
-> +               /* Need physical address for SMC call */
-> +               regmap =3D devm_regmap_init(dev, NULL,
-> +                                         (void *)(uintptr_t)res->start,
-> +                                         &pmu_regmcfg);
-> +       } else {
-> +               /* All other SoCs use a MMIO regmap */
-> +               pmu_regmcfg =3D regmap_mmiocfg;
-> +               pmu_regmcfg.max_register =3D resource_size(res) -
-> +                                          pmu_regmcfg.reg_stride;
-> +               regmap =3D devm_regmap_init_mmio(dev, pmu_base_addr,
-> +                                              &pmu_regmcfg);
-> +       }
-> +
-> +       if (IS_ERR(regmap))
-> +               return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-> +                                    "regmap init failed\n");
-> +
-> +       pmu_context->pmureg =3D regmap;
-> +       pmu_context->dev =3D dev;
-> +
->         if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
->                 pmu_context->pmu_data->pmu_init();
->
-> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exyno=
-s-pmu.h
-> index 1c652ffd79b4..0a49a2c9a08e 100644
-> --- a/drivers/soc/samsung/exynos-pmu.h
-> +++ b/drivers/soc/samsung/exynos-pmu.h
-> @@ -21,6 +21,7 @@ struct exynos_pmu_conf {
->  struct exynos_pmu_data {
->         const struct exynos_pmu_conf *pmu_config;
->         const struct exynos_pmu_conf *pmu_config_extra;
-> +       bool pmu_secure;
->
->         void (*pmu_init)(void);
->         void (*powerdown_conf)(enum sys_powerdown);
-> diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc/s=
-amsung/exynos-pmu.h
-> index a4f5516cc956..2bd9d12d9a52 100644
-> --- a/include/linux/soc/samsung/exynos-pmu.h
-> +++ b/include/linux/soc/samsung/exynos-pmu.h
-> @@ -10,6 +10,7 @@
->  #define __LINUX_SOC_EXYNOS_PMU_H
->
->  struct regmap;
-> +struct device_node;
->
->  enum sys_powerdown {
->         SYS_AFTR,
-> @@ -20,12 +21,20 @@ enum sys_powerdown {
->
->  extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
->  #ifdef CONFIG_EXYNOS_PMU
-> -extern struct regmap *exynos_get_pmu_regmap(void);
-> +struct regmap *exynos_get_pmu_regmap(void);
-> +struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
-> +                                               const char *propname);
->  #else
->  static inline struct regmap *exynos_get_pmu_regmap(void)
->  {
->         return ERR_PTR(-ENODEV);
->  }
-> +
-> +static inline struct regmap *exynos_get_pmu_regmap_by_phandle(struct dev=
-ice_node *np,
-> +                                                             const char =
-*propname)
-> +{
-> +       return ERR_PTR(-ENODEV);
-> +}
->  #endif
->
->  #endif /* __LINUX_SOC_EXYNOS_PMU_H */
-> --
-> 2.44.0.rc0.258.g7320e95886-goog
->
+This is resend v2 of replace of_graph_get_next_endpoint()
+
+We should get rid of or minimize of_graph_get_next_endpoint() in
+its current form. In general, drivers should be asking for a specific 
+port number because their function is fixed in the binding.
+
+	https://lore.kernel.org/r/20240131184347.GA1906672-robh@kernel.org
+
+This patch-set replace of_graph_get_next_endpoint() by
+of_graph_get_endpoint_by_regs(). There are still next_endpoint()
+after this patch-set, but it will be replaced by
+for_each_endpoint_of_node() in next patch-set (A)
+
+[*] this patch-set
+[o] done
+
+	[o] tidyup of_graph_get_endpoint_count()
+	[*] replace endpoint func - use endpoint_by_regs()
+(A)	[ ] replace endpoint func - use for_each()
+	[ ] rename endpoint func to device_endpoint
+	[ ] add new port function
+	[ ] add new endpont function
+	[ ] remove of_graph_get_next_device_endpoint()
+
+v1 -> v2
+	- add Reviewed-by from Launrent
+	- use by_regs(xx, -1, -1) for some devices
+	- add extra explain for drm_of_get_dsi_bus()
+	- add FIXME and Link on adv7604.c
+	- based on latest of branch
+
+Kuninori Morimoto (4):
+  gpu: drm: replace of_graph_get_next_endpoint()
+  media: i2c: replace of_graph_get_next_endpoint()
+  media: platform: replace of_graph_get_next_endpoint()
+  video: fbdev: replace of_graph_get_next_endpoint()
+
+ drivers/gpu/drm/drm_of.c                      |  4 +++-
+ .../drm/panel/panel-raspberrypi-touchscreen.c |  2 +-
+ drivers/gpu/drm/tiny/arcpgu.c                 |  2 +-
+ drivers/media/i2c/adv7343.c                   |  2 +-
+ drivers/media/i2c/adv7604.c                   |  4 ++--
+ drivers/media/i2c/mt9p031.c                   |  2 +-
+ drivers/media/i2c/mt9v032.c                   |  2 +-
+ drivers/media/i2c/ov2659.c                    |  2 +-
+ drivers/media/i2c/ov5645.c                    |  2 +-
+ drivers/media/i2c/ov5647.c                    |  2 +-
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c      |  2 +-
+ drivers/media/i2c/s5k5baf.c                   |  2 +-
+ drivers/media/i2c/tc358743.c                  |  2 +-
+ drivers/media/i2c/tda1997x.c                  |  2 +-
+ drivers/media/i2c/tvp514x.c                   |  2 +-
+ drivers/media/i2c/tvp7002.c                   |  2 +-
+ drivers/media/platform/atmel/atmel-isi.c      |  4 ++--
+ drivers/media/platform/intel/pxa_camera.c     |  2 +-
+ .../platform/samsung/exynos4-is/fimc-is.c     |  2 +-
+ .../platform/samsung/exynos4-is/mipi-csis.c   |  3 ++-
+ drivers/media/platform/st/stm32/stm32-dcmi.c  |  4 ++--
+ drivers/media/platform/ti/davinci/vpif.c      |  3 +--
+ drivers/video/fbdev/omap2/omapfb/dss/dsi.c    |  3 ++-
+ drivers/video/fbdev/omap2/omapfb/dss/dss-of.c | 20 +------------------
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi4.c  |  3 ++-
+ drivers/video/fbdev/omap2/omapfb/dss/hdmi5.c  |  3 ++-
+ drivers/video/fbdev/omap2/omapfb/dss/venc.c   |  3 ++-
+ drivers/video/fbdev/pxafb.c                   |  2 +-
+ include/video/omapfb_dss.h                    |  3 ---
+ 29 files changed, 38 insertions(+), 53 deletions(-)
+
+-- 
+2.25.1
+
