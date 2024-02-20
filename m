@@ -1,60 +1,59 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08E85A0E0
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 06:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28D5A0E0
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 06:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708412216; cv=none; b=k0h8mw+jaGze85+TWv0MA8AAvqcyeNe1hBeI0IGJMUTUNlSRc51DYYHjeWY8V3wm/oXepNTCWJtkoM1uqIPVNTCXtvvUKbMdImcHxm2b4f3RrP/mfQ86R0tU8Y8p0wFekKfZMYfr/ndu5Ya8tQ0X7Y+qn+AcI9UEWC0cXYcqEbY=
+	t=1708412384; cv=none; b=IgMuXlNVucf5bc7bPdksErArAtzkTalxSNYn7NkKjFm3BYpyRgjarD6gH6zq5LsPpGKypFWmpSgHhP7dDTZetEeFBtDkQmuQlymR1evsMiRrzSkfd/bscI+qYE1MNy5EC1eDajE26w7M2LPfo65fpotFo1Dj3zxkEGMrLtUlalI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708412216; c=relaxed/simple;
-	bh=Qnve8srr+d7k2IoQ8HZTR5t0IM8PBkOsm7uqSwQke1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TF8AyWPysWhOENgfr8KidP7IZlPYi2hHyy9FRHYWmYN1BYww6WaEZvxNWJYzQPnttIfC8IiYS+kneCSBaDPXI6Q2kIf4WEvr3RvwI/UbPK23caXpCgS6BLUuG084nJ7AiUWiXGrJBkAAaagOoj7sYfJMYsdwGQcAbP6aSx1Vns0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFYu/XWM; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1708412384; c=relaxed/simple;
+	bh=rujM/o5AjDNJ9lcZkArg6d87J1BhTiGW6Fn0Na9SRI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bbV2zgYz0OSoEKUT8iG1X7z8vmmd7UZ5BB+UPd2+PVZ10oN3IvllPH7JSmE0ZggsoHuwGVPFJnjPx5Dz205YS+iL89FjUdKw6NYecH7DlLVtCYxirOyT6JTnuQp7juV59+5LUlzkKq/hxzbq+fhii53YFpX9PzBSBah8IdL3N8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZSJq5wDz; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFYu/XWM"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-33aeb088324so2677950f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Feb 2024 22:56:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZSJq5wDz"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-608342633b8so19130257b3.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Feb 2024 22:59:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708412213; x=1709017013; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XaxgW75VyO9fScBpfnldWfP1qgRL3ra5DMemRw+uks4=;
-        b=PFYu/XWMbxDXt3+ZanyOEwbLaKOUin0Y1Mr9XKQh+pNm2u0AwaZVPZnqd5UAl/a6VE
-         HoQ5Fft2jI2TvCViU95DkO/C1/QmwlL0FtoNS/v5l9MEHMXab/GwkAXGeAzahnpGZKn4
-         ZzyB/6o6zKBvmmq+LUXXXt5Lbb3oXfZW4ZqdznJPQb979lHDBOJd0el6rLLo67LA/Tg1
-         hR49Y2tBFo8pWyWb5CFv+hd8aLqQ8pqrEQMXlVl+8oxD79hT6h2RvyRXFxSOX306OrHf
-         l2VwyzERBXHiJIq+KSPnp62ox0HYPqiMtzazpFvEmZv4MM89fVaIutLLrMyzGp4Nxbay
-         3DJw==
+        d=linaro.org; s=google; t=1708412380; x=1709017180; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TMFT0tsiHgdz9iZN1EKIldjl3b45OLLNs9mRQlVJ+mo=;
+        b=ZSJq5wDztcC0598GPl5gsiiGz6EXEk9rex0SPJx2eekXB7lb++ZTP6xSOjFks2QAwo
+         nJ6i0V4taQiI4p1JSyl0gj1rh7x7edg1C7q20/2vUa3fscaSi73RNzq/Bkr4AOrX3GYi
+         MyUnxCzfAXdj4CD0khJNIWuP4w/o4IRoOi8Iql5tTzLDinlZXuKp6rVg2tui0P2JPyXa
+         RzWemsPBKOKFDnlSV+LhgIo8AU2Rhu+Hco7ECyG6hHDnP5UCZM08mu6nniaXmEIPrb/Q
+         YVkpN9lCafrA1um5KFohruOAD7NS/s+NwvYl6XGi18gXPYzliZarV2qDT6wsWfzUa5oH
+         prjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708412213; x=1709017013;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XaxgW75VyO9fScBpfnldWfP1qgRL3ra5DMemRw+uks4=;
-        b=EDDtqn8anc7vhDeSqFigNMpKHmeKnO2s4T8ry+8EjgErQjU0MfhcGt6Vi9UnBBfgdk
-         6nOBP5gsUVhyp1fiUN5SxPKp+65ph2tPp+BcxvGS0PpJCNcJBVgc6SgaRGW6Mk5Oq1/W
-         TTQwL5LfRTq8Wwo8820FxU3VzXjAyKKgZ0rCxtba9eHFheyTwXw5JAzAXJBRcZqkXWDy
-         fkjJ0tgOxlt5NEWKeD1tHiVjISgvUbDRAEPSx8KkroHgc+tM0AhUzVfG5EkZAeWCs2F7
-         nVsDMXJk36qDtgRSag6bGFMB3gmBiJ1NJ7VM365UjAuC6N/IAsixIOIhoiUX/SUA81ap
-         4v8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVhpzXDZiNjUP6oMM+n+sYtHSa/8ZsL23+3w6DySYBjYkcljKlatfTKCg49PBReroXISdorzu0C9GVoZU+HMcKBH6C6dy9fvyjMbFmOrCL6rxw=
-X-Gm-Message-State: AOJu0YwT9mcApqSTQ1cp4e7WCackb79TBI5HWZtB9NKMqhGx+xysfSCK
-	l9VEzO8gnwcBmwHR7YkreBbq3+hurLAKEDoweMjDkxdy+Uh4BOybH8V48jnW2C0=
-X-Google-Smtp-Source: AGHT+IElwXe8LVOVT8F9QEnILQOeYGjidjNYvcSXK2rPq1F5Ifc3AodFZNQAZNXmNg/vOgo3L51xNg==
-X-Received: by 2002:a5d:4e92:0:b0:33b:187c:4ca0 with SMTP id e18-20020a5d4e92000000b0033b187c4ca0mr8190273wru.62.1708412213118;
-        Mon, 19 Feb 2024 22:56:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708412380; x=1709017180;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMFT0tsiHgdz9iZN1EKIldjl3b45OLLNs9mRQlVJ+mo=;
+        b=IGLsTbZW5Fpy1HOSChG4BhN8aNvbohRoH7pwe43oI4SybIDMnMoXOh4EMZ6U6ZM4Ex
+         LICdL/81B0r0zORn4jRm2DzRNny+CZEqxovTJG1YpDA8KR0moeWkivxNlVrSLcDnUawn
+         snUjLWE8Kkl+X+SMHzv4kB82BgYKjQ4GRp/9RGHlZFdz3QIEheKUlVwdkyC/290FQxAB
+         VpZbC7hkjD1kBcxohwKrHAyNuPmdtGa+JNsrFDsosi9Bk1fiOu9cZHEvARh2Q5miOxE2
+         Kf20vpy0TQpLIJRCcXuuCtCDiypeRiNcSbh5AGHvQYcQC09NnBmY4N8X8sSaFA+IsdO+
+         zjsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqf0YPnko5OpMOdE843nzncsspxSjOPw4JSNCqcR5HjhAgLEwQyNzV1IEWRTbaJ4+qdbLN51FVuS4trBarvXiDI80DSBDemKQFtUDqC1kjEkA=
+X-Gm-Message-State: AOJu0YwngNF4opiqDhjYEglxXFF8KbRHiXuEp0GenymtKOZuUVdmCuRs
+	tSs2WW2s5d37Kb9PU7EO3ccWsB35gC8LqwiqYWUm34+NP1hiiEUWcAhIdDgsQe8=
+X-Google-Smtp-Source: AGHT+IHoF+nqnIqy8Vp0maOl4q34YF7mKopu/6NelFWU12CMt2LtJkC2P4rmj2X+cDpi8B2aCRvgKw==
+X-Received: by 2002:a81:ad47:0:b0:607:f679:e370 with SMTP id l7-20020a81ad47000000b00607f679e370mr10840185ywk.33.1708412380376;
+        Mon, 19 Feb 2024 22:59:40 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id r8-20020adfe688000000b0033cf5094fcesm12339789wrm.36.2024.02.19.22.56.50
+        by smtp.gmail.com with ESMTPSA id u128-20020a818486000000b0060853d574aasm423826ywf.84.2024.02.19.22.59.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 22:56:51 -0800 (PST)
-Message-ID: <d25a887e-801d-410b-9ccd-2ec10fb28f23@linaro.org>
-Date: Tue, 20 Feb 2024 07:56:49 +0100
+        Mon, 19 Feb 2024 22:59:40 -0800 (PST)
+Message-ID: <ac4f1b66-2407-44e9-ab97-f6583a13a428@linaro.org>
+Date: Tue, 20 Feb 2024 07:59:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,21 +61,24 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] soc: samsung: exynos-pmu: Add regmap support for
- SoCs that protect PMU regs
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: arnd@arndb.de, linux@roeck-us.net, wim@linux-watchdog.org,
- alim.akhtar@samsung.com, jaewon02.kim@samsung.com,
- semen.protsenko@linaro.org, alexey.klimov@linaro.org,
- kernel-team@android.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org,
- saravanak@google.com, willmcvicker@google.com, linux-fsd@tesla.com,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20240208161700.268570-1-peter.griffin@linaro.org>
- <20240208161700.268570-2-peter.griffin@linaro.org>
- <ab1f9285-73ba-4b69-8882-0cf08c508e28@linaro.org>
- <CADrjBPqw9E5foNvZ-ETFZR3mb8=x8CYHz3UUhfJUbBpOi3iKYw@mail.gmail.com>
+Subject: Re: [PATCH] interconnect: constify of_phandle_args in xlate
 Content-Language: en-US
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Georgi Djakov <djakov@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Jonathan Hunter
+ <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+References: <20240216135236.129878-1-krzysztof.kozlowski@linaro.org>
+ <488cc7dc-f45a-4c9e-b572-e4a6b3202e3e@linaro.org>
+ <41e371f1-96f4-45c0-9f65-81ed6924b325@linaro.org>
+ <CZ973FMYMJAO.PQ0Z5YLXZPPM@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -122,39 +124,48 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CADrjBPqw9E5foNvZ-ETFZR3mb8=x8CYHz3UUhfJUbBpOi3iKYw@mail.gmail.com>
+In-Reply-To: <CZ973FMYMJAO.PQ0Z5YLXZPPM@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/02/2024 20:47, Peter Griffin wrote:
+On 19/02/2024 17:27, Thierry Reding wrote:
+> On Fri Feb 16, 2024 at 2:59 PM CET, Krzysztof Kozlowski wrote:
+>> On 16/02/2024 14:55, Konrad Dybcio wrote:
+>>> On 16.02.2024 14:52, Krzysztof Kozlowski wrote:
+>>>> The xlate callbacks are supposed to translate of_phandle_args to proper
+>>>> provider without modifying the of_phandle_args.  Make the argument
+>>>> pointer to const for code safety and readability.
+>>>>
+>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> ---
+>>>>  drivers/gpio/gpiolib-of.c              |  2 +-
+>>>>  drivers/interconnect/core.c            |  4 ++--
+>>>>  drivers/interconnect/qcom/icc-common.c |  3 ++-
+>>>>  drivers/interconnect/qcom/icc-common.h |  3 ++-
+>>>>  drivers/interconnect/samsung/exynos.c  |  2 +-
+>>>>  drivers/memory/tegra/mc.c              |  2 +-
+>>>>  drivers/memory/tegra/tegra124-emc.c    |  2 +-
+>>>>  drivers/memory/tegra/tegra124.c        |  2 +-
+>>>>  drivers/memory/tegra/tegra186-emc.c    |  2 +-
+>>>>  drivers/memory/tegra/tegra20-emc.c     |  2 +-
+>>>>  drivers/memory/tegra/tegra20.c         |  2 +-
+>>>>  drivers/memory/tegra/tegra30-emc.c     |  2 +-
+>>>>  drivers/memory/tegra/tegra30.c         |  2 +-
+>>>>  include/linux/interconnect-provider.h  | 11 ++++++-----
+>>>>  include/soc/tegra/mc.h                 |  7 ++++---
+>>>
+>>> Ended up being a bit wider than just icc..
+>>>
+>>> Looks sane apart from that
 >>
->>> +
->>> +     if (property)
->>> +             pmu_np = of_parse_phandle(np, property, 0);
->>> +     else
->>> +             pmu_np = np;
->>> +
->>> +     if (!pmu_np)
->>> +             return ERR_PTR(-ENODEV);
->>> +
->>> +     /*
->>> +      * Determine if exynos-pmu device has probed and therefore regmap
->>> +      * has been created and can be returned to the caller. Otherwise we
->>> +      * return -EPROBE_DEFER.
->>> +      */
->>> +     dev = driver_find_device_by_of_node(&exynos_pmu_driver.driver,
->>> +                                         (void *)pmu_np);
->>> +
->>> +     of_node_put(pmu_np);
+>> Tegra memory controllers are also interconnect providers, so two subsystems.
 >>
->> You are dropping now referencen from np when property==NULL. This does
->> no look right.
+>> This patch should go via interconnect tree.
 > 
-> Good spot, will fix. It seems syscon.c and altera-sysmgr also have the
-> same issue.
-> 
+> I think Konrad might have been referring to the GPIO hunk, which seems
+> out of place. For the Tegra parts, though:
 
-Do you plan on fixing them as well in such case?
+Oh, that's right. I mixed up patches.
 
 Best regards,
 Krzysztof
