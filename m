@@ -1,147 +1,191 @@
 Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC797152E19
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 22:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080DB3A278
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 07:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708466784; cv=none; b=N9/w/63p1bW5U52sOrmp5NtnURxF9GBDVaLAUC+MJv/WSPRjyo/0qoVS7Zig+QegldvHApMKTvvfVMsWALudDYVFzJELwgRD1JPxZlmFX/tomSses6SsdizZ2a5v5PsUSqsuLYssJG8WFOqpoXONScDdqBnRUkQFFvxcCOvmIpI=
+	t=1708499633; cv=none; b=VFrRbB1mdjTA/Su88tTOwrykqrICs6bQFvXd9A01xzDeinaYucGO4Nrj14lDHBV3SwQDRHWOMIq/4w54dOGf9uRPzUPV/gce4+1Go7yTTUD5aryF7QN7dm2f037sEOEncEZeASbBTbWntcfcMSB6aBCME/3ee2eXKROvkMGCU3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708466784; c=relaxed/simple;
-	bh=0qlxg4Wl4LV4zmhyFrXH9tW2Y2omtNhqxGLvqo65VnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WccaRps84cdDqJV8oJOG7CAMzQorlTAL26hB2xf5GYGGJ3bKZzxq7tO8Z5wBo+U/4a1lEzxEPTltCuPSE1CJ54Rm29l35LMvoRY2k5NHkkRjMb8qsgE5wFJa2MvvuvHQwNgdWrSS4S2Pz/oS7h5oSCvBPNrsbhQI3mlMUv7RSSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=meEQlzaU; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1708499633; c=relaxed/simple;
+	bh=sm7aYXSJG8Hcgc7YVjS0YUnjzNl03wLN6NHSIs+5RfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qp6jkE7EO9kskoDcCBZOBhpjaX1GQ+mxwGsank/x0BeMyIdEgZKqx5PISPnWjdI3O8MXxmUdRmVy3jXAeBc7j8Gj4oab3kkmMoCMhjM6kftAbeY43xqK3aNuRsTGVF+u0izoN27gDm4jZ0YRsM+kRKIkIj2Q/bgenyezo8U4kwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LKLBM+pF; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="meEQlzaU"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3e6f79e83dso379395966b.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 14:06:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LKLBM+pF"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3e7ce7dac9so373684666b.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 23:13:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708466780; x=1709071580; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=daii2vCQdv00wY9FjSBPTiVONH9pzRxUrLR+kFtKtA4=;
-        b=meEQlzaULVexn+WCqEta3SKhfTZpGxWvDmvRU4Ecd6Li3id1n1LC0el6bdccUEWhpW
-         VbpSHtE418jrwI6eyW0taaX0dg1Hw3zfra0oLEiSv2Hz1VLxKzE3P6FxAhfH4PsSuz2t
-         xubyCRo9xypCY06e9Zgxj2KbpTW6SusQhOCobKPVY/GFE4wxHpIgeTxXQreIGFsqlM/v
-         9c1atNnGDY0yJDGEDzRtTQiPu6EoE9w+3RPidU8Qrrm/v+YwheHAGQaJii/WxIC8/wOP
-         4aa4SsnMJrMAr162mDmNb8ZJCtAmOMDJLFfqBTdkybOaSJhFodbK253iOGpnJBbsBF+8
-         +A5Q==
+        d=linaro.org; s=google; t=1708499629; x=1709104429; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lj6G8JZlNb0ydBBYXexPWzfMBPbLnVkovsLWtWCOKI8=;
+        b=LKLBM+pFNxwep6TEu6aufC1mQdsP4V1Lu9aIgqbIpb47ne5TNfD9t8SPj/3PkJ+886
+         /uW2pi1hrc4yuIq2vEgBq1qleSU+s7XRujjYq0PsKPeMv9qQ4pIKXC0DYOW3zz4Pzl8e
+         FIYL9xHUAQOKgR7LaLOscrQ0ITwVUtiwyTIRamX+bHfjGzwE1DCusTEHN33r0B/0Ai45
+         cwe3ERjdQBBLrJTTxRn9DdWu9v+umS4R4M8EYIIZjTBTmZYf2NwSvoxQE9pckZDkxOeN
+         uGXkGLAI0DchQLLpnmowMPNLRxRNdCSQLy/aYhjGnYua1OcMFc29ygKkzvPLm1Gj4XD9
+         uF2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708466780; x=1709071580;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=daii2vCQdv00wY9FjSBPTiVONH9pzRxUrLR+kFtKtA4=;
-        b=flTFs/uC97IylQEr02uh7h73rTu5U570b6qHpIj1VqULTVBQHk2BaTFIb7CbKCmerI
-         XokEcfBVoYRpmznC17hMdEDMX+drbsuIaDidUZtFtvaJM4RFEFcx3kOyIs2dyOIk+tX+
-         O22yOocci6fM6hdnoa3AwcLlbjcmjSxWZJLfTOv6DDGlKG4tlmmXyojMLct4jF5ALYqw
-         vaAFoys3fF/twg3SVtEpflLEwwHi+3UlanwK+u5ZWjcBTLKxDIIsQs9PWumk9NxNUPCC
-         LMxyHhvBm8gIFvK2dOXpkMOZeAUPwmlFx9NZcfjK8G2nWTgezWQGaZJwqMemUKI1rtP+
-         Yetg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQR3Jzp9fyhX7U00sA3A4zb54f6DbYGflp+v+7tgFdVAkG8W/feZNI2g1ndjjfMXQeB92GT0pP5ovd/MU0DOIFlnLZr78liAGS4p8oDoKOKLU=
-X-Gm-Message-State: AOJu0YzqLd5e7CotAOpr4HY61QnV51gPk+2HRrsM57zu7Btd4qcx1H0J
-	YujDMTkRAznraCHdYlmQTjW+fsINy9LWi4GIjM5SEL3jopTPKv29vcQvu/4cdKE=
-X-Google-Smtp-Source: AGHT+IENoRCzD3oMuUnlMnFJl867ZBn0wakLan0u2FvzSezPfB3YnUQKoLNvYdv4W+5EI7SAuJXN8g==
-X-Received: by 2002:a17:906:793:b0:a3f:2703:1c6a with SMTP id l19-20020a170906079300b00a3f27031c6amr585247ejc.51.1708466780215;
-        Tue, 20 Feb 2024 14:06:20 -0800 (PST)
-Received: from gpeter-l.lan (host-92-18-74-232.as13285.net. [92.18.74.232])
-        by smtp.gmail.com with ESMTPSA id r8-20020a170906364800b00a3e4e7ad9dbsm3413771ejb.68.2024.02.20.14.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 14:06:19 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: arnd@arndb.de,
-	krzysztof.kozlowski@linaro.org,
-	linux@roeck-us.net,
-	wim@linux-watchdog.org,
-	alim.akhtar@samsung.com,
-	jaewon02.kim@samsung.com,
-	semen.protsenko@linaro.org
-Cc: alexey.klimov@linaro.org,
-	kernel-team@android.com,
-	peter.griffin@linaro.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	linux-fsd@tesla.com,
-	linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v6 2/2] watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle() for PMU regs
-Date: Tue, 20 Feb 2024 22:06:13 +0000
-Message-ID: <20240220220613.797068-3-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
-In-Reply-To: <20240220220613.797068-1-peter.griffin@linaro.org>
-References: <20240220220613.797068-1-peter.griffin@linaro.org>
+        d=1e100.net; s=20230601; t=1708499629; x=1709104429;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lj6G8JZlNb0ydBBYXexPWzfMBPbLnVkovsLWtWCOKI8=;
+        b=eIhoRMG4M7UuOPXuJ4dcOdg0WYZMEP+/22oyBkMIVFf8qzpApUftfjVV0lux75H1JO
+         wDtIBMf3XD2zob/uZKW33szmwMGEw/3GEUkOtXQGVH3N/v63l+OBuIZgjzIrBYItUSe0
+         QJLSgP+zIUdgqAFyvWqCcMAWGMVVzYyacYiY957qfRS3Wa+uIQt4/GfD6JZHeSvjp9zx
+         v94j8ygbBlquyF9lIYOZXf78DW+9ol3LCtOTfSopk9/8rHftCHTncVE4qkOCAV8P6y6z
+         35xGD3F1lzxuACfmbGvOf+8QURILgkAJYTU/yxjkPTwmcDumaa9C9IybqdQ2lbnIIhJ/
+         3EbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+Om96wGDqCHrMpnoPp7DCs6dCLnCOKjpwEEAj36FJm84V89AIUn9n//gNsVGzb+2Kss/iH6/NvfhFaAGwpYkyCkylrgdK31GSdYQzTeYemCs=
+X-Gm-Message-State: AOJu0YwUilPzTUQ50faY4kbyMXb0Q+wvjp7NR0+wKHChj7AkWs/4Ta2l
+	ztNfMHdwHIIhb5paavkyTZhHy/H7OWsTpeml41qlOnitxJdYy7zcPKE4VE7aseQ=
+X-Google-Smtp-Source: AGHT+IGMgyZUNqmxcjMbb7mMKrPL7LtX9airZjvk8iggZudIU2hMGM0jsJm7YuVneGwLQlAFnz1fKw==
+X-Received: by 2002:a17:906:bc86:b0:a3e:389b:caa3 with SMTP id lv6-20020a170906bc8600b00a3e389bcaa3mr9013178ejb.53.1708499629371;
+        Tue, 20 Feb 2024 23:13:49 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.116])
+        by smtp.gmail.com with ESMTPSA id g16-20020a170906c19000b00a3cee88ddc7sm4742557ejz.147.2024.02.20.23.13.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Feb 2024 23:13:48 -0800 (PST)
+Message-ID: <6c4bdd9f-6b1f-43a0-9baa-7c1eedd46f76@linaro.org>
+Date: Wed, 21 Feb 2024 08:13:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] interconnect: constify of_phandle_args in xlate
+To: Alim Akhtar <alim.akhtar@samsung.com>, 'Georgi Djakov'
+ <djakov@kernel.org>, 'Bjorn Andersson' <andersson@kernel.org>,
+ 'Konrad Dybcio' <konrad.dybcio@linaro.org>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ =?UTF-8?B?J0FydHVyIMWad2lnb8WEJw==?= <a.swigon@samsung.com>,
+ 'Thierry Reding' <thierry.reding@gmail.com>,
+ 'Jonathan Hunter' <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org
+Cc: 'Thierry Reding' <treding@nvidia.com>
+References: <CGME20240220072224epcas5p4ff60556b0b5632abfc44d2b8ad932b8f@epcas5p4.samsung.com>
+ <20240220072213.35779-1-krzysztof.kozlowski@linaro.org>
+ <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Obtain the PMU regmap using the new API added to exynos-pmu driver rather
-than syscon_regmap_lookup_by_phandle(). As this driver no longer depends
-on mfd syscon remove that header and Kconfig dependency.
+On 20/02/2024 13:18, Alim Akhtar wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: Tuesday, February 20, 2024 12:52 PM
+>> To: Georgi Djakov <djakov@kernel.org>; Bjorn Andersson
+>> <andersson@kernel.org>; Konrad Dybcio <konrad.dybcio@linaro.org>;
+>> Sylwester Nawrocki <s.nawrocki@samsung.com>; Artur Świgoń
+>> <a.swigon@samsung.com>; Krzysztof Kozlowski
+>> <krzysztof.kozlowski@linaro.org>; Alim Akhtar
+>> <alim.akhtar@samsung.com>; Thierry Reding <thierry.reding@gmail.com>;
+>> Jonathan Hunter <jonathanh@nvidia.com>; linux-pm@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+>> samsung-soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>> tegra@vger.kernel.org
+>> Cc: Thierry Reding <treding@nvidia.com>
+>> Subject: [PATCH v2] interconnect: constify of_phandle_args in xlate
+>>
+>> The xlate callbacks are supposed to translate of_phandle_args to proper
+>> provider without modifying the of_phandle_args.  Make the argument
+>> pointer to const for code safety and readability.
+>>
+>> Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> Acked-by: Thierry Reding <treding@nvidia.com> # Tegra
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> 1. Drop unrelated gpiolib changes (Konrad, Thierry).
+>> 2. Add tags.
+>> ---
+>>  drivers/interconnect/core.c            |  4 ++--
+>>  drivers/interconnect/qcom/icc-common.c |  3 ++-
+>> drivers/interconnect/qcom/icc-common.h |  3 ++-
+>> drivers/interconnect/samsung/exynos.c  |  2 +-
+>>  drivers/memory/tegra/mc.c              |  2 +-
+>>  drivers/memory/tegra/tegra124-emc.c    |  2 +-
+>>  drivers/memory/tegra/tegra124.c        |  2 +-
+>>  drivers/memory/tegra/tegra186-emc.c    |  2 +-
+>>  drivers/memory/tegra/tegra20-emc.c     |  2 +-
+>>  drivers/memory/tegra/tegra20.c         |  2 +-
+>>  drivers/memory/tegra/tegra30-emc.c     |  2 +-
+>>  drivers/memory/tegra/tegra30.c         |  2 +-
+>>  include/linux/interconnect-provider.h  | 11 ++++++-----
+>>  include/soc/tegra/mc.h                 |  7 ++++---
+>>  14 files changed, 25 insertions(+), 21 deletions(-)
+>>
+> 
+> For Samsung/Exynos
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Tested-by: Alexey Klimov <alexey.klimov@linaro.org>
-Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/watchdog/Kconfig       | 1 -
- drivers/watchdog/s3c2410_wdt.c | 8 ++++----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+Review tags are per patch. You probably meant Acked-by.
+https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/process/submitting-patches.rst#L544
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 7d22051b15a2..d78fe7137799 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -512,7 +512,6 @@ config S3C2410_WATCHDOG
- 	tristate "S3C6410/S5Pv210/Exynos Watchdog"
- 	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	select WATCHDOG_CORE
--	select MFD_SYSCON if ARCH_EXYNOS
- 	help
- 	  Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
- 	  SoCs. This will reboot the system when the timer expires with
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 349d30462c8c..686cf544d0ae 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -24,9 +24,9 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
--#include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/delay.h>
-+#include <linux/soc/samsung/exynos-pmu.h>
- 
- #define S3C2410_WTCON		0x00
- #define S3C2410_WTDAT		0x04
-@@ -699,11 +699,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
--		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
--						"samsung,syscon-phandle");
-+		wdt->pmureg = exynos_get_pmu_regmap_by_phandle(dev->of_node,
-+						 "samsung,syscon-phandle");
- 		if (IS_ERR(wdt->pmureg))
- 			return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
--					     "syscon regmap lookup failed.\n");
-+					     "PMU regmap lookup failed.\n");
- 	}
- 
- 	wdt_irq = platform_get_irq(pdev, 0);
--- 
-2.44.0.rc0.258.g7320e95886-goog
+What is there anyway to review in Samsung? Adding one const in one driver?
+
+
+Best regards,
+Krzysztof
 
