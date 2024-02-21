@@ -1,60 +1,59 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080DB3A278
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 07:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293733A8F0
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 08:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708499633; cv=none; b=VFrRbB1mdjTA/Su88tTOwrykqrICs6bQFvXd9A01xzDeinaYucGO4Nrj14lDHBV3SwQDRHWOMIq/4w54dOGf9uRPzUPV/gce4+1Go7yTTUD5aryF7QN7dm2f037sEOEncEZeASbBTbWntcfcMSB6aBCME/3ee2eXKROvkMGCU3A=
+	t=1708503998; cv=none; b=kRBCvFItGx9TzO27m9WCBB3dGHAA2p4Mj8o/smGIjNjPv9C1ge4+FLNKjBvaF1ezKuREZCViIJ6bESXda7NzoHsHeOIFgDgog+XcS1ni1U2pmnlhbDKOO0N0P5MIBOBL2w32l1mONFMYCjQmaBY37ioKJ1PU7RuPALQp5hS6Jyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708499633; c=relaxed/simple;
-	bh=sm7aYXSJG8Hcgc7YVjS0YUnjzNl03wLN6NHSIs+5RfU=;
+	s=arc-20240116; t=1708503998; c=relaxed/simple;
+	bh=I0bo8l/3tnsQkzmqvZYQClIXmZoRUaOHZDADPg+C6z8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qp6jkE7EO9kskoDcCBZOBhpjaX1GQ+mxwGsank/x0BeMyIdEgZKqx5PISPnWjdI3O8MXxmUdRmVy3jXAeBc7j8Gj4oab3kkmMoCMhjM6kftAbeY43xqK3aNuRsTGVF+u0izoN27gDm4jZ0YRsM+kRKIkIj2Q/bgenyezo8U4kwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LKLBM+pF; arc=none smtp.client-ip=209.85.218.46
+	 In-Reply-To:Content-Type; b=KnCaEcmvyt2Ol+CYM+8n2/u/1ovjtTQD53kSU6ye7vAQnNJ6Gby3hmn0HP0oCwQbUrk6yU20RHIdp79G1LcLjFPdC6fNeOf9hTG58YGeI7BKAAXHCmiIItd8AmC5lp3iTe/f9kI3Za1u3b8S+hoBOtlhcXaEAvj0A4jyhmbi91c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gv8Lv9yG; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LKLBM+pF"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3e7ce7dac9so373684666b.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Feb 2024 23:13:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gv8Lv9yG"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-564fc8f56c5so377245a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 00:26:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708499629; x=1709104429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lj6G8JZlNb0ydBBYXexPWzfMBPbLnVkovsLWtWCOKI8=;
-        b=LKLBM+pFNxwep6TEu6aufC1mQdsP4V1Lu9aIgqbIpb47ne5TNfD9t8SPj/3PkJ+886
-         /uW2pi1hrc4yuIq2vEgBq1qleSU+s7XRujjYq0PsKPeMv9qQ4pIKXC0DYOW3zz4Pzl8e
-         FIYL9xHUAQOKgR7LaLOscrQ0ITwVUtiwyTIRamX+bHfjGzwE1DCusTEHN33r0B/0Ai45
-         cwe3ERjdQBBLrJTTxRn9DdWu9v+umS4R4M8EYIIZjTBTmZYf2NwSvoxQE9pckZDkxOeN
-         uGXkGLAI0DchQLLpnmowMPNLRxRNdCSQLy/aYhjGnYua1OcMFc29ygKkzvPLm1Gj4XD9
-         uF2g==
+        d=linaro.org; s=google; t=1708503995; x=1709108795; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q/sQIzf7jUG39BwFXjRnU4IN93Y7rOl9mKYuRy+MVuk=;
+        b=gv8Lv9yGE7MZabaU37aV6fMeKnhcecj6JVejvUZGeVCzcOsBpmWI7RO9J6IuHRzZwY
+         qTJe0hD+6mmU2GPo20qXBTK3RAGa/9X8UhT4FWbiuTUAR/fIxUVX6c8UyD82rgjEMo/Y
+         HhLEtfzfxQEk5hZxWPuEkklKM+qLSPQMZCOBzYyKa1x7ZoZ6yctxpp6uV/WvAjTdEF+M
+         hwMaEsfBe6KNq8JSz8w9Rkf2E3tDBCeYxp4JN/0rJ9mcQHQ7hw+D78XKRhn/lMzLRHS3
+         ilTZqsprrx2hLF/ZF6ayZKCrq3QfP60nm2oJbnP85iUcUsBcYJl3fnwQOfm29g45Fk9L
+         p/pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708499629; x=1709104429;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lj6G8JZlNb0ydBBYXexPWzfMBPbLnVkovsLWtWCOKI8=;
-        b=eIhoRMG4M7UuOPXuJ4dcOdg0WYZMEP+/22oyBkMIVFf8qzpApUftfjVV0lux75H1JO
-         wDtIBMf3XD2zob/uZKW33szmwMGEw/3GEUkOtXQGVH3N/v63l+OBuIZgjzIrBYItUSe0
-         QJLSgP+zIUdgqAFyvWqCcMAWGMVVzYyacYiY957qfRS3Wa+uIQt4/GfD6JZHeSvjp9zx
-         v94j8ygbBlquyF9lIYOZXf78DW+9ol3LCtOTfSopk9/8rHftCHTncVE4qkOCAV8P6y6z
-         35xGD3F1lzxuACfmbGvOf+8QURILgkAJYTU/yxjkPTwmcDumaa9C9IybqdQ2lbnIIhJ/
-         3EbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Om96wGDqCHrMpnoPp7DCs6dCLnCOKjpwEEAj36FJm84V89AIUn9n//gNsVGzb+2Kss/iH6/NvfhFaAGwpYkyCkylrgdK31GSdYQzTeYemCs=
-X-Gm-Message-State: AOJu0YwUilPzTUQ50faY4kbyMXb0Q+wvjp7NR0+wKHChj7AkWs/4Ta2l
-	ztNfMHdwHIIhb5paavkyTZhHy/H7OWsTpeml41qlOnitxJdYy7zcPKE4VE7aseQ=
-X-Google-Smtp-Source: AGHT+IGMgyZUNqmxcjMbb7mMKrPL7LtX9airZjvk8iggZudIU2hMGM0jsJm7YuVneGwLQlAFnz1fKw==
-X-Received: by 2002:a17:906:bc86:b0:a3e:389b:caa3 with SMTP id lv6-20020a170906bc8600b00a3e389bcaa3mr9013178ejb.53.1708499629371;
-        Tue, 20 Feb 2024 23:13:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708503995; x=1709108795;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/sQIzf7jUG39BwFXjRnU4IN93Y7rOl9mKYuRy+MVuk=;
+        b=tuub5CADICBZcq2IZOOlTHQIUvho2BUySBSShkwnxTtHGwys0vVO2RrpX+DpHzngqE
+         m089cXkfasT2nYTfVTb3r0juupawso222RRv7sTGpcyWvQC1q1NE9K4JcKZWkjg+9dqu
+         qcL7a1Tb64lP79PDdYLsJ3TT6kNI1ADujpjuSN6RD9cRafe2btSCEP5mukZYBOi/alc+
+         wtw8o31urhOD6L1FYGYC6TDcAjoXQhJ3T+078cSTnZM1qwoEqv2uZriGcXdqzkKNSInK
+         FkM/SnjaHcCwMR5Yp4USd7Jcb12x88V4yue95WcDGZfhB2XG/Eo0lGzY1f4bpd1cYDTm
+         9vgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5cHBH8/jsuKwmcwVTAStQEY0OyZRPzWT2G+z80dmNjZhuld+SmCByu8+ZfSwIeJj11I8ZCWvC3acGiw7/2jXgsb4YcZlI53v+LAU65ADS7TQ=
+X-Gm-Message-State: AOJu0Yxtbw4y2ZaaNdRk5NNb9lKtpHreHWzQWpGEvUTCBJzcpLl6i5Ye
+	5gw8bSiPytXuB7HFL98rwxpv/eDuLx7FLQFJeKxfUH7pK80jKTLKvbvjeb1WPUQ=
+X-Google-Smtp-Source: AGHT+IE5308iO3EziNYS8p6OPFXk0fAD939H+KHXM+VeHIRV49q9tNWT2mXHQsloXxsn5P/WLKd/Mg==
+X-Received: by 2002:a05:6402:1814:b0:560:209:c800 with SMTP id g20-20020a056402181400b005600209c800mr14433374edy.18.1708503995437;
+        Wed, 21 Feb 2024 00:26:35 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id g16-20020a170906c19000b00a3cee88ddc7sm4742557ejz.147.2024.02.20.23.13.47
+        by smtp.gmail.com with ESMTPSA id fe12-20020a056402390c00b00564fa936b2bsm337395edb.94.2024.02.21.00.26.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 23:13:48 -0800 (PST)
-Message-ID: <6c4bdd9f-6b1f-43a0-9baa-7c1eedd46f76@linaro.org>
-Date: Wed, 21 Feb 2024 08:13:46 +0100
+        Wed, 21 Feb 2024 00:26:34 -0800 (PST)
+Message-ID: <5d67441e-df61-4894-ba52-2bed8a1143d6@linaro.org>
+Date: Wed, 21 Feb 2024 09:26:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,22 +61,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] interconnect: constify of_phandle_args in xlate
-To: Alim Akhtar <alim.akhtar@samsung.com>, 'Georgi Djakov'
- <djakov@kernel.org>, 'Bjorn Andersson' <andersson@kernel.org>,
- 'Konrad Dybcio' <konrad.dybcio@linaro.org>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- =?UTF-8?B?J0FydHVyIMWad2lnb8WEJw==?= <a.swigon@samsung.com>,
- 'Thierry Reding' <thierry.reding@gmail.com>,
- 'Jonathan Hunter' <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-tegra@vger.kernel.org
-Cc: 'Thierry Reding' <treding@nvidia.com>
-References: <CGME20240220072224epcas5p4ff60556b0b5632abfc44d2b8ad932b8f@epcas5p4.samsung.com>
- <20240220072213.35779-1-krzysztof.kozlowski@linaro.org>
- <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos4212-tab3: limit usable memory range
 Content-Language: en-US
+To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240217-tab3-limit-usable-memory-range-v1-1-49cc9c86a5cc@gmail.com>
+ <15ab6aa6-fb30-4970-9c50-546afb933e03@linaro.org>
+ <c2fde69d-48c2-446f-ac56-876651c06b51@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -123,68 +117,55 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
+In-Reply-To: <c2fde69d-48c2-446f-ac56-876651c06b51@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 20/02/2024 13:18, Alim Akhtar wrote:
+On 19/02/2024 20:49, Artur Weber wrote:
+> On 19.02.2024 08:44, Krzysztof Kozlowski wrote:
+>> On 17/02/2024 20:02, Artur Weber wrote:
+>>> The stock bootloader on the Samsung Galaxy Tab 3 8.0 provides an
+>>> incorrect available memory range over ATAG_MEM. Limit the usable
+>>> memory in the DTS to prevent it from doing so, without having to
+>>> disable ATAG support.
+>>>
+>>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>>> ---
+>>>   arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 6 ++++++
+>>>   1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+>>> index e5254e32aa8f..9bc05961577d 100644
+>>> --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+>>> +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+>>> @@ -45,6 +45,12 @@ chosen {
+>>>   		/* Default S-BOOT bootloader loads initramfs here */
+>>>   		linux,initrd-start = <0x42000000>;
+>>>   		linux,initrd-end = <0x42800000>;
+>>> +
+>>> +		/*
+>>> +		 * Stock bootloader provides incorrect memory size in ATAG_MEM;
+>>> +		 * override it here
+>>> +		 */
+>>> +		linux,usable-memory-range = <0x40000000 0x3fc00000>;
+>>
+>> Applied and dropped:
+>>   chosen: linux,usable-memory-range:0: [4611686019496935424] is too short
 > 
+> This seems to be a binding issue; the DT schema expects a 64-bit memory 
+> address and size, and doesn't allow a 32-bit range. I've tested the DTS 
+> on my device and this property seems to be handled fine, so I think this 
+> should allow 32-bit values as well.
+
+Regardless where is the issue: please test before sending.
+
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Sent: Tuesday, February 20, 2024 12:52 PM
->> To: Georgi Djakov <djakov@kernel.org>; Bjorn Andersson
->> <andersson@kernel.org>; Konrad Dybcio <konrad.dybcio@linaro.org>;
->> Sylwester Nawrocki <s.nawrocki@samsung.com>; Artur Świgoń
->> <a.swigon@samsung.com>; Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org>; Alim Akhtar
->> <alim.akhtar@samsung.com>; Thierry Reding <thierry.reding@gmail.com>;
->> Jonathan Hunter <jonathanh@nvidia.com>; linux-pm@vger.kernel.org;
->> linux-kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
->> samsung-soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
->> tegra@vger.kernel.org
->> Cc: Thierry Reding <treding@nvidia.com>
->> Subject: [PATCH v2] interconnect: constify of_phandle_args in xlate
->>
->> The xlate callbacks are supposed to translate of_phandle_args to proper
->> provider without modifying the of_phandle_args.  Make the argument
->> pointer to const for code safety and readability.
->>
->> Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> Acked-by: Thierry Reding <treding@nvidia.com> # Tegra
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
->>
->> Changes in v2:
->> 1. Drop unrelated gpiolib changes (Konrad, Thierry).
->> 2. Add tags.
->> ---
->>  drivers/interconnect/core.c            |  4 ++--
->>  drivers/interconnect/qcom/icc-common.c |  3 ++-
->> drivers/interconnect/qcom/icc-common.h |  3 ++-
->> drivers/interconnect/samsung/exynos.c  |  2 +-
->>  drivers/memory/tegra/mc.c              |  2 +-
->>  drivers/memory/tegra/tegra124-emc.c    |  2 +-
->>  drivers/memory/tegra/tegra124.c        |  2 +-
->>  drivers/memory/tegra/tegra186-emc.c    |  2 +-
->>  drivers/memory/tegra/tegra20-emc.c     |  2 +-
->>  drivers/memory/tegra/tegra20.c         |  2 +-
->>  drivers/memory/tegra/tegra30-emc.c     |  2 +-
->>  drivers/memory/tegra/tegra30.c         |  2 +-
->>  include/linux/interconnect-provider.h  | 11 ++++++-----
->>  include/soc/tegra/mc.h                 |  7 ++++---
->>  14 files changed, 25 insertions(+), 21 deletions(-)
->>
-> 
-> For Samsung/Exynos
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> I've opened a PR[1] against devicetree-org/dt-schema (where the schema 
+> for the chosen node is stored) to try and fix this. If my approach is 
+> incorrect, feel free to comment there as well.
 
-Review tags are per patch. You probably meant Acked-by.
-https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/process/submitting-patches.rst#L544
 
-What is there anyway to review in Samsung? Adding one const in one driver?
-
+According to Rob's comments, the DTS is the issue.
 
 Best regards,
 Krzysztof
