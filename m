@@ -1,57 +1,57 @@
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99270156985
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 17:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D531586F5
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 17:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708623598; cv=none; b=GKPoNmmJzEmN+h/tGUCsWGI2T0WGLdkqg7/LEt0ZjVLavQVST6J/ev3Kb3uMIuGWJq7N8JsKuWFPaRPpVBBQJu6+HmxZGdlCUBys8WGdRDBulnZp5GQfHnPLKY+Xee/UdSQjPDJlmvjd758w3rTDR45pLPJPqKncS2s+V6NEi1c=
+	t=1708623601; cv=none; b=UMKaW0CyGK3sE7L42mmo5wYboygwA9/YOpzpEm2tJj2sL54P2FDjfhTTpdDzdg5xNTE8TfNA/9SZNbw9mViw3vJrFUqLZigBl/iXlCL6ixvJPttOdAEcUrM1wjz64f86mO0qvzNuAl1NpiYaM9RDz0lMQm1O2T/LGh/Pmf3UITY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708623598; c=relaxed/simple;
-	bh=4O/lLtqZ0CSeZX6xhgII8Jva5Jk41VTWtWk38T0JqEg=;
+	s=arc-20240116; t=1708623601; c=relaxed/simple;
+	bh=hdLpspnbEGp4kEuYunjFJ86S1uZvH9wpW0yn7Y14D/4=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RBxyg12zJ5Y6DeLxgc0Tj2iaYy7YkTVXFPYL1gIJD4N9Q7J3Lvv7R/04+kBHTkS0x1IyOL7E7Lyr56n0aXYzcFbJgWn+DP3ZrW/ZmwXKREjuTWEbzi+PILvIoeQPDpbn4QYgBRf1K4xBUuqbTZie5uZHpjQpGKrnaSCBoK5YDO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=QG9Fs4JL; arc=none smtp.client-ip=209.85.160.176
+	 MIME-Version; b=PPja6A2hW8t5tdq33H1vG5ApHPDv2FZmV5aTL/MhtdV75SAJ/tslxu86rX1822KfSlDLvgHfwZDZ/QgKYm3cdqa6GphxE0buniJ5WkltssLeY+/Yi4dUtza5+PWzgvPjYwMXtJIbqTncTFhoK0RVN1pf2M2U8lJNggxgW2/Q4vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=o+5TmM8G; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="QG9Fs4JL"
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-42e323a2e39so199741cf.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 09:39:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="o+5TmM8G"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-42a029c8e76so57475131cf.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 09:39:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708623591; x=1709228391; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708623593; x=1709228393; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g7w3BmgXmvWecR5SKtsZ1cNA/rDbNvV1OeS7wJNdwTQ=;
-        b=QG9Fs4JLtoi2i0cYZgoB+0XW/saYPs7n/iFx7DAFdeCmQrebCvGI1z+1MVbxF4EOnf
-         3VomTM0Y8NAQ0uXUWoY7N06kRbyj/WVwzPtIZbyIyo4jMw/jNUB0WEfXAWjWFCy2G44C
-         Mba5hthSxpARK8tYcTHMc6D5BjTajCDQZ39EDWxKviSppdUOpTZmGksdy18h1Ad3pPMv
-         cyxF0wqV1mvHlxupa4NaLpF1Yd0AaYO97eTO9D40x7De4lBkeJDEZQh10VaCKLmuN8pD
-         CksMdHPZxQC4tisVtRKGjtg0UGnJshDdh9bHfnt29DfV7XPGFtybwj9yS82ROwqxDgmC
-         3Trg==
+        bh=ZEqwPir77gZiomgrLUuNDH63tTDpLGc+7y089oTBF1I=;
+        b=o+5TmM8G//XEyI/pvIdUZ5kZPAx1GYWud3Py5Ja+J810QnLcljpHtHIiTUKitE/3W4
+         7g2uUPtBZp1ivALzHWfQbtcatEsEhLAkhHz4s27bk0T2su0neaoUDeggrgJpGprQXDPZ
+         s8XJft2DnLbUNcruZKHJuJFsz6is8keLXKhvxUGTrutzYzggXFTHSeMtvB+2F2/1C7l5
+         I59R8gd8rx+SkZHQPNrEy5HgNVnX56rGb5HZ5MBK6rIDiekk+5ZHZH6N9W+ITClTHru+
+         LSZxELhZQF0ahkPQ7D92/F8QmbCDaiNK2aigaq0OIsaWr6tI/Hrjh96dYKZQtNJAbgou
+         0SOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708623591; x=1709228391;
+        d=1e100.net; s=20230601; t=1708623593; x=1709228393;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g7w3BmgXmvWecR5SKtsZ1cNA/rDbNvV1OeS7wJNdwTQ=;
-        b=cDyN+65NDxfB4IxGmz79e4h4zmB4JrFeH8PJ72cYnIwOyFaU/iiNwyr69Iw+lw4rFg
-         f20vA0pZaT1SKBkYBYs3+uu3vB640z7dFzBArA/QqM7L5no4NAm8aPKmDnvzAgJFF1NY
-         R5/7SyuuGD1xLW1AQPUhrl0R8W0AVCa7GcZ5cZDvT7nHxAmx1Oes9JOv0msbGvN3k+f4
-         bfx5d2ZqWzirh/p2tYSasGc3SkJM3wf1TzWlEF82FImTUi8nAQxaFL7H7ii8Ix1K7p2Y
-         ndrxKgMbm87L8zNvL2p4MtHw/+0wQmSNvQjYJW8ArcV4cCPzBfX4iE78iKJmCGVuPPMv
-         rl5w==
-X-Forwarded-Encrypted: i=1; AJvYcCURFh0gkzbQaGUa7fC1n/PTKi5njgWaG0HJIoH90SNYTEWUfC9FtT2kuNhpq14ytH/vSELNjgjOOTj3RjrrpTOlljlOT5Ca0kvrZ67uXs/61y0=
-X-Gm-Message-State: AOJu0YxIIhfEMH3ORGqRac8kBlzVSayguD1XVZqnggcQNTfdI3PzyZx1
-	NgBB4J4pz5oawnnOYEmtf6eD15l/e8pjgyODWxjto7tmvnKR6RmLlMyxfPI3mQk=
-X-Google-Smtp-Source: AGHT+IG90zBa6YLMZGIfCYT7Th/1b5UWVffhOhrq9tGqR1mvmgjPkxAiIwv1iDqI+0/4uYQJoXyfRA==
-X-Received: by 2002:ac8:4e82:0:b0:42c:8054:8a with SMTP id 2-20020ac84e82000000b0042c8054008amr5212735qtp.27.1708623591384;
-        Thu, 22 Feb 2024 09:39:51 -0800 (PST)
+        bh=ZEqwPir77gZiomgrLUuNDH63tTDpLGc+7y089oTBF1I=;
+        b=mlrY2JXNI566wdPryMZHCCG94Xq5kVev/dQCG0qlsohdXKRZztrnHSt4s0g34U7JXj
+         nRRCm41KVYbgG6k02HIM9Cs0cxmDVM4Uc9slPmAPyV9ICmO6UPfJQBMXFmla4cHkOS1p
+         c1MobylTp/5FIw8DGUhAvdBcfeqixq0/iBuR2Yk8owpBfUI3JVC0W/p0fpZEAR5frO6A
+         pxsaGkDvX2cHSdVcmQSKLz45xBmwGBXC4wcE9Mu+lLKE+0flWKRMbpg3kGIab8FByXmD
+         srfZrESr1N9wDqTlh8BYS5/IRyQVHWXBCGi9gRlTXtxATrnM3C0Z69EEFKsxwZED9L0y
+         9ujw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdSO7VOe4VhRM/R5HJYWwSrHa4xBVVB/+YC2PjyZtjZfIU9Mw6LfHpUkc0W/euOB9pgR/OAidB390OlKFL/rZlCnnxGrRvNJG+Dzt90Mfby0w=
+X-Gm-Message-State: AOJu0YzLWHYLAmkwyP54J7DV5vth86M6nl+hhhy7pMYRRoVPIGAQJl8S
+	z5ny18LwSmJh4IYFTiso+eQQ6kfNe30XSBUPO+OT1DQHLOEF5YPbbNYo53jRI/A=
+X-Google-Smtp-Source: AGHT+IHWgbe6ipO8HL4XSLjafpdpzGiSGfQct8NtUqWcRWqXLU3Gq7aLBUbxfLYc4BAno8BAqxzaSw==
+X-Received: by 2002:a05:622a:11d0:b0:42d:feeb:64df with SMTP id n16-20020a05622a11d000b0042dfeeb64dfmr18277023qtk.36.1708623593054;
+        Thu, 22 Feb 2024 09:39:53 -0800 (PST)
 Received: from soleen.c.googlers.com.com (249.240.85.34.bc.googleusercontent.com. [34.85.240.249])
-        by smtp.gmail.com with ESMTPSA id f17-20020ac86ed1000000b0042e5ab6f24fsm259682qtv.7.2024.02.22.09.39.50
+        by smtp.gmail.com with ESMTPSA id f17-20020ac86ed1000000b0042e5ab6f24fsm259682qtv.7.2024.02.22.09.39.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 09:39:51 -0800 (PST)
+        Thu, 22 Feb 2024 09:39:52 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	alim.akhtar@samsung.com,
@@ -99,9 +99,9 @@ To: akpm@linux-foundation.org,
 	rientjes@google.com,
 	bagasdotme@gmail.com,
 	mkoutny@suse.com
-Subject: [PATCH v5 06/11] iommu/exynos: use page allocation function provided by iommu-pages.h
-Date: Thu, 22 Feb 2024 17:39:32 +0000
-Message-ID: <20240222173942.1481394-7-pasha.tatashin@soleen.com>
+Subject: [PATCH v5 08/11] iommu/sun50i: use page allocation function provided by iommu-pages.h
+Date: Thu, 22 Feb 2024 17:39:34 +0000
+Message-ID: <20240222173942.1481394-9-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
 In-Reply-To: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
 References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
@@ -113,67 +113,49 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert iommu/exynos-iommu.c to use the new page allocation functions
+Convert iommu/sun50i-iommu.c to use the new page allocation functions
 provided in iommu-pages.h.
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/iommu/exynos-iommu.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/iommu/sun50i-iommu.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 2c6e9094f1e9..3eab0ae65a4f 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -22,6 +22,8 @@
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
+diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
+index 41484a5a399b..172ddb717eb5 100644
+--- a/drivers/iommu/sun50i-iommu.c
++++ b/drivers/iommu/sun50i-iommu.c
+@@ -26,6 +26,8 @@
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
  
 +#include "iommu-pages.h"
 +
- typedef u32 sysmmu_iova_t;
- typedef u32 sysmmu_pte_t;
- static struct iommu_domain exynos_identity_domain;
-@@ -900,11 +902,11 @@ static struct iommu_domain *exynos_iommu_domain_alloc_paging(struct device *dev)
- 	if (!domain)
+ #define IOMMU_RESET_REG			0x010
+ #define IOMMU_RESET_RELEASE_ALL			0xffffffff
+ #define IOMMU_ENABLE_REG		0x020
+@@ -679,8 +681,7 @@ sun50i_iommu_domain_alloc_paging(struct device *dev)
+ 	if (!sun50i_domain)
  		return NULL;
  
--	domain->pgtable = (sysmmu_pte_t *)__get_free_pages(GFP_KERNEL, 2);
-+	domain->pgtable = iommu_alloc_pages(GFP_KERNEL, 2);
- 	if (!domain->pgtable)
- 		goto err_pgtable;
+-	sun50i_domain->dt = (u32 *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+-						    get_order(DT_SIZE));
++	sun50i_domain->dt = iommu_alloc_pages(GFP_KERNEL, get_order(DT_SIZE));
+ 	if (!sun50i_domain->dt)
+ 		goto err_free_domain;
  
--	domain->lv2entcnt = (short *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 1);
-+	domain->lv2entcnt = iommu_alloc_pages(GFP_KERNEL, 1);
- 	if (!domain->lv2entcnt)
- 		goto err_counter;
+@@ -702,7 +703,7 @@ static void sun50i_iommu_domain_free(struct iommu_domain *domain)
+ {
+ 	struct sun50i_iommu_domain *sun50i_domain = to_sun50i_domain(domain);
  
-@@ -930,9 +932,9 @@ static struct iommu_domain *exynos_iommu_domain_alloc_paging(struct device *dev)
- 	return &domain->domain;
+-	free_pages((unsigned long)sun50i_domain->dt, get_order(DT_SIZE));
++	iommu_free_pages(sun50i_domain->dt, get_order(DT_SIZE));
+ 	sun50i_domain->dt = NULL;
  
- err_lv2ent:
--	free_pages((unsigned long)domain->lv2entcnt, 1);
-+	iommu_free_pages(domain->lv2entcnt, 1);
- err_counter:
--	free_pages((unsigned long)domain->pgtable, 2);
-+	iommu_free_pages(domain->pgtable, 2);
- err_pgtable:
- 	kfree(domain);
- 	return NULL;
-@@ -973,8 +975,8 @@ static void exynos_iommu_domain_free(struct iommu_domain *iommu_domain)
- 					phys_to_virt(base));
- 		}
- 
--	free_pages((unsigned long)domain->pgtable, 2);
--	free_pages((unsigned long)domain->lv2entcnt, 1);
-+	iommu_free_pages(domain->pgtable, 2);
-+	iommu_free_pages(domain->lv2entcnt, 1);
- 	kfree(domain);
- }
- 
+ 	kfree(sun50i_domain);
 -- 
 2.44.0.rc0.258.g7320e95886-goog
 
