@@ -1,59 +1,59 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494391775A
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 07:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1592C683
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 08:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708588027; cv=none; b=meycdG+C8y0WuvC0FuJFnW2IEJTu6A+ML+tIl6ePiCkGF0khvHnhAvyibUeUMdw0fqPKGkxZCkxXOuX8pD4zSN3+9n74kJ6f6Nw16uYlZpbpOi2jd0oUadrCTnOF42YyHZwFw6ObeX+h/kWDkknZPRl3q0tdIImrDcdV60ShwhQ=
+	t=1708591804; cv=none; b=JieAcJxQwNb+1vqLcCmVgFAq0ycCUtNkcmjHJTMrUDxq76k1K4yysnZtAwKe/k/dceBNgrj5aFxyQFM/n+R2OFAhIklT2y6z5QoixiPf1ULcCs1QP0Rr/b7LMvOGFRxxsoCBQwwCwBFcJfuJ3xZPZsBTkLLyHY7UKPeoIJZhryg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708588027; c=relaxed/simple;
-	bh=wJBFHsQ66055reSqqi6It9R23VoGCCMweYpA5lfJPPs=;
+	s=arc-20240116; t=1708591804; c=relaxed/simple;
+	bh=D/nUQN7NYaiaPkI9T6J6ezrsHaCP33aZDmexe1pbOjE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mm1e7hoUYu6Uc+ppkYS1sPk2pnPrx3bgXKjqHc0c6Yit7YC1JGtG0kHxUr7kZUxzSZwzlYrn0urKHdh8xsoncry/Q/V8NagdtBvvOCxnH+KCKxWNcVl7vfjsjCVNfGmkiaGXk1WYuy47FzL5p9/2RLsdC72QnoLKAZFeTSgTHv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZd6dWj8; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:Content-Type; b=Jrj2hBRzy7kxevNmMjHFPCCqHww/Cfrz7ptDHMjopVVpz5gwXVvNGWvreNVHdPusqoOShbBWmCPdcKGMaIW0wa/cdkkLkvuEnxPhHSz/6iRa2Sdteg+2OLhergy651CBKTtKF5nYYGaRb1h1OsMa3BGCI8k7RjqglpUr7Mr1qO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QfWzejNl; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZd6dWj8"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5648d92919dso2226136a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 23:47:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QfWzejNl"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3e75e30d36so107053866b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 00:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708588023; x=1709192823; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708591801; x=1709196601; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nPtrn2AJlyFrVhVFg0+RrmhVpSvDXT3cdrnrFrP+YME=;
-        b=KZd6dWj8oajx4mmh73rFm4tmgT8rw3VlKZ8M+ZrEA5Q5+Vk4vorG6AVsd8qeuBTuj0
-         BJzrInvGlthTuTG2wBZjz6k5xOIPNeGQx6gcV3vn4z/UtArlS1W5Pr6ZjwyRPVowyDIg
-         oZBf+/kwBguitF1jt5fT1booHVtL4ytuAuscKIy5YTQdX+L9aHYM2vSnVWg0lg25K1Wa
-         dimSqJ7cD3ATqcp/0dS4TnWwSG9gXAr8v0ZnlMGjj7ZmoNLnAyK16qYlByeZfaXVJZAN
-         CGcDJfih4bd2YlWhbV35p74GaxFv4l8XUaG2rKTUbs8HECI71HrXS/xMmbYJ4O8IuSYH
-         WMcg==
+        bh=D/nUQN7NYaiaPkI9T6J6ezrsHaCP33aZDmexe1pbOjE=;
+        b=QfWzejNlZ12PjwYOX4NZG5jzG/4WRKidhoowH1Vt8BgaP2SBJ1aVv/MAyQTEsXALGs
+         MBgKRn7FTAQweqSKqse0uYQk3EEOfeTU3tE0x8Gb8A9OiLJrW5bucGlxxXhdkFYoWLHe
+         HohNgdxWoksU3SZTsei9rWE6S1Mt0//YDmuSHwQ2rKAKHxoaGb4H4GcWmE9s3dQyiB/u
+         7TQKxSJY7LIdNjyUh7oHmuqO2rFp22qar0B3jK7EC6/Rvz7tywlsqOdmAPv0wgbhNC2D
+         y6CP8y21ASzAS4lsBadu8qJ7IkICOsZu5PJzTp9Lp/ipI8NwfmIH1O9hsFsyFxZ16gBu
+         bafw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708588023; x=1709192823;
+        d=1e100.net; s=20230601; t=1708591801; x=1709196601;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nPtrn2AJlyFrVhVFg0+RrmhVpSvDXT3cdrnrFrP+YME=;
-        b=Cu+vDMI7DDiq9bkxdMHiV3wREYL7TlmZizASmp008QO5fhXJSZ7BiJScHsmWFZnxdv
-         qofVl6tUC+WckYAThbJnJHHW+awm+QJRNsBf+Dt2gZOlA00p5cCOI3557194PQF8ezHP
-         TslZmXUN+mm+vhxVD4t+QNhroGgeksL8RdHZg5cBlOfZhtipBnUAjZMTfb6ejWFh1Sdu
-         UQ//UYZUvcCPt6v44h6hJm4P4pOmzIzo7ExkjK3Tfs8Be03RT0AE7RCoh9lgyUNIF6Lu
-         y1Y+HNie0hK2JYaJI6n3NDH8dQJaBfpuMCdWg+5PNxJ4L75UUB8kL/ikdKAwdMEFqXj6
-         baqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMY+ZcZDT2OgLpnXyRunXFIEexY9weY7efGDeSdu+iurso2udVaJSMiWhIcFL+NYO2VV/PuMz08Zcxsh+0qAZgzmRXJRabsW4L4D72KJkAVOc=
-X-Gm-Message-State: AOJu0Yx8oWFsvD79zwThcRMBmcTif+rsbJ67R3/gZ/vTN4rzIPtDG92I
-	t+GKECAXeCWvXTpAvlex4bwO80hNeZFNLnSCW/pvM3TnBEY+GP8cOO6hLCUn95A=
-X-Google-Smtp-Source: AGHT+IHSrLKY+pxwdrtKyhvCh2pr+Bjwrjzz/crpqYDIb/F9FwG/huwkjS75Xvr395MFitR+p8cBmQ==
-X-Received: by 2002:a05:6402:288:b0:565:2fe2:905b with SMTP id l8-20020a056402028800b005652fe2905bmr719464edv.6.1708588023656;
-        Wed, 21 Feb 2024 23:47:03 -0800 (PST)
+        bh=D/nUQN7NYaiaPkI9T6J6ezrsHaCP33aZDmexe1pbOjE=;
+        b=Qv/+f21G1xstlS3htxnzkGyjlknYFRfcPPblu+xbp7i2MB/yXlt1GtRcJcwdsQTL0X
+         Psd1uIDCi0ab1biJ2za1CImsv3VSvsjFtJXgOlsGrRfu3Kyc4a5ADRdmTSWCA7P5ZkNv
+         cd5dMvic/1XNsMbAY0QLC3uL+AtEBWYanmwWXWnz7edm/5XGjH9z9LsAcd1GKh/8N5Fc
+         M2HpCedibcNG2INyI5vVuNZ+cfgfGYyg/RGQB7QJslYthNIsZfQnQB3BhGIOUxtxOk1t
+         z5LfxSAuo7L+bOHJSwqroYkFmF665ClhUeu3FsDj7lJE9APD/s9qtj0bY0ezeUQfLHtT
+         NxPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDytzJQ0wwsJ+nBwRtiLPM4rcAS4mdX9qkCBaVD8cSkNLkS/C9R6n4CmeyjifDIKcaBwMYRsA68ycIUf+I45lDv+tkA6Zj9AuLLmymQzZr6CE=
+X-Gm-Message-State: AOJu0YzKp9glxkcv12raZ0dTFDW6HRJNFFNtS0ZbvfQaNsMXms9fHeI1
+	A9fN97ZRIMfNjIfvJQGTvdLp94ZrT2Mek7WmQt1J2dYV0h93Cuwtih2Iph3+shY=
+X-Google-Smtp-Source: AGHT+IH/nh++5vilUspAVKKJyxBjsl+Ckxtaqb05jotBiF2zHKJp0sk0Zmn1nWBdalzUaV+KjllKQQ==
+X-Received: by 2002:a17:906:27ce:b0:a3e:4cfc:2186 with SMTP id k14-20020a17090627ce00b00a3e4cfc2186mr1566310ejc.17.1708591800779;
+        Thu, 22 Feb 2024 00:50:00 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id h10-20020a0564020e0a00b005641bab8db3sm5128141edh.86.2024.02.21.23.47.01
+        by smtp.gmail.com with ESMTPSA id wb8-20020a170907d50800b00a3e9c4fa24esm3742427ejc.96.2024.02.22.00.49.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Feb 2024 23:47:03 -0800 (PST)
-Message-ID: <c4f7e3cb-db9b-48be-883e-33878d2510e8@linaro.org>
-Date: Thu, 22 Feb 2024 08:47:01 +0100
+        Thu, 22 Feb 2024 00:50:00 -0800 (PST)
+Message-ID: <be85edb1-4f65-4b5e-a137-76e4e92d8fe4@linaro.org>
+Date: Thu, 22 Feb 2024 09:49:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,22 +61,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/16] clk: samsung: Keep register offsets in chip
- specific structure
+Subject: Re: [PATCH v2 0/7] ARM: dts: samsung: specify the SPI FIFO depth
 Content-Language: en-US
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240216223245.12273-1-semen.protsenko@linaro.org>
- <20240216223245.12273-12-semen.protsenko@linaro.org>
- <ce515530-428a-4a21-8c56-5a497cc8130a@linaro.org>
- <CAPLW+4=kpk=Vg=nX-hVxcCS0OttC6xmyUcB005tmX+vtUF9TLA@mail.gmail.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, conor+dt@kernel.org
+Cc: alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, broonie@kernel.org, andi.shyti@kernel.org,
+ semen.protsenko@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, andre.draszik@linaro.org, peter.griffin@linaro.org
+References: <20240216140449.2564625-1-tudor.ambarus@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -122,74 +116,17 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAPLW+4=kpk=Vg=nX-hVxcCS0OttC6xmyUcB005tmX+vtUF9TLA@mail.gmail.com>
+In-Reply-To: <20240216140449.2564625-1-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 22/02/2024 01:42, Sam Protsenko wrote:
-> On Tue, Feb 20, 2024 at 5:04 AM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> On 16/02/2024 23:32, Sam Protsenko wrote:
->>> Abstract CPU clock registers by keeping their offsets in a dedicated
->>> chip specific structure to accommodate for oncoming Exynos850 support,
->>> which has different offsets for cluster 0 and cluster 1. This rework
->>> also makes it possible to use exynos_set_safe_div() for all chips, so
->>> exynos5433_set_safe_div() is removed here to reduce the code
->>> duplication.
->>>
->>
->> So that's the answer why you could not use flags anymore - you need an
->> enum, not a bitmap. Such short explanation should be in previous commits
->> justifying moving reg layout to new property.
-> 
-> Will do, thanks.
-> 
->>
->>> No functional change.
->>>
->>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>> ---
->>>  drivers/clk/samsung/clk-cpu.c | 156 +++++++++++++++++++---------------
->>>  1 file changed, 86 insertions(+), 70 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
->>> index 04394d2166c9..744b609c222d 100644
->>> --- a/drivers/clk/samsung/clk-cpu.c
->>> +++ b/drivers/clk/samsung/clk-cpu.c
->>> @@ -44,12 +44,14 @@ typedef int (*exynos_rate_change_fn_t)(struct clk_notifier_data *ndata,
->>>
->>>  /**
->>>   * struct exynos_cpuclk_chip - Chip specific data for CPU clock
->>> + * @regs: register offsets for CPU related clocks
->>>   * @pre_rate_cb: callback to run before CPU clock rate change
->>>   * @post_rate_cb: callback to run after CPU clock rate change
->>>   */
->>>  struct exynos_cpuclk_chip {
->>> -     exynos_rate_change_fn_t pre_rate_cb;
->>> -     exynos_rate_change_fn_t post_rate_cb;
->>> +     const void                              * const regs;
->>
->> Why this is void?
->>
-> 
-> Different chips can have very different register layout. For example,
-> older Exynos chips usually keep multiple CPU divider ratios in one
-> single register, whereas more modern chips have a dedicated register
-> for each divider clock. Also, old chips usually split divider ratio vs
-> DIV clock status between different registers, but in modern chips they
-> both live in one single register. Having (void *) makes it possible to
-> keep pointers to different structures, and each function for the
-> particular chip can "know" which exactly structure is stored there,
-> casting (void *) to a needed type. Another way to do that would be to
-> have "one-size-fits-all" structure with all possible registers for all
-> possible chips. I don't know, I just didn't like that for a couple of
-> reasons, so decided to go with (void *).
-> 
-> I'll add some explanation in the commit message in v2.
+On 16/02/2024 15:04, Tudor Ambarus wrote:
+> Bindings patch sent but not yet integrated:
+> https://lore.kernel.org/linux-spi/20240216070555.2483977-2-tudor.ambarus@linaro.org/
 
-Currently the one-size-fits-all seems feasible, even if few fields are
-not matching, so I would prefer to go this approach.
+I still wait for bindings to be applied. This means it might be too late
+to apply it for this cycle. Just letting you know, that I did not forget
+about this patchset.
 
 Best regards,
 Krzysztof
