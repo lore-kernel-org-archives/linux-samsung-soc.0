@@ -1,129 +1,149 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09C28BF3
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 00:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5517BF501
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 00:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708561666; cv=none; b=n4yUntK3RJRO1gRAOk/GTvcZLUwWj5guPdVcSNQz3OpGj/OoWIbCM4xZ0uwT58a14XsehKPw2UotHaPMb2BdJeKj0yi322gKO9Hjt8b/POY1LsLdw6goJeKyf6oZNdkwZ7fGHW7XP7A2C6iRfY/6dlDK92KSwyakWFLsE85bgFs=
+	t=1708562553; cv=none; b=UGqvSVLVE/XGY21Tmf/X0X+tP0Tq8Ep+zNa6IA8lID7Xla6Xu+FAHjJWklc5d9jWiOqSZ6c9KqGMTIiKjrOBN1ij3kkkFgXunuUW0+5iZdSxN2ynzECKNN4VY/lMMp+YLSB0/rqmdBabKZiW6v1tAi45Q4Xo8xVStcGoqEi9QGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708561666; c=relaxed/simple;
-	bh=KFCl6fU1744flulJCJ4xzKP7ZfOs3jlFHZaEmtavvFE=;
+	s=arc-20240116; t=1708562553; c=relaxed/simple;
+	bh=Bs9vhLKuGEIex6OPxJkFxMFJCT3jUj8PEgVKlk55ND4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l9Zn4bAyRzhArRWehtXrGcDCN4r6ctiafZdjIdwHVvcu3SOLlvn8K+qYRlkcAtX0Mh1MYP/J5LGMK5Z5Ck1nlXvPTskOMYBOUfn498TC0ZRDaI08Q+6ElDyTDVBmVxG3nnE08L1Bjw6CcEyE7ZLmOXeONKLl08Q78SRS5W2Tfcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=JnM/2ln7; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	 To:Cc:Content-Type; b=TPo5aUJPv1pIsPa4zaC6K29BIRQPwcxE7quXZ5xEARQVkyzeYNQUXzQ5wLeKjfexAANLVMVXFIyo8nSwgu94ZPdo1+xQLNzcfuBgTao6LiwLZvH7go+vVhWOqpPdhu1qpwW5dTkKiGjw8ZMEciwJoOP8btJE0BAZ7sTMXoqoJWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UYtixNgB; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="JnM/2ln7"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-42dfe1c3353so13944371cf.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 16:27:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UYtixNgB"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-607bfa4c913so12354187b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 16:42:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708561664; x=1709166464; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQ94+F18kEzvELBZYdN+dTOkgUJXZz4kfGzznQZui6Y=;
-        b=JnM/2ln76gYW1tBtjZzIQkXZZJUE+c6Cm8ltv7jcJ66U77pb/zP+cWXHwHGCzYx1pj
-         AoUW07ViMUJNcUIfSBYbqU+9N/4sTySG2CFoIJz3cjQDoI4lFOwp/cCl2JxT/Zx/jdoN
-         G67hrawA6O4rOF772J87zhoyAole98md4lGz4PJdMY/Zla0wr2/LRzbfxI9EVnSeoa35
-         YSQBFriQgFymSJWDJyienlKgiY0sRUhTQ5Jclv1q84kjHjQ6pKN8EiOYPZbGPvKKS3Nv
-         3Aq9SR2KTmbbWmkc80rcQOHh4kt6eMAEv08Vgb+Dk6mCONnXwLb9b49YkPxoT7aBDTRz
-         BKpA==
+        d=linaro.org; s=google; t=1708562550; x=1709167350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ShxvQ8PVoqtGaEPQqhEqEYNCHruhNGrg1u0pTjKfrU0=;
+        b=UYtixNgBQFiKAO4w4+Udpn2GKuFPl0ARB5tOU1uUFetljSj8qUmr+Rn5G1gSGUqBg0
+         f5tv5Q+P8Z5CSQegkDMu3wuvbSEGxAmkb/2Ur+cUWt9wEHexOAlA4nViBG3VLQK65bz1
+         kqY7/KnQfsQRrJ7XeDuSybRY80SMRQLdCFrJHlwRi54sDKGV+oaExp0Gjff7O1orll0M
+         8MriWzrdQQYSm2VeBeUzt2DQFs15sn706mvjUXqkhMVppZOC3rlaBUTHTYvSL9qqkWK5
+         ayHgYwJIDv3Z1ff+NHd02CwxMpTPxSRp0FJ8d8IIKN7S3d6o+OIENWdKw7/do+acWQxc
+         qSkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708561664; x=1709166464;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQ94+F18kEzvELBZYdN+dTOkgUJXZz4kfGzznQZui6Y=;
-        b=OZDqwiYpr81qCm1KwsvptsAUyLI+V41aaGTkak4M/B42hYtuZw6uzbggX0DC22pDhb
-         smM2E0wHw+ezEh/f8sqOb0g/ae4C3zJlSRUup3ruPobSgpQdF+dVQ9rZ1ZZbb0sbmk1g
-         rsc4RdYni5eN6yrFh19i1fPOjoHeDvCXtiKdD0uBneuXnBXfiZ68ehT5SbEqnomQwA4K
-         LnVTL55l0ghpDZg00uD5TMpm967VABGGpLYuXHzzF6EpAW3O6XzC/tTFveJOo3H/d/UN
-         pChRievoDRUWuIYFobfZifMCV1p2FcpHxPlL86HTD1KhH4cvcu7NpLgYn/YfPxfbrz0b
-         la8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXVwgnptoI8sVY3XLwXwdBlvZa3jq1Xph3oVpO7TrDq7rL6YmAtQSrTb6x2PF+N+cA0ocJCMYxJPyLPuBwOlDgjde3rejMmFQPEtRZhPVT00fQ=
-X-Gm-Message-State: AOJu0YxZvdg+RJE/Hg4l9Uvrls2jcp/eQHNDM5VAkdkz9gwteARGuDAM
-	Mp2G8Ihrh4oeg5Lu6Wg9AU7KvzbcZVMN1IiBlFT8i2DJQHy3PGSJkb4+0PNv0VZWiwtapBsBzmZ
-	CR4taGh3mkqgPe/SmCd60Mng/qfKzrjiD0VDV5g==
-X-Google-Smtp-Source: AGHT+IGOmZsSpC2Y4SyYnlcRyS9zDA76SD5RvGLDRLTwS53fSOkMzROnT7IsmFNQ2MsELKRVDDNbuO1hZG2u+Llmnq0=
-X-Received: by 2002:a05:622a:1391:b0:42c:6fef:90e with SMTP id
- o17-20020a05622a139100b0042c6fef090emr25244584qtk.65.1708561663980; Wed, 21
- Feb 2024 16:27:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708562550; x=1709167350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ShxvQ8PVoqtGaEPQqhEqEYNCHruhNGrg1u0pTjKfrU0=;
+        b=KoNpJlSjYkz2CZnr8dplMB/X0KUyM/GMDM6wRAJ56vaK3Ad4AoeFMwcI5zxiwPFTrX
+         6w1v6YuWD+ZLDtRQS9QWPQPbMAiLB9z4njVuQo3HBIivNk78YJZVHVvypDpPrjakmVUs
+         emiA2lNEpvdxOBjekzyLGrV/R2pmRBeYkgze1lmGwmto3XV++2n49ZF3waDO6tpABWAd
+         Vr1etG1ZSE8MNbBPhZnY6EPWLfXJt6rr8FHagagSR3lLULXhi3RxLMk8aXZax2LT2vQ+
+         zzHlzdDy9EOAKFtoHkVZfev2GEK3iIKGnwJtMHtpjia4Veb/tNv3Rt3N9u4+bvpXejn4
+         N2FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1NsKKRHQaNwXY3Rd3Qvc1SHme6qZJDmabrfN6OVU5oIvpcxc2Vfs3LGZvq3EV18omSXyogNylVTEON29o/Y7vBzC9uwB0hrTF7c4MTETlK6A=
+X-Gm-Message-State: AOJu0YxV2ND+mtyswvqqYdsCpfvATc91k2X/7Fb1zqTYyqfBQcnC/SIv
+	Dpr953qwXJ6sxOalBm+V3lgQHM1nh8kKM4lJ36RKCAvsNla2bQD6JxIhsWi41hkQFgTZWgX//rP
+	ho72y2A2/Sp5jHtj0LvLFJiMtZWCtLsgfmKa1yw==
+X-Google-Smtp-Source: AGHT+IHHuwGqbZaTb+bV+UPau4y6yhAeIrb6TWdnVktV+oEQVFlA8nEB2tKz9vC9H977t8keyZqZPMrkgYtfMJvYxvw=
+X-Received: by 2002:a81:9a47:0:b0:607:a75e:9caf with SMTP id
+ r68-20020a819a47000000b00607a75e9cafmr18882889ywg.22.1708562549946; Wed, 21
+ Feb 2024 16:42:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
- <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com>
- <20240216175752.GB2374@willie-the-truck> <CA+CK2bDURTkZFo9uE9Bgfrz-NwgXqo4SAzLOW6Jb35M+eqUEaA@mail.gmail.com>
- <20240222002152.GG13491@ziepe.ca>
-In-Reply-To: <20240222002152.GG13491@ziepe.ca>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 21 Feb 2024 19:27:07 -0500
-Message-ID: <CA+CK2bBGzM8Xbfq9A7HHNr40oukvAk7-1RK7AFbW3qFcNstb5g@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Will Deacon <will@kernel.org>, akpm@linux-foundation.org, alim.akhtar@samsung.com, 
-	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, 
-	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com
+References: <20240216223245.12273-1-semen.protsenko@linaro.org>
+ <20240216223245.12273-12-semen.protsenko@linaro.org> <ce515530-428a-4a21-8c56-5a497cc8130a@linaro.org>
+In-Reply-To: <ce515530-428a-4a21-8c56-5a497cc8130a@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 21 Feb 2024 18:42:18 -0600
+Message-ID: <CAPLW+4=kpk=Vg=nX-hVxcCS0OttC6xmyUcB005tmX+vtUF9TLA@mail.gmail.com>
+Subject: Re: [PATCH 11/16] clk: samsung: Keep register offsets in chip
+ specific structure
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > > > > While I can see the value in this for IOMMU mappings managed by VFIO,
-> > > > > doesn't this end up conflating that with the normal case of DMA domains?
-> > > > > For systems that e.g. rely on an IOMMU for functional host DMA, it seems
-> > > > > wrong to subject that to accounting constraints.
-> > > >
-> > > > The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
-> > > > is passed to the iommu mapping functions. We do that from the vfio,
-> > > > iommufd, and vhost. Without this flag, the memory useage is reported
-> > > > in /proc/meminfo as part of  SecPageTables field, but not constrained
-> > > > in cgroup.
-> > >
-> > > Thanks, Pasha, that explanation makes sense. I still find it bizarre to
-> > > include IOMMU allocations from the DMA API in SecPageTables though, and
-> > > I worry that it will confuse people who are using that metric as a way
-> > > to get a feeling for how much memory is being used by KVM's secondary
-> > > page-tables. As an extreme example, having a non-zero SecPageTables count
-> > > without KVM even compiled in is pretty bizarre.
+On Tue, Feb 20, 2024 at 5:04=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 16/02/2024 23:32, Sam Protsenko wrote:
+> > Abstract CPU clock registers by keeping their offsets in a dedicated
+> > chip specific structure to accommodate for oncoming Exynos850 support,
+> > which has different offsets for cluster 0 and cluster 1. This rework
+> > also makes it possible to use exynos_set_safe_div() for all chips, so
+> > exynos5433_set_safe_div() is removed here to reduce the code
+> > duplication.
 > >
-> > I agree; I also prefer a new field in /proc/meminfo named
-> > 'IOMMUPageTables'. This is what I proposed at LPC, but I was asked to
-> > reuse the existing 'SecPageTables' field instead. The rationale was
-> > that 'secondary' implies not only KVM page tables, but any other
-> > non-regular page tables.
 >
-> Right, SeanC mentioned that the purpose of SecPageTables was to
-> capture all non-mm page table radix allocations.
+> So that's the answer why you could not use flags anymore - you need an
+> enum, not a bitmap. Such short explanation should be in previous commits
+> justifying moving reg layout to new property.
+
+Will do, thanks.
+
 >
-> > I would appreciate the opinion of IOMMU maintainers on this: is it
-> > preferable to bundle the information with 'SecPageTables' or maintain
-> > a separate field?
+> > No functional change.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/clk/samsung/clk-cpu.c | 156 +++++++++++++++++++---------------
+> >  1 file changed, 86 insertions(+), 70 deletions(-)
+> >
+> > diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cp=
+u.c
+> > index 04394d2166c9..744b609c222d 100644
+> > --- a/drivers/clk/samsung/clk-cpu.c
+> > +++ b/drivers/clk/samsung/clk-cpu.c
+> > @@ -44,12 +44,14 @@ typedef int (*exynos_rate_change_fn_t)(struct clk_n=
+otifier_data *ndata,
+> >
+> >  /**
+> >   * struct exynos_cpuclk_chip - Chip specific data for CPU clock
+> > + * @regs: register offsets for CPU related clocks
+> >   * @pre_rate_cb: callback to run before CPU clock rate change
+> >   * @post_rate_cb: callback to run after CPU clock rate change
+> >   */
+> >  struct exynos_cpuclk_chip {
+> > -     exynos_rate_change_fn_t pre_rate_cb;
+> > -     exynos_rate_change_fn_t post_rate_cb;
+> > +     const void                              * const regs;
 >
-> I think you should keep them together. I don't think we should be
-> introducing new counters, in general.
+> Why this is void?
+>
 
-Thanks Jason, I will keep it as-is. I will send a new version soon
-with your comments addressed.
+Different chips can have very different register layout. For example,
+older Exynos chips usually keep multiple CPU divider ratios in one
+single register, whereas more modern chips have a dedicated register
+for each divider clock. Also, old chips usually split divider ratio vs
+DIV clock status between different registers, but in modern chips they
+both live in one single register. Having (void *) makes it possible to
+keep pointers to different structures, and each function for the
+particular chip can "know" which exactly structure is stored there,
+casting (void *) to a needed type. Another way to do that would be to
+have "one-size-fits-all" structure with all possible registers for all
+possible chips. I don't know, I just didn't like that for a couple of
+reasons, so decided to go with (void *).
 
-> Detailed memory profile should come from some kind of more dynamic and
-> universal scheme. Hopefully that other giant thread about profiling
-> will reach some conclusion.
+I'll add some explanation in the commit message in v2.
 
-+1! Memory profiling is going to be a very useful addition to the kernel.
-
-Pasha
+> > +     exynos_rate_change_fn_t                 pre_rate_cb;
+> > +     exynos_rate_change_fn_t                 post_rate_cb;
+> >  };
+> >
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
