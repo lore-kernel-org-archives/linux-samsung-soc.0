@@ -1,57 +1,57 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61015156972
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 17:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0000157E64
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 17:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708623592; cv=none; b=cqlKN8Sq/Vvtvmd0YeHEMhDEJq7NioN5Qf+1GwGSFkoDFNOD7rny5daIUnWD11MRWyHppd45N/A5I5RTK3lnA3GbLI7vQ/Nm1q7oqdMf82dYZWAL9YN+ogu7k87tubKIbit+2D4HGaJxMHduS+GdYInnr6D04y8N9JW/5uUoxpQ=
+	t=1708623597; cv=none; b=ASU5FZnelLY/M/elkA1cnN0VC7dow7qbw/pbNa2bCu4+fKJgVjsGyqB24WvHGyNPSwafJn3MqvhnYVl0NHALDA2DNxNR80COZt6Du8quY4iZUnEKU5RvRqY7a/ceS3OoeM6nZqttaOWhfufEIa+vLDtThX6v4j5tvK6IuwUOkeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708623592; c=relaxed/simple;
-	bh=e5/EqNK9UpM0PQlRBjtqkQj6WaKZ0lxzfKw0E0tVZJ8=;
+	s=arc-20240116; t=1708623597; c=relaxed/simple;
+	bh=HFMzJSfAagxMsn8PANMQxhVlBhQeJV3s4jHhao7IlsQ=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z8rwLDZKhQ/ls0PDgIDOBiigPhUg3TvRx2W2Dx8e4r0undyO8u97p/E9kuVQgx5DbzV+vFKjppL8NoEc8MZyYomasEIn2sSweiPJFBX/ECmCzbNW7mzH9sjpzJsoDqdmXqyvZZtTSHnFw4O5yAuoxbJS/nG/qxKFB90XXoPQjXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=SUq+1qIF; arc=none smtp.client-ip=209.85.160.179
+	 MIME-Version; b=GqA29GKfoi9fYMrE0dMEOcTXHyo5H6nE61EiQG0qLMTxTFSKMlfu6f5Zb4WA3CTJUN/3w6TYKEtIAknrY5+VaSAfnoU6cABQzKFfG6PywJ4vV3lfSe7cYlVGQhw2RiCPRyh1A0ujO2zg6QiUuOzficl+OJ2N0Ssna8P6tRlLNa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=dUwkbRo/; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="SUq+1qIF"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-429f53f0b0bso58601461cf.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 09:39:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="dUwkbRo/"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-42dd6f6518fso26854681cf.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 09:39:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708623588; x=1709228388; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708623590; x=1709228390; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WCq+3vWtONMZUCcchixRvndD69tz6ABYgm5wv9T97ic=;
-        b=SUq+1qIFGJX2KSx7gOCeTyimDlKQLq0GTGlAM05sJHDPXcw4o8u9HahlDtGj6Pjqem
-         xNipopXVFWGha260DWAkgbdcb6DE180aHBVXX3QbWPTLGbxd8dj1E8W/Qu4GE2PljXEl
-         Ga78hJWd4yBV7F6fKSAz2NHoVt1PV5ZyP46zwD1Fz//7jbaoi4lYu4oWDyl5hNcbPqka
-         NBi/scXvxTYGVPxr89quvOJL9fq8cQt5AjcebgU3uCDhFKPcbF2eijwnkNUTN+hi1/bK
-         +nnypxKZUEmwrqPPbL+koZcXlt247YwPDjwHz8kld1LMuzeXGIOpezmjY9G9ovVgoxGP
-         mj+g==
+        bh=xhLjauiol2hX/CcN6wSXepYqvX9ekQ41OuBb1dZBQzE=;
+        b=dUwkbRo/zGxx9V4pg7lnXDNrH/12crjApNGm2Q2xxjqsQ+v2rB5nxiefqSxuwzocKA
+         tPk+QTnm059ZfEl8OMlD4HX4t/SXbXlNCWjgF6JrtQZGtQxi5RU1EL6TrkrOUCqRv3OQ
+         9gyIpXQ+v5N4M+94vhSUmF0KvWZb2yt17vuZAqWzjPIrSO+iexv8t2v/uO67m/LfsfyN
+         esQjijjIh3Vbp/mmBwdQ33ZloGSfJkMRqwHwAcN5ViPgLqwLLmHYlTzAbNfIIdL/YMds
+         pLR6uZTP63fLywonb6n6NerRM4xNZPTFhdCbkPf773R1g6dFdth7O04BUXl5Dp+b09gy
+         dfmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708623588; x=1709228388;
+        d=1e100.net; s=20230601; t=1708623590; x=1709228390;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WCq+3vWtONMZUCcchixRvndD69tz6ABYgm5wv9T97ic=;
-        b=rfauaqfyscTWaautkTCgMbsWSIbJ5RYVdkv5znphmnmkTZwCBe3RArgK/kNLCX9P69
-         ffLBpaxJMsTcxcItL7fA0RzDaELe/4+xvU4qa7zSm0SihJN7NbBnHxc8qS5pxQLubtG7
-         AFodHBjSU44KIf4OpGooHIAVzutatpTOpH7GHCMh+P2uAmn2wF2uKyFvnSBA1KxGdLza
-         hbgwAJ2hoFaaUH2Ar4V7vOO/xv19Cm1KxZ4kB1ROiTfRy6hOi/DTsxtC7NzvYfjmSZCR
-         jwofrWjbJCF3e5HhGh9ffCHJvkNQ6d1dUbZjo3c3LzQ5I6eomHod5BDlU0SXGKV881gH
-         ibow==
-X-Forwarded-Encrypted: i=1; AJvYcCU4vgPZ67znLh/3sN2gW9JwwKc0rerIEgZKm3IMPPPLhdmSMAJcviIxXtAmJHtYs2AgauR/8hdum9Bgw5VksQS1gE2cPQgF5zMjetdYFrfeAdc=
-X-Gm-Message-State: AOJu0Yy/TnCv6fIlYyEdTSgHr9MjKEQ6nmKw2UqHpYjLS1jygrWD3RI/
-	lXN1f3jjW6V5Z2UxXVa0gqlVQgmz6K+DM8FhWKKYQa4WJrE00ev1dmEj8A5ZCrY=
-X-Google-Smtp-Source: AGHT+IHYsjufxgrQOIaZKGAlBEgAe+E77c4mX2kxpmgTPbMZQuerhv+xRzMr0weawYHNzNvAJaqSlw==
-X-Received: by 2002:ac8:7e82:0:b0:42e:5791:3531 with SMTP id w2-20020ac87e82000000b0042e57913531mr1519017qtj.22.1708623587773;
-        Thu, 22 Feb 2024 09:39:47 -0800 (PST)
+        bh=xhLjauiol2hX/CcN6wSXepYqvX9ekQ41OuBb1dZBQzE=;
+        b=OtBzu2dtfffM+qDKA/5p6K9fF2EPtARkDU0WwhfP90hpcdF8ylLxkuGb6FC5r8KONW
+         4xhM/RDxksGPc7Erj4+wkIIzR5kcihFyYapGGqI0zOxsciiy8Aen3tn/EMzYgna4p9DU
+         SLuycWFjVDrTOX2441sEmYRlwb3frOG6FMa9r6y4zlivou0OOsSWwgV4WnfXofVqMWAJ
+         bmnV9DiJE6vKukwWlFJQi42Rm1nbj0ilNbw1wmzqqryS8cXWr1y3GObKFZa6N/s0uVwO
+         z6jD9nuSHJ2E6DasexkcUdhjMB+YETvRwTLycnjJ4pWvd2RVjTKYZkG8UawOC4UN5ko2
+         YN4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXuUlNeiXee7jFLKVVaUlkbQ0sntVzAYbV6lcBfYw4ZtU33gWlcS8jhnIMeiXXE+BYLNzbQ6WWUrLeXWfzZNCg0/oRr8SRy6p5S496csbg5SYM=
+X-Gm-Message-State: AOJu0YwSuS59iFoseSqUXrQYYIBGUqcC04u/pVxMkQ8kT6zN+NknErU2
+	+d4xAP9vSPbR1O4E1lJA088JUYQ8oI2rCihda9OsxgSIPLAi0zn/Kjv5+VDUNTk=
+X-Google-Smtp-Source: AGHT+IEp4MwFnGzbjUWvOKNS7CvUx1mMeLXTjvER84y2unxVOxwU99/U/wStbNygCnfZAxx//dKL9w==
+X-Received: by 2002:ac8:5b84:0:b0:42e:3bf2:89ce with SMTP id a4-20020ac85b84000000b0042e3bf289cemr5044762qta.49.1708623590514;
+        Thu, 22 Feb 2024 09:39:50 -0800 (PST)
 Received: from soleen.c.googlers.com.com (249.240.85.34.bc.googleusercontent.com. [34.85.240.249])
-        by smtp.gmail.com with ESMTPSA id f17-20020ac86ed1000000b0042e5ab6f24fsm259682qtv.7.2024.02.22.09.39.46
+        by smtp.gmail.com with ESMTPSA id f17-20020ac86ed1000000b0042e5ab6f24fsm259682qtv.7.2024.02.22.09.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 09:39:47 -0800 (PST)
+        Thu, 22 Feb 2024 09:39:50 -0800 (PST)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	alim.akhtar@samsung.com,
@@ -99,9 +99,9 @@ To: akpm@linux-foundation.org,
 	rientjes@google.com,
 	bagasdotme@gmail.com,
 	mkoutny@suse.com
-Subject: [PATCH v5 02/11] iommu/dma: use iommu_put_pages_list() to releae freelist
-Date: Thu, 22 Feb 2024 17:39:28 +0000
-Message-ID: <20240222173942.1481394-3-pasha.tatashin@soleen.com>
+Subject: [PATCH v5 05/11] iommu/io-pgtable-dart: use page allocation function provided by iommu-pages.h
+Date: Thu, 22 Feb 2024 17:39:31 +0000
+Message-ID: <20240222173942.1481394-6-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
 In-Reply-To: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
 References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
@@ -113,57 +113,118 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Free the IOMMU page tables via iommu_put_pages_list(). The page tables
-were allocated via iommu_alloc_* functions in architecture specific
-places, but are released in dma-iommu if the freelist is gathered during
-map/unmap operations into iommu_iotlb_gather data structure.
-
-Currently, only iommu/intel that does that.
+Convert iommu/io-pgtable-dart.c to use the new page allocation functions
+provided in iommu-pages.h., and remove unnecessary struct io_pgtable_cfg
+argument from __dart_alloc_pages().
 
 Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Janne Grunau <j@jannau.net>
+Acked-by: David Rientjes <rientjes@google.com>
+Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/iommu/dma-iommu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/iommu/io-pgtable-dart.c | 37 +++++++++++++--------------------
+ 1 file changed, 14 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 50ccc4f1ef81..fa0c4be79f9f 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -32,6 +32,7 @@
- #include <trace/events/swiotlb.h>
+diff --git a/drivers/iommu/io-pgtable-dart.c b/drivers/iommu/io-pgtable-dart.c
+index 74b1ef2b96be..ad28031e1e93 100644
+--- a/drivers/iommu/io-pgtable-dart.c
++++ b/drivers/iommu/io-pgtable-dart.c
+@@ -23,6 +23,7 @@
+ #include <linux/types.h>
  
- #include "dma-iommu.h"
+ #include <asm/barrier.h>
 +#include "iommu-pages.h"
  
- struct iommu_dma_msi_page {
- 	struct list_head	list;
-@@ -156,7 +157,7 @@ static void fq_ring_free_locked(struct iommu_dma_cookie *cookie, struct iova_fq
- 		if (fq->entries[idx].counter >= counter)
- 			break;
+ #define DART1_MAX_ADDR_BITS	36
  
--		put_pages_list(&fq->entries[idx].freelist);
-+		iommu_put_pages_list(&fq->entries[idx].freelist);
- 		free_iova_fast(&cookie->iovad,
- 			       fq->entries[idx].iova_pfn,
- 			       fq->entries[idx].pages);
-@@ -254,7 +255,7 @@ static void iommu_dma_free_fq_single(struct iova_fq *fq)
- 	int idx;
- 
- 	fq_ring_for_each(idx, fq)
--		put_pages_list(&fq->entries[idx].freelist);
-+		iommu_put_pages_list(&fq->entries[idx].freelist);
- 	vfree(fq);
+@@ -106,18 +107,12 @@ static phys_addr_t iopte_to_paddr(dart_iopte pte,
+ 	return paddr;
  }
  
-@@ -267,7 +268,7 @@ static void iommu_dma_free_fq_percpu(struct iova_fq __percpu *percpu_fq)
- 		struct iova_fq *fq = per_cpu_ptr(percpu_fq, cpu);
+-static void *__dart_alloc_pages(size_t size, gfp_t gfp,
+-				    struct io_pgtable_cfg *cfg)
++static void *__dart_alloc_pages(size_t size, gfp_t gfp)
+ {
+ 	int order = get_order(size);
+-	struct page *p;
  
- 		fq_ring_for_each(idx, fq)
--			put_pages_list(&fq->entries[idx].freelist);
-+			iommu_put_pages_list(&fq->entries[idx].freelist);
+ 	VM_BUG_ON((gfp & __GFP_HIGHMEM));
+-	p = alloc_pages(gfp | __GFP_ZERO, order);
+-	if (!p)
+-		return NULL;
+-
+-	return page_address(p);
++	return iommu_alloc_pages(gfp, order);
+ }
+ 
+ static int dart_init_pte(struct dart_io_pgtable *data,
+@@ -262,13 +257,13 @@ static int dart_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+ 
+ 	/* no L2 table present */
+ 	if (!pte) {
+-		cptep = __dart_alloc_pages(tblsz, gfp, cfg);
++		cptep = __dart_alloc_pages(tblsz, gfp);
+ 		if (!cptep)
+ 			return -ENOMEM;
+ 
+ 		pte = dart_install_table(cptep, ptep, 0, data);
+ 		if (pte)
+-			free_pages((unsigned long)cptep, get_order(tblsz));
++			iommu_free_pages(cptep, get_order(tblsz));
+ 
+ 		/* L2 table is present (now) */
+ 		pte = READ_ONCE(*ptep);
+@@ -419,8 +414,7 @@ apple_dart_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
+ 	cfg->apple_dart_cfg.n_ttbrs = 1 << data->tbl_bits;
+ 
+ 	for (i = 0; i < cfg->apple_dart_cfg.n_ttbrs; ++i) {
+-		data->pgd[i] = __dart_alloc_pages(DART_GRANULE(data), GFP_KERNEL,
+-					   cfg);
++		data->pgd[i] = __dart_alloc_pages(DART_GRANULE(data), GFP_KERNEL);
+ 		if (!data->pgd[i])
+ 			goto out_free_data;
+ 		cfg->apple_dart_cfg.ttbr[i] = virt_to_phys(data->pgd[i]);
+@@ -429,9 +423,10 @@ apple_dart_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
+ 	return &data->iop;
+ 
+ out_free_data:
+-	while (--i >= 0)
+-		free_pages((unsigned long)data->pgd[i],
+-			   get_order(DART_GRANULE(data)));
++	while (--i >= 0) {
++		iommu_free_pages(data->pgd[i],
++				 get_order(DART_GRANULE(data)));
++	}
+ 	kfree(data);
+ 	return NULL;
+ }
+@@ -439,6 +434,7 @@ apple_dart_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
+ static void apple_dart_free_pgtable(struct io_pgtable *iop)
+ {
+ 	struct dart_io_pgtable *data = io_pgtable_to_data(iop);
++	int order = get_order(DART_GRANULE(data));
+ 	dart_iopte *ptep, *end;
+ 	int i;
+ 
+@@ -449,15 +445,10 @@ static void apple_dart_free_pgtable(struct io_pgtable *iop)
+ 		while (ptep != end) {
+ 			dart_iopte pte = *ptep++;
+ 
+-			if (pte) {
+-				unsigned long page =
+-					(unsigned long)iopte_deref(pte, data);
+-
+-				free_pages(page, get_order(DART_GRANULE(data)));
+-			}
++			if (pte)
++				iommu_free_pages(iopte_deref(pte, data), order);
+ 		}
+-		free_pages((unsigned long)data->pgd[i],
+-			   get_order(DART_GRANULE(data)));
++		iommu_free_pages(data->pgd[i], order);
  	}
  
- 	free_percpu(percpu_fq);
+ 	kfree(data);
 -- 
 2.44.0.rc0.258.g7320e95886-goog
 
