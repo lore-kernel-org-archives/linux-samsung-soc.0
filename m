@@ -1,57 +1,57 @@
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACBE225A6
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 03:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5470222331
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 03:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708570970; cv=none; b=nyH43RQlx5mRg2KPqw9/Zwus9PXQmpjre+hHASIiYoLfdFsH7gdBYKp6Smz1eE7dBqnCfMCbPepNKuUBufX3veySWrm0ioWLz2WZTeyM/wdPKRK1q1gRs3C/8GGuarStJ2sCxjZ0o2/TlTbm+mFwf4/hKIHgOmJFhatGZEdSHns=
+	t=1708570971; cv=none; b=ipGi1E9GJ5qwSVzaqYcLk8YV5LDD/sWsjmquyk+ngCB5ZDoDBW89zcNZrCqzQTHzgnbBF93bAMdlqShx9Sfre9qJJamNsLpZSpgCIyl3xc7jjLN4apezGoj5Mz18cW26tXKIo48suLAmpf9uFleH3JE2qjE+bL9gNp1hoR7yXgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708570970; c=relaxed/simple;
-	bh=r6h1NTeFTkbjAGya8zua/jcWtSX1k++dA2oUrhCyAv0=;
+	s=arc-20240116; t=1708570971; c=relaxed/simple;
+	bh=ndooDbku8kIQaCfAwEvZLh2O8ok1jgIAYCDtodmMyoo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nxAuGItieNr0nwbCPPGJVO41DNNZKjSPjFSIkkl4zLk5CrwR6T7iacHlyjhH+sf+9A2PG8wvf/wUwrErnnKaUE4EQCkMMkSC2w+1zfLk5+rJLaXJ5JT8WKHs45R0eU3VufuuYfqYTBFVrZpagQiQA39k6ajOxjVT8y04m184BtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=scZRBduR; arc=none smtp.client-ip=209.85.167.182
+	 MIME-Version; b=VcX5xWI3OLMdlTOZ+mPH+UQsxTaJi2zRDeBFS1z2T2j9u3j/qRq1TWSxvbz2t+wRXoTRe9/xLekTvKAvpH+0CatIWLDH7UTPoCZB0wp0qOit2idpy5PEvERbKIycjxBCQhRL4GluUB/0HDJKzD/+ohA76yACTIxEt2Nfm8OxaV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z1k+yJGC; arc=none smtp.client-ip=209.85.167.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="scZRBduR"
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c1652613d3so1912360b6e.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 19:02:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z1k+yJGC"
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3bbc649c275so761158b6e.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Feb 2024 19:02:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708570967; x=1709175767; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708570966; x=1709175766; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7FVV9XkzNkckGF5r8p15gninEMa0F9j2UMwTU7X9t5U=;
-        b=scZRBduRa515C5gQ60zOEJASctFC4+FOyPMXT6OFTaWZQO0PNNlZIiFTHlD3b5spHU
-         o3uMSi7tWHsEhcUkWauWZXFGdI0F8Ef0g/X7VgrcM2789owNsubqrHKmH23xTDXYAGjv
-         T+Tl8+5oCOuXizo752X8sSyWGggGClU3LZyQ4+tsdZyLo8cX4DWurdvtNQ5Cr8TM7OOS
-         ph9b6zCZGRBylEhfYCp+I3ObpQGSwKNjYMle6jiM4Z0ISzKv722DHtzDLc/moZitLJ/S
-         P8RhQYG2BIlJp/EHA0j5AofZuUqbxhae+ohNzi2D2yYZKBd/avhcB3GV9i0Ko7gspTQo
-         a4uA==
+        bh=Xu/V/yIxxPTU9BuvQgksMezTJmyKx+N2w/iRf/Kb/uE=;
+        b=Z1k+yJGCKr6DrMRaXb/VQgPlOmQj7wxhpbi0p5W+TbIhpJT5xmpU3qqZF7HYxHrvfp
+         QjwKXeRignzavv1GoS4rWfQ9JzrbF/8IfOULjuMQKSZQNr09rnqmH82qGr1jnPE/NqSw
+         kBRRlku2YdNMsUjIsRwT7a8KrjRcHf91hEYhPLK6qi3wPSAhDmjYeZuGvnvT5X1+N7hi
+         pSmdozDMcfw/WSJPkQUOchUsFfQNn3fJbz9deRz7wXAY0et1pEudfBSpjH1EowI91634
+         xp/P9GUWa651OKm5NXsiluwGHZtRtk8lxLCWPNknQlia13ZDvPaQA+ee5+yjndyl3ONn
+         OVxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708570967; x=1709175767;
+        d=1e100.net; s=20230601; t=1708570966; x=1709175766;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7FVV9XkzNkckGF5r8p15gninEMa0F9j2UMwTU7X9t5U=;
-        b=dPwnasRzA0pT90ki1UyeUSLcWXT6ml81ER8V+EfxThWyNYVgM2oKURyz9IVdx98e63
-         Yf60ZNxusYCbgWr1/tcMV2kcBXuZFfBcF7zIYPgcuDWEM7aZc7OzRuMEhp9/MGNoE7ur
-         lLTrDwPsipTuz87u3aJ8KxfEIsSo6gO5xoFjCd5pg5hhLHpDmmjd2iPntjIhV8AHEZTO
-         5DhCf2LerEsOi+hjx1K8bmCjOQO+IGPawS9RHr9fZiWzr+95L1c78EWDdSZERClF0mPb
-         zkh61VIDe+2YAdiY5FMP+3FPgEMIXe7dYWpWcw4eSOy98rct6AvEhuyPt6LTJrA9xiE1
-         RrSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQEWYepzRqKjTXcON3iw0nKae1Ymm95+oBTmPDCVwr3yWjbu51OLERPTEa+lLKWwIlUMKaREoLbZqosxskmRA3oifgWsmdgbdQ2G5htoWWuSs=
-X-Gm-Message-State: AOJu0YzN5zVvEq/vmByViuqTSHhRISQMyOtqvB+O24CT4mQcbteBeA9o
-	sj1E/nkKVw+F+F2JOCMuySxDifXvNDUfEfwL23nKsakvZKW3gN+GTCS1swBlX7g=
-X-Google-Smtp-Source: AGHT+IFDqLwUZKoz0hGjxt5wtidJ2c+JHpOH/RWc0W4xfJqMkTkS0kRod9I9+S/Y+Pj5xpFpNXgpIg==
-X-Received: by 2002:a05:6808:1249:b0:3c1:7c2b:8d51 with SMTP id o9-20020a056808124900b003c17c2b8d51mr229612oiv.54.1708570967058;
-        Wed, 21 Feb 2024 19:02:47 -0800 (PST)
-Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id l26-20020aca191a000000b003c16b1d3862sm640909oii.50.2024.02.21.19.02.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=Xu/V/yIxxPTU9BuvQgksMezTJmyKx+N2w/iRf/Kb/uE=;
+        b=ipJApj4apun9ZMlpEHt0/mFaVVglHpDXRgmWHovuc46xhtO0eXHB5GRsZhNv8Amk5g
+         gzho7ZZVOoYYJVArqF7O1ui655wKa29mRJLwdSYvDYzmM7657ywMrEvXgOx5HjRODS3p
+         OyLIpqmTrAXYQLD5pFnCeuFzn6pMpE7krLa1fgm480ov3Y/ZL94vtXM+/F0m/lu8w0hJ
+         rscQjaVCaJpX8Zf6ZC1la/cBRw6k1Jyuem/UGAEN2yVOn359jTXsDeVSPo+9iHWDjnHj
+         WNp7HP0SgIg+H/NA27b477QvMNIHTJqUGFJcHSWu/m5b3Q/4bvyJ2Zj13UDQ5DAwx2Kb
+         YCmw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+iXhyAPm9Hz1Z0r2nATURuvWYzQ/N2Ozh2mYpT0XLvmsGp7D18NVxZbsqtGoolRHNfsWMc6scR9g6sZJ7K1v3bdDlmY/6rvSHzFwgeLTylJw=
+X-Gm-Message-State: AOJu0YxIZIUwqNvO5i2MZQus4+otD9gGku27r9KJ8jGYHYPmHzu/To6u
+	EXTJQC7xqB2Nw/jUxRyZh2qhPkYiiJpGgcAs79Chd81Tc16PQvI01ftbZt0zXBQ=
+X-Google-Smtp-Source: AGHT+IHPfXGtwYRjqJtRE72B3DjWSJUtuvJRZsdgap9ekkYqdlVlAd1Lwfog12HtnZSLtW81xSOjAg==
+X-Received: by 2002:a05:6808:1642:b0:3c0:4d21:e62a with SMTP id az2-20020a056808164200b003c04d21e62amr24604480oib.31.1708570966119;
         Wed, 21 Feb 2024 19:02:46 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id d28-20020a05680808fc00b003c16c9977d5sm587777oic.21.2024.02.21.19.02.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 19:02:45 -0800 (PST)
 From: Sam Protsenko <semen.protsenko@linaro.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -67,9 +67,9 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/15] clk: samsung: Implement manual PLL control for ARM64 SoCs
-Date: Wed, 21 Feb 2024 21:02:33 -0600
-Message-Id: <20240222030235.27815-14-semen.protsenko@linaro.org>
+Subject: [PATCH v2 12/15] clk: samsung: Add CPU clock support for Exynos850
+Date: Wed, 21 Feb 2024 21:02:32 -0600
+Message-Id: <20240222030235.27815-13-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240222030235.27815-1-semen.protsenko@linaro.org>
 References: <20240222030235.27815-1-semen.protsenko@linaro.org>
@@ -81,160 +81,266 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some ARM64 Exynos chips are capable to control PLL clocks automatically.
-For those chips, whether the PLL is controlled automatically or manually
-is chosen in PLL_CON1 register with next bits:
+Implement CPU clock control for Exynos850 SoC. It follows the same
+procedure which is already implemented for other SoCs in clk-cpu.c:
 
-    [28]  ENABLE_AUTOMATIC_CLKGATING
-    [1]   MANUAL_PLL_CTRL
-    [0]   AUTO_PLL_CTRL
+1. Set the correct rate for the alternate parent (if needed) before
+   switching to use it as the CPU clock
+2. Switch to the alternate parent, so the CPU continues to get clocked
+   while the PLL is being re-configured
+3. Adjust the dividers for the CPU related buses (ACLK, ATCLK, etc)
+4. Re-configure the PLL for the new CPU clock rate. It's done
+   automatically, as the CPU clock rate change propagates to the PLL
+   clock, because the CPU clock has CLK_SET_RATE_PARENT flag set in
+   exynos_register_cpu_clock()
+5. Once the PLL is locked, set it back as the CPU clock source
+6. Set alternate parent clock rate back to max speed
 
-The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
-which means any attempt to control those PLLs manually (e.g.
-disabling/enabling those PLLs or changing MUX parent clocks) would lead
-to PLL lock timeout with error message like this:
+As in already existing clk-cpu.c code, the divider and mux clocks are
+configured in a low-level fashion (using direct register access instead
+of CCF API), to avoid affecting how DIV and MUX clock flags are declared
+in the actual clock driver (clk-exynos850.c).
 
-    Could not lock PLL ...
-
-At the moment, all Samsung clock drivers implement manual clock control.
-So in order to make it possible to control PLLs, corresponding PLL_CON1
-registers should be set to 0x2 first.
-
-Some older ARM64 chips don't implement the automatic clock control
-though. It also might be desirable to configure some PLLs for manual
-control, while keeping the default configuration for the rest. So it'd
-convenient to choose this PLL mode for each CMU separately. Introduce
-.manual_plls field to CMU structure to choose the PLL control mode.
-Because it'll be initialized with "false" in all existing CMU
-structures by default, it won't affect any existing clock drivers,
-allowing for this feature to be enabled gradually when it's needed with
-no change for the rest of users. In case .manual_plls is set, set
-PLL_CON1 registers to manual control, akin to what's already done for
-gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
-should be added to corresponding struct samsung_cmu_info::clk_regs array
-to make sure they get initialized.
-
-No functional change. This patch adds a feature, but doesn't enable it
-for any users.
+No functional change. This patch adds support for Exynos850 CPU clock,
+but doesn't enable it per se.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v2:
-  - none
+  - Changed .ctrl_base field to .base, to reflect changes made in
+    previous commits
 
- drivers/clk/samsung/clk-exynos-arm64.c | 44 +++++++++++++++++---------
- drivers/clk/samsung/clk.h              |  4 +++
- 2 files changed, 33 insertions(+), 15 deletions(-)
+ drivers/clk/samsung/clk-cpu.c | 183 ++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-cpu.h |   4 +
+ 2 files changed, 187 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
-index 6fb7194df7ab..55490209b9a9 100644
---- a/drivers/clk/samsung/clk-exynos-arm64.c
-+++ b/drivers/clk/samsung/clk-exynos-arm64.c
-@@ -25,6 +25,19 @@
- #define GATE_OFF_START		0x2000
- #define GATE_OFF_END		0x2fff
- 
-+/* PLL CON register offsets range */
-+#define PLL_CON_START		0x100
-+#define PLL_CON_END		0x600
-+
-+/* PLL register bits */
-+#define PLL_CON1_MANUAL		BIT(1)
-+
-+/* Helper macros to check for particular clock regiter by its offset */
-+#define IS_GATE_REG(o)		((o) >= GATE_OFF_START && (o) <= GATE_OFF_END)
-+#define IS_PLL_CONx_REG(o)	((o) >= PLL_CON_START && (o) <= PLL_CON_END)
-+#define IS_PLL_CON1_REG(o)	\
-+	(IS_PLL_CONx_REG(o) && ((o) & 0xf) == 0x4 && !((o) & 0x10))
-+
- struct exynos_arm64_cmu_data {
- 	struct samsung_clk_reg_dump *clk_save;
- 	unsigned int nr_clk_save;
-@@ -40,15 +53,16 @@ struct exynos_arm64_cmu_data {
- 
- /**
-  * exynos_arm64_init_clocks - Set clocks initial configuration
-- * @np:			CMU device tree node with "reg" property (CMU addr)
-- * @reg_offs:		Register offsets array for clocks to init
-- * @reg_offs_len:	Number of register offsets in reg_offs array
-+ * @np:		CMU device tree node with "reg" property (CMU addr)
-+ * @cmu:	CMU data
-  *
-- * Set manual control mode for all gate clocks.
-+ * Set manual control mode for all gate and PLL clocks.
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 89b24fd5d0a9..34c195a980b2 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -29,6 +29,7 @@
+  * down in order to keep the output clock rate within the previous OPP limits.
   */
- static void __init exynos_arm64_init_clocks(struct device_node *np,
--		const unsigned long *reg_offs, size_t reg_offs_len)
-+					    const struct samsung_cmu_info *cmu)
- {
-+	const unsigned long *reg_offs = cmu->clk_regs;
-+	size_t reg_offs_len = cmu->nr_clk_regs;
- 	void __iomem *reg_base;
- 	size_t i;
  
-@@ -60,14 +74,14 @@ static void __init exynos_arm64_init_clocks(struct device_node *np,
- 		void __iomem *reg = reg_base + reg_offs[i];
- 		u32 val;
- 
--		/* Modify only gate clock registers */
--		if (reg_offs[i] < GATE_OFF_START || reg_offs[i] > GATE_OFF_END)
--			continue;
--
--		val = readl(reg);
--		val |= GATE_MANUAL;
--		val &= ~GATE_ENABLE_HWACG;
--		writel(val, reg);
-+		if (cmu->manual_plls && IS_PLL_CON1_REG(reg_offs[i])) {
-+			writel(PLL_CON1_MANUAL, reg);
-+		} else if (IS_GATE_REG(reg_offs[i])) {
-+			val = readl(reg);
-+			val |= GATE_MANUAL;
-+			val &= ~GATE_ENABLE_HWACG;
-+			writel(val, reg);
-+		}
- 	}
- 
- 	iounmap(reg_base);
-@@ -177,7 +191,7 @@ void __init exynos_arm64_register_cmu(struct device *dev,
- 		pr_err("%s: could not enable bus clock %s; err = %d\n",
- 		       __func__, cmu->clk_name, err);
- 
--	exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+	exynos_arm64_init_clocks(np, cmu);
- 	samsung_cmu_register_one(np, cmu);
++#include <linux/delay.h>
+ #include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+@@ -397,6 +398,178 @@ static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	return 0;
  }
  
-@@ -224,7 +238,7 @@ int __init exynos_arm64_register_cmu_pm(struct platform_device *pdev,
- 		       __func__, cmu->clk_name, ret);
- 
- 	if (set_manual)
--		exynos_arm64_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+		exynos_arm64_init_clocks(np, cmu);
- 
- 	reg_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(reg_base))
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index a763309e6f12..a70bd7cce39f 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -330,6 +330,7 @@ struct samsung_clock_reg_cache {
-  * @suspend_regs: list of clock registers to set before suspend
-  * @nr_suspend_regs: count of clock registers in @suspend_regs
-  * @clk_name: name of the parent clock needed for CMU register access
-+ * @manual_plls: Enable manual control for PLL clocks
-  */
- struct samsung_cmu_info {
- 	const struct samsung_pll_clock *pll_clks;
-@@ -354,6 +355,9 @@ struct samsung_cmu_info {
- 	const struct samsung_clk_reg_dump *suspend_regs;
- 	unsigned int nr_suspend_regs;
- 	const char *clk_name;
++/* ---- Exynos850 ----------------------------------------------------------- */
 +
-+	/* ARM64 Exynos CMUs */
-+	bool manual_plls;
++#define E850_DIV_RATIO_MASK	GENMASK(3, 0)
++#define E850_BUSY_MASK		BIT(16)
++
++/* Max time for divider or mux to stabilize, usec */
++#define E850_DIV_MUX_STAB_TIME	100
++/* OSCCLK clock rate, Hz */
++#define E850_OSCCLK		(26 * MHZ)
++
++/**
++ * struct exynos850_cpuclk_regs - Register offsets for Exynos850 CPU clocks
++ * @mux:		offset of MUX register for choosing CPU clock source
++ * @divs:		offsets of DIV registers (ACLK, ATCLK, PCLKDBG and
++ *			PERIPHCLK)
++ */
++struct exynos850_cpuclk_regs {
++	u32 mux;
++	u32 divs[4];
++};
++
++static const struct exynos850_cpuclk_regs e850cl0_cpuclk_regs = {
++	.mux	= 0x100c,
++	.divs	= { 0x1800, 0x1808, 0x180c, 0x1810 },
++};
++
++static const struct exynos850_cpuclk_regs e850cl1_cpuclk_regs = {
++	.mux	= 0x1000,
++	.divs	= { 0x1800, 0x1808, 0x180c, 0x1810 },
++};
++
++/*
++ * Set alternate parent rate to "rate" value or less.
++ *
++ * rate: Desired alt_parent rate, or 0 for max alt_parent rate
++ *
++ * Exynos850 doesn't have CPU clock divider in CMU_CPUCLx block (CMUREF divider
++ * doesn't affect CPU speed). So CPUCLx_SWITCH divider from CMU_TOP is used
++ * instead to adjust alternate parent speed.
++ *
++ * It's possible to use clk_set_max_rate() instead of this function, but it
++ * would set overly pessimistic rate values to alternate parent.
++ */
++static int exynos850_alt_parent_set_max_rate(const struct clk_hw *alt_parent,
++					     unsigned long rate)
++{
++	struct clk_hw *clk_div, *clk_divp;
++	unsigned long divp_rate, div_rate, div;
++	int ret;
++
++	/* Divider from CMU_TOP */
++	clk_div = clk_hw_get_parent(alt_parent);
++	if (!clk_div)
++		return -ENOENT;
++	/* Divider's parent from CMU_TOP */
++	clk_divp = clk_hw_get_parent(clk_div);
++	if (!clk_divp)
++		return -ENOENT;
++	/* Divider input rate */
++	divp_rate = clk_hw_get_rate(clk_divp);
++	if (!divp_rate)
++		return -EINVAL;
++
++	/* Calculate new alt_parent rate for integer divider value */
++	if (rate == 0)
++		div = 1;
++	else
++		div = DIV_ROUND_UP(divp_rate, rate);
++	div_rate = DIV_ROUND_UP(divp_rate, div);
++	WARN_ON(div >= MAX_DIV);
++
++	/* alt_parent will propagate this change up to the divider */
++	ret = clk_set_rate(alt_parent->clk, div_rate);
++	if (ret)
++		return ret;
++	udelay(E850_DIV_MUX_STAB_TIME);
++
++	return 0;
++}
++
++/* Handler for pre-rate change notification from parent clock */
++static int exynos850_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
++					    struct exynos_cpuclk *cpuclk)
++{
++	const unsigned int shifts[4] = { 16, 12, 8, 4 }; /* E850_CPU_DIV0() */
++	const struct exynos850_cpuclk_regs * const regs = cpuclk->chip->regs;
++	const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
++	const struct clk_hw *alt_parent = cpuclk->alt_parent;
++	void __iomem *base = cpuclk->base;
++	unsigned long alt_prate = clk_hw_get_rate(alt_parent);
++	unsigned long flags;
++	u32 mux_reg;
++	size_t i;
++	int ret;
++
++	/* No actions are needed when switching to or from OSCCLK parent */
++	if (ndata->new_rate == E850_OSCCLK || ndata->old_rate == E850_OSCCLK)
++		return 0;
++
++	/* Find out the divider values to use for clock data */
++	while ((cfg_data->prate * 1000) != ndata->new_rate) {
++		if (cfg_data->prate == 0)
++			return -EINVAL;
++		cfg_data++;
++	}
++
++	/*
++	 * If the old parent clock speed is less than the clock speed of
++	 * the alternate parent, then it should be ensured that at no point
++	 * the armclk speed is more than the old_prate until the dividers are
++	 * set.  Also workaround the issue of the dividers being set to lower
++	 * values before the parent clock speed is set to new lower speed
++	 * (this can result in too high speed of armclk output clocks).
++	 */
++	if (alt_prate > ndata->old_rate || ndata->old_rate > ndata->new_rate) {
++		unsigned long tmp_rate = min(ndata->old_rate, ndata->new_rate);
++
++		ret = exynos850_alt_parent_set_max_rate(alt_parent, tmp_rate);
++		if (ret)
++			return ret;
++	}
++
++	spin_lock_irqsave(cpuclk->lock, flags);
++
++	/* Select the alternate parent */
++	mux_reg = readl(base + regs->mux);
++	writel(mux_reg | 1, base + regs->mux);
++	wait_until_mux_stable(base + regs->mux, 16, 1, 0);
++
++	/* Alternate parent is active now. Set the dividers */
++	for (i = 0; i < ARRAY_SIZE(shifts); ++i) {
++		unsigned long div = (cfg_data->div0 >> shifts[i]) & 0xf;
++		u32 val;
++
++		val = readl(base + regs->divs[i]);
++		val = (val & ~E850_DIV_RATIO_MASK) | div;
++		writel(val, base + regs->divs[i]);
++		wait_until_divider_stable(base + regs->divs[i], E850_BUSY_MASK);
++	}
++
++	spin_unlock_irqrestore(cpuclk->lock, flags);
++
++	return 0;
++}
++
++/* Handler for post-rate change notification from parent clock */
++static int exynos850_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
++					     struct exynos_cpuclk *cpuclk)
++{
++	const struct exynos850_cpuclk_regs * const regs = cpuclk->chip->regs;
++	const struct clk_hw *alt_parent = cpuclk->alt_parent;
++	void __iomem *base = cpuclk->base;
++	unsigned long flags;
++	u32 mux_reg;
++
++	/* No actions are needed when switching to or from OSCCLK parent */
++	if (ndata->new_rate == E850_OSCCLK || ndata->old_rate == E850_OSCCLK)
++		return 0;
++
++	spin_lock_irqsave(cpuclk->lock, flags);
++
++	/* Select main parent (PLL) for mux */
++	mux_reg = readl(base + regs->mux);
++	writel(mux_reg & ~1, base + regs->mux);
++	wait_until_mux_stable(base + regs->mux, 16, 1, 0);
++
++	spin_unlock_irqrestore(cpuclk->lock, flags);
++
++	/* Set alt_parent rate back to max */
++	return exynos850_alt_parent_set_max_rate(alt_parent, 0);
++}
++
+ /* -------------------------------------------------------------------------- */
+ 
+ /* Common round rate callback usable for all types of CPU clocks */
+@@ -459,6 +632,16 @@ static const struct exynos_cpuclk_chip exynos_clkcpu_chips[] = {
+ 		.pre_rate_cb	= exynos5433_cpuclk_pre_rate_change,
+ 		.post_rate_cb	= exynos5433_cpuclk_post_rate_change,
+ 	},
++	[CPUCLK_LAYOUT_E850_CL0] = {
++		.regs		= &e850cl0_cpuclk_regs,
++		.pre_rate_cb	= exynos850_cpuclk_pre_rate_change,
++		.post_rate_cb	= exynos850_cpuclk_post_rate_change,
++	},
++	[CPUCLK_LAYOUT_E850_CL1] = {
++		.regs		= &e850cl1_cpuclk_regs,
++		.pre_rate_cb	= exynos850_cpuclk_pre_rate_change,
++		.post_rate_cb	= exynos850_cpuclk_post_rate_change,
++	},
  };
  
- struct samsung_clk_provider *samsung_clk_init(struct device *dev,
+ /* helper function to register a CPU clock */
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index 4382ab005ad3..892843611b0a 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -17,10 +17,14 @@
+  * enum exynos_cpuclk_layout - CPU clock registers layout compatibility
+  * @CPUCLK_LAYOUT_E4210: Exynos4210 compatible layout
+  * @CPUCLK_LAYOUT_E5433: Exynos5433 compatible layout
++ * @CPUCLK_LAYOUT_E850_CL0: Exynos850 cluster 0 compatible layout
++ * @CPUCLK_LAYOUT_E850_CL1: Exynos850 cluster 1 compatible layout
+  */
+ enum exynos_cpuclk_layout {
+ 	CPUCLK_LAYOUT_E4210,
+ 	CPUCLK_LAYOUT_E5433,
++	CPUCLK_LAYOUT_E850_CL0,
++	CPUCLK_LAYOUT_E850_CL1,
+ };
+ 
+ /**
 -- 
 2.39.2
 
