@@ -1,97 +1,77 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6678611C84
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Feb 2024 05:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694D75C90C;
+	Fri, 23 Feb 2024 12:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708666642; cv=none; b=rK0c56ZQ5RCBdnmm+axLOysZS34TTFYcFjqd0ceX+v/r7UH1MxIP+MoOFwE2v167PagGUBikxhmMsM3KQKcidXq/DBopWmiNP9XAP54V0ZEIO5dQwqjiAeGzpah6ZsV/iZz2GRiUDEmxXMCLmQA9FNetfZrgw+u6ZPnU7L5tB8I=
+	t=1708690564; cv=none; b=FVE5LOxGkozSS8G1bjL1zpWdyLLMpu4teT7RGtw+U4m549lJVnCJt740e/JMyiEV+CuzldpvV2+JGYn15JMvrntuCCc6mS1CEm352HopHiTNNJiR7lo0e/Nxi0/40MCsmmgVG9q6pfmzkQ1XqwtzeaoeH6uxdD/CrCXkxaDgWys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708666642; c=relaxed/simple;
-	bh=pwC8vXe2BEi1HayfXlFAjE1clRdM+GtLEtZzzi5L3ug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FV0D6eWGfONttISQiTJMKeR30d8AKc4C/0A3z8Bhkehe8eNS9Hlb7WlStpFHW1IjcsigUKV5/+qE8PPgjUdWH3nfna9h4JRevj1HoVaj+q0quR7CGm/6M2IPEOtFh8WXP+2HuCt833vHY05deHz3HbOnuCm+rHYs/qnAx2+syhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=axldeQhc; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708690564; c=relaxed/simple;
+	bh=JCFDC8egWyXQb7HABdNFJAfvo0AUNIyjCWnepDQI21c=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CKtNHIMj9xNxddcNQ4oHyJlR3Q4GVE5xdoaLOsfUnJGAEyc8T6ohTBNwqj5p2DnhODOyxCFz0ymCb5T12+qMDE/Y+hN93lSB4XUwkRCDjCV7KPT8DBEgn7r+vr94bwDkbH5+q7FWRHvYJbPQAzXmVuB5XhKoJVWQ2bRl74RthWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwAAV5G0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="axldeQhc"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55f50cf2021so544525a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Feb 2024 21:37:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708666639; x=1709271439; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PIjIrdX9a/D0bdP757W9xJG0ACMGs6E8sBOLS8lO3g0=;
-        b=axldeQhcVjNNYQBYR9nxXZrGYuLtATUJBaiJsVwdK4zH3b0jisD0gJ0iEPzdIs7ELD
-         XT9PaEhQxYxdeiR6plOThQPskBCHtkIy3z8jqbBc/NoKtkvAcA3Xth/GH++3nospiL/y
-         CNhthpe8+m2Uw0VIsu9F6dx0176hsLg4gQcKSThLZ6+b24mxqd98dveWkllWdff7GgXP
-         ucpnHyKahUotliUFcQREpEzYqgNJMkW6e0e1obluq+eBixdBDQsTfKkodKeOSXFQpBWq
-         IMWoRdyheaW6P9xqxYe98FjFTW+kDUT2+IgzjSrc1rM2ALaK6HXqi9LnDdTxF/ulCFf3
-         i5Ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708666639; x=1709271439;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PIjIrdX9a/D0bdP757W9xJG0ACMGs6E8sBOLS8lO3g0=;
-        b=OHr/uXhQYld6O67EB9NJmU05caUzKDC8xdkZoxoj4PXK0d2x7Pi2CkKpkHdlvgSTWx
-         nODHx7KP/tSX4iGRmOUg/WxQid29VZ3iVn8GENiymHHosDbHQWrzz/Nngx/NpHoiWbz8
-         WiCLOz5167uTut3Ka6IEkcKbg8MZTvVL6r2ocRejgvzI4aP22BV2BMa15cz7DC6teJJW
-         ypzlQoqyOAGIb5LwGF8Kvkjsm3Lt4Kt1M6pNwWoeXcBv/ElgrKk7vcG7q1t/WihFFyIk
-         3Wn87SClXhFY1as5XfCZxvrhDWKKelcXK1o8O9x+gQBQ4gp6d457XSB/sl4vRlwt5sRR
-         uOCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBnLH0tUTJeec6gp2QAAxGoBIJUd/NtDyEKoLuE0V+ifFz9gFzYnEGAJCONCz0vfTyUPrZCKqVCkf3oVN35EkVBCr0WEh+LRxwJwBtNOGk7bI=
-X-Gm-Message-State: AOJu0YzyCWN0jXTiUzDLomeTVJflTMn6JPJ27WukNsUDP8jIwr9iqbhl
-	Um6gHRo4YEd7bAUWW5ySSf6K95dFusdYeJ6xF7SZ5/x3+uBRz/cK23zT8gVcShU=
-X-Google-Smtp-Source: AGHT+IHp9u8FcNkO7Rs60RgvxCzXLWbsMKeEEJK3FbSEtsuAsk96erfXlX+cVzs0qQgntOe2IKaKhw==
-X-Received: by 2002:a17:906:e0c:b0:a3f:9df3:2a4f with SMTP id l12-20020a1709060e0c00b00a3f9df32a4fmr469558eji.9.1708666638805;
-        Thu, 22 Feb 2024 21:37:18 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.202])
-        by smtp.gmail.com with ESMTPSA id li14-20020a170907198e00b00a3fc82c49afsm203202ejc.215.2024.02.22.21.37.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Feb 2024 21:37:18 -0800 (PST)
-Message-ID: <115e1e9f-2067-41f4-8642-43e9d6819798@linaro.org>
-Date: Fri, 23 Feb 2024 05:37:15 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwAAV5G0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02934C433C7;
+	Fri, 23 Feb 2024 12:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708690563;
+	bh=JCFDC8egWyXQb7HABdNFJAfvo0AUNIyjCWnepDQI21c=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=iwAAV5G0xRLinAtkNwS/UDub21NcNA/YD1kSoIhSJS+aJCIHz/rumU3D1Lenn5wnk
+	 HkGxD26tSsFekC+CXQG5DAxyM5Nzw7ypVnkoX0qMWTFo45T7vyZh1ulJdmcw6I6vSI
+	 UJ6q6aPRVM14waxuS1UmjG5fRjGbU95J8syQO6PWLp28QwLU5RigoqYeGbzTnehotR
+	 OZnD6ewlC3ECto1MNL2V+wyAZ3smxhQ8ivngTmijPejLtLKy0AU+B7T3E2jt7ju1IV
+	 UjCjpAXG60xgL49D4fBUMAYJ90iueYRNijtk1m0BQrN7+M/KilrjgPT1EIM/oblm0X
+	 /pGqEA5bFmyQw==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ netdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240217093937.58234-1-krzysztof.kozlowski@linaro.org>
+References: <20240217093937.58234-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] phy: constify of_phandle_args in xlate
+Message-Id: <170869055762.530534.10335046810476136989.b4-ty@kernel.org>
+Date: Fri, 23 Feb 2024 17:45:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] ARM: dts: samsung: specify the SPI FIFO depth
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- Mark Brown <broonie@kernel.org>
-Cc: alim.akhtar@samsung.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, andi.shyti@kernel.org,
- semen.protsenko@linaro.org, kernel-team@android.com,
- willmcvicker@google.com, andre.draszik@linaro.org, peter.griffin@linaro.org
-References: <20240216140449.2564625-1-tudor.ambarus@linaro.org>
- <be85edb1-4f65-4b5e-a137-76e4e92d8fe4@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <be85edb1-4f65-4b5e-a137-76e4e92d8fe4@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.3
 
 
-
-On 2/22/24 08:49, Krzysztof Kozlowski wrote:
-> On 16/02/2024 15:04, Tudor Ambarus wrote:
->> Bindings patch sent but not yet integrated:
->> https://lore.kernel.org/linux-spi/20240216070555.2483977-2-tudor.ambarus@linaro.org/
+On Sat, 17 Feb 2024 10:39:37 +0100, Krzysztof Kozlowski wrote:
+> The xlate callbacks are supposed to translate of_phandle_args to proper
+> provider without modifying the of_phandle_args.  Make the argument
+> pointer to const for code safety and readability.
 > 
-> I still wait for bindings to be applied. This means it might be too late
-> to apply it for this cycle. Just letting you know, that I did not forget
-> about this patchset.
 > 
 
-Thanks, Krzysztof, no worries. I'll reply here once Mark queues the
-bindings.
+Applied, thanks!
 
-Cheers,
-ta
+[1/1] phy: constify of_phandle_args in xlate
+      commit: 00ca8a15dafa990d391abc37f2b8256ddf909b35
+
+Best regards,
+-- 
+~Vinod
+
+
