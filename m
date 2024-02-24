@@ -1,156 +1,240 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEB64C635
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 19:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302D54CDEB
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 20:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708804669; cv=none; b=iaPXV7L8kVtPzwAhY9cQE71YpTDWV4uo678ZDVr0g9KM/mxGj8EBeMGyXttv+em62z7ea2Vb3BceWsCbtzIXBixGXFI1K8BoRjNjMNboQeqN2z8rITxiDgwRmk2s3CQiczWF4PCON9Of+bW0SlRQrnaSVwoAG5S3i379Rs0518o=
+	t=1708806057; cv=none; b=AMOF/taFeQUoJlHIHWNVjc/Q83hbh2ygAF63oQr15V5yZmXGreEv///CkjpD0hxOo8S2Q3xUGi1k5ynixWbbE4p9u2XzHDE6ME8xc1Jh0kwc+f5GlDV2i19D+WA/a90rTF0eEhF4nVtU8TDuFExfGTtFDk+ncltcv4YoqaCT9f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708804669; c=relaxed/simple;
-	bh=QT98gB0MamXu+48RZNGJKHHUP35XArdtMZSyttKyeqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RBKjNS2QvWBA0yo2JL9lQuetZT9V6BjTUQcEExwZWFOPRuqbWqoi+PoOUGmcXnnZM+OTSqmNHAtVj2jlVCpM6uM++87mk+fGcL1dOg4a223FhBF+TZhH+rVndTS17bZaRq9oQKQJW/DJbHLdFAE3uZrv/r3JOCkvJ6i8o9vibG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NAd4oJC2; arc=none smtp.client-ip=209.85.219.169
+	s=arc-20240116; t=1708806057; c=relaxed/simple;
+	bh=OhURSWM8+fuAVHhkszMUOwGry5e3K6VMP6vMpX968h0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=U89M+FGZYm5TDNFuD+ps4Se24MuDw0AdS7yX8EaKsRVLVbwjtSktYYX/0pwBQO99Da7SwulWY3WsZo7iIygPg+WZVLrv/0GwBDA24gNYIuq5Kfe+vj7E3zvadimAsNBFoLKdINtMuZt2GMi2qYroFTXDhg62vwcv/p3NldVMsiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LXnOPI4w; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NAd4oJC2"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dcbc00f6c04so1920651276.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 11:57:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXnOPI4w"
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6ddca59e336so1161137a34.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 12:20:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708804666; x=1709409466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1708806055; x=1709410855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3upkBSE7EW4IvTVy+GKTlfggEfeNrb15KBzrmzdqVsY=;
-        b=NAd4oJC2v0oLjR3kGoQO+AQEzFPHslNy3YRTisExxy+Usvy2yJdcVgOuoDax/aNm9N
-         p+iC1ALNpX9ejayOImmiGDpAnwavMnaU+IvwWWfI1Tw3imIcWtTCxRRBzOFRZgd1pgr4
-         FiG/1jNbqRLyqr11b8yTvs9VAQ1XzzZ16shc3cpA8hN9gcEMjdKJ/+taPko8QMXXbo4T
-         Xx72TUHuxwGtL58WOqAGIp5EscHc0r63w+2lG3q+tyvlKyPP0NvwxHBZQdLKet3salEF
-         5WgukKqjJTGgUluNq9TF1mTPssqzBLOM+W77RGvvKWbK0FBACpLFDwknQlPO3cwtcaMv
-         stOQ==
+        bh=Itgu/CZdB2adz5dOihNeRA11oIiQNAIilHhTarLaGhY=;
+        b=LXnOPI4wcHhWM0iUeHs2bGAvvsTSoMWPV00HsLUebi738YVCJHAIbdZPa27epBlW1T
+         iycZvEqmpyGGIlaqExYN4Uol46DbTwjef3kpCZ0uEEe2hzulxN/7aYiimL5rV9oyNPyg
+         kdAQK8qfo69VGLnCcbkdHwm5vYX75JzZoOilUblVDFFbBCcl4WCTdo4SoFbieCjGTnVe
+         qi9LyH3ICfGtkUUh6RVuNu2YhGm8JZHGcq0Ph0BRgWHWiDLr7GiV0RoiTarYN3g4bXJS
+         Uye3RM69rR4wcPzazDOTwL0Csb76AskY2F+O+RFpqu7CEWZzu7zsbp/hmEQu7YYkY6b4
+         bw+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708804666; x=1709409466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1708806055; x=1709410855;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3upkBSE7EW4IvTVy+GKTlfggEfeNrb15KBzrmzdqVsY=;
-        b=rV7JywKZS9VStE1rBeUhqDBsvHK0JL30dIw60b7TVTOQkkZU9NFX5tvYMRmcHUfUPN
-         PUufLIjS2tZCcXbdSmsiiTMUw28aL/Hh7jscU56WPQOaEDhZvJNhW09jQmN+9MDKBsR5
-         nQ23/ogGzjG4dHUsrKPK0pqcr/9+wZgLn43kIqBpBAyAkwH0uIWa4C7wA3QaQqyU8Rqc
-         Mf2Kf/NahL40b5fcZdD1n3AFM1QFDCjP5+aVykAD7br2NSPcoMxPVa2dyJIESRckUk8n
-         cKMpzydWXx8/eii1t+2gARz2wFugWo6wPHMWKe5Bx7ZtBam+soxmQUi/N+yDAfOiXeuL
-         KovQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNW+l5a0ayP7IxAYY0Afm/FKbRVHBxU+rCuobS1cQdhpzQTslcwE4++FM8HLA7XcJ0M0ZC6uLOy3EeFX0V1xfX5WCltRNWRw2cRz8g9hJxrEM=
-X-Gm-Message-State: AOJu0Yw6/Ip1lSRRZpncPOBTZ7opj9NQAfpkefqVOLPqWCURJHA8TXTY
-	cmRV2PzQrEzUvt2l7RgNHg0dGXz4exKBJFFeHxwx/dE3rhzqX9I0lPq7SbPCEeniiJA1yU0+Ds/
-	F4m53Yhss5rBHeSNUMUc2ugxyWn3Ob1tGfpF7lA==
-X-Google-Smtp-Source: AGHT+IF324Ij+0TdHaj23lio+sfs2T6+v3wM2ZIkq1lLEzIDLQ6B8M2LdAqBy5aPp7QJDr8vBzFvnBhEYhGDAHPSbIM=
-X-Received: by 2002:a25:abcf:0:b0:dc6:9ea9:8154 with SMTP id
- v73-20020a25abcf000000b00dc69ea98154mr2050724ybi.13.1708804666266; Sat, 24
- Feb 2024 11:57:46 -0800 (PST)
+        bh=Itgu/CZdB2adz5dOihNeRA11oIiQNAIilHhTarLaGhY=;
+        b=LUvmjsjFrbZ6U1ormPBPbGxzhP3LkoRq4fqccamoC7qcXoB7TZcLaL5hxzFtAN88Au
+         pSRZyX3T92jzXp7uPH1djvf6P/oK4mBY1jGTAd1kIFmfhzPq1pitPeHVU7m/5n8h2WWH
+         BZk3RonbRH8LVH4sLlIVVYP41z1Ky+3F1x0gKN/2cQsyfdRzPBWBTuBvnC2IJcbuxajO
+         Qz9BSiiHOcSVkECLI6KnPmUi8UR29Ytpo3B5S8gWnNx052JrpiDg73X9rmRe5vr0q2X5
+         H2crDg9cLx9YsJdzAYn2c0aPzAZsPjwF/OfeqQ0YG7oLb0bDx8npQDhlKFXo8Q/7LUye
+         JZAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUD0WcbqnjjRw9EVg9vKD8w9baRkm3sTr36N/7VM/M/W8Ag+Gsta6Bqj+d2+hgiA9231T2Xej/RMOBQL1NvLITCtCPodMaYdIBE7urfdAgc6y4=
+X-Gm-Message-State: AOJu0YzHWHi6uJ9VibcTbaZaWZkhSR/51RejniY2anGcseA2cXhU9NU/
+	FS8m9ev0WdlJXm6UWfrjgWer/CQkgbtg91JZmrMa9uPx2f/wMeJHTpYV59WR22A=
+X-Google-Smtp-Source: AGHT+IEaFdafQDxvOhqf7szlKBjLkGDFQh1IaD2JJ1F/oKaL+attengEbCt1ufEL8VF8J7YfxLkw5w==
+X-Received: by 2002:a9d:6045:0:b0:6e4:8c95:1ac9 with SMTP id v5-20020a9d6045000000b006e48c951ac9mr1050906otj.16.1708806055136;
+        Sat, 24 Feb 2024 12:20:55 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id m24-20020a4a2418000000b005a044f901c0sm454345oof.23.2024.02.24.12.20.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Feb 2024 12:20:54 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 01/15] dt-bindings: clock: exynos850: Add CMU_CPUCLK0 and CMU_CPUCL1
+Date: Sat, 24 Feb 2024 14:20:39 -0600
+Message-Id: <20240224202053.25313-2-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240224202053.25313-1-semen.protsenko@linaro.org>
+References: <20240224202053.25313-1-semen.protsenko@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240216223245.12273-1-semen.protsenko@linaro.org>
- <20240216223245.12273-12-semen.protsenko@linaro.org> <ce515530-428a-4a21-8c56-5a497cc8130a@linaro.org>
- <CAPLW+4=kpk=Vg=nX-hVxcCS0OttC6xmyUcB005tmX+vtUF9TLA@mail.gmail.com> <c4f7e3cb-db9b-48be-883e-33878d2510e8@linaro.org>
-In-Reply-To: <c4f7e3cb-db9b-48be-883e-33878d2510e8@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Sat, 24 Feb 2024 13:57:35 -0600
-Message-ID: <CAPLW+4kBHnLnPj0JKvdQ-Bm7DiEJ+_Ob-Cw60=vzwDwbOh4qOA@mail.gmail.com>
-Subject: Re: [PATCH 11/16] clk: samsung: Keep register offsets in chip
- specific structure
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 22, 2024 at 1:47=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 22/02/2024 01:42, Sam Protsenko wrote:
-> > On Tue, Feb 20, 2024 at 5:04=E2=80=AFAM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >>
-> >> On 16/02/2024 23:32, Sam Protsenko wrote:
-> >>> Abstract CPU clock registers by keeping their offsets in a dedicated
-> >>> chip specific structure to accommodate for oncoming Exynos850 support=
-,
-> >>> which has different offsets for cluster 0 and cluster 1. This rework
-> >>> also makes it possible to use exynos_set_safe_div() for all chips, so
-> >>> exynos5433_set_safe_div() is removed here to reduce the code
-> >>> duplication.
-> >>>
-> >>
-> >> So that's the answer why you could not use flags anymore - you need an
-> >> enum, not a bitmap. Such short explanation should be in previous commi=
-ts
-> >> justifying moving reg layout to new property.
-> >
-> > Will do, thanks.
-> >
-> >>
-> >>> No functional change.
-> >>>
-> >>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >>> ---
-> >>>  drivers/clk/samsung/clk-cpu.c | 156 +++++++++++++++++++-------------=
---
-> >>>  1 file changed, 86 insertions(+), 70 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-=
-cpu.c
-> >>> index 04394d2166c9..744b609c222d 100644
-> >>> --- a/drivers/clk/samsung/clk-cpu.c
-> >>> +++ b/drivers/clk/samsung/clk-cpu.c
-> >>> @@ -44,12 +44,14 @@ typedef int (*exynos_rate_change_fn_t)(struct clk=
-_notifier_data *ndata,
-> >>>
-> >>>  /**
-> >>>   * struct exynos_cpuclk_chip - Chip specific data for CPU clock
-> >>> + * @regs: register offsets for CPU related clocks
-> >>>   * @pre_rate_cb: callback to run before CPU clock rate change
-> >>>   * @post_rate_cb: callback to run after CPU clock rate change
-> >>>   */
-> >>>  struct exynos_cpuclk_chip {
-> >>> -     exynos_rate_change_fn_t pre_rate_cb;
-> >>> -     exynos_rate_change_fn_t post_rate_cb;
-> >>> +     const void                              * const regs;
-> >>
-> >> Why this is void?
-> >>
-> >
-> > Different chips can have very different register layout. For example,
-> > older Exynos chips usually keep multiple CPU divider ratios in one
-> > single register, whereas more modern chips have a dedicated register
-> > for each divider clock. Also, old chips usually split divider ratio vs
-> > DIV clock status between different registers, but in modern chips they
-> > both live in one single register. Having (void *) makes it possible to
-> > keep pointers to different structures, and each function for the
-> > particular chip can "know" which exactly structure is stored there,
-> > casting (void *) to a needed type. Another way to do that would be to
-> > have "one-size-fits-all" structure with all possible registers for all
-> > possible chips. I don't know, I just didn't like that for a couple of
-> > reasons, so decided to go with (void *).
-> >
-> > I'll add some explanation in the commit message in v2.
->
-> Currently the one-size-fits-all seems feasible, even if few fields are
-> not matching, so I would prefer to go this approach.
->
+Document CPU clock management unit compatibles and add corresponding
+clock indices. Exynos850 has two CPU clusters (CL0 and CL1), each
+containing 4 Cortex-A55 cores. CPU PLLs are generating main CPU clocks
+for each cluster, and there are alternate ("switch") clocks that can be
+used temporarily while re-configuring the PLL for the new rate. ACLK,
+ATCLK, PCLKDBG and PERIPHCLK clocks are driving corresponding buses.
+CLK_CLUSTERx_SCLK are actual leaf CPU clocks and should be used to
+change CPU rates. Also some CoreSight clocks can be derived from
+DBG_USER (debug clock).
 
-Sure, no problem. Will fix it in v3.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+Changes in v3:
+  - none
 
-> Best regards,
-> Krzysztof
->
+Changes in v2:
+  - none
+
+ .../clock/samsung,exynos850-clock.yaml        | 42 +++++++++++++++
+ include/dt-bindings/clock/exynos850.h         | 54 +++++++++++++++++++
+ 2 files changed, 96 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+index c752c8985a53..cdc5ded59fe5 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+@@ -36,6 +36,8 @@ properties:
+       - samsung,exynos850-cmu-aud
+       - samsung,exynos850-cmu-cmgp
+       - samsung,exynos850-cmu-core
++      - samsung,exynos850-cmu-cpucl0
++      - samsung,exynos850-cmu-cpucl1
+       - samsung,exynos850-cmu-dpu
+       - samsung,exynos850-cmu-g3d
+       - samsung,exynos850-cmu-hsi
+@@ -152,6 +154,46 @@ allOf:
+             - const: dout_core_mmc_embd
+             - const: dout_core_sss
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-cpucl0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CPUCL0 switch clock (from CMU_TOP)
++            - description: CPUCL0 debug clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_cpucl0_switch
++            - const: dout_cpucl0_dbg
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-cpucl1
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CPUCL1 switch clock (from CMU_TOP)
++            - description: CPUCL1 debug clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_cpucl1_switch
++            - const: dout_cpucl1_dbg
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+index bc15108aa3c2..7666241520f8 100644
+--- a/include/dt-bindings/clock/exynos850.h
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -88,6 +88,18 @@
+ #define CLK_MOUT_G3D_SWITCH		76
+ #define CLK_GOUT_G3D_SWITCH		77
+ #define CLK_DOUT_G3D_SWITCH		78
++#define CLK_MOUT_CPUCL0_DBG		79
++#define CLK_MOUT_CPUCL0_SWITCH		80
++#define CLK_GOUT_CPUCL0_DBG		81
++#define CLK_GOUT_CPUCL0_SWITCH		82
++#define CLK_DOUT_CPUCL0_DBG		83
++#define CLK_DOUT_CPUCL0_SWITCH		84
++#define CLK_MOUT_CPUCL1_DBG		85
++#define CLK_MOUT_CPUCL1_SWITCH		86
++#define CLK_GOUT_CPUCL1_DBG		87
++#define CLK_GOUT_CPUCL1_SWITCH		88
++#define CLK_DOUT_CPUCL1_DBG		89
++#define CLK_DOUT_CPUCL1_SWITCH		90
+ 
+ /* CMU_APM */
+ #define CLK_RCO_I3C_PMIC		1
+@@ -195,6 +207,48 @@
+ #define CLK_GOUT_CMGP_USI1_PCLK		14
+ #define CLK_GOUT_SYSREG_CMGP_PCLK	15
+ 
++/* CMU_CPUCL0 */
++#define CLK_FOUT_CPUCL0_PLL		1
++#define CLK_MOUT_PLL_CPUCL0		2
++#define CLK_MOUT_CPUCL0_SWITCH_USER	3
++#define CLK_MOUT_CPUCL0_DBG_USER	4
++#define CLK_MOUT_CPUCL0_PLL		5
++#define CLK_DOUT_CPUCL0_CPU		6
++#define CLK_DOUT_CPUCL0_CMUREF		7
++#define CLK_DOUT_CPUCL0_PCLK		8
++#define CLK_DOUT_CLUSTER0_ACLK		9
++#define CLK_DOUT_CLUSTER0_ATCLK		10
++#define CLK_DOUT_CLUSTER0_PCLKDBG	11
++#define CLK_DOUT_CLUSTER0_PERIPHCLK	12
++#define CLK_GOUT_CLUSTER0_ATCLK		13
++#define CLK_GOUT_CLUSTER0_PCLK		14
++#define CLK_GOUT_CLUSTER0_PERIPHCLK	15
++#define CLK_GOUT_CLUSTER0_SCLK		16
++#define CLK_GOUT_CPUCL0_CMU_CPUCL0_PCLK	17
++#define CLK_GOUT_CLUSTER0_CPU		18
++#define CLK_CLUSTER0_SCLK		19
++
++/* CMU_CPUCL1 */
++#define CLK_FOUT_CPUCL1_PLL		1
++#define CLK_MOUT_PLL_CPUCL1		2
++#define CLK_MOUT_CPUCL1_SWITCH_USER	3
++#define CLK_MOUT_CPUCL1_DBG_USER	4
++#define CLK_MOUT_CPUCL1_PLL		5
++#define CLK_DOUT_CPUCL1_CPU		6
++#define CLK_DOUT_CPUCL1_CMUREF		7
++#define CLK_DOUT_CPUCL1_PCLK		8
++#define CLK_DOUT_CLUSTER1_ACLK		9
++#define CLK_DOUT_CLUSTER1_ATCLK		10
++#define CLK_DOUT_CLUSTER1_PCLKDBG	11
++#define CLK_DOUT_CLUSTER1_PERIPHCLK	12
++#define CLK_GOUT_CLUSTER1_ATCLK		13
++#define CLK_GOUT_CLUSTER1_PCLK		14
++#define CLK_GOUT_CLUSTER1_PERIPHCLK	15
++#define CLK_GOUT_CLUSTER1_SCLK		16
++#define CLK_GOUT_CPUCL1_CMU_CPUCL1_PCLK	17
++#define CLK_GOUT_CLUSTER1_CPU		18
++#define CLK_CLUSTER1_SCLK		19
++
+ /* CMU_G3D */
+ #define CLK_FOUT_G3D_PLL		1
+ #define CLK_MOUT_G3D_PLL		2
+-- 
+2.39.2
+
