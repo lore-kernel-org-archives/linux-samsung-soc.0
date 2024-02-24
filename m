@@ -1,57 +1,57 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0767F4E1C9
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 20:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36F95102F
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 20:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708806066; cv=none; b=sDyTPPeBXntVrzTfdr+ABeA4kQdmRnnl3QNZYZUK/H+UM4IYZzAWz6RD2TNXvYTtEXLhEAg1cxcZyPocjiKdP/zgIknEajmwKgf0CygeHgyW0yDPGgBg0UxyWzVWpQ3Kht+8qwIRs3GDKpzqcDe/4Xu7F20YR2G0qX0TWKiDKkA=
+	t=1708806067; cv=none; b=nvP1/u3fX/4sFVXoh4x6cmVBsYzN4UOPoz002zoaBp4mENzEgSdmp5Yt+H8J6o6c1pKaLXWMTQruL0q9on9p72wOnfRc2DTk/2yx9pAeBHqN4txmhLARDdID/d3Rr8XN3OMC3WKYMEsb/QL5ebI37zFQ4JKEgY500Uc/zqFDTfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708806066; c=relaxed/simple;
-	bh=9SoRSzxWcGaydbHrFDSNHoHFdfw9AKcnZIpgUrABSWs=;
+	s=arc-20240116; t=1708806067; c=relaxed/simple;
+	bh=9IGEijDoQiVXlFlrlwF4bqCIQO/DVJF6uV65BmN5IJk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J9gTp/7jHy4gB4fU+Y5nIPFkOvEUnj+zH+JrO0C6W4sy4OTwzaOvLLLMKCz4Vn9nHnhtqJVMJnJZFqaRTzJobTerb6ESIlSJHvTvKkFTBW9r3TMXy7oJp0sQU8F1L65RAUD8xLZQdgPEme2FVOJIBIxs9Cg64lGMJOj8EzYyq+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qMqoYQjc; arc=none smtp.client-ip=209.85.210.45
+	 MIME-Version; b=ceKlKgsx/4N1nz4TnwICPxwGsETQkUil+CMGnIvw4cFTLiWmSHqTBlcc0gsc/n2zO0bOVo3SQ0wZ7zVygK+TJATGdOaQu/BIm3IncZFhpFTJuTAlwnGOemRs0SXi7T4byb2N1kRlCvihy6ejzFbvlDwFNIpgSyUi/8wQt+Krnw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jR201hfe; arc=none smtp.client-ip=209.85.167.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMqoYQjc"
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6ddca59e336so1161246a34.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 12:21:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jR201hfe"
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c18fc6a2faso530988b6e.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 Feb 2024 12:21:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708806063; x=1709410863; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708806064; x=1709410864; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jxynHCX6n2NFtKK18h8LwX8Im2S2Zjm5Bqoy0lY/gAg=;
-        b=qMqoYQjcM0+EZhrIXFTcImYo10vWsVnxqKJrNkIBbPjD9s/6860xni1sLr4DfW7pBO
-         YJcziO5e7ODz6E93D13CgHeYuc/4qNlfsEchulxLKMd++m8iMQVlGUEkGwmfcmQUbocz
-         hPpRfsUa7YQr9W0Lo7FfYgKCtGVOWN/6yI3WL/WcKJarpBtD5sRnCHm14E26brW0XnQ9
-         d0a2gg1IKTWw+xe1lDdlFqksPOWAbN24bZdo0loEqtdQg4D4LrmehDug4RZr4aFg7UVD
-         fnBaTios5IT+K7K5jV6P7QlhMXrD+CObSf9BeRWlLQ3c6TEu+O3DrVVmE08sdp6P1lxh
-         QESA==
+        bh=bRzpcpTlkocgklC/igIeXP7AAH24T8PbXBQTZ2YqBko=;
+        b=jR201hfe3oJ3bwb2wR25ocp7RuUVPuSglZ7EJB0ecgoDamrm+wyD/uV1SQD8IwSJUw
+         dkUdfm03NRjCNI0Utzs2xoMyiQpID5Jonx1WjZMYKceAsH8pqx6rRWJ5sq5gPSGSGjkZ
+         D4hd5G8MKzzWkuHG69iNb5DU2oOlw/+WP/ZZraxIVItIIzPiBTMLTxdWbSkd3gfTgtOQ
+         TG8ve8/fCfrMlfTKsfYmFEt1S8g+p3kRsdLQ/m5zaELsNuXl/H5mnaxj3XBEL+OHG228
+         vA9hqVvWqAPP5clDtCJ68/71QRzDCHZYK3uV3niT13hUUazPCWXxY0xDe6kaalDlb8cF
+         dsZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708806063; x=1709410863;
+        d=1e100.net; s=20230601; t=1708806064; x=1709410864;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jxynHCX6n2NFtKK18h8LwX8Im2S2Zjm5Bqoy0lY/gAg=;
-        b=PqH/m3tIa4jxJmZP+85ph0qIJJlR7qgpZWU7R7ptINXThPaL+vv6GLBIPwWcSBHF6q
-         VeXv/VgzrTTZYGqAkQGd5zBm2kFNMhQOdSJykE4stkPgDj7ghaAm3QYObgnHCVkzBlJd
-         7crY7e7VnucmuVGOylo9kM5AHyANIYekPYEQcquNzPsB8+RJFWdzaTp4KDG0kcoVnstT
-         3qQT9mOMvAauoGEM1Vr4DMkcr+tJLeys7iOEiGINFWicS1cDf3+ESn8Q5ZZLfkrwPVbA
-         FtPu+UsAiIHBepb+KuSSfUnzZb4Hq/BRWQYpG9TGrI3RagZk3zqQ7hJxVAKtM5BP4olj
-         A/uA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoD+wiylzeNCYwywjzORvsOLTYazwHpRwWZ2gmkFpYR/+OwsaW0Jfub6IBy0OW5EU586Mg0IrHYxnIggbfrZ6nD9VKc65SzvsPq/4cHBI+y0w=
-X-Gm-Message-State: AOJu0YwKdPSgAAUOqDcp2VieX9Gjcd/5OackCzt5lJl+5fcnP2xOSDFk
-	SafwKouOGJ2Tu//XIM+na47+yZrsfocCrISAJTaxNwjsYsz7hhg6ftUPp6PO88I=
-X-Google-Smtp-Source: AGHT+IFnDJ/rs9ipgn5drE3Y9e4JSbMKRailfOBMuRxXVrrb84Xu0Nn8Lvf8nI4GGCITh/z9FbQ+3w==
-X-Received: by 2002:a9d:4e93:0:b0:6e4:8456:c362 with SMTP id v19-20020a9d4e93000000b006e48456c362mr1406094otk.14.1708806062983;
-        Sat, 24 Feb 2024 12:21:02 -0800 (PST)
+        bh=bRzpcpTlkocgklC/igIeXP7AAH24T8PbXBQTZ2YqBko=;
+        b=eFecMsJqV/XeATzN+CI3E5LNZN6LhtFFV8x4u9MhEbO2zLv+1rBdr8gsIkTln2vpgN
+         lUXVTX9nZpOXyHIZvV2v/zr0o3JDlYPPowEIdbUE13P47qUT/EbCzwewENvA4XS+oLlm
+         +1wuo15NF7YAuKbPWN057U5e5oP+3b31/g5dfCOz7fDYqvWa9whS+Juy5cuo2oAXYSQu
+         TGdftyr3lLpJ+OBBPEo8gy3tHP1PwnaICXrgL75yCw45FpSe8Mi7JM4JuRiL6o0l7+0g
+         cGT7O0EZ3R7IK+W3VLWAWMMg63p0evw0edvGNDT8QfPlbUPehl3NjUirC223YH9tRynY
+         muzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX68UKYaklflRf7aNT3cCD19rZv4sWu64T8kWnlnwmmCnTU4uCuIQELqB2Y94AzRcDId7TtPBPQ9CYO5P830AJhm4OYy8d7MalAjSQPqVI57c=
+X-Gm-Message-State: AOJu0YzXaMW2xKsmxUdrwdu2fkS5JgUVPxmryYhPvQfb0FgSR9ZsUs7m
+	cdCSZg1kGr1XsnZhNMfp0MuEsOP/r9XDgvrl3GfaIHEttieAoTmADxdOyuaozyY=
+X-Google-Smtp-Source: AGHT+IHdr3BVt2CyrCrzGMJ5Kh3DUvKcHv+fa9gzXmAALOTHsIjD4YFJgQ0NSc7TzQkObjCSfABbYA==
+X-Received: by 2002:a54:448b:0:b0:3c1:377a:4641 with SMTP id v11-20020a54448b000000b003c1377a4641mr3051812oiv.24.1708806063814;
+        Sat, 24 Feb 2024 12:21:03 -0800 (PST)
 Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id n17-20020a4a3451000000b005a02b453ff8sm448112oof.45.2024.02.24.12.21.02
+        by smtp.gmail.com with ESMTPSA id bp4-20020a056808238400b003c19a459283sm132430oib.17.2024.02.24.12.21.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 12:21:02 -0800 (PST)
+        Sat, 24 Feb 2024 12:21:03 -0800 (PST)
 From: Sam Protsenko <semen.protsenko@linaro.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -67,9 +67,9 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/15] clk: samsung: Pass mask to wait_until_mux_stable()
-Date: Sat, 24 Feb 2024 14:20:49 -0600
-Message-Id: <20240224202053.25313-12-semen.protsenko@linaro.org>
+Subject: [PATCH v3 12/15] clk: samsung: Add CPU clock support for Exynos850
+Date: Sat, 24 Feb 2024 14:20:50 -0600
+Message-Id: <20240224202053.25313-13-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240224202053.25313-1-semen.protsenko@linaro.org>
 References: <20240224202053.25313-1-semen.protsenko@linaro.org>
@@ -81,83 +81,278 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make it possible to use wait_until_mux_stable() for MUX registers where
-the mask is different from MUX_MASK (e.g. in upcoming CPU clock
-implementation for Exynos850).
+Implement CPU clock control for Exynos850 SoC. It follows the same
+procedure which is already implemented for other SoCs in clk-cpu.c:
 
-No functional change.
+1. Set the correct rate for the alternate parent (if needed) before
+   switching to use it as the CPU clock
+2. Switch to the alternate parent, so the CPU continues to get clocked
+   while the PLL is being re-configured
+3. Adjust the dividers for the CPU related buses (ACLK, ATCLK, etc)
+4. Re-configure the PLL for the new CPU clock rate. It's done
+   automatically, as the CPU clock rate change propagates to the PLL
+   clock, because the CPU clock has CLK_SET_RATE_PARENT flag set in
+   exynos_register_cpu_clock()
+5. Once the PLL is locked, set it back as the CPU clock source
+6. Set alternate parent clock rate back to max speed
+
+As in already existing clk-cpu.c code, the divider and mux clocks are
+configured in a low-level fashion (using direct register access instead
+of CCF API), to avoid affecting how DIV and MUX clock flags are declared
+in the actual clock driver (clk-exynos850.c).
+
+No functional change. This patch adds support for Exynos850 CPU clock,
+but doesn't enable it per se.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v3:
-  - none
+  - Merged struct exynos850_cpuclk_regs fields into struct
+    exynos_cpuclk_regs
 
 Changes in v2:
-  - none
+  - Changed .ctrl_base field to .base, to reflect changes made in
+    previous commits
 
- drivers/clk/samsung/clk-cpu.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/samsung/clk-cpu.c | 177 ++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-cpu.h |   4 +
+ 2 files changed, 181 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index e29d08a1c8b3..0cf288138167 100644
+index 0cf288138167..6ac884fccac6 100644
 --- a/drivers/clk/samsung/clk-cpu.c
 +++ b/drivers/clk/samsung/clk-cpu.c
-@@ -135,16 +135,16 @@ static void wait_until_divider_stable(void __iomem *div_reg, unsigned long mask)
-  * value was changed.
+@@ -29,6 +29,7 @@
+  * down in order to keep the output clock rate within the previous OPP limits.
   */
- static void wait_until_mux_stable(void __iomem *mux_reg, u32 mux_pos,
--				  unsigned long mux_value)
-+				  unsigned long mask, unsigned long mux_value)
- {
- 	unsigned long timeout = jiffies + msecs_to_jiffies(MAX_STAB_TIME);
  
- 	do {
--		if (((readl(mux_reg) >> mux_pos) & MUX_MASK) == mux_value)
-+		if (((readl(mux_reg) >> mux_pos) & mask) == mux_value)
- 			return;
- 	} while (time_before(jiffies, timeout));
++#include <linux/delay.h>
+ #include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+@@ -51,6 +52,8 @@ typedef int (*exynos_rate_change_fn_t)(struct clk_notifier_data *ndata,
+  * @div_cpu1: offset of CPU DIV1 register (for modifying divider values)
+  * @div_stat_cpu0: offset of CPU DIV0_STAT register (for checking DIV status)
+  * @div_stat_cpu1: offset of CPU DIV1_STAT register (for checking DIV status)
++ * @mux: offset of MUX register for choosing CPU clock source
++ * @divs: offsets of DIV registers (ACLK, ATCLK, PCLKDBG and PERIPHCLK)
+  */
+ struct exynos_cpuclk_regs {
+ 	u32 mux_sel;
+@@ -59,6 +62,9 @@ struct exynos_cpuclk_regs {
+ 	u32 div_cpu1;
+ 	u32 div_stat_cpu0;
+ 	u32 div_stat_cpu1;
++
++	u32 mux;
++	u32 divs[4];
+ };
  
--	if (((readl(mux_reg) >> mux_pos) & MUX_MASK) == mux_value)
-+	if (((readl(mux_reg) >> mux_pos) & mask) == mux_value)
- 		return;
+ /**
+@@ -397,6 +403,167 @@ static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	return 0;
+ }
  
- 	pr_err("%s: re-parenting mux timed-out\n", __func__);
-@@ -249,7 +249,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	/* select sclk_mpll as the alternate parent */
- 	mux_reg = readl(base + regs->mux_sel);
- 	writel(mux_reg | (1 << 16), base + regs->mux_sel);
--	wait_until_mux_stable(base + regs->mux_stat, 16, 2);
-+	wait_until_mux_stable(base + regs->mux_stat, 16, MUX_MASK, 2);
++/* ---- Exynos850 ----------------------------------------------------------- */
++
++#define E850_DIV_RATIO_MASK	GENMASK(3, 0)
++#define E850_BUSY_MASK		BIT(16)
++
++/* Max time for divider or mux to stabilize, usec */
++#define E850_DIV_MUX_STAB_TIME	100
++/* OSCCLK clock rate, Hz */
++#define E850_OSCCLK		(26 * MHZ)
++
++static const struct exynos_cpuclk_regs e850cl0_cpuclk_regs = {
++	.mux	= 0x100c,
++	.divs	= { 0x1800, 0x1808, 0x180c, 0x1810 },
++};
++
++static const struct exynos_cpuclk_regs e850cl1_cpuclk_regs = {
++	.mux	= 0x1000,
++	.divs	= { 0x1800, 0x1808, 0x180c, 0x1810 },
++};
++
++/*
++ * Set alternate parent rate to "rate" value or less.
++ *
++ * rate: Desired alt_parent rate, or 0 for max alt_parent rate
++ *
++ * Exynos850 doesn't have CPU clock divider in CMU_CPUCLx block (CMUREF divider
++ * doesn't affect CPU speed). So CPUCLx_SWITCH divider from CMU_TOP is used
++ * instead to adjust alternate parent speed.
++ *
++ * It's possible to use clk_set_max_rate() instead of this function, but it
++ * would set overly pessimistic rate values to alternate parent.
++ */
++static int exynos850_alt_parent_set_max_rate(const struct clk_hw *alt_parent,
++					     unsigned long rate)
++{
++	struct clk_hw *clk_div, *clk_divp;
++	unsigned long divp_rate, div_rate, div;
++	int ret;
++
++	/* Divider from CMU_TOP */
++	clk_div = clk_hw_get_parent(alt_parent);
++	if (!clk_div)
++		return -ENOENT;
++	/* Divider's parent from CMU_TOP */
++	clk_divp = clk_hw_get_parent(clk_div);
++	if (!clk_divp)
++		return -ENOENT;
++	/* Divider input rate */
++	divp_rate = clk_hw_get_rate(clk_divp);
++	if (!divp_rate)
++		return -EINVAL;
++
++	/* Calculate new alt_parent rate for integer divider value */
++	if (rate == 0)
++		div = 1;
++	else
++		div = DIV_ROUND_UP(divp_rate, rate);
++	div_rate = DIV_ROUND_UP(divp_rate, div);
++	WARN_ON(div >= MAX_DIV);
++
++	/* alt_parent will propagate this change up to the divider */
++	ret = clk_set_rate(alt_parent->clk, div_rate);
++	if (ret)
++		return ret;
++	udelay(E850_DIV_MUX_STAB_TIME);
++
++	return 0;
++}
++
++/* Handler for pre-rate change notification from parent clock */
++static int exynos850_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
++					    struct exynos_cpuclk *cpuclk)
++{
++	const unsigned int shifts[4] = { 16, 12, 8, 4 }; /* E850_CPU_DIV0() */
++	const struct exynos_cpuclk_regs * const regs = cpuclk->chip->regs;
++	const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
++	const struct clk_hw *alt_parent = cpuclk->alt_parent;
++	void __iomem *base = cpuclk->base;
++	unsigned long alt_prate = clk_hw_get_rate(alt_parent);
++	unsigned long flags;
++	u32 mux_reg;
++	size_t i;
++	int ret;
++
++	/* No actions are needed when switching to or from OSCCLK parent */
++	if (ndata->new_rate == E850_OSCCLK || ndata->old_rate == E850_OSCCLK)
++		return 0;
++
++	/* Find out the divider values to use for clock data */
++	while ((cfg_data->prate * 1000) != ndata->new_rate) {
++		if (cfg_data->prate == 0)
++			return -EINVAL;
++		cfg_data++;
++	}
++
++	/*
++	 * If the old parent clock speed is less than the clock speed of
++	 * the alternate parent, then it should be ensured that at no point
++	 * the armclk speed is more than the old_prate until the dividers are
++	 * set.  Also workaround the issue of the dividers being set to lower
++	 * values before the parent clock speed is set to new lower speed
++	 * (this can result in too high speed of armclk output clocks).
++	 */
++	if (alt_prate > ndata->old_rate || ndata->old_rate > ndata->new_rate) {
++		unsigned long tmp_rate = min(ndata->old_rate, ndata->new_rate);
++
++		ret = exynos850_alt_parent_set_max_rate(alt_parent, tmp_rate);
++		if (ret)
++			return ret;
++	}
++
++	spin_lock_irqsave(cpuclk->lock, flags);
++
++	/* Select the alternate parent */
++	mux_reg = readl(base + regs->mux);
++	writel(mux_reg | 1, base + regs->mux);
++	wait_until_mux_stable(base + regs->mux, 16, 1, 0);
++
++	/* Alternate parent is active now. Set the dividers */
++	for (i = 0; i < ARRAY_SIZE(shifts); ++i) {
++		unsigned long div = (cfg_data->div0 >> shifts[i]) & 0xf;
++		u32 val;
++
++		val = readl(base + regs->divs[i]);
++		val = (val & ~E850_DIV_RATIO_MASK) | div;
++		writel(val, base + regs->divs[i]);
++		wait_until_divider_stable(base + regs->divs[i], E850_BUSY_MASK);
++	}
++
++	spin_unlock_irqrestore(cpuclk->lock, flags);
++
++	return 0;
++}
++
++/* Handler for post-rate change notification from parent clock */
++static int exynos850_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
++					     struct exynos_cpuclk *cpuclk)
++{
++	const struct exynos_cpuclk_regs * const regs = cpuclk->chip->regs;
++	const struct clk_hw *alt_parent = cpuclk->alt_parent;
++	void __iomem *base = cpuclk->base;
++	unsigned long flags;
++	u32 mux_reg;
++
++	/* No actions are needed when switching to or from OSCCLK parent */
++	if (ndata->new_rate == E850_OSCCLK || ndata->old_rate == E850_OSCCLK)
++		return 0;
++
++	spin_lock_irqsave(cpuclk->lock, flags);
++
++	/* Select main parent (PLL) for mux */
++	mux_reg = readl(base + regs->mux);
++	writel(mux_reg & ~1, base + regs->mux);
++	wait_until_mux_stable(base + regs->mux, 16, 1, 0);
++
++	spin_unlock_irqrestore(cpuclk->lock, flags);
++
++	/* Set alt_parent rate back to max */
++	return exynos850_alt_parent_set_max_rate(alt_parent, 0);
++}
++
+ /* -------------------------------------------------------------------------- */
  
- 	/* alternate parent is active now. set the dividers */
- 	writel(div0, base + regs->div_cpu0);
-@@ -290,7 +290,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	/* select mout_apll as the alternate parent */
- 	mux_reg = readl(base + regs->mux_sel);
- 	writel(mux_reg & ~(1 << 16), base + regs->mux_sel);
--	wait_until_mux_stable(base + regs->mux_stat, 16, 1);
-+	wait_until_mux_stable(base + regs->mux_stat, 16, MUX_MASK, 1);
+ /* Common round rate callback usable for all types of CPU clocks */
+@@ -459,6 +626,16 @@ static const struct exynos_cpuclk_chip exynos_clkcpu_chips[] = {
+ 		.pre_rate_cb	= exynos5433_cpuclk_pre_rate_change,
+ 		.post_rate_cb	= exynos5433_cpuclk_post_rate_change,
+ 	},
++	[CPUCLK_LAYOUT_E850_CL0] = {
++		.regs		= &e850cl0_cpuclk_regs,
++		.pre_rate_cb	= exynos850_cpuclk_pre_rate_change,
++		.post_rate_cb	= exynos850_cpuclk_post_rate_change,
++	},
++	[CPUCLK_LAYOUT_E850_CL1] = {
++		.regs		= &e850cl1_cpuclk_regs,
++		.pre_rate_cb	= exynos850_cpuclk_pre_rate_change,
++		.post_rate_cb	= exynos850_cpuclk_post_rate_change,
++	},
+ };
  
- 	if (cpuclk->flags & CLK_CPU_NEEDS_DEBUG_ALT_DIV) {
- 		div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
-@@ -362,7 +362,7 @@ static int exynos5433_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
- 	/* select the alternate parent */
- 	mux_reg = readl(base + regs->mux_sel);
- 	writel(mux_reg | 1, base + regs->mux_sel);
--	wait_until_mux_stable(base + regs->mux_stat, 0, 2);
-+	wait_until_mux_stable(base + regs->mux_stat, 0, MUX_MASK, 2);
+ /* helper function to register a CPU clock */
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index 4382ab005ad3..892843611b0a 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -17,10 +17,14 @@
+  * enum exynos_cpuclk_layout - CPU clock registers layout compatibility
+  * @CPUCLK_LAYOUT_E4210: Exynos4210 compatible layout
+  * @CPUCLK_LAYOUT_E5433: Exynos5433 compatible layout
++ * @CPUCLK_LAYOUT_E850_CL0: Exynos850 cluster 0 compatible layout
++ * @CPUCLK_LAYOUT_E850_CL1: Exynos850 cluster 1 compatible layout
+  */
+ enum exynos_cpuclk_layout {
+ 	CPUCLK_LAYOUT_E4210,
+ 	CPUCLK_LAYOUT_E5433,
++	CPUCLK_LAYOUT_E850_CL0,
++	CPUCLK_LAYOUT_E850_CL1,
+ };
  
- 	/* alternate parent is active now. set the dividers */
- 	writel(div0, base + regs->div_cpu0);
-@@ -390,7 +390,7 @@ static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
- 	/* select apll as the alternate parent */
- 	mux_reg = readl(base + regs->mux_sel);
- 	writel(mux_reg & ~1, base + regs->mux_sel);
--	wait_until_mux_stable(base + regs->mux_stat, 0, 1);
-+	wait_until_mux_stable(base + regs->mux_stat, 0, MUX_MASK, 1);
- 
- 	exynos_set_safe_div(cpuclk, div, div_mask);
- 	spin_unlock_irqrestore(cpuclk->lock, flags);
+ /**
 -- 
 2.39.2
 
