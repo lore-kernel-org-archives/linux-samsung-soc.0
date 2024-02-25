@@ -1,59 +1,59 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBEA168DE
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Feb 2024 16:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B03517C76
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Feb 2024 16:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708876889; cv=none; b=fnYVO8wUiiLfTl9ktkWQ81R/YXJDvC/TYI2vfFn5/xtmAfQC6HHveuFUQb73QuImAsjcc8G6BUlyucEd5SuvUj/pxyv0lxHDPJ3jQ1QXa7SZrEgfPv06VSWBcPqfyRLXNz4DGD4AKdip2Y6WQ6Zz3WtDim6jo4rNdWqjSpSowDw=
+	t=1708877392; cv=none; b=mRSDic0PWz1dKNykvEnb06dGhsspJ4F+zaLDZPHRIkF/O3P242tRzpMXKS9TLxUJqR4di6/WGpXLNkLkUpWE+umMI1mxSiEYJFYaKtkGDASmh9GFW2C0LwGwRX0NKkV64Ec7w1eeqTf5F62Q06jwQfPmfjcltLASEceQUxfeFY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708876889; c=relaxed/simple;
-	bh=tzc3inzMBBnJRCFSdQFsBFDwAmTQGVCalWIpAZqpb4U=;
+	s=arc-20240116; t=1708877392; c=relaxed/simple;
+	bh=U2+VGqrsZndaPaTKvuFN9LF54oo+9v3fZPEIQn7mSUo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DbRWbx2tL2ZFU6ZWJce6fg9vCu7zkHTajGS48WXjiMJmjnj+yzOwatDwgY6as3JWiFkpaXlZ9zaqFjvSnrrIh/BXYKZEbDD05DCA6LWMwUzieQa7HVZqy6tvhHXELAmY0Gmwf+tMhLJpIvBk4Q724nFBmNZjdmXL+DK2FEeTZt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tx5t9d9r; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:Content-Type; b=EWiqcw6kdNG+ZPFw/crNvt4aQaaH3xyRzsV70DxoU3v7CFI8KrgEBrh5NuAP1kgrsCz9mrRjL1yoVxDbhFpiZvKYWfnTltEzVmWQERobPiKu0QKT0W69v8t1G92eVNMYrFEjTPzV7FmksNPvdYYxATlysfvAg1VpJIoaQ3Po32k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mDfTzpXZ; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tx5t9d9r"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-564372fb762so3287003a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Feb 2024 08:01:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mDfTzpXZ"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3bbb4806f67so1720830b6e.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Feb 2024 08:09:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708876886; x=1709481686; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708877389; x=1709482189; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Lh8/THgwGw55D3SYvQ4tVT4wl9yHcsf48kaa/ReQKE=;
-        b=tx5t9d9rbdhHSDJ22dZfseqTBCMaxf2u6HrgLaVr1Qxe35moWKt/EDvbmvu3mrk+G0
-         RJnnsh5zMV8VytjhAjfvJdvuxNFlNi4mcF4iJUckRGYvOoiS4wXn50qgQIQ4cHKGJqR8
-         i6soDJIwl7x9smznps22M4cHCyRa+nr9HjeN7z/bem/C4dvRXPBTGkB3MI9MLVLrfAdQ
-         1KKkyxhVKwAzrzB0OFMXJ9HTDJ54GhcFmhQglF8gvlhIFedCQybTgyUP9fVX0NOSoGe5
-         V2b54l7UmHsXfUQbj3lEOkun4zcytFdUcaooHJgBh9GfQHatcG5Iwk2oW9VqZrNo5UTm
-         Lsng==
+        bh=VNniMBJSHHTqW45rUrejLdgYVmP6sB411s+Ak3b0ET4=;
+        b=mDfTzpXZUYfm9mTP7kkjqaT5f5oItE8pj874veNVqRo+bDwA6eBRiFdLMGyxFDn89r
+         V+pKEsDzhiLMQj/YWe+cp3/2U1upBwWcy+CflSqiN1qXXTcceXOJeena5ZwEubDv3dqj
+         B1ihZsqyBcgzoiss0tTm/MOoGDIa5rh7TD4jLxvkEYkbg5TWc+UPDMhLAEfJquIUuFFO
+         u0B8VkjlP9xKPz93Jv4UT7QaKXIzmJFlTJ7hoYqbqSnfb05CilCYPTBUdS8nVs4kcFWc
+         RLmMO7ts1zYnCmit0tjO9odUhiMNo+A2M3pu4bxGjrEru52ewisshTR6+iH11DB9PusF
+         Pg6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708876886; x=1709481686;
+        d=1e100.net; s=20230601; t=1708877389; x=1709482189;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Lh8/THgwGw55D3SYvQ4tVT4wl9yHcsf48kaa/ReQKE=;
-        b=ub5gGv+kX6R+LzLbIaF6OvXvYvJH7eKARJ9ABrN7bT9v5A+t9qu9ubzuhSYkm2IYYc
-         LipiZyalyGcZihOrTa/MDa076oXUVADlTmwKsK03OnauISzh4qSizRviaHZRfbSySCBX
-         qfSueSC19d06GEqwCOI/V0tnc58IHsN8o2Rk1UyJW9kk+gKZ/wEhu9puInWYE8urYN2Q
-         4PZAOlJ172JWFQmor6vDc9uLbOcvPb3cDAdv+4nlunc+WeSVjKsQPrMCw8irbv0JYG9I
-         dGwfM0o/uvJj92boReooEbL4ENCta3JJKSAlKWegKynjwD2HA7z8GcWPUzJVVs2TTqcl
-         vALQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1QU5THOrLWZ8IviqtVHEcmgS7K2oxQ1qJfTb67YzzdJBdVjVIs0nK9uHKrBFILd1gnghYL/uZm0SyMyXIyoe0ypCN7KBOLm4wptf13IAd+4A=
-X-Gm-Message-State: AOJu0YwwyjBrHIIMmgNVO6Rk366UkB1b6raZNlqzMV60m9OXdGogQqXb
-	P3mboLpPI7GbCfZh/eTW0mayZdgyEwuxwoAFeuGd/HhHnpmTyU6P92KHSWT1iPI=
-X-Google-Smtp-Source: AGHT+IF+ubTsC8/SfgWb/dm7Gvisz+DHZDC6KCVOARscF3A2ASrzSWnLFyBviuiY0FAyujHvpfnv+w==
-X-Received: by 2002:a05:6402:5201:b0:565:a5f5:84d0 with SMTP id s1-20020a056402520100b00565a5f584d0mr2761007edd.22.1708876886028;
-        Sun, 25 Feb 2024 08:01:26 -0800 (PST)
+        bh=VNniMBJSHHTqW45rUrejLdgYVmP6sB411s+Ak3b0ET4=;
+        b=EXJRVvImrFmUgTSKpNzpBQGhjTCBIokX0Wt7neHNT6jE9ahXZoIhuUiQoaQ5QsBuHA
+         4FDaB2prd8Ql8MEid2Lg2kD6JIBEFo4x8rLkFukTzlgq/1AqVpxgGA3ou7osMZ2cZY1C
+         npNRkS2Oyj+TvF/fyigGSFgK06IIer/zyk/9LPkAr3FGkbfmGhL+RzxYeA5R5o20euuD
+         oWqvPtZlRa6zdrERLpENhaHE76vOD8oima9V3+oOuG/8JTVZZcigRDafb96K02CZVjr9
+         s250fQf6fhxi364hB1+R20NxDrkmSUAchdizjh6xWBjIWwFppKvDf+JOMcAcI0LyIoUC
+         EbZA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6+V/x0ownyh1P/8sBmRnN22kYeYxr8+ZmWflh9HoQqO9xvIEAwKR95KMwi5lgBPqP9p8IWiTStZl5w/4N/csp6NJX3ZPOcATU2s6o4h4n7GY=
+X-Gm-Message-State: AOJu0Yx4xdnhHIr/jnHVBcmGJVA3qE7Dh0DuQvbyDBHxUqBALLN8odaV
+	xz7f5UDhqAAIjf7v+NyfcYM20SxUuvdCjmdu5tsfUXb1PMkZ5KGQDv3a6s/FmsI=
+X-Google-Smtp-Source: AGHT+IEL7pBi/R21XdtjAI/ovskBwkyc+QGRVLeiORtTlYr2h8bZQHdRpl6WvFMznUszUCztJYD4fQ==
+X-Received: by 2002:a05:6870:95a8:b0:21e:fbf6:8aaf with SMTP id k40-20020a05687095a800b0021efbf68aafmr5860764oao.53.1708877389506;
+        Sun, 25 Feb 2024 08:09:49 -0800 (PST)
 Received: from [192.168.1.20] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id a8-20020a50ff08000000b0056524c91e18sm1531847edu.2.2024.02.25.08.01.24
+        by smtp.gmail.com with ESMTPSA id r17-20020a056830121100b006e45a5f0a70sm764617otp.49.2024.02.25.08.09.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Feb 2024 08:01:25 -0800 (PST)
-Message-ID: <f6d99b65-7679-4a14-bb4c-ab62aa45dd6f@linaro.org>
-Date: Sun, 25 Feb 2024 17:01:23 +0100
+        Sun, 25 Feb 2024 08:09:49 -0800 (PST)
+Message-ID: <eb968e2b-495b-44dd-aad9-3cd5eac72bdf@linaro.org>
+Date: Sun, 25 Feb 2024 17:09:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/15] clk: samsung: Keep register offsets in chip
- specific structure
+Subject: Re: [PATCH v3 13/15] clk: samsung: Implement manual PLL control for
+ ARM64 SoCs
 Content-Language: en-US
 To: Sam Protsenko <semen.protsenko@linaro.org>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -75,7 +75,7 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20240224202053.25313-1-semen.protsenko@linaro.org>
- <20240224202053.25313-11-semen.protsenko@linaro.org>
+ <20240224202053.25313-14-semen.protsenko@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,30 +121,82 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240224202053.25313-11-semen.protsenko@linaro.org>
+In-Reply-To: <20240224202053.25313-14-semen.protsenko@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 24/02/2024 21:20, Sam Protsenko wrote:
-> Abstract CPU clock registers by keeping their offsets in a dedicated
-> chip specific structure to accommodate for oncoming Exynos850 support,
-> which has different offsets for cluster 0 and cluster 1. This rework
-> also makes it possible to use exynos_set_safe_div() for all chips, so
-> exynos5433_set_safe_div() is removed here to reduce the code
-> duplication. The ".regs" field has to be (void *) as different Exynos
-> chips can have very different register layout, so this way it's possible
-> for ".regs" to point to different structures, each representing its own
-> chip's layout.
+> Some ARM64 Exynos chips are capable to control PLL clocks automatically.
+> For those chips, whether the PLL is controlled automatically or manually
+> is chosen in PLL_CON1 register with next bits:
 > 
-> No functional change.
+>     [28]  ENABLE_AUTOMATIC_CLKGATING
+>     [1]   MANUAL_PLL_CTRL
+>     [0]   AUTO_PLL_CTRL
+> 
+> The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
+> which means any attempt to control those PLLs manually (e.g.
+> disabling/enabling those PLLs or changing MUX parent clocks) would lead
+> to PLL lock timeout with error message like this:
+> 
+>     Could not lock PLL ...
+> 
+> At the moment, all Samsung clock drivers implement manual clock control.
+> So in order to make it possible to control PLLs, corresponding PLL_CON1
+> registers should be set to 0x2 first.
+> 
+> Some older ARM64 chips don't implement the automatic clock control
+> though. It also might be desirable to configure some PLLs for manual
+> control, while keeping the default configuration for the rest. So it'd
+> convenient to choose this PLL mode for each CMU separately. Introduce
+> .manual_plls field to CMU structure to choose the PLL control mode.
+> Because it'll be initialized with "false" in all existing CMU
+> structures by default, it won't affect any existing clock drivers,
+> allowing for this feature to be enabled gradually when it's needed with
+> no change for the rest of users. In case .manual_plls is set, set
+> PLL_CON1 registers to manual control, akin to what's already done for
+> gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
+> should be added to corresponding struct samsung_cmu_info::clk_regs array
+> to make sure they get initialized.
+> 
+> No functional change. This patch adds a feature, but doesn't enable it
+> for any users.
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
+> Changes in v3:
+>   - none
+> 
+> Changes in v2:
+>   - none
+> 
+>  drivers/clk/samsung/clk-exynos-arm64.c | 44 +++++++++++++++++---------
+>  drivers/clk/samsung/clk.h              |  4 +++
+>  2 files changed, 33 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-arm64.c b/drivers/clk/samsung/clk-exynos-arm64.c
+> index 6fb7194df7ab..55490209b9a9 100644
+> --- a/drivers/clk/samsung/clk-exynos-arm64.c
+> +++ b/drivers/clk/samsung/clk-exynos-arm64.c
+> @@ -25,6 +25,19 @@
+>  #define GATE_OFF_START		0x2000
+>  #define GATE_OFF_END		0x2fff
+>  
+> +/* PLL CON register offsets range */
+> +#define PLL_CON_START		0x100
+> +#define PLL_CON_END		0x600
+> +
+> +/* PLL register bits */
+> +#define PLL_CON1_MANUAL		BIT(1)
+> +
+> +/* Helper macros to check for particular clock regiter by its offset */
+> +#define IS_GATE_REG(o)		((o) >= GATE_OFF_START && (o) <= GATE_OFF_END)
+> +#define IS_PLL_CONx_REG(o)	((o) >= PLL_CON_START && (o) <= PLL_CON_END)
+> +#define IS_PLL_CON1_REG(o)	\
+> +	(IS_PLL_CONx_REG(o) && ((o) & 0xf) == 0x4 && !((o) & 0x10))
 
-Missing checkpatch --strict:
-ERROR: "foo * const	bar" should be "foo * const bar"
-
-Corrected and applied.
+These should be static functions, because it leads to trickier code. See
+also checkpatch warning.
 
 Best regards,
 Krzysztof
