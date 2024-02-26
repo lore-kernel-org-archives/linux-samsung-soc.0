@@ -1,110 +1,93 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADECEEAC
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Feb 2024 16:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D911AAB1;
+	Mon, 26 Feb 2024 02:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708877479; cv=none; b=IKvAs6ZPgyj2xULrXrzGDgdrayofI/5/k19cjEDoxEH4XRUo/csQMJgXPRrh7CsVg/QGAEOQwuO8QEjT7n2k8ZjtDzIu4tpvhSLTtSzxeb7fzSxbc3/OXrqyiKgz5iEdBNMM/FE50d7X4S2kwuhn6uaxpvcNiXPahrfE//dBz+w=
+	t=1708916111; cv=none; b=MtdUP33kehb6fs4SRPyAD3mEp2U6yAgzp63ozM6+LdBJuTYtzplPuIdLNiYpb7g8DjAP/kzfXOuFP3DoAnJ1jbfpJobBs5jits7tR25S9dFy2B+aPje+9UnS+IQ4m7TjFSHr5uNGa8NqKMzRHM5rlt48KPQB4w7NIryuMLgmAWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708877479; c=relaxed/simple;
-	bh=+Rw9cHF3zvvHudVBxpfd85hAjXfCOlv2DWgdevEOxfg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hpmXvlSqAci73LRjmRdGrVh59vFMr7s9ZxooHnMlKZD0sgZLFAO1mIKDVVxrbM/XZNhDuYqO08T+MHPhTSYvRci9W+VQ5ndPpRSHFuMhvbx1iFQmW/vuNTnwySWUNyhfJe7pP0Vd6DLNz1rJ6RDoOUiLupc/HQ7wa6pFvJhZmG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LTf1wnzr; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LTf1wnzr"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d180d6bd32so34511361fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Feb 2024 08:11:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708877474; x=1709482274; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=21UrOfJ5QkeVV5ZEwy7jUJphKXCc27WnFaTIldWYtUM=;
-        b=LTf1wnzrq/0VsYabZgzYhfPbq49o74EpTRlgvJlcAUk5q+zY18C68HAysn7N+H4pxK
-         EQUnQCdTyXDZ8UwUtvQtxQVMN3aROtTyV2CjzYQ0kZXHjtdc3iDkTZXiiCPnGJ25pbgs
-         AJx9pITlYb4U7MR/EPH7/y2SOon9y3fC9/OPX4zKaL7604jQaskH3p8J7EUVjr/C1CL2
-         LIoHoMMXa4fMV9X3iX7Pe0x/Wlf8rybK9oMKEBvv66bEbCaQeTfciA+raK9/3llfmuln
-         xC06HoyQq87ZIIj6yA5qah4bDF4D4rcaYx9O4c3HLZEPZ6RAnnmEcie5RBgJy+hWBhVK
-         bcpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708877474; x=1709482274;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=21UrOfJ5QkeVV5ZEwy7jUJphKXCc27WnFaTIldWYtUM=;
-        b=oKanKSl69GGiojGSOyN7Vm8x87/eLEMwPLlAptkk02H/608LmK+UrYlnskf4QIYKgB
-         EwgVps+4mQ/2llIYan0C/IhVWwMYf66EG08rvDTB/v1FqhM2v2255pN4S+iA97jMORm5
-         DT1v1XTIKvdWsqLwIYAqd5WEUriQ3ftQORsv4EWi1lzcLVBWCGn81/gSDaK8FJtdYgfh
-         t02xIhoHd87QIV5zPV0NigrXemukKapjyBjQiWva/KOsCl4HwnunciWSJfE3yy/s2T+P
-         iHX5KueKpqrMmAEUnWI3b8svLScROoG3Fw191iYv9lJh2pjofGC9dxqLl6dLeTfCWdR/
-         sL1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVyFuWMmzdr/us3kcVR5j2XAFZC4A5L5p8m3cZ+ch2tgajLirpYFVJN9k1Kon2dGrEtOwZKATF9RXBeB1Wua3FLBwscHh6Wsl4jdOu24xBKEPM=
-X-Gm-Message-State: AOJu0Yxc+tD4d+zQHUvwsly3VDH8by+Qcd0aK7e6WXksNG5UpyAtclwB
-	MQvd3IJ06UOimEt1mDUjAiHoxN3sSeVE4ObiInRLeflhWDIILPT1owTCnwZpNH8=
-X-Google-Smtp-Source: AGHT+IEZ2nGwiR9Zs0FXNbvtOlq7ks4iteoQaOvCoZGxw0nEmtC/oNj0/clKB7TC/Yr6DpFDxLapGg==
-X-Received: by 2002:a2e:990b:0:b0:2d2:7164:c6ba with SMTP id v11-20020a2e990b000000b002d27164c6bamr2529804lji.43.1708877474757;
-        Sun, 25 Feb 2024 08:11:14 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id n21-20020a2e7215000000b002d2697570fcsm579184ljc.93.2024.02.25.08.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 08:11:14 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240224202053.25313-13-semen.protsenko@linaro.org>
-References: <20240224202053.25313-1-semen.protsenko@linaro.org>
- <20240224202053.25313-13-semen.protsenko@linaro.org>
-Subject: Re: (subset) [PATCH v3 12/15] clk: samsung: Add CPU clock support
- for Exynos850
-Message-Id: <170887747270.215710.14391018888369319254.b4-ty@linaro.org>
-Date: Sun, 25 Feb 2024 17:11:12 +0100
+	s=arc-20240116; t=1708916111; c=relaxed/simple;
+	bh=tbnDJSmrkota+0h34QQWBs6KGLOigNzHb9e9sHBP7nM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A2x1eiuktn/Q0zyALx3Hsl6KOAGPglJIRrGej9c9vumXAoqXey6YGFR8opRaZJbmhtoW1XeTS1KA55W7009nAaLo+dlGASbDjxCPc7ilTi4RWvnpiAG2Peq0D1fIz/rTLZi3y9/Pde1IWIVxOTF0yV7sVja6gVh3oD3pmyH3nzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: cd6f21063eea4d909cd0db4c58a0fafd-20240226
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.37,REQID:af9dbba1-f6a7-4adc-a51c-1807b965315c,IP:10,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:20
+X-CID-INFO: VERSION:1.1.37,REQID:af9dbba1-f6a7-4adc-a51c-1807b965315c,IP:10,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:20
+X-CID-META: VersionHash:6f543d0,CLOUDID:79f44d84-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:240226102255YBXUWZHW,BulkQuantity:0,Recheck:0,SF:24|17|19|44|66|38|1
+	02,TC:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: cd6f21063eea4d909cd0db4c58a0fafd-20240226
+Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
+	(envelope-from <chentao@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1075076401; Mon, 26 Feb 2024 10:22:54 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 0EF0FE000EBC;
+	Mon, 26 Feb 2024 10:22:54 +0800 (CST)
+X-ns-mid: postfix-65DBF5FD-853442222
+Received: from kernel.. (unknown [172.20.15.254])
+	by mail.kylinos.cn (NSMail) with ESMTPA id B2D6EE000EBC;
+	Mon, 26 Feb 2024 10:22:52 +0800 (CST)
+From: Kunwu Chan <chentao@kylinos.cn>
+To: inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kunwu Chan <chentao@kylinos.cn>
+Subject: [PATCH] drm/exynos: use KMEM_CACHE() to create g2d_runqueue_node cache
+Date: Mon, 26 Feb 2024 10:22:51 +0800
+Message-Id: <20240226022251.1781070-1-chentao@kylinos.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: quoted-printable
 
+Use the KMEM_CACHE() macro instead of kmem_cache_create() to simplify
+the creation of SLAB caches when the default values are used.
 
-On Sat, 24 Feb 2024 14:20:50 -0600, Sam Protsenko wrote:
-> Implement CPU clock control for Exynos850 SoC. It follows the same
-> procedure which is already implemented for other SoCs in clk-cpu.c:
-> 
-> 1. Set the correct rate for the alternate parent (if needed) before
->    switching to use it as the CPU clock
-> 2. Switch to the alternate parent, so the CPU continues to get clocked
->    while the PLL is being re-configured
-> 3. Adjust the dividers for the CPU related buses (ACLK, ATCLK, etc)
-> 4. Re-configure the PLL for the new CPU clock rate. It's done
->    automatically, as the CPU clock rate change propagates to the PLL
->    clock, because the CPU clock has CLK_SET_RATE_PARENT flag set in
->    exynos_register_cpu_clock()
-> 5. Once the PLL is locked, set it back as the CPU clock source
-> 6. Set alternate parent clock rate back to max speed
-> 
-> [...]
+Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied, thanks!
-
-[12/15] clk: samsung: Add CPU clock support for Exynos850
-        https://git.kernel.org/krzk/linux/c/61f4399c74d0677ee64e42f7b8d4ab01ee39de45
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_g2d.c
+index f3138423612e..a5818ed6a6f7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -1456,8 +1456,7 @@ static int g2d_probe(struct platform_device *pdev)
+ 	if (!g2d)
+ 		return -ENOMEM;
+=20
+-	g2d->runqueue_slab =3D kmem_cache_create("g2d_runqueue_slab",
+-			sizeof(struct g2d_runqueue_node), 0, 0, NULL);
++	g2d->runqueue_slab =3D KMEM_CACHE(g2d_runqueue_node, 0);
+ 	if (!g2d->runqueue_slab)
+ 		return -ENOMEM;
+=20
+--=20
+2.39.2
 
