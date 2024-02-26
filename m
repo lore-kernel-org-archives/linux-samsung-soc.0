@@ -1,93 +1,158 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D911AAB1;
-	Mon, 26 Feb 2024 02:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1DC1DFF7;
+	Mon, 26 Feb 2024 18:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708916111; cv=none; b=MtdUP33kehb6fs4SRPyAD3mEp2U6yAgzp63ozM6+LdBJuTYtzplPuIdLNiYpb7g8DjAP/kzfXOuFP3DoAnJ1jbfpJobBs5jits7tR25S9dFy2B+aPje+9UnS+IQ4m7TjFSHr5uNGa8NqKMzRHM5rlt48KPQB4w7NIryuMLgmAWU=
+	t=1708972410; cv=none; b=os6QPDuDeS9bVsaAeiO8/chc70DWDlrOUiXaKLArKbVHnTR8ziwUrnFlEU/MQFNY/jHQSqI7QVB1GvYoKb65IHyY1bRb44/Jv2BODFVNZeNi41wvClJk8MffwiJNojdZRfZNC4P/2bjjcyMg8F8avUbzxvF0K3ZGYlO1lxMbA80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708916111; c=relaxed/simple;
-	bh=tbnDJSmrkota+0h34QQWBs6KGLOigNzHb9e9sHBP7nM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A2x1eiuktn/Q0zyALx3Hsl6KOAGPglJIRrGej9c9vumXAoqXey6YGFR8opRaZJbmhtoW1XeTS1KA55W7009nAaLo+dlGASbDjxCPc7ilTi4RWvnpiAG2Peq0D1fIz/rTLZi3y9/Pde1IWIVxOTF0yV7sVja6gVh3oD3pmyH3nzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cd6f21063eea4d909cd0db4c58a0fafd-20240226
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.37,REQID:af9dbba1-f6a7-4adc-a51c-1807b965315c,IP:10,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:20
-X-CID-INFO: VERSION:1.1.37,REQID:af9dbba1-f6a7-4adc-a51c-1807b965315c,IP:10,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:6f543d0,CLOUDID:79f44d84-8d4f-477b-89d2-1e3bdbef96d1,B
-	ulkID:240226102255YBXUWZHW,BulkQuantity:0,Recheck:0,SF:24|17|19|44|66|38|1
-	02,TC:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: cd6f21063eea4d909cd0db4c58a0fafd-20240226
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
-	(envelope-from <chentao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1075076401; Mon, 26 Feb 2024 10:22:54 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 0EF0FE000EBC;
-	Mon, 26 Feb 2024 10:22:54 +0800 (CST)
-X-ns-mid: postfix-65DBF5FD-853442222
-Received: from kernel.. (unknown [172.20.15.254])
-	by mail.kylinos.cn (NSMail) with ESMTPA id B2D6EE000EBC;
-	Mon, 26 Feb 2024 10:22:52 +0800 (CST)
-From: Kunwu Chan <chentao@kylinos.cn>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1708972410; c=relaxed/simple;
+	bh=JsfCY4whwMXgC0aq3QAW8sFMe0CHckGaDhVinE9NJQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e8e3270Z9manL0o/gGEvxUXJ9wZGbZn8w/pk4ZpiBlE3fI24s9xjOm529z1yP0rFGK8bDeLRJofgxRjuCsfsxomXg0SUyTd/Yznca4AAkw1WwZqr0iRpClbisZcy2qT1cZkDTL39w11Z6T7g8rTMWEHGNp6TSDI3DHK4TymQXJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXZZBGZb; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXZZBGZb"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1dcad814986so7170955ad.0;
+        Mon, 26 Feb 2024 10:33:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708972408; x=1709577208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HAEObWk7q9tpmoQojnoq6Ltq98FhWaI3HcoghSaFe9w=;
+        b=VXZZBGZbKmEz8gLNyVp/pv9oYURx/1YU7H+TT0N/9bcniFCN3V0kdpvw4D+2XhLEBp
+         v9wqPmaSB+NuNJ12pNzcKoajKr56xakdG+oOxKKjcQrI9wmqXR1d7caRAUPEdGJLX4f5
+         altbBZ6tzA5RMqjlQrT/F1/WvfAVp2noG/NeycrEvvDLbpWPCO346n7tUSi4AinnkBSI
+         ah4kMuDB3i8sWG+26Gorzgf9KtzYq87Yew4KNaVQJ6EZeQg6cjGyiTr3NmWlGK9ephoi
+         YXm9Jj6kShDjFbVE8yoT92tHixxZch0ip89N89RQZvdAinSZSm8Iopzg0CjvGv3okUSW
+         madA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708972408; x=1709577208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HAEObWk7q9tpmoQojnoq6Ltq98FhWaI3HcoghSaFe9w=;
+        b=hC/YFOjvWnarupCqDS/TUrMpXP9f4wvQUo9ZNMyh3u1UmQPnZpLQBBo3zkRGM9zYIL
+         Aub1m1D6y1fJxYERDGmQm9Iglavk3zs5jl0s/EbXkPvhA0ZsdrS8se6VPVq9BgV6gKP1
+         bbiaCJP5zp1uDpA46NYA+YJYoaVJMoDo8Muc5bJSYqiJK7pAn5pLeQrr8mLNtnujQU3X
+         mUemYLLesZB7wVASwj5G5aiQiyJYs1EK+fbq+BJabwHsGvATOyEUu7BGA1DrIfMqQfyT
+         JCBY2eulXqV3M9ESTFSS40i2w1lo6ICD/LUPyg0xkWnmh8fNbvpvyR6XdZY0JwSHdeke
+         RrVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEZd3D3K4fy1kJTCrq0hr5HnZ8l7sGYRt9uqLX1CyNdeIG/11loZUShoq9cUzPpke5GjZNkEekFP6tzwQTpJLATEzoWY8h00LeEnP+jSRkEAerDVEzHYlKDlFgpkHtbM0JQ2U3fI9pJOgzqmU22/2P/jXmiVdffK2JpZYQiihBoQkg47mWt80Oww==
+X-Gm-Message-State: AOJu0Yyg0MsxRRlju87rwvoiec/VyRd0llyYPifjoSFUi8SgenfTf+NP
+	uQPnH1cwaNKZ/5csib+YsghzpGwiN1zlx0tDIDpATEkN+RkaYLGFGZ/ZhWbG
+X-Google-Smtp-Source: AGHT+IGz32s4Nqri0wpJmVkUdRWblviR+tS2ZYRNwFOfB42AasdShh+BjCineXQuWxw668weMUhVAQ==
+X-Received: by 2002:a17:902:b7c4:b0:1dc:b01e:99d0 with SMTP id v4-20020a170902b7c400b001dcb01e99d0mr1494288plz.1.1708972407905;
+        Mon, 26 Feb 2024 10:33:27 -0800 (PST)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id jh2-20020a170903328200b001da15580ca8sm12302plb.52.2024.02.26.10.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 10:33:27 -0800 (PST)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-pm@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: [PATCH] drm/exynos: use KMEM_CACHE() to create g2d_runqueue_node cache
-Date: Mon, 26 Feb 2024 10:22:51 +0800
-Message-Id: <20240226022251.1781070-1-chentao@kylinos.cn>
-X-Mailer: git-send-email 2.39.2
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv1 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled() helpers
+Date: Tue, 27 Feb 2024 00:02:56 +0530
+Message-ID: <20240226183308.4730-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Use the KMEM_CACHE() macro instead of kmem_cache_create() to simplify
-the creation of SLAB caches when the default values are used.
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+This simplifies the code and avoids the calls to clk_disable_unprepare().
+
+While at it, use dev_err_probe consistently, and use its return value
+to return the error code.
+
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_g2d.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/devfreq/exynos-bus.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_g2d.c
-index f3138423612e..a5818ed6a6f7 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -1456,8 +1456,7 @@ static int g2d_probe(struct platform_device *pdev)
- 	if (!g2d)
- 		return -ENOMEM;
-=20
--	g2d->runqueue_slab =3D kmem_cache_create("g2d_runqueue_slab",
--			sizeof(struct g2d_runqueue_node), 0, 0, NULL);
-+	g2d->runqueue_slab =3D KMEM_CACHE(g2d_runqueue_node, 0);
- 	if (!g2d->runqueue_slab)
- 		return -ENOMEM;
-=20
---=20
-2.39.2
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 245898f1a88e..153340b6685f 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -160,7 +160,6 @@ static void exynos_bus_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ }
+ 
+@@ -171,7 +170,6 @@ static void exynos_bus_passive_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ }
+ 
+ static int exynos_bus_parent_parse_of(struct device_node *np,
+@@ -247,23 +245,15 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 	int ret;
+ 
+ 	/* Get the clock to provide each bus with source clock */
+-	bus->clk = devm_clk_get(dev, "bus");
+-	if (IS_ERR(bus->clk)) {
+-		dev_err(dev, "failed to get bus clock\n");
+-		return PTR_ERR(bus->clk);
+-	}
+-
+-	ret = clk_prepare_enable(bus->clk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to get enable clock\n");
+-		return ret;
+-	}
++	bus->clk = devm_clk_get_enabled(dev, "bus");
++	if (IS_ERR(bus->clk))
++		return dev_err_probe(dev, PTR_ERR(bus->clk), "failed to get bus clock\n");
+ 
+ 	/* Get the freq and voltage from OPP table to scale the bus freq */
+ 	ret = dev_pm_opp_of_add_table(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to get OPP table\n");
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	rate = clk_get_rate(bus->clk);
+@@ -281,8 +271,6 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dev);
+-err_clk:
+-	clk_disable_unprepare(bus->clk);
+ 
+ 	return ret;
+ }
+@@ -453,7 +441,6 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ err_reg:
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ 
+-- 
+2.43.0
 
