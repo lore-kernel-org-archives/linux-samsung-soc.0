@@ -1,71 +1,70 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F225155E57
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Feb 2024 07:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ACA55E57
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Feb 2024 08:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709020721; cv=none; b=kmw75f5i8XOLlTqFZF4yIyCojh6CrYbGtPPphlWjSpdeIEAgUGgNf47a64CzmQruyXN6p9w+mwfhYTIi+9mgBjlNMbY4pLTt6N5z279NPwdpE7KudeIz4krnqZ07lPk4UcBlG/oU0A+EN8+qy+0rMovHyC1OLa10RKESX9GKMqY=
+	t=1709021285; cv=none; b=mO8dx2LM4RhZWN2EzcHBFj6AlJ3EQhA13YGjcYDd46NfDzDVAoMR0Y2vLqVvRyWs4mdBsepz3tdtegKO++M/bBeaaHuM7X4uYNANXaCAKnxIoMNqHbZakUgAF/diZoDjn8T3/h50hf8zXV3aEn9WCYm0v1l906VymMvn2QgjFsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709020721; c=relaxed/simple;
-	bh=/ew7vIeLEuM/TCI7njTkckWnYO2dVksctCFiWGxakDM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CiE4xvzNcptED3CSxK5Kx7I36YYZ/OxuhbitART2QbHLtiBAefzm2JCZjLBgaYRzLtlsG7d9fdVuKirCM5WOWGIXiDWXPzONnVobzZcFgi+MlqR28Rftrn/Ly8si+gUSs7D4q8Uv+V+RkLkn5o1u5BssxsQrygrptaxc1TnIJd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A2pwS+qT; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1709021285; c=relaxed/simple;
+	bh=n1CqIB7HxwTIaN27h/cGfKFJJyQtYXmpjcrb3kKzZac=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ozqw0mT7YSS71728P5w2f9tZPNHBHi1Y9undnvnz+TvoVruz8s/OQlLrSoH+J1f6Mpiousq1/uV/LSwyqLVeGSN2ZhCuDFak2hpLDwqy+PYHuRmM68eQOXEmwr3bclLb17GgzAv93a5UsVrX7nS20MWP4npC1tCkDLnSgr//ICU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cmDbc12x; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A2pwS+qT"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3ddc13bbb3so603508966b.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Feb 2024 23:58:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cmDbc12x"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-563d56ee65cso5113434a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Feb 2024 00:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709020718; x=1709625518; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1709021280; x=1709626080; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ic80dLEyZy6kdVJF7joUFUuNP61uTBpqR9Za88+XI28=;
-        b=A2pwS+qTQzBQgPiW144YdOmdFP1LbuoxQHAEvJ1cs4yZHqcs4n+GHVJ7vql/7nET9W
-         1PjlyJJHWCwfW1nnR3J5zZYSIRn9uGUgCv6t+CJ3Sj3NAfED8B0zrEMRRWqStBQ5THfT
-         Gm298p+S7ug+8ndExDumcwNpGNxYDwh+pReOtRVP42mkLaqmVMdT1bXMJLaVwhMqNr36
-         HKO6DcjD06fCdRCiaRYfWHUFwkBus0key7uqFuSp5ZkN15Q9bfCV3rhO+yne7B66KyG3
-         LJO2G2BMUcNsh8HDJsNNbyo9rPsh2wByWXZmK830+5E9YnwmAkt6b48m/U8XmmjXfFne
-         8u1g==
+        bh=3X6X6/tz50wnZDUvbb5WN4nVEsnFWe25Xdt4g8Ugnig=;
+        b=cmDbc12xg7tUTv4OQ1H4ooGKndYbq0L5EX+HMy3ZiSORjIQkVJiXssADxWiEBs03UJ
+         REWhXQA9XpQAYRdaziPbUcBNZWkZDBgxgqgI3Zokrp2bP+sVWD/zBZNQNj16dPnjL7EK
+         +urufMSz12D4F+oId3y5Z5IIyAVbaYovUK4nu++q5PjQUoSAb+W9tGC7ObWnnrqYvaMz
+         SX4Su54UeMxxLzBfRHEI3fP9lo9oAk7Qq17JNpJjYBwQ9+C1y7V944maGbH6PdmfIRfu
+         HxUJqh6AVoZ1r517nAlJC5Tb/riiHuhDGhOgWYo47qy4R3oOxN6bzcng7rwVxEN+xDDd
+         wuuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709020718; x=1709625518;
+        d=1e100.net; s=20230601; t=1709021280; x=1709626080;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ic80dLEyZy6kdVJF7joUFUuNP61uTBpqR9Za88+XI28=;
-        b=I9m142RyzrupzI+RzydBYMfafiiwHSO3HqZootpE7fgGWOdgaZJTb0ukzdjOJEa03G
-         nvIFGnR7h/QgAjouJ75deg3+6Sf6rdrmW/aoTPAyavRnKOpiPf3DHC1DVz4Mrg2XiyFZ
-         QXs0jT0EqJZnUVExH5hWz9hcvy93fmRc0VhGwNiivMRv3O50Dqlu45tGB5mi/3R4SIm+
-         XIFCv5HpsH36Oy41CAyT7SJcm3Aihkff7eTLt2nz6hEmQ+Y13dNqHckUJJC8Oteovfw8
-         Ds/3vuzet/lCIgIGc7Oesy8g2UcpbDX7upEqdMczIiRh3KVxNG3/PQSzFNIK/pI8wb13
-         zRSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbkV+43FtlzORvPdH+bmqPhEn1jBsljCXEp+a92OYCp2THBkIb3X6FfrPfFLDI9q5/02TJ4pQthB42tqqparrzRYbQ25Y8QLe7WrmtaaWUCxk=
-X-Gm-Message-State: AOJu0Yy+z8ilnATui8gGZqYknUFQGqtqZpaIcv+F69xeUwaKnp/N4tJV
-	JTocmHufrPLNnEmVW8ZsjsqvsUSyP/0Ka6+gvNvcl1rG7Gqq5fzWozrS9+6KKMI=
-X-Google-Smtp-Source: AGHT+IFTBK9hxL6b/DxdG3pgJ4lkvuj80VlJ9MESHK5mlD8V/Sd4fRjlluYaVaQPIm8Rcyfo6sMoVg==
-X-Received: by 2002:a17:906:fa8d:b0:a3f:f8a7:e1f7 with SMTP id lt13-20020a170906fa8d00b00a3ff8a7e1f7mr8339780ejb.5.1709020718353;
-        Mon, 26 Feb 2024 23:58:38 -0800 (PST)
+        bh=3X6X6/tz50wnZDUvbb5WN4nVEsnFWe25Xdt4g8Ugnig=;
+        b=j3P3vgl8KA729v9baK9FbWS9OSqDcP0T4ZFoUwgYjIGMxyESc56l/H6CDvjtlWh+V/
+         i30ad3b1WrJU4sTuVInAXjqH0XstlvNEBQBM3FOc0fo2hj0fkpt377DG6gb3yzv9g0dB
+         IYGw0wtb1VTTrhbhxzXFj56jS99jFXN8oP88sp2HnOROkojGDGeuk03ej23OMWrPOT50
+         44JhM70uUjq0vPB3EtUgN/tIqb1UK2r5XPJ2jeRNultwBwd5GtYU+k5nS50kf5+fjd3b
+         jxQfPZ/PTVYNFNrYnTXozFXe7C9FCDibOshYuccu2rEE75QweP7ltb/XNVHuNF9cnQo6
+         92tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqq2AkARqw9ERuL386ipNrpDLwfSJFix6Pc1qwJMy19VSCBE/r20s8blKV4omA9qVZbTEOc7GQN1DHv25FGJdxrT4LK+HSbcW/RQoXFwVMFiU=
+X-Gm-Message-State: AOJu0YxD2IvapEeFui+AyYtVTCwUB5ya/DbFp/VsZz6a2QmQ10ITOacj
+	UWl8fZmc2lDpGBDBtfwjJunIl9OY/ukgrRAi6pxjfG2DoLB7AN25s+k+i1ScoRQ=
+X-Google-Smtp-Source: AGHT+IFaapiS/FFG8BskCGhtgplEMxtjTEE3oU8cJgGqNh5gbBgUjZ/8L7PXjg1DmlNnflpw/Pm3Qw==
+X-Received: by 2002:a05:6402:b2d:b0:564:87c1:a1e8 with SMTP id bo13-20020a0564020b2d00b0056487c1a1e8mr6917441edb.13.1709021280356;
+        Tue, 27 Feb 2024 00:08:00 -0800 (PST)
 Received: from krzk-bin.. ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id bg26-20020a170906a05a00b00a3d0a094574sm503467ejb.66.2024.02.26.23.58.36
+        by smtp.gmail.com with ESMTPSA id b22-20020aa7dc16000000b00564d7d23919sm509662edu.67.2024.02.27.00.07.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 23:58:37 -0800 (PST)
+        Tue, 27 Feb 2024 00:07:59 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
+To: Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	arm@kernel.org,
+	soc@kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	linux-clk@vger.kernel.org,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Peter Griffin <peter.griffin@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.9
-Date: Tue, 27 Feb 2024 08:58:35 +0100
-Message-Id: <20240227075835.33513-1-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 1/3] samsung: drivers for v6.9, part two
+Date: Tue, 27 Feb 2024 09:07:53 +0100
+Message-Id: <20240227080755.34170-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -73,97 +72,54 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Hi,
 
-On top of the previous fixes pull request - my previous tag
-samsung-clk-fixes-6.8 - due to context dependencies.
+On top of previous pull request.
 
 Best regards,
 Krzysztof
 
 
-The following changes since commit d76c762e7ee04af79e1c127422e0bbcb5f123018:
+The following changes since commit 97d4b55111efd72926eb92cbd81c5ad8e6a7b3b1:
 
-  clk: samsung: clk-gs101: comply with the new dt cmu_misc clock names (2024-01-22 11:40:12 +0100)
+  MAINTAINERS: Remove Tomasz from Samsung clock and pinctrl entries (2024-02-07 16:35:26 +0100)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.9
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.9-2
 
-for you to fetch changes up to 61f4399c74d0677ee64e42f7b8d4ab01ee39de45:
+for you to fetch changes up to 746f0770f916e6c48e422d6a34e67eae16707f0e:
 
-  clk: samsung: Add CPU clock support for Exynos850 (2024-02-25 17:07:34 +0100)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.9
-
-Google GS101:
-1. Register the CMU MISC clock controller earlier, so the Multi Core
-   Timer clocksource can use it.
-2. Add PERIC0 and PERIC1 clock controllers.
-
-Exynos850:
-1. Add PDMA clocks.
-2. Add CPU cluster 0 and 1 (CMU_CPUCLK0/CMU_CPUCLK1) clock controllers.
-3. Propagate SPI IPCLK rate change to parents, so the SPI will get
-   proper clock rates.
-4. Refactor the generic Samsung CPU clock controllers code, preparing it
-   for supporting Exynos850 CPU clocks.
+  watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle() for PMU regs (2024-02-25 11:39:25 +0100)
 
 ----------------------------------------------------------------
-André Draszik (4):
-      clk: samsung: gs101: gpio_peric0_pclk needs to be kept on
-      dt-bindings: clock: google,gs101-clock: add PERIC1 clock management unit
-      clk: samsung: gs101: drop extra empty line
-      clk: samsung: gs101: add support for cmu_peric1
+Samsung SoC driver changes for v6.9, part two
 
-Krzysztof Kozlowski (2):
-      Merge tag 'samsung-dt-bindings-clk-6.9-2' into next/clk
-      Merge tag 'samsung-dt-bindings-clk-6.9-3' into next/clk
+1. Extend Exynos PMU (Power Management Unit) driver being also the
+   syscon to main system controller registers block, to support Google
+   GS101.  The Google GS101 has PMU registers protected and writing is
+   available only via SMC.  The Exynos PMU will register its own custom
+   regmap for such case of mixed MMIO+SMC.
 
-Peter Griffin (1):
-      clk: samsung: gs101: register cmu_misc clocks early
+2. Rework Samsung watchdog driver to get the regmap to PMU block not
+   via syscon API, but from the Exynos PMU driver.  This is necessary
+   for the watchdog driver to work on Google GS101.
 
-Sam Protsenko (15):
-      dt-bindings: clock: exynos850: Add PDMA clocks
-      clk: samsung: exynos850: Add PDMA clocks
-      clk: samsung: exynos850: Propagate SPI IPCLK rate change
-      dt-bindings: clock: exynos850: Add CMU_CPUCLK0 and CMU_CPUCL1
-      clk: samsung: Improve clk-cpu.c style
-      clk: samsung: Pull struct exynos_cpuclk into clk-cpu.c
-      clk: samsung: Reduce params count in exynos_register_cpu_clock()
-      clk: samsung: Use single CPU clock notifier callback for all chips
-      clk: samsung: Group CPU clock functions by chip
-      clk: samsung: Pass actual CPU clock registers base to CPU_CLK()
-      clk: samsung: Pass register layout type explicitly to CLK_CPU()
-      clk: samsung: Keep CPU clock chip specific data in a dedicated struct
-      clk: samsung: Keep register offsets in chip specific structure
-      clk: samsung: Pass mask to wait_until_mux_stable()
-      clk: samsung: Add CPU clock support for Exynos850
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      MAINTAINERS: samsung: gs101: match patches touching Google Tensor SoC
 
-Tudor Ambarus (2):
-      dt-bindings: clock: google,gs101-clock: add PERIC0 clock management unit
-      clk: samsung: gs101: add support for cmu_peric0
+Peter Griffin (2):
+      soc: samsung: exynos-pmu: Add regmap support for SoCs that protect PMU regs
+      watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle() for PMU regs
 
-Varada Pavani (1):
-      dt-bindings: clock: tesla,fsd: Fix spelling mistake
-
- .../bindings/clock/google,gs101-clock.yaml         |  28 +-
- .../bindings/clock/samsung,exynos850-clock.yaml    |  42 +
- .../devicetree/bindings/clock/tesla,fsd-clock.yaml |   2 +-
- drivers/clk/samsung/clk-cpu.c                      | 564 +++++++++----
- drivers/clk/samsung/clk-cpu.h                      |  53 +-
- drivers/clk/samsung/clk-exynos3250.c               |   2 +-
- drivers/clk/samsung/clk-exynos4.c                  |   9 +-
- drivers/clk/samsung/clk-exynos5250.c               |   5 +-
- drivers/clk/samsung/clk-exynos5420.c               |  16 +-
- drivers/clk/samsung/clk-exynos5433.c               |  10 +-
- drivers/clk/samsung/clk-exynos850.c                |  43 +-
- drivers/clk/samsung/clk-gs101.c                    | 940 ++++++++++++++++++++-
- drivers/clk/samsung/clk.h                          |   5 +-
- include/dt-bindings/clock/exynos850.h              |  56 ++
- include/dt-bindings/clock/google,gs101.h           | 129 +++
- 15 files changed, 1661 insertions(+), 243 deletions(-)
+ MAINTAINERS                            |   1 +
+ drivers/soc/samsung/Kconfig            |   1 +
+ drivers/soc/samsung/exynos-pmu.c       | 235 ++++++++++++++++++++++++++++++++-
+ drivers/soc/samsung/exynos-pmu.h       |   1 +
+ drivers/watchdog/Kconfig               |   1 -
+ drivers/watchdog/s3c2410_wdt.c         |   8 +-
+ include/linux/soc/samsung/exynos-pmu.h |  11 +-
+ 7 files changed, 250 insertions(+), 8 deletions(-)
