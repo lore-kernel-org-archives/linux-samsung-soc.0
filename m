@@ -1,154 +1,128 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0041536AFB
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Mar 2024 01:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAB320300
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Mar 2024 11:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709257883; cv=none; b=QI/P5SnHLHXddgl2W5wAVkNJ2m604kiMjw1BM39RKnhHri14rcLoZ0YBT/dm3ZwCauFvZpexZf2/K0n4TKJl/q9I1fSOFAISQo22uOElV8csvT/1LBzadzyJGCVF/9+eWeWEWL/cRdl/hcohd7tsYVrsGfrmH1+n0VzTFT0UKVA=
+	t=1709292531; cv=none; b=KfQ1BuQqG5EZtdGuU/Px/Gm0RXEECzDJP/fY3YQgpOdZk3ia2jLz46hpAJLhnxNeUWxOg7y+JPiRwdwAD5pwxXuWwSN+fXla9dXDwH4h7FvAma6xrxHRnb+fhaqzT17bXEb405oq0cVGP2YkPBc6bQnq4152HelENAmXKiapB1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709257883; c=relaxed/simple;
-	bh=ynSp4BOfTgMg4ogCAHRZ6Dvo2D19rcIObO4Ct27E17o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IYld7wOxegjnEr9lUfYgm8eb1b6ZUr52liDzsPehZ7O2uu1TUeklH4m4ErD1pqEChuk/uxu6PRNNWLEcCMGgUt6Zd2i9sjXGeUx90QGG377cEF9AzZ1qSch47BkmvzovJmbWY551JMLl3EJ9HTdvh9uOWT+D1Drtf1iXC8+RkvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ip3sHbMI; arc=none smtp.client-ip=209.85.160.45
+	s=arc-20240116; t=1709292531; c=relaxed/simple;
+	bh=aYulztljP4NuyowweG9K2SwvWg+mDvCTutG7otENH8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQmknAy/WjCVox55As7c2/npOd5BPmwXbA4NNNGkulooUziRpdSqh7HLQwHAaaKbKfJGzKRPFQE+JUAkpdkebX1DaH+sIZsEpcvM11p9GEebCiFEKRLjrLYhRESBcGwfudDmm8MXVsvhc+aHD+445P/uwp4XY2TduVdP7eDN/kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=py7od88W; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ip3sHbMI"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-21e45ece781so1079036fac.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Feb 2024 17:51:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="py7od88W"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d27fef509eso26121601fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Mar 2024 03:28:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709257881; x=1709862681; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jiCxGhizFNRcTB4tNXp2x/NDTlkj4gUJN/57L1mqhmQ=;
-        b=ip3sHbMIeDpLc+d7dIDNdl/wjOF6EJevj8yb8S5qkEDlbgJTpvzANadccJvdqAAHvO
-         0tHBJ3v4M0ap6FxpNPRC7yhEY0zvX4ZeoLWdvnDUc2JcQVgnTc5xGEk1JFoGxnVhiCH3
-         uHftbM+ng70tOuRNx1czxCs7nq2TSWw21goVD0jkawQS00TpQiaYYR3S1toCy/lRwe0S
-         5IdC37gY6GOvx2OvIyhlUtZhBmgofvMqfXJUAzjvoInMsFz63R4PH6OpsrwaJg88dmRq
-         m1BrDlgmo7N3MRB0m+RmMhwv5rLHPYSvtcBb2VFnOB+4J6sGLkswIvw10SAGxeFHhAYK
-         Dl1A==
+        d=linaro.org; s=google; t=1709292528; x=1709897328; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FooY6PWiKNPrfwZqqVcqa07jZtGfRl4IYqI+n4V8Fng=;
+        b=py7od88W+msxPCEylSwpyHV5nPyoa3TF+SgBAe5WH7xmiyFEMK2ihz0Rd4JZFGYWcd
+         Yw8FvmfCD6Rqfjcye+gBOc/0UiIz6Np2LQtvS1RNR7/I8XP/BNAafC57Rvy1TNISGZ5C
+         HGfLhATxz7WBEDtaRj9X/G5rWcnNTQvtdsBJP/kY3HGqQYNMxryIew0bNpR38TTFBPbJ
+         GBuDbM9QZ+EFCu1tSqo2tsPgTf3e/9+dqzobXjDnRVyITTwAzoIcnP9D4unbVD1sZbPq
+         PwxvLAXsQt76WNAxxG0NuSG/PQD6y0XyYd0wmNwMVgyhpDUF62pbwPZAXBwVm3iU0O1d
+         rgYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709257881; x=1709862681;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jiCxGhizFNRcTB4tNXp2x/NDTlkj4gUJN/57L1mqhmQ=;
-        b=Kp33cBaQMier12ccpBjKUmymLLcrtQt0QxqRJ1H/Yk0zU58H54D7JD25Hfb9ag7rA6
-         QKaNNH7NwocofxP/eEpacNdzBHb14laJPc4mfBZczXo2Rcho0vog7qaHe3TdkhRyxfBq
-         Ab+rTaT0v2mmSIsYEVvU7KDqh+Uzs8LTdaVi6bZiG8zfmS8fZiV/WC1usJu0HLIrv8ql
-         LtuVqpj94JuAsLetCAkctFDBslJnNAP6+xABC61F3nKFMSjqEPk6sixlMNdrynAH7uG5
-         M2SEy7X4tbDKxZDmAbhY6zFG7BnV4i1YzPSr4qUWysXpFwYhNfMhhVP57Owtimn89q1W
-         MV2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXx3XOpinrRdKt7bgxaGEsLVsajZkBNCNA9/TK7oRNuNyJWvwvKIvq55qBbrK8ntsb7HSp/UGWZ9bzRbjbaTAHxp33s9Kqt+vAsSiVX80LJKnw=
-X-Gm-Message-State: AOJu0YxKziOkO26h4K3+8ccBZG57AVxD3/UC4DBC013nE5AMVCMDAhGB
-	+1R9q/8sWAYqIM0Qo6Yg9sFsnThRYrMlQOdu1GQA1TwbzDwWA8t91qgQelIeKYg=
-X-Google-Smtp-Source: AGHT+IGW/xHch8VdSjPLbyRX6s/pcxfNLRl0cQAlv9++DNTkn4NVmJyqUvzA/3mFGDn1HZks1resxA==
-X-Received: by 2002:a05:6870:b001:b0:21e:e9bd:afa9 with SMTP id y1-20020a056870b00100b0021ee9bdafa9mr296486oae.21.1709257881008;
-        Thu, 29 Feb 2024 17:51:21 -0800 (PST)
-Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id wo6-20020a056871a98600b0021fe6bbf8c2sm767017oab.31.2024.02.29.17.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Feb 2024 17:51:20 -0800 (PST)
-From: Sam Protsenko <semen.protsenko@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
-Date: Thu, 29 Feb 2024 19:51:18 -0600
-Message-Id: <20240301015118.30072-3-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240301015118.30072-1-semen.protsenko@linaro.org>
-References: <20240301015118.30072-1-semen.protsenko@linaro.org>
+        d=1e100.net; s=20230601; t=1709292528; x=1709897328;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FooY6PWiKNPrfwZqqVcqa07jZtGfRl4IYqI+n4V8Fng=;
+        b=kPyjYiM3i9LLDyEIU04mICNMAIvpcYlwX1uFsWVWMdk6I0zNboWchJZO16TeqpUUZF
+         8rwUOuL53rkimpcxccUykvc6hlAl08t3qYdvuSQO1LjWRPp0gHSL+aTghLuqyUEo4sS3
+         qDgNklg/AuG/Y7V9YLHhe/5oH9L3bDbHg9y4asCHytMw7/TuHC66nGX9HZad5rlDoW9e
+         Xto2HwOcoMBefYZKo2oeJdoddxXOAH+WP1Sa4xGWiUzBO/kcMSuRnsI79QWlFN4hSAC+
+         Dt9Zif1nsvCuSa3EUYbvfi6FfQmT7RfAdsMi3FouvY8D550LpTWhY4WD28nFkRFZd1uZ
+         Jp7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXS6wWDMNhS1C2FRjhLot44UHSZ3SDDP9YZ+9oSHmr5nnarEr+9afgDooQeKDMsxtq7HB5c0AJErT70WuqeBZQal7uMhsAUoZxNQwLQOA5SXgA=
+X-Gm-Message-State: AOJu0YxNl3IzYxqrgWJ6wqitgA8SqGb8k3af1fu7yUo6l6IhjKpDzeYG
+	9BYtTu2gAwUg1blW2wHijaxuvYksMlYM5gyBZlikEFkisgEle4KF+KtEUcglznE=
+X-Google-Smtp-Source: AGHT+IE9FlH05apBu38tdBmkkbQVih/5PnqUb5fFuYj6hez9P+twTADKuukceTB88p7GkHUNnVh6cQ==
+X-Received: by 2002:a2e:9085:0:b0:2d1:1de5:3c42 with SMTP id l5-20020a2e9085000000b002d11de53c42mr914211ljg.24.1709292528060;
+        Fri, 01 Mar 2024 03:28:48 -0800 (PST)
+Received: from [192.168.2.107] ([79.115.63.35])
+        by smtp.gmail.com with ESMTPSA id u16-20020a2e9b10000000b002d2d384519dsm540910lji.102.2024.03.01.03.28.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Mar 2024 03:28:47 -0800 (PST)
+Message-ID: <a0786437-25b0-4649-acb7-8827165ff4ac@linaro.org>
+Date: Fri, 1 Mar 2024 11:28:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] clk: samsung: exynos850: fix propagation of SPI IPCLK
+ rate
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: krzysztof.kozlowski@linaro.org, mturquette@baylibre.com,
+ sboyd@kernel.org, peter.griffin@linaro.org, andre.draszik@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20240229122021.1901785-1-tudor.ambarus@linaro.org>
+ <20240229122021.1901785-5-tudor.ambarus@linaro.org>
+ <CAPLW+4=jSr6ZsB7XekXsiUBm0SmVpVFnqpgjViuF3=HpT4gRAg@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPLW+4=jSr6ZsB7XekXsiUBm0SmVpVFnqpgjViuF3=HpT4gRAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Define CPU cluster 0 and CPU cluster 1 CMUs, which generate CPU clocks,
-and add corresponding CPU clocks to CPU nodes.
+Hi, Sam,
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v4:
-  - none
+On 3/1/24 00:13, Sam Protsenko wrote:
+>>     mout_peri_spi_user     -            { oscclk (26 MHz), dout_peri_ip }
+> AFAIK, the OSCCLK only purpose is to be used during suspend (PM
+> state). When implementing clk-exynos850.c I specifically avoided using
+> OSCCLK clock for the regular use-cases, and I believe other existing
 
-Changes in v3:
-  - none
+Ok.
 
-Changes in v2:
-  - Added "for Exynos850" part to the commit title
+> Exynos clock drivers don't use OSCCLK during normal operation too.
 
- arch/arm64/boot/dts/exynos/exynos850.dtsi | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+I saw.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-index 2ba67c3d0681..0706c8534ceb 100644
---- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-@@ -93,6 +93,8 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x0>;
- 			enable-method = "psci";
-+			clocks = <&cmu_cpucl0 CLK_CLUSTER0_SCLK>;
-+			clock-names = "cluster0_clk";
- 		};
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
-@@ -117,6 +119,8 @@ cpu4: cpu@100 {
- 			compatible = "arm,cortex-a55";
- 			reg = <0x100>;
- 			enable-method = "psci";
-+			clocks = <&cmu_cpucl1 CLK_CLUSTER1_SCLK>;
-+			clock-names = "cluster1_clk";
- 		};
- 		cpu5: cpu@101 {
- 			device_type = "cpu";
-@@ -254,6 +258,28 @@ cmu_peri: clock-controller@10030000 {
- 				      "dout_peri_uart", "dout_peri_ip";
- 		};
- 
-+		cmu_cpucl1: clock-controller@10800000 {
-+			compatible = "samsung,exynos850-cmu-cpucl1";
-+			reg = <0x10800000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>, <&cmu_top CLK_DOUT_CPUCL1_SWITCH>,
-+				 <&cmu_top CLK_DOUT_CPUCL1_DBG>;
-+			clock-names = "oscclk", "dout_cpucl1_switch",
-+				      "dout_cpucl1_dbg";
-+		};
-+
-+		cmu_cpucl0: clock-controller@10900000 {
-+			compatible = "samsung,exynos850-cmu-cpucl0";
-+			reg = <0x10900000 0x8000>;
-+			#clock-cells = <1>;
-+
-+			clocks = <&oscclk>, <&cmu_top CLK_DOUT_CPUCL0_SWITCH>,
-+				 <&cmu_top CLK_DOUT_CPUCL0_DBG>;
-+			clock-names = "oscclk", "dout_cpucl0_switch",
-+				      "dout_cpucl0_dbg";
-+		};
-+
- 		cmu_g3d: clock-controller@11400000 {
- 			compatible = "samsung,exynos850-cmu-g3d";
- 			reg = <0x11400000 0x8000>;
--- 
-2.39.2
+> It's easy to see from the clock diagrams in the TRM: all CMUs have
+> top-level MUXes that have two parents (normal clock and OSCCLK). In
+> fact, the TRM mentions it:
+> 
+>     "All CMUs have MUXs to change the OSCCLK during power-down mode"
+> 
 
+typo in datasheet, s/the/to, but I get what you're saying.
+
+> Even if OSCCLK can be used in some cases for driving HW blocks, the
+> top-level MUXes are not related to those cases.
+
+This is what I'm challenging, yes. Do you know why we can't use oscclk
+to drive hw blocks in normal operation mode, i.e. not low power modes?
+
+Since the datasheet does not specify any other usage of oscclk, I think
+too that it's safer to not use it to drive HW blocks. So unless someone
+else intervenes and clarifies this aspect, please ignore the entire
+patch set.
+
+Re-parenting the MUX to oscclk allows the same clock range as before and
+with the benefit of not affecting the clock rates of HSI2C/I3C for SPI
+clock rates below 500 KHz. This is what I'm trying to fix here, I think
+it's not a good idea to allow SPI to modify the clock rate of HSI2C/I3C
+at run-time.
+
+How about specifying CLK_SET_RATE_GATE to the common bus divider? It
+will prevent SPI from changing the rate while the clock is prepared.
+Thus HSI2C/I3C will no longer be affected behind the curtains.
+
+Thanks,
+ta
