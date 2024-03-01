@@ -1,112 +1,177 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09C3A1B7
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Mar 2024 19:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FDA5C9A;
+	Fri,  1 Mar 2024 19:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709321330; cv=none; b=UKjWdx+qaQPeBE0LxO7W2RyN9gVijPT2W4oPJ8705rgdWCm0QS5P8kojanC2+9RP09AYqKorinilQGE5enEjms24tFv9IovcjhBNlapP93hwlgikYjaV7sH3JjYmV7XwYpHbTISFqmnQwFgdYRDpGnop2vMM/XhwaEw3p1VyCHA=
+	t=1709321950; cv=none; b=ET9cywhHf69uYIstrHlvPT26iJew/3AjLz4u4r6HAt2bI0vFRR/qUMgAbpnHqffPUnWSxtXvFmWe4jw7FSLx62AuMhk476MSEg7Pa9LZbtHT3iCV0EjMPOS7ngt7jL/kco611Mi8nx8vwM9+0Td2BNpFwQ0aR2wA7bxiMScm2NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709321330; c=relaxed/simple;
-	bh=t546p6Brvs3tkX10UPo7s28no8BBdd+IpN6RcODT7kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l/j4um9I83k6jK60FF/WtW4g15qEeN+z6KUQJRFw+MDJE/93s6ipEXFnc3lv4bE/i6L9hJXnVtTcgsesURKCrMnWrhXfT/eY6tqVl6MxE2VDuMoLUR+P/FWdIs5v4Bkn13nY5AS6smCYkWEolco68IHfAj0z0+jscrVrw4Qrx8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pQxSkOAJ; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709321950; c=relaxed/simple;
+	bh=qzEiaIwCgvzo/jlLWGnfGMZS52j/5NljTf80U9c7pCY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E52k/cfCoBnrmsVtVtIlI9+hZ/D/5c7lcydW1suk7TjFOY4hUCoXh3NKzkjFWOieNABEKYr4xvpEAuRZHevXOkO6Fjta862xwXz77z8JlxHyw7OxwMk6A4WVN+r7t6jeEqCgT35IP7wHn+Xc0QQnKd1mm1UkyQPj0Jk31b6jZjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7CNgKJF; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pQxSkOAJ"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dcd94fb9e4dso2546741276.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Mar 2024 11:28:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7CNgKJF"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5e152c757a5so1759878a12.2;
+        Fri, 01 Mar 2024 11:39:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709321326; x=1709926126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1709321949; x=1709926749; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j3eQJfKffcVJndSl+5ss1Mu5dgdvX9a32YznZ6LbejE=;
-        b=pQxSkOAJc+OYxnkdKNqJHOBERphIxBoVFUhM8TrCuu4yyi3jKu239WWJZGSkZ8T7gM
-         mUh6NtKGZzCBM2bncN3mxXBFp6H0gnBF9HBikTpTzH7bJ2D/1/O2uoHBDAbfp0aamuJD
-         PhjWwu+YfdnKh01DElhy/DMkAs40iNfEs8vjrzQqNunnCsf2AfqmLvyfgXG2i/5Asau5
-         DsnPMnF+tnyjJOabK0zW/tpoAsEUX/YR/vDpxPnQKpySQkkJGfcKbRe1MNYbC/eMTUM4
-         Bw6AeAOFz0q1q9IOC/CrbNn3G/Gy//D7zz/JeyjcyuJ8hEXyXFaF0WEN2Q3vh421GUHU
-         kDQQ==
+        bh=+XmK1KXUIgEldgLQ9Dj7dEfcJRP25Vkl9HU6FEdalXs=;
+        b=T7CNgKJF2ndd3WxavdWd7ssw71sUi6Epaif2SUi5oCPNTOetOran91fWM8AxZK8lO4
+         rbHtdNJN2PrU66X71FSjvYtz+lReLt0TUU42SeW2X9dbBhDeGMtGj95P0EZuu6sBTczW
+         ThEkw7rUHfkROQBjTxDEcpA45+S3PjDg1PSN04N7SkriuwGYevMaTWcitzN6Kz6+SWdo
+         xqk6XSkU7cO9K9EKnqxszHB9V/yYOIH/l5AaD68Zs8oVZrbZB4QoUTGFMXd4ZALw3avI
+         GnKZiFNtNGlwO9yZSu08VKWudThqmP1SuKlB+qT6DDscXjsD3IEq0lKK1QXKoHvW84Wk
+         +Ztg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709321326; x=1709926126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1709321949; x=1709926749;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j3eQJfKffcVJndSl+5ss1Mu5dgdvX9a32YznZ6LbejE=;
-        b=IG2cU35QyH5dHNsXF7sdvKMWDHHJliVf8fJhZzZKJ1cWwckmYzhQBA66jzrm3Pd9Cf
-         xuhDKyQz6X0gL7JBJE398EbgfSQFB7wqTkc7SeKDUr8nevXuk+wuhgB4bip6aaO9BHND
-         s1WrPKlvyrkMt4oc4R8x1OFWywn/KsVaZrpnE+P2QzKFC9X1lu1da8yUoB6vWxmlN0Da
-         LC0xF7Xddu6uW/AG5fdiYX45+3VRYA5048clxQdmfatUMIMBzjFL16t6XLY8piI1fpTL
-         GXR/FccPKIWXRmZUHMTwYZo8ns0HyUXfea6c4M6CSrYjzVpmofrrqX6SaGvB8QAbnc72
-         Gt8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQcwIStqEHhrX8Fzz7zrITx5XOmyKYpoKmJALaGbtX2R9McYBpo9DuhOE5bXlWvv3/IQUK4qsn+cntQXAioswmlEBmN93cGqnWKXz6d3EYhY8=
-X-Gm-Message-State: AOJu0YwwjQQKuMv/ziNU5M+S3McFcX774FhCMgxvZ0Tw8jlouDarfmO7
-	NBkPvh/Trp3eBMVeMPcy9UMW1iMsijpLLRqDxwc5a/J9mSGQZcI3HJ0h7A8DaelvK1cgeChfznF
-	n4HjWwoI/10E7TvC927WA9eNbJtP/5z2EI2F58Q==
-X-Google-Smtp-Source: AGHT+IEv03n8LbjI9tr6DDazz4uxUVmvw+zxPE7+xUkw8/yPG1uVEj4/9mSLSkT4tUUhQpyxWWLPRcYiL/VYZLB4rZY=
-X-Received: by 2002:a25:b109:0:b0:dcc:1814:ace9 with SMTP id
- g9-20020a25b109000000b00dcc1814ace9mr2464922ybj.28.1709321326441; Fri, 01 Mar
- 2024 11:28:46 -0800 (PST)
+        bh=+XmK1KXUIgEldgLQ9Dj7dEfcJRP25Vkl9HU6FEdalXs=;
+        b=vEJyUfIPQcL8L5ClHUBjgfYsQJXMnFVbQag1x59FO8R2i5SOd1zQAjowG2yDkwkXwW
+         GGrPLMqDP/NvMgDOUU1s/Xem2ZnS/T5xZvwFirDRPdiaEPHyylkfLGxbwrf7H/3raVfm
+         CenJxI2WA3/fITHaRJP+qOqSSRYtZMb+OFV3odFbEGkR01u/2Nan/PMCRrhyuz2IInJV
+         bWeZu1oP5ITNKeTRjOoMOAXa4DG0kv809g5ucJ7F13a0u+/mn/AkiOiBET23yoDsjFQT
+         1LoWL1l9gmj57PfQ7QiBkgbXWOt5u8ubEa1LKPS++iqTYp+5eEn4RA5LdVDGj8YykTE3
+         VASQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXqHHTGvPXCqV90pIk5nB5GUk2YA0IjAmN70dE62RcESiFvhhJyQCLah7TRulevD24GchW9srVPEC2ylg/uuW/ElM5752I0nPFiJYRAz+Ci/mo/HSoLw4EmzKJucEXJT+5/xKreB4QHIEYTJQd6UdZOGDET9+BPr0mk1nQ6qVEKGBQpK85k0vsD5kc=
+X-Gm-Message-State: AOJu0YzVC/cU3oCS0wJfBav/wz9w2pDdz2NIrc9kVAafaqyZR75TiiS1
+	9yaL+IZYf6GRoJF4cyiYZGYnSqDLg6yecFd+/c5OMRbjy/NoZGn6
+X-Google-Smtp-Source: AGHT+IFe/jusPETkAIAJswHE+vTyxv3T1WsrpeHoubCmcfJB1aHT1VfWeAn2Cx/qrh1L+SPHWwbrkg==
+X-Received: by 2002:a17:902:fe82:b0:1db:8fd9:ba0d with SMTP id x2-20020a170902fe8200b001db8fd9ba0dmr2177685plm.23.1709321948602;
+        Fri, 01 Mar 2024 11:39:08 -0800 (PST)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id u8-20020a170902e5c800b001dca6d1d572sm3837474plf.63.2024.03.01.11.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Mar 2024 11:39:08 -0800 (PST)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/4] usb: ehci-exynos: Use devm_clk_get_enabled() helpers
+Date: Sat,  2 Mar 2024 01:08:08 +0530
+Message-ID: <20240301193831.3346-2-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240301193831.3346-1-linux.amoon@gmail.com>
+References: <20240301193831.3346-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301115546.2266676-1-tudor.ambarus@linaro.org>
-In-Reply-To: <20240301115546.2266676-1-tudor.ambarus@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 1 Mar 2024 13:28:35 -0600
-Message-ID: <CAPLW+4=6oYcs0NPXo4ffLiCvtNQ-tY1s_isaxTX8dcPkV56xMw@mail.gmail.com>
-Subject: Re: [PATCH] spi: dt-bindings: samsung: make dma properties not required
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: andi.shyti@kernel.org, broonie@kernel.org, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	andre.draszik@linaro.org, peter.griffin@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 1, 2024 at 5:55=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro.=
-org> wrote:
->
-> Since the addition of the driver in 2009, the driver selects between DMA
-> and polling mode depending on the transfer length - DMA mode for
-> transfers bigger than the FIFO depth, polling mode otherwise. All
-> versions of the IP support polling mode, make the dma properties not
-> required.
->
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-AFAIU, the device tree has nothing to do with drivers, it's about
-hardware description. Does making DMA properties not required here
-mean that there are some HW out there which doesn't integrate DMA in
-SPI blocks? Even if this change is ok (I'm not sure), the
-argumentation doesn't look sound to me.
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  Documentation/devicetree/bindings/spi/samsung,spi.yaml | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/spi/samsung,spi.yaml b/Doc=
-umentation/devicetree/bindings/spi/samsung,spi.yaml
-> index 2f0a0835ecfb..f681372da81f 100644
-> --- a/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/samsung,spi.yaml
-> @@ -76,8 +76,6 @@ required:
->    - compatible
->    - clocks
->    - clock-names
-> -  - dmas
-> -  - dma-names
->    - interrupts
->    - reg
->
-> --
-> 2.44.0.278.ge034bb2e1d-goog
->
+While at it, use dev_err_probe consistently, and use its return value
+to return the error code.
+
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/usb/host/ehci-exynos.c | 30 +++++-------------------------
+ 1 file changed, 5 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index f644b131cc0b..05aa3d9c2a3b 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -159,19 +159,12 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 
+ 	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+ 	if (err)
+-		goto fail_clk;
+-
+-	exynos_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
+-
+-	if (IS_ERR(exynos_ehci->clk)) {
+-		dev_err(&pdev->dev, "Failed to get usbhost clock\n");
+-		err = PTR_ERR(exynos_ehci->clk);
+-		goto fail_clk;
+-	}
++		goto fail_io;
+ 
+-	err = clk_prepare_enable(exynos_ehci->clk);
+-	if (err)
+-		goto fail_clk;
++	exynos_ehci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
++	if (IS_ERR(exynos_ehci->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ehci->clk),
++				  "Failed to get usbhost clock\n");
+ 
+ 	hcd->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 	if (IS_ERR(hcd->regs)) {
+@@ -223,8 +216,6 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 	exynos_ehci_phy_disable(&pdev->dev);
+ 	pdev->dev.of_node = exynos_ehci->of_node;
+ fail_io:
+-	clk_disable_unprepare(exynos_ehci->clk);
+-fail_clk:
+ 	usb_put_hcd(hcd);
+ 	return err;
+ }
+@@ -240,8 +231,6 @@ static void exynos_ehci_remove(struct platform_device *pdev)
+ 
+ 	exynos_ehci_phy_disable(&pdev->dev);
+ 
+-	clk_disable_unprepare(exynos_ehci->clk);
+-
+ 	usb_put_hcd(hcd);
+ }
+ 
+@@ -249,7 +238,6 @@ static void exynos_ehci_remove(struct platform_device *pdev)
+ static int exynos_ehci_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+-	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 
+ 	bool do_wakeup = device_may_wakeup(dev);
+ 	int rc;
+@@ -260,25 +248,17 @@ static int exynos_ehci_suspend(struct device *dev)
+ 
+ 	exynos_ehci_phy_disable(dev);
+ 
+-	clk_disable_unprepare(exynos_ehci->clk);
+-
+ 	return rc;
+ }
+ 
+ static int exynos_ehci_resume(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+-	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 	int ret;
+ 
+-	ret = clk_prepare_enable(exynos_ehci->clk);
+-	if (ret)
+-		return ret;
+-
+ 	ret = exynos_ehci_phy_enable(dev);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable USB phy\n");
+-		clk_disable_unprepare(exynos_ehci->clk);
+ 		return ret;
+ 	}
+ 
+-- 
+2.43.0
+
