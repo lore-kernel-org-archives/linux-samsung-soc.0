@@ -1,125 +1,144 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A481134DE
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  2 Mar 2024 09:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5906C29AB;
+	Sat,  2 Mar 2024 15:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709372212; cv=none; b=Hc8BkY3EjBI7IS/YiktXG3xGUDBZoL867tUGh5lm0h8hZO5xlqt5piMClDgGfBbpP6a2bmKDy4fAi2cp4SAcoxISiw7T77r4WkCQOae2bCorLIY22AHQKIrGkwqCj0T17qL4BNqLxRmKFXDUYiA/jIbpFjXnrPp3BpmLT0OrTzo=
+	t=1709394126; cv=none; b=Pb2f2krbY72tT/e0MKye6xQ9Gg4iHN/JVbMHnaekr2tOiOedVX5/nTTzb3uSVl6a7Y3x77Iv8IGxx+/3t+XQm4kfjUGjW+eOpA8zVFqughy59aW4+uDqzHru/KVUYhR2WJK5aolaZ2lu2SIOI8Ir9CB4E+u13pHUZMfdsp7DNvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709372212; c=relaxed/simple;
-	bh=X/AL9TvNX/+ErvbiZEnbteQ6E0iQD2tAJQ+ARrkNOXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HAIIBDT/ZXE1PfOINYAKneFfkxY1Qr/en+WxCLD+qJrnMxfoP6RCqNc0EUloEXihWZsS3X76un0X8NHuEgry/9fCxnTghCCV+TyzpBd+0B3I4dK7UgdrFWkIH3P/NbTuztQQkIl1HVs2rXAjpyic4Lm6XQEkZkVzj+FliBauxzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rk1gZxzV; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709394126; c=relaxed/simple;
+	bh=Vg0+NRsFIWYNeq3/Y14CGJlm6ANmz7j0y8mB3zB10Io=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DlpAJKOhFlIgjgvBwbrOwIuT5K9JTdzmqHL9sI0GeV9fNjzKtin1yLfLSNC2644tia2ixIQN6tVDEuOVrUBzdjaVejtJvuRiL5HXzZoX9Q8w/PqxuyoKxm3IioTFDk5FrshQrHw5/HkBp9esniTT+zG9HCr55vYTNhjdAdi5HVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMOfG5Rp; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rk1gZxzV"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5654f700705so4374849a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Mar 2024 01:36:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMOfG5Rp"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-21f0c82e97fso1795330fac.2;
+        Sat, 02 Mar 2024 07:42:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709372209; x=1709977009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LvcKz/ggpTufe8TwOw+mHRKPGyMuEJMkdqXs69fMMA8=;
-        b=rk1gZxzVOrImSi5lm6BSOIdmipt/aGrrQsjmXqjYJ0iPRPcew9Mi4ClysL3GOKE7Q4
-         jhns6tOoFMc4ppQ2kJ4CI6aNCz+o1RJr8JMwzQOI4rAJbxWNI6hf9eC3PnQ+vKUS55t2
-         QzxJ/PqrqgjowgwklGYa78//wsY0Hmuayh0BiG1RuURLV7k3H2agHuGDaTSHmL/SYOV7
-         T8vB0wecw9Za/c/njLPme6NlEoMbIxe67KHpI5x6rAS29eGXcu6ea7PhL3ynltror9C2
-         XU1Hmlp+jRoCWNV+ia4nSMIVCYCuFLACMfhlDrzyD2NB7jXzNiNvY7lmmTWRnxNwByto
-         /VfQ==
+        d=gmail.com; s=20230601; t=1709394124; x=1709998924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LzCpnhGEH0mn0/NF9dJmvWd3SERdejuejaFsItX1rnU=;
+        b=PMOfG5Rp5UdE9iAyhD5r6i8yUGolV8HGUOAJcJULQAKW4bzZf4XYQNU9PTnmb6tVjW
+         NNL7iyubKKL5pJRXrxBMTcqi590u3Ymad5DvV1xo+7fl1/2mfphdaR/GamNqqEe6jeCD
+         MzBXpiqG9TYdAYzqvkkxczH4fJrIfPmFnE6izU6JhVU6hxNRlLRXakz4Y5uD3K2tkR4K
+         DiT4JUPUsOmxXZCAgI+2z2/BhLBb2Ej6rRXcuIoH06/S6eQI6rScS6mMxrxvX+5ZxZKg
+         D7PIjKCbMqYt2ukaB20KtV4n0MaH016At/Zb0U3nztXjusKfZsz3PvphF5KKylMmqD2s
+         HlBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709372209; x=1709977009;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LvcKz/ggpTufe8TwOw+mHRKPGyMuEJMkdqXs69fMMA8=;
-        b=JSypi+bEMCtLu9Uhx0+uxs8kpL2YAqJhc4sErCnj7FlAEL04sCrlRqUtTiHsyIkaVV
-         qFurWyCSJ8ag8sfJILnRSxddxNdgBAaxkzTyU9o313VKVyw214WnBKgtzIUqEyvpRY2M
-         MS4TjVOY5o/TBqAy+kRSgrFR6mvTb/XbqYFbCBoFm5FSofjwok7oEsjosFZHI6a6wbB/
-         kSRPG21nsbHwuJL1eeEndBP8FMxr1/Vwo2257MsD5ONvHjkCbQDK5y29/zI8LrjpimRV
-         SX0FWTrcgs/kDH83T5yJ71lOlPSKbHLChL/TwthICPtvwEFWjwfvDA7Ga2i7YoKOaEUN
-         IvBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmGLABYTvFJSytkMnwQYZrAYmqATfTmbRvvfahEoGMHF9ru4CiqgkhkKlx2Sp/2UjSYBbbewnLuLHuXvenbU+ZFw9irVH7+wM/SdgJCp8h3uU=
-X-Gm-Message-State: AOJu0YyjWLpUHzLocTvEpT5KnFp9qmUsaIZ1fJ3hDv7bF24XIwVYEiRs
-	kUvhuy1Y8j6usx73+w9PTCzcOSnZsxOTBrhWzYyJm7E1vjrwY4n8h9VPCy+DM54=
-X-Google-Smtp-Source: AGHT+IHyHU7L10kTlkkTRniCEnzyER/dAOmXjiBsxNbkczBaTHO/POH2wBkjJHVx2ngJK0q2toRjLg==
-X-Received: by 2002:a17:906:5a9a:b0:a43:bf25:989 with SMTP id l26-20020a1709065a9a00b00a43bf250989mr2973140ejq.9.1709372209521;
-        Sat, 02 Mar 2024 01:36:49 -0800 (PST)
-Received: from [192.168.0.173] ([79.115.63.35])
-        by smtp.gmail.com with ESMTPSA id gs4-20020a170906f18400b00a449d12cdc5sm1210443ejb.119.2024.03.02.01.36.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Mar 2024 01:36:49 -0800 (PST)
-Message-ID: <f06328e4-b283-4302-b9c1-6473aa3cfa25@linaro.org>
-Date: Sat, 2 Mar 2024 11:36:47 +0200
+        d=1e100.net; s=20230601; t=1709394124; x=1709998924;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LzCpnhGEH0mn0/NF9dJmvWd3SERdejuejaFsItX1rnU=;
+        b=QRzUd+Pix/JhPBNmQS+HVdWAOJ1T0JtxRWmSMN08u0RyOm0NI5CC3b7uifKAmqbvPj
+         lZFPdK5w88xBrwTjXzxsirV+/tOnCTblPp7EvVCAO7McY/Tof9Vli6/UUN9cKVWSC56d
+         cLiM2nJDwEhDGWP+pyoWFKzj9qD+tLaVochPOA+PLtqzydBRINM2FPVOSs6R4UEyXEkz
+         HWnGe2CwQx8zlyiwwg3euJCty6CJF3Jx0u9KBTfTFoAPvZeLTLqtdUNrwIkYv1ecvIRn
+         SSAL5uaSqszzhzBMF9Z9+1b6alqdEKu1Ei+y46dtH23HOjFC5jnsOFf3aYZq1FrrQiEO
+         WX2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWcxXHaZ0PJb9G+A+I877Vg1g4INmgudqt4m/Q0EAwAMQazy2m3n35tGnKDQp9z1jRttcS9IUUxWLYOTNI7LRij/s8IbHb+jStSwThj4mNhpHmixYk6smY5dXtaErwF5nHKV4WiGQRRDAMZP+7AdoZRmZ68SehF1DbV4L8bnuF+kv0OkvyHFvbzjqg=
+X-Gm-Message-State: AOJu0YxNtFBnI35GvVzOHD957EI/qjSJFvmsYjobZJgCURuHiOK1MmZt
+	fiMHMC7oJMUvKtLwjNBzYOglhmCOAsEWspANrViQjWNIdS0y2jcybAxgxJb76cpuw7Hicze01vI
+	H1uLvlb+ZEkrBFEOC/RX1hShqAA7Ys5s9
+X-Google-Smtp-Source: AGHT+IFOyLUGj5njldof2Kjx3MpNztLCDh4BskGy5JZiPRXjanr3DeP4NYYaguyNpTzzI6L8Bn7MKpE4vNcxua4KW5g=
+X-Received: by 2002:a05:6870:830d:b0:21e:5f83:e698 with SMTP id
+ p13-20020a056870830d00b0021e5f83e698mr4957415oae.52.1709394124410; Sat, 02
+ Mar 2024 07:42:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: dt-bindings: samsung: make dma properties not
- required
-To: Mark Brown <broonie@kernel.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: andi.shyti@kernel.org, robh+dt@kernel.org, conor+dt@kernel.org,
- linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, peter.griffin@linaro.org, willmcvicker@google.com,
- kernel-team@android.com
-References: <20240301115546.2266676-1-tudor.ambarus@linaro.org>
- <CAPLW+4=6oYcs0NPXo4ffLiCvtNQ-tY1s_isaxTX8dcPkV56xMw@mail.gmail.com>
- <cb426fb0-2f27-4c9b-89f5-7139354ea425@sirena.org.uk>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Content-Language: en-US
-In-Reply-To: <cb426fb0-2f27-4c9b-89f5-7139354ea425@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240301193831.3346-1-linux.amoon@gmail.com> <20240301193831.3346-3-linux.amoon@gmail.com>
+ <f989a532-a77e-4324-902b-968b12134f15@rowland.harvard.edu>
+In-Reply-To: <f989a532-a77e-4324-902b-968b12134f15@rowland.harvard.edu>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 2 Mar 2024 21:11:49 +0530
+Message-ID: <CANAwSgT5cvfwQmv6SbMoKoNA1vHYEpbhvc+6rfaMr-36bHnLUQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] usb: ehci-exynos: Switch from CONFIG_PM guards to pm_ptr()
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Alan,
 
+On Sat, 2 Mar 2024 at 01:58, Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Sat, Mar 02, 2024 at 01:08:09AM +0530, Anand Moon wrote:
+> > Use the new PM macros for the suspend and resume functions to be
+> > automatically dropped by the compiler when CONFIG_PM are disabled,
+> > without having to use #ifdef guards. If CONFIG_PM unused,
+> > they will simply be discarded by the compiler.
+> >
+> > Use RUNTIME_PM_OPS runtime macro for suspend/resume function.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  drivers/usb/host/ehci-exynos.c | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> > index 05aa3d9c2a3b..4676f45655cd 100644
+> > --- a/drivers/usb/host/ehci-exynos.c
+> > +++ b/drivers/usb/host/ehci-exynos.c
+> > @@ -234,7 +234,6 @@ static void exynos_ehci_remove(struct platform_device *pdev)
+> >       usb_put_hcd(hcd);
+> >  }
+> >
+> > -#ifdef CONFIG_PM
+> >  static int exynos_ehci_suspend(struct device *dev)
+> >  {
+> >       struct usb_hcd *hcd = dev_get_drvdata(dev);
+> > @@ -268,14 +267,9 @@ static int exynos_ehci_resume(struct device *dev)
+> >       ehci_resume(hcd, false);
+> >       return 0;
+> >  }
+> > -#else
+> > -#define exynos_ehci_suspend  NULL
+> > -#define exynos_ehci_resume   NULL
+> > -#endif
+>
+> Doesn't this now generate warnings about functions being defined but not
+> used when you build with CONFIG_PM disabled?
+>
+Yes I have tried compile the kernel with disable CONFIG_PM=n and
+CONFIG_PM_SLEEP=n
+But it's getting selected  by default.
 
-On 01.03.2024 22:42, Mark Brown wrote:
-> On Fri, Mar 01, 2024 at 01:28:35PM -0600, Sam Protsenko wrote:
->> On Fri, Mar 1, 2024 at 5:55 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> 
->>> Since the addition of the driver in 2009, the driver selects between DMA
->>> and polling mode depending on the transfer length - DMA mode for
->>> transfers bigger than the FIFO depth, polling mode otherwise. All
->>> versions of the IP support polling mode, make the dma properties not
->>> required.
-> 
->> AFAIU, the device tree has nothing to do with drivers, it's about
->> hardware description. Does making DMA properties not required here
+Also compiled with W=1 and found no warning with these patches.
+To be safe I will add __maybe_unused to suspend / resume functions in
+the next version.
 
-correct
+diff --git a/arch/arm/configs/exynos_defconfig
+b/arch/arm/configs/exynos_defconfig
+index c98d5ff8a1ed..e96f5c3bf8c1 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -29,8 +29,10 @@ CONFIG_ARM_EXYNOS_CPUIDLE=y
+ CONFIG_VFP=y
+ CONFIG_NEON=y
+ CONFIG_KERNEL_MODE_NEON=y
+-CONFIG_PM_DEBUG=y
+-CONFIG_PM_ADVANCED_DEBUG=y
++# CONFIG_PM_SLEEP is not set
++# CONFIG_PM is not set
++# CONFIG_PM_DEBUG is not set
++# CONFIG_PM_ADVANCED_DEBUG is not set
+ CONFIG_ENERGY_MODEL=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_MODULES=y
 
->> mean that there are some HW out there which doesn't integrate DMA in
+> Alan Stern
 
-no, to me it means that the IP can work without DMA, only in PIO mode,
-regardless if DMA is integrated or not. Not required means that the
-property is not mandatory, which is what I'm trying to achieve here.
+Thanks
 
->> SPI blocks? Even if this change is ok (I'm not sure), the
->> argumentation doesn't look sound to me.
-
-switching to PIO mode in the driver for sizes smaller than FIFO depths
-in the driver guarantees that all existing compatibles support PIO mode.
-
-Are you saying that if there is a physical line between an IP and DMA
-controller, then the DMA properties must always be specified in dt? I
-thought they can be marked as optional in this case, and that's what I
-did with this patch.
-
-> 
-> I do remember there being some SoC which shipped a SPI controller in
-> that configuration for some reason.  Possibly one of the OEM ones rather
-> than one in a Samsung SoC?
-
-with DMA you mean?
-
-Thanks,
-ta
+-Anand
