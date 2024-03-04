@@ -1,233 +1,119 @@
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B212BCFF;
-	Mon,  4 Mar 2024 11:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EA33F9C0;
+	Mon,  4 Mar 2024 15:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709552810; cv=none; b=uX4X3LWbdwPsoGpPLbFPxLdRFq+nGlEt9VKicaSIGOJlwgMkqdII5+18rlqAXPEyIIxRDKitDoDX5sM8KnDtqhEpbyiW9D/6x2Kr7MHKOiYFtKAJyFXO4/wW1IV1+8KsFj9EWeDlKvPK7uGROnPeKHGSZidU9mx+rm070VlwSPo=
+	t=1709564652; cv=none; b=BYg/4w4bqFAy/L+ONk5mySjLDUnR/zW3gU0vcWTWLpBtvYbq/4bWRhvcILXsKp55j/r80EBaA46Cf7Gkt+OZQRLbLjWmcqaERBcMS6A9EnFQQRPofjAnlVGeeEoNT/Kd516DhmuqHhVH9ZY+hZMDiPgd/JLkBCCDMFZG9njWoZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709552810; c=relaxed/simple;
-	bh=MREf+q+trSbCOEQo2zmMzNcMz+h6WiYld+brhD1xTWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vAwaLAzDFboMP/bVJFK9zywBFqXy1AIds7Fm2YeGVoUrEQdCLkU8eWgGadbQDQJ0JCVVCnNvVc7kn/x66Ipn9U6s3bdjbzYXtYK+aSeZSjR7A7FLyvT8jOtxJWddXCXipOaVpyXqVCdbcH1Zsx+WtZ2YIbsqGPYQV7hurDvKiaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvdcOhRh; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709564652; c=relaxed/simple;
+	bh=sUkZRyJ98U5WESus3dO/qr3DdVnkuuLZdtsBx6GFUVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5q9YhPubmeMnF0/ZdEShYpEy7VUhXwjl+vprWbnVUQaYhbtQ7VxyGb7dJb9pYr8BBWSSmWKMe3j+Qt+K2qqJwfL6+7ZXPpAyQN4+e7Ue/s21hFMJGBD2JuOiX2viO4P+c147yOA8yoo4dfDiyx9h4yxMkap6Y6I5NlahGYT06E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwlfxjuC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvdcOhRh"
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5a0a19c9bb7so3538188eaf.3;
-        Mon, 04 Mar 2024 03:46:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709552808; x=1710157608; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6JEGHtbqyJwPzknb9cutu3F9GTXF2cnTcxkajaqQGKU=;
-        b=DvdcOhRhKJyzGkG7Xb+992GJpuMqhdDK05IQXQlF3RDOmeun1SMzVBtpt8kqypkoyR
-         5+JSoS0LXJ+EJJhxTa4FOGIRA3bwp2TDgRTtdwn5TM0LELJJseas43sRlLsKxAhwVaKT
-         v+Hi5kqyLRPj0iTqtFuNjta5vU/X1IgpPlBa+AYMW3Kd/OA8eCLBr/IkUM8hVGLD8YRm
-         Ii0Bx8wTHySCJcPoEPgBJnyhL9gFcNOXRjEJzNfLbuvGof4dFnRdyYu+keqP29PYUhey
-         GgaxbzGK1dularqYVkhBM4ixCMQTA4MKiRsdJfx1ZoO8HMv83eFHT6JyCqwVo9w7C/SF
-         JShA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709552808; x=1710157608;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6JEGHtbqyJwPzknb9cutu3F9GTXF2cnTcxkajaqQGKU=;
-        b=kg0IeYDFci5KRr4K63TTWp3sELHuJCguH5li7mJrv7K4Rd+InU8xWj45Ny6apR1kJW
-         9eQ41V9MFM3u6z3Zqd8v+J3Gr0j7o4yjU9JqYj6QeSRn4146XefFfMVSSgH+biCxFr5U
-         ix3BWG5dPShZmGxgr9KVr6NW2gwJYVzKHWBdeD6SvKumivyLvMIlLMhAxM0Sw6vJr43o
-         vELmL1MbUW2DV9Heqg9XLOfvaxcGM+KYGJBQEDl52Gs40mSY5AgBYQbV8JpkmiNxp03N
-         w8xE6uc5fbo+d8opwgeB9uQt0SZlRti5fDqRbVBv+DR2E4ZszO+ma/24+SpTFdaUdq6X
-         VpaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOywENJYacw6n6vNS4N8GMG0rypYriOC6pWoT8vIYSpkNrog27t1ocGAYz4Qs47JHxQberi3caS07NGFuKaMXQ8RHvH+9ErTd1nPHLz8K5MJ6XWNMvyNrc1ccicQKbuMdzX3MbSvpUBk+K30HyblX5wIIOyekYWM/ryIQhQKmGYRBWOoxUL9TZKlA=
-X-Gm-Message-State: AOJu0YyBFHIiJDuoJCam9w8bY7DSOkiBJv/TxyqlIT17q+/qA+CkibJE
-	qlHG3Kap2k7WUiRbSBlR+c5kpheyvsHZ+6bE3ehqTJWllJ57WyIuDq2KGiGPQ5DgPQsihpCpz1V
-	KHVvAHswhiv36hGFSk5aRYFwa24w=
-X-Google-Smtp-Source: AGHT+IEeP26jeJGto7pU0/H3MLxor72shrPPLiWXPA7B5vfhOmQFc4jDmdCqhuCwpM9prlDnUrdGDerfdd0RJie/m6k=
-X-Received: by 2002:a05:6820:2281:b0:5a1:841:c2a6 with SMTP id
- ck1-20020a056820228100b005a10841c2a6mr7832749oob.3.1709552807779; Mon, 04 Mar
- 2024 03:46:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwlfxjuC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0096C433F1;
+	Mon,  4 Mar 2024 15:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709564652;
+	bh=sUkZRyJ98U5WESus3dO/qr3DdVnkuuLZdtsBx6GFUVE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jwlfxjuCNqmqMUTyLOsCMywTHyYeve0FUWr0Nh+EKoe2ysWjPj2eUeVAk6UPDA7Rv
+	 6hUG+TK+e4c4aV6d7C04+jNVHrgWxRc0BsnUlU9zYmUS3QGjS+mRkhTRYK6FKmUwbX
+	 EkkGOGl6t0zo84p0autOIEGHNxXNtNWvWeH3t1Tel1fnt2pPgEj1OCzjb80BHwzSgP
+	 LMFNXe+diQiiY437/I5LByPyodDxfuIafqX7Qs8C4Ygt2yvMZJ5KovPKvm9fIRdWO3
+	 rJCnfuj20yoyigyqm2E1CthVLJFcK5waVtglDg4+K14KBqPAunP9lpKuGh9EXmB/MF
+	 RCPNOOzzrWnzg==
+Date: Mon, 4 Mar 2024 16:04:08 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com, 
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: Re: [PATCH] i2c: exynos5: Init data before registering interrupt
+ handler
+Message-ID: <vpe5jvnhz3r5cpfiofwrelp62awe74knbxrz47i2deflczx276@yahhrshr355r>
+References: <20240304-i2c_exynos5-v1-1-e91c889d2025@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301193831.3346-1-linux.amoon@gmail.com> <20240301193831.3346-4-linux.amoon@gmail.com>
- <52158bf6-16fe-4ce2-b9b6-bbc6550a6e14@wanadoo.fr> <CANAwSgTCaSSMN2QCw5fr=RBp0WwWaLuebzQDO=scnABNFNctJQ@mail.gmail.com>
- <e85ad80f-af7d-4eaf-9d14-dff13451f7e5@wanadoo.fr>
-In-Reply-To: <e85ad80f-af7d-4eaf-9d14-dff13451f7e5@wanadoo.fr>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 4 Mar 2024 17:16:35 +0530
-Message-ID: <CANAwSgRrOw+6MHLPDP8RwLwzwB1EVGBTovtR2ChhqR3b5uWowA@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] usb: dwc3: exynos: Use devm_regulator_bulk_get_enable()
- helper function
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240304-i2c_exynos5-v1-1-e91c889d2025@axis.com>
 
-Hi Christophe,
+Hi Jesper,
 
-On Sun, 3 Mar 2024 at 00:07, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Le 02/03/2024 =C3=A0 17:48, Anand Moon a =C3=A9crit :
-> > Hi Christophe,
-> >
-> > On Sat, 2 Mar 2024 at 21:20, Christophe JAILLET
-> > <christophe.jaillet@wanadoo.fr> wrote:
-> >>
-> >> Le 01/03/2024 =C3=A0 20:38, Anand Moon a =C3=A9crit :
-> >>> Use devm_regulator_bulk_get_enable() instead of open coded
-> >>> 'devm_regulator_get(), regulator_enable(), regulator_disable().
-> >>>
-> >>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >>> ---
-> >>>    drivers/usb/dwc3/dwc3-exynos.c | 49 +++---------------------------=
-----
-> >>>    1 file changed, 4 insertions(+), 45 deletions(-)
-> >>>
-> >>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-e=
-xynos.c
-> >>> index 5d365ca51771..7c77f3c69825 100644
-> >>> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> >>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> >>> @@ -32,9 +32,6 @@ struct dwc3_exynos {
-> >>>        struct clk              *clks[DWC3_EXYNOS_MAX_CLOCKS];
-> >>>        int                     num_clks;
-> >>>        int                     suspend_clk_idx;
-> >>> -
-> >>> -     struct regulator        *vdd33;
-> >>> -     struct regulator        *vdd10;
-> >>>    };
-> >>>
-> >>>    static int dwc3_exynos_probe(struct platform_device *pdev)
-> >>> @@ -44,6 +41,7 @@ static int dwc3_exynos_probe(struct platform_device=
- *pdev)
-> >>>        struct device_node      *node =3D dev->of_node;
-> >>>        const struct dwc3_exynos_driverdata *driver_data;
-> >>>        int                     i, ret;
-> >>> +     static const char * const regulators[] =3D { "vdd33", "vdd10" }=
-;
-> >>>
-> >>>        exynos =3D devm_kzalloc(dev, sizeof(*exynos), GFP_KERNEL);
-> >>>        if (!exynos)
-> >>> @@ -78,27 +76,9 @@ static int dwc3_exynos_probe(struct platform_devic=
-e *pdev)
-> >>>        if (exynos->suspend_clk_idx >=3D 0)
-> >>>                clk_prepare_enable(exynos->clks[exynos->suspend_clk_id=
-x]);
-> >>>
-> >>> -     exynos->vdd33 =3D devm_regulator_get(dev, "vdd33");
-> >>> -     if (IS_ERR(exynos->vdd33)) {
-> >>> -             ret =3D PTR_ERR(exynos->vdd33);
-> >>> -             goto vdd33_err;
-> >>> -     }
-> >>> -     ret =3D regulator_enable(exynos->vdd33);
-> >>> -     if (ret) {
-> >>> -             dev_err(dev, "Failed to enable VDD33 supply\n");
-> >>> -             goto vdd33_err;
-> >>> -     }
-> >>> -
-> >>> -     exynos->vdd10 =3D devm_regulator_get(dev, "vdd10");
-> >>> -     if (IS_ERR(exynos->vdd10)) {
-> >>> -             ret =3D PTR_ERR(exynos->vdd10);
-> >>> -             goto vdd10_err;
-> >>> -     }
-> >>> -     ret =3D regulator_enable(exynos->vdd10);
-> >>> -     if (ret) {
-> >>> -             dev_err(dev, "Failed to enable VDD10 supply\n");
-> >>> -             goto vdd10_err;
-> >>> -     }
-> >>> +     ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulato=
-rs), regulators);
-> >>> +     if (ret)
-> >>> +             return dev_err_probe(dev, ret, "Failed to enable regula=
-tors\n");
-> >>>
-> >>>        if (node) {
-> >>>                ret =3D of_platform_populate(node, NULL, NULL, dev);
-> >>> @@ -115,10 +95,6 @@ static int dwc3_exynos_probe(struct platform_devi=
-ce *pdev)
-> >>>        return 0;
-> >>>
-> >>>    populate_err:
-> >>> -     regulator_disable(exynos->vdd10);
-> >>> -vdd10_err:
-> >>> -     regulator_disable(exynos->vdd33);
-> >>> -vdd33_err:
-> >>>        for (i =3D exynos->num_clks - 1; i >=3D 0; i--)
-> >>>                clk_disable_unprepare(exynos->clks[i]);
-> >>>
-> >>> @@ -140,9 +116,6 @@ static void dwc3_exynos_remove(struct platform_de=
-vice *pdev)
-> >>>
-> >>>        if (exynos->suspend_clk_idx >=3D 0)
-> >>>                clk_disable_unprepare(exynos->clks[exynos->suspend_clk=
-_idx]);
-> >>> -
-> >>> -     regulator_disable(exynos->vdd33);
-> >>> -     regulator_disable(exynos->vdd10);
-> >>>    }
-> >>>
-> >>>    static const struct dwc3_exynos_driverdata exynos5250_drvdata =3D =
-{
-> >>> @@ -196,9 +169,6 @@ static int dwc3_exynos_suspend(struct device *dev=
-)
-> >>>        for (i =3D exynos->num_clks - 1; i >=3D 0; i--)
-> >>>                clk_disable_unprepare(exynos->clks[i]);
-> >>>
-> >>> -     regulator_disable(exynos->vdd33);
-> >>> -     regulator_disable(exynos->vdd10);
-> >>
-> >> Hi,
-> >>
-> >> Same here, I don't think that removing regulator_[en|dis]able from the
-> >> suspend and resume function is correct.
-> >>
-> >> The goal is to stop some hardware when the system is suspended, in ord=
-er
-> >> to save some power.
-> > Ok,
-> >>
-> >> Why did you removed it?
-> >
-> > As per the description of the function  devm_regulator_bulk_get_enable
-> >
-> > * This helper function allows drivers to get several regulator
-> >   * consumers in one operation with management, the regulators will
-> >   * automatically be freed when the device is unbound.  If any of the
-> >   * regulators cannot be acquired then any regulators that were
-> >   * allocated will be freed before returning to the caller.
->
-> The code in suspend/resume is not about freeing some resources. It is
-> about enabling/disabling some hardware to save some power.
->
-> Think to the probe/remove functions as the software in the kernel that
-> knows how to handle some hardawre, and the suspend/resume as the on/off
-> button to power-on and off the electrical chips.
->
-> When the system is suspended, the software is still around. But some
-> hardware can be set in a low consumption mode to save some power.
->
-> IMHO, part of the code you removed changed this behaviour and increase
-> the power consumption when the system is suspended.
->
+On Mon, Mar 04, 2024 at 12:01:14PM +0100, Jesper Nilsson wrote:
+> devm_request_irq() is called before we initialize the "variant"
+> member variable from of_device_get_match_data(), so if an interrupt
+> is triggered inbetween, we can end up following a NULL pointer
+> in the interrupt handler.
+> 
+> This problem was exposed when the I2C controller in question was
+> (mis)configured to be used in both secure world and Linux.
+> 
+> That this can happen is also reflected by the existing code that
+> clears any pending interrupts from "u-boot or misc causes".
+> 
+> Move the clearing of pending interrupts and the call to
+> devm_request_irq() to the end of probe.
 
-You are correct, I have changed the regulator API from
-devm_regulator_get_enable to devm_regulator_bulk_get_enable
-which changes this behavior.
-I will fix it in the next version.
+I'm OK with moving the irq request at the end and I'm going to
+give my r-b anyway. There is still one comment below.
 
-> CJ
+> Additionally, return failure if we can't find a match in devicetree.
+> 
+> Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
 
-Thanks
--Anand
+The way you are describing it you would need the Fixes tag here
+and this patch should be treated as a fix.
+
+Nevertheless, I think that it's odd that the device is sending
+interrupts at this phase and the real fix should be preventing
+the controller to send interrupts here.
+
+How have you tested this patch?
+
+> ---
+>  drivers/i2c/busses/i2c-exynos5.c | 32 ++++++++++++++++++--------------
+>  1 file changed, 18 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index 385ef9d9e4d4..eba717e5cad7 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -906,24 +906,14 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+>  	i2c->adap.algo_data = i2c;
+>  	i2c->adap.dev.parent = &pdev->dev;
+>  
+> -	/* Clear pending interrupts from u-boot or misc causes */
+> -	exynos5_i2c_clr_pend_irq(i2c);
+> -
+>  	spin_lock_init(&i2c->lock);
+>  	init_completion(&i2c->msg_complete);
+>  
+> -	i2c->irq = ret = platform_get_irq(pdev, 0);
+> -	if (ret < 0)
+> -		goto err_clk;
+> -
+> -	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
+> -			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
+> -	if (ret != 0) {
+> -		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
+> -		goto err_clk;
+> -	}
+> -
+>  	i2c->variant = of_device_get_match_data(&pdev->dev);
+> +	if (!i2c->variant) {
+> +		dev_err(&pdev->dev, "can't match device variant\n");
+> +		return -ENODEV;
+
+return dev_err_probe(), please.
+
+Andi
