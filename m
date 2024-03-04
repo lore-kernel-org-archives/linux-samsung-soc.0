@@ -1,116 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E92A20;
-	Mon,  4 Mar 2024 16:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95D761674;
+	Mon,  4 Mar 2024 17:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709571397; cv=none; b=uw1fLOFs5DeZqyt4qLBpkPULvLxn9NqWFa6XQE3QE8fqDusvYr+4NVE2+ZeaT8mP0OuMsLRhQVnUGPpf2hzEjraLKWd9L00Z2sQXm2jEeAvWNG3uDHetJz82kX1c5Xx7VGaVxHgLuMqVrsCstGY7o8VbMK2rJOJ3QhYFu99Euv0=
+	t=1709574974; cv=none; b=LjEQLgrTHwfeBe5pMx2Xo7AnlFLWX5GxWbBjwNk1BrFU5Eki8nr5CX+/UqVbOlsO1OOPrywzjMW9P77RZVRtMh46NaRzNDaMnOu34AafbKzLpl9tC7xqvxhEjNp1gMZtKB7zi4Uzew0n9O6n2sgIZFnRZNbuSeUapt4T5y1aq3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709571397; c=relaxed/simple;
-	bh=xVMa7i8oPGdLj8iX76oU3OuSEEgYdE3cXj3g2JVHqYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FK6ZTCqd8vTUuYMnuhdz1e4rK/2ljC9WqvUz2QCE3qq29CdnwnEG7vscsLav6qXDXuUvQSr0LCYroR9d7csFOyFTfNNazepoft210c5lsTJEEaLw/1AiNLD4diUqyZB1B6TU2KKVYVwVNfSVOEHzbx0+XNxNMNPqmFjdE5dkaro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+h3DOW9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709574974; c=relaxed/simple;
+	bh=drtzyZtOwqkOW+9tBb7Ed1tvYjSnYABhtG4eJWqnI48=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BR5/4zFIhTEM9uPATxgs+EhTXhveULTJtn+S+nPySqW6MSiTpeE75A+eSlNoEPmipxYrTEC/0tCyR6y4hOO0mAdxnaIlNJAh3ymFQ2BLGQHhSyllM7YYEr00VE0o8lM3oTkZwnQwoHUbf2KlY5vPE7hQqFG+u6I5mMAV53Ng35k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bvir76AW; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+h3DOW9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43584C433F1;
-	Mon,  4 Mar 2024 16:56:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709571397;
-	bh=xVMa7i8oPGdLj8iX76oU3OuSEEgYdE3cXj3g2JVHqYA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F+h3DOW9ORlN/9HF9TaxmR/fYvUag0uSF8Hc9e/12dJNoz+71goZo2H8TackF4ndY
-	 NfVYqGj/6OFDRiDCsry5FDGozEtGEBurPUvzd9yu6rOK0cbMv8vDpUXzA1HT0Z0/sA
-	 qujKdTO7/OeWMSBL96U+8G+buwL9ScaI1Mid9Lcybrym8Th/7y5NAPq1JqK70JXxKQ
-	 WvLrG00pt/H1qdoz+81PJJ5YiS22nvmqncYZfgaMLdXthBsu3rxy5UE35nXH9gpq8q
-	 KeiaEoMNsjjEdzpngrMHC/ZI1eja3L9D7ZMCGBt+YMsACvSIS2ioHguEOpdgDRyZDa
-	 YZKTSWcYAv91A==
-Date: Mon, 4 Mar 2024 10:56:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	andi.shyti@kernel.org, conor+dt@kernel.org,
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org, peter.griffin@linaro.org,
-	willmcvicker@google.com, kernel-team@android.com
-Subject: Re: [PATCH] spi: dt-bindings: samsung: make dma properties not
- required
-Message-ID: <20240304165635.GA739022-robh@kernel.org>
-References: <20240301115546.2266676-1-tudor.ambarus@linaro.org>
- <CAPLW+4=6oYcs0NPXo4ffLiCvtNQ-tY1s_isaxTX8dcPkV56xMw@mail.gmail.com>
- <cb426fb0-2f27-4c9b-89f5-7139354ea425@sirena.org.uk>
- <f06328e4-b283-4302-b9c1-6473aa3cfa25@linaro.org>
- <CAPLW+4kjXK=EWx__h0bX0rJMrL33E=t4YDzSOfObmvtG9aS+jg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bvir76AW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709574973; x=1741110973;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=drtzyZtOwqkOW+9tBb7Ed1tvYjSnYABhtG4eJWqnI48=;
+  b=bvir76AWPweEjP+Hq9YUjuRezIw82E4yvb8gqczJJxMHuMEiGhDWiso4
+   faKIeBiG6CKfMT8rFuifDrLjPnwOThlKpDpa1154+zJk1Nfo1eY/fzeuP
+   qhyewiI/vpT+6KOweyE3HqPZ7dQsoxDMcN+T4y9qegZpUUoVXzRBiAbT8
+   R/uDMrc+VIt0/1r7ZG4pTVgXsx/KXvtC5IW//1EOYsZ6T6ddboJCuDDFn
+   z1er2htyFXk3VGz7u8zwIFegBTDXjxGUyROO+QvCDHjbbuSMDhcOlBIfQ
+   Sez0ZqemRwJl/cJtKpWGzgsPwsj7VdzeprFra8hIXifme3FNJCHB7KzaK
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11003"; a="4210405"
+X-IronPort-AV: E=Sophos;i="6.06,204,1705392000"; 
+   d="scan'208";a="4210405"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 09:56:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,11003"; a="937040908"
+X-IronPort-AV: E=Sophos;i="6.06,204,1705392000"; 
+   d="scan'208";a="937040908"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Mar 2024 09:56:09 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 2210415C; Mon,  4 Mar 2024 19:56:07 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yangtao Li <frank.li@vivo.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-mmc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v1 1/1] mmc: dw_mmc: Remove unused of_gpio.h
+Date: Mon,  4 Mar 2024 19:56:06 +0200
+Message-ID: <20240304175606.1200076-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPLW+4kjXK=EWx__h0bX0rJMrL33E=t4YDzSOfObmvtG9aS+jg@mail.gmail.com>
 
-On Sat, Mar 02, 2024 at 10:23:16AM -0600, Sam Protsenko wrote:
-> On Sat, Mar 2, 2024 at 3:36 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> >
-> >
-> >
-> > On 01.03.2024 22:42, Mark Brown wrote:
-> > > On Fri, Mar 01, 2024 at 01:28:35PM -0600, Sam Protsenko wrote:
-> > >> On Fri, Mar 1, 2024 at 5:55 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> > >
-> > >>> Since the addition of the driver in 2009, the driver selects between DMA
-> > >>> and polling mode depending on the transfer length - DMA mode for
-> > >>> transfers bigger than the FIFO depth, polling mode otherwise. All
-> > >>> versions of the IP support polling mode, make the dma properties not
-> > >>> required.
-> > >
-> > >> AFAIU, the device tree has nothing to do with drivers, it's about
-> > >> hardware description. Does making DMA properties not required here
-> >
-> > correct
-> >
-> > >> mean that there are some HW out there which doesn't integrate DMA in
-> >
-> > no, to me it means that the IP can work without DMA, only in PIO mode,
-> > regardless if DMA is integrated or not. Not required means that the
-> > property is not mandatory, which is what I'm trying to achieve here.
-> >
-> > >> SPI blocks? Even if this change is ok (I'm not sure), the
-> > >> argumentation doesn't look sound to me.
-> >
-> > switching to PIO mode in the driver for sizes smaller than FIFO depths
-> > in the driver guarantees that all existing compatibles support PIO mode.
-> >
-> > Are you saying that if there is a physical line between an IP and DMA
-> > controller, then the DMA properties must always be specified in dt? I
-> > thought they can be marked as optional in this case, and that's what I
-> > did with this patch.
-> >
-> 
-> No, I would wait for maintainers to clarify on that bit. Change itself
-> can be ok. But the commit message shouldn't mention the driver,
-> because the driver uses (depends on) device tree, not vice versa. The
-> device tree can be used in other projects as well (like U-Boot and
-> OP-TEE), so it should be designed to be universal and not depend on
-> kernel drivers. The commit message should be based on particular HW
-> layout features and how the patch makes the bindings describe that HW
-> better. It shouldn't rely on driver implementations.
+of_gpio.h is deprecated and subject to remove.
+The driver doesn't use it, simply remove the unused header.
 
-If the controller is DMA capable then it should have dma properties. The 
-compatible should be enough to tell if it is a case of 'can only work 
-with DMA'. Otherwise, it is going to be up to a specific user. Even 
-within Linux, you may have a serial port that doesn't use DMA for the 
-console, but uses it for the tty or serdev.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mmc/host/dw_mmc-exynos.c | 1 -
+ drivers/mmc/host/dw_mmc.c        | 1 -
+ 2 files changed, 2 deletions(-)
 
-Of course, if a new device is added without DMA properties and they 
-are added later on, then they are going to be optional even though the 
-DMA support is always there. I can't fully understand everyone's h/w. 
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 698408e8bad0..6dc057718d2c 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -11,7 +11,6 @@
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/mmc.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ 
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 829af2c98a44..8e2d676b9239 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -35,7 +35,6 @@
+ #include <linux/bitops.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/mmc/slot-gpio.h>
+ 
+ #include "dw_mmc.h"
+-- 
+2.43.0.rc1.1.gbec44491f096
 
-Rob
