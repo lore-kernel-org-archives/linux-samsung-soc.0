@@ -1,107 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D72C840;
-	Mon,  4 Mar 2024 09:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF51A12E73;
+	Mon,  4 Mar 2024 09:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709543890; cv=none; b=skcJo4YL/R1QVzgEx+RAdYzDP0Qk4ZVUJagCGEVvCDPYDfauHLZ8mV2j5XynV9+vVPVFkr9FFKNG/yZZWtiHHiXf4dJBMS0HWhfRdds3ndtTO2FJVw5ts/6ojjOuWUDxGCpVcOriqKpr3/IbCspMi/w1BFUPuyfefFGYUKFl4X8=
+	t=1709544095; cv=none; b=gadWbYku6mElee2ogQhFFctaCTvH75OKOElxTch/009EhQGlspa/TLIUBEBATkahSZ5bfQTOYA7ozc+7o1K6/FHttFmLmr89gnfeDxfZoiCxG3qbdwHWzrB1TkNcLkiOXIcXuPTtx3pcx0hJaiM8u9AfJ3cme25YmwLszEyq6uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709543890; c=relaxed/simple;
-	bh=2NE8g2addB4JbRzGr5d4FEp+f0iHBWz+jrXCpfZtwJQ=;
+	s=arc-20240116; t=1709544095; c=relaxed/simple;
+	bh=lOa50vXkrUsDFtIi8C9JTx4wGk9mm9mtJoD1tNnorho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0FxgjCGnlFgbTG9jcAZceqfS0zVnyzXJpnD+Z2GZSrLkDtBbVId0rQohZkvEEG46JkZoCdpuehEB81/8qqyVI2ch3N/YjXK86Fot6DUEEvoQCHdN1DHq23xrLeV9vfzqk4ZvdT0kSC7IKFECeeWSSArk3D0CxeFcvQqcL+g3XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NenlFay1; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tjXh+AU9vpnu1Cf5IO2hxl2RI8dBBr2V46MmHD9mCzsMEk6v2l/4nDffYM+cCpLUPlbm8aZ+2/KCMLZV52N0arda3h+S6Nuur0jMMtvt+9LWM7yx38PqLK1/WKYniRQdOvnVgpBBBbVMD41qdTzu9NPFTnN0OsEaPpBnelXzYBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuJm+66A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NenlFay1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C45EC433C7;
-	Mon,  4 Mar 2024 09:18:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuJm+66A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F12C433F1;
+	Mon,  4 Mar 2024 09:21:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709543890;
-	bh=2NE8g2addB4JbRzGr5d4FEp+f0iHBWz+jrXCpfZtwJQ=;
+	s=k20201202; t=1709544095;
+	bh=lOa50vXkrUsDFtIi8C9JTx4wGk9mm9mtJoD1tNnorho=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NenlFay1MbxbJPHgLYvsg7O47VtPF6kw4AwX5TmQ7vPryNVNrM6qgfGylZQ5wUm1N
-	 p6sfyIKOmo039RTOvDQ7vXCjHVZkkNTOwRN0IVYd9X8CZVdLe6OOECVH/S8AwKn01p
-	 1QELIvxo01dt4xoBTs2omBSR0DifRalsLaieDKNzL6PgG7oTGY6kOJp3zcnOXtztdp
-	 3G3WLpDN6MyeWctiEL+6cKCCasoJIkcCpizPNjcn0QeqlVO3pT5wGVQkUWNGrY8ZcG
-	 d9fbzWOe/pmdiPBGVZDSHR3cyHkM+PRx1KD5IzzETy1OFnDP0pAMvQPDxZGp1YrZK8
-	 XsizSg3llGdsw==
+	b=DuJm+66A65ap4KUPFek0FET5sProtZDdcqySyv4Ul+T1yfNKR9kVXRW+8oDwbqxkv
+	 vJZo3BSdIZMFm9s26GuEGVaWmLwUUID1UZILQP6Xn9Irz4uFM51yANy5RxC1sgR7Lt
+	 zIFuf0aIuq68BiM7j56YWAu7uAS6IXzO1j64R56Uf0R+ThNBig/04DQFMfrH/qj7Kl
+	 huXHMOqvpyO9A/YdbnUarXTi0IorJLnPtDTvziVbUHjkw+Dcfq92/G7XJDPzIdENUl
+	 zR+cqviNLc2cVXHSgNl45BD/10truw82TOgP+5fhZ4WT3+UIHpmXuGrBsuxAVC/sLV
+	 7ZVo+FTdL2Wgg==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan@kernel.org>)
-	id 1rh4Sf-000000006L4-3Ei2;
-	Mon, 04 Mar 2024 10:18:17 +0100
-Date: Mon, 4 Mar 2024 10:18:17 +0100
+	id 1rh4Vz-000000006M9-1I22;
+	Mon, 04 Mar 2024 10:21:43 +0100
+Date: Mon, 4 Mar 2024 10:21:43 +0100
 From: Johan Hovold <johan@kernel.org>
 To: Anand Moon <linux.amoon@gmail.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Alan Stern <stern@rowland.harvard.edu>,
+Cc: Alan Stern <stern@rowland.harvard.edu>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>, linux-usb@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] usb: ehci-exynos: Use devm_clk_get_enabled()
- helpers
-Message-ID: <ZeWR2VByrV1xWmYN@hovoldconsulting.com>
+Subject: Re: [PATCH v1 2/4] usb: ehci-exynos: Switch from CONFIG_PM guards to
+ pm_ptr()
+Message-ID: <ZeWSp4ohOhHGclud@hovoldconsulting.com>
 References: <20240301193831.3346-1-linux.amoon@gmail.com>
- <20240301193831.3346-2-linux.amoon@gmail.com>
- <3d1c7682-d163-4bcf-bd41-d7db0c8f61d1@wanadoo.fr>
- <CANAwSgR0aQ7nt1y5xknvVjHSnfvTaC8JZMLWurb8z2D0Oxg6Rw@mail.gmail.com>
+ <20240301193831.3346-3-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgR0aQ7nt1y5xknvVjHSnfvTaC8JZMLWurb8z2D0Oxg6Rw@mail.gmail.com>
+In-Reply-To: <20240301193831.3346-3-linux.amoon@gmail.com>
 
-On Sat, Mar 02, 2024 at 10:05:46PM +0530, Anand Moon wrote:
-> On Sat, 2 Mar 2024 at 21:19, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
-> > Le 01/03/2024 à 20:38, Anand Moon a écrit :
-
-> > > The devm_clk_get_enabled() helpers:
-> > >      - call devm_clk_get()
-> > >      - call clk_prepare_enable() and register what is needed in order to
-> > >       call clk_disable_unprepare() when needed, as a managed resource.
-> > >
-> > > This simplifies the code and avoids the calls to clk_disable_unprepare().
-> > >
-> > > While at it, use dev_err_probe consistently, and use its return value
-> > > to return the error code.
-
-> > > @@ -260,25 +248,17 @@ static int exynos_ehci_suspend(struct device *dev)
-> > >
-> > >       exynos_ehci_phy_disable(dev);
-> > >
-> > > -     clk_disable_unprepare(exynos_ehci->clk);
-
-> > I don't think that removing clk_[en|dis]abble from the suspend and
-> > resume function is correct.
-> >
-> > The goal is to stop some hardware when the system is suspended, in order
-> > to save some power.
-> Yes correct,
-> >
-> > Why did you removed it?
-
-> devm_clk_get_enabled  function register callback for clk_prepare_enable
-> and clk_disable_unprepare, so when the clock resource is not used it should get
-> disabled.
+On Sat, Mar 02, 2024 at 01:08:09AM +0530, Anand Moon wrote:
+> Use the new PM macros for the suspend and resume functions to be
+> automatically dropped by the compiler when CONFIG_PM are disabled,
+> without having to use #ifdef guards. If CONFIG_PM unused,
+> they will simply be discarded by the compiler.
 > 
-> [0] https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk-devres.c#L75
+> Use RUNTIME_PM_OPS runtime macro for suspend/resume function.
 > 
-> I have also tested with rtc suspend & resume and did not find any issue.
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/usb/host/ehci-exynos.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+ 
+>  static const struct dev_pm_ops exynos_ehci_pm_ops = {
+> -	.suspend	= exynos_ehci_suspend,
+> -	.resume		= exynos_ehci_resume,
+> +	RUNTIME_PM_OPS(exynos_ehci_suspend, exynos_ehci_resume, NULL)
+>  };
 
-You seem to be totally confused about how devres works, and arguing back
-after Christophe points this out to you instead of going back and doing
-the homework you should have done before posting these patches is really
-not OK (e.g. as you're wasting other people's time).
+This is also broken and clearly not tested. See the definition of
+RUNTIME_PM_OPS() which sets the runtime pm callbacks, not the suspend
+ones:
 
-And you clearly did not test these patches enough to confirm that you
-didn't break the driver.
+	#define RUNTIME_PM_OPS(suspend_fn, resume_fn, idle_fn) \
+		.runtime_suspend = suspend_fn, \
+		.runtime_resume = resume_fn, \
+		.runtime_idle = idle_fn,
 
 Johan
