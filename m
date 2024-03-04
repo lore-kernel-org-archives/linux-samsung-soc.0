@@ -1,110 +1,206 @@
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2040.outbound.protection.outlook.com [40.107.20.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51EA2574D;
-	Mon,  4 Mar 2024 10:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709547414; cv=none; b=Bg2cse9RsPWukdnP1InQmkGN0IYh5llLkrS9/KW+WsmD/rjGIEa4SXC4JPQZM7ITHBT/vx48mVfRyW25inSp0Gmo7i3I7ZNhfE2LGT/10r87/p+B5KtF4AfuBNREofXyUfizlRZ2cwXubbJI4blRCuC5KwrvPhDDqovAqTQBgsE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709547414; c=relaxed/simple;
-	bh=r9R7fsoaFTssCD4S8pAvGpfWz79/sdKQ+D2RchM3Vp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sACfMU//dZUIQWAhOoYx7BTdnKjzvzlQbTs+cwoiYGqY36o1tgZdEeKvEEnretEZbOFq6mWQ36SP25BM6x/01rcOAuyYcs3av0O+A6vHetHmv5eg/M26Sagid60/wcN+oDer7coNFj12tGvOeBJBG92zbcGEDNbcHj3gFrmYLfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1v6gwCK; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348BFB654;
+	Mon,  4 Mar 2024 11:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709550082; cv=fail; b=eGYAtyGGcMu8fm7lQ9bUmjvBim3YYEdHvOic2rCNrfHdT9nl6a2gj70xTek0IPGl35RNenaIsZSu2pCmx4gOg9MRs3VRh0mo+NJhWdmpFgZuJzE/25poPXdL+SKFzz0eQRCLeSJrvbt/K7c5rDpntt9XF1qDf05gxNDoU/xsuLs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709550082; c=relaxed/simple;
+	bh=taEDUYVo0Xd2CqGzoJOj2Ho325kV+SsKkReUpIS++rs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=d/ELFtL3ZtZzC76SfpMoOg8K4RDUHKqu64WkWUvfwu5xGyoOHFgQJA/aC5PXA827QdG5cZ+50Iu0CBiQ+N090iVhxUkYirec/BrAqM5pOj2SjgG3KBYcXutGuy+qZp4VOMtZFyBFm/aqVIiPzXDazIHtobTHPAXH5++WSSLQaYg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=Mo6hwwvp; arc=fail smtp.client-ip=40.107.20.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1v6gwCK"
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5a0932aa9ecso2244363eaf.3;
-        Mon, 04 Mar 2024 02:16:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709547412; x=1710152212; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9IduB56gCouP3puaRFBT9qXQWpSpTWONTThlDJRHj/0=;
-        b=m1v6gwCKzw48XrtMF9FKJ7IGIkm2+RdpmNCD6V2UnWqJrnPCCIHAw1M7/lmyl31oRa
-         gnvlz1YoolMrnWd4A59JTsRiAquY/9e8zuVwkB3tueL1zgN1ZJX0MWgr88ygXbOWEEnY
-         /BEJOARYB+t5VihMuRgbzJnPHYpQAVdrUVUsivWg31JU2B20fOJ5lhIfK1ghfxAXbSFa
-         HyDk7Q/h1ZTeT3BvM8qdjQ5h6oZPYDmIqqQEp7zWAZDNEkcb9paqLXvpzcpbgvpEjjaH
-         MddkcwIpqTE4AHojjE3khyIwleeAfpBHAWvuT7iF23L2DgDJ+O7FSwRyv3/7O/gAKlRT
-         YuBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709547412; x=1710152212;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9IduB56gCouP3puaRFBT9qXQWpSpTWONTThlDJRHj/0=;
-        b=t9OuSEJQBD0APTWMN9oXqD+WZ6xJRRr2nyYOyB89nxzDIfr4QnzRpT/GTzRbyHQ8o+
-         nEKK7Z5KcfjLkS9uUUrFbbAEfUv9Z/xVY/iSaroxCvET6WvGwCtcPHy0WJwcFhqTa9c9
-         J9HUhcxturenhMuMJNC5kiKMAwpMaakzSan1NSmSTGgbPBWCZdey+8zbAwyWq5rDSSHP
-         zyH3geKJNs6gHZbKXe0kNCY6LV42OwwLcqM5u4N8eEmr/nKiMqMqpY/ypIrHQaDxINBk
-         EnaL81gKmv9VTUyk10nQhnnRzTh3ye7Il7gjOD4plTkyGXQCUAkSk+uz9avsVbq9hm2L
-         43wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHN2W0nefe09Q1Ssc/tXfdXwWFpR/qwzdgqKtJPL4XPkkRqi0CHkqgoUGs+EpGVRiwSN4aol65A843lvUxw5KH361bODi7L9xQMeiyj6lxbOorFbwqXXDd4m52nl0ctgJ3ID238nByVZNrvf/Tf4tQ7WSd0KwnwFZYeYzS0D9q9TDspwrbhqbQBz0=
-X-Gm-Message-State: AOJu0YwtTW8uGZpJ2dxeRNtXMlzPv5vvHu8LaozsnQ95I0b6LkNiV3Rq
-	Cec+TEziiTep0UUskOQyNnpHSTVG5o47dNxpbL9clwzr51lRhrOmLdEtg9MsNmbIol+ppGe//qr
-	2grawcS0m4upTJPykFO4n5cnBvMk=
-X-Google-Smtp-Source: AGHT+IGKlDQiwe2ETynuP1WjM66TUUfTvgAkEekSsjW8GST4aMh5tCx5vaqg6xAtZrzbO88Nx3b5zZhE0vTBzIOc68s=
-X-Received: by 2002:a05:6820:808:b0:5a1:ff2:4c46 with SMTP id
- bg8-20020a056820080800b005a10ff24c46mr6436866oob.9.1709547411912; Mon, 04 Mar
- 2024 02:16:51 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="Mo6hwwvp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IiURKwBBLcGrdvOT8wnppYEl9Z4QJj+wvtEHWPp227kmcvK1WsodMYyvVKsaXEB5IjN0YvFypBLPeYIz4OxAjLwJ0iXbIfzENZNLBA8iC9PQmWJh16mIZzcK5eKkXBGKvJEmBXisAGQIpveUgmxYO38B3QXOV32YmqCgsg1CKrTCPQHhrnILKw+eHD+ZoWefbWY2Pca7WnpZ0Hp0Q3ZyVcUnhWDDgRS7jvP13ILPowqphYfGawDha7iNsm4gEITcsgD1YfWWbEAdEalJYe4KNh4Djmdt/hgwkN9HLl7ECdEcGqYO0vSvZy80S+bJrAKITsnl3cpc8lAPDNBjCSBFCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v+ZZbnIdkoGNUj57jIAS8nVuE1fh9JoC9AwLIvDdNmc=;
+ b=Es3PyzAKGYwGLdJd2MdAwg64+4sL5P6sUIunqBckA/E3aZIfgXu2VW4WSYljPhP9K/rXI4M3uZlxT+LcvXIOVZNrY5ZH3B47pVacvpMn+CPrwjClCPAncOasWRJdUQFcBGx8FRmiqxqp6caQFroiWp8knxm9AhMztX81HRvh2qomIcc+JJyMwIxuQzwlRE96NmuVwl3Qna4PTyQ/h0M0AZ1/Mbt3zEbnarLmRrv42pIVSYEO0/P4uydTCVDkiYgJqe1/BFnWI9B/79xJvUC9HaprY3y7a16OYiao0yjwM/RYhz12+ER3SjxcPKNp7naMYHkz771crDZzSB1GxP+dBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=kernel.org smtp.mailfrom=axis.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v+ZZbnIdkoGNUj57jIAS8nVuE1fh9JoC9AwLIvDdNmc=;
+ b=Mo6hwwvpqCngHVXfCi1Z3ew7Hm+83uvauoguNs9lpouu8inPtk05ihKzYU3v3cOOR3sKNgkrH7xRkM0ijNzxibPZZMkRFPjSkEHe26N3wynCbKHfTUSHreJ1ueUqvj9yhUMU09zBQrxGb9UPcMN3l9Gz1BFAgcyfOFBEdXYSktc=
+Received: from DU6P191CA0024.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:540::14)
+ by AM9PR02MB7108.eurprd02.prod.outlook.com (2603:10a6:20b:266::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.39; Mon, 4 Mar
+ 2024 11:01:16 +0000
+Received: from DB1PEPF000509FD.eurprd03.prod.outlook.com
+ (2603:10a6:10:540:cafe::b0) by DU6P191CA0024.outlook.office365.com
+ (2603:10a6:10:540::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.39 via Frontend
+ Transport; Mon, 4 Mar 2024 11:01:16 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=axis.com;
+Received-SPF: Fail (protection.outlook.com: domain of axis.com does not
+ designate 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com;
+Received: from mail.axis.com (195.60.68.100) by
+ DB1PEPF000509FD.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7292.25 via Frontend Transport; Mon, 4 Mar 2024 11:01:16 +0000
+Received: from SE-MAIL21W.axis.com (10.20.40.16) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 4 Mar
+ 2024 12:01:15 +0100
+Received: from se-mail02w.axis.com (10.20.40.8) by SE-MAIL21W.axis.com
+ (10.20.40.16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 4 Mar
+ 2024 12:01:15 +0100
+Received: from se-intmail01x.se.axis.com (10.0.5.60) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
+ Transport; Mon, 4 Mar 2024 12:01:15 +0100
+Received: from pc55637-2337.se.axis.com (pc55637-2337.se.axis.com [10.88.4.11])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 79B30159B0;
+	Mon,  4 Mar 2024 12:01:15 +0100 (CET)
+Received: by pc55637-2337.se.axis.com (Postfix, from userid 363)
+	id 7CE00209F3C1; Mon,  4 Mar 2024 12:01:15 +0100 (CET)
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+Date: Mon, 4 Mar 2024 12:01:14 +0100
+Subject: [PATCH] i2c: exynos5: Init data before registering interrupt
+ handler
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301193831.3346-1-linux.amoon@gmail.com> <20240301193831.3346-3-linux.amoon@gmail.com>
- <ZeWSp4ohOhHGclud@hovoldconsulting.com>
-In-Reply-To: <ZeWSp4ohOhHGclud@hovoldconsulting.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 4 Mar 2024 15:46:39 +0530
-Message-ID: <CANAwSgShe9-Buyta5Ej9nmhp1dy467da6Cdfm5a+pwpEjem=QA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] usb: ehci-exynos: Switch from CONFIG_PM guards to pm_ptr()
-To: Johan Hovold <johan@kernel.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240304-i2c_exynos5-v1-1-e91c889d2025@axis.com>
+X-B4-Tracking: v=1; b=H4sIAPmp5WUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDIyML3Uyj5PjUisq8/GJT3ZQkQ+NEc6PU1GSLJCWgjoKi1LTMCrBp0bG
+ 1tQAgdi6bXQAAAA==
+To: Andi Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
+CC: <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1709550075; l=2710;
+ i=jesper.nilsson@axis.com; s=20240216; h=from:subject:message-id;
+ bh=taEDUYVo0Xd2CqGzoJOj2Ho325kV+SsKkReUpIS++rs=;
+ b=42Xz07/u1gESiLkkx8zkvVy0spBZP95p3aFkIH9BUSDtZ4eERc12NHYCw1maC1j0y6Q/qteJt
+ 5pAMd0Uh6bCB0kaO75nQwB1Ip1v2AkpTndpB5nn28qz/CvUhxiHUMyH
+X-Developer-Key: i=jesper.nilsson@axis.com; a=ed25519;
+ pk=RDobTFVrTaE8iMP112Wk0CDiLdcV7I+OkaCECzhr/bI=
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509FD:EE_|AM9PR02MB7108:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd92e749-2c52-4bbb-d358-08dc3c3a69f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	6rF2IcZicHZYAIAjju7qPxXL7AP5Q6m5A/pDVQqhmnm/UVzxQ8DGdH4QhS6kKu3PBkbJTR3se2C3RaSNF9oa8Sh0CqkttpMwGo0S3DLRVbn/iaq3kSp2SPXvMqIeThvNdctAiP3oQED0iiVp2w1iuSjPecNIjAdJ8AkPrgnw+YYOzess9q/3TQKxo1AYjNrJJMdD1mot2wvL31SPE3yKO3lhXwKDTxrt1Hq5IC4RfO8apjnddNqxylUR43DZSWspJSdGRoePFp5tAZLr2UM4PrvAQUHCa1V/xeLtwjloOKPYTkkj6UiUUYx7z/ZlJIuUzUQQrAjz8rPJrrGwu4SWjwdOSJV9uw11BgD6lWdc0g6NIv5OVuzK327PEAYZGvSzLpBG/fax7M6ztbbg0g+9uGTYAcIaKaXiKQdS0Oyvnu98kfBelZBU1gfAenMB7IAJ45M9tAt5yutWIcQ3JwhNaez0Fm97n0olJeivRVXBT6ZumssfmvF6pfxpLDMeAtiG03EntsDlFFrp09Qtiao5VoAb2h2Js8iIsc97hHsSeXtDfOOnTtxxxZb7O8xXgJNKIMRXBxaX6J2hLifvqjgm7OIhSZir2aXlk88X0N3OmAYpjQFENly1+NjD2H/ZP4qszkPCwYrkwHhiMdL7wbaWB07tGPQH7sA398sncnoNlqBU1ecZ+ChO2Uo2ArgYuSAHjNzhDBVSBFlOmc9ZSCFiGnFC84OfuBXIdSO9jgJwi0vfo2sCr+rqb5gMzgKCTV7O
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2024 11:01:16.2736
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd92e749-2c52-4bbb-d358-08dc3c3a69f9
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509FD.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR02MB7108
 
-Hi Johan,
+devm_request_irq() is called before we initialize the "variant"
+member variable from of_device_get_match_data(), so if an interrupt
+is triggered inbetween, we can end up following a NULL pointer
+in the interrupt handler.
 
-On Mon, 4 Mar 2024 at 14:51, Johan Hovold <johan@kernel.org> wrote:
->
-> On Sat, Mar 02, 2024 at 01:08:09AM +0530, Anand Moon wrote:
-> > Use the new PM macros for the suspend and resume functions to be
-> > automatically dropped by the compiler when CONFIG_PM are disabled,
-> > without having to use #ifdef guards. If CONFIG_PM unused,
-> > they will simply be discarded by the compiler.
-> >
-> > Use RUNTIME_PM_OPS runtime macro for suspend/resume function.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >  drivers/usb/host/ehci-exynos.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
->
-> >  static const struct dev_pm_ops exynos_ehci_pm_ops = {
-> > -     .suspend        = exynos_ehci_suspend,
-> > -     .resume         = exynos_ehci_resume,
-> > +     RUNTIME_PM_OPS(exynos_ehci_suspend, exynos_ehci_resume, NULL)
-> >  };
->
-> This is also broken and clearly not tested. See the definition of
-> RUNTIME_PM_OPS() which sets the runtime pm callbacks, not the suspend
-> ones:
->
->         #define RUNTIME_PM_OPS(suspend_fn, resume_fn, idle_fn) \
->                 .runtime_suspend = suspend_fn, \
->                 .runtime_resume = resume_fn, \
->                 .runtime_idle = idle_fn,
->
-> Johan
+This problem was exposed when the I2C controller in question was
+(mis)configured to be used in both secure world and Linux.
 
-Ok, I will drop these changes.
+That this can happen is also reflected by the existing code that
+clears any pending interrupts from "u-boot or misc causes".
 
-Thanks.
--Anand
+Move the clearing of pending interrupts and the call to
+devm_request_irq() to the end of probe.
+Additionally, return failure if we can't find a match in devicetree.
+
+Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index 385ef9d9e4d4..eba717e5cad7 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -906,24 +906,14 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.algo_data = i2c;
+ 	i2c->adap.dev.parent = &pdev->dev;
+ 
+-	/* Clear pending interrupts from u-boot or misc causes */
+-	exynos5_i2c_clr_pend_irq(i2c);
+-
+ 	spin_lock_init(&i2c->lock);
+ 	init_completion(&i2c->msg_complete);
+ 
+-	i2c->irq = ret = platform_get_irq(pdev, 0);
+-	if (ret < 0)
+-		goto err_clk;
+-
+-	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
+-			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
+-	if (ret != 0) {
+-		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
+-		goto err_clk;
+-	}
+-
+ 	i2c->variant = of_device_get_match_data(&pdev->dev);
++	if (!i2c->variant) {
++		dev_err(&pdev->dev, "can't match device variant\n");
++		return -ENODEV;
++	}
+ 
+ 	ret = exynos5_hsi2c_clock_setup(i2c);
+ 	if (ret)
+@@ -940,6 +930,20 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	clk_disable(i2c->clk);
+ 	clk_disable(i2c->pclk);
+ 
++	/* Clear pending interrupts from u-boot or misc causes */
++	exynos5_i2c_clr_pend_irq(i2c);
++
++	i2c->irq = ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
++		goto err_clk;
++
++	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
++			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
++	if (ret != 0) {
++		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
++		goto err_clk;
++	}
++
+ 	return 0;
+ 
+  err_clk:
+
+---
+base-commit: 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+change-id: 20240228-i2c_exynos5-db13a72eec8b
+
+Best regards,
+-- 
+
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
+
