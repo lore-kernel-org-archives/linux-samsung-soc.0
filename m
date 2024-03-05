@@ -1,74 +1,42 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6364E1C1
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Mar 2024 08:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17E653387;
+	Tue,  5 Mar 2024 09:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709628637; cv=none; b=Br7sGi64OoSHNAtfIqf+pPPVrrIAflNo/C0qZ7SlH4YEuRixOVfK/+iXZqyQiMRLHS3Z2glqPo5lgzAYDYdynCrPIiHQzio2U1//3UF4APXRvXktjniNGbKCm3gvhQYsMw1duNSuYnPuLeA4IY1cmZJAdzMN72/ZxlMhosntu8Y=
+	t=1709632397; cv=none; b=e2tOVXm+hq8VUd2F28drlQqA36yPxhK7YwbgKRe1sci1sZyyDorJ3xZwGHhDMxQoNv1556zBJISLo2JTQbkHY4E/XCyaKsM79d50RpzeVOhYi4A/m2XF7bCaukcI3tPudGpZXPZ55k5Zq9AMw7+OTNe0aC8EI9ePSPJ8X0JVQ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709628637; c=relaxed/simple;
-	bh=/qaRgOCPIEFkrZRFeRFcZiqUAPgGaXs8wvM/tEPQzCw=;
+	s=arc-20240116; t=1709632397; c=relaxed/simple;
+	bh=PZNtxETNBMvwgRvNajtlng5m/Fskjy/Sopf4o4P6IvA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhEQl6L5RZupsndSofzGmfTWtFeXQVjW4x0wn0SGkpVhffpHgqoPYi6ie1RxCGvnOBiiOmhj6fGltHTv2SMo4ayzEiTR0gUCPsrdO39z1yAftrBgSJmK4mAAt4XcvZXumFUh1nD1GRfoc4cBb8dvppcs6bj4FxtBvT9jOZ//QMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgB85y0s; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=OW+7WXGKfUzhO1v02SrMrQE7La6d6Dcrf2gMx0CkxU1pInMs/AArr+oNfJB3KKwHK61SKNxfmqAzmiTB2SyRMf1wWvgW/zUftIei/8vqRd+yoDYMC/m6x7WRS3b+/U1sInYCn1yC88doavZm+cuUcET6faaNbo3qELZeh00DVlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oF9+D/O4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgB85y0s"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a4499ef8b5aso387768966b.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2024 00:50:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709628634; x=1710233434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jT7ZsmNph1HICQhGYk/X5PZRUWWUGk3/PHQvVwvJTOo=;
-        b=wgB85y0s6rf4i2vIzrgObujA09hgoBt7adI9IZOTwi6FrRA3PMf5vJ1An2UTkwImsU
-         Py6ZjRaJJnJebSDWj3EmZq9+uUAp1+cMTmlyYOCzD5bhdAPTdZpX52Y0BKKIBVD35571
-         bOs0aK7sVzcqTsaFRjYipop4g9HDrbo098GQ5TpomE6nI1oHeU6GtT6O3lSrcP0/KAdi
-         Ptd3+vHAqD/wd2kngPt9owa7iEyo/yazTT7OnHd8qkKwUrOY7MgIbGdngUs9Lcbaqr40
-         PjzUYwxQ1o6T3NfcqPUkMRM5Iwj+bfb621d0+/sLHgbHnVFSgvDRa1PpZ9v51iX9nqt8
-         ATrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709628634; x=1710233434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jT7ZsmNph1HICQhGYk/X5PZRUWWUGk3/PHQvVwvJTOo=;
-        b=b8s7V1G+zfmvJCcXNzvhAfNzaJ/JdGk4WejZeLTbbrQnfCdX2ZzGrXdMePhgBIzQaM
-         VgOPzPLIl4c9W+yelSa0+XbRNeNvfkMXglmWPGT7CchYgsE4zQC6/67u/s5AxE47vTd0
-         /1XtU4r9qlmCMrwzSGFkRd1/OC27h8HwGQkGfry8pWaejdG2/YNsjSNN1eeWeOCSVlr1
-         s0f0lmnRB0SS3rDqBKLfRC2k6pYD3n0Ykm6R1imAqe0EnQJ0OLgbP9HjlAIph9fHP9Bn
-         exo0Vr2gV248JjKJKhrHEjuemsh8wiPK1W02HE6BF5EZWA2PvD4AXQkQiH0nLuEN9flQ
-         s2cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcoi2SN/aBpSvtHxHQt/LCon91uYwqsmLgMvX/cdQY5saA7wao/NRBYL42pq2xbwq5d1E3Q3vhMmRJmxb+f6XsCkPW8wj86tjh/TvdQukLWFk=
-X-Gm-Message-State: AOJu0YwVkEGIvC1N9/bnMAL4rMLRgsXoMLbO6KAD9/Yy/pqb1kmHM1r5
-	TV4W1gTXGa5Bgsw4fibIaVs3S33uqbBWaw7ik4Hqqz9uthrOCnpt26bh3Dt2oZs=
-X-Google-Smtp-Source: AGHT+IHJS+2LhiDD7zxJqHM589abVoaxutSaB3e9mIWp3cLj6gDlecOCLPFEcxg3I6gVnMuHzHEJSQ==
-X-Received: by 2002:a17:906:c06:b0:a44:1978:c73f with SMTP id s6-20020a1709060c0600b00a441978c73fmr7660917ejf.61.1709628633846;
-        Tue, 05 Mar 2024 00:50:33 -0800 (PST)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id ef5-20020a17090697c500b00a449cb924dbsm4457506ejb.124.2024.03.05.00.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Mar 2024 00:50:33 -0800 (PST)
-Date: Tue, 5 Mar 2024 11:50:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
-	linux@armlinux.org.uk, m.szyprowski@samsung.com,
-	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Message-ID: <f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
-References: <20240220084046.23786-1-shradha.t@samsung.com>
- <CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com>
- <20240220084046.23786-2-shradha.t@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oF9+D/O4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4817C433F1;
+	Tue,  5 Mar 2024 09:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709632397;
+	bh=PZNtxETNBMvwgRvNajtlng5m/Fskjy/Sopf4o4P6IvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oF9+D/O4L8XlTVRDRjDyp84tWeSb4IdLktYVkVK46OBtmMYkTCxzWDaqF7We/jSkf
+	 3JPFGEHV96Vt8UOdVTKaousir12DzaHU+1U6HAWcpoCO5apQ7PRI8bm6wAAesYHu9S
+	 PppNoY1mhxcSlbEV8OAsS4z63HP0MC+vvZDdfv+JenQoTEzoMs0OedWErkLB+2QBY5
+	 Z6akL1FDwaUiG/fZxxP3nSWazkSpjrGLdSC3LlCq8NpYUyBsqzMyQSxx1hVXRE1u50
+	 IzFG+hLWHjDrrU5og5zECV2P8RlJo4t2Ql8BiV52B5WLLzc7l2nlXjBPttJFmQlTMT
+	 1P/CYP/YVOFFA==
+Date: Tue, 5 Mar 2024 10:53:13 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Jesper Nilsson <jesper.nilsson@axis.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Naveen Krishna Ch <ch.naveen@samsung.com>, 
+	linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH v2] i2c: exynos5: Init data before registering interrupt
+ handler
+Message-ID: <vk5s2p43v7lmmuwh3mzvgqetu4luwodmkejf4va6xyxwgdn5eq@ej2mjdii3rle>
+References: <20240304-i2c_exynos5-v2-1-7b9c312be719@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -77,50 +45,28 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240220084046.23786-2-shradha.t@samsung.com>
+In-Reply-To: <20240304-i2c_exynos5-v2-1-7b9c312be719@axis.com>
 
-On Tue, Feb 20, 2024 at 02:10:45PM +0530, Shradha Todi wrote:
-> +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> +					      struct clk_bulk_data **clks)
-> +{
-> +	struct clk_bulk_devres *devres;
-> +	int ret;
+Hi Jesper,
+
+I have taken your patch in my testing branch, but...
+
+> +	/* Clear pending interrupts from u-boot or misc causes */
+> +	exynos5_i2c_clr_pend_irq(i2c);
 > +
-> +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
-> +			      sizeof(*devres), GFP_KERNEL);
-> +	if (!devres)
-> +		return -ENOMEM;
-> +
-> +	ret = clk_bulk_get_all(dev, &devres->clks);
-> +	if (ret > 0) {
+> +	i2c->irq = ret = platform_get_irq(pdev, 0);
 
-I feel like this should be >= instead of >.  There aren't any callers
-of this function yet so we can't see what's in *clks at the start but
-it's easy to imagine a situation where it's bad data.
+... I get this checkpatch note:
 
-> +		*clks = devres->clks;
-> +		devres->num_clks = ret;
-> +	} else {
-> +		devres_free(devres);
-> +		return ret;
+  CHECK: multiple assignments should be avoided
+  #60: FILE: drivers/i2c/busses/i2c-exynos5.c:932:
+  +       i2c->irq = ret = platform_get_irq(pdev, 0);
 
-When clk_bulk_get_all() returns zero then we return success here.
+You are still in time to fix it, or you can fix it later or you
+can leave it as for me it's not a big deal.
 
-regards,
-dan carpenter
+But, please, next time, make sure to run checkpatch before
+sending a patch.
 
-> +	}
-> +
-> +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-> +	if (!ret) {
-> +		devres_add(dev, devres);
-> +	} else {
-> +		clk_bulk_put_all(devres->num_clks, devres->clks);
-> +		devres_free(devres);
-> +	}
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-> +
-
+Thanks,
+Andi
