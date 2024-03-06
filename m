@@ -1,207 +1,209 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2BA1BDCB
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Mar 2024 06:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1008002A
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Mar 2024 12:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709705381; cv=none; b=Nuf/zALYCsSuACmvRseX/GElSOovCkqE2MyZc1taVCSXRqvBpSeU2lXtC3Wpn8KFVhcU8UTHAvncExiwY9PSFU1E33HCnSjYz5OYW7OYM2ekN2L+xeM+oaf654bwXg60dJ5vk9YovXz6PxVDx23Jbujx75o0G9f1ir/2lU5vQaU=
+	t=1709727208; cv=none; b=W7oWpp5OabWFUxGyM8IOwT9/oFAofNdg3Lo2pZWxCzy/Lh6BeMYvWbcNY0EBJ1x+il+9CD7dKQymOirro81u96Wf+qk+rDzO4rxfSSW1tnRtvtT+zaKtKa7xsxVg4xcfvUm/moT46JVHtZBlbNCULcSCYz7pza4Mbce6VyXE1e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709705381; c=relaxed/simple;
-	bh=1gq6ypPil2p4oTVWlsz5gSA5XMP5G8k15TtyF/kGgfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VGQs7IZjpoho21KlWhaIYXtg5cRfppgsVy832Xv9vs4lNvy5tRCgGDd+OBogj8+wm8YVn0NCl4snpXtNJnHxONieGIxp3V9uajZDl6lQdtIfBUGhhgILObl/O6AAsfYcevAok0nrNXHbQI00jYOWRVhr2m9s8cUN399Y1ElF/Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uOIKQ9mK; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1709727208; c=relaxed/simple;
+	bh=MvQWTMYzbR7pSSNPtXrU0pZYKoIJ+SgRUhNdIt6jGjg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=n5NKmlTXCBW/2ZKfOZcxTjqdAeyKvjk8Hh34obM2UBm22Tagg9QCqveCFWEzdim8LJliwSHxc7hNDBOG+T91ap4nUBOS6vtb7wjOtgokTlDexMOIr0hjx4A3ayEjgehRJFLr/79Fak8ZVw3Ga4i1dA/9UHqvdPt8xj1qW7RM0qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sMiaLAO7; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uOIKQ9mK"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5658082d2c4so8755600a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Mar 2024 22:09:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1709705377; x=1710310177; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TCfscL91sKexfy7B7QqN90h+oKQiAmhmqtO/HzPcNck=;
-        b=uOIKQ9mKYsbxkAkxiez1jVgo+X0MPZjyrgpeiEf6UtNWlZupvOjqKy1SCv1s5IEBZF
-         8wZdyxmG+GZ6jYhQdhuJXRLzavn9J0NoZ5syMZ4wsRCjVf/Mas4VDMACDP/MbjUeNum/
-         ryYvTsMjqgyIxKCgkysVFCSnFwgha3CPIBMtu4oX5FE/Oa72LQe7f7D5nN0BBHoVqeHB
-         okEarEm5GawnOr8BQytSadUQCAd98goLyZlj7E+n1bZu8lSjpDyMB3K5Ahto4lk9PL3f
-         6QJKF33A6GhoL7AwYHObWPtlKotpa5AeDc+lBbhdb9cuq6lZJRRK4BSNe8qnCmkD03ld
-         HXkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709705377; x=1710310177;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCfscL91sKexfy7B7QqN90h+oKQiAmhmqtO/HzPcNck=;
-        b=rn2zQ7tUj1UbRCuWe3VjPa7CGR4gX/emy6NQvWFFmPxT2GR0okEKC/VNzwnUERA4JZ
-         h9kpRj0Zp5QOH4ThwLDFFTFtwLnfo/DZyx9DDN44q82/jSBwO+inv4mhsIvXX75iA1MT
-         GmHVjIfcXD4V49hqaso+B3vPP40FJ6agSho/a/gTvrRSViSzNeSQFIanoHBB7cSZxbUL
-         oHSoY3YkoIZCHL9P17ODr2cF88oMoTZd70CAeOxGWLK9/OXwpAKTmEAcyUYxHnZuM/D4
-         8E38cQvnF7d+pgXtgKYCIysaq79voFC5CzJvHOiyqpIQuJc/PRxAl8Q5EoCkXvgrkPLS
-         VVFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9MgSVcSJyO/wJtu7dm0g85WMH8TK3Hdw0Cx1jnYfvetd+9BODUe5Esg+cednCN2fOUDxJJhXVxesxM3ElaDHTd55hOzqYOjWHtzo+484ZrSE=
-X-Gm-Message-State: AOJu0YzIrsnGrpWXVX8ur/ETdtiB+rKTfBLCvdHEAZi/UHXvoEE4C4Pa
-	EZHt6y+Kr2SsuAOwEgrM4ee5Gha3XUWN3NmWo+ox+lc3rrDrOgVzSqC8BbDMpqg=
-X-Google-Smtp-Source: AGHT+IEsajMRsmweIyn5WvyQ9w++OfI6XStVJ4Os/TiAuf+ScrCFN4d0Tk9Ax7CXktQpsnHam7SYXA==
-X-Received: by 2002:a05:6402:d71:b0:567:f080:740e with SMTP id ec49-20020a0564020d7100b00567f080740emr184571edb.1.1709705376928;
-        Tue, 05 Mar 2024 22:09:36 -0800 (PST)
-Received: from [192.168.2.107] ([79.115.63.35])
-        by smtp.gmail.com with ESMTPSA id dy25-20020a05640231f900b005655dd9492dsm6586938edb.53.2024.03.05.22.09.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Mar 2024 22:09:36 -0800 (PST)
-Message-ID: <9732478c-c371-4db6-b8f2-5623ac733a0c@linaro.org>
-Date: Wed, 6 Mar 2024 06:09:34 +0000
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sMiaLAO7"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240306121318epoutp04a4a14aa48570687a58e092607af27c08~6K9Q2436f1510615106epoutp04b
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Mar 2024 12:13:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240306121318epoutp04a4a14aa48570687a58e092607af27c08~6K9Q2436f1510615106epoutp04b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1709727199;
+	bh=WTQ15VypupqP8VXJmmdKI+HBcUQn7Q0FdOahxVlCL5Q=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=sMiaLAO7GwhG4k4SeQLwsPOvCcGbUb56nnFKuMSRQeegxCpaR6CN/EtEWQKEa0ZAR
+	 cMjmkrc5cGMPOmCPrDc35rbKxCaOzmi/QBVPWbJLTCEo47We+cYI5RFk6BDR72lR26
+	 AGRPBpxs6biJfoaSkNHl35bQuMD7FyqstlE2CwsQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240306121318epcas5p46d8921f3096590ae7e8b27e08f1f0a0e~6K9QQ5BhA2378723787epcas5p4E;
+	Wed,  6 Mar 2024 12:13:18 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4TqWY84pFhz4x9Pv; Wed,  6 Mar
+	2024 12:13:16 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E0.62.09634.CDD58E56; Wed,  6 Mar 2024 21:13:16 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240306121316epcas5p2dd93d2a62d83e2bae45ef4fcfb7362f5~6K9OKiGjh1360113601epcas5p2_;
+	Wed,  6 Mar 2024 12:13:16 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240306121316epsmtrp17a3a8dcd902734f3b463752b5ef267a5~6K9OJjFBD1302513025epsmtrp1g;
+	Wed,  6 Mar 2024 12:13:16 +0000 (GMT)
+X-AuditID: b6c32a49-159fd700000025a2-af-65e85ddc69fc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.63.08817.BDD58E56; Wed,  6 Mar 2024 21:13:15 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240306121311epsmtip1a9216d1eb53f803e079c054ed232e15a~6K9J5QBtm2312523125epsmtip1O;
+	Wed,  6 Mar 2024 12:13:11 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: "'Dan Carpenter'" <dan.carpenter@linaro.org>
+Cc: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <jingoohan1@gmail.com>, <lpieralisi@kernel.org>,
+	<kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+	<krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
+	<linux@armlinux.org.uk>, <m.szyprowski@samsung.com>,
+	<manivannan.sadhasivam@linaro.org>, <pankaj.dubey@samsung.com>,
+	<gost.dev@samsung.com>
+In-Reply-To: <f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
+Subject: RE: [PATCH v6 1/2] clk: Provide managed helper to get and enable
+ bulk clocks
+Date: Wed, 6 Mar 2024 17:43:03 +0530
+Message-ID: <022301da6fbf$aae4f7e0$00aee7a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: samsung: clk: re-parent MUX to OSCCLK at run-time
-Content-Language: en-US
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: 'Sam Protsenko' <semen.protsenko@linaro.org>,
- 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>,
- 'Peter Griffin' <peter.griffin@linaro.org>,
- =?UTF-8?Q?=27Andr=C3=A9_Draszik=27?= <andre.draszik@linaro.org>,
- 'William McVicker' <willmcvicker@google.com>, kernel-team@android.com,
- jaewon02.kim@samsung.com
-References: <CGME20240306032013epcas5p4932674432fbb49f586ed9d00f006a9e8@epcas5p4.samsung.com>
- <d508dfc1-bc28-4470-92aa-cf71915966f4@linaro.org>
- <324701da6f81$ad1379d0$073a6d70$@samsung.com>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <324701da6f81$ad1379d0$073a6d70$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH2hJCcwYDjJDqbclltz640cKP7jQL/AcmgAaOboDkDexFUCLCxgc9A
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xTVxjN62v7CoPxBhguxG317UeECbSjhcsi4AKaN6YGsjgXg6lv8GyR
+	/lp/6GAkIKEykK1ixkYLVNDGAIYRWioUYbDiYHNBZUA3MiA4cEOJAxRMQHFreXXjv/N995yc
+	73z3Xh4avMyN4OUqdbRGSckJrj/76kBkZPTk0XlacPcOH85YrnKhtUQGlywGDE70O1mwacWE
+	wd4FBwaLK59woG3WzYHLldMcONpdx4XDliEurLn1HQu6qnsRWPq0lA1br09hcKq0nANHbuyF
+	Fx0rGPynpwuDz9zt7D2h5Kh7BCUXfzNgpNM8hZENNj1paynnkpPuHi45N/YNi7Rbi8gvO1oQ
+	8pHtlQz/I3m7ZTSVQ2v4tDJblZOrlCYR738gSZWI4wXCaGEiTCD4SkpBJxFp+zOi9+XKPeEI
+	/klKrve0MiitlohN3q1R6XU0X6bS6pIIWp0jV4vUMVpKodUrpTFKWveOUCB4W+whHsuT2S58
+	rJ4P+bT7tAUtRlaDKhA/HsBFoHn2K3YF4s8Lxq8hoOFsGcYUDxHwc1UXhykeI+D7v43s55K1
+	y4u+g14EjN+5wmWKeQTc6h/GvCwuvgvMjT1FvTgUF4AldzvqJaF4PRv0j5dvkvzwVPCnu4nl
+	xSH4YVC2+JDrxWz8ddBq79jsB+KJoH71Dw6DXwI/meY2x0DxV0HngzqUGYkP1u5e5jBm+4DF
+	8S2L4YSBH9YqN40BXusHnH3TLEaQBn6/edEnDgH3hzowBkeAe8YzPiwFzfYaH0cOHtutPm0K
+	6B+r8wzB8xhEgrbuWMbrRfDFkzmWtw3wQPD5mWCG/RpY2ejxbS4cWAZHOQwmQe3GDewcssO8
+	JZl5SzLzlgTm/80aEHYLEk6rtQoprRWrhUr61H8Xnq1S2JDNtx/1XhcyNbMU40JYPMSFAB5K
+	hAYWrs/RwYE5VH4BrVFJNHo5rXUhYs+6q9CIbdkqz+dR6iRCUaJAFB8fL0qMixcSYYELhvqc
+	YFxK6eg8mlbTmuc6Fs8vopjlPN7X112AlvwSjpvpo9d3haVY9oObhfnOKKNpo3P2XfbJ9MHC
+	9pS4rimVZEhITBgPH7p/ujFoukK7ai9q+pHq3xZq7UytPhBRf2xHQkl6QBhbVyh6OXln821F
+	46meRiuYyBJHG4ySQ1X2EEf6lemeIwS8ECA9aN3eNqCJTB8OeqFWWBWwvpxlGHkjoywzzDEt
+	1H8ofrNlT2HsbSz2gOlE3M7M85c4Q/L8kYTt6WnrJ/aeXVgrMznvXUpx9ZpnDraajhuanpFZ
+	mX99Nrlh/JpnbnRzEmHRR82DKnoypIR6q3Rko616dgzrcP06sGyihbJrDx4ln3dwxj/JVBTM
+	1hBsrYwSRqEaLfUvVaqDpYQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsWy7bCSnO7t2BepBlN7LSwezNvGZrGkKcPi
+	w7xWdoubB3YyWaz4MpPdYu/rrewWDT2/WS02Pb7GavGx5x6rxeVdc9gszs47zmYx4/w+JotD
+	U/cyWrT8aWGxWHvkLrvF3ZZOVouLp1wtFm39wm7xf88Odot/1zayOIh4XL52kdnj/Y1Wdo+d
+	s+6yeyzYVOqxaVUnm8eda3vYPJ5cmc7ksXlJvUffllWMHp83yQVwRXHZpKTmZJalFunbJXBl
+	bJqfVPBCuGJX4zzmBsav/F2MnBwSAiYSP5e9Z+1i5OIQEtjNKLFuyS0miISkxOeL66BsYYmV
+	/56zg9hCAs8YJe7/UQSx2QR0JJ5c+cMMYosIGEh8uLaRGWQQs8BGFok5n/awQEz9xCjxs2kt
+	I0gVp4CzxLNrK8CmCguESnRN2QI2lUVARWLt5i1gcV4BS4m5Xx+xQtiCEidnPgEaxAE0VU+i
+	bSPYGGYBeYntb+cwQxynIPHz6TJWiCPcJOZthTiaWUBc4ujPHuYJjMKzkEyahTBpFpJJs5B0
+	LGBkWcUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERz3Wlo7GPes+qB3iJGJg/EQowQH
+	s5IIb82vJ6lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1
+	MKkXvuir5VvLqlqaYK5TfqST/fTc7652zlNPa9Rt9tHxZD/Qvi24fRf37N/6b//8/fjw9cRF
+	0tL7+80mXNn6wD/504cd+XE187aIyou/Yfx5i+/qrMn9ApMjZ+o1GUz8WVz1KNV9dqIgJ2NF
+	9Kq+qy85w6q2ztymNPtg9Y4LdZuNivqWXl90e2FH+LUfZ8QXRS/b8nZKb/60Lws3xPO+eBvn
+	o7//xa6PkziuFM00++L9a6eC5HW3CT/23gizf8Ltsz6Fw+PuA/4+9ewStl1bVYS/e4pdXbUj
+	OLSveK6U97qQVYFTroTxcTefORH2cL9idMn0Gf4bV9xQ2nZUSI3F3vF9N+c3lwL7G61zK78p
+	BbYosRRnJBpqMRcVJwIAvC2ismoDAAA=
+X-CMS-MailID: 20240306121316epcas5p2dd93d2a62d83e2bae45ef4fcfb7362f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c
+References: <20240220084046.23786-1-shradha.t@samsung.com>
+	<CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com>
+	<20240220084046.23786-2-shradha.t@samsung.com>
+	<f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
 
 
 
-On 3/6/24 04:49, Alim Akhtar wrote:
-> Hi Tudor
-
-Hi!
-
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: 05 March 2024 14:20
+> To: Shradha Todi <shradha.t@samsung.com>
+> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; mturquette@baylibre.com; sboyd@kernel.org;
+> jingoohan1@gmail.com; lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
+> bhelgaas@google.com; krzysztof.kozlowski@linaro.org;
+> alim.akhtar@samsung.com; linux@armlinux.org.uk;
+> m.szyprowski@samsung.com; manivannan.sadhasivam@linaro.org;
+> pankaj.dubey@samsung.com; gost.dev@samsung.com
+> Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable bulk
+> clocks
 > 
->> -----Original Message-----
->> From: Tudor Ambarus <tudor.ambarus@linaro.org>
->> Sent: Wednesday, March 6, 2024 8:50 AM
->> To: Sylwester Nawrocki <s.nawrocki@samsung.com>; Chanwoo Choi
->> <cw00.choi@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>
->> Cc: Sam Protsenko <semen.protsenko@linaro.org>; Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org>; linux-samsung-soc@vger.kernel.org;
->> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel
->> <linux-arm-kernel@lists.infradead.org>; Peter Griffin
->> <peter.griffin@linaro.org>; André Draszik <andre.draszik@linaro.org>;
->> William McVicker <willmcvicker@google.com>; kernel-team@android.com
->> Subject: samsung: clk: re-parent MUX to OSCCLK at run-time
->>
->> Hi,
->>
->> Trying to get some feedback from the samsung experts. Please consider the
->> following:
->>
->>                          ---------------------------------------------
->>                         |                                CMU_PERIC0   |
->>                         |                                             |
->>                         |  MUX_USI                                    |
->>                         |                                             |
->>                         |  |\                                         |
->>               OSCCLK ---|->| \                                        |
->>                         |  |  \                                       |
->>                         |  | M |                                      |
->>                         |  | U |--> DIV_CLK_PERIC0_USI*_ --> GATE_USI |
->>                         |  | X |        (1 ~ 16)                      |
->>                         |  |  /                                       |
->> DIV_CLKCMU_PERIC0_IP ---|->| /                                        |
->>     (1 ~ 16)          | |  |/                                         |
->>                       | |                                             |
->>                       | |                                             |
->>                       | |  MUX_I3C                                    |
->>                       | |                                             |
->>                       | |  |\                                         |
->>                       --|->| \                                        |
->>                         |  |  \                                       |
->>                         |  | M |                                      |
->>                         |  | U |--> DIV_CLK_PERIC0_I3C --> GATE_I3C   |
->>                         |  | X |                                      |
->>                         |  |  /                                       |
->>               OSCCLK ---|->| /                                        |
->>                         |  |/                                         |
->>                         |                                             |
->>                          ---------------------------------------------
->>
->> Is it fine to re-parent the MUX_USI from above to OSCCLK at run-time,
+> On Tue, Feb 20, 2024 at 02:10:45PM +0530, Shradha Todi wrote:
+> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> > +					      struct clk_bulk_data **clks) {
+> > +	struct clk_bulk_devres *devres;
+> > +	int ret;
+> > +
+> > +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
+> > +			      sizeof(*devres), GFP_KERNEL);
+> > +	if (!devres)
+> > +		return -ENOMEM;
+> > +
+> > +	ret = clk_bulk_get_all(dev, &devres->clks);
+> > +	if (ret > 0) {
 > 
-> I am not aware of the exact SOC/HW you are working on. 
-
-I'm working with GS101. I'm interested in exynos850 as well.
-
-> It depends on the CMU design about how to achieve low power mode and clock gating for an IP/Block. 
+> I feel like this should be >= instead of >.  There aren't any callers of this
+function
+> yet so we can't see what's in *clks at the start but it's easy to imagine a
+situation
+> where it's bad data.
 > 
-> In theory and looking at your clock diagram above, it is ok to switch to OSCCLK  for MUX_USI.
+
+Reference for this piece of code has been taken from devm_clk_bulk_get_all()
+which
+has multiple callers, so it's safe. If we make this >=, it will hold on to the
+devres node
+even though there are no clocks.
+
+> > +		*clks = devres->clks;
+> > +		devres->num_clks = ret;
+> > +	} else {
+> > +		devres_free(devres);
+> > +		return ret;
 > 
-> If you can just use GATE_USI clock to clock gate USI IP, you will have a low power for USI (of course there will be a leakage current still drawn).
-> Is that what you want to achieve (low power mode)? Or you are looking to get lowest possible operating clock for USI IP?
-
-I'm trying to get the lowest possible operating clock for the USI IP.
-
+> When clk_bulk_get_all() returns zero then we return success here.
 > 
-> You need to takecare about if that clock is being shared with any other IP,
 
-It's not shared, the entire MUX USI, DIV, and GATE sequence is dedicated
-per IP. GS101 has 15 USI blocks, each with its dedicated MUX-DIV-GATE
-sequence of clocks.
+Yes, we are returning success in case there are no clocks as well. In case there
+are no
+clocks defined in the DT-node, then it is assumed that the driver does not need
+any
+clock manipulation for driver operation. So the intention here is to continue
+without
+throwing error.
 
-> so unless all the IPs which consume this clock, goes into idle state, you can avoid MUX_USI change to OSCCLK.
-
-Since the MUX USI is per IP, I guess I shouldn't be concerned about
-this, right?
-
-I'm trying to find out if it's OK to reparent the MUX to OSCCLK in
-normal operation mode (not low power mode), in order to get the lowest
-possible operating clock for the USI IP. Would be great if the decision
-is backed up by some info from datasheet. Unfortunately the datasheet
-that I have access to it's not explicit.
-
-Thanks for the help!
-ta
-
+> regards,
+> dan carpenter
 > 
-> 
->> during normal operation mode? Experimentally I determined that it's fine,
->> but the datasheet that I'm reading mentions OSCCLK just in the low-power
->> mode context:
->> i/ CMU ... "Communicates with Power Management Unit (PMU) to stop
->> clocks or switch OSC clock before entering a Low-Power mode to reduce
->> power consumption by minimizing clock toggling".
->> ii/ "All CMUs have MUXs to change the OSCCLK during power-down mode".
->>
->> Re-parenting the MUX to OSCCLK allows lower clock rates for the USI blocks
->> than the DIV_CLK_PERIC0_USI can offer. For a USI clock rate below
->> 6.25 MHz I have to either reparent MUX_USI to OSCCLK, or to propagate the
->> clock rate to the common divider DIV_CLKCMU_PERIC0_IP. I find the
->> propagation to the common DIV less desirable as a low USI clock rate affects
->> I3C by lowering its clock rate too. Worse, if the common bus divider is not
->> protected (using CLK_SET_RATE_GATE), USI can lower the I3C clock rate
->> without I3C noticing.
->>
->> Either re-parenting the MUX_USI to OSCCLK, or propagating the clock rate to
->> DIV_CLKCMU_PERIC0_IP allows the same clock ranges. The first with the
->> benefit of not affecting the clock rate of I3C for USI clock rates below
->> 6.25 MHz. Is it fine to re-parent MUX_USI to OSCCLK at run-time?
->>
->> If no feedback is received I lean towards propagating the USI clock rate to the
->> common divider, but by protecting it with CLK_SET_RATE_GATE.
->>
->> Feel free to add in To: or Cc: whoever might be interested. Thanks, ta
-> 
-> 
+> > +	}
+> > +
+> > +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
+> > +	if (!ret) {
+> > +		devres_add(dev, devres);
+> > +	} else {
+> > +		clk_bulk_put_all(devres->num_clks, devres->clks);
+> > +		devres_free(devres);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+> > +
+
+
