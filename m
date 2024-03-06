@@ -1,209 +1,114 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1008002A
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Mar 2024 12:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA70131E27;
+	Wed,  6 Mar 2024 14:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709727208; cv=none; b=W7oWpp5OabWFUxGyM8IOwT9/oFAofNdg3Lo2pZWxCzy/Lh6BeMYvWbcNY0EBJ1x+il+9CD7dKQymOirro81u96Wf+qk+rDzO4rxfSSW1tnRtvtT+zaKtKa7xsxVg4xcfvUm/moT46JVHtZBlbNCULcSCYz7pza4Mbce6VyXE1e4=
+	t=1709734128; cv=none; b=PlCIYHDSrpH0ZTeAANCW+tCSSNXmEonZWcLb2RH+xMS0A8HJfByxvbqI7Zq0aGvQmW9Dpt0uy2lWn/MiucTs0UY0IUQvWsCUSHOsXCZVrZrH27FrI4lOptLdf7TkhWDqxNGPMEsR7kQYYkmPVnL6bQPMELL1e8QQevfhY0QDc0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709727208; c=relaxed/simple;
-	bh=MvQWTMYzbR7pSSNPtXrU0pZYKoIJ+SgRUhNdIt6jGjg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=n5NKmlTXCBW/2ZKfOZcxTjqdAeyKvjk8Hh34obM2UBm22Tagg9QCqveCFWEzdim8LJliwSHxc7hNDBOG+T91ap4nUBOS6vtb7wjOtgokTlDexMOIr0hjx4A3ayEjgehRJFLr/79Fak8ZVw3Ga4i1dA/9UHqvdPt8xj1qW7RM0qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sMiaLAO7; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1709734128; c=relaxed/simple;
+	bh=RG0W/+RUSiHi+MbIBgdiFtijyxDD7F+zc1eridG9d5I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DyAbGuj9oiWvnq0CUwKktXJoKOLd29B0rqiCB5dlv8mSs2Tp7dtsoO2+klpf8jmrA5rt3wWhdjv1yy4ISKKjTVzrT+zqz/91sqHGf9sLRDnuMkYrEhjadS5zV7u8/6ZVm+a4Xk1SbntlCljYDmRAlysd5O3LU58eGOW/1AodsZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OfmRchC8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sMiaLAO7"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240306121318epoutp04a4a14aa48570687a58e092607af27c08~6K9Q2436f1510615106epoutp04b
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Mar 2024 12:13:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240306121318epoutp04a4a14aa48570687a58e092607af27c08~6K9Q2436f1510615106epoutp04b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1709727199;
-	bh=WTQ15VypupqP8VXJmmdKI+HBcUQn7Q0FdOahxVlCL5Q=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=sMiaLAO7GwhG4k4SeQLwsPOvCcGbUb56nnFKuMSRQeegxCpaR6CN/EtEWQKEa0ZAR
-	 cMjmkrc5cGMPOmCPrDc35rbKxCaOzmi/QBVPWbJLTCEo47We+cYI5RFk6BDR72lR26
-	 AGRPBpxs6biJfoaSkNHl35bQuMD7FyqstlE2CwsQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240306121318epcas5p46d8921f3096590ae7e8b27e08f1f0a0e~6K9QQ5BhA2378723787epcas5p4E;
-	Wed,  6 Mar 2024 12:13:18 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4TqWY84pFhz4x9Pv; Wed,  6 Mar
-	2024 12:13:16 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E0.62.09634.CDD58E56; Wed,  6 Mar 2024 21:13:16 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240306121316epcas5p2dd93d2a62d83e2bae45ef4fcfb7362f5~6K9OKiGjh1360113601epcas5p2_;
-	Wed,  6 Mar 2024 12:13:16 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240306121316epsmtrp17a3a8dcd902734f3b463752b5ef267a5~6K9OJjFBD1302513025epsmtrp1g;
-	Wed,  6 Mar 2024 12:13:16 +0000 (GMT)
-X-AuditID: b6c32a49-159fd700000025a2-af-65e85ddc69fc
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	09.63.08817.BDD58E56; Wed,  6 Mar 2024 21:13:15 +0900 (KST)
-Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240306121311epsmtip1a9216d1eb53f803e079c054ed232e15a~6K9J5QBtm2312523125epsmtip1O;
-	Wed,  6 Mar 2024 12:13:11 +0000 (GMT)
-From: "Shradha Todi" <shradha.t@samsung.com>
-To: "'Dan Carpenter'" <dan.carpenter@linaro.org>
-Cc: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <jingoohan1@gmail.com>, <lpieralisi@kernel.org>,
-	<kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-	<krzysztof.kozlowski@linaro.org>, <alim.akhtar@samsung.com>,
-	<linux@armlinux.org.uk>, <m.szyprowski@samsung.com>,
-	<manivannan.sadhasivam@linaro.org>, <pankaj.dubey@samsung.com>,
-	<gost.dev@samsung.com>
-In-Reply-To: <f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
-Subject: RE: [PATCH v6 1/2] clk: Provide managed helper to get and enable
- bulk clocks
-Date: Wed, 6 Mar 2024 17:43:03 +0530
-Message-ID: <022301da6fbf$aae4f7e0$00aee7a0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfmRchC8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2681C433C7;
+	Wed,  6 Mar 2024 14:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709734127;
+	bh=RG0W/+RUSiHi+MbIBgdiFtijyxDD7F+zc1eridG9d5I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OfmRchC8sHDnTnzGcRHVyPhc0Uy5pNu9t3KdG12ZlnGyxWWrBVDK2K9j/J6ZFgsMF
+	 4c/J16xwc83sM4siFxZ3EwBhrI73xyZa+2oYaCcRfwWgKT7cHMGm6MTNrcKiQSJwT+
+	 8BbJrkAWkNITxbecpq1Hp4xGey1oHAs58jC4X7sP6dBdzfSOaxR3Eeb/6WhJFCt+Qd
+	 VK8YJrXJu25HthQyv0/XDmYzp16evOdwnXnQehU07CXGHPKUW47oJUHXI20jBsVlaw
+	 B/HhDzdxlj3KM3hk43t2nOA4owjNpF6pRb1aL6FU5eCMWolGU5KN2dgESGNF5SnpTn
+	 Lxp/SwUtPCtpg==
+From: Mark Brown <broonie@kernel.org>
+To: robh@kernel.org, andi.shyti@kernel.org, krzysztof.kozlowski@linaro.org, 
+ semen.protsenko@linaro.org, conor+dt@kernel.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: alim.akhtar@samsung.com, linux-spi@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
+ peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240216070555.2483977-1-tudor.ambarus@linaro.org>
+References: <20240216070555.2483977-1-tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v3 00/12] spi: s3c64xx: remove OF alias ID dependency
+Message-Id: <170973412458.162474.13178252432739879797.b4-ty@kernel.org>
+Date: Wed, 06 Mar 2024 14:08:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH2hJCcwYDjJDqbclltz640cKP7jQL/AcmgAaOboDkDexFUCLCxgc9A
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xTVxjN62v7CoPxBhguxG317UeECbSjhcsi4AKaN6YGsjgXg6lv8GyR
-	/lp/6GAkIKEykK1ixkYLVNDGAIYRWioUYbDiYHNBZUA3MiA4cEOJAxRMQHFreXXjv/N995yc
-	73z3Xh4avMyN4OUqdbRGSckJrj/76kBkZPTk0XlacPcOH85YrnKhtUQGlywGDE70O1mwacWE
-	wd4FBwaLK59woG3WzYHLldMcONpdx4XDliEurLn1HQu6qnsRWPq0lA1br09hcKq0nANHbuyF
-	Fx0rGPynpwuDz9zt7D2h5Kh7BCUXfzNgpNM8hZENNj1paynnkpPuHi45N/YNi7Rbi8gvO1oQ
-	8pHtlQz/I3m7ZTSVQ2v4tDJblZOrlCYR738gSZWI4wXCaGEiTCD4SkpBJxFp+zOi9+XKPeEI
-	/klKrve0MiitlohN3q1R6XU0X6bS6pIIWp0jV4vUMVpKodUrpTFKWveOUCB4W+whHsuT2S58
-	rJ4P+bT7tAUtRlaDKhA/HsBFoHn2K3YF4s8Lxq8hoOFsGcYUDxHwc1UXhykeI+D7v43s55K1
-	y4u+g14EjN+5wmWKeQTc6h/GvCwuvgvMjT1FvTgUF4AldzvqJaF4PRv0j5dvkvzwVPCnu4nl
-	xSH4YVC2+JDrxWz8ddBq79jsB+KJoH71Dw6DXwI/meY2x0DxV0HngzqUGYkP1u5e5jBm+4DF
-	8S2L4YSBH9YqN40BXusHnH3TLEaQBn6/edEnDgH3hzowBkeAe8YzPiwFzfYaH0cOHtutPm0K
-	6B+r8wzB8xhEgrbuWMbrRfDFkzmWtw3wQPD5mWCG/RpY2ejxbS4cWAZHOQwmQe3GDewcssO8
-	JZl5SzLzlgTm/80aEHYLEk6rtQoprRWrhUr61H8Xnq1S2JDNtx/1XhcyNbMU40JYPMSFAB5K
-	hAYWrs/RwYE5VH4BrVFJNHo5rXUhYs+6q9CIbdkqz+dR6iRCUaJAFB8fL0qMixcSYYELhvqc
-	YFxK6eg8mlbTmuc6Fs8vopjlPN7X112AlvwSjpvpo9d3haVY9oObhfnOKKNpo3P2XfbJ9MHC
-	9pS4rimVZEhITBgPH7p/ujFoukK7ai9q+pHq3xZq7UytPhBRf2xHQkl6QBhbVyh6OXln821F
-	46meRiuYyBJHG4ySQ1X2EEf6lemeIwS8ECA9aN3eNqCJTB8OeqFWWBWwvpxlGHkjoywzzDEt
-	1H8ofrNlT2HsbSz2gOlE3M7M85c4Q/L8kYTt6WnrJ/aeXVgrMznvXUpx9ZpnDraajhuanpFZ
-	mX99Nrlh/JpnbnRzEmHRR82DKnoypIR6q3Rko616dgzrcP06sGyihbJrDx4ln3dwxj/JVBTM
-	1hBsrYwSRqEaLfUvVaqDpYQEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsWy7bCSnO7t2BepBlN7LSwezNvGZrGkKcPi
-	w7xWdoubB3YyWaz4MpPdYu/rrewWDT2/WS02Pb7GavGx5x6rxeVdc9gszs47zmYx4/w+JotD
-	U/cyWrT8aWGxWHvkLrvF3ZZOVouLp1wtFm39wm7xf88Odot/1zayOIh4XL52kdnj/Y1Wdo+d
-	s+6yeyzYVOqxaVUnm8eda3vYPJ5cmc7ksXlJvUffllWMHp83yQVwRXHZpKTmZJalFunbJXBl
-	bJqfVPBCuGJX4zzmBsav/F2MnBwSAiYSP5e9Z+1i5OIQEtjNKLFuyS0miISkxOeL66BsYYmV
-	/56zg9hCAs8YJe7/UQSx2QR0JJ5c+cMMYosIGEh8uLaRGWQQs8BGFok5n/awQEz9xCjxs2kt
-	I0gVp4CzxLNrK8CmCguESnRN2QI2lUVARWLt5i1gcV4BS4m5Xx+xQtiCEidnPgEaxAE0VU+i
-	bSPYGGYBeYntb+cwQxynIPHz6TJWiCPcJOZthTiaWUBc4ujPHuYJjMKzkEyahTBpFpJJs5B0
-	LGBkWcUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERz3Wlo7GPes+qB3iJGJg/EQowQH
-	s5IIb82vJ6lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1
-	MKkXvuir5VvLqlqaYK5TfqST/fTc7652zlNPa9Rt9tHxZD/Qvi24fRf37N/6b//8/fjw9cRF
-	0tL7+80mXNn6wD/504cd+XE187aIyou/Yfx5i+/qrMn9ApMjZ+o1GUz8WVz1KNV9dqIgJ2NF
-	9Kq+qy85w6q2ztymNPtg9Y4LdZuNivqWXl90e2FH+LUfZ8QXRS/b8nZKb/60Lws3xPO+eBvn
-	o7//xa6PkziuFM00++L9a6eC5HW3CT/23gizf8Ltsz6Fw+PuA/4+9ewStl1bVYS/e4pdXbUj
-	OLSveK6U97qQVYFTroTxcTefORH2cL9idMn0Gf4bV9xQ2nZUSI3F3vF9N+c3lwL7G61zK78p
-	BbYosRRnJBpqMRcVJwIAvC2ismoDAAA=
-X-CMS-MailID: 20240306121316epcas5p2dd93d2a62d83e2bae45ef4fcfb7362f5
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c
-References: <20240220084046.23786-1-shradha.t@samsung.com>
-	<CGME20240220084120epcas5p1e8980539667c3d9da20f49fc645d8f4c@epcas5p1.samsung.com>
-	<20240220084046.23786-2-shradha.t@samsung.com>
-	<f00eed31-4baf-4d5c-934d-8223d1ab554d@moroto.mountain>
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-a684c
 
-
-
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: 05 March 2024 14:20
-> To: Shradha Todi <shradha.t@samsung.com>
-> Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; mturquette@baylibre.com; sboyd@kernel.org;
-> jingoohan1@gmail.com; lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
-> bhelgaas@google.com; krzysztof.kozlowski@linaro.org;
-> alim.akhtar@samsung.com; linux@armlinux.org.uk;
-> m.szyprowski@samsung.com; manivannan.sadhasivam@linaro.org;
-> pankaj.dubey@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH v6 1/2] clk: Provide managed helper to get and enable bulk
-> clocks
+On Fri, 16 Feb 2024 07:05:43 +0000, Tudor Ambarus wrote:
+> The driver was wrong as it assumed that the alias values in devicetree
+> have a particular meaning in identifying instances. This immediately
+> breaks when there is a dtb file that does not use the same alias values,
+> e.g. because it only needs some of the SPI ports.
 > 
-> On Tue, Feb 20, 2024 at 02:10:45PM +0530, Shradha Todi wrote:
-> > +int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
-> > +					      struct clk_bulk_data **clks) {
-> > +	struct clk_bulk_devres *devres;
-> > +	int ret;
-> > +
-> > +	devres = devres_alloc(devm_clk_bulk_release_all_enable,
-> > +			      sizeof(*devres), GFP_KERNEL);
-> > +	if (!devres)
-> > +		return -ENOMEM;
-> > +
-> > +	ret = clk_bulk_get_all(dev, &devres->clks);
-> > +	if (ret > 0) {
+> Tested gs101 SPI with spi-loopback-test, all went fine. I updated
+> exynos850 as it uses the same USI.SPI_VERSION as gs101. Maybe Sam can
+> test exynos850, if not, we can drop that patch (12/12).
 > 
-> I feel like this should be >= instead of >.  There aren't any callers of this
-function
-> yet so we can't see what's in *clks at the start but it's easy to imagine a
-situation
-> where it's bad data.
-> 
+> [...]
 
-Reference for this piece of code has been taken from devm_clk_bulk_get_all()
-which
-has multiple callers, so it's safe. If we make this >=, it will hold on to the
-devres node
-even though there are no clocks.
+Applied to
 
-> > +		*clks = devres->clks;
-> > +		devres->num_clks = ret;
-> > +	} else {
-> > +		devres_free(devres);
-> > +		return ret;
-> 
-> When clk_bulk_get_all() returns zero then we return success here.
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Yes, we are returning success in case there are no clocks as well. In case there
-are no
-clocks defined in the DT-node, then it is assumed that the driver does not need
-any
-clock manipulation for driver operation. So the intention here is to continue
-without
-throwing error.
+Thanks!
 
-> regards,
-> dan carpenter
-> 
-> > +	}
-> > +
-> > +	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
-> > +	if (!ret) {
-> > +		devres_add(dev, devres);
-> > +	} else {
-> > +		clk_bulk_put_all(devres->num_clks, devres->clks);
-> > +		devres_free(devres);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
-> > +
+[01/12] spi: dt-bindings: introduce FIFO depth properties
+        commit: 80a38bfbbd5965c8bda73b20aa78d308739bbc31
+[02/12] spi: s3c64xx: define a magic value
+        commit: ff8faa8a5c0f4c2da797cd22a163ee3cc8823b13
+[03/12] spi: s3c64xx: allow full FIFO masks
+        commit: d6911cf27e5c8491cbfedd4ae2d1ee74a3e685b4
+[04/12] spi: s3c64xx: determine the fifo depth only once
+        commit: c6e776ab6abdfce5a1edcde7a22c639e76499939
+[05/12] spi: s3c64xx: retrieve the FIFO depth from the device tree
+        commit: 414d7b8c9147db7dc34c0e2bae2e2361b922dc07
+[06/12] spi: s3c64xx: allow FIFO depth to be determined from the compatible
+        commit: 82b98fb8cd33db7793e3e695c44e4e75bca03b3e
+[07/12] spi: s3c64xx: let the SPI core determine the bus number
+        commit: e08433e095dda8b5e44c376648dbf65c6fb6771a
+[08/12] spi: s3c64xx: introduce s3c64xx_spi_set_port_id()
+        commit: 2cda3623ff4f002877a81f4e7a4c3401fd98aa2d
+[09/12] spi: s3c64xx: get rid of the OF alias ID dependency
+        commit: ea3fba7c41babda225fea324a72d171be9ff6de6
+[10/12] spi: s3c64xx: deprecate fifo_lvl_mask, rx_lvl_offset and port_id
+        commit: ad0adac84d42b693295f4bde407d9f20c9a694ab
+[11/12] spi: s3c64xx: switch gs101 to new port config data
+        commit: e8b16c7a420420a994f68c181abc4a82dcca0616
+[12/12] spi: s3c64xx: switch exynos850 to new port config data
+        commit: 7ad288208d24e42047e5bf0b88271684a32aa967
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
