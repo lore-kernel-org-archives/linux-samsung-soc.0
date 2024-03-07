@@ -1,173 +1,211 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from wp725.webpack.hosteurope.de (wp725.webpack.hosteurope.de [80.237.130.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A613D85634
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Mar 2024 11:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489F312E1FB;
+	Thu,  7 Mar 2024 13:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709812472; cv=none; b=CiOOSnJEEtO+oZZvxpAdTavaij2sVDPGLgk2kvuEjlJMjpZHyoCY+Yg0cdLzZjwH7gYHa+Z5y+wWQkKZGlysXw55qb6h+JKRX8TT6Mxr1MH07Ex77AxhuWTuVcFIgyYGsYB94sIeB4bHezm66Pa3/WEFmF5iwVfxHmhD6lCCTOA=
+	t=1709819234; cv=none; b=mlO5KGPuGzz09Of1DhbUg2BbiXOx/2Gzngk/mccPNpbzoy0RWVEuglRizXPbiPvx/pZ1K8BDQCJ5lPAV+bmOKIVh4osv0FWEDq1FbScUy2am7uYQu866JNLfpjVvB0LwtX24PURI8wAXSCtWvhrXCwIRonKE73fM8yDOovTlt/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709812472; c=relaxed/simple;
-	bh=S+OOB+GK6VFrLU913soTUn1itPxHtbfjSIr8cNPFaSs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=AsbxrWk8GryoRA8YpOWTzN6pnr/o0fWZcmvdlSHw1PJZXD/EnuI6EUPtHorD1BRGLnLW9xswTv3CO+H2XtpV1BJ1xiVBJNTFk66fn6Ut40qeDFHLcHgSaIliueMwZak8ObKfBDx1tD9CbG7vx1n/HG+PdsR0EhR5C8RAJqN+Pcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=X3UhcUky; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1709819234; c=relaxed/simple;
+	bh=dv62tGRYptDubici5vM7ijhoWIhLm4YHQ1AoA3GAGlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hp9Nwa14h6bEdz3NyOM2DYq1OeAObeRajxz60Edta2jV0NzHqlLYVGAYAUG7d6mvbmWCfPZTtvIbgPKLezc0KiZ/eLdOBP+EbvuG+QcnY01I0Mgt66Zban6Bmsa0dPEyerh+/ViWhsZuUbmbRJmD9VTfspORYxUWLaZQfgNyP6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fivetechno.de; spf=pass smtp.mailfrom=fivetechno.de; dkim=pass (2048-bit key) header.d=fivetechno.de header.i=@fivetechno.de header.b=nL43zlXd; arc=none smtp.client-ip=80.237.130.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fivetechno.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fivetechno.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X3UhcUky"
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240307115427epoutp03927e972a1ca5effdb9b795ca5da2fd17~6eWFazfCi1857118571epoutp03T
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Mar 2024 11:54:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240307115427epoutp03927e972a1ca5effdb9b795ca5da2fd17~6eWFazfCi1857118571epoutp03T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1709812467;
-	bh=S+OOB+GK6VFrLU913soTUn1itPxHtbfjSIr8cNPFaSs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=X3UhcUkyX80pkHsHAEJRyj7zhb+q855DKIx+31ZXPs9w3nLzshOEj4/e8I/bpTezF
-	 haCg3ESDGQnXeAuSv0xzC95wNsE0y8IMXRObpIa0xj5K3DImzhiN542uHzc4suvsXj
-	 xzOqaoTZYqZCvEUNyAyKKaVgwyTy+2nixucktkJo=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240307115426epcas1p4cbca85f882d1daff4f2bc0c8469a9925~6eWEZNKax0713107131epcas1p4j;
-	Thu,  7 Mar 2024 11:54:26 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.36.134]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Tr74x4l5Qz4x9Pv; Thu,  7 Mar
-	2024 11:54:25 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.D0.10211.1FAA9E56; Thu,  7 Mar 2024 20:54:25 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240307115424epcas1p3dae7021656de57990d7b9c84b06229bd~6eWCse3-00080400804epcas1p3B;
-	Thu,  7 Mar 2024 11:54:24 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240307115424epsmtrp27a490503a98e3f1df497644f7709d732~6eWCrvFlE0263602636epsmtrp2X;
-	Thu,  7 Mar 2024 11:54:24 +0000 (GMT)
-X-AuditID: b6c32a38-6d3fd700000027e3-3c-65e9aaf134ec
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DB.23.18939.0FAA9E56; Thu,  7 Mar 2024 20:54:24 +0900 (KST)
-Received: from cw00choi03 (unknown [10.113.111.106]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240307115424epsmtip1801a154e2cadb80324364524bbc607d7~6eWCVpCVq0677806778epsmtip19;
-	Thu,  7 Mar 2024 11:54:24 +0000 (GMT)
-From: "Chanwoo Choi" <cw00.choi@samsung.com>
-To: =?utf-8?Q?'Uwe_Kleine-K=C3=B6nig'?= <u.kleine-koenig@pengutronix.de>,
-	"'MyungJoo Ham'" <myungjoo.ham@samsung.com>, "'Kyungmin Park'"
-	<kyungmin.park@samsung.com>
-Cc: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Alim
-	Akhtar'" <alim.akhtar@samsung.com>, <linux-pm@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
- <kernel@pengutronix.de>, "'Matthias Brugger'" <matthias.bgg@gmail.com>,
-	"'AngeloGioacchino Del Regno'" <angelogioacchino.delregno@collabora.com>,
-	<linux-mediatek@lists.infradead.org>, "'Chen-Yu Tsai'" <wens@csie.org>,
-	"'Jernej	Skrabec'" <jernej.skrabec@gmail.com>, "'Samuel Holland'"
-	<samuel@sholland.org>, <linux-sunxi@lists.linux.dev>
-In-Reply-To: <cover.1709587301.git.u.kleine-koenig@pengutronix.de>
-Subject: RE: [PATCH 0/5] PM / devfreq: Convert to platform remove callback
- returning void
-Date: Thu, 7 Mar 2024 20:54:24 +0900
-Message-ID: <002101da7086$32fe0dd0$98fa2970$@samsung.com>
+	dkim=pass (2048-bit key) header.d=fivetechno.de header.i=@fivetechno.de header.b="nL43zlXd"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fivetechno.de; s=he121032; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=L3pILwjmWiNz/UuxYopFxz90O1sPL169tOa3rXJQcXc=; t=1709819232;
+	x=1710251232; b=nL43zlXd8jFdtBaft5Qw2hoC/rhg3dMAkK+0dHQ3+ONMGbYzUBu6BkL74ezik
+	4MOrRDG+hUuf85y9UZjgbBx1kMbWy+h/fM0zb83HSEOBisCSHViCSCEZtNua/+uZX3/HtijJMAQtv
+	YXdQcagC8MmNZknBnb0dV+X34ZN27UYJivJr5sUfniKVjN+k2uzbjj2feotdCtkliAuSeELME9I3G
+	3pfvZX79+WCT5FlZppdbKiHdQ3Vrv7bBFay9MeUV7hpswqgAJZWADnJpo2sN2nU3+vxXjz9qh+tg/
+	kNPp7sk42qnxaKZcgjo4FbVxnmwOt9ADSGdcpn6dhAh6fhckvQ==;
+Received: from p5098d998.dip0.t-ipconnect.de ([80.152.217.152] helo=hermes.fivetechno.de); authenticated
+	by wp725.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	id 1riDoU-0002B4-Do; Thu, 07 Mar 2024 14:29:34 +0100
+X-Virus-Scanned: by amavisd-new 2.12.1 using newest ClamAV at
+	linuxbbg.five-lan.de
+Received: from [192.168.178.100] (p508f320b.dip0.t-ipconnect.de [80.143.50.11])
+	(authenticated bits=0)
+	by hermes.fivetechno.de (8.15.2/8.15.2/SUSE Linux 0.8) with ESMTPSA id 427DTVIU021364
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 7 Mar 2024 14:29:32 +0100
+Message-ID: <a46e91ad-8cbc-4a4d-9268-f27906077e68@fivetechno.de>
+Date: Thu, 7 Mar 2024 14:29:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFzxRFSFHCd7QkDGmNm1eZX/JQK7QIZjy18sei1t8A=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJJsWRmVeSWpSXmKPExsWy7bCmnu7HVS9TDZYvUrB4MG8bm8WllRIW
-	z+evY7RYNXUni8Xe11vZLc42vWG32PT4GqvF5eaLjBafe48wWsw4v4/JYsq+XWwWTS3GFrcb
-	V7BZPH/UyWZxe+JkRoufh84zOQh47Li7hNFjw6PVrB47Z91l97hzbQ+bx+Yl9R4vNs9k9Oj/
-	a+DRt2UVo8err3MZPT5vkgvgisq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdS
-	yEvMTbVVcvEJ0HXLzAF6REmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFqgV5yY
-	W1yal66Xl1piZWhgYGQKVJiQnbFj1RTmgi6piq5XUQ2MayW7GDk5JARMJG5+72LqYuTiEBLY
-	wShx7slUFgjnE6PEh8Y5THDO5QeHmGBaLk2/D2YLCexklDizKBGi6CWjREvfBqB2Dg42AR2J
-	BT9CQeIiAiuA4hPOsYM0MAtsYJH4+CAXxOYUcJJYc6uJDcQWFoiWaOifAmazCKhI3Jh+iRnE
-	5hWwlNh/dh87hC0ocXLmExaIOdoSyxa+ZoY4SEHi59NlrCC2iICVxPctL6FqRCRmd7Yxgxwh
-	IfCFQ+L4ob1sEA0uEn9ezmWEsIUlXh3fwg5hS0l8fgdSA9IwmVHi4uvXUN3rGSU2rmyBWmcs
-	sX/pZCaQN5kFNCXW79KH2MYn8e5rDytIWEKAV6KjTQiiWhkYcnehIScpsbi9kw2ixENi1jKX
-	CYyKs5C8NgvJa7OQvDALYdcCRpZVjGKpBcW56anFhgUm8MhOzs/dxAhO41oWOxjnvv2gd4iR
-	iYPxEKMEB7OSCC+LxctUId6UxMqq1KL8+KLSnNTiQ4ymwMCeyCwlmpwPzCR5JfGGJpYGJmZG
-	xiYWhmaGSuK8Z66UpQoJpCeWpGanphakFsH0MXFwSjUwhe/JDLO/XP3sX8W6V0wOYv/Xh3rM
-	jJjrt+/EreqDpx5dY419wmz3Q9+k2KZ9t6nz04MJZ9YvXx48tcZzacbkt5qdPSIvrNI85h85
-	/UXozf1zAaVPNi+V7NkVd+DqX4VvD+9f+sj4cPGhvb175qxTvzp9lcqMberXd4ova/6T8Sr4
-	5QQ1je56udmyqbf0eTr79zoGc7Zv/Sc6RyvrYdUHh8X6nVxJx8Mm2v7cm+5/+czBxZk71Let
-	WTuDiym7TyXJJ7BMZdnp+8qmFx8d88/kiPp86O3dF/EWmZUN7ToMGz+qn5l278KpbnWJoy5n
-	X71tEVvpy576c9v/0KgtTste/dIp2ebdnatXemp/1EaWPfFKLMUZiYZazEXFiQCRPAmGbAQA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCSnO6HVS9TDZrvyVo8mLeNzeLSSgmL
-	5/PXMVqsmrqTxWLv663sFmeb3rBbbHp8jdXicvNFRovPvUcYLWac38dkMWXfLjaLphZji9uN
-	K9gsnj/qZLO4PXEyo8XPQ+eZHAQ8dtxdwuix4dFqVo+ds+6ye9y5tofNY/OSeo8Xm2cyevT/
-	NfDo27KK0ePV17mMHp83yQVwRXHZpKTmZJalFunbJXBlrJj7k6WgU7hizWKTBsZ3/F2MnBwS
-	AiYSl6bfZ+pi5OIQEtjOKHF33iVGiISkxLSLR5m7GDmAbGGJw4eLIWqeM0rMu97MAhJnE9CR
-	WPAjFCQuIrCCUeLLkxXMIA6zwC4WiUsrzjNDdExmlOi//RtsKqeAk8SaW01sILawQKTE/PO9
-	7CA2i4CKxI3pl5hBbF4BS4n9Z/exQ9iCEidnPmEBsZkFtCWe3nwKZy9b+JoZ4lIFiZ9Pl7GC
-	2CICVhLft7yEqhGRmN3ZxjyBUXgWklGzkIyahWTULCQtCxhZVjGKphYU56bnJhcY6hUn5haX
-	5qXrJefnbmIEx7JW0A7GZev/6h1iZOJgPMQowcGsJMLLYvEyVYg3JbGyKrUoP76oNCe1+BCj
-	NAeLkjivck5nipBAemJJanZqakFqEUyWiYNTqoEpq9Hg6/oJvg4SVj8ZdnUp1ChNq/WWVb22
-	I9duhdlz79yDV64md+15wPjEZsK7VFHdU+Y7Rf+0nX/eO+EcxxHeCre7QsofpD59tfV2Wd/n
-	sFCxSsn48sOMJ6r8Eu7bn6x57Tz98+Ome7n3njx6vuCyjckcK+/Q+Y1SznFCN7d6RWlHHEpW
-	DGOZXmizvVM8QXxf5NT3r98IXnzF/t9Fryjwm25yQE3izkrnJZwax1ruLPVdF2YbfYFp00Xz
-	iKtMguX1sf6WOXUcklme82e9Orb4xRadKm0lHoO7bkFb1JwCv0xddUAgOPGc+uR3E/wWvSrg
-	WflIrct99sqn6ba2hxLNOYX2a/YoqObsSNQ6Wa3EUpyRaKjFXFScCAD6dlbgVAMAAA==
-X-CMS-MailID: 20240307115424epcas1p3dae7021656de57990d7b9c84b06229bd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240304212922epcas1p3f9a8c4fdf976f6d6266e3129bfcfb00c
-References: <CGME20240304212922epcas1p3f9a8c4fdf976f6d6266e3129bfcfb00c@epcas1p3.samsung.com>
-	<cover.1709587301.git.u.kleine-koenig@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] i2c: exynos5: Init data before registering interrupt
+ handler
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Andi Shyti
+ <andi.shyti@kernel.org>,
+        Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@axis.com
+References: <CGME20240305105548eucas1p110f1ecf1570ff69a618ca86297eeba89@eucas1p1.samsung.com>
+ <20240305-i2c_exynos5-v3-1-17a749688806@axis.com>
+ <949c82da-f0dc-4824-ac57-bc86ae42d871@samsung.com>
+From: Markus Reichl <m.reichl@fivetechno.de>
+Content-Language: de-DE
+Autocrypt: addr=m.reichl@fivetechno.de; keydata=
+ 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
+ ZnS2JHg/17+ErCtiUzuJ5EGMPA==
+In-Reply-To: <949c82da-f0dc-4824-ac57-bc86ae42d871@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;m.reichl@fivetechno.de;1709819232;308ca482;
+X-HE-SMSGID: 1riDoU-0002B4-Do
 
+Hi Marek,
 
+Am 07.03.24 um 12:41 schrieb Marek Szyprowski:
+> On 05.03.2024 11:50, Jesper Nilsson wrote:
+> > devm_request_irq() is called before we initialize the "variant"
+> > member variable from of_device_get_match_data(), so if an interrupt
+> > is triggered inbetween, we can end up following a NULL pointer
+> > in the interrupt handler.
+> >
+> > This problem was exposed when the I2C controller in question was
+> > (mis)configured to be used in both secure world and Linux.
+> >
+> > That this can happen is also reflected by the existing code that
+> > clears any pending interrupts from "u-boot or misc causes".
+> >
+> > Move the clearing of pending interrupts and the call to
+> > devm_request_irq() to the end of probe.
+> >
+> > Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> > Fixes: 218e1496135e ("i2c: exynos5: add support for HSI2C on Exynos5260 SoC")
+> > Signed-off-by: Jesper Nilsson <jesper.nilsson@axis.com>
+> > ---
+> > Changes in v3:
+> > - Avoid multiple assignment
+> > - Link to v2: https://lore.kernel.org/r/20240304-i2c_exynos5-v2-1-7b9c312be719@axis.com
+> >
+> > Changes in v2:
+> > - Use dev_err_probe() instead of open coding it
+> > - Dropped the return failure if we can't find a match in devicetree
+> > - Link to v1: https://lore.kernel.org/r/20240304-i2c_exynos5-v1-1-e91c889d2025@axis.com
+> > ---
+> >   drivers/i2c/busses/i2c-exynos5.c | 29 +++++++++++++++--------------
+> >   1 file changed, 15 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> > index 385ef9d9e4d4..8458e22313a7 100644
+> > --- a/drivers/i2c/busses/i2c-exynos5.c
+> > +++ b/drivers/i2c/busses/i2c-exynos5.c
+> > @@ -906,23 +906,9 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+> >   	i2c->adap.algo_data = i2c;
+> >   	i2c->adap.dev.parent = &pdev->dev;
+> >   
+> > -	/* Clear pending interrupts from u-boot or misc causes */
+> > -	exynos5_i2c_clr_pend_irq(i2c);
+> > -
+> >   	spin_lock_init(&i2c->lock);
+> >   	init_completion(&i2c->msg_complete);
+> >   
+> > -	i2c->irq = ret = platform_get_irq(pdev, 0);
+> > -	if (ret < 0)
+> > -		goto err_clk;
+> > -
+> > -	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
+> > -			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
+> > -	if (ret != 0) {
+> > -		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
+> > -		goto err_clk;
+> > -	}
+> > -
+> >   	i2c->variant = of_device_get_match_data(&pdev->dev);
+> >   
+> >   	ret = exynos5_hsi2c_clock_setup(i2c);
+> > @@ -940,6 +926,21 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+> >   	clk_disable(i2c->clk);
+> >   	clk_disable(i2c->pclk);
+> >   
+> > +	/* Clear pending interrupts from u-boot or misc causes */
+> > +	exynos5_i2c_clr_pend_irq(i2c);
+>
+> Just above this call the clocks have been disabled, so any access to the 
+> i2c host registers will result in freeze or external abort (depending on 
+> the soc/cpu).
+>
+> To make things worse, this patch moved registering the interrupt handler 
+> after the i2c_add_adapter() call. This means that all i2c devices that 
+> will be probbed directly from i2c_add_adapter() won't be able to access 
+> the i2c bus, as the host controller is still not fully functional that 
+> time yet.
+>
+> This breaks today's linux-next on all Exynos5+ platforms. Has anyone 
+> tested this change?
+Tested this patch on top of stable 6.7.9, breaks booting odroid-xu4.
 
-> -----Original Message-----
-> From: Uwe Kleine-K=C3=B6nig=20<u.kleine-koenig=40pengutronix.de>=0D=0A>=
-=20Sent:=20Tuesday,=20March=205,=202024=206:29=20AM=0D=0A>=20To:=20Chanwoo=
-=20Choi=20<cw00.choi=40samsung.com>;=20MyungJoo=20Ham=0D=0A>=20<myungjoo.ha=
-m=40samsung.com>;=20Kyungmin=20Park=20<kyungmin.park=40samsung.com>=0D=0A>=
-=20Cc:=20Krzysztof=20Kozlowski=20<krzysztof.kozlowski=40linaro.org>;=20Alim=
-=20Akhtar=0D=0A>=20<alim.akhtar=40samsung.com>;=20linux-pm=40vger.kernel.or=
-g;=20linux-arm-=0D=0A>=20kernel=40lists.infradead.org;=20linux-samsung-soc=
-=40vger.kernel.org;=0D=0A>=20kernel=40pengutronix.de;=20Matthias=20Brugger=
-=20<matthias.bgg=40gmail.com>;=0D=0A>=20AngeloGioacchino=20Del=20Regno=20<a=
-ngelogioacchino.delregno=40collabora.com>;=20linux-=0D=0A>=20mediatek=40lis=
-ts.infradead.org;=20Chen-Yu=20Tsai=20<wens=40csie.org>;=20Jernej=20Skrabec=
-=0D=0A>=20<jernej.skrabec=40gmail.com>;=20Samuel=20Holland=20<samuel=40shol=
-land.org>;=20linux-=0D=0A>=20sunxi=40lists.linux.dev=0D=0A>=20Subject:=20=
-=5BPATCH=200/5=5D=20PM=20/=20devfreq:=20Convert=20to=20platform=20remove=20=
-callback=0D=0A>=20returning=20void=0D=0A>=20=0D=0A>=20Hello,=0D=0A>=20=0D=
-=0A>=20this=20series=20converts=20all=20drivers=20below=20drivers/devfreq=
-=20to=20struct=0D=0A>=20platform_driver::remove_new().=20See=20commit=205c5=
-a7680e67b=20(=22platform:=20Provide=20a=0D=0A>=20remove=20callback=20that=
-=20returns=20no=20value=22)=20for=20an=20extended=20explanation=20and=20the=
-=0D=0A>=20eventual=20goal.=0D=0A>=20=0D=0A>=20All=20conversations=20are=20t=
-rivial,=20because=20their=20.remove()=20callbacks=20returned=0D=0A>=20zero=
-=20unconditionally.=0D=0A>=20=0D=0A>=20There=20are=20no=20interdependencies=
-=20between=20these=20patches,=20so=20they=20could=20be=20picked=0D=0A>=20up=
-=20individually.=20But=20I'd=20hope=20that=20they=20get=20picked=20up=20all=
-=20together=20by=20the=0D=0A>=20devfreq=20maintainers.=0D=0A>=20=0D=0A>=20B=
-est=20regards=0D=0A>=20Uwe=0D=0A>=20=0D=0A>=20Uwe=20Kleine-K=C3=B6nig=20(5)=
-:=0D=0A>=20=20=20PM=20/=20devfreq:=20exynos-nocp:=20Convert=20to=20platform=
-=20remove=20callback=20returning=0D=0A>=20void=0D=0A>=20=20=20PM=20/=20devf=
-req:=20exynos-ppmu:=20Convert=20to=20platform=20remove=20callback=20returni=
-ng=0D=0A>=20void=0D=0A>=20=20=20PM=20/=20devfreq:=20mtk-cci:=20Convert=20to=
-=20platform=20remove=20callback=20returning=20void=0D=0A>=20=20=20PM=20/=20=
-devfreq:=20rk3399_dmc:=20Convert=20to=20platform=20remove=20callback=20retu=
-rning=0D=0A>=20void=0D=0A>=20=20=20PM=20/=20devfreq:=20sun8i-a33-mbus:=20Co=
-nvert=20to=20platform=20remove=20callback=20returning=0D=0A>=20void=0D=0A>=
-=20=0D=0A>=20=20drivers/devfreq/event/exynos-nocp.c=20=7C=206=20++----=0D=
-=0A>=20drivers/devfreq/event/exynos-ppmu.c=20=7C=206=20++----=0D=0A>=20=20d=
-rivers/devfreq/mtk-cci-devfreq.c=20=20=20=7C=206=20++----=0D=0A>=20=20drive=
-rs/devfreq/rk3399_dmc.c=20=20=20=20=20=20=20=20=7C=206=20++----=0D=0A>=20=
-=20drivers/devfreq/sun8i-a33-mbus.c=20=20=20=20=7C=206=20++----=0D=0A>=20=
-=205=20files=20changed,=2010=20insertions(+),=2020=20deletions(-)=0D=0A>=20=
-=0D=0A>=20base-commit:=2067908bf6954b7635d33760ff6dfc189fc26ccc89=0D=0A>=20=
---=0D=0A>=202.43.0=0D=0A>=20=0D=0A=0D=0AApplied=20it.=20Thanks.=0D=0A=0D=0A=
-Best=20Regards,=0D=0AChanwoo=20Choi=0D=0A=0D=0A=0D=0A
+Gruß,
+--
+Markus
+
+>
+> > +
+> > +	ret = platform_get_irq(pdev, 0);
+> > +	if (ret < 0)
+> > +		goto err_clk;
+> > +	i2c->irq = ret;
+> > +
+> > +	ret = devm_request_irq(&pdev->dev, i2c->irq, exynos5_i2c_irq,
+> > +			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), i2c);
+> > +	if (ret != 0) {
+> > +		dev_err(&pdev->dev, "cannot request HS-I2C IRQ %d\n", i2c->irq);
+> > +		goto err_clk;
+> > +	}
+> > +
+> >   	return 0;
+> >   
+> >    err_clk:
+> >
+> Best regards
+
