@@ -1,71 +1,66 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29698139572
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2024 18:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2141420A6
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2024 19:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710269442; cv=none; b=irUWkgQx1eTrc6VPOzHin/SDeClSCBBIcAIae8fP/i0UPHJVMY4xYn1pNOomy3+jZ78D8qRt8ZTkLTr0Zeo9ZQtzv65ySm0Qjybiei1Snrh9BYvrpqHI5Bod0cykC09FzwCbZzbObRxH+LEyZL5hmmmIdsYLru5t2loqj5HEY1M=
+	t=1710270258; cv=none; b=QqJU3mb7z/AchKPvo129peh6H/ZnpsEG7zpBfbhXcNE6E1tx3dqqxZa/0M/d7QMBoX2x26RtCaA6O5TrXwinFymP8Lz+6AwVRb8x2JLwgJQDSyFlsAk3WsiXzvdV6rSLuCTWsV1+IxHhhnfyzqdq/KsuNYjkg0lFoU2aiS+1hq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710269442; c=relaxed/simple;
-	bh=VXNVVnHLzcUMf+eMc1cXZF1qhCcY1ZICBw2e0CD90oU=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=GQPxwaumD7O826P2S6QXoeesauhivaI+fEcgt3OOzCs6aiBUx54ShLrDhxGpSz9C13o4nbW1pZy6MLP1qyiMoAQWn0Iw0qaF2JzZIJKnPFp5uydq3pCNFCZFp55GsbGY0P/09vrL0yq0KK7rVm/xx/X45UUhEs3u+g28Zg93NQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Icjz8BUa; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1710270258; c=relaxed/simple;
+	bh=SQRvqno3weA2SpppxGsRLACyWfP4MXYb+R8En2zxrXY=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=BN50cdRDE+FScBM8IY0CcOboYA/3uw/px2BFSboWCSEW8EIQgMaBQGO5Y7CBVWrDX9fYqyBFx/nIoj0z71LirpnNjbN12CJRWwlIy3Hp3JPNyrBO3buqWXyxKaaGwa1ZEenR1N5oFsAfL+5y7JS49tz0VTUdi89l+/9G7OrQBHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYQWkBwG; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Icjz8BUa"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-513173e8191so6239311e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2024 11:50:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYQWkBwG"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4132a348546so16230135e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2024 12:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710269438; x=1710874238; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710270255; x=1710875055; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWmv8PROciGabllAPSqvA9F+FHYmPZHSjaaUfTtwxLQ=;
-        b=Icjz8BUayisfyD6eGg27vg1xvbZZpSUDXWgVXRI3XLbEG1XoTUuQ/g6NCdeq2S+Ona
-         W7nV1GOjyVyiswaaxOgVjcvElnr1rXQc3fqT954JwzbnAVH5KqmxqKgchKgCmp/34st7
-         KNtRRyJpyOteA3ZIZ8ear3MO5agCjyXVF0IC5nyt9Pi9E2MUw2MV4qvLZdLEyD5kujSS
-         6coBBc0cTw/taDGA2+YR2O0GNckvkoDgCDgTC0u+L2hj+2jMx9LT6boYa4lEQxCI0wMc
-         NNq+i7Zuh4X83lPpkI1TakLxShYp2zwUj/A92Ghz62IeMQ2CSPxtKiwdcbt/6q+59ZI3
-         h3rg==
+        bh=Nh16+Oh9k6Mlc+LShu+JvHr3Rf2JG6ms52z9eMyG5NA=;
+        b=LYQWkBwGciuXPdVy1QqPyhx8FVU8vv5s2CCNKouVXIce4hKvN4vDYjMgbe8vR4OowW
+         KuuNEE5pcAOuuIaq/J2tJC20B7FnZThvAO9/J10sr0UGDl91bascWfFQYBSeQ4O3ImEE
+         EuAorTdjLSmX3Ao312M/kXoLXARAKXi3/XYZeZwMKlkKDA37QQaimBLvSPy6DD8wFV7x
+         W6pqlks/25tH7+mf53xD0Ly+gaBAkk0Z1zfp+sPKZEJHiiZrnxjOWpx2JFYi3kTYdT1C
+         RyDGJ1xkd1uJ4f9tnC/Y0IbIU8UnGX0ba199xBJ78xaKDfIZPPw2R18oDqSfXQ+Fhzhr
+         i+Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710269438; x=1710874238;
+        d=1e100.net; s=20230601; t=1710270255; x=1710875055;
         h=content-transfer-encoding:mime-version:message-id:date:subject:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWmv8PROciGabllAPSqvA9F+FHYmPZHSjaaUfTtwxLQ=;
-        b=L+rCHCHf5wJo+SnpoS6vcde73V20o7CeWiF4i8SBArOn9dQ8NbKZGdj8zeBdj3N1EF
-         N/bJpj6WXpj5AnHU0xCfGpehOSHD9+oBNm3fg4wRy+9uMhAO2zqKJgZNYn4xGBVHMA4J
-         7kEXfeHk10caz0ZAQDJlxnNNj23vsRn/kFO3CDz9kMFlu3JpzekqeTth8CvRKscpZcsz
-         +shsbiaULV2Fz5Mjc4WcV3tXt9eDslIVdl+iCE1d9wSrlN/AiT2ctOnX95qt85u+ry4p
-         QyXl5Wr0Etx3uY+nEB2eWJClt8TbEdGGA/AjCHDGnoP6LY+ksrYAHPeNfZcGvsduAA2S
-         mV1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVaTLr6UyZWyQgcKspzGUZUqDB5ukRp/k9fPkJAq/vxKqP0/WTt0l8j2cY/ZvaNR5kqk4IVKs8Kjt6C60xpFaYtfEvr1Ioc6eq8z8MqZ7XdbKY=
-X-Gm-Message-State: AOJu0YzKSyBZ9mUYvokcmkGKS3lfO5uyHbosWU9Oqp9StRww6/t0Bs2t
-	TDATQmIYDD3OBROGPlNifXywHvhZuLB3kuZ6VCYHN/injmY4zM7WIdkj0zvcG6E=
-X-Google-Smtp-Source: AGHT+IGxrhlnbqnZw+75kfh+yq+KarLg4EMELr26c6t+nZ26T7LkDm/X5ar7Kec8Nuoyw6XvydLALA==
-X-Received: by 2002:ac2:47fb:0:b0:513:588a:2614 with SMTP id b27-20020ac247fb000000b00513588a2614mr737193lfp.49.1710269438328;
-        Tue, 12 Mar 2024 11:50:38 -0700 (PDT)
+        bh=Nh16+Oh9k6Mlc+LShu+JvHr3Rf2JG6ms52z9eMyG5NA=;
+        b=qPCn5PaWzcWA0eKE6xTvd40vd+G5d3DbKcOQKSO9IzrjqvCzGvgv1V5FAZjmneqma5
+         bjvcArP5o37jW3+rb8t9okO9GMG+KMLdyHGNT/yiIULXe875QzBgmssh2cjpg9z24gj5
+         Z7LW0LEl6uYBva6UgSl4E9aZprw3HQZJlMSvzcSLWT3dXQHwoQ7Al0P+JAkFD8dkhX3T
+         hVB/vYq946nGYAwQvInrE9cfEQ0gnqYUcLsf9cpDoB5fVI0BJ2IY8ZnRY13+ciEzqIxi
+         Mj3MlNnBF2V5DySJQeiegEWrBWd+UzZ0eUpibCtvZYEzdTBW/mWMP2VFh5a/2uGYmY+t
+         LeaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtUQSbHTOLmIQ6ZpZEFtbmbI8bNMvMnZL/heKrZyA1Hfs7RHdNycGYhUvFAPatYpowQjVn9yQ63Vhp5ULyqs554kW9ymitAeoSViG63Q6WNSk=
+X-Gm-Message-State: AOJu0YxcVbgyNMDxYarZjJXkk9Ovbg3+RRkgJADfQjt1luu2DjYE9C6v
+	7/CkL4RN6DidAEnNLuNkl7BueQMsUEsfHgu+YdaLgSLMRzyiUfwqqJtWGiidQsA=
+X-Google-Smtp-Source: AGHT+IE03tspZ9sgXYE9B6vVJFsBFq8hVMsaS8u+v+becWRB1JKdGQdCgH0fW2AYovTobu+W5fqFiA==
+X-Received: by 2002:a05:600c:35d4:b0:413:7f3:8d5 with SMTP id r20-20020a05600c35d400b0041307f308d5mr7370972wmq.0.1710270255136;
+        Tue, 12 Mar 2024 12:04:15 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id j20-20020a05600c191400b0041339453775sm2557465wmq.48.2024.03.12.11.50.36
+        by smtp.gmail.com with ESMTPSA id l2-20020a05600c4f0200b00412a31d2e2asm13435026wmq.32.2024.03.12.12.04.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Mar 2024 11:50:37 -0700 (PDT)
+        Tue, 12 Mar 2024 12:04:14 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
-Date: Tue, 12 Mar 2024 19:50:35 +0100
-Message-Id: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: memory-controllers: add Samsung S5Pv210 SoC DMC
+Date: Tue, 12 Mar 2024 20:03:48 +0100
+Message-Id: <20240312190348.724361-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -75,162 +70,57 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
-schema.
+Document bindings for the S5Pv210 SoC DMC memory controller, already
+used in DTS and Linux CPU frequency scaling driver.  The binding looks
+quite empty and is most likely incomplete, but the platform is so old
+that no one expects any effort on this, except documenting what is in
+DTS.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/clock/samsung,s3c6400-clock.yaml | 57 ++++++++++++++
- .../bindings/clock/samsung,s3c64xx-clock.txt  | 76 -------------------
- 2 files changed, 57 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
+ .../samsung,s5pv210-dmc.yaml                  | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/samsung,s5pv210-dmc.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
+diff --git a/Documentation/devicetree/bindings/memory-controllers/samsung,s5pv210-dmc.yaml b/Documentation/devicetree/bindings/memory-controllers/samsung,s5pv210-dmc.yaml
 new file mode 100644
-index 000000000000..d0660313c262
+index 000000000000..c0e47055f28c
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
-@@ -0,0 +1,57 @@
++++ b/Documentation/devicetree/bindings/memory-controllers/samsung,s5pv210-dmc.yaml
+@@ -0,0 +1,33 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/samsung,s3c6400-clock.yaml#
++$id: http://devicetree.org/schemas/memory-controllers/samsung,s5pv210-dmc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung S3C6400 SoC clock controller
++title: Samsung S5Pv210 SoC Dynamic Memory Controller
 +
 +maintainers:
 +  - Krzysztof Kozlowski <krzk@kernel.org>
 +
-+description: |
-+  There are several clocks that are generated outside the SoC. It is expected
-+  that they are defined using standard clock bindings with following
-+  clock-output-names:
-+   - "fin_pll" - PLL input clock (xtal/extclk) - required,
-+   - "xusbxti" - USB xtal - required,
-+   - "iiscdclk0" - I2S0 codec clock - optional,
-+   - "iiscdclk1" - I2S1 codec clock - optional,
-+   - "iiscdclk2" - I2S2 codec clock - optional,
-+   - "pcmcdclk0" - PCM0 codec clock - optional,
-+   - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
-+
-+  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/samsung,s3c64xx-clock.h header.
++description:
++  Dynamic Memory Controller interfaces external JEDEC DDR-type SDRAM.
 +
 +properties:
 +  compatible:
-+    enum:
-+      - samsung,s3c6400-clock
-+      - samsung,s3c6410-clock
++    const: samsung,s5pv210-dmc
 +
 +  reg:
 +    maxItems: 1
 +
-+  clocks:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
 +required:
 +  - compatible
 +  - reg
-+  - clocks
-+  - "#clock-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    clock-controller@7e00f000 {
-+        compatible = "samsung,s3c6410-clock";
-+        reg = <0x7e00f000 0x1000>;
-+        #clock-cells = <1>;
-+        clocks = <&fin_pll>;
++    memory-controller@f0000000 {
++        compatible = "samsung,s5pv210-dmc";
++        reg = <0xf0000000 0x1000>;
 +    };
-diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt b/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
-deleted file mode 100644
-index 872ee8e0f041..000000000000
---- a/Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
-+++ /dev/null
-@@ -1,76 +0,0 @@
--* Samsung S3C64xx Clock Controller
--
--The S3C64xx clock controller generates and supplies clock to various controllers
--within the SoC. The clock binding described here is applicable to all SoCs in
--the S3C64xx family.
--
--Required Properties:
--
--- compatible: should be one of the following.
--  - "samsung,s3c6400-clock" - controller compatible with S3C6400 SoC.
--  - "samsung,s3c6410-clock" - controller compatible with S3C6410 SoC.
--
--- reg: physical base address of the controller and length of memory mapped
--  region.
--
--- #clock-cells: should be 1.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. Some of the clocks are available only
--on a particular S3C64xx SoC and this is specified where applicable.
--
--All available clocks are defined as preprocessor macros in
--dt-bindings/clock/samsung,s3c64xx-clock.h header and can be used in device
--tree sources.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It is expected
--that they are defined using standard clock bindings with following
--clock-output-names:
-- - "fin_pll" - PLL input clock (xtal/extclk) - required,
-- - "xusbxti" - USB xtal - required,
-- - "iiscdclk0" - I2S0 codec clock - optional,
-- - "iiscdclk1" - I2S1 codec clock - optional,
-- - "iiscdclk2" - I2S2 codec clock - optional,
-- - "pcmcdclk0" - PCM0 codec clock - optional,
-- - "pcmcdclk1" - PCM1 codec clock - optional, only S3C6410.
--
--Example: Clock controller node:
--
--	clock: clock-controller@7e00f000 {
--		compatible = "samsung,s3c6410-clock";
--		reg = <0x7e00f000 0x1000>;
--		#clock-cells = <1>;
--	};
--
--Example: Required external clocks:
--
--	fin_pll: clock-fin-pll {
--		compatible = "fixed-clock";
--		clock-output-names = "fin_pll";
--		clock-frequency = <12000000>;
--		#clock-cells = <0>;
--	};
--
--	xusbxti: clock-xusbxti {
--		compatible = "fixed-clock";
--		clock-output-names = "xusbxti";
--		clock-frequency = <48000000>;
--		#clock-cells = <0>;
--	};
--
--Example: UART controller node that consumes the clock generated by the clock
--  controller (refer to the standard clock bindings for information about
--  "clocks" and "clock-names" properties):
--
--		uart0: serial@7f005000 {
--			compatible = "samsung,s3c6400-uart";
--			reg = <0x7f005000 0x100>;
--			interrupt-parent = <&vic1>;
--			interrupts = <5>;
--			clock-names = "uart", "clk_uart_baud2",
--					"clk_uart_baud3";
--			clocks = <&clock PCLK_UART0>, <&clocks PCLK_UART0>,
--					<&clock SCLK_UART>;
--		};
 -- 
 2.34.1
 
