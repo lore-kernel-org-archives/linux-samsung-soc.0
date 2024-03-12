@@ -1,159 +1,111 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F10A364BE
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Mar 2024 10:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED49E13B7AA
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2024 18:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710154040; cv=none; b=jLiEoJUf0wrZQqUsAtRdHHekMk/rkAmoCbzkVfF8XonO93ucRY3JP3rQhI6l9uGt+hWpitJAroSazxOMQ/xGUH8EjpfxYde8C40tdjPHk5ed9GOewugPfdK/+cbZl81Mnu1Bs/D/9ClJ9/PfHOlHUO2Oi+2qWImi3rO4HKD/zEM=
+	t=1710268274; cv=none; b=h9cGRokl3VKho3MfWOi+FR8DZ1Bqun4NSySOa7fRy429uw5MJdV8gL5yilzXtufCPVcUQ4/im6l2voWR9IFuN3TKg8FBIXGrOqbMYnUddqV298VswVhLAHi1nYf3LEZPm0O/LMExBEdMhbd2j+4izRO27rppHADpkDsY0ClUezY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710154040; c=relaxed/simple;
-	bh=FCFtKM5ZoK2XTLYGhcLAlAmDD4xwFFMWyjuRlDleGTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r8snPozx7sjYyeWHBkulvj5U/Jd2+g3M/Tts6l2t03VsyvDKhRIrlhNaLZg5TgDMbfQug7+4rByK/Vydjbv8hB2bral3NlAy46FLa3tGNbDe11OpcTKHV5GVuoO47iLYywewjmg5qJbCnGBsF46f7N2pLESXVOtQqvXK0/Nex64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MiwezWWn; arc=none smtp.client-ip=209.85.219.47
+	s=arc-20240116; t=1710268274; c=relaxed/simple;
+	bh=GGfohuvUdCR1mIme2gaPlbrTnQyrLD6PmEDa+LPTZEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tqvBwW+NuvEBk/eWzFb2qWRD7kTwjt+QFiWBViW1XFhDNBDncLTMV10swsCaYaD/dJ3ZRqnVH3ZixqEyJG5URTjazDYqxBPhU8RdEfhup82jQWoAXXir8e46i4Ah6hVKQa+S/VbQdtM4D1ifb3WR37EviKsWuezErMXU8kp89CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EBvabJbO; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MiwezWWn"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-690bd329df2so18806766d6.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Mar 2024 03:47:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EBvabJbO"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-513a6416058so3484123e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Mar 2024 11:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710154038; x=1710758838; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRIjS+xX+GPm53OcBVvySCiWaptis6C/taxIOwdOm1E=;
-        b=MiwezWWnFKe8CFyXo7GC85OnrSCA/SH8NmsvfAL1uZq01ddhSiHJJLCsi+lVFqQKaC
-         ckozFsZNvPwxFIPsYv5lCgwEmV+ujazm6dJgD7+fBJDC2Z1+SUJfy6cqWu0r3LHmn/Um
-         GtHA/TInxGgHM4+8/gX4csPjGCcv+C5Gx0mgiB8bNl/XQUnUC5MqHeSNRVfzMlaie+1a
-         4TX+DujKjdbLLkHpae2bg43w90OHHiuj1lFdyzPwl6R1oZRhiIeMJjXVi/W+Y89hXIfM
-         wDFsLNeV1099OKwqm28uikkToGNWA55GUGR8/iuY4y4Z21USjcaMJY9Oo9wJtB5gYaz1
-         hUgg==
+        d=linaro.org; s=google; t=1710268270; x=1710873070; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qkPzWlNIYGy9ZZ9Z9dAov2lpIc23rvtotSMeeMgpt0o=;
+        b=EBvabJbOvVJLU+eePjTudKSZwUhB/eEEA1O9xhLQYCgFs1idELPT6xflHyFO548VbA
+         oiCxf/sDcvAmu/kiUE3TC+ZEsv38jsOJ5M1RNunRR9/48nfyvw1Fl24i/Ym3HJfhaI0Y
+         69Wf9dbXmX/O11/q0Y7N8Tnu8Mzwisq7vil2beD5VgVixwV7WtarUF+CjeDPMEFs9GN7
+         P3fYOkpYlpDlJX1i+BRTxExvR7o3sG81hu/FjyYHuvADg45xOkvEg6x4zxaQxS/WcBOo
+         aVaV+61JhfzCGyga4bVJRk5T5+9a3DoubNRb8/IZeGdJvZp4MmO6MyRVtT+/+gwoivwv
+         KSyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710154038; x=1710758838;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1710268270; x=1710873070;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cRIjS+xX+GPm53OcBVvySCiWaptis6C/taxIOwdOm1E=;
-        b=PjsaqzIU0RMSkh8ogWH1+BbJ4fGXecWuVB6lL5WlHgO/7HTSB2msqjPAWXx7HN4rkH
-         hayWchX5vx//lEmfjWykZAnuviEmbcGtoBMIEBrfdTbJytSHs0NmAqpQAb31mxW8W4je
-         sjQHoeq8QLqWCNBnc0ZLSx4x9fLCEzaC3MVOwDlrkuBI4vcuMfW9A4xRlqP/UCVWo5qU
-         l13bGaGITGt12fx4SdHG7MNTpEwPeHUYiWuXwnOIoDSogmb4q8mNUUauCbOgBsNTT3VM
-         IMF5JCg2d8nhIQs+QNwUJ5AFWpeXY8gbsk4sbZclihYmoCF4Cqs9dVbkD+bHnH4QNETP
-         MbHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMPAIQzW3WfTpVEDxcK8hXwmgIFTE7UR4jmQl5BzACgerR4Fwokxf8vDatnOAY+y65oLsc9JlEqA/hF0X+k5Zcs9LQDok0EHN0mU1ZvObb8Dw=
-X-Gm-Message-State: AOJu0YxKrBvgkUuC/FIL42/iQnO43CEB/g+EWIUylVeJRDmdTICD8JcO
-	54W6nB9if+ibX/ZsVuOqt3E9vPAyDJE5fzcF1PPTNHGN86Wh9jr767I1riDHgJScETBhK0c9Enp
-	dFGK9Rm8LPA3DoW94q4t31kYSwjpIQym542dk5w==
-X-Google-Smtp-Source: AGHT+IGyrPx1d8EcSWfPY0WZ1CYoYrM93ITiWLlRr/ltcc0nW0tGxeB9PQdlmfL0rMLOYoJeiLKm/R9q7ev0Ge3Vbpc=
-X-Received: by 2002:ad4:58c5:0:b0:690:46a8:93f with SMTP id
- dh5-20020ad458c5000000b0069046a8093fmr5235070qvb.44.1710154038009; Mon, 11
- Mar 2024 03:47:18 -0700 (PDT)
+        bh=qkPzWlNIYGy9ZZ9Z9dAov2lpIc23rvtotSMeeMgpt0o=;
+        b=uVOcE/4e/EMYoOtuAYg3uUVQwN2XePinZ6c4+lbur7zYH11XassUXr00pc2XOQPjt5
+         myFsE9NoLWz6MN7NeazFfxdf1FE3Iv2o5f1XOvyR6BiDT6/6B0ki0nX2BSXVEpPaS2hx
+         uWWGjiotAumVj484K5B2ZQkbDNLwjDnU1HLupr/T+m00NKmJ5dZ8+9NZCWLYJaRNfALu
+         9kCq8u3ZBa2P7c+7axAA54VovNdM2QF2fjNgiivAkRW9sKCbFeiZbb4QDTQD3Yahc4Mf
+         QKJ1Hefh5hW+qS2AajFldITJPnMC+Cwz7JhCbSiBKDz702PPtEUCXb303MQxOGidmPFb
+         z3iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWVejfGf7Mf2tglGVPlxrI7h1YulJmzcKzJyTYzJX2PWboo1r8OJKmppyzi824hWu8z9BlOXrqUiyCMtX9eduAq6it7VjhIRoiI/WgWhvpIUM=
+X-Gm-Message-State: AOJu0Yx7aLoKQs7MHYtxicgK4WRtgIqUGBb1j3l41HKoHWwtUjcMjivk
+	y4+sYTa2N3G2PeIkncJpY+ETDqiCeMK5YIFKLsQ3t7ZtE/6XI9wGhgl7QEQst2M=
+X-Google-Smtp-Source: AGHT+IESZy9/6wwGJzCCuXlWCFt+8swHC3N0HCtMssrwELRNtrUB6XEi2FAAOG+h5wyUNtIPAzDErQ==
+X-Received: by 2002:a19:2d0b:0:b0:513:b2bc:793e with SMTP id k11-20020a192d0b000000b00513b2bc793emr3219193lfj.41.1710268270059;
+        Tue, 12 Mar 2024 11:31:10 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.97])
+        by smtp.gmail.com with ESMTPSA id b4-20020a056512060400b0051329001f53sm1661012lfe.54.2024.03.12.11.31.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Mar 2024 11:31:09 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thomas Abraham <thomas.abraham@linaro.org>,
+	Kukjin Kim <kgene.kim@samsung.com>,
+	Grant Likely <grant.likely@secretlab.ca>,
+	Sachin Kamat <sachin.kamat@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/4] ARM: dts: samsung: smdkv310: fix keypad no-autorepeat
+Date: Tue, 12 Mar 2024 19:31:02 +0100
+Message-Id: <20240312183105.715735-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240307135912.163996-1-tudor.ambarus@linaro.org> <073e5ef5-2a2e-4300-93d6-e25552276e13@linaro.org>
-In-Reply-To: <073e5ef5-2a2e-4300-93d6-e25552276e13@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 11 Mar 2024 10:47:06 +0000
-Message-ID: <CADrjBPojf92=Vvq9rVt9frC-61BQbKeX+5fRa-q8fqr9iGMryA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: exynos: gs101: define all PERIC USI nodes
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, robh+dt@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
-	willmcvicker@google.com, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof & Tudor,
+Although the Samsung SoC keypad binding defined
+linux,keypad-no-autorepeat property, Linux driver never implemented it
+and always used linux,input-no-autorepeat.  Correct the DTS to use
+property actually implemented.
 
-On Fri, 8 Mar 2024 at 16:45, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 07/03/2024 14:59, Tudor Ambarus wrote:
-> > Universal Serial Interface (USI) supports three types of serial
-> > interface such as UART, SPI and I2C. Each protocol works independently.
-> > USI can be configured to work as one of these protocols. Define all the
-> > USI nodes from the PERIC blocks (USI0-14), in all their possible
-> > configurations. These blocks have the TX/RX FIFO depth of 64 bytes.
-> >
-> > Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+This also fixes dtbs_check errors like:
 
-With Krzystof's comments addressed:
+  exynos4210-smdkv310.dtb: keypad@100a0000: 'linux,keypad-no-autorepeat' does not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 0561ceabd0f1 ("ARM: dts: Add intial dts file for EXYNOS4210 SoC, SMDKV310 and ORIGEN")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm/boot/dts/samsung/exynos4210-smdkv310.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > ---
-> > Please note that:
-> > - google,gs101-spi compatible was queued through the SPI tree:
-> >   https://lore.kernel.org/linux-arm-kernel/170742731537.2266792.3851016361229293846.b4-ty@kernel.org/
-> > - SPI dma properties were marked as not requiered. Queued through the
-> >   SPI tree:
-> >   https://lore.kernel.org/linux-spi/170967132774.228925.1759895846287455970.b4-ty@kernel.org/
-> >
-> >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 782 +++++++++++++++++++
-> >  1 file changed, 782 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > index ee65ed9d2cfc..d7ecfbc7e440 100644
-> > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > @@ -373,6 +373,398 @@ pinctrl_peric0: pinctrl@10840000 {
-> >                       interrupts = <GIC_SPI 625 IRQ_TYPE_LEVEL_HIGH 0>;
-> >               };
-> >
-> > +             usi1: usi@109000c0 {
-> > +                     compatible = "google,gs101-usi",
-> > +                                  "samsung,exynos850-usi";
->
-> This should fit within 81 characters, which is pretty close to 80, so if
-> there is going to be any resend/new version, please join the lines.
->
-> > +                     reg = <0x109000c0 0x20>;
-> > +                     ranges;
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <1>;
-> > +                     clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_0>,
-> > +                              <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_0>;
-> > +                     clock-names = "pclk", "ipclk";
-> > +                     samsung,sysreg = <&sysreg_peric0 0x1000>;
-> > +                     status = "disabled";
-> > +
-> > +                     hsi2c_1: i2c@10900000 {
-> > +                             compatible = "google,gs101-hsi2c",
-> > +                                          "samsung,exynosautov9-hsi2c";
-> > +                             reg = <0x10900000 0xc0>;
-> > +                             interrupts = <GIC_SPI 635 IRQ_TYPE_LEVEL_HIGH 0>;
->
-> I wonder why we use four cells in GIC...
+diff --git a/arch/arm/boot/dts/samsung/exynos4210-smdkv310.dts b/arch/arm/boot/dts/samsung/exynos4210-smdkv310.dts
+index b566f878ed84..18f4f494093b 100644
+--- a/arch/arm/boot/dts/samsung/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/samsung/exynos4210-smdkv310.dts
+@@ -88,7 +88,7 @@ eeprom@52 {
+ &keypad {
+ 	samsung,keypad-num-rows = <2>;
+ 	samsung,keypad-num-columns = <8>;
+-	linux,keypad-no-autorepeat;
++	linux,input-no-autorepeat;
+ 	wakeup-source;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&keypad_rows &keypad_cols>;
+-- 
+2.34.1
 
-Due to the ppi-partitions defined in the gic for the pmu-(0-2) devices.
-
-regards,
-
-Peter.
-
-
-
->
-> > +                             #address-cells = <1>;
-> > +                             #size-cells = <0>;
-> > +                             pinctrl-names = "default";
-> > +                             pinctrl-0 = <&hsi2c1_bus>;
->
-> Please reverse two lines, first pinctrl-0 then pinctrl-names. I know we
-> did not follow this convention till now, but at least new code can be
-> correct. Also clocks should be before pinctrl, so we keep some sort of
-> alphabetical order.
->
-> It is anyway too late in the cycle for me to pick it up, so no need to
-> hurry with resend.
->
-> Best regards,
-> Krzysztof
->
