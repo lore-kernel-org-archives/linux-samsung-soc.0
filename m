@@ -1,100 +1,120 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F666FE1E;
-	Thu, 14 Mar 2024 14:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EF13D75;
+	Thu, 14 Mar 2024 14:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710425096; cv=none; b=EynTQ8UAC4B+u3bCVnkbRG3+O3iIw2EW8dzVwSWWCGuGztGwkQXqlLEzoaOsNe4adYTnjOez92gKsP5YGXlCJyPM7VkaiRRSc6f8IVEJqXF/Z4M070RQuWe/zzfeRz3a/2ufFU8F/xb8Jr4LNyuzrJ+yOeBFFdv/lrXAzcjrA8A=
+	t=1710426744; cv=none; b=nBtiefEiN3PgBy3pdW/XcyNru5L6AXdOl9Pj8nVEAV8uqoupHSe3ekUoUqF2v/oIkjKu9HTHksZEVNWTN9HhapC9GegqD6AirkNjxdU7G4ynTNORc/S8Grsda8GA0ehbxZbXdTvzDbpXVsVyX027CXLrZMm0Ssqn8nJKUbGjb3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710425096; c=relaxed/simple;
-	bh=mzHk+OCGnE2cjK/GID6NafKHM6xvW+nmtg17CRUaB+w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B2k5BU0YNIGxbRVoAygt3HuKUn9Tu9rT0H2Wm8I+pbMTVv3nptJHnq60Cnp8J7p689evomKtAmD3tjtKwKAiLU/ekIDqSqvooRo8VGW/wakycjpattZNu6XTV/+rdjWKajBNda+DF/RFtNORekav26dNaufA54U0d0N71Y4awjw=
+	s=arc-20240116; t=1710426744; c=relaxed/simple;
+	bh=d6bhwA/P3ncxIFhHlOOvQpGjSkuqQGU5Gk7Hkz0XghI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vDDI8ZCkl5HRF4TONW5qom+IJD9yk+S94FLi57WtBNIn0CioMGZumDnAb6t2T6bCtS/+tWMlU8NqXhAYb35B11vo4RSL3/RkdXXoBQ/7mcdy0nrdjyKmSBN16FdogDO6pWhi/EVOfKWBNYUuF2/8rYjIjbZqj9ZVl0Z53T9ZUQI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 340A61063;
-	Thu, 14 Mar 2024 07:05:29 -0700 (PDT)
-Received: from e129166.arm.com (unknown [10.57.13.158])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4D8253F762;
-	Thu, 14 Mar 2024 07:04:50 -0700 (PDT)
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	nm@ti.com,
-	linux-samsung-soc@vger.kernel.org,
-	daniel.lezcano@linaro.org,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com,
-	m.szyprowski@samsung.com,
-	mhiramat@kernel.org
-Subject: [PATCH 4/4] soc: samsung: exynos-asv: Update Energy Model after adjusting voltage
-Date: Thu, 14 Mar 2024 14:04:21 +0000
-Message-Id: <20240314140421.3563571-5-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240314140421.3563571-1-lukasz.luba@arm.com>
-References: <20240314140421.3563571-1-lukasz.luba@arm.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30C4E1007;
+	Thu, 14 Mar 2024 07:32:58 -0700 (PDT)
+Received: from [10.1.38.62] (e133047.arm.com [10.1.38.62])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CADE3F762;
+	Thu, 14 Mar 2024 07:32:19 -0700 (PDT)
+Message-ID: <aefbb61c-8e15-4e40-9459-30bbbcb8d6f5@arm.com>
+Date: Thu, 14 Mar 2024 14:32:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] PM: EM: Add em_dev_update_chip_binning()
+To: Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: dietmar.eggemann@arm.com, linux-arm-kernel@lists.infradead.org,
+ sboyd@kernel.org, nm@ti.com, linux-samsung-soc@vger.kernel.org,
+ daniel.lezcano@linaro.org, rafael@kernel.org, viresh.kumar@linaro.org,
+ krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+ m.szyprowski@samsung.com, mhiramat@kernel.org
+References: <20240314140421.3563571-1-lukasz.luba@arm.com>
+ <20240314140421.3563571-4-lukasz.luba@arm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240314140421.3563571-4-lukasz.luba@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the voltage for OPPs is adjusted there is a need to also update
-Energy Model framework. The EM data contains power values which depend
-on voltage values. The EM structure is used for thermal (IPA governor)
-and in scheduler task placement (EAS) so it should reflect the real HW
-model as best as possible to operate properly.
+On 14/03/2024 14:04, Lukasz Luba wrote:
+> Add a function which allows to modify easily the EM after the new voltage
+> information is available. The device drivers for the chip can adjust
+> the voltage values after setup. The voltage for the same frequency in OPP
+> can be different due to chip binning. The voltage impacts the power usage
+> and the EM power values can be updated to reflect that.
+> 
+> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+> ---
+>  include/linux/energy_model.h |  5 ++++
+>  kernel/power/energy_model.c  | 51 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+> index 770755df852f1..d30d67c2f07cf 100644
+> --- a/include/linux/energy_model.h
+> +++ b/include/linux/energy_model.h
+> @@ -172,6 +172,7 @@ struct em_perf_table __rcu *em_table_alloc(struct em_perf_domain *pd);
+>  void em_table_free(struct em_perf_table __rcu *table);
+>  int em_dev_compute_costs(struct device *dev, struct em_perf_state *table,
+>  			 int nr_states);
+> +int em_dev_update_chip_binning(struct device *dev);
+>  
+>  /**
+>   * em_pd_get_efficient_state() - Get an efficient performance state from the EM
+> @@ -387,6 +388,10 @@ int em_dev_compute_costs(struct device *dev, struct em_perf_state *table,
+>  {
+>  	return -EINVAL;
+>  }
+> +static inline int em_dev_update_chip_binning(struct device *dev)
+> +{
+> +	return -EINVAL;
+> +}
+>  #endif
+>  
+>  #endif
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index 6960dd7393b2d..1494a909844a4 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -808,3 +808,54 @@ static void em_update_workfn(struct work_struct *work)
+>  {
+>  	em_check_capacity_update();
+>  }
+> +
+> +/**
+> + * em_dev_update_chip_binning() - Update Energy Model with new values after
+> + *			the new voltage information is present in the OPPs.
+> + * @dev		: Device for which the Energy Model has to be updated.
+> + *
+> + * This function allows to update easily the EM with new values available in
+> + * the OPP framework and DT. It can be used after the chip has been properly
+> + * verified by device drivers and the voltages adjusted for the 'chip binning'.
+> + * It uses the "dynamic-power-coefficient" DT property to calculate the power
+> + * values for EM. For power calculation it uses the new adjusted voltage
+> + * values known for OPPs, which might be changed after boot.
+> + */
+> +int em_dev_update_chip_binning(struct device *dev)
+> +{
+> +	struct em_perf_table __rcu *em_table;
+> +	struct em_perf_domain *pd;
+> +	int i, ret;
+> +
+> +	if (IS_ERR_OR_NULL(dev))
+> +		return -EINVAL;
+> +
+> +	pd = em_pd_get(dev);
+> +	if (!pd) {
+> +		dev_warn(dev, "Couldn't find Energy Model %d\n", ret);
 
-Based on data on Exynos5422 ASV tables the maximum power difference might
-be ~29%. An Odroid-XU4 (with a random sample SoC in this chip lottery)
-showed power difference for some OPPs ~20%. Therefore, it's worth to
-update the EM.
+ret is uninitialized at this point, I guess just
++		dev_warn(dev, "Couldn't find Energy Model\n");
+already contains everything relevant.
 
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
- drivers/soc/samsung/exynos-asv.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-index d60af8acc3916..bd6bb2cab2cd8 100644
---- a/drivers/soc/samsung/exynos-asv.c
-+++ b/drivers/soc/samsung/exynos-asv.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/cpu.h>
- #include <linux/device.h>
-+#include <linux/energy_model.h>
- #include <linux/errno.h>
- #include <linux/of.h>
- #include <linux/pm_opp.h>
-@@ -97,9 +98,17 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
- 			last_opp_table = opp_table;
- 
- 			ret = exynos_asv_update_cpu_opps(asv, cpu);
--			if (ret < 0)
-+			if (!ret) {
-+				/*
-+				 * When the voltage for OPPs successfully
-+				 * changed, update the EM power values to
-+				 * reflect the reality and not use stale data
-+				 */
-+				em_dev_update_chip_binning(cpu);
-+			} else {
- 				dev_err(asv->dev, "Couldn't udate OPPs for cpu%d\n",
- 					cpuid);
-+			}
- 		}
- 
- 		dev_pm_opp_put_opp_table(opp_table);
--- 
-2.25.1
-
+> [...]
