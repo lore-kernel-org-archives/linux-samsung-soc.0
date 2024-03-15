@@ -1,41 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D1F40BEE;
-	Fri, 15 Mar 2024 16:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493852B9D8;
+	Fri, 15 Mar 2024 16:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710519088; cv=none; b=rVnC7dmSkzWqQz8E0UJs+v+WzSuTGRkVs/bHHlhGVamUDvLY0vUBFbs4Sd+xt+0kEt6zOfIEgsrBRpzKTum1+kyIYeirJ6Civod8lj2ZfOATAw73PdNvArV8VszYWoq09sifx4p2W0C/A+yixeDOmZHwxocoyvYktTbo6o37HsY=
+	t=1710519526; cv=none; b=jNa9szOZ0dkRcO4MfHxbqwDxUhhBdjJdLA4EiJqb7793+kQ+agy2ksdFQtZN/bvXlhWpg/QhZ90RIVpzqBuFUkaRh9Xp5S6TbQERTjDPXS37VpdrwDbEKcY94VFWfFnIB+Ew3FbhR3T12O4JFF+B9EqEboxICBQwGw+wN5Mjeak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710519088; c=relaxed/simple;
-	bh=VW7YCKCSmxhXKxL8WmbPKYavlvTFAAsxWtG6CIWo7cA=;
+	s=arc-20240116; t=1710519526; c=relaxed/simple;
+	bh=I4yiGMKxs0fQ59nZ33YMS14pXHChscnJgtcJ520E6iM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gDqL9dfZg7KZ0UEkr19kgWnBobM21IvXhxTE7PUeWRp7gFXeYZeUQ1XuqShk9rgt1kx4awrI7KvsTFjMX+303LDD9fRYXV6/gK6E9W4C+THJCGNQAgP1POeI6UAs+QOP2kyeBfb2UlGHZ8EQGRodQvoywWqTDScolydCPD9YAJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsRETq9/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=sExHRd071S+ETe5+8zNqGHvtPJbT+WfcemWMXiJ5O5AYe3znN4UyCZ+47+QpAOQMglT0zoBKFkwyPhdU7Gj7Gu/cNMiioAQw0w+yy85WRzqVzeBF+fb8KKI8X2RSerCYgfU6dtbPkXr68UKJLjvYNwF59o8Sz9Wq2NBZSQ01Yt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxtVPwY4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsRETq9/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F21FBC433F1;
-	Fri, 15 Mar 2024 16:11:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxtVPwY4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF912C433F1;
+	Fri, 15 Mar 2024 16:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710519088;
-	bh=VW7YCKCSmxhXKxL8WmbPKYavlvTFAAsxWtG6CIWo7cA=;
+	s=k20201202; t=1710519525;
+	bh=I4yiGMKxs0fQ59nZ33YMS14pXHChscnJgtcJ520E6iM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VsRETq9/NDZ4TwbQkuZD1/7Il5fbOoNCcgrtNsssBgM/6DbCpcKH0fGDXuI5+SOok
-	 4hNOmxvAJmfakUjvD9lv27msJsIhSUL9J287K2EWBY5R7cvo0pl4wQ0+GkCnsbNTPs
-	 O7FLk11XVtAaByQK9DEbg+M2nmGw0Q1aF1eWdpONZ3Hvt4pEWlUCckzH7HzvJIGRZU
-	 0fgu8cXvNDfNXXf7tdCkvCkv1cYlozqx4AXc3M6DqRL196QwXafiNTbxQuVFIvR8jG
-	 w1plQSnUg36U3nDxYkvZ0bCGUKWwxU4NGqOjA1sKi7ochoVC/2yuL05YPxuwkr65vj
-	 AD/DfGHttRwqQ==
-Date: Fri, 15 Mar 2024 10:11:25 -0600
+	b=WxtVPwY4vfEneiTk0m6zTkW0Ro2JARQvje9ayWwneQB4/q/b6bVXmqjyYxdzbvEfF
+	 kS85xsStpchgmWCbsMVyRVguKK3uyntKlDEPrmp89rkPbVc+PIOlz/ENPUSmn8AJ/K
+	 ArcWe+q7UDMl4EL4bpfXrsMZeTKV5J4kBHRdpmc6n/9dyIV2gTpmfqLfmvfVWdu3xB
+	 uaQPNirGXjUFa4AuVpwevZA87e9wApe/sN9tuBekd9G19u58b5cv4O/H4Vos99RBmC
+	 yJoJD0GRYvC3fMAwFqIAetSJgkUozpgKtMpyV0CwKpAh6W51VTHb52J8ksxv+omq4g
+	 t0zXMWoGS1LBA==
+Date: Fri, 15 Mar 2024 10:18:43 -0600
 From: Rob Herring <robh@kernel.org>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH] dt-bindings: memory-controllers: add Samsung S5Pv210 SoC
- DMC
-Message-ID: <171051908549.1426867.12932046451039923575.robh@kernel.org>
-References: <20240312190348.724361-1-krzysztof.kozlowski@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-samsung-soc@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH] dt-bindings: mtd: Add Samsung S5Pv210 OneNAND
+Message-ID: <171051952297.1435235.12756745883937589239.robh@kernel.org>
+References: <20240313184317.18466-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -44,21 +49,18 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240312190348.724361-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240313184317.18466-1-krzysztof.kozlowski@linaro.org>
 
 
-On Tue, 12 Mar 2024 20:03:48 +0100, Krzysztof Kozlowski wrote:
-> Document bindings for the S5Pv210 SoC DMC memory controller, already
-> used in DTS and Linux CPU frequency scaling driver.  The binding looks
-> quite empty and is most likely incomplete, but the platform is so old
-> that no one expects any effort on this, except documenting what is in
-> DTS.
+On Wed, 13 Mar 2024 19:43:17 +0100, Krzysztof Kozlowski wrote:
+> Document binding for Samsung S5Pv210 SoC OneNAND controller used already
+> in S5Pv210 DTS.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../samsung,s5pv210-dmc.yaml                  | 33 +++++++++++++++++++
->  1 file changed, 33 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/samsung,s5pv210-dmc.yaml
+>  .../bindings/mtd/samsung,s5pv210-onenand.yaml | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/samsung,s5pv210-onenand.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
