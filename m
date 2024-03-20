@@ -1,60 +1,60 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B721EB23
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 07:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A41DA52
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 07:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710918947; cv=none; b=tUErAC7KrkuAvPgWt3njuAsbU6mxrULz93aWgiWEZmbWYSWbD+u3EuWjSqUQxfPE3PoFpIAyfXu9EOEt90FkzOw5De5MYFe5R0amJUWOLzhKmXYekBUfvP6r4nvQ9DSnamhkvSv7Q05e12ybaEMEcxPHzzKk3wb+oVLxbPQN6Go=
+	t=1710919260; cv=none; b=DDwp34ptQb+rNbOzO8lrqptKB0ZnbVRRungmInGxbKK9NT5s5AYIuOT7UNCLwrfvTJy39Z9tPmKevhUDD/9xtE7cr47llD4uEGrTIjz/zQ1QMgKvfiobTQ99Mk2BHMIiDbBnfXB04PnZZwEaDwIhEIvOSpS2Q7HUIc/pjXwuX1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710918947; c=relaxed/simple;
-	bh=uAiOL5GdoR6kEhRwJz3jX8EsnRj9M2m+Ll9g7jlCZ44=;
+	s=arc-20240116; t=1710919260; c=relaxed/simple;
+	bh=/6CqZEV50/HDUpwdn3sQhk8AnOPHuffll7LzWFbRSPw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kz6HWhz5DPqTslEb3dvP+OA8W9W04Apwjc5nFUuaJrPM6FC7UmjKJdtXtno5RfGalHtCVh+5StmgeyT3iesgCRhbQq+vvGO0pGBSiB/cDaJutIp97NQ0Bg0vR8ZEVsThx9aGhUeOkWPx7prcD/769mpXu6UOaZCNZYD2OoQe1h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knxTLmxe; arc=none smtp.client-ip=209.85.218.48
+	 In-Reply-To:Content-Type; b=sW4OUVYe/x0NjVvPeV8FAmYhC3ECos26i2Gooq8DV4EuC6zF+esDRt+40AcOEW/+bmtFUNsXtZ1XDrag2MccD0t7N3jars6QncTMjrMTjL8AnccAXMKsdrwbVXflA5j+anNQQJjROXdjrb1BD5zT1iVrpVJiGXQpLqLNaeQetRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjWGYv1Z; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knxTLmxe"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a46f79f60afso24803866b.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 00:15:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjWGYv1Z"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a465ddc2c09so422332966b.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 00:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710918944; x=1711523744; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710919257; x=1711524057; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=olh1x6wED1wlUWfy3fPcoEKZFeL0ZQi1R+KL4fAIutY=;
-        b=knxTLmxeVD9VFmFhwQPO2ZJRM1WCabdlp8IewU33LTjCmlGEhV/dwYzWvnlLlVHLG+
-         xoKKmKmXv4W9UO3W6JfZx0vmxh1+kwQWifvdGPBIwty55gZtgii9RffMPnygFNG51VFi
-         aGJewFitEovW467BscVsLrGjN0I6Jnbfn1r7I8ar10VI7fCzQDryuT1S+VpVpAVjT5gy
-         rx7sjNUBZc1wirmKl4duSd0/vzvn77xucdFPgHi6rJ2d2kfNAwHD/tzH90JFhG7kaQu9
-         k9hPEPZPlXtDZB49A3pqXDyxPcpHnuOYpb+w8AfiNwyuu+Gi1TgosmJqVMCkqkNFY5rw
-         LJYw==
+        bh=kGGtH5pV+JgXK6yvZ/OzVX7sAz2a5zYCjHOqU+mGpgk=;
+        b=xjWGYv1Z61nJJZ2KD+HxXcpt6xewYoczOT/a4ZDgQ7fuD+Kqw7ZZrt6JFwAVHMD/Ee
+         iiW133V/a+BXXSj/+FwJPOhTPXkjoEAOOZrb9mpwGa7KQcedfCFZFuDjfcbTaKKFyGzg
+         ZN7QY1k52y8ufMH1fkw/sFCaKswowIC3VQR9wX0NgNJeZZo0yT9Gz+Lti91tcnQGhCxI
+         RujPIzp7890lUfgXcmy579BkzdHMxziybUfFJU5wksX2Q2gyfhgz8ihP6y4K5VY2ruio
+         VwU9kayeTPfTKMZcA2hbntDu1ZEdASJ7430I0cztBPYgrP2lcnY1E9vqEzB96ovV3Dgr
+         UkLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710918944; x=1711523744;
+        d=1e100.net; s=20230601; t=1710919257; x=1711524057;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=olh1x6wED1wlUWfy3fPcoEKZFeL0ZQi1R+KL4fAIutY=;
-        b=dMkv6fxjFD1EYceqcsG+NQz+LlLzGr4eNUv7F2C1tKYXuiJyUn/VCSMOaKJCoiKvkV
-         qnQu6PnZCYoUwYTNLZbMm8oKqWUO7dUzl+V0VmywxRFIxxaqVyX1GnWxOGTLc/jbGOnY
-         BezqkmmbloVX9pGAKJ8X7eP6HpRNa2t5aTynKBRBH3QAUMg9bpyjniETgEY88TnkCTwK
-         +P14IJJGaMYMmYOJY2pIytCOaie6hiIwdjoJw3t3moQa8G6Df8aPBse26ZZOBbviCEi7
-         IEflkEh9Wn5P9PaepKxj2iLpREe13lNpbEXoToWIzRG9oK2deSFGwHsfd7XrzKQijwsC
-         l3Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYXfrS5xAhSlnP3WhI77TyXPv8mNPji/KL/+smLwMympEIIduIcAtvh2tDtc9mRERHeziU693v5rd2wlZxe6H9+xXCuS0RbVn9SYIDmhpQc80=
-X-Gm-Message-State: AOJu0YzGb9F+Ot/kJ2SjAWnaOotqIz5Rcj2jg3Ze2gE/eCEsWMOfIB+O
-	cBEa22k3Tj/+bI84kxWyNpnKlwHWqOxdax6z3P6FleBMvr/uAtn352WVlqM6LJY=
-X-Google-Smtp-Source: AGHT+IGy4pHyrGgiDEtdIBqpgQzGrmuTcbZzIkFUCPPzqcWHeAqI5EV5Mv+IuXtIUiJAwLJqcvp+Jw==
-X-Received: by 2002:a17:906:4554:b0:a46:b8ed:8a9 with SMTP id s20-20020a170906455400b00a46b8ed08a9mr6443836ejq.55.1710918943919;
-        Wed, 20 Mar 2024 00:15:43 -0700 (PDT)
+        bh=kGGtH5pV+JgXK6yvZ/OzVX7sAz2a5zYCjHOqU+mGpgk=;
+        b=IeJKCElnkrwRf/KKvyvF72LQljYuBMJ+SaBZ5oVGJeJFKCnBW7LU2DZ8fkuMscHEPo
+         DRqHUAEeYWJcsKec16Gzt23P26qEIMFmSm0hrU42hW3b5T+foL9TILyKVrCMGVcfVhM3
+         ZlxblO632CaESIi1BiIrrOCERwryC6b7FWVc5QO9Zlq1INaAtY0EpMPKbfAZGQ6jGmMb
+         7Y1zuP9cP18U8qy02xLfM9ESedqys3y97dV7Mb1kXhqaS/NAhrUKwfMMTjRm3T2fTakh
+         BsSfVMaAEWJiNOKDkL7KHkdOQe8EvS/Fpd7Og7Pw8Hjtsg0unHG4+F93JnkPSomxRq/k
+         Ki+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXcEacEUoshPvrd9gFfKnxhBu8odZUss8fHU5OeHAg7YjY7uS9566whI3vLBpmQ7UCHqzHnRTy3YStofhRJgoklTnESWoytdtyHmyKvic4KtKA=
+X-Gm-Message-State: AOJu0YxyqbpHtcD90lcwe5m3tkU6vXykn30DLz7Qfer09k50r2xNfqiK
+	c/Qmrh5Q0gzo3cIVOnOowsZUctVHHysd5cnW2M36KFjgHXHHqsCotisp9MAwIgw=
+X-Google-Smtp-Source: AGHT+IGltDGgbVu9/Z4qmXvaw4FuZ+sqm0PFM+fJbYrxAAu+/Lm3xVjYmuqrMfUc4Qr5nINdaCb26A==
+X-Received: by 2002:a05:6402:3712:b0:56b:a8ea:9642 with SMTP id ek18-20020a056402371200b0056ba8ea9642mr1306169edb.14.1710919256953;
+        Wed, 20 Mar 2024 00:20:56 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id gy4-20020a170906f24400b00a45f39b2d16sm6818936ejb.200.2024.03.20.00.15.42
+        by smtp.gmail.com with ESMTPSA id g14-20020a170906198e00b00a46d049ff63sm2317751ejd.21.2024.03.20.00.20.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 00:15:43 -0700 (PDT)
-Message-ID: <70846fbb-9c17-440a-911d-456b0444dd94@linaro.org>
-Date: Wed, 20 Mar 2024 08:15:41 +0100
+        Wed, 20 Mar 2024 00:20:56 -0700 (PDT)
+Message-ID: <4d5b2da7-2a45-4a9f-8a96-a6840d2751a2@linaro.org>
+Date: Wed, 20 Mar 2024 08:20:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: exynos: gs101: add poweroff node
+Subject: Re: [PATCH 3/3] power: reset: add new gs101-poweroff driver
 To: Alexey Klimov <alexey.klimov@linaro.org>, sre@kernel.org,
  robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
  linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
@@ -74,7 +74,7 @@ Cc: conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
  alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
  elder@linaro.org
 References: <20240320020549.71810-1-alexey.klimov@linaro.org>
- <20240320020549.71810-2-alexey.klimov@linaro.org>
+ <20240320020549.71810-3-alexey.klimov@linaro.org>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -121,33 +121,34 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240320020549.71810-2-alexey.klimov@linaro.org>
+In-Reply-To: <20240320020549.71810-3-alexey.klimov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 20/03/2024 03:05, Alexey Klimov wrote:
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index 55e6bcb3689e..9def28393274 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -509,6 +509,13 @@ sysreg_apm: syscon@174204e0 {
->  		pmu_system_controller: system-controller@17460000 {
->  			compatible = "google,gs101-pmu", "syscon";
->  			reg = <0x17460000 0x10000>;
 > +
-> +			poweroff {
-> +				compatible = "google,gs101-poweroff";
-> +				samsung,syscon-phandle = <&pmu_system_controller>;
+> +	ret = devm_work_autocancel(dev, &gs101->shutdown_work,
+> +				   gs101_shutdown_work_fn);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register gs101 shutdown_work: %i\n", ret);
+> +		unregister_keyboard_notifier(&gs101->keyboard_nb);
+> +		return ret;
+> +	}
+> +
+> +	gs101_poweroff_ctx = gs101;
+> +	platform_set_drvdata(pdev, gs101);
+> +
+> +	/*
+> +	 * At this point there is a chance that psci_sys_poweroff already
+> +	 * registered as pm_power_off hook but unfortunately it cannot power
+> +	 * off the gs101 SoC hence we are rewriting it here just as is.
+> +	 */
+> +	pm_power_off = gs101_poweroff;
 
-This is just senseless... you are the child of pmu, as seen in this DTS.
-You do not need to reference yourself (so the PMU)!
-
-
+So that's a duplicated syscon power off driver. Why syscon does not
+work? syscon_node_to_regmap() does not return correct regmap? If so,
+this should be fixed instead of copying the driver with basically only
+one difference.
 
 Best regards,
 Krzysztof
