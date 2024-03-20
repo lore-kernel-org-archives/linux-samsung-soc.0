@@ -1,55 +1,57 @@
 Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14590748E
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 02:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB01D749F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 02:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710900355; cv=none; b=kGi+A/O82KJd8NTk84+cEMeWdj0eGT/2IIIEhf2mWEhj4pVcV1P4LqpaQAFNDjQldh+xycInDCamRDFVlgBLyc56I11RuoT+xek8KYGaB3CM8259CH1FyiEoVztMKj2+Q09qCoyBGDpC1oPMjsdrByjZnLXWNv2OXTPnj1Lmu5A=
+	t=1710900355; cv=none; b=gzcxY0CL8/xh4UG/xnMiai5oqRWk2Ngtms/FeBrhtmJKVioKQrI6sT0vHlZ8V0SoWasiZBSpiqynho+WPdIhnUxQIQ0jz48IfvrFNvbSlRQBdSQ5kC3IOZx7ogUgCqlTSsOBpSLz7ZFLY1bbDLjPTDHgmfaPz/rHJ7wpgoS3bt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710900355; c=relaxed/simple;
-	bh=UDPA0ill2nwITsEd4B7gur+Ay98Nr/tWbJGEuMapLoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SDJJsmUw+qfgu+loiZ4acSxzdZJdsfLjHfN3OEKu1W5oXNyYDamPeaUt+KdtKO+qQ+0Kf80vGB7k8IqljC2rEvJBDOyJXSP1qN71ae+fo7O2ShBPvMqMLikhqVRHmYO81yKXfqsn/+8KWd1LDhaAlP4kRr8x1iC1sTIX+eg0ILc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Si4oQMwE; arc=none smtp.client-ip=209.85.221.45
+	bh=lPoNO8Djhl6VxJOMdubS7uCdMzqsv5KWwLk5re8YgxA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Liun8rsn05uAXfz9DX30WsEZjxjqWsxo43rwGn20KcMrtmiu/CR+tr0HOCbCqCmB8rrnX7jmXZjrlZbcTx/4vhUh3brSSJ8vnQZZkeSoYLMksqB66geVO1+cn+Fptu9/zhq4hs2dJc1FI4llPzIDeg7RyT6ASVwFifvAP3lq8A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EdfFqXPd; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Si4oQMwE"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34169f28460so1764144f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2024 19:05:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EdfFqXPd"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-33e17342ea7so3166539f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Mar 2024 19:05:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710900351; x=1711505151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MJbSfYpc/jJCFvciL1kM3GDBs5qlmkaejLmxGj8x3co=;
-        b=Si4oQMwE4H/GNnHSK90+vLL9fQyZAjVHeyaM6dIwe6gYR2Ntm+Hkw62dAi+ZOp92sV
-         1RDXzCcYdHxyOSorpoU8Aho0ydK3FZ2VL6fd5Z3+l9TiwYmIrMr9kSj6pDkkgniUpYVk
-         nIyzSW22l0IMOWQ0+IGaHe/IQpZo3Lve8wI19FwfeIwp9p1T79zwMreixFc2CMFPgRC2
-         HNnBBV0ZWsUxggT+dG5tcwEfcTnuQpnsuT9ER8uFYLXyq6BzwzXuH+7YeMjZxrXkU38O
-         uLvIuebhKXMt4Q3Q+0q8U3Zzhbrsdax0Vfz8Mwpq8M5qGOOrVu1TbunJ6qABuUdUoTEV
-         EA3A==
+        d=linaro.org; s=google; t=1710900352; x=1711505152; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QyasacTOWOP4VjRKrlicHpzCDd6GgK1tri/KhQEKWGg=;
+        b=EdfFqXPdgDJn/VvVyrxKcqn6uYht+JIpzUYIRwJOgxfsBOJiFVlfaUPaKMUO+FmTl4
+         XIq3LVNN5TA8F2QHV3Y2BZ/Qi89Mh+lPqfYLQu65ZzF144/m0utiEnCUdYqGPG/wHBU1
+         xJhYGf+S7E2lkj4A2fMFdOEP0LVBK4zQOpdIHtAfMJHmn7OX9pd/JmcragUDKzU5vG+O
+         3bRpybYm1bNz63orJbQH+0mH0jL/PStg+EQQzshNkMmjlieDGN6K4jN5LC2bexOiiNhR
+         gxdSjuLMNb8voZP34tONuOmJOkPvgzFlpK/RUGWP+pKW3wqQCZmIkl0L5lo1+SINaHJw
+         09ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710900351; x=1711505151;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MJbSfYpc/jJCFvciL1kM3GDBs5qlmkaejLmxGj8x3co=;
-        b=N+gthAxFcjUMNsby2H/f624BbukksyLrIj7iLlSKVtXoiNVyWCmhPACNORLbx8qB0N
-         bSdL9K3plbV8fkA8ODt48bnfaQ0Eyfp+j8e/ZbIoelTcUsbuvJ6Ol6mxumrGV4pN6XTj
-         pRcGdrgSh9EiZojn+Tn5tm0ZAT7lCPTor+zjzcelqJaQtrtoXcBKEiExqTt4OsuL+VTK
-         48fa8pLLMwMlYtDj5x6QHWRtZRknMlrl8CNPO+36EfIcBQSHU8QzQDFSQG90s/DDBh9B
-         noBRcKywypWavuIdFGVo2crRDHEsGCU8l+zrdMNpFzWqEbyfLYEgA/kdamj3+b1vuNHp
-         nSxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHISoMEMLCMtMFaErjmoGSDuW95alZWh0LONh2RCJWYnlsYVhJ9p8xnb1STUaJNjnZyhIMnYu1ZSRe3++WF5cet4UlvY6r/+01FnVbrewKcdw=
-X-Gm-Message-State: AOJu0Yz9Rp0Qyr736mEvIya/QUQ3Nbd2L5EIvkmX4tw6foPRzS1V04Nd
-	zsItjpvrZjALikKmrJxYiZY/u/74V4E8+OGmyYw6CpXnhuvWjWfDtSK/t9sgiNw=
-X-Google-Smtp-Source: AGHT+IH/ytnOuoK/tbCb+jKMCYsJebzK8CKTqro9S3Oi5Rnu/OymshQKURc3tWsZeCaJ5TZYMJuCGQ==
-X-Received: by 2002:a5d:5102:0:b0:341:938a:cd95 with SMTP id s2-20020a5d5102000000b00341938acd95mr590725wrt.0.1710900351339;
-        Tue, 19 Mar 2024 19:05:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710900352; x=1711505152;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QyasacTOWOP4VjRKrlicHpzCDd6GgK1tri/KhQEKWGg=;
+        b=BspTtbKWjkycs5xypiT0KwE1+N809wag1ygt5aobvuwk5OaRgKTH7r73iMHbyrDhJ/
+         8SS5D0eNM3L+crGVi9LamGCHtjWVrZkkkWvrdOgOj+1iD+5cwhVUq38DJy94Uaho8Ski
+         rCfsX9CC54NZnnFgcLIPpU47Yrnmq6PfmiPTH/7XhZ0bDbgGIif4DPInOG8dd/Z+VPyM
+         VMfLIoxP4bjsqi/I3CjP7VuuWSrRnVmkAP2qByo7QFXsuXXp+S71n+BFyVa0rz/Z9sVA
+         a2gqwzS1v//H5pSXPl0W/9qq9w5hPcJN9sdwk9PUl9DOESNiyocEiG+n/InL9AnuDqfj
+         kNxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfDM4qlNNRdYYX6RkCK+wlUWnFY3AYoW1GD/syMbmC58HqL5NUvdBfZIB0t3vMReuMzERdeZdO/QBHVoJ+figR3ZmEdfTIOA9Ulwwwdn0GoiI=
+X-Gm-Message-State: AOJu0YywjxHugTykf+BkkejMJT/3jsAZiyB+tvfTe88KLOOPV0Ak/kyj
+	DzxbtZbZFPFUMbOtszDfiMNAIkadpFKRLSSkUl0bB0CthuwIOC/u7s0vWswzeiw=
+X-Google-Smtp-Source: AGHT+IE8+12GBzXTqWjxuTZRshAv01JpKd7Einxq0QOMnNA/rTAdlf6+uMRJwWulrGPL+WIBl6UI1w==
+X-Received: by 2002:a5d:5492:0:b0:33e:cf33:bb1a with SMTP id h18-20020a5d5492000000b0033ecf33bb1amr10138419wrv.12.1710900352322;
+        Tue, 19 Mar 2024 19:05:52 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:c7c:7213:c700:e992:6869:474c:a63f])
-        by smtp.gmail.com with ESMTPSA id u14-20020a056000038e00b0033e34c53354sm9209295wrf.56.2024.03.19.19.05.50
+        by smtp.gmail.com with ESMTPSA id u14-20020a056000038e00b0033e34c53354sm9209295wrf.56.2024.03.19.19.05.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Mar 2024 19:05:50 -0700 (PDT)
+        Tue, 19 Mar 2024 19:05:51 -0700 (PDT)
 From: Alexey Klimov <alexey.klimov@linaro.org>
 To: sre@kernel.org,
 	robh@kernel.org,
@@ -72,10 +74,12 @@ Cc: conor+dt@kernel.org,
 	alim.akhtar@samsung.com,
 	linux-arm-kernel@lists.infradead.org,
 	elder@linaro.org
-Subject: [PATCH 1/3] dt-bindings: power: reset: add gs101 poweroff bindings
-Date: Wed, 20 Mar 2024 02:05:47 +0000
-Message-ID: <20240320020549.71810-1-alexey.klimov@linaro.org>
+Subject: [PATCH 2/3] arm64: dts: exynos: gs101: add poweroff node
+Date: Wed, 20 Mar 2024 02:05:48 +0000
+Message-ID: <20240320020549.71810-2-alexey.klimov@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240320020549.71810-1-alexey.klimov@linaro.org>
+References: <20240320020549.71810-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -86,70 +90,27 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 ---
- .../power/reset/google,gs101-poweroff.yaml    | 54 +++++++++++++++++++
- 1 file changed, 54 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/reset/google,gs101-poweroff.yaml
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/reset/google,gs101-poweroff.yaml b/Documentation/devicetree/bindings/power/reset/google,gs101-poweroff.yaml
-new file mode 100644
-index 000000000000..d704bf28294a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/reset/google,gs101-poweroff.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/power/reset/google,gs101-poweroff.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index 55e6bcb3689e..9def28393274 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -509,6 +509,13 @@ sysreg_apm: syscon@174204e0 {
+ 		pmu_system_controller: system-controller@17460000 {
+ 			compatible = "google,gs101-pmu", "syscon";
+ 			reg = <0x17460000 0x10000>;
 +
-+title: Google GS101 poweroff driver
-+
-+maintainers:
-+  - Alexey Klimov <alexey.klimov@linaro.org>
-+
-+description: |+
-+  This is a Google Tensor gs101 poweroff driver using custom regmap
-+  to map the poweroff register. The poweroff itself is performed with
-+  a write to the poweroff register from a privileged mode. Since generic
-+  syscon does not support this, the specific one is required.
-+  The write to the poweroff register is defined by the register map pointed
-+  by syscon reference plus the offset with the value and mask defined
-+  in the poweroff node.
-+  Default will be little endian mode, 32 bit access only.
-+
-+properties:
-+  compatible:
-+    const: google,gs101-poweroff
-+
-+  mask:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Update only the register bits defined by the mask (32 bit).
-+
-+  offset:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Offset in the register map for the poweroff register (in bytes).
-+
-+  samsung,syscon-phandle:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to the PMU system controller node.
-+
-+required:
-+  - compatible
-+  - offset
-+  - mask
-+  - samsung,syscon-phandle
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    poweroff {
-+        compatible = "google,gs101-poweroff";
-+        samsung,syscon-phandle = <&pmu_syscon>;
-+        offset = <0x10>;
-+        mask = <0x42>;
-+    };
++			poweroff {
++				compatible = "google,gs101-poweroff";
++				samsung,syscon-phandle = <&pmu_system_controller>;
++				offset = <0x3e9c>;
++				mask = <0x100>;
++			};
+ 		};
+ 
+ 		pinctrl_gpio_alive: pinctrl@174d0000 {
 -- 
 2.43.0
 
