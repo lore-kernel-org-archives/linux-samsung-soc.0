@@ -1,60 +1,60 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A41DA52
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 07:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1720D1EEE7
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 07:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710919260; cv=none; b=DDwp34ptQb+rNbOzO8lrqptKB0ZnbVRRungmInGxbKK9NT5s5AYIuOT7UNCLwrfvTJy39Z9tPmKevhUDD/9xtE7cr47llD4uEGrTIjz/zQ1QMgKvfiobTQ99Mk2BHMIiDbBnfXB04PnZZwEaDwIhEIvOSpS2Q7HUIc/pjXwuX1I=
+	t=1710919426; cv=none; b=GLqhmVZoKfY6OKKbo5HepkBO5RJub6mghlTBr4azYDlCTWeSpoiiyc34Am8Bj4cQ4B4kb6Kh/jGqdFS/+x1mYzH8LlJKrATQqadqm7jGxIW9xnrfPwqeaWjbeI1XrC8rc/ND5qtzlb0ra85ELD3t8bL3t0GOqpgISM5RNPV684I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710919260; c=relaxed/simple;
-	bh=/6CqZEV50/HDUpwdn3sQhk8AnOPHuffll7LzWFbRSPw=;
+	s=arc-20240116; t=1710919426; c=relaxed/simple;
+	bh=EkqWs0W3q04YVqE2gPo5awQuY3J0Lng3bMWEGITru1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sW4OUVYe/x0NjVvPeV8FAmYhC3ECos26i2Gooq8DV4EuC6zF+esDRt+40AcOEW/+bmtFUNsXtZ1XDrag2MccD0t7N3jars6QncTMjrMTjL8AnccAXMKsdrwbVXflA5j+anNQQJjROXdjrb1BD5zT1iVrpVJiGXQpLqLNaeQetRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjWGYv1Z; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:Content-Type; b=MMGP23SszqN9+77tJaecaPpw805QHJr8dZFs3Afua99ilhiSQQrJiXka8qyyRdKXN6n1KeTt9XiKJaNu+triWk5akkjy5O+wZHLpJBtulUUgoUVjBCXvUqA89q3KvYkrGMir7in+Xv1yA/xaRCfg0l/LGCzfIY8t0t/L6EZKu40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OJleVZIZ; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjWGYv1Z"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a465ddc2c09so422332966b.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 00:20:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OJleVZIZ"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-56899d9bf52so8163543a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Mar 2024 00:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710919257; x=1711524057; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1710919423; x=1711524223; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGGtH5pV+JgXK6yvZ/OzVX7sAz2a5zYCjHOqU+mGpgk=;
-        b=xjWGYv1Z61nJJZ2KD+HxXcpt6xewYoczOT/a4ZDgQ7fuD+Kqw7ZZrt6JFwAVHMD/Ee
-         iiW133V/a+BXXSj/+FwJPOhTPXkjoEAOOZrb9mpwGa7KQcedfCFZFuDjfcbTaKKFyGzg
-         ZN7QY1k52y8ufMH1fkw/sFCaKswowIC3VQR9wX0NgNJeZZo0yT9Gz+Lti91tcnQGhCxI
-         RujPIzp7890lUfgXcmy579BkzdHMxziybUfFJU5wksX2Q2gyfhgz8ihP6y4K5VY2ruio
-         VwU9kayeTPfTKMZcA2hbntDu1ZEdASJ7430I0cztBPYgrP2lcnY1E9vqEzB96ovV3Dgr
-         UkLA==
+        bh=i3jlY94/eeyZ6RcBk4RP2SNOK962GMXwjEvU51sOt6s=;
+        b=OJleVZIZCLEsZQWLXTg7B/L2QFjEJEuzof2ZZCL9xntszCLEPYL4XrfYLo61na3r9h
+         +9y/Q/gsmQlkQO/H7AKtCpQ2MEruK1jP/OZuMoFqrdcWtBDqA2J7t3MZbK3yzqxee5tD
+         /Zxf6n9g2oClipaY2/mNIv4VHT9mQrmarCrpM/gDj34vzDWQ6TVf6pJFmrOun/lJ9uoy
+         4+XksrDnI+m0IyBHx+M+RvOP2ZC01xD6xN7dqQ3hso3MNNnluBS5gAdYOyildx9Pqcqn
+         JrCcmHpklDqcoTOLnUqS+rwlu8EZgAMX7KD37d1fY24cHYufswoWZ+qxy3kI+feu/u1F
+         cKWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710919257; x=1711524057;
+        d=1e100.net; s=20230601; t=1710919423; x=1711524223;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kGGtH5pV+JgXK6yvZ/OzVX7sAz2a5zYCjHOqU+mGpgk=;
-        b=IeJKCElnkrwRf/KKvyvF72LQljYuBMJ+SaBZ5oVGJeJFKCnBW7LU2DZ8fkuMscHEPo
-         DRqHUAEeYWJcsKec16Gzt23P26qEIMFmSm0hrU42hW3b5T+foL9TILyKVrCMGVcfVhM3
-         ZlxblO632CaESIi1BiIrrOCERwryC6b7FWVc5QO9Zlq1INaAtY0EpMPKbfAZGQ6jGmMb
-         7Y1zuP9cP18U8qy02xLfM9ESedqys3y97dV7Mb1kXhqaS/NAhrUKwfMMTjRm3T2fTakh
-         BsSfVMaAEWJiNOKDkL7KHkdOQe8EvS/Fpd7Og7Pw8Hjtsg0unHG4+F93JnkPSomxRq/k
-         Ki+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXcEacEUoshPvrd9gFfKnxhBu8odZUss8fHU5OeHAg7YjY7uS9566whI3vLBpmQ7UCHqzHnRTy3YStofhRJgoklTnESWoytdtyHmyKvic4KtKA=
-X-Gm-Message-State: AOJu0YxyqbpHtcD90lcwe5m3tkU6vXykn30DLz7Qfer09k50r2xNfqiK
-	c/Qmrh5Q0gzo3cIVOnOowsZUctVHHysd5cnW2M36KFjgHXHHqsCotisp9MAwIgw=
-X-Google-Smtp-Source: AGHT+IGltDGgbVu9/Z4qmXvaw4FuZ+sqm0PFM+fJbYrxAAu+/Lm3xVjYmuqrMfUc4Qr5nINdaCb26A==
-X-Received: by 2002:a05:6402:3712:b0:56b:a8ea:9642 with SMTP id ek18-20020a056402371200b0056ba8ea9642mr1306169edb.14.1710919256953;
-        Wed, 20 Mar 2024 00:20:56 -0700 (PDT)
+        bh=i3jlY94/eeyZ6RcBk4RP2SNOK962GMXwjEvU51sOt6s=;
+        b=msCr2QsAEA1yYWq5fuON/uMLZR1E+ihDbHARy08qAF2ifadRgkxfaYNlD4+tTo15XO
+         AQg/C6rdhaTTdTFOLO+46Y0BcLey35snL6aGZxyiN7Sioyi1u9U9xeSqgkNNQeEOZ+92
+         3WQ3FL07HTKHZIAFPftoc7PlfJovnn0TcwE8kdzuZ0x2ikLyzsI/nIUVghuBeovZzP65
+         CzcuwNCyxMCW6PvojezYSxb5NyPx0Dsjr5aRLlG3Gbwk0LNVpKEKE3E441fM+fc1+Gzx
+         x56+FkjgsVSvDZc+P66Wie+ft01Y6fHuCadbn7PzogR2lfUwMRs6lTNh7/DMqlYGbKar
+         mEAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAyQicGQd8zmaI7gZEZyeKQ+f5UwTXqA3cj8W7//ToBJ9kkyUj4YJBsJl12cxuNts0Imw5aecHuMZ3rKTQA0h8OaXwNJPwNXLrXUaZurTFNIo=
+X-Gm-Message-State: AOJu0Yx3A67b4l25rhvCVbxSzxxcoszpy+l/RfWS02QHfm6V2dpndA4W
+	0nveMmLxEFgndCCjOaNR8MbbLQyprF5gRQHzNvX4CHy0S3dWpyn5rdXHGvAdKqs=
+X-Google-Smtp-Source: AGHT+IHfT2z0OxThuuxSUr06aWZGYCKZSymdnckDGx+Y83LSi19WiCYtHnyAy4GauWep8eYh4xrfgw==
+X-Received: by 2002:a17:906:c80a:b0:a45:c027:372 with SMTP id cx10-20020a170906c80a00b00a45c0270372mr676128ejb.68.1710919423329;
+        Wed, 20 Mar 2024 00:23:43 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.222.97])
-        by smtp.gmail.com with ESMTPSA id g14-20020a170906198e00b00a46d049ff63sm2317751ejd.21.2024.03.20.00.20.55
+        by smtp.gmail.com with ESMTPSA id s10-20020a1709060c0a00b00a44899a44ddsm7038094ejf.11.2024.03.20.00.23.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Mar 2024 00:20:56 -0700 (PDT)
-Message-ID: <4d5b2da7-2a45-4a9f-8a96-a6840d2751a2@linaro.org>
-Date: Wed, 20 Mar 2024 08:20:54 +0100
+        Wed, 20 Mar 2024 00:23:42 -0700 (PDT)
+Message-ID: <0ad9a94a-0fb6-4ff4-84bf-56ce0ff682f1@linaro.org>
+Date: Wed, 20 Mar 2024 08:23:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,19 +62,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] power: reset: add new gs101-poweroff driver
-To: Alexey Klimov <alexey.klimov@linaro.org>, sre@kernel.org,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- peter.griffin@linaro.org, robh+dt@kernel.org
-Cc: conor+dt@kernel.org, linux-samsung-soc@vger.kernel.org,
- semen.protsenko@linaro.org, linux-kernel@vger.kernel.org,
- klimov.linux@gmail.com, kernel-team@android.com, tudor.ambarus@linaro.org,
- andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
- alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- elder@linaro.org
-References: <20240320020549.71810-1-alexey.klimov@linaro.org>
- <20240320020549.71810-3-alexey.klimov@linaro.org>
+Subject: Re: [PATCH v4 1/3] clk: samsung: Implement manual PLL control for
+ ARM64 SoCs
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240301015118.30072-1-semen.protsenko@linaro.org>
+ <CAPLW+4=_yD3ShU5DvLWFyEzVrVHNVCsB+4bVkP+x_boRmC-vEw@mail.gmail.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -121,34 +121,67 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240320020549.71810-3-alexey.klimov@linaro.org>
+In-Reply-To: <CAPLW+4=_yD3ShU5DvLWFyEzVrVHNVCsB+4bVkP+x_boRmC-vEw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/03/2024 03:05, Alexey Klimov wrote:
-> +
-> +	ret = devm_work_autocancel(dev, &gs101->shutdown_work,
-> +				   gs101_shutdown_work_fn);
-> +	if (ret) {
-> +		dev_err(dev, "failed to register gs101 shutdown_work: %i\n", ret);
-> +		unregister_keyboard_notifier(&gs101->keyboard_nb);
-> +		return ret;
-> +	}
-> +
-> +	gs101_poweroff_ctx = gs101;
-> +	platform_set_drvdata(pdev, gs101);
-> +
-> +	/*
-> +	 * At this point there is a chance that psci_sys_poweroff already
-> +	 * registered as pm_power_off hook but unfortunately it cannot power
-> +	 * off the gs101 SoC hence we are rewriting it here just as is.
-> +	 */
-> +	pm_power_off = gs101_poweroff;
+On 19/03/2024 19:47, Sam Protsenko wrote:
+> On Thu, Feb 29, 2024 at 7:51 PM Sam Protsenko
+> <semen.protsenko@linaro.org> wrote:
+>>
+>> Some ARM64 Exynos chips are capable to control PLL clocks automatically.
+>> For those chips, whether the PLL is controlled automatically or manually
+>> is chosen in PLL_CON1 register with next bits:
+>>
+>>     [28]  ENABLE_AUTOMATIC_CLKGATING
+>>     [1]   MANUAL_PLL_CTRL
+>>     [0]   AUTO_PLL_CTRL
+>>
+>> The bl2 bootloader sets 0x10000001 value for some PLL_CON1 registers,
+>> which means any attempt to control those PLLs manually (e.g.
+>> disabling/enabling those PLLs or changing MUX parent clocks) would lead
+>> to PLL lock timeout with error message like this:
+>>
+>>     Could not lock PLL ...
+>>
+>> At the moment, all Samsung clock drivers implement manual clock control.
+>> So in order to make it possible to control PLLs, corresponding PLL_CON1
+>> registers should be set to 0x2 first.
+>>
+>> Some older ARM64 chips don't implement the automatic clock control
+>> though. It also might be desirable to configure some PLLs for manual
+>> control, while keeping the default configuration for the rest. So it'd
+>> convenient to choose this PLL mode for each CMU separately. Introduce
+>> .manual_plls field to CMU structure to choose the PLL control mode.
+>> Because it'll be initialized with "false" in all existing CMU
+>> structures by default, it won't affect any existing clock drivers,
+>> allowing for this feature to be enabled gradually when it's needed with
+>> no change for the rest of users. In case .manual_plls is set, set
+>> PLL_CON1 registers to manual control, akin to what's already done for
+>> gate clocks in exynos_arm64_init_clocks(). Of course, PLL_CON1 registers
+>> should be added to corresponding struct samsung_cmu_info::clk_regs array
+>> to make sure they get initialized.
+>>
+>> No functional change. This patch adds a feature, but doesn't enable it
+>> for any users.
+>>
+>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> ---
+> 
+> Hi Krzysztof,
+> 
+> If it looks ok to you, can you please apply this series?
+> 
+>     [PATCH 1/3] clk: samsung: Implement manual PLL control for ARM64 SoCs
+>     [PATCH 2/3] clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
+>     [PATCH 3/3] arm64: dts: exynos: Add CPU clocks for Exynos850
+> 
+> That concludes my efforts on CPU clock enablement in Exynos850.
 
-So that's a duplicated syscon power off driver. Why syscon does not
-work? syscon_node_to_regmap() does not return correct regmap? If so,
-this should be fixed instead of copying the driver with basically only
-one difference.
+Please do not ping during merge window, for anything else than fixes
+(and me only for fixes being serious regressions or serious issues, not
+for fixing something which never worked thus will not get to fixes
+branch). Not only me, but don't ping that way any of the maintainers.
 
 Best regards,
 Krzysztof
