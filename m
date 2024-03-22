@@ -1,251 +1,123 @@
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3848D5E091
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Mar 2024 17:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2C1626C0
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Mar 2024 18:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711127395; cv=none; b=uFW2DHnNJDMRSpBgef27uJ/Uw7bVFVZs+dkdZRhwDK/ymOx0cDq9H0AMyQvg2HQ/tqOgysykKF0DlTBzX4TJR7msL9XtTVbN+1onWvNX1WjFFFifjGpXt7InL/gBuza4tWeMI8yzBQtZOmoD+xmAN12UeZbLKCzdSidse2BQ/cQ=
+	t=1711130991; cv=none; b=S/H7XzCZEEtghbBTa4ODtBJc41vKAV9OBIFP61iNlSg1jMQ2c2kdQ9cQvkbdVAI/q/ygRaZZTqMESDJ6Pb3H46JDRJPyqkllQC4IsfYQgmgKtQkHROXOGP+dV9g4bSi2ZiTfqdaIHr9KGNLuHzRQzypyykf7tGgS5Yga8jDWnMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711127395; c=relaxed/simple;
-	bh=WFSROxQZOVxFu47A+8VqRSUCe8TRaljA8PS0t5b553Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LN4YGzvKQz8OR+k0Yk2QfR5Lh0CCVajIR8Fc0EiDV7vDTM+zXIDvPs/e9WNhkfE0fynWzJW2NNodD/LRUUFYdWeTeS7aqBPuTD1IgsD6P233xv+0soRWisj5IZoEVExemP88Hz78MQH7fphe8hYGv98HESWd1pwmxu2gr9WFG8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cNmYtKwO; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1711130991; c=relaxed/simple;
+	bh=B4sbDsuOvZKIeibg8vvbrEb2XScnKsrmTvz+Q6EZUB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VMscZmUC/LOi9E1IMdvP3H8rZGXaxMzH4CtSg9Mfhm6lgYGq+tR+DbswXzrrqH37JkL8uOx4fvhp9ICJg/z7IL5KUVMgRFgfTh9jOFF78j0tLvJiR+x3yZzXU+lQpVa4E5bUz/9LiGE6bBTDSO0Ax3wy5jXtIEAZFXxevZyc9XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kwQByvCX; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cNmYtKwO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=WFSR
-	OxQZOVxFu47A+8VqRSUCe8TRaljA8PS0t5b553Y=; b=cNmYtKwO5Cu5IWiuRD5o
-	Rra1wfWzl7faA6KT3pVfA9ipAZ93fnWCDyioXrFmupshiecN38ZhuEn20Lv197ck
-	wliUCprkQUA+jo49CTtVw9txv7lkqS3TK7Sph3u8PGimL8isWCSjBtDUOvzRJC0c
-	HV4nrVroNyYOMldN5AgE4PNKHFpmVyKgXYoBCwPSXbXBzaxGbeNIbPfQZpKPIkJj
-	OW/7uewh3zH5HPeHcYM/IfiHiY62bvPzBSsPOmiOjbDOgKSwOamu6D/qtV+wk6R+
-	BNT0hTYDcakbO1754UvcuMCQVFvDQRT4cCISEjn5KLHZbq2psaT5U9oxZ+uoJ87t
-	pw==
-Received: (qmail 3929014 invoked from network); 22 Mar 2024 18:09:43 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Mar 2024 18:09:43 +0100
-X-UD-Smtp-Session: l3s3148p1@P2He40IU0sJehhtF
-Date: Fri, 22 Mar 2024 18:09:42 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <groeck@google.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, linux-i2c@vger.kernel.org,
-	Elie Morisse <syniurge@gmail.com>,
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jean-Marie Verdun <verdun@hpe.com>,
-	Nick Hawkins <nick.hawkins@hpe.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Khalil Blaiech <kblaiech@nvidia.com>,
-	Asmaa Mnebhi <asmaa@nvidia.com>, Qii Wang <qii.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Ajay Gupta <ajayg@nvidia.com>,
-	Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>,
-	Robert Richter <rric@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Conghui Chen <conghui.chen@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
-	Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: Re: [PATCH 64/64] i2c: reword i2c_algorithm in drivers according to
- newest specification
-Message-ID: <Zf27VpOHPXAtHCLr@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <groeck@google.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	linux-i2c@vger.kernel.org, Elie Morisse <syniurge@gmail.com>,
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jean-Marie Verdun <verdun@hpe.com>,
-	Nick Hawkins <nick.hawkins@hpe.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Khalil Blaiech <kblaiech@nvidia.com>,
-	Asmaa Mnebhi <asmaa@nvidia.com>, Qii Wang <qii.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Ajay Gupta <ajayg@nvidia.com>,
-	Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>,
-	Robert Richter <rric@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Conghui Chen <conghui.chen@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
-	Ryan Wanner <Ryan.Wanner@microchip.com>
-References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
- <20240322132619.6389-65-wsa+renesas@sang-engineering.com>
- <e8dff9d4-ed15-44e9-ae9a-2e77845ec40b@microchip.com>
- <Zf22G4jC2gIlzhi_@shikoro>
- <CABXOdTc14kfPpkF96KG-oeLRTLvjxAD_gtOO2TQFLnHMLNoU_Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kwQByvCX"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-29fa98705b1so1765147a91.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Mar 2024 11:09:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711130989; x=1711735789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B4sbDsuOvZKIeibg8vvbrEb2XScnKsrmTvz+Q6EZUB4=;
+        b=kwQByvCXNEoWTTK/etf485vcHqxgMeyoNCiDwfje8rgLt9i9QjipTFJCSpyWmJm+7p
+         gux4BUF1nLSK0nJZ2Wwb/wX1NbRa3zGNZfrvB4SAN+WZ1tPIriivuleOL5GipGYWM1Jb
+         wYg83WeSLfuxB9aBU21JS7d2eWTgL/7ACCpCDau4zWDR1pd0Yw7C9M/rWPIoZur27u6I
+         vWiDCf9oh7iCxqYj5IB3rZEn1NF40214KuhnYMhkFOzPN29ymEeoN2THuMctcDRr0wVT
+         vekaC1NphHeswQexuOlYyJFp1AgEuYQ9B/o9zF8chLr7T9hDQs1TeMbVZtV0b4I6g95D
+         McEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711130989; x=1711735789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B4sbDsuOvZKIeibg8vvbrEb2XScnKsrmTvz+Q6EZUB4=;
+        b=mmtpM0bGP6pk+E9SHb1XDlY1/qWG96VUhMAi+LVZJU4edSO1EBGmO0BpuVYrT1uuhC
+         5czxFPnVxNJ06pz7T8xUTZWaMsMAnQTbsqMrZTdHKWyQ6IxtovhF/gDsO4JOg1Sv5BSb
+         v1u/y3bByCUchkVJSSwZ17JoO/0Jrc7N6u4yKrODQdg3e4ItleIUciVhWDi+/+69xmFN
+         96TT1ttCpz858j3pizsLOv5njyhE/yzMPxfpPU6myN3Gmu1hvTRHd9CY+dC95qJEUiIU
+         CU76mss0uqJ2wDq2ndHIVOCvB6rtNaAKNTvq3a77ckLuGVrVt1Qm0MyVVOULotIda/Q/
+         Lr3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWODGCYWKe3WlpQVwk1Iswb1xNziVKGt7592wTcvnFR7mjTA4rGyWrvPaZFXJwHvhofV0Ay8MP6Tys419uU0sZlWgq8W4grwzSXT8RZPyc+fIg=
+X-Gm-Message-State: AOJu0Yw/uV6a5JdPJk/E8VVLi3a3/1J2+N4Ylnrm3W1r9Hbm/33W3q7S
+	G6AOuMaDFMsxyodQFM6WnaCxOPW+PsG+04Il1ybsitMm6D9k1oxqNvmRITeAL/4/DayWAHY2qbC
+	0j0QE6PkTX31eJ4DT65MB7BfuKS90XAoJRQ2q3A==
+X-Google-Smtp-Source: AGHT+IHbIgzFZJrnayUw9uaEmWMhyoSB8z65Yw2YoZfEhl+AX+br8325k9E+8hMkgDwJHkwpF+BkhWneNlLVoUeaygM=
+X-Received: by 2002:a17:90a:6d61:b0:29c:b540:706b with SMTP id
+ z88-20020a17090a6d6100b0029cb540706bmr424792pjj.17.1711130988988; Fri, 22 Mar
+ 2024 11:09:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="un7BlYMtStBuO9gz"
-Content-Disposition: inline
-In-Reply-To: <CABXOdTc14kfPpkF96KG-oeLRTLvjxAD_gtOO2TQFLnHMLNoU_Q@mail.gmail.com>
+References: <20240229122021.1901785-1-tudor.ambarus@linaro.org>
+ <20240229122021.1901785-5-tudor.ambarus@linaro.org> <CAPLW+4=jSr6ZsB7XekXsiUBm0SmVpVFnqpgjViuF3=HpT4gRAg@mail.gmail.com>
+ <867158d7-0d98-4058-9c2e-6b573ec68516@linaro.org>
+In-Reply-To: <867158d7-0d98-4058-9c2e-6b573ec68516@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 22 Mar 2024 13:09:37 -0500
+Message-ID: <CAPLW+4=nRjRPdu80Y3izifxQDNUaJymU3di0hGErm1dHry3EfQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: samsung: exynos850: fix propagation of SPI IPCLK rate
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: =?UTF-8?B?6rmA7J6s7JuQL0pBRVdPTiBLSU0=?= <jaewon02.kim@samsung.com>, 
+	krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	peter.griffin@linaro.org, andre.draszik@linaro.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	willmcvicker@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Mar 22, 2024 at 4:39=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+>
+> Hi, Sam!
+>
+> On 3/1/24 00:13, Sam Protsenko wrote:
+> > I fail to see how this patch fixes anything. Instead it looks to me it
+> > replaces the (already) correctly implemented logic with incorrect one.
+>
+> I opened another thread asking for feedback on whether it's safe to
+> re-parent the USI MUX to OSCCLK at run-time, find it here:
+> https://lore.kernel.org/linux-samsung-soc/71df1d6b-f40b-4896-a672-c5f0f52=
+6fb1f@linaro.org/T/#m588abb87eb5fd8817d71d06b94c91eb84928e06b
+>
+> Jaewon came up with the idea on verifying what the downstream clock
+> driver does. I added some prints in the driver, and indeed the USI MUX
+> re-parents to OSCCLK on low SPI clock rates in the GS101 case.
+>
+> Thus I'll respin this patch set fixing GS101 on low USI clock rates by
+> re-parenting the USI MUX to OSCCLK. I'll leave exynos850 out if I don't
+> hear back from you, but I think it deserves the same fix. Allowing SPI
+> to modify the clock rate of HSI2C/I3C at run-time is bad IMO.
+> Re-parenting the USI MUX to OSCCLK fixes this problem, HSI2C/I3C will no
+> longer be affected on low SPI clock rates.
+>
 
---un7BlYMtStBuO9gz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, please leave Exynos850 out of it, if possible. It's fine with me
+if you send it for gs101, as it's you who is going to maintain that
+platform further, so it's for the maintainers to decide. I'll refrain
+from reviewing that particular patch.
 
+For Exynos850 driver, I'm convinced the SPI clock derivation is
+already implemented in the correct way (exactly as it was designed in
+HW), and doing anything else would be a hack, and frankly this sole
+fact is already enough of argumentation for me. There is also the
+whole bunch of use-cases which I think could be affected by using
+OSCCLK, e.g.: clock signal integrity, runtime PM concerns, possible
+interference in case of automatic clock control enablement, etc. I
+don't even want to think about all possible pitfalls which
+implementation of this non-standard and undocumented behavior could
+create. So as the only person who currently supports Exynos850 drivers
+(apart from the maintainers, of course), I would strictly oppose this
+particular OSCCLK change.
 
-> Kind of odd though to change function names but not parameter names of
-> those very same functions.
-
-Ouch, this is definitely a valid point. Seems like this series will need
-a respin after all. Will wait for further comments, though.
-
-Thanks!
-
-
---un7BlYMtStBuO9gz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmX9u1YACgkQFA3kzBSg
-KbZSKA//Q8484MbfzpPKmvUS0QA73oCgcHXOiIKbRKOfwXWkquKc1vuGV6LbxWG+
-oPc84UQGrv+MjAhAMX/ZpO2VdGp+ej/a1j1kNYihlqVTkY/rRWPMa5y1oNB2H5Xq
-tFjFmqgwbqm/K/OND3KcJw8zAmXCTgCvgQDyQx76B6KMydRGzKel/sM29TwW6mTm
-HCQ9klGLK273LaNEAwn4vkLQ6BtVmjI1CpnjIp3hSRWdW9IytTQlM2weh0gQ+D2p
-OerYgE9JUZp4dgPgLIR60J3AER1DaZtHMVH5NwMLT8xMLa/L3RgkSaTbxa/D2tvm
-K2XQbEWvx8HsxtEIUEcIy936gmSyZ7Nta1mJv+5yN+DLHdGoo9KNl6vcMxzXLgpM
-02/ySV8tMq+Q4cX/fIVZxaeudi69toWj1QcjLg11KaJDo4ndbPqBwYRkSYJ+o2Nh
-aJNDu7J+5ud051bq05bFRaCitl7kyEdv5WEjwk5RTLDD1xvwR84SZ3ElcQ6Jnb/I
-VaA1JNnKw/et4KmEF4A65wphnC8pC/gmH5c9SrPs6w7dUw44dla+p+jPrgtvUOnY
-sqhCnFNLZ5MGuyhTemuWVdGNNvwwuTYFf/VYKi7mdRVsCRdLQIoHklH7FUfmwhpM
-G5oEk4nI7j9MbLPl4WOjrZ9k5wZQnd5zRSWHj/aw5xmVCbNVKsQ=
-=dqSs
------END PGP SIGNATURE-----
-
---un7BlYMtStBuO9gz--
+> Cheers,
+> ta
