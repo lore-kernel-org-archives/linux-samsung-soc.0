@@ -1,84 +1,35 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352192A65B3;
-	Sun, 24 Mar 2024 23:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7F1149C7D;
+	Mon, 25 Mar 2024 01:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711324604; cv=none; b=Eodf7a8Yu/iA0Z/rcCEOmw2x2P8Zw9XjPqSORTBdio32vBIE3MpAYT9QjohNd0nIMzUlXagin5K4/g4xNDJk4JHRa6CEMlR4unNInDajUccrhl4H7Dl2HBeLpYDDWKMZH5OEmhvETlrCvTOyC1HsmZyj600BY9KmN+r6FU3toXY=
+	t=1711331662; cv=none; b=Gk9MkEKfQh/D1sbgyIJcS2VT44gcR3xdWwM4FEIckwNLvv7lLKUfsZL6pX33r+4ssJpNmxOXlNTGCSwEzqx295gTe/MgmmUU85qEaDJ9kfQYElfB2ZdgUb72cMd+hNq3t16ami7TgpWt6edLJaKM9znWnFndfLfcDZWKWhKqulE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711324604; c=relaxed/simple;
-	bh=4X5JDASsyVTqpZ1mOIk4YSbgd2kOuQOTKm1luQihzFY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dAu4A6cNbE6LNR2/nHQLvx/0gvJcsdYOPsxG/UOyWwQ0TT5Zqve2nipZA4h43ZH3grPuSpbyvdE5j8nZQLHxSB43oj7O4o6h1l4yiOB7pxI5gOx2ztImfffRDEI5z6lBN6JcG36QwsUhAuKp5+qS7H5tjwTOdgYB6DsBUgtzM1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AiAGPerO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1711331662; c=relaxed/simple;
+	bh=x6gbNWDUC3393woiAhRGtrXvkbgxFEKnVO43IWMARsU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jo4eRyXnHT6pJlze8xtEpd1EeBpqCzs5cNTT6ZJHa8EUHj40hkpdHUwApSEPYljxRFVAPnX0dye4BDIjBhOZuJDCzLFydOpPlDJOiMZB4G7KpGIWtVFbD8Ec9x0bye3cy2qJDr7S0LwJ2Sd7sTThMgJVZwKf91MQmw2WiWm3+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrPZZfZ0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AiAGPerO"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=8Ap781XzTEv6/N3Fz2uGluUK4bmcyE+i99tuUWvhx7k=; b=AiAGPerOJJbKRhNpuJsVUJbWmU
-	YiCXZspsGoKuruGzkhXHiiyVNOI0Loafwt6J7055bgOgT1jWkIP3AlLWQCJzfIg5DEuQhyeElrsHh
-	OUojqAL/iskl2rJR6f4LO0c6wQeTpj9lncLIYXijQOwKZ1TTLd69jX+0LnPqXUNDLZNDWpLyMfBH4
-	0TUN7wXQwCDU7Dw7VjvYj4KhVtBPjRgM7rcf/vQAfFcA/AqookY3rH0oBWYMq7S5C0oVO3i58Jf2H
-	0SoUGAFpU1+jYml+W1kBdGthgRKRmPFP+q0UdWjn2AhGHMe3nHBwmW18pDrUtn155JRbx1UolfBb0
-	aB1fenLA==;
-Received: from [210.13.83.2] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1roXhZ-0000000DzuH-28iC;
-	Sun, 24 Mar 2024 23:56:34 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"Juergen E. Fischer" <fischer@norbit.de>,
-	Xiang Chen <chenxiang66@hisilicon.com>,
-	HighPoint Linux Team <linux@highpoint-tech.com>,
-	Tyrel Datwyler <tyreld@linux.ibm.com>,
-	Brian King <brking@us.ibm.com>,
-	Lee Duncan <lduncan@suse.com>,
-	Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Jason Yan <yanaijie@huawei.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Jack Wang <jinpu.wang@cloud.ionos.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	linux-block@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux1394-devel@lists.sourceforge.net,
-	MPT-FusionLinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	open-iscsi@googlegroups.com,
-	megaraidlinux.pdl@broadcom.com,
-	mpi3mr-linuxdrv.pdl@broadcom.com,
-	linux-samsung-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net
-Subject: [PATCH 23/23] block: remove now unused queue limits helpers
-Date: Mon, 25 Mar 2024 07:54:48 +0800
-Message-Id: <20240324235448.2039074-24-hch@lst.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240324235448.2039074-1-hch@lst.de>
-References: <20240324235448.2039074-1-hch@lst.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrPZZfZ0"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D974C43399;
+	Mon, 25 Mar 2024 01:54:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711331662;
+	bh=x6gbNWDUC3393woiAhRGtrXvkbgxFEKnVO43IWMARsU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jrPZZfZ03PsaQD3fMGm9nq2UPpPmNCR2UhRG5lEG5sj1PDjplq8FZ75Zbzq4M++fX
+	 Q6TVSgOVQbUvhZzKhKOQNbQwhQhy2BZ8MRkhAIEF+3w0ilwV/nWxm1rjxE/qfP/Mr+
+	 E3yc5dSuBNp0Bm1L/KI5QDwiA8kFCuNjxzWIU7cCRVNPOgSNBZV+qUtQOY4O/YoTDT
+	 PFwCgNm3HEFcmI1zG6v/j47VLsywRsjUKgaIEweM6/K8U5bK1qRIu9RKHx/KjIcwnX
+	 cAPddvxMuoVuFBd1hKdjXjkxNm2QAvn+OmyKHTZvNymrjm/TZ8YaQVQ3vy0XdpqBcO
+	 88LTlEfD/nBQw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 59B24D2D0E0;
+	Mon, 25 Mar 2024 01:54:22 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -86,380 +37,84 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Subject: Re: [PATCH v6 000/164] pwm: Improve lifetime tracking for pwm_chips
+From: patchwork-bot+chrome-platform@kernel.org
+Message-Id: 
+ <171133166235.9916.5159550524752322105.git-patchwork-notify@kernel.org>
+Date: Mon, 25 Mar 2024 01:54:22 +0000
+References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+In-Reply-To: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
+Cc: linux-pwm@vger.kernel.org, corbet@lwn.net, Jonathan.Cameron@huawei.com,
+ james.clark@arm.com, andriy.shevchenko@linux.intel.com, broonie@kernel.org,
+ marcan@marcan.st, sven@svenpeter.dev, claudiu.beznea@tuxon.dev,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com,
+ shc_work@mail.ru, bleung@chromium.org, p.zabel@pengutronix.de,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, paul@crapouillou.net,
+ vz@mleia.com, mika.westerberg@linux.intel.com, andy@kernel.org,
+ linus.walleij@linaro.org, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ neil.armstrong@linaro.org, khilman@baylibre.com, conor.dooley@microchip.com,
+ daire.mcnamara@microchip.com, j.neuschaefer@gmx.net, heiko@sntech.de,
+ krzysztof.kozlowski@linaro.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ mwalle@kernel.org, orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
+ zhang.lyra@gmail.com, fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, wens@csie.org, jernej.skrabec@gmail.com,
+ samuel@sholland.org, hammerh0314@gmail.com, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+ sean.anderson@seco.com, michal.simek@amd.com, brgl@bgdev.pl,
+ andrzej.hajda@intel.com, rfoss@kernel.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ pavel@ucw.cz, lee@kernel.org, quic_amelende@quicinc.com,
+ quic_bjorande@quicinc.com, keescook@chromium.org, robh@kernel.org,
+ johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org,
+ kernel@pengutronix.de, linux-doc@vger.kernel.org, alyssa@rosenzweig.io,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org,
+ groeck@chromium.org, chrome-platform@lists.linux.dev, festevam@gmail.com,
+ linux-imx@nxp.com, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+ linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ dianders@chromium.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+ greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+ gustavoars@kernel.org, linux-hardening@vger.kernel.org
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-settings.c           | 245 ---------------------------------
- drivers/s390/block/dasd_eckd.c |   6 +-
- include/linux/blkdev.h         |  13 --
- include/linux/mmc/host.h       |   4 +-
- 4 files changed, 5 insertions(+), 263 deletions(-)
+Hello:
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index cdbaef159c4bc3..57cd1660815ec2 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -283,72 +283,6 @@ int queue_limits_set(struct request_queue *q, struct queue_limits *lim)
- }
- EXPORT_SYMBOL_GPL(queue_limits_set);
- 
--/**
-- * blk_queue_bounce_limit - set bounce buffer limit for queue
-- * @q: the request queue for the device
-- * @bounce: bounce limit to enforce
-- *
-- * Description:
-- *    Force bouncing for ISA DMA ranges or highmem.
-- *
-- *    DEPRECATED, don't use in new code.
-- **/
--void blk_queue_bounce_limit(struct request_queue *q, enum blk_bounce bounce)
--{
--	q->limits.bounce = bounce;
--}
--EXPORT_SYMBOL(blk_queue_bounce_limit);
--
--/**
-- * blk_queue_max_hw_sectors - set max sectors for a request for this queue
-- * @q:  the request queue for the device
-- * @max_hw_sectors:  max hardware sectors in the usual 512b unit
-- *
-- * Description:
-- *    Enables a low level driver to set a hard upper limit,
-- *    max_hw_sectors, on the size of requests.  max_hw_sectors is set by
-- *    the device driver based upon the capabilities of the I/O
-- *    controller.
-- *
-- *    max_dev_sectors is a hard limit imposed by the storage device for
-- *    READ/WRITE requests. It is set by the disk driver.
-- *
-- *    max_sectors is a soft limit imposed by the block layer for
-- *    filesystem type requests.  This value can be overridden on a
-- *    per-device basis in /sys/block/<device>/queue/max_sectors_kb.
-- *    The soft limit can not exceed max_hw_sectors.
-- **/
--void blk_queue_max_hw_sectors(struct request_queue *q, unsigned int max_hw_sectors)
--{
--	struct queue_limits *limits = &q->limits;
--	unsigned int max_sectors;
--
--	if ((max_hw_sectors << 9) < PAGE_SIZE) {
--		max_hw_sectors = 1 << (PAGE_SHIFT - 9);
--		pr_info("%s: set to minimum %u\n", __func__, max_hw_sectors);
--	}
--
--	max_hw_sectors = round_down(max_hw_sectors,
--				    limits->logical_block_size >> SECTOR_SHIFT);
--	limits->max_hw_sectors = max_hw_sectors;
--
--	max_sectors = min_not_zero(max_hw_sectors, limits->max_dev_sectors);
--
--	if (limits->max_user_sectors)
--		max_sectors = min(max_sectors, limits->max_user_sectors);
--	else
--		max_sectors = min(max_sectors, BLK_DEF_MAX_SECTORS_CAP);
--
--	max_sectors = round_down(max_sectors,
--				 limits->logical_block_size >> SECTOR_SHIFT);
--	limits->max_sectors = max_sectors;
--
--	if (!q->disk)
--		return;
--	q->disk->bdi->io_pages = max_sectors >> (PAGE_SHIFT - 9);
--}
--EXPORT_SYMBOL(blk_queue_max_hw_sectors);
--
- /**
-  * blk_queue_chunk_sectors - set size of the chunk for this queue
-  * @q:  the request queue for the device
-@@ -435,65 +369,6 @@ void blk_queue_max_zone_append_sectors(struct request_queue *q,
- }
- EXPORT_SYMBOL_GPL(blk_queue_max_zone_append_sectors);
- 
--/**
-- * blk_queue_max_segments - set max hw segments for a request for this queue
-- * @q:  the request queue for the device
-- * @max_segments:  max number of segments
-- *
-- * Description:
-- *    Enables a low level driver to set an upper limit on the number of
-- *    hw data segments in a request.
-- **/
--void blk_queue_max_segments(struct request_queue *q, unsigned short max_segments)
--{
--	if (!max_segments) {
--		max_segments = 1;
--		pr_info("%s: set to minimum %u\n", __func__, max_segments);
--	}
--
--	q->limits.max_segments = max_segments;
--}
--EXPORT_SYMBOL(blk_queue_max_segments);
--
--/**
-- * blk_queue_max_discard_segments - set max segments for discard requests
-- * @q:  the request queue for the device
-- * @max_segments:  max number of segments
-- *
-- * Description:
-- *    Enables a low level driver to set an upper limit on the number of
-- *    segments in a discard request.
-- **/
--void blk_queue_max_discard_segments(struct request_queue *q,
--		unsigned short max_segments)
--{
--	q->limits.max_discard_segments = max_segments;
--}
--EXPORT_SYMBOL_GPL(blk_queue_max_discard_segments);
--
--/**
-- * blk_queue_max_segment_size - set max segment size for blk_rq_map_sg
-- * @q:  the request queue for the device
-- * @max_size:  max size of segment in bytes
-- *
-- * Description:
-- *    Enables a low level driver to set an upper limit on the size of a
-- *    coalesced segment
-- **/
--void blk_queue_max_segment_size(struct request_queue *q, unsigned int max_size)
--{
--	if (max_size < PAGE_SIZE) {
--		max_size = PAGE_SIZE;
--		pr_info("%s: set to minimum %u\n", __func__, max_size);
--	}
--
--	/* see blk_queue_virt_boundary() for the explanation */
--	WARN_ON_ONCE(q->limits.virt_boundary_mask);
--
--	q->limits.max_segment_size = max_size;
--}
--EXPORT_SYMBOL(blk_queue_max_segment_size);
--
- /**
-  * blk_queue_logical_block_size - set logical block size for the queue
-  * @q:  the request queue for the device
-@@ -660,29 +535,6 @@ void blk_limits_io_opt(struct queue_limits *limits, unsigned int opt)
- }
- EXPORT_SYMBOL(blk_limits_io_opt);
- 
--/**
-- * blk_queue_io_opt - set optimal request size for the queue
-- * @q:	the request queue for the device
-- * @opt:  optimal request size in bytes
-- *
-- * Description:
-- *   Storage devices may report an optimal I/O size, which is the
-- *   device's preferred unit for sustained I/O.  This is rarely reported
-- *   for disk drives.  For RAID arrays it is usually the stripe width or
-- *   the internal track size.  A properly aligned multiple of
-- *   optimal_io_size is the preferred request size for workloads where
-- *   sustained throughput is desired.
-- */
--void blk_queue_io_opt(struct request_queue *q, unsigned int opt)
--{
--	blk_limits_io_opt(&q->limits, opt);
--	if (!q->disk)
--		return;
--	q->disk->bdi->ra_pages =
--		max(queue_io_opt(q) * 2 / PAGE_SIZE, VM_READAHEAD_PAGES);
--}
--EXPORT_SYMBOL(blk_queue_io_opt);
--
- static int queue_limit_alignment_offset(const struct queue_limits *lim,
- 		sector_t sector)
- {
-@@ -932,81 +784,6 @@ void blk_queue_update_dma_pad(struct request_queue *q, unsigned int mask)
- }
- EXPORT_SYMBOL(blk_queue_update_dma_pad);
- 
--/**
-- * blk_queue_segment_boundary - set boundary rules for segment merging
-- * @q:  the request queue for the device
-- * @mask:  the memory boundary mask
-- **/
--void blk_queue_segment_boundary(struct request_queue *q, unsigned long mask)
--{
--	if (mask < PAGE_SIZE - 1) {
--		mask = PAGE_SIZE - 1;
--		pr_info("%s: set to minimum %lx\n", __func__, mask);
--	}
--
--	q->limits.seg_boundary_mask = mask;
--}
--EXPORT_SYMBOL(blk_queue_segment_boundary);
--
--/**
-- * blk_queue_virt_boundary - set boundary rules for bio merging
-- * @q:  the request queue for the device
-- * @mask:  the memory boundary mask
-- **/
--void blk_queue_virt_boundary(struct request_queue *q, unsigned long mask)
--{
--	q->limits.virt_boundary_mask = mask;
--
--	/*
--	 * Devices that require a virtual boundary do not support scatter/gather
--	 * I/O natively, but instead require a descriptor list entry for each
--	 * page (which might not be idential to the Linux PAGE_SIZE).  Because
--	 * of that they are not limited by our notion of "segment size".
--	 */
--	if (mask)
--		q->limits.max_segment_size = UINT_MAX;
--}
--EXPORT_SYMBOL(blk_queue_virt_boundary);
--
--/**
-- * blk_queue_dma_alignment - set dma length and memory alignment
-- * @q:     the request queue for the device
-- * @mask:  alignment mask
-- *
-- * description:
-- *    set required memory and length alignment for direct dma transactions.
-- *    this is used when building direct io requests for the queue.
-- *
-- **/
--void blk_queue_dma_alignment(struct request_queue *q, int mask)
--{
--	q->limits.dma_alignment = mask;
--}
--EXPORT_SYMBOL(blk_queue_dma_alignment);
--
--/**
-- * blk_queue_update_dma_alignment - update dma length and memory alignment
-- * @q:     the request queue for the device
-- * @mask:  alignment mask
-- *
-- * description:
-- *    update required memory and length alignment for direct dma transactions.
-- *    If the requested alignment is larger than the current alignment, then
-- *    the current queue alignment is updated to the new value, otherwise it
-- *    is left alone.  The design of this is to allow multiple objects
-- *    (driver, device, transport etc) to set their respective
-- *    alignments without having them interfere.
-- *
-- **/
--void blk_queue_update_dma_alignment(struct request_queue *q, int mask)
--{
--	BUG_ON(mask > PAGE_SIZE);
--
--	if (mask > q->limits.dma_alignment)
--		q->limits.dma_alignment = mask;
--}
--EXPORT_SYMBOL(blk_queue_update_dma_alignment);
--
- /**
-  * blk_set_queue_depth - tell the block layer about the device queue depth
-  * @q:		the request queue for the device
-@@ -1060,28 +837,6 @@ void blk_queue_required_elevator_features(struct request_queue *q,
- }
- EXPORT_SYMBOL_GPL(blk_queue_required_elevator_features);
- 
--/**
-- * blk_queue_can_use_dma_map_merging - configure queue for merging segments.
-- * @q:		the request queue for the device
-- * @dev:	the device pointer for dma
-- *
-- * Tell the block layer about merging the segments by dma map of @q.
-- */
--bool blk_queue_can_use_dma_map_merging(struct request_queue *q,
--				       struct device *dev)
--{
--	unsigned long boundary = dma_get_merge_boundary(dev);
--
--	if (!boundary)
--		return false;
--
--	/* No need to update max_segment_size. see blk_queue_virt_boundary() */
--	blk_queue_virt_boundary(q, boundary);
--
--	return true;
--}
--EXPORT_SYMBOL_GPL(blk_queue_can_use_dma_map_merging);
--
- /**
-  * disk_set_zoned - inidicate a zoned device
-  * @disk:	gendisk to configure
-diff --git a/drivers/s390/block/dasd_eckd.c b/drivers/s390/block/dasd_eckd.c
-index 180a008d38eaaf..2f16f543079b4f 100644
---- a/drivers/s390/block/dasd_eckd.c
-+++ b/drivers/s390/block/dasd_eckd.c
-@@ -4561,9 +4561,9 @@ static struct dasd_ccw_req *dasd_eckd_build_cp_tpm_track(
- 	len_to_track_end = 0;
- 	/*
- 	 * A tidaw can address 4k of memory, but must not cross page boundaries
--	 * We can let the block layer handle this by setting
--	 * blk_queue_segment_boundary to page boundaries and
--	 * blk_max_segment_size to page size when setting up the request queue.
-+	 * We can let the block layer handle this by setting seg_boundary_mask
-+	 * to page boundaries and max_segment_size to page size when setting up
-+	 * the request queue.
- 	 * For write requests, a TIDAW must not cross track boundaries, because
- 	 * we have to set the CBC flag on the last tidaw for each track.
- 	 */
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index c3e8f7cf96be9e..7a1e96c5bb1106 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -895,15 +895,9 @@ int queue_limits_set(struct request_queue *q, struct queue_limits *lim);
- /*
-  * Access functions for manipulating queue properties
-  */
--void blk_queue_bounce_limit(struct request_queue *q, enum blk_bounce limit);
--extern void blk_queue_max_hw_sectors(struct request_queue *, unsigned int);
- extern void blk_queue_chunk_sectors(struct request_queue *, unsigned int);
--extern void blk_queue_max_segments(struct request_queue *, unsigned short);
--extern void blk_queue_max_discard_segments(struct request_queue *,
--		unsigned short);
- void blk_queue_max_secure_erase_sectors(struct request_queue *q,
- 		unsigned int max_sectors);
--extern void blk_queue_max_segment_size(struct request_queue *, unsigned int);
- extern void blk_queue_max_discard_sectors(struct request_queue *q,
- 		unsigned int max_discard_sectors);
- extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
-@@ -920,7 +914,6 @@ void disk_update_readahead(struct gendisk *disk);
- extern void blk_limits_io_min(struct queue_limits *limits, unsigned int min);
- extern void blk_queue_io_min(struct request_queue *q, unsigned int min);
- extern void blk_limits_io_opt(struct queue_limits *limits, unsigned int opt);
--extern void blk_queue_io_opt(struct request_queue *q, unsigned int opt);
- extern void blk_set_queue_depth(struct request_queue *q, unsigned int depth);
- extern void blk_set_stacking_limits(struct queue_limits *lim);
- extern int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
-@@ -928,10 +921,6 @@ extern int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
- void queue_limits_stack_bdev(struct queue_limits *t, struct block_device *bdev,
- 		sector_t offset, const char *pfx);
- extern void blk_queue_update_dma_pad(struct request_queue *, unsigned int);
--extern void blk_queue_segment_boundary(struct request_queue *, unsigned long);
--extern void blk_queue_virt_boundary(struct request_queue *, unsigned long);
--extern void blk_queue_dma_alignment(struct request_queue *, int);
--extern void blk_queue_update_dma_alignment(struct request_queue *, int);
- extern void blk_queue_rq_timeout(struct request_queue *, unsigned int);
- extern void blk_queue_write_cache(struct request_queue *q, bool enabled, bool fua);
- 
-@@ -948,8 +937,6 @@ void disk_set_independent_access_ranges(struct gendisk *disk,
- 
- extern void blk_queue_required_elevator_features(struct request_queue *q,
- 						 unsigned int features);
--extern bool blk_queue_can_use_dma_map_merging(struct request_queue *q,
--					      struct device *dev);
- 
- bool __must_check blk_get_queue(struct request_queue *);
- extern void blk_put_queue(struct request_queue *);
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 5894bf912f7bdb..88c6a76042ee73 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -433,8 +433,8 @@ struct mmc_host {
- 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
- 
- 	/* host specific block data */
--	unsigned int		max_seg_size;	/* see blk_queue_max_segment_size */
--	unsigned short		max_segs;	/* see blk_queue_max_segments */
-+	unsigned int		max_seg_size;	/* lim->max_segment_size */
-+	unsigned short		max_segs;	/* lim->max_segments */
- 	unsigned short		unused;
- 	unsigned int		max_req_size;	/* maximum number of bytes in one req */
- 	unsigned int		max_blk_size;	/* maximum size of one mmc block */
+This series was applied to chrome-platform/linux.git (for-kernelci)
+by Uwe Kleine-König <u.kleine-koenig@pengutronix.de>:
+
+On Wed, 14 Feb 2024 10:30:47 +0100 you wrote:
+> Hello,
+> 
+> this is v6 of the series introducing better lifetime tracking for
+> pwmchips that addresses (for now theoretic) lifetime issues of pwm
+> chips. Addressing these is a necessary precondition to introduce chardev
+> support for PWMs.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v6,001/164] pwm: Provide an inline function to get the parent device of a given chip
+    https://git.kernel.org/chrome-platform/c/4e59267c7a20
+  - [v6,003/164] pwm: Provide pwmchip_alloc() function and a devm variant of it
+    https://git.kernel.org/chrome-platform/c/024913dbf99f
+  - [v6,029/164] pwm: cros-ec: Change prototype of helpers to prepare further changes
+    https://git.kernel.org/chrome-platform/c/7256c2e79b8e
+  - [v6,030/164] pwm: cros-ec: Make use of pwmchip_parent() accessor
+    https://git.kernel.org/chrome-platform/c/19a568a8d3c4
+  - [v6,031/164] pwm: cros-ec: Make use of devm_pwmchip_alloc() function
+    https://git.kernel.org/chrome-platform/c/452be9421eda
+
+You are awesome, thank you!
 -- 
-2.39.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
