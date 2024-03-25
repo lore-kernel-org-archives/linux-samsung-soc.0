@@ -1,120 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ABE15253D;
-	Mon, 25 Mar 2024 02:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B5F18441F
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Mar 2024 07:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711332788; cv=none; b=kdeHrfc35gKEaEXohVq3g8dJ2nXsdQ4KR6W3d75bqOTEIcNP5kvqHuyY/ankkPxhm2VwKn59Ro0Wfts6WRGI+IXU2BAzUxqfIb4Y7ntMk8qLdvKzpecFZAQJIx+3iIiS86n2t7dzFh1fT4dmsEs9qj2y61lXJyb5uXwx84GYkuQ=
+	t=1711350921; cv=none; b=kCuEK+YrqdA3P8gkFDLcgLzKJrKLlpeQk4IOHnAOlHHZ/3mZbtWUZa7z4AjfSeJs8F79W+0/5+ySnx9X0cVrmE1iK3pW1iTTlw9piMowc6ses9H8UadSvOl7idZ9LyaU16wiB8IJS5GEgMjjenMfgkD+lWDT0zjRhdjjbouaoAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711332788; c=relaxed/simple;
-	bh=aJvg1KH6joFG6oJkgTHoc61lNEcN6UYDL94Kek/0h5A=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=R48zXyjukBt/Etd1M9nCVkEZlG1fiiroEpe8dgkhWTSZKJewMBoUhqtKirm01WvT+0Bge0vv0kJAjB3CdJ1Oiiw25oqtXiCoXPPqKnyMt/PCq4nNwXfQ2alDH2jKyP50EIZRz3IJcJ30QEDhSOgNg9lMVsQ/U21QNHuh3ld1bGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUL61oDb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711350921; c=relaxed/simple;
+	bh=+OyKK7IkvwEV/w7UMcTxO7cG4x4rvzI12pOx3LK8JQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l8qAYSl7m2Edp3etXwrHLXo1oxsdDNlxGFlMa2DTipuSaWvxDbwc57lNvtzYlfxm+vE0yea6FS5AClY9sWeFoPFE7U+Sj350QmG4wU8OKc13anXIoZZeOwlxW283QvZnWs3SgIeytDML+i6ZPRRyPwBUewhiRbWTChtYtk9iG7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ro+EHill; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUL61oDb"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7DB0EC43390;
-	Mon, 25 Mar 2024 02:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711332787;
-	bh=aJvg1KH6joFG6oJkgTHoc61lNEcN6UYDL94Kek/0h5A=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bUL61oDb/M+5KYmdH9GZAQdZT3PYKaJ010SbGP/0QAETJ2gY+Rxd19+hfItokn4fc
-	 qXm+5UshaVvnLaKO+h8US6GsQq7XoxEkTJDEVJIEaNCFv8M2uUBhoQrMAu3fisTCQo
-	 B4fRFMNeMscSki123E/z54cBRXf+v5p5HhYpLJ3jJtc1OvR7VQslOwZ36RRz8NHOez
-	 HFUH5lzzeG0rrZGBHCyr2OTeNZB2H2sILwj6OEqE53Bfd2qCAI/Z34pAg9I1JWd2Cn
-	 dq/bNtJWoCPVpzv9DjBiOxvAIfXazxrFfLBNOkzXYWWq5P+zSQavVa4Lgiia++T7N2
-	 7rjlBqvf/ljRg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5AFA0D2D0E0;
-	Mon, 25 Mar 2024 02:13:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ro+EHill"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-56845954ffeso5371165a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Mar 2024 00:15:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711350918; x=1711955718; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OxdjCTpMFkU2iy+O7js4KexQH/nrED/NHR9zVi08e94=;
+        b=Ro+EHillAS5+CDQHhQK4soZHh7bpfFrTib9LvmTZVs8Ly2G1rUmmcohhmIZlBMvaHK
+         c4Kb/5XrxeJf0TW5VTppJN6JhiEW94jA+Gs9A09YpbmJbCkfGZWLDbP8xFZkDFWoqClN
+         98Aq2zLtar/buAvu92upr0lEPLhuTrptxcgWMn2YuD62uFrXn/+AcwOI68P921sxAJj8
+         1Vlif5PkCVs4x0VxJLtdPzohIorlDlcMCjYAWUzoNlkSI4cl1s7yHyKu6h9Iz8KPhIip
+         Gfw1glFi/5TfOHSUu4wk6uLexNLSif9U/yPvcZXE6x8nU/8SrTaN8u73b+YmBnIcrMkR
+         /TbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711350918; x=1711955718;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxdjCTpMFkU2iy+O7js4KexQH/nrED/NHR9zVi08e94=;
+        b=Kf6w6n3ss47r1QU8o6bUAKb/cA+OGFZP/m7U4J2Sw+Qt9QkMY8sehJei2qD+6pSd3B
+         BEuJ+uPNpHnfTwX6tUm9jy5zMAicAnObMnpeaN+5tLoZkp3kIW2hH0d1rF4/dCfuEIKi
+         0/iPgmtM8IWUFB54mm0y9/Ad+iUi1g5bEBnxkQNozoLE92EXMw7851QQnkSD+IOz0BeU
+         V3T4hjPKgOThMGZy0KfuarOSZYlMuV2Ub9FBp0CGjIr4Z461QIMDh4ZG9cYhM6E2BzyX
+         EaP0RyjBnivOlE6SIAm2snopoG8K2eOHBVKH5QbwgIoyBhp8IUIYAPAX3w0s4Oy+H/Wb
+         Br/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9er8KOkQ5LdERmumNuhwrY2FdTBwjHmr36eo+5zhhSm30utyhIUOVHZXI2XgJtU3nh+rAQs9i7nsLpHeEg02dzn/mAn5nK7BvrnstXC6PJA=
+X-Gm-Message-State: AOJu0YxXTRkNYixwYRgNOXojDdLY09BZrVEzjJydTZ5OOukFQ1rBZdx5
+	aqIh8UEy8RLvRidfe7YKNs6JnAGrJRgozBE/LiY4dLRQCbioKcqrVUWNSYgiFQI=
+X-Google-Smtp-Source: AGHT+IEABScS/uWpH8mLPgka5W2OjNZXv8LwGqs+ViqHFZf7wcLBOPPQPWhOE5l5IRTB8EdwF1y6ig==
+X-Received: by 2002:a17:906:1d04:b0:a47:34c8:900b with SMTP id n4-20020a1709061d0400b00a4734c8900bmr3993917ejh.0.1711350917368;
+        Mon, 25 Mar 2024 00:15:17 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.252])
+        by smtp.gmail.com with ESMTPSA id lv16-20020a170906bc9000b00a464f709687sm2723321ejb.59.2024.03.25.00.15.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Mar 2024 00:15:16 -0700 (PDT)
+Message-ID: <20deadca-48e2-4359-ae6e-82e44651a2e6@linaro.org>
+Date: Mon, 25 Mar 2024 07:15:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v6 000/164] pwm: Improve lifetime tracking for pwm_chips
-From: patchwork-bot+chrome-platform@kernel.org
-Message-Id: 
- <171133278736.9916.5526869645378949035.git-patchwork-notify@kernel.org>
-Date: Mon, 25 Mar 2024 02:13:07 +0000
-References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
-In-Reply-To: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
-Cc: linux-pwm@vger.kernel.org, corbet@lwn.net, Jonathan.Cameron@huawei.com,
- james.clark@arm.com, andriy.shevchenko@linux.intel.com, broonie@kernel.org,
- marcan@marcan.st, sven@svenpeter.dev, claudiu.beznea@tuxon.dev,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com,
- shc_work@mail.ru, bleung@chromium.org, p.zabel@pengutronix.de,
- shawnguo@kernel.org, s.hauer@pengutronix.de, paul@crapouillou.net,
- vz@mleia.com, mika.westerberg@linux.intel.com, andy@kernel.org,
- linus.walleij@linaro.org, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- neil.armstrong@linaro.org, khilman@baylibre.com, conor.dooley@microchip.com,
- daire.mcnamara@microchip.com, j.neuschaefer@gmx.net, heiko@sntech.de,
- krzysztof.kozlowski@linaro.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
- mwalle@kernel.org, orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
- zhang.lyra@gmail.com, fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, wens@csie.org, jernej.skrabec@gmail.com,
- samuel@sholland.org, hammerh0314@gmail.com, thierry.reding@gmail.com,
- jonathanh@nvidia.com, nobuhiro1.iwamatsu@toshiba.co.jp,
- sean.anderson@seco.com, michal.simek@amd.com, brgl@bgdev.pl,
- andrzej.hajda@intel.com, rfoss@kernel.org, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- pavel@ucw.cz, lee@kernel.org, quic_amelende@quicinc.com,
- quic_bjorande@quicinc.com, keescook@chromium.org, robh@kernel.org,
- johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org,
- kernel@pengutronix.de, linux-doc@vger.kernel.org, alyssa@rosenzweig.io,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org,
- groeck@chromium.org, chrome-platform@lists.linux.dev, festevam@gmail.com,
- linux-imx@nxp.com, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, linux-mediatek@lists.infradead.org,
- jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
- linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-rockchip@lists.infradead.org, alim.akhtar@samsung.com,
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- dianders@chromium.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
- greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
- gustavoars@kernel.org, linux-hardening@vger.kernel.org
-
-Hello:
-
-This series was applied to chrome-platform/linux.git (for-next)
-by Uwe Kleine-König <u.kleine-koenig@pengutronix.de>:
-
-On Wed, 14 Feb 2024 10:30:47 +0100 you wrote:
-> Hello,
-> 
-> this is v6 of the series introducing better lifetime tracking for
-> pwmchips that addresses (for now theoretic) lifetime issues of pwm
-> chips. Addressing these is a necessary precondition to introduce chardev
-> support for PWMs.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v6,001/164] pwm: Provide an inline function to get the parent device of a given chip
-    https://git.kernel.org/chrome-platform/c/4e59267c7a20
-  - [v6,003/164] pwm: Provide pwmchip_alloc() function and a devm variant of it
-    https://git.kernel.org/chrome-platform/c/024913dbf99f
-  - [v6,029/164] pwm: cros-ec: Change prototype of helpers to prepare further changes
-    https://git.kernel.org/chrome-platform/c/7256c2e79b8e
-  - [v6,030/164] pwm: cros-ec: Make use of pwmchip_parent() accessor
-    https://git.kernel.org/chrome-platform/c/19a568a8d3c4
-  - [v6,031/164] pwm: cros-ec: Make use of devm_pwmchip_alloc() function
-    https://git.kernel.org/chrome-platform/c/452be9421eda
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] clk: samsung: exynos850: fix propagation of SPI IPCLK
+ rate
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: =?UTF-8?B?6rmA7J6s7JuQL0pBRVdPTiBLSU0=?= <jaewon02.kim@samsung.com>,
+ krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, peter.griffin@linaro.org, andre.draszik@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com
+References: <20240229122021.1901785-1-tudor.ambarus@linaro.org>
+ <20240229122021.1901785-5-tudor.ambarus@linaro.org>
+ <CAPLW+4=jSr6ZsB7XekXsiUBm0SmVpVFnqpgjViuF3=HpT4gRAg@mail.gmail.com>
+ <867158d7-0d98-4058-9c2e-6b573ec68516@linaro.org>
+ <CAPLW+4=nRjRPdu80Y3izifxQDNUaJymU3di0hGErm1dHry3EfQ@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAPLW+4=nRjRPdu80Y3izifxQDNUaJymU3di0hGErm1dHry3EfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+
+On 3/22/24 18:09, Sam Protsenko wrote:
+> Yes, please leave Exynos850 out of it, if possible. 
+
+Sure, Sam, thanks for the feedback!
+
+Cheers,
+ta
