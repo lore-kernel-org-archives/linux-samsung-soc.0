@@ -1,94 +1,74 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15EB481DE
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 11:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A274D38FB9;
+	Tue, 26 Mar 2024 11:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711451586; cv=none; b=fZcKSRLPZKCDf2YVacllStZXuZiqYKQ3QU+VmZ+oUKQyK1rv7/8R9Ynh6ZW6x1+5FaY2Av1iP98t5sLsSeAAqMOtrRR85oLKkF1q6UUwVCLO5S0hwo9I8VUs5TqfJFvPZufUSh0h639wNnLFeCFufT61Z061XUP1HD6+NXfd7Hw=
+	t=1711452007; cv=none; b=fouAGk7xbuhskxsBJm+4lVgcBOIBQ2RwR1LkSHyu1vokj86U5O51MVMceeF9/Mrnj8BbkLKmC0UoJPNBEe/AvqbaiXdPl3+WpvH7O5rZ+KfIDkZtOH3FRae+xEJ9oCuuxnKwGPhH84IJDKnvp7ft3YpYvYCzBxybc7tjXZJgNrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711451586; c=relaxed/simple;
-	bh=obuHcm/3xdOzAnj87UVbyqU27DBpx+x5xHMGLWBzQIs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eGYwanCMRTnhpvn3tFFbtPDxRBkU4lcuADAFlAJeV1mVscU+J/tnaxeZOD40tcaBtuQUy/9q/jh8VUKLvszXzfEVZ489M8+bhYnxlXVtYKLKDEMsk1O0I7K0H+RJdLqUGCa6/QiYTL4kIPrto6JnNM/hw3vJranwV/QP8cfqPyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QWzFEIh6; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QWzFEIh6"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-341808b6217so3407643f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 04:13:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711451583; x=1712056383; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=obuHcm/3xdOzAnj87UVbyqU27DBpx+x5xHMGLWBzQIs=;
-        b=QWzFEIh6i8GZqoN++S2BWJG/xse+ekUgLf8c7ohCtExEQv5UWZ034M6KcFbK2Y7DBI
-         SRv31gE/+k6XJaE+KyNMsK2o9Pq9lHkUPpGxhA8O3gb+Ij/1tr/YZ7xI0KDT4UTdQAnw
-         +pKOyaSA6AYjOCvq1jACSTjk2sQ7+WPNDq34nQyP18J/c9WVBXhEWbkWikBm1WaW8Zh6
-         c62TRWtVONILJVbyuTM/EJJrLJaFmfbnfl7ACcjbqLi+Na7gkw+5RwYz77ST6G0hI3Wr
-         M8QWiL24Opl5lLoMJhaU583mbhXVfpltjcY2iv+kznXyR8XeYETJ7mhhUmHYjvuLOUhD
-         qENQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711451583; x=1712056383;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=obuHcm/3xdOzAnj87UVbyqU27DBpx+x5xHMGLWBzQIs=;
-        b=ZjE7x7S2Jus7z0A1iXz/FzZYzFX6VRZ7uKdAignnDT8Xd9A2lx+Xqn8TRGULPirl0t
-         pZHEdlhVqSqIK/8Zob3MlVyBhVO86fsCVXJD9JatzLlcKtkgZEH3z1kKgJ3wBCc86WEi
-         UE9lweYA+CF00N6Mn2aHHqNcH22nFzcAMgkzVh6KbI7ltreOsRtazjg2lX112EN1G4QU
-         jB/F2A5JV8+ainHQNSDUAam9teq7U2BrENFmUmbAI2HjbBSfwAamWVkdWv9Gv0Ua1MeT
-         H+WqCijzd0Pqsxq6DYtOu2qOzD6cTRwFEQ7zs0jp7i8ll82Kcw3Rwkx7hIeL+sa65H/7
-         6EwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxi32X4jwDC52Vt4i+mxh/1FTN/VaGrOR7DvpQ+G4WzInUmAeqes0V7PKGT/hiKq2fjIjzvh9kCZ+0JcfuyP0M9cmFzy1yvEbIQa2c4DHOyhs=
-X-Gm-Message-State: AOJu0YxCYx4nfqLFn2VjZLfBUj+/jsnCTv/drBb65DZgRUPOqgXVi0BZ
-	9FytoaQX1c/XRYAD3BZVMaUxroKTbHowbpWGH7T2ybN5RJA0l+wk9HlApMlxfiw=
-X-Google-Smtp-Source: AGHT+IGbgs8epz50aPlOWQHVksIvzA+lR3GutAL2nVRw5PemwOzalG1PtcF/Y6WO7R4P8gZsBDXvHQ==
-X-Received: by 2002:a5d:4e8c:0:b0:33e:6d6c:8503 with SMTP id e12-20020a5d4e8c000000b0033e6d6c8503mr6765943wru.16.1711451583172;
-        Tue, 26 Mar 2024 04:13:03 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id n14-20020a5d51ce000000b0033e9fca1e49sm11869966wrv.60.2024.03.26.04.13.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 04:13:02 -0700 (PDT)
-Message-ID: <9f2c715e671de0c083355bfbece703936e14045a.camel@linaro.org>
-Subject: Re: [PATCH v2 2/4] arm64: dts: exynos: gs101: order pinctrl-* props
- alphabetically
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, willmcvicker@google.com,
- kernel-team@android.com
-Date: Tue, 26 Mar 2024 11:13:01 +0000
-In-Reply-To: <20240326103620.298298-3-tudor.ambarus@linaro.org>
-References: <20240326103620.298298-1-tudor.ambarus@linaro.org>
-	 <20240326103620.298298-3-tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.2-1 
+	s=arc-20240116; t=1711452007; c=relaxed/simple;
+	bh=6brBgBW6YoCYIcFpfRnD9GmEyXoViwHWmMX0BAYP6h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZGkvLlHSrT6yN2q+8qTIJ13VHqeaKQ6YhJKrca557KXGGBx432GGANDpo0PmES81z87GUEN0TkdvWOO78VxaAMTSG0jnWVKtwapGvOmD5DIMeHSSd3tthTWvrQAumVbolo6z+0XjKRFMlT6lPxQrlc/7wXv9GrOKnb7AjwMVpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16CB92F4;
+	Tue, 26 Mar 2024 04:20:38 -0700 (PDT)
+Received: from [192.168.178.6] (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 784523F64C;
+	Tue, 26 Mar 2024 04:20:02 -0700 (PDT)
+Message-ID: <59d37960-cf19-4b10-802f-59d42496c133@arm.com>
+Date: Tue, 26 Mar 2024 12:20:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v2 4/4] soc: samsung: exynos-asv: Update Energy
+ Model after adjusting voltage
+Content-Language: en-US
+To: Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
+ linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, krzysztof.kozlowski@linaro.org,
+ alim.akhtar@samsung.com, m.szyprowski@samsung.com, mhiramat@kernel.org
+References: <20240322110850.77086-1-lukasz.luba@arm.com>
+ <20240322110850.77086-5-lukasz.luba@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+In-Reply-To: <20240322110850.77086-5-lukasz.luba@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tudor,
+On 22/03/2024 12:08, Lukasz Luba wrote:
 
-On Tue, 2024-03-26 at 10:36 +0000, Tudor Ambarus wrote:
-> Reverse pinctrl-* lines, first pinctrl-0 then pinctrl-names. Move the
-> pinctrl-* properties after clocks so that we keep alphabetic order and
-> align with the other similar definitions.
+[...]
 
-Krzysztof had requested to change not just the DTSI but all instances for G=
-S101
-here:
-https://lore.kernel.org/all/98810c49-38e6-4402-bd47-05d8cbc99ef3@linaro.org=
-/
+> @@ -97,9 +98,17 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
+>  			last_opp_table = opp_table;
+>  
+>  			ret = exynos_asv_update_cpu_opps(asv, cpu);
+> -			if (ret < 0)
+> +			if (!ret) {
+> +				/*
+> +				 * When the voltage for OPPs successfully
+> +				 * changed, update the EM power values to
+> +				 * reflect the reality and not use stale data
 
-Cheers,
-Andre'
+At this point, can we really say that the voltage has changed?
 
+  exynos_asv_update_cpu_opps()
+
+    ...
+    ret = dev_pm_opp_adjust_voltage()
+    if (!ret)
+      em_dev_update_chip_binning()
+    ...
+
+dev_pm_opp_adjust_voltage() also returns 0 when the voltage value stays
+the same?
+
+[...]
