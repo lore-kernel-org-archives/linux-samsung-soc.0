@@ -1,93 +1,77 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8FB12AAF0;
-	Tue, 26 Mar 2024 06:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341FE1353E1;
+	Tue, 26 Mar 2024 08:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711433621; cv=none; b=F2X02SC8kCwFOuhlICHXaBkEk+NOAHd80XiTucQrBX7U2C1nspYf+XTtI79LIFEqPBuJyDgZ2EdxKqtDxz9FQdkKW2bTrYSgrOImOKIgQFnCxFPfpvRMQwxEMst1Ok/+4GAoUf0UnD88T7j9pJabOWegK73QaljfavQeLNWtJGI=
+	t=1711441724; cv=none; b=BPE42KZ3MIXZF1CVYGjsnNmtRskhwdge3fCpCx8LNDgRChXpMHFotGIWy3WAJrVbrMC7FoKgAej1IZ12nszX7PUFe9QqN5AK7EWguzqpEL3DkDft+etHCT3aLeQ410B6zIROvsVA9tAeFoGF1r08jHpBBpuYrHo0aTW00iEnyW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711433621; c=relaxed/simple;
-	bh=DcNGe9Tk16HHRAoWEdPOBl5gcDCsDZwYgrSCwCtlhAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJJMAxgwzPjl5coCQLY5tl2iVFl+pZHAiAZDkDKrUBk4jHhQbVXVFn/v4MIgbEYZo+mhOg/PeQEZjR9DVFKgECaF1a3twvHWLG/X2pNJQqW5YkVEnb+FlYK6pwkexXf4vKBmC3soJ0Qbp36DIuF6j0T8WzMO3jWvP5wGFb8+vis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AEBC068D45; Tue, 26 Mar 2024 07:13:35 +0100 (CET)
-Date: Tue, 26 Mar 2024 07:13:35 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"Juergen E. Fischer" <fischer@norbit.de>,
-	Xiang Chen <chenxiang66@hisilicon.com>,
-	HighPoint Linux Team <linux@highpoint-tech.com>,
-	Tyrel Datwyler <tyreld@linux.ibm.com>,
-	Brian King <brking@us.ibm.com>, Lee Duncan <lduncan@suse.com>,
-	Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Jason Yan <yanaijie@huawei.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Jack Wang <jinpu.wang@cloud.ionos.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-block@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-	open-iscsi@googlegroups.com, megaraidlinux.pdl@broadcom.com,
-	mpi3mr-linuxdrv.pdl@broadcom.com, linux-samsung-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH 10/23] scsi: add a device_configure method to the host
- template
-Message-ID: <20240326061335.GE7108@lst.de>
-References: <20240324235448.2039074-1-hch@lst.de> <20240324235448.2039074-11-hch@lst.de> <6199c70e-f0a9-4756-b3fb-106985c41ebf@kernel.org>
+	s=arc-20240116; t=1711441724; c=relaxed/simple;
+	bh=DI13yHG2DTqEW7LMLFYsUMuHh6LIv0PK0NVoglFctCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WT1jiVusyuAnl6ZVYBzIae/FRsyAeq6TaZ1+Vta7RWBCCFzef1QcgmQBRS69/C3ecdDRqLT4mq0BHiQbNjRrd6VrU74lWVJpc797EIzC4+4QgMRL12A9jzNvvDbZgA6iRIRxFg7rWg8JiLvjzQkuvZb8fIZPZkOBUhc3H8XWAWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 003DF2F4;
+	Tue, 26 Mar 2024 01:29:09 -0700 (PDT)
+Received: from [10.57.71.219] (unknown [10.57.71.219])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432A43F7C5;
+	Tue, 26 Mar 2024 01:28:33 -0700 (PDT)
+Message-ID: <6801486a-46d9-4af9-a4fb-4d25f55a22bc@arm.com>
+Date: Tue, 26 Mar 2024 08:28:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6199c70e-f0a9-4756-b3fb-106985c41ebf@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v2 4/4] soc: samsung: exynos-asv: Update Energy
+ Model after adjusting voltage
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: dietmar.eggemann@arm.com, linux-arm-kernel@lists.infradead.org,
+ sboyd@kernel.org, nm@ti.com, linux-samsung-soc@vger.kernel.org,
+ daniel.lezcano@linaro.org, rafael@kernel.org, viresh.kumar@linaro.org,
+ alim.akhtar@samsung.com, m.szyprowski@samsung.com, mhiramat@kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240322110850.77086-1-lukasz.luba@arm.com>
+ <20240322110850.77086-5-lukasz.luba@arm.com>
+ <637a6390-6e38-49a4-abf5-b0d2b2a31093@linaro.org>
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <637a6390-6e38-49a4-abf5-b0d2b2a31093@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 25, 2024 at 04:38:43PM +0900, Damien Le Moal wrote:
-> > +	if (hostt->device_configure)
-> > +		ret = hostt->device_configure(sdev, &lim);
-> > +	else if (hostt->slave_configure)
-> > +		ret = hostt->slave_configure(sdev);
-> > +
-> > +	ret2 = queue_limits_commit_update(sdev->request_queue, &lim);
+
+
+On 3/25/24 19:17, Krzysztof Kozlowski wrote:
+> On 22/03/2024 12:08, Lukasz Luba wrote:
+>> When the voltage for OPPs is adjusted there is a need to also update
+>> Energy Model framework. The EM data contains power values which depend
+>> on voltage values. The EM structure is used for thermal (IPA governor)
+>> and in scheduler task placement (EAS) so it should reflect the real HW
+>> model as best as possible to operate properly.
+>>
+>> Based on data on Exynos5422 ASV tables the maximum power difference might
+>> be ~29%. An Odroid-XU4 (with a random sample SoC in this chip lottery)
+>> showed power difference for some OPPs ~20%. Therefore, it's worth to
+>> update the EM.
+>>
+>> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
+>> ---
+>>   drivers/soc/samsung/exynos-asv.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> Why do this if ->device_configure() or ->slave_configure() failed ?
-> Shouldn't the "if (ret) goto fail" hunk be moved above this call ?
-
-queue_limits_commit_update unlocks the limits lock, which we'd
-otherwise leak.  We could have a queue_limits_commit_abort, but
-it seems a bit pointless.
-
-> > +	 *
-> > +	 * Note: slave_configure is the legacy version, use device_configure for
-> > +	 * all new code.
+> I assume there is dependency, even though cover letter did not mention
+> it, so:
 > 
-> Maybe explictly mention that both *cannot* be defined here ?
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Will do.
+Thanks Krzysztof for the review. Yes, it touches driver in your tree
+indeed. Hopefully it can goes smoothly via Rafael's tree with your
+tag.
 
+Regards,
+Lukasz
