@@ -1,70 +1,78 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C39818EB1
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 09:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3724CE09
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 09:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711443624; cv=none; b=YZ2fkLiu3pl/Slktrl9VY+oInQ2TAHNTHcAb+ZobWRjsW7SUFaoNA+l4vEpVB+viMf4shO6tO1sFHaBlQ+xotoVt07gp4cah0ak75LvN37fmOx7ruu40BAr1zMNpTcBxfAqnYN3yvMI0rNKNN5bBjBJr88TK6YX3o+od4phmhjE=
+	t=1711443860; cv=none; b=VR3WRKRsF24Alj4NnpzqA6VBg0dEwpm0+e0HE+Z+eAdo0iFn/1fkcgdUvkw7ga4e/LBBAG5TgEv3z5OdU4ufn4FXK0a6wuxRkhdNxxlLlx9TNS1WmeLYj6DQZ2YA/9SWFtpZnLvUbkq8FxWgHqS24s6MQY1RHLBt8AOFdkwbN4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711443624; c=relaxed/simple;
-	bh=pNzfa0tdg/eWAuQZW6ONxAInY6gp1HmiXSutOixrMY4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AW/gIFrbayboXuxHxD95aoP2w/iHptH95wmOzfjHVMRp5BMzGdLFCAmVPB/IWQoVNHbqeAINyummQubrDCGUiQvNWv/YjO1X307foL+P+BLjq8po0Hxq1Tz38pGVPKggA96EX3q3bhNbOrn2pMpaneEvp1VaROL+ZZXAodhhtOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b4+gF7y6; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1711443860; c=relaxed/simple;
+	bh=ZyvDnyVdYW8mApjviyCj1pFwuScQjCQKI2BuXx5sgvw=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t5sGBiDU1dJLToV6ZiC3cxfYCz9jOxWJMV2uQ5dvZ2nS3TntPgIUBruBbx7GvvC9sOyg6m/DeuD3UYskL0fCZlrZB2++dd96SOEWJ67/XSaCJawZenMG9SleaDakjekdRecGA3MCnBjidruo4fkwimuL3sYSto+7CiWGXyn0+D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rQKmnbqd; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b4+gF7y6"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a466a27d30aso645964366b.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 02:00:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rQKmnbqd"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a44665605f3so610290966b.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 02:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711443621; x=1712048421; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1711443857; x=1712048657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N4iPDWY1+f0T1Q2vEEbvMtradJ/i1iR854HyXNPduhM=;
-        b=b4+gF7y6P3rpW28puep8VGUIolak4Z4zZ/lajVUvG8+HVxMUFYJSJU5IcHwtVxuLKN
-         uYZf+7iCb6nBBdysbt630Lcr03c7E5ukk7yd0aUgd6srAgToWkgmxty5xZfnHAQhKJql
-         pSg05LEbFG5rDfJMhLj6L3ZTJ+bu/Fu4Q5IaxPMQ4DjLMc8K/bJlR6GSIGfs0CSqexdl
-         YVbXIgOxAUzqzRUMq0NqYWs4PVWHEsFo+Druye6k6aeGQ/p/4kO0wM8PEpF/DonNMRv9
-         vuiC7QVL4C305hngY/ab1JHVR0eE/DRq1pp4lvKzVFqKUJhC/SK9Iel81HHNkaqOu9AA
-         cWZA==
+        bh=JUHFACxolYxK4dRg3Sf0j2U2n01l+uu5n940mo+Zokw=;
+        b=rQKmnbqdQHO+Fh9QJXQIwp+GKUpps5x6vM70tfJF9zDSFXS0GtRyEgMBkv31/aydew
+         TXgih7QesKG83xi49w7ZJUIl9UxoR6RkvRQtDdiRMB4hG/oSm142JKY7UDe0uVlBsnhR
+         6OzU9ur+fNWN97qWDcXnsYnDW6ps3qCuW78wagPNtLdbD6q9W6QAeNDitIMCKEULqFlB
+         ZW7yX3Z+SZBy9rNIeY2gtYbCKuLBpbvlJWeumLMZoXgDbAGA5cUOryOqQPkQJ337gGCb
+         uw5iepJ7qwIdWBRJF6kQXdvPXUmEnQd3wcSdvEC6SduL5WKBr237kCbMRA0El2WWs2Tl
+         Mpfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711443621; x=1712048421;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1711443857; x=1712048657;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=N4iPDWY1+f0T1Q2vEEbvMtradJ/i1iR854HyXNPduhM=;
-        b=k+WjwPn+umOxFtfH1xWWvXd3V3kMMqzMJGtpO8buiETX8DWVqcINMqkW7woR7tdxUS
-         Vh4kE1z4+mw9UYl8cywtzT2V4nSCRY2ywhQR0Gnpvv1WC/9MBl0DyJuYkHTj8qR0VFSq
-         HgTnfzEzPir0Pz7DGDngHKF8dnsJfg1SAxQ18RUnuGb8hfkKsAZ3EKlr/4j6BCMLrUZF
-         tL9OwhCScNR8hBcNB/CsuvAs6/6nLcurd6C1H3MPzhLYMpRTYt/AEVF+OhjNK7TMsF/H
-         KOIPSP8oJMWWfcvwm9OScAWTuWeetwzuvquBG+Id4jJnuX9bEGoXUhts6ssh713hrKvi
-         vWtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWShw4EUGPd07OPh2kvidpV7nOemuS/MYHow61w6j4DhtIrTJE5HWWGLHv4agoEdJu3rKORcuXprTtKuN+ZdP639LeaIV+4jYF2/gW3bNHHdlc=
-X-Gm-Message-State: AOJu0YxeYNG1YvoGiDHg42AJWF0Aj1SiJMZHT03W+vdkX53djyCUjCpe
-	FJLUje+UVkgNAh4oSQ0Y3a+twW09eaDdtFKwMyVhiiuEk9+UE4WdgwqM97/5RjDvkm9be3Ov33L
-	A
-X-Google-Smtp-Source: AGHT+IEyA1ZISAYO+CTSMcYnd+8P39nO4D6VhkYb5rVIQFSdgNbddobawaW1CRoklpLfMEqGbBHpSw==
-X-Received: by 2002:a17:906:260a:b0:a46:de64:c479 with SMTP id h10-20020a170906260a00b00a46de64c479mr5987710ejc.69.1711443620676;
-        Tue, 26 Mar 2024 02:00:20 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.222.44])
-        by smtp.gmail.com with ESMTPSA id a8-20020a170906670800b00a4710e7817esm4000973ejp.135.2024.03.26.02.00.19
+        bh=JUHFACxolYxK4dRg3Sf0j2U2n01l+uu5n940mo+Zokw=;
+        b=s/eobwj2C6es2gbHY1x6aQo/pJiVQJr/VFtga3/25a6SJNzCxq5SF9TeLj0QzZH3Ln
+         ee4sfGOdl0EoAwajRl1LDqY1VU5V7lDmCj+YQRdtarfnmzO/PUfa37JW0hf0Ykc8rqZ4
+         p3cDH0cD3JZGl8TVP//f1dpdbYi15loUhmq977MQufvmroZhtQfjEy2iF5SzVky9XiCD
+         NbxGK33USbqsVdsWletTiY8aSWSBLbupTh09U/JiQF1woE7Jylm3DsrW0+j2R5bRRsfk
+         Y6duNKiMT7S7th3yTZSPi6wYiPz29GxT+s2HopTJQryzlg2Ye9erqaGQFBHzIQeBzejX
+         +maA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvigHs/klc+aUMxfeoiq75+xZTgMLJG5r6Z0TJ+ZWxvvFEVnM3u5dz7454IjZCh/HPqWpgcGJ1foiaVLt7XGx00kbFZrbgXN56Cz+TYhLNLNc=
+X-Gm-Message-State: AOJu0YwFKa7mZ7QWA0CKTVMvKzYVA39ynwM14+xparSxC2kqH5viNyub
+	t7XVaiJ/3aL2gJHhar4eMTeWpqfYyms+Sn4XnR5TF2ttccmrCotqbJ52t64v6GJmTZI6FZITmq2
+	S
+X-Google-Smtp-Source: AGHT+IEvHcy6UDTsdaGFobIClvyRxp2fSbGk49oVaAThiZZUGAXxspDnmzsU3qZha76m4QuIBn8YEA==
+X-Received: by 2002:a17:906:3e0b:b0:a4d:f999:de2d with SMTP id k11-20020a1709063e0b00b00a4df999de2dmr86359eji.8.1711443856748;
+        Tue, 26 Mar 2024 02:04:16 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.44])
+        by smtp.gmail.com with ESMTPSA id ao18-20020a170907359200b00a46aba003eesm3973097ejc.215.2024.03.26.02.04.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 02:00:20 -0700 (PDT)
+        Tue, 26 Mar 2024 02:04:16 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240312190348.724361-1-krzysztof.kozlowski@linaro.org>
-References: <20240312190348.724361-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: memory-controllers: add Samsung S5Pv210
- SoC DMC
-Message-Id: <171144361934.95197.9760843620606063956.b4-ty@linaro.org>
-Date: Tue, 26 Mar 2024 10:00:19 +0100
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
+Date: Tue, 26 Mar 2024 10:04:13 +0100
+Message-Id: <171144376244.95623.15251693618331114140.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
+References: <20240312185035.720491-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -72,26 +80,22 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
 
-On Tue, 12 Mar 2024 20:03:48 +0100, Krzysztof Kozlowski wrote:
-> Document bindings for the S5Pv210 SoC DMC memory controller, already
-> used in DTS and Linux CPU frequency scaling driver.  The binding looks
-> quite empty and is most likely incomplete, but the platform is so old
-> that no one expects any effort on this, except documenting what is in
-> DTS.
+On Tue, 12 Mar 2024 19:50:35 +0100, Krzysztof Kozlowski wrote:
+> Convert Samsung S3C6400/S3C6410 SoC clock controller bindings to DT
+> schema.
 > 
 > 
-> [...]
+
+Applied with description changes as Conor suggested.
 
 Applied, thanks!
 
-[1/1] dt-bindings: memory-controllers: add Samsung S5Pv210 SoC DMC
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/e23359d88a81679e7c55d221e7cb4c39abf5d760
+[1/1] dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
+      https://git.kernel.org/krzk/linux/c/2125459ced054218fa8cf0170a116e2eeaa0f276
 
 Best regards,
 -- 
 Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
