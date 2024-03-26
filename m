@@ -1,93 +1,70 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7436A76049;
-	Mon, 25 Mar 2024 22:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E256B1804F;
+	Tue, 26 Mar 2024 00:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711404817; cv=none; b=Pe7hiC9+TP1LnVjV9evkWq1t8QHhXSJZq6EXVckXwpEEdB2S0XldzoPzEMxPbED7UY7SiQIvxADit2palZSxfZAfdT/kLgzQ50h4azI5M9FR+u1p+T20wXJAgJtVGkU7F5q1/GxhOXiLCd6tshAk9SacexLJ/XibRLRPcFw8C1g=
+	t=1711413406; cv=none; b=s/wPuTkwcAZC/mztNgv2M9V/PhIGPAcx6w6BAsDWtQQGkl73MEWj569zN8pFjg74lXLCyU6P9lBTOatNDmpg9fgJ1E8UY8o4YBK8xE2/fqWCI5/w29HDPvH4V3FdgZIU2c95Rf7jXvPdtyhwRXvVjl4h5HVvJaR+/WeXjidT1bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711404817; c=relaxed/simple;
-	bh=/aQ4e/dbCdS2itYvqCPdo8g2LXYfZKkrZB47BoXZEIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BVWrvAX9d6fGDRWNyp3Tqpxe1V28J0Dz2hj7K85sFoMSYHA9aAG8QPCK7AB2PmkRqWdmAPDDdyBjiSVJyxzOJ7XOFnOe6/43o/hc0YC3019KIhfi3NJo2vrt+LBhNVkM95+rBsfYvfaCSaJM2PU5akc0fnoE/6EFLvJoLlnvjwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1dfff641d10so33199075ad.2;
-        Mon, 25 Mar 2024 15:13:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711404815; x=1712009615;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/aQ4e/dbCdS2itYvqCPdo8g2LXYfZKkrZB47BoXZEIg=;
-        b=AaZU0bb8r2Z1qf9JawTq3jTgbvgna/sjm4Njr+h/9fzBz62Cb6HrAyfdfYYXc0Z7mI
-         254eIX2TjwF3/Br3E2Ilhq88jS8FMHxqdrtDlxe2wd+KFO/AUEpzPpVAhBpV4QYoFx4y
-         RnZ9CdPqYS10dTemKZGYArPRGiMjrYhv8Xr/y1B7orOtw2kJHlZGtK8fNa+VDfiJpyoc
-         7QVsi4/Fj4U2yW0DDPVdf22+nZsF9vZmSC6HaVFAbCQn5oEXRZKERIS4pYsql1n5hqN4
-         O0qSwultMSpkylKiJZQxVMbBGW9asw1BSJ6y+GLiva0xZ2vwfSG+S7oD0QU7EQLAuEv2
-         mH3A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/M/PHx5ZW93BPBiM3h05B7cbaf6PSE8qtaTvQXGbuHUZ2h8nkr4qhxJvCqrMwOYc29QEfkZCzCpTWpF8nkcVEMJTbs9bDdsux8QB1y2Og0kNXu4KUWopmdnN8dhQuFjYtWnyfudDyas0cyR1pZPPQqiIY0XbZj1PKhORLpG3ApHE+k00b2VW8SFJFTg9V0cdkiViB/Fswnjifnj5qxoUuRUCLjcrraDpWBJyTvBjmGlcmc7hO3m/chfzNl4ofSGc=
-X-Gm-Message-State: AOJu0YwZc2KHjJW2A5tWFs9B3FC6Waxf8iS1CZzg98a60W3Q7HQo80hW
-	wg7ME2WfJ9n7hvAh6zcYGbxehvyt5e/whtqmblw13m3KEawD3JZ7
-X-Google-Smtp-Source: AGHT+IGfB+WQv3DsfWzHC6sXgKWc3iOzsu5rHx4jJULxZaWi0a0lVRdY99x8OK5M+q8sweYiGRV5UA==
-X-Received: by 2002:a17:902:d650:b0:1e0:d579:91df with SMTP id y16-20020a170902d65000b001e0d57991dfmr956391plh.68.1711404815577;
-        Mon, 25 Mar 2024 15:13:35 -0700 (PDT)
-Received: from ?IPV6:2620:0:1000:8411:262:e41e:a4dd:81c6? ([2620:0:1000:8411:262:e41e:a4dd:81c6])
-        by smtp.gmail.com with ESMTPSA id s19-20020a170902989300b001dd67c8e108sm5195084plp.199.2024.03.25.15.13.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Mar 2024 15:13:35 -0700 (PDT)
-Message-ID: <a81db761-7ed2-4e4b-834f-7641f6199fcc@acm.org>
-Date: Mon, 25 Mar 2024 15:13:31 -0700
+	s=arc-20240116; t=1711413406; c=relaxed/simple;
+	bh=r6ja1S3WkmxWys+sE3KabUy5bKAQKHZGyKXel35g+zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dpc+FvOx18fHm1OGndsMDgpoQyDIMSjFGHKmGbshxy45Ao/sgRnwfvIaTWlts0nhnzwQS945Vc2ZXiv3G3xafTrYj66NuWfvwY14zz2rJ0arutkxDAPH3AAKEy1W4IQjXsK0GJeQkcJbU2848eYoUajcE0okRAQwhJFB19z6Pok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFOy9Sck; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFOy9Sck"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84803C433C7;
+	Tue, 26 Mar 2024 00:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711413405;
+	bh=r6ja1S3WkmxWys+sE3KabUy5bKAQKHZGyKXel35g+zY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RFOy9SckrUmOjcVY80p+Bpxbe+5dpDJq+JeaQvIywXepTed1YRXnEepoqUkHhDLDv
+	 KZQ8orGHJmcfhxU4yqXzvKwkkh03GuDsm5VknrzWZxwAeC8moegodFxeAFmHcguP3V
+	 MvMXRlBgmBX55pjBPgOUTWQbK7zrjPHUR7Ivk7miBmPv+gpyP5Ja8S02vD6UZnj61n
+	 CqfQ4NXy/CKPT7KniveufUJdSfosIbl7mM5+gISfC65C9eTYs21OyRMfhMeYTy9MAj
+	 ov2d24lOwn4Oj/ZJVUPrXNuEHsLe2pES4uVY1T8XSrKZegQunB7Zn3qmkn816MOaQo
+	 yZPbuVAYSRHAg==
+Date: Tue, 26 Mar 2024 01:36:41 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, asahi@lists.linux.dev, 
+	chrome-platform@lists.linux.dev, imx@lists.linux.dev, linux-actions@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH 00/64] i2c: reword i2c_algorithm according to newest
+ specification
+Message-ID: <j2l7tu24itjelylrgwe6gdsy3mfrw3dnve4rdofmri3z7xdroc@se56t5ylmdak>
+References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
+ <ug266trshvhhbsln3eoh53fmsuj3l63ziz6gavcl7rv2jhjr5t@3av5givh5n7m>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/23] ufs-exynos: move setting the the dma alignment to
- the init method
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- Sathya Prakash <sathya.prakash@broadcom.com>,
- Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
- Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
- "Juergen E. Fischer" <fischer@norbit.de>,
- Xiang Chen <chenxiang66@hisilicon.com>,
- HighPoint Linux Team <linux@highpoint-tech.com>,
- Tyrel Datwyler <tyreld@linux.ibm.com>, Brian King <brking@us.ibm.com>,
- Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
- Mike Christie <michael.christie@oracle.com>,
- John Garry <john.g.garry@oracle.com>, Jason Yan <yanaijie@huawei.com>,
- Kashyap Desai <kashyap.desai@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>,
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- Jack Wang <jinpu.wang@cloud.ionos.com>, Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alan Stern <stern@rowland.harvard.edu>, linux-block@vger.kernel.org,
- linux-ide@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
- MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- open-iscsi@googlegroups.com, megaraidlinux.pdl@broadcom.com,
- mpi3mr-linuxdrv.pdl@broadcom.com, linux-samsung-soc@vger.kernel.org,
- linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-References: <20240324235448.2039074-1-hch@lst.de>
- <20240324235448.2039074-9-hch@lst.de>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240324235448.2039074-9-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ug266trshvhhbsln3eoh53fmsuj3l63ziz6gavcl7rv2jhjr5t@3av5givh5n7m>
 
-On 3/24/24 16:54, Christoph Hellwig wrote:
-> Use the SCSI host's dma_alignment field and set it in ->init and remove
-> the now unused config_scsi_dev method.
+Hi Wolfram,
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> > @Andi: are you okay with this approach? It means you'd need to merge
+> > -rc2 into your for-next branch. Or rebase if all fails.
+> 
+> I think it's a good plan, I'll try to support you with it.
+
+Do you feel more comfortable if I take the patches as soon as
+they are reviewd?
+
+So far I have tagged patch 1-4 and I can already merge 2,3,4 as
+long as you merge patch 1.
+
+Andi
