@@ -1,157 +1,98 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320745732A
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 11:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661F113C3D9
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 14:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711452967; cv=none; b=jCB/sXdRcizI3f1ajWN1uMxdT9hkoUERn/wcOO07718d6G7anzZeZGsj2iC4MyfZGPTGqctTDaWtOqlXow8OKPeOBlIcvxSzA/0Wg7CRgtKdAurSGOIrgiSu4x8EfozeyYb4AydN7WeF2nSqtuljO0P8eOIXrb4+8IjkG5oveYk=
+	t=1711463973; cv=none; b=DIlKlyacX7DTavROWR1ZheqgZRfyS6jkRssKQODL4Y3JSPqpstF+uNTh+3FqZ9VAY1Sm5N+7WBLCqA9GGIndfMZf/q45d/aoP9A4JCDFPtDqb2/E4cSOLcrLhH9QLlHUbby3s1GwB2kTFi9782SXF0+B+ffZeRzfWxrmLZEmhHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711452967; c=relaxed/simple;
-	bh=/9sjfhLIfFGy77UGOvipu72hd+OCrZ/YXwyTWB7a/e8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=U8Dwiu0lNMJxwKHwZIhcatdWf65ET3cORoeMH8flPftNhGdXt2rkqHx5rXEQiik9duy44SKfnjSxIrX00CirDzbTqtQLkdpuLQ5RK51SBqI5KeG62ay2saq29C1+ZgbwbIDRfuYQDPsPT3SPUvSA7ZFmhSDsJM7WqyJTxfPD5lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qxUANOsR; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1711463973; c=relaxed/simple;
+	bh=PVCqUI2IthMT8jtHUQFgN0wk4nd/zHp6x9pGlyM8wjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GL1+fAWZBTK8q1hjtnLYpyaI5J7yGIjC/pCDOlRb9g16l27tiNpOWT1u5e+k1Jn6ppxz/m6s7k9j0fe9MdWgM+vxPhwYw5775VyPy8oCJ2lAGvWoJMTLTBGRRSHfu1srbDtl6FC15eYkXLQKtvB0FRIIe/3Mu5NVflnHu+WD9TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmJDdAEm; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qxUANOsR"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240326113603epoutp03188a5b1a3d3fb78aa811642e6d052f37~ATWb7r1Ns2036320363epoutp03E
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 11:36:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240326113603epoutp03188a5b1a3d3fb78aa811642e6d052f37~ATWb7r1Ns2036320363epoutp03E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1711452963;
-	bh=3Z1Bn3oqb+Uo6Pqdv34+uEDikoxRgsxCbeOO/g/bLpI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=qxUANOsRkdJARt33vn/dplgg4X50Iz/ZJQyZDDPi8LwPK2c7uRjkNrVco83zlxw9m
-	 t6ssRm0+3LQ7z2I7WM1vwSNKTRo2hecxbVyF2gmZmuRNi1g9PWSc9tZMrXCgwd6m1b
-	 17nGLC2/Ea7wsYQn0iDRCrP6METS67St9LK9pShw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240326113602epcas5p3e9735ef1a0d2b1d3dd112c70c7dfac72~ATWbgawYF2752627526epcas5p3r;
-	Tue, 26 Mar 2024 11:36:02 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4V3nmw6CsLz4x9Py; Tue, 26 Mar
-	2024 11:36:00 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	15.B6.09665.023B2066; Tue, 26 Mar 2024 20:36:00 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240326113600epcas5p273b4e2b62aa732a55bade196b3f45afe~ATWZVkryq2506225062epcas5p2j;
-	Tue, 26 Mar 2024 11:36:00 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240326113600epsmtrp216cf20999d06b863f2fb703b60349db6~ATWZRHkMj0269802698epsmtrp2Y;
-	Tue, 26 Mar 2024 11:36:00 +0000 (GMT)
-X-AuditID: b6c32a4b-5cdff700000025c1-0b-6602b320c210
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E7.5B.08924.023B2066; Tue, 26 Mar 2024 20:36:00 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240326113558epsmtip11297fc7f004d14d87616aff8b8e509fb~ATWXVzdOO2176721767epsmtip1R;
-	Tue, 26 Mar 2024 11:35:58 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Tudor Ambarus'" <tudor.ambarus@linaro.org>,
-	<peter.griffin@linaro.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <andre.draszik@linaro.org>,
-	<willmcvicker@google.com>, <kernel-team@android.com>
-In-Reply-To: <20240326103620.298298-5-tudor.ambarus@linaro.org>
-Subject: RE: [PATCH v2 4/4] arm64: dts: exynos: gs101: define all PERIC USI
- nodes
-Date: Tue, 26 Mar 2024 17:05:56 +0530
-Message-ID: <001a01da7f71$c68073f0$53815bd0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmJDdAEm"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34175878e30so4006516f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 07:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711463970; x=1712068770; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cfqyT8DykVWS2FVT06Lc/GB2ETA54ZjApWkcdYSEHgE=;
+        b=mmJDdAEmdcbg0XZ0wVIXC76s8wLBrcmWLcyW2MIbty/FPvCRK9LP7CJjR938Ihj7a8
+         hwJUY+skNoWBMpMf7kcKKYzZSbfO2Y3u+/UW8XeMpjIVuro0BOAHuYI7ifNGRzvGaXPW
+         m2MF339XVJV1sIk5JSmTJA/VdVMmN15NutP3SlOhqjFfFDC11WSPobqNmFntqtCBO5v/
+         fRxmaFcks0hg/5B++kL47PfE14q41OfIvIFnqZRokCX8a1WL11e1UMJ/X1/++hwwFdSb
+         09hChma3FRfpKFg3P6RRd4WgLFD1dm+oWkFR7M6jp/rMVqxUK+tmS0jPpEWikb05eSy/
+         Pcaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711463970; x=1712068770;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfqyT8DykVWS2FVT06Lc/GB2ETA54ZjApWkcdYSEHgE=;
+        b=jIV440xzQnlFPSCHQe9NpJHCKOPL0uv6/nW38m5fe0PQhN+7FENt9pCkemtpMNAbdP
+         QDnhQqbPI1iDLT8VhmRQ1fUSOZjZqNHx1BLDoG7ZhiN2NIcKWj5Q3UhBurU7pl8plhUc
+         jPSFsGYM3Ay77/ufuRAzRrhQL27c330Fb0ULsp29ZHOhinGlCQ3tvkmsRC4aIbO51Ekp
+         dPK4ztTvUgcPTW46MYGf9qJT16u6O4U5O0qHiSScey52w9NLm4dDXwmI6HIyIrRKxglp
+         DneRP2CRqcL8dOAKnU3QIWrbfC59Fo6uISZ/NfxQsYr2M1LTrcxBrwY5e0AD/lK2+TKc
+         OGoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX24CbGp1bhfbRw591gpHAhPExUMvwAOauG2IIF0RdAI8q0qzC2pgYa61r4xTTWEA+PefJghlQn895aMdIG0k+V7JadOd+K3jmd+qjbNl+18M=
+X-Gm-Message-State: AOJu0YwEVPFkkzG6J5QlOvuPc4hK06pnCOIBFZSheu5A391MBMs4AJXJ
+	cKytNRoQO40ThFWSliesCRoFcAwnO3/6w71nl0018Y6VGI5C2AAmXolwx38vClQ=
+X-Google-Smtp-Source: AGHT+IFMbpIbW88EA8mOGps+QLuXd1FMyYQpvKzji8LKbQ9tVeTRAt7QVs0I2203R8pDGu9n+TxvwA==
+X-Received: by 2002:a5d:42c3:0:b0:33e:7650:1297 with SMTP id t3-20020a5d42c3000000b0033e76501297mr7274848wrr.6.1711463969712;
+        Tue, 26 Mar 2024 07:39:29 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.252])
+        by smtp.gmail.com with ESMTPSA id bo4-20020a056000068400b00341b749ab8bsm10004692wrb.69.2024.03.26.07.39.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Mar 2024 07:39:29 -0700 (PDT)
+Message-ID: <b80134a2-99b8-489e-860e-7ddb2bda576a@linaro.org>
+Date: Tue, 26 Mar 2024 14:39:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQD6o8IeErxKDZrGFPr+Y/HHTXn7CgHEJvlEAe9KlRWy7AASoA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmhq7CZqY0gymT9S22vNrMYrFm7zkm
-	i/lHzrFa7NguYtH34iGzxabH11gtLu+aw2Yx4/w+JosNM/6xWLTuPcJu8elWnMWqT/8ZHXg8
-	tu3exuqxYFOpx6ZVnWwed67tYfPYvKTe4/MmuQC2qGybjNTElNQihdS85PyUzLx0WyXv4Hjn
-	eFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKADlRTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2
-	SqkFKTkFJgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGa/e/GIqaOeqWP+6j6mB8ThHFyMnh4SA
-	icS6C+1sXYxcHEICuxklrh89zALhfGKU+PhmJZTzjVGi+8pxdpiWP93roRJ7GSXm/zzMDOG8
-	YJRYuXw7K0gVm4CuxI7FbWCDRQQWMUo8P7uQDSTBLPCUUeLgSwsQm1PAXmLtJ5CFnBzCAsES
-	h/tbwGwWAVWJxg/9TCA2r4ClxJ7uR1C2oMTJmU9YIObIS2x/O4cZ4iQFiZ9Pl4EtFhFwkvi3
-	/BYjRI24xMujR9hBjpAQOMAh8XsmxHUSAi4Sn5Y0Q/0jLPHq+BYoW0ri87u9QIdyANkeEov+
-	SEGEMyTeLl/PCGHbSxy4MocFpIRZQFNi/S59iFV8Er2/nzBBdPJKdLQJQVSrSjS/u8oCYUtL
-	TOzuhjrAQ2LTi/msExgVZyF5bBaSx2YheWAWwrIFjCyrGCVTC4pz01OLTQuM81LL4RGenJ+7
-	iRGcfrW8dzA+evBB7xAjEwfjIUYJDmYlEd6WLwxpQrwpiZVVqUX58UWlOanFhxhNgaE9kVlK
-	NDkfmAHySuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8sSc1OTS1ILYLpY+LglGpgCre745JZ
-	embZ4SMzV4lFSJaFNqct/sL4UpjrgMmjNZ5/6qyi4w46S5R9K95spf71xpSrQQY1S+fsCWcs
-	S4tZrNcVXX/r3PWNn54tORt9qFZp3/Fcm2laW/7/fvFUZoV0k8xO9l0JgoU1RQIHux5Gim48
-	1l2tVGn7olpllo+AysEX4aVbJrCvvfdOoHPpuz2P0qpn/Gnf6sy4sfziykcfzv+9x9syc1PR
-	hFjjnwJubAIfO1jOZ8f5yDcyVl27zu+63KfPZvLrs2HMVTmCha/8jTfecxJIsBKqr/TafsSv
-	oWj7RJUJqrbq/9Zqlj5cuf2hz62dXBGr/kj4/A6ZfdTxrtzk4g9af6+/N/0a/640S4mlOCPR
-	UIu5qDgRAKJsNo5IBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSnK7CZqY0g2MruSy2vNrMYrFm7zkm
-	i/lHzrFa7NguYtH34iGzxabH11gtLu+aw2Yx4/w+JosNM/6xWLTuPcJu8elWnMWqT/8ZHXg8
-	tu3exuqxYFOpx6ZVnWwed67tYfPYvKTe4/MmuQC2KC6blNSczLLUIn27BK6MV29+MRW0c1Ws
-	f93H1MB4nKOLkZNDQsBE4k/3epYuRi4OIYHdjBKbvpxhgkhIS1zfOIEdwhaWWPnvOTtE0TNG
-	iY1rf4MVsQnoSuxY3MYGYosILGOUmPpZFaSIWeA1o8Sn5Vegxh5mlHi6aB9YB6eAvcTaT4dZ
-	QGxhgUCJ/ctamEFsFgFVicYP/WA1vAKWEnu6H0HZghInZz4BqucAmqon0baRESTMLCAvsf3t
-	HGaI6xQkfj5dxgpxhJPEv+W3oGrEJV4ePcI+gVF4FpJJsxAmzUIyaRaSjgWMLKsYJVMLinPT
-	c4sNCwzzUsv1ihNzi0vz0vWS83M3MYJjUEtzB+P2VR/0DjEycTAeYpTgYFYS4W35wpAmxJuS
-	WFmVWpQfX1Sak1p8iFGag0VJnFf8RW+KkEB6YklqdmpqQWoRTJaJg1OqgUno63Hm4Jvz/5+9
-	ceqoxaPOl0L/lpSombz74n75Ynupp421WLnr2Rnvmebu4UyTXDLjsNDiw03/y6L822atbD86
-	sWn2ldbAWJ1p2e/Zi09NmmO6Uvmn3PStj2pOTLdt7T24OOnl5dqXQdvz82T6ONUfbtj8ipVR
-	PnDTne2Xp63siOE7tC/09QTJW8ItT6SfLmBrnXjgm4XFi6K4LvUgA/UHiyfek1iWeUP2oM3W
-	50lKfznK6wWnnLjAa/JbYr3Vk163bRmXuLxYb37Y8WybZpPzu3v71p6/tePY03P31qsHd9Ys
-	nuXSMH3lfOE9Cx1ZZY9tjjk58+Ovt0Ghjte2au7ZUqDHlznNycaqXu7ci3AtJiWW4oxEQy3m
-	ouJEAEOTuj4wAwAA
-X-CMS-MailID: 20240326113600epcas5p273b4e2b62aa732a55bade196b3f45afe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240326103634epcas5p2a6a3621a6258aed8e13958339dd6caba
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: exynos: gs101: order pinctrl-* props
+ alphabetically
+Content-Language: en-US
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ peter.griffin@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, willmcvicker@google.com,
+ kernel-team@android.com
 References: <20240326103620.298298-1-tudor.ambarus@linaro.org>
-	<CGME20240326103634epcas5p2a6a3621a6258aed8e13958339dd6caba@epcas5p2.samsung.com>
-	<20240326103620.298298-5-tudor.ambarus@linaro.org>
+ <20240326103620.298298-3-tudor.ambarus@linaro.org>
+ <9f2c715e671de0c083355bfbece703936e14045a.camel@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <9f2c715e671de0c083355bfbece703936e14045a.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Tudor,
 
-> -----Original Message-----
-> From: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Sent: Tuesday, March 26, 2024 4:06 PM
-> To: peter.griffin@linaro.org; robh+dt@kernel.org;
-> krzysztof.kozlowski+dt@linaro.org; conor+dt@kernel.org
-> Cc: alim.akhtar@samsung.com; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; andre.draszik@linaro.org;
-> willmcvicker@google.com; kernel-team@android.com; Tudor Ambarus
-> <tudor.ambarus@linaro.org>
-> Subject: [PATCH v2 4/4] arm64: dts: exynos: gs101: define all PERIC USI
-nodes
+
+On 3/26/24 11:13, André Draszik wrote:
+> Hi Tudor,
 > 
-> Universal Serial Interface (USI) supports three types of serial interface
-such
-> as UART, SPI and I2C. Each protocol works independently.
-> USI can be configured to work as one of these protocols. Define all the
-USI
-> nodes from the PERIC blocks (USI0-14), in all their possible
-configurations.
-> These blocks have the TX/RX FIFO depth of 64 bytes.
+> On Tue, 2024-03-26 at 10:36 +0000, Tudor Ambarus wrote:
+>> Reverse pinctrl-* lines, first pinctrl-0 then pinctrl-names. Move the
+>> pinctrl-* properties after clocks so that we keep alphabetic order and
+>> align with the other similar definitions.
 > 
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 769
-> +++++++++++++++++++
->  1 file changed, 769 insertions(+)
+> Krzysztof had requested to change not just the DTSI but all instances for GS101
+> here:
+> https://lore.kernel.org/all/98810c49-38e6-4402-bd47-05d8cbc99ef3@linaro.org/
 > 
 
+ah, yes, makes sense. I saw you had your own patch doing the reverse,
+I'll take yours and rebase on top.
