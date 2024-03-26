@@ -1,25 +1,25 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15F52AD2C;
-	Tue, 26 Mar 2024 20:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFB613D89B;
+	Tue, 26 Mar 2024 20:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711483987; cv=none; b=PkxhFweHqwerDMIEI4e23/lIe8ll35uzpMLDvg54lLBtcTC8XLmZqMVutzXjzITJAFzLvp7Zss5rO1FTEaxaSbtFlNyWhJWz9Vyc2R26CG7VbpPHy+MFaKBLb3PgR6ziHxyWfQg2+2tG03Hb6Vfer3ZGtnFB/cLfdRamqDlTGEk=
+	t=1711485147; cv=none; b=V+stiiMZcPKrDvPoL0ypnkfbhqcB4f1AHOaU0Qtcw7Ml1onfH/QLxuLRZ+ixUaYM8Dxyt1MCkX6QY40pplC71qAIvMWyijiAB+jFSB36DjmOoQyspnoIEnh4hYgtrtXB3qASDLMjzJyHVk/OTRu9vVzI8DO5yPksU/8aLB32NNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711483987; c=relaxed/simple;
-	bh=ONqS7vCsZDHAZUJpV/vbCQilzEFVRm30lbCcXCOG7dk=;
+	s=arc-20240116; t=1711485147; c=relaxed/simple;
+	bh=YDiYTZbDlKFpyomUQc0JumjopdGUmZbWPOUs4wMJU6s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ai19z0nusk4Eex1ZGmcUuJ7gNCZ1DYke5VMxCm5iq7vKCPsg+AyiT/9/FKasZerCjUPMJZwsKmd6BEYR9tgkzsyF3jwMLlyHAJn5qSXVrG3jgNBzmgZrraaQI18Mc8pbgBpyiOwWU6Y6OdKiENQI7W7wZUEAnEWyo6WQNzh2uY4=
+	 In-Reply-To:Content-Type; b=oYrW8cq4WNsA4pKLRVd1h4B9WVZ8NRtfuqeMXViC3Z1cSCdtlr2ECrKF3dWXuFzA+42cU6klNYsSb9UkcmXNkHOXjjm1d9Gsh3EIqmTjK1mwvZuhL5xhHf596xHdZyVKTG5wNhLgbTjRURsz/nb5uFV8psUsuMUaPmhnNChPEpA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E7C52F4;
-	Tue, 26 Mar 2024 13:13:36 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EB912F4;
+	Tue, 26 Mar 2024 13:32:58 -0700 (PDT)
 Received: from [10.57.71.219] (unknown [10.57.71.219])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99A983F64C;
-	Tue, 26 Mar 2024 13:13:00 -0700 (PDT)
-Message-ID: <d5d6ae17-3ba1-4cb8-909f-865e47bfa45b@arm.com>
-Date: Tue, 26 Mar 2024 20:12:59 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A7AF3F64C;
+	Tue, 26 Mar 2024 13:32:22 -0700 (PDT)
+Message-ID: <30ee98e9-3d9a-4be8-8127-043f68a7dcb1@arm.com>
+Date: Tue, 26 Mar 2024 20:32:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -27,8 +27,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND][PATCH v2 4/4] soc: samsung: exynos-asv: Update Energy
- Model after adjusting voltage
+Subject: Re: [RESEND][PATCH v2 3/4] PM: EM: Add em_dev_update_chip_binning()
 Content-Language: en-US
 To: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
@@ -37,54 +36,129 @@ Cc: linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
  alim.akhtar@samsung.com, m.szyprowski@samsung.com, mhiramat@kernel.org,
  linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 References: <20240322110850.77086-1-lukasz.luba@arm.com>
- <20240322110850.77086-5-lukasz.luba@arm.com>
- <59d37960-cf19-4b10-802f-59d42496c133@arm.com>
+ <20240322110850.77086-4-lukasz.luba@arm.com>
+ <eb9f48f6-cca8-405b-82a2-352893a79f14@arm.com>
 From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <59d37960-cf19-4b10-802f-59d42496c133@arm.com>
+In-Reply-To: <eb9f48f6-cca8-405b-82a2-352893a79f14@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Dietmar,
 
-On 3/26/24 11:20, Dietmar Eggemann wrote:
+
+On 3/26/24 10:09, Dietmar Eggemann wrote:
 > On 22/03/2024 12:08, Lukasz Luba wrote:
 > 
-> [...]
+>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>> index 6960dd7393b2d..f7f7ae34ec552 100644
+>> --- a/kernel/power/energy_model.c
+>> +++ b/kernel/power/energy_model.c
+>> @@ -808,3 +808,54 @@ static void em_update_workfn(struct work_struct *work)
+>>   {
+>>   	em_check_capacity_update();
+>>   }
+>> +
+>> +/**
+>> + * em_dev_update_chip_binning() - Update Energy Model with new values after
 > 
->> @@ -97,9 +98,17 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
->>   			last_opp_table = opp_table;
->>   
->>   			ret = exynos_asv_update_cpu_opps(asv, cpu);
->> -			if (ret < 0)
->> +			if (!ret) {
->> +				/*
->> +				 * When the voltage for OPPs successfully
->> +				 * changed, update the EM power values to
->> +				 * reflect the reality and not use stale data
-> 
-> At this point, can we really say that the voltage has changed?
-> 
->    exynos_asv_update_cpu_opps()
-> 
->      ...
->      ret = dev_pm_opp_adjust_voltage()
->      if (!ret)
->        em_dev_update_chip_binning()
->      ...
-> 
-> dev_pm_opp_adjust_voltage() also returns 0 when the voltage value stays
-> the same?
-> 
-> [...]
+> s/with new values// ... IMHO this should be obvious ?
 
-The comment for the dev_pm_opp_adjust_voltage() says that it
-returns 0 if no modification was done or modification was
-successful. So I cannot distinguish in that driver code, but
-also there is no additional need to do it IMO (even framework
-doesn't do this).
+Make sense
 
-Regards,
-Lukasz
+> 
+>> + *			the new voltage information is present in the OPPs.
+>> + * @dev		: Device for which the Energy Model has to be updated.
+>> + *
+>> + * This function allows to update easily the EM with new values available in
+>> + * the OPP framework and DT. It can be used after the chip has been properly
+>> + * verified by device drivers and the voltages adjusted for the 'chip binning'.
+>> + * It uses the "dynamic-power-coefficient" DT property to calculate the power
+>> + * values for EM. For power calculation it uses the new adjusted voltage
+>> + * values known for OPPs, which might be changed after boot.
+> 
+> The last two sentences describe what dev_pm_opp_calc_power() is doing.
+> Maybe this can be made clearer here?
 
-[1] 
-https://elixir.bootlin.com/linux/v6.9-rc1/source/drivers/opp/core.c#L2950
+Or I can just remove this, since it's too detailed description.
+
+> 
+>> + */
+>> +int em_dev_update_chip_binning(struct device *dev)
+> 
+> This is the old dev_pm_opp_of_update_em() right?
+
+Yes, it is similar.
+
+> 
+>> +{
+>> +	struct em_perf_table __rcu *em_table;
+>> +	struct em_perf_domain *pd;
+>> +	int i, ret;
+>> +
+>> +	if (IS_ERR_OR_NULL(dev))
+>> +		return -EINVAL;
+> 
+> When do you use if '(IS_ERR_OR_NULL(dev))' and when 'if(!dev)' for EM
+> interface functions?
+
+Sometimes IS_ERR_OR_NULL is used, especially for API function other
+that register function.
+
+> 
+>> +	pd = em_pd_get(dev);
+>> +	if (!pd) {
+>> +		dev_warn(dev, "Couldn't find Energy Model\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	em_table = em_table_dup(pd);
+>> +	if (!em_table) {
+>> +		dev_warn(dev, "EM: allocation failed\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	/* Update power values which might change due to new voltage in OPPs */
+>> +	for (i = 0; i < pd->nr_perf_states; i++) {
+>> +		unsigned long freq = em_table->state[i].frequency;
+>> +		unsigned long power;
+>> +
+>> +		ret = dev_pm_opp_calc_power(dev, &power, &freq);
+>> +		if (ret) {
+>> +			em_table_free(em_table);
+>> +			return ret;
+>> +		}
+>> +
+>> +		em_table->state[i].power = power;
+>> +	}
+>> +
+>> +	return em_recalc_and_update(dev, pd, em_table);
+>> +}
+>> +EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
+> 
+> In the previous version of 'chip-binning' you were using the new EM
+> interface em_dev_compute_costs() (1) which is now replaced by
+> em_recalc_and_update() -> em_compute_costs().
+> 
+> https://lkml.kernel.org/r/20231220110339.1065505-2-lukasz.luba@arm.com
+> 
+> Which leaves (1) still unused.
+> 
+> That was why my concern back then that we shouldn't introduce EM
+> interfaces without a user:
+> 
+> https://lkml.kernel.org/r/8fc499cf-fca1-4465-bff7-a93dfd36f3c8@arm.com
+> 
+> What happens now with em_dev_compute_costs()?
+> 
+
+For now it's not used, but modules which will create new EMs
+with custom power values will use it. When such a module have
+e.g. 5 EMs for one PD and only switches on one of them, then
+this em_dev_compute_costs() will be used at setup for those
+5 EMs. Later it won't be used.
+I don't wanted to combine the registration of new EM with
+the compute cost, because that will create overhead in the
+switching to new EM code path. Now we have only ~3us, which
+was the main goal.
+
+When our scmi-cpufreq get the support for EM update this
+compute cost will be used there.
