@@ -1,137 +1,110 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B7B5C911;
-	Tue, 26 Mar 2024 10:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4B5468E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 10:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711447752; cv=none; b=ghHrl6udP13ri9aRvEixaMbj3m6TYEoxM6ZP4+6TCLJFTvpPKNMJOEDLTNCgEc8FLGGjX4qUp64tEMCa6vbMAYiAUpTJ7J3cCQTG8x9+S17WY9jRJv5oZwpviJjJRkS4op8A8Nj3Xi2aR8esTpadIMqJCntarGOqtRDw3chObEA=
+	t=1711449386; cv=none; b=aUii2Pqbq2nhsUVdRcTEnRgUKaJ7rd0VQHpmj4LZRs9F17LVKKcH3T1exaljCI/gcQQIb5J/t27RvPJVLp4FGFWoDOlQDehSZGjXRFKGVKOxja/PhwIJi3TYCSa8z4AUVF8ZzPvcjYiR0btPvLIlKaQUdtyKCRdqfnwjjPHYvJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711447752; c=relaxed/simple;
-	bh=0qqyjsoUJJgOhHL/bgPaKR1WiY++FeUVJ10GLBY70VU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dx2B60yOjviZtGgALVud1lI348Jn14SrEIZ7XMauujzAK5wHN4JnpMT9AFLo7qiPjMUZ36uu+KPrvHQpJmd1KTkJelTpdH+e3uCLVMSlgwTCJHY/OkxfoaTv2btYqj/LnuOy3bZFEo4wQqY+90Rs+UzEmFf54NNOAfKJPwmupRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A093339;
-	Tue, 26 Mar 2024 03:09:43 -0700 (PDT)
-Received: from [10.57.15.246] (unknown [10.57.15.246])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 807503F64C;
-	Tue, 26 Mar 2024 03:09:07 -0700 (PDT)
-Message-ID: <eb9f48f6-cca8-405b-82a2-352893a79f14@arm.com>
-Date: Tue, 26 Mar 2024 11:09:05 +0100
+	s=arc-20240116; t=1711449386; c=relaxed/simple;
+	bh=xQX9vjjhHlhpIG6Oqh4n+jDkazu37I7c7NJ4aCM4BSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tP+eQELqs6Prnl2NCHRA7yxuXypM4T3wsnxDxJdhW+UxxsgIq9D7c9T13sphr4OC3iMBROaAuVcHiQ4cD6wTRRqD8avrf87B6ot3MkBJvs1URl0J2x2Yyja+qMDj6RYkiq2+zpJ8DIBlEF9xa8N4BZo1f8c02+Enz7F9+ybEnt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L+/8JeGG; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L+/8JeGG"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34100f4f9a2so3199214f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Mar 2024 03:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711449383; x=1712054183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8cq4cJeCYZBITVK41CQ5JeNyS7iUkkN8uZMCoe8yIaQ=;
+        b=L+/8JeGGLeq/aq3gTgECaXKLXE8j8QkcuPT0KsaGfGJ5SR3OlvACMqpthNV/R6mC49
+         a4Qx8fTyqO8JwlrtRtxaT6I/U8keaCeRfjHou/oucfiLLP9QoCByqcTnRhldjiCC/cWk
+         0C3zVH9IEoT8Eh990JvVqzXQfSFUUvfwd587MnakO67ppt5iymSwdWGJKAUwbVicmypk
+         MedxVPRjpNYPlHc08QPBzzinRNYua6ncsosEV0+idYFDNeszanBwCXrfus18EBW4PBM0
+         AkDl4yyX7Ar1D4wixTFyhiheYcTSzDQSjW7UC9Wqy1QALhB8MmpqiTo44B4L2LomzniL
+         K7Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711449383; x=1712054183;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8cq4cJeCYZBITVK41CQ5JeNyS7iUkkN8uZMCoe8yIaQ=;
+        b=V6ENVrCUv2x+gHr8e4GG69JlPYa3enLc6wc9biO396g3pHFBHJDWAd6qpz8+tnGP4H
+         byT/B1mc6jpQjSOetrvMc8z9IWYGWSnwa+7Nf9G3R82j999ScHEeI08hazbKEfgDwjdf
+         QUoirv4zP5r5jvNA+y3K9+gQ9wWmExySmPMqKCEiJI/tf5O1daoRNkm/9NvKhpyVffl7
+         CTv8ovYa73rPfEjUYmScMfGOSkd1F0MTDtOwiMjJuIcbtsF2lPU/p0Yu6p8WsbSNJw97
+         CggLKkQe18vw2YNi6gASPwnOB1/7Mi0MU09wC9sGRIV6LlGQ1YIIK6zfGvNWH4pA/W0M
+         PzjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzQsnDL4Emxb9YXq3VWsqFq2+zziutX2PZGp4Xy811BuPc9ZKh3WoBP4z2bs6b++0gNTTlBZonfCGEScrH9/WNyeUaQ5zwsYFuq8eycLz5AhI=
+X-Gm-Message-State: AOJu0YwDC5E7EB5CKyszUJL7wafZxu5JVyqVBZ6ojIdIprvx7lVAxk5V
+	H1XS4IEUPUUb/ggCiEf48xqjTVYCyCuvVwJqi3PODYMvTxzWYRBEm7v67SvUh5I=
+X-Google-Smtp-Source: AGHT+IEQC6F62RP1GVxuaRRJ9iwSF/Nxno04fOCkJFrqlroTRqSWmDZp5Wxx5aVj11C+UY5lPZ9ozw==
+X-Received: by 2002:a5d:648e:0:b0:341:cf9c:1c43 with SMTP id o14-20020a5d648e000000b00341cf9c1c43mr3595786wri.43.1711449383327;
+        Tue, 26 Mar 2024 03:36:23 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
+        by smtp.gmail.com with ESMTPSA id bn22-20020a056000061600b00341d2604a35sm3337954wrb.98.2024.03.26.03.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Mar 2024 03:36:22 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: peter.griffin@linaro.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org
+Cc: alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org,
+	willmcvicker@google.com,
+	kernel-team@android.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v2 0/4] arm64: dts: exynos: gs101: define all PERIC USI nodes
+Date: Tue, 26 Mar 2024 10:36:16 +0000
+Message-ID: <20240326103620.298298-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [RESEND][PATCH v2 3/4] PM: EM: Add em_dev_update_chip_binning()
-To: Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
- linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
- rafael@kernel.org, viresh.kumar@linaro.org, krzysztof.kozlowski@linaro.org,
- alim.akhtar@samsung.com, m.szyprowski@samsung.com, mhiramat@kernel.org
-References: <20240322110850.77086-1-lukasz.luba@arm.com>
- <20240322110850.77086-4-lukasz.luba@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240322110850.77086-4-lukasz.luba@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/03/2024 12:08, Lukasz Luba wrote:
+Hi,
 
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index 6960dd7393b2d..f7f7ae34ec552 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -808,3 +808,54 @@ static void em_update_workfn(struct work_struct *work)
->  {
->  	em_check_capacity_update();
->  }
-> +
-> +/**
-> + * em_dev_update_chip_binning() - Update Energy Model with new values after
+The series starts with some cleanup/cosmetics patches, then defines all
+the PERIC USI nodes.
 
-s/with new values// ... IMHO this should be obvious ?
+v2:
+- reverse pinctrl-* lines, first pinctrl-0 then pinctrl-names
+- move the pinctrl-* properties after clocks so that we keep alphabetic
+  order
+- join lines close to 80 chars
+- use alphabetic order for the standard/common properties:
+  address/size-cells, clocks, interrupts, pinctrl
+- collect R-b tags
 
-> + *			the new voltage information is present in the OPPs.
-> + * @dev		: Device for which the Energy Model has to be updated.
-> + *
-> + * This function allows to update easily the EM with new values available in
-> + * the OPP framework and DT. It can be used after the chip has been properly
-> + * verified by device drivers and the voltages adjusted for the 'chip binning'.
-> + * It uses the "dynamic-power-coefficient" DT property to calculate the power
-> + * values for EM. For power calculation it uses the new adjusted voltage
-> + * values known for OPPs, which might be changed after boot.
+v1:
+- https://lore.kernel.org/linux-samsung-soc/20240307135248.162752-1-tudor.ambarus@linaro.org/
+- https://lore.kernel.org/linux-samsung-soc/20240307135912.163996-1-tudor.ambarus@linaro.org/
 
-The last two sentences describe what dev_pm_opp_calc_power() is doing.
-Maybe this can be made clearer here?
+Tudor Ambarus (4):
+  arm64: dts: exynos: gs101: move serial_0 pinctrl-0/names to dtsi
+  arm64: dts: exynos: gs101: order pinctrl-* props alphabetically
+  arm64: dts: exynos: gs101: join lines close to 80 chars
+  arm64: dts: exynos: gs101: define all PERIC USI nodes
 
-> + */
-> +int em_dev_update_chip_binning(struct device *dev)
+ .../boot/dts/exynos/google/gs101-oriole.dts   |   2 -
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi  | 791 +++++++++++++++++-
+ 2 files changed, 779 insertions(+), 14 deletions(-)
 
-This is the old dev_pm_opp_of_update_em() right?
-
-> +{
-> +	struct em_perf_table __rcu *em_table;
-> +	struct em_perf_domain *pd;
-> +	int i, ret;
-> +
-> +	if (IS_ERR_OR_NULL(dev))
-> +		return -EINVAL;
-
-When do you use if '(IS_ERR_OR_NULL(dev))' and when 'if(!dev)' for EM
-interface functions?
-
-> +	pd = em_pd_get(dev);
-> +	if (!pd) {
-> +		dev_warn(dev, "Couldn't find Energy Model\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	em_table = em_table_dup(pd);
-> +	if (!em_table) {
-> +		dev_warn(dev, "EM: allocation failed\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Update power values which might change due to new voltage in OPPs */
-> +	for (i = 0; i < pd->nr_perf_states; i++) {
-> +		unsigned long freq = em_table->state[i].frequency;
-> +		unsigned long power;
-> +
-> +		ret = dev_pm_opp_calc_power(dev, &power, &freq);
-> +		if (ret) {
-> +			em_table_free(em_table);
-> +			return ret;
-> +		}
-> +
-> +		em_table->state[i].power = power;
-> +	}
-> +
-> +	return em_recalc_and_update(dev, pd, em_table);
-> +}
-> +EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
-
-In the previous version of 'chip-binning' you were using the new EM
-interface em_dev_compute_costs() (1) which is now replaced by
-em_recalc_and_update() -> em_compute_costs().
-
-https://lkml.kernel.org/r/20231220110339.1065505-2-lukasz.luba@arm.com
-
-Which leaves (1) still unused.
-
-That was why my concern back then that we shouldn't introduce EM
-interfaces without a user:
-
-https://lkml.kernel.org/r/8fc499cf-fca1-4465-bff7-a93dfd36f3c8@arm.com
-
-What happens now with em_dev_compute_costs()?
-
-
-
+-- 
+2.44.0.396.g6e790dbe36-goog
 
