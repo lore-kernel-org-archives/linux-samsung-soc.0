@@ -1,127 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE22142902;
-	Wed, 27 Mar 2024 12:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8EC12F37F;
+	Wed, 27 Mar 2024 12:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711542489; cv=none; b=SgmDjyzs1lyk8I3OBGyRTK3Jf1Dy/JHJjChMxfzteBCz5M80NiPVhvFqSt+KQYf/onRmCsGKU/v1vymKVj28N+AKrpX/r8wXjCGRo+AmqlCNVy+PNja7XOtAV7DAAoakTdyKk90SIzC2e198Xhcjc2tzRUnJGiqw2FqHNhJgJ3w=
+	t=1711544141; cv=none; b=K6E2oLhunFnQvbQNSRXveswcGDCAFo+gPypiUctUEd9Fyi5MsHVqm0/7+IesB9avRbGiPIr3UyjloE+urt/AyEle9FDTY8ZmWoUGynGAdR08f53gQpOD2f9yOGR2bh18uNg4mcW+uvH2HEFUO3VC1IWCWCbvsoL4HtAeE5cCmmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711542489; c=relaxed/simple;
-	bh=8rHkXgsNXtISc0+6xFhktGiHJ0cO+8sY0nyEZ1IjZdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BsTDS3rf+esnLVbtO+I+cEOQ1RP/ssI27VxkYZ+GEhLKvAZd9Wm6U6Cdidy9TFQII6PlR9b5C6ZN3IqNCs5PaLEEMkgZQSjSKwvLlcqWI9YSr6hjj10JpSKkNW2lzNllWCfJjrDGR2/EFthTTrAeoWuuMJSdzJDVBwkuMuVLic8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qea+K034; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qea+K034"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04F2C433C7;
-	Wed, 27 Mar 2024 12:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711542488;
-	bh=8rHkXgsNXtISc0+6xFhktGiHJ0cO+8sY0nyEZ1IjZdQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qea+K034Ofey84Kuwbni/D+h6Q+wE5pDtxiI736++iHFxUAqLpQgPsrQun5hy642C
-	 J5tEvFL0364z7lUXUvouYjSUOSuempDNk0p/w/ymAxuoKus3OGQ0fcMQjrrCOj6mDM
-	 9IQqwHR22PBL5eTxYgY9C9Lh2a0o6U4IeNGyqw6LkNiw/JpkHuR4Bvr5doGgSsy3ZP
-	 JQezNHomK/gTBu/FrVsdrErGAxPWh0Zf4uhZpgTJhoCU+ZsZe5I6OfVx0WDI5d77Va
-	 0VNIfakXRX5aLN45oYBi0iUtlY71edqDv1jU4RHYqonOnYLSs0UY+aY4UTbVrtsK0C
-	 kJpobKxdaGvxA==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	jani.nikula@intel.com
-Cc: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "drm/exynos: do not return negative values from .get_modes()" failed to apply to 4.19-stable tree
-Date: Wed, 27 Mar 2024 08:28:06 -0400
-Message-ID: <20240327122806.2842495-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1711544141; c=relaxed/simple;
+	bh=3K5FY9zYoZ9NIYrs8JeXAE2pagjbwPp+dZ93De3oyV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EK9zmRbNONZeGke3kZ1HaNlR6pkeGZsagmRjRX7c6yD3qbYeHbagALPCEYFJrquVd1AVQZDaSDxYNkAUjUeKgN1bJ7qhV6Lp2cNNCZsvK2lbi6xeSkqxnJB84EROndmZM8amMtff6lhKhdQwMsc91k9PH0EFy0so/SrbWvxZRxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27C1E2F4;
+	Wed, 27 Mar 2024 05:56:12 -0700 (PDT)
+Received: from [192.168.178.110] (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CD983F7C5;
+	Wed, 27 Mar 2024 05:55:35 -0700 (PDT)
+Message-ID: <410c5da7-c79c-4607-9aa3-2e78d991d2d7@arm.com>
+Date: Wed, 27 Mar 2024 13:55:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v2 3/4] PM: EM: Add em_dev_update_chip_binning()
+Content-Language: en-US
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
+ linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, krzysztof.kozlowski@linaro.org,
+ alim.akhtar@samsung.com, m.szyprowski@samsung.com, mhiramat@kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240322110850.77086-1-lukasz.luba@arm.com>
+ <20240322110850.77086-4-lukasz.luba@arm.com>
+ <eb9f48f6-cca8-405b-82a2-352893a79f14@arm.com>
+ <30ee98e9-3d9a-4be8-8127-043f68a7dcb1@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+In-Reply-To: <30ee98e9-3d9a-4be8-8127-043f68a7dcb1@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 4.19-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+On 26/03/2024 21:32, Lukasz Luba wrote:
+> 
+> 
+> On 3/26/24 10:09, Dietmar Eggemann wrote:
+>> On 22/03/2024 12:08, Lukasz Luba wrote:
 
-Thanks,
-Sasha
+[...]
 
------------------- original commit in Linus's tree ------------------
+>>> +    return em_recalc_and_update(dev, pd, em_table);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
+>>
+>> In the previous version of 'chip-binning' you were using the new EM
+>> interface em_dev_compute_costs() (1) which is now replaced by
+>> em_recalc_and_update() -> em_compute_costs().
+>>
+>> https://lkml.kernel.org/r/20231220110339.1065505-2-lukasz.luba@arm.com
+>>
+>> Which leaves (1) still unused.
+>>
+>> That was why my concern back then that we shouldn't introduce EM
+>> interfaces without a user:
+>>
+>> https://lkml.kernel.org/r/8fc499cf-fca1-4465-bff7-a93dfd36f3c8@arm.com
+>>
+>> What happens now with em_dev_compute_costs()?
+>>
+> 
+> For now it's not used, but modules which will create new EMs
+> with custom power values will use it. When such a module have
+> e.g. 5 EMs for one PD and only switches on one of them, then
+> this em_dev_compute_costs() will be used at setup for those
+> 5 EMs. Later it won't be used.
+> I don't wanted to combine the registration of new EM with
+> the compute cost, because that will create overhead in the
+> switching to new EM code path. Now we have only ~3us, which
+> was the main goal.
+> 
+> When our scmi-cpufreq get the support for EM update this
+> compute cost will be used there.
 
-From 13d5b040363c7ec0ac29c2de9cf661a24a8aa531 Mon Sep 17 00:00:00 2001
-From: Jani Nikula <jani.nikula@intel.com>
-Date: Fri, 8 Mar 2024 18:03:41 +0200
-Subject: [PATCH] drm/exynos: do not return negative values from .get_modes()
-
-The .get_modes() hooks aren't supposed to return negative error
-codes. Return 0 for no modes, whatever the reason.
-
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: stable@vger.kernel.org
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/d8665f620d9c252aa7d5a4811ff6b16e773903a2.1709913674.git.jani.nikula@intel.com
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 4 ++--
- drivers/gpu/drm/exynos/exynos_hdmi.c     | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 00382f28748ac..f5bbba9ad2252 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -316,14 +316,14 @@ static int vidi_get_modes(struct drm_connector *connector)
- 	 */
- 	if (!ctx->raw_edid) {
- 		DRM_DEV_DEBUG_KMS(ctx->dev, "raw_edid is null.\n");
--		return -EFAULT;
-+		return 0;
- 	}
- 
- 	edid_len = (1 + ctx->raw_edid->extensions) * EDID_LENGTH;
- 	edid = kmemdup(ctx->raw_edid, edid_len, GFP_KERNEL);
- 	if (!edid) {
- 		DRM_DEV_DEBUG_KMS(ctx->dev, "failed to allocate edid\n");
--		return -ENOMEM;
-+		return 0;
- 	}
- 
- 	drm_connector_update_edid_property(connector, edid);
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 43bed6cbaaea0..b1d02dec3774d 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -887,11 +887,11 @@ static int hdmi_get_modes(struct drm_connector *connector)
- 	int ret;
- 
- 	if (!hdata->ddc_adpt)
--		return -ENODEV;
-+		return 0;
- 
- 	edid = drm_get_edid(connector, hdata->ddc_adpt);
- 	if (!edid)
--		return -ENODEV;
-+		return 0;
- 
- 	hdata->dvi_mode = !connector->display_info.is_hdmi;
- 	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
--- 
-2.43.0
-
-
-
+OK, I see. I checked the reloadable EM test module and
+em_dev_compute_costs() is used there like you described it.
 
