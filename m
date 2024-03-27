@@ -1,130 +1,127 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46872C69B
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2024 08:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE22142902;
+	Wed, 27 Mar 2024 12:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711526990; cv=none; b=BaELUUFR7QMWvw4pm9ioF8KfVyeqCpmMWjgZYM9ngoA9S6B7TV/gHX/MRIeM49QGRhBNHqDfKpJx4udrZ4LuQTrkRoe7s+SwsNc03M8SyduErjanONtYSRwH490oZSRLJZZHdRFFWE5pGLZFnxG3sG52jSTx+vSeqrWBN3UGJcU=
+	t=1711542489; cv=none; b=SgmDjyzs1lyk8I3OBGyRTK3Jf1Dy/JHJjChMxfzteBCz5M80NiPVhvFqSt+KQYf/onRmCsGKU/v1vymKVj28N+AKrpX/r8wXjCGRo+AmqlCNVy+PNja7XOtAV7DAAoakTdyKk90SIzC2e198Xhcjc2tzRUnJGiqw2FqHNhJgJ3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711526990; c=relaxed/simple;
-	bh=GPu0olZFo/3Df8UKJk+W9AS/4Etn7baYS1zdkvAVtIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwOrjG5p03692AhO2+rOcu+1DqWska/ossVukrAnEEEOq8Jpqm3zP265mgq/eI0Y8MdIk4PlVuvREXLPuBBRmUIqdJMpaerUabxfhAmpusulsSUEvh+vcCaIl316Ac5qLBNo6xWcdgPXLDjnLRr7KaCPC0TwISm3VqcB3Bxi2DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q3Pv/gQs; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711542489; c=relaxed/simple;
+	bh=8rHkXgsNXtISc0+6xFhktGiHJ0cO+8sY0nyEZ1IjZdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BsTDS3rf+esnLVbtO+I+cEOQ1RP/ssI27VxkYZ+GEhLKvAZd9Wm6U6Cdidy9TFQII6PlR9b5C6ZN3IqNCs5PaLEEMkgZQSjSKwvLlcqWI9YSr6hjj10JpSKkNW2lzNllWCfJjrDGR2/EFthTTrAeoWuuMJSdzJDVBwkuMuVLic8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qea+K034; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q3Pv/gQs"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41492504233so5516895e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2024 01:09:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711526987; x=1712131787; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
-        b=Q3Pv/gQsam2BY1ZZCrfrZ6Hlc9c1ZugUlFx8C2V5B26fyhQxDdIn48rWTzIhBsxkn/
-         6dlUizWBny8f/AE7DfduNSyquz8n2WUH2y59u9ULjekIZqux4+J1/ilV27JsjyxUyPQN
-         K8aEdiEciNBSFe88a5gE+bpwnwp2ev8d4bYtUPvEStwXedCBt8DqHFGdY/l96kWcc/4r
-         8iydzL9PQX+wqmvwr+E6d8ty2GoMUCYzenYzCIfONLBga7QlZvl5BWvyzDK70QR/4Zx8
-         4R4B2t6fJMDASk5Qk3QUFWOZY1ycksmlwfD2HSfVJ0IGoLiMDUMts7cw42+7M6xIBSJ7
-         uyfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711526987; x=1712131787;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
-        b=LmfcZnMxa1kFfn2NdUXV6+DytCEXFaPPCZn96kU3fn7t+kruORRVcnCwzb0+L3ua2h
-         +yIY8G0qWx8Bnn2RywYxvxaVCCA1cnnvJPnwCxUiQGTz0NHDs6zy/0hqSdA6TcGlMRQd
-         KGnc7/ZNfdIHTyHXqSS3eDJpJACq18/Q7ilnK/Ylgiqp8hulh/ixUyOO0/BcGxmOEv8L
-         P17QHlMD+mOQpNukySQ0Rr2mYsS3TW5jn/34T+N5vcikSqQdm3OYRNRwlICVcEfy84Hg
-         Q0jeQB1KzJwtMyxF7QCOFg76T5A7aFqMTMl3fKBELCUHH0i9VT2XyHYVZGfDP9V/bdUe
-         JlHw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0T/zL/ww+0jCm7Ddm0ctH1OlIigk6082KNyQypBxZJjZ83NUH/C0LJzE/KExOiQ8JwJkaQzY3LOj7nWpZCaeu9nm5yA9B21O8B9BNwsJ/IWs=
-X-Gm-Message-State: AOJu0YwxNP/pA8JinhTNPZEklSlisbwGX7PWkAMLhSidSp8GEftO+d8A
-	aWGmf99Lep04dK2IjSLniErMBUJ98CqY04cs3MG6368ltpP8LvT7w/juBub4BW0=
-X-Google-Smtp-Source: AGHT+IGEz+1d1jkgyoddachI7gTTbD9dQEkwNHSRq3xwokZx4P8MvimuzJLiHrnBk29XtEAHxjXt3Q==
-X-Received: by 2002:a05:600c:1c15:b0:414:21e:86e8 with SMTP id j21-20020a05600c1c1500b00414021e86e8mr410489wms.27.1711526986918;
-        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.252])
-        by smtp.gmail.com with ESMTPSA id q18-20020a05600c46d200b0041409db0349sm1334313wmo.48.2024.03.27.01.09.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
-Message-ID: <2b441832-9b3b-452f-8c63-444f29cbdd12@linaro.org>
-Date: Wed, 27 Mar 2024 08:09:44 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qea+K034"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04F2C433C7;
+	Wed, 27 Mar 2024 12:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711542488;
+	bh=8rHkXgsNXtISc0+6xFhktGiHJ0cO+8sY0nyEZ1IjZdQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qea+K034Ofey84Kuwbni/D+h6Q+wE5pDtxiI736++iHFxUAqLpQgPsrQun5hy642C
+	 J5tEvFL0364z7lUXUvouYjSUOSuempDNk0p/w/ymAxuoKus3OGQ0fcMQjrrCOj6mDM
+	 9IQqwHR22PBL5eTxYgY9C9Lh2a0o6U4IeNGyqw6LkNiw/JpkHuR4Bvr5doGgSsy3ZP
+	 JQezNHomK/gTBu/FrVsdrErGAxPWh0Zf4uhZpgTJhoCU+ZsZe5I6OfVx0WDI5d77Va
+	 0VNIfakXRX5aLN45oYBi0iUtlY71edqDv1jU4RHYqonOnYLSs0UY+aY4UTbVrtsK0C
+	 kJpobKxdaGvxA==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org,
+	jani.nikula@intel.com
+Cc: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: FAILED: Patch "drm/exynos: do not return negative values from .get_modes()" failed to apply to 4.19-stable tree
+Date: Wed, 27 Mar 2024 08:28:06 -0400
+Message-ID: <20240327122806.2842495-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
- reparented
-Content-Language: en-US
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- peter.griffin@linaro.org, krzysztof.kozlowski@linaro.org
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- willmcvicker@google.com, kernel-team@android.com, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
- jaewon02.kim@samsung.com
-References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
- <20240326172813.801470-2-tudor.ambarus@linaro.org>
- <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: ignore
+X-stable: review
 Content-Transfer-Encoding: 8bit
 
-
-
-On 3/26/24 17:43, André Draszik wrote:
-> Hi Tudor,
-> 
-
-Hi, Andre'!
-
-> On Tue, 2024-03-26 at 17:28 +0000, Tudor Ambarus wrote:
->> All samsung MUX clocks that are defined with MUX() set the
->> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
->> reparented during clk_set_rate().
->>
->> Introduce nMUX() for MUX clocks that can be reparented.
-> 
-> What does n in nMUX stand for?
-
-I thought about using the common terminology, "n-to-1 multiplexer",
-where n is the number of select lines. I'm open to other suggestions if
-there are any. I should have specified the naming scheme in the commit
-message, will do in the next version.
-> 
->> [...]
->>  
->> +/* Used by MUX clocks where reparenting is allowed. */
->> +#define __nMUX(_id, cname, pnames, o, s, w, f, mf)		\
->> +	{							\
->> +		.id		= _id,				\
->> +		.name		= cname,			\
->> +		.parent_names	= pnames,			\
->> +		.num_parents	= ARRAY_SIZE(pnames),		\
->> +		.flags		= f,				\
->> +		.offset		= o,				\
->> +		.shift		= s,				\
->> +		.width		= w,				\
->> +		.mux_flags	= mf,				\
->> +	}
-> 
-> You've duplicated __MUX() and removed the CLK_SET_RATE_NO_REPARENT
-> from flags - I think it would make sense to instead drop the flag
-> from the existing __MUX(), and adjust the only two existing users
-> of the macro, i.e. to add it in MUX() and MUX_F().
-> 
-
-Yes, I find the suggestion good. Will do in v3.
+The patch below does not apply to the 4.19-stable tree.
+If someone wants it applied there, or to any other stable or longterm
+tree, then please email the backport, including the original git commit
+id to <stable@vger.kernel.org>.
 
 Thanks,
-ta
+Sasha
+
+------------------ original commit in Linus's tree ------------------
+
+From 13d5b040363c7ec0ac29c2de9cf661a24a8aa531 Mon Sep 17 00:00:00 2001
+From: Jani Nikula <jani.nikula@intel.com>
+Date: Fri, 8 Mar 2024 18:03:41 +0200
+Subject: [PATCH] drm/exynos: do not return negative values from .get_modes()
+
+The .get_modes() hooks aren't supposed to return negative error
+codes. Return 0 for no modes, whatever the reason.
+
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: stable@vger.kernel.org
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/d8665f620d9c252aa7d5a4811ff6b16e773903a2.1709913674.git.jani.nikula@intel.com
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 4 ++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 00382f28748ac..f5bbba9ad2252 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -316,14 +316,14 @@ static int vidi_get_modes(struct drm_connector *connector)
+ 	 */
+ 	if (!ctx->raw_edid) {
+ 		DRM_DEV_DEBUG_KMS(ctx->dev, "raw_edid is null.\n");
+-		return -EFAULT;
++		return 0;
+ 	}
+ 
+ 	edid_len = (1 + ctx->raw_edid->extensions) * EDID_LENGTH;
+ 	edid = kmemdup(ctx->raw_edid, edid_len, GFP_KERNEL);
+ 	if (!edid) {
+ 		DRM_DEV_DEBUG_KMS(ctx->dev, "failed to allocate edid\n");
+-		return -ENOMEM;
++		return 0;
+ 	}
+ 
+ 	drm_connector_update_edid_property(connector, edid);
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 43bed6cbaaea0..b1d02dec3774d 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -887,11 +887,11 @@ static int hdmi_get_modes(struct drm_connector *connector)
+ 	int ret;
+ 
+ 	if (!hdata->ddc_adpt)
+-		return -ENODEV;
++		return 0;
+ 
+ 	edid = drm_get_edid(connector, hdata->ddc_adpt);
+ 	if (!edid)
+-		return -ENODEV;
++		return 0;
+ 
+ 	hdata->dvi_mode = !connector->display_info.is_hdmi;
+ 	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+-- 
+2.43.0
+
+
+
+
