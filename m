@@ -1,157 +1,130 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769A722F00
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2024 03:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46872C69B
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2024 08:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711510512; cv=none; b=LcfRLrmLGf/bGKGUymHI80B5JOkqnY0Xq1m1PsTCaVclkwCSa3MOtRSXkOucXME4iLS6KfQt/dlKRnXD1ZoEvsAHiBlG9ZWvcDefKYr9n15Mpn03xsEyCebzP+Sxcw2NftB80z76PWM7V/PX0eM4636pRj4KthTgrVbe5zo9V8Y=
+	t=1711526990; cv=none; b=BaELUUFR7QMWvw4pm9ioF8KfVyeqCpmMWjgZYM9ngoA9S6B7TV/gHX/MRIeM49QGRhBNHqDfKpJx4udrZ4LuQTrkRoe7s+SwsNc03M8SyduErjanONtYSRwH490oZSRLJZZHdRFFWE5pGLZFnxG3sG52jSTx+vSeqrWBN3UGJcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711510512; c=relaxed/simple;
-	bh=yE4PMETRYM/2rpfGQXheo9i6JB20t0k0UI0M+ZWUews=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=h3FEC+CmbuUirEb080HASp7Sgckb4pMFGwOaab4XkJM0BiJUeEE8dRf8hPf5FwmNpKMxQBqpBVks1hGIoTX57X4tZVft7pVtkeXlzSruX4hvHEjbe/HWDK1ro+aYPX6fg83hQQJROI3yd1Cd54ps3UmXzpov9Auxo1N/4aWP+/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iZi6g87e; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1711526990; c=relaxed/simple;
+	bh=GPu0olZFo/3Df8UKJk+W9AS/4Etn7baYS1zdkvAVtIc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KwOrjG5p03692AhO2+rOcu+1DqWska/ossVukrAnEEEOq8Jpqm3zP265mgq/eI0Y8MdIk4PlVuvREXLPuBBRmUIqdJMpaerUabxfhAmpusulsSUEvh+vcCaIl316Ac5qLBNo6xWcdgPXLDjnLRr7KaCPC0TwISm3VqcB3Bxi2DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q3Pv/gQs; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iZi6g87e"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240327033502epoutp04f9be9a3f3b8d5fe88db3b34fa24553c8~Agbv8rtFl2375623756epoutp04p
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2024 03:35:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240327033502epoutp04f9be9a3f3b8d5fe88db3b34fa24553c8~Agbv8rtFl2375623756epoutp04p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1711510502;
-	bh=4vLIx4cKbVxH4k3P7I50/kDpmxK4TCaZJ+e8oBu8dro=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=iZi6g87ey5by0Q6f2un91DzAOAAfMvHjRGZCsxE1TmoJXggJhp+xFVKk5RZItBwZU
-	 DyJF0p3hWBKAq/h7c+eKdkZwHnwLVnMC7DYuC2f2aCII8zqW5Yzg0fUipBSnn0EYFW
-	 0jtAQbF6Rf94YufEyE+ZZFnTHg+Q1STnr1NvPBdM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20240327033502epcas2p4835a84a54f1999514440b7d361df4a41~AgbvcJbu02511025110epcas2p40;
-	Wed, 27 Mar 2024 03:35:02 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.91]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4V4C3T3MMwz4x9QH; Wed, 27 Mar
-	2024 03:35:01 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0B.EA.09639.5E393066; Wed, 27 Mar 2024 12:35:01 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00~AgbuWqU8y1245812458epcas2p2F;
-	Wed, 27 Mar 2024 03:35:01 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240327033501epsmtrp2cac592103009f2358a153ff29e04f89b~AgbuV7hV42125621256epsmtrp2k;
-	Wed, 27 Mar 2024 03:35:01 +0000 (GMT)
-X-AuditID: b6c32a46-8ddfa700000025a7-2f-660393e5a775
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	82.91.19234.4E393066; Wed, 27 Mar 2024 12:35:01 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240327033500epsmtip10f06e521fafec7b31e710706bda00497~AgbuMrnZD0139001390epsmtip1B;
-	Wed, 27 Mar 2024 03:35:00 +0000 (GMT)
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-To: Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Jaewon
-	Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH] spi: s3c64xx: Use DMA mode from fifo size
-Date: Wed, 27 Mar 2024 12:30:41 +0900
-Message-ID: <20240327033041.83625-1-jaewon02.kim@samsung.com>
-X-Mailer: git-send-email 2.43.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q3Pv/gQs"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41492504233so5516895e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Mar 2024 01:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711526987; x=1712131787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
+        b=Q3Pv/gQsam2BY1ZZCrfrZ6Hlc9c1ZugUlFx8C2V5B26fyhQxDdIn48rWTzIhBsxkn/
+         6dlUizWBny8f/AE7DfduNSyquz8n2WUH2y59u9ULjekIZqux4+J1/ilV27JsjyxUyPQN
+         K8aEdiEciNBSFe88a5gE+bpwnwp2ev8d4bYtUPvEStwXedCBt8DqHFGdY/l96kWcc/4r
+         8iydzL9PQX+wqmvwr+E6d8ty2GoMUCYzenYzCIfONLBga7QlZvl5BWvyzDK70QR/4Zx8
+         4R4B2t6fJMDASk5Qk3QUFWOZY1ycksmlwfD2HSfVJ0IGoLiMDUMts7cw42+7M6xIBSJ7
+         uyfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711526987; x=1712131787;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=laN7yfiUrlW9A39+FpFCocbYRuO1xnHUno2fLpcSh5I=;
+        b=LmfcZnMxa1kFfn2NdUXV6+DytCEXFaPPCZn96kU3fn7t+kruORRVcnCwzb0+L3ua2h
+         +yIY8G0qWx8Bnn2RywYxvxaVCCA1cnnvJPnwCxUiQGTz0NHDs6zy/0hqSdA6TcGlMRQd
+         KGnc7/ZNfdIHTyHXqSS3eDJpJACq18/Q7ilnK/Ylgiqp8hulh/ixUyOO0/BcGxmOEv8L
+         P17QHlMD+mOQpNukySQ0Rr2mYsS3TW5jn/34T+N5vcikSqQdm3OYRNRwlICVcEfy84Hg
+         Q0jeQB1KzJwtMyxF7QCOFg76T5A7aFqMTMl3fKBELCUHH0i9VT2XyHYVZGfDP9V/bdUe
+         JlHw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0T/zL/ww+0jCm7Ddm0ctH1OlIigk6082KNyQypBxZJjZ83NUH/C0LJzE/KExOiQ8JwJkaQzY3LOj7nWpZCaeu9nm5yA9B21O8B9BNwsJ/IWs=
+X-Gm-Message-State: AOJu0YwxNP/pA8JinhTNPZEklSlisbwGX7PWkAMLhSidSp8GEftO+d8A
+	aWGmf99Lep04dK2IjSLniErMBUJ98CqY04cs3MG6368ltpP8LvT7w/juBub4BW0=
+X-Google-Smtp-Source: AGHT+IGEz+1d1jkgyoddachI7gTTbD9dQEkwNHSRq3xwokZx4P8MvimuzJLiHrnBk29XtEAHxjXt3Q==
+X-Received: by 2002:a05:600c:1c15:b0:414:21e:86e8 with SMTP id j21-20020a05600c1c1500b00414021e86e8mr410489wms.27.1711526986918;
+        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.252])
+        by smtp.gmail.com with ESMTPSA id q18-20020a05600c46d200b0041409db0349sm1334313wmo.48.2024.03.27.01.09.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Mar 2024 01:09:46 -0700 (PDT)
+Message-ID: <2b441832-9b3b-452f-8c63-444f29cbdd12@linaro.org>
+Date: Wed, 27 Mar 2024 08:09:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
+ reparented
+Content-Language: en-US
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ peter.griffin@linaro.org, krzysztof.kozlowski@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ willmcvicker@google.com, kernel-team@android.com, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+ semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
+ <20240326172813.801470-2-tudor.ambarus@linaro.org>
+ <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <c20452059e62d3b8c45efb8070223f10f0bd06ed.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdljTVPfpZOY0g5VLxCwezNvGZnH/awej
-	xdSHT9gsdjQcYbXY+3oru8Wmx9dYLS7vmsNmMeP8PiaLxo832R04PTat6mTzuHNtD5vH5iX1
-	Hn1bVjF6fN4kF8AalW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk
-	4hOg65aZA3SPkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8v
-	tcTK0MDAyBSoMCE7487VG0wFZ7krWt9NY2tg3MDZxcjJISFgInGm7y5zFyMXh5DADkaJr5cP
-	sUA4nxgllre9YYVzZn4/zgbTMmfDdEaIxE5Gibt39kP1f2SUeHh0DQtIFZuAtsT39YvB2kUE
-	VjBKbLvwAWwws8B6Rol1F74wgVQJC1hJfFu8gBXEZhFQlZi9YQqQzcHBK2ArsfxdNcQ6eYm7
-	Z2Yxg9i8AoISJ2c+AVvADBRv3jobbLOEwC12ibPtDxghGlwktvx5DXWrsMSr41vYIWwpic/v
-	9kLF8yXarpyBitdIbFxwCarXXmLRmZ/sIDcwC2hKrN+lD2JKCChLHLkFtZZPouPwX3aIMK9E
-	R5sQRKOaxP2p56CGy0hMOrKSCcL2kGhpnApmCwnESqz/9419AqP8LCTPzELyzCyEvQsYmVcx
-	iqUWFOempxYbFRjBYzU5P3cTIzhNarntYJzy9oPeIUYmDsZDjBIczEoivC1fGNKEeFMSK6tS
-	i/Lji0pzUosPMZoCQ3cis5Rocj4wUeeVxBuaWBqYmJkZmhuZGpgrifPea52bIiSQnliSmp2a
-	WpBaBNPHxMEp1cC0uv5Ws7NSW0VP5tqpfP6TXh9Vzug2zJohe5H1zecpridXMVz6ZVB1rVhr
-	arFFaX0A+/K03Nl77l1aGfgipDCxlvkt10vW9/oCFf5rcuNXpocrTWmZvl35ocq/cwWetVUu
-	3y2m9W3QCBf2+poXqjJH0engpUWqnr12oUnOjse8Lyz9pORy11L1yZP/m+euexBnc+X2lhif
-	4PcvmSxuylSFWHspd77Wn+i3x37uhNlvZvwTsF95NPLWw+hrR5oClEJPTEk/r6Oybuqrez2u
-	Gz9svWuzoHMy7057q6WP+b8kvOQ/s+0p48ECy+knGVj+KC41qfP3n6nmaMAe3Ju3Zb2tt39T
-	/u5FhiFHu/bWbuVUYinOSDTUYi4qTgQAAk81zBwEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSnO7TycxpBqt/MFo8mLeNzeL+1w5G
-	i6kPn7BZ7Gg4wmqx9/VWdotNj6+xWlzeNYfNYsb5fUwWjR9vsjtwemxa1cnmcefaHjaPzUvq
-	Pfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugSvjztUbTAVnuSta301ja2DcwNnFyMkhIWAiMWfD
-	dMYuRi4OIYHtjBL3Fy5nh0jISCx/1scGYQtL3G85wgpR9J5RYsG69WAJNgFtie/rF4MlRARW
-	MUpsWn4GbBSzwGZGifbz51hBqoQFrCS+LV4AZrMIqErM3jAFyObg4BWwlVj+rhpig7zE3TOz
-	mEFsXgFBiZMzn7CA2MxA8eats5knMPLNQpKahSS1gJFpFaNoakFxbnpucoGhXnFibnFpXrpe
-	cn7uJkZwyGoF7WBctv6v3iFGJg7GQ4wSHMxKIrwtXxjShHhTEiurUovy44tKc1KLDzFKc7Ao
-	ifMq53SmCAmkJ5akZqemFqQWwWSZODilGpjmTTZvYW79OHv6jNkHRNkFf4QHsYlEf3q2PSk/
-	edenJW+MmmL/uB1K/ZJ0z2Xy89sNmRLR17d7yZXe0V21Vv3pEjWeYPVPqltNg2Y0pk3QXata
-	+yzKc2GQYFNZFL+yRp7reS5WsRsh7l6d16TepH17HpxluoVjmc+2t0aTTtecSbETes9y20F+
-	U+X5Vhu3TTYLtXo3/yt6f2vCacll2h+2pH61jOCreWfd+KbkllTnFp6FrjImdnO9W1evOXVw
-	doY8xxP5Cqk1N58pfJZZfY3B6XzUAevyi8arNx49vueA2RtFDgm184f3PDELSLlT7dZy7d3r
-	k8v0Xy1aHntyjvok6/Oz6zol3j/1m16rl6ukxFKckWioxVxUnAgAnZWtWsgCAAA=
-X-CMS-MailID: 20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00
-References: <CGME20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00@epcas2p2.samsung.com>
 
-The SPI data size is smaller than FIFO, it operates in PIO mode,
-and if it is larger than FIFO mode, DMA mode is selected.
 
-If the data size is the same as the FIFO size, it operates in PIO mode
-and data is separated into two transfer. In order to prevent,
-DMA mode must be used from the case of FIFO and data size.
 
-Fixes: 1ee806718d5e ("spi: s3c64xx: support interrupt based pio mode")
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- drivers/spi/spi-s3c64xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 3/26/24 17:43, André Draszik wrote:
+> Hi Tudor,
+> 
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 9fcbe040cb2f..81ed5fddf83e 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -430,7 +430,7 @@ static bool s3c64xx_spi_can_dma(struct spi_controller *host,
- 	struct s3c64xx_spi_driver_data *sdd = spi_controller_get_devdata(host);
- 
- 	if (sdd->rx_dma.ch && sdd->tx_dma.ch)
--		return xfer->len > sdd->fifo_depth;
-+		return xfer->len >= sdd->fifo_depth;
- 
- 	return false;
- }
-@@ -826,11 +826,11 @@ static int s3c64xx_spi_transfer_one(struct spi_controller *host,
- 			return status;
- 	}
- 
--	if (!is_polling(sdd) && (xfer->len > fifo_len) &&
-+	if (!is_polling(sdd) && xfer->len >= fifo_len &&
- 	    sdd->rx_dma.ch && sdd->tx_dma.ch) {
- 		use_dma = 1;
- 
--	} else if (xfer->len >= fifo_len) {
-+	} else if (xfer->len > fifo_len) {
- 		tx_buf = xfer->tx_buf;
- 		rx_buf = xfer->rx_buf;
- 		origin_len = xfer->len;
--- 
-2.43.2
+Hi, Andre'!
 
+> On Tue, 2024-03-26 at 17:28 +0000, Tudor Ambarus wrote:
+>> All samsung MUX clocks that are defined with MUX() set the
+>> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
+>> reparented during clk_set_rate().
+>>
+>> Introduce nMUX() for MUX clocks that can be reparented.
+> 
+> What does n in nMUX stand for?
+
+I thought about using the common terminology, "n-to-1 multiplexer",
+where n is the number of select lines. I'm open to other suggestions if
+there are any. I should have specified the naming scheme in the commit
+message, will do in the next version.
+> 
+>> [...]
+>>  
+>> +/* Used by MUX clocks where reparenting is allowed. */
+>> +#define __nMUX(_id, cname, pnames, o, s, w, f, mf)		\
+>> +	{							\
+>> +		.id		= _id,				\
+>> +		.name		= cname,			\
+>> +		.parent_names	= pnames,			\
+>> +		.num_parents	= ARRAY_SIZE(pnames),		\
+>> +		.flags		= f,				\
+>> +		.offset		= o,				\
+>> +		.shift		= s,				\
+>> +		.width		= w,				\
+>> +		.mux_flags	= mf,				\
+>> +	}
+> 
+> You've duplicated __MUX() and removed the CLK_SET_RATE_NO_REPARENT
+> from flags - I think it would make sense to instead drop the flag
+> from the existing __MUX(), and adjust the only two existing users
+> of the macro, i.e. to add it in MUX() and MUX_F().
+> 
+
+Yes, I find the suggestion good. Will do in v3.
+
+Thanks,
+ta
