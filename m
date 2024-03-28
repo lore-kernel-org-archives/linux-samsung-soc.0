@@ -1,60 +1,60 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874247EF00
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 13:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B68612F588
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 17:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711633009; cv=none; b=J4fQZ6t1IukwWvfjEeEhv36iN3JCTaBScWnaBMkMUVxxcQUwnCHCNl9EDoVSzcKXjbxBy9TnIHeM/WQ37JcV0V7GmRvdAPp5m7YRqX6QNxnoR3RlpynLbHqzvss7JZAAy0PK9Nkwvrqe+jXFPCle3Z6QDLuNjtXalr11oJdGyA8=
+	t=1711645278; cv=none; b=fYDBrDRIk+jAnjq8B7UYxJ3uay/gsnTnOQP5FzBPNVMO/Cu+dpKA9W8IttGce5DGgz54g0qEZ7DfwH61mqh/U0e4w0sB7XAcEgEzDMd7dDHPUlIohfRrdqc1hHJiqU2AxsCs4NsQuUjpoYNcQbvzIyX3SpECYPG9f7KRzTNuYHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711633009; c=relaxed/simple;
-	bh=ImeiQvEeK4vVx6wgVtnrIyHLe/KlQ6pY3d5ytHEwbuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EuOw7xe/FWWf7Kei4oVJCgK7EysKLeZsCvbm1RUXER6tElDtGBVqMdBOVu2ZGLLEAWAnrQDZ9C5PaY+CiVrLE98JDYR+ntPy8NXDeyatO1qmvrwfYmRZmM8/rIy4x9ENPjukDNQlQzEhCNwR3j8aHJ50NPxuuXOZOTr/Swaeb3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ls7eTJPH; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1711645278; c=relaxed/simple;
+	bh=Fh/fvvGRV0ipLGBScyPvhaczpeww/KTs/gfhtV+DHN0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=T3MivC1Iuc58Jm6Ftdv6VAx9uUb4ohWut+CM6O3AD+1ZcslKzFCqYv6LnaQfaw9zJhXttaGN7LTVN9SXeHLQ6wC19heUn8wru3qrRlWBx6TOpQ6KoXHTkWB4sb1qzWwEc5TW3jynW14i/hMzi1MNX2vUKTZ4Q2MOiw4r/cSIm6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WtXEBXl/; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ls7eTJPH"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4148c6132b4so12005295e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 06:36:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WtXEBXl/"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-415482307b0so5766395e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 10:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711633003; x=1712237803; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1IePTNqHmG2u8C44qjEuGkD7ttbOGPgyCjA8yYZ50bc=;
-        b=ls7eTJPHiC5L1ZjnEH3HxkoCDdjo5ndDi1hffwr+ln8UC6/VVTXLl5uBXEmaTVLzgc
-         Qr8DFzXBRBWD3p7ft7QK7UG04VmXtnrxglgvoPjaYnjxyTcSdNNJ/95EN1g1LJlUbowV
-         D8wxtc8u01Qc/x8b+WBRvIY7yHEVRSn1pTK0CoTJxnyXuE8BB2auCZOtVkryoAlk+Zsp
-         McMfvBtcnQSqXNrCY0heLEWB+B2fOAWt3SlXamPM4SB0COYbsO2bWXKJdNiIZMwo+xFb
-         FUQSGqPve5UK2g+YiCMoTm3/shvejOQYmJQlEgHOODwm2TdDdcjcceGpGHQU4KTs+YgB
-         Rizg==
+        d=linaro.org; s=google; t=1711645275; x=1712250075; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JvbGlCWeEtR2d0HYfJpjix5RjBTOtqrn3Jd60OZZIu0=;
+        b=WtXEBXl/oH6yh/h6j3NH93kUw3nshTECO/Q81N2QaMmymkGTkKzHix5icUgpfDqJbj
+         pXyyf2bcetSn3sfawAnXb+2IBOjJOXHTKvJqIVt00KbczaufoQiGxLUY+BRgYdeXWO2T
+         CrD00hSnQrToJSF/BzkB1Unghg0fG4+5SOSMO0hGmvw3kxJLFfE0Pmst3t3z1PO4AhzL
+         doyBpnxEY17n4j/YUzXiwwV92+8WpsJIIZGjti9aCaxqj6kM2yCpbWqekYzJDlpDeQsa
+         1hWSDwlvb3Rq24lhxvlmh+Y+59MdpJrB+h+qYw/w3sHdYsswkIPpjCXDVLKnzWr8eBKF
+         at+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711633003; x=1712237803;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1IePTNqHmG2u8C44qjEuGkD7ttbOGPgyCjA8yYZ50bc=;
-        b=S7dsv102Iwu1w3JeXVYXGepcO1FbzkGmODUXup9bkbmQuqzUcFvphST78aJG+DWXJq
-         jGPPivlDHiziQUmKhgpvqGARBdCQJrUQFBDgxcb2gDYx3ixqjjWKAEXUIcx38FqWd+vH
-         M0zAiCXKepP1NhrQ48ExM0onFpGIoQm0gvev7VpRoJ6gArpOeZBMS4l5OBkhapRYDFxS
-         EUSI64khSmx6F/kHmqPfhcKaPBJ+n22SZuROZGjkxvaxKz2ZJFS/rJyz6Wczch1cbxmB
-         DSA7FH0LzkltPT3llu/weXKoVszHbDmzj1GkAwpjwUA+E6rqVs2JVXobW4u3Nb0Fo8c5
-         D0ew==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Mh9MfkAqyaFaw6oD+GUwhrDQDL/qw4d7jsSPQC5SqEAkB8ar096+v6NVKJB96UHRgwaSQoTS8K6pBm/7+5XgxXddgGgCHv/EDvBFZaSSJmY=
-X-Gm-Message-State: AOJu0Yw5+82PeYv92x8O1S1yj/vosBZVkdDmU4At26QfVcxakRqiNynP
-	h+JEOOsQFf4S+PSu3C5Sy4zBPgXxTCm1pDORKUjiGrLr3AsI8NirgFFVFhQag+0=
-X-Google-Smtp-Source: AGHT+IEqy69lfejNCICnEF+Lz3j5+RW5/EqlqxH994OBXzrzmpwHtFr1ILfHmp+nOsj3wq2bEQxAVA==
-X-Received: by 2002:adf:e6cb:0:b0:343:343f:85da with SMTP id y11-20020adfe6cb000000b00343343f85damr886818wrm.33.1711633002735;
-        Thu, 28 Mar 2024 06:36:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711645275; x=1712250075;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JvbGlCWeEtR2d0HYfJpjix5RjBTOtqrn3Jd60OZZIu0=;
+        b=dakoId7F03szyNF6IT+HvfZ1z/+JI7CXQ8JjTGDGMMJuHpNi0cmbJMKdxAk0KUNAAx
+         LiImFGvWLWNb9VxnQgV5/GGX/qwXMyjx/yNQk0k5she1ivraTVWNWwgDmcaY6BFJTmVv
+         EBawcCyV+gltA3a7R8lBERBWRiFRzQHBXg/cWCjP9TPAD9xsTRts6X4PBExKUDvvPmfu
+         02wSVvyNaJSOAYwoO4hJcaxL/u53vM9C1+0h4NIMutBZ08dxZy3CdcE1coSo9Ojx+4r5
+         gxV1fdxtohJxpkKiVoSmwHcvqLujs7/qUVpeJyAINefwSShXL9be/Wt8r7b4FegAGoPi
+         jrlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURHrMs+XleFULYGFZ/0DJtyDvcs6j0RTKYpYQf82j4qqCv+bmBcAscWop1m4URzeLdXOXdfScyCY8OFebj8mLDGAeC0vLMXUOlyeKCDHKu0Aw=
+X-Gm-Message-State: AOJu0Yy2fuK6SEw+Q4JAvUrS1sYI+WwVLrwathcCQCQtvTK4S1Ih4Y74
+	mtkW2pPoAPKNRBnH6+3wrQ/i6tK2pAIlhdrk6nhHN7mEAJAIY3XyaqHyEwoo3Z8=
+X-Google-Smtp-Source: AGHT+IHl1XVC/4kgvD79NRisLWRE2gI3TkFtYQsLM4Dews8SLNO5juXXxy8LEkOQtwW4O/6aP3wovg==
+X-Received: by 2002:a05:600c:4f13:b0:413:ee55:8bba with SMTP id l19-20020a05600c4f1300b00413ee558bbamr3347745wmq.4.1711645274517;
+        Thu, 28 Mar 2024 10:01:14 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.50])
-        by smtp.gmail.com with ESMTPSA id fj3-20020a05600c0c8300b00414896b61e4sm5493647wmb.16.2024.03.28.06.36.41
+        by smtp.gmail.com with ESMTPSA id gw5-20020a05600c850500b004148e3f4cafsm6030284wmb.14.2024.03.28.10.01.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 06:36:42 -0700 (PDT)
-Message-ID: <6b691a48-ca97-4f23-a09f-69b9254f0c11@linaro.org>
-Date: Thu, 28 Mar 2024 14:36:40 +0100
+        Thu, 28 Mar 2024 10:01:14 -0700 (PDT)
+Message-ID: <83607b46-56e4-45eb-ac69-9bc5be5bdee4@linaro.org>
+Date: Thu, 28 Mar 2024 18:01:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,6 +63,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH REVIEW] hwrng: add exynos Secure World RNG device driver
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Alexey Klimov <alexey.klimov@linaro.org>, olivia@selenic.com,
  herbert@gondor.apana.org.au, sehi.kim@samsung.com,
  linux-samsung-soc@vger.kernel.org, peter.griffin@linaro.org,
@@ -73,8 +74,8 @@ Cc: alim.akhtar@samsung.com, linux-crypto@vger.kernel.org,
  saravanak@google.com, elder@linaro.org, tudor.ambarus@linaro.org,
  klimov.linux@gmail.com
 References: <20240328125056.1054878-1-alexey.klimov@linaro.org>
+ <6b691a48-ca97-4f23-a09f-69b9254f0c11@linaro.org>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -119,126 +120,44 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240328125056.1054878-1-alexey.klimov@linaro.org>
+In-Reply-To: <6b691a48-ca97-4f23-a09f-69b9254f0c11@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/03/2024 13:50, Alexey Klimov wrote:
-> The Exynos TRNG device is controlled by firmware and shared between
-
-No, it is not. I have TRNG perfectly usable on my board. Maybe you are
-refer to some specific SoC...
-
-Please always Cc existing TRNG driver maintainer.
-
-> non-secure world and secure world. Access to it is exposed via SMC
-> interface which is implemented here. The firmware code does
-> additional security checks, start-up test and some checks on resume.
+On 28/03/2024 14:36, Krzysztof Kozlowski wrote:
+>> +
+>> +static UNIVERSAL_DEV_PM_OPS(exyswd_rng_pm_ops, exyswd_rng_suspend,
+>> +			    exyswd_rng_resume, NULL);
+>> +
+>> +static struct platform_driver exyswd_rng_driver = {
+>> +	.probe		= exyswd_rng_probe,
+>> +	.remove		= exyswd_rng_remove,
+>> +	.driver		= {
+>> +		.name	= DRVNAME,
+>> +		.owner	= THIS_MODULE,
 > 
-> This device is found, for instance, in Google Tensor GS101-family
-> of devices.
-
-Nothing here explains why this cannot be integrated into existing
-driver. Maybe it, maybe it cannot...
-
-You try to upstream again vendor driver ignoring that community already
-did it and instead it might be enough to customize it.
-
-Guys, the same as all the MCT, PHYs and PCI in previous works of various
-people: stop duplicating drivers by upstreaming new vendor stuff with
-all the issues we already fixed and please work on re-using existing
-drivers.
-
-Sometimes work cannot be combined, so come with arguments. Otherwise we
-keep repeating and repeating the same feedback.
-
+> So this was fixed ~8-10 years ago. Yet it re-appears. Please do not use
+> downstream code as template.
 > 
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-> ---
->  drivers/char/hw_random/Kconfig           |  12 +
->  drivers/char/hw_random/Makefile          |   1 +
->  drivers/char/hw_random/exynos-swd-trng.c | 423 +++++++++++++++++++++++
->  3 files changed, 436 insertions(+)
->  create mode 100644 drivers/char/hw_random/exynos-swd-trng.c
-> 
-> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-> index 442c40efb200..bff7c3ec129a 100644
-> --- a/drivers/char/hw_random/Kconfig
-> +++ b/drivers/char/hw_random/Kconfig
-> @@ -479,6 +479,18 @@ config HW_RANDOM_EXYNOS
->  
->  	  If unsure, say Y.
->  
-> +config HW_RANDOM_EXYNOS_SWD
-> +	tristate "Exynos SWD HW random number generator support"
+> Take upstream driver and either change it or customize it.
 
-What is SWD?
+Alex Elder pointed out that some of my comments might not be precise or
+not helping enough. Let me clarify then:
 
-> +	default n
-> +	help
-> +	  This driver provides kernel-side support for accessing Samsung
-> +	  TRNG hardware located in secure world using smc calls.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called exynos-swd-trng.
-> +
-> +	  If unsure, say N.
-> +
+Please run all standard, open-source tools when submitting new driver,
+which is:
+1. Coccinelle, which points to this specific line since 2014,
+2. smatch,
+3. sparse,
+4. checkpatch,
+5. If changing bindings: dt_binding_check,
+6. If changing DTS or bindings: dtbs_check.
 
+I still did not point to specific error I see, because I would like you
+to setup the tools and find it. This way you will have toolset ready for
+any other submissions. I hope this will be helpful.
 
-...
-
-> +
-> +static UNIVERSAL_DEV_PM_OPS(exyswd_rng_pm_ops, exyswd_rng_suspend,
-> +			    exyswd_rng_resume, NULL);
-> +
-> +static struct platform_driver exyswd_rng_driver = {
-> +	.probe		= exyswd_rng_probe,
-> +	.remove		= exyswd_rng_remove,
-> +	.driver		= {
-> +		.name	= DRVNAME,
-> +		.owner	= THIS_MODULE,
-
-So this was fixed ~8-10 years ago. Yet it re-appears. Please do not use
-downstream code as template.
-
-Take upstream driver and either change it or customize it.
-
-
-> +		.pm     = &exyswd_rng_pm_ops,
-> +	},
-> +};
-> +
-> +static struct platform_device *exyswd_rng_pdev;
-
-And if I have multiple devices?
-
-> +
-> +static int __init exyswd_rng_init(void)
-> +{
-> +	int ret;
-> +
-> +	exyswd_rng_pdev = platform_device_register_simple(DRVNAME, -1, NULL, 0);
-> +	if (IS_ERR(exyswd_rng_pdev))
-> +		pr_err(DRVNAME ": could not register device: %ld\n",
-> +		       PTR_ERR(exyswd_rng_pdev));
-
-This is some oddity... Why do you create devices based on module load?
-So I load this on Qualcomm anbd you create exynos device? This does not
-make sense.
-
-
-> +
-> +	ret = platform_driver_register(&exyswd_rng_driver);
-> +	if (ret) {
-> +		platform_device_unregister(exyswd_rng_pdev);
-> +		return ret;
-> +	}
-> +
-> +	pr_info("ExyRNG driver, (c) 2014 Samsung Electronics\n");
-
-Drop, dirvers should not print code just because I load a driver. Again:
-imagine I load it on Qualcomm.
+Thank you for your contribution.
 
 
 Best regards,
