@@ -1,122 +1,129 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A487EF00
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 11:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871987F466
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 12:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711625789; cv=none; b=AAlNET3ICu+gA/DquxNDDq8XBt/JaXZ2Mj4R6r2MKdQlRgx0D9/VbFQ05Hre2jOFCQqK3IQz0zcHe5NGzgoJL9oAsO7mNucGb4SIHS7U6EfzUYh9+OBwznEXj/YLFL4RWYZ3OMoCCKGzGRj3Y4vg+46hlu+H5r6bAf3iBUvoAY8=
+	t=1711629289; cv=none; b=tCAbECzfm7uvCV3S3zRU6QoGXhFrm5UT/ROFMSi0NyuS2pD/+WJ16YXI4rc3lC0kaJnJBeWL0eIFIc/MADPYmVNG5BV0S5TChK22ZNnPVYJVlWjHSXjbHfgBuEigoMgW9gWyB5+BtGPTnoAPHbsZtLiStEYjmXMAVKbd+E/9QSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711625789; c=relaxed/simple;
-	bh=ilFiE9F2pbJK4CUMlqxrCeQ1cVjq7bZKPhWVwfSrj9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VoJW4sqXWjpYHJkvtCBqqvDszTztrU3ibEBbkuYrxFmaWyHJgaL0kvneTqgM02NU1LeI13/oqpUWvduUl2l6XzNJGbxvMlBJZjDsbazaanLTWQ123kNiqONxzYXpS9EMf+NiNYN5+Tdt/uvLmoWiY/d9aw06pU0W9gJnItkA91Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tdAUr0hF; arc=none smtp.client-ip=209.85.222.180
+	s=arc-20240116; t=1711629289; c=relaxed/simple;
+	bh=N0VnPgbWrvY1XSHkJSVJnzw1cjtZzFe0yo4Covel7Fw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nm4XDiGoY8o68S4a6vwmyBYF5WxTt8htm9ZVs+fGsCli8jT3NPY8yRLKovYThrCBbjGYBiZSlpLu//VxgElaBUHFLVfy1TOLWTadVP3Kym2ypyMkT5EJj37TlsK0KBfl7df9b9VKJKtX0pZKZFwpta8Ij/cOqFCiIeJhbDFbVwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ypwiHoIt; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tdAUr0hF"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-789f00aba19so58640485a.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 04:36:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ypwiHoIt"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34005b5927eso608045f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 05:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711625786; x=1712230586; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/prkjkwBayqxMQUYRG7IzJfpOCSd/2k5XXEN/lDQzgY=;
-        b=tdAUr0hFkCKJHDI8qlWl6HmDvuVsRGRbk+cOnoNM0xtRJVUo8vnVMWnTq1YHS/Qnek
-         0SKBtiPBIvk2jnoDiRajZAp/6IUnu9CLE613IGXZuuPOaYpdHRWnNlH2umhL+w4zUYeR
-         npz7YouK6t2Us/FuWqUH4JeTDyyTPyyu9fxi4sOLpm4sZDsOAz33u8R9lFarj/qnwsg9
-         yZh5EBQogMSxmQZt2kogAd40HzvtCo+ePt4wTd4CZqqh5FRx2VdqWv9gF3MPRzwuo8Up
-         yVKUuDx+hgsuPaEr8FHyw76hUqhGOMgGsBITP+yTOJGJx+tZkb0IH+mAQGz5andLHwuG
-         +YMg==
+        d=linaro.org; s=google; t=1711629285; x=1712234085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0wFpD+++a2qGN194PQlW/ydpKP0vxDJuH65l8GmtaME=;
+        b=ypwiHoItjV+5/GIR/MZSqp8UFkl88D3MPWZ5EsBWcyDv7aWwXKwugVn0722FobebGe
+         R38jX5z65/G3N1KAV35Mb81InwBIykUshd34indmcysQBvgCZFaketKk+tGrORhTOcfO
+         KfEQyusE4TZSKXQccVLabuD52xDppzbGOs/KOZMshkq+VtZUJiJ6VhYEY/3g7pyLFgYO
+         W3XOV3hsdu4Oc4pZISXBBCwNgQbcRSI3WAfQd1jAM7bMiiAFZoWrilcMpRArTFuXQcyY
+         +HmxL0iHhWL0HvwL1PQofKDHAinW2IAxCDLrzJXsprQmUB39MziU2JraFHTVrDBhJkrw
+         hcGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711625786; x=1712230586;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1711629285; x=1712234085;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/prkjkwBayqxMQUYRG7IzJfpOCSd/2k5XXEN/lDQzgY=;
-        b=YBsvTLEKy0GgY26LZwcZukBkDpR50P+gd7aH8i/2xiaRfZondWWJGWbZsVqZIXBXd0
-         plZJbsfZdLiomYEnLzsfMulW78XYUl6zvBMPxrdRe9sANmVhJCg9RF0TpEtIl9MFo7db
-         d1ayzEVSAcdjOdVw4r2W7o3VAJ7ih3FezncWPprB9BMNtdP0rdnebLKzYAjaNOcwwp+r
-         Xi+//YBcFW06FjRpCo2fKQMgLcBrDHI5w6f6bL20npKG5vGq4ga/owKCOdEVy2kTW9QQ
-         45+MzvnOMb3xvsp9UFg/+mAjbwzsvsG/+5tT7bSt0fRmQRLTJ68U0/CVdhW8o03tloHQ
-         brGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqzgnV6f+VzmBKrRNVt3gT5kYBvg210uJhoC43WWlDYtfOQMOuvTUxamCZeqR/Kqd1f/yZjrTp525NMlzG79RMPKj7YuGEA6ptsxcnjG6Tm3M=
-X-Gm-Message-State: AOJu0YwJknx+2mAlHBv3ZMvrD7ty+O8y408ZR9YhXcCntb8ljPT+41YX
-	FZScpiJbE3Ssse6KJ+xdiE9MXCAUzaWfi0o8K/+hChhRkq54b6fSltzUaQYQIPpAu8VQ6jRGEa5
-	Ajc8dcgEU3U1dLpCUOAeY2wlpcumNaxAJ3pJ11Q==
-X-Google-Smtp-Source: AGHT+IECGMP91OnvJpnEQBoQ4ZvbqvFkvhcH6wJdMgASlS9vR/dFRa/h/ehJAtH5CkKObHpqEYR5kJ/+W/XF3z8Eh9c=
-X-Received: by 2002:a05:6214:14a3:b0:696:3704:712c with SMTP id
- bo3-20020a05621414a300b006963704712cmr1853382qvb.63.1711625786555; Thu, 28
- Mar 2024 04:36:26 -0700 (PDT)
+        bh=0wFpD+++a2qGN194PQlW/ydpKP0vxDJuH65l8GmtaME=;
+        b=I2PP1V6SATLSqZH3rSX7BJqP1wDERF8gzgw1I6GdRdxfKxJDfNJJpMNvgU9SyF5CvG
+         FC90k9W+zjKbre3dzLa+BjktLAWo1ey8VJsl9B26g9PYUU3jYK9uN6mr2aXITXR0+8QN
+         t5hXK3Ct4kzk77bLvwza5TpSpbwFIrR+oc/CiITYRCqiEMvsd33dUMFosehHM9E9EjOP
+         oUdRunseFna8HxDrYo6rbJOZjCYomgGpL9NXijM3YWxUvSOJ7HBby8cZRu2VrehnPFWg
+         JxZs1yRjwn/VRx7aasr/o7a7LmZJ5/NtGNQGhOY4QHLLopZIBEnU0BMDeUVivnp1wG0X
+         07nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnRtXLPrnwi+IGNX4ENT1+UIgn6RRirg3FzjVMYIOoyZs2VQcA4V7ZTjKJY94rc4Dd7ooT+fGOEnVHgyS9G/O6RFu+0j0PXR/OM10Utskb8v8=
+X-Gm-Message-State: AOJu0YxljHZyuXbKRw7RUTu+mXrArIivDp3sAlhadoYaiiJauV1cLK6y
+	Zgpsa43v0x3g2gqTTHUx1b8W7pe4QU4wf33VXfA0fyx2jYfPCwdEVeyw7SnIkns=
+X-Google-Smtp-Source: AGHT+IGeWvo/4NVkNv2RtRW6WUniovQcsePcpHiG6m59zjQV4C3QR40TEwzrJzXenDVVjdliNkIBvg==
+X-Received: by 2002:a5d:6448:0:b0:33e:c316:2a51 with SMTP id d8-20020a5d6448000000b0033ec3162a51mr1524284wrw.27.1711629284889;
+        Thu, 28 Mar 2024 05:34:44 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
+        by smtp.gmail.com with ESMTPSA id u6-20020adfa186000000b00341e2146b53sm1639671wru.106.2024.03.28.05.34.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Mar 2024 05:34:44 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: peter.griffin@linaro.org,
+	krzysztof.kozlowski@linaro.org
+Cc: alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org,
+	willmcvicker@google.com,
+	kernel-team@android.com,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	semen.protsenko@linaro.org,
+	linux-clk@vger.kernel.org,
+	jaewon02.kim@samsung.com,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v3 0/3] clk: samsung: introduce nMUX to reparent MUX clocks
+Date: Thu, 28 Mar 2024 12:34:37 +0000
+Message-ID: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.44.0.396.g6e790dbe36-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240326172813.801470-1-tudor.ambarus@linaro.org> <20240326172813.801470-4-tudor.ambarus@linaro.org>
-In-Reply-To: <20240326172813.801470-4-tudor.ambarus@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 28 Mar 2024 11:36:15 +0000
-Message-ID: <CADrjBPpjK15MDTcSdOhiC6FnJcofDGArEvrkhdz+CHoFzpFheA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] clk: samsung: gs101: propagate PERIC0 USI SPI
- clock rate
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
-	willmcvicker@google.com, kernel-team@android.com, s.nawrocki@samsung.com, 
-	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	semen.protsenko@linaro.org, linux-clk@vger.kernel.org, 
-	jaewon02.kim@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Tudor,
+v3:
+- update first patch:
+  - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+  - update commit message
+  - update comment and say that nMUX() shall be used where MUX reparenting
+    on clock rate chage is allowed
+- collect R-b, A-b tags
 
-On Tue, 26 Mar 2024 at 17:28, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
-> When SPI transfer is being prepared, the spi-s3c64xx driver will call
-> clk_set_rate() to change the rate of SPI source clock (IPCLK). But IPCLK
-> is a gate (leaf) clock, so it must propagate the rate change up the
-> clock tree, so that corresponding MUX/DIV clocks can actually change
-> their values. Add CLK_SET_RATE_PARENT flag to corresponding clocks for
-> all USI instances in GS101 PERIC0: USI{1-8, 14}. This change involves the
-> following clocks:
->
-> PERIC0 USI*:
->
->     Clock                              Div range    MUX Selection
->     -------------------------------------------------------------------
->     gout_peric0_peric0_top0_ipclk_*    -            -
->     dout_peric0_usi*_usi               /1..16       -
->     mout_peric0_usi*_usi_user          -            {24.5 MHz, 400 MHz}
->
-> With input clock of 400 MHz this scheme provides the following IPCLK
-> rate range, for each USI block:
->
->     PERIC0 USI*:       1.5 MHz ... 400 MHz
->
-> Accounting for internal /4 divider in SPI blocks, and because the max
-> SPI frequency is limited at 50 MHz, it gives us next SPI SCK rates:
->
->     PERIC0 USI_SPI*:   384 KHz ... 49.9 MHz
->
-> Which shall be fine for the applications of the SPI bus.
->
-> Note that with this we allow the reparenting of the MUX_USIx clocks to
-> OSCCLK. Each instance of the USI IP has its own MUX_USI clock, thus the
-> reparenting of a MUX_USI clock corresponds to a single instance of the
-> USI IP. The datasheet mentions OSCCLK just in the low-power mode
-> context, but the downstream driver reparents too the MUX_USI clocks to
-> OSCCLK. Follow the downstream driver and do the same.
->
-> Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
+v2:
+- reword commit messages
+- drop exynos850 patch on Sam's request
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+v1: https://lore.kernel.org/linux-samsung-soc/20240229122021.1901785-1-tudor.ambarus@linaro.org/
 
-regards,
 
-Peter
+All samsung MUX clocks that are defined with MUX() set the
+CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
+reparented during clk_set_rate().
+    
+Introduce nMUX() for MUX clocks that can be reparented. nMUX is used
+in GS101 to reparent the USI MUX to OSCCLK on low SPI clock rates.
+
+Each instance of the USI IP in GS101 has its own MUX_USI clock, thus
+the reparenting of a MUX_USI clock corresponds to a single instance
+of the USI IP. We allow the reparenting of the MUX_USIx clocks to
+OSCCLK. The datasheet mentions OSCCLK just in the low-power mode
+context, but the downstream driver reparents too the MUX_USI clocks
+to OSCCLK. Follow the downstream driver and do the same.
+
+Tested with USI6 and USI13 SPI.
+
+Find discussion on MUX reparenting to OSCCLK at:
+https://lore.kernel.org/linux-samsung-soc/d508dfc1-bc28-4470-92aa-cf71915966f4@linaro.org/
+
+Tudor Ambarus (3):
+  clk: samsung: introduce nMUX for MUX clks that can reparented
+  clk: samsung: gs101: propagate PERIC1 USI SPI clock rate
+  clk: samsung: gs101: propagate PERIC0 USI SPI clock rate
+
+ drivers/clk/samsung/clk-gs101.c | 225 +++++++++++++++++---------------
+ drivers/clk/samsung/clk.h       |  11 +-
+ 2 files changed, 129 insertions(+), 107 deletions(-)
+
+-- 
+2.44.0.396.g6e790dbe36-goog
+
