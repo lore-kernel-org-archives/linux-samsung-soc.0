@@ -1,162 +1,70 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C66364DA
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 09:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FA455769;
+	Thu, 28 Mar 2024 09:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711619795; cv=none; b=PxMxa4pB00D+HsNLW4IOAopxqWgW7YYvMiEH8vjIlMVxBd6a3jAWCPc0cl6pd5xYST2GiM9MGkDxwC8TPmTZRqa0qcRw6d+Ipz9tGoX2lpO23sm3uoIx58VoQHHIbClk01m5xROe95ZpA47cfWMZr8kmOi9/dGvxpgObslU6w84=
+	t=1711619931; cv=none; b=KGpgJngumfby/KwJw8gcwfGhCvmJeptadQqqmfzisQvxAYLgi1kbK7SNz1l0JByth15I4dCNTRFzrzQpK4hrldknd6JfFNFq12wMYuN/MLURAW26JatmaNVoYYSj+wRbW2GqYQDp8F6ZT9OfVh7x1AgT5oKa8dyCifpB7bc7PBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711619795; c=relaxed/simple;
-	bh=apGxcrTbcKwNlgJyzx6P+DpiuihHBxUNXPG7dq4SEeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mM7Dm8eEznV9R2S03S9iLs2DQlkKzYyq0qDUvHSbt/ZUXQrnPgEeUAnHxBgkE3Dg8FR2tchanlGnUKYWyYx+TuNx6trHX4xMh0p/D3mIsjSbFw21fmIuIAddbLvgZnVkJ/nBzTJ8ka81VWycm/c3Tc3tTfdvwisRCE9OEDeze1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QoB8RAlO; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QoB8RAlO"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-415446af364so2301835e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 02:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711619792; x=1712224592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=91H2EuwYgRKbUQaWSu0pH6B/AYEEMsEWRVAOxy3hrd8=;
-        b=QoB8RAlOy4wJTkTTB4/9zhOAMe36UhUm6gh/vH9DTzhMPrEJD3FPMGLF1VQbIAtvcq
-         x90sRbs7An+R2bzQ5A6d3vhf4xAvCRVj2eBdPgPeI9fcZm5OWakgy1uTvWaSXIo/pgJZ
-         pyoR6FQTdfSb/e2qOEohrdcME1HWaSqQmhR5y0sWRIm14aJ6xpqLTS0l47XK4FpiUW1D
-         XyFWIaWvp+smeNB3JYAc7WRIliQN3h2p34kOGPg828Uo7ACwALIrfeDzsgr+StLueh8W
-         +qSESIzwRKZofxfoP9rURAuYrVdcw6I/45nEg5ptHR3Gh1t6tj60zs3Oma9o3Zw+89BH
-         OQZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711619792; x=1712224592;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=91H2EuwYgRKbUQaWSu0pH6B/AYEEMsEWRVAOxy3hrd8=;
-        b=CnCTD51HfxG9YeCciHpcbkpU2/znICMtLsUB4RYbRpYd6nmNr3Jf0EVpZIQXxnvoBd
-         4NEmNmDOTmEbxYRx6CP6zDB55rJZTvJZ0SXFO35N5ilqKyidPPrJua5/d2XBrUNadtbL
-         OY9e/1kun4ShZFmi9Cei0iYHA2jKQYVacky0BNzN66ddAtYgqph3wZkJoq+Cr+j+4eqh
-         2hpQALK84OD6m9dyPm5IpXiDx2Xh2mIOwk3xQMMZAc59Z272n4xYeSxBM5xBhddxVt+f
-         K/kNl49hC7km8V/8yhY1wwWHvjHUTWgui9ugmV3bXj/Ye9CHxNRXvPWLXGDm5ZcLWDQ4
-         QKGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPeg8DADLGz1VbTow2eT/rQou4PNBfFyQQMpbfgPIjoYWICc5HtQ0e7XUxt3qNU2IHaFvj25JHX0ajYYqJCG+JAEETCTGb0fJb2uVG5pmvJ8U=
-X-Gm-Message-State: AOJu0YypEFisFpCPHnmv1s3skTPg+yUIuUeAONHHvXGM3zNCxua9SeVV
-	xQmDWftdDJtY+aD33SqkeSQMtdxxhBWrirsByMX3lorxosXZgXLJuY7/gojmMn0=
-X-Google-Smtp-Source: AGHT+IE6xVKsucdvo8+lIKtmrupCQlFTJPljR4VV4CUvbyOwJdocmeCslf3s9odir9/DXErpcPG3Ig==
-X-Received: by 2002:a5d:44cf:0:b0:33e:c68d:d536 with SMTP id z15-20020a5d44cf000000b0033ec68dd536mr1325559wrr.15.1711619791818;
-        Thu, 28 Mar 2024 02:56:31 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.148])
-        by smtp.gmail.com with ESMTPSA id f12-20020a056000036c00b00341ce80ea66sm1297697wrf.82.2024.03.28.02.56.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 02:56:31 -0700 (PDT)
-Message-ID: <5af43398-70fc-4598-9453-6a52d758975e@linaro.org>
-Date: Thu, 28 Mar 2024 10:56:29 +0100
+	s=arc-20240116; t=1711619931; c=relaxed/simple;
+	bh=LR01KxWnPZWOqIcA1p8pdeTLxQFRQRqlaLiwBVcMWjY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GpFZ+gOZiL3HulnNbXkJavSkFLTG3vM8NoiZgYsTzx97qlH2YLSW3RHoD7w2vpqx8q5Hjx5F9Ft2nmLGSsdTXgSRYi7do/RNJwjbtvA6gEFEIWCzWfZT3PZIgZcbDPvbeIBoOoZ9QnYRJvQyLvARpAB7ZTuwsReSyyxN29Rprak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D925C433F1;
+	Thu, 28 Mar 2024 09:58:46 +0000 (UTC)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: peter.griffin@linaro.org, robh+dt@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, andre.draszik@linaro.org, 
+ willmcvicker@google.com, kernel-team@android.com
+In-Reply-To: <20240326151301.348932-1-tudor.ambarus@linaro.org>
+References: <20240326151301.348932-1-tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v3 0/5] arm64: dts: exynos: gs101: define all PERIC USI
+ nodes
+Message-Id: <171161992678.13192.16312850568393488957.b4-ty@linaro.org>
+Date: Thu, 28 Mar 2024 10:58:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
- reparented
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
- s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
- jaewon02.kim@samsung.com
-References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
- <20240326172813.801470-2-tudor.ambarus@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240326172813.801470-2-tudor.ambarus@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 26/03/2024 18:28, Tudor Ambarus wrote:
-> All samsung MUX clocks that are defined with MUX() set the
-> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
-> reparented during clk_set_rate().
+
+On Tue, 26 Mar 2024 15:12:56 +0000, Tudor Ambarus wrote:
+> The series starts with some trivial cosmetics patches, then defines all
+> the PERIC USI nodes.
 > 
-> Introduce nMUX() for MUX clocks that can be reparented. One user of
-> nMUX() will be GS101. GS101 defines MUX clocks that are dedicated for
-> each instance of an IP (see MUX USI). The reparenting of these MUX clocks
-> will not affect other instances of the same IP or different IPs
-> altogether.
+> v3:
+> - seems that Andre' already reordered the pinctrl properties, take his
+>   patch (first in the series) and rebase my series on top.
+> - small updates on commit messages
+> - collect R-b tags
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/clk/samsung/clk.h | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-> index a70bd7cce39f..01f58b7686db 100644
-> --- a/drivers/clk/samsung/clk.h
-> +++ b/drivers/clk/samsung/clk.h
-> @@ -146,6 +146,26 @@ struct samsung_mux_clock {
->  #define MUX_F(_id, cname, pnames, o, s, w, f, mf)		\
->  	__MUX(_id, cname, pnames, o, s, w, f, mf)
->  
-> +/* Used by MUX clocks where reparenting is allowed. */
+> [...]
 
-...where reparenting on clock rate change is allowed
+Applied, thanks!
 
-Because otherwise this suggest muxes cannot change :)
-
-No need to resend just for this, I can fix it while applying. Still
-waiting for some review, till EOD.
-
+[1/5] arm64: dts: exynos: gs101: reorder pinctrl-* properties
+      https://git.kernel.org/krzk/linux/c/7d7df014617ba8df7fbdacac54cafe0d13573dcb
+[2/5] arm64: dts: exynos: gs101: move serial_0 pinctrl-0/names to dtsi
+      https://git.kernel.org/krzk/linux/c/73618dfa705dc8f993a6829c895eaf5af8402ceb
+[3/5] arm64: dts: exynos: gs101: move pinctrl-* properties after clocks
+      https://git.kernel.org/krzk/linux/c/d978c70e8d4775c62db21f85947d12b4f874104a
+[4/5] arm64: dts: exynos: gs101: join lines close to 80 chars
+      https://git.kernel.org/krzk/linux/c/028a87e91fcd8c485afcf8bd0d26ae34a0872438
+[5/5] arm64: dts: exynos: gs101: define all PERIC USI nodes
+      https://git.kernel.org/krzk/linux/c/a45c3a9b1ef9571741d40bf10f22ce3c60bc5111
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
