@@ -1,60 +1,60 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B87764CCE
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 09:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C66364DA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 09:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711619363; cv=none; b=DC198XPUq9HWLwFMqfse1FuljSGD4BX53wQDgPQalbZXPUL4iIVZaAFUE1eboBGVFuYsJ8KcFdA490m7qLujGADak3Fa7pvnRbm9lqSYNGhtT12YLEgM+yWxZjZRt1HQBstFVyeH/w9fOopeDUBF86fm3FnmoVtrCCahJlOWslY=
+	t=1711619795; cv=none; b=PxMxa4pB00D+HsNLW4IOAopxqWgW7YYvMiEH8vjIlMVxBd6a3jAWCPc0cl6pd5xYST2GiM9MGkDxwC8TPmTZRqa0qcRw6d+Ipz9tGoX2lpO23sm3uoIx58VoQHHIbClk01m5xROe95ZpA47cfWMZr8kmOi9/dGvxpgObslU6w84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711619363; c=relaxed/simple;
-	bh=hzmvgD34ISPJE+AouaRVXOuDSIWXTiOaZypBcAViVmg=;
+	s=arc-20240116; t=1711619795; c=relaxed/simple;
+	bh=apGxcrTbcKwNlgJyzx6P+DpiuihHBxUNXPG7dq4SEeY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fmFQ5KgfqKh0D8TG/daZpk77oH26N2kWl5Jve9CAoBqJbobL0M7vWZ6UYcXfHe6JCvib6bfPhISx2Mmln/WI46n4H6UKaMzfOS4x0EF9pSp2bvl8HzDVh5wmMym/u5WPRc4FF6qWqLYp6hVffKbJyfjUFHCDZeBl8njfPiHrCCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nv3tEDuf; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=mM7Dm8eEznV9R2S03S9iLs2DQlkKzYyq0qDUvHSbt/ZUXQrnPgEeUAnHxBgkE3Dg8FR2tchanlGnUKYWyYx+TuNx6trHX4xMh0p/D3mIsjSbFw21fmIuIAddbLvgZnVkJ/nBzTJ8ka81VWycm/c3Tc3tTfdvwisRCE9OEDeze1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QoB8RAlO; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nv3tEDuf"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41544650225so3263055e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 02:49:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QoB8RAlO"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-415446af364so2301835e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 02:56:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711619360; x=1712224160; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711619792; x=1712224592; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=v77UoLBLsIld8XmVs+b2QBRLQe7ErVFpEjJbNjK04qs=;
-        b=Nv3tEDufYfzp9xf3ADvUzJRmpowxjuqshWWRaX5MA8/WrDqtT7a5hQ9XffiZR0TOVq
-         v6xIbYKml2YNu4cd2hIPcbQ3TOX4s2HdNSMWpUtQQJEKxkt7Syk7DsLdIYbCaG7yvFSa
-         ZJNhugVr40AOIOixGAPZMrUeSEmnZzU5mfd5f4uInnBfbEQ/0fa6fr7oKhb5MvrSh8r6
-         ewJCt4UXpXtVOZV5XoZBQa7ic5842iX/tgXdagkjz+Rf6LRUF7QuAc6kEsWLt0LO7pOa
-         5/NOTqk0aPfvckoy/L014H3oklkO2WGmFMPDMnBo7cPN3tViPRikTHi8XYFu54/HAtLc
-         U4Vw==
+        bh=91H2EuwYgRKbUQaWSu0pH6B/AYEEMsEWRVAOxy3hrd8=;
+        b=QoB8RAlOy4wJTkTTB4/9zhOAMe36UhUm6gh/vH9DTzhMPrEJD3FPMGLF1VQbIAtvcq
+         x90sRbs7An+R2bzQ5A6d3vhf4xAvCRVj2eBdPgPeI9fcZm5OWakgy1uTvWaSXIo/pgJZ
+         pyoR6FQTdfSb/e2qOEohrdcME1HWaSqQmhR5y0sWRIm14aJ6xpqLTS0l47XK4FpiUW1D
+         XyFWIaWvp+smeNB3JYAc7WRIliQN3h2p34kOGPg828Uo7ACwALIrfeDzsgr+StLueh8W
+         +qSESIzwRKZofxfoP9rURAuYrVdcw6I/45nEg5ptHR3Gh1t6tj60zs3Oma9o3Zw+89BH
+         OQZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711619360; x=1712224160;
+        d=1e100.net; s=20230601; t=1711619792; x=1712224592;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v77UoLBLsIld8XmVs+b2QBRLQe7ErVFpEjJbNjK04qs=;
-        b=RJdjp4l1I+U2GbrG441aVigJdrsx+hcpaj/7u6CHSgKv+oR1N0303Rn7zktXYK+xBW
-         HJAL067kdg/aIH5VEdzuC4c3IEIwIa9Mu1v3JKzaLiZMqAccoi1h/fuRWNTwsod9g1dq
-         W2WPXAh8Ca3VUHMRjjRMaN/HMF3LTtCc1n27ZTsAKmKlYUS/1LKJ2dKGRPUD+JVuJf5K
-         UiXCoXENFM6yZGq3WftddNIhuj1kCpuWhdtBvFLI9ChyoXajhyOwcryn63h6COe9WyK4
-         jeRLOZhLB4CIxJuchYzezwkkksUy5ryIGZoxRtlJeuRXW+xwqVSMNiXw8bXYgtmal6n8
-         kQwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPwcsF+bcuzdx9jDLl3g4YHbQZ3Loo4qfFHjDnZjuO5ITJaf6rivjp0Te5jCxZ+Rn7fUk3ZQv3Wi/or8i17GTNdkA/h3ozmSJuz4yU8IzcsXk=
-X-Gm-Message-State: AOJu0YzTMoJztuHbEOvSHrpbRt2HNgSNKnpCMxhYJ9AuoTAmJzeAAIbg
-	jnDkLDE91JHVL1/ohsBaT+13m+5VSjvAFiYYM9we1gXAsVAKspMWflscxbmdmlY=
-X-Google-Smtp-Source: AGHT+IF8/V9vViTXm0hMhm+pxnBd3cPTY38qxFZ3M/IzVD0AG9F0j/daJRVYLpqaCWPwXKHSqjP47Q==
-X-Received: by 2002:a05:600c:46d1:b0:414:8870:9c1a with SMTP id q17-20020a05600c46d100b0041488709c1amr1344121wmo.7.1711619359773;
-        Thu, 28 Mar 2024 02:49:19 -0700 (PDT)
+        bh=91H2EuwYgRKbUQaWSu0pH6B/AYEEMsEWRVAOxy3hrd8=;
+        b=CnCTD51HfxG9YeCciHpcbkpU2/znICMtLsUB4RYbRpYd6nmNr3Jf0EVpZIQXxnvoBd
+         4NEmNmDOTmEbxYRx6CP6zDB55rJZTvJZ0SXFO35N5ilqKyidPPrJua5/d2XBrUNadtbL
+         OY9e/1kun4ShZFmi9Cei0iYHA2jKQYVacky0BNzN66ddAtYgqph3wZkJoq+Cr+j+4eqh
+         2hpQALK84OD6m9dyPm5IpXiDx2Xh2mIOwk3xQMMZAc59Z272n4xYeSxBM5xBhddxVt+f
+         K/kNl49hC7km8V/8yhY1wwWHvjHUTWgui9ugmV3bXj/Ye9CHxNRXvPWLXGDm5ZcLWDQ4
+         QKGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPeg8DADLGz1VbTow2eT/rQou4PNBfFyQQMpbfgPIjoYWICc5HtQ0e7XUxt3qNU2IHaFvj25JHX0ajYYqJCG+JAEETCTGb0fJb2uVG5pmvJ8U=
+X-Gm-Message-State: AOJu0YypEFisFpCPHnmv1s3skTPg+yUIuUeAONHHvXGM3zNCxua9SeVV
+	xQmDWftdDJtY+aD33SqkeSQMtdxxhBWrirsByMX3lorxosXZgXLJuY7/gojmMn0=
+X-Google-Smtp-Source: AGHT+IE6xVKsucdvo8+lIKtmrupCQlFTJPljR4VV4CUvbyOwJdocmeCslf3s9odir9/DXErpcPG3Ig==
+X-Received: by 2002:a5d:44cf:0:b0:33e:c68d:d536 with SMTP id z15-20020a5d44cf000000b0033ec68dd536mr1325559wrr.15.1711619791818;
+        Thu, 28 Mar 2024 02:56:31 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.148])
-        by smtp.gmail.com with ESMTPSA id m28-20020a05600c3b1c00b00414688af147sm4881034wms.20.2024.03.28.02.49.18
+        by smtp.gmail.com with ESMTPSA id f12-20020a056000036c00b00341ce80ea66sm1297697wrf.82.2024.03.28.02.56.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 02:49:19 -0700 (PDT)
-Message-ID: <1a7f1818-2f2c-4e89-b2dd-4ad0f72ae3c2@linaro.org>
-Date: Thu, 28 Mar 2024 10:49:17 +0100
+        Thu, 28 Mar 2024 02:56:31 -0700 (PDT)
+Message-ID: <5af43398-70fc-4598-9453-6a52d758975e@linaro.org>
+Date: Thu, 28 Mar 2024 10:56:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,19 +62,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: gs101: join lines close to 80
- chars
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, peter.griffin@linaro.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com
-References: <20240326103620.298298-1-tudor.ambarus@linaro.org>
- <CGME20240326103631epcas5p37bc95c57becdeb63b0d8b01ffc6606fb@epcas5p3.samsung.com>
- <20240326103620.298298-4-tudor.ambarus@linaro.org>
- <001801da7f6e$40545650$c0fd02f0$@samsung.com>
- <454b88d5-885d-4933-ae49-46eaee99d75d@linaro.org>
+Subject: Re: [PATCH v2 1/3] clk: samsung: introduce nMUX for MUX clks that can
+ reparented
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240326172813.801470-1-tudor.ambarus@linaro.org>
+ <20240326172813.801470-2-tudor.ambarus@linaro.org>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -121,40 +119,43 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <454b88d5-885d-4933-ae49-46eaee99d75d@linaro.org>
+In-Reply-To: <20240326172813.801470-2-tudor.ambarus@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/03/2024 15:48, Tudor Ambarus wrote:
+On 26/03/2024 18:28, Tudor Ambarus wrote:
+> All samsung MUX clocks that are defined with MUX() set the
+> CLK_SET_RATE_NO_REPARENT flag in __MUX(), which prevents MUXes to be
+> reparented during clk_set_rate().
 > 
+> Introduce nMUX() for MUX clocks that can be reparented. One user of
+> nMUX() will be GS101. GS101 defines MUX clocks that are dedicated for
+> each instance of an IP (see MUX USI). The reparenting of these MUX clocks
+> will not affect other instances of the same IP or different IPs
+> altogether.
 > 
-> On 3/26/24 11:10, Alim Akhtar wrote:
->> Hi Tudor
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  drivers/clk/samsung/clk.h | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
-> Hi, Alim!
->>
->>> -----Original Message-----
->>> From: Tudor Ambarus <tudor.ambarus@linaro.org>
->>> Sent: Tuesday, March 26, 2024 4:06 PM
->>> To: peter.griffin@linaro.org; robh+dt@kernel.org;
->>> krzysztof.kozlowski+dt@linaro.org; conor+dt@kernel.org
->>> Cc: alim.akhtar@samsung.com; linux-arm-kernel@lists.infradead.org; linux-
->>> samsung-soc@vger.kernel.org; devicetree@vger.kernel.org; linux-
->>> kernel@vger.kernel.org; andre.draszik@linaro.org;
->>> willmcvicker@google.com; kernel-team@android.com; Tudor Ambarus
->>> <tudor.ambarus@linaro.org>
->>> Subject: [PATCH v2 3/4] arm64: dts: exynos: gs101: join lines close to 80
->> chars
->>>
->>> These lines fit 81 characters, which is pretty close to 80.
->>> Join the lines.
->>>
->> Does this breaks checkpatch flow?
-> 
-> ./scripts/checkpatch --strict does not complain
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index a70bd7cce39f..01f58b7686db 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -146,6 +146,26 @@ struct samsung_mux_clock {
+>  #define MUX_F(_id, cname, pnames, o, s, w, f, mf)		\
+>  	__MUX(_id, cname, pnames, o, s, w, f, mf)
+>  
+> +/* Used by MUX clocks where reparenting is allowed. */
 
-Because checkpatch does not have limit of 80... Coding style has, but
-for readability it is fine to stretch or even break this rule.
+...where reparenting on clock rate change is allowed
+
+Because otherwise this suggest muxes cannot change :)
+
+No need to resend just for this, I can fix it while applying. Still
+waiting for some review, till EOD.
+
 
 Best regards,
 Krzysztof
