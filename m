@@ -1,60 +1,60 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B68612F588
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 17:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88575BADB
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 17:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711645278; cv=none; b=fYDBrDRIk+jAnjq8B7UYxJ3uay/gsnTnOQP5FzBPNVMO/Cu+dpKA9W8IttGce5DGgz54g0qEZ7DfwH61mqh/U0e4w0sB7XAcEgEzDMd7dDHPUlIohfRrdqc1hHJiqU2AxsCs4NsQuUjpoYNcQbvzIyX3SpECYPG9f7KRzTNuYHc=
+	t=1711645558; cv=none; b=jSFeAbUhIjVqOATmVKEsgdaD/KYKXuNAp7AB9veOJGOXBI5AwjgaiHZR1PhzRf4z2iaggfihYCWnC49s02uZ/WAx2aGLpVcjmNaKks2E0JZ10sAgGcH/6gKk19ViWLdA20O14NPOPDwO3tr0ACm3yZ2PrAM26lS0ckdTdYjFWNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711645278; c=relaxed/simple;
-	bh=Fh/fvvGRV0ipLGBScyPvhaczpeww/KTs/gfhtV+DHN0=;
+	s=arc-20240116; t=1711645558; c=relaxed/simple;
+	bh=wSsry2PMXLPRJT5NhTiuPA1FZxtDvgfhBGHxg4riOr4=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=T3MivC1Iuc58Jm6Ftdv6VAx9uUb4ohWut+CM6O3AD+1ZcslKzFCqYv6LnaQfaw9zJhXttaGN7LTVN9SXeHLQ6wC19heUn8wru3qrRlWBx6TOpQ6KoXHTkWB4sb1qzWwEc5TW3jynW14i/hMzi1MNX2vUKTZ4Q2MOiw4r/cSIm6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WtXEBXl/; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:Content-Type; b=DcMFSl89sefNbC5bAL0uhkkFv45Jc/wCEB+vZrjjLOhzLWqiqwCSW4XSh5qmotnvv1mHEWJToLflQW5i09TCHiUPXwzYP2JPiDrNAc4cv9+GlOuJWMXO/LJTrxHtNnAeyyw5v2yId+/m5lKHzVbBDkGcjDd0w3dLWkT+YjSa3+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VzTVIOOh; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WtXEBXl/"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-415482307b0so5766395e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 10:01:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VzTVIOOh"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2d6fc3adaacso17278171fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 10:05:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711645275; x=1712250075; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711645555; x=1712250355; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JvbGlCWeEtR2d0HYfJpjix5RjBTOtqrn3Jd60OZZIu0=;
-        b=WtXEBXl/oH6yh/h6j3NH93kUw3nshTECO/Q81N2QaMmymkGTkKzHix5icUgpfDqJbj
-         pXyyf2bcetSn3sfawAnXb+2IBOjJOXHTKvJqIVt00KbczaufoQiGxLUY+BRgYdeXWO2T
-         CrD00hSnQrToJSF/BzkB1Unghg0fG4+5SOSMO0hGmvw3kxJLFfE0Pmst3t3z1PO4AhzL
-         doyBpnxEY17n4j/YUzXiwwV92+8WpsJIIZGjti9aCaxqj6kM2yCpbWqekYzJDlpDeQsa
-         1hWSDwlvb3Rq24lhxvlmh+Y+59MdpJrB+h+qYw/w3sHdYsswkIPpjCXDVLKnzWr8eBKF
-         at+w==
+        bh=8UV269C+zXw1qTig2GGB1q1grJrIL/P42czrgTeCgxA=;
+        b=VzTVIOOhSUQTcx1vlA6ObXvp6qGaHNcxqRblLYzeUefZZWXD6LEvFA3QC5ode6oUyd
+         TsZQnmm/gKQaAKC2AeMWMOuMlndV7iY/gmSQN466WEE/vQLZP1zKoaJVUo8zJQazo/aR
+         KZHCjlo0U1/934njzM2FldbSWa6TGuknKwj7maa7YO9swLJyVgihujEUofIhvIegxa9f
+         FvShosevcp13L9Zh0GLNJrm80dfhqUGTe9N8W7li0w8iodWsWR4CppqRTaneHLKuGpBq
+         9NBxazIkdG3D6QJTkd58KibPMnONOE/WOmMGlinZz0aWNFtmx2bYbLdg9sJ1dKC1mAqE
+         zeGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711645275; x=1712250075;
+        d=1e100.net; s=20230601; t=1711645555; x=1712250355;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :references:cc:to:from:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JvbGlCWeEtR2d0HYfJpjix5RjBTOtqrn3Jd60OZZIu0=;
-        b=dakoId7F03szyNF6IT+HvfZ1z/+JI7CXQ8JjTGDGMMJuHpNi0cmbJMKdxAk0KUNAAx
-         LiImFGvWLWNb9VxnQgV5/GGX/qwXMyjx/yNQk0k5she1ivraTVWNWwgDmcaY6BFJTmVv
-         EBawcCyV+gltA3a7R8lBERBWRiFRzQHBXg/cWCjP9TPAD9xsTRts6X4PBExKUDvvPmfu
-         02wSVvyNaJSOAYwoO4hJcaxL/u53vM9C1+0h4NIMutBZ08dxZy3CdcE1coSo9Ojx+4r5
-         gxV1fdxtohJxpkKiVoSmwHcvqLujs7/qUVpeJyAINefwSShXL9be/Wt8r7b4FegAGoPi
-         jrlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURHrMs+XleFULYGFZ/0DJtyDvcs6j0RTKYpYQf82j4qqCv+bmBcAscWop1m4URzeLdXOXdfScyCY8OFebj8mLDGAeC0vLMXUOlyeKCDHKu0Aw=
-X-Gm-Message-State: AOJu0Yy2fuK6SEw+Q4JAvUrS1sYI+WwVLrwathcCQCQtvTK4S1Ih4Y74
-	mtkW2pPoAPKNRBnH6+3wrQ/i6tK2pAIlhdrk6nhHN7mEAJAIY3XyaqHyEwoo3Z8=
-X-Google-Smtp-Source: AGHT+IHl1XVC/4kgvD79NRisLWRE2gI3TkFtYQsLM4Dews8SLNO5juXXxy8LEkOQtwW4O/6aP3wovg==
-X-Received: by 2002:a05:600c:4f13:b0:413:ee55:8bba with SMTP id l19-20020a05600c4f1300b00413ee558bbamr3347745wmq.4.1711645274517;
-        Thu, 28 Mar 2024 10:01:14 -0700 (PDT)
+        bh=8UV269C+zXw1qTig2GGB1q1grJrIL/P42czrgTeCgxA=;
+        b=GlKWRTNHqcI5x9D2P55o+sM5+rknirvoqpS5jW2yYMV/xnwOCJTqsRDGC2cF98JQO+
+         IVJyJdnlXQ3tMyZCR2UWM5cBTo96QIhwbBhUJleEzmBjgRk0VK/RB0KuEl+2ZKdgSibR
+         hPCk52+SsL5wMahmCF9HjGHZAH26g41dmnQPTjgp0qKi7wltVOyF8Wdnu3/lJbRWSaqU
+         UxCJO8z/2vQqeN6TlZPsame8BQU1pxACPdgAz0QdpZpj3xAU4R1u66pnTWoe2DxJZ/Ze
+         YX/pirL6l+nMUAb+F/RKENcnymsKTkSEFNopd+Isu3e7OZu2xyGbsF5esrkU54Vfb4kM
+         kCVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU6BGwj4xJm5wdYQKP7GBLJrxYr/vJg61G/MapzsH3BOww3ZMKKSHLuQKs2RqNgbhZjGvsnKLo57w9HAocZYgu/mSpMYeUlECRMj0mGtQk0PQ=
+X-Gm-Message-State: AOJu0YyYmiEQHMMqCQH2gLVsOvdYOzwPiUlB2ySUGUjhZBphSsi260Ll
+	cY09MYBtdX+Kvc8xikA0rFuS+NdvOkhDZBTQoahyfXIz1vfpSiDrwIrJl8tqSl8=
+X-Google-Smtp-Source: AGHT+IFZbbgEPpP8HiHWB0MFkZHwyrileLkAqzyfyUOIrjDjVaxKv38u5/6CSekNPHOY1gdBGyKJ9A==
+X-Received: by 2002:a2e:8606:0:b0:2d6:f62b:6e08 with SMTP id a6-20020a2e8606000000b002d6f62b6e08mr2511766lji.27.1711645554835;
+        Thu, 28 Mar 2024 10:05:54 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.50])
-        by smtp.gmail.com with ESMTPSA id gw5-20020a05600c850500b004148e3f4cafsm6030284wmb.14.2024.03.28.10.01.12
+        by smtp.gmail.com with ESMTPSA id u15-20020a05600c00cf00b00414041032casm4810878wmm.1.2024.03.28.10.05.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 10:01:14 -0700 (PDT)
-Message-ID: <83607b46-56e4-45eb-ac69-9bc5be5bdee4@linaro.org>
-Date: Thu, 28 Mar 2024 18:01:11 +0100
+        Thu, 28 Mar 2024 10:05:54 -0700 (PDT)
+Message-ID: <38d2156e-fdc5-4196-b598-644a00a0c35f@linaro.org>
+Date: Thu, 28 Mar 2024 18:05:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -75,6 +75,7 @@ Cc: alim.akhtar@samsung.com, linux-crypto@vger.kernel.org,
  klimov.linux@gmail.com
 References: <20240328125056.1054878-1-alexey.klimov@linaro.org>
  <6b691a48-ca97-4f23-a09f-69b9254f0c11@linaro.org>
+ <83607b46-56e4-45eb-ac69-9bc5be5bdee4@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -120,45 +121,46 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <6b691a48-ca97-4f23-a09f-69b9254f0c11@linaro.org>
+In-Reply-To: <83607b46-56e4-45eb-ac69-9bc5be5bdee4@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/03/2024 14:36, Krzysztof Kozlowski wrote:
->> +
->> +static UNIVERSAL_DEV_PM_OPS(exyswd_rng_pm_ops, exyswd_rng_suspend,
->> +			    exyswd_rng_resume, NULL);
->> +
->> +static struct platform_driver exyswd_rng_driver = {
->> +	.probe		= exyswd_rng_probe,
->> +	.remove		= exyswd_rng_remove,
->> +	.driver		= {
->> +		.name	= DRVNAME,
->> +		.owner	= THIS_MODULE,
+On 28/03/2024 18:01, Krzysztof Kozlowski wrote:
+> On 28/03/2024 14:36, Krzysztof Kozlowski wrote:
+>>> +
+>>> +static UNIVERSAL_DEV_PM_OPS(exyswd_rng_pm_ops, exyswd_rng_suspend,
+>>> +			    exyswd_rng_resume, NULL);
+>>> +
+>>> +static struct platform_driver exyswd_rng_driver = {
+>>> +	.probe		= exyswd_rng_probe,
+>>> +	.remove		= exyswd_rng_remove,
+>>> +	.driver		= {
+>>> +		.name	= DRVNAME,
+>>> +		.owner	= THIS_MODULE,
+>>
+>> So this was fixed ~8-10 years ago. Yet it re-appears. Please do not use
+>> downstream code as template.
+>>
+>> Take upstream driver and either change it or customize it.
 > 
-> So this was fixed ~8-10 years ago. Yet it re-appears. Please do not use
-> downstream code as template.
+> Alex Elder pointed out that some of my comments might not be precise or
+> not helping enough. Let me clarify then:
 > 
-> Take upstream driver and either change it or customize it.
+> Please run all standard, open-source tools when submitting new driver,
+> which is:
+> 1. Coccinelle, which points to this specific line since 2014,
+> 2. smatch,
+> 3. sparse,
+> 4. checkpatch,
+> 5. If changing bindings: dt_binding_check,
+> 6. If changing DTS or bindings: dtbs_check.
 
-Alex Elder pointed out that some of my comments might not be precise or
-not helping enough. Let me clarify then:
+And I forgot:
+7. make W=1
 
-Please run all standard, open-source tools when submitting new driver,
-which is:
-1. Coccinelle, which points to this specific line since 2014,
-2. smatch,
-3. sparse,
-4. checkpatch,
-5. If changing bindings: dt_binding_check,
-6. If changing DTS or bindings: dtbs_check.
-
-I still did not point to specific error I see, because I would like you
-to setup the tools and find it. This way you will have toolset ready for
-any other submissions. I hope this will be helpful.
-
-Thank you for your contribution.
-
+Many of these, including W=1 above, can be with target, e.g.
+	`make W=1 drivers/char/hw_random/`
+to reduce the scope of tests/warnings etc.
 
 Best regards,
 Krzysztof
