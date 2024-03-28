@@ -1,157 +1,117 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C8B130AFD
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 17:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3943B2E419
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 18:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711648702; cv=none; b=FW3mrfH1AvTE/F9IMdlGsX3eg7nLD/nqwZGlq3WSCjzjc8mpHezgSh//2VVdZCg7AxByjwvGHJDbbpRbbJU0+YDCICOPGsEEMpGwO/arLKSXTsoOkzF+UxAmWZGkoUyBXPnE/JqXWEl+M14RMCTTdeY/rU3H5NLnCzh8RzJYnMM=
+	t=1711648830; cv=none; b=MFb8wjfRqkr+9Dh0E/cwePGcQcOVxweULVaZpmlbvRfCYs3RNVlWT1tcEwjrNj8+aReeggI1rTnWoxupIIq7RTwT9viBliAtBP0/4DJ2blswc+R3Gnr8fSsOLt8IOSBYRZocELLuIGhC61Eeu7RCkLMn4Z1b6ysDlju8pLhP9Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711648702; c=relaxed/simple;
-	bh=VF9kw4WTAs6CxHwuSeD4k3v4iYoGGymRT9tDvNquKv0=;
+	s=arc-20240116; t=1711648830; c=relaxed/simple;
+	bh=OUydAPp6uAcvd+QU+kjZdkJNOn3bbSBOUwQje8ZcuGs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jOb21qaYQFWw9AupSj5MvqmBVHnJPse0IDtEdSs/Jg0/1kz5YCjR7o8bzA1wCkWJ7LKZjpBRgUQRGwkgsex+dEi0WATEMUvsvPwfusAb3wFn1yipIjQuK5bb/s7s2KQMjbhelYZJLcwPDO70c8lucf3B8m9ZnBLb8ympgz99zck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Be/HF6uw; arc=none smtp.client-ip=209.85.219.172
+	 To:Cc:Content-Type; b=ooK2fpWb4D6piMKSaNFDWRi3R8iTKlhHFDlyKE0U41TPoBMKRBioDR4fvmbrZsaAYEOd/a280kbOk3LQ1OZBU6Gzw6SwX+E0ruXJFjjNuHIDfMiRC+Ty6drLxomlkAzIJACiVdP3l9zoijaQI/rs0Y74edZ5Ndbg75ewrfU6jvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBxOLjEC; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Be/HF6uw"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dcbd1d4904dso1231673276.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 10:58:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBxOLjEC"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-db3a09e96daso1203480276.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 11:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711648698; x=1712253498; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711648828; x=1712253628; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IMB2JrEaXdtfR7K1jGqJIj8fJgUdIhDmgzuCsvn0h6Y=;
-        b=Be/HF6uwM1Qk3pOx8fJuRHzRY5ClpLb20uL2Dg4kATWnyV+QL0/t+XlKQNotZDn/Vt
-         2z/VAzxr9QzRvJWwG5pTY6nk/wNDVMM1v3J1+VW07gZRP50VjRtMmxbQ5F5WuJ82pH7X
-         CQftllm3JdhTMqY/ADdBqN0o6UKTXaAbtdVzQ7R6k0eG05BFxCXxZ3LpfgYQPykzcnFJ
-         l3syEz4ZAv1U47diPMQNvNKyUvfMwi0iv0cNNC2uaa/mkrQB/1X/ckmlbIvk18mLpWS6
-         6Lg+IL65lbm+WSuPXS9EfSujtxbK5Lx/NP5NTD61UzC+GnvyfMLyn3UhwEFCAt1mN0mt
-         V5CA==
+        bh=VKbfion+n4fQpm3TAmkfKQ03jeIchA2VK+TIGXUHdDw=;
+        b=rBxOLjECmakZ0P+Jgp7LTlJ7fJhdQmE5hePtGDoMgrR/wXhtheIid6NF8DLlVG/O0t
+         gDsm29z+5LKfrRf0VV8ICRTkCrJf49JPAVUgWLih/IBz1RLRbKgKrAzvSZ/XQNt3gD6U
+         5rGxTtnJtqtfwe6dz7tEvTCYbXUnAgJ+SqD6O2tXdqKdzpBxM2+EgC6p+gBMx85PKR3E
+         wLtu9H8Eyr1+lVGsicdSZG5Jh8J1aMOZ/YlfQ8Mq7MTbBXTMtr6JDYHrv3ueyA9zqskZ
+         2TeumASDhN4N7R/jXyHS1yQgL0ewG1YpSknwpEGGX3tVTWSDgTMXQ3d1JHYf1rD9HLb0
+         uchw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711648698; x=1712253498;
+        d=1e100.net; s=20230601; t=1711648828; x=1712253628;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IMB2JrEaXdtfR7K1jGqJIj8fJgUdIhDmgzuCsvn0h6Y=;
-        b=c4vR66jTNUqyV9617AITt6cZcca6b92QB6XuH/q4/N8WAg+MBB9qjjSnvLqgNxSCbW
-         Jx1K7aQjn9Y2idEsoa/W8TUR55gAJ++UQPmDiZ/Qy3QAINtrfSYS7AYdCw+UDenmyfdT
-         VQTUF7vjoIC5pYuSat5O8hMn614KwGulLiB3ojeROLnivVA1DwvhuTE7f43Rpc4kP2Mn
-         265mnnQnXGQVpaD/25mixqiXeX/1XHqQ9b1wA94abIxx5+DIfX0aqSA9MQ8s9XnEGlkY
-         fLHPAMxKeVU10t5zJBxyfsFTldv4Kj7xR6tdZ3jJozVke1yJz/mKFndOBW/aja6iYIV1
-         z0rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUe5Mxg+ajaladngw6qSwnUUYc8eVkV2U+suCxvggq/73GgBRK3sHaRpurnP8cln1b5k2+5UQwTT9AA3g2p+kWDfITzzKSLzOogQ7KTZqa4D/c=
-X-Gm-Message-State: AOJu0YyvqqFYAVBFSGjNubVTjpCPlen5StjV/d8+2Kh7NblAEQHAeCTT
-	6aQhotICvA+OdsSpwtwUIlN2kuGIZFfMMymYnItaXp4e8lxecvH+OA5GKbT/kBsAf1KdyKWNSmA
-	1bmss+6RPjzEwBrDn/yIYUWwNg1bm+Luw2vB5lQ==
-X-Google-Smtp-Source: AGHT+IFvODLCEqAxm5n0XVkXoNSLzULV36Er2Og/J1Iy7BT7XxZQSRjln9IX9vYVbq35MTHF9K8T2+xldb2BmW5RcZo=
-X-Received: by 2002:a25:70c5:0:b0:dcf:288e:21ca with SMTP id
- l188-20020a2570c5000000b00dcf288e21camr38551ybc.11.1711648698172; Thu, 28 Mar
- 2024 10:58:18 -0700 (PDT)
+        bh=VKbfion+n4fQpm3TAmkfKQ03jeIchA2VK+TIGXUHdDw=;
+        b=h/ATPsfmqmQpUTYBQyA7i0PyEX4Ywmo34HIwEqygbj6Lf86zJjPLRryN1Ctb0y5VMp
+         ssaJ1SfIxU9gqkvWwTw0+aGzKo3c5pJZlN2dBI2BFHktC/ZeG8Hu8oyQU5z8HEQR+jH5
+         60zzaYj2+o81cFdpRnSZFZfEk4gnxiz8ilaysbN2g48XeNu2+0NAqRn1zJvd0Puxgd4q
+         J6y/h6HNNVQLn119gkS9lAmSIy/YPSzybSUNYaLsTBYN/K+3Ay3Te/Kjm76X0mABWVuu
+         dck9rmKVn9CxUhVA/FOETPEb07pwgPGZUmqpNkyuUeEn8LOBViGH+cAqve1lEpQd1hve
+         ZoRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOoVM4zJWNdpzVt46sXe6IaARC3b8BQTTyUnNtw86XODY6yG2/ssfDJdX0ESHd1hY8r+8kocOJMv1UD/ZVBp4CGF4y8qC4S8FIGVQ3co7JEC0=
+X-Gm-Message-State: AOJu0YzaTx3AjcpCG2p0Lc3+zCBQ/LOopVd9AIk5wqm9pOHY+75rq8v+
+	bxk4ENDZeJosKEiyf1MPwpABOwFTSoVHUQKHPTylkRprOSIBU7ufMNOVffipNtpoivsaEXbLbU6
+	nUpe3svuDc5b4aek1IcY2rO5Tu42bTBpaPd9fQw==
+X-Google-Smtp-Source: AGHT+IGHxMl2tnOV7GPTKo3pBywdHk3iGeVuT0X7oDfIzsFuQvKcAYE+hyVJY60/3ItdBMDUUFGB2g/T+7vhTuvUDjQ=
+X-Received: by 2002:a25:b989:0:b0:dbd:8f9:a71 with SMTP id r9-20020a25b989000000b00dbd08f90a71mr44716ybg.28.1711648828232;
+ Thu, 28 Mar 2024 11:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00@epcas2p2.samsung.com>
- <20240327033041.83625-1-jaewon02.kim@samsung.com>
-In-Reply-To: <20240327033041.83625-1-jaewon02.kim@samsung.com>
+References: <CGME20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f@epcas2p4.samsung.com>
+ <20240328091000.17660-1-jaewon02.kim@samsung.com>
+In-Reply-To: <20240328091000.17660-1-jaewon02.kim@samsung.com>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 28 Mar 2024 12:58:07 -0500
-Message-ID: <CAPLW+4k4qh4ZYBufZoGbUZN0yxSE2X8bOdkEQVw1Zg9YUVpbug@mail.gmail.com>
-Subject: Re: [PATCH] spi: s3c64xx: Use DMA mode from fifo size
+Date: Thu, 28 Mar 2024 13:00:17 -0500
+Message-ID: <CAPLW+4=kW3-h69_Ctx=MNE2c_k3iyTqZf7242wixRBz-gRkzkQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: exynosautov9: fix wrong pll clock id value
 To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 26, 2024 at 10:35=E2=80=AFPM Jaewon Kim <jaewon02.kim@samsung.c=
-om> wrote:
+On Thu, Mar 28, 2024 at 4:14=E2=80=AFAM Jaewon Kim <jaewon02.kim@samsung.co=
+m> wrote:
 >
-> The SPI data size is smaller than FIFO, it operates in PIO mode,
-
-Spelling: "The" -> "If the"
-
-> and if it is larger than FIFO mode, DMA mode is selected.
+> All PLL id values of CMU_TOP were incorrectly set to FOUT_SHARED0_PLL.
+> It modified to the correct PLL clock id value.
 >
-> If the data size is the same as the FIFO size, it operates in PIO mode
-> and data is separated into two transfer. In order to prevent,
-
-Nit: "transfer" -> "transfers", "prevent" -> "prevent it"
-
-> DMA mode must be used from the case of FIFO and data size.
->
-
-You probably mean this code (it occurs two times in the driver):
-
-    xfer->len =3D fifo_len - 1;
-
-Can you please elaborate on why it's done this way? Why can't we just
-do "xfer->len =3D fifo_len" and use the whole FIFO for the transfer
-instead? I don't understand the necessity to split the transfer into
-two chunks if its size is of FIFO length -- wouldn't it fit into FIFO
-in that case? (I'm pretty sure this change is correct, just want to
-understand how exactly it works).
-
-> Fixes: 1ee806718d5e ("spi: s3c64xx: support interrupt based pio mode")
-
-Just wonder if that fixes some throughput regression, or something
-worse (like failed transfers when the transfer size is the same as
-FIFO size)?
-
+> Fixes: 6587c62f69dc ("clk: samsung: add top clock support for Exynos Auto=
+ v9 SoC")
 > Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 > ---
->  drivers/spi/spi-s3c64xx.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+>  drivers/clk/samsung/clk-exynosautov9.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 9fcbe040cb2f..81ed5fddf83e 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -430,7 +430,7 @@ static bool s3c64xx_spi_can_dma(struct spi_controller=
- *host,
->         struct s3c64xx_spi_driver_data *sdd =3D spi_controller_get_devdat=
-a(host);
+> diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung=
+/clk-exynosautov9.c
+> index e9c06eb93e66..f04bacacab2c 100644
+> --- a/drivers/clk/samsung/clk-exynosautov9.c
+> +++ b/drivers/clk/samsung/clk-exynosautov9.c
+> @@ -352,13 +352,13 @@ static const struct samsung_pll_clock top_pll_clks[=
+] __initconst =3D {
+>         /* CMU_TOP_PURECLKCOMP */
+>         PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
+>             PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0, NULL),
+> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared1_pll", "oscclk",
+> +       PLL(pll_0822x, FOUT_SHARED1_PLL, "fout_shared1_pll", "oscclk",
+>             PLL_LOCKTIME_PLL_SHARED1, PLL_CON3_PLL_SHARED1, NULL),
+> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared2_pll", "oscclk",
+> +       PLL(pll_0822x, FOUT_SHARED2_PLL, "fout_shared2_pll", "oscclk",
+>             PLL_LOCKTIME_PLL_SHARED2, PLL_CON3_PLL_SHARED2, NULL),
+> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared3_pll", "oscclk",
+> +       PLL(pll_0822x, FOUT_SHARED3_PLL, "fout_shared3_pll", "oscclk",
+>             PLL_LOCKTIME_PLL_SHARED3, PLL_CON3_PLL_SHARED3, NULL),
+> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared4_pll", "oscclk",
+> +       PLL(pll_0822x, FOUT_SHARED4_PLL, "fout_shared4_pll", "oscclk",
+>             PLL_LOCKTIME_PLL_SHARED4, PLL_CON3_PLL_SHARED4, NULL),
+>  };
 >
->         if (sdd->rx_dma.ch && sdd->tx_dma.ch)
-> -               return xfer->len > sdd->fifo_depth;
-> +               return xfer->len >=3D sdd->fifo_depth;
->
->         return false;
->  }
-> @@ -826,11 +826,11 @@ static int s3c64xx_spi_transfer_one(struct spi_cont=
-roller *host,
->                         return status;
->         }
->
-> -       if (!is_polling(sdd) && (xfer->len > fifo_len) &&
-> +       if (!is_polling(sdd) && xfer->len >=3D fifo_len &&
->             sdd->rx_dma.ch && sdd->tx_dma.ch) {
->                 use_dma =3D 1;
->
-
-Would be nice to remove this empty line, while at it.
-
-> -       } else if (xfer->len >=3D fifo_len) {
-> +       } else if (xfer->len > fifo_len) {
-
-Below in the same function I can see similar code:
-
-            if (target_len >=3D fifo_len)
-                xfer->len =3D fifo_len - 1;
-
-Shouldn't that 'if' condition be fixed too? Or it's ok as it is? (Just
-noticed it by searching, not sure myself, hence asking).
-
->                 tx_buf =3D xfer->tx_buf;
->                 rx_buf =3D xfer->rx_buf;
->                 origin_len =3D xfer->len;
 > --
 > 2.43.2
 >
