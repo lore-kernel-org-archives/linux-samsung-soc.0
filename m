@@ -1,138 +1,99 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712202C6B8;
-	Thu, 28 Mar 2024 07:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33C164CCC;
+	Thu, 28 Mar 2024 08:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711611035; cv=none; b=TVDzjvxOSf5nCoa/W3OCF//T6pcmZclSTa+xSjNHn5A+Li8NqF5wPbhSUV+kw95P8VZj1R9mtgZORkHCCism9kvLD3T0MTcoayjwsq0ZTSxhHNwzr8QEGNEQfGLT3UvAM4zmMfxrptX5Pk1zPR38uGziGonCON8pX9YdEjfvjs4=
+	t=1711615882; cv=none; b=YQEJSyY594IobBRoUpMpOKsNv1NMkrwCR4/U6mZjIsPztR9adSazeHkjHKteJa6lBj6OwE/6QYy2cQW01z35CgscR/Di9gpuc1GcOVsp8C0oTSvw9csKrvY23bKalOp9RmgbrNxybpbI7N/DbRWe7XO9NhPfzejkSTXTBR4tpg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711611035; c=relaxed/simple;
-	bh=3exzUqajDFk/5+jRBK0S4zTkjn1GxyDjBzP18yJnkn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aRgY1xop8AhtIAnyMgLSyKUYWVuvff3GuhzBE5ry/o4ChEyAbf2jEL2g1NIpMf4onKMw0vO2o0JcxfcXW3h8eIzruFM76FFULHcIt9fSw0lGXlIftpWrQS8wUxmF0qTzeeOF0+OhvhrDuvPgKOwwpTAT2QzB7tLjbXzMxdZzwms=
+	s=arc-20240116; t=1711615882; c=relaxed/simple;
+	bh=VjTZgK/Qn0DOsZybfTiGOpl86fNw/oP4YfAinPR5uJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GvnzxZww5oYxMeio/ZTnL+65oOHsInk29an1zEUaRhNvaW2nyxWrzQ6UPL/hR8LcN3v+4j8gy2DT3SqIwXFepys82hOG9ATc0EmuGlCtIakQN4LVSSPeU8BlCx4n0CwldnT7X3H04CnfFcDVk5ZuxVAUZ/p8OHI6wUoPHu5D1PA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D1A02F4;
-	Thu, 28 Mar 2024 00:31:06 -0700 (PDT)
-Received: from [10.57.73.83] (unknown [10.57.73.83])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B2123F64C;
-	Thu, 28 Mar 2024 00:30:30 -0700 (PDT)
-Message-ID: <b4d1cb26-f49a-4f5e-9059-8bc87baba5e3@arm.com>
-Date: Thu, 28 Mar 2024 07:30:29 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F016D2F4;
+	Thu, 28 Mar 2024 01:51:53 -0700 (PDT)
+Received: from e129166.arm.com (unknown [10.57.73.83])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 932A03F7BD;
+	Thu, 28 Mar 2024 01:51:17 -0700 (PDT)
+From: Lukasz Luba <lukasz.luba@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rafael@kernel.org
+Cc: lukasz.luba@arm.com,
+	dietmar.eggemann@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	nm@ti.com,
+	linux-samsung-soc@vger.kernel.org,
+	daniel.lezcano@linaro.org,
+	viresh.kumar@linaro.org,
+	krzysztof.kozlowski@linaro.org,
+	alim.akhtar@samsung.com,
+	m.szyprowski@samsung.com,
+	mhiramat@kernel.org
+Subject: [PATCH v3 0/4] Update Energy Model after chip binning adjusted voltages
+Date: Thu, 28 Mar 2024 08:51:08 +0000
+Message-Id: <20240328085112.3873050-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND][PATCH v2 3/4] PM: EM: Add em_dev_update_chip_binning()
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, sboyd@kernel.org, nm@ti.com,
- linux-samsung-soc@vger.kernel.org, daniel.lezcano@linaro.org,
- rafael@kernel.org, viresh.kumar@linaro.org, krzysztof.kozlowski@linaro.org,
- alim.akhtar@samsung.com, m.szyprowski@samsung.com, mhiramat@kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240322110850.77086-1-lukasz.luba@arm.com>
- <20240322110850.77086-4-lukasz.luba@arm.com>
- <eb9f48f6-cca8-405b-82a2-352893a79f14@arm.com>
- <30ee98e9-3d9a-4be8-8127-043f68a7dcb1@arm.com>
- <410c5da7-c79c-4607-9aa3-2e78d991d2d7@arm.com>
- <9f2f5c94-cc9f-4a16-9b70-f00598af8cab@arm.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <9f2f5c94-cc9f-4a16-9b70-f00598af8cab@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi all,
+
+This is a follow-up patch aiming to add EM modification due to chip binning.
+The first RFC and the discussion can be found here [1].
+
+It uses Exynos chip driver code as a 1st user. The EM framework has been
+extended to handle this use case easily, when the voltage has been changed
+after setup. On my Odroid-xu4 in some OPPs I can observe ~20% power difference.
+According to that data in driver tables it could be up to ~29%.
+
+This chip binning is applicable to a lot of SoCs, so the EM framework should
+make it easy to update. It uses the existing OPP and DT information to
+re-calculate the new power values.
+
+It has dependency on Exynos SoC driver.
 
 
-On 3/28/24 07:21, Dietmar Eggemann wrote:
-> On 27/03/2024 13:55, Dietmar Eggemann wrote:
->> On 26/03/2024 21:32, Lukasz Luba wrote:
->>>
->>>
->>> On 3/26/24 10:09, Dietmar Eggemann wrote:
->>>> On 22/03/2024 12:08, Lukasz Luba wrote:
->>
->> [...]
->>
->>>>> +    return em_recalc_and_update(dev, pd, em_table);
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
->>>>
->>>> In the previous version of 'chip-binning' you were using the new EM
->>>> interface em_dev_compute_costs() (1) which is now replaced by
->>>> em_recalc_and_update() -> em_compute_costs().
->>>>
->>>> https://lkml.kernel.org/r/20231220110339.1065505-2-lukasz.luba@arm.com
->>>>
->>>> Which leaves (1) still unused.
->>>>
->>>> That was why my concern back then that we shouldn't introduce EM
->>>> interfaces without a user:
->>>>
->>>> https://lkml.kernel.org/r/8fc499cf-fca1-4465-bff7-a93dfd36f3c8@arm.com
->>>>
->>>> What happens now with em_dev_compute_costs()?
->>>>
->>>
->>> For now it's not used, but modules which will create new EMs
->>> with custom power values will use it. When such a module have
->>> e.g. 5 EMs for one PD and only switches on one of them, then
->>> this em_dev_compute_costs() will be used at setup for those
->>> 5 EMs. Later it won't be used.
->>> I don't wanted to combine the registration of new EM with
->>> the compute cost, because that will create overhead in the
->>> switching to new EM code path. Now we have only ~3us, which
->>> was the main goal.
->>>
->>> When our scmi-cpufreq get the support for EM update this
->>> compute cost will be used there.
->>
->> OK, I see. I checked the reloadable EM test module and
->> em_dev_compute_costs() is used there like you described it.
-> 
-> I had a second look and IMHO the layout is like this:
-> 
-> Internal (1) and external (2,3) 'reloadable EM' use cases:
-> (EM alloc and free not depicted)
-> 
-> 1. Late CPUs booting (CPU capacity adjustment)
-> 
->   e3f1164fc9ee  PM: EM: Support late CPUs booting and capacity adjustment
-> 
->   schedule_delayed_work(&em_update_work, ...)
-> 
->    em_update_workfn()
->     em_check_capacity_update()
->      em_adjust_new_capacity()
->       em_recalc_and_update()       <-- (i)
->        em_compute_costs()          <-- (ii)
->        em_dev_update_perf_domain() <-- external
-> 
-> 2. Reload EM from driver
-> 
->   22ea02848c07  PM: EM: Add em_dev_compute_costs()
->   977230d5d503  PM: EM: Introduce em_dev_update_perf_domain() for EM
->                 updates
-> 
->   em_dev_compute_costs()           <-- external
->    em_compute_costs()              <-- (ii)
->   em_dev_update_perf_domain()      <-- external
-> 
-> 3. Chip binning
-> 
->   this patchset  PM: EM: Add em_dev_update_chip_binning()
-> 
->   em_dev_update_chip_binning()     <-- external
->    em_recalc_and_update()          <-- (i)
->     em_compute_costs()             <-- (ii)
->     em_dev_update_perf_domain()    <-- external
-> 
-> 
-> 
-> 
+Changes:
+v3:
+- updated header description patch 2/4 (Dietmar)
+- removed 2 sentences from comment and adjusted in patch 3/4 (Dietmar)
+- patch 4/4 re-phrased code comment (Dietmar)
+- collected tags (Krzysztof, Viresh)
+v2:
+- removed 'ret' from error message which wasn't initialized (Christian)
+v1:
+- exported the OPP calculation function from the OPP/OF so it can be
+  used from EM fwk (Viresh)
+- refactored EM updating function to re-use common code
+- added new EM function which can be used by chip device drivers which
+  modify the voltage in OPPs
+RFC is at [1]
 
-Yes, that's correct.
+Regards,
+Lukasz Luba
+
+Lukasz Luba (4):
+  OPP: OF: Export dev_opp_pm_calc_power() for usage from EM
+  PM: EM: Change the em_adjust_new_capacity() to re-use code
+  PM: EM: Add em_dev_update_chip_binning()
+  soc: samsung: exynos-asv: Update Energy Model after adjusting voltage
+
+ drivers/opp/of.c                 |  17 +++--
+ drivers/soc/samsung/exynos-asv.c |  11 +++-
+ include/linux/energy_model.h     |   5 ++
+ include/linux/pm_opp.h           |   8 +++
+ kernel/power/energy_model.c      | 106 +++++++++++++++++++++++++------
+ 5 files changed, 122 insertions(+), 25 deletions(-)
+
+-- 
+2.25.1
+
