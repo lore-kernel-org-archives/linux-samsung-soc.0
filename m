@@ -1,118 +1,228 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3943B2E419
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 18:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB23D0D1
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Mar 2024 05:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711648830; cv=none; b=MFb8wjfRqkr+9Dh0E/cwePGcQcOVxweULVaZpmlbvRfCYs3RNVlWT1tcEwjrNj8+aReeggI1rTnWoxupIIq7RTwT9viBliAtBP0/4DJ2blswc+R3Gnr8fSsOLt8IOSBYRZocELLuIGhC61Eeu7RCkLMn4Z1b6ysDlju8pLhP9Z4=
+	t=1711691634; cv=none; b=OjD5D9dP4+aZHN6He/7kXQgjqJluHMQoxrog488yP1mRbmkqCBUi/T4rNLE2syugqooLY+Gk6A2rwbTMhEYG0qATNB6YW56j+6/bqdbclqWjBHK0w6gL/UWyHO4JmoB+u0xlnPMAv/WXemC7wlOPqrspvp9zX32oUg9D9Il0LRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711648830; c=relaxed/simple;
-	bh=OUydAPp6uAcvd+QU+kjZdkJNOn3bbSBOUwQje8ZcuGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ooK2fpWb4D6piMKSaNFDWRi3R8iTKlhHFDlyKE0U41TPoBMKRBioDR4fvmbrZsaAYEOd/a280kbOk3LQ1OZBU6Gzw6SwX+E0ruXJFjjNuHIDfMiRC+Ty6drLxomlkAzIJACiVdP3l9zoijaQI/rs0Y74edZ5Ndbg75ewrfU6jvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBxOLjEC; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1711691634; c=relaxed/simple;
+	bh=g2SnQTkcDJ4MHL5Cu1+rfTDJOSFbJDjPk0W0xUDtBKI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
+	 Content-Type:References; b=exMvl2IYdBIwq09w3vuAxuSTDgH2oFtMlKTn9oqojNCufid7h8d08PPTBNri2zpZiu22LffZprMrVLcvnql+0FaSreV1OJHtI4Co0HlEx+R6g4+2HNiDNP0n3663I3mm5SUo0hBhbmOfblJYVdKmVSa4RDVab4ygEG3jIPdCGkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VyOdHSFG; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBxOLjEC"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-db3a09e96daso1203480276.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Mar 2024 11:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711648828; x=1712253628; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VKbfion+n4fQpm3TAmkfKQ03jeIchA2VK+TIGXUHdDw=;
-        b=rBxOLjECmakZ0P+Jgp7LTlJ7fJhdQmE5hePtGDoMgrR/wXhtheIid6NF8DLlVG/O0t
-         gDsm29z+5LKfrRf0VV8ICRTkCrJf49JPAVUgWLih/IBz1RLRbKgKrAzvSZ/XQNt3gD6U
-         5rGxTtnJtqtfwe6dz7tEvTCYbXUnAgJ+SqD6O2tXdqKdzpBxM2+EgC6p+gBMx85PKR3E
-         wLtu9H8Eyr1+lVGsicdSZG5Jh8J1aMOZ/YlfQ8Mq7MTbBXTMtr6JDYHrv3ueyA9zqskZ
-         2TeumASDhN4N7R/jXyHS1yQgL0ewG1YpSknwpEGGX3tVTWSDgTMXQ3d1JHYf1rD9HLb0
-         uchw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711648828; x=1712253628;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VKbfion+n4fQpm3TAmkfKQ03jeIchA2VK+TIGXUHdDw=;
-        b=h/ATPsfmqmQpUTYBQyA7i0PyEX4Ywmo34HIwEqygbj6Lf86zJjPLRryN1Ctb0y5VMp
-         ssaJ1SfIxU9gqkvWwTw0+aGzKo3c5pJZlN2dBI2BFHktC/ZeG8Hu8oyQU5z8HEQR+jH5
-         60zzaYj2+o81cFdpRnSZFZfEk4gnxiz8ilaysbN2g48XeNu2+0NAqRn1zJvd0Puxgd4q
-         J6y/h6HNNVQLn119gkS9lAmSIy/YPSzybSUNYaLsTBYN/K+3Ay3Te/Kjm76X0mABWVuu
-         dck9rmKVn9CxUhVA/FOETPEb07pwgPGZUmqpNkyuUeEn8LOBViGH+cAqve1lEpQd1hve
-         ZoRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOoVM4zJWNdpzVt46sXe6IaARC3b8BQTTyUnNtw86XODY6yG2/ssfDJdX0ESHd1hY8r+8kocOJMv1UD/ZVBp4CGF4y8qC4S8FIGVQ3co7JEC0=
-X-Gm-Message-State: AOJu0YzaTx3AjcpCG2p0Lc3+zCBQ/LOopVd9AIk5wqm9pOHY+75rq8v+
-	bxk4ENDZeJosKEiyf1MPwpABOwFTSoVHUQKHPTylkRprOSIBU7ufMNOVffipNtpoivsaEXbLbU6
-	nUpe3svuDc5b4aek1IcY2rO5Tu42bTBpaPd9fQw==
-X-Google-Smtp-Source: AGHT+IGHxMl2tnOV7GPTKo3pBywdHk3iGeVuT0X7oDfIzsFuQvKcAYE+hyVJY60/3ItdBMDUUFGB2g/T+7vhTuvUDjQ=
-X-Received: by 2002:a25:b989:0:b0:dbd:8f9:a71 with SMTP id r9-20020a25b989000000b00dbd08f90a71mr44716ybg.28.1711648828232;
- Thu, 28 Mar 2024 11:00:28 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VyOdHSFG"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240329055348epoutp01059dc0e96c62264da34e622f69c5b00f~BJnekrtid1239112391epoutp01b
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Mar 2024 05:53:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240329055348epoutp01059dc0e96c62264da34e622f69c5b00f~BJnekrtid1239112391epoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1711691628;
+	bh=PQUcA7QC3xHCPhhP5+dYZWwWhUzQV3dMsOt9Dcqdz4s=;
+	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+	b=VyOdHSFGAb9tYw7AWiyJ1lE6o4HiixfSqoAL6soPNFDHSmw8J26DL8JabPakpvcd/
+	 FQiTTHIa/aggv8ZDV1H8GtZHDxwlE1vM7pOkwHbHXCaf+7ooaf/5I8JLQaNTx4/SBO
+	 El6mvSm11+SaN6K4dAdbrDLdjMZXwOexTUgTmnRI=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240329055347epcas2p1fd2a6e7ac8451f541dc34651cd3bd209~BJndpBAsM2188521885epcas2p1L;
+	Fri, 29 Mar 2024 05:53:47 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.102]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4V5V2f6mlqz4x9QH; Fri, 29 Mar
+	2024 05:53:46 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9C.8B.09673.A6756066; Fri, 29 Mar 2024 14:53:46 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240329055346epcas2p43987f15b85181ea5dafeb9c0883c224e~BJnclOo-q0505505055epcas2p4e;
+	Fri, 29 Mar 2024 05:53:46 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240329055346epsmtrp215863283d5d0f39bb922a9814050280f~BJncjJ6pV0600906009epsmtrp2M;
+	Fri, 29 Mar 2024 05:53:46 +0000 (GMT)
+X-AuditID: b6c32a45-0aecca80000025c9-64-6606576a3469
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	40.96.08924.A6756066; Fri, 29 Mar 2024 14:53:46 +0900 (KST)
+Received: from [10.229.18.66] (unknown [10.229.18.66]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240329055346epsmtip23c40f90f2bc7ab907c62bc1c9effd8d4~BJncSQ9ev1495514955epsmtip2o;
+	Fri, 29 Mar 2024 05:53:46 +0000 (GMT)
+Message-ID: <63355869-e679-7226-7719-36b62169db7e@samsung.com>
+Date: Fri, 29 Mar 2024 14:53:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f@epcas2p4.samsung.com>
- <20240328091000.17660-1-jaewon02.kim@samsung.com>
-In-Reply-To: <20240328091000.17660-1-jaewon02.kim@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Thu, 28 Mar 2024 13:00:17 -0500
-Message-ID: <CAPLW+4=kW3-h69_Ctx=MNE2c_k3iyTqZf7242wixRBz-gRkzkQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynosautov9: fix wrong pll clock id value
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+	Thunderbird/102.11.0
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: Re: [PATCH] spi: s3c64xx: Use DMA mode from fifo size
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, linux-spi@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+In-Reply-To: <CAPLW+4k4qh4ZYBufZoGbUZN0yxSE2X8bOdkEQVw1Zg9YUVpbug@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmhW5WOFuawZ5ZhhYP5m1js7j/tYPR
+	YurDJ2wWe19vZbfY9Pgaq8XlXXPYLGac38dk0fjxJrvF8759TA6cHptWdbJ53Lm2h81j85J6
+	j74tqxg9Pm+SC2CNyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
+	8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeX
+	WmJlaGBgZApUmJCdMXfjfaaCx7IVxxacZW5gXCHWxcjJISFgItGz4i9jFyMXh5DADkaJY28n
+	MUE4nxglHm++wQLhfGOU2NLwgh2m5dGDOVAtexklXt54wgzhvGaUWHf5LDNIFa+AncTPSXNZ
+	QWwWAVWJN393MkLEBSVOznzCAmKLCkRLtC67zwZiswloS3xfvxisXhiod+KOJ2D1IgJ6Eutm
+	vmIHWcAssI5J4tnEq0wgCWYBcYlbT+aD2ZwCgRL3V56CistLNG+dDXaRhMBMDontLxtZIe52
+	keje94ENwhaWeHV8C9Q/UhKf3+2FiudLtF05AxWvkdi44BIjhG0vsejMT6A4B9ACTYn1u/RB
+	TAkBZYkjt1gg1vJJdBz+yw4R5pXoaBOCaFSTuD/1HNRwGYlJR1YyQdgeEi2NU5kmMCrOQgqV
+	WUgem4XkmVkIexcwsqxiFEstKM5NTy02KjCEx3Zyfu4mRnBa1XLdwTj57Qe9Q4xMHIyHGCU4
+	mJVEeHceZUkT4k1JrKxKLcqPLyrNSS0+xGgKjJuJzFKiyfnAxJ5XEm9oYmlgYmZmaG5kamCu
+	JM57r3VuipBAemJJanZqakFqEUwfEwenVAPTrpa1uldXs004kfqvLdroaJTaxXeflK9eElzW
+	mpmn8fYE+/Z8kUMrLOeFFR41qDnxdtXsqWv3SvoUxZ+5fL/j54Yfe7rTzFy+296T6A9k4st+
+	rRbMln1SM43XJvrtQv0l4S4KLXVsex8r+bulTq6d/1e1+Ur1KwuV+4cO5i2Yc197/kvTP+1X
+	s+Yd3eZaqbYxZMvptLUfox6dP5LXvdwlde/F7/qyy94HLvia8Wjh69lz/t/kyC7WdpdtWqoS
+	NjvP2kuicp2Ab/DSmblCYod4jgZOaVl0zCAyp/Q4q1THVC/ruSXHslh3eMXLKvqvWTPNzXjT
+	99D73ErybTHnNF58l8lvXu+1ynZtvvqd//ZPlViKMxINtZiLihMBmrbMTzQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJXjcrnC3N4OM6SYsH87axWdz/2sFo
+	MfXhEzaLva+3sltsenyN1eLyrjlsFjPO72OyaPx4k93ied8+JgdOj02rOtk87lzbw+axeUm9
+	R9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGXM3XifqeCxbMWxBWeZGxhXiHUxcnJICJhIPHow
+	h7GLkYtDSGA3o8S/C8fYIRIyEsuf9bFB2MIS91uOsEIUvWSUePZ/OxNIglfATuLnpLmsIDaL
+	gKrEm787GSHighInZz5hAbFFBaIlVn++AFbDJqAt8X39YjBbGKh34o4nYPUiAnoS62a+YgdZ
+	wCywjkli5vJd7BDbbjBKLL76HuwMZgFxiVtP5oNt5hQIlLi/8hQTRNxMomtrFyOELS/RvHU2
+	8wRGoVlIDpmFpH0WkpZZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjiYt
+	zR2M21d90DvEyMTBeIhRgoNZSYR351GWNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK84i96U4QE
+	0hNLUrNTUwtSi2CyTBycUg1MDXZeOzkvNvGwTvZMuc0nqGNb5CfEYvTnyjPhqHNfDiv7TJ6f
+	z2owj7G00F5NbdfCFtanfr9KWpJfPL2Us3PmGqGcRZmxIa4akft5uP+r7M851jTF8WdNxMNX
+	jHX69YXq06ckyjp0flxX/9/DU+245xrpAr3kWO7SbX6KFQkna5Zxp/QJXjxxtPptow73rqoS
+	z/DWGQ07ussFJ+9lUNxXeK/++5Ff6SY75aeYBL5a2/T/RdT8Qo+k9KA5W18dmcS4LnwHA0MY
+	N8sz68MN+eaLL0889Sf8t2+g7/xr6UXJwpP37Hki4h9R8E+C6Rvn6cRFfr4daalfSz5leMRu
+	qZ1/s6ChQvnwShHOR38LViixFGckGmoxFxUnAgBJSJplFQMAAA==
+X-CMS-MailID: 20240329055346epcas2p43987f15b85181ea5dafeb9c0883c224e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00
+References: <CGME20240327033501epcas2p2bbe21301da5584f7f3a073c51a363c00@epcas2p2.samsung.com>
+	<20240327033041.83625-1-jaewon02.kim@samsung.com>
+	<CAPLW+4k4qh4ZYBufZoGbUZN0yxSE2X8bOdkEQVw1Zg9YUVpbug@mail.gmail.com>
 
-On Thu, Mar 28, 2024 at 4:14=E2=80=AFAM Jaewon Kim <jaewon02.kim@samsung.co=
-m> wrote:
->
-> All PLL id values of CMU_TOP were incorrectly set to FOUT_SHARED0_PLL.
-> It modified to the correct PLL clock id value.
->
-> Fixes: 6587c62f69dc ("clk: samsung: add top clock support for Exynos Auto=
- v9 SoC")
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
+Hi Sam,
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Thanks for your review.
 
->  drivers/clk/samsung/clk-exynosautov9.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+
+On 3/29/24 02:58, Sam Protsenko wrote:
+> On Tue, Mar 26, 2024 at 10:35 PM Jaewon Kim<jaewon02.kim@samsung.com>  wrote:
+>> The SPI data size is smaller than FIFO, it operates in PIO mode,
+> Spelling: "The" -> "If the"
+
+Thanks, I will fix it v2.
+
+>> and if it is larger than FIFO mode, DMA mode is selected.
+>>
+>> If the data size is the same as the FIFO size, it operates in PIO mode
+>> and data is separated into two transfer. In order to prevent,
+> Nit: "transfer" -> "transfers", "prevent" -> "prevent it"
+
+Thanks, I will fix it v2.
+
+>> DMA mode must be used from the case of FIFO and data size.
+>>
+> You probably mean this code (it occurs two times in the driver):
 >
-> diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung=
-/clk-exynosautov9.c
-> index e9c06eb93e66..f04bacacab2c 100644
-> --- a/drivers/clk/samsung/clk-exynosautov9.c
-> +++ b/drivers/clk/samsung/clk-exynosautov9.c
-> @@ -352,13 +352,13 @@ static const struct samsung_pll_clock top_pll_clks[=
-] __initconst =3D {
->         /* CMU_TOP_PURECLKCOMP */
->         PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
->             PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0, NULL),
-> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared1_pll", "oscclk",
-> +       PLL(pll_0822x, FOUT_SHARED1_PLL, "fout_shared1_pll", "oscclk",
->             PLL_LOCKTIME_PLL_SHARED1, PLL_CON3_PLL_SHARED1, NULL),
-> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared2_pll", "oscclk",
-> +       PLL(pll_0822x, FOUT_SHARED2_PLL, "fout_shared2_pll", "oscclk",
->             PLL_LOCKTIME_PLL_SHARED2, PLL_CON3_PLL_SHARED2, NULL),
-> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared3_pll", "oscclk",
-> +       PLL(pll_0822x, FOUT_SHARED3_PLL, "fout_shared3_pll", "oscclk",
->             PLL_LOCKTIME_PLL_SHARED3, PLL_CON3_PLL_SHARED3, NULL),
-> -       PLL(pll_0822x, FOUT_SHARED0_PLL, "fout_shared4_pll", "oscclk",
-> +       PLL(pll_0822x, FOUT_SHARED4_PLL, "fout_shared4_pll", "oscclk",
->             PLL_LOCKTIME_PLL_SHARED4, PLL_CON3_PLL_SHARED4, NULL),
->  };
+>      xfer->len = fifo_len - 1;
 >
-> --
-> 2.43.2
+> Can you please elaborate on why it's done this way? Why can't we just
+> do "xfer->len = fifo_len" and use the whole FIFO for the transfer
+> instead? I don't understand the necessity to split the transfer into
+> two chunks if its size is of FIFO length -- wouldn't it fit into FIFO
+> in that case? (I'm pretty sure this change is correct, just want to
+> understand how exactly it works).
+
+In IRQ mode(S3C64XX_SPI_MODE_RX_RDY_LVL enable), TxOverrun/RxUnderrun 
+irq occurs when FIFO is full.
+
+To avoid FIFO full, it is transmitted in a smaller size than 
+fifo_len.(fifo-len - 1)
+
+However, in case of "fifo_len == data size" "fifo_len - 1" byte + "1" 
+byte were transmitted separately.
+
+This problem can be solved by starting DMA transmission start size from 
+fifo_len.
+
+>> Fixes: 1ee806718d5e ("spi: s3c64xx: support interrupt based pio mode")
+> Just wonder if that fixes some throughput regression, or something
+> worse (like failed transfers when the transfer size is the same as
+> FIFO size)?
+
+It is not a critical issue, but When I look at the actual waveform, it 
+seems strange that only the last 1-byte is transmitted separately.
+
+I thought it was "Fixes", but if not, I will remove it.
+
+>> Signed-off-by: Jaewon Kim<jaewon02.kim@samsung.com>
+>> ---
+>>   drivers/spi/spi-s3c64xx.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+>> index 9fcbe040cb2f..81ed5fddf83e 100644
+>> --- a/drivers/spi/spi-s3c64xx.c
+>> +++ b/drivers/spi/spi-s3c64xx.c
+>> @@ -430,7 +430,7 @@ static bool s3c64xx_spi_can_dma(struct spi_controller *host,
+>>          struct s3c64xx_spi_driver_data *sdd = spi_controller_get_devdata(host);
+>>
+>>          if (sdd->rx_dma.ch && sdd->tx_dma.ch)
+>> -               return xfer->len > sdd->fifo_depth;
+>> +               return xfer->len >= sdd->fifo_depth;
+>>
+>>          return false;
+>>   }
+>> @@ -826,11 +826,11 @@ static int s3c64xx_spi_transfer_one(struct spi_controller *host,
+>>                          return status;
+>>          }
+>>
+>> -       if (!is_polling(sdd) && (xfer->len > fifo_len) &&
+>> +       if (!is_polling(sdd) && xfer->len >= fifo_len &&
+>>              sdd->rx_dma.ch && sdd->tx_dma.ch) {
+>>                  use_dma = 1;
+>>
+> Would be nice to remove this empty line, while at it.
+Good, I will remove it also.
+>> -       } else if (xfer->len >= fifo_len) {
+>> +       } else if (xfer->len > fifo_len) {
+> Below in the same function I can see similar code:
 >
+>              if (target_len >= fifo_len)
+>                  xfer->len = fifo_len - 1;
 >
+> Shouldn't that 'if' condition be fixed too? Or it's ok as it is? (Just
+> noticed it by searching, not sure myself, hence asking).
+
+You are correct. This 'if' condition should not have been modified.
+
+>>                  tx_buf = xfer->tx_buf;
+>>                  rx_buf = xfer->rx_buf;
+>>                  origin_len = xfer->len;
+>> --
+>> 2.43.2
+>>
+>>
+
+Thanks
+
+Jaewon Kim
+
