@@ -1,59 +1,61 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3681A1DFC6
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Mar 2024 20:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F408C33062
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Mar 2024 20:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711830803; cv=none; b=d1gTY6jFETff6qD/VZs/O7HNew1eIs5QD0bveRiEgR7nkowdq75fZBWk90BGamKeHt7s+NOt+NwuQodb4/IKWcgUrxCSx/X2NK8gVRie5y0bnT0GxcgLqJ/NX45wjAUHxUM67g0lGjuO22U9l5cVtnpffQb+/fGQhsDXaWjAKH8=
+	t=1711830804; cv=none; b=aH97FNaXGlXZFSHpggdmS6Qx3m2kS8PrlRe75xV5i7akA8tzJGEZZWLuwP4nMywoWKp3ktk12Xj2Fk1noaa/JFxrCOkVi0WcAk/RVQEA/Vub2puji/SBOrn6q9Hm8BvvVevcmH/TbU87Eoxqrd06cUfNaW5uvlnIdlIfgYrxer8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711830803; c=relaxed/simple;
-	bh=ikAn+U2VxbkfcXOAocqiqsMAFIUnrQGNULyY7tvmZjM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JTAd78KbTYm8n/Lf7mmhd20KTy8X08ttzsyFaoClsP58+oL3zRmj2UcyyVHuFov9uHt9HGPg/q+m5KF5vaPO3UZuTYK1bmUag21FSx8dT9wmSfEKd8/fPc7QnUC/wBOgxyY3z5vxlmU2jM5PbMLchGscA1Up8GRL5BZO6IhK8K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J0vCs3bZ; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1711830804; c=relaxed/simple;
+	bh=RrrYKA/AFI5ndy2h1Lx8b0hMlMn5qR8304zzYvRKNZU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=aVePsLapx9EAY6XtpT1R2wIovv1uTFwR7gu4LjUSTqwe8z0NGsOTKO+eq36ewbe32NZZ37aFL8lYUdGGvkKtz5cmyldubL8fYrDQqap9l/Pb2D/+Ax88tbLY3iYnnILY8Oz9agJRwQlGtifcNTh3HViSlkLX5HkGtCV0ehX0XMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CxTNcIJx; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J0vCs3bZ"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3433e518c78so579285f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Mar 2024 13:33:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CxTNcIJx"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-33ed4d8e9edso2311644f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Mar 2024 13:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711830800; x=1712435600; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFAjJDDVv2Mq/JzFmcsO7YxhKCuR+cnUm88ySh3fdCY=;
-        b=J0vCs3bZj868wkv2dxCA16usdLTxHmx+JepOHhgNLGhrtirvnyRwGOK7QU8kuAGxkI
-         XAwimqKE0ToQZRhZD2eGjLCsReLZgXnm5vuNxSlCPMlf3dalnHePEaHvZ54DxRzsb0a+
-         9elkNdrVfMD0433x0LhQBzFqNu6bJZ3dIT0RnvVXjeQUwXR/Dle4HKh24gEmEZcU+I6E
-         i587xtWsu6wcJR6o9dEISLZ0x3fnP8wT6e04edOK5Re/KbOOH3X3Df52EX5M5vmOSP/8
-         PTbzSeZj7uKmttBPdBXpUUQwHCDYJm9dVvCMyXuRzNXG+Cs+9w04YkBJmL0+ozCgjDz7
-         +7DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711830800; x=1712435600;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1711830801; x=1712435601; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GFAjJDDVv2Mq/JzFmcsO7YxhKCuR+cnUm88ySh3fdCY=;
-        b=VBi6HaCk+xhYWgLQ6c/6RMUat1EY/MsjNV1hhN7CvOhTxNEyx10RRWB8dYpE+wFeXc
-         KV1d7MYbynFV/RW3YBoQ2celUyyMlo6zZQYtK2qjjIfVUpfPPkFPH9ERjVdt/pEzXWgd
-         0+v2/K0Wj/EMZZE1SJ8mXx7SxERLoFFxn53Bl+lmpQKq2ajloFBY4tFp6GFLMkWLH0nP
-         duepQ9tDt+125nuKUne2VfTlq4u8T1JFuMDNue8aqG6MHSEWsmvZ9/VuDnnmJidUAYsN
-         4my/0cNpu3rptD7ajAVSCaS1jkcOYZbdEkA/lnNq2vmcFbFQqH83RU79EHmyeuAEuunk
-         p2wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEcn53b043MGW7WGp0gIaKnDFpSuA+OA8TR90PFxn4M7slMX8Sz7jobDfVP9Qq6eSRvkZtIczB/9JdTwD7IUrzyly76OEmxvflhc5ngR2yInw=
-X-Gm-Message-State: AOJu0YxICClOvnwIMQQXFfn1xxPPZiq3ja8qWqbGMt05q0Fl+LSVC9/h
-	q4xUyhta0sQEZcmg9e1oU3sCtQOUi/nvDS4TO8Wloqn46sWfem6X+PI5WGlBQ1g=
-X-Google-Smtp-Source: AGHT+IGOX9rzHnZKqEi/0u/JwllhPjDL5WI+9xrT75BifyUqTbwy5wixNEYn4orV6XKjH7yINyhNTQ==
-X-Received: by 2002:a05:6000:402a:b0:341:c9bc:6340 with SMTP id cp42-20020a056000402a00b00341c9bc6340mr5662696wrb.12.1711830799729;
-        Sat, 30 Mar 2024 13:33:19 -0700 (PDT)
+        bh=qxXsLaV/Jp0AuTCoy11lqfJYU7SA1bxHTVlpRCdXP0o=;
+        b=CxTNcIJxTRUYZSkW5AfrN+9V7qghVkJ5K8pjLQUi6VLDcNC+fQ+Emkn4WBT8P9fzu8
+         jAxOOKZk+yztPoen/bzEBbn7QhBBv+Jq5R50pXlRdvjtTHqPMhJsQhDY92O+brmRvItz
+         opzloi54XgaaHL6GoMicxlRXo6fEr/taCisZwWiJus+dNqv+tAnmFcU92RvW9CJ37B2x
+         yBYC+/n9JvGEU2D37gm/mlOsfApxjfofA1oWvFtPqzD7bQyRmstq+oNOKP2n6I6aFuGO
+         eoxgCOU1AXYPaQ2s1+0fYc2hgDKwzJ8YA7QdyKicy9o8RRyhW9HlEb+5SFlh36KldH80
+         YT5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711830801; x=1712435601;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qxXsLaV/Jp0AuTCoy11lqfJYU7SA1bxHTVlpRCdXP0o=;
+        b=q34ZzvG2m/6XpKoM+xSPCrT5jppBFHpz1PGS5GPtf+RJfspffN+cmS28yseJvQc2YF
+         IWuYJL14Af6BpkKlou7fLg5XU5QEPnD5H7JXstyGd2Dpj8NkyXBIUdR+/OtIZPsfT9k5
+         3xQ9OfKzPF0AqODMjgbVp6tbdHfiAtBlhzePeoEcqKF6/2eRfkSYApGXWvjyO+BSng7K
+         2kBmoZh5vLPHJdPM9RlrpGfrtJOJReCCuJB2qfmA5Q22lCF0VUkiifgwe6ggmQOVgB1W
+         ejbn9udiWMqhxz7nu7wa91VeNDIv3KYKCG5eVXmCyYKwhv1dy7Jz0Tm3Cu6cSo66Cw6B
+         YTnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvWKtunoPeNlBLCl7TddasvbjNXJEb2HyUMm798tfJKtX1I+JATECCFZjXXHGUUGJKWW4ktVIKfHeb9XbhpxJKTZcfmF75UUx5pnqbuWp08y8=
+X-Gm-Message-State: AOJu0YzsTR094ibyYOyUluL7X1LDBVPSu4QFFgSMvykbJJYvXvXmCBSW
+	yCGka7CToWZW0Xf/RRvJk3sMe0QfOViuHFM0vz/QBlORvBWEIHzNyluJqqV8NiHF9uRjuV1ktCw
+	S
+X-Google-Smtp-Source: AGHT+IHN/nKCm/+Mnbt3kT5922it2JlAg2uTRVYbLIOJLEZ4YrvuKM85wtb0sB8SeztSNGtLyUBYjA==
+X-Received: by 2002:adf:f747:0:b0:33e:6efa:757e with SMTP id z7-20020adff747000000b0033e6efa757emr3751670wrp.22.1711830801306;
+        Sat, 30 Mar 2024 13:33:21 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id f14-20020adfc98e000000b0033b48190e5esm7209315wrh.67.2024.03.30.13.33.18
+        by smtp.gmail.com with ESMTPSA id f14-20020adfc98e000000b0033b48190e5esm7209315wrh.67.2024.03.30.13.33.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Mar 2024 13:33:19 -0700 (PDT)
+        Sat, 30 Mar 2024 13:33:20 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 00/11] drm/exynos: drop driver owner initialization
-Date: Sat, 30 Mar 2024 21:33:04 +0100
-Message-Id: <20240330-b4-module-owner-drm-exynos-v1-0-3fa30e2c7e5a@linaro.org>
+Date: Sat, 30 Mar 2024 21:33:05 +0100
+Subject: [PATCH 01/11] drm/exynos: fimc: drop driver owner initialization
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,9 +64,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAB3CGYC/x3MQQqEMAwAwK9IzgZq24P4FdmDblINaCsp6yri3
- y0e5zIXZFbhDF11gfIuWVIsaOoKvvMQJ0ahYrDGeuOcwdHjmui3MKZ/ZEXSFfk4Y8pINjSjJd8
- OwUEJNuUgx5v3n/t+AL01KntsAAAA
+Message-Id: <20240330-b4-module-owner-drm-exynos-v1-1-3fa30e2c7e5a@linaro.org>
+References: <20240330-b4-module-owner-drm-exynos-v1-0-3fa30e2c7e5a@linaro.org>
+In-Reply-To: <20240330-b4-module-owner-drm-exynos-v1-0-3fa30e2c7e5a@linaro.org>
 To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
  Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
  Daniel Vetter <daniel@ffwll.ch>, 
@@ -73,61 +75,46 @@ To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1590;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=815;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=ikAn+U2VxbkfcXOAocqiqsMAFIUnrQGNULyY7tvmZjM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmCHcD5nGngLbev9+ND1Nt7ZqZYQsRksp1eacLP
- WkIvzjxXZuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZgh3AwAKCRDBN2bmhouD
- 1xbxEACSQfAZBiA6d/aLNg7qF26Uj0wPR1fgjNyfRIfnunql1d/6F6f4IStx4vjq0toKC17p3bR
- PdE6D2sQxPj6wsScga2SpIYE53Q0dXFIBtvqB0F5GqY2+MLAExBETmkgeKTrnv+dikQaqO5Kw3P
- pkPLep6s4eUpf4QSCaKQggBRFNs0MgUCW7mvQu35OOsw7t+rBrmvxUkBWQgwzH+elQw0sA5VgcK
- ljBU/gecnRyddZ/EbhGIuU5qJbFN+UZejzLHwrewFRmWetZQNsG+NDDlSOQuZ4qle8fRP+sIBZC
- Pw7FKA2PIQdtOuNCXipkThniRxQqJSBUflAzKaUZdNHtxHIOmvcokX3S1k4Sx87HIG+ERLN4QwO
- /62OnW4TW2LIewfHg+3H0fsYNghHw/uW7ifEEVqOfgeibGGsgQoOcp6eKUNDG9MIeO5lTt9IQRx
- EeN1Mpis0Fh6cM4l8xTC1D1NcqQS0IoNsudpnX4hbPGgH3R212SOHT8wk1BwatrZdJ6R2Q8x5g0
- EyI24A4UewQQMbyWJL+o7SJnVTaQzlaJzZclJoJV76UpgyHVF8IzgpqWxTWNiHfu3Y2Lh3vdPAW
- u9FjNjO3ZxUf63LnC0ATHBPdyDAHBTgB/xspsVfe8bwnMUNJBTIMSY8Sq2rjLPjEd8nNb6hXDtX
- Cb+Pm6aXb5PFKFA==
+ bh=RrrYKA/AFI5ndy2h1Lx8b0hMlMn5qR8304zzYvRKNZU=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmCHcEZEHDFpKCTeyd9y90cBj1gZxYBm7I4YGUJ
+ Sxemb8fceqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZgh3BAAKCRDBN2bmhouD
+ 1xT3D/9zXrRAF+TmbzdfPV40breUzsBxyRtoc1viFKPZ51qVOINcSfgvasG+FYOE3m2Bsv2/cN8
+ KohEWM0YcyH9ILS4YFz0hWOAKxLUARJWIocN+3ATd3BJvuSMoyfGaasvvgHwVXtKDM5hw3rJKdh
+ O7AeV6fOH3/OTjgQ7sxknMrTwLDViIzXTh81p45zNgd0Mmn1Dw96uWp4PNIztsV0JzChNgt4/jp
+ FNh9xntzf6pYgkeupWD3bCVV0M6NWmkLQMARj5miXx+zdAibMbIYK1/Q7etUCFDU7aKkQ/RVa6n
+ GW9T75h9zvmdC0hipz2Osc7qAMOdBgJ6/MchkpZIf0s5XRApNgTtbVxv5EhZ3hJbXsKyFZtAdDg
+ kT470aNoLsY3nxcwuVCntfrB/8Aay7japfstnoR6qOy6EV7AiAsE3CHX7E8LS0Badjz+ItkmIj7
+ hTpWAxe3Pfk4vV0zoofqYyY2kuAW06VgxtqlmoCLg+OdIIhnogjnOsH0byKZ3r1uYMlxWM213+1
+ xAuNnbwqLJSP81BX8vhQgTu2nco91Ks2a+bMDOlGv1rOWy6XwNUm/2OBpqFtFboicqooI/16MTh
+ edSgCFuJtOwEBbhG7PlFWD+OJ/YAFRjb/08fGmD56aMZDjGayokHjEypvUisIO2AyDwEv1Uj0LD
+ 6/l2Z3jONE8VGTA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Simplify the code by dropping unnecessary .owner initialization in the
-driver.
+Core in platform_driver_register() already sets the .owner, so driver
+does not need to.  Whatever is set here will be anyway overwritten by
+main driver calling platform_driver_register().
 
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (11):
-      drm/exynos: fimc: drop driver owner initialization
-      drm/exynos: fimd: drop driver owner initialization
-      drm/exynos: dsi: drop driver owner initialization
-      drm/exynos: g2d: drop driver owner initialization
-      drm/exynos: gsc: drop driver owner initialization
-      drm/exynos: mic: drop driver owner initialization
-      drm/exynos: rotator: drop driver owner initialization
-      drm/exynos: scaler: drop driver owner initialization
-      drm/exynos: vidi: drop driver owner initialization
-      drm/exynos: hdmi: drop driver owner initialization
-      drm/exynos: mixer: drop driver owner initialization
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 1 -
- drivers/gpu/drm/exynos/exynos_drm_fimc.c    | 1 -
- drivers/gpu/drm/exynos/exynos_drm_fimd.c    | 1 -
- drivers/gpu/drm/exynos/exynos_drm_g2d.c     | 1 -
- drivers/gpu/drm/exynos/exynos_drm_gsc.c     | 1 -
- drivers/gpu/drm/exynos/exynos_drm_mic.c     | 1 -
- drivers/gpu/drm/exynos/exynos_drm_rotator.c | 1 -
- drivers/gpu/drm/exynos/exynos_drm_scaler.c  | 1 -
- drivers/gpu/drm/exynos/exynos_drm_vidi.c    | 1 -
- drivers/gpu/drm/exynos/exynos_hdmi.c        | 1 -
- drivers/gpu/drm/exynos/exynos_mixer.c       | 1 -
- 11 files changed, 11 deletions(-)
----
-base-commit: 7fdcff3312e16ba8d1419f8a18f465c5cc235ecf
-change-id: 20240330-b4-module-owner-drm-exynos-d2f1b2d48af3
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index e81a576de398..142184c8c3bc 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1412,7 +1412,6 @@ struct platform_driver fimc_driver = {
+ 	.driver		= {
+ 		.of_match_table = fimc_of_match,
+ 		.name	= "exynos-drm-fimc",
+-		.owner	= THIS_MODULE,
+ 		.pm	= pm_ptr(&fimc_pm_ops),
+ 	},
+ };
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.34.1
 
