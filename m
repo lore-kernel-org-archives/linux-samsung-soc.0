@@ -1,254 +1,133 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6067130E2D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Mar 2024 17:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3681A1DFC6
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Mar 2024 20:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711734515; cv=none; b=tMjEx6f0NrXYWcsu17EyO5SRnvskByzZ4BUml+k9Dj+ZA+zbP19llwH60j8kz6ICnNxkMJijuR/59cs2HsYDuLDfbKdqmDXwLrhfG7HOgFKWmnbJT9qg9sBI3JNN4WfwAjdu10RClFzb4G0lvdtUqL6g2AKfmgOc82+OFWGg1GY=
+	t=1711830803; cv=none; b=d1gTY6jFETff6qD/VZs/O7HNew1eIs5QD0bveRiEgR7nkowdq75fZBWk90BGamKeHt7s+NOt+NwuQodb4/IKWcgUrxCSx/X2NK8gVRie5y0bnT0GxcgLqJ/NX45wjAUHxUM67g0lGjuO22U9l5cVtnpffQb+/fGQhsDXaWjAKH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711734515; c=relaxed/simple;
-	bh=/lMEaQ5FWLqHxvVKuDHkZPuDwH08gzMnjgffT2YIXAA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jekxqp4GCYxynzFlZcaNrtRZDP2tUOs64vZ8jTqJyiyaO/E+QDmT8/rPHWNouRa7E+jfrgQrDBzyjTGmpAXYsRphQ5pfLGr7mhzcMwS9WVxQt54e8yCVXMOQ7+P+3myhszF8bnd3E0+7IePRxB3/bYMTGqpy6dZpSx1l25mBrmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dwIAnNRX; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1711830803; c=relaxed/simple;
+	bh=ikAn+U2VxbkfcXOAocqiqsMAFIUnrQGNULyY7tvmZjM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JTAd78KbTYm8n/Lf7mmhd20KTy8X08ttzsyFaoClsP58+oL3zRmj2UcyyVHuFov9uHt9HGPg/q+m5KF5vaPO3UZuTYK1bmUag21FSx8dT9wmSfEKd8/fPc7QnUC/wBOgxyY3z5vxlmU2jM5PbMLchGscA1Up8GRL5BZO6IhK8K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J0vCs3bZ; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwIAnNRX"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41493e0fbf2so15023815e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Mar 2024 10:48:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J0vCs3bZ"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3433e518c78so579285f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Mar 2024 13:33:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711734511; x=1712339311; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ui/J5zKmEsVywXjm0Kgz2mYnNVlOw/q5qR+FEIy068E=;
-        b=dwIAnNRXbWnOZJ43Vwpr0sC0+4gDA1CkVOZ6ZTZBYwI13c7Iz2R3ll+d7nScXPYte7
-         CJEH0fiGg1zyz34N3/9NSWlAxQzsQ+HuQlnTamSKstrIWJRD/bORDdXw8GClGd9vbRmw
-         mNANwTO9SYeN65Dh7Nzyb/h7yS7wOmXD2OrhkNNz0Ug2H5xUwZBADR6thDk0zp5K83YZ
-         vuS+kaz7INCrDeG4MwaCfCD4gI4u/Ip6Adkwc02xwSMYGGnrzX/3djKqmRwHe/5V8t4B
-         KPQ66NlmOf7NAXBpWqQbL+9Ohv5koqHHe4MW5B29l0iIsWVZasPRr011WvLS15Awwr3i
-         SKMA==
+        d=linaro.org; s=google; t=1711830800; x=1712435600; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GFAjJDDVv2Mq/JzFmcsO7YxhKCuR+cnUm88ySh3fdCY=;
+        b=J0vCs3bZj868wkv2dxCA16usdLTxHmx+JepOHhgNLGhrtirvnyRwGOK7QU8kuAGxkI
+         XAwimqKE0ToQZRhZD2eGjLCsReLZgXnm5vuNxSlCPMlf3dalnHePEaHvZ54DxRzsb0a+
+         9elkNdrVfMD0433x0LhQBzFqNu6bJZ3dIT0RnvVXjeQUwXR/Dle4HKh24gEmEZcU+I6E
+         i587xtWsu6wcJR6o9dEISLZ0x3fnP8wT6e04edOK5Re/KbOOH3X3Df52EX5M5vmOSP/8
+         PTbzSeZj7uKmttBPdBXpUUQwHCDYJm9dVvCMyXuRzNXG+Cs+9w04YkBJmL0+ozCgjDz7
+         +7DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711734511; x=1712339311;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1711830800; x=1712435600;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ui/J5zKmEsVywXjm0Kgz2mYnNVlOw/q5qR+FEIy068E=;
-        b=Fjz8hsLbvIEeUIZ193UbwdBbntERBY0tA15s4fFEWKJ29D1qFWgw0HhlassuRGWPvf
-         If3CMtZaF77i8vpRzKIseea9gRC/h/uD4W3c5CdsKjiHMLuH/sOZHigAetZmQ6+SO7wN
-         F4blqlDPfeKCDfDLv7EhEhlsFQRwLvXY/jxXYCOM0uo7JZT/xjKYWxBf1SlR7EEL/QjN
-         c+B3R8gkB0LUu1q09VzCs+vCJdBuNKmXLJvGGJEQkHYgWud7t7/CpRKlfCH8MOT68DF6
-         MSyWlAPi8eAF5T9Fv6/g6Swp6cu8FnHNzcMysbj6k87dPhxWX0Dm+gsy8DaoHd40+seQ
-         UGZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXM2HqMWWsBjZ+/gJ3K7Iur/ONbbIc6RPFOtJWkAhPx0cK2qKvRpgb9NtAb4ZmFkiLhRY3kKYtP3kU8wtPcnjQ9GvlXm4tigUQ2UVj0ryUxElE=
-X-Gm-Message-State: AOJu0Yw7ZbQQDPBHRpEcR8Xa49i5YOhQygon04K1QTRbXojV3t79paO6
-	wgDbmhseQxKfbzN1xzCKhtODdcDSuRpNRfhzt0Mrlj0gyHFuu0Upd0Sl4zSYxis=
-X-Google-Smtp-Source: AGHT+IGfd2HZTroy7a6ljeuF6eUNe+t5bfgbd6ICXavZQWyRpJL8AzYiWUdWFmwHAudmGtcksOQWoA==
-X-Received: by 2002:a05:6000:1143:b0:33e:4d34:f40f with SMTP id d3-20020a056000114300b0033e4d34f40fmr1804706wrx.46.1711734511133;
-        Fri, 29 Mar 2024 10:48:31 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id g16-20020adfa490000000b00341dd083371sm4687089wrb.90.2024.03.29.10.48.30
+        bh=GFAjJDDVv2Mq/JzFmcsO7YxhKCuR+cnUm88ySh3fdCY=;
+        b=VBi6HaCk+xhYWgLQ6c/6RMUat1EY/MsjNV1hhN7CvOhTxNEyx10RRWB8dYpE+wFeXc
+         KV1d7MYbynFV/RW3YBoQ2celUyyMlo6zZQYtK2qjjIfVUpfPPkFPH9ERjVdt/pEzXWgd
+         0+v2/K0Wj/EMZZE1SJ8mXx7SxERLoFFxn53Bl+lmpQKq2ajloFBY4tFp6GFLMkWLH0nP
+         duepQ9tDt+125nuKUne2VfTlq4u8T1JFuMDNue8aqG6MHSEWsmvZ9/VuDnnmJidUAYsN
+         4my/0cNpu3rptD7ajAVSCaS1jkcOYZbdEkA/lnNq2vmcFbFQqH83RU79EHmyeuAEuunk
+         p2wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEcn53b043MGW7WGp0gIaKnDFpSuA+OA8TR90PFxn4M7slMX8Sz7jobDfVP9Qq6eSRvkZtIczB/9JdTwD7IUrzyly76OEmxvflhc5ngR2yInw=
+X-Gm-Message-State: AOJu0YxICClOvnwIMQQXFfn1xxPPZiq3ja8qWqbGMt05q0Fl+LSVC9/h
+	q4xUyhta0sQEZcmg9e1oU3sCtQOUi/nvDS4TO8Wloqn46sWfem6X+PI5WGlBQ1g=
+X-Google-Smtp-Source: AGHT+IGOX9rzHnZKqEi/0u/JwllhPjDL5WI+9xrT75BifyUqTbwy5wixNEYn4orV6XKjH7yINyhNTQ==
+X-Received: by 2002:a05:6000:402a:b0:341:c9bc:6340 with SMTP id cp42-20020a056000402a00b00341c9bc6340mr5662696wrb.12.1711830799729;
+        Sat, 30 Mar 2024 13:33:19 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id f14-20020adfc98e000000b0033b48190e5esm7209315wrh.67.2024.03.30.13.33.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Mar 2024 10:48:30 -0700 (PDT)
+        Sat, 30 Mar 2024 13:33:19 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] MAINTAINERS: Change Krzysztof Kozlowski's email address
-Date: Fri, 29 Mar 2024 18:48:23 +0100
-Message-Id: <20240329174823.74918-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+Subject: [PATCH 00/11] drm/exynos: drop driver owner initialization
+Date: Sat, 30 Mar 2024 21:33:04 +0100
+Message-Id: <20240330-b4-module-owner-drm-exynos-v1-0-3fa30e2c7e5a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAB3CGYC/x3MQQqEMAwAwK9IzgZq24P4FdmDblINaCsp6yri3
+ y0e5zIXZFbhDF11gfIuWVIsaOoKvvMQJ0ahYrDGeuOcwdHjmui3MKZ/ZEXSFfk4Y8pINjSjJd8
+ OwUEJNuUgx5v3n/t+AL01KntsAAAA
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1590;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=ikAn+U2VxbkfcXOAocqiqsMAFIUnrQGNULyY7tvmZjM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmCHcD5nGngLbev9+ND1Nt7ZqZYQsRksp1eacLP
+ WkIvzjxXZuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZgh3AwAKCRDBN2bmhouD
+ 1xbxEACSQfAZBiA6d/aLNg7qF26Uj0wPR1fgjNyfRIfnunql1d/6F6f4IStx4vjq0toKC17p3bR
+ PdE6D2sQxPj6wsScga2SpIYE53Q0dXFIBtvqB0F5GqY2+MLAExBETmkgeKTrnv+dikQaqO5Kw3P
+ pkPLep6s4eUpf4QSCaKQggBRFNs0MgUCW7mvQu35OOsw7t+rBrmvxUkBWQgwzH+elQw0sA5VgcK
+ ljBU/gecnRyddZ/EbhGIuU5qJbFN+UZejzLHwrewFRmWetZQNsG+NDDlSOQuZ4qle8fRP+sIBZC
+ Pw7FKA2PIQdtOuNCXipkThniRxQqJSBUflAzKaUZdNHtxHIOmvcokX3S1k4Sx87HIG+ERLN4QwO
+ /62OnW4TW2LIewfHg+3H0fsYNghHw/uW7ifEEVqOfgeibGGsgQoOcp6eKUNDG9MIeO5lTt9IQRx
+ EeN1Mpis0Fh6cM4l8xTC1D1NcqQS0IoNsudpnX4hbPGgH3R212SOHT8wk1BwatrZdJ6R2Q8x5g0
+ EyI24A4UewQQMbyWJL+o7SJnVTaQzlaJzZclJoJV76UpgyHVF8IzgpqWxTWNiHfu3Y2Lh3vdPAW
+ u9FjNjO3ZxUf63LnC0ATHBPdyDAHBTgB/xspsVfe8bwnMUNJBTIMSY8Sq2rjLPjEd8nNb6hXDtX
+ Cb+Pm6aXb5PFKFA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Switch Krzysztof Kozlowski's to @kernel.org account.
+Simplify the code by dropping unnecessary .owner initialization in the
+driver.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Best regards,
+Krzysztof
+
 ---
- MAINTAINERS | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+Krzysztof Kozlowski (11):
+      drm/exynos: fimc: drop driver owner initialization
+      drm/exynos: fimd: drop driver owner initialization
+      drm/exynos: dsi: drop driver owner initialization
+      drm/exynos: g2d: drop driver owner initialization
+      drm/exynos: gsc: drop driver owner initialization
+      drm/exynos: mic: drop driver owner initialization
+      drm/exynos: rotator: drop driver owner initialization
+      drm/exynos: scaler: drop driver owner initialization
+      drm/exynos: vidi: drop driver owner initialization
+      drm/exynos: hdmi: drop driver owner initialization
+      drm/exynos: mixer: drop driver owner initialization
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 56aa6108b58b..aa97210edb41 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2698,7 +2698,7 @@ F:	sound/soc/rockchip/
- N:	rockchip
- 
- ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org
-@@ -5555,7 +5555,7 @@ F:	drivers/cpuidle/cpuidle-big_little.c
- CPUIDLE DRIVER - ARM EXYNOS
- M:	Daniel Lezcano <daniel.lezcano@linaro.org>
- M:	Kukjin Kim <kgene@kernel.org>
--R:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+R:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-pm@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-@@ -8998,7 +8998,7 @@ F:	drivers/i2c/muxes/i2c-mux-gpio.c
- F:	include/linux/platform_data/i2c-mux-gpio.h
- 
- GENERIC GPIO RESET DRIVER
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- S:	Maintained
- F:	drivers/reset/reset-gpio.c
- 
-@@ -13286,7 +13286,7 @@ F:	drivers/iio/adc/max11205.c
- 
- MAXIM MAX17040 FAMILY FUEL GAUGE DRIVERS
- R:	Iskren Chernev <iskren.chernev@gmail.com>
--R:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+R:	Krzysztof Kozlowski <krzk@kernel.org>
- R:	Marek Szyprowski <m.szyprowski@samsung.com>
- R:	Matheus Castello <matheus@castello.eng.br>
- L:	linux-pm@vger.kernel.org
-@@ -13296,7 +13296,7 @@ F:	drivers/power/supply/max17040_battery.c
- 
- MAXIM MAX17042 FAMILY FUEL GAUGE DRIVERS
- R:	Hans de Goede <hdegoede@redhat.com>
--R:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+R:	Krzysztof Kozlowski <krzk@kernel.org>
- R:	Marek Szyprowski <m.szyprowski@samsung.com>
- R:	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>
- R:	Purism Kernel Team <kernel@puri.sm>
-@@ -13354,7 +13354,7 @@ F:	Documentation/devicetree/bindings/power/supply/maxim,max77976.yaml
- F:	drivers/power/supply/max77976_charger.c
- 
- MAXIM MUIC CHARGER DRIVERS FOR EXYNOS BASED BOARDS
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-pm@vger.kernel.org
- S:	Maintained
- B:	mailto:linux-samsung-soc@vger.kernel.org
-@@ -13365,7 +13365,7 @@ F:	drivers/power/supply/max77693_charger.c
- 
- MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BOARDS
- M:	Chanwoo Choi <cw00.choi@samsung.com>
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- B:	mailto:linux-samsung-soc@vger.kernel.org
-@@ -14157,7 +14157,7 @@ F:	lib/alloc_tag.c
- F:	lib/pgalloc_tag.c
- 
- MEMORY CONTROLLER DRIVERS
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- B:	mailto:krzysztof.kozlowski@linaro.org
-@@ -15538,7 +15538,7 @@ F:	include/uapi/linux/nexthop.h
- F:	net/ipv4/nexthop.c
- 
- NFC SUBSYSTEM
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	netdev@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/nfc/
-@@ -15914,7 +15914,7 @@ F:	Documentation/devicetree/bindings/regulator/nxp,pf8x00-regulator.yaml
- F:	drivers/regulator/pf8x00-regulator.c
- 
- NXP PTN5150A CC LOGIC AND EXTCON DRIVER
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/extcon/extcon-ptn5150.yaml
-@@ -16525,7 +16525,7 @@ K:	of_overlay_remove
- 
- OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
- M:	Rob Herring <robh@kernel.org>
--M:	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-+M:	Krzysztof Kozlowski <krzk+dt@kernel.org>
- M:	Conor Dooley <conor+dt@kernel.org>
- L:	devicetree@vger.kernel.org
- S:	Maintained
-@@ -17483,7 +17483,7 @@ F:	Documentation/devicetree/bindings/pinctrl/renesas,*
- F:	drivers/pinctrl/renesas/
- 
- PIN CONTROLLER - SAMSUNG
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-@@ -19420,7 +19420,7 @@ F:	Documentation/devicetree/bindings/sound/samsung*
- F:	sound/soc/samsung/
- 
- SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-@@ -19455,7 +19455,7 @@ S:	Maintained
- F:	drivers/platform/x86/samsung-laptop.c
- 
- SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-kernel@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-@@ -19481,7 +19481,7 @@ F:	drivers/media/platform/samsung/s3c-camif/
- F:	include/media/drv-intf/s3c_camif.h
- 
- SAMSUNG S3FWRN5 NFC DRIVER
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/net/nfc/samsung,s3fwrn5.yaml
- F:	drivers/nfc/s3fwrn5
-@@ -19502,7 +19502,7 @@ S:	Supported
- F:	drivers/media/i2c/s5k5baf.c
- 
- SAMSUNG S5P Security SubSystem (SSS) DRIVER
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- M:	Vladimir Zapolskiy <vz@mleia.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
-@@ -19524,7 +19524,7 @@ F:	Documentation/devicetree/bindings/media/samsung,fimc.yaml
- F:	drivers/media/platform/samsung/exynos4-is/
- 
- SAMSUNG SOC CLOCK DRIVERS
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
- M:	Chanwoo Choi <cw00.choi@samsung.com>
- R:	Alim Akhtar <alim.akhtar@samsung.com>
-@@ -19556,7 +19556,7 @@ F:	drivers/net/ethernet/samsung/sxgbe/
- 
- SAMSUNG THERMAL DRIVER
- M:	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-pm@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-@@ -23740,7 +23740,7 @@ S:	Orphan
- F:	drivers/mmc/host/vub300.c
- 
- W1 DALLAS'S 1-WIRE BUS
--M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-+M:	Krzysztof Kozlowski <krzk@kernel.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/w1/
- F:	Documentation/w1/
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c    | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c     | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_mic.c     | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c  | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c    | 1 -
+ drivers/gpu/drm/exynos/exynos_hdmi.c        | 1 -
+ drivers/gpu/drm/exynos/exynos_mixer.c       | 1 -
+ 11 files changed, 11 deletions(-)
+---
+base-commit: 7fdcff3312e16ba8d1419f8a18f465c5cc235ecf
+change-id: 20240330-b4-module-owner-drm-exynos-d2f1b2d48af3
+
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
