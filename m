@@ -1,56 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx2.usergate.com (mx2.usergate.com [46.229.79.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E92AE66;
-	Sun, 31 Mar 2024 10:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF22209F;
+	Mon,  1 Apr 2024 10:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.229.79.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711880398; cv=none; b=KuLRx6GPMJ7yIXdELa+WF4qdNagHXkaHG5nB47gGzaF5SMwWL8Yxj3264z2RdYVTi5Li9XdymkuHIoLAvonOIYUbDdLl8c5m2JgkpcLyf2vH9GeDcF8x6Ll5InGiHrquBsZUwVrC4Sg2N1/T6yxAz0TeXMOn0di/Qyg4mXqXyYU=
+	t=1711967915; cv=none; b=G8emiY1on8Y1rJtxLUIEej0KNcxhcor5SK2prC8Rrrq5y+WZafbhPPkHPcQ7LsZk9oUR3Zjmiyp8ai+W8kJfXyaoh0fztBveIjmAiQWYA7IZJEJHHzzhKLppuaNvI/440907vAl1GVz2I7bJx16S1cPnPK+vqVkyBm5H/Z07O50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711880398; c=relaxed/simple;
-	bh=PwbEoi4UwK9F4HKq6a7upZnV6eqHtWN+7WjlzHonK94=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QYIItfjrdnDCZjZV5Ckg/hLqB6sMOshCiQbznc3THsgR6IelR6liGTQ8zskpqPcVOUpFlJGAyjapVCqOyMXT6Q7aWiUX30L4nX2lLh813yI5RwxUKsSs5Wsrrbm1ughreJ9pABa4m/bycv94DoFEl6e1GPN9828etmxvAe/1ErU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032F7C433F1;
-	Sun, 31 Mar 2024 10:19:54 +0000 (UTC)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240328091000.17660-1-jaewon02.kim@samsung.com>
-References: <CGME20240328091426epcas2p4f227abb6cd7e710f49f4e61aa022f74f@epcas2p4.samsung.com>
- <20240328091000.17660-1-jaewon02.kim@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynosautov9: fix wrong pll clock id
- value
-Message-Id: <171188039458.21481.12012544033214893386.b4-ty@linaro.org>
-Date: Sun, 31 Mar 2024 12:19:54 +0200
+	s=arc-20240116; t=1711967915; c=relaxed/simple;
+	bh=3wAh+pB/PnNQex92i1+AES9ZDslGICWsgIRD4jVuNyI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=el31ggzNFczMKnlH4+D7n6ygLqrdW9XssrYN2ktQppp63KugO1CoffpDkDpdToRi60U+W8HP/EbHRpELfbCLFpXJGoEDq/zDJow0MQtNC5pSqHhhyVNjP2xZ6W63S7gpxWUjCPhav9J5H/woSny9PnAqi9bgWkcCLOLGt0xDmPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usergate.com; spf=pass smtp.mailfrom=usergate.com; arc=none smtp.client-ip=46.229.79.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usergate.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=usergate.com
+Received: from mail.usergate.com[192.168.90.36] by mx2.usergate.com with ESMTP id
+	 F0569C2093D044FBB24DB97CF6AC9904; Mon, 1 Apr 2024 17:38:21 +0700
+From: Aleksandr Aprelkov <aaprelkov@usergate.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Aleksandr Aprelkov <aaprelkov@usergate.com>,Michael Turquette <mturquette@baylibre.com>,Stephen Boyd <sboyd@kernel.org>,<linux-kernel@vger.kernel.org>,<linux-samsung-soc@vger.kernel.org>,<linux-clk@vger.kernel.org>,<lvc-project@linuxtesting.org>
+Subject: [PATCH] clk: s2mps11: Check of_clk_add_hw_provider() result
+Date: Mon, 1 Apr 2024 17:38:08 +0700
+Message-ID: <20240401103808.617463-1-aaprelkov@usergate.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ESLSRV-EXCH-01.esafeline.com (192.168.90.36) To
+ nsk02-mbx01.esafeline.com (10.10.1.35)
+X-Message-Id: D787E24C5A284804AC7923C7C89510EA
+X-MailFileId: 0DE6D82EDE3D42C6A79E7984A7D233FA
 
+There is no check if error occurs in clock provider registration.
 
-On Thu, 28 Mar 2024 18:10:00 +0900, Jaewon Kim wrote:
-> All PLL id values of CMU_TOP were incorrectly set to FOUT_SHARED0_PLL.
-> It modified to the correct PLL clock id value.
-> 
-> 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Applied, thanks!
+Fixes: b228fad50c00 ("clk: s2mps11: Migrate to clk_hw based OF and registration APIs")
+Signed-off-by: Aleksandr Aprelkov <aaprelkov@usergate.com>
+---
+ drivers/clk/clk-s2mps11.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-[1/1] clk: samsung: exynosautov9: fix wrong pll clock id value
-      https://git.kernel.org/krzk/linux/c/04ee3a0b44e3d18cf6b0c712d14b98624877fd26
-
-Best regards,
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 38c456540d1b..f9ce413b6c02 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -187,8 +187,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	clk_data->num = S2MPS11_CLKS_NUM;
+-	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
++	ret = of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
+ 			       clk_data);
++	if (ret < 0)
++		goto err_reg;
+ 
+ 	platform_set_drvdata(pdev, s2mps11_clks);
+ 
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.34.1
 
