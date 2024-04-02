@@ -1,101 +1,93 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76652131720;
-	Tue,  2 Apr 2024 15:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157441E531;
+	Tue,  2 Apr 2024 23:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712073549; cv=none; b=ndM2xQq5T3Wr75mqxjcIwCb2joZBExCKstXKqeMaX8eNrq6sulT0qie0vsEvKFEDt26qdyz9kJOSVPcr5TKwChm+zkAVBYvgKelIDMUEN9a0wgTcIBP+YdFwpuVqu0E2/vzf0iuavZmVOLfPkcrKaE/BqC2cwroQ3yaqfz2bAuQ=
+	t=1712100286; cv=none; b=WpUJCyvaXkfHyJswGEtGNO3wh7rRvSaj7DZffM13w8FTll9//kqfDZkUL1y5tz43/2yeZK+b4aoBKwMSCPvwDJssY113vQXHEs5reEQk6TTvmgCRAiMDp1mU6Px1uFB8EX0onf2vo7Ihaiyld/953q4U83t8l1w7s7Z+meApfUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712073549; c=relaxed/simple;
-	bh=qnN9weQ8zePSFzOoB2/Nqdch/QqBxOvQUT/3iZ1s9A4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JDi9EuK11EhSYuUks0f/JWp1AnvHDSizHhExFuaF91OM0EdXZIdDlbaEHod9J66/sQUFIi1Ks8hjYymP23C/2F95R3+jSoGFxGoJk1WqF2/3V1d/CCASs4YaGZGHIr2tMb9OsCP9aba6VcO5A/lOF+JGoPjrquG36gc1JjzmmBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CB3A1042;
-	Tue,  2 Apr 2024 08:59:38 -0700 (PDT)
-Received: from e129166.arm.com (unknown [10.57.72.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 514333F64C;
-	Tue,  2 Apr 2024 08:59:04 -0700 (PDT)
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rafael@kernel.org
-Cc: lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	nm@ti.com,
-	linux-samsung-soc@vger.kernel.org,
-	daniel.lezcano@linaro.org,
-	viresh.kumar@linaro.org,
-	krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com,
-	m.szyprowski@samsung.com,
-	mhiramat@kernel.org
-Subject: [PATCH v4 4/4] soc: samsung: exynos-asv: Update Energy Model after adjusting voltage
-Date: Tue,  2 Apr 2024 16:58:22 +0100
-Message-Id: <20240402155822.505491-5-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240402155822.505491-1-lukasz.luba@arm.com>
-References: <20240402155822.505491-1-lukasz.luba@arm.com>
+	s=arc-20240116; t=1712100286; c=relaxed/simple;
+	bh=SOcZmrJfqQWxyRrd5zPsb0SS4XNlrFrejR2keRnseV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mv3qZ3w/4Hjf25CDtooQ3XcMOdkRw7lV8IpFFU+1JV2LutW/lImoWrpzc7elyfd5Ro+hHkGsBlAlg/oQuxAOQs+9roodWCEJdBQXoGTWeKW5/ASfevMiQxpFnp0XbgHNeL9OJaXxnmHd3lB83euDIJM89SKkQtOF5kZeoOmdxZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDo1c+tC; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDo1c+tC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 576F6C433F1;
+	Tue,  2 Apr 2024 23:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712100285;
+	bh=SOcZmrJfqQWxyRrd5zPsb0SS4XNlrFrejR2keRnseV4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UDo1c+tCNp/2smLd5/d1j/Qxh5i7+6sQQE/akTCYPQzi0uokgij/08ZiMKqbPtKWw
+	 0gar+cTToqgQcYSkP+ZWuJwjrkY4wmjJLSIhVcaEMASiAN+JH+q/3TJm/ZTVTYJP8F
+	 WUjWN5Ke4G0iq68+VzPr8KEJ0Sh2tQzFbCXml891QjePPaI3s7jnO9qmK+ru1L8DPq
+	 yPst2pTlCr59CtPo7/cwyz4n45SbDQ0V7D3cTw59NDMu08FjVccOt7Fmc1suFDSDbb
+	 689ikLQAZVTDcBJqFM4Ap2fQL8yLTYT1bOc5Z5An6OckOpgTdAtGJfWucFNRgWIkn7
+	 xHlxZkx/XdIAw==
+Message-ID: <dac7ec14-7819-46dd-82b0-fd009523c743@kernel.org>
+Date: Wed, 3 Apr 2024 08:24:37 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/23] block: add a helper to cancel atomic queue limit
+ updates
+To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Niklas Cassel <cassel@kernel.org>,
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Sathya Prakash <sathya.prakash@broadcom.com>,
+ Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+ "Juergen E. Fischer" <fischer@norbit.de>,
+ Xiang Chen <chenxiang66@hisilicon.com>,
+ HighPoint Linux Team <linux@highpoint-tech.com>,
+ Tyrel Datwyler <tyreld@linux.ibm.com>, Brian King <brking@us.ibm.com>,
+ Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+ Mike Christie <michael.christie@oracle.com>,
+ John Garry <john.g.garry@oracle.com>, Jason Yan <yanaijie@huawei.com>,
+ Kashyap Desai <kashyap.desai@broadcom.com>,
+ Sumit Saxena <sumit.saxena@broadcom.com>,
+ Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+ Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+ Jack Wang <jinpu.wang@cloud.ionos.com>, Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alan Stern <stern@rowland.harvard.edu>, linux-block@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+ MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+ linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ usb-storage@lists.one-eyed-alien.net
+References: <20240402130645.653507-1-hch@lst.de>
+ <20240402130645.653507-2-hch@lst.de>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240402130645.653507-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the voltage for OPPs is adjusted there is a need to also update
-Energy Model framework. The EM data contains power values which depend
-on voltage values. The EM structure is used for thermal (IPA governor)
-and in scheduler task placement (EAS) so it should reflect the real HW
-model as best as possible to operate properly.
+On 4/2/24 22:06, Christoph Hellwig wrote:
+> Drivers might have to perform complex actions to determine queue limits,
+> and those might fail.  Add a helper to cancel a queue limit update
+> that can be called in those cases.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Based on data on Exynos5422 ASV tables the maximum power difference might
-be ~29%. An Odroid-XU4 (with a random sample SoC in this chip lottery)
-showed power difference for some OPPs ~20%. Therefore, it's worth to
-update the EM.
+Looks good to me.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
- drivers/soc/samsung/exynos-asv.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-diff --git a/drivers/soc/samsung/exynos-asv.c b/drivers/soc/samsung/exynos-asv.c
-index d60af8acc3916..d6d003e3a81ab 100644
---- a/drivers/soc/samsung/exynos-asv.c
-+++ b/drivers/soc/samsung/exynos-asv.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/cpu.h>
- #include <linux/device.h>
-+#include <linux/energy_model.h>
- #include <linux/errno.h>
- #include <linux/of.h>
- #include <linux/pm_opp.h>
-@@ -97,9 +98,17 @@ static int exynos_asv_update_opps(struct exynos_asv *asv)
- 			last_opp_table = opp_table;
- 
- 			ret = exynos_asv_update_cpu_opps(asv, cpu);
--			if (ret < 0)
-+			if (!ret) {
-+				/*
-+				 * When the voltage for OPPs could be changed,
-+				 * make sure to update the EM power values, to
-+				 * reflect the reality and not use stale data.
-+				 */
-+				em_dev_update_chip_binning(cpu);
-+			} else {
- 				dev_err(asv->dev, "Couldn't udate OPPs for cpu%d\n",
- 					cpuid);
-+			}
- 		}
- 
- 		dev_pm_opp_put_opp_table(opp_table);
 -- 
-2.25.1
+Damien Le Moal
+Western Digital Research
 
