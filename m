@@ -1,87 +1,116 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78580146D41;
-	Wed,  3 Apr 2024 12:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3316147C76
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Apr 2024 13:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712148944; cv=none; b=OQCQcaSLxmLsTkSm3dsoSNFyvAtmObkqGY96LOuIqDuv8kgJQ3gCHsZY5v4UVUy4oKlPFUGAz+446+FQW29Qx2zjMmEUrYCVebq7NcEnCOPDvYrx1PIEoJg2ieoJ1fe5CmYxm3bG+eLjesAlgdyaSmotF1lFN2mLhaot+cmQVkw=
+	t=1712150352; cv=none; b=YptUIPbVAAFKr86ZbwcTv+ma8cVTbTywcILwjkJr6Kjblr0HYxwFxufbAGDw/GKOSZCNZIiABna3SH1IsF/EkhyR2VFQhKWuwhlYmOYVURx7XQmSz3ITh8PuwxI+YDMTF/d7Yy+Lgl/L25nrd7PIbXrXqcMjjNWqxHtyoOpBhkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712148944; c=relaxed/simple;
-	bh=kLg5w+VhnMZXw4r2H5fTrv+slAsLxDCRcGAC3HKHuaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wwv66IqElOrgKjPOaYiwXCWuEKKI3GajvYmQx/A/2hN60z5JQ5tPDDvcFYlSU0Jn9mRkLe1GBORxLFzeZ/0NXwJLdo9bdAyDB05CoKQ40DlERb1+yoWbO1/0L8H0hXsbRhlxTt/jAN0StT5RNB1ALPKFDbEO+tYwvAdZUiEX15E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 965EC68D05; Wed,  3 Apr 2024 14:55:35 +0200 (CEST)
-Date: Wed, 3 Apr 2024 14:55:35 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"Juergen E. Fischer" <fischer@norbit.de>,
-	Xiang Chen <chenxiang66@hisilicon.com>,
-	HighPoint Linux Team <linux@highpoint-tech.com>,
-	Tyrel Datwyler <tyreld@linux.ibm.com>,
-	Brian King <brking@us.ibm.com>, Lee Duncan <lduncan@suse.com>,
-	Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Jason Yan <yanaijie@huawei.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Jack Wang <jinpu.wang@cloud.ionos.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-block@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
-	MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH 11/23] megaraid_sas: switch to using ->device_configure
-Message-ID: <20240403125535.GC19332@lst.de>
-References: <20240402130645.653507-1-hch@lst.de> <20240402130645.653507-12-hch@lst.de> <9f555953-6b41-4962-8f43-339326e30d6a@suse.de>
+	s=arc-20240116; t=1712150352; c=relaxed/simple;
+	bh=cWyJ3cJLCpRglG8Yk4xFCKIFWdrd8x6dZaV75Jxrvbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ca1u9luLkNqLowev60hsf0QyKYM2bIggJzuqjnXlW/V8j4wBvRtMmuqy81YxkdwxGdEQbHugdUTtgn1bIrrmEBAD9At0cCCy213r2qPrHtUDpZf0tHIe3bE/GH1j7kyEtyfn1dG7mkSeO5ojpUQpsiHzSfAnI2lMlkuAjGOdMJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=OzTfZbDA; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="OzTfZbDA"
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-432c947e92eso8498661cf.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Apr 2024 06:19:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1712150350; x=1712755150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWyJ3cJLCpRglG8Yk4xFCKIFWdrd8x6dZaV75Jxrvbw=;
+        b=OzTfZbDAK169DHvtiGLE1p56hWxrPJIvztF4HCEG28uzI7eK2DDmyoFnlpMcVff0Ju
+         c7HfnRJdMT3cqqxjH5ta+XDwFfzxP7nhChJPfdXbCh/IYQgFfXapvkwDzhtcQKIMJDU6
+         /AYta6lJ4gWauzOHkhmOzIjsNFqlePdHHn3xy9JT6hKwAeKaW0n7cYID5zC35uJ+E1J9
+         MjmpsOIduTxUPwoUx60yV5mxx/3qr0JADBO7+Rf5akc1FV1XnIFH8emGKZpFjW7KCbm0
+         cWNz6heaYM6CJ35L/MFmo5LBGu6IXNRGey0GQtZdKGb0oNwjKGxhdSPQYm+tHTmRafwM
+         UqNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712150350; x=1712755150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cWyJ3cJLCpRglG8Yk4xFCKIFWdrd8x6dZaV75Jxrvbw=;
+        b=IGW3u60MIb1shq9d3p6eitnvhEAXReIJq03C2HQ920C/hV1Xb1gMXh5edrOCJ5ttrU
+         sjXc0ocyTTgKHd2tEq7tliiXI5ItC6Qzbn380RXB+ySAUjJCtJ5ToX7XKRlIAnLi70IL
+         RLv5f560TdTGQp+mIEgUwDy6Lb/IncLRY3RKK5Iu1XWzbaUwZ19kiLi2Q91zxuM7/dA0
+         XpEl4SfNBmJ5QjcqMsM1LeeWI7UmgjigQn7F+wfcN47h4wec9ryl36V6VKdQWtChtSOh
+         i2b+mXNmlaotbVrHz7wNCIBfXD7RVJoqfKu0KEljoAIKVcLTlHTi/N5IFUtXukq0YBQ6
+         DyEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjlIqy27ys239k46y0Au2f38H12rDD4mGdE/sHZCLniIFArNLyV4UgJSwRmP5KejC3/czVtDsIrQSRdNw+J89QhFCVrnT0hWSUKutYgqD2dvc=
+X-Gm-Message-State: AOJu0YwHd0NGF/V/bq2L5fU6bzy0Ys3sLLx+DlCRkMJ7s2ABrZQg740G
+	4gCAMGYJtCcZvxQZOZWuRmYI2gpc2FZsuwdU+CpixaYe78w0ipO+8X3tuOYLOv7vSLktvdpmWuN
+	4Vv96JeLAQDcjsaEAp85oALsN7l9Yi/WcTr2Tjw==
+X-Google-Smtp-Source: AGHT+IEGVCWVaM3OZyGBYvZk7eIME6rUXSm4/CdsRsbb+oN0keiU95giarhKtyBsTd58XnIkGQv2TzNnxS90eOdz7ws=
+X-Received: by 2002:a05:622a:104c:b0:434:338c:31ac with SMTP id
+ f12-20020a05622a104c00b00434338c31acmr3549454qte.14.1712150349909; Wed, 03
+ Apr 2024 06:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f555953-6b41-4962-8f43-339326e30d6a@suse.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
+ <00555af4-8786-b772-7897-aef1e912b368@google.com> <ZfTDUGSshZUbs13-@8bytes.org>
+In-Reply-To: <ZfTDUGSshZUbs13-@8bytes.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 3 Apr 2024 09:18:33 -0400
+Message-ID: <CA+CK2bC7jd65=eZoN7szWJKSO2TLsxxKFH8D6WjHS3_2U7=McA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] IOMMU memory observability
+To: Joerg Roedel <joro@8bytes.org>
+Cc: David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jernej.skrabec@gmail.com, 
+	jonathanh@nvidia.com, krzysztof.kozlowski@linaro.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, 
+	m.szyprowski@samsung.com, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, bagasdotme@gmail.com, mkoutny@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 03, 2024 at 09:06:12AM +0200, Hannes Reinecke wrote:
->> +	lim->virt_boundary_mask = mr_nvme_pg_size - 1;
->>     	blk_queue_flag_set(QUEUE_FLAG_NOMERGES, sdev->request_queue);
->> -	blk_queue_virt_boundary(sdev->request_queue, mr_nvme_pg_size - 1);
->>   }
-> That now looks odd.
-> We're taking great pains to have everything in queue_limits and avoid 
-> having to use the request_queue directly, yet this one call we're missing.
-> Wouldn't it make sense to move that into queue_limits, too?
+On Fri, Mar 15, 2024 at 5:53=E2=80=AFPM Joerg Roedel <joro@8bytes.org> wrot=
+e:
+>
+> Hi David,
+>
+> On Fri, Mar 15, 2024 at 02:33:53PM -0700, David Rientjes wrote:
+> > Joerg, is this series anticipated to be queued up in the core branch of
+> > git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git so it gets into
+> > linux-next?
+> >
+> > This observability seems particularly useful so that we can monitor and
+> > alert on any unexpected increases (unbounded memory growth from this
+> > subsystem has in the past caused us issues before the memory is otherwi=
+se
+> > not observable by host software).
+> >
+> > Or are we still waiting on code reviews from some folks that we should
+> > ping?
+>
+> A few more reviews would certainly help, but I will also do a review on
+> my own. If things are looking good I can merge it into the iommu tree
+> when 6.9-rc3 is released (which is the usual time I start merging new
+> stuff).
 
-The queue flags are in the queue, so there is no way to set them
-through the limits.  I plan to eventually split out actual features
-and move them to the limits from the blk-mq internal state flags.
+Hi Joerg,
 
-That being said QUEUE_FLAG_NOMERGES is a really weird one and drivers
-shouldn't really be messing with it at all..
+Would it make sense to stage this series in an unstable branch to get
+more test coverage from the 0-day robots?
 
+Thank you,
+Pasha
