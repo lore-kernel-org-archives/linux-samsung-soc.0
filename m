@@ -1,136 +1,129 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177531534F2;
-	Wed,  3 Apr 2024 18:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0257B156671
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Apr 2024 21:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712168781; cv=none; b=j8yvTezLRhonC4+9kRAQh9KTg8UMVsoF5gypL22BWYnN06zKGLEzOoqn5w179gZLbaZe5IuiRMrRw1DIBclhLBd6yK6OG8ivw0075UsTO5yRGJkghXhXXZsbKUO0Z39eGT1tUV0+j4zQW6DQZWEicc2pmYAbq/uo1lEf4Hryobo=
+	t=1712178398; cv=none; b=ZJwFVGr0Bc1lsa+RYKA7cq6n69wu/4p4GHVy4OCUbZkZr6knxb6GRO4Oa7EhkzzObjxCxDKGTPtc3i7X49HCQabMnEwc7rr0LmNvn4oFb354K1u9oWKn2pOh9WfFfUTS3rwLt7lUZhy+ojyd0O5KVQZJU8C88RMllc6BYpK6l34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712168781; c=relaxed/simple;
-	bh=Of2GYAaUswv6LvHoA0UkUvxuxYZ5tgWnA6txjalqaVQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iEupv8KtqOomDOuY91BcOFIr/VbZVgmCMw9fBcqM1Cf9Gpv88jfqC6XvyfD7v++J638/xEiWLbOCnAbfi8hwKuaCqsFvbAGUnMkX2Nh2qLvMTBaA21q5uUdB+8h+SnrgMboS7z7gSpmqs3OnhewAHbTOMXn/MsSRAgIf0ElEoSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTkYfxzS; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTkYfxzS"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6ea8ee55812so115405b3a.0;
-        Wed, 03 Apr 2024 11:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712168779; x=1712773579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KbtoEoj4oChBiO+Y87ED1v4ExuftqHcGwPMYfmQNkfA=;
-        b=hTkYfxzSBkzMxBSDsk2ykPM/vOwPUOKkblnOjqQcFsuuJ1jvrWKV6qn/L9PADoQQe5
-         zFh+hDaB93AMoIi/u/8eA+z71fef63BvlMCRnhG9LKJEdEf7SeDiUe56knH/Q97A8EMp
-         4gdoSSdqIOaH4M8bDAZVrkQQn0aOYAMjyCGa3VPCr6G48O/a0hcu5d/ZmspoJeaJtSPk
-         zv8Klh0R3zxsy64+P/mxdOiqX4VIn0SimqTzZp8ljgc2pUpDqXtS7yqh95haAlar7Law
-         FfdBbmA05hKkrAvPLZM/TVpvaHg/RBnSiTK5PK4HMMqgoCR2nMzEBHGxnhPijXo+f3E0
-         Ne0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712168779; x=1712773579;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KbtoEoj4oChBiO+Y87ED1v4ExuftqHcGwPMYfmQNkfA=;
-        b=YyCRetmz9GRms93Mfo/15zOXn1w/KlfSONgwgKZyRhRcx7B7vuoXuXYIOmESTl2KT/
-         X+L6Jy0zz9h3Z97S6VbGAH8FdkVjGSAUK93NQAyD8XhKG9giqlfG3pnQ2Yjoo8G3QVJv
-         fWaonDx5zBTfWXMG65aS7tZf/bJdDlVM3tzicjZuZ6oFKa1Q014IJb2z9HWf9sXEF3fo
-         1+HE3iZrABNcDwNbMiM/LzJDqBvMcVeOMXZpI1DMIpC3Xws+/eRpf5cAdobxN+urzw2p
-         bnK+p6OISQINb5aLNOFglfrm/23EBfwka3g8599iLvHO60BalPxfU2SasiRFPVKB1E1m
-         pv0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWteOvDQztVyzmRk54tVABNWzJNC1ccUKRxFXXvqZyI3yrTCE1qzYAFgkrvOkvZtKWNYH8Lm+eCqnqus0mKloyQ94AdNtDIbwexO7KAN2s+BwTL5FUnvky6Y3tx9+zgmYcSE96VWTCjFfMx8wJIoXOiwNjpLEwOL7tQ/GWjU/6xHUqpVEMIVf7eHQ==
-X-Gm-Message-State: AOJu0Yx7kPpNOyynBqGHWwkQ+tAzmup33uUtzTS8WfBYis2E+9JAWf9K
-	DI46jN4E6WPMf2JMGoEbZVV6n81ZQft7jKCXf7jv6X3VQ7rHNqdG
-X-Google-Smtp-Source: AGHT+IHQ9uuUuPoQFrr8foz2IR4qr+5ODebDBIJMqbDQ/OLXs1tkY8YgMX5XpBIC998RHg3OwMlolg==
-X-Received: by 2002:a05:6a00:b81:b0:6ea:92de:3603 with SMTP id g1-20020a056a000b8100b006ea92de3603mr406437pfj.16.1712168779381;
-        Wed, 03 Apr 2024 11:26:19 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id kq10-20020a056a004b0a00b006eae3aac040sm10609776pfb.31.2024.04.03.11.26.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Apr 2024 11:26:18 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] PM / devfreq: exynos: Switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()
-Date: Wed,  3 Apr 2024 23:45:05 +0530
-Message-ID: <20240403181517.5993-2-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240403181517.5993-1-linux.amoon@gmail.com>
-References: <20240403181517.5993-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1712178398; c=relaxed/simple;
+	bh=bvE6+Ioe65Pvy3tTo3/DekL3m3PgUp+qr/wE3M2vlMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lXGx7fDjFaK63iuKoGopZRA7YFfP96To+dIrtXZKOIJoMUYBgVt6l5U926FBkoUqlCL+FPqv/4cU/hZeLQUIrHJC/td+6pt2c3XnxPuos0L2dsk5XG+wKt5K95AyAlK4/Z6Gb2lYwsifY31qRWPwsJ08iFxfYYeyaHBAk/h16xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rs7nv-0001NX-2i; Wed, 03 Apr 2024 23:05:55 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rs7nr-00AFDj-LI; Wed, 03 Apr 2024 23:05:51 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rs7nr-00EqVT-1m;
+	Wed, 03 Apr 2024 23:05:51 +0200
+Date: Wed, 3 Apr 2024 23:05:51 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Andi Shyti <andi.shyti@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Li Zetao <lizetao1@huawei.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Rob Herring <robh@kernel.org>, 
+	Yang Yingliang <yangyingliang@huawei.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Luis de Arquer <luis.dearquer@inertim.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Peter Griffin <peter.griffin@linaro.org>, 
+	Jaewon Kim <jaewon02.kim@samsung.com>, linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 31/34] spi: remove incorrect of_match_ptr annotations
+Message-ID: <5f3qvhasho4mfnf6f7i6djak3ankje375mt4fzvv3gqrlj242o@zdk2ajvha6hx>
+References: <20240403080702.3509288-1-arnd@kernel.org>
+ <20240403080702.3509288-32-arnd@kernel.org>
+ <b4418ac1-10ba-4932-be6e-93282707024f@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="j3dyffzs5mph63yw"
+Content-Disposition: inline
+In-Reply-To: <b4418ac1-10ba-4932-be6e-93282707024f@sirena.org.uk>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-Use the new PM macros for the suspend and resume functions to be
-automatically dropped by the compiler when CONFIG_PM_SLEEP are disabled,
-without having to use #ifdef guards. If CONFIG_PM_SLEEP unused,
-they will simply be discarded by the compiler.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-added __maybe_unused to suspend/resume functions
+--j3dyffzs5mph63yw
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[0] https://lore.kernel.org/all/20240226183308.4730-1-linux.amoon@gmail.com/
----
- drivers/devfreq/exynos-bus.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+On Wed, Apr 03, 2024 at 10:56:58AM +0100, Mark Brown wrote:
+> On Wed, Apr 03, 2024 at 10:06:49AM +0200, Arnd Bergmann wrote:
+>=20
+> > These appear to all be copied from the same original driver, so fix the=
+m at the
+> > same time by removing the unnecessary of_match_ptr() annotation. As far=
+ as I
+> > can tell, all these drivers are only actually used on configurations th=
+at
+> > have CONFIG_OF enabled.
+>=20
+> Why are we not fixing of_match_ptr() here, or at least adding the ifdefs
+> in case someone does end up wanting to run without OF?
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 153340b6685f..09822f8fa209 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -454,8 +454,7 @@ static void exynos_bus_shutdown(struct platform_device *pdev)
- 	devfreq_suspend_device(bus->devfreq);
+Fixing of_match_ptr =3D
+
+diff --git a/include/linux/of.h b/include/linux/of.h
+index a0bedd038a05..d980bccffda0 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -890,7 +890,7 @@ static inline const void *of_device_get_match_data(cons=
+t struct device *dev)
+ 	return NULL;
  }
- 
--#ifdef CONFIG_PM_SLEEP
--static int exynos_bus_resume(struct device *dev)
-+static int __maybe_unused exynos_bus_resume(struct device *dev)
- {
- 	struct exynos_bus *bus = dev_get_drvdata(dev);
- 	int ret;
-@@ -469,7 +468,7 @@ static int exynos_bus_resume(struct device *dev)
- 	return 0;
- }
- 
--static int exynos_bus_suspend(struct device *dev)
-+static int __maybe_unused exynos_bus_suspend(struct device *dev)
- {
- 	struct exynos_bus *bus = dev_get_drvdata(dev);
- 	int ret;
-@@ -482,7 +481,6 @@ static int exynos_bus_suspend(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
- static const struct dev_pm_ops exynos_bus_pm = {
- 	SET_SYSTEM_SLEEP_PM_OPS(exynos_bus_suspend, exynos_bus_resume)
-@@ -499,7 +497,7 @@ static struct platform_driver exynos_bus_platdrv = {
- 	.shutdown	= exynos_bus_shutdown,
- 	.driver = {
- 		.name	= "exynos-bus",
--		.pm	= &exynos_bus_pm,
-+		.pm	= pm_sleep_ptr(&exynos_bus_pm),
- 		.of_match_table = exynos_bus_of_match,
- 	},
- };
--- 
-2.44.0
+=20
+-#define of_match_ptr(_ptr)	NULL
++#define of_match_ptr(_ptr)	(0 ? (_ptr) : NULL)
+ #define of_match_node(_matches, _node)	NULL
+ #endif /* CONFIG_OF */
+=20
+?
 
+Assuming this helps, I agree this would be the better fix.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--j3dyffzs5mph63yw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmYNxK4ACgkQj4D7WH0S
+/k4RIQf+N9Iy5vdLQiMUAN6AC+cOYMVtNTWEXHv3Iu8OMI4BbFULD/p4hJYx4A/Y
++4trHVq0G7vFcqwJIyZ8XD7U0NnRLweSBCiBdm6lh/R7j8pyI32zbpvrJb8ge/Wm
+LTfO5dGPLQMf1kIpjRlpYniRKxzxOTWIsnKpr801JczfdZDvZ236nLgQNNFTtYNP
+4X9v+IjyFHuXxEjYvIZ52EsIgHnfGsNT7RNmncSBQSxLRwliB6gAO/Bzo1ulw1xS
+iSIatTBxMMTV5D3fDRS1Ve4g7VIjI0LAO+I784HK+wg9jWI4tEwQz2eO5GZXxDXp
+WbiT8oxPt4xi8tsgDAu681Ac2zeUOg==
+=qPPD
+-----END PGP SIGNATURE-----
+
+--j3dyffzs5mph63yw--
