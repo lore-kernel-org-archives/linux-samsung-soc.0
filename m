@@ -1,106 +1,136 @@
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EFE12839F
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 13:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A73C1272A3;
+	Thu,  4 Apr 2024 13:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712238699; cv=none; b=sOEbmC5E/KmXY3OcQG0Fm+v2ClvA2AGVdYtO/dqx8B/sAmytEgOFCQIqTXQwduZYGXspX1RQIiZvKGmqjJ1k51PMQjHXNux/yiCO/igEhUdpVPgcVYV7qETGG6UA+G8/IFXyCJGoAi/47RQqd5s3Xvb86iE+pmb+NNoLhrzihmE=
+	t=1712238747; cv=none; b=gP49IoTKajXGWrHYvP/C9pz3S9QPGbZQltkqZd+87tMATlBUGz4Yuilxp8FWx1CYyRNjKGTodTpbGs49MgZYBM1kkJwkJmeijZdeGW9Rk/ED7JNmJmZXNMYtiT9Q79MsTwknK2uq0JYR/vtHhr/MXLQiUD9+1W2DCxxAsLrxFgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712238699; c=relaxed/simple;
-	bh=1F5VA5YE599dOlO3zQ9ZskLhNBoOk9J98W5SFXY1QOs=;
+	s=arc-20240116; t=1712238747; c=relaxed/simple;
+	bh=SyaoC9dGTnAAIwvKQL5lKilmQfKt1cUMZ3Uwe9zaSWA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OWsBDtY85Y7F0w7/Q3O9Xu5Vu+b4kh9460rTAZXvTfqN5wyUT0rMwj+Ib1LBXw/LytJnfUN0wuf//NjFREtliBtEpqQk/vti+FQN2TOWikWYgmq9LmoNi7ERHFAniOguiygCAvP9OiMWXN0+qgU4MBRghyh992S6AlOGF2XJn7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=IaK6ZFAS; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	 To:Cc:Content-Type; b=b/WWR2xCuJkQHH+ZOFKS3zcRwhT5RNtu5PJ1wHG0l/ZAHyeIPV9JyTwvrTpr4tiauuMUnmzrPJAGzzjjwEERVFZypj/nkqFu8sQv1pHiGaPujqaXqJLlu+bbSBrFMScWPdL+F5GCAsn6cXdtEFcXYDDcB6pebKiCrWN5Ytva0CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvJfP5QZ; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="IaK6ZFAS"
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4317aff5cfdso5478261cf.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 06:51:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvJfP5QZ"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5a9d93ed063so345255eaf.0;
+        Thu, 04 Apr 2024 06:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1712238697; x=1712843497; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1712238745; x=1712843545; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEhrf+Xnwdm4P0BoHyd6IIElLQSsz5Bym9Fr83GNG8o=;
-        b=IaK6ZFASM9ZbNHLWy0px/hWReUW0WZm1twCBxdS176TODDQ1u5YzOsniRkQpFB+UZ+
-         TnCeAtf2+LVOUUhCwRXPg/iTd97A33Ijpc3fyJq7ThoswZFV5bds7Gv6fA9glPgYkfL1
-         PmH+jN3wPgQ2lnxXc7s5S1mf0WUiQmR5pPVEswt2ABYyEkIT8jIij5swa7pN9bWYpw6z
-         j1miCYsbdThniJc9xstU796pwQlScPJ3w35xsHU+xT2i5D9umW+iSG0t/T+tsNnHKf3W
-         34V4UaRO9ZbT9HrxPbNFhGNTxsZ7uMiTZyZbYPvvKdSoXRmCXEbPOHxo5cklub6HAIOZ
-         nxCg==
+        bh=Jn4qrU+tBprHqhbcKEnAjUZjtZ7L2LhdcfMRoTh6EAo=;
+        b=DvJfP5QZkUfHdb1tUHjTJ2ZgUhjyXE7vf2znYG6ZX1753H1ET7nQ/SpYvZJJDM0xQn
+         8hfrn2VKFUZwezaUQieL8pcf/Te0FJJYkUSvmsHlUtOW1eCBu6UQdaV7Mjo67kZud3Nx
+         HGxuWJyHin1t52cLJbfxWRgERiQjhj2Mj80IpBJlyn+p0Ek0p3NBMT71yDY73HYVXvGY
+         Aqi9XvXBms8NytmwDjelCSS4nJgAv0YkE+0AnLeNgp+ZlhvfR0oqmHU1wS2IGkAhbf2r
+         jA6dxyZfN1HwNx3wDwSC/BInI+OqHkAMzpWAbOREJZafUYtvH5STFreFY1Du5Wo1AqW+
+         ZSBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712238697; x=1712843497;
+        d=1e100.net; s=20230601; t=1712238745; x=1712843545;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GEhrf+Xnwdm4P0BoHyd6IIElLQSsz5Bym9Fr83GNG8o=;
-        b=GW2+QnSh3GaUJUw9NJ6r2JZALy4/19JPTXWpglONdIU8acBBbgged4YKg/fAmGe0EH
-         fhoahOAo42cGYnheb210cfDcl1do4kbc2HS7xvx+MNaRNadyou/3XNTn2xguTv6azED/
-         3NhwIOHS1t6CWI/1zYUMOrEtNTpuySqkW22BLxUm51Rpe4I2wXPBi6+Su1Hmd+GPhIBa
-         OdsKmf5uUNFIYLp6xPeutK0pWnrdDw03sy2ZbPOQqSzNkQhb5m6A58kTOvjyyUVCc8sk
-         +yEzychgagGADrEgd6PaUOEMVywv3XFQ3tYjNCUqXR8LDMWyX1981Tj736XFJI6qMTou
-         5W0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWtp8+bk7FjhSLk5s3UgfRJrKBc6y5n8fmysMNHoIsVhVTBi0FIFHqxhwkI08HAQHqp/1RDHtsRmh/NceHaEkq3N1g663jdHqqban1g86yyeFI=
-X-Gm-Message-State: AOJu0YzzCnaxDvaEHyQicMU6VgHlMDs0C5o5+4JWN5qaE1Eu9MkPfSP4
-	QfrISr6a+0BgIsPSSvd8OLrJs3ODQkkPfnMU4rF/xIwTDaMKvwmIbY9Up4PVX1Y9j0hcYirhsSH
-	q17+TsmlVvRJfWBqORrU7SaGBErfTZoKvOUcUGQ==
-X-Google-Smtp-Source: AGHT+IG34VfsrO/bFBQm1+tAdMAMjkEMbTIL7Igt83TuV9+7PUf7aasZynC6bg9Q2hezj4QPdzlhPGGLCOEcmSFudGM=
-X-Received: by 2002:a05:622a:20d:b0:431:8135:6fa9 with SMTP id
- b13-20020a05622a020d00b0043181356fa9mr2490307qtx.61.1712238696692; Thu, 04
- Apr 2024 06:51:36 -0700 (PDT)
+        bh=Jn4qrU+tBprHqhbcKEnAjUZjtZ7L2LhdcfMRoTh6EAo=;
+        b=m2lLdmb917YBLoLe+fDINTLpmSgj1YCfR7j9pBgzuxL9WuCZU2ww6rzf+OtyPBNtO1
+         hLcTkwtG7qTKd/eDdEXR9eLaMI0Uoe5O8SWTCfxBtbwgoGHxS4gbtw0Td/txX2nOpmF+
+         Ef4shL8hidyl81xL66wBHx+e72jHnqu3Gt3y0+F++E/9VrokaQeNVtWFMOXlC/q7W4l/
+         Ds2Af1tzaCEPN67v3oiwai67IHY3R2dYu/mOF5EYZfVGjlzI5mhmpQ34f4vjQyKrIQMz
+         Q1Nhq7NHA4ylLbdyi9ron8MTFlnLgMMt01vzQkIIe8ENCmS9AijcSpN3nkKwr3rRBxc0
+         rxRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXm87J2kWeuyEdVg6y5gObqzZjRV/ZLjQfF9doL2kdDBNn+Wf4AfjV46ZIVNlS/WIsn8LYjpI80VjTv7d/J0Q+9YF6jSHI6Bn9YMRyITCjOgzCS7gkmk3b+VZhMvj3HA5ffRqJjHWbT7CSr3aIIpwQntF4N9Y+e6/j1yORgfyqvrnzB0h5TIOLEWbU=
+X-Gm-Message-State: AOJu0YxQbf7TbuhV7WWUcUXWdPr0/wMW1zNJi6rDzvfwb1bNzUbNpO0n
+	+k9bmfaYR/UZ5bOgmqlh2+AOBQSBC0ee1O5s2U2PnHt66r5HYYtZRivuNWRJT9MMt1SWIRw8d7i
+	c7DTijCgFXrVHF2J91WlWLyXXmXk=
+X-Google-Smtp-Source: AGHT+IFWQpzRCjm7/583y1xcVxsmai/Zw151/uyWqhl68ZTJzk8QXI/NJYa2aT2TnSuca/lXGucPFQgiQc6pJzWxQSA=
+X-Received: by 2002:a05:6820:2614:b0:5a4:5526:1740 with SMTP id
+ cy20-20020a056820261400b005a455261740mr1164843oob.2.1712238744855; Thu, 04
+ Apr 2024 06:52:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240222173942.1481394-1-pasha.tatashin@soleen.com> <20240404005803.GA102637@hyd1403.caveonetworks.com>
-In-Reply-To: <20240404005803.GA102637@hyd1403.caveonetworks.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 4 Apr 2024 09:50:59 -0400
-Message-ID: <CA+CK2bAiM_eC6k2EVL93uuOwB+hhV1WkDDK0YROo9-wAh=ju-w@mail.gmail.com>
-Subject: Re: [PATCH v5 00/11] IOMMU memory observability
-To: Linu Cherian <lcherian@marvell.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com, 
-	bagasdotme@gmail.com, mkoutny@suse.com
+References: <20240404071350.4242-1-linux.amoon@gmail.com> <20240404071350.4242-2-linux.amoon@gmail.com>
+ <2024040442-subscript-detective-8d12@gregkh>
+In-Reply-To: <2024040442-subscript-detective-8d12@gregkh>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 4 Apr 2024 19:22:08 +0530
+Message-ID: <CANAwSgTpvrUY_H4Q4TzZWF+z-B=rGM1ny9B-pgSZ3dKCn-mXrA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] usb: ehci-exynos: Use devm_clk_get_enabled() helpers
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Johan Hovold <johan@kernel.org>, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-> > Description
-> > ----------------------------------------------------------------------
-> > IOMMU subsystem may contain state that is in gigabytes. Majority of that
-> > state is iommu page tables. Yet, there is currently, no way to observe
-> > how much memory is actually used by the iommu subsystem.
-> >
-> > This patch series solves this problem by adding both observability to
-> > all pages that are allocated by IOMMU, and also accountability, so
-> > admins can limit the amount if via cgroups.
-> >
-> > The system-wide observability is using /proc/meminfo:
-> > SecPageTables:    438176 kB
-> >
-> > Contains IOMMU and KVM memory.
+Hi Greg,
+
+On Thu, 4 Apr 2024 at 18:30, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Can you please clarify what does KVM memory refers to here ?
-> Does it mean the VFIO map / virtio-iommu invoked ones for a guest VM?
+> On Thu, Apr 04, 2024 at 12:43:17PM +0530, Anand Moon wrote:
+> > The devm_clk_get_enabled() helpers:
+> >     - call devm_clk_get()
+> >     - call clk_prepare_enable() and register what is needed in order to
+> >      call clk_disable_unprepare() when needed, as a managed resource.
+> >
+> > This simplifies the code and avoids the calls to clk_disable_unprepare().
+> >
+> > While at it, use dev_err_probe consistently, and use its return value
+> > to return the error code.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > V2: drop the clk_disable_unprepare in suspend/resume functions
+> >     fix the usb_put_hcd return before the devm_clk_get_enabled
+> > ---
+> >  drivers/usb/host/ehci-exynos.c | 19 +++++--------------
+> >  1 file changed, 5 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> > index f644b131cc0b..f00bfd0b13dc 100644
+> > --- a/drivers/usb/host/ehci-exynos.c
+> > +++ b/drivers/usb/host/ehci-exynos.c
+> > @@ -159,20 +159,15 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+> >
+> >       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+> >       if (err)
+> > -             goto fail_clk;
+> > -
+> > -     exynos_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
+> > +             goto fail_io;
+> >
+> > +     exynos_ehci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
+> >       if (IS_ERR(exynos_ehci->clk)) {
+> > -             dev_err(&pdev->dev, "Failed to get usbhost clock\n");
+> > -             err = PTR_ERR(exynos_ehci->clk);
+> > -             goto fail_clk;
+> > +             usb_put_hcd(hcd);
+> > +             return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ehci->clk),
+> > +                               "Failed to get usbhost clock\n");
+>
+> Why is this logic changed?
+>
+> If you want to call dev_err_probe(), that's great, but do NOT mix it up
+> with a commit that does something totally different.
+>
+> When you say something like "while at it" in a changelog text, that is a
+> HUGE hint that it needs to be a separate commit.  Because of that reason
+> alone, I can't take these, you know better :(
+>
+> thanks,
+>
 
-This means that nested page tables that are managed by KVM, and device
-page tables that are managed by IOMMU are all accounted in
-SecPageTables (secondary page tables). The decision to account them
-both in one field of meminfo was made at LPC'23.
+Ok, I will improve the commit message relevant to the code changes.
 
-Pasha
+> greg k-h
+
+Thanks
+-Anand
