@@ -1,57 +1,57 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD8C127B69
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 12:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35D3129A9C
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 12:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712233580; cv=none; b=nIMT+2JG5r4ykcz8hxhQhNA7v7XxatUxuEZCKkn1G8Z3a5xoc4hMjyImnwHbKVV4RIHue6e2l+Mb49DHIq/BQFR8RaUjo3+BdkI37yiaqeiHVO7SRGXn+XWmVjLLeqlUaRrXm2sqIN4C9uh3Obs8oQO6OKnMae5qcjOUlqGojjE=
+	t=1712233587; cv=none; b=M0lv6jCXeulijj2kEWXx72zQ5OiIj7F31Li2RGP6F1LTnZHpQtQdZ83ENQ6THkD3zvwSoJA6VHsyErKKN1U80CNkrdzDVa+kaLDgefOV/OA1q+a7XdT11rD3DrUWMQ+539oJgUNl2tjwspQO2VzGF3FVWGb3ZBpF5trUrr/4KT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712233580; c=relaxed/simple;
-	bh=2q8gij64Ov8TqGR2w8c78XW7P+5rgnWSMwbThRQDZHU=;
+	s=arc-20240116; t=1712233587; c=relaxed/simple;
+	bh=hmBS3wUHO0mONt4FlN4wFgGGwPzu6YR45Hg+n9iZFDA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z20mSqHIkrCcA230aj0M/h/O29PEUedEBzsU9CZQRWyzg9F/3JgZef4q6oU5uKOAmxrF4Qwg7XzueyuM9mkmVuBW8IPqKulFCurPKoy7NxYe848eGX9QteIA3WXy4vkHC1rtR/Mgb4yPYdaiFCOMo9lX8Gad7O8cmsv1EWsDePk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rj3iFcEm; arc=none smtp.client-ip=209.85.167.47
+	 MIME-Version; b=FiDOrlYRDAd5a0QgwFFSPLXDm3HiAGe5rclHyFY0ByHVh3uBl2d3MFvsSockwD46K4zXilg4DGV0F1+U2ZWqK4lhBl2XrHACbq23STQxfhfrpZp8gIiqi9nWwepY/VdUNPVh7lsfUi1JvC6iKjTPloSql0oOh7+booF/5xrZobs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gMVIZZWi; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rj3iFcEm"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-516d16db927so204528e87.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 05:26:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gMVIZZWi"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-343d2b20c4bso43296f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 05:26:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712233577; x=1712838377; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712233584; x=1712838384; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d249q8OLaMbSIVMmFzjKWfEr9wukeZUtFSKBwYI0cD4=;
-        b=Rj3iFcEmapu965Ht/c98I+poCEk8ez0iCGNzQrDKCKJLJMfshDIC6WO3JyPaGhogLi
-         ctzgdcGa18SRItRnha0dktzITk5C36WDwaysfQnk+pRORCMASbwesUQmAUFEQ5IRzC3g
-         exkCOGqUlNPl3U3Zll68SNOpdU2l+KpLN5V4xBseMvXnzH/gevD291sYUm19ijObX7Ff
-         pf9Qq1ghXkgZl5Rn/6rM7O6gLqWytcD0B+0XoFw3/1fhFDwrkA1ORSBcWmPyrlnPAoCd
-         CyOoOtizxxL3s7mB8eriTmYh1xNVluaUts2CPJxVx+pyBdsjPvCT9kaEeWo8pj1CZNTC
-         z5NQ==
+        bh=cXMXdhzuoLCLynIjoXzQvanMKsFRKu7E/3G3H+50quM=;
+        b=gMVIZZWi1z2FkhN00xQ+9vw0OIo8cysxMi1K7veW43FyRARjY0LAKrwqdvWOL0ACmQ
+         h87Vk9Z67FyZAJ7ooIL1l95eXG7TZxG29nqqc3NHBOte/N/rn2VKTT58WkEsLPq4UjoP
+         tbKqE2eNEF8UGuTfN+R7d80PcLP0d2tP8CTApvdkXUEbKGyLFuG8LyiMp7I7C6ZAfsOZ
+         fmZ+pwXoB/TW14/ree+87TxWxgAY4U6jCEOTYu7e7aqmE2nc92+brfKiEwCHbgyJLQhf
+         LdqplzbB2SiIi6COgJNg4zBIesqMqEV32VxyjW10sBS801e6atOE9FHCgcxmP7fxRUHP
+         purQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712233577; x=1712838377;
+        d=1e100.net; s=20230601; t=1712233584; x=1712838384;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=d249q8OLaMbSIVMmFzjKWfEr9wukeZUtFSKBwYI0cD4=;
-        b=O/OZWE1n3NX2hlmWfHWWAmn+O9hYJMFjUM6zX7PQmAdNQgYiaQ4W3PwLeOW3Jih97N
-         uguMctC1ulEVCo5J1R3I2XMz8ZCjAzgEY/6Wuw4Y0p3jKlYhK0TnmB7s1gQri4FsyJaZ
-         JXAEP/MTGFZnV0ZgjWA8fBWLaGS1DA4OBTw6y3BSDyH1sLeADGCbfTSXiO+M9OciFIZ9
-         gmdL9BVpdvaM0FJTXmYDcAA9ICZi9qt54trT/JKOWmh6pGVd7lYaVHmCDDCZzY4BV82a
-         ucPSG8CNwZMwtQsG1LmHGS9/DAi9Vp+mU7AkuXnPLuA6J7IQD5RQWa2tuS5jbDz5IA/u
-         uzwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3mdVtFgQO3q/59nx9AwVlGypBnWnVPcooqb599JwmeMML6OmDr8s3pCsy4ewIUdsRk/FCMAKJNU+ZPIHwxXKgQiixwsm4abEIzNNFiVCpC4=
-X-Gm-Message-State: AOJu0YwX4Rgqv5rzhIeDRVSckosOU618ecuX9tMrcvg/IWwqm+i9wugD
-	S4Q4CGRSt7FBspxqXLqTuVfWnIXyG1sjRIlnNIPBKJAxo3k+weGC37kprRdGoNE=
-X-Google-Smtp-Source: AGHT+IHKUb9uxI3dVCBnRZqZdhwAN2Y0OAl2yQXHesVhm5X+TGFWVXPaqh+/KMFU4TwWx7ODQVorYA==
-X-Received: by 2002:a05:6512:3a91:b0:515:8564:28c8 with SMTP id q17-20020a0565123a9100b00515856428c8mr1952674lfu.67.1712233577227;
-        Thu, 04 Apr 2024 05:26:17 -0700 (PDT)
+        bh=cXMXdhzuoLCLynIjoXzQvanMKsFRKu7E/3G3H+50quM=;
+        b=bFrwC82pODPeIEMR97Af7Zwhzgysdmxwtxnu0or8c5gSF7l3EtyKSuJuFUuv3ZZN7L
+         ruSLULJV9G1IRJsOXyCtsGshyZmELzOv91mamPlwzUCudjxWUwF5hjq1poIMMW9bN3bz
+         2oqVQOxckl0hDjjxqaNDQ6MldKWmx0v+AvszITCHo1R65J5wugSklSPoYPU/OnPmBMVC
+         BYcNMatETwdTsIIPsTV6P1WljL87bV/XCK6ishuiPCiFl8yUdV10mQosnb6Iv3U38T/M
+         0vrN1KGnbXpJvYFhUH4CYscuF5yj2zARqTaYTJY/OKTShJLHCj0JMP6e2KzsMQZKS4ew
+         2hVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfEG3ADWY7t7bApwgr+Tb8e/jYR2umRjpJD+P1Wr5LOEhYdw9pUuCW5CctireKMrdGPwlBLK0OBA7QdCj7biLSnPKpAfVnNp/MhMBCc+Hs1Lw=
+X-Gm-Message-State: AOJu0Yx9ZdCQv3JUiSQIdYRoOdKADXFKCzz2HSIUxtLXMwnD+x7i8UsB
+	loF7Oix+Zl85qFvZ9LnDKF2zQe5lVRmgjhBUj5xV1BHABrEztuUO9nxufPDC9zs=
+X-Google-Smtp-Source: AGHT+IEApEjUKboR0OBWLDTAS6Jxlk1eQTEdQEi/Xza6SHa5181j+IZCoUEpXbG45sbONQ13Dr267A==
+X-Received: by 2002:a5d:60ce:0:b0:343:9189:e685 with SMTP id x14-20020a5d60ce000000b003439189e685mr1644596wrt.48.1712233584399;
+        Thu, 04 Apr 2024 05:26:24 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([148.252.128.204])
-        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.26.10
+        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.26.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 05:26:14 -0700 (PDT)
+        Thu, 04 Apr 2024 05:26:23 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -81,9 +81,9 @@ Cc: linux-scsi@vger.kernel.org,
 	saravanak@google.com,
 	willmcvicker@google.com,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 01/17] dt-bindings: clock: google,gs101-clock:  add HSI2 clock management unit
-Date: Thu,  4 Apr 2024 13:25:43 +0100
-Message-ID: <20240404122559.898930-2-peter.griffin@linaro.org>
+Subject: [PATCH 02/17] dt-bindings: soc: google: exynos-sysreg: add dedicated hsi2 sysreg compatible
+Date: Thu,  4 Apr 2024 13:25:44 +0100
+Message-ID: <20240404122559.898930-3-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
 In-Reply-To: <20240404122559.898930-1-peter.griffin@linaro.org>
 References: <20240404122559.898930-1-peter.griffin@linaro.org>
@@ -95,69 +95,33 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dt schema documentation and clock IDs for the High Speed Interface
-2 (HSI2) clock management unit. This CMU feeds high speed interfaces
-such as PCIe and UFS.
+Update dt schema to include the gs101 hsi2 sysreg compatible.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- .../bindings/clock/google,gs101-clock.yaml    | 30 +++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml  | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-index 1d2bcea41c85..a202fd5d1ead 100644
---- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-@@ -32,14 +32,15 @@ properties:
-       - google,gs101-cmu-misc
-       - google,gs101-cmu-peric0
-       - google,gs101-cmu-peric1
-+      - google,gs101-cmu-hsi2
- 
-   clocks:
-     minItems: 1
--    maxItems: 3
-+    maxItems: 5
- 
-   clock-names:
-     minItems: 1
--    maxItems: 3
-+    maxItems: 5
- 
-   "#clock-cells":
-     const: 1
-@@ -112,6 +113,31 @@ allOf:
-             - const: bus
-             - const: ip
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - google,gs101-cmu-hsi2
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (24.576 MHz)
-+            - description: High Speed Interface bus clock (from CMU_TOP)
-+            - description: High Speed Interface pcie clock (from CMU_TOP)
-+            - description: High Speed Interface ufs clock (from CMU_TOP)
-+            - description: High Speed Interface mmc clock (from CMU_TOP)
-+
-+        clock-names:
-+          items:
-+            - const: oscclk
-+            - const: bus
-+            - const: pcie
-+            - const: ufs_embd
-+            - const: mmc_card
-+
- additionalProperties: false
- 
- examples:
+diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+index c0c6ce8fc786..3ca220582897 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
+@@ -15,6 +15,7 @@ properties:
+       - items:
+           - enum:
+               - google,gs101-apm-sysreg
++              - google,gs101-hsi2-sysreg
+               - google,gs101-peric0-sysreg
+               - google,gs101-peric1-sysreg
+               - samsung,exynos3-sysreg
+@@ -72,6 +73,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - google,gs101-hsi2-sysreg
+               - google,gs101-peric0-sysreg
+               - google,gs101-peric1-sysreg
+               - samsung,exynos850-cmgp-sysreg
 -- 
 2.44.0.478.gd926399ef9-goog
 
