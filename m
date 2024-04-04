@@ -1,70 +1,69 @@
 Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEFC1CFBD;
-	Thu,  4 Apr 2024 07:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E966BB37;
+	Thu,  4 Apr 2024 07:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712216325; cv=none; b=SAvPo4h/s14Poc1JRmMd+HoMsIZ6uYUy5iuqhAKP4tAj8DVNzvk4UT7oNlwPIEtCJ03xEEU6fbuGFseZqrZuq+XijiC6rPrZuc4BeO/lot7nxUJi6SZhB5ogSLAdqWuo1KUUjLd/9RHMmlMJ42skY9Sv1UND3jDgYOCSnVAPdBg=
+	t=1712217025; cv=none; b=GQdqrQAHPwrPJQWTD+w0DzeI3XokB3dGfEwn55ZlY2kg7wTreANdIuvzExCGq844tbrlUL6aidFwjDHFtOH1SWPakxHz9CfMLqIPn+pbyA21Mn48aDK5l5DRzypiFePFgUdd3tZperY49YGyq4r/FZAkWLKkq6Ro7L5PQGvp/yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712216325; c=relaxed/simple;
-	bh=VI6p+4L4BRKcApkAcCV82aS1Qi1Z1UvR8SX+4NHMGnw=;
+	s=arc-20240116; t=1712217025; c=relaxed/simple;
+	bh=NWxJC3S7oWeoP6JnP4Wnt4FVn9if0vkhHt462TfgcJc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SzGY52b2OrVOEZ99OW3kUaV53jrDqpYttX3e6IXtzqfGYDgg4ntk7jDvbAbjNnEEniX7E58+e2qiZS60ITCsu4pAqMkeur82kYMKSxTnaHKWCOGq6iwJ8DrHBAAXvvR9bl3fDVigWnfSrV/hL9C3OMyCFn7VQquP0YDvAMOHpH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JN2SnF1q; arc=none smtp.client-ip=209.85.161.47
+	 To:Cc:Content-Type; b=bR3gUDqdEwu8k/sKwjf29zQkKtzjin1Lgbxy9AowdALWaTcTF0wBrT/4itt5t5Wtsdk5QKgXdb8i3bDjtW2oR4r2jv89U9agqHE1dWAZp+FIv/L4oaUN7c2ZeUJP379tpwz2jrSfE/idIzuuRYe9rH+fs80gSw309oKUwaGqefg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfu+l6ia; arc=none smtp.client-ip=209.85.161.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JN2SnF1q"
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5a7a4119d02so293336eaf.1;
-        Thu, 04 Apr 2024 00:38:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfu+l6ia"
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5a128e202b6so241798eaf.2;
+        Thu, 04 Apr 2024 00:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712216323; x=1712821123; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1712217023; x=1712821823; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=we2O1Ti81VxZtCCVRPAlQfc7bOWmir0153692cEekTA=;
-        b=JN2SnF1q8aYkV27/mPu/k8WqwTxYErayIRM6m7Lg1iXx7MOmYOPPHYwrfaHNgcSR5g
-         kcAt9ZUL4m3TWDEC1ffzhFoRD3oJNB8s+eFmif/Am4RmWKVB7r28SfWbAWMxdL+G/1ZR
-         uIodC6OxTjd5vBFuKNJi3EuN7y2YzPAsSzDqZkmUQNgbKJDNM8c0Be+zhGz9MEVncVbV
-         09wKqQnYW9TAb4NQDg8ZL3VOm20wJfc3Aq4/DdQYItMrPo+6i9EAdZjZoRFe2EWUpKWn
-         9KBRpC7jSTqWEiiWz2ePMdVRzqJ3GlG5XcOwd7taYhGz3WPYDuqHoSG4PJyIzAKrgf2e
-         bTJQ==
+        bh=7DLipv1gLwdp+4wPnw2EaA0n0cimect1ObBpG2y7Fc8=;
+        b=dfu+l6iaVjF4jms5yWtNIPk1BTsCCqut6ekb5I3RWa58bh6g4yPnNUvWE2tOD98qYn
+         p6LT28a2+NTkihMNq2AIjKS0Y0hL0oK7XXcz9S55jzAWq/2xEObnLik1u4iY2PP81hkB
+         n9QpYqzdAf5y6W+jKpopwlLF0b70HIAcoZWMGIXCaGzQ74iHmEuTKOgMwJ6h0w6SbmRO
+         hmWhu3tq0IPrU5cg0qoTg9uXrt/fNr0Xv9lwk3Fu5mNJgegIBp4nfb3rLpMS5lOy8ejo
+         OnsVNrbM+mOlfbevlqJtL/OesgxyGf/z9h9eEYxJbNFPl4AoXrxQt24KcCExVQiSX1xB
+         fbJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712216323; x=1712821123;
+        d=1e100.net; s=20230601; t=1712217023; x=1712821823;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=we2O1Ti81VxZtCCVRPAlQfc7bOWmir0153692cEekTA=;
-        b=CAPnsx3rMl7tKEpIqQqpwbCqPPHEht7RAad8Ll67VAO9rrJoNXa7BEOxYqKCUdpTxD
-         q/CJ5EZFvMT/Zf38eeyc82OKXPnL8LMpu5krc2SxmY5oC3oIaspkFliydB+Qby1iynD0
-         aMoeMQ9X0lVJvNnplNq1mFn7AYK5fMkWbncj1j/JAK5Qdt0KlqNTXpq0X1DvcP6Y0NAz
-         fSsTsYsT7tQNGKkS4ZJZBu2Zyylv2TewfEWJLHwen6u5rcX6a3DAIhhJ24y0mX5F0d9R
-         ryKTSLTlfrv3rxvKaCPT12U6ZgjKeyO6sI+dTZNp0LOzyh4cRK5t4ztKdchp242amESc
-         QMHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4xG6RXRcL/XREIKWKUjZDeEEnZvaFHGbew3x8Np5F5fisb/0hDcOZOG1Ogcn3dufzwgPxKmWUuyi+UntOWq9VWq8aX9OIkx7aDUtZCv9Vhp86iIS+0zJkDSZTT+dj2Vyat3Sc1wvG3XwcZLCajTx+2jlS3X4Eu2u4QULMqLzY83E/hb7rG1OPMJk=
-X-Gm-Message-State: AOJu0YwMcTNSVNO4TH+vTD/iIKSB9NhB4MEferqqXf29A+JwAccLvnLc
-	UKUq2D4raW/XjoKSj+aT3fM75O0pW9kOZFNxhbqxFI9wuEndJjgDkgm0mKZoqzAmlwwY46mzxf9
-	yrZ1BNG2CSI0Q253WIFUQKRTUw3M=
-X-Google-Smtp-Source: AGHT+IETHfDKs90ZM2H1TVHcAUgZqVFrTvOqJYL9jrxo6+qMd1YqwAdGD0Ml1tnLH1xe1d0c1QgdqCpI1PaSO0LTKYY=
-X-Received: by 2002:a05:6820:308f:b0:5a9:d519:b541 with SMTP id
- eu15-20020a056820308f00b005a9d519b541mr1858551oob.4.1712216322675; Thu, 04
- Apr 2024 00:38:42 -0700 (PDT)
+        bh=7DLipv1gLwdp+4wPnw2EaA0n0cimect1ObBpG2y7Fc8=;
+        b=nXMaQGVx+3HDn+wo0SzBgA+MKI8NyQ3X+7LfAyCMRZ9JH0GeLV6XbPniYS8VIuflEF
+         1ASuHsVBQy8XvzRK2jyxvMrFxosfZJzyfMyHOZ8OEXQusSbcb/Xx7fR+RcccqsU3p/9F
+         6DKBvViFBPLZkvJ8vL4gL0NMOpucrGy9Rs7O1woIW9p3XJNdbYGXwbqXFD0ypk4WrROF
+         uKplUCrecXET0/8uefQjOPOVqFrrhcshmU7Ay4xZWsv3axfRl4+UbwK3jdR+/v9ICPQP
+         YwBhBEfkWT95YHuyZyeYvduRNQXBs31nGRI+qGs84kGJaJ5746p1+qhCN5KL0hjD02cU
+         GRjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUuK9A9pyWL29YA+5Kh53r4nicbcJ59EGrDHJCaTRlZZ5rzsDqrQcrF93NudB9edwT+H/PziB5RofhIF2LJaT8LXBuACD3Z+pNzKncqo9S+EO8f+WjM8N72MR3QaoXma3MR0klgcan2t43WVA9P40nFQ+XQhwcu4tjdAMcwlcQNOUzH8hy/C277v4=
+X-Gm-Message-State: AOJu0Yw+9lZLiyx9WizJ+euafUAq4k5uAJZC+Un9iPeaGLKCNbqBUt7C
+	J/IYF6VMDjTm1VE9ECsThQiP2S5fYIRBedfQROBPotr37YforeLq1AbjIsKS2NEn5sPk3X0kxax
+	NNZentCO+0uMeqBjPHdyTrQoFeM4=
+X-Google-Smtp-Source: AGHT+IEplLI26Agv3bOugDmqgcY0bZfVaal2vGF+fsJurKCq8gepckFybKV9rn+Ek4jGGtsVEYO1ReRXzrPUQeXcJiM=
+X-Received: by 2002:a05:6820:a08:b0:5a4:77f2:1c9f with SMTP id
+ ch8-20020a0568200a0800b005a477f21c9fmr1669484oob.6.1712217022889; Thu, 04 Apr
+ 2024 00:50:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240404071350.4242-1-linux.amoon@gmail.com> <20240404071350.4242-6-linux.amoon@gmail.com>
- <d6d5f6d4-1d34-4d42-9afc-822a014063dd@linaro.org>
-In-Reply-To: <d6d5f6d4-1d34-4d42-9afc-822a014063dd@linaro.org>
+References: <20240404071350.4242-1-linux.amoon@gmail.com> <20240404071350.4242-4-linux.amoon@gmail.com>
+ <0a21f8e8-f4a6-4311-ab35-a02a1a593629@linaro.org>
+In-Reply-To: <0a21f8e8-f4a6-4311-ab35-a02a1a593629@linaro.org>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 4 Apr 2024 13:08:26 +0530
-Message-ID: <CANAwSgSe37Pn062enCLd39P+RXU1VCZugyz7oDRafpnU1FyN1w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] usb: dwc3: exynos: Use devm_regulator_bulk_get_enable()
- helper function
+Date: Thu, 4 Apr 2024 13:20:07 +0530
+Message-ID: <CANAwSgSU6YYM5qCrmsqp8vWDJkAMTOOAc2Wrjf8Fe8x72-4aGA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] usb: ohci-exynos: Use devm_clk_get_enabled() helpers
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+Cc: Alan Stern <stern@rowland.harvard.edu>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Johan Hovold <johan@kernel.org>, 
 	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -73,47 +72,59 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Krzysztof,
 
-On Thu, 4 Apr 2024 at 12:53, Krzysztof Kozlowski
+
+On Thu, 4 Apr 2024 at 12:50, Krzysztof Kozlowski
 <krzysztof.kozlowski@linaro.org> wrote:
 >
 > On 04/04/2024 09:13, Anand Moon wrote:
-> > Use devm_regulator_bulk_get_enable() instead of open coded
-> > 'devm_regulator_get(), regulator_enable(), regulator_disable().
->
-> I fail to see how did you replace open-coded suspend/resume paths.
->
+> > The devm_clk_get_enabled() helpers:
+> >     - call devm_clk_get()
+> >     - call clk_prepare_enable() and register what is needed in order to
+> >       call clk_disable_unprepare() when needed, as a managed resource.
+> >
+> > This simplifies the code and avoids the calls to clk_disable_unprepare().
+> >
+> > While at it, use dev_err_probe consistently, and use its return value
+> > to return the error code.
 > >
 > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > > ---
-> > V2: no changes, did not find any regression in pm suspend/resume.
+> > v2: new changes in this series.
+> > ---
+> >  drivers/usb/host/ohci-exynos.c | 19 +++++--------------
+> >  1 file changed, 5 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> > index 20e26a474591..85d04ae0ae40 100644
+> > --- a/drivers/usb/host/ohci-exynos.c
+> > +++ b/drivers/usb/host/ohci-exynos.c
+> > @@ -135,20 +135,15 @@ static int exynos_ohci_probe(struct platform_device *pdev)
+> >
+> >       err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
+> >       if (err)
+> > -             goto fail_clk;
+> > -
+> > -     exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
+> > +             goto fail_io;
+> >
+> > +     exynos_ohci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
+> >       if (IS_ERR(exynos_ohci->clk)) {
+> > -             dev_err(&pdev->dev, "Failed to get usbhost clock\n");
+> > -             err = PTR_ERR(exynos_ohci->clk);
+> > -             goto fail_clk;
+> > +             usb_put_hcd(hcd);
+> > +             return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ohci->clk),
+> > +                             "Failed to get usbhost clock\n");
 >
-> No, that's not equivalent code. No explanation in commit msg.
+> Why do you introduce entirely parallel exit paths? There is already
+> single error handling part with labels. Use that.
 >
-> You already got comments on this and nothing improved. You just entirely
-> ignored received comments. That's not how it works.
+OK, I  will use the labels to return over here,
 >
-> I don't think you understand the code and Linux driver model. This patch
-> repeats several previous attempts with similar issues: no logic behind a
-> change.
->
-> NAK.
-
-devm_regulator_get_enable and devm_regulator_bulk_get_enable
-both remove the dependency from the driver to handle the regulator_enabled
-and regulator_disabled. ie this removes the regulator from the driver structure.
-
-Since these functions set devm_add_action to disable the regulator when the
-resource is not used.
-
-     ret = devm_add_action(dev, devm_regulator_bulk_disable, devres);
-     if (!ret)
-               return 0;
 >
 > Best regards,
 > Krzysztof
 >
-
-if you feel it's incorrect, I will drop this patch..
-
 Thanks
+
 -Anand
