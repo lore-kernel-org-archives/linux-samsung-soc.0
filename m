@@ -1,169 +1,247 @@
-Received: from wfout6-smtp.messagingengine.com (wfout6-smtp.messagingengine.com [64.147.123.149])
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33919156257;
-	Wed,  3 Apr 2024 22:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0495C99;
+	Thu,  4 Apr 2024 00:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712182812; cv=none; b=nKm2/1omOXYBtHGGconP4FtZYBbahrTXznjEvwivwgMzUA93Uea93ftPW5YV1d6GoKMAmyCzhlaGxBNzKstJ0b3/g2abkob//+wIbzTZdSYTsFeE9D5RtMKFhr6v0L5wcQIr6rK8jLI1Gp3W7hpr2pR/A+HPi2ltTJgnsp9POFs=
+	t=1712192378; cv=none; b=A17lMm1L7KN1LIjiIqvlfk+L/3YHFHeM4DlPmRjZc8GJ/PaWuA/yoeiwKfvHM+oYGgxZ0PhSkOUzUPsgcVW1P2rRTJ76+TNSyK7CYhDUyeq161l5n0naTrGTnJKdJ1oAeXc4kE8S25NhfVKSeP1fCeamzQzbrAN2fpihGzVtzJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712182812; c=relaxed/simple;
-	bh=lhxZXpWe2OEgaHRkPZP3vfJA0SWyKK989dfzTEI4d+g=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=la9R95PsZ46GDAhU18WqDtEj9O/x0ubIaMcyTLLXX5gG2lahpNW6Ino+bOr63AntW0pAEhKTQJu1HTbiO2oGjusvKMf8O7cJJUcZGufnetkJMnRgEfOef02pqPj5vPlQeKXxV9HAArrjSZNlkICwifPqHiy0dpmu3/+0q/uCzNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cJesWQV6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wvGu6xtO; arc=none smtp.client-ip=64.147.123.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1712192378; c=relaxed/simple;
+	bh=6QUBr595slcroOCfdcb8UZF1fOlVIaKWwWcSFJGekL0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPoCsjBfk8zcdXOIrHe1gJlna+T8e8fxZN4Tbbil5jUwCn7Hd5GjvZmVzalk7fSCUMxHbJ64nI/bbyUR02qVVKrYuzriU5LFfADJblil2eCc7urIPm0OUnWS+Qd20irQH9RfdGe8q/5Eo5ykkscV6uMtiDY3doyDG/CnfJjat6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=F6fuBFB3; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cJesWQV6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wvGu6xtO"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id E66511C000D6;
-	Wed,  3 Apr 2024 18:20:05 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 03 Apr 2024 18:20:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1712182805;
-	 x=1712269205; bh=Xbt92os27lL5H9pYrJJJSECna8SqfJoMjVwzgkuyoZM=; b=
-	cJesWQV6sdI6FrzfX4Lid/lEGt6FnxnOnyh9gq0kDbchrgT68okmI4OuEg1r492/
-	DQCj2kqFBdSg9f4v6PxKlwP3WJ0O2Gvq5+2rWETAzirKeRMxX4S6fuckou+9DtfQ
-	UHcn/mNG6lnEE6byR7hr+uy7geJK8si93XjFbB5FNiFhY4rrKiS7H8jKjBdZjnY5
-	UJsWFBC6TVig2jTzaxJiLECLQCw5EoiutJJw8v9tKcjnCwyZc098EWgIuqvwIyG9
-	mND4GEj/1BxLEBB0LBRffwARQftQftUvvaV+0OP7hhITzN2AEtNUvKw0X+nP/E4S
-	uYss4K1DglH6KZ5SYYt7hA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1712182805; x=
-	1712269205; bh=Xbt92os27lL5H9pYrJJJSECna8SqfJoMjVwzgkuyoZM=; b=w
-	vGu6xtOGcCz9d9iyhRkHEdJk+qDMi9unSaDst+Fg2yk7d3lTD7aYZC7WkjS0PhC/
-	gOdopkn+KZthmg9+FTE/uRJ5yF36BuWnIFtd8C5kV8XJHaORKs+591FbtVBYxJ0h
-	mpHmNItIxNT3WTJzXS1+TxYkeXpKx746regGbPsBvsMB+YPCIfIDyy0ntAq/urEz
-	RrohZpr2o03YQ8aPUh3EWbRcT4xNfSmNf6RZiQna6io7rOTC5+jx03MOYe0wCTGe
-	3XWNGWtwEchsbzLSfYtNuAmjAyhxsrA9Vwg31AHT63Fi7cbB73fc1BDDkYOn+emM
-	upWAjEMBBVe8kEUWMagxQ==
-X-ME-Sender: <xms:FNYNZluQf7QcdxGcufSbjYo1HsftnTLndE9a24KgyTIcl8ym2Mq7qw>
-    <xme:FNYNZudU3LsSXhQcLB_u7SjDhgQp5drJPkhZqPnEZ-6b5sIwri950uqmb5Q5Qhizy
-    rSwQAocGj9r-zSDhD4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrudefjedguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:FNYNZowIbH-1mbC7tl04s8luS269xSWyYLvh50n0U2_Gm4z0pKpNag>
-    <xmx:FNYNZsPXoN6J3nYP9LUHpomCZmMH848FtqB1lJFLPI7kw8rCZfX7UA>
-    <xmx:FNYNZl_UXIpsDoIEVulnGYZMwWMxVwGZzIB6ZEMhxLWIfaJfFr34lg>
-    <xmx:FNYNZsVizvrRhvC7M-87G7YT1K82Di35hmhKA6jWxC2yLKzsYM2bVA>
-    <xmx:FdYNZhLG2Ve1yP_2u6OobwgJQnl7P8ga3FycwOyCVO30x_Cnr92C7lpT>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 05200B60092; Wed,  3 Apr 2024 18:20:04 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-333-gbfea15422e-fm-20240327.001-gbfea1542
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="F6fuBFB3"
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 433KwHmY025088;
+	Wed, 3 Apr 2024 17:58:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:content-transfer-encoding:in-reply-to; s=pfpt0220;
+	 bh=mEz3A0cFZLO3onQWAKZpQFFgP9D767dhafoyZkTOCQ4=; b=F6fuBFB3hkdU
+	hSnUatMqU08RjlunuB1Kmkz7laPp8UHNL8cMK1rvQZzjFByFH/yxRwlI9VqKVAA+
+	as18etdXEOgRSaY2hWPuywuYrPhNItb1W5K4l8cXB08gUeyF1rrDkyl9/qmaYHCE
+	uJW1gQ/YbPkxVpA7iE1A5GWX3PgbOlrYjCBPTR5KwINBDECmFAcTzgkilXE0yBCd
+	iBvx8O/PqnHc7W0TsZm288RAc+XSp66lbZ6f1qQwLbeK+nNF6bJs7iYy9RsvuyWM
+	3YbFbFoSV4S+rHef2lnTdmLfwRTt6PC5A5M471i5yfhDoLGdga+g/JAQuK2yE86s
+	BZnYSW8Gqg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3x9em4gk88-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Apr 2024 17:58:19 -0700 (PDT)
+Received: from m0045849.ppops.net (m0045849.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.24/8.17.1.24) with ESMTP id 4340wINl007682;
+	Wed, 3 Apr 2024 17:58:18 -0700
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3x9em4gk83-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 03 Apr 2024 17:58:18 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 3 Apr 2024 17:58:17 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 3 Apr 2024 17:58:17 -0700
+Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
+	by maili.marvell.com (Postfix) with ESMTP id DC6583F706F;
+	Wed,  3 Apr 2024 17:58:04 -0700 (PDT)
+Date: Thu, 4 Apr 2024 06:28:03 +0530
+From: Linu Cherian <lcherian@marvell.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+CC: <akpm@linux-foundation.org>, <alim.akhtar@samsung.com>,
+        <alyssa@rosenzweig.io>, <asahi@lists.linux.dev>,
+        <baolu.lu@linux.intel.com>, <bhelgaas@google.com>,
+        <cgroups@vger.kernel.org>, <corbet@lwn.net>, <david@redhat.com>,
+        <dwmw2@infradead.org>, <hannes@cmpxchg.org>, <heiko@sntech.de>,
+        <iommu@lists.linux.dev>, <jernej.skrabec@gmail.com>,
+        <jonathanh@nvidia.com>, <joro@8bytes.org>,
+        <krzysztof.kozlowski@linaro.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-tegra@vger.kernel.org>, <lizefan.x@bytedance.com>,
+        <marcan@marcan.st>, <mhiramat@kernel.org>, <m.szyprowski@samsung.com>,
+        <paulmck@kernel.org>, <rdunlap@infradead.org>, <robin.murphy@arm.com>,
+        <samuel@sholland.org>, <suravee.suthikulpanit@amd.com>,
+        <sven@svenpeter.dev>, <thierry.reding@gmail.com>, <tj@kernel.org>,
+        <tomas.mudrunka@gmail.com>, <vdumpa@nvidia.com>, <wens@csie.org>,
+        <will@kernel.org>, <yu-cheng.yu@intel.com>, <rientjes@google.com>,
+        <bagasdotme@gmail.com>, <mkoutny@suse.com>
+Subject: Re: [PATCH v5 00/11] IOMMU memory observability
+Message-ID: <20240404005803.GA102637@hyd1403.caveonetworks.com>
+References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <e5ebcbac-f445-4a48-a40f-7aa606c7d460@app.fastmail.com>
-In-Reply-To: <Zg3GdUtBUKzB6NNZ@surfacebook.localdomain>
-References: <20240403080702.3509288-1-arnd@kernel.org>
- <20240403080702.3509288-32-arnd@kernel.org>
- <b4418ac1-10ba-4932-be6e-93282707024f@sirena.org.uk>
- <5f3qvhasho4mfnf6f7i6djak3ankje375mt4fzvv3gqrlj242o@zdk2ajvha6hx>
- <Zg3GdUtBUKzB6NNZ@surfacebook.localdomain>
-Date: Thu, 04 Apr 2024 00:19:41 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "Mark Brown" <broonie@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>,
- linux-kernel@vger.kernel.org,
- "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Kevin Hilman" <khilman@baylibre.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Andi Shyti" <andi.shyti@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- "Jerome Brunet" <jbrunet@baylibre.com>,
- "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
- "Alim Akhtar" <alim.akhtar@samsung.com>,
- "Li Zetao" <lizetao1@huawei.com>,
- "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
- "Rob Herring" <robh@kernel.org>,
- "Yang Yingliang" <yangyingliang@huawei.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Luis de Arquer" <luis.dearquer@inertim.com>,
- "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- "Sam Protsenko" <semen.protsenko@linaro.org>,
- "Peter Griffin" <peter.griffin@linaro.org>,
- "Jaewon Kim" <jaewon02.kim@samsung.com>, linux-spi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 31/34] spi: remove incorrect of_match_ptr annotations
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
+X-Proofpoint-ORIG-GUID: kzH1frYTGGUfUioN4mjeRs5C7L-Xm_vN
+X-Proofpoint-GUID: s6kXEc2yc7_K9P5CbGLReHonYF_ihsoo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-03_26,2024-04-03_01,2023-05-22_02
 
-On Wed, Apr 3, 2024, at 23:13, Andy Shevchenko wrote:
-> Wed, Apr 03, 2024 at 11:05:51PM +0200, Uwe Kleine-K=C3=B6nig kirjoitti:
->> On Wed, Apr 03, 2024 at 10:56:58AM +0100, Mark Brown wrote:
->> > On Wed, Apr 03, 2024 at 10:06:49AM +0200, Arnd Bergmann wrote:
->> >=20
->> > > These appear to all be copied from the same original driver, so f=
-ix them at the
->> > > same time by removing the unnecessary of_match_ptr() annotation. =
-As far as I
->> > > can tell, all these drivers are only actually used on configurati=
-ons that
->> > > have CONFIG_OF enabled.
->> >=20
->> > Why are we not fixing of_match_ptr() here, or at least adding the i=
-fdefs
->> > in case someone does end up wanting to run without OF?
->>=20
->> Fixing of_match_ptr =3D
->>=20
->> diff --git a/include/linux/of.h b/include/linux/of.h
->> index a0bedd038a05..d980bccffda0 100644
->> --- a/include/linux/of.h
->> +++ b/include/linux/of.h
->> @@ -890,7 +890,7 @@ static inline const void *of_device_get_match_dat=
-a(const struct device *dev)
->>  	return NULL;
->>  }
->> =20
->> -#define of_match_ptr(_ptr)	NULL
->> +#define of_match_ptr(_ptr)	(0 ? (_ptr) : NULL)
+On 2024-02-22 at 23:09:26, Pasha Tatashin (pasha.tatashin@soleen.com) wrote:
+> ----------------------------------------------------------------------
+> Changelog
+> ----------------------------------------------------------------------
+> v5:
+> - Synced with v6.8-rc5
+> - Added: Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> - Added: Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> - Addressed review comments from Robin Murphy:
+>   Updated the header comment in iommu-pages.h
+>   Removed __iommu_alloc_pages_node(), invoke
+>   iommu_alloc_pages_node directly.
+>   Removed unused: __iommu_alloc_page_node()
+>   Removed __iommu_free_page()
+>   Renamed: iommu_free_pages_list() -> iommu_put_pages_list()
+>   Added missing iommu_put_pages_list() to dma-iommu.c in
+>   iommu/dma: use iommu_put_pages_list() to releae freelist
+> 
+> v4:
+> - Synced with v6.8-rc3
+> - Updated commit log for "iommu: account IOMMU allocated memory" as
+>   suggested by Michal Koutný
+> - Added more Acked-bys David Rientjes and Thierry Reding
+> - Added Tested-by Bagas Sanjaya.
+> 
+> v3:
+> - Sync with v6.7-rc7
+> - Addressed comments from David Rientjes: s/pages/page/, added
+>   unlikely() into the branches, expanded comment for
+>   iommu_free_pages_list().
+> - Added Acked-bys: David Rientjes
+> 
+> v2:
+> - Added Reviewed-by Janne Grunau
+> - Sync with 6.7.0-rc3
+> - Separated form the series patches:
+> vhost-vdpa: account iommu allocations
+> https://lore.kernel.org/all/20231130200447.2319543-1-pasha.tatashin@soleen.com
+> vfio: account iommu allocations
+> https://lore.kernel.org/all/20231130200900.2320829-1-pasha.tatashin@soleen.com
+> as suggested by Jason Gunthorpe
+> - Fixed SPARC build issue detected by kernel test robot
+> - Drop the following patches as they do account iommu page tables:
+> iommu/dma: use page allocation function provided by iommu-pages.h
+> iommu/fsl: use page allocation function provided by iommu-pages.h
+> iommu/iommufd: use page allocation function provided by iommu-pages.h
+> as suggested by Robin Murphy. These patches are not related to IOMMU
+> page tables. We might need to do a separate work to support DMA
+> observability.
+> - Remove support iommu/io-pgtable-arm-v7s as the 2nd level pages are
+> under a page size, thanks Robin Murphy for pointing this out.
+> 
+> ----------------------------------------------------------------------
+> Description
+> ----------------------------------------------------------------------
+> IOMMU subsystem may contain state that is in gigabytes. Majority of that
+> state is iommu page tables. Yet, there is currently, no way to observe
+> how much memory is actually used by the iommu subsystem.
+> 
+> This patch series solves this problem by adding both observability to
+> all pages that are allocated by IOMMU, and also accountability, so
+> admins can limit the amount if via cgroups.
+> 
+> The system-wide observability is using /proc/meminfo:
+> SecPageTables:    438176 kB
+> 
+> Contains IOMMU and KVM memory.
 
-This would require removing several hundred "#ifdef CONFIG_OF"
-checks around the of_device_id tables at the same time
-unfortunately. Most of those are completely unnecessary, so
-if we wanted to remove those, we should remove the of_match_ptr()
-instances at the same time.
+Can you please clarify what does KVM memory refers to here ?
+Does it mean the VFIO map / virtio-iommu invoked ones for a guest VM?  
 
->>  #define of_match_node(_matches, _node)	NULL
->>  #endif /* CONFIG_OF */
->> =20
->> ?
->>=20
->> Assuming this helps, I agree this would be the better fix.
->
-> Why? I mean why do we need to even have this API? It's always
-> good to know which devices are supported by the module even
-> if you have no need in such support or it's not compiled in.
-> One of the reasons why is to be able to google for compatible hardware,
-> for example.
-
-As far as I can tell, the of_match_ptr() helper was a historic
-mistake, it makes pretty much no sense in its current form.
-
-The version that Uwe proposes would have made sense but we
-can't change it now.
-
-      Arnd
+> 
+> Per-node observability:
+> /sys/devices/system/node/nodeN/meminfo
+> Node N SecPageTables:    422204 kB
+> 
+> Contains IOMMU and KVM memory in the given NUMA node.
+> 
+> Per-node IOMMU only observability:
+> /sys/devices/system/node/nodeN/vmstat
+> nr_iommu_pages 105555
+> 
+> Contains number of pages IOMMU allocated in the given node.
+> 
+> Accountability: using sec_pagetables cgroup-v2 memory.stat entry.
+> 
+> With the change, iova_stress[1] stops as limit is reached:
+> 
+> $ ./iova_stress
+> iova space:     0T      free memory:   497G
+> iova space:     1T      free memory:   495G
+> iova space:     2T      free memory:   493G
+> iova space:     3T      free memory:   491G
+> 
+> stops as limit is reached.
+> 
+> This series encorporates suggestions that came from the discussion
+> at LPC [2].
+> ----------------------------------------------------------------------
+> [1] https://github.com/soleen/iova_stress
+> [2] https://lpc.events/event/17/contributions/1466
+> ----------------------------------------------------------------------
+> Previous versions
+> v1: https://lore.kernel.org/all/20231128204938.1453583-1-pasha.tatashin@soleen.com
+> v2: https://lore.kernel.org/linux-mm/20231130201504.2322355-1-pasha.tatashin@soleen.com
+> v3: https://lore.kernel.org/all/20231226200205.562565-1-pasha.tatashin@soleen.com
+> v4: https://lore.kernel.org/all/20240207174102.1486130-1-pasha.tatashin@soleen.com
+> ----------------------------------------------------------------------
+> 
+> Pasha Tatashin (11):
+>   iommu/vt-d: add wrapper functions for page allocations
+>   iommu/dma: use iommu_put_pages_list() to releae freelist
+>   iommu/amd: use page allocation function provided by iommu-pages.h
+>   iommu/io-pgtable-arm: use page allocation function provided by
+>     iommu-pages.h
+>   iommu/io-pgtable-dart: use page allocation function provided by
+>     iommu-pages.h
+>   iommu/exynos: use page allocation function provided by iommu-pages.h
+>   iommu/rockchip: use page allocation function provided by iommu-pages.h
+>   iommu/sun50i: use page allocation function provided by iommu-pages.h
+>   iommu/tegra-smmu: use page allocation function provided by
+>     iommu-pages.h
+>   iommu: observability of the IOMMU allocations
+>   iommu: account IOMMU allocated memory
+> 
+>  Documentation/admin-guide/cgroup-v2.rst |   2 +-
+>  Documentation/filesystems/proc.rst      |   4 +-
+>  drivers/iommu/amd/amd_iommu.h           |   8 -
+>  drivers/iommu/amd/init.c                |  91 ++++++------
+>  drivers/iommu/amd/io_pgtable.c          |  13 +-
+>  drivers/iommu/amd/io_pgtable_v2.c       |  20 +--
+>  drivers/iommu/amd/iommu.c               |  13 +-
+>  drivers/iommu/dma-iommu.c               |   7 +-
+>  drivers/iommu/exynos-iommu.c            |  14 +-
+>  drivers/iommu/intel/dmar.c              |  16 +-
+>  drivers/iommu/intel/iommu.c             |  47 ++----
+>  drivers/iommu/intel/iommu.h             |   2 -
+>  drivers/iommu/intel/irq_remapping.c     |  16 +-
+>  drivers/iommu/intel/pasid.c             |  18 +--
+>  drivers/iommu/intel/svm.c               |  11 +-
+>  drivers/iommu/io-pgtable-arm.c          |  15 +-
+>  drivers/iommu/io-pgtable-dart.c         |  37 ++---
+>  drivers/iommu/iommu-pages.h             | 186 ++++++++++++++++++++++++
+>  drivers/iommu/rockchip-iommu.c          |  14 +-
+>  drivers/iommu/sun50i-iommu.c            |   7 +-
+>  drivers/iommu/tegra-smmu.c              |  18 ++-
+>  include/linux/mmzone.h                  |   5 +-
+>  mm/vmstat.c                             |   3 +
+>  23 files changed, 361 insertions(+), 206 deletions(-)
+>  create mode 100644 drivers/iommu/iommu-pages.h
+> 
+> -- 
+> 2.44.0.rc0.258.g7320e95886-goog
+> 
