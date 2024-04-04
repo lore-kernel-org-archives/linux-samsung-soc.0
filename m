@@ -1,119 +1,132 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29D13A86C
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 12:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63096BB44
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 12:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712233673; cv=none; b=ZrLiNOFogGr22H6BnPF/wx0HxA1hJ7wRMsjvysU5VbbJWjOlnXJjrMR6J4ubR0VLcvO7fubkrf1F9a7YdwCDJ4Z+5ilW4Vy0hcX5RhTQSp29c0D6eKhjhIdBb/rCKnxwysrtDMnPczJFvl6d1Xzz271cm3TqCTLAd2Wn1WUCKkc=
+	t=1712233916; cv=none; b=L+UgpKPxBK2nSFwbz6SFgnal1iCPLCJQNS99H/AdTnbDToTIhtcnk1/7GT9SElSjxZpK5EIh0AG+Q8ujKZT9/I/AemhkqQyNGZGyP5NZA0I8XKnuBG9MlAM8ykyQIbiXdzzZzW+HL8mJQAzCF2FGjmBNHiZKiuUztmIutUz01wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712233673; c=relaxed/simple;
-	bh=1usg8EVo8lpQx89y6EqbzjPZs8xvMoC2TNFiu1OGw0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ghnuwNNwUHsyOuiq7Wf0JmVWOrcjG4q9EZCvn3EErqy3+dREFLGlOVQA5YqfkWOlSQsD3zxuF0YcGh55sljmXl/KFTdiTHqgdVYn/JAGl0FyzZjD2HgqHsYyvZfCFB/9f/ap3mVPwU+0QATtNaSvoEsO/lbwRaca/kS2Jky9GyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WZIzIfnH; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1712233916; c=relaxed/simple;
+	bh=H6wk5JtpIz8kyYF79iQKtOOqzwCWf/ucdKY+aK2YOBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oaCqR7WVhL12O/xdrBYnc5g/DzEdWr+s/fACvMTWAQbd9l6BFvUMicHh9BgvMn7reGansi6JRZxFg0dVr+R8lLx4R99bPVdYvTu9/UyVxutbjGU2cEPqouK8/8LYV2rO47zfrR7ldjxyqwHk7Th3lZ0yydBghBIajcWJlAd0RHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xdSUszCv; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZIzIfnH"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34005b5927eso597753f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 05:27:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xdSUszCv"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a51799456e9so141163266b.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 05:31:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712233669; x=1712838469; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v2/Kxl6LpRi19aNU0GnPRsNjsIub/vSGQr1JFgUlFR8=;
-        b=WZIzIfnH6HJ7sajXhnlneF1gm+bprHF1U58Ah9UEwE+H9i6X2vMO4oV6ihl31ghRwl
-         MNRQYj8fjJZletlEGf74dOmfA+EuisSxrs2Tw7Z/52TAy0DCubRAWXXIpYo7hGREiO2f
-         auejeMaB2Seshjovc5VYLUa55cRKk8YN/w4lHTlDzM++NOFLJXVBM6RzNRUDoOOXUoH0
-         HA/wWgMobQp26f9xQq76gMQexyXcpc+6gjUIFUQCotuW4xA8isLyDkAaxVtvQNddGv23
-         HXHsiTteEBllJNCkSNO2/vaTYr2OtkN409KlidGqsuVThurbaxN82/9q99XmQpBUdBzd
-         cT4Q==
+        d=linaro.org; s=google; t=1712233913; x=1712838713; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zoLoSWqRLLw+G0HC4w9EuQnTh1Ywj5rM+D5vilpHXs=;
+        b=xdSUszCvf6L12qw0LBWtDr5F2SDxtp2y6tBeXQjJbhLY7PX/nLLB++4rToALw0WpDK
+         AcsVhDnCOyvnPv4hXZTE3e29aatHGkSbWbqCRAGW9b88+hyW6EyXFYelryojGngZGTyV
+         ojpv5qcKi8wtimyQmjXhaZgb4q+g3/XAKK1yz5bIrdBSBIRKbMUkdXnBgOUX5RzVwrWf
+         NQPqiNmfwY9hpveDczXsLcj5jZacUMM1tqBkoFhZfUYE1FDl0O0Cv07V+irbzmdZ4AQJ
+         nE1Zalxzr4XFYjX6CZusU1zfcHU9ekgs3yzO8vQoIPD6lbwgzov7thNnFCBuuYJYMZB7
+         9n8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712233669; x=1712838469;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v2/Kxl6LpRi19aNU0GnPRsNjsIub/vSGQr1JFgUlFR8=;
-        b=H9DYsJDPkxuG4EDsBzoF8jhLGvqhpjTICAfI6bxy8TW0wy/z5on+F3ogSuGJWgQ3Md
-         Kn/+fhykUV17nQHzB46pFfEt7Kzlk8ziguSMy8nl3jwATPS7RfScy0POpkK4i9WJcsE6
-         Mi5hURTfeQ9LoSpdjoWnEd/9mLoA6/7np3lBdjHWB3oTddqrGGQcm7PFIbhTF2/H6qhC
-         h0jEVkaBVhWi1in7wZm/XLWkhvGndU5I5CudRNYaN9QjtEbKFe2CCng0imn1n2h6HxdD
-         guDO9Kfn25RD+eHRMYN2BwixByUvG+tJffCfoyPXLen4o9jORtyIXce+Y4N58TP5xjeB
-         J/6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVbwS9erO+A9moiZzaje63RXRx7J3bIW023G6Zk3lasV3l+f07Zod2gvJPYCzC6Pdx6aFwkjL4lw1J9l6aaHqJXtgrFKhMAR971fP+HYS0ilmo=
-X-Gm-Message-State: AOJu0YyjhnplhAOFYcczTTcFd4oHrsQArCSybFat/WpMor6XcbE0z66M
-	n8AsIth8y5hCH5aAckGwA2jq+GUje/5QBQDuXUplqpp1iKoMpzZVlwPcMbyrWMo=
-X-Google-Smtp-Source: AGHT+IE4lWG03NrsYGIMb38leE/EL6KNHhTvu/DlJtCiu5w5jF8R4KkplAWIhngCJVQJeXTuDbWSsA==
-X-Received: by 2002:a5d:58e6:0:b0:343:419d:ba87 with SMTP id f6-20020a5d58e6000000b00343419dba87mr1780461wrd.13.1712233669746;
-        Thu, 04 Apr 2024 05:27:49 -0700 (PDT)
-Received: from gpeter-l.roam.corp.google.com ([148.252.128.204])
-        by smtp.gmail.com with ESMTPSA id bu14-20020a056000078e00b003434b41c83fsm12106303wrb.81.2024.04.04.05.27.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 05:27:49 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	alim.akhtar@samsung.com,
-	avri.altman@wdc.com,
-	bvanassche@acm.org,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	chanho61.park@samsung.com,
-	ebiggers@kernel.org
-Cc: linux-scsi@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 17/17] MAINTAINERS: Add phy-gs101-ufs file to Tensor GS101.
-Date: Thu,  4 Apr 2024 13:25:59 +0100
-Message-ID: <20240404122559.898930-18-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.44.0.478.gd926399ef9-goog
-In-Reply-To: <20240404122559.898930-1-peter.griffin@linaro.org>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
+        d=1e100.net; s=20230601; t=1712233913; x=1712838713;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9zoLoSWqRLLw+G0HC4w9EuQnTh1Ywj5rM+D5vilpHXs=;
+        b=luk1oiytxsm4LCPhgLzuK9GH1kx/mgckV8EdGj3ikQB/OKtXTXr7mN56pRsIUPWXbr
+         lU/AZXkNmxrinMqu6WGCyoq6jzaK/Rmlc/kHuR7UwtyzPqUbxCOLIo0lJrNkPxshbhSU
+         Oe+kmlW7UBtIaXI6EfjoEMb7uVeSI/WDqnNP3E6CRBU9EQAwNr5BLqN+qr5bP9vcjkpM
+         PYi3zNw3BCLkxq9nj05kU3Q+Dtu2IC0OtXZ3bfpJy+PA9YV3oBEQFXxq1UbYk+8ZzXWa
+         YG2SU8WJbtrqDChKGpz68IUeWNyD75A1aEz0WzSQEGw3IsJ4rMCeAN8Am2XklDJrhS6W
+         Ipjw==
+X-Gm-Message-State: AOJu0YyXhNw4SAl0aD29pFGRnB+Qpbh+v3vHVCQSQ6Y+8nJmyeCR2zdc
+	2101W7MKVSGsBp6uEBzyJmabht+xR0ojN0c0RySZCeQc6gUPSeubetOc8GTa8dowaAlw/5B4e1R
+	0WGqR4TUEWrFKkSKWXptDIhBdKo8zNDrfWs9njOHj4uUxmeDzbwQ=
+X-Google-Smtp-Source: AGHT+IGnN55RkS2InA47vPJc47+W85HMUGk7kK8ICI0QUOdA4X0OIj3WORug9wF93/s0LYiAK2taYmjnKYk/yezAKTg=
+X-Received: by 2002:a17:906:4719:b0:a4e:2178:d91a with SMTP id
+ y25-20020a170906471900b00a4e2178d91amr1794422ejq.59.1712233912997; Thu, 04
+ Apr 2024 05:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240206034502.GA175333@sol.localdomain> <CADrjBPpw4f-GW+dxQMTP4HEhVjEJ19g=eAsYLdzXzzFkTmcVbA@mail.gmail.com>
+ <20240207015234.GD35324@sol.localdomain>
+In-Reply-To: <20240207015234.GD35324@sol.localdomain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 4 Apr 2024 13:31:40 +0100
+Message-ID: <CADrjBPrLnowwe+GNLmpRJjMUsCv3pqcadsSAhWQE5KPLfVVcCw@mail.gmail.com>
+Subject: Re: UFS storage support for Tensor/GS101?
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Will McVicker <willmcvicker@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add the newly created ufs phy for GS101 to MAINTAINERS.
+Hi Eric,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, 7 Feb 2024 at 01:52, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Hi Peter,
+>
+> On Tue, Feb 06, 2024 at 05:09:13PM +0000, Peter Griffin wrote:
+> > Hi Eric,
+> >
+> > + Will
+> >
+> > On Tue, 6 Feb 2024 at 03:45, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > Hi Peter!  Thanks for all the hard work you've been doing on upstreaming support
+> > > for Tensor/GS101.  I've tested that the latest upstream kernel is now able to
+> > > boot to a serial console on Pixel 6.
+> >
+> > Thanks for testing :)
+> > >
+> > > I'm wondering if you have any plans to upstream support for the UFS storage on
+> > > that platform?  It should be able to use the already-upstream
+> > > drivers/ufs/host/ufs-exynos.c driver, but changes may be required; I'm not sure
+> > > how many.  I'm interested in this mainly because I'd like to upstream some
+> > > patches related to inline encryption, and that depends on UFS storage working.
+> > >
+> > > I'm interested in helping with this, but I wanted to check to see if you know
+> > > about any existing plans first.
+> >
+> > We certainly want to add support for UFS upstream, and if you can help
+> > out with enabling it that would be great! It would free us up to work
+> > on enabling something else in parallel. From a first pass analysis of
+> > the downstream UFS code it looks like ufs phy driver likely needs the
+> > most attention.
+> >
+> > The last UFS dependency (that I'm aware of) that is missing currently
+> > is clock support for cmu_hsi2 (which I was planning on working on as
+> > my next task). Also the UFS phy accesses PMU registers so that will
+> > require my exynos-pmu [1] series but that is hopefully close to being
+> > merged.
+> >
+> > So I think we are quite close to having all the UFS dependencies in
+> > place. Shall I ping you once I have some code for cmu_hsi2, and
+> > hopefully that should be enough for you to start working on the UFS
+> > driver and phy?
+> >
+> > Thanks,
+> >
+> > Peter
+>
+> Yes, let me know as soon as you have some code for cmu_hsi2, and I'll try to get
+> UFS working.  I don't know how hard it will be, though, so it's possible I'll
+> need help from others.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 491d48f7c2fa..48ac9bd64f22 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9256,6 +9256,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
- F:	arch/arm64/boot/dts/exynos/google/
- F:	drivers/clk/samsung/clk-gs101.c
-+F:	drivers/phy/samsung/phy-gs101-ufs.c
- F:	include/dt-bindings/clock/google,gs101.h
- K:	[gG]oogle.?[tT]ensor
- 
--- 
-2.44.0.478.gd926399ef9-goog
+I just posted an initial series that adds the cmu_hsi2 clocks, UFS
+controller glue
+and UFS phy for GS101 (your on cc). With that series applied, UFS link comes up
+and you can mount flash partitions etc.
 
+Hopefully that is enough to unblock you so you can start on the inline
+encryption
+feature. Let me know how you get on :)
+
+Thanks,
+
+Peter.
