@@ -1,121 +1,103 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7580E3D3BF;
-	Thu,  4 Apr 2024 12:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F118528D;
+	Thu,  4 Apr 2024 13:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712234469; cv=none; b=TBaazaTZEJsaD0xYQCfyjergOafU/H7IHN65sMsOc4jl83IfM44/DWPgL4VIIRk2iPZFueLXg3pDag67KTCPUWl43A6o86X1YeocPZ8acR2w9sq1hEljYlHt2excQIQEymqGHjgsThQUQ9PQPzg4nbKQrYKjEDANhw6I7TArnDs=
+	t=1712235651; cv=none; b=nWXz2SyLhnKRdR7z1fNx+bcl2i3U4TXWHCZHNoPoODnQ93NsZa0AGU6kFynez03H9E3iDBz5KbaH8oQ4OnQWism9utHZS6sS6G7JlgwArvkwTWs58mOQAXsHqT8/4jVWtoOFXjGe8VQMBxbs9QwxWvupWf+JKkH3V9aIzpu9Z4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712234469; c=relaxed/simple;
-	bh=1+ARrgqOwE2kiq3eGjR0xYk+TKFwqS1s+JPGIlCRzrg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sVzx9vPNlxlKR+ZjTa6C0nolZMv2/av+/sVl4kd5TbDQptYCCreY40NJkGg7Er2KEFy96m8YiMa0tfvdDoWKReM/wjHLdAL0BTQJ0fg/zOeF+OLz1+A2fSxFiPmDG6KPbJeS+PwZfnVESukZv4TITl7tNJWe59ZQyN4Vxv4Z8xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1wILHmz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712235651; c=relaxed/simple;
+	bh=U2Ze18IaiYym3G5T8VVewUxICdwroUYzwMPTeS27ubw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCh+jOlF68ZE8GJf9obp0W7wLYQMfJT1DvgpsjZlDEQtMhieaR90KaUEg05Kdvt1RFQY6K5p0HxPGZ4C+76jrSOHLeBFcSP9zXWH0wtyJtslcotkNjMg8yH0wpzFYmbYpbGVy9mD2M7UZ+LpycFkyuHinlwVWUf3wlAf4ITn3gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Butq47HZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1wILHmz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4576C433C7;
-	Thu,  4 Apr 2024 12:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712234468;
-	bh=1+ARrgqOwE2kiq3eGjR0xYk+TKFwqS1s+JPGIlCRzrg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=M1wILHmzWdiOAp7d8xIOgHHXhrz/7TiyaIV1N2+o2verXTbHYiqK0wiSsSsod5n86
-	 YbzkiBrkwthA4pFginyMapp29V66ueImtirbBSyRioo09xy5hhd7gYbfsy25QqkVSt
-	 uJODYi4DD/IJ1X0yu7ZUKpcc8qPAIjnyRgJxkD9LmBecKcvVN1Hnbao5N096v1ikp5
-	 llsQNqn9J+qKXXmzj+55bcTNNXm6Kg9wv5/mBPX/7bEy9vwng9+/gxQLNZzKJLUyFE
-	 0uGjsV5Ci0rgCkwpXuFYzqAgepspQCK/1lkFCHdbZvU7BSUcJD8CC2cTSM6XuF5vI6
-	 9RNZ4CHYRj8lA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jani Nikula <jani.nikula@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Butq47HZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3FFBC433C7;
+	Thu,  4 Apr 2024 13:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1712235651;
+	bh=U2Ze18IaiYym3G5T8VVewUxICdwroUYzwMPTeS27ubw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Butq47HZgP90PPp4KiQbstGLkbFYIyE5/PGSSFRZ1C7CCtxMZPaqR05OVLQgQ607c
+	 yAPV8smmjPwbElzG7ZLm1voSWiiKPc+cV7kWm1ttZdynepinTrhvqOTbkJcr45aE5n
+	 vL1GqqFHU4RWQdOTPlefn2brPMh/HN2gElLhggeE=
+Date: Thu, 4 Apr 2024 15:00:48 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	dri-devel@lists.freedesktop.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH] drm: fix DRM_DISPLAY_DP_HELPER dependencies
-Date: Thu,  4 Apr 2024 14:40:51 +0200
-Message-Id: <20240404124101.2988099-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] usb: ehci-exynos: Use devm_clk_get_enabled()
+ helpers
+Message-ID: <2024040442-subscript-detective-8d12@gregkh>
+References: <20240404071350.4242-1-linux.amoon@gmail.com>
+ <20240404071350.4242-2-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240404071350.4242-2-linux.amoon@gmail.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Thu, Apr 04, 2024 at 12:43:17PM +0530, Anand Moon wrote:
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
+> 
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
+> 
+> While at it, use dev_err_probe consistently, and use its return value
+> to return the error code.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> V2: drop the clk_disable_unprepare in suspend/resume functions
+>     fix the usb_put_hcd return before the devm_clk_get_enabled
+> ---
+>  drivers/usb/host/ehci-exynos.c | 19 +++++--------------
+>  1 file changed, 5 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index f644b131cc0b..f00bfd0b13dc 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -159,20 +159,15 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>  
+>  	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+>  	if (err)
+> -		goto fail_clk;
+> -
+> -	exynos_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
+> +		goto fail_io;
+>  
+> +	exynos_ehci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
+>  	if (IS_ERR(exynos_ehci->clk)) {
+> -		dev_err(&pdev->dev, "Failed to get usbhost clock\n");
+> -		err = PTR_ERR(exynos_ehci->clk);
+> -		goto fail_clk;
+> +		usb_put_hcd(hcd);
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ehci->clk),
+> +				  "Failed to get usbhost clock\n");
 
-Both the exynos and rockchip drivers ran into link failures after
-a Kconfig cleanup:
+Why is this logic changed?
 
-aarch64-linux-ld: drivers/gpu/drm/exynos/exynos_dp.o: in function `exynos_dp_resume':
-exynos_dp.c:(.text+0xc0): undefined reference to `analogix_dp_resume'
-aarch64-linux-ld: drivers/gpu/drm/exynos/exynos_dp.o: in function `exynos_dp_suspend':
-exynos_dp.c:(.text+0xf4): undefined reference to `analogix_dp_suspend'
+If you want to call dev_err_probe(), that's great, but do NOT mix it up
+with a commit that does something totally different.
 
-x86_64-linux-ld: drivers/gpu/drm/rockchip/cdn-dp-core.o: in function `cdn_dp_connector_mode_valid':
-cdn-dp-core.c:(.text+0x13a): undefined reference to `drm_dp_bw_code_to_link_rate'
-x86_64-linux-ld: cdn-dp-core.c:(.text+0x148): undefined reference to `drm_dp_bw_code_to_link_rate'
-x86_64-linux-ld: drivers/gpu/drm/rockchip/cdn-dp-core.o: in function `cdn_dp_check_link_status':
-cdn-dp-core.c:(.text+0x1396): undefined reference to `drm_dp_channel_eq_ok'
+When you say something like "while at it" in a changelog text, that is a
+HUGE hint that it needs to be a separate commit.  Because of that reason
+alone, I can't take these, you know better :(
 
-In both cases, the problem is that ROCKCHIP_CDN_DP and DRM_EXYNOS_DP
-are 'bool' symbols that depend on the the 'tristate' DRM_DISPLAY_HELPER
-symbol, but end up not working when the SoC specific part is built-in
-but the helper is in a loadable module.
+thanks,
 
-Use the same trick that DRM_ROCKCHIP already uses for the EXTCON
-dependency and disallow DP support when it would not work.
-
-Fixes: 0323287de87d ("drm: Switch DRM_DISPLAY_DP_HELPER to depends on")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/exynos/Kconfig   | 2 +-
- drivers/gpu/drm/rockchip/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 6a26a0b8eff2..58cd77220741 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -68,7 +68,7 @@ config DRM_EXYNOS_DP
- 	bool "Exynos specific extensions for Analogix DP driver"
- 	depends on DRM_EXYNOS_FIMD || DRM_EXYNOS7_DECON
- 	depends on DRM_DISPLAY_DP_HELPER
--	depends on DRM_DISPLAY_HELPER
-+	depends on DRM_DISPLAY_HELPER=y || (DRM_DISPLAY_HELPER=m && DRM_EXYNOS=m)
- 	select DRM_ANALOGIX_DP
- 	default DRM_EXYNOS
- 	select DRM_PANEL
-diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-index 4b49a14758fe..4b4ad75032fd 100644
---- a/drivers/gpu/drm/rockchip/Kconfig
-+++ b/drivers/gpu/drm/rockchip/Kconfig
-@@ -46,7 +46,7 @@ config ROCKCHIP_ANALOGIX_DP
- config ROCKCHIP_CDN_DP
- 	bool "Rockchip cdn DP"
- 	depends on DRM_DISPLAY_DP_HELPER
--	depends on DRM_DISPLAY_HELPER
-+	depends on DRM_DISPLAY_HELPER=y || (DRM_DISPLAY_HELPER=m && DRM_ROCKCHIP=m)
- 	depends on EXTCON=y || (EXTCON=m && DRM_ROCKCHIP=m)
- 	help
- 	  This selects support for Rockchip SoC specific extensions
--- 
-2.39.2
-
+greg k-h
