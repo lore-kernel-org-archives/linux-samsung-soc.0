@@ -1,60 +1,60 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9755466D
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 07:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E310758203
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 07:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712215232; cv=none; b=d+LL4ijCJ6ZN2gFFBv5/6uPP1mwrInblq5PBgcYpJiHKM8nK4gxU7Pf3ZlqBnMPzYQ+tg0WBDz39Smc3xLqeUi4vKbzKxHX6S/HaRpgUPLZFEIieRUJB73knH0KIC+HVvc1gJ6qXrefYB4JWe8mp56rv2B5d5AyP5wUFqRUPeEE=
+	t=1712215416; cv=none; b=lGwu8bd93NpRLDbSsQyR0WAZ+wLM9CZII9BJJ374hU03C2CfEjAbXJs0BOHvKcAAHtBvkFovjH2o38HT/zKYE7KqBEAn6fXzo+8H8RD3fnkDZCaJVP93N4jhORHHN+6062ouyTcmjyhb+MZNlDE7zkGoC60CwtLcJx9eL9eMYvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712215232; c=relaxed/simple;
-	bh=dZ/LJzmIyKBBAugpjKDRIEBQXdbiUc+yi6wlw2Eq2aE=;
+	s=arc-20240116; t=1712215416; c=relaxed/simple;
+	bh=IrcjDwW2go+0W9hIALaBib0t3+sE41yHO3viuD71acQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i0DWiRqYfeIlMCGgRN6qlva5uuJwZJF4+3EKWwqjFhXs56saGqdkHQuWK4eq6gD7xAvyouQvSXU4C091Ok9bAueS8ub4lhcCaE+la81rwXNXZR7FoxMoAtC10NP/ku9vdqGbO6WzgXgiJSUDz8a7YryTl8Jml+npO97K1Bv7gbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N03qbChc; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:Content-Type; b=QI6uTkJ8Ek5Jkz0kkwYilGIEXrRDPUXalsgZfiIqUJ8mF5H5FwLqqLiSd9HiPhuRYCy8mO6bXFzWhkRFwyAO/2CY0F7yzJYg2N8KY9+6WNCVZE8ymsifoKIS9kY5iLklyESarxR+0jX6UjgiZzJi02N5SbLXFNy/i7hct2r+qUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h7jy9uU6; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N03qbChc"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a4e62f3e63dso74791466b.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 00:20:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7jy9uU6"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56e0a8733d8so622326a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 00:23:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712215229; x=1712820029; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712215412; x=1712820212; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OgaBRRYm38Qfzq1LavdZ1TJFYqk4dhlgKQGGttrD9nM=;
-        b=N03qbChcJzl3ykq1LRn3Q6wutxWKr1+zju2T5ilkbCy3Rflz/vOJWKFpP9gzkxGEkY
-         JWigQ/emZmKm1sXFoOVrZLRJoLFlsILpfDlSd1+MWB9TXMR32V8b8IG/6eCw0QlIEWVI
-         F6sEBtF96SUwMPXtSIWh2nQdEH+szIQIzkcqnvj149nmz3apIjv2WQ4YE5MtMabcIN7m
-         v2G9Td6jSVsOLnGhPmM752NjaCHdap0rzfQIheL2tvNNoslM6cMbfHmvqiA+OowWw2dX
-         JSZ9uA5fzsDb5ssEYQrRgrVX0aHUXiuebQ59OYtStltc24tvcLgSaz63aCbnLFXSoErg
-         DY+g==
+        bh=qoKp3ietYjXVwlK1qyyowUsmILGtAZ83ZV038OqgG/I=;
+        b=h7jy9uU6M/rJZRdfcSeS9U+ZAEM47oS/giZIq16t1avV5MzffiicIlVAemp4uM/qee
+         jR+e56Jl3HpZaB7b56LLSMVlYN2RwLiuI0ggOMR3drlEzNM7l4kRoTz9PVOTsM1OMmTf
+         e+OeFd0mbbgDjv8I69Xd1WCoPaOW/WSo/ILNQ7XygL2Am2qEdEtu5Y0mx1bk3fVaTnnc
+         yJ+5DaTytYpIcgCI4HPcRQpiwOIR2l8lHj00ckK/8qyPv9ODKuKZreo7bX1wSBoVJ0LP
+         sVdPz18w0kmIuAenCv1noEHSIarXsouLixl9vJxeH+jD0CL9lR7ooc5zt76Kkp0qkMww
+         U4tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712215229; x=1712820029;
+        d=1e100.net; s=20230601; t=1712215412; x=1712820212;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OgaBRRYm38Qfzq1LavdZ1TJFYqk4dhlgKQGGttrD9nM=;
-        b=aPMDPd5lUXQZKFMxnvGOZvYLgjirNbBQfG9byGrjkEC6HrcllFRcw+8Jg9KRd9pp5J
-         gKdKIhBNNqNOm3O6gkgQKnkThkVBZJ/eWdF9BqUuzGveirBbpL0sBkYrV8F5dMUbduny
-         Bovj59Q+DyygbTsA7WPtpfgPr/bK/9sugAI7AciTuGmsHhLArgEPdVoMcZ/cW2aDSyiG
-         Yg1DIScphBlFcC2G1ARwERZTdzD8bq6A97gkDwn3ESaVoSCXzYtunZjIVvGzstLqaa67
-         ScrGDMIrsQe6O9Az9HttkAGNo2NLTi3+/Zw7YNvTX1nNEsUJMxgruAQXrsgrYKvaQu8w
-         OiFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUweOiF0wrS5tDKkNBRAzGee1vMYT3jwTkbBY02uRdQ3SBb3vn3FxLHFv89EbiLG4lCmkmveW4/Q83AG2cOkIn6EuEH9jUeiIfEMYy4q0+qU8=
-X-Gm-Message-State: AOJu0YwnmVIqiwQPIqQy/eSH+0yTnBbdzEP5OeP9WiaDSjsgTUP5RPLh
-	SDP2Xus9jpkrqHxm4Bc3QPD06LPWgWHFxKdeBK9FF1wgLLC4b8asvRoGUwAjWj4=
-X-Google-Smtp-Source: AGHT+IHl0rGgS/mCzgzYRofFpn+QrHpDe+GqBD6Ys4LT2Ywyrlwb4JRyu6MPi2jR8akgovW2mqdwPA==
-X-Received: by 2002:a17:906:3502:b0:a46:e8c1:11ac with SMTP id r2-20020a170906350200b00a46e8c111acmr833320eja.18.1712215229087;
-        Thu, 04 Apr 2024 00:20:29 -0700 (PDT)
+        bh=qoKp3ietYjXVwlK1qyyowUsmILGtAZ83ZV038OqgG/I=;
+        b=Np6KZOvmND8caFu+xrjoTz5cAFwnyPF0OTKqNFVHnsATj0SAjRhfUsV2a2uG1EDZGt
+         RdKyLzUwgTox9WyA0hcb63kI9gGecuRFdMsmaiz3UFD4kOi8QMvSm1R1FpGcbgx0JWq4
+         SGq35SyWT/bNGdtWeQTNF7XW54wi8JX9lAWzzFg1EstYlFu1YwCCoWDTRBcxf0Yqs30y
+         II0skCezHPHiFTzawBZnxPUvP0ifKQGQWzYknvhvH5M28efrRP9yQqNp3JCSNeTLdqpR
+         BF/y/GRyZipBRpWe8oGxN3RAaMc0AN+zbe+QOrxwkxpNyW/0L+/t6e8Lc4Wf/4AyTKFD
+         O9Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPbSIbwecu39oEcXDvXhKk2jC72faoHhwiFb0qVF+lDbuTTchv+NE66UvgXALpywJYlEns6aJuMlAQ4xg8nV+jvB0p2w1BoetttOiu0XVxz38=
+X-Gm-Message-State: AOJu0YyCtnWvUEz929lE2gK1D4wuF7jN/8pkFRunZw8g3/3Vp5rP8Ozc
+	fXWeNXT1kFk99JqAqljmDZazgNMWv77WjsF/bDt9tsUmaQuvUYQVkXwwNcJIAMA=
+X-Google-Smtp-Source: AGHT+IFcJeD2EvWnHL85kO8MUwgmZU5Y0OIrgm8eUvLfu9ihlvaIopRpMGfP5G9oEemWuCKoLa7gGQ==
+X-Received: by 2002:a50:9f22:0:b0:56b:a077:2eee with SMTP id b31-20020a509f22000000b0056ba0772eeemr1125203edf.4.1712215412338;
+        Thu, 04 Apr 2024 00:23:32 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id dq4-20020a170907734400b00a4e2a09efcasm8126596ejc.217.2024.04.04.00.20.27
+        by smtp.gmail.com with ESMTPSA id o2-20020aa7dd42000000b00568abb329a3sm8856010edw.88.2024.04.04.00.23.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Apr 2024 00:20:28 -0700 (PDT)
-Message-ID: <0a21f8e8-f4a6-4311-ab35-a02a1a593629@linaro.org>
-Date: Thu, 4 Apr 2024 09:20:26 +0200
+        Thu, 04 Apr 2024 00:23:31 -0700 (PDT)
+Message-ID: <d6d5f6d4-1d34-4d42-9afc-822a014063dd@linaro.org>
+Date: Thu, 4 Apr 2024 09:23:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,17 +62,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] usb: ohci-exynos: Use devm_clk_get_enabled()
- helpers
-To: Anand Moon <linux.amoon@gmail.com>, Alan Stern
- <stern@rowland.harvard.edu>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH v2 5/6] usb: dwc3: exynos: Use
+ devm_regulator_bulk_get_enable() helper function
+To: Anand Moon <linux.amoon@gmail.com>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>
 Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
  Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240404071350.4242-1-linux.amoon@gmail.com>
- <20240404071350.4242-4-linux.amoon@gmail.com>
+ <20240404071350.4242-6-linux.amoon@gmail.com>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -119,54 +120,31 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240404071350.4242-4-linux.amoon@gmail.com>
+In-Reply-To: <20240404071350.4242-6-linux.amoon@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/04/2024 09:13, Anand Moon wrote:
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->       call clk_disable_unprepare() when needed, as a managed resource.
-> 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> While at it, use dev_err_probe consistently, and use its return value
-> to return the error code.
+> Use devm_regulator_bulk_get_enable() instead of open coded
+> 'devm_regulator_get(), regulator_enable(), regulator_disable().
+
+I fail to see how did you replace open-coded suspend/resume paths.
+
 > 
 > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
-> v2: new changes in this series.
-> ---
->  drivers/usb/host/ohci-exynos.c | 19 +++++--------------
->  1 file changed, 5 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 20e26a474591..85d04ae0ae40 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -135,20 +135,15 @@ static int exynos_ohci_probe(struct platform_device *pdev)
->  
->  	err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
->  	if (err)
-> -		goto fail_clk;
-> -
-> -	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
-> +		goto fail_io;
->  
-> +	exynos_ohci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
->  	if (IS_ERR(exynos_ohci->clk)) {
-> -		dev_err(&pdev->dev, "Failed to get usbhost clock\n");
-> -		err = PTR_ERR(exynos_ohci->clk);
-> -		goto fail_clk;
-> +		usb_put_hcd(hcd);
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ohci->clk),
-> +				"Failed to get usbhost clock\n");
+> V2: no changes, did not find any regression in pm suspend/resume.
 
-Why do you introduce entirely parallel exit paths? There is already
-single error handling part with labels. Use that.
+No, that's not equivalent code. No explanation in commit msg.
 
+You already got comments on this and nothing improved. You just entirely
+ignored received comments. That's not how it works.
 
+I don't think you understand the code and Linux driver model. This patch
+repeats several previous attempts with similar issues: no logic behind a
+change.
+
+NAK.
 
 Best regards,
 Krzysztof
