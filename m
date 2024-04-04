@@ -1,152 +1,106 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05F0126F0F
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 13:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EFE12839F
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 13:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712237083; cv=none; b=DAgvMT0cEPi89j43oI1FN7fh0RZcIu0KBii7972o5J4pN1zZCJkW36JWeAH1AZ50WIRMqEdV3OZ1ecgDiGXWK/BxxmJvIVLtwRfUST8Smlkh45Z9gZ3P9dfbEf0qiTuNn1whXSOk4/4v0yg6zn5mvaighbWBBeVrHDAvYPf18Jw=
+	t=1712238699; cv=none; b=sOEbmC5E/KmXY3OcQG0Fm+v2ClvA2AGVdYtO/dqx8B/sAmytEgOFCQIqTXQwduZYGXspX1RQIiZvKGmqjJ1k51PMQjHXNux/yiCO/igEhUdpVPgcVYV7qETGG6UA+G8/IFXyCJGoAi/47RQqd5s3Xvb86iE+pmb+NNoLhrzihmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712237083; c=relaxed/simple;
-	bh=nBXwkA4A0krstFpyvfjsEVO0w0Xz+CnGhEwhMIz2nxA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Sn/8hHoXq6YSjmW4ZFFcRvjSO2Q2c5XGurPilGmKeG2Eitq48bLcn1+1SaEe4s8KZxnCmuQTVygGUzTihdSGcMNGBBuNqvV79yyErXQ/93C4OWobUzS7vZ2TxTZa4Laxa2kpEDrwGoBL2dMTaG1g76Hey9ag2iG7KSzu8I4F+po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=STX2NdSO; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712238699; c=relaxed/simple;
+	bh=1F5VA5YE599dOlO3zQ9ZskLhNBoOk9J98W5SFXY1QOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWsBDtY85Y7F0w7/Q3O9Xu5Vu+b4kh9460rTAZXvTfqN5wyUT0rMwj+Ib1LBXw/LytJnfUN0wuf//NjFREtliBtEpqQk/vti+FQN2TOWikWYgmq9LmoNi7ERHFAniOguiygCAvP9OiMWXN0+qgU4MBRghyh992S6AlOGF2XJn7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=IaK6ZFAS; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="STX2NdSO"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d718ee7344so11485791fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 06:24:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="IaK6ZFAS"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4317aff5cfdso5478261cf.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 06:51:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712237080; x=1712841880; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QPezEfD0t1esOw49T38S7/dvcH4ZrRMz2JA7Keo/jF4=;
-        b=STX2NdSOVMuHrqgjp5g0ZlGQ3/lhfA1n/DToyUa6dsG1jme+LaJV+O+ZDeiU1YN0ST
-         UlqSF+RKNCBNLs/P7taD2sF1Wp/peVWN3MnryMvCCae5gPD5XmBLfDZCAWX8xEUX32iX
-         QGQgA+veb2nXHXHAqxi6rA734/xn+TouYaU7uwAo1gF7nOaKboymvviE+YJ4s3GVN1tZ
-         q4XHZM+1HHEMF5MriJOKsiBCHqS+HblnZcB23DlFxUajGItk3Rlu398kxgXNTLeFOWr4
-         livV6E/0xQZO/lwC2K1dfZUZqY3kYTH3iWknanPYamF76AzNzuovVSyTo/+WPSUFwgzi
-         yBSA==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1712238697; x=1712843497; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GEhrf+Xnwdm4P0BoHyd6IIElLQSsz5Bym9Fr83GNG8o=;
+        b=IaK6ZFASM9ZbNHLWy0px/hWReUW0WZm1twCBxdS176TODDQ1u5YzOsniRkQpFB+UZ+
+         TnCeAtf2+LVOUUhCwRXPg/iTd97A33Ijpc3fyJq7ThoswZFV5bds7Gv6fA9glPgYkfL1
+         PmH+jN3wPgQ2lnxXc7s5S1mf0WUiQmR5pPVEswt2ABYyEkIT8jIij5swa7pN9bWYpw6z
+         j1miCYsbdThniJc9xstU796pwQlScPJ3w35xsHU+xT2i5D9umW+iSG0t/T+tsNnHKf3W
+         34V4UaRO9ZbT9HrxPbNFhGNTxsZ7uMiTZyZbYPvvKdSoXRmCXEbPOHxo5cklub6HAIOZ
+         nxCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712237080; x=1712841880;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QPezEfD0t1esOw49T38S7/dvcH4ZrRMz2JA7Keo/jF4=;
-        b=u1eXlGzp3WzNoYTf/w+vVWxoNtHUQKBo34C9zss2ujxYLeE0dn1XyOg46gBZm63Fjn
-         ty6BUFAz5x1VFeTJfFZz9WQVAFkq1fWmye+YhoYaKKVjapt2QlsZNGk5KRgrMka6C1br
-         D7IDhBfosQme4KbMWZL56+Q/bmnsNbejejJwgTKTjAyRcmqjU1mRbXlMVl3ikyPSwHbR
-         ypL6Wo7IzdJgVH9mhH1r1CBYFbw3+jne8ljoe/pNudyySywxSedGbmj6fw6qQE0IhP5f
-         H1ZX4jk3E30tNhLSBVMd3DOel/uMdkGvluPCq6RdbEs8HEbiY3b7TefmSEHIRfESF+xM
-         DJfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKTM2JCwxL4Oj2zK29KQWemsaTWMyR522xhvKnMCz5Fmb2RjKm92VoE7ARUWNfLuXdSr/s/EGrJkv4IKrgaPbaAS4KHZ7LNNwGcer+35zAC8M=
-X-Gm-Message-State: AOJu0YwKglzcuMCR1XSxlz60plZYulLJnkh0S8VT8hfxbe5CxAV/qdX1
-	OGG7YQ8P8Zkxfg8WkHLHU04iW170NjsyXH1h4P7nQ1VTO29r6quL1QvAgYUyuY0=
-X-Google-Smtp-Source: AGHT+IGxgH9A5s0WiNgOB7bXFCAvV00A/PQ0OT0BzurZEBZ4YAccdY+QiP2+2qjmMUfFLq93x9ZqAg==
-X-Received: by 2002:a2e:7c0a:0:b0:2d8:274a:db16 with SMTP id x10-20020a2e7c0a000000b002d8274adb16mr2125485ljc.17.1712237079816;
-        Thu, 04 Apr 2024 06:24:39 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id v3-20020a5d59c3000000b00341cc9c1871sm20435575wry.0.2024.04.04.06.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Apr 2024 06:24:39 -0700 (PDT)
-Message-ID: <61f427ab3793def23d80d94457ff1568cae5ee11.camel@linaro.org>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
- avri.altman@wdc.com,  bvanassche@acm.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com,  jejb@linux.ibm.com, martin.petersen@oracle.com,
- chanho61.park@samsung.com,  ebiggers@kernel.org
-Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com
-Date: Thu, 04 Apr 2024 14:24:37 +0100
-In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
-	 <20240404122559.898930-9-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+        d=1e100.net; s=20230601; t=1712238697; x=1712843497;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GEhrf+Xnwdm4P0BoHyd6IIElLQSsz5Bym9Fr83GNG8o=;
+        b=GW2+QnSh3GaUJUw9NJ6r2JZALy4/19JPTXWpglONdIU8acBBbgged4YKg/fAmGe0EH
+         fhoahOAo42cGYnheb210cfDcl1do4kbc2HS7xvx+MNaRNadyou/3XNTn2xguTv6azED/
+         3NhwIOHS1t6CWI/1zYUMOrEtNTpuySqkW22BLxUm51Rpe4I2wXPBi6+Su1Hmd+GPhIBa
+         OdsKmf5uUNFIYLp6xPeutK0pWnrdDw03sy2ZbPOQqSzNkQhb5m6A58kTOvjyyUVCc8sk
+         +yEzychgagGADrEgd6PaUOEMVywv3XFQ3tYjNCUqXR8LDMWyX1981Tj736XFJI6qMTou
+         5W0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWtp8+bk7FjhSLk5s3UgfRJrKBc6y5n8fmysMNHoIsVhVTBi0FIFHqxhwkI08HAQHqp/1RDHtsRmh/NceHaEkq3N1g663jdHqqban1g86yyeFI=
+X-Gm-Message-State: AOJu0YzzCnaxDvaEHyQicMU6VgHlMDs0C5o5+4JWN5qaE1Eu9MkPfSP4
+	QfrISr6a+0BgIsPSSvd8OLrJs3ODQkkPfnMU4rF/xIwTDaMKvwmIbY9Up4PVX1Y9j0hcYirhsSH
+	q17+TsmlVvRJfWBqORrU7SaGBErfTZoKvOUcUGQ==
+X-Google-Smtp-Source: AGHT+IG34VfsrO/bFBQm1+tAdMAMjkEMbTIL7Igt83TuV9+7PUf7aasZynC6bg9Q2hezj4QPdzlhPGGLCOEcmSFudGM=
+X-Received: by 2002:a05:622a:20d:b0:431:8135:6fa9 with SMTP id
+ b13-20020a05622a020d00b0043181356fa9mr2490307qtx.61.1712238696692; Thu, 04
+ Apr 2024 06:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240222173942.1481394-1-pasha.tatashin@soleen.com> <20240404005803.GA102637@hyd1403.caveonetworks.com>
+In-Reply-To: <20240404005803.GA102637@hyd1403.caveonetworks.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 4 Apr 2024 09:50:59 -0400
+Message-ID: <CA+CK2bAiM_eC6k2EVL93uuOwB+hhV1WkDDK0YROo9-wAh=ju-w@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] IOMMU memory observability
+To: Linu Cherian <lcherian@marvell.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com, 
+	bagasdotme@gmail.com, mkoutny@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Pete,
+> > Description
+> > ----------------------------------------------------------------------
+> > IOMMU subsystem may contain state that is in gigabytes. Majority of that
+> > state is iommu page tables. Yet, there is currently, no way to observe
+> > how much memory is actually used by the iommu subsystem.
+> >
+> > This patch series solves this problem by adding both observability to
+> > all pages that are allocated by IOMMU, and also accountability, so
+> > admins can limit the amount if via cgroups.
+> >
+> > The system-wide observability is using /proc/meminfo:
+> > SecPageTables:    438176 kB
+> >
+> > Contains IOMMU and KVM memory.
+>
+> Can you please clarify what does KVM memory refers to here ?
+> Does it mean the VFIO map / virtio-iommu invoked ones for a guest VM?
 
-Thanks for this!
+This means that nested page tables that are managed by KVM, and device
+page tables that are managed by IOMMU are all accounted in
+SecPageTables (secondary page tables). The decision to account them
+both in one field of meminfo was made at LPC'23.
 
-I haven't reviewed this, but one immediate comment...
-
-On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
-> [...]
-> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
-101.c
-> index d065e343a85d..b9f84c7d5c22 100644
-> --- a/drivers/clk/samsung/clk-gs101.c
-> +++ b/drivers/clk/samsung/clk-gs101.c
-> @@ -22,6 +22,7 @@
-> =C2=A0#define CLKS_NR_MISC	(CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
-> =C2=A0#define CLKS_NR_PERIC0	(CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
-> =C2=A0#define CLKS_NR_PERIC1	(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-> +#define CLKS_NR_HSI2	(CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
-
-Can you please keep the #defines alphabetical (hsi before misc).
-
-> =C2=A0
-> =C2=A0/* ---- CMU_TOP ---------------------------------------------------=
----------- */
-> =C2=A0
-> @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu_i=
-nfo __initconst =3D {
-> =C2=A0	.clk_name		=3D "bus",
-> =C2=A0};
-> =C2=A0
-> +/* ---- CMU_HSI2 -------------------------------------------------------=
---- */
-
-and this code block should be earlier in the file
-
-> [..]
-=C2=A0
-> =C2=A0static int __init gs101_cmu_probe(struct platform_device *pdev)
-> @@ -3432,6 +3987,9 @@ static const struct of_device_id gs101_cmu_of_match=
-[] =3D {
-> =C2=A0	}, {
-> =C2=A0		.compatible =3D "google,gs101-cmu-peric1",
-> =C2=A0		.data =3D &peric1_cmu_info,
-> +	}, {
-> +		.compatible =3D "google,gs101-cmu-hsi2",
-> +		.data =3D &hsi2_cmu_info,
-> =C2=A0	}, {
-
-and this block should move up
-
-> =C2=A0	},
-> =C2=A0};
-> diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindin=
-gs/clock/google,gs101.h
-> index 3dac3577788a..ac239ce6821b 100644
-> --- a/include/dt-bindings/clock/google,gs101.h
-> +++ b/include/dt-bindings/clock/google,gs101.h
-> @@ -518,4 +518,67 @@
-> =C2=A0#define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK		45
-> =C2=A0#define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK		46
-> =C2=A0
-> +/* CMU_HSI2 */
-
-and all these defines, too.
-
-
-
-Cheers,
-Andre'
-
+Pasha
