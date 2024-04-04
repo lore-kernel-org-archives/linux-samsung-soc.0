@@ -1,151 +1,119 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E310758203
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Apr 2024 07:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEFC1CFBD;
+	Thu,  4 Apr 2024 07:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712215416; cv=none; b=lGwu8bd93NpRLDbSsQyR0WAZ+wLM9CZII9BJJ374hU03C2CfEjAbXJs0BOHvKcAAHtBvkFovjH2o38HT/zKYE7KqBEAn6fXzo+8H8RD3fnkDZCaJVP93N4jhORHHN+6062ouyTcmjyhb+MZNlDE7zkGoC60CwtLcJx9eL9eMYvw=
+	t=1712216325; cv=none; b=SAvPo4h/s14Poc1JRmMd+HoMsIZ6uYUy5iuqhAKP4tAj8DVNzvk4UT7oNlwPIEtCJ03xEEU6fbuGFseZqrZuq+XijiC6rPrZuc4BeO/lot7nxUJi6SZhB5ogSLAdqWuo1KUUjLd/9RHMmlMJ42skY9Sv1UND3jDgYOCSnVAPdBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712215416; c=relaxed/simple;
-	bh=IrcjDwW2go+0W9hIALaBib0t3+sE41yHO3viuD71acQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QI6uTkJ8Ek5Jkz0kkwYilGIEXrRDPUXalsgZfiIqUJ8mF5H5FwLqqLiSd9HiPhuRYCy8mO6bXFzWhkRFwyAO/2CY0F7yzJYg2N8KY9+6WNCVZE8ymsifoKIS9kY5iLklyESarxR+0jX6UjgiZzJi02N5SbLXFNy/i7hct2r+qUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h7jy9uU6; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712216325; c=relaxed/simple;
+	bh=VI6p+4L4BRKcApkAcCV82aS1Qi1Z1UvR8SX+4NHMGnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SzGY52b2OrVOEZ99OW3kUaV53jrDqpYttX3e6IXtzqfGYDgg4ntk7jDvbAbjNnEEniX7E58+e2qiZS60ITCsu4pAqMkeur82kYMKSxTnaHKWCOGq6iwJ8DrHBAAXvvR9bl3fDVigWnfSrV/hL9C3OMyCFn7VQquP0YDvAMOHpH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JN2SnF1q; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7jy9uU6"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56e0a8733d8so622326a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Apr 2024 00:23:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JN2SnF1q"
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5a7a4119d02so293336eaf.1;
+        Thu, 04 Apr 2024 00:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712215412; x=1712820212; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoKp3ietYjXVwlK1qyyowUsmILGtAZ83ZV038OqgG/I=;
-        b=h7jy9uU6M/rJZRdfcSeS9U+ZAEM47oS/giZIq16t1avV5MzffiicIlVAemp4uM/qee
-         jR+e56Jl3HpZaB7b56LLSMVlYN2RwLiuI0ggOMR3drlEzNM7l4kRoTz9PVOTsM1OMmTf
-         e+OeFd0mbbgDjv8I69Xd1WCoPaOW/WSo/ILNQ7XygL2Am2qEdEtu5Y0mx1bk3fVaTnnc
-         yJ+5DaTytYpIcgCI4HPcRQpiwOIR2l8lHj00ckK/8qyPv9ODKuKZreo7bX1wSBoVJ0LP
-         sVdPz18w0kmIuAenCv1noEHSIarXsouLixl9vJxeH+jD0CL9lR7ooc5zt76Kkp0qkMww
-         U4tA==
+        d=gmail.com; s=20230601; t=1712216323; x=1712821123; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=we2O1Ti81VxZtCCVRPAlQfc7bOWmir0153692cEekTA=;
+        b=JN2SnF1q8aYkV27/mPu/k8WqwTxYErayIRM6m7Lg1iXx7MOmYOPPHYwrfaHNgcSR5g
+         kcAt9ZUL4m3TWDEC1ffzhFoRD3oJNB8s+eFmif/Am4RmWKVB7r28SfWbAWMxdL+G/1ZR
+         uIodC6OxTjd5vBFuKNJi3EuN7y2YzPAsSzDqZkmUQNgbKJDNM8c0Be+zhGz9MEVncVbV
+         09wKqQnYW9TAb4NQDg8ZL3VOm20wJfc3Aq4/DdQYItMrPo+6i9EAdZjZoRFe2EWUpKWn
+         9KBRpC7jSTqWEiiWz2ePMdVRzqJ3GlG5XcOwd7taYhGz3WPYDuqHoSG4PJyIzAKrgf2e
+         bTJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712215412; x=1712820212;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoKp3ietYjXVwlK1qyyowUsmILGtAZ83ZV038OqgG/I=;
-        b=Np6KZOvmND8caFu+xrjoTz5cAFwnyPF0OTKqNFVHnsATj0SAjRhfUsV2a2uG1EDZGt
-         RdKyLzUwgTox9WyA0hcb63kI9gGecuRFdMsmaiz3UFD4kOi8QMvSm1R1FpGcbgx0JWq4
-         SGq35SyWT/bNGdtWeQTNF7XW54wi8JX9lAWzzFg1EstYlFu1YwCCoWDTRBcxf0Yqs30y
-         II0skCezHPHiFTzawBZnxPUvP0ifKQGQWzYknvhvH5M28efrRP9yQqNp3JCSNeTLdqpR
-         BF/y/GRyZipBRpWe8oGxN3RAaMc0AN+zbe+QOrxwkxpNyW/0L+/t6e8Lc4Wf/4AyTKFD
-         O9Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPbSIbwecu39oEcXDvXhKk2jC72faoHhwiFb0qVF+lDbuTTchv+NE66UvgXALpywJYlEns6aJuMlAQ4xg8nV+jvB0p2w1BoetttOiu0XVxz38=
-X-Gm-Message-State: AOJu0YyCtnWvUEz929lE2gK1D4wuF7jN/8pkFRunZw8g3/3Vp5rP8Ozc
-	fXWeNXT1kFk99JqAqljmDZazgNMWv77WjsF/bDt9tsUmaQuvUYQVkXwwNcJIAMA=
-X-Google-Smtp-Source: AGHT+IFcJeD2EvWnHL85kO8MUwgmZU5Y0OIrgm8eUvLfu9ihlvaIopRpMGfP5G9oEemWuCKoLa7gGQ==
-X-Received: by 2002:a50:9f22:0:b0:56b:a077:2eee with SMTP id b31-20020a509f22000000b0056ba0772eeemr1125203edf.4.1712215412338;
-        Thu, 04 Apr 2024 00:23:32 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id o2-20020aa7dd42000000b00568abb329a3sm8856010edw.88.2024.04.04.00.23.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Apr 2024 00:23:31 -0700 (PDT)
-Message-ID: <d6d5f6d4-1d34-4d42-9afc-822a014063dd@linaro.org>
-Date: Thu, 4 Apr 2024 09:23:30 +0200
+        d=1e100.net; s=20230601; t=1712216323; x=1712821123;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=we2O1Ti81VxZtCCVRPAlQfc7bOWmir0153692cEekTA=;
+        b=CAPnsx3rMl7tKEpIqQqpwbCqPPHEht7RAad8Ll67VAO9rrJoNXa7BEOxYqKCUdpTxD
+         q/CJ5EZFvMT/Zf38eeyc82OKXPnL8LMpu5krc2SxmY5oC3oIaspkFliydB+Qby1iynD0
+         aMoeMQ9X0lVJvNnplNq1mFn7AYK5fMkWbncj1j/JAK5Qdt0KlqNTXpq0X1DvcP6Y0NAz
+         fSsTsYsT7tQNGKkS4ZJZBu2Zyylv2TewfEWJLHwen6u5rcX6a3DAIhhJ24y0mX5F0d9R
+         ryKTSLTlfrv3rxvKaCPT12U6ZgjKeyO6sI+dTZNp0LOzyh4cRK5t4ztKdchp242amESc
+         QMHA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4xG6RXRcL/XREIKWKUjZDeEEnZvaFHGbew3x8Np5F5fisb/0hDcOZOG1Ogcn3dufzwgPxKmWUuyi+UntOWq9VWq8aX9OIkx7aDUtZCv9Vhp86iIS+0zJkDSZTT+dj2Vyat3Sc1wvG3XwcZLCajTx+2jlS3X4Eu2u4QULMqLzY83E/hb7rG1OPMJk=
+X-Gm-Message-State: AOJu0YwMcTNSVNO4TH+vTD/iIKSB9NhB4MEferqqXf29A+JwAccLvnLc
+	UKUq2D4raW/XjoKSj+aT3fM75O0pW9kOZFNxhbqxFI9wuEndJjgDkgm0mKZoqzAmlwwY46mzxf9
+	yrZ1BNG2CSI0Q253WIFUQKRTUw3M=
+X-Google-Smtp-Source: AGHT+IETHfDKs90ZM2H1TVHcAUgZqVFrTvOqJYL9jrxo6+qMd1YqwAdGD0Ml1tnLH1xe1d0c1QgdqCpI1PaSO0LTKYY=
+X-Received: by 2002:a05:6820:308f:b0:5a9:d519:b541 with SMTP id
+ eu15-20020a056820308f00b005a9d519b541mr1858551oob.4.1712216322675; Thu, 04
+ Apr 2024 00:38:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] usb: dwc3: exynos: Use
- devm_regulator_bulk_get_enable() helper function
-To: Anand Moon <linux.amoon@gmail.com>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240404071350.4242-1-linux.amoon@gmail.com>
- <20240404071350.4242-6-linux.amoon@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240404071350.4242-6-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240404071350.4242-1-linux.amoon@gmail.com> <20240404071350.4242-6-linux.amoon@gmail.com>
+ <d6d5f6d4-1d34-4d42-9afc-822a014063dd@linaro.org>
+In-Reply-To: <d6d5f6d4-1d34-4d42-9afc-822a014063dd@linaro.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 4 Apr 2024 13:08:26 +0530
+Message-ID: <CANAwSgSe37Pn062enCLd39P+RXU1VCZugyz7oDRafpnU1FyN1w@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] usb: dwc3: exynos: Use devm_regulator_bulk_get_enable()
+ helper function
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Johan Hovold <johan@kernel.org>, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 04/04/2024 09:13, Anand Moon wrote:
-> Use devm_regulator_bulk_get_enable() instead of open coded
-> 'devm_regulator_get(), regulator_enable(), regulator_disable().
+Hi Krzysztof,
 
-I fail to see how did you replace open-coded suspend/resume paths.
+On Thu, 4 Apr 2024 at 12:53, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 04/04/2024 09:13, Anand Moon wrote:
+> > Use devm_regulator_bulk_get_enable() instead of open coded
+> > 'devm_regulator_get(), regulator_enable(), regulator_disable().
+>
+> I fail to see how did you replace open-coded suspend/resume paths.
+>
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > V2: no changes, did not find any regression in pm suspend/resume.
+>
+> No, that's not equivalent code. No explanation in commit msg.
+>
+> You already got comments on this and nothing improved. You just entirely
+> ignored received comments. That's not how it works.
+>
+> I don't think you understand the code and Linux driver model. This patch
+> repeats several previous attempts with similar issues: no logic behind a
+> change.
+>
+> NAK.
 
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> V2: no changes, did not find any regression in pm suspend/resume.
+devm_regulator_get_enable and devm_regulator_bulk_get_enable
+both remove the dependency from the driver to handle the regulator_enabled
+and regulator_disabled. ie this removes the regulator from the driver structure.
 
-No, that's not equivalent code. No explanation in commit msg.
+Since these functions set devm_add_action to disable the regulator when the
+resource is not used.
 
-You already got comments on this and nothing improved. You just entirely
-ignored received comments. That's not how it works.
+     ret = devm_add_action(dev, devm_regulator_bulk_disable, devres);
+     if (!ret)
+               return 0;
+>
+> Best regards,
+> Krzysztof
+>
 
-I don't think you understand the code and Linux driver model. This patch
-repeats several previous attempts with similar issues: no logic behind a
-change.
+if you feel it's incorrect, I will drop this patch..
 
-NAK.
-
-Best regards,
-Krzysztof
-
+Thanks
+-Anand
