@@ -1,152 +1,184 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D78F71723;
-	Thu,  4 Apr 2024 22:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED792EAC5
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Apr 2024 05:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712271203; cv=none; b=CQHoQL6+vktB/WTYdn0XDtDQarNlL4Iwp1gxFX0D7LTA5Qw+zgYPa159skWaEMjlYCBeyExL+V1UXKBonxOWPtLjjHrF7L6gyW2st/YYhQ8HpFsK+wxnXtf/+sKM+kj9MH8pUW/eZiiu3pZ/VLYh5kgN9v/aGLfQS7zxfoivkEo=
+	t=1712294353; cv=none; b=J4b5tQu3RTtHAI7+Ama0fbYFAAIwv5eOHSldBgxKZa94bmatlt+713xq5XFW+KI4Xw6gUILyBaPDJWdk6+alS89srSycqX0WPsq8iKuEFtfGzp6x3qObF7mVJ7KDVV543zwMfDhEm6csEiqV595D21o+Sax0AVlnsLqb3JyuhiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712271203; c=relaxed/simple;
-	bh=nHDeIZjgG/ABq+COPbhriixxj1CJ1aiFsFPnz9B5/Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzXPltvc/38mxa0NM3bUVoz3/WDmJV9bb4Gffd77wvu/IRggzZ5bcSn0Ahz1dyD3UxIdk8C9x/x6KqNR3HfzjMM1eCmSdUtrmOv9wgJLJxxiAmHZ214Jkl4+nW3AGm91VaCm+GxrJ4Jomqbwu0L/Y6jd2OM2OZ6H4HDP1ghhQq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jI6yA9Ei; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1712294353; c=relaxed/simple;
+	bh=ECfuPBixhevTExaEoM82zR7UK6Zo84mDciDVg4pO008=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=rpjMmCGhgCGXRrjgIhGSAq/AO9u2X0WgNPGeA6JwwDjJ9eYBaKT41xs/LhGVV/zUxiQRglHjaSfPt2H5k5/Yj0vVv1aKNbitVMfCvrsEbqF5Ubodv2pz1Th95juWORXGn24suLo2ohmRLNzQKURYh6RiFXtb6hpe1A7snVtcQl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=q1Riz1Ni; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jI6yA9Ei"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1712271202; x=1743807202;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=nHDeIZjgG/ABq+COPbhriixxj1CJ1aiFsFPnz9B5/Ew=;
-  b=jI6yA9Ein2vQr/xrpwN8Wdagm7yBeJxof7VWn5CEPxe/EsC71g1w9spL
-   Y+VSCINywYjsWn4HO8pgnux8klDq/AJ4LGrR0UIyHE2tduDWPEIrx6IRg
-   Fpe7WN5hDQpt/GaO7Fo0cb2yFBTxU1Tgjq+EeDtn6R1yEEP9CoggIE28E
-   XHyyct9M1XPrvh6lVz6z7eW5Plzsyl0MpUh/X76w5Fj0weCWVjYMHycQt
-   r7J+3KzNtqMPZFwbTN1M8Ux+1+g6Z6Bc1CNRqylefVbjnTnrZnySJjGI/
-   HaY73yb3c9C07Q99wWYCCrNFAcsH+Yd+Nh1d3IDcDISvD8zA4rCAm1a8S
-   w==;
-X-CSE-ConnectionGUID: AxPZNNiXQ+Sm++dRuJQXTQ==
-X-CSE-MsgGUID: DGEll113QRa54DvJegj47A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11034"; a="7747184"
-X-IronPort-AV: E=Sophos;i="6.07,180,1708416000"; 
-   d="scan'208";a="7747184"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2024 15:53:21 -0700
-X-CSE-ConnectionGUID: DMVI8dVNQt+mFpCKldjuFw==
-X-CSE-MsgGUID: qHDgff3ISNujXJMguBDG9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,180,1708416000"; 
-   d="scan'208";a="50191958"
-Received: from lkp-server01.sh.intel.com (HELO e61807b1d151) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 04 Apr 2024 15:53:14 -0700
-Received: from kbuild by e61807b1d151 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rsVxH-0001b6-2d;
-	Thu, 04 Apr 2024 22:53:11 +0000
-Date: Fri, 5 Apr 2024 06:52:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, chanho61.park@samsung.com,
-	ebiggers@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-scsi@vger.kernel.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	saravanak@google.com, willmcvicker@google.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-Message-ID: <202404050633.EZfOttFD-lkp@intel.com>
-References: <20240404122559.898930-9-peter.griffin@linaro.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q1Riz1Ni"
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240405051125epoutp0214e18c4b72198425f0c1301aa8e9666b~DSjdrMCt51732217322epoutp02a
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Apr 2024 05:11:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240405051125epoutp0214e18c4b72198425f0c1301aa8e9666b~DSjdrMCt51732217322epoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1712293885;
+	bh=Sg1g9N/G1pvV115mMMnWln56UDO17G4Nqgp6n10MxAU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=q1Riz1NiMrxFpa5owQaFIPQy4RYpkYGS7y4BcUrboRyVDZDE9xfJm4tlYXtGL80Dr
+	 srvgoOZCiM4r29xhsh+Zy7Sbg0pEFakhlksBBQ/I6RSGSuKGjz9k49FrX/mnmcv4Ok
+	 AjJkx7nIYfGkIGb8ltZjiKoaBR92lDh5lT03h7vs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240405051124epcas1p2bf5cf35b3047c5698f9ca4a9e69e58d6~DSjdKC-ai0826508265epcas1p2U;
+	Fri,  5 Apr 2024 05:11:24 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.38.231]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4V9mmX0sYHz4x9Q7; Fri,  5 Apr
+	2024 05:11:24 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4C.1E.09663.BF78F066; Fri,  5 Apr 2024 14:11:24 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240405051123epcas1p271e78f5d3b844af6511d7e591df887d7~DSjcOEsKQ0445304453epcas1p2o;
+	Fri,  5 Apr 2024 05:11:23 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240405051123epsmtrp2f2a5f9764c39b1081fecfee10c7a5cff~DSjcNSsTB0503805038epsmtrp2Z;
+	Fri,  5 Apr 2024 05:11:23 +0000 (GMT)
+X-AuditID: b6c32a37-2f9ff700000025bf-03-660f87fbcbc0
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	29.C0.07541.BF78F066; Fri,  5 Apr 2024 14:11:23 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240405051123epsmtip15d4fe3d57130e9c0c35db04f6492aa13~DSjb_hNYb2139921399epsmtip1G;
+	Fri,  5 Apr 2024 05:11:23 +0000 (GMT)
+From: =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
+	<inki.dae@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Seung-Woo
+ Kim'" <sw0312.kim@samsung.com>, "'Kyungmin Park'"
+	<kyungmin.park@samsung.com>, "'David Airlie'" <airlied@gmail.com>, "'Daniel
+ Vetter'" <daniel@ffwll.ch>, "'Alim Akhtar'" <alim.akhtar@samsung.com>
+Cc: <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20240330-b4-module-owner-drm-exynos-v1-0-3fa30e2c7e5a@linaro.org>
+Subject: RE: [PATCH 00/11] drm/exynos: drop driver owner initialization
+Date: Fri, 5 Apr 2024 14:11:23 +0900
+Message-ID: <017601da8717$b3ebbee0$1bc33ca0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQEofrVXOxMdMsLkDHpOmMtI8zwlmAIjrw+ysqwUVQA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmge6fdv40gydXmC1OXF/EZPFg3jY2
+	i//bJjJbXPn6ns1i7+ut7BZnm96wW2x6fI3V4vKuOWwWM87vY7KYMfklmwOXx95vC1g8ds66
+	y+5x59oeNo/73ceZPDYvqffo27KK0ePzJrkA9qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hT
+	MwNDXUNLC3MlhbzE3FRbJRefAF23zByg85QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqp
+	BSk5BaYFesWJucWleel6eaklVoYGBkamQIUJ2RkdT/YyFpwQqrgw6xJbA2MffxcjB4eEgInE
+	xadqXYxcHEICOxglOvbMY4JwPjFKXDvTzALhfGOUaP/xl62LkROsY/+J56wQib2MEo93fmSD
+	cF4ySryfuoIFpIpNIF3ibncD2CwRgclMEqtOfGcGcZgFpjFKHJrbyQRSxSngL7HvVxMziC0s
+	4C5xZOpUMJtFQEXi3YyXTCAX8gpYSjTNkwIJ8woISpyc+QRsAbOAvMT2t3OYIU5SkPj5dBkr
+	RFxEYnZnG1hcRMBK4tCmJnaQvRICBzgk9jT+ZYFocJFYM3khI4QtLPHq+BZ2CFtK4vO7vWwQ
+	DZMZJe5cX8EC4cxglDj88zpUh7HE/qWTwa5jFtCUWL9LH2Izn8S7rz2skGDllehoE4KoVpI4
+	dvEGVKeExIUlE6Hh6CFx9fB9xgmMirOQ/DYLyW+zkPwzC2HZAkaWVYxiqQXFuempxYYFxvD4
+	Ts7P3cQITrxa5jsYp739oHeIkYmD8RCjBAezkghvtwNvmhBvSmJlVWpRfnxRaU5q8SFGU2Bg
+	T2SWEk3OB6b+vJJ4QxNLAxMzI2MTC0MzQyVx3jNXylKFBNITS1KzU1MLUotg+pg4OKUamA6W
+	rJ8vaPnxpWui3O6prjVptps75desf9Gc8ObYtW0LQubwWFdu8+RZXdSiy/LraO5refGli2ws
+	FvHYPHxaeX6mQtW8g2xf5wqUF5pont2juTA5l19KZ0P/ksN88+wf3On0XLFro6ehLGOPs7B1
+	kq2oUHSpwgafhy07v7y06W45991MSuT0ai3bet72ylW1K1ms+lhqam9eEt+hkTUjzlPhw59r
+	b+86z5LnvSywSn7dxa9VJrOetigFHeMx0Qp/qdq5yKj0/k1FYc4vrYuc1u+93L55/5OSv2VT
+	/7vXM0/54L7oTK7t2+h/cT4Nbz8xqycKcB553ufuumCL2UO+3nqBEga5Y3luZw/mfrJfpcRS
+	nJFoqMVcVJwIACrsKa9FBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsWy7bCSnO7vdv40g7+nFS1OXF/EZPFg3jY2
+	i//bJjJbXPn6ns1i7+ut7BZnm96wW2x6fI3V4vKuOWwWM87vY7KYMfklmwOXx95vC1g8ds66
+	y+5x59oeNo/73ceZPDYvqffo27KK0ePzJrkA9igum5TUnMyy1CJ9uwSujI4nexkLTghVXJh1
+	ia2BsY+/i5GTQ0LARGL/ieesXYxcHEICuxkl9k5YwtjFyAGUkJDYspUDwhSWOHy4GKLkOaNE
+	y/upzCC9bAKpEjc+fWQHSYgITGeSWNR7BGwQs8AMRom12y4xQbQsYJQ4dvQ5C0gLp4C/xL5f
+	TWDtwgLuEkemQoxiEVCReDfjJRPIOl4BS4mmeVIgYV4BQYmTM5+AtTILaEv0PmxlhLDlJba/
+	ncMM8YGCxM+ny1gh4iISszvbwOIiAlYShzY1sU9gFJ6FZNQsJKNmIRk1C0n7AkaWVYySqQXF
+	uem5yYYFhnmp5XrFibnFpXnpesn5uZsYwfGnpbGD8d78f3qHGJk4GA8xSnAwK4nwdjvwpgnx
+	piRWVqUW5ccXleakFh9ilOZgURLnNZwxO0VIID2xJDU7NbUgtQgmy8TBKdXAVLjF5JPe02fi
+	T04HNBhF9uQvfVxed0Hp5qFnL2SVt6jMnL77tozuypsWmW8+v3/xc/GmK4/PbpUOcN070Ua9
+	Kijl6zXdxmhzi6sbDvPuNoh+et57a1XKiTi5zwzKWdf+1JQWZJpcz15+osNQMnxFdF/tce8H
+	C4+Z5kVduXCzqnjxslUW1yKA6YH18H/FBZrHJapqd1WsrvqaMePKbWZHB2vx6nKt3CNCfDdk
+	V5o9PnmUL30vm2jahPXNN+rczYuVLCWXVkftfHThxrWQ/wvubZzEYKvYxz51hqXGrMjVM7ir
+	Mh33HPki+NfK5JTG5Bdyrx4U3fBee6yJJaVXZFt6LbspV9iaxodx6lb+DZ9rlViKMxINtZiL
+	ihMBXtExwy4DAAA=
+X-CMS-MailID: 20240405051123epcas1p271e78f5d3b844af6511d7e591df887d7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240330203328epcas1p3132c85946c00e6a2432d3e23db6213e8
+References: <CGME20240330203328epcas1p3132c85946c00e6a2432d3e23db6213e8@epcas1p3.samsung.com>
+	<20240330-b4-module-owner-drm-exynos-v1-0-3fa30e2c7e5a@linaro.org>
 
-Hi Peter,
+Hi Krzysztof,
 
-kernel test robot noticed the following build warnings:
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Sent: Sunday, March 31, 2024 5:33 AM
+> To: Inki Dae <inki.dae@samsung.com>; Seung-Woo Kim
+> <sw0312.kim@samsung.com>; Kyungmin Park <kyungmin.park@samsung.com>; David
+> Airlie <airlied@gmail.com>; Daniel Vetter <daniel@ffwll.ch>; Krzysztof
+> Kozlowski <krzysztof.kozlowski@linaro.org>; Alim Akhtar
+> <alim.akhtar@samsung.com>
+> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: [PATCH 00/11] drm/exynos: drop driver owner initialization
+> 
+> Simplify the code by dropping unnecessary .owner initialization in the
+> driver.
 
-[auto build test WARNING on krzk/for-next]
-[also build test WARNING on robh/for-next clk/clk-next linus/master v6.9-rc2 next-20240404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Applied.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/dt-bindings-clock-google-gs101-clock-add-HSI2-clock-management-unit/20240404-205113
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240404122559.898930-9-peter.griffin%40linaro.org
-patch subject: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240405/202404050633.EZfOttFD-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240405/202404050633.EZfOttFD-lkp@intel.com/reproduce)
+Thanks. :)
+Inki Dae
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202404050633.EZfOttFD-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/clk/samsung/clk-gs101.c:16:
->> drivers/clk/samsung/clk-gs101.c:3640:7: warning: 'mout_hsi2_mmc_card_p' defined but not used [-Wunused-const-variable=]
-    3640 | PNAME(mout_hsi2_mmc_card_p)     = { "fout_shared2_pll", "fout_shared3_pll",
-         |       ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
->> drivers/clk/samsung/clk-gs101.c:3633:7: warning: 'mout_hsi2_bus_p' defined but not used [-Wunused-const-variable=]
-    3633 | PNAME(mout_hsi2_bus_p)          = { "dout_cmu_shared0_div4",
-         |       ^~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
->> drivers/clk/samsung/clk-gs101.c:3631:7: warning: 'mout_hsi2_pcie_p' defined but not used [-Wunused-const-variable=]
-    3631 | PNAME(mout_hsi2_pcie_p)         = { "oscclk", "dout_cmu_shared2_div2" };
-         |       ^~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
->> drivers/clk/samsung/clk-gs101.c:3628:7: warning: 'mout_hsi2_ufs_embd_p' defined but not used [-Wunused-const-variable=]
-    3628 | PNAME(mout_hsi2_ufs_embd_p)     = { "oscclk", "dout_cmu_shared0_div4",
-         |       ^~~~~~~~~~~~~~~~~~~~
-   drivers/clk/samsung/clk.h:229:44: note: in definition of macro 'PNAME'
-     229 | #define PNAME(x) static const char * const x[] __initconst
-         |                                            ^
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (11):
+>       drm/exynos: fimc: drop driver owner initialization
+>       drm/exynos: fimd: drop driver owner initialization
+>       drm/exynos: dsi: drop driver owner initialization
+>       drm/exynos: g2d: drop driver owner initialization
+>       drm/exynos: gsc: drop driver owner initialization
+>       drm/exynos: mic: drop driver owner initialization
+>       drm/exynos: rotator: drop driver owner initialization
+>       drm/exynos: scaler: drop driver owner initialization
+>       drm/exynos: vidi: drop driver owner initialization
+>       drm/exynos: hdmi: drop driver owner initialization
+>       drm/exynos: mixer: drop driver owner initialization
+> 
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c     | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c    | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c    | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c     | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c     | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_mic.c     | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_scaler.c  | 1 -
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c    | 1 -
+>  drivers/gpu/drm/exynos/exynos_hdmi.c        | 1 -
+>  drivers/gpu/drm/exynos/exynos_mixer.c       | 1 -
+>  11 files changed, 11 deletions(-)
+> ---
+> base-commit: 7fdcff3312e16ba8d1419f8a18f465c5cc235ecf
+> change-id: 20240330-b4-module-owner-drm-exynos-d2f1b2d48af3
+> 
+> Best regards,
+> --
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
 
-vim +/mout_hsi2_mmc_card_p +3640 drivers/clk/samsung/clk-gs101.c
-
-  3627	
-> 3628	PNAME(mout_hsi2_ufs_embd_p)	= { "oscclk", "dout_cmu_shared0_div4",
-  3629					    "dout_cmu_shared2_div2", "fout_spare_pll" };
-  3630	
-> 3631	PNAME(mout_hsi2_pcie_p)		= { "oscclk", "dout_cmu_shared2_div2" };
-  3632	
-> 3633	PNAME(mout_hsi2_bus_p)		= { "dout_cmu_shared0_div4",
-  3634					    "dout_cmu_shared1_div4",
-  3635					    "dout_cmu_shared2_div2",
-  3636					    "dout_cmu_shared3_div2",
-  3637					    "fout_spare_pll", "oscclk", "oscclk",
-  3638					    "oscclk" };
-  3639	
-> 3640	PNAME(mout_hsi2_mmc_card_p)	= { "fout_shared2_pll", "fout_shared3_pll",
-  3641					    "dout_cmu_shared0_div4", "fout_spare_pll" };
-  3642	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
