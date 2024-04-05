@@ -1,113 +1,55 @@
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B99515F3E8
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Apr 2024 08:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456D6161303;
+	Fri,  5 Apr 2024 09:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712306921; cv=none; b=Ah9jCDRMoGLYzdYc7Zxn6JUN1NAlyerWomN4cw52vE8h+z2GUHQL/TFTHoooNwi9NH07Txh2i2FNkgblYt7XHY9Tv3WqxeEu1UQKlBNNAsY1ZUb4KWKmD08lnvE4sIbo+AQ4jXtN6tWDZ6szomtaf6604sh9r8RQJTda2bsPnZg=
+	t=1712310965; cv=none; b=nENW4L6jC7azkY39hZheeEQVAWmSnHuaNvw+4JYmwBxXcmBKbHB3XzwAJ+G3F9oJENz4StZqb8ICDA9hQLIY8kFHzXGTSx+f67o3qBR05gkTLEFl2eRXSRhDPpJ8tuDbOGN3wq/cvypJhUP6oesUhGpys3chO+dvIdfDyqRVtio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712306921; c=relaxed/simple;
-	bh=rs0vw5LW9UM/y60I9xGZqbakggiNBHyoOs4B+0ZsN6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=if/iITmOZWfT2Q0uhPswmoVue9XQ3g/SeRwqSvsuI2HQemoX2EreOj5Ub9DfPb5losXtbhfviESItdBDr9SPtkFCIBmP4e4a7mByDV4vKI4u7vK/WkKVV53R4hM5WhEpqn/FEdIxSRX4QaKg5JZFSPeTwnVCrWtmC+2KuK10gKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=R8T/4zsl; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="R8T/4zsl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=D3bA
-	ysj0N+3ktsukYn/zGLisNXUDp098hBJ07HyHzKc=; b=R8T/4zsl0Zd0dNbaommC
-	kCLTauMRf6yuGZlEbnNrPo+sDuLbN4s8BfD2QtEyqFV73GtOSagiQmnkLEuHWGCQ
-	vRejlIPlKU/mYMv+6t8UkEAMEtwYdgwHTAQorcdRr9Ope6KAX7AmqTkxF537SxfY
-	hbp2DrU8wtJm0oExDm1ozx0tnjR+RM/n3EJ7Hxedj1A/sxIF9bIEt0Q6uqjDDZO6
-	DhN5dSoCZRnlewvb/Wq/ACyPQ8GtSN3yttgw0BjHvy2Oz86yt92QQcC0xPBJXssA
-	1OMpCVAZHpK9gwh4XkivjtbsyOTJWxSQAZ6QWGsn2F7XdFdDJmCqNTrRYM5kOmvv
-	nA==
-Received: (qmail 4044863 invoked from network); 5 Apr 2024 10:48:34 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Apr 2024 10:48:34 +0200
-X-UD-Smtp-Session: l3s3148p1@j8VihVUV/oogAwDPXwEGAANOsN0UmmrN
-Date: Fri, 5 Apr 2024 10:48:34 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, asahi@lists.linux.dev, 
-	chrome-platform@lists.linux.dev, imx@lists.linux.dev, linux-actions@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH 00/64] i2c: reword i2c_algorithm according to newest
- specification
-Message-ID: <kd2gnsosi5xar3mwc3zz7wqtqkfgicq3wical5ch34sbmlgegk@mb2c2hxzzoi4>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, asahi@lists.linux.dev, 
-	chrome-platform@lists.linux.dev, imx@lists.linux.dev, linux-actions@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, virtualization@lists.linux.dev
-References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
- <ug266trshvhhbsln3eoh53fmsuj3l63ziz6gavcl7rv2jhjr5t@3av5givh5n7m>
- <j2l7tu24itjelylrgwe6gdsy3mfrw3dnve4rdofmri3z7xdroc@se56t5ylmdak>
+	s=arc-20240116; t=1712310965; c=relaxed/simple;
+	bh=nAKV/KIjO0niNMWNTOLLP1H2qDBqS7M9ULvho+EQ1zA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qj3k1MIp6haMEKg5L6flYwVM+Am2/NCgERIJk+FLa28Ul6saT/47zDMy59Zd1smbdcAGyGVSkwCF3SXzAHUtQCmtrHRtLjnoGqSg6rlnJ9dtJbuoptBAjEQQAzDQJxWA39EwKVHn3I7hygOVk02QMOHkGdd347YltowE0GQy2ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4V9tzY2lJqz6J7pn;
+	Fri,  5 Apr 2024 17:51:21 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id CEFDC1400D1;
+	Fri,  5 Apr 2024 17:56:01 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 5 Apr
+ 2024 10:56:01 +0100
+Date: Fri, 5 Apr 2024 10:56:00 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Lukasz Luba <lukasz.luba@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<dietmar.eggemann@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
+	<linux-samsung-soc@vger.kernel.org>, <rafael@kernel.org>,
+	<viresh.kumar@linaro.org>, <quic_sibis@quicinc.com>
+Subject: Re: [PATCH 0/2] Update Energy Model with perfromance limits
+Message-ID: <20240405105600.000019fd@Huawei.com>
+In-Reply-To: <20240403162315.1458337-1-lukasz.luba@arm.com>
+References: <20240403162315.1458337-1-lukasz.luba@arm.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c5kq2kdwqrnl4eet"
-Content-Disposition: inline
-In-Reply-To: <j2l7tu24itjelylrgwe6gdsy3mfrw3dnve4rdofmri3z7xdroc@se56t5ylmdak>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
+On Wed,  3 Apr 2024 17:23:13 +0100
+Lukasz Luba <lukasz.luba@arm.com> wrote:
 
---c5kq2kdwqrnl4eet
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Andi, hi everyone,
-
-thank you for reviewing and waiting. I had a small personal hiatus over
-Easter but now I am back. This series needs another cycle, so no need to
-hurry. I will address some of the review comments but not all. The
-conversion (and API improvements) are some bigger tasks, so
-inconsistencies inbetween can't be avoided AFAICS.
-
-I'll keep you updated.
-
-Happy hacking,
-
-   Wolfram
-
-
---c5kq2kdwqrnl4eet
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmYPut4ACgkQFA3kzBSg
-KbbwnxAAtFWKOWnU/VyFFeZnqQCgQ76FzO93xERcjysHlgnZv3BnA6UpxFnrHrs4
-Cn7RTWa0i9Ct1ns2AkkjOQ5rUIqczF7M2dVS0tqODwyazGPaDHYtsa3urfkCsLT7
-Gz0y5V+oHHUNj1hypkKtQ37/7iFSYbo5oryt9MFK6eFfs878jel/4BCGJk3SEa48
-ewNnEuM8aYfzlrn7/VbkWqHkCS5J6x8/VFk3PjlxgEW45UtEI3r30K6/jT9HOdx4
-6lCofEZKn4Bl0VbfJJ7MXd1Be2/Dk6ZaY09e97iAKt2+fM1OLrBwig2V8PAdV7ei
-LlHolA153CWJAAkzXE2bJsr252IuCLpVpZobTSQRfr+u5vVV354dfo2ek11R8iff
-DSr94kqdKVvOvegpxt4vyHUxQrfy70R9vlkgVhkdvdGbi3JfLeiCK+C+IcBZlbXr
-uTaPlNvOt6p+VJNAlucnKQF3mK0FvVMK7bTwqjbKR8ZzB8J20qj5pqxqtBZDjfOl
-fpTR9f9+kHWdmBuCLBq35aes6Lxq4JtNRH+czt8F8wIAfx/xcgTf2uPThVoFPO9s
-jyO4fy773Wsfo8PGo9SqSKr7K6gQW3dIDoFTk489lp3e9Y/DYJ+ZV2ixvCQKATjO
-3K0umrWHYd25+mhripLMPzaz3h1GPtmAiQq/dq2GUviAFUPoZas=
-=RWT2
------END PGP SIGNATURE-----
-
---c5kq2kdwqrnl4eet--
+Typo in patch title.  performance
