@@ -1,294 +1,148 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2694C5339B;
-	Mon,  8 Apr 2024 10:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E2614293;
+	Mon,  8 Apr 2024 10:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712570544; cv=none; b=F/2Fq+3ek+LN0Mmd+89K2pjPW1eR7/03E7rys6XviahpyQ8CzpM7JSDuUcxeM1l++Uj5l5xJ/MgfHqvwRu5CTTpLhZuPtLaG2PiGQ9FSIwtIz/uNZIl3v8hZz4gHXGxJNBk+wBK69tCP2PPNxbaFO21mvE+a/6Qeg+Ht1/tQ9Ds=
+	t=1712570605; cv=none; b=IIVnyJWo6ZvV9x7iNWTH8opmtyAzjRVdNHnncNBDMPvRTJ9I47R7ycu7eJvwz18+QEUcq5Oj6ZCdXvlZ8aY4kZgMEFOyHs/klLaE9zy+hlSSmtPiSPE7YHM4gmMaJBaddSxkhUpi/yoOnArK14c0UgIM2vtbxkhjH7MBSYhIlb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712570544; c=relaxed/simple;
-	bh=G0ku0dDFdTLc1pYqQSxUGgaQIlylzP539QExCGqMIzk=;
+	s=arc-20240116; t=1712570605; c=relaxed/simple;
+	bh=WORzMsyv7/eD22IgJnRRrJyiZieZ+C20vntCjs2Cb68=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vjgw5ynr8hWpGHtAZIaKy5UdKn/k3J4WSXID9AZ0a4wP19dPfyS3cxqjt9G+wbxlIOjE/RxYCn7FU2A2CgkqJncywdcWBe8V2zqs2CR+mQNwD/RxFBCuY/Ls9DXcbM+blk24dmMxtbplEibbBEcfL9MmkLBTzymmHYH2xnZs4GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AliY2OXz; arc=none smtp.client-ip=209.85.160.45
+	 To:Cc:Content-Type; b=kWU9oCkC8Cj4Qarlpecr3IeLLFOIl66Qr8yuEWV2XXi8rTaEkh5ZMh4DQyr5GtzLeGrENQkLNeB4T1Tlk1zvGuVI2aln6MlAMYA3UsJ4QXboD/AR2z8sAi42la7EkHmxRjl6P8fdMZt6KKneltsag0oCEnAl9nt62ibSR0IOhs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Atm40Bj5; arc=none smtp.client-ip=209.85.167.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AliY2OXz"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-22edb0ca19bso2071419fac.2;
-        Mon, 08 Apr 2024 03:02:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Atm40Bj5"
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c5ed27114bso166915b6e.0;
+        Mon, 08 Apr 2024 03:03:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712570542; x=1713175342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PPEmMPD9A+hZEcFAt1PdPzHj0S7+4U/Ump7cFa0dIPw=;
-        b=AliY2OXzoJZYps1a/PkvLY+MsS4eja4OpveLMbdA+77tDLqidy0Gks+TsS3F5Cnl00
-         zS9joIVnv48jkvBAy1NazStsB+u9o43ni8R9kfXu4kBG/wt2tWzljKS9rE+pKMUVT3LD
-         TZ0r53h9N/iLbwxVk9pHKPHkzu2Q4F570Jx7x5OzMijBFVJsWKoDiaj6l+/FeuABnlZU
-         dLkVSR+X7+C9kalsRwN69G3Mx7JTQFJ4dC6FrUEpv3Ak7cfI/Pef7kQjQ1S/gyiyUvvI
-         x3NiZqVJ6qUX1cDBypM2nP6izIIo4SUzNVKhVujfZpk6geWxMCRKnU/SbRQB5tqYGszN
-         bOGA==
+        d=gmail.com; s=20230601; t=1712570603; x=1713175403; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PE03u/ATA7y4is4W65IiCIRxo+xGf7RO1YxtgagN7Q=;
+        b=Atm40Bj5DhHX529XEa8+6GDsUotHimRLTZI0XdPiUmKmiXgo0a7PNVBf/DRSRmBwyD
+         iUHguEcfQAZ3Ucpd+7jvOleaA7DIkG9u+hgX8iRJdQXhEOeW0jpic3o9ONRc/L18OFbj
+         aeyeEThA5CTkf0HlkBEadIG3bStmvtd7cewo54mG7fgxaVPuSHyrCkaWuHEgs4X6QHQc
+         y1N1Io0Yzc9Ooe3o7H8/j8Q8O8sbDmHxhkMNg3IFDepJQNz9MOjLpMMKEcORLioOuZRJ
+         z2Hs2t8R45CkPg/0RCF8EDi5FxImC37Gys93G4DQ3B0fegi17TgJ0qaMCPW1LU3eqTCW
+         FChQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712570542; x=1713175342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PPEmMPD9A+hZEcFAt1PdPzHj0S7+4U/Ump7cFa0dIPw=;
-        b=QWj12NREEMV02+X1lFznevWhJ3LDDPeifSTeJ4YsYtc+iXg0SpvTflKIINdN2Abkpt
-         ECmBG4pWqnE25Wdm8vHMVf1FEa+/KhttNR6soAIubB9RzDe6nMV1Gnr84fQ+1YEaTLkF
-         Dli6hKzFlgIKAD4fdeOeEN16nfEhdPPe+CFgy4vdas8e9UDC/wNb0DP0jt3kEcrqXrU5
-         ccOMLETejRmuSx//4TOAyEA7xCBSFwoP3qBbFd5tBHBJf8Nx4tFqZOo1T7CbjrxjNOL2
-         oNdLSDLHOlvmhD4mFiUJIR0aL2c47A2UllqiTVkguI02BmzWc3IDmYdE1xDtf1xhlOau
-         ieAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsk/+TwXEjjJ6vW4k00w3s4PrieN6A27l0f8ALh4gvUCA70iQ4JatvgTnhsrkHaVSZ1uSNbBFvgmLn96+vWS+2PYzd/CpZiNQo2Jor20BAvRFi7UPYFtuW3vS103bQlKD4/XPD2LF+IK40o/Yr/ObNpkSWMVMRuStYtOQCnxd6q3Mujx0SHlkBjF0=
-X-Gm-Message-State: AOJu0YxJonxgH4YYq+PvO5sWp/LmGv08h+6n5Vkbe5ZFVrgq6w1jAZ4J
-	KfF0QSuHUgEmMY6M5b/rJXSu4rQcfihBSqGqI5egv3Vq9udnB1BJ4JPOpt5l5PasPa4PR3MtvhH
-	5mZmr4iYb2pn3ttjEs06P8WiT+E0=
-X-Google-Smtp-Source: AGHT+IEmpFRODcH4mOqBevHssvRTSi09L5ZlGtdmOwaxO0NzU0IoOHDQYE5m0GIfABZy5itcHhOErpFNTK2Kf3HzlBk=
-X-Received: by 2002:a05:6870:3927:b0:221:bcde:29cc with SMTP id
- b39-20020a056870392700b00221bcde29ccmr9107148oap.21.1712570542235; Mon, 08
- Apr 2024 03:02:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1712570603; x=1713175403;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2PE03u/ATA7y4is4W65IiCIRxo+xGf7RO1YxtgagN7Q=;
+        b=nvUPjUJ9lkiQHcI3NkQXgFnvcKfxod+R+l7zpYDAyVqjCtXf89LANuI0mxTPgjQrM2
+         rb1h7OaPK02ekCjQvXIUhjHt7Wb3hS6wNYfceQHnYLu+Oqx28UBGBk4/gJMHDhIZC0fO
+         ulIUkiUQe32aw3uScqMFPx7A2xUcFW7bN5QWRVUXwOQOt94fLsdjNFVj6zQToOaNqRwB
+         chBsiQq7NX9GmmXQ7r14TqtTMQzEobQ5ovJlwwux6qm+W41mI/QWurlVzwqgGTBika9T
+         kR3Ox0lUhmvOc4Q4oQ78bK2KX21Po3eXi2YlzLCU5svfNXf+L7RoBLRWQbPx7mzh5jqo
+         9OuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhKG7E/gUVy1A247kCq1xXLSkQ5wnq8RA6a6w26wUdId8A3DXMpMxeIYouQBd8uTUPyFoUAMwuPvB2eGJblD1n8Qs1aGSgn9MAUAn9m/okCH9aA9OSGNa9kQ7EuQEAS7icEOzufpGg2a0X+6f5kmNFixU9ne3CxnTlpwwGwy96thSlmhjkjfO7Am4=
+X-Gm-Message-State: AOJu0YxOUtLSymAi4WPf58/2dlykv7rjZDGJecOcsUbtP6DFJVi58uj3
+	PCVEp/stfE9ToicJ2zcSCNbuP2tsdkB14e95S5IA+piXxkM93v0QZE10L9Fene+VDj/MkEw333q
+	TnPmnkNyVJc9ORkag1If96SQb5Xc=
+X-Google-Smtp-Source: AGHT+IEQ3hVGE92TGKT4B04slYnWVGrK3nnjU+kRC8lDhLD9YRUEmgm7Gj1sBkLvrK/h6jh3Ut4TpCkZptegcRGNtjc=
+X-Received: by 2002:a05:6808:2010:b0:3c3:e679:cfbf with SMTP id
+ q16-20020a056808201000b003c3e679cfbfmr2936986oiw.21.1712570603048; Mon, 08
+ Apr 2024 03:03:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240301193831.3346-1-linux.amoon@gmail.com> <20240301193831.3346-4-linux.amoon@gmail.com>
- <52158bf6-16fe-4ce2-b9b6-bbc6550a6e14@wanadoo.fr> <CANAwSgTCaSSMN2QCw5fr=RBp0WwWaLuebzQDO=scnABNFNctJQ@mail.gmail.com>
- <e85ad80f-af7d-4eaf-9d14-dff13451f7e5@wanadoo.fr> <CANAwSgRrOw+6MHLPDP8RwLwzwB1EVGBTovtR2ChhqR3b5uWowA@mail.gmail.com>
- <CANAwSgQk10=K6Z5OzvT3OUncfr6BWyx7oH2JKN5CJAnS+uO7QQ@mail.gmail.com> <ed5153e1-f4de-4268-a9d0-e74b779d2587@wanadoo.fr>
-In-Reply-To: <ed5153e1-f4de-4268-a9d0-e74b779d2587@wanadoo.fr>
+References: <20240404071350.4242-1-linux.amoon@gmail.com> <20240404071350.4242-2-linux.amoon@gmail.com>
+ <2024040442-subscript-detective-8d12@gregkh> <CANAwSgTpvrUY_H4Q4TzZWF+z-B=rGM1ny9B-pgSZ3dKCn-mXrA@mail.gmail.com>
+ <f52f0634-a12c-46bd-9701-e5caf4326432@linaro.org>
+In-Reply-To: <f52f0634-a12c-46bd-9701-e5caf4326432@linaro.org>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 8 Apr 2024 15:32:06 +0530
-Message-ID: <CANAwSgQ6_bxpKmanPwXvKEQJ0p7AvwTs3on9ubOegaDn3nkdxw@mail.gmail.com>
-Subject: Re: [PATCH v1 3/4] usb: dwc3: exynos: Use devm_regulator_bulk_get_enable()
- helper function
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+Date: Mon, 8 Apr 2024 15:33:07 +0530
+Message-ID: <CANAwSgTM6744thtq4ywFfgtsBjnNEdHqkH9Or9ENm6zjqoUmxw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] usb: ehci-exynos: Use devm_clk_get_enabled() helpers
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Johan Hovold <johan@kernel.org>, 
 	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Christophe,
+Hi Krzysztof, Greg.
 
-On Fri, 5 Apr 2024 at 21:42, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
+On Thu, 4 Apr 2024 at 19:24, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Le 05/04/2024 =C3=A0 08:10, Anand Moon a =C3=A9crit :
-> >   Hi Christophe, Krzysztof,
+> On 04/04/2024 15:52, Anand Moon wrote:
+> > Hi Greg,
 > >
-> > On Mon, 4 Mar 2024 at 17:16, Anand Moon <linux.amoon@gmail.com> wrote:
+> > On Thu, 4 Apr 2024 at 18:30, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
 > >>
-> >> Hi Christophe,
+> >> On Thu, Apr 04, 2024 at 12:43:17PM +0530, Anand Moon wrote:
+> >>> The devm_clk_get_enabled() helpers:
+> >>>     - call devm_clk_get()
+> >>>     - call clk_prepare_enable() and register what is needed in order to
+> >>>      call clk_disable_unprepare() when needed, as a managed resource.
+> >>>
+> >>> This simplifies the code and avoids the calls to clk_disable_unprepare().
+> >>>
+> >>> While at it, use dev_err_probe consistently, and use its return value
+> >>> to return the error code.
+> >>>
+> >>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> >>> ---
+> >>> V2: drop the clk_disable_unprepare in suspend/resume functions
+> >>>     fix the usb_put_hcd return before the devm_clk_get_enabled
+> >>> ---
+> >>>  drivers/usb/host/ehci-exynos.c | 19 +++++--------------
+> >>>  1 file changed, 5 insertions(+), 14 deletions(-)
+> >>>
+> >>> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> >>> index f644b131cc0b..f00bfd0b13dc 100644
+> >>> --- a/drivers/usb/host/ehci-exynos.c
+> >>> +++ b/drivers/usb/host/ehci-exynos.c
+> >>> @@ -159,20 +159,15 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+> >>>
+> >>>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+> >>>       if (err)
+> >>> -             goto fail_clk;
+> >>> -
+> >>> -     exynos_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
+> >>> +             goto fail_io;
+> >>>
+> >>> +     exynos_ehci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
+> >>>       if (IS_ERR(exynos_ehci->clk)) {
+> >>> -             dev_err(&pdev->dev, "Failed to get usbhost clock\n");
+> >>> -             err = PTR_ERR(exynos_ehci->clk);
+> >>> -             goto fail_clk;
+> >>> +             usb_put_hcd(hcd);
+> >>> +             return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ehci->clk),
+> >>> +                               "Failed to get usbhost clock\n");
 > >>
-> >> On Sun, 3 Mar 2024 at 00:07, Christophe JAILLET
-> >> <christophe.jaillet@wanadoo.fr> wrote:
-> >>>
-> >>> Le 02/03/2024 =C3=A0 17:48, Anand Moon a =C3=A9crit :
-> >>>> Hi Christophe,
-> >>>>
-> >>>> On Sat, 2 Mar 2024 at 21:20, Christophe JAILLET
-> >>>> <christophe.jaillet@wanadoo.fr> wrote:
-> >>>>>
-> >>>>> Le 01/03/2024 =C3=A0 20:38, Anand Moon a =C3=A9crit :
-> >>>>>> Use devm_regulator_bulk_get_enable() instead of open coded
-> >>>>>> 'devm_regulator_get(), regulator_enable(), regulator_disable().
-> >>>>>>
-> >>>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >>>>>> ---
-> >>>>>>     drivers/usb/dwc3/dwc3-exynos.c | 49 +++-----------------------=
---------
-> >>>>>>     1 file changed, 4 insertions(+), 45 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc=
-3-exynos.c
-> >>>>>> index 5d365ca51771..7c77f3c69825 100644
-> >>>>>> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> >>>>>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> >>>>>> @@ -32,9 +32,6 @@ struct dwc3_exynos {
-> >>>>>>         struct clk              *clks[DWC3_EXYNOS_MAX_CLOCKS];
-> >>>>>>         int                     num_clks;
-> >>>>>>         int                     suspend_clk_idx;
-> >>>>>> -
-> >>>>>> -     struct regulator        *vdd33;
-> >>>>>> -     struct regulator        *vdd10;
-> >>>>>>     };
-> >>>>>>
-> >>>>>>     static int dwc3_exynos_probe(struct platform_device *pdev)
-> >>>>>> @@ -44,6 +41,7 @@ static int dwc3_exynos_probe(struct platform_dev=
-ice *pdev)
-> >>>>>>         struct device_node      *node =3D dev->of_node;
-> >>>>>>         const struct dwc3_exynos_driverdata *driver_data;
-> >>>>>>         int                     i, ret;
-> >>>>>> +     static const char * const regulators[] =3D { "vdd33", "vdd10=
-" };
-> >>>>>>
-> >>>>>>         exynos =3D devm_kzalloc(dev, sizeof(*exynos), GFP_KERNEL);
-> >>>>>>         if (!exynos)
-> >>>>>> @@ -78,27 +76,9 @@ static int dwc3_exynos_probe(struct platform_de=
-vice *pdev)
-> >>>>>>         if (exynos->suspend_clk_idx >=3D 0)
-> >>>>>>                 clk_prepare_enable(exynos->clks[exynos->suspend_cl=
-k_idx]);
-> >>>>>>
-> >>>>>> -     exynos->vdd33 =3D devm_regulator_get(dev, "vdd33");
-> >>>>>> -     if (IS_ERR(exynos->vdd33)) {
-> >>>>>> -             ret =3D PTR_ERR(exynos->vdd33);
-> >>>>>> -             goto vdd33_err;
-> >>>>>> -     }
-> >>>>>> -     ret =3D regulator_enable(exynos->vdd33);
-> >>>>>> -     if (ret) {
-> >>>>>> -             dev_err(dev, "Failed to enable VDD33 supply\n");
-> >>>>>> -             goto vdd33_err;
-> >>>>>> -     }
-> >>>>>> -
-> >>>>>> -     exynos->vdd10 =3D devm_regulator_get(dev, "vdd10");
-> >>>>>> -     if (IS_ERR(exynos->vdd10)) {
-> >>>>>> -             ret =3D PTR_ERR(exynos->vdd10);
-> >>>>>> -             goto vdd10_err;
-> >>>>>> -     }
-> >>>>>> -     ret =3D regulator_enable(exynos->vdd10);
-> >>>>>> -     if (ret) {
-> >>>>>> -             dev_err(dev, "Failed to enable VDD10 supply\n");
-> >>>>>> -             goto vdd10_err;
-> >>>>>> -     }
-> >>>>>> +     ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regul=
-ators), regulators);
-> >>>>>> +     if (ret)
-> >>>>>> +             return dev_err_probe(dev, ret, "Failed to enable reg=
-ulators\n");
-> >>>>>>
-> >>>>>>         if (node) {
-> >>>>>>                 ret =3D of_platform_populate(node, NULL, NULL, dev=
-);
-> >>>>>> @@ -115,10 +95,6 @@ static int dwc3_exynos_probe(struct platform_d=
-evice *pdev)
-> >>>>>>         return 0;
-> >>>>>>
-> >>>>>>     populate_err:
-> >>>>>> -     regulator_disable(exynos->vdd10);
-> >>>>>> -vdd10_err:
-> >>>>>> -     regulator_disable(exynos->vdd33);
-> >>>>>> -vdd33_err:
-> >>>>>>         for (i =3D exynos->num_clks - 1; i >=3D 0; i--)
-> >>>>>>                 clk_disable_unprepare(exynos->clks[i]);
-> >>>>>>
-> >>>>>> @@ -140,9 +116,6 @@ static void dwc3_exynos_remove(struct platform=
-_device *pdev)
-> >>>>>>
-> >>>>>>         if (exynos->suspend_clk_idx >=3D 0)
-> >>>>>>                 clk_disable_unprepare(exynos->clks[exynos->suspend=
-_clk_idx]);
-> >>>>>> -
-> >>>>>> -     regulator_disable(exynos->vdd33);
-> >>>>>> -     regulator_disable(exynos->vdd10);
-> >>>>>>     }
-> >>>>>>
-> >>>>>>     static const struct dwc3_exynos_driverdata exynos5250_drvdata =
-=3D {
-> >>>>>> @@ -196,9 +169,6 @@ static int dwc3_exynos_suspend(struct device *=
-dev)
-> >>>>>>         for (i =3D exynos->num_clks - 1; i >=3D 0; i--)
-> >>>>>>                 clk_disable_unprepare(exynos->clks[i]);
-> >>>>>>
-> >>>>>> -     regulator_disable(exynos->vdd33);
-> >>>>>> -     regulator_disable(exynos->vdd10);
-> >>>>>
-> >>>>> Hi,
-> >>>>>
-> >>>>> Same here, I don't think that removing regulator_[en|dis]able from =
-the
-> >>>>> suspend and resume function is correct.
-> >>>>>
-> >>>>> The goal is to stop some hardware when the system is suspended, in =
-order
-> >>>>> to save some power.
-> >>>> Ok,
-> >>>>>
-> >>>>> Why did you removed it?
-> >>>>
-> >>>> As per the description of the function  devm_regulator_bulk_get_enab=
-le
-> >>>>
-> >>>> * This helper function allows drivers to get several regulator
-> >>>>    * consumers in one operation with management, the regulators will
-> >>>>    * automatically be freed when the device is unbound.  If any of t=
-he
-> >>>>    * regulators cannot be acquired then any regulators that were
-> >>>>    * allocated will be freed before returning to the caller.
-> >>>
-> >>> The code in suspend/resume is not about freeing some resources. It is
-> >>> about enabling/disabling some hardware to save some power.
-> >>>
-> >>> Think to the probe/remove functions as the software in the kernel tha=
-t
-> >>> knows how to handle some hardawre, and the suspend/resume as the on/o=
-ff
-> >>> button to power-on and off the electrical chips.
-> >>>
-> >>> When the system is suspended, the software is still around. But some
-> >>> hardware can be set in a low consumption mode to save some power.
-> >>>
-> >>> IMHO, part of the code you removed changed this behaviour and increas=
-e
-> >>> the power consumption when the system is suspended.
-> >>>
+> >> Why is this logic changed?
 > >>
-> >> You are correct, I have changed the regulator API from
-> >> devm_regulator_get_enable to devm_regulator_bulk_get_enable
-> >> which changes this behavior.
-> >> I will fix it in the next version.
+> >> If you want to call dev_err_probe(), that's great, but do NOT mix it up
+> >> with a commit that does something totally different.
 > >>
-> >>> CJ
+> >> When you say something like "while at it" in a changelog text, that is a
+> >> HUGE hint that it needs to be a separate commit.  Because of that reason
+> >> alone, I can't take these, you know better :(
+> >>
+> >> thanks,
+> >>
 > >
-> > I could not find any example in the kernel to support
-> > devm_regulator_bulk_disable
-> > but here is my modified file.
-> >
-> > If you have any suggestions for this plz let me know.
+> > Ok, I will improve the commit message relevant to the code changes.
 >
-> I don't think that your approach is correct, and I don't think that the
-> proposed patch does what you expect it to do.
+> Please read Greg's message one more time. He did not propose to fix
+> commit msg, right?
 >
-> Calling a devm_ function in suspend/resume functions looks really
-> strange to me and is likely broken.
->
-> Especially here, devm_regulator_bulk_get_enable() in the resume function
-> allocates some memory that is not freed in
-> devm_regulator_bulk_disable(), because the API is not designed to work
-> like that. So this could generate a kind of memory leak.
->
->
-> *I think that the code is good enough as-is*, but if you really want to
-> change something, maybe:
->     - devm_regulator_get()+regulator_enable() in the probe could be
-> changed to devm_regulator_get_enable()
->     - the resume/suspend function should be left as-is with
-> regulator_disable()/regulator_ensable()
->     - remove regulator_disable() from the error handling path of the
-> probe and from the remove function.
->
-> I *think* it would work.
->
-No devm_regulator_get_enable use the same logic as
-devm_regulator_bulk_get_enable
-to enable the regulator.
 
-[0] https://elixir.bootlin.com/linux/latest/source/drivers/regulator/devres=
-.c#L126
-
-So as of now I am dropping the changes on the regulator in this patch serie=
-s.
-
-> CJ
->
-Thanks for your inputs.
+Ok I will drop dev_err_probe and keep the error flow as it is.
+It will not break the feature..
 
 Thanks
 
