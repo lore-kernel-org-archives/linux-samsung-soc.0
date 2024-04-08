@@ -1,269 +1,281 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D07D13F42D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Apr 2024 14:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD437482;
+	Mon,  8 Apr 2024 20:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712587765; cv=none; b=bH6llgmyG8+eHr26ALUDiuOlEvvmG+N+mkRjxVRaSyXuPQ2XzR0B4gRXGvntlHT+i9yptwr4gCzH0yJHvgYv1DRZyUsTfpooUUlv22arrpmT3RsYROrFiLQ6ijole670k00Wm6MJHsVNHdLEspgSP3pATieXTYNyRjzpQXPrQrw=
+	t=1712608518; cv=none; b=NpTWQdWqfq0pUKB5aI9cJZFOOgpUoWhNcaduRTIZJpC1d3TGbtxpKWkTc+uEVYU6QTSP0jysP9BVLDI6BQ2J7XKjPdNUR2H2sV5oeDydXN+W61ZzsCR9Z9q6zOkBdywg23I5g78lNbCmJDGF+IgZQpGTI3Xh+/HDDrOgUBtJGrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712587765; c=relaxed/simple;
-	bh=kqABwm4SeRyyWpDPZiCA1IIfX5kotHTU4sIUNm44rds=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fn1DfotJn47DEOwv7yw/jBOfyt7mLathTZb+GRJCl2aNte8MXFXBbhjLFLL7OVAasJumoMvj8gJq2KVadXwFZQdUIGxUX9n4lcI5AYeUd880tAZjd3S0/JR6EJ/GfTABul7zLXcsWqDFuHbqfuTltai6RWMM6WUsYccVYuq2WOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CajWZAZ9; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712608518; c=relaxed/simple;
+	bh=6wIbXijNZnjnOQq/sRLb9m1wVYCIfcRdMHTfHRaLA0s=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SLkOaSd71aTTkUPKQGK1nsBHMmjJ1LR+uL4nbLgxX1t1+ZUlN/rfHjzoqVOK3A9yGz98cNKEODt3GwJKXcAFy0DnZ6lyvA6E6Z4P3O9LqttgYolDW3YxFOr/Mkrezpk09jibI7ED7EOrCTe35CPBKLqQ5aq1BJEso9oPr3ZVtE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=V+c/5SYg; arc=none smtp.client-ip=80.12.242.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CajWZAZ9"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4162b74f2a1so27852085e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Apr 2024 07:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712587761; x=1713192561; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0EE/MOgIxft1vfD//KGXquYTb4qzSH0XjrabPn5Q8lo=;
-        b=CajWZAZ9A4VNb96o21snoUhAZo9hBeNkQ6dtDuj8xCdU2nKuw4K5hTsPYNmdRXVFH+
-         pEG1aVh5mRCdgZW43o0r3f1RaoqFtSmFxkkPjO/TgxgrR/b65L5aOTEoVOiTMonqFKny
-         tOfc5xfWhkTRo0qVsmC0PFDvcvHwH9czTuKWJJ9d/GS5kzsCzI7xEYl2C4u/mEiir/CD
-         eDSiBH4G7xG8bFt7ebCwKtLKMuZT2NnmwvO0BMt4PkxKgD6bPPv2d0IJDTCtQ9WZBtm3
-         erwF3dtoi5+ttRz4xQ3boax104TkbLM4Vn26KGPw6K2JRCAt2feGjpsy0j4freT0jfDO
-         +YpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712587761; x=1713192561;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0EE/MOgIxft1vfD//KGXquYTb4qzSH0XjrabPn5Q8lo=;
-        b=MCAXRaBke1LHmLsI0Z3TwDCCmbPBjZlrUNoO+9xCaALLxow+u53puMWEHFW18V1j9F
-         fNs8eAxlOOg61Y/jamZwlxebVD5UkU0nUKyr1knMzyWNBnGShxbJ2x5MVusxRw+rAbWy
-         LJaalEhZSuzBHB0t9gDnMWsA2fEN7fvbdmiiUY7pqO8Vw82n8W4z37GH9eGUXAxqovGN
-         TjMfE6SZFxdbMVdDVhMcaNU3NQYYw5YuRDEx76R6SUA9PZNYfO4K+nU6BvYTo6MhMT25
-         THRc/3TiV9qOxjZuq2qkay+vpsOr7w5ipf8+QsrKNMjDzsGglKVT0LA7pqCx1/p32f9B
-         CMwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcGE5Sdotrtsiv15ufKBM1Lma7zUq4zOkZqOntoE0Q1UgQMhCbfMEJAyv8K3LUYRdmKPKpd1wVdQCECmlsS1f9YsM02beI54lFqDNP+5JRqh8=
-X-Gm-Message-State: AOJu0YxE0ym7ROhLJgTok7u+Lw7M0DbJy0chCyl48fO0VD0JHMTTaICG
-	y6A4/EEEMzIrRRnyJaZ1TLt9SD1V1PiwrU1/Nzuqfgxe5BG6ZLsYrqzBstjBIso=
-X-Google-Smtp-Source: AGHT+IGG9i5K+adcR32eYKb2R1dhdhIu35XUgoAG2pjKiBFFLAOeBkyufatVzBbZUYaV4XpDPUBWWg==
-X-Received: by 2002:a05:600c:3acb:b0:416:7222:8a78 with SMTP id d11-20020a05600c3acb00b0041672228a78mr2201360wms.37.1712587760913;
-        Mon, 08 Apr 2024 07:49:20 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id dr20-20020a5d5f94000000b0033ea499c645sm9303171wrb.4.2024.04.08.07.49.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Apr 2024 07:49:20 -0700 (PDT)
-Message-ID: <6c2b060b3b32b2da46bafbdc33236c319b6cec62.camel@linaro.org>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
- avri.altman@wdc.com,  bvanassche@acm.org, s.nawrocki@samsung.com,
- cw00.choi@samsung.com,  jejb@linux.ibm.com, martin.petersen@oracle.com,
- chanho61.park@samsung.com,  ebiggers@kernel.org
-Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com
-Date: Mon, 08 Apr 2024 15:49:18 +0100
-In-Reply-To: <20240404122559.898930-9-peter.griffin@linaro.org>
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
-	 <20240404122559.898930-9-peter.griffin@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="V+c/5SYg"
+Received: from [192.168.1.18] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id tvZIrDqpwcdQQtvZIr8sCw; Mon, 08 Apr 2024 22:26:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1712607983;
+	bh=GgXY2ZURZjB5f6jznbBiGTWLjQntZx7NuXSDPoPAJoY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=V+c/5SYgM+nv6Z4DXzXctxKJC5zWfV353MCYZ/bLp6iRpydM5VYGzPiKynORj8fXM
+	 6CXHzEAOfpcCrnhm35VAUnbjZwus6d9tY51DBtyVZPXG3UBBr0rpW/bGBrLsVuI/do
+	 LfZzGR7qLiJKflrTNoEdH6/KBtxlDARrpTIhp97wtnnHMDmkwDBIyDgxj2TzGImrma
+	 qoW4i/SxjRF/CLUd658+iW/GUjUXvQgdbr2/+atsRYcXmSpx5/LOhk5LtCN8Mp9yp9
+	 ugbiL5thw9/W4WTUkMKsRqZWeAUULX6AyjR8ijnRMi6/KFCt1iQvGqmGgeDbj95jrB
+	 G7saZ67RahwAA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 08 Apr 2024 22:26:23 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <6450334d-596b-4982-8a17-eefc8585e036@wanadoo.fr>
+Date: Mon, 8 Apr 2024 22:26:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v1 3/4] usb: dwc3: exynos: Use
+ devm_regulator_bulk_get_enable() helper function
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240301193831.3346-1-linux.amoon@gmail.com>
+ <20240301193831.3346-4-linux.amoon@gmail.com>
+ <52158bf6-16fe-4ce2-b9b6-bbc6550a6e14@wanadoo.fr>
+ <CANAwSgTCaSSMN2QCw5fr=RBp0WwWaLuebzQDO=scnABNFNctJQ@mail.gmail.com>
+ <e85ad80f-af7d-4eaf-9d14-dff13451f7e5@wanadoo.fr>
+ <CANAwSgRrOw+6MHLPDP8RwLwzwB1EVGBTovtR2ChhqR3b5uWowA@mail.gmail.com>
+ <CANAwSgQk10=K6Z5OzvT3OUncfr6BWyx7oH2JKN5CJAnS+uO7QQ@mail.gmail.com>
+ <ed5153e1-f4de-4268-a9d0-e74b779d2587@wanadoo.fr>
+ <CANAwSgQ6_bxpKmanPwXvKEQJ0p7AvwTs3on9ubOegaDn3nkdxw@mail.gmail.com>
+Content-Language: en-MW
+In-Reply-To: <CANAwSgQ6_bxpKmanPwXvKEQJ0p7AvwTs3on9ubOegaDn3nkdxw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Pete,
+Le 08/04/2024 à 12:02, Anand Moon a écrit :
+> Hi Christophe,
+> 
+> On Fri, 5 Apr 2024 at 21:42, Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> Le 05/04/2024 à 08:10, Anand Moon a écrit :
+>>>    Hi Christophe, Krzysztof,
+>>>
+>>> On Mon, 4 Mar 2024 at 17:16, Anand Moon <linux.amoon@gmail.com> wrote:
+>>>>
+>>>> Hi Christophe,
+>>>>
+>>>> On Sun, 3 Mar 2024 at 00:07, Christophe JAILLET
+>>>> <christophe.jaillet@wanadoo.fr> wrote:
+>>>>>
+>>>>> Le 02/03/2024 à 17:48, Anand Moon a écrit :
+>>>>>> Hi Christophe,
+>>>>>>
+>>>>>> On Sat, 2 Mar 2024 at 21:20, Christophe JAILLET
+>>>>>> <christophe.jaillet@wanadoo.fr> wrote:
+>>>>>>>
+>>>>>>> Le 01/03/2024 à 20:38, Anand Moon a écrit :
+>>>>>>>> Use devm_regulator_bulk_get_enable() instead of open coded
+>>>>>>>> 'devm_regulator_get(), regulator_enable(), regulator_disable().
+>>>>>>>>
+>>>>>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>>>>>>>> ---
+>>>>>>>>      drivers/usb/dwc3/dwc3-exynos.c | 49 +++-------------------------------
+>>>>>>>>      1 file changed, 4 insertions(+), 45 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+>>>>>>>> index 5d365ca51771..7c77f3c69825 100644
+>>>>>>>> --- a/drivers/usb/dwc3/dwc3-exynos.c
+>>>>>>>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+>>>>>>>> @@ -32,9 +32,6 @@ struct dwc3_exynos {
+>>>>>>>>          struct clk              *clks[DWC3_EXYNOS_MAX_CLOCKS];
+>>>>>>>>          int                     num_clks;
+>>>>>>>>          int                     suspend_clk_idx;
+>>>>>>>> -
+>>>>>>>> -     struct regulator        *vdd33;
+>>>>>>>> -     struct regulator        *vdd10;
+>>>>>>>>      };
+>>>>>>>>
+>>>>>>>>      static int dwc3_exynos_probe(struct platform_device *pdev)
+>>>>>>>> @@ -44,6 +41,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>>>>>>>          struct device_node      *node = dev->of_node;
+>>>>>>>>          const struct dwc3_exynos_driverdata *driver_data;
+>>>>>>>>          int                     i, ret;
+>>>>>>>> +     static const char * const regulators[] = { "vdd33", "vdd10" };
+>>>>>>>>
+>>>>>>>>          exynos = devm_kzalloc(dev, sizeof(*exynos), GFP_KERNEL);
+>>>>>>>>          if (!exynos)
+>>>>>>>> @@ -78,27 +76,9 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>>>>>>>          if (exynos->suspend_clk_idx >= 0)
+>>>>>>>>                  clk_prepare_enable(exynos->clks[exynos->suspend_clk_idx]);
+>>>>>>>>
+>>>>>>>> -     exynos->vdd33 = devm_regulator_get(dev, "vdd33");
+>>>>>>>> -     if (IS_ERR(exynos->vdd33)) {
+>>>>>>>> -             ret = PTR_ERR(exynos->vdd33);
+>>>>>>>> -             goto vdd33_err;
+>>>>>>>> -     }
+>>>>>>>> -     ret = regulator_enable(exynos->vdd33);
+>>>>>>>> -     if (ret) {
+>>>>>>>> -             dev_err(dev, "Failed to enable VDD33 supply\n");
+>>>>>>>> -             goto vdd33_err;
+>>>>>>>> -     }
+>>>>>>>> -
+>>>>>>>> -     exynos->vdd10 = devm_regulator_get(dev, "vdd10");
+>>>>>>>> -     if (IS_ERR(exynos->vdd10)) {
+>>>>>>>> -             ret = PTR_ERR(exynos->vdd10);
+>>>>>>>> -             goto vdd10_err;
+>>>>>>>> -     }
+>>>>>>>> -     ret = regulator_enable(exynos->vdd10);
+>>>>>>>> -     if (ret) {
+>>>>>>>> -             dev_err(dev, "Failed to enable VDD10 supply\n");
+>>>>>>>> -             goto vdd10_err;
+>>>>>>>> -     }
+>>>>>>>> +     ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators), regulators);
+>>>>>>>> +     if (ret)
+>>>>>>>> +             return dev_err_probe(dev, ret, "Failed to enable regulators\n");
+>>>>>>>>
+>>>>>>>>          if (node) {
+>>>>>>>>                  ret = of_platform_populate(node, NULL, NULL, dev);
+>>>>>>>> @@ -115,10 +95,6 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>>>>>>>>          return 0;
+>>>>>>>>
+>>>>>>>>      populate_err:
+>>>>>>>> -     regulator_disable(exynos->vdd10);
+>>>>>>>> -vdd10_err:
+>>>>>>>> -     regulator_disable(exynos->vdd33);
+>>>>>>>> -vdd33_err:
+>>>>>>>>          for (i = exynos->num_clks - 1; i >= 0; i--)
+>>>>>>>>                  clk_disable_unprepare(exynos->clks[i]);
+>>>>>>>>
+>>>>>>>> @@ -140,9 +116,6 @@ static void dwc3_exynos_remove(struct platform_device *pdev)
+>>>>>>>>
+>>>>>>>>          if (exynos->suspend_clk_idx >= 0)
+>>>>>>>>                  clk_disable_unprepare(exynos->clks[exynos->suspend_clk_idx]);
+>>>>>>>> -
+>>>>>>>> -     regulator_disable(exynos->vdd33);
+>>>>>>>> -     regulator_disable(exynos->vdd10);
+>>>>>>>>      }
+>>>>>>>>
+>>>>>>>>      static const struct dwc3_exynos_driverdata exynos5250_drvdata = {
+>>>>>>>> @@ -196,9 +169,6 @@ static int dwc3_exynos_suspend(struct device *dev)
+>>>>>>>>          for (i = exynos->num_clks - 1; i >= 0; i--)
+>>>>>>>>                  clk_disable_unprepare(exynos->clks[i]);
+>>>>>>>>
+>>>>>>>> -     regulator_disable(exynos->vdd33);
+>>>>>>>> -     regulator_disable(exynos->vdd10);
+>>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> Same here, I don't think that removing regulator_[en|dis]able from the
+>>>>>>> suspend and resume function is correct.
+>>>>>>>
+>>>>>>> The goal is to stop some hardware when the system is suspended, in order
+>>>>>>> to save some power.
+>>>>>> Ok,
+>>>>>>>
+>>>>>>> Why did you removed it?
+>>>>>>
+>>>>>> As per the description of the function  devm_regulator_bulk_get_enable
+>>>>>>
+>>>>>> * This helper function allows drivers to get several regulator
+>>>>>>     * consumers in one operation with management, the regulators will
+>>>>>>     * automatically be freed when the device is unbound.  If any of the
+>>>>>>     * regulators cannot be acquired then any regulators that were
+>>>>>>     * allocated will be freed before returning to the caller.
+>>>>>
+>>>>> The code in suspend/resume is not about freeing some resources. It is
+>>>>> about enabling/disabling some hardware to save some power.
+>>>>>
+>>>>> Think to the probe/remove functions as the software in the kernel that
+>>>>> knows how to handle some hardawre, and the suspend/resume as the on/off
+>>>>> button to power-on and off the electrical chips.
+>>>>>
+>>>>> When the system is suspended, the software is still around. But some
+>>>>> hardware can be set in a low consumption mode to save some power.
+>>>>>
+>>>>> IMHO, part of the code you removed changed this behaviour and increase
+>>>>> the power consumption when the system is suspended.
+>>>>>
+>>>>
+>>>> You are correct, I have changed the regulator API from
+>>>> devm_regulator_get_enable to devm_regulator_bulk_get_enable
+>>>> which changes this behavior.
+>>>> I will fix it in the next version.
+>>>>
+>>>>> CJ
+>>>
+>>> I could not find any example in the kernel to support
+>>> devm_regulator_bulk_disable
+>>> but here is my modified file.
+>>>
+>>> If you have any suggestions for this plz let me know.
+>>
+>> I don't think that your approach is correct, and I don't think that the
+>> proposed patch does what you expect it to do.
+>>
+>> Calling a devm_ function in suspend/resume functions looks really
+>> strange to me and is likely broken.
+>>
+>> Especially here, devm_regulator_bulk_get_enable() in the resume function
+>> allocates some memory that is not freed in
+>> devm_regulator_bulk_disable(), because the API is not designed to work
+>> like that. So this could generate a kind of memory leak.
+>>
+>>
+>> *I think that the code is good enough as-is*, but if you really want to
+>> change something, maybe:
+>>      - devm_regulator_get()+regulator_enable() in the probe could be
+>> changed to devm_regulator_get_enable()
+>>      - the resume/suspend function should be left as-is with
+>> regulator_disable()/regulator_ensable()
+>>      - remove regulator_disable() from the error handling path of the
+>> probe and from the remove function.
+>>
+>> I *think* it would work.
+>>
+> No devm_regulator_get_enable use the same logic as
+> devm_regulator_bulk_get_enable
+> to enable the regulator.
 
-On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
-> CMU_HSI2 is the clock management unit used for the hsi2 block.
-> HSI stands for High Speed Interface and as such it generates
-> clocks for PCIe, UFS and MMC card.
->=20
-> This patch adds support for the muxes, dividers, and gates in
-> cmu_hsi2.
->=20
-> CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK is marked as CLK_IS_CRITICAL
-> as disabling it leads to an immediate system hang.
->=20
-> CLK_GOUT_HSI2_SYSREG_HSI2_PCLK is also marked CLK_IS_CRITICAL.
-> A hang is not observed with fine grained clock control, but
-> UFS IP does not function with syscon controlling this clock
-> just around hsi2_sysreg register accesses.
+Yes, the logic is the same, but you get a pointer to the "struct 
+regulator" which can be used to disable/enable in the suspend/resume 
+functions.
 
-Would it make sense to add this clock to the &ufs_0 node in the DTS
-instead? Seems more natural than a clock that's constantly enabled?
+With the bulk version, you can not do that.
 
-> [...]
->=20
-> Updated regex for clock name mangling
-> =C2=A0=C2=A0=C2=A0 sed \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^PLL_LOCKTIME_PLL_\([^_]=
-\+\)|fout_\L\1_pll|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^PLL_CON0_MUX_CLKCMU_\([=
-^_]\+\)_\(.*\)|mout_\L\1_\2|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^PLL_CON0_PLL_\(.*\)|mou=
-t_pll_\L\1|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_MUX_MUX_CLK_\(.=
-*\)|mout_\L\1|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^PLL_CON[1-4]_[^_]\+_/d' =
-\
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^[^_]\+_CMU_[^_]\+_CONTRO=
-LLER_OPTION/d' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^CLKOUT_CON_BLK_[^_]\+_CM=
-U_[^_]\+_CLKOUT0/d' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_IPCLKPORT||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_RSTNSYNC||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_G4X2_DWC_PCIE_CTL||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_G4X1_DWC_PCIE_CTL||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_PCIE_SUB_CTRL||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_INST_0||g' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_LN05LPE||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_TM_WRAPPER||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|_SF||' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_DIV_DIV_CLK_\([=
-^_]\+\)_\(.*\)|dout_\L\1_\2|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_BUF_CLKBUF_\([^=
-_]\+\)_\(.*\)|gout_\L\1_\2|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_GAT_CLK_BLK_\([=
-^_]\+\)_UID_\(.*\)|gout_\L\1_\2|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^gout_[^_]\+_[^_]\+_cmu_=
-\([^_]\+\)_pclk$|gout_\1_\1_pclk|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_GAT_GOUT_BLK_\(=
-[^_]\+\)_UID_\(.*\)|gout_\L\1_\2|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e 's|^CLK_CON_GAT_CLK_\([^_]\=
-+\)_\(.*\)|gout_\L\1_clk_\L\1_\2|' \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -e '/^\(DMYQCH\|PCH\|QCH\|QUEU=
-E\)_/d'
+See my first reply on your 3/4 patch.
 
-Thank you for the updated regex.
+> 
+> [0] https://elixir.bootlin.com/linux/latest/source/drivers/regulator/devres.c#L126
+> 
+> So as of now I am dropping the changes on the regulator in this patch series.
 
-> ---
-> =C2=A0drivers/clk/samsung/clk-gs101.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 558 +++++++++++++++++++++++
-> =C2=A0include/dt-bindings/clock/google,gs101.h |=C2=A0 63 +++
-> =C2=A02 files changed, 621 insertions(+)
->=20
-> diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs=
-101.c
-> index d065e343a85d..b9f84c7d5c22 100644
-> --- a/drivers/clk/samsung/clk-gs101.c
-> +++ b/drivers/clk/samsung/clk-gs101.c
-> @@ -22,6 +22,7 @@
-> =C2=A0#define CLKS_NR_MISC	(CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
-> =C2=A0#define CLKS_NR_PERIC0	(CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
-> =C2=A0#define CLKS_NR_PERIC1	(CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-> +#define CLKS_NR_HSI2	(CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
-> =C2=A0
-> =C2=A0/* ---- CMU_TOP ---------------------------------------------------=
----------- */
-> =C2=A0
-> @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu_i=
-nfo __initconst =3D {
-> =C2=A0	.clk_name		=3D "bus",
-> =C2=A0};
-> =C2=A0
-> +/* ---- CMU_HSI2 -------------------------------------------------------=
---- */
+I do agree that it is certainly the way to go here.
 
-This comment is shorter that all the other similar comments in this file.
+CJ
 
-> [...]
-> +
-> +PNAME(mout_hsi2_bus_user_p)	=3D { "oscclk", "dout_cmu_hsi2_bus" };
-> +PNAME(mout_hsi2_pcie_user_p)	=3D { "oscclk", "dout_cmu_hsi2_pcie" };
-> +PNAME(mout_hsi2_ufs_embd_user_p) =3D { "oscclk", "dout_cmu_hsi2_ufs_embd=
-" };
-> +PNAME(mout_hsi2_mmc_card_user_p) =3D { "oscclk", "dout_cmu_hsi2_mmc_card=
-" };
-
-Can you make these alphabetical, too, please, which would also match their =
-usage
-below:
-
-> +
-> +static const struct samsung_mux_clock hsi2_mux_clks[] __initconst =3D {
-> +	MUX(CLK_MOUT_HSI2_BUS_USER, "mout_hsi2_bus_user", mout_hsi2_bus_user_p,
-> +	=C2=A0=C2=A0=C2=A0 PLL_CON0_MUX_CLKCMU_HSI2_BUS_USER, 4, 1),
-> +	MUX(CLK_MOUT_HSI2_MMC_CARD_USER, "mout_hsi2_mmc_card_user",
-> +	=C2=A0=C2=A0=C2=A0 mout_hsi2_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_HSI2_=
-MMC_CARD_USER,
-> +	=C2=A0=C2=A0=C2=A0 4, 1),
-> +	MUX(CLK_MOUT_HSI2_PCIE_USER, "mout_hsi2_pcie_user",
-> +	=C2=A0=C2=A0=C2=A0 mout_hsi2_pcie_user_p, PLL_CON0_MUX_CLKCMU_HSI2_PCIE=
-_USER,
-> +	=C2=A0=C2=A0=C2=A0 4, 1),
-> +	MUX(CLK_MOUT_HSI2_UFS_EMBD_USER, "mout_hsi2_ufs_embd_user",
-> +	=C2=A0=C2=A0=C2=A0 mout_hsi2_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI2_=
-UFS_EMBD_USER,
-> +	=C2=A0=C2=A0=C2=A0 4, 1),
-> +};
-> +
-> +static const struct samsung_gate_clock hsi2_gate_clks[] __initconst =3D =
-{
-> +
-
-Here and below: all these extra empty lines are not needed.
-
-> +	GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_PHY_REFCLK_IN,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_pcie_gen4_1_pcie_003_phy_refclk_in"=
-,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_pcie_user",
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLK=
-PORT_PCIE_003_PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
-> +
-> +	GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_PHY_REFCLK_IN,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_pcie_gen4_1_pcie_004_phy_refclk_in"=
-,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_pcie_user",
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLK=
-PORT_PCIE_004_PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
-> +
-> +	GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_ACLK,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_ssmt_pcie_ia_gen4a_1_aclk",
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_bus_user",
-
-The two strings fit on the same line.
-
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_CLK_BLK_HSI2_UID_SSMT_PCIE_IA_GEN4=
-A_1_IPCLKPORT_ACLK,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, 0, 0),
-> +
-> +	GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_PCLK,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_ssmt_pcie_ia_gen4a_1_pclk",
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "mout_hsi2_bus_user",
-
-dito.
-
-> [...]
-> +	/* Disabling this clock makes the system hang. Mark the clock as critic=
-al. */
-> +	GATE(CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 "gout_hsi2_hsi2_cmu_hsi2_pclk", "mout_hsi2_bus=
-_user",
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 CLK_CON_GAT_GOUT_BLK_HSI2_UID_HSI2_CMU_HSI2_IP=
-CLKPORT_PCLK,
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 21, CLK_IS_CRITICAL, 0),
-
-I have a similar clock in USB, which also causes a hang if off, I wonder wh=
-at we
-could do better here.
-
-
-Cheers,
-Andre'
+> 
+>> CJ
+>>
+> Thanks for your inputs.
+> 
+> Thanks
+> 
+> -Anand
+> 
+> 
 
