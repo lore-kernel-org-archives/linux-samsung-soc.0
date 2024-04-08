@@ -1,149 +1,129 @@
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E2614293;
-	Mon,  8 Apr 2024 10:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDE97C097;
+	Mon,  8 Apr 2024 14:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712570605; cv=none; b=IIVnyJWo6ZvV9x7iNWTH8opmtyAzjRVdNHnncNBDMPvRTJ9I47R7ycu7eJvwz18+QEUcq5Oj6ZCdXvlZ8aY4kZgMEFOyHs/klLaE9zy+hlSSmtPiSPE7YHM4gmMaJBaddSxkhUpi/yoOnArK14c0UgIM2vtbxkhjH7MBSYhIlb4=
+	t=1712585213; cv=none; b=h6KNDGZQmEKe1yoG8spWFHC588hAuKwXe7TvO3avAKz74ZOholJDYXXMQ9L2kbXptF/6tprBpkpd18HrziPeOahTwGt+08h/W8ZzugESkClJLm75gE7DUxDoO/m9ciOXpVoYzUdBklmtJMcGdHl3UfMGTlhoqMXpZa1jRdLEvRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712570605; c=relaxed/simple;
-	bh=WORzMsyv7/eD22IgJnRRrJyiZieZ+C20vntCjs2Cb68=;
+	s=arc-20240116; t=1712585213; c=relaxed/simple;
+	bh=kJRZax7tKQw/4aGj608DFmiz3SzBrQfRW1Czn6YXsFM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kWU9oCkC8Cj4Qarlpecr3IeLLFOIl66Qr8yuEWV2XXi8rTaEkh5ZMh4DQyr5GtzLeGrENQkLNeB4T1Tlk1zvGuVI2aln6MlAMYA3UsJ4QXboD/AR2z8sAi42la7EkHmxRjl6P8fdMZt6KKneltsag0oCEnAl9nt62ibSR0IOhs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Atm40Bj5; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=lBsmf+TBO+8jNKV09d1R7g17Zt6jTcgQ5w3h+pTCH/umds2m+CBGJ8DlRxEiWO+rVt0Hhe60rWVxmTaLNlKcJHmq+4T89E8DoYszCaalFIeIqJnBTLUqUJqojBHY0zHA2VydY265YzUp/u0Zp1Qu6zWOWwIQueL58IoaYEzdr6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaNLfay3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Atm40Bj5"
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c5ed27114bso166915b6e.0;
-        Mon, 08 Apr 2024 03:03:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712570603; x=1713175403; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PE03u/ATA7y4is4W65IiCIRxo+xGf7RO1YxtgagN7Q=;
-        b=Atm40Bj5DhHX529XEa8+6GDsUotHimRLTZI0XdPiUmKmiXgo0a7PNVBf/DRSRmBwyD
-         iUHguEcfQAZ3Ucpd+7jvOleaA7DIkG9u+hgX8iRJdQXhEOeW0jpic3o9ONRc/L18OFbj
-         aeyeEThA5CTkf0HlkBEadIG3bStmvtd7cewo54mG7fgxaVPuSHyrCkaWuHEgs4X6QHQc
-         y1N1Io0Yzc9Ooe3o7H8/j8Q8O8sbDmHxhkMNg3IFDepJQNz9MOjLpMMKEcORLioOuZRJ
-         z2Hs2t8R45CkPg/0RCF8EDi5FxImC37Gys93G4DQ3B0fegi17TgJ0qaMCPW1LU3eqTCW
-         FChQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712570603; x=1713175403;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2PE03u/ATA7y4is4W65IiCIRxo+xGf7RO1YxtgagN7Q=;
-        b=nvUPjUJ9lkiQHcI3NkQXgFnvcKfxod+R+l7zpYDAyVqjCtXf89LANuI0mxTPgjQrM2
-         rb1h7OaPK02ekCjQvXIUhjHt7Wb3hS6wNYfceQHnYLu+Oqx28UBGBk4/gJMHDhIZC0fO
-         ulIUkiUQe32aw3uScqMFPx7A2xUcFW7bN5QWRVUXwOQOt94fLsdjNFVj6zQToOaNqRwB
-         chBsiQq7NX9GmmXQ7r14TqtTMQzEobQ5ovJlwwux6qm+W41mI/QWurlVzwqgGTBika9T
-         kR3Ox0lUhmvOc4Q4oQ78bK2KX21Po3eXi2YlzLCU5svfNXf+L7RoBLRWQbPx7mzh5jqo
-         9OuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhKG7E/gUVy1A247kCq1xXLSkQ5wnq8RA6a6w26wUdId8A3DXMpMxeIYouQBd8uTUPyFoUAMwuPvB2eGJblD1n8Qs1aGSgn9MAUAn9m/okCH9aA9OSGNa9kQ7EuQEAS7icEOzufpGg2a0X+6f5kmNFixU9ne3CxnTlpwwGwy96thSlmhjkjfO7Am4=
-X-Gm-Message-State: AOJu0YxOUtLSymAi4WPf58/2dlykv7rjZDGJecOcsUbtP6DFJVi58uj3
-	PCVEp/stfE9ToicJ2zcSCNbuP2tsdkB14e95S5IA+piXxkM93v0QZE10L9Fene+VDj/MkEw333q
-	TnPmnkNyVJc9ORkag1If96SQb5Xc=
-X-Google-Smtp-Source: AGHT+IEQ3hVGE92TGKT4B04slYnWVGrK3nnjU+kRC8lDhLD9YRUEmgm7Gj1sBkLvrK/h6jh3Ut4TpCkZptegcRGNtjc=
-X-Received: by 2002:a05:6808:2010:b0:3c3:e679:cfbf with SMTP id
- q16-20020a056808201000b003c3e679cfbfmr2936986oiw.21.1712570603048; Mon, 08
- Apr 2024 03:03:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaNLfay3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94005C433C7;
+	Mon,  8 Apr 2024 14:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712585213;
+	bh=kJRZax7tKQw/4aGj608DFmiz3SzBrQfRW1Czn6YXsFM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iaNLfay3XcHLZIpaCy2Tg5KiN9C3T5cq/wYk6+Alx80Fm/p5jZv6aRCZll9Kz4KXQ
+	 +1umEhFvpMDhygvSnwrGi9eHUz3JhVFewNicg4vs5ZfvNqvF70YPp7weJcsIgssSmU
+	 1YUW1VYVR5YeCyV4p8KHNZbAEMkhNg/xbY0fdSjGw+M6v/mJ0ABsmTPOSECekQV46t
+	 ofuMtPwfaSrvSagJ8G332KuTNnPDZGMzGoBzALD12Tzt68P4lMSy5Io6zjToMmO75z
+	 g1OjDlOYV4RmVRBsFu0PyHTitXZMoV5SnnXcqHi41q87Dqn0TDHtavTSJk/lHAYnyZ
+	 jLydp/j7C2+ZA==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5aa327a5514so62092eaf.0;
+        Mon, 08 Apr 2024 07:06:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWS6Hq0met6ef5CV5XhojOX/n6pkk2S+IKXYRRPnVt7XEvdYf8bfLX6WExx+8NI41IJHk9yPZPXkHC2lyZ7/YfuumatxNQaChNMQ133mzMRcb7ooUutzWOnyI12L+Z1agDMhfABzad1CGdj7g==
+X-Gm-Message-State: AOJu0Yww8oFUE3aJSdxFWqcENr4QxTTKpWCyUMgSFJsuIuUE7gb5jIs5
+	kNasAJciUTU9LGlkGSZE3lauxAQiX7cdYCS55W33laMnebaPh4LCew85eCqLzPXm+Jo2ltkFvlu
+	u//hgfFffO5QbYbzX5oeMsbANrCc=
+X-Google-Smtp-Source: AGHT+IEbfthzZ79XuDvyUQLEJLfFsf+aggAbvd3kcXbcCcp/nApsYYrvB2ACXv1jcTNPI8mdNwRCkjBg8LGXi0Cz1m8=
+X-Received: by 2002:a05:6870:1651:b0:220:bd4d:674d with SMTP id
+ c17-20020a056870165100b00220bd4d674dmr9057467oae.5.1712585212959; Mon, 08 Apr
+ 2024 07:06:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240404071350.4242-1-linux.amoon@gmail.com> <20240404071350.4242-2-linux.amoon@gmail.com>
- <2024040442-subscript-detective-8d12@gregkh> <CANAwSgTpvrUY_H4Q4TzZWF+z-B=rGM1ny9B-pgSZ3dKCn-mXrA@mail.gmail.com>
- <f52f0634-a12c-46bd-9701-e5caf4326432@linaro.org>
-In-Reply-To: <f52f0634-a12c-46bd-9701-e5caf4326432@linaro.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 8 Apr 2024 15:33:07 +0530
-Message-ID: <CANAwSgTM6744thtq4ywFfgtsBjnNEdHqkH9Or9ENm6zjqoUmxw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] usb: ehci-exynos: Use devm_clk_get_enabled() helpers
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Johan Hovold <johan@kernel.org>, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240403154907.1420245-1-lukasz.luba@arm.com>
+In-Reply-To: <20240403154907.1420245-1-lukasz.luba@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 8 Apr 2024 16:06:41 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jP8j3kcUFHx45_qpeOTa9THtP3qztC0oxuiohcYs5PPQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jP8j3kcUFHx45_qpeOTa9THtP3qztC0oxuiohcYs5PPQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/4] Update Energy Model after chip binning adjusted voltages
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, rafael@kernel.org, 
+	dietmar.eggemann@arm.com, linux-arm-kernel@lists.infradead.org, 
+	sboyd@kernel.org, nm@ti.com, linux-samsung-soc@vger.kernel.org, 
+	daniel.lezcano@linaro.org, viresh.kumar@linaro.org, 
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com, 
+	m.szyprowski@samsung.com, mhiramat@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof, Greg.
-
-On Thu, 4 Apr 2024 at 19:24, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Wed, Apr 3, 2024 at 5:49=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.com> wr=
+ote:
 >
-> On 04/04/2024 15:52, Anand Moon wrote:
-> > Hi Greg,
-> >
-> > On Thu, 4 Apr 2024 at 18:30, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> >>
-> >> On Thu, Apr 04, 2024 at 12:43:17PM +0530, Anand Moon wrote:
-> >>> The devm_clk_get_enabled() helpers:
-> >>>     - call devm_clk_get()
-> >>>     - call clk_prepare_enable() and register what is needed in order to
-> >>>      call clk_disable_unprepare() when needed, as a managed resource.
-> >>>
-> >>> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> >>>
-> >>> While at it, use dev_err_probe consistently, and use its return value
-> >>> to return the error code.
-> >>>
-> >>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >>> ---
-> >>> V2: drop the clk_disable_unprepare in suspend/resume functions
-> >>>     fix the usb_put_hcd return before the devm_clk_get_enabled
-> >>> ---
-> >>>  drivers/usb/host/ehci-exynos.c | 19 +++++--------------
-> >>>  1 file changed, 5 insertions(+), 14 deletions(-)
-> >>>
-> >>> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> >>> index f644b131cc0b..f00bfd0b13dc 100644
-> >>> --- a/drivers/usb/host/ehci-exynos.c
-> >>> +++ b/drivers/usb/host/ehci-exynos.c
-> >>> @@ -159,20 +159,15 @@ static int exynos_ehci_probe(struct platform_device *pdev)
-> >>>
-> >>>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
-> >>>       if (err)
-> >>> -             goto fail_clk;
-> >>> -
-> >>> -     exynos_ehci->clk = devm_clk_get(&pdev->dev, "usbhost");
-> >>> +             goto fail_io;
-> >>>
-> >>> +     exynos_ehci->clk = devm_clk_get_enabled(&pdev->dev, "usbhost");
-> >>>       if (IS_ERR(exynos_ehci->clk)) {
-> >>> -             dev_err(&pdev->dev, "Failed to get usbhost clock\n");
-> >>> -             err = PTR_ERR(exynos_ehci->clk);
-> >>> -             goto fail_clk;
-> >>> +             usb_put_hcd(hcd);
-> >>> +             return dev_err_probe(&pdev->dev, PTR_ERR(exynos_ehci->clk),
-> >>> +                               "Failed to get usbhost clock\n");
-> >>
-> >> Why is this logic changed?
-> >>
-> >> If you want to call dev_err_probe(), that's great, but do NOT mix it up
-> >> with a commit that does something totally different.
-> >>
-> >> When you say something like "while at it" in a changelog text, that is a
-> >> HUGE hint that it needs to be a separate commit.  Because of that reason
-> >> alone, I can't take these, you know better :(
-> >>
-> >> thanks,
-> >>
-> >
-> > Ok, I will improve the commit message relevant to the code changes.
+> Hi all,
 >
-> Please read Greg's message one more time. He did not propose to fix
-> commit msg, right?
+> This is a follow-up patch aiming to add EM modification due to chip binni=
+ng.
+> The first RFC and the discussion can be found here [1].
 >
+> It uses Exynos chip driver code as a 1st user. The EM framework has been
+> extended to handle this use case easily, when the voltage has been change=
+d
+> after setup. On my Odroid-xu4 in some OPPs I can observe ~20% power diffe=
+rence.
+> According to that data in driver tables it could be up to ~29%.
+>
+> This chip binning is applicable to a lot of SoCs, so the EM framework sho=
+uld
+> make it easy to update. It uses the existing OPP and DT information to
+> re-calculate the new power values.
+>
+> It has dependency on Exynos SoC driver tree.
+>
+> Changes:
+> v5:
+> - adjusted aligning of the function arguments in patch 1/4 (Dietmar)
+> - adjusted the in-code comment patch 4/4 (Dietmar)
+> - added Reviewed-by to all patches (Dietmar)
+> v4:
+> - added asterisk in the comment section (test robot)
+> - change the patch 2/4 header name and use 'Refactor'
+> v3:
+> - updated header description patch 2/4 (Dietmar)
+> - removed 2 sentences from comment and adjusted in patch 3/4 (Dietmar)
+> - patch 4/4 re-phrased code comment (Dietmar)
+> - collected tags (Krzysztof, Viresh)
+> v2:
+> - removed 'ret' from error message which wasn't initialized (Christian)
+> v1:
+> - exported the OPP calculation function from the OPP/OF so it can be
+>   used from EM fwk (Viresh)
+> - refactored EM updating function to re-use common code
+> - added new EM function which can be used by chip device drivers which
+>   modify the voltage in OPPs
+> RFC is at [1]
+>
+> Regards,
+> Lukasz Luba
+>
+> [1] https://lore.kernel.org/lkml/20231220110339.1065505-1-lukasz.luba@arm=
+.com/
+>
+> Lukasz Luba (4):
+>   OPP: OF: Export dev_opp_pm_calc_power() for usage from EM
+>   PM: EM: Refactor em_adjust_new_capacity()
+>   PM: EM: Add em_dev_update_chip_binning()
+>   soc: samsung: exynos-asv: Update Energy Model after adjusting voltage
+>
+>  drivers/opp/of.c                 |  17 +++--
+>  drivers/soc/samsung/exynos-asv.c |  10 ++-
+>  include/linux/energy_model.h     |   5 ++
+>  include/linux/pm_opp.h           |   8 +++
+>  kernel/power/energy_model.c      | 106 +++++++++++++++++++++++++------
+>  5 files changed, 121 insertions(+), 25 deletions(-)
+>
+> --
 
-Ok I will drop dev_err_probe and keep the error flow as it is.
-It will not break the feature..
-
-Thanks
-
--Anand
+All patches in the series applied as 6.10 material, thanks!
