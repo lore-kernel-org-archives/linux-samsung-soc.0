@@ -1,281 +1,220 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00230701.pphosted.com (mx0a-00230701.pphosted.com [148.163.156.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD437482;
-	Mon,  8 Apr 2024 20:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712608518; cv=none; b=NpTWQdWqfq0pUKB5aI9cJZFOOgpUoWhNcaduRTIZJpC1d3TGbtxpKWkTc+uEVYU6QTSP0jysP9BVLDI6BQ2J7XKjPdNUR2H2sV5oeDydXN+W61ZzsCR9Z9q6zOkBdywg23I5g78lNbCmJDGF+IgZQpGTI3Xh+/HDDrOgUBtJGrU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712608518; c=relaxed/simple;
-	bh=6wIbXijNZnjnOQq/sRLb9m1wVYCIfcRdMHTfHRaLA0s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SLkOaSd71aTTkUPKQGK1nsBHMmjJ1LR+uL4nbLgxX1t1+ZUlN/rfHjzoqVOK3A9yGz98cNKEODt3GwJKXcAFy0DnZ6lyvA6E6Z4P3O9LqttgYolDW3YxFOr/Mkrezpk09jibI7ED7EOrCTe35CPBKLqQ5aq1BJEso9oPr3ZVtE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=V+c/5SYg; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE414EB23;
+	Tue,  9 Apr 2024 01:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712627703; cv=fail; b=TsoIg4TaH/65ykszSyfCwwrT8u3dY98LJC/4RDzl2S9N4iCFR3yYg8oQJ3Zx+jD6LpzZa9kAst1ffUqg9Oi3vQYJBguCR2AZ8A7/DVodpYPJSk0unbq0xIpzdUoIE/IceSJ3OvL+tSh71nGDhU8a6bipUaWAadxY25/9kfI+xbM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712627703; c=relaxed/simple;
+	bh=vJF0ruO7/ofv+NcVkQLBg5LIxv8TJqDl2svtkVJ9bDg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SfPQF2FyleMFJRbdTWB3PcXG/kUQL1HNHXG4vkMKQO3vQ+97mToY048ER+X70FIY3hmrLhdnLK1tJhPUYqWHJWzm2PiCMkPnCocbYDyDvBfdWSE2TDR982SBBj+CxRWgvPYJ85pAx+zFrtO8Xm5SH+hLaJfe6i9v4tIaakyTERI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com; spf=pass smtp.mailfrom=synopsys.com; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=C8LcO7Og; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=knhUvHzJ; dkim=fail (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=B8cBaPvT reason="signature verification failed"; arc=fail smtp.client-ip=148.163.156.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synopsys.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="V+c/5SYg"
-Received: from [192.168.1.18] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id tvZIrDqpwcdQQtvZIr8sCw; Mon, 08 Apr 2024 22:26:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1712607983;
-	bh=GgXY2ZURZjB5f6jznbBiGTWLjQntZx7NuXSDPoPAJoY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To;
-	b=V+c/5SYgM+nv6Z4DXzXctxKJC5zWfV353MCYZ/bLp6iRpydM5VYGzPiKynORj8fXM
-	 6CXHzEAOfpcCrnhm35VAUnbjZwus6d9tY51DBtyVZPXG3UBBr0rpW/bGBrLsVuI/do
-	 LfZzGR7qLiJKflrTNoEdH6/KBtxlDARrpTIhp97wtnnHMDmkwDBIyDgxj2TzGImrma
-	 qoW4i/SxjRF/CLUd658+iW/GUjUXvQgdbr2/+atsRYcXmSpx5/LOhk5LtCN8Mp9yp9
-	 ugbiL5thw9/W4WTUkMKsRqZWeAUULX6AyjR8ijnRMi6/KFCt1iQvGqmGgeDbj95jrB
-	 G7saZ67RahwAA==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 08 Apr 2024 22:26:23 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <6450334d-596b-4982-8a17-eefc8585e036@wanadoo.fr>
-Date: Mon, 8 Apr 2024 22:26:16 +0200
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="C8LcO7Og";
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="knhUvHzJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="B8cBaPvT"
+Received: from pps.filterd (m0297266.ppops.net [127.0.0.1])
+	by mx0a-00230701.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4391Gaad002698;
+	Mon, 8 Apr 2024 18:54:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com; h=
+	from:to:cc:subject:date:message-id:references:in-reply-to
+	:content-type:content-id:content-transfer-encoding:mime-version;
+	 s=pfptdkimsnps; bh=vJF0ruO7/ofv+NcVkQLBg5LIxv8TJqDl2svtkVJ9bDg=; b=
+	C8LcO7Og60c0ys22kXte+WXLTIilZhvW9SpNdJ8Z7UB2FaBeIbeCBqnIeduLK0IS
+	qku6UaWCHDy50To7/3OFdxBedAC5nZF5tkQbpLIqDfNmK8BMxeDceVQH/CvBdyj5
+	HLPg1HroUUWy4QIfCByqpp+fEyZiJNNUj2mcQ4XeepHYfMh3kplHuC8vbr8E+HtM
+	pXD7NYUFyGLS+U/c4fAhgnHHuIaCdlqwXyvxGuSdzokwAU0ixcTsxlxZGcrxlS0T
+	eEzfdu0YlDeTLO0W3PtttPmSyGgTZcSqGDLW5IQuT2acp0fevxQ2NXd0JWKr+vQ1
+	xJRkHQ/p8Zxf8+uNc4rbzA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 3xb5n3qemk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Apr 2024 18:54:47 -0700 (PDT)
+Received: from m0297266.ppops.net (m0297266.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.24/8.17.1.24) with ESMTP id 4391r35C002595;
+	Mon, 8 Apr 2024 18:54:46 -0700
+Received: from smtprelay-out1.synopsys.com (smtprelay-out1.synopsys.com [149.117.73.133])
+	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 3xb5n3qemh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Apr 2024 18:54:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+	t=1712627686; bh=vJF0ruO7/ofv+NcVkQLBg5LIxv8TJqDl2svtkVJ9bDg=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=knhUvHzJeIDdaDdn4DH4Ic7d2yoMLf7Jxft07CoSpK5aZYhEtFo2rMnMJyqNnvrCY
+	 hVvKXFFjelwMHgzXk1jsVIGdD3QInvgpy30KxI5s9OlshK3KEp6K04e10cC1gMK1M7
+	 ZOK+UNC1UFUdKTaef9dIntA0JTV6sGhKHyILaaQ5r32dnL/ssqj7vYldBNC3q6pVU7
+	 modlrBX/0EGhQ5XiMNmLf6q1liTZvPOdDWKv9d21MVfRFfQLBH4egtu7tq2zu9hvh5
+	 AGFlHPIpWYzMFz/d2wr68PEUZN030FDOnIuFCo4a0L2ZZVzfnzVpfKbImbCiPPhVkf
+	 39+ySCmD9yGdA==
+Received: from mailhost.synopsys.com (sv2-mailhost2.synopsys.com [10.205.2.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits)
+	 client-signature RSA-PSS (2048 bits))
+	(Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
+	by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D1319401C6;
+	Tue,  9 Apr 2024 01:54:44 +0000 (UTC)
+Received: from o365relay-in.synopsys.com (us03-o365relay1.synopsys.com [10.4.161.137])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (verified OK))
+	by mailhost.synopsys.com (Postfix) with ESMTPS id 99A51A00B4;
+	Tue,  9 Apr 2024 01:54:44 +0000 (UTC)
+Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
+Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=synopsys.com
+Authentication-Results: o365relay-in.synopsys.com;
+	dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.a=rsa-sha256 header.s=selector1 header.b=B8cBaPvT;
+	dkim-atps=neutral
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
+	by o365relay-in.synopsys.com (Postfix) with ESMTPS id 95C274045F;
+	Tue,  9 Apr 2024 01:54:42 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XV9vHgX0sVsYB4gtNyWxpiLkG8isGx8zgeMcaoypSVTP50CrZmfAPGV2hRuNSsSLm1ITLICMcMOE/CbZq48O9uopcma5ZS5Nc9f8wGSI/WeAHugadlKGURi/CHPEMHQFOeFPtzMWkcQls4SHfFukFj04yoZXfU2u0saMkcLkezrDQnmoSdlW9rmqkip0IceHq3kgiDqSf3EBy3eaWqkkrVG8DfIA8ob637CtZNAAMtY6KSPDHJQoUiFW15X8LGytMR/4ETZ/TK7MLjWbwsRkP/rBVJhSd28q3EJ1pCWJ+I+YiFdJod06mslljyVYJcAwu3LqRSH5TRsLJOnF3wo1PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vJF0ruO7/ofv+NcVkQLBg5LIxv8TJqDl2svtkVJ9bDg=;
+ b=mh5VrO0PDETUuK+XsDrCYVLFTSVPQ2Y0thZfvdiPsZjCs0wo6HgjgBeAJjwjQ3iaXYpyRcw34BE2skYDrj8UuSuWrZkESzCdoC7cLT3FVSmB+em81/qK6+Lp4e9asCBwtL/PsSsm89R7ubkE769/l5UH0e3iz+gmJCATpLpeK2wq/BMkIHP/IITvRPjJSiLNFeufXZxoaw2UFD4pQH1qIihbP+43qwF8+YUiLqUsT3g9YHdHwo5hiZ/oUmGbhNXyzRjf2jXa3b/LOkbxCMS+z7PjyHN//2mqhPalWtenZmaeJpFe/+y6KOzdCkIb2TNNVu0LdbO/zXItkKSNg5g3qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
+ dkim=pass header.d=synopsys.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vJF0ruO7/ofv+NcVkQLBg5LIxv8TJqDl2svtkVJ9bDg=;
+ b=B8cBaPvTweLFyv36zttef21PtncA1i/LPR8z4h2tPuFumgLES2LxJN2K9F2mEFhabBogQfvhek8oPC4dzIPY4dozNWlh4BhKQ2RAR4gq8g+UbxzwGMJaC9vWAReCpSjQH7V79udg0vvkvsc67eVSqY9DX8km/VlPBgo+Dv2aTNU=
+Received: from LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16)
+ by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Tue, 9 Apr
+ 2024 01:54:38 +0000
+Received: from LV2PR12MB5990.namprd12.prod.outlook.com
+ ([fe80::c87:4fbe:a367:419c]) by LV2PR12MB5990.namprd12.prod.outlook.com
+ ([fe80::c87:4fbe:a367:419c%3]) with mapi id 15.20.7409.042; Tue, 9 Apr 2024
+ 01:54:38 +0000
+X-SNPS-Relay: synopsys.com
+From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+To: Anand Moon <linux.amoon@gmail.com>
+CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Johan Hovold <johan@kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 6/6] usb: dwc3: exynos: Switch from CONFIG_PM_SLEEP
+ guards to pm_sleep_ptr()
+Thread-Topic: [PATCH v2 6/6] usb: dwc3: exynos: Switch from CONFIG_PM_SLEEP
+ guards to pm_sleep_ptr()
+Thread-Index: AQHahl/kJDrJTmdr+Ua3V0pkAR86KrFfNPmA
+Date: Tue, 9 Apr 2024 01:54:37 +0000
+Message-ID: <20240409015352.ocpjbgxrx636jmk4@synopsys.com>
+References: <20240404071350.4242-1-linux.amoon@gmail.com>
+ <20240404071350.4242-7-linux.amoon@gmail.com>
+In-Reply-To: <20240404071350.4242-7-linux.amoon@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV2PR12MB5990:EE_|CYXPR12MB9340:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ a1LihwmuSbD2XSKsfngO98gRLUEJYyHZlDDS9I13qlzkym3mFS2y/OgSsz/ZQvNhR6NX99mjZhoPDoLa5YYQK5n6jwI1N+/QQ8IxuPyCpqvgb3IEFhKuZwK7wM2PzIVzssepuKOyW4MO+t9EYe4dRveG0c8IQYNyPvkJSfRVHh5q0jd70yrZkQRDbM1G9b0FTGI+av0rljtZkm3FbTSQtAYRbrNA9l6qNsJqi6XZu5hsSmF2BoX9CuoDy9AgqinoJJobL/xHdXxeSmQPzUoq5pDuHt3o0tMwiQeNpRqAR3yToAl7ceeWWef9Bz7q0afqhTKIJ6pwxkF8hOjvIL3215DxyHZ+WnhfL24nARb6ejCo9oeOiPpfIbY251F24BmmZIsFnKKGnx7ENB43DzMEcgt9oQqhtXfXW2vLcek7T8/5L7M0dUqt74pKYwqo44z8KYgWc7Sy5FQFa8/BOB9D7TRj6Tg5RJchVjRrPRhZ6qeSQV3Y4aaFirVL+vuD2z0Fg7dFTordTxCC0wrQ8o7TbvTrSfzoRFqMDIDBGuUnwhDAF4gvSSN/xxhWENxuv2fs+Ow/sAjEDZ4oEdo7/ZgkSGurUmspppUDTYDpToE6z+njKkToaDPN3GdXzP9fptBUNuhyq0P4wBxgjkvJHWhJtvbIVuwOSDj4dtUlp9eFmMc=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?dHBFTmQzay94VkVUTU9YWFpVWWsvV1RhYVRjYTcxUDMydEgvZSt4c2x3emNO?=
+ =?utf-8?B?V1RzNlJvY0dkZHBGZFBjQTZvK1AvRWlGb0dUSVc4dWdMclFyc3pTa1BNbFNF?=
+ =?utf-8?B?VGMrMWIyUVRLbXdLeGdJRlhsb2s0V3d6ekZIMWVGaDBkZWZkVWgwREYwQUpN?=
+ =?utf-8?B?bHFsNmRHMEkyUlN1ZWpIUFZibEoxeExhNzdnd1FwbVlBdDNuajVMemxrb3Y0?=
+ =?utf-8?B?aE8zeThRbUF1TklRbDhtdHhaRlRCbjk4cnN1NTcrY0xvWThDQXR3MkpWT3BL?=
+ =?utf-8?B?ZnVuN3ExYUJTRUdla0ZJMmE2NjltdWpNN0FNL2wrWENWbVlBQUllcFBxNXAr?=
+ =?utf-8?B?Y0J1L1JyTXFoaEJqMFJ3YURQd3NiN2ZHcHdMalBibmVxWFYrZTdwUkptaVBi?=
+ =?utf-8?B?OEIxUzF2eHp4MHRWWDRQSm9yZndTZnlyZ2UwdHUyU1ZGVTErYWRYRXJGdWV5?=
+ =?utf-8?B?bFZ1M1ExQUdVSjVuR01peTBvU0xibko4cTRUdDgzejJMWllNcEJDRkprWXJ0?=
+ =?utf-8?B?eWNjRDFmcUc4ZGNjZE80NVRORUpjRzl2YXpzTDJVczdRVlpJMHd0OXNsNDVJ?=
+ =?utf-8?B?OTlrd0FrRjEzUU9MTWFQMXEyLzJYcFpCU2Z0TTJDbnV1MmFpZUlHd2lObFFT?=
+ =?utf-8?B?czl2L2JSV1RmS3N1Q0hSU3RoMDA3UFV4QUpVWlU5WGlCTk54WEpCMFNJTzVW?=
+ =?utf-8?B?K0VPa1dHeVlBbHF5Mk8zaXJVSVI1dlNVNlcwZ0hvRjlISFpycEhjQ0FSMG9J?=
+ =?utf-8?B?WklBYktHSjl0R05xQmpqNFowQVppRHhMczZHSVFuY214ZTI4NHNleURwenJN?=
+ =?utf-8?B?WGRqY09qcUhJaWppeHh3UUZEMFhwTEQrRU9oeE5leVBiWEVkZWR3Vmt5SGlM?=
+ =?utf-8?B?S3hQTTNrUlZoMkpJZFBKNWlxQkdKYTJ4VEphTmdCZkovOHlPZTRGSVlBQ0dx?=
+ =?utf-8?B?NmpneWFuUjhxZlk1UmRvZHNIVVhodE1MbEFtYXFZRGUwME5FT2xGNUdMNk5n?=
+ =?utf-8?B?VUxmQWYyMis0MzVBVG81ZU5ocGhjcW0xZUNwOXVtVE53cGlBa01oZjVzSWVU?=
+ =?utf-8?B?QjFVMjMzdFZ5YXBvL2F5UDZiVExtL0RHMkhxcFRUZitoUUJJRjh0SFQ4aE9j?=
+ =?utf-8?B?TzNGMDlLNzlvMjFLODVGMUVrRjRkdm9YWU9UNldhV1VpMUJJL3htZEJPMTN3?=
+ =?utf-8?B?SDNhcGtZZDFISEdFUkN5M2U1d2dTSDk4R2ZUa3o0TTJHWGdsNEhOY2xTVm15?=
+ =?utf-8?B?YUxsTHRiem9PZk9aMFV0RU5DbU9ZVGtLQnBsVHMyaWhhTk9tQmVFN0dhTWhJ?=
+ =?utf-8?B?ZGhJM24wditLRmpnVkpxdmNwMCttVjdOcUV5SjIrZ0RJK29hL2VvN09EVEFK?=
+ =?utf-8?B?d2YzQ2lKTHJkdU1NTGRIYlM2NkYra2tkV2NSNldrVW43aVFXb0YzOVFneGFv?=
+ =?utf-8?B?WkQ0YUtBcys2bWN5cUtoR09KeXlHU3lOY2pmYXpSRFgyQ3lZYzRDZzNacS8z?=
+ =?utf-8?B?VDNlclcrUjB2eFhFQlhVVVVLQ0hlSEFhVTY0MHB0RkJPWVA3MDM4bnFRRjZt?=
+ =?utf-8?B?bWN6OWhYbERvR1daK1NGVHBXeUlQMy81ZHhxTnNLM2llYkFDTW44VWtxcDBU?=
+ =?utf-8?B?cVp0VTIzUTJ1OThmOG15K3grT21laGRwNFBQbTZyL0tmcUh0dGxWTU13a054?=
+ =?utf-8?B?SENTcXgwMFpCd3lGSEIxQ29GOVZTZitWd2FUQVlhY1JXSmxHQm9tY3AvSUtn?=
+ =?utf-8?B?YjJ2WjVGVE8xYXdRcndHYUxxUHNUNEJrYzhCem50US9lWjhSQVlNNkJYNFZU?=
+ =?utf-8?B?bTlld2YyT0NSaHM0R1QrTXlCdURhRW5xYURyakQyTXQwM3JwanlhMmxiWXJy?=
+ =?utf-8?B?VXk5SEcrSXF6b21sNmNjZ0NDNS81RVJ2a0s4dmJMYnBHNFhHcnBLczhGd01o?=
+ =?utf-8?B?ZTg0ckMvZUUwTmZQL2VvY1p2a1JsdXlPMERGdWFMY09CUWRqdHQyRUoyNDli?=
+ =?utf-8?B?OXRlMlMvV0gxSlBMeWZkejFYTEZaTS83ekJkUTVXK2Y2RGNETTBzUjlWYUU1?=
+ =?utf-8?B?ZVdtYkpHMnVyZzZvUFpYWGQ2VFZ3Z05qYlNPY3NvZVFRS1luaStodHMzSGh3?=
+ =?utf-8?B?enF5ZTMvTmdiOVU2UlJOdGtzeFYrNFlYcnRCNDhUd2VCS3hQZDgxeG1FTTFR?=
+ =?utf-8?B?UHc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6F4044BF54A46B41A6B1380701896214@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v1 3/4] usb: dwc3: exynos: Use
- devm_regulator_bulk_get_enable() helper function
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240301193831.3346-1-linux.amoon@gmail.com>
- <20240301193831.3346-4-linux.amoon@gmail.com>
- <52158bf6-16fe-4ce2-b9b6-bbc6550a6e14@wanadoo.fr>
- <CANAwSgTCaSSMN2QCw5fr=RBp0WwWaLuebzQDO=scnABNFNctJQ@mail.gmail.com>
- <e85ad80f-af7d-4eaf-9d14-dff13451f7e5@wanadoo.fr>
- <CANAwSgRrOw+6MHLPDP8RwLwzwB1EVGBTovtR2ChhqR3b5uWowA@mail.gmail.com>
- <CANAwSgQk10=K6Z5OzvT3OUncfr6BWyx7oH2JKN5CJAnS+uO7QQ@mail.gmail.com>
- <ed5153e1-f4de-4268-a9d0-e74b779d2587@wanadoo.fr>
- <CANAwSgQ6_bxpKmanPwXvKEQJ0p7AvwTs3on9ubOegaDn3nkdxw@mail.gmail.com>
-Content-Language: en-MW
-In-Reply-To: <CANAwSgQ6_bxpKmanPwXvKEQJ0p7AvwTs3on9ubOegaDn3nkdxw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	VEY7OM8bHqkU7VljNXi1dv2U46pJVWGnnDYm37OvG/oOId+XeOTL71wniNhASBikmetX5wupeI+qtBE4AGbPpAXq711uFaP07SIiOHFhJOZJBrIlPkGFZ8wEpLN9N2T8aNujJ67Yzq56HD7hDkkZmW2YGFrjeIORF2s2gLV/k3wNPmYUQ7BGsv1F/KIPoyF+iY8ceS8PglU5VSbcsbAMyiRKt/gPB04kUfEhJqVqEfrlCxVfkuf51B8Cvn1cNZw86CA8++h0c3MZF+NFJXiDeSn3Ku2nnVfPFkCBTGx/Zg5H1EKCK9apo7PsUyX/X608CVoprjP+xWw9QKDbLmDsjLPYUrB/Q9+7eMb1T1HVhxEgDx0x+7SRKd3X8bbDMJEzRWjsRvXh9RXc4YS/03pbB4scvZ/dMFdH+UaoV9/YJnCWPw3M4vmixasgsYT7lDoQuQcEKOt4AoxL8ZLaxsXApsA4yE7Mr/Dve8Uki+aK/qXSY/QaQihmW4EAQ0k9qdBx13XK2G7d6xn/iFrqWSXj3vCZJ1EaSJl4bwkceiVkBay9qY9g7h40vEZsCHz/HSj83icFyfj5voqG24+Peh2DH2OlyQ7JJc3oZzEYXuF9rfy02iW/qen1C0dX/Jy6U2thzlu6eYJ5lSz+VZWghEMLXQ==
+X-OriginatorOrg: synopsys.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d9aab71-490f-4d17-0333-08dc58380381
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2024 01:54:37.9741
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JWcXkxIvhrBFpfGO/zUAgQYmYmKuVuAE9+CA0jtho2frcFkyffgw44bz36J0rIr/kvmo1fgXyYF+eazeys0s6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
+X-Proofpoint-GUID: pfCWQOOoQDxrsYj5YzEfDayvp-GmVw2h
+X-Proofpoint-ORIG-GUID: Y6eVqXpQITJVj1tTZJf07voVaaaMg4an
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-04-08_19,2024-04-05_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_active_cloned_notspam policy=outbound_active_cloned score=0
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0
+ mlxscore=0 mlxlogscore=745 phishscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2404010003 definitions=main-2404090009
 
-Le 08/04/2024 à 12:02, Anand Moon a écrit :
-> Hi Christophe,
-> 
-> On Fri, 5 Apr 2024 at 21:42, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> Le 05/04/2024 à 08:10, Anand Moon a écrit :
->>>    Hi Christophe, Krzysztof,
->>>
->>> On Mon, 4 Mar 2024 at 17:16, Anand Moon <linux.amoon@gmail.com> wrote:
->>>>
->>>> Hi Christophe,
->>>>
->>>> On Sun, 3 Mar 2024 at 00:07, Christophe JAILLET
->>>> <christophe.jaillet@wanadoo.fr> wrote:
->>>>>
->>>>> Le 02/03/2024 à 17:48, Anand Moon a écrit :
->>>>>> Hi Christophe,
->>>>>>
->>>>>> On Sat, 2 Mar 2024 at 21:20, Christophe JAILLET
->>>>>> <christophe.jaillet@wanadoo.fr> wrote:
->>>>>>>
->>>>>>> Le 01/03/2024 à 20:38, Anand Moon a écrit :
->>>>>>>> Use devm_regulator_bulk_get_enable() instead of open coded
->>>>>>>> 'devm_regulator_get(), regulator_enable(), regulator_disable().
->>>>>>>>
->>>>>>>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>>>>>>> ---
->>>>>>>>      drivers/usb/dwc3/dwc3-exynos.c | 49 +++-------------------------------
->>>>>>>>      1 file changed, 4 insertions(+), 45 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
->>>>>>>> index 5d365ca51771..7c77f3c69825 100644
->>>>>>>> --- a/drivers/usb/dwc3/dwc3-exynos.c
->>>>>>>> +++ b/drivers/usb/dwc3/dwc3-exynos.c
->>>>>>>> @@ -32,9 +32,6 @@ struct dwc3_exynos {
->>>>>>>>          struct clk              *clks[DWC3_EXYNOS_MAX_CLOCKS];
->>>>>>>>          int                     num_clks;
->>>>>>>>          int                     suspend_clk_idx;
->>>>>>>> -
->>>>>>>> -     struct regulator        *vdd33;
->>>>>>>> -     struct regulator        *vdd10;
->>>>>>>>      };
->>>>>>>>
->>>>>>>>      static int dwc3_exynos_probe(struct platform_device *pdev)
->>>>>>>> @@ -44,6 +41,7 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->>>>>>>>          struct device_node      *node = dev->of_node;
->>>>>>>>          const struct dwc3_exynos_driverdata *driver_data;
->>>>>>>>          int                     i, ret;
->>>>>>>> +     static const char * const regulators[] = { "vdd33", "vdd10" };
->>>>>>>>
->>>>>>>>          exynos = devm_kzalloc(dev, sizeof(*exynos), GFP_KERNEL);
->>>>>>>>          if (!exynos)
->>>>>>>> @@ -78,27 +76,9 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->>>>>>>>          if (exynos->suspend_clk_idx >= 0)
->>>>>>>>                  clk_prepare_enable(exynos->clks[exynos->suspend_clk_idx]);
->>>>>>>>
->>>>>>>> -     exynos->vdd33 = devm_regulator_get(dev, "vdd33");
->>>>>>>> -     if (IS_ERR(exynos->vdd33)) {
->>>>>>>> -             ret = PTR_ERR(exynos->vdd33);
->>>>>>>> -             goto vdd33_err;
->>>>>>>> -     }
->>>>>>>> -     ret = regulator_enable(exynos->vdd33);
->>>>>>>> -     if (ret) {
->>>>>>>> -             dev_err(dev, "Failed to enable VDD33 supply\n");
->>>>>>>> -             goto vdd33_err;
->>>>>>>> -     }
->>>>>>>> -
->>>>>>>> -     exynos->vdd10 = devm_regulator_get(dev, "vdd10");
->>>>>>>> -     if (IS_ERR(exynos->vdd10)) {
->>>>>>>> -             ret = PTR_ERR(exynos->vdd10);
->>>>>>>> -             goto vdd10_err;
->>>>>>>> -     }
->>>>>>>> -     ret = regulator_enable(exynos->vdd10);
->>>>>>>> -     if (ret) {
->>>>>>>> -             dev_err(dev, "Failed to enable VDD10 supply\n");
->>>>>>>> -             goto vdd10_err;
->>>>>>>> -     }
->>>>>>>> +     ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators), regulators);
->>>>>>>> +     if (ret)
->>>>>>>> +             return dev_err_probe(dev, ret, "Failed to enable regulators\n");
->>>>>>>>
->>>>>>>>          if (node) {
->>>>>>>>                  ret = of_platform_populate(node, NULL, NULL, dev);
->>>>>>>> @@ -115,10 +95,6 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
->>>>>>>>          return 0;
->>>>>>>>
->>>>>>>>      populate_err:
->>>>>>>> -     regulator_disable(exynos->vdd10);
->>>>>>>> -vdd10_err:
->>>>>>>> -     regulator_disable(exynos->vdd33);
->>>>>>>> -vdd33_err:
->>>>>>>>          for (i = exynos->num_clks - 1; i >= 0; i--)
->>>>>>>>                  clk_disable_unprepare(exynos->clks[i]);
->>>>>>>>
->>>>>>>> @@ -140,9 +116,6 @@ static void dwc3_exynos_remove(struct platform_device *pdev)
->>>>>>>>
->>>>>>>>          if (exynos->suspend_clk_idx >= 0)
->>>>>>>>                  clk_disable_unprepare(exynos->clks[exynos->suspend_clk_idx]);
->>>>>>>> -
->>>>>>>> -     regulator_disable(exynos->vdd33);
->>>>>>>> -     regulator_disable(exynos->vdd10);
->>>>>>>>      }
->>>>>>>>
->>>>>>>>      static const struct dwc3_exynos_driverdata exynos5250_drvdata = {
->>>>>>>> @@ -196,9 +169,6 @@ static int dwc3_exynos_suspend(struct device *dev)
->>>>>>>>          for (i = exynos->num_clks - 1; i >= 0; i--)
->>>>>>>>                  clk_disable_unprepare(exynos->clks[i]);
->>>>>>>>
->>>>>>>> -     regulator_disable(exynos->vdd33);
->>>>>>>> -     regulator_disable(exynos->vdd10);
->>>>>>>
->>>>>>> Hi,
->>>>>>>
->>>>>>> Same here, I don't think that removing regulator_[en|dis]able from the
->>>>>>> suspend and resume function is correct.
->>>>>>>
->>>>>>> The goal is to stop some hardware when the system is suspended, in order
->>>>>>> to save some power.
->>>>>> Ok,
->>>>>>>
->>>>>>> Why did you removed it?
->>>>>>
->>>>>> As per the description of the function  devm_regulator_bulk_get_enable
->>>>>>
->>>>>> * This helper function allows drivers to get several regulator
->>>>>>     * consumers in one operation with management, the regulators will
->>>>>>     * automatically be freed when the device is unbound.  If any of the
->>>>>>     * regulators cannot be acquired then any regulators that were
->>>>>>     * allocated will be freed before returning to the caller.
->>>>>
->>>>> The code in suspend/resume is not about freeing some resources. It is
->>>>> about enabling/disabling some hardware to save some power.
->>>>>
->>>>> Think to the probe/remove functions as the software in the kernel that
->>>>> knows how to handle some hardawre, and the suspend/resume as the on/off
->>>>> button to power-on and off the electrical chips.
->>>>>
->>>>> When the system is suspended, the software is still around. But some
->>>>> hardware can be set in a low consumption mode to save some power.
->>>>>
->>>>> IMHO, part of the code you removed changed this behaviour and increase
->>>>> the power consumption when the system is suspended.
->>>>>
->>>>
->>>> You are correct, I have changed the regulator API from
->>>> devm_regulator_get_enable to devm_regulator_bulk_get_enable
->>>> which changes this behavior.
->>>> I will fix it in the next version.
->>>>
->>>>> CJ
->>>
->>> I could not find any example in the kernel to support
->>> devm_regulator_bulk_disable
->>> but here is my modified file.
->>>
->>> If you have any suggestions for this plz let me know.
->>
->> I don't think that your approach is correct, and I don't think that the
->> proposed patch does what you expect it to do.
->>
->> Calling a devm_ function in suspend/resume functions looks really
->> strange to me and is likely broken.
->>
->> Especially here, devm_regulator_bulk_get_enable() in the resume function
->> allocates some memory that is not freed in
->> devm_regulator_bulk_disable(), because the API is not designed to work
->> like that. So this could generate a kind of memory leak.
->>
->>
->> *I think that the code is good enough as-is*, but if you really want to
->> change something, maybe:
->>      - devm_regulator_get()+regulator_enable() in the probe could be
->> changed to devm_regulator_get_enable()
->>      - the resume/suspend function should be left as-is with
->> regulator_disable()/regulator_ensable()
->>      - remove regulator_disable() from the error handling path of the
->> probe and from the remove function.
->>
->> I *think* it would work.
->>
-> No devm_regulator_get_enable use the same logic as
-> devm_regulator_bulk_get_enable
-> to enable the regulator.
-
-Yes, the logic is the same, but you get a pointer to the "struct 
-regulator" which can be used to disable/enable in the suspend/resume 
-functions.
-
-With the bulk version, you can not do that.
-
-See my first reply on your 3/4 patch.
-
-> 
-> [0] https://elixir.bootlin.com/linux/latest/source/drivers/regulator/devres.c#L126
-> 
-> So as of now I am dropping the changes on the regulator in this patch series.
-
-I do agree that it is certainly the way to go here.
-
-CJ
-
-> 
->> CJ
->>
-> Thanks for your inputs.
-> 
-> Thanks
-> 
-> -Anand
-> 
-> 
-
+T24gVGh1LCBBcHIgMDQsIDIwMjQsIEFuYW5kIE1vb24gd3JvdGU6DQo+IFVzZSB0aGUgbmV3IFBN
+IG1hY3JvcyBmb3IgdGhlIHN1c3BlbmQgYW5kIHJlc3VtZSBmdW5jdGlvbnMgdG8gYmUNCj4gYXV0
+b21hdGljYWxseSBkcm9wcGVkIGJ5IHRoZSBjb21waWxlciB3aGVuIENPTkZJR19QTV9TTEVFUCBh
+cmUgZGlzYWJsZWQsDQo+IHdpdGhvdXQgaGF2aW5nIHRvIHVzZSAjaWZkZWYgZ3VhcmRzLiBJZiBD
+T05GSUdfUE1fU0xFRVAgdW51c2VkLA0KPiB0aGV5IHdpbGwgc2ltcGx5IGJlIGRpc2NhcmRlZCBi
+eSB0aGUgY29tcGlsZXIuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBbmFuZCBNb29uIDxsaW51eC5h
+bW9vbkBnbWFpbC5jb20+DQo+IC0tLQ0KPiB2MjogYWRkIF9fbWF5YmVfdW51c2VkIHRvIHN1c3Bl
+bmQvcmVzdW1lIGZ1bmN0aW9ucyBpbiBjYXNlIENPTkZJR19QTSBpcw0KPiAgICBkaXNhYmxlZC4N
+Cg0KVGhlIGNvbXBpbGVyIGRpc2NhcmRzIHRoZSBjb2RlLCB5ZXQgd2Ugc3RpbGwgbmVlZCBfX21h
+eWJlX3VudXNlZD8NCg0KQlIsDQpUaGluaA0KDQo+IC0tLQ0KPiAgZHJpdmVycy91c2IvZHdjMy9k
+d2MzLWV4eW5vcy5jIHwgMTIgKysrLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNl
+cnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQ0KPiA=
