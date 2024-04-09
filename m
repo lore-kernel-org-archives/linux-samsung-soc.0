@@ -1,116 +1,141 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6148763FC;
-	Tue,  9 Apr 2024 07:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3922D781;
+	Tue,  9 Apr 2024 14:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712646450; cv=none; b=dvDIz1GXv/HsLgojFIQrsZpZ+UivQNFoFacfHpeL16qYGb8DpITGL94EN5JnqLIuH1K94lZje35rVYsIUj29RS0iCFqwIxmuLaRizPHb+QmYwCxnKF6lQBaPeb+nS7S3PuMSfnveiwEAwFIFIlS9sNMqXGh8Gf7915UmBRcaqAU=
+	t=1712673492; cv=none; b=kt2QrPBUJSqNDnX9dM//y37/PyRMQIRX0k7Mz8lopQ2VYPVhpWsHjxR592/Os8s1Os0j7IDuvFbReaKVqHAdLCASNR9VZkHKXcAnPiF4phLfUb8ukaFErnufzXCunNZIV9FKt+Gj/Eo7TQHUSRlXQrhZFhe1227iLIrzVNFE10E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712646450; c=relaxed/simple;
-	bh=ILlLN110MwkRvm0kV386nPbIZbSkkSytLLDGU68h6CU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eLmbOl0tKn7okm446Xu27DbOggDrbsRpK9FFw92MKdr/MQvYQ8GGnU9vA07sH5ir+EGO9AR2y2l6lPLk3tpvg5dRutvJq2OLtdZD2+YclIhrXfQhdC8/i1MaUDioFWz9jGlB1tGhvoFBpowVvDmJ42KUa2zcr9nhewXkhiageIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1E2FDA7;
-	Tue,  9 Apr 2024 00:07:52 -0700 (PDT)
-Received: from [10.57.75.42] (unknown [10.57.75.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0AAB3F766;
-	Tue,  9 Apr 2024 00:07:19 -0700 (PDT)
-Message-ID: <7259d711-d542-4057-af12-178c7f2b292b@arm.com>
-Date: Tue, 9 Apr 2024 08:07:24 +0100
+	s=arc-20240116; t=1712673492; c=relaxed/simple;
+	bh=WWYKPGj9czOqLTO0oX9N/l4w+cm5zbzGbk+M3GLZboE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CXVjGFBfz8bj0v5g6TFgpb/+bZHHFjAgSUioLZuYqvMtTniFuiwjov3wn8SRMXMqs8au1z/ocd8TtfXWVke4+ekf5T+vM6ENVHcGSBAsOUdhAnU2x7ymAR5B8HGNHmIjLItukNkbHFEWKVrqFPq5umDIRX1ylBbzuu39TG5pZ80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fLPg523d; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fLPg523d"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=X+gXVF78AgUh7bwzkprwZK7b92TFqgltEgDLxNaodqo=; b=fLPg523dfnH0RTzcadCtiXmfuu
+	AJH/gG+ptmJmZHKCEDqSG4SN+IAs+DHm499u3i6VeUPBonHNomz5fUMtA9Z8ylPOpN9fwVRuVKf1w
+	2b5XQs7VUdF64Zaltfk76I9JRy5AxhWAQhuxxPW8Z9xR6IvDn3I7H3QWyeKlzj65fMjiSDMv3tBIq
+	x8KSxddyfEAwixu/wczVt9qaK782OeQj1fFFeh1zjF68xdtS2Fa6i3sHLdh+ouKXMgJs7JN/pD6gl
+	Kv7by94ZotET5HGuW04HYxEc4PWci+vslRktdteqryi4T+CXtjXuVHW8IGoHwDjCHqitv3d5kVl8a
+	sro5b6bQ==;
+Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ruCbn-00000002Ruc-1TRV;
+	Tue, 09 Apr 2024 14:37:59 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Sathya Prakash <sathya.prakash@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	"Juergen E. Fischer" <fischer@norbit.de>,
+	Xiang Chen <chenxiang66@hisilicon.com>,
+	HighPoint Linux Team <linux@highpoint-tech.com>,
+	Tyrel Datwyler <tyreld@linux.ibm.com>,
+	Brian King <brking@us.ibm.com>,
+	Lee Duncan <lduncan@suse.com>,
+	Chris Leech <cleech@redhat.com>,
+	Mike Christie <michael.christie@oracle.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	Jack Wang <jinpu.wang@cloud.ionos.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	linux-block@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net,
+	MPT-FusionLinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com,
+	mpi3mr-linuxdrv.pdl@broadcom.com,
+	linux-samsung-soc@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 03/23] mpi3mr: pass queue_limits to bsg_setup_queue
+Date: Tue,  9 Apr 2024 16:37:28 +0200
+Message-Id: <20240409143748.980206-4-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240409143748.980206-1-hch@lst.de>
+References: <20240409143748.980206-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/4] Update Energy Model after chip binning adjusted
- voltages
-Content-Language: en-US
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- dietmar.eggemann@arm.com, linux-arm-kernel@lists.infradead.org,
- sboyd@kernel.org, nm@ti.com, linux-samsung-soc@vger.kernel.org,
- daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
- krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
- m.szyprowski@samsung.com, mhiramat@kernel.org
-References: <20240403154907.1420245-1-lukasz.luba@arm.com>
- <CAJZ5v0jP8j3kcUFHx45_qpeOTa9THtP3qztC0oxuiohcYs5PPQ@mail.gmail.com>
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAJZ5v0jP8j3kcUFHx45_qpeOTa9THtP3qztC0oxuiohcYs5PPQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+Pass the limits to bsg_setup_queue instead of setting them up on the live
+queue.
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: John Garry <john.g.garry@oracle.com>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/scsi/mpi3mr/mpi3mr_app.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-On 4/8/24 15:06, Rafael J. Wysocki wrote:
-> On Wed, Apr 3, 2024 at 5:49 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
->>
->> Hi all,
->>
->> This is a follow-up patch aiming to add EM modification due to chip binning.
->> The first RFC and the discussion can be found here [1].
->>
->> It uses Exynos chip driver code as a 1st user. The EM framework has been
->> extended to handle this use case easily, when the voltage has been changed
->> after setup. On my Odroid-xu4 in some OPPs I can observe ~20% power difference.
->> According to that data in driver tables it could be up to ~29%.
->>
->> This chip binning is applicable to a lot of SoCs, so the EM framework should
->> make it easy to update. It uses the existing OPP and DT information to
->> re-calculate the new power values.
->>
->> It has dependency on Exynos SoC driver tree.
->>
->> Changes:
->> v5:
->> - adjusted aligning of the function arguments in patch 1/4 (Dietmar)
->> - adjusted the in-code comment patch 4/4 (Dietmar)
->> - added Reviewed-by to all patches (Dietmar)
->> v4:
->> - added asterisk in the comment section (test robot)
->> - change the patch 2/4 header name and use 'Refactor'
->> v3:
->> - updated header description patch 2/4 (Dietmar)
->> - removed 2 sentences from comment and adjusted in patch 3/4 (Dietmar)
->> - patch 4/4 re-phrased code comment (Dietmar)
->> - collected tags (Krzysztof, Viresh)
->> v2:
->> - removed 'ret' from error message which wasn't initialized (Christian)
->> v1:
->> - exported the OPP calculation function from the OPP/OF so it can be
->>    used from EM fwk (Viresh)
->> - refactored EM updating function to re-use common code
->> - added new EM function which can be used by chip device drivers which
->>    modify the voltage in OPPs
->> RFC is at [1]
->>
->> Regards,
->> Lukasz Luba
->>
->> [1] https://lore.kernel.org/lkml/20231220110339.1065505-1-lukasz.luba@arm.com/
->>
->> Lukasz Luba (4):
->>    OPP: OF: Export dev_opp_pm_calc_power() for usage from EM
->>    PM: EM: Refactor em_adjust_new_capacity()
->>    PM: EM: Add em_dev_update_chip_binning()
->>    soc: samsung: exynos-asv: Update Energy Model after adjusting voltage
->>
->>   drivers/opp/of.c                 |  17 +++--
->>   drivers/soc/samsung/exynos-asv.c |  10 ++-
->>   include/linux/energy_model.h     |   5 ++
->>   include/linux/pm_opp.h           |   8 +++
->>   kernel/power/energy_model.c      | 106 +++++++++++++++++++++++++------
->>   5 files changed, 121 insertions(+), 25 deletions(-)
->>
->> --
-> 
-> All patches in the series applied as 6.10 material, thanks!
+diff --git a/drivers/scsi/mpi3mr/mpi3mr_app.c b/drivers/scsi/mpi3mr/mpi3mr_app.c
+index a45406fae2629b..3c309e8c3a2bc8 100644
+--- a/drivers/scsi/mpi3mr/mpi3mr_app.c
++++ b/drivers/scsi/mpi3mr/mpi3mr_app.c
+@@ -1845,6 +1845,10 @@ void mpi3mr_bsg_init(struct mpi3mr_ioc *mrioc)
+ {
+ 	struct device *bsg_dev = &mrioc->bsg_dev;
+ 	struct device *parent = &mrioc->shost->shost_gendev;
++	struct queue_limits lim = {
++		.max_hw_sectors		= MPI3MR_MAX_APP_XFER_SECTORS,
++		.max_segments		= MPI3MR_MAX_APP_XFER_SEGMENTS,
++	};
+ 
+ 	device_initialize(bsg_dev);
+ 
+@@ -1860,20 +1864,14 @@ void mpi3mr_bsg_init(struct mpi3mr_ioc *mrioc)
+ 		return;
+ 	}
+ 
+-	mrioc->bsg_queue = bsg_setup_queue(bsg_dev, dev_name(bsg_dev), NULL,
++	mrioc->bsg_queue = bsg_setup_queue(bsg_dev, dev_name(bsg_dev), &lim,
+ 			mpi3mr_bsg_request, NULL, 0);
+ 	if (IS_ERR(mrioc->bsg_queue)) {
+ 		ioc_err(mrioc, "%s: bsg registration failed\n",
+ 		    dev_name(bsg_dev));
+ 		device_del(bsg_dev);
+ 		put_device(bsg_dev);
+-		return;
+ 	}
+-
+-	blk_queue_max_segments(mrioc->bsg_queue, MPI3MR_MAX_APP_XFER_SEGMENTS);
+-	blk_queue_max_hw_sectors(mrioc->bsg_queue, MPI3MR_MAX_APP_XFER_SECTORS);
+-
+-	return;
+ }
+ 
+ /**
+-- 
+2.39.2
 
-Thank you Rafael!
-
-Regards,
-Lukasz
