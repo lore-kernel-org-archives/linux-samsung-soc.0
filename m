@@ -1,196 +1,93 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C8AA59
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Apr 2024 00:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19721BA50;
+	Wed, 10 Apr 2024 04:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712710773; cv=none; b=MBJfj6Yk9IqgoupLgI514tdkP/XKYybf4f0ceoj0Q4b7gMxJ+rXINd7KCcdFWPUP9zK2IV6zxr/ZfoeN049fD1F/hXgI6V4en05f3jXqyD+2WYzqeVE0ZUhrBOTu/FkBlEdlLDlOM+P80A/Jho9m6pr6FXzZq2WckmIJH2JX61k=
+	t=1712723142; cv=none; b=fWAR+Bzb5VLOXNMFUAD8D1RCCs9FRRHbO9654NfN5PwjJ/3DJfM0cZyeI/FuwhSYnI65BVCpbcAxMKtF/s2VsVoxm20jA2qpvBzutK1UvQYHTPcpdg5KLLggxn+AwKZEk78mRXqB4fUfPoV4exxzUhakH1oqZG8VscFZLJrM8tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712710773; c=relaxed/simple;
-	bh=IYM17KR5sH0wu5fq9yF5lCEVAj4vI3cqhYG8+PggzqE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=omOt3vGSIYlpzfZUFr4QBfbI/TH4TbrHjKACOVb/hzY6NPnH3LiVSPoJ7OEbzo0E98bHyCCCBsZWI72Ik1Agv3/CXf1J6s/fOHSB/PCPus14oDoJ2gnMoniTCfCAY8TlBjqXRpOL+vdZHnO18IqNnN/Id8zeB86sDyJPqfUd9tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cSUcSJur; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cSUcSJur"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240410005922epoutp03306c552bb43fae32c0b744b139089529~ExV0dLzla1551115511epoutp03y
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Apr 2024 00:59:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240410005922epoutp03306c552bb43fae32c0b744b139089529~ExV0dLzla1551115511epoutp03y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1712710762;
-	bh=oKR9O5fGEyCFcm4G62ExjkYKNcmQzxsntbMqmBNuTzw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=cSUcSJur33x2tSoCdC3kiMK8ti3sKkkv6Lmo4JhWhg73j9IDZxrzDAmjjV+FSAbeh
-	 Ks2kbXST3uUUkHUAvH0dCgHa644/I8f6vVoQEUrKhrjNmcLzR/zUqr5dV9bzpn86ku
-	 EWWycqfoUeqwEfZiJhjcGviAjlW4lBweEnw8sy5E=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240410005920epcas5p2a904a7fd347f4ffb4eb65b9d1dba79d9~ExVzflEQ52928829288epcas5p2z;
-	Wed, 10 Apr 2024 00:59:20 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VDkxM5xykz4x9Pp; Wed, 10 Apr
-	2024 00:59:19 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F0.AF.09665.764E5166; Wed, 10 Apr 2024 09:59:19 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240410005919epcas5p451ba8a440d5b7935bb36a53a7f0ffc66~ExVxwpfiP0641306413epcas5p47;
-	Wed, 10 Apr 2024 00:59:19 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240410005919epsmtrp2912db7cb00a152e5c05205cfc43d115a~ExVxuuNda0910809108epsmtrp2k;
-	Wed, 10 Apr 2024 00:59:19 +0000 (GMT)
-X-AuditID: b6c32a4b-829fa700000025c1-0b-6615e4670533
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3C.09.07541.664E5166; Wed, 10 Apr 2024 09:59:18 +0900 (KST)
-Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240410005915epsmtip296566b8d160466579c35fcad102a2664~ExVuJnHuN0394003940epsmtip2Z;
-	Wed, 10 Apr 2024 00:59:15 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <vkoul@kernel.org>, <kishon@kernel.org>,
-	<avri.altman@wdc.com>, <bvanassche@acm.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<chanho61.park@samsung.com>, <ebiggers@kernel.org>
-Cc: <linux-scsi@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <tudor.ambarus@linaro.org>,
-	<andre.draszik@linaro.org>, <saravanak@google.com>,
-	<willmcvicker@google.com>
-In-Reply-To: <20240404122559.898930-10-peter.griffin@linaro.org>
-Subject: RE: [PATCH 09/17] phy: samsung-ufs: use
- exynos_get_pmu_regmap_by_phandle() to obtain PMU regmap
-Date: Wed, 10 Apr 2024 06:29:13 +0530
-Message-ID: <065301da8ae2$50fed190$f2fc74b0$@samsung.com>
+	s=arc-20240116; t=1712723142; c=relaxed/simple;
+	bh=4FBVoUmFN8na8de48F5/iGsG5nPf0m9yzudFippKALs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml/9KC8c5Vbd31WSq8oCWZK5mgnvF+FTTQqvBlR+amTBRH8xG39d5lVnqlaIhM4LT5rlHYgJFeC7ymkQBLoQvRl/93HbnpE2T8qwpgS5FNgxFn6G7e28LzGToK0oG/izbvJC0AmQ1+evA5wSObEDhlfZt6uGj2+k3XTDXqHVDp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id EF67068B05; Wed, 10 Apr 2024 06:25:32 +0200 (CEST)
+Date: Wed, 10 Apr 2024 06:25:32 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Sathya Prakash <sathya.prakash@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	"Juergen E. Fischer" <fischer@norbit.de>,
+	Xiang Chen <chenxiang66@hisilicon.com>,
+	HighPoint Linux Team <linux@highpoint-tech.com>,
+	Tyrel Datwyler <tyreld@linux.ibm.com>,
+	Brian King <brking@us.ibm.com>, Lee Duncan <lduncan@suse.com>,
+	Chris Leech <cleech@redhat.com>,
+	Mike Christie <michael.christie@oracle.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	Jack Wang <jinpu.wang@cloud.ionos.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	"GR-QLogic-Storage-Upstream@marvell.com" <GR-QLogic-Storage-Upstream@marvell.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <Avri.Altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+	"linux1394-devel@lists.sourceforge.net" <linux1394-devel@lists.sourceforge.net>,
+	"MPT-FusionLinux.pdl@broadcom.com" <MPT-FusionLinux.pdl@broadcom.com>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"megaraidlinux.pdl@broadcom.com" <megaraidlinux.pdl@broadcom.com>,
+	"mpi3mr-linuxdrv.pdl@broadcom.com" <mpi3mr-linuxdrv.pdl@broadcom.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"usb-storage@lists.one-eyed-alien.net" <usb-storage@lists.one-eyed-alien.net>,
+	Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH 21/23] mpi3mr: switch to using ->device_configure
+Message-ID: <20240410042532.GA2457@lst.de>
+References: <20240409143748.980206-1-hch@lst.de> <20240409143748.980206-22-hch@lst.de> <1e41a8df-2046-45cf-8ab7-caa5839d1718@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJaURTOFBtz0klhjQ4XchDKhOUW7wKPBJe9Al10qBiwOb1wsA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxjAub23twVXcy0Qz2CZXTNjxIFUoJ4qDB2Kd4MRnO4fE4Z39EIR
-	aEtbdHNxg0HB8RLMQqDgJLABdi5gJVqhIBaQIVmV8ZwS5LmJyvsRGays5eLGf7/znd+X73Fy
-	uCi/gOPGjZVraJWcihfiTtit5t27PGPGXKO9XxZ7wdrnNzE4sdyDw4KZZRR23d0DrzdYWLBv
-	4S82vNpiYcNfTKsoLOu/xYKt2jUUTugGcWgY7WXD2exBNuyqK8Fhnn4Jg4UPG1kwq8+Iw8o2
-	Kwt2PjgKawqtGFwzGTmw+WUGG2aa/8GhtfcGBucefwbvDPyKQv3cGnLInezqDiGn+7UcstSQ
-	RBr03+HkQK8JJ/PKmhDy5o/fkLPjjzEyt1aPkPOGt8mMpixW+JZTcf4ympLSKgEtj1JIY+Ux
-	AcKQE5FBkX5ib5GnSAL3CwVyKoEOEB4JDfcMjo23rUAoOEvFJ9lC4ZRaLdz7vr9KkaShBTKF
-	WhMgpJXSeKWv0ktNJaiT5DFeclpzQOTtvc/PJp6Ok/2mu8dSjvC/SHuShiUjF4lMxJELCF+Q
-	kWNCMxEnLp+oR8DPQ5MYc5hDQPfiLGq3+MQSAhoGnV5nLKaYEUZqQMBYY91GxjMEGPKMuN3C
-	CU9gLE/H7RcuhA4FjTU960VQYpAFnmhT1y1H4hCYuzyF2NmZOAM6DEaOnTFiJ0jOvs+2M4+Q
-	gKH6Ug7D20B70RhmZ5TYAW5PlqBMTwKwPF6x7rsQH4Di7P4NZzuYaG3hMI7FEXRZKYaPgI6n
-	D3GGncHzttoNxw3MTzXY4lwbk6Bs1Y0Jy8BkZTXCcCBo6i7B7ApK7AbVdXuZSltBzsoYi8nk
-	gYvpfMbeCVKnejCG3UF+VhabYRL8kGpi5SHv6DbNpds0l25T/7r/i5UimB55k1aqE2JotZ/S
-	R06f+++9oxQJBmT9g3iEGJGRoRkvM8LiImYEcFGhC8/dwzWaz5NSX56nVYpIVVI8rTYjfrZl
-	56NurlEK2w+TayJFvhJvX7FY7CvxEYuE23kvtFekfCKG0tBxNK2kVa/zWFxHt2TWnjSHR16l
-	suJrbUS37GRl6dnw84nXq/7wdX5a6BCwvy605t0LW2daWsFRy2pgmPREGXXKVG7tHmmvl12+
-	8J5W/3tGU/++sBA3TbL40b0P87KLzvFyD0fcXSkcLTN0VqfGVpH4dF9u6IEUn8PNEotEj/8Z
-	scxfPN7odOTMwZxhgcDoPiVdi2oe/Koq7eQ1S8XApV0V7GeFhi2dx2ITFyYdi08XfK9yXOri
-	5vo76y8RQVdnPx24siM/Ynzo+PCD+XTu5wuB0cOJkjTR359kuejXvlZ9W1QeFPZxsln70cGU
-	F6PtM2PT1hsrr7T3q7YtvhHsFJyifnVn1Pmt212t5Qmmn/gdUgchppZRIg9Upab+BdQhG7+p
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0yMcRzH932e5557yq4ed7W+1aacbBYdZ9g3Wn4Nz7Q2RjRZXHrqoie3
-	+4HMjwzXr9NiQ67MdQyd/OjyozjKqfyYIunHkhuqU6gIkbjjOqb/3tvr/X7t88eHwoVOIoBK
-	SVOzyjRZqpj0JK7fEweFJXX5Js3Y14nQ1XflBOodbibRsY/DOGqqmopKbzdgqPXLWx46VdPA
-	QxctP3FkbLuOodqDThz16m0kMne28NAnnY2Hmm4WkSjfNESggid3MJTbWkGic/cdGGp8tARd
-	KXAQyGmp4KN7HzJ5KMf6i0SOljICDbbHo8qOBzgyDTrBgkCm6XkUM9B2kM8YzBrGbMommY4W
-	C8nkG6sBU35mL/Opu51g8q6aAPPZPIHJrM7FVoxb5xmRyKambGOV0yM3esrr9XcxxRvhjgMv
-	DhAZIIvOAR4UpGfBr/usIAd4UkL6FoDN7818NwiErWX5f7MIljje8t0lO4DFh57wXICkw2DF
-	aS3pAj70JRx+s9kxF8DpHgzWP4t3L2oAzMtuJ1zAg14AB4/0A1cW0XKoK83CXZmgJ8MMXd2o
-	VUCHw1e3DHx3Hg8fnuj6s6X+SCVQWwbc/iB4o68Id18XDIe7z45OfehFsFDXRrg7frC3toaf
-	D0T6MSb9f5N+jEk/ZmEAhAn4swoVl8xtkiqkaex2iUrGqTRpyZJNWzkzGP2R0CkVwHbKIbEC
-	jAJWAClc7CMIDPVNEgoSZek7WeXWDUpNKquygkCKEPsJpAWFiUI6WaZmt7CsglX+oxjlEZCB
-	RTZwwuErTGx9ufdZ7+7aOcv6Tk7sy5qjqUvYtfiypZEXIf8+EKYeWFbc7My97B23/nw0ej1i
-	JNNXHPJqXBV3zV/aOSJaPyGmd6HttlZt2exjbY4LXhr967OX/Eelbp651B7gtSppfnDP4YTO
-	qHM/ds8M53FGSWy7IcSmdnzhorIelhQlcMff2M8LkpVrSu/Ef9dMEnVpImFU32LwThsTcu0k
-	nu3P9ayepbWOPIq1Y3vy1qpeTouZPbcogpFMnzLz6f6FhsELqf4Tfcf1G1c+TlheJ7wUlDmv
-	KjrP76ijujiusUSaslux9H666rlJMDSyuqq78v3FGLyfFOcocrdphsSESi6ThuJKlew3LlI0
-	CJIDAAA=
-X-CMS-MailID: 20240410005919epcas5p451ba8a440d5b7935bb36a53a7f0ffc66
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240404122708epcas5p15f130c36300778bb61f8ea5cc0cce70d
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
-	<CGME20240404122708epcas5p15f130c36300778bb61f8ea5cc0cce70d@epcas5p1.samsung.com>
-	<20240404122559.898930-10-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1e41a8df-2046-45cf-8ab7-caa5839d1718@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Peter,
+On Tue, Apr 09, 2024 at 03:34:13PM +0000, Johannes Thumshirn wrote:
+> Why did you split this into two functions, with the innermost function 
+> being only called once?
+> 
+> While it's slightly less of a mess to read this would be fully 
+> sufficient and IMHO more readable (please excuse the whitespace damage):
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin@linaro.org>
-> Sent: Thursday, April 4, 2024 5:56 PM
-> To: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
-> krzk+dt@kernel.org; conor+dt@kernel.org; vkoul@kernel.org;
-> kishon@kernel.org; alim.akhtar@samsung.com; avri.altman@wdc.com;
-> bvanassche@acm.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> jejb@linux.ibm.com; martin.petersen@oracle.com;
-> chanho61.park@samsung.com; ebiggers@kernel.org
-> Cc: linux-scsi@vger.kernel.org; linux-phy@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-clk@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; tudor.ambarus@linaro.org;
-> andre.draszik@linaro.org; saravanak@google.com;
-> willmcvicker@google.com; Peter Griffin <peter.griffin@linaro.org>
-> Subject: [PATCH 09/17] phy: samsung-ufs: use
-> exynos_get_pmu_regmap_by_phandle() to obtain PMU regmap
-> 
-> This allows us to obtain a PMU regmap that is created by the exynos-pmu
-> driver. Platforms such as gs101 require exynos-pmu created regmap to issue
-> SMC calls for PMU register accesses. Existing platforms still get a MMIO
-> regmap as before.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+Because having a helper for a specific type of device just simply
+is good code struture.  It might not matter too much now, but as
+soon as something else gets added your version turns into a mess
+quickly.
 
-Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
-
->  drivers/phy/samsung/phy-samsung-ufs.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c
-> b/drivers/phy/samsung/phy-samsung-ufs.c
-> index 183c88e3d1ec..c567efafc30f 100644
-> --- a/drivers/phy/samsung/phy-samsung-ufs.c
-> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
-> @@ -18,6 +18,7 @@
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/soc/samsung/exynos-pmu.h>
-> 
->  #include "phy-samsung-ufs.h"
-> 
-> @@ -255,8 +256,8 @@ static int samsung_ufs_phy_probe(struct
-> platform_device *pdev)
->  		goto out;
->  	}
-> 
-> -	phy->reg_pmu = syscon_regmap_lookup_by_phandle(
-> -				dev->of_node, "samsung,pmu-syscon");
-> +	phy->reg_pmu = exynos_get_pmu_regmap_by_phandle(dev-
-> >of_node,
-> +							"samsung,pmu-
-> syscon");
->  	if (IS_ERR(phy->reg_pmu)) {
->  		err = PTR_ERR(phy->reg_pmu);
->  		dev_err(dev, "failed syscon remap for pmu\n");
-> --
-> 2.44.0.478.gd926399ef9-goog
-
-
+But it turns out the rebase caused a real mess in this patch as it
+marks a function static that now gets used outside the fіle in the
+scsi tree, and has a weird rename in not actually visible characters,
+so I'm resending it.
