@@ -1,213 +1,146 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6161AAA5
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Apr 2024 00:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770734A33
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Apr 2024 08:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712967941; cv=none; b=V6GRX5YMRdbdnkcQmgkhnJBh3k58VP5yAYOuTDwG/1+DG+DJrm9L7WStFqELLYFyIHNCP5NnK4/bCYaYAaqQsVTHx7KsFkAHvo0haIP2CK0g63AnQVxF1aMEJTkx3Mpw8OcUGkL0FqROFzKiTXrjR/iOkLiygGWSFYlOdTQ1bYI=
+	t=1712998049; cv=none; b=kQ7qr/DYLA2hrsw4mqnjY3605F+jjx3q0qV0PVVJw5rUVaPUTRxu2L9PLRxPKAuX4rpvJLmj6+iae+ZVrz5/JxjsxjxS4NhfEI5wd3b8LXm615HME+Jbm3FF8ct/kS9QfUp2C0DMmILv3Bo6iaaNgz/p1gKt8IubOc+nNo31tHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712967941; c=relaxed/simple;
-	bh=dBUhehkqWlwtuk2YExCoaUwsamRcicuKsCtw8n2OMRA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E0Zr+8/mJAorTYKCuldYQooh04+ypI5jBdEYY4mXgNI2MO4lXepHWGmkFb83p+loPJRa1o0BSx5UMvjleRZCku97vaM23wce3X7lBGu69L0iMUmTi5Mi7IZZmQ0BrsjH1ipPj/CT2w4PNZqedA4kqolWWEmuymFDKSafBbgYrtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=nWMLvU7n; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	s=arc-20240116; t=1712998049; c=relaxed/simple;
+	bh=guMeNbCqf8Bf7dLBBZ03qR5b/wAPVhCuSkwUDiHkreo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nu7DPOblfo09AywbrZViaK114thQok+slyt7qWJKyfhjUDr1Ezp0ZRfiFXHwB/AelBrSIV4fcIVzIYvur/5N1mtJ5A5egOhhgc6aWGHFfmrdEDbP2RSM18nzPYzIHq9eYDAFaGDu7V8FLxidWfnmmDZjZpER7o7FJqmWeiCTp5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OMRLCK57; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="nWMLvU7n"
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-78ebc7e1586so247572885a.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Apr 2024 17:25:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OMRLCK57"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a523e1372b2so123637766b.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Apr 2024 01:47:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1712967934; x=1713572734; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3Msq3s0T9jYWGepWyMOjVGhKtsGemyt6YXf5qXgBQII=;
-        b=nWMLvU7nhW6UlrenbIjiTlYFze+9c9pcfQ5bVMD3iGqMcV8TVJsFp32/ShfPbtfEk/
-         KZZIaRM6hJbYOZzjeTi67Xbvr5d6F6MGLg+aXyZx8PDm6/hCOfMzvtK5aSI/shOegSgi
-         ekx31utaCRcJWulpLFRyBspn16n3/26DtKJXpNVA00yyj63Qv3HHUqSJDOmC317e1ymh
-         SMTzTznSoVjFPkxAx+u4MCY169N+/NS+PGmfrMWDMN/4QqcvxU2tNqyO7g2jtgEyii5K
-         9L+0oABtrBIq6+pZe0rd2UqQvf9jXUVIfSOJXNZD7N+MF1vN3P24IHMx3Kg6zki9ec8P
-         Nnqw==
+        d=linaro.org; s=google; t=1712998047; x=1713602847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rII/pQt/MW1EBrzDYRD3z/sRc7Tary/0+K7B68syeNY=;
+        b=OMRLCK57a41t37uwapCRplFClEO+pxTlffutfB2VDznar1RD/9ezkEEQrHVl/CEEVt
+         0hTWs5eP2n1h6rbi85IxNf0zHPjUJmd6RZoKCzV847E6LXSJvzzTY/BSNNBfuqq4DOxA
+         BvaVbNfgTJnDDIU1nwfx65reuB9V1DWp9Yxyp3T9o1FH3CaRWKamjPrhXUKBNU005DUt
+         JgX6LsEw3XUclEjk0fP5jQYTyQtfE7FBBC0a54Qo31HMHtctDOWKLCnFWtlx57cbP2xH
+         9WTHbX/W6bAo5EjsUhlGIT6QRgN0OTE808nx0r4Mndcqn8s1WXBzfCkECSb55ri6ElR+
+         xclA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712967934; x=1713572734;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3Msq3s0T9jYWGepWyMOjVGhKtsGemyt6YXf5qXgBQII=;
-        b=MLb4m0mFW5XTI68JlLlttK+EcS6xZkGrNOOowbZG6/tZ8KAF42mvCAN6T9EASmO49b
-         0KMxLMzYAkS37qt9IKt/OhFJblnb7euEuFLWi1pWstBUesL2ER62W20+v+YILp67OYmt
-         pWVeHO2n8Oz9nGf6kSOpuzG4gmU9J2Z/zE7t5XO4B9RX+7Af+QSjAov0qh9xSCmxg6n0
-         FExBKZW1jmnjlmmTwqpbzc59Hcal2Lf8C3VnBohIdJvNLx2WZsaEFhwsWyJ8BrN8lgaa
-         tSWVc+Bz7DicSNPTsVUwFCUIhjYklosdFo+CNT00qQRDZduNImhw64lOemsyz9Wehh4q
-         xipw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCQXPW3EKadK8iwCpNRNSB2o2cIfs6Rp/vn1Xo6c/8rbJyK8nxjR8OLsxBUDqrpW21KBMF9MSSW54/ix6EOKSG21mSbF/MfA9eSVt8cGgVp4M=
-X-Gm-Message-State: AOJu0Yx+hGMcCpsjzklM7Go6dZA3+jShzEQfNrwIwvbdC2Mf7XOB1ixK
-	i9L9VFaU1Xob7UI1eD/6SYRh8Vx+qRFHbZerhtuD1/1FEL4Bdz40pC/pJuaNF84=
-X-Google-Smtp-Source: AGHT+IFLWyccRHbQF5BJmQAmIq2yaafFcDxYEvTdEMzon+yR8BjvOaupqITKjDvsX+13T7c1AAimFg==
-X-Received: by 2002:a05:620a:4606:b0:78d:77f1:6043 with SMTP id br6-20020a05620a460600b0078d77f16043mr8190515qkb.6.1712967934070;
-        Fri, 12 Apr 2024 17:25:34 -0700 (PDT)
-Received: from soleen.c.googlers.com.com (128.174.85.34.bc.googleusercontent.com. [34.85.174.128])
-        by smtp.gmail.com with ESMTPSA id wl25-20020a05620a57d900b0078d5fece9a6sm3053490qkn.101.2024.04.12.17.25.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Apr 2024 17:25:33 -0700 (PDT)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io,
-	asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com,
-	bhelgaas@google.com,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	dwmw2@infradead.org,
-	hannes@cmpxchg.org,
-	heiko@sntech.de,
-	iommu@lists.linux.dev,
-	jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com,
-	joro@8bytes.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	lizefan.x@bytedance.com,
-	marcan@marcan.st,
-	mhiramat@kernel.org,
-	m.szyprowski@samsung.com,
-	pasha.tatashin@soleen.com,
-	paulmck@kernel.org,
-	rdunlap@infradead.org,
-	robin.murphy@arm.com,
-	samuel@sholland.org,
-	suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev,
-	thierry.reding@gmail.com,
-	tj@kernel.org,
-	tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com,
-	wens@csie.org,
-	will@kernel.org,
-	yu-cheng.yu@intel.com,
-	rientjes@google.com,
-	bagasdotme@gmail.com,
-	mkoutny@suse.com
-Subject: [PATCH v6 09/11] iommu/tegra-smmu: use page allocation function provided by iommu-pages.h
-Date: Sat, 13 Apr 2024 00:25:20 +0000
-Message-ID: <20240413002522.1101315-10-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.44.0.683.g7961c838ac-goog
-In-Reply-To: <20240413002522.1101315-1-pasha.tatashin@soleen.com>
-References: <20240413002522.1101315-1-pasha.tatashin@soleen.com>
+        d=1e100.net; s=20230601; t=1712998047; x=1713602847;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rII/pQt/MW1EBrzDYRD3z/sRc7Tary/0+K7B68syeNY=;
+        b=VP5YbnWxkdH7pVyTSCYqrCYNTjr/hh7bJsIKmpJVQiCPx8gT3hy57AZmLla4DUClZA
+         jue9IIx0Kux3n5IlWOgjA73h3yLqE9tUj88gyfx9MyFUYeAlnpkMlH+8xLooiOPJ0Spa
+         kG3qBm7+GtlwF2kwSpeaLS4M6wfeeT43ySMfMfUHAMwrpmRo9YmvB0Vg0kQ7F9wui34/
+         EoaCGF4Xwn6tD05yXFMYAi//AF5fBStadeVexiHLJtlBscg8n5uMe1vMr0p4oKzyUM9F
+         BLkFNIx4X94gzrskoCVQct4901s+9mx4hHgBvZLwp8FC4webizu6NopDHAGiyY4OObhI
+         hQLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnwb77l7Zf5mKNdm6iI2SIyOZlScoFwc855BVWPAwTes9lSC5ER64dYNukgpM3xUyx0xr0EpBQY9z/Rixd1M2M5T1s+csx7P/8x0xPi2rmi74=
+X-Gm-Message-State: AOJu0YwYpDZSxzpF6pInwEuWPUsna2eghZ7SZNlGi/YFj9GUHhsOa6ih
+	q7/X77pDdleBga0lTuWkhJB2sxJ15k2/QtQBif4gFcInKa8MM15Ru74xVDZK8xSblm8PJoA0/fw
+	1
+X-Google-Smtp-Source: AGHT+IGHF+5m3Vbg3WQcgDLVBuRhXBmb/Mh6KEGMPJznnhUA3UPiXlgXiDdzEwh6Fj5RkgHrzFtlTw==
+X-Received: by 2002:a17:907:9448:b0:a52:5296:cd94 with SMTP id dl8-20020a170907944800b00a525296cd94mr270923ejc.60.1712998046792;
+        Sat, 13 Apr 2024 01:47:26 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id go36-20020a1709070da400b00a51fea47897sm2722435ejc.214.2024.04.13.01.47.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Apr 2024 01:47:26 -0700 (PDT)
+Message-ID: <ab700927-d7b6-44c6-bbe0-8c52e4a0f907@linaro.org>
+Date: Sat, 13 Apr 2024 10:47:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] clk: samsung: introduce nMUX to reparent MUX
+ clocks
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert iommu/tegra-smmu.c to use the new page allocation functions
-provided in iommu-pages.h.
+On 28/03/2024 13:34, Tudor Ambarus wrote:
+> v3:
+> - update first patch:
+>   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+>   - update commit message
+>   - update comment and say that nMUX() shall be used where MUX reparenting
+>     on clock rate chage is allowed
+> - collect R-b, A-b tags
+> 
 
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- drivers/iommu/tegra-smmu.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+Sorry for late response, somehow this end up deep in inbox. You
+reference some non existing commits, so I think you do not work on
+mainline trees.
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 14e525bd0d9b..f86c7ae91814 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -19,6 +19,8 @@
- #include <soc/tegra/ahb.h>
- #include <soc/tegra/mc.h>
- 
-+#include "iommu-pages.h"
-+
- struct tegra_smmu_group {
- 	struct list_head list;
- 	struct tegra_smmu *smmu;
-@@ -282,7 +284,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
- 
- 	as->attr = SMMU_PD_READABLE | SMMU_PD_WRITABLE | SMMU_PD_NONSECURE;
- 
--	as->pd = alloc_page(GFP_KERNEL | __GFP_DMA | __GFP_ZERO);
-+	as->pd = __iommu_alloc_pages(GFP_KERNEL | __GFP_DMA, 0);
- 	if (!as->pd) {
- 		kfree(as);
- 		return NULL;
-@@ -290,7 +292,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
- 
- 	as->count = kcalloc(SMMU_NUM_PDE, sizeof(u32), GFP_KERNEL);
- 	if (!as->count) {
--		__free_page(as->pd);
-+		__iommu_free_pages(as->pd, 0);
- 		kfree(as);
- 		return NULL;
- 	}
-@@ -298,7 +300,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
- 	as->pts = kcalloc(SMMU_NUM_PDE, sizeof(*as->pts), GFP_KERNEL);
- 	if (!as->pts) {
- 		kfree(as->count);
--		__free_page(as->pd);
-+		__iommu_free_pages(as->pd, 0);
- 		kfree(as);
- 		return NULL;
- 	}
-@@ -599,14 +601,14 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
- 		dma = dma_map_page(smmu->dev, page, 0, SMMU_SIZE_PT,
- 				   DMA_TO_DEVICE);
- 		if (dma_mapping_error(smmu->dev, dma)) {
--			__free_page(page);
-+			__iommu_free_pages(page, 0);
- 			return NULL;
- 		}
- 
- 		if (!smmu_dma_addr_valid(smmu, dma)) {
- 			dma_unmap_page(smmu->dev, dma, SMMU_SIZE_PT,
- 				       DMA_TO_DEVICE);
--			__free_page(page);
-+			__iommu_free_pages(page, 0);
- 			return NULL;
- 		}
- 
-@@ -649,7 +651,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
- 		tegra_smmu_set_pde(as, iova, 0);
- 
- 		dma_unmap_page(smmu->dev, pte_dma, SMMU_SIZE_PT, DMA_TO_DEVICE);
--		__free_page(page);
-+		__iommu_free_pages(page, 0);
- 		as->pts[pde] = NULL;
- 	}
- }
-@@ -688,7 +690,7 @@ static struct page *as_get_pde_page(struct tegra_smmu_as *as,
- 	if (gfpflags_allow_blocking(gfp))
- 		spin_unlock_irqrestore(&as->lock, *flags);
- 
--	page = alloc_page(gfp | __GFP_DMA | __GFP_ZERO);
-+	page = __iommu_alloc_pages(gfp | __GFP_DMA, 0);
- 
- 	if (gfpflags_allow_blocking(gfp))
- 		spin_lock_irqsave(&as->lock, *flags);
-@@ -700,7 +702,7 @@ static struct page *as_get_pde_page(struct tegra_smmu_as *as,
- 	 */
- 	if (as->pts[pde]) {
- 		if (page)
--			__free_page(page);
-+			__iommu_free_pages(page, 0);
- 
- 		page = as->pts[pde];
- 	}
--- 
-2.44.0.683.g7961c838ac-goog
+Also Fixes must come before other patches, so probably first patch
+should be squashed with second. Otherwise second patch is not a complete
+fix.
+
+Best regards,
+Krzysztof
 
