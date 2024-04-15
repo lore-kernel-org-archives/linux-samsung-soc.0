@@ -1,117 +1,147 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345C722EEF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2024 07:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93313B18D;
+	Mon, 15 Apr 2024 08:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713165225; cv=none; b=n+UYGp0s3oBVLi62SEuTy6U29pa87o7eZdCVQm51Z6SNb9PZ2jgTPKLnz8KgTuXg/PbNFHWLvl+qzXEBXOnkMVr5+5KSaiELFmsE5edWMLpghcbJHaGcVJLId9+PitvIPFI6/L1Ua0GqIhr5UgAAh3HOrK6OCgvcbjEktERbaCk=
+	t=1713171477; cv=none; b=WDwOdEUr85WZcHTg3Y1B+i5bdyWXL1EwwSbHuMtCtWwT/69Bh4joFO1BvsLGi7WM01EWEkT8otxbge+fs2MrAsC8inQtDjFzR1wxPufnEk1aKmNP597JShZazLS4rvd+jCNqEKm8uhZVaz2VVvIkOlZMbRSZFn3mdvHXRjZtuVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713165225; c=relaxed/simple;
-	bh=CWPK6w3zT6afZGt6HGhP0UmfQDzpzebaNu5gv9LbIxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U2WpIu73J2PmekO4fy6KragSMD1CZT9GiCAtwrjvIR3FLT27D7uJ1AKYLrg/G9cANpaz0f6g1q6HYjK1qptOGaoFZb897wuZ3yXrJWqPwpGCFhrgIQe2VVsEE4wnWcFC19wkqHS0VHNHZebMQV57yP2O8lU17TXU6NljSdEUxGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wlpgHbas; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wlpgHbas"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4187481e384so945325e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2024 00:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713165222; x=1713770022; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qjbv0BDxFhdQ1QGv5B0joRulZmVtsUIq6ZfbQ+JtryM=;
-        b=wlpgHbasYSA/XndgyY01q9XwrfW4Mh9NFMdgK6PkpeoxkaT8+Hy1MAdk+lAX3X1GO3
-         W23Glsnjy0bwrem9muBi8vDioR1/bS6L9IdyvSqnPldwMvZbc02eWiZHaseccM1gu45z
-         /K2vt6UBSIuGEY63B8+VtWz88HQ8tDKsM6ChJzzEx4S4NfvSPD7w/xw8mH7ne8W+zFEm
-         B4u7lxcueFLRcTH6sReBKXBE2xD3R8F9MVO4gHks1AWnVElGcQSG5CYgVsjskpPI5ffF
-         zsSGPUinnYtOu5FbPAnDZd4utV1sjspI/5c2ZXhgJafAnQEDS3kcVB8dBke19ojAsjyS
-         OQpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713165222; x=1713770022;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qjbv0BDxFhdQ1QGv5B0joRulZmVtsUIq6ZfbQ+JtryM=;
-        b=R56D9x2Y77qbv+ZT1dVevZkwuzJEUN7jTA77mlOXmfQYBJ2HR9EbdZ8M8dbrgEiZFL
-         ezjwz72uuPBaf9UlH3qkestAGV9shaTATgswZhorely00/BWRcwakDGxOpAxAHikerQ3
-         cmVWH34Ng2EYwc+CqaxW8eimSxlOR05c3aocM2F6oxl/lllzvvRXUZlIlVli4wfi6kmK
-         5apRdV0DmGlD5qS2994x3Ypa0iUM6YI2VMyGreaLrzSqjvm35R2HMfOSPQpqeKX7w27o
-         dTySgsIIHsLUIBfZMaRdaxdwpT/MLZaxOOLN1x3U0AtTLh6aPpd9CI1LrzuwUFmVs4II
-         6p6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX3NGXfHobKuEWGOaAxP0TQlFw7VZEPWEn7WwgFVi/WOTIC3JRekDWddvGSb8xDWzbFBh/McUKD79Odo9laeggvVOSOVi6qsKsi8NCqdiDuv3c=
-X-Gm-Message-State: AOJu0YyWoxuV3XvSeLWW3qgG8uy1BrgEqvcZFPlE+SxpdnO7Jd3bQ8zz
-	TYSdN82LNK2jdDNa+2OmRU+EnAF+mIyR0lzFqblnYTlvnZYsh/6UTYjPRra/auU=
-X-Google-Smtp-Source: AGHT+IFw5PvpvWQlXLxEO8rTs0jwGiWfzv6ThaBcqyAtvdCVjmi0upBC2QGhXVNqAcIWfkLcPsLoDw==
-X-Received: by 2002:a05:600c:5656:b0:417:d4f6:22eb with SMTP id js22-20020a05600c565600b00417d4f622ebmr7540359wmb.24.1713165222504;
-        Mon, 15 Apr 2024 00:13:42 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.35])
-        by smtp.gmail.com with ESMTPSA id t4-20020a1c7704000000b004180c6a26b4sm5439490wmi.1.2024.04.15.00.13.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Apr 2024 00:13:41 -0700 (PDT)
-Message-ID: <f67ca72f-c0ae-4f2f-a435-b00266914053@linaro.org>
-Date: Mon, 15 Apr 2024 08:13:39 +0100
+	s=arc-20240116; t=1713171477; c=relaxed/simple;
+	bh=y17O9lADy1koeCNGu1Oe7+FyvbVjW2CQKFJ5vnc/bJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtxK1xiD+qHRFCQoZvHumDA+p2qsuwjvhjY3VSNiMq9GEO/PFYeOCXOEhr69RTA1F/dCwqhaXnjfhJ0Z1ckn4UBSrwbAcg5KPUiH8nMQcYzTIFGFQtIKC1QVXvhIOOzCGDGZ6T7rS0nG2jGZ5HcdzLYejZLj+BI5u2PyFqaqKrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D864DA7;
+	Mon, 15 Apr 2024 01:58:22 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E68D3F64C;
+	Mon, 15 Apr 2024 01:57:48 -0700 (PDT)
+Date: Mon, 15 Apr 2024 09:57:45 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: soc@kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Robert Richter <rric@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Li Yang <leoyang.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"Paul J. Murphy" <paul.j.murphy@intel.com>,
+	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Heiko Stuebner <heiko@sntech.de>, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com,
+	Michal Simek <michal.simek@amd.com>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-realtek-soc@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] arm/arm64: dts: Drop "arm,armv8-pmuv3" compatible usage
+Message-ID: <ZhzsCYu4PEYaQFaF@bogus>
+References: <20240412222857.3873079-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] clk: samsung: introduce nMUX to reparent MUX
- clocks
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- peter.griffin@linaro.org
-Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
- s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
- jaewon02.kim@samsung.com
-References: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
- <ab700927-d7b6-44c6-bbe0-8c52e4a0f907@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <ab700927-d7b6-44c6-bbe0-8c52e4a0f907@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240412222857.3873079-1-robh@kernel.org>
 
-
-
-On 4/13/24 09:47, Krzysztof Kozlowski wrote:
-> On 28/03/2024 13:34, Tudor Ambarus wrote:
->> v3:
->> - update first patch:
->>   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
->>   - update commit message
->>   - update comment and say that nMUX() shall be used where MUX reparenting
->>     on clock rate chage is allowed
->> - collect R-b, A-b tags
->>
+On Fri, Apr 12, 2024 at 05:28:51PM -0500, Rob Herring wrote:
+> The "arm,armv8-pmuv3" compatible is intended only for s/w models. Primarily,
+> it doesn't provide any detail on uarch specific events.
 > 
-> Sorry for late response, somehow this end up deep in inbox. You
-
-no worries!
-
-> reference some non existing commits, so I think you do not work on
-> mainline trees.
-
-Ah, the horror, you're right, I messed up the fixes reference in commit
-2. It's because I started working on this before that patch got
-integrated. Would be good to extend checkpatch to catch such situations.
-
+> There's still remaining cases for CPUs without any corresponding PMU
+> definition and for big.LITTLE systems which only have a single PMU node
+> (there should be one per core type).
 > 
-> Also Fixes must come before other patches, so probably first patch
-> should be squashed with second. Otherwise second patch is not a complete
-> fix.
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> SoC Maintainers, Can you please apply this directly.
+> ---
+>  arch/arm/boot/dts/broadcom/bcm2711.dtsi              | 4 ++--
+>  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 2 +-
+>  arch/arm64/boot/dts/amazon/alpine-v2.dtsi            | 2 +-
+>  arch/arm64/boot/dts/apm/apm-storm.dtsi               | 2 +-
+>  arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts | 2 +-
+>  arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi     | 2 +-
+>  arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi  | 2 +-
+>  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 2 +-
+>  arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi        | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi       | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi       | 7 +++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi       | 7 +++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi       | 5 -----
+>  arch/arm64/boot/dts/freescale/imx8dxl.dtsi           | 2 +-
+>  arch/arm64/boot/dts/intel/keembay-soc.dtsi           | 2 +-
+>  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi        | 2 +-
+>  arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi        | 2 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi         | 2 +-
+>  arch/arm64/boot/dts/mediatek/mt8516.dtsi             | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi             | 2 +-
+>  arch/arm64/boot/dts/qcom/qcm2290.dtsi                | 2 +-
+>  arch/arm64/boot/dts/qcom/qdu1000.dtsi                | 2 +-
+>  arch/arm64/boot/dts/qcom/sdm630.dtsi                 | 2 +-
+>  arch/arm64/boot/dts/qcom/sdx75.dtsi                  | 2 +-
+>  arch/arm64/boot/dts/realtek/rtd16xx.dtsi             | 2 +-
+>  arch/arm64/boot/dts/rockchip/rk3368.dtsi             | 2 +-
+>  arch/arm64/boot/dts/sprd/sc9860.dtsi                 | 2 +-
+>  arch/arm64/boot/dts/sprd/sc9863a.dtsi                | 2 +-
+>  arch/arm64/boot/dts/synaptics/berlin4ct.dtsi         | 2 +-
+>  arch/arm64/boot/dts/tesla/fsd.dtsi                   | 2 +-
+>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi               | 2 +-
+>  32 files changed, 44 insertions(+), 35 deletions(-)
+>
 
-I don't mind squashing them. I noticed a tag that might help in this
-situations: "Depends-on:". But I guess we can't use that in the same
-patch set as when the maintainer applies the dependency and adds its
-S-o-b tag, it will modify the sha1 of the commit. Will squash them.
+[...]
 
-Cheers,
-ta
+> diff --git a/arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts b/arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts
+> index 8db4243a4947..9115c99d0dc0 100644
+> --- a/arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts
+> +++ b/arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts
+> @@ -102,7 +102,7 @@ timer {
+>  	};
+>
+>  	pmu {
+> -		compatible = "arm,armv8-pmuv3";
+> +		compatible = "arm,cortex-a53-pmu";
+>  		interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+>  			     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>  	};
+
+(For vexpress related change)
+
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+
+--
+Regards,
+Sudeep
