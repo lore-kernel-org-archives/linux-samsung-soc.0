@@ -1,142 +1,117 @@
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565D71859;
-	Mon, 15 Apr 2024 00:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345C722EEF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2024 07:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713141624; cv=none; b=b+PQgRIuN9EQrrt7Q08/ybkfMu7ujHkflIaKAxgCV4gT0Mb7C/Ae9aUKC7cub6oln0408L5vYhub+XtkPxz7GrHk3b7xyJ42bPG+tk4JzUjbQjRG30f9JRfM83+mb4cBUKoZjpIfRmrTWz4g44mN6nAsjDwa5ttt0TaO357n/lQ=
+	t=1713165225; cv=none; b=n+UYGp0s3oBVLi62SEuTy6U29pa87o7eZdCVQm51Z6SNb9PZ2jgTPKLnz8KgTuXg/PbNFHWLvl+qzXEBXOnkMVr5+5KSaiELFmsE5edWMLpghcbJHaGcVJLId9+PitvIPFI6/L1Ua0GqIhr5UgAAh3HOrK6OCgvcbjEktERbaCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713141624; c=relaxed/simple;
-	bh=iQlzzmlkkcsjXqkdwfgCF4ZCJUO8YG5RXp5OS6ION1w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YVzcH0KKnfZHQ7U0/EsqCoN5ZEw4aliZG0LbwzVvEpt6KIaSTUbGDzupodc0TnUZD2hAmYjkqDSuc41SvTOsrjSr2PGSa27lODUNOfwyfELfsk7a3wX8ReC52jSlMLATQp5ZFog+kthV4uD7lvDT7mq5gXcTH89ghv9vidU6nEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/9ybJAU; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713165225; c=relaxed/simple;
+	bh=CWPK6w3zT6afZGt6HGhP0UmfQDzpzebaNu5gv9LbIxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U2WpIu73J2PmekO4fy6KragSMD1CZT9GiCAtwrjvIR3FLT27D7uJ1AKYLrg/G9cANpaz0f6g1q6HYjK1qptOGaoFZb897wuZ3yXrJWqPwpGCFhrgIQe2VVsEE4wnWcFC19wkqHS0VHNHZebMQV57yP2O8lU17TXU6NljSdEUxGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wlpgHbas; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/9ybJAU"
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-36a2ab5a05dso12443915ab.2;
-        Sun, 14 Apr 2024 17:40:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wlpgHbas"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4187481e384so945325e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Apr 2024 00:13:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713141621; x=1713746421; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJzHJYqm9cEleo6og2FxZikBNx9MbCNpwTRyUR9B8k0=;
-        b=f/9ybJAUiojSbtQzGKGmN5Sixmm8/fE/JwDQ4ddgNVwHVIFGiDAvZqy48nKRUUJbjL
-         m975TpLgRrpzLdVzqtLVZyfgCoJZCJyh7AIihbUFTragVJ9Z1+hfKlmyFe76RMZ4TPv7
-         IcMYsIhrDcZ3m5zgkqtO1C7qjSKaO3W45oDOoWHvclGtptlMblTg5hTa2EHplQyZPTMX
-         KUbTZLU7xlX0M852CaZ89xio/XwfZ8zR/r6AwIRURzC1dneQ1FVMsPzaNI7n+uwsaQkX
-         nvV7GCDtKInQyfg4jmnJGFNZBK+A8K8wDpNQQUpGFdKoafpdrw7a+vtCp3I6BshwVXqx
-         SY0g==
+        d=linaro.org; s=google; t=1713165222; x=1713770022; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Qjbv0BDxFhdQ1QGv5B0joRulZmVtsUIq6ZfbQ+JtryM=;
+        b=wlpgHbasYSA/XndgyY01q9XwrfW4Mh9NFMdgK6PkpeoxkaT8+Hy1MAdk+lAX3X1GO3
+         W23Glsnjy0bwrem9muBi8vDioR1/bS6L9IdyvSqnPldwMvZbc02eWiZHaseccM1gu45z
+         /K2vt6UBSIuGEY63B8+VtWz88HQ8tDKsM6ChJzzEx4S4NfvSPD7w/xw8mH7ne8W+zFEm
+         B4u7lxcueFLRcTH6sReBKXBE2xD3R8F9MVO4gHks1AWnVElGcQSG5CYgVsjskpPI5ffF
+         zsSGPUinnYtOu5FbPAnDZd4utV1sjspI/5c2ZXhgJafAnQEDS3kcVB8dBke19ojAsjyS
+         OQpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713141621; x=1713746421;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tJzHJYqm9cEleo6og2FxZikBNx9MbCNpwTRyUR9B8k0=;
-        b=a7jjpSBpk8WVbcJiiCQ2WdlmQp1c+4zekhb+Z7cxdAKQA7Mz1NjSKuzcmND6643W/R
-         thlkuVxDdBufk6WZk3IpVRjDWXnnOkXAFSbpQs3oxavRQzPOWx1GDGxppOCZ/W+BvLeK
-         1AwP/JLo+ZK3kKbvezKX8txhWmGbA7uiXKzoPoKAYkXePC3UjE9PzYwWoWkA2V+jqufw
-         xQHQvXgPuBsh3S/gzFSahno7qsNM3svy4shu2v1mmnRQnEdXpuBegr5HBbOSqLq/5oAK
-         LsaVrshyOCKVqAbCPCfM73iCDe7LGhQ4u/Pd92zBODZdH1wInxtxX1LalB2V7cs7wSs0
-         inMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn/LGfSb6JjPLx9tnQP3wKe3DxMWuwoRShc/e4KxqpJgRPhNMErG1552ZlAszUPwqMrdUqc+q6ymSsNH8joEYOv6vxA+qwBZPp7uLE+Jpk8wjQQCMa6ZYTMhBcQyfSJMvr2ocd+CMQQMCnP+Flw5o=
-X-Gm-Message-State: AOJu0Yy0OefMy8KmBpIEzOolIwyzSqFIsRzIRENwUxmiGWJ4jrJhcrRf
-	t+oicS4muzrqtKUAJ0fDHhNFcImccaq9c/DU6blFtYnGG3wRQSZu
-X-Google-Smtp-Source: AGHT+IE7TLQRmn6MQvbZZQ4KmVzPFc/46RGTaTcbSYdprI+Y5m9b8zWk0XjVhcZ3KdggzpTwOHk0BQ==
-X-Received: by 2002:a05:6e02:170b:b0:36a:20be:bf89 with SMTP id u11-20020a056e02170b00b0036a20bebf89mr11365073ill.16.1713141621359;
-        Sun, 14 Apr 2024 17:40:21 -0700 (PDT)
-Received: from shiv-machina.. (c-73-169-52-138.hsd1.co.comcast.net. [73.169.52.138])
-        by smtp.gmail.com with ESMTPSA id fg7-20020a056638620700b00482b2dc023esm2730851jab.18.2024.04.14.17.40.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Apr 2024 17:40:21 -0700 (PDT)
-From: Shivani Gupta <shivani07g@gmail.com>
-To: Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Julia Lawall <julia.lawall@inria.fr>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shivani Gupta <shivani07g@gmail.com>
-Subject: [PATCH] gpu: drm: exynos: hdmi: eliminate uses of of_node_put()
-Date: Mon, 15 Apr 2024 00:39:58 +0000
-Message-Id: <20240415003958.721061-1-shivani07g@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1713165222; x=1713770022;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qjbv0BDxFhdQ1QGv5B0joRulZmVtsUIq6ZfbQ+JtryM=;
+        b=R56D9x2Y77qbv+ZT1dVevZkwuzJEUN7jTA77mlOXmfQYBJ2HR9EbdZ8M8dbrgEiZFL
+         ezjwz72uuPBaf9UlH3qkestAGV9shaTATgswZhorely00/BWRcwakDGxOpAxAHikerQ3
+         cmVWH34Ng2EYwc+CqaxW8eimSxlOR05c3aocM2F6oxl/lllzvvRXUZlIlVli4wfi6kmK
+         5apRdV0DmGlD5qS2994x3Ypa0iUM6YI2VMyGreaLrzSqjvm35R2HMfOSPQpqeKX7w27o
+         dTySgsIIHsLUIBfZMaRdaxdwpT/MLZaxOOLN1x3U0AtTLh6aPpd9CI1LrzuwUFmVs4II
+         6p6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX3NGXfHobKuEWGOaAxP0TQlFw7VZEPWEn7WwgFVi/WOTIC3JRekDWddvGSb8xDWzbFBh/McUKD79Odo9laeggvVOSOVi6qsKsi8NCqdiDuv3c=
+X-Gm-Message-State: AOJu0YyWoxuV3XvSeLWW3qgG8uy1BrgEqvcZFPlE+SxpdnO7Jd3bQ8zz
+	TYSdN82LNK2jdDNa+2OmRU+EnAF+mIyR0lzFqblnYTlvnZYsh/6UTYjPRra/auU=
+X-Google-Smtp-Source: AGHT+IFw5PvpvWQlXLxEO8rTs0jwGiWfzv6ThaBcqyAtvdCVjmi0upBC2QGhXVNqAcIWfkLcPsLoDw==
+X-Received: by 2002:a05:600c:5656:b0:417:d4f6:22eb with SMTP id js22-20020a05600c565600b00417d4f622ebmr7540359wmb.24.1713165222504;
+        Mon, 15 Apr 2024 00:13:42 -0700 (PDT)
+Received: from [192.168.2.107] ([79.115.63.35])
+        by smtp.gmail.com with ESMTPSA id t4-20020a1c7704000000b004180c6a26b4sm5439490wmi.1.2024.04.15.00.13.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 Apr 2024 00:13:41 -0700 (PDT)
+Message-ID: <f67ca72f-c0ae-4f2f-a435-b00266914053@linaro.org>
+Date: Mon, 15 Apr 2024 08:13:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] clk: samsung: introduce nMUX to reparent MUX
+ clocks
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ peter.griffin@linaro.org
+Cc: alim.akhtar@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, willmcvicker@google.com, kernel-team@android.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, semen.protsenko@linaro.org, linux-clk@vger.kernel.org,
+ jaewon02.kim@samsung.com
+References: <20240328123440.1387823-1-tudor.ambarus@linaro.org>
+ <ab700927-d7b6-44c6-bbe0-8c52e4a0f907@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <ab700927-d7b6-44c6-bbe0-8c52e4a0f907@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Utilize the __free() cleanup handler within the hdmi_get_phy_io function
-to automatically release the device node when it is out of scope.
-This eliminates the manual invocation of of_node_put(), reducing the
-potential for memory leaks.
 
-The modification requires initializing the device node at the beginning
-of the function, ensuring that the automatic cleanup is safely executed.
 
-Consequently, this removes the need for error cleanup paths that utilize
-goto statements and the jump to out is no longer necessary.
+On 4/13/24 09:47, Krzysztof Kozlowski wrote:
+> On 28/03/2024 13:34, Tudor Ambarus wrote:
+>> v3:
+>> - update first patch:
+>>   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+>>   - update commit message
+>>   - update comment and say that nMUX() shall be used where MUX reparenting
+>>     on clock rate chage is allowed
+>> - collect R-b, A-b tags
+>>
+> 
+> Sorry for late response, somehow this end up deep in inbox. You
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Shivani Gupta <shivani07g@gmail.com>
----
- drivers/gpu/drm/exynos/exynos_hdmi.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+no worries!
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index b1d02dec3774..a741fd949482 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -1919,10 +1919,9 @@ static int hdmi_get_ddc_adapter(struct hdmi_context *hdata)
- static int hdmi_get_phy_io(struct hdmi_context *hdata)
- {
- 	const char *compatible_str = "samsung,exynos4212-hdmiphy";
--	struct device_node *np;
--	int ret = 0;
-+	struct device_node *np __free(device_node) =
-+		of_find_compatible_node(NULL, NULL, compatible_str);
+> reference some non existing commits, so I think you do not work on
+> mainline trees.
 
--	np = of_find_compatible_node(NULL, NULL, compatible_str);
- 	if (!np) {
- 		np = of_parse_phandle(hdata->dev->of_node, "phy", 0);
- 		if (!np) {
-@@ -1937,21 +1936,17 @@ static int hdmi_get_phy_io(struct hdmi_context *hdata)
- 		if (!hdata->regs_hdmiphy) {
- 			DRM_DEV_ERROR(hdata->dev,
- 				      "failed to ioremap hdmi phy\n");
--			ret = -ENOMEM;
--			goto out;
-+			return -ENOMEM;
- 		}
- 	} else {
- 		hdata->hdmiphy_port = of_find_i2c_device_by_node(np);
- 		if (!hdata->hdmiphy_port) {
- 			DRM_INFO("Failed to get hdmi phy i2c client\n");
--			ret = -EPROBE_DEFER;
--			goto out;
-+			return -EPROBE_DEFER;
- 		}
- 	}
+Ah, the horror, you're right, I messed up the fixes reference in commit
+2. It's because I started working on this before that patch got
+integrated. Would be good to extend checkpatch to catch such situations.
 
--out:
--	of_node_put(np);
--	return ret;
-+	return 0;
- }
+> 
+> Also Fixes must come before other patches, so probably first patch
+> should be squashed with second. Otherwise second patch is not a complete
+> fix.
 
- static int hdmi_probe(struct platform_device *pdev)
---
-2.34.1
+I don't mind squashing them. I noticed a tag that might help in this
+situations: "Depends-on:". But I guess we can't use that in the same
+patch set as when the maintainer applies the dependency and adds its
+S-o-b tag, it will modify the sha1 of the commit. Will squash them.
 
+Cheers,
+ta
