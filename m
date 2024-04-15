@@ -1,106 +1,142 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC24A21360;
-	Sun, 14 Apr 2024 07:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565D71859;
+	Mon, 15 Apr 2024 00:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713081067; cv=none; b=QXnz6JwNhSsJAZIEfORzoAH7tT3w4H94oRWJ//llya+ZTESvwsXigOC/29ud6qTKiLqhmJW/4efzYLlnysL4qoeNMXZphLU+c4grDSd87f/3ExC3efHVoRzuHSsUJc9WUhjl1xlZkSVJon0iI/q+eWAerVkqtigimK1KWwiz2Wo=
+	t=1713141624; cv=none; b=b+PQgRIuN9EQrrt7Q08/ybkfMu7ujHkflIaKAxgCV4gT0Mb7C/Ae9aUKC7cub6oln0408L5vYhub+XtkPxz7GrHk3b7xyJ42bPG+tk4JzUjbQjRG30f9JRfM83+mb4cBUKoZjpIfRmrTWz4g44mN6nAsjDwa5ttt0TaO357n/lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713081067; c=relaxed/simple;
-	bh=6GuqLWvuYUqQo5TDZvw45mpK3aLhCABT5CnF056sszg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TtQeMhdINWYZ3ZsVB6rZ4G1OF1teJXegFgjZJAtbGnfwmQl+BwYveuEmygAaR4GbhYruQoRcPlUiq6YdUNhVCRxjp4swhQ9LULWY82D7wm/4Le/5AK/eZrw9RIwCVJoiGeb6tJkIhGEMWr9tbE0Qiy0g5sTHm6f+C6SgyWkorXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e8616c3.versanet.de ([94.134.22.195] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1rvudE-0001KG-L5; Sun, 14 Apr 2024 09:50:32 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: soc@kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Dinh Nguyen <dinguyen@kernel.org>,
- Tsahee Zidenberg <tsahee@annapurnalabs.com>,
- Antoine Tenart <atenart@kernel.org>,
- Khuong Dinh <khuong@os.amperecomputing.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Robert Richter <rric@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- "Paul J. Murphy" <paul.j.murphy@intel.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
- Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com,
- Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-realtek-soc@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] arm/arm64: dts: Drop "arm,armv8-pmuv3" compatible usage
-Date: Sun, 14 Apr 2024 09:50:29 +0200
-Message-ID: <2262532.iZASKD2KPV@diego>
-In-Reply-To: <20240412222857.3873079-1-robh@kernel.org>
-References: <20240412222857.3873079-1-robh@kernel.org>
+	s=arc-20240116; t=1713141624; c=relaxed/simple;
+	bh=iQlzzmlkkcsjXqkdwfgCF4ZCJUO8YG5RXp5OS6ION1w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YVzcH0KKnfZHQ7U0/EsqCoN5ZEw4aliZG0LbwzVvEpt6KIaSTUbGDzupodc0TnUZD2hAmYjkqDSuc41SvTOsrjSr2PGSa27lODUNOfwyfELfsk7a3wX8ReC52jSlMLATQp5ZFog+kthV4uD7lvDT7mq5gXcTH89ghv9vidU6nEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/9ybJAU; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/9ybJAU"
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-36a2ab5a05dso12443915ab.2;
+        Sun, 14 Apr 2024 17:40:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713141621; x=1713746421; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tJzHJYqm9cEleo6og2FxZikBNx9MbCNpwTRyUR9B8k0=;
+        b=f/9ybJAUiojSbtQzGKGmN5Sixmm8/fE/JwDQ4ddgNVwHVIFGiDAvZqy48nKRUUJbjL
+         m975TpLgRrpzLdVzqtLVZyfgCoJZCJyh7AIihbUFTragVJ9Z1+hfKlmyFe76RMZ4TPv7
+         IcMYsIhrDcZ3m5zgkqtO1C7qjSKaO3W45oDOoWHvclGtptlMblTg5hTa2EHplQyZPTMX
+         KUbTZLU7xlX0M852CaZ89xio/XwfZ8zR/r6AwIRURzC1dneQ1FVMsPzaNI7n+uwsaQkX
+         nvV7GCDtKInQyfg4jmnJGFNZBK+A8K8wDpNQQUpGFdKoafpdrw7a+vtCp3I6BshwVXqx
+         SY0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713141621; x=1713746421;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tJzHJYqm9cEleo6og2FxZikBNx9MbCNpwTRyUR9B8k0=;
+        b=a7jjpSBpk8WVbcJiiCQ2WdlmQp1c+4zekhb+Z7cxdAKQA7Mz1NjSKuzcmND6643W/R
+         thlkuVxDdBufk6WZk3IpVRjDWXnnOkXAFSbpQs3oxavRQzPOWx1GDGxppOCZ/W+BvLeK
+         1AwP/JLo+ZK3kKbvezKX8txhWmGbA7uiXKzoPoKAYkXePC3UjE9PzYwWoWkA2V+jqufw
+         xQHQvXgPuBsh3S/gzFSahno7qsNM3svy4shu2v1mmnRQnEdXpuBegr5HBbOSqLq/5oAK
+         LsaVrshyOCKVqAbCPCfM73iCDe7LGhQ4u/Pd92zBODZdH1wInxtxX1LalB2V7cs7wSs0
+         inMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUn/LGfSb6JjPLx9tnQP3wKe3DxMWuwoRShc/e4KxqpJgRPhNMErG1552ZlAszUPwqMrdUqc+q6ymSsNH8joEYOv6vxA+qwBZPp7uLE+Jpk8wjQQCMa6ZYTMhBcQyfSJMvr2ocd+CMQQMCnP+Flw5o=
+X-Gm-Message-State: AOJu0Yy0OefMy8KmBpIEzOolIwyzSqFIsRzIRENwUxmiGWJ4jrJhcrRf
+	t+oicS4muzrqtKUAJ0fDHhNFcImccaq9c/DU6blFtYnGG3wRQSZu
+X-Google-Smtp-Source: AGHT+IE7TLQRmn6MQvbZZQ4KmVzPFc/46RGTaTcbSYdprI+Y5m9b8zWk0XjVhcZ3KdggzpTwOHk0BQ==
+X-Received: by 2002:a05:6e02:170b:b0:36a:20be:bf89 with SMTP id u11-20020a056e02170b00b0036a20bebf89mr11365073ill.16.1713141621359;
+        Sun, 14 Apr 2024 17:40:21 -0700 (PDT)
+Received: from shiv-machina.. (c-73-169-52-138.hsd1.co.comcast.net. [73.169.52.138])
+        by smtp.gmail.com with ESMTPSA id fg7-20020a056638620700b00482b2dc023esm2730851jab.18.2024.04.14.17.40.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Apr 2024 17:40:21 -0700 (PDT)
+From: Shivani Gupta <shivani07g@gmail.com>
+To: Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shivani Gupta <shivani07g@gmail.com>
+Subject: [PATCH] gpu: drm: exynos: hdmi: eliminate uses of of_node_put()
+Date: Mon, 15 Apr 2024 00:39:58 +0000
+Message-Id: <20240415003958.721061-1-shivani07g@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Am Samstag, 13. April 2024, 00:28:51 CEST schrieb Rob Herring:
-> The "arm,armv8-pmuv3" compatible is intended only for s/w models. Primarily,
-> it doesn't provide any detail on uarch specific events.
-> 
-> There's still remaining cases for CPUs without any corresponding PMU
-> definition and for big.LITTLE systems which only have a single PMU node
-> (there should be one per core type).
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> SoC Maintainers, Can you please apply this directly.
-> ---
+Utilize the __free() cleanup handler within the hdmi_get_phy_io function
+to automatically release the device node when it is out of scope.
+This eliminates the manual invocation of of_node_put(), reducing the
+potential for memory leaks.
 
->  arch/arm64/boot/dts/rockchip/rk3368.dtsi             | 2 +-
+The modification requires initializing the device node at the beginning
+of the function, ensuring that the automatic cleanup is safely executed.
 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-> index 62af0cb94839..734f87db4d11 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-> @@ -141,7 +141,7 @@ cpu_b3: cpu@103 {
->  	};
->  
->  	arm-pmu {
-> -		compatible = "arm,armv8-pmuv3";
-> +		compatible = "arm,cortex-a53-pmu";
->  		interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
->  			     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
+Consequently, this removes the need for error cleanup paths that utilize
+goto statements and the jump to out is no longer necessary.
 
-For Rockchip:
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: Shivani Gupta <shivani07g@gmail.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index b1d02dec3774..a741fd949482 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1919,10 +1919,9 @@ static int hdmi_get_ddc_adapter(struct hdmi_context *hdata)
+ static int hdmi_get_phy_io(struct hdmi_context *hdata)
+ {
+ 	const char *compatible_str = "samsung,exynos4212-hdmiphy";
+-	struct device_node *np;
+-	int ret = 0;
++	struct device_node *np __free(device_node) =
++		of_find_compatible_node(NULL, NULL, compatible_str);
+
+-	np = of_find_compatible_node(NULL, NULL, compatible_str);
+ 	if (!np) {
+ 		np = of_parse_phandle(hdata->dev->of_node, "phy", 0);
+ 		if (!np) {
+@@ -1937,21 +1936,17 @@ static int hdmi_get_phy_io(struct hdmi_context *hdata)
+ 		if (!hdata->regs_hdmiphy) {
+ 			DRM_DEV_ERROR(hdata->dev,
+ 				      "failed to ioremap hdmi phy\n");
+-			ret = -ENOMEM;
+-			goto out;
++			return -ENOMEM;
+ 		}
+ 	} else {
+ 		hdata->hdmiphy_port = of_find_i2c_device_by_node(np);
+ 		if (!hdata->hdmiphy_port) {
+ 			DRM_INFO("Failed to get hdmi phy i2c client\n");
+-			ret = -EPROBE_DEFER;
+-			goto out;
++			return -EPROBE_DEFER;
+ 		}
+ 	}
+
+-out:
+-	of_node_put(np);
+-	return ret;
++	return 0;
+ }
+
+ static int hdmi_probe(struct platform_device *pdev)
+--
+2.34.1
 
