@@ -1,112 +1,135 @@
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0773B127B6A
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2024 10:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C113E126F38
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2024 10:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713263323; cv=none; b=aju2TtMod9ghgwypM1wYRM8OJqAAzHzvBkfqjMEOQzE0WyLzPw46P7Wuxy665inzYiQ4cQtxVjOGmE9XP7MtiaUb38PbDcJu76ICoZuyJOmNz2ItKQ8cJvnGZoBzaspcPTGoc+N01mwceW7+lrGrjMRds+NJBzb/FWdvheoMVEo=
+	t=1713263368; cv=none; b=HL6ivZtHV5lQy9D+D81ewqoEg1yC5PHLjmpx3b+GQL+z8GkB15Zos92ZqOydjz5t58kbhRdQkvhf/9dYGAqxlbCRAcTbdWV5TqkmjwzWE+a/xJAUT2/BNe1lM+8N5I6W61s13SqOsTYRIFwIly2h3IItKV/UQRgaFoJbPxYRQL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713263323; c=relaxed/simple;
-	bh=gXScnn7hEl87X0LHuVINW9LoVC2gyqeNWlwiwXYKs4A=;
+	s=arc-20240116; t=1713263368; c=relaxed/simple;
+	bh=CTjrCNZbBSPJIq0cHJaUgYHpJavxftBIjzydI7AEWe8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=feaQgxHTmujiM3we/tDdq8Ceob6ds9vhuLpdVsLZQigwoqMCLboeDf6JeLhhA1qnOHWRguNWFzKB0EfIXy/r5RnBlarhy5MLcoDFztev/qzAJl7mHUjxneZ+zpeXmn3b4e/+Vou4fLHfY7gAhMD2WL0koOmQ4Vul5lEzy924vRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hdKv9A7+; arc=none smtp.client-ip=209.85.161.41
+	 To:Cc:Content-Type; b=UfUtT8XmD/sgUk+cfDydaa660MEPjeE6aKK4W9Jc4pBdrTCVFjIdsu8H9NCjng6jZ+4WKTy9QTPnaVkjZp0qfL7Q23zLTEIIz62S3J7ydgjL8Bt23CvEvOCYCAVzVUGneqstTaG1XAM84NNj3nsAFA8orOJrXDexu1NJeiKLGVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GTyLr1Yn; arc=none smtp.client-ip=209.85.161.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hdKv9A7+"
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5aa17c29ba0so2481687eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2024 03:28:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GTyLr1Yn"
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5aa27dba8a1so2600684eaf.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2024 03:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713263321; x=1713868121; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713263366; x=1713868166; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gXScnn7hEl87X0LHuVINW9LoVC2gyqeNWlwiwXYKs4A=;
-        b=hdKv9A7+Y9zW7yIVLwQVu0RoSY0kp0nc1FOJVW7N89Z4k4IxwzGF1BJvplkVMHXBxl
-         s+J5vXnuxaQIpfIPVccqRLum5dVHoJ8be3GJHRZk4wffNInRtVjyAOI8uxPAeawlU7Na
-         OWrbVuc7XYOpllPVcO0knJMdnTcQYxtYC4wqwXM9u71knbX6ie+9Lp8s3csdMgO+cyZc
-         TMQ+7wbsyg2XXE7IPQUJZdE3T1INlP7L7uwEv9ZDHScIYvBt8oHlobo4Z3dBUi/1aWSO
-         cTi7YFbEqXQIfDMye3512OST9IWAle2r5km9EEfDas4oCRcilhJG0LXkrNcd5IgyMybC
-         R8Bw==
+        bh=CTjrCNZbBSPJIq0cHJaUgYHpJavxftBIjzydI7AEWe8=;
+        b=GTyLr1YnIn1Gj4hf0+sXQng3qRUeoJMvoHZuVwzJ5jduu/1O2AmTbphLHLWcWZeWFq
+         GhcFiL4zxZ/EQpHDcQskAiye3kQ7wlint+B3aExxIDldjWzh1VDNUE5aa9vvQGxalitR
+         jA6alvyNb7mcDPwqql+ZyoSCJ8cS/Fpxj8BoE1hymp4iARnByqOVfLsuJxT+dy2mvbG4
+         4romHI7a4BBz4Qbz8R4WQgTGaprtTg7BWSpQoDn+nosqEQsixw3NRpeLBAZBt6gE2voo
+         n+EO6rJz4H1YSTDrBLG9OZuNf8zC2BHS3j7Oz6mICZqHLA70vrShcgVKCu6+CVGp4c31
+         80+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713263321; x=1713868121;
+        d=1e100.net; s=20230601; t=1713263366; x=1713868166;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gXScnn7hEl87X0LHuVINW9LoVC2gyqeNWlwiwXYKs4A=;
-        b=Xs1U3TlW9zirVePfxcNTX1mzCZ0A7hiT+WZN2KwI6gwLOpuOuBscgPG0/ln4i/1nuV
-         0UIokcFWqlD89cwTBTJjxsrYbNtem6DhwPa7xLuFcBYYMixjHVsII+OhshLhG+LKGjea
-         rcGrOajEc1wNCRndbB1pAA+CJevkfMZJU5wZ7GU5uftRfaPT/t8YW1M9Txa8ICLTiMqx
-         AkyytjbBtjpq1SG6bB+eJuQrI/PdYNdFvf8whpsh7/IbUvoTcicWxUjF1rEm8icNJlYX
-         /8XXxKBtYkXuQCqkpGdP8hh89ygAx316TeNR5s6Mx3UV1Y/2C35kJ8j9me21DL20bZXo
-         vH0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTLIYjlGZ8SYoZjwnBZFdhFnTOg9r4VKQOAfGbdY4b3cJgFCD85B5iZLfBVYnz03EyNix2PwyHTCCZe8xX9QpZsZV9jOEcPXRgo9yvAUFBLlc=
-X-Gm-Message-State: AOJu0Yya8ETLdYHF9XLVyM3j49utr6kHUT33HBCL7sOpvgw69MdjjUD4
-	Stl6UWjtMV9NSaK/D1G1ngGANDTZvYTnZ4HuM1ZrmiWnmxaQe3S3B3vVUH7NV6fWIromJnpamBi
-	zDyAqHJLhkhef1+vOr+BkirTOvnueIJARf1fyCg==
-X-Google-Smtp-Source: AGHT+IE+KH4+3J+4bWImbLmf/i6TMO+pjq+Zhj12DdRm1Ocu0R700WdkfWb+yJ4DCJJOFwu9s9QfuRU794n8yE834po=
-X-Received: by 2002:a05:6820:1e16:b0:5aa:676e:9ad9 with SMTP id
- dh22-20020a0568201e1600b005aa676e9ad9mr12599912oob.2.1713263321084; Tue, 16
- Apr 2024 03:28:41 -0700 (PDT)
+        bh=CTjrCNZbBSPJIq0cHJaUgYHpJavxftBIjzydI7AEWe8=;
+        b=rgj+lKRM2iWGTLf0eVtIbuTU/3yy46FRRaiLJgszfWFDtevaylJvfd5ss5El9VhnJ2
+         e7sjPSafTT1dXQ5xBrIO4M/4Gfc/7Cni7m8WmoCh3p5f05MS2DmaAwLYOCUpWIa0x/As
+         oKrDJCWgV/z5xDFbUgzc8GaWg3XSfhz8ozhdiMEEZSTIuIDW5HgxOiZbqD5GuCUQHCWa
+         3oZApj9qjOJnDDUt6tbdJkdCdoRutCyffiQzLgcySR2vth/1DIql4GohMX6k4J2db9zB
+         qjDjGCiJh8McngFzBvMglzBbGAxvolmXJAKuJmElB1jNnWeAXPA6+YkcmpOWRlh5SopY
+         OROw==
+X-Forwarded-Encrypted: i=1; AJvYcCW13hlrB7XVXxLvI0cy+zXUKuhbKFYov2C7eIZy6CdzqejlRomANgQFRRTw2cNn/jVF3X7FIUnZ6ShA34zBgm2YiDP9uiLybN2gMidlMj5T6Cc=
+X-Gm-Message-State: AOJu0YxyQAFMga8oLqJDOr75m4OTvT5XL1bfW55EBczULtxNiEQLrd44
+	83lgOUlXHjgzt75VABGGH7qokrwMcLbmszAegj3hDZy2QVPxxU04crXkk50cZu/pEa7zpZ1CpDG
+	wn+S3y7ddpR9+34Tfx6kUuYy4gXt1jb1/XlxRXQ==
+X-Google-Smtp-Source: AGHT+IF0mprWmsJ0VbCYrBsXHEko3BiOSfnamAyFvbNWuNvMQCxuk0etOf3eft9TH8byKplO1hBCDcIJEdlM+FZqB18=
+X-Received: by 2002:a4a:98d1:0:b0:5ac:9f37:3ef4 with SMTP id
+ b17-20020a4a98d1000000b005ac9f373ef4mr5487329ooj.4.1713263365969; Tue, 16 Apr
+ 2024 03:29:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240404122559.898930-1-peter.griffin@linaro.org> <948a70ed-e3de-41d6-ada8-b547aa004ef0@kernel.org>
-In-Reply-To: <948a70ed-e3de-41d6-ada8-b547aa004ef0@kernel.org>
+References: <CGME20240404122615epcas5p3812bd7c825bf604fc474bbcdf40d11f6@epcas5p3.samsung.com>
+ <20240404122559.898930-1-peter.griffin@linaro.org> <04d401da898e$fd57ec10$f807c430$@samsung.com>
+In-Reply-To: <04d401da898e$fd57ec10$f807c430$@samsung.com>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 16 Apr 2024 11:28:30 +0100
-Message-ID: <CADrjBPoo4uwiv1x1mNdtNUiaYkbksTre19AYT-ZtzjXaV63CyQ@mail.gmail.com>
+Date: Tue, 16 Apr 2024 11:29:15 +0100
+Message-ID: <CADrjBPoVSvUoq4Yw6DWRXN6=xi31p6=UKCL=57VHDoaKiQCTEQ@mail.gmail.com>
 Subject: Re: [PATCH 00/17] HSI2, UFS & UFS phy support for Tensor GS101
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
-	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
-	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
+	avri.altman@wdc.com, bvanassche@acm.org, s.nawrocki@samsung.com, 
+	cw00.choi@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+	chanho61.park@samsung.com, ebiggers@kernel.org, linux-scsi@vger.kernel.org, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com, 
+	willmcvicker@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
+Hi Alim,
 
-On Fri, 5 Apr 2024 at 08:45, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Thanks for your review feedback.
+
+On Mon, 8 Apr 2024 at 09:30, Alim Akhtar <alim.akhtar@samsung.com> wrote:
 >
-> On 04/04/2024 14:25, Peter Griffin wrote:
+> Hi Peter
+>
+> > -----Original Message-----
+> > From: Peter Griffin <peter.griffin@linaro.org>
+> > Sent: Thursday, April 4, 2024 5:56 PM
+> > To: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+> > krzk+dt@kernel.org; conor+dt@kernel.org; vkoul@kernel.org;
+> > kishon@kernel.org; alim.akhtar@samsung.com; avri.altman@wdc.com;
+> > bvanassche@acm.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> > jejb@linux.ibm.com; martin.petersen@oracle.com;
+> > chanho61.park@samsung.com; ebiggers@kernel.org
+> > Cc: linux-scsi@vger.kernel.org; linux-phy@lists.infradead.org;
+> > devicetree@vger.kernel.org; linux-clk@vger.kernel.org; linux-samsung-
+> > soc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-
+> > kernel@lists.infradead.org; tudor.ambarus@linaro.org;
+> > andre.draszik@linaro.org; saravanak@google.com;
+> > willmcvicker@google.com; Peter Griffin <peter.griffin@linaro.org>
+> > Subject: [PATCH 00/17] HSI2, UFS & UFS phy support for Tensor GS101
+> >
 > > Hi folks,
 > >
-> > This series adds support for the High Speed Interface (HSI) 2 clock
-> > management unit, UFS controller and UFS phy calibration/tuning for GS101.
 > >
-> > With this series applied, UFS is now functional! The SKhynix HN8T05BZGKX015
-> > can be enumerated, partitions mounted etc. This then allows us to move away
-> > from the initramfs rootfs we have been using for development so far.
+> > Question
+> > ========
 > >
-> > The intention is this series will be merged via Krzysztofs Samsung Exynos
-> > tree(s). This series is rebased on next-20240404.
+> > Currently the link comes up in Gear 3 due to ufshcd_init_host_params()
+> > host_params initialisation. If I update that to use UFS_HS_G4 for
+> negotiation
+> > then the link come up in Gear 4. I propose (in a future patch) to use VER
+> > register offset 0x8 to determine whether to set G4 capability or not (if
+> major
+> > version is >= 3).
 > >
-> > The series is broadly split into the following parts:
-> > 1) dt-bindings documentation updates
-> > 2) gs101 device tree updates
-> > 3) Prepatory patches for samsung-ufs driver
-> > 4) GS101 ufs-phy support
-> > 5) Prepatory patches for ufs-exynos driver
-> > 6) GS101 ufs-exynos support
+> > The bitfield of VER register in gs101 docs is
+> >
+> > RSVD [31:16] Reserved
+> > MJR [15:8] Major version number
+> > MNR [7:4] Minor version number
+> > VS [3:0] Version Suffix
+> >
+> > Can anyone confirm if other Exynos platforms supported by this driver have
+> > the same register, and if it conforms to the bitfield described above?
+> >
 >
-> UFS phy and host should go through their trees. What is the
-> reason/need/requirement to put it into this patchset and merge via
-> Samsung SoC tree?
+> VER (offset 0x8) is standard UFS HCI spec, so all vendor need to have this
+> (unless something really wrong with the HW)
+> Yes, Exynos and FSD SoC has these bitfield implemented.
 
-Good point, there is no requirement for it to all go via Samsung SoC
-tree I will remove that from the cover letter in future versions.
-I see Vinod has already queued the phy parts of the series which is great :-)
+Thanks for confirming! I will look to propose something once this
+series is merged.
 
-regards,
-
-Peter
+Peter.
