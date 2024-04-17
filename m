@@ -1,144 +1,161 @@
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324BF12C52E
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2024 14:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09B047F53;
+	Wed, 17 Apr 2024 04:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713278035; cv=none; b=azB3TG4ZLDy8ZUiGkqbekgMFU9IDdtr2Hv/csoUqRUkCNWab4GWcDUehQv1ZrBQ3SPdamCe61sBRlcHiRQgf3tbWgyVMbHeKR9Ort4A4JCv6iGiGeSoEOBqINjyTcVDkp7yS1yVL5gkHgKh0w2XOBKSUmnZ6Q0GIYvDpCeJcf88=
+	t=1713329122; cv=none; b=NfJT0+tP+eIaJSI6ZxQUldkHKDu9XWZT0qoCfM6qvUNlnqEdNogxCEr1dTOZxuOOHakHcF7Rdl74h8ka7g8qxQJwPJZKhhDWKwljZd0AOewgToDruVA4/kHHENDDipt+rh1yEH9UmtkUXUoPdFYjAgK5KPahnRVkGRqVz7GjhoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713278035; c=relaxed/simple;
-	bh=fa/DxXobOZz7ufW7MMuUoP20SVnc4eYC7N+Ri1bZCxc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ht7gcjBYMDXa/BHKviykC7XPgEPhYKkcVHvCJDF46IPvIIMuVcrjk3tDaiANXJFX9Hj/N7LbHupoQKxNAjrFltxEZHm/zvvJvgg+WpwQQZpXI/qeTGu5q7FpaqLlakO9zdbSu82rVJnz48qsYMztsM3tlaTEkL8/2e+0JT69zhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O3Ozc4xE; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713329122; c=relaxed/simple;
+	bh=9GNRWeMaGUDIINfdfON0mc6ytXs7DVhN6Uaa7izOWVI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oqoyEZKyRZFbe1WWTwAsJKzoIpiI/RD14TOebKLjHHRP0VOxkg0KYC7q3k8Rmve2+xJeFUGs85ctet9QfB2Yb2O60MGppfALvvNNhOMlIdsDEtlBU9uAHouPlm6HfiNA1XSzHFR+76YibYxLoqJiKC6w60ym5LIZP0tqmPOkCJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KL98xNfS; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O3Ozc4xE"
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5aa17c69cf7so3222099eaf.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Apr 2024 07:33:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KL98xNfS"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1e2b137d666so42006455ad.2;
+        Tue, 16 Apr 2024 21:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713278032; x=1713882832; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AFOshnHZVt7eovShCJGYyqtlZeqxkfrMezoV0SJga2Y=;
-        b=O3Ozc4xEHpxgmskS84RsU9Q3nK8B3K2qGrNsfkwExS8BBeFMzik9aFry3RgPkEY5Ai
-         PBGazbn6NvBuYyP1Wj2YOFhhZPrEesQtERJsT4jiy0fFb3QXszUBOcRoVTI3NPvQzzxS
-         vZsjBPiDTsqhHVjxMBmxDDldDvJKEzlBG8ytezSQFWR40Ua27tWntCAjreH0a525WvOJ
-         5UOo2GfHcdKxgTj9MDCZUAJAMBk5ZrBXTDZLF9u41Vik+KeUPXTSXtiFDVbdcNqcLO9B
-         O0+ybgBN1I22hHF9ESMhO1u5vm71gj5MzGC0GDdbeCxQzeZ1McY2/N3eGo4rlWq1dWaS
-         gwvA==
+        d=gmail.com; s=20230601; t=1713329120; x=1713933920; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/+FnJ6J/RkjJ0VXVfZtkwMb7BZfv1rFQNC+1ugT22Ak=;
+        b=KL98xNfSgmxir2DCwXoWcRhBkAAPpJzFiVusRLbPw0QYP1eb4dPb0bBOHN9EpXIdwG
+         434COLKjJPgEltFyXXrgMvl03rPpYbuAV0kdPibH3x27c9XqBlMJC7yvEvQJnCWG3+Iv
+         P6CsJ2WvAfJyMUUOtMtulkKTru65VDMv5FW+MD+oGfeM3Ug+CaddbyL3rRPhttRV7GIa
+         dmJWTh/BbzxlFmNg8S+ugXan2Q8ESr/RSPcMNvBJDGVb7oO1cHvM/jZdhN/kUSmEAd4Z
+         p7Cl6dOmGpglSblXg9JSgTZRYPzBZCwMZkCUyCFji5EFvs9rEx+0vzrfvILZ2GW3cEQX
+         2lKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713278032; x=1713882832;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AFOshnHZVt7eovShCJGYyqtlZeqxkfrMezoV0SJga2Y=;
-        b=asZNnTGspeR6VpfpeaEnjSRQ5WQyg7ydZgXUC7WGepLiYJB/GDjSenyy+4VEZebjvA
-         14SfyVeYB7c0yCZFsepojfkmD1SUJ4noINHqgse/9DSbMs0TC4JK4wryJ0jKZkiOm1bN
-         6I/LXmCW78+buksPtGscqE7xxh3Rqlq5GCE4W7/p6zgoSbAr6TW7ECRMZisiX7cruPDL
-         vi1oLvQE0ZlqIhoLMH1qEySoAZ/X005jlmaNEevN5Vk5XOcPBVRU2bJp2j1ElhQBRZoD
-         3qbFv/ZrookHYnRnIKwurUnFh6s4Km8d/sadh9rtBwjQyoLgE+Hd24J4niZmhTjdxvR6
-         sBfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkJxasZohyG8gmcjQ2bhogThdftIGM16Oo6xN0PhGMepBkMLEBipfqDmeq3uJqE6wlJK3S11yiwSr6OxJl1z23Xeqf2A8jdKaRuOKh8nCfEV8=
-X-Gm-Message-State: AOJu0YyDIoLawbuiNWSf5v6DYz04CXGA8qgxEXrejC2rKGkT2PLVn7UH
-	Sx/EKsSlfFoz69GvIgi+60kN/ukKrVP0SkSO5QIJMIqttKPPLueAB9OoiUA4K6d0n50U6iMLziB
-	zEDh+Zeb6NnVf0fXOrNTBVkFV/qcUBARRkGnsMg==
-X-Google-Smtp-Source: AGHT+IEhzO0EWt8vnjX98wzr993MD/IhGn+sVx3cYjsgq4VouGSkc835TnH2i1adzvBUpJ7lxv2taDV6TczYCuSnil4=
-X-Received: by 2002:a05:6820:408a:b0:5ac:5c3b:a9b7 with SMTP id
- fi10-20020a056820408a00b005ac5c3ba9b7mr12436630oob.0.1713278032316; Tue, 16
- Apr 2024 07:33:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713329120; x=1713933920;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/+FnJ6J/RkjJ0VXVfZtkwMb7BZfv1rFQNC+1ugT22Ak=;
+        b=b+vEn4mk1I6vBP3U1wdJVMeLJmunp5Q4hbl3+P8rVl7OrGop9DqKF0MbmZ2KrbfCMu
+         apdYevtNr8TPs0px9UMHbTPuopPJ1LGwsKXX87BDknBgiE/cL0gOuYsgnp4Xbhly4CrF
+         Oc1A+YWAaRU4wK00uYfzXsycMznBsAEP7RDyDsm8gsv0Tbvo/ZEt80eyr52sbMgAAUle
+         s18F0eSW14cqDk/OOWZoBPbzQvmz6fM7VotcgFYe4z5d+yAKywvqNY5cSn423RWZUQeo
+         ZIFTJXyhVSFaLXtVZP4+7ppgmshyq/K7dAYgNbZdX7sQhy9GZEkD7l0bv4/4n85iGrRo
+         yycA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP8VEFo5ePUfFV7qMX4poS7gzXWiuOkQCLlHvMbnpErXhTz+dTf3nnDL4Xntdq4EcLJS1H5w8yrwckrHeVX7j+5AOldP1PRbcMRs/q2Pnb1jkn2XTUjjgbXhha4e0ziQqS9XcEMCDF48emRIgQ3Am/Yz7j+t5kLjvtVrtz8WT3j4lgUSZFjlho9A==
+X-Gm-Message-State: AOJu0YzhmKMURx1qTv+psdszM6PCGXeTfm5dZZsxdFXqC8zE+Eb4xwSR
+	t5A+BVwMTO13I6Y8OH9ASucUI9Yw/GhEKsD54auqaK/IjUybWika
+X-Google-Smtp-Source: AGHT+IHxRzmBXFzDf+o2Pp3UyCz0NHEGmQbeHnpP5TR162wNSMlZLOZeT8I5OP1PmnGHDYp0Y6h2eQ==
+X-Received: by 2002:a17:90a:b307:b0:2a3:48a8:cf7b with SMTP id d7-20020a17090ab30700b002a348a8cf7bmr15071413pjr.18.1713329119838;
+        Tue, 16 Apr 2024 21:45:19 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id z88-20020a17090a6d6100b002a2dbbbb36asm511458pjj.37.2024.04.16.21.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Apr 2024 21:45:19 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled() helpers
+Date: Wed, 17 Apr 2024 10:14:47 +0530
+Message-ID: <20240417044459.1908-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-6-peter.griffin@linaro.org> <391a874522a4141b4bc7f0314a9e50d27142123a.camel@linaro.org>
- <CADrjBPqwLt6gzwMpkZvxp5sC-owdDYUN91F0-nV2NvEzek_v9g@mail.gmail.com> <fd7fe44ecbd99358bac583df3cc8192e250e758b.camel@linaro.org>
-In-Reply-To: <fd7fe44ecbd99358bac583df3cc8192e250e758b.camel@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 16 Apr 2024 15:33:40 +0100
-Message-ID: <CADrjBPpJ2AEYZhg1s1jd00UqH=R+sGUzpWyW-aQs95_Rbm0=CQ@mail.gmail.com>
-Subject: Re: [PATCH 05/17] arm64: dts: exynos: gs101: enable cmu-hsi2 clock controller
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
-	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
-	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Andr=C3=A9,
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
-On Tue, 16 Apr 2024 at 13:21, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> Hi Pete,
->
-> On Tue, 2024-04-16 at 12:56 +0100, Peter Griffin wrote:
-> > Hi Andr=C3=A9,
-> >
-> > Thanks for the review.
-> >
-> > On Fri, 5 Apr 2024 at 08:38, Andr=C3=A9 Draszik <andre.draszik@linaro.o=
-rg> wrote:
-> > >
-> > > On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
-> > > > Enable the cmu_hsi2 clock management unit. It feeds some of
-> > > > the high speed interfaces such as PCIe and UFS.
-> > > >
-> > > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > > > ---
-> > > >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 12 ++++++++++++
-> > > >  1 file changed, 12 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/ar=
-m64/boot/dts/exynos/google/gs101.dtsi
-> > > > index eddb6b326fde..38ac4fb1397e 100644
-> > > > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> > > > @@ -1253,6 +1253,18 @@ pinctrl_hsi1: pinctrl@11840000 {
-> > > >                       interrupts =3D <GIC_SPI 471 IRQ_TYPE_LEVEL_HI=
-GH 0>;
-> > > >               };
-> > > >
-> > > > +             cmu_hsi2: clock-controller@14400000 {
-> > > > +                     compatible =3D "google,gs101-cmu-hsi2";
-> > > > +                     reg =3D <0x14400000 0x4000>;
-> > > > +                     #clock-cells =3D <1>;
-> > > > +                     clocks =3D <&ext_24_5m>,
-> > > > +                              <&cmu_top CLK_DOUT_CMU_HSI2_BUS>,
-> > > > +                              <&cmu_top CLK_DOUT_CMU_HSI2_PCIE>,
-> > > > +                              <&cmu_top CLK_DOUT_CMU_HSI2_UFS_EMBD=
->,
-> > > > +                              <&cmu_top CLK_DOUT_CMU_HSI2_MMC_CARD=
->;
-> > > > +                     clock-names =3D "oscclk", "bus", "pcie", "ufs=
-_embd", "mmc_card";
-> > > > +             };
-> > >
-> > > This doesn't build because you didn't add the clock ids in the bindin=
-g patch.
-> >
-> > These clock IDs are for cmu_top, not cmu_hsi2.
->
-> Right. I replied to the wrong patch. Sorry for that. It is patch 7 that
-> uses clock ids that are only added in patch 8. The clock ids from patch 8
-> in include/dt-bindings/clock/google,gs101.h should be added in patch 1
-> instead.
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-Ah I see, thanks for the clarification. I'll fix that in v2.
+While at it, use dev_err_probe consistently, and use its return value
+to return the error code.
 
-Thanks,
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+v3 - No change
+v2 - No change
+---
+ drivers/devfreq/exynos-bus.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-Pete
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 245898f1a88e..153340b6685f 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -160,7 +160,6 @@ static void exynos_bus_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ }
+ 
+@@ -171,7 +170,6 @@ static void exynos_bus_passive_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ }
+ 
+ static int exynos_bus_parent_parse_of(struct device_node *np,
+@@ -247,23 +245,15 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 	int ret;
+ 
+ 	/* Get the clock to provide each bus with source clock */
+-	bus->clk = devm_clk_get(dev, "bus");
+-	if (IS_ERR(bus->clk)) {
+-		dev_err(dev, "failed to get bus clock\n");
+-		return PTR_ERR(bus->clk);
+-	}
+-
+-	ret = clk_prepare_enable(bus->clk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to get enable clock\n");
+-		return ret;
+-	}
++	bus->clk = devm_clk_get_enabled(dev, "bus");
++	if (IS_ERR(bus->clk))
++		return dev_err_probe(dev, PTR_ERR(bus->clk), "failed to get bus clock\n");
+ 
+ 	/* Get the freq and voltage from OPP table to scale the bus freq */
+ 	ret = dev_pm_opp_of_add_table(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to get OPP table\n");
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	rate = clk_get_rate(bus->clk);
+@@ -281,8 +271,6 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dev);
+-err_clk:
+-	clk_disable_unprepare(bus->clk);
+ 
+ 	return ret;
+ }
+@@ -453,7 +441,6 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ err_reg:
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ 
+-- 
+2.44.0
+
