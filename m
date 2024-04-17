@@ -1,134 +1,122 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C209A48CC7;
-	Wed, 17 Apr 2024 04:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE741384BE
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Apr 2024 09:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713329129; cv=none; b=gyL+XTDKTB7JzKGx1JCqmHNCwgMTFlaUn0I5jpmWxGIOMMijmlSLgtcFa3NLOQbqRdVBGV4OXCdcmSPLFOefFeYqINvXLG7wcAna11J9kV7SLK/sWyzqFwK+VrpbD2E5qiX0BP0FrKQkIOUfLR/KAle5yuwf1rgqIJ9yqbgByZs=
+	t=1713347534; cv=none; b=SjBCyabrAgLTw5tLFwivqAOxqcdGkr91yxfnH/r5c2LfO1DOF7Koqj9JQyHvOIv7VwKZFPBcG/VcN3J5q9fcttv+OU/enEf1wzS5a5QRoPh2lPvPmHviO77hiD12S0KzdmpqzDZ84ITCvJuymslsnqxrdrPvzKj0FG850bnrtbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713329129; c=relaxed/simple;
-	bh=0uYmzNbmhVT0zrBveQiXWQNqO5I2h3S7etrYhBY3kPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YH7C1DCqbXh0g+7uoBOe7nE36ZSiYxnXLTkqgJV9euqe/AjcGj+SEQlsV9UflRuxgBql6jTCvt5+4ITpntuArdlvUfP0efYSJBSN8bB/mSm4azyejIAqOYABXItZTSXwdnjyNca++YKc/nJ4aEPk5iDdyigQTJWfKoZhOQHGQfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVW2VMuD; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713347534; c=relaxed/simple;
+	bh=3X6WwNfAVR7FMkoaL54r/zUW5zJ1gH7cm4+/P1mg7j0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pwnn5iwvrRwjJpzDtaGJlHBquXpJBTlFta1VORI8zJxqyTNdOAVn1/1GrOp+QzjLRHWSOzhyLi0KVn4uzFgqnHi5sTr2iak2wK7XzHDripitdIPkYOiH3wP4wqV5DFPChKhb4ycNJDCHeeATHvOYuKKbBbNw5EWlA2fxdvMIkAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fGY39utO; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVW2VMuD"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2a2e5d86254so302996a91.1;
-        Tue, 16 Apr 2024 21:45:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fGY39utO"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a450bedffdfso667232866b.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Apr 2024 02:52:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713329127; x=1713933927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ix5I1EmrcVwkdm6oev/n0e0cu3EKBfKkUwQi0q2AcII=;
-        b=TVW2VMuDg6OO4JMpHlfWTuwsJHOzFcIGuT80xSaP5nihoMec23me1mtWonY65sXudO
-         gnOeV+sMm38wnwe+vtiVt60n5U0WLvS89tfDPXEKKs1nRBC340XObOUbXWTWNRFT8CaB
-         51LuvNKG1XiUHlaDrWzD8edAqah2YW/fpSYWBSoBtGV/UWfcVjbGlgJGDaAOaHfpXumM
-         ChrfH6A4f+3HYHUOr9EutRSZDD9E5s8yod520FHjXrsjbLICtZzN6ecN4K6OGfNgqiLR
-         2jUVvxJyP3aiOQhPgL6IbBnD9aTz5LnJdwyqMyu1Iocr1n3d4+iEVWwVBFqhGvnEdyzT
-         YDFQ==
+        d=linaro.org; s=google; t=1713347531; x=1713952331; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5f5XU8CL1kg+VvVC0mF3oI+N9DcL6GD1pDu7yNmuO1Q=;
+        b=fGY39utO6irKOll8izO+7MR1eqH1lbzYw2D+KRkJoY2GDZ1weRqAekMVOf0hw/bdXd
+         PzHupGVCXJkwYGv1UpqG+56mMCXm+Cg0FLX/BHOP49/+P3UzNBlDJArd9RQlCRVczfRg
+         zCXihgKHtNnRETbVT0LpeF5+pZ3WBuxNjhOJpZ5iJScAzOlWCSTIyRbF/G9Gt/uAqyBj
+         Kyl8j2RUwiDAuiDPftEVv0g1ZDNlEJz4qEGCIubiZvQIYMIgw5aJwM0I4wwoTGjkO4Ny
+         EbuHnLpmot0+NwjF7D5KxOtWFzrV3Xa3Nhar4+MWhPJDnEr3g0vYEMDIGFWf6hBHTUxc
+         9XAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713329127; x=1713933927;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ix5I1EmrcVwkdm6oev/n0e0cu3EKBfKkUwQi0q2AcII=;
-        b=lR1ZfD2BTZxkGPByIq18d8vfiu3TqfzohYoJM0gZz5QBvtg7UnSUw4y6//4d/AAWYm
-         goDpyDaOE+5hSTHKNZi8Lg7rCecjMC+CHD0XEby5bstZiYjpQeDbkNTsUEok7a5Nj7Si
-         zoEG/oXlQIwciSATwIj61ve5gkwjZjsYWUn3eA5CGIpDiQ8yr8M6BuHwPKf4KR4x/+zp
-         63u/q74b/VOituXJ69h+/UL6lUAGnuAwukBF11adPiKi0pTTyTg8s1Pt1YnbAwVPtuFp
-         FfY9UYtnjUE2X0lodYq9Dqy4ACYajv+gc+ZgbG2+AjIzIknRLb/Xxmol1dNAiu+IM3Z9
-         eq/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUY57fBrKl92pI2jY+4cutCm/Sz0mNCRQdPaW2eHreeYdkHz0bMShPM+jXukiViYJBTvodDCadwykia7P3DXwU23VbwATKUIWK5g5O5F4ZCt3HmwhZvWWdmGHpsVMrl54Ogk+5z5UGtxXfzND2tMJvqwrzOoeCGuvoySXfXVPI3kgaCuy2ojiyURA==
-X-Gm-Message-State: AOJu0YwZjeJEe4ft4HAsWqK3sqVdPkvAV1Hhx9Rzw4ckYf71k7H3/LUb
-	3CSHCprBUztZajNWuN1pEb/a/dKP08M9eTR9Ww3DfZf5iKmUJHIrQfuavg==
-X-Google-Smtp-Source: AGHT+IHcijOFiGcrpds/8InYTdLVg2ob8g6xgqf32vPTH6ClkmhGxpsSjcOf+6Heyl309B3TS6AIdw==
-X-Received: by 2002:a17:90b:3010:b0:2a5:c1ca:801 with SMTP id hg16-20020a17090b301000b002a5c1ca0801mr6393726pjb.23.1713329126906;
-        Tue, 16 Apr 2024 21:45:26 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id z88-20020a17090a6d6100b002a2dbbbb36asm511458pjj.37.2024.04.16.21.45.23
+        d=1e100.net; s=20230601; t=1713347531; x=1713952331;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5f5XU8CL1kg+VvVC0mF3oI+N9DcL6GD1pDu7yNmuO1Q=;
+        b=k4zlbOlhpLR9gFx3kYFxR8AziI9wtC1JQhfoREM8zgSOCvJzJkqpCXvAZqEZzlEyua
+         L0XnDIOW9BNUhflLJWYPKC2dL8V1wfz5jDPgjuShgI5rUwC3A/uYasPrVeQMr1RmgArh
+         EOH3NOO0H2VyhHBDGzKjp6UodbrvLHz5qPV8IC9joNHaf5IUSEJVtw0qZraWaBQVYfGp
+         M4s2pwGxAKDepUOJa3x3QFx0771LXmVWClhETqtvR8a77vYMr05v0t9OEQHua0tZO++D
+         E9Q1dech4IlqyyVdLg084OYG9i+B0DZ6fMzRHa6ekhxGilCV/rE3xIEDjPcGC9R5K0ga
+         BWCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrMOyLhRuU/r2/aVh0e6aQ5HsqbDXnAEyE9TsZ4x4vfAWBfaB40jpc7rHVnAgO2KVyeqQb317RX1r7scnsROQvjrougJVeD4f7X7MMuMD6Owo=
+X-Gm-Message-State: AOJu0Yw0Z+kiiBeeIOhV6OYNLCzDjqp3Zj9JAjZ6QEESERd7kFlf2pRR
+	/Pn3SPlK1vmkdB+/0pvmSL8egxJdS8Fk9e7DFjbwVepqcgLY/aDn6TFF1xOmq1E=
+X-Google-Smtp-Source: AGHT+IEYPrQEauvIgRMeVjGwsmiUGzuIZo8hcH8ym7d63O1kdjEGb0XdYaDBVBXRGhRdHQrpHYNOWg==
+X-Received: by 2002:a17:907:7d91:b0:a54:1c55:7123 with SMTP id oz17-20020a1709077d9100b00a541c557123mr5905226ejc.73.1713347531118;
+        Wed, 17 Apr 2024 02:52:11 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id t6-20020a1709067c0600b00a5229c51077sm7414958ejo.9.2024.04.17.02.52.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Apr 2024 21:45:26 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] PM / devfreq: exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-Date: Wed, 17 Apr 2024 10:14:48 +0530
-Message-ID: <20240417044459.1908-2-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240417044459.1908-1-linux.amoon@gmail.com>
-References: <20240417044459.1908-1-linux.amoon@gmail.com>
+        Wed, 17 Apr 2024 02:52:10 -0700 (PDT)
+Date: Wed, 17 Apr 2024 12:52:07 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+	bvanassche@acm.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	chanho61.park@samsung.com, ebiggers@kernel.org,
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org, saravanak@google.com,
+	willmcvicker@google.com
+Subject: Re: [PATCH 10/17] phy: samsung-ufs: ufs: Add SoC callbacks for
+ calibration and clk data recovery
+Message-ID: <75b1b063-e8d4-417d-99a8-4320d72297cf@moroto.mountain>
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-11-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240404122559.898930-11-peter.griffin@linaro.org>
 
-This macro has the advantage over SET_SYSTEM_SLEEP_PM_OPS that we don't
-have to care about when the functions are actually used.
+On Thu, Apr 04, 2024 at 01:25:52PM +0100, Peter Griffin wrote:
+> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
+> index c567efafc30f..f57a2f2a415d 100644
+> --- a/drivers/phy/samsung/phy-samsung-ufs.c
+> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
+> @@ -46,7 +46,7 @@ static void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
+>  	}
+>  }
+>  
+> -static int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy)
+> +int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy, u8 lane)
+>  {
+>  	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
+>  	const unsigned int timeout_us = 100000;
+> @@ -98,8 +98,15 @@ static int samsung_ufs_phy_calibrate(struct phy *phy)
+>  		}
+>  	}
+>  
+> -	if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS)
+> -		err = samsung_ufs_phy_wait_for_lock_acq(phy);
+> +	for_each_phy_lane(ufs_phy, i) {
+> +		if (ufs_phy->ufs_phy_state == CFG_PRE_INIT &&
+> +		    ufs_phy->drvdata->wait_for_cal)
+> +			err = ufs_phy->drvdata->wait_for_cal(phy, i);
+> +
+> +		if (ufs_phy->ufs_phy_state == CFG_POST_PWR_HS &&
+> +		    ufs_phy->drvdata->wait_for_cdr)
+> +			err = ufs_phy->drvdata->wait_for_cdr(phy, i);
 
-Also make use of pm_sleep_ptr() to discard all PM_SLEEP related
-stuff if CONFIG_PM_SLEEP isn't enabled.
+The "err" value is only preserved from the last iteration in this loop.
 
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v3: fix using new DEFINE_SIMPLE_DEV_PM_OPS PM macro hence
-    change the $subject and the commit message
+regards,
+dan carpenter
 
-v2: add __maybe_unused to suspend/resume functions in case CONFIG_PM
-   is disabled
----
- drivers/devfreq/exynos-bus.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 153340b6685f..b89e04eb8430 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -454,7 +454,6 @@ static void exynos_bus_shutdown(struct platform_device *pdev)
- 	devfreq_suspend_device(bus->devfreq);
- }
- 
--#ifdef CONFIG_PM_SLEEP
- static int exynos_bus_resume(struct device *dev)
- {
- 	struct exynos_bus *bus = dev_get_drvdata(dev);
-@@ -482,11 +481,9 @@ static int exynos_bus_suspend(struct device *dev)
- 
- 	return 0;
- }
--#endif
- 
--static const struct dev_pm_ops exynos_bus_pm = {
--	SET_SYSTEM_SLEEP_PM_OPS(exynos_bus_suspend, exynos_bus_resume)
--};
-+static DEFINE_SIMPLE_DEV_PM_OPS(exynos_bus_pm,
-+				exynos_bus_suspend, exynos_bus_resume);
- 
- static const struct of_device_id exynos_bus_of_match[] = {
- 	{ .compatible = "samsung,exynos-bus", },
-@@ -499,7 +496,7 @@ static struct platform_driver exynos_bus_platdrv = {
- 	.shutdown	= exynos_bus_shutdown,
- 	.driver = {
- 		.name	= "exynos-bus",
--		.pm	= &exynos_bus_pm,
-+		.pm	= pm_sleep_ptr(&exynos_bus_pm),
- 		.of_match_table = exynos_bus_of_match,
- 	},
- };
--- 
-2.44.0
+> +	}
+>  
+>  	/**
+>  	 * In Samsung ufshci, PHY need to be calibrated at different
 
