@@ -1,124 +1,210 @@
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDBC4A02;
-	Thu, 18 Apr 2024 00:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322D415F322
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Apr 2024 13:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713398725; cv=none; b=tySAmW7sEG9daDGIZfUR26BBbBJglWlhmU1Rz3PA0hEnmDiiOz9OX6a/5dQ0IPJXL0XmVpdQmD2euX8QG2d7AFElzy0jXEfgKn8yapJv6SmGXpMkgdt8XGuoDcwlGcUR3AgoCnjA8fKz1I5SXKdCPkzrFl+M68muQRCu4pEHb+Q=
+	t=1713446429; cv=none; b=T26RfFkiHwi8PwT54HlXw9dLwbbf4BnixVoi7mVsLVxUvofosazGQzrW2xZLlmsZDkZ8R9BV8Lk1KJq2tu4FV+7El8utr8Zy7Az/NLmLd5ivRjaOflN8bdQmMwczEGJe7Sp0imkt4xT4v6+haBuEFCZkUeI0uUpPAv4o1PxAYT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713398725; c=relaxed/simple;
-	bh=yj/sYzJ2Jxp+y+6KcxbcY/KqBOzuG1tsZ4AJilTQtew=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=btJDndRvu+kdOVsKUY8Fm5OPdSUYVbHPl+xFSdw9BHwaNPx4e0Cfq8o3kLvXUw+rulfSceCWmWNXLpFLQ2OnUmsPpI8EuBI98M42v0A66B9WmGxASQF+bQqiXWX6es+cWk0Qsb0fjybfxgvPgIynwz7OpfL1CQXr1uMHkHZ8GzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cksNc7Nd; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713446429; c=relaxed/simple;
+	bh=Ij0WftYV/5ZMg5fO9jgZuOZnGI9lrIxnyxWRy7o1chQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UKq6qvZWZGmsRJkJKqZyLJGB8w4U58NZdMH9x/5k2qz9YFZtN8x+4fT32EwwxQTI6pbKgY/4BrbLIFrvA79PBMmCEujw1Tc9+GMOYDZzqNjsAaIcWIFGAtIQV7QGKIcm+v0cecvzpUMZSTQQTs+JySwI7/6lGC+MtvoPgDqlzGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hI9W2kT7; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cksNc7Nd"
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-36b08fc1913so1150435ab.0;
-        Wed, 17 Apr 2024 17:05:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hI9W2kT7"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5aa28cde736so511766eaf.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Apr 2024 06:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713398723; x=1714003523; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7lw/eo8vYS/jr51eHoroeN5VlW5AAoYkDX60WZMmgGs=;
-        b=cksNc7NdjJeEBrXt8Mizfa2duojUBbFDY+3C0OEHG9/umObsFfggxaQPE2iVWoOdRK
-         YG5jVgzIp9E85DbSplnWXdZVRR5cDiTsE/+B50gUAZm19DfnlEYgHeYdE1Ua2s7u6pYs
-         G5pz0PPatXJKS5fas44mDgs++rJSpkV7nnY5k2QIGx3tiNCrsMtiX25CgdPlyB6y4cC6
-         oNk0X7mPrmBpyIau3O8OC5mjOVuuFHOBXMOEsZmc45yglmFT67Z0RBDRxPkbUROwN862
-         sga0N/cnMMbi/EUYsqv3ta6VCW58HQl+qyln3cdxES4yY6HRQCvnts9nvULxTWkflRcd
-         Hxew==
+        d=linaro.org; s=google; t=1713446426; x=1714051226; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kv/eRlfqI9fnVJrlsdInFKVMVhQmcxt9AimltQ38bU4=;
+        b=hI9W2kT7VEnNzepqozO6CsirkQ87gJT6BbCrodwmQQVbLuVDsUJiKI3tykUM+HP9S/
+         eed/NaEkNHh98ebwISsdFegj5BfJ/0evAevx4fqGvdtEWP9SLJ37AaVOTYZxk9AeCMuW
+         rWKXaHY6mqr7ZU2YOopgr0+uyjh4+9fVu/6+fY19xw7h+KIvkcaQ0hlLhCJe0LpM7oiS
+         rdi7eKufPWOhtCqaERieSSJxr+aSPStPlWT7sGo7cVTBpLJmkD6mdDnUkHD5LnLeupD/
+         YgLLYz9ogrq1UkWYu1zryJDjZd7ISd84phdqd07AG3DpP/LDSWuyXtgxRijsnZK5eC1h
+         yOlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713398723; x=1714003523;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1713446426; x=1714051226;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7lw/eo8vYS/jr51eHoroeN5VlW5AAoYkDX60WZMmgGs=;
-        b=PIMJxbvayox5rnvfQt/ghPWheRKbCqlbQ7RdO39mMhcLkMwgezX7vsxnhsfSKWM+Pl
-         VXx6DFEwzCUM2/HwHNZiAzWTrKA+ZBA/k5OEu/D9+Ud1/zVFsQ9jJtIRnBjH9KRmegnM
-         gAKw7Z4yXiIuGpFZaE6kaK8jMt3mvgC4CK2PRp4kpxo5MfPxlCo/A0AoKRtPwZDrOtE9
-         qXm+kPY+4fDjtdSRZz3xhiPqEqCAF/TYbzJvF45ueq81GynDclyhloyzceti9cMh5T1F
-         HhZeXS52fxHnDRi5D1HWatLAvJzN8dxXQvj8/4+lnPqmK9/OpfHQjZQs5xknX0gcR/FY
-         AY6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCViUDHuG+LRimVed9TyNwDZuYHuxx+sI4H++heCgq7qNGjnA5JBaHJEmcQNP7GkrxA4BbcAeJxVzlK8b/CXomqyNB0H8RtkceSeXY5ZlQCSwQGGiNUP4tO91SPxZFon1woqCQt4E0gE93OTs9DgeMc=
-X-Gm-Message-State: AOJu0YzGd52sdx7y6bQgM7ysepPhxbZdBsigwyzjoFK0UJOxXAUt2otJ
-	EwM5Yf0hdvNFSbS4SYyw176uklZJmCXbyFxVBGQ1zrRdopVMs/ES
-X-Google-Smtp-Source: AGHT+IGOWuVeNK5n1yJtOE4vhdXiU4Ah+hHLYIlOUB/p61hc5VYbJesLZUvdNIwAU0mwyRjpJLuSVg==
-X-Received: by 2002:a05:6e02:1d05:b0:36b:3024:a4da with SMTP id i5-20020a056e021d0500b0036b3024a4damr917731ila.3.1713398722906;
-        Wed, 17 Apr 2024 17:05:22 -0700 (PDT)
-Received: from shiv-machina.. (c-73-169-52-138.hsd1.co.comcast.net. [73.169.52.138])
-        by smtp.gmail.com with ESMTPSA id ix10-20020a056638878a00b004830f829b86sm90127jab.133.2024.04.17.17.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Apr 2024 17:05:22 -0700 (PDT)
-From: Shivani Gupta <shivani07g@gmail.com>
-To: andi.shyti@kernel.org,
-	broonie@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com
-Cc: linux-spi@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Shivani Gupta <shivani07g@gmail.com>,
-	Julia Lawall <julia.lawall@inria.fr>
-Subject: [PATCH] spi: spi-s3c64xx.c: Remove of_node_put for auto cleanup
-Date: Thu, 18 Apr 2024 00:05:05 +0000
-Message-Id: <20240418000505.731724-1-shivani07g@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        bh=kv/eRlfqI9fnVJrlsdInFKVMVhQmcxt9AimltQ38bU4=;
+        b=e3ASBP9xud4cqJlVPUzDrJEbhqDyLLxM4TyE2XtQVTuLhQVtRkUbhiu/9x84PlUpRQ
+         IiUMx1lttYim0CI3TGq6bLVVOsngDHoQFGIJJ9GhwCNlw1nbQCl0vTXDLtcLiZ9fprrz
+         +NPTKj0Lw1SQzyl3a0rsTM4HnctzR0iMBONYN/ZX2DXgqSZAHSL/x76FVF44f4NwIuxp
+         mWf0carfyzYKJSIMfMxFWqQhDm5zxF6ezQmlNlsOYqjy1EcC+qQofO8SlxufdXvLRd1y
+         GsttEffB3kaJv2q3xfQ3rUebAuOlmxZwZifYrCPi58bcAWL+oEt4ltl2jfIuAbXaFLzx
+         FL2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWX8tzp+4a3W/lLYi2+nb5ie9ro3jjS+YhE/7TUVlrVbz5Em7x5E5ServUSOrWtk94ErWmHpmLA9j3Xyr54U49UU/ZJDH0JPaLyPec6v6DrxVs=
+X-Gm-Message-State: AOJu0Yz8h16jN42OEc4u+c67ngK2PaD3ZjUnAzWlUjdFo30E5iSd+0oD
+	MmzB0vM8k1ihi1EyWlXd8BG6O05mDelSh+GBGH+WSLfOBqmPJajkGCCzGY459LqnSc/BJJyjN5N
+	nDCTRbhQpKRmI4FER232sMMsP/YUDphYphiQJag==
+X-Google-Smtp-Source: AGHT+IHb/MdViNDEYLGDlZta2cUpYEdAdq/Zq5yJhTp7tH/XZ2cMCev0RXDqyzn43o1+A8jwrKM5rxrFUIw8Q5yDYVo=
+X-Received: by 2002:a4a:ac89:0:b0:5aa:676e:9ad9 with SMTP id
+ b9-20020a4aac89000000b005aa676e9ad9mr3474499oon.2.1713446426269; Thu, 18 Apr
+ 2024 06:20:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-8-peter.griffin@linaro.org> <4ed72378-672e-46d6-9f29-fa118f598739@kernel.org>
+In-Reply-To: <4ed72378-672e-46d6-9f29-fa118f598739@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 18 Apr 2024 14:20:15 +0100
+Message-ID: <CADrjBPpaR86R6FMwMqos7ojVfDpGxS=ygW50UBCy1DTsoXHJgQ@mail.gmail.com>
+Subject: Re: [PATCH 07/17] arm64: dts: exynos: gs101: Add ufs, ufs-phy and ufs
+ regulator dt nodes
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Use the scope based of_node_put() cleanup in s3c64xx_spi_csinfo to
-automatically release the device node with the __free() cleanup handler
-Initialize data_np at the point of declaration for clarity of scope.
+Hi Krzysztof,
 
-This change reduces the risk of memory leaks and simplifies the code by
-removing manual node put call.
+Thanks for your review feedback.
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Shivani Gupta <shivani07g@gmail.com>
----
- drivers/spi/spi-s3c64xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, 5 Apr 2024 at 08:53, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 04/04/2024 14:25, Peter Griffin wrote:
+> > Enable the ufs controller, ufs phy and ufs regulator in device tree.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../boot/dts/exynos/google/gs101-oriole.dts   | 17 +++++++++
+> >  arch/arm64/boot/dts/exynos/google/gs101.dtsi  | 35 +++++++++++++++++++
+>
+> If you wish you can split DTSI and DTS into separate patches. Up to you.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index f726d8670428..833c58c88e40 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -950,7 +950,7 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_target_ctrldata(
- 				struct spi_device *spi)
- {
- 	struct s3c64xx_spi_csinfo *cs;
--	struct device_node *target_np, *data_np = NULL;
-+	struct device_node *target_np;
- 	u32 fb_delay = 0;
+Thanks for the heads up
+>
+> >  2 files changed, 52 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > index 6be15e990b65..986eb5c9898a 100644
+> > --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> > @@ -53,6 +53,14 @@ button-power {
+> >                       wakeup-source;
+> >               };
+> >       };
+> > +
+> > +     ufs_0_fixed_vcc_reg: regulator-0 {
+> > +             compatible = "regulator-fixed";
+> > +             regulator-name = "ufs-vcc";
+> > +             gpio = <&gpp0 1 0>;
+>
+> Use defines for GPIO flags,
 
- 	target_np = spi->dev.of_node;
-@@ -963,7 +963,8 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_target_ctrldata(
- 	if (!cs)
- 		return ERR_PTR(-ENOMEM);
+Will fix in v2
 
--	data_np = of_get_child_by_name(target_np, "controller-data");
-+	struct device_node *data_np __free(device_node) =
-+			of_get_child_by_name(target_np, "controller-data");
- 	if (!data_np) {
- 		dev_info(&spi->dev, "feedback delay set to default (0)\n");
- 		return cs;
-@@ -971,7 +972,6 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_target_ctrldata(
+> but more important: are you sure this is not
+> coming from a PMIC? What's the voltage? It looks like a stub for missing
+> PMIC, because UFS voltages are usually provided by PMIC.
 
- 	of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
- 	cs->fb_delay = fb_delay;
--	of_node_put(data_np);
- 	return cs;
- }
+UFS vcc is 1.2v. The gpio signal from gs101 SoC is called BOOTLD0, and
+it is connected to slave pmic (S2MPG11) UFS_EN signal which is a gpio
+enabled voltage rail for UFS (LDO8S).
 
---
-2.34.1
+The downstream driver code declares the UFS supply as regulator-fixed
+even though it has a fully featured regulator driver for the pmic,
+with the LDO8S regulator exposed. Checking the DT for the pmic the min
+and max volt are different, so using regulator-fixed seems wrong for
+downstream.
 
+s_ldo8_reg: LDO8S {
+    regulator-name = "S2MPG11_LDO8";
+    regulator-min-microvolt = <1127800>;
+    regulator-max-microvolt = <1278600>;
+    regulator-always-on;
+    regulator-initial-mode = <SEC_OPMODE_SUSPEND>;
+    channel-mux-selection = <0x28>;
+    schematic-name = "L8S_UFS_VCCQ";
+    subsys-name = "UFS";
+ };
+
+So I think you're correct this is a stub pending full pmic support. I
+propose in v2 to add a comment similar to what we have in
+exynos850-e850-96.dts today above the regulator-fixed node like /*
+TODO: Remove this once PMIC is implemented  */?
+
+regards,
+
+Peter.
+
+
+
+
+>
+> > +             regulator-boot-on;
+> > +             enable-active-high;
+> > +     };
+> >  };
+> >
+> >  &ext_24_5m {
+> > @@ -106,6 +114,15 @@ &serial_0 {
+> >       status = "okay";
+> >  };
+> >
+> > +&ufs_0 {
+> > +     status = "okay";
+> > +     vcc-supply = <&ufs_0_fixed_vcc_reg>;
+> > +};
+> > +
+> > +&ufs_0_phy {
+> > +     status = "okay";
+> > +};
+> > +
+> >  &usi_uart {
+> >       samsung,clkreq-on; /* needed for UART mode */
+> >       status = "okay";
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > index 608369cec47b..9c94829bf14c 100644
+> > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > @@ -1277,6 +1277,41 @@ pinctrl_hsi2: pinctrl@14440000 {
+> >                       interrupts = <GIC_SPI 503 IRQ_TYPE_LEVEL_HIGH 0>;
+> >               };
+> >
+> > +             ufs_0_phy: phy@17e04000 {
+> > +                     compatible = "google,gs101-ufs-phy";
+> > +                     reg = <0x14704000 0x3000>;
+> > +                     reg-names = "phy-pma";
+> > +                     samsung,pmu-syscon = <&pmu_system_controller>;
+> > +                     #phy-cells = <0>;
+> > +                     clocks = <&ext_24_5m>;
+> > +                     clock-names = "ref_clk";
+> > +                     status = "disabled";
+> > +             };
+> > +
+> > +             ufs_0: ufs@14700000 {
+> > +                     compatible = "google,gs101-ufs";
+> > +
+>
+> Drop blank line.
+>
+> > +                     reg = <0x14700000 0x200>,
+> > +                           <0x14701100 0x200>,
+> > +                           <0x14780000 0xa000>,
+> > +                           <0x14600000 0x100>;
+>
+>
+> Best regards,
+> Krzysztof
+>
