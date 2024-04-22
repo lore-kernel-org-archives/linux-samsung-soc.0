@@ -1,143 +1,107 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D411C29F;
-	Sun, 21 Apr 2024 13:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A36251037
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2024 07:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713707339; cv=none; b=HaIH67yBmeXRY/KqGy6tnDHKsBZzW6zWT/ubVefid1ChRAGJfaewdJ6hUIy6573IBqBdG5p+MefNOhyw2VQLw/xiKdbep26eaHEkm6X7DsQOXMxhMxTIDA1/TodivtND3S4dOVGWESoqtW/YgImF73f4Dr7wW3QPsVdWMwoOX6I=
+	t=1713770427; cv=none; b=IoyuR6RQGHO57LDT9XC1WvwEQ1kO+qEJC7uv66UbD9UMvyVnOu7mWekoS3Pl6G/QFc51npPh7Rwmw1OrTMvI3+kNDu20AcVt+ajRL3hWVIDieOKaAG4Nl2ZZQBdD3J6FXcFSNGoaUmZpsv7acVlKYsA2kdj5fh2iHNce3WebC6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713707339; c=relaxed/simple;
-	bh=Y9jIyElOMp31XHXfaCIVTLoMyn8wDqkA34DCh0awnvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oinBLTiDXDSL14ka0l2Wwo3jnqvCtylnFqAL4PBSWjpu8v9kykt1SHouYi50v8PXPOnaGryhzVy0xKmaEu9SmP4OW6WWLnc67eYIXBxlYVeMJCGM37hTULXWAGTSFq2er5Jj7qImGxoUTvBZSacIhowaZV+8/S4el5/yGj73URk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx6zQLop; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713770427; c=relaxed/simple;
+	bh=ATftZ9Ym7rSAUoJHd1ARgykQ/AWlPFdo0bDfzdin4dQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rSzfAoyToe40BuX/09HmjWEpjbXfvxo0XOnrax2Jg/o/LKI7L0IEdsJYzh6Hvk1EKiv7AC1RM3b2L9wv8Iz1ESdzRZPIbm3bXMhMhFebl+SXS2Qq3SJtqpnafcpXVO+77M1tJBYo/T88yeT4sz7RJhn0HUDJQRmy1pBPNz/1V9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPf1+btW; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx6zQLop"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6ed627829e6so4016303b3a.1;
-        Sun, 21 Apr 2024 06:48:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPf1+btW"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-516d6c1e238so5130548e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2024 00:20:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713707338; x=1714312138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1713770424; x=1714375224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vAq3AHvWEQFsKDgpu//rdmbRIcBJ6dLOs4RYotedEeg=;
-        b=Tx6zQLopnJkmPQeroWlWtNHVVFP4NZSBfP+CV8kfhhmDeB5pPfh86sFz43FOO2aISl
-         XJTWhIZfwNCaOkV2JxSB/2Kp+VhB75CX9bx6BKzccB/UQIs9VbqfZqX/0kRCLZI7S7de
-         1kYvhPh7MD0zc+G0sCCoA3hTEVug8jK9sr32IderaCqZbHWQlMVKHj1+WeK5OVwqvEub
-         w/8kdSAi/gHHtRQl7pOjxM+AWWeszXFVnZxxIcZ/t9SvUAsba0Z31snoQylO1yqNJYwk
-         jEbr5W9XuDPRAkedjdSKip6agfJy6E9G/Fq9xE61GzYGSEkpV6ehzcltkglaRFpMyQ8o
-         FQWw==
+        bh=32Lq/HZzWg4ZCGDLhtubfrCq19J1a57yr3c9tUQ33v8=;
+        b=MPf1+btW/Bof0PFz962IeC1GNjlllsUtqaP3KkiwUC9wNAXXI+IuGaatf743KqeHS7
+         9VO3QSTSab7mADC52mDkXiXPyfJlz3vhrTOGDoCkJnMia1f0SM+xmrFoXoDe6vKfbYpG
+         dk7kyLC/mr3lbxTh47q5aqlUrRHxOrt8ZHYWeZqu3q//4tdnD/zxcZGv4DKOmoz4xzzF
+         LZ/XbPhcxmBh14CqhzioMmdzkmFAuqjcqAC+LFSuMgHAjOMZpkuokmb98dMOoUWnzRfj
+         AZVAenAoVqDuqGgbROzTP3kXYk5/zlyQ8+4FKHi8OFi4YtzS6Y79oRRivs3XIGH68Emy
+         4yvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713707338; x=1714312138;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1713770424; x=1714375224;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vAq3AHvWEQFsKDgpu//rdmbRIcBJ6dLOs4RYotedEeg=;
-        b=e7WmupRFU921uCvrnLtLYigQJ76w4ESoOd539E3UsTxfLxXaF3uwMChEG6DjEVel1u
-         +7zNAyhPws//rtzlmsk08S0crhs6hm+w/cx/NCiwm6c4M/gekCNid2R9knP+LWoxFNjK
-         ONnney3Fkyrpm1TGV63XZaCQksTSkUiyZAsgTmA3i0g4c6J1PG3A3b6PTIVAYn1zOfDU
-         1Ms+8pXFNl+8RLOSgUJvhQRcgeFCytIDYsRRBFSTmR6CjQ9ECdlfYF7mM4oLGGzHefQ2
-         DEbV982YhVTkRakN2VCFzVSZvdJddNueg6VKz6wfYJW75/U8sDZjUFp7zDlMusxKhr7r
-         aFMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBoWA/ya0WcTFFIkn0PToMHCKCDmSfMcUZlCYdc8gitb9a9cltQdTNFUeeW0n2LZGrjnctEazVcXTX3k2vY4BaFLpddiahJKl9I2rN6IC8ZILkt0KUPx4atRRZg3TQx+mwo8Iof6BTgkUgRe11bk41Gv/nHKMCDZ8XKDWCPkABxqjssY6e49zRIiU=
-X-Gm-Message-State: AOJu0YyCEZsUT7bnWOzw+I5Su3m60xozxW/ku7Umyc7FMvOqv8b3BN/i
-	cjYU97miwnm2SWuS68ImMsFe0HPisaoHEj2OFFBle++cKmKtq2wn
-X-Google-Smtp-Source: AGHT+IFqFGNGrYSxduO+G3kiUy/CR5IuQrcVEgPwVltGpWh2slVvuWUY98I8IosXloAx10/SaETCIw==
-X-Received: by 2002:aa7:8883:0:b0:6ea:bf1c:9dfd with SMTP id z3-20020aa78883000000b006eabf1c9dfdmr10512702pfe.27.1713707337795;
-        Sun, 21 Apr 2024 06:48:57 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id o13-20020a056a001b4d00b006e6c733bde9sm6175043pfv.155.2024.04.21.06.48.54
+        bh=32Lq/HZzWg4ZCGDLhtubfrCq19J1a57yr3c9tUQ33v8=;
+        b=f3TchCQZY9pXtNWO2DcGabFTA9EObw+OBUhUQaFKUWlJk8nwSxxIKAefFmO6tPlm88
+         09pkWtq71hrsSAP6I4amwMBd3s4L7Cq2S90h3SNLiWDQE8YVs++D0/qUYmsAmTvHrGJJ
+         cRjGTKIa2Hzc2mXdk6qAyp1kZmXKfDjeAiDMROR7ScK9vYbfVJpH6ElGgh+COlQKmSAb
+         Tfv1aU+NE+79jE2x6K72uJqezU0S6JgJzRVvgwAHbj9z71mFjRcBNJAT1hl96jVqwtUK
+         +OxSeVEWYOLpncfTzHEgBSZTzYOJgAq9W863B7CpcWdlBiJLq5euLYYMhC9aUPJkUFe3
+         dTMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmoYZRyTDsfUeF9AwKFMNFZbQZtEU/8G5SMGGTqbJ7V5yTyUkkTjz2pnIgu8kNARp/oVoCIxpWMkow/Qcfe5qVoLB/u/2BIvD3hlsa9BZDMfg=
+X-Gm-Message-State: AOJu0YxYlUbvqRhqwgosF4wa8xX86e3aws0PrYGBiPgKmpC5VpVIfmsf
+	DrD20Lsghh0siGXSsd+9pFlKkyTGW7kHS3Ry0gOZYgBRaoVfyUzhkDcJPFK8VtQ=
+X-Google-Smtp-Source: AGHT+IE0GxCmo2sauSNNM1yFpkUOibF0cGEOXefwlVpQiyWuzx9DvXPhQthTU9pfqLtasIWX7K48yA==
+X-Received: by 2002:a05:6512:b10:b0:51b:2909:4cc4 with SMTP id w16-20020a0565120b1000b0051b29094cc4mr2054973lfu.46.1713770423518;
+        Mon, 22 Apr 2024 00:20:23 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id s3-20020a056402164300b00562d908daf4sm5205872edx.84.2024.04.22.00.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Apr 2024 06:48:57 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Johan Hovold <johan@kernel.org>,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/5] usb: dwc3: exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
-Date: Sun, 21 Apr 2024 19:17:34 +0530
-Message-ID: <20240421134752.2652-6-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240421134752.2652-1-linux.amoon@gmail.com>
-References: <20240421134752.2652-1-linux.amoon@gmail.com>
+        Mon, 22 Apr 2024 00:20:22 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: peter.griffin@linaro.org, Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+ mturquette@baylibre.com, sboyd@kernel.org, semen.protsenko@linaro.org, 
+ andre.draszik@linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, willmcvicker@google.com, 
+ kernel-team@android.com
+In-Reply-To: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
+References: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v4 0/2] clk: samsung: introduce nMUX to reparent MUX
+ clocks
+Message-Id: <171377042206.10231.3797208490823201633.b4-ty@linaro.org>
+Date: Mon, 22 Apr 2024 09:20:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-This macro has the advantage over SET_SYSTEM_SLEEP_PM_OPS that we
-don't have to care about when the functions are actually used.
 
-Also make use of pm_sleep_ptr() to discard all PM_SLEEP related
-stuff if CONFIG_PM_SLEEP isn't enabled.
+On Fri, 19 Apr 2024 10:09:13 +0000, Tudor Ambarus wrote:
+> v4:
+> - squash nMUX patch with the PERIC0 patch so that it becomes a single
+>   entity fixing the introduction of the PERIC0 clocks. PERIC1 fix comes
+>   after, as the PERIC1 clocks were introduced after PERIC0.
+> - fix the fixes tag of the PERIC1 patch.
+> 
+> v3:
+> - update first patch:
+>   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
+>   - update commit message
+>   - update comment and say that nMUX() shall be used where MUX reparenting
+>     on clock rate chage is allowed
+> - collect R-b, A-b tags
+> 
+> [...]
 
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v4 Fix typo in commit message SIMPLE_DEV_PM_OPS to
-       SET_SYSTEM_SLEEP_PM_OPS
-   Add Acked by Thinh Nguyen
+Applied, thanks!
 
-v3: fix using new DEFINE_SIMPLE_DEV_PM_OPS PM macro hence
-    change the $subject and the commit message
+[1/2] clk: samsung: gs101: propagate PERIC0 USI SPI clock rate
+      https://git.kernel.org/krzk/linux/c/7b54d9113cd4923432c0b2441c5e2663873b4e5b
+[2/2] clk: samsung: gs101: propagate PERIC1 USI SPI clock rate
+      https://git.kernel.org/krzk/linux/c/7cf0324ba0bc61a8c360d23d284e06d2994b1fef
 
-v2: add __maybe_unused to suspend/resume functions in case CONFIG_PM
-   is disabled.
----
- drivers/usb/dwc3/dwc3-exynos.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index 5d365ca51771..3427522a7c6a 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -187,7 +187,6 @@ static const struct of_device_id exynos_dwc3_match[] = {
- };
- MODULE_DEVICE_TABLE(of, exynos_dwc3_match);
- 
--#ifdef CONFIG_PM_SLEEP
- static int dwc3_exynos_suspend(struct device *dev)
- {
- 	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
-@@ -230,14 +229,8 @@ static int dwc3_exynos_resume(struct device *dev)
- 	return 0;
- }
- 
--static const struct dev_pm_ops dwc3_exynos_dev_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(dwc3_exynos_suspend, dwc3_exynos_resume)
--};
--
--#define DEV_PM_OPS	(&dwc3_exynos_dev_pm_ops)
--#else
--#define DEV_PM_OPS	NULL
--#endif /* CONFIG_PM_SLEEP */
-+static DEFINE_SIMPLE_DEV_PM_OPS(dwc3_exynos_dev_pm_ops,
-+				dwc3_exynos_suspend, dwc3_exynos_resume);
- 
- static struct platform_driver dwc3_exynos_driver = {
- 	.probe		= dwc3_exynos_probe,
-@@ -245,7 +238,7 @@ static struct platform_driver dwc3_exynos_driver = {
- 	.driver		= {
- 		.name	= "exynos-dwc3",
- 		.of_match_table = exynos_dwc3_match,
--		.pm	= DEV_PM_OPS,
-+		.pm	= pm_sleep_ptr(&dwc3_exynos_dev_pm_ops),
- 	},
- };
- 
+Best regards,
 -- 
-2.44.0
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
