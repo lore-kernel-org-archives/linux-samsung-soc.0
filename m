@@ -1,125 +1,62 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7133D4D135;
-	Mon, 22 Apr 2024 07:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7E8502B6;
+	Mon, 22 Apr 2024 08:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713771977; cv=none; b=SwxmYGCM+MuBh2cD21agg8cArgqBm8I0X4WgIGa5TeP2MAG2S2LQu3YYTgBNEaGyBL3Y9ppC5sMueSlkMHHu86Xg0woN1t3htXZbiO7t37CJ1AVaYmGva4mDq6RHsVqpGJb8N0w1q/oX751YmZFscJ11aR6uuQATjCoMheyXL4o=
+	t=1713773930; cv=none; b=KTm7pF/s+L1x4s93exkltT3gtWTwvsrb5ODXQhDqV1rnnAEQ3cC/R1o07e8mV5kWKUt9/m0P52Y/SpCWQmj49+zfMhBkfvGYS8rXuoFDEqNLwia2T6OS19rsiHEZugkH98ZHKaimpuWC36p45qdtEJ9VWGvZGdRVj/5IXH1HAes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713771977; c=relaxed/simple;
-	bh=JcnupMm7bC25hniPo7VWk3eKDRk/vCds8Dg/D7e7xUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M5S5a8kRtdht9XpJXz9DW/EOZDtWlEW35ORP2B/DrwsTkxadTM0i+lattLlcS6/lKz8MTfMW/NwebmiBdiYzLgpx5+tYKi3hmbeAmhnao0NCmOTzLwV8OatRFYIvgjHCudlbQQhkga0G7DPukJG972pFIcz3RQM43wxdrNMH334=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BC79339;
-	Mon, 22 Apr 2024 00:46:43 -0700 (PDT)
-Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32D433F7BD;
-	Mon, 22 Apr 2024 00:46:13 -0700 (PDT)
-Message-ID: <823cbe86-1615-4c68-9995-ef3565c9e42b@arm.com>
-Date: Mon, 22 Apr 2024 09:46:03 +0200
+	s=arc-20240116; t=1713773930; c=relaxed/simple;
+	bh=1R0QdiqBkh2lDI1KZWlD4yhHxXvFKtuxtuwBOw/ITOE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=a+EoWro1vSYv/ZNn5sKp0LrXGEJL9PtjzaARAm/t9y97X+8es7AW8AXSONV2Xlw2Idw0f5RRs3eFRU0usNcj/3jgG7LtGO7qZ0wpNGQ6XH/onCZ8zFLmgWDArikSSFqCwco1GtxsJ9hEpRRlWDQsvNe7S4QvMQlAie6SNuX1T30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VNJ6g0Nzdz4x1R;
+	Mon, 22 Apr 2024 18:18:35 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Michael Ellerman <mpe@ellerman.id.au>, Christophe Leroy <christophe.leroy@csgroup.eu>, Damien Le Moal <dlemoal@kernel.org>, Jiri Kosina <jikos@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Corey Minyard <minyard@acm.org>, Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Ian Abbott <abbotti@mev.co.uk>, H Hartley Sweeten <hsweeten@visionengravers.com>, Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, Vinod Koul <vkoul@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Moritz Fischer <mdf@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, Andi Shyti <andi.shyti@kernel.org>, Michael Hennerich <michael.hennerich@analo
+ g.com>, Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Markuss Broks <markuss.broks@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Lee Jones <lee@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Iyappan Subramanian <iyappan@os.amperecomputing.com>, Yisen Zhuang <yisen.zhuang@huawei.com>, Stanislaw Gruszka <stf_xl@wp.pl>, Kalle Valo <kvalo@kernel.org>, Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Xiang Chen <chenxiang66@hisilicon.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Vaibhav Hiremath <hvaibhav.linux@gmail.com>, Alex Elder <elder@kernel.org>, Jiri Slaby <jirislaby@kernel.
+ org>, Jacky Huang <ychuang3@nuvoton.com>, Helge Deller <deller@gmx.de>, Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Takashi Iwai <tiwai@suse.com>, linuxppc-dev@lists.ozlabs.org, linux-ide@vger.kernel.org, openipmi-developer@lists.sourceforge.net, linux-integrity@vger.kernel.org, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org, linux-efi@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-fpga@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormr
+ eply.com, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, linux-leds@vger.kernel.org, linux-wireless@vger.kernel.org, linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-spi@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev, linux-serial@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, iommu@lists.linux.dev, linux-trace-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kbuild@vger.kernel.org, alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+In-Reply-To: <20240403080702.3509288-1-arnd@kernel.org>
+References: <20240403080702.3509288-1-arnd@kernel.org>
+Subject: Re: (subset) [PATCH 00/34] address all -Wunused-const warnings
+Message-Id: <171377378377.1025456.1313405994816400451.b4-ty@ellerman.id.au>
+Date: Mon, 22 Apr 2024 18:16:23 +1000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PM: EM: Add min/max available performance state
- limits
-Content-Language: en-US
-To: Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
- cristian.marussi@arm.com, linux-samsung-soc@vger.kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, quic_sibis@quicinc.com
-References: <20240403162315.1458337-1-lukasz.luba@arm.com>
- <20240403162315.1458337-2-lukasz.luba@arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <20240403162315.1458337-2-lukasz.luba@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 03/04/2024 18:23, Lukasz Luba wrote:
-> On some devices there are HW dependencies for shared frequency and voltage
-> between devices: CPUs and L3 cache. When the L3 cache frequency is
-> increased, the affected CPUs might run at higher voltage and frequency.
-
-IMHO, this is an example where the min Performance State (PS) makes
-sense. But what's a use case for the max PS?
-
-> That higher voltage causes higher CPU power and thus more energy is used
-> for running the tasks.
+On Wed, 03 Apr 2024 10:06:18 +0200, Arnd Bergmann wrote:
+> Compilers traditionally warn for unused 'static' variables, but not
+> if they are constant. The reason here is a custom for C++ programmers
+> to define named constants as 'static const' variables in header files
+> instead of using macros or enums.
 > 
-> Add performance state limits which are applied for the device. This allows
+> In W=1 builds, we get warnings only static const variables in C
+> files, but not in headers, which is a good compromise, but this still
+> produces warning output in at least 30 files. These warnings are
+> almost all harmless, but also trivial to fix, and there is no
+> good reason to warn only about the non-const variables being unused.
+> 
+> [...]
 
-Regarding device, I thought that this is only applicable for device type
-CPU?
+Applied to powerpc/next.
 
-> the Energy Model (EM) to better reflect the CPU's currently available
-> performance states. This information is used by Energy Aware Scheduler
-> (EAS) during task placement to avoid situation when a simulated energy
-> cost has error due to using wrong Power Domain (PD) frequency.
+[01/34] powerpc/fsl-soc: hide unused const variable
+        https://git.kernel.org/powerpc/c/01acaf3aa75e1641442cc23d8fe0a7bb4226efb1
 
-Maybe better?
-
-This is important on SoCs with HW dependencies mentioned above so that
-the  Energy Aware Scheduler (EAS) does not use performance states
-outside the valid min-max range for energy calculation.
-
-> The function performs only bare minimum checks (and requires EM as
-
-s/The function/em_update_performance_limits()
-
-s/EM/PD ... I guess we always pass a PD pointer to all the EM functions.
-I guess we can say that an EM consists of at least 2 PDs.
-I guess it's valid to say that we limit per PD, e.g. per little CPUs?
-
-[...]
-
->  /**
->   * em_pd_get_efficient_state() - Get an efficient performance state from the EM
-> @@ -189,12 +195,13 @@ int em_dev_update_chip_binning(struct device *dev);
->   */
-
-Missing  min_ps, max_ps description in function header of
-em_pd_get_efficient_state().
-
-[...]
-
-> +/**
-> + * em_update_performance_limits() - Update Energy Model with performance
-> + *				limits information.
-> + * @pd			: Performance Domain with EM that has to be updated.
-> + * @freq_min_khz	: New minimum allowed frequency for this device.
-> + * @freq_max_khz	: New maximum allowed frequency for this device.
-> + *
-> + * This function allows to update the EM with information about available
-> + * performance levels. It takes the minimum and maximum frequency in kHz
-> + * and does internal translation to performance levels.
-> + * Returns 0 on success or -EINVAL when failed.
-> + */
-> +int em_update_performance_limits(struct em_perf_domain *pd,
-> +		unsigned long freq_min_khz, unsigned long freq_max_khz)
-> +{
-> +	struct em_perf_state *table;
-> +	int min_ps = -1;
-> +	int max_ps = -1;
-> +	int i;
-> +
-> +	if (!pd)
-> +		return -EINVAL;
-> +
-> +	rcu_read_lock();
-> +	table = em_perf_state_from_pd(pd);
-> +
-> +	for (i = 0; i < pd->nr_perf_states; i++) {
-> +		if (freq_min_khz == table[i].frequency)
-
-So the caller has to know the exact frequency value of the performance
-states (PSs)? It's not 'f(PS_n-1) + 1 <= x <= f(PS_n)'.
-
-[...]
-
+cheers
