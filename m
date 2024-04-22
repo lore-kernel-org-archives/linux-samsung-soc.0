@@ -1,107 +1,122 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A36251037
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2024 07:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E7E51037;
+	Mon, 22 Apr 2024 07:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713770427; cv=none; b=IoyuR6RQGHO57LDT9XC1WvwEQ1kO+qEJC7uv66UbD9UMvyVnOu7mWekoS3Pl6G/QFc51npPh7Rwmw1OrTMvI3+kNDu20AcVt+ajRL3hWVIDieOKaAG4Nl2ZZQBdD3J6FXcFSNGoaUmZpsv7acVlKYsA2kdj5fh2iHNce3WebC6I=
+	t=1713770666; cv=none; b=fe1Mq31biu6kpqA+qX48Lf4LLsn81QYo/yuGkXJj8LY798z/lJZF6g+zUJ9U4INxpFSWgN7/z/K902GaGg4THjnARfaP7fEWWrD7IwMoisKP+ldBlAiYJUbnFH7KkR1pXbtRx2PHn4i/MA+qVK/DA9lyrAMfca28ewawradmXqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713770427; c=relaxed/simple;
-	bh=ATftZ9Ym7rSAUoJHd1ARgykQ/AWlPFdo0bDfzdin4dQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rSzfAoyToe40BuX/09HmjWEpjbXfvxo0XOnrax2Jg/o/LKI7L0IEdsJYzh6Hvk1EKiv7AC1RM3b2L9wv8Iz1ESdzRZPIbm3bXMhMhFebl+SXS2Qq3SJtqpnafcpXVO+77M1tJBYo/T88yeT4sz7RJhn0HUDJQRmy1pBPNz/1V9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPf1+btW; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPf1+btW"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-516d6c1e238so5130548e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2024 00:20:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713770424; x=1714375224; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=32Lq/HZzWg4ZCGDLhtubfrCq19J1a57yr3c9tUQ33v8=;
-        b=MPf1+btW/Bof0PFz962IeC1GNjlllsUtqaP3KkiwUC9wNAXXI+IuGaatf743KqeHS7
-         9VO3QSTSab7mADC52mDkXiXPyfJlz3vhrTOGDoCkJnMia1f0SM+xmrFoXoDe6vKfbYpG
-         dk7kyLC/mr3lbxTh47q5aqlUrRHxOrt8ZHYWeZqu3q//4tdnD/zxcZGv4DKOmoz4xzzF
-         LZ/XbPhcxmBh14CqhzioMmdzkmFAuqjcqAC+LFSuMgHAjOMZpkuokmb98dMOoUWnzRfj
-         AZVAenAoVqDuqGgbROzTP3kXYk5/zlyQ8+4FKHi8OFi4YtzS6Y79oRRivs3XIGH68Emy
-         4yvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713770424; x=1714375224;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=32Lq/HZzWg4ZCGDLhtubfrCq19J1a57yr3c9tUQ33v8=;
-        b=f3TchCQZY9pXtNWO2DcGabFTA9EObw+OBUhUQaFKUWlJk8nwSxxIKAefFmO6tPlm88
-         09pkWtq71hrsSAP6I4amwMBd3s4L7Cq2S90h3SNLiWDQE8YVs++D0/qUYmsAmTvHrGJJ
-         cRjGTKIa2Hzc2mXdk6qAyp1kZmXKfDjeAiDMROR7ScK9vYbfVJpH6ElGgh+COlQKmSAb
-         Tfv1aU+NE+79jE2x6K72uJqezU0S6JgJzRVvgwAHbj9z71mFjRcBNJAT1hl96jVqwtUK
-         +OxSeVEWYOLpncfTzHEgBSZTzYOJgAq9W863B7CpcWdlBiJLq5euLYYMhC9aUPJkUFe3
-         dTMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmoYZRyTDsfUeF9AwKFMNFZbQZtEU/8G5SMGGTqbJ7V5yTyUkkTjz2pnIgu8kNARp/oVoCIxpWMkow/Qcfe5qVoLB/u/2BIvD3hlsa9BZDMfg=
-X-Gm-Message-State: AOJu0YxYlUbvqRhqwgosF4wa8xX86e3aws0PrYGBiPgKmpC5VpVIfmsf
-	DrD20Lsghh0siGXSsd+9pFlKkyTGW7kHS3Ry0gOZYgBRaoVfyUzhkDcJPFK8VtQ=
-X-Google-Smtp-Source: AGHT+IE0GxCmo2sauSNNM1yFpkUOibF0cGEOXefwlVpQiyWuzx9DvXPhQthTU9pfqLtasIWX7K48yA==
-X-Received: by 2002:a05:6512:b10:b0:51b:2909:4cc4 with SMTP id w16-20020a0565120b1000b0051b29094cc4mr2054973lfu.46.1713770423518;
-        Mon, 22 Apr 2024 00:20:23 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id s3-20020a056402164300b00562d908daf4sm5205872edx.84.2024.04.22.00.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Apr 2024 00:20:22 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: peter.griffin@linaro.org, Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
- mturquette@baylibre.com, sboyd@kernel.org, semen.protsenko@linaro.org, 
- andre.draszik@linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, willmcvicker@google.com, 
- kernel-team@android.com
-In-Reply-To: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
-References: <20240419100915.2168573-1-tudor.ambarus@linaro.org>
-Subject: Re: [PATCH v4 0/2] clk: samsung: introduce nMUX to reparent MUX
- clocks
-Message-Id: <171377042206.10231.3797208490823201633.b4-ty@linaro.org>
-Date: Mon, 22 Apr 2024 09:20:22 +0200
+	s=arc-20240116; t=1713770666; c=relaxed/simple;
+	bh=+jbogwzOl0Cmt21yqpTd7FcQBUl20qerWA4osI69YTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHRwzmdQjBRzEhBhWmtr6Z5wvdYdEq6aOEp6vj3B8ziIrziHNerF19exQlmSPslCxFjO1vnInhX9qYf73/bezXNRJ04UWB655QafuMZqUGumV2wH65rOEwYwtA59/gsHB1BdQyacc4VunUxkR39BQifn/jYTW8wlrLI2Nr5yxzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A81D4339;
+	Mon, 22 Apr 2024 00:24:52 -0700 (PDT)
+Received: from [10.57.75.149] (unknown [10.57.75.149])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B74D3F7BD;
+	Mon, 22 Apr 2024 00:24:22 -0700 (PDT)
+Message-ID: <ff527b90-416c-4fc0-8b03-b1e2968e71dd@arm.com>
+Date: Mon, 22 Apr 2024 08:24:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] PM: EM: Add min/max available performance state
+ limits
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: dietmar.eggemann@arm.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ sudeep.holla@arm.com, cristian.marussi@arm.com,
+ linux-samsung-soc@vger.kernel.org, rafael@kernel.org,
+ viresh.kumar@linaro.org, quic_sibis@quicinc.com
+References: <20240403162315.1458337-1-lukasz.luba@arm.com>
+ <20240403162315.1458337-2-lukasz.luba@arm.com>
+ <08bff6ab-dcdc-42b6-b8ad-5938f0119385@arm.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <08bff6ab-dcdc-42b6-b8ad-5938f0119385@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On Fri, 19 Apr 2024 10:09:13 +0000, Tudor Ambarus wrote:
-> v4:
-> - squash nMUX patch with the PERIC0 patch so that it becomes a single
->   entity fixing the introduction of the PERIC0 clocks. PERIC1 fix comes
->   after, as the PERIC1 clocks were introduced after PERIC0.
-> - fix the fixes tag of the PERIC1 patch.
+
+On 4/9/24 15:47, Hongyan Xia wrote:
+> On 03/04/2024 17:23, Lukasz Luba wrote:
+>> [...]
+>>
+>> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+>> index 927cc55ba0b3d..1a8b394251cb2 100644
+>> --- a/kernel/power/energy_model.c
+>> +++ b/kernel/power/energy_model.c
+>> @@ -628,6 +628,8 @@ int em_dev_register_perf_domain(struct device 
+>> *dev, unsigned int nr_states,
+>>           goto unlock;
+>>       dev->em_pd->flags |= flags;
+>> +    dev->em_pd->min_ps = 0;
+>> +    dev->em_pd->max_ps = nr_states - 1;
+>>       em_cpufreq_update_efficiencies(dev, dev->em_pd->em_table->state);
+>> @@ -856,3 +858,49 @@ int em_dev_update_chip_binning(struct device *dev)
+>>       return em_recalc_and_update(dev, pd, em_table);
+>>   }
+>>   EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
+>> +
+>> +
+>> +/**
+>> + * em_update_performance_limits() - Update Energy Model with performance
+>> + *                limits information.
+>> + * @pd            : Performance Domain with EM that has to be updated.
+>> + * @freq_min_khz    : New minimum allowed frequency for this device.
+>> + * @freq_max_khz    : New maximum allowed frequency for this device.
+>> + *
+>> + * This function allows to update the EM with information about 
+>> available
+>> + * performance levels. It takes the minimum and maximum frequency in kHz
+>> + * and does internal translation to performance levels.
+>> + * Returns 0 on success or -EINVAL when failed.
+>> + */
+>> +int em_update_performance_limits(struct em_perf_domain *pd,
+>> +        unsigned long freq_min_khz, unsigned long freq_max_khz)
+>> +{
+>> +    struct em_perf_state *table;
+>> +    int min_ps = -1;
+>> +    int max_ps = -1;
+>> +    int i;
+>> +
+>> +    if (!pd)
+>> +        return -EINVAL;
+>> +
+>> +    rcu_read_lock();
+>> +    table = em_perf_state_from_pd(pd);
+>> +
+>> +    for (i = 0; i < pd->nr_perf_states; i++) {
+>> +        if (freq_min_khz == table[i].frequency)
+>> +            min_ps = i;
+>> +        if (freq_max_khz == table[i].frequency)
+>> +            max_ps = i;
+>> +    }
+>> +    rcu_read_unlock();
+>> +
+>> +    /* Only update when both are found and sane */
+>> +    if (min_ps < 0 || max_ps < 0 || max_ps < min_ps)
+>> +        return -EINVAL;
+>> +
+>> +    pd->min_ps = min_ps;
+>> +    pd->max_ps = max_ps;
 > 
-> v3:
-> - update first patch:
->   - remove __nMUX() as it duplicated __MUX() with an exception on flags.
->   - update commit message
->   - update comment and say that nMUX() shall be used where MUX reparenting
->     on clock rate chage is allowed
-> - collect R-b, A-b tags
+> Are we sure we are protected against multiple simultaneous updates? Or 
+> is this a concern for the caller?
 > 
-> [...]
+> The rest of the patch LGTM.
+> 
 
-Applied, thanks!
+I've tried to make it running fast for only one caller. Although,
+if someone would like to use it from many places then locking should be
+handled under in function (and I will use the existing mutex for it).
 
-[1/2] clk: samsung: gs101: propagate PERIC0 USI SPI clock rate
-      https://git.kernel.org/krzk/linux/c/7b54d9113cd4923432c0b2441c5e2663873b4e5b
-[2/2] clk: samsung: gs101: propagate PERIC1 USI SPI clock rate
-      https://git.kernel.org/krzk/linux/c/7cf0324ba0bc61a8c360d23d284e06d2994b1fef
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+I'll change it. Thanks for the review.
