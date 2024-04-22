@@ -1,108 +1,161 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0814F9F8;
-	Mon, 22 Apr 2024 13:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F57152184
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2024 14:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713794139; cv=none; b=TY+hKN5YpmQ/vltOFJ5uXc5ZHpksLy1KhCwW+/ZxACnpoJZ61JCvM5Q5gUBXY9fOxxhLtc4ISU9tXmpWHaK6WqlNhvHhUlEuIu7IXy3b5Zlmo9U37DBu786GlWmvntXvBu5MCowFzcn4gMHpnKaipBm+rV0ODmAUYJhQ2xLqZ3g=
+	t=1713797767; cv=none; b=Eawwsk7c9X2wdDn3TiK79DIwSmvQ3bGgW98KIfbKwsMUwr7HcoI3Ez9wdkRkuNR+guA8Od++oj3ynFoSoK1aLH3/DD6/0znDV9r4P3ft9OvNIMtBQ3Jb+HAKxYUlFtVpQImVQgw2DGO99F96i+Ph+Va40hdq7wRrgN4WBA5sXxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713794139; c=relaxed/simple;
-	bh=LxjMLSPiqVdSQbJOUuBYUblOWTo6pFvZqG/mb5eNzdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d4emF6U7WrRIt1/a75VPOcypIA59kfD86L+NgVTNxEtspXNJ8gPryeE+rmx97geaz3oRWhrVdq5QjE+/hLw2jouXAp1Jvo4aLeXRQVN1zcE8mytbZDthq7DI+/TkXxo6a7oHKDiSqjxBqazMyBXqO7HTj1liWyc36IVb768RgQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98FE0339;
-	Mon, 22 Apr 2024 06:56:04 -0700 (PDT)
-Received: from [10.57.75.149] (unknown [10.57.75.149])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0FCC3F73F;
-	Mon, 22 Apr 2024 06:55:34 -0700 (PDT)
-Message-ID: <2aba29c3-2519-4709-9f83-4a74cbfea263@arm.com>
-Date: Mon, 22 Apr 2024 14:55:43 +0100
+	s=arc-20240116; t=1713797767; c=relaxed/simple;
+	bh=imsekkblo55XmgjAaWRpZaTVc+ZBiFNXzC9IucNVpbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9k8Iif+T4gavH79Y55cAdQBMih4efM9KM2+8dNoxzDHKhGwp+WiYqgCvFQhUaJFQ/5SLRd83Kfqim7cwqmGj81lbjAq7ihasFesh7heokWK4iKpqFrt1CV9PAqvGgBK4D7c7nKa8z8bRkkWBS4CDqWJlOPLcEqK/Y1k16p8jvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U4HjiUXU; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U4HjiUXU"
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-22edbef3b4eso1054188fac.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Apr 2024 07:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713797765; x=1714402565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NTOg8DkAW/3dkpxikcsk436y8h1eZe1SfUF5lmW3ku0=;
+        b=U4HjiUXUk7RxfDBJM02w61BKjrevJJkbVQ4n308mTss7ZrXCgsfziCIwLKxShfByoo
+         hWFUPwgoHrnn3+txvd+/dIRdrUyblWZBxXoIwQ7UOUEt5AXEp3fu6NW1YR9Euv3EQx5h
+         I1rveApyv3uw4B8KPrC6Jknj+jJkMsDnxzmLngWhjRpXz52q9hKfhn6LfI2E+KADBrKI
+         r+uDdkRm9scQAFyNYr+06lPE2DWOuUWWkQvldJVTr7zvmAQ4ictOwHFJ3K+eaL8sVheP
+         2p/ckccpkJIi/sQewygszj8wg3710ivlA+IL92IGQ0r+8UQMLXtriqxQHG6s6r8iYUjm
+         58zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713797765; x=1714402565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NTOg8DkAW/3dkpxikcsk436y8h1eZe1SfUF5lmW3ku0=;
+        b=le4EEJlfrvNA3CUDbE20v3UGHuLwgRYDuo/+lds1C6TL8SBwmO1b+WgnoqJW0Zk31m
+         LSXm/Byw9lWaYc0QRyV1iewNxIcYzCF+wmZIOQCOgbnM88f1x+Q3YlkhDXOfIXe2Ybr3
+         4vFctg0ioYJrEQMGN/KQXO6gdXQhq62XsMNkiVcWg6dYFGtiZKHaOhbmISDBsZ2CCBAz
+         u3WfugnI0/uXzJ38Ez268JPajqIaL8PG10k6xPW6PcESoh9V03KDedwZH3EGj+1aOWLK
+         GVLwLP6kWf2Q1oGGeCZvncqgCDkM6YF9Fp7B4dHjBxrL0Pt3l1V1yAxZfo3v6N2VyPIq
+         HgZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTYRVCus1K6GmwWDUxhlU3h0oCryz4rMXXojjY5RwslsKQ0XUdG2sQ2HLrAaLZgpeEqtQf2ZKoVnYHzWko9Zovm31taZA5AZt8oiZmOCWMxms=
+X-Gm-Message-State: AOJu0YwNnfZYzlUqexiZaLnPLPLtEJlDmXwrSwse1Zkbaq7NtpNU1M09
+	UgzcrU9yQmX+e1hXlLaOku0hxcmXEzaxkIv4GnwW2XWMcpIIIgVTSInSb4LkvZrFBzjIQCK967N
+	jqsiSxUsKiTNGKGGefQ1TwADdZhXtRALBdRn1FQ==
+X-Google-Smtp-Source: AGHT+IHTzGHT1v9LeibIhpXISDP5Up0NDJE//bpDlntvJJiW0sMwcyQm0rL5VdwsrhLb5OjnZBVN3sPtCblaMnzwbwM=
+X-Received: by 2002:a05:6870:1318:b0:21f:aba0:772d with SMTP id
+ 24-20020a056870131800b0021faba0772dmr10853360oab.39.1713797765495; Mon, 22
+ Apr 2024 07:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] cpufreq: scmi: Update Energy Model with allowed
- performance limits
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- cristian.marussi@arm.com, linux-samsung-soc@vger.kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, quic_sibis@quicinc.com
-References: <20240403162315.1458337-1-lukasz.luba@arm.com>
- <20240403162315.1458337-3-lukasz.luba@arm.com>
- <780caf10-964c-4a5b-8333-b448e9cbab4b@arm.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <780caf10-964c-4a5b-8333-b448e9cbab4b@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240404122559.898930-1-peter.griffin@linaro.org>
+ <20240404122559.898930-9-peter.griffin@linaro.org> <61f427ab3793def23d80d94457ff1568cae5ee11.camel@linaro.org>
+In-Reply-To: <61f427ab3793def23d80d94457ff1568cae5ee11.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 22 Apr 2024 15:55:54 +0100
+Message-ID: <CADrjBPqAyWzuw9TmdE1XRQ2BkYojR8r7nnH7JcRWc9_xOpUgHg@mail.gmail.com>
+Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
+	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
+	saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Andr=C3=A9,
 
+On Thu, 4 Apr 2024 at 14:24, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> Hi Pete,
+>
+> Thanks for this!
+>
+> I haven't reviewed this, but one immediate comment...
+>
+> On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
+> > [...]
+> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
+gs101.c
+> > index d065e343a85d..b9f84c7d5c22 100644
+> > --- a/drivers/clk/samsung/clk-gs101.c
+> > +++ b/drivers/clk/samsung/clk-gs101.c
+> > @@ -22,6 +22,7 @@
+> >  #define CLKS_NR_MISC (CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
+> >  #define CLKS_NR_PERIC0       (CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
+> >  #define CLKS_NR_PERIC1       (CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
+> > +#define CLKS_NR_HSI2 (CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
+>
+> Can you please keep the #defines alphabetical (hsi before misc).
 
-On 4/22/24 14:11, Dietmar Eggemann wrote:
-> On 03/04/2024 18:23, Lukasz Luba wrote:
->> The Energy Model (EM) supports performance limits updates. Use the SCMI
->> notifications to get information from FW about allowed frequency scope for
->> the CPUs.
-> 
-> I'm slightly confused here. IMHO this doesn't seem to be related to the
-> "HW dependency between 'little CPUs & L3 $ in DSU' or similar" usecase.
-> 
-> I assumed that this usecase is rather handled via an additional
-> out-of-tree driver, potentially the same which updates the EM because of
-> temperature change (em_dev_compute_costs(), em_dev_update_perf_domain())
-> or chip binning (em_dev_update_chip_binning()).
+Will fix
 
-This patch allows to handle relatively simple and straight forward use
-case for updating the perf limits in the EM. The one that you mention,
-which would probably always live out-of-tree, is more complex and
-focused on leakage estimation in different conditions.
+>
+> >
+> >  /* ---- CMU_TOP ------------------------------------------------------=
+------- */
+> >
+> > @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu=
+_info __initconst =3D {
+> >       .clk_name               =3D "bus",
+> >  };
+> >
+> > +/* ---- CMU_HSI2 -----------------------------------------------------=
+----- */
+>
+> and this code block should be earlier in the file
 
-I see those two drivers separate. We have the DSU+Littles dependency
-always, because it's HW dependency, while the leakage issue can happen
-in some scenarios like gaming and needs more dedicated driver to handle
-it (or rely on FW, but that's another story, orthogonal as well) and
-more information to do it properly.
+Will fix
+>
+> > [..]
+>
+> >  static int __init gs101_cmu_probe(struct platform_device *pdev)
+> > @@ -3432,6 +3987,9 @@ static const struct of_device_id gs101_cmu_of_mat=
+ch[] =3D {
+> >       }, {
+> >               .compatible =3D "google,gs101-cmu-peric1",
+> >               .data =3D &peric1_cmu_info,
+> > +     }, {
+> > +             .compatible =3D "google,gs101-cmu-hsi2",
+> > +             .data =3D &hsi2_cmu_info,
+> >       }, {
+>
+> and this block should move up
 
-> 
-> What about other CPUFreq drivers registering an EM via
-> em_dev_register_perf_domain() or 'cpufreq_register_em_with_opp() ->
-> dev_pm_opp_of_register_em()'? Or is this 'limit notification' an SCMI FW
-> only thing?
+Will fix
+>
+> >       },
+> >  };
+> > diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bind=
+ings/clock/google,gs101.h
+> > index 3dac3577788a..ac239ce6821b 100644
+> > --- a/include/dt-bindings/clock/google,gs101.h
+> > +++ b/include/dt-bindings/clock/google,gs101.h
+> > @@ -518,4 +518,67 @@
+> >  #define CLK_GOUT_PERIC1_CLK_PERIC1_USI9_USI_CLK              45
+> >  #define CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK           46
+> >
+> > +/* CMU_HSI2 */
+>
+> and all these defines, too.
 
-Other platforms which use different drivers for CPUfreq will have to
-develop their own code. Although, when we merge this upstream, they
-could follow this pattern as a reference design.
+Will fix.
 
-In our SCMI cpufreq and our SCP firmware we have this situation:
-1. Sending CPUfreq request from Big CPU to SCP e.g. via fast-channel &
-    it's done from sched-util w/o sugov kthread &
-    it has to be super fast, we don't check any other dependency CPU
-    for Littles or something like that.
-2. The SCP firmware receives the frequency request for Big CPU &
-    it checks internal dependencies for other components e.g.
-    L3 cache min speed (DSU+Littles domian frequency)
-3. The SCP changes the Big CPU frequency & changes the DSU+Littles
-    frequency as the depended device
-4. The SCP sends updated performance limits for the depended DSU+Littles
-    domian to the SCMI cpufreq kernel driver, for proper Littles domain
-    cpufreq device
-5. SCMI cpufreq kernel driver gets the SCP notification about updated
-    perf limits & translates the perf limits min value as the lowest
-    currently available frequency for the Littles
-6. The SCMI cpufreq driver updates the EM perf limits for Littles
-    as the currently minimum available frequency.
-    This allows to properly simulate the energy impact when the EAS
-    tries to put a task on that domain, even when that PD's util signals
-    might show lower frequency potentially being used.
+regards,
 
-That's why I see this as part of the CPUfreq driver feature.
-
-The leakage driver might be better suited for the thermal framework,
-since there is more information available there.
+Peter
