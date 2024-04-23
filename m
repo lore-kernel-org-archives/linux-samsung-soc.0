@@ -1,176 +1,149 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB2E142E7C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 20:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D94A143866
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 20:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713905563; cv=none; b=usb9FYoIs+J8R5HweBqCicrkxOBvGapNr57QZEXP4ihlK7Cd2OLGaonclL1YxZXYsAv2UMGemySV6aW4zGELCFVTaa/Qg/9/Myll/eYd+ub4tI9xA4fLu/kPbfRChZjBXWKE0TtR8TvIWkMSvGH6j2gwYn4Km+4WmKehcQaGGGA=
+	t=1713905573; cv=none; b=HeWWadxhTIES+/XIjQo/50Rq/AReU/P+IbSOIHu/iWdisw/Ms2K0PknbAZ8juF7JFrQHr7Z2sxw4qfmwnR8B3PK+GXQybP93aURFY7HRf1KsNTsUWn4UJd1FYYw+uINl/mNdQjwf1lKVuC0lBpcfMTNQH+qQtxBSN3mXXgwB+1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713905563; c=relaxed/simple;
-	bh=R8iQ8Hov4GJ1MakW6Sr+IudRZUGc4LJ0u0efMMaVDpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=hjfBI/USuQQrFSILXR0MRmepgyOz6i/op72mvXoDuzoM0917I4N5rXyGyqQTmQtFDzD68JsFR3x7Pxi8dg3qdEiJAZBjzJjDg3nl0WyAN6/sogTeduL770HWfXQUUQyQUHwoRIBEnQvs8mfjLdb1B/hvlk09lR8FiQ+7QXBUbyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H1zi+uW1; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1713905573; c=relaxed/simple;
+	bh=agoaO+yLgcCTgSTMLIJU2ZqfpAxYpRgRuzhSrnmExVE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YP4pczzDDvs3Xfn3pI5z0l9H7gnprbfI32r0VLWRpEuNosYbufqEt05mpbpgF6jQPauo18oek3EOwNmpsnlcg7EsGvh/Q4HxVOuw344FX5AYxPgN/U8VGx4HO3v8l6Cm0RHBb8Asd7A6LBWsSgMsm5OWPaEqQ/MVZiGIIm0lB0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g9vQ8df2; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H1zi+uW1"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240423205238euoutp01a73b0fa31c5a3e2082a761e8929ca72f~JBAZp_Gee1395613956euoutp01g
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 20:52:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240423205238euoutp01a73b0fa31c5a3e2082a761e8929ca72f~JBAZp_Gee1395613956euoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1713905558;
-	bh=2otvmutdKyHoEaA06cEeWxPbYOppyD/0lNiNCzbg05g=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=H1zi+uW1Z40x3XzIdNP7JwVEN55zswPVuI83E8PnzeYo7AGafSU4/xym3YmwHJy6Z
-	 95zKIBALSaJ09yNcvVMzQK7ECyQu3xsueOVFTUpOpUpJ+FfPRfmTh4n7yKv4ErKye9
-	 svKNVDazSl/l2oFy9kW0Ir2CHrjNVxzF9zr38dJQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240423205238eucas1p1d42dca0b203ed18170c2360dc670194a~JBAZQPWYy1461514615eucas1p1_;
-	Tue, 23 Apr 2024 20:52:38 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 4C.2A.09875.69F18266; Tue, 23
-	Apr 2024 21:52:38 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240423205237eucas1p193f07dfa95bb54c2d3d23a6187c4614e~JBAYr64GL1461514615eucas1p19;
-	Tue, 23 Apr 2024 20:52:37 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240423205237eusmtrp25e0512fb14637a6a188206f796ce90c5~JBAYrUESH3042330423eusmtrp2F;
-	Tue, 23 Apr 2024 20:52:37 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-cb-66281f968a0d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E8.17.08810.59F18266; Tue, 23
-	Apr 2024 21:52:37 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240423205237eusmtip1f46664a45102f838da2f722dc193cfcd~JBAYOW64C0206202062eusmtip1K;
-	Tue, 23 Apr 2024 20:52:37 +0000 (GMT)
-Message-ID: <e9d4378e-60c6-4004-ae56-6b4f55eb3400@samsung.com>
-Date: Tue, 23 Apr 2024 22:52:37 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g9vQ8df2"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-565c6cf4819so487388a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 13:52:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713905571; x=1714510371; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=enKb/FePM63duYlRqV9Qk3Sv4AxdpT2UptzUIV9J624=;
+        b=g9vQ8df24kKpLTwa2JI+wacBBhqNdnYNi+jciZTQKMm+zfrnhITsCqsZvgwR12z4z4
+         nPrd5aNd7zrkl9VK4ACYjHSwILC2SSzERf+6sSgrxOiMO1sUxoo+zYd+SK4kM06q8+27
+         H5TV7ROjtuRQOZxfnb7c1LwgOWbPqvyq+uQQ74XoHHdbQt7Kne0xURe4ydFiAkGovcdO
+         LvSx18QfXsj3rt9RoDX4FROwmyr8499NMgY5mYC7VO2i9pLMWmYc8dvx0+msfbZ7e3ko
+         RTMTJ9R1UUChp8YG3cVENf+4TWrkGw5Jwlyo3CBs5agfk5OacfQ7kmnfPeRoHJNZBncC
+         Nl9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713905571; x=1714510371;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=enKb/FePM63duYlRqV9Qk3Sv4AxdpT2UptzUIV9J624=;
+        b=EaXLDzyg9YDGdRxyToUt8A5bTQtmjGl+YPkvugo62e10/7sfX5z4I2lmHztRVN/L8x
+         UHrTpwRtE0M1irfz8hUTz3PNkkgxd1toEKqc/ewVAmUNxb8NFIB2BB6FBDNBhVv8Ue6D
+         5qnLNocXLRGVVq2KlcTniLP+8l9tSSpvRey/Xx7tlntngT4CKDNdJDJvTxhAdhkGBwyz
+         hPVJ+qgK9OowTYVd7c7bGSRcJOsNYTLoAQb98arVR4MqVlDbqSsDTWPaX0EJtevGq9nT
+         StMoeJJH6pYfnCa2XWJB6247smftd1qFWvwcb6/jVZWk0Cs4ewe70wBbiB5XlCVvcPHJ
+         cXQA==
+X-Forwarded-Encrypted: i=1; AJvYcCW97zHq82Mjft7kv8Goabh9qZaaA9C9imtYtDJ24i0ehhINu3HKd+O4xeFqlm1jb0GnusplRmHFAL1OLSVrMAbkq2OzB/bCdUS54fjUekwN71A=
+X-Gm-Message-State: AOJu0YxogG4AmdJD3JAthcx1tR1JypuN7SUDeLyJuKhcx2KCRsnUdVIL
+	KGemuvmaBdu4GwX4XfelR4ak0iP9laBcMrRIHgp9bYqai45BJcbRCQSlPIFrFNc=
+X-Google-Smtp-Source: AGHT+IE5ZEFfPw9z6hVQ6KJ4VDfJlUP0PDE9gbusrIEU5+zuqqJGyyYKlrOwD4UvxqV9eS82lWjsuw==
+X-Received: by 2002:a17:906:30d0:b0:a55:aded:200d with SMTP id b16-20020a17090630d000b00a55aded200dmr533206ejb.12.1713905570797;
+        Tue, 23 Apr 2024 13:52:50 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id ww4-20020a170907084400b00a51d88e6164sm7443632ejb.203.2024.04.23.13.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 13:52:50 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/2] enable USB on Pixel 6 (Oriole)
+Date: Tue, 23 Apr 2024 21:52:47 +0100
+Message-Id: <20240423-usb-dts-gs101-v1-0-3421b0371298@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/exynos: fix .get_modes return value in case of
- errors
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20240423204431.3288578-1-m.szyprowski@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djPc7rT5DXSDLr2CFlc+fqezWLS/Qks
-	FufPb2C32PT4GqvFjPP7mCwWbHzEaDFj8ks2B3aPTas62Tzudx9n8ti8pN6jb8sqRo/Pm+QC
-	WKO4bFJSczLLUov07RK4Mh6+WcVWcECo4sJXgwbGbv4uRk4OCQETieOrdjKB2EICKxgl5jSz
-	dzFyAdlfGCVWbv/IBuF8ZpTYv3AZE0zHweNnmCASyxklNj6/yQzhfGSUePz6HlgVr4CdxJGj
-	V9hBbBYBVYmeyw2MEHFBiZMzn7CA2KIC8hL3b80AqxEWCJCYeXIamC0ikCdxdVo7K8hQZoEe
-	RolVs64wgySYBcQlbj2ZD7aATcBQouttFxuIzSngIDFzeg87RI28xPa3c8AukhC4wyEx8+IG
-	Voi7XSTW9V+BsoUlXh3fwg5hy0j83zmfCaKhnVFiwe/7UM4ERomG57cYIaqsJe6c+wW0jgNo
-	habE+l36EGFHianXD4KFJQT4JG68FYQ4gk9i0rbpzBBhXomONiGIajWJWcfXwa09eOES8wRG
-	pVlI4TILyZuzkLwzC2HvAkaWVYziqaXFuempxUZ5qeV6xYm5xaV56XrJ+bmbGIEp6PS/4192
-	MC5/9VHvECMTB+MhRgkOZiUR3l9/VNKEeFMSK6tSi/Lji0pzUosPMUpzsCiJ86qmyKcKCaQn
-	lqRmp6YWpBbBZJk4OKUamFQZw3XVXy0VVVA+Nn/llpxTWRIyf//MZH3f6vn6gfeuvV4uS9KN
-	ylhu1C12dvqh1iDWx5kukmF057XA7QnKInFOHN+WSLrPTV4pKnX4UFWofWhnuffr+l/Wxs75
-	PNvPCLMuLtl145sO17vO78Idc3ti+96Wih7vtzuWKGZ4O0z6q2j8hP2/jHeUvT3t9vCW5qrT
-	m0uzrNX63u9lbHg9I/7o38hj52LvcV92D/3weUruk3O/b3Ptq9nFbP82506mTVEV/znbxKSF
-	yxZcq69JdGjjUF/XmfvA3yvAbvG/iqwdmpE60++4nJt20GnPqQl/1IPkXdNXpE6a9F3jq7Pb
-	HsmfF3Z99swQSOi8s82qTYmlOCPRUIu5qDgRABXiTMOwAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsVy+t/xu7pT5TXSDBZeULG48vU9m8Wk+xNY
-	LM6f38BusenxNVaLGef3MVks2PiI0WLG5JdsDuwem1Z1snnc7z7O5LF5Sb1H35ZVjB6fN8kF
-	sEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZTx8
-	s4qt4IBQxYWvBg2M3fxdjJwcEgImEgePn2ECsYUEljJKnNthCRGXkTg5rYEVwhaW+HOti62L
-	kQuo5j2jxKbZq9hAErwCdhJHjl5hB7FZBFQlei43MELEBSVOznzCAmKLCshL3L81A6xGWMBP
-	4uOkfrBlIgJ5EouWHmAFGcos0MMosWDxV2aIDZMZJV59fwG2mllAXOLWk/lgHWwChhJdb7vA
-	NnMKOEjMnN7DDlFjJtG1tYsRwpaX2P52DvMERqFZSA6ZhWTULCQts5C0LGBkWcUoklpanJue
-	W2yoV5yYW1yal66XnJ+7iREYc9uO/dy8g3Heq496hxiZOBgPMUpwMCuJ8P76o5ImxJuSWFmV
-	WpQfX1Sak1p8iNEUGBoTmaVEk/OBUZ9XEm9oZmBqaGJmaWBqaWasJM7rWdCRKCSQnliSmp2a
-	WpBaBNPHxMEp1cCk09R0qS70vt3K862P69p/NXx11LCT2qmuwXTt34HvLJyC7WuLa2x+R9cu
-	Nrxw75nu79cfl71SsFvp+kT0rfyu1aXpnJ++cezbafDvzQf9X0WBMe8mp/HMUW1dUCaX7/rh
-	0LStZyUYNzQoJScaKCYeuOW4fFXFERnpn9rHHM6drI8+Z/HuQ2z2fO5T/Kur3n64vlfxT6dC
-	TtNExzjX27OFfdMPcD5fP93bsWCv2vMUx8+aK6UmM1quZtXyUMh2inS5WqdvKDxliyPbCdGl
-	s2vXRfYvYnzWWGV95VDor4evlx282mjJ9VI6Wrx6neak0EmTmlZmPHu8YK624+LsGSnnzv7X
-	XeBW3cHD8myDe7yfEktxRqKhFnNRcSIAvPqvK0IDAAA=
-X-CMS-MailID: 20240423205237eucas1p193f07dfa95bb54c2d3d23a6187c4614e
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240423204435eucas1p2c0a9a75f87b31d11faa59fec40878f23
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240423204435eucas1p2c0a9a75f87b31d11faa59fec40878f23
-References: <CGME20240423204435eucas1p2c0a9a75f87b31d11faa59fec40878f23@eucas1p2.samsung.com>
-	<20240423204431.3288578-1-m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAJ8fKGYC/x3MQQ5AMBBA0avIrE0yrUbDVcSCGjUbpINIxN01l
+ m/x/wPKSVihLR5IfInKtmaYsoCwDGtklCkbLFlHzlZ46ojToRjVkEFn64bJeB9ohtzsiWe5/1/
+ Xv+8HWsKQDF8AAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.12.4
 
-On 23.04.2024 22:44, Marek Szyprowski wrote:
-> Commit 7af03e688792 ("drm/probe-helper: warn about negative
-> .get_modes()") clarified, that .get_modes callback must not return
-> negative values on failure, so fix sub-drivers to return 0 in case of
-> errors. This fixes strange Exynos DRM initialization failure on boot
-> (timeout waiting for VSYNC) observed on Trats2 board.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+These patches enable USB in peripheral mode on Pixel 6.
 
-Ah, I've missed that this has been already fixed in -next by the patch 
-13d5b040363c ("drm/exynos: do not return negative values from 
-.get_modes()"), so ignore this one. I'm sorry for the noise.
+We can only support peripheral mode at this stage, as the MAX77759 TCPCI
+controller used on Pixel 6 to do the role selection doesn't have a(n
+upstream) Linux driver. Therefore the role is defaulted to peripheral
+without any endpoints / ports.
 
-> ---
->   drivers/gpu/drm/exynos/exynos_drm_vidi.c | 4 ++--
->   drivers/gpu/drm/exynos/exynos_hdmi.c     | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> index e5662bdcbbde..e3868956eb88 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> @@ -315,14 +315,14 @@ static int vidi_get_modes(struct drm_connector *connector)
->   	 */
->   	if (!ctx->raw_edid) {
->   		DRM_DEV_DEBUG_KMS(ctx->dev, "raw_edid is null.\n");
-> -		return -EFAULT;
-> +		return 0;
->   	}
->   
->   	edid_len = (1 + ctx->raw_edid->extensions) * EDID_LENGTH;
->   	edid = kmemdup(ctx->raw_edid, edid_len, GFP_KERNEL);
->   	if (!edid) {
->   		DRM_DEV_DEBUG_KMS(ctx->dev, "failed to allocate edid\n");
-> -		return -ENOMEM;
-> +		return 0;
->   	}
->   
->   	drm_connector_update_edid_property(connector, edid);
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index c5ba32fca5f3..603d8bb0b03a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -878,11 +878,11 @@ static int hdmi_get_modes(struct drm_connector *connector)
->   	int ret;
->   
->   	if (!hdata->ddc_adpt)
-> -		return -ENODEV;
-> +		return 0;
->   
->   	edid = drm_get_edid(connector, hdata->ddc_adpt);
->   	if (!edid)
-> -		return -ENODEV;
-> +		return 0;
->   
->   	hdata->dvi_mode = !drm_detect_hdmi_monitor(edid);
->   	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+For the same reason, we can not detect the orientation of a SS USB-C cable
+and therefore it will only establish a link in SS mode in one of the
+possible orientations of the cable. In all other cases, the link will be HS.
 
-Best regards
+This series has a dependency on other patches, please see below.
+
+I have mainly tested this as CDC ECM Ethernet device using the following:
+
+    mount -t configfs configfs /sys/kernel/config/
+    modprobe libcomposite
+    modprobe usb_f_ecm
+    mkdir /sys/kernel/config/usb_gadget/g3
+    cd /sys/kernel/config/usb_gadget/g3
+
+    echo 0xadad > idVendor
+    echo 0xddaa > idProduct
+    mkdir strings/0x409
+    echo 01234567 > strings/0x409/serialnumber
+    echo ADADAD > strings/0x409/manufacturer
+    cat /proc/device-tree/model > strings/0x409/product
+    # create the function (name must match a usb_f_<name> module such as 'acm')
+    mkdir functions/ecm.usb0
+    # stable MAC addresses
+    echo "6e:27:3a:b9:40:87" > functions/ecm.usb0/dev_addr
+    echo "ca:49:84:b0:3b:bc" > functions/ecm.usb0/host_addr
+
+    mkdir configs/c.1
+    ln -s functions/ecm.usb0 configs/c.1/
+    echo $(ls -1 /sys/class/udc/) > UDC
+
+    ifconfig usb0 192.168.1.2 up
+
+at which point the other side should detect it and network communication
+becomes possible (once the other side also configures its network
+interface).
+
+Due to the clock IDs, this series depends on the bindings patch
+"dt-bindings: clock: google,gs101-clock: add HSI0 clock management unit" of
+the series in
+https://lore.kernel.org/r/20240423-hsi0-gs101-v1-0-2c3ddb50c720@linaro.org
+
+The bindings for USB and USB-phy have been proposed as part of:
+https://lore.kernel.org/r/20240423-usb-dwc3-gs101-v1-0-2f331f88203f@linaro.org
+and
+https://lore.kernel.org/r/20240423-usb-phy-gs101-v1-0-ebdcb3ac174d@linaro.org
+respectively.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (2):
+      arm64: dts: exynos: gs101: add USB & USB-phy nodes
+      arm64: dts: exynos: gs101-oriole: enable USB on this board
+
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 24 +++++++++++++
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       | 41 ++++++++++++++++++++++
+ 2 files changed, 65 insertions(+)
+---
+base-commit: a59668a9397e7245b26e9be85d23f242ff757ae8
+change-id: 20240423-usb-dts-gs101-4269e0177c0f
+
+Best regards,
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+André Draszik <andre.draszik@linaro.org>
 
