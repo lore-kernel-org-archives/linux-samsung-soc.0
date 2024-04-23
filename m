@@ -1,276 +1,103 @@
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23B513DBA7
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 17:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE791420C9
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 20:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713894366; cv=none; b=i13EW7R00QU5VztaYBiiE2//zZ7AZX24fJuQpg8HxiVr2AQraRQeGyrgkbYVSlamJYaM9miuG0Sebv4IleBeNsy2Yp3t0ikKH9Ze+bQycNrLotyTzg9oEsf5hgaS3Y/wfAy521rLzpGaQ7cWD/mENZvWoD0nG1SuJOMTr5EorBU=
+	t=1713903589; cv=none; b=DhG+jJIUk2kiRmAyl7DZIF6MNJkBAr90meCMzQcUn2FXuhCUImEPs8Gwu5u4ol9tp2ILcgJ7GzjGBOd+YDrnvXABCl9TMYhYITxTC5Fq4v5PvcBvUy9DBzp/1TXthOw4+JPwTxY1kgJ8p+1b2kF0eMjx/j3ZjTj6GqxKqN8CzAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713894366; c=relaxed/simple;
-	bh=jnAd/2sSEJ0WMtjOyYGX1bWKZAuyDHWJ/L9RphxwCAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ty5JCMZA6aBhdM/KQGxaRmUU1T9RZL7jDeFQpulEPTLJWBPW2v0NjqCiEceiraDXNgTkihx7UNRqoXWejKFinl19JDoWb2aQEMYrkvM2OIId/1hwtuxv6JDat82OqJ7l3OmGslnYGUnWb9Ouv8oMm3KGGMN+NYbBPA0gl8XGR38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5fQyOLn; arc=none smtp.client-ip=209.85.161.42
+	s=arc-20240116; t=1713903589; c=relaxed/simple;
+	bh=3O7BXnUsDX8ukBf3kywe0wHWEfDlM8avhl1AO6/1pQk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZLhAAfhcHeGJIiA5frxwD+h8zS03SRlTrA3nwf4IngBl6r6ySINwM51XVVwvtEhFgeZKKeobR8pAT8P/vgXKXz2OcbV4ub8ODkHXE2hGgOJ10Aw9UzNW+13lAqSE9TFsjoARFFFAmm83f/P86E8tF8uUgEYYCuFcG0fAVpEqSiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kHIaoAWX; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5fQyOLn"
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5af2d0a53f5so46801eaf.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 10:46:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHIaoAWX"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a58872905b5so79786266b.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Apr 2024 13:19:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713894363; x=1714499163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o3mo6Mk3SX0kmzv/thEaB5W9SO6Cld9rTNEVyk3LNv4=;
-        b=q5fQyOLnyClGY2zV+51CCMidc5Ja2V25hkdC2ccWaMDTk450rOyzBHvFrrPCT5ASp0
-         bQrIzDRziKJYDhO/7KC6GZLKXJdBDTODasPF89JRY3saYOAXNkTyektOj/eWznqiuGeb
-         RDS7N8vRvkCkQvKOvNE1tXH0mkSP7Qmj3zeIllvYSHe9dSGk4gLY37tOKDWXJUcf1V6x
-         y7f56cKVLkr/rvi3xg4DslYDSRgfxlAOBKfLTy54ZWFKpMbh3kcq0MWUCyDb3FWVLaXo
-         cnTt+6SG7pItUFcR2cNIzslSUABRRzs6SZtxbOmNEVISLUuv6dLbbn//ribnPRFr112T
-         yKHw==
+        d=linaro.org; s=google; t=1713903586; x=1714508386; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+do+sS5zXVZ8W0CIVva6X+uSo3qaE6aX4OfqXyq/5zc=;
+        b=kHIaoAWXwvRM6APjvVkAUXYSh7D06dZ1Tzw0y8bXwmN09rtaS8GBCfije4zJdjT4at
+         9cQN33NNDWbM0mUPBq1sDQ2qrnpPEN9di00vIy9PdGRQCZ3Lo7AuqqXpuFyqibAkbWtU
+         xz4Oq0CTiT9/Ag8PFdNIWB2CwlQFjAVtQqMWj+DF2mG7sg+QgGHxfhxBPWvPPFr7Jxlh
+         Yk4WfpsJirMpAwoqn8jAidq2uWBR56fSXKTOujPnKQsixSM5BJLL7YlxhNxEHoloC8uC
+         w8azOL4lOpWITfG422dfVgtaHsaZ7HkPRkXuBFJv+efXNpCeo+6tyj/2Wkt2a6waXcRy
+         xUTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713894363; x=1714499163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o3mo6Mk3SX0kmzv/thEaB5W9SO6Cld9rTNEVyk3LNv4=;
-        b=itchEwAkpLpeM/cqtndd2A4DUvnYhGHV5OilPXLkW0gV/fBTQbfcLwhUlZIazbJU4j
-         AHWcckO21QTnl00pTBBgh/6oNNMwf0Nkg9YFu6ToPR/ppNqtzaCsAC3Cv5/0HODpG3yt
-         iZd9Gf5W0Yg1jqMxcpzlMcRoM3WeiI5iY88MNot7jJFSmeBzI1LqK/GQ3NWtaSKs7PBn
-         Ai39BkZmfs3/9jLrMVxlYTKDHeBbudhK6kiijsm4PxDEPGEezB9TWheN2RxdAjvoSVFJ
-         dFqgjTZYimNodMPS2CUHKR2/Cfv7LNMQ0YgbmAqRoSqkOw2A8lb9x6pfmnhfhaCi6k0M
-         vcvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3S6rTi9NMJ4PE3KvhuZsaJSzNVzOVS2c5rzX1Jitq0RxHlaCEweyrB8FXfyA7WZRPnDyhpgrMJK7ipetMqlVMmQdNScn4QazEe9yA2yq3tK4=
-X-Gm-Message-State: AOJu0YzWVDGVjnJvIfgg16uBSvmRwDFRO/k3Ewzephe6oauSQ4tFq98d
-	awQNcKUZDI5yD8RTWOgjxcddXD9jnMkqWfN1dcreF4BiqXzBbQrdTOMbvGewTelAfXabQ49Q9tz
-	QVYzsSBCcE9IZeyTlMpTBWhVz5hKLge7mbB//xg==
-X-Google-Smtp-Source: AGHT+IFjQt3mfbwBR44wWtiV52Fvs+JYmX+pN7lhEf2mhrvRbg8R0D5V2WdJQGT9SPtHiTXEX5fgYqJFaSu9KML7oR8=
-X-Received: by 2002:a4a:8554:0:b0:5aa:22f5:a908 with SMTP id
- l20-20020a4a8554000000b005aa22f5a908mr1685739ooh.1.1713894362907; Tue, 23 Apr
- 2024 10:46:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1713903586; x=1714508386;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+do+sS5zXVZ8W0CIVva6X+uSo3qaE6aX4OfqXyq/5zc=;
+        b=BWY0gRHA5tQzJfKvjgmsgX+ekJk62YqIEATPn70RcTGwwKUG5GtKUiN2xRvXBbPseb
+         Ml4HtYmORriRIf46unwZ+GnXiHwxrXJS5rHx9e7Y26f6t4BCgFOv8l5UnP0K2K1bZTjt
+         a2W6U4g8PdNkzKjhr9h8xSleEo9uQ5gbyW4okpCkyUrV5aYL0kXUqQWqV/k73WxDVnAc
+         52iwwBDYmDACko8cfTtUQr7K4s9fm+gaqWT51FhCXY6HhB8ZPfoVndpD2F2oE2hpJEz2
+         PI1yZEcfX21pi/MC5IOs1Qs8LKYDmbOTL3CuPC314bwfBaVV0vmtzUd1P4rVSbNdbgjP
+         mHiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWITn8E2/X2KURDK/cLXnFStRw1lDx/STE4ciGPAjllkMtW36IWXblXupPyNXduim3g04wTZy5JOcxx/l/KG7/nWLZ2dm3xDblUUm2mzb/DOzU=
+X-Gm-Message-State: AOJu0YzDiLuS5T7zzpqhaXpj6GM+c2RoSKQ6RRx728iJIFSGmWKSjFRC
+	8qdb1zBE3Y1AxSgKYX/dxZowt6b0Sj5uMFm0pf8XWmjhTpZ6hzUPlDmHpv2xlws=
+X-Google-Smtp-Source: AGHT+IGdOsUjr0vw61OFmMtWTH1FBxLLoYGz76G1VI9CIdDARt2oojq6AQjBqT/RxUpia0y4IXYtuw==
+X-Received: by 2002:a17:906:7c56:b0:a58:832d:c3e8 with SMTP id g22-20020a1709067c5600b00a58832dc3e8mr228603ejp.58.1713903586261;
+        Tue, 23 Apr 2024 13:19:46 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id i7-20020a1709061e4700b00a52244ab819sm7552431ejj.170.2024.04.23.13.19.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 13:19:45 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/2] USB (dwc3-glue) support for Google Tensor gs101
+Date: Tue, 23 Apr 2024 21:19:44 +0100
+Message-Id: <20240423-usb-dwc3-gs101-v1-0-2f331f88203f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240404122559.898930-1-peter.griffin@linaro.org>
- <20240404122559.898930-9-peter.griffin@linaro.org> <6c2b060b3b32b2da46bafbdc33236c319b6cec62.camel@linaro.org>
-In-Reply-To: <6c2b060b3b32b2da46bafbdc33236c319b6cec62.camel@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 23 Apr 2024 18:45:50 +0100
-Message-ID: <CADrjBPrNqJ6FNKZTgVxST1en-hRdyZFmJe42uwerSnDSmgifbg@mail.gmail.com>
-Subject: Re: [PATCH 08/17] clk: samsung: gs101: add support for cmu_hsi2
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
-	martin.petersen@oracle.com, chanho61.park@samsung.com, ebiggers@kernel.org, 
-	linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org, 
-	saravanak@google.com, willmcvicker@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOAXKGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDEyNj3dLiJN2U8mRj3fRiQwNDXcM0UwszkzQDs+RESyWgpoKi1LTMCrC
+ B0bG1tQC5VkjRYAAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-usb@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.12.4
 
-Hi Andr=C3=A9,
+The Google Tensor gs101 SoC embeds a DWC3 USB 3.1 DRD controller.
 
-On Mon, 8 Apr 2024 at 15:49, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> Hi Pete,
->
-> On Thu, 2024-04-04 at 13:25 +0100, Peter Griffin wrote:
-> > CMU_HSI2 is the clock management unit used for the hsi2 block.
-> > HSI stands for High Speed Interface and as such it generates
-> > clocks for PCIe, UFS and MMC card.
-> >
-> > This patch adds support for the muxes, dividers, and gates in
-> > cmu_hsi2.
-> >
-> > CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK is marked as CLK_IS_CRITICAL
-> > as disabling it leads to an immediate system hang.
-> >
-> > CLK_GOUT_HSI2_SYSREG_HSI2_PCLK is also marked CLK_IS_CRITICAL.
-> > A hang is not observed with fine grained clock control, but
-> > UFS IP does not function with syscon controlling this clock
-> > just around hsi2_sysreg register accesses.
->
-> Would it make sense to add this clock to the &ufs_0 node in the DTS
-> instead? Seems more natural than a clock that's constantly enabled?
+This patch series enables the existing dwc3-exynos glue layer to work on
+this SoC.
 
-Will add this to ufs node in v2.
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (2):
+      dt-bindings: usb: samsung,exynos-dwc3: add gs101 compatible
+      usb: dwc3: exynos: add support for Google Tensor gs101
 
->
-> > [...]
-> >
-> > Updated regex for clock name mangling
-> >     sed \
-> >         -e 's|^PLL_LOCKTIME_PLL_\([^_]\+\)|fout_\L\1_pll|' \
-> >         \
-> >         -e 's|^PLL_CON0_MUX_CLKCMU_\([^_]\+\)_\(.*\)|mout_\L\1_\2|' \
-> >         -e 's|^PLL_CON0_PLL_\(.*\)|mout_pll_\L\1|' \
-> >         -e 's|^CLK_CON_MUX_MUX_CLK_\(.*\)|mout_\L\1|' \
-> >         -e '/^PLL_CON[1-4]_[^_]\+_/d' \
-> >         -e '/^[^_]\+_CMU_[^_]\+_CONTROLLER_OPTION/d' \
-> >         -e '/^CLKOUT_CON_BLK_[^_]\+_CMU_[^_]\+_CLKOUT0/d' \
-> >         \
-> >         -e 's|_IPCLKPORT||' \
-> >         -e 's|_RSTNSYNC||' \
-> >         -e 's|_G4X2_DWC_PCIE_CTL||' \
-> >         -e 's|_G4X1_DWC_PCIE_CTL||' \
-> >         -e 's|_PCIE_SUB_CTRL||' \
-> >         -e 's|_INST_0||g' \
-> >         -e 's|_LN05LPE||' \
-> >         -e 's|_TM_WRAPPER||' \
-> >         -e 's|_SF||' \
-> >         \
-> >         -e 's|^CLK_CON_DIV_DIV_CLK_\([^_]\+\)_\(.*\)|dout_\L\1_\2|' \
-> >         \
-> >         -e 's|^CLK_CON_BUF_CLKBUF_\([^_]\+\)_\(.*\)|gout_\L\1_\2|' \
-> >         -e 's|^CLK_CON_GAT_CLK_BLK_\([^_]\+\)_UID_\(.*\)|gout_\L\1_\2|'=
- \
-> >         -e 's|^gout_[^_]\+_[^_]\+_cmu_\([^_]\+\)_pclk$|gout_\1_\1_pclk|=
-' \
-> >         -e 's|^CLK_CON_GAT_GOUT_BLK_\([^_]\+\)_UID_\(.*\)|gout_\L\1_\2|=
-' \
-> >         -e 's|^CLK_CON_GAT_CLK_\([^_]\+\)_\(.*\)|gout_\L\1_clk_\L\1_\2|=
-' \
-> >         \
-> >         -e '/^\(DMYQCH\|PCH\|QCH\|QUEUE\)_/d'
->
-> Thank you for the updated regex.
->
-> > ---
-> >  drivers/clk/samsung/clk-gs101.c          | 558 +++++++++++++++++++++++
-> >  include/dt-bindings/clock/google,gs101.h |  63 +++
-> >  2 files changed, 621 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-=
-gs101.c
-> > index d065e343a85d..b9f84c7d5c22 100644
-> > --- a/drivers/clk/samsung/clk-gs101.c
-> > +++ b/drivers/clk/samsung/clk-gs101.c
-> > @@ -22,6 +22,7 @@
-> >  #define CLKS_NR_MISC (CLK_GOUT_MISC_XIU_D_MISC_ACLK + 1)
-> >  #define CLKS_NR_PERIC0       (CLK_GOUT_PERIC0_SYSREG_PERIC0_PCLK + 1)
-> >  #define CLKS_NR_PERIC1       (CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK + 1)
-> > +#define CLKS_NR_HSI2 (CLK_GOUT_HSI2_XIU_P_HSI2_ACLK + 1)
-> >
-> >  /* ---- CMU_TOP ------------------------------------------------------=
-------- */
-> >
-> > @@ -3409,6 +3410,560 @@ static const struct samsung_cmu_info peric1_cmu=
-_info __initconst =3D {
-> >       .clk_name               =3D "bus",
-> >  };
-> >
-> > +/* ---- CMU_HSI2 -----------------------------------------------------=
------ */
->
-> This comment is shorter that all the other similar comments in this file.
+ .../devicetree/bindings/usb/samsung,exynos-dwc3.yaml   | 18 ++++++++++++++++++
+ drivers/usb/dwc3/dwc3-exynos.c                         |  9 +++++++++
+ 2 files changed, 27 insertions(+)
+---
+base-commit: a59668a9397e7245b26e9be85d23f242ff757ae8
+change-id: 20240423-usb-dwc3-gs101-1f5864f06ca9
 
-Will fix
->
-> > [...]
-> > +
-> > +PNAME(mout_hsi2_bus_user_p)  =3D { "oscclk", "dout_cmu_hsi2_bus" };
-> > +PNAME(mout_hsi2_pcie_user_p) =3D { "oscclk", "dout_cmu_hsi2_pcie" };
-> > +PNAME(mout_hsi2_ufs_embd_user_p) =3D { "oscclk", "dout_cmu_hsi2_ufs_em=
-bd" };
-> > +PNAME(mout_hsi2_mmc_card_user_p) =3D { "oscclk", "dout_cmu_hsi2_mmc_ca=
-rd" };
->
-> Can you make these alphabetical, too, please, which would also match thei=
-r usage
-> below:
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
-Will fix
->
-> > +
-> > +static const struct samsung_mux_clock hsi2_mux_clks[] __initconst =3D =
-{
-> > +     MUX(CLK_MOUT_HSI2_BUS_USER, "mout_hsi2_bus_user", mout_hsi2_bus_u=
-ser_p,
-> > +         PLL_CON0_MUX_CLKCMU_HSI2_BUS_USER, 4, 1),
-> > +     MUX(CLK_MOUT_HSI2_MMC_CARD_USER, "mout_hsi2_mmc_card_user",
-> > +         mout_hsi2_mmc_card_user_p, PLL_CON0_MUX_CLKCMU_HSI2_MMC_CARD_=
-USER,
-> > +         4, 1),
-> > +     MUX(CLK_MOUT_HSI2_PCIE_USER, "mout_hsi2_pcie_user",
-> > +         mout_hsi2_pcie_user_p, PLL_CON0_MUX_CLKCMU_HSI2_PCIE_USER,
-> > +         4, 1),
-> > +     MUX(CLK_MOUT_HSI2_UFS_EMBD_USER, "mout_hsi2_ufs_embd_user",
-> > +         mout_hsi2_ufs_embd_user_p, PLL_CON0_MUX_CLKCMU_HSI2_UFS_EMBD_=
-USER,
-> > +         4, 1),
-> > +};
-> > +
-> > +static const struct samsung_gate_clock hsi2_gate_clks[] __initconst =
-=3D {
-> > +
->
-> Here and below: all these extra empty lines are not needed.
-
-Will fix
->
-> > +     GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_PHY_REFCLK_IN,
-> > +          "gout_hsi2_pcie_gen4_1_pcie_003_phy_refclk_in",
-> > +          "mout_hsi2_pcie_user",
-> > +          CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLKPORT_PCIE_003_=
-PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
-> > +          21, 0, 0),
-> > +
-> > +     GATE(CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_PHY_REFCLK_IN,
-> > +          "gout_hsi2_pcie_gen4_1_pcie_004_phy_refclk_in",
-> > +          "mout_hsi2_pcie_user",
-> > +          CLK_CON_GAT_CLK_BLK_HSI2_UID_PCIE_GEN4_1_IPCLKPORT_PCIE_004_=
-PCIE_SUB_CTRL_INST_0_PHY_REFCLK_IN,
-> > +          21, 0, 0),
-> > +
-> > +     GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_ACLK,
-> > +          "gout_hsi2_ssmt_pcie_ia_gen4a_1_aclk",
-> > +          "mout_hsi2_bus_user",
->
-> The two strings fit on the same line.
-
-Will fix
->
-> > +          CLK_CON_GAT_CLK_BLK_HSI2_UID_SSMT_PCIE_IA_GEN4A_1_IPCLKPORT_=
-ACLK,
-> > +          21, 0, 0),
-> > +
-> > +     GATE(CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_PCLK,
-> > +          "gout_hsi2_ssmt_pcie_ia_gen4a_1_pclk",
-> > +          "mout_hsi2_bus_user",
->
-> dito.
-
-Will fix
-
-regards,
-
-Peter
-
-
->
-> > [...]
-> > +     /* Disabling this clock makes the system hang. Mark the clock as =
-critical. */
-> > +     GATE(CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK,
-> > +          "gout_hsi2_hsi2_cmu_hsi2_pclk", "mout_hsi2_bus_user",
-> > +          CLK_CON_GAT_GOUT_BLK_HSI2_UID_HSI2_CMU_HSI2_IPCLKPORT_PCLK,
-> > +          21, CLK_IS_CRITICAL, 0),
->
-> I have a similar clock in USB, which also causes a hang if off, I wonder =
-what we
-> could do better here.
->
->
-> Cheers,
-> Andre'
->
