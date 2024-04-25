@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE0F74416;
-	Thu, 25 Apr 2024 08:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0253983CD2;
+	Thu, 25 Apr 2024 08:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714035042; cv=none; b=P4wm7nQHIC2vHWQaLdj3nGyDpa75XzHSZnU3yF9LR390aL05snc1U5v3L4W93dwVP8z24eGhXljkZ1cI9coODz2QbMa6+5IqFL93cJFpO7KaQsmvVekRm9ewH40hI39ZNfmFS7l6Bxq9KM1LczJPH92kLOrkfYACVq+UB4iyfXA=
+	t=1714035055; cv=none; b=ftrHWC7YYWA4FoXrTXCAZhKkuPuaf9xJArWcZn0h9KGv7F0fbcxyffyDAb1MXrRJskkrwizBg4hpFbpdN2+5JbHx7RmVQF+8GvZd676JEn5DMUdlDJFr4XBvf4UvXPrgC97B5rywBGJzhwx5bTa7I7VDB+aQPx3Wrx4GmgaW9+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714035042; c=relaxed/simple;
-	bh=VU/QxCzFTuW5Od8waAXtoxj8CWVwZqgt//t2MsUeAPg=;
+	s=arc-20240116; t=1714035055; c=relaxed/simple;
+	bh=fXQExCvNLtHW5hj8xDuSAVdpyMbbhjWi52wu8FzeoTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cp7tbiNihYJTmAWimpzpRQLmVwOKedxqy01JjjJ9PbAXr0OWcuvnMmIqlG5WwRgfSTcth49+D3n8eFnpyusm7vjYV/xFldioxF8YyBo5Vz9Gba1Sn59fpev0+qmzOkEmFl3f1WNHIcyifLX06fD7nJym1p+ydRaKYb64igQ2FME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLbHF1R+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=bUhjFZZfazFR2U8izBD/d8GEmLF+gOi0OzkgjJin+rYjU/UJomAZniphMheTLdDL1ucdEQdWyMxj4UXXYEOwXEmCRgWQQWaZgcc7LdghYMWvBERNKgPjRRlusseQSAoEs9SzvyxJApGyr8v8fpgH2knBlhrlU2qpyavLvsuhFwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YF3Uz8TO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLbHF1R+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD5BC113CC;
-	Thu, 25 Apr 2024 08:50:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YF3Uz8TO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F652C2BD10;
+	Thu, 25 Apr 2024 08:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714035042;
-	bh=VU/QxCzFTuW5Od8waAXtoxj8CWVwZqgt//t2MsUeAPg=;
+	s=k20201202; t=1714035054;
+	bh=fXQExCvNLtHW5hj8xDuSAVdpyMbbhjWi52wu8FzeoTI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LLbHF1R+Q3okUWU7GR2XGTjtaC1kvdDcR7PxFZ8sdyBH77hvriPZGveSMEqyTRlR1
-	 QUtGv2GEEiO5z3UvphS5zWt2Utk7Ar2E0YFZjFPEMpysUsUh34I43IgDJqH1rh1GZT
-	 EmgPdAxlm7dPvCIlazC9zjGMUK+VT2Kg9wNAu+l3KXeb+dkM7oymEUU1n0XLaSMCUa
-	 hEdg4+J+u1Coy8r4KVQ42AF/tIZ52e6oDvkoXAQ6XQtN86swiDOZtm3/cDhDGrQXJx
-	 0hqxJb9F3WDlAoQgCuGeYh4UwamURi+WHNVEDy+zoajSPm/PcBmPMc02iy5hx4etoB
-	 5Ynd2fCA8hYUQ==
-Message-ID: <e3262ac8-4a9d-46cd-ae25-9dece1b497ad@kernel.org>
-Date: Thu, 25 Apr 2024 10:50:36 +0200
+	b=YF3Uz8TOLUzBXxCgyeRn0ureRNqEhOV6lzoThZrM4BbwTcYWrF+z2PxatcAOMjTf7
+	 +7hltNZUY7VeAqt5IDmsWZmYs8EG3m1Be482djAz9YNLI5udo7wjZll2uo/01T8TpF
+	 JMH7fAm2wx9c/Seautr1br+upLP8EJQEGuIrG/xF68M7d/i2hoyV6H/QZynm5pnZYP
+	 fPtl6/GR7xVq1MBOlyPpZmsDMzcEToW7XHu4aqpXHo/baGtV27qTyE7CGvP9lvTz/G
+	 e5+GWilOj+EKH9HK+6ns/5vUv+sjPkhBorhbW53qBkN47W737vQgf+jAd2GK0gTNm5
+	 EtbPXeSoZ7dCw==
+Message-ID: <9e16f81b-9ec9-4cf5-bf44-9d4bf7bf0e02@kernel.org>
+Date: Thu, 25 Apr 2024 10:50:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] usb: dwc3: exynos: add support for Google Tensor
- gs101
+Subject: Re: [PATCH 1/2] dt-bindings: usb: samsung,exynos-dwc3: add gs101
+ compatible
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -49,7 +49,7 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240423-usb-dwc3-gs101-v1-0-2f331f88203f@linaro.org>
- <20240423-usb-dwc3-gs101-v1-2-2f331f88203f@linaro.org>
+ <20240423-usb-dwc3-gs101-v1-1-2f331f88203f@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,23 +95,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240423-usb-dwc3-gs101-v1-2-2f331f88203f@linaro.org>
+In-Reply-To: <20240423-usb-dwc3-gs101-v1-1-2f331f88203f@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 23/04/2024 22:19, André Draszik wrote:
 > The Exynos-based Google Tensor gs101 SoC has a DWC3 compatible USB
-> controller and can reuse the existing Exynos glue. Add the
-> google,gs101-dwusb3 compatible and associated driver data. Four clocks
-> are required for USB for this SoC:
->     * bus clock
->     * suspend clock
->     * Link interface AXI clock
->     * Link interface APB clock
+> controller and can reuse the existing Exynos glue. Update the dt schema
+> to include the google,gs101-dwusb3 compatible for it.
 > 
 > Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > ---
->  drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
+>  .../devicetree/bindings/usb/samsung,exynos-dwc3.yaml   | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
