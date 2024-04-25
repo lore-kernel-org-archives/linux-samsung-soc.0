@@ -1,60 +1,61 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA98114C5B8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F77A14D28C
 	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 16:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714061033; cv=none; b=gdYuUxMvQl8YsQqZ9GlynQEzPSjRXuzclAaS4eZXXwfKEIlwtipyooy3xTiqVO5XHcpq6uGh7X+w/p2fnoI6gcmBVvEMtz1Z2ZD7zrBoFw9mFqJp//0e7DfsBrs/6XCJzooF5gatsBeKJy7npQTawi6/ZCSW3O+u7+qDXqDFoRM=
+	t=1714061035; cv=none; b=j8gxgIMQpL/AnfKw5jjqOiorrOKQpyyXeQJrPpie3wosd4//kU1uCF2s38vpweqG3AMEI479iq10PlULx2BYZtlBEmmkPiiso/pZ/B9USr4zR00oCVDZAEuRg+VHQHEGKocQRiK3vxwf3GrW2tNJONJ6LKxWkH3zXu/Pws+w/7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714061033; c=relaxed/simple;
-	bh=2oqcmNS3jd8d2/9WZaZaIujWbPFQr6kvI2pAa+x+YxA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=USf6AxVp0078DwRBCwwnioVS6Fmg1faZYK6n+SSsTnfbdjFLJfUpPakxTuCVdX3eQGA7BdxNGID/H2KsmOqFF8mM6iouxhBk//+H7yTW+l2epNYSN/i3cBjLnAIkTTtTCO5aFhbfvZlhL+ZAs56Ub3+LvOCVGEXwLDtrJ8dzlUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=py0150OJ; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1714061035; c=relaxed/simple;
+	bh=qjiLRzQ/LzL957Tztom+GeWOX7MmZNPVIPPVkVPDhT0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DV4W6wYP1YLWxkxhcia7e9jITuU/vZT/1FLVLdDRhAOagMFOSBUBl2OWpF2L2NxLzc9BCeNvZNciilfPLFzbPUQmpvanLgBA/09+mX9u+Oc+rdPP8KDwZ2ci5Qj/JlG99SEi3C6qQWir8cgws0+j8ii+mHSKXeJpAhlrowee5CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yAlbA9vd; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="py0150OJ"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-518a3e0d2ecso1787022e87.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yAlbA9vd"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a55bf737cecso145284866b.0
         for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 09:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1714061030; x=1714665830; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=90o4FgSL+CeIO1gyLTC5XITGjfeMRvZ6Pyb1+yyX+Xg=;
-        b=py0150OJutXqulUaeKnhAW9xaT2b0NaYvrgJY9bN+os8z/Odw/lX3mqnN5VMJDFy4k
-         R3QMNI7MaikB5/suno5zKVBzJqokUcD8/8K/9ECpoNf0XWAEOtBsWM07Qx3AnkjUkI2Z
-         TUAQMrWHDll4hhPHi9X2rEu+CzUsbTdzNPzA0t4CGLh4UXKW8457gwKJLdc7qBvV1Jy4
-         rPmjjfFzd32/vNp6XBTPW9sWRb3cFQjvfUJifNh0lMN7XsWn5dnC4EQdC2w/w+VMETve
-         04rfBWCeLtnSt7TrNGqXQWwMuG/ZnKNBWr6GCpdEu4CaEzEflVt9Ib12YSIgCEJTM+5G
-         Z3Mg==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kyR9vWPsqsAUgpTsJMpV9yCJydAsWbKkcw3s9RwSvbs=;
+        b=yAlbA9vdpKll8bZrBaNU6rcD8+XAh04F/rFaXX6fvdSYj7XfQyV/lRlX+DS/oB/ZE2
+         2CdeQJjfrFiOBvbyA2CkJv8fmUbiroEz9Fd3VrZyzRu5Y/GOvkon9oWMLE/xz+giL9FC
+         ExeqkDI/X0Yw88AcsFICWjF2Otw4xvIeWtohxik0UDwo6dwDGLfWTXdicWJQ6b7W2KO8
+         BAbcG8r3KMVjkw4ps1K/KHydeONaQn/fz6gHqwnSfcXTc7uA0KxhRaTLthbeu0DmW2Cj
+         bjKL34eDFNWECfY3xGewwDGAWj0PTP9ISvKOE0jn6Y0G4xx9Bl4DMLIhLPyql4GGbs0W
+         /i9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1714061030; x=1714665830;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=90o4FgSL+CeIO1gyLTC5XITGjfeMRvZ6Pyb1+yyX+Xg=;
-        b=N8lICCF1C+s2KCt1BzWYhyZMHT0eztet2xHeNOzaLkB47vJryUZxUQysbNKTN3FAP+
-         Z3uprT5mJptSt8lMyHVXGYYckzYknBdOqrAzH1TTMN5NIBS4wjH1IQ0/5yvqVSZGOiXX
-         zwa0S8Idf9Pli5afo0gNZf6mlfeguacTC4w9NLXuNnMmLvkiv8tjfHnwzpyR9FVnwXD6
-         bUp3tnu6WcrsOY8j5r1MR6vcQZcBy5oavxGjpYyFqvsM2PMmV2Xk7wKF1qz4Yt6J1DaZ
-         nx8NBmiicFAysxeL8kfhBPrCy/RnZ1vEUfaGKMOitVsL5YPfjcbVjrU8jmdbAVRgQmih
-         0liw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPqRRPEgZfhJNas/YMXiTevjltxa8QjJytLsXuBPre5Itc13Xv8TDK+o2WjOYVm0FqRzRxbPqRNGDbzzGmbzqILIWGQfMF2jDZ4s9PhWFvilc=
-X-Gm-Message-State: AOJu0YySFhtMWfW4An4Z0fKg1JoxDGX4jZO5hz9pd71S9nb/3kSrtmLA
-	bnOjYDCeDLjE0tHaEw5YYcjiIXzdh0+zhjUCwz3FNc6xEwbc2uk4uWLeLhhug8Q=
-X-Google-Smtp-Source: AGHT+IH4W0cQvppH7SQIIXB9y9gkfeZnnN7nZLtEwV9kMHM6f50E3eDdLoX2AavWUT9QZExL/niKeA==
-X-Received: by 2002:ac2:5edd:0:b0:51b:4b94:a956 with SMTP id d29-20020ac25edd000000b0051b4b94a956mr5436845lfq.21.1714061029915;
-        Thu, 25 Apr 2024 09:03:49 -0700 (PDT)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kyR9vWPsqsAUgpTsJMpV9yCJydAsWbKkcw3s9RwSvbs=;
+        b=qwGWWENvj+CbTgbx6HxXlenxvYjlxzXz5ZRSFry3uqx7q7elU9tZu8ZCa5L1N00H/e
+         TBK0+GOIRrooBg/CCq4CowN6Xw8qyaMlHgwWRODlh4YKeZt7D/2SVKFhVcmrQRiXhIvU
+         GHrU5V7xJ/wODuuA/CIYWpTx3kp1gaKG9k0PDTn/9eEn4YGfDe45+gdtD6muDiP10vqU
+         j3RlAo/F5WzVVf2sjMH2HglJ+N1ONvniuLPfSk0iIq5072BBBJ5k4pntlKlRQN0+9bAD
+         EHXIayfUZixN8kWTCwRGhWj2zqznQ25Vhj/18RrD05e0RYqKN4SSCt3eif9RpDnG5xgl
+         lqZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzSPFyIWPb70+FKv0eTLNpUlbD36PeAOWGSvz6Gn20nkDerBsydjCHZbuxPomDhDDbBh6MsPDSlfFYBeWvD1z7XRokNnEje6Cv7qjiiZGk4rI=
+X-Gm-Message-State: AOJu0Yyoa/a4yFB6x/e+isOJF7DCUBgZcxUhtLZvt/yGxD/oFg5Ww9LX
+	mlgxZ6fufYar4+YhhvrduP8teEPQYIVIYuTGs3x0bcyGhg8+eDDO53wIubGGuCk=
+X-Google-Smtp-Source: AGHT+IHWlzXObnhoIYoQz5NBCn2aut5u9/VWIBSK4AfPvrhlCDjNKP1pLhTffJGnUYMckpFjpwyP/g==
+X-Received: by 2002:a17:906:6bc6:b0:a52:367b:e4ff with SMTP id t6-20020a1709066bc600b00a52367be4ffmr120217ejs.42.1714061030485;
+        Thu, 25 Apr 2024 09:03:50 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id mm10-20020a170906cc4a00b00a58a44a4419sm1329562ejb.57.2024.04.25.09.03.49
+        by smtp.gmail.com with ESMTPSA id mm10-20020a170906cc4a00b00a58a44a4419sm1329562ejb.57.2024.04.25.09.03.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Apr 2024 09:03:49 -0700 (PDT)
+        Thu, 25 Apr 2024 09:03:50 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH 0/2] clock support for Samsung Exynos pin controller
- (Google Tensor gs101)
-Date: Thu, 25 Apr 2024 17:03:30 +0100
-Message-Id: <20240425-samsung-pinctrl-busclock-v1-0-898a200abe68@linaro.org>
+Date: Thu, 25 Apr 2024 17:03:31 +0100
+Subject: [PATCH 1/2] dt-bindings: pinctrl: samsung: google,gs101-pinctrl
+ needs a clock
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,9 +64,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIANJ+KmYC/x3MTQqEMAxA4atI1gba+jfMVcSFxqhhnCqNiiDe3
- eLyW7x3gXIQVvgmFwQ+RGXxETZNgKbWj4zSR4MzLje5K1Dbv+5+xFU8bWHGbleaF/qhLSy5rK/
- KT2kg5mvgQc53XTf3/QAY9rBvagAAAA==
+Message-Id: <20240425-samsung-pinctrl-busclock-v1-1-898a200abe68@linaro.org>
+References: <20240425-samsung-pinctrl-busclock-v1-0-898a200abe68@linaro.org>
+In-Reply-To: <20240425-samsung-pinctrl-busclock-v1-0-898a200abe68@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -80,29 +81,56 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.12.4
 
-This series enables clock support on the Samsung Exynos pin controller
-driver.
-
-This is required on Socs like Google Tensor gs101, which implement
-fine-grained clock control / gating, and as such a running bus clock is
-required for register access to work.
+The pin controller on Google Tensor gs101 requires a bus clock for
+register access to work. Add it.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-André Draszik (2):
-      dt-bindings: pinctrl: samsung: google,gs101-pinctrl needs a clock
-      pinctrl: samsung: support a bus clock
 
- .../bindings/pinctrl/samsung,pinctrl.yaml          |  17 ++++
- drivers/pinctrl/samsung/pinctrl-exynos.c           | 111 +++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |  74 ++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
- 4 files changed, 204 insertions(+)
 ---
-base-commit: a59668a9397e7245b26e9be85d23f242ff757ae8
-change-id: 20240425-samsung-pinctrl-busclock-151c23d76860
+As we only have the one clock here, please let me know if the
+clock-names should be removed. Having it does make
+/sys/kernel/debug/clk/clk_summary look nicer / more meaningful though
+:-)
+---
+ .../devicetree/bindings/pinctrl/samsung,pinctrl.yaml    | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+index 118549c25976..49cc36b76fd0 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl.yaml
+@@ -73,6 +73,13 @@ properties:
+     minItems: 1
+     maxItems: 2
+ 
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: pclk
++
+   wakeup-interrupt-controller:
+     $ref: samsung,pinctrl-wakeup-interrupt.yaml
+ 
+@@ -120,6 +127,16 @@ required:
+ 
+ allOf:
+   - $ref: pinctrl.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: google,gs101-pinctrl
++    then:
++      required:
++        - clocks
++        - clock-names
++
+   - if:
+       properties:
+         compatible:
+
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.44.0.769.g3c40516874-goog
 
