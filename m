@@ -1,127 +1,136 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0BD23767
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 03:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C784817E;
+	Thu, 25 Apr 2024 07:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714016613; cv=none; b=CJI6j7eB/PCZpjUIwbc2ZEUGbRN4hWjO3JFsLJtOozGFHlZHabu89B+c33iLmxISLJ24IvYu7EI/9boUPlAstmXuCy6KeeCeFLaeTCI0dy7eEVzM2L+yzqQ9ANnXCHNpC7Du+4eya0zSfnO2xHlq9NqgQXooLAA9YeGzCwgdzT4=
+	t=1714028922; cv=none; b=bnIs50EZSUekPCzHcrOCUsn+V6p0eoeZ9/MFP2m85WVfLp4QEDvbPS3qTgor3uKsQTW1knpf9sjLiI0FTZTrS6xfPu9EkY9KXzT0KiUllZG6r0xF2jRcPCyWIhiQY4YJ2uZ4+4XMKovSCIqK750NoIH+wTqbmdrVdslTwkrfBto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714016613; c=relaxed/simple;
-	bh=VtntOmKbYYcoG5mLwePvjlQf1clcdudLhsWcgdZdSKA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=B3CIhWK0DatNR2eYc1d/px+zsl/qIg/f0Pf0H70y5Swe3Y2kV7vmzsCHbHhmJSzXSvrcquM6rX+a3shrxJmEMjUhOcYPJDd/wVcz5JbToWNU+iAcI6qbl8UZ1keWnR/ILdr5kqgSPuo3LSs1IZtQnj6cg6gXt+KPWU1KDYXpC2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NM/EDlb9; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714028922; c=relaxed/simple;
+	bh=WK3IIsj2k+XFoe/9zTARNV+xrwTUvh5SAaxj5Dhb+cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dnXB3udNdDSBA6v5X5oiEhW7HVHcscTBjB3fFsqH6FDKVx/DcF+fKZa/rpUoCpVzk93OqTnBoNKAChmsjt0pteLzqZGBZpH4czd8kw1Ni+CaCY5d5nnbT6fosgIcg/xeYoj/gSFnOVHMJzrXFwNfx8hiHX5JC0ecPViC9mPblqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBhWMc3A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NM/EDlb9"
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3bbbc6e51d0so333545b6e.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Apr 2024 20:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714016610; x=1714621410; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vnCK077vcnic/R+LScKzvv08SpUTXpy5huFzD93QYW0=;
-        b=NM/EDlb9ZukE3Su1b+hVfhvCEUs+xT+6rEZcR5iaIU7Dkxsr5J5iZWliZ8ZR6/e0bR
-         AKir87+JdmWWdPy/40jybrbodZHDU8ODwcOe4cjUFKDfT9Z2V/dx67Y8tS62ElF6VlWc
-         1IsD6U3vsFtKPtu24JrJlm8iKF3fHCPUU+OFUMw5gORTLt7l4IKOyumCAOoJMpYjNVbn
-         W+U96LenNCO7YDKwTUvDGKw1gIvH7HMvjwQFY1uSSnLYjLLFpUPCQxe/52Uaq/F0GI/a
-         ZnaX76vt/h7jVT8QqkBiSygPyOsFMfSMtoArENtEmFMUO/fKtdar1/YalvPRaBtBzKt6
-         EmUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714016610; x=1714621410;
-        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vnCK077vcnic/R+LScKzvv08SpUTXpy5huFzD93QYW0=;
-        b=QLoN8qV0dZ2LERCP7R97ZpkoS5XjtZw2Ts+0xng2gLwkEUafilimZ0I0W6oNwJpeWP
-         jvFWqSWt98Fg53RkWvPXV7+8DGPEA2Wr48szlr+AS/jxAHKZ7oQ/rBXqwgK3idoEqJLc
-         NOKDOLGr4eoMiD+z89cKwod3mMbgUa3j86gxGGhqehsGbekVVMmwndPhZNj4XHFt+tun
-         4Lz6Rkd385biDVnIW+1PcKgHCq25uZbghTXgoFoHFk6jFsslNGoBem63iFfyfBFQckK/
-         9BK61d+JZ7iFeNg5wDybk1czPSoPFUWHh9HCehN28fI6fl9nGAZ6KQrSnL+Yu9xEqdqM
-         ih4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvdR1zYy69EKhhe2ciubrRULxVqseibhnJy9oOreC0u8tMascyrITYEcpVH1isBkQ3kcPFHPGPZ4B6dJWBl+m5lT/3fOdPpMAGiRAXEoPucwQ=
-X-Gm-Message-State: AOJu0Ywpq+7+FJHeN6Xe3nPL7TqWq0yq7UCNcybcuPov64IjRLdEmu4x
-	lZiKAX9mMuKK8R+263Feka5WVZTYWz/UvKADwVjlSY2toJOhX8lTNwC75+Uv9kM=
-X-Google-Smtp-Source: AGHT+IHOtD3scAdjmymPzNeVVVH8W7S8v16Wo22wJAyYclqXKFP3sd7XGOtUTQzT9WE51vOGS34ZKg==
-X-Received: by 2002:a05:6808:9ac:b0:3c7:426f:7640 with SMTP id e12-20020a05680809ac00b003c7426f7640mr4387734oig.32.1714016609985;
-        Wed, 24 Apr 2024 20:43:29 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id c3-20020a634e03000000b005cd835182c5sm11899227pgb.79.2024.04.24.20.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 20:43:29 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date: Thu, 25 Apr 2024 12:43:25 +0900
-Message-Id: <20240425034325.33507-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBhWMc3A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2A3C113CC;
+	Thu, 25 Apr 2024 07:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714028921;
+	bh=WK3IIsj2k+XFoe/9zTARNV+xrwTUvh5SAaxj5Dhb+cY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kBhWMc3Ac4yW+TuIiNd73YL1NwccRH0B9fSW2HZA9AObgNcf70/34V+OXVTxTM4i9
+	 rupcl08trJpFc/x8+4sZ/FIYV4aSrp4UYkaaY1BSyytDU8FVMVDQHQFramDmCa7GBu
+	 KkALIsSDpeyK20oUkf4YzmnS9JgikdBrCDDCq4pjAgR31H4FSiv5utoKTQMoTuRuja
+	 1sTmblklWCUnXGjCTS/+pG1qnI0nK9vhuy4qPFTZo4e8AD8Q5tkBn9PwU+wyLi9FK6
+	 8OBwik0gJ1z+fRMWYE9dUljRVBo22o4GP4cMiRD/yeHTo0MXCPlcNJ7NKSmczbiviN
+	 tPc8vi8IQ+aQg==
+Message-ID: <1c6f5984-7f9f-47e3-98c3-3c3671512675@kernel.org>
+Date: Thu, 25 Apr 2024 09:08:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/14] HSI2, UFS & UFS phy support for Tensor GS101
+To: Peter Griffin <peter.griffin@linaro.org>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ vkoul@kernel.org, kishon@kernel.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, bvanassche@acm.org, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+ James.Bottomley@HansenPartnership.com, ebiggers@kernel.org
+Cc: linux-scsi@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, tudor.ambarus@linaro.org,
+ andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com
+References: <20240423205006.1785138-1-peter.griffin@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240423205006.1785138-1-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dave and Daniel,
+On 23/04/2024 22:49, Peter Griffin wrote:
+> Hi James, Martin, Alim, Bart, Krzysztof, Vinod, all
+> 
+> Firstly, many thanks to everyone who reviewed and tested v1.
+> 
+> This series adds support for the High Speed Interface (HSI) 2 clock
+> management unit, UFS controller and UFS phy calibration/tuning for GS101
+> found in Pixel 6.
+> 
+> With this series applied, UFS is now functional on gs101. The SKhynix
+> HN8T05BZGKX015 can be enumerated, partitions mounted etc. This allows us to
+> move away from the initramfs rootfs we have been using for development so far.
+> 
+> Merge Strategy
+> 1) UFS driver/bindings via UFS/SCSI tree (James / Martin / Alim)
+> 2) GS101 DTS/DTSI should go via Krzysztofs Exynos SoC tree
+> 3) Clock driver/bindings via Clock tree (Krzysztof / Stephen)
+> 4) PHY driver/bindings via PHY tree (Vinod)
+> 
+> The v2 series has been rebased on next-20240422, as such all the phy parts
+> which were already queued by Vinod have been dropped. Two new phy patches
+> are added to address review feedback received after the patches were queued.
+> 
+> The series is broadly split into the following parts:
+> 1) dt-bindings documentation updates
+> 2) gs101/oriole dts & dtsi updates
+> 3) Prepatory patches for ufs-exynos driver
+> 4) GS101 ufs-exynos support
+> 5) gs101 phy fixes
+> 
 
-   Just two cleanups - one is remove the .owner field from the platform_driver
-   declarations in Exynos DRM modules and other is to drop the device_node
-   cleanup code in exynos_hdmi.c using the scope-based resource management.
+I asked to split, otherwise please explain why PHY and UFS depends on
+DTS and clk.
 
-Please kindly let me know if there is any problem.
+Best regards,
+Krzysztof
 
-Thanks,
-Inki Dae
-
-The following changes since commit 83221064c28a0f9fdc4f63ab4fce2e51bfe23315:
-
-  Merge tag 'drm-xe-next-2024-04-23' of https://gitlab.freedesktop.org/drm/xe/kernel into drm-next (2024-04-24 10:51:29 +1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-6.10
-
-for you to fetch changes up to d65bfb9546eb627e3c578336355c5b81797f2255:
-
-  gpu: drm: exynos: hdmi: eliminate uses of of_node_put() (2024-04-25 09:37:12 +0900)
-
-----------------------------------------------------------------
-Two cleanups
-- Drop .owner from platform_driver declaration of each exynos drm module.
-- Drop the cleanup code to device_node object in exynos_hdmi.c using
-  the scope-based resource management feature[1].
-
-[1] https://lwn.net/Articles/934679/?ref=upstract.com
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (11):
-      drm/exynos: fimc: drop driver owner initialization
-      drm/exynos: fimd: drop driver owner initialization
-      drm/exynos: dsi: drop driver owner initialization
-      drm/exynos: g2d: drop driver owner initialization
-      drm/exynos: gsc: drop driver owner initialization
-      drm/exynos: mic: drop driver owner initialization
-      drm/exynos: rotator: drop driver owner initialization
-      drm/exynos: scaler: drop driver owner initialization
-      drm/exynos: vidi: drop driver owner initialization
-      drm/exynos: hdmi: drop driver owner initialization
-      drm/exynos: mixer: drop driver owner initialization
-
-Shivani Gupta (1):
-      gpu: drm: exynos: hdmi: eliminate uses of of_node_put()
-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     |  1 -
- drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  1 -
- drivers/gpu/drm/exynos/exynos_drm_fimd.c    |  1 -
- drivers/gpu/drm/exynos/exynos_drm_g2d.c     |  1 -
- drivers/gpu/drm/exynos/exynos_drm_gsc.c     |  1 -
- drivers/gpu/drm/exynos/exynos_drm_mic.c     |  1 -
- drivers/gpu/drm/exynos/exynos_drm_rotator.c |  1 -
- drivers/gpu/drm/exynos/exynos_drm_scaler.c  |  1 -
- drivers/gpu/drm/exynos/exynos_drm_vidi.c    |  1 -
- drivers/gpu/drm/exynos/exynos_hdmi.c        | 16 +++++-----------
- drivers/gpu/drm/exynos/exynos_mixer.c       |  1 -
- 11 files changed, 5 insertions(+), 21 deletions(-)
