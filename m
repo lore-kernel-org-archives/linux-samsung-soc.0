@@ -1,614 +1,139 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3937F14D294
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 16:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4545338C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 16:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714061035; cv=none; b=KGqm9UiJBVvhLugAS/SM7PHwgqwXvn2NXJ15H1+Kb4LNb+zdmX19I7OAyxLS+O2ndCpDUPr+fLLdE27MIWXZZ+YLvD6IYzZtTJzSgaV+ZWH5bXhlXaNB4Y1Lds0gIXR6baaTle3WuqOQjMnXoRHbrHACpwgq0IBifbXfyU0jJcU=
+	t=1714062934; cv=none; b=XfIxxpLUpKwOTSr5Xni7mboG0nRXjXO51YPnY/h2gv+qgSc1MmD4/92w3Fb8rDeYgtg0/OKalnBUDiCo3UhH/SxFepGEf7jnt1bQ+05R/98u3nequduI7sxPkMJQngw1yF1OIqcIZzW0JDTh62ry6FPby5Lxle1lTMC/v0Ge6vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714061035; c=relaxed/simple;
-	bh=EGir2EDt2n1eyZpIdv4Fkr4bconE/1CQyWEMEYxiMZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IT1/PinKlbcGD9K7ja3L70EXukXXPrGPtfg1KI6D1nLGsAaOswacx8qXYSIYiNhH19M6fGfCHYqfbySJOJxQanjG21XNz9NqWeRqk3LYLqeAyPTjIOmHcz+1nF7i0MQCcuOmhW5zf1Pu6TBUyWkrF+hEYWp+sEQ1zPG9ibJdsL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AuTNFvjo; arc=none smtp.client-ip=209.85.167.52
+	s=arc-20240116; t=1714062934; c=relaxed/simple;
+	bh=j9WGUFY71ps6OSCWciRhDzFj4uK9mlFz0tqR2rg0Q4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a0smYpCsAkBJLJKDD/JJtYCwmzwtpF9oTgnifSrmSlqEF7Bwr8uCiOUsZu5KtnR0wijNwJygHocOksUS/tWvg7/9a/38GsydTFL9VSJlftywO6hQCvPjrukTNk0vVEkTStwuDcPbK86koAVMxiKJVIAl2fAlazbxJFu7or7srzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U6T6Pr+P; arc=none smtp.client-ip=209.85.161.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AuTNFvjo"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-518a3e0d2ecso1787066e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 09:03:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6T6Pr+P"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5af702072a9so184794eaf.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Apr 2024 09:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714061031; x=1714665831; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ArRFcwbSGE5KriuGhAYuKxWGlaznKDFOE6RNc9h6uy8=;
-        b=AuTNFvjoGrfXhTSdg+susdNWbxVsL5jxGAEyvN9EKJKZQba9pRdSNuK5ifFXqcmNnH
-         QaRIHBhK25HvSe0brnoaU9TSgK/Bk/cc9Kh5wx1SkMkfNs8AFI3hC0ekfz3zAdx8J2iO
-         E/Ok3aJzaALCFWReU2ABqQME0wv4BF6QQ0je6Pv3llahsAYdJlyeTMNUNrIuRmHhcZCo
-         7TK9gluEzKyUi5zh2Xa+MRI1dyUOfdNhBQxvUkbcSfGA1Sdtx5Vxr0Y7PEQuVupyhSTP
-         LJRIPy24EV9wtszFVuiV/H76ocz8xGIQAROD61uegTdle4wsIXLA+o87tv1isNiAyTIe
-         uOlA==
+        d=linaro.org; s=google; t=1714062931; x=1714667731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8D10nkcOa5R+uHy2/Q7XxV4zDHaJ6w0gsH2wqoomVXQ=;
+        b=U6T6Pr+PFC5DKgi3aIKsKkSrPsanqBFS5/OHvEcc9EkNwJuboB4yPzS9B1cYFY2my5
+         Ven3lsSYywpkatU72jcZ6HXqGPmPDFums3SmmZz9WHDBBfcyFduxF8kJXrXP0VAAsuae
+         aulHTdAbGkZZe/HwAxOQfrNxkP4szowDdlzUUI1EkBumawc4TRa+BMGGDvofPZNOgmy5
+         noJDkddsbc5cBqFkzbmMo5js/77K6f7l6404Kzr2RwZ1mKgefcwUSPesl3gJMyYDOh2B
+         AcKn0Uw8jwoCo2v8n1poJ8Kd9XkisE29wrq0ylFPIeUplX9uYLh/R06Cl9QgDcxttnb1
+         37XA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714061031; x=1714665831;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1714062931; x=1714667731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ArRFcwbSGE5KriuGhAYuKxWGlaznKDFOE6RNc9h6uy8=;
-        b=rd8r8d6g/fYcyi1jVtbKozaeRreLmxtNNBu1WD3e1RamhVdhchiANmFSG5WIxdYbQ9
-         O3Pa6ffSR5jadQWU+OBXd8LlctwHZ6WxZKuFcLdwnNgYKE+3gJsQtKnYpuupb1P8GaOQ
-         Mo4722h5KOuWqZUrWK969mFikqO7p3sKTbmmUzVDnRl90hFYjCByHBvjSuF0LGarGtko
-         QLtyYyZwSlzH9HKe18mEKQTB7Nhyle0VZFWYjnJxKfh8cNE95KRDpkJboG1fxEv6/6BK
-         FCU7QO0wHp2NcWScTt2euDilOT0+ko9AYzo/LrYg3IGusyOHsfdYKcxGErOw5v6Ur+ri
-         yImg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZnn2zpTFSLXseaFPkqhcb1WS5z0SRvXPpEMQCFYHQVn/mrd/9Fi/Kp9Ai4udNcVxO0JBpgx9eUTK1sCyhtpKone5WoL+tkQfjHIPVmGb7s7w=
-X-Gm-Message-State: AOJu0Yza/SjZ2kU9quFeC8tR+bXpLkF2yuSVl6eGiduiZNdNzblo+sgS
-	HJlEvEBq75DSNtY4UOXWf0JqPska3jcen7rX2MOlnlBTsPxu3qE3d4nM1Uw+TVs=
-X-Google-Smtp-Source: AGHT+IFNPQTMWqC6vi+FKfSqneB6UBtETV3r7joKdRzNgHGYkWkBtEvnWrq0n5MsCARUlaoZk6BbUQ==
-X-Received: by 2002:a05:6512:3d0d:b0:51c:66fb:cda with SMTP id d13-20020a0565123d0d00b0051c66fb0cdamr2026971lfv.25.1714061031121;
-        Thu, 25 Apr 2024 09:03:51 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id mm10-20020a170906cc4a00b00a58a44a4419sm1329562ejb.57.2024.04.25.09.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Apr 2024 09:03:50 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 25 Apr 2024 17:03:32 +0100
-Subject: [PATCH 2/2] pinctrl: samsung: support a bus clock
+        bh=8D10nkcOa5R+uHy2/Q7XxV4zDHaJ6w0gsH2wqoomVXQ=;
+        b=slhLKMGpkP0lAswSdG4ap+GVN4MapWXNNo8Jx05HMf88Rki44u/C/pfo6pVN9xKnsE
+         s1WOjfsbwp4qwHu0L66k2NQb0YLtL0wzrVBbqnBgWisxOu4yYupFGqBQ7W8uBVi9636E
+         IYklvmQqUPBgkIQ4GY56KzVs/jkUkb3FFQ2OzaBhitx9U0hyo3l9mNixcLlP0qZnM4I5
+         HQkFO5NfDkP6fKoPMCjykyt1FjrSSwQBKmgaP4Uuc5mvqy/w1acLQ9HeJclgJqrUBm9S
+         hp7dMhaMdo6u3jWppA7QgRnfv9QV0dveo9Nrky3dfcpBrC7mONW7XOY9s/eyl2j1Nf4A
+         Oz0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWaCH0/59tDxLPS3o3bT9NQ8UtmF0/ZrvDirjv73rtSPPK/gCwg5I4oHHWswkvySRG/+JzLgTJVkzl17BSMj2Fj8ZBO8tkGMi7GL2VGzOK4DE=
+X-Gm-Message-State: AOJu0Yzy8k8zOPpPK3aYmM/XCo3wMVPdLHjynhnI9GMnONW4QqwL7fSs
+	yzhLvnw2/9sbTNXJ9fRiBJhl08+7JSDr6ih3Ok3v2Rm8urr8xgDjnsGS4+1cvYHOmVOT10gDs1u
+	mvLHelUQy/ZsM/0CI/eolCykjBsIhCSCWgkPGuA==
+X-Google-Smtp-Source: AGHT+IHjcgDl2gtVr/nZRGKGuh2NquqDXaKs02m0Ke3hafEhPZVueDe1BLxI7k0uWnYn7WyPx11zD8Zk9f2sSWyLcbo=
+X-Received: by 2002:a4a:d46:0:b0:5ac:9e7d:576e with SMTP id
+ 67-20020a4a0d46000000b005ac9e7d576emr185709oob.1.1714062931017; Thu, 25 Apr
+ 2024 09:35:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240425-samsung-pinctrl-busclock-v1-2-898a200abe68@linaro.org>
-References: <20240425-samsung-pinctrl-busclock-v1-0-898a200abe68@linaro.org>
-In-Reply-To: <20240425-samsung-pinctrl-busclock-v1-0-898a200abe68@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.12.4
+References: <20240423205006.1785138-1-peter.griffin@linaro.org>
+ <20240423205006.1785138-7-peter.griffin@linaro.org> <52403f522a4f7513c5ee5dae48856988f7141825.camel@linaro.org>
+In-Reply-To: <52403f522a4f7513c5ee5dae48856988f7141825.camel@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 25 Apr 2024 17:35:19 +0100
+Message-ID: <CADrjBPrpsTFns8o+H=SvqdgmKFrkuGEJ2QphL7BpRfy9kifxJQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/14] arm64: dts: exynos: gs101: Add ufs, ufs-phy and
+ ufs regulator dt nodes
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, 
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, jejb@linux.ibm.com, 
+	martin.petersen@oracle.com, James.Bottomley@hansenpartnership.com, 
+	ebiggers@kernel.org, linux-scsi@vger.kernel.org, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	tudor.ambarus@linaro.org, saravanak@google.com, willmcvicker@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On some Samsung-based SoCs there are separate bus clocks / gates each
-for each pinctrl instance. To be able to access each pinctrl instance's
-registers, this bus clock needs to be running, otherwise register
-access will hang. Google Tensor gs101 is one example for such an
-implementation.
+Hi Andr=C3=A9,
 
-Update the driver to handle this optional bus clock:
-* handle an optional bus clock from DT
-* prepare it during driver probe
-* enclose all relevant register accesses with a clock enable & disable
+On Thu, 25 Apr 2024 at 13:02, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+>
+> On Tue, 2024-04-23 at 21:49 +0100, Peter Griffin wrote:
+> > Enable the ufs controller, ufs phy and ufs regulator in device tree.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  .../boot/dts/exynos/google/gs101-oriole.dts   | 18 ++++++++++
+> >  arch/arm64/boot/dts/exynos/google/gs101.dtsi  | 36 +++++++++++++++++++
+> >  2 files changed, 54 insertions(+)
+> >
+>
+> [...]
+>
+> > +
+> > +             ufs_0: ufs@14700000 {
+> > +                     compatible =3D "google,gs101-ufs";
+> > +                     reg =3D <0x14700000 0x200>,
+> > +                           <0x14701100 0x200>,
+> > +                           <0x14780000 0xa000>,
+> > +                           <0x14600000 0x100>;
+> > +                     reg-names =3D "hci", "vs_hci", "unipro", "ufsp";
+> > +                     interrupts =3D <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH 0=
+>;
+> > +                     clocks =3D <&cmu_hsi2 CLK_GOUT_HSI2_UFS_EMBD_I_AC=
+LK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_UFS_EMBD_I_CLK_=
+UNIPRO>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_UFS_EMBD_I_FMP_=
+CLK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_QE_UFS_EMBD_HSI=
+2_ACLK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_QE_UFS_EMBD_HSI=
+2_PCLK>,
+> > +                              <&cmu_hsi2 CLK_GOUT_HSI2_SYSREG_HSI2_PCL=
+K>;
+> > +                     clock-names =3D "core_clk", "sclk_unipro_main", "=
+fmp",
+> > +                                   "ufs_aclk", "ufs_pclk", "sysreg";
+> > +                     freq-table-hz =3D <0 0>, <0 0>, <0 0>, <0 0>, <0 =
+0>, <0 0>;
+> > +                     pinctrl-names =3D "default";
+> > +                     pinctrl-0 =3D <&ufs_rst_n &ufs_refclk_out>;
+>
+> The preferred order is pinctrl-0 before pinctrl-names (similar to clock-n=
+ames and reg-names).
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 111 ++++++++++++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c |  74 ++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.h |   2 +
- 3 files changed, 187 insertions(+)
+Will fix
+>
+> Other than that,
+>
+> Acked-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 871c1eb46ddf..857d631132f9 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -13,6 +13,7 @@
- // the Samsung pinctrl/gpiolib driver. It also includes the implementation of
- // external gpio and wakeup interrupt support.
- 
-+#include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/irqdomain.h>
-@@ -61,6 +62,12 @@ static void exynos_irq_mask(struct irq_data *irqd)
- 	else
- 		reg_mask = our_chip->eint_mask + bank->eint_offset;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for masking IRQ\n");
-+		return;
-+	}
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = readl(bank->eint_base + reg_mask);
-@@ -68,6 +75,8 @@ static void exynos_irq_mask(struct irq_data *irqd)
- 	writel(mask, bank->eint_base + reg_mask);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	clk_disable(bank->drvdata->pclk);
- }
- 
- static void exynos_irq_ack(struct irq_data *irqd)
-@@ -82,7 +91,15 @@ static void exynos_irq_ack(struct irq_data *irqd)
- 	else
- 		reg_pend = our_chip->eint_pend + bank->eint_offset;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock to ack IRQ\n");
-+		return;
-+	}
-+
- 	writel(1 << irqd->hwirq, bank->eint_base + reg_pend);
-+
-+	clk_disable(bank->drvdata->pclk);
- }
- 
- static void exynos_irq_unmask(struct irq_data *irqd)
-@@ -110,6 +127,12 @@ static void exynos_irq_unmask(struct irq_data *irqd)
- 	else
- 		reg_mask = our_chip->eint_mask + bank->eint_offset;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for unmasking IRQ\n");
-+		return;
-+	}
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = readl(bank->eint_base + reg_mask);
-@@ -117,6 +140,8 @@ static void exynos_irq_unmask(struct irq_data *irqd)
- 	writel(mask, bank->eint_base + reg_mask);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	clk_disable(bank->drvdata->pclk);
- }
- 
- static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
-@@ -127,6 +152,7 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	unsigned int shift = EXYNOS_EINT_CON_LEN * irqd->hwirq;
- 	unsigned int con, trig_type;
- 	unsigned long reg_con;
-+	int ret;
- 
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -159,11 +185,20 @@ static int exynos_irq_set_type(struct irq_data *irqd, unsigned int type)
- 	else
- 		reg_con = our_chip->eint_con + bank->eint_offset;
- 
-+	ret = clk_enable(bank->drvdata->pclk);
-+	if (ret) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for configuring IRQ type\n");
-+		return ret;
-+	}
-+
- 	con = readl(bank->eint_base + reg_con);
- 	con &= ~(EXYNOS_EINT_CON_MASK << shift);
- 	con |= trig_type << shift;
- 	writel(con, bank->eint_base + reg_con);
- 
-+	clk_disable(bank->drvdata->pclk);
-+
- 	return 0;
- }
- 
-@@ -200,6 +235,14 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
-+	ret = clk_enable(bank->drvdata->pclk);
-+	if (ret) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for configuring pin %s-%lu\n",
-+			bank->name, irqd->hwirq);
-+		return ret;
-+	}
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	con = readl(bank->pctl_base + reg_con);
-@@ -209,6 +252,8 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
-+	clk_disable(bank->drvdata->pclk);
-+
- 	return 0;
- }
- 
-@@ -223,6 +268,13 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
- 	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for deconfiguring pin %s-%lu\n",
-+			bank->name, irqd->hwirq);
-+		return;
-+	}
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	con = readl(bank->pctl_base + reg_con);
-@@ -232,6 +284,8 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
-+	clk_disable(bank->drvdata->pclk);
-+
- 	gpiochip_unlock_as_irq(&bank->gpio_chip, irqd->hwirq);
- }
- 
-@@ -281,10 +335,19 @@ static irqreturn_t exynos_eint_gpio_irq(int irq, void *data)
- 	unsigned int svc, group, pin;
- 	int ret;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for handling IRQ\n");
-+		return IRQ_NONE;
-+	}
-+
- 	if (bank->eint_con_offset)
- 		svc = readl(bank->eint_base + EXYNOSAUTO_SVC_OFFSET);
- 	else
- 		svc = readl(bank->eint_base + EXYNOS_SVC_OFFSET);
-+
-+	clk_disable(bank->drvdata->pclk);
-+
- 	group = EXYNOS_SVC_GROUP(svc);
- 	pin = svc & EXYNOS_SVC_NUM_MASK;
- 
-@@ -563,6 +626,19 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
- 
- 	chained_irq_enter(chip, desc);
- 
-+	/* just enable the clock once here, to avoid an enable/disable dance for
-+	 * each bank.
-+	 */
-+	if (eintd->nr_banks) {
-+		struct samsung_pin_bank *b = eintd->banks[0];
-+
-+		if (clk_enable(b->drvdata->pclk)) {
-+			dev_err(b->gpio_chip.parent,
-+				"unable to enable clock for pending IRQs\n");
-+			return;
-+		}
-+	}
-+
- 	for (i = 0; i < eintd->nr_banks; ++i) {
- 		struct samsung_pin_bank *b = eintd->banks[i];
- 		pend = readl(b->eint_base + b->irq_chip->eint_pend
-@@ -572,6 +648,9 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
- 		exynos_irq_demux_eint(pend & ~mask, b->irq_domain);
- 	}
- 
-+	if (eintd->nr_banks)
-+		clk_disable(eintd->banks[0]->drvdata->pclk);
-+
- 	chained_irq_exit(chip, desc);
- }
- 
-@@ -695,6 +774,12 @@ static void exynos_pinctrl_suspend_bank(
- 	struct exynos_eint_gpio_save *save = bank->soc_priv;
- 	const void __iomem *regs = bank->eint_base;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for saving state\n");
-+		return;
-+	}
-+
- 	save->eint_con = readl(regs + EXYNOS_GPIO_ECON_OFFSET
- 						+ bank->eint_offset);
- 	save->eint_fltcon0 = readl(regs + EXYNOS_GPIO_EFLTCON_OFFSET
-@@ -704,6 +789,8 @@ static void exynos_pinctrl_suspend_bank(
- 	save->eint_mask = readl(regs + bank->irq_chip->eint_mask
- 						+ bank->eint_offset);
- 
-+	clk_disable(bank->drvdata->pclk);
-+
- 	pr_debug("%s: save     con %#010x\n", bank->name, save->eint_con);
- 	pr_debug("%s: save fltcon0 %#010x\n", bank->name, save->eint_fltcon0);
- 	pr_debug("%s: save fltcon1 %#010x\n", bank->name, save->eint_fltcon1);
-@@ -716,9 +803,17 @@ static void exynosauto_pinctrl_suspend_bank(struct samsung_pinctrl_drv_data *drv
- 	struct exynos_eint_gpio_save *save = bank->soc_priv;
- 	const void __iomem *regs = bank->eint_base;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for saving state\n");
-+		return;
-+	}
-+
- 	save->eint_con = readl(regs + bank->pctl_offset + bank->eint_con_offset);
- 	save->eint_mask = readl(regs + bank->pctl_offset + bank->eint_mask_offset);
- 
-+	clk_disable(bank->drvdata->pclk);
-+
- 	pr_debug("%s: save     con %#010x\n", bank->name, save->eint_con);
- 	pr_debug("%s: save    mask %#010x\n", bank->name, save->eint_mask);
- }
-@@ -753,6 +848,12 @@ static void exynos_pinctrl_resume_bank(
- 	struct exynos_eint_gpio_save *save = bank->soc_priv;
- 	void __iomem *regs = bank->eint_base;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for restoring state\n");
-+		return;
-+	}
-+
- 	pr_debug("%s:     con %#010x => %#010x\n", bank->name,
- 			readl(regs + EXYNOS_GPIO_ECON_OFFSET
- 			+ bank->eint_offset), save->eint_con);
-@@ -774,6 +875,8 @@ static void exynos_pinctrl_resume_bank(
- 						+ 2 * bank->eint_offset + 4);
- 	writel(save->eint_mask, regs + bank->irq_chip->eint_mask
- 						+ bank->eint_offset);
-+
-+	clk_disable(bank->drvdata->pclk);
- }
- 
- static void exynosauto_pinctrl_resume_bank(struct samsung_pinctrl_drv_data *drvdata,
-@@ -782,6 +885,12 @@ static void exynosauto_pinctrl_resume_bank(struct samsung_pinctrl_drv_data *drvd
- 	struct exynos_eint_gpio_save *save = bank->soc_priv;
- 	void __iomem *regs = bank->eint_base;
- 
-+	if (clk_enable(bank->drvdata->pclk)) {
-+		dev_err(bank->gpio_chip.parent,
-+			"unable to enable clock for restoring state\n");
-+		return;
-+	}
-+
- 	pr_debug("%s:     con %#010x => %#010x\n", bank->name,
- 		 readl(regs + bank->pctl_offset + bank->eint_con_offset), save->eint_con);
- 	pr_debug("%s:    mask %#010x => %#010x\n", bank->name,
-@@ -789,6 +898,8 @@ static void exynosauto_pinctrl_resume_bank(struct samsung_pinctrl_drv_data *drvd
- 
- 	writel(save->eint_con, regs + bank->pctl_offset + bank->eint_con_offset);
- 	writel(save->eint_mask, regs + bank->pctl_offset + bank->eint_mask_offset);
-+
-+	clk_disable(bank->drvdata->pclk);
- }
- 
- void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ed07e23e0912..8e4742d3655c 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -15,6 +15,7 @@
- // but provides extensions to which platform specific implementation of the gpio
- // and wakeup interrupts can be hooked to.
- 
-+#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/gpio/driver.h>
- #include <linux/init.h>
-@@ -397,6 +398,11 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 		reg += 4;
- 	}
- 
-+	if (clk_enable(drvdata->pclk)) {
-+		dev_err(pctldev->dev, "failed to enable clock for setup\n");
-+		return;
-+	}
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_FUNC]);
-@@ -405,6 +411,8 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 	writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	clk_disable(drvdata->pclk);
- }
- 
- /* enable a specified pinmux by writing to registers */
-@@ -436,6 +444,7 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 	u32 data, width, pin_offset, mask, shift;
- 	u32 cfg_value, cfg_reg;
- 	unsigned long flags;
-+	int ret;
- 
- 	drvdata = pinctrl_dev_get_drvdata(pctldev);
- 	pin_to_reg_bank(drvdata, pin, &reg_base, &pin_offset, &bank);
-@@ -447,6 +456,12 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 	width = type->fld_width[cfg_type];
- 	cfg_reg = type->reg_offset[cfg_type];
- 
-+	ret = clk_enable(drvdata->pclk);
-+	if (ret) {
-+		dev_err(drvdata->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
- 	raw_spin_lock_irqsave(&bank->slock, flags);
- 
- 	mask = (1 << width) - 1;
-@@ -466,6 +481,8 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 
-+	clk_disable(drvdata->pclk);
-+
- 	return 0;
- }
- 
-@@ -539,16 +556,24 @@ static void samsung_gpio_set_value(struct gpio_chip *gc,
- {
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	const struct samsung_pin_bank_type *type = bank->type;
-+	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
- 	void __iomem *reg;
- 	u32 data;
- 
- 	reg = bank->pctl_base + bank->pctl_offset;
- 
-+	if (clk_enable(drvdata->pclk)) {
-+		dev_err(drvdata->dev, "failed to enable clock\n");
-+		return;
-+	}
-+
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
- 	data &= ~(1 << offset);
- 	if (value)
- 		data |= 1 << offset;
- 	writel(data, reg + type->reg_offset[PINCFG_TYPE_DAT]);
-+
-+	clk_disable(drvdata->pclk);
- }
- 
- /* gpiolib gpio_set callback function */
-@@ -569,12 +594,23 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
- 	u32 data;
- 	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
- 	const struct samsung_pin_bank_type *type = bank->type;
-+	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
-+	int ret;
- 
- 	reg = bank->pctl_base + bank->pctl_offset;
- 
-+	ret = clk_enable(drvdata->pclk);
-+	if (ret) {
-+		dev_err(drvdata->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
- 	data = readl(reg + type->reg_offset[PINCFG_TYPE_DAT]);
- 	data >>= offset;
- 	data &= 1;
-+
-+	clk_disable(drvdata->pclk);
-+
- 	return data;
- }
- 
-@@ -591,9 +627,12 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- 	struct samsung_pin_bank *bank;
- 	void __iomem *reg;
- 	u32 data, mask, shift;
-+	struct samsung_pinctrl_drv_data *drvdata;
-+	int ret;
- 
- 	bank = gpiochip_get_data(gc);
- 	type = bank->type;
-+	drvdata = bank->drvdata;
- 
- 	reg = bank->pctl_base + bank->pctl_offset
- 			+ type->reg_offset[PINCFG_TYPE_FUNC];
-@@ -606,12 +645,20 @@ static int samsung_gpio_set_direction(struct gpio_chip *gc,
- 		reg += 4;
- 	}
- 
-+	ret = clk_enable(drvdata->pclk);
-+	if (ret) {
-+		dev_err(drvdata->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
- 	data = readl(reg);
- 	data &= ~(mask << shift);
- 	if (!input)
- 		data |= PIN_CON_FUNC_OUTPUT << shift;
- 	writel(data, reg);
- 
-+	clk_disable(drvdata->pclk);
-+
- 	return 0;
- }
- 
-@@ -1164,6 +1211,12 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	drvdata->pclk = devm_clk_get_optional_prepared(dev, "pclk");
-+	if (IS_ERR(drvdata->pclk)) {
-+		ret = PTR_ERR(drvdata->pclk);
-+		goto err_put_banks;
-+	}
-+
- 	ret = samsung_pinctrl_register(pdev, drvdata);
- 	if (ret)
- 		goto err_put_banks;
-@@ -1202,6 +1255,13 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
- 	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
- 	int i;
- 
-+	i = clk_enable(drvdata->pclk);
-+	if (i) {
-+		dev_err(drvdata->dev,
-+			"failed to enable clock for saving state\n");
-+		return i;
-+	}
-+
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
- 		const void __iomem *reg = bank->pctl_base + bank->pctl_offset;
-@@ -1231,6 +1291,8 @@ static int __maybe_unused samsung_pinctrl_suspend(struct device *dev)
- 		}
- 	}
- 
-+	clk_disable(drvdata->pclk);
-+
- 	if (drvdata->suspend)
- 		drvdata->suspend(drvdata);
- 	if (drvdata->retention_ctrl && drvdata->retention_ctrl->enable)
-@@ -1252,6 +1314,16 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
- 	struct samsung_pinctrl_drv_data *drvdata = dev_get_drvdata(dev);
- 	int i;
- 
-+	/* enable clock before the callback, as we don't want to have to deal
-+	 * with callback cleanup on clock failures.
-+	 */
-+	i = clk_enable(drvdata->pclk);
-+	if (i) {
-+		dev_err(drvdata->dev,
-+			"failed to enable clock for restoring state\n");
-+		return i;
-+	}
-+
- 	if (drvdata->resume)
- 		drvdata->resume(drvdata);
- 
-@@ -1286,6 +1358,8 @@ static int __maybe_unused samsung_pinctrl_resume(struct device *dev)
- 				writel(bank->pm_save[type], reg + offs[type]);
- 	}
- 
-+	clk_disable(drvdata->pclk);
-+
- 	if (drvdata->retention_ctrl && drvdata->retention_ctrl->disable)
- 		drvdata->retention_ctrl->disable(drvdata);
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index ab791afaabf5..d50ba6f07d5d 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -274,6 +274,7 @@ struct samsung_pin_ctrl {
-  *             through samsung_pinctrl_drv_data, not samsung_pin_bank).
-  * @dev: device instance representing the controller.
-  * @irq: interrpt number used by the controller to notify gpio interrupts.
-+ * @pclk: optional bus clock if required for accessing registers
-  * @ctrl: pin controller instance managed by the driver.
-  * @pctl: pin controller descriptor registered with the pinctrl subsystem.
-  * @pctl_dev: cookie representing pinctrl device instance.
-@@ -293,6 +294,7 @@ struct samsung_pinctrl_drv_data {
- 	void __iomem			*virt_base;
- 	struct device			*dev;
- 	int				irq;
-+	struct clk			*pclk;
- 
- 	struct pinctrl_desc		pctl;
- 	struct pinctrl_dev		*pctl_dev;
+thanks,
 
--- 
-2.44.0.769.g3c40516874-goog
-
+Peter
