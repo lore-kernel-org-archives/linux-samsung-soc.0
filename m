@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE96F6BFA3;
-	Thu, 25 Apr 2024 08:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE0F74416;
+	Thu, 25 Apr 2024 08:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714032272; cv=none; b=M2d3KJW+08RTQ4rlnHSIeWtLz2qUKNHAOQ1vCEp1DfL7lZm7TB8oJypK0FRHgGGX1ka2vrjQXhF7epwesq18UAO6EvbpK3GTpL85vCBz635RsP7B9eg6NeXIFzI+AvSwWgue/HVd4Xc8PCRKSmlWgdMwesqu3rWMeDNuqTIPL/c=
+	t=1714035042; cv=none; b=P4wm7nQHIC2vHWQaLdj3nGyDpa75XzHSZnU3yF9LR390aL05snc1U5v3L4W93dwVP8z24eGhXljkZ1cI9coODz2QbMa6+5IqFL93cJFpO7KaQsmvVekRm9ewH40hI39ZNfmFS7l6Bxq9KM1LczJPH92kLOrkfYACVq+UB4iyfXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714032272; c=relaxed/simple;
-	bh=OiSuUIeg53SAKqFkgvl8SjcCCUVNfa7mJ+FXyP6HtJA=;
+	s=arc-20240116; t=1714035042; c=relaxed/simple;
+	bh=VU/QxCzFTuW5Od8waAXtoxj8CWVwZqgt//t2MsUeAPg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L9sbeCcyOpAPIaxcL3NhqNMePdbf1yBBRNDmAJsPtBl2BUJPuXu6turfzFaeykGtJyeFzAMQO7vJoSCphLEuqBJN+vUnAFI8kSnp36GqtKx4zF3ASRX2fWOB8xemI6HtVwj5ZKQuMt8WclULs2p2hsw1mSxiYHSZqJU9HQ6GqgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOuWHi9F; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=cp7tbiNihYJTmAWimpzpRQLmVwOKedxqy01JjjJ9PbAXr0OWcuvnMmIqlG5WwRgfSTcth49+D3n8eFnpyusm7vjYV/xFldioxF8YyBo5Vz9Gba1Sn59fpev0+qmzOkEmFl3f1WNHIcyifLX06fD7nJym1p+ydRaKYb64igQ2FME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLbHF1R+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOuWHi9F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CA4C113CC;
-	Thu, 25 Apr 2024 08:04:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLbHF1R+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CD5BC113CC;
+	Thu, 25 Apr 2024 08:50:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714032272;
-	bh=OiSuUIeg53SAKqFkgvl8SjcCCUVNfa7mJ+FXyP6HtJA=;
+	s=k20201202; t=1714035042;
+	bh=VU/QxCzFTuW5Od8waAXtoxj8CWVwZqgt//t2MsUeAPg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WOuWHi9FEyrxLuLAdFreAtxK6IBFXEE2VZWctL0mjph0ulUTQfKcZxuInbz4/QmzT
-	 jwBxQwAKd+zpGFIagAvCu08v9+Mwckk5rp5NQL7wgZipaGRsvl9XTYkHEw6qoXJ4Qf
-	 eHzRg7JARWtAm1lnV9OHdapgSPI4Rdl4kNay1ET+tYh2xDCimHlQx0Qw4LvaISDvog
-	 Cps34PEyIiYc7hSAYue6R+EcLSesKgi0rPitUf3RM7L+REnO48eovEtJiNEgz1ieVD
-	 AIdkU0TgKrpFT8/Ybxa5Gs0QhgQc33YfO8USx2zI+onq7JM1XieEVN575jQD25AdoA
-	 o+8bvJAHoRJJQ==
-Message-ID: <88a930cf-c1bf-4cda-be1b-6a0462258ed4@kernel.org>
-Date: Thu, 25 Apr 2024 10:04:25 +0200
+	b=LLbHF1R+Q3okUWU7GR2XGTjtaC1kvdDcR7PxFZ8sdyBH77hvriPZGveSMEqyTRlR1
+	 QUtGv2GEEiO5z3UvphS5zWt2Utk7Ar2E0YFZjFPEMpysUsUh34I43IgDJqH1rh1GZT
+	 EmgPdAxlm7dPvCIlazC9zjGMUK+VT2Kg9wNAu+l3KXeb+dkM7oymEUU1n0XLaSMCUa
+	 hEdg4+J+u1Coy8r4KVQ42AF/tIZ52e6oDvkoXAQ6XQtN86swiDOZtm3/cDhDGrQXJx
+	 0hqxJb9F3WDlAoQgCuGeYh4UwamURi+WHNVEDy+zoajSPm/PcBmPMc02iy5hx4etoB
+	 5Ynd2fCA8hYUQ==
+Message-ID: <e3262ac8-4a9d-46cd-ae25-9dece1b497ad@kernel.org>
+Date: Thu, 25 Apr 2024 10:50:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: Revert "clk: Use device_get_match_data()"
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- David Lechner <david@lechnology.com>, Bjorn Andersson
- <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <CGME20240425075634eucas1p17bef12cf8ccafb6971f352d955e14fae@eucas1p1.samsung.com>
- <20240425075628.838497-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 2/2] usb: dwc3: exynos: add support for Google Tensor
+ gs101
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
+ kernel-team@android.com, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240423-usb-dwc3-gs101-v1-0-2f331f88203f@linaro.org>
+ <20240423-usb-dwc3-gs101-v1-2-2f331f88203f@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,39 +95,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240425075628.838497-1-m.szyprowski@samsung.com>
+In-Reply-To: <20240423-usb-dwc3-gs101-v1-2-2f331f88203f@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/04/2024 09:56, Marek Szyprowski wrote:
-> device_get_match_data() function should not be used on the device other
-> than the one matched to the given driver, because it always returns the
-> match_data of the matched driver. In case of exynos-clkout driver, the
-> original code matches the OF IDs on the PARENT device, so replacing it
-> with of_device_get_match_data() broke the driver.
+On 23/04/2024 22:19, André Draszik wrote:
+> The Exynos-based Google Tensor gs101 SoC has a DWC3 compatible USB
+> controller and can reuse the existing Exynos glue. Add the
+> google,gs101-dwusb3 compatible and associated driver data. Four clocks
+> are required for USB for this SoC:
+>     * bus clock
+>     * suspend clock
+>     * Link interface AXI clock
+>     * Link interface APB clock
 > 
-> This has been already pointed once in commit 2bc5febd05ab ("clk: samsung:
-> Revert "clk: samsung: exynos-clkout: Use of_device_get_match_data()"").
-> To avoid further confusion, add a comment about this special case, which
-> requires direct of_match_device() call to pass custom IDs array.
-> 
-> This partially reverts commit 409c39ec92a35e3708f5b5798c78eae78512cd71.
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/usb/dwc3/dwc3-exynos.c | 9 +++++++++
 
-D'oh! Again!
-
-But to be honest, I think there misleading code is that exynos-clkout
-(so the child) has:
-.of_match_table = exynos_clkout_ids,
-
-So one really can believe that this driver matches to exynos_clkout_ids,
-which are the same as exynos-pmu (parent).
-
-I think we should drop the of_match_table and rely on driver name
-matching (MFD cell) or platform_device_id.
-
-This patch is correct, so above solution could be added as 2 patch.
-
-Thanks for noticing it.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
