@@ -1,155 +1,223 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61F913E052
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 09:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086451422D4
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 10:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714123590; cv=none; b=Sy6cWx5vj5ir29uhs1H4+oBeUk+6VDgLJf7ZVyqo2iNni85QmK6ZN8QlQV6WjIIAOXwfBbOf1ZRo8XmxP+BSxVuKbhqAnsX47cLJN3ZLA2/IRS4THWMalPtp1l0qZlraN3JRlY1qpa70irWfcpATEt29/Epc2oKrJkoxMVSopBw=
+	t=1714125790; cv=none; b=A0Bcjx3kmPrwxC/ghW17K/jhy+mAIad5x721rwnbwLATkzLwcXbBj3F6QMYRwZ51zhJzxTngZO1V3oCoDn/LnnkTcvJospk1XYHI8Mv2Uhvo/vIyvb4+XCVN97dVNzKIPPdnZVQux4JfmGx2t1L3n76gGWQE41pgBAr8UnRmpy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714123590; c=relaxed/simple;
-	bh=Hahu2lWmHobYZzXBDCNNbnolJfAs8n4gH0zk1CT+pRs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=qYjVsMRq89lthupmhCeZ5NKE6qi9ZX7eEXEYY9FSSFcLyPMUGs7JhX8ACXmIBkqg478ZxThnbZcSmZv/018CHZPcEzH9oLd7hp6F/M8hmuu2CGN+OZiioEuN2CyZ0pFl5tp0MD27id7tLO61g08jqF5DOrbMg7wMxyviAZlYH1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=N9G2iMQk; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1714125790; c=relaxed/simple;
+	bh=kEIXNWge+gu6r69LP1+LoW5ZL/kMo1721Gar8FYgwE0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=k7Jh1YBsMsGuWHhPezN7qEhCW57eo3zEEEUXI9Olf/WYv4FrBn6+2IM80NQ2K2INW3t2N7ByGQ2MpAATBy+KfV4FY5iAK63mnadRcsogcEHGcE0Hot5vkhm0+8mZ/2TxvPQHRKRm2rAKmNiXuAz9R2c7FxCNnOk3up7hrrZSYMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sljorf8a; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N9G2iMQk"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240426092627euoutp01f13ea282421ea375577f04f73925c730~JylIcaAXk1154311543euoutp01C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 09:26:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240426092627euoutp01f13ea282421ea375577f04f73925c730~JylIcaAXk1154311543euoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1714123587;
-	bh=/gN1XfdnNIwlyEXOxgUrP1Jreo4fLBZ5hZiCe6ZgYo4=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=N9G2iMQkY662K2xAZ3/rVuP0qEQRpJQWZDGF1snNq1fyyVt7K7thnDXSPn4kq7i7n
-	 ADxdpKaNeu44iLBN+zTwbk6DZGwG4/lfWHrmB1zhRGhDVfHGr1G3wftaj/GfOlKxKm
-	 ZgsGvKm4HJS3tsJpGJS9yXSXPWyMLm0zWlUxmfHc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240426092626eucas1p1081e6648d084e46b1b5505a9f214dac4~JylH7bRWN2842128421eucas1p11;
-	Fri, 26 Apr 2024 09:26:26 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 39.2F.09620.2437B266; Fri, 26
-	Apr 2024 10:26:26 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247~JylHfCf-01571715717eucas1p25;
-	Fri, 26 Apr 2024 09:26:26 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240426092626eusmtrp2b92da2c2394bcd42d2784b0c87619038~JylHdroqQ0550905509eusmtrp2O;
-	Fri, 26 Apr 2024 09:26:26 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-2b-662b7342383d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id F4.8A.09010.2437B266; Fri, 26
-	Apr 2024 10:26:26 +0100 (BST)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240426092625eusmtip255132645e8c30e80961bbb405cb1b9a5~JylGrwPWf2970829708eusmtip2f;
-	Fri, 26 Apr 2024 09:26:25 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
-	Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, Bjorn
-	Andersson <andersson@kernel.org>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-Subject: [PATCH v2] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-Date: Fri, 26 Apr 2024 11:26:15 +0200
-Message-Id: <20240426092616.4187022-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sljorf8a"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5883518135so224806866b.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 03:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714125787; x=1714730587; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wXVLcsEROWtnozSKM9ibFjZVD9YeGJfdJ8xwiEDpbCA=;
+        b=sljorf8abuXbxliOoFIkZbMZ0KUNYxoCzpmwvJ1PvhBKTdXzaf70grQr3owfp4C75D
+         dJONjyTB8CHK8uQR/tFfFZY40eWUmUUIqr2daX4IJw91FqKCGxlYnyvNyZU3uDsC4ACP
+         9rjrKvY9bswDq6kEhMgm+vdndEzBTt9YetFh1333Nd6CklzPNyLbojTMEqwvZx1PzMTQ
+         XYPNBO5NSUdsIUV5Gy0IzR7Z7NQmEN0+7eq3pHIhRDA5GOgdpqE1vYt5EILyrZ7HhP7N
+         Aha1WZRXgOq/b6haHvUhJFpquxREvVUDNudsIwS+MOm5YpCf+RNKIzJYkbQJAak8+X0Z
+         W8CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714125787; x=1714730587;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wXVLcsEROWtnozSKM9ibFjZVD9YeGJfdJ8xwiEDpbCA=;
+        b=ix8tVkw51yaG2L4REcnfbF3urJPIY332u0VSqNAGT0WFLQMf+EwFpVa2wh6+hqSfUO
+         dOTnG8EQJuwCmhQ1q/ZqFYwKR6BwdfyNsP2Mp++B3Tc8HtkGBWp2LDykG2atHLFMZY9n
+         MZYAmrt2i4cx1LMYzvTzBsCOoi0jPkmO1JO9gzTAW+2EMylPrzECsbGJuOfJrYakmTX1
+         tWqdwf/hJivgGAUUT1oJ41q25MyFaa0jJSOgrRnCObBp5ABhVqceiW2x3Daw1LOz4a7b
+         yGUB3fikyG9Ao56aMAF9KIbQ1Imb/GF36a7EjeCz8ncohahWtj1iLZiQVUCQ0frwnbzz
+         okVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxkYTAZHwka8p5qzmtEGlIaIVFfwY0Ky6oiJPOCF0SIm7Od3e+et45syT3IlgzQe6Yvn5Ex1xOh/bwrxZi/zGgJwRa00ZOf5NL8p5pE3vb2pw=
+X-Gm-Message-State: AOJu0YwPDsWKVd4NM1SJZhgseTvirC5U+Hm0cmZZkWWoaHVuCPNntq4p
+	sN0SLjwEsfe3xnqNmXh/icsECkfU+BFgpLl/1F9fzWoF0eQ5Jd865hnTTGoY+1U=
+X-Google-Smtp-Source: AGHT+IHWAn2UwzuKzKX4rvGcf0ZfBBLAyRhZHKgOyrPEhmB6C/M04p2DwE2DH2kIrrp+nKiuxjo6WA==
+X-Received: by 2002:a17:906:1457:b0:a52:2c0e:2e91 with SMTP id q23-20020a170906145700b00a522c0e2e91mr1517888ejc.17.1714125787362;
+        Fri, 26 Apr 2024 03:03:07 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id r20-20020a170906705400b00a555ef55ab5sm10417289ejj.218.2024.04.26.03.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Apr 2024 03:03:07 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 26 Apr 2024 11:03:04 +0100
+Subject: [PATCH v2 1/5] dt-bindings: clock: google,gs101-clock: add HSI2
+ clock management unit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djPc7pOxdppBrP75S0ezNvGZrGtw8bi
-	+pfnrBaLGsQsJp7/yWZx/vwGdotNj6+xWnzsucdqMeP8PiaLtUfusltcPOVq8X/PDnaLw2/a
-	WS3+XdvI4sDn8f5GK7vHplWdbB6f+k+yety5tofNY/OSeo++LasYPT5vkgtgj+KySUnNySxL
-	LdK3S+DKePj4C3vBUZ6KCwvDGxjvc3UxcnJICJhIrLs7nQXEFhJYwShxsIeti5ELyP7CKPHx
-	xSYo5zOjRNepXewwHd+/X2aCSCxnlOjZ0cUE0Q7UsndrEojNJmAo0fW2iw3EFhHIkLh5dz87
-	SAOzwHFmiZO7b4I1CAukS2ydvIQZxGYRUJVYc+QzWAOvgL3E9CvTWSG2yUvsP3iWGSIuKHFy
-	5hOwW5mB4s1bZzODDJUQuMMhcXfmOqgGF4k9Cz8zQ9jCEq+Ob4E6W0bi/875TBAN7YwSC37f
-	h3ImMEo0PL/FCFFlLXHn3C+gMziAVmhKrN+lDxF2lLh3/hELSFhCgE/ixltBiCP4JCZtm84M
-	EeaV6GgTgqhWk5h1fB3c2oMXLkGd4yEx69lldkhgxUpcXjORaQKjwiwkr81C8toshBsWMDKv
-	YhRPLS3OTU8tNs5LLdcrTswtLs1L10vOz93ECExep/8d/7qDccWrj3qHGJk4GA8xSnAwK4nw
-	3vyokSbEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2xJDU7NbUgtQgmy8TBKdXAFHTl
-	2rtIo/oJZ0/1TbvDpVMTVspvvufMnapLm8y6yu+yZTflfZF8k3r+aHN0SO6Cg+etdmVfKGW4
-	cYpr+dOvwuwLQ28HH956UOnt1/crN9cHBMr6rplpyml8pir3UWhtRdvbsn+LkqfMzt739dbX
-	jxkSP18HrJNlC1wf1rzg//7nQeKXmuw5Ge8xv07aq/RbSnDn9nmlC1+2x3i68v/gmmHM8zpo
-	MsO7n67pPWpxgmzyHDNfz/z19sTuQxmWx3jcp/yq1brxmUtnqyCHZwSTxcnlvcar1a4pX2SN
-	uvXcb0dlJ6tn2aaPabF6W5IURT8b9DJMXWq1anptIuvxD5fr3qg/1ztrGf4xeeWJ7Xn1j5RY
-	ijMSDbWYi4oTAeMQ7yTNAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsVy+t/xe7pOxdppBpOOMFs8mLeNzWJbh43F
-	9S/PWS0WNYhZTDz/k83i/PkN7BabHl9jtfjYc4/VYsb5fUwWa4/cZbe4eMrV4v+eHewWh9+0
-	s1r8u7aRxYHP4/2NVnaPTas62Tw+9Z9k9bhzbQ+bx+Yl9R59W1YxenzeJBfAHqVnU5RfWpKq
-	kJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX8fDxF/aCozwVFxaG
-	NzDe5+pi5OSQEDCR+P79MlMXIxeHkMBSRom3+54xQyRkJE5Oa2CFsIUl/lzrYoMo+sQosaF1
-	PxNIgk3AUKLrLUiCk0NEIEti3oQ7YJOYBc4zS9xo2M4IkhAWSJVYtO8cWBGLgKrEmiOfwWxe
-	AXuJ6VemQ22Ql9h/8CwzRFxQ4uTMJywgNjNQvHnrbOYJjHyzkKRmIUktYGRaxSiSWlqcm55b
-	bKRXnJhbXJqXrpecn7uJERg324793LKDceWrj3qHGJk4GA8xSnAwK4nw3vyokSbEm5JYWZVa
-	lB9fVJqTWnyI0RTovonMUqLJ+cDIzSuJNzQzMDU0MbM0MLU0M1YS5/Us6EgUEkhPLEnNTk0t
-	SC2C6WPi4JRqYFr2qmXRG1bD+lObVE+2KWqtdV/aIvt5ia8A532FJ20bKlvmBXH+53h6bM4E
-	jSNRb3q/bFriv8Dy5VPndyLuXx8YB9g/Oj5lt3fr2auaE40FP284b+3zmU3aNJGT4xir9OTW
-	wOUqRnPkORztcsJ9HLdkPT+neuU4v+idgyu/p90S26G7ZkrbsagpG65mHJ+nUXr8tvXz2tpH
-	J5m65B7+/MHGvpVntsrd+r5dv8prZFOnTe481abAsUZM+CNDgOg8Qz2ZLbbJc228GPcknRSJ
-	ltwZvOLtO9FGDsvtEqFLDebNseaa0zAzw+jgi+VLtsh+lj9ZHNnx+80f/TMtC5i5H2quu3zP
-	7Q3P/3XyQhq1Z/4rsRRnJBpqMRcVJwIAHLTZSiQDAAA=
-X-CMS-MailID: 20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247
-References: <CGME20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247@eucas1p2.samsung.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240426-hsi0-gs101-v2-1-2157da8b63e3@linaro.org>
+References: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org>
+In-Reply-To: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.12.4
 
-Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
-module driver") this driver is instantiated as MFD-cell (matched by
-platform device name) not as a real platform device created by OF code.
-Remove of_match_table and change related MODULE_DEVICE_TABLE to simple
-MODULE_ALIAS to avoid further confusion.
+From: Peter Griffin <peter.griffin@linaro.org>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Add dt schema documentation and clock IDs for the High Speed Interface
+2 (HSI2) clock management unit. This CMU feeds high speed interfaces
+such as PCIe and UFS.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Reviewed-by: André Draszik <andre.draszik@linaro.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+[AD: keep CMUs in google,gs101.h sorted alphabetically, and resolve
+minor merge conflicts in google,gs101-clock.yaml]
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos-clkout.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../bindings/clock/google,gs101-clock.yaml         | 26 +++++++++
+ include/dt-bindings/clock/google,gs101.h           | 62 ++++++++++++++++++++++
+ 2 files changed, 88 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 503c6f5b20d5..e2968784d307 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
- 		.data = &exynos_clkout_exynos5,
- 	}, { }
- };
--MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+index 94dcc4f84c85..6323971e1f2f 100644
+--- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
+@@ -31,6 +31,7 @@ properties:
+       - google,gs101-cmu-apm
+       - google,gs101-cmu-misc
+       - google,gs101-cmu-hsi0
++      - google,gs101-cmu-hsi2
+       - google,gs101-cmu-peric0
+       - google,gs101-cmu-peric1
  
- /*
-  * Device will be instantiated as child of PMU device without its own
-@@ -237,7 +236,6 @@ static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
- static struct platform_driver exynos_clkout_driver = {
- 	.driver = {
- 		.name = "exynos-clkout",
--		.of_match_table = exynos_clkout_ids,
- 		.pm = &exynos_clkout_pm_ops,
- 	},
- 	.probe = exynos_clkout_probe,
-@@ -248,4 +246,5 @@ module_platform_driver(exynos_clkout_driver);
- MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
- MODULE_AUTHOR("Tomasz Figa <tomasz.figa@gmail.com>");
- MODULE_DESCRIPTION("Samsung Exynos clock output driver");
-+MODULE_ALIAS("platform:exynos-clkout");
- MODULE_LICENSE("GPL");
+@@ -97,6 +98,31 @@ allOf:
+             - const: usb31drd
+             - const: usbdpdbg
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - google,gs101-cmu-hsi2
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (24.576 MHz)
++            - description: High Speed Interface bus clock (from CMU_TOP)
++            - description: High Speed Interface pcie clock (from CMU_TOP)
++            - description: High Speed Interface ufs clock (from CMU_TOP)
++            - description: High Speed Interface mmc clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: pcie
++            - const: ufs_embd
++            - const: mmc_card
++
+   - if:
+       properties:
+         compatible:
+diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
+index 7a2006f0edf1..442f9e9037dc 100644
+--- a/include/dt-bindings/clock/google,gs101.h
++++ b/include/dt-bindings/clock/google,gs101.h
+@@ -367,6 +367,68 @@
+ #define CLK_GOUT_HSI0_XIU_D1_HSI0_ACLK				51
+ #define CLK_GOUT_HSI0_XIU_P_HSI0_ACLK				52
+ 
++/* CMU_HSI2 */
++#define CLK_MOUT_HSI2_BUS_USER						1
++#define CLK_MOUT_HSI2_MMC_CARD_USER					2
++#define CLK_MOUT_HSI2_PCIE_USER						3
++#define CLK_MOUT_HSI2_UFS_EMBD_USER					4
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_PHY_REFCLK_IN		5
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_PHY_REFCLK_IN		6
++#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_ACLK				7
++#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_PCLK				8
++#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4B_1_ACLK				9
++#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4B_1_PCLK				10
++#define CLK_GOUT_HSI2_D_TZPC_HSI2_PCLK					11
++#define CLK_GOUT_HSI2_GPC_HSI2_PCLK					12
++#define CLK_GOUT_HSI2_GPIO_HSI2_PCLK					13
++#define CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK				14
++#define CLK_GOUT_HSI2_LHM_AXI_P_HSI2_I_CLK				15
++#define CLK_GOUT_HSI2_LHS_ACEL_D_HSI2_I_CLK				16
++#define CLK_GOUT_HSI2_MMC_CARD_I_ACLK					17
++#define CLK_GOUT_HSI2_MMC_CARD_SDCLKIN					18
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_DBI_ACLK_UG			19
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_MSTR_ACLK_UG			20
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_SLV_ACLK_UG			21
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_I_DRIVER_APB_CLK		22
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_DBI_ACLK_UG			23
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_MSTR_ACLK_UG			24
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_SLV_ACLK_UG			25
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_I_DRIVER_APB_CLK		26
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCS_PMA_PHY_UDBG_I_APB_PCLK		27
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCS_PMA_PIPE_PAL_PCIE_I_APB_PCLK	28
++#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCS_PMA_PCIEPHY210X2_QCH_I_APB_PCLK	29
++#define CLK_GOUT_HSI2_PCIE_IA_GEN4A_1_I_CLK				30
++#define CLK_GOUT_HSI2_PCIE_IA_GEN4B_1_I_CLK				31
++#define CLK_GOUT_HSI2_PPMU_HSI2_ACLK					32
++#define CLK_GOUT_HSI2_PPMU_HSI2_PCLK					33
++#define CLK_GOUT_HSI2_QE_MMC_CARD_HSI2_ACLK				34
++#define CLK_GOUT_HSI2_QE_MMC_CARD_HSI2_PCLK				35
++#define CLK_GOUT_HSI2_QE_PCIE_GEN4A_HSI2_ACLK				36
++#define CLK_GOUT_HSI2_QE_PCIE_GEN4A_HSI2_PCLK				37
++#define CLK_GOUT_HSI2_QE_PCIE_GEN4B_HSI2_ACLK				38
++#define CLK_GOUT_HSI2_QE_PCIE_GEN4B_HSI2_PCLK				39
++#define CLK_GOUT_HSI2_QE_UFS_EMBD_HSI2_ACLK				40
++#define CLK_GOUT_HSI2_QE_UFS_EMBD_HSI2_PCLK				41
++#define CLK_GOUT_HSI2_CLK_HSI2_BUS_CLK					42
++#define CLK_GOUT_HSI2_CLK_HSI2_OSCCLK_CLK				43
++#define CLK_GOUT_HSI2_SSMT_HSI2_ACLK					44
++#define CLK_GOUT_HSI2_SSMT_HSI2_PCLK					45
++#define CLK_GOUT_HSI2_SYSMMU_HSI2_CLK_S2				46
++#define CLK_GOUT_HSI2_SYSREG_HSI2_PCLK					47
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_DBI_1_ACLK			48
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_DBI_1_PCLK			49
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_SLV_1_ACLK			50
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_SLV_1_PCLK			51
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_DBI_1_ACLK			52
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_DBI_1_PCLK			53
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_SLV_1_ACLK			54
++#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_SLV_1_PCLK			55
++#define CLK_GOUT_HSI2_UFS_EMBD_I_ACLK					56
++#define CLK_GOUT_HSI2_UFS_EMBD_I_CLK_UNIPRO				57
++#define CLK_GOUT_HSI2_UFS_EMBD_I_FMP_CLK				58
++#define CLK_GOUT_HSI2_XIU_D_HSI2_ACLK					59
++#define CLK_GOUT_HSI2_XIU_P_HSI2_ACLK					60
++
+ /* CMU_MISC */
+ #define CLK_MOUT_MISC_BUS_USER				1
+ #define CLK_MOUT_MISC_SSS_USER				2
+
 -- 
-2.34.1
+2.44.0.769.g3c40516874-goog
 
