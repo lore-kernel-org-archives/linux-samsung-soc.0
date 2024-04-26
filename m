@@ -1,61 +1,59 @@
 Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086451422D4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDF41422AE
 	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 10:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714125790; cv=none; b=A0Bcjx3kmPrwxC/ghW17K/jhy+mAIad5x721rwnbwLATkzLwcXbBj3F6QMYRwZ51zhJzxTngZO1V3oCoDn/LnnkTcvJospk1XYHI8Mv2Uhvo/vIyvb4+XCVN97dVNzKIPPdnZVQux4JfmGx2t1L3n76gGWQE41pgBAr8UnRmpy0=
+	t=1714125790; cv=none; b=RvPTCq18IGm5yD6/XFIvW6aWi5F+g5qshVxSUTyC7cQ3PbuxqcSfShP8NQMA3w7ab9tmh/VFKUdv2qFEd2tVyWdL7mwpzibHUg/ziOhrfs+cyNcL1KRmJi1KFKnFAs3HGM7SqGLOeYQBS3vR4Kk0IxMFlb79Pk8fPf2/WGPuY+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1714125790; c=relaxed/simple;
-	bh=kEIXNWge+gu6r69LP1+LoW5ZL/kMo1721Gar8FYgwE0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k7Jh1YBsMsGuWHhPezN7qEhCW57eo3zEEEUXI9Olf/WYv4FrBn6+2IM80NQ2K2INW3t2N7ByGQ2MpAATBy+KfV4FY5iAK63mnadRcsogcEHGcE0Hot5vkhm0+8mZ/2TxvPQHRKRm2rAKmNiXuAz9R2c7FxCNnOk3up7hrrZSYMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sljorf8a; arc=none smtp.client-ip=209.85.218.53
+	bh=ryP7QOTYlztIm8nqNij3nVjhL1SYpQUIEozyw+/HVzI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kv1cxktq9rH2VQQL/dhM6Kw/c6+IcZ1QLZySjX2EHXSpHf36NUckv1ZeML/HyhwARcTh/rkkins/6C4ThtY7HfXbr6HbICH/jt7f5ay6gGZJeaPd+X9S5gvutbr2jsilqRm4vbuM1YEUB7BIQqoP7yrlozSaw0rr3hT/Hmb6m+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=USJDmzH4; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sljorf8a"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5883518135so224806866b.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="USJDmzH4"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5872b74c44so222809266b.3
         for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 03:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1714125787; x=1714730587; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wXVLcsEROWtnozSKM9ibFjZVD9YeGJfdJ8xwiEDpbCA=;
-        b=sljorf8abuXbxliOoFIkZbMZ0KUNYxoCzpmwvJ1PvhBKTdXzaf70grQr3owfp4C75D
-         dJONjyTB8CHK8uQR/tFfFZY40eWUmUUIqr2daX4IJw91FqKCGxlYnyvNyZU3uDsC4ACP
-         9rjrKvY9bswDq6kEhMgm+vdndEzBTt9YetFh1333Nd6CklzPNyLbojTMEqwvZx1PzMTQ
-         XYPNBO5NSUdsIUV5Gy0IzR7Z7NQmEN0+7eq3pHIhRDA5GOgdpqE1vYt5EILyrZ7HhP7N
-         Aha1WZRXgOq/b6haHvUhJFpquxREvVUDNudsIwS+MOm5YpCf+RNKIzJYkbQJAak8+X0Z
-         W8CQ==
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZroSo8iMfP3vk8OTX3L1wntYEviDHYNgM+pqywM7tQ=;
+        b=USJDmzH4BOdZ6ax+cjfpiOwTi+m9lMHO0XVE7I3E6se0sNEPhlcPMxunC5fmMKIc4E
+         PG3J6uqniXgd/OclOplVVK9YU28MQbRZJ5fzgYfdelfod3Q/axuJioQIvbd/YmCt4NeL
+         AF2T1jlvKwtRct08LvN26GoorbOcMt2y++kfeSwO/WPFFJs42Yshec115ZIOgPHtgblg
+         aWCLyA87IRKwwQMD4vDWhDNLeVotJYdfTcz+oSR4q1HcYSke0/Mn8HZyycfo7BrEp4js
+         W3szRXeQDGt3TglDIta8ZpL87Rt0VIQfk6KoqIArUImMzgTFqqPDU1V80mVCQJms2gmv
+         pVJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1714125787; x=1714730587;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXVLcsEROWtnozSKM9ibFjZVD9YeGJfdJ8xwiEDpbCA=;
-        b=ix8tVkw51yaG2L4REcnfbF3urJPIY332u0VSqNAGT0WFLQMf+EwFpVa2wh6+hqSfUO
-         dOTnG8EQJuwCmhQ1q/ZqFYwKR6BwdfyNsP2Mp++B3Tc8HtkGBWp2LDykG2atHLFMZY9n
-         MZYAmrt2i4cx1LMYzvTzBsCOoi0jPkmO1JO9gzTAW+2EMylPrzECsbGJuOfJrYakmTX1
-         tWqdwf/hJivgGAUUT1oJ41q25MyFaa0jJSOgrRnCObBp5ABhVqceiW2x3Daw1LOz4a7b
-         yGUB3fikyG9Ao56aMAF9KIbQ1Imb/GF36a7EjeCz8ncohahWtj1iLZiQVUCQ0frwnbzz
-         okVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxkYTAZHwka8p5qzmtEGlIaIVFfwY0Ky6oiJPOCF0SIm7Od3e+et45syT3IlgzQe6Yvn5Ex1xOh/bwrxZi/zGgJwRa00ZOf5NL8p5pE3vb2pw=
-X-Gm-Message-State: AOJu0YwPDsWKVd4NM1SJZhgseTvirC5U+Hm0cmZZkWWoaHVuCPNntq4p
-	sN0SLjwEsfe3xnqNmXh/icsECkfU+BFgpLl/1F9fzWoF0eQ5Jd865hnTTGoY+1U=
-X-Google-Smtp-Source: AGHT+IHWAn2UwzuKzKX4rvGcf0ZfBBLAyRhZHKgOyrPEhmB6C/M04p2DwE2DH2kIrrp+nKiuxjo6WA==
-X-Received: by 2002:a17:906:1457:b0:a52:2c0e:2e91 with SMTP id q23-20020a170906145700b00a522c0e2e91mr1517888ejc.17.1714125787362;
-        Fri, 26 Apr 2024 03:03:07 -0700 (PDT)
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NZroSo8iMfP3vk8OTX3L1wntYEviDHYNgM+pqywM7tQ=;
+        b=hKzTuOZUYTXb8+ZI3DGBPow3/4Wu+sVIsELhKkHn9H4wE0NaMrkiOv3Z4X1bwe4LD7
+         x55gAT445t1NsOlfpSyiUKI3qHqxYaAeA0kEFNrvTuBVXmQf5y/TVlqA7jOqmehMnOwE
+         0oMdfRmZahQjWwR1xzt7N9UfylPvOKTf7TPl0cWsicMWMfBCdCQ8pE98AwIQdxyrrk6V
+         Dg7NmWlNcz3DpgF4z8IwyInppOe5Teu4ikQjiKQ2oHdpuulr3J9227ONr8M63MpXrI6R
+         NASjHFvxUnYk9LNcy+vx/iOWtF/hYZFSdHqrhmioEJt8BC4q8J9u1ekHt7pcHnN3tkDq
+         JzYg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1PswAL3XjgU51XKK6PWpZJSnY3iw2u1S3//b6mcGOZ6NQYJotXx7EpI+tJLrpQSYqaj05zeAndcCJw9R23yq4yn3LR98B0ULM3Yu8Liz0TOw=
+X-Gm-Message-State: AOJu0YyxkiAf64NxH4VWfctQKbxA38Sbyial5RZlTqE8khQp+U42RbCa
+	uw0D1nR58fFpGEEtuFosyZuKu85m3YtFShLVAubms5tlTpRE6JL1Ko/06nnvVCw=
+X-Google-Smtp-Source: AGHT+IFqZI2EX6TGMrhgOaiItUVC4QA3lp6lQjXgOmzliiIzZJRkthk8yLel6nW0qHdN359C7X9+Sg==
+X-Received: by 2002:a17:906:16d7:b0:a58:86c0:1275 with SMTP id t23-20020a17090616d700b00a5886c01275mr1579547ejd.30.1714125786723;
+        Fri, 26 Apr 2024 03:03:06 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
         by smtp.gmail.com with ESMTPSA id r20-20020a170906705400b00a555ef55ab5sm10417289ejj.218.2024.04.26.03.03.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 03:03:07 -0700 (PDT)
+        Fri, 26 Apr 2024 03:03:06 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 26 Apr 2024 11:03:04 +0100
-Subject: [PATCH v2 1/5] dt-bindings: clock: google,gs101-clock: add HSI2
- clock management unit
+Subject: [PATCH v2 0/5] HSI0 and HSI2 support for Google Tensor gs101
+Date: Fri, 26 Apr 2024 11:03:03 +0100
+Message-Id: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,9 +62,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240426-hsi0-gs101-v2-1-2157da8b63e3@linaro.org>
-References: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org>
-In-Reply-To: <20240426-hsi0-gs101-v2-0-2157da8b63e3@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANd7K2YC/23MQQ7CIBCF4as0sxYzQBXjynuYLqaFwiQGDBiia
+ bi72LXL/yXv26C4zK7Addggu8qFU+yhDgMsgaJ3gm1vUKhGHJUWoTAKXyRKQWTMRZ/lvBJBPzy
+ zW/m9Y/epd+DySvmz21X+1r9MlQKFWrS18wkXo/D24Eg5HVP2MLXWvrUuOfelAAAA
 To: Peter Griffin <peter.griffin@linaro.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -83,141 +81,51 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.12.4
 
-From: Peter Griffin <peter.griffin@linaro.org>
+This patch series enables the HSI0 and HSI2 (high speed interfaces) for
+gs101:
 
-Add dt schema documentation and clock IDs for the High Speed Interface
-2 (HSI2) clock management unit. This CMU feeds high speed interfaces
-such as PCIe and UFS.
+- HSI0 feeds the USB block and is a prerequisite to get USB working.
+- HSI2 feeds PCIe and UFS
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: André Draszik <andre.draszik@linaro.org>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-[AD: keep CMUs in google,gs101.h sorted alphabetically, and resolve
-minor merge conflicts in google,gs101-clock.yaml]
+The parts added here have been verified to work OK without the
+clk_ignore_unused kernel command line option.
+
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- .../bindings/clock/google,gs101-clock.yaml         | 26 +++++++++
- include/dt-bindings/clock/google,gs101.h           | 62 ++++++++++++++++++++++
- 2 files changed, 88 insertions(+)
+Changes in v2:
+- My v1 just contained HSI0, but due due to changing similar areas in the
+  code, I've also added Peter's HSI2 clock patches from
+  https://lore.kernel.org/all/20240423205006.1785138-1-peter.griffin@linaro.org
+  to this series so as to preempt any merge conflicts. Namely:
+  * hsi2 bindings
+  * hsi2 DT
+  * hsi2 cmu clock driver
+- drop patch 'dt-bindings: clock: google,gs101-clock: add HSI0 clock
+  management unit' as already applied
+- cometic updates to patch 4: 'clk: samsung: gs101: add support for
+  cmu_hsi0' (macro name, a whitespace, subject line)
+- Link to v1: https://lore.kernel.org/r/20240423-hsi0-gs101-v1-0-2c3ddb50c720@linaro.org
 
-diff --git a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-index 94dcc4f84c85..6323971e1f2f 100644
---- a/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/google,gs101-clock.yaml
-@@ -31,6 +31,7 @@ properties:
-       - google,gs101-cmu-apm
-       - google,gs101-cmu-misc
-       - google,gs101-cmu-hsi0
-+      - google,gs101-cmu-hsi2
-       - google,gs101-cmu-peric0
-       - google,gs101-cmu-peric1
- 
-@@ -97,6 +98,31 @@ allOf:
-             - const: usb31drd
-             - const: usbdpdbg
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - google,gs101-cmu-hsi2
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (24.576 MHz)
-+            - description: High Speed Interface bus clock (from CMU_TOP)
-+            - description: High Speed Interface pcie clock (from CMU_TOP)
-+            - description: High Speed Interface ufs clock (from CMU_TOP)
-+            - description: High Speed Interface mmc clock (from CMU_TOP)
-+
-+        clock-names:
-+          items:
-+            - const: oscclk
-+            - const: bus
-+            - const: pcie
-+            - const: ufs_embd
-+            - const: mmc_card
-+
-   - if:
-       properties:
-         compatible:
-diff --git a/include/dt-bindings/clock/google,gs101.h b/include/dt-bindings/clock/google,gs101.h
-index 7a2006f0edf1..442f9e9037dc 100644
---- a/include/dt-bindings/clock/google,gs101.h
-+++ b/include/dt-bindings/clock/google,gs101.h
-@@ -367,6 +367,68 @@
- #define CLK_GOUT_HSI0_XIU_D1_HSI0_ACLK				51
- #define CLK_GOUT_HSI0_XIU_P_HSI0_ACLK				52
- 
-+/* CMU_HSI2 */
-+#define CLK_MOUT_HSI2_BUS_USER						1
-+#define CLK_MOUT_HSI2_MMC_CARD_USER					2
-+#define CLK_MOUT_HSI2_PCIE_USER						3
-+#define CLK_MOUT_HSI2_UFS_EMBD_USER					4
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_PHY_REFCLK_IN		5
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_PHY_REFCLK_IN		6
-+#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_ACLK				7
-+#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4A_1_PCLK				8
-+#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4B_1_ACLK				9
-+#define CLK_GOUT_HSI2_SSMT_PCIE_IA_GEN4B_1_PCLK				10
-+#define CLK_GOUT_HSI2_D_TZPC_HSI2_PCLK					11
-+#define CLK_GOUT_HSI2_GPC_HSI2_PCLK					12
-+#define CLK_GOUT_HSI2_GPIO_HSI2_PCLK					13
-+#define CLK_GOUT_HSI2_HSI2_CMU_HSI2_PCLK				14
-+#define CLK_GOUT_HSI2_LHM_AXI_P_HSI2_I_CLK				15
-+#define CLK_GOUT_HSI2_LHS_ACEL_D_HSI2_I_CLK				16
-+#define CLK_GOUT_HSI2_MMC_CARD_I_ACLK					17
-+#define CLK_GOUT_HSI2_MMC_CARD_SDCLKIN					18
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_DBI_ACLK_UG			19
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_MSTR_ACLK_UG			20
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_SLV_ACLK_UG			21
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_003_I_DRIVER_APB_CLK		22
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_DBI_ACLK_UG			23
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_MSTR_ACLK_UG			24
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_SLV_ACLK_UG			25
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCIE_004_I_DRIVER_APB_CLK		26
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCS_PMA_PHY_UDBG_I_APB_PCLK		27
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCS_PMA_PIPE_PAL_PCIE_I_APB_PCLK	28
-+#define CLK_GOUT_HSI2_PCIE_GEN4_1_PCS_PMA_PCIEPHY210X2_QCH_I_APB_PCLK	29
-+#define CLK_GOUT_HSI2_PCIE_IA_GEN4A_1_I_CLK				30
-+#define CLK_GOUT_HSI2_PCIE_IA_GEN4B_1_I_CLK				31
-+#define CLK_GOUT_HSI2_PPMU_HSI2_ACLK					32
-+#define CLK_GOUT_HSI2_PPMU_HSI2_PCLK					33
-+#define CLK_GOUT_HSI2_QE_MMC_CARD_HSI2_ACLK				34
-+#define CLK_GOUT_HSI2_QE_MMC_CARD_HSI2_PCLK				35
-+#define CLK_GOUT_HSI2_QE_PCIE_GEN4A_HSI2_ACLK				36
-+#define CLK_GOUT_HSI2_QE_PCIE_GEN4A_HSI2_PCLK				37
-+#define CLK_GOUT_HSI2_QE_PCIE_GEN4B_HSI2_ACLK				38
-+#define CLK_GOUT_HSI2_QE_PCIE_GEN4B_HSI2_PCLK				39
-+#define CLK_GOUT_HSI2_QE_UFS_EMBD_HSI2_ACLK				40
-+#define CLK_GOUT_HSI2_QE_UFS_EMBD_HSI2_PCLK				41
-+#define CLK_GOUT_HSI2_CLK_HSI2_BUS_CLK					42
-+#define CLK_GOUT_HSI2_CLK_HSI2_OSCCLK_CLK				43
-+#define CLK_GOUT_HSI2_SSMT_HSI2_ACLK					44
-+#define CLK_GOUT_HSI2_SSMT_HSI2_PCLK					45
-+#define CLK_GOUT_HSI2_SYSMMU_HSI2_CLK_S2				46
-+#define CLK_GOUT_HSI2_SYSREG_HSI2_PCLK					47
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_DBI_1_ACLK			48
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_DBI_1_PCLK			49
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_SLV_1_ACLK			50
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4A_SLV_1_PCLK			51
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_DBI_1_ACLK			52
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_DBI_1_PCLK			53
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_SLV_1_ACLK			54
-+#define CLK_GOUT_HSI2_UASC_PCIE_GEN4B_SLV_1_PCLK			55
-+#define CLK_GOUT_HSI2_UFS_EMBD_I_ACLK					56
-+#define CLK_GOUT_HSI2_UFS_EMBD_I_CLK_UNIPRO				57
-+#define CLK_GOUT_HSI2_UFS_EMBD_I_FMP_CLK				58
-+#define CLK_GOUT_HSI2_XIU_D_HSI2_ACLK					59
-+#define CLK_GOUT_HSI2_XIU_P_HSI2_ACLK					60
-+
- /* CMU_MISC */
- #define CLK_MOUT_MISC_BUS_USER				1
- #define CLK_MOUT_MISC_SSS_USER				2
+---
+André Draszik (2):
+      arm64: dts: exynos: gs101: enable cmu-hsi0 clock controller
+      clk: samsung: gs101: add support for cmu_hsi0
 
+Peter Griffin (3):
+      dt-bindings: clock: google,gs101-clock: add HSI2 clock management unit
+      arm64: dts: exynos: gs101: enable cmu-hsi2 clock controller
+      clk: samsung: gs101: add support for cmu_hsi2
+
+ .../bindings/clock/google,gs101-clock.yaml         |  26 +
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       |  26 +
+ drivers/clk/samsung/clk-gs101.c                    | 976 +++++++++++++++++++++
+ include/dt-bindings/clock/google,gs101.h           |  62 ++
+ 4 files changed, 1090 insertions(+)
+---
+base-commit: bb7a2467e6beef44a80a17d45ebf2931e7631083
+change-id: 20240423-hsi0-gs101-aa778361bfaa
+
+Best regards,
 -- 
-2.44.0.769.g3c40516874-goog
+André Draszik <andre.draszik@linaro.org>
 
