@@ -1,133 +1,66 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFEC1487D9
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 13:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F70146A4;
+	Fri, 26 Apr 2024 19:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714138718; cv=none; b=Jv7rsu11lhkkWyMuQYtunTfAfzvqsLdclRts8uam2qnl3OsPJ3r/h+bhWjfdVjKQrV5SbULGkNoG7njDjiN6R4pYjqw2aMJfQ5LjGDCSc5LyIVebaxYj5J4ouy9DO3UiunOF0TRxPxzmH+cEdE28YpgBZNBbfPy0o8Gfk/d5Fjc=
+	t=1714158694; cv=none; b=nPo2y/dVvjIqF+OvXSeBftwrqDnsJVo7aUNIOmebyvJDp/Fg+Z7TxLsktAv3TF6qiq6TmucgQp0IvUrFsREVWop2aW5RnZuBgYyGI8Amm1MptHOO+XKC71DkSgL5XLBY8pMvXf/1LcEdioDmFSwmMjJnHMeFNakwK4KDqF6OWas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714138718; c=relaxed/simple;
-	bh=ZmIYYUt0QcbC0Veeq4Fmo5dE3JV8iq7sEVsLahwG0es=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fGvh3e2PiToav5Tg3sqqvyfCFzUwaq9BiTf/PrZpZaPS2akk5SpO0E1uLWBpYxO63Rtcb7omf5mY0b4uvJNUyfF8uMge4Ll9xHevMEaYOmLqeeUods6bsDU8XAqW76DMiIEGe34Ggnp/ul3fw16RRpcIekaLfGYstvZ+OIHlyx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D6K88qWU; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1714158694; c=relaxed/simple;
+	bh=XUdr7nZ1LWSQx5wvYOHZw265cdc3ykPmcH+6/9UHKPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QryEn/wKYBpm5EtW7K74rcswkHww0asKF7J8xA1SC/GzbckSie7q0eNxdKzwBNqX7oBQvnqKHj92C6f5X8O3DQe9eHdT8iDBml0kzAy8YySJHLtUOW+pUj4aNWlb8PZbFAgQ8HJbvEmVHbUzad+LMpWefhI9lDdDZoYqImjl5cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhSQ6sJV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D6K88qWU"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41b5e74fa83so11573915e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Apr 2024 06:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714138715; x=1714743515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AX1t+YE1cBl5MQLmH5bPrWGcz0Ebchp9QnAASzx5oG4=;
-        b=D6K88qWUQqxBT2SQHLvY7BaEfoHioMxCa4hmYyR56N+mKgP0idkJZR72KjxG3YpymT
-         3rO5cr3GOyJTdtbyD8b9A//Wg+646WPKM/de4/c0ggLPHpfYnIA5I5P/fDaSnanwTwwz
-         0sxVZBcJnNTzYP48NAGXwfPHUsAkQmSiDGnQboqPzQ3bI/LUf843eyekZebmbxmQIFcy
-         yMceTfxB/bxk9ftkVyeZiUoKei58uSWsekZVJhWBWknDS+bNgdWLx+pczrnGXmoGJY6R
-         qunCMF+mNRDoHe+i1fChVZYKhY3c7FXfgCVay8Pr2NO6cYqbJfFQ2i3yu6Tv1/CJBxXA
-         WpVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714138715; x=1714743515;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AX1t+YE1cBl5MQLmH5bPrWGcz0Ebchp9QnAASzx5oG4=;
-        b=NZcG+9yAg8OSXcD+SV+7SqVhCjbAKDPJR1AoqMb7b9J99eJbU8lPD+eMCLAVHj6Da1
-         MH3MbqQnAKifbe0UzWOFww6rBLuUhKCUlfr3pAU2ZLaFHwYZ55Own+z0T1p1ytGV5+wd
-         nNZu9EQ1oCLItf++ITQvR6SW0p/rMgdJHG1go3u97vlyUm/JdW92UWbBobLSCvzZ+rf3
-         toMEeWq/ICDTdD/zJuWpIPauDkLSnzd+ujB1iEVWuGcndha+ugksuTnKVmfc/zjV+nkp
-         YEXSOAtu++gKRyguRaNn38Cb5Ex+6ufQgPps66qw8xDZXgvEk9W4+Lj3fIaPHZ+eO9TM
-         r0ag==
-X-Forwarded-Encrypted: i=1; AJvYcCV7WMfIOuIfME5EmC1h5MINH/W9XC5IBr57cyCJIUeOLKhNq4fXTnPlVvl8m80tsKlx2C1PRcyltTkzZ1sHHsTVvApnsLrCKFduZLwYuhPQ380=
-X-Gm-Message-State: AOJu0Yx9WsBC6DCIORuZmnPLlHHxWLn5BF2vjifCTkxrv6CocvEJRWAl
-	WkjmVa8btqNdJUqRjUJotxpG/KeRUjLg7XuJNf6R3Emu3Z3tyGV24HS0R2SpVOI=
-X-Google-Smtp-Source: AGHT+IFTTh4iakkkfqbFYU7oLhsNchB50w3aO7hEduSjteZTlE4Y7Y4KaHOlWbEsAZDxFgk08i6IsQ==
-X-Received: by 2002:adf:fcd2:0:b0:343:7fa6:4393 with SMTP id f18-20020adffcd2000000b003437fa64393mr1870301wrs.38.1714138715070;
-        Fri, 26 Apr 2024 06:38:35 -0700 (PDT)
-Received: from gpeter-l.lan ([2a0d:3344:2e8:8510:63cc:9bae:f542:50e4])
-        by smtp.gmail.com with ESMTPSA id p3-20020a5d6383000000b00341b451a31asm22327689wru.36.2024.04.26.06.38.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 06:38:34 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	kernel-team@android.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v3 4/4] arm64: dts: exynos: gs101: enable ufs, phy on oriole & define ufs regulator
-Date: Fri, 26 Apr 2024 14:38:24 +0100
-Message-ID: <20240426133824.2283144-5-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.44.0.769.g3c40516874-goog
-In-Reply-To: <20240426133824.2283144-1-peter.griffin@linaro.org>
-References: <20240426133824.2283144-1-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhSQ6sJV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6489CC113CD;
+	Fri, 26 Apr 2024 19:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714158693;
+	bh=XUdr7nZ1LWSQx5wvYOHZw265cdc3ykPmcH+6/9UHKPI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qhSQ6sJVIPWNk2Tlq8ZyUWJAXvcEksEoqwroEyfWhYQPAi5oSSW4O7Cyx7j61DCcv
+	 rKoX3fOtSlHVSPIXWIB53HsNJx3ehmrD2LOpONQF68yeBRT9M4+nWS8oGiFExejdYP
+	 KDqXbRpVJQOp1HQTeykhB1EREirY0q1pVlY0uy4VSb1nGnvr7oXr4HClH3K5oORxkS
+	 3518oOHGy1cjg4rn8dH9pRowzQABkONLuFSAcmp8tOAwNUcUmUsxy44LwWimq7HT0A
+	 IXdnqv1i37F/Zpkm1fXgCg6IoRh/UdKUDNDMvBbfDij/fLNYMeOzuqgCth3t0lpYjp
+	 k93dzeLg7LoiQ==
+Date: Fri, 26 Apr 2024 14:11:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, bvanassche@acm.org,
+	James.Bottomley@hansenpartnership.com, willmcvicker@google.com,
+	saravanak@google.com, tudor.ambarus@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, alim.akhtar@samsung.com,
+	andre.draszik@linaro.org, martin.petersen@oracle.com,
+	krzk+dt@kernel.org, linux-scsi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, avri.altman@wdc.com
+Subject: Re: [PATCH v3 1/6] dt-bindings: ufs: exynos-ufs: Add gs101 compatible
+Message-ID: <171415865280.2674676.16238135633423140947.robh@kernel.org>
+References: <20240426122004.2249178-1-peter.griffin@linaro.org>
+ <20240426122004.2249178-2-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240426122004.2249178-2-peter.griffin@linaro.org>
 
-Enable ufs & ufs phy nodes for Oriole. Also define the ufs regulator node.
 
-ufs regulator is a stub until full s2mpg11 slave pmic support is added.
-The gpio defined is for the BOOTLD0 (gs101) signal connected to
-UFS_EN(s2mpg11) gpio enabled voltage rail for UFS.
+On Fri, 26 Apr 2024 13:19:59 +0100, Peter Griffin wrote:
+> Add dedicated google,gs101-ufs compatible for Google Tensor gs101
+> SoC.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  .../bindings/ufs/samsung,exynos-ufs.yaml      | 38 +++++++++++++++++--
+>  1 file changed, 35 insertions(+), 3 deletions(-)
+> 
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- .../boot/dts/exynos/google/gs101-oriole.dts    | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index 6be15e990b65..fb32f6ce2a4d 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -53,6 +53,15 @@ button-power {
- 			wakeup-source;
- 		};
- 	};
-+
-+	/* TODO: Remove this once S2MPG11 slave PMIC is implemented  */
-+	ufs_0_fixed_vcc_reg: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ufs-vcc";
-+		gpio = <&gpp0 1 GPIO_ACTIVE_HIGH>;
-+		regulator-boot-on;
-+		enable-active-high;
-+	};
- };
- 
- &ext_24_5m {
-@@ -106,6 +115,15 @@ &serial_0 {
- 	status = "okay";
- };
- 
-+&ufs_0 {
-+	status = "okay";
-+	vcc-supply = <&ufs_0_fixed_vcc_reg>;
-+};
-+
-+&ufs_0_phy {
-+	status = "okay";
-+};
-+
- &usi_uart {
- 	samsung,clkreq-on; /* needed for UART mode */
- 	status = "okay";
--- 
-2.44.0.769.g3c40516874-goog
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
