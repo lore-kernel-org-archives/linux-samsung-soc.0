@@ -1,46 +1,46 @@
 Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037041487D8
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Apr 2024 20:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70F315B15F
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Apr 2024 20:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714250186; cv=none; b=OGLTk1cN+h1g0GKbC91TFmF6j5qQ3qyyAPNyJXSV9PUY7PWUXSWm+2J85oHC6eD+JpKy4sZhyGY7U0Oy4aZlzKLnDdHdYUYOIHVJSBdLAZI7DtBlJbfTTS1uo3zfK0jeLJAD7RmJY1RXco2L8L3+3qP7OpdgZTmj5Xhpgnps6rQ=
+	t=1714250198; cv=none; b=YIZ6zXQq5c53SX48VeSBUB0UY1Pn2EDexERZ5AM67YsOsvWqnVZDjJ8e1DaaY4hENG9FDZSQ8Tvhcm/AUOK03RzLrJxSKzuKtdlf/r22XC3df/5DkY4vP2gtSwM8/fD1u1XNFlsejhBkK51PInpQKkHXMepOxs/qJwuYrBiDPTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714250186; c=relaxed/simple;
-	bh=5bodQvN8FujH0DNsbxAsErbliMjmBltn92WZuAMz57w=;
+	s=arc-20240116; t=1714250198; c=relaxed/simple;
+	bh=Vr6FJGRmH65/Z+SbGDHhY+dUnDZnbqoip1Sy/Q8SJio=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UQNAXCpG8duH9DhUT2yupONvC7aQ3y6dG2bS3ej1GS+d39bPABFAmYNXXRqIKdrgNuCde/FIH71J1dnIop9UBdcJIvt3JlPOBFqoXNgLN+CbAaQ+0dhEoy2v8IUXbrtxpJxVZjCOweRZs8Jg0rUgDVuPE13JR7FSxEoMJ+2LiQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fJiHsU0F; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=sc0JFICvmNIltaLHoaVV3ZSEgKW5FAOr3hvIgzyzbovHBXAgZsQ0MwUV1C/tCvsoZgOjtxbCAz8VqGnQj9bUyl0SzmAF9FzB9S9FJoyhRojU+TqPxWxRByuy8mchtuMMjMapWx0ukbMOVzZJM0p5N686lukaHw0YLRFFVDZBS18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bZBZ1isp; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fJiHsU0F"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bZBZ1isp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=2F3yQc5OYq/TjttbywN55Gd7XF7kO1dQ9WqJ4zJk1sI=; b=fJiHsU
-	0FrDuj2rFjcEbPa/eFwf2/IKpYn2fIMHQmySsrwP8DoakwcW0k8eSgz7Sm7/2pxJ
-	RaPpfO1YZg+tyPq84O8nUBNIUH5VQK+QNGiizJ35zDwL47RUQlonvtZsPOY/UbcA
-	t9ug/su/9zwYFCGRPxLz4gfeH1ITq1viJBYOmVLBKaZukMTsdl93JIaHaSp/I7MV
-	NMMOdwSA++ql2q3tNkY9t9/sfFcleDLqoBLtwmMoHuWbPqfPZzBY4zhJdAHFsrEg
-	B0Or6avYVZKuZci2VOYxuXtqQhj2yDvu3tBDbJ2nv7/d29ElcsmQyGGDaZYi3VId
-	TCIHT6pvTPCDxt1g==
-Received: (qmail 1781878 invoked from network); 27 Apr 2024 22:36:16 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Apr 2024 22:36:16 +0200
-X-UD-Smtp-Session: l3s3148p1@bqHO+BkXwo9ehh9l
+	 s=k1; bh=wxBftEHkYMQUmyq9eqJI/NqAPsdhyx/MQOFdHVmTJFI=; b=bZBZ1i
+	spPigwswTyePXwpc39oBGmZ4zvAHVdFIS4CJQshYU094QHut33dW4aqiCNUO8Wt6
+	OcrK/ADcvb51QkO65EuSr65gz45DiXUfyqLXfGFIMVcUk6/CcaoJvRKU45hMmT0w
+	0SSRhKfof4aR6E36w/SdP3kUbcHgGWfQfmUvSN5BT5uwLU0ZkGRFRj4euNRhhhhw
+	oWFzu0sSTof4uICSb0Gs23/c5yGCwkioIIMeRwpcQfw22SW6jo2A+g/hiCCoBis1
+	3JVIMP8sKT2JGKUfXpYAysXmXa2bqJC6dQI1awnDvTGQAVQvLaIYxTWjyAUOuUaF
+	xDNkIVIhtJhAlprw==
+Received: (qmail 1782144 invoked from network); 27 Apr 2024 22:36:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Apr 2024 22:36:25 +0200
+X-UD-Smtp-Session: l3s3148p1@7Phd+RkXBtBehh9l
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 03/15] i2c: exynos5: use 'time_left' variable with wait_for_completion_timeout()
-Date: Sat, 27 Apr 2024 22:35:55 +0200
-Message-ID: <20240427203611.3750-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 14/15] i2c: s3c2410: use 'time_left' variable with wait_event_timeout()
+Date: Sat, 27 Apr 2024 22:36:06 +0200
+Message-ID: <20240427203611.3750-15-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240427203611.3750-1-wsa+renesas@sang-engineering.com>
 References: <20240427203611.3750-1-wsa+renesas@sang-engineering.com>
@@ -53,51 +53,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 There is a confusing pattern in the kernel to use a variable named 'timeout' to
-store the result of wait_for_completion_timeout() causing patterns like:
+store the result of wait_event_timeout() causing patterns like:
 
-	timeout = wait_for_completion_timeout(...)
+	timeout = wait_event_timeout(...)
 	if (!timeout) return -ETIMEDOUT;
 
 with all kinds of permutations. Use 'time_left' as a variable to make the code
 self explaining.
 
+Fix to the proper variable type 'long' while here.
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-exynos5.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 385ef9d9e4d4..d8baca9b610c 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -763,7 +763,7 @@ static bool exynos5_i2c_poll_irqs_timeout(struct exynos5_i2c *i2c,
- static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
- 			      struct i2c_msg *msgs, int stop)
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 275f7c42165c..01419c738cfc 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -685,7 +685,7 @@ static void s3c24xx_i2c_wait_idle(struct s3c24xx_i2c *i2c)
+ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+ 			      struct i2c_msg *msgs, int num)
  {
--	unsigned long timeout;
-+	unsigned long time_left;
+-	unsigned long timeout = 0;
++	long time_left = 0;
  	int ret;
  
- 	i2c->msg = msgs;
-@@ -775,13 +775,13 @@ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
- 	exynos5_i2c_message_start(i2c, stop);
+ 	ret = s3c24xx_i2c_set_master(i2c);
+@@ -715,7 +715,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+ 				dev_err(i2c->dev, "deal with arbitration loss\n");
+ 		}
+ 	} else {
+-		timeout = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
++		time_left = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
+ 	}
  
- 	if (!i2c->atomic)
--		timeout = wait_for_completion_timeout(&i2c->msg_complete,
--						      EXYNOS5_I2C_TIMEOUT);
--	else
--		timeout = exynos5_i2c_poll_irqs_timeout(i2c,
-+		time_left = wait_for_completion_timeout(&i2c->msg_complete,
- 							EXYNOS5_I2C_TIMEOUT);
-+	else
-+		time_left = exynos5_i2c_poll_irqs_timeout(i2c,
-+							  EXYNOS5_I2C_TIMEOUT);
- 
+ 	ret = i2c->msg_idx;
+@@ -724,7 +724,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+ 	 * Having these next two as dev_err() makes life very
+ 	 * noisy when doing an i2cdetect
+ 	 */
 -	if (timeout == 0)
 +	if (time_left == 0)
- 		ret = -ETIMEDOUT;
- 	else
- 		ret = i2c->state;
+ 		dev_dbg(i2c->dev, "timeout\n");
+ 	else if (ret != num)
+ 		dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
 -- 
 2.43.0
 
