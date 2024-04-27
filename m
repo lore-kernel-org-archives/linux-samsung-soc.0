@@ -1,66 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F70146A4;
-	Fri, 26 Apr 2024 19:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD25E4D9EC
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Apr 2024 20:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714158694; cv=none; b=nPo2y/dVvjIqF+OvXSeBftwrqDnsJVo7aUNIOmebyvJDp/Fg+Z7TxLsktAv3TF6qiq6TmucgQp0IvUrFsREVWop2aW5RnZuBgYyGI8Amm1MptHOO+XKC71DkSgL5XLBY8pMvXf/1LcEdioDmFSwmMjJnHMeFNakwK4KDqF6OWas=
+	t=1714250181; cv=none; b=rdC3NUgs+8z3FkUBnjogFkQkphEzoEBXF60pIW7s8+nalEc4O35k7/l6hk534r1BED59kShybXTL6A05qrby/VbryEK+9o5jnnUFMvZKjO4tm9u7IaikSOmfVhUi3o6hrPlYO4fd796AxcwmJcRGJnCodrTYwmnc31Oa+OWiqZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714158694; c=relaxed/simple;
-	bh=XUdr7nZ1LWSQx5wvYOHZw265cdc3ykPmcH+6/9UHKPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QryEn/wKYBpm5EtW7K74rcswkHww0asKF7J8xA1SC/GzbckSie7q0eNxdKzwBNqX7oBQvnqKHj92C6f5X8O3DQe9eHdT8iDBml0kzAy8YySJHLtUOW+pUj4aNWlb8PZbFAgQ8HJbvEmVHbUzad+LMpWefhI9lDdDZoYqImjl5cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhSQ6sJV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714250181; c=relaxed/simple;
+	bh=Tx0G6b9JwQMFmz7pulrhML1UHa1rgqE/GzFQrCputUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IdPjEglh3718zZEbABysrEKay+AqpINoXiiTGwtf1TlVABgEtfmXbNYv9QZIzB//pw7QVCN0v3l6t/vnOtpOS1Tn48yjoiCWhifsfyMjKLD5erSi0//LpfYsXQh0CYeD9DbQ6rn8UlEDyGyc9551UjgXc0qB/fm0U4o9qYk1HxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J/dbn4NF; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhSQ6sJV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6489CC113CD;
-	Fri, 26 Apr 2024 19:11:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714158693;
-	bh=XUdr7nZ1LWSQx5wvYOHZw265cdc3ykPmcH+6/9UHKPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qhSQ6sJVIPWNk2Tlq8ZyUWJAXvcEksEoqwroEyfWhYQPAi5oSSW4O7Cyx7j61DCcv
-	 rKoX3fOtSlHVSPIXWIB53HsNJx3ehmrD2LOpONQF68yeBRT9M4+nWS8oGiFExejdYP
-	 KDqXbRpVJQOp1HQTeykhB1EREirY0q1pVlY0uy4VSb1nGnvr7oXr4HClH3K5oORxkS
-	 3518oOHGy1cjg4rn8dH9pRowzQABkONLuFSAcmp8tOAwNUcUmUsxy44LwWimq7HT0A
-	 IXdnqv1i37F/Zpkm1fXgCg6IoRh/UdKUDNDMvBbfDij/fLNYMeOzuqgCth3t0lpYjp
-	 k93dzeLg7LoiQ==
-Date: Fri, 26 Apr 2024 14:11:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, bvanassche@acm.org,
-	James.Bottomley@hansenpartnership.com, willmcvicker@google.com,
-	saravanak@google.com, tudor.ambarus@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, alim.akhtar@samsung.com,
-	andre.draszik@linaro.org, martin.petersen@oracle.com,
-	krzk+dt@kernel.org, linux-scsi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, avri.altman@wdc.com
-Subject: Re: [PATCH v3 1/6] dt-bindings: ufs: exynos-ufs: Add gs101 compatible
-Message-ID: <171415865280.2674676.16238135633423140947.robh@kernel.org>
-References: <20240426122004.2249178-1-peter.griffin@linaro.org>
- <20240426122004.2249178-2-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J/dbn4NF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=vucjjM3RsCbo5+
+	FPCKzNEmVbLons1oLEEtyP6oygaEw=; b=J/dbn4NFhpPLnpA2UHgTAGogwIkFVU
+	c1Oe144PmBmlBY7G1bZjfrO64wUSfJItMs30Ey1vHza/lqVrpXpu3HBC64PtE6wm
+	PM643I22QuBpe+FQCCFBy9C1g8B/+qKR2wnguasGV7MKIQhjrLfC6ogaEikc7wZg
+	NXKz5ylEb6ox+6JSJCa222bDqBSM7wjjeZmD2itN/VEqY86s1JzjVcawhMT0dNBB
+	ZfrCpu0HSx1LJTveW87o2Bi1Cr36obPwq5lvaoeqdeUgwJOFx2FSWFozO2gDVB1+
+	r2IRSzGgTFNtpEl2Svq5p+/Wg9jwOurnZVwcxRc0W7D4YqCilqvAW/8A==
+Received: (qmail 1781755 invoked from network); 27 Apr 2024 22:36:14 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Apr 2024 22:36:14 +0200
+X-UD-Smtp-Session: l3s3148p1@ZFeo+BkXsI9ehh9l
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH 00/15] i2c: use 'time_left' with wait_for_*
+Date: Sat, 27 Apr 2024 22:35:52 +0200
+Message-ID: <20240427203611.3750-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240426122004.2249178-2-peter.griffin@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+There is a confusing pattern in the kernel to use a variable named 'timeout' to
+store the result of wait_for_*() causing patterns like:
 
-On Fri, 26 Apr 2024 13:19:59 +0100, Peter Griffin wrote:
-> Add dedicated google,gs101-ufs compatible for Google Tensor gs101
-> SoC.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
->  .../bindings/ufs/samsung,exynos-ufs.yaml      | 38 +++++++++++++++++--
->  1 file changed, 35 insertions(+), 3 deletions(-)
-> 
+        timeout = wait_for_completion_timeout(...)
+        if (!timeout) return -ETIMEDOUT;
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+with all kinds of permutations. Use 'time_left' as a variable to make the code
+self explaining.
+
+This is the I2C part of a tree-wide series. The rest of the patches can
+be found here (slightly WIP):
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
+
+Because these patches are generated, they need manual audit. So, I will
+send them step by step. This is part 1 and also a call for opinions if
+this is a desirable change. But at least in the I2C realm, I really want
+to have it proper.
+
+Build bot is happy with these patches and I also compile tested them
+(except two). No functional changes intended.
+
+Wolfram Sang (15):
+  i2c: amd-mp2-plat: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: digicolor: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: exynos5: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: hix5hd2: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: imx-lpi2c: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: omap: use 'time_left' variable with wait_for_completion_timeout()
+  i2c: st: use 'time_left' variable with wait_for_completion_timeout()
+  i2c: stm32f4: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: stm32f7: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: synquacer: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: jz4780: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: qcom-geni: use 'time_left' variable with
+    wait_for_completion_timeout()
+  i2c: rk3x: use 'time_left' variable with wait_event_timeout()
+  i2c: s3c2410: use 'time_left' variable with wait_event_timeout()
+  i2c: pxa: use 'time_left' variable with wait_event_timeout()
+
+-- 
+2.43.0
 
