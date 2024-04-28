@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1114A6BFB8;
-	Sun, 28 Apr 2024 15:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5A5138C;
+	Sun, 28 Apr 2024 15:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714319424; cv=none; b=SxvSpq/h18NxvEnCO80fHBMFrbLCfZPtKIk9Z/wd1lB4jMduqWEGFPHT7EE7tX20vTv1PV6cds1n3n/UvcLwbVHsu9y/mrWH1Qp1JSyvUXgt/3XSctzzBnetx8dbk07qjWFFXeBVX+QiPBXwoPs5Yeqpj7f+/XOuci0RGbI18dc=
+	t=1714319612; cv=none; b=vBvk6ZSyr8yPTl+ci7GVqIX7qRRjfeRSCia8WHpImIUSgo8V3Yym1bJ4s+aJEc/fZ9wmhsOROOS6Nuv7ggqA3781QnCRJ6JRDRxGzf74Rni8kjVYVEtAEYPgtd1Qvaf6R2CIWijHAZsySWR2k4n299cY8bH0rjG//fIB5FXa4TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714319424; c=relaxed/simple;
-	bh=6SLtj4qlM6RC/B1QjEfYRprkd6q1YdCM//V6eFsX8yM=;
+	s=arc-20240116; t=1714319612; c=relaxed/simple;
+	bh=ANIFIA3zgRlWZ04zKDowYbJvUFx9cL/2mTU/19h+0zI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YtVi4ELW0CuH97ZdzrH1jdd6tRgDKwWBhV0z9LbiYK4RxRjqGlw9uXiODnpflVzHGob8UAEBBfqBymAchWNkoajeEUdwp5OKfVS/NckpxADNsneCmmni/lx5N9FVgACXb1j4KlErDbYLjjkKrA7/Rfum1zfhcwbmZ9DIFYJV++4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axnkbvwQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qFSktyCbGMTC7ZuJEyvbz/dc6WMDM/M5Bt7S2V1wq6u8WPN2AQ52ePhShmQfFVv+1ztFG5CpleZBrdc3JLTqaNMuyYBx7u4bre2HfXYEIyUMKMbjyAZi71JAv/C2vktJmekEhZ3rklt8SUp+kzor2hzGCc/PMvSQ5PVYjMaKtQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OkhNWBDk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axnkbvwQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 826B9C116B1;
-	Sun, 28 Apr 2024 15:50:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OkhNWBDk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1314AC113CC;
+	Sun, 28 Apr 2024 15:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714319423;
-	bh=6SLtj4qlM6RC/B1QjEfYRprkd6q1YdCM//V6eFsX8yM=;
+	s=k20201202; t=1714319611;
+	bh=ANIFIA3zgRlWZ04zKDowYbJvUFx9cL/2mTU/19h+0zI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=axnkbvwQOy/I1hPjbRSjfOh9Xc5Q2sMjVgLpEUBoGx5IbtIRU2hAY0ImYhgz0vRvl
-	 xsK7DJubie/ym2Jl0lwGJZlKv9R4FwbC5H2d/VPCCsVzN026fO906AhadF9y5nSZBS
-	 T+cWOznZc4Hi4lHi7Li+4GFAavKUgiPkbsp8CLmC+A+D80Et5S69SZRdP9tvjFpY3e
-	 SnhY1ch7snsgIf7vcyu2ximnxbosjRCe9xXrVNV9mNIkKulpRmUL7nmnaZjo/fmNxK
-	 8STQoqMuPXVBkn5v4D6oeWYWaYhlLYw219v7yfpuaLdPiaORJcK8X3Zbg1BY7TFjQV
-	 w/zweK0utvGKA==
-Message-ID: <3377917b-556f-4502-888d-a0032b195833@kernel.org>
-Date: Sun, 28 Apr 2024 17:50:17 +0200
+	b=OkhNWBDkuaFO5wD7hz6jVoZu5qU/aSv0MKuEmzBGt49waMowQics1kDKbri/a6Lpm
+	 5Tx8zLl6/5JzV0lIuVguVaSTn76mckTdm+M6tzYlGG3idlWBR/CfwJyZSxx+/hMYXe
+	 2emwhCeNkTctGTtIP37G3oBdDz3Te9+HvSHLUhFcqJgSTcxwS72V3YwkUZrWVc1M3k
+	 3XQGp6EF1IgdDyY0i0iWc01qBaZgmZCmvT6kJlglrIMup3yNZJlzBZ4WnXnPUcnCSr
+	 4mvyt3ue8aLj3D5O0pkQCUhRHDiZMB2sypPnfQESKPNYG+EGghMUJ7PQKYlLmxRSpi
+	 XxlOezIxgjWvg==
+Message-ID: <5bba4390-8ff0-4169-b159-b5bc57bad4e6@kernel.org>
+Date: Sun, 28 Apr 2024 17:53:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: exynos: gs101: Add ufs and ufs-phy dt
- nodes
-To: Peter Griffin <peter.griffin@linaro.org>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, saravanak@google.com,
- willmcvicker@google.com, kernel-team@android.com
-References: <20240426133824.2283144-1-peter.griffin@linaro.org>
- <20240426133824.2283144-4-peter.griffin@linaro.org>
+Subject: Re: [PATCH 0/2] enable USB on Pixel 6 (Oriole)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240423-usb-dts-gs101-v1-0-3421b0371298@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,42 +91,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240426133824.2283144-4-peter.griffin@linaro.org>
+In-Reply-To: <20240423-usb-dts-gs101-v1-0-3421b0371298@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 26/04/2024 15:38, Peter Griffin wrote:
-> Add the ufs controller node and phy node for gs101.
+On 23/04/2024 22:52, André Draszik wrote:
+> These patches enable USB in peripheral mode on Pixel 6.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> Acked-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 36 ++++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index 09044deede63..4679ca33c6a0 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -1277,6 +1277,42 @@ pinctrl_hsi2: pinctrl@14440000 {
->  			interrupts = <GIC_SPI 503 IRQ_TYPE_LEVEL_HIGH 0>;
->  		};
->  
-> +		ufs_0_phy: phy@17e04000 {
-> +			compatible = "google,gs101-ufs-phy";
-> +			reg = <0x14704000 0x3000>;
-> +			reg-names = "phy-pma";
-> +			samsung,pmu-syscon = <&pmu_system_controller>;
-> +			#phy-cells = <0>;
-> +			clocks = <&ext_24_5m>;
-> +			clock-names = "ref_clk";
-> +			status = "disabled";
-> +		};
-> +
-> +		ufs_0: ufs@14700000 {
+> We can only support peripheral mode at this stage, as the MAX77759 TCPCI
+> controller used on Pixel 6 to do the role selection doesn't have a(n
+> upstream) Linux driver. Therefore the role is defaulted to peripheral
+> without any endpoints / ports.
 
-Unit-address order got broken here.
+Be sure you run checkpatch *before* sending patches:
 
+WARNING: Possible repeated word: 'be'
+
+WARNING: Possible repeated word: 'enabled'
 
 
 Best regards,
