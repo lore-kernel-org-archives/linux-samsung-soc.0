@@ -1,55 +1,57 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5077E31A83
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Apr 2024 16:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158C36F062
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Apr 2024 16:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714322004; cv=none; b=hKNtY2+ub9r3R9UUPW1uiPezjVL1EvaEhAQVj8wwV+yNk6zjhw6dNOplPHjAtNQjoE0x22R0otFWBolH0d8Rz8qaFr9bXoHYUAdSpz4q1hs1QvcTQZ7tZUvY594Uun387IDYtvhOFBv0OyBzxbwWDFTBDpv5hFoo0t3AvMrf5hY=
+	t=1714322005; cv=none; b=A8kXAgAtW0NB3uAt9Tu39OiN4H+C99YyKaz/cjYeRNUagclbe9oBKi77vN/2lglaHStaqUjopYBj+d7V74QudgP0ayM8XOhpDNr6ZzWghgRjRmmoTR1izWKQFBiruJxGuMfrvvFFUCBO+WlU0REG9Zk0r5sJX4+c2kqMFoPR178=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714322004; c=relaxed/simple;
-	bh=hJwkw1Qe6He0UoOh47oNbcetclyLtp+Ip53ep8cFUls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JxmbFzhZ01Xf698UpOHgIQYBmCHjnJuo7CHOg13KfveB4dZsadt+dILMwh0ODJIc0weRWZ26U+4GEXdnUHmM/CfL+aC2KSOKel2YE7oYRjIWX5iCxs+38gTbSMca5gpIajpbbBbFO1B9vrh1Fbsr/6GI8lJWQw2a7lDxvpWCpVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iQe/YZgk; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1714322005; c=relaxed/simple;
+	bh=88rTqj5+Fqw2jJzBssNoetZI6xLcmbWmkGRmH4jzlMQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PxLRW1JW2/1R2hEgQbRabG52u5+5I7nYAvz2/+M53Y1zjYmvnRC6STTccY1RVx7YdXTq4EUPftql+3XebZ4L5km7N/rcFxhfUQW7L3+GtI6AFf9D/FgaLgh8E75UmD7n6vCxEhPH+XCIAZW2DLvcMwXBFg9E1UaUzCdLW7fj7HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h28YFcoo; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQe/YZgk"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a52223e004dso394217766b.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Apr 2024 09:33:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h28YFcoo"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51b526f0fc4so4600860e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Apr 2024 09:33:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714322000; x=1714926800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bkBehBmM8rJHl9TYbr2TiyM0+uJxcjWlmpw8IC5vBb8=;
-        b=iQe/YZgkG3VfRhMfu7oqQ+qhLNl81XSjTEmfY9KNlvZNs/8tTKhwmrlPA1Y6mOOfiv
-         U0jq/NelAiO0gMfis7Xn4qsgruRthqDjOIOtStweI6sJLYqQTFGWz2xC3T1Mp2hzsLSx
-         IIaNwnUusxdAkDMhPEHQX1zzaJy/6nudFHBW/fTl5io5rbEeN+xvmJYelVlQAh1pZClO
-         3ZqeDgO69t2atuisQEmBt0JBbrxlvjMePYLxXYefhQ5x4Yciz9dsAayyUcYalalKBJXy
-         0QW55+r7OhADKy/RrcuYLKcLEQ7UCNKY10nG223aj5LahvPohacHRhPOu+3cTj5Y0G3m
-         rpuA==
+        d=linaro.org; s=google; t=1714322002; x=1714926802; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DIvwFd+6dBRNz3tx998sp/xJQSPWwbglBJ/Us19tEPs=;
+        b=h28YFcooJeJDAXydQOSmLVqUc6QUqo4PTYT6dBXceXm4NQYO9EquQ0SRYkrwPfz1Iz
+         LQW8Jf12/7LYNHBr5cFyabhPNTMSWuMKpdWmrcGgEd5FQRh6euhJ6UyOAPWUOgE903sB
+         1RuWKsaf6pk4YJEHmxPhyH9cumfA6N69mK73ZVGhJmjq+gdihIqveB5A6rxLg67dDYyS
+         LODRXBw+sxstpJxCoUe89BLX3osMFoIZ6V/yLPdESaBTu9/z3iSZAfME/ebS8AEljW23
+         BVSzRRtNVlxiF3CTlNGbO7GYer0i+cmyPH0SpkJkoqogjRNFcYle69MtvnSuNyA+HygU
+         DqLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714322000; x=1714926800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bkBehBmM8rJHl9TYbr2TiyM0+uJxcjWlmpw8IC5vBb8=;
-        b=GAmrjv3jwhMJ5JQ94RTcSEvCUtTtftTHY5C3nA1tnQx7qHxJEOp7l+k7+zltjgUAHv
-         h481Fr7VneXL91PVq0IVWfytX/aSMb8cAI9hp2dvil9ijRmMJNRWR2GVvM+ZyBoiN09T
-         gJMb1+woiKvRz6OkQXBmvrigjT1IJxa17/YIcJoW2S3Q0PKMZeH+Qexe1yK/64wCOJXz
-         JLuY4BcMU0UvtLc3xVKRRbkwtKpCeM/qcwlUVghBPQuDOxcYmXehEA0WSikrK9ni8wds
-         bdKDbhF9sBZsmffnECqunGnSZqZtGlYMmibDCohxfvHnq7hgnrjPw2F5DL6yOODQrNoy
-         mbJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVZcq6iqiDhseJq52vexnGDTggmtyX7Z7j+7131CqNmTYDqLnij4NFJBN6NcRm8oxEGFDp1etGgNU1OL1vC6za1Q8OrmWlUJPNL2ZjAiqPi5k=
-X-Gm-Message-State: AOJu0YxSrFZSuVXeyfJQWoXngvOpDSgJ+wL3XpWneBuydaxyuKVdNDBV
-	9fGU7EAvIYkl1Rw5hPDWmwL1mVqLfr+I/brgSk5W2mD2DN7SrANXaMNIiZBnqHk=
-X-Google-Smtp-Source: AGHT+IG2xsOsBb1Q9wusjv7j48e04laj4MhrtGe2fyJZosVzz7UkCTyzwT62xmRR9KcjI6SwTW3mwg==
-X-Received: by 2002:a17:906:1c8b:b0:a58:c09d:1484 with SMTP id g11-20020a1709061c8b00b00a58c09d1484mr7831776ejh.7.1714322000448;
-        Sun, 28 Apr 2024 09:33:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1714322002; x=1714926802;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DIvwFd+6dBRNz3tx998sp/xJQSPWwbglBJ/Us19tEPs=;
+        b=ZMfvK9UqtCRZnCoPgHVXm8rzIYH1Ph/CBJnZH0eWOHfyHAQ/rnzre0p6HgCm5m7ecq
+         Puskt7TgCJ7DKTgezgchY3Y6xkrIOETtYVIM/ie5X3KkBcbkDRzDoPcD8NFtS18xNYQh
+         7n9V+li9kFtZLcJG4pcfrGsV31DVq+YjHlbMaYlH7Q1nkQYVr6PcQmw+QR3bkhTYXtYo
+         ONcl2vV8BRjS1vv9IgNElp24t7m+v4ebJec9jei4aBjLbPpUer0Wvls36yORJnQ6t4No
+         AVTi3krmGT8xlZWpx/he7KdAiGOqdUW1mLiHYtHhXAe07OVKoUVfNRDBZY7aUB8pJ74F
+         bp3g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9SW+r+4g2RwNd+9XvXMeyOaSMoPmN8x+sJd81xJNSPCwdff/4lKFVWQJOie465jV4gbkRugxa+9bvjl3nW9Mt4jsRkVbmvexg0FP6LDY7wcM=
+X-Gm-Message-State: AOJu0YwD28mLSxzLA2TLBz2s+0uO1QyA2+L0h0/qDl2TloaU8U0Tzqzn
+	bNPteJxhNFOwSzwYwjpLOWIODvgP7N8bVCM5EfzDn9B7HHy0dy0JQ4zeNjm1QQQ=
+X-Google-Smtp-Source: AGHT+IGj/4CvRzNe03RJhSdckWN1v7eKR6DFdwXQ54NmI3ZsptGolRM+QbPy2Y04B05+jtOGJKazTw==
+X-Received: by 2002:ac2:5b8d:0:b0:51d:3c79:547 with SMTP id o13-20020ac25b8d000000b0051d3c790547mr2031285lfn.27.1714322002207;
+        Sun, 28 Apr 2024 09:33:22 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id lb2-20020a170906adc200b00a58f4b3661asm1173623ejb.0.2024.04.28.09.33.19
+        by smtp.gmail.com with ESMTPSA id lb2-20020a170906adc200b00a58f4b3661asm1173623ejb.0.2024.04.28.09.33.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Apr 2024 09:33:19 -0700 (PDT)
+        Sun, 28 Apr 2024 09:33:21 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Olof Johansson <olof@lixom.net>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -60,10 +62,12 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/2] arm64: dts: cleanup and fixes for v6.10
-Date: Sun, 28 Apr 2024 18:33:13 +0200
-Message-ID: <20240428163316.28955-1-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 2/2] ARM: dts: cleanup for v6.10
+Date: Sun, 28 Apr 2024 18:33:14 +0200
+Message-ID: <20240428163316.28955-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240428163316.28955-1-krzysztof.kozlowski@linaro.org>
+References: <20240428163316.28955-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -78,88 +82,28 @@ The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.10
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt-cleanup-6.10
 
-for you to fetch changes up to de2ba5bd3607a5e5442a5fcbdea6ee2823b72fb9:
+for you to fetch changes up to 5e0705a74f8075dbefcb0ad18d6bbf909c72ebf3:
 
-  arm64: dts: cavium: thunder2-99xx: drop redundant reg-names (2024-04-24 09:23:56 +0200)
-
-----------------------------------------------------------------
-Minor improvements in ARM64 DTS for v6.10
-
-Fixes, which might have practical impact, however things were broken for
-long enough to justify pushing it regular path:
-1. ARM Juno: shorten node names for thermal zones, because Linux drivers
-   have strict limit of 20 characters.
-2. HiSilicon: correct size of GIC GICC address space and add missing
-   GICH and GICV spaces, add cache info to properly describe cache
-   topology and solve kernel boot warning.
-
-Several cleanups:
-1. Use capital "OR" for multiple licenses in SPDX.
-2. Correct white-spaces for code readability.
-3. Fix W=1 dtc compiler warnings, which should not have practical
-   impact for Amazon, APM, Cavium, Realtek, Socionext Uniphier and
-   Spreadtrum like:
-    - missing unit addresses,
-    - nodes not belonging to soc node,
-    - not using generic node names,
-    - few incorrect unit addresses.
+  ARM: dts: aspeed: Add vendor prefixes to lm25066 compat strings (2024-04-24 09:25:22 +0200)
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (25):
-      arm64: dts: juno: fix thermal zone node names
-      arm64: dts: amd: use capital "OR" for multiple licenses in SPDX
-      arm64: dts: sprd: minor whitespace cleanup
-      arm64: dts: sc9860: add missing aon-prediv unit address
-      arm64: dts: sc9860: move GPIO keys to board
-      arm64: dts: sc9860: move GIC to soc node
-      arm64: dts: whale2: add missing ap-apb unit address
-      arm64: dts: sharkl3: add missing unit addresses
-      arm64: dts: uniphier: ld11-global: use generic node name for audio-codec
-      arm64: dts: uniphier: ld11-global: drop audio codec port unit address
-      arm64: dts: uniphier: ld20-global: use generic node name for audio-codec
-      arm64: dts: uniphier: ld20-global: drop audio codec port unit address
-      arm64: dts: realtek: rtd129x: add missing unit address to soc node
-      arm64: dts: realtek: rtd139x: add missing unit address to soc node
-      arm64: dts: realtek: rtc16xx: add missing unit address to soc node
-      arm64: dts: cavium: move non-MMIO node out of soc
-      arm64: dts: cavium: correct unit addresses
-      arm64: dts: apm: storm: move non-MMIO node out of soc
-      arm64: dts: apm: shadowcat: move non-MMIO node out of soc
-      arm64: dts: amazon: alpine-v2: add missing io-fabric unit addresses
-      arm64: dts: amazon: alpine-v2: move non-MMIO node out of soc
-      arm64: dts: amazon: alpine-v3: add missing io-fabric unit addresses
-      arm64: dts: amazon: alpine-v3: drop cache nodes unit addresses
-      arm64: dts: amazon: alpine-v3: correct gic unit addresses
-      arm64: dts: cavium: thunder2-99xx: drop redundant reg-names
+Minor improvements in ARM DTS for v6.10
 
-Yang Xiwen (3):
-      arm64: dts: hi3798cv200: fix the size of GICR
-      arm64: dts: hi3798cv200: add GICH, GICV register space and irq
-      arm64: dts: hi3798cv200: add cache info
+1. TI: add missing white-spaces for code readability.
+2. Aspeed: add vendor prefix to compatibles, to properly describe
+   hardware, even though Linux drivers match by device name.
 
- arch/arm64/boot/dts/amazon/alpine-v2.dtsi          | 35 +++++++-------
- arch/arm64/boot/dts/amazon/alpine-v3.dtsi          | 12 ++---
- arch/arm64/boot/dts/amd/elba-16core.dtsi           |  2 +-
- arch/arm64/boot/dts/amd/elba-asic-common.dtsi      |  2 +-
- arch/arm64/boot/dts/amd/elba-asic.dts              |  2 +-
- arch/arm64/boot/dts/amd/elba-flash-parts.dtsi      |  2 +-
- arch/arm64/boot/dts/amd/elba.dtsi                  |  2 +-
- arch/arm64/boot/dts/apm/apm-shadowcat.dtsi         | 14 +++---
- arch/arm64/boot/dts/apm/apm-storm.dtsi             | 13 ++---
- arch/arm64/boot/dts/arm/juno-base.dtsi             |  4 +-
- arch/arm64/boot/dts/arm/juno-scmi.dtsi             |  4 +-
- arch/arm64/boot/dts/cavium/thunder-88xx.dtsi       | 20 ++++----
- arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi      |  1 -
- arch/arm64/boot/dts/hisilicon/hi3798cv200.dtsi     | 43 ++++++++++++++++-
- arch/arm64/boot/dts/realtek/rtd129x.dtsi           |  2 +-
- arch/arm64/boot/dts/realtek/rtd139x.dtsi           |  2 +-
- arch/arm64/boot/dts/realtek/rtd16xx.dtsi           |  2 +-
- .../boot/dts/socionext/uniphier-ld11-global.dts    |  4 +-
- .../boot/dts/socionext/uniphier-ld20-global.dts    |  4 +-
- arch/arm64/boot/dts/sprd/sc9860.dtsi               | 56 ++++++----------------
- arch/arm64/boot/dts/sprd/sharkl3.dtsi              | 18 +++----
- arch/arm64/boot/dts/sprd/sp9860g-1h10.dts          | 30 +++++++++++-
- arch/arm64/boot/dts/sprd/whale2.dtsi               |  2 +-
- 23 files changed, 159 insertions(+), 117 deletions(-)
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: dts: ti: omap: minor whitespace cleanup
+
+Zev Weiss (1):
+      ARM: dts: aspeed: Add vendor prefixes to lm25066 compat strings
+
+ arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-romed8hm3.dts | 4 ++--
+ arch/arm/boot/dts/aspeed/aspeed-bmc-delta-ahe50dc.dts    | 2 +-
+ arch/arm/boot/dts/ti/omap/am33xx.dtsi                    | 8 ++++----
+ arch/arm/boot/dts/ti/omap/am4372.dtsi                    | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
