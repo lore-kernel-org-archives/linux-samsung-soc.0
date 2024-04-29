@@ -1,102 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20A21442FD;
-	Mon, 29 Apr 2024 20:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696AB1119B
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2024 20:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714421220; cv=none; b=JHZyneKZbcosxBtYHIs679lL9Vnbu30aatlB0Nb8RQu6RUijHUtefB4BpnE8Z9w3TMC5NMc+BQg2KiihCuIyVklDkAZePUcVa+b04/TCGh4DVOfvddjO2mc30TO6nZ0i1/DC13ToOu8SfkjBDSSLiqr2BtxkkIlSd1s1tZdxTd4=
+	t=1714421494; cv=none; b=DX5civ4rOWOYolBvAUk8TgZn7w75DKulgSUmMMvzypJWyLdwhdTbWCj9WnYi84Hv5GHKNtw4BIO6bPaywnlBpuO0eT+5WxBrRzBxqhvNsDVl17c0WBAFoxoTUZB1Lzg4zVGPJ2YocQSE8IGH70OWa4FqbnfLRATFkGQnYbJScpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714421220; c=relaxed/simple;
-	bh=4A88CtFhO9g0Vm1pMTxYoO6IBnLwMZJMkAtxvaB8yTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PD//LsOY5mZSEnj7mhp8kSd5Z2dfL2ZruNetOb9eE8NvqJOcPEg3bkIqzx/zuUfgPdpIEIFUWDZfEPu+uKEIxe9p7MN08LgDDfPxaF/OQ8pwnGJXfGZSJz/Pr9YDRIMMvJjge7dPhVY9bJVsyflDSMo+7IWQblxJyHwYw/D+N/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2Eu+bDc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714421494; c=relaxed/simple;
+	bh=Gk9Q9uO+A4X6+2/odyrhEeYvregRg2NlQ6Np9vWKc+A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=M0HPe1F0nVbiKuaUswy2M2QfjPpiskv7nICktzaDTXI1lMIxuRvEItyCgRobb1kYng5sS5vr+LduXrCaHayL/xgJ/qgKFhwgVPf8RbstH2CMjlfZqnJ1CNoQyRa3EsKUnsSZxrlSLKKvIk1FoCOY2EHJTcYpAlX1hNWnakBW4Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AzUI6NKn; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2Eu+bDc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C298EC4AF14;
-	Mon, 29 Apr 2024 20:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714421219;
-	bh=4A88CtFhO9g0Vm1pMTxYoO6IBnLwMZJMkAtxvaB8yTQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=d2Eu+bDcB2VBGxzdNS8FaG+wTdSF6EoPn0gvxQjza1D737089iPlbg0X3lOuJ7qth
-	 yva0Bwg83ykirUtT774C38MB8baxZTN7nAsmiaI4FJKiv2i9/gmHixZUCEOw9MeQ1h
-	 zg6AbK4mBXTHZT+4Cvu/os75HZWacf7PReftRCBMhYTrKwp2XbiaubHfGdTuvfZ5rg
-	 BONtufjopg6ZlMGGhKRZppD2XFeHXoXqHwen53ezbgea/Cg+w9UpW2hDxgRMTqxJC+
-	 07vhFpg9Xe221vL8ol/WQGRNXarUta0VmHYfVOgReolABJxkH5ps5kZNfzH3AFlg8w
-	 9NFnqEt6HKlLQ==
-Date: Mon, 29 Apr 2024 21:06:48 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-iio@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 0/8] iio: use 'time_left' instead of 'timeout' with
- wait_for_*() functions
-Message-ID: <20240429210648.4b429d31@jic23-huawei>
-In-Reply-To: <20240429113313.68359-1-wsa+renesas@sang-engineering.com>
-References: <20240429113313.68359-1-wsa+renesas@sang-engineering.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AzUI6NKn"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34cc606b1b1so1916081f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Apr 2024 13:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714421492; x=1715026292; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Gk9Q9uO+A4X6+2/odyrhEeYvregRg2NlQ6Np9vWKc+A=;
+        b=AzUI6NKnQWJg4cn9x7g4Ojimv9H8JvqCAOJPoarG1nsV1HirNYI7MVUJLiVvoOuYh5
+         XhVqW1zDzwpyr1mqFRr6FeseflASXv4vNksEehFvcudUk+tExf6bFl4Ie7c7pMKjNHac
+         /KUhsT7A2q6P/sAtQ7xJG376JXSqAS2mxHm0g6U33/LhAU1/8oSHj7orcu/sTY0XKVQB
+         2n3GHxS/9ATlP3ffjOL3ZyRUJkT7GbRcgaj5MBlkzLEGINBNUJyKayuUGMnSsNcZvanK
+         npSW4M/oiwJI+f2Ca5SBWq0ZfX1SMe6bDz8LU2kqEB+WDPB0nweXw3Vtaemf1gtJ0S5D
+         VLfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714421492; x=1715026292;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gk9Q9uO+A4X6+2/odyrhEeYvregRg2NlQ6Np9vWKc+A=;
+        b=NjMnfDuDot7oogRQpYYVUoXM1aA8Rv8vvqm+rw6qVCWCqHDF0dljg9tsgqmU4RNUCp
+         uG4ve2QxxsCtCMPy6FXOfbJtwzhd4crjalSfKHtRCI6nVbtNXbaS627MUMQtOnRKGi8C
+         3+NGQgri8caUjNmSKScav5maNN+ejomVLcQZpm8JkqNldMs2jnu9gA/YC6wPklq/i+U4
+         TwYzMCfsLFKujSDO5yIsniGs797NtXcl5S7eAAY0xrfNQG5V3xL5gLr4N/NrcHUNogY6
+         0lqPzCFxtuIwbudL2dpfmQW0I4Em1eU7PsC9KAtrGwtjcoACvOpClmvd7eNqMZUW02LS
+         xvnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs82rWVpm2UBWiK0zRzUzENm8o3Icor4/mPn/URmD7IqINfnVXBkpOkMThWMX9qedeyc/dK2oE70iabG9wbXqYJ7u9eL6ObO2PKw8YlJyfrAQ=
+X-Gm-Message-State: AOJu0YxGxwI9Jy+HnMsniczIT4Way8X7ILu04zIahEp4rmRgwtBbGC9z
+	WcJuT8PivaSeqZfcIFzdhvpM5giEjwSrPU4+Fy87eYbiQsJc0b3+YbbOSj1j1qs=
+X-Google-Smtp-Source: AGHT+IED0nGy3qbIPeoHBT0UXTPEa8PBvuPeW8v6yBecZqwOZZ3M+oI31X4uRqOMy8lVpuzoahiqVQ==
+X-Received: by 2002:adf:a457:0:b0:34a:4f1c:3269 with SMTP id e23-20020adfa457000000b0034a4f1c3269mr9488780wra.0.1714421491886;
+        Mon, 29 Apr 2024 13:11:31 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id bf7-20020a0560001cc700b003439d2a5f99sm30300260wrb.55.2024.04.29.13.11.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Apr 2024 13:11:31 -0700 (PDT)
+Message-ID: <560140f9b402e86b4d0e54f0eaa96a5cb57cfa22.camel@linaro.org>
+Subject: Re: [PATCH v3 0/2] clock support for Samsung Exynos pin controller
+ (Google Tensor gs101)
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,  Peter Griffin
+ <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker
+	 <willmcvicker@google.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 29 Apr 2024 21:11:28 +0100
+In-Reply-To: <8309a9a8906d3b910f775c6d55d9f75681b03802.camel@linaro.org>
+References: <20240426-samsung-pinctrl-busclock-v3-0-adb8664b8a7e@linaro.org>
+	 <171441172281.306662.17546797534297489946.b4-ty@linaro.org>
+	 <479aeb87-ddc1-421a-a451-d9e62893eef5@linaro.org>
+	 <8309a9a8906d3b910f775c6d55d9f75681b03802.camel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 29 Apr 2024 13:33:03 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
+On Mon, 2024-04-29 at 21:06 +0100, Andr=C3=A9 Draszik wrote:
+> Hi Krzysztof,
+>=20
+> On Mon, 2024-04-29 at 19:45 +0200, Krzysztof Kozlowski wrote:
+> > On 29/04/2024 19:28, Krzysztof Kozlowski wrote:
+> > >=20
+> > > On Fri, 26 Apr 2024 14:25:13 +0100, Andr=C3=A9 Draszik wrote:
+> > > > This series enables clock support on the Samsung Exynos pin control=
+ler
+> > > > driver.
+> > > >=20
+> > > > This is required on Socs like Google Tensor gs101, which implement
+> > > > fine-grained clock control / gating, and as such a running bus cloc=
+k is
+> > > > required for register access to work.
+> > > >=20
+> >=20
+> > Where's the DTS?
+>=20
+> Here: https://lore.kernel.org/r/20240429-samsung-pinctrl-busclock-dts-v1-=
+0-5e935179f3ca@linaro.org
+>=20
+> (I was waiting to see how the HSI2 patches pan out)
 
-> There is a confusing pattern in the kernel to use a variable named 'timeout' to
-> store the result of wait_for_*() functions causing patterns like:
-> 
->         timeout = wait_for_completion_timeout(...)
->         if (!timeout) return -ETIMEDOUT;
-> 
-> with all kinds of permutations. Use 'time_left' as a variable to make the code
-> obvious and self explaining.
-> 
-> This is part of a tree-wide series. The rest of the patches can be found here
-> (some parts may still be WIP):
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
-> 
-> Because these patches are generated, I audit them before sending. This is why I
-> will send series step by step. Build bot is happy with these patches, though.
-> No functional changes intended.
+... and potential binding feedback of course :-)
 
-Nice improvement.  Applied
-
-> 
-> Wolfram Sang (8):
->   iio: adc: ad_sigma_delta: use 'time_left' variable with
->     wait_for_completion_timeout()
->   iio: adc: exynos_adc: use 'time_left' variable with
->     wait_for_completion_timeout()
->   iio: adc: fsl-imx25-gcq: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
->   iio: adc: intel_mrfld_adc: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
->   iio: adc: stm32-adc: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
->   iio: adc: stm32-dfsdm-adc: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
->   iio: adc: twl6030-gpadc: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
->   iio: pressure: zpa2326: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
-> 
->  drivers/iio/adc/ad_sigma_delta.c  |  6 +++---
->  drivers/iio/adc/exynos_adc.c      | 16 ++++++++--------
->  drivers/iio/adc/fsl-imx25-gcq.c   | 10 +++++-----
->  drivers/iio/adc/intel_mrfld_adc.c | 12 ++++++------
->  drivers/iio/adc/stm32-adc.c       | 10 +++++-----
->  drivers/iio/adc/stm32-dfsdm-adc.c | 12 ++++++------
->  drivers/iio/adc/twl6030-gpadc.c   |  8 ++++----
->  drivers/iio/pressure/zpa2326.c    | 10 +++++-----
->  8 files changed, 42 insertions(+), 42 deletions(-)
-> 
 
