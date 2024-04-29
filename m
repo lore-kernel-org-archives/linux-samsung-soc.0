@@ -1,90 +1,72 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5C379DE;
-	Mon, 29 Apr 2024 02:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE973372;
+	Mon, 29 Apr 2024 04:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714358387; cv=none; b=Bb4bnVDcGmFf56AbLFtfGc7dzNzyAfnPfkAWCg06bunc58kkdBgPgQEDmYFuKChxcyvNPWpk/tkiDYk07yv8x8nCM1U0F3QhdjSbF6LVcVoBO2/8VUp0vcLopES8GCn3gNa0PLJEB+Cwl+htctPsz0C2W+eQO247OG04N27bXl0=
+	t=1714365399; cv=none; b=MdCRPJzMuC2sDxJrzWE1jMIOc1Tl+ZG02OuM89RHmgQ8bkQYG7dmAXfGv5GDqlujWEEp63349r984Hy2ey8bdN7j/6f87XHlTt0aIG3Y3kXcj8O8jfmiHLa3pxbJrLPXieqzzWGUBJtXHr9gZvQ1Ts3x2npp6KujsXFDwuNtlmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714358387; c=relaxed/simple;
-	bh=/Ut9n6JDnIQSvBAqdGVqX11aL0csFLr0zkITRrdN7Ak=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BQ+v3RJAhv/CRLEy8OW6qFUNrLk3wi0twc8LJm2pL+jLkwziKVhpsT7prCQIoByX68pM+gvwgAzLJyi5+FjA1Sz1k1xqUhKkzRjBRqFp4IE7bbMvknqilwRYwd6G9fgPLCxsf3WHotrQtWUOgaNalJRyBam5WBBLr3yEEswv4bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABHN5hTCC9mT+wNAQ--.11237S2;
-	Mon, 29 Apr 2024 10:39:15 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	m.szyprowski@samsung.com
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1714365399; c=relaxed/simple;
+	bh=0TEbWLRVmx0NrCEqsbCKI72JXdFePC8Jatm2nCWzw6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e4/oDtkF5kvItehweHlJxRMiEt+CsD8/SSMEyqFOPmpVDhJiSmIss+yKgl+tEuGo/f7IDB850KozdXjqGIBug3IRuDAChqVSJj2weElAcjWJ8fKewvRrQDJUru4S3le5vD32nIMu4hXCCr1K4PBI91VL2gOQ5JiJx/C0Pk2mibo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sZ7HLoOs; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sZ7HLoOs"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=04scR3eROCXqOCzcxjuahB7wfjxGYZ3R+aBj3XOaRvI=; b=sZ7HLoOsUy+JxLelKGvZxj3Mbo
+	2vlWc5r82gmbmCriO9GK+RMAy6G0il/e03OAvSoY8xaLsH0HnF5yLi1anUOJePCVldZg4dCT+lxH+
+	ASDpY/PoMFV+F6KhT4HPbP9bCWkrMwQzo3Z2eAGPQ3YO2zWTU5tq3hbPrWKFFch3WE5E2534j0+/Z
+	kD4dgrMdoGPA32mWL7XmUlobRS0J4KOFoLEG+/Fzi2wokB3uXHyID4r0+FdMW1ScJxXL+G1n9TUbl
+	y+/f+zdVjc7iexyxIiWAxl17nQAAHS3zgThlQko8oXMqfpJJ0EYRBJ9BYKXKBAekjy3ZrQl4WKShg
+	8car23NQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s1Iki-00000001QX3-1fYF;
+	Mon, 29 Apr 2024 04:36:32 +0000
+Date: Sun, 28 Apr 2024 21:36:32 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com,
+	airlied@gmail.com, daniel@ffwll.ch, krzk@kernel.org,
+	alim.akhtar@samsung.com, m.szyprowski@samsung.com,
+	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/exynos: Add check for dma_set_max_seg_size
-Date: Mon, 29 Apr 2024 10:38:33 +0800
-Message-Id: <20240429023833.1869154-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/exynos: Add check for dma_set_max_seg_size
+Message-ID: <Zi8j0J9PoOiMrA6H@infradead.org>
+References: <20240429023833.1869154-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHN5hTCC9mT+wNAQ--.11237S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XryxXF1xWFW7Cw4fWrWxJFb_yoWDJFX_uF
-	18XFn3Wr1v9rWqv3ZFyFZ3ZryjvF97Za1fuFZ2q3WfXFy7CrZxt3y7Zr17Zry7XFWUAFnr
-	A3WUA3y3AF1xXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VU1sYFtUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240429023833.1869154-1-nichen@iscas.ac.cn>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add check for the return value of dma_set_max_seg_size() and return
-the error if it fails in order to catch the error.
+On Mon, Apr 29, 2024 at 10:38:33AM +0800, Chen Ni wrote:
+> Add check for the return value of dma_set_max_seg_size() and return
+> the error if it fails in order to catch the error.
+> 
+> Fixes: ddfd4ab6bb08 ("drm/exynos: Fix dma_parms allocation")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Fixes: ddfd4ab6bb08 ("drm/exynos: Fix dma_parms allocation")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/exynos/exynos_drm_dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+With my dma-mapping hat maintainer on I think we should remove the
+return value from it.  It can only return -EIO or 0, and the first
+only if the bus has not set up a dma_params structure for the device.
+I'd much rather WARN_ON() on that, as it is is a grave error to either
+call dma_set_max_seg_size on a device that is on a bus that doesn't
+support DMA at all, or for the bus maintainer to accidentlaly drop it.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dma.c b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-index e2c7373f20c6..0f942186f3ff 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dma.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dma.c
-@@ -51,7 +51,10 @@ static int drm_iommu_attach_device(struct drm_device *drm_dev,
- 		return -EINVAL;
- 	}
- 
--	dma_set_max_seg_size(subdrv_dev, DMA_BIT_MASK(32));
-+	ret = dma_set_max_seg_size(subdrv_dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		return ret;
-+
- 	if (IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)) {
- 		/*
- 		 * Keep the original DMA mapping of the sub-device and
--- 
-2.25.1
+Feel free to add the patch if exynos has a strict error checking policy,
+but it's rather pointless and I'll add removing the return value to my
+ever growing TODO list.
 
