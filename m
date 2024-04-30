@@ -1,93 +1,97 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D42138DFC
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Apr 2024 07:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5C3EA83
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Apr 2024 07:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714462063; cv=none; b=Ewq73NadZlY/r6pZCbRd18QU1s/KVBePLaBTSRjv30KZNHCsi9P5y2ePpHCjZfsdxcnDDgDsqts4XPChl8MITL42Nni0NKFm1csr+/zh19qDec0FveD6dQ22Z7PEXlqnszGgKwLFNZU3LFhrs91Hd7l7uB3BI7/Jh/VdB/AsKng=
+	t=1714462965; cv=none; b=GgSggdvDDYZqrbMdX9/RLZNyASOsGVj0pL5iOmSlj4qlw4rh4xLP7hi7RbBWT/pj2YS/ZcH+msJKJ5Z2xTabql8aDEisBqvte3sjhISjc6NLvekCHUcld1w1/V9QiniR0riPvPOUEZu2Y8r32yAF8m/qxxxMZY8LSJ55m2onfok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714462063; c=relaxed/simple;
-	bh=M/hzeBG6OaWFku1EhbZX7s3qNTyz1PRn42pLoTcmWto=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RyobcFTF0TSFcnkVjgRyoAQspCX8KH6XfSAC5X/wfsQjUPAgDcW6sNNTYlMsM/OiCHsDpdkE/K59nkdJqAXyHfFBXRcPPbhGlwNAJWTCEP4V92DJDFZoMwcBOSlR7q7DyakHvtuhHVpVDg5stTPxfrCkKfQXU1EMqFvCvoOpbLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s1MT00pc; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1714462965; c=relaxed/simple;
+	bh=6rOSQeWbEhAv8MCLaqz4msA0/THApX/ROztnBEcH/ZI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=auHKjPqw9COJpJpZKhej5HiQeUcoYCAbxyWcsygewVuh0q3kPIDXIF7peAmFqtfUxOKcvDGJKoHriLrLyTUnQptSvKptD/RSkWtDjJI3majTlxSPuHNk5gt7KFiQuGXfdkd9g6LvS1YceFjQXEUGMoLSLX3bm6kcNI1FcQiaSSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TdXxaxXs; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s1MT00pc"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so28936675e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Apr 2024 00:27:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TdXxaxXs"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-572669fd9f9so4295885a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Apr 2024 00:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714462060; x=1715066860; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=M/hzeBG6OaWFku1EhbZX7s3qNTyz1PRn42pLoTcmWto=;
-        b=s1MT00pcoO+R7Nh739Qy/1BS9/63srFTbpyrg6LS9cNS01v184tbOlOYoSHYSw8efP
-         7trOc1aJhQu34eUEhvv8z/ihYcBEBIuE6iTftT1q5KaShTTnYc0o0jvprkIFemnJmQ51
-         pintOQivJd1ZZ+n3xq/tyX9/Sm9cdMU+hXSBN/6nwH+0lRgDiBK5sW1m/VbzGvu79tPj
-         vNa1e5tazlw4B61L+ardquVeETIGxHx278JICFnsaj60V0WgsBKXZAwgvF5choMfxcgd
-         wowJKQIZJDjMsBYvgKKMBhovajrGOktNXy9eF0LGgH3Vm19gJj1A/d6yJyMGeW6QGnbd
-         1/qg==
+        d=linaro.org; s=google; t=1714462962; x=1715067762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j5p+Hhe5o0oz9SnrKznY0Fc+JFHlQEV01P0MQ+lMur0=;
+        b=TdXxaxXsJ00JCbd4wmYYur+0wi5UWdEXowlZwsXZJTVUhOmLJbm4DchDvOG1A4e449
+         ldyDHYDL33k3hVJPInivhD9pYDQ6dgoxmux0Ofsoga8pXHkTrDKgAVuNvL0SIc9jYxc/
+         NNg2p6JNO2BL2z5lVkoVqfJ1ex2Y+fhxiULsy22sr1KMAObAxsrYwBq3tt2AxopMDB9w
+         xF1fGQ8RdCPl5F7PzeqSKCMUu7T5WWUsTEwIXyfhwYIa8dGfAj0EnsiTbeI++Uw/OJEs
+         21aZX2UCCjkD4jD6dKO8PNvwBAQ7fUqNE/qtRomTH1Nz1ArqwhNfvyIxCd43qu2NqECl
+         4hHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714462060; x=1715066860;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M/hzeBG6OaWFku1EhbZX7s3qNTyz1PRn42pLoTcmWto=;
-        b=IgaaWhFEZdS50O97NThu2rVWPW8XQI5MXGuVjlHAkWD3fSWYkHtnQtfQ7rppItP+mb
-         DUEbK43tkTFOizD9zZE7regFmImX927YcD3+sKti8bEkKApNwTtKWN5irxq1jQ5ZHMP8
-         b91PjPJPCkxVuqkrFbg74UFdpI8UTW0GjqUvyT8gh6cu9tGclL1ZLjM7oVZUVcxMkmBB
-         hLJOh7HvmKTG7cXdJOjpePlylafm5Y8PpXaxMs19hYR3cf58jsQmYgPEN18hHEwotBnP
-         TgevOfOIzBoADbQgKNrIwiHYtQOfF0FN1Hxq9wuXBEMO7URFhLqUHT7hiSLmPzywUUig
-         LhqA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6cccBBGZCPjzQMHHhVKW0uTFbqX70xIQJdkqjjkfDnpzH3GAE4B9OqHI/pf/h8ZsdXccqlfegkjT+qPDzrH/d56J5W92CiplbpMkIg/Kg1Eo=
-X-Gm-Message-State: AOJu0YyYETgYRwb1WTnckmGFIEvGX8/YbXUZAWMYYutVxCni1wAIrFX7
-	41Ak/qYu7R0H9VNKAWJ9Nj0BS65XFbM30hEskQphCFwDt8E7gZLiwl1O5FOqL/g=
-X-Google-Smtp-Source: AGHT+IFIu1343enMW9iVavH8FHdSsBD2PkgGl/FjmA/oRCmHYmy2D2AwHMnE6E9debZFQIezWJDQ9w==
-X-Received: by 2002:a05:600c:3b23:b0:41b:edf4:4077 with SMTP id m35-20020a05600c3b2300b0041bedf44077mr1218130wms.36.1714462060021;
-        Tue, 30 Apr 2024 00:27:40 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id n7-20020a05600c500700b0041bc412899fsm12666330wmr.42.2024.04.30.00.27.39
+        d=1e100.net; s=20230601; t=1714462962; x=1715067762;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j5p+Hhe5o0oz9SnrKznY0Fc+JFHlQEV01P0MQ+lMur0=;
+        b=w8q5gWCUUMn7K4I9tYriyCeQ3aGmIXlh5D+j4reP3zr+TSMPm7r7FcJSkvcEQpcHIV
+         IgEBAwRstinGtLN2vXHikCQ01eFFCHYSPECCLFcXOc8K3Pi7wdEhdZGqMCGYi0S0x8Zm
+         GFTwAKZMg6wHjwlLkivx94Dkgg3BXWdZZk0tsWqxkdaBc89/P9/DD9PbsokzFXu1B2Bd
+         jJXLvNfrM2o75ge2Tr2/cohF6rgNvxT2Tc8wkFNsjQzpU34W+exmvPxGKBQdpnh+jEF9
+         Ej2RUjD0RVDN9sSJvxY+AI/xMeD933yPtwIS+mfQ5vCCoy3coRC3OCW2yAYVv2H57AHk
+         4gow==
+X-Forwarded-Encrypted: i=1; AJvYcCUS5IIP7ybXRw3QdYHFC45J61xnf6qKkCYMPV6HZlYuKa1Hewuk6mOEJ+p+CpnAstqogEhMOaxD+ZG76Rw9dATQCg6Zvs/NPnbjKAAOtcMulZ4=
+X-Gm-Message-State: AOJu0YwaZOieBmOjcxV+HzhMjqelqDzgmqfYod1G/LppMmyyd0uT2dEp
+	Z1l4RmJo7vE/2lA3D8YOQSk0KXDcVoece5nw/1XsdpCKWyYNHpOSuHK9pqGf2Xs=
+X-Google-Smtp-Source: AGHT+IGBMuRm0U6K3jNaqA1YmMlR1gvfu8aRSrgUg/G0JYE7jjhY0WN5zoh6hbRFgw5euhqtv+xtKw==
+X-Received: by 2002:a17:906:378d:b0:a52:1770:965 with SMTP id n13-20020a170906378d00b00a5217700965mr7467711ejc.42.1714462961803;
+        Tue, 30 Apr 2024 00:42:41 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id p11-20020a170906a00b00b00a55892e840bsm13175844ejy.205.2024.04.30.00.42.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 00:27:39 -0700 (PDT)
-Message-ID: <5da47eb853c0acbb6111d6d885cddb475e857236.camel@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: drop redundant drvdata assignment
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij
- <linus.walleij@linaro.org>,  linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,  linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
+        Tue, 30 Apr 2024 00:42:41 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: kernel test robot <lkp@intel.com>
-Date: Tue, 30 Apr 2024 08:27:37 +0100
 In-Reply-To: <20240430060304.12332-1-krzysztof.kozlowski@linaro.org>
 References: <20240430060304.12332-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+Subject: Re: [PATCH] pinctrl: samsung: drop redundant drvdata assignment
+Message-Id: <171446296047.37280.9740688458228801878.b4-ty@linaro.org>
+Date: Tue, 30 Apr 2024 09:42:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Tue, 2024-04-30 at 08:03 +0200, Krzysztof Kozlowski wrote:
-> Fix W=3D1 warning:
->=20
-> =C2=A0 drivers/pinctrl/samsung/pinctrl-samsung.c: In function =E2=80=98sa=
-msung_gpio_set_direction=E2=80=99:
-> =C2=A0 drivers/pinctrl/samsung/pinctrl-samsung.c:633:42: warning: variabl=
-e =E2=80=98drvdata=E2=80=99 set but not used [-Wunused-but-set-variable]
->=20
-> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202404300825.6lxLwvUY-lkp@i=
-ntel.com/
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+On Tue, 30 Apr 2024 08:03:04 +0200, Krzysztof Kozlowski wrote:
+> Fix W=1 warning:
+> 
+>   drivers/pinctrl/samsung/pinctrl-samsung.c: In function ‘samsung_gpio_set_direction’:
+>   drivers/pinctrl/samsung/pinctrl-samsung.c:633:42: warning: variable ‘drvdata’ set but not used [-Wunused-but-set-variable]
+> 
+> 
+
+Applied, thanks!
+
+[1/1] pinctrl: samsung: drop redundant drvdata assignment
+      https://git.kernel.org/pinctrl/samsung/c/e5b3732a9654f26d21647d9e7b4fec846f6d4810
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
