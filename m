@@ -1,74 +1,110 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EEADF60
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 May 2024 16:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556EB17C74
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 May 2024 17:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714582196; cv=none; b=Rxq4IYNZs9adYcW2fuXGd17yFawNu9ONqCeSXEG+qtEF/qAD0jTR+jCbm6AYqYJ5DgDv6y+Uh0/k4G+aAC6DFMnbFV3mkM/V8pjGROeae9M0l4KrTABSEK+3ax/q5Bxrba1z6gfV+JeKqBCTKviAMXj5i/U1kx2y+liIEOIm58s=
+	t=1714583820; cv=none; b=HJ55Sz4tQrdB6BCIYfFKgAslH97ED3r5vFcjP6pcW7JN3g31pPD3pO5ays39zkkswVANRoHDY4bTGrb+8lKdxHPTVINuMPBnaq8YRNhqS2B2R3fApjYYZ6hFPRVsPB8MIw42TtA6Z7MohZqD8iIdpbPX3CLJrjPPo3aT8X2PBHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714582196; c=relaxed/simple;
-	bh=3JSARQIpGMNBBAy7nmsP79Gq+hsfBR+N6MeC2K/TmP8=;
+	s=arc-20240116; t=1714583820; c=relaxed/simple;
+	bh=02BhFBAy4ZX6ytoV+oKn8+uM4s9GylTFH+6SsonvGE8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQGl+SWz7dqJoVp7wBF62SWBVjg9DAM+g1/VETlUP4aV1GMNxUZWZY663+FVJqZsezkbbJKyfieq8n2O0lAxQWsQTepFs1nVizBuMEdqohA9c8NPz1I67prVpSPxhRFMwCVNiX2dpORUMqyU7VnHm5aIjoO7LAMpgBKEWlmcjRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OSOQN1zI; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwj7vxGymr4XKCZq6QxIzb/aARca9RWmZ2dY5bfta3zszjbI7YHLGDkY8v+Ix0H40cceGuq01axfaok0Tsc5QaMyZh+eosHFtOPTppY+eG3lhlv7GoBAVuWBfJxD1YVwLVXqBsilRNZMSdVgjcSC3DWoV0BUmt3BxqhhWJz2lac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iVpOppxs; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OSOQN1zI"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1eb1cb1a8f1so4085ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2024 09:49:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iVpOppxs"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-51b09c3a111so9814515e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2024 10:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1714582194; x=1715186994; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714583815; x=1715188615; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cepHyqKwqWvx30NtahhDLdkap0UgBbDdcS3cIZcnbio=;
-        b=OSOQN1zIi36oxS4WXLif2UwFnJD6RV9lCS00BhHIxdOJt9RNh1ZRYaG7DvEcWzGp/B
-         ySar+tERnu7NN5GNzK0yUJRrKeWXGxwj7dvGrCzy7PKqnNWT1n//ViAxF8phIl/shAya
-         kw9l6zJKe3YXgzLGt1KmmrxUWyUPIydJK3a0qUytF6oAKfPsIpb0QmA1iq6uNyHUgL54
-         3fkL6XqTJpvJjgDH23KEz/fXU2cf6tbgLSDkaSDjAsqwu7g1m+/3aS/kWERNUEz5vlN9
-         3gWMX9GY/qSrcMII9DTpdtCB+ZWrDebncVfdLDEsfX4at7WNBzdDmeSO1OMFhGmlMKxW
-         jOVw==
+        bh=MOHqyTk2nsRZy88pDJJ/quBzrqb3UUPa7Yn14ZhLib4=;
+        b=iVpOppxsz5ghxxUEB9NfOFKKI+6G8FWE8KMpEIgL0IzcDWO4UZU0AxzNOAubNoopfN
+         wjDM612rx0zN/3xvdmazYR0SfUpXTWhGudu6WKk0hkW3jEUkVEA3CZ1UlmRSoRPZ/6Vg
+         6jh64wo3h4vc8RtCyuPEogJauoXB7cj9we+zmVBImIlXav+Epi9zhso7KEwFJL8Oa+Fe
+         D5oDbAAGeTOuSvCkxWVy6dZ6tkNo61rsMt3dn65YW4J5gK5gwwAh+GyeiY9KGXdMYwhT
+         QOh0+tIniDa0BMRg+6CaFlTm2JlG1ykwbhZdyw/VV7ozKz3xoHVWT6DaM+O9Xs+DwgDM
+         kLpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714582194; x=1715186994;
+        d=1e100.net; s=20230601; t=1714583815; x=1715188615;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cepHyqKwqWvx30NtahhDLdkap0UgBbDdcS3cIZcnbio=;
-        b=qJ1DNGdCbmvPDcdffQic9KVofclsQBAT42l47EvILnzLkrZHoo0rlsXbIrVUVOWQkO
-         Y4YJaY7AUO+qPdmGS0kWirNa8z+rAmpzzDg+smG4yzz/HMpI1tA2XzM0ZCp2Yxqtzd8m
-         pqLLAP80ZNc/TO+zSBwNUkepjripgcPW1771I+drgxnf96DGX4KUt5H0mz0o1SsIAGze
-         osS1NGDv6/B4Y37VHk67BFeM304rEEHuhtAXy2UgK3QVdFnktFNThP6KhNgTF9JzHiEk
-         spngDgEePrrTh6uGqF5fE/bf6n5RxzGN8ehft7rAS2kuL8c+RK3rHiKqIgxykCtMnuqa
-         8goA==
-X-Gm-Message-State: AOJu0YwwN/2cs33TIC9UennMoMJYNNFpQg7yhoGSggYP/FainpsG/YHh
-	2XRSeVHAz9dHbu9+XqNmiYE9nRN2E/EKhDAU0VsTZMEeRKeoUGINerkpFspJ+Q==
-X-Google-Smtp-Source: AGHT+IHQqhtGtE9tvxLfm8Jh6wSQPY6ndh8+WXu/q2oaOTBz/QmJS5CUhGvF7oYJsnqJUozYFMpHQw==
-X-Received: by 2002:a17:903:22ca:b0:1ea:2838:e599 with SMTP id y10-20020a17090322ca00b001ea2838e599mr199000plg.17.1714582193896;
-        Wed, 01 May 2024 09:49:53 -0700 (PDT)
-Received: from google.com (100.22.168.34.bc.googleusercontent.com. [34.168.22.100])
-        by smtp.gmail.com with ESMTPSA id db5-20020a17090ad64500b002a53b33afa3sm1576661pjb.8.2024.05.01.09.49.53
+        bh=MOHqyTk2nsRZy88pDJJ/quBzrqb3UUPa7Yn14ZhLib4=;
+        b=NQgRRkuuiGkwB1Maw87Cko/WENTU0dYrrnfWqw5BzvGTYjmbON5TZCW89iH570lZxv
+         apeRH31n9qkcI1+JPeToy8BXD7uBY0h9JBnZotvqB11CxzkPb5BEUFofjem4RGsu7kTq
+         8LMcOlzvnu7Pvr6frLPS9wESzP2fly9mpR6NGWgO62+ufOi21wmbLgH9S3qwJkCkCR9N
+         YtL0CRxisJoa9IBHNUHtHECk6cfAzg/YYWXU/KdMZy450Js2T1VUlgH7jzyFJtd/nwhT
+         7ef91gnpNXWL9/a/VTUozdcGxSVk0xAV6C64UOWRd9nEy4Mr8D+NVoHTY59Kvb9NcSHF
+         s1pA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6QVAGBczrYvUwEZAPiiHRUt0KNA03kirXYa2JPuzkJpfg44C7S9QoHijVz0utKqdJQ4WP9FwnosRPofulmaOXe+FqX2z6z96uyk00JZJy7a0=
+X-Gm-Message-State: AOJu0YyT9cejCUFXbL0dzlxB/qdrLUcxro4nASaaw+V0mfEC08HFmBdv
+	/c5oJlbmX2xeuRG5SQktCh4fF0u6MQ2+iV3tgb4H51ehpaciddS3ZmkfZpqDjis=
+X-Google-Smtp-Source: AGHT+IGQV4KLhJUah5uwpDXzYUszrhPNSItjqkYS07RJilfCu8tUsg9Dz64nf2enkLVMqtqy/1k75Q==
+X-Received: by 2002:a05:6512:12c7:b0:51f:196:d217 with SMTP id p7-20020a05651212c700b0051f0196d217mr197144lfg.63.1714583815158;
+        Wed, 01 May 2024 10:16:55 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id t10-20020a192d4a000000b0051d5616c3e1sm1524897lft.231.2024.05.01.10.16.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 May 2024 09:49:53 -0700 (PDT)
-Date: Wed, 1 May 2024 09:49:50 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+        Wed, 01 May 2024 10:16:54 -0700 (PDT)
+Date: Wed, 1 May 2024 20:16:49 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	David Lechner <david@lechnology.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v2] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-Message-ID: <ZjJyrkNfWQR3tsGM@google.com>
-References: <CGME20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247@eucas1p2.samsung.com>
- <20240426092616.4187022-1-m.szyprowski@samsung.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-samsung-soc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 10/21] pinctrl: st: Use scope based of_node_put() cleanups
+Message-ID: <f6aa3a17-90d2-42e3-8c55-639dfcdbf8ca@moroto.mountain>
+References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
+ <20240501-pinctrl-cleanup-v1-10-797ceca46e5c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -77,66 +113,21 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240426092616.4187022-1-m.szyprowski@samsung.com>
+In-Reply-To: <20240501-pinctrl-cleanup-v1-10-797ceca46e5c@nxp.com>
 
-On 04/26/2024, Marek Szyprowski wrote:
-> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
-> module driver") this driver is instantiated as MFD-cell (matched by
-> platform device name) not as a real platform device created by OF code.
-> Remove of_match_table and change related MODULE_DEVICE_TABLE to simple
-> MODULE_ALIAS to avoid further confusion.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos-clkout.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-> index 503c6f5b20d5..e2968784d307 100644
-> --- a/drivers/clk/samsung/clk-exynos-clkout.c
-> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
-> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
->  		.data = &exynos_clkout_exynos5,
->  	}, { }
->  };
-> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+On Wed, May 01, 2024 at 08:56:08PM +0800, Peng Fan (OSS) wrote:
+> @@ -1224,8 +1221,7 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
+>  	grp->pin_conf = devm_kcalloc(dev, npins, sizeof(*grp->pin_conf), GFP_KERNEL);
 >  
->  /*
->   * Device will be instantiated as child of PMU device without its own
-> @@ -237,7 +236,6 @@ static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
->  static struct platform_driver exynos_clkout_driver = {
->  	.driver = {
->  		.name = "exynos-clkout",
-> -		.of_match_table = exynos_clkout_ids,
->  		.pm = &exynos_clkout_pm_ops,
->  	},
->  	.probe = exynos_clkout_probe,
-> @@ -248,4 +246,5 @@ module_platform_driver(exynos_clkout_driver);
->  MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
->  MODULE_AUTHOR("Tomasz Figa <tomasz.figa@gmail.com>");
->  MODULE_DESCRIPTION("Samsung Exynos clock output driver");
-> +MODULE_ALIAS("platform:exynos-clkout");
+>  	if (!grp->pins || !grp->pin_conf) {
+> -		ret = -ENOMEM;
+> -		goto out_put_node;
+> +		return -ENOMEM;
+>  	}
 
-As mentioned by Krzysztof in v1, please create a `platform_device_id` table so
-that this is scalable in case we need to add other aliases in the future. For
-example, something like this:
+You could delete the curly braces as well.
+
+regards,
+dan carpenter
 
 
-static const struct platform_device_id exynos_clkout_platform_ids[] = {
-	{ "exynos-clkout" },
-	{}
-};
-MODULE_DEVICE_TABLE(platform, exynos_clkout_platform_ids);
-
-static struct platform_driver exynos_clkout_driver = {
-	.driver = {
-		.name = "exynos-clkout",
-		.pm = &exynos_clkout_pm_ops,
-	},
-	.probe = exynos_clkout_probe,
-	.id_table = exynos_clkout_platform_ids,
-...
-
-
-Thanks,
-Will
