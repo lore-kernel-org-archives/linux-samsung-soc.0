@@ -1,170 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872F134BD;
-	Wed,  1 May 2024 16:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EEADF60
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  1 May 2024 16:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714581307; cv=none; b=nBkZYV7VKsr4TbOD8bdfglwNGugmaPWUdSb/fv2hd3oO2HWQjrzirew+0p1HNN6h3n0shd/VfKPfTgPsjVu3hgyEu/sRR0eSYLDQ8lSFY68QIoNk7mprST/b4B8R54OlJROk1n+Rl9cLw00A5KRMJMVRy9FTz+gam8ILFirIdJ8=
+	t=1714582196; cv=none; b=Rxq4IYNZs9adYcW2fuXGd17yFawNu9ONqCeSXEG+qtEF/qAD0jTR+jCbm6AYqYJ5DgDv6y+Uh0/k4G+aAC6DFMnbFV3mkM/V8pjGROeae9M0l4KrTABSEK+3ax/q5Bxrba1z6gfV+JeKqBCTKviAMXj5i/U1kx2y+liIEOIm58s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714581307; c=relaxed/simple;
-	bh=bjFD0rHxLsC2c7Uw5VnvdgzaWdEjNPdDAmFkEgyLG4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0Jmlyaj6Iy1J0vTPl5Wm8Mw0YVMmOC0tL0yYwY8j5xjuOGaulD0xLYmMbUblX5zmHSs4981y0SDKfkKobxnh9aEJY6hxK3kIO6w38Jsk4ob66vm7QnzlissPfylbv9+Ba1425/VNqTZ38X5jn9JPCjd9dlvh7VN5i6CX3pmrZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1BQgOiw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714582196; c=relaxed/simple;
+	bh=3JSARQIpGMNBBAy7nmsP79Gq+hsfBR+N6MeC2K/TmP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQGl+SWz7dqJoVp7wBF62SWBVjg9DAM+g1/VETlUP4aV1GMNxUZWZY663+FVJqZsezkbbJKyfieq8n2O0lAxQWsQTepFs1nVizBuMEdqohA9c8NPz1I67prVpSPxhRFMwCVNiX2dpORUMqyU7VnHm5aIjoO7LAMpgBKEWlmcjRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OSOQN1zI; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1BQgOiw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A123FC072AA;
-	Wed,  1 May 2024 16:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714581307;
-	bh=bjFD0rHxLsC2c7Uw5VnvdgzaWdEjNPdDAmFkEgyLG4E=;
-	h=Date:Subject:List-Id:To:Cc:References:From:In-Reply-To:From;
-	b=G1BQgOiwmAz/rQreDqB3fQkhY3McXS3qtH7HRtubCWgIsbrhT5mqOR3TtopXNkf84
-	 wIocaw9hrFPybHdnYvEtfb+NBydjQrly76XIDBUfqEL1f5WwKSKdzANMm0/e/KfjAn
-	 QjgU4inFW6xPGpQ2+OhYi83rXZ6E4Lc7nJ54qRhJf3f/wwAiVNonz5MoVNbgJvHLtD
-	 ZgpRsGO/xLiDXgoBVuCZMhmobuIWTegqFGBRRNpiyj/HH8EySqGNgqwA1sDPDomArH
-	 cKCYjQdpoPXBjN3SEXFH2z1WLDZKFxXgrcAW72mzrbTfuXjZDaxMnR0qnpb+8hDsFl
-	 /oWKk4wwInhgQ==
-Message-ID: <34193501-5b7b-4ffd-8549-a04c6930d02d@kernel.org>
-Date: Wed, 1 May 2024 18:34:47 +0200
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OSOQN1zI"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1eb1cb1a8f1so4085ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 May 2024 09:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1714582194; x=1715186994; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cepHyqKwqWvx30NtahhDLdkap0UgBbDdcS3cIZcnbio=;
+        b=OSOQN1zIi36oxS4WXLif2UwFnJD6RV9lCS00BhHIxdOJt9RNh1ZRYaG7DvEcWzGp/B
+         ySar+tERnu7NN5GNzK0yUJRrKeWXGxwj7dvGrCzy7PKqnNWT1n//ViAxF8phIl/shAya
+         kw9l6zJKe3YXgzLGt1KmmrxUWyUPIydJK3a0qUytF6oAKfPsIpb0QmA1iq6uNyHUgL54
+         3fkL6XqTJpvJjgDH23KEz/fXU2cf6tbgLSDkaSDjAsqwu7g1m+/3aS/kWERNUEz5vlN9
+         3gWMX9GY/qSrcMII9DTpdtCB+ZWrDebncVfdLDEsfX4at7WNBzdDmeSO1OMFhGmlMKxW
+         jOVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714582194; x=1715186994;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cepHyqKwqWvx30NtahhDLdkap0UgBbDdcS3cIZcnbio=;
+        b=qJ1DNGdCbmvPDcdffQic9KVofclsQBAT42l47EvILnzLkrZHoo0rlsXbIrVUVOWQkO
+         Y4YJaY7AUO+qPdmGS0kWirNa8z+rAmpzzDg+smG4yzz/HMpI1tA2XzM0ZCp2Yxqtzd8m
+         pqLLAP80ZNc/TO+zSBwNUkepjripgcPW1771I+drgxnf96DGX4KUt5H0mz0o1SsIAGze
+         osS1NGDv6/B4Y37VHk67BFeM304rEEHuhtAXy2UgK3QVdFnktFNThP6KhNgTF9JzHiEk
+         spngDgEePrrTh6uGqF5fE/bf6n5RxzGN8ehft7rAS2kuL8c+RK3rHiKqIgxykCtMnuqa
+         8goA==
+X-Gm-Message-State: AOJu0YwwN/2cs33TIC9UennMoMJYNNFpQg7yhoGSggYP/FainpsG/YHh
+	2XRSeVHAz9dHbu9+XqNmiYE9nRN2E/EKhDAU0VsTZMEeRKeoUGINerkpFspJ+Q==
+X-Google-Smtp-Source: AGHT+IHQqhtGtE9tvxLfm8Jh6wSQPY6ndh8+WXu/q2oaOTBz/QmJS5CUhGvF7oYJsnqJUozYFMpHQw==
+X-Received: by 2002:a17:903:22ca:b0:1ea:2838:e599 with SMTP id y10-20020a17090322ca00b001ea2838e599mr199000plg.17.1714582193896;
+        Wed, 01 May 2024 09:49:53 -0700 (PDT)
+Received: from google.com (100.22.168.34.bc.googleusercontent.com. [34.168.22.100])
+        by smtp.gmail.com with ESMTPSA id db5-20020a17090ad64500b002a53b33afa3sm1576661pjb.8.2024.05.01.09.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 May 2024 09:49:53 -0700 (PDT)
+Date: Wed, 1 May 2024 09:49:50 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2] clk: samsung: exynos-clkout: Remove misleading
+ of_match_table/MODULE_DEVICE_TABLE
+Message-ID: <ZjJyrkNfWQR3tsGM@google.com>
+References: <CGME20240426092626eucas1p23da5ce328d98bc13e721c2c88caa2247@eucas1p2.samsung.com>
+ <20240426092616.4187022-1-m.szyprowski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/21] pinctrl: samsung: Use scope based of_node_put()
- cleanups
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>,
- Wells Lu <wellslutw@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Emil Renner Berthing <kernel@esmil.dk>,
- Jianlong Huang <jianlong.huang@starfivetech.com>,
- Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Viresh Kumar <vireshk@kernel.org>,
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>,
- Ludovic Desroches <ludovic.desroches@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org,
- imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
- openbmc@lists.ozlabs.org, Peng Fan <peng.fan@nxp.com>
-References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
- <20240501-pinctrl-cleanup-v1-8-797ceca46e5c@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240501-pinctrl-cleanup-v1-8-797ceca46e5c@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240426092616.4187022-1-m.szyprowski@samsung.com>
 
-On 01/05/2024 14:56, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 04/26/2024, Marek Szyprowski wrote:
+> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
+> module driver") this driver is instantiated as MFD-cell (matched by
+> platform device name) not as a real platform device created by OF code.
+> Remove of_match_table and change related MODULE_DEVICE_TABLE to simple
+> MODULE_ALIAS to avoid further confusion.
 > 
-> Use scope based of_node_put() cleanup to simplify code.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c |  3 +--
->  drivers/pinctrl/samsung/pinctrl-exynos.c     | 16 ++++------------
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  8 ++------
->  drivers/pinctrl/samsung/pinctrl-samsung.c    | 26 +++++++-------------------
->  4 files changed, 14 insertions(+), 39 deletions(-)
+>  drivers/clk/samsung/clk-exynos-clkout.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> index 85ddf49a5188..9a57b3ceb536 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> @@ -56,7 +56,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
->  		       const struct samsung_retention_data *data)
->  {
->  	struct samsung_retention_ctrl *ctrl;
-> -	struct device_node *np;
-> +	struct device_node *np __free(device_node) = NULL;
->  	void __iomem *clk_base;
+> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+> index 503c6f5b20d5..e2968784d307 100644
+> --- a/drivers/clk/samsung/clk-exynos-clkout.c
+> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
+> @@ -75,7 +75,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
+>  		.data = &exynos_clkout_exynos5,
+>  	}, { }
+>  };
+> -MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
 >  
->  	ctrl = devm_kzalloc(drvdata->dev, sizeof(*ctrl), GFP_KERNEL);
-> @@ -71,7 +71,6 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
->  	}
->  
->  	clk_base = of_iomap(np, 0);
-> -	of_node_put(np);
+>  /*
+>   * Device will be instantiated as child of PMU device without its own
+> @@ -237,7 +236,6 @@ static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
+>  static struct platform_driver exynos_clkout_driver = {
+>  	.driver = {
+>  		.name = "exynos-clkout",
+> -		.of_match_table = exynos_clkout_ids,
+>  		.pm = &exynos_clkout_pm_ops,
+>  	},
+>  	.probe = exynos_clkout_probe,
+> @@ -248,4 +246,5 @@ module_platform_driver(exynos_clkout_driver);
+>  MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+>  MODULE_AUTHOR("Tomasz Figa <tomasz.figa@gmail.com>");
+>  MODULE_DESCRIPTION("Samsung Exynos clock output driver");
+> +MODULE_ALIAS("platform:exynos-clkout");
 
-I don't think the code as simpler. Previous was very easy to read,
-obvious, no error paths.
-
-To me any conversion of such of_node_get immediately followed by
-of_node_put is unwelcomed. Easy code is being  converted to complicated one.
+As mentioned by Krzysztof in v1, please create a `platform_device_id` table so
+that this is scalable in case we need to add other aliases in the future. For
+example, something like this:
 
 
-Best regards,
-Krzysztof
+static const struct platform_device_id exynos_clkout_platform_ids[] = {
+	{ "exynos-clkout" },
+	{}
+};
+MODULE_DEVICE_TABLE(platform, exynos_clkout_platform_ids);
 
+static struct platform_driver exynos_clkout_driver = {
+	.driver = {
+		.name = "exynos-clkout",
+		.pm = &exynos_clkout_pm_ops,
+	},
+	.probe = exynos_clkout_probe,
+	.id_table = exynos_clkout_platform_ids,
+...
+
+
+Thanks,
+Will
