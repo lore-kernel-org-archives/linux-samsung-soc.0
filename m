@@ -1,119 +1,175 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45744224F6
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 May 2024 07:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F8F22F00
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 May 2024 07:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714633398; cv=none; b=BrdXsfvh9eIIL2WST4pKGCKbOsUioBTNXUdiMkkfeEXqrj60B1YyvuImeb8mxeszOyTsPZhdnNa3ZHEfWwOoQNZ5Pe9JXXTEfceeAfc085q4RItorG2qZYYyoWwUR+OI+ED3A8xZrL58t5CoaFGHDhEyZWd4SyXd6crCbAZZiEI=
+	t=1714633543; cv=none; b=P/MfpkonYM6/X0ug1WMQIQqpVK1qYFKFIM2BbRDXd6QUSVOKfkJYVm2TQwsvclCsk7Y/1Rmxtrmv8UIr8k5i7xGiOozfElJPjVLo/y4stTzCKN/m7XI3zpZkqfITeqMpriqo2xwhfKQw36MQSZCuDQdQfCHE+wtxgyYbn8zzkbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714633398; c=relaxed/simple;
-	bh=HioLiSxaTT3L9jLeBVE08Icv/6BMDP4b5Tqu4usekps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OOXRXD645K8liSX58+LnDmaf7OliKVFplaMCBrsxA8pJb+So29NnJWZqoOzWG6xK3yJATiLzLS7gIN+lWQ1MyVaXu6SoPzUuY2/Sbyc0kNMhjcP+OP7xrVsQBy2K1hQKKEH79vxsKbR33GIuDY1yqkqlvjJQpXUWklRMB6D2VIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tC4XrcGp; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1714633543; c=relaxed/simple;
+	bh=jmCz2bzZzN6llSSfnEw77N01jtx9utNXMW5o87pvL2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbzNZJWFAXXq3Yp5gxe+XLX/nQuUQl7qftPawRLZN5AoR12vmIXvCrER/GbrZvt1B3M9S9On5QAh+3f+DS2YjJzDbfYoCY35jlDw0uRtYIEknCtyLvwAtZO39H9Xeh7UhD7cIBl6HbmTP6ShcD5OXZNXvyh1muehXQEhonIBLWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zOqxvveo; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tC4XrcGp"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56e48d0a632so11716497a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 May 2024 00:03:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zOqxvveo"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d8a2cbe1baso99259631fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 May 2024 00:05:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714633395; x=1715238195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gT0wZEscSYeblV//UK2U7Db5HieDrFtfc03MYGL1w1I=;
-        b=tC4XrcGpXLmDW5X+LEYIKp2hmfXHghh3p+yP+5Vm9YjUqNGm9MnPlBJWj1Qm45DsfW
-         22dvCvctBtpXlV4AXA0e/o4z14zC5u+PgoZlDVfvG9IQr91DR96i+iG04yu67Y8TrNoQ
-         8X06HRunxGrT1JX+XbFQnVRnwraavdNiN42w7v8V0jX29EO0Jl9jmufenxq+Yr5bfJ7F
-         SZkqKSedGjdPPDA4Z9srZYKhAoGMMv6GruGsF6b2shZh0MLeJHJZVDOiWxgXgvhZfv3V
-         wUWGSD0NKkW9q+NUU2kA+jIY4cWMda8uK4CySJO2grmS1jmfb1vDPsmtbe05MLW0m83k
-         lVYA==
+        d=linaro.org; s=google; t=1714633540; x=1715238340; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V3T3S0/ACanJIeY4czsTT+RTZ1YRol9ljsewIaXQads=;
+        b=zOqxvveoh0antj8BAs4hQvuiDTYMLbFX6Gto+PdQ7hl2MT62tfWZ1Q4ZYhaHtnVVxK
+         VVpIqua7oEgqKx3G5v7d2vMuiLxkb0DlfBC3p4BM6nOdVMlUsIaa+kTJlCIs9k+ewaLj
+         +KokrfVL9ldJ+4TJr2CkZZCuYk3e+4dtfQqK8vXBnTStehYk9i28w8+//9db1Hjq3xR6
+         odXInKjwg/237Fd3XORDBm98Y/J3mpbj05871x7CBdGrlMSDjRiYB3JQ9i41PFCs1hPh
+         AOXbZsuPil/A2+4TO+/4QX3QT9lTJoewkZtR+VgILuC75Jwk89aEQyUtsGgAp75ZxmWa
+         wVJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714633395; x=1715238195;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gT0wZEscSYeblV//UK2U7Db5HieDrFtfc03MYGL1w1I=;
-        b=PXWCnPlJ4NLc+9uNHWnSy/ppt5aToA0cLqWa2VU2SoVAVgRUDh40N25fjVel6y3edo
-         lA6UjMuViwtisoAeBD5Ks4u1lbMhvbar9vUpnePmwrKVJNkO0xuahL0bXD1ZvAqJ0Fet
-         MQFDk2t7cjeP3BIZoYxm8Wd8q0Wp2dQReGps/7oiHHzk5c8YNtilXTURKPVlbkjrCgS4
-         RAE3X1NaAHZrDWl0C9A8OYp2EcXMMmpHonV5NRqIv94AstvGPIyIaBaV0kNZZhkBNlRf
-         RdbAeCOvHmaLU+EU+w3S3WVrsXz8cXpNRyidX+3yBNY/zZ4uK7E+EraSWKrFWL6Lq8Vf
-         LZSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3xzA7ZLUAz0Qa4Od23xup5lcvAaYHR9XNnVYLgr1RlTcA/KgpqrP7HeYnvHJ+vNXgUm/ZFZ8B9Cy7rH535x1lC9QZ8Dleeb5LahMMUj3RoZk=
-X-Gm-Message-State: AOJu0YyRr4rM9tWpI1A6EXJeAhNaHqPbPFdz2KqvbNjKDwohJIV+cZ96
-	c2I5mn1pOgKZb0+EEZ3rfwUyRtpXdv25avk2KeyAQXbb9f54FwJ4O/cCP9vzr+U=
-X-Google-Smtp-Source: AGHT+IHFpFEqlXM3zz6rJKm3I8vjCOOz+uryNLLCBIGYAJc6l96B5NrBVV8YYabtH9jAVna9mDuoZA==
-X-Received: by 2002:a50:cc9b:0:b0:572:637b:c7e1 with SMTP id q27-20020a50cc9b000000b00572637bc7e1mr1146508edi.21.1714633395016;
-        Thu, 02 May 2024 00:03:15 -0700 (PDT)
-Received: from [172.20.10.10] ([213.233.85.172])
-        by smtp.gmail.com with ESMTPSA id d25-20020aa7ce19000000b00572a7127cb0sm182422edv.50.2024.05.02.00.03.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 May 2024 00:03:13 -0700 (PDT)
-Message-ID: <b3621642-485f-42d4-a9d2-0ccca63e219b@linaro.org>
-Date: Thu, 2 May 2024 08:03:10 +0100
+        d=1e100.net; s=20230601; t=1714633540; x=1715238340;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V3T3S0/ACanJIeY4czsTT+RTZ1YRol9ljsewIaXQads=;
+        b=LOgxJlvoMBhhC2IgDlzy3bOa1NRawjY0oTItP+ijuYWayJcTChN5+5ijZ4cJ5ETcyv
+         VQvjgas41VYlMMFH7M10HesGWSl4TLy5OKtp2kOM5bXeKAY5r15825v3rmTvsoB9vr/v
+         3ikgGZv4tJ5HITFAz2Fn9L69qavLcBJdHH36XpseXSu4GdtyIXlNfT4NFypp1aZLaiYS
+         qE5ZqbQpD5fpueK4N8mypMZjO/CxID4kiiWI9DNWc/GocW/POX1dZtHL3UhmjbbWep39
+         qi8tWiez9ctD0X+iLk3t2zWUtze0iReIAp9z0WvbL5S+oTxYXHHfzdJ0rlXhoqbZGH02
+         kEQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwU1ceRQg8OHWwft+lBGgAZORQsUhDELKIL0V7vBz1cVjme+JKhEXltm/rIE4zPYh6Up/mcZK+t+jX3wh2mRNUnvlXt+MZ5eeUSN4kFd1XmFQ=
+X-Gm-Message-State: AOJu0YyQIC/Ln2fyBs11yncY7OJ6/y5FnAWGkF6JvwaRhfuYv0m0GlOq
+	hZV3G+GAc70ZHnjA6nwHIReJiMIj86yu3zv/7GyO9VIWCk94sYYdqior5NGbzu8=
+X-Google-Smtp-Source: AGHT+IGHVWuyebZDGCsij4vuuCGXUnlNacdJhnGzP0jhAixWhDpzQ1nmi4t3DPfRBlZrMwTir+WhcA==
+X-Received: by 2002:a2e:a58e:0:b0:2d9:fb60:9afa with SMTP id m14-20020a2ea58e000000b002d9fb609afamr1096872ljp.40.1714633540084;
+        Thu, 02 May 2024 00:05:40 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id q26-20020a2e969a000000b002d860a40f9dsm69420lji.136.2024.05.02.00.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 May 2024 00:05:39 -0700 (PDT)
+Date: Thu, 2 May 2024 10:05:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+	"soc@kernel.org" <soc@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Aisheng Dong <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	"Ghennadi Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
+Subject: Re: [PATCH 01/21] pinctrl: ti: iodelay: Use scope based
+ of_node_put() cleanups
+Message-ID: <26aab31b-8085-49e0-862d-24c26ff4d02c@moroto.mountain>
+References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
+ <20240501-pinctrl-cleanup-v1-1-797ceca46e5c@nxp.com>
+ <ee5c8637-b8b2-491b-b011-e399942691dc@moroto.mountain>
+ <DU0PR04MB9417AD5892A1A45E6AE18D8688182@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: gs101: mark some apm UASC and XIU clocks
- critical
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com
-References: <20240430-gs101-apm-clocks-v1-1-b2e2335e84f5@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240430-gs101-apm-clocks-v1-1-b2e2335e84f5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU0PR04MB9417AD5892A1A45E6AE18D8688182@DU0PR04MB9417.eurprd04.prod.outlook.com>
 
-
-
-On 4/30/24 10:54, André Draszik wrote:
-> The system hangs when any of these clocks are turned off.
+On Thu, May 02, 2024 at 12:28:42AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH 01/21] pinctrl: ti: iodelay: Use scope based of_node_put()
+> > cleanups
+> > 
+> > On Wed, May 01, 2024 at 08:55:59PM +0800, Peng Fan (OSS) wrote:
+> > > @@ -879,16 +874,12 @@ static int ti_iodelay_probe(struct
+> > platform_device *pdev)
+> > >  	ret = pinctrl_register_and_init(&iod->desc, dev, iod, &iod->pctl);
+> > >  	if (ret) {
+> > >  		dev_err(dev, "Failed to register pinctrl\n");
+> > > -		goto exit_out;
+> > > +		return ret;
+> > >  	}
+> > >
+> > >  	platform_set_drvdata(pdev, iod);
+> > >
+> > >  	return pinctrl_enable(iod->pctl);
+> > > -
+> > > -exit_out:
+> > > -	of_node_put(np);
+> > > -	return ret;
+> > >  }
+> > 
+> > This will call of_node_put() on the success path so it's a behavior change.  The
+> > original code is buggy, it's supposed to call of_node_put() on the success path
+> > here or in ti_iodelay_remove().
+> > 
+> > If it's supposed to call of_node_put() here, then fine, this is bugfix but if it's
+> > supposed to call it in ti_iodelay_remove() then we need to save the pointer
+> > somewhere using no_free_ptr().  Probably saving ->np is the safest choice?
+> > 
+> > The original code is already a little bit buggy because it doesn't check for
+> > pinctrl_enable() errors and cleanup.
 > 
-> With the introduction of pinctrl clock support [1], the approach taken
-> in this clock driver for the APM clocks to rely solely on the
-> clk_ignore_unused kernel command line option does not work anymore and
-> the system hangs during boot.
+> It was introduced by 
+> commit 6118714275f0a313ecc296a87ed1af32d9691bed (tag: pinctrl-v4.11-4)
+> Author: Tony Lindgren <tony@atomide.com>
+> Date:   Thu Mar 30 09:16:39 2017 -0700
 > 
-> gout_apm_func is a parent clock to the clocks that are going to be
-> handled by the pinctrl driver [2], namely
-> gout_apm_apbif_gpio_alive_pclk and gout_apm_apbif_gpio_far_alive_pclk.
-> It also is the parent to the clocks marked as critical in this commit
-> here (and some others that aren't relevant for this commit)). This
-> means that once the pinctrl driver decides to turn off clocks, the
-> clock framework will subsequently turn off parent clocks of those
-> pinctrl clocks if they have no (apparent) user. Since gout_apm_func is
-> the parent, and since no drivers are hooked up to it or any of its
-> other children, gout_apm_func will be turned off. This will cause the
-> system to hang, as the clocks marked as critical in this commit stop
-> having an input.
+>     pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
 > 
-> We might have to add a driver for these clocks, but in the meantime
-> let's just ensure they stay on even if siblings are turned off.
-
-It's sane, yes.
-
-> 
-> For the avoidance of doubt: This commit doesn't mean that we can boot
-> with clk_ignore_unused.
+> of_node_put is expected in probe, not in remove.
 > 
 
-s/with/without. Because there are still other clocks that are not yet
-handled/marked as critical where needed. There's still work to do.
+Ah, right.  You'll add that for the Fixes tag obviously...
 
-With the typo addressed:
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+regards,
+dan carpenter
+
