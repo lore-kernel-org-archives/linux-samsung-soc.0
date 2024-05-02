@@ -1,59 +1,33 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F255224EF
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  2 May 2024 07:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5E5225AE;
+	Thu,  2 May 2024 07:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714635676; cv=none; b=OGtIsLeNaa1x/Q4Z+KhKsvfKkrCF0UCzlD9FKBDA+cmvZHhVjNplvynIH0ku9O5t+lqqVKwyByTKycNq4DKKCDtbxstBwJIjnKj2IM9woY10hfgaZY9QSj8jOW2+F/4T0H8LRnm4tzpQdrmzMR2HZvJc95Ko3/f8XV7VIh/Dr+c=
+	t=1714636002; cv=none; b=qSIgTowmFLNUy+EECZSJZhTIBPAGy2G/m3enHv3XQMGVdY+svF5hfOnx7jhkQ+zutja8vXiVO7FumiYUsA1aBy4Xu7clKo99dZu0DX3hViYnWnR64GeQWmplyI41Ipk4YWBzmdW4x6A60pwofMEKXZymtVbb54tAUlsHEmJFoDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714635676; c=relaxed/simple;
-	bh=zABtKC+Rtoh7jI4D99cudXvLlTLkH2cSA0Kfdm54lQw=;
+	s=arc-20240116; t=1714636002; c=relaxed/simple;
+	bh=51OpcgVVRLpo30BsMQIvjTqnAxBAwx6Vvn/ZEENsG0A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O7jIqmd93n200ntYqSkvk3zeOZBNbNpgB6Hi9y7+K2blybF9baVZsP82PGd0a3R/a6CGt2fSyHdl4In2QuabyZPimg+OpLXxt9TyqSdgPpf/Esd4J/83scsEOL3+OVK4HA9gGFrixkD3YveL0TedBIyTmTy/1MzKCwO/sKglneQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEvfHznr; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=KpWL+ukCedUHUTwhf+QtrOjTOLnmDFOXVq9qNpTI0owjc2x4zlcz4pIgFhF2VUg0QqpqKN7u9GuFZOc1OtBluDPc6W44Ud2FHPGP7x/vVqBGXZzos05Nwg8cuVdfc9c6peesdY+dtjzrjMUB/H466kFPWgxJmHuKqAR6BxnWQdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR2mCp3s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEvfHznr"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a58e787130fso263170666b.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 May 2024 00:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714635672; x=1715240472; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Q2C006YjdfPOCf5/2sNCH0MuBR/EBBXkcEnDcvy0KM=;
-        b=hEvfHznrQGIHw6Oxw9hqIYbiE0jrtzkUrHvwH/Bs1QQfvC0tpoE7hK5Pp4h6u2jizY
-         UGBQKK/ZOlrl898RWELZOVPaQBN/zjzx38781a7nhMKWN3z+dfRvr4DtuAZ6l2phrSvE
-         G2hTa/TyNCIlGQKRhjNQ0onh33cjCSmczsv5V88S6RphNblHRL1i0PGASYUQSwcRQJSI
-         OLQCERFG6re06EYXcEZRAMqBIYisN0lrKscrgpfqTHi/lE8juzLG37fh9raW2OIhBl2g
-         FnWIJue+9lhbAr3hp4IvfVq8SzYCKKzfdThf++a/oHYvrc/lwqDaMUGnV1nlpGgBSwFn
-         OVHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714635672; x=1715240472;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Q2C006YjdfPOCf5/2sNCH0MuBR/EBBXkcEnDcvy0KM=;
-        b=JkDUzYl6l3vVCkxXCOggqMqHJtiMz5a+0NwovdoD9imvn9hZDl7Vvcip3SK/oP8VW3
-         dvi7G4koIIUTcsDqwv+L7AOE6M7CvETJhL++PH4fBMz+c7ZpqQ8KlY0FYYkqBeKoIV3t
-         45sx6aA6gsi8iLkkxHUtgUjr1lgEuVZUA8syBcur2AoiK+snlQwT0qadruHULuEMletR
-         Ba2diQZSCZOJ2XEdVohPsxy9OLjGv7fX1GH06foQiIzaeEWLxBaAs9vrclxHRhJ7iqlF
-         LR9H01KgQ3DRp7yv/MA+h353+Gd9fkNHYxeSPVKc+QOe3ovLvkNGD68itTvwxHCm3ktL
-         mVfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0kQGkdZEiHJGjIiOULj+thuaVJDoqPOIHXLdtZ/ac5fxYlSXWlTuM8vJ3Zz/WNQCOrbF/dxdqqlBzGapBqvhXUAoehZoA3hATG1A5O6q7jjc=
-X-Gm-Message-State: AOJu0YyOMQn+qhiY7C/STjdNsY93sUGvks5LIOoCCUAgTyjigIR3VK33
-	26RHwBf/qtnwSnwX47saYCikTfe9+90+R1kr1a9JDIJElxBPzSX8UiT77m681bQ=
-X-Google-Smtp-Source: AGHT+IFP6c4sujTOMTIqEmlCFgQb9BiI3UfyLMTVFf3tUx1jI6Xp+ozJDDd4kk44gM2ZM9XkX8ZcNg==
-X-Received: by 2002:a17:907:7d94:b0:a59:5693:d709 with SMTP id oz20-20020a1709077d9400b00a595693d709mr1777751ejc.30.1714635671861;
-        Thu, 02 May 2024 00:41:11 -0700 (PDT)
-Received: from [172.20.10.10] ([213.233.85.172])
-        by smtp.gmail.com with ESMTPSA id n26-20020a170906089a00b00a587868c5d2sm229664eje.195.2024.05.02.00.41.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 May 2024 00:41:11 -0700 (PDT)
-Message-ID: <ea6f17d7-49bf-4a1e-ba3b-757e29221590@linaro.org>
-Date: Thu, 2 May 2024 08:41:06 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR2mCp3s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68726C113CC;
+	Thu,  2 May 2024 07:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714636001;
+	bh=51OpcgVVRLpo30BsMQIvjTqnAxBAwx6Vvn/ZEENsG0A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SR2mCp3sCShgNeqyqia0ej5cXOBh5f1/unNiRm+Y8gLXd/SV/HcrnRsdL/wPanEau
+	 TG5sF3JddlIvTst8MOCY3+zVEY0u33sB7tF2ZM0s55tMYKz2GzNm+rKbBmlJ0zaECK
+	 /b61gxM+oj5uRh5g+eOgRGznSS8yLzRVQSj4f/LS1nqEpKvCMujxxaeS6BXU5Lz/5Q
+	 uU1us66L0QkAcQ6WCWfQlMq4QvKS9XattzWqoMTFpUzommjio/RndVx1hjS/BLZr/3
+	 pSTAvqUdXwlILYiA8hztNuv6qkj29EA8oavsS+ldAIYzyhwjFjBglREQKArZkdqnK9
+	 cBzOrTMLeV8VA==
+Message-ID: <9a960401-f41f-4902-bcbd-8f30f318ba98@kernel.org>
+Date: Thu, 2 May 2024 09:46:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,8 +36,8 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 2/2] pinctrl: samsung: support a bus clock
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Alim Akhtar <alim.akhtar@samsung.com>,
  Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
@@ -76,54 +50,79 @@ Cc: Will McVicker <willmcvicker@google.com>,
  linux-kernel@vger.kernel.org
 References: <20240426-samsung-pinctrl-busclock-v3-0-adb8664b8a7e@linaro.org>
  <20240426-samsung-pinctrl-busclock-v3-2-adb8664b8a7e@linaro.org>
+ <ea6f17d7-49bf-4a1e-ba3b-757e29221590@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240426-samsung-pinctrl-busclock-v3-2-adb8664b8a7e@linaro.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ea6f17d7-49bf-4a1e-ba3b-757e29221590@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi, André!
+On 02/05/2024 09:41, Tudor Ambarus wrote:
+>>  
+>> @@ -223,6 +268,13 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
+>>  	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
+>>  	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
+>>  
+>> +	if (clk_enable(bank->drvdata->pclk)) {
+>> +		dev_err(bank->gpio_chip.parent,
+>> +			"unable to enable clock for deconfiguring pin %s-%lu\n",
+>> +			bank->name, irqd->hwirq);
+>> +		return;
+> 
+> but here we just print an error. I guess that for consistency reasons it
+> would be good to follow up with a patch and change the return types of
+> these methods and return the error too when the clock enable fails.
 
-On 4/26/24 14:25, André Draszik wrote:
-> @@ -200,6 +235,14 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
->  	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
->  	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
->  
-> +	ret = clk_enable(bank->drvdata->pclk);
-> +	if (ret) {
-> +		dev_err(bank->gpio_chip.parent,
-> +			"unable to enable clock for configuring pin %s-%lu\n",
-> +			bank->name, irqd->hwirq);
-> +		return ret;
+That's a release, so usually void callback. The true issue is that we
+expect release to always succeed, I think.
 
-here we return an error
-> +	}
-> +
->  	raw_spin_lock_irqsave(&bank->slock, flags);
->  
->  	con = readl(bank->pctl_base + reg_con);
-> @@ -209,6 +252,8 @@ static int exynos_irq_request_resources(struct irq_data *irqd)
->  
->  	raw_spin_unlock_irqrestore(&bank->slock, flags);
->  
-> +	clk_disable(bank->drvdata->pclk);
-> +
->  	return 0;
->  }
->  
-> @@ -223,6 +268,13 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
->  	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
->  	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
->  
-> +	if (clk_enable(bank->drvdata->pclk)) {
-> +		dev_err(bank->gpio_chip.parent,
-> +			"unable to enable clock for deconfiguring pin %s-%lu\n",
-> +			bank->name, irqd->hwirq);
-> +		return;
+This points to issue with this patchset: looks like some patchwork all
+around the places having register accesses. But how do you even expect
+interrupts and pins to work if entire pinctrl block is clock gated?
 
-but here we just print an error. I guess that for consistency reasons it
-would be good to follow up with a patch and change the return types of
-these methods and return the error too when the clock enable fails.
+Best regards,
+Krzysztof
 
-Cheers,
-ta
