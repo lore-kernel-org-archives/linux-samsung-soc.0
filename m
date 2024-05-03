@@ -1,141 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6B9146D4B;
-	Fri,  3 May 2024 09:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869C713959C
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 May 2024 09:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714727595; cv=none; b=ZPcGbs5qqrSDumqzPc0HatnGC2f3xUxotCm/oulyIxN2iZxnpR/rJR5f2L8uwq3NI1lZvHr/4YphirWr80wlSe1n22tD0qzy3d3Tcz4MCpN2poXRq+urm6UBFd5q400KqXAz8qOan3JuMw6whjbNH9JwpRc4ESIM7FRqR0n8jN4=
+	t=1714728611; cv=none; b=VZdgnvuDD3J4SRP/qI08UphCm1g79eka9tDalLMO1RV/YNh7c4/SB2vRfoj337g7LhSe8jb0Rtk+Qv3iDSXEwEh8d8e4G8CiNKUqc0k8y7MqV9m6Iw5uhushEsYmkGHzC8IYcgXx4SbkUOVrlxz9yiW17oELeSu6mkVl/qZIkWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714727595; c=relaxed/simple;
-	bh=3LaUaAv7CyMgsmPwhMzjeWmmLQOKPPAU1rg5+fLg16Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Akz5aPQWVFLeH3C0yX62tyAlATK181UBEji1DFiEQZzk/G2xXonEZPKNg2C1ONVq+HNZjflc3HCE+/D7Zm2rEMC7msuKuF3ZcYLMGjCC0KiSIdyFaYHsdz7qlBHrw1KMtHx5EBpy+oxhMuuUBVdEbmmMheRGWIVRGXO/im43hZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X14Yt8iO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714728611; c=relaxed/simple;
+	bh=ZNb2/oSuDvsekJbrUvzVBARQvr1M+l1FF1dsoV5we18=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KxnPSgGDTnOMgWb6OUmqarGkjCNS7Rf38qex5lMZf/j5OX/fs09b+ql7epioG6YQElMD08FQXTAcMwUcZX74RuwT+zVVZiqjTodcM5zN7fFZeEu06t0IX5SuzF7KZtg6Qgtib7yRsZRpeM4odeiO2V/o74ZOMowO1nCkTfCN2UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=grBC8Hap; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X14Yt8iO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6B6C116B1;
-	Fri,  3 May 2024 09:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714727594;
-	bh=3LaUaAv7CyMgsmPwhMzjeWmmLQOKPPAU1rg5+fLg16Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X14Yt8iOniJkilrmKoZkCD67RtnmMu1YNUsyONG1snPV1Xl2iOjt5G/S9DDBkqhDE
-	 +oLAX5nuJ2lbJuEGOQrMsxSVlWclgAXvyouhYBOqERsC8trTUQrVNf2Hp1pyRA5NbP
-	 15cwS8bOq57cZfaShsVHT9DoPy8EWK1REvCTtkV41JybZBF1PYKJJ9TT0OgM8G5fr2
-	 octBJP4J3rV0uBoP6x6WaIolQcXWFYOXiR5g8gIwfGeBPg96F5L+vOLKWa2nBQN8/4
-	 C0gM8lCFunDpmlEbheXfKT1e30qNKHZ1F68YMQeI1J4qwo0pFUtSREJ7PzjUer6gEJ
-	 xRS1eqReFgfZA==
-Message-ID: <c39eab66-4e78-4f24-bcaf-003161b38ed0@kernel.org>
-Date: Fri, 3 May 2024 11:13:06 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="grBC8Hap"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41bab13ca4eso47983515e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 May 2024 02:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714728608; x=1715333408; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KULRcTjxfat7nflWft5bz9NukEzEddiZ2lggi8GzZ0E=;
+        b=grBC8HapctbhvTbub7vtfg58qy5UOfQxyjgAjDMr32V+DGEd/69rY110u70yzZlY6a
+         YmTPKt6IV/MsENRwslhCcbDgSBGDe4k4WwzTlYIt+UO878ZX9DsXIkIBMxVOx1zoJcMY
+         FgyP0o6IbUbVXaV/zQE9StkIZtrzmXk2HHCRqlXL4sUGRIgGwR6+/lv89I0zWRDMwEYT
+         G/IBabHtyjy3TnI+0zk87noYm/ZWO0Zw3J2clS2bjmnsg/8KU+9cPmQN6GJ1G5t4k8al
+         m5T7fR3TvFhtVSnfpYMK9+YV2RvBLszqst1ruyBDcymP28MMtXB2/tAKCpwzjRoyeK5+
+         Xd6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714728608; x=1715333408;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KULRcTjxfat7nflWft5bz9NukEzEddiZ2lggi8GzZ0E=;
+        b=wmVR7g1oUmlE+aRsPEgKkBi2mFvLdcV0fm+ZZ5WldDrD147MDBCh4mfO9kir167GvT
+         dAJrmPUo77Mn51oCDOwTss6sX/FRUfP0quMizbqnO2xbVQ8P6FZkVFk8ws0XoeQf1ehk
+         HYim2Io/SqIurW9wnPlJ0sqWVttKj3t1/4Bc1qmSBafgDCpQLYl8x4kbh4NJxFwjalCb
+         2wahdXZiA0+X0aVy4CI5HC5MeQl1LlSHECnSDa9Dqa1JpLyHwIIP7KmFIgSoyUlOOVmj
+         xjDJOZ/zXC1cCKsMDatbvW6CG22JGghN7l3nbPkawZPJUq8VVItdV9Idf+Fq1ln3m4Qd
+         DJ8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUOJkQJKB6U6pP8ycH5UOXgfb0NIxgBnjIeLM61vFkHMQnCLOqZK+n42gFOxsW7bRmzUJNbFtxGz5mE4IFa9XrMBIQPk86BpGSBc4bc6lsmo68=
+X-Gm-Message-State: AOJu0YwvWDVqd0hGkEo3WeU69IrLMkVfVovY+oPdLvZoJFV9LFfYqOay
+	cq0y+N+IwwnskPVjbdwkLl3OhBT0b5JaSX2espCrf7nKMZOMyg6b37iJXRgGfwA=
+X-Google-Smtp-Source: AGHT+IFMjfL7kc5atSQVs5RqNDVKOWw0871oLlfuW3vxv/8yUSCVntr1NwQgjxnL3bhXh2tYDPwLzw==
+X-Received: by 2002:a05:600c:a01:b0:41b:13a3:6183 with SMTP id z1-20020a05600c0a0100b0041b13a36183mr1736973wmp.24.1714728607700;
+        Fri, 03 May 2024 02:30:07 -0700 (PDT)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id bi9-20020a05600c3d8900b00418db9e4228sm4988571wmb.29.2024.05.03.02.30.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 02:30:07 -0700 (PDT)
+Message-ID: <0106b6f58ce19752c2c685d128e5a480103ee91c.camel@linaro.org>
+Subject: Re: [PATCH v3 2/2] pinctrl: samsung: support a bus clock
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Peter Griffin
+ <peter.griffin@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, Sam Protsenko
+	 <semen.protsenko@linaro.org>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 03 May 2024 10:30:06 +0100
+In-Reply-To: <c39eab66-4e78-4f24-bcaf-003161b38ed0@kernel.org>
+References: <20240426-samsung-pinctrl-busclock-v3-0-adb8664b8a7e@linaro.org>
+	 <20240426-samsung-pinctrl-busclock-v3-2-adb8664b8a7e@linaro.org>
+	 <ea6f17d7-49bf-4a1e-ba3b-757e29221590@linaro.org>
+	 <9a960401-f41f-4902-bcbd-8f30f318ba98@kernel.org>
+	 <c4c73732595b067369a6c8d71508d54358962552.camel@linaro.org>
+	 <c39eab66-4e78-4f24-bcaf-003161b38ed0@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] pinctrl: samsung: support a bus clock
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: Will McVicker <willmcvicker@google.com>,
- Sam Protsenko <semen.protsenko@linaro.org>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240426-samsung-pinctrl-busclock-v3-0-adb8664b8a7e@linaro.org>
- <20240426-samsung-pinctrl-busclock-v3-2-adb8664b8a7e@linaro.org>
- <ea6f17d7-49bf-4a1e-ba3b-757e29221590@linaro.org>
- <9a960401-f41f-4902-bcbd-8f30f318ba98@kernel.org>
- <c4c73732595b067369a6c8d71508d54358962552.camel@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c4c73732595b067369a6c8d71508d54358962552.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 02/05/2024 12:41, André Draszik wrote:
-> On Thu, 2024-05-02 at 09:46 +0200, Krzysztof Kozlowski wrote:
->> On 02/05/2024 09:41, Tudor Ambarus wrote:
->>>>  
->>>> @@ -223,6 +268,13 @@ static void exynos_irq_release_resources(struct irq_data *irqd)
->>>>  	shift = irqd->hwirq * bank_type->fld_width[PINCFG_TYPE_FUNC];
->>>>  	mask = (1 << bank_type->fld_width[PINCFG_TYPE_FUNC]) - 1;
->>>>  
->>>> +	if (clk_enable(bank->drvdata->pclk)) {
->>>> +		dev_err(bank->gpio_chip.parent,
->>>> +			"unable to enable clock for deconfiguring pin %s-%lu\n",
->>>> +			bank->name, irqd->hwirq);
->>>> +		return;
->>>
->>> but here we just print an error. I guess that for consistency reasons it
->>> would be good to follow up with a patch and change the return types of
->>> these methods and return the error too when the clock enable fails.
->>
->> That's a release, so usually void callback. The true issue is that we
->> expect release to always succeed, I think.
->>
->> This points to issue with this patchset: looks like some patchwork all
->> around the places having register accesses. But how do you even expect
->> interrupts and pins to work if entire pinctrl block is clock gated?
-> 
-> I was initially thinking the same, but the clock seems to be required for
-> register access only, interrupts are still being received and triggered
-> with pclk turned off as per my testing.
+Hi Krzysztof,
 
-Probably we could simplify this all and keep the clock enabled always,
-when device is not suspended. Toggling clock on/off for every pin change
-is also an overhead. Anyway, I merged the patches for now, because it
-addresses real problem and seems like one of reasonable solutions.
+On Fri, 2024-05-03 at 11:13 +0200, Krzysztof Kozlowski wrote:
+> On 02/05/2024 12:41, Andr=C3=A9 Draszik wrote:
+> > I was initially thinking the same, but the clock seems to be required f=
+or
+> > register access only, interrupts are still being received and triggered
+> > with pclk turned off as per my testing.
+>=20
+> Probably we could simplify this all and keep the clock enabled always,
+> when device is not suspended. Toggling clock on/off for every pin change
+> is also an overhead. Anyway, I merged the patches for now, because it
+> addresses real problem and seems like one of reasonable solutions.
 
-Best regards,
-Krzysztof
+I had contemplated a global enable of the clock on driver instantiation
+as well, but in the end for me the reasons why I chose the fine-grained
+approach here instead were:
+
+* Since the clock is only needed for register access, it seems only
+  natural to enable it during register accesses only. (The same would
+  happen if we had support for automatic clock gating in Linux).
+* If we think about external GPIO interrupts, they are likely to occur
+  very rarely (think button press by operator on some external keys or
+  I2C interrupts), it seems a waste to have the clock running all the
+  time.
+* drivers/i2c/busses/i2c-exynos5.c and drivers/soc/samsung/exynos-usi.c
+  also kinda do it this way. Bus clocks are only enabled when needed
+  (e.g. during transfer) (granted, the IPs (IP clocks) are also fully
+  enabled/disabled in those drivers when idle, and there is no such
+  thing here)
+
+
+Cheers,
+Andre'
 
