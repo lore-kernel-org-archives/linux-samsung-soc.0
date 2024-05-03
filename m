@@ -1,107 +1,123 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6E113959C
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 May 2024 08:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7556513959C
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 May 2024 08:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714725471; cv=none; b=VP1utRJhIfFgMxM/ZWqWSgfQxB00V4xXWU2CTK3XG2DWqkqi0YLmGg9TxojW9y1/ewCEeJqnT2uer7O5sEZQet3i+NafbMIVPcplbns6cB1nBJ1o1MK2GYq4lRkQ3Pi+9zjPcMf+AfLsJ5IO51iZUtg6pYLrYz2bQRT2pV210ug=
+	t=1714725602; cv=none; b=TJANUBYma+lLPh6fCPOtO8zmQGvmlBfel265fTFNfPIZtKF6AaZdkqIVnxjoBXvxR/7sAKFNJosVSXKSI3NKnh0pyWwAC++ohB3ku0DQqh3QNw3IL4qRgEbyfABMWTM/TsiSesv+jooBetEnIMs3ghqwHsWBp5AM9N3onJW7qSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714725471; c=relaxed/simple;
-	bh=f9s1YSiVD52aHqdBTeuwwIXhnNwvYW/1Dw/i3aVnEgc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Jr0wzFZQGQr15OSTPdWni8zGwldunp1uU9JbaF/xsAdd50Q3/NSoa0jOwgecogJ57RAXkeesuAn22g6xsFreUR9AQOwgomvzpzZmfQh3rvJgSUWi1g0vh4UbXBax/9diL36oGZTyOZGIe7WBFV/ydP4KMA5LNFzgVdNzB8Txv0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vWzV3HDd; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1714725602; c=relaxed/simple;
+	bh=6cqDU6nyC9QVmMog1BprNjYhQIvdazHuL/+8ud4VoTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=urYETYFU2DDcsYpn2bTP4HE0SD15z+mMRCXz21zNTuTxi3mmhTotUzuf2LXmnbaDy4BHsvMPCKqavAzjO+rwQ4pIq/pYfLHY/bYMmLfp7GSFeqr9MYimTCQd+gaJJQc+i0/0jCVHz3cqroR6ROIdpw3thhfDvijtMT4murEU0zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DC2q8hZ/; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vWzV3HDd"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41b869326daso50618045e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 May 2024 01:37:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DC2q8hZ/"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f174e316eso1892108e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 May 2024 01:40:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714725468; x=1715330268; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=djU56EKFkZeLFAmo+/c+p/uGgTnWE8lujhDLkE4pYF8=;
-        b=vWzV3HDdfFTw7vgESI+lFQzKbWXgGjlqLrdBOBCpngd+oav3VsFI9ur/mmVdGzjhyf
-         roDEDtFdFUQm7mtAMAPpMSKVo9f0PR6wJeXxhVo6VxJaiQW4UOgU8TVuwaIlBvaUoZpo
-         1RAcWfGAagD9/3uxW76EO1HfCrSI5hi+zQgBm0s8ghpmHqPtafFP4HNSMqHZtlfZDd2E
-         J/eFxI7Xh9+DRw+ZtwxbDqlKZaLfSnVT/Uku5s89qAc1/Xntzv0ALAeCAuTs1/NRZv7f
-         VHZ3XHxoLfzTIZdKvOphP1AaXdTbgyGbT3w8w9LwGJOJulOAMb/apld4QyZowt/ZU7ms
-         OpVg==
+        d=linaro.org; s=google; t=1714725599; x=1715330399; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xd2nsty2WG6SHHF8+nkpeQv9fDcTG+0JYjbHe+PLVZg=;
+        b=DC2q8hZ/ASRjwd1kEpdWbaje5M7aJvCYlmtaIXCJfYKl8F9sPrlL7j7lE5S2WFKETM
+         /FNg3lyC9b9CdIwTA4+OElvrBELNuldLre/zk/8sybAaUS5OKURNuHpcBtNoanJy/oxH
+         dnyEgJ8Z0cAfkJ98N3tSfQWFE0iCJcqInbduMRJP2V3KXt1i8n8KOXNBc/fqnmN/t8D8
+         slWzuNqNGRzLTi5LUgyJ6leKkPREjbZkBQfgXMwkXbgK2d4oIWWVD1RIxbekEvqYRAFU
+         SMiDPqRBY0tlmdc0M68EkM13K/W7+loRWlztKIe3HxnKDFnISWLYjOmha+FYpSRPWhu5
+         02XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714725468; x=1715330268;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=djU56EKFkZeLFAmo+/c+p/uGgTnWE8lujhDLkE4pYF8=;
-        b=whKGMntP9iD8X8m14gfRM7UMryo/IKPqXB0O2zzBO9Mh0Kc+kKuy+ZVY5ZHkFVqUIb
-         rOntilpnx111BmkonKALk0e8IT5d0jesPadcG+00QVszeqw970Y1Vom8hDfJ8LyVcR17
-         l84yaDxgTKEKdgD7RwDXCm6QRWSq3iRpIXW7Se0gLqQnZobenoxEku9xX0rdZlMLvx81
-         fU/jrgOsS+dcIwe9QTPcMttt3i8od0BYMzTzgzKO/VIcknBF5N8U0mt8kLERT1HF72s0
-         duMKyo2l59WoBNKPb+2VytMEXr65CZryfy00AVMMft9awRGuRTOL3UUxDhDB50tkfr3/
-         rAmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2f4kqPH/v08HyyXTFo36dei5/+tEyZGueJFplCzFa1ofqna9SzWmtjkWKd8ssFEMfy545AEz3F5pvJ2pbPy4WNKN4wka9iXzy6BFgVd8UUbc=
-X-Gm-Message-State: AOJu0YzobjiRWsH5A1MGhAkpC6z9HKZuPUS9nYs26BU+A39fGatxVykH
-	zrk6COsPqbFLcO6lIbkRG/3yCutw/ROSGPG8i/YzKx+AhwXNaqlzQSR66s2I6ZeSLERnmEv3+Qs
-	VfZE=
-X-Google-Smtp-Source: AGHT+IF+yo1CSmcm/XfdpTbc5DTYAMLCEwKlh3+OLYAB/T23+ydfBZUwmj5WVek8mohi3cyYFqC/5g==
-X-Received: by 2002:a05:600c:3d12:b0:41b:5944:d05c with SMTP id bh18-20020a05600c3d1200b0041b5944d05cmr1941642wmb.15.1714725468315;
-        Fri, 03 May 2024 01:37:48 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id s20-20020a05600c45d400b0041bde8ddce9sm8578461wmo.36.2024.05.03.01.37.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 01:37:47 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, 
- Sam Protsenko <semen.protsenko@linaro.org>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240430-samsung-pinctrl-busclock-dts-v2-0-14fc988139dd@linaro.org>
-References: <20240430-samsung-pinctrl-busclock-dts-v2-0-14fc988139dd@linaro.org>
-Subject: Re: [PATCH v2 0/4] hook up pin controller clocks on Google Tensor
- gs101
-Message-Id: <171472546662.18690.14989005186865924429.b4-ty@linaro.org>
-Date: Fri, 03 May 2024 10:37:46 +0200
+        d=1e100.net; s=20230601; t=1714725599; x=1715330399;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xd2nsty2WG6SHHF8+nkpeQv9fDcTG+0JYjbHe+PLVZg=;
+        b=syRK3cjQnhBtfdO2AIb/1w9/X8G7ypHV2vuMzrYUADeUgZGMVOhuTPGR8syOG6P9Iz
+         A575DEugTdcoDBRQdUjLYODI205p37mfrtVJL/vwwgZWR9Rfjl9sf6YZ92eQjnWjSmPn
+         5Yqe6rxXwmsxWTETsktOufx7W4ZEyYOp2AkzTqQWwCj3qzVI0s98wEA1PxnsZ6X4HreC
+         56i/j6Dy0QJ6EwWkq7LzRr1xOqw8LRCZd1w/O/YNVO9b9dNuTu/JP4Mfvz8a+DA0ebOg
+         ClxsdEbmbtdCENf42jsq1sG3j3LaxWCHa/dL24nH2ytvpvJjilzE2qoQOMoJs8XiHEa7
+         qFMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQBIfNePmonBRedcETYO8FRNhAW/g9ySE/fYSCV6X4Wdj7eSXXevUfpc2zPaLHW3KFQYWxMJkUpnKzU4B0c9UMRxv7IWDjoB2p9ugCNLjFXCo=
+X-Gm-Message-State: AOJu0Ywmz6+mg9yjnVLpKUl21jm7gBPj5nyZ1XRq+9t18Sku8HLCGGOs
+	9CqX6C6a0LNHnSOpyQ7EYrI1lDmmJ7mGcze2sw5jus25M1GH86ZazzSSvPElzmg=
+X-Google-Smtp-Source: AGHT+IF4QKcb/sXAo8+X01dOQnrnNqk2SSFq/L9I8igfxBKKMdF/CsCxYt2AjVAF4ukP/fC/AnH4MA==
+X-Received: by 2002:ac2:58d9:0:b0:51d:bbb:7a4e with SMTP id u25-20020ac258d9000000b0051d0bbb7a4emr1341798lfo.24.1714725598711;
+        Fri, 03 May 2024 01:39:58 -0700 (PDT)
+Received: from [192.168.1.119] ([37.251.223.213])
+        by smtp.gmail.com with ESMTPSA id j3-20020a05600c1c0300b004186f979543sm8674790wms.33.2024.05.03.01.39.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 May 2024 01:39:53 -0700 (PDT)
+Message-ID: <7f5e3ab6-515c-4943-8678-03232fd9aed5@linaro.org>
+Date: Fri, 3 May 2024 09:39:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: Use full path to other schemas
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20240503072116.12430-1-krzysztof.kozlowski@linaro.org>
+ <a2886f72-210e-41a1-aae0-c079a4d11396@linaro.org>
+ <0af10387-ddfb-47b0-b59e-eeba1644be1c@kernel.org>
+ <20240503082444.GJ1227636@google.com>
+ <72f94454-867f-4a6c-90c8-134db2ce150e@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <72f94454-867f-4a6c-90c8-134db2ce150e@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On Tue, 30 Apr 2024 10:49:45 +0100, André Draszik wrote:
-> This series hooks up the individual clocks for each pin controller in the
-> gs101 DTS.
+
+On 5/3/24 09:31, Krzysztof Kozlowski wrote:
+> On 03/05/2024 10:24, Lee Jones wrote:
+>> On Fri, 03 May 2024, Krzysztof Kozlowski wrote:
+>>
+>>> On 03/05/2024 10:08, Tudor Ambarus wrote:
+>>>>
+>>>>
+>>>> On 5/3/24 08:21, Krzysztof Kozlowski wrote:
+>>>>>  .../bindings/mfd/samsung,s2mpa01.yaml         |  2 +-
+>>>>>  .../bindings/mfd/samsung,s2mps11.yaml         | 12 ++---
+>>>>>  .../bindings/mfd/samsung,s5m8767.yaml         |  4 +-
+>>>>
+>>>> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>>>
+>>> So this should be Ack. You cannot review part of the patch ("I have
+>>> carried out a technical review of this patch...").
+>>> https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/process/submitting-patches.rst
+>>
+>> Reviewed-by is totally appropriate here.
 > 
-> On Google Tensor gs101 there are separate bus clocks / gates each for each
-> pinctrl instance. To be able to access each pinctrl instance's registers,
-> this bus clock needs to be running, otherwise register access will hang.
+> Submitting patches is clear on that:
+> "A Reviewed-by tag is a statement of opinion that the patch is an"
+> Not "the patch or part of patch"
 > 
-> [...]
+> And ack:
+> " It is a record that the acker has at least reviewed the patch ....
+> Acked-by: does not necessarily indicate acknowledgement of the entire
+> patch."
+> 
+> So no, reviewing part of the patch means you Ack it. Especially that in
+> git log the Rb tag will suggest entire patch was reviewed, while it was
+> not true. Review of 80% of patch did not happen.
 
-Applied, thanks!
+Thanks, Krzysztof, I'll keep in mind next time. I now confirm I went
+through all the substitutions and they look good to me. R-b now applies
+to all the changes.
 
-[1/4] arm64: dts: exynos: gs101: specify bus clock for pinctrl (far) alive
-      https://git.kernel.org/krzk/linux/c/1665b303a00c1acb2fe126486c6256c755f0b7c4
-[2/4] arm64: dts: exynos: gs101: specify bus clock for pinctrl_peric[01]
-      https://git.kernel.org/krzk/linux/c/42e3f188b238b7fb1c42dee8b4dc4107cbb321e2
-[3/4] arm64: dts: exynos: gs101: specify bus clock for pinctrl_hsi2
-      https://git.kernel.org/krzk/linux/c/8120dc4656aedf86c24e1b5776f84fdd9f8ece80
-[4/4] arm64: dts: exynos: gs101: specify empty clocks for remaining pinctrl
-      https://git.kernel.org/krzk/linux/c/4db286b0a29aa3576a401b637ac5910dac22117f
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+ta
