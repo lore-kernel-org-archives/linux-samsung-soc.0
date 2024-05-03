@@ -1,443 +1,213 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2088.outbound.protection.outlook.com [40.107.21.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0661586F5;
-	Fri,  3 May 2024 18:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714762528; cv=none; b=E1x1EcNGlLB55fs9JyQdX5+iswlrgOgTevDDe/pKNu/AwiwOvrmx2K0+w5ceHwd89OIQq6ZLbjImh5BwaG9v/mLmAAc/aMtB1Z5CaFCXXDnXqPZysb2wnl56iC5+gbg1dwI2/PZ07LHJaOzSqWbAz/npPhXNCoYe6peKrXKIRJw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714762528; c=relaxed/simple;
-	bh=/bENfoqr33Deh+36b873gv6Z24nDakoAKeNHo3TJKok=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vah0pg/5zivJNvy5llUgikcVXVtBTH6PusncLjChThGNf2j0Rapm68esygQBteTMloyjmIpbQ4mw0yJJRy7wsOMK4M690StZXc9tDttiX3u6j+L0NICOCatE1ucN/7nRQyhYxt0/VoMNUXBXopOgm8ysweo0QCojV7uOFT3XOeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KD3GHqCP; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DACD65194;
+	Fri,  3 May 2024 23:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714777906; cv=fail; b=mvbStTkLb4pOLHkXV04rYoNr2n2mY8fOWFdkThpK4S1bPtV8RIEX5dhlSIFSAbbmAvHYrCXmrfD064eHZGnMvdIxpCXEPDaOhkZQFnRNWNBTQ0xiY0OADnuNzRkiBha1CoD+S20EBwxhLtbuDWYYYQhzUbG1B1syPcZXHIapUIo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714777906; c=relaxed/simple;
+	bh=yLHFXL6d71G9zA6ggjpyU+QaC8aUhPbADtwjXl05o7E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iNLBMUlWCxEyho55hOX1nZOPEAFePdXoUbH85VBsOTNCSJdQ0kTAYSBFje941CGS4UWU9TprBnn6yHV0EduQ/fH5KdNZNMycxqM+3srdv7dAOw/vQ56guaexwSa6Y7ruiSpLYM9OMv9BTzhOQGkaiLEjP3vYV73Z7uwVJHW+2mc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=G22qLQx8; arc=fail smtp.client-ip=40.107.21.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KD3GHqCP"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51f12ccff5eso3034299e87.1;
-        Fri, 03 May 2024 11:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714762524; x=1715367324; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qaLJt3CrEL7LI/neNr6VMqZn//h/KqT1cG+3ONCcvbk=;
-        b=KD3GHqCPkKKX7+PkmbStuuCNRxverP38omRIp3pI69750q2CIC33DyGYfkEWUTBsZf
-         Wdl4HxMf9jy3kuH+h1gXV6i4g661ViIgrrLykKZTLsOVewRrT4MP2J5qCHL50HD0fIDr
-         FNjlPAkAlih1if+dVHxmDORYxKAQo00JGz/AP0IQ+tqteVwXNJRm+vzrTOk3Uxk/KISM
-         kc+9vNWKkiejdXsjPvO00o571//5EBjjLYe5pFxOrm6xgH8c86ircxkOw0KfchmkJAmn
-         8o0f+nSQByJzzphZ1LFBElAgK02POZsqBMcM4hVCsI0qXtY6oGgMqxl7zNAMOzO9Pklv
-         zBng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714762524; x=1715367324;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qaLJt3CrEL7LI/neNr6VMqZn//h/KqT1cG+3ONCcvbk=;
-        b=jSmhoP8OhJrHo6myxvlocQsXL+R59MMKMVGVW0FTaHe3P7UGOkwLVYQJZJ6r+OLjp+
-         vbUTfKDMm7Uq5Hme1uhSC8cznmvdzt9vF+Fa4aEHxmbGJgMz147LTK9Y1oN5ItrVmjRv
-         l7394PeAfsLs6lBZsWByvL7SiAqhjoInebDlOLsQb8MkmthTalXlv4pEsy/DtFehWrqO
-         LVmVa21x9NLvUTWsYGFtu8tJXsfCXY+pvMnOLekFYrEN2PxGGnmzTR4DM8XmNWrUI+Pq
-         pI7unbkI/lMlktsfaeUE/cL9u3qIc/B3oL/FdLl7LoQp7kgUKH3Bk6wH9t8dWdmG4+RB
-         M4eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr8zAQC0fN7t27L+LVy7Qf+u4K7feQdTiwH2YaB+yf/ptqSPT9RZLpTx8wmrCqby5UY4SN9cNT2QZXmTF7gQrJWJmvEB8YhYXHbqQed+iHi8DV4Tsyg+jZ3RZ05X0xeBdDzKzB/FQhyrEZSOhce/8rCsXEopUC8k2D5GqDNKzbtl9OGoV5r26+RLZeoZDyqM76R0ewMVfn0ZLspoQxCRUS6BRmH1YHZkg=
-X-Gm-Message-State: AOJu0YzMWVRdihKiGs7yaLDdJDMMN0fJigZLKcWgWUF4T5zuMUVMS0s8
-	bdjD52KUd80T7k2J1IM++kVf2o7EmCoW/sY4TEI6jp8oB58Yn8PQ
-X-Google-Smtp-Source: AGHT+IFiuOPhU9b+r8pW/xcxVPJuQACI/MSqzs6EaP7yMC8jhNXlFywNjSHA0WrTIrj2YXK11IW4Lg==
-X-Received: by 2002:ac2:4945:0:b0:51b:6ed6:af3f with SMTP id o5-20020ac24945000000b0051b6ed6af3fmr2238853lfi.16.1714762523689;
-        Fri, 03 May 2024 11:55:23 -0700 (PDT)
-Received: from hex.my.domain (83.25.185.84.ipv4.supernova.orange.pl. [83.25.185.84])
-        by smtp.gmail.com with ESMTPSA id l8-20020a170906078800b00a598d3ddf8dsm1104618ejc.28.2024.05.03.11.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 May 2024 11:55:23 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Fri, 03 May 2024 20:55:12 +0200
-Subject: [PATCH 2/3] ASoC: samsung: midas_wm1811: Add GPIO-based headset
- jack detection
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="G22qLQx8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QruS0Pr3MAIRkYTY3dwrfSBOboBgpOvCcgLQ5x8SFl/FRn+qfVvMDtyt/ATqgYqDHYl26SI0w0DHOb8kIPkesmDyeLmTqxF4k/HFWpMYbsYPeI25SqIL2hbEWljv+aFLs9qZbguWR54ZtRHcYD5c1OEEvRF54Jh1dHWHuFgy/ub9lcbNIyN/hiYqmSeMmvzp6gUv1U6ybK9MIkG21AyH6qfLBSiileu7m5LFo73fhzaZHjfhpjauLCcSQI/KiG7RKuQD27zxSIiHqC1FlPnenvsW+3EIgIuGnraZuS6F0+0h3kgRlGoEWvBxQfMwNslx4hNAdP10CjfeEzOBQKqR/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yLHFXL6d71G9zA6ggjpyU+QaC8aUhPbADtwjXl05o7E=;
+ b=I9pChR+xiqZG/1InktnyptN0tWaIlLq6/OYRKpHoOVAp45XDfxZuNmYARNpiWOVBM1SnvSa++O1DxuxRn4fOqtx+pXL8W9dNsqAdHNA7YgBzEEvNmL7ha1PD7XaZVCE9NIaLGrtwQjclzdtM5+GEukOK7X22Cma+N9kKAah4ninyoGf+JOuuwJTY2E43F+SRD2a7EfV1nGeKNw77hhNaefEJfIV4n1RK8ih0ko1EyGt81V+QpGVm2CkLgfq6jdxilIiaZ9hE3/tgOTqn/AJtkha6Bn2F1HFCnixpUgm/KYF8bbJ4HRgg2FobwVjotk1kONLGXYFnOzpBK3uTGue1gA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yLHFXL6d71G9zA6ggjpyU+QaC8aUhPbADtwjXl05o7E=;
+ b=G22qLQx8wAIGJg3gYaSJatPdN6sKdslMnL/kTsIw2pnLdH+MVskXbKAV8LtVWPrpx+hHvpC+5c5N6c1Gq2sK5K35R94lRpJYAN44ptBONA75mapxlChMZmKHVaJcR1eOjRdSE4vaQ3T9g4KuuzvFKBCNU2zQjManNyuAyTLC0DY=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AS8PR04MB9191.eurprd04.prod.outlook.com (2603:10a6:20b:44e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.36; Fri, 3 May
+ 2024 23:11:40 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.029; Fri, 3 May 2024
+ 23:11:40 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Linus Walleij <linus.walleij@linaro.org>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu
+	<wellslutw@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, Emil Renner Berthing
+	<kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, Hal Feng
+	<hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Viresh
+ Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+	"soc@kernel.org" <soc@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner
+	<heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches
+	<ludovic.desroches@microchip.com>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>, "Ghennadi Procopciuc (OSS)"
+	<ghennadi.procopciuc@oss.nxp.com>, Sean Wang <sean.wang@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, Joel
+ Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+	"linux-stm32@st-md-mailman.stormreply.com"
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>
+Subject: RE: [PATCH 00/21] pinctrl: Use scope based of_node_put() cleanups
+Thread-Topic: [PATCH 00/21] pinctrl: Use scope based of_node_put() cleanups
+Thread-Index: AQHam8XZF+hoIEqtO0+ph11dwkNN67GFHQ8AgAEJP+A=
+Date: Fri, 3 May 2024 23:11:40 +0000
+Message-ID:
+ <DU0PR04MB9417D5D76707C413ABC0BAC0881F2@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
+ <CACRpkdaRpJw=kHtya2iww7vvm+Bt6-oPMmz-6VzfhZniSoMP3w@mail.gmail.com>
+In-Reply-To:
+ <CACRpkdaRpJw=kHtya2iww7vvm+Bt6-oPMmz-6VzfhZniSoMP3w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|AS8PR04MB9191:EE_
+x-ms-office365-filtering-correlation-id: 5b44d46e-9f13-438a-f5ee-08dc6bc66415
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?QzZwOUVoYzJXWTBHNzY5T1RYYkNJMXA4OUlJRy9VeitoRy9IMHJJejJFZSs1?=
+ =?utf-8?B?NjJsQnhmUUZ6Sjk0b2g3MFRPaDVaY3MwSUZyQVRudU5jUU1XV3ZWRmpkNkdK?=
+ =?utf-8?B?QS9OZnczZXlFMzhiNFZTNXpWbGJSQUVMOGVqZ3dGaE5IbGRRdDR2K2gzVmI5?=
+ =?utf-8?B?bC81WlJaZ0hYTEU5YnVJd2ZKclBZRlYyWitVOUM4ZnllWDZFNFcyZnRzamFE?=
+ =?utf-8?B?OFRBWE82bTBUVjk0KzJSWlp0STdCcWxjY1Rha09oOUFYMyttL2E5Yzl3N2Ew?=
+ =?utf-8?B?UmVrM0R2endLTUYxaWNwMHhTU1pJM1VJS3NPVUZjQ0pscVNoVHNrWGJSemZ0?=
+ =?utf-8?B?NUExUTdBUnZaQjB4MmxkWFoxbGJKL3pBVmRVOUMwcis4djdlVEJ6NXJUZEtl?=
+ =?utf-8?B?TFZMbHFEVTFUSHMwc0lZYWNTNk9BWXQ2N05MYWREYnMxclVVT2lYM2Y2UjdS?=
+ =?utf-8?B?aXE3NDE3Yi9iRk1vUDRzeDhic1h4OXpwdjNpODZodDJJcmJDR2lOU0MwSDZB?=
+ =?utf-8?B?OTA3YkVMK21ldVVOSHhlQVlGSGFpcmN4ZE55ZXdwa05LdkZYNTIyWlE3aGh6?=
+ =?utf-8?B?Mk9zek94UXFEOXM5d1NzUXA0THZuMTBYNDBhYWs2elVsZ0FURWRRR1YwVFFq?=
+ =?utf-8?B?czIzNndVQWFWVk92clNxYW5MY3JpUjlkQTNqYlpMSXF3emViblFya3FZTnJF?=
+ =?utf-8?B?MWJyQ09JVndlRVNpd0ZteXFybW53b203d0tsZXBwUUlQMGNXMzl1cHBpZTlF?=
+ =?utf-8?B?U21LR1l1RGpiSGd4bFkvbk15cXFGM0NPNDJyaksrbmRpdS8zY0Vad0hhdHl0?=
+ =?utf-8?B?aFhDQ01QN04vRkpjQlowMUcyMzM3d2xHeXp5Q2czaG9yblJkOHloUHV5Vi9w?=
+ =?utf-8?B?aGhleFNURHhvaGtEK2trdVpwcndDSmhtVldUNUJVSzdhNzJuc3I0Mnd6RWFj?=
+ =?utf-8?B?dVltenZpWUdEYVdSSjI5dDlaTmN0UTVpNU84cUtLVUFxenZlK0hmcHA4ZGpW?=
+ =?utf-8?B?Q3VNQTc1dE1DSTErVmh4YWdGRWpSZWlWWDFQUXR2c3dzTUd2cTFOUVkzTmND?=
+ =?utf-8?B?cGRtWGpPY2sybVRtaXFQdmVQUEFMWWVodUpscnZEeW1IKzJrc2hCNjZNd013?=
+ =?utf-8?B?RW5NRUltcC9tc0FVUzRKYXVKUG9aZkduZVd6cTgwQ2ZIdTVqdXlReHlvTUZM?=
+ =?utf-8?B?c1JXdEdBMWMxWW9IeER5ai9aT3F3QTJ1RExrazI2R29NdFRFVXZxYjFlV2xY?=
+ =?utf-8?B?bzZDb1BTYkRIOGw2b2gya3Q1OElENVE2Y09pSGZ2cnZ2eDVOYjk1Smw4Rnpj?=
+ =?utf-8?B?cnhSNFRhM2Q5ZVk4dU5PeWdza01ET1E1dWQvNzNqZi9oTE5aY05ZeDNoMUVm?=
+ =?utf-8?B?cFRwWnA4RFluSUFFelgwTCtaMmZZZWp4cDNTeFR4anAyT0oxQWdHd3hJcDlM?=
+ =?utf-8?B?NWVLeHlja1FnN1YxcVY3anNJc2NicWRMRkhhTW5WdHJHaDJMUXF2Q3FLOVRM?=
+ =?utf-8?B?dWRHNkpuMWllNWZScGFkUlM2VWlXcDJaWXpuc3hXTlpLdmdEWHAyemMrbnk3?=
+ =?utf-8?B?T2FYTnVSdHJ3azJZMXd0TjVPRVdrOGl0UC9rN3lzYW9HRDh6OGFlYXFqQnk1?=
+ =?utf-8?B?bm0zSjNENW9TcTFuWWY3N1BLVklyem1qb1diVHdId2JoYkpxMkJPbDRUb2tO?=
+ =?utf-8?B?T0dsU0ZsRnVvMWtkS0lZYmN2VStLUFdqUC9WWERqUWhndm1NZGFLSXBEbW5t?=
+ =?utf-8?B?bTUvVTBPem5ub1liZU9DLy82bHphTHlHUzdwalpYR1VuTXluNytTTDA4N29R?=
+ =?utf-8?B?QVo5cXlKS0pObHdMUk1Udz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MmhUU2hwU3BRSWozZDRDMkl6VW1oR1AzUUNwS2FTb2VOSzFNRmE5Z1JqWEc0?=
+ =?utf-8?B?Zm1tdjJVZzBzRElSMnJhWWdsTG1UT0hXRENZVU5zNVhjaDhjUk1GcFlLMzdn?=
+ =?utf-8?B?dnNuWFQ0eCtvNDZEU25nTWJqek5sa0xKUmhpU21SZ0VMcldubS9aTUNVdHF1?=
+ =?utf-8?B?U2VBelNjcVR1UkF3QnF6MmhWdmZ2c2YwUUpPT0dQSm0wamtVWVpFSEZHSFhM?=
+ =?utf-8?B?NE90NzhlWWV0b1p0eFJuQjA3Yk93V1NLZVZjeW95U1VoZStWbFo3YjJZQVhB?=
+ =?utf-8?B?OGtJTXNHZ3l3OGdVeFljWjluRXpJbE9rdUtYcWN6UXFPUm03SXdpRituS1hp?=
+ =?utf-8?B?bktOSGg4ZjREUGVLV28xV1VRT0gvcDZLVy9TVmNmczRsaWR3dkxnc2kvMGlV?=
+ =?utf-8?B?T0lBSHgzaG1Vd2gwU2ZuUXUwV2lSVEoxbi9qOVlNVExrN2ZiTHBPOUpjZWcr?=
+ =?utf-8?B?K0xWd2ErMGVTSkFhSmR1dm9yRWUvQ0VncUptalJlQ2JkYjJWQjlpaktvTHAy?=
+ =?utf-8?B?K1RSVzdORVo5b2dhTlJQbDdmOHdab25WMG5lejNBY3BSUklnMjNySDBaT2M4?=
+ =?utf-8?B?dEFhanFTa2QwR2pBU29Vc1p2ajhrRXZ1U0lROUhsTXJ4bFFrZ01xRFR4TWlL?=
+ =?utf-8?B?a1dzMkxLZnA4Y25SbVhuRGY3WEdnbUdVRkIrY0hhdy9QM21wYWFQU2RWWTlM?=
+ =?utf-8?B?aUdQeHB6c2pHRzhDS0FxVG4wZEFEWmliL3crWDlOMDlPMWkvZkFrSEhtS01F?=
+ =?utf-8?B?eEY5NlFPMWVsWHJEeG5ZZWMrNE4ySkx5UHo5eFRUNHFhYkJVSWNtdjNETTdW?=
+ =?utf-8?B?RVdMaTcxN005dmMxZmQ2c2ZvcFFGZjBHdFdKNE9NWUVGV3FOMFpKSVRSVE9Q?=
+ =?utf-8?B?ZURZMmgzdjdNajRoWGVIU2tiV3dXK1RnODFSZ284Smx5ZllhS0dVNGVqc0M1?=
+ =?utf-8?B?YzBjUzNHTHVOMEp3Nm5iU3RieGE0Smh0cG51VVUzaTJjZDAwc2p2RWhJS2ht?=
+ =?utf-8?B?bytaeFBDMG8zeVZ6dDZYWGpwSlVSZFlqNjdNclpvYi9rMGZZb25qcVQ3czZR?=
+ =?utf-8?B?Vm1LQWJ6T0gxL3NYYUR5Z3RDVlhoTzBFWHdVT3daSEpNZmh4NGNsdndlWmVR?=
+ =?utf-8?B?ZXh0V3RGb3c3b2FGcTBiajJkR1ZROVRDY3NETjJpUjc0ZmpQUzhnWENQTFo3?=
+ =?utf-8?B?L0dTOS9zTlZPSmdDbnREbHRHWC80a2NOWCs1ajNuYWZ2T2pzT0RoNVY0R25S?=
+ =?utf-8?B?VjR3elluS0ZYRTU4M0tTcmRma3NGa2JtTkl3eUpFRzB3NTkrakNON0dOUjFq?=
+ =?utf-8?B?ZWQrRGc3eStheG1VS2FBNVAyNGY3a3BBWHg0WmtpZmZLa1ZYZVo2eWpyeFdy?=
+ =?utf-8?B?azUwVkY2a05NSngxWkVuTTJISWYvN29KRk5HTXFhenQ4MXFMRklUSWFzYnhN?=
+ =?utf-8?B?Zk1lUkFTL1ZQNUNueEI1RHpoc1RyOGc5Nkh1R0pDMDUwdHFOU3M5c21IRWRa?=
+ =?utf-8?B?c2hBNXRwckxYWFhrTmVIbWVwM2ZkZ0phQXlMdndUWGtNeE5LRTNUN0JKcnhO?=
+ =?utf-8?B?UmdtNUJZZ01vMHRLcmVEVzZhUGpuT0MxNlZzRzZlTzNpeTNwMlZSUWtYTmpt?=
+ =?utf-8?B?TVUzZ0RVMjNCdXB2dm1wVDFKemJNRlI4WkplSVVoNVdsNWdLK3g3RHJIK0FB?=
+ =?utf-8?B?akVueHpXK3kvamlRSjBseDBKT2piU00vK0dwbHVna1JxeDIrdkYyRFp4a3R6?=
+ =?utf-8?B?STRabEt6K0VlYWVwLzVwN2Z6U0VFVmpOY29hbUEwSXExRm9MVU5MaHVuSVRV?=
+ =?utf-8?B?Sk1hZXpqOVk0ODZpdnd4azFZVUZmZW5wbEVQL0xDNThRRm1iSUJWSDh4VGZp?=
+ =?utf-8?B?NjJBNXRQck5RMGR2WENCczdaYlVMSk1Mb1J3NVlaRG5qbmU4ajY2UkI3R0ph?=
+ =?utf-8?B?SHhFTWwxdkZqbTZEQklzZkNxR2FSWVV6bkpRRGZmYnZqbnEvMHRSRjZlc3VP?=
+ =?utf-8?B?QkszSG1BSlMwMWJHTFZadlZ0bjRYZmFXOEJTMlFjN2hpOEVOQno3OUFWZTNJ?=
+ =?utf-8?B?SUdISVpBNWw3c3ZFblRZYVZYWDQwdnRCVXZJSVQwUDd4enlxQWxWeDBTMU50?=
+ =?utf-8?Q?lbyQ=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240503-midas-wm1811-gpio-jack-v1-2-e8cddbd67cbf@gmail.com>
-References: <20240503-midas-wm1811-gpio-jack-v1-0-e8cddbd67cbf@gmail.com>
-In-Reply-To: <20240503-midas-wm1811-gpio-jack-v1-0-e8cddbd67cbf@gmail.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714762519; l=11162;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=/bENfoqr33Deh+36b873gv6Z24nDakoAKeNHo3TJKok=;
- b=USavtv/kIxxsiKYsTqgVjRjDeGfhckh1wgRCP0r2FNybgFhfNN8FGJuvou7Qm8ApR9HNuTTug
- uoSZsAhZnZzASvIYYa7VMrlpuH3OwOhNhXhGxmdCY4aSNryTU21Nejh
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b44d46e-9f13-438a-f5ee-08dc6bc66415
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2024 23:11:40.6410
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XWzUJl2JaHLV99jsMXx0K2J7ZLDHv9l3R3NjqLiga1b4fp0hG0yFwEEW2Oz1wVjKHKLFyXgaIIj61nL5nHeH+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9191
 
-Some Samsung devices that use the midas_wm1811 driver use a GPIO-based
-method for detecting whether the headset jack is plugged in, as well as
-detecting which headset buttons are pressed. There are two GPIOs:
-a "headset detect" GPIO responsible for detecting jack insertion, and
-a "headset key" GPIO which triggers when a button on the headset is
-pressed. The plug type and the button pressed are determined based
-on information from an ADC channel.
-
-Add support for the GPIO-based headset jack detection mechanism,
-and make it configurable from the device tree.
-
-This implementation borrows somewhat from the aries_wm8994.c driver,
-though there are a few changes to make the code cleaner, and to add
-support for DT-based configuration.
-
-Notably, a dependency on IIO is introduced, to accommodate the ADC
-reading requirement.
-
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
- sound/soc/samsung/Kconfig        |   2 +-
- sound/soc/samsung/midas_wm1811.c | 265 +++++++++++++++++++++++++++++++++++++--
- 2 files changed, 256 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 93c2b1b08d0a..4b1ea7b2c796 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -140,7 +140,7 @@ config SND_SOC_SAMSUNG_ARIES_WM8994
- 
- config SND_SOC_SAMSUNG_MIDAS_WM1811
- 	tristate "SoC I2S Audio support for Midas boards"
--	depends on SND_SOC_SAMSUNG
-+	depends on SND_SOC_SAMSUNG && IIO
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM8994
- 	help
-diff --git a/sound/soc/samsung/midas_wm1811.c b/sound/soc/samsung/midas_wm1811.c
-index f31244156ff6..bbffb9301cbf 100644
---- a/sound/soc/samsung/midas_wm1811.c
-+++ b/sound/soc/samsung/midas_wm1811.c
-@@ -7,7 +7,9 @@
- 
- #include <linux/clk.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/iio/consumer.h>
- #include <linux/mfd/wm8994/registers.h>
-+#include <linux/input-event-codes.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/regulator/consumer.h>
-@@ -31,6 +33,9 @@ struct midas_priv {
- 	struct regulator *reg_submic_bias;
- 	struct gpio_desc *gpio_fm_sel;
- 	struct gpio_desc *gpio_lineout_sel;
-+	struct gpio_desc *gpio_headset_detect;
-+	struct gpio_desc *gpio_headset_key;
-+	struct iio_channel *adc_headset_detect;
- 	unsigned int fll1_rate;
- 
- 	struct snd_soc_jack headset_jack;
-@@ -47,6 +52,109 @@ static struct snd_soc_jack_pin headset_jack_pins[] = {
- 	},
- };
- 
-+/*
-+ * min_mv/max_mv values in this struct are set up based on DT values.
-+ */
-+static struct snd_soc_jack_zone headset_jack_zones[] = {
-+	{ .jack_type = SND_JACK_HEADPHONE, },
-+	{ .jack_type = SND_JACK_HEADSET, },
-+	{ .jack_type = SND_JACK_HEADPHONE, },
-+};
-+
-+/*
-+ * This is used for manual detection in headset_key_check, we reuse the
-+ * structure since it's convenient.
-+ *
-+ * min_mv/max_mv values in this struct are set up based on DT values.
-+ */
-+static struct snd_soc_jack_zone headset_key_zones[] = {
-+	{ .jack_type = SND_JACK_BTN_0, },  /* Media */
-+	{ .jack_type = SND_JACK_BTN_1, },  /* Volume Up */
-+	{ .jack_type = SND_JACK_BTN_2, },  /* Volume Down */
-+};
-+
-+static int headset_jack_check(void *data)
-+{
-+	struct midas_priv *priv = (struct midas_priv *) data;
-+	int adc, jack_type, ret;
-+
-+	if (!gpiod_get_value_cansleep(priv->gpio_headset_detect))
-+		return 0;
-+
-+	/* Temporarily enable micbias for ADC measurement */
-+	ret = regulator_enable(priv->reg_mic_bias);
-+	if (ret)
-+		pr_err("%s: Failed to enable micbias: %d\n", __func__, ret);
-+
-+	/* Sleep for a small amount of time to get the value to stabilize */
-+	msleep(20);
-+
-+	ret = iio_read_channel_processed(priv->adc_headset_detect, &adc);
-+	if (ret) {
-+		pr_err("%s: Failed to read ADC (%d), assuming headphones\n",
-+		       __func__, ret);
-+		return SND_JACK_HEADPHONE;
-+	}
-+	pr_debug("%s: ADC value is %d\n", __func__, adc);
-+
-+	jack_type = snd_soc_jack_get_type(&priv->headset_jack, adc);
-+
-+	/* Disable micbias if the jack is not a headset */
-+	if ((jack_type & SND_JACK_HEADSET) != SND_JACK_HEADSET) {
-+		ret = regulator_disable(priv->reg_mic_bias);
-+		if (ret)
-+			pr_err("%s: Failed to disable micbias: %d\n",
-+			       __func__, ret);
-+	}
-+
-+	return jack_type;
-+}
-+
-+static int headset_key_check(void *data)
-+{
-+	struct midas_priv *priv = (struct midas_priv *) data;
-+	int adc, i, ret;
-+
-+	if (!gpiod_get_value_cansleep(priv->gpio_headset_key))
-+		return 0;
-+
-+	/* Filter out keypresses when 4 pole jack not detected */
-+	if (!(priv->headset_jack.status & SND_JACK_MICROPHONE))
-+		return 0;
-+
-+	ret = iio_read_channel_processed(priv->adc_headset_detect, &adc);
-+	if (ret) {
-+		pr_err("%s: Failed to read ADC (%d), can't detect key type\n",
-+		       __func__, ret);
-+		return 0;
-+	}
-+	pr_debug("%s: ADC value is %d\n", __func__, adc);
-+
-+	for (i = 0; i < ARRAY_SIZE(headset_key_zones); i++) {
-+		if (adc >= headset_key_zones[i].min_mv &&
-+		    adc <= headset_key_zones[i].max_mv) {
-+			return headset_key_zones[i].jack_type;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_jack_gpio headset_gpio[] = {
-+	{
-+		.name = "Headset Jack",
-+		.report = SND_JACK_HEADSET,
-+		.debounce_time = 150,
-+		.jack_status_check = headset_jack_check,
-+	},
-+	{
-+		.name = "Headset Key",
-+		.report = SND_JACK_BTN_0 | SND_JACK_BTN_1 | SND_JACK_BTN_2,
-+		.debounce_time = 30,
-+		.jack_status_check = headset_key_check,
-+	},
-+};
-+
- static int midas_start_fll1(struct snd_soc_pcm_runtime *rtd, unsigned int rate)
- {
- 	struct snd_soc_card *card = rtd->card;
-@@ -315,18 +423,67 @@ static int midas_late_probe(struct snd_soc_card *card)
- 		return ret;
- 	}
- 
--	ret = snd_soc_card_jack_new_pins(card, "Headset",
--					 SND_JACK_HEADSET | SND_JACK_MECHANICAL |
--					 SND_JACK_BTN_0 | SND_JACK_BTN_1 | SND_JACK_BTN_2 |
--					 SND_JACK_BTN_3 | SND_JACK_BTN_4 | SND_JACK_BTN_5,
--					 &priv->headset_jack,
--					 headset_jack_pins,
--					 ARRAY_SIZE(headset_jack_pins));
--	if (ret)
-+	if (!priv->gpio_headset_detect) {
-+		ret = snd_soc_card_jack_new_pins(card, "Headset",
-+				 SND_JACK_HEADSET | SND_JACK_MECHANICAL |
-+				 SND_JACK_BTN_0 | SND_JACK_BTN_1 |
-+				 SND_JACK_BTN_2 | SND_JACK_BTN_3 |
-+				 SND_JACK_BTN_4 | SND_JACK_BTN_5,
-+				 &priv->headset_jack,
-+				 headset_jack_pins,
-+				 ARRAY_SIZE(headset_jack_pins));
-+		if (ret)
-+			return ret;
-+
-+		wm8958_mic_detect(aif1_dai->component, &priv->headset_jack,
-+				  NULL, NULL, NULL, NULL);
-+	} else {
-+		/* Some devices (n8000, t310) use a GPIO to detect the jack. */
-+		ret = snd_soc_card_jack_new_pins(card, "Headset",
-+				SND_JACK_HEADSET | SND_JACK_BTN_0 |
-+				SND_JACK_BTN_1 | SND_JACK_BTN_2,
-+				&priv->headset_jack,
-+				headset_jack_pins,
-+				ARRAY_SIZE(headset_jack_pins));
-+		if (ret) {
-+			dev_err(card->dev,
-+				"Failed to set up headset pins: %d\n", ret);
-+			return ret;
-+		}
-+
-+		ret = snd_soc_jack_add_zones(&priv->headset_jack,
-+				ARRAY_SIZE(headset_jack_zones),
-+				headset_jack_zones);
-+		if (ret) {
-+			dev_err(card->dev,
-+				"Failed to set up headset zones: %d\n", ret);
-+			return ret;
-+		}
-+
-+		headset_gpio[0].data = priv;
-+		headset_gpio[0].desc = priv->gpio_headset_detect;
-+
-+		headset_gpio[1].data = priv;
-+		headset_gpio[1].desc = priv->gpio_headset_key;
-+
-+		snd_jack_set_key(priv->headset_jack.jack,
-+				 SND_JACK_BTN_0, KEY_MEDIA);
-+		snd_jack_set_key(priv->headset_jack.jack,
-+				 SND_JACK_BTN_1, KEY_VOLUMEUP);
-+		snd_jack_set_key(priv->headset_jack.jack,
-+				 SND_JACK_BTN_2, KEY_VOLUMEDOWN);
-+
-+		ret = snd_soc_jack_add_gpios(&priv->headset_jack,
-+				ARRAY_SIZE(headset_gpio),
-+				headset_gpio);
-+		if (ret)
-+			dev_err(card->dev,
-+				"Failed to set up headset jack GPIOs: %d\n",
-+				ret);
-+
- 		return ret;
-+	}
- 
--	wm8958_mic_detect(aif1_dai->component, &priv->headset_jack,
--			  NULL, NULL, NULL, NULL);
- 	return 0;
- }
- 
-@@ -433,6 +590,9 @@ static int midas_probe(struct platform_device *pdev)
- 	struct snd_soc_card *card = &midas_card;
- 	struct device *dev = &pdev->dev;
- 	static struct snd_soc_dai_link *dai_link;
-+	enum iio_chan_type channel_type;
-+	u32 fourpole_threshold[2];
-+	u32 button_threshold[3];
- 	struct midas_priv *priv;
- 	int ret, i;
- 
-@@ -468,6 +628,91 @@ static int midas_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->gpio_lineout_sel);
- 	}
- 
-+	priv->gpio_headset_detect = devm_gpiod_get_optional(dev,
-+				"headset-detect", GPIOD_IN);
-+	if (IS_ERR(priv->gpio_headset_detect)) {
-+		dev_err(dev, "Failed to get headset jack detect GPIO\n");
-+		return PTR_ERR(priv->gpio_headset_detect);
-+	}
-+
-+	if (priv->gpio_headset_detect) {
-+		priv->adc_headset_detect = devm_iio_channel_get(dev,
-+							"headset-detect");
-+		if (IS_ERR(priv->adc_headset_detect)) {
-+			dev_err(dev, "Failed to get ADC channel\n");
-+			return PTR_ERR(priv->adc_headset_detect);
-+		}
-+
-+		ret = iio_get_channel_type(priv->adc_headset_detect,
-+					   &channel_type);
-+		if (ret) {
-+			dev_err(dev, "Failed to get ADC channel type\n");
-+			return ret;
-+		}
-+
-+		if (channel_type != IIO_VOLTAGE) {
-+			dev_err(dev, "ADC channel is not voltage\n");
-+			return ret;
-+		}
-+
-+		priv->gpio_headset_key = devm_gpiod_get(dev, "headset-key",
-+							GPIOD_IN);
-+		if (IS_ERR(priv->gpio_headset_key)) {
-+			dev_err(dev, "Failed to get headset key gpio\n");
-+			return PTR_ERR(priv->gpio_headset_key);
-+		}
-+
-+		ret = of_property_read_u32_array(dev->of_node,
-+				"headset-4pole-threshold-microvolt",
-+				fourpole_threshold,
-+				ARRAY_SIZE(fourpole_threshold));
-+		if (ret) {
-+			dev_err(dev, "Failed to get 4-pole jack detection threshold\n");
-+			return ret;
-+		}
-+
-+		if (fourpole_threshold[0] > fourpole_threshold[1]) {
-+			dev_err(dev, "Invalid 4-pole jack detection threshold value\n");
-+			return -EINVAL;
-+		}
-+
-+		headset_jack_zones[0].max_mv = (fourpole_threshold[0]);
-+		headset_jack_zones[1].min_mv = (fourpole_threshold[0] + 1);
-+
-+		headset_jack_zones[1].max_mv = (fourpole_threshold[1]);
-+		headset_jack_zones[2].min_mv = (fourpole_threshold[1] + 1);
-+
-+		ret = of_property_read_u32_array(dev->of_node,
-+				"headset-button-threshold-microvolt",
-+				button_threshold,
-+				ARRAY_SIZE(button_threshold));
-+		if (ret) {
-+			dev_err(dev, "Failed to get headset button detection threshold\n");
-+			return ret;
-+		}
-+
-+		if (button_threshold[0] > button_threshold[1] ||
-+		    button_threshold[1] > button_threshold[2]) {
-+			dev_err(dev, "Invalid headset button detection threshold value\n");
-+			return -EINVAL;
-+		}
-+
-+		for (i = 0; i < 3; i++) {
-+			if (i != 0 && button_threshold[i] <= 0) {
-+				dev_err(dev, "Invalid headset button detection threshold value\n");
-+				return -EINVAL;
-+			}
-+
-+			headset_key_zones[i].min_mv = button_threshold[i];
-+
-+			if (i == 2)
-+				headset_key_zones[i].max_mv = UINT_MAX;
-+			else
-+				headset_key_zones[i].max_mv = \
-+						(button_threshold[i+1] - 1);
-+		}
-+	}
-+
- 	ret = snd_soc_of_parse_card_name(card, "model");
- 	if (ret < 0) {
- 		dev_err(dev, "Card name is not specified\n");
-
--- 
-2.45.0
-
+SGkgTGludXMsDQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAwMC8yMV0gcGluY3RybDogVXNlIHNj
+b3BlIGJhc2VkIG9mX25vZGVfcHV0KCkgY2xlYW51cHMNCj4gDQo+IEhpIFBlbmcsDQo+IA0KPiB0
+aGFua3MgZm9yIGRvaW5nIHRoaXMhIEkgYW0gdmVyeSBtdWNoIGluIGZhdm9yIG9mIHVzaW5nIHNj
+b3BlZCBtYW5hZ2VtZW50DQo+IG9mIHJlc291cmNlcyB3aGVyZSBpdCBtYWtlcyBpdCBlYXNpZXIg
+dG8gZG8gdGhlIHJpZ2h0IHRoaW5nLg0KPiANCj4gSSBhZ3JlZSB3aXRoIEtyenlzenRvZidzIGNv
+bW1lbnQgdGhhdCB3ZSBzaG91bGQgYXZvaWQgc2NvcGluZyBpbiBjYXNlcyB3aGVyZQ0KPiB0aGVy
+ZSBpcyBhIGNsZWFyIHBhdGggZ3JhYi91c2UvcmVsZWFzZSBzbyB0aGUgY29kZSBpcyBlYXN5IHRv
+IHJlYWQgYWxyZWFkeSBhcyBpdA0KPiBpcy4gTGV0J3MgZHJvcCB0aG9zZS4NClllYWgsIHdpbGwg
+ZHJvcCB0aGVtIGluIHYyLg0KDQo+IA0KPiBJIHNhdyB0aGVyZSB3YXMgc29tZSBwYXRjaCB0aGF0
+IHdhcyBldmVuIGEgZml4LCBwZXJoYXBzIEkgc2hvdWxkIHBpY2sgdGhhdA0KPiBvbmUgc2VwYXJh
+dGVseSBmb3IgZml4ZXMsIGJ1dCBwcm9iYWJseSBpdCBpcyBub24tdXJnZW50Lg0KDQpOb3QgdXJn
+ZW50LCBJIHdpbGwgYWRkIGZpeCB0YWcgaW4gdjIuDQoNClRoYW5rcywNClBlbmcuDQo+IA0KPiBJ
+IHN1cHBvc2Ugd2Ugd2lsbCBqdXN0IGFwcGx5IHYyIGFmdGVyIHBlb3BsZSBoYWQgc29tZSB0aW1l
+IHRvIGxvb2sgYXQgaXQhDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0K
