@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA73E14F62;
-	Fri,  3 May 2024 08:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35140256D;
+	Fri,  3 May 2024 08:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714725123; cv=none; b=vDzLUEKXTKyw5C7D+hXEyTl9QTxk/ThI0GVJbxO+ltNtJzjEEECCSSsP9r1l1zKhlWCFDnyfUHnkl/wJ/9+bGO1avKTGflfWjrljnAvq/dUA7ywcNi6Om0UQDGtIGN103Rz2LhnkksM9fkV8/X0YSWRQvemrS9LRTHBtzewf4P8=
+	t=1714725350; cv=none; b=nwHmmS6hUp4B1RJ2QHJRHbF206YwCgSsQ4gULLY0InyHInSmQhw4DeQtUjsgL2rK82cgy5nXUVZiT2eTRIrkdq7IpA1TEahcTc36zzeFMPZMkyCVC7PMsqMFTDQggzdoPKEk2KbzFnUG0N2ANr2prH0If14FoAlFleZQMvEJAxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714725123; c=relaxed/simple;
-	bh=6DOS5VQQAPRSm2t3Wyf6dx/0I1EkIRN09CkZc6wmfVw=;
+	s=arc-20240116; t=1714725350; c=relaxed/simple;
+	bh=hZAtJF0T/h26Ard2BzIfL5X5Q91LFQovXCklPlmU0Ho=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JCmZJ824wfU8kblunpuoDWKb2f5DCaMaFhEFVBLP1LsUmBdvu/UfVG381tXRwAk4GeXX496VDMAwyJ4g6lfculxIH9gTg6PpQwuq5ZhwuYCXIDOPsfoJiYO+DTiM4lPRE7mWuhAL5LcNsr1L+tE9DY14qbB1NXNkExrHeEK6n68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyORqsoL; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Gi/Zl1L0te/j+/T0bhr7q0EbWd1oroK+Cm9qEavuXNEpdSY/r96olNkb/KbKQgh4xdPAfzrCbC1wKblCTO3kbv6T/yfZZXRsMHl8/yOG0bnx7emMUT79G1SwieMvpX1AM40ZZDxMm55bdE1A7glgkpaSm+4wRbJpknjweujRxYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWkpKHxx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyORqsoL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB9EC116B1;
-	Fri,  3 May 2024 08:31:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWkpKHxx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2587C116B1;
+	Fri,  3 May 2024 08:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714725123;
-	bh=6DOS5VQQAPRSm2t3Wyf6dx/0I1EkIRN09CkZc6wmfVw=;
+	s=k20201202; t=1714725349;
+	bh=hZAtJF0T/h26Ard2BzIfL5X5Q91LFQovXCklPlmU0Ho=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YyORqsoLNjIRopGWrYSwT/D/qtOD1g5x36af3k8SQdIXg9PCx8p797wFMpX3BApQ3
-	 LHbSfOdaIcAutK5/CQQx42CyBJ6eD7CMp57CdVXLK05xWXFv527IwEaEsmRUDsuDqf
-	 G1F8r1WNExzgQSbovlfnUFwxim8pTQNzTwSVXP51t69vqfZ2zfG1598+us3xVqlyH5
-	 K1E2w9sp7TKzr+UoSzSiYJaAowY6w/7uXO5We+vwcN5eAs9vSw3x50/ilebYW3ijVn
-	 GlfPYtIuixUr2K0lv1bWaGWiSJSHV7MaJ0ux5eiTQVB90QUrzeA4nplObT9+zYuDXJ
-	 f5ELXvNJ1zDxw==
-Message-ID: <72f94454-867f-4a6c-90c8-134db2ce150e@kernel.org>
-Date: Fri, 3 May 2024 10:31:55 +0200
+	b=PWkpKHxxiJp2gTJ0iTjJ0mDDMG6Etirxc35yyULRcCAQd24JBVffXNxRjLcPhii1d
+	 VvOV8LgV2O6/z+fxR+ui4FKztAw0caqRBXvutcyUFHaOhQ/nggoPcw/pnRNQgEbF4Q
+	 jaMz02A8lljroBt0zY0Yu3XB8zxKxRg3mZ6tcBZzBBs/n7qEZhSVowH16grRNMDZhr
+	 eGFARkaSy33tM29P2QZHTX1yLT2+FddjxwCT5UQGJu4XQZD+jQ+QYNZMW0uoJSylQL
+	 wlwu207YAN6sqecyOFYxTPLWLhMs2xLa6HJgLMQkaG0SWO25rwUGusScBJzyxWqW13
+	 cwwnS4osMEiVg==
+Message-ID: <dfb64a74-04ee-4193-be28-53c8e3c80e14@kernel.org>
+Date: Fri, 3 May 2024 10:35:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: Use full path to other schemas
-To: Lee Jones <lee@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20240503072116.12430-1-krzysztof.kozlowski@linaro.org>
- <a2886f72-210e-41a1-aae0-c079a4d11396@linaro.org>
- <0af10387-ddfb-47b0-b59e-eeba1644be1c@kernel.org>
- <20240503082444.GJ1227636@google.com>
+Subject: Re: [PATCH] clk: samsung: gs101: mark some apm UASC and XIU clocks
+ critical
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com
+References: <20240430-gs101-apm-clocks-v1-1-b2e2335e84f5@linaro.org>
+ <b3621642-485f-42d4-a9d2-0ccca63e219b@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,41 +93,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240503082444.GJ1227636@google.com>
+In-Reply-To: <b3621642-485f-42d4-a9d2-0ccca63e219b@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/05/2024 10:24, Lee Jones wrote:
-> On Fri, 03 May 2024, Krzysztof Kozlowski wrote:
+On 02/05/2024 09:03, Tudor Ambarus wrote:
+>> We might have to add a driver for these clocks, but in the meantime
+>> let's just ensure they stay on even if siblings are turned off.
 > 
->> On 03/05/2024 10:08, Tudor Ambarus wrote:
->>>
->>>
->>> On 5/3/24 08:21, Krzysztof Kozlowski wrote:
->>>>  .../bindings/mfd/samsung,s2mpa01.yaml         |  2 +-
->>>>  .../bindings/mfd/samsung,s2mps11.yaml         | 12 ++---
->>>>  .../bindings/mfd/samsung,s5m8767.yaml         |  4 +-
->>>
->>> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> It's sane, yes.
+> 
 >>
->> So this should be Ack. You cannot review part of the patch ("I have
->> carried out a technical review of this patch...").
->> https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/process/submitting-patches.rst
+>> For the avoidance of doubt: This commit doesn't mean that we can boot
+>> with clk_ignore_unused.
+>>
 > 
-> Reviewed-by is totally appropriate here.
+> s/with/without. Because there are still other clocks that are not yet
+> handled/marked as critical where needed. There's still work to do.
+> 
+> With the typo addressed:
 
-Submitting patches is clear on that:
-"A Reviewed-by tag is a statement of opinion that the patch is an"
-Not "the patch or part of patch"
-
-And ack:
-" It is a record that the acker has at least reviewed the patch ....
-Acked-by: does not necessarily indicate acknowledgement of the entire
-patch."
-
-So no, reviewing part of the patch means you Ack it. Especially that in
-git log the Rb tag will suggest entire patch was reviewed, while it was
-not true. Review of 80% of patch did not happen.
+Thanks, applied with fix above.
 
 Best regards,
 Krzysztof
