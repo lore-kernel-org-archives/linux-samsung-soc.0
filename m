@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B5E4B5A6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE24857C84
 	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 May 2024 15:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714749116; cv=none; b=LJ9d7wbRNd4qvILw7B2QdoMcu5C9pmXFePwM3XAvQr4Iq8g1vvVDGIGOCb7HaY/h09jJSHA3NOT4WzKhuqVX2HVxhDGs5rk7curWIAt4E4mndEQC8MiXpLHUnnZYWI0bSvN/NzVIRTTsRPpCBAaHp7sPv9fl+49HS7h8/bavDAw=
+	t=1714749116; cv=none; b=XAdkGt16xRzVIqIE/yLAkBTOTkDppX23utle/cZyb7J1bVveD+2pmX+L16q8O89HokUjSw8bh7a4vpojeXGd/xEDK2OZ/LkNrDdpV3X49uyXG9pRm5efw6LuNrYyswnNh60zFwneCFlbfEJW77kMhwoJNeJ8as+8zaZrhBCpo5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1714749116; c=relaxed/simple;
-	bh=ix5sNdJpNM5nL04VaCVojcbg9Hfy0Nde61E632Djeho=;
+	bh=u28VEb4Yg4C45qiXYHH4z9QpMSQtdTkAZwEPydDSXd8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lOXN32qLHMVvd2p6u4ChmKkdycBVMMJDIPYmmv7yZWwXkuOQjdiOEhOWTYruPQ1CO9y0Ai6n6Ya125WWocpd7XL2uKBtZsYSh+CvGUiZFLT9rFP8ygGd2izWJ3NMd0Wj70gvex8WZ1c0aVVtH7E+SQ5UeS2r1rdEbTeGCThSehw=
+	 MIME-Version; b=jZYWbVKoG0Uvnx6mPa4hHg+V6Y1M1Uy3pC1WATIILMOgy6I4aFPT3uGF0y3n7qj8KSiJncWkBkLoz4o49ghX7OJx7U1ySJCFjNr9f7mcTJLWEnUv14ifL7c014pgmMMUy5adNh+XoYKqJN2Lnk7/uHdbaZsdpLsCfvMKmO3JZvU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,11 +18,11 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <l.stach@pengutronix.de>)
-	id 1s2uZR-0004Bs-K5; Fri, 03 May 2024 17:11:33 +0200
+	id 1s2uZR-0004Bt-K7; Fri, 03 May 2024 17:11:33 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
 	(envelope-from <l.stach@pengutronix.de>)
-	id 1s2uZN-00FjHY-EW; Fri, 03 May 2024 17:11:29 +0200
+	id 1s2uZN-00FjHY-Gu; Fri, 03 May 2024 17:11:29 +0200
 From: Lucas Stach <l.stach@pengutronix.de>
 To: =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
 	Andy Yan <andy.yan@rock-chips.com>,
@@ -43,9 +43,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	dri-devel@lists.freedesktop.org,
 	kernel@pengutronix.de,
 	patchwork-lst@pengutronix.de
-Subject: [PATCH 01/14] drm/bridge: analogix_dp: remove unused platform power_on_end callback
-Date: Fri,  3 May 2024 17:11:16 +0200
-Message-Id: <20240503151129.3901815-2-l.stach@pengutronix.de>
+Subject: [PATCH 02/14] drm/rockchip: analogix_dp: add runtime PM handling
+Date: Fri,  3 May 2024 17:11:17 +0200
+Message-Id: <20240503151129.3901815-3-l.stach@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240503151129.3901815-1-l.stach@pengutronix.de>
 References: <20240503151129.3901815-1-l.stach@pengutronix.de>
@@ -61,92 +61,62 @@ X-SA-Exim-Mail-From: l.stach@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-This isn't used, but gives the impression of the power on and power off
-platform calls being non-symmetrical. Remove the unused callback and
-rename the power_on_start to simplay power_on.
+Hook up the runtime PM suspend/resume paths to make the rockchip
+glue behave more like the exynos one. The same suspend/resume
+functions are used for system sleep via the runtime PM force
+suspend/resume.
 
 Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 7 ++-----
- drivers/gpu/drm/exynos/exynos_dp.c                 | 2 +-
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 4 ++--
- include/drm/bridge/analogix_dp.h                   | 3 +--
- 4 files changed, 6 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 98454f0af90e..b39721588980 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1264,8 +1264,8 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_clk_pre;
- 	}
- 
--	if (dp->plat_data->power_on_start)
--		dp->plat_data->power_on_start(dp->plat_data);
-+	if (dp->plat_data->power_on)
-+		dp->plat_data->power_on(dp->plat_data);
- 
- 	phy_power_on(dp->phy);
- 
-@@ -1290,9 +1290,6 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
- 		goto out_dp_init;
- 	}
- 
--	if (dp->plat_data->power_on_end)
--		dp->plat_data->power_on_end(dp->plat_data);
--
- 	enable_irq(dp->irq);
- 	return 0;
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index f48c4343f469..30c8750187ad 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -233,7 +233,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	/* The remote port can be either a panel or a bridge */
- 	dp->plat_data.panel = panel;
- 	dp->plat_data.dev_type = EXYNOS_DP;
--	dp->plat_data.power_on_start = exynos_dp_poweron;
-+	dp->plat_data.power_on = exynos_dp_poweron;
- 	dp->plat_data.power_off = exynos_dp_poweroff;
- 	dp->plat_data.attach = exynos_dp_bridge_attach;
- 	dp->plat_data.get_modes = exynos_dp_get_modes;
 diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 7069a3d4d581..baeb41875a4b 100644
+index baeb41875a4b..8214265f1497 100644
 --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
 +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -92,7 +92,7 @@ static int rockchip_dp_pre_init(struct rockchip_dp_device *dp)
- 	return 0;
+@@ -13,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/clk.h>
+@@ -430,7 +431,6 @@ static void rockchip_dp_remove(struct platform_device *pdev)
+ 	analogix_dp_remove(dp->adp);
  }
  
--static int rockchip_dp_poweron_start(struct analogix_dp_plat_data *plat_data)
-+static int rockchip_dp_poweron(struct analogix_dp_plat_data *plat_data)
+-#ifdef CONFIG_PM_SLEEP
+ static int rockchip_dp_suspend(struct device *dev)
  {
- 	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
- 	int ret;
-@@ -397,7 +397,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
- 	dp->data = dp_data;
- 	dp->plat_data.panel = panel;
- 	dp->plat_data.dev_type = dp->data->chip_type;
--	dp->plat_data.power_on_start = rockchip_dp_poweron_start;
-+	dp->plat_data.power_on = rockchip_dp_poweron;
- 	dp->plat_data.power_off = rockchip_dp_powerdown;
- 	dp->plat_data.get_modes = rockchip_dp_get_modes;
+ 	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
+@@ -450,14 +450,9 @@ static int rockchip_dp_resume(struct device *dev)
  
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index b0dcc07334a1..8709b6a74c0f 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -29,8 +29,7 @@ struct analogix_dp_plat_data {
- 	struct drm_connector *connector;
- 	bool skip_connector;
+ 	return analogix_dp_resume(dp->adp);
+ }
+-#endif
  
--	int (*power_on_start)(struct analogix_dp_plat_data *);
--	int (*power_on_end)(struct analogix_dp_plat_data *);
-+	int (*power_on)(struct analogix_dp_plat_data *);
- 	int (*power_off)(struct analogix_dp_plat_data *);
- 	int (*attach)(struct analogix_dp_plat_data *, struct drm_bridge *,
- 		      struct drm_connector *);
+-static const struct dev_pm_ops rockchip_dp_pm_ops = {
+-#ifdef CONFIG_PM_SLEEP
+-	.suspend_late = rockchip_dp_suspend,
+-	.resume_early = rockchip_dp_resume,
+-#endif
+-};
++static DEFINE_RUNTIME_DEV_PM_OPS(rockchip_dp_pm_ops, rockchip_dp_suspend,
++		rockchip_dp_resume, NULL);
+ 
+ static const struct rockchip_dp_chip_data rk3399_edp = {
+ 	.lcdsel_grf_reg = RK3399_GRF_SOC_CON20,
+@@ -485,7 +480,7 @@ struct platform_driver rockchip_dp_driver = {
+ 	.remove_new = rockchip_dp_remove,
+ 	.driver = {
+ 		   .name = "rockchip-dp",
+-		   .pm = &rockchip_dp_pm_ops,
++		   .pm = pm_ptr(&rockchip_dp_pm_ops),
+ 		   .of_match_table = rockchip_dp_dt_ids,
+ 	},
+ };
 -- 
 2.39.2
 
