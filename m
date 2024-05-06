@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F8148CCD;
-	Mon,  6 May 2024 06:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B381DA3A;
+	Mon,  6 May 2024 06:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714976946; cv=none; b=Snmcc9iigauXaa12OQUop+dvY5tp2xMe+X2fS5L50nQ/IYiH6Li48ePcg9nc3SFVvW3QAZcRqAAYpADd/RcoMHHCwkzALs2uxeJ3Ad5Oh7VO1X0BQb1oNgFQu1uJOHpo1hSXaWXVe/ldKrpQ6f68GfibPKeWNWBQNnpOs4HRlSw=
+	t=1714977037; cv=none; b=O3UL+GsRKHZ4fcJublO2yl6Is0FuGrUqqUeIndaFBbAueN0jMD1Mt5vwK1hsrTylcDgzk68FF+gKKbYxClk9DL5jUqVDukXHI9GcAyuCKBJNtBnvXDa1DcnWm4YeoQNXZIFvK8yVf6FTJgRCAsd/5zpNKlleTMH9Gl0QJKL/7NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714976946; c=relaxed/simple;
-	bh=Wp8V1xbEsuIb8axNQCbpMXR4ddHlcSxKFTYvwFrK4jY=;
+	s=arc-20240116; t=1714977037; c=relaxed/simple;
+	bh=q1g4NGGH7/ausmEg/1oVhs9w4Q/ZB/1rs+nRhq8ssuc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ovb53TEcWAKGbjgbiGwWwFLj3g36IEqC7vQz0uunTH1WQVBVwcwRBNZdZbGTyiuLVR/wt3MMDGtzDD87BgSvJ9sQu5C9hl8Tbtl7mQ3IDpm1B1Ja/iKWl0gCmPrPrnjLWpCDXmDHwdQcNyNuVMMrt6hclR4o0smXv618HTAm1eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZpWFdlrQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=DZxkSh83vO6QEHouGhXz9p3hBS82rIeKRGMBTSxqvn7nO8Nf058QpYalOU3KwtDDTbjybIxFXLv44rQF6wGwGDUePLmy/DrJjdMFqVsaOeoc4XugR4GuwVtHtRyyHSlT8HsPwGn7PoXhuHiGwUmmDeNQ88RvUDTXnHV1Vd0KAqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AXB8Zjp9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpWFdlrQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4705CC116B1;
-	Mon,  6 May 2024 06:29:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXB8Zjp9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 375B5C116B1;
+	Mon,  6 May 2024 06:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714976946;
-	bh=Wp8V1xbEsuIb8axNQCbpMXR4ddHlcSxKFTYvwFrK4jY=;
+	s=k20201202; t=1714977037;
+	bh=q1g4NGGH7/ausmEg/1oVhs9w4Q/ZB/1rs+nRhq8ssuc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZpWFdlrQ3sfPb0TgPY+L2ht9cjLQDbaPrZ0snx2q4iQgsjHkkxuNbdGXuBAMXiSpR
-	 AlZ3Wsj3W7eTjQErU5BUddROrvn7GfMpcPxRmLNwCNqnQfdkBeCfQJ/xGvxVZnTzX2
-	 P5f5N7CuXzLnaSKJqLgognRdlUqQQjSyOUo/W2A+b7eNs0kiH3fMAghBucwgp/aGiN
-	 LCH/0YFS8mzDaMo3lTs8HUL9hUWoO4uIOiVjmbFesH1ZhwVAsSrS7ANprVyt+A+nDj
-	 nQOvfwKMLkOVUXmrGxfzlGg/FdTjM5d3O+cwRIQqpa7KkLXvV46uex5rV+8r16pL9o
-	 /zv7X10ycP8rg==
-Message-ID: <2efe0393-11ce-448d-81a9-eb2383bc1e4b@kernel.org>
-Date: Mon, 6 May 2024 08:28:59 +0200
+	b=AXB8Zjp9ykrIoQJB8Qr7a/tIXjqML5x9gDSQoonU5MOdWOHEEXcVvRIyrLHDoV1dK
+	 Nge7qgj/fmg+OC5bM1CbThSEZl4gVgN+bA5FTg1m2Dgmywqeu/8kUScCz3WOVprDAj
+	 Q3Ge9ZyL+B+n0ap1QIPYrJB7Ct+5ERHDZScSToyP1GnFgAsicQejrncwAwchCygKT4
+	 ItKBxo1JO4XMmZ83xG+QS8skhTDBBcp410nMW9O6JqoLEUM4wnLDBUgVX3hxTRV/zF
+	 M0b61/jArn1wH1ZWiCMlsTs7Km8g6O2T9etRQgyauGNy8/huNHQu4oJ+l7rnNBHlLG
+	 PyPc0I7KyavKg==
+Message-ID: <1038ca45-b9e9-4625-9c43-5ef4abf4a86d@kernel.org>
+Date: Mon, 6 May 2024 08:30:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ASoC: dt-bindings: samsung,midas-audio: Add
- GPIO-based headset jack detection
+Subject: Re: [PATCH 2/3] ASoC: samsung: midas_wm1811: Add GPIO-based headset
+ jack detection
 To: Artur Weber <aweber.kernel@gmail.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>
@@ -48,7 +48,7 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
 References: <20240503-midas-wm1811-gpio-jack-v1-0-e8cddbd67cbf@gmail.com>
- <20240503-midas-wm1811-gpio-jack-v1-1-e8cddbd67cbf@gmail.com>
+ <20240503-midas-wm1811-gpio-jack-v1-2-e8cddbd67cbf@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,54 +94,77 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240503-midas-wm1811-gpio-jack-v1-1-e8cddbd67cbf@gmail.com>
+In-Reply-To: <20240503-midas-wm1811-gpio-jack-v1-2-e8cddbd67cbf@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/05/2024 20:55, Artur Weber wrote:
-> Some Samsung devices that share the midas-audio driver use a GPIO-based
-> approach to headset jack detection, as opposed to using the built-in
-> jack detection provided by the wm8994 driver.
-> 
-> Add DT configuration values that allow for describing these setups.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
->  .../bindings/sound/samsung,midas-audio.yaml        | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> index 6ec80f529d84..9f521131f2b3 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> @@ -61,6 +61,36 @@ properties:
->      maxItems: 1
->      description: GPIO pin for line out selection
+> Some Samsung devices that use the midas_wm1811 driver use a GPIO-based
+> method for detecting whether the headset jack is plugged in, as well as
+> detecting which headset buttons are pressed. There are two GPIOs:
+> a "headset detect" GPIO responsible for detecting jack insertion, and
+> a "headset key" GPIO which triggers when a button on the headset is
+> pressed. The plug type and the button pressed are determined based
+> on information from an ADC channel.
+
+...
+
 >  
-> +  headset-detect-gpios:
-> +    maxItems: 1
-> +    description: GPIO for detection of headset insertion
-> +
-> +  headset-key-gpios:
-> +    maxItems: 1
-> +    description: GPIO for detection of headset key press
-> +
-> +  io-channels:
-> +    maxItems: 1
-> +    description: IO channel to read micbias voltage for headset detection
-> +
-> +  io-channel-names:
-> +    const: headset-detect
-> +
-> +  headset-4pole-threshold-microvolt:
+> @@ -433,6 +590,9 @@ static int midas_probe(struct platform_device *pdev)
+>  	struct snd_soc_card *card = &midas_card;
+>  	struct device *dev = &pdev->dev;
+>  	static struct snd_soc_dai_link *dai_link;
+> +	enum iio_chan_type channel_type;
+> +	u32 fourpole_threshold[2];
+> +	u32 button_threshold[3];
+>  	struct midas_priv *priv;
+>  	int ret, i;
+>  
+> @@ -468,6 +628,91 @@ static int midas_probe(struct platform_device *pdev)
+>  		return PTR_ERR(priv->gpio_lineout_sel);
+>  	}
+>  
+> +	priv->gpio_headset_detect = devm_gpiod_get_optional(dev,
+> +				"headset-detect", GPIOD_IN);
+> +	if (IS_ERR(priv->gpio_headset_detect)) {
+> +		dev_err(dev, "Failed to get headset jack detect GPIO\n");
 
-You need vendor prefix for this and next property.
+syntax is:
+return dev_err_probe()
 
-> +    minItems: 2
-> +    maxItems: 2
-> +    description: |
+> +		return PTR_ERR(priv->gpio_headset_detect);
+> +	}
+> +
+> +	if (priv->gpio_headset_detect) {
+> +		priv->adc_headset_detect = devm_iio_channel_get(dev,
+> +							"headset-detect");
+> +		if (IS_ERR(priv->adc_headset_detect)) {
+> +			dev_err(dev, "Failed to get ADC channel\n");
 
-Do not need '|' unless you need to preserve formatting.
+return dev_err_probe()
+
+> +			return PTR_ERR(priv->adc_headset_detect);
+> +		}
+> +
+
+> +		ret = iio_get_channel_type(priv->adc_headset_detect,
+> +					   &channel_type);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to get ADC channel type\n");
+> +			return ret;
+> +		}
+> +
+> +		if (channel_type != IIO_VOLTAGE) {
+> +			dev_err(dev, "ADC channel is not voltage\n");
+> +			return ret;
+> +		}
+> +
+> +		priv->gpio_headset_key = devm_gpiod_get(dev, "headset-key",
+> +							GPIOD_IN);
+> +		if (IS_ERR(priv->gpio_headset_key)) {
+> +			dev_err(dev, "Failed to get headset key gpio\n");
+
+return dev_err_probe()
 
 
 
