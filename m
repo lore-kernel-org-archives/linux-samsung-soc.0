@@ -1,117 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125815DBC0
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 May 2024 13:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AC15FA7F
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 May 2024 14:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087464; cv=none; b=ITCadWdOg556JtY37b3hKsOyvaFFWWaSayqeQTdaEJPU44eYpamDOsSC7LUcvdyd1bxVgkLKWYPF7BRGXuFQSfh2HIkXfTUf+JydJ61FUc0PgnMpmeMhBYiRFrmP3mM/mhr+HRmYZkWZuhSZ6CWsSqpWoefdvpiDRyncTNmtAes=
+	t=1715091289; cv=none; b=U3nPfdxusN0FGJxNoX11Ocsaw8FlifWsmBls1qewUJwMIfn/8ri7G1QMlfDG1gyB5n1DNrCaediz3B4myowuJZPYBAiCV8jPBKJwfpHQ0phyA+Wl4kaViagOIkimrBPxqB+UYE+HUjP6kUgGVZxHmieigIgrBoyWLDDGTrM8pTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087464; c=relaxed/simple;
-	bh=vdFUPxI2rK4X4ACGJc33PkZDLQWpMwoj2Qa0AfmlRj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LrV+kWaIjHBciut4lbKzDTYK4WREOrr9XYspH5g4yXOkmeC2rNgfYvzOO1pe8VgcUWK5KV7JJAWWhAnQGUp1foRslds3nLHC1jMohfEpzlNOtvBTqqtjZC2n9yqS3ZgkrvQn98cXyixmHVw1ZO1jvHbNA3zDvUigWAFcV7Dkn7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRuS7tJM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715091289; c=relaxed/simple;
+	bh=Pqdbr37s3eqaIoQ5CSmZ2Yuk/GO+mHLRpIesgbXMwU8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OSkiV1mXDxfILpRuWFa25HjZtSTnCN+HL2OM9m8wpNy40iJGFEnQnE5a43c26/5FYiCc4hmT9RXfPt3IkgQhALXYxuTYexpegOXuLAcE2GRT1xj20GTPpKeyQa9mqVAnsQrjM/XwhIC8VACcaBAlkgNSIqnITyOM0T9zax/BPHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cPEvfYVx; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRuS7tJM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560E3C4DDE3
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 May 2024 13:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715087464;
-	bh=vdFUPxI2rK4X4ACGJc33PkZDLQWpMwoj2Qa0AfmlRj8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bRuS7tJMq+xHrEpU4ae6gPZ2EEu5SybMRZl3bh9uURvV+iW/7I2akJSej6K6C5ka8
-	 FD3b1REImXZQSTOQ+wWwjyCzCbhyS2cwqAFH2KkgSwVurKOFaY/f3m1eqGi2/K4l6C
-	 pdM7qvRhxbL32bDuXLeG5iWRfVc/41dCdU1WBjABjTjdtn8uxBlW3lsVX/Jl2THTAc
-	 vJWzZX/f+LbDYyriS6BtBlQ74NMRUkL+PG3Xnhv5rH0lgIT8hS+qjJqfoPxSuTK0O4
-	 17epchFWegWRlMvHL9ihYiVFKtIXrECg408jacU7u2Ys1dAlNLtH7VARQONs/8BccM
-	 4Y9zRlFPfXTog==
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-deb654482bcso3144339276.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 May 2024 06:11:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWc+lSwDThhGjkl++8r93WfOHBBdFYoqYpEtdvWFuoJ2WuriPhQiwCN5Kbu+KvFYI5A0U1YNRCwSFdK3axSBMVJvZSuZixISscocbWOLiHuLzw=
-X-Gm-Message-State: AOJu0Yy6scOQG5hG8pngvMzdURfPj/y3A4hUVRFNIbfRXDZSC56ZdgHT
-	cyuvra0qI8L48pnYiN8j0oLMnHMtJcsrSjzwXXDTeoLA72RgZlrZn/RzVs/hugoX7NnRK3mm3Qe
-	eMqIs7lWT1KU9Vlyi8q0d4fsMvlqapmpzPIjJ2Q==
-X-Google-Smtp-Source: AGHT+IFsm9DC3DaDqy/o8t6hXSkYeTcEajdfOC7CkRK6RkveYsEckuITQhToPeKR3ocgyQC/Xu6yE8vpx90pCLe4bg0=
-X-Received: by 2002:a05:6902:250a:b0:de5:d1cd:b593 with SMTP id
- dt10-20020a056902250a00b00de5d1cdb593mr14853945ybb.33.1715087463592; Tue, 07
- May 2024 06:11:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cPEvfYVx"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59cf8140d0so552342766b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 May 2024 07:14:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715091285; x=1715696085; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/iDIa9UU9YohRPSME0x6hMsrK0cAAO/SHuOJTAMlGZM=;
+        b=cPEvfYVxcBrXXS2Ru9wq+6RVz83XTajiNPDCAVxDTvN9nHLkma5SPRHj/QqWyuVxH3
+         Sq8Sr5hwlZCk9iMZ8DnZ0NZrBehQ9Cwx58QaNrRbd962owbzd56PStBWp57E1K+Ei+hM
+         BgKQTzPULhsRDEpFGDQSPiSIGB9MM59SiGBeE8xTZH3T5E3edJGO+d0w6obBTHflBwf3
+         3DjNEuOGxM9Dbqtw7slKvk0tW8RGZ7nBQeeMkIiYQvJt29PDUL8QM2q/UCKKG9FaO2Sb
+         32Z0t8EOE4Um21WEyw/jE6iTs1TzmNFtLAOSRwluAVf8R8oJcQiM+nyZHOOn+MNORLpZ
+         mNnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715091285; x=1715696085;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/iDIa9UU9YohRPSME0x6hMsrK0cAAO/SHuOJTAMlGZM=;
+        b=cpp1xpxd/UT+vWMNdLlpRAp2oB9FNcmYdJpV5U4eK12ms2l1H6HAkrYZ9qXm81dXFP
+         KZn7cqUbc62yKs1+WJz0EiSTCn1nh1QeMXgYGGpTJTsRXhEWzF5OGtRGZ1F1rUPCpO88
+         a6ZUB7+l/5ZPZS1ab/4/7Nh53EJEbL7mOxBK7dXg+RD/12dQ0gwST6OvJBSVNi4tSiGa
+         8GjJw5N2tuLwVN4rrvXev/GPZJa2UHwZDLgyPWu7z5+Z4RBQ0lxeu8ibQ1P7q7Y8ehKJ
+         Bfn+MwP+sXBU2AgeUHAhXq9faOsUD7dy8DFlWwOgeYEhKwDiFYhglkn5KMwH3T8g9Gdw
+         Dzgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPmELVHzpW1t2gLKO+s8i/esYexKnENOYoddb0qoBVSGzkAJHNd8ILLrI0QOav90KHWwH83J7vT572xd9Jisni6yciyQ7oFCBdUcFgALkNqvY=
+X-Gm-Message-State: AOJu0YzGKK91GBjxuGVhyElT8w4S/123IPr3IwS9VsKr5L5bxvraXwh/
+	zJziL2MQClJoXLCS3tfJeRqsPQCCo66uMlWkfoyNu0B4vIwbeVBgAt2Jgppa+74LIfntg3wNnrA
+	33pX43Q==
+X-Google-Smtp-Source: AGHT+IE/MwdnFKw9M2O7xyKn7PZzuL6h8QMv+vTzlYdiFTDL2ZOu/TBbmPYlhs0qq7EIgjDCRx4ISQ==
+X-Received: by 2002:a50:cd17:0:b0:572:9962:7f0 with SMTP id z23-20020a50cd17000000b00572996207f0mr8054362edi.34.1715091285631;
+        Tue, 07 May 2024 07:14:45 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm5621928eda.23.2024.05.07.07.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 07:14:45 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH 0/5] a few fixes for the Samsung USB phy driver
+Date: Tue, 07 May 2024 15:14:43 +0100
+Message-Id: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503151129.3901815-1-l.stach@pengutronix.de>
-In-Reply-To: <20240503151129.3901815-1-l.stach@pengutronix.de>
-From: Robert Foss <rfoss@kernel.org>
-Date: Tue, 7 May 2024 15:10:52 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi73ks50-Xg78Jpj6Me80hpaR0ww=RXOMKJoT2V6Zg8_Yg@mail.gmail.com>
-Message-ID: <CAN6tsi73ks50-Xg78Jpj6Me80hpaR0ww=RXOMKJoT2V6Zg8_Yg@mail.gmail.com>
-Subject: Re: [PATCH 00/14] improve Analogix DP AUX channel handling
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Jingoo Han <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, kernel@pengutronix.de, 
-	patchwork-lst@pengutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFQ3OmYC/x3LTQ5AMBBA4avIrE1S9RNcRSyUac1CSSeENO6us
+ fzy8iIIBSaBPosQ6GLh3ScUeQbzOnlHyEsyaKUrVasSZdrk9A5PMXisD1q+SbA1rWmaTlk7a0j
+ vEegPaR3G9/0A5w1wPWcAAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.12.4
 
-On Fri, May 3, 2024 at 5:12=E2=80=AFPM Lucas Stach <l.stach@pengutronix.de>=
- wrote:
->
-> Currently the AUX channel support in the Analogix DP driver is severely
-> limited as the AUX block of the bridge is only initialized when the video
-> link is to be enabled. This is okay for the purposes of link training,
-> but does not allow to detect displays by probing for EDID. This series
-> reworks the driver to allow AUX transactions before the video link is
-> active.
->
-> As this requires to rework some of the controller initialization and
-> also handling of both internal and external clocks, the series includes
-> quite a few changes to add better runtime PM handling.
->
-> Lucas Stach (14):
->   drm/bridge: analogix_dp: remove unused platform power_on_end callback
->   drm/rockchip: analogix_dp: add runtime PM handling
->   drm/bridge: analogix_dp: register AUX bus after enabling runtime PM
->   drm/bridge: analogix_dp: handle clock via runtime PM
->   drm/bridge: analogix_dp: remove unused analogix_dp_remove
->   drm/bridge: analogix_dp: remove clk handling from
->     analogix_dp_set_bridge
->   drm/bridge: analogix_dp: move platform and PHY power handling into
->     runtime PM
->   drm/bridge: analogix_dp: move basic controller init into runtime PM
->   drm/bridge: analogix_dp: remove PLL lock check from
->     analogix_dp_config_video
->   drm/bridge: analogix_dp: move macro reset after link bandwidth setting
->   drm/bridge: analogix_dp: don't wait for PLL lock too early
->   drm/bridge: analogix_dp: simplify and correct PLL lock checks
->   drm/bridge: analogix_dp: only read AUX status when an error occured
->   drm/bridge: analogix_dp: handle AUX transfer timeouts
->
->  .../drm/bridge/analogix/analogix_dp_core.c    | 196 ++++++++----------
->  .../drm/bridge/analogix/analogix_dp_core.h    |   7 +-
->  .../gpu/drm/bridge/analogix/analogix_dp_reg.c |  38 ++--
->  .../gpu/drm/bridge/analogix/analogix_dp_reg.h |   9 +
->  drivers/gpu/drm/exynos/exynos_dp.c            |   5 +-
->  .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  26 +--
->  include/drm/bridge/analogix_dp.h              |   4 +-
->  7 files changed, 120 insertions(+), 165 deletions(-)
->
-> --
-> 2.39.2
->
+Before coming to an agreement on my Samsung USB31 / gs101 phy changes [1]
+[2], I decided to split out those changes from that series which can also be
+applied independently and add a few additional fixes I had lying around.
 
-There are some checkpatch --strict warnings, and the patch 10/14 does
-not apply. Other than that the series looks very good.
+This contains mostly cleanup, but also a change to using fsleep() as
+recommended by the timers-howto, and a fix for setting the ref frequency for
+E850.
 
-Maybe rebase on drm-misc/drm-misc-next, fix the applicable checkpatch
---strict warnings and send a new version of this series. Then the last
-patches can be reviewed.
+These should be less controversial.
+
+Link: https://lore.kernel.org/r/20240423-usb-phy-gs101-v1-0-ebdcb3ac174d@linaro.org [1]
+Link: https://lore.kernel.org/r/20240501-usb-phy-gs101-v2-0-ed9f14a1bd6d@linaro.org [2]
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+André Draszik (5):
+      phy: exynos5-usbdrd: uniform order of register bit macros
+      phy: exynos5-usbdrd: convert udelay() to fsleep()
+      phy: exynos5-usbdrd: make phy_isol() take a bool for clarity
+      phy: exynos5-usbdrd: fix definition of EXYNOS5_FSEL_26MHZ
+      phy: exynos5-usbdrd: set ref clk freq in exynos850_usbdrd_utmi_init()
+
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 95 ++++++++++++++++++--------------
+ 1 file changed, 55 insertions(+), 40 deletions(-)
+---
+base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
+change-id: 20240503-samsung-usb-phy-fixes-8b8b6690ffc2
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
