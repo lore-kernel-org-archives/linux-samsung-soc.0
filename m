@@ -1,62 +1,62 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944B116F0CD
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCAE16F0D2
 	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 May 2024 14:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091290; cv=none; b=i2tGZJiQWtk50Up3PyM5n0lqWs/T0AxUtXhBxkCJzLtrE+mtHufWos8Ws5LZV4EaWtCuDU+2N0C+M4suWOdACpludPon2UvELnY0oqgE8rTuSXXD5taskrU88vklPiZJu6UHNKTGFlGi0JNKL5uA9MwtHzggR0zFIFkWA08KfJU=
+	t=1715091290; cv=none; b=EgBemmQ+CAHYRrm2XBNVeSUk1CM9DnKbEhC+fKh83E0lEb2o01coo/rR5n8mbkGhGf3I0vOqV9hcQ3Sn6G3gPrtyjCn2xYYtaN8U+uGubVVa7qHePcjr7sR0sFzCs61e47Btw7jS2Tr+wUYzqsCGcozU4bPNVWEeACegvBUXFWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715091290; c=relaxed/simple;
-	bh=QcH+btRFNoWS4TjpLpt+GQ3sskfBxn9Nd4Jm3dRcxGs=;
+	bh=3bFJoZ914QT6J6EQqjd5/3SA82dIJ6nV/7s+Fn+7mFI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C7o6Cm36lTmW0TX7FIe1HVmJDnYfS/Lg/NZDO6XkKvsNTZwcjVYTRKZn2QwLwvpsJTAFKx6hBaTfMSsv59eOVLLuZJrw8zx123Rl+8VpBbTp6m6G8aJVZ0i9ofybljtfjSiaA4yBOMpECfNZPI/ZacVNzVd9AEZExzempObkZtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Su+zFz2l; arc=none smtp.client-ip=209.85.218.43
+	 In-Reply-To:To:Cc; b=fOkBgzKCkVB5GwZWe1AdjrCg9wyb47XDmk91rFLDDk1bBLu6jEiK2fpPSi3+Jn2ysVj+KpYPOPLPABfA/A6oTqDBoXNQwmn6Ee81KGrlcYyA/o4AMkz5E2fdxzQEmZiLM3Mg4Ycf88TW/Qw8pJpS9ZVqRGlivsSS1SfFH+1WRdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PYRBv4F3; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Su+zFz2l"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a5200afe39eso838629366b.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PYRBv4F3"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5200afe39eso838632166b.1
         for <linux-samsung-soc@vger.kernel.org>; Tue, 07 May 2024 07:14:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1715091287; x=1715696087; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PzqUO+Y4mCEkRzT42mutSa2giiTX1rn5tTLc65YmNFs=;
-        b=Su+zFz2l86wwrdbf0v7o+iWoFsQtWSKhymbdA37Ly2uXEBA5aN2mixB9NtWUCeSiVL
-         Y6nvLQkqfpl10wrc/kXZXRXiROeCoQK8HT6vBxeQYHlurgekC2UuLv2sM8ZJDSvk6/85
-         EsjoV9Lv/bKl5b/LfGVgr0W0ocO2VjXfqviqjPD2P4U4Dy227ILEoduVobkPudvbMhOK
-         snCTIT3da2qNIQqvR9gmVOHW8DkvTbI71WCD/8qg/vPSY8ng8r7mGjAB6bhBGUW+3ZVw
-         TPWiRSsZfG85f6736ReoktKFHp9RCx+uvuy9l0rhqK9ENECmA+p0Wv/vJcxTgRDmU1WT
-         Uasw==
+        bh=LRJY6HmSgpn53uyORMcRB9h2EnMXe+jzCDlKmur6pwc=;
+        b=PYRBv4F3VRuptvTlCe6L977JCJgqknY5uuvtWh2ulsfZ90knBw6ViZOX6lxoRe68BE
+         1qEy/fLayeSl2IC1hrOiglYQffpA6zXaecWohmB2+2Ka2HqNn6o2GagP5f8Ou33Ry0SL
+         7cbN3r0ts6YMWh8dW7XQXuh4wWsMUyUR3snkbZPTX2uQ18q8urSwHMTzkdGlV29GbBX1
+         sqk3RzSsPUvmoRZxubsd3E6VMx0lL1+vvOcswoNsg2tBeBg/dngeK+wPUZBWJf3Jdq4K
+         4Hx1tbKggmi6wF2gEpPqbGPLFeQNqpWmLKSe9hYJ6ePNItqM0UcZ1eXcgGhDh01OKjTQ
+         Qvwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1715091287; x=1715696087;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PzqUO+Y4mCEkRzT42mutSa2giiTX1rn5tTLc65YmNFs=;
-        b=eAvB1iOvTIoikxkKSAiahMBCNfZY75GNn6Q3ySn8VpHGx7Y5Acd8ICjDwasJ1lyKhN
-         7a8jqSdBRvKDKPe0k2Q2AVOx+ug73/ANcGgxTV9l2wErbER11lsXjMTnslOCvrozpVSB
-         FyjuLpT7guLLmZdFc0ggAohQMGrhbffnRMKw9wR80SOaOplpIumdW3bKn6lGCvcWLgxI
-         lzlFhAWOQ6erLj3Muy/VLHH5iYKQvBy1RRTHpOH0+KFuM4dq93xs3eWa6/nSyLVvofDh
-         WdwrE+UL79eLJXwISZdWQ7INKh3jK4Vv+BVEvcIrnKv6q48KjKhYMkd4fYoLy1xvyQaA
-         TedA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0y84ysKiAWRTI4j8uenF4mRjw2u3gOxzTw6U1u1Vpg049HkUfai7BargqdgmiATlqVVnLbJhBfiaDbRGXKRLVOezAP8DKeQuSLepz1GLolYs=
-X-Gm-Message-State: AOJu0YwAKMlDUI5UfXRED0gEaTfiv/arNzW0fOfwU0nfSfJhsJhlgzgu
-	q1nZ5xfZkx/0oDkdkg0tCfk8SxrkcN5S1anwE3d0+w9kf2bq3/oTCp7sChJzaVlIREmOb2tqJjA
-	b9X1jNA==
-X-Google-Smtp-Source: AGHT+IFLbaE7KL4bM9NZleowwf/9bWz6QW+2cO4ZQn/n47PzlsG520bpJ6V/v0rjjw6rNMHBVt1ovw==
-X-Received: by 2002:a50:c319:0:b0:56f:e7b9:e67d with SMTP id a25-20020a50c319000000b0056fe7b9e67dmr13463276edb.12.1715091287117;
+        bh=LRJY6HmSgpn53uyORMcRB9h2EnMXe+jzCDlKmur6pwc=;
+        b=klh02rFPglz3QTclK4b6e7GuUsC6Zn26/UR6WNlNZcK2avYT5hljCrJNh+SmD2lJrg
+         oAClT7Ce6QJZwKJBKqCdnQ77ZZgY/79hT4+YKOcURWSf2h8A7hHmb/ox/LYBfYhKDx31
+         3yspz+VzE2VQ8eyaVxoIJ3OrwavEAFu7tBaR44BdD8NUekkAKBtOnFinR8/ilLzERJ1T
+         OCBqUEsg1ELGSpgipA11uu9phVEocLmyzUEVs5dGRtOR/RvtljQL5+DuStCKz6Cjdxrt
+         gDLunZU5rqTDLt7vBzrS5c0scIrCX2oLKC6Z+//5Lq344u7r6YIYZJiWrRuFvGSYqwWc
+         UIPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvqqY2GnmCTT3fospHuo+iZPZMEbMPaGmf986Ip3RXCGr0ldq1AryY+ENYpvrgYKxI2eJXEU2UkY4w96P3r/XKbie0Uf7Db9yFRiyRTBxj5ng=
+X-Gm-Message-State: AOJu0Yxn//ubtMbslNbweA+gaGIqTgv1p51VHzrnoBEASOV5wnUfWztS
+	4Iqbb8z8JFMPJfb1sp2aYu9XDpBkeqTrgg2EVIO5JfEdj4n1EoIPbRT4nHqosjhSaxl4pzK4Oro
+	1NKn/ng==
+X-Google-Smtp-Source: AGHT+IEdZxa78ehLtOjVAh87nK9d2t0R1fsYeVK5kmd0WktV4j/K80OYdHHk5mz5N7FPqzg+kN+QUg==
+X-Received: by 2002:a50:a45c:0:b0:572:9dc3:ce3b with SMTP id v28-20020a50a45c000000b005729dc3ce3bmr11623041edb.1.1715091287502;
         Tue, 07 May 2024 07:14:47 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm5621928eda.23.2024.05.07.07.14.46
+        by smtp.gmail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm5621928eda.23.2024.05.07.07.14.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 07:14:46 -0700 (PDT)
+        Tue, 07 May 2024 07:14:47 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 07 May 2024 15:14:46 +0100
-Subject: [PATCH 3/5] phy: exynos5-usbdrd: make phy_isol() take a bool for
- clarity
+Date: Tue, 07 May 2024 15:14:47 +0100
+Subject: [PATCH 4/5] phy: exynos5-usbdrd: fix definition of
+ EXYNOS5_FSEL_26MHZ
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240507-samsung-usb-phy-fixes-v1-3-4ccba5afa7cc@linaro.org>
+Message-Id: <20240507-samsung-usb-phy-fixes-v1-4-4ccba5afa7cc@linaro.org>
 References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
 In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -82,71 +82,37 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.12.4
 
-on / not on is just a boolean flag and is a bit misleading as currently
-on==1 means to turn off the power, and on==0 to turn power on.
+Using 0x82 seems odd, where everything else is just a sequence.
 
-Rename the flag and make it a bool to avoid confusion of future readers
-of this code. No functional change.
+On E850, this macro isn't used (as a register value), only to assign
+its value to the 'extrefclk' variable, which is otherwise unused on
+that platform. Older platforms don't appear to support 26MHz in the
+first place (since this macro was added for E850).
 
-While at it, fix a whitespace issue in nearby comment.
+Furthermore, the downstream driver uses 0x82 to denote
+USBPHY_REFCLK_DIFF_26MHZ (whatever that means exactly), but for all the
+other values we match downstream's non-DIFF macros.
 
-No functional change.
+Update to avoid confusion. No functional change intended.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 1b209ab7a268..ed4898741c99 100644
+index ed4898741c99..1da7a4881f72 100644
 --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
 +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -173,7 +173,7 @@ struct exynos5_usbdrd_phy;
+@@ -30,7 +30,7 @@
+ #define EXYNOS5_FSEL_19MHZ2		0x3
+ #define EXYNOS5_FSEL_20MHZ		0x4
+ #define EXYNOS5_FSEL_24MHZ		0x5
+-#define EXYNOS5_FSEL_26MHZ		0x82
++#define EXYNOS5_FSEL_26MHZ		0x6
+ #define EXYNOS5_FSEL_50MHZ		0x7
  
- struct exynos5_usbdrd_phy_config {
- 	u32 id;
--	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
-+	void (*phy_isol)(struct phy_usb_instance *inst, bool isolate);
- 	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
- 	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
- };
-@@ -273,14 +273,14 @@ static unsigned int exynos5_rate_to_clk(unsigned long rate, u32 *reg)
- }
- 
- static void exynos5_usbdrd_phy_isol(struct phy_usb_instance *inst,
--						unsigned int on)
-+				    bool isolate)
- {
- 	unsigned int val;
- 
- 	if (!inst->reg_pmu)
- 		return;
- 
--	val = on ? 0 : EXYNOS4_PHY_ENABLE;
-+	val = isolate ? 0 : EXYNOS4_PHY_ENABLE;
- 
- 	regmap_update_bits(inst->reg_pmu, inst->pmu_offset,
- 			   EXYNOS4_PHY_ENABLE, val);
-@@ -525,8 +525,8 @@ static int exynos5_usbdrd_phy_power_on(struct phy *phy)
- 		}
- 	}
- 
--	/* Power-on PHY*/
--	inst->phy_cfg->phy_isol(inst, 0);
-+	/* Power-on PHY */
-+	inst->phy_cfg->phy_isol(inst, false);
- 
- 	return 0;
- 
-@@ -553,7 +553,7 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- 	dev_dbg(phy_drd->dev, "Request to power_off usbdrd_phy phy\n");
- 
- 	/* Power-off the PHY */
--	inst->phy_cfg->phy_isol(inst, 1);
-+	inst->phy_cfg->phy_isol(inst, true);
- 
- 	/* Disable VBUS supply */
- 	if (phy_drd->vbus)
+ /* Exynos5: USB 3.0 DRD PHY registers */
 
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
