@@ -1,155 +1,121 @@
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CF35336D;
-	Wed,  8 May 2024 17:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64EE1272B2
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 May 2024 20:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715189053; cv=none; b=npAX9u2jpbxTGTAV3xQlMed+p/qINvEO82nQZ3QlbbcAQZKCpm+WHFBbluYM8UJ/0gS7IrFGPVyagkVU72iTcVH59kQgqb69cv+nwqKGL3dEuIkaIJolSrjlJz7J27Lc4trGEbldQxR0Tghq3xAmHaFV6WWZy8q8GkRfkd91O9s=
+	t=1715201193; cv=none; b=tnf58JqolJfxRnHAfSDoIEa+THpnJlKXFSBgdhGbIJo6cqYjFpyHSdmJnHRo/IE17s60Yloj9e24rmXPfyubYX4LAykTOFflMBPFF3aaBzkNzNKyq/lJ5LUUTJyc3sJIf2y8kh0RPwR4kRXj4eJXUIuJNSLNP0oR8XYAyJoZnn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715189053; c=relaxed/simple;
-	bh=tgV1CXwWsl+p61PgQKuNqvgRR6FjZHYST25qfrxpaSE=;
+	s=arc-20240116; t=1715201193; c=relaxed/simple;
+	bh=U+JJXdSyICqOC60nUmI2fkQ5vGZZspCCnV4ePaM9Zjc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FRH9fzAdd7oUyHmAt8SnJLR88sO9ivsFw2ArDC6EPMw6A7p4+Q9u57NVJAYAHEDBUJhPfRw3YIb8xh4jMEs5KSgiFGYF4xlU5UShU7TQB4lml29kFBuiBaFWphDbR/FvzExXzQQARMzR1DNkvstzl5O7fAgbKTgZMKDw5oXaYbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mctxl4Cl; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=ScscanVP4XbA5tCKN6Yf9nCmhbtDvLq41L1HXkHqTS9ILz+mBxZM+S/IisLvh4gjeUI7q6urlE8r7U10ImwXQRaT7Y1WjuW396NLNn65upWMJml0oxW3wbo2+ZWNhk1fGTDz0NDmBI7lO+CYfmp1tspZEzzoDy3AFe81xVNeh1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hUSOlYER; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mctxl4Cl"
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5b1ffd24c58so2476234eaf.2;
-        Wed, 08 May 2024 10:24:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUSOlYER"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-de45dba15feso223923276.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 May 2024 13:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715189051; x=1715793851; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715201191; x=1715805991; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gZ/+17iczEabMzYSnwED5XJS+Nkb33ul+oPCIawtx9c=;
-        b=Mctxl4Cl713M1NYq+8bft2Qe9KRAQ/gakVt7BCbKp2YF9jskK1h8cNJMfHP9dzN5Nd
-         oxM4BSOa495iE8mt+ZhV/7TyGgTjowe1jg8RXqEMIdKCCUSVZnrWJHyIl8E9Kp0Ay4lA
-         tL/4umWQdn39D++WgdwXPSi8Fu7tJ5h0Ia4OKExIRASwifIpjBorsT4nzJz1Md/cGT3y
-         R35pLqPOJrPZHcfOT80TOMqePhjs4JHwavfw1ft8IjqjrzjZj/kMMvYEB/Qdp62Y3uAU
-         55VvUuPly9sa3Eci+39vofcTrL18J5ne8ayhkc8eCHNuCLFvsbcaSPLOZE36vSFAuuxR
-         uikw==
+        bh=qHxj1v+rFAJCX5c6BhRi3cdybi17vUj5Ix+LCyAtYMk=;
+        b=hUSOlYERSj4zOV3bjqh7WrbnlS83nvH+4OpSiRtqfoi7nrvkqNHU8J8/Ff5JrayowV
+         rpUghUsWVAtQ1ea8E6MimmtqNL9jcCy9NO/QY+v6K4/HaYYKz8B7yOK2l3mBSLP2rQWG
+         9FxO1BnTnx9JPoQU/Fm9T05kVKzoL8LNPJVILetRKHO1b7e8ty/pEVFfWw9djQGXhbwH
+         xgWYg5/KatWqgbNCoDlMebP2wlYTQrJK25dvnAdxqEfZg99nKj9WLwR2el/QvGk6byRY
+         hc258YFCsZEDKslhx63Qma39D9+03FKD2PIHFis8zdux5PYjMcclzmylSYS5JmmJaqCW
+         jISQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715189051; x=1715793851;
+        d=1e100.net; s=20230601; t=1715201191; x=1715805991;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gZ/+17iczEabMzYSnwED5XJS+Nkb33ul+oPCIawtx9c=;
-        b=wxuPqZqEwrw6t+nBVI6dZsOOE2vwA/pvXxO7LfgsD6z8OU4W2Kz6yM/PucaYOLNWCo
-         BvFJ1SzzdtVYdfaEx7f/gAbHP9N/DyHRj6Q3tReE5ysD/wSaqj6TBjW5J/fxlp8ufvri
-         mSIFdNoAhgnMq2LiGBOP+/yo2HeGKFFWt1HqGq1gJpWhvcimtLLEnUMy9eKO1Wi/gcvN
-         zrOnnGYRDZxHHR9GjNjrMLeq9zgYmATpQJau4yyMdBjRFRAnEnOg9G0cfsKLr0utwFwr
-         CfKDsCjFVMxr1heQvh+KgGomd8RpCKKawgK1+y8ukUju4tvjUv/4oCwmSHFqS8qzlHJv
-         vqVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT3WFaQJqFhF0r3UvYfxPkr/NbTiZQJ8VCB0cR53RrwTypUacj7u+AEkgKWCJDrK8rERev7zBZzeaFqz3oNZgUKvUfREhyn5v6lzCM8wQ9jfMl14Gkx0TnGjSnqPkUxVDJNd5nVfoF72zK3vc0vexwXcuYxjOyF4mt6f0oI3uXfGss8BQqKR4B9A==
-X-Gm-Message-State: AOJu0YyhnJ2Y4wC6+VdQoDY1psoBsuG+V3Y6TlpzImsgOrP5VXXknh7i
-	+hWSIkQeKy0wa/jbsUFa02NNP+hWWPQBKckMG8j3luhLPZmg36VU1yfBeMqCGPTjf43TuJFM6lN
-	FTHKd1Rv59LcfJH4VYI8kXZ9b0no=
-X-Google-Smtp-Source: AGHT+IHiJkUZQ/+LcuQSBjvtRv27j6+1yp6q0NXJp6d29mGbuu8y0YmDIRS3eipJjBddJoQovYbw4CUS+2ANQeNIaaU=
-X-Received: by 2002:a4a:aa09:0:b0:5af:c4b3:7c6d with SMTP id
- 006d021491bc7-5b24d5e69dfmr3356211eaf.5.1715189051165; Wed, 08 May 2024
- 10:24:11 -0700 (PDT)
+        bh=qHxj1v+rFAJCX5c6BhRi3cdybi17vUj5Ix+LCyAtYMk=;
+        b=H4yoM5N3MdPaT6pXUjJSgHzP7zN4TwSVkav6c+cyC4xFa1+pclnI4dTWV2f94ybCqF
+         VyQ9GLeyS8juLoTebpLV0iUJ90eaBybI9w2LmYo9RrvU17awZ7bA+tIGXXPoeiWA2hNw
+         8oGAL3YbZuJfQhjRPLpCc0RVYMpmi9cZBI9cuGxtgilPCAIpQo2aFfyLniFQ+5JE280I
+         IfHLyCkA+44AYdyjAHLxFr9WMF2J/isFJaBPlWd9vK8RR9MTdSkC/wsetPxvrnfFUIpj
+         l7tfv+iIMFSQMVUsDz6g0l0LN5GZknMgc3Gzo5sqxXIibPogrVUbG3myU43Hf1qtdnPP
+         L5DQ==
+X-Gm-Message-State: AOJu0Yxsroha/KcWjv1GaJf1XCPNzySGE2T9wRSWm4hakPlx8jRhuyE9
+	bRleywggo6jCDuknXpehr02F9/vTvBl+nwhxb3gWpR9ZpIYRmozbLGFga+xZf450kYvR05bx2oS
+	J09Cu1ZB+Yd7E6VG57lgk5ebV9501eCdNdgu1UQ==
+X-Google-Smtp-Source: AGHT+IF+nKOg/oxvvBseKMAcD7PQcQCKUYem6zIWSWwsVSBfv7UhB9pH6t8FEIwl47oXy3DTvLagu0RNYkWsFNtMCYs=
+X-Received: by 2002:a5b:981:0:b0:deb:a0a2:aad6 with SMTP id
+ 3f1490d57ef6-debb9db1fe3mr4178079276.28.1715201190873; Wed, 08 May 2024
+ 13:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417044459.1908-1-linux.amoon@gmail.com> <CAGTfZH3oJQsc0XVrrA-F7NxSfKx8=mOYDM1Vvxt37+skvXZVaw@mail.gmail.com>
-In-Reply-To: <CAGTfZH3oJQsc0XVrrA-F7NxSfKx8=mOYDM1Vvxt37+skvXZVaw@mail.gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 8 May 2024 22:53:54 +0530
-Message-ID: <CANAwSgQsqWSn4yvsgrEAyHTx2n7ccpeFqL-qUZG+3_=GgsF4rg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled()
- helpers
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <CGME20240507065329eucas1p1b26d68384a4f076b31223ed099fd3a48@eucas1p1.samsung.com>
+ <20240507065317.3214186-1-m.szyprowski@samsung.com>
+In-Reply-To: <20240507065317.3214186-1-m.szyprowski@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 8 May 2024 15:46:20 -0500
+Message-ID: <CAPLW+4nFp4AUpKdcsPTQ4gE3AByJU4WO+M34c3om+8AqTziAeg@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: Don't register clkdev lookup for the fixed
+ rate clocks
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chanwoo
+On Tue, May 7, 2024 at 1:53=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
+> clkdev entries") revealed that clock lookup is registered for all fixed
+> clocks. The mentioned commit added a check if the registered name is not
+> too long. This fails for some clocks registered for Exynos542x SoCs famil=
+y.
+> This lookup is a left-over from early common clock framework days, not
+> really needed nowadays, so remove it to avoid further issues.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Here is the fix for the mentioned 4d11c62ca8d7 commit, which fixes
+> booting of Exynos542x SoCs:
+> https://lore.kernel.org/all/20240507064434.3213933-1-m.szyprowski@samsung=
+.com/
+>
+> This change is independent fix. I've tested it on all Exynos based boards
+> I have in my test lab. It would be great if someone could test it on
+> s3c64xx and s3c24xx based boards.
+> ---
 
-On Wed, 8 May 2024 at 21:16, Chanwoo Choi <chanwoo@kernel.org> wrote:
->
-> On Wed, Apr 17, 2024 at 1:45=E2=80=AFPM Anand Moon <linux.amoon@gmail.com=
-> wrote:
-> >
-> > The devm_clk_get_enabled() helpers:
-> >     - call devm_clk_get()
-> >     - call clk_prepare_enable() and register what is needed in order to
-> >      call clk_disable_unprepare() when needed, as a managed resource.
-> >
-> > This simplifies the code and avoids the calls to clk_disable_unprepare(=
-).
-> >
-> > While at it, use dev_err_probe consistently, and use its return value
-> > to return the error code.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > v3 - No change
-> > v2 - No change
-> > ---
-> >  drivers/devfreq/exynos-bus.c | 21 ++++-----------------
-> >  1 file changed, 4 insertions(+), 17 deletions(-)
-> >
-> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.=
-c
-> > index 245898f1a88e..153340b6685f 100644
-> > --- a/drivers/devfreq/exynos-bus.c
-> > +++ b/drivers/devfreq/exynos-bus.c
-> > @@ -160,7 +160,6 @@ static void exynos_bus_exit(struct device *dev)
-> >         platform_device_unregister(bus->icc_pdev);
-> >
-> >         dev_pm_opp_of_remove_table(dev);
-> > -       clk_disable_unprepare(bus->clk);
-> >         dev_pm_opp_put_regulators(bus->opp_token);
-> >  }
-> >
-> > @@ -171,7 +170,6 @@ static void exynos_bus_passive_exit(struct device *=
-dev)
-> >         platform_device_unregister(bus->icc_pdev);
-> >
-> >         dev_pm_opp_of_remove_table(dev);
-> > -       clk_disable_unprepare(bus->clk);
-> >  }
-> >
-> >  static int exynos_bus_parent_parse_of(struct device_node *np,
-> > @@ -247,23 +245,15 @@ static int exynos_bus_parse_of(struct device_node=
- *np,
-> >         int ret;
-> >
-> >         /* Get the clock to provide each bus with source clock */
-> > -       bus->clk =3D devm_clk_get(dev, "bus");
-> > -       if (IS_ERR(bus->clk)) {
-> > -               dev_err(dev, "failed to get bus clock\n");
-> > -               return PTR_ERR(bus->clk);
-> > -       }
-> > -
-> > -       ret =3D clk_prepare_enable(bus->clk);
-> > -       if (ret < 0) {
-> > -               dev_err(dev, "failed to get enable clock\n");
-> > -               return ret;
-> > -       }
-> > +       bus->clk =3D devm_clk_get_enabled(dev, "bus");
-> > +       if (IS_ERR(bus->clk))
-> > +               return dev_err_probe(dev, PTR_ERR(bus->clk), "failed to=
- get bus clock\n");
->
-> nitpick. I recommend that better to keep 80 char on one line as following
-> for the readability.
->
->                return dev_err_probe(dev, PTR_ERR(bus->clk),
->                                           "failed to get bus clock\n");
->
-Ok
->
-I will update this in the next version.
+Thanks Marek, it fixes some warnings when booting the E850-96 board
+with current kernel-next (next-20240508), like:
 
-Thanks
--Anand
+    samsung_clk_register_fixed_rate: failed to register clock lookup
+for clk_rco_i3c_pmic
+    ...
+
+But I guess 'ret' variable should be removed now, I'm seeing this
+build warning after applying this patch:
+
+    drivers/clk/samsung/clk.c: In function 'samsung_clk_register_fixed_rate=
+':
+    drivers/clk/samsung/clk.c:142:20: warning: unused variable 'ret'
+[-Wunused-variable]
+
+Also, maybe add corresponding "Fixes" tag?
+
+Other than that:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Thanks!
+
+[snip]
