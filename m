@@ -1,134 +1,99 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6DB1649DD;
-	Fri, 10 May 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B8E11713
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 May 2024 18:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715334063; cv=none; b=iFwMqxK/SoVXbXwmsV6sF0aoNUY25tqtQ50S6Mts1Z+CiqlsItJGPm8E8+jxS9dtZ7hpNdM6T2Wu9jW9cuQlibxJFjd9x5xBA2sAEQNLzVF+fwnywWtqXNkwcVF6ff/Q4bEbfZyKioO9Yw0d8CNjLErfgkfeH4CWCCjWxHhyJFY=
+	t=1715365826; cv=none; b=Jmg0oFXqijjyAhm3mJIF4tbqksdiwWxFEcXHR/06QZ6v1XBlw00gbQh1dcXhOZCubsoSr/TfwHMsGHLXrgXcwYAeH7ASIOauex9/oa2I9zqqEHxnSndVn64I8MNHtd9Nsntv7oQ1LL/nKLkRhELOoSh3ksiv8Li8N6q+DebQO0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715334063; c=relaxed/simple;
-	bh=1AdAs/JP/a3mKsJUfe3CkMCB928cBD8nioKo20W2VsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nt70Ebe7/1h2phUbBXGXA1snPcsOUs+SUkFCeBtnw9cW6xYPjvwxiAi7o0Oc9mbQuani2pRPFvH5FMdkcr83w+JRgwJAa3Y0PBjpKT/jrM3GpJprPD1Bq4hCopCHbPjkmHEv/TRlLxuEOWiqtDJisxNJ6OQszD7qfGgT5rNZG0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AT0g+QV7; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715365826; c=relaxed/simple;
+	bh=wC0jfjirw2za7FXTFvs+sXPDHXPCl1QN0MXNhFZPgH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nWVofyCSjp/xi4cQTb+gY3mh8VjbeoVpFcWgVjbZiYHSDYJEFU7IyAHAL94qdPd+q5uQ7zQp/m4LVL8s8+hzO0qZMXo3MXM4QMmaC//v2So6LDnPPeSJtd7kF143SgrDtHCUvrv67t/Q2zzS8esxRkJPYkhcoJ5huN7GliU8yvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lPU4XzCw; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AT0g+QV7"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f4dcc3eeb3so680274b3a.0;
-        Fri, 10 May 2024 02:41:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lPU4XzCw"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de60a51fe21so2352426276.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 May 2024 11:30:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715334061; x=1715938861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1715365824; x=1715970624; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xYCA026a98+jinm4XXjivyCMpzTaBQNxk+cwgCPrDy4=;
-        b=AT0g+QV72pJc1e7BisZ5Qon4GauE4AfiXMUNsJ2bCERTZ7cbE/uUVW8Rzgwmbd2kHm
-         Y6ZcQFArkqQiyE3wjtzPfFdbMtzXnK23E1nGtV+uyPhnitjIrfF6F5vkfw0d13oKW46Z
-         /Rvl2Uuk52jqqPA7mKwLS98/8sc7Luv9sKHMnI7ZmsLSZwkx3luQ/74FmouQW4mTXg8N
-         zMkfPRLBBVq/0ekQeFdaEF2yc4rCkOZenhdKw2dFozdhbKBlFDOaWQsIfaPEnCAj6sIK
-         nE6ddHm04Ts3AjoyTx0CFnpqxgpA7/s0wFk3a2cVCJken2ShIaNDsQRXVqyf+C1KFLxE
-         /HvA==
+        bh=wC0jfjirw2za7FXTFvs+sXPDHXPCl1QN0MXNhFZPgH4=;
+        b=lPU4XzCwSI8b947LqkKqd92/F+Dzylj5CZtct+sw7/F2CUgPIwWj6zAwD8ig8cfRYj
+         xG3pSF4WwMEx+93nQ5HExyzV5riRRjTzvRGti8tUnwU8Qbq4mOhtyySIXirS+xTFZI1o
+         DCUVmKjWNYqqg8gXU7Mvgoec+7d5YXUFI3rn5pp8J2EjkdPv6rEfHlcdZJlDtEHSDek0
+         SDGn6fMrwjli+1drtCCY+a7VpzP3AdDjMIJgXGuodPVyEWNDvpVEBcAbe9stPHKVlII9
+         V07cyfZVCtly2cKv+zy6djjVUygvFY2HLUcbkoK775kvFgDT2eblAt4hiGASBhxLNJ9v
+         RNpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715334061; x=1715938861;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715365824; x=1715970624;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xYCA026a98+jinm4XXjivyCMpzTaBQNxk+cwgCPrDy4=;
-        b=hpHSbXSQ6k8+zmZ9xFdUWhWDw4mtqxbRJiY1Z5t/pDIYEcZkOCUwywXIJYbaybex2b
-         Nq/z/lcCLiTzrDxgvD6Cf2GRi7xY/fefBhxYVeAqFmqRM6zIY/HdUS7D0lJuDBzn0hzt
-         IthgCGG9RK1aV18kx7wBLgm5pV87ggrp3cYXHpanhxAhMqXsnsycOyNI/QeBci3+m6jY
-         +EY6OFcQxsJLcAgXWHqFLjGfHL3vmZ5K/9qKIgkLcAHzlqTZs1oASlKTrxzYouTKdzL3
-         1rFf4+PbdUDoEUak2t21YgnnBQiis1WRpAsrBjhhhZ01gGtRIu5MR+kczmkbjE5uadlc
-         vZdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdVn7njd9Nqfu7XLtmWZv9LPmSofvesYkmpFggUMWSuwzAOCIKPoYf2pBI0fRCixLwcgd40ypJpeqLCaESLXMHnhnAArvx3iaKDaEq2FZOQXo3Ha3YrQ8yTlwZrH/26tK0F1HQnG9lXlrD1PKmOppsfDHhL5eZ3lDrhSM7WaRGwmprtcSw+duf3g==
-X-Gm-Message-State: AOJu0YyUZg1NkgoIZs7C87IuhxVPxIEuKXL7rtVoB+Io05ygejkBkgFO
-	O5I/3D2D4uW4j+aPtdipqscs4/ON4fLBEe8Vw3cOq3r8nx3h/Vug
-X-Google-Smtp-Source: AGHT+IGv0EhQaZQv5264QLirP3eVLjx8maXcHjKU/FgFJ8ZT4iudZpiwgz4HLBkM4c/WXo008palAg==
-X-Received: by 2002:a05:6a00:3cc7:b0:6f3:e6e0:d9fb with SMTP id d2e1a72fcca58-6f4e02c6a0emr2055840b3a.11.1715334061383;
-        Fri, 10 May 2024 02:41:01 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade28asm2554518b3a.139.2024.05.10.02.40.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 02:41:01 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] PM / devfreq: exynos: Use local clk variable instead of exynos_bus member
-Date: Fri, 10 May 2024 15:10:25 +0530
-Message-ID: <20240510094034.12493-2-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240510094034.12493-1-linux.amoon@gmail.com>
-References: <20240510094034.12493-1-linux.amoon@gmail.com>
+        bh=wC0jfjirw2za7FXTFvs+sXPDHXPCl1QN0MXNhFZPgH4=;
+        b=L/S9KpWif2iAyz76VvqkVzHForgUYTcvV7/JFKPXJHUTBiiWHIXK7cbY9fOku3Nuek
+         KLQ/ubaS6XbBnlpbZK48/YyhV3gBe9lddnVY7/o2WWZmWCww80ATPVJBPVxE6mjVsogX
+         LYoW+d5JRFkHLiiRhjqd8xs6lvGzJGXUnsRSb9DBhaA3aaAh0uN8bhyGqptlcsx9E80R
+         RXa8ZXR9W21r8Ds0wI1QmSKCCSfvz+8XUH9clut40sGoRUoGs4ELTP5KKe61qZ93D3mB
+         AZdFRc7C0V7VzYhNUdI/rVWCptI3p2SPsa6vCbvUemXQiW6eru7qrBPINx3lf2/mYgmn
+         NSBA==
+X-Gm-Message-State: AOJu0YzHYKu377+hsAhh4J2AAeQIYgpQ17PQRiHGZPwL3crpNrcBKz7a
+	AWYuqtQBfEiBsmwUrin4aBEWjeBTv6ewqBQRRWAzm6gJqGB8vN990GE2NMRL+aWYbHx1IPCsAgC
+	gWEUrENtrfCz9YHXCiKszbr41drXllHypkE5dnw==
+X-Google-Smtp-Source: AGHT+IEdUtsjRJuFPtE/WysoIoyTtkfgv+irC179eNOa1gAB+4VTMJciFkgGa8Q1Udn3gJX8TJvtg3/kjSc6VXrh038=
+X-Received: by 2002:a25:80ce:0:b0:de5:507a:7378 with SMTP id
+ 3f1490d57ef6-dee4f4c2a98mr3886600276.45.1715365823561; Fri, 10 May 2024
+ 11:30:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384@eucas1p1.samsung.com>
+ <20240510070653.537089-1-m.szyprowski@samsung.com>
+In-Reply-To: <20240510070653.537089-1-m.szyprowski@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 10 May 2024 13:30:11 -0500
+Message-ID: <CAPLW+4kYE7mnEUrQM4qRs0Uhr2RcXXVCu0XLvX7-czJUZ_Fd1w@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: samsung: exynos-clkout: Remove misleading of_match_table/MODULE_DEVICE_TABLE
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	William McVicker <willmcvicker@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This commit modifies the exynos bus driver to use a local clk variable
-for clock handling instead of storing it in the exynos_bus struct member.
-This helps in simplifying the code and makes it more readable.
+On Fri, May 10, 2024 at 2:07=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
+> module driver") this driver is instantiated as MFD-cell (matched by
+> platform device name) not as a real platform device created by OF code.
+> Remove then of_match_table and change related MODULE_DEVICE_TABLE to
+> simple MODULE_ALIAS to avoid further confusion.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v3:
+> - Use '#define DRV_NAME' based alias. I see no point bloating the driver
+> with another platform device IDs array, as I don't expect this driver to
+> be used with any other platform device ID. Driver variants are already
+> selected based on the parent PMU device compatible.
+>
+> v2:
+> - added MODULE_ALIAS
+> ---
 
-Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v5: New patch
----
- drivers/devfreq/exynos-bus.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 7d06c476d8e9..e55ae59a8ae7 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -34,7 +34,6 @@ struct exynos_bus {
- 	unsigned long curr_freq;
- 
- 	int opp_token;
--	struct clk *clk;
- 	unsigned int ratio;
- };
- 
-@@ -241,13 +240,14 @@ static int exynos_bus_parse_of(struct device_node *np,
- {
- 	struct device *dev = bus->dev;
- 	struct dev_pm_opp *opp;
-+	struct clk *clk;
- 	unsigned long rate;
- 	int ret;
- 
- 	/* Get the clock to provide each bus with source clock */
--	bus->clk = devm_clk_get_enabled(dev, "bus");
--	if (IS_ERR(bus->clk))
--		return dev_err_probe(dev, PTR_ERR(bus->clk),
-+	clk = devm_clk_get_enabled(dev, "bus");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk),
- 				"failed to get bus clock\n");
- 
- 	/* Get the freq and voltage from OPP table to scale the bus freq */
-@@ -257,7 +257,7 @@ static int exynos_bus_parse_of(struct device_node *np,
- 		return ret;
- 	}
- 
--	rate = clk_get_rate(bus->clk);
-+	rate = clk_get_rate(clk);
- 
- 	opp = devfreq_recommended_opp(dev, &rate, 0);
- 	if (IS_ERR(opp)) {
--- 
-2.44.0
-
+[snip]
