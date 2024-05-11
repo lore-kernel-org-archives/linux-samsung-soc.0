@@ -1,99 +1,112 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B8E11713
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 10 May 2024 18:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12BE1C698;
+	Sat, 11 May 2024 18:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715365826; cv=none; b=Jmg0oFXqijjyAhm3mJIF4tbqksdiwWxFEcXHR/06QZ6v1XBlw00gbQh1dcXhOZCubsoSr/TfwHMsGHLXrgXcwYAeH7ASIOauex9/oa2I9zqqEHxnSndVn64I8MNHtd9Nsntv7oQ1LL/nKLkRhELOoSh3ksiv8Li8N6q+DebQO0I=
+	t=1715453673; cv=none; b=J22G6MtLCHuIiL+NE8y3Kv3TJjvOJoFda/si4823WeOf2Jdwn/nmx55kdobLTG1U5hd7HMCNMlNRW1JKewMDcQuUosRy02+r7G4n3AfvJo5YMa86nUbqrUOZgLmsUczziBs3wgdB5IQF6HXI+dJ3tsu/VFC7uYcgPaEhaZrXFWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715365826; c=relaxed/simple;
-	bh=wC0jfjirw2za7FXTFvs+sXPDHXPCl1QN0MXNhFZPgH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nWVofyCSjp/xi4cQTb+gY3mh8VjbeoVpFcWgVjbZiYHSDYJEFU7IyAHAL94qdPd+q5uQ7zQp/m4LVL8s8+hzO0qZMXo3MXM4QMmaC//v2So6LDnPPeSJtd7kF143SgrDtHCUvrv67t/Q2zzS8esxRkJPYkhcoJ5huN7GliU8yvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lPU4XzCw; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715453673; c=relaxed/simple;
+	bh=zsV9PavFJcTnNWI/Th6BtzFhoDWcMrSZoE/bqvNAUb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IKn6EyLylU2zDD92PgVZVb7DuRLomCicVmS0GF/4mZJUSfge98ekgHxRNfzltyM6LwGv0VPezJ9kOcYIpWyWOYDOZ33boC2Vmso/CQC24z3w52S3Fc9iVOVRYXUPbg9RTYk8N4JGmTm8rE8BE1s8fxIOn5Yv4JQuTYLf21F8peQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lrz64as7; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lPU4XzCw"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de60a51fe21so2352426276.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 May 2024 11:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715365824; x=1715970624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wC0jfjirw2za7FXTFvs+sXPDHXPCl1QN0MXNhFZPgH4=;
-        b=lPU4XzCwSI8b947LqkKqd92/F+Dzylj5CZtct+sw7/F2CUgPIwWj6zAwD8ig8cfRYj
-         xG3pSF4WwMEx+93nQ5HExyzV5riRRjTzvRGti8tUnwU8Qbq4mOhtyySIXirS+xTFZI1o
-         DCUVmKjWNYqqg8gXU7Mvgoec+7d5YXUFI3rn5pp8J2EjkdPv6rEfHlcdZJlDtEHSDek0
-         SDGn6fMrwjli+1drtCCY+a7VpzP3AdDjMIJgXGuodPVyEWNDvpVEBcAbe9stPHKVlII9
-         V07cyfZVCtly2cKv+zy6djjVUygvFY2HLUcbkoK775kvFgDT2eblAt4hiGASBhxLNJ9v
-         RNpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715365824; x=1715970624;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wC0jfjirw2za7FXTFvs+sXPDHXPCl1QN0MXNhFZPgH4=;
-        b=L/S9KpWif2iAyz76VvqkVzHForgUYTcvV7/JFKPXJHUTBiiWHIXK7cbY9fOku3Nuek
-         KLQ/ubaS6XbBnlpbZK48/YyhV3gBe9lddnVY7/o2WWZmWCww80ATPVJBPVxE6mjVsogX
-         LYoW+d5JRFkHLiiRhjqd8xs6lvGzJGXUnsRSb9DBhaA3aaAh0uN8bhyGqptlcsx9E80R
-         RXa8ZXR9W21r8Ds0wI1QmSKCCSfvz+8XUH9clut40sGoRUoGs4ELTP5KKe61qZ93D3mB
-         AZdFRc7C0V7VzYhNUdI/rVWCptI3p2SPsa6vCbvUemXQiW6eru7qrBPINx3lf2/mYgmn
-         NSBA==
-X-Gm-Message-State: AOJu0YzHYKu377+hsAhh4J2AAeQIYgpQ17PQRiHGZPwL3crpNrcBKz7a
-	AWYuqtQBfEiBsmwUrin4aBEWjeBTv6ewqBQRRWAzm6gJqGB8vN990GE2NMRL+aWYbHx1IPCsAgC
-	gWEUrENtrfCz9YHXCiKszbr41drXllHypkE5dnw==
-X-Google-Smtp-Source: AGHT+IEdUtsjRJuFPtE/WysoIoyTtkfgv+irC179eNOa1gAB+4VTMJciFkgGa8Q1Udn3gJX8TJvtg3/kjSc6VXrh038=
-X-Received: by 2002:a25:80ce:0:b0:de5:507a:7378 with SMTP id
- 3f1490d57ef6-dee4f4c2a98mr3886600276.45.1715365823561; Fri, 10 May 2024
- 11:30:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lrz64as7"
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44BHw2s1024717;
+	Sat, 11 May 2024 18:54:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2023-11-20;
+ bh=8w/6C+HdpkK6kFdInaalIfrEqZhi68Ze6hefgz5Sk/U=;
+ b=lrz64as7e/YGk8I57jY/dV7HacWL4o9ZE3faF8f8F0ULPyeUDIROy1InorcdG77hCwDw
+ rAaxiqnANL2/ySDI2qtPMkHX3Ae+6P3SK3uYt+8xOGpj85QDjTFUtmCIC3VCkH8wYfE1
+ VXEq7pa7CJ4HC8cYLqxua6qKCb53Q0Rv6WckGl5Cc7fFbsR144ApVZUM9t6BLeaeYevQ
+ VZd6Nx2yeFJ5hyTwYXGKOou+Wl7cSeRFp1sPbYfpzsT1mxWp8wQ3QoSZ3FoSCjaNFLsZ
+ PwIEZhfGeVISOiMPQP1cYkW/0AUzhZ4iQD9brfI6wxF+Yy2M9Hoq4RYYiVb+xfpexctT 0A== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y28ub864c-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 11 May 2024 18:54:03 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44BGJkGR022397;
+	Sat, 11 May 2024 18:40:00 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y1y44fn7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 11 May 2024 18:40:00 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44BIZYPW028255;
+	Sat, 11 May 2024 18:39:59 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3y1y44fn5r-5;
+	Sat, 11 May 2024 18:39:59 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        James.Bottomley@HansenPartnership.com,
+        Peter Griffin <peter.griffin@linaro.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+        saravanak@google.com, willmcvicker@google.com, kernel-team@android.com
+Subject: Re: [PATCH v3 0/6] ufs-exynos support for Tensor GS101
+Date: Sat, 11 May 2024 14:39:11 -0400
+Message-ID: <171545260083.2119337.10146864051829985278.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240426122004.2249178-1-peter.griffin@linaro.org>
+References: <20240426122004.2249178-1-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384@eucas1p1.samsung.com>
- <20240510070653.537089-1-m.szyprowski@samsung.com>
-In-Reply-To: <20240510070653.537089-1-m.szyprowski@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 10 May 2024 13:30:11 -0500
-Message-ID: <CAPLW+4kYE7mnEUrQM4qRs0Uhr2RcXXVCu0XLvX7-czJUZ_Fd1w@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: samsung: exynos-clkout: Remove misleading of_match_table/MODULE_DEVICE_TABLE
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	William McVicker <willmcvicker@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-11_06,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405110139
+X-Proofpoint-ORIG-GUID: 2qdil7Pa5aFUKQqVJo-LXRoqqyQtZf98
+X-Proofpoint-GUID: 2qdil7Pa5aFUKQqVJo-LXRoqqyQtZf98
 
-On Fri, May 10, 2024 at 2:07=E2=80=AFAM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
-> module driver") this driver is instantiated as MFD-cell (matched by
-> platform device name) not as a real platform device created by OF code.
-> Remove then of_match_table and change related MODULE_DEVICE_TABLE to
-> simple MODULE_ALIAS to avoid further confusion.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> v3:
-> - Use '#define DRV_NAME' based alias. I see no point bloating the driver
-> with another platform device IDs array, as I don't expect this driver to
-> be used with any other platform device ID. Driver variants are already
-> selected based on the parent PMU device compatible.
->
-> v2:
-> - added MODULE_ALIAS
-> ---
+On Fri, 26 Apr 2024 13:19:58 +0100, Peter Griffin wrote:
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> This series adds support to the ufs-exynos driver for Tensor gs101 found
+> in Pixel 6. It was send previously in [1] and [2] but included the other
+> clock, phy and DTS parts. This series has been split into just the
+> ufs-exynos part to hopefully make things easier.
+> 
+> With this series, plus the phy, clock and dts changes UFS is functional
+> upstream for Pixel 6. The SKhynix HN8T05BZGKX015 can be enumerated,
+> partitions mounted etc.
+> 
+> [...]
 
-[snip]
+Applied to 6.10/scsi-queue, thanks!
+
+[1/6] dt-bindings: ufs: exynos-ufs: Add gs101 compatible
+      https://git.kernel.org/mkp/scsi/c/438e23b61cd4
+[2/6] scsi: ufs: host: ufs-exynos: Add EXYNOS_UFS_OPT_UFSPR_SECURE option
+      https://git.kernel.org/mkp/scsi/c/449adb00d4f7
+[3/6] scsi: ufs: host: ufs-exynos: add EXYNOS_UFS_OPT_TIMER_TICK_SELECT option
+      https://git.kernel.org/mkp/scsi/c/9238cad67969
+[4/6] scsi: ufs: host: ufs-exynos: allow max frequencies up to 267Mhz
+      https://git.kernel.org/mkp/scsi/c/c9deb9a4f574
+[5/6] scsi: ufs: host: ufs-exynos: add some pa_dbg_ register offsets into drvdata
+      https://git.kernel.org/mkp/scsi/c/6f9f0d564b04
+[6/6] scsi: ufs: host: ufs-exynos: Add support for Tensor gs101 SoC
+      https://git.kernel.org/mkp/scsi/c/d11e0a318df8
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
