@@ -1,130 +1,139 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916F417996;
-	Tue, 14 May 2024 08:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5C48612E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 May 2024 12:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715674038; cv=none; b=hU2FRyLRnxZKkiLov9y/zS6ulLg4MU21gwRrwGh9w2OBKoezjLS2eCI0Dalu3V8/fJe+2A/F/l+5iT89jXfCHrYllzzQYCfxaiUhH16QpTojXBCDol1XtrrJbwygX4iGVShz5kyPi3dTs+o8wWfRGp8uzeyGQkGw/FSZrNyCb+U=
+	t=1715691355; cv=none; b=JwAuJLNXNxwIHcemIvZGRyoxgBvPi1KsVtXrdJyMFy6lvLDLhbN0xWrr8JdHx7GLV3ZJOP6pxyFvChiaiTA3mOD6PFai9DPQhVvjarDUOKlmgqYeqVI3AH6dkMwbvfuRCCExz4S9Zorqkts3pufiiqq+aJlEeZpJN8KuZJ05cUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715674038; c=relaxed/simple;
-	bh=toj7avCrdtDP66sy+w2xPyKX8oobvvymnd+3vjyORlc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lLn8jUm/ThhrMH/0cvUl/XwG/bigkmUavSS00ZbkfFOVPN2We+O7C+aQa9zyE5SLkQhpMHjl0Ew2FRC0Bz1RMhOhVzI0IsblVINKNJUBz5liWYSc4kj00fDIgsiNXYxwUhoSSUZyRje3ur6AGVHo5zgaZGz4f6xXFDT+Vp3e09k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61e04fcf813so59817737b3.3;
-        Tue, 14 May 2024 01:07:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715674035; x=1716278835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mAZGt+1Rc/qtuBUqNnzX2rBGCR5XoalBEqWaRtcOihM=;
-        b=Iw4IaWQY1QwhFqN+npKwJG6R2WAEeKh/7wlU8M1zhh6zgPMYBbGCExna4NVD4azTm2
-         fwcKDtUEXl0HqHUAhJeYa56jbl8Ilr5hqhzJYdBJjOjOz4lS1VjwVwcVWPKFryULM3kd
-         8EkeI7m4Lk1AGR11inXpvAGG2ZLOByZ85HGaedoH5h7CT+fEz1AvRpuzDCUXcSFa8b4X
-         y5Ak4b5GtpLe3RTb69FxGFVCg4KPNLKvBqJUe4VHHsIHAX3YJED/QRakA3lOgyKiJJ8L
-         m9Ou9u2uyIoC4qZdxiQQM6Ljg+ANlTB8RcvxEm1tMSLL//+bx4CBSgEa0jQrKNJXO7Xd
-         jwHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWj8vv9qRX44nJZ2fw4LRrvwF7M5pA0HhNQZZs4ZXqrKbTJxhqfZA4nC8gYayDLDDir9fGS+NP/4OXL1s1hGDSONAEGWDp3jTz9SxLyUpFtn81jHfE/T32IBQoJNe7yv83Gdq/E1s9PMXbL928bfmVHdxuqXpnjQed79nk5S02RUCLrIDnwAZAPRNfrGXL12cqnWB4xTmEJcV4SPVASQAihITB6Sqm7XYOsO8ehDWCSoA1lOslXnQio+kJksQP+X+tPIBOpXw5wdglkIA==
-X-Gm-Message-State: AOJu0YxnaZVK0299AffwWYdOxj9UBafosFEXrkv9FjLhrpn4BqXDLNJZ
-	eLfR1wQin7f+hCBJkxKEEquE+W685McUel/HjrKsxLUx3LVs82v9w1eXnELn
-X-Google-Smtp-Source: AGHT+IGxjxDOYrEBfWACS3xb4tBhGmMofLxxMuAzFLCqhT/U50fNTCZGyD79+TBrcCbgSwQTnN+5tw==
-X-Received: by 2002:a25:7909:0:b0:dd0:c866:ec3a with SMTP id 3f1490d57ef6-dee4f344357mr9991216276.22.1715674035592;
-        Tue, 14 May 2024 01:07:15 -0700 (PDT)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f194c3asm50576136d6.69.2024.05.14.01.07.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 01:07:15 -0700 (PDT)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-792b8d31702so339701585a.3;
-        Tue, 14 May 2024 01:07:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVf5DFfZPLOyhchVtkqQQEau6PvVJvWpWfK6MH7evdfLUxtEBMaJRn/MqBWZHm2IsKsPS5UpziVP+gAUJaHPZsAk9yLBg/5ORozWICwSjP96i136aq9D+mQhjaGpFuF4QgVFjGI7ZjzqF7FHzRuv3L3ICCvatIPMMHvJLxmM6fHMnT+HDRF1J0D70RyBrXRq/g+btRfPctdwxEeMpwijhD9oqPUUcAvcE5CKahhBTpOvOhE6IBaA5zWmK6e8Ex35u1CEl7jnnKLVxALfQ==
-X-Received: by 2002:a05:690c:fd0:b0:611:7132:e6ba with SMTP id
- 00721157ae682-622b0147778mr138786587b3.40.1715674014345; Tue, 14 May 2024
- 01:06:54 -0700 (PDT)
+	s=arc-20240116; t=1715691355; c=relaxed/simple;
+	bh=rufPGwYsfmgJJZF8O5nQY4lb0oTkh06RDRE/RlmnRhI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Fs+wCyUBXWW+ZPdqHWBgcXhDizj95IA+XefNOoai5pq/5SfE/Av1PLRuobJlejfD1zoGImzGekZqpo3ExPLodpJO44S7GDYtnzAFkbunzdmtsw9fiExztKsfnZakp13vhkGADqrSJYl11qNGDhGFWxcjw9a8dxKuaU3B/RLEMjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f3Crfp+4; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f3Crfp+4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715691354; x=1747227354;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rufPGwYsfmgJJZF8O5nQY4lb0oTkh06RDRE/RlmnRhI=;
+  b=f3Crfp+4sAUKcnVGdffebF6er8O7CGv7iWosVJa09KhI1PljzwaUNJ9X
+   0WUOvgfVOFgOb3QDlwIJ0WBNz2J8nERofQnDo88SFf81ipM/+zjYzXDQU
+   GQIyncyzIhZS105LWAV1YTYwOTMmp7+4/8NwvxkLshFOpsHRKiYlLun8v
+   vp/zzseSBevmWBbizwSdwRPvJCXZtfapNsoYv/NKycHGkFgdO63jKqXXh
+   g7FPeyIEw1Ors3zj4egl3bCdrnlZ388ES0yyvtG3dd9SK/pAxbtsN/G9t
+   rigv18cz4YnLBI69Tioy78FLsQuN0oK2j8Vuk2XKIC2L9tNhbc1F04yL0
+   A==;
+X-CSE-ConnectionGUID: SnZjENZlQeC/0lECjWFhhw==
+X-CSE-MsgGUID: enxYZDSETHKl0HKtt9ARew==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="15458729"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="15458729"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 05:55:53 -0700
+X-CSE-ConnectionGUID: v/dEKlCiRICdmy1xrzI0Jg==
+X-CSE-MsgGUID: AU+6hwDjRImNasTMPzmKGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30507475"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.91])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 05:55:49 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: dri-devel@lists.freedesktop.org
+Cc: jani.nikula@intel.com,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 04/11] drm/exynos: hdmi: convert to struct drm_edid
+Date: Tue, 14 May 2024 15:55:10 +0300
+Message-Id: <2fe0b4deb4f2ab255735cd6e1a657a17e0d45784.1715691257.git.jani.nikula@intel.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1715691257.git.jani.nikula@intel.com>
+References: <cover.1715691257.git.jani.nikula@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com> <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
- <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
- <CAMuHMdWCD+k8=iX8+tcK76DU_m9quR8BV+K68K73SygJzCz5VA@mail.gmail.com> <CACRpkdYS8=cHT=7tGbzWZ73jbLhjqdpssbaHH-qREe=bcHYe2A@mail.gmail.com>
-In-Reply-To: <CACRpkdYS8=cHT=7tGbzWZ73jbLhjqdpssbaHH-qREe=bcHYe2A@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 May 2024 10:06:42 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUucOu-c7tbeBBCMaoouFcUnJi0aRU--pc2Gk9QWNrANg@mail.gmail.com>
-Message-ID: <CAMuHMdUucOu-c7tbeBBCMaoouFcUnJi0aRU--pc2Gk9QWNrANg@mail.gmail.com>
-Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 14, 2024 at 9:33=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
-> On Tue, May 14, 2024 at 8:36=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > > Does this go into the Renesas patch stack?
-> > > I think the patch stands fine without the rest of the series.
-> >
-> > Sure, I can do that.
->
-> Please apply it!
+Prefer the struct drm_edid based functions for reading the EDID and
+updating the connector.
 
-OK, will queue in renesas-pinctrl for v6.11.
+The functional change is that the CEC physical address gets invalidated
+when the EDID could not be read.
 
-> > From your positive response to v1, I thought that perhaps you just
-> > wanted to take the full series yourself?
->
-> Sorry, I always prefer submaintainers to pick their stuff, they
-> know what they are doing and they can test the entire patch
-> stack properly.
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 
-OK, will (try to ;-) remember...
+---
 
-Gr{oetje,eeting}s,
+Cc: Inki Dae <inki.dae@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-                        Geert
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index e968824a4c72..9033e8b66816 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -883,27 +883,30 @@ static const struct drm_connector_funcs hdmi_connector_funcs = {
+ static int hdmi_get_modes(struct drm_connector *connector)
+ {
+ 	struct hdmi_context *hdata = connector_to_hdmi(connector);
+-	struct edid *edid;
++	const struct drm_display_info *info = &connector->display_info;
++	const struct drm_edid *drm_edid;
+ 	int ret;
+ 
+ 	if (!hdata->ddc_adpt)
+ 		return 0;
+ 
+-	edid = drm_get_edid(connector, hdata->ddc_adpt);
+-	if (!edid)
++	drm_edid = drm_edid_read_ddc(connector, hdata->ddc_adpt);
++
++	drm_edid_connector_update(connector, drm_edid);
++
++	cec_notifier_set_phys_addr(hdata->notifier, info->source_physical_address);
++
++	if (!drm_edid)
+ 		return 0;
+ 
+-	hdata->dvi_mode = !connector->display_info.is_hdmi;
++	hdata->dvi_mode = !info->is_hdmi;
+ 	DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+ 			  (hdata->dvi_mode ? "dvi monitor" : "hdmi monitor"),
+-			  edid->width_cm, edid->height_cm);
+-
+-	drm_connector_update_edid_property(connector, edid);
+-	cec_notifier_set_phys_addr_from_edid(hdata->notifier, edid);
++			  info->width_mm / 10, info->height_mm / 10);
+ 
+-	ret = drm_add_edid_modes(connector, edid);
++	ret = drm_edid_connector_add_modes(connector);
+ 
+-	kfree(edid);
++	drm_edid_free(drm_edid);
+ 
+ 	return ret;
+ }
+-- 
+2.39.2
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
