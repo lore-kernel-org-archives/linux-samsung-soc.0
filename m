@@ -1,61 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAC1DFD1;
-	Tue, 14 May 2024 21:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26BF364AE
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 May 2024 10:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715721138; cv=none; b=kRITa4qBiLgzwxLNEulhsHQ7T1uOlWnIdImOnIavcB9bGkneu9gkw9pzRH8YDf5PSeKlGI/0gTrCuuS0EkQzDpn6jVrHXjv9EKKUvwn4uKDpm2SXimFsvKCgWdHMHyhNknMiY8wRFRmi8vO0ZdUeZtE0idEgBsmAPiHJWeTc2kw=
+	t=1715769112; cv=none; b=TAD4yC1bsBrcDNvj8TF1OXO11vzLb/Bowijh5YvRI3WzoUwwkLmOvAfOZ90pdFVcaSAz5DQk1NJs6Zj2RVvtWXibkKSnv6cmkQW2h89DtYImVJ4xb0lDv0Ob/5WDmOMBQHMIoDep982W8Qt2v3Dx/HHeGzjIB/etj3x8CCyB4Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715721138; c=relaxed/simple;
-	bh=UyCf2gxOf2W6QtrpR8rjzzIMkckYknSHaNnua2jwqXY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=g6SNLVysu5nt8nyhsm4Qp8NLYJNhKxpKG1WyyJQ98po5IQ/HwqrfLfBwfUJzBwsnZ7RYM0ORTigNduRAP9jZdrYnWC0S6uUZTIc9NCxbmraPMX4d8Bw6mAluQMcVpzN1BNXW7iYU68EjVY7etoCdzDP2IuRJiNeEAJS5EOiANFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPKdMNGg; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPKdMNGg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99A7C2BD10;
-	Tue, 14 May 2024 21:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715721138;
-	bh=UyCf2gxOf2W6QtrpR8rjzzIMkckYknSHaNnua2jwqXY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=VPKdMNGg57box3oUqpj3v6ptKzrzMoRedpLF40dxQ+kX2ZLXy45By60FwRBz7A8gd
-	 5/WD0iXxHtC+QknUO88wLAv2eW5HloxoJlFSNM2hsply/cE5OTCv3pO6YWQhrPmTiv
-	 fZcZjS93mYEzwYohGxZXoPxKmv/jxorf2YEzidmudtFCvRjbNqz2nWQmUShv7xjCKa
-	 WgP+lBrm6c9B4QB9wWmP7+O3W7U19VQEQV0jR/qhAgZkctaimuRe6vxrKeT7LE+4Kl
-	 pVuqSp0OIY7ctAmdxEOR/45ToDF6/OE3UbRyMNWkaFme4rr6M02QYBCIZBw1G3VqGP
-	 rVs27JSb74xqA==
-Message-ID: <f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715769112; c=relaxed/simple;
+	bh=WV/rhMgPG8ISHITPSiQcs++LZ0OVZUVp2oHdbMwSsKI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EXtASDHxPYO3LclSPVhS1dzGla0UJEQRnKxXwNfGrCTwTs1xbuTxlo+owwmG/j68VXgDfmubKAMUegk2BOm6rBYZHJmuma8oLJRw34MwtDuezRmxUWDlo9vqprobikdcp1x2t5DEFpuhUasiWvJtf63cDSV75ELXlzVcPWVRa/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1s7Bus-0002Hu-Fl; Wed, 15 May 2024 12:31:22 +0200
+Message-ID: <0642186160bb31ca603b754a67aba47da1af716c.camel@pengutronix.de>
+Subject: Re: [PATCH 00/14] improve Analogix DP AUX channel handling
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Robert Foss <rfoss@kernel.org>
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Andy Yan
+ <andy.yan@rock-chips.com>, Sandy Huang <hjc@rock-chips.com>, Jingoo Han
+ <jingoohan1@gmail.com>, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim
+ <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,  dri-devel@lists.freedesktop.org,
+ kernel@pengutronix.de,  patchwork-lst@pengutronix.de
+Date: Wed, 15 May 2024 12:31:18 +0200
+In-Reply-To: <CAN6tsi73ks50-Xg78Jpj6Me80hpaR0ww=RXOMKJoT2V6Zg8_Yg@mail.gmail.com>
+References: <20240503151129.3901815-1-l.stach@pengutronix.de>
+	 <CAN6tsi73ks50-Xg78Jpj6Me80hpaR0ww=RXOMKJoT2V6Zg8_Yg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240510065901.535124-1-m.szyprowski@samsung.com>
-References: <CGME20240510065909eucas1p20067042a45b26e0a58110ff439dcc1b8@eucas1p2.samsung.com> <20240510065901.535124-1-m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] clk: samsung: Don't register clkdev lookup for the fixed rate clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Sam Protsenko <semen.protsenko@linaro.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date: Tue, 14 May 2024 14:12:15 -0700
-User-Agent: alot/0.10
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-Quoting Marek Szyprowski (2024-05-09 23:59:01)
-> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
-> clkdev entries") revealed that clock lookup is registered for all fixed
-> clocks. The mentioned commit added a check if the registered name is not
-> too long. This fails for some clocks registered for Exynos542x SoCs famil=
-y.
-> This lookup is a left-over from early common clock framework days, not
-> really needed nowadays, so remove it to avoid further issues.
+Hi Robert,
+
+Am Dienstag, dem 07.05.2024 um 15:10 +0200 schrieb Robert Foss:
+> On Fri, May 3, 2024 at 5:12=E2=80=AFPM Lucas Stach <l.stach@pengutronix.d=
+e> wrote:
+> >=20
+> > Currently the AUX channel support in the Analogix DP driver is severely
+> > limited as the AUX block of the bridge is only initialized when the vid=
+eo
+> > link is to be enabled. This is okay for the purposes of link training,
+> > but does not allow to detect displays by probing for EDID. This series
+> > reworks the driver to allow AUX transactions before the video link is
+> > active.
+> >=20
+> > As this requires to rework some of the controller initialization and
+> > also handling of both internal and external clocks, the series includes
+> > quite a few changes to add better runtime PM handling.
+> >=20
+> > Lucas Stach (14):
+> >   drm/bridge: analogix_dp: remove unused platform power_on_end callback
+> >   drm/rockchip: analogix_dp: add runtime PM handling
+> >   drm/bridge: analogix_dp: register AUX bus after enabling runtime PM
+> >   drm/bridge: analogix_dp: handle clock via runtime PM
+> >   drm/bridge: analogix_dp: remove unused analogix_dp_remove
+> >   drm/bridge: analogix_dp: remove clk handling from
+> >     analogix_dp_set_bridge
+> >   drm/bridge: analogix_dp: move platform and PHY power handling into
+> >     runtime PM
+> >   drm/bridge: analogix_dp: move basic controller init into runtime PM
+> >   drm/bridge: analogix_dp: remove PLL lock check from
+> >     analogix_dp_config_video
+> >   drm/bridge: analogix_dp: move macro reset after link bandwidth settin=
+g
+> >   drm/bridge: analogix_dp: don't wait for PLL lock too early
+> >   drm/bridge: analogix_dp: simplify and correct PLL lock checks
+> >   drm/bridge: analogix_dp: only read AUX status when an error occured
+> >   drm/bridge: analogix_dp: handle AUX transfer timeouts
+> >=20
+> >  .../drm/bridge/analogix/analogix_dp_core.c    | 196 ++++++++----------
+> >  .../drm/bridge/analogix/analogix_dp_core.h    |   7 +-
+> >  .../gpu/drm/bridge/analogix/analogix_dp_reg.c |  38 ++--
+> >  .../gpu/drm/bridge/analogix/analogix_dp_reg.h |   9 +
+> >  drivers/gpu/drm/exynos/exynos_dp.c            |   5 +-
+> >  .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  26 +--
+> >  include/drm/bridge/analogix_dp.h              |   4 +-
+> >  7 files changed, 120 insertions(+), 165 deletions(-)
+> >=20
+> > --
+> > 2.39.2
+> >=20
 >=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
+> There are some checkpatch --strict warnings, and the patch 10/14 does
+> not apply. Other than that the series looks very good.
+>=20
+> Maybe rebase on drm-misc/drm-misc-next, fix the applicable checkpatch
+> --strict warnings and send a new version of this series. Then the last
+> patches can be reviewed.
 
-Applied to clk-next
+Thanks for the review so far. Patch 10/14 probably doesn't apply, as I
+based the series on some patches I sent earlier [1]. Maybe you are also
+willing to take a look at those, so I could squash them into a single
+series for the resend?
+
+Regards,
+Lucas
+
+[1] https://lore.kernel.org/dri-devel/20240318203925.2837689-1-l.stach@peng=
+utronix.de/
