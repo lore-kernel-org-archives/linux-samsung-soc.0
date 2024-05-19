@@ -1,61 +1,61 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF68A18C08;
-	Sun, 19 May 2024 08:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F41C69A;
+	Sun, 19 May 2024 08:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716106694; cv=none; b=XH0u65R4GEoS5qq4ZKW7EAi9R94rCYvqWvh1L1pfrzihq1SS1Y4klPev02ow7ceYGMr5J6Ape3sLug1CAPmfAXvbPd42kFs3GMaE3KnFf7FUjuiqf3Mg59fLsDHHmoAxy4mSqtbWgJuR5ZiMYeR0Yhere2fIrWvV3kfxy20M168=
+	t=1716106695; cv=none; b=cmQ7gkadgjDK9znC8xWLpstoMFlrv6E+GQfNbsh1Ba/rr0S87zG/3JG+n7IAPLO+VWTMj6wAq44Z0lcsOlOpDI+zSPvgZjEMc5pFfc3hYl/kHIEGip+rD8to7c/F/c+ibWT+DJC7aMgpDzz58VCBAIA+MxqeKvNIlglM7beKIBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716106694; c=relaxed/simple;
-	bh=EZXePcBvXKiwP3EXDEHqCyB/Gu0AEIhLbrUV4Fe+KI4=;
+	s=arc-20240116; t=1716106695; c=relaxed/simple;
+	bh=vuYNtCSoGcmTk8GfhvJhaoNcv6Dz56BFdGIefFxXzuk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qkG2kRTy2kBPVIXSadUIv4abGEayQRMemccCrgXwpijteE+TM8owptJRsmlfDz1OXkAchLABBCbZ3S/minpPmpIlaPxKeFCsyyr2Hph1qLQvzxkJg3vQRZd9Db/qmRItirDQXQ+n7YFKgrCy+DYv7tGvzhMSp71Wb8HZ18auWxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evO6cqRH; arc=none smtp.client-ip=209.85.208.43
+	 In-Reply-To:To:Cc; b=CYAy3QCQs8K9ryR9n8GyLMKOSnOFp/BxnOBuSW3d98oJlX9TkoxMcnSa+FaI8cq65J3GSZ2CuI+EFA5YRnNX3aV7geu22UnBdBYXUPejfEYlhFp30/jSsIz91DNCc7hdu2ybCso76cfOaRUm9z6Zx+Yl7IfZ9PUQxZWA6ihMWUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hTgO4g6G; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evO6cqRH"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56e1baf0380so6291515a12.3;
-        Sun, 19 May 2024 01:18:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTgO4g6G"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-574b3d6c0f3so6595772a12.0;
+        Sun, 19 May 2024 01:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716106691; x=1716711491; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716106692; x=1716711492; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=R9dPohp8pfuUkAslj/44LQMkiwtv+DsL3rPN9tPKGHw=;
-        b=evO6cqRHGpItRJvz3XH4lqDh0qa8kN16LXUCHjDbROGxF8X9Wl3XDwtqRHZ6FSt7a9
-         qoN5cFKynMDDtdwGj6sWb/iOoivXcu1urQhGVsRQUgxCFPDrKCnwTL0gbMcW79o4YJW6
-         Bxi1NQipKlI+YLN8bLhY7P9KPmJuTzMH05Tn/zbHs3g4X1ST1RQqG8oFDQ4RevTQw9Nh
-         fERDvXtz0k3VqnQ2OW5xbVutORon9FKln2PE+Zck87ooUWfFrwslfs5R2KXgdqFK1jZh
-         43xx9LB18TYn0pHyb7Kiv62hHQSNY+SIl05v2MnDAhtznDWpUXhrDzinlIJ0l4zSTfV4
-         iUWA==
+        bh=EUmoS//RS/NzAGvmwPir69ysTLwZDq4qcPlEK/AGs3g=;
+        b=hTgO4g6GT0QnsirkOYqVKhEqbRKqfTmvbh2e4uBw4Ooo+MOv43DDHyXattzXYZU1ss
+         zv8lm5cWn0e0DBhb8+xblWyhot6LKTk9g+iE66xVbh9A5HqLzcL30iTHtBjn1oliv2C8
+         thPvNIRYClShMg8wCQOA5d6fTlB/wfYb3s7RUGTq9McIsScB86Fz1uOay6OEoAPIjIH+
+         y8i1TYGpuU/ugPe3xzqNe43jddEEs0cHWBskz/IHHbCK3Mvo0F55M8xADM1alxuulHGO
+         haRr1AGw7OfyYtquxUhRr8GHrMIBrzGzzBMikARgYrc1vyVz775knFIFvEmLeYkuV5X2
+         zu8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716106691; x=1716711491;
+        d=1e100.net; s=20230601; t=1716106692; x=1716711492;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R9dPohp8pfuUkAslj/44LQMkiwtv+DsL3rPN9tPKGHw=;
-        b=dimSBAx78YxMw0ogkwTfpihSCyQ7NaLv92nJM6rYpz2rGIJRiHqUemxay6xQwn9x4z
-         //dWnrLrLbj4yoc0JYKET0oTd/w2+MVMPKSd67L5nLaGjwNTc1ojkfPQVEzq2I+ta33Y
-         m3zXkhodHS/S/GnuPor1ysBa6i1ikh2YT07kPYDFdMsgDdMjXWN/WNR4aqGTL7xvjxOU
-         RwhO7vDQjiE1WX9AzYo0Ha36xg6jJY+omIwiOw1TYsXidQ31jO4H6HKh0WaQJH4L2ONA
-         3DSZKwUBHMiLpUXSBe9HZ2hz5r30I7r7sfKKP/Eb3A5S17lMT0hktp2YKkyHlAcqGJcT
-         +6SA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYnr731lmJAm6C09q1tbBFXOEoL1LD9u/oFWFcds1mvV2EStVT9qMgHUcfBVPJnpUUcXCyf6aewwc/G35u/JhPyxbcR6IKBlzkStEc3/sJAHSn7fKdJRYI3rd0cBSNWWjkY6Oys3mAvKrLDKthYvwKBUK9wfsLIhb94G1UaBAs+2Yyp/eoroLeCIKitul2BchLkDizSzxEb35qpA1SQIC759bsgQmLddk=
-X-Gm-Message-State: AOJu0YzOT1NNixAzRgiJ7g/PFa1vdoyP/h49Hmiav+pMDcMyi7BOBvGe
-	gIQlpZKxDG3C36iTrSffcFJb5uUgrPPUl4EKaE+w5hYQ5KyM/E0j
-X-Google-Smtp-Source: AGHT+IFSJPpCsXD8nlzNZtTtwVuOywlJ3kEeHAEQNsTVgsVqCTp5lAG6+vAvM/y1zxZstH6QWCi7tQ==
-X-Received: by 2002:a50:9519:0:b0:575:d74:338c with SMTP id 4fb4d7f45d1cf-5750d7433dbmr5644244a12.10.1716106691185;
-        Sun, 19 May 2024 01:18:11 -0700 (PDT)
+        bh=EUmoS//RS/NzAGvmwPir69ysTLwZDq4qcPlEK/AGs3g=;
+        b=jjUrbLaDwqOix6ERipRB1QTgOSzCg8I5R4Wt+csdopykPLlW8anIwoPTdmbLGwjWMX
+         Vyqx0sfeI8F5AZznkQBSv0uE1U/aryyr+skgJidUDX3jasV8WhyP0sBEt1gq34o2S4Ev
+         A4kwjzhGnURqRdUjtMDdlxwct5TTAVKKTX54im0lmzHDJ8C4lxF8EcETwfDqYVrnQqYP
+         hx8T8oUImdYl6nAl4ZmvTMp6GFOGbZ1HOtTfwBj8tHNOmloi++isyT/Lmae7pTFiIxXX
+         mBkYHR65T7miK1L0oZqyrD3ZRYYwGX9MLkjhMuILTAQmjifgdGcK8sgjds3iKsUcVtFl
+         vrHw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6KHQd4hCeltZQauWcqIw06EACvtmNZZgD8lFbmdBvXqRqUwsL83EN5osrr9DJF/d+OYcIJrwgtcqtshXJSM3PsfiI5ICzyimQ93YW3NZ/8LX1+FvhNsXrDoV7arzOD/7at5fkUZYtoMydImxvESGWz17XKH2TMloQRMyS6v+wWiT0nSWNwI3nhsOlDZjq0R8vPgLFjAdzywhEI/jKrorFPjBhN+XfkxM=
+X-Gm-Message-State: AOJu0Ywt/sxM03sVVAyVHlwGML6/IHzlUaos9QMqtzw3oh3noeTUH4ga
+	naqA/8Fp7llAOumkWv61aTLbftbsX9fhKIrBoq02ye/iaRDS02/G
+X-Google-Smtp-Source: AGHT+IFtA0Va8QiICPbaNatA5PVquOStRUtv//wy7zLyNNpUAzWXvwJve0s999PpRDl1QmQ8sDDadQ==
+X-Received: by 2002:a50:8a84:0:b0:572:7280:89d6 with SMTP id 4fb4d7f45d1cf-5734d597a25mr18601319a12.7.1716106692558;
+        Sun, 19 May 2024 01:18:12 -0700 (PDT)
 Received: from hex.my.domain (83.8.125.62.ipv4.supernova.orange.pl. [83.8.125.62])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c34e5ccsm13698518a12.95.2024.05.19.01.18.09
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c34e5ccsm13698518a12.95.2024.05.19.01.18.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 01:18:10 -0700 (PDT)
+        Sun, 19 May 2024 01:18:12 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sun, 19 May 2024 10:17:48 +0200
-Subject: [PATCH v3 2/8] ASoC: dt-bindings: samsung,midas-audio: Add
- GPIO-based headset jack detection
+Date: Sun, 19 May 2024 10:17:49 +0200
+Subject: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
+ supply support
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240519-midas-wm1811-gpio-jack-v3-2-0c1736144c0e@gmail.com>
+Message-Id: <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
 References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
 In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
@@ -78,76 +78,93 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716106686; l=2328;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716106686; l=2705;
  i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=EZXePcBvXKiwP3EXDEHqCyB/Gu0AEIhLbrUV4Fe+KI4=;
- b=y0s6y128OFbER9wO691Pl1y+dbxejiJKN2KyMeWLB/2Zj0rDj0uqrU/vqrYEf3sfku35wMvuJ
- 4n07G9uGfoZC4uco+vrUBL0eL2AF5KeXYuDpzrN+9MsyZOiAHxEX8eh
+ bh=vuYNtCSoGcmTk8GfhvJhaoNcv6Dz56BFdGIefFxXzuk=;
+ b=Oph8hMfgjPv7+ASAJ6X81w2AItr7S+gGYQiA9lMJgDun4mT3Z8oy8+F7ihMMEw8x/x9MM0sTS
+ JswKrd6RYJNAbRYAXVEkhrsO34yH4MtOXVYi+wgzHZq41rRJmRkYJWp
 X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
  pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-Some Samsung devices that share the midas-audio driver use a GPIO-based
-approach to headset jack detection, as opposed to using the built-in
-jack detection provided by the wm8994 driver. This setup uses two GPIOs
-(one for jack detection and another for key detection) and an ADC
-channel for determining the jack type or button pressed.
+Some devices use a headset mic bias supply (sometimes referred to as
+"ear mic bias") to enable/disable the headset mic.
 
-Add DT configuration values that allow for describing these setups.
+Add support for getting the supply from DT and setting it up
+accordingly to the value of the Headset Mic switch.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
-Changes in v3:
-- Re-added pipe (|) to description of samsung,headset-button-threshold-
-  microvolt to prevent syntax error (otherwise the "in order: ..." part
-  is interpreted as a list)
 Changes in v2:
-- Added vendor prefix to threshold properties
-- Dropped pipe (|) character from description: field
+- Added this commit
 ---
- .../bindings/sound/samsung,midas-audio.yaml        | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ sound/soc/samsung/midas_wm1811.c | 33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-index 6ed53dd0bb53..69ddfd4afdcd 100644
---- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-@@ -64,6 +64,36 @@ properties:
-     maxItems: 1
-     description: GPIO pin for line out selection
+diff --git a/sound/soc/samsung/midas_wm1811.c b/sound/soc/samsung/midas_wm1811.c
+index f31244156ff6..ab0a4804b45e 100644
+--- a/sound/soc/samsung/midas_wm1811.c
++++ b/sound/soc/samsung/midas_wm1811.c
+@@ -29,6 +29,7 @@
+ struct midas_priv {
+ 	struct regulator *reg_mic_bias;
+ 	struct regulator *reg_submic_bias;
++	struct regulator *reg_headset_mic_bias;
+ 	struct gpio_desc *gpio_fm_sel;
+ 	struct gpio_desc *gpio_lineout_sel;
+ 	unsigned int fll1_rate;
+@@ -201,6 +202,25 @@ static int midas_submic_bias(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
  
-+  headset-detect-gpios:
-+    maxItems: 1
-+    description: GPIO for detection of headset insertion
++static int midas_headset_mic_bias(struct snd_soc_dapm_widget *w,
++			     struct snd_kcontrol *kcontrol, int event)
++{
++	struct snd_soc_card *card = w->dapm->card;
++	struct midas_priv *priv = snd_soc_card_get_drvdata(card);
 +
-+  headset-key-gpios:
-+    maxItems: 1
-+    description: GPIO for detection of headset key press
++	if (!priv->reg_headset_mic_bias)
++		return 0;
 +
-+  io-channels:
-+    maxItems: 1
-+    description: IO channel to read micbias voltage for headset detection
++	switch (event) {
++	case SND_SOC_DAPM_PRE_PMU:
++		return regulator_enable(priv->reg_headset_mic_bias);
++	case SND_SOC_DAPM_POST_PMD:
++		return regulator_disable(priv->reg_headset_mic_bias);
++	}
 +
-+  io-channel-names:
-+    const: headset-detect
++	return 0;
++}
 +
-+  samsung,headset-4pole-threshold-microvolt:
-+    minItems: 2
-+    maxItems: 2
-+    description:
-+      Array containing minimum and maximum IO channel value for 4-pole
-+      (with microphone/button) headsets. If the IO channel value is
-+      outside of this range, a 3-pole headset is assumed.
+ static int midas_fm_set(struct snd_soc_dapm_widget *w,
+ 			struct snd_kcontrol *kcontrol, int event)
+ {
+@@ -271,7 +291,7 @@ static const struct snd_soc_dapm_widget midas_dapm_widgets[] = {
+ 	SND_SOC_DAPM_LINE("FM In", midas_fm_set),
+ 
+ 	SND_SOC_DAPM_HP("Headphone", NULL),
+-	SND_SOC_DAPM_MIC("Headset Mic", NULL),
++	SND_SOC_DAPM_MIC("Headset Mic", midas_headset_mic_bias),
+ 	SND_SOC_DAPM_MIC("Main Mic", midas_mic_bias),
+ 	SND_SOC_DAPM_MIC("Sub Mic", midas_submic_bias),
+ };
+@@ -455,6 +475,17 @@ static int midas_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->reg_submic_bias);
+ 	}
+ 
++	priv->reg_headset_mic_bias = devm_regulator_get_optional(dev,
++							    "headset-mic-bias");
++	if (IS_ERR(priv->reg_headset_mic_bias)) {
++		ret = PTR_ERR(priv->reg_headset_mic_bias);
++		if (ret == -ENODEV)
++			priv->reg_headset_mic_bias = NULL;
++		else
++			return dev_err_probe(dev, ret,
++				     "Failed to get headset mic bias regulator\n");
++	}
 +
-+  samsung,headset-button-threshold-microvolt:
-+    minItems: 3
-+    maxItems: 3
-+    description: |
-+      Array of minimum (inclusive) IO channel values for headset button
-+      detection, in order: "Media", "Volume Up" and "Volume Down".
-+
- required:
-   - compatible
-   - cpu
+ 	priv->gpio_fm_sel = devm_gpiod_get_optional(dev, "fm-sel", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(priv->gpio_fm_sel)) {
+ 		dev_err(dev, "Failed to get FM selection GPIO\n");
 
 -- 
 2.45.0
