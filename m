@@ -1,61 +1,61 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ECB3D963;
-	Sun, 19 May 2024 08:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA41E44C73;
+	Sun, 19 May 2024 08:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716106700; cv=none; b=EdYoOCTW4rDnzwwPL1FQFEw9uRB/6wXxPmhmagEkdMLmJC5ZHWVlSt3Cuk++lOtCwmHxNpV9rWH3JVI+WulE44SRIDE+qQ1GJ05bwVbpcTKHvLjpHpd7Obh7F9qMKwhQHzeMn/k+ib8BjbRe4q4W08AkzGxuBrZHy/3teEMEbNA=
+	t=1716106701; cv=none; b=Qrq+cB4YtspT5ap4fIhYniPC5SgQVV34z8N+Ovjm+FRe/ktIF70rb2/g0JdU/MIn5WQNhRsFaa3BPi2HDtUeiNtqNZJ7nnyV1CpnblC5YKM9c8k6v8GU92obE9LHWqG/CtoOpqGD4cK+9Q84OaLk48vNpLF6VYjsbZJxlnfOfvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716106700; c=relaxed/simple;
-	bh=7ghoUuP1F66lo5lQILjtg4IgiT6Z0TAcd0jCIemjWlQ=;
+	s=arc-20240116; t=1716106701; c=relaxed/simple;
+	bh=/QyKeHFcTD2xub55oeUkv2MeNFIR4VYheZEY658FtbY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g3TtaEoGpfreASYpsdHVx72mkai6nnVqtacLOyPpB0fvxBv/x94EDM7uuzdORHJxz0OC6iSilBW8w7yALuVY18ITg2AdDjBxC6nnT6Vb4ZzSlnNCeztL/vJoJjfZ2iQPY/c8TLO7VOvT++0ZUGdrOLY9IqcDwy4aFlsEPbZ2+Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H1h0p4XB; arc=none smtp.client-ip=209.85.218.49
+	 In-Reply-To:To:Cc; b=KaEyuWZRxWss/hHjsFSKX5My+TN7VzJQowU4nXxBsvG3saBR8xOBkNHqG1figgl+QpLX8Iy87rK7lLE0fgKAoJOVQSBfojf9MGAfpd+LW65OJaDN97dApA9Emu2O3HSUW0eI2Kw/e1tqidRiAsfUyHN9SI1Em5FHeyYc92QXJ2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsbnD5pF; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1h0p4XB"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5cec2c2981so208299266b.1;
-        Sun, 19 May 2024 01:18:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsbnD5pF"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e56ee8d5cso7096392a12.2;
+        Sun, 19 May 2024 01:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716106697; x=1716711497; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716106698; x=1716711498; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JckYzcWe8w+0grZPS9NysF8GgHh7PfoFNUhYz6cHvfw=;
-        b=H1h0p4XBxiNofg1ggcgytmaeiSBfgw2PhYaWYml0HgJu6trRrXgnEbcQL0k6CDeJF7
-         fFqSLTPmX4qWrPA1HjJ/kiom5LRwRD3Rj+/kAB5s8OUzt7REamEunaSRIM5JPHf3z4F4
-         oyYNpyxszY7gsUPbXZpbwRaLzLmuF0D8ietD7CkQg1XJL4vwsxwFoS+7UEcw3TRfj+1j
-         lFwKDhterjfrEf2iTtawFODLQiXXXCg58nikT1U/azYxVDXYZA8DFnW+grgJ6OY6kd+2
-         VngjxktqS6iLfxH8KU4kGB4dwqwdRhwDyvY8bU0Mtr0CGuXnkuZEben7narGJRqLS/IG
-         F3zg==
+        bh=aoYlKJuAVKS/043JOXevm+O+WyF+DYPGbRh4c0zs6G4=;
+        b=RsbnD5pF7EkI5Cn10Rlej9fWzFf1d9/fR2nLcmH7/Z1LK9rBHSOfwubZNEX1tIPM1i
+         MXq6bifOCfyNTEHgJvx1S8xNEv4XUElJbkkpSBagWIHWH2gZc90R83BilWLcAlLtfev0
+         Q5vYbr6oO5MqLSZ+yRArW5ZFsurSCzWkk+A7Z3U1Nx8ubnsXpjecNWbMFt6o+C4+DqNs
+         L73JzDASFJ7P0Da6wZOe1/UnLhZzd/lBhMe49OQ3v5GwCaCqULnvdpHA5k5FEyDm3UFb
+         Jq7l89OqenHrjmNWMt/ZB60TCWWEOWs6n9XPqRfUgQXA8hxZZXYdOP5BSUYZ0OSDqXMg
+         cDcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716106697; x=1716711497;
+        d=1e100.net; s=20230601; t=1716106698; x=1716711498;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JckYzcWe8w+0grZPS9NysF8GgHh7PfoFNUhYz6cHvfw=;
-        b=mnSQ6dXGNO1bJ0lZFgyneF+gQ181YU0RmEh7ssu6gAcV5SfMUjq6Dunm0wRHmc7o9B
-         FQbtHeWq95HyOv52chS9PUUCOnO4mVv+8QfeIUx9L6M+t//SHc55AkLo+zUQJGw+dLot
-         cPHDrXiz/eOZXQ1g1lYo2EAldVNSiM20970yf2Atlcf/7g0Qm9STmVVHO8izj/B0o/wp
-         EZ66O1S1pBaGR771IH5U2Josn/gK/WAEmCGrCMQmE5uxAseg+IMZCn+kgJWiaLPJRA0Q
-         j1dpF9e369z7cDy5hzPe39xOSpRbA+DMaA9/XFxoezuV/Qx01cSCzqdSqefTQLOMnmoo
-         XSMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/QdNOLTBLhraeWwItmkp8Y4PF+5JePubt+qLcxhoExiw7HNZq07LKyzFg+3eHVUXDWSxsgTLHABIZ+wOwIMoAJmC3bYo/ZJnIo0or/tkRg8AMfzdZssLnoEVOZTqJEQRGJa/XiiEXIwaHx9mBXYBltufOEn72KxOJ2ghoCnTivIgku5CO50AZM134MZhPPbYoKZvUxCHjD4bt2B9qVh4emVrO2HUxQlg=
-X-Gm-Message-State: AOJu0YxSY5EBfTIEfiVtiFbGJW5Qk1L0x/v2S5DaSFhaRmeJRiYQ7HsB
-	CiR+gGAMQ2wCbOj+3PEIqJR5BRleaMjfoEKM5ALKzqnBXGWks5ul
-X-Google-Smtp-Source: AGHT+IG3SMaDBws1fzIkcPLAJz7n7Ag6C6la0lbxW02ImT03Ca69NZo4TJd0EVoTiNb4ZOsqOYvl9w==
-X-Received: by 2002:a50:d6c3:0:b0:575:a0c:4b8c with SMTP id 4fb4d7f45d1cf-5750a0c4c71mr7898781a12.38.1716106696840;
-        Sun, 19 May 2024 01:18:16 -0700 (PDT)
+        bh=aoYlKJuAVKS/043JOXevm+O+WyF+DYPGbRh4c0zs6G4=;
+        b=mdgGFALc5GNOJcA3faUflYoJMgB9z+mbr3EhVfd2xzIPzfxAh9UU1p3RJwZKbmwrKO
+         xBbqnfbxeyJ76gqG01cUr15+akJ5lPd7QntajM2DYGg/9dTqnuW1jKjRJInDIja3iHRj
+         ct0b4jyW+JaOyeZk5IPjiK1l5vNONu0wFgn7CmZc2bl9cMhRLsONJotL7MgZfyd0vNd2
+         KJhOfM2fbNrM6i73brJuKswVvf6z5YK/nASk6j8H59HGBvxazv3cLhPCnXXKFI+HV4+a
+         hkdUb6y2QbiO+FNDdkEz5srdPpK/9sOGcOwAbJFGFm1IKq+uVDaSYPFUP1MgBl4y92lt
+         HDHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMKoiPtXplCNb7enENsx6mW03U1yMqJoSVe4XGJ9Ap9uKnVQ7CPAyhBL+LVXGpYk0X5M1rBunKitf6ofDRHmcGArfnA7vuuhdP/CMfMQFBwGn1XrQzbtkIX8KOT7l16ora7D0rk9vmBq+zGeupHuHwdyw1nVhGpV2O68mgwmhr7YFWTuoRpocIYM579HRQMnJoSiupzv+Y1S1fcaM4RfFokWBg7RWXgIk=
+X-Gm-Message-State: AOJu0YzAOHwL0O2IpBSSigir5sttsS63l9/+XwUsm1JpoK9oCU0cIm++
+	U76eAc3GOT4aNpxxDCXRaSfrjhDzR4KaIP/KDuLKGPpQ2hYzSRPU
+X-Google-Smtp-Source: AGHT+IF4aVK2RHhsoD2L1FcF//bl60wrCCva82WMUuzqnmun+LZB4T1hbo8EUe/nwWs1BL/H6eqGiA==
+X-Received: by 2002:aa7:d1d3:0:b0:574:eb26:74a with SMTP id 4fb4d7f45d1cf-574eb260839mr10123048a12.21.1716106698259;
+        Sun, 19 May 2024 01:18:18 -0700 (PDT)
 Received: from hex.my.domain (83.8.125.62.ipv4.supernova.orange.pl. [83.8.125.62])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c34e5ccsm13698518a12.95.2024.05.19.01.18.15
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c34e5ccsm13698518a12.95.2024.05.19.01.18.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 May 2024 01:18:16 -0700 (PDT)
+        Sun, 19 May 2024 01:18:17 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sun, 19 May 2024 10:17:52 +0200
-Subject: [PATCH v3 6/8] ARM: dts: samsung: exynos4212-tab3: Fix headset
- mic, add jack detection
+Date: Sun, 19 May 2024 10:17:53 +0200
+Subject: [PATCH v3 7/8] ARM: dts: samsung: exynos4212-tab3: Add MCLK2 clock
+ to WM1811 codec config
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240519-midas-wm1811-gpio-jack-v3-6-0c1736144c0e@gmail.com>
+Message-Id: <20240519-midas-wm1811-gpio-jack-v3-7-0c1736144c0e@gmail.com>
 References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
 In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
@@ -78,74 +78,47 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716106686; l=1934;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716106686; l=1280;
  i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=7ghoUuP1F66lo5lQILjtg4IgiT6Z0TAcd0jCIemjWlQ=;
- b=7uG1N3oCFSVcHBgOu630Zb3pi3zaKhxy6TMe+0DPNU1zBvvLFKsgdfN4Ck4LNGhnW0CpYcgRE
- mdzyO/Ha9ITAAd84jXijoFHaM9QleQPYATtna13/I/VA3AuPupxCnTk
+ bh=/QyKeHFcTD2xub55oeUkv2MeNFIR4VYheZEY658FtbY=;
+ b=uIhQX5gQujMd8bBF2k9b1KLhHd9WhMaSqaCMxb8Np8cIQECgR/UjvobYYub101csayG1sTsUl
+ wFY8L+MWe0dA9Ypafuhq1UhoaBTHpdAku9evW3iE3kLkozY5QxnDDuZ
 X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
  pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-Set up headset mic bias regulator and add the necessary properties to
-the samsung,midas-audio node to allow for headset jack detection.
+In the schematics, the MCLK2 pin is shown as connected to CODEC_CLK32K,
+which is derived from the same 32KHZ_PMIC clock as Bluetooth/WiFi and
+GPS clocks. 32KHZ_PMIC is connected to the BTCLK pin, represented in
+mainline as S2MPS11_CLK_BT.
+
+Add the MCLK2 clock to the WM1811 codec clock property to properly
+describe the hardware.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
-Changes in v2:
-- Added headset mic bias regulator
-- Added samsung prefix to threshold properties
-- Dropped wm1811 config changes
+Changes in v3:
+- Split out from "[PATCH v2 7/7] ARM: dts: samsung: exynos4212-tab3:
+  Fix up wm1811 codec config"
 ---
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index e5254e32aa8f..8dc81112172c 100644
+index 8dc81112172c..47e9a230f2e8 100644
 --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
 +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -294,11 +294,30 @@ submic_bias_reg: voltage-regulator-5 {
- 		regulator-max-microvolt = <2800000>;
- 	};
- 
-+	earmic_bias_reg: voltage-regulator-6 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "EAR_MICBIAS_LDO_2.8V";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&gpm0 0 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
- 	sound: sound {
- 		compatible = "samsung,midas-audio";
- 		model = "TAB3";
- 		mic-bias-supply = <&mic_bias_reg>;
- 		submic-bias-supply = <&submic_bias_reg>;
-+		headset-mic-bias-supply = <&earmic_bias_reg>;
-+
-+		lineout-sel-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
-+
-+		headset-detect-gpios = <&gpx0 4 GPIO_ACTIVE_LOW>;
-+		headset-key-gpios = <&gpx3 6 GPIO_ACTIVE_LOW>;
-+		samsung,headset-4pole-threshold-microvolt = <710 2000>;
-+		samsung,headset-button-threshold-microvolt = <0 130 260>;
-+		io-channel-names = "headset-detect";
-+		io-channels = <&adc 0>;
- 
- 		audio-routing = "HP", "HPOUT1L",
- 				"HP", "HPOUT1R",
-@@ -345,6 +364,11 @@ wlan_pwrseq: sdhci3-pwrseq {
- 	};
- };
- 
-+&adc {
-+	vdd-supply = <&ldo3_reg>;
-+	status = "okay";
-+};
-+
- &bus_acp {
- 	devfreq = <&bus_dmc>;
- 	status = "okay";
+@@ -529,8 +529,9 @@ &i2c_4 {
+ 	wm1811: audio-codec@1a {
+ 		compatible = "wlf,wm1811";
+ 		reg = <0x1a>;
+-		clocks = <&pmu_system_controller 0>;
+-		clock-names = "MCLK1";
++		clocks = <&pmu_system_controller 0>,
++			 <&s5m8767_osc S2MPS11_CLK_BT>;
++		clock-names = "MCLK1", "MCLK2";
+ 		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 		interrupt-parent = <&gpx3>;
 
 -- 
 2.45.0
