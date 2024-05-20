@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10F182DF;
-	Mon, 20 May 2024 14:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235B77D3FB;
+	Mon, 20 May 2024 14:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716215745; cv=none; b=suSQuaczdiOP14Y/n6swZL2rYIww+t21734B5cY5trFy264/1c/Lgz0eQWz3ZRfa7+yVY2ORpGbmJZHKmk9julSgDyGgqLCdVkHLQtiNxCT80OldAS70ufT6ehHdObVjpiYNkfsbml9U0pUzf7slMHo2kkg0A1Qgy8c7P/mmb6A=
+	t=1716216084; cv=none; b=HHgsFpyEcr+3PfDjvubYyhknJrwn2K95OIDoRBkTHKAZZf41NZyEjFf/es4XPoPWKmUXktfdeVh3Jj/VIGvnbwc9SW9lBJIIxN4HwxKpQNG4FmusuQK0a2+Bc84hbfmKK0tpDXQlwYp/qx1kPmeKaVitEwsjM63efKHW/MV1Hxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716215745; c=relaxed/simple;
-	bh=uSKePMg68VHTXgwYY757U7QjRjNo5hrsfRcyRwpLxfY=;
+	s=arc-20240116; t=1716216084; c=relaxed/simple;
+	bh=619Z6jy0Nar5HnINkMj+OqkRlvVm8QNHCVeJy2e8Qus=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0HWKLmYd+KQbY5qmxVjBelUdghqQzJDKZNsL0TwmNZBsbCxIiIXD/4kwjF2FUk5JlBA9YMPLiAHMvDwQljRCX1jGnBgE+AyxtdcAlnSiayvzJBwNVfQY34cyFC+3xEMJ2MQlvnWi6EHA4kjzNGe1UjhHwwhs9SRRJCt8RZS1Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyTqSGz/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cpxr8JxNTw23d3kiL9Kwl54VqUOAYzHBD7z5F2T1V3l/WIrLPf6UNDWZ/vvvkZx8Kkjef5CuvAzGflJSTOrGfXvV6Aawh7yT6OhSjkPiaQ9oJmz2IURh+V3he/qPCpO/n3F0d42+QstCLtr2ZUzfJo95nHx+DfiSoGFHA4FU4+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFJ6jtkj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyTqSGz/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D43DAC2BD10;
-	Mon, 20 May 2024 14:35:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFJ6jtkj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A25C2BD10;
+	Mon, 20 May 2024 14:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716215745;
-	bh=uSKePMg68VHTXgwYY757U7QjRjNo5hrsfRcyRwpLxfY=;
+	s=k20201202; t=1716216083;
+	bh=619Z6jy0Nar5HnINkMj+OqkRlvVm8QNHCVeJy2e8Qus=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyTqSGz/Is1DZZJFNqP/b4Jk32a1bzHgOfe3VALEG1QyaujqN4mnQoNIGEf3E8DFV
-	 t6U4XsM8T9SCiuud31ZqmvDSwHC70rcdUmh6y1DkKXaeMyKUcfUmIOHWI3/FXWcRo2
-	 Zj/QIQM8Fv9KJI4M+4Ca6uMTjElqkhWNe2MOOdyYQlkQRuiuzAIEZIJp3XQlB6FGvc
-	 ooaBUiLxH/coetBrCjC1ZU+gpEGmBtAOaidl+g5sw0vAW32yAEy61aHjX4f78gZoaG
-	 RadZ3is985KiHJbZYfdbMyqcXY/+4/cDcgcES93ulI3RnalcfaGLXuF0rVBRu81wR7
-	 ++ajJ7TE2BqAQ==
-Date: Mon, 20 May 2024 15:35:38 +0100
+	b=uFJ6jtkjLSCdTwIjLDYa5L963tzFoaUCzXZoLvXojXsEzX3rq4zqiEoKSb989dzzn
+	 OMNPSzJtGW4QGIoQjqNh14Y0j0jAg2qRYHXaYBX8u3Ryd73zrixwepaDGhD3xTh6LV
+	 p7MinFwEhedpSYyWxmZHCZlLtCYlhYjrnGrBwwW1NSfGK3V3h3thQ0dMbKWnIMd9u/
+	 IIEa3DMLhD3fAD3fGFrGzd8w8JWZTH8VqItKNzg75AHRslBCQ80N4gWTClRvCHswyX
+	 hQyieUmwjPZbnRGnNciIXQkTXaBhvSK2p2jduQLg9aVUY8VXO0Canm4CtQ2hkQyWel
+	 oA1uGVgq5faDQ==
+Date: Mon, 20 May 2024 15:41:17 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Artur Weber <aweber.kernel@gmail.com>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -39,11 +39,11 @@ Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
- supply support
-Message-ID: <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
+Subject: Re: [PATCH v3 4/8] ASoC: samsung: midas_wm1811: Add GPIO-based
+ headset jack detection
+Message-ID: <2c4c0aeb-2870-4905-bcfc-642ae40c87f1@sirena.org.uk>
 References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
- <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
+ <20240519-midas-wm1811-gpio-jack-v3-4-0c1736144c0e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -51,49 +51,58 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pxaZ0LKbE08JUaU/"
+	protocol="application/pgp-signature"; boundary="lfTGNXXe0eUJp9Hl"
 Content-Disposition: inline
-In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
+In-Reply-To: <20240519-midas-wm1811-gpio-jack-v3-4-0c1736144c0e@gmail.com>
 X-Cookie: We are what we are.
 
 
---pxaZ0LKbE08JUaU/
+--lfTGNXXe0eUJp9Hl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, May 19, 2024 at 10:17:49AM +0200, Artur Weber wrote:
+On Sun, May 19, 2024 at 10:17:50AM +0200, Artur Weber wrote:
 
-> +static int midas_headset_mic_bias(struct snd_soc_dapm_widget *w,
-> +			     struct snd_kcontrol *kcontrol, int event)
-> +{
-> +	struct snd_soc_card *card = w->dapm->card;
-> +	struct midas_priv *priv = snd_soc_card_get_drvdata(card);
-> +
-> +	if (!priv->reg_headset_mic_bias)
-> +		return 0;
-> +
-> +	switch (event) {
-> +	case SND_SOC_DAPM_PRE_PMU:
-> +		return regulator_enable(priv->reg_headset_mic_bias);
-> +	case SND_SOC_DAPM_POST_PMD:
-> +		return regulator_disable(priv->reg_headset_mic_bias);
+> +	if (priv->reg_headset_mic_bias) {
+> +		/*
+> +		 * Get state of Headset Mic switch by checking the headset mic
+> +		 * bias regulator
+> +		 */
+> +		bias_already_on = \
+> +			regulator_is_enabled(priv->reg_headset_mic_bias);
+
+If you're going to do this you need to use regulator_get_exclusive() to
+ensure that nothing else can enable the regulator, otherwise you should
+just unconditionally enable the regulator.
+
+> +	/*
+> +	 * Revert the headset mic bias supply to its previous state
+> +	 * (i.e. if it was disabled before the check, disable it again)
+> +	 */
+> +	if (priv->reg_headset_mic_bias && bias_already_on == 0) {
+> +		ret = regulator_disable(priv->reg_headset_mic_bias);
+> +		if (ret)
+> +			pr_err("%s: Failed to disable micbias: %d\n",
+> +			       __func__, ret);
 > +	}
 
-We have SND_SOC_DAPM_REGULATOR_SUPPLY?
+Given that you're just briefly bouncing the regulator on and off it'd be
+best to just unconditionally enable and disable here, I can't see what
+the enable check gains you other than possible race conditions.
 
---pxaZ0LKbE08JUaU/
+--lfTGNXXe0eUJp9Hl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZLX7oACgkQJNaLcl1U
-h9B+pQf/bj3bL8onTU8c2fQX8+h6MTpaxgO+m8QtLrABywDZfmRF/bCC0d/FGzGT
-2dAn3CMy8ZhJo65ELhLPkBHKRypcILUsxzjTOL6ddyek3cwtaomzLKt/5BPO6zDn
-XCygGXgK3NXCDSM4ldhW+N7x5n/i3j6ZCZfAxmYtrxpbEeTxRUbBBYfh20/cSEsa
-hhd0GxkGdUdG3ylpnA5n/hi+eMWlGHHB+OxXVJfv/iDrXF8hjOHUbaf82ZR9xwrJ
-2wP4BQNUowOuMBQ84h8zzBYOKtvtWUlig2y4ppzeMFeFw4MhYeeQzp/fz5COeKO+
-7+EiuORd1ry9xIRankV9nGs7JgiAHQ==
-=JVQ0
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZLYQwACgkQJNaLcl1U
+h9Dwjgf/WnkaIdmy+K4GxTBYERrrATUvQAIiQ6PjAPC/Gf9ZYNuIgC/EEe6k4Nlw
+WkBAfRhzMebnNCagnadq8ZyPNKp5zUVpGo2/r0QOvrJ3Ajk3RD7e18nKipsWpb7D
+DFrusOYqlUdIRUjWCPn/u6WWRojAH9UhnF7XiuL/NSnz9F/g0xvd8wyWa2a5+LjK
+NrAKc2Xd0jpBvcTGmTzS+hgFW+xr10HGoG6nutfh9Gm3hi7b9WQ2dl5eo5rGzMqO
+kJNvPmQA6kFPcJkCtkLFSgEARq7edL6c+l3rIr42nORS6PtmclS/vRVlkIvXBHyZ
+CtJveZ2pcrft4S204mzZk+4vNymYzg==
+=EEPv
 -----END PGP SIGNATURE-----
 
---pxaZ0LKbE08JUaU/--
+--lfTGNXXe0eUJp9Hl--
