@@ -1,117 +1,94 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8912642AB9;
-	Wed, 22 May 2024 16:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF91542AB9;
+	Wed, 22 May 2024 16:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394820; cv=none; b=i4gPhFLOk0ePXPNQRl4xm4GZ6Ia8Gc6bOiwwPdHMyUue18yAgoVzvFla9DVii0Rryg8YkbVZ98/9FzPmNMtAFYCdBX5ruNrDemr475KQx8BqSKdTUmGf489+iwPtGOhtsnWY5/YK2YFJY1IKnRWaCdMvap1L41zhVDymx4kTTww=
+	t=1716394942; cv=none; b=ChRFLcX3AHtLB4Wrm/qXDLiiTZU12+vIozwBd1CQ1uqErO6I7pzQjYpdiSAMS2JNIWojk/aW0c8P0EKd8aOCot4qzTljK7jCbJfMkCbqLLbn8azDGSunKvSdYfiwv/VI8/PibHiDNfSB+la+ygPBxlItXADnoOCQ0vhiF7BUw1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394820; c=relaxed/simple;
-	bh=Q0YYgomuZ7a/Ey+Ex03pRVCfua6lfh9KBm3qhFwLyAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F138G1rHXh7R9AJ4OwVKqCryeQyQRsRIDhiJ6dR/gp9iviAvi5rWnAYvIgfn68D+JLAoZAgZQUi8V+xtLl2mtQ9OIq+Ihxdow3wJcuRFuBewqnkYob7hwfDZ3AsEWt0MqymNJz9KTGDKdKms9e7k4v19xwRfvFikQb7dIVRqySc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUEAW0uv; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716394942; c=relaxed/simple;
+	bh=AWTKHb0bmoEcBitaeZqYTd0+23qEPVjE572slrya0ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwBk1X5zSTUE2MmwHi3bc/hM/qK+FcGPB7i8z3KNg9xHbY7zMj+gPHcbbnWGwAty8wBF1r8jBXZd2YFqVGGujtcanpdfkKJOmFpK6XfBBoMNcV6HuDAKKBV7fh0l6k0H9xX9EvvXEqKH6eCC7YP6Agb34HRv6nGeb0R+xAcdHOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fky4eMAs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUEAW0uv"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a621cb07d8fso155847566b.2;
-        Wed, 22 May 2024 09:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716394817; x=1716999617; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rAmYmReX6PJbiPANH3CQQN4HAh3/OEfTwrGvBy42nz0=;
-        b=DUEAW0uvAAX5PjhG/Et0QkkPybkUG27toqovsjAvwtT58rajcX7A1jX1lnfGqe3FQR
-         SMGzilhMAUwdUPiiMTFeZHZh2B/uJ6kDedSx2owEFyU95+GlMiCY/UA1tF8TAzecOmGk
-         ykqNduk5wFqOklf1GoKIN+rNZtG9b7JFDrBSDMbNDi80y5TPOL0UgCArKLa3+iIl/g0o
-         Fh0iBKCB3aN6XoTEvGIjQYGwRRVnlp5JxwTAWExYl5grhISnLoJ+UGg06d3/YeSlxyfw
-         ceW+r/3msIaI+LXEkWFZBx2f9KqdgaJ0wdB98S8JOiOwk910EN2675hmvC+LL9eFjO9S
-         zxTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716394817; x=1716999617;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAmYmReX6PJbiPANH3CQQN4HAh3/OEfTwrGvBy42nz0=;
-        b=Z40EKG/m+hgouVWOyf6bcmc5krbyvL6Fk8AqlI5HHYAFrMuG2YaBlAzyGryc4zSyVv
-         RWjisFiXHcMDmFSx3vEVeEfpGiBOlek3AkOEqfKq76PxJ6Q345LEHUmubj+XJAqdRS0a
-         2RCyIgUE6Gmltnpkb+yk5+SmQQcOkr97fEnuy94yYNkNIsLj2knfiVDR1R3FkCmdYuJw
-         CGUqTPEQ7AUtFJ2CZNV4qSc+LckXVzswUMhjxITxv86AmgvSAeseQ11J3zgIykyPMvdJ
-         CYL9PKEo5Zcqy3WD6tpPAPiMsj9KRkFbEr58iK5+bBuicaF+pzFokG0CmnAhBb9iusjd
-         afSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTtvawIpH8HGtyoZl//rQiMc0Hn7RWjobVadQMxSvpN5+BNBtHroBFQ+c950jiFTgXLsyU5ZUcJ6YTCYC2s6bo+HcCSaTbuEqD7ZTU07KchTIuWt+q3WmfQpKvQUTjcrCZJPp8kV0XDotJE7JAQUCyLSAj5EJRZCbx7JKvP2AXc0ju3MYqa04I1fo0zx4kiKZcUR+cHc3QTGduAInXRktNzHNSpCNPnhg=
-X-Gm-Message-State: AOJu0Yz2L7wmZcm7BPKH6A+b9zXTNp391JKZAFTpAmEgfEVc9psaenpH
-	JKsrytl3YLtAfSa9U/+lSQhkn5YTZgJL8mpZSDjsE9i7BB0h3pOg
-X-Google-Smtp-Source: AGHT+IHX16TQSndzssQgcqAzfbd1WNux9/z8SsMd1HxgJsKinbW/Bh1wbsuSCjyy29FD+JAs7+9gIQ==
-X-Received: by 2002:a17:906:f80e:b0:a5c:f73d:67b3 with SMTP id a640c23a62f3a-a6228153fe5mr162987766b.63.1716394816651;
-        Wed, 22 May 2024 09:20:16 -0700 (PDT)
-Received: from [192.168.50.244] (83.8.125.62.ipv4.supernova.orange.pl. [83.8.125.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7dd4sm1798467266b.139.2024.05.22.09.20.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 09:20:16 -0700 (PDT)
-Message-ID: <52428c0d-4b18-4707-9cda-4e6a11e256bc@gmail.com>
-Date: Wed, 22 May 2024 18:20:14 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fky4eMAs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5C0C2BBFC;
+	Wed, 22 May 2024 16:22:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716394942;
+	bh=AWTKHb0bmoEcBitaeZqYTd0+23qEPVjE572slrya0ls=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fky4eMAsBLnUS+z0kupJjk+N+lm7BPyuPATy7PrnPDc6XufE0Gn+auAfTvhCwPmfl
+	 avvetGb85fhHXdyDoZooW49ws3OQBB4mKM4tM6ql7fynuLgM8uD7NfESRNb3YFEtRg
+	 e1GLPba1O4ykrm3HMSYFYYwIJACKyE47Jwde7y17wRGRjAaoYBYuQHetb166tZpCEg
+	 UVoQiPuFJTim0WPru6wl/d6xdzKQVtc6ixII07M7yNSfqLgXjM7OymfVpW0yreMP6V
+	 w9Lg5C3jVNs0I8zxj5Y9z/1AUPXAZM0SvGnALDzGsnk9KqOEtX6jcSA2QNGlL0fcES
+	 K4+fxL9I5ollQ==
+Date: Wed, 22 May 2024 17:22:15 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
+ supply support
+Message-ID: <d64991ee-e125-4497-8030-6ca64fbe35e6@sirena.org.uk>
+References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
+ <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
+ <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
+ <52428c0d-4b18-4707-9cda-4e6a11e256bc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
- supply support
-To: Mark Brown <broonie@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
- <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
- <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EL4i+puPElguxjip"
+Content-Disposition: inline
+In-Reply-To: <52428c0d-4b18-4707-9cda-4e6a11e256bc@gmail.com>
+X-Cookie: Bridge ahead.  Pay troll.
 
-On 20.05.2024 16:35, Mark Brown wrote:
-> On Sun, May 19, 2024 at 10:17:49AM +0200, Artur Weber wrote:
-> 
->> +static int midas_headset_mic_bias(struct snd_soc_dapm_widget *w,
->> +			     struct snd_kcontrol *kcontrol, int event)
->> +{
->> +	struct snd_soc_card *card = w->dapm->card;
->> +	struct midas_priv *priv = snd_soc_card_get_drvdata(card);
->> +
->> +	if (!priv->reg_headset_mic_bias)
->> +		return 0;
->> +
->> +	switch (event) {
->> +	case SND_SOC_DAPM_PRE_PMU:
->> +		return regulator_enable(priv->reg_headset_mic_bias);
->> +	case SND_SOC_DAPM_POST_PMD:
->> +		return regulator_disable(priv->reg_headset_mic_bias);
->> +	}
-> 
-> We have SND_SOC_DAPM_REGULATOR_SUPPLY?
 
-This is pretty much copied from the implementation of the mic bias
-and sub mic bias regulator handling in the same driver; they all use
-SND_SOC_DAPM_MIC combined with an enable/disable function like this one.
+--EL4i+puPElguxjip
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What would be the correct thing to do here - add a secondary DAPM widget
-of type REGULATOR_SUPPLY and connect it to the MIC widget via audio-
-routing, or replace the entire MIC widget with a REGULATOR_SUPPLY (or
-something else entirely)?
-And should this be done with the Main Mic and Sub Mic as well?
+On Wed, May 22, 2024 at 06:20:14PM +0200, Artur Weber wrote:
 
-Best regards
-Artur
+> What would be the correct thing to do here - add a secondary DAPM widget
+> of type REGULATOR_SUPPLY and connect it to the MIC widget via audio-
+> routing, or replace the entire MIC widget with a REGULATOR_SUPPLY (or
+> something else entirely)?
+
+The microphone is getting a supply so the first option seems better.
+
+> And should this be done with the Main Mic and Sub Mic as well?
+
+Probably yes.
+
+--EL4i+puPElguxjip
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZOG7cACgkQJNaLcl1U
+h9Da9Af/YiLFo0ws5uTputzZ9Vnnzu51OTlsLRlk/AI4srvbo/yePNM+Zsxysdsm
+cM6zex9GmD0DJCYpHAS6sCwGT11nGDlfAUrxi1D/xZYURxArtojJbBztByv7Y2QM
+NBjQJcKcvvwtmIG4NT6YS46w2jUBfq7j8LbqMxkby62KiWPe5t1tILfeyv9qHIay
+QuR6ILhS093P1LaNp/gM1u6d+usQTb7ymCMWhZWk3ODj23x2VdCSQ94DvUjIlGYV
+P4rIzntrO9jzQw3NgEJBLuAhIt6VQmk7Cg04H5ElZlgT7pmbr9cWiLRnepe2uR7g
+oQLU9FWtULGu/9PXCdtk2Jj3T61Liw==
+=NRmF
+-----END PGP SIGNATURE-----
+
+--EL4i+puPElguxjip--
