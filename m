@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B66915F41F;
-	Mon, 27 May 2024 18:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E24915FA7B;
+	Mon, 27 May 2024 18:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716835352; cv=none; b=YG3wpkoOJcdABLO89TmDiSTBtl1bVdIIsSGu0mRFMp+qStRK5IU1rYk7ZDZWq9G9GwVh4O8fIlig76WZ63dbTg1b13022CpByTZcLAcDS6njGxchXxuYTqZ9RlO41nw2NETKlIpkFuqaBsWBrurbsMRnsb2v6NTNlVFE3AcWf7c=
+	t=1716835374; cv=none; b=QmYEkF70lhnpx/XpQP5ucnarna2DeeHwT0hKg2O1QrBB80PArx8daPEVmrQWtBceOOfMWjYuKOBKYaE/T85gns5sAtRHcqIj4VNwb7xrL6Vz1HEZja7sVR25kvDEs139xXH49csYjbDxzUGqOBOzLZsUiu/nfi/TmC1dCP1ygwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716835352; c=relaxed/simple;
-	bh=Rh67QaYUX6AOAR++bY+3ddLPTJ7PDZJkLa6D0bjdQ0M=;
+	s=arc-20240116; t=1716835374; c=relaxed/simple;
+	bh=xEpbPDiFG2K+IH0Y/rvh7wsZUZ7O1REPFbeWPqsBuJg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOIsiKGPj5S0ov8A/6Qj+DcqY61w8vbEvR2gw6KroQEeWlhflHOoMjpGccbCg1qsuBeozR5WMlL0ZWN8OICz9X4RfPQ/V9NwcPn/tFDR1o2L0KU95Fz3srYBROxuKxEMddFpAUMF8bpMZGzOJFubVjLjEDhX4wNW6Ut+nPH/flY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itEZHSGG; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qVgMCzwW3gsWWUG32DaqF16rdQ8ibq72EFH9KyHATVZTev/WUqWSBaanPXn+gz3GW/yV1CROTHcIqySRmd+eAR9xE+JfdrM4tYx7uWCYGxDjQ7qOWEkAarYRj8IdOXfltiS6krhnqZC78S1REcX0DGiHSvSiC28cKwu5BpZ0hdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSiiFpfC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itEZHSGG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97417C2BBFC;
-	Mon, 27 May 2024 18:42:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSiiFpfC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D13C2BBFC;
+	Mon, 27 May 2024 18:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716835351;
-	bh=Rh67QaYUX6AOAR++bY+3ddLPTJ7PDZJkLa6D0bjdQ0M=;
+	s=k20201202; t=1716835373;
+	bh=xEpbPDiFG2K+IH0Y/rvh7wsZUZ7O1REPFbeWPqsBuJg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=itEZHSGGyuf8w8JCDVOYg2mqZfPQfEj1Ri9h7bL5IbUFt4+mTaetpThx4H7CUpqiy
-	 GBLj8eIaFQ1xTTPlQps/Vkahp+1rVuv3RT4VCUvmvMnAYpWB1FFvWlJfHvhrXwxJVY
-	 SeDIvYCcsTarca5QJ2lIkGP0q7FBK6DF9QVEsoTb15CvFLA3gL5TsX8bOZAKylhysy
-	 jVthY83qvmstwPTBm5N/v3qEHvYMl5clv2kXrcLi3zr1wppCiPtCGUWNDOIEBTOmPi
-	 LVARwSjwCjR5xpKg0jH7F46lz03HHVvn9Ew5dYC2gQq+xuiq9Nc7mULktB7WliEeZn
-	 esvchSBE8NRhg==
-Message-ID: <71bb5b77-193e-4c69-8ecb-4203b0fd3c6e@kernel.org>
-Date: Mon, 27 May 2024 20:42:25 +0200
+	b=dSiiFpfCIiU7Uo0a5B2wFfsyb6P96fVATzj5DePYbiadg/EpboYLICcveTXOqSKy4
+	 NtCmlpt8iC+3Ks0c80ZLAaJIwpMJHQPV5Ygcjk+bVVTyzr33GIJ2/YjQWDkbS1EXOC
+	 oj9O2C5X8uXmtAzNxJOh25c5TxmLWgUVSGhPE0ASf5Meka0UAAmfz7yKdGJH/B61+o
+	 RlNWDJfUa3VzovLC15lCeBy6bnwsTeQuQF1v5HT1LwnOoG1Okf9p3+0mV0EHnblGaG
+	 y2h/A9HMkym1PAnc8/sQGvx0nd8NStQFZNtjD4lpRlag2mV/GyOOQ+KFhAKymzUp7l
+	 8o5Xl6f8I/yZw==
+Message-ID: <fb49e19b-911c-440a-a83b-f54b828fc304@kernel.org>
+Date: Mon, 27 May 2024 20:42:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] ASoC: dt-bindings: samsung,midas-audio: Add
- headset mic bias supply
+Subject: Re: [PATCH v4 2/9] ASoC: dt-bindings: samsung,midas-audio: Add
+ GPIO-based headset jack detection
 To: Artur Weber <aweber.kernel@gmail.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>
@@ -48,7 +48,7 @@ Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
 References: <20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com>
- <20240525-midas-wm1811-gpio-jack-v4-1-f488e03bd8c7@gmail.com>
+ <20240525-midas-wm1811-gpio-jack-v4-2-f488e03bd8c7@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,16 +94,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240525-midas-wm1811-gpio-jack-v4-1-f488e03bd8c7@gmail.com>
+In-Reply-To: <20240525-midas-wm1811-gpio-jack-v4-2-f488e03bd8c7@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/05/2024 15:28, Artur Weber wrote:
-> Some devices use a separate mic bias supply (also referred to as
-> "ear mic bias") to enable/disable the headset mic.
+> Some Samsung devices that share the midas-audio driver use a GPIO-based
+> approach to headset jack detection, as opposed to using the built-in
+> jack detection provided by the wm8994 driver. This setup uses two GPIOs
+> (one for jack detection and another for key detection) and an ADC
+> channel for determining the jack type or button pressed.
 > 
-> Add the DT property headset-mic-bias-supply to allow for specifying
-> this supply.
+> Add DT configuration values that allow for describing these setups.
 > 
 > Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
