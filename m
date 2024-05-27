@@ -1,67 +1,67 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE3616C84B
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2024 12:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E38A15DBCA
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2024 12:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814627; cv=none; b=si9ciVRi64/iyVn0X5tnKbtL2g1R7oQyCvQvLQZuGzk/ChG7V2cCL7BNf+fxrNMZtFnGjB/MCXSvS647qkYSsiuQrDd2htaX7Nwq9WfxFN2F+8Ckl7omk4+AGeMhLcoLdmLEletLj8acADJyq9WSqI4Wv1D9P7cykWEZvasjuQo=
+	t=1716814670; cv=none; b=e4o5n37FWUuHh3JI+z6Ta6ngoFL1U/hwLhcFaMyAByS/vqXSHzshkOvBpMI4gg+nnNBeJxhoV3PsAYURUt0OEIeciMBJMT9KJDehUkthCfFLtWT+HZt1CxxaP2v4wdnQyQ3fCRpeehr+rHnx/SIrs/vwsEtYXVtkAY9XI0Ft7Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814627; c=relaxed/simple;
-	bh=pJJyP+9frURhdd/ZV2qsiiwzKPVnn0nUZRG4Ztdu5Ds=;
+	s=arc-20240116; t=1716814670; c=relaxed/simple;
+	bh=rNZ98tycbIm8gHCECF6fFAUqvVWA7Py4cjGRVlBtUzM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SG7oRUEix8JIIq9k4mEjH4/v4uv9zEPNcpbRXB7AjyAjDSkbmo8ncOSf0X4+jVxlyNfThpzHPQtq1WFM+0F6AqRDBcjDrI3BANPoKa46ztNFhZ1yjgSRsw5Ha3en5RSmXlmhJ9HdmWpl7QIKWqsan81OV8hh4RTeF3wLmQVWEz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jXCrQXK4; arc=none smtp.client-ip=209.85.219.176
+	 To:Cc:Content-Type; b=jwXgV7MsiJOlMWIoa573uZmHCWpSDCnlw+z8izouoEDpwJ+0Lb3r/UUeZDXRMbABsqTIqNcNYTidqIfZQuPamWb1lmZtJdvgfC/bHBbu0nxHVshddvUU/KnzZhRrzJh2YcfgzU9rQmHEbQBAq76PhMxxTfa0w2rObLhWeMinR84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xZjSW3Kv; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXCrQXK4"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-df7607785e9so3463625276.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2024 05:57:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xZjSW3Kv"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-df4e5b89e49so5153617276.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 May 2024 05:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716814624; x=1717419424; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716814666; x=1717419466; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pJJyP+9frURhdd/ZV2qsiiwzKPVnn0nUZRG4Ztdu5Ds=;
-        b=jXCrQXK4vKKG3HNR2A3yrhA0N89JXaALNJNJZFifU5IcPmNHSV9/2cOI458EcoPwSp
-         MS8tiPvxGlUeIzWn77Wc+B97UCTfQyJpY3/Wq7Y+34n5758vEvKc5NsGlqkOD4UM3jY2
-         j3++z8nTL32t1NMfJR77W9ZbGD6s8Ho9b8sXjoTkCTBfwJ/X7deVNRLnfC7v8N2lDZfK
-         R5D27pTTRyLCkRYZGQvBaVoczAp5THTkjy6iFgn2g3IuWau9JlRxwsw7wsJ3kdoSqueg
-         WkEa+oKqAPIYXL2aQkmLYoo9zelMDkvpzcwN3Rf4Wgs1p32CJpmnoUP+Ahrw8+LQJdR0
-         nDcg==
+        bh=rNZ98tycbIm8gHCECF6fFAUqvVWA7Py4cjGRVlBtUzM=;
+        b=xZjSW3Kvib9bA2fuiZguOMj/iBQcVxTBNd4+MePuDiOWiLp/1cjpsIk0SX/FqpWHiM
+         Pbsw80Fp0uSo2+qs0Yz8u65ZOUCrczWDUMpRUTZkANI60DYInk+z/cQbjU0hcxXZ3HnG
+         Ut1+gUns56/8o4E4S4kw2dlqfZJo3Bvd/7XXJItZCy+w3B/9BftGY+pjKpyv0OhyJHWP
+         uPbMOPzMK1ZC1pE9Vcg8T5Ptzh1qbAeBSOFxjjzXr+MlGnEGDeMOuOI5uiPZDzbYYnmR
+         4eaImTMk0JpJdOZpRYlS1qILympE3IqjPRj5LuELPRgkR62y8uanQIw3P15V7bSJ/MVE
+         U6Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716814624; x=1717419424;
+        d=1e100.net; s=20230601; t=1716814666; x=1717419466;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pJJyP+9frURhdd/ZV2qsiiwzKPVnn0nUZRG4Ztdu5Ds=;
-        b=rThvtiFAUajkkT45NhhB68jAPmVIgI5FovKxpZcSVuSZdOMe7nEsq77AaK8zUo68Dd
-         duRPCP7mRACYy40boY1Fz9Wbd8+h43kd+zkVF0e3cem0nNlVsvvILHqQeVmbMHIlcv2U
-         VZgAfGMyhTEtkO+U/P4xE0PiX2uZqHs6osy4HM18928xSjZV365srFAS3CpPDFUtJJ2g
-         AzzqodjbkDheeUpVqO9OtaIgnpPGxQXdxkQdMyu+iSRN89Mj8dEgZwB5YidZn43ADiME
-         hZ0deWpOspoCwjFQsYR0TawE00efP2q8P8wrITykWFJiZzNNJKwivTd0XbrFMuA0xtPw
-         FG4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXFWpH/QqJGSPCQRmcIBzPPwAPehyAf/ChmJUqBTKeEEEI+b5TwpnwsrYrGqXiXuC1jfattTO1I7REa3bmMy8hgG7m9eH7lf+ol29l6krwwP+0=
-X-Gm-Message-State: AOJu0Yxb1eqiOgfj3rIpQKUpiGRvDumQ7XT5UrhMehtVdjx56oLhkzCP
-	KqfAIQFPkhu+RhCVHBMQA/oUCa3RJxLUrwOM0TK3/2Kl3g9eZ7b3i6yqlNjS2/aSjkGx3iB+Uqg
-	TZGficWluBQ9ULJ6o9MUC9V0vwLe1KjnD8cNO0A==
-X-Google-Smtp-Source: AGHT+IHtuitKU1in514NtpJEfJGREAKzOXikcv6xhBvHaqSAyXXF4vYDUv/B437jXNYfH7CNGKFQFe5YOvThvoGTSqk=
-X-Received: by 2002:a25:7486:0:b0:dc2:3f75:1f79 with SMTP id
- 3f1490d57ef6-df772184c54mr8792593276.23.1716814624064; Mon, 27 May 2024
- 05:57:04 -0700 (PDT)
+        bh=rNZ98tycbIm8gHCECF6fFAUqvVWA7Py4cjGRVlBtUzM=;
+        b=iBGeCc6inbB/kdqA4thvfNa5mXlQaLgkLo1Unz0Bc0A+mC6vMh5pSPirHGOdlm+XD2
+         9DuDQbmQXJbmdpU8dNfDAWR+sgKDJ2N4SBCPUv9eQYfIi4GhpcQnXzu03Btn9cGU+m+u
+         z7u5WUGWRG5WpNhypAqZONR9PJ/+DELZjyHIjfRFY+jg1htNz7qnSQXUTZpyq+qBSmx4
+         YCdwQyKQXL4PyglJq0X8NpiARDJSYKozhPusI+3ntR+WoXy7beJc50CYuIOsLo1EUhDy
+         GCaJwRAl89OTblcGuhkmQSqFAEs07pVM8BDMBRJ0lFtp/Cq7aw3Q7eWPzksHHIMRUs9h
+         hfcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVFAmGPCRTSDnJGa+k0TcRuvX1EmapKMwaCwJfZnElBW4HsP8/C+Q/cR8rvM8aZ0LMuMTDwWXMcA6V3selZLqwu/U4zDHhg0qrwVa9cXmJRko=
+X-Gm-Message-State: AOJu0YyizNBOfuMt41OwGDQXdB4AhOes8itWqaj9Z/VFUbdmnrEmuEAG
+	RiGQyQFgJBpVO1vMFGKPzB7DquGJO8qCZnmujLbY03M/Kpj6NSZyEV4ZOgjm0loyNhBrE7MIuij
+	On4K78PXmh/FpEv1ja8wXxwzLzgonIBGGgTIeRA==
+X-Google-Smtp-Source: AGHT+IGPHGbdeDgQwNEq4mWXFwTqV0k8iDBOK2TyTZ4utk5viKokv4dr91DnLp+C01zzJZrl1Jzg3NthvUqaC/NhrDk=
+X-Received: by 2002:a05:6902:70a:b0:df7:9946:b32c with SMTP id
+ 3f1490d57ef6-df79946bc95mr6983978276.29.1716814666366; Mon, 27 May 2024
+ 05:57:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com> <20240504-pinctrl-cleanup-v2-3-26c5f2dc1181@nxp.com>
-In-Reply-To: <20240504-pinctrl-cleanup-v2-3-26c5f2dc1181@nxp.com>
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com> <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
+In-Reply-To: <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 May 2024 14:56:53 +0200
-Message-ID: <CACRpkdZ+YPAXTNU-kaA8ywBLW0RpGJBpXJqPD7aJ+B1V=axPrg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/20] pinctrl: stm32: Use scope based of_node_put() cleanups
+Date: Mon, 27 May 2024 14:57:35 +0200
+Message-ID: <CACRpkdbt0kE6VP3O+63U1rmJ_JKRvWENCnETT4f+mvNMMphLeA@mail.gmail.com>
+Subject: Re: [PATCH v2 08/20] pinctrl: st: Use scope based of_node_put() cleanups
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
 	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
@@ -95,7 +95,7 @@ Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 4, 2024 at 3:13=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
 > wrote:
 
 > From: Peng Fan <peng.fan@nxp.com>
