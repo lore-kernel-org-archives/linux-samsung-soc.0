@@ -1,134 +1,119 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757D517FAB5;
-	Thu, 30 May 2024 08:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713813B290
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2024 09:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059404; cv=none; b=KSl5/Xq4P3Da2VBk12vUOaDIxDvgwGd4CNzP/CxAc+APgmufc6/h7m6mRhtpodCfFcwWUMz+fgTKVIvm0DyyeeM9Y1cyHoO+ssXACxVe+DXGGsFX495Fc3de/1TVRsMJEiKY/iK20tnBUb55METClPVbYFJw/f8e3yInCH8URNs=
+	t=1717059745; cv=none; b=qB57SAh8U3n3UxGR6H7UfoALHWaqPKvVFLuPXOsxuhYVBtvKd8MZWQh+NF/+A/IMgswG4ykwc2zeN6ANPUpSCDVKW5XFFxpIi92H4g9mtm7XQedJPKGwHS7czbOHQhOefE5Nxiy4cxIV+uqAGVwgDT2ZTK9FiY4Q+lP0FCuQc60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059404; c=relaxed/simple;
-	bh=fjOh0MJjj/plDrKA9K0KZ/bX8+GSDBRzqIWJ4jir1Tw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cbW7X6aQggG+ROHkpI70RWhOlXjaIIxDUHdAFiv4RGCan/RV3LbQlcq8n+lkuKsFxiS1hg0U/dwsNhFnip3uGemqJBz72z77Ek3QOaqqEck5BgdLkuaQ/zZ3Q3o8SQcT7t9TSa84nxPoMMfTJlU64jUXjb9DZM5XX7LN5nX+V+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ti6CjaFm; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ti6CjaFm"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a63036f2daaso54458666b.1;
-        Thu, 30 May 2024 01:56:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717059401; x=1717664201; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a/bTfxUDpLBsxqobZuUMzQ5F6E7SsMJqv3Sv+i++EIs=;
-        b=Ti6CjaFm6P9+5+gad6CC/QW76oeCB8SNhctDdBZLUTQc8qjyMY99ER2N65HWg1AbBl
-         4GTNRBqZsmCBvea3jwCiibtXnah7n1QBffUTMerJIt6z8iciw01fxZSVHkyV7lrwjW0c
-         PJ7dybdo/wYwjDMTEtyno+PGmr9UBGyoDH2CXpTrPWxNfvO8ACJGS/EMww1ZY+ZCBqBc
-         IHdpQRQ1r7azRQ2KS3T0YrXCzRW5gpP63fK1lJ3sLWxNHA/NKx+aG+/6XqkKs5krQ7Cd
-         eg7r5RbrPoBqgRmEOrPa8LSsej5AxA1BDXqmME86eAdIAq8ImWkqRN6aTVXboGCVhXLL
-         dadw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717059401; x=1717664201;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a/bTfxUDpLBsxqobZuUMzQ5F6E7SsMJqv3Sv+i++EIs=;
-        b=Tx9E+tMzbakL85sny14vjRyVUjOdRhJn9sxsu98oGoqqTk8zTNFJ04SmTzVf4hhDI4
-         /whaVv+Ob0tsxZ7gHJNbT545XquwHHUfwnzrlK1flRaIn1cTPlVVpnmHYzyw7FtcfbRT
-         Nb10d5re8sGpFaxKu1wlEIzBr+vQpN9HdYIJxQGI1an+Ptfn9Q/9qY7xC5YG5zy7iGtk
-         tzAEzO1cehptPcCoBqS32sLjabviCpO+1esFOnz0PPec7BVD+jBMhi1QyOfmjsNxUbwW
-         U+84jGliNFUXKMhMRqfcvKmaYOQPsD5/31q8YA9b6EDxdEt6UllFSWRClmCCuakD8J7I
-         lpkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcCkk+OErXo8CeOpcteLdu+mSWzQ1WATjlUT4dYQ8T3CXDLeLJxtxxm9XDeSJPSlRmt1KeRcrqOyxSTzF2ADDBPJJ+wA9GkJZ/LzXIdeBgHMjN0qzNYCTVCyvpn1D1XVwXlMSOL2Ub0uu5Rhchl/7yHxiKRXCyYMQ3RVBJBBquVGu9+6vuYEbqZPKQ5JcV54xrdFUPZ0AqjOwWoTohywYbQ+sfWoU=
-X-Gm-Message-State: AOJu0Ywghz9qOiahOIbfgOHWJzfFNoKZKPflSZPy5rbxxSr4ACWJoO1s
-	3ykbJQXkU4cxAUQjpMXJ0qDrg1QhUMevm2L0QP5GXiVEIHPs1jK7Zttsmw==
-X-Google-Smtp-Source: AGHT+IG573BZMS5XVV6j5fgOeiWkxgpjXNFMSLM5231icRj+AWqiNBcvUSNKCU/IRhzaVgsi5S3G1g==
-X-Received: by 2002:a17:906:4087:b0:a5a:896e:d0b4 with SMTP id a640c23a62f3a-a65e8e5d2e3mr98732566b.26.1717059400816;
-        Thu, 30 May 2024 01:56:40 -0700 (PDT)
-Received: from hex.my.domain (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc500a1sm798430166b.125.2024.05.30.01.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:56:40 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Thu, 30 May 2024 10:56:01 +0200
-Subject: [PATCH RFC 11/11] ARM: dts: samsung: exynos4212-tab3: Add USB
- connector node
+	s=arc-20240116; t=1717059745; c=relaxed/simple;
+	bh=F2UL5a5lNnRgjZ1mIiR2YUOReGq+mkXTrOgzg/TJ45E=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kW87BLlnz+h6Qb4ceq9qbQWWbLZrm/H9/URklSpV9VHb3Fc9agSzjKpAErxpTSF6+aSpU6YBIauUNhzr1JfxoIypMnz+aCzjnX2s2rOhmUKOjU9aHncofwCZgbCrWFtSqLG8RDafjOq7YpbCbyvcH1qV0FeLlV65FHaujVweLgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id 51e6d162-1e63-11ef-80c8-005056bdfda7;
+	Thu, 30 May 2024 12:02:22 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 30 May 2024 12:02:19 +0300
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-samsung-soc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put()
+ cleanups
+Message-ID: <ZlhAm-giX6jNaUKr@surfacebook.localdomain>
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+ <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com>
+ <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-max77693-charger-extcon-v1-11-dc2a9e5bdf30@gmail.com>
-References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
-In-Reply-To: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, 
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717059384; l=1216;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=fjOh0MJjj/plDrKA9K0KZ/bX8+GSDBRzqIWJ4jir1Tw=;
- b=iWckinN8kfDKXZyUp93fjpuNF22RQGJf7qyhBbbG9wnGN5Ei88ykYtNMZdQQU+5qTudvzUHn/
- E8JEI13qHidDkix15SP7eOCW4aOpuH5PjY/ei03qHHTzr6K9AX3aMG+
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
 
-Add a subnode to the MAX77693 MFD for the MUIC and connect the USB
-connector node to the charger to allow for charger type/OTG cable
-detection.
+Mon, May 13, 2024 at 01:59:03PM +0200, Geert Uytterhoeven kirjoitti:
+> On Sat, May 4, 2024 at 3:14 PM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+...
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index b13c135bd944..2e7f7e8f6c3b 100644
---- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -151,6 +151,17 @@ charger_reg: CHARGER {
- 				};
- 			};
- 
-+			muic {
-+				compatible = "maxim,max77693-muic";
-+
-+				usb_conn: connector {
-+					compatible = "samsung,usb-connector-11pin",
-+						     "usb-b-connector";
-+					label = "micro-USB";
-+					type = "micro";
-+				};
-+			};
-+
- 			charger {
- 				compatible = "maxim,max77693-charger";
- 
-@@ -160,6 +171,8 @@ charger {
- 				maxim,battery-overcurrent-microamp = <3500000>;
- 				maxim,fast-charge-current-microamp = <1800000>;
- 				maxim,charge-input-threshold-microvolt = <4300000>;
-+
-+				maxim,usb-connector = <&usb_conn>;
- 			};
- 		};
- 	};
+> You missed one trivial conversion, presumably because no error handling
+> and thus no of_node_put() is involved?
+
+Nothing is missed. The below is a redundant change.
+
+...
+
+> -       for_each_child_of_node(np, child) {
+> +       for_each_child_of_node_scoped(np, child) {
+>                 if (of_property_count_u32_elems(child, RZN1_PINS_PROP) > 0)
+>                         count++;
+>         }
+> 
+> If you prefer not to include this
+
+I prefer this not to be included as it will give a misleading signals to the
+use of the original API(s).
 
 -- 
-2.45.1
+With Best Regards,
+Andy Shevchenko
+
 
