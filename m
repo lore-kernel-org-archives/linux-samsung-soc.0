@@ -1,28 +1,27 @@
 Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713813B290
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2024 09:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573B26F314
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 May 2024 09:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059745; cv=none; b=qB57SAh8U3n3UxGR6H7UfoALHWaqPKvVFLuPXOsxuhYVBtvKd8MZWQh+NF/+A/IMgswG4ykwc2zeN6ANPUpSCDVKW5XFFxpIi92H4g9mtm7XQedJPKGwHS7czbOHQhOefE5Nxiy4cxIV+uqAGVwgDT2ZTK9FiY4Q+lP0FCuQc60=
+	t=1717059879; cv=none; b=ZkZ8PPQVrP2zBDdKsXV2LdAvmdsgg37fMaqTCZXIkc4wG+7VRYtdWirchBiRVuVy+VrEsadXflYa0hOPNbe30C8OkbSH65s3FfQ04h5JTuGQgQmvYVgO4Lc92DSluxsIIdA5BBUcCEZJZNfk/tz0M6k4i9/tQJeQGzgmk4Eze4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059745; c=relaxed/simple;
-	bh=F2UL5a5lNnRgjZ1mIiR2YUOReGq+mkXTrOgzg/TJ45E=;
+	s=arc-20240116; t=1717059879; c=relaxed/simple;
+	bh=hRYXJybvTCdX1i87a/CbDN1b+MJo2gYTetWMREEWjI4=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kW87BLlnz+h6Qb4ceq9qbQWWbLZrm/H9/URklSpV9VHb3Fc9agSzjKpAErxpTSF6+aSpU6YBIauUNhzr1JfxoIypMnz+aCzjnX2s2rOhmUKOjU9aHncofwCZgbCrWFtSqLG8RDafjOq7YpbCbyvcH1qV0FeLlV65FHaujVweLgg=
+	 Content-Type:Content-Disposition:In-Reply-To; b=MNTK9jyu/F0AmmfwyeTa2uRINiZnBRiYn3XZKwDCA83BHYIwI54jP4SntvvXAO9qN+A/zMzVuxA0gBGFv5tgYLYgoNV5aAjAAEViTA63S5erZpUv0YUJ/Mqlp0BKY3eTgqVvqs1NrcmlJFQ1H8uJ9idgp68U5A5vNBXrmPRX/sI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 51e6d162-1e63-11ef-80c8-005056bdfda7;
-	Thu, 30 May 2024 12:02:22 +0300 (EEST)
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id a254b3f7-1e63-11ef-aaf9-005056bdd08f;
+	Thu, 30 May 2024 12:04:35 +0300 (EEST)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 30 May 2024 12:02:19 +0300
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+Date: Thu, 30 May 2024 12:04:34 +0300
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
 	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
@@ -72,45 +71,41 @@ Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
 	linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
 	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
 	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put()
+Subject: Re: [PATCH v2 08/20] pinctrl: st: Use scope based of_node_put()
  cleanups
-Message-ID: <ZlhAm-giX6jNaUKr@surfacebook.localdomain>
+Message-ID: <ZlhBImaUrnddkm-r@surfacebook.localdomain>
 References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com>
- <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
+ <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
+In-Reply-To: <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
 
-Mon, May 13, 2024 at 01:59:03PM +0200, Geert Uytterhoeven kirjoitti:
-> On Sat, May 4, 2024 at 3:14 PM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
-
-...
-
-> You missed one trivial conversion, presumably because no error handling
-> and thus no of_node_put() is involved?
-
-Nothing is missed. The below is a redundant change.
-
-...
-
-> -       for_each_child_of_node(np, child) {
-> +       for_each_child_of_node_scoped(np, child) {
->                 if (of_property_count_u32_elems(child, RZN1_PINS_PROP) > 0)
->                         count++;
->         }
+Sat, May 04, 2024 at 09:20:06PM +0800, Peng Fan (OSS) kirjoitti:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> If you prefer not to include this
+> Use scope based of_node_put() cleanup to simplify code.
 
-I prefer this not to be included as it will give a misleading signals to the
-use of the original API(s).
+...
+
+>  	struct property *pp;
+>  	struct device *dev = info->dev;
+>  	struct st_pinconf *conf;
+> -	struct device_node *pins;
+> +	struct device_node *pins __free(device_node) = NULL;
+
+It's better to move it upper to follow reversed xmas tree order (okay, to some
+extent in this case).
+
+>  	phandle bank;
+>  	unsigned int offset;
+> -	int i = 0, npins = 0, nr_props, ret = 0;
+> +	int i = 0, npins = 0, nr_props;
 
 -- 
 With Best Regards,
