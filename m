@@ -1,215 +1,242 @@
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2068.outbound.protection.outlook.com [40.107.7.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D60317618F;
-	Thu, 30 May 2024 08:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058654; cv=fail; b=c4bt0rNs0mbsFYU8+/uccDJ3qq8wSjwStGF1PJp/9NlVkyXQ1TNgN45+sPqkcg/ce/1/H15wO6Q3WhlX3zZ3c6XZIlmUo5pvcaZrx+S41vruNiQSUBKudsq9sVOkjPVqUlEwYnTwVkAiqSYdEqDo+oxyizeccMaixTKLA45/cTM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058654; c=relaxed/simple;
-	bh=lY5cnNjCnzHMNAYe3UNeuptGPxRKDgDGA3KNChZ4JIc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=l19YIUPmOZUN+7fF3mH1CDEmGu8phzNN5+cVrthtAaaDxqSY4/xi9UK3i9qvZFfaPymeQyJxfEZ+vf+6zc9rgLEif9enstKZiTJR1c/5c/LYv4WKiZ7WD7ajfH0mFg3BoIk1ANlFEuritYWycO8CT5scduR+MI3/DkO2JKC1Slw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=JHfbBcGt; arc=fail smtp.client-ip=40.107.7.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76DE6F2F4;
+	Thu, 30 May 2024 08:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717059389; cv=none; b=hapBDxpUuES7p9cxvQAV1/vcRvyWfmcD5XUCnlMLJZg42agXw3JS0xtQ+VCN7d8xN1kXwE5ZK8r99Ou0crjR3UXkA3pFgmlTq5RwNUOByM1WqyPL0R6utYu8rfS7ZdxiFJ0tQYr33kw3mdNsoTJbrGvqnLwP0UwiH84Mpd5r4H4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717059389; c=relaxed/simple;
+	bh=qOadE76vLdaIplciF8D6zHAXndcfCGT/osoFvr6KlEk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GznVRRLn1CQCwiMeA1U6UwMxd0s4anVGLLE+AxtVpT63Oy8q/CR+WtrY2fLE8eMrxYGGZkVpYkokd3DOucxeulhi216/xTcMQtrObGIEV9HgjugJcxp3Yt5ALCwFvv1Xk0CUEstaWdr0hEs1r7IuUZY2HojWMU0U6jRzVAysD9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBpXHacA; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JHfbBcGt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=APwcAvXeDqdbhkRD9xmzZhwhqmoA60G2NTe2im8M7srEp3xFd7o7oNLg8NXDKJD3PBsgSxX782JDu4F/j/B6JzQs5yEEHEe5b9ZEdU0PQwl/XSt0Er88hA0Aps3X3szrsEkIefzCfr+WFQ5yDwUIJ3WiM7WuHXFtH2jWuX79OkLqLQJ5xhe5i1KUYIuIx/yDviI4+KFpWlBq062mbN3Ubz1/w6QJBMo90G1qtwCsk6oumBEl9wluEE22ssMmlxF/4yaPR0AzmDO+4oPlR5sl6a589gVZ1IVfKtsxpkwG+4obYGSo0DrTqlfBoOGjW1AZ1cBIGJ/OKHy1r02Uj9F7MQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lY5cnNjCnzHMNAYe3UNeuptGPxRKDgDGA3KNChZ4JIc=;
- b=OnVnQfMb2c1NBpw+KVs2J+sqHVc3bi3YvnAfYbC98PfCwm/ubfiu9C5Zmrgy6TnhgjdH/4mPQOp5YrpMEUJMYBLHwEABTQo5A/CwOj8Ci2n7N1vc6nEoqBdYr4G71GpBzSi44UBwNoB3e30jTzq5WlhbdYG19lHqSacJnJ31nOeK3HUrDWsLOYqm5bAmzb//V5O7/O6FiRO6ANbiXw5MDmEbPanJ+DJKg9Jhkre3LO3m+BB6eZbC4Z+lfM2KZIbDRrgwX7LfRdwZVWbPV+MKfVow3kVMevAP87ZmJV2F/30BVtyqXXYXVnxER9me1AqE39CV0Zfb5PrQka6XUv2Wew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lY5cnNjCnzHMNAYe3UNeuptGPxRKDgDGA3KNChZ4JIc=;
- b=JHfbBcGtfLAER9e5lgF4ChVT3GSVeP2KBDlMUeg3RJbPIW0v50zKCnVCDHfCMT/eCsoikk3bt2Rz6fZmCyNXj3OeHtdQu9/d8JNLFHtMpFVwQ7h05EE3Lwpb57WRbTmFRX3jKRd9cT7xVwWB+1VnAy/UdOKhBL+03ne52P0Z1ig=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DU2PR04MB8856.eurprd04.prod.outlook.com (2603:10a6:10:2e3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Thu, 30 May
- 2024 08:44:09 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::557f:6fcf:a5a7:981c]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::557f:6fcf:a5a7:981c%7]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 08:44:09 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Markus Elfring <Markus.Elfring@web.de>, "soc@kernel.org" <soc@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Alim Akhtar <alim.akhtar@samsung.com>, Andrew
- Jeffery <andrew@codeconstruct.com.au>, Angelo Gioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, Chester Lin <chester62515@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Damien Le Moal <dlemoal@kernel.org>, Dan
- Carpenter <dan.carpenter@linaro.org>, Aisheng Dong <aisheng.dong@nxp.com>,
-	Dvorkin Dmitry <dvorkin@tibbo.com>, Emil Renner Berthing <kernel@esmil.dk>,
-	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, "Ghennadi Procopciuc (OSS)"
-	<ghennadi.procopciuc@oss.nxp.com>, Hal Feng <hal.feng@starfivetech.com>,
-	=?utf-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Jacky Bai
-	<ping.bai@nxp.com>, Jianlong Huang <jianlong.huang@starfivetech.com>, Joel
- Stanley <joel@jms.id.au>, Jonathan Hunter <jonathanh@nvidia.com>, Krzysztof
- Kozlowski <krzk@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Ludovic Desroches <ludovic.desroches@microchip.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, Matthias Brugger <mbrugger@suse.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Orson Zhai <orsonzhai@gmail.com>, Patrice
- Chotard <patrice.chotard@foss.st.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Sean Wang <sean.wang@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Shiraz
- Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren
-	<swarren@wwwdotorg.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thierry
- Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>, Viresh
- Kumar <vireshk@kernel.org>, Wells Lu <wellslutw@gmail.com>
-CC: LKML <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "openbmc@lists.ozlabs.org"
-	<openbmc@lists.ozlabs.org>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Subject: RE: [PATCH v2 18/20] pinctrl: freescale: mxs: Fix refcount of child
-Thread-Topic: [PATCH v2 18/20] pinctrl: freescale: mxs: Fix refcount of child
-Thread-Index: AQHaniVkZWlAc+ixjEijPTWAKiPHFrGrYKWAgAQ9t9A=
-Date: Thu, 30 May 2024 08:44:08 +0000
-Message-ID:
- <DU0PR04MB941783DEB48C73844CD3FDBF88F32@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20240504-pinctrl-cleanup-v2-18-26c5f2dc1181@nxp.com>
- <aa58efd3-b502-4bed-8c84-e5d78da23fbe@web.de>
-In-Reply-To: <aa58efd3-b502-4bed-8c84-e5d78da23fbe@web.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DU2PR04MB8856:EE_
-x-ms-office365-filtering-correlation-id: 77c0b891-a678-4e4c-511b-08dc8084ac08
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|366007|1800799015|7416005|376005|38070700009|921011;
-x-microsoft-antispam-message-info:
- =?utf-8?B?WHB0YUdlSTNHeFduNDNHWmNWUmVsR3ErcHhBREh1Z3hWUjVmZGxjL002ZzZv?=
- =?utf-8?B?V2lzRFRpMTlWS25xVFBnb3lMbEJpa2pydUZyN2ZxeWxzN0lnNGJNV01iSGx5?=
- =?utf-8?B?alk4V2RYZWp4SmJmNWtYNm9VdjNrbHZPZ3dJUytpM2hQRWNOeVo3N0VlZWlt?=
- =?utf-8?B?RTdIREJyZnNXa1hrU01GUnJsUHlSaWRFQStQckNDMStsS1M4L3BtTnZXR3Ji?=
- =?utf-8?B?bzQzK1I1Nmh4N2JncGV1N1NSaDNNUkl1M0xIbkVPeUZIL2dTQXhLWUdhTEZm?=
- =?utf-8?B?MFh5OGcwaVpZWEs3RUdtTEFpa2lHbU5Obi9qMkVhaHJSblVnb1JrL3VQZkVp?=
- =?utf-8?B?OHB3a2VDNzNpR3lPNmxFWWVuL0J5R2ZMRWR6SzF4TUlnV2VBUlNCOHN1aGxN?=
- =?utf-8?B?c3d5KzZPZlMxaUJ3bnkwUzh0WHdsR2x3OXdRRFRySFFlaVVPQUNWMTVnbFAz?=
- =?utf-8?B?ZzRod0NFZy81Q0RSOHhkWXZ6Y0IxbTVWczY5TW9maWFRdGdORmMzQXpRMCsz?=
- =?utf-8?B?TFZqK2Uxb2FnUlRJUCswVGtjNFJXWUxsbjRjdThWZ1N0OGtZN0tRZFJQbWhP?=
- =?utf-8?B?ZUJHNS9tUWZRVmw2djVCS01mblAxQzIrVnd0OHVRWUVxSXd0dTJJS0tZdEQ1?=
- =?utf-8?B?QTkyQm1HVEJFb1o3VFpjMW9GSk1VVVhGcjkyc1RwMlNhYlkxT0M4VFZ0UWRz?=
- =?utf-8?B?VmptR3VSTS83b3JoNjhnR2l0VzJwWUxUOFZ4ZUIveWRyakthRFRmU3NyeUkv?=
- =?utf-8?B?NjhaaWxkektLU0pFczg5OWJiQkpxOWc0SHZvcWZ3UWtOdjZoUDVRSE5MY1RT?=
- =?utf-8?B?aDJ6bWR1Nkk2aGVmM1lsMStjd1BRT3NIL0NQMWVEUWw1ZjJqNk5jY2ZzWWwv?=
- =?utf-8?B?VjMvSzlFWVNHUkFERXBsWDZnbEdCZjBhckdaQ090YVlaTngxcC93M1lXT1RH?=
- =?utf-8?B?Zm84L1RmR1FDNkg2RDM2YmE0RnhDdkVwNkFrNG9HblZ2ZHY0V2J3NWNXN2Ur?=
- =?utf-8?B?S0M0N2JNbGJKOU9SUnNDekVSRURiVExCM1lpRTNIUnJ3dWVOdmpUQ2ZrY2Ja?=
- =?utf-8?B?YTFuajEwaUozUGRyQzl2bDRkdkFnUlJQamllT1dPU3ljMmwwQjJ4MHEreDEz?=
- =?utf-8?B?TUlSSWF4UFM3OWRCdkVKYXJ6eEg5cVRwRVBQRnV5YmFxZkZmMU5vOGtTNk9W?=
- =?utf-8?B?cTZXRVNiU0ZrNHJxMmF6RVd0Rnh3SDBLb3NMeGNUQnNnaE5tb3NpelQ4REtm?=
- =?utf-8?B?VFNPZ3duTFVmUEVhN2hDS08zMFpKdFk4Q2pubmpzNHA1QlJRWXh6bXh3Ry8v?=
- =?utf-8?B?VVdFbmJ6a1prQlIveHhtand0Z2xYK2VGRCs3d1VRNUJDMlgvcmhoTzNOdW9F?=
- =?utf-8?B?LzM0Mkt5Qkd6TW5vYlRpbEdmOXJOakgrZEJ3c0duTmR5RTYvSkE2VFM1ZTVQ?=
- =?utf-8?B?YjlGQ29KemI5RHBVMzF1SEtybGZiK2RJTmQyQ0RvSVI0bk5QS2hyWFhJdGQx?=
- =?utf-8?B?c2FLeUl5VXVEeDNrMzBvQXM1VWdOdUN2bWdGVVVwSUZUK2ZGem54RjViRTIz?=
- =?utf-8?B?djZsUTdPY1V6K1A1NHYxNVJ2UldvTGhGY0swM1Nwcmx3WkJTQ0xQU3QwdnV2?=
- =?utf-8?B?cTBZbVhWd1VNVWIvaUhIMXpRb25pSiswYlJLSDlTSDFDeUt3S2loNGRrNUdH?=
- =?utf-8?B?WnpBMWQ0eXoydUZSY1I3YjhFaGVBNUNjeHk1cmhyTlo2M3ZVeTRhY0tzZVcr?=
- =?utf-8?B?RGUxL0xmSUEwNTNUS3BYeFJoWE13SmJweVlBSkdpdEtUMHhsbjg3dW9XUnEz?=
- =?utf-8?Q?0+seWBIt6kb2B5WxohRc+yj08p3lOItzflD74=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005)(38070700009)(921011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VzlTLzkyWGx3YmF5d0Y1VWlHV0xMZituaEdxbDBLSTAxTnJ0SkVCWFYxcVRy?=
- =?utf-8?B?K2hMTGxyYzNVOE1FRXJZcDkzeTJjSTAxN0RLWmhVYUJML3ZOZFBZU3c4MzNl?=
- =?utf-8?B?MXVkMkFNVzhlMms2RjFQTDBrZnRITHpyK1JIZjgzZkhmVnljRWFMaXF0OHJl?=
- =?utf-8?B?RDJPWGxqY0dPTTFUWXpBUjJSa3hFMlQ4NmNUbDdaMXRvOVpOVTFwVzhwN2hT?=
- =?utf-8?B?cnk5RXlyUlN2N29HMENQaEdZV0dVVjVJOE00eC9xeUJ0Y1lKSVp6Wm5zU2Jn?=
- =?utf-8?B?R3lNYUphQlV1cGRyZ0M5UUxLOFAzZjByV2EyclVQSWJqRm40QThJdkpKWUZO?=
- =?utf-8?B?STNjdjk4NWYrMk5RcDZiUlMvem5mOUdScmpoSEFFTkljc3diWkdhVEh6c3Jr?=
- =?utf-8?B?QVY5VEJuTmhhbTk5NWl6a1U0REJVdFYydTQrbFZ0Q1QxcXp5RlpMUHlhNHRZ?=
- =?utf-8?B?Rm9ENmxZbnpPc2dMU3lvWWREejBIZFpoYml0NGJ3cncxU0tacEwrOGd5clVK?=
- =?utf-8?B?ZThweWtFTGN6Y2FmQ014VTFHbC9Uai8yMHpEYlo5MjU0OFNITXRDekhBN2JT?=
- =?utf-8?B?U2oyVkxUN2RXMXNvNkV4bUxIc2RTTFJobHFPVnlpQ2NZYkM2RkJHdEJZNmkv?=
- =?utf-8?B?RVF5QVcxclFpeFI0U0F0MVk5dDNmQVZRTm1LS08rSngrUHFkNXAwM29MQTZv?=
- =?utf-8?B?akIzZ0IzM3lCc1duYjlweWF3STk3L2gyZTVwc0JrZ1lFek9qOUdFTC90NFNE?=
- =?utf-8?B?bXNzdWZjRXZhRGlLYkgySUxsa3RQRUtpRUE5V3JpY1lpSDdkNXk3bXRjN0hm?=
- =?utf-8?B?dXRtQ3A4ZldtNkZKZUVSbXJHMmdjdGhoS09YZlhhK1NmdTJzYTlVbkcvN2o4?=
- =?utf-8?B?MHNHQXJ3VGZ2S0dQZVhhWERnYzh2RzRSNm9jVDlaZElGYWYzZkFZZWwwaEl0?=
- =?utf-8?B?R0psdEhzV1BKVmVsRmgrUEpmaVRCZUVlM2hvRjdWaTZIT05obXpsWC95NHNM?=
- =?utf-8?B?RElBVjJ0MFUrcnh1NXQyUHFoUEZ0TDBVdngybzIySEQ4Y2FqZnA0RVB5RUxy?=
- =?utf-8?B?U2N1ZEFjazhiYTdLWGtRbzl5aExwVkFOcVd1Q0hIbXRQeFFtVlpmdzJYNWVE?=
- =?utf-8?B?R3U4ejFTZkJxZ0liblY4aXlKL3VRcll5YXZYY3FQWFlnTmNSbHYxZUFBZndh?=
- =?utf-8?B?djJGUFFvcTdDcG9idEN4R1ZMZWRvVnFJYlFhZlNNTzB2c0dkT0txZStUcXgy?=
- =?utf-8?B?NUxma3BOMEx1REJHbVhxR29yMHozQUtRVVdxQmptU1hPWFgxclZ4RGFwWU92?=
- =?utf-8?B?SkpQR3ZQcldiMHFod1V1VFRRZFJwTUphSm1sMVVFMDZONGFDeEVrTHlVOWFz?=
- =?utf-8?B?TVpwTys5VlZMTFQvV2F2TXNhYnloV2MxWWVMRkN5d1BKT1NiRmRmNVNreVFj?=
- =?utf-8?B?bVRXN1BObFo1ZGt3NWxEcHdsQ2xYZ3Zhc3pHU0lYOUhQMGZrTWpPSE1FSVUv?=
- =?utf-8?B?TkFldWJQNlo1V2s5STViVnB5bm5NellNdlQ3aE1HN3c1S0pRc2U1cmlWVlM5?=
- =?utf-8?B?LzhmZHB2eXBKa1IwTTBQLzI3dHp5Q242dnRidlN5OWJUZm92TFBmY1hkaTRK?=
- =?utf-8?B?bkQwUFkvQVhlS0ZPenUrYUxFSmplUE5kNlUwMVJwYmZtb3ZQUUhZOGxyVVpE?=
- =?utf-8?B?QnlOZTdCRUFBUk1Za0VKU1pmaXlwSi9VZFJYbFgzdm1ZR05JOStWb25zcmZ1?=
- =?utf-8?B?bTdxU05VWFpmQ0o2UUlyNis5N21BTDcvZ0cwT1FDNVUwTi85NHN5VW4rTnc3?=
- =?utf-8?B?VjZVOEVubjBUdmpkT2d5Wmxmd3BtcXJqZkh3c3lucmpyVEFOK2RDMWdBakxV?=
- =?utf-8?B?WWo2V0VIYmhSc2R6b1hZL2dsRC9yNWdNREVlLy8vbU1mQnp5YzNabHFRRk9I?=
- =?utf-8?B?NTh5NjVvTHorTVRjNmR0aEdzNHBIT1JlMGZHWUtOTS84RUJpN0tsL1RQMmlR?=
- =?utf-8?B?enNYNVpVRS94U2VjQUFGeVg1bEhUTTRqek43cVc1MU1SL1Vnb2sxcmhjak1E?=
- =?utf-8?B?S1dFT3pwSjdmQ2ZFQUtKQU9UUFJpSU92cys2MWtJVW1XamF6VVN4NHBCTmtz?=
- =?utf-8?Q?dHu4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBpXHacA"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a1fe63a96so301146a12.0;
+        Thu, 30 May 2024 01:56:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717059386; x=1717664186; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lJbFOMieqUJ1HvhG4PnEYVJKF/U/LFck+FVCHvfSXS0=;
+        b=YBpXHacA1eDj9F2y9pU6rVlNOJg2O+Zbb/k6Zw7cBmd65pgQHIbSUqibnTQXFKSNfI
+         H6tXfvJr/5W3radVQD6z5ysa4fi/uGdIt7/K/ZgNagMBaawVAerdWb5g39lmMZvNfh+g
+         xU4k2ybHSQdfaaOgtnpm4UV2nrzYUpg9m2OJToILdKPLti4NJN2wvk3h6KZ+N51wu5so
+         F6HKpkrvUo1EFfffHMAFUzg/l9yzGbPymYZpgcafH9uzx2+nIEtXftoox+Q/cQvXQBlS
+         FosvQEeP9PCMoeHtqWgCQQOqEvmmAZj48pgCFHdWYsuIEHEdcfgGsQZh3KDG2Fz2RdAT
+         CH4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717059386; x=1717664186;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lJbFOMieqUJ1HvhG4PnEYVJKF/U/LFck+FVCHvfSXS0=;
+        b=D0EmXdeSHDvvwK1Y3UEX13vEh89L9EXayVrziZSSHu0lLRQDwuTSn+PS3/AsYIfGQm
+         TL3gwAP9C7CqawnGS174GoJhZmi09lbziUKwI77kA/Byz8XWgZHuIui4b9I+Ev+Y919k
+         kPN7MuErGkhfkM0gzA8TRkr6WfxvMaEYHnaVDTGTomSPJ/pLjYYdqPQU+FyXB40yrAMK
+         Bxorbn+f2UcKs+anLliaAp6VH36JkcZXwgScMc8cgXPdCFCZLreBszyc9V72lWV8HUn9
+         ur2IFwUjng+JEXh45pw9cguOH7aXZ3kGF3rcRx4e2OkZdGzK+AKqquCKNpXcaIt3uFgy
+         rfcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLd2xE/DM+qKcVXSwbGAmcQi+Bzyw1D450zuDTCihhexq3gxBT2xF20eqtEv957pVxR28FQMUojiOFqJTVEWFLdvHk36SwsilHyJNkfcoEAkCCt8f+W0mBiZ5gDgBJuRBY7ZJEIKITETEHxFeJQO52lbIg5o5kDRc2nSzOVTnXcfliZyvH3UWH3G7G+Wp9tVkLFtBfuh8bWhUTwz9DZUAYlgCcsPg=
+X-Gm-Message-State: AOJu0YyjFhHLTwJZ0+GbSpXcyHK+MDsHAuDtP0Qwcr7/sueNjiBKczJo
+	hRHNWHRVG46eowl1gHp6UVaJe5z8xzOt4LfBw/2mm08y/PKgtIe2
+X-Google-Smtp-Source: AGHT+IEKymx3ifIQOa5BXuhl+5X0zN/+cM7GQF9Ej5dDfbtdj4YsozuxlRJoa3tJo6QcZv/W0pOI2A==
+X-Received: by 2002:a17:906:70c:b0:a5a:5b8b:d14 with SMTP id a640c23a62f3a-a65e8f7b58fmr91646866b.40.1717059385883;
+        Thu, 30 May 2024 01:56:25 -0700 (PDT)
+Received: from hex.my.domain (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc500a1sm798430166b.125.2024.05.30.01.56.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 01:56:25 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH RFC 00/11] power: supply: max77693: Toggle charging/OTG
+ based on extcon status
+Date: Thu, 30 May 2024 10:55:50 +0200
+Message-Id: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77c0b891-a678-4e4c-511b-08dc8084ac08
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2024 08:44:08.9823
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: A7hZ9840t60j4IRntB33hVVAfdsRol41wy0W+y8gL/qlLpUeLvzCFEeyQE4KW1bhwVtjnMVo9R5qxiD/dNW2sA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8856
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABY/WGYC/x2MzQqDMBAGX0X23AUbf1L7KsVDEj91D41lUyQgv
+ rvB4zDMHJSggkTv6iDFLkm2WOD5qCisLi5gmQqTqU1bd6bjr8vW9kPDResCZeR/2CIP8N56N72
+ aACr1TzFLvs+f8TwvQw6C9GkAAAA=
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, 
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717059384; l=7625;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=qOadE76vLdaIplciF8D6zHAXndcfCGT/osoFvr6KlEk=;
+ b=MMtU+GPWlwCX0PoSEku/V91gjQOS+G/MXBGM8VPiwgMRwiRu56xv0CqcQUQT5CiqwS3RIBZBn
+ nd+dmF9GoxmCzDiJrOArIdCmggW/bE8oKrBrk0QPkcIrP/w0iqPrpRp
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDE4LzIwXSBwaW5jdHJsOiBmcmVlc2NhbGU6IG14czog
-Rml4IHJlZmNvdW50IG9mIGNoaWxkDQo+IA0KPiBIb3cgZG8geW91IHRoaW5rIGFib3V0IHRvIHVz
-ZSB0aGUgc3VtbWFyeSBwaHJhc2Ug4oCcRml4IHJlZmVyZW5jZSBjb3VudGluZw0KPiBmb3IgY2hp
-bGRyZW4gaW4gbXhzX3BpbmN0cmxfcHJvYmVfZHQoKeKAnT8NCg0KVGhhbmtzIGZvciByZXZpZXdp
-bmcuIEkgaGF2ZSBubyBwbGFuIHRvIHJld29yayB0aGlzIHNlcmllcyBmb3Igbm9uLWFjY2VwdGVk
-DQpwYXRjaGVzLiBJZiB5b3UgaGF2ZSBpbnRlcmVzdCBhbmQgdGltZSwgZmVlbCBmcmVlIHRvIHRh
-a2UgaXQuDQoNClRoYW5rcywNClBlbmcuDQo+IA0KPiANCj4g4oCmDQo+ID4gb2ZfZ2V0X25leHRf
-Y2hpbGQoKSB3aWxsIGluY3JlYXNlIHJlZmNvdW50IOKApg0KPiANCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgdGhlIHJlZmVyZW5jZSBjb3VudGVyPw0KPiANCj4gDQo+ID4g
-UGVyIGN1cnJlbnQgaW1wbGVtZW50YXRpb24sICdjaGlsZCcgd2lsbCBiZSBvdmVycmlkZSBieQ0K
-PiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG92ZXJy
-aWRkZW4/DQo+IA0KPiANCj4gPiBmb3JfZWFjaF9jaGlsZF9vZl9ub2RlKG5wLCBjaGlsZCksIHNv
-IHVzZSBvZl9nZXRfY2hpbGRfY291bnQgdG8gYXZvaWQNCj4gPiByZWZjb3VudCBsZWFrYWdlLg0K
-PiANCj4gQW5vdGhlciB3b3JkaW5nIHN1Z2dlc3Rpb246DQo+ICAgZm9yX2VhY2hfY2hpbGRfb2Zf
-bm9kZShucCwgY2hpbGQpLiBUaHVzIHVzZSBhbiBvZl9nZXRfY2hpbGRfY291bnQoKSBjYWxsDQo+
-ICAgdG8gYXZvaWQgcmVmZXJlbmNlIGNvdW50aW5nIGxlYWthZ2UuDQo+IA0KPiANCj4gUmVnYXJk
-cywNCj4gTWFya3VzDQo=
+This patchset does the following:
+
+- Add CURRENT_MAX and INPUT_CURRENT_MAX power supply properties to
+  expose the "fast charge current" (maximum current from charger to
+  battery) and "CHGIN input current limit" (maximum current from
+  external supply to charger).
+
+- Add functions for toggling charging and OTG modes.
+
+- Add an extcon-based handler that enables charging or OTG depending
+  on the cable type plugged in. The extcon device to use for cable
+  detection can be specified in the device tree, and is entirely
+  optional.
+
+The extcon listener implementation is inspired by the rt5033 charger
+driver (commit 8242336dc8a8 ("power: supply: rt5033_charger: Add cable
+detection and USB OTG supply")).
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+This started off as a cleanup of "[PATCH 0/3] max77693: USB event listener
+for charger"[1] (and its later iterations[2]), but I ended up replacing 99%
+of the code and adding a few more additions on top.
+
+This patchset was made for two reasons:
+
+- I noticed that charging on my Galaxy Tab 3 8.0 seems to "work", but is
+  so slow that it starts to discharge during normal usage. After some
+  investigation I found that under the downstream kernel, the charging
+  limit registers (two of them! see patch descriptions) are changed to a
+  higher value when plugged into a charger, and adjusted based on the cable
+  type.
+
+- I was investigating what was needed to get OTG support running, and
+  found that some OTG mode bits had to be set in the charger when an OTG
+  cable is detected, and that required me to modify the charging driver.
+
+That's why the patchset includes *both* charging detection and OTG support.
+
+== Kernel-side charging management ==
+
+The original patchset this was meant to supersede was denied because,
+among other reasons, upstream did not agree to having the charging be
+controlled this way in the charger driver, suggesting that either
+user-space or the charger-manager driver should do it[3][4].
+
+charger-manager is not used in any devices, plus the already mentioned
+patchset comments suggest that it's not the correct way to do things
+("DT should be used for concrete hardware, not glue drivers")[4].
+
+There are also some drivers that already do this sort of kernel-side charger
+toggling/management: other than the aforementioned RT5033 driver which this
+new patchset is based off[5], there's also the MAX8997 charger[6] (the patch
+for which was merged just a year after the MAX77693 discussion[7]!) and the
+AXP288 driver[8]. Still, that's just 3 out of many more drivers...
+
+For this reason, I'm sending this first version of the patchset as an RFC
+for further discussion. I've done some thinking about what a potential
+implementation allowing for controlling charging from userspace might look
+like, and here's what I came up with:
+
+- Allow for setting the charging input current by setting the INPUT_CURRENT_
+  MAX property of the power supply. (Leave current from charger to battery
+  set by the device tree in the kernel, since it's arguably more dangerous.)
+
+- Allow for setting the CHARGER regulator on/off through some sysfs property.
+  How this should be done is tough to specify; there seems to be a few
+  ways to do it (e.g. setting the STATUS property[9]), we could use a custom
+  sysfs property.
+
+- Add a custom sysfs property to disable kernel-side charging.
+
+About that last one - I'm convinced at least *some* level of kernel-side
+charging control should exist, and that's for a practical reason:
+
+A reccuring complaint[10] is devices that are low on battery and plugged
+into a charger shutting down before they can fully boot. If we set up
+charging during boot, the charger driver can handle charging until a
+userspace daemon appears and takes over.
+
+Of course, this is all up for discussion - comments appreciated ;)
+
+== CHARGER regulator ==
+
+I think it's worth also analysing the role that the CHARGER regulator plays
+here. At the moment, the CHARGER regulator (managed in drivers/regulator/
+max77693-regulator.c) handles:
+
+* the CHGIN input limit as the regulator current limit;
+* charger enable/disable as the regulator enable/disable.
+
+A comment in the regulator driver suggests that this should in fact manage
+the *fast charge* current, not the CHGIN input current, and that "this
+should be fixed"[11]. But now we're managing the fast charge current in
+the charger driver... and, if the regulator driver ever was to be "fixed"
+this way, it would break the charger driver's ability to set input current.
+
+We could potentially drop the CHARGER regulator and manage these registers
+within the charger driver, but since it's not causing us any real problems
+at the moment (and the "fix" scenario mentioned earlier is very unlikely),
+I decided to keep it and use it to handle the two functions mentioned above.
+(Although one of the reasons for the superseded patchset being denied was
+that "[this] power supply driver should not manage regulators"[3]...)
+
+---
+
+Special thanks to Wolfgang Wiedmeyer whose original patchset[1] served as
+the base for this one, and to Henrik Grimler for helping me out with
+figuring out how the input current/fast charge current registers are
+used.
+
+[1] https://lore.kernel.org/all/1474932670-11953-1-git-send-email-wolfgit@wiedmeyer.de/
+[2] https://lore.kernel.org/all/20190910200233.3195-1-GNUtoo@cyberdimension.org/
+[3] https://lore.kernel.org/all/20160927081344.GC4394@kozik-lap/
+[4] https://lore.kernel.org/all/298d81d5-fe41-e2d1-32a7-d3dc35b0fe25@kernel.org/
+[5] https://github.com/torvalds/linux/blob/v6.9/drivers/power/supply/rt5033_charger.c
+[6] https://github.com/torvalds/linux/blob/v6.9/drivers/power/supply/max8997_charger.c#L98-L141
+[7] https://github.com/torvalds/linux/commit/f384989e88d4484fc9a9e31b0cf0a36e6f172136
+[8] https://github.com/torvalds/linux/blob/v6.9/drivers/power/supply/axp288_charger.c#L617-L673
+[9] https://github.com/torvalds/linux/blob/v6.9/drivers/power/supply/rt9471.c#L370-L371
+[10] https://gitlab.com/postmarketOS/pmaports/-/issues/2594
+[11] https://github.com/torvalds/linux/blob/v6.9/drivers/regulator/max77693-regulator.c#L45-L54
+
+---
+Artur Weber (10):
+      dt-bindings: power: supply: max77693: Add fast charge current property
+      dt-bindings: power: supply: max77693: Add maxim,usb-connector property
+      mfd: max77693: Add defines for OTG control
+      power: supply: max77693: Expose INPUT_CURRENT_LIMIT and CURRENT_MAX
+      power: supply: max77693: Set charge current limits during init
+      power: supply: max77693: Add USB extcon detection for enabling charging
+      power: supply: max77693: Add support for detecting and enabling OTG
+      power: supply: max77693: Set up charge/input current according to cable type
+      ARM: dts: samsung: exynos4212-tab3: Set fast charge current for MAX77693
+      ARM: dts: samsung: exynos4212-tab3: Add USB connector node
+
+Wolfgang Wiedmeyer (1):
+      mfd: max77693: Add defines for charger current control
+
+ .../bindings/power/supply/maxim,max77693.yaml      |  13 +
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  14 +
+ drivers/power/supply/Kconfig                       |   1 +
+ drivers/power/supply/max77693_charger.c            | 291 +++++++++++++++++++++
+ include/linux/mfd/max77693-private.h               |   9 +
+ 5 files changed, 328 insertions(+)
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240525-max77693-charger-extcon-9ebb7bad83ce
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
