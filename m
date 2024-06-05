@@ -1,114 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F163218C33F;
-	Wed,  5 Jun 2024 07:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ACF84FDA
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jun 2024 09:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717574074; cv=none; b=Dy8fHkQhwU/9EbYdgK10byM9dAJGWMpsZA4iVTidNftU6EGsRz5QTH+EUq2iKiqCR29uhxNKGBLrUOW66outIxemnx/rTKHfVIepaM6NueTRkArKKxsn83giyo/lTjiddVzJmwwWA7+2O3k42MKbDNQI+DqyBElfr7k8bCjr4TU=
+	t=1717578577; cv=none; b=DFEvqP2slt2wTQ8FlaLMSJLlL3zyt5LMybKlyzKvok8hVvHhnlNRtXQppBMaXlCwFn1F8ECfnE0OTMTJRsddS3ZDrGRCSfm53r/kOgVgbmKjHrqOGhJLIxvL2Upg39kO2hhne6aOp/YSELgsvCOEanECmXQGVfly1aKhOS0gcPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717574074; c=relaxed/simple;
-	bh=Cr5U2lpLmtlQqVASADPcN8XEvX+ZdVME7u8RuwfOA+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FrDgcJEFN2n0EJZaOqpNMnmkTVJmtCN3VQsodb/xG9FJGI/OLI3cjSaK+HxDhxLsNjGCDo5PYkcH1xiC8dAOiQw6IUwetI23rQm6bjmm0yEg8kr6y6d8/yv6P268w3Ck1j2eHJ0eke1TCUEZkGxpRk87ssbICQteEbKHm26Tnuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ukj4vKdZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717578577; c=relaxed/simple;
+	bh=1Ydk+OWiTnXAHwOuMX34qo5U40tky81PZQBs4gDvO7g=;
+	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=ToY2/zLpEsmq8SaW2jDL5QXPy7TbQsl1ypdMVegWc36cgb8n4DeH5bJtObFROq61P6/0NNvvaw495BOqSsNTn8MzmWvtEu3pNTR+oiYcryp1MHlTGreWvVfLUG+BzVYv7GhbgjaIo21bJ7qJ08KW6LT0B54uVScqFgx6O5AUPUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OReSv/02; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ukj4vKdZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F268EC3277B;
-	Wed,  5 Jun 2024 07:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717574073;
-	bh=Cr5U2lpLmtlQqVASADPcN8XEvX+ZdVME7u8RuwfOA+o=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Ukj4vKdZ7S/bFES+AiUUKATVaMvALLnVQYqIZxW4lpvoN+7SbLTW+ztehgLsCo2JT
-	 C1e0bbOqfT4esUDzIHz4HcQr9AN2UW5QXisccn4Q8LDP21zd/sWRt8RTUohcatiuUC
-	 dVBfe/1N0ecZW3fG27elWU0px62Nduai/kMGkW7IQ6AshAqXSdm9tUoMjwRYMPYCXo
-	 Q0UGdHIt45hvmbnFI1FPio5czttge8bSWuOCjWbsRD8ySHZTv/QtHevY01L43eMYpq
-	 R0tiYcSmM4492Mm/lbkMp0N4v2/2Kq9+ZJQ7q0RXHtKdBhAoI6+zqiDQadfue53Kab
-	 WqVIcnQ6uL8MQ==
-Message-ID: <da461341-0998-4282-a64c-a6f094e6566d@kernel.org>
-Date: Wed, 5 Jun 2024 09:54:30 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OReSv/02"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240605090327epoutp02307f84eb3001a2d7c9926af85c0ab0dc~WEEd8_zxJ1898718987epoutp02W
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jun 2024 09:03:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240605090327epoutp02307f84eb3001a2d7c9926af85c0ab0dc~WEEd8_zxJ1898718987epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1717578207;
+	bh=1Ydk+OWiTnXAHwOuMX34qo5U40tky81PZQBs4gDvO7g=;
+	h=From:To:In-Reply-To:Subject:Date:References:From;
+	b=OReSv/02hefZTHnFeuuUX8pa47sDD+OnGNCwF0vG+ItLFat5HLybE+k57nGXi3rH5
+	 9qhAZZulidlc8CNx+NgDP/UMjgVYQvEierfK/Vk1UygbUOt0WUoWUAunW9P7i50Tdh
+	 eaI1rKSQsXqJHdh40Pp5H1ezty92/qZ1e/LUh4fc=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240605090326epcas5p124538737401f364639c29aa6c627870b~WEEdug8cK1283012830epcas5p1A;
+	Wed,  5 Jun 2024 09:03:26 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VvM252P1rz4x9QG; Wed,  5 Jun
+	2024 09:03:25 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	6C.29.19174.CD920666; Wed,  5 Jun 2024 18:03:24 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240605090323epcas5p4ceef993ef6a017c805687bbaf94a8fa8~WEEbDQY8e0902409024epcas5p4A;
+	Wed,  5 Jun 2024 09:03:23 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240605090323epsmtrp28cef3b2557b53d95927d7fed626dffb4~WEEbCmtov1690916909epsmtrp2n;
+	Wed,  5 Jun 2024 09:03:23 +0000 (GMT)
+X-AuditID: b6c32a50-87fff70000004ae6-55-666029dc9085
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CA.8B.08622.BD920666; Wed,  5 Jun 2024 18:03:23 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240605090322epsmtip2c40d30d045f5c56fc09af4f3e7cb61a0~WEEZ_oY8r1486814868epsmtip2F;
+	Wed,  5 Jun 2024 09:03:22 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Kwanghoon Son'" <k.son@samsung.com>, <krzk@kernel.org>,
+	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-serial@vger.kernel.org>
+In-Reply-To: <20240605040719.160778-1-k.son@samsung.com>
+Subject: RE: [PATCH] serial: samsung: Change MAX_CLK_NAME_LENGTH to 17
+Date: Wed, 5 Jun 2024 14:33:21 +0530
+Message-ID: <033801dab727$3835d2f0$a8a178d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: samsung: Change MAX_CLK_NAME_LENGTH to 17
-To: Kwanghoon Son <k.son@samsung.com>, alim.akhtar@samsung.com,
- gregkh@linuxfoundation.org, jirislaby@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJsKbdffATXsgma7My52wvbWvpMKAFCuxyIsIvjyzA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmuu4dzYQ0g6kfeCyaF69ns3g3V8ai
+	d81VJovz5zewW8w4v4/J4sziXnYHNo9NqzrZPPbPXcPu0bdlFaPH501yASxR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZq+cdZCt4yVdx
+	auNitgbGRr4uRk4OCQETidamXexdjFwcQgJ7GCWmPVnABuF8YpRo+POBEaRKSOAbo8TS27Iw
+	Hcs3bWKEKNrLKPF++24WCOcFo8SrcxtZQarYBHQldixuYwOxRQR2M0o8+soPYnMKWEgseLOO
+	BcQWFnCT+HP0O1MXIwcHi4CKxIS3miBhXgFLiUvLLzFC2IISJ2c+AStnFtCWWLbwNTPEEQoS
+	P58uY4UYbyWx5flPVogacYmXR4+AvSMh8JNdYv+xBlaIBheJ6R/6mSBsYYlXx7ewQ9hSEp/f
+	7WWDsLMljl+cBWVXSHS3foSqsZfY+egmC8idzAKaEut36UPs4pPo/f0E7HwJAV6JjjYhiGpV
+	ieZ3V1kgbGmJid3dUBd4SHyeuwsabt2MEnM617JNYFSYheTNWUjenIXknVkImxcwsqxilEot
+	KM5NT002LTDUzUsth0d4cn7uJkZw0tQK2MG4esNfvUOMTByMhxglOJiVRHj9iuPThHhTEiur
+	Uovy44tKc1KLDzGaAsN+IrOUaHI+MG3nlcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5Ykpqd
+	mlqQWgTTx8TBKdXAVGI94TzjE7mIwOCGk5mcFR+T1KJ+FbfIMUSzlVzsCnthtalW6uL2NE2G
+	f9ZS6dq3sy5+KAtXVa7d/cTTpyVwZYqXqvonTvZzU6afn5wor9pnqXIrUrwvtp6b45J2An/n
+	duHL5Qp3S0N1V0a++JwkfnRClD7rq/q718SP7RCeGzhVnXGu9IlX4dfYtr87scVI4Ubzge6g
+	FvudHbYWLcxvv2Z/iV72Pvz9kuYH3vxKb472Cs1i637XJbTm5bTrK464t/i+c6ypY7YLXy7c
+	qn7fPmD9MZ6FIsLbJL3Pbmg0+e2t3s/JXM361LlB4p3+xVvf+I/PurhOfm8t+wpLpd2t746p
+	JE6cmD7HIyp9SZkSS3FGoqEWc1FxIgDo5iKbIwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSvO5tzYQ0g8YXphbNi9ezWbybK2PR
+	u+Yqk8X58xvYLWac38dkcWZxL7sDm8emVZ1sHvvnrmH36NuyitHj8ya5AJYoLpuU1JzMstQi
+	fbsErozWmbPYC65wV/zcsJ2xgfEdZxcjJ4eEgInE8k2bGLsYuTiEBHYzSjxaM5cRIiEtcX3j
+	BHYIW1hi5b/n7BBFzxglbp87BpZgE9CV2LG4jQ0kISJwkFGisf00VFUno8SZjlusIFWcAhYS
+	C96sYwGxhQXcJP4c/c7UxcjBwSKgIjHhrSZImFfAUuLS8kuMELagxMmZT8DKmQW0JXoftjLC
+	2MsWvmaGuEhB4ufTZWDjRQSsJLY8/8kKUSMu8fLoEfYJjEKzkIyahWTULCSjZiFpWcDIsopR
+	MrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzhGtLR2MO5Z9UHvECMTB+MhRgkOZiURXr/i
+	+DQh3pTEyqrUovz4otKc1OJDjNIcLErivN9e96YICaQnlqRmp6YWpBbBZJk4OKUamI5IP0u+
+	w+rP0iRfdCQljD2Cv8xc3J3L6FPoQe0WfrvprZ+Fp8VK2GX4GzalFsxcs7C8+I+CpsP5G7+u
+	FM+bUSvw63uT6vXg+KkdVT5bj641Drxlz+vY01G0TGOy9/TUkP984rdOV5+/eLhf/ELXhKdf
+	xL4UbODxdrHOtwt2tq7eHsN8Y0Vt1bsQV+7r1m3WJk1t84x4/ZZy73VeVrnFvaUwfuKK3c94
+	tQQNu8tDj0qvaNilpyX6/mLViWhbhvIndfvrd816JHX44ZSjzNNW8Rg3HWyTq2GIarq2b+dW
+	gbum8T/qkvYs+b3x4/Jcyb1peyKaul13vN3O8LP8w4wbh95kPTBjE/Oq7P19fFGvEktxRqKh
+	FnNRcSIAKwW4yQADAAA=
+X-CMS-MailID: 20240605090323epcas5p4ceef993ef6a017c805687bbaf94a8fa8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240605040759epcas1p36d200e262d9a98f9879cf7fd0ee94bba
 References: <CGME20240605040759epcas1p36d200e262d9a98f9879cf7fd0ee94bba@epcas1p3.samsung.com>
- <20240605040719.160778-1-k.son@samsung.com>
- <1d68e73b-18b9-4fad-b0c0-fcd9cc9571e2@kernel.org>
- <c7505440-23cb-4397-8a0e-6fab707bd155@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c7505440-23cb-4397-8a0e-6fab707bd155@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+	<20240605040719.160778-1-k.son@samsung.com>
 
-On 05/06/2024 09:52, Kwanghoon Son wrote:
-> On 6/5/24 3:42 PM, Krzysztof Kozlowski wrote:
->> But that's not true. We do not write there more than 15, including
->> terminating NULL byte, right?
-> 
-> For now, right. only clk_uart_baud[0-3] acceptable.
-> 
-> I thought this meaningful in code side, clk_num u8 can over in future.
 
-But it can't now.
 
-> Also don't want to see warnings.
-> 
-> But if It's false warning(device tree constrain), please ignore patch.
-
-To me the warning is a false positive.
-
-Best regards,
-Krzysztof
-
+> -----Original Message-----
+> From: Kwanghoon Son <k.son=40samsung.com>
+> Sent: Wednesday, June 5, 2024 9:37 AM
+> To: krzk=40kernel.org; alim.akhtar=40samsung.com; gregkh=40linuxfoundatio=
+n.org;
+> jirislaby=40kernel.org; linux-samsung-soc=40vger.kernel.org; linux-
+> serial=40vger.kernel.org
+> Cc: Kwanghoon Son <k.son=40samsung.com>
+> Subject: =5BPATCH=5D serial: samsung: Change MAX_CLK_NAME_LENGTH to 17
+>=20
+> clkname =22clk_uart_baud=22 already 13 byte, so compiler warns
+> drivers/tty/serial/samsung_tty.c:1392:17: note: =E2=80=98sprintf=E2=80=99=
+=20output=20between=2015=20and=0D=0A>=2017=20bytes=20into=20a=20destination=
+=20of=20size=2015=0D=0A=0D=0AThere=20was=20a=20similar=20discussion=20aroun=
+d=20buffer=20size=20of=20clkname=20last=20year=0D=0Ahttps://www.spinics.net=
+/lists/arm-kernel/msg1039769.html=20=0D=0Aand=20it=20was=20concluded=20that=
+=20it=E2=80=99s=20a=20false=20warning=20AFAIR.=20=0D=0A=20=0D=0A=0D=0A>=20=
+=0D=0A>=20Signed-off-by:=20Kwanghoon=20Son=20<k.son=40samsung.com>=0D=0A>=
+=20---=0D=0A>=20=20drivers/tty/serial/samsung_tty.c=20=7C=202=20+-=0D=0A>=
+=20=201=20file=20changed,=201=20insertion(+),=201=20deletion(-)=0D=0A>=20=
+=0D=0A>=20diff=20--git=20a/drivers/tty/serial/samsung_tty.c=20b/drivers/tty=
+/serial/samsung_tty.c=0D=0A>=20index=20dc35eb77d2ef..cad838ac8aa2=20100644=
+=0D=0A>=20---=20a/drivers/tty/serial/samsung_tty.c=0D=0A>=20+++=20b/drivers=
+/tty/serial/samsung_tty.c=0D=0A>=20=40=40=20-1339,7=20+1339,7=20=40=40=20st=
+atic=20void=20s3c24xx_serial_pm(struct=20uart_port=20*port,=0D=0A>=20unsign=
+ed=20int=20level,=0D=0A>=20=20=20*=0D=0A>=20=20=20*/=0D=0A>=20=0D=0A>=20-=
+=23define=20MAX_CLK_NAME_LENGTH=2015=0D=0A>=20+=23define=20MAX_CLK_NAME_LEN=
+GTH=2017=0D=0A>=20=0D=0A>=20=20static=20inline=20u8=20s3c24xx_serial_getsou=
+rce(struct=20uart_port=20*port)=20=20=7B=0D=0A>=20--=0D=0A>=202.39.2=0D=0A=
+=0D=0A=0D=0A
