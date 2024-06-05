@@ -1,147 +1,203 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ACF84FDA
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jun 2024 09:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5A419D8AB;
+	Wed,  5 Jun 2024 14:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717578577; cv=none; b=DFEvqP2slt2wTQ8FlaLMSJLlL3zyt5LMybKlyzKvok8hVvHhnlNRtXQppBMaXlCwFn1F8ECfnE0OTMTJRsddS3ZDrGRCSfm53r/kOgVgbmKjHrqOGhJLIxvL2Upg39kO2hhne6aOp/YSELgsvCOEanECmXQGVfly1aKhOS0gcPA=
+	t=1717598634; cv=none; b=hf67X1zeQQMVzmCCxau6yQ6oFoqZMOtDYyojgv7fZud3+2JF6Jfy2XmLHRt/xj18B7ayuvM+ALCiccw+YLWzFCydPKfq7dJYttAGXP0/kEOhUk9GfOwqGhP1fgvAUHp9Fxndg/aKb5CatHLUP7EtHKGQ+yqSaCqeyboDJ/kVYRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717578577; c=relaxed/simple;
-	bh=1Ydk+OWiTnXAHwOuMX34qo5U40tky81PZQBs4gDvO7g=;
-	h=From:To:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=ToY2/zLpEsmq8SaW2jDL5QXPy7TbQsl1ypdMVegWc36cgb8n4DeH5bJtObFROq61P6/0NNvvaw495BOqSsNTn8MzmWvtEu3pNTR+oiYcryp1MHlTGreWvVfLUG+BzVYv7GhbgjaIo21bJ7qJ08KW6LT0B54uVScqFgx6O5AUPUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OReSv/02; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1717598634; c=relaxed/simple;
+	bh=Sb/jG58L9OQoNfoAxJYNWr5/aZrpNieBK/yrnVB4x4c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ECBTDTLoB+SXtVNOOKXgCRjahwIynPYlnB6IQkmuwGrVHR7glba2e0kwXxe15mQ8rfWb1zKm2oP73FXkInWuZWbjcG36hUEZBZe2ZI05P2SJSFF0MkB3NhSaWQSZJTFKQTYtcHX/TgQMn+0+QrfeRHgzu6q9E2GAL1Unhtcodsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXnApwH1; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OReSv/02"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240605090327epoutp02307f84eb3001a2d7c9926af85c0ab0dc~WEEd8_zxJ1898718987epoutp02W
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  5 Jun 2024 09:03:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240605090327epoutp02307f84eb3001a2d7c9926af85c0ab0dc~WEEd8_zxJ1898718987epoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1717578207;
-	bh=1Ydk+OWiTnXAHwOuMX34qo5U40tky81PZQBs4gDvO7g=;
-	h=From:To:In-Reply-To:Subject:Date:References:From;
-	b=OReSv/02hefZTHnFeuuUX8pa47sDD+OnGNCwF0vG+ItLFat5HLybE+k57nGXi3rH5
-	 9qhAZZulidlc8CNx+NgDP/UMjgVYQvEierfK/Vk1UygbUOt0WUoWUAunW9P7i50Tdh
-	 eaI1rKSQsXqJHdh40Pp5H1ezty92/qZ1e/LUh4fc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240605090326epcas5p124538737401f364639c29aa6c627870b~WEEdug8cK1283012830epcas5p1A;
-	Wed,  5 Jun 2024 09:03:26 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VvM252P1rz4x9QG; Wed,  5 Jun
-	2024 09:03:25 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6C.29.19174.CD920666; Wed,  5 Jun 2024 18:03:24 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240605090323epcas5p4ceef993ef6a017c805687bbaf94a8fa8~WEEbDQY8e0902409024epcas5p4A;
-	Wed,  5 Jun 2024 09:03:23 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240605090323epsmtrp28cef3b2557b53d95927d7fed626dffb4~WEEbCmtov1690916909epsmtrp2n;
-	Wed,  5 Jun 2024 09:03:23 +0000 (GMT)
-X-AuditID: b6c32a50-87fff70000004ae6-55-666029dc9085
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CA.8B.08622.BD920666; Wed,  5 Jun 2024 18:03:23 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240605090322epsmtip2c40d30d045f5c56fc09af4f3e7cb61a0~WEEZ_oY8r1486814868epsmtip2F;
-	Wed,  5 Jun 2024 09:03:22 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Kwanghoon Son'" <k.son@samsung.com>, <krzk@kernel.org>,
-	<gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-serial@vger.kernel.org>
-In-Reply-To: <20240605040719.160778-1-k.son@samsung.com>
-Subject: RE: [PATCH] serial: samsung: Change MAX_CLK_NAME_LENGTH to 17
-Date: Wed, 5 Jun 2024 14:33:21 +0530
-Message-ID: <033801dab727$3835d2f0$a8a178d0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXnApwH1"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a692130eb19so342413866b.2;
+        Wed, 05 Jun 2024 07:43:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717598631; x=1718203431; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qByNMwxXX4ivi26JfgBsfFLgqmTESa4XXOPqaCiIKWY=;
+        b=hXnApwH1E5aYU73u4t9CqeNi8PCHEdRq6FRKUl6nbSr5l78ES2bRK8xW0NLzJv8bKf
+         a9AcArjC7c+15KCHqdwYXlMcy7qWST8MjnlwekfbxNGvKgHV5ufweYAr4levlE7bBimO
+         26bz4ZaTme+wGAIZqLbJccSqCQm3mwvZ2hCK2rYnrI75Ss79V0lv7BY4UX5AZZDuXNfl
+         tk8AgF96zO43S8H9c++8PwiVLXCVY52YwPhb3KiqyeKjQmLfgMyTR6pLPQNxAXEc1ip3
+         fc16nY8fMArCqdjcSasujmzZsHJDrEfEFWYSN/MrO9jIt9qzD07XRwUHr8OXDuF+tfQu
+         wvQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717598631; x=1718203431;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qByNMwxXX4ivi26JfgBsfFLgqmTESa4XXOPqaCiIKWY=;
+        b=V14Yqx6UxnvC09j4CCCfo+DjI7N+0m1P1Ey6/8qeiU6dF0SgvqFNFRml0J1PG8briC
+         UUytGA51Qortij1BDwvND8IsvZ2Px1GNqttzJNQC0scZGZjp7/QUD6TA1CwMXMERFx18
+         +X4a/OTiUs2dMtAp0PAmgo+OqafK2zmw85PDHvgNNe8oHghG88Ah2WhkUq4wc0h5zONt
+         vS43lkxGQsErGM74b7lpcAMW2/tH+vRYvlXS2SVYQ76AhMh+br24e8kltGbPB6DSo+4l
+         d5Hjby949jnGhGIbAFgwztE4CAtux//xP74/oniAkShmlQXi+fLRQqxp1VBbSuDI3Mow
+         nFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxNuUMDnaMh8p2yUGsaA8VsLv76GXNW9k9bBP+ceYVn4wQ5VlNHXeZ5wJCIgjo8miln6JeHIzSReP8f5aqZfOELo9lhKICQQk4hgSjnn6IIhRNNvZ5e2n54SkkbO7oM8lpxA1BWDIpm0gFyUfD53b7mtVbxPDASb4ZQcJSGi6L2BhgpsRv0NusTO4IRrp70QfHE1wEP35yvhAfSio+fkE+TqgFSnw=
+X-Gm-Message-State: AOJu0YwVC1LS3ROT0vWkrVEPy4W5i1dECN4Qn8NdFf26YstivhK6/+UI
+	jMVsRKUYJmJySrgHWlxVtXfY9jTixEM7hd4agWk7+Ma0ZkjYIdNnqLmLuw==
+X-Google-Smtp-Source: AGHT+IFagiMMgOracxl4APCyCa7Db8mxloo+5oQtHl11gJk6HqZyhy9pD4aiwLNxg/ZH+8cCM+248g==
+X-Received: by 2002:a17:907:2918:b0:a68:733b:d419 with SMTP id a640c23a62f3a-a699faa9909mr153408666b.7.1717598630698;
+        Wed, 05 Jun 2024 07:43:50 -0700 (PDT)
+Received: from [192.168.50.244] (83.8.128.191.ipv4.supernova.orange.pl. [83.8.128.191])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a68e6b5cdf8sm564187666b.81.2024.06.05.07.43.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 07:43:50 -0700 (PDT)
+Message-ID: <9f88a533-cb99-4fa4-836d-9a8bd68992a2@gmail.com>
+Date: Wed, 5 Jun 2024 16:43:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJsKbdffATXsgma7My52wvbWvpMKAFCuxyIsIvjyzA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmuu4dzYQ0g6kfeCyaF69ns3g3V8ai
-	d81VJovz5zewW8w4v4/J4sziXnYHNo9NqzrZPPbPXcPu0bdlFaPH501yASxR2TYZqYkpqUUK
-	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
-	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZq+cdZCt4yVdx
-	auNitgbGRr4uRk4OCQETidamXexdjFwcQgJ7GCWmPVnABuF8YpRo+POBEaRKSOAbo8TS27Iw
-	Hcs3bWKEKNrLKPF++24WCOcFo8SrcxtZQarYBHQldixuYwOxRQR2M0o8+soPYnMKWEgseLOO
-	BcQWFnCT+HP0O1MXIwcHi4CKxIS3miBhXgFLiUvLLzFC2IISJ2c+AStnFtCWWLbwNTPEEQoS
-	P58uY4UYbyWx5flPVogacYmXR4+AvSMh8JNdYv+xBlaIBheJ6R/6mSBsYYlXx7ewQ9hSEp/f
-	7WWDsLMljl+cBWVXSHS3foSqsZfY+egmC8idzAKaEut36UPs4pPo/f0E7HwJAV6JjjYhiGpV
-	ieZ3V1kgbGmJid3dUBd4SHyeuwsabt2MEnM617JNYFSYheTNWUjenIXknVkImxcwsqxilEot
-	KM5NT002LTDUzUsth0d4cn7uJkZw0tQK2MG4esNfvUOMTByMhxglOJiVRHj9iuPThHhTEiur
-	Uovy44tKc1KLDzGaAsN+IrOUaHI+MG3nlcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5Ykpqd
-	mlqQWgTTx8TBKdXAVGI94TzjE7mIwOCGk5mcFR+T1KJ+FbfIMUSzlVzsCnthtalW6uL2NE2G
-	f9ZS6dq3sy5+KAtXVa7d/cTTpyVwZYqXqvonTvZzU6afn5wor9pnqXIrUrwvtp6b45J2An/n
-	duHL5Qp3S0N1V0a++JwkfnRClD7rq/q718SP7RCeGzhVnXGu9IlX4dfYtr87scVI4Ubzge6g
-	FvudHbYWLcxvv2Z/iV72Pvz9kuYH3vxKb472Cs1i637XJbTm5bTrK464t/i+c6ypY7YLXy7c
-	qn7fPmD9MZ6FIsLbJL3Pbmg0+e2t3s/JXM361LlB4p3+xVvf+I/PurhOfm8t+wpLpd2t746p
-	JE6cmD7HIyp9SZkSS3FGoqEWc1FxIgDo5iKbIwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSvO5tzYQ0g8YXphbNi9ezWbybK2PR
-	u+Yqk8X58xvYLWac38dkcWZxL7sDm8emVZ1sHvvnrmH36NuyitHj8ya5AJYoLpuU1JzMstQi
-	fbsErozWmbPYC65wV/zcsJ2xgfEdZxcjJ4eEgInE8k2bGLsYuTiEBHYzSjxaM5cRIiEtcX3j
-	BHYIW1hi5b/n7BBFzxglbp87BpZgE9CV2LG4jQ0kISJwkFGisf00VFUno8SZjlusIFWcAhYS
-	C96sYwGxhQXcJP4c/c7UxcjBwSKgIjHhrSZImFfAUuLS8kuMELagxMmZT8DKmQW0JXoftjLC
-	2MsWvmaGuEhB4ufTZWDjRQSsJLY8/8kKUSMu8fLoEfYJjEKzkIyahWTULCSjZiFpWcDIsopR
-	MrWgODc9t9iwwCgvtVyvODG3uDQvXS85P3cTIzhGtLR2MO5Z9UHvECMTB+MhRgkOZiURXr/i
-	+DQh3pTEyqrUovz4otKc1OJDjNIcLErivN9e96YICaQnlqRmp6YWpBbBZJk4OKUamI5IP0u+
-	w+rP0iRfdCQljD2Cv8xc3J3L6FPoQe0WfrvprZ+Fp8VK2GX4GzalFsxcs7C8+I+CpsP5G7+u
-	FM+bUSvw63uT6vXg+KkdVT5bj641Drxlz+vY01G0TGOy9/TUkP984rdOV5+/eLhf/ELXhKdf
-	xL4UbODxdrHOtwt2tq7eHsN8Y0Vt1bsQV+7r1m3WJk1t84x4/ZZy73VeVrnFvaUwfuKK3c94
-	tQQNu8tDj0qvaNilpyX6/mLViWhbhvIndfvrd816JHX44ZSjzNNW8Rg3HWyTq2GIarq2b+dW
-	gbum8T/qkvYs+b3x4/Jcyb1peyKaul13vN3O8LP8w4wbh95kPTBjE/Oq7P19fFGvEktxRqKh
-	FnNRcSIAKwW4yQADAAA=
-X-CMS-MailID: 20240605090323epcas5p4ceef993ef6a017c805687bbaf94a8fa8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240605040759epcas1p36d200e262d9a98f9879cf7fd0ee94bba
-References: <CGME20240605040759epcas1p36d200e262d9a98f9879cf7fd0ee94bba@epcas1p3.samsung.com>
-	<20240605040719.160778-1-k.son@samsung.com>
+User-Agent: Mozilla Thunderbird
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: Re: [PATCH RFC 06/11] power: supply: max77693: Set charge current
+ limits during init
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com>
+ <20240530-max77693-charger-extcon-v1-6-dc2a9e5bdf30@gmail.com>
+ <d740ff64-2de6-424c-9fc0-f1064f8c4f8b@kernel.org>
+ <0b611c4b-23d2-4c33-a6be-c15a04e8b99a@gmail.com>
+ <311c13e0-2f14-4134-afb5-128bc82111e7@kernel.org>
+Content-Language: en-US
+In-Reply-To: <311c13e0-2f14-4134-afb5-128bc82111e7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 31.05.2024 14:18, Krzysztof Kozlowski wrote:
+> On 31/05/2024 13:55, Artur Weber wrote:
+>> On 31.05.2024 11:47, Krzysztof Kozlowski wrote:
+>>> On 30/05/2024 10:55, Artur Weber wrote:
+>>>> There are two charger current limit registers:
+>>>>
+>>>> - Fast charge current limit (which controls current going from the
+>>>>     charger to the battery);
+>>>> - CHGIN input current limit (which controls current going into the
+>>>>     charger through the cable, and is managed by the CHARGER regulator).
+>>>>
+>>>> Add functions for setting both of the values, and set them to a
+>>>> safe default value of 500mA at initialization.
+>>>>
+>>>> The default value for the fast charge current limit can be modified
+>>>> by setting the maxim,fast-charge-current-microamp DT property; the
+>>>> CHGIN input current limit will be set up later in the charger detection
+>>>> mechanism.
+>>>>
+>>>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>>>> ---
+>>>>    drivers/power/supply/max77693_charger.c | 45 +++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 45 insertions(+)
+>>>>
+>>>> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
+>>>> index 894c35b750b3..d59b1524b0a4 100644
+>>>> --- a/drivers/power/supply/max77693_charger.c
+>>>> +++ b/drivers/power/supply/max77693_charger.c
+>>>> @@ -28,6 +28,7 @@ struct max77693_charger {
+>>>>    	u32 min_system_volt;
+>>>>    	u32 thermal_regulation_temp;
+>>>>    	u32 batttery_overcurrent;
+>>>> +	u32 fast_charge_current;
+>>>>    	u32 charge_input_threshold_volt;
+>>>>    };
+>>>>    
+>>>> @@ -591,6 +592,35 @@ static int max77693_set_batttery_overcurrent(struct max77693_charger *chg,
+>>>>    			CHG_CNFG_12_B2SOVRC_MASK, data);
+>>>>    }
+>>>>    
+>>>> +static int max77693_set_input_current_limit(struct max77693_charger *chg,
+>>>> +		unsigned int uamp)
+>>>> +{
+>>>> +	dev_dbg(chg->dev, "CHGIN input current limit: %u\n", uamp);
+>>>
+>>> That's quite useless debug. It duplicates
+>>> max77693_set_fast_charge_current(). Just drop entire wrapper.
+>>
+>> It doesn't duplicate max77693_set_fast_charge_current, they modify two
+>> separate registers. Quote from the commit message:
+> 
+> But it is the same uamp value. Debug messages should not be per register
+> write, because we are not debugging here registers...
+> 
+>>
+>>> There are two charger current limit registers:
+>>>
+>>> - Fast charge current limit (which controls current going from the
+>>>   charger to the battery);
+>>> - CHGIN input current limit (which controls current going into the
+>>>    charger through the cable, and is managed by the CHARGER regulator).
+>>
+>> max77693_set_fast_charge_current sets up the "fast charge current"
+>> register (in CNFG_02, CHG_CNFG_02_CC). The CHARGER regulators sets the
+>> CHGIN input current (in CNFG_09, CHG_CNFG_09_CHGIN_ILIM).
+>>
+>> (Apparently the CHARGER regulator is supposed to handle the fast
+>> charge current, but it does not; I wrote about this in the "CHARGER
+>> regulator" section of the patchset description.)
+>>
+>>>> +
+>>>> +	return regulator_set_current_limit(chg->regu, (int)uamp, (int)uamp);
+>>>> +}
+>>>> +
+>>>> +static int max77693_set_fast_charge_current(struct max77693_charger *chg,
+>>>> +		unsigned int uamp)
+>>>> +{
+>>>> +	unsigned int data;
+>>>> +
+>>>> +	data = (uamp / 1000) * 10 / 333; /* 0.1A/3 steps */
+>>>> +
+>>>> +	if (data > CHG_CNFG_02_CC_MASK) {
+>>>> +		dev_err(chg->dev, "Wrong value for fast charge current\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	data <<= CHG_CNFG_02_CC_SHIFT;
+>>>> +
+>>>> +	dev_dbg(chg->dev, "Fast charge current: %u (0x%x)\n", uamp, data);
+>>>> +
+>>>> +	return regmap_update_bits(chg->max77693->regmap,
+>>>> +			MAX77693_CHG_REG_CHG_CNFG_02,
+>>>> +			CHG_CNFG_02_CC_MASK, data);
+>>>
+>>> I am surprised that you set current limit via regulator but actual
+>>> charging current value here. I think both should go to regulator in such
+>>> case.
+>>
+>> As in, both fast charge current and input current should be set up by
+>> the CHARGER regulator? Sure, sounds good to me.
 
+Now that I look at it, there's one small problem with moving this to the 
+CHARGER regulator - the CHGIN input limit and the fast charge current 
+limit have different ranges for values; CHGIN input limit accepts values 
+from 60mA to 2.58A, whereas fast charge current accepts values from 0mA 
+to ~2.1A. (This also means the limits I described for the fast charge 
+current property in [PATCH 2/11] are wrong...)
 
-> -----Original Message-----
-> From: Kwanghoon Son <k.son=40samsung.com>
-> Sent: Wednesday, June 5, 2024 9:37 AM
-> To: krzk=40kernel.org; alim.akhtar=40samsung.com; gregkh=40linuxfoundatio=
-n.org;
-> jirislaby=40kernel.org; linux-samsung-soc=40vger.kernel.org; linux-
-> serial=40vger.kernel.org
-> Cc: Kwanghoon Son <k.son=40samsung.com>
-> Subject: =5BPATCH=5D serial: samsung: Change MAX_CLK_NAME_LENGTH to 17
->=20
-> clkname =22clk_uart_baud=22 already 13 byte, so compiler warns
-> drivers/tty/serial/samsung_tty.c:1392:17: note: =E2=80=98sprintf=E2=80=99=
-=20output=20between=2015=20and=0D=0A>=2017=20bytes=20into=20a=20destination=
-=20of=20size=2015=0D=0A=0D=0AThere=20was=20a=20similar=20discussion=20aroun=
-d=20buffer=20size=20of=20clkname=20last=20year=0D=0Ahttps://www.spinics.net=
-/lists/arm-kernel/msg1039769.html=20=0D=0Aand=20it=20was=20concluded=20that=
-=20it=E2=80=99s=20a=20false=20warning=20AFAIR.=20=0D=0A=20=0D=0A=0D=0A>=20=
-=0D=0A>=20Signed-off-by:=20Kwanghoon=20Son=20<k.son=40samsung.com>=0D=0A>=
-=20---=0D=0A>=20=20drivers/tty/serial/samsung_tty.c=20=7C=202=20+-=0D=0A>=
-=20=201=20file=20changed,=201=20insertion(+),=201=20deletion(-)=0D=0A>=20=
-=0D=0A>=20diff=20--git=20a/drivers/tty/serial/samsung_tty.c=20b/drivers/tty=
-/serial/samsung_tty.c=0D=0A>=20index=20dc35eb77d2ef..cad838ac8aa2=20100644=
-=0D=0A>=20---=20a/drivers/tty/serial/samsung_tty.c=0D=0A>=20+++=20b/drivers=
-/tty/serial/samsung_tty.c=0D=0A>=20=40=40=20-1339,7=20+1339,7=20=40=40=20st=
-atic=20void=20s3c24xx_serial_pm(struct=20uart_port=20*port,=0D=0A>=20unsign=
-ed=20int=20level,=0D=0A>=20=20=20*=0D=0A>=20=20=20*/=0D=0A>=20=0D=0A>=20-=
-=23define=20MAX_CLK_NAME_LENGTH=2015=0D=0A>=20+=23define=20MAX_CLK_NAME_LEN=
-GTH=2017=0D=0A>=20=0D=0A>=20=20static=20inline=20u8=20s3c24xx_serial_getsou=
-rce(struct=20uart_port=20*port)=20=20=7B=0D=0A>=20--=0D=0A>=202.39.2=0D=0A=
-=0D=0A=0D=0A
+Should we limit the CHARGER regulator to 2.1A (would require fixing 
+every DTS that defines the limits... though maybe they should be 
+hardcoded in the driver anyways?), or leave the limit as-is and cap the 
+fast charge current if the CHARGER current limit is set above 2.1A, or 
+something else entirely?
+
+Best regards
+Artur
