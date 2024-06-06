@@ -1,50 +1,50 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878DA1991B6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A7B1991BB;
 	Thu,  6 Jun 2024 16:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690239; cv=none; b=IF19vK12HVd7m6yJLsGD5XZ7JfYTPxxRVe/P+PPXMj93nIAQz7WJ2ZH+Yb6z1UdTBik1uIIt3rSneTENipBZ+Y54FUaixo6H8q/PZPGp7SXH+znIvqEHHzEkTy477HWizkbbEepw4wPD3ZeTMGh9BHyyhvhOzYZmqOFbYNaoCRA=
+	t=1717690239; cv=none; b=ZtM6rC3aaml6KEpD8nOK4xyfc4QdHgO8W1U5bfl+zFI4ZwhLfLOBhk65xICKtiqmUci+j+xemiI2644BKIUW23yK1w/O6Bq+sdYA3NMg2gMtwGxFABQ0dSUF+wY+sC8qdpgqNLaSFuf7cwmCNkub7d44vvQ/uLd5wwg8+W7RXnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1717690239; c=relaxed/simple;
-	bh=981GD+z8786+C1hp7EEXk+A3A1FHkVkYoLEaJHuT4kc=;
+	bh=gj6vGOfIMvi9wknlVIRBepDS/CXPzi91odpfx0mTouo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T5kzeRBt/B/hzzBtQcdvdu9i2xA7jt8BRe3dpM/DPKGEaJPPKQuxP2cLVl6k9RzFzPXgNm2Oe+UBYvqOy7hgZ66wqcjfUuFf1kgHR+pjcJD1JcHDKPsk4d8g0XsHArDY1GqryAd3LXXyjS+HYhuodUHFACNbbGnYFhPDk/sSZIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIL9SuzP; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=u/gOiU0V0hHtgc4PudFRi5Ove3BYJ0x2DVt751NUBX4TMKq4yLV4x2PK01CvOZWXLok7xVWmfgfbnv2SMGz6NUgfHuxWP0yc4+qklDOhMy+PbbrOdcZmMTKUbj4VAKEmOAar3a6hSRwWHWi/QXbZQdj+ezDIg9zhosSB9JNQqk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BWp/1rHL; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIL9SuzP"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BWp/1rHL"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1717690238; x=1749226238;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=981GD+z8786+C1hp7EEXk+A3A1FHkVkYoLEaJHuT4kc=;
-  b=lIL9SuzP05E736w2t6sclJvu3JqLstKrWkKBJ/zTYz2Sr4IkcQv/5lJD
-   FbHS8TuKdGkelpaIeuPt9+y7fzkv40lYjRMv/vzXotl1pdgOr0NzFIx58
-   ksQzp4nq9h7NsMk2DrEITP4Knd/hNmuRZhZPD4Stu7FKCagqpv7jfeeun
-   arpxMsNWizX0ycsv7QMm8ANfUFwhmnXd7lTj8JL1/GFtXHxGd2tlO5E0L
-   n4e9KKB662q9eTojfVIj2tYSao/S2qF1tcg4vagZZj+B0O7168+WB5C38
-   Vy9hyXy75VGDpXMb5w46MgfDOt0IJAER1gAU7e4FepHULRnEG+uG0NXIT
+  bh=gj6vGOfIMvi9wknlVIRBepDS/CXPzi91odpfx0mTouo=;
+  b=BWp/1rHLf0gWpdstKDFmaGtCVrAMgoTeKyrjZneIqCSD6KWNlhG0i+0F
+   WQIdV+1umJbUaEJyN6wS/1JZSVbo2esa7w1fmh+o97z8dcd0CIaqKAk6D
+   Ge9/JK+OsoBEyS0n6Td3rJdEak8KZD6rocyVjVazE4rD/kKj6fBnB46oq
+   e7olweniMyEBQHenUipqdc1X0Wg7Nme2foKLjixuOp2hZRqsOAj+2yuQ8
+   KI+tyR3G3aRU/2ZmMkmUqhQBvE/GhqR9SkY4fCsWmMWudpR9lfGCDxF6X
+   YhJVCIufhzYevair+DsAYarFFFV+LxXZqWO8tQ+0aLfflN7rY3pA1n0un
    A==;
-X-CSE-ConnectionGUID: N/xwbN3pRw2XyKatPQvEGQ==
-X-CSE-MsgGUID: bAVsWFH5SxqrIc3Sye+W3g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525065"
+X-CSE-ConnectionGUID: 3aCrt+LSTneoV6NFTdDGZg==
+X-CSE-MsgGUID: dO6UusazQfqm79OAVsLJww==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525082"
 X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="14525065"
+   d="scan'208";a="14525082"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
   by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:36 -0700
-X-CSE-ConnectionGUID: 0YfWCvGIRxmFQhBgzuOM0Q==
-X-CSE-MsgGUID: fP3DNq1eQYaIJNdR5+FS1w==
+X-CSE-ConnectionGUID: 6qzv+wlwTLqiO2jXs6ZH2w==
+X-CSE-MsgGUID: WntpOTQdS1WOSgQljWuITw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="38695663"
+   d="scan'208";a="38695664"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa007.jf.intel.com with ESMTP; 06 Jun 2024 09:10:32 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 617131C9; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
+	id 68B992CF; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Sam Protsenko <semen.protsenko@linaro.org>,
@@ -62,9 +62,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Chanwoo Choi <cw00.choi@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v1 1/4] clk: mmp: Switch to use kmemdup_array()
-Date: Thu,  6 Jun 2024 19:09:31 +0300
-Message-ID: <20240606161028.2986587-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
+Date: Thu,  6 Jun 2024 19:09:32 +0300
+Message-ID: <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
 References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
@@ -81,44 +81,45 @@ overflows.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/clk/mmp/clk-mix.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/clk/rockchip/clk-cpu.c | 5 ++---
+ drivers/clk/rockchip/clk-pll.c | 8 ++++----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-mix.c b/drivers/clk/mmp/clk-mix.c
-index 454d131f475e..07ac9e6937e5 100644
---- a/drivers/clk/mmp/clk-mix.c
-+++ b/drivers/clk/mmp/clk-mix.c
-@@ -447,7 +447,6 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 	struct mmp_clk_mix *mix;
- 	struct clk *clk;
- 	struct clk_init_data init;
--	size_t table_bytes;
+diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+index 6ea7fba9f9e5..398a226ad34e 100644
+--- a/drivers/clk/rockchip/clk-cpu.c
++++ b/drivers/clk/rockchip/clk-cpu.c
+@@ -369,9 +369,8 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
  
- 	mix = kzalloc(sizeof(*mix), GFP_KERNEL);
- 	if (!mix)
-@@ -461,8 +460,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
+ 	if (nrates > 0) {
+ 		cpuclk->rate_count = nrates;
+-		cpuclk->rate_table = kmemdup(rates,
+-					     sizeof(*rates) * nrates,
+-					     GFP_KERNEL);
++		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
++						   GFP_KERNEL);
+ 		if (!cpuclk->rate_table) {
+ 			ret = -ENOMEM;
+ 			goto unregister_notifier;
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 2d42eb628926..606ce5458f54 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -1136,10 +1136,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 			len++;
  
- 	memcpy(&mix->reg_info, &config->reg_info, sizeof(config->reg_info));
- 	if (config->table) {
--		table_bytes = sizeof(*config->table) * config->table_size;
--		mix->table = kmemdup(config->table, table_bytes, GFP_KERNEL);
-+		mix->table = kmemdup_array(config->table, config->table_size,
-+					   sizeof(*mix->table), GFP_KERNEL);
- 		if (!mix->table)
- 			goto free_mix;
- 
-@@ -470,9 +469,8 @@ struct clk *mmp_clk_register_mix(struct device *dev,
- 	}
- 
- 	if (config->mux_table) {
--		table_bytes = sizeof(u32) * num_parents;
--		mix->mux_table = kmemdup(config->mux_table, table_bytes,
--					 GFP_KERNEL);
-+		mix->mux_table = kmemdup_array(config->mux_table, num_parents,
-+					       sizeof(*mix->mux_table), GFP_KERNEL);
- 		if (!mix->mux_table) {
- 			kfree(mix->table);
- 			goto free_mix;
+ 		pll->rate_count = len;
+-		pll->rate_table = kmemdup(rate_table,
+-					pll->rate_count *
+-					sizeof(struct rockchip_pll_rate_table),
+-					GFP_KERNEL);
++		pll->rate_table = kmemdup_array(rate_table,
++						pll->rate_count,
++						sizeof(*pll->rate_table),
++						GFP_KERNEL);
+ 		WARN(!pll->rate_table,
+ 			"%s: could not allocate rate table for %s\n",
+ 			__func__, name);
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
