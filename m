@@ -1,79 +1,95 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B4FC02;
-	Thu,  6 Jun 2024 13:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45C51991A7;
+	Thu,  6 Jun 2024 16:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717680368; cv=none; b=mo3pgwldfb5GXUUe0+B5lOTTp2Tc1HyAChKY+yUxg0hIqVLytqcJ+bMpKzNGQr8KXnDxfey60e2XKB0bS3NlJr0u4LaiEzUuMSFwXAJFq94Q+a0cUbKkXdcKVST90PLGYIINyirS6/edOVoaWTa//jQyqG4YzNEXBwn0gG7jrLM=
+	t=1717690237; cv=none; b=bjh4bmJDAAWhzpkgDVSHfqGuTCzMZDmdfxVLAXfe4IQKBimjgdU3kwi2u3FC8dqxpXUtPBQ+/NZFPVMTRyEvYP4+c8ELcNTUJ8whSrD420MSN/eBhMovbGgN1ubPo2lvS3fc02e+p6XyEr4OkpOTpWd7nmtHooWjr1PMnnkunQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717680368; c=relaxed/simple;
-	bh=Da94MbDvCzudQyDztnqyQOKY9skofvJFvAJNp1KTIcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gieaXsHP8HeHZ2Del1BwTAvXF15KAZ9DkHmDNOgwd3De+Yiig384+w/kuyPFDs5BE5xUSMOPyrW6WXJwdJegZDLMHAR8MEsJRANbWVaqzX/8qzoPv7NIEwZjHRGhrahVz9pSsAXBgOJ1j204dPpwHZrSAfELGYH4Kt+ths2OHcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BEQ2Sg2h; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1717690237; c=relaxed/simple;
+	bh=je0DYBuKhWYW4JpL97m6nmOv4z/QoM1eIcNvWJ+BGJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mt+1VyyB44OTkybg5PcwYU/CY3zbsbPZ0DTBoOhJ1p6QUqYHT+6wYI4iW+KRqZGHyNxJnRYCFWt+pCOAXu8TyZgtSUGkSD6NBUmLRJ3ZgbxcIggNpumPjtv/9OSZpoLn3MW2pdqgUadd7jog3eJhRtnPqk96K99xbIMFB4AMEB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UFdMrZ1G; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BEQ2Sg2h"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QehpudYNwQn/+EF5t8WXc8vQI3VYnM/EWDpwkUDEZHI=; b=BEQ2Sg2hRkMyI04nmbrlG0HbLo
-	QeO7iB/STgiK0VKfWXCGl2sd4tRbx5MAgMZ9LWf63lpyYEFkYk4g6YyOsCBRaL6wqcc/iMAGBoUZ0
-	+cN1km/L3X73Hqjk5o0FlagS1JwYR7HdhDrOZmTBtipc3cdJhEStoQJjYmllVZH48tYg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sFD7o-00H1FE-DV; Thu, 06 Jun 2024 15:25:52 +0200
-Date: Thu, 6 Jun 2024 15:25:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	richardcochran@gmail.com, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	alim.akhtar@samsung.com, linux-fsd@tesla.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: net: Add FSD EQoS device tree
- bindings
-Message-ID: <22eae086-0f77-4df7-9d70-e7249d67b106@lunn.ch>
-References: <20230814112539.70453-1-sriranjani.p@samsung.com>
- <CGME20230814112605epcas5p31aca7b23e70e8d93df11414291f7ce66@epcas5p3.samsung.com>
- <20230814112539.70453-2-sriranjani.p@samsung.com>
- <4e745c2a-57bd-45da-8bd2-ee1cb2bab84f@lunn.ch>
- <000201dab7f2$1c8d4580$55a7d080$@samsung.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UFdMrZ1G"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1717690236; x=1749226236;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=je0DYBuKhWYW4JpL97m6nmOv4z/QoM1eIcNvWJ+BGJY=;
+  b=UFdMrZ1GfxjDqJUR3mR1sMujMHwYLbWlGKtL78M2ggr3dFjywpvvXbA2
+   Tsib6sdhDPZxjvxsf5vMBD+pXBgzzGA9RWBzm7CnS3AVuCXV1KmD/ZXw6
+   QkSjl13oJspvBHL3clLyHe1a116tBGOkdE0L+K9R53UpXWjPXDZe31vKn
+   8mDi4LMpaDhi8mzgDVtedqCRKBGhRAL1s8KOzRrwQE0JMnj5zMuuwfBbe
+   pNoRDmy5QTOOcqnDb5BjUeh+mdUDAqj1zSmR9DvMgyNUyQaA/9017EQi8
+   oPrgT1/loct11vT0w50yvVV+pw94s0LyfKSRtwFUsK+zYYVuf6h7bs41Q
+   w==;
+X-CSE-ConnectionGUID: d0iNDyqkS4a9Ejc7IcInvw==
+X-CSE-MsgGUID: ELl6U3UMTZm5GvgMDM7uPA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="14525073"
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="14525073"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:36 -0700
+X-CSE-ConnectionGUID: SEfdrqv7QsChJC8hWYOwtA==
+X-CSE-MsgGUID: uMf6eAe2QZ6v/8IuWzVlkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
+   d="scan'208";a="38695666"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 06 Jun 2024 09:10:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 515D12A4; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
+Date: Thu,  6 Jun 2024 19:09:30 +0300
+Message-ID: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000201dab7f2$1c8d4580$55a7d080$@samsung.com>
+Content-Transfer-Encoding: 8bit
 
-> > > +  fsd-rx-clock-skew:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > +    items:
-> > > +      - items:
-> > > +          - description: phandle to the syscon node
-> > > +          - description: offset of the control register
-> > > +    description:
-> > > +      Should be phandle/offset pair. The phandle to the syscon node.
-> > 
-> > What clock are you skew-ing here? And why?
-> 
-> As per customer's requirement, we need 2ns delay in fsys block both in TX
-> and RX path.
+Replace open coded kmemdup_array(), which does an additional
+overflow check.
 
-Lots of people get RGMII delays wrong. Please look back at the mailing
-list where there is plenty of discussion about this. I don't want to
-have to repeat myself yet again...
+Andy Shevchenko (4):
+  clk: mmp: Switch to use kmemdup_array()
+  clk: rockchip: Switch to use kmemdup_array()
+  clk: samsung: Switch to use kmemdup_array()
+  clk: visconti: Switch to use kmemdup_array()
 
-     Andrew
+ drivers/clk/mmp/clk-mix.c      | 10 ++++------
+ drivers/clk/rockchip/clk-cpu.c |  5 ++---
+ drivers/clk/rockchip/clk-pll.c |  8 ++++----
+ drivers/clk/samsung/clk-cpu.c  |  4 ++--
+ drivers/clk/samsung/clk-pll.c  |  8 ++++----
+ drivers/clk/visconti/pll.c     |  6 +++---
+ 6 files changed, 19 insertions(+), 22 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
