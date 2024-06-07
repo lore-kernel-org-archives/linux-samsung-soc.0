@@ -1,124 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D68E199399;
-	Thu,  6 Jun 2024 16:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+Received: from comesltaly.com (unknown [198.46.142.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65A2154C17
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jun 2024 07:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.46.142.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690244; cv=none; b=hrheJrH4tdbMN4/8aThOnwAimBTd9DuuZLYkOiaraSQpVadz3FQLWhChTDmafKhXcO3ZecLy8VX/raTQOnbsbnV1TgD+T98dTIq6lc5ZbGYVQZg5Z1QtGkumlYJOIbTPJPpKvNjaNhOVSqqhxA3o56R54fOP1p97eTeXj1S4oRY=
+	t=1717746063; cv=none; b=FiQVxHQZWTGcs6cWF65cmA0bu8x8lzJTppl1p7+JFH/WzXD/4crkWZxzvc3Nrwbwh/xkrkF/V75xdD7mZnCSIgXkWWakLLXaviBwRRJnpuOFN8omxdXn0greEAV+w4Q1XnVhhKH80BUAzSLAsvfqH8Y2YC+29maG3iCibh8hz4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690244; c=relaxed/simple;
-	bh=3+qSRLVpcdMyUzcNy5jn6Wrz5bikHflvBafSsMgGFj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bkein40dAFnzn3YJd2TGm2bX77kqSyTNQioPle0HzHQCmga+CfAREYg1pF5UKfyu0K4mVooSk/LlPEeg+0WojA1gW1XF1dncSSWGBa1113oRpF3SGrgHftz4DJOFf0Z5+JzkN+GqtoOFhfuKoSq/g3ZLZXMi6ZLzDzGov5rwGdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aIEJx+PB; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1717746063; c=relaxed/simple;
+	bh=xcIcXLG5CTTJlkIKljMGXKd1//0ywM1gBKg/1sk1Czw=;
+	h=Content-Type:MIME-Version:Subject:To:From:Date:Message-ID; b=HP/QvFZzlgBu1PFumkftMz/bmxM1kAXudqQlnbNdnvBb5mLO0WFPr3xxZIkgM2AO/zWU2lJo3zAvebyoVG+oLSNA5I7EgQHUw5nk223DsuZ70luhQXEWEdtYBCQ7tI4vtYx8UHfxeRO+bfLGh6/3I1FQ2NoN5f8wyPs9cAcsEaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comesltaly.com; spf=pass smtp.mailfrom=comesltaly.com; dkim=pass (1024-bit key) header.d=comesltaly.com header.i=@comesltaly.com header.b=EpxhlVRE; arc=none smtp.client-ip=198.46.142.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comesltaly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=comesltaly.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aIEJx+PB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1717690242; x=1749226242;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3+qSRLVpcdMyUzcNy5jn6Wrz5bikHflvBafSsMgGFj4=;
-  b=aIEJx+PBIvh4wCbIWf+5RU/uxUGYoQxDHB8tN/Snu2P04uA9R+wifoEg
-   OKCNtP0OVvqV4a1PemcfHQwtR8ah+SL5KxmkkiZt4QzxtqwDLfTy8QBDk
-   80RUkwB0OpFmvD48TbLp0c0qSvz+7R4wftjClWStMoDf551saFz2aCaYc
-   qxFG5mXk1o8QKcAo4j3QKz4y4u620sa9ZVyglvgN1rydtBzYoQtVMxrVy
-   tlG3Y0VUmbjBi19nH7nx9LGsvvM0nkCoaGpo0myfvPhckMZDWvjCBfbIT
-   E+TPRP8HzfvqV6SgYE4JKXlBdfdRncnFykXBKEcmUe528+SG+CgNOYfSp
-   g==;
-X-CSE-ConnectionGUID: w/PmKJ2lRZKIWJDukrHV5Q==
-X-CSE-MsgGUID: fYD5Ur7ySleyJ2pBZ6tojQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11095"; a="18164351"
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="18164351"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2024 09:10:35 -0700
-X-CSE-ConnectionGUID: 6PYiMqvtSKGU11AqT+idoA==
-X-CSE-MsgGUID: nCNrCDJvSL+zXHFUY5b1DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,219,1712646000"; 
-   d="scan'208";a="37949163"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 06 Jun 2024 09:10:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 73307339; Thu, 06 Jun 2024 19:10:30 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH v1 3/4] clk: samsung: Switch to use kmemdup_array()
-Date: Thu,  6 Jun 2024 19:09:33 +0300
-Message-ID: <20240606161028.2986587-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (1024-bit key) header.d=comesltaly.com header.i=@comesltaly.com header.b="EpxhlVRE"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=comesltaly.com; s=vahn4;
+	bh=xcIcXLG5CTTJlkIKljMGXKd1//0ywM1gBKg/1sk1Czw=;
+	h=Message-ID:Reply-To:Date:From:To:Subject:Content-Description:
+	Content-Transfer-Encoding:MIME-Version:Content-Type; b=EpxhlVREhYMUehz1wwt86Q
+	3QtUJunMosyTToCabUcuvRWIenFAh1L7riJg0hoSMOOaNqZrnq7aoTRM6vaFzwG1SY25OehArOIhd
+	GzbbHmykRio0C78H2tp8ssJU4OJg9GJQfsaRT65a5IVOGrOM3M0CLV+ZNAL5pXYjhkvkPtDs=
+Received: from [20.37.118.4] (account admin@comesltaly.com HELO myVm.jiy03wdx5zcuhdlxdgii1ipjkg.lx.internal.cloudapp.net)
+  by comesltaly.com (CommuniGate Pro SMTP 6.2.14 _community_)
+  with ESMTPSA id 1513015 for linux-samsung-soc@vger.kernel.org; Fri, 07 Jun 2024 09:34:27 +0200
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: SV: Policy Notification #5610932:
+To: linux-samsung-soc@vger.kernel.org
+From: "Vahn Montes" <admin@comesltaly.com>
+Date: Fri, 07 Jun 2024 07:40:59 +0000
+Reply-To: vahnmontes@legalprobates.com
+Message-ID: <auto-000001513015@comesltaly.com>
 
-Let the kememdup_array() take care about multiplication and possible
-overflows.
+Greetings from Vahn,
+ =
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/clk/samsung/clk-cpu.c | 4 ++--
- drivers/clk/samsung/clk-pll.c | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+I hope this message finds you well. =
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index fbf4c4208e06..dfa149e648aa 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -689,8 +689,8 @@ static int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
- 	for (num_cfgs = 0; clk_data->cfg[num_cfgs].prate != 0; )
- 		num_cfgs++;
- 
--	cpuclk->cfg = kmemdup(clk_data->cfg, sizeof(*clk_data->cfg) * num_cfgs,
--			      GFP_KERNEL);
-+	cpuclk->cfg = kmemdup_array(clk_data->cfg, num_cfgs, sizeof(*cpuclk->cfg),
-+				    GFP_KERNEL);
- 	if (!cpuclk->cfg) {
- 		ret = -ENOMEM;
- 		goto unregister_clk_nb;
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 4bbdf5e91650..4be879ab917e 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -1286,10 +1286,10 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 			len++;
- 
- 		pll->rate_count = len;
--		pll->rate_table = kmemdup(pll_clk->rate_table,
--					pll->rate_count *
--					sizeof(struct samsung_pll_rate_table),
--					GFP_KERNEL);
-+		pll->rate_table = kmemdup_array(pll_clk->rate_table,
-+						pll->rate_count,
-+						sizeof(*pll->rate_table),
-+						GFP_KERNEL);
- 		WARN(!pll->rate_table,
- 			"%s: could not allocate rate table for %s\n",
- 			__func__, pll_clk->name);
--- 
-2.43.0.rc1.1336.g36b5255a03ac
 
+I hereby express my unwavering patience in awaiting your prompt response to=
+ the aforementioned correspondence.
+
+Please confirm your availability to enable me to reach you through Phone or=
+ email for a very important notice.
+
+Best Regards,
+Vahn Montes ( LL.B, LL.M)
+Attorney at Law
+Brandschenkestrasse 24
+CH-8027 Zurich, Switzerland
