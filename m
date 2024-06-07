@@ -1,57 +1,114 @@
-Received: from comesltaly.com (unknown [198.46.142.169])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65A2154C17
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jun 2024 07:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.46.142.169
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD28313E043;
+	Fri,  7 Jun 2024 08:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717746063; cv=none; b=FiQVxHQZWTGcs6cWF65cmA0bu8x8lzJTppl1p7+JFH/WzXD/4crkWZxzvc3Nrwbwh/xkrkF/V75xdD7mZnCSIgXkWWakLLXaviBwRRJnpuOFN8omxdXn0greEAV+w4Q1XnVhhKH80BUAzSLAsvfqH8Y2YC+29maG3iCibh8hz4Y=
+	t=1717748007; cv=none; b=lZ8wFnmVwFvk0bpyQcLjLlebYdjKigvJc+ZzzCi+LN1WWIuFtuiKyQUXgxOVN1Y2K1Hduv5eKXrZGxXpVFDMH529DoVCgrOXiiP8E8aV6VIKsmZaU117l45H+6T2JqtRvJzJN3eDcYC5m854WPXT2onAnf5V3eBkQmRBqkjmQC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717746063; c=relaxed/simple;
-	bh=xcIcXLG5CTTJlkIKljMGXKd1//0ywM1gBKg/1sk1Czw=;
-	h=Content-Type:MIME-Version:Subject:To:From:Date:Message-ID; b=HP/QvFZzlgBu1PFumkftMz/bmxM1kAXudqQlnbNdnvBb5mLO0WFPr3xxZIkgM2AO/zWU2lJo3zAvebyoVG+oLSNA5I7EgQHUw5nk223DsuZ70luhQXEWEdtYBCQ7tI4vtYx8UHfxeRO+bfLGh6/3I1FQ2NoN5f8wyPs9cAcsEaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comesltaly.com; spf=pass smtp.mailfrom=comesltaly.com; dkim=pass (1024-bit key) header.d=comesltaly.com header.i=@comesltaly.com header.b=EpxhlVRE; arc=none smtp.client-ip=198.46.142.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comesltaly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=comesltaly.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=comesltaly.com header.i=@comesltaly.com header.b="EpxhlVRE"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=comesltaly.com; s=vahn4;
-	bh=xcIcXLG5CTTJlkIKljMGXKd1//0ywM1gBKg/1sk1Czw=;
-	h=Message-ID:Reply-To:Date:From:To:Subject:Content-Description:
-	Content-Transfer-Encoding:MIME-Version:Content-Type; b=EpxhlVREhYMUehz1wwt86Q
-	3QtUJunMosyTToCabUcuvRWIenFAh1L7riJg0hoSMOOaNqZrnq7aoTRM6vaFzwG1SY25OehArOIhd
-	GzbbHmykRio0C78H2tp8ssJU4OJg9GJQfsaRT65a5IVOGrOM3M0CLV+ZNAL5pXYjhkvkPtDs=
-Received: from [20.37.118.4] (account admin@comesltaly.com HELO myVm.jiy03wdx5zcuhdlxdgii1ipjkg.lx.internal.cloudapp.net)
-  by comesltaly.com (CommuniGate Pro SMTP 6.2.14 _community_)
-  with ESMTPSA id 1513015 for linux-samsung-soc@vger.kernel.org; Fri, 07 Jun 2024 09:34:27 +0200
-Content-Type: text/plain; charset="iso-8859-1"
+	s=arc-20240116; t=1717748007; c=relaxed/simple;
+	bh=VIzFG9SjjjS21ocqaupIRcoydDcwg7MVYn9fi3MKjaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZYazl8lZaDk0S7K27RsZlqfweL/IjyML/eYAITk5k7CK1OV7HUgM6hPtwoUdROPIse2oHpqQ9z4h1FVR0iM6Bkx2NnKUDfjkwXQOhsuNQW5RB9oBcqwc5xFhU0+TGTQeFwXAYszsIhGQNIY6mTw01I0C5jmABooC3wOXAUUq4BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sFUif-0000XX-SI; Fri, 07 Jun 2024 10:13:05 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
+Date: Fri, 07 Jun 2024 10:13:04 +0200
+Message-ID: <8182279.JRmrKFJ9eK@diego>
+In-Reply-To: <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
+References:
+ <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+ <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: SV: Policy Notification #5610932:
-To: linux-samsung-soc@vger.kernel.org
-From: "Vahn Montes" <admin@comesltaly.com>
-Date: Fri, 07 Jun 2024 07:40:59 +0000
-Reply-To: vahnmontes@legalprobates.com
-Message-ID: <auto-000001513015@comesltaly.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Greetings from Vahn,
- =
+Hi Andy,
 
-I hope this message finds you well. =
+Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/clk/rockchip/clk-cpu.c | 5 ++---
+>  drivers/clk/rockchip/clk-pll.c | 8 ++++----
+>  2 files changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+> index 6ea7fba9f9e5..398a226ad34e 100644
+> --- a/drivers/clk/rockchip/clk-cpu.c
+> +++ b/drivers/clk/rockchip/clk-cpu.c
+> @@ -369,9 +369,8 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+>  
+>  	if (nrates > 0) {
+>  		cpuclk->rate_count = nrates;
+> -		cpuclk->rate_table = kmemdup(rates,
+> -					     sizeof(*rates) * nrates,
+> -					     GFP_KERNEL);
+> +		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
+> +						   GFP_KERNEL);
+
+are you sure the param order is correct?
+
+According to [0], it's (src, element_size, count, gfp), while above
+(and below) element_size and count seems switched in the
+kmemdup_array calls.
 
 
-I hereby express my unwavering patience in awaiting your prompt response to=
- the aforementioned correspondence.
+Heiko
 
-Please confirm your availability to enable me to reach you through Phone or=
- email for a very important notice.
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/util.c#n149
 
-Best Regards,
-Vahn Montes ( LL.B, LL.M)
-Attorney at Law
-Brandschenkestrasse 24
-CH-8027 Zurich, Switzerland
+>  		if (!cpuclk->rate_table) {
+>  			ret = -ENOMEM;
+>  			goto unregister_notifier;
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index 2d42eb628926..606ce5458f54 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -1136,10 +1136,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+>  			len++;
+>  
+>  		pll->rate_count = len;
+> -		pll->rate_table = kmemdup(rate_table,
+> -					pll->rate_count *
+> -					sizeof(struct rockchip_pll_rate_table),
+> -					GFP_KERNEL);
+> +		pll->rate_table = kmemdup_array(rate_table,
+> +						pll->rate_count,
+> +						sizeof(*pll->rate_table),
+> +						GFP_KERNEL);
+>  		WARN(!pll->rate_table,
+>  			"%s: could not allocate rate table for %s\n",
+>  			__func__, name);
+> 
+
+
+
+
