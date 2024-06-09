@@ -1,133 +1,132 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD306D1B9
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  7 Jun 2024 16:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAFB18C22;
+	Sun,  9 Jun 2024 21:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717778100; cv=none; b=db6BrdysjJd9i+ehf2YmKe6kiSwjekqKOmAny/bK2LIb0oJqNR59rIyVmSspwCh56njBEuQ/s8MIW+AI6Nd8lU+8jeWLw2CPT6biGDzf5KGOv1XoEyYSDVyE7WulfmkEnWeYwXOqsltBV3rkXQ7xzevRT40urpCSAc+tTxk990I=
+	t=1717967006; cv=none; b=Ke89oiIBgPYYubgouY1Q828EXQIMVG20boWBIz1lkOmjKDDbVe6Ogj/aAbm5TaxKD0T8JWafAK9+GvRT/h8ttpBOg/8b/zC2PWoQAoCa2NiD1Fk8I+iLtgHRqeKD3kn6mlQbyE/NA28N5HHmkbOlJtOhRu2E7z4hWsWdTQZcpyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717778100; c=relaxed/simple;
-	bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3noULO6XA/iok4e+C+fiRhzOCx8DT7G5N4s9fKtONE+MmyKxcpuw5yThbOjvs4yqKARAowe2Dc0+iib9HiThxNplGs+LozMmK7Uq8/eG8knpH9MS1VuZMSeChTns05bZqhfu5E5plPeK2cyuXpwa+63lp9kGoH0SfcW+cR+Hgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vz1LTUe9; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1717967006; c=relaxed/simple;
+	bh=Wl9NG8h/GJ+vj6ODjcz+fX4TjV1msfDj8arPmokIcOw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uBuHbybrslIshCz2tDLxhFPfpiaM1cn2PyiUr5jX/JGC1N380IGTAsglu8pFdkyvKb65arit64euBhA/qP7ZoxsENDW6Uz3dYNiEkfDpg8FkzEeeuxkTkz2G6F2yoeXlDK3VBlH0FSPwai44RFhXBN2cyviCVR1mkDcYmpnt0rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W1C1TP99; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vz1LTUe9"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4216badde75so7014495e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Jun 2024 09:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717778096; x=1718382896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
-        b=Vz1LTUe9I471TI69Ynuiuhq9MswC4g5uooJcYJjaMDtAqCc6UddtnVD25Egc9n9Idq
-         7nufaQ/AnSE1/FanmqWl4vpHz3M9+8rQtAGTIkfehR+dthNkMG59dMXz/lRgwTcrgwhV
-         BZ1mlpPYYYAu8Gqx666X+SwcpOJkC+DMYY9nQPIwylAgzj//b1bTGho5pHWXBrXcn72t
-         SSKHCnqYgEmsnvxZaca733bYXntpu0UFRn4XIx8wmU5qkvyXMuOBzVBtRROo669ovwYC
-         5zq1uGrBmSi5NtQv0M9dsY9IlskcwlPpFpT5VXxd+zQE0zBtpX07S9HzKBYbHyFQm2Ju
-         bNqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717778096; x=1718382896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JSjugDn364e1bR2NBfOIb6HAziv7A8jZrYbuA88Eh+4=;
-        b=Uhlmos8XpWzdBmO4Itbg619SEcK6yQ1qOq/acFQQC/4HL9mGgOasjyb6qDlARaciYh
-         uME3IH9Suc3IiNhACP31Ff0Mu8iI0SLqHo59WVnthwburx600V3B2R6YQOPIKZhLHjOQ
-         yfGyCA1eIP31fpXQaPESqxbs2YGzutYz6fGebtsCYbg2IyZo61dIwFNmubRVtAcN3XGr
-         qvXNFwaycCP0nQIw7rZ7nIVJ6iJOe8p6TBPu9+Z2xZUCUE5kAOGdO3NElzQrdN9TYQBn
-         c+sGueknJ6CczHg2tccBLVgmUWFL55WWwd77WQhExG8Sx1qOw0hK8wo/kFfh/2uW6FOH
-         k71g==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/7VTAgIiB0zVA9ih6uZy/knamZhIrXnA2raFFbllNi1m2FUuueGfaf9Mzk/yVA4KoK4JnyY6F+jBfDMI+vzuTyzv5XcgMI41BYoifnU1pvk=
-X-Gm-Message-State: AOJu0YwciOQRBwxrNGhj8M9WaMU/pmlEAlwHQL4NrMzZAWzSt2+/2G3+
-	GsDagOrGxCFZ49cwA/xRFfZhtEtuXVBNyqV7MkSus55xSbKLIENgAmc6yF99pKQ=
-X-Google-Smtp-Source: AGHT+IGpGEuV4DVZ1kdf6ue+dBm6Ke4RvEdYp3g9xEjXsaFgOxYEd6wAXfkcbKsCsHOsq8Dy8bGbhw==
-X-Received: by 2002:a05:600c:3c83:b0:41c:13f6:206d with SMTP id 5b1f17b1804b1-42164a2e9d4mr30060715e9.25.1717778096151;
-        Fri, 07 Jun 2024 09:34:56 -0700 (PDT)
-Received: from localhost (p200300f65f283b0017c92b05fa289d44.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:17c9:2b05:fa28:9d44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215c19e719sm58262335e9.3.2024.06.07.09.34.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 09:34:55 -0700 (PDT)
-From: "Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=" <ukleinek@baylibre.com>
-X-Google-Original-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Date: Fri, 7 Jun 2024 18:34:54 +0200
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-Message-ID: <vunkvcpe7omv5tbsyw237hhauzyrhf6nujwvyv6vq5zd33udee@5b36qxbz5mjx>
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W1C1TP99"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459HtLZO024951;
+	Sun, 9 Jun 2024 21:03:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=WixHRYN2timxfzVPnpYDb/
+	GYF5ejmv1jUPZn2cYpWKI=; b=W1C1TP99e+EZl0v+qBeXnJq3H0ohKYkoOSLApS
+	i+ALw7184rLDZ5D9QyXzE6eXkmxeCyFoCpGy3BGkFaATfrUHMP1PP1fJf06Wi6QJ
+	W4c6vmS713//ay7RiACRUJplQ0B8WqCK4WXJ5iUabVoX8JbqvGD6hRkaZ28izGox
+	6pjDFVXP2O/3TE5OULzW0fxV/pF7IY32oDRwIczopG1wypHuuAg6s9xbFg3P5/eS
+	DTIhPNiZd/CIcfyFqYW0jhqq3fZEgEfpkrXys6O9iEegLEK59KexDwxgRbx9c4Xe
+	IKws2ZhkmJ9M4ir9IA+jrXuN67AO4pHkLCYA7XqVkepba3ww==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemgj5gm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 09 Jun 2024 21:03:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459L390m024628
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 9 Jun 2024 21:03:09 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
+ 14:03:09 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Sun, 9 Jun 2024 14:03:08 -0700
+Subject: [PATCH] media: exynos4-is: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uegcep6av77uozx5"
-Content-Disposition: inline
-In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240609-md-drivers-media-platform-samsung-v1-1-d474799346dd@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIsYZmYC/x3NQQqDQAxA0atI1g2otRV7ldJFnMlowBklURHEu
+ 3fa5dv8f4KxChu8ihOUdzGZU0Z1K8CNlAZG8dlQl3VTPssOo0evsrMaRvZCuEy0hlkjGkXb0oC
+ hfbgmtFUTujvkzqIc5Pg/3p/snoyxV0pu/JUnSduBkWxlhev6AuWorDKSAAAA
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mjFA0Prx5eVWNJXc9abuziiQl1vixQUL
+X-Proofpoint-ORIG-GUID: mjFA0Prx5eVWNJXc9abuziiQl1vixQUL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-09_16,2024-06-06_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406090165
 
+make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-lite.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-is.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos4-is-common.o
 
---uegcep6av77uozx5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the missing invocations of the MODULE_DESCRIPTION() macro.
 
-Hello,
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/media/platform/samsung/exynos4-is/common.c    | 1 +
+ drivers/media/platform/samsung/exynos4-is/fimc-is.c   | 1 +
+ drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 1 +
+ 3 files changed, 3 insertions(+)
 
-On Fri, Jun 07, 2024 at 09:02:33AM -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
-gm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
-k.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
-=2Eo
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
-i.o
->=20
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
-> This addresses all of the issues in driver/pwm
->=20
-> Let me know if you want any of the individual module changes
-> segregated into separate patches.
+diff --git a/drivers/media/platform/samsung/exynos4-is/common.c b/drivers/media/platform/samsung/exynos4-is/common.c
+index e41333535eac..77007f1a909b 100644
+--- a/drivers/media/platform/samsung/exynos4-is/common.c
++++ b/drivers/media/platform/samsung/exynos4-is/common.c
+@@ -44,4 +44,5 @@ void __fimc_vidioc_querycap(struct device *dev, struct v4l2_capability *cap)
+ }
+ EXPORT_SYMBOL(__fimc_vidioc_querycap);
+ 
++MODULE_DESCRIPTION("Samsung S5P/EXYNOS4 SoC Camera Subsystem driver");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+index 39aab667910d..0a4b58daf924 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
+@@ -999,4 +999,5 @@ module_exit(fimc_is_module_exit);
+ MODULE_ALIAS("platform:" FIMC_IS_DRV_NAME);
+ MODULE_AUTHOR("Younghwan Joo <yhwan.joo@samsung.com>");
+ MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
++MODULE_DESCRIPTION("Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
+index d1d860fa3454..1a4d75443215 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
+@@ -1662,5 +1662,6 @@ static struct platform_driver fimc_lite_driver = {
+ 	}
+ };
+ module_platform_driver(fimc_lite_driver);
++MODULE_DESCRIPTION("Samsung EXYNOS FIMC-LITE (camera host interface) driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" FIMC_LITE_DRV_NAME);
 
-Looks good to me, I applied it to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
+---
+base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+change-id: 20240609-md-drivers-media-platform-samsung-f75c4f714f93
 
-Thanks
-Uwe
-
---uegcep6av77uozx5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZjNqkACgkQj4D7WH0S
-/k4LyAf+MocX0RpPC44cCBO/dFFZlEnU4+NMAXx+vRXpg0ASWbWuBgbMvXujfpeo
-YRQZYgDgLp/7/FndOQIPT59C9fFbWz0UdLPSiT/MkN+cbRAoiaMXD5JqiTrORPFq
-RFbNwOtXzQoRAEceczkKFb65oV7rwmyNyIBN9Vv3Ce/o+avvmlqdAziFU/smNwKz
-en3MhIonz85eSOessjikio9bmBGGFzT8US8WiD8Ya8zcQUZ/i9aXH/verkoyfsb/
-9hIlW/QY+mBn61RQeVHuF6O5W5Trnq4/sPf2TtnicRafEYBtwNFJRZmDviEqVp3g
-UVN+CF/yOMS6eo/89WixvZXyYMNuEQ==
-=bpJ1
------END PGP SIGNATURE-----
-
---uegcep6av77uozx5--
