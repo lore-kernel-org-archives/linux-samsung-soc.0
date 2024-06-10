@@ -1,132 +1,130 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9C486126;
-	Mon, 10 Jun 2024 14:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CA414B973
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 16:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718031119; cv=none; b=e2+aw5lt6YgSl54dexG/THtiJvDPz6a4tDBaI/ITAaU6CwkomymeCW3spOGkbZ7vMFjWs7BoYgTDmiDEhxoYSUBfuE5DbbXr6uRhuthBOVukUB66B6m5Y61HztHOd4C6ukQZCAv6cmOq3QBA3AXdGzvmVhYtkQ7rBH+MYvPk9T4=
+	t=1718038403; cv=none; b=C9I2A8+bNBQvorIxFPgm403Lnan183uPBcPYBbagWlYxV9QI64cvX0izz1f8Bt1DUWNrXSevycqvzc4th16V4/DnCTvYloueZHaJjlsGI2yV2vXN4CTgELBvymc663/WcNeO6G1adPgXXP8JvLAstsvo4LRvyrHR41++t0632To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718031119; c=relaxed/simple;
-	bh=J7ZWOqXKkyCGzFLryf6VAuDFNJZDiEG9zvqZplCGJVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ucSuWs7X118ug2kgDe8HH1eftrxLSS/gYx7iUr2cG4JaELsQu1OvSlYXIdbeUP6qDPTqWOnUu2kUtJslGAF2ml1/8BLSS3j+2PnA7JHVPvBaVQqSSVRKv/ZRLrOY94nPQ8jCoOxvkB8KLmQH4aZR9ACqaW9HL+vEGOAMMCyyyc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FJASzE0i; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718038403; c=relaxed/simple;
+	bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WR0f1g4bPgnRolVH3+Dv+W9lJfIhq7p22j6QynLNMlmFH9S+DY0f7FGlQTk7K4AK71P9QO/QzM3nk7cfwyPZR+Zx8zljpu9YK/s9M/Pdx9K2dN0eRnetGQFelZOqLKF7KZE1lWYzmW8ZVf0NwFSvPwS/k86fG9QiBa5fjnOJEwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LmDXmJ3Y; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FJASzE0i"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45A1k2N1014061;
-	Mon, 10 Jun 2024 14:51:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	773pQf40WEFcUjWibw27sM8RmGgqxd1j76oenfdCpJQ=; b=FJASzE0i3yei5LWQ
-	FhK4tTd6kJFDiPloLmDqUniEEBQ3MJ3HQLgMVGw9slJkTEgNvFSbY0os5SSFyVj0
-	cEPX1IhxR3jitqveKagXYEa2EGR/zHi/4GoozIbIJGAZUqREU9g3sQpTM+TS8//g
-	abE9EtMwtgDDUtF6cCrBaIFsFoTnPmUTSzpqRWLBwafkDviRDAILf0mHO9dbhKOz
-	RZ3iaPgNPUHUFjZ4LPdXArkAJ1a9b4cRqO8sA0ko3rU2pn/lZ74h1/syJPTRCtvc
-	LLYnbhcWCXGA91x6oaG2bJ/zUcIXYv9P65BLzyOOMxFNqb+G+mp6yn+UEVOKEES1
-	Fm4JUg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymg2ekxv7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:51:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45AEpfLP006698
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 10 Jun 2024 14:51:41 GMT
-Received: from [10.48.242.196] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 10 Jun
- 2024 07:51:40 -0700
-Message-ID: <e730c786-86b9-4362-986d-cfe37ef33753@quicinc.com>
-Date: Mon, 10 Jun 2024 07:51:39 -0700
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LmDXmJ3Y"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57c8353d8d0so1568694a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 09:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718038399; x=1718643199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+        b=LmDXmJ3Yzniv81WTRdsZrtyZG1y6KoqY2FzHq6MQ5drqhYzqqrl4x6g+Pq1dUZk11L
+         N5m1aeKPAKW9+sdMceZiP9qUStPbxCZNKAsJOPl4bpq7ecpL7xUSi8empeWWkadyfDGE
+         Lcow7q+hnKY8QXz1ifZnNRqqYBe206OMLOFWnjDDfbM6z+I8U1wQrr7au6g1ASJJl2up
+         dM60+egFWlFm8MCe4C3VRaEfTtxs1CSENpAa2KTR5Rfi5EsbinMdIuWhy7orHbmiYUxA
+         QZkJdzEnW6yBW1PKOnnVYmcjThZa0xIypG5MNpMJ//UsGGY7DJlC10ORrtS/Sppn3qYz
+         eAkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718038399; x=1718643199;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BES8ee5sXlc5zmrxJY2BlnRPRIoI2IPGXq+EX3VR1No=;
+        b=U9xMMaH5XbhcumI7GvxTc3RTPx87c+y0vijtJHe3J8sZu0yjRRkRopuPxwH3ykv/PQ
+         4bun/dzZj0xRYxRfOvkJ4IbFR1dD/Ps+U1L96QxeJOTCrQ5zOnZN40B/Lp9ONTXomyKL
+         pX5WZe0e7UCBEzum/5uklKWDSG5M6ikmv91Fw6HJJPv8lO9X64DKQO6sJnaH4GviTbjq
+         WGNv10D4lYRZ+emsPrDV51KJXuxDJ/uaTT9dfSTYHzd3uAmOABaeM1M+31onQy22LW8t
+         PgpgEN/tuHeicPSp6+TIZ6BXHZo2NtanJjkeIS3fXlbNt3oj/+fs6MoOftwfyxX2bE60
+         xYZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWK2i4YjSozSBqo8hQN0UcP1LUFI17A9L0Q+DRUXN7PLrto5P0bgDVfGd+ozqUV1RYqM6+kbm9baIqGtr9hCjupZ8uI04rYb3kR4/7Pv1ro2M=
+X-Gm-Message-State: AOJu0YwsZDfvr0MPYTKgN8PpVTpnryRUx6V5UJx8yglpFF0nzgvBwNTh
+	PkS/cB0+EGVYX09igh6jf6AWwKq6cMBZwZ0WccAe0QaF2hBnS9nxqG/TENyLv2M=
+X-Google-Smtp-Source: AGHT+IFEYSFuraPOa+WYVzdaL+ESVBNKCRmo08LglRUMqvJEaK4g/mE7UxIj5Y6FmBNmUXmvs8sJdQ==
+X-Received: by 2002:a17:906:e20c:b0:a6f:26a5:9f5f with SMTP id a640c23a62f3a-a6f26a5a0a5mr142869266b.42.1718038398698;
+        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
+Received: from localhost (p200300f65f283b00ca876ee5dd3d1e3b.dip0.t-ipconnect.de. [2003:f6:5f28:3b00:ca87:6ee5:dd3d:1e3b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f20563a26sm133567866b.129.2024.06.10.09.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 09:53:18 -0700 (PDT)
+Date: Mon, 10 Jun 2024 18:53:16 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] pwm: add missing MODULE_DESCRIPTION() macros
+Message-ID: <t4xkx7mmokgj3lqmcl222s223obdahpqp6sqxgwaohisbqlbib@vitt25ggsezf>
+References: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam
-	<festevam@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>,
-        Nobuhiro Iwamatsu
-	<nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Matthias Brugger
-	<matthias.bgg@gmail.com>,
-        <linux-pwm@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
- <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
- <g5u7xk2l625vu6dxleonlmshnwqoge5fiaigbqlcedayu2rate@o4vgz7g27vlv>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <g5u7xk2l625vu6dxleonlmshnwqoge5fiaigbqlcedayu2rate@o4vgz7g27vlv>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _rEb0ZrrPJdfv-EUvA8XxWBacA4VddRP
-X-Proofpoint-GUID: _rEb0ZrrPJdfv-EUvA8XxWBacA4VddRP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-10_02,2024-06-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 adultscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406100113
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lp35xxqvbjr4igp3"
+Content-Disposition: inline
+In-Reply-To: <20240610-md-drivers-pwm-v2-1-b337cfaa70ea@quicinc.com>
 
-On 6/10/2024 2:05 AM, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Mon, Jun 10, 2024 at 10:06:49AM +0200, AngeloGioacchino Del Regno wrote:
->> Il 07/06/24 18:02, Jeff Johnson ha scritto:
->>> [...]
->>> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
->>> index 19a87873ad60..0b5d68a90e83 100644
->>> --- a/drivers/pwm/pwm-mediatek.c
->>> +++ b/drivers/pwm/pwm-mediatek.c
->>> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
->>>   module_platform_driver(pwm_mediatek_driver);
->>>   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
->>> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
->>
->> MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
->> for the Display PWM, and it is located in the DDP block.
->>
->> So, there are two PWM IPs in one SoC:
->>  - A general purpose PWM IP
->>  - A DDP PWM IP
->>
->> This driver is for the general purpose PWM IP.. so, please, can we change this
->> to "MediaTek general purpose Pulse Width Modulator driver"?
->>
->> After which,
->>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> Looks like a reasonable request.
-> 
-> @Jeff: Can you please resend with the suggested change, I dropped the
-> patch from for-next now.
 
-No problem, v2 sent.
+--lp35xxqvbjr4igp3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-/jeff
+Hello Jeff,
 
+On Mon, Jun 10, 2024 at 07:51:15AM -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=3D1 C=3D1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-l=
+gm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediate=
+k.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung=
+=2Eo
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-viscont=
+i.o
+>=20
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+Thanks for the respin. Applied for next to
+
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+
+Thanks
+Uwe
+
+--lp35xxqvbjr4igp3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZnL3kACgkQj4D7WH0S
+/k7Y/gf+Oi0+dsAnW1E2XuJ43To/HG6xmMhALT1XJIHtAS1SRiuCRQ/KVw0Y07Ik
+Nr5ZJapzijm9o/YiKy3vJyMVEjozrO7E3AummZ24ZMBL7Ggz3EroPRAj8+l2v60k
+oz7i+Vs34vCraZGsPucTn52EuCnRMBh53fhz6bsKVKtOzNUD33k6c4V/BN9bIHfd
+MJpqwTO3ejnSMAUdC6ZPJc7ZTeddyiPi6u/I1UIm43Gud/1XGcnVXx7PL34kwB2R
+ng5cjCPGoiBYXfftDskl72+f2upFM5eJfueti5qqlGaT/C+wUxXQG3w5TGadSPmM
+00uycs1SX65h65o8xSssTRGIFQtOuQ==
+=OGvB
+-----END PGP SIGNATURE-----
+
+--lp35xxqvbjr4igp3--
