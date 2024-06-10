@@ -1,132 +1,123 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAFB18C22;
-	Sun,  9 Jun 2024 21:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FD1364A4;
+	Mon, 10 Jun 2024 06:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717967006; cv=none; b=Ke89oiIBgPYYubgouY1Q828EXQIMVG20boWBIz1lkOmjKDDbVe6Ogj/aAbm5TaxKD0T8JWafAK9+GvRT/h8ttpBOg/8b/zC2PWoQAoCa2NiD1Fk8I+iLtgHRqeKD3kn6mlQbyE/NA28N5HHmkbOlJtOhRu2E7z4hWsWdTQZcpyI=
+	t=1718001204; cv=none; b=aSel6FWM09BqQYc0PF3u63TRFyUPwwPSTuziW9NMPPnSobwBkaTQ/TSaujqdcsy5s9n08BfWdiP8g9tjUBsbfKGF/mbyBsP9Ep6aTa8x23wEBDFo/Y94kNeb7HQgptgd17P1WzAluFfQkwgvPM3ZhlD64LEJZXkEPn1nPnx3iUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717967006; c=relaxed/simple;
-	bh=Wl9NG8h/GJ+vj6ODjcz+fX4TjV1msfDj8arPmokIcOw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uBuHbybrslIshCz2tDLxhFPfpiaM1cn2PyiUr5jX/JGC1N380IGTAsglu8pFdkyvKb65arit64euBhA/qP7ZoxsENDW6Uz3dYNiEkfDpg8FkzEeeuxkTkz2G6F2yoeXlDK3VBlH0FSPwai44RFhXBN2cyviCVR1mkDcYmpnt0rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W1C1TP99; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718001204; c=relaxed/simple;
+	bh=uLyGZd04XBxnLbXgp3VhdQscMg9GAlkmWTN8arnq1UA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s7UAg+Kc0zHpoxyo3yomVToSbIVAdgL1kUddTS2wihFlvT5AGuzZrPWICZtXJ0ZaIjjcMBbWsfcOZ+SpsMHguY4JGygFDfrnr35cCL4llaT5buCwbd70LUDG4HWJNXeCvwfaunQ9V7ICYZZPrAR5Zsu0ruUmu+6JhAHMFEiqD1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzxZZ57S; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W1C1TP99"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 459HtLZO024951;
-	Sun, 9 Jun 2024 21:03:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=WixHRYN2timxfzVPnpYDb/
-	GYF5ejmv1jUPZn2cYpWKI=; b=W1C1TP99e+EZl0v+qBeXnJq3H0ohKYkoOSLApS
-	i+ALw7184rLDZ5D9QyXzE6eXkmxeCyFoCpGy3BGkFaATfrUHMP1PP1fJf06Wi6QJ
-	W4c6vmS713//ay7RiACRUJplQ0B8WqCK4WXJ5iUabVoX8JbqvGD6hRkaZ28izGox
-	6pjDFVXP2O/3TE5OULzW0fxV/pF7IY32oDRwIczopG1wypHuuAg6s9xbFg3P5/eS
-	DTIhPNiZd/CIcfyFqYW0jhqq3fZEgEfpkrXys6O9iEegLEK59KexDwxgRbx9c4Xe
-	IKws2ZhkmJ9M4ir9IA+jrXuN67AO4pHkLCYA7XqVkepba3ww==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymemgj5gm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 09 Jun 2024 21:03:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 459L390m024628
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 9 Jun 2024 21:03:09 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 9 Jun 2024
- 14:03:09 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Sun, 9 Jun 2024 14:03:08 -0700
-Subject: [PATCH] media: exynos4-is: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzxZZ57S"
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4eb1b9865e4so1334308e0c.1;
+        Sun, 09 Jun 2024 23:33:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718001202; x=1718606002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WoxL7sxR5fVE2wpf25zkRX1keP/l47DLSwfYmo+1E88=;
+        b=JzxZZ57SZmLC50L63F2s4UPOj7xYTp8DSsg1mG2j/a3eUT8RT8Um1o9UIK965bI5Wu
+         HxY0bEP9f5HKv7oF0eg1qVU8gauAVGHooZGBSC7xUjjoyS7RC+o1Dw4jbHGovfaAlWYW
+         pg2FYrUTtfnMIkZwPYD0GDgXC3pNFUh3NonoigEQVyUX3bDz8Fpw3FujOqvEcwjEp580
+         tgIx0P6IJ5WWBO4FkrdcPia8pLYOxaVVrNA75dC5aGjS8xdqP0/PSRacV1A9MFumAWFN
+         qEV+mUnu0mmyEwV7xky83K8swBfoq+Jz/pHM04L/RG3cCr+V+8vXiXUUFxhX8sXEdLd5
+         yP/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718001202; x=1718606002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WoxL7sxR5fVE2wpf25zkRX1keP/l47DLSwfYmo+1E88=;
+        b=Tvu4DyVBz8s6O4UB6/54MBPb+gfDIqi+sKZP81kdNLmaqNF8JUCrByFOd4s9Pi+Qm4
+         a+DVFTwuUlndEhOmrIVw217V1MgMhabNmNwKt+wq/uJQcVQWTkIn1BXLrYqClx+0YjkA
+         2OTQhokJ5NDhEo5L8jkMBAYCKrpHhltVfEVVWeWZeylIzlCw/ENU2fcr8VSITRsh387P
+         WN9ciIwsJ+NueY2wiTn1ViOMpEiDUawzAM0vgUs200A24y5k3HGbKuAoVGoU1k8QTzxs
+         UYBzZsuxY+KQAypj6A+UWyjcAATNDW+hdKwhSCH9nG/ZfSyuHjE3lD1pltJkQJULfFxR
+         48yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3WYYrnXH4CbApn9okcCPBEITa6SVO2/uADB8tlLiONyNW10NO1eHDyY80WgONQED6n/vrWrbjF1IQaIZ67gEsT+ulOwNW0NRZdvTm5Uy/TumjmKGRhizMhCx6PpoxJOQi5WvHDXNYmgA=
+X-Gm-Message-State: AOJu0YyBw6Le5RMMLX5SxfCMwvp1O3/BrWzSvn9si8qrlkaEXOgPjMDW
+	cxFwkkv671sBYw5XMmasgTROJ/71+JubLkyQhIHIz1vbUdb+dLAmt0TE+QtbcIPvmRD8k9Totwb
+	j3T1of7CPT/yrZe6Tz/3yT47xz6I=
+X-Google-Smtp-Source: AGHT+IE6WwuGJf/J6Plpzhz9jA+n7W7A3UHb9PzPwtd8XmJu4EiIUfbwUKnVPUxp+1oRqDCPDYvJIUTzr/73LsCncVM=
+X-Received: by 2002:a05:6122:c9:b0:4e4:ea87:ec72 with SMTP id
+ 71dfb90a1353d-4eb562bbb38mr6632138e0c.11.1718001202243; Sun, 09 Jun 2024
+ 23:33:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240609-md-drivers-media-platform-samsung-v1-1-d474799346dd@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIsYZmYC/x3NQQqDQAxA0atI1g2otRV7ldJFnMlowBklURHEu
- 3fa5dv8f4KxChu8ihOUdzGZU0Z1K8CNlAZG8dlQl3VTPssOo0evsrMaRvZCuEy0hlkjGkXb0oC
- hfbgmtFUTujvkzqIc5Pg/3p/snoyxV0pu/JUnSduBkWxlhev6AuWorDKSAAAA
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mjFA0Prx5eVWNJXc9abuziiQl1vixQUL
-X-Proofpoint-ORIG-GUID: mjFA0Prx5eVWNJXc9abuziiQl1vixQUL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-09_16,2024-06-06_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406090165
+References: <20240530100154.317683-1-jani.nikula@intel.com>
+In-Reply-To: <20240530100154.317683-1-jani.nikula@intel.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Mon, 10 Jun 2024 15:32:45 +0900
+Message-ID: <CAAQKjZPWT7=JircaiksP3Wg_1oKRr1xDkznQ1RSoe4jmn12fUw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] drm/exynos/vidi: fix memory leak in .get_modes()
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, 
+	kyungmin.park@samsung.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-lite.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos-fimc-is.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/samsung/exynos4-is/exynos4-is-common.o
+Hi Jani Nikula,
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+The patch(1/4) has been applied to the -fixes branch, and the other
+three patches(2/4 ~ 4/4) have been applied to the -next branch.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/media/platform/samsung/exynos4-is/common.c    | 1 +
- drivers/media/platform/samsung/exynos4-is/fimc-is.c   | 1 +
- drivers/media/platform/samsung/exynos4-is/fimc-lite.c | 1 +
- 3 files changed, 3 insertions(+)
+Thanks,
+Inki Dae
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/common.c b/drivers/media/platform/samsung/exynos4-is/common.c
-index e41333535eac..77007f1a909b 100644
---- a/drivers/media/platform/samsung/exynos4-is/common.c
-+++ b/drivers/media/platform/samsung/exynos4-is/common.c
-@@ -44,4 +44,5 @@ void __fimc_vidioc_querycap(struct device *dev, struct v4l2_capability *cap)
- }
- EXPORT_SYMBOL(__fimc_vidioc_querycap);
- 
-+MODULE_DESCRIPTION("Samsung S5P/EXYNOS4 SoC Camera Subsystem driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is.c b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-index 39aab667910d..0a4b58daf924 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is.c
-@@ -999,4 +999,5 @@ module_exit(fimc_is_module_exit);
- MODULE_ALIAS("platform:" FIMC_IS_DRV_NAME);
- MODULE_AUTHOR("Younghwan Joo <yhwan.joo@samsung.com>");
- MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-+MODULE_DESCRIPTION("Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-index d1d860fa3454..1a4d75443215 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite.c
-@@ -1662,5 +1662,6 @@ static struct platform_driver fimc_lite_driver = {
- 	}
- };
- module_platform_driver(fimc_lite_driver);
-+MODULE_DESCRIPTION("Samsung EXYNOS FIMC-LITE (camera host interface) driver");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" FIMC_LITE_DRV_NAME);
-
----
-base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-change-id: 20240609-md-drivers-media-platform-samsung-f75c4f714f93
-
+2024=EB=85=84 5=EC=9B=94 30=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 7:02, J=
+ani Nikula <jani.nikula@intel.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> The duplicated EDID is never freed. Fix it.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/e=
+xynos/exynos_drm_vidi.c
+> index fab135308b70..11a720fef32b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -309,6 +309,7 @@ static int vidi_get_modes(struct drm_connector *conne=
+ctor)
+>         struct vidi_context *ctx =3D ctx_from_connector(connector);
+>         struct edid *edid;
+>         int edid_len;
+> +       int count;
+>
+>         /*
+>          * the edid data comes from user side and it would be set
+> @@ -328,7 +329,11 @@ static int vidi_get_modes(struct drm_connector *conn=
+ector)
+>
+>         drm_connector_update_edid_property(connector, edid);
+>
+> -       return drm_add_edid_modes(connector, edid);
+> +       count =3D drm_add_edid_modes(connector, edid);
+> +
+> +       kfree(edid);
+> +
+> +       return count;
+>  }
+>
+>  static const struct drm_connector_helper_funcs vidi_connector_helper_fun=
+cs =3D {
+> --
+> 2.39.2
+>
+>
