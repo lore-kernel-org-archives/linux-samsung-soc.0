@@ -1,173 +1,141 @@
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566C56F2E7
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 09:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D5C71753
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 09:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718010182; cv=none; b=UyxQICtVqjpc7kCP0eIYN3n0Nu4UK/DhjodhtQhEmZ8o6TgLgr+fSEExJGGd9KNR5dboWH0ivs0a/UIXaMZHclYZNrLgHns+QkzS9azTqGO7ydNpGcBZajLKYemXknWbgF90eQ+plaKjl3SrYzZLHCjaUSZb8UTGevZJ+iKaoTs=
+	t=1718010342; cv=none; b=Qh/qdOZhz28ZbXI5XsOhnY+LBoxJG4Qmw0efC6sDEdoxUGtw6LQZQjI0VFROYS2/HJ+ZdDzCHqQhOE5bunM92c4iVcwpEqgCRJWsJjB4jpoBGZ+F85YgV2fHisbzdgmVPjgy2qXpyOxzlYg/6lVn7e3FNv9MRrJDbSIOkfqy1sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718010182; c=relaxed/simple;
-	bh=VFhC+nJ7tBR/FwPycVePgXsl7Q/xJeh/CTtJVVU5o0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QRra8OPE3TswLVKE41NCEZVQE2Gcvtq4A1DmTzLeqazRF4mUfBDeIIvlt3kMMIBWgRZ7dvdQH4MlodPERbLd9z9YYLmaTn7BWOH7XGSiPzYe+N+2OrSyvEc75e6uZPYrn/NBINipwklFBJbKFwgczYXeTiwu/FUhfF1t1Uc6Bj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3HRyt1y; arc=none smtp.client-ip=209.85.217.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718010342; c=relaxed/simple;
+	bh=HEg0zyvw/V+cMw418J+Nfsgp8PdHvRrJzynNEBulD/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJSdm2rL6C/bvf/YAmqN2x4K/J8gUSW5jV5rUxjqkmzGrg2Ou2X2tR64AiJfLGiCr9gRwc6o9tZyaCoGIH5CgGUtck2xu33ovlv/AA3Xps7SowzZ0O5sqX5cI265yB8BV+tpCaPZRBXx9sPk8b9rFAIp8I8jwAd5dR3k7NKlTSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=b3d3lJke; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3HRyt1y"
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48c5133a2adso262634137.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 02:03:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="b3d3lJke"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c6d3e6606so2401555a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 02:05:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718010180; x=1718614980; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8D1xRI+i6XbOFe1nGV/VEBCOouzsGHQh9VuVWaJeScE=;
-        b=G3HRyt1yavdODLYSi/SComPoZmuOHeAdbzyv/duKLPo54hyuKpSEack+uholQWFQm8
-         lztowRw8NTnbQYsU7zv1aLncmtAM+N+dChkFpm2p2FpBgWNe+Nks0UT5k1ENf5CJEJXm
-         IJT29LlNs+MZ5BKDyW3OVXJptF3yWs3QvrhJ+nPqiIZx8XUgXHD1d0PRmyg1OBlxgkID
-         YGeg4AefaSF0mH6xbbq2bJx8ypVQ/+R6ORxccIY7IX59mG27arBU0En3kJKUaQgomSYr
-         fmaaGjDGE8d8etHpXMeeXJSZSJem7Wv29baJHzWGQE4P6rscvayxnXisyVpU0d2V3igN
-         d6/g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718010337; x=1718615137; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z97Srw814CSk6XdmVlMPcCGnmoMkpcpqJTTh4MZ38CU=;
+        b=b3d3lJkeKrEbLtTZr4R1OZWdGIQZFPncD6Y+TvfAnvUbPpF9t0V3hjGT5H2ChguXzG
+         OPkANN6libICRfhi4s6n5KQxo0JKx6D+95sEUe2YTBQb5PE9I4/bGEadbvYpqY8/37+t
+         Xt1Zis8yBgA2s+f9g+3fkag3JIv8YJH//6I+mkGuyhFEfPbUHrVQLZakXRwe/WI7+k3f
+         VttLkn59hLbD2Mcet0Xj7MxGIfquvklMqZgl9JzzRGogBRH3yQ4gLiwRRgD7tzBXVUcA
+         OFoVqOdfUm0fItxIK+/z2Sz8blTcrkNaUGrlTqzioFmuQQQa8/CnLHc0Jn0W6AB9J0Cu
+         gymw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718010180; x=1718614980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8D1xRI+i6XbOFe1nGV/VEBCOouzsGHQh9VuVWaJeScE=;
-        b=ttBapTfVN3Al1uzAwTexpcHpein21b6HykLgB+xSl5QB45/+2Qf+6VELJhedUoR99U
-         IdOGQLqz1COBy0XBhEJ7sdP51JOfOgWMqchC022s5uzYkVzhPTv6KmFc021OtWFfv/zW
-         LUh5/By9W536L0ARCjFpySLzfi/w0ndtW1GBBeRXkwCxacUxfdwXqBK7Mk32f9tQxmEK
-         M1C0u8M8Em7u+Cw8+wVmVKCXBtwlqfG2xpSexdNoPFXqunmH56LElBHrytLlmfK5kfwz
-         Hn3CA11ul36rbDkOFaR/SRWQqxK73UpYJdA6eFXxtq+1izVuj6oxV916U/2PZCreNEZT
-         ZG3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXF4Re5EAkeTnTt6bRo3E+sxY2oWzeZjCbYWnvK5NJ0L8AcG6GvgHE2MefJbp1odnjpbUc8zubvA2HLwqiT8efLzWYuccOhfNUq3+gMyH4bEvo=
-X-Gm-Message-State: AOJu0YxtwnznOca2Cd7MR16Yw+gxiRoOpkpH6lqxYyCzF8Os3uqR22zX
-	kSN5nnLiEbafbyaRy5ZZOaRPlHc2ggmA2xQDb45Yr2kC5ogYue+CnqqROarC5dJRLMgpmaU92CX
-	/lUXwS5mhi3PJk9Li1DUbCsTrzTU=
-X-Google-Smtp-Source: AGHT+IENq9kzQ6aI4IYLBQaNTUgvTVHL49Rkm7/5OoofhYSBaeobfRJ13I1Ha1fqNTI1Enwb179CJpHpoqTO6gDCSS4=
-X-Received: by 2002:a67:fb49:0:b0:48c:3514:2f9f with SMTP id
- ada2fe7eead31-48c351431cdmr6607984137.23.1718010180219; Mon, 10 Jun 2024
- 02:03:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718010337; x=1718615137;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z97Srw814CSk6XdmVlMPcCGnmoMkpcpqJTTh4MZ38CU=;
+        b=inGsEtYR2FwLVoh2Oyd1oPhSEGgbZ0NGNVByi7jGNm0sgkkgpTbNo7a/WP0hcpVhxm
+         Q8WpwwcldcflZzxAVNduC+i5R7krZtgPfi73Ph5NREzr80BgCJZRcrdvKaJkInmfFEBC
+         krml8Ik/fJIFHWeYsCEZjyKXY2KllEbiByuhMrBjY6b3udL60PWdOrGHVhQdGTeCK2xl
+         33mbKMlM2Jt8z80WDNq/Wcq36GP72VdBPqDuwFDXDAIzTkrAelJlheEeFnwJIJk0xcCh
+         E+C0I7LUKMcoWphulNcYk5upaR33k/GA382JuWZlTjnmlALSvPoKMhjSa3TSmPnYDI52
+         p6KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZfdVpellIMhsOdfDU88zS7aPyqPZq7B63uM57ScpRgOVX/tKqv5INhEh0MbENoPbMfOMpEUMv3KDIpTkS073aI0i7n0CNIOYH+VS0OL4LH3A=
+X-Gm-Message-State: AOJu0YxJmklBjzjnqiGuyXSY3HO3r7TIone5EXniU5mKh5LVvaSLMW28
+	J4KQzF0gkkEOGVDciM2ffQUjs00adJ4jJELsV9VuFWGBeqe5qMQ7NtYKeL2burc=
+X-Google-Smtp-Source: AGHT+IFkyhcT1eyJNZMa+v9iD180qe0aqLoDogvtNodRry9SmYe35KOJ15PGipaMtMR7zBJCwHj8dA==
+X-Received: by 2002:a17:906:840b:b0:a6f:dec:5a66 with SMTP id a640c23a62f3a-a6f0dec6614mr276844566b.5.1718010337430;
+        Mon, 10 Jun 2024 02:05:37 -0700 (PDT)
+Received: from localhost (p509153eb.dip0.t-ipconnect.de. [80.145.83.235])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6ef5285748sm412819866b.146.2024.06.10.02.05.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jun 2024 02:05:36 -0700 (PDT)
+Date: Mon, 10 Jun 2024 11:05:36 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	linux-pwm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
+Message-ID: <g5u7xk2l625vu6dxleonlmshnwqoge5fiaigbqlcedayu2rate@o4vgz7g27vlv>
+References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+ <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1715691257.git.jani.nikula@intel.com> <2fe0b4deb4f2ab255735cd6e1a657a17e0d45784.1715691257.git.jani.nikula@intel.com>
-In-Reply-To: <2fe0b4deb4f2ab255735cd6e1a657a17e0d45784.1715691257.git.jani.nikula@intel.com>
-From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 10 Jun 2024 18:02:23 +0900
-Message-ID: <CAAQKjZNhUzyUO4rjPZGGrp=0MsTdQvT2ij3bVV91oDcYjk9EDg@mail.gmail.com>
-Subject: Re: [PATCH 04/11] drm/exynos: hdmi: convert to struct drm_edid
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q35kt4hkwtu27u62"
+Content-Disposition: inline
+In-Reply-To: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
+
+
+--q35kt4hkwtu27u62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Jani Nikula,
+Hello,
 
-Thanks for your contribution and sorry for being late. Below are my comment=
-s.
+On Mon, Jun 10, 2024 at 10:06:49AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 07/06/24 18:02, Jeff Johnson ha scritto:
+> > [...]
+> > diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> > index 19a87873ad60..0b5d68a90e83 100644
+> > --- a/drivers/pwm/pwm-mediatek.c
+> > +++ b/drivers/pwm/pwm-mediatek.c
+> > @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver =
+=3D {
+> >   module_platform_driver(pwm_mediatek_driver);
+> >   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
+> > +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
+>=20
+> MediaTek SoCs have got two different PWM IPs, one of which is used exclus=
+ively
+> for the Display PWM, and it is located in the DDP block.
+>=20
+> So, there are two PWM IPs in one SoC:
+>  - A general purpose PWM IP
+>  - A DDP PWM IP
+>=20
+> This driver is for the general purpose PWM IP.. so, please, can we change=
+ this
+> to "MediaTek general purpose Pulse Width Modulator driver"?
+>=20
+> After which,
+>=20
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
 
-2024=EB=85=84 5=EC=9B=94 14=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 9:57, J=
-ani Nikula <jani.nikula@intel.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> Prefer the struct drm_edid based functions for reading the EDID and
-> updating the connector.
->
-> The functional change is that the CEC physical address gets invalidated
-> when the EDID could not be read.
->
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
->
-> ---
->
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c | 23 +++++++++++++----------
->  1 file changed, 13 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exyno=
-s/exynos_hdmi.c
-> index e968824a4c72..9033e8b66816 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -883,27 +883,30 @@ static const struct drm_connector_funcs hdmi_connec=
-tor_funcs =3D {
->  static int hdmi_get_modes(struct drm_connector *connector)
->  {
->         struct hdmi_context *hdata =3D connector_to_hdmi(connector);
-> -       struct edid *edid;
-> +       const struct drm_display_info *info =3D &connector->display_info;
-> +       const struct drm_edid *drm_edid;
->         int ret;
->
->         if (!hdata->ddc_adpt)
->                 return 0;
->
-> -       edid =3D drm_get_edid(connector, hdata->ddc_adpt);
-> -       if (!edid)
-> +       drm_edid =3D drm_edid_read_ddc(connector, hdata->ddc_adpt);
+Looks like a reasonable request.
 
-drm_edid_read_ddc function can return NULL for an error. Could you add
-an exception handling?
+@Jeff: Can you please resend with the suggested change, I dropped the
+patch from for-next now.
 
-> +
-> +       drm_edid_connector_update(connector, drm_edid);
+Best regards
+Uwe
 
-Ditto. drm_edid_connector_update function can return a negative value
-for an error.
+--q35kt4hkwtu27u62
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +       cec_notifier_set_phys_addr(hdata->notifier, info->source_physical=
-_address);
-> +
-> +       if (!drm_edid)
->                 return 0;
->
-> -       hdata->dvi_mode =3D !connector->display_info.is_hdmi;
-> +       hdata->dvi_mode =3D !info->is_hdmi;
+-----BEGIN PGP SIGNATURE-----
 
-Above change wouldn't be related to this patch.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZmwdsACgkQj4D7WH0S
+/k55zQf8CfuApQ1ZBtYAqa1Nbq+ZlBw/O21Uu1RabLwL/pyilctw+8HyD94rpw4l
+fa2pQmjJNIpbxVLwqbSz/liyD5+xs3qysDJdfTjG2sc3iWXXtfEo2PSOgxGByXfx
+53HHtTMGgwf4SGBDghqpOgBrfuPhjDbUC2xvVIYMwPFPliUjZhdQvNEUqZZiZxo1
+Ueou9i3+1M0/jEBd4adgtcR1QlNVQO/4QJ3RJMAFe1tQDVdYrLG3xb0+4uxskJ5b
+uuEuYScgNnItS4OISYQoo3R+M9RjhqBhiz+geuCDuHQOTK3GsLd6uJdvojmm1B1n
+PTlKBhDnoqJUPIoyjB6XfukvubKsiA==
+=P61q
+-----END PGP SIGNATURE-----
 
->         DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
->                           (hdata->dvi_mode ? "dvi monitor" : "hdmi monito=
-r"),
-> -                         edid->width_cm, edid->height_cm);
-> -
-> -       drm_connector_update_edid_property(connector, edid);
-> -       cec_notifier_set_phys_addr_from_edid(hdata->notifier, edid);
-> +                         info->width_mm / 10, info->height_mm / 10);
-
-The purpose of this patch would be to replace edid with drm_edid so
-how about updating the above change like below?
-    drm_edid->edid->width_cm, erm_edid->edid->height_cm);
-
-Thanks,
-Inki Dae
-
->
-> -       ret =3D drm_add_edid_modes(connector, edid);
-> +       ret =3D drm_edid_connector_add_modes(connector);
->
-> -       kfree(edid);
-> +       drm_edid_free(drm_edid);
->
->         return ret;
->  }
-> --
-> 2.39.2
->
->
+--q35kt4hkwtu27u62--
