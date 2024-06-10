@@ -1,114 +1,123 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F7224F6
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 07:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2F63C7;
+	Mon, 10 Jun 2024 08:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718005126; cv=none; b=ascCcP77wi9S4r5V7qhSM2dFvfg3OAYszqHttjrBDX2tmPlZvhyGFKXfQwi1NbNKbLhnG3bdEsdNzwu4T7/hClezCnNs0Ywjm+++Jhb4AtAyLyrXBhFjecsPOsUzmCj32W53UOOMIRlx5mnPMlqqGQQufTV9swkiMnKtpITDCfI=
+	t=1718006815; cv=none; b=uI3C+QxYVoaFPODrxh+7O6nkWWQvP1GjOI+qnOISANTAy4QsapuxwGe25ex+bqxPgeC9+ZOLC++IMMNRqQJOGLxFVoRyATyw/ww+XsyXBFBY4fpwfkxUvItv1an5ljPa5NdE7eWfMORiiMBbR75FC+GK0JpM9TbvHdajNMCl+Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718005126; c=relaxed/simple;
-	bh=KdYwW+f0zwrMeKGRegSFmZQDMvEAtriEte6o6Iugejc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=SwmRMMDQ/IqQnLRJcV8WSLEncEyUdUc3ssHln/CnDHrcq1nNR0wXVi2jBn02Gcpr4nVdbyTgNibj8XF4LNqb96Nq7ilIQdPrRmCow2zQAXP+H/HeMtG/y6XOWMyz6+umTj3n0AM72C6cPFm+bmE0C+wonswESvKmjawXU7P8nD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxNSny3t; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718006815; c=relaxed/simple;
+	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiIiSnnOxBjTPL8iB+CMLzSMKSaoI4ldkWk2W44h3wuDv9n6B2l4tCnNRfNT7FsQPFN3yeLMSpmuuEhKPYYn0Pg4Uml32ErUjQ35DeDmJ+RvujHbJK4Z/THvwuPPP6Uv7mrGnH9iRykqeaiSsQFjW+3LcPTgYR6aHKdEuOYIqs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fbc2JGTX; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxNSny3t"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f480624d0fso33346115ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 00:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718005124; x=1718609924; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fEeYczgmKxylMukshxG6mWi27nmS4L72/ofau0FaVSI=;
-        b=CxNSny3tmOXIGjK23AocnM7WBns19Qd3XLxBKd9gi+z13wlp7nN5Ze4JUyryNPkBqg
-         1aj3ambqPBYJlVHUaz5EKOZsaQnDbNIZU2/B0XncfivMeUkYzDQNbCxt1HEZ5VHhhSnI
-         ODMwP1hc1QpOomrG17jVe+4OnohUQD3EUbXfJ9x2K98sEVFBkhvtvDaS1/0qqi2r3BfB
-         xxd14CBaKIDVftK4NXsoO1dkI63rF7iDiuZZ6PruumEmkSToTEL9gS3b3kjBn2DKV6Hh
-         WyHyQpUm0Xyv3IJCoPmtMgFEphgGn2PdYaoKcemn3/IthOB8rwJMNqmBlZL8NiKs+bc+
-         HnbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718005124; x=1718609924;
-        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fEeYczgmKxylMukshxG6mWi27nmS4L72/ofau0FaVSI=;
-        b=YVBiqfEl9Ch2D74Xdqo5FPbWurOPO2s0QjoF4+wJXYZBiginhVxL76un06MB3Y3jBv
-         ZucygnlJPAh6AZ6dHV5u38gpNZUNS/IuzE8o0kOuOrIftq0200yTsAqY9RrsTbllFj/M
-         wCYkn3zOn2CfRxFtMcrUBbDbApPhYMy7K40mK96Ii3XU/1mRx2WGttz7j6bpNJmb2KVH
-         DXCgOMXvzpMBZfFF/n6mQtGf5mYTOx/KpngO2vRaq8cHkRqihMO1Wf74xej4UfrYHpS/
-         wLMcYqD2NEy1gVdLAJv4RUJ/czmUjrs68Dez0WcflKQWqrJB/aRHYN88RfK2wWoyVH1q
-         kBBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvdCoBm0B3CxZVYxURREUmRn13doxu30OPNDF+YtB5dORScBI6NW7gIVTqyqFkgVFdQOGYEGMmQlQuCGULcZyfI+Xxo/7sElXNSe5evYHUlsI=
-X-Gm-Message-State: AOJu0YyKTa+dp8G7NQiAsua0UmmIE+kKw95DYeBMzONC0xXiFswy1g4k
-	QX2k0dpj/elcDp4nl/+IfC8jdQ3HVaJ9AUF/CZ16+xVcdL7VXIrc
-X-Google-Smtp-Source: AGHT+IHzTtNYHQERotEFnvwdsciHAGRVrrOcRqC4zBx7IkWX/kCXL7BDT1ZwLHdaBUAHJknASlMROw==
-X-Received: by 2002:a17:902:d4d2:b0:1f4:b702:f143 with SMTP id d9443c01a7336-1f6d02dda45mr89178495ad.15.1718005123325;
-        Mon, 10 Jun 2024 00:38:43 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd7e5cc4sm78276175ad.235.2024.06.10.00.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 00:38:42 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-fixes
-Date: Mon, 10 Jun 2024 16:38:39 +0900
-Message-Id: <20240610073839.37430-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fbc2JGTX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718006811;
+	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fbc2JGTXECrFLODOjNn5zPCS+TLlAAFYhQsu2hcMV7wlYO+4bYbR+S8HFQTxnSQVJ
+	 6Lw4UXYbpVRg64axJD5r39bybViwB7dZRlj7x84GupRvj2cbdsQ5+UjO4joFxWbFhQ
+	 hYssLYCiK4OTf/t3g9+LVyhiaJx5dVOusA3Cm3KCXl9wJh6gQ3Vb0vLY0Gr1MPMKpz
+	 mnHV33QC32ZPJinIxRZ+yjf/gyt9Wkzqwg/4amvXJz/uAbjzenkmBekdVnWkxylBMS
+	 ZxGV0Hb/jugOFt00Svd/44yfxnsSyv+M3SA+WB21BMhiEogAj5jYLtDvdyuG9e4S9F
+	 mQrVlBtltHCxA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E36503780575;
+	Mon, 10 Jun 2024 08:06:49 +0000 (UTC)
+Message-ID: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
+Date: Mon, 10 Jun 2024 10:06:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-pwm@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ kernel-janitors@vger.kernel.org
+References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Dave and Daniel,
+Il 07/06/24 18:02, Jeff Johnson ha scritto:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-lgm.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediatek.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-visconti.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This addresses all of the issues in driver/pwm
+> 
+> Let me know if you want any of the individual module changes
+> segregated into separate patches.
+> ---
+>   drivers/pwm/pwm-imx1.c      | 1 +
+>   drivers/pwm/pwm-imx27.c     | 1 +
+>   drivers/pwm/pwm-intel-lgm.c | 1 +
+>   drivers/pwm/pwm-mediatek.c  | 1 +
+>   drivers/pwm/pwm-pxa.c       | 1 +
+>   drivers/pwm/pwm-samsung.c   | 1 +
+>   drivers/pwm/pwm-spear.c     | 1 +
+>   drivers/pwm/pwm-visconti.c  | 1 +
+>   8 files changed, 8 insertions(+)
+> 
 
-   Two fixups - one for an regeression issue and other for memory leak - and one cleanup.
+..snip..
 
-Please kindly let me know if there is any problem.
+> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> index 19a87873ad60..0b5d68a90e83 100644
+> --- a/drivers/pwm/pwm-mediatek.c
+> +++ b/drivers/pwm/pwm-mediatek.c
+> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
+>   module_platform_driver(pwm_mediatek_driver);
+>   
+>   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
+> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
 
-Thanks,
-Inki Dae
+MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
+for the Display PWM, and it is located in the DDP block.
 
+So, there are two PWM IPs in one SoC:
+  - A general purpose PWM IP
+  - A DDP PWM IP
 
-The following changes since commit eb55943aab89be99a26e34fc2175ebb3583a2778:
+This driver is for the general purpose PWM IP.. so, please, can we change this
+to "MediaTek general purpose Pulse Width Modulator driver"?
 
-  Merge tag 'drm-misc-next-fixes-2024-06-07' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes (2024-06-07 08:40:58 +1000)
+After which,
 
-are available in the Git repository at:
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-fixes-for-v6.10-rc4
+>   MODULE_LICENSE("GPL v2");
 
-for you to fetch changes up to 38e3825631b1f314b21e3ade00b5a4d737eb054e:
-
-  drm/exynos/vidi: fix memory leak in .get_modes() (2024-06-10 15:05:43 +0900)
-
-----------------------------------------------------------------
-Regression fix
-- Fix an regression issue by adding 640x480 fallback mode
-  for Exynos HDMI driver.
-
-Bug fix
-- Fix a memory leak by ensuring the duplicated EDID is properly freed in the get_modes function.
-
-Code cleanup
-- Remove redundant driver owner initialization since platform_driver_register() sets it automatically.
-
-----------------------------------------------------------------
-Jani Nikula (1):
-      drm/exynos/vidi: fix memory leak in .get_modes()
-
-Krzysztof Kozlowski (1):
-      drm/exynos: dp: drop driver owner initialization
-
-Marek Szyprowski (1):
-      drm/exynos: hdmi: report safe 640x480 mode as a fallback when no EDID found
-
- drivers/gpu/drm/exynos/exynos_dp.c       | 1 -
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 7 ++++++-
- drivers/gpu/drm/exynos/exynos_hdmi.c     | 7 +++++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
