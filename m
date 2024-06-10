@@ -1,123 +1,173 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2F63C7;
-	Mon, 10 Jun 2024 08:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566C56F2E7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 09:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006815; cv=none; b=uI3C+QxYVoaFPODrxh+7O6nkWWQvP1GjOI+qnOISANTAy4QsapuxwGe25ex+bqxPgeC9+ZOLC++IMMNRqQJOGLxFVoRyATyw/ww+XsyXBFBY4fpwfkxUvItv1an5ljPa5NdE7eWfMORiiMBbR75FC+GK0JpM9TbvHdajNMCl+Tc=
+	t=1718010182; cv=none; b=UyxQICtVqjpc7kCP0eIYN3n0Nu4UK/DhjodhtQhEmZ8o6TgLgr+fSEExJGGd9KNR5dboWH0ivs0a/UIXaMZHclYZNrLgHns+QkzS9azTqGO7ydNpGcBZajLKYemXknWbgF90eQ+plaKjl3SrYzZLHCjaUSZb8UTGevZJ+iKaoTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006815; c=relaxed/simple;
-	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiIiSnnOxBjTPL8iB+CMLzSMKSaoI4ldkWk2W44h3wuDv9n6B2l4tCnNRfNT7FsQPFN3yeLMSpmuuEhKPYYn0Pg4Uml32ErUjQ35DeDmJ+RvujHbJK4Z/THvwuPPP6Uv7mrGnH9iRykqeaiSsQFjW+3LcPTgYR6aHKdEuOYIqs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fbc2JGTX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1718010182; c=relaxed/simple;
+	bh=VFhC+nJ7tBR/FwPycVePgXsl7Q/xJeh/CTtJVVU5o0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QRra8OPE3TswLVKE41NCEZVQE2Gcvtq4A1DmTzLeqazRF4mUfBDeIIvlt3kMMIBWgRZ7dvdQH4MlodPERbLd9z9YYLmaTn7BWOH7XGSiPzYe+N+2OrSyvEc75e6uZPYrn/NBINipwklFBJbKFwgczYXeTiwu/FUhfF1t1Uc6Bj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3HRyt1y; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fbc2JGTX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718006811;
-	bh=Io/Z8pmSrin1ufDf1pTTnqKm0on+4xHG0V02DJ6G6fo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fbc2JGTXECrFLODOjNn5zPCS+TLlAAFYhQsu2hcMV7wlYO+4bYbR+S8HFQTxnSQVJ
-	 6Lw4UXYbpVRg64axJD5r39bybViwB7dZRlj7x84GupRvj2cbdsQ5+UjO4joFxWbFhQ
-	 hYssLYCiK4OTf/t3g9+LVyhiaJx5dVOusA3Cm3KCXl9wJh6gQ3Vb0vLY0Gr1MPMKpz
-	 mnHV33QC32ZPJinIxRZ+yjf/gyt9Wkzqwg/4amvXJz/uAbjzenkmBekdVnWkxylBMS
-	 ZxGV0Hb/jugOFt00Svd/44yfxnsSyv+M3SA+WB21BMhiEogAj5jYLtDvdyuG9e4S9F
-	 mQrVlBtltHCxA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E36503780575;
-	Mon, 10 Jun 2024 08:06:49 +0000 (UTC)
-Message-ID: <ca6b4ce2-4ebf-409d-b87d-2024445b9392@collabora.com>
-Date: Mon, 10 Jun 2024 10:06:49 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3HRyt1y"
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48c5133a2adso262634137.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Jun 2024 02:03:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718010180; x=1718614980; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8D1xRI+i6XbOFe1nGV/VEBCOouzsGHQh9VuVWaJeScE=;
+        b=G3HRyt1yavdODLYSi/SComPoZmuOHeAdbzyv/duKLPo54hyuKpSEack+uholQWFQm8
+         lztowRw8NTnbQYsU7zv1aLncmtAM+N+dChkFpm2p2FpBgWNe+Nks0UT5k1ENf5CJEJXm
+         IJT29LlNs+MZ5BKDyW3OVXJptF3yWs3QvrhJ+nPqiIZx8XUgXHD1d0PRmyg1OBlxgkID
+         YGeg4AefaSF0mH6xbbq2bJx8ypVQ/+R6ORxccIY7IX59mG27arBU0En3kJKUaQgomSYr
+         fmaaGjDGE8d8etHpXMeeXJSZSJem7Wv29baJHzWGQE4P6rscvayxnXisyVpU0d2V3igN
+         d6/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718010180; x=1718614980;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8D1xRI+i6XbOFe1nGV/VEBCOouzsGHQh9VuVWaJeScE=;
+        b=ttBapTfVN3Al1uzAwTexpcHpein21b6HykLgB+xSl5QB45/+2Qf+6VELJhedUoR99U
+         IdOGQLqz1COBy0XBhEJ7sdP51JOfOgWMqchC022s5uzYkVzhPTv6KmFc021OtWFfv/zW
+         LUh5/By9W536L0ARCjFpySLzfi/w0ndtW1GBBeRXkwCxacUxfdwXqBK7Mk32f9tQxmEK
+         M1C0u8M8Em7u+Cw8+wVmVKCXBtwlqfG2xpSexdNoPFXqunmH56LElBHrytLlmfK5kfwz
+         Hn3CA11ul36rbDkOFaR/SRWQqxK73UpYJdA6eFXxtq+1izVuj6oxV916U/2PZCreNEZT
+         ZG3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXF4Re5EAkeTnTt6bRo3E+sxY2oWzeZjCbYWnvK5NJ0L8AcG6GvgHE2MefJbp1odnjpbUc8zubvA2HLwqiT8efLzWYuccOhfNUq3+gMyH4bEvo=
+X-Gm-Message-State: AOJu0YxtwnznOca2Cd7MR16Yw+gxiRoOpkpH6lqxYyCzF8Os3uqR22zX
+	kSN5nnLiEbafbyaRy5ZZOaRPlHc2ggmA2xQDb45Yr2kC5ogYue+CnqqROarC5dJRLMgpmaU92CX
+	/lUXwS5mhi3PJk9Li1DUbCsTrzTU=
+X-Google-Smtp-Source: AGHT+IENq9kzQ6aI4IYLBQaNTUgvTVHL49Rkm7/5OoofhYSBaeobfRJ13I1Ha1fqNTI1Enwb179CJpHpoqTO6gDCSS4=
+X-Received: by 2002:a67:fb49:0:b0:48c:3514:2f9f with SMTP id
+ ada2fe7eead31-48c351431cdmr6607984137.23.1718010180219; Mon, 10 Jun 2024
+ 02:03:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pwm: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-pwm@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
- kernel-janitors@vger.kernel.org
-References: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240607-md-drivers-pwm-v1-1-27237a2bec6a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.1715691257.git.jani.nikula@intel.com> <2fe0b4deb4f2ab255735cd6e1a657a17e0d45784.1715691257.git.jani.nikula@intel.com>
+In-Reply-To: <2fe0b4deb4f2ab255735cd6e1a657a17e0d45784.1715691257.git.jani.nikula@intel.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Mon, 10 Jun 2024 18:02:23 +0900
+Message-ID: <CAAQKjZNhUzyUO4rjPZGGrp=0MsTdQvT2ij3bVV91oDcYjk9EDg@mail.gmail.com>
+Subject: Re: [PATCH 04/11] drm/exynos: hdmi: convert to struct drm_edid
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 07/06/24 18:02, Jeff Johnson ha scritto:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-intel-lgm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-mediatek.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-visconti.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Hi, Jani Nikula,
+
+Thanks for your contribution and sorry for being late. Below are my comment=
+s.
+
+2024=EB=85=84 5=EC=9B=94 14=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 9:57, J=
+ani Nikula <jani.nikula@intel.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Prefer the struct drm_edid based functions for reading the EDID and
+> updating the connector.
+>
+> The functional change is that the CEC physical address gets invalidated
+> when the EDID could not be read.
+>
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+>
 > ---
-> This addresses all of the issues in driver/pwm
-> 
-> Let me know if you want any of the individual module changes
-> segregated into separate patches.
+>
+> Cc: Inki Dae <inki.dae@samsung.com>
+> Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
 > ---
->   drivers/pwm/pwm-imx1.c      | 1 +
->   drivers/pwm/pwm-imx27.c     | 1 +
->   drivers/pwm/pwm-intel-lgm.c | 1 +
->   drivers/pwm/pwm-mediatek.c  | 1 +
->   drivers/pwm/pwm-pxa.c       | 1 +
->   drivers/pwm/pwm-samsung.c   | 1 +
->   drivers/pwm/pwm-spear.c     | 1 +
->   drivers/pwm/pwm-visconti.c  | 1 +
->   8 files changed, 8 insertions(+)
-> 
+>  drivers/gpu/drm/exynos/exynos_hdmi.c | 23 +++++++++++++----------
+>  1 file changed, 13 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exyno=
+s/exynos_hdmi.c
+> index e968824a4c72..9033e8b66816 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -883,27 +883,30 @@ static const struct drm_connector_funcs hdmi_connec=
+tor_funcs =3D {
+>  static int hdmi_get_modes(struct drm_connector *connector)
+>  {
+>         struct hdmi_context *hdata =3D connector_to_hdmi(connector);
+> -       struct edid *edid;
+> +       const struct drm_display_info *info =3D &connector->display_info;
+> +       const struct drm_edid *drm_edid;
+>         int ret;
+>
+>         if (!hdata->ddc_adpt)
+>                 return 0;
+>
+> -       edid =3D drm_get_edid(connector, hdata->ddc_adpt);
+> -       if (!edid)
+> +       drm_edid =3D drm_edid_read_ddc(connector, hdata->ddc_adpt);
 
-..snip..
+drm_edid_read_ddc function can return NULL for an error. Could you add
+an exception handling?
 
-> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> index 19a87873ad60..0b5d68a90e83 100644
-> --- a/drivers/pwm/pwm-mediatek.c
-> +++ b/drivers/pwm/pwm-mediatek.c
-> @@ -395,4 +395,5 @@ static struct platform_driver pwm_mediatek_driver = {
->   module_platform_driver(pwm_mediatek_driver);
->   
->   MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
-> +MODULE_DESCRIPTION("MediaTek Pulse Width Modulator driver");
+> +
+> +       drm_edid_connector_update(connector, drm_edid);
 
-MediaTek SoCs have got two different PWM IPs, one of which is used exclusively
-for the Display PWM, and it is located in the DDP block.
+Ditto. drm_edid_connector_update function can return a negative value
+for an error.
 
-So, there are two PWM IPs in one SoC:
-  - A general purpose PWM IP
-  - A DDP PWM IP
+> +
+> +       cec_notifier_set_phys_addr(hdata->notifier, info->source_physical=
+_address);
+> +
+> +       if (!drm_edid)
+>                 return 0;
+>
+> -       hdata->dvi_mode =3D !connector->display_info.is_hdmi;
+> +       hdata->dvi_mode =3D !info->is_hdmi;
 
-This driver is for the general purpose PWM IP.. so, please, can we change this
-to "MediaTek general purpose Pulse Width Modulator driver"?
+Above change wouldn't be related to this patch.
 
-After which,
+>         DRM_DEV_DEBUG_KMS(hdata->dev, "%s : width[%d] x height[%d]\n",
+>                           (hdata->dvi_mode ? "dvi monitor" : "hdmi monito=
+r"),
+> -                         edid->width_cm, edid->height_cm);
+> -
+> -       drm_connector_update_edid_property(connector, edid);
+> -       cec_notifier_set_phys_addr_from_edid(hdata->notifier, edid);
+> +                         info->width_mm / 10, info->height_mm / 10);
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+The purpose of this patch would be to replace edid with drm_edid so
+how about updating the above change like below?
+    drm_edid->edid->width_cm, erm_edid->edid->height_cm);
 
->   MODULE_LICENSE("GPL v2");
+Thanks,
+Inki Dae
 
+>
+> -       ret =3D drm_add_edid_modes(connector, edid);
+> +       ret =3D drm_edid_connector_add_modes(connector);
+>
+> -       kfree(edid);
+> +       drm_edid_free(drm_edid);
+>
+>         return ret;
+>  }
+> --
+> 2.39.2
+>
+>
