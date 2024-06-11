@@ -1,110 +1,247 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AC01E49E;
-	Tue, 11 Jun 2024 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4004A2C694
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2024 16:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112014; cv=none; b=pUtqI6y+E48EaD1G5Uzzvt4nmzbsjAngf/pw/upWTTAcZcpkTJRfAjmxr96HYeuvgJ8cZViwRrbcJmu6r1zG6CDe/tTsN8yhBmUGtdLjcHXSIrLHUXdgxzQ5EB1gOA/CQXWvjkd2h5z1doet08k/BlxsgKQxgh6ULQPLm747S5Y=
+	t=1718122084; cv=none; b=DpK4Ub/dEF0OFz23hCc2Y9cNGb0cg3wtHSxQq56hQMMDwFuOP8bGu/D7LMpr12yrbo422sPyFRGUYHsw73sr1PjBYlmPJX1sjQyU+EG2ai6cD7KDDV1FnYowFCxQG66/3p0iOsV0OROxIAdqAvW9u4TVUQ13RSHT9KnXDPgzxZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112014; c=relaxed/simple;
-	bh=scYseydD4W86mLHD0NXDGiB61t/F+N3UuYzCRNJji34=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOnXIREqUEEe7jhq5cGh3J1b2fE5ax7DGSgbeUxYuztJBXatbbJicWR1pAfMRoO5jJW9Hzj9ThNUFWTkQqUAdGcCWeanehHSe8aHxl7oMadHz3VbbNfvQSyrRhv/Q2rNeBTN6Dv5Xyg1OOkWHr6vcfwaZh2drGFMNbGkQu2Sv9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bwJyvK17; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1718122084; c=relaxed/simple;
+	bh=OSxpykUCDOtz4FP2u13GeoHJw2xF6TOx7thtDiW8Q7M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=acB0CSAgUzVQ2SDPd9XdXsaSgR9MH3XZqOSW7jU6Q9XfPPHwpgR7f3BP3Nyh7o/0Nk+8j7xM7bW0bD+nMX3BNQ9y7MgAwnLqoHBVIq/UDYYXAFnZ5cHwEH3HB8mLihJVo7tnuSoG//8WTIplW+U5tlcnz6zDTkNZap7OpGmCnmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZOnkZBxI; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bwJyvK17"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718112014; x=1749648014;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=scYseydD4W86mLHD0NXDGiB61t/F+N3UuYzCRNJji34=;
-  b=bwJyvK17+Gd5T4QlDVTkPbhz8s/LSoxCHBTQucdXHzW7x7HVnE1AsLsc
-   XpYb3yYh/UmNZjZqO3eBSDOonroClXQzKIypPOlJ1KzqHinoQr/EoRQVf
-   08AhZzWEO62VGWfcriDlXS3jQLVUEDeB+R1fh0Nki7u0aqv+nMxayWQXS
-   vPCiC9ngeF1PsjGO+2toGvWKyyHliVwjh+G7SDC/ofORP+0QHMaCJ/VJb
-   wg03ZMhvyNUkVQknaBAeePyn5C2YkyRcDkON3zG1r7BT6PmH7TmvZ0du6
-   RB5gVb6Jn6beWWtcQq/0KAsZNzfQ0FVhxdhmZUBd58/1sZOv+vRS1i6nj
-   w==;
-X-CSE-ConnectionGUID: nc6+Zm4cRd+Y9El4S4bEUg==
-X-CSE-MsgGUID: Ti6hXySQROaAixZciQJPdg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11099"; a="14661980"
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="14661980"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:20:13 -0700
-X-CSE-ConnectionGUID: yvfEdXfwTOGfTOhvmakTUQ==
-X-CSE-MsgGUID: 1s2C84kRRhKD11GcAk+tbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,230,1712646000"; 
-   d="scan'208";a="40022762"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jun 2024 06:20:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sH1Py-0000000FXuW-0YY5;
-	Tue, 11 Jun 2024 16:20:06 +0300
-Date: Tue, 11 Jun 2024 16:20:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
-Message-ID: <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
- <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
- <8182279.JRmrKFJ9eK@diego>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZOnkZBxI"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57c68c3f8adso1625844a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Jun 2024 09:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718122080; x=1718726880; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Usr3iQr9P44DbTK5za8+K7ebuiDZp91g0I8Srd02vj4=;
+        b=ZOnkZBxIBrIizyaYP9WQLL+f5hWy1BcBFw39Orbly/61pDYIVrcf+kp8AOXhRfVp4O
+         hn1gZu30D8643v1XiKCgwD8kveLVlmNgZNwxbuC7QRr4/m2OCTDJBN6TV50DUQVkxWw4
+         WogAretDDshWN1PzWgE6X/4CgLa7a9m/rAy17s1+IDG8B+wnsfNSjCH1HcLZGzjLmc4v
+         ab7R83h/RAILIdajwk3gYlO+RqxjNDP5GWl1L7d7bpgeTR6Rl3kOpcATHDqkbBvhAF9N
+         f81zszQGsdBU1sFxrS2bAEnHCtlZzl1mvoJ+tJkl4EqLGT5QFzArwXRZh4UEsYekL00S
+         YjWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718122080; x=1718726880;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Usr3iQr9P44DbTK5za8+K7ebuiDZp91g0I8Srd02vj4=;
+        b=aWvu7imdC/RPKGAzzGN0PPc97zS7WERJomrI2MkrAnS25UESlz6hrHkiXrP0ZUzh2O
+         p87XNYN0RrOQxslv8u+xawR+racCQs2iCo8tupKAmtgf3Xq8cGWLWnvUuES54yaywY/0
+         6CrzRlLSRNLtW8TobHowUdleGKQn1mdH4Wf7kcMhTvWsrXrnWWe6gpN6wr3QvR4DH4vG
+         cSsFjNqd7glWBQIZgw7WbYGi9BlkoH0g7/m2ExgYmIjbi50qFSexxlgVzIzImEltHLyw
+         1DnjpX1IECllFREGSqZ1BiYKqOzzfMr0vY9Axq9M4Ah7PDs1WFVcGv/A2yGmcJDN145k
+         j9gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSluOgBp/dtfDhjw1dtcSsu5hQdLpCLN360O8PM80kgOnXG1Idcg6r1DQ9lZGh1IowJxFgxYxIZDBsg9U+FUomX73miD+ZJ7nTXkMvmNt5mU4=
+X-Gm-Message-State: AOJu0YyqNVLuVCL5fF0g6mkdk7Y/uPJyJCNclOPpk2VXDAYBSxuJQP6O
+	kUXd67knRtNdHAfuFs+zoTefugfEtq0dHpJGclPnOYBVHd5RePr26quXVVmN2jI=
+X-Google-Smtp-Source: AGHT+IEowbwwQtXxbAT06y7Gg7FQMQ53Bw7eHa7p2QqiWVbkjUjQbUvUYPw++jPdElsPq62dNgJEBA==
+X-Received: by 2002:a50:d5da:0:b0:57c:6d9a:914e with SMTP id 4fb4d7f45d1cf-57c6d9a9263mr9092206a12.30.1718122080489;
+        Tue, 11 Jun 2024 09:08:00 -0700 (PDT)
+Received: from puffmais.c.googlers.com (94.189.141.34.bc.googleusercontent.com. [34.141.189.94])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57c8492fb96sm3503740a12.11.2024.06.11.09.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 09:08:00 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Tue, 11 Jun 2024 17:07:59 +0100
+Subject: [PATCH] arm64: dts: exynos: gs101: reorder properties as per
+ guidelines
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8182279.JRmrKFJ9eK@diego>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Message-Id: <20240611-gs101-dts-cleanup-v1-1-877358cd6536@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAF52aGYC/x2MQQqAIBAAvxJ7TlDJpL4SHUS3WggTtyII/550G
+ ZjDzAuMmZBhbF7IeBPTEauotgG/ubiioFAdtNSdNFKJlVVlOFn4HV28kpDaLn2waui9gdqljAs
+ 9/3OaS/kABH6ev2MAAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Fri, Jun 07, 2024 at 10:13:04AM +0200, Heiko St�bner wrote:
-> Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
+* 'interrupts' & 'cpus' & 'clocks' are standard/common properties as
+  per the Devicetree Sources (DTS) Coding Style and therefore should be
+  sorted alphabetically within the standard/common section
+* vendor properties should be last
+* reg / ranges should be 2nd/3rd (after compatible)
+* status should be last
 
-...
+Do so.
 
-> > -		cpuclk->rate_table = kmemdup(rates,
-> > -					     sizeof(*rates) * nrates,
-> > -					     GFP_KERNEL);
-> > +		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
-> > +						   GFP_KERNEL);
-> 
-> are you sure the param order is correct?
-> 
-> According to [0], it's (src, element_size, count, gfp), while above
-> (and below) element_size and count seems switched in the
-> kmemdup_array calls.
+Note: I've left the cpus{} node untouched to keep the grouping of
+relatedd properties.
 
-I'm glad you asked. The parameter order is going to be fixed [1].
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  2 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi       | 22 +++++++++++-----------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/util.c#n149
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 5e8ffe065081..b10bde2ec716 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -131,9 +131,9 @@ &ufs_0_phy {
+ };
+ 
+ &usbdrd31 {
+-	status = "okay";
+ 	vdd10-supply = <&reg_placeholder>;
+ 	vdd33-supply = <&reg_placeholder>;
++	status = "okay";
+ };
+ 
+ &usbdrd31_dwc3 {
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index a66e996666b8..eadb8822e6d4 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -213,9 +213,9 @@ pmu-2 {
+ 
+ 	pmu-3 {
+ 		compatible = "arm,dsu-pmu";
+-		interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
+ 		cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
+ 		       <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
++		interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH 0>;
+ 	};
+ 
+ 	psci {
+@@ -288,6 +288,8 @@ timer@10050000 {
+ 			compatible = "google,gs101-mct",
+ 				     "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
++			clocks = <&ext_24_5m>, <&cmu_misc CLK_GOUT_MISC_MCT_PCLK>;
++			clock-names = "fin_pll", "mct";
+ 			interrupts = <GIC_SPI 753 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 754 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 755 IRQ_TYPE_LEVEL_HIGH 0>,
+@@ -300,17 +302,15 @@ timer@10050000 {
+ 				     <GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 763 IRQ_TYPE_LEVEL_HIGH 0>,
+ 				     <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH 0>;
+-			clocks = <&ext_24_5m>, <&cmu_misc CLK_GOUT_MISC_MCT_PCLK>;
+-			clock-names = "fin_pll", "mct";
+ 		};
+ 
+ 		watchdog_cl0: watchdog@10060000 {
+ 			compatible = "google,gs101-wdt";
+ 			reg = <0x10060000 0x100>;
+-			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			clocks = <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER0_PCLK>,
+ 				 <&ext_24_5m>;
+ 			clock-names = "watchdog", "watchdog_src";
++			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			samsung,cluster-index = <0>;
+ 			status = "disabled";
+@@ -319,10 +319,10 @@ watchdog_cl0: watchdog@10060000 {
+ 		watchdog_cl1: watchdog@10070000 {
+ 			compatible = "google,gs101-wdt";
+ 			reg = <0x10070000 0x100>;
+-			interrupts = <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			clocks = <&cmu_misc CLK_GOUT_MISC_WDT_CLUSTER1_PCLK>,
+ 				 <&ext_24_5m>;
+ 			clock-names = "watchdog", "watchdog_src";
++			interrupts = <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			samsung,cluster-index = <1>;
+ 			status = "disabled";
+@@ -776,12 +776,12 @@ hsi2c_8: i2c@10970000 {
+ 				compatible = "google,gs101-hsi2c",
+ 					     "samsung,exynosautov9-hsi2c";
+ 				reg = <0x10970000 0xc0>;
+-				interrupts = <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_IPCLK_7>,
+ 					 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP0_PCLK_7>;
+ 				clock-names = "hsi2c", "hsi2c_pclk";
++				interrupts = <GIC_SPI 642 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				pinctrl-0 = <&hsi2c8_bus>;
+ 				pinctrl-names = "default";
+ 				status = "disabled";
+@@ -831,10 +831,10 @@ usi_uart: usi@10a000c0 {
+ 			serial_0: serial@10a00000 {
+ 				compatible = "google,gs101-uart";
+ 				reg = <0x10a00000 0xc0>;
+-				interrupts = <GIC_SPI 634 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				clocks = <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0>,
+ 					 <&cmu_peric0 CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0>;
+ 				clock-names = "uart", "clk_uart_baud0";
++				interrupts = <GIC_SPI 634 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				pinctrl-0 = <&uart0_bus>;
+ 				pinctrl-names = "default";
+ 				samsung,uart-fifosize = <256>;
+@@ -1157,12 +1157,12 @@ hsi2c_12: i2c@10d50000 {
+ 				compatible = "google,gs101-hsi2c",
+ 					     "samsung,exynosautov9-hsi2c";
+ 				reg = <0x10d50000 0xc0>;
+-				interrupts = <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_IPCLK_5>,
+ 					 <&cmu_peric1 CLK_GOUT_PERIC1_PERIC1_TOP0_PCLK_5>;
+ 				clock-names = "hsi2c", "hsi2c_pclk";
++				interrupts = <GIC_SPI 655 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				pinctrl-0 = <&hsi2c12_bus>;
+ 				pinctrl-names = "default";
+ 				status = "disabled";
+@@ -1277,13 +1277,14 @@ usbdrd31_phy: phy@11100000 {
+ 				 <&cmu_hsi0 CLK_GOUT_HSI0_UASC_HSI0_CTRL_PCLK>,
+ 				 <&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_I_USBDPPHY_SCL_APB_PCLK>;
+ 			clock-names = "phy", "ref", "ctrl_aclk", "ctrl_pclk", "scl_pclk";
+-			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			#phy-cells = <1>;
++			samsung,pmu-syscon = <&pmu_system_controller>;
+ 			status = "disabled";
+ 		};
+ 
+ 		usbdrd31: usb@11110000 {
+ 			compatible = "google,gs101-dwusb3";
++			ranges = <0x0 0x11110000 0x10000>;
+ 			clocks = <&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_BUS_CLK_EARLY>,
+ 				<&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_I_USB31DRD_SUSPEND_CLK_26>,
+ 				<&cmu_hsi0 CLK_GOUT_HSI0_UASC_HSI0_LINK_ACLK>,
+@@ -1291,14 +1292,13 @@ usbdrd31: usb@11110000 {
+ 			clock-names = "bus_early", "susp_clk", "link_aclk", "link_pclk";
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			ranges = <0x0 0x11110000 0x10000>;
+ 			status = "disabled";
+ 
+ 			usbdrd31_dwc3: usb@0 {
+ 				compatible = "snps,dwc3";
++				reg = <0x0 0x10000>;
+ 				clocks = <&cmu_hsi0 CLK_GOUT_HSI0_USB31DRD_I_USB31DRD_REF_CLK_40>;
+ 				clock-names = "ref";
+-				reg = <0x0 0x10000>;
+ 				interrupts = <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				phys = <&usbdrd31_phy 0>, <&usbdrd31_phy 1>;
+ 				phy-names = "usb2-phy", "usb3-phy";
 
-[1]: 0ee14725471c ("mm/util: Swap kmemdup_array() arguments")
+---
+base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+change-id: 20240501-gs101-dts-cleanup-027f6d7196c5
 
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+André Draszik <andre.draszik@linaro.org>
 
