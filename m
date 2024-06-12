@@ -1,67 +1,67 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824FB16C6B1
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 08:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE5A16D4E3
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 08:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179596; cv=none; b=DztG4zz/1wrWUDEkQIfl7INHFWqX+Vm8fEjnVgMFo/1jUi7LmL1fGhLlPg20bxCVTu/0h9pFg4zR0+sEYzo2HGD1efYKagksd5TUSGJ0519VRblWWAw1dK6i8IdFyaeqU5uL2hiGM+M7w0koEy6jpuDYdK1ti+BxIi6Ga5V+PkQ=
+	t=1718182045; cv=none; b=nV51TnsEJFtEznXx+HkTJE/52d47PfpckNw7CQLH+fVEnXais/DBMWQiRLPNOR3IPPE6ESRl6SngV8XdiN3a9MujocW/WSVNpk8swRrmSnug8hgS37k6zbIe3/nzm7VuGUIocC1NRmtd785jWgoZiQjPSVOazlZk8ZECRa/RPqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179596; c=relaxed/simple;
-	bh=Hp+wgixUjXcH+0cXMe0p+8KZqim/yUUJ2Z/8XZttkQk=;
+	s=arc-20240116; t=1718182045; c=relaxed/simple;
+	bh=thEY5o/ShqkcdWv9f38FwQGucHRsZQowS1ike3Px+EU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XYPjzLUfDTq66QCvvIAv4SU3x5UCYMAUCumfVt8yU/TxkUVAa0u5n64EEJjbtiG88qSHZ1uC2YE3cD3cOnrE3iwhhIyfbxA/AAsK6CjqPKZk8LcE0M9vQ2N+8T6vs5kem2b0KerjzQdHgofj4ULIy3qq5Y+7yyVgufn4g67gXvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LQ0Jr4zL; arc=none smtp.client-ip=209.85.208.51
+	 To:Cc:Content-Type; b=QvoyrbLgXd2Z1PnAWO1+wDxZvYvaN1nY845qgSxsqAIhEQBVWl3tJl/QZDywO4ZyQqz+DVnXut9rTjCa9gWuGnqyVEPmGHkqeGPOdttbDKVijvfanFVty8I8yTsaLEHUc4LTFMhIezZ5LGorCL/qidepNu0eXj4cbBjKk/wjxK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H22nylHd; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQ0Jr4zL"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57c7681ccf3so4334467a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 01:06:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H22nylHd"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-35f090093d8so3748851f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 01:47:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718179592; x=1718784392; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718182042; x=1718786842; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O/NUPbIh6KH2M0kCYkMVAfLrTd49vfN01minAiZapEM=;
-        b=LQ0Jr4zLx38ZT+upm+lHPYzWZZdxgqJ5gk3+Bx7G6VkZg2vzu7dN3EJ+1/BupHJnGy
-         cIu6W3W+dqDLffH8VH3E3DO74tccPS3CVuI9stbeahAfxfSMZPtPgXdzDJ6aA0d5c4p5
-         /6T2V0VVu2xzLPXe+vPvWNfKJ3ZZtj/wXyzSXUfrQ2bQl6Ry2o34ZkBFm54r/2SrcKNZ
-         C856y/hINUeX2fJIAhYB8E6rZADpjInWPAOcRdT8QKc1Ll5g9wfVkzikbmZmZNPmRyEV
-         dZNAkg3W0N/dt39zZahBfUUQehV87P6PO5qKXYRiH572V8Qo2pUTGaiKcBUN2VISftPB
-         kqRQ==
+        bh=hpYxsqepRZpn/4oxNpupSBAJdfrKtBfgkfp6t0rsS5g=;
+        b=H22nylHd2+1k7I9MAfh0w+tRHiz7xiNXxRCFJiVuORvYH5SFjAoHkjdngaH7B5yERn
+         cQmgOoN31+7IV4df4Ef35rbNFy4aUOxZB7MZCWoLqHh9Pq1kAKfA0jHueSGzI9U36Sfi
+         THpzPHn4Ns8B8d6jmpkKSzdPEWEuZTjDy+8cUmxEDodI0IJxXDW7nRuxjtINN35d/m6o
+         +KDIklvLdjn5lg9YIhdtKcGSFKZZtQv1kJDUDKjJL5FN8jqfXvJuvJsLSiFJ4Si5duyf
+         hHBX8nhmet8jJSYmGpZjgkZ6j6N3da83ghPbiKN2u3p67Fuh79C8r8g55ZXU2BkkyNFO
+         ILKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718179592; x=1718784392;
+        d=1e100.net; s=20230601; t=1718182042; x=1718786842;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O/NUPbIh6KH2M0kCYkMVAfLrTd49vfN01minAiZapEM=;
-        b=oJqEiwaLymDGvKL+0OVMoC2I2YrsYY59LCVZpQ/EmTcIsjLVcR2Fe4q1IFCgPHY4hy
-         6bzoHyqtvBbALQ92V2nu/TrBUcULuzgy3qFq5HjrSeS8Vh1LqoGmSIVTa2psHayrvNCo
-         ddB7mtBSWEP7LYpytnww6S3hi4MjeD+iKbvLlxhzk/pPHU6eNJm/6NOj1GRIlvwbpSC+
-         g4AMLh8RMs/lxb0Fg7axz9+bck/dbZQUeFWH/2Py3e5k78RYIxdn+z8QfFfPN8SU2Cj0
-         ZDUDH7/t3H8KMdkNy9rL/idBmd35qzrum9/oMqZorH6qVUqNY7qKNtdZjjy110NeZZVz
-         qlag==
-X-Forwarded-Encrypted: i=1; AJvYcCVkmgpO/C8TEK9ZWXqKKI/4kelTyfmwUunnRyuV+vtkWLuhErlmxtN4jTNpWsrlcqeEvncQZ9PKfEQAgEk6SHs+Srnnfq8jqZbsSXsBs7ygmV8=
-X-Gm-Message-State: AOJu0YywoC/eofAtysU3LasmHrXlXnm/paiF/bDIU3Xmb7vZquHhFYq1
-	bpvLcrycbp4viis869iMK/Gs/flz/g3jR3fv5DmUI0mucC7X6ggE815i+2sA1WxJlJ24zL9njm6
-	H9G2LPSQZoI6SPXlOYFsTDY2XDI9CIpED9TB5eg==
-X-Google-Smtp-Source: AGHT+IH6OoZV1gKE9M3AfTYykV/eXXOCa0e/szV5LwhuD7ADmm+ab2ExPKHa0SiqR2zEvoqdUE6xd6qSmfp4NPHk93k=
-X-Received: by 2002:a50:a419:0:b0:57c:7dee:52e4 with SMTP id
- 4fb4d7f45d1cf-57ca9764b69mr562078a12.25.1718179591338; Wed, 12 Jun 2024
- 01:06:31 -0700 (PDT)
+        bh=hpYxsqepRZpn/4oxNpupSBAJdfrKtBfgkfp6t0rsS5g=;
+        b=vFYdgz5dZSbGNQfxq7hA/NYkYFS42oUKoHdeK26GnK9kxBRPDfYXv3cCpvSBfiLt65
+         rDFsNjzUosfT7N6GJS9FVq0UXgGFxjYhn1+TM7ELHCmGbCiGhgeYcY8AohVWgCjzU4PK
+         M+gzPT7n+rnKGdLgUvO1hRXA8JbeYJk3dBp2Hb1AguE5jn7aOBR2NCKncws/OlFRxkDg
+         yZCVyqlU0uMi7saMB9e1BUkqNry4bHDjLU+skqG8mazTigLSbUdnK+01fue11eW1N2PX
+         OklppwiZK1jTpbi4XGO1+h/Ihjsa1pDf86w81nOs1/Sdd52plGi3MIlzc9CDThySK/pM
+         TOpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp2tEguMi2MsGOkNeq8Y/TgpVTaUY6hiemPsySRd0c/z/6Gz6OSEakasFyzFEzibuBGj4wjBbPIKtARVKh9d8bp6qPY2rKB0kB9Cmk0GFuAZo=
+X-Gm-Message-State: AOJu0YzDd7RGyynHm74vWy1KWBGlQKJeOc7QRwELX/MvdXQ6bHKsOATh
+	Onn6s+roRlABgn1EtnyWIHYvCI7VU7cBQQkZRvVUpQ3YG1fHViJ7y/JFy2K2FyDxSpzaOCAo01K
+	VPr/AGycNNcJQyLqrpbyEhl5l3zibTcS+mg9RB+7PBUA5TmoN1W4=
+X-Google-Smtp-Source: AGHT+IGKboPzIxB9BeyAEWGYtdD8T8bNkpToXsBx4DoZghmZUY5/VvCBH45JS7ImHQeNexbYdraUIv+ahM0YJb35NXg=
+X-Received: by 2002:a50:96cf:0:b0:57c:4867:6738 with SMTP id
+ 4fb4d7f45d1cf-57ca973f532mr916036a12.2.1718182021586; Wed, 12 Jun 2024
+ 01:47:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org> <20240507-samsung-usb-phy-fixes-v1-2-4ccba5afa7cc@linaro.org>
-In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-2-4ccba5afa7cc@linaro.org>
+References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org> <20240507-samsung-usb-phy-fixes-v1-3-4ccba5afa7cc@linaro.org>
+In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-3-4ccba5afa7cc@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 12 Jun 2024 09:06:19 +0100
-Message-ID: <CADrjBPqRq_T-bz3SXvAzYobH8R9DaZyuikdD=TzDz7PZghJVQA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] phy: exynos5-usbdrd: convert udelay() to fsleep()
+Date: Wed, 12 Jun 2024 09:46:49 +0100
+Message-ID: <CADrjBPqAEbbJ7PKgbUSWCP_AgLcz6uxvKsvc9VzOSD9jXK+scg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] phy: exynos5-usbdrd: make phy_isol() take a bool for clarity
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
 	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -78,24 +78,23 @@ Hi Andr=C3=A9,
 On Tue, 7 May 2024 at 15:14, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
 wrote:
 >
-> The timers-howto recommends using usleep_range() and friends anytime
-> waiting for >=3D ~10us is required. Doing so can help the timer subsystem
-> a lot to coalesce wakeups.
+> on / not on is just a boolean flag and is a bit misleading as currently
+> on=3D=3D1 means to turn off the power, and on=3D=3D0 to turn power on.
 >
-> Additionally, fsleep() exists as a convenient wrapper so we do not have
-> to think about which exact sleeping function is required in which case.
+> Rename the flag and make it a bool to avoid confusion of future readers
+> of this code. No functional change.
 >
-> Convert all udelay() calls in this driver to use fsleep() to follow the
-> recommendataion.
-
-Nit: typo in commit message  recommendataion -> recommendation
-
+> While at it, fix a whitespace issue in nearby comment.
+>
+> No functional change.
 >
 > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
 
-Aside from that:
-
 Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+
+regards,
+
+Peter
 
 [..]
