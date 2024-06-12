@@ -1,67 +1,67 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C516D4C9
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 08:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824FB16C6B1
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 08:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718179394; cv=none; b=pxsm7MY4CMd3eV3aAPrp/1f1Xn0R0O/5sD5fVniGHx02sUyRf/DPK7/scYK66BcRAiNYNqyw821pFUhkrrlYRR5oR0zBxk1ALPeDti2FqEBii8blA/JdUg1qFHwVk1P1c69N64VJHBRwY7JRpDKCZLVykYa8ZoqR3HyzU7pHeZ8=
+	t=1718179596; cv=none; b=DztG4zz/1wrWUDEkQIfl7INHFWqX+Vm8fEjnVgMFo/1jUi7LmL1fGhLlPg20bxCVTu/0h9pFg4zR0+sEYzo2HGD1efYKagksd5TUSGJ0519VRblWWAw1dK6i8IdFyaeqU5uL2hiGM+M7w0koEy6jpuDYdK1ti+BxIi6Ga5V+PkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718179394; c=relaxed/simple;
-	bh=w4GPNplcnOrxjX9LxJ2UyHSylkkAakamu/YIwBqrUQA=;
+	s=arc-20240116; t=1718179596; c=relaxed/simple;
+	bh=Hp+wgixUjXcH+0cXMe0p+8KZqim/yUUJ2Z/8XZttkQk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GMb+z9M3IsZFVVCPQuofJqHUcHjJvnUzhpq02r2zmMNl4won4ChooyuUlJlsCLofu9u3sSrljho+1Qd00jkz2qpeyEB0odv51kr4ZdlZ4xRaI5LyE4PNyqvxmjfSFlDZj5YgWouHDHRKt5lVeRRnqKJoCo9DwcmB1HBj+ujnOT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IOpl2w/R; arc=none smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=XYPjzLUfDTq66QCvvIAv4SU3x5UCYMAUCumfVt8yU/TxkUVAa0u5n64EEJjbtiG88qSHZ1uC2YE3cD3cOnrE3iwhhIyfbxA/AAsK6CjqPKZk8LcE0M9vQ2N+8T6vs5kem2b0KerjzQdHgofj4ULIy3qq5Y+7yyVgufn4g67gXvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LQ0Jr4zL; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IOpl2w/R"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57c6994e2f1so2727073a12.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 01:03:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQ0Jr4zL"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57c7681ccf3so4334467a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2024 01:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718179391; x=1718784191; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718179592; x=1718784392; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yEEQoekQRon+t3gUDKwXNDGB0vL1Zgsl9jkaeNoSvtw=;
-        b=IOpl2w/RoVlMxlbW8zBKCki3huobe99tALVgbjtCQ4NZ79zHDscf2gCBwWf029dAo+
-         NvPDM+oqH3L8u3VKm4VBL1sntqkaPQCw19gmgTxrMHpC/V8qcql5YWRCy9H2zI71KgL6
-         Po8hM5Tr6hVBg6us22tjEYHNVX+ttx2D7f5NLoRLBxRyBQWaVNBvB1WlhagtDMUOGj8K
-         lecO4evdp75LIX5hAROm/ppUF66Gax+p5hThA1glv0bc6+a78jQFfOMzGCoyaSajIllk
-         Me1DpeH22QIJUXbxqs+ACtbWLMYwPdNUO/b77aNcFWJLP/2cZlldCzd+mKPYUzuR8SE3
-         3P7w==
+        bh=O/NUPbIh6KH2M0kCYkMVAfLrTd49vfN01minAiZapEM=;
+        b=LQ0Jr4zLx38ZT+upm+lHPYzWZZdxgqJ5gk3+Bx7G6VkZg2vzu7dN3EJ+1/BupHJnGy
+         cIu6W3W+dqDLffH8VH3E3DO74tccPS3CVuI9stbeahAfxfSMZPtPgXdzDJ6aA0d5c4p5
+         /6T2V0VVu2xzLPXe+vPvWNfKJ3ZZtj/wXyzSXUfrQ2bQl6Ry2o34ZkBFm54r/2SrcKNZ
+         C856y/hINUeX2fJIAhYB8E6rZADpjInWPAOcRdT8QKc1Ll5g9wfVkzikbmZmZNPmRyEV
+         dZNAkg3W0N/dt39zZahBfUUQehV87P6PO5qKXYRiH572V8Qo2pUTGaiKcBUN2VISftPB
+         kqRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718179391; x=1718784191;
+        d=1e100.net; s=20230601; t=1718179592; x=1718784392;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yEEQoekQRon+t3gUDKwXNDGB0vL1Zgsl9jkaeNoSvtw=;
-        b=eYqW05Bm0QHpQAnMXMR+J+Kb/sm7hkeqmnFt75tot6nshkoHugNlvoRZYbOyvTw6ia
-         pk8aFCwqtkdS8jOXp03Zk6waJuC8QJQ7DFAjDAxzsMBZcIo8jgiuNRJ/mvgnEhvCIdwv
-         5QPivv/WZnweVKv98F2OVbnCK8TGCxIKuSiaRHyWdo2GSC8RSjHLJ+3o9pBvCcw6lSMp
-         oFsEG2R3YziXuKv3BZfZaoxGwLhIhd6Mt16JDtIErjtd6OkFkY7AcSVXObHh3AA/2uGP
-         TjJmUEb3GQujh72EKShGm0bZFOn0n4KUd/KH7RSQpzRcXDGdU8bpL3bJbiVqDK+b0Dgi
-         ibdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYkcGg5RxxjyF4KZdz14DX+LGn4Ap4ccglycIxzp4DfgNlGuWM5BRggS9+LHmFYNsC8FGcbM3DliqH2iysbRyiyXRoQ8FiTEOGSa2p3KNhsdA=
-X-Gm-Message-State: AOJu0YzNcDoj+Qdzjf0sLGShtGOaNOENsmFvq2EShClsB+cgPVXJdHUv
-	N+m2iuV55z9BmOBIRMm0rQXDxqHMGSdrtdWh/ggcRmCapgZQpVrQ76XEKbqr0dIdkAtdwZ2o18m
-	Ng45LHvcLLgzJE6JRtQ1eCPNG+F9NPLCgXw4St5705btLw0jiYIg=
-X-Google-Smtp-Source: AGHT+IG3DkdnwCX7yWoeLqpWN1gPYZHoua+wApHjAc3xsU9wEXw7nl/lYk3pClx+tXAPMxhOztwxQVIAAQzvweUAOg8=
-X-Received: by 2002:a50:9e2e:0:b0:57c:ad96:14c8 with SMTP id
- 4fb4d7f45d1cf-57cad961876mr323057a12.23.1718179390979; Wed, 12 Jun 2024
- 01:03:10 -0700 (PDT)
+        bh=O/NUPbIh6KH2M0kCYkMVAfLrTd49vfN01minAiZapEM=;
+        b=oJqEiwaLymDGvKL+0OVMoC2I2YrsYY59LCVZpQ/EmTcIsjLVcR2Fe4q1IFCgPHY4hy
+         6bzoHyqtvBbALQ92V2nu/TrBUcULuzgy3qFq5HjrSeS8Vh1LqoGmSIVTa2psHayrvNCo
+         ddB7mtBSWEP7LYpytnww6S3hi4MjeD+iKbvLlxhzk/pPHU6eNJm/6NOj1GRIlvwbpSC+
+         g4AMLh8RMs/lxb0Fg7axz9+bck/dbZQUeFWH/2Py3e5k78RYIxdn+z8QfFfPN8SU2Cj0
+         ZDUDH7/t3H8KMdkNy9rL/idBmd35qzrum9/oMqZorH6qVUqNY7qKNtdZjjy110NeZZVz
+         qlag==
+X-Forwarded-Encrypted: i=1; AJvYcCVkmgpO/C8TEK9ZWXqKKI/4kelTyfmwUunnRyuV+vtkWLuhErlmxtN4jTNpWsrlcqeEvncQZ9PKfEQAgEk6SHs+Srnnfq8jqZbsSXsBs7ygmV8=
+X-Gm-Message-State: AOJu0YywoC/eofAtysU3LasmHrXlXnm/paiF/bDIU3Xmb7vZquHhFYq1
+	bpvLcrycbp4viis869iMK/Gs/flz/g3jR3fv5DmUI0mucC7X6ggE815i+2sA1WxJlJ24zL9njm6
+	H9G2LPSQZoI6SPXlOYFsTDY2XDI9CIpED9TB5eg==
+X-Google-Smtp-Source: AGHT+IH6OoZV1gKE9M3AfTYykV/eXXOCa0e/szV5LwhuD7ADmm+ab2ExPKHa0SiqR2zEvoqdUE6xd6qSmfp4NPHk93k=
+X-Received: by 2002:a50:a419:0:b0:57c:7dee:52e4 with SMTP id
+ 4fb4d7f45d1cf-57ca9764b69mr562078a12.25.1718179591338; Wed, 12 Jun 2024
+ 01:06:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org> <20240507-samsung-usb-phy-fixes-v1-1-4ccba5afa7cc@linaro.org>
-In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-1-4ccba5afa7cc@linaro.org>
+References: <20240507-samsung-usb-phy-fixes-v1-0-4ccba5afa7cc@linaro.org> <20240507-samsung-usb-phy-fixes-v1-2-4ccba5afa7cc@linaro.org>
+In-Reply-To: <20240507-samsung-usb-phy-fixes-v1-2-4ccba5afa7cc@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 12 Jun 2024 09:02:57 +0100
-Message-ID: <CADrjBPocKu4iSLBu12RdLVo7O3FujF-346aYBOWCn3JutyjX9Q@mail.gmail.com>
-Subject: Re: [PATCH 1/5] phy: exynos5-usbdrd: uniform order of register bit macros
+Date: Wed, 12 Jun 2024 09:06:19 +0100
+Message-ID: <CADrjBPqRq_T-bz3SXvAzYobH8R9DaZyuikdD=TzDz7PZghJVQA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] phy: exynos5-usbdrd: convert udelay() to fsleep()
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
 	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -78,25 +78,24 @@ Hi Andr=C3=A9,
 On Tue, 7 May 2024 at 15:14, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
 wrote:
 >
-> Most of the macros are ordered high -> low, but there are some
-> outliers.
+> The timers-howto recommends using usleep_range() and friends anytime
+> waiting for >=3D ~10us is required. Doing so can help the timer subsystem
+> a lot to coalesce wakeups.
 >
-> Order them all uniformly from high to low. This will allow adding
-> additional register (field) definitions in a consistent way.
+> Additionally, fsleep() exists as a convenient wrapper so we do not have
+> to think about which exact sleeping function is required in which case.
 >
-> While at it, also remove some extra empty lines to group register bit
-> field definitions together with the relevant register. This makes the
-> registers easier to distinguish visually.
->
-> No functional change.
+> Convert all udelay() calls in this driver to use fsleep() to follow the
+> recommendataion.
+
+Nit: typo in commit message  recommendataion -> recommendation
+
 >
 > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
 
+Aside from that:
+
 Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
-
-regards,
-
-Peter
 
 [..]
