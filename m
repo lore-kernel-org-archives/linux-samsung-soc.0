@@ -1,183 +1,162 @@
-Received: from flow6-smtp.messagingengine.com (flow6-smtp.messagingengine.com [103.168.172.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615B8199247;
-	Fri, 14 Jun 2024 12:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2936FB1
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 14:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718369652; cv=none; b=tWAyftH6uu4grbUbbr2p7vCgoEFsvtHY1DuJe2LQ6UdCgjaXb5/oqy0cloUydqB7PoRqBCWCGN2TIYSJNbXImRSy9oYY7KD7SFU90DNGShJ0C1c9Empw9Q3jOtyPpRus5p8jML80x2YWzKoCSIbbJMAyGUYO5dPvX3gTgRO7FuQ=
+	t=1718373868; cv=none; b=osJoZwf2mTIGjneM3pTG6gNpGP7CZULTflotseEYIe2CYIci6BmW9v9Itzybpu4VSClkzPYYeV2gA4UjSvtbjcntnC4eyjxpfSSCT+K3KKW/Q1lDYFoAlhw+Z+HnhPGQ7j1QoraqWWoMLJQi/ZrS4K+MJyv/c2x1TF2s885Y3yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718369652; c=relaxed/simple;
-	bh=8S17m0g/GRM52gnnBJ2eIixlqDKuO32wjIb3d+7vdnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5+f3JV2KMF+U8c96AuU6tGYV3m8xgl35LMMC/utfE927oT5PAIdQtGAG7im7ztvv3W8p/W84um34Vd5jLOpweW7B6RWfGnbqef2Qcwz0vhOCqbIYyV/JUV1rt6fW9hWHgyJzdX7fFkWBXg1CuuUjOcB301bBYTCNF6xC2DFJcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=e/sNUWPz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fkAY6ikA; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1718373868; c=relaxed/simple;
+	bh=f1I2izaEwdrTKDYFgUwTYTY2ennzgeG3p5+KWbrZfU0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QoOo6RFxxLxLqF2MBcy00+jfAkIl53nctInhQggeE7x3I/CblxdbSWBndDFQphKB84XWsJ5P6kl+iuK6eMJn1HtRRSf7UFtG4Tvx6DcrJwYcN8TSb6o1XNuUZIQ28cBKwfVFWJdIOWt2+KglXdGbzb8YjJKlK1CXyVCxkjamLgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VRU7cHE8; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="e/sNUWPz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fkAY6ikA"
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 448CD20036F;
-	Fri, 14 Jun 2024 08:54:07 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 14 Jun 2024 08:54:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718369647;
-	 x=1718376847; bh=kzkq65OIpuCs3ZdNQe9hETg6fCuxaq6pJOhxp3W4MzU=; b=
-	e/sNUWPzt41ZDlEJ0rbaHgsDAM6/Psb18uSYQwdiX0fvKqE47ANccOOWPj1FonOQ
-	N3piZ2RgrxAxEjJLHD/Tjg484eOsFcuuVq5Lcr70+sIdjPfPrUAW50u5y3sYMYwt
-	Trz5xVZ4smlNoFkAnnSsSDyXF5f/w9sxJ/aBOlaFkAnTbivmMXznJTEcaPN5esst
-	zyZ/mgTiM4RmKRGUwkRbrpD6HKOXu8Yttwi2uS/vWjJZ9+UfahWXIda2sjBXSeur
-	U0rI/xNHRV/jZzvLlSDHtRPC5Gz7cllMYqgOp6vzbyaXA0palhobbG5bGWRylVxS
-	oDrqU1xuVwRQ6gq/YrP6Sg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718369647; x=
-	1718376847; bh=kzkq65OIpuCs3ZdNQe9hETg6fCuxaq6pJOhxp3W4MzU=; b=f
-	kAY6ikA50Nntgl2wgpRJZ9Ew6563PdZDxBLtifDJkORDnS00MMuwwyv9AsspdeUg
-	/HTOJFa71y+TfuEXFBHZaBOJPq0OyU1UrM4fJxxdMVCWfGMPFaxLdgJ2+0SjQ2/q
-	ZfO6pl1ptKLd43UMIp4LQA4sXKJv2FsHukJsNNgMErq1IwjgucZOmMiZE5f3QKHB
-	ZTyXQEVhj+6eVMMLiVIoEMnKsg2LYlP5j8ffsbsSXJNToBxvOCxvch6Gr1PemQdD
-	fL5hHJ2eGvyzxBLi5FrMgq0SawjdEbzWq+ultnPkAFTXQWqoJBF2gvN7ScwuaDKh
-	IjX5kLwAzcFwByEYbetyQ==
-X-ME-Sender: <xms:aj1sZm0YAf0zlUT593horrfn2ipIf6acHvfVQfKnkssTGEoa8Om9BA>
-    <xme:aj1sZpFw2wf-iUC0IxtB5DWqqMMCnfD5VwYNAWttsFCic6kzrQpS8fxftg6pDABVX
-    gMRKaPwKQJK1IO1REM>
-X-ME-Received: <xmr:aj1sZu6LnfoPNVf1i1OoOxnLt75iGeJAKkFzz6DKNOFoFPlHciJ07OnW_Ab6ov50yRtvLYs0artd5qzgETjo3Il5sf7KbpI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeduledgheeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhk
-    lhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrgh
-    hnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeef
-    heetheekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgr
-    ghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:aj1sZn3UF-l6IfHHyHpli8od0E7EfKnMJHiNOP4rjDLANiOlZP9VuA>
-    <xmx:aj1sZpGLjS1pUc8dzhTkicRu4rXw6-BHkx_QDjbMnwIN4RldTwsGMQ>
-    <xmx:aj1sZg9PO3n30TtGNYeLy_c9dRoyMDheA8jU9Iue3Y71RDgWVAyCcg>
-    <xmx:aj1sZum0uT3bn8S6g2d5fDuzN3HqD3y4vwBY3flT8LVQkY6RHWszlw>
-    <xmx:bz1sZrA4KYFKicBY-9XPwZyWW4hVJJyQ9KBkWa4ddbDjdQZY1aBRj8Ry>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 14 Jun 2024 08:54:01 -0400 (EDT)
-Date: Fri, 14 Jun 2024 14:53:59 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Guillaume La Roque <glaroque@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,	Anson Huang <Anson.Huang@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Biju Das <biju.das.jz@bp.renesas.com>,	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
-	Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	zhanghongchen <zhanghongchen@loongson.cn>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,	linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org,	devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,	linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org,	linux-sunxi@lists.linux.dev,
- imx@lists.linux.dev,	linux-tegra@vger.kernel.org,
- linux-arm-msm@vger.kernel.org,	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 13/22] dt-bindings: thermal: rcar-gen3: reference
- thermal-sensor schema
-Message-ID: <20240614125359.GH382677@ragnatech.se>
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
- <20240614-dt-bindings-thermal-allof-v1-13-30b25a6ae24e@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VRU7cHE8"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso23547641fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 07:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718373865; x=1718978665; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=db7sE7gdNSfDkTH/SLqMSnZ6L88Gths7vYb0/TqgdKM=;
+        b=VRU7cHE8onUruAckfm/Pei/s14IHKQ76HTih5IKInperyjGpL4iylm3s+IUBvHMgKi
+         LxJanpHIgQcJTvvTRGAp7TcXBV8byENsJQHZMzNbVJbrg7azXfzfjxN0OvBFRcpbW56g
+         pkQh1vIIVHl4J6U13G3Mwqaky3FGieaYEoM6CNKXyg4XjneKDfwF27dxcENaisFLbZ6w
+         CZyVyD84Wyq/fV/8XBq58tUbq75kWWwcRmYCysX6adH/+A+Eo/36qGlbTszJRZ89xIub
+         6UtNB1iwDpCaMfAvIEM8UkGRoG3Q76DyrYLSCmjyc0Ym/8E/zb+dHHJcRzcQ+brQxkR7
+         jATQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718373865; x=1718978665;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=db7sE7gdNSfDkTH/SLqMSnZ6L88Gths7vYb0/TqgdKM=;
+        b=QjNw7b/V/+uK4NMJ/oUHskkvQaPDWjE5Eiv8ntNk5waba9aKAbZR4zt2VOCVLw18AE
+         DQZ7fSM4ouxcc4XpHQ5g4iK+w+ujCAedvRT16qlqmNrxXYtoo/1C+xIe1DxADBnWsSL2
+         8PZ3zSATi1Iq1pupjRws/Hdx+KqD7Q7eGu10Keglz6n996bqiAjs5B2zOCM+mczblfKM
+         QTXZFFRZvvTPB6T9hTcZHgVQMjeVrST+EIfpGQji/gct6LKvo/ADOmuDv/dMiRdePpk1
+         nBvNXYS+Ltqe+rCtqO84RWRPgtX6Q+AIgZAf7ArKl6Ioim7A6dJI8rdnG6kacUnJBDoa
+         HtDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWA1egvvT67ulZ62XFlHPV/QzERjGbC6sSDJ8cjnUDcWWifBsx7B/2HtLkdOAaSgXq0tJbpctEsXx7y+ilRbCD23DQ7xrGyUc7+xReiqlNG4w=
+X-Gm-Message-State: AOJu0YyKoCLAIL//hQj/LhXMOtuALAkPLkD8SlZt9usdXatM/sN5haYm
+	3sUxYCUccPF1mkInI0ppYlV9ujHEQOZtMm8yOJilXK/ZXtxzrGurD5HYzvXH7EM=
+X-Google-Smtp-Source: AGHT+IEQ/9CdNafN3ICQ2QfdqLMQd7VY1Js0/I455oOeWFuzmq38dPh57KkFo8JhwUZcxnxpU6JvAA==
+X-Received: by 2002:a05:651c:547:b0:2ec:f8a:6f11 with SMTP id 38308e7fff4ca-2ec0f8a702emr17969671fa.9.1718373864725;
+        Fri, 14 Jun 2024 07:04:24 -0700 (PDT)
+Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33ccesm61310525e9.3.2024.06.14.07.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 07:04:24 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: lee@kernel.org,
+	arnd@arndb.de,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/2] Add syscon of_syscon_register_regmap api
+Date: Fri, 14 Jun 2024 15:04:19 +0100
+Message-ID: <20240614140421.3172674-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-13-30b25a6ae24e@linaro.org>
 
-Hi Krzysztof,
+Hi Lee, Arnd, Krzysztof, all,
 
-Thanks for your work.
+This series adds support to syscon driver for a new of_syscon_register_regmap()
+api.
 
-On 2024-06-14 11:46:12 +0200, Krzysztof Kozlowski wrote:
-> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
-> reference the thermal-sensor.yaml to simplify it and bring the
-> common definition of '#thermal-sensor-cells' property.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Platforms such as gs101 require a special regmap to access PMU registers, which
+in the existing upstream client drivers are accessed via syscon regmap. This
+issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
+and a new API exynos_get_pmu_regmap_by_phandle() created.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+One issue with the approach in [1] is that it required client drivers to be
+updated from syscon_regmap_lookup_by_phandle() to
+exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
 
-> ---
->  Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-> index 6a81cb6e11bc..d92e882c9e8d 100644
-> --- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml
-> @@ -15,6 +15,8 @@ description:
->  maintainers:
->    - Niklas Söderlund <niklas.soderlund@ragnatech.se>
->  
-> +$ref: thermal-sensor.yaml#
-> +
->  properties:
->    compatible:
->      enum:
-> @@ -57,7 +59,6 @@ required:
->    - clocks
->    - power-domains
->    - resets
-> -  - "#thermal-sensor-cells"
->  
->  if:
->    properties:
-> @@ -96,7 +97,7 @@ else:
->      required:
->        - interrupts
->  
-> -additionalProperties: false
-> +unevaluatedProperties: false
->  
->  examples:
->    - |
-> 
-> -- 
-> 2.43.0
-> 
+Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
+specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
+which span multiple SoC architectures could not be easily re-used.
+
+In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
+requested [2] that we take a more generic approach that other SoCs can also
+leverage.
+
+The new of_syscon_register_regmap() api overcomes this limitation by allowing
+a SoC driver like exynos-pmu to register it's SoC specific regmap with the
+syscon driver. This keeps the SoC complexity out of syscon driver, and allows
+client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
+The solution allows more code re-use and can be used by other SoC archs.
+
+Notes on probe ordering
+
+exynos-pmu runs at postcore_initcall, so all but one of the client drivers
+(ufs phy, usb phy, watchdog) run after the regmap is created and registered.
+
+The one exception to this is pinctrl-samsung driver which is also
+postcore_initcall level. The exynos_get_pmu_regmap() and
+exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
+-EPROBE_DEFER for pinctrl-samsung driver.
+
+The longer term plan to solve that probe ordering issue is to enable
+fw_devlink for syscon dt properties so they are correctly listed as
+suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
+fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
+believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
+currently with fw_devlink syscon support is the wide diversity of dt property
+naming currently in use. That was discussed previously here [3]
+
+1248a1256,1257
+> DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
+> DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
+1358a1368,1369
+>     { .parse_prop = parse_syscon_phandle, },
+>     { .parse_prop = parse_pmu_syscon, },
+
+
+Note one previous concern from Saravana about syscon potentially probing
+before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
+this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
+always probes first due to syscon driver not setting a .of_match_table entry.
+
+Once the syscon and exynos-pmu patchs are queued I will send patches for
+watchdog and ufs phy driver to switch back to syscon_regmap_lookup_by_phandle()
+
+Many thanks,
+
+Peter.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
+[2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
+[3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
+
+
+Peter Griffin (2):
+  mfd: syscon: add of_syscon_register_regmap() API
+  soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
+
+ drivers/mfd/syscon.c             | 48 ++++++++++++++++++++++++++++++++
+ drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++---------------
+ include/linux/mfd/syscon.h       |  8 ++++++
+ 3 files changed, 70 insertions(+), 24 deletions(-)
 
 -- 
-Kind Regards,
-Niklas Söderlund
+2.45.2.627.g7a2c4fd464-goog
+
