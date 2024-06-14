@@ -1,84 +1,91 @@
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A848197A8A;
-	Fri, 14 Jun 2024 17:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16887E76D
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 18:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718384937; cv=none; b=D8UD3wvIYN5c+mPPpftrj3i6H/A0qBbdYPirthOpoQb2ca98pfdQ6iJm+/lyxB1CNlOUdxEhXzKiqw9/cNMHSVPsadQQVRx70c9vCnb+GUnspw5xBaLPmCMuJAHOaDjHbr/NVZ40MivoF+J/Pc+7hvGBmNDLjQhcgSk7p/LOQ5c=
+	t=1718389526; cv=none; b=BfU8S3BSHwqGteIdlrfl4+gJ+A6aiUTZ1snUFXp6PnjG8cCRfSoDHpPC/OyzgkFIsHNoLKVQoykTLQQ+LNIID6vWamkTCONdBeKykID75zJ09LNWYaMlxS/B8brCd4VhB28mFs13hYOO6XnwdyyY5XdqDAJRzAsJBZxjQP81tFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718384937; c=relaxed/simple;
-	bh=zDgquWL9WTZHVxMSBM55tUA3TUtmDG9t57fELwdqvgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJqaCFVnnPZnHYztmavir2pf9uRX0nD0gu1FlZVHyKP69pLnM3bHG9dmvt4oworAwBXjj4AVVOrR0yHD+BTwgF3BhbD1vww9iX3aXUpHnFT+piGBKvDru6nw4FLjajS+GBcZ1QUvuYYOhT9DQNltjzD7tb1tGG69sND00Kubj38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=t9DbYtCD; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1718389526; c=relaxed/simple;
+	bh=17XqsCYTuwNMMXk8dTaMUWD29V4eaG1WBt3UP1RONPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFNh6pJdjnOAeNJkNVKdQaqEIEGvqh6NZc1L6cxfknHc5PqfnvT1ZFWMTONVGkIkY53Bq/Cek3HsUlRcZgHiS5VYD/RO4740UMBjeCOUGwHQZ/kgqtcrGUMU5obdJUM9hjoz0Ag3pIgTcS0x57/nmpPGitzHGBaCRT71Zc2qb7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WcIdSUhG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="t9DbYtCD"
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W15N6712Gz6Cnv3g;
-	Fri, 14 Jun 2024 17:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1718384931; x=1720976932; bh=KwEa/QCzQe9/zSgXOq1yzUeW
-	viOivvbVdURGowWehwk=; b=t9DbYtCDyoG+Tii0ZUizV6fCSWB/JEvzRbKsdOHs
-	utxBEeLwTfqk8H2CrukrfkwaN7d/sRRKk8sUprhJmzXDMpojZPDj4bIJshQ2lR+g
-	ziBQ15zptcITec0dOxL+k3G2IDBOo10KL0w4R6vRjUz1HEPHdIG9wh3LjDgMtKIL
-	eWTsDRhzS3ShLsRiBYk9x4IA+PimGPijaODDGbk6JsFxa77Lv/piTMJ05N11Y+N3
-	/HBKmNwhEIu/jTUVoWj7GwJGLABpP1cXUJrV28fV/o3pgMT3tdR2nreqasISDBxS
-	abZtt/9qdVXcAYYCtxs6Kg5JwxL981Fck9KjyRmTwomceQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id pJSbmmB6srOS; Fri, 14 Jun 2024 17:08:51 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WcIdSUhG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1718389523;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rVuWdzbjR5bd+U/y/e+aXYkOnbjqY8dHfGNq+VGdIi8=;
+	b=WcIdSUhGvulFjHY3EGiDloMzWCfvdXxH/0qrJKBZ89yQDZU2uqgocHrSgQ4PrLSzzu2QNR
+	pG3X4i+iihLH3cXEHnd0KbeqPGW9CySzWvDH5YJew9MGq6TNtEACOx/lqwXfLUyz0pIC+W
+	Z42Pxug5WZL5rNEEskTDf4d4BFQ10GY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-368-yroaDZQoPo2HAkZQVCiwnQ-1; Fri,
+ 14 Jun 2024 14:25:18 -0400
+X-MC-Unique: yroaDZQoPo2HAkZQVCiwnQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W15N30F7Pz6Cnk98;
-	Fri, 14 Jun 2024 17:08:50 +0000 (UTC)
-Message-ID: <4dfd06ba-7d95-435b-95e1-e864a33447b9@acm.org>
-Date: Fri, 14 Jun 2024 10:08:49 -0700
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28041195608C;
+	Fri, 14 Jun 2024 18:25:15 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B377A1956087;
+	Fri, 14 Jun 2024 18:25:10 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: linux-doc@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	arnd@arndb.de
+Subject: [PATCH] Documentation: Remove unused "mtdset=" from kernel-parameters.txt
+Date: Fri, 14 Jun 2024 20:25:08 +0200
+Message-ID: <20240614182508.600113-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] scsi: ufs: exynos: Add support for Flash Memory
- Protector (FMP)
-To: Eric Biggers <ebiggers@kernel.org>, linux-scsi@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- William McVicker <willmcvicker@google.com>
-References: <20240611223419.239466-1-ebiggers@kernel.org>
- <20240611223419.239466-7-ebiggers@kernel.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240611223419.239466-7-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 6/11/24 3:34 PM, Eric Biggers wrote:
-> +#define FMP_DATA_UNIT_SIZE	SZ_4K
+The kernel parameter "mtdset" has been removed two years ago in
+commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support") and
+thus should be removed from the documentation now, too.
 
-A Samsung employee told me that the Exynos encryption data unit size is configurable
-and also that it is set by the following code:
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 5 -----
+ 1 file changed, 5 deletions(-)
 
-	hci_writel(ufs, PRDT_SET_SIZE(12), HCI_TXPRDT_ENTRY_SIZE);
-	hci_writel(ufs, PRDT_SET_SIZE(12), HCI_RXPRDT_ENTRY_SIZE);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 87d5bee924fe..ff02e1a02e12 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3631,11 +3631,6 @@
+ 	mtdparts=	[MTD]
+ 			See drivers/mtd/parsers/cmdlinepart.c
+ 
+-	mtdset=		[ARM]
+-			ARM/S3C2412 JIVE boot control
+-
+-			See arch/arm/mach-s3c/mach-jive.c
+-
+ 	mtouchusb.raw_coordinates=
+ 			[HW] Make the MicroTouch USB driver use raw coordinates
+ 			('y', default) or cooked coordinates ('n')
+-- 
+2.45.2
 
-How about introducing a new macro that represents the TX PRDT entry size, the RX PRDT
-entry size and the encryption data unit size?
-
-Thanks,
-
-Bart.
