@@ -1,425 +1,186 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433FF2107
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 23:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F1A3D60;
+	Sat, 15 Jun 2024 06:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718406072; cv=none; b=aLh729Z45YfNvIEFy3n42UOb3vrrkmjZWFNyS2ZFZiHldEypv7ytCxGU+Xn8ppweJNjqWVqnv7384Hwj7S3Finh1cGcqioo7c3c23T2e+UENOk4Z0Q1ebrYvgCJjgz98Z4G+g3jGNAnWJAqmWtlGJzDL6CLy9ae2ky4OsEyQCN4=
+	t=1718433489; cv=none; b=TIm32EBYSwS4i7xNjk7zcUuB4csIIXOL2vPoOtR5ILmqEDrUAjnNA0n3JgneaTf0OIGUMVLyGszkjXyQqictNrTeYl+Mm/vLwjXZnIrdEwfq2cIXW1gtL46h7ELSYVCvAgVs6na7MH3lqhJ+J8PpI3httV4gPvHDgbM3YhsuxrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718406072; c=relaxed/simple;
-	bh=cUn2ro5t8hvJdnUiLMEBcEs/sY4KPWEv4rettZXbmUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7WeNeyhUsHRQK2AFq3ZoWeMP04aKk55wep+9ALn2U00j7RvL+c+TbDVJZ2FE7PieByW17/uuNhFWiYwMMEIAMswGaQExfArN/Hx7SKTcx4xw2JccNe2aYfDNSNsro/Or905MIaib+72virzwVA+YVpDSzQH+SF2xa7bquc9n6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p9QNOLLZ; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718433489; c=relaxed/simple;
+	bh=3KCfEoLSbRk49SE6hTMUSazt4vE30jZwifvmCko0MxI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=J+HkJrq66N69ray4HfiFjLl1eJtCjoNJtPwN3JOZ7SP+LNH6RBI6OqCLY+Ink1JZHffHoKDStDSqDK/rIUyAm+ixGx3P0lxE/llgdAOHnhTRAU5BvjmC+OG+EXvfaXPfNavOiUPh/QCO3H+xbqsxK+/OMGuDDyjHOqA638Q4ZIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZqRx9WEW; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p9QNOLLZ"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso1143766276.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 16:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718406068; x=1719010868; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgHV6L3eFSZdc43txkr9tWnMlInmAtTjrQiLaQo6Imo=;
-        b=p9QNOLLZ0FgzaeEq12hMN3QIJSKVS8yvB7wmuIhrYsw09AIFjTxwBdfLhrOFCT6Kho
-         6BybRjC61XlC1LkWPBII5ReUCUHiA/SVXerEsvxVieQd1CDFp5Jz2NRpzuJjUCLNEPpV
-         o7kbY7hC/F/4rUyc0M7mc0mcV34qNn+yQwvJ4hbCZ+BDpRRU6OOPhybHuFmWO0qFpPUW
-         X6qOzRVefS2OnS0gHofIqJMOmIx1E4hDn6Pd4GHKc4jvyWKR0nA+Rq5zGo7hs2bC9pe+
-         9/Zgp2TRiZFz2wHWGN3bJlhIOWK16bBcjkVav0Ko9OOa8rphs4aD3793rKBYjCzjbHAz
-         /JEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718406068; x=1719010868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgHV6L3eFSZdc43txkr9tWnMlInmAtTjrQiLaQo6Imo=;
-        b=unXIXW0YfPwDpHty/FUTG/B5MEhCgjTbNhTsdjdHgh/P7dDw7ukdKhj6S2q71fuqcG
-         O/IW71AdJte22y89g/JAmTrSO+xO8TKVSNQ2bV/+yj0agLt2UdnYirmcpHi1Viqt3HtW
-         fk/A5ejIovMc1Iqm4DM/ypN49nlvWffxu2dkWyPdsRfpSTM05okZ36D0L5UbOHcE2fCy
-         TgM0ohp6CTygqDut/FPIHHyzLlwiBclD1A32bx01UiuNjLvD9Lkt2lIunWlDEkcUGiVk
-         k9847gr9ScdpqP/rZjC6zCXzVgBbPWhxlGlYfgAzgpY6ash7VBRkD0LkWQmgFqhaq/vk
-         V+Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/pSxCMPHlz6zL76tusO9voe97hgd7ubPkxLoEkJ7oVfScw/WN9cf4oLnzNO0gW7/yA0dj9GKw4vOHHxWzkpjJOdQv4kPON8dPts1XPO+fLeU=
-X-Gm-Message-State: AOJu0Ywiwvqrww7zIbKm1mW5H6Ao0XvrDOYRO6PN6uhg0NRpEB6fO1Dv
-	cmZb9RNm5Pi1ZYt7zRBN7tsk5+G2jm1GIKPJjycGS8XYLt26Et3CyEwryC3/S5iV9MwT+xJHwpE
-	0VBAIMWUp2CmbfZ2Gt40Iue0x2ngJjRsG/ddiGg==
-X-Google-Smtp-Source: AGHT+IHzlpm/VkF6w2lTOi1zI4/MusMO0PMLsXm+2gRujgsEeAH4uoTUkpth6NTMIWvVW4Wd1MYUzB+293S9EBj7Ni4=
-X-Received: by 2002:a05:6902:701:b0:dfb:312:61c9 with SMTP id
- 3f1490d57ef6-dff1548fbd5mr4437169276.52.1718406068229; Fri, 14 Jun 2024
- 16:01:08 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZqRx9WEW"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240615063802epoutp03937665879767c7bb38a494fd9922b629~ZGiW7zCER1672516725epoutp03U;
+	Sat, 15 Jun 2024 06:38:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240615063802epoutp03937665879767c7bb38a494fd9922b629~ZGiW7zCER1672516725epoutp03U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1718433482;
+	bh=vIwSYtTFXPS3sO38FNNQ6oJ71Y0bLvlrMHrlSuad46E=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=ZqRx9WEWTrFB0xPY+AKKfrl5bDsclQ3TWzUHUdAxvTY441omquggL+KXasoOMm0vb
+	 TT+Pz6KIgcBpV+kxr0393uI0VDMBX9ZwbarTNJXaWh2vxCh9xsvWvGFQaMHx8xlyGI
+	 iz4oghNbkk5GDaB2b8OoCpIX7Wn+XVPM7Cal+B2Q=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240615063801epcas5p14a1910659716b444f56195a7b2ec983b~ZGiWWyQ_Y0633306333epcas5p1F;
+	Sat, 15 Jun 2024 06:38:01 +0000 (GMT)
+Received: from epcpadp4 (unknown [182.195.40.18]) by epsnrtp4.localdomain
+	(Postfix) with ESMTP id 4W1RKj3gpKz4x9Px; Sat, 15 Jun 2024 06:38:01 +0000
+	(GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240614142920epcas5p15f5887136072ebf6c2e23275dd872861~Y5Uk66YwW0344703447epcas5p15;
+	Fri, 14 Jun 2024 14:29:20 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240614142920epsmtrp2e40951f54cedb283a63bd26a75890a5d~Y5Uk39wd62550925509epsmtrp2Y;
+	Fri, 14 Jun 2024 14:29:20 +0000 (GMT)
+X-AuditID: b6c32a2a-73fff70000004a71-de-666c53c04e95
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FD.07.19057.0C35C666; Fri, 14 Jun 2024 23:29:20 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240614142913epsmtip17b1c18bda36c53de5d30099c1e4afd13~Y5UeC7Xu-3016230162epsmtip1U;
+	Fri, 14 Jun 2024 14:29:13 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Daniel
+ Lezcano'" <daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>,
+	"'Lukasz Luba'" <lukasz.luba@arm.com>, "'Rob Herring'" <robh@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>, "'Guillaume La Roque'"
+	<glaroque@baylibre.com>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
+	"'Vasily Khoruzhick'" <anarsoul@gmail.com>, "'Chen-Yu Tsai'"
+	<wens@csie.org>, "'Jernej Skrabec'" <jernej.skrabec@gmail.com>, "'Samuel
+ Holland'" <samuel@sholland.org>, "'Shawn Guo'" <shawnguo@kernel.org>,
+	"'Sascha Hauer'" <s.hauer@pengutronix.de>, "'Pengutronix	Kernel Team'"
+	<kernel@pengutronix.de>, "'Fabio Estevam'" <festevam@gmail.com>, "'Anson
+ Huang'" <Anson.Huang@nxp.com>, "'Thierry Reding'"
+	<thierry.reding@gmail.com>, "'Jonathan Hunter'" <jonathanh@nvidia.com>,
+	"'Dmitry	Baryshkov'" <dmitry.baryshkov@linaro.org>, "'Amit Kucheria'"
+	<amitk@kernel.org>, =?utf-8?Q?'Niklas_S=C3=B6derlund'?=
+	<niklas.soderlund@ragnatech.se>, "'Heiko	Stuebner'" <heiko@sntech.de>,
+	"'Biju Das'" <biju.das.jz@bp.renesas.com>, "'Orson	Zhai'"
+	<orsonzhai@gmail.com>, "'Baolin Wang'" <baolin.wang@linux.alibaba.com>,
+	"'Chunyan Zhang'" <zhang.lyra@gmail.com>, "'Alexandre Torgue'"
+	<alexandre.torgue@foss.st.com>, "'Pascal Paillet'" <p.paillet@foss.st.com>,
+	"'Keerthy'" <j-keerthy@ti.com>, "'Broadcom internal kernel review list'"
+	<bcm-kernel-feedback-list@broadcom.com>, "'Florian Fainelli'"
+	<florian.fainelli@broadcom.com>, "'Scott Branden'" <sbranden@broadcom.com>,
+	"'zhanghongchen'" <zhanghongchen@loongson.cn>, "'Matthias Brugger'"
+	<matthias.bgg@gmail.com>, "'AngeloGioacchino Del Regno'"
+	<angelogioacchino.delregno@collabora.com>, "'Bjorn Andersson'"
+	<andersson@kernel.org>, "'Geert Uytterhoeven'" <geert+renesas@glider.be>
+Cc: <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <imx@lists.linux.dev>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, "'Florian Fainelli'"
+	<f.fainelli@gmail.com>, <linux-rpi-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <cpgs@samsung.com>
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-1-30b25a6ae24e@linaro.org>
+Subject: RE: [PATCH 01/22] dt-bindings: thermal: samsung,exynos: specify
+ cells
+Date: Fri, 14 Jun 2024 19:59:11 +0530
+Message-ID: <1891546521.01718433481489.JavaMail.epsvc@epcpadp4>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611223419.239466-1-ebiggers@kernel.org> <20240611223419.239466-7-ebiggers@kernel.org>
-In-Reply-To: <20240611223419.239466-7-ebiggers@kernel.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 14 Jun 2024 18:00:57 -0500
-Message-ID: <CAPLW+4kPAi+13C7t34XWW9ciAoYUebj5nz_EQY+RKhsT2ZpHnQ@mail.gmail.com>
-Subject: Re: [PATCH 6/6] scsi: ufs: exynos: Add support for Flash Memory
- Protector (FMP)
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-fscrypt@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	William McVicker <willmcvicker@google.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGhCdcVAXQc0tvKk5x9QOKQ/J0WewGh/L0BAiWHCW6yHH4lsA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTdxTG97+9vbfQ1ZSXyQUFTaPZgJXBNtlxGLLgy+6mEYxzyUwUGriC
+	jJbaikPjMuhaMmA4wAn2dhRQxgoUcDBoQd5Sist0QMTZzTgQkAJdE/BtaN2gA7otfPudc57n
+	OefD4XF89UQQ77jsJKOQSTJEhDfe3i8KEfcdzDgWWdPnAy5HGYL+ymzQXJtG0P7FDhipo8Ck
+	TQZ39zUEjUUDOOjNCxgYu4cwcFhCQf84GCqtQ1woGXYR8HzOSsLE7Xhoah/jQIWuFEH1+QoC
+	3JNOLmjHNARcN6kwmKlsQqBmL+FQf6EDBwc7RkC3s42EKh0fWu7bltN6B0m41fkNAbc+v4ng
+	cZEVQZtjDoNH424OlNy9QsLF4R4MCmxTXPi6p5OA/CcsAdUqNQkq9RvwY9k5LpQ/0CHos5/H
+	wd1lJmFq4hwBi6YWHGYm8wmYa5hCMPtDALg69Ti4LMMYfDfeScKCzcR55y3aqDciev43DUnX
+	zepImr03SNDm0RpEX5ls4NL2r9pIumRQTHewoyR9ucuB0S31+QT9u62LoDsmttOtNZ/Rs61a
+	ROeqLmEJQYe9d6QwGcdPMYrXYpO80yomj8ivCrK1PY2cHKTmFyAvHiV8kypW9RMr7Cu8iqie
+	waOe/gbq1++LSQ/7UXVLM8vsvayZRlRtccmqgRCKKfPlPGJl4C80rqOeOn9eLTjCP3Cqdc7A
+	9VgmEPW3NhdfsXgJ91P6R2pshf1WuHBqtY8Lt1JLzabVfQLhdupGo/Zf9qF+0no0HGE4Zb9j
+	/59rq50cz32bKZe9dnkZb/mMOCq3GfNIAijHgJUsRn7smiR2TRK7JoldY6lCeD0KZORKaapU
+	GSV/XcZ8EqGUSJVZstSI5ExpC1p94bAwM+qqfxBhQRgPWRDF44j8BWx1+jFfQYrk9BlGkZmo
+	yMpglBa0gYeLAgQLzqIUX2Gq5CTzMcPIGcV/U4znFZSDiQsTbvzlGnCM2y9aXnSx3dh6d7D6
+	thR921tqijm4N6r29FhDsnSbIeTILxttWXuHN/Gt9HO+7NShkS7/P63vvvrpfLugPjXOp9v8
+	5QvwbGuVMyx8PPSjs+u8AqufGD7Aoj8M7Y8/Ec8e2FnObrHmtRXMzHTwRfO2QEfMdHJ4+qH7
+	0YbBhUneotEwlLfNELm060xp2tMmjbJVoyPfbiu7uSt9T8zRVyLxu2HiskJL9Nl7vUEJUnq9
+	vfA6P1E8nXnBbizdnb14J5jYJHsWm4UnvfRQRJa35ry/f+dS/3ujMXHNcjIEP6yPzdVAxImR
+	Lfucs/LNOvW+AxUPX87anZS4MUOEK9MkUWEchVLyD7bfoqExBAAA
+X-CMS-MailID: 20240614142920epcas5p15f5887136072ebf6c2e23275dd872861
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20240614094638epcas5p115d52130f45e130652b6f1d946358d19
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+	<CGME20240614094638epcas5p115d52130f45e130652b6f1d946358d19@epcas5p1.samsung.com>
+	<20240614-dt-bindings-thermal-allof-v1-1-30b25a6ae24e@linaro.org>
 
-On Tue, Jun 11, 2024 at 5:36=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
-wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Add support for Flash Memory Protector (FMP), which is the inline
-> encryption hardware on Exynos and Exynos-based SoCs.
->
-> Specifically, add support for the "traditional FMP mode" that works on
-> many Exynos-based SoCs including gs101.  This is the mode that uses
-> "software keys" and is compatible with the upstream kernel's existing
-> inline encryption framework in the block and filesystem layers.  I plan
-> to add support for the wrapped key support on gs101 at a later time.
->
-> Tested on gs101 (specifically Pixel 6) by running the 'encrypt' group of
-> xfstests on a filesystem mounted with the 'inlinecrypt' mount option.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Hi Krzysztof,
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Sent: Friday, June 14, 2024 3:16 PM
+> To: Daniel Lezcano <daniel.lezcano@linaro.org
+.stormreply.com;
+> Subject: [PATCH 01/22] dt-bindings: thermal: samsung,exynos: specify cell=
+s
+>=20
+> All Samsung Exynos SoCs Thermal Management Units have only one sensor, so
+> make '#thermal-sensor-cells' fixed at 0.
+>=20
+This is not entirely true, there are SoCs which have multiple temp sensors.
+It is true that currently only one sensor support is added though.
+
+So we can leave this as is or you suggest to make it to support only one se=
+nsor
+(to match the current DT support), and later (in near future) change it aga=
+in to
+match what HW actually support?
+
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  drivers/ufs/host/ufs-exynos.c | 219 +++++++++++++++++++++++++++++++++-
->  1 file changed, 218 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.=
-c
-> index 88d125d1ee3c..969c4eedbe2d 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -6,10 +6,13 @@
->   * Author: Seungwon Jeon  <essuuj@gmail.com>
->   * Author: Alim Akhtar <alim.akhtar@samsung.com>
->   *
->   */
->
-> +#include <asm/unaligned.h>
-> +#include <crypto/aes.h>
-> +#include <linux/arm-smccc.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> @@ -1149,10 +1152,221 @@ static inline void exynos_ufs_priv_init(struct u=
-fs_hba *hba,
->                 ufs->rx_sel_idx =3D 0;
->         hba->priv =3D (void *)ufs;
->         hba->quirks =3D ufs->drv_data->quirks;
->  }
->
-> +#ifdef CONFIG_SCSI_UFS_CRYPTO
-> +
-> +/*
-> + * Support for Flash Memory Protector (FMP), which is the inline encrypt=
-ion
-> + * hardware on Exynos and Exynos-based SoCs.  The interface to this hard=
-ware is
-> + * not compatible with the standard UFS crypto.  It requires that encryp=
-tion be
-> + * configured in the PRDT using a nonstandard extension.
-> + */
-> +
-> +enum fmp_crypto_algo_mode {
-> +       FMP_BYPASS_MODE =3D 0,
-> +       FMP_ALGO_MODE_AES_CBC =3D 1,
-> +       FMP_ALGO_MODE_AES_XTS =3D 2,
-> +};
-> +enum fmp_crypto_key_length {
-> +       FMP_KEYLEN_256BIT =3D 1,
-> +};
-> +#define FMP_DATA_UNIT_SIZE     SZ_4K
-> +
-> +/* This is the nonstandard format of PRDT entries when FMP is enabled. *=
-/
-> +struct fmp_sg_entry {
-> +
-> +       /*
-> +        * This is the standard PRDT entry, but with nonstandard bitfield=
-s in
-> +        * the high bits of the 'size' field, i.e. the last 32-bit word. =
- When
-> +        * these nonstandard bitfields are zero, the data segment won't b=
-e
-> +        * encrypted or decrypted.  Otherwise they specify the algorithm =
-and key
-> +        * length with which the data segment will be encrypted or decryp=
-ted.
-> +        */
-
-Minor suggestion: create a kernel-doc comment for the structure and
-pull all fields documentation there.
-
-> +       struct ufshcd_sg_entry base;
-> +
-> +       /* The initialization vector (IV) with all bytes reversed */
-> +       __be64 file_iv[2];
-> +
-> +       /*
-> +        * The key with all bytes reversed.  For XTS, the two halves of t=
-he key
-> +        * are given separately and are byte-reversed separately.
-> +        */
-> +       __be64 file_enckey[4];
-> +       __be64 file_twkey[4];
-> +
-> +       /* Unused */
-> +       __be64 disk_iv[2];
-> +       __be64 reserved[2];
-> +};
-> +
-> +#define SMC_CMD_FMP_SECURITY           0xC2001810
-> +#define SMC_CMD_SMU                    0xC2001850
-> +#define SMC_CMD_FMP_SMU_RESUME         0xC2001860
-
-Suggest to use ARM_SMCCC_CALL_VAL() macro to define above values.
-
-> +#define SMU_EMBEDDED                   0
-> +#define SMU_INIT                       0
-> +#define CFG_DESCTYPE_3                 3
-> +
-> +static inline long exynos_smc(unsigned long cmd, unsigned long arg0,
-> +                             unsigned long arg1, unsigned long arg2)
-> +{
-> +       struct arm_smccc_res res;
-> +
-> +       arm_smccc_smc(cmd, arg0, arg1, arg2, 0, 0, 0, 0, &res);
-> +       return res.a0;
-> +}
-
-This wrapper looks like it was borrowed from the downstream Samsung
-code. Not sure if it brings any value nowadays. Maybe it would be
-clearer to just use arm_smccc_smc() directly and remove this wrapper?
-
-> +
-> +static void exynos_ufs_fmp_init(struct ufs_hba *hba)
-> +{
-> +       struct blk_crypto_profile *profile =3D &hba->crypto_profile;
-> +       long ret;
-> +
-> +       /*
-> +        * Check for the standard crypto support bit, since it's availabl=
-e even
-> +        * though the rest of the interface to FMP is nonstandard.
-> +        *
-> +        * This check should have the effect of preventing the driver fro=
-m
-> +        * trying to use FMP on old Exynos SoCs that don't have FMP.
-> +        */
-> +       if (!(ufshcd_readl(hba, REG_CONTROLLER_CAPABILITIES) &
-> +             MASK_CRYPTO_SUPPORT))
-> +               return;
-> +
-> +       /*
-> +        * This call (which sets DESCTYPE to 0x3 in the FMPSECURITY0 regi=
-ster)
-> +        * is needed to make the hardware use the larger PRDT entry size.
-> +        */
-> +       BUILD_BUG_ON(sizeof(struct fmp_sg_entry) !=3D 128);
-> +       ret =3D exynos_smc(SMC_CMD_FMP_SECURITY, 0, SMU_EMBEDDED, CFG_DES=
-CTYPE_3);
-> +       if (ret) {
-> +               dev_warn(hba->dev,
-> +                        "SMC_CMD_FMP_SECURITY failed on init: %ld.  Disa=
-bling FMP support.\n",
-> +                        ret);
-> +               return;
-> +       }
-> +       ufshcd_set_sg_entry_size(hba, sizeof(struct fmp_sg_entry));
-> +
-> +       /*
-> +        * This is needed to initialize FMP.  Without it, errors occur wh=
-en
-> +        * inline encryption is used.
-> +        */
-> +       ret =3D exynos_smc(SMC_CMD_SMU, SMU_INIT, SMU_EMBEDDED, 0);
-> +       if (ret) {
-> +               dev_err(hba->dev,
-> +                       "SMC_CMD_SMU(SMU_INIT) failed: %ld.  Disabling FM=
-P support.\n",
-> +                       ret);
-> +               return;
-> +       }
-> +
-> +       /* Advertise crypto capabilities to the block layer. */
-> +       ret =3D devm_blk_crypto_profile_init(hba->dev, profile, 0);
-> +       if (ret) {
-> +               /* Only ENOMEM should be possible here. */
-> +               dev_err(hba->dev, "Failed to initialize crypto profile: %=
-ld\n",
-> +                       ret);
-> +               return;
-> +       }
-> +       profile->max_dun_bytes_supported =3D AES_BLOCK_SIZE;
-> +       profile->dev =3D hba->dev;
-> +       profile->modes_supported[BLK_ENCRYPTION_MODE_AES_256_XTS] =3D
-> +               FMP_DATA_UNIT_SIZE;
-> +
-> +       /* Advertise crypto support to ufshcd-core. */
-> +       hba->caps |=3D UFSHCD_CAP_CRYPTO;
-> +
-> +       /* Advertise crypto quirks to ufshcd-core. */
-> +       hba->quirks |=3D UFSHCD_QUIRK_CUSTOM_CRYPTO_PROFILE |
-> +                      UFSHCD_QUIRK_BROKEN_CRYPTO_ENABLE |
-> +                      UFSHCD_QUIRK_KEYS_IN_PRDT;
-> +
-> +}
-> +
-> +static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
-> +{
-> +       long ret;
-> +
-> +       ret =3D exynos_smc(SMC_CMD_FMP_SECURITY, 0, SMU_EMBEDDED, CFG_DES=
-CTYPE_3);
-> +       if (ret)
-> +               dev_err(hba->dev,
-> +                       "SMC_CMD_FMP_SECURITY failed on resume: %ld\n", r=
-et);
-> +
-> +       ret =3D exynos_smc(SMC_CMD_FMP_SMU_RESUME, 0, SMU_EMBEDDED, 0);
-> +       if (ret)
-> +               dev_err(hba->dev, "SMC_CMD_FMP_SMU_RESUME failed: %ld\n",=
- ret);
-> +}
-> +
-> +static inline __be64 fmp_key_word(const u8 *key, int j)
-> +{
-> +       return cpu_to_be64(get_unaligned_le64(
-> +                       key + AES_KEYSIZE_256 - (j + 1) * sizeof(u64)));
-> +}
-> +
-> +/* Fill the PRDT for a request according to the given encryption context=
-. */
-> +static int exynos_ufs_fmp_fill_prdt(struct ufs_hba *hba,
-> +                                   const struct bio_crypt_ctx *crypt_ctx=
-,
-> +                                   void *prdt, unsigned int num_segments=
-)
-> +{
-> +       struct fmp_sg_entry *fmp_prdt =3D prdt;
-> +       const u8 *enckey =3D crypt_ctx->bc_key->raw;
-> +       const u8 *twkey =3D enckey + AES_KEYSIZE_256;
-> +       u64 dun_lo =3D crypt_ctx->bc_dun[0];
-> +       u64 dun_hi =3D crypt_ctx->bc_dun[1];
-> +       unsigned int i;
-> +
-> +       /* If FMP wasn't enabled, we shouldn't get any encrypted requests=
-. */
-> +       if (WARN_ON_ONCE(!(hba->caps & UFSHCD_CAP_CRYPTO)))
-> +               return -EIO;
-> +
-> +       /* Configure FMP on each segment of the request. */
-> +       for (i =3D 0; i < num_segments; i++) {
-> +               struct fmp_sg_entry *prd =3D &fmp_prdt[i];
-> +               int j;
-> +
-> +               /* Each segment must be exactly one data unit. */
-> +               if (prd->base.size !=3D cpu_to_le32(FMP_DATA_UNIT_SIZE - =
-1)) {
-> +                       dev_err(hba->dev,
-> +                               "data segment is misaligned for FMP\n");
-> +                       return -EIO;
-> +               }
-> +
-> +               /* Set the algorithm and key length. */
-> +               prd->base.size |=3D cpu_to_le32((FMP_ALGO_MODE_AES_XTS <<=
- 28) |
-> +                                             (FMP_KEYLEN_256BIT << 26));
-> +
-> +               /* Set the IV. */
-> +               prd->file_iv[0] =3D cpu_to_be64(dun_hi);
-> +               prd->file_iv[1] =3D cpu_to_be64(dun_lo);
-> +
-> +               /* Set the key. */
-> +               for (j =3D 0; j < AES_KEYSIZE_256 / sizeof(u64); j++) {
-> +                       prd->file_enckey[j] =3D fmp_key_word(enckey, j);
-> +                       prd->file_twkey[j] =3D fmp_key_word(twkey, j);
-> +               }
-> +
-> +               /* Increment the data unit number. */
-> +               dun_lo++;
-> +               if (dun_lo =3D=3D 0)
-> +                       dun_hi++;
-> +       }
-> +       return 0;
-> +}
-> +
-> +#else /* CONFIG_SCSI_UFS_CRYPTO */
-> +
-> +static void exynos_ufs_fmp_init(struct ufs_hba *hba)
-> +{
-> +}
-> +
-> +static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
-> +{
-> +}
-> +
-> +#define exynos_ufs_fmp_fill_prdt NULL
-> +
-> +#endif /* !CONFIG_SCSI_UFS_CRYPTO */
-> +
->  static int exynos_ufs_init(struct ufs_hba *hba)
->  {
->         struct device *dev =3D hba->dev;
->         struct platform_device *pdev =3D to_platform_device(dev);
->         struct exynos_ufs *ufs;
-> @@ -1196,10 +1410,12 @@ static int exynos_ufs_init(struct ufs_hba *hba)
->                 goto out;
->         }
->
->         exynos_ufs_priv_init(hba, ufs);
->
-> +       exynos_ufs_fmp_init(hba);
-> +
->         if (ufs->drv_data->drv_init) {
->                 ret =3D ufs->drv_data->drv_init(dev, ufs);
->                 if (ret) {
->                         dev_err(dev, "failed to init drv-data\n");
->                         goto out;
-> @@ -1430,11 +1646,11 @@ static int exynos_ufs_resume(struct ufs_hba *hba,=
- enum ufs_pm_op pm_op)
->
->         if (!ufshcd_is_link_active(hba))
->                 phy_power_on(ufs->phy);
->
->         exynos_ufs_config_smu(ufs);
-> -
-> +       exynos_ufs_fmp_resume(hba);
->         return 0;
->  }
->
->  static int exynosauto_ufs_vh_link_startup_notify(struct ufs_hba *hba,
->                                                  enum ufs_notify_change_s=
-tatus status)
-> @@ -1696,10 +1912,11 @@ static const struct ufs_hba_variant_ops ufs_hba_e=
-xynos_ops =3D {
->         .setup_xfer_req                 =3D exynos_ufs_specify_nexus_t_xf=
-er_req,
->         .setup_task_mgmt                =3D exynos_ufs_specify_nexus_t_tm=
-_req,
->         .hibern8_notify                 =3D exynos_ufs_hibern8_notify,
->         .suspend                        =3D exynos_ufs_suspend,
->         .resume                         =3D exynos_ufs_resume,
-> +       .fill_crypto_prdt               =3D exynos_ufs_fmp_fill_prdt,
->  };
->
->  static struct ufs_hba_variant_ops ufs_hba_exynosauto_vh_ops =3D {
->         .name                           =3D "exynosauto_ufs_vh",
->         .init                           =3D exynosauto_ufs_vh_init,
+>  Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml | =
+3
+> ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-
+> thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-
+> thermal.yaml
+> index 1344df708e2d..29a08b0729ee 100644
+> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-
+> thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.y
+> +++ aml
+> @@ -61,7 +61,8 @@ properties:
+>            TRIMINFO at 0x10068000 contains data for TMU channel 2
+>      minItems: 1
+>=20
+> -  '#thermal-sensor-cells': true
+> +  '#thermal-sensor-cells':
+> +    const: 0
+>=20
+>    vtmu-supply:
+>      description: The regulator node supplying voltage to TMU.
+>=20
 > --
-> 2.45.2
->
->
+> 2.43.0
+
+
+
