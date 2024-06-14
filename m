@@ -1,180 +1,177 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4470E79E1
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 14:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85B21BC37
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 14:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718373871; cv=none; b=brwlHMgWyD9NmdsekWukH0NH0auIGWdGi3GRz2oSDXz2Hn4N4nRzyg14X2yZhLpxnQ3JMxYenaDEppyqwIgP0kV6OvBKjfj3TJN04iN/U5HUKVy8RtibtqLGp9ym44LUgGDN3wxFFGUuXGiKcZKZazwl/SQQerowtFC/Xe4pki4=
+	t=1718375807; cv=none; b=BfTjp+MopJjCEUIrJHowQ7noNUDrIQzJsZGu0zD7hcfn8DlewdCaaRmucC/vaGaMa2macEdUjFWt2pBux9m7+aD3+EYMp7xEXU0avzCsu27aD5E6UGm2S9Sl83LOiiZJvkHNNuRf9ugu4lCeBK6jbjDq+HdUOUuYi5t7i7GScgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718373871; c=relaxed/simple;
-	bh=45+7DJ3Zi1zWTvH/h2mVbRQtLebXojIZJISifInGfi4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ifRXNWD0ZHIFhJaTsdtikZbaGV7Pz4rAC7JpAAz2FatLLxs2H9s4WTOuO/p8JyOM7+Ez21oRJ7DsX2ga2t2O3XCzZz/W1CKHvgobpfGyCDbzzXgJNDjW2nGCfO+8Phw3EXp/O8ZEQM7k0PuIQv7xIF0nr6x+fFOuBf4+kgJkTxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a2wzp2Bm; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1718375807; c=relaxed/simple;
+	bh=i+2swah0zZgVXbkTe0iYaiZCqnlKaxQhq77fv0zxHYg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t04ROnyv+EsUGW1JXkJgrqAJWSw2enqA/OjtIw68Msr1eHnekOoPyiBMb34LyR0oOFofIoWIk5hB9VSWWhp5QYqWKfC/diVC6EyOLrEc1N9Mj4AGVrc+AO8FZiERW+EPqmabptRJ/xkjJ3Izj7+pWs9dScsKWMWoVdRp8Hj2KPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yu788xU+; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a2wzp2Bm"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebd421a931so21731351fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 07:04:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yu788xU+"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso18235845e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 07:36:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718373867; x=1718978667; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dl9kqcfGBwFy5H6BJGB/GnGPra5NWoxJWzdEPKFSvgU=;
-        b=a2wzp2BmnQYvYGGhfrwoFvuBKlCiu/Ps2GMI3fq/xU+Kghph5lzN5XU5ebs6YqsfTH
-         0EnfaCq8aF/rESGLivbKrI1BK4euPsjpdhuHL++J68MdVIimngXk4eTmkxS2ScHpeDqn
-         Oy8kWBqnr/3fOgpfJcmHl6dscjWaVXgZnhiX/hUImPhj6bg4CTl8RV0x+nBlYj0yYve6
-         Mlh9KdSfuFJB4Rg8Whu6vE7CzL/z2Mdk/QlZUGUid4VRfoEudD/MDHQnbuYXleCJ9ieL
-         OzdEGaKb/nDzZ5X1WGzLyz5PxM8GM4+ewDkYHLWe75d1mjt7UsBM5ZPqdOui15Q6oJ4Y
-         nOzw==
+        d=linaro.org; s=google; t=1718375803; x=1718980603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9pjHA27KSDFDPJxgz/w9YGYzEfUAZs5JLmVszAQFE64=;
+        b=Yu788xU+ImZuRg0jMvRS4JRm6usITv3JKkwnjZ5/JZwrhyfXTlSooPlDtKiiDRZl4d
+         4KSioArFHhraoEP1ZEnw4T5jieEjU6jA5btwyCA4B5rRz/WXLRw1t9uhyLTPtss+3hoi
+         B3V25qbYdetozLPf0YbENEhu98Y51ypCCKSfmGbrEJQIfdVX99Ljzb/v8C3XKNQBadFK
+         ranqmJpYAuQyXjCyzYaImLWuaqGAFrmxO++pXYMLxw7bQAgped/IGD4snFdt6+sRF+g6
+         o72jNL2A/TvN6DGh5uqsopF3W2Ml1PrIY1bGHYt2G83duYjdjsN31eVqR8LtOfzY6Sp6
+         p+uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718373867; x=1718978667;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dl9kqcfGBwFy5H6BJGB/GnGPra5NWoxJWzdEPKFSvgU=;
-        b=PAx4ynVRQIdqDYLUAbQ5ERRn63/IbxjhDl4eSzeavWxPiALBOFDXYCNsuwhJvWtT5I
-         u6pp5fvQphTNQsdJBCP+hiDEkMyXoGlj7NDiCSI+nl0fRbhB8yKr/hYUaZcLn2/+uoFa
-         ySzGKe94ATa2Z4iJneZo5ke406G4QhR8PtDn65Tx8y9MekgIA6DEMBcd52pQb3UioCkx
-         AAdHtgjUTTO1X4Ty0O+XFQytQe2b4hA4WwUSfSTCWXvwNjZxtJebT6S9vhGxI9T9hAyF
-         5kbbvDwHzO1aYDoMG+4MSG45r8FEOUqh8af0qydCMjuxQQVUDvei62A17kKM3ty9i3E1
-         FGbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVosBoEGuA+9/i9w6Fzh7nO2/uZ/ardiWV1WWvoxEX8EteleKeQKbgddWyU9diLGdTh6xYRSYi+tZqphUt4qwWnlGw5g+kehhzJ4uA7kMS2WhY=
-X-Gm-Message-State: AOJu0Yx2wlPyO+6aMshe3HFp5bB4ZWb11cBp4a7tLG/J8PuAUPQbT2KC
-	oVbswfbi2PBCikmQ9fjyfugph0ck6R5P/L5JE/lkz5I/IW+LxxOboL2wYlE6F6M=
-X-Google-Smtp-Source: AGHT+IEQOuPOYPaM8o3aNWyvd8/zbnKHujN2cBZJn554KZZftzu74XY5xkUakXzxKrF6TPEHis8wFg==
-X-Received: by 2002:a2e:2e0f:0:b0:2eb:f5ce:a0fa with SMTP id 38308e7fff4ca-2ec0e60cb34mr18675991fa.46.1718373867299;
-        Fri, 14 Jun 2024 07:04:27 -0700 (PDT)
-Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33ccesm61310525e9.3.2024.06.14.07.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 07:04:26 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: lee@kernel.org,
-	arnd@arndb.de,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	semen.protsenko@linaro.org,
-	kernel-team@android.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 2/2] soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-Date: Fri, 14 Jun 2024 15:04:21 +0100
-Message-ID: <20240614140421.3172674-3-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-In-Reply-To: <20240614140421.3172674-1-peter.griffin@linaro.org>
-References: <20240614140421.3172674-1-peter.griffin@linaro.org>
+        d=1e100.net; s=20230601; t=1718375803; x=1718980603;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9pjHA27KSDFDPJxgz/w9YGYzEfUAZs5JLmVszAQFE64=;
+        b=cH7zP+SPH+Htcb/Le3T4NcpPgmx0eD6ywH7n0ez0b1+escy9JAUjuQ82XnhURIaDrh
+         O2cbbugvGnhIriz9sIEyS70Lbu/nm2JfOfqvZC7yoa9hF5eTuvVvOGDvwcLH3/UiYID2
+         Ds8DEdwj7Wkeurz3QA1+Xa3VklcToX4sUOdeXAdsj4iWPlqtihDH4wo1y04Mf+x/F7Xw
+         oHPI4I5+Hol5NzsdiWZPqx/rEJ7R0QeZ1gZk0+hj2k4YbONDEpcsiy0htpQ9gs4bw5gL
+         KQVgJUAmMZHBvpb2tF0IQAQX+SXvoYwJR3RsFY5U7ODW8vseZXEAhO7gOtVEzduUfPQT
+         XrwA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/nv0LNaXlYAaNP1qq/PmJeTRW5eYRkeZ+nO9QrgIkKk5/RiZRy8hbBOE6VyK4dGck5TmtX5AZZoW//AkvosvmVdz7sVq+RtFJhXtyliEMUPI=
+X-Gm-Message-State: AOJu0YyVJt3HAfFwVuEbNXtH5oSDQ4FoC7nP8opXHtC0+McIQ0e1Qiee
+	PGpaIgo/zEQlZmaACGBdI0jQjdjF6VKkEzCADOMErrx199XfTtCG927JFw4dAeQ=
+X-Google-Smtp-Source: AGHT+IEzMKgUi8Y9YIfJCmkgzt1+FWf2beN5X++98O6QozELkl3Svx/Pv/K8danURzS2F0IaAL6yBw==
+X-Received: by 2002:a05:600c:1f92:b0:421:7407:d778 with SMTP id 5b1f17b1804b1-423048272eamr23600425e9.14.1718375803117;
+        Fri, 14 Jun 2024 07:36:43 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc? ([2a01:e0a:982:cbb0:261a:269e:a3a8:a2cc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42285574e33sm44341635e9.1.2024.06.14.07.36.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 07:36:42 -0700 (PDT)
+Message-ID: <966d2474-57ea-4eca-baac-4b448c76fbf4@linaro.org>
+Date: Fri, 14 Jun 2024 16:36:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 02/22] dt-bindings: thermal: amlogic: reference
+ thermal-sensor schema
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Guillaume La Roque <glaroque@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Amit Kucheria <amitk@kernel.org>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ zhanghongchen <zhanghongchen@loongson.cn>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+ <20240614-dt-bindings-thermal-allof-v1-2-30b25a6ae24e@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-2-30b25a6ae24e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For SoCs like gs101 that need a special regmap, register this with
-of_syscon_register_regmap api, so it can be returned by
-syscon_regmap_lookup_by_phandle() and friends.
+On 14/06/2024 11:46, Krzysztof Kozlowski wrote:
+> Device is a thermal sensor and all in-tree DTS provide
+> '#thermal-sensor-cells', so reference the thermal-sensor.yaml to
+> simplify it, bring the common definition of '#thermal-sensor-cells'
+> property and require it.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+> index 01fccdfc4178..e52fc40e215d 100644
+> --- a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+> @@ -11,6 +11,8 @@ maintainers:
+>   
+>   description: Binding for Amlogic Thermal
+>   
+> +$ref: thermal-sensor.yaml#
+> +
+>   properties:
+>     compatible:
+>       oneOf:
+> @@ -44,7 +46,7 @@ required:
+>     - clocks
+>     - amlogic,ao-secure
+>   
+> -additionalProperties: false
+> +unevaluatedProperties: false
+>   
+>   examples:
+>     - |
+> 
 
-For SoCs that don't require a custom regmap, revert back to syscon
-creating the mmio regmap rather than duplicating the logic here.
-
-exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-is kept around until fw_devlink support for syscon property is added
-for the pinctrl-samsung driver that also runs at postcore_initcall
-level.
-
-All other exynos client drivers can revert back to
-syscon_regmap_lookup_by_phandle().
-
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++++--------------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index fd8b6ac06656..91d7f4121a72 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -204,16 +204,6 @@ static const struct regmap_config regmap_smccfg = {
- 	.reg_update_bits = tensor_sec_update_bits,
- };
- 
--static const struct regmap_config regmap_mmiocfg = {
--	.name = "pmu_regs",
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.fast_io = true,
--	.use_single_read = true,
--	.use_single_write = true,
--};
--
- static const struct exynos_pmu_data gs101_pmu_data = {
- 	.pmu_secure = true
- };
-@@ -290,7 +280,6 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap);
- struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 						const char *propname)
- {
--	struct exynos_pmu_context *ctx;
- 	struct device_node *pmu_np;
- 	struct device *dev;
- 
-@@ -316,9 +305,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--	ctx = dev_get_drvdata(dev);
--
--	return ctx->pmureg;
-+	return syscon_node_to_regmap(np);
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
-@@ -355,19 +342,22 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 		regmap = devm_regmap_init(dev, NULL,
- 					  (void *)(uintptr_t)res->start,
- 					  &pmu_regmcfg);
-+
-+		if (IS_ERR(regmap))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-+					     "regmap init failed\n");
-+
-+		ret = of_syscon_register_regmap(dev->of_node, regmap);
-+		if (ret)
-+			return ret;
- 	} else {
--		/* All other SoCs use a MMIO regmap */
--		pmu_regmcfg = regmap_mmiocfg;
--		pmu_regmcfg.max_register = resource_size(res) -
--					   pmu_regmcfg.reg_stride;
--		regmap = devm_regmap_init_mmio(dev, pmu_base_addr,
--					       &pmu_regmcfg);
-+		/* let syscon create mmio regmap */
-+		regmap = syscon_node_to_regmap(dev->of_node);
-+		if (IS_ERR(regmap))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-+					     "syscon_node_to_regmap failed\n");
- 	}
- 
--	if (IS_ERR(regmap))
--		return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
--				     "regmap init failed\n");
--
- 	pmu_context->pmureg = regmap;
- 	pmu_context->dev = dev;
- 
--- 
-2.45.2.627.g7a2c4fd464-goog
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
