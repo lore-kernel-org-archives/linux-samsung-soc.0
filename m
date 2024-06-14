@@ -1,91 +1,92 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16887E76D
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2024 18:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8098614A4CF;
+	Fri, 14 Jun 2024 20:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718389526; cv=none; b=BfU8S3BSHwqGteIdlrfl4+gJ+A6aiUTZ1snUFXp6PnjG8cCRfSoDHpPC/OyzgkFIsHNoLKVQoykTLQQ+LNIID6vWamkTCONdBeKykID75zJ09LNWYaMlxS/B8brCd4VhB28mFs13hYOO6XnwdyyY5XdqDAJRzAsJBZxjQP81tFA=
+	t=1718397194; cv=none; b=RHugzJf/hr6gaw8C40V8bO7B/4aHmhZxfHC3k27xTjREJ0EcUHPDFICGrju6F7GmKt523ZPgCKzM3iOsza4agzI6EqOR2RMME2+OF/cH0q3EUg8xU10mirwzbtKbNyLQESHXe0Yuqxysthzz176DpGjHVo5ZKDI2woezFokM8Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718389526; c=relaxed/simple;
-	bh=17XqsCYTuwNMMXk8dTaMUWD29V4eaG1WBt3UP1RONPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFNh6pJdjnOAeNJkNVKdQaqEIEGvqh6NZc1L6cxfknHc5PqfnvT1ZFWMTONVGkIkY53Bq/Cek3HsUlRcZgHiS5VYD/RO4740UMBjeCOUGwHQZ/kgqtcrGUMU5obdJUM9hjoz0Ag3pIgTcS0x57/nmpPGitzHGBaCRT71Zc2qb7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WcIdSUhG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1718397194; c=relaxed/simple;
+	bh=SrGQawhOHAt457GSz0TS370IrGd04m3neidTOhOoNRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NujPResWFzUCHGLPYXV6UXfRuL7iV4tT5lP1ChHB2WjQwFF8lcbAwr5ExAEN7N6kVqW061jgtk8XmAzfnnfNb+mC/UH22gdk6gdfpkjNZFzoZa4lnuBQiJxpPR/Ihcy/BTtoJWSlF9olFapaSW5JOH8+hcIhr1ZlsXRBzVuEujc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r5hIFyDr; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WcIdSUhG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718389523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rVuWdzbjR5bd+U/y/e+aXYkOnbjqY8dHfGNq+VGdIi8=;
-	b=WcIdSUhGvulFjHY3EGiDloMzWCfvdXxH/0qrJKBZ89yQDZU2uqgocHrSgQ4PrLSzzu2QNR
-	pG3X4i+iihLH3cXEHnd0KbeqPGW9CySzWvDH5YJew9MGq6TNtEACOx/lqwXfLUyz0pIC+W
-	Z42Pxug5WZL5rNEEskTDf4d4BFQ10GY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-368-yroaDZQoPo2HAkZQVCiwnQ-1; Fri,
- 14 Jun 2024 14:25:18 -0400
-X-MC-Unique: yroaDZQoPo2HAkZQVCiwnQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 28041195608C;
-	Fri, 14 Jun 2024 18:25:15 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.39.193.73])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B377A1956087;
-	Fri, 14 Jun 2024 18:25:10 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: linux-doc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	arnd@arndb.de
-Subject: [PATCH] Documentation: Remove unused "mtdset=" from kernel-parameters.txt
-Date: Fri, 14 Jun 2024 20:25:08 +0200
-Message-ID: <20240614182508.600113-1-thuth@redhat.com>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r5hIFyDr"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Cpw5+2dcDOhDIommnV7v8AYXOFdFgYf0SjEsdScsFTw=; b=r5hIFyDrIjPgp34N/pO+OPmmRE
+	dhLoLl/KGFHizzLnG3cL+gLl+w1cIyxmVMgpEo+vYJJ/mKaw5AuY36ZiuyJcp184RAmYG8BL0vxFD
+	mw6vnJXgyPk+1Veoi9ku7+vpG0y3qmD0ukEORYGpjmE2xAcyJgkGhusKHM02aXG1Oh4inhDBbvWfq
+	LV2PxkaYbxctUzTkJAEyo54+JL+Zt/9ULsxcPKSrhbkKHUtYd4m2Wn5O+ZB/9Ie6ZogNY9f8FXdj1
+	/1nyuwivrizYyHc66fb8oigP1dgXxRWBGQIfqV42kmtAU7/7Qd1p0ZkIeS4UuPk+bGLB9JIPgTe+x
+	4HNPATOw==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sIDbj-000000040Hw-0A7O;
+	Fri, 14 Jun 2024 20:33:11 +0000
+Message-ID: <621856c3-50be-44d4-aafd-f08338f1c639@infradead.org>
+Date: Fri, 14 Jun 2024 13:33:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Remove unused "mtdset=" from
+ kernel-parameters.txt
+To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ arnd@arndb.de
+References: <20240614182508.600113-1-thuth@redhat.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240614182508.600113-1-thuth@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The kernel parameter "mtdset" has been removed two years ago in
-commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support") and
-thus should be removed from the documentation now, too.
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- Documentation/admin-guide/kernel-parameters.txt | 5 -----
- 1 file changed, 5 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 87d5bee924fe..ff02e1a02e12 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3631,11 +3631,6 @@
- 	mtdparts=	[MTD]
- 			See drivers/mtd/parsers/cmdlinepart.c
- 
--	mtdset=		[ARM]
--			ARM/S3C2412 JIVE boot control
--
--			See arch/arm/mach-s3c/mach-jive.c
--
- 	mtouchusb.raw_coordinates=
- 			[HW] Make the MicroTouch USB driver use raw coordinates
- 			('y', default) or cooked coordinates ('n')
+On 6/14/24 11:25 AM, Thomas Huth wrote:
+> The kernel parameter "mtdset" has been removed two years ago in
+> commit 61b7f8920b17 ("ARM: s3c: remove all s3c24xx support") and
+> thus should be removed from the documentation now, too.
+> 
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 87d5bee924fe..ff02e1a02e12 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3631,11 +3631,6 @@
+>  	mtdparts=	[MTD]
+>  			See drivers/mtd/parsers/cmdlinepart.c
+>  
+> -	mtdset=		[ARM]
+> -			ARM/S3C2412 JIVE boot control
+> -
+> -			See arch/arm/mach-s3c/mach-jive.c
+> -
+>  	mtouchusb.raw_coordinates=
+>  			[HW] Make the MicroTouch USB driver use raw coordinates
+>  			('y', default) or cooked coordinates ('n')
+
 -- 
-2.45.2
-
+~Randy
