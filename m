@@ -1,73 +1,81 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A691E61FF1;
-	Sun, 16 Jun 2024 07:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A8016D33E;
+	Sun, 16 Jun 2024 08:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718524774; cv=none; b=mRYNu2/pN42cLx/D+gkgw88JcgK+aaeaI6/jFuzpOC+3rc3aP+hBt/NpWJU8yTsyRyeUXj7e5R4B2CEIk7/kp/VFLL3Fw2e2uLfGGosFYtZtjCnPdYOp59UnS/oHSCnnLyVbSNthV9psCX5G9OuJk5iW55UV9PKsmA3xIQSRhs8=
+	t=1718524817; cv=none; b=jyooDlwRF8eR0j81/UZYngWkON1t5hR63is3igmqdJnTPPB1AFTMd7mtGPgYiQY0tcKo3iL0VBMdPIHCqvLt9F5sIQoerlqAsOMcsw0elN40glVMe1gkJGdF3Npm0up01ZUcXtB4ZtR+AK6GIJXoqFmW3drNbpRI+d0KOX5I5+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718524774; c=relaxed/simple;
-	bh=kdCwhDXT+UFIY/O1VgGsN1+FtroxhsWGrqdbAQg5REs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DZiOCib34p6IE7LMxl/IJlBw70nzMWBByEpijdxgSRY6sqSHlZr4gXQi4a/HI9zI7grvncSKh8HBXmEnvTnPWrYlo8CMSIIEv5F1WD+37nMNpkIGQBIF4yAEIv0NHe9ow08upXwhRQggdorT01tXrVM9nsQPSg048jtoH/mQZ24=
+	s=arc-20240116; t=1718524817; c=relaxed/simple;
+	bh=Kx9wz1mFls9/uJS/vpae1QpuUfW4zPS3SusOm+sxWXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AlVi7tXSErSntSTOXazmeMH1UgkQKrjmYN9TeFh4bNosKH7tGpS8lU0+1NsW0qNMaXkgFGMrYaxsWEBJItqbS0T6OP2w+KkAracSDC1+UqGgLm4ifB49dl98/LXTaI1MtAc/fpVjIVbCbUHvgNRwWSoQ4pKHP29bZiseibxHao0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from 79-98-74-242.sys-data.com ([79.98.74.242] helo=phil.guest.centrum-krystal.cz)
+Received: from 79-98-74-242.sys-data.com ([79.98.74.242] helo=phil.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sIknO-0000UZ-8H; Sun, 16 Jun 2024 09:59:26 +0200
+	id 1sIko5-0000Vp-S0; Sun, 16 Jun 2024 10:00:09 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-rockchip@lists.infradead.org,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: (subset) [PATCH v1 0/4] clk: Switch to use kmemdup_array()
-Date: Sun, 16 Jun 2024 09:59:24 +0200
-Message-Id: <171852472233.3824365.10919952003321666649.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
+Date: Sun, 16 Jun 2024 10:00:07 +0200
+Message-ID: <6087515.R56niFO833@phil>
+In-Reply-To: <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
+References:
+ <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+ <8182279.JRmrKFJ9eK@diego> <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Thu, 6 Jun 2024 19:09:30 +0300, Andy Shevchenko wrote:
-> Replace open coded kmemdup_array(), which does an additional
-> overflow check.
-> 
-> Andy Shevchenko (4):
->   clk: mmp: Switch to use kmemdup_array()
->   clk: rockchip: Switch to use kmemdup_array()
->   clk: samsung: Switch to use kmemdup_array()
->   clk: visconti: Switch to use kmemdup_array()
-> 
-> [...]
+Am Dienstag, 11. Juni 2024, 15:20:05 CEST schrieb Andy Shevchenko:
+> On Fri, Jun 07, 2024 at 10:13:04AM +0200, Heiko St=FCbner wrote:
+> > Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
+>=20
+> ...
+>=20
+> > > -		cpuclk->rate_table =3D kmemdup(rates,
+> > > -					     sizeof(*rates) * nrates,
+> > > -					     GFP_KERNEL);
+> > > +		cpuclk->rate_table =3D kmemdup_array(rates, nrates, sizeof(*rates),
+> > > +						   GFP_KERNEL);
+> >=20
+> > are you sure the param order is correct?
+> >=20
+> > According to [0], it's (src, element_size, count, gfp), while above
+> > (and below) element_size and count seems switched in the
+> > kmemdup_array calls.
+>=20
+> I'm glad you asked. The parameter order is going to be fixed [1].
+>=20
+> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+tree/mm/util.c#n149
+>=20
+> [1]: 0ee14725471c ("mm/util: Swap kmemdup_array() arguments")
 
-Applied, thanks!
+ah that clears it up :-)
 
-[2/4] clk: rockchip: Switch to use kmemdup_array()
-      commit: c9ba07b0c02acd89f2e521754357de30e704c254
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Thanks for the pointer
+Heiko
+
+
