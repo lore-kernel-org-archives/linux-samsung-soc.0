@@ -1,153 +1,92 @@
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6419C176AC6;
-	Mon, 17 Jun 2024 02:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6604D7492;
+	Mon, 17 Jun 2024 08:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718591796; cv=none; b=XpNBj8/BGiNmJQLTMG/7dVkXabJIQpu28YZFfUBrOBcCAb9SLYBfdMN86dHT/I36kGofcGJhRmW7eu0AORv2ctdgb+QhFYutHLp9UEaJ4a6mNjhiitKuRbXXw0Mn/xpLQBL/KzSmLm3Ch+cRII3iflXNvvmwyngZh+cvLTg6rrk=
+	t=1718612663; cv=none; b=O2broj1+/QA9FaY7fPP8GCnATQfGixx9/Cfbnknd6LXDqIWoXL/CVym69V//5Qyoes3RlO7DuyXhMoAp3m/m/u03XV1J1GXe7bbm2owDf8XNZfNOvEwZy6Mga+bJ5XNAFdMCj1gsgUK8UA2rsNpx74lYl+Jve17MSiS0uD07P2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718591796; c=relaxed/simple;
-	bh=lczObmd9t5CNOLsW1w8BAFRVJ0CtUEDoyScV7EOYG6w=;
+	s=arc-20240116; t=1718612663; c=relaxed/simple;
+	bh=4PMSWQqpgy9KLTBdJ1z7dLEh7Y62+2GJ2xCLSoh/wE4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kDvdOEQgCSp2S1RGhfRLVVNms+kfnku7e01XNzbvX6oi1SyTBMM2mAO45qh0BRGHPPApa23z6MbRq06n2gjE0XCqQ1v0O2bcvc9UBaFhpxARUbzTlnAfZgmnF46YCXOas1YWMilPAnZztJP2sWeQy/r+sBfwdXwCC2jrEeIf5Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UI1bCvAX; arc=none smtp.client-ip=209.85.160.47
+	 To:Cc:Content-Type; b=gTC03h1hnW9OlBZNUD4F9A1HDxI4Hsf+y1afbrCysIDbLESYShAkfEO+1Sc4ctlcThPquh6QFkYYlr0eHeBLOgQ8LYKfhDkohsFT3bnXDP8KcWxz2BZyqTuqZqZRLgIhIphxY6bVxDM7FnpuPLP6e3XGyAmunI73j/t8MMmm0uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhN4LAsy; arc=none smtp.client-ip=209.85.161.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UI1bCvAX"
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25075f3f472so544980fac.2;
-        Sun, 16 Jun 2024 19:36:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhN4LAsy"
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b96a78639aso1622411eaf.1;
+        Mon, 17 Jun 2024 01:24:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718591794; x=1719196594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3S2YurUrl5MC+fkMuKFY0ClzSCLEfz1Oc40ER8vtAUk=;
-        b=UI1bCvAXcT8oFawrgPKV7R7V1Y1l9hihWGu2H359gjJ86/mdhD10RbY13jKDplo6/f
-         j4V84YzGTTu7GMT1ujD373FYRNeHQFOHZf6QPKhEoMUGslm5dhXoJ1RwPb2xnhlnWk/p
-         z7z7jOtlxyWt8CfvBFI5/ee6EgGNfqXCkMghaEfY+P9clxdD+UnnSpP/jlgoz43VPB41
-         tVD5AekHv/QDHkxhhuTnNPW2SDN7DQGi56Gvvj84EWqKSmshZ6pThCJEmoa8GAhQG5dj
-         VIRiR66vbrNfsH5XyRNwcbjerF2JQDz4/TR9ZjWsLCKj425Tas+U9JkZmxEi+q8Z9N9V
-         qcPA==
+        d=gmail.com; s=20230601; t=1718612661; x=1719217461; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9HdCcwPlP04M3/JAPMUtzS+6dDB80C3B57mZ9YxWUl4=;
+        b=PhN4LAsysQRcL6wvq7W32/wCk4K+KdPg9e0nObFG8uu5to4e7QA30/qL3OhjqXMVHR
+         +GX5Qo164NCiYPVqbKQV/m2oOY6kyoWtIGiNGL7H3OBilwln7nCVogUDbkD6QMPtUxML
+         dTcRiFMWYnhd1IlgFIHvvDDfoCTwOca0HhseGS3TU2+XRuC3IyIIGqr6Xljd+QL4MSey
+         pcNJoZ/Sub5pk5Hn7rUAjLvrxlMXlrTXsO/GDcuBqyoXw1G7oBP689Gcnw77RzkzSTt7
+         SBUGPpL7MiqEKAiktDaXEFhpW8BaGQOnA3x/2KbNjMnGlfpYRUi+5lksxDmji9/QoF1Q
+         Te9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718591794; x=1719196594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3S2YurUrl5MC+fkMuKFY0ClzSCLEfz1Oc40ER8vtAUk=;
-        b=jvOUItlC6L/lAYZLl8KVUurp+pX1dgaDnDb4hQ9OEBaC0YMEQoC8HYQyuR3+APoRZ9
-         q6fQTLpFjWwVBPjgO8279WXaBtW0cdIHmA/PrPxHD6ZrlkP9YHdZr1qAakVy1qob4WLo
-         Ed1J7zZYBMlVTFtPGBkQHCYDet9cXi+rfKLld8iI1+iIgXPluYR80poYt6oBYod31NTu
-         kCoZwWH4P9S7KN/p/oTbo9XEZc+9SIGSSr44+WRZpKwVbXX3xYIlrQTZu8ZiTS14Mqu/
-         XD/5ci+pduOWSul41Ndt0iFZrRzh675LxcZDCB6sJdleojYsKRSig9rYpY9I29fjsFAD
-         EIeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhYVX2EiZOngemrWzn1b7b9JA3sbrM0CIxZHB6Pjcp3Kb2409O+2NqqdioOBYiS9oU2s1i/+8qo5+3VzeeD5r8Lm2PwJaQNfIlHDtMI13eMedKFn/grLLqTkxxDDWMQ3uKDkV2APKXQS4o5EEjyVQPomhsvucKYjHoWEWtCgn9HyE0BWkQzIcj7OJOmdgxzMZ3dm5J+RzpQcnvXWNvbmtFcwG0FQUxAS5R3Z6+xuAzc8OxRDqMWzt+kjo68y+OuMsUr/pLHDoj3mHcglckzvvezLvjCAZwaPTwFVp6xANeUPhFokzUyY9Vmj4PTfu+7Co8OjDeqnbGDEuz2QMJo9KaG2bOOg==
-X-Gm-Message-State: AOJu0Yxu0BgZ9ADF/gBgQT1lzljIvTuI4UwcS7fRtrRlT1g2f3MQUVde
-	WrKzWTuwJzMvhlIquQFDFOrZGa/Z0jFgnYm7zkjg5WT2uw2L0imnrBuUsfD2VgGF+rTUscD5s4v
-	PM3FCkJ27GqkA/N+D4+6Ch6sTIF0=
-X-Google-Smtp-Source: AGHT+IGltFa0bQ5GCz9R8Qfp8q4AWMyO+O31iG05ayKCR1g5p5BB0jiP/wIlvjmzI8GEc+sBuDPZkWfe/0K++X8dom4=
-X-Received: by 2002:a05:6870:469f:b0:254:d417:351f with SMTP id
- 586e51a60fabf-258429511admr9266807fac.1.1718591794255; Sun, 16 Jun 2024
- 19:36:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718612661; x=1719217461;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9HdCcwPlP04M3/JAPMUtzS+6dDB80C3B57mZ9YxWUl4=;
+        b=K1xmpYPyu6SP1KO5DWV49ehzLJqn3/MKyILzOPhdRtsBcCLH6EyMVVEqo1bepc96G7
+         1OJeuXlqMEQCmJzn5kPy7rBYIn/n3wOLWKqgmXQ6yjM1QqF9eBWxQPq2ThCL5Y9s5pvH
+         +AStxLSSE4Oz00ExQGRX5rk2ZIblCvD/ye5IvDmCEK6nhLGvJBizmNeH21PgdxguRajn
+         j6gXxVY3p501CzbfhRrBJP0By691ZuA67/d5KBHZFNX+/xXJzY2oWNUaEsFQTjhwpHjN
+         wiXkoYpORj37CpbFYoi+q+Lu5LC1TUv4PhS4+PsqklFtczdRJTrPIPFXrkrDDq8Z64xO
+         x7qg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3q79ULvZdK0fjQng7qBVf4NqUMRZFT3rf0sHzGvBxiYLLuRa//J/RuJj8dxdLWzR+MqRH8JcOa+zaryX1LdfjKxNlfTdSZaN0eYbVnYiS6Ad7YStYGKC1HK9vhv56K5e+j25FBo7KyjYOBFrEG0Mk61PqyHrKZ1AMhUBUZCreuGLaxsiCBzXtuw==
+X-Gm-Message-State: AOJu0YykWm7489kBlxIac4jRXnRIL222Bl00Azk8YY52j6yEz5SJxso4
+	ZFfiuMZeC703xRHpZwjvB10Mdn6LS0AFJBH3jlgyG5Lc9HfzW4spNuIRssKzTELQDqaJxTjYlyM
+	fukYwczqT94dAWOWpzDb5Hyb3PKU=
+X-Google-Smtp-Source: AGHT+IEXwPAwhOMCvBhbWjRVW5Ubq87Slh/d+RapR7WqMRF0MA+etjIVrc7SQl3B2SvXdsOlXOP+gTpxWIkIi/JCyWc=
+X-Received: by 2002:a05:6820:1506:b0:5bd:80d7:1891 with SMTP id
+ 006d021491bc7-5bdadc8d142mr8246644eaf.9.1718612661374; Mon, 17 Jun 2024
+ 01:24:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org> <20240614-dt-bindings-thermal-allof-v1-3-30b25a6ae24e@linaro.org>
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-3-30b25a6ae24e@linaro.org>
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Date: Sun, 16 Jun 2024 19:36:08 -0700
-Message-ID: <CA+E=qVdpw5dMSdZiBkX5i6y18vHzfG2JnBSmd2Rq=y4kkgZLQw@mail.gmail.com>
-Subject: Re: [PATCH 03/22] dt-bindings: thermal: allwinner,sun8i-a83t-ths:
- reference thermal-sensor schema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Guillaume La Roque <glaroque@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Anson Huang <Anson.Huang@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Amit Kucheria <amitk@kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	zhanghongchen <zhanghongchen@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	imx@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	Florian Fainelli <f.fainelli@gmail.com>, linux-rpi-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
+References: <20240510094034.12493-1-linux.amoon@gmail.com>
+In-Reply-To: <20240510094034.12493-1-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 17 Jun 2024 13:54:04 +0530
+Message-ID: <CANAwSgTRfEChziyys251-FezSevSq9pxHLJixVCAybJhq5YAqw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled()
+ helpers
+To: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 2:46=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
-> reference the thermal-sensor.yaml to simplify it and bring the
-> common definition of '#thermal-sensor-cells' property.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Hi All,
 
-> ---
->  .../devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml       | 6 =
-+++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, 10 May 2024 at 15:10, Anand Moon <linux.amoon@gmail.com> wrote:
 >
-> diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a8=
-3t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83=
-t-ths.yaml
-> index 6b3aea6d73b0..dad8de900495 100644
-> --- a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.=
-yaml
-> +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.=
-yaml
-> @@ -10,6 +10,8 @@ maintainers:
->    - Vasily Khoruzhick <anarsoul@gmail.com>
->    - Yangtao Li <tiny.windzz@gmail.com>
+> The devm_clk_get_enabled() helpers:
+>     - call devm_clk_get()
+>     - call clk_prepare_enable() and register what is needed in order to
+>      call clk_disable_unprepare() when needed, as a managed resource.
 >
-> +$ref: thermal-sensor.yaml#
-> +
->  properties:
->    compatible:
->      enum:
-> @@ -55,7 +57,6 @@ properties:
->      maxItems: 1
->      description: phandle to device controlling temperate offset SYS_CFG =
-register
+> This simplifies the code and avoids the calls to clk_disable_unprepare().
 >
-> -  # See Documentation/devicetree/bindings/thermal/thermal-sensor.yaml fo=
-r details
->    "#thermal-sensor-cells":
->      enum:
->        - 0
-> @@ -135,9 +136,8 @@ required:
->    - compatible
->    - reg
->    - interrupts
-> -  - '#thermal-sensor-cells'
+> While at it, use dev_err_probe consistently, and use its return value
+> to return the error code.
 >
-> -additionalProperties: false
-> +unevaluatedProperties: false
->
->  examples:
->    - |
->
-> --
-> 2.43.0
->
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+
+Gentle ping?
+
+Thanks
+-Anand
