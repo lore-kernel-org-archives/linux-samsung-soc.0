@@ -1,92 +1,102 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6604D7492;
-	Mon, 17 Jun 2024 08:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DDA188CD0
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2024 09:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718612663; cv=none; b=O2broj1+/QA9FaY7fPP8GCnATQfGixx9/Cfbnknd6LXDqIWoXL/CVym69V//5Qyoes3RlO7DuyXhMoAp3m/m/u03XV1J1GXe7bbm2owDf8XNZfNOvEwZy6Mga+bJ5XNAFdMCj1gsgUK8UA2rsNpx74lYl+Jve17MSiS0uD07P2M=
+	t=1718616908; cv=none; b=Ht8+jbYtGJQeV2T1hNnL3hQ0heo7tBiLS5tm0Ho8HsFLJewN2oYoo2xmcPBSXGaBluiuZgc7mfSZq5+moVJ8mg4sB7jA/JEggEPsBRxPrnFKZLf48HkntIpDrnEZ2OuLaA9oo0jMDTF7XYcDtAoO23Q8JrFlBx4w9ebmnfjjMlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718612663; c=relaxed/simple;
-	bh=4PMSWQqpgy9KLTBdJ1z7dLEh7Y62+2GJ2xCLSoh/wE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gTC03h1hnW9OlBZNUD4F9A1HDxI4Hsf+y1afbrCysIDbLESYShAkfEO+1Sc4ctlcThPquh6QFkYYlr0eHeBLOgQ8LYKfhDkohsFT3bnXDP8KcWxz2BZyqTuqZqZRLgIhIphxY6bVxDM7FnpuPLP6e3XGyAmunI73j/t8MMmm0uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PhN4LAsy; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718616908; c=relaxed/simple;
+	bh=pGsKYSsuVqYhnQGqi4IUCl0rXwhURd33quQLgivZ3+k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y73uEXPBsRU316vHZhe0PWY4B1sOzI5LHnWDX2HkLfcORLMnMQ9U6gvuYKH71cyJmiCNLsSJlf+66db3tjlcREWpXda9Utw2HcepOXGtZYJJYa6puQIA7Uv7m1fJ9DuC6BlmGuh0efGG9q14z9W44qaG2oRrciu+ZfIJJbeCSM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lTemQ+Kw; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhN4LAsy"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b96a78639aso1622411eaf.1;
-        Mon, 17 Jun 2024 01:24:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lTemQ+Kw"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso43236505e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2024 02:35:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718612661; x=1719217461; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9HdCcwPlP04M3/JAPMUtzS+6dDB80C3B57mZ9YxWUl4=;
-        b=PhN4LAsysQRcL6wvq7W32/wCk4K+KdPg9e0nObFG8uu5to4e7QA30/qL3OhjqXMVHR
-         +GX5Qo164NCiYPVqbKQV/m2oOY6kyoWtIGiNGL7H3OBilwln7nCVogUDbkD6QMPtUxML
-         dTcRiFMWYnhd1IlgFIHvvDDfoCTwOca0HhseGS3TU2+XRuC3IyIIGqr6Xljd+QL4MSey
-         pcNJoZ/Sub5pk5Hn7rUAjLvrxlMXlrTXsO/GDcuBqyoXw1G7oBP689Gcnw77RzkzSTt7
-         SBUGPpL7MiqEKAiktDaXEFhpW8BaGQOnA3x/2KbNjMnGlfpYRUi+5lksxDmji9/QoF1Q
-         Te9g==
+        d=linaro.org; s=google; t=1718616905; x=1719221705; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pGsKYSsuVqYhnQGqi4IUCl0rXwhURd33quQLgivZ3+k=;
+        b=lTemQ+Kw+ojX0sDCbGlEKD8ALBuEUScwLLm7wRcV2/bFeJlM/Ik/Fm5sokh/VEjHOq
+         P5Ip2x4PqEpIR1lXjUmRKLg7/3fS50V+pmte/FsdgIcokyv+0DTTqyVrdEYZtmvcdCYO
+         DxzcEI1jrOtgXhDWwcg18uypSKgxFN3FSczRxx8GTxn9XCqIl+hxJ4g92TcZ4nRHcmP0
+         tdx1pCv/AB7Ww5nmNrL4NxZaDiUlAMQeUaes1goUihRrPJbYPfiTE33bu9G8ODcgnlAp
+         4nkyg3cCgx1PJmsV7n81PaX7Gx0KWDs/dWaGmyZIdzLR5HqploRnxQsXB4nQsu+oNXgI
+         p3pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718612661; x=1719217461;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9HdCcwPlP04M3/JAPMUtzS+6dDB80C3B57mZ9YxWUl4=;
-        b=K1xmpYPyu6SP1KO5DWV49ehzLJqn3/MKyILzOPhdRtsBcCLH6EyMVVEqo1bepc96G7
-         1OJeuXlqMEQCmJzn5kPy7rBYIn/n3wOLWKqgmXQ6yjM1QqF9eBWxQPq2ThCL5Y9s5pvH
-         +AStxLSSE4Oz00ExQGRX5rk2ZIblCvD/ye5IvDmCEK6nhLGvJBizmNeH21PgdxguRajn
-         j6gXxVY3p501CzbfhRrBJP0By691ZuA67/d5KBHZFNX+/xXJzY2oWNUaEsFQTjhwpHjN
-         wiXkoYpORj37CpbFYoi+q+Lu5LC1TUv4PhS4+PsqklFtczdRJTrPIPFXrkrDDq8Z64xO
-         x7qg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3q79ULvZdK0fjQng7qBVf4NqUMRZFT3rf0sHzGvBxiYLLuRa//J/RuJj8dxdLWzR+MqRH8JcOa+zaryX1LdfjKxNlfTdSZaN0eYbVnYiS6Ad7YStYGKC1HK9vhv56K5e+j25FBo7KyjYOBFrEG0Mk61PqyHrKZ1AMhUBUZCreuGLaxsiCBzXtuw==
-X-Gm-Message-State: AOJu0YykWm7489kBlxIac4jRXnRIL222Bl00Azk8YY52j6yEz5SJxso4
-	ZFfiuMZeC703xRHpZwjvB10Mdn6LS0AFJBH3jlgyG5Lc9HfzW4spNuIRssKzTELQDqaJxTjYlyM
-	fukYwczqT94dAWOWpzDb5Hyb3PKU=
-X-Google-Smtp-Source: AGHT+IEXwPAwhOMCvBhbWjRVW5Ubq87Slh/d+RapR7WqMRF0MA+etjIVrc7SQl3B2SvXdsOlXOP+gTpxWIkIi/JCyWc=
-X-Received: by 2002:a05:6820:1506:b0:5bd:80d7:1891 with SMTP id
- 006d021491bc7-5bdadc8d142mr8246644eaf.9.1718612661374; Mon, 17 Jun 2024
- 01:24:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718616905; x=1719221705;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pGsKYSsuVqYhnQGqi4IUCl0rXwhURd33quQLgivZ3+k=;
+        b=K3XAhKsGd6eXM2cz+XR8jF8jlBtVyeQB7SyRKIYym4w/K94Q6o7KtS7syWW0S2Vfx5
+         fh1afbrxSDZQLgHJWg5KuvvGJ9d94M3FzqwGSd4a9IY63cosWNq6BtTjH4b2wNwGhQSa
+         pF74LRqMbQwrcicIiAWzgrHNSzILCqhJDrf1XasiDQcgZc5rj2PiTB9tbjSnuV6ut9Ze
+         iVzmaXGpSChJd44fgfor9tMBZFwaTspv9ooUNZrYwECweyitV73oHwC+AYtty9AN1D1v
+         WBnd6AjHnHIDeDzo50NnUz+S3LJZ9sMUqUseMFLrXy7sPdYp5MHtht3Fw+ol1WBHGMw9
+         +qEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJBfDN//PG4r6tA1ZXeDiaUZtTtcspjnUv7yVP57Ok8fFWJ7RRJ9MW6ST9EkjeV2NIWNnq6yFVNOx6v3iemT8upsQ8D3z3bb3S5Z8EUa3p5+M=
+X-Gm-Message-State: AOJu0YxPvz9wGJRH5TvlAMpWaLu/t/rEBmsppWoOB2WEQ8YwA/b37Q1O
+	NEY6MdEk3nu05tUAMuak5BLobfs5mVeqvc4QRNABYunEfe9/yF1eVh/iNdmgjB7ilxdSNWIFReX
+	l
+X-Google-Smtp-Source: AGHT+IHUl9su+9vEGw2u/MC6cJy6tBHnuW8Q+azq1tOrCWK3Hcpkd3jQ3R0UUBO09JjSMYv6YCAO0w==
+X-Received: by 2002:a05:600c:5118:b0:422:2044:a0dd with SMTP id 5b1f17b1804b1-42304825795mr77677235e9.18.1718616905237;
+        Mon, 17 Jun 2024 02:35:05 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f5f33c43sm156505395e9.7.2024.06.17.02.35.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jun 2024 02:35:04 -0700 (PDT)
+Message-ID: <dec7f7542d1445818a02d2adbd4d5942fe80ce7d.camel@linaro.org>
+Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, lee@kernel.org, arnd@arndb.de,
+  krzk@kernel.org, alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+  linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org,
+ saravanak@google.com,  willmcvicker@google.com, semen.protsenko@linaro.org,
+ kernel-team@android.com
+Date: Mon, 17 Jun 2024 10:35:03 +0100
+In-Reply-To: <20240614140421.3172674-2-peter.griffin@linaro.org>
+References: <20240614140421.3172674-1-peter.griffin@linaro.org>
+	 <20240614140421.3172674-2-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510094034.12493-1-linux.amoon@gmail.com>
-In-Reply-To: <20240510094034.12493-1-linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 17 Jun 2024 13:54:04 +0530
-Message-ID: <CANAwSgTRfEChziyys251-FezSevSq9pxHLJixVCAybJhq5YAqw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled()
- helpers
-To: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi All,
+On Fri, 2024-06-14 at 15:04 +0100, Peter Griffin wrote:
+> The of_syscon_register_regmap() API allows an externally created regmap
+> to be registered with syscon. This regmap can then be returned to client
+> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+>=20
+> The API is used by platforms where mmio access to the syscon registers is
+> not possible, and a underlying soc driver like exynos-pmu provides a SoC
+> specific regmap that can issue a SMC or hypervisor call to write the
+> register.
+>=20
+> This approach keeps the SoC complexities out of syscon, but allows common
+> drivers such as=C2=A0 syscon-poweroff, syscon-reboot and friends that are=
+ used
+> by many SoCs already to be re-used.
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-On Fri, 10 May 2024 at 15:10, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> The devm_clk_get_enabled() helpers:
->     - call devm_clk_get()
->     - call clk_prepare_enable() and register what is needed in order to
->      call clk_disable_unprepare() when needed, as a managed resource.
->
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
->
-> While at it, use dev_err_probe consistently, and use its return value
-> to return the error code.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+With this series, the exynos5 usb phy driver works on gs101 without
+having to patch it to use exynos_get_pmu_regmap_by_phandle() instead
+of the standard syscon_regmap_lookup_by_phandle():
 
-Gentle ping?
+Tested-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-Thanks
--Anand
+
