@@ -1,98 +1,142 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A16074BED
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 17:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0BB146580
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 17:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718732863; cv=none; b=ZJiXbo6hjSld0g3de/UQCjpsdOF+XgckCbl2PnIvii1AM2KoxJpRS+nAZt7IW9c0GCX2HBuHZA4cfNosYOU6y+/5KR/PgURtrJDSX9TQOO9irEe5r8xWMT+2RGDZF+xseXQvb/pW4rrZZYHf+bSjCHQfAs03TTndgLxrUT4m4fQ=
+	t=1718733063; cv=none; b=JElVtaVo+KQmrtFSCdH9d3YLJhyomS8VFnqU2PHFzLDBn8pBUps8kSdt6vmblQJnLc2Z0wxrGl7kdNLw2oTolABDdpclLooQfpZw7diqL+/7Ro+xCTUrFxIo1R8EG/L5HxH4/chxuJMLXZaRGik74AMnyFV2eTsRonPWURUvkcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718732863; c=relaxed/simple;
-	bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QcWaFgtCGIsShcBD9+vydvLvCKHWaG8WqcX2XqstlMAHHBeV5bH2oNNlClhySePZVyIi9pUdzOt04HqY/AvGJNgxlYzeAjFep3moAhGijzeWXBRn91Yu3rQitpgYZthuTfRe/fYf5/oaQ9dGF4LgJMBtx3lEtBXLHAGSFqvWe94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s/GM+j+e; arc=none smtp.client-ip=209.85.219.177
+	s=arc-20240116; t=1718733063; c=relaxed/simple;
+	bh=d3mOZkwzhQUitJ9p5NHqTux2I2OqtKSPIYhdsh5PmW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sI+52p6wogMFbVfuiFf1+Ro4b894hAGDPSpOFSLPj9k3w4WifpNQHO6Ba4dgBJ/UXJD2p55A0LaxRpm4o7bP1PzP1mQWyjsWAloeSP1aC8UvsAIJaSDB1sA+FcFefycMrILcHpsmXV2Ad5vZ2zcJqsCduAYLIZcl/+tGAt8el+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZbjvGBi; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s/GM+j+e"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dff305df675so3066318276.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 10:47:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZbjvGBi"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso64729381fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 10:51:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718732860; x=1719337660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
-        b=s/GM+j+ewxwl5okUZjGHFUX3IFYU94jfOhUo6R/ZlW/k/ZEu+CZIiqohXW9yogyJVh
-         UreuH6BJKxxn2X1+jsT1Dt0kL6miBt1KrA9laLRzQJaYH2+jHrIWnzjw4tKS1pTqFDHA
-         jGQb9vjf+M3vnWyeHTWf0+d2gBldYgIk17xQMnQLSoOAx76HQyiE2niKAy/9t7gilmEg
-         7ccOpHhV/M22OUyUPcZ+NoeZHcR7/Phku9UK/RGUC1NcKtoF4Va/jfpAaBB2hyWbEjB2
-         sv91gRujFHCyfhP9vGEHQ36vMqfHiGIYf9M6FfZC1qbCKRCCz7/K1IuDsCW7gicCY7I4
-         KUFA==
+        d=linaro.org; s=google; t=1718733060; x=1719337860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdrPsOFRH9tibJcIwTVDIHrvX0et09f9Ar+HQWRvLZQ=;
+        b=UZbjvGBibP5eUYTkPaNxof/tkbNC8npO5YOvD3hQ4EtX1wH25FASo/SB13vTt+Rffx
+         FvZTPnWMvGFaWZSF3ry5vXYjC8RLeF5SU0gqaNoM2MMlDHlXcVOpT22HMh4mUZgpjset
+         gny+T5ZxSPjtbqBcELArMFbmZ4XICJl23MclKGrnMxm5xZptuKdYa+ovy+qi+yIQ4XiQ
+         FP4TNqGI5IgNzGlPsYveXlh0A4fqIthbYniUNqLC7sDn5XBj0DBFX0rTNpQnz0IvwFAd
+         3zPAwC/0kmTBHvsqH5zMEXCE49MrcAngFo4cqar0NuEPJU+a84CxoRcMIFrTXgksySPO
+         44YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718732860; x=1719337660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
-        b=LB3ymllal5c1wpOiOZ9NDRlAeSU8ICd8YrssCb+hPxRiLTJujp3IVtXRjQmNG6N6R7
-         0k30OqnT58hLls2VnLC2DEYpL+7PCoE+h9EFLCltnjhNNMK1gknzHv18zq2mT2MqSftC
-         PY5NLvV+NTiAKnDxsJe6HCrQxv3QLUljYiR2SjJlptO6Tdt6/0zv0Nzv7/ZIKq+vwzBO
-         oS7El6tDbck1JdKJnmIVVPm4OfAVN5D3SLhhWvv3IkEBJZdnihk1IVKsRxAmrrfxyX+7
-         JbbTEFiTXIocMOfyS/Ww5Wi9fDYBVeQ/B+4CpqGLTITgvlvIXf4npvR4R6dn3wx31FZM
-         wh+A==
-X-Forwarded-Encrypted: i=1; AJvYcCX2x71qT4Vmfrey8Q/zkJ2h3DTbCgBAzxbfMc+3obRot/E1fS31ks/sS0D0mLoVmNoQ074yPvBREeH+lxtFTTG3saJkZujtfLSrXCpcWO/V5ug=
-X-Gm-Message-State: AOJu0YzeBgZqTbfmhAMGDf/M4M0leL683dWPQePtTXiOwcUGLNUHNeZy
-	w5b6Ehs3ze+87C3/bsxDXqVhF0NIm3Qsw2kMnDYnb1N18bgY7hJAefVDiW0WWC2PhRd7gyhrmR/
-	inkjN3WbA/6FyltLBbTUuWGDhudyZaGYnal/Feg==
-X-Google-Smtp-Source: AGHT+IFappc3wA7RX8sQbYdiSE7dEKm/VYOIaHva/VzeNskm7446FG29AlCvkzHOdVWauRc4e+y8oo3dJe1/GIgFb3s=
-X-Received: by 2002:a25:846:0:b0:e01:bb57:4d1a with SMTP id
- 3f1490d57ef6-e02be13b828mr587249276.19.1718732860244; Tue, 18 Jun 2024
- 10:47:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718733060; x=1719337860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jdrPsOFRH9tibJcIwTVDIHrvX0et09f9Ar+HQWRvLZQ=;
+        b=lA5NuvIv9JdkLrMUQ1bCz7y/5I0RQyepTiSFTVHgv2Oic/I5Hgzhx7kjmbOGJ6mVes
+         CbnciuDJcSYvpdRDndQ77Y4XQixI5Qk7sosQrosTG7limAD/yOHQOdGXHC1F/dkHQWU1
+         uRDlfncOzec8z7DWse25BhgGjVYdY04CHPYZFzN16hMwEwBdM9d4OG33B+tUKnwSpEeE
+         pIP+LEH78CEhoY4RqZkH4AtIaIvfiFXMJDzYG7MDADAE9tGpk1AK8GSfr5bLnxtLweh8
+         vvBgX0XP6XStWCHJn+IiMl9bJSAIWrRpOvw0VV4kqBLVD8W9vlRimvdIlDAs7q+zX9mU
+         NiUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUarT7mIbQqw5iULruxoqX4oyPqGdfN5ge73RmihmM28DVB0Beplm+KqBdoDtRPncbuHS0DnAhfFAxNTiUZkvvXRx7B7X+Ui+DPTb2EEUBBLeU=
+X-Gm-Message-State: AOJu0YyY9/p1VhgcgDK7FIOzG3g2RD6zc2LQrV1slo6n5WjbuVwKqERv
+	DyVQWaACSdI3BnegMM07xK9zyVXRsV3tF6C8Q29U90+Cx2dPD8u/PhWMIdKuz2E=
+X-Google-Smtp-Source: AGHT+IGM/U45FeUpxxsmNAsTgVBSD3mO9NOKixFEiUXqhhF6IJuZRODRDq1PxwN+t2vV3hmMxogugA==
+X-Received: by 2002:a2e:2416:0:b0:2ec:eee:f19e with SMTP id 38308e7fff4ca-2ec3cfe5a12mr3314651fa.37.1718733059948;
+        Tue, 18 Jun 2024 10:50:59 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec3d00ae2bsm499111fa.51.2024.06.18.10.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 10:50:59 -0700 (PDT)
+Date: Tue, 18 Jun 2024 20:50:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
+Message-ID: <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614140421.3172674-1-peter.griffin@linaro.org> <20240614140421.3172674-3-peter.griffin@linaro.org>
-In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 18 Jun 2024 12:47:29 -0500
-Message-ID: <CAPLW+4mnCVdPwA8awj_95uwvbHXniGwCBJQyKztv6_vNOOQgmA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
 
-On Fri, Jun 14, 2024 at 9:04=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> For SoCs like gs101 that need a special regmap, register this with
-> of_syscon_register_regmap api, so it can be returned by
-> syscon_regmap_lookup_by_phandle() and friends.
->
-> For SoCs that don't require a custom regmap, revert back to syscon
-> creating the mmio regmap rather than duplicating the logic here.
->
-> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-> is kept around until fw_devlink support for syscon property is added
-> for the pinctrl-samsung driver that also runs at postcore_initcall
-> level.
->
-> All other exynos client drivers can revert back to
-> syscon_regmap_lookup_by_phandle().
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
+> sdm845 has "General Purpose" clocks that can be muxed to
+> SoC pins.
+> 
+> Those clocks may be used as e.g. PWM sources for external peripherals.
+> Add more frequencies to the table for those clocks so it's possible
+> for arbitrary peripherals to make use of them.
+> 
+> See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
+
+Each time I look at the table attached to the GP CLK, I feel that it's
+plain wrong. In the end the GPCLK can in theory have arbitrary value
+depending on the usecase.
+
+Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
+allow more flexibility than a default clk_rcg2_ops?
+
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
+>  drivers/clk/qcom/gcc-sdm845.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index ea4c3bf4fb9b..0efd3364e8f5 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -283,7 +283,21 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
+>  	},
+>  };
+>  
+> +/*
+> + * This is a frequency table for "General Purpose" clocks.
+> + * These clocks can be muxed to the SoC pins and may be used by
+> + * external devices. They're often used as PWM source.
+> + *
+> + * See comment in gcc-mam8916.c at ftbl_gcc_gp1_3_clk.
+> + */
+>  static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+> +	F(10000,   P_BI_TCXO,    16,  1, 120),
+> +	F(20000,   P_BI_TCXO,    16,  1, 60),
+> +	F(100000,  P_BI_TCXO,    16,  1,  12),
+> +	F(500000,  P_GPLL0_OUT_EVEN, 12, 1, 100),
+> +	F(1000000, P_GPLL0_OUT_EVEN, 12, 1, 50),
+> +	F(2500000, P_GPLL0_OUT_EVEN, 12, 1, 10),
+> +	F(5000000, P_GPLL0_OUT_EVEN, 12, 1, 5),
+>  	F(19200000, P_BI_TCXO, 1, 0, 0),
+>  	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+>  	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+> 
+> -- 
+> 2.39.2
+> 
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-[snip]
+-- 
+With best wishes
+Dmitry
