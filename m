@@ -1,57 +1,57 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7F617625D
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 20:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3661A176FAC
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 20:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718743528; cv=none; b=FuNeVKDO9tnh4TRnM2JYrv9/xek1f0wxDIAeo8OmaLgoLpuUpqvCyOKHdtBNkbjXYPQsaQIgE3/28LFdqp4/W9tfXsvPACsE2AIJ5F/qivYc65IgO9MA1PmT2BoRh2zMBkBujCirQ+2ZYaq5x2dLsgZcXPfi8tkEeZe5qIfmp08=
+	t=1718743529; cv=none; b=TQTCSB/7OZogFU8dNf31ZObDQpAwGaEzXsBnWnHeLKQM9x+whHIVQWlTQE0DWA/+Q6Gr3zEat+UHZkMMqz5frs7DYsUSNM9CSgLMxj0abilvKA4a1O0GMVgHqiFEArewotlVcqHlqGmlLq3wMfi3pA0Ldl9+U9ctkMipoVQyk4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718743528; c=relaxed/simple;
-	bh=jCr2PSyk+QzA3n1KIeezmKnsRWEIq76Xr/2/3wqo+Ho=;
+	s=arc-20240116; t=1718743529; c=relaxed/simple;
+	bh=o3eOG1LnpJmTG9KLHgnK43QtqvIq3WSopLjA7R+Hozs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oljCRTP044Bw/C1Gvj09R6tiLwGMyiXrf+uD5AuSXzrkEy4G3noSfQdjvtwgOZBcD0hqkrjD/hnvs3GjoWhyjii372a9zHjPAhECPsk6YvdbPJpscszqCE7hNU8COFg1PzidjF7rZ6XdR0cE3gP/7u32kh17wAbqloJ5OTTG0hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SkwesoYg; arc=none smtp.client-ip=209.85.210.52
+	 MIME-Version; b=qc2f6jI9xUujyNzUIVCA5pS0hwKFmcwcgYXKzedPbSgjTkP5f+11etp3FCCnvPmvTPmj56qTyvA5aQE5JyvlXfbVGRrBv81g61eFid8BGLtBXa2gJipxQIo3Q3YPALtp74nLD56gAcbuPOqzVjyUFUjNfgcJRzy2eZ2YR3NmA8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F65tdRX1; arc=none smtp.client-ip=209.85.160.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SkwesoYg"
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6f8ef63714cso3484965a34.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 13:45:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F65tdRX1"
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-25982aa59efso403644fac.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 13:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718743525; x=1719348325; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718743527; x=1719348327; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AlbvvMZMqGqL9+iJm7HJUKaP51agxlDWROSsJ57jie8=;
-        b=SkwesoYg7VwJrx3rP2Davq8TCBbyBLRbJ7Fgaac4j/4oN9bzcc6stGTcoxzkuJZu8y
-         lLrw1vhOvW2hhSTG66fwsyk6jG206ziommkub0nqko6V2bN6Gf8ekxJi2rO/Ko7cQUa8
-         eHb+TyTtQ6dNg95qrA1A79LoVXsP542WTD56cOqoJWCAFsfueRD62b879GkDE7iM4URQ
-         tN4syU3DJQGUCjKzbIuXn3lhDoynNPxwfj+qxUCWDNPVweHsvhZJbmMFpO/2sc//Klc2
-         ccbKrc5rXrUOShPnoK1+y6g8FnptpkHppq3PulPeH0wsN/uBa22NklYFfvvRv41U8YKC
-         CHrg==
+        bh=N5PSLoK5277DwTxre0IUhy89MhV1sfVHkT9GD1kskOA=;
+        b=F65tdRX12CZvBh/aL3651rs/OvEn/1FazE8eHzQMvFPHdVmHHZp7VW7WWG19ewIiVO
+         WFC61EbwUb/txN8ZoSaFkfcyrqOE4ANqGtULk/2IjudV6Ky5eQeEzU4bi7vCNLwbwwS6
+         MW/OCJwnhe1kUKli3I4nL7OGSoBo25S1mieh4EHvTAcC4moz2aYCSXoleb8e4ENY7sbI
+         gFp+lLyzwBWM/HGB/vdDpZNzKGK2t321madq8tvtDyC4Lbv8OQPqjBSVsrTeXezlqAfE
+         K8j9cQGHsOro13y2kh1QxUny86b3CCj56xMVzrqid8CU6S25P8s46R7ksG9kZoIFzmfr
+         nLYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718743525; x=1719348325;
+        d=1e100.net; s=20230601; t=1718743527; x=1719348327;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AlbvvMZMqGqL9+iJm7HJUKaP51agxlDWROSsJ57jie8=;
-        b=Z+XNX9EPIkFG+WJ2vJci1P2oH+NBDqRQot43oPNOXdpVEnzVrvq/1D/bqAqBZEgj4a
-         piYHx+L06nxCFXVWQ19xY3gDe/h+xEmpOJTIhk1y6YzM/FRHHAaTJ4pOr+U1phntk9QL
-         vGwWY6cT4s9tXlKGjxB4izEqLIR95VRkCIKTsIb68OolWig+o2u/eNRT0QyKT1sMRPVU
-         m/WQk/dDYUyIHC/NyTFkQJWiHWFqaSsqb1iT2IFzNnjIcRYHgFWikO4yEsOM9dT6bts7
-         qHqgAiIy7kw5+++cJasfdzAOrXHOG/+MNaD7fS0GGMYBfa+bBU4wr+/iXZWvmXKIwWs+
-         5xHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXB9q4QfG7wvD0ZZbARnq56IBK5ToVSg8YLxpeSdgFSYyRbm4CP/+ELhrgHl+4ZA5dbZoWndDnQIs6dT5VJ63fSDd15DfU4lyOfDC2etOPaSLo=
-X-Gm-Message-State: AOJu0YxLp3RbqRuilYU+brne8vxCDR/NjjBYxufy7tyneBqnJUjZpH5b
-	Vo/8N9wbs2JzPJ1aWDoWqnID9MmYsQqMLCYIdg/PJa1nCUsvNSgOwA2eIyY9/So=
-X-Google-Smtp-Source: AGHT+IHtQ4jPiGwmE6Fqz4f+T054gfg7HjueTuRrzz7pHpWmzy4tU4cMlClLNNSm5wif6dmg4G42uA==
-X-Received: by 2002:a9d:7841:0:b0:6fe:858a:8d4a with SMTP id 46e09a7af769-700771e7314mr874352a34.35.1718743525201;
-        Tue, 18 Jun 2024 13:45:25 -0700 (PDT)
+        bh=N5PSLoK5277DwTxre0IUhy89MhV1sfVHkT9GD1kskOA=;
+        b=b3e3hDZHgpmKWRuO0/yVFqnyrCrrbST3PNw22VO2cfvGZKuLV7CKy1yENeeLQ9F+bQ
+         ccTgNnaxlYw6j62jlFdlDte+DxHzFSOdx7vaN8BF3yS39TUsA8b9WUevUWAh359qmdvu
+         u57pRen54mrtuVOZF2vKltmnPxoJLjafl/SI4RR/TCSYFdz7nDRPFmPDpjg3Y4cJtUcJ
+         nLmSYEgQO/cTKRMLmq93CY2lDX4oqn0odgjbIUp9hLQzTsymxihj0aY3GfE24d2qjBcm
+         C+6upMD21op0fIiFXtHLy4OaSVrHymRIuZIVXFDdReIEh4MK9b0S2xBjWBvVEGPcgZPu
+         eqIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHPJgXN1Xx7k8zc3BpKxX3UEEKcN8GEqImGA4yqUoIOdAHzcvJ2DnH4vPvob14IAFwb61NtoEPvN5eqdT4AlQlrwF8I+L/Lgog/j6RNAEdIR8=
+X-Gm-Message-State: AOJu0Yz2sjng3P16hiI/2zgpej5DbmaBXHhRFqeGX2ZSSdofYmVEc56Z
+	bElsTyW38d8ocIfkPm55YhIqarnfnOgYfgG4M5mTGSulU5m2PUEj9ONBR06aIGY=
+X-Google-Smtp-Source: AGHT+IFDRAFXeFBv7i8uwvM6wavaDuobxVfToXwipE3qzms4/u2yGTluz+/UFCszPXir6zQE6J0cyg==
+X-Received: by 2002:a05:6871:5209:b0:254:b3cc:a6d8 with SMTP id 586e51a60fabf-25c94a200famr1057219fac.32.1718743527261;
+        Tue, 18 Jun 2024 13:45:27 -0700 (PDT)
 Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5afab892sm1937125a34.7.2024.06.18.13.45.24
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25a6d0fd5a6sm231281fac.56.2024.06.18.13.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 13:45:24 -0700 (PDT)
+        Tue, 18 Jun 2024 13:45:27 -0700 (PDT)
 From: Sam Protsenko <semen.protsenko@linaro.org>
 To: =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -66,9 +66,9 @@ Cc: Anand Moon <linux.amoon@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/7] dt-bindings: rng: Add Exynos850 support to exynos-trng
-Date: Tue, 18 Jun 2024 15:45:17 -0500
-Message-Id: <20240618204523.9563-2-semen.protsenko@linaro.org>
+Subject: [PATCH v2 4/7] hwrng: exynos: Implement bus clock control
+Date: Tue, 18 Jun 2024 15:45:20 -0500
+Message-Id: <20240618204523.9563-5-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240618204523.9563-1-semen.protsenko@linaro.org>
 References: <20240618204523.9563-1-semen.protsenko@linaro.org>
@@ -80,85 +80,47 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TRNG block in Exynos850 is pretty much the same as in Exynos5250,
-but there are two clocks that has to be controlled to make it work:
-  1. Functional (operating) clock: called ACLK in Exynos850, the same as
-     "secss" clock in Exynos5250
-  2. Interface (bus) clock: called PCLK in Exynos850. It has to be
-     enabled in order to access TRNG registers
-
-Document Exynos850 compatible and the related clock changes.
+Some SoCs like Exynos850 might require the SSS bus clock (PCLK) to be
+enabled in order to access TRNG registers. Add and handle the optional
+PCLK clock accordingly to make it possible.
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v2:
-  - Removed example added in v1
+  - Used devm_clk_get_optional_enabled() to avoid calling
+    clk_prepare_enable() for PCLK
 
- .../bindings/rng/samsung,exynos5250-trng.yaml | 40 +++++++++++++++++--
- 1 file changed, 36 insertions(+), 4 deletions(-)
+ drivers/char/hw_random/exynos-trng.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
-index 765d9f9edd6e..1a71935d8a19 100644
---- a/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
-+++ b/Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.yaml
-@@ -12,14 +12,17 @@ maintainers:
+diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
+index 91c210d80a3d..99a0b271ffb7 100644
+--- a/drivers/char/hw_random/exynos-trng.c
++++ b/drivers/char/hw_random/exynos-trng.c
+@@ -47,7 +47,8 @@
+ struct exynos_trng_dev {
+ 	struct device	*dev;
+ 	void __iomem	*mem;
+-	struct clk	*clk;
++	struct clk	*clk;	/* operating clock */
++	struct clk	*pclk;	/* bus clock */
+ 	struct hwrng	rng;
+ };
  
- properties:
-   compatible:
--    const: samsung,exynos5250-trng
-+    enum:
-+      - samsung,exynos5250-trng
-+      - samsung,exynos850-trng
+@@ -141,6 +142,13 @@ static int exynos_trng_probe(struct platform_device *pdev)
+ 		goto err_clock;
+ 	}
  
-   clocks:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 2
- 
-   clock-names:
--    items:
--      - const: secss
-+    minItems: 1
-+    maxItems: 2
- 
-   reg:
-     maxItems: 1
-@@ -30,6 +33,35 @@ required:
-   - clock-names
-   - reg
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos850-trng
++	trng->pclk = devm_clk_get_optional_enabled(&pdev->dev, "pclk");
++	if (IS_ERR(trng->pclk)) {
++		ret = dev_err_probe(&pdev->dev, PTR_ERR(trng->pclk),
++				    "Could not get pclk");
++		goto err_clock;
++	}
 +
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: SSS (Security Sub System) operating clock
-+            - description: SSS (Security Sub System) bus clock
-+
-+        clock-names:
-+          items:
-+            - const: secss
-+            - const: pclk
-+
-+    else:
-+      properties:
-+        clocks:
-+          items:
-+            - description: SSS (Security Sub System) operating clock
-+
-+        clock-names:
-+          items:
-+            - const: secss
-+
- additionalProperties: false
- 
- examples:
+ 	ret = devm_hwrng_register(&pdev->dev, &trng->rng);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not register hwrng device.\n");
 -- 
 2.39.2
 
