@@ -1,59 +1,59 @@
 Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE4E157A48
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 14:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6211382869
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 14:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718719690; cv=none; b=XgjacErr/OYeoPfmIkHGc8RYvsvU4EhEj1U/ZN6n3JWBUuVCMk9I30yI0Yufno9ZQaLQ4KMLmyYAqUXi/DMFClKF7jAhLGQv+wUlsoMgvRVm1G6ZZlvGxskXFDRcGJ6KKg4vBWWDdJLJkIRxtzAxuFmaRyYBi9OMnjYlMficN/g=
+	t=1718719940; cv=none; b=JmonYVKWQSNHCFwonguLStYs2HTMxCoBgqybX2V5eARiGVmHtiX674uG32hRyx9sWFY1Wyd/I3Zl57XG2VvoqC/Un/n8cs6qxYVTeYD8770Zn+WZckWv+JC6vhiYRkvtQRCx/FrMfYVefhW2c9SXLA8gb9tkMz8EbjU+AGb1IZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718719690; c=relaxed/simple;
-	bh=n+QilORxP3RK1yVnaHzKUmNkVSKNJe6tBhnWisHRmlo=;
+	s=arc-20240116; t=1718719940; c=relaxed/simple;
+	bh=0av22ofhvv+G1ykCXRTuar9N3ZcJAK8et2AWxSzeNng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSvwrTldaRcsbvHabG8dv9NVNk0fmNYiJoID84rl5D9twM9YwY5SCsjt4L/oyHmuAUQUIxEd1u7hvfFySknsUtOZqHEh/ytmrrRLXnbQ7IYaVZUgkNJtbtcbL9Fmt2rRc2Iaxkz33vXtIxnN5ej8B7xXBf2Jo5olId2C1yLWze8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MyGyVX0K; arc=none smtp.client-ip=209.85.167.47
+	 In-Reply-To:Content-Type; b=GxijvRy+jj/R4iJNg6/EGXGagdVz1l/64ICFmhlYi8wOBDOZvcnuREkNE+gjGOMYvueTs+SUYLuuKali4EPFYpIrfNHXTFQAnBaqCEWqXBM+RDPiYiW5CUJbFZ/KN1X9F3VjR+p9CSSo5Dme4JjTrPkUlYOjUrbpjeHTwk7JhY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zHcLB3wX; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MyGyVX0K"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cc1528c83so1220462e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 07:08:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zHcLB3wX"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52c85a7f834so7036623e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 07:12:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718719685; x=1719324485; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718719936; x=1719324736; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EPYowminOVvr+nmoaSaS+pLCI6yVw569Zh9cdjJsE7M=;
-        b=MyGyVX0KL2B1uTed/G7P+E58qdzbpV+ZiM4cp2Fd/GzqbTTWJXIKfQBldd/YEmYOL2
-         0UNBV3ZkNIAr/JRnUI27SPV/OQJo/Eq1QOFzY8ebgfxVn3cjoNBLebWtKuSCT+ogdfJn
-         x+CZyxLTnF9tE3Tj7LYi+QlthpetvcVgtJX2fjjDyPiBMIbqGazw8T4OmY71mRHhz/1C
-         Rc/nuJM0QHXgMgTR+m3v9rvYdY6gFlClpi8HKguMEBdMVrdISbXm3oOr2gF8zjQMMb5v
-         2pnB8eH3uPq+XpeSz2M0W6IwQc3R/u/SqXwUUG0AJbyrgOzbSICdZJwzqfA6++RMfcuH
-         6fAQ==
+        bh=Z6Y4EgoXPRwJTHBawpiMcURy3sFFDfTP4JTr3Ev81mc=;
+        b=zHcLB3wXjK+ILG4tqLn10gDyPTobyjq3vbYbYoJpgiFaaLLSPrjSNPkr+J70bNvIPB
+         c9IDDMsYOyvHsHJP1XW99NAA+W67toVRsAQOZ4RpyUveH3Pubmya05ciSRISXpOcvFYR
+         ZMffKD3/nJIg+chWgC4KCFvS2/n8z4eWoIT3LWgKxyNSoyf1qnGKQQC2gCvBdf5rW09t
+         Y8irguPBPNq8aNomobzsz4en2p1fECywlfqcdcwGSqfqyesVYK0uv1ibcpc/CvIVRTeu
+         EqB+wYT8DMioCoTch5Hn8LX2uxRkWu8hhztrClpnu0GMlRsekb7pUTC3+5mDmcnFYnmT
+         dLRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718719685; x=1719324485;
+        d=1e100.net; s=20230601; t=1718719936; x=1719324736;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EPYowminOVvr+nmoaSaS+pLCI6yVw569Zh9cdjJsE7M=;
-        b=KOA72nuGQRll9+7iM1Z66+XWcj3DCtbvgTM+qMhV5dNJlGyiPiAF6NwKoe9dBZoEvc
-         +Of/VlYTXsRt4+dHBLDDJYscyPBUrpywnX0IMxinteroDeEruEUGVNHduQJW5YZbCzuy
-         4z48Sfh7cb0ttjotBeO5kK+Ji3T8Gtjdos7ciGZSV2YMBztjKlLmjUzsiwelZmpSro7j
-         qlRvTClCfTVSK3n1/OOo3l6Grt6lzEheS2+LILFLpD0Tv8nql8jL3HvMUbGhQIto/04Z
-         e4jSdk1TZuxpYlybvKosC759TOpvGw7Qmih4znTs33Y6vpJzFMQWBXJ1hKLYgkS5Sa98
-         rtUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULgsWZBnhmcad36ueTQ238iS9zQ7ckSuIIVDsEnYd3rTTWdLGF5jAN+XiYNkcQKo1aYcld/AkZz1WRcBehiCcUXlzuDiW2VhiekiBec/05kjo=
-X-Gm-Message-State: AOJu0YxVJiBGqcOfqxF0ZGlqhuyuT1H8WRaXo22upVCC2206RBPuILpt
-	/rTn805dXJhp8bKaYAKgw3bdcLhvqWFurcwDUcvZCWwvLRV+3Wc6aDvFRVHeGTg=
-X-Google-Smtp-Source: AGHT+IFjNs+7IdOYMMPvNdFNexxA9RGwd73g79/svh7QWdlywyc8T5oNxWK+VByqXQUr181S1dbiZQ==
-X-Received: by 2002:a19:8c5a:0:b0:52c:88d6:891d with SMTP id 2adb3069b0e04-52ca6e5637emr7805302e87.9.1718719685041;
-        Tue, 18 Jun 2024 07:08:05 -0700 (PDT)
+        bh=Z6Y4EgoXPRwJTHBawpiMcURy3sFFDfTP4JTr3Ev81mc=;
+        b=O6f10yyyUG3cEWZoDjZu89s7MvffTmwcXIzjmDUpSNsoGXEZXzAufLFRt/cFT+X4sK
+         sYg3kVNKX5M0sY7204bim4JmvJiy8csXAAucURm2L++GIYDbPAAeIWnSUbZOghh96bS1
+         rgCETU/CJEoHMWFUcf6S1IZJ9CY1orqC7IUBT/ck4ZQov1xcpzYU3x2vc2oos+Tf2zT8
+         IqRgTCnVo0vQHyWNU57DbZZ0lkizjxLSyPrJ0jnooMZHTSMFYh6VlMqnDZ6dVvav4hCM
+         vigBzKCeCnfjvZnfndcEIadR+PAfqSdeyCF0NiBcJWtBD+3ZEK5/qVWYVnN4zd0s9gID
+         3y5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUpmQHrx7weAQqaM38i9HIbxzNTXVdInrF0sbUvHxVzSAaeRat09Fxsdl/IsSGqegnbjeUAPt9qVXmTnu/55IfMYAsCCuIN1JuiNbOfUfE4CTc=
+X-Gm-Message-State: AOJu0YzSRADa8w2WwwccjA6B2bdL6NXgvOLn6rzd1R4QYOauUmQIyXcW
+	bXUc8pwdSNQuhUPE573pj8OMmSGpYjZ1PnY8oyk4VdfuEi8YT9XQWFOaF6vD22s=
+X-Google-Smtp-Source: AGHT+IGZaIibqfCcQvl/1r3MYhEg7Ikhi/ZBC3FSzVQkmqP3CbCr8ETdFAVMl4V1LEjW+9OKcHaQjQ==
+X-Received: by 2002:a05:6512:15a:b0:52c:958a:4afa with SMTP id 2adb3069b0e04-52ca6e65889mr7126633e87.23.1718719936329;
+        Tue, 18 Jun 2024 07:12:16 -0700 (PDT)
 Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282581csm1520479e87.37.2024.06.18.07.07.58
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2888658sm1508463e87.298.2024.06.18.07.12.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 07:08:04 -0700 (PDT)
-Message-ID: <e6a81932-0609-4476-82b6-43ee30b7de43@linaro.org>
-Date: Tue, 18 Jun 2024 16:07:55 +0200
+        Tue, 18 Jun 2024 07:12:15 -0700 (PDT)
+Message-ID: <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
+Date: Tue, 18 Jun 2024 16:12:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,8 +61,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 22/23] arm64: dts: qcom: starqltechn: fix usb regulator
- mistake
+Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: starqltechn: add new features
 To: Dzmitry Sankouski <dsankouski@gmail.com>,
  Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -84,24 +83,134 @@ Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
  linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-22-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-22-e3f6662017ac@gmail.com>
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
 On 6/18/24 15:59, Dzmitry Sankouski wrote:
-> Usb regulator was wrongly pointed to vreg_l1a_0p875.
-> However, on starqltechn it's powered from vreg_l5a_0p8.
-> 
-> Fixes: d711b22eee55 ("arm64: dts: qcom: starqltechn: add initial device tree for starqltechn")
+> Add support for new features:
+> - sound (headphones and mics only)
+> - gpu
+> - panel
+> - buttons
+> - MAX77705 MFD:
+>     - charger
+>     - fuelgauge
+>     - haptic
+>     - led
 > 
 > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
 
-How did you confirm that?
+Please split this up
+
+>   .../boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 593 ++++++++++++++++++++-
+>   1 file changed, 592 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+> index bad154b1e894..28a5210e22fb 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+> @@ -7,15 +7,40 @@
+>   
+>   /dts-v1/;
+>   
+> +#include <dt-bindings/input/linux-event-codes.h>
+>   #include <dt-bindings/gpio/gpio.h>
+>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +#include <dt-bindings/sound/qcom,q6afe.h>
+> +#include <dt-bindings/sound/qcom,q6asm.h>
+> +
+>   #include "sdm845.dtsi"
+> +#include "pm8998.dtsi"
+> +#include "sdm845-wcd9340.dtsi"
+> +
+> +/delete-node/ &rmtfs_mem;
+> +/delete-node/ &adsp_mem;
+> +/delete-node/ &slpi_mem;
+> +/delete-node/ &spss_mem;
+>   
+>   / {
+>   	chassis-type = "handset";
+>   	model = "Samsung Galaxy S9 SM-G9600";
+>   	compatible = "samsung,starqltechn", "qcom,sdm845";
+>   
+> +	aliases {
+> +		serial0 = &uart9;
+> +	};
+> +
+> +	battery: battery {
+> +		compatible = "simple-battery";
+> +		constant-charge-current-max-microamp = <2150000>;
+> +		charge-full-design-microamp-hours = <3000000>;
+> +
+> +		over-voltage-threshold-microvolt = <4500000>;
+> +		voltage-min-design-microvolt = <3400000>;
+> +		voltage-max-design-microvolt = <4350000>;
+> +	};
+> +
+>   	chosen {
+>   		#address-cells = <2>;
+>   		#size-cells = <2>;
+> @@ -59,9 +84,199 @@ memory@a1300000 {
+>   			ftrace-size = <0x40000>;
+>   			pmsg-size = <0x40000>;
+>   		};
+> +
+> +		/* The rmtfs_mem needs to be guarded due to "XPU limitations"
+> +		 * it is otherwise possible for an allocation adjacent to the
+> +		 * rmtfs_mem region to trigger an XPU violation, causing a crash.
+> +		 */
+> +		rmtfs_lower_guard: memory@fde00000 {
+> +			no-map;
+> +			reg = <0 0xfde00000 0 0x1000>;
+> +		};
+
+qcom,use-guard-pages instead
+
+
+> +
+> +		rmtfs_mem: rmtfs-mem@fde01000 {
+> +			compatible = "qcom,rmtfs-mem";
+> +			reg = <0 0xfde01000 0 0x200000>;
+> +			no-map;
+> +
+> +			qcom,client-id = <1>;
+> +			qcom,vmid = <15>;
+
+QCOM_SCM_VMID_MSS_MSA
+
+[...]
+
+> +		/*
+> +		 * It seems like reserving the old rmtfs_mem region is also needed to prevent
+> +		 * random crashes which are most likely modem related, more testing needed.
+> +		 */
+> +		removed_region: removed-region@88f00000 {
+> +			no-map;
+> +			reg = <0 0x88f00000 0 0x1c00000>;
+
+Please keep no-map below reg for consistency
+
+[...]
+
+> +
+> +&gmu {
+> +	status = "okay";
+> +};
+
+Drop this and remove the disablement in 845.dtsi, gmu is only probed when
+GPU is
+
+[...]
+
+>   	gpio-reserved-ranges = <0 4>, <27 4>, <81 4>, <85 4>;
+
+Do you know what these are for?
 
 Konrad
