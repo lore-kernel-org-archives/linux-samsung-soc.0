@@ -1,58 +1,58 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9016623BE
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 08:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1527415380B
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 09:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718701074; cv=none; b=H6dQX8OFNqadXcGQycjsQ/A7lbwEHNuVqFtKI2pqj+rHzgAA+kRUDIJV9K1ZMQW63gNKQi1Q3j3HQP2D3+hKKhPwFfn4bxmDx6UnfKYm4pU1hmAdyshRMtFaJjhsdFUicstmOiNWQfeYQzTRQTklN6i7ut9mwSzo5ifKlukMlO4=
+	t=1718701298; cv=none; b=TXOtelZRS9GyesmcCSKykv2TIVrLe7c/lMDr6C2Q3AwEG4omILOnAumm7m+3wka72q2F8S93B4jqEWVJVYBdl+pEJRRBRwKps2T8EDNtPDBUrfj2+vlrHans75YnxXMg0xEXmcdUXfeMrKomcsYtOq1CHM7mrx2Gm6zNXEkjEOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718701074; c=relaxed/simple;
-	bh=OfhHEECoMTrvbtNrNAx3G4SFmuDhLfL7z/fJS6M2isc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pKcS/rf/CWi1OhnoMQqxUbEMjWlTlHpgdwpnDAkEDSyt7pcX7kOKNuhBnbzPe0ox2qD6KmuptVyv5UQiVklNLQUdSROsODPqEaB51hitPlhfam24xedLD+yDrwjsUwd2/wZT7M3fmI8ZNyWj/Gp4TTeT+HiFRkSLqsGawVCoG/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LIA+p9e3; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1718701298; c=relaxed/simple;
+	bh=1ERlM9xbe+p9Wi478V8mqPsP/ZS3bIAAbT6Tpz8s6+A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BQWsljuWZROFP4d9QLwy/LVkQ9QRx4uPA2U3zttoTaPgN4z/KlAi9uAf2iKlDuDq/LXYGNviFnp0OY3HhyUogqd8LgsoeEhRkaJhAsVp6gOJSiM7Em9v8Pb5hbF+Cump4rLmevRJw1aKvWLuOoG9Lx8mC8X4KeyroqLrXZAU3xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l8CvjjAJ; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LIA+p9e3"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso674382566b.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 01:57:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l8CvjjAJ"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so6175240a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 02:01:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718701070; x=1719305870; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718701295; x=1719306095; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gQeZLyvewF8YU8DnwJSqp6ymN/u0iZA0tyrclF4X+xc=;
-        b=LIA+p9e3dawrY4Ai3oc55miUebFEArdtSI88Wn4nE+O9TnJrdWUYECoydjTnye9rQG
-         ZbCDZgD4m9hd+diZJcO6m9LH7QIiwmhQO9cpufgDqwcVIqjoPXUWyGgl9SwQujLwonrv
-         YESWQfdByaEgzXKCInWl5Cfyo/jWzpm5YgVNdrKSOuszhnTnent4J2vU/fNETfP5vhNx
-         Uk8iM1L2Fgpfm/6ofVULiVGIaf8DDd9xBU1z6ehb6gYjYe6OZpdqHHugFQqygfHjX7VB
-         02SryfF/C2tocWLoRkmaVIFDHUiqg6XBkfoNj6pOXpSz5RsiTx/ZlipCkl0yFtazFToR
-         AbDg==
+        bh=TY5XZJXNokRJfFdx27EQvsooJR1M7d0Z/bZec752EIc=;
+        b=l8CvjjAJYGg4o1HIuP6sM6Qj0j0DGc9P2C/OR+nqgUq9+9VoHfPDtUHDrpvB4a4Ri3
+         4/OEO6GuDYrKKX9VPEFD/DC2IkbHphuXvTkPEc1WB7w3PKKgr0kzfXE5dKIU8doQoyKK
+         4N95N2oubUy3DbpMd+X5MWMce+ZwljQJKmoDYKIUqXikqo/vVEdC2NP5Nf/h6kdRM2xN
+         Utnu+NNrUBFAse0KDBXpk50pdsz4b0xcTCYqHRUyshOOMgUpiBSuYS+hg0eTNVhXQYrU
+         YxAcUzcI1L39cA4GOk72fJx8Wxvcz+QSel7TmSNgbxmE6w0JQkO20PMr055ZzIEkWe6R
+         Wl4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718701070; x=1719305870;
+        d=1e100.net; s=20230601; t=1718701295; x=1719306095;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gQeZLyvewF8YU8DnwJSqp6ymN/u0iZA0tyrclF4X+xc=;
-        b=gZ5AjDvC5UsyDhNsfXdcvht7qkqSdBz9X46VwDYP2venwvu39vGgTUyw57jIe4MXdb
-         QC3HljvuGj8HyG8ibCIVUkPwYLG1LBahOjXxOzS6gmE0C696JKGMCOfeH77QSVhLrpFT
-         dFe3t+XmyLOeVifW5jivNoa5JPv+ltuHEynU2MWTBrOZnKXCZ5g4/2SN8GIUGii9rO/9
-         GjNmxTD4ICyHg7htPeG4C8AK/cMMiOHNq7ZvhgGSDMzhpjqlZjzvoHKHDWOxCf6/vbNG
-         YTf7tFFPirP+LTscNi/oUf2FOMiA+33kjpZH0PwF3ULuDpYbgE9XbDam5AgBPkAoHCuo
-         LRcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdzMLYPgY5b21Xwf3TZjpgg9bksyVBKRneLsKJq/iyQfzP+kVY171uHjE0ASyjENSzFUbU8sg+1vwMeHUdxOmPTeSJYZtLz55M/r17JCdJPh4=
-X-Gm-Message-State: AOJu0Yz4nW+K8olYjCF8gSZDcVrdVXC+BBTvfqPUGuqa/wEZ40nqvgaW
-	j54/vC/ekg8sW23yiHOE9Dj3MXOGvhJXrHTCdFY+O3/fBg4GWfnwADGJSC10ums=
-X-Google-Smtp-Source: AGHT+IGyqZXy5Y18iT2k+UrC5GF8C9JEdIPf7YDm/pJlw1f/llTK2DjwXfZqo1KYV/WwRuZX4jbzEQ==
-X-Received: by 2002:a17:906:6894:b0:a6f:33d6:2d45 with SMTP id a640c23a62f3a-a6f60dc4e59mr687544566b.60.1718701069839;
-        Tue, 18 Jun 2024 01:57:49 -0700 (PDT)
+        bh=TY5XZJXNokRJfFdx27EQvsooJR1M7d0Z/bZec752EIc=;
+        b=QxYmMpPIGshuKy3e2qBtgDJMkr0/IVhkk9DcN1QcHkeqj9GQACFkmEhLFTvwJun8iW
+         1ddFGkwA4UsH70iUNOJBFbh1/JYwEUo0f+JJpgSYEbgrUjYFk9EpNFPQ7zomDW2Z1k+y
+         qfXa9B81QfwYmW9xJ2zbMR9Kx4Ziq0FsRmwsBuUD0wIpjqfhSt4SMET9EcgDnSC1Jtqn
+         McWwwbMdulA2ZKLlZwxnsAZdbaBhU9XPDp6i8jFhM2NU985PQJd1VcbpdT514h4QRGBv
+         VpeXGpXImMYV7CNEhzkGIRx2P1LRHD6+eIxc0V0wXEgKL5JqA5TFFxP6XNV+4U1E+rGE
+         iy2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWC3TO4p8GPWmqPGB/2PDvkBE/YDlm+TTTusUUXAF4rUD530P5i0emNuTVFzrBt0w8gNXCLU16pGqWbSyN2KR/vB3664CjGRS89s/uyGQ4G9pU=
+X-Gm-Message-State: AOJu0Yza4N4s+l8BwPNL980s2BoU9/qWzUFGhSfMsumHGfGTmyAwzREj
+	wZtApyLESlLh7tqV7iCwEXVkQiQEGPFGDq+n1gLyYFD4FgCyfIOHy1PIsXs+gW0=
+X-Google-Smtp-Source: AGHT+IEMfNh1NAwANZa+CTASxafBgLpH8LEwjMP1KkmOFsQGGuf85H4JncEgCzIOFHv4XwbkvI/p4Q==
+X-Received: by 2002:a17:906:4a4f:b0:a6f:38:6968 with SMTP id a640c23a62f3a-a6f60d2bd3dmr727559366b.32.1718701294701;
+        Tue, 18 Jun 2024 02:01:34 -0700 (PDT)
 Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db681fsm597748766b.72.2024.06.18.01.57.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f8cc20663sm146355966b.190.2024.06.18.02.01.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 01:57:49 -0700 (PDT)
+        Tue, 18 Jun 2024 02:01:34 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 18 Jun 2024 09:57:49 +0100
-Subject: [PATCH v2] arm64: dts: exynos: gs101-oriole: add placeholder
+Date: Tue, 18 Jun 2024 10:01:33 +0100
+Subject: [PATCH v3] arm64: dts: exynos: gs101-oriole: add placeholder
  regulators for USB phy
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -62,11 +62,11 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240618-gs101-usb-regulators-in-dt-v2-1-85632069201b@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAxMcWYC/42NTQqDMBBGryJZd4ozaP9W3qO4SHSMA5KUiUqLe
- PemnqDL9/h432YSq3Ayj2IzyqskiSEDnQrTjTZ4BukzGyqpKi94BZ+wRFiSA2W/THaOmkAC9DO
- 43rmOLdUD300OvJQHeR/xZ5t5lJTXn+NrxZ/9K7siIDBRRXVFXY23ZpJgNZ6jetPu+/4FtBCfy
- MUAAAA=
+Message-Id: <20240618-gs101-usb-regulators-in-dt-v3-1-6a749207052e@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAOxMcWYC/43NQQ6CMBCF4auQrh3TDhTRlfcwLloYShPSmhYaD
+ eHuFla6MS7/l8k3C4sULEV2KRYWKNlovctRHgrWDsoZAtvlZsix4rU4gYmCC5ijhkBmHtXkQwT
+ roJtAd1q3pFD2dGYZeATq7XPHb/fcg435+rX/SmJb/2KTAAGEWKGssJWiuY7WqeCPPhi2uQk/r
+ eanhdlqZF0ir8/Ihf6y1nV9A9jfodoRAQAA
 To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
@@ -84,13 +84,17 @@ While we don't have a PMIC driver yet, the supplies should still be
 added to the DT.
 
 Add some placeholders, which will be replaced with the real ones once
-we PMIC implemented.
+we implement PMIC.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
 Note that this patch depends on the updated DT binding from
 https://lore.kernel.org/r/20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org
 ---
+Changes in v3:
+- fix typo in commit message
+- Link to v2: https://lore.kernel.org/r/20240618-gs101-usb-regulators-in-dt-v2-1-85632069201b@linaro.org
+
 Changes in v2:
 - update commit message to clarify that the regulators added here are
   temporary placeholders only (Krzysztof)
