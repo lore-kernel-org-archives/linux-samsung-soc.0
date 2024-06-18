@@ -1,126 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3629150285;
-	Tue, 18 Jun 2024 06:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9016623BE
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 08:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718692758; cv=none; b=sEKR/LaNNmqiXRQOpV7FSBCrNFmn2OlrqOiLP9PMitTeFR1wqLPiSk0xSeKE2W0IOU1QI3Sh10yhHXaDamKninSHLCyLU0YeThfWylykLYnJFVoKoC1VF72EPT6dMPBP47sUcEnx2xmKVXAR/w28zxC+zqoLmL2DXXEMAA7Z9HY=
+	t=1718701074; cv=none; b=H6dQX8OFNqadXcGQycjsQ/A7lbwEHNuVqFtKI2pqj+rHzgAA+kRUDIJV9K1ZMQW63gNKQi1Q3j3HQP2D3+hKKhPwFfn4bxmDx6UnfKYm4pU1hmAdyshRMtFaJjhsdFUicstmOiNWQfeYQzTRQTklN6i7ut9mwSzo5ifKlukMlO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718692758; c=relaxed/simple;
-	bh=etFrlf2PYqV0eSgRzTXNnsDE4NLFvh1oNzyCmytsCNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cCTmr9RSJmQgem9xy2UDvTYICrmAUjx/ZQEQ8TiGuex3k+IJzEX6uMq+LlDc8uVwLBXX63Zn1qAXP9sg5lZMpYQdUOBzjlCdIvjSuaZax2S7vyxi+YRUFoqv5z9+PGqQ6Y9LxUqI0GgB3Hp9xFHNlHUo+pdib4MIFJfYujyuwik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/iU2yGS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718701074; c=relaxed/simple;
+	bh=OfhHEECoMTrvbtNrNAx3G4SFmuDhLfL7z/fJS6M2isc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pKcS/rf/CWi1OhnoMQqxUbEMjWlTlHpgdwpnDAkEDSyt7pcX7kOKNuhBnbzPe0ox2qD6KmuptVyv5UQiVklNLQUdSROsODPqEaB51hitPlhfam24xedLD+yDrwjsUwd2/wZT7M3fmI8ZNyWj/Gp4TTeT+HiFRkSLqsGawVCoG/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LIA+p9e3; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/iU2yGS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E08C4AF1C;
-	Tue, 18 Jun 2024 06:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718692757;
-	bh=etFrlf2PYqV0eSgRzTXNnsDE4NLFvh1oNzyCmytsCNo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K/iU2yGSg4URsowg0dyKTU5qaq3Fp1htc1Kp7b6iMkw9QEmjvw9s97uG68dQ2SQZ0
-	 rMtjjxF8VO2+NpoDn/18PZUpZfz9t8vAUYPemM1ghEaEfQvrKSP4qFOye639gz1tdy
-	 nyKDfahwAtiSqeRy7srZMl6Tr7BR7I/JKPV7bNwJ4f/kIHWSI4NTA6MKdGdZ3z9i15
-	 VLJqg0BQu9raHqJ+ZlTNZ12hSgiNxibCYYOX7KnUZ+8/l7bb1xVNJGwagqzSujLeyV
-	 0XA669TFvZ5rAqNXLRGq3YyuIcSm4/MAQZ2WX7sgBxYRyhbP1Ww7gKpmFyQmdcvqmA
-	 1OaWDqDxa5iAw==
-Message-ID: <94d50353-15ba-4769-bd98-57f4430f5fc2@kernel.org>
-Date: Tue, 18 Jun 2024 08:39:10 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LIA+p9e3"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f11a2d18aso674382566b.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 01:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718701070; x=1719305870; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gQeZLyvewF8YU8DnwJSqp6ymN/u0iZA0tyrclF4X+xc=;
+        b=LIA+p9e3dawrY4Ai3oc55miUebFEArdtSI88Wn4nE+O9TnJrdWUYECoydjTnye9rQG
+         ZbCDZgD4m9hd+diZJcO6m9LH7QIiwmhQO9cpufgDqwcVIqjoPXUWyGgl9SwQujLwonrv
+         YESWQfdByaEgzXKCInWl5Cfyo/jWzpm5YgVNdrKSOuszhnTnent4J2vU/fNETfP5vhNx
+         Uk8iM1L2Fgpfm/6ofVULiVGIaf8DDd9xBU1z6ehb6gYjYe6OZpdqHHugFQqygfHjX7VB
+         02SryfF/C2tocWLoRkmaVIFDHUiqg6XBkfoNj6pOXpSz5RsiTx/ZlipCkl0yFtazFToR
+         AbDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718701070; x=1719305870;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gQeZLyvewF8YU8DnwJSqp6ymN/u0iZA0tyrclF4X+xc=;
+        b=gZ5AjDvC5UsyDhNsfXdcvht7qkqSdBz9X46VwDYP2venwvu39vGgTUyw57jIe4MXdb
+         QC3HljvuGj8HyG8ibCIVUkPwYLG1LBahOjXxOzS6gmE0C696JKGMCOfeH77QSVhLrpFT
+         dFe3t+XmyLOeVifW5jivNoa5JPv+ltuHEynU2MWTBrOZnKXCZ5g4/2SN8GIUGii9rO/9
+         GjNmxTD4ICyHg7htPeG4C8AK/cMMiOHNq7ZvhgGSDMzhpjqlZjzvoHKHDWOxCf6/vbNG
+         YTf7tFFPirP+LTscNi/oUf2FOMiA+33kjpZH0PwF3ULuDpYbgE9XbDam5AgBPkAoHCuo
+         LRcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdzMLYPgY5b21Xwf3TZjpgg9bksyVBKRneLsKJq/iyQfzP+kVY171uHjE0ASyjENSzFUbU8sg+1vwMeHUdxOmPTeSJYZtLz55M/r17JCdJPh4=
+X-Gm-Message-State: AOJu0Yz4nW+K8olYjCF8gSZDcVrdVXC+BBTvfqPUGuqa/wEZ40nqvgaW
+	j54/vC/ekg8sW23yiHOE9Dj3MXOGvhJXrHTCdFY+O3/fBg4GWfnwADGJSC10ums=
+X-Google-Smtp-Source: AGHT+IGyqZXy5Y18iT2k+UrC5GF8C9JEdIPf7YDm/pJlw1f/llTK2DjwXfZqo1KYV/WwRuZX4jbzEQ==
+X-Received: by 2002:a17:906:6894:b0:a6f:33d6:2d45 with SMTP id a640c23a62f3a-a6f60dc4e59mr687544566b.60.1718701069839;
+        Tue, 18 Jun 2024 01:57:49 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56db681fsm597748766b.72.2024.06.18.01.57.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 01:57:49 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Tue, 18 Jun 2024 09:57:49 +0100
+Subject: [PATCH v2] arm64: dts: exynos: gs101-oriole: add placeholder
+ regulators for USB phy
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] hwrng: exynos: Enable Exynos850 support
-To: Sam Protsenko <semen.protsenko@linaro.org>,
- =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240618003743.2975-1-semen.protsenko@linaro.org>
- <20240618003743.2975-7-semen.protsenko@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618003743.2975-7-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240618-gs101-usb-regulators-in-dt-v2-1-85632069201b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAxMcWYC/42NTQqDMBBGryJZd4ozaP9W3qO4SHSMA5KUiUqLe
+ PemnqDL9/h432YSq3Ayj2IzyqskiSEDnQrTjTZ4BukzGyqpKi94BZ+wRFiSA2W/THaOmkAC9DO
+ 43rmOLdUD300OvJQHeR/xZ5t5lJTXn+NrxZ/9K7siIDBRRXVFXY23ZpJgNZ6jetPu+/4FtBCfy
+ MUAAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On 18/06/2024 02:37, Sam Protsenko wrote:
-> Add Exynos850 compatible and its driver data. It's only possible to
-> access TRNG block via SMC calls in Exynos850, so specify that fact using
-> QUIRK_SMC in the driver data.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  drivers/char/hw_random/exynos-trng.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_random/exynos-trng.c
-> index 98b7a8ebb909..3368a08df9ce 100644
-> --- a/drivers/char/hw_random/exynos-trng.c
-> +++ b/drivers/char/hw_random/exynos-trng.c
-> @@ -333,6 +333,9 @@ static DEFINE_SIMPLE_DEV_PM_OPS(exynos_trng_pm_ops, exynos_trng_suspend,
->  static const struct of_device_id exynos_trng_dt_match[] = {
->  	{
->  		.compatible = "samsung,exynos5250-trng",
-> +	}, {
-> +		.compatible = "samsung,exynos850-trng",
-> +		.data = (void *)QUIRK_SMC,
+The USB phy requires various power supplies to work.
 
-Probably this (and in previous patch) should be called flags, not
-quirks. Quirks are for work-arounds.
+While we don't have a PMIC driver yet, the supplies should still be
+added to the DT.
+
+Add some placeholders, which will be replaced with the real ones once
+we PMIC implemented.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Note that this patch depends on the updated DT binding from
+https://lore.kernel.org/r/20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org
+---
+Changes in v2:
+- update commit message to clarify that the regulators added here are
+  temporary placeholders only (Krzysztof)
+- use fixed placeholder regulators, not <0> (Krzysztof)
+- Link to v1: https://lore.kernel.org/r/20240617-gs101-usb-regulators-in-dt-v1-1-e2242542c518@linaro.org
+---
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 5e8ffe065081..dec2c6d9619b 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -145,6 +145,13 @@ &usbdrd31_dwc3 {
+ };
+ 
+ &usbdrd31_phy {
++	/* TODO: Update these once PMIC is implemented */
++	pll-supply = <&reg_placeholder>;
++	dvdd-usb20-supply = <&reg_placeholder>;
++	vddh-usb20-supply = <&reg_placeholder>;
++	vdd33-usb20-supply = <&reg_placeholder>;
++	vdda-usbdp-supply = <&reg_placeholder>;
++	vddh-usbdp-supply = <&reg_placeholder>;
+ 	status = "okay";
+ };
+ 
+
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240617-gs101-usb-regulators-in-dt-bdbbcea25fe9
 
 Best regards,
-Krzysztof
+-- 
+André Draszik <andre.draszik@linaro.org>
 
