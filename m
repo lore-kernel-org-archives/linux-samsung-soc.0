@@ -1,197 +1,450 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D04C13F003
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 17:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C8915ECFA
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 18:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718733073; cv=none; b=Dd9smierk3z6r8gMltkjF+n2Z8uUxMtWTZbmhj0IckyzVsrrsffPKw0X4Oz+8BooBRbDTqBIW+f6ninR6iQZJmYUdUAXdcZkja8zvGqmWC2JZ1V9OpLgmKZWEnxcjPg7YP5AqEF7ydjzyOUywNI1VdExo6mPPoFsvKfPxoWw4+4=
+	t=1718735962; cv=none; b=Jfzw5aEjZR8ewh4ThLEdzqRx9hIazSNUBF126oAwp42tSlmorpcKGHiKd3OLkemXDjjx31pOZlKiD7BTTTRT2lNkTyRsJToQEzU5kIM4kceIa8Wt5ylJ/MB5IZLDKTf0t2mgYjCqMS0QMteUuUczRxVVQyHh7d0svmGFUBcCh3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718733073; c=relaxed/simple;
-	bh=+i7LdplVSBgpsqHCuk3Ek+mDHHKs0qtFfimb7c5uK0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJ4g8reIDvFaxnGJYXmwyQOVK8x6Ndxglog8xKWw9oc/Hsi00ZG4X+qyg5E4qJRK9FRmdHKSOs4kL9kRhVYZET+Pn691HGXTlZGdiCJ8Oe3M4asLadjlBBMevYwqEcM1LHmhZ3AMp9KJLROO88dbYqQldHVb8Xrs0KMiqyyB39U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SwuENrJq; arc=none smtp.client-ip=209.85.128.178
+	s=arc-20240116; t=1718735962; c=relaxed/simple;
+	bh=D+mwJC/R3TszkdX7sLwAgbmRGWTIfahOBYOjWexnAgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqryK5bxoYXjW0FqPL5CL1dmjy0LfwVKuvhdRRzU1qe0LKiLlSvqKHildi9wbjEdi7rtESHFnqB9V90x9DxF1FpXnT5Svi3Uoczvc5Pma681SSJJTht9LVIax3FY7a0oIUxqLDvW2j5/EvvgbKJwRzR9oDFF9d1iMcbQDktTMog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GOpKRSJD; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SwuENrJq"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-63267c30eaaso40458717b3.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 10:51:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GOpKRSJD"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso5222513e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 11:39:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718733070; x=1719337870; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tyXvq+2kNSq2yY1cpCgzqGKNpoe28AhGuqUANf/m0KY=;
-        b=SwuENrJqza9uruPAfYte9lWutWNeHoUNvDpJph0igA+J46q0F3uAt9McddA17J6owN
-         Tvk55tmEjsmEMFOVN0TOSeroegrgPvWUVZE8G6CFefV7pteLOiXRjkuxn5ir8WEen2ft
-         GFMybhQvJ37TpWJuvt6JUMuz1Zm9A9I0tXtfpgJqR0cGOUxZq2JyILum4jAGUG7oTHNq
-         MM15YyHYxtPpbHf2Q5xQvyKi0CJHuaW5QtQSnVc68aoHVLnWQoEx7TWiWCnXnAAAJxgt
-         MALNi3TpGZahMxePWtqyrZ+y3btpv+fL3yDMY1IGJ691E1UgyvjzmBVrZcJfiRKgRst/
-         edmg==
+        d=linaro.org; s=google; t=1718735958; x=1719340758; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FwDjBzxOyA5K9+61SDRjXbz7t/PybP6aQR55s+tXa8=;
+        b=GOpKRSJDdYoChgG52JXCyQ8hLASwaeHUpwfRQoN+Q215K89OvUvkWy4OFoG4kzUsfj
+         U8aHc8Ty5yXvGPVVKMTYvsf/n2/HREQO9Nhc1mxB0H1J2JdKxEbidRUd88rW7i+LLvc7
+         cLKQ5xMBo65kXnrzpfY+fN+ICCYrP6IhJDx0IxQo4ofluBpjogfRr0L0ulMeZkXZgEEe
+         VnNgafTzd4USpsLO4ll/jfJ7rKweAF2LvsvW/bZdPwnGygBmy6ZkrV5wc71CpIiSkOK9
+         6cylxnSXZ3jgBp417q87MzEQxIFhrXgkq/wmqAg/KWqDoo/DBaGFjduBnnXoglhcmlQJ
+         SPew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718733070; x=1719337870;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tyXvq+2kNSq2yY1cpCgzqGKNpoe28AhGuqUANf/m0KY=;
-        b=weKGbT3r9v6/QS8f9lkwS+8FgpSZgZT6uW8wtlulMQvwYa3wfZE9YuBe4eSvkKBPXX
-         8/40P5YwlhIsSC1kEvWPphlmRxtZeKZWCYKpyKWGh4JcBE2h23P8XRlVApWJFhUNlYGx
-         qptTdg0it2Z6t6+6mIy9alP4OIXEm8IZKlovvLzWXUsj4nXrZoyKBXgAIDzmjHXbAi42
-         XO506QRvJ1QxkpeO2W4ITRFSj/nrAxrKnHe0zzWikuI5I7Phb1FvvR0nnrDqkqUay8cW
-         qix7Ag38EvESywQfpjtMRa8mfFlymxwrzzKhYkw90jdl1ImMcKUJ1WbJTmv021Ucsg55
-         GsCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWaq7altw6fiYRkgtH8pcJ491TZl9ftzlVQr3MdixWgvtTiP5DFghPfvUfomWZEx7WTZds1Q59uu7r0ETGi2Rlq3WZNFogBZxn4U9N7sEUoVM=
-X-Gm-Message-State: AOJu0YzQZ6n7P6mKlB39HDKyTXzLzlv2aoddvo5wfVnVOMvnnPyINOT3
-	YQgYTmSKSvQ55jHihMpdDzoIf/iw1l/TB8tZj+0Qnq6QG5WN3xGqP89huj3IEEaezmSqb9X+5tn
-	aW7j2d282LgmTdvfKDUjftzoVascJQR3LzMKHhOHD4m5eUI+2nco=
-X-Google-Smtp-Source: AGHT+IGX0rSKvmM9LtFbl2y0uuFDIWZVXyutPg9+1l/SGSIE4/dOh7rq6j1hE7fYLB7yhECyYlIakQysuwd2NawkPxQ=
-X-Received: by 2002:a81:a190:0:b0:62c:b66b:c7a7 with SMTP id
- 00721157ae682-63a8dd02cc5mr4803717b3.17.1718733070618; Tue, 18 Jun 2024
- 10:51:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718735958; x=1719340758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+FwDjBzxOyA5K9+61SDRjXbz7t/PybP6aQR55s+tXa8=;
+        b=Jj5I4gNe6zYu26OiM6tSsyKF7UQQlt9NjsQOcBmuQ/LK0mB+3loSMvXvm1QZoyW0tc
+         2ZwFmciCA+mj5VNO36XJDUTJuoqqD6iVPu4pfQQxGh8EewelkGOwAz+dAD+zHlJ4X3Dy
+         Yh4mNs1sEIN4SoYzQCcnPhDPfGxjlCnP3AxPHOLX+qtFgCLGERQF9nDbaqi/C15NxlWK
+         AJzUNpPaw433nKqRGk0bb823hip6g1iiWBR1k55h+TRtsSZ2Bu3d0K8f04wEoB2Kk+9B
+         s7JaaoamOSOHOJmfOIWmyvwLEt3T2unSEr93O0cM3QY/ZFTSNr9A5gC3urYNcnM1MtZC
+         j09g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjMxMpJMak5PZ1/1ZWdihdKOEGlKQcl++pxK5pkMO4kejbz4P4OTs5OZtd9/BHisg6e2r8GVIyuxi34vQpYjeAqCga1v0oggZBy+20HlSbBi0=
+X-Gm-Message-State: AOJu0YxyMlFRyvmpCkBGShJdJo/llT+UqPhx3FDR99mn3RnrDUndVg9N
+	OImPZ2TeNZwkrs+/IbbqZGkqLmknAWZeIn24YzS10Hdd/wW/5/FGxo83LfSGR+g=
+X-Google-Smtp-Source: AGHT+IHNJLZtrdVemSmcP9/vodwRV/x124sIZ1p+XWWDZ77OnquiYe6x9ozhXl/rnfxO7zDFAtaYZQ==
+X-Received: by 2002:a05:6512:3c9e:b0:52b:82d5:8fd2 with SMTP id 2adb3069b0e04-52ccaa97444mr341031e87.47.1718735957403;
+        Tue, 18 Jun 2024 11:39:17 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2825922sm1575728e87.26.2024.06.18.11.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 11:39:17 -0700 (PDT)
+Date: Tue, 18 Jun 2024 21:39:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 11/23] drm/panel: Add support for S6E3HA8 panel driver
+Message-ID: <pkmxbxoc4sno6mbjsftz6hp5lxefc6yhwxjlhiy2pd4wbkzpvl@as43z4t64mm6>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-11-e3f6662017ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614140421.3172674-1-peter.griffin@linaro.org> <20240614140421.3172674-2-peter.griffin@linaro.org>
-In-Reply-To: <20240614140421.3172674-2-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 18 Jun 2024 12:50:59 -0500
-Message-ID: <CAPLW+4my8dw7BmF242vbsp9iaPGjgP47Tc5Bz6U2kL5bBHRpwg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-11-e3f6662017ac@gmail.com>
 
-On Fri, Jun 14, 2024 at 9:04=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> The of_syscon_register_regmap() API allows an externally created regmap
-> to be registered with syscon. This regmap can then be returned to client
-> drivers using the syscon_regmap_lookup_by_phandle() APIs.
->
-> The API is used by platforms where mmio access to the syscon registers is
-> not possible, and a underlying soc driver like exynos-pmu provides a SoC
-> specific regmap that can issue a SMC or hypervisor call to write the
-> register.
->
-> This approach keeps the SoC complexities out of syscon, but allows common
-> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
-> by many SoCs already to be re-used.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+On Tue, Jun 18, 2024 at 04:59:45PM GMT, Dzmitry Sankouski wrote:
+> Add support for MIPI-DSI based S6E3HA8 AMOLED panel
+> driver. This panel has 1440x2960 resolution, 5.8-inch physical
+> size, and can be found in starqltechn device.
+> Brightness regulation is not yet supported.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
-
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
->  drivers/mfd/syscon.c       | 48 ++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/syscon.h |  8 +++++++
->  2 files changed, 56 insertions(+)
->
-> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> index 7d0e91164cba..44991da3ea23 100644
-> --- a/drivers/mfd/syscon.c
-> +++ b/drivers/mfd/syscon.c
-> @@ -192,6 +192,54 @@ static struct regmap *device_node_get_regmap(struct =
-device_node *np,
->         return syscon->regmap;
->  }
->
-> +/**
-> + * of_syscon_register_regmap() - Register regmap for specified device no=
-de
-> + * @np: Device tree node
-> + * @regmap: Pointer to regmap object
-> + *
-> + * Register an externally created regmap object with syscon for the spec=
-ified
-> + * device tree node. This regmap can then be returned to client drivers =
-using
-> + * the syscon_regmap_lookup_by_phandle() API.
-> + *
-> + * Return: 0 on success, negative error code on failure.
+>  MAINTAINERS                                   |   1 +
+>  drivers/gpu/drm/panel/Kconfig                 |   7 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c | 426 ++++++++++++++++++++++++++
+>  4 files changed, 435 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 92a5d0a56353..fae3b8ea9ce4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7154,6 +7154,7 @@ DRM DRIVER FOR SAMSUNG S6E3HA8 PANELS
+>  M:	Dzmitry Sankouski <dsankouski@gmail.com>
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/display/panel/samsung,s6e3ha8.yaml
+> +F:	drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c
+>  
+>  DRM DRIVER FOR SITRONIX ST7586 PANELS
+>  M:	David Lechner <david@lechnology.com>
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index 2ae0eb0638f3..903fc8c155c0 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -651,6 +651,13 @@ config DRM_PANEL_SAMSUNG_S6E3HA2
+>  	depends on BACKLIGHT_CLASS_DEVICE
+>  	select VIDEOMODE_HELPERS
+>  
+> +config DRM_PANEL_SAMSUNG_S6E3HA8
+> +	tristate "Samsung S6E3HA8 DSI video mode panel"
+> +	depends on OF
+> +	depends on DRM_MIPI_DSI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+> +	select VIDEOMODE_HELPERS
+> +
+>  config DRM_PANEL_SAMSUNG_S6E63J0X03
+>  	tristate "Samsung S6E63J0X03 DSI command mode panel"
+>  	depends on OF
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index f0203f6e02f4..71774cc5820a 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -66,6 +66,7 @@ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D27A1) += panel-samsung-s6d27a1.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D7AA0) += panel-samsung-s6d7aa0.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3FA7) += panel-samsung-s6e3fa7.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3HA2) += panel-samsung-s6e3ha2.o
+> +obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3HA8) += panel-samsung-s6e3ha8.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0) += panel-samsung-s6e63m0.o
+>  obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0_SPI) += panel-samsung-s6e63m0-spi.o
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c b/drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c
+> new file mode 100644
+> index 000000000000..49d629643171
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e3ha8.c
+> @@ -0,0 +1,426 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Generated with linux-mdss-dsi-panel-driver-generator from vendor device tree:
+> + *  Copyright (c) 2013, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
 > + */
-> +int of_syscon_register_regmap(struct device_node *np, struct regmap *reg=
-map)
+> +
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <drm/display/drm_dsc.h>
+> +#include <drm/display/drm_dsc_helper.h>
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_modes.h>
+> +#include <drm/drm_panel.h>
+> +
+> +struct s6e3ha8 {
+> +	struct drm_panel panel;
+> +	struct mipi_dsi_device *dsi;
+> +	struct drm_dsc_config dsc;
+> +	struct gpio_desc *reset_gpio;
+> +	struct regulator_bulk_data supplies[3];
+> +};
+> +
+> +static inline
+> +struct s6e3ha8 *to_s6e3ha8_amb577px01_wqhd(struct drm_panel *panel)
 > +{
-> +       struct syscon  *entry, *syscon =3D NULL;
-> +
-> +       if (!np || !regmap)
-> +               return -EINVAL;
-> +
-> +       /* check if syscon entry already exists */
-> +       spin_lock(&syscon_list_slock);
-> +
-> +       list_for_each_entry(entry, &syscon_list, list)
-> +               if (entry->np =3D=3D np) {
-> +                       syscon =3D entry;
-> +                       break;
-> +               }
-> +
-> +       spin_unlock(&syscon_list_slock);
-> +
-> +       if (syscon)
-> +               return -EEXIST;
-> +
-> +       syscon =3D kzalloc(sizeof(*syscon), GFP_KERNEL);
-> +       if (!syscon)
-> +               return -ENOMEM;
-> +
-> +       syscon->regmap =3D regmap;
-> +       syscon->np =3D np;
-> +
-> +       /* register the regmap in syscon list */
-> +       spin_lock(&syscon_list_slock);
-> +       list_add_tail(&syscon->list, &syscon_list);
-> +       spin_unlock(&syscon_list_slock);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(of_syscon_register_regmap);
-> +
->  struct regmap *device_node_to_regmap(struct device_node *np)
->  {
->         return device_node_get_regmap(np, false);
-> diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-> index c315903f6dab..aad9c6b50463 100644
-> --- a/include/linux/mfd/syscon.h
-> +++ b/include/linux/mfd/syscon.h
-> @@ -28,6 +28,8 @@ struct regmap *syscon_regmap_lookup_by_phandle_args(str=
-uct device_node *np,
->                                                     unsigned int *out_arg=
-s);
->  struct regmap *syscon_regmap_lookup_by_phandle_optional(struct device_no=
-de *np,
->                                                         const char *prope=
-rty);
-> +int of_syscon_register_regmap(struct device_node *np,
-> +                             struct regmap *regmap);
->  #else
->  static inline struct regmap *device_node_to_regmap(struct device_node *n=
-p)
->  {
-> @@ -67,6 +69,12 @@ static inline struct regmap *syscon_regmap_lookup_by_p=
-handle_optional(
->         return NULL;
->  }
->
-> +static inline int of_syscon_register_regmap(struct device_node *np,
-> +                                       struct regmap *regmap)
-> +{
-> +       return -EOPNOTSUPP;
+> +	return container_of(panel, struct s6e3ha8, panel);
 > +}
 > +
->  #endif
->
->  #endif /* __LINUX_MFD_SYSCON_H__ */
-> --
-> 2.45.2.627.g7a2c4fd464-goog
->
+> +#define s6e3ha8_call_write_func(ret, func) do {	\
+> +	ret = (func);				\
+> +	if (ret < 0)				\
+> +		return ret;			\
+> +} while (0)
+
+Please rework the driver to use mipi_dsi_*_multi() family of functions.
+Using the mipi_dsi_multi_context should make this wrapper obsolete too.
+
+> +
+> +static int s6e3ha8_test_key_on_lvl1(struct mipi_dsi_device *dsi)
+> +{
+> +	static const u8 d[] = { 0x9f, 0xa5, 0xa5 };
+> +
+> +	return mipi_dsi_dcs_write_buffer(dsi, d, ARRAY_SIZE(d));
+> +	return 0;
+
+Ugh. So which return is it?
+
+> +}
+> +
+
+[...]
+> +static int s6e3ha8_power_on(struct s6e3ha8 *ctx)
+> +{
+> +	int ret;
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+
+Inline this function, it's just regulator_bulk_enable() in the end.
+
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e3ha8_power_off(struct s6e3ha8 *ctx)
+> +{
+> +	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +}
+> +
+> +static void s6e3ha8_amb577px01_wqhd_reset(struct s6e3ha8 *ctx)
+> +{
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +	usleep_range(5000, 6000);
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+> +	usleep_range(5000, 6000);
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +	usleep_range(5000, 6000);
+> +}
+> +
+> +static int s6e3ha8_amb577px01_wqhd_on(struct s6e3ha8 *ctx)
+> +{
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	struct device *dev = &dsi->dev;
+> +	int ret;
+> +
+> +	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+> +
+> +	s6e3ha8_test_key_on_lvl1(dsi);
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +
+> +	ret = mipi_dsi_compression_mode(dsi, true);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to set compression mode: %d\n", ret);
+> +		return ret;
+> +	}
+
+Interesting, compression mode is being set before the PPS programming?
+
+> +
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +
+> +	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
+> +		return ret;
+> +	}
+> +	usleep_range(5000, 6000);
+> +
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0xf2, 0x13);
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +
+> +	usleep_range(10000, 11000);
+> +
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0xf2, 0x13);
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +
+> +	/* OMOK setting 1 (Initial setting) - Scaler Latch Setting Guide */
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x07);
+> +	/* latch setting 1 : Scaler on/off & address setting & PPS setting -> Image update latch */
+> +	mipi_dsi_generic_write_seq(dsi, 0xf2, 0x3c, 0x10);
+> +	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x0b);
+> +	/* latch setting 2 : Ratio change mode -> Image update latch */
+> +	mipi_dsi_generic_write_seq(dsi, 0xf2, 0x30);
+> +	/* OMOK setting 2 - Seamless setting guide : WQHD */
+> +	mipi_dsi_generic_write_seq(dsi, 0x2a, 0x00, 0x00, 0x05, 0x9f); /* CASET */
+> +	mipi_dsi_generic_write_seq(dsi, 0x2b, 0x00, 0x00, 0x0b, 0x8f); /* PASET */
+> +	mipi_dsi_generic_write_seq(dsi, 0xba, 0x01); /* scaler setup : scaler off */
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0x35, 0x00); /* TE Vsync ON */
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0xed, 0x4c); /* ERR_FG */
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +	s6e3ha8_test_key_on_lvl3(dsi);
+> +	/* FFC Setting 897.6Mbps */
+> +	mipi_dsi_generic_write_seq(dsi, 0xc5, 0x0d, 0x10, 0xb4, 0x3e, 0x01);
+> +	s6e3ha8_test_key_off_lvl3(dsi);
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0xb9,
+> +				   0x00, 0xb0, 0x81, 0x09, 0x00, 0x00, 0x00,
+> +				   0x11, 0x03); /* TSP HSYNC Setting */
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
+> +	mipi_dsi_generic_write_seq(dsi, 0xf6, 0x43);
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +	s6e3ha8_test_key_on_lvl2(dsi);
+> +	/* Brightness condition set */
+> +	mipi_dsi_generic_write_seq(dsi, 0xca,
+> +				   0x07, 0x00, 0x00, 0x00, 0x80, 0x80, 0x80,
+> +				   0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +				   0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +				   0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +				   0x80, 0x80, 0x80, 0x00, 0x00, 0x00);
+> +	mipi_dsi_generic_write_seq(dsi, 0xb1, 0x00, 0x0c); /* AID Set : 0% */
+> +	mipi_dsi_generic_write_seq(dsi, 0xb5,
+> +				   0x19, 0xdc, 0x16, 0x01, 0x34, 0x67, 0x9a,
+> +				   0xcd, 0x01, 0x22, 0x33, 0x44, 0x00, 0x00,
+> +				   0x05, 0x55, 0xcc, 0x0c, 0x01, 0x11, 0x11,
+> +				   0x10); /* MPS/ELVSS Setting */
+> +	mipi_dsi_generic_write_seq(dsi, 0xf4, 0xeb, 0x28); /* VINT */
+> +	mipi_dsi_generic_write_seq(dsi, 0xf7, 0x03); /* Gamma, LTPS(AID) update */
+> +	s6e3ha8_test_key_off_lvl2(dsi);
+> +	s6e3ha8_test_key_off_lvl1(dsi);
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e3ha8_enable(struct drm_panel *panel)
+> +{
+> +	struct s6e3ha8 *ctx = to_s6e3ha8_amb577px01_wqhd(panel);
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	int ret;
+> +
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_test_key_on_lvl1(dsi));
+> +	s6e3ha8_call_write_func(ret, mipi_dsi_dcs_set_display_on(dsi));
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_test_key_off_lvl1(dsi));
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e3ha8_disable(struct drm_panel *panel)
+> +{
+> +	struct s6e3ha8 *ctx = to_s6e3ha8_amb577px01_wqhd(panel);
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	int ret;
+> +
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_test_key_on_lvl1(dsi));
+> +	s6e3ha8_call_write_func(ret, mipi_dsi_dcs_set_display_off(dsi));
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_test_key_off_lvl1(dsi));
+> +	msleep(20);
+> +
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_test_key_on_lvl2(dsi));
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_afc_off(dsi));
+> +	s6e3ha8_call_write_func(ret, s6e3ha8_test_key_off_lvl2(dsi));
+> +
+> +	msleep(160);
+> +
+> +	return 0;
+> +}
+> +
+> +static int s6e3ha8_amb577px01_wqhd_prepare(struct drm_panel *panel)
+> +{
+> +	struct s6e3ha8 *ctx = to_s6e3ha8_amb577px01_wqhd(panel);
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	struct device *dev = &dsi->dev;
+> +	struct drm_dsc_picture_parameter_set pps;
+> +	int ret;
+> +
+> +	s6e3ha8_power_on(ctx);
+> +	msleep(120);
+> +	s6e3ha8_amb577px01_wqhd_reset(ctx);
+> +	ret = s6e3ha8_amb577px01_wqhd_on(ctx);
+> +
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to initialize panel: %d\n", ret);
+> +		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +		goto err;
+> +	}
+> +
+> +	drm_dsc_pps_payload_pack(&pps, &ctx->dsc);
+> +
+> +	s6e3ha8_test_key_on_lvl1(dsi);
+> +	ret = mipi_dsi_picture_parameter_set(ctx->dsi, &pps);
+> +	if (ret < 0) {
+> +		dev_err(panel->dev, "failed to transmit PPS: %d\n", ret);
+> +		return ret;
+> +	}
+> +	s6e3ha8_test_key_off_lvl1(dsi);
+> +
+> +	ret = mipi_dsi_compression_mode(ctx->dsi, true);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to enable compression mode: %d\n", ret);
+> +		return ret;
+> +	}
+
+Again?
+
+> +
+> +
+> +	msleep(28);
+> +
+> +	return 0;
+> +err:
+> +	s6e3ha8_power_off(ctx);
+> +	return ret;
+> +}
+> +
+> +static int s6e3ha8_amb577px01_wqhd_unprepare(struct drm_panel *panel)
+> +{
+> +	struct s6e3ha8 *ctx = to_s6e3ha8_amb577px01_wqhd(panel);
+> +
+> +	return s6e3ha8_power_off(ctx);
+> +}
+> +
+> +static const struct drm_display_mode s6e3ha8_amb577px01_wqhd_mode = {
+> +	.clock = (1440 + 116 + 44 + 120) * (2960 + 120 + 80 + 124) * 60 / 1000,
+> +	.hdisplay = 1440,
+> +	.hsync_start = 1440 + 116,
+> +	.hsync_end = 1440 + 116 + 44,
+> +	.htotal = 1440 + 116 + 44 + 120,
+> +	.vdisplay = 2960,
+> +	.vsync_start = 2960 + 120,
+> +	.vsync_end = 2960 + 120 + 80,
+> +	.vtotal = 2960 + 120 + 80 + 124,
+> +	.width_mm = 64,
+> +	.height_mm = 132,
+> +};
+> +
+> +static int s6e3ha8_amb577px01_wqhd_get_modes(struct drm_panel *panel,
+> +					     struct drm_connector *connector)
+> +{
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(connector->dev, &s6e3ha8_amb577px01_wqhd_mode);
+> +	if (!mode)
+> +		return -ENOMEM;
+> +
+> +	drm_mode_set_name(mode);
+> +
+> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +	connector->display_info.width_mm = mode->width_mm;
+> +	connector->display_info.height_mm = mode->height_mm;
+> +	drm_mode_probed_add(connector, mode);
+
+drm_connector_helper_get_modes_fixed()
+
+> +
+> +	return 1;
+> +}
+> +
+
+-- 
+With best wishes
+Dmitry
