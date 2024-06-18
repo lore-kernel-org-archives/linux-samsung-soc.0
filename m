@@ -1,129 +1,169 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70891BF50
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 19:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF6915747F
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 19:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718737927; cv=none; b=g12yhqk7zBxe+rmeuOdC8iPAAnKdXYo0wo3mk5t7HwT3wEjjnEweAIJLET/ieLDY+H0+o+NdVMY38SaYrr2OGWQFmkebwB5/IZiEphiEJSy1Wu+XKyjHocagEw+AbHZ9FL1TthAsan4LYd+FnCnDd7cXstjTvGSEz2mJzF3KL9c=
+	t=1718738809; cv=none; b=OwbGmjAgLpZBTmy5OASGWHUjT335CkveRqOZYnTgiAs6X9ERPtyG8oFUsQ/rlULT9VoKGC45y5ZhIn7UUhFwF8kzvNoVySYs17lrq2oHYAAgl604A4DWAs1aSPTsU2Wvx8KF9u/6RgeGU0rcRtoJurU5dM2e4oU1XqzQjPzL+7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718737927; c=relaxed/simple;
-	bh=V6TUkHZXRl29GH5tB+9zD1O+XS7wyCwcd/6nrTmB+zo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AMZBug6UBb7GWW5qbQh69zXvwjPuJwEKxRPfYFc78HoikIAkDmkVr92aIvsNGz8D00jS/7ELN0u7nRn3/wQxV/lnXvQU74bZhbSfkbPcDhFAkHHKV/850o9t308PIeww3iIw2/pSlMl3/OrmDOT3ZQRJkaMUvdTp7SJut9JgNH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oH0hcvFJ; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1718738809; c=relaxed/simple;
+	bh=+FyiA+pYK8APwK75QeRcyo/HcZRVxSHlp1CzDFB8ZR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ewP4uTUyf8QJk0VTWZ2Z+Mz+AG99yfKc3eFy5bNUjxfC3lg1/PhJX/oNkmgflliewjyZ89VDHRm/giyTxGcmiaGOY0sFEPVBraAhJxJgaNHROgRkme0i1QjUmASIIo9/MsrSLH75PnCSCE1L8wETAcd9RufFRbd3GAnH7JuN5+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=An9P9Ci9; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oH0hcvFJ"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35f06861ae6so5037502f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 12:12:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="An9P9Ci9"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfa48f505dfso6215577276.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 12:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718737924; x=1719342724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f8+/cR8dmnRCIY8KO1c6EzfyrRTOkElOzLEANvqSOFw=;
-        b=oH0hcvFJ7FmVmxz8THavBoaaaDNUg/2g4Z6LQuingacqxNEXmPzSba9sw4TOfi492Q
-         ooW+qyu7XLOz22qJtfnr6/AwZa8qp6je324y00HxdtdPZebey5DLkLE2XUdSAgZntRq7
-         3ULheWyKCY99KmTO1ePsCu4PxnXk5M7s1jZcGlXhssPN5elk8ATtHOYNi0t+I5f6qvd+
-         TWe2H/5jBl+xtvh7NRA+yfKJWXBGFq7fVgRTq1xBECGXEvF2iXCxeq2jal3oJgtrDO4i
-         TC1F+3uLJu3LyNbchFfqH23CB1Xg9OeZsZvFWA0qVcA8y0cYcLSFg7DPyiKuyCGqdLre
-         5lLg==
+        d=linaro.org; s=google; t=1718738806; x=1719343606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9JdIhONv4P+97AjtXHbls42T4V6PxnxrDwc043W4vOo=;
+        b=An9P9Ci9QQ1c5s7gcjCkRnfqnMy/q/1l90M1HEk38mkKcMwJZBQlZMctXfkqRwSUXs
+         GoPq7wRdaI6U/3SLlTkld9O9xMIEW898NrHgJ5ZvD1Lr4OmxwqBuJAsW4yM+pHXzJxpR
+         7nD63JgJO44ZJKs1g6sf+ebcMpAbxWguzEbmvWFUt6OuCOSTSw2BrzfsPEWdzsY7707j
+         rWtNw7QDxpd2TlVGM3WjuBNYx87Rt4Hj18CLPXNFWmlDM/cNLmXbHS6zJMOeVvQP/YkL
+         HANnyn/aSn8+kyhCDH07N21Yr/MZbZIFYuSshUVYPxj9n/ophLf8LjeOLU0DkbmqJDPG
+         EPow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718737924; x=1719342724;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f8+/cR8dmnRCIY8KO1c6EzfyrRTOkElOzLEANvqSOFw=;
-        b=J3gTfIekTnzDikp7GJcPRsAnQ9idvYzvHSfhiDfcnyrbWm0iYFAxIuK9ds8APmdJWr
-         fSo2J7M0i7LBcGggSzqnCmOZVGcfGi6PeAXiiAS/e2fNWYkieaSatSGhdn/tUQ4LpLAU
-         Pt13gkOeB00635ahs8paFaxSXTwgCwGjqjZjpoMaIdbOVcyC1v9IQ0BcAew+zWD+rWpa
-         qA7dmVQw5FqgRUg86zziV2nh47bVD3p9oLsja1tTG0vTyJ+XXOC9mCJExdhIGokDublY
-         To0qfVQZSDAmPAF9bPPKtvsvSCr9BvEofFN8sjdrAYkBxrft6gALP+6lg4QXImOpaFQG
-         QWaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmqyQmwUecoehpUvEq7mqu3j4SSe2mAh93vaeC3L4ecDfPpNlpxt+5TETXdgxLRUJEhh/MEEHLkLGfq5IZQEGCw1Ts0hhXBJjjZUGIB2ZPM+8=
-X-Gm-Message-State: AOJu0YwW2qb9c6uTeLZ/XDJ5upHc9T5E8f0ehjJ6DLWfbQkGhyqqxpbA
-	xl0zRGcKmtR2WzplRhwXgWygEqv1r6CA/MZt9ZkdL9SAhglHSOdzG7HmTUlsHyw=
-X-Google-Smtp-Source: AGHT+IHdn2YVcteO5gHaAZyTpV2RKc9NRMuQMnYAe8emYCZSQL9/iTeEcqYKL05YMuGAZiFOdSXtsQ==
-X-Received: by 2002:adf:fe11:0:b0:35e:5bf6:5432 with SMTP id ffacd0b85a97d-363175b8c65mr437516f8f.21.1718737923890;
-        Tue, 18 Jun 2024 12:12:03 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:5d11:7fa7:8997:f811? ([2a00:f41:9028:9df3:5d11:7fa7:8997:f811])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-361a85074a2sm2280828f8f.25.2024.06.18.12.11.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 12:12:03 -0700 (PDT)
-Message-ID: <85e03d10-59a2-4f15-bb85-7b2c0354a5d1@linaro.org>
-Date: Tue, 18 Jun 2024 21:11:58 +0200
+        d=1e100.net; s=20230601; t=1718738806; x=1719343606;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9JdIhONv4P+97AjtXHbls42T4V6PxnxrDwc043W4vOo=;
+        b=RdOvzWr/lNoaXy7fP/jmpMRnPb5CVwMGS2+W4OUvWiqK1F/Uq8EOfMsZp+IhNmQNyE
+         dTst9m6VPqlF+CAcYXLRLgSRlKLWgkm9qKVIW3KMFjMgrZaOERfyNVvOL+iaoiqbXDx/
+         giU/PlVj+nD/ogMubsQ3fF178iIjcHqfpVsPSZ+tey/eMeZ1UtRojVaKNdr3/zQCLEew
+         owsB65/YlIaH6yYGoSUV3p+KnbWg7NJFBqvk32i7BsrSP2CMjPwMV+7YRXXQLsW2L2h8
+         uRYtQE+O5NacTrHovaoCsEYgSyo87tv14Fo+8r5Q3rMwQ9I9qLx17Qc0/Ui8SDlSzrW/
+         lwzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD9lQbocw2S4zYr/ORaZOR5cmvn51RBXFmHGLYJb5Lu1E7qmz2z3WIORPJ7HFJmfQy2BPouvPB3DZxe9gsnhr5sp8q68q+Uxv4j4WU3AoLM7s=
+X-Gm-Message-State: AOJu0YxHTp4yr248v8AEVbCq6ZmHJUhRCoNRh02AACJhp1ilRzvi3gyF
+	bvfD6iyxqpQ70aAIdwcdipBwiGNNV6c6gksAPnrABkFHin+PMZh33QZsR21sUaBMc+Vz4MJ0mSr
+	bbUUj4srlOaOWJoLQsJiZxby9zJVV02xmhSjYxA==
+X-Google-Smtp-Source: AGHT+IEgckfSzpfRkRk3dzsXY6WG0jQp3J3r598HIt7lADXYgT+sH/QiHeZPNODRKExgkh5yZnVfoB+gxVSZC+8vuoE=
+X-Received: by 2002:a5b:c4d:0:b0:dfd:c928:cc9f with SMTP id
+ 3f1490d57ef6-e02be142117mr988991276.26.1718738805816; Tue, 18 Jun 2024
+ 12:26:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- phone-devel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
- <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
- <ad04e203-4244-4cd3-9c9a-fae002962990@linaro.org>
- <lwrz4rvn6ogseea5v6j7plc3yi3xnzo76dvrsl3muat3iswlkb@zmwa3xo3xgw4>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <lwrz4rvn6ogseea5v6j7plc3yi3xnzo76dvrsl3muat3iswlkb@zmwa3xo3xgw4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240618003743.2975-1-semen.protsenko@linaro.org>
+ <20240618003743.2975-5-semen.protsenko@linaro.org> <CANAwSgSaYip=oqtLfTzFMq_HWGJMMbEXOqKWC8ANzxNZmBFXTw@mail.gmail.com>
+In-Reply-To: <CANAwSgSaYip=oqtLfTzFMq_HWGJMMbEXOqKWC8ANzxNZmBFXTw@mail.gmail.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 18 Jun 2024 14:26:34 -0500
+Message-ID: <CAPLW+4kGH+WJS5x6ujGacD_uhsUb9Mi7w1F+ocnc6hZz628kew@mail.gmail.com>
+Subject: Re: [PATCH 4/7] hwrng: exynos: Implement bus clock control
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 17, 2024 at 11:26=E2=80=AFPM Anand Moon <linux.amoon@gmail.com>=
+ wrote:
+>
+> Hi Sam,
+>
+> On Tue, 18 Jun 2024 at 06:08, Sam Protsenko <semen.protsenko@linaro.org> =
+wrote:
+> >
+> > Some SoCs like Exynos850 might require the SSS bus clock (PCLK) to be
+> > enabled in order to access TRNG registers. Add and handle optional PCLK
+> > clock accordingly to make it possible.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> >  drivers/char/hw_random/exynos-trng.c | 22 ++++++++++++++++++++--
+> >  1 file changed, 20 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/char/hw_random/exynos-trng.c b/drivers/char/hw_ran=
+dom/exynos-trng.c
+> > index 88a5088ed34d..4520a280134c 100644
+> > --- a/drivers/char/hw_random/exynos-trng.c
+> > +++ b/drivers/char/hw_random/exynos-trng.c
+> > @@ -47,7 +47,8 @@
+> >  struct exynos_trng_dev {
+> >         struct device   *dev;
+> >         void __iomem    *mem;
+> > -       struct clk      *clk;
+> > +       struct clk      *clk;   /* operating clock */
+> > +       struct clk      *pclk;  /* bus clock */
+> >         struct hwrng    rng;
+> >  };
+> >
+> > @@ -141,10 +142,23 @@ static int exynos_trng_probe(struct platform_devi=
+ce *pdev)
+> >                 goto err_clock;
+> >         }
+> >
+> > +       trng->pclk =3D devm_clk_get_optional(&pdev->dev, "pclk");
+>
+> Use devm_clk_get_optional_enabled to avoid clk_prepare_enable
+>
 
+Thanks for pointing that out! Will fix in v2.
 
-On 6/18/24 20:55, Dmitry Baryshkov wrote:
-> On Tue, Jun 18, 2024 at 08:50:52PM GMT, Konrad Dybcio wrote:
->>
->>
->> On 6/18/24 19:50, Dmitry Baryshkov wrote:
->>> On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
->>>> sdm845 has "General Purpose" clocks that can be muxed to
->>>> SoC pins.
->>>>
->>>> Those clocks may be used as e.g. PWM sources for external peripherals.
->>>> Add more frequencies to the table for those clocks so it's possible
->>>> for arbitrary peripherals to make use of them.
->>>>
->>>> See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
->>>
->>> Each time I look at the table attached to the GP CLK, I feel that it's
->>> plain wrong. In the end the GPCLK can in theory have arbitrary value
->>> depending on the usecase.
->>>
->>> Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
->>> allow more flexibility than a default clk_rcg2_ops?
->>
->> If we can somehow get max m/n/d values for all possible parents, sure
-> 
-> Calculate them at runtime?
-
-We'd be calculating the mnd values for a frequency that's either equal or
-reasonably close to the one requested. My worry is that we somehow need
-to get the maximum values they can take (unless they're well-known)
-
-Konrad
+> > +       if (IS_ERR(trng->pclk)) {
+> > +               ret =3D dev_err_probe(&pdev->dev, PTR_ERR(trng->pclk),
+> > +                                   "cannot get pclk");
+> > +               goto err_clock;
+> > +       }
+> > +
+> > +       ret =3D clk_prepare_enable(trng->pclk);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "Could not enable the pclk.\n");
+> > +               goto err_clock;
+> > +       }
+> > +
+> >         ret =3D clk_prepare_enable(trng->clk);
+>
+> Use devm_clk_get_enabled for this clock
+>
+> >         if (ret) {
+> >                 dev_err(&pdev->dev, "Could not enable the clk.\n");
+> > -               goto err_clock;
+> > +               goto err_clock_enable;
+> >         }
+> >
+> >         ret =3D devm_hwrng_register(&pdev->dev, &trng->rng);
+> > @@ -160,6 +174,9 @@ static int exynos_trng_probe(struct platform_device=
+ *pdev)
+> >  err_register:
+> >         clk_disable_unprepare(trng->clk);
+> >
+> > +err_clock_enable:
+> > +       clk_disable_unprepare(trng->pclk);
+> > +
+> >  err_clock:
+> >         pm_runtime_put_noidle(&pdev->dev);
+> >
+> > @@ -174,6 +191,7 @@ static void exynos_trng_remove(struct platform_devi=
+ce *pdev)
+> >         struct exynos_trng_dev *trng =3D platform_get_drvdata(pdev);
+> >
+> >         clk_disable_unprepare(trng->clk);
+> > +       clk_disable_unprepare(trng->pclk);
+> >
+> >         pm_runtime_put_sync(&pdev->dev);
+> >         pm_runtime_disable(&pdev->dev);
+> > --
+> > 2.39.2
+> >
+> >
+>
+> Thanks
+> -Anand
