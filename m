@@ -1,100 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183BD13F016;
-	Tue, 18 Jun 2024 16:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A16074BED
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 17:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718729641; cv=none; b=koqm17h8Fly4si+SRye455z139zLAwaJpBwCMTgnZokR/kXDoUBKKfQ6wAl9W1fLiFM8QFySvcasmr4ooQ0l1ux3MVfz2BlB14/KgpQMOLOhAlufeI0LuRjoYvDrE008CtlJaLdggmT8N6rS2vYSjkPA6EcfE2zCgnRpcII4JsE=
+	t=1718732863; cv=none; b=ZJiXbo6hjSld0g3de/UQCjpsdOF+XgckCbl2PnIvii1AM2KoxJpRS+nAZt7IW9c0GCX2HBuHZA4cfNosYOU6y+/5KR/PgURtrJDSX9TQOO9irEe5r8xWMT+2RGDZF+xseXQvb/pW4rrZZYHf+bSjCHQfAs03TTndgLxrUT4m4fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718729641; c=relaxed/simple;
-	bh=pi1s9JzXbV/imk2EIUojuF6yHVD4/lluGwnh58k352E=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=gCQ0w1s2Ni8Dqk0At1ERc36we477n7n5kAbq8gq+OKVOeCqNQOdFOTjopiFYSTGoT0o4ZprAmlqxoNkDYIScWfDNCPGAwAf8FdvNyfw1HC//bDPlvCHp7pjegp1sP+JZHchv9BlPZD2iVfBT3hM2FDEu3az20hcaY6wgAmXOq+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GK8Nog0G; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718732863; c=relaxed/simple;
+	bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QcWaFgtCGIsShcBD9+vydvLvCKHWaG8WqcX2XqstlMAHHBeV5bH2oNNlClhySePZVyIi9pUdzOt04HqY/AvGJNgxlYzeAjFep3moAhGijzeWXBRn91Yu3rQitpgYZthuTfRe/fYf5/oaQ9dGF4LgJMBtx3lEtBXLHAGSFqvWe94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s/GM+j+e; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GK8Nog0G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA0FC4AF64;
-	Tue, 18 Jun 2024 16:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718729640;
-	bh=pi1s9JzXbV/imk2EIUojuF6yHVD4/lluGwnh58k352E=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GK8Nog0GRPQFKv4Bfioz4q801P9MX5gLhJJ5Kjvcl1VR+0ZUukb2CL1FMiKZ5ye4r
-	 tYXSTjDQYOiJOtY944SglSxxtZvRN02hIWk1OEcECVDiur5hjXLkDnsDg6L+/uS0na
-	 hd9XmxrIBipeGMozPvpqkTU3RK3i55zNrvwmJdaeR7Q5SI+JGIlLgVLd3KLNDIfqt9
-	 LRRmFZujT8xd2Zm1tOXonz63uJY/zky0jeF4IVtlPgnUBRzOnRx6jOc5nKBwh4kz5P
-	 pbt6GWIviEmxO2JLnOuX9LGWIuB57pxCgbZnH5riGuw6MU+FSw6J6JcRBEwJFWllb0
-	 4yeYwmEW89tDw==
-Date: Tue, 18 Jun 2024 10:53:59 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s/GM+j+e"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dff305df675so3066318276.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 10:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718732860; x=1719337660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
+        b=s/GM+j+ewxwl5okUZjGHFUX3IFYU94jfOhUo6R/ZlW/k/ZEu+CZIiqohXW9yogyJVh
+         UreuH6BJKxxn2X1+jsT1Dt0kL6miBt1KrA9laLRzQJaYH2+jHrIWnzjw4tKS1pTqFDHA
+         jGQb9vjf+M3vnWyeHTWf0+d2gBldYgIk17xQMnQLSoOAx76HQyiE2niKAy/9t7gilmEg
+         7ccOpHhV/M22OUyUPcZ+NoeZHcR7/Phku9UK/RGUC1NcKtoF4Va/jfpAaBB2hyWbEjB2
+         sv91gRujFHCyfhP9vGEHQ36vMqfHiGIYf9M6FfZC1qbCKRCCz7/K1IuDsCW7gicCY7I4
+         KUFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718732860; x=1719337660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WtKpZWcUl0e+YJfunJzlBdQYEVufWtzLJiMSdeYhNkI=;
+        b=LB3ymllal5c1wpOiOZ9NDRlAeSU8ICd8YrssCb+hPxRiLTJujp3IVtXRjQmNG6N6R7
+         0k30OqnT58hLls2VnLC2DEYpL+7PCoE+h9EFLCltnjhNNMK1gknzHv18zq2mT2MqSftC
+         PY5NLvV+NTiAKnDxsJe6HCrQxv3QLUljYiR2SjJlptO6Tdt6/0zv0Nzv7/ZIKq+vwzBO
+         oS7El6tDbck1JdKJnmIVVPm4OfAVN5D3SLhhWvv3IkEBJZdnihk1IVKsRxAmrrfxyX+7
+         JbbTEFiTXIocMOfyS/Ww5Wi9fDYBVeQ/B+4CpqGLTITgvlvIXf4npvR4R6dn3wx31FZM
+         wh+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX2x71qT4Vmfrey8Q/zkJ2h3DTbCgBAzxbfMc+3obRot/E1fS31ks/sS0D0mLoVmNoQ074yPvBREeH+lxtFTTG3saJkZujtfLSrXCpcWO/V5ug=
+X-Gm-Message-State: AOJu0YzeBgZqTbfmhAMGDf/M4M0leL683dWPQePtTXiOwcUGLNUHNeZy
+	w5b6Ehs3ze+87C3/bsxDXqVhF0NIm3Qsw2kMnDYnb1N18bgY7hJAefVDiW0WWC2PhRd7gyhrmR/
+	inkjN3WbA/6FyltLBbTUuWGDhudyZaGYnal/Feg==
+X-Google-Smtp-Source: AGHT+IFappc3wA7RX8sQbYdiSE7dEKm/VYOIaHva/VzeNskm7446FG29AlCvkzHOdVWauRc4e+y8oo3dJe1/GIgFb3s=
+X-Received: by 2002:a25:846:0:b0:e01:bb57:4d1a with SMTP id
+ 3f1490d57ef6-e02be13b828mr587249276.19.1718732860244; Tue, 18 Jun 2024
+ 10:47:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Pavel Machek <pavel@ucw.cz>, 
- linux-input@vger.kernel.org, Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Mark Brown <broonie@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
- linux-clk@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
- linux-leds@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
- Chanwoo Choi <cw00.choi@samsung.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- phone-devel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
- David Airlie <airlied@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-9-e3f6662017ac@gmail.com>
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-9-e3f6662017ac@gmail.com>
-Message-Id: <171872963565.3062659.8558146217368306841.robh@kernel.org>
-Subject: Re: [PATCH v3 09/23] dt-bindings: mfd: add samsung,s2dos05
+References: <20240614140421.3172674-1-peter.griffin@linaro.org> <20240614140421.3172674-3-peter.griffin@linaro.org>
+In-Reply-To: <20240614140421.3172674-3-peter.griffin@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 18 Jun 2024 12:47:29 -0500
+Message-ID: <CAPLW+4mnCVdPwA8awj_95uwvbHXniGwCBJQyKztv6_vNOOQgmA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Tue, 18 Jun 2024 16:59:43 +0300, Dzmitry Sankouski wrote:
-> add samsung,s2dos05 core MFD module binding
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+On Fri, Jun 14, 2024 at 9:04=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
+>
+> For SoCs like gs101 that need a special regmap, register this with
+> of_syscon_register_regmap api, so it can be returned by
+> syscon_regmap_lookup_by_phandle() and friends.
+>
+> For SoCs that don't require a custom regmap, revert back to syscon
+> creating the mmio regmap rather than duplicating the logic here.
+>
+> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
+> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
+> is kept around until fw_devlink support for syscon property is added
+> for the pinctrl-samsung driver that also runs at postcore_initcall
+> level.
+>
+> All other exynos client drivers can revert back to
+> syscon_regmap_lookup_by_phandle().
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  .../devicetree/bindings/mfd/samsung,s2dos05.yaml   | 89 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 90 insertions(+)
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/mfd/samsung,s2dos05.example.dtb: /example-0/i2c/pmic@60: failed to match any schema with compatible: ['samsung,s2dos05']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240618-starqltechn_integration_upstream-v3-9-e3f6662017ac@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+[snip]
