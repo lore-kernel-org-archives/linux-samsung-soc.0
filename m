@@ -1,142 +1,197 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0BB146580
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 17:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D04C13F003
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 17:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718733063; cv=none; b=JElVtaVo+KQmrtFSCdH9d3YLJhyomS8VFnqU2PHFzLDBn8pBUps8kSdt6vmblQJnLc2Z0wxrGl7kdNLw2oTolABDdpclLooQfpZw7diqL+/7Ro+xCTUrFxIo1R8EG/L5HxH4/chxuJMLXZaRGik74AMnyFV2eTsRonPWURUvkcw=
+	t=1718733073; cv=none; b=Dd9smierk3z6r8gMltkjF+n2Z8uUxMtWTZbmhj0IckyzVsrrsffPKw0X4Oz+8BooBRbDTqBIW+f6ninR6iQZJmYUdUAXdcZkja8zvGqmWC2JZ1V9OpLgmKZWEnxcjPg7YP5AqEF7ydjzyOUywNI1VdExo6mPPoFsvKfPxoWw4+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718733063; c=relaxed/simple;
-	bh=d3mOZkwzhQUitJ9p5NHqTux2I2OqtKSPIYhdsh5PmW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sI+52p6wogMFbVfuiFf1+Ro4b894hAGDPSpOFSLPj9k3w4WifpNQHO6Ba4dgBJ/UXJD2p55A0LaxRpm4o7bP1PzP1mQWyjsWAloeSP1aC8UvsAIJaSDB1sA+FcFefycMrILcHpsmXV2Ad5vZ2zcJqsCduAYLIZcl/+tGAt8el+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZbjvGBi; arc=none smtp.client-ip=209.85.208.170
+	s=arc-20240116; t=1718733073; c=relaxed/simple;
+	bh=+i7LdplVSBgpsqHCuk3Ek+mDHHKs0qtFfimb7c5uK0k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PJ4g8reIDvFaxnGJYXmwyQOVK8x6Ndxglog8xKWw9oc/Hsi00ZG4X+qyg5E4qJRK9FRmdHKSOs4kL9kRhVYZET+Pn691HGXTlZGdiCJ8Oe3M4asLadjlBBMevYwqEcM1LHmhZ3AMp9KJLROO88dbYqQldHVb8Xrs0KMiqyyB39U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SwuENrJq; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZbjvGBi"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso64729381fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 10:51:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SwuENrJq"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-63267c30eaaso40458717b3.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2024 10:51:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718733060; x=1719337860; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdrPsOFRH9tibJcIwTVDIHrvX0et09f9Ar+HQWRvLZQ=;
-        b=UZbjvGBibP5eUYTkPaNxof/tkbNC8npO5YOvD3hQ4EtX1wH25FASo/SB13vTt+Rffx
-         FvZTPnWMvGFaWZSF3ry5vXYjC8RLeF5SU0gqaNoM2MMlDHlXcVOpT22HMh4mUZgpjset
-         gny+T5ZxSPjtbqBcELArMFbmZ4XICJl23MclKGrnMxm5xZptuKdYa+ovy+qi+yIQ4XiQ
-         FP4TNqGI5IgNzGlPsYveXlh0A4fqIthbYniUNqLC7sDn5XBj0DBFX0rTNpQnz0IvwFAd
-         3zPAwC/0kmTBHvsqH5zMEXCE49MrcAngFo4cqar0NuEPJU+a84CxoRcMIFrTXgksySPO
-         44YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718733060; x=1719337860;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1718733070; x=1719337870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jdrPsOFRH9tibJcIwTVDIHrvX0et09f9Ar+HQWRvLZQ=;
-        b=lA5NuvIv9JdkLrMUQ1bCz7y/5I0RQyepTiSFTVHgv2Oic/I5Hgzhx7kjmbOGJ6mVes
-         CbnciuDJcSYvpdRDndQ77Y4XQixI5Qk7sosQrosTG7limAD/yOHQOdGXHC1F/dkHQWU1
-         uRDlfncOzec8z7DWse25BhgGjVYdY04CHPYZFzN16hMwEwBdM9d4OG33B+tUKnwSpEeE
-         pIP+LEH78CEhoY4RqZkH4AtIaIvfiFXMJDzYG7MDADAE9tGpk1AK8GSfr5bLnxtLweh8
-         vvBgX0XP6XStWCHJn+IiMl9bJSAIWrRpOvw0VV4kqBLVD8W9vlRimvdIlDAs7q+zX9mU
-         NiUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUarT7mIbQqw5iULruxoqX4oyPqGdfN5ge73RmihmM28DVB0Beplm+KqBdoDtRPncbuHS0DnAhfFAxNTiUZkvvXRx7B7X+Ui+DPTb2EEUBBLeU=
-X-Gm-Message-State: AOJu0YyY9/p1VhgcgDK7FIOzG3g2RD6zc2LQrV1slo6n5WjbuVwKqERv
-	DyVQWaACSdI3BnegMM07xK9zyVXRsV3tF6C8Q29U90+Cx2dPD8u/PhWMIdKuz2E=
-X-Google-Smtp-Source: AGHT+IGM/U45FeUpxxsmNAsTgVBSD3mO9NOKixFEiUXqhhF6IJuZRODRDq1PxwN+t2vV3hmMxogugA==
-X-Received: by 2002:a2e:2416:0:b0:2ec:eee:f19e with SMTP id 38308e7fff4ca-2ec3cfe5a12mr3314651fa.37.1718733059948;
-        Tue, 18 Jun 2024 10:50:59 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec3d00ae2bsm499111fa.51.2024.06.18.10.50.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 10:50:59 -0700 (PDT)
-Date: Tue, 18 Jun 2024 20:50:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
-Message-ID: <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
+        bh=tyXvq+2kNSq2yY1cpCgzqGKNpoe28AhGuqUANf/m0KY=;
+        b=SwuENrJqza9uruPAfYte9lWutWNeHoUNvDpJph0igA+J46q0F3uAt9McddA17J6owN
+         Tvk55tmEjsmEMFOVN0TOSeroegrgPvWUVZE8G6CFefV7pteLOiXRjkuxn5ir8WEen2ft
+         GFMybhQvJ37TpWJuvt6JUMuz1Zm9A9I0tXtfpgJqR0cGOUxZq2JyILum4jAGUG7oTHNq
+         MM15YyHYxtPpbHf2Q5xQvyKi0CJHuaW5QtQSnVc68aoHVLnWQoEx7TWiWCnXnAAAJxgt
+         MALNi3TpGZahMxePWtqyrZ+y3btpv+fL3yDMY1IGJ691E1UgyvjzmBVrZcJfiRKgRst/
+         edmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718733070; x=1719337870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tyXvq+2kNSq2yY1cpCgzqGKNpoe28AhGuqUANf/m0KY=;
+        b=weKGbT3r9v6/QS8f9lkwS+8FgpSZgZT6uW8wtlulMQvwYa3wfZE9YuBe4eSvkKBPXX
+         8/40P5YwlhIsSC1kEvWPphlmRxtZeKZWCYKpyKWGh4JcBE2h23P8XRlVApWJFhUNlYGx
+         qptTdg0it2Z6t6+6mIy9alP4OIXEm8IZKlovvLzWXUsj4nXrZoyKBXgAIDzmjHXbAi42
+         XO506QRvJ1QxkpeO2W4ITRFSj/nrAxrKnHe0zzWikuI5I7Phb1FvvR0nnrDqkqUay8cW
+         qix7Ag38EvESywQfpjtMRa8mfFlymxwrzzKhYkw90jdl1ImMcKUJ1WbJTmv021Ucsg55
+         GsCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWaq7altw6fiYRkgtH8pcJ491TZl9ftzlVQr3MdixWgvtTiP5DFghPfvUfomWZEx7WTZds1Q59uu7r0ETGi2Rlq3WZNFogBZxn4U9N7sEUoVM=
+X-Gm-Message-State: AOJu0YzQZ6n7P6mKlB39HDKyTXzLzlv2aoddvo5wfVnVOMvnnPyINOT3
+	YQgYTmSKSvQ55jHihMpdDzoIf/iw1l/TB8tZj+0Qnq6QG5WN3xGqP89huj3IEEaezmSqb9X+5tn
+	aW7j2d282LgmTdvfKDUjftzoVascJQR3LzMKHhOHD4m5eUI+2nco=
+X-Google-Smtp-Source: AGHT+IGX0rSKvmM9LtFbl2y0uuFDIWZVXyutPg9+1l/SGSIE4/dOh7rq6j1hE7fYLB7yhECyYlIakQysuwd2NawkPxQ=
+X-Received: by 2002:a81:a190:0:b0:62c:b66b:c7a7 with SMTP id
+ 00721157ae682-63a8dd02cc5mr4803717b3.17.1718733070618; Tue, 18 Jun 2024
+ 10:51:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
+References: <20240614140421.3172674-1-peter.griffin@linaro.org> <20240614140421.3172674-2-peter.griffin@linaro.org>
+In-Reply-To: <20240614140421.3172674-2-peter.griffin@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Tue, 18 Jun 2024 12:50:59 -0500
+Message-ID: <CAPLW+4my8dw7BmF242vbsp9iaPGjgP47Tc5Bz6U2kL5bBHRpwg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mfd: syscon: add of_syscon_register_regmap() API
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: lee@kernel.org, arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
-> sdm845 has "General Purpose" clocks that can be muxed to
-> SoC pins.
-> 
-> Those clocks may be used as e.g. PWM sources for external peripherals.
-> Add more frequencies to the table for those clocks so it's possible
-> for arbitrary peripherals to make use of them.
-> 
-> See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
-
-Each time I look at the table attached to the GP CLK, I feel that it's
-plain wrong. In the end the GPCLK can in theory have arbitrary value
-depending on the usecase.
-
-Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
-allow more flexibility than a default clk_rcg2_ops?
-
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+On Fri, Jun 14, 2024 at 9:04=E2=80=AFAM Peter Griffin <peter.griffin@linaro=
+.org> wrote:
+>
+> The of_syscon_register_regmap() API allows an externally created regmap
+> to be registered with syscon. This regmap can then be returned to client
+> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+>
+> The API is used by platforms where mmio access to the syscon registers is
+> not possible, and a underlying soc driver like exynos-pmu provides a SoC
+> specific regmap that can issue a SMC or hypervisor call to write the
+> register.
+>
+> This approach keeps the SoC complexities out of syscon, but allows common
+> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
+> by many SoCs already to be re-used.
+>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  drivers/clk/qcom/gcc-sdm845.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index ea4c3bf4fb9b..0efd3364e8f5 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -283,7 +283,21 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
->  	},
->  };
->  
-> +/*
-> + * This is a frequency table for "General Purpose" clocks.
-> + * These clocks can be muxed to the SoC pins and may be used by
-> + * external devices. They're often used as PWM source.
-> + *
-> + * See comment in gcc-mam8916.c at ftbl_gcc_gp1_3_clk.
-> + */
->  static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
-> +	F(10000,   P_BI_TCXO,    16,  1, 120),
-> +	F(20000,   P_BI_TCXO,    16,  1, 60),
-> +	F(100000,  P_BI_TCXO,    16,  1,  12),
-> +	F(500000,  P_GPLL0_OUT_EVEN, 12, 1, 100),
-> +	F(1000000, P_GPLL0_OUT_EVEN, 12, 1, 50),
-> +	F(2500000, P_GPLL0_OUT_EVEN, 12, 1, 10),
-> +	F(5000000, P_GPLL0_OUT_EVEN, 12, 1, 5),
->  	F(19200000, P_BI_TCXO, 1, 0, 0),
->  	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
->  	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
-> 
-> -- 
-> 2.39.2
-> 
 
--- 
-With best wishes
-Dmitry
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+>  drivers/mfd/syscon.c       | 48 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/syscon.h |  8 +++++++
+>  2 files changed, 56 insertions(+)
+>
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index 7d0e91164cba..44991da3ea23 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -192,6 +192,54 @@ static struct regmap *device_node_get_regmap(struct =
+device_node *np,
+>         return syscon->regmap;
+>  }
+>
+> +/**
+> + * of_syscon_register_regmap() - Register regmap for specified device no=
+de
+> + * @np: Device tree node
+> + * @regmap: Pointer to regmap object
+> + *
+> + * Register an externally created regmap object with syscon for the spec=
+ified
+> + * device tree node. This regmap can then be returned to client drivers =
+using
+> + * the syscon_regmap_lookup_by_phandle() API.
+> + *
+> + * Return: 0 on success, negative error code on failure.
+> + */
+> +int of_syscon_register_regmap(struct device_node *np, struct regmap *reg=
+map)
+> +{
+> +       struct syscon  *entry, *syscon =3D NULL;
+> +
+> +       if (!np || !regmap)
+> +               return -EINVAL;
+> +
+> +       /* check if syscon entry already exists */
+> +       spin_lock(&syscon_list_slock);
+> +
+> +       list_for_each_entry(entry, &syscon_list, list)
+> +               if (entry->np =3D=3D np) {
+> +                       syscon =3D entry;
+> +                       break;
+> +               }
+> +
+> +       spin_unlock(&syscon_list_slock);
+> +
+> +       if (syscon)
+> +               return -EEXIST;
+> +
+> +       syscon =3D kzalloc(sizeof(*syscon), GFP_KERNEL);
+> +       if (!syscon)
+> +               return -ENOMEM;
+> +
+> +       syscon->regmap =3D regmap;
+> +       syscon->np =3D np;
+> +
+> +       /* register the regmap in syscon list */
+> +       spin_lock(&syscon_list_slock);
+> +       list_add_tail(&syscon->list, &syscon_list);
+> +       spin_unlock(&syscon_list_slock);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(of_syscon_register_regmap);
+> +
+>  struct regmap *device_node_to_regmap(struct device_node *np)
+>  {
+>         return device_node_get_regmap(np, false);
+> diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
+> index c315903f6dab..aad9c6b50463 100644
+> --- a/include/linux/mfd/syscon.h
+> +++ b/include/linux/mfd/syscon.h
+> @@ -28,6 +28,8 @@ struct regmap *syscon_regmap_lookup_by_phandle_args(str=
+uct device_node *np,
+>                                                     unsigned int *out_arg=
+s);
+>  struct regmap *syscon_regmap_lookup_by_phandle_optional(struct device_no=
+de *np,
+>                                                         const char *prope=
+rty);
+> +int of_syscon_register_regmap(struct device_node *np,
+> +                             struct regmap *regmap);
+>  #else
+>  static inline struct regmap *device_node_to_regmap(struct device_node *n=
+p)
+>  {
+> @@ -67,6 +69,12 @@ static inline struct regmap *syscon_regmap_lookup_by_p=
+handle_optional(
+>         return NULL;
+>  }
+>
+> +static inline int of_syscon_register_regmap(struct device_node *np,
+> +                                       struct regmap *regmap)
+> +{
+> +       return -EOPNOTSUPP;
+> +}
+> +
+>  #endif
+>
+>  #endif /* __LINUX_MFD_SYSCON_H__ */
+> --
+> 2.45.2.627.g7a2c4fd464-goog
+>
