@@ -1,115 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229C015253B;
-	Wed, 19 Jun 2024 15:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9787915252C
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2024 18:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812335; cv=none; b=J102YcQn6JLE0HnjApZw/hEz+zwSknyZGv5WTZ0daY7fMinuRoO3HVqgsmrdye5zXoI36h/nM/zNjYtxaLxzah2tAY2RYznqnO26enZ09X6tReD9ox8gXxDPUi5I7pUNtHNrKXmSDFzYvTPhD0GTjCPSfP7vRCR5yhOj2dbzi0o=
+	t=1718821342; cv=none; b=LT+bzPjXj/N0YQDz6+NNsl/Hwv2GBzuDoKRSz+pZfmeOQuqfDi4wi+fa9hKRTSPe0qSKVNLy2YUNebQ4PHYuYvNTwosC+HkUXB3kRMl3nJHoI14Ez4SYoYAGKKBEY0TXlEYmJkJxTUmNM9LJmgSJb2abrA50UWn2ssZxcKTFI6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812335; c=relaxed/simple;
-	bh=B/QDewZ8f8pxC39ZfdvW4tjMlJycPZjA3D7QbLHaMqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUT4UBkhU6hZ8TdiWoKJ+bQ3/x5Ejb2KffS0x1ZM76gV9YFhpI2jHCPr8dDPaxTDXKfH0pTPGjZupCqCF0Vdtml4WqiF6SLZHKm4uGxFFfbt4W1pkiMi6XRQAaOJ7NWFsrbL+68TUgsMyx6/2CzpwdAKz9LWfFKjGPqKZOkddwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IylMLhlN; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IylMLhlN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87025C2BBFC;
-	Wed, 19 Jun 2024 15:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718812334;
-	bh=B/QDewZ8f8pxC39ZfdvW4tjMlJycPZjA3D7QbLHaMqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IylMLhlNZi/cBkkmZVPI7bXXgrSd1kDiDEp6eLLOo2nGFroQz5C5LHISQRpu8OsT1
-	 ZebKIkh/37BE+tCC0dPbTunx+Jf7mW8Lc/X9ck1GnvrdFV8SeypZlwHN5y4jU0KjX4
-	 /Om4T7tnb4jG4zTwBY1QpJBsKP21M1OBf8KPqReV2NUXM/7Ia9OgMKi5a9I82MS75F
-	 fwMjiOFF79nRb6ImdtvUJ9f9VwuKSH9ux6kPUoE0ufCRYD2awuICQff7QG5YsKlyVv
-	 axYsRc5alGXsGKOx+fl5Ye2CssDPfd7Be2SuLIfb099sEGElhi8KhOh1MpHQddk4Be
-	 A4y3g2uw6MFjg==
-Date: Wed, 19 Jun 2024 16:52:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 18/23] regulator: add s2dos05 regulator support
-Message-ID: <c17669b2-5fa0-40d4-b88d-8dee6a264321@sirena.org.uk>
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-18-e3f6662017ac@gmail.com>
- <4eab619f-6da9-4aff-b956-69d8e2ecd47f@sirena.org.uk>
- <CABTCjFDUKgeYWuwo8eLt+5WD=4O+kLbFwMRxsTufGnqK0Ecpvg@mail.gmail.com>
+	s=arc-20240116; t=1718821342; c=relaxed/simple;
+	bh=xl7JBVCboVplKePZ+LWZvbJgXJvLcOdS+pfYu7HsObI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=CABvDrZ7BsF8h8lLoMeZcCGQXhFAZTWVDAfzdAwc8ktbi4hrANelhfCLo3gcfm8gGq2FqmpHtJnL8xrLhIvyCrs+judvMIC0RbUxtctwhyfMkCiV2ndhQctRwShDAcuMbe3Nrlwo1oQyvQ27Dhx/IU1qxcbMxBoIUidec8qXMNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1sJzwX-00049g-K8; Wed, 19 Jun 2024 20:22:01 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1sJzwW-003WTo-V5; Wed, 19 Jun 2024 20:22:01 +0200
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Robert Foss <rfoss@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	patchwork-lst@pengutronix.de,
+	kernel@pengutronix.de
+Subject: [PATCH v2 09/14] drm/bridge: analogix_dp: remove PLL lock check from analogix_dp_config_video
+Date: Wed, 19 Jun 2024 20:21:55 +0200
+Message-Id: <20240619182200.3752465-9-l.stach@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240619182200.3752465-1-l.stach@pengutronix.de>
+References: <20240619182200.3752465-1-l.stach@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sNyOiMkks8z+Tn4L"
-Content-Disposition: inline
-In-Reply-To: <CABTCjFDUKgeYWuwo8eLt+5WD=4O+kLbFwMRxsTufGnqK0Ecpvg@mail.gmail.com>
-X-Cookie: Don't I know you?
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
+This check is way too late in the DP enable flow. The PLL must be
+locked much earlier, before any link training can happen. If the
+PLL is unlocked at that point in time there is something seriously
+wrong in the enable flow.
 
---sNyOiMkks8z+Tn4L
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Robert Foss <rfoss@kernel.org>
+Tested-by: Heiko Stuebner <heiko@sntech.de> (rk3288-veyron and rk3399-gru)
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-On Wed, Jun 19, 2024 at 06:49:06PM +0300, Dzmitry Sankouski wrote:
-> =D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:08, M=
-ark Brown <broonie@kernel.org>:
-> > On Tue, Jun 18, 2024 at 04:59:52PM +0300, Dzmitry Sankouski wrote:
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index c852d9517c27..bbf2c0808ace 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -717,11 +717,6 @@ static int analogix_dp_config_video(struct analogix_dp_device *dp)
+ 
+ 	analogix_dp_set_video_color_format(dp);
+ 
+-	if (analogix_dp_get_pll_lock_status(dp) == PLL_UNLOCKED) {
+-		dev_err(dp->dev, "PLL is not locked yet.\n");
+-		return -EINVAL;
+-	}
+-
+ 	for (;;) {
+ 		timeout_loop++;
+ 		if (analogix_dp_is_slave_video_stream_clock_on(dp) == 0)
+-- 
+2.39.2
 
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +/*
-> > > + * s2dos05.c - Regulator driver for the Samsung s2dos05
-> > > + *
-
-> > Please make the entire comment a C++ one so things look more
-> > intentional.
-
-> Do you mean enclosing the first line (license identifier) in /* */
-> style comment?
-
-No, that would be a C comment.  Please use C++ style for the rest of the
-header as well as the first line.
-
---sNyOiMkks8z+Tn4L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy/qMACgkQJNaLcl1U
-h9DGWQgAgOa8X/ixdsOMeRWsYHbb7eeKRUufmB/VZK2WyLNILPGYtncD6cuJ+cLr
-AvUANsF0WqGXnetxElS8Y2jV21tcbGNT1eGe64GUPss6hdDebteb63GcRbB8N0Fd
-3L+HI4CWnr1oqwLzGGmVRLifr3h/4alGz6R+jy9O5drxEHxalZPdRFVdjbZ8jyr/
-3jg43CkWP2vdnZz08OObTm8jI197PhpxgFleekSlSmPqIqtMV/a3krF5CCSh4M8V
-n1CJGe6mr4M9lSZ3UpDJQCzWW7EfTmM1iu8RW6IpF5T6JZFtj+cwfS9Ba6kIK4+E
-zrmidAhG51b6MN5sNypIpxv0bh1Jxw==
-=zdP0
------END PGP SIGNATURE-----
-
---sNyOiMkks8z+Tn4L--
