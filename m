@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2EC157480
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2024 18:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C1415252C
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2024 18:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718821343; cv=none; b=AGqjPkHHk4ycHD9AjLSRf6/iuC7Qm69ZaTvrSqgyNaj0Tg7JJvaLURc4ZEBCmPXXz/2lLS5/msBs1ox2tB2LvYhuUhI/Tbu/G5JuV6TBpbOigZT+TU6ctgV0tn0gN4n99Yvla4p9Dm0z+A5ki6hP+cdqUb3cql3Gv5RieooAJ3w=
+	t=1718821343; cv=none; b=ZqZHdgDF20N1MAqBU8ZjiOy3ojHk9oSp6qvtKC4j1RshJ3VMvDfg8JPb3HTwUCeKBpC5hwHOHrJNonKui3nco3vILk32FooUiwPn+0NzQZZhjMaM6MwwFr17oJGxYfuGLoRFCdkyfGO2hllHbgAbJAPMyzU2JCsjFCD1FgHDPB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1718821343; c=relaxed/simple;
-	bh=Ybh8JAFI8zFn2J+Iz9ya7pP6+dh8wQ8aMipitQX5Nk8=;
+	bh=kpwxqN9UwpLXJaeKJh6xVnXQKtBaSQK1YGkoWwUSoUY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fPWqkArqXnqydDzMaIAEfpFnZgkFrB/kmQnuCAoBUnmd8PHFzO6opXjPcmK7DmPwvzpsnzLrO1kbexaKHPNV6nejVHssmUSNrE0nABGd4LKbWjTBNUWiUnSPy1FmJ49PlTWR++DVwRHOs+plQpfsZe96bWBaoz20fcfUx6S3DPc=
+	 MIME-Version; b=UGR3ysQVwepzCiqopNa5w/bWcfJbbVEQXnOlRrbG/NILek9PBqlYnKlMZvYSuC1QprwHYlPyxuWu2hnxjylfytacAviSZlyMaH4ra8tSiUEgFO13G4azAJNsAF1gNa+/ConlQo0XO90oCJSgGARJsxO4FZhyEvCVHxbRUisK188=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,11 +18,11 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <l.stach@pengutronix.de>)
-	id 1sJzwX-00049c-K4; Wed, 19 Jun 2024 20:22:01 +0200
+	id 1sJzwX-00049a-K3; Wed, 19 Jun 2024 20:22:01 +0200
 Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
 	(envelope-from <l.stach@pengutronix.de>)
-	id 1sJzwW-003WTo-Jj; Wed, 19 Jun 2024 20:22:00 +0200
+	id 1sJzwW-003WTo-DJ; Wed, 19 Jun 2024 20:22:00 +0200
 From: Lucas Stach <l.stach@pengutronix.de>
 To: Robert Foss <rfoss@kernel.org>
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,
@@ -36,9 +36,9 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	patchwork-lst@pengutronix.de,
 	kernel@pengutronix.de
-Subject: [PATCH v2 05/14] drm/bridge: analogix_dp: remove unused analogix_dp_remove
-Date: Wed, 19 Jun 2024 20:21:51 +0200
-Message-Id: <20240619182200.3752465-5-l.stach@pengutronix.de>
+Subject: [PATCH v2 03/14] drm/bridge: analogix_dp: register AUX bus after enabling runtime PM
+Date: Wed, 19 Jun 2024 20:21:49 +0200
+Message-Id: <20240619182200.3752465-3-l.stach@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240619182200.3752465-1-l.stach@pengutronix.de>
 References: <20240619182200.3752465-1-l.stach@pengutronix.de>
@@ -54,90 +54,65 @@ X-SA-Exim-Mail-From: l.stach@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
 
-Now that the clock is handled dynamically through
-analogix_dp_resume/suspend and it isn't statically enabled in the
-driver probe routine, there is no need for the remove function anymore.
+AUX transactions require the controller to be in working state and
+take a runtime PM reference. To avoid potential races beween the
+first transactions on the bus and runtime PM being set up, move the
+AUX registration behind the runtime PM setup.
 
 Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Reviewed-by: Robert Foss <rfoss@kernel.org>
 Tested-by: Heiko Stuebner <heiko@sntech.de> (rk3288-veyron and rk3399-gru)
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 5 -----
- drivers/gpu/drm/exynos/exynos_dp.c                 | 3 ---
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c    | 9 +--------
- include/drm/bridge/analogix_dp.h                   | 1 -
- 4 files changed, 1 insertion(+), 17 deletions(-)
+ .../drm/bridge/analogix/analogix_dp_core.c    | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 4453d1672686..7a5e25b6aa3a 100644
+index 31fa67d966c7..ae79802b62bb 100644
 --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
 +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1805,11 +1805,6 @@ void analogix_dp_unbind(struct analogix_dp_device *dp)
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
+@@ -1721,31 +1721,34 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+ 	dp->drm_dev = drm_dev;
+ 	dp->encoder = dp->plat_data->encoder;
  
--void analogix_dp_remove(struct analogix_dp_device *dp)
--{
--}
--EXPORT_SYMBOL_GPL(analogix_dp_remove);
++	pm_runtime_use_autosuspend(dp->dev);
++	pm_runtime_set_autosuspend_delay(dp->dev, 100);
++	pm_runtime_enable(dp->dev);
++
+ 	dp->aux.name = "DP-AUX";
+ 	dp->aux.transfer = analogix_dpaux_transfer;
+ 	dp->aux.dev = dp->dev;
+ 	dp->aux.drm_dev = drm_dev;
+ 
+ 	ret = drm_dp_aux_register(&dp->aux);
+-	if (ret)
+-		return ret;
 -
- int analogix_dp_start_crc(struct drm_connector *connector)
- {
- 	struct analogix_dp_device *dp = to_dp(connector);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index 8ad2ec5c6455..22142b293279 100644
---- a/drivers/gpu/drm/exynos/exynos_dp.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -251,10 +251,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
+-	pm_runtime_use_autosuspend(dp->dev);
+-	pm_runtime_set_autosuspend_delay(dp->dev, 100);
+-	pm_runtime_enable(dp->dev);
++	if (ret) {
++		DRM_ERROR("failed to register AUX (%d)\n", ret);
++		goto err_disable_pm_runtime;
++	}
  
- static void exynos_dp_remove(struct platform_device *pdev)
- {
--	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
--
- 	component_del(&pdev->dev, &exynos_dp_ops);
--	analogix_dp_remove(dp->adp);
- }
- 
- static int exynos_dp_suspend(struct device *dev)
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index 8214265f1497..362c7951ca4a 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -414,21 +414,14 @@ static int rockchip_dp_probe(struct platform_device *pdev)
- 
- 	ret = component_add(dev, &rockchip_dp_component_ops);
- 	if (ret)
--		goto err_dp_remove;
-+		return ret;
+ 	ret = analogix_dp_create_bridge(drm_dev, dp);
+ 	if (ret) {
+ 		DRM_ERROR("failed to create bridge (%d)\n", ret);
+-		goto err_disable_pm_runtime;
++		goto err_unregister_aux;
+ 	}
  
  	return 0;
--
--err_dp_remove:
--	analogix_dp_remove(dp->adp);
--	return ret;
+ 
++err_unregister_aux:
++	drm_dp_aux_unregister(&dp->aux);
+ err_disable_pm_runtime:
+ 	pm_runtime_dont_use_autosuspend(dp->dev);
+ 	pm_runtime_disable(dp->dev);
+-	drm_dp_aux_unregister(&dp->aux);
+ 
+ 	return ret;
  }
- 
- static void rockchip_dp_remove(struct platform_device *pdev)
- {
--	struct rockchip_dp_device *dp = platform_get_drvdata(pdev);
--
- 	component_del(&pdev->dev, &rockchip_dp_component_ops);
--	analogix_dp_remove(dp->adp);
- }
- 
- static int rockchip_dp_suspend(struct device *dev)
-diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
-index 8709b6a74c0f..6002c5666031 100644
---- a/include/drm/bridge/analogix_dp.h
-+++ b/include/drm/bridge/analogix_dp.h
-@@ -44,7 +44,6 @@ struct analogix_dp_device *
- analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data);
- int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev);
- void analogix_dp_unbind(struct analogix_dp_device *dp);
--void analogix_dp_remove(struct analogix_dp_device *dp);
- 
- int analogix_dp_start_crc(struct drm_connector *connector);
- int analogix_dp_stop_crc(struct drm_connector *connector);
 -- 
 2.39.2
 
