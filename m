@@ -1,187 +1,128 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AEC1AB8F0
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 11:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DF3EBE;
+	Thu, 20 Jun 2024 11:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718882696; cv=none; b=Tc5XCsn8K4XrBlQ8wgKGxLtPGJhD1ihbchB+Uby3DKf0bf8X6YkZIkv8udTo5SCFgFZG6B0agt4uVg/6lHCkzv9aNtuIYFkQLQAPTfD1J9RxXSI6YEzm6ymZITH+N4v+TsW2o9qTlRmglSfgjYMDERYiaI9KKSU5EboH3klP/Gs=
+	t=1718883648; cv=none; b=b/OEbrd9U5knb+kqhwmnt18aSPbhTBMILXanRPJ/Uqy9oOcVneauW2CYfaixMct3lXnYIHo5XFfOXjdKyNSD8qsXg1ViXVzM2ipkmqiZDAugqAta7vWcDnF4pH/Ohow5w1JyB/yKb+tDsf53YxRd1qUwtBKQ6ikxItOMAIdWe28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718882696; c=relaxed/simple;
-	bh=Xq7Y5OxTOhqlbSsF4ClvHT17sw2kze9goC5POMsbHvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tfmOYWfad3sE371kOUh94S/SG85CTNDHj9CCF8BHPfV9UDvAaMeEy5m56qNFZAHoo8in1GkX/HrXsPv9H8EfRsCV7eF/jEjgu4Zjprl66dWnUvqjQCEHaCi1MeH9BYkLRJEMFV4KBth+6sN3yd5vfu27y9GunHtKivOUnHeOPlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E5vT/r8o; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718883648; c=relaxed/simple;
+	bh=FYQA09eJnQbBscXTK3MzsRbkjN4tAg+3ilMpf/N2kn4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ZcIM71GqUHqmpp03K/nju/su3vASXd9+e2SuO2C9nIL6ZhgUdTsadSrC+6/klmrEFizHt3PopbcXVruJKbvKLqFhY1DR7eVB32/Cn8ujPkobheKqs+w76h2BA4yeQoe9sDVtCY0V8XSbYbx/ASPAksbwWEBIkEOwp324uoiRaog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JK9Jer9d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ifvy0gtK; arc=none smtp.client-ip=64.147.123.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5vT/r8o"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421cd1e5f93so6118325e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 04:24:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718882692; x=1719487492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GTdnj0h4hO88f5E9a81SRTfb2IoRwa/RVBQI7iSQd1U=;
-        b=E5vT/r8oLipiL+q35t4z3mjIDird5oNvwqko1UUwxd6NDfZgMUYNyGcCuMy5Yb9/lY
-         TX7hAISu8Xpql0uilLrAJvJA5Acodttck+aDlniBjaSasLEjh71V38Gr4HDfVAFKpfie
-         dVaUvheFCZvBlx47MWnziF+UZd9CtuK+bE8p9oP2neJez4q72IfIphD7dB+CS8TMxgwB
-         pkTOhXHWgDxXE7ZC+Ify6EQo6FygGXyzlLy2hCv2nNllyGqhIYtDexhFH5LKvuEs3rOg
-         uJk4AVkVSUeqdW8RJUoIslHHCF71cgGdQlii9lGn50oWU1yfwDjxumLTXIMGF11UkddP
-         vHDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718882692; x=1719487492;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GTdnj0h4hO88f5E9a81SRTfb2IoRwa/RVBQI7iSQd1U=;
-        b=a04bitvjBRrMP/ox1KraTy3ZkkhHC4gyFaJ3FU1iruehBWUZAUym5tkeUqvyLcDQPq
-         R6VFYNDxmZwIPpXE9iPez7cM1bX2rY9nC3sQpfCCPg/TmgmXLn+5Buv92MYRCUD6QbhA
-         HkvBwogbf5kL7VmktSkVD9jN/x9rGph1vK7mORFJSdeeLZyOO+3/q91CrJ51r4kvV9mc
-         RITio7OvdmJRXbGn/fbMxbtTQXP76XOgJXrmPSQIU+FzgRtGg2nPs8jb1ozSAHxGJ6ZW
-         ysD4lFvYVqzZ8rLsBXqBuqzbWNFrt4TsygWwP4vof9P20sCkjjp9AmP3M7jGU/GEvadH
-         PrnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOdgowPPutCF2GkMbFIWTwBcRHXJzpAvamBKLnNgF4zWwR27QFgci1d9Sj8p9DxneTz183IpQ/vqqU4E/RnSbRrZI2yUB4vFQFpicYdAJepM=
-X-Gm-Message-State: AOJu0YzvgQ1KDEQsVxbRTu2hnkTXKxw5b7lZUTLq4BQcWVdC+Cx4+ndP
-	Fj39VrCg4UwCY8qIqA0OmkCLJ8RbBMYPrRjVTx48DhozadOhx/eUeiKs+DnsYVaqjBYWtX2iw3Z
-	4
-X-Google-Smtp-Source: AGHT+IG0bmj/clv7a657zIPzp9MmvrFRbSd49FscT10OF1XmC+kRwLR3I33eOqChc4j25jNWe1YVvw==
-X-Received: by 2002:a5d:4687:0:b0:360:7c63:53cf with SMTP id ffacd0b85a97d-363177a1dcamr3799891f8f.19.1718882692152;
-        Thu, 20 Jun 2024 04:24:52 -0700 (PDT)
-Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3647bf3092csm2025371f8f.97.2024.06.20.04.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 04:24:51 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: lee@kernel.org,
-	arnd@arndb.de,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	saravanak@google.com,
-	willmcvicker@google.com,
-	semen.protsenko@linaro.org,
-	kernel-team@android.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v2 2/2] soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-Date: Thu, 20 Jun 2024 12:24:46 +0100
-Message-ID: <20240620112446.1286223-3-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
-In-Reply-To: <20240620112446.1286223-1-peter.griffin@linaro.org>
-References: <20240620112446.1286223-1-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JK9Jer9d";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ifvy0gtK"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id EC8641C001CF;
+	Thu, 20 Jun 2024 07:40:44 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 20 Jun 2024 07:40:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1718883644; x=1718970044; bh=Kyi6DOxRGm
+	mf09/1dL9TG4SUHEYH9mmOWhybLNfnbjM=; b=JK9Jer9dTt0YjzBCTg1GfIEtHe
+	FRH5WdSbTjvMurVAZGwHvDVahjkDPlsoGeCeJ9/uK78nXL+IZ4T2GmkSyOOXO00c
+	JnNSYykFnitvKbOnw9xQMGBeMUjQPBXqItBzpsLZHYxVC0nPJA6YZMR6UwHyEcDA
+	bgrrtUm/rPzeuQcQxirVqAiIVjhheuIaNMAGQE082i3VxmcKITBR8hd/LOeMK5py
+	AyXH4KdrEUl1OV2LbGNWSodv5yxrO8g0kT0FvV/clgN8FwyO83jtvGyUBqSWdcvH
+	butQxfttYKsG+ucoRUM/TcHjQwp8KgWw8Sy3ucA/hw0ohL6s1/3EV1ScoajA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1718883644; x=1718970044; bh=Kyi6DOxRGmmf09/1dL9TG4SUHEYH
+	9mmOWhybLNfnbjM=; b=ifvy0gtKenpo+a7GkQIgD5glYthYdrnu9qj+tL1mXdpt
+	i41BOXARRT3xlIpPDBgJaWRQwicXHnSEkfPpqDOoF0BVOA2Sm0L8EX++zBjmE912
+	CYlxsWBrlUsyPQ4WMoSm2BPJdW8zCmxTSYLwMTb17ML7ZkVzNXAxEOldr2N7EXSO
+	ZvNou+vQxnSKRgadf6nMaF/M1zUJ6s//fBNWawDis3zdw9rwsqboiXLrRqqH5f3Q
+	7NgWQsnUAmokRZxX7VH8xKxrMscs1mgd1IbpId7nbZWOgmyJGzefVZIqtXlGQq76
+	LiEJFEpX+vhfjK5ku7lXAG8VxfAA2f+UdY/J8vBYsg==
+X-ME-Sender: <xms:OxV0Zp0QUxYYh1JD7Vi5S1-pCbvczEhdRhHz37eqKxsuEfN_zwcZNA>
+    <xme:OxV0ZgE9_eBIWV6hHs46VlWYJb2oqJealXm7tQ2ZKetWAmMw7v9_o8PT_GxIGmjJA
+    lWjBJFq4sq0FV5C-2Y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:OxV0Zp437mKwByYjdmJmcQh5-TPfC6gVQDfYMriZnC0D7Ch1QEjbgg>
+    <xmx:OxV0Zm0O8bMUtW4t7Djbu2ba0mKmJUqk1NHVDqrSkiLA65C5aWL_2g>
+    <xmx:OxV0ZsHWWD-bI-u-YBSTrzMTK5hOohGbAGrZ1wITyJZWDKJVUoDB_g>
+    <xmx:OxV0Zn9yl6LTiR8rpLyIcsQpEQyX8HDbrZjHC2IR6cMyy9pi_eSIeg>
+    <xmx:PBV0ZjeEvY64vDWkPr-1epllCd82VMIP2XLoV-kHt1Cc6yk5B2XPt8QG>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id BD415B6008D; Thu, 20 Jun 2024 07:40:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <73d2002a-9afa-4cfd-b835-6908d64586d6@app.fastmail.com>
+In-Reply-To: <20240620112446.1286223-2-peter.griffin@linaro.org>
+References: <20240620112446.1286223-1-peter.griffin@linaro.org>
+ <20240620112446.1286223-2-peter.griffin@linaro.org>
+Date: Thu, 20 Jun 2024 13:40:23 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Peter Griffin" <peter.griffin@linaro.org>, "Lee Jones" <lee@kernel.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ "Saravana Kannan" <saravanak@google.com>,
+ "William McVicker" <willmcvicker@google.com>,
+ "Sam Protsenko" <semen.protsenko@linaro.org>, kernel-team@android.com
+Subject: Re: [PATCH v2 1/2] mfd: syscon: add of_syscon_register_regmap() API
+Content-Type: text/plain
 
-For SoCs like gs101 that need a special regmap, register this with
-of_syscon_register_regmap api, so it can be returned by
-syscon_regmap_lookup_by_phandle() and friends.
 
-For SoCs that don't require a custom regmap, revert back to syscon
-creating the mmio regmap rather than duplicating the logic here.
+On Thu, Jun 20, 2024, at 13:24, Peter Griffin wrote:
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+> Changes in v2:
+> - Keep syscon lock held between checking and adding entry (Krzysztof)
 
-exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
-the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
-is kept around until fw_devlink support for syscon property is added
-for the pinctrl-samsung driver that also runs at postcore_initcall
-level.
+Unfortunately you now have a different bug:
 
-All other exynos client drivers can revert back to
-syscon_regmap_lookup_by_phandle().
+> +	/* check if syscon entry already exists */
+> +	spin_lock(&syscon_list_slock);
+> +
+> +	list_for_each_entry(entry, &syscon_list, list)
+> +		if (entry->np == np) {
+> +			syscon = entry;
+> +			break;
+> +		}
+> +
+> +	if (syscon) {
+> +		ret = -EEXIST;
+> +		goto err_unlock;
+> +	}
+> +
+> +	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
+> +	if (!syscon) {
+> +		ret = -ENOMEM;
+> +		goto err_unlock;
+> +	}
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes since v1:
- - pass pmu_np (not np) to syscon_node_to_regmap() (reported by William)
-Link to v1: https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-3-peter.griffin@linaro.org/
----
- drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++++--------------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
+You can't use GFP_KERNEL while holding a spinlock.
 
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index fd8b6ac06656..624324f4001c 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -204,16 +204,6 @@ static const struct regmap_config regmap_smccfg = {
- 	.reg_update_bits = tensor_sec_update_bits,
- };
- 
--static const struct regmap_config regmap_mmiocfg = {
--	.name = "pmu_regs",
--	.reg_bits = 32,
--	.reg_stride = 4,
--	.val_bits = 32,
--	.fast_io = true,
--	.use_single_read = true,
--	.use_single_write = true,
--};
--
- static const struct exynos_pmu_data gs101_pmu_data = {
- 	.pmu_secure = true
- };
-@@ -290,7 +280,6 @@ EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap);
- struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 						const char *propname)
- {
--	struct exynos_pmu_context *ctx;
- 	struct device_node *pmu_np;
- 	struct device *dev;
- 
-@@ -316,9 +305,7 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
- 
--	ctx = dev_get_drvdata(dev);
--
--	return ctx->pmureg;
-+	return syscon_node_to_regmap(pmu_np);
- }
- EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
- 
-@@ -355,19 +342,22 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 		regmap = devm_regmap_init(dev, NULL,
- 					  (void *)(uintptr_t)res->start,
- 					  &pmu_regmcfg);
-+
-+		if (IS_ERR(regmap))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-+					     "regmap init failed\n");
-+
-+		ret = of_syscon_register_regmap(dev->of_node, regmap);
-+		if (ret)
-+			return ret;
- 	} else {
--		/* All other SoCs use a MMIO regmap */
--		pmu_regmcfg = regmap_mmiocfg;
--		pmu_regmcfg.max_register = resource_size(res) -
--					   pmu_regmcfg.reg_stride;
--		regmap = devm_regmap_init_mmio(dev, pmu_base_addr,
--					       &pmu_regmcfg);
-+		/* let syscon create mmio regmap */
-+		regmap = syscon_node_to_regmap(dev->of_node);
-+		if (IS_ERR(regmap))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
-+					     "syscon_node_to_regmap failed\n");
- 	}
- 
--	if (IS_ERR(regmap))
--		return dev_err_probe(&pdev->dev, PTR_ERR(regmap),
--				     "regmap init failed\n");
--
- 	pmu_context->pmureg = regmap;
- 	pmu_context->dev = dev;
- 
--- 
-2.45.2.627.g7a2c4fd464-goog
+I think the correct way to do this is to move the allocation
+before the locked section, and then free it in the failure case.
 
+     Arnd
