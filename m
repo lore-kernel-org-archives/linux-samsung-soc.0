@@ -1,198 +1,118 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997441876
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2024 18:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0A0446A5;
+	Thu, 20 Jun 2024 07:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718822618; cv=none; b=oyyT1ThrIT3tXPa03jTiDVdmb9ONduEbCA1o/LgDSp+8Jsh6PXdvjnZxGbRxjjK1rsCYgln7dzWRDZh2TJubKXnoKipJxxtp3IKZL+eTyQ5xTkpTTXznUEIrZ6VZA6ytFBwwz2HbUEhrpjZzSN5rmpmRjP5Vro5rhBk9NitgOEM=
+	t=1718868449; cv=none; b=jF8QiOclbO+fa2AOHICRRvCAe36G9n9su6eMKaMILxSroUI/tIJ3HRm8LOR9pAXbOXKT2ZLymz+EEG5FNq62XZTWhOWxPIC6Vujs1zecUIV4N1EVAVBOWFl7cPRvsOZGAzEVrfp8ztLGIlXEZkTVAI+8HjIFuOQ8ligYnpsUmYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718822618; c=relaxed/simple;
-	bh=VUZvZcNQBiO8BGlfI6k9igV+hoAiA0i2uvdi4RiZBzA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Kw5ed4ieSDkMbtV0qr8rfyssFB1OZj2Tezg2KMCFD59oZsN9oqBaSQmstN93lYgon9N2cNuqYVyCkjpqIgugsAdgKmjDrSbppVuNu3Mn3Ux51GuXA9k7v5x+o/y+zJX+3+HoqEECXJmQpDIoZsXKl1b4tlh08o3p7pk3t4tTuzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1sK0H7-0005dP-Dc; Wed, 19 Jun 2024 20:43:17 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1sJzwX-003WTo-8S; Wed, 19 Jun 2024 20:22:01 +0200
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Robert Foss <rfoss@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	patchwork-lst@pengutronix.de,
-	kernel@pengutronix.de
-Subject: [PATCH v2 12/14] drm/bridge: analogix_dp: simplify and correct PLL lock checks
-Date: Wed, 19 Jun 2024 20:21:58 +0200
-Message-Id: <20240619182200.3752465-12-l.stach@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240619182200.3752465-1-l.stach@pengutronix.de>
-References: <20240619182200.3752465-1-l.stach@pengutronix.de>
+	s=arc-20240116; t=1718868449; c=relaxed/simple;
+	bh=cnfxORgUb2XRzaUYhyY7pO04rpW+058lKSthDjn+Z90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cf3kZ9JyUB4h4aQy7twe+McIHGvL9Gy6MJGqgp83rnEwyzbh7yvymm7MT3+FnSM3YmQTRRFHx90AxwWlbb4mxkKa8zU/KPHzVESHjdrEodMUQ0aESKWS9lgipkO10xYlaOAySjdH2KGuSG9T/CiFrBcLpxgtkUk/y760dpuJvjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVgTOahZ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVgTOahZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA3DC2BD10;
+	Thu, 20 Jun 2024 07:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718868448;
+	bh=cnfxORgUb2XRzaUYhyY7pO04rpW+058lKSthDjn+Z90=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cVgTOahZ7q8pfb9SLRgrQ3drJhGKn0rOK7azdkbjd/FdlyRfwj39PI2NMfFxdSJAm
+	 iu3Lif8D9pIkpJQ4paeP5Y7ZM4+/1msNjNQ0AQfuEIye6mPOdJmRA+Gz9zVCoL3Uqx
+	 EDQ+VYI7l9TYjHhzdxoZvW7Z+TP/Gl1tAL07eUvBaOGksljF2wvdIteUyNqPYHK/Ku
+	 jgOFqQCr1SO31bfhJIqGEIsUqmWDqeXtdVfu71ak1Rbf3NFkRV/HzBGBboBKKyVZo4
+	 3b6kaEYnsjOIeAqgGs4oO/cYrHSdt9aoOv+b5p6p9ulgVspRZ1/UUIIEJJesnaurtC
+	 mjt7zwGMqTefA==
+Message-ID: <710469e2-d7be-46d0-9851-773458bd789b@kernel.org>
+Date: Thu, 20 Jun 2024 09:27:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-samsung-soc@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] dt-bindings: rng: Add Exynos850 support to
+ exynos-trng
+To: Sam Protsenko <semen.protsenko@linaro.org>,
+ =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Anand Moon <linux.amoon@gmail.com>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240618204523.9563-1-semen.protsenko@linaro.org>
+ <20240618204523.9563-2-semen.protsenko@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240618204523.9563-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Move the wait loop into its own function, so it doesn't need to be
-replicated in multiple locations. Also move the PLL lock checks between
-setting the link bandwidth, which may cause the PLL to unlock, and the
-MACRO_RST which needs the PLL to be locked.
+On 18/06/2024 22:45, Sam Protsenko wrote:
+> The TRNG block in Exynos850 is pretty much the same as in Exynos5250,
+> but there are two clocks that has to be controlled to make it work:
+>   1. Functional (operating) clock: called ACLK in Exynos850, the same as
+>      "secss" clock in Exynos5250
+>   2. Interface (bus) clock: called PCLK in Exynos850. It has to be
+>      enabled in order to access TRNG registers
+> 
+> Document Exynos850 compatible and the related clock changes.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Robert Foss <rfoss@kernel.org>
-Tested-by: Heiko Stuebner <heiko@sntech.de> (rk3288-veyron and rk3399-gru)
----
- .../drm/bridge/analogix/analogix_dp_core.c    | 34 +++++++------------
- .../drm/bridge/analogix/analogix_dp_core.h    |  7 +---
- .../gpu/drm/bridge/analogix/analogix_dp_reg.c | 12 +++----
- 3 files changed, 18 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index d2c7a9117ce3..ddf1e4424ffd 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -231,7 +231,7 @@ static int analogix_dp_training_pattern_dis(struct analogix_dp_device *dp)
- static int analogix_dp_link_start(struct analogix_dp_device *dp)
- {
- 	u8 buf[4];
--	int lane, lane_count, pll_tries, retval;
-+	int lane, lane_count, retval;
- 
- 	lane_count = dp->link_train.lane_count;
- 
-@@ -243,6 +243,11 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 
- 	/* Set link rate and count as you want to establish*/
- 	analogix_dp_set_link_bandwidth(dp, dp->link_train.link_rate);
-+	retval = analogix_dp_wait_pll_locked(dp);
-+	if (retval) {
-+		DRM_DEV_ERROR(dp->dev, "Wait for pll lock failed %d\n", retval);
-+		return retval;
-+	}
- 	/*
- 	 * MACRO_RST must be applied after the PLL_LOCK to avoid
- 	 * the DP inter pair skew issue for at least 10 us
-@@ -270,18 +275,6 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 					DP_TRAIN_PRE_EMPH_LEVEL_0;
- 	analogix_dp_set_lane_link_training(dp);
- 
--	/* Wait for PLL lock */
--	pll_tries = 0;
--	while (analogix_dp_get_pll_lock_status(dp) == PLL_UNLOCKED) {
--		if (pll_tries == DP_TIMEOUT_LOOP_COUNT) {
--			dev_err(dp->dev, "Wait for PLL lock timed out\n");
--			return -ETIMEDOUT;
--		}
--
--		pll_tries++;
--		usleep_range(90, 120);
--	}
--
- 	/* Set training pattern 1 */
- 	analogix_dp_set_training_pattern(dp, TRAINING_PTN1);
- 
-@@ -631,9 +624,14 @@ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
- {
- 	int ret;
- 	u8 link_align, link_status[2];
--	enum pll_status status;
- 
- 	analogix_dp_set_link_bandwidth(dp, dp->link_train.link_rate);
-+	ret = analogix_dp_wait_pll_locked(dp);
-+	if (ret) {
-+		DRM_DEV_ERROR(dp->dev, "Wait for pll lock failed %d\n", ret);
-+		return ret;
-+	}
-+
- 	/*
- 	 * MACRO_RST must be applied after the PLL_LOCK to avoid
- 	 * the DP inter pair skew issue for at least 10 us
-@@ -642,14 +640,6 @@ static int analogix_dp_fast_link_train(struct analogix_dp_device *dp)
- 	analogix_dp_set_lane_count(dp, dp->link_train.lane_count);
- 	analogix_dp_set_lane_link_training(dp);
- 
--	ret = readx_poll_timeout(analogix_dp_get_pll_lock_status, dp, status,
--				 status != PLL_UNLOCKED, 120,
--				 120 * DP_TIMEOUT_LOOP_COUNT);
--	if (ret) {
--		DRM_DEV_ERROR(dp->dev, "Wait for pll lock failed %d\n", ret);
--		return ret;
--	}
--
- 	/* source Set training pattern 1 */
- 	analogix_dp_set_training_pattern(dp, TRAINING_PTN1);
- 	/* From DP spec, pattern must be on-screen for a minimum 500us */
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index 382b2f068ab9..774d11574b09 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -95,11 +95,6 @@ enum dynamic_range {
- 	CEA
- };
- 
--enum pll_status {
--	PLL_UNLOCKED,
--	PLL_LOCKED
--};
--
- enum clock_recovery_m_value_type {
- 	CALCULATED_M,
- 	REGISTER_M
-@@ -191,7 +186,7 @@ void analogix_dp_swreset(struct analogix_dp_device *dp);
- void analogix_dp_config_interrupt(struct analogix_dp_device *dp);
- void analogix_dp_mute_hpd_interrupt(struct analogix_dp_device *dp);
- void analogix_dp_unmute_hpd_interrupt(struct analogix_dp_device *dp);
--enum pll_status analogix_dp_get_pll_lock_status(struct analogix_dp_device *dp);
-+int analogix_dp_wait_pll_locked(struct analogix_dp_device *dp);
- void analogix_dp_set_pll_power_down(struct analogix_dp_device *dp, bool enable);
- void analogix_dp_set_analog_power_down(struct analogix_dp_device *dp,
- 				       enum analog_power_block block,
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-index e9c643a8b6fc..143a78b1d156 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_reg.c
-@@ -217,15 +217,13 @@ void analogix_dp_unmute_hpd_interrupt(struct analogix_dp_device *dp)
- 	writel(reg, dp->reg_base + ANALOGIX_DP_INT_STA_MASK);
- }
- 
--enum pll_status analogix_dp_get_pll_lock_status(struct analogix_dp_device *dp)
-+int analogix_dp_wait_pll_locked(struct analogix_dp_device *dp)
- {
--	u32 reg;
-+	u32 val;
- 
--	reg = readl(dp->reg_base + ANALOGIX_DP_DEBUG_CTL);
--	if (reg & PLL_LOCK)
--		return PLL_LOCKED;
--	else
--		return PLL_UNLOCKED;
-+	return readl_poll_timeout(dp->reg_base + ANALOGIX_DP_DEBUG_CTL, val,
-+				  val & PLL_LOCK, 120,
-+				  120 * DP_TIMEOUT_LOOP_COUNT);
- }
- 
- void analogix_dp_set_pll_power_down(struct analogix_dp_device *dp, bool enable)
--- 
-2.39.2
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
