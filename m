@@ -1,128 +1,118 @@
-Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DF3EBE;
-	Thu, 20 Jun 2024 11:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C211D175546
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 11:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718883648; cv=none; b=b/OEbrd9U5knb+kqhwmnt18aSPbhTBMILXanRPJ/Uqy9oOcVneauW2CYfaixMct3lXnYIHo5XFfOXjdKyNSD8qsXg1ViXVzM2ipkmqiZDAugqAta7vWcDnF4pH/Ohow5w1JyB/yKb+tDsf53YxRd1qUwtBKQ6ikxItOMAIdWe28=
+	t=1718884438; cv=none; b=d5cl4YYec1KHPeLpMoiGpwGqMixxqYyfJfF8ZlKfArjK6QyhSgWBrLg1PqqNC29D//OeNlEk4Oce4hEN6al6tXs9R3PCeNIzHQgWirwbWfJ6uZoIxw0oBFizsyibly/+/lkrjI2uY0E9zXOn88zy5nvPhiye7UhtEy187OrQR8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718883648; c=relaxed/simple;
-	bh=FYQA09eJnQbBscXTK3MzsRbkjN4tAg+3ilMpf/N2kn4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ZcIM71GqUHqmpp03K/nju/su3vASXd9+e2SuO2C9nIL6ZhgUdTsadSrC+6/klmrEFizHt3PopbcXVruJKbvKLqFhY1DR7eVB32/Cn8ujPkobheKqs+w76h2BA4yeQoe9sDVtCY0V8XSbYbx/ASPAksbwWEBIkEOwp324uoiRaog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JK9Jer9d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ifvy0gtK; arc=none smtp.client-ip=64.147.123.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1718884438; c=relaxed/simple;
+	bh=x+qABZ4JfmfGmpZHBp7+niF77ec63+ZO9qrC0sEi3ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ganGkBsJ0apmrkzlRFhgTlN9BG40gCIHw42VwmDg341wWVd3QEGD3Y0PT8oo4ergEy5IEVyJfkS/dN0LAOI0ynNTe62kckVAttk+UrucylXVi4jSVAtBc/ZAEs9ZwyNgUrd/pPeiIgHKWQCw/nLCbIOdLS8ecjokDgruesRVQh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GomE+gFF; arc=none smtp.client-ip=209.85.161.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JK9Jer9d";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ifvy0gtK"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id EC8641C001CF;
-	Thu, 20 Jun 2024 07:40:44 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Thu, 20 Jun 2024 07:40:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1718883644; x=1718970044; bh=Kyi6DOxRGm
-	mf09/1dL9TG4SUHEYH9mmOWhybLNfnbjM=; b=JK9Jer9dTt0YjzBCTg1GfIEtHe
-	FRH5WdSbTjvMurVAZGwHvDVahjkDPlsoGeCeJ9/uK78nXL+IZ4T2GmkSyOOXO00c
-	JnNSYykFnitvKbOnw9xQMGBeMUjQPBXqItBzpsLZHYxVC0nPJA6YZMR6UwHyEcDA
-	bgrrtUm/rPzeuQcQxirVqAiIVjhheuIaNMAGQE082i3VxmcKITBR8hd/LOeMK5py
-	AyXH4KdrEUl1OV2LbGNWSodv5yxrO8g0kT0FvV/clgN8FwyO83jtvGyUBqSWdcvH
-	butQxfttYKsG+ucoRUM/TcHjQwp8KgWw8Sy3ucA/hw0ohL6s1/3EV1ScoajA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1718883644; x=1718970044; bh=Kyi6DOxRGmmf09/1dL9TG4SUHEYH
-	9mmOWhybLNfnbjM=; b=ifvy0gtKenpo+a7GkQIgD5glYthYdrnu9qj+tL1mXdpt
-	i41BOXARRT3xlIpPDBgJaWRQwicXHnSEkfPpqDOoF0BVOA2Sm0L8EX++zBjmE912
-	CYlxsWBrlUsyPQ4WMoSm2BPJdW8zCmxTSYLwMTb17ML7ZkVzNXAxEOldr2N7EXSO
-	ZvNou+vQxnSKRgadf6nMaF/M1zUJ6s//fBNWawDis3zdw9rwsqboiXLrRqqH5f3Q
-	7NgWQsnUAmokRZxX7VH8xKxrMscs1mgd1IbpId7nbZWOgmyJGzefVZIqtXlGQq76
-	LiEJFEpX+vhfjK5ku7lXAG8VxfAA2f+UdY/J8vBYsg==
-X-ME-Sender: <xms:OxV0Zp0QUxYYh1JD7Vi5S1-pCbvczEhdRhHz37eqKxsuEfN_zwcZNA>
-    <xme:OxV0ZgE9_eBIWV6hHs46VlWYJb2oqJealXm7tQ2ZKetWAmMw7v9_o8PT_GxIGmjJA
-    lWjBJFq4sq0FV5C-2Y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddggeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:OxV0Zp437mKwByYjdmJmcQh5-TPfC6gVQDfYMriZnC0D7Ch1QEjbgg>
-    <xmx:OxV0Zm0O8bMUtW4t7Djbu2ba0mKmJUqk1NHVDqrSkiLA65C5aWL_2g>
-    <xmx:OxV0ZsHWWD-bI-u-YBSTrzMTK5hOohGbAGrZ1wITyJZWDKJVUoDB_g>
-    <xmx:OxV0Zn9yl6LTiR8rpLyIcsQpEQyX8HDbrZjHC2IR6cMyy9pi_eSIeg>
-    <xmx:PBV0ZjeEvY64vDWkPr-1epllCd82VMIP2XLoV-kHt1Cc6yk5B2XPt8QG>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id BD415B6008D; Thu, 20 Jun 2024 07:40:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GomE+gFF"
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5b97a071c92so312536eaf.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 04:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718884432; x=1719489232; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cjrKq/3Qh8NTVOb/zVT+vutzDEvUB3oaVogbIVhMr70=;
+        b=GomE+gFFDiArOQ6PzL6cmvRa9sNcRK+dUWsWl+FnldHpwvHsicv73P3A29jvy+o1u0
+         K3VszaSDXKfY9zMfoyAOQidukLCtmrXx1UEey/kEUVI/UfmQPBPIB8lniI3ThArVNXbg
+         R2B4Ui+G0ZHiT6KJ2g0adm6Oee922hlnFBqvxbKeQRXt1bX5U8Re39LMUmOGH34YjiDZ
+         E5rHSIiXAMVdEuH96GMWiIgiI3cfghPeZvsjLXFvtmClBWQ4MH/pCDBzq8qA3h5GIxRm
+         h9SD+41CzwfVDChWHnG/GR88tF7/WHMqT5L1KSV6ltN8zhS7w0mV3HLSpZgOQDUy3aHX
+         h1LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718884432; x=1719489232;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cjrKq/3Qh8NTVOb/zVT+vutzDEvUB3oaVogbIVhMr70=;
+        b=JWTrauE8MP1qCwbED+JQCvgiUgJdBKyThtUcTlq/lkcd1ijaCNblBwpiwy1S7U97Jg
+         IjHQcbpM4imM4YjJj3QZnPBzib5wB4Rjal1r8HxNH+dvQv9TIFQDOwSMCKWnKrZhkRNV
+         d1hwtW7vaFF2ncUUUd+r/lPzbe3xdxZtgRPkxZcBC9lvjJwrTdQ+eyw+tSsw8IOiTGYZ
+         VwsHwlXEAx2eqJSVYUr/EMY6lji8QEAHXc93ANUsRN/VZs9YwmomMOLwfGVXdemS86oV
+         wPCpBva4hEtAit73hst1YkY9uB+v39LCkFQW0+uXVpb5QKDqRNT5TEcKU3no0R58yGQn
+         0s7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXYllmMaVW5YN3/KpMbmE54O9dAlYcquR4EcAhUc/9YRGaV2tKeTcO/4kQOYybkFAPfmWkwCjJBGxZe3CgNZFVI0g+1VAMRF9iemw7Qbjp/KhA=
+X-Gm-Message-State: AOJu0YzwnR0vB57QrezR1sDtbwrYaNIkRXE+pBHg5R9u+8i7x0FPloj3
+	8ZviXGQyakSt7ZR0Qr6RN7NToBMGYY2lkk2412TO7eegTKfG9fMOXXZfJdK51pKJ+IM2LO1Aw3/
+	+7q3PB4OgFESW4jG1gN3/YO4jwr9DlnttNxagYA==
+X-Google-Smtp-Source: AGHT+IFPx+/U0MCQcAmhqRdoRS/mrygvKBapXgwNhMr/lYOA6Js+H/0uIcES6GdbOZI42Bp3HEwrbbkdplWrAB8inzg=
+X-Received: by 2002:a4a:d285:0:b0:5bd:c0a2:c349 with SMTP id
+ 006d021491bc7-5c1adbeae27mr5662760eaf.4.1718884432634; Thu, 20 Jun 2024
+ 04:53:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <73d2002a-9afa-4cfd-b835-6908d64586d6@app.fastmail.com>
-In-Reply-To: <20240620112446.1286223-2-peter.griffin@linaro.org>
 References: <20240620112446.1286223-1-peter.griffin@linaro.org>
- <20240620112446.1286223-2-peter.griffin@linaro.org>
-Date: Thu, 20 Jun 2024 13:40:23 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Peter Griffin" <peter.griffin@linaro.org>, "Lee Jones" <lee@kernel.org>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Alim Akhtar" <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "William McVicker" <willmcvicker@google.com>,
- "Sam Protsenko" <semen.protsenko@linaro.org>, kernel-team@android.com
+ <20240620112446.1286223-2-peter.griffin@linaro.org> <73d2002a-9afa-4cfd-b835-6908d64586d6@app.fastmail.com>
+In-Reply-To: <73d2002a-9afa-4cfd-b835-6908d64586d6@app.fastmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 20 Jun 2024 12:53:40 +0100
+Message-ID: <CADrjBPobNnneOy2EuT9jNtJAxa+Cz-a-Jcy-==LE55PbOo7LMg@mail.gmail.com>
 Subject: Re: [PATCH v2 1/2] mfd: syscon: add of_syscon_register_regmap() API
-Content-Type: text/plain
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Saravana Kannan <saravanak@google.com>, William McVicker <willmcvicker@google.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Arnd,
 
-On Thu, Jun 20, 2024, at 13:24, Peter Griffin wrote:
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
-> Changes in v2:
-> - Keep syscon lock held between checking and adding entry (Krzysztof)
+Thanks for the review feedback.
 
-Unfortunately you now have a different bug:
+On Thu, 20 Jun 2024 at 12:40, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>
+> On Thu, Jun 20, 2024, at 13:24, Peter Griffin wrote:
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Changes in v2:
+> > - Keep syscon lock held between checking and adding entry (Krzysztof)
+>
+> Unfortunately you now have a different bug:
+>
+> > +     /* check if syscon entry already exists */
+> > +     spin_lock(&syscon_list_slock);
+> > +
+> > +     list_for_each_entry(entry, &syscon_list, list)
+> > +             if (entry->np == np) {
+> > +                     syscon = entry;
+> > +                     break;
+> > +             }
+> > +
+> > +     if (syscon) {
+> > +             ret = -EEXIST;
+> > +             goto err_unlock;
+> > +     }
+> > +
+> > +     syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
+> > +     if (!syscon) {
+> > +             ret = -ENOMEM;
+> > +             goto err_unlock;
+> > +     }
+>
+> You can't use GFP_KERNEL while holding a spinlock.
+>
+> I think the correct way to do this is to move the allocation
+> before the locked section, and then free it in the failure case.
 
-> +	/* check if syscon entry already exists */
-> +	spin_lock(&syscon_list_slock);
-> +
-> +	list_for_each_entry(entry, &syscon_list, list)
-> +		if (entry->np == np) {
-> +			syscon = entry;
-> +			break;
-> +		}
-> +
-> +	if (syscon) {
-> +		ret = -EEXIST;
-> +		goto err_unlock;
-> +	}
-> +
-> +	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-> +	if (!syscon) {
-> +		ret = -ENOMEM;
-> +		goto err_unlock;
-> +	}
+Thanks for spotting this! I'll update as you suggest in v3.
 
-You can't use GFP_KERNEL while holding a spinlock.
-
-I think the correct way to do this is to move the allocation
-before the locked section, and then free it in the failure case.
-
-     Arnd
+Peter.
