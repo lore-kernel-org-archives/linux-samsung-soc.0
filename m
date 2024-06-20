@@ -1,238 +1,169 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97561AAE34
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 11:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17801AB531
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 11:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718881376; cv=none; b=n+kEN66PXAgDAZ8lee6aN5K4lOFem0Kxa1Nsic/zDubo3Wqvl1bm+1RSCzabk2vacz1efn3xz1UJddPEM6A7cKBfp+FxC5Dr4Wk1xN71fkAgnJNxjH9qpI6lCbwHYAOJBRDLboJeVGwRUOSLkCmlFtQUu4rrOJ6u4Qs69Bx5RS8=
+	t=1718882693; cv=none; b=Pxm+y68Jd55H65N5rPM4wiIY3OG0tB1u3X+lDFNPvGWiQmLlbpYefwrknhhkx90eovXUHg6VfKPsXqqHvc/zj4OXdXLkr05t66oy5n6ledVUqFf3xL5Ndoe0JGT196bG+3XLmMV0v00TZo2dH8tqYwhomHBs8eN4eQRebyQSBu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718881376; c=relaxed/simple;
-	bh=Rf6/z8+NZYtEexYsTbeo8XAwkMuFDOP0e+7M1U38HEo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=jsb8apXnE88sLkGZKNIa0wAX3gUZ/vtjLeWPEKhP7AnzfThtmlnSCR1Bk8psQ8D01VVAsehPOaPP9l/+Asat+X32a//ZulkfSm/qTuWYREoIJmCwe6/3iAA34yiyvFw43jzs3wDqnzbS7gZrhAhnfLKuSshZxqWUvtVQSLtrT50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pKZ8MYaO; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1718882693; c=relaxed/simple;
+	bh=4ds6lgEBHypbXsdx34WZF0wcW2UxEYrxEDqsfQYnqds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CpuHDjMDsYjHWB9zdbO9pO7K8K79H3HicxKi5G2WseL7BV2f72d69vS7GaFNEeiWYbdKqOhvdn1rl1cDsn39IXV0raMcm3exn/oXJFgVG/f6ufyRp0fkQa2yN8bejdzCtIToTqkxwhYUX3Q0Qv3iYQ/ihdKqEW5EiCfVKKW029I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E9dTn8PI; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pKZ8MYaO"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240620110246epoutp0389ff24977f7db61dbaef6b483174daa4~asX7h9lT70933609336epoutp03U
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 11:02:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240620110246epoutp0389ff24977f7db61dbaef6b483174daa4~asX7h9lT70933609336epoutp03U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1718881366;
-	bh=4waPKmlDVvfwHEu03i05Nc/0VcDtSEWLACuXgVrz5Fw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=pKZ8MYaO4AAlsuS3Ic2kvG9qUx3Ksgl8hNtStSmd+DWBIHSWOhMN7Tu/NMno22i6m
-	 MrgZr2/dTUhK5Bpr/VYB5bxTQ0U1EuRyBXRaxXdM+/voUHURjh0edLixMWxnjkv/kT
-	 Y+j4pIu8cCh56IwARIcNu1TNP6beB2zdqANRCiD0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240620110245epcas5p466a5a420cfeb41a00dcbeb94e01ecd68~asX7FDAUW3046730467epcas5p4S;
-	Thu, 20 Jun 2024 11:02:45 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4W4cyr0bG9z4x9Pw; Thu, 20 Jun
-	2024 11:02:44 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FB.2C.10047.35C04766; Thu, 20 Jun 2024 20:02:43 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7~asD6WZEpM1259712597epcas5p17;
-	Thu, 20 Jun 2024 10:39:50 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240620103950epsmtrp1f7455fa48db4efb72c96332a5e9440f5~asD6VliIz2404424044epsmtrp1L;
-	Thu, 20 Jun 2024 10:39:50 +0000 (GMT)
-X-AuditID: b6c32a49-f75ff7000000273f-c9-66740c532437
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EE.14.29940.6F604766; Thu, 20 Jun 2024 19:39:50 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240620103948epsmtip1eb9d447dbf01c5e1db8ddea28d59aa96~asD4xlpm21821018210epsmtip1e;
-	Thu, 20 Jun 2024 10:39:48 +0000 (GMT)
-From: Vishnu Reddy <vishnu.reddy@samsung.com>
-To: krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
-	alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-Subject: [PATCH v2] pinctrl: samsung: Add support for pull-up and pull-down
-Date: Thu, 20 Jun 2024 16:04:10 +0530
-Message-Id: <20240620103410.35786-1-vishnu.reddy@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRmVeSWpSXmKPExsWy7bCmpm4wT0mawaPHlhYP5m1js7h5YCeT
-	xd7XW9ktpvxZzmSx6fE1VovN8/8wWlzeNYfNYsb5fUwWi7Z+Ybd4+GEPu8XhN+2sDtwed67t
-	YfPYvKTeo2/LKkaPz5vkAliism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
-	EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YW
-	l+al6+WlllgZGhgYmQIVJmRn/H11lqXgn1zFtAefGRsYG6W6GDk4JARMJHZf5O1i5OIQEtjN
-	KHHr5CRWCOcTo8TdrvlQzjdGiW8T7zHBdHQ1eUHE9zJKrNw5gw3CaWWS2HZ9LVARJwebgK7E
-	5yVnWUBsEYF8iZUX/jGBFDELXGSU+LdlPytIQljAW2Lhj0Ywm0VAVWJDbzfYBl4BW4mJ3yVB
-	whIC8hKrNxxgBumVEDjGLtHS9pURIuEiselhDxuELSzx6vgWdghbSuJlfxuUnSyx/vcpdoir
-	cyR6pilAhO0lDlyZwwISZhbQlFi/Sx8iLCsx9dQ6sPOZBfgken8/YYKI80rsmAdjq0kcmzSd
-	FcKWkehccQPqGg+Jxp2fwWwhgViJhpvPWScwys5C2LCAkXEVo2RqQXFuemqxaYFhXmo5PJqS
-	83M3MYJTmpbnDsa7Dz7oHWJk4mA8xCjBwawkwvu8qyhNiDclsbIqtSg/vqg0J7X4EKMpMMQm
-	MkuJJucDk2peSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1M4XvP
-	5lT+KV3P1yWVr/hg8/RvDNL9v5vn/qng17rCeezFrfWKfzj3WD73nuKRmxqUYbSo6PjVjUW+
-	HPpnebla/64MPV634LNqtoXBqhs6j6a80wwIaD8z67Hu0aN7t07Pvhu/rmBKC0fG9pVtKdX+
-	ygGCt73Y3wjdXro54KdGzZuZ0p81+mdo3HB84pVdfu/gxAP1+79/CAld5q0doGWSG58hejC9
-	cPtjwXKL71yrl/8/9+PkafHGzRd3Tnv+TqxB7u13YDJefsx/78uVk8RmScfYRHEc1nqhfvhO
-	omawNM//s0HvXhZ+eCsskv6uZtr6ngdzPh/0Mwlft/ud6gXxg+KT1Q9yV5VF9PyPyC98osRS
-	nJFoqMVcVJwIABSuFEPyAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmluLIzCtJLcpLzFFi42LZdlhJTvcbW0mawcLnChYP5m1js7h5YCeT
-	xd7XW9ktpvxZzmSx6fE1VovN8/8wWlzeNYfNYsb5fUwWi7Z+Ybd4+GEPu8XhN+2sDtwed67t
-	YfPYvKTeo2/LKkaPz5vkAliiuGxSUnMyy1KL9O0SuDL+vjrLUvBPrmLag8+MDYyNUl2MHBwS
-	AiYSXU1eXYxcHEICuxklWvc/Ye9i5ASKy0h8uLOFGcIWllj57zlYXEigmUliz7MUEJtNQFfi
-	85KzLCC2iECxxJXX+5hABjEL3GSU6Nv6BSwhLOAtsfBHIyuIzSKgKrGht5sJZDGvgK3ExO+S
-	EPPlJVZvOMA8gZFnASPDKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4PDS0tzBuH3V
-	B71DjEwcjIcYJTiYlUR4n3cVpQnxpiRWVqUW5ccXleakFh9ilOZgURLnFX/RmyIkkJ5Ykpqd
-	mlqQWgSTZeLglGpgMndesfrGhZj0YKNYA6krackREfbawXXKGz8+4cx41CSso+W1UPidPceB
-	f3rPDSeUhV4tStO+HfXv3SdxNvnyIOsdBy+lptXUhXqIVDic+DZrl779a4Nj95PufdyjfiSe
-	5xLD5G86iSoJMo0bdnPmdxQusJtQ5fF9/oFPVlJ8id/8002C2UKseFZ9/W0xV/X5WYOkbz4q
-	oi83Nf+qvKb1Qb0s4sv+67w57DMPXHu98sv57gtJWu0uN9b8FzGew2RtYDA133+9nvb87P62
-	lwmh3XLieuqnxFJPB016Zh8r2rvZK5XhYGPSpTTdsu0F7ZwJRTqC6RNMPc5PXxMZuTDyYx5D
-	zTOv3oa0T5KTTiuxFGckGmoxFxUnAgC8XpbVngIAAA==
-X-CMS-MailID: 20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7
-References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1.samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E9dTn8PI"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e724bc466fso8185961fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2024 04:24:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718882690; x=1719487490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gCJG0Ja4O3W5+n0BOGZ+62h9PoJVQnw5m6Ruy1ZerC8=;
+        b=E9dTn8PIif2iwk+5mcX7bV2SXNZvuYwd6vx1Vx/DoOfLHV5NaS2s8SPO7+vl/V9zVR
+         fi33yjm9G7WPvD1GVcy2u180gLHLcYn8j6rPG0Ox56VDWoL4idt7fgpucV2SAOunIz/H
+         zX2Vsd0UDqS2+vcH4nnFRxJuIvBswkj0FldqRdN4L97g6td+kc2YFs6iaSmVkKxuyeCt
+         fyeh8qjMT66JClXV76TkXROK9Saz8ksUg56j7J01gkM7sFuSz4CkNCU3D+r5shrQldDp
+         TTqhQpCwYad2KiVDQ4pPJ2vqz0boiyS9by6bVEwBIaFwJiAHzNb9dMki9b80T2g6RQH9
+         GU0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718882690; x=1719487490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gCJG0Ja4O3W5+n0BOGZ+62h9PoJVQnw5m6Ruy1ZerC8=;
+        b=seWvWfYBNVQPrTTKdiYQC72bMhmLyryy2yPsvgTSjs8nVl/ubM5p2mdLIXAqXG1eHT
+         KgFjkfQYS59zjalearnv1I9QQ41ouUcsEjFuPZJpG5dq76GWP8ar26/bi1e/OgQ3W53O
+         zNoVVNXcI6tBSNCr9xcxmWU22TjLdblzCM5v+PvwQaZ/yfDrr8AAepcxzJyrAQNzY5FY
+         VT3yaB8O0ukR9g5rpR8vXnOEmyjvNt21DujQb+JlkWKx30n8O95U0oQF5yGUA2i8B99y
+         0qLSSMyPuXxLtA6wlhO9i4NpgdiArK8YwT4hLJbI4P3WDy1GnTa79LpFFYlPudh4g2K2
+         +txA==
+X-Forwarded-Encrypted: i=1; AJvYcCXW6fV+9EN8p7n+41ilM5equksF2Po0tyM+hNfoPzGwMT7ngski2at8AAp4g7gKhrUOurISjh6w7Qcbf8C4q1PSrpoJUEO70LHhlZyEu0gO39M=
+X-Gm-Message-State: AOJu0Yyjl0KKZr3B4Tf9j+oKbhZLufFG3t0QYC7RzNlO2SgkqFBv9YbF
+	xJzvwy1zCpFiuqsJM6ei80VNk2VhIKURnHmLnTPPLxbhlAJOTENOVOgl5b8KQV8=
+X-Google-Smtp-Source: AGHT+IFa6EadGkjUelwniOpcoV8wjGzlajwf0CUb0A6oVYtvqsnZs3ZgSbMRkdrUCg8xWmBN7N855g==
+X-Received: by 2002:a05:651c:20f:b0:2eb:f6bd:e4ec with SMTP id 38308e7fff4ca-2ec3cea1b44mr37772661fa.24.1718882689841;
+        Thu, 20 Jun 2024 04:24:49 -0700 (PDT)
+Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3647bf3092csm2025371f8f.97.2024.06.20.04.24.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 04:24:49 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: lee@kernel.org,
+	arnd@arndb.de,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	saravanak@google.com,
+	willmcvicker@google.com,
+	semen.protsenko@linaro.org,
+	kernel-team@android.com,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v2 0/2]  Add syscon of_syscon_register_regmap api
+Date: Thu, 20 Jun 2024 12:24:44 +0100
+Message-ID: <20240620112446.1286223-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.45.2.627.g7a2c4fd464-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-gpiolib framework has the implementation of setting up the
-PUD configuration for GPIO pins but there is no driver support.
+Hi Lee, Arnd, Krzysztof, all,
 
-Add support to handle the PUD configuration request from the
-userspace in samsung pinctrl driver.
+This series adds support to syscon driver for a new of_syscon_register_regmap()
+api.
 
-Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
----
-Verified the offset from the user manual of following Exynos SoC series
-and found the current code is taking care of correct offset for pull-up
-and pull-down
+Platforms such as gs101 require a special regmap to access PMU registers, which
+in the existing upstream client drivers are accessed via syscon regmap. This
+issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
+and a new API exynos_get_pmu_regmap_by_phandle() created.
 
-Exynos-3250
-Exynos-3470
-Exynos-4412
-Exynos-4415
-Exynos-5250
-Exynos-5260
-Exynos-5410
-Exynos-5420
-Exynos-5422
-Exynos-7420
-Exynos-7580
-Exynos-7880
-Exynos-9820
-Exynos-9830
-Exynos-4210
-Exynos-S5PC210
-Exynos-S5PV310
+One issue with the approach in [1] is that it required client drivers to be
+updated from syscon_regmap_lookup_by_phandle() to
+exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
 
-This patch is tested on FSD platform
+Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
+specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
+which span multiple SoC architectures could not be easily re-used.
 
- drivers/pinctrl/samsung/pinctrl-samsung.c | 53 +++++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.h |  7 +++
- 2 files changed, 60 insertions(+)
+In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
+requested [2] that we take a more generic approach that other SoCs can also
+leverage.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 623df65a5d6f..13e8109d002a 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -997,6 +997,58 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
- 	return 0;
- }
- 
-+/*
-+ * samsung_gpio_set_pud will enable or disable the pull-down and
-+ * pull-up for the gpio pins in the PUD register.
-+ */
-+static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
-+				 unsigned int value)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	const struct samsung_pin_bank_type *type = bank->type;
-+	void __iomem *reg;
-+	unsigned int data, mask;
-+
-+	reg = bank->pctl_base + bank->pctl_offset;
-+	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+	mask = (1 << type->fld_width[PINCFG_TYPE_PUD]) - 1;
-+	data &= ~(mask << (offset * type->fld_width[PINCFG_TYPE_PUD]));
-+	data |= value << (offset * type->fld_width[PINCFG_TYPE_PUD]);
-+	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+}
-+
-+/*
-+ * samsung_gpio_set_config will identify the type of PUD config based
-+ * on the gpiolib request to enable or disable the PUD configuration.
-+ */
-+static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	unsigned long flags;
-+	unsigned int value = 0;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		value = PIN_PUD_PULL_UP_DOWN_DISABLE;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		value = PIN_PUD_PULL_DOWN_ENABLE;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		value = PIN_PUD_PULL_UP_ENABLE;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	raw_spin_lock_irqsave(&bank->slock, flags);
-+	samsung_gpio_set_pud(gc, offset, value);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	return 0;
-+}
-+
- static const struct gpio_chip samsung_gpiolib_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-@@ -1006,6 +1058,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
- 	.direction_output = samsung_gpio_direction_output,
- 	.to_irq = samsung_gpio_to_irq,
- 	.add_pin_ranges = samsung_add_pin_ranges,
-+	.set_config = samsung_gpio_set_config,
- 	.owner = THIS_MODULE,
- };
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index d50ba6f07d5d..758b623a4bea 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -61,6 +61,13 @@ enum pincfg_type {
- #define PIN_CON_FUNC_INPUT		0x0
- #define PIN_CON_FUNC_OUTPUT		0x1
- 
-+/*
-+ * Values for the pin PUD register.
-+ */
-+#define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
-+#define PIN_PUD_PULL_DOWN_ENABLE	0x1
-+#define PIN_PUD_PULL_UP_ENABLE		0x3
-+
- /**
-  * enum eint_type - possible external interrupt types.
-  * @EINT_TYPE_NONE: bank does not support external interrupts
+The new of_syscon_register_regmap() api overcomes this limitation by allowing
+a SoC driver like exynos-pmu to register it's SoC specific regmap with the
+syscon driver. This keeps the SoC complexity out of syscon driver, and allows
+client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
+The solution allows more code re-use and can be used by other SoC archs.
+
+Notes on probe ordering
+
+exynos-pmu runs at postcore_initcall, so all but one of the client drivers
+(ufs phy, usb phy, watchdog) run after the regmap is created and registered.
+
+The one exception to this is pinctrl-samsung driver which is also
+postcore_initcall level. The exynos_get_pmu_regmap() and
+exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
+-EPROBE_DEFER for pinctrl-samsung driver.
+
+The longer term plan to solve that probe ordering issue is to enable
+fw_devlink for syscon dt properties so they are correctly listed as
+suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
+fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
+believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
+currently with fw_devlink syscon support is the wide diversity of dt property
+naming currently in use. That was discussed previously here [3]
+
+1248a1256,1257
+> DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
+> DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
+1358a1368,1369
+>     { .parse_prop = parse_syscon_phandle, },
+>     { .parse_prop = parse_pmu_syscon, },
+
+
+Note one previous concern from Saravana about syscon potentially probing
+before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
+this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
+always probes first due to syscon driver not setting a .of_match_table entry.
+
+Once the syscon and exynos-pmu patchs are queued I will send patches for
+watchdog and ufs phy drivers to switch back to syscon_regmap_lookup_by_phandle()
+
+Many thanks,
+
+Peter.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
+[2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
+[3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
+
+Changes since v1:
+ - Collect by tags
+ - Keep syscon lock held for check and adding entry (Krzysztof)
+ - pass pmu_np not np to syscon_node_to_regmap() (William)
+
+Link to v1:
+ - https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-1-peter.griffin@linaro.org/
+
+Peter Griffin (2):
+  mfd: syscon: add of_syscon_register_regmap() API
+  soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
+
+ drivers/mfd/syscon.c             | 54 ++++++++++++++++++++++++++++++++
+ drivers/soc/samsung/exynos-pmu.c | 38 +++++++++-------------
+ include/linux/mfd/syscon.h       |  8 +++++
+ 3 files changed, 76 insertions(+), 24 deletions(-)
+
 -- 
-2.17.1
+2.45.2.627.g7a2c4fd464-goog
 
