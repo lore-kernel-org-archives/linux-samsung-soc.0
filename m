@@ -1,58 +1,58 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0728F1
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jun 2024 00:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B92979FE
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jun 2024 00:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719014714; cv=none; b=Hl11+pXjaGnyODOl3vMaUTRgWbM/OPWqeUcuXuOVt7AJYXncaYL8LlA5LlReRqUz5BPu/H3g5xOY1DMKhQlAJkPiook/ufM6LLxRJkO+sgB87bwLL8oMaIbFbISAedJZP391h3+CrynnJaxsYnmsjKUoeZjz88rRbzdlbDK6HeU=
+	t=1719014808; cv=none; b=LX+2kX9P+P0UggRf3Yi3Lt/Y0zwbjGia71PU7qGWjUSe1n2rwSLFsb6mdSzWsI3NIPJCWVjXoD5JmeL4ZT20/gJYV8LuhrlAOWembhY2RRNjqS0O2zH0JaJMYORb44Gdb/JyIIvoVqhqtx07V1n08QzS6voZgXCa5NqxieX4uLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719014714; c=relaxed/simple;
-	bh=mtLzfIy7druKeAfdg+1CJtW/70Bo9KaqxrNxgShLw3c=;
+	s=arc-20240116; t=1719014808; c=relaxed/simple;
+	bh=2iZCdobCesQIlaIFBjwhULiIkRQI8wcQ8QBqpcXuLO4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O310vnTc3XIpmY6sBnNDzTAAYFllG/8e0KR2Rj+7WFSRQXiPbfqxJ5jMIa+QuR+kANcs7zlY56fCR0PB7EyvPrbBX78O0aMXp4T4yHEtRaC4sqD3txUnwYReUidMGlfeU5oYN+NUrPx8PPlwAXLEd5hHXIJ0eD8iV+IFPMA59zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BzE4dRlw; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=abbe2wv2NGqkk/XI8mn4a2MtAzwThSFwHrfyPF7hRbMye/s9hKUZHhkI/4nIxfdI3rSUmiHa56VHy+kjXEHAkzF5Koo7SmJ1QbR2EIGleKL9vM8U+bl9Aj3bIFl6gomyZOn0HLUF9fcCJ+DVRrrNsoioQuCbWpTpQYsFc4wd9d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q4Xqf3sj; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BzE4dRlw"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f70fdc9645so222595ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jun 2024 17:05:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q4Xqf3sj"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f70fdc9645so222745ad.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jun 2024 17:06:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719014713; x=1719619513; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719014806; x=1719619606; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=2NFHVTARxY6oz0ND/xOG9DTefTphGU25EZtwr7kbv4k=;
-        b=BzE4dRlwfoYK0FZktszkKgAdIQ1cQgU6LoyhmD+YNNPxqbDmZNPUgH1tdNbIVysD2l
-         mapzQjSckbO4SGLf43k6mN3gq9kZq+uLJPHVwjWLqSpcD0KgGhRmlDnup8zsKdxetmiG
-         8eBp8JTkRDPINttX52ZUYwVp/ReE18e0RA7cQAJrpDkaDTZYUJWGHhbmmVoBkrzcRzg8
-         /ipDXtVs3UMJNErgDEDs9/uT3vAunSifZJ/7IhxmMcJR6yLj3H+cgqgCIoAvxDJbmxKY
-         hpchcCc4F5dRtx9rQkjkXLHtpWgnak59WuaE2mpcnGPEl1zPm/2u3sSEb2Lx+kmjovbH
-         22kw==
+        bh=50aRBwML1alf49hO+1BmWw804OZfmi02o/xT006me7w=;
+        b=q4Xqf3sjKt+6bs4X7412Tauxe8ZK75EWtXsyRXywJc65KD8yLHzAD7rS696c8rb2ww
+         fyPIiIuPS40v5fDaJC98Dkj//vuZVAtv/DYXUUvHJH9XEexB9TPzCe17YW5hPGd8o/g1
+         9DsxDex6z78ncsuRV8YQtbbVHaV78oGG0FZM/IlHW9NKX83lkjQ8cOfgh67UmXR561Gk
+         g+ClmliAzy0lnmi8Fq4OwCWfrH4SVw3sFtDoMWwK8Bp8yrboM/pI3i1IWtIxcQK/W89H
+         3FyuZDlJU83e03n6FFxZEEy6gncSesDECTyiIMc2+PKjFAV+rx1fs5d1vIR/txVIB026
+         Qisw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719014713; x=1719619513;
+        d=1e100.net; s=20230601; t=1719014806; x=1719619606;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2NFHVTARxY6oz0ND/xOG9DTefTphGU25EZtwr7kbv4k=;
-        b=sBtV/epDQ4Apu4kMCjwsc2SIBZ5evGbC1DnysgCp3yRiJmY2VGycQsYsDTlmXPsQvj
-         7zzZboosE5yOh8plGRVWS170l8RlJPXKO3iGFt9ezxYqUx3VvzCRDBAI9rO/VVNq0fyH
-         YGWiE/ewn12a3nYn3Cil+WdmchiK0sII0OTt+fbhTfdVdVmZD7+IQxY7aL16HSknMxt0
-         yURw8UTwSJY/dZskp4vhggytV4WZQ+/GhGzCGKKp2Rx5rQeDJy3HzuNyKTPZZ1QuReU0
-         8Oo/oSf8mrKMNnHlGOV15vEOZ9PTwQEoC0dA44/juJEdSisO9RfZ2kbVh+lH46EtxqJ3
-         j6DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVG5B8TOGkecOlGxqhoVVEvPM+tZqr6JVQ5/WXq1B3lv+wjmlPl3HQkBgkJ5Kt3Mgd+VktEHTwSE5Tf8XwxyipR+sXHIvWqCC6SKvJNR2rUX4=
-X-Gm-Message-State: AOJu0YzP02ZqglZ7v6HZr4TFZoBiJSahjr9I3tvmO68E2AWCM7SHGulW
-	pU1v38mFU1XnCaXpg6rLTgQGXRAw5cPs0D1fDMXfmZ6AZSUT59wWqs3OwOTiTQ==
-X-Google-Smtp-Source: AGHT+IGDqe+3EUcAreiXyt9Qnv6KoLaGftjNkz08Y2Ium1Q4hAkVCIpw2uQMNCaRjKkz1QhQFpj8/g==
-X-Received: by 2002:a17:903:33cf:b0:1f2:fee2:82ea with SMTP id d9443c01a7336-1fa09ffb017mr842335ad.11.1719014712177;
-        Fri, 21 Jun 2024 17:05:12 -0700 (PDT)
+        bh=50aRBwML1alf49hO+1BmWw804OZfmi02o/xT006me7w=;
+        b=ojZVBHtEL+OsBcBUe7n9pGJkRzU/glT6F74sUr/7IZ/j+nMB6a8pck6fcwNtv+M3+5
+         q+1orBYYtAXebQ7PvgOVKWFbXNZZFCL4gmJQ2S+tPqpFK7RwOIvHxyth3IW2f/vMB4Qe
+         FuODu7ObZZF9eO0hC/lPrxZgXfGv70h+AgQmn5DopeNS69tcaJZKZyh9URqA72DKXIIP
+         VfptdnxQyWCjwZyigmICtR+dTvoO0f8nBFz9Dmbyy7q8hsVJaIrKvyaDUbkiG88nhW6D
+         sIcJht9FpUV4nyMb+r4PtHHPLly+2EM0kxP+CDpelB/vaV1XGz7dngD69YcBdLpSEaYv
+         eEqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMePkeryD7SMlK6iylJIXPGhab3Wqq6wpwqhs+qWvTUeWR6MVkAeHjLMGXVgrjScPckmLJpYHs8LTwsNo6HOg3W/yoQGP3r5/0qIJmhhQr3DU=
+X-Gm-Message-State: AOJu0YzfK0Qhb7rsh5G6trEN6K+DDQW7yF3ZmjqJw4Ddht4ZA26rPO00
+	RnHmFFZkpye1Z7NupDur4apAhHGcHTXl6fcDTrTbvRLs5KIckallCHARp4J36A==
+X-Google-Smtp-Source: AGHT+IH2DpcqGgyH+HjMIKHYfMU0Aprz6jSxhq9kEXfnCX/pqvkRFp0LybPg6McZN0Dup2hfAWO3ng==
+X-Received: by 2002:a17:902:7689:b0:1f9:bc99:d94a with SMTP id d9443c01a7336-1fa09ff2e18mr845625ad.5.1719014806175;
+        Fri, 21 Jun 2024 17:06:46 -0700 (PDT)
 Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512ad7b5sm1982244b3a.165.2024.06.21.17.05.11
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512d6088sm2058052b3a.175.2024.06.21.17.06.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 17:05:11 -0700 (PDT)
-Date: Fri, 21 Jun 2024 17:05:08 -0700
+        Fri, 21 Jun 2024 17:06:45 -0700 (PDT)
+Date: Fri, 21 Jun 2024 17:06:42 -0700
 From: William McVicker <willmcvicker@google.com>
 To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>,
@@ -71,11 +71,11 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] phy: exynos5-usbdrd: convert core clocks to
- clk_bulk
-Message-ID: <ZnYVNLkAmUGU6ZVN@google.com>
+Subject: Re: [PATCH v3 5/6] phy: exynos5-usbdrd: convert Vbus supplies to
+ regulator_bulk
+Message-ID: <ZnYVkmVjHiaOVJ9b@google.com>
 References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org>
- <20240617-usb-phy-gs101-v3-3-b66de9ae7424@linaro.org>
+ <20240617-usb-phy-gs101-v3-5-b66de9ae7424@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -85,41 +85,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240617-usb-phy-gs101-v3-3-b66de9ae7424@linaro.org>
+In-Reply-To: <20240617-usb-phy-gs101-v3-5-b66de9ae7424@linaro.org>
 
 On 06/17/2024, André Draszik wrote:
-> Using the clk_bulk APIs, the clock handling for the core clocks becomes
-> much simpler. No need to check any flags whether or not certain clocks
-> exist or not. Further, we can drop the various handles to the
-> individual clocks in the driver data and instead simply treat them all
-> as one thing.
+> Using the regulator_bulk APIs, the handling of power supplies becomes
+> much simpler. There is no need anymore to check if regulators have been
+> acquired or not, the bulk APIs will do all the work for us. We can also
+> drop the various handles to the individual power supplies in the driver
+> runtime data and instead simply treat them all as one thing. Error
+> cleanup also becomes much simpler.
 > 
-> So far, this driver assumes that all platforms have a clock "ref". It
-> also assumes that the clocks "phy_pipe", "phy_utmi", and "itp" exist if
-> the platform data "has_common_clk_gate" is set to true. It then goes
-> and individually tries to acquire and enable and disable all the
-> individual clocks one by one. Rather than relying on these implicit
-> clocks and open-coding the clock handling, we can just explicitly spell
-> out the clock names in the different device data and use that
-> information to populate clk_bulk_data, allowing us to use the clk_bulk
-> APIs for managing the clocks.
+> Converting to the regulator_bulk APIs also makes it easier to add
+> support for those SoCs that have additional power supplies for the PHY.
+> Google Tensor gs101 is one example of such a SoC. Otherwise we'd have
+> to add all additional supplies individually via individual calls to
+> regulator_get() and enable/disable handle them all individually,
+> including complicated error handling. That doesn't scale and clutters
+> the code.
 > 
-> As a side-effect, this change highlighted the fact that
-> exynos5_usbdrd_phy_power_on() forgot to check the result of the clock
-> enable calls. Using the clk_bulk APIs, the compiler now warns when
-> return values are not checked - therefore add the necessary check
-> instead of silently ignoring failures and continuing as if all is OK
-> when it isn't.
-> 
-> For consistency, also change a related dev_err() to dev_err_probe() in
-> exynos5_usbdrd_phy_clk_handle() to get consistent error message
-> formatting.
-> 
-> Finally, exynos5_usbdrd_phy_clk_handle() prints an error message in all
-> cases as necessary (except for -ENOMEM). There is no need to print
-> another message in its caller (the probe() function), and printing
-> errors during OOM conditions is usually discouraged. Drop the
-> duplicated message in exynos5_usbdrd_phy_probe().
+> Just update the code to use the regulator_bulk APIs.
 > 
 > Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
