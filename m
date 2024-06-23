@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D670C185E6D;
-	Sun, 23 Jun 2024 13:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A1719415A;
+	Sun, 23 Jun 2024 13:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719150269; cv=none; b=gxln4mOrRHEY6rC+KsnsVgyK1qgX0gr3rfvcSWC4uR1HORzjlAaybdLsSrSMGnVqaQpDIdbyABLRgD/W3P7QsUJlC9YwQVBg+rvUsiMqNtd8NON1otvG8/jYVqT95gepLvz7lyDD/fptPpZqr06CfwFcpJa5rdB3dxu0u1adz24=
+	t=1719150308; cv=none; b=tcchQHHc/C0Layv/kruaJAdbAz01HG6muP++GtF74QbBRTJGCI6Fgg/5wcFCTMdLaqFtwpNLAoBq+ayaxNR1RA2QtxPGdApKJ5wfnXmQpz7zVe96zu4Rj1l0jx5ZiUmdWF4xQGvQphTLB4JOkcFzzsFv5iDDke6lhnEFAbmvuy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719150269; c=relaxed/simple;
-	bh=2VViG7Ljb3t8VZRFZHT3YXOFyq8TksW57NNk5hqXajk=;
+	s=arc-20240116; t=1719150308; c=relaxed/simple;
+	bh=e2nUYJcqOmmveWyyVEjm37yY43tInovyngLChMBlzxk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qglx4wSR742AhUT2+BhoPjOcsyXp2d9G6ULgDvSxOBv0wweHqmw0gnJdIip5FKlZ2H8XvxVyFoilzJEGgMUzGjOQjwkY0vvp3G5d6RBE3ZihLnJq6nUrsuZwr0dvjNeb2XrGLbHMjp08tS+iYEUCgIf/6IROwOrz+oflONcbYls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJhWGD1x; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=JzT9Z40D52TlsMmCK6NCDbLMwT9zKSgvWD2ummtIbwcEyhTmM8h/Tf4f8S29bRAwTe570lww1Xy6PIRHZtegC+wav1Fm59So0ucHadhA8U6xp6mReMrUzR8nCcgnM0EcfGnEYV0Brlah2WEnbRI1DSHoQVxEnPHtNCuct2OezoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwuB7TXT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJhWGD1x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34680C32781;
-	Sun, 23 Jun 2024 13:44:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwuB7TXT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844A5C2BD10;
+	Sun, 23 Jun 2024 13:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719150269;
-	bh=2VViG7Ljb3t8VZRFZHT3YXOFyq8TksW57NNk5hqXajk=;
+	s=k20201202; t=1719150308;
+	bh=e2nUYJcqOmmveWyyVEjm37yY43tInovyngLChMBlzxk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CJhWGD1xtFS3JoQZHj1qPIdUbbl0i4oGly7NqtnG3ZgWqFR6KaUU5L0dXI7U0ehG2
-	 EHjItsmYd2VsEoNUEtCp6Xq9mpm1KR43uBdSSEr96S2gUPeXBLRvejP7gsT0VJibqN
-	 9Pdra4S50lH4EUqWVrDW7F0eI/lNDE+sWszeGNb1Rc8BNWurPR2v6891KZMs8H7Pak
-	 2mp2LIAougvYN1gy1Pi0rFIlvpKjkgr8Qb+aZNsCkWttMtMvo4YlUiboV1Whld3F6k
-	 PYcjeiyTWJ2iAF67hIiggX6o05HlazOF5TJv+02YOOaU3UFGVUyLTS4JfclCgT4fRU
-	 ap5AC/w67wLDg==
+	b=DwuB7TXTo7YsLtj6eD3P2F2R9JBEY38oJEV6l4e4EF9xvx0BohQeuHLaaw2n1SFvG
+	 xmHMBwpAnBNg8cKRDEs4oSbwcmWFdy9rHesKQXDU5SBTUaWwqfFKU3J67inTmzDQis
+	 hro/i+xzKre55ffavLdmfW+B+sY4c55Onw1sZw2BClWxBH0u7vtWL6R5uDLzTaqhZm
+	 YIZ/WzNxpDo5diSW5j75RHnJBfM3xDCTOAugYzcj30K6ZkcQ/qmWgabzIvor3KNm/U
+	 //y9WIEr1AfVmcYP45YMwd2noCMoJv5RnmL20OMzFiAukBIW0oFTgyQNUg4Q69hULb
+	 jUY2nHEwSSRPw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -41,12 +41,12 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	dri-devel@lists.freedesktop.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 14/21] drm/exynos: dp: drop driver owner initialization
-Date: Sun, 23 Jun 2024 09:43:47 -0400
-Message-ID: <20240623134405.809025-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 12/16] drm/exynos: dp: drop driver owner initialization
+Date: Sun, 23 Jun 2024 09:44:41 -0400
+Message-ID: <20240623134448.809470-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240623134405.809025-1-sashal@kernel.org>
-References: <20240623134405.809025-1-sashal@kernel.org>
+In-Reply-To: <20240623134448.809470-1-sashal@kernel.org>
+References: <20240623134448.809470-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.6
+X-stable-base: Linux 6.6.35
 Content-Transfer-Encoding: 8bit
 
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -74,11 +74,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
-index f48c4343f4690..3e6d4c6aa877e 100644
+index 3404ec1367fb9..71ee824c4140b 100644
 --- a/drivers/gpu/drm/exynos/exynos_dp.c
 +++ b/drivers/gpu/drm/exynos/exynos_dp.c
-@@ -285,7 +285,6 @@ struct platform_driver dp_driver = {
- 	.remove_new	= exynos_dp_remove,
+@@ -288,7 +288,6 @@ struct platform_driver dp_driver = {
+ 	.remove		= exynos_dp_remove,
  	.driver		= {
  		.name	= "exynos-dp",
 -		.owner	= THIS_MODULE,
