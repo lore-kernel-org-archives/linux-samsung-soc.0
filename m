@@ -1,67 +1,68 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791A137C2E
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 11:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EA613A894
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 11:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228512; cv=none; b=Hhfi1sy1P/2v55z176yzm+wjaqb40AKJflXWy9cOZ4/SLd140Zt+OFLA4WFO3Ylz4Ha97D/ct+IK0oYOhNGodpKii9vghv5d70ZZPIrrM22yrux901u/4rHnP0chviflVh76T41Cb34J0w/yB0QXWBh229YeJAE/eg9QtxoTFyY=
+	t=1719228803; cv=none; b=PhmdUdayCo9WesIkval/161crNmkgOTTGy9FIRSlLNnCwiaPhIGYUvCOy9AtiTQgho2YmISAfN3gLiBmvXpRqntAwQqyICrfDyBL3/5eEgpFzD8ZQBLNJt4NQf8OA3vZFsFChBK2k6SuLQPefPVET9ulsHhdqOLZlcJ19hu5QXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228512; c=relaxed/simple;
-	bh=NYND7VdilAAcK8UQ6tNb4wM6mWC/LRp6HLGpJAraXLA=;
+	s=arc-20240116; t=1719228803; c=relaxed/simple;
+	bh=aHBMPXZbuIaqHeB85khV05HlP6Xqj7t2FeSE5qthS3c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BlBfOHcWDCclBHvrFm2Ram4EK8H59Vy02y9RJQFBISnTfgMKaWsj0ogK9U1C7CLgQ/BSLJhXFHoI4ryAJGW/rlHhoGSBc2W4BvNDggt8t8epuJ42rtqLXJj+NhjG4R8mzMlKtm9pGwDk4lOXm0s8U+UBWsyScWxVc1aEGVOORwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Skk7pb8B; arc=none smtp.client-ip=209.85.161.52
+	 To:Cc:Content-Type; b=ogoYoJgmmH5dq7o869OjRoKqTQu2O7vFmsqn1HROGTIYMoRX9xzlb8QTJFe7nBe65ofcMmsSsfUIWoLeU97v//S4O93nKgxZpqzpYXPOReBcIlKDqvIMWvLSqxLjJQjStqAqGKgLqns6T75WFg2++OJCvPZDsyDKEFv14xpccPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SIj/pJ8S; arc=none smtp.client-ip=209.85.161.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Skk7pb8B"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5bfb24e338bso1674268eaf.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 04:28:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SIj/pJ8S"
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c204600d49so274164eaf.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 04:33:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719228510; x=1719833310; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719228800; x=1719833600; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QteiONYM0/7wKm8o/iZbfkWsRu+IEcJCYcDxA/UWpZM=;
-        b=Skk7pb8B4pTG2wluyc+M3BEnjjfsc+cjoBKHYUgSt4mMKH8bSzkDEfLplA6wY7xiFv
-         gyXyAmNkJqM+Lb1EUY8iXv2TyuKvwMPucVhZ6wnLKqg9/QXQICkHXfxdmThoXJziHjMd
-         KhIrKs43ZDZEefLpo17/tzYlWXXbE7tU2P9pAusJMO1ElDxa6NIUiycheVX9zT6lVu+9
-         gw29awlOqAcBZ4wcMeNCR3ndK95g1lDWnidLW/EPguZrSZ3dTX8oJBJZWiV+hL3jv3o2
-         B5XVnfVVFkX3XisnDmr85HOkBWb5CubA0PjgbeODapqszdB6lHztFk6vhIqxZUkwl2sm
-         qJeA==
+        bh=odpMfJJZ8NPTYLZvgutefDIcMfEDKS6u2cQ2F9qXb2A=;
+        b=SIj/pJ8SkjXrkKdG2Em6ZbdDd369mqHkAvh9JRfRXorWP4boLiTDpqN6/5k/O5Pna3
+         /Bo+IJ6tuCVaNe2JIRoEcLpJ6WH3mKD4aeVhc0aOmFJ7FsmPoNJLmk7GfU8JOsINKkDA
+         4Rp/fh2Vts/VDujxCty2aXC1mKRanXhgkQAX1X2tt/mtY9m1Wh9DzK8EWLVvZTQyQtfR
+         A/dftmLhd7svPTOrtWjJWwMEZOV+MYBuSsTyc44EhmJA9E/3hX+PsT/qn68eXFGnpqx+
+         OMi1MzKdqul0bdYrI1QYVkX8sbnxaP3wRu3PdstempmOFZQGP9+AbfW47/2QhokMf1AZ
+         dbhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228510; x=1719833310;
+        d=1e100.net; s=20230601; t=1719228800; x=1719833600;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QteiONYM0/7wKm8o/iZbfkWsRu+IEcJCYcDxA/UWpZM=;
-        b=ZFcc2pa98CJLJHb91Z9x7b2qmyKnIEFysu41W9t9z769YxwC6Vb+CDQ+sOOmnRPpwv
-         KSFLlb8ng8W6im3pHekMhrFK1pVRa0dPlA/vaDvBzhoQ0RhsTPxHjoDWCIqeBpKL+pzn
-         ZEx9U0LwNdqEwfHvoeTER3hEL5Ios1bIlxDGaQ6FjrXbIGDBqbJWFPBwLsbocSoNa5HC
-         FAGrq7U1ikf45Wv7T7HN4mHnKZ2Cdhy0fAI/k5znul4hIvpftmBtuOpGw1vglNVhJ/UP
-         pwxdgJ5FfRnkHzFpr88pxlRVEhZG/xdiVniJEVIPAWA3/Vu2zXLjTwbrzvxIDd5Kc40i
-         ZoIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBLYdtb5HHMzNdbquaNdZTdJvCLdmbNSeChT24eUjUzqIi7QFq7eHv/zgyyoN1vlWD6/HSwVNqVkCFB54U0Io8T8fL033PqxBiQisrJHkvBqE=
-X-Gm-Message-State: AOJu0Yz/fpjNN1rjm5OosK8DxZflaV3Yc/IQnoylYKlpUTKhmtaQwrqG
-	NMZ3vab6XtoB12Jxp7qPeSA4eZ4FpFn4q5Jte76AlRqf0PDw5Teq0+0eFkBQbiN/rmbMpHOm/Pk
-	xs48Nkd8tkGNULR9kpsmzF/u8pumn7BU01uPQiw==
-X-Google-Smtp-Source: AGHT+IFlNv2FZElqgVQlBk87lsFwbs9c65tZcdtCpO79u3aNcvuYkknMUcQr9mTDHrMDvpletr+cOs9nxhTCAnVSEb4=
-X-Received: by 2002:a05:6820:60f:b0:5c1:e83b:ee10 with SMTP id
- 006d021491bc7-5c1e83bef4amr2456768eaf.1.1719228509995; Mon, 24 Jun 2024
- 04:28:29 -0700 (PDT)
+        bh=odpMfJJZ8NPTYLZvgutefDIcMfEDKS6u2cQ2F9qXb2A=;
+        b=NXXVkG8zVsZT7FzokgAo5CcXRe7YM6FpYQU/Rd+aEHW3HDISsqooW7di6ubxNMniJQ
+         JmTR0PbFQXMdRhaxGonbOUfhRq46AyE+jizTzaegKyoQbumjYFsghSxppTG5sCRlQ3P4
+         ZO6iuvsPxQZ1aV2BGLFlxDxr4A7NpQDWDunLkEEsVxiI3Kehbg+OhXT8+XAg2X//zqBQ
+         JZr70E5v2BD9/oyllNTjJeQdsaoj9R8VBIW9h8L/Ij8msaUvYd4LJeCAv2Gsn6yrfS32
+         flYrUKXnMHKT2gXRkymkYa+gwZ1Ze6qYJ+uth44Y2z/p1wGx/rKuvFanJoyI/Vr2vTW4
+         c76g==
+X-Forwarded-Encrypted: i=1; AJvYcCV3QA0f8SWkySYGBvkmBI6Sf6EgsEBx1nObG4wm+HBWVL3YBVbpXHU2MJHv1tp1Sf94dxoIbZy5BfuLAkjyJ/BbTWnSpIB/VBZ5o6/0XeU170E=
+X-Gm-Message-State: AOJu0YwX2JK0kIWzuIkV9am4QU1ZnjqGjtY7re1hW7GaA+X/2jo5I47V
+	mWS9jkxQZcK7w7Y/gU6FhMrjBbqXLnQqhl2TnsEGtWZVIaZLB1GLeVrP50wWMjTe8H9U384FmYl
+	oBppGVgUpA1WIe/FyCU69sj0xr4W/bNm25U/tlw==
+X-Google-Smtp-Source: AGHT+IGmvLU2Uh+ee6D/ZczJ3wgdd7eqWxvkUL1HgsQRsgH4xuQIXM0iyYoA9GudXgodjHC0GIwB+1yLti8wulJ2M18=
+X-Received: by 2002:a4a:870d:0:b0:5c1:ae16:acb3 with SMTP id
+ 006d021491bc7-5c1eb76906fmr4738478eaf.0.1719228800566; Mon, 24 Jun 2024
+ 04:33:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-5-b66de9ae7424@linaro.org>
-In-Reply-To: <20240617-usb-phy-gs101-v3-5-b66de9ae7424@linaro.org>
+References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-6-b66de9ae7424@linaro.org>
+In-Reply-To: <20240617-usb-phy-gs101-v3-6-b66de9ae7424@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Jun 2024 12:28:18 +0100
-Message-ID: <CADrjBPpESTiZBruqMsZuuY=GyAjcFEZSXGEceeDAVESd52jJZA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk
+Date: Mon, 24 Jun 2024 12:33:09 +0100
+Message-ID: <CADrjBPrg6_3FhD=2W8X=yaSrTMbmcfjRo3HVo1LyHVcUM8P=0g@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] phy: exynos5-usbdrd: support Exynos USBDRD 3.1
+ combo phy (HS & SS)
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -80,24 +81,64 @@ Hi Andr=C3=A9,
 On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
  wrote:
 >
-> Using the regulator_bulk APIs, the handling of power supplies becomes
-> much simpler. There is no need anymore to check if regulators have been
-> acquired or not, the bulk APIs will do all the work for us. We can also
-> drop the various handles to the individual power supplies in the driver
-> runtime data and instead simply treat them all as one thing. Error
-> cleanup also becomes much simpler.
+> Add support for the Exynos USB 3.1 DRD combo phy, as found in Exynos 9
+> SoCs like Google GS101. It supports USB SS, HS and DisplayPort.
 >
-> Converting to the regulator_bulk APIs also makes it easier to add
-> support for those SoCs that have additional power supplies for the PHY.
-> Google Tensor gs101 is one example of such a SoC. Otherwise we'd have
-> to add all additional supplies individually via individual calls to
-> regulator_get() and enable/disable handle them all individually,
-> including complicated error handling. That doesn't scale and clutters
-> the code.
+> In terms of UTMI+, this is very similar to the existing Exynos850
+> support in this driver. The difference is that this combo phy supports
+> both UTMI+ (HS) and PIPE3 (SS). It also supports DP alt mode.
 >
-> Just update the code to use the regulator_bulk APIs.
+> The number of ports for UTMI+ and PIPE3 can be determined using the
+> LINKPORT register (which also exists on Exynos E850).
+>
+> For SuperSpeed (SS) a new SS phy is in use and its PIPE3 interface is
+> new compared to Exynos E850, and also very different from the existing
+> support for older Exynos SoCs in this driver.
+>
+> The SS phy needs a bit more configuration work and register tuning for
+> signal quality to work reliably, presumably due to the higher
+> frequency, e.g. to account for different board layouts. Additionally,
+> power needs to be enabled before writing to the SS phy registers.
+>
+> This commit adds the necessary changes for USB HS and SS to work.
+> DisplayPort is out of scope in this commit.
+>
+> Notes:
+> * For the register tuning, exynos5_usbdrd_apply_phy_tunes() has been
+>   added with the appropriate data structures to support tuning at
+>   various stages during initialisation. Since these are hardware
+>   specific, the platform data is supposed to be populated accordingly.
+>   The implementation is loosely modelled after the Samsung UFS PHY
+>   driver.
+>
+>   There is one tuning state for UTMI+, PTS_UTMI_POSTINIT, to execute
+>   after init and generally intended for HS signal tuning, as done in
+>   this commit.
+>
+>   PTS_PIPE3_PREINIT PTS_PIPE3_INIT PTS_PIPE3_POSTINIT
+>   PTS_PIPE3_POSTLOCK are tuning states for PIPE3. In the downstream
+>   driver, preinit differs by Exynos SoC, and postinit and postlock
+>   are different per board. The latter haven't been implemented for
+>   gs101 here, because downstream doesn't use them on gs101 either.
+>
+> * Signal lock acquisition for SS depends on the orientation of the
+>   USB-C plug. Since there currently is no infrastructure to chain
+>   connector events to both the USB DWC3 driver and this phy driver, a
+>   work-around has been added in
+>   exynos5_usbdrd_usbdp_g2_v4_pma_check_cdr_lock() to check both
+>   registers if it failed in one of the orientations.
+>
+> * Equally, we can only establish SS speed in one of the connector
+>   orientations due to programming differences when selecting the lane
+>   mux in exynos5_usbdrd_usbdp_g2_v4_pma_lane_mux_sel(), which really
+>   needs to be dynamic, based on the orientation of the connector.
+>
+> * As is, we can establish a HS link using any cable, and an SS link in
+>   one orientation of the plug, falling back to HS if the orientation is
+>   reversed to the expectation.
 >
 > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
 > ---
 
 Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
