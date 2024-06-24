@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363BD17BA2;
-	Mon, 24 Jun 2024 05:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C864A3D;
+	Mon, 24 Jun 2024 05:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719206388; cv=none; b=XWf/kdyGhkv76dWlc5Qe/5TmkCy8c35rh6vx8Q6VyNh/0OxOKSgMU3AF/OcvEMVhYyWnEn3Xd3VMPf+KBeXZqGdNXur0IsM13vttLgXE6c32VYH/7YaoPfU6u720wXXS8KDCWw6OVkQmN92myFUCoby7bI266DBi+Zl49QgpiNo=
+	t=1719208680; cv=none; b=X0ggRdI3bNO3S0CWMw3HR6/E38iMan22jasju5mvIo6uZxF4fUwrwIw9vAxDvgM5PLYqTP9Cal3LD7XGoKDsYVwYE4Q794sQECf4teAyI4O3Pc9hCrSPO7HgNrhB1f8iNJ6gPsvzdJzZ5ZBO9Sqz+i0GZds+rYHSbmYt7pH2c/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719206388; c=relaxed/simple;
-	bh=+EUnXjR3wwAOJNwcvE8bLduH/+zAa+qjz/9ZG7vIRN4=;
+	s=arc-20240116; t=1719208680; c=relaxed/simple;
+	bh=BuNlnahmg3+TJg9BToutUnnarm8xdDJGpNmE6+5oF8A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bMtvANf9j4jkFAUbuLHrRnWmUOWe22kPv8CVYRy2czgU2vNvK1LSmmozyNdeA5/GwCSpbNxc2mDs66rKERiWsbRuJ6jt8gAFbKdJvI0KwkqqO2YO+pC5W+1TsyEA6X6B4MmBqm4KkIWSm4x9StLtnyT1ka8M39cdEH+7Nd7uNZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHMJ1oEK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=VAhUhw0lnN8ClaFukz6QXp/vWvL2YWiDy6uk+uEwrbsDSfDicKGgGR7ZSygphY52ccu01+rdNbNzDK+EGSGC+d7KaVmCHtgpnx4ULBWNkQyyVOnOlMOPkwT9j8T7bqehIFNtZ8ZwCXvw9zGPZDVuZsjiB98QfgwEciQ8ESBTJVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHUBbyOA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHMJ1oEK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DD9C2BBFC;
-	Mon, 24 Jun 2024 05:19:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHUBbyOA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA85C2BBFC;
+	Mon, 24 Jun 2024 05:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719206387;
-	bh=+EUnXjR3wwAOJNwcvE8bLduH/+zAa+qjz/9ZG7vIRN4=;
+	s=k20201202; t=1719208679;
+	bh=BuNlnahmg3+TJg9BToutUnnarm8xdDJGpNmE6+5oF8A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XHMJ1oEKmDqpdqpKxrr0cTfNYhRjKILb3DSjsdy7DM1jJDw9bCbfJJevc14FMslRr
-	 3v9csFJ9lfBD1nzo0HbC19Rf5yq/mLP8nN/OZoU+5vSTiB1MSfFHaQni1NhQWDXICA
-	 9Kn4bVgrbN4vuTEQGyzqB/dIUK5wylGjqHNKPQb9tgVSFb2vSy1Qu4wuO44Q/2DbZ8
-	 SmXJiD7zz0XDhWXjVgaV7hKkZB1SqPUHLzxtKRY0pPo5vbeAYm30xR0cBX8dBwnjH1
-	 M0LmzEXDrWw+IN3Coi/3qYwqKThbR4mlpqSOQPzlSqSFHf9oMab9rb74XGTRVcTkXF
-	 fCK5VzfgCYmgg==
-Message-ID: <b91eda69-5cdc-4cd3-93c9-5daa89bdbe23@kernel.org>
-Date: Mon, 24 Jun 2024 07:19:39 +0200
+	b=OHUBbyOAkup/wUoJL8ijEDH/Xn938syrvANuumaJq5nrGSn+DbomvqcayREGcvNHb
+	 jUf+qEuQ1mL2R1wetUTXE3aUKT4yzfJCyPDr9b40U1pQrbNKo24cgIatbfAoOgbVBM
+	 wEd/I1mb8Bhg4DD5xQ338Rpzyvwtiu52Of5cijwJL/CffGIxy/zShPzcSUPszzzwsi
+	 TJeFU1HYPbXG/eMUiY3iaUcf4RXFqjMkxi+DsJ64ZUtpG6784ptkYd5L5E0iM+9W+G
+	 NZicGTpgzUDQtLTDa7eVXtM8PEYgHowx4OiEHlEvcT6DNQL61fUwRfWPQ1mWDDBMsK
+	 mHG55qAvVxb6w==
+Message-ID: <e13cce68-3e71-4e1b-8bd6-7932fd10b221@kernel.org>
+Date: Mon, 24 Jun 2024 07:57:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,23 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add gs101
- compatible
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
- kernel-team@android.com, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org>
- <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
+Subject: Re: [PATCH v3 1/2] mfd: syscon: add of_syscon_register_regmap() API
+To: Peter Griffin <peter.griffin@linaro.org>, lee@kernel.org, arnd@arndb.de,
+ alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org,
+ andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
+ semen.protsenko@linaro.org, kernel-team@android.com
+References: <20240621115544.1655458-1-peter.griffin@linaro.org>
+ <20240621115544.1655458-2-peter.griffin@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,21 +89,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
+In-Reply-To: <20240621115544.1655458-2-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 17/06/2024 18:44, André Draszik wrote:
-> Add a dedicated google,gs101-usb31drd-phy compatible for Google Tensor
-> gs101 SoC.
+On 21/06/2024 13:55, Peter Griffin wrote:
+> The of_syscon_register_regmap() API allows an externally created regmap
+> to be registered with syscon. This regmap can then be returned to client
+> drivers using the syscon_regmap_lookup_by_phandle() APIs.
 > 
-> It needs additional clocks enabled for register access, and additional
-> memory regions (PCS & PMA) are required for successful configuration.
+> The API is used by platforms where mmio access to the syscon registers is
+> not possible, and a underlying soc driver like exynos-pmu provides a SoC
+> specific regmap that can issue a SMC or hypervisor call to write the
+> register.
 > 
-> It also requires various power supplies (regulators) for the internal
+> This approach keeps the SoC complexities out of syscon, but allows common
+> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
+> by many SoCs already to be re-used.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Lee,
+
+The second patch is for Samsung SoC but it depends on this one. I do not
+see any conflicting work, so you could take both via MFD tree, but just
+in case, could you keep both on a separate patchset? That way I could
+still pull it if there are more patches coming.
 
 Best regards,
 Krzysztof
