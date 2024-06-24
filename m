@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C864A3D;
-	Mon, 24 Jun 2024 05:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A9A1CD25;
+	Mon, 24 Jun 2024 05:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719208680; cv=none; b=X0ggRdI3bNO3S0CWMw3HR6/E38iMan22jasju5mvIo6uZxF4fUwrwIw9vAxDvgM5PLYqTP9Cal3LD7XGoKDsYVwYE4Q794sQECf4teAyI4O3Pc9hCrSPO7HgNrhB1f8iNJ6gPsvzdJzZ5ZBO9Sqz+i0GZds+rYHSbmYt7pH2c/4=
+	t=1719208701; cv=none; b=a4TkX/eaAUtko4+DhjjEHXltuOzBdMb8QuurB94u4hq/bUOz37u9WVu5KANKVoT6vpdXsfNVBb/ugZLLQBC23y5Gyae+LpzfkoPSFoAPDIc/9dfXscsgOf+LmTYlX+1L7/lOKtbaZGU9dzQuIT2Oex0zHpQfzUn2JjFtNWGD0z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719208680; c=relaxed/simple;
-	bh=BuNlnahmg3+TJg9BToutUnnarm8xdDJGpNmE6+5oF8A=;
+	s=arc-20240116; t=1719208701; c=relaxed/simple;
+	bh=7Q7HxI8bq08SkmPGkLg3kgEarAFP+IQUYzN1DRlXf88=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VAhUhw0lnN8ClaFukz6QXp/vWvL2YWiDy6uk+uEwrbsDSfDicKGgGR7ZSygphY52ccu01+rdNbNzDK+EGSGC+d7KaVmCHtgpnx4ULBWNkQyyVOnOlMOPkwT9j8T7bqehIFNtZ8ZwCXvw9zGPZDVuZsjiB98QfgwEciQ8ESBTJVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHUBbyOA; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=P1mxcOwqN17BQinz+X5q3JaiEO3XPjiIX36kOwcE0g0OKffRaE6pK8wnocj/slPjr95PaQpkh0y8OY8DofgH9aA09tvHQeyqxL0t3At3BcHcveh8bybd8qoBR1tBtAcJ7Xf3afBiXLhLfIsTmPSa9eGoMwTYnzzihBNdnKT9MnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLho03fm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHUBbyOA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA85C2BBFC;
-	Mon, 24 Jun 2024 05:57:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLho03fm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2060AC2BBFC;
+	Mon, 24 Jun 2024 05:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719208679;
-	bh=BuNlnahmg3+TJg9BToutUnnarm8xdDJGpNmE6+5oF8A=;
+	s=k20201202; t=1719208700;
+	bh=7Q7HxI8bq08SkmPGkLg3kgEarAFP+IQUYzN1DRlXf88=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OHUBbyOAkup/wUoJL8ijEDH/Xn938syrvANuumaJq5nrGSn+DbomvqcayREGcvNHb
-	 jUf+qEuQ1mL2R1wetUTXE3aUKT4yzfJCyPDr9b40U1pQrbNKo24cgIatbfAoOgbVBM
-	 wEd/I1mb8Bhg4DD5xQ338Rpzyvwtiu52Of5cijwJL/CffGIxy/zShPzcSUPszzzwsi
-	 TJeFU1HYPbXG/eMUiY3iaUcf4RXFqjMkxi+DsJ64ZUtpG6784ptkYd5L5E0iM+9W+G
-	 NZicGTpgzUDQtLTDa7eVXtM8PEYgHowx4OiEHlEvcT6DNQL61fUwRfWPQ1mWDDBMsK
-	 mHG55qAvVxb6w==
-Message-ID: <e13cce68-3e71-4e1b-8bd6-7932fd10b221@kernel.org>
-Date: Mon, 24 Jun 2024 07:57:51 +0200
+	b=RLho03fmaA4UxOKibme7xpIudTThY6sZUvBOQzACLZwUQovk+7f6A3sbQOjAx2i0S
+	 4pvt1wKIYU63nbtcjdJ0wz9aYrWPtNP4bRq7EmAZUqFXsFHX9ZRSanM6SnO1dNHYrE
+	 BBk+rwlUR48fh9likN8CDfAuz7gd17MsCyA+bfdJoY+YTMXpGVDkm4Cl90X3aojYPT
+	 grvLD2wRMOPOLk1St59+i2ZYyTJh+9qRt+jgSKnzDUrab95H3ai3EjODcTM7OHSHSt
+	 UCu2KMV0WYsxsU6XrwEAXMvaF7QcmA2DUuI2Cmhxwul8phg9+mAqmTKXyWTtzMkO13
+	 kcyEOyR+HbRTA==
+Message-ID: <87d0bfce-b446-4263-a56a-69ce44681261@kernel.org>
+Date: Mon, 24 Jun 2024 07:58:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mfd: syscon: add of_syscon_register_regmap() API
+Subject: Re: [PATCH v3 2/2] soc: samsung: exynos-pmu: update to use
+ of_syscon_register_regmap()
 To: Peter Griffin <peter.griffin@linaro.org>, lee@kernel.org, arnd@arndb.de,
  alim.akhtar@samsung.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
@@ -43,7 +44,7 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  andre.draszik@linaro.org, saravanak@google.com, willmcvicker@google.com,
  semen.protsenko@linaro.org, kernel-team@android.com
 References: <20240621115544.1655458-1-peter.griffin@linaro.org>
- <20240621115544.1655458-2-peter.griffin@linaro.org>
+ <20240621115544.1655458-3-peter.griffin@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,37 +90,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240621115544.1655458-2-peter.griffin@linaro.org>
+In-Reply-To: <20240621115544.1655458-3-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21/06/2024 13:55, Peter Griffin wrote:
-> The of_syscon_register_regmap() API allows an externally created regmap
-> to be registered with syscon. This regmap can then be returned to client
-> drivers using the syscon_regmap_lookup_by_phandle() APIs.
+> For SoCs like gs101 that need a special regmap, register this with
+> of_syscon_register_regmap api, so it can be returned by
+> syscon_regmap_lookup_by_phandle() and friends.
 > 
-> The API is used by platforms where mmio access to the syscon registers is
-> not possible, and a underlying soc driver like exynos-pmu provides a SoC
-> specific regmap that can issue a SMC or hypervisor call to write the
-> register.
+> For SoCs that don't require a custom regmap, revert back to syscon
+> creating the mmio regmap rather than duplicating the logic here.
 > 
-> This approach keeps the SoC complexities out of syscon, but allows common
-> drivers such as  syscon-poweroff, syscon-reboot and friends that are used
-> by many SoCs already to be re-used.
+> exynos_get_pmu_regmap_by_phandle() api is also updated to retrieve
+> the regmap via syscon. The exynos_get_pmu_regmap_by_phandle() api
+> is kept around until fw_devlink support for syscon property is added
+> for the pinctrl-samsung driver that also runs at postcore_initcall
+> level.
+> 
+> All other exynos client drivers can revert back to
+> syscon_regmap_lookup_by_phandle().
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 > Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
+For Lee/MFD:
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Lee,
-
-The second patch is for Samsung SoC but it depends on this one. I do not
-see any conflicting work, so you could take both via MFD tree, but just
-in case, could you keep both on a separate patchset? That way I could
-still pull it if there are more patches coming.
 
 Best regards,
 Krzysztof
