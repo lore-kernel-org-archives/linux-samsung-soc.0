@@ -1,68 +1,67 @@
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843A11384B1
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 11:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE8A13776F
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 11:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228039; cv=none; b=XN12OmqYgspfHIkWK7POy5+7v+7lZSot0xcO29zlscj6U1XS558j8TQ3/RPHy9hYYZ9QqTZQzTFcGTTQoXhI+NS/5Db/KOEMm8qgclITKoG4ZRYWCwJzfp3l591UiZhBz0Efg20B1gTIx+A1L92GpdcrbuC0HMyMW6gazT1YEZo=
+	t=1719228186; cv=none; b=UvWIg0WvT5PlavfDsmE3HUQhZlfQvajHFUHT9NJm3qBGH6VbSUuyraFFi7RgcaCcBd3w+/AlVlRF7dQuGJMpQfO6ZK5lZArkmztFAqBeCko4/UQ4lAto6jwgRz6vBs4T/xXMdCX7Tuup8ALo6MadQCkQFbtU1eFl06wL4XA+oSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228039; c=relaxed/simple;
-	bh=8SljLriCQU/R9iZ5gWt9zSCnrJAdSlcr5Md1yQsHitk=;
+	s=arc-20240116; t=1719228186; c=relaxed/simple;
+	bh=S4Oa3Fi8IQljVdEYLI5O8zdfZsxp5YbWq8vVORk/zlM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tCt+SDNVNL5Lj+K6Nj0wr8Y+wNg4fnDkN5r2fRa0NSE8M+nMyCar+f9P/4GdCFo5URwBJJbwleaeUAkl7e2DMdLzbsfFd7wxuNaxacti7JuCpo4mkW52+APgXNK/dwpe2Z8a9ncQmIPkYXF3Y0dWtNIFAHlRkv3WRaCFOsbqjSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HmuiA2J2; arc=none smtp.client-ip=209.85.161.47
+	 To:Cc:Content-Type; b=Jn3kn/i+eg36CD4vwIb4i+ZPIbqGsp8A8Cqrl3/+9wLZTMwFtcBChrzrpFnLYaAozY13pM4lkWlD/Xh5zfm0EF+POoq77vlWpxEeeYysXZwLLNuEygBrCWOiRBnzU/esOYMkzn98t1onoFxv7KrM3f+Gzq713nm+TgSB74FTU7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zu3kIjxz; arc=none smtp.client-ip=209.85.161.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HmuiA2J2"
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5c2011716a3so266335eaf.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 04:20:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zu3kIjxz"
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b970e90ab8so2412080eaf.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2024 04:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719228037; x=1719832837; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719228184; x=1719832984; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hiWe4k8FtBd5fLnyYS4pxEhg5OzBr8vUWEFs5mIbuS4=;
-        b=HmuiA2J2rC+CpZ6U6KTdguUb92pH7DT52mE3U8EnDhUKPXpB49IFYd3c+oLszwXYBg
-         w8X5wMXwZCjFsvwgS4z3BHXvgGPrjfk92jQCVTVqTkDE8+5MHThp4TI6Tj5KtrPPLzm8
-         GsDWLqIlxIzdXvAWzRq0iDGDE+lV7FDMldHSy4pzBnBdq9b/b2u9wRsMb9BM//CDlhjX
-         UQmVsAzr/NJHb1inZCmDFLg3d5o98EFVFVaLE+B50Z/WjDLdE7vsh8HKDIXL0qlGuPg0
-         DFHWNSXElIibyfEhOT0gSMBg3br4W6qT9V2v4v6vFoH0AA6i/UtP0jqpBwTuCbX4rpU/
-         frMw==
+        bh=u30lLX5MsP/IKxn1NfwcAHsSmZJS+FIZz7/OFIlaO7I=;
+        b=Zu3kIjxzOftbaS3NAFWR008Jt3PeySACnJTg9Mo7KISu4z+38omBIFJvQyN++lv7cB
+         zU0dAVDZs14c8ST/sK65k9V3nxxHPyq3Avm16Upe1dQjbaYvj8xrF8ZrY2TFCnnWDJ+V
+         80Z9WBWkYVYcysLKNPrAistos06qhS5o6UZxaxOxKcKhJig5CTTgXwBEK0SSJCjqhbUM
+         WpprSZV0Nj1nhIK6sdCd/mdHnjekAtUazD6Zgfbof4AQwlf6cJ+nu9krgbZGJY024tJC
+         gbZgKtR2LdKjt1FglyrDKbvAxwApN0OG6Pq+WQu/gfmTErf4WW6MEv8+ASXQ9TvGUXYW
+         /vEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228037; x=1719832837;
+        d=1e100.net; s=20230601; t=1719228184; x=1719832984;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hiWe4k8FtBd5fLnyYS4pxEhg5OzBr8vUWEFs5mIbuS4=;
-        b=kE5Ij9tPYZqEzh2mPfZC2kgSejo4sS0NuL+oe8xXfgZ3qITKihbudJIDbRW7ItWx11
-         iBokbojhweIfdW8jWaKT1QKlhbYNGxsyvmwJJ6vU5DSpw91C3rhnRSxLVOICeBb+fo3y
-         fOeIkwsJ/Plvs5Ez3nlNDy1crBSomH9KGhgzylQRukhGyVicD3VtYKFxHeEecfQwfDuZ
-         I/ZlOIteq6OAZu2JCR4yMpo3ygiDYFslyXlwjisVDCXn+K9y6JBlkrb8+9NV8iKpfveB
-         7jSVVoE3Xu6rEMZKTavuKVi5amI6pnu+sSpJrinWvhZ2ankpTSL+58ngOW8Z+MejfJsv
-         d2EA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdad0c4RssZqugrZ54MROCGcH2Cy3PK0Fr3iaBaR+8GkOXxaMI2DfeL6Nj+XpCH2kMQAkN/IJ2a/AjfK+TLqSLLpzJ/B1bWOjlrmwU/kJB7xc=
-X-Gm-Message-State: AOJu0Yy/C/wd4qoaki6fqu0f6QiCpkb3MscdHYEqxitls993S18tRUNV
-	xbJGvRP0kb4YNR5w2EEqiMru0rap4lKn8FtK+7KFTvECTqcYMdccLCLK5HrR+vxslmzS2o636RG
-	xgiME/40t5ikC+hDzZLrAW2+bQFnRMAl+tAG7nZ/kGu7zMM+lL3Y=
-X-Google-Smtp-Source: AGHT+IHfldjpB99ZpNwFcajstPYz4MdvmrWm26sCR24wJ27onowRiUicbCtcbFxhvjwoR18exO9DD0r6k4/LILVcIj4=
-X-Received: by 2002:a05:6820:2b0d:b0:5c1:eee6:6ed5 with SMTP id
- 006d021491bc7-5c1eee66f99mr3951941eaf.2.1719228037550; Mon, 24 Jun 2024
- 04:20:37 -0700 (PDT)
+        bh=u30lLX5MsP/IKxn1NfwcAHsSmZJS+FIZz7/OFIlaO7I=;
+        b=KU1/O9ujmBCad1w2XUd/94PjhzI9TEsoZmKNgyTBHqEVsynwl76pd/L5YxUJ3Y8kLL
+         uqw81c7EzOzycuSU7n6rLvF0Kyz5y/Z7ccFdZmLuKjL4RDLmmE2jafjG386RDkurC6uQ
+         Gr3xgLuPcGGzMq24P5yzbu7axnTgh6/PLSDXdIKKYWePfh9dMnxFiBs8hllyCNgLDTYA
+         3Z3ql2eucXld1/UwOusOOcfs2WYRJ2ID8Qh/uFZc91EoUPXkzt6eIIkpv69GkpMzjxjp
+         oJ7mQZu9jAUFaVPNcaV2338TzJwCKgdkXWHqcH67Ns7oZKAPy4wBdofsOCVB2xtkNjhm
+         hv5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVuP3wX3+gC2qcwcn1yTceSaSIVdiWnTC0jFmtjVH1DTtW188vZ21PdThxT/u5oUGbf33t062JjRkH61rvMKxIqQqeGvy9fhTJ6EsKTmN0UBS4=
+X-Gm-Message-State: AOJu0YxpCCKL1uNTdu7e7N9tUK+SJbjMBLnLiLcsZbJ5Sw/aR0TLDU2+
+	DjwqSvWDSCd8Cg4l0/YPd+9WtV5H8NOTUohe6D5mMs08eO1Gd7OD+nUxTfklwiLCK6UVGmm6tOH
+	PvosuFobYBzXaCXr56X2E+gVyQulJythr+QTwig==
+X-Google-Smtp-Source: AGHT+IEMLOPKjw5oHjHxY0zCeeuDJx6nBikXHAv0mrWk60i33NBz4cPxYEwhe+RUgp41xs0jTLpfBU3mUf65mTiLoME=
+X-Received: by 2002:a4a:345d:0:b0:5bb:3ab6:94d8 with SMTP id
+ 006d021491bc7-5c1eed472c1mr4618521eaf.6.1719228184148; Mon, 24 Jun 2024
+ 04:23:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-2-b66de9ae7424@linaro.org>
-In-Reply-To: <20240617-usb-phy-gs101-v3-2-b66de9ae7424@linaro.org>
+References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-3-b66de9ae7424@linaro.org>
+In-Reply-To: <20240617-usb-phy-gs101-v3-3-b66de9ae7424@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Jun 2024 12:20:26 +0100
-Message-ID: <CADrjBPpRCuQwLOG35mjAc==6mD4rgx2HzqLHgCA8fNGg79YOnw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] phy: exynos5-usbdrd: support isolating HS and SS
- ports independently
+Date: Mon, 24 Jun 2024 12:22:53 +0100
+Message-ID: <CADrjBPod9w5L_SNFCa8+=kzasnf8g6MmGC6m9E+kF8spu37Z8w@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] phy: exynos5-usbdrd: convert core clocks to clk_bulk
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -81,20 +80,40 @@ Hi Andr=C3=A9,
 On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
  wrote:
 >
-> Some versions of this IP have been integrated using separate PMU power
-> control registers for the HS and SS parts. One example is the Google
-> Tensor gs101 SoC.
+> Using the clk_bulk APIs, the clock handling for the core clocks becomes
+> much simpler. No need to check any flags whether or not certain clocks
+> exist or not. Further, we can drop the various handles to the
+> individual clocks in the driver data and instead simply treat them all
+> as one thing.
 >
-> Such SoCs can now set pmu_offset_usbdrd0_phy_ss in their
-> exynos5_usbdrd_phy_drvdata for the SS phy to the appropriate value.
+> So far, this driver assumes that all platforms have a clock "ref". It
+> also assumes that the clocks "phy_pipe", "phy_utmi", and "itp" exist if
+> the platform data "has_common_clk_gate" is set to true. It then goes
+> and individually tries to acquire and enable and disable all the
+> individual clocks one by one. Rather than relying on these implicit
+> clocks and open-coding the clock handling, we can just explicitly spell
+> out the clock names in the different device data and use that
+> information to populate clk_bulk_data, allowing us to use the clk_bulk
+> APIs for managing the clocks.
 >
-> The existing 'usbdrdphy' alias can not be used in this case because
-> that is meant for determining the correct PMU offset if multiple
-> distinct PHYs exist in the system (as opposed to one PHY with multiple
-> isolators).
+> As a side-effect, this change highlighted the fact that
+> exynos5_usbdrd_phy_power_on() forgot to check the result of the clock
+> enable calls. Using the clk_bulk APIs, the compiler now warns when
+> return values are not checked - therefore add the necessary check
+> instead of silently ignoring failures and continuing as if all is OK
+> when it isn't.
+>
+> For consistency, also change a related dev_err() to dev_err_probe() in
+> exynos5_usbdrd_phy_clk_handle() to get consistent error message
+> formatting.
+>
+> Finally, exynos5_usbdrd_phy_clk_handle() prints an error message in all
+> cases as necessary (except for -ENOMEM). There is no need to print
+> another message in its caller (the probe() function), and printing
+> errors during OOM conditions is usually discouraged. Drop the
+> duplicated message in exynos5_usbdrd_phy_probe().
 >
 > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
 > ---
 
 Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
@@ -102,7 +121,7 @@ and
 Tested-by: Peter Griffin <peter.griffin@linaro.org>
 
 Tested using my Pixel 6 pro device. USB comes up and it is possible to
-use adb from the host to the phone
+use adb from the host computer to the phone.
 
 regards,
 
