@@ -1,256 +1,120 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C8F18FDC3;
-	Wed, 26 Jun 2024 17:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A62E1922F8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 19:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719421667; cv=none; b=NgTZs2wt01Ncvip9/BadwJsX5QEkf7n2+W4OX5kFw4K4Mk/ThCE7u6RFDbvfnbGZM11CQhLCCFp6RHST1I7JxeSQL3Lptzc4iCJiboqNvN8W0CIve/o7PzCyrRGqIavVj3eLtGv1VbppadX22e39cBT179JV1L/LVoQJMitNLXY=
+	t=1719430990; cv=none; b=kdziKgfw3KVBQ76SBOwpKaApUQb5I/huSjjLv0KxAgT89N3CVwx/Rgh6o8wLo9rwiIDF+yLyWinQNyydOfhcN7z8SF+QLoVdEQua7BFeQr532jv3ebiNC0j0LFVtn/W+lpcb0yR3LbrGL0nlWNkCkm3ADc5WR6Hgpv/mBv4o0Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719421667; c=relaxed/simple;
-	bh=oxQZkX3Fk10UtY8kTR8wn4YJhoUPmskzn0OLNWOBAWc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=F8CWlUZlTx+33BAlgQdhq8Pa9A4PqIAzlDRrLMoSznMXHSKRDW2QrBuwHmeNBPyUtsZzgfGbe1/KSrfeh7LGYeyd+ZpCmXmplrL/hL5aiKAq6Oz5Dj2EJ7iypqDJsT6OD1hFNk7at3eYeVZvlYR+q01z+n4MGnM6seQRzgzofN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oWTPPIh2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719430990; c=relaxed/simple;
+	bh=wQfLyPSaduwhoXhyw7tCofrvU/aH1SkdI6MXu0jHKKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9VZxtYPU89dLR/Oqvolex3dYDZ7FQhQw7FlqgfVDzqrqREB62rFRzuGQ0IS4VIHZJxv7H4OhB4abVcp4uBR1alNMq5PHftWvUP3HHHBd2xNczB1h70I+dR9UG4moanV/OB75V7CZpclnQ/5gtrQg1mXa7eEYL54C9eKyjmKb/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UTNtSLMH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oWTPPIh2"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfJcS029739;
-	Wed, 26 Jun 2024 17:07:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=7WuQrotKCjs+y+VTNTpnxm
-	SDTsA4KaqgNw6FEkiGJ+U=; b=oWTPPIh2ir48moBu8/0Lw+aZ1+oh1ItKN0gqdM
-	Jrh3q/a2zc/0J00QZUpubzaE96o5a1NLtCwQVIDoOSGP/aXZnkzthD49jKGFI4Ou
-	/brEshgg7Xz1M/7qLW/W/fp48oyhhErcvtxrsci1mWvP/s9ODHEs7ja5/oJ8vQQZ
-	ihMn3YCc926OyEoOq9Zy3OMVkS4NqQCY/RVfmV5seAlAHNyDvCJdPOMQx22OJNot
-	2nK/mbj21bRMWSLMwCYljYOwmm7MMFYNMc5+b9tOmZsKu8da4nh5FFMH4DIdku+s
-	5F9XSpG9kAI1NmQErJa072GNQNFhGp8aYzsb/3Wfx3rXBfBQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400c469veg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 17:07:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QH73ww014766
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 17:07:03 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 10:07:03 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 26 Jun 2024 10:07:01 -0700
-Subject: [PATCH v2] PCI: controller: add missing MODULE_DESCRIPTION()
- macros
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UTNtSLMH"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-421b9068274so60182725e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 12:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719430987; x=1720035787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fnjsauIL/CcAxAa/bQLK55jPhlKZNz6Is4DxauRo/E0=;
+        b=UTNtSLMHPX6W4Z5ZTUik5X0mZtVQGth8+tRfRkfP8FWhXBztW4jN0GwCfb0zcoSe4d
+         CCIpKNW0qUTqfIO66Y5ttnKoNvTgIis9fo1mAcJ0JjascqfQYDgOCyb32pC66qn6lQzV
+         mp45YgWQKL7HG2S3502mqTQkH8ge5iT9EGe3vgFhCbDkPpNA6ajmM+GBgZ0ZVM0WwJv5
+         BBOZwrGLyB8oUGCyAJ1hE07nhSmAmTiCQ6zUvfXrR8PkHaYIPKyYDyLf6yIUjMu3pT+o
+         m7AdNN4PH1lUVnvGiWAvh9I8bph8m7G+DNLMn+0EFC6O1tD4/7ieQauWTzka/Wyds84B
+         fN1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719430987; x=1720035787;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fnjsauIL/CcAxAa/bQLK55jPhlKZNz6Is4DxauRo/E0=;
+        b=pwxvt64mDK7YLjVdr69iIEd6pPjyxWgmuMDKCGfU4csOpz1EsW0zhoRCf9TRJrR90t
+         vdxMVYWUHm2WAPkq6LSY2oSI9PiwpnK8POnhxgHY+qDYC/m1QomyBOIZf9MU/f4QSYXg
+         dHCOj9UHFU5WVDX4fCcA9c28L0noKt2HxbrKrbPM/aybm/f8fDPLAWqKpz0+fosGi43W
+         +arqiDVtaHtkwtjHiqHP9E+ocg/1zT8fl+9/rGyckAcQPXBPgdBV/tSSm1lwDLuYyZNw
+         xxXXy/8Ft9oqKHAhf93aHXkaBijc2KrlrtigZbub1iSMHY/bGA2oyADA6o71bUe/1hMM
+         XBaw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/jJ3ouF6eVtq1JLdCjzfH9v+rKhKuBNyQB1ooYYRi2Y4yPIglczAs1lsFMBOAum5JJAhlBD8gYTO4Tr+1xa5gn6xI9zbULiGUQ3rnKOt2G9M=
+X-Gm-Message-State: AOJu0YwEzvCa37JVZHKHtgPgi05bBkWK1HkIpuv8v2b6BveIaZ6lXjOX
+	2J6W8rS5NYDmQefj5EO8GIyquHGa3BoJ+o7XtqDJSwF6fcqMo5nVrCVTYfUqRuY=
+X-Google-Smtp-Source: AGHT+IG2LSoOJQA11RV0AZDKvrStmKskCO7Ie8cnMZ0Kw2R/ExVN3FkSauKy1goNEMtUgpFm9FC1NQ==
+X-Received: by 2002:a05:600c:3510:b0:424:76d7:2cca with SMTP id 5b1f17b1804b1-4248b9363d3mr74795175e9.4.1719430987018;
+        Wed, 26 Jun 2024 12:43:07 -0700 (PDT)
+Received: from gpeter-l.lan ([2a0d:3344:2e8:8510:24d9:a20a:2de5:8eda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c837eb2bsm36728905e9.39.2024.06.26.12.43.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 12:43:03 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/3] Add syscon-reboot and syscon-poweroff support for gs101/Pixel 6
+Date: Wed, 26 Jun 2024 20:42:57 +0100
+Message-ID: <20240626194300.302327-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240626-md-drivers-pci-controller-v2-1-94c811db7a51@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALVKfGYC/42OTQ6CMBCFr0K6dgw0YIor72FY9GeQSaDVKTQYw
- t0tnMDll7z3vbeJiEwYxb3YBGOiSMFnkJdC2EH7FwK5zEKWsi5vVQmTA8eUkCO8LYENfuYwjsi
- gHKq2VlqaVorcfzP2tJ7uZ5fZ6IhgWHs7HMaR/LLCpOOMfMQHinPg7/kkVUfpn9FUQQWmbZWVt
- XR90zw+C1ny9mrDJLp933+azXEq4wAAAA==
-To: Jingoo Han <jingoohan1@gmail.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>, Will Deacon <will@kernel.org>,
-        Joyce Ooi
-	<joyce.ooi@intel.com>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Marc Zyngier
-	<maz@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-        Jianjun Wang
-	<jianjun.wang@mediatek.com>,
-        Sergio Paracuellos
-	<sergio.paracuellos@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        "Nirmal
- Patel" <nirmal.patel@linux.intel.com>,
-        Jonathan Derrick
-	<jonathan.derrick@linux.dev>
-CC: <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <kernel-janitors@vger.kernel.org>,
-        "Jeff Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Pp_ugrtXN2NnNxBk5z3CSJw--DMyIJx1
-X-Proofpoint-GUID: Pp_ugrtXN2NnNxBk5z3CSJw--DMyIJx1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_08,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 malwarescore=0 clxscore=1011 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406260125
+Content-Transfer-Encoding: 8bit
 
-When ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/dwc/pci-exynos.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pci-host-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-altera-msi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mediatek-gen3.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/vmd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-apple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mt7621.o
+Hi Krzysztof,
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+This series adds support for syscon-reboot and syscon-poweroff to gs101/Oriole.
+It has been tested with reboot and poweroff commands respectively.
 
-Acked-by: Nirmal Patel <nirmal.patel@linux.intel.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com> # MT7621
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Corrections to these descriptions are welcomed. I'm not an expert in
-this code so in most cases I've taken these descriptions directly from
-code comments, Kconfig descriptions, or git logs.  History has shown
-that in some cases these are originally wrong due to cut-n-paste
-errors, and in other cases the drivers have evolved such that the
-original information is no longer accurate.
+Note the syscon-reboot/poweroff has *runtime* dependencies on the exynos-pmu
+and clk-gs101 patches in this series, as well as [1] which was just queued by
+Lee. As you are the maintainer for exynos-pmu and samsung clock drivers I've
+included those patches in this series.
 
-Also let me know if any individual changes need to be split into a
-separate patch to go through a separate maintainer tree.
----
-Changes in v2:
-- no changes to the actual patch, just rebased to recent linus/master
-  and collected the tags received so far
-- Link to v1: https://lore.kernel.org/r/20240610-md-drivers-pci-controller-v1-1-b998c242df55@quicinc.com
----
- drivers/pci/controller/dwc/pci-exynos.c     | 1 +
- drivers/pci/controller/pci-host-common.c    | 1 +
- drivers/pci/controller/pci-host-generic.c   | 1 +
- drivers/pci/controller/pcie-altera-msi.c    | 1 +
- drivers/pci/controller/pcie-altera.c        | 1 +
- drivers/pci/controller/pcie-apple.c         | 1 +
- drivers/pci/controller/pcie-mediatek-gen3.c | 1 +
- drivers/pci/controller/pcie-mediatek.c      | 1 +
- drivers/pci/controller/pcie-mt7621.c        | 1 +
- drivers/pci/controller/vmd.c                | 1 +
- 10 files changed, 10 insertions(+)
+For the moment I have left out syscon-reboot-mode dt node as whilst it uses the
+same SYSIP_DAT0 register as exynosautov9, and setting this the reboot mode is
+correctly reported in the Pixel bootloader. The bootloader is also checking a
+scratch register in max77779 chip that isn't currently enabled upstream, and
+thus the bootloader doesn't actually enter fastboot.
 
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index a33fa98a252e..79d83fe85d3b 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -437,5 +437,6 @@ static struct platform_driver exynos_pcie_driver = {
- 	},
- };
- module_platform_driver(exynos_pcie_driver);
-+MODULE_DESCRIPTION("PCIe host controller driver for Samsung Exynos SoCs");
- MODULE_LICENSE("GPL v2");
- MODULE_DEVICE_TABLE(of, exynos_pcie_of_match);
-diff --git a/drivers/pci/controller/pci-host-common.c b/drivers/pci/controller/pci-host-common.c
-index 45b71806182d..60f5e328314e 100644
---- a/drivers/pci/controller/pci-host-common.c
-+++ b/drivers/pci/controller/pci-host-common.c
-@@ -96,4 +96,5 @@ void pci_host_common_remove(struct platform_device *pdev)
- }
- EXPORT_SYMBOL_GPL(pci_host_common_remove);
- 
-+MODULE_DESCRIPTION("Generic PCI host driver common code");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pci-host-generic.c b/drivers/pci/controller/pci-host-generic.c
-index 41cb6a057f6e..cb911863a3cb 100644
---- a/drivers/pci/controller/pci-host-generic.c
-+++ b/drivers/pci/controller/pci-host-generic.c
-@@ -86,4 +86,5 @@ static struct platform_driver gen_pci_driver = {
- };
- module_platform_driver(gen_pci_driver);
- 
-+MODULE_DESCRIPTION("Simple, generic PCI host controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
-index 6ad5427490b5..25ad1717f1d8 100644
---- a/drivers/pci/controller/pcie-altera-msi.c
-+++ b/drivers/pci/controller/pcie-altera-msi.c
-@@ -290,4 +290,5 @@ static void __exit altera_msi_exit(void)
- subsys_initcall(altera_msi_init);
- MODULE_DEVICE_TABLE(of, altera_msi_of_match);
- module_exit(altera_msi_exit);
-+MODULE_DESCRIPTION("Altera PCIe MSI support");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-index a9536dc4bf96..ef73baefaeb9 100644
---- a/drivers/pci/controller/pcie-altera.c
-+++ b/drivers/pci/controller/pcie-altera.c
-@@ -826,4 +826,5 @@ static struct platform_driver altera_pcie_driver = {
- 
- MODULE_DEVICE_TABLE(of, altera_pcie_of_match);
- module_platform_driver(altera_pcie_driver);
-+MODULE_DESCRIPTION("Altera PCIe host controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pcie-apple.c b/drivers/pci/controller/pcie-apple.c
-index f7a248393a8f..5850bc84d58d 100644
---- a/drivers/pci/controller/pcie-apple.c
-+++ b/drivers/pci/controller/pcie-apple.c
-@@ -839,4 +839,5 @@ static struct platform_driver apple_pcie_driver = {
- };
- module_platform_driver(apple_pcie_driver);
- 
-+MODULE_DESCRIPTION("PCIe host bridge driver for Apple system-on-chips");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index 975b3024fb08..b7e8e24f6a40 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -1091,4 +1091,5 @@ static struct platform_driver mtk_pcie_driver = {
- };
- 
- module_platform_driver(mtk_pcie_driver);
-+MODULE_DESCRIPTION("MediaTek Gen3 PCIe host controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 48372013f26d..7fc0d7709b7f 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -1252,4 +1252,5 @@ static struct platform_driver mtk_pcie_driver = {
- 	},
- };
- module_platform_driver(mtk_pcie_driver);
-+MODULE_DESCRIPTION("MediaTek PCIe host controller driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/pcie-mt7621.c b/drivers/pci/controller/pcie-mt7621.c
-index d97b956e6e57..9989e5e614b9 100644
---- a/drivers/pci/controller/pcie-mt7621.c
-+++ b/drivers/pci/controller/pcie-mt7621.c
-@@ -549,4 +549,5 @@ static struct platform_driver mt7621_pcie_driver = {
- };
- builtin_platform_driver(mt7621_pcie_driver);
- 
-+MODULE_DESCRIPTION("MediaTek MT7621 PCIe controller");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-index 87b7856f375a..e4d6ae7241fe 100644
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -1128,5 +1128,6 @@ static struct pci_driver vmd_drv = {
- module_pci_driver(vmd_drv);
- 
- MODULE_AUTHOR("Intel Corporation");
-+MODULE_DESCRIPTION("Volume Management Device driver");
- MODULE_LICENSE("GPL v2");
- MODULE_VERSION("0.6");
+Kind regards,
 
----
-base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-change-id: 20240610-md-drivers-pci-controller-8de8948a2b92
+Peter
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240621115544.1655458-1-peter.griffin@linaro.org/
+
+Peter Griffin (3):
+  arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
+  soc: samsung: exynos-pmu: add support for PMU_ALIVE non atomic
+    registers
+  clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical
+
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 15 +++++++++++++++
+ drivers/clk/samsung/clk-gs101.c              |  2 +-
+ drivers/soc/samsung/exynos-pmu.c             | 16 ++++++++++++++--
+ include/linux/soc/samsung/exynos-regs-pmu.h  |  4 ++++
+ 4 files changed, 34 insertions(+), 3 deletions(-)
+
+-- 
+2.45.2.741.gdbec12cfda-goog
 
