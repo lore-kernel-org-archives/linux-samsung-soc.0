@@ -1,289 +1,209 @@
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C510C17FAAA
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 12:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069F3180A9F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 12:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403330; cv=none; b=dp3U/8lVk0yF2IUzBjcBhMmUgF1nZuiggB5oz43LnMpPQT6izFf0/gmMJcUhpQPDzhOwNkH0tzgU1RWWWKIdm8hzgVj01YePPjH5us41yd3FnMU6nS+HBOoFilQ0wUKkTA1yhPwJrrpqqL3xKmQmu7XLTSShMbm1MEHCHnlLsuk=
+	t=1719403334; cv=none; b=ifagCg9f6PJGzUOgzMPWchhaWjzSoZqjO4YuE2tKM2zI63zwCJDd3r14RjqVXV/X0ty4GrRL/67WgOWei2SNMO9J60K0JwWPmaGf45cyzq/D8rge2nQ/2NdN5EtkmsKwDDicw0gGaiaWkWHGM9G+mkxT+xUNRZKZffHOtWiJxVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403330; c=relaxed/simple;
-	bh=05Qbdc/NTKaHTbRIAVXDnU79PyV2ELztLroZ0pqOdI8=;
+	s=arc-20240116; t=1719403334; c=relaxed/simple;
+	bh=rucZHfaxupwZMqi9uyxtOgQfeiJgbrbSQeZuVmUsJCM=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=TTrZoRWxgyymNu7qXUIAxv/TIxfhCHXugboR9AnC0NbNUeJYzl06g521BlUIAoaxDfAglZRWb1VwOkSYtAQO80QaDQHGjExwWMbyIkqrXfL/5hOSMmC8d/wShAoAkU6XmLHLT66M+SCfb9hTTQZ9P0y4vod+ItLXy5RcwHSMbs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qoCZhvZf; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=IXPYB+y1///ZCtPum9H9fomiT2A2GldqevQug4hxeZax+GqIWpYYWCwSvlXgXY5EaxdI89DVqOH/shLVWO4b1JBv0QZzg4LXXJAGldfXXDSe1ZQnpQs2YwqEH7B5WKc4ZcR8huT4AY5p+RJQ79DBQ5c76/2yO0fVnb+B8aObqcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cBv4MYWc; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qoCZhvZf"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240626120205epoutp0247aa5712bcf98cd9142adbcc72a445da~cjDboHzvS1763517635epoutp02_
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 12:02:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240626120205epoutp0247aa5712bcf98cd9142adbcc72a445da~cjDboHzvS1763517635epoutp02_
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cBv4MYWc"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240626120209epoutp020b8203dcbad56ae933aacc25d2120e52~cjDfPnRUi1763517635epoutp02D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 12:02:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240626120209epoutp020b8203dcbad56ae933aacc25d2120e52~cjDfPnRUi1763517635epoutp02D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719403325;
-	bh=rJmfCY/MRzs0vCHI/jisdFHeZmDRK5AL4y8pcWT2GvA=;
+	s=mail20170921; t=1719403329;
+	bh=T4l6KCBJTyjVibvGopmp4YQjs7hQFGCk9hEFe7ue7Dk=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=qoCZhvZfxmtbSABUkV6pfkfqFvM2I0L0rxP8/nokYxrHi72f809bzjInsjhr2NpZb
-	 etqpmO9gedkiQSpXtKT1DJZdMAJbbwNgFmb1ZI91axQJuHONoCoYszBb1BK2nqiu+K
-	 JR6QQVpr1BOvek1dZI14QbdXXP7i9dZ2NRNeFIPA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240626120204epcas5p32d27e1054fea6b70266df14cd9169cd4~cjDa9KEw52883228832epcas5p38;
-	Wed, 26 Jun 2024 12:02:04 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4W8L0W2Vdsz4x9Px; Wed, 26 Jun
-	2024 12:02:03 +0000 (GMT)
+	b=cBv4MYWcpJhl2hBZ0jsyiijsh+XDEdurIqXqgH2mxBrtsmK8kSwh49q2NBYF7Ebfd
+	 S+D3huNuYKFxtaHYFd9m0Bpo6CQDAGGiV+h0EJRG8zz8WzRvvYPc8GcuZFXn5eMxj8
+	 ydLK9FtOgI3b0bJ5fa8gMpGYwkgPXzAfoKbmB5iQ=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240626120208epcas5p4914f9781e747c0bc160646f73a4631eb~cjDezqtcb1798117981epcas5p4A;
+	Wed, 26 Jun 2024 12:02:08 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4W8L0b060Sz4x9Pr; Wed, 26 Jun
+	2024 12:02:07 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
 	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.48.11095.B330C766; Wed, 26 Jun 2024 21:02:03 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240626114754epcas5p3f4a4920cd68331f7721cb60ac0c1651c~ci3DI8mNy1347913479epcas5p3z;
-	Wed, 26 Jun 2024 11:47:54 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240626114754epsmtrp14afe0fd8245cf4456aa17cf2c4b93b1d~ci3DHuGUh3015130151epsmtrp14;
-	Wed, 26 Jun 2024 11:47:54 +0000 (GMT)
-X-AuditID: b6c32a49-423b770000012b57-ae-667c033b50e6
+	0B.48.11095.E330C766; Wed, 26 Jun 2024 21:02:06 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240626114931epcas5p1d7840cbe7418c6e62b15e4b54bee5d42~ci4dxwYNj0549805498epcas5p1P;
+	Wed, 26 Jun 2024 11:49:31 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240626114931epsmtrp2a5b41a7aca61cdd62daadaf141488201~ci4dxFEnw0062900629epsmtrp2R;
+	Wed, 26 Jun 2024 11:49:31 +0000 (GMT)
+X-AuditID: b6c32a49-423b770000012b57-b8-667c033e2620
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1B.D2.29940.AEFFB766; Wed, 26 Jun 2024 20:47:54 +0900 (KST)
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	51.5B.07412.B400C766; Wed, 26 Jun 2024 20:49:31 +0900 (KST)
 Received: from FDSFTE582 (unknown [107.122.82.121]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20240626114752epsmtip1410264395d014b57fd8d18025a65caf7~ci3BkwhaA2102021020epsmtip1K;
-	Wed, 26 Jun 2024 11:47:52 +0000 (GMT)
+	20240626114929epsmtip13168b189f56ddddf1db83ce831674989~ci4bcLE7L2637326373epsmtip1M;
+	Wed, 26 Jun 2024 11:49:28 +0000 (GMT)
 From: "Vishnu Reddy" <vishnu.reddy@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <s.nawrocki@samsung.com>,
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+	<krzysztof.kozlowski@linaro.org>, <s.nawrocki@samsung.com>,
 	<alim.akhtar@samsung.com>, <linus.walleij@linaro.org>
 Cc: <linux-arm-kernel@lists.infradead.org>,
 	<linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <pankaj.dubey@samsung.com>,
-	<ravi.patel@samsung.com>
-In-Reply-To: 
-Subject: RE: [PATCH] pinctrl: samsung: Add support for pull-up and pull-down
-Date: Wed, 26 Jun 2024 17:17:51 +0530
-Message-ID: <07f101dac7be$ae4349d0$0ac9dd70$@samsung.com>
+	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
+Subject: RE: [PATCH v2] pinctrl: samsung: Add support for pull-up and
+ pull-down
+Date: Wed, 26 Jun 2024 17:19:28 +0530
+Message-ID: <07f201dac7be$e81317d0$b8394770$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
 Content-Language: en-in
-Thread-Index: AQLxKHH81TrGQH9mk3YrmwmVK5Ft8wKHISlnASHDNFKvcAPUsIAf4KGA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmlq41c02awZz9PBYP5m1jszh/fgO7
-	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/JYtHWL+wWDz/sYbc4/Kad1YHLY9OqTjaPO9f2
-	sHlsXlLv0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
-	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
-	S/PS9fJSS6wMDQyMTIEKE7IzXn08w1zwS7fi7qUupgbGnypdjJwcEgImEk9XNjF2MXJxCAns
-	ZpQ48O83M4TziVFiUstuVpAqIYFvjBL/l5TBdPz9/xmqaC+jxJTNO5kgnBeMErOOTgHq4OBg
-	E9CXaL4hARIXEWhglDh+qpcVxGEWOMko8WzFCUaQIk4BXokJ/6xBpgoL+Egc6TvKDGKzCKhK
-	fLn7BGwzr4ClxLRjk5ggbEGJkzOfsIDYzALyEtvfzmGGuEhB4ufTZawQcXGJoz97wOIiAm4S
-	r3bcAjtOQmAlh8SOC89YIRpcJGa/fQxlC0u8Or6FHcKWknjZ3wZlJ0us/32KHeROCYEciZ5p
-	ChBhe4kDV+awgISZBTQl1u/ShwjLSkw9tY4J4gQ+id7fT5gg4rwSO+bB2GoSxyZNh9oqI9G5
-	4gbjBEalWUg+m4Xks1lIvpmFsG0BI8sqRsnUguLc9NRi0wLDvNRyeHwn5+duYgQnWS3PHYx3
-	H3zQO8TIxMF4iFGCg1lJhDe0pCpNiDclsbIqtSg/vqg0J7X4EKMpMLgnMkuJJucD03xeSbyh
-	iaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1ME/xXtU/ewdyixBzQXPhr
-	PbPnoWU3XwbeYrGZsj3a7KRZkWG+WOXnUzNSvv94vHCyDe9FoUsRUtaXQ0xWtgg8b7+zXtU9
-	s2zt/tuv31zabvxL6Ir1jnX6rZOu/P1aMfePx5ZFUfJizPUmGWudpmoLZu2MTjzizR1rZvlk
-	wfefO79sWbJNI8CDMXJ/gHpUYcvjtLtFoTrHY3OS3zTJXtJd8FE3dQ+jmkH/ic2Zs8478nq7
-	GN3czmzs8qZb+sjPHR0zu3tCLae1mfTNZ52oJ3A45f11qytXP60r4DrBsORnmxab1H1di4t7
-	HOvdmF9wzv+TrLFUKLbA4fiZTQLPdz6q2+k8sWXumaQugUvmf7cuV2Ipzkg01GIuKk4EAKdk
-	qkQ7BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJTvfV/+o0g56z7BYP5m1jszh/fgO7
-	xZQ/y5ksNj2+xmqxef4fRovLu+awWcw4v4/JYtHWL+wWDz/sYbc4/Kad1YHLY9OqTjaPO9f2
-	sHlsXlLv0bdlFaPH501yAaxRXDYpqTmZZalF+nYJXBmvPp5hLvilW3H3UhdTA+NPlS5GTg4J
-	AROJv/8/M3cxcnEICexmlDg+5QU7REJG4sOdLcwQtrDEyn/PweJCAs8YJbYsz+xi5OBgE9CX
-	aL4hARIWEWhhlNg40QfEZhY4yygxtS8MYuYhRonunodMIPWcArwSE/5Zg9QIC/hIHOk7Cjae
-	RUBV4svdJ6wgNq+ApcS0Y5OYIGxBiZMzn7CAtDIL6Em0bWSEGC8vsf3tHKjLFCR+Pl3GChEX
-	lzj6s4cZ4hw3iVc7bjFNYBSehWTSLIRJs5BMmoWkewEjyypGydSC4tz03GLDAsO81HK94sTc
-	4tK8dL3k/NxNjOAY09Lcwbh91Qe9Q4xMHIxAH3IwK4nwhpZUpQnxpiRWVqUW5ccXleakFh9i
-	lOZgURLnFX/RmyIkkJ5YkpqdmlqQWgSTZeLglGpg2nm/89/206v/X4gS+LfU9EJvUMieJv0/
-	bK7TL/loKt7qk9H3XnmpPr5dj8G22TSweaXrZMkPJXp67V/m5sw6zuT9P6ZIYKbxTBNLy4t6
-	u1W+7mrvk/nt6Nzln7LlWPvc/cmJll1GvlIa7kJstT79dh3KHyyYIqpuqnAyiJrOuGHL26uz
-	6/u/rytC/a4Kzysx7S9Y/Sf2psiTtbs2Pz6wNsljT+OEjXay7ba86YEz14lu614ucce86fZ6
-	x6ez/myPnf3yhMsey3u/WDwuvmCU8fnYFBBuJlBQvZw5TTSaaYek4F19jhzzXR/OhFtPX/Is
-	v3T/k5Vb+FIqsxSt21y81t/uKlywuX1h+kO7k11KLMUZiYZazEXFiQA2j+KsIAMAAA==
-X-CMS-MailID: 20240626114754epcas5p3f4a4920cd68331f7721cb60ac0c1651c
+Thread-Index: AQJsl4iGk1jvO+hY9fFKxJSBqey3YQJX8oCQAbw/7Giwla0CYA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmlq4dc02aweGp5hYP5m1js7h5YCeT
+	xfnzG9gt9r7eym4x5c9yJotNj6+xWmye/4fR4vKuOWwWM87vY7JYtPULu8XDD3vYLQ6/aWd1
+	4PHYtKqTzePOtT1sHpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7yp
+	mYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QeUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XU
+	gpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IwZLWfYCh6KVezY9pelgfGuUBcjJ4eEgInE
+	rPPPmboYuTiEBHYzSvT/W8UI4XxilGhYuxkq841R4s+uE4wwLfcu/WWBSOxllHi4tZkJJCEk
+	8IJRYsFd1S5GDg42AX2J5hsSIGERgSWMEt3LjUDqmQUeMkpMvP+JFSTBKWAnca2nF8wWFgiU
+	aH51nwXEZhFQlTj98Dg7iM0rYClx71cXK4QtKHFy5hOwGmYBbYllC18zQxykIPHz6TJWiLi4
+	xNGfPcwQi50kPnY2gr0jIbCHQ2LhiQVMEA0uEh+WdEPZwhKvjm9hh7ClJD6/28sGYSdLrP99
+	ih3kGQmBHImeaQoQYXuJA1fmsICEmQU0Jdbv0ocIy0pMPbWOCeIEPone30+gpvNK7JgHY6tJ
+	HJs0nRXClpHoXHGDcQKj0iwkn81C8tksJN/MQti2gJFlFaNkakFxbnpqsWmBYV5qOTy+k/Nz
+	NzGCE6+W5w7Guw8+6B1iZOJgPMQowcGsJMIbWlKVJsSbklhZlVqUH19UmpNafIjRFBjcE5ml
+	RJPzgak/ryTe0MTSwMTMzMzE0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGJvfUoo3X
+	H9rLcEYYC+ypd7wXcP9I29bLT527xbdX3/nEJLDpy48nk9f9X/L3lbcpy4M3QrW79inVTT+9
+	7JjKorJ1QnvYPolF7e0w+crBz6PgPWXbM/9L0jdC9S/d3BakoK5nYlnPLirvLqx14yP7izMv
+	0ipK/zI53Co/vJYprfngoc45z9yWGH5onLXw/5y/iS9r3aSUWJYdPVXQc0dX6Z9s6+P8NesP
+	XP/hGbd6osaf3GlTFJi+zCib9dcuaEZolKBvw/4pic4RP9rf/bNefNQ5eGkZo6G3yISu+/PY
+	z9wLqf3RdrY3fIP4Cd+X+amCeqcrO7S5rjYvOMGcmjHzSZ9X/RFLxsy5CmINUewcDkosxRmJ
+	hlrMRcWJABkzLO9FBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSnK43Q02aQV+LhMWDedvYLG4e2Mlk
+	cf78BnaLva+3sltM+bOcyWLT42usFpvn/2G0uLxrDpvFjPP7mCwWbf3CbvHwwx52i8Nv2lkd
+	eDw2repk87hzbQ+bx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRvl8CVcfq5X8FWsYrNfz+x
+	NDCuFOpi5OSQEDCRuHfpLwuILSSwm1FiyoMMiLiMxIc7W5ghbGGJlf+es3cxcgHVPGOUuLf/
+	NVADBwebgL5E8w0JkLiIwApGicNHp7OCOMwCzxklNr2YxwTRcZBRYuf7dWCjOAXsJK719LKC
+	dAsL+EtMOKwDEmYRUJU4/fA4O4jNK2Apce9XFyuELShxcuYTsOuYBbQleh+2MsLYyxa+hrpO
+	QeLn02WsEHFxiaM/e8DiIgJOEh87GxknMArPQjJqFpJRs5CMmoWkfQEjyypGydSC4tz03GTD
+	AsO81HK94sTc4tK8dL3k/NxNjODo09LYwXhv/j+9Q4xMHIyHGCU4mJVEeENLqtKEeFMSK6tS
+	i/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYHoSVlO0PW7ter3AOyqX
+	Cx+ZfbrKqLFnT/en2rsWMzq4OFQs2/ZEK3z4W8z39fdF4e/Sf27vmcxxiefFvlJ3p+fs/A82
+	nV5maOPLpKsvUfOY797xLfObG5R3tex/+OHRncYWnanR5zrW8Ew22XKrboLr1bCWgJzf9hPe
+	P9+o80jDT9bUpr895F6qlFmRsRqjgYEz33Stqa63M4MdI599fCJdeazm95fA7+V3eM/uevZq
+	xR5ngQkhH7R3CMR7Mih+Z3zTKS1g5ypfFNJs8iVC90T5MpeXklGVe3dLT55acPS5Vd+Dp6ts
+	Fix8sPLsykMXJV3WHv779P8xhqWviw2MYjLrPJ4pLVt5zsbSoEc1XVKJpTgj0VCLuag4EQCG
+	nSEgLQMAAA==
+X-CMS-MailID: 20240626114931epcas5p1d7840cbe7418c6e62b15e4b54bee5d42
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240529070220epcas5p140580a28b93ce5cb256ef825c778c649
-References: <CGME20240529070220epcas5p140580a28b93ce5cb256ef825c778c649@epcas5p1.samsung.com>
-	<20240529065939.36369-1-vishnu.reddy@samsung.com>
-	<32137d7d-fe61-468a-a3f4-1602512104da@kernel.org> 
+X-CMS-RootMailID: 20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7
+References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1.samsung.com>
+	<20240620103410.35786-1-vishnu.reddy@samsung.com>
+	<38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
 
 
 
 > -----Original Message-----
-> From: Vishnu Reddy [mailto:vishnu.reddy@samsung.com]
-> Sent: 06 June 2024 10:42
-> To: 'Krzysztof Kozlowski' <krzk@kernel.org>; 's.nawrocki@samsung.com'
-> <s.nawrocki@samsung.com>; 'alim.akhtar@samsung.com'
-> <alim.akhtar@samsung.com>; 'linus.walleij@linaro.org'
-> <linus.walleij@linaro.org>
-> Cc: 'linux-arm-kernel@lists.infradead.org' <linux-arm-
-> kernel@lists.infradead.org>; 'linux-samsung-soc@vger.kernel.org' <linux-
-> samsung-soc@vger.kernel.org>; 'linux-gpio@vger.kernel.org' <linux-
-> gpio@vger.kernel.org>; 'linux-kernel@vger.kernel.org' <linux-
-> kernel@vger.kernel.org>; 'pankaj.dubey@samsung.com'
-> <pankaj.dubey@samsung.com>; 'ravi.patel@samsung.com'
-> <ravi.patel@samsung.com>
-> Subject: RE: [PATCH] pinctrl: samsung: Add support for pull-up and
-pull-down
-> 
-> Hi Krzysztof, Thank you for reviewing the patch.
-> 
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski [mailto:krzk@kernel.org]
-> > Sent: 01 June 2024 21:41
-> > To: Vishnu Reddy <vishnu.reddy@samsung.com>;
-> s.nawrocki@samsung.com;
-> > alim.akhtar@samsung.com; linus.walleij@linaro.org
-> > Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> > soc@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; pankaj.dubey@samsung.com;
-> > ravi.patel@samsung.com
-> > Subject: Re: [PATCH] pinctrl: samsung: Add support for pull-up and
-> > pull-down
+> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
+> Sent: 24 June 2024 19:27
+> To: Vishnu Reddy <vishnu.reddy=40samsung.com>;
+> krzysztof.kozlowski=40linaro.org; s.nawrocki=40samsung.com;
+> alim.akhtar=40samsung.com; linus.walleij=40linaro.org
+> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-
+> soc=40vger.kernel.org; linux-gpio=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; pankaj.dubey=40samsung.com;
+> ravi.patel=40samsung.com; gost.dev=40samsung.com
+> Subject: Re: =5BPATCH v2=5D pinctrl: samsung: Add support for pull-up and=
+ pull-
+> down
+>=20
+> On 20/06/2024 12:34, Vishnu Reddy wrote:
+> > gpiolib framework has the implementation of setting up the
+> > PUD configuration for GPIO pins but there is no driver support.
 > >
-> > On 29/05/2024 08:59, Vishnu Reddy wrote:
-> > > gpiolib framework has the implementation of setting up the PUD
-> > > configuration for GPIO pins but there is no driver support.
-> > >
-> > > Add support to handle the PUD configuration request from the
-> > > userspace in samsung pinctrl driver.
-> > >
-> > > Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
-> > > ---
-> > >  drivers/pinctrl/samsung/pinctrl-samsung.c | 51
-> > > +++++++++++++++++++++++  drivers/pinctrl/samsung/pinctrl-
-> samsung.h
-> > |
-> > > 7 ++++
+> > Add support to handle the PUD configuration request from the
+> > userspace in samsung pinctrl driver.
 > >
-> > Please work on latest mainline or next branches. This was based on
-> > some older tree.
-> Ack, Will work on 'krzk/for-next' branch.
+> > Signed-off-by: Vishnu Reddy <vishnu.reddy=40samsung.com>
+> > ---
+> > Verified the offset from the user manual of following Exynos SoC series
+> > and found the current code is taking care of correct offset for pull-up
+> > and pull-down
 > >
+> > Exynos-3250
+> > Exynos-3470
+> > Exynos-4412
+> > Exynos-4415
+> > Exynos-5250
+> > Exynos-5260
+> > Exynos-5410
+> > Exynos-5420
+> > Exynos-5422
+> > Exynos-7420
+> > Exynos-7580
+> > Exynos-7880
+> > Exynos-9820
+> > Exynos-9830
+> > Exynos-4210
+> > Exynos-S5PC210
+> > Exynos-S5PV310
 > >
-> > >  2 files changed, 58 insertions(+)
-> > >
-> > > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > > b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > > index ed07e23e0912..a4b6eea5e168 100644
-> > > --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> > > @@ -939,6 +939,56 @@ static int samsung_pinctrl_unregister(struct
-> > platform_device *pdev,
-> > >  	return 0;
-> > >  }
-> > >
-> > > +/*
-> > > + * samsung_gpio_set_pud will enable or disable the pull-down and
-> > > + * pull-up for the gpio pins in the PUD register.
-> > > + */
-> > > +static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int
-> > offset,
-> > > +				 unsigned int value)
-> > > +{
-> > > +	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-> > > +	const struct samsung_pin_bank_type *type = bank->type;
-> > > +	void __iomem *reg;
-> > > +	unsigned int data;
-> > > +
-> > > +	reg = bank->pctl_base + bank->pctl_offset;
-> > > +	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-> > > +	data &= ~(0xf << (offset * 4));
-> > > +	data |= value << (offset * 4);
-> > > +	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
-> > > +}
-> > > +
-> > > +/*
-> > > + * samsung_gpio_set_config will identify the type of PUD config
-> > > +based
-> > > + * on the gpiolib request to enable or disable the PUD configuration.
-> > > + */
-> > > +static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned
-> > > +int
-> > offset,
-> > > +				   unsigned long config)
-> > > +{
-> > > +	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-> > > +	unsigned long flags;
-> > > +	unsigned int value = 0;
-> > > +
-> > > +	switch (pinconf_to_config_param(config)) {
-> > > +	case PIN_CONFIG_BIAS_DISABLE:
-> > > +		value = DISABLE_PIN_PULL_UP_DOWN;
-> > > +		break;
-> > > +	case PIN_CONFIG_BIAS_PULL_DOWN:
-> > > +		value = ENABLE_PIN_PULL_DOWN;
-> > > +		break;
-> > > +	case PIN_CONFIG_BIAS_PULL_UP:
-> > > +		value = ENABLE_PIN_PULL_UP;
-> > > +		break;
-> > > +	default:
-> > > +		return -ENOTSUPP;
-> > > +	}
-> > > +
+> > This patch is tested on FSD platform
+>=20
+> You verified but...
+>=20
+> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> > index d50ba6f07d5d..758b623a4bea 100644
+> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> > =40=40 -61,6 +61,13 =40=40 enum pincfg_type =7B
+> >  =23define PIN_CON_FUNC_INPUT		0x0
+> >  =23define PIN_CON_FUNC_OUTPUT		0x1
 > >
-> > Missing clock.
-> Sorry, I didn't get your point exactly. Could you please elaborate?
-I understood what is missing clock.
-Ack, Will update.
-> >
-> > > +	raw_spin_lock_irqsave(&bank->slock, flags);
-> > > +	samsung_gpio_set_pud(gc, offset, value);
-> > > +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-> >
-> > Blank line
-> Ack, Will update.
-> >
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static const struct gpio_chip samsung_gpiolib_chip = {
-> > >  	.request = gpiochip_generic_request,
-> > >  	.free = gpiochip_generic_free,
-> > > @@ -948,6 +998,7 @@ static const struct gpio_chip
-> > > samsung_gpiolib_chip =
-> > {
-> > >  	.direction_output = samsung_gpio_direction_output,
-> > >  	.to_irq = samsung_gpio_to_irq,
-> > >  	.add_pin_ranges = samsung_add_pin_ranges,
-> > > +	.set_config = samsung_gpio_set_config,
-> > >  	.owner = THIS_MODULE,
-> > >  };
-> > >
-> > > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > > b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > > index ab791afaabf5..23b70ddcaccc 100644
-> > > --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > > @@ -61,6 +61,13 @@ enum pincfg_type {
-> > >  #define PIN_CON_FUNC_INPUT		0x0
-> > >  #define PIN_CON_FUNC_OUTPUT		0x1
-> > >
-> > > +/*
-> > > + * Values for the pin PUD register.
-> > > + */
-> > > +#define DISABLE_PIN_PULL_UP_DOWN	0x0
-> > > +#define ENABLE_PIN_PULL_DOWN		0x1
-> > > +#define ENABLE_PIN_PULL_UP		0x3
-> >
-> > This does not look right. The value is 0x2 for s3c and s5p.
-> I received exynos manuals. I'll check and I'll update.
-> >
-> >
-> >
-> > Best regards,
-> > Krzysztof
+> > +/*
+> > + * Values for the pin PUD register.
+> > + */
+> > +=23define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
+> > +=23define PIN_PUD_PULL_DOWN_ENABLE	0x1
+> > +=23define PIN_PUD_PULL_UP_ENABLE		0x3
+>=20
+> ... I said it is not correct, so you send the same? If you think I was
+> wrong, then please respond and keep discussion going. Sending the same
+> suggests you just ignored my comment.
+>=20
+> Look at two headers s5pv210-pinctrl.h and s3c64xx-pinctrl.h. How did you
+> resolve these?
+Thank you for sharing the s5pv210-pinctrl.h and s3c64xx-pinctrl.h  file nam=
+es for the pin value information.
+I have not ignored your comment. Unfortunately, I don't have the user manua=
+ls for the s3c64xx and s5pv210 series.
+I have an idea to handle the PIN_PULL_UP value of the s3c64xx and s5pv210 s=
+eries by checking the compatibility with the of_device_is_compatible API.
+Will it be okay or do you have any other suggestions?
+>=20
+> Best regards,
+> Krzysztof
 
 
