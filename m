@@ -1,111 +1,95 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D55E193061
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 19:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A11A19048C
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 23:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719430998; cv=none; b=Yl0G8eshW0bnXtZ0RkFwi6glDfQ8W7zwtHElZK/Q/ZvC0VpeMCFYdVdxCBYEgy3Lev6ZrDgyono93VEhQgSvfQNtAGtJM0T61uspg83wva32MXCpxxbBpaBrVJN7qg7+bQ/ftbmbkQldPbSDnB5dWc6qTiSt93VQtEGh5emGiHM=
+	t=1719445012; cv=none; b=FYx6UH1Yfom1wTQqDdlIeffVOWwg5AWgE1ReYWLLu4LidTYfG3fWlZqKkO6YXRSR0CnzElIsV0GX04vCoZAaWOyM4nl7x28Qqz2TsOA/uxZ2gQqXjp3HgpZv3iZ7/p/IFpWvRU3uoTX60MpFFgsUmxOuThLCgesmxxvr587i+2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719430998; c=relaxed/simple;
-	bh=APPE5dKRkNonvKUqWSiryKOGNpOJlvFzK+dcKt1+dBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mbp9ZBwiqOVEUgjPRO6wK53+IjA7mBKhoDbts9k2+TG8w9y7FMbx5AZY3QDxEBEYiQgsuH5As9qZSF9oVUlMHg+gCSVUOrqjvWSgKvX2XXaoGrppll8JPfHNGtIpUgxAHs4DfR8j8aLVggPZi9FV8Htln9TOqB/Q5BPryqXXxtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tM7Ucryg; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719445012; c=relaxed/simple;
+	bh=z/wAF2IKsQ5synR7GDt8p9XW7wQtUDuAPAF7D3cS6cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLsVeJfzGlpFAMx+a5J1h71R3rAwxmPoTNkNmzkYPh3dgeuVFOegtfRLvshXemtIiNJVY/sMzCwMPNhsefVdp3lpExzFdGEL/Awj4r+fcyFsw9XyfWy5CRN9HImj5Kq1uuWSz8TQn797e0rnxUKkVMqxDqkQeuOmZfIX7T2Ln7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rt3pnG4M; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tM7Ucryg"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5295e488248so8403299e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 12:43:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rt3pnG4M"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f70ec6ff8bso44795ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 16:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719430995; x=1720035795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vZg0Dan8dZ1cJlzdkxx9g6a64AyosFvjL+3niLEIVTM=;
-        b=tM7UcrygseR6YravsEJUDH6ROi9tj8d/3rgQKffuTpXjVYjiwDxNlGLGNWH4jkbxhT
-         p9EfsQQ35gyfBPEGanIrQsfWa8dPpTdAzlRwz6T35Vr8LHutFNZb5Q6CiKcLO7lMeT2I
-         G9SujYGsc84gRZkpdqDq0upsGcPgPAeWqOLf0h+PA87yM2tyYaqCKqm8RdcR6KXGgqSg
-         /nhjPdjrhx0e/c+fdwaHZ7NgXzmHtOqCchsG1vfNTD6umpK+yOPWlZEyTHoKCVJTIRyS
-         zNOBsv3iDJAFkqFxIB4GSof86/ueTxKYEXmNEc0h94TqkK1WK4HU6X8i7M+44pLzslW0
-         l2Gw==
+        d=google.com; s=20230601; t=1719445011; x=1720049811; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oH/qUWFW4tGC7M67sX1amiT3vWfL3r4iG1qiqBFOKFA=;
+        b=rt3pnG4MJ7hLQhRdM8Kke2tbcSbdYgd+gklTSa72kINn5PK0R4a+z2pWzv5tHutOU/
+         ukXyCEqqfjJyjDGKw6OCqn0Se6ebzihvRTNSQBIITxrTr6dCDfT53w4M5+UaI7lJ11gB
+         htJ4FiEkEIs04OnKIrkKNrUzcNYamSh/se2/qnm6uhh7VVs6EleJx+1PdjnxWlYW/TAM
+         +/cdF0BsHd8UIh3qZE2PMUPrORE8WidmUlQaUGTFJ7WPgRun/zTygQ3wnEhGAsoO5Cir
+         mVwNcYxOFQUxPdLjbh6XfzRovtW352xivntqyCaUz+EE7voHeOLDRuA6rTg0Rbw29ytf
+         uHFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719430995; x=1720035795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vZg0Dan8dZ1cJlzdkxx9g6a64AyosFvjL+3niLEIVTM=;
-        b=HNt7GGrdNKfCFUIivXX3MR+ZlPHuxw/YeY6IoTDQiyn2JjAnfIkU/7WnFwkv2gBfEv
-         s4HFJsnE0bQywIGahnBkCzArYOpdhY0kVgp1oEvKMqql4AJHVVNokXuuyrQJ1z97GY/S
-         b6mPSYqAYzWT9WSEVBXRFjvTuCENKz4zeUT0FZ71qBqsRXISnfqo0zQbTWCgRyXPxsFQ
-         4yUQVKZQNh4uXZHjeHsCPtW6Ztnegr9NyslEaN/KLypPkT3ocgotKyp97/EVMuRiVcGE
-         oa26dWzmXUyVTniUrdwnJiSG3PSg1nkm7wSxQ2dmezJaq57+ZwbTNir3cu09SzDP7RIs
-         Tgjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtqIMn0qL+0N58NKfE9i1CneLndL5bdv1TG/Hn1V3u0VYjsUIym8cRJHmCceYkoMaZcZAcwCP6DvzUjFKyLFVF5lXppcjKdUuezOFmmiFFAvA=
-X-Gm-Message-State: AOJu0YzzKNp9dIueRjQFruQNHwevKkzIgeCy8cHXYMvPOkaUqCcYvkHB
-	6LMIzEnLumbB/xM3bwkDZ7kajiCglGlUcx+gWGYbZim3yjhnOdQRZlLU6oXaK/k=
-X-Google-Smtp-Source: AGHT+IF5TBKDZODftqTmo/Y2LCMw2rq2sjADo9zE73i9eab9HhHgjvgOrzapHeP3tI3ZKFHbYrq1dw==
-X-Received: by 2002:a05:6512:3f0b:b0:52d:215a:5071 with SMTP id 2adb3069b0e04-52d215a5162mr2982937e87.62.1719430993614;
-        Wed, 26 Jun 2024 12:43:13 -0700 (PDT)
-Received: from gpeter-l.lan ([2a0d:3344:2e8:8510:24d9:a20a:2de5:8eda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c837eb2bsm36728905e9.39.2024.06.26.12.43.11
+        d=1e100.net; s=20230601; t=1719445011; x=1720049811;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oH/qUWFW4tGC7M67sX1amiT3vWfL3r4iG1qiqBFOKFA=;
+        b=PxUvemyr+buv1eCtY2nDkl0K1QJjOWSri2puiDlhRjjnCIa3Kp9B00/K6M9WRxKrly
+         QrdKDhug4M59ZqiTuhkHpX/Tc0HMHPgwz63JdYyOzpslAM+ImX1r//QPrKcz6C/Qq3aS
+         NVfIIxPL47Wzmtn8sxRmpvYr5WhuaQed0egi+HZGkvr7RKo/qwB5FqZt60No5N8pAj3u
+         m4UCKE4kaSK+9n0j4GW+xlwFdm/oOedUqSMePIkW6CUH4SXN10MWdHjjGaoermaeyILA
+         3W1YzuQLod/Yp8a2a2G+XMjvgihLBJjyPO1g9/MELKl+blDaizBrXMm4XVMRUicSg/Qe
+         sIWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlKPObBgU1kWk+vobHQMiDKAk9cdfKHDJIcs59XBw8FWnYl9KnMY67SP2swqmIxhmMRlyiBBznuEu0IltziEMN9A7ihs2WfE9EeNa2+by4ADo=
+X-Gm-Message-State: AOJu0Yy4+McaQ+ScZ+XavTHgXHj9TcTFtU1p0Ni0hHsIoQFpLHv9dtu4
+	tRW/todtJmeieaDo8sCwbjSguEwDR4tY9v/avojkPISS5p/SsY95j9SJtZJkWw==
+X-Google-Smtp-Source: AGHT+IGWzunzRKU/pxSD5TKBv4BbD7ipJSDwv30o0P4jS2ap96vNu+qiT1InfYybFnYLD+PBVkyeiQ==
+X-Received: by 2002:a17:902:8648:b0:1ea:963e:2e2d with SMTP id d9443c01a7336-1faa999a933mr1481655ad.24.1719445010425;
+        Wed, 26 Jun 2024 16:36:50 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac9a75b6sm484945ad.247.2024.06.26.16.36.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 12:43:12 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 3/3] clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical
-Date: Wed, 26 Jun 2024 20:43:00 +0100
-Message-ID: <20240626194300.302327-4-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-In-Reply-To: <20240626194300.302327-1-peter.griffin@linaro.org>
+        Wed, 26 Jun 2024 16:36:49 -0700 (PDT)
+Date: Wed, 26 Jun 2024 16:36:46 -0700
+From: William McVicker <willmcvicker@google.com>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	kernel-team@android.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: dts: exynos: gs101: add syscon-poweroff and
+ syscon-reboot nodes
+Message-ID: <ZnymDq5Yzd0oyuIr@google.com>
 References: <20240626194300.302327-1-peter.griffin@linaro.org>
+ <20240626194300.302327-2-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626194300.302327-2-peter.griffin@linaro.org>
 
-The system hangs on poweroff when this UFS clock is turned off, meaning
-the system never powers down. For the moment mark the clock as critical.
+On 06/26/2024, Peter Griffin wrote:
+> Reboot of gs101 SoC can be handled by setting the
+> bit(SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
+> 
+> Poweroff of gs101 SoC can be handled by setting bit(DATA[8]) of
+> PAD_CTRL_PWR_HOLD register (PMU + 0x3e9c).
+> 
+> Tested using "reboot" and "poweroff -p" commands.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested-by: Will McVicker <willmcvicker@google.com>
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index ba9570f7a5fa..85098c61c15e 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -2846,7 +2846,7 @@ static const struct samsung_gate_clock hsi2_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_HSI2_UFS_EMBD_I_CLK_UNIPRO,
- 	     "gout_hsi2_ufs_embd_i_clk_unipro", "mout_hsi2_ufs_embd_user",
- 	     CLK_CON_GAT_GOUT_BLK_HSI2_UID_UFS_EMBD_IPCLKPORT_I_CLK_UNIPRO,
--	     21, 0, 0),
-+	     21, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_GOUT_HSI2_UFS_EMBD_I_FMP_CLK,
- 	     "gout_hsi2_ufs_embd_i_fmp_clk", "mout_hsi2_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_HSI2_UID_UFS_EMBD_IPCLKPORT_I_FMP_CLK,
--- 
-2.45.2.741.gdbec12cfda-goog
+Thanks Peter. I verified the device reboots and powers off with these updates.
 
+--Will
