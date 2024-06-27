@@ -1,95 +1,112 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837681922FE
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 23:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34455208A5;
+	Thu, 27 Jun 2024 10:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719445212; cv=none; b=Lhht/QUKtLlrJTrDiW7LgkV76hB1SA+TQiLjfGPPJUc4VVINg8uurRYTmWOE73z7gp+U6SB5089x0RWHNJRZN41z9Q8FF6bK9GACeXJXzaLBU+9sak1EkxneU+OfhXx0TBWDUTR2l/meaSBLGM2PJAzoB3/mB54n20bRk6aXfvc=
+	t=1719485232; cv=none; b=KMMo22Mr15X9B0aLM82B16bOwEPewGita122yG+TvZErr8SD3ehoU256r980ngsPj4ZUzcbBF5ZS5QLB7JC1JqeEx9bATAN00ComhAxSBuW95I60MtXonxq4MUzJJO2LOZzdOwgnlhUf9YDWH6VuDfdZK53AdFMwIYCQosplYRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719445212; c=relaxed/simple;
-	bh=019CaFVh3lhoS0w68HPIP9ng8eI8idSw76yT38lMbnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUyhe38/pIimbfk/vvXVIqRSVxAXbG4mg222tDGxa7BbNe9hagIZCD1D+zirlj9Gz2899As7vqT+OuzX+wAu305pR0TGblNCVe6B19D3JA37F32Eg6R4UF6z4lqVz4wfYmQU8Skl9W3hwCC//gFQam31x0mGK/pLyeSNS/aTqcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iRXaG7j+; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1719485232; c=relaxed/simple;
+	bh=OyBFFVfSvqTHAxuaZCU+Adga5FafxLrEJvMj1Fa5Bqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rffv3RORTZX01DkNNPfGtNAFpwfe905JAKSX3HPnd4Z+uR9D+etBXmLVbE3SiwBFhgEal6YJqQzc3HBpzT6Di+B7nbOTMxXu1KevgZ9X1MbZdk2wonOT+QB0jB8u0Xi8N80yatA5ijhDp9HuAhQDLBJpXFVvdBn/af34vN/Q5mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBq8keNj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iRXaG7j+"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa4b332645so40135ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2024 16:40:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719445211; x=1720050011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYUt50CXgSrSaz+HXS9uk+LgKfhLcjaXpXf0DU8eqcI=;
-        b=iRXaG7j+1XO5wSVH1ggF3Hk1ivlNRrYsOVzBOY4GSdqQ2D9W9tOFGubX47Y6t+coDo
-         KvUf/2TygQAptptFsYn5OwjFPr739t8h/eEn7Fxht/K9Eue1Vx0NVezGkCdmVnITWA3Y
-         GfzTjK9HmAH9+LMVYQ3LkQO8kMJ0Rfa8/FBJFf4OGXdb6Vd70UJ24kSbMlY+qegx7C4E
-         Cxj22dgWVi7Tsp4frCCvw+v90w6rIZPjluEMKDBOOjksQVV++Y7QdP0w/hxdTEAZ1kla
-         /uzzYawBQ8+zN8tFUwwwST9rgR7O7fCihtauBI5ZkxcEEXcLyhOAa0Jfn6kLFSfhNT/I
-         lQiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719445211; x=1720050011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cYUt50CXgSrSaz+HXS9uk+LgKfhLcjaXpXf0DU8eqcI=;
-        b=dfPszT1m0J0bGsJBUmKJ4ZjyW5GOGhy4gCiM9VUUPUMqwWgmRhVmyZYzRlhWcSrYed
-         LxROhdKOcYPv44kVCGY1tQUAqL1qdDZKUpB60+r1b7TEXdAB/ktbxLbfwgi7M5kkefTn
-         rdRfPB1yLgFKyZh/7ZGorQ1J79VlL+Y30//t4fJbLymWt/kU/2e8k+UlxHVruHj9FfYD
-         GR5oJscmSIof8hM/KTBv4BtcecjERgbdLXyVc2C12obiC9Os5YeFWH/pp+ZSc2bB9ptv
-         mE6LzZru6d8UMRNRFh7G2WW1E0RkY8SgIvQYhr+UhJxD45qi42ln00x4/tt7D7UTMIpN
-         s+3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2IYIP1jD3mzpp24yVzy98OOQpOkUzO6E6NliVWIALDqcwVQtLmNh+4hwGY8+qzeSpF9ZjBVMv6o5qf04+OEvZ5luMhKw7mx4po9rVRvRiu1g=
-X-Gm-Message-State: AOJu0YwQHQ/fnhc1qRy+YI0D4m85X6f3UAMoVoXr1jHWTu518Pxc7PcJ
-	xKDuLjUr2D+LAQ1TaleIGk9RSd93DCEFXBppTqfT4+nSaF+DLQxGkT1938olug==
-X-Google-Smtp-Source: AGHT+IHlKaAmURTLh3ZeZvxHBLbh/zTd2wDSCpmqMl4TBrZZ7NKfHf0vVsBEj0+hsbeFfCuPgzzyhg==
-X-Received: by 2002:a17:902:82c6:b0:1f4:7db0:afbd with SMTP id d9443c01a7336-1faa999eb47mr1582755ad.28.1719445209827;
-        Wed, 26 Jun 2024 16:40:09 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac979499sm514875ad.144.2024.06.26.16.40.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 16:40:09 -0700 (PDT)
-Date: Wed, 26 Jun 2024 16:40:06 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com, s.nawrocki@samsung.com,
-	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	kernel-team@android.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: samsung: gs101: mark
- gout_hsi2_ufs_embd_i_clk_unipro as critical
-Message-ID: <Znym1qR9hyYwy5Ll@google.com>
-References: <20240626194300.302327-1-peter.griffin@linaro.org>
- <20240626194300.302327-4-peter.griffin@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBq8keNj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33DEC2BBFC;
+	Thu, 27 Jun 2024 10:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719485231;
+	bh=OyBFFVfSvqTHAxuaZCU+Adga5FafxLrEJvMj1Fa5Bqs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rBq8keNjjehT/IysCvMakPHET5AmvZsZ3CVOHhq2eI7rMAobLGugA6z6C6y0yVK9K
+	 9/gRt97YUe49xJnsaVlgwFzrnv3eUJbSje3sl5GKbT0puKyM65JqFnHMVySlwTnHlX
+	 lDawr88q3Vx6lnNDtswZzb/kLpJ6cCjnrSgXYZH8WFpF+NicBdCur2W1TlsOOf5BMl
+	 z1Exmes7+J3Q/8uHIgjJiVaAFSFoiTx2/v0A06OBjMrkG1GBTX6DiPAlR0iTKNMK7i
+	 ksHwtv49KqfYkQAikNUcvS/yWjVeu//qngz7GApzYX46yxHG1bT0D6QEn5iXfIpb5y
+	 JHyaxtRPoPI2g==
+Message-ID: <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
+Date: Thu, 27 Jun 2024 12:47:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626194300.302327-4-peter.griffin@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add syscon-reboot and syscon-poweroff support for
+ gs101/Pixel 6
+To: Peter Griffin <peter.griffin@linaro.org>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240626194300.302327-1-peter.griffin@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240626194300.302327-1-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 06/26/2024, Peter Griffin wrote:
-> The system hangs on poweroff when this UFS clock is turned off, meaning
-> the system never powers down. For the moment mark the clock as critical.
+On 26/06/2024 21:42, Peter Griffin wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> This series adds support for syscon-reboot and syscon-poweroff to gs101/Oriole.
+> It has been tested with reboot and poweroff commands respectively.
+> 
+> Note the syscon-reboot/poweroff has *runtime* dependencies on the exynos-pmu
 
-Reviewed-by: Will McVicker <willmcvicker@google.com>
-Tested-by: Will McVicker <willmcvicker@google.com>
+How does the runtime dependency manifests? Something get broken if there
+are no dependencies? Or maybe reboot does not work, but probably it did
+not work before, either?
 
-[...]
+Best regards,
+Krzysztof
 
-Thanks! I verified my Pixel 6 Pro reboots and powers off fine with these
-changes.
-
-Regards,
-Will
