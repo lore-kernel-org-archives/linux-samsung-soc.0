@@ -1,159 +1,249 @@
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131C714D6F5
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jun 2024 12:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC30193072
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jun 2024 13:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490239; cv=none; b=GUsjcaG9H0YDoJPTt41i0IseAm+Uey8WWZeZxhWoMfQ8jiREzVfxRxk+jRDVfWMBlrSVF58qXKZ2pwsuGXkArsW5/QRpKDXTram9HZXi0HTx46IEGNypmpujRnt45+0HMpLe5XSun0diDYKUScOBkFKxjDT9C93qJy4tDbAHPQc=
+	t=1719495374; cv=none; b=gX6HUF6ppjlBrEyK+rywUIowUOIfnpiaM46Fu2JPdFqbFSmKx33hzwu6bQu9qjGs2ZisFx0JKS5WZXfLgZNJCIDxXBCHyTYx4NtoeRKbIZxdYz90imckvhkRdR8l8LCkc8v8665BWTkpf2LSyZroc3qGsN0g0FTjygs041ynzZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490239; c=relaxed/simple;
-	bh=NkigWkA6VySFfvHgeE5oFW+QBC+cXkg9GyKrJbWRTzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qRyzLNt2aw9HWZJIBk6ucZVnpiZlNqnFr+c7JbWCWR9RQzy0m4+hARU85JCLK4oy3Z5X0MF3y+Z3uT0jsdNxQvyQQgsrXxtbb4HBXmDwKbX8fBYLCs9MHNYjUUn/y6R5Z8GNBtvpiSFHjvpB/0i8ySrtFfRhaAg7tlZKm29U3G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqbmgB9m; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719495374; c=relaxed/simple;
+	bh=o0xP6qtuI2xAaBgmlMNQoczDWl/0Ocbp9qhH2FYUfKA=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=EK9e/tzf0pA7SWbOY2LKZJIrUjqGGoKaWt/dHmgufa+kYcak4bdneLiAK72uPH6EZ2VuuR2gT3DAZlv5ezRlQxwpPPkqHAD/3O2Gv3NVSpykeBmkhekLgW8WDyzqJ0tVMtefkFnLERihX2aW3KTezXzdJ/OKQUJeGGql0MOs1yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A8DjVxl9; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqbmgB9m"
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b9a35a0901so2436740eaf.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jun 2024 05:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719490237; x=1720095037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cE4Bab1XKSgATh7IHyFiARbi4eUyFalxuUlRbbSbrnQ=;
-        b=bqbmgB9mpeGOWGv6XSkMtnZNCBoyYQFKDR2ohtG+PMSVhrmpK62yZ0XganCVFk/KUm
-         jBJM1DFeYYMHyT73QPMn9XEnlmr9tohINW/++deI0Vf8L+fXN8PRc+RCubAkibiL62Ls
-         mstzsgP/JxEUX36fillZzEJsb7nrdUthU6acz5ArYom6ibyiaTIj2SEmKYkPCPQggQwN
-         WLYgab6CuHC+aG14Wg7uYcFU87znXyckk5BvYcx/shQ6azeAEfSVAc/kHrcT4j+Bh0/5
-         ZJ4kZ4rZ0jqMElnsMb82FZTvOUFeYU3vYrQxkiaIzAxAihBNf5NjDK7rnV16FZWX2qd8
-         qylA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719490237; x=1720095037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cE4Bab1XKSgATh7IHyFiARbi4eUyFalxuUlRbbSbrnQ=;
-        b=fDoMJnU8isv+60Gv30PPfGMrbXHikAy5YIF8WLoV5REdIH1W2sJfiwo06QzJ1UBZVi
-         zlo7++5+acKzMUwos6zdM3pXywkPYTjd1sjHU96fRzJ1dcflybDi75xoDeMfF9wPsmlj
-         wYE3iD6kO6IcRtpPIqtK4IqJG1qzZ2cjey8tIeh2hwuEpT9tRO65kdXbWM7uWudkjpB0
-         j+O2YS9hpEwNg4Pue2AMtcCK0rZ3Y8COVHtvHEXX/GpWOPZvI0GDry6Eu92RSprrvcVZ
-         VKk/RKZpyXfPBpX7Rwd0a5COTVjHLZYGB7B3xYj90NNQ5unFlYKcd1bqwY92zxI/tYrb
-         ltkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyOSYMc0lWhCeDd/QYmMlkBwl008MH39cy44pnbKnOmyCfHDLmfLL5oP0s2rrmnPd3n82Uz9tjWHQjks2OW8+GARStcrNPx50c+VkrRLhYhmg=
-X-Gm-Message-State: AOJu0Yy09dihlgXmjBJzHGIDjb7gub7NvljAxf9jqTSXrQ7kwIFthqjG
-	1xm5fE6YHXf+wjb0EwrUu/MAAnR3amGGHW24KmuZUUGUX+g04yTqbYJ/ve1K+vrlSeCPycIHIiE
-	kMYLncW13qa9DKWP/0+xHHCBrOqqqwO/P+vxA8A==
-X-Google-Smtp-Source: AGHT+IHAyaiJEmjGK1tayduKPakkTEDNumaseSBPgUWJsXu5w7UaamjrpjUQeIA3/oIdt38OMiLEdTZdpwGs2IfqBCk=
-X-Received: by 2002:a05:6871:3a28:b0:259:8805:b634 with SMTP id
- 586e51a60fabf-25d06eb6695mr14671549fac.49.1719490237191; Thu, 27 Jun 2024
- 05:10:37 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A8DjVxl9"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240627133608epoutp01769acda97a7e0eb3ee00069ab3ee8fa3~c3_1b-zhx0539705397epoutp01B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jun 2024 13:36:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240627133608epoutp01769acda97a7e0eb3ee00069ab3ee8fa3~c3_1b-zhx0539705397epoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719495368;
+	bh=oZFefIbTEXfHE9kmb3JrnZ21gch5OUIrWc+UYD4fy9g=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=A8DjVxl9q1pWqqCXRYMT9VbexFW1Hvr4XKyeOn1ojjf6weJTfQSXIL/80bNB1hKdf
+	 rImJvk1T4zMgrzBPOLE13G9FSw8yQung0BdLgoYoD0MwuPO+H/8Yp9iQxZPElHHW+z
+	 m7lBZ3Mvzay6akrvJ3RVMLAuL7JvxeEm/7xm2zLg=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240627133607epcas5p31dcfcf49b7b2bf04481fb31eb45863e0~c3_0w1SXL0254402544epcas5p3U;
+	Thu, 27 Jun 2024 13:36:07 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4W902Y5wF4z4x9Pt; Thu, 27 Jun
+	2024 13:36:05 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	85.AC.07307.5CA6D766; Thu, 27 Jun 2024 22:36:05 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240627133545epcas5p461398bd51e6482f7a364fdfbb69e7243~c3_gMDdY22898428984epcas5p41;
+	Thu, 27 Jun 2024 13:35:45 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240627133545epsmtrp29817ddeb1ef407da2f71aed6b8766c56~c3_gLWIqR0470304703epsmtrp2G;
+	Thu, 27 Jun 2024 13:35:45 +0000 (GMT)
+X-AuditID: b6c32a44-3f1fa70000011c8b-17-667d6ac54660
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C3.59.18846.1BA6D766; Thu, 27 Jun 2024 22:35:45 +0900 (KST)
+Received: from FDSFTE582 (unknown [107.122.82.121]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240627133542epsmtip185ac39553214b64cc180369a2688d07b~c3_d1AfLO0198001980epsmtip1E;
+	Thu, 27 Jun 2024 13:35:42 +0000 (GMT)
+From: "Vishnu Reddy" <vishnu.reddy@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Krzysztof
+ Kozlowski'" <krzk@kernel.org>, <s.nawrocki@samsung.com>,
+	<alim.akhtar@samsung.com>, <linus.walleij@linaro.org>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <pankaj.dubey@samsung.com>,
+	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <4efb51f3-4600-4d88-a5df-e7be43294d53@linaro.org>
+Subject: RE: [PATCH v2] pinctrl: samsung: Add support for pull-up and
+ pull-down
+Date: Thu, 27 Jun 2024 19:05:41 +0530
+Message-ID: <086b01dac896$e988fed0$bc9afc70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626194300.302327-1-peter.griffin@linaro.org> <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
-In-Reply-To: <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 27 Jun 2024 13:10:26 +0100
-Message-ID: <CADrjBPqLT7e_eV9=ykDXG7_p3j8yJTbQNAc_dXVVRDP7Vqbtag@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add syscon-reboot and syscon-poweroff support for
- gs101/Pixel 6
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-in
+Thread-Index: AQJsl4iGk1jvO+hY9fFKxJSBqey3YQJX8oCQAbw/7GgCIZ1lJgH0CiQ3sHaumEA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmuu7RrNo0g6br2hYP5m1js7h5YCeT
+	xfnzG9gt9r7eym4x5c9yJotNj6+xWmye/4fR4vKuOWwWM87vY7JYtPULu8XDD3vYLQ6/aWd1
+	4PHYtKqTzePOtT1sHpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7yp
+	mYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QeUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XU
+	gpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7Iz315oYC16qVGzsvs3awLhLrouRk0NCwETi
+	4b3XzF2MXBxCArsZJa70bYVyPjFK9M27yI7g9G9lgmlZ8vsjVGIno8TsWXugnBeMEvt/bARy
+	ODjYBPQlmm9IgMRFBPYwSky43M8I4jALPGSUmHj/EyvIKE4BO4mtVx8zg9jCAoESza/us4A0
+	swioSqy7mQcS5hWwlLj0u40ZwhaUODnzCQuIzSygLbFs4WtmiIsUJH4+XcYKEReXOPqzBywu
+	IuAncebJehaQvRICWzgkmu+9Y4RocJE4e7gbqllY4tXxLewQtpTE53d72SDsZIn1v0+BPSMh
+	kCPRM00BImwvceDKHLAzmQU0Jdbv0ocIy0pMPbWOCeIEPone30+ggcUrsWMejK0mcWzSdFYI
+	W0aic8UNxgmMSrOQfDYLyWezkHwzC2HbAkaWVYySqQXFuempyaYFhnmp5fAIT87P3cQITr1a
+	LjsYb8z/p3eIkYmD8RCjBAezkghvaElVmhBvSmJlVWpRfnxRaU5q8SFGU2BoT2SWEk3OByb/
+	vJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamBLecjpKuBjck5Vv
+	bfwYY/01eTfvv/fz/uiz80tK5hw4cZ7/vWRmjvBH97dnPNvMnLMeCt5h/7LYIH6JlslSjQ4Z
+	0XQOI50LV2N/l23WUJQXWiDmt3VvnMYFx2Oln67+yr/4a76S58K+Gh41ocC9nQdO335fdXxa
+	TfU156mx175NCjh9J3R6XFcQ//mDEcE6dVzfnpWtW/OMQ5ojyuTt6b2aLN0Triqf1fD7xrez
+	/NItubMNjUklS14+360YNd/llFCfZ2mTpWLGRh9dS9XGoj7WSXuX87DWdkauNVvyZc37/qTL
+	1fdUJ4YfnP/71BLpz1NtvJTMtx6KiNhSYKge0/Zjj+UKeR/9tV7hVZm7lFiKMxINtZiLihMB
+	3nhi4EYEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSnO7GrNo0g3vvhS0ezNvGZnHzwE4m
+	i/PnN7Bb7H29ld1iyp/lTBabHl9jtdg8/w+jxeVdc9gsZpzfx2SxaOsXdouHH/awWxx+087q
+	wOOxaVUnm8eda3vYPDYvqffo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujKb1Z9gL5qlUvLnK
+	3cD4VLaLkZNDQsBEYsnvj+wgtpDAdkaJTY1OEHEZiQ93tjBD2MISK/89B6rhAqp5xihxbkIr
+	SxcjBwebgL5E8w0JkLiIwAFGiQOtT5lBHGaB50CDXsxjguhYyCSxbOpFJpBRnAJ2EluvPmYG
+	6RYW8JeYcFgHxGQRUJVYdzMPpIJXwFLi0u82ZghbUOLkzCcsIDazgLZE78NWRhh72cLXUMcp
+	SPx8uowVIi4ucfRnD1hcRMBP4syT9SwTGIVnIRk1C8moWUhGzULSvoCRZRWjaGpBcW56bnKB
+	oV5xYm5xaV66XnJ+7iZGcMxpBe1gXLb+r94hRiYOxkOMEhzMSiK8oSVVaUK8KYmVValF+fFF
+	pTmpxYcYpTlYlMR5lXM6U4QE0hNLUrNTUwtSi2CyTBycUg1ME2Syty1NWKF6asoOVu4AO4Uj
+	+fftr//W5Un0dnS7WFRe++oo30IxQ/cNJ2fECxR27lRxCmu9z5e78Mj/lwcducwm5//8f31H
+	fsqe9dqBP68+e7vzpOXWu5fn5sQJ222yyrH/su+v0Z/0h0v7V1l23fTnMFf3YdvcXl/9jC3w
+	+oqtzhZGPYft0nvKjr/ITTs1s/9Sp+Xz9GPqSt6PHx8W/nJMpThR36z+ec19jrmuHZGtvodZ
+	jxd+UfgzrdPWcE1lc3Ti15wMMce/fIIsua9f2GkLCV+bPzvr2I726mVRM60eJq1RP/zkyMVy
+	udzFvGqN79svrrs7Y+9CRoOlVr5fTtXvEFBu5Xr11thmCYuGEktxRqKhFnNRcSIAqMSdoCgD
+	AAA=
+X-CMS-MailID: 20240627133545epcas5p461398bd51e6482f7a364fdfbb69e7243
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7
+References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1.samsung.com>
+	<20240620103410.35786-1-vishnu.reddy@samsung.com>
+	<38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
+	<07f201dac7be$e81317d0$b8394770$@samsung.com>
+	<4efb51f3-4600-4d88-a5df-e7be43294d53@linaro.org>
 
-Hi Krzysztof,
 
-On Thu, 27 Jun 2024 at 11:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 26/06/2024 21:42, Peter Griffin wrote:
-> > Hi Krzysztof,
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40linaro.org=5D
+> Sent: 26 June 2024 18:31
+> To: Vishnu Reddy <vishnu.reddy=40samsung.com>; 'Krzysztof Kozlowski'
+> <krzk=40kernel.org>; s.nawrocki=40samsung.com; alim.akhtar=40samsung.com;
+> linus.walleij=40linaro.org
+> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-
+> soc=40vger.kernel.org; linux-gpio=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; pankaj.dubey=40samsung.com;
+> ravi.patel=40samsung.com; gost.dev=40samsung.com
+> Subject: Re: =5BPATCH v2=5D pinctrl: samsung: Add support for pull-up and=
+ pull-
+> down
+>=20
+> On 26/06/2024 13:49, Vishnu Reddy wrote:
 > >
-> > This series adds support for syscon-reboot and syscon-poweroff to gs101/Oriole.
-> > It has been tested with reboot and poweroff commands respectively.
 > >
-> > Note the syscon-reboot/poweroff has *runtime* dependencies on the exynos-pmu
->
-> How does the runtime dependency manifests? Something get broken if there
-> are no dependencies? Or maybe reboot does not work, but probably it did
-> not work before, either?
-
-Without [1] but with this series applied you will get an Serror
-interrupt and hang on poweroff, and reboot commands, as it will use a
-mmio syscon to write the protected register.
-
-[   74.680240][    T1] reboot: Restarting system
-[   74.680322][    C0] SError Interrupt on CPU0, code
-0x00000000be000011 -- SError
-[   74.680329][    C0] CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted
-6.10.0-rc3-next-20240613-00009-g6ca503bd3c2b #476
-[   74.680336][    C0] Hardware name: Oriole (DT)
-[   74.680338][    C0] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT
--SSBS BTYPE=--)
-[   74.680345][    C0] pc : _raw_spin_unlock_irqrestore+0x10/0x44
-[   74.680363][    C0] lr : regmap_unlock_spinlock+0x14/0x20
-[   74.680373][    C0] sp : ffff80008009bb40
-[   74.680375][    C0] x29: ffff80008009bb40 x28: ffff00da4587e158
-x27: ffffa38d3bc74708
-[   74.680386][    C0] x26: ffffa38d3d9c9ca8 x25: 0000000000000000
-x24: 0000000000000000
-[   74.680394][    C0] x23: 0000000000000000 x22: 0000000000000002
-x21: 0000000000000002
-[   74.680400][    C0] x20: 0000000000003a00 x19: 0000000000000000
-x18: ffffffffffffffff
-[   74.680407][    C0] x17: 0000000000000000 x16: ffffa38d3c6cf438
-x15: ffff80008009b6a0
-[   74.680414][    C0] x14: 0000000000000000 x13: ffff00dbb6980000
-x12: 00000000000007d4
-[   74.680421][    C0] x11: 000000000000029c x10: ffff00dbb6c40000 x9
-: ffff00dbb6980000
-[   74.680427][    C0] x8 : ffff80008009bc28 x7 : 0000000000000000 x6
-: 0000000000000000
-[   74.680434][    C0] x5 : ffffa38d3b83e074 x4 : 0000000000003a00 x3
-: 0000000000000000
-[   74.680440][    C0] x2 : ffffa38d3b831764 x1 : ffff00da40230000 x0
-: 0000000100000001
-[   74.680447][    C0] Kernel panic - not syncing: Asynchronous SError Interrupt
-
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
+> >> Sent: 24 June 2024 19:27
+> >> To: Vishnu Reddy <vishnu.reddy=40samsung.com>;
+> >> krzysztof.kozlowski=40linaro.org; s.nawrocki=40samsung.com;
+> >> alim.akhtar=40samsung.com; linus.walleij=40linaro.org
+> >> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-
+> >> soc=40vger.kernel.org; linux-gpio=40vger.kernel.org; linux-
+> >> kernel=40vger.kernel.org; pankaj.dubey=40samsung.com;
+> >> ravi.patel=40samsung.com; gost.dev=40samsung.com
+> >> Subject: Re: =5BPATCH v2=5D pinctrl: samsung: Add support for pull-up =
 and
+> >> pull- down
+> >>
+> >> On 20/06/2024 12:34, Vishnu Reddy wrote:
+> >>> gpiolib framework has the implementation of setting up the PUD
+> >>> configuration for GPIO pins but there is no driver support.
+> >>>
+> >>> Add support to handle the PUD configuration request from the
+> >>> userspace in samsung pinctrl driver.
+> >>>
+> >>> Signed-off-by: Vishnu Reddy <vishnu.reddy=40samsung.com>
+> >>> ---
+> >>> Verified the offset from the user manual of following Exynos SoC
+> >>> series and found the current code is taking care of correct offset
+> >>> for pull-up and pull-down
+> >>>
+> >>> Exynos-3250
+> >>> Exynos-3470
+> >>> Exynos-4412
+> >>> Exynos-4415
+> >>> Exynos-5250
+> >>> Exynos-5260
+> >>> Exynos-5410
+> >>> Exynos-5420
+> >>> Exynos-5422
+> >>> Exynos-7420
+> >>> Exynos-7580
+> >>> Exynos-7880
+> >>> Exynos-9820
+> >>> Exynos-9830
+> >>> Exynos-4210
+> >>> Exynos-S5PC210
+> >>> Exynos-S5PV310
+> >>>
+> >>> This patch is tested on FSD platform
+> >>
+> >> You verified but...
+> >>
+> >>> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> >> b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> >>> index d50ba6f07d5d..758b623a4bea 100644
+> >>> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> >>> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> >>> =40=40 -61,6 +61,13 =40=40 enum pincfg_type =7B
+> >>>  =23define PIN_CON_FUNC_INPUT		0x0
+> >>>  =23define PIN_CON_FUNC_OUTPUT		0x1
+> >>>
+> >>> +/*
+> >>> + * Values for the pin PUD register.
+> >>> + */
+> >>> +=23define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
+> >>> +=23define PIN_PUD_PULL_DOWN_ENABLE	0x1
+> >>> +=23define PIN_PUD_PULL_UP_ENABLE		0x3
+> >>
+> >> ... I said it is not correct, so you send the same? If you think I
+> >> was wrong, then please respond and keep discussion going. Sending the
+> >> same suggests you just ignored my comment.
+> >>
+> >> Look at two headers s5pv210-pinctrl.h and s3c64xx-pinctrl.h. How did
+> >> you resolve these?
+> > Thank you for sharing the s5pv210-pinctrl.h and s3c64xx-pinctrl.h  file
+> names for the pin value information.
+> > I have not ignored your comment. Unfortunately, I don't have the user
+> manuals for the s3c64xx and s5pv210 series.
+> > I have an idea to handle the PIN_PULL_UP value of the s3c64xx and
+> s5pv210 series by checking the compatibility with the
+> of_device_is_compatible API.
+> > Will it be okay or do you have any other suggestions?
+>=20
+> I don't remember the code used here, but usually such choices are
+> determined by driver match data (and flags or value customized per varian=
+t).
+Hi, Thanks for suggestion.
+I have gone through this and found that driver match data in this driver is=
+ stored in the __initconst section, which is freed up after kernel initiali=
+zation. So we have two options:
+1: Keep this platform specific data in driver match data and then populate =
+driver_data field in probe function.=20
+2: Use compatible matching and set different values during set_config.=20
 
-[   49.448590][    T1] reboot: Power down
-[   49.448747][    C0] SError Interrupt on CPU0, code
-0x00000000be000011 -- SError
-[..]
+First approach will result in many changes, such as populating  driver matc=
+h data for all platforms and then storing the same in driver_data in probe.
 
-Without the clk-gs101 critical clock change, poweroff command will
-hang, when shutting down UFS.
+In the second approach, we can handle this using simple if/else based on a =
+compatible match.=20
 
-Without the exynos-pmu support for !atomic registers, the reboot
-command won't work when the DT is present as the register write to
-SYSTEM_CONFIGURATION register will fail.
+IMO, second approach would be simpler and introduce less changes. Any sugge=
+stions from your end?
+>=20
+> Best regards,
+> Krzysztof
 
-[  114.525217][    T1] reboot: Restarting system
-[  114.525290][    T1] tensor_sec_reg_write(): SMC failed: -22
-[  115.525434][    T1] Unable to restart system
-[  116.025576][    T1] Reboot failed -- System halted
 
-For poweroff, you are correct this has not been supported on Pixel 6
-so far upstream.
-
-However `echo b > /proc/sysrq-trigger ` has worked in previous kernel
-releases (it would reset the system using Watchdog). With the
-syscon-reboot DT present, but without [1] this will cause a Serror and
-no longer restart the system which would be a regression.
-
-Thanks,
-
-Peter.
-
-[1] https://lore.kernel.org/linux-arm-kernel/20240621115544.1655458-1-peter.griffin@linaro.org/
