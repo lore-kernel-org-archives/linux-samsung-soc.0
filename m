@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F04B1591F0;
-	Thu, 27 Jun 2024 15:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A808B198E66;
+	Thu, 27 Jun 2024 15:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501753; cv=none; b=aUA6JF6Qu1CJs7hbf7r14pmaL+baOMP6gXi8tf0WydMY4mkj98BA3oWH9ATZKPW+Vpm6gWyQoFIJtsUswhvhct4MXke3lzjswbZHvSJSMGnQxE8LJxZ+GSJAm8h5SOKJFExYOvev2e65WM7R5IxMwvjIpuSKGs4mStq0QQO9sqg=
+	t=1719502075; cv=none; b=uJEieeVUuzM3n/zyKcjMCIQRDJRLwed2BKGoSfddXyjiud3j7FTDZuSDEwZQO5BmWjLKdwmwuW3bM/4rLZhTu6+Rogu4dFcOaG0pnw8DA4hyibty6n7kv8v/uTle8NVLNsXFnH21sr4ifA3jVfqP5s4UiwL4oWg1XmBZLI6G2f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501753; c=relaxed/simple;
-	bh=dzYnLX0ofV348/ikNHktNilDa/Whpr7p2KqpvFijEkA=;
+	s=arc-20240116; t=1719502075; c=relaxed/simple;
+	bh=9cPgU3lKZ5sHDxRTQaP3BVTiignn+lYlySeU6Ux/fys=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJqr9+GSYwI87u85MC30mrJpSEuAYHpUToYBKIhrb4PAPpXTe15M/anU4ymRyryzZWKvpP4Ufz42w08Tf3d85Yt76Al/dbtDtRwz7VydM1V+5E+nfQVNTriqRQoeGP4HmbqAGbze5WATVnkn3Y0ihgaHJOExqjo1C6SjjnntaTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjbVpYgq; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=XXp7/9lEzGjYe8Hm28maEsGajQtH1TwSt8jn1vibjtv9z/TvU0jtSX+JInrIbwBA2+Yrl5+kxmlGOzO0BSuWqji/jm0PSlOtwiPowsX3Bsln93NdfCQ2RUHPOsPB9iDO3PoB3Cksb/wrs2hlk/Aq3gbbZxJ3p62fDM7nQZNWLho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiLrGhdW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjbVpYgq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2093C2BBFC;
-	Thu, 27 Jun 2024 15:22:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiLrGhdW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71DA8C2BBFC;
+	Thu, 27 Jun 2024 15:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719501753;
-	bh=dzYnLX0ofV348/ikNHktNilDa/Whpr7p2KqpvFijEkA=;
+	s=k20201202; t=1719502075;
+	bh=9cPgU3lKZ5sHDxRTQaP3BVTiignn+lYlySeU6Ux/fys=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cjbVpYgqgIXYJnCEvdeaZCCwJAARjGbN5gPemtbhVjxZMSSMTaqprKACo7c2nnLQs
-	 HFHdlpgZfHucfrrvV5es81uasb82gSvbeRxl1DwecrjZ3RkoFdQ4LTQRoSiOMLhdY0
-	 nUk7uFJ/ufGzGl/MXfvqf3LfdfR8sYcY86c6rPUaA08PI4CpqgMsGd5hU1LhKpJIqk
-	 NA691Rym2+GwaEi1PQ6N7WjcU4grUIaf/5g9XdS4w4mIuBWV48J6nL+BnLE+DzYQ9u
-	 HgnAwqTdt5GxXHDV7bxKJ20UmUauLvvIl+lauMDufsJWFXj7aLQhUI1sSPN1PKIkIG
-	 kG/AUoXair8Nw==
-Message-ID: <dbe55275-a13e-46a3-8b45-b08c301088d4@kernel.org>
-Date: Thu, 27 Jun 2024 17:22:27 +0200
+	b=DiLrGhdWBpmA3W1tjY7IIBB1Gg6aIbnJO0AzMMaDUklbi1yYhpui73U2buHSeePuE
+	 De4azC/U+G0f/w2z6h+SI8wlHf3m9DtRk+3rdOmLk4RW+pStAVkC+qAQKSghXVDCte
+	 VS6rfeGQswgi4zxj8FxOJ7oWojvz5qdQq76aB7WW49tL2lRlHnDE48qRNXasf7gnk8
+	 EhtZ8yPP9XKFiZ79nu2NV8VDAE8G+jdrmvF58O46dzBfjhSr9OkrMZce29/ZczrvUI
+	 6+BN8ml8JSWe9n4HSX9zP5tsJdfPCesQgO6SMkdqivZQWQglcKsIHbQ9SElUU8Pz9/
+	 etKli/S9h+zLg==
+Message-ID: <b1b6ccc8-ab83-4d4e-8902-769e12975580@kernel.org>
+Date: Thu, 27 Jun 2024 17:27:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -49,8 +49,9 @@ References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1
  <07f201dac7be$e81317d0$b8394770$@samsung.com>
  <4efb51f3-4600-4d88-a5df-e7be43294d53@linaro.org>
  <086b01dac896$e988fed0$bc9afc70$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <dbe55275-a13e-46a3-8b45-b08c301088d4@kernel.org>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -94,32 +95,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <086b01dac896$e988fed0$bc9afc70$@samsung.com>
+In-Reply-To: <dbe55275-a13e-46a3-8b45-b08c301088d4@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/06/2024 15:35, Vishnu Reddy wrote:
+On 27/06/2024 17:22, Krzysztof Kozlowski wrote:
+> On 27/06/2024 15:35, Vishnu Reddy wrote:
+>>>
+>>> I don't remember the code used here, but usually such choices are
+>>> determined by driver match data (and flags or value customized per variant).
+>> Hi, Thanks for suggestion.
+>> I have gone through this and found that driver match data in this driver is stored in the __initconst section, which is freed up after kernel initialization. So we have two options:
+>> 1: Keep this platform specific data in driver match data and then populate driver_data field in probe function. 
+>> 2: Use compatible matching and set different values during set_config. 
 >>
->> I don't remember the code used here, but usually such choices are
->> determined by driver match data (and flags or value customized per variant).
-> Hi, Thanks for suggestion.
-> I have gone through this and found that driver match data in this driver is stored in the __initconst section, which is freed up after kernel initialization. So we have two options:
-> 1: Keep this platform specific data in driver match data and then populate driver_data field in probe function. 
-> 2: Use compatible matching and set different values during set_config. 
+>> First approach will result in many changes, such as populating  driver match data for all platforms and then storing the same in driver_data in probe.
+>>
+>> In the second approach, we can handle this using simple if/else based on a compatible match. 
+>>
+>> IMO, second approach would be simpler and introduce less changes. Any suggestions from your end?
 > 
-> First approach will result in many changes, such as populating  driver match data for all platforms and then storing the same in driver_data in probe.
+> Please wrap your email according to mailing list style.
 > 
-> In the second approach, we can handle this using simple if/else based on a compatible match. 
-> 
-> IMO, second approach would be simpler and introduce less changes. Any suggestions from your end?
+> Both options are not the way because you introduce a new, different
+> style of handling per-variant customization. The driver already parses
+> match data and stores such per-variant-details in different places, like
+> samsung_pin_bank or samsung_pinctrl_drv_data. This seems like a value
+> fixed per entire device, so could go to samsung_pinctrl_drv_data.
 
-Please wrap your email according to mailing list style.
-
-Both options are not the way because you introduce a new, different
-style of handling per-variant customization. The driver already parses
-match data and stores such per-variant-details in different places, like
-samsung_pin_bank or samsung_pinctrl_drv_data. This seems like a value
-fixed per entire device, so could go to samsung_pinctrl_drv_data.
+... although maybe this matches your first option? Not sure.
 
 Best regards,
 Krzysztof
