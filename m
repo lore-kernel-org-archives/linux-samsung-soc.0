@@ -1,113 +1,117 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9291B132112
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Jun 2024 22:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6061DA53;
+	Sat, 29 Jun 2024 04:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719614118; cv=none; b=iRhs8SkHkmklS+UUKp4fWupvgsSzReQgbk1PAnJY5Zh44L79D6ig0IE1ckZPw/3cMCcQv5GYsi66tjePa0abT4hUs5q8LFSZXV7QOK/uNyR8/7Hfj8VXHBNRv9L1i70m06k550TATRfcfuiy7BoeFiePiDuFWH483Mty1iegRNE=
+	t=1719635156; cv=none; b=rhMGvRhe67zTRqrPe5keS+UTD+kQPNp0XLRwLuu6D2y5tNdydXZ1/nmQoQiW2VNRZjx0PEfLJAZ0xMn0KAd9G1auOZ0aRmt57YPjCLcS8hrGgfeShXiXvAhAoMNEl5Z8l+Bh5QDZOhcI6L8LBmfV6wADvXy0hQquL68/XXNVIds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719614118; c=relaxed/simple;
-	bh=PApABQ8Ns3+kJP3W0ZfRrX0JhAAa8kO4F6PTGhhK+4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oU4CH6HI/2AJ2dx5pv78qbFMD6F+wuSu8Z5rgKFvk6Q3uU3NQXHTj6YMnyExTc1ZNVC3Xt0iwidNZcyv+J+5o+y+h6ROEWHh8fyFMShwzVlcednJhDaN8X7ayCWV/zXE971pBz/ysQp2M87OEJ09dGL9B2Mpg8gnG+uwyn9qA2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uWlWMie0; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719635156; c=relaxed/simple;
+	bh=pbUWmzBZxa7d97eWO0V0lrZEifzBld3FlFLlGxEXEcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VPt6DoCccfdM71lp2qvIXj+PgrCLKArT3fscSm9iXFalIuRplhewxdcVkj+yWg7oBznNJLgAzKrvqJx/BaT4MZPcDPtVtddGA1EYMLty8GwEi21i8rVrcYLvsvXRbW/4SeZ20sx6AxvdBUae4dS1Hoi6A6QRMjIKTJZfbzeuNwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHQVdcNN; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uWlWMie0"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4256eec963eso7592005e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Jun 2024 15:35:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHQVdcNN"
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c21ba58227so645800eaf.0;
+        Fri, 28 Jun 2024 21:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719614115; x=1720218915; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719635154; x=1720239954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bK4GVLftRcx1G43I5RNC1VZ+kMnAGIqU8rAyC3MW8BY=;
-        b=uWlWMie0Yso5DTYVxZMXd7OoxDvA3F0ybBEFiZxJcIX8WI21yAImKn8MasHkGIeE/s
-         GNY9I3BXv1efa+JNp8LP0OMBxqpnQDcRGrc3sy3xAMNFV4KhvMGctdiS+nCiPLzQR6d+
-         enc/EXBTgahMZ6kECjihgc2i/uEMRGskRvsZLDkbi5qXQcSr1tJ1tIvG+gB+X0rhMQWm
-         kJ0NQgUM8QNMt4wyvFOE3WJq6uEX0ksSBHV94HXMceiMMoFnnwzHOcbaAf5kvI8A1t/w
-         tevENQpqp6EOR0STEc+88dyTf6D5YX6tmcRzqdPdGklrfxmVtpVEXd/aRNwC537KK2c3
-         nIFw==
+        bh=30kxa0Q+gUHVRJCK4oP0++E6pyeV3ESDyAZnq2q+C5o=;
+        b=NHQVdcNNbc/e/xktlU6oxlx/Th6rEzy2MMItZGrkidNa6vy4mYJ5xkA7sfq4OAYNHB
+         gwU39nTSTQuiJ91boANXaV6AG5I1TC+b7XHX7E3bDTtPKP4f2RHunLNm6BwqbDfiaS3E
+         brhrTD6S0L4bXEHIvL8Lycio0jmFzSZN4baVs/ri/h80erjBLsH/kahmY4n53isr6y1I
+         +gJRZQv++KwY5NBGMEjyPSwshfqUzn09lGMgrkMlwFmtz0M59T3i0ycCTTvTW6vm8R4/
+         WEH7CAcbSUJwwD+LOtWu3QOeSEkwWHtA8O6EwkPreIr8evn4wbJe3aUPqf5c/0YWgy1j
+         VI8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719614115; x=1720218915;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719635154; x=1720239954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bK4GVLftRcx1G43I5RNC1VZ+kMnAGIqU8rAyC3MW8BY=;
-        b=Xcj4hEfN6+Ao81CTX0qFGljeWD6xJ0aHbEyAQt8SYYeY3hfB6aXhsbKgC7Ruf3OTZu
-         6yMo0zL3n+gQH5ahNYOj7DQxWO4m8J6UpTPOuIo3dOnx9JHnEcctRzqXkt1fjt8NqXjJ
-         wo/WygCz6vbsu00GqrbkwJEoqvqo7FnyUDzv5K7fl+uvtRcdMEJfzPvqmOe11DUjaOF3
-         I57okN0o+wFOAA73De8mws5y7J3uW2J5sLGFZ55SQdXmeCkU7DaTkSVWVrKUikOrm0Pt
-         tm3lxifNiDQvjEHMDQlkuD+P3fhtM62pvr0BqnXLlXnl15lCW/JkjlGRN0sZrxzwb54h
-         GXqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaNhYnr5iBQREZ6EHPy+f4PLdKWmAb/RFnYUftsO7dZjYUR86b5hvH9IMXZDOk64HFZ8VmuxW/vsN/3KKh9aBPI5XXyckPW6PrsmTWLFFpUSA=
-X-Gm-Message-State: AOJu0Yz9ApiVnWgiAv5U23HMMeX99i34lPu7xP/PtXGFIt9ryGSE8kyB
-	mr5RkQcT0wfBUAziQhXAttPkZv5jlQM1bHmwooO7OLj1BZU9DxTrhYXArVssoqU=
-X-Google-Smtp-Source: AGHT+IGAx/+hg7U8vXysG5fFaJ+7znqTB7jHT7deRrgK6fDUyfus/N4BjGymdOMvzYq/K9V9/QTmyA==
-X-Received: by 2002:a05:600c:6b16:b0:424:a3d7:2a89 with SMTP id 5b1f17b1804b1-424a3d72b27mr80778525e9.4.1719614115166;
-        Fri, 28 Jun 2024 15:35:15 -0700 (PDT)
-Received: from gpeter-l.lan ([2a0d:3344:2e8:8510::3aa])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a043a16sm3496711f8f.0.2024.06.28.15.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 15:35:14 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	cw00.choi@samsung.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v2 3/3] clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical
-Date: Fri, 28 Jun 2024 23:35:06 +0100
-Message-ID: <20240628223506.1237523-5-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <20240628223506.1237523-1-peter.griffin@linaro.org>
-References: <20240628223506.1237523-1-peter.griffin@linaro.org>
+        bh=30kxa0Q+gUHVRJCK4oP0++E6pyeV3ESDyAZnq2q+C5o=;
+        b=nLXjGtX6D75odboFQTLt85EKCfGi42N2RYVHubO6Y9XGkbGYWHm219XieVxfmdiBU2
+         EHaJHYTJ5JEdtyyd/+gfVXLo1/w+bICiLZDV8WAQoo7LOTgE5pvyVmix2XNQOsWLJeIH
+         XHgPvdeHur834w6ddXBoazPOi0DdbgaZnOIhkmgq1uyxASCoIiKqf3hjputxObxNxuaq
+         GOXUdkvatjkFfMRglL4ol7kyUkjhEH+aUApLDzoLPBDKvVEzzIi0v0dAnUDfOaT3rnY7
+         p/0vThwP9LZ1jsa+O6IGOezVuhYjNayp0eD812cw5QE68zfOaT1AX6EBgrJ2UZ+g/McO
+         jUdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY5WiaK8T9JnfMj6VuXT9kjbvieF6OCy/VP1T8+IPEoWc2M6SXYHno6+Qxloe8DGrmeGAoUh88dta0o/wFpq+adBPPfZEhDkLAwNiQtathU6egnIsDwVvlGYINUMa/7XJjW+PQhsd0sSXdDs1F60EjYd41oyOEzftO/0XC7udS0B4MTEGwRPVqUg==
+X-Gm-Message-State: AOJu0YztXjiQ5QyBMkDTwjmP+BrFk17WtbvCIT7JfY3/r4OFGoDIS2D5
+	J9artIyF+G4o3p1VjToMDtW4myXTKn4Rr7IwREAjPSvDCARw0ldDkgMBzE+5YPjBAtTon5A35km
+	LyQhrA+F4Mf50qB6U0OEZFeViCpg=
+X-Google-Smtp-Source: AGHT+IHTyqC+oWHQSDqh/4MuJ4c4xX2WdLH/YKVOYoC1crgGxMG+PzC2Z4AqXkc0NcLW8CJto3S2vXHr58J93giO4SY=
+X-Received: by 2002:a4a:4884:0:b0:5c2:23ee:bc33 with SMTP id
+ 006d021491bc7-5c439051779mr68928eaf.5.1719635154450; Fri, 28 Jun 2024
+ 21:25:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240510094034.12493-1-linux.amoon@gmail.com> <CANAwSgTRfEChziyys251-FezSevSq9pxHLJixVCAybJhq5YAqw@mail.gmail.com>
+ <15b164aa-601f-4dad-8115-14a715608319@kernel.org>
+In-Reply-To: <15b164aa-601f-4dad-8115-14a715608319@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 29 Jun 2024 09:55:37 +0530
+Message-ID: <CANAwSgRyZ=43yBxiAmj-+5xL0b9FBkoDeR88BJ8FqDTQX7KVFg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled()
+ helpers
+To: Chanwoo Choi <chanwoo@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The system hangs on poweroff when this UFS clock is turned off, meaning
-the system never powers down. For the moment mark the clock as critical.
+Hi Chanwoo,
 
-Reviewed-by: Will McVicker <willmcvicker@google.com>
-Tested-by: Will McVicker <willmcvicker@google.com>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 26 Jun 2024 at 20:00, Chanwoo Choi <chanwoo@kernel.org> wrote:
+>
+> 24. 6. 17. 17:24=EC=97=90 Anand Moon =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=
+=B8=80:
+> > Hi All,
+> >
+> > On Fri, 10 May 2024 at 15:10, Anand Moon <linux.amoon@gmail.com> wrote:
+> >>
+> >> The devm_clk_get_enabled() helpers:
+> >>     - call devm_clk_get()
+> >>     - call clk_prepare_enable() and register what is needed in order t=
+o
+> >>      call clk_disable_unprepare() when needed, as a managed resource.
+> >>
+> >> This simplifies the code and avoids the calls to clk_disable_unprepare=
+().
+> >>
+> >> While at it, use dev_err_probe consistently, and use its return value
+> >> to return the error code.
+> >>
+> >> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> >
+> > Gentle ping?
+> >
+> > Thanks
+> > -Anand
+> >
+>
+> Applied it. Thanks.
+> I'm sorry for late reply.
+>
+Thanks & Regards
+-Anand
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index ba9570f7a5fa..85098c61c15e 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -2846,7 +2846,7 @@ static const struct samsung_gate_clock hsi2_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_HSI2_UFS_EMBD_I_CLK_UNIPRO,
- 	     "gout_hsi2_ufs_embd_i_clk_unipro", "mout_hsi2_ufs_embd_user",
- 	     CLK_CON_GAT_GOUT_BLK_HSI2_UID_UFS_EMBD_IPCLKPORT_I_CLK_UNIPRO,
--	     21, 0, 0),
-+	     21, CLK_IS_CRITICAL, 0),
- 	GATE(CLK_GOUT_HSI2_UFS_EMBD_I_FMP_CLK,
- 	     "gout_hsi2_ufs_embd_i_fmp_clk", "mout_hsi2_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_HSI2_UID_UFS_EMBD_IPCLKPORT_I_FMP_CLK,
--- 
-2.45.2.803.g4e1b14247a-goog
-
+> --
+> Best Regards,
+> Samsung Electronics
+> Chanwoo Choi
+>
