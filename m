@@ -1,117 +1,136 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6061DA53;
-	Sat, 29 Jun 2024 04:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C6220B35;
+	Sat, 29 Jun 2024 13:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719635156; cv=none; b=rhMGvRhe67zTRqrPe5keS+UTD+kQPNp0XLRwLuu6D2y5tNdydXZ1/nmQoQiW2VNRZjx0PEfLJAZ0xMn0KAd9G1auOZ0aRmt57YPjCLcS8hrGgfeShXiXvAhAoMNEl5Z8l+Bh5QDZOhcI6L8LBmfV6wADvXy0hQquL68/XXNVIds=
+	t=1719669141; cv=none; b=NOOnJHvMlkt/Szgi1V+lz1P9dZ4CZlT9hSz/EVJRNw0Zx8WA60egRb5uWO8O0PQ42XgtvotMBj8mHhWlOTESy/P7niKeWWyOVl8tWk1tu6Oitlosa6pF0FrpdZ0Hq2yKvq1F9t4YO8sLK4Zoddh/cpwmkLnJmxrhRMqtI5khpPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719635156; c=relaxed/simple;
-	bh=pbUWmzBZxa7d97eWO0V0lrZEifzBld3FlFLlGxEXEcc=;
+	s=arc-20240116; t=1719669141; c=relaxed/simple;
+	bh=TbbyMyfvILKCy9QD4+VE6X1XF2QUuSxC/os+k31QF6g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VPt6DoCccfdM71lp2qvIXj+PgrCLKArT3fscSm9iXFalIuRplhewxdcVkj+yWg7oBznNJLgAzKrvqJx/BaT4MZPcDPtVtddGA1EYMLty8GwEi21i8rVrcYLvsvXRbW/4SeZ20sx6AxvdBUae4dS1Hoi6A6QRMjIKTJZfbzeuNwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHQVdcNN; arc=none smtp.client-ip=209.85.161.50
+	 To:Cc:Content-Type; b=aN1j5ZxsnROw2ugHgYgGWXLI8p8SDwaZTQJp7OAIn7FOD3Ghdh4PmPDzyHateYtUcG/AtnA3ott2bZnoVz3Xc6Q9dSiQ9rgK5oi/CsAYk6uu3DIR2XzdWQj5fyZOUxyHsd7R/GjBk21TfXnQURINKtPdq9ThnrCLYcECvQLip+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lziih1CO; arc=none smtp.client-ip=209.85.161.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHQVdcNN"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c21ba58227so645800eaf.0;
-        Fri, 28 Jun 2024 21:25:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lziih1CO"
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c21ba58227so780342eaf.0;
+        Sat, 29 Jun 2024 06:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719635154; x=1720239954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=30kxa0Q+gUHVRJCK4oP0++E6pyeV3ESDyAZnq2q+C5o=;
-        b=NHQVdcNNbc/e/xktlU6oxlx/Th6rEzy2MMItZGrkidNa6vy4mYJ5xkA7sfq4OAYNHB
-         gwU39nTSTQuiJ91boANXaV6AG5I1TC+b7XHX7E3bDTtPKP4f2RHunLNm6BwqbDfiaS3E
-         brhrTD6S0L4bXEHIvL8Lycio0jmFzSZN4baVs/ri/h80erjBLsH/kahmY4n53isr6y1I
-         +gJRZQv++KwY5NBGMEjyPSwshfqUzn09lGMgrkMlwFmtz0M59T3i0ycCTTvTW6vm8R4/
-         WEH7CAcbSUJwwD+LOtWu3QOeSEkwWHtA8O6EwkPreIr8evn4wbJe3aUPqf5c/0YWgy1j
-         VI8g==
+        d=gmail.com; s=20230601; t=1719669139; x=1720273939; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wisMx0ek/spfbVP70onUB10Oer/RxJ8B4YlAA8+gQ8w=;
+        b=Lziih1COlBYG2EiRvyU/sgOhEVKNdmAbLKIsBz2j1CKEH7jIdFqquhgD07lXGjuu8O
+         zUqjEggyOxUbx0moJJLROmutiYtThZs2hQUIlkNl40tXp/BQB5JeXGkUSPlMxOtEy0mM
+         CIj9Gi3C1jzvRCLo2/q/ubdi2UyyhBAyXv8xjOG+ogGdCwOA8PsNOJyX6gFsWy4GZl57
+         O5pK+giizdu1xmLl/bJIZ1oqx/BkCCGg0noq1/jR2oiTryMwPxGAUSkqFsEOfdaAyhVv
+         tKwU0LzDIyGG+1/wvqSeBLgj40/CnZ10ZtX9U3ZdfV5PEBX0VcVMqEfzQ/Z9Wi1QSrjk
+         0fAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719635154; x=1720239954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=30kxa0Q+gUHVRJCK4oP0++E6pyeV3ESDyAZnq2q+C5o=;
-        b=nLXjGtX6D75odboFQTLt85EKCfGi42N2RYVHubO6Y9XGkbGYWHm219XieVxfmdiBU2
-         EHaJHYTJ5JEdtyyd/+gfVXLo1/w+bICiLZDV8WAQoo7LOTgE5pvyVmix2XNQOsWLJeIH
-         XHgPvdeHur834w6ddXBoazPOi0DdbgaZnOIhkmgq1uyxASCoIiKqf3hjputxObxNxuaq
-         GOXUdkvatjkFfMRglL4ol7kyUkjhEH+aUApLDzoLPBDKvVEzzIi0v0dAnUDfOaT3rnY7
-         p/0vThwP9LZ1jsa+O6IGOezVuhYjNayp0eD812cw5QE68zfOaT1AX6EBgrJ2UZ+g/McO
-         jUdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXY5WiaK8T9JnfMj6VuXT9kjbvieF6OCy/VP1T8+IPEoWc2M6SXYHno6+Qxloe8DGrmeGAoUh88dta0o/wFpq+adBPPfZEhDkLAwNiQtathU6egnIsDwVvlGYINUMa/7XJjW+PQhsd0sSXdDs1F60EjYd41oyOEzftO/0XC7udS0B4MTEGwRPVqUg==
-X-Gm-Message-State: AOJu0YztXjiQ5QyBMkDTwjmP+BrFk17WtbvCIT7JfY3/r4OFGoDIS2D5
-	J9artIyF+G4o3p1VjToMDtW4myXTKn4Rr7IwREAjPSvDCARw0ldDkgMBzE+5YPjBAtTon5A35km
-	LyQhrA+F4Mf50qB6U0OEZFeViCpg=
-X-Google-Smtp-Source: AGHT+IHTyqC+oWHQSDqh/4MuJ4c4xX2WdLH/YKVOYoC1crgGxMG+PzC2Z4AqXkc0NcLW8CJto3S2vXHr58J93giO4SY=
-X-Received: by 2002:a4a:4884:0:b0:5c2:23ee:bc33 with SMTP id
- 006d021491bc7-5c439051779mr68928eaf.5.1719635154450; Fri, 28 Jun 2024
- 21:25:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719669139; x=1720273939;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wisMx0ek/spfbVP70onUB10Oer/RxJ8B4YlAA8+gQ8w=;
+        b=oWuljWkntLocFnAAyHEA+U+jThn0IY7GnyQcpvqRICQD+dDGFjRTCmqFsWj0eHm7AL
+         aC6EQqAZItyXS6pSLbnCo9UHxSDG+YEpb4kKMCDps9wC6JZRxSpPHzhFbWBk9FApNry4
+         Q82fd6MWEnIVqDC4lCPCDZcsUtZu9oxhPZWjqhJ7qac1Wg5JCDPX6+zWzHoCZOe8i6ub
+         LzDAZDRAZG2zT+udLCjJfsw6MPdc8o6KvYFSMmbn7BaKeaP7kQLoiQPrku2WIj1dZFnK
+         H7sRY4fgEW6CCtLKl5Amj3zE/AAXKpDOSxgvbBT90P7vhChdqRxza5KVoFByvP4f8Bxt
+         /Qrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZu1DTDgajxQuaGvjHgzLkSKrjguqdtTJ+01wSTvdCvR/0/ffcq1V+Z0H9FeITj6+2bof+lqlzdKdp4ppD3bK6AOIlLbWmwfupStoNf425IdRlA3V0I3Pzk4KOqZJxu4wSoRNPvQzLRfuyW+OX6ESqHZ0PNUZDyRcXIW0e3OV9ph4nl7pILvQeFA==
+X-Gm-Message-State: AOJu0YzxJY0orMQUE3Fg5P67OJP/F/Xn4KcbcqyXYy3pkOS/qEdr+UQJ
+	EXwlmsi0DKlgrLYFB9UkH6Qg4dWL9rZCNtXtjZRLP9cv1hcxNOtdxPuLPaEkqpAQpCxrFaN9mxb
+	WQ9tz6CC9cJFs7RqBnA1HhOlZgLI=
+X-Google-Smtp-Source: AGHT+IEnqeU/rjRxtlGchXeDSLdHKdBq5buSR6YNbubUtRs1QS9eoTiCbB4x+HyoR4KIHTFFBNwQOpSnJYXZ1R+yCbs=
+X-Received: by 2002:a05:6870:d14d:b0:250:8913:7400 with SMTP id
+ 586e51a60fabf-25db35af930mr802172fac.40.1719669139304; Sat, 29 Jun 2024
+ 06:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510094034.12493-1-linux.amoon@gmail.com> <CANAwSgTRfEChziyys251-FezSevSq9pxHLJixVCAybJhq5YAqw@mail.gmail.com>
- <15b164aa-601f-4dad-8115-14a715608319@kernel.org>
-In-Reply-To: <15b164aa-601f-4dad-8115-14a715608319@kernel.org>
+References: <20240510094034.12493-1-linux.amoon@gmail.com> <20240510094034.12493-2-linux.amoon@gmail.com>
+In-Reply-To: <20240510094034.12493-2-linux.amoon@gmail.com>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 29 Jun 2024 09:55:37 +0530
-Message-ID: <CANAwSgRyZ=43yBxiAmj-+5xL0b9FBkoDeR88BJ8FqDTQX7KVFg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled()
- helpers
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+Date: Sat, 29 Jun 2024 19:22:02 +0530
+Message-ID: <CANAwSgRETDNtLLyh_5z-TXdkhRN_VwegDBZuaSyx=hXWkAJdRA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] PM / devfreq: exynos: Use local clk variable
+ instead of exynos_bus member
+To: Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
 	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-pm@vger.kernel.org, 
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-pm@vger.kernel.org, 
 	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Chanwoo,
+Hi Chamwoo,
 
-On Wed, 26 Jun 2024 at 20:00, Chanwoo Choi <chanwoo@kernel.org> wrote:
+On Fri, 10 May 2024 at 15:11, Anand Moon <linux.amoon@gmail.com> wrote:
 >
-> 24. 6. 17. 17:24=EC=97=90 Anand Moon =EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=
-=B8=80:
-> > Hi All,
-> >
-> > On Fri, 10 May 2024 at 15:10, Anand Moon <linux.amoon@gmail.com> wrote:
-> >>
-> >> The devm_clk_get_enabled() helpers:
-> >>     - call devm_clk_get()
-> >>     - call clk_prepare_enable() and register what is needed in order t=
-o
-> >>      call clk_disable_unprepare() when needed, as a managed resource.
-> >>
-> >> This simplifies the code and avoids the calls to clk_disable_unprepare=
-().
-> >>
-> >> While at it, use dev_err_probe consistently, and use its return value
-> >> to return the error code.
-> >>
-> >> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >
-> > Gentle ping?
-> >
-> > Thanks
-> > -Anand
-> >
+> This commit modifies the exynos bus driver to use a local clk variable
+> for clock handling instead of storing it in the exynos_bus struct member.
+> This helps in simplifying the code and makes it more readable.
 >
-> Applied it. Thanks.
-> I'm sorry for late reply.
+> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+
+I am letting you know that you missed this patch.
+
+> v5: New patch
+> ---
+>  drivers/devfreq/exynos-bus.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 7d06c476d8e9..e55ae59a8ae7 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -34,7 +34,6 @@ struct exynos_bus {
+>         unsigned long curr_freq;
+>
+>         int opp_token;
+> -       struct clk *clk;
+>         unsigned int ratio;
+>  };
+>
+> @@ -241,13 +240,14 @@ static int exynos_bus_parse_of(struct device_node *np,
+>  {
+>         struct device *dev = bus->dev;
+>         struct dev_pm_opp *opp;
+> +       struct clk *clk;
+>         unsigned long rate;
+>         int ret;
+>
+>         /* Get the clock to provide each bus with source clock */
+> -       bus->clk = devm_clk_get_enabled(dev, "bus");
+> -       if (IS_ERR(bus->clk))
+> -               return dev_err_probe(dev, PTR_ERR(bus->clk),
+> +       clk = devm_clk_get_enabled(dev, "bus");
+> +       if (IS_ERR(clk))
+> +               return dev_err_probe(dev, PTR_ERR(clk),
+>                                 "failed to get bus clock\n");
+>
+>         /* Get the freq and voltage from OPP table to scale the bus freq */
+> @@ -257,7 +257,7 @@ static int exynos_bus_parse_of(struct device_node *np,
+>                 return ret;
+>         }
+>
+> -       rate = clk_get_rate(bus->clk);
+> +       rate = clk_get_rate(clk);
+>
+>         opp = devfreq_recommended_opp(dev, &rate, 0);
+>         if (IS_ERR(opp)) {
+> --
+> 2.44.0
 >
 Thanks & Regards
--Anand
 
-> --
-> Best Regards,
-> Samsung Electronics
-> Chanwoo Choi
->
+-Anand
