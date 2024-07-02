@@ -1,65 +1,139 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40371CE081;
-	Tue,  2 Jul 2024 19:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20AE201262
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jul 2024 21:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719949384; cv=none; b=Zzt9JE8f4hzi2urfYGwPQWlGz+iBKPjmspDuFK03OdxVOE3dHD4qDXqMTLfA1Jhqb5z4AJhvYzeS454zAenVjhaMqoPD6UG80MWBVQBE0mYU77dTLopUMFZPcjQceVEU3t+yvZ/e2tohE3s+TeWZGonBEtIgvUHJOs53sZB+/7c=
+	t=1719954379; cv=none; b=MwmH9nv23HQ/LK9AJm0thBnjD46KoxNXFgGOoc66PSIzMopwdqq61zshFZy8b5H1nf3f43PrOxm6MWCTBBwwPnQ7Nbr/U6KoclfH4EyqWvQE7G7U4V2aP9RI5KBCkwQ2gNSM4Sy4lKT1wK5AewWA0wmK5oyr8k7xU+1cTlvfFc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719949384; c=relaxed/simple;
-	bh=1Af7dOq/VVVXmMQiunoP36ng6uRURIvlVcmZwUEBrOY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=UStGiP/a1HIPH7MYpu+ZY2pCyknA+0t3NUWCqUdk4Ju8wxscHWkmzkkAiDxK+ReYGR+TvqMViPSzofTUzO4STXc6eiSs258peA9b6gQOSF8AwR3KMZq7RSf6n4V3ocQFMNah/JsdjGcH3dCE52ZspYFmS5/7pdE7RZifXj12Be0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T4Rl2+TV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719954379; c=relaxed/simple;
+	bh=NyzwM0fsXKf4dXOAJKkuMhvtpscp3UAXzQ88ePFkdHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RPZUaclQOuW3AMGfDU7QXBUqyIyiL6ewUw2vJe+/ZaF/ojwTOMKK3DetYhHatL3fWgns/B0irHo+V4guqReAOyhUbTFqa48FyVBwsFkaU5NwFOXzgQvKlO55gmdSenflI/Ziu1uBb53InBP3uhupM44e5gJoNt13Wv11ge75QAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0jF5n0X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4Rl2+TV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D70C116B1;
-	Tue,  2 Jul 2024 19:43:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0jF5n0X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76D93C4AF11
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  2 Jul 2024 21:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719949384;
-	bh=1Af7dOq/VVVXmMQiunoP36ng6uRURIvlVcmZwUEBrOY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=T4Rl2+TVsw6zOxuU1a8rY978AYWyDyxJAe1T84mZtlip+KTLFN+Tot7zSRFdtA9M1
-	 w7kq3iBdDSot4E0e3L+NfVO09TPFSnpOYy/bhvCcIptcohIlZGdgjZwElCZh03GU6A
-	 zUczEBcv8JMKoU6DaNlkEnIAw8eiutvVSIxUoYvEoJsRoGvZeXDyyX82Bd03Hk4wER
-	 zoquKXEPs9LckGiO8GDwYyG3E+pQ+An3+ReZ4j+GocbnaXc9FkgSqS5U/+NFjYXd3E
-	 cR566AL8SOWfuWWJGZMU8j/3CDPXwIJ/H2NYy7OAnzho0fB2+J7xpkADogNXSrAkAg
-	 U6EjeB4SkUjAg==
-Message-ID: <a35c04d7d3ba579294ff1b7319a147b6.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1719954379;
+	bh=NyzwM0fsXKf4dXOAJKkuMhvtpscp3UAXzQ88ePFkdHg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T0jF5n0XmYOBWCFsIhEiFwCW709AF2iNAJBXPHQDhZ3ouUIflhHJtwIPSeAQkemwl
+	 uvh5nDRj8MsScENuyxikrGs7trBmvGpceQ90A9jThyM6OwHTK1hSB47GteIED0mkfp
+	 yIXfQgx1XVTTfS14P6B441+5oNJT53fpMKqRINxMzkGSKAywbiMtggfLmF/5MhXRyE
+	 MR2OEIi2KWdc0w+AofhLDxqqtYNvgWMUcCMzmTV90XllmcI+M2rs3uGRjmGpiIo+bY
+	 S7E4wTeW1JLVmvZdlftDTuGLXlMEsznlapdBUQq2P/lZic0fAeIbHo/yvEPyuqkLW8
+	 0fIXzDl9OJV+g==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52cd8897c73so5387319e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Jul 2024 14:06:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+o4LB9PCjDz9HFmbXCJ/SxJXGrEIECmrBbBHwBbRq9SietW55mOYZS3sHZ1wjELPF1ASOGUEfbfsvFFJm8mbs8qwCcul6dpym5nPZPugaXko=
+X-Gm-Message-State: AOJu0YwEcHY8iFZ0NJQxuXofxv0vbnH6SJ2p3hNEkCzq7HAh55SX8kSb
+	lGjptBiHKXn4n6yvwCTeGdNcQ4Iz/ApSF+Gx03jJL/CAVWqS96exvgVurJBT5u/+SR8RjIbKURi
+	JOzQNT67C7/KhII0yWOxggwIdjmJBpgycBNEXOw==
+X-Google-Smtp-Source: AGHT+IGUxDpnfmOI+j4i7sET5B6iGTwPCxoZxCFPXJYFFkWMGwCKQTKuc3id2P0lUND+5DiDyxhNNJ4MNomLGxiA7Lo=
+X-Received: by 2002:a17:906:f185:b0:a72:b1b1:eb3a with SMTP id
+ a640c23a62f3a-a751447b093mr634755766b.19.1719954357446; Tue, 02 Jul 2024
+ 14:05:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org> <20240614-dt-bindings-thermal-allof-v1-11-30b25a6ae24e@linaro.org>
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-11-30b25a6ae24e@linaro.org>
+From: Amit Kucheria <amitk@kernel.org>
+Date: Wed, 3 Jul 2024 02:35:45 +0530
+X-Gmail-Original-Message-ID: <CAHLCerMuG92Sf8+BdqPLqh+x3YxBjD6YdYF2k+AxQcwCqerxzw@mail.gmail.com>
+Message-ID: <CAHLCerMuG92Sf8+BdqPLqh+x3YxBjD6YdYF2k+AxQcwCqerxzw@mail.gmail.com>
+Subject: Re: [PATCH 11/22] dt-bindings: thermal: qcom-tsens: reference
+ thermal-sensor schema
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Guillaume La Roque <glaroque@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Anson Huang <Anson.Huang@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	zhanghongchen <zhanghongchen@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	imx@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
+	Florian Fainelli <f.fainelli@gmail.com>, linux-rpi-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240702063120.5821-1-krzysztof.kozlowski@linaro.org>
-References: <20240702063120.5821-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.11
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 02 Jul 2024 12:43:02 -0700
-User-Agent: alot/0.10
 
-Quoting Krzysztof Kozlowski (2024-07-01 23:31:19)
-> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
-d0:
->=20
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.11
->=20
-> for you to fetch changes up to e61f400d6cf3d598ac3ff88a47b34823f9e1f2d5:
->=20
->   clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical (=
-2024-07-01 10:15:30 +0200)
->=20
-> ----------------------------------------------------------------
+On Fri, Jun 14, 2024 at 3:17=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
+> reference the thermal-sensor.yaml to simplify it and bring the
+> common definition of '#thermal-sensor-cells' property.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks. Pulled into clk-next
+Reviewed-by: Amit Kucheria <amitk@kernel.org>
+
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/=
+Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> index 99d9c526c0b6..cce6624228c7 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+> @@ -217,18 +217,16 @@ properties:
+>
+>    "#thermal-sensor-cells":
+>      const: 1
+> -    description:
+> -      Number of cells required to uniquely identify the thermal sensors.=
+ Since
+> -      we have multiple sensors this is set to 1
+>
+>  required:
+>    - compatible
+>    - interrupts
+>    - interrupt-names
+> -  - "#thermal-sensor-cells"
+>    - "#qcom,sensors"
+>
+>  allOf:
+> +  - $ref: thermal-sensor.yaml#
+> +
+>    - if:
+>        properties:
+>          compatible:
+> @@ -292,7 +290,7 @@ allOf:
+>        required:
+>          - reg
+>
+> -additionalProperties: false
+> +unevaluatedProperties: false
+>
+>  examples:
+>    - |
+>
+> --
+> 2.43.0
+>
