@@ -1,117 +1,184 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DF813957B
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  3 Jul 2024 07:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10182142904;
+	Wed,  3 Jul 2024 10:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719993559; cv=none; b=fRuIstNVNqO/NEMcZKXfxR33bdanaZCBy3Sy1YKbfp+w7KU+fx/rxqVA7O2RECE3QcqIRFqbKNnNco6o/QdabYkXezYzjpnEnWTYEZVB5ov0xF/PtUqbFsRBtWAL6Qt8r96vyK8DVw29haL2fIhDA4FrL52o/vSGqiJ+0ncn1gQ=
+	t=1720003051; cv=none; b=raZXsFvvD4ILQMylTRE6f8waMrU+FPHiYvKlL/HiXfZldruX4VeTZSLAVx+sSwpbLOQ327NmImlcaFxb6xibdMKYjolDgTWqLUSWLNGpz5SIdH+zw2hNRVkIxNr5kdUuENk1N5LjC/+yW6ksrdLzNbQOyN7MjLiNjwKHjLO2kAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719993559; c=relaxed/simple;
-	bh=TLz36ZO/6koabHqZG8cpDOteD6VZ9qut1UFJUgiCSrc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=QD6e1uSnJN4GOahHdC6UalIg8kBAtudKX5GCTXUNLvYjalyG+nHhKXS2NkG7hSaJOJbOGXaRtNa6OOfrHITmtA8p6irXdar9R6z6q4ZXRAcfXz2EKcSpcww5aO/shSxMVe9vxosY4hUgF8Tix/ZCcGbQJcyvSU7zibgU+ACTTZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAN30fX2; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720003051; c=relaxed/simple;
+	bh=9D0oFgRed8MuxGxSMJGRs4O77WGIRnK3b9TAv6iBcRo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dZq1Hb7A7jL/XOKmywazgwWbZu6vQsAOXUz3RMFZZRUIAt7Yb93YqxU85xdTJIHuTKFXPe3jNvZILMU5luatsNcb9gY5zUfvTRA+LDCRcBxlJPI9GaSwiS/0nUflrHr+FPZmvK8uYVGsGLva25RhuvgpW/FQmRmLYWFyDhuaeJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=foJzSM9R; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAN30fX2"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7201cb6cae1so2827890a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Jul 2024 00:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719993557; x=1720598357; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WUXP1n3neYZQXYyEiIWXxaQep8rZCiu9VynGOnY6c9o=;
-        b=KAN30fX2O080+iFAj5M+/tcDlMGEuBLMoI/vBKwtBoqSqvSRbANUBOJOliw46ZIIH7
-         xVePiGkc2QwnastkzNPZmkiDGNWFnlqK8vaNoS2p6hdIG0ybBP2VwTaRT85lHKAOgact
-         8L+82MjcTsOeqevwvJP6xdDNUZZVKuxvHFzpIgdJH8PPo/Ved2Dn1Ayz+6UODXeMRHjW
-         C/rR7AlVfbp0l/e58BF3h6gtgl/yvwWL8EJ7SccrZHHWpDWptNSxZZz6EWGDcrMfqE+T
-         bGKvdypbrjMBmnw+pmKmobEPvDq+miis4UrFHFCm1VVwMWiyXDDpkbFyyBdrRuppmPT2
-         TZ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719993557; x=1720598357;
-        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WUXP1n3neYZQXYyEiIWXxaQep8rZCiu9VynGOnY6c9o=;
-        b=GihF9WmXgPKj1YhGTiPmD/28hwm7Y8AupNdZp+EbX57yyf5K9PE7LBQZ2vXCra3F/v
-         yHWJ+CefoX2Vp6Fuoa8OULXH/EBaoRBoNB8ZufjVxi9FDfw/aL1PLNPaddFWp26yIaFw
-         7dI17q8WNNgwhony42j2a2gR9pBx91AEkdCrDdhAAeuzkz1yuJ46+5GFo8WI+az3jbOm
-         o3qfj1CbS3AQgKQ2oaLNjQMy/4jBSSLf1zkWJRRSnd3lonlAINNWoZi+giIX4d9Nib9/
-         Y1X1ZtFTl2yv0moDd17Rzu3BnrcUzzHUTytsBm7Wel7+l9Xg7HrYNiHdaxnTvC+yvBuj
-         bBaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtJpRQG5s+0JNnPxCcsYZUQYElJ1Rfnb/9cuR0m9Rw1yqCb/8YamXFWEZPHz9dpTMgLHahmaxtWj337bLa1yDd+bkYfBKbGMHiXcrThvGRyDg=
-X-Gm-Message-State: AOJu0YwCNbOmC9VHGbIN48w17+vmhp8e8oyHLYXH7B7bDHOJJwQmr50f
-	X0MQeRFqyXfyHpNHi7qTmFRqCj5NuiWyhmLe7+2eQtVnBdUcQMqf
-X-Google-Smtp-Source: AGHT+IEmp3rXcu2b0cdpoNk5erAfpzbe0GUB6DHEdKkuar1CPSsd+S+Xv2XmyThBNVhasHPcpzKcRg==
-X-Received: by 2002:a05:6a20:28a9:b0:1be:c054:1ce1 with SMTP id adf61e73a8af0-1bef626eea6mr7742948637.55.1719993556427;
-        Wed, 03 Jul 2024 00:59:16 -0700 (PDT)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac15698d6sm96241075ad.192.2024.07.03.00.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 00:59:16 -0700 (PDT)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date: Wed,  3 Jul 2024 16:59:12 +0900
-Message-Id: <20240703075912.37106-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="foJzSM9R"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3ECA340002;
+	Wed,  3 Jul 2024 10:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720003045;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Y9dKIY8UF+nReYR3bpF9Pb7TJp7WLPLWK/B5oYjjbq8=;
+	b=foJzSM9RuZQOf/VPApRW0lmUGrQblXobu0gWcMfK3rdR7fFeSllw9HZtvDHamCZSnVeAQd
+	xl3StvV0X9RM6zrGGH8rKfTVgGj2rxAQ/FXj4AoPA7jwEAAykHOnYYQdsWoKj0Z5qT9EbI
+	NJSgM2y4fGFlocfqLTtmMbWZcFSesBLFVfvUvMOxSvZzRHYiHre2aVkplOJXZ8APv8zjRO
+	yRmCwXsRILqubrSOViPCck2qs6VXTOpPU1Zh2pkMz/CDpauRr4KYDvJCL2P3T9WnVnXRPw
+	Yp49tSFnocZKud9kw1tjEbXpKeoo3s6qbV/lMc9MWdp1PkDr10Ce8YagcplEvA==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH 00/20] Simplify of_property_for_each_u32()
+Date: Wed, 03 Jul 2024 12:36:44 +0200
+Message-Id: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALwphWYC/x3MTQqEMAxA4atI1lOI9Q+8igyltKlmY0uqw4j07
+ haX3+K9GzIJU4a5uUHox5njXtF+GnCb3VdS7KtBo+5xwlbFYJLERHJcJkQxZN1mzk6rfsTgUdv
+ Bo4OaJ6HA/3e9fEt5ALUFP0BqAAAA
+To: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ =?utf-8?q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron <jic23@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Richard Leitner <richard.leitner@linux.dev>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+ Damien Le Moal <dlemoal@kernel.org>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ llvm@lists.linux.dev, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-usb@vger.kernel.org, patches@opensource.cirrus.com, 
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-riscv@lists.infradead.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.0
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Dave and Daniel,
-   
-   Just three cleanup patches to Exynos Virtual Display driver
-   for improved management.
+[Note: to reduce the noise I have trimmed the get_maintainers list
+manually. Should you want to be removed, or someone else added, to future
+versions, just tell me. Sorry for the noise.]
 
-Please kindly let me know if there is any problem.
+This series aims at simplifying of_property_for_each_u32() as well as
+making it more difficult to misuse it in the future.
 
-Thanks,
-Inki Dae
+The long-term goal is changing this pattern:
 
+  struct property *prop;
+  const __be32 *p;
+  u32 val;
+ 
+  of_property_for_each_u32(np, "xyz", prop, p, val) { ... }
 
-The following changes since commit fb625bf6187d97c3cd28d680b14bf80f84207e5a:
+to this:
 
-  Merge tag 'drm-habanalabs-next-2024-06-23' of https://github.com/HabanaAI/drivers.accel.habanalabs.kernel into drm-next (2024-06-28 09:41:04 +1000)
+  u32 val;
 
-are available in the Git repository at:
+  of_property_for_each_u32(np, "xyz", val) { ... }
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.11
+So, removing the 3rd and 4th arguments which are typically meant to be
+internal. Those two parameters used to be unavoidable until the kernel
+moved to building with the C11 standard unconditionally. Since then, it is
+now possible to get rid of them. However a few users of
+of_property_for_each_u32() do actually use those arguments, which
+complicates the transition. For this reason this series does the following:
 
-for you to fetch changes up to 2210093478443cd57cff5950379fec31ee8a5f79:
+ * Add of_property_for_each_u32_new(), which does not have those two
+   arguments (patch 1)
+ * Convert _almost_ every usage to of_property_for_each_u32_new()
+ * Rename of_property_for_each_u32() to of_property_for_each_u32_old() and
+   deprecate it, as a incentive to code not (yet) in mainline to upgrade
+   to the *_new() version (last patch)
 
-  drm/exynos/vidi: convert to struct drm_edid (2024-07-03 13:00:16 +0900)
+The plan for the next series is to additionally:
 
-----------------------------------------------------------------
-Some cleanups to Exynos Virtual Display driver
-- Use drm_edid_duplicate() instead of kmemdup().
-- Replace existing EDID handling with struct drm_edid functions
-  for improved management.
-- Keep an allocated raw_edid or NULL and handle fake_edid_info in get_modes().
+ * Convert the few remaining of_property_for_each_u32_old() instantes to
+   of_property_for_each_u32_new()
+ * Remove of_property_for_each_u32_old()
+ * Rename of_property_for_each_u32_new() to of_property_for_each_u32()
 
-----------------------------------------------------------------
-Inki Dae (1):
-      Merge tag 'exynos-drm-fixes-for-v6.10-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos into exynos-drm-next
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Luca Ceresoli (20):
+      of: add of_property_for_each_u32_new()
+      clk: convert to of_property_for_each_u32_new()
+      clk: qcom: convert to of_property_for_each_u32_new()
+      clk: sunxi: clk-simple-gates: convert to of_property_for_each_u32_new()
+      clk: sunxi:  clk-sun8i-bus-gates: convert to of_property_for_each_u32_new()
+      clocksource/drivers/samsung_pwm: convert to of_property_for_each_u32_new()
+      bus: ti-sysc: convert to of_property_for_each_u32_new()
+      lk: clk-conf: convert to of_property_for_each_u32_new()
+      gpio: brcmstb: convert to of_property_for_each_u32_new()
+      pinctrl: s32cc: convert to of_property_for_each_u32_new()
+      irqchip/atmel-aic: convert to of_property_for_each_u32_new()
+      iio: adc: ti_am335x_adc: convert to of_property_for_each_u32_new()
+      pwm: samsung: convert to of_property_for_each_u32_new()
+      tty: sysrq: convert to of_property_for_each_u32_new()
+      usb: usb251xb: convert to of_property_for_each_u32_new()
+      mfd: ti_am335x_tscadc: convert to of_property_for_each_u32_new()
+      ASoC: arizona: convert to of_property_for_each_u32_new()
+      powerpc/xive: convert to of_property_for_each_u32_new()
+      powerpc/xive: convert to of_property_for_each_u32_new()
+      of: deprecate and rename of_property_for_each_u32()
 
-Jani Nikula (4):
-      drm/exynos/vidi: fix memory leak in .get_modes()
-      drm/exynos/vidi: use drm_edid_duplicate()
-      drm/exynos/vidi: simplify fake edid handling
-      drm/exynos/vidi: convert to struct drm_edid
+ .clang-format                           |  3 ++-
+ arch/powerpc/sysdev/xive/native.c       |  4 +---
+ arch/powerpc/sysdev/xive/spapr.c        |  3 +--
+ drivers/bus/ti-sysc.c                   |  4 +---
+ drivers/clk/clk-conf.c                  |  4 +---
+ drivers/clk/clk-si5351.c                |  4 ++--
+ drivers/clk/clk.c                       |  6 ++----
+ drivers/clk/qcom/common.c               |  4 +---
+ drivers/clk/sunxi/clk-simple-gates.c    |  4 +---
+ drivers/clk/sunxi/clk-sun8i-bus-gates.c |  4 +---
+ drivers/clocksource/samsung_pwm_timer.c |  4 +---
+ drivers/gpio/gpio-brcmstb.c             |  5 +----
+ drivers/iio/adc/ti_am335x_adc.c         |  4 +---
+ drivers/irqchip/irq-atmel-aic-common.c  |  4 +---
+ drivers/irqchip/irq-pic32-evic.c        |  2 +-
+ drivers/mfd/ti_am335x_tscadc.c          |  4 +---
+ drivers/pinctrl/nxp/pinctrl-s32cc.c     |  4 +---
+ drivers/pinctrl/pinctrl-k210.c          |  2 +-
+ drivers/pwm/pwm-samsung.c               |  4 +---
+ drivers/tty/sysrq.c                     |  4 +---
+ drivers/usb/misc/usb251xb.c             |  4 +---
+ include/linux/of.h                      | 14 ++++++++++----
+ sound/soc/codecs/arizona.c              | 12 +++++-------
+ 23 files changed, 39 insertions(+), 68 deletions(-)
+---
+base-commit: e937d48ed96381e9620d9c81fbc1ce666f5b7358
+change-id: 20240701-of_property_for_each_u32-460fd02a5d0c
 
-Krzysztof Kozlowski (1):
-      drm/exynos: dp: drop driver owner initialization
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-Marek Szyprowski (1):
-      drm/exynos: hdmi: report safe 640x480 mode as a fallback when no EDID found
-
- drivers/gpu/drm/exynos/exynos_dp.c       |  1 -
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 83 ++++++++++++++------------------
- drivers/gpu/drm/exynos/exynos_hdmi.c     |  7 ++-
- 3 files changed, 42 insertions(+), 49 deletions(-)
