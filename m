@@ -1,347 +1,270 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E641CA84
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jul 2024 04:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8FF1A0B1D
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jul 2024 13:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720067694; cv=none; b=F79gFR5uccYDPCPTd7RgoBoTqK+DR7qy1/6S8hYR/qk7dfUpySSRS11OJgbCBQ9JJr1rGjRwytow0CMfULGdXoaWSlfvilSXbsSmiLTv1HFm1DO/Kk+SZYQASdaWmMQT8N/tSw9AuAA1aTLTyXGZVY9i1If227hWxs1mQ44VpkM=
+	t=1720099579; cv=none; b=P6D1BnZiTtigPkReA5QnzLzeYaqZaYSR/AvBBuGSS4wz8Rh5bUM/1VfkNTc50vHz6gNRlx3Fq143fU2rC4jMRKyRgROzLLAA0VsT9Xk2//N89W5msQJIWosNxxyCeTC8YgfnjxXVS5sWmNV0Rm8KRgyksMQw+Kb4SRaHXhSNUCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720067694; c=relaxed/simple;
-	bh=sLU0HGXpQVIjIcKm2LtpYq8wU5K+GUMCiD2DC7XAPq8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=CABoau4ySmSb1weCTieq741cOB2ZmyqyETha7wwPJ+l50GZ0k39gJZ5ImsvjweIvDUv7dUpCXdU+L5QwP0+bDhxteADNsT8atteuVlIpYg6lsphUoF/HeY3sZLonwjxXmhxTR5MIXGr0nThv0noR8toM8dE16CUdVqX6bqIsnH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=B3c2xHvi; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1720099579; c=relaxed/simple;
+	bh=6KE36sYsIPrhU1snmLsl5853/tRFRTAQdUtKyGHqJ3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qH4pfL3s8lZPxnkBG8XQK6iST8iAtpcSQeUPEQ1oUhGQu/Zjn9juHru+gAM81Y381bIa5Nnr+CBArUUfZccuLm0R3IpDEARQsYAOdpZA93DGKONj5DLNSMnRDKJwxx1su5FF4WbzO2tj01Zno2BDGtgmMk1odyn4fDyNzBG7UVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xPK6/BPS; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B3c2xHvi"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240704043449epoutp03d1338507849acf6e5b76a6f4ef2badac~e6HMpTPJ40989009890epoutp03s
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  4 Jul 2024 04:34:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240704043449epoutp03d1338507849acf6e5b76a6f4ef2badac~e6HMpTPJ40989009890epoutp03s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720067689;
-	bh=GxkhhqZtQSwEd6USk9LeX5xb31fX0CQaVQqgdQPIH3M=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=B3c2xHviAERXTTHJ9S9HjRE29LVws+Fcd5JUjAPhF92g2cOhdOgmjly+YfXV7nXwS
-	 tMfzfommK+Cut+mdP7h1I+43HQHKCAcVY6xkRQM+dzA6PjN5Kkdg1xqrPumkvxXwYk
-	 YMUWpth8B7c9xJLBQNqt3obmwRjKm8lwZbW+Xdb8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240704043448epcas5p32892e7123a50310cff1ab6c61edb0dbd~e6HMLVFCC1534215342epcas5p38;
-	Thu,  4 Jul 2024 04:34:48 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WF3hk1YV0z4x9QK; Thu,  4 Jul
-	2024 04:34:46 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7C.66.09989.66626866; Thu,  4 Jul 2024 13:34:46 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240704043358epcas5p282acd174113c7baf3f7a3472ba4c39ff~e6GeAgdRy1008710087epcas5p25;
-	Thu,  4 Jul 2024 04:33:58 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240704043358epsmtrp223643ba3041a76e8350bd942bd3de7db~e6Gd_piuf1646316463epsmtrp2G;
-	Thu,  4 Jul 2024 04:33:58 +0000 (GMT)
-X-AuditID: b6c32a4a-bffff70000002705-17-668626666d91
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1B.A3.29940.63626866; Thu,  4 Jul 2024 13:33:58 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240704043357epsmtip295fdbc756b1b96dc7c4e35db83668dc5~e6GcRq2yG1541315413epsmtip2d;
-	Thu,  4 Jul 2024 04:33:56 +0000 (GMT)
-From: Vishnu Reddy <vishnu.reddy@samsung.com>
-To: krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
-	alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-Subject: [PATCH v3] pinctrl: samsung: Add support for pull-up and pull-down
-Date: Thu,  4 Jul 2024 09:56:29 +0530
-Message-Id: <20240704042629.26151-1-vishnu.reddy@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIKsWRmVeSWpSXmKPExsWy7bCmhm6aWluawZpVLBYP5m1js7h5YCeT
-	xd7XW9ktpvxZzmSx6fE1VovN8/8wWlzeNYfNYsb5fUwWi7Z+Ybd4+GEPu8XhN+2sDtwed67t
-	YfPYvKTeo2/LKkaPz5vkAliism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTy
-	EnNTbZVcfAJ03TJzgI5SUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YW
-	l+al6+WlllgZGhgYmQIVJmRnfJ+/gr2g0aHiXU9CA+M70y5GTg4JAROJnScXsHQxcnEICexm
-	lPh05zMbhPOJUWL9xntMEM43Rok7D78xwrS83bwaqmovo8Sri3MZIZxWJol1M5aBVbEJ6Ep8
-	XnKWBcQWEciXWHnhH9goZoGLjBL/tuxnBUkIC3hL7J95ng3EZhFQlfi0+A4TiM0rYCsx/doW
-	Voh18hKrNxxgBmmWEDjELrH6xgt2iISLxK7ur1A3CUu8Or4FKi4l8fndXjYIO1li/e9TQHEO
-	IDtHomeaAkTYXuLAlTksIGFmAU2J9bv0IcKyElNPrQM7gVmAT6L39xMmiDivxI55MLaaxLFJ
-	06FOk5HoXHED6gIPiX2bNoJdICQQK7Fqzx72CYyysxA2LGBkXMUomVpQnJueWmxaYJSXWg6P
-	qOT83E2M4LSm5bWD8eGDD3qHGJk4GA8xSnAwK4nwSr1vThPiTUmsrEotyo8vKs1JLT7EaAoM
-	sonMUqLJ+cDEmlcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA5PO
-	4kWXf15lC/tQ18IgsPmp/knnvvucBvc/XONkXFsnuTx2Qa3n3ZbOvtVpta/P7FK+ZuWqX/FT
-	z/3ey+1tmTu0Vx/8/7s38Gn9zLhdLOGdr56kXnywcO8RT2HdtcfUI05HdYS0Xpr5b9oGs3n1
-	fQu4y1OZOxb/lxDLnyAbuGLPwZ1/VwioFeR1VmzYc+O8S1rYzPLva7y4xWcuknxrL9bZz/Sr
-	8FtF9XpPrh/cLkXTmxmusu6siDx1ZOrhbRF6rVyHp2w+ksekcodlpvKSYpdbzIsteC2nbOAs
-	3H6C8V3C/dq1K0O3RHfeE2hVSv71n0G0UjDa24PpraxpvYupU8iqtiieLM3Q++rmxg2PhJRY
-	ijMSDbWYi4oTATPue8D0AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42LZdlhJXtdMrS3N4OwzHYsH87axWdw8sJPJ
-	Yu/rrewWU/4sZ7LY9Pgaq8Xm+X8YLS7vmsNmMeP8PiaLRVu/sFs8/LCH3eLwm3ZWB26PO9f2
-	sHlsXlLv0bdlFaPH501yASxRXDYpqTmZZalF+nYJXBnf569gL2h0qHjXk9DA+M60i5GTQ0LA
-	ROLt5tVsXYxcHEICuxklXlz6wAqRkJH4cGcLM4QtLLHy33N2iKJmJonrzycxgSTYBHQlPi85
-	ywJiiwgUS1x5vY8JpIhZ4CajRN/WL2AJYQFvif0zz7OB2CwCqhKfFt8Ba+YVsJWYfm0L1DZ5
-	idUbDjBPYORZwMiwilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOMS0NHcwbl/1Qe8Q
-	IxMH4yFGCQ5mJRFeqffNaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5xV/0pggJpCeWpGanphak
-	FsFkmTg4pRqY9Fz+BJedi9JnFjhoe6vu30tzCRum31x3bnLU/XpqLGk8N5Zn7eHnU3fo/w1q
-	LK956Hvo5ZI7UyV6VxlEpAb+VZp7KOdSVZlC1JM5CxwTvj3e1Oe2senbuT/Fs8q+7tl8YE1q
-	kNPKyJmiXkw5rxaxM5pf2vkmpml2SjzbOn+hH7n3dEwWmt1g9zT9/fzk2383W/06Ww0Xccz6
-	8E/sYAUHi+2kiqsbdof/ajAxcCzKnXFn0eqYqgX638udztV5vbf13COXukowc9vSTi8/Nzbp
-	l27GwRd2GvLFT5JKmbpws6eo2xzJDRfnv8yrSFu2eeasNev3SlfE525/Epnl+uZorixXV/aD
-	1nMGH8o9/h6/q8RSnJFoqMVcVJwIAJ8gQzygAgAA
-X-CMS-MailID: 20240704043358epcas5p282acd174113c7baf3f7a3472ba4c39ff
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240704043358epcas5p282acd174113c7baf3f7a3472ba4c39ff
-References: <CGME20240704043358epcas5p282acd174113c7baf3f7a3472ba4c39ff@epcas5p2.samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPK6/BPS"
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5c47ad9967cso325495eaf.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Jul 2024 06:26:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720099576; x=1720704376; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+4WShCgGhWUJoyoAZy3V3wltgHAWP7TeUYDDY3MbU4=;
+        b=xPK6/BPS0Gt+NL3I33NwVpsC12xWntG+8aBgIExevVtHmPx8baHlVuBtibv8Xxz5eB
+         vi0CwTN72A17R65ejDBBM68aaoVHOdwfJZ0jQfkr+5U3EAYb7Rb4wE/RnIVwrzizfhiK
+         5gIEtK3170gsKRIeArqf2DJKaGW0tee2PrNHrsRd+gKnrKtUfSaIgpF2hPPalq7y/2Q/
+         QWYcuVbwaN1pQCxzwMZWvGLhcqVFHP7SWflD0HQ13e9NC3aSYgYw2TfzA/avxXES06u+
+         Gtzn8R+c6DQepUFrDT2XPHidE8EVPaBY8rn0so7N6ix9+RAYK9016agjrTdgF4C2UScb
+         Acuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720099576; x=1720704376;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4+4WShCgGhWUJoyoAZy3V3wltgHAWP7TeUYDDY3MbU4=;
+        b=IuOVEph5/RePTrsVyXgfJEILX8gF2MmoFhF+HHC4h9qhphm2sEBw4bls+9ZgxygfQN
+         NcTIcZjwQ8SuSaZpimXsDQnaPRmUbRd/3BEW8PRv/9VEyc46FfKV/nFqy7ASJTAbsobh
+         gFUmJCdxnhMo0ZgZzR2RLlpCHaUiqZE4FqHKdQeave/JV10D332+aggIv4B3qYDKPJTa
+         DMaxug5/4k67Tl69d03UZ3tv5ArvzqnS0d2lA4ckKHVsI9xQkHtSiot4cxIu9/FWQOHS
+         SkI72G56mx05qzsPrVS/ndxx021gNpXRQr5LgN6ZEGXp2r+Zq+YrRJmhQuxWnsoLqSIs
+         whOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsi+GjowNtTVEw7fYBDXOEWWy5MsDXnrAP2eafULwgRTgDJno5odf0MVbqNVvpUfaNKqNoJuU2uzrvvcoCjbGUZ32gE2XpNcMUBuzpPbecju4=
+X-Gm-Message-State: AOJu0Yyu/QWSg0zHS4vdbGYaG6ISs1WozyVhrpGpHbn1r8uotEAuCvUj
+	ZzjV+rzhPk550Mrrs3n5v9Lvvtj2CkfQB05FGjJEwMF52ZfVOa4orfsRfQK0ZEUZm1viKo8AddI
+	w4hyeHw8IUMoezTHP7LTsbSNW3Nsbg1rzUhi/2A==
+X-Google-Smtp-Source: AGHT+IHNOzppQBMIFNBfAhjmhqm5j30FIyzr+PKbgP+CO8B6eDJXi+MpFuJ9ilhBNnPP/bTnrmBOj8I4qCtkXH7n5Vs=
+X-Received: by 2002:a4a:54c4:0:b0:5ba:f20c:3629 with SMTP id
+ 006d021491bc7-5c646f35f57mr1595882eaf.4.1720099576204; Thu, 04 Jul 2024
+ 06:26:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240702072510.248272-1-ebiggers@kernel.org> <20240702072510.248272-7-ebiggers@kernel.org>
+In-Reply-To: <20240702072510.248272-7-ebiggers@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 4 Jul 2024 14:26:05 +0100
+Message-ID: <CADrjBPoWVq-eu4Wa6_hrkk067tnZGC82UCJDyjSRGoG254w6vg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] scsi: ufs: exynos: Add support for Flash Memory
+ Protector (FMP)
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	William McVicker <willmcvicker@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-gpiolib framework has the implementation of setting up the
-PUD configuration for GPIO pins but there is no driver support.
+Hi Eric,
 
-Add support to handle the PUD configuration request from the
-userspace in samsung pinctrl driver.
+Thanks for your contribution, it's great to see new features like this
+being posted upstream for gs101 :)
 
-Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 15 ++++
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    | 15 ++++
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 80 ++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.h    | 24 ++++++
- 4 files changed, 134 insertions(+)
+On Tue, 2 Jul 2024 at 08:28, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add support for Flash Memory Protector (FMP), which is the inline
+> encryption hardware on Exynos and Exynos-based SoCs.
+>
+> Specifically, add support for the "traditional FMP mode" that works on
+> many Exynos-based SoCs including gs101.  This is the mode that uses
+> "software keys" and is compatible with the upstream kernel's existing
+> inline encryption framework in the block and filesystem layers.  I plan
+> to add support for the wrapped key support on gs101 at a later time.
+>
+> Tested on gs101 (specifically Pixel 6) by running the 'encrypt' group of
+> xfstests on a filesystem mounted with the 'inlinecrypt' mount option.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  drivers/ufs/host/ufs-exynos.c | 228 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 222 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> index 88d125d1ee3c..dd545ef7c361 100644
+> --- a/drivers/ufs/host/ufs-exynos.c
+> +++ b/drivers/ufs/host/ufs-exynos.c
+> @@ -6,10 +6,13 @@
+>   * Author: Seungwon Jeon  <essuuj@gmail.com>
+>   * Author: Alim Akhtar <alim.akhtar@samsung.com>
+>   *
+>   */
+>
+> +#include <asm/unaligned.h>
+> +#include <crypto/aes.h>
+> +#include <linux/arm-smccc.h>
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> @@ -23,16 +26,18 @@
+>  #include <ufs/ufshci.h>
+>  #include <ufs/unipro.h>
+>
+>  #include "ufs-exynos.h"
+>
+> +#define DATA_UNIT_SIZE         4096
+> +#define LOG2_DATA_UNIT_SIZE    12
+> +
+>  /*
+>   * Exynos's Vendor specific registers for UFSHCI
+>   */
+>  #define HCI_TXPRDT_ENTRY_SIZE  0x00
+>  #define PRDT_PREFECT_EN                BIT(31)
+> -#define PRDT_SET_SIZE(x)       ((x) & 0x1F)
+>  #define HCI_RXPRDT_ENTRY_SIZE  0x04
+>  #define HCI_1US_TO_CNT_VAL     0x0C
+>  #define CNT_VAL_1US_MASK       0x3FF
+>  #define HCI_UTRL_NEXUS_TYPE    0x40
+>  #define HCI_UTMRL_NEXUS_TYPE   0x44
+> @@ -1041,12 +1046,12 @@ static int exynos_ufs_post_link(struct ufs_hba *hba)
+>
+>         exynos_ufs_establish_connt(ufs);
+>         exynos_ufs_fit_aggr_timeout(ufs);
+>
+>         hci_writel(ufs, 0xa, HCI_DATA_REORDER);
+> -       hci_writel(ufs, PRDT_SET_SIZE(12), HCI_TXPRDT_ENTRY_SIZE);
+> -       hci_writel(ufs, PRDT_SET_SIZE(12), HCI_RXPRDT_ENTRY_SIZE);
+> +       hci_writel(ufs, LOG2_DATA_UNIT_SIZE, HCI_TXPRDT_ENTRY_SIZE);
+> +       hci_writel(ufs, LOG2_DATA_UNIT_SIZE, HCI_RXPRDT_ENTRY_SIZE);
+>         hci_writel(ufs, (1 << hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
+>         hci_writel(ufs, (1 << hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
+>         hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
+>
+>         if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB)
+> @@ -1149,10 +1154,218 @@ static inline void exynos_ufs_priv_init(struct ufs_hba *hba,
+>                 ufs->rx_sel_idx = 0;
+>         hba->priv = (void *)ufs;
+>         hba->quirks = ufs->drv_data->quirks;
+>  }
+>
+> +#ifdef CONFIG_SCSI_UFS_CRYPTO
+> +
+> +/*
+> + * Support for Flash Memory Protector (FMP), which is the inline encryption
+> + * hardware on Exynos and Exynos-based SoCs.  The interface to this hardware is
+> + * not compatible with the standard UFS crypto.  It requires that encryption be
+> + * configured in the PRDT using a nonstandard extension.
+> + */
+> +
+> +enum fmp_crypto_algo_mode {
+> +       FMP_BYPASS_MODE = 0,
+> +       FMP_ALGO_MODE_AES_CBC = 1,
+> +       FMP_ALGO_MODE_AES_XTS = 2,
+> +};
+> +enum fmp_crypto_key_length {
+> +       FMP_KEYLEN_256BIT = 1,
+> +};
+> +
+> +/**
+> + * struct fmp_sg_entry - nonstandard format of PRDT entries when FMP is enabled
+> + *
+> + * @base: The standard PRDT entry, but with nonstandard bitfields in the high
+> + *     bits of the 'size' field, i.e. the last 32-bit word.  When these
+> + *     nonstandard bitfields are zero, the data segment won't be encrypted or
+> + *     decrypted.  Otherwise they specify the algorithm and key length with
+> + *     which the data segment will be encrypted or decrypted.
+> + * @file_iv: The initialization vector (IV) with all bytes reversed
+> + * @file_enckey: The first half of the AES-XTS key with all bytes reserved
+> + * @file_twkey: The second half of the AES-XTS key with all bytes reserved
+> + * @disk_iv: Unused
+> + * @reserved: Unused
+> + */
+> +struct fmp_sg_entry {
+> +       struct ufshcd_sg_entry base;
+> +       __be64 file_iv[2];
+> +       __be64 file_enckey[4];
+> +       __be64 file_twkey[4];
+> +       __be64 disk_iv[2];
+> +       __be64 reserved[2];
+> +};
+> +
+> +#define SMC_CMD_FMP_SECURITY   \
+> +       ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
+> +                          ARM_SMCCC_OWNER_SIP, 0x1810)
+> +#define SMC_CMD_SMU            \
+> +       ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
+> +                          ARM_SMCCC_OWNER_SIP, 0x1850)
+> +#define SMC_CMD_FMP_SMU_RESUME \
+> +       ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
+> +                          ARM_SMCCC_OWNER_SIP, 0x1860)
+> +#define SMU_EMBEDDED                   0
+> +#define SMU_INIT                       0
+> +#define CFG_DESCTYPE_3                 3
+> +
+> +static void exynos_ufs_fmp_init(struct ufs_hba *hba)
+> +{
+> +       struct blk_crypto_profile *profile = &hba->crypto_profile;
+> +       struct arm_smccc_res res;
+> +       int err;
+> +
+> +       /*
+> +        * Check for the standard crypto support bit, since it's available even
+> +        * though the rest of the interface to FMP is nonstandard.
+> +        *
+> +        * This check should have the effect of preventing the driver from
+> +        * trying to use FMP on old Exynos SoCs that don't have FMP.
+> +        */
+> +       if (!(ufshcd_readl(hba, REG_CONTROLLER_CAPABILITIES) &
+> +             MASK_CRYPTO_SUPPORT))
+> +               return;
+> +
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index 85ddf49a5188..426d1daacef2 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -40,6 +40,20 @@ static const struct samsung_pin_bank_type bank_type_alive = {
- #define S5P_OTHERS_RET_MMC		(1 << 29)
- #define S5P_OTHERS_RET_UART		(1 << 28)
- 
-+/*
-+ * s5pv210_pud_value_init: initialize the drvdata pud_val with s5pv210 pud values
-+ * s5pv210_pull_disable:	0
-+ * s5pv210_pull_down_enable:	1
-+ * s5pv210_pull_up_enable:	2
-+ */
-+static void s5pv210_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	unsigned int i, *pud_val = drvdata->pud_val;
-+
-+	for (i = 0; i < PUD_MAX; i++)
-+		pud_val[i] = i;
-+}
-+
- static void s5pv210_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- {
- 	void __iomem *clk_base = (void __iomem *)drvdata->retention_ctrl->priv;
-@@ -133,6 +147,7 @@ static const struct samsung_pin_ctrl s5pv210_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(s5pv210_pin_bank),
- 		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
-+		.pud_value_init	= s5pv210_pud_value_init,
- 		.suspend	= exynos_pinctrl_suspend,
- 		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &s5pv210_retention_data,
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index c5d92db4fdb1..cf57b0f16999 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -255,6 +255,20 @@ static int s3c64xx_irq_get_trigger(unsigned int type)
- 	return trigger;
- }
- 
-+/*
-+ * s3c64xx_pud_value_init: initialize the drvdata pud_val with s3c64xx pud values
-+ * s3c64xx_pull_disable:	0
-+ * s3c64xx_pull_down_enable:	1
-+ * s3c64xx_pull_up_enable:	2
-+ */
-+static void s3c64xx_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	unsigned int i, *pud_val = drvdata->pud_val;
-+
-+	for (i = 0; i < PUD_MAX; i++)
-+		pud_val[i] = i;
-+}
-+
- static void s3c64xx_irq_set_handler(struct irq_data *d, unsigned int type)
- {
- 	/* Edge- and level-triggered interrupts need different handlers */
-@@ -797,6 +811,7 @@ static const struct samsung_pin_ctrl s3c64xx_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(s3c64xx_pin_banks0),
- 		.eint_gpio_init = s3c64xx_eint_gpio_init,
- 		.eint_wkup_init = s3c64xx_eint_eint0_init,
-+		.pud_value_init	= s3c64xx_pud_value_init,
- 	},
- };
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 623df65a5d6f..7d7e924c1fdb 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -997,6 +997,80 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
- 	return 0;
- }
- 
-+/*
-+ * samsung_pud_value_init: initialize the drvdata pud_val
-+ */
-+static void samsung_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	unsigned int  *pud_val = drvdata->pud_val;
-+
-+	pud_val[PUD_PULL_DISABLE] = PIN_PUD_PULL_UP_DOWN_DISABLE;
-+	pud_val[PUD_PULL_DOWN] = PIN_PUD_PULL_DOWN_ENABLE;
-+	pud_val[PUD_PULL_UP] = PIN_PUD_PULL_UP_ENABLE;
-+}
-+
-+/*
-+ * samsung_gpio_set_pud will enable or disable the pull-down and
-+ * pull-up for the gpio pins in the PUD register.
-+ */
-+static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
-+				 unsigned int value)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	const struct samsung_pin_bank_type *type = bank->type;
-+	void __iomem *reg;
-+	unsigned int data, mask;
-+
-+	reg = bank->pctl_base + bank->pctl_offset;
-+	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+	mask = (1 << type->fld_width[PINCFG_TYPE_PUD]) - 1;
-+	data &= ~(mask << (offset * type->fld_width[PINCFG_TYPE_PUD]));
-+	data |= value << (offset * type->fld_width[PINCFG_TYPE_PUD]);
-+	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+}
-+
-+/*
-+ * samsung_gpio_set_config will identify the type of PUD config based
-+ * on the gpiolib request to enable or disable the PUD configuration.
-+ */
-+static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
-+	unsigned int value;
-+	int ret = 0;
-+	unsigned long flags;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		value = drvdata->pud_val[PUD_PULL_DISABLE];
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		value = drvdata->pud_val[PUD_PULL_DOWN];
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		value = drvdata->pud_val[PUD_PULL_UP];
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	ret = clk_enable(drvdata->pclk);
-+	if (ret) {
-+		dev_err(drvdata->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
-+	raw_spin_lock_irqsave(&bank->slock, flags);
-+	samsung_gpio_set_pud(gc, offset, value);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	clk_disable(drvdata->pclk);
-+
-+	return ret;
-+}
-+
- static const struct gpio_chip samsung_gpiolib_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-@@ -1006,6 +1080,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
- 	.direction_output = samsung_gpio_direction_output,
- 	.to_irq = samsung_gpio_to_irq,
- 	.add_pin_ranges = samsung_add_pin_ranges,
-+	.set_config = samsung_gpio_set_config,
- 	.owner = THIS_MODULE,
- };
- 
-@@ -1237,6 +1312,11 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 	if (ctrl->eint_wkup_init)
- 		ctrl->eint_wkup_init(drvdata);
- 
-+	if (ctrl->pud_value_init)
-+		ctrl->pud_value_init(drvdata);
-+	else
-+		samsung_pud_value_init(drvdata);
-+
- 	ret = samsung_gpiolib_register(pdev, drvdata);
- 	if (ret)
- 		goto err_unregister;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index d50ba6f07d5d..61384096b6d7 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -61,6 +61,28 @@ enum pincfg_type {
- #define PIN_CON_FUNC_INPUT		0x0
- #define PIN_CON_FUNC_OUTPUT		0x1
- 
-+/*
-+ * Values for the pin PUD register.
-+ */
-+#define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
-+#define PIN_PUD_PULL_DOWN_ENABLE	0x1
-+#define PIN_PUD_PULL_UP_ENABLE		0x3
-+
-+/*
-+ * enum pud_index: Index values to access the pud_val array in
-+ *	struct samsung_pinctrl_drv_data.
-+ * @PUD_PULL_DISABLE: Index for value of pud disable
-+ * @PUD_PULL_DOWN: Index for the value of pull down enable
-+ * @PUD_PULL_UP: Index for the value of pull up enable
-+ * @PUD_MAX: Maximun value of the index
-+ */
-+enum pud_index {
-+	PUD_PULL_DISABLE,
-+	PUD_PULL_DOWN,
-+	PUD_PULL_UP,
-+	PUD_MAX,
-+};
-+
- /**
-  * enum eint_type - possible external interrupt types.
-  * @EINT_TYPE_NONE: bank does not support external interrupts
-@@ -261,6 +283,7 @@ struct samsung_pin_ctrl {
- 
- 	int		(*eint_gpio_init)(struct samsung_pinctrl_drv_data *);
- 	int		(*eint_wkup_init)(struct samsung_pinctrl_drv_data *);
-+	void		(*pud_value_init)(struct samsung_pinctrl_drv_data *drvdata);
- 	void		(*suspend)(struct samsung_pinctrl_drv_data *);
- 	void		(*resume)(struct samsung_pinctrl_drv_data *);
- };
-@@ -307,6 +330,7 @@ struct samsung_pinctrl_drv_data {
- 	struct samsung_pin_bank		*pin_banks;
- 	unsigned int			nr_banks;
- 	unsigned int			nr_pins;
-+	unsigned int			pud_val[PUD_MAX];
- 
- 	struct samsung_retention_ctrl	*retention_ctrl;
- 
--- 
-2.17.1
+Do you know how these FMP registers (FMPSECURITY0 etc) relate to the
+UFSPR* registers set in the existing exynos_ufs_config_smu()? The
+UFS_LINK spec talks about UFSPR(FMP), so I had assumed the FMP support
+would be writing these same registers but via SMC call.
 
+I think by the looks of things
+
+#define UFSPRSECURITY 0x010
+#define UFSPSBEGIN0 0x200
+#define UFSPSEND0 0x204
+#define UFSPSLUN0 0x208
+#define UFSPSCTRL0 0x20C
+
+relates to the following registers in gs101 spec
+
+FMPSECURITY0 0x0010
+FMPSBEGIN0 0x2000
+FMPSEND0 0x2004
+FMPSLUN0 0x2008
+FMPSCTRL0 0x200C
+
+And the SMC calls your calling set those same registers as
+exynos_ufs_config_smu() function. Although it is hard to be certain as
+I don't have access to the firmware code. Certainly the comment below
+about FMPSECURITY0 implies that :)
+
+With that in mind I think exynos_ufs_fmp_init() function in this patch
+needs to be better integrated with the EXYNOS_UFS_OPT_UFSPR_SECURE
+flag and the existing exynos_ufs_config_smu() function that is
+currently just disabling decryption on platforms where it can access
+the UFSPR(FMP) regs via mmio.
+
+Thanks,
+
+Peter
+
+p.s. Also whilst reviewing this I noticed a bug where I don't check
+EXYNOS_UFS_OPT_UFSPR_SECURE flag in exynos_ufs_resume() before calling
+exynos_ufs_config_smu(). I'll send a patch to fix that.
+
+[..]
