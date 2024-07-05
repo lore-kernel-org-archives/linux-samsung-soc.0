@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E285A33C7;
-	Fri,  5 Jul 2024 06:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0B11C6A0;
+	Fri,  5 Jul 2024 06:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720159337; cv=none; b=PWKrrIDxxCxuKYu0vTZWtIA8bPqcs8C5qC6Q5h4f2wnycI4zODW0zXEjEhlU8Gh3OYouQAQl6ZSdKs2Vpdc9nT6W3EukM3TsxnPkd/RWRWzhACi8/QHZ+jZ8edLwYyzp+h4vXf/0L3M9A1KBNHclTVAQtfq1+8Zwfi/RndBweUM=
+	t=1720159356; cv=none; b=dY+EXFFjKDKl2wCp1GUNHppYIkdwylCK2XdHy8KIW5hCuD99notY/Z1YNnqhHSgWuT63zBH21Wt2pHgNs/h6wfJi46OpaiSSL2ZnYKGlaJYCp1whc14ny90YD3v+KQJD6EmRnNT1/OkkQ75pnnz1eT/k/x+30IaLZtZLrzU+t5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720159337; c=relaxed/simple;
-	bh=cMetijWwUDDhhHq329hXttPjGfKxO+SH3IDye3kmUrs=;
+	s=arc-20240116; t=1720159356; c=relaxed/simple;
+	bh=4cDtFbBGomg/7dv2zNoG56ixsJZ7lwwLgniIuxOLZfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tv7tm22aEnSriBsho6fFbQHy5pS+Nfu/cGMn3hfTMlC8lAtIKQXiHe95gyH4W4hPUFegSxYNA2KYv52jCQUJaFWWFmEE4RJCXYn+1tMYcY6scFU0VKGHB37ggLe5A2o1R0Hj0g/st/axMYmOGpG4UCHWrl1iXy5/FnJ94qXN2ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/tC5tWQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=D4ZpP8rTTkg1jNwrkfRuD27kcnhS1cFCuYw/zt9Z6wOsq3b/Gnf9XTRnvFezWLpX6HZ3pMDbu9BxCpKesYQopGngZCzVs+Mqm76evFv1h3wufquJbFGFw9/oRIbGTH/PXL9b4CWZ7Xf4PI8RGkExxu46CCHTy5LOtI7L58sCVgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kX/Qdixj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/tC5tWQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 495C0C116B1;
-	Fri,  5 Jul 2024 06:02:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kX/Qdixj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D45C116B1;
+	Fri,  5 Jul 2024 06:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720159336;
-	bh=cMetijWwUDDhhHq329hXttPjGfKxO+SH3IDye3kmUrs=;
+	s=k20201202; t=1720159355;
+	bh=4cDtFbBGomg/7dv2zNoG56ixsJZ7lwwLgniIuxOLZfo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u/tC5tWQ7iDVk5fu24SLH341GtVAY+U0tW4ACqCYed/Zx0knJuOkOpncTe4VJ+OjV
-	 2Wx7hiUa/Q33Tt0+3+QBF7EOgagqRikUBM2gK//C2wzj03XZShIImXw4A1jeljDRgM
-	 H9RvLpH9judXXrgDOCQAAkSpJ7lH4+8twKolriFWujcu5Q22P2KFh3x5ZwM+A23Wm8
-	 9dZlqiYNuv05wD2vcCJDDeCDJoCF9SddNUsMxQwIr9ey3byfDaKxxxy/UPGWhHjj2p
-	 WbWfKWDfQ9DDGT19pJ0jk5dg5JlZ/o5NZPvU+wzcOqlc87qG5haEIer6hW1u1yAd/u
-	 kMqK/g408WPMA==
-Message-ID: <b7365faa-adce-409f-9040-b0901e6bc555@kernel.org>
-Date: Fri, 5 Jul 2024 08:02:10 +0200
+	b=kX/QdixjwSH2Do3jBNgSOWlgOlsi3OJhs3soVDC0BCYFRRF6c+HiRTdxoRQHZpDI0
+	 sQ42x43dbbMj/tBkdTgmBj479+HCYGh0Xm1ac8GJmgYGbKWFWv5qiyZPg0Xb3K5ds7
+	 hDQWG4gzz+5TKYeld9pOHKHUhLhW0+1uoAR6fVPJbfEAGPZR+E9UWIjYbZfpJj3fL1
+	 87F2lxfwf42OfTMHDTfVUMNlvaoq9UvB0qQi/FnUmtqSlrMnWrNIoA9W/Vf5obc08C
+	 91ImeZ7kZdZJdruwJb6jQwAAhCDDKh2Ds9H1HO9XsoiMyWOYhO/wBzIQ6/Qs8dWCeE
+	 2oMtrPAQQio7Q==
+Message-ID: <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
+Date: Fri, 5 Jul 2024 08:02:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: clock: add Exynos Auto v920 SoC CMU
- bindings
+Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions for
+ Exynos Auto v920
 To: Sunyeal Hong <sunyeal.hong@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -44,8 +44,8 @@ To: Sunyeal Hong <sunyeal.hong@samsung.com>,
 Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
- <CGME20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706@epcas2p2.samsung.com>
- <20240705021110.2495344-2-sunyeal.hong@samsung.com>
+ <CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+ <20240705021110.2495344-3-sunyeal.hong@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,14 +91,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240705021110.2495344-2-sunyeal.hong@samsung.com>
+In-Reply-To: <20240705021110.2495344-3-sunyeal.hong@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/07/2024 04:11, Sunyeal Hong wrote:
-> Add dt-schema for Exynos Auto v920 SoC clock controller.
+> Add device tree clock binding definitions for below CMU blocks.
+> 
+> - CMU_TOP
+> - CMU_PERIC0
 > 
 > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+
+Headers are part of bindings patch.
 
 <form letter>
 Please use scripts/get_maintainers.pl to get a list of necessary people
