@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B0313A25D;
-	Fri,  5 Jul 2024 19:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBBA13A416;
+	Fri,  5 Jul 2024 21:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720209126; cv=none; b=Os/aKz0+S72rfpkiIwYiHDJ5W3l7cM2wuZ8BdV0+caoCCvEQ4y/y3JH3/xQigxjtw1r0B/MofkgEz8qNa31+1SP4j1sxJ3+LNpdCmZ5pifyUtPLZRZ66GxrljHS2TtW5EI82rIsKbyr6fgjtHOOsdbPKv7n4LzcG2856WHWOO9Q=
+	t=1720216035; cv=none; b=i5h4CGUjhVoXmSMr8u1OjY6ak50qL++W4NqYH06R9bkN1zTEXU6P6Q5R58XUkP7v9bSNn8p5Z4qR/9rfihccYlxiQlhmtuJW54lg/x2Y2n8C4GV6dN0kw9ZGt2ThfuHilv9h6IyMSvvVIXepKlC01Gfr6Fh0GY4W6Ipvd4MjIH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720209126; c=relaxed/simple;
-	bh=+VnYErGIIkw3TidWUIIlES6ORgduwaMebaN/MgmmDbE=;
+	s=arc-20240116; t=1720216035; c=relaxed/simple;
+	bh=DO9YI6U87/AdMasnKM6dLVn1EA/TZFiL2Gbj0GMnUZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJxwdsewDGadTHCU8LLuDi+/5UrAq9vFkEcsXoIFDd08VuK1F8dSzDlaUFAmvpY0w3mv9xG5pRU2NYPz71/Hq3fI1iTBR0Dt6exSqVB8Hp64a4GZMmZ0ZuA3cPoMTUk04ea/dTAAbizXIyN022PW0aObCpj405THu37oIF59yuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DAyWTzpJ; arc=none smtp.client-ip=192.198.163.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=naRjHi2m2UN/FwpUvCRPpkgnfqthl9PkjWQvpRFOz5uv5e8d7RpDQgXTW4QwCksEQejeKasLv/yGCZ5Me7YaxSWCo/g7QtnqI7Z3DlPRS6KTP3ibkBAW26rabo19Xe407lg31ug9V6jj2GDdjVHLX2q8GbiDRy0q2InzJkQ5D+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=muGtsAxj; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DAyWTzpJ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="muGtsAxj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720209125; x=1751745125;
+  t=1720216032; x=1751752032;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=+VnYErGIIkw3TidWUIIlES6ORgduwaMebaN/MgmmDbE=;
-  b=DAyWTzpJAXW/2B8+HwJ2Q5J/3PELB/SfkmcwFLlXJ+yH1fJmDX8Z6mkD
-   Pre1AnNJyYELZfrHO9h8j/oNmw+//n6e8tHHvqAQnX9JtC30dWVbdbKZp
-   a4PMcg6MZfJkdBDPqrhFlpqfLfo/DtuguJGKMZ5kPabsPIgOKK0sRqK9d
-   XP5OwGfaAWojVdN0Mz/HqBvLNga0K+DcjrX9bRAmPHeAD7/kFsJZZZq8X
-   h4Z5U+OEODmLw+hlBqzakag+Mb/VAUhQGrYTm8KEMfhY0FL5kukxHWOe2
-   EXMX3gGn2WgGOo1pBfQTkl9gwbcbUodBi8VbCmJagPtlYI4B9m70LffkG
+  bh=DO9YI6U87/AdMasnKM6dLVn1EA/TZFiL2Gbj0GMnUZ4=;
+  b=muGtsAxjD/Igzsv+LCo4NmSKZsOQBFuEN/zhBlUgW7htJV0jzxntUk1n
+   ErLXjna8TRyItrOO7220YNMTLsgwhb8BQmc58FE8ylXfqy3sR61BNf5z5
+   wHiRl2V2l4D2WaDfj8nOPLxYJWI3EESI6VzyASIglba4dtwbPuFQQ4QgP
+   ltgfYCklIA74gyTIWJKtYL7gimXIgCZQUzlM3PEyAGJywHrn+BmUwO4aD
+   1sdh8Exh5WUwEzQyvL6F+VO+yjPJu0q3uO90HjW3Q/TdrDdAxLZUS3YRa
+   mhqmW+6s/kkw6RQ1QxIu8UoYRqkBnCMv8Vn+WZ+luTurqcZO2HxVg+l3M
    A==;
-X-CSE-ConnectionGUID: /9VFPOJ3Qc68uWOwf0V6RA==
-X-CSE-MsgGUID: DVIF4NUaTLG78IC1pNAwyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="17150262"
-X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
-   d="scan'208";a="17150262"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 12:52:04 -0700
-X-CSE-ConnectionGUID: eMQnS9GbRfutWVu7eMXv6w==
-X-CSE-MsgGUID: QDixITXqRT+7KRwbYxMS9A==
+X-CSE-ConnectionGUID: R1hVL9B+Th2ROvAZOc2gjQ==
+X-CSE-MsgGUID: xPvJ/cayRli9vmG2aQVOPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="40018474"
+X-IronPort-AV: E=Sophos;i="6.09,186,1716274800"; 
+   d="scan'208";a="40018474"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2024 14:47:12 -0700
+X-CSE-ConnectionGUID: aIZrDO3KQ0C9qQiMHrZZJA==
+X-CSE-MsgGUID: OxqEUSBdR2KL+507Z7R3SA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,185,1716274800"; 
-   d="scan'208";a="46725005"
+X-IronPort-AV: E=Sophos;i="6.09,186,1716274800"; 
+   d="scan'208";a="47040794"
 Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 05 Jul 2024 12:52:01 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 05 Jul 2024 14:47:09 -0700
 Received: from kbuild by 68891e0c336b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sPoyN-000SnU-26;
-	Fri, 05 Jul 2024 19:51:59 +0000
-Date: Sat, 6 Jul 2024 03:51:20 +0800
+	id 1sPqlm-000Svc-39;
+	Fri, 05 Jul 2024 21:47:06 +0000
+Date: Sat, 6 Jul 2024 05:46:49 +0800
 From: kernel test robot <lkp@intel.com>
 To: Sunyeal Hong <sunyeal.hong@samsung.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -56,12 +56,13 @@ To: Sunyeal Hong <sunyeal.hong@samsung.com>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Sunyeal Hong <sunyeal.hong@samsung.com>
 Subject: Re: [PATCH 5/5] clk: samsung: add top clock support for Exynos Auto
  v920 SoC
-Message-ID: <202407060332.KhLXveCd-lkp@intel.com>
+Message-ID: <202407060546.Zqh1m0PR-lkp@intel.com>
 References: <20240705021110.2495344-6-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -87,20 +88,21 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Sunyeal-Hong/dt-bindings-
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
 patch link:    https://lore.kernel.org/r/20240705021110.2495344-6-sunyeal.hong%40samsung.com
 patch subject: [PATCH 5/5] clk: samsung: add top clock support for Exynos Auto v920 SoC
-config: arm-randconfig-001-20240706 (https://download.01.org/0day-ci/archive/20240706/202407060332.KhLXveCd-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240706/202407060332.KhLXveCd-lkp@intel.com/reproduce)
+config: arm64-randconfig-003-20240706 (https://download.01.org/0day-ci/archive/20240706/202407060546.Zqh1m0PR-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240706/202407060546.Zqh1m0PR-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407060332.KhLXveCd-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407060546.Zqh1m0PR-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
->> drivers/clk/samsung/clk-exynosautov920.c:1131:40: warning: 'peric0_gate_clks' defined but not used [-Wunused-const-variable=]
-    1131 | static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
-         |                                        ^~~~~~~~~~~~~~~~
+>> drivers/clk/samsung/clk-exynosautov920.c:1131:40: warning: unused variable 'peric0_gate_clks' [-Wunused-const-variable]
+   static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
+                                          ^
+   1 warning generated.
 
 
 vim +/peric0_gate_clks +1131 drivers/clk/samsung/clk-exynosautov920.c
