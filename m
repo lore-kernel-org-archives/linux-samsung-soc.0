@@ -1,372 +1,263 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07F0146A97
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Jul 2024 09:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB9B1448E9
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Jul 2024 09:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720172316; cv=none; b=UrUeR53Tz6sB4uaxYHqmomyg5PX3veJ/xh+qflxGIDP43gvhsT3PpyQniHSpDx6eVocaIKfm/HmqBOKzfgmkcZ62Rms6789ctQjLCblICdUYV9aQBIZYlkjH9UTzlVzE0xaX7M1WHCWwejVStVbeDeWB3PNt+JdK8G4xKVjhcjA=
+	t=1720172840; cv=none; b=VCP/8RRV1UDoEgbYPZbxe2pfABWwY6QonorRbxnqAo/NhFBclK9hMEGVtOuHI2DQBt2pEMmOT1xLfcu2+OGhRs68zIl0IlUE8dCtWPgkSWbrLRulHLihSjtlmoXqJOfHn+6H1T3ytVyPzRj1K4ChVxZ0rjbsmQk91Q4bao0JPjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720172316; c=relaxed/simple;
-	bh=H3LIhSNZQKMYtlqW8KsC915SQX2x44dGDfWPEwylGvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lHW70ASTS2d5V0GaiwhMZ3huzy22zJHjU9+ZaqTmlGPHmj+9yE0WlOFYQP6z5zt7xBJbNGG9AWL9VcaTUvoHvIoEH6W5qxpe1c//Rtnzps2VgPuVOjNB1zLrigKXb45yI64Z78KMVIlTT2EmZeO+TTUv6uZDvB4liZiNJH/uRJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yBtx7k4Q; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720172840; c=relaxed/simple;
+	bh=SNVIq8IzEq/+ixojpoOnQcqrIQtEdZaAPkEwmaEt8/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=LqcpKOiZTptz5DfRHS8aGmuBSSWWf2aomVsbEAAVoWzUtyoxM8q0WBOOI3wezGnEpMSORz1tyfZI5uy5GeSDvgAvGNaGgIFruU/FnE8aZJj5Wm8mrSrLUdmss/8rpcJ3yBKqHV0nVPWnKNzKQcOzXF1C2r2ic/I0Zp5ZhV8epdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZE0Jjlel; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yBtx7k4Q"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3678f36f154so769164f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Jul 2024 02:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720172313; x=1720777113; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObbfnTF/ig6JDQuTygy6iiFA4DAAf48nruHQbJOCnXQ=;
-        b=yBtx7k4Q3uK3VpOPEwQMi5t7cpws53I91OTxKLZNFFDrBGPosQJ029jue6g9wJI+gp
-         TV8m0fD36HVzk+MYoAgrDtppiyl4vEAwSVzGbGKJLwIDDCArME2hlCBkN6svIv6abrnW
-         UaXDVtytnJEVZBT8NVZBHPG/SgkoHLFd41FLUVFYQCvxsT0pBXv1dhJxD7CDpWOGtu2B
-         tIFSxpfDrRSDJeqwpnkaErQ2gIlb2Zks3rOAsbvyS0ZVZnbXIokQ/rlBjuDPAMAnaWUm
-         p3gFRzytVAznJUMsdnmTfy+IImI5k3Z+WzdkgrxoSq4gqsxFmABtrGWpoMWjAz05kpdX
-         FJbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720172313; x=1720777113;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ObbfnTF/ig6JDQuTygy6iiFA4DAAf48nruHQbJOCnXQ=;
-        b=c5HH603x5yiEUNl8khT4fmr1PlbYH0nB7Vv6pbe8zHGitnh0A5Pejwgta/bl3VLnXT
-         T6NyKx5oVvm2DTYdMklnlbvPDbiS2RBoxMR5o+caQvDDvUJLfJWtexV8NYy7z3VvdHFs
-         KZFsIQqAdbFfhPhZp6tm46aIDXiOShffXdldma2/LFoTXRfjKvyzoyPBJJZoDa4BPKdS
-         r8z7FGcZ1O8alqN/X58U4DYTYb+8/5nDxy+7FsidEPFO7xnxpTQC5A1vdfId32kdtq11
-         j3oqVJKqcONmdcgwt1C57Ylq6DocC87ja9FTHz2toH0b/7ExmMZcJtlWmiBF7lPRRF52
-         3Y4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUqDf7T5Eki5MR6KKzE63Sy5/iBhtrEdAxAhUHsEx2bldQkqwr7KdHPPq3kd+6K3cvwPlMR1P8xNwVp2tPoNmDXp4ZHbgJ8Rp2vd5U4zQ2FlUg=
-X-Gm-Message-State: AOJu0YxtKRzLyUyaM9t4bnPR1v/zwhi9Iz4jIimSkdYG1ty8s0HlCpKW
-	qLjYL04uTCUVbKbeNM7hKowp0j7D+xsMb1yf2+6+rlziBRyEcPHbtzCjfRYHhUo=
-X-Google-Smtp-Source: AGHT+IENEoehOBqKgKCrQHFL2ATAv5msu6AWrdhCuFQer5ew34/sZeVqsGuzLlH59WB4CY92L/619w==
-X-Received: by 2002:a5d:5184:0:b0:363:e0e2:eeff with SMTP id ffacd0b85a97d-3679dd3cb6cmr2609570f8f.20.1720172313033;
-        Fri, 05 Jul 2024 02:38:33 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367957d3451sm5781084f8f.101.2024.07.05.02.38.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 02:38:32 -0700 (PDT)
-Message-ID: <4781d95e-a44c-423b-97b6-973c1826a1ab@linaro.org>
-Date: Fri, 5 Jul 2024 11:38:31 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZE0Jjlel"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240705094715epoutp0292f8ce0c9949ec9121ca6fe241e441ec~fSBRu5SB50589705897epoutp02j
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  5 Jul 2024 09:47:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240705094715epoutp0292f8ce0c9949ec9121ca6fe241e441ec~fSBRu5SB50589705897epoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720172835;
+	bh=7hc5/Ebz+qisnzZvFIi0bERvrPY/X5FNJfe7LrCQvt0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ZE0JjlelrQGOXDOc0N6mOpV4Cq5SLI8Eo5LnUvrfzMZPQ/rP283wrT9VCdyqJwH0V
+	 okC4QM2bCWDHvhBdom9H8Cl2s3+/9ZtfuXH0eT8WLC0/tSugWbQvY7rwhuKKXAZCsR
+	 CxivUyG9xGroWRsZywQbSSKGC6WFawcuPziXTtkY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240705094714epcas2p35ee03825b0f502c44fd0949d3ca05a08~fSBRCaKql2339523395epcas2p3F;
+	Fri,  5 Jul 2024 09:47:14 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.92]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WFpZn6v0gz4x9Q1; Fri,  5 Jul
+	2024 09:47:13 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9C.F0.09485.121C7866; Fri,  5 Jul 2024 18:47:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240705094713epcas2p332450ad4dae04cd2fa599994c7956c29~fSBPzzBco1873818738epcas2p3p;
+	Fri,  5 Jul 2024 09:47:13 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240705094713epsmtrp23c0002a7d4d994b458bbdffd07d94add~fSBPyzKuO0969009690epsmtrp2k;
+	Fri,  5 Jul 2024 09:47:13 +0000 (GMT)
+X-AuditID: b6c32a46-f3bff7000000250d-86-6687c121bfdc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	36.2C.18846.021C7866; Fri,  5 Jul 2024 18:47:13 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240705094712epsmtip1d0be6d4a507a0b0d376e8e996576570c~fSBPjTUmS2580925809epsmtip1T;
+	Fri,  5 Jul 2024 09:47:12 +0000 (GMT)
+Message-ID: <c1891fb7-748b-62ad-a115-ee143fd05784@samsung.com>
+Date: Fri, 5 Jul 2024 18:46:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] pinctrl: samsung: Add support for pull-up and
- pull-down
-To: Vishnu Reddy <vishnu.reddy@samsung.com>, s.nawrocki@samsung.com,
- alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-References: <CGME20240704043358epcas5p282acd174113c7baf3f7a3472ba4c39ff@epcas5p2.samsung.com>
- <20240704042629.26151-1-vishnu.reddy@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+	Thunderbird/102.11.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240704042629.26151-1-vishnu.reddy@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <20240705021110.2495344-2-sunyeal.hong@samsung.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmua7iwfY0g4ltZhYP5m1js7j+5Tmr
+	xfnzG9gtPvbcY7W4vGsOm8WM8/uYLC6ecrU4/Kad1eLftY0sFk3L1jM5cHm8v9HK7rFpVSeb
+	R9+WVYwenzfJBbBEZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5
+	+AToumXmAN2jpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwL9ArTswtLs1L18tL
+	LbEyNDAwMgUqTMjOmDP/P3PBOdWK+U1NzA2MW2W6GDk5JARMJGZcXsfexcjFISSwg1HiydQd
+	UM4nRonzXV+YQarAnLvr5boYOcA63nzXhqjZySjR2nyZCcJ5zSix9P9CFpAGXgE7iT9rXzOB
+	2CwCKhILZj1jhIgLSpyc+QSsRlQgWqJ12X02EFtYIETiwIufjCCDRAQWMEmc37WXFSTBLJAg
+	seTwBzYIW1zi1pP5YEPZBLQlvq9fDFbDKeAgcfTeMqh6eYntb+cwgwySEJjKIdGyZwszxKMu
+	Ek3XPzJB2MISr45vYYewpSQ+v9vLBmHnS7RdOQMVr5HYuOASI4RtL7HozE92kPeZBTQl1u/S
+	h4SEssSRWywQa/kkOg7/ZYcI80p0tAlBNKpJ3J96Dmq4jMSkIyuhDvCQmL53AesERsVZSKEy
+	C8mTs5A8Mwth7wJGllWMYqkFxbnpqcVGBUbwuE7Oz93ECE6pWm47GKe8/aB3iJGJg/EQowQH
+	s5IIr9T75jQh3pTEyqrUovz4otKc1OJDjKbAuJnILCWanA9M6nkl8YYmlgYmZmaG5kamBuZK
+	4rz3WuemCAmkJ5akZqemFqQWwfQxcXBKNTDpd4r2i159kOByvz7njuhPtvPz8q+s8lh6nS1t
+	3WufW7kVjdU1VkVS34REY5neZ7hMutZ1Njdqe3/LYY+Fa3U+duZyle1wnrR65rKgiA/cFb1P
+	J33ez+j/Pvfnzdr6GMmayUt2u9efUk003jON2efzQu5Xsz7cbKvaGsl0bcnFybu6bPV0W84+
+	MD3XIPTX+vD+pqMa2Uz1imwTl937dl+w4fmWbXrJ3nfX1m/onn2KxXvvAuZNua4ZTGlPWnpC
+	5DxLwvUj9Hb96Sy/MY/9RfHjI7Ee+m37r15le9H3p+O8xLEYLpZcq5agHqXrdlr/csuWfQ0Q
+	D8wy/nlp6t/W7+ZqL51mmIimb5mrV94S36vEUpyRaKjFXFScCACOdnq5MgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSnK7iwfY0g12zmS0ezNvGZnH9y3NW
+	i/PnN7BbfOy5x2pxedccNosZ5/cxWVw85Wpx+E07q8W/axtZLJqWrWdy4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4MqYM/8/c8E51Yr5TU3MDYxbZboYOTgkBEwk3nzX
+	7mLk4hAS2M4ocbnrCGMXIydQXEZi+bM+NghbWOJ+yxFWiKKXjBKnZu9lAknwCthJ/Fn7Gsxm
+	EVCRWDDrGSNEXFDi5MwnLCC2qEC0xOrPF1hBbGGBEIkDL34yggwSEVjEJDFvSRs7SIJZIEHi
+	/tbdbBAbTjJKbJxzgQkiIS5x68l8MJtNQFvi+/rFYJM4BRwkjt5bxgpRYybRtbWLEcKWl9j+
+	dg7zBEahWUgOmYVk1CwkLbOQtCxgZFnFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERxDWkE7
+	GJet/6t3iJGJg/EQowQHs5IIr9T75jQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJ
+	JanZqakFqUUwWSYOTqkGpl2NO8tzVhvs4HSyfurKISK35oq6IfMtUY+itetrYoXYAm7sfiWW
+	mR15jMFX53WxV2vPzGxdQVP9e9kPj1v2CXc++NQzsaBr//5Lple/GMcq3a/VM4uWXV/ww6Or
+	mme5NVNZAX/thcc1k9K0RHK22c9/Grk76vN2ruWVM3KUi32usn65qf6Xs9kpRCX3UG7wplPz
+	N/qdUbktbRnIptqTe0v9Y7HwfD4hIcVbfu0arFVMmwq3LeER+p5Qc1ds6o7PpW/qLfM4DZ7e
+	vjSRtWT1mp02i8rSdzF+XP/+9pTm+fWP/edWPwtV/PZusYu098KlB6def7HR2TDz6PoPX7MY
+	LUv1jmfskzuzYdkO/62zlViKMxINtZiLihMB4HpyxBADAAA=
+X-CMS-MailID: 20240705094713epcas2p332450ad4dae04cd2fa599994c7956c29
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706@epcas2p2.samsung.com>
+	<20240705021110.2495344-2-sunyeal.hong@samsung.com>
 
-On 04/07/2024 06:26, Vishnu Reddy wrote:
-> gpiolib framework has the implementation of setting up the
-> PUD configuration for GPIO pins but there is no driver support.
-> 
-> Add support to handle the PUD configuration request from the
-> userspace in samsung pinctrl driver.
-> 
-> Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
+Hi Sunyeal,
+
+
+On 7/5/24 11:11, Sunyeal Hong wrote:
+> Add dt-schema for Exynos Auto v920 SoC clock controller.
+>
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
 > ---
->  drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 15 ++++
->  drivers/pinctrl/samsung/pinctrl-s3c64xx.c    | 15 ++++
->  drivers/pinctrl/samsung/pinctrl-samsung.c    | 80 ++++++++++++++++++++
->  drivers/pinctrl/samsung/pinctrl-samsung.h    | 24 ++++++
->  4 files changed, 134 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> index 85ddf49a5188..426d1daacef2 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-> @@ -40,6 +40,20 @@ static const struct samsung_pin_bank_type bank_type_alive = {
->  #define S5P_OTHERS_RET_MMC		(1 << 29)
->  #define S5P_OTHERS_RET_UART		(1 << 28)
->  
-> +/*
-> + * s5pv210_pud_value_init: initialize the drvdata pud_val with s5pv210 pud values
-> + * s5pv210_pull_disable:	0
-> + * s5pv210_pull_down_enable:	1
-> + * s5pv210_pull_up_enable:	2
-
-Please use proper defines, e.g. S5P_PIN_PUD_PULL_DISABLE
-
-
-> + */
-> +static void s5pv210_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-> +{
-> +	unsigned int i, *pud_val = drvdata->pud_val;
+>   .../clock/samsung,exynosautov920-clock.yaml   | 115 ++++++++++++++++++
+>   1 file changed, 115 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> new file mode 100644
+> index 000000000000..3e5e408c8336
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: https://protect2.fireeye.com/v1/url?k=804ccde6-e1c7d8c9-804d46a9-74fe485cbfe7-c44fcfa897bd4340&q=1&e=65af0c33-026a-42d4-92cd-09b6c91c9bfb&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Fsamsung%2Cexynosautov920-clock.yaml%23
+> +$schema: https://protect2.fireeye.com/v1/url?k=8a40f68c-ebcbe3a3-8a417dc3-74fe485cbfe7-63f39e48f537ca7e&q=1&e=65af0c33-026a-42d4-92cd-09b6c91c9bfb&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
 > +
-> +	for (i = 0; i < PUD_MAX; i++)
-> +		pud_val[i] = i;
-
-pud_val[PUD_PULL_DISABLE] = PROPER_DEFINE
-
-> +}
+> +title: Samsung Exynos Auto v920 SoC clock controller
 > +
->  static void s5pv210_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
->  {
->  	void __iomem *clk_base = (void __iomem *)drvdata->retention_ctrl->priv;
-> @@ -133,6 +147,7 @@ static const struct samsung_pin_ctrl s5pv210_pin_ctrl[] __initconst = {
->  		.nr_banks	= ARRAY_SIZE(s5pv210_pin_bank),
->  		.eint_gpio_init = exynos_eint_gpio_init,
->  		.eint_wkup_init = exynos_eint_wkup_init,
-> +		.pud_value_init	= s5pv210_pud_value_init,
->  		.suspend	= exynos_pinctrl_suspend,
->  		.resume		= exynos_pinctrl_resume,
->  		.retention_data	= &s5pv210_retention_data,
-> diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-> index c5d92db4fdb1..cf57b0f16999 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-> @@ -255,6 +255,20 @@ static int s3c64xx_irq_get_trigger(unsigned int type)
->  	return trigger;
->  }
->  
-> +/*
-> + * s3c64xx_pud_value_init: initialize the drvdata pud_val with s3c64xx pud values
-> + * s3c64xx_pull_disable:	0
-> + * s3c64xx_pull_down_enable:	1
-> + * s3c64xx_pull_up_enable:	2
-
-Use proper defines. Comments are not the place to define magic values.
-
-
-> + */
-> +static void s3c64xx_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-> +{
-> +	unsigned int i, *pud_val = drvdata->pud_val;
+> +maintainers:
+> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
 > +
-> +	for (i = 0; i < PUD_MAX; i++)
-> +		pud_val[i] = i;
-> +}
+> +description: |
+> +  Exynos Auto v920 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
+> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
+> +  The external OSCCLK must be defined as fixed-rate clock in dts.
 > +
->  static void s3c64xx_irq_set_handler(struct irq_data *d, unsigned int type)
->  {
->  	/* Edge- and level-triggered interrupts need different handlers */
-> @@ -797,6 +811,7 @@ static const struct samsung_pin_ctrl s3c64xx_pin_ctrl[] __initconst = {
->  		.nr_banks	= ARRAY_SIZE(s3c64xx_pin_banks0),
->  		.eint_gpio_init = s3c64xx_eint_gpio_init,
->  		.eint_wkup_init = s3c64xx_eint_eint0_init,
-> +		.pud_value_init	= s3c64xx_pud_value_init,
->  	},
->  };
->  
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> index 623df65a5d6f..7d7e924c1fdb 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-> @@ -997,6 +997,80 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
->  	return 0;
->  }
->  
-> +/*
-> + *samsung_pud_value_init: initialize the drvdata pud_val
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other clocks of function blocks (other CMUs) are usually
+> +  derived from CMU_TOP.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynosautov920-cmu-top
+> +      - samsung,exynosautov920-cmu-peric0
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-top
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-peric0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_clkcmu_peric0_noc
+> +            - const: dout_clkcmu_peric0_ip
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock controller node for CMU_PERIC0
+> +  - |
+> +    #include <dt-bindings/clock/samsung,exynosautov920.h>
+> +
+> +    cmu_peric0: clock-controller@10800000 {
+> +        compatible = "samsung,exynosautov920-cmu-peric0";
+> +        reg = <0x10800000 0x8000>;
+> +        #clock-cells = <1>;
+> +
+> +        clocks = <&xtcxo>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
+> +        clock-names = "oscclk",
+> +                      "dout_clkcmu_peric0_noc",
+> +                      "dout_clkcmu_peric0_ip";
 
-You use some weird style of comments. It's not kerneldoc, it's not a
-proper neither useful comment. Either use proper kerneldoc (and test
-it!) or drop duplicated function names. They are not helping. This
-applies everywhere.
+There was a review with clock name.
+Please consider modifying the clock-name by referring to the review below.
+https://lore.kernel.org/linux-samsung-soc/20231220150726.GA223267-robh@kernel.org/
 
+> +    };
+> +
+> +...
 
-> + */
-> +static void samsung_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-> +{
-> +	unsigned int  *pud_val = drvdata->pud_val;
-> +
-> +	pud_val[PUD_PULL_DISABLE] = PIN_PUD_PULL_UP_DOWN_DISABLE;
-> +	pud_val[PUD_PULL_DOWN] = PIN_PUD_PULL_DOWN_ENABLE;
-> +	pud_val[PUD_PULL_UP] = PIN_PUD_PULL_UP_ENABLE;
-> +}
-> +
-> +/*
-> + * samsung_gpio_set_pud will enable or disable the pull-down and
-> + * pull-up for the gpio pins in the PUD register.
-> + */
-> +static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
-> +				 unsigned int value)
-> +{
-> +	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-> +	const struct samsung_pin_bank_type *type = bank->type;
-> +	void __iomem *reg;
-> +	unsigned int data, mask;
-> +
-> +	reg = bank->pctl_base + bank->pctl_offset;
-> +	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-> +	mask = (1 << type->fld_width[PINCFG_TYPE_PUD]) - 1;
-> +	data &= ~(mask << (offset * type->fld_width[PINCFG_TYPE_PUD]));
-> +	data |= value << (offset * type->fld_width[PINCFG_TYPE_PUD]);
-> +	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
-> +}
-> +
-> +/*
-> + * samsung_gpio_set_config will identify the type of PUD config based
-> + * on the gpiolib request to enable or disable the PUD configuration.
-> + */
-> +static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-> +				   unsigned long config)
-> +{
-> +	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-> +	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
-> +	unsigned int value;
-> +	int ret = 0;
-> +	unsigned long flags;
-> +
-> +	switch (pinconf_to_config_param(config)) {
-> +	case PIN_CONFIG_BIAS_DISABLE:
-> +		value = drvdata->pud_val[PUD_PULL_DISABLE];
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		value = drvdata->pud_val[PUD_PULL_DOWN];
-> +		break;
-> +	case PIN_CONFIG_BIAS_PULL_UP:
-> +		value = drvdata->pud_val[PUD_PULL_UP];
-> +		break;
-> +	default:
-> +		return -ENOTSUPP;
-> +	}
-> +
-> +	ret = clk_enable(drvdata->pclk);
-> +	if (ret) {
-> +		dev_err(drvdata->dev, "failed to enable clock\n");
-> +		return ret;
-> +	}
-> +
-> +	raw_spin_lock_irqsave(&bank->slock, flags);
-> +	samsung_gpio_set_pud(gc, offset, value);
-> +	raw_spin_unlock_irqrestore(&bank->slock, flags);
-> +
-> +	clk_disable(drvdata->pclk);
-> +
-> +	return ret;
-> +}
-> +
->  static const struct gpio_chip samsung_gpiolib_chip = {
->  	.request = gpiochip_generic_request,
->  	.free = gpiochip_generic_free,
-> @@ -1006,6 +1080,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
->  	.direction_output = samsung_gpio_direction_output,
->  	.to_irq = samsung_gpio_to_irq,
->  	.add_pin_ranges = samsung_add_pin_ranges,
-> +	.set_config = samsung_gpio_set_config,
->  	.owner = THIS_MODULE,
->  };
->  
-> @@ -1237,6 +1312,11 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
->  	if (ctrl->eint_wkup_init)
->  		ctrl->eint_wkup_init(drvdata);
->  
-> +	if (ctrl->pud_value_init)
-> +		ctrl->pud_value_init(drvdata);
-> +	else
-> +		samsung_pud_value_init(drvdata);
-> +
->  	ret = samsung_gpiolib_register(pdev, drvdata);
->  	if (ret)
->  		goto err_unregister;
-> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> index d50ba6f07d5d..61384096b6d7 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> @@ -61,6 +61,28 @@ enum pincfg_type {
->  #define PIN_CON_FUNC_INPUT		0x0
->  #define PIN_CON_FUNC_OUTPUT		0x1
->  
-> +/*
-> + * Values for the pin PUD register.
-> + */
-> +#define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
-
-EXYNOS_PIN_PUD_PULL_DISABLE
-
-> +#define PIN_PUD_PULL_DOWN_ENABLE	0x1
-
-EXYNOS_PIN_PID_PULL_DOWN
-
-> +#define PIN_PUD_PULL_UP_ENABLE		0x3
-
-EXYNOS_PIN_PID_PULL_UP
-
-> +
-> +/*
-> + * enum pud_index: Index values to access the pud_val array in
-> + *	struct samsung_pinctrl_drv_data.
-> + * @PUD_PULL_DISABLE: Index for value of pud disable
-> + * @PUD_PULL_DOWN: Index for the value of pull down enable
-> + * @PUD_PULL_UP: Index for the value of pull up enable
-> + * @PUD_MAX: Maximun value of the index
-
-Typo: Maximum
-
-> + */
-> +enum pud_index {
-> +	PUD_PULL_DISABLE,
-> +	PUD_PULL_DOWN,
-> +	PUD_PULL_UP,
-> +	PUD_MAX,
-> +};
-
-Best regards,
-Krzysztof
+Thanks
+Jaewon Kim
 
