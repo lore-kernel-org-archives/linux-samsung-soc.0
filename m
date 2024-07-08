@@ -1,87 +1,151 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C725AD2C
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jul 2024 17:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F52144D25
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jul 2024 18:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720460013; cv=none; b=lxR9V6/v/B/aY0MgFKQmAdLMdJLb0uCRJ5PfH3nhF6F8AQTvf6WuY/+HaLn9869hLTFkrC/9AC6ymVv20q5oTLAPK/GJdw196HYSvl/JqdRIkiIiD5I+grk7cmBL9Shm06u9/flF6dWBQR4p53JwYYBzXutzt1D4YptK/y2yCgw=
+	t=1720462147; cv=none; b=Sm/ubTSP1ggFDhpZKgbx9oEHgRvqF6dtsV+ZvxCX0yI6VAXolkLeW1wdera0XhZS0QT1u40djf0aAghyU9hKvNRas2c2F6pecjVEys3/qh2QWlPz/EBQbqBAcdZxDqckDxw8Gdo6BlZ2MCtN+2g3mIkH5ZSHiWSM3bcbS/ERIM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720460013; c=relaxed/simple;
-	bh=xMgVMxuVJ+4mDxDIZpv60LWECy5vBRGinidcROVywxQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BEojPKKUAY6oNkKOuTHqWtQQiqrLPeOa3l2QdHoNfPL/mI9kbk2p75vKi/XJ7HNQHPSi9tfz6v91vOqEvWUKr2xd9+hlJcF9eRebbxdv04q7jch3Dvqsa/Af4QK5mV1w0EoygELpDeA46q5Nhx/S1gbZV4D+Oq4BVM1nQqqVfTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y50tGogI; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1720462147; c=relaxed/simple;
+	bh=CG707koYbJnede1fww7JQ7JLqlDrWGnQkLN5J+JJjnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GWvbGld9oPD4P2WkR5mjVdrVKLcI7TXGpkmXcgR7hg5NJ9KY7tds49kdBLaB3maAjcLLG7GLSiSq1XCWZMrddNVCOM5D0bqFmZmhplaZ7yrbsgZdlBZv4fe2nxWmS9e+FmPaE4534N+RUnqtsQUoRZYJAGh+H1MnBOQTulK6M+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iSv0hOMT; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y50tGogI"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee8911b451so52344131fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jul 2024 10:33:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iSv0hOMT"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58b447c519eso5236327a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jul 2024 11:09:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720460010; x=1721064810; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xMgVMxuVJ+4mDxDIZpv60LWECy5vBRGinidcROVywxQ=;
-        b=Y50tGogIngiclh4Gts5xkP4pOWNro5ruF/OZolpDwLqRsNTA+OxfK0DtSOyKzzALe8
-         OVKL3i4CpYcP4Nw6lYb0nfdhnKnrGCIR7T8t70gVVsI44HIpmtlofEaQJ7VZiPolsOn+
-         f8oKytFIs7qqBmvnvOz/7XiPTT0kCMfvXKSK4hHsihxFH1QroOx7ByPSJhBvRrlN2OBQ
-         HHCbi6iN1EA4jTBdC2owSX7quGRalPXVfsO/p2EtzGdUQI7zpwJqeoZ5B/RBk+ZejVeu
-         Dxa9zCLntjXk/8y5NQCFO0oA/zKUgHm7SWYSeGGBjF7oYWtrqhG+0eFfPVs6+QoyFjqd
-         Q5gw==
+        d=linaro.org; s=google; t=1720462144; x=1721066944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9SclVHHKmhSqXdWBkdjpfcUGGg73PYZ76UnLpmlrPA=;
+        b=iSv0hOMTxQjy252hK+lJdahNOjRMvdEM754WGhaHmKvdZn+uL5HbMYCm5HzFGCd9Mg
+         Qoh8rPuVsmMt1d0R9toj0TW3zv85+OeMpy0TRr4AJxPM7DROF4Pb7AVTtMF1mzCHIymm
+         m7bXDqZ7oOYAZf4unDE3AMj0MlBzdaqHCUUdsXjQHLVnXB8bOWUCcIRVkpbh/X0lvl7n
+         SEfogpmSKiTN7i1eY8Ro0Z6Y6ja506Ilq3iP+/IQLa5QaNo7iuYwWjeW4xZXsNmTQ9t7
+         pL4zmJ93Uhyx3J11MP7tSG9d/LOi/Azji0lTSgX7jXaaIMEH4A5k9QlBAfk91VgYzBYT
+         paTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720460010; x=1721064810;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xMgVMxuVJ+4mDxDIZpv60LWECy5vBRGinidcROVywxQ=;
-        b=e/WYew/oPPMPvGZC3zavbfnsY1PuNrEVZwyMQOItkc7U0xdpYewQeXobNBRjgAJX6D
-         1WMqlQHmRgq90yBBOjlAU/caJSCzWDklxERfkKoZmEM1TnEDYCOF04vzSrCPs0YDb/HO
-         f+kIoc2E7/9mgR2gQEueURpFjp5JhdOIaVPDWzlxUOgqEJ6hzZKe+dCcvYXpw2gYhcp6
-         /JDJnjFS/ROtVLhga8OS2mJCCXADN6fkLpsG2wdi98gfv5kXf2rQ+P3N1AQz7zCQ7V79
-         fiw/nQkcYHovojGmPvKtUxv3dLbnxrnhSl8WriKx5c9zG9Zg9DdtmUHhp0OFbeOQKvse
-         wGvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOY2aUUCIWF9uIPx5GybZaFuG2Ynvof6DOmEv5N18MKBM0bA9+Wft9/if/Swj5cJoFiKOmcXGdWTBBONylnH7YryTzaxOyVy1gl6/4Yc9KUsg=
-X-Gm-Message-State: AOJu0YwAk0AhQ9Gdf0gs3Y2OfbOhaLl37kiityJ7jHThzt9LrEME70tv
-	LABdnxFtYDuu0taVkeFMizMs/TanDx4X2LFp1Fbe6o30uiAGg1nH6TrIieszcwY=
-X-Google-Smtp-Source: AGHT+IHqm74O9XrXu8Sp/c9nwIkpH2JvcIAs+C9RT3fJBrhdSnfh3Hhhnky9bRB/8pAITn8lkJu/iQ==
-X-Received: by 2002:a2e:9a92:0:b0:2ed:136b:755b with SMTP id 38308e7fff4ca-2eeb318b5e9mr2863341fa.53.1720460010540;
-        Mon, 08 Jul 2024 10:33:30 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741553sm5885805e9.40.2024.07.08.10.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 10:33:30 -0700 (PDT)
-Message-ID: <77711848a7e7242a7445a4bccf5c93675239b838.camel@linaro.org>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,  Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-Date: Mon, 08 Jul 2024 18:33:29 +0100
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+        d=1e100.net; s=20230601; t=1720462144; x=1721066944;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h9SclVHHKmhSqXdWBkdjpfcUGGg73PYZ76UnLpmlrPA=;
+        b=Ajfqbe/D6b/ChtLCRVwr5PPABFEj3Aq4h6VOGkrfLEFsw5u+qhya0xDu9xJ7+mOq9I
+         VkOuzMwDJbLc66coF829Dkd4tCWQcgN/TjqdKCcQbRvaE8ief1MTMsqha3amWLL0OAD/
+         o9hDiiaTuOf0PQOxVWBxhynRnNS/PdJBR73CZC0uvGOta8YHMvGK1ILwcdMgVzZqP7Lu
+         0E++rqn9h6EU5vl3oBTj/TiON+fcXJvCyGKPXr+vTEkpBM/PWCkBVm6X/wqp/41KWPRJ
+         Ni0xf4neoWBJvjazaAmGvg0I3SW7QV62u5N3vdWQJJ6y4Wt0cwRYHaiqQGN7iTVNtiQP
+         KpNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVipPjM7LnZjiBKhxBHqnJum2AbyNIHhCZc2qMaP8MEgHnUkS1NEH7BKmXOaK8cjCGzs+/jw6abo90Soy0kBE/hjFQpqpw5Gra8cZk7djK1TDQ=
+X-Gm-Message-State: AOJu0Yx7y4DMaeSBp9BnxDiRoYk1VHeOJIRNTxVtYVRHezKO5qzvELp+
+	cnL26E3mGeHqxocXzw4Y9Wa+eKDEgB42gHaEl9fFsUMA/KgA3HyKUqno8+7hcCA=
+X-Google-Smtp-Source: AGHT+IEY4wUlDLgxf2i3rdkVHcpk1OUK0j5ihUIo/iySjtcBRkZ3zUlg7nzE4G/y1pYBhf9gKCamKg==
+X-Received: by 2002:a05:6402:84c:b0:58e:2b65:385b with SMTP id 4fb4d7f45d1cf-594ba0c9e5dmr286249a12.14.1720462143775;
+        Mon, 08 Jul 2024 11:09:03 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bda308efsm98182a12.81.2024.07.08.11.08.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 11:09:03 -0700 (PDT)
+Message-ID: <d83ff8c4-15de-4e20-9c27-eb0247184b5f@linaro.org>
+Date: Mon, 8 Jul 2024 20:08:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: starqltechn: add new features
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ phone-devel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com>
+ <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
+ <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-07-08 at 12:04 -0500, Dan Carpenter wrote:
-> Return negative -ENOMEM instead of positive ENOMEM.
->=20
-> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regul=
-ator_bulk")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 8.07.2024 5:54 PM, Dzmitry Sankouski wrote:
+> вт, 18 июн. 2024 г. в 17:12, Konrad Dybcio <konrad.dybcio@linaro.org>:
+>>
+>>
+> ...
+>>
+>>>       gpio-reserved-ranges = <0 4>, <27 4>, <81 4>, <85 4>;
+>>
+>> Do you know what these are for?
+>>
+>> Konrad
+> 
+> <85 4> is spi for fingerprint.
+> <27 4> is spi for eSE(embedded Secure Element)
+> The rest shouldn't be reserved.
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Thanks for digging this up!
 
+Please add a comment for it, like in x1e80100-crd.dts
+
+Konrad
