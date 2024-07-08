@@ -1,106 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7210714D444;
-	Mon,  8 Jul 2024 20:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB4B14B94E
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jul 2024 20:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720470392; cv=none; b=dxUKo8L0+r9QSfVxO92q8/mHbbfek340FRzPF1RTwS+P1svgf73pssC/0HHcKaFP7JdoJFPp/VPiVH1eNpzKf9VP5QqEjmxMydRANxTpIwLKPhcp4QbLnoUpY1vCG66znCgqDVaYxyIfouqyJ0nnntm58B0KU7m88V3YCavfPMY=
+	t=1720470417; cv=none; b=Os/VOPxrqlo2XjmmkSOQo89PDZMh3bkJ0P/3x0GGyqjDW32f8Nt5gz1Qdf8ChfgQBTrbZ8UYVMQx5d2Nr6/Px3bYuGpHVZOG367JObQejiHnWQblFtAf9l6lyijydvJjA7IR6kD7oypGPrCgOpOgVEzl+bdJzwo3KPAVDbxjY2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720470392; c=relaxed/simple;
-	bh=+6YheFz+kLx2rM0m2RczYow7VkKXHg66pCP5r1wwAr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b42KYHg8Ncl0WtrZYzqQaV7TZ6qYE30ImvfNMfCpE/KX4jUKwt5D3KltzhIPxYwcyh0BlqCvKhwv/T5sJI0P8C4C78vPJtVNVg/snrPDfGTgXaRbQlcVPG3bJJo67yLTE+1ctL0q7vr9ztVymuZ2moH9fHgb29GbT89ljMGuIGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULGuEKof; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720470417; c=relaxed/simple;
+	bh=iP0jvq7PGIFczaEA5bqaPg8rzTLnc33XdldzK181P5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Md6zSVTGL6LsUe1WuyLF29IIcjhDn5d3hbDjoGZJE9sh4IxnZ8e1VY2ayR+hhECjGnXC0gf57Dm2dXy2OoFxeUejK7AH+q41Eo8SjVPzaFz2jks4yaWjXjVTKaNTbuQl/+foYp0F3lhbZR8vI1Etfsf/XnV5ow252/NXuD9HVGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bpBFcbj4; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULGuEKof"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0495DC3277B;
-	Mon,  8 Jul 2024 20:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720470392;
-	bh=+6YheFz+kLx2rM0m2RczYow7VkKXHg66pCP5r1wwAr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ULGuEKofNcRRrB8NkgVnDyYWfv0JlNkXpd5cSpFi1/vEWRSy3i5Jd7n2TwKy1rc/z
-	 zS+/CoWw1W4P+u/QHCsrr/MQkE/gzgjWTg8PyQq7l0bzi07FJ9sdaxRs5IEAkmtk9V
-	 If3160+E9b/QJLEOxgZwpfpS8Vl4k+k5YhNkJRj5gGf1k85l/FF8YVTZMAp8IwC3cB
-	 +F84i5wdyG98B56+jxS3GLqHdVSg5STwouHAE4rShUXxmG04w8HX3mN/4FTjkRtiAb
-	 OQ+Psu/SUo+aNjJFjarLGJwhPsZ4o4j4ZbHIWN/zdwdX4z81YfUC5vnTGFDq4K53c8
-	 OtNJM1cWBCgBg==
-Date: Mon, 8 Jul 2024 13:26:30 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	William McVicker <willmcvicker@google.com>
-Subject: Re: [PATCH v2 6/6] scsi: ufs: exynos: Add support for Flash Memory
- Protector (FMP)
-Message-ID: <20240708202630.GA47857@sol.localdomain>
-References: <20240702072510.248272-1-ebiggers@kernel.org>
- <20240702072510.248272-7-ebiggers@kernel.org>
- <CADrjBPoWVq-eu4Wa6_hrkk067tnZGC82UCJDyjSRGoG254w6vg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bpBFcbj4"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e03a9f7c6a6so4709848276.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jul 2024 13:26:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720470415; x=1721075215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQqAxoPni/sISUNtLPGbi6yaKTLLkE7TWz06MwgXUpw=;
+        b=bpBFcbj4V+g9sYzyufrCz+ceNYlJ8B73U96MDIBLf8IBoUzymmB61yuip291Ci8fgF
+         iZNDkatbR/84jHsW26gu1p1J9s8dJOFOmTR2qa7TbXtLx3MNLGdagquAx3xGadeN13tg
+         hx2Dx3Y4W3rD8C9xMvbJOFUR9s+IS4u7OMhnLm4IAMIA6hN1vn4gWzBE973ffeeugQYe
+         d6MMfsRBTp2Rh8aj1A6o56UPpp1A4YMhfH/tNtkFPR36rZFhK+W9BsyZ4OZ8ETiC6lAA
+         t8ljsWtS5g2koclncYr7vQyW1giEPdUiHAdE1XIybYoSYuDoERDjDmojUzA+j0XcErYo
+         KBJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720470415; x=1721075215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kQqAxoPni/sISUNtLPGbi6yaKTLLkE7TWz06MwgXUpw=;
+        b=acQVrpIPXPIFBrJgkSrPmSYHR/5DbpNxdjxJBnOW3jWqcJYbxbI+glaWWEQa604739
+         GGIQ3GfXSLeDlzQJ8MWst5yHhl9Q28dDHQvNm0+ZDi+UWXmFWdlThQCA9k2bXsXQvb9V
+         naqrmph6eOB0ICkS8oRQRZWH/J9A8LRgF2aoCxX0LcfBAjDNvUbJD0zUlRxZgJwFklYI
+         oHYO7VoL31ZokT+Sn17eWyNZcTZBh740JcFrtSPjP03ZbzBX9r15G7uhkZSVuvLZiunf
+         5Kzn1JVpKffixZ8XXgBi3ZthLX26kA8hebUwgezpdqu9AZfiVgsVJ49AWAv8RFhHhskg
+         o6Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLk/89U009xTPHPtj1JJybY0HFA0R50jrtbYZblY4VBN6PQdg7JuGceHPX35LZX1w0Q04nEhkFfdwPHWEoUuIlo2PfmWMRHKZqIUxLeIHxmwc=
+X-Gm-Message-State: AOJu0YxslPIVN6LZcPjRvr0O3SOOaMxNqVcavrf0KrkzOl8Qb4h13jou
+	1AZHuUeRQzn2yaaaHtJhWDJREj8NcHqbkaaVD0NO4cz7Ht3zII0XiRAYnH0m26R2VqVwbkqY0Un
+	yZbnY27XQF5sHV5gdZ5JAoZMlwfYwZFt72lCnAg==
+X-Google-Smtp-Source: AGHT+IGO2ni/QPKZ5DyTQznLmq+yxlD7B6UffX80ITsFXuqHyccHxv2wbcoz3FyUQBIlQaTdDB4QDOW83uoQ6RkVu50=
+X-Received: by 2002:a81:ae04:0:b0:649:fa54:1f8c with SMTP id
+ 00721157ae682-658f11a595cmr7769077b3.48.1720470415272; Mon, 08 Jul 2024
+ 13:26:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADrjBPoWVq-eu4Wa6_hrkk067tnZGC82UCJDyjSRGoG254w6vg@mail.gmail.com>
+References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 8 Jul 2024 15:26:44 -0500
+Message-ID: <CAPLW+4kwiKUUdwPW-TjdXEWivWbh4dTe+LYqsR+YssYy6XSzvg@mail.gmail.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+On Mon, Jul 8, 2024 at 12:04=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Return negative -ENOMEM instead of positive ENOMEM.
+>
+> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regul=
+ator_bulk")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-On Thu, Jul 04, 2024 at 02:26:05PM +0100, Peter Griffin wrote:
-> Do you know how these FMP registers (FMPSECURITY0 etc) relate to the
-> UFSPR* registers set in the existing exynos_ufs_config_smu()? The
-> UFS_LINK spec talks about UFSPR(FMP), so I had assumed the FMP support
-> would be writing these same registers but via SMC call.
-> 
-> I think by the looks of things
-> 
-> #define UFSPRSECURITY 0x010
-> #define UFSPSBEGIN0 0x200
-> #define UFSPSEND0 0x204
-> #define UFSPSLUN0 0x208
-> #define UFSPSCTRL0 0x20C
-> 
-> relates to the following registers in gs101 spec
-> 
-> FMPSECURITY0 0x0010
-> FMPSBEGIN0 0x2000
-> FMPSEND0 0x2004
-> FMPSLUN0 0x2008
-> FMPSCTRL0 0x200C
-> 
-> And the SMC calls your calling set those same registers as
-> exynos_ufs_config_smu() function. Although it is hard to be certain as
-> I don't have access to the firmware code. Certainly the comment below
-> about FMPSECURITY0 implies that :)
-> 
-> With that in mind I think exynos_ufs_fmp_init() function in this patch
-> needs to be better integrated with the EXYNOS_UFS_OPT_UFSPR_SECURE
-> flag and the existing exynos_ufs_config_smu() function that is
-> currently just disabling decryption on platforms where it can access
-> the UFSPR(FMP) regs via mmio.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-I think that is all correct.  For some reason, on gs101 the FMP registers are
-not accessible by the "normal world", and SMC calls need to be used instead.
-The sequences of SMC calls originated from Samsung's Linux driver code for FMP.
-So I know they are the magic incantations that are needed, but I don't have
-access to the source code or documentation for them.  It does seem clear that
-one of the things they must do is write the needed values to the FMP registers.
-
-I'd hope that these same SMC calls also work on Exynos-based SoCs that do make
-the FMP registers accessible to the "normal world", and therefore they can just
-be used on all Exynos-based SoCs and ufs-exynos won't need two different code
-paths.  But I don't have a way to confirm this myself.  Until someone is able to
-confirm this, I think we need to make the FMP support depend on
-EXYNOS_UFS_OPT_UFSPR_SECURE so that it doesn't conflict with
-exynos_ufs_config_smu() which runs when !EXYNOS_UFS_OPT_UFSPR_SECURE.
-
-- Eric
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsu=
+ng/phy-exynos5-usbdrd.c
+> index df52b78a120b..9cbf90142950 100644
+> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> @@ -1745,7 +1745,7 @@ static int exynos5_usbdrd_phy_probe(struct platform=
+_device *pdev)
+>                                            sizeof(*phy_drd->regulators),
+>                                            GFP_KERNEL);
+>         if (!phy_drd->regulators)
+> -               return ENOMEM;
+> +               return -ENOMEM;
+>         regulator_bulk_set_supply_names(phy_drd->regulators,
+>                                         drv_data->regulator_names,
+>                                         drv_data->n_regulators);
+> --
+> 2.43.0
+>
