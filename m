@@ -1,66 +1,66 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98B4446B4
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jul 2024 10:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B05A770F6
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jul 2024 10:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720432919; cv=none; b=VGmuJ1qpNhdAEuAuT2hVHm4GASEv+/hQE54k/IVAH1X+9TJo26o9WuC4qeKfkrxpWa2EHz5XeB0oeNwLNe3Kgl/encIi+1zGmxdUEOFIkBvRpcOopE0/74N0id3AP+5et/jOwfAwFYro5d3xakSbSMWDIafrdr+d+wWmrV/wQzY=
+	t=1720433199; cv=none; b=rnWkLcWVUIrVFeP9wDbaQ0se81+QzP2jYwgV7xdwg/dVV7eLEOB/XjC3T7wvQs/VEewHFc62L8MFQODuXKzzzavyOoMdhCEmmJ8LdvSprCONjafBpr4lU5EULENPIj3SiVXRAD31yPaJQgCPyFvUEWGDmwggFrc3pNMuCOO/sQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720432919; c=relaxed/simple;
-	bh=SVihhqPsjw1aby9Mnriupbd1CRSchBT64K5CWP/L6Hk=;
+	s=arc-20240116; t=1720433199; c=relaxed/simple;
+	bh=P7OaU1ezIgpW6/4WHytXBtMimP58RhF0QQzrz4kizWM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EDpSsIDzD3WRh1CulYAmmC6cA1dO5Z7auAsI88LDZB+InQW5g73m/F47DU+tX/AcTjao6novmGYajMew/0IhkyOEshsdbJ/6CEbjTntWpLtAc+aMrNbH0u6nqlJlYCZcjOJsG3rO/Y2QdQUetfrYBjawALp+9juRuYBkSa0x9U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gxny2AqM; arc=none smtp.client-ip=209.85.161.50
+	 To:Cc:Content-Type; b=I5DGivNax2noR+ngOK3FLvsYbMnuUPPQ1DmhVPu5T8Ipu523ApC8zCoZ+UKcRwYOhEWz5c/TVg2Q69mELVDAGS1eAjj1gh9DmPVVbB5+U26dNoRY0+hQKEW/HdFtzuZeM/Ffk1jvA7XoBIKTxwmgCMVH+xeULdr2KrEARE46V/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dK/6uR6G; arc=none smtp.client-ip=209.85.167.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gxny2AqM"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c661519bc2so1234757eaf.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jul 2024 03:01:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dK/6uR6G"
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d9231a8dd6so709512b6e.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jul 2024 03:06:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720432917; x=1721037717; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720433196; x=1721037996; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qk7Fc3i9dd3OlZuL04X6Rue/WRCbHYH2AlZY6gbT1k=;
-        b=Gxny2AqMbwE1d+LxjEoKIm/ybDX9dE1fcvgo710lEpPeUFAr7F0Ak4xAURbzAtKwYB
-         PpS7tcT2pBnTI+EeYQGsyw9LcoC9o902B2SHRGDoXSjoPkmWX1siZhXK6j9Fqa3K0ZN4
-         RdRUycV42/AOFeaUvTggmcNesWaioRj2pO9Yuek19EmnKkCJlegbIGI96bkeo0EPSetf
-         vhOteFXR33w0fDso1UUofW9IfFL5J35zG2QEiaqzTyoyO0WeCNCBUEwrx3qlF4nDQlZ2
-         wyIq3KCeD6Uw1+ABjbcczLIgORnPdU3jSbWfrcDYBXm7DBoiuhaj8h/6mbgeu4F3b8YB
-         1Tyw==
+        bh=qWX5Q5O5NiALQ1tJK5ppQuf8O8WFA9Gn/tOulONtFsw=;
+        b=dK/6uR6GigwEiu8Jg+E+PwJtnzceh+Yf8HPkKqDUSTE83sabD9HqcI0Yx1dG8yB0Im
+         FYdldXPEadysLEm9nsYjE44BA/XMfJ9C3NlZ5bw49QVt6pHozjHgExATuYb69weKk6OZ
+         yzOaf6FUWJEsVBaQjQ3KmqEZX8mN0KMCT53fx31CnScoW1hEYmAsGKiWnkwqs0Qq5+g5
+         zkvfqqg7C3krJeugC/P2ga0NHzXO5AyVnk+oYJhAtDmI+oGLhuXL2lsNNawMJ5ChrUGg
+         9SaD/IqnUNEiEd9oWGTX5ckAdSKFVDqSLePZ5iw2j+aw6TuE0SJSlp6f/5ETmuH+NA0z
+         la0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720432917; x=1721037717;
+        d=1e100.net; s=20230601; t=1720433196; x=1721037996;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6qk7Fc3i9dd3OlZuL04X6Rue/WRCbHYH2AlZY6gbT1k=;
-        b=MdLfWDj64XVMDW0fipEAy5dmHvOZkADrci4oSzTmEqRU67Ztf0bg4Hf6TSCOXyHBA6
-         OUkey/s5dk1GOZiYiUwnW5CkHkG4He56I746KJ85kHnettS2lRhRSwVJ9GhCMlVp0/Ws
-         AZ5aUCVRGG6/swSanrP3th/NTLIvufLBOTUy2IRhg2fqAGsUomEmwsTpEqN8VCO7co+l
-         GlvZKa+fMasst5fCQsCErl5yTBZMbqFO3WBEX6Dyi/w8p8c6/NiKSW5Vrc/ls9MU1nVS
-         jpHhAd6mEE59iO/aVBOaWjSEPjrwQNoeVX8DpwrfU/5OXeJN4t1Tni2VmEEr2/L8EFTv
-         oa/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqVrlFsLn91njQpWYT1TLcRMwi4r7qpJOGgHqqb4VMfUxV22rH8/Ae3zUrI3MLwoSB0SYVS2d8FzHfNZQDjsTT5BDuacreENLdA/qLxbaqjXc=
-X-Gm-Message-State: AOJu0Yx7QbXD9RSX+fRPyyUWXL2kn6mHXkubM4ytbQFMYIpfpOK/D0mU
-	+EDintKJGfCKspQo2DkUwRyKiJlrvz7/+eOYWGKqdECpZ6wTySEcutwYxjTH9Mf9yT/c264pR62
-	lcSVR58TSxfS5dXEctac2G9U7XG/WGWBFSOKQng==
-X-Google-Smtp-Source: AGHT+IF3h2FT1NdyCnJBUlwrVg0fkKLI6Bw9BPSqTY3LI5E43LkfcHgkqRxr3+bNUcKY9t3hgY9B887bEbhhWArf5iw=
-X-Received: by 2002:a05:6870:2195:b0:25e:24b:e65b with SMTP id
- 586e51a60fabf-25e2bec9856mr9419383fac.42.1720432916918; Mon, 08 Jul 2024
- 03:01:56 -0700 (PDT)
+        bh=qWX5Q5O5NiALQ1tJK5ppQuf8O8WFA9Gn/tOulONtFsw=;
+        b=SOMhM0RknK09LV87Cs3UhPTA4dYRwfU93GsyUoS2u/MY2Tf6ujDhkBIzw4Np6Joz8Z
+         w5AeqrY4WDuiP/iIWGcgZZAu9H9Nxd7ntZfrt9qF2X3eqa6Y0ZAARsfKFbziQp8Ag7iZ
+         zVLlh58unOPWYifum5fuHsy8IgeakIxmISUu89zk5lq6/Vsa/XJRDNFGW0vj/pk0mq2H
+         uVe0YZ9YirNXV1Z41n+7jEmUmbNi+BdDnedqA1aX+3G3n7WaCV/j3Ou3pNyF2hao5VMd
+         4anJHwv53JwRuWl0G6WzHls0BQ7RGgOacC7TZNsJDmYFEjxuZDNr0Brcr1OH1DEWPD3t
+         bk/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXp1RWfnhzL7KYB0UawGs9grQgU6cxNOipSiZbj96xAu6Wp7xmi89c+LdrCvcnVK128AEtrRAyLXh/PdF2nS4eovyWcxpFkpXSCB9UiS9CLGAI=
+X-Gm-Message-State: AOJu0Ywccos3eGFWGq9P4B7+IIFlyVQeTZXpZ467/uJBoJvhY9Pue/jG
+	q3JlZLprUgUbeDLMdiwMWzBYA12oFBcAuKKT84HthSKtC3Yz6TqQ1xFET8dXCh3sfNcWthqxhLU
+	Vg1FE4LktQeyOXMdEYpIAiPMNBX1u1c3ag5a9OA==
+X-Google-Smtp-Source: AGHT+IEgQYbQmWGrt9fgyJiO0ChAtyKfDdrUCIsSNJAN0RS6Om+uFgWmAgNurVJ6JWmy+EN9h5OUoOAEjttb3PLpzLI=
+X-Received: by 2002:a05:6871:798e:b0:25e:1551:a2ec with SMTP id
+ 586e51a60fabf-25e2b9ea912mr7049472fac.3.1720433196248; Mon, 08 Jul 2024
+ 03:06:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702072510.248272-1-ebiggers@kernel.org> <20240702072510.248272-6-ebiggers@kernel.org>
-In-Reply-To: <20240702072510.248272-6-ebiggers@kernel.org>
+References: <20240702072510.248272-1-ebiggers@kernel.org> <20240702072510.248272-4-ebiggers@kernel.org>
+In-Reply-To: <20240702072510.248272-4-ebiggers@kernel.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 8 Jul 2024 11:01:45 +0100
-Message-ID: <CADrjBPqrdoDzBesV7e=paz4mj3VDnZTynjPYD6kCV=xe9aszbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] scsi: ufs: core: Add UFSHCD_QUIRK_KEYS_IN_PRDT
+Date: Mon, 8 Jul 2024 11:06:25 +0100
+Message-ID: <CADrjBPqVXHh1gPxQxuLHej76yWh6imJ9CAe-fFrX84gccc7_-g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] scsi: ufs: core: Add UFSHCD_QUIRK_BROKEN_CRYPTO_ENABLE
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
 	linux-fscrypt@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -75,13 +75,9 @@ On Tue, 2 Jul 2024 at 08:28, Eric Biggers <ebiggers@kernel.org> wrote:
 >
 > From: Eric Biggers <ebiggers@google.com>
 >
-> Since the nonstandard inline encryption support on Exynos SoCs requires
-> that raw cryptographic keys be copied into the PRDT, it is desirable to
-> zeroize those keys after each request to keep them from being left in
-> memory.  Therefore, add a quirk bit that enables the zeroization.
->
-> We could instead do the zeroization unconditionally.  However, using a
-> quirk bit avoids adding the zeroization overhead to standard devices.
+> Add UFSHCD_QUIRK_BROKEN_CRYPTO_ENABLE which tells the UFS core to not
+> use the crypto enable bit defined by the UFS specification.  This is
+> needed to support inline encryption on the "Exynos" UFS controller.
 >
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
