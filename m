@@ -1,60 +1,40 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F52144D25
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  8 Jul 2024 18:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C454879FD;
+	Mon,  8 Jul 2024 18:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720462147; cv=none; b=Sm/ubTSP1ggFDhpZKgbx9oEHgRvqF6dtsV+ZvxCX0yI6VAXolkLeW1wdera0XhZS0QT1u40djf0aAghyU9hKvNRas2c2F6pecjVEys3/qh2QWlPz/EBQbqBAcdZxDqckDxw8Gdo6BlZ2MCtN+2g3mIkH5ZSHiWSM3bcbS/ERIM0=
+	t=1720463255; cv=none; b=gBkHT72ryvF7CjlCzLVKOTnTcnPq4hin99xWpxZYdhfdZI1wcPSyb6mGv44eQXbdoY9f7xkCiSe8A0ljzJhc2qRbipYCrt+g4rHHrXnJ2ZSwxW/vEUm6vy1PjkuM6KpgfQIRfMQ/gPq8bHYxbOkKRgMmSalV4eIu8Dwc18RXx34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720462147; c=relaxed/simple;
-	bh=CG707koYbJnede1fww7JQ7JLqlDrWGnQkLN5J+JJjnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GWvbGld9oPD4P2WkR5mjVdrVKLcI7TXGpkmXcgR7hg5NJ9KY7tds49kdBLaB3maAjcLLG7GLSiSq1XCWZMrddNVCOM5D0bqFmZmhplaZ7yrbsgZdlBZv4fe2nxWmS9e+FmPaE4534N+RUnqtsQUoRZYJAGh+H1MnBOQTulK6M+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iSv0hOMT; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720463255; c=relaxed/simple;
+	bh=nlMaB/JpuH88DM3GoVX7G0Uuyms0smFzf26TAoL12eY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FFRb2KmIobdBwftU8G7zoygme34lwJsbpCtePlFdHv0WRqPbDb+iiLNEcqUzA8vjHdhqEpjn0I29gV6x5HgmHyOnyyXZ6qQEXLbtStTo5B7mGv4KpEqeNOYDpgKxqSjYotJas7bf7sXTiF2SkHU1PdvnO30pybpsoLcUXn9XLAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U42852Dn; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iSv0hOMT"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58b447c519eso5236327a12.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Jul 2024 11:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720462144; x=1721066944; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=h9SclVHHKmhSqXdWBkdjpfcUGGg73PYZ76UnLpmlrPA=;
-        b=iSv0hOMTxQjy252hK+lJdahNOjRMvdEM754WGhaHmKvdZn+uL5HbMYCm5HzFGCd9Mg
-         Qoh8rPuVsmMt1d0R9toj0TW3zv85+OeMpy0TRr4AJxPM7DROF4Pb7AVTtMF1mzCHIymm
-         m7bXDqZ7oOYAZf4unDE3AMj0MlBzdaqHCUUdsXjQHLVnXB8bOWUCcIRVkpbh/X0lvl7n
-         SEfogpmSKiTN7i1eY8Ro0Z6Y6ja506Ilq3iP+/IQLa5QaNo7iuYwWjeW4xZXsNmTQ9t7
-         pL4zmJ93Uhyx3J11MP7tSG9d/LOi/Azji0lTSgX7jXaaIMEH4A5k9QlBAfk91VgYzBYT
-         paTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720462144; x=1721066944;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h9SclVHHKmhSqXdWBkdjpfcUGGg73PYZ76UnLpmlrPA=;
-        b=Ajfqbe/D6b/ChtLCRVwr5PPABFEj3Aq4h6VOGkrfLEFsw5u+qhya0xDu9xJ7+mOq9I
-         VkOuzMwDJbLc66coF829Dkd4tCWQcgN/TjqdKCcQbRvaE8ief1MTMsqha3amWLL0OAD/
-         o9hDiiaTuOf0PQOxVWBxhynRnNS/PdJBR73CZC0uvGOta8YHMvGK1ILwcdMgVzZqP7Lu
-         0E++rqn9h6EU5vl3oBTj/TiON+fcXJvCyGKPXr+vTEkpBM/PWCkBVm6X/wqp/41KWPRJ
-         Ni0xf4neoWBJvjazaAmGvg0I3SW7QV62u5N3vdWQJJ6y4Wt0cwRYHaiqQGN7iTVNtiQP
-         KpNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVipPjM7LnZjiBKhxBHqnJum2AbyNIHhCZc2qMaP8MEgHnUkS1NEH7BKmXOaK8cjCGzs+/jw6abo90Soy0kBE/hjFQpqpw5Gra8cZk7djK1TDQ=
-X-Gm-Message-State: AOJu0Yx7y4DMaeSBp9BnxDiRoYk1VHeOJIRNTxVtYVRHezKO5qzvELp+
-	cnL26E3mGeHqxocXzw4Y9Wa+eKDEgB42gHaEl9fFsUMA/KgA3HyKUqno8+7hcCA=
-X-Google-Smtp-Source: AGHT+IEY4wUlDLgxf2i3rdkVHcpk1OUK0j5ihUIo/iySjtcBRkZ3zUlg7nzE4G/y1pYBhf9gKCamKg==
-X-Received: by 2002:a05:6402:84c:b0:58e:2b65:385b with SMTP id 4fb4d7f45d1cf-594ba0c9e5dmr286249a12.14.1720462143775;
-        Mon, 08 Jul 2024 11:09:03 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bda308efsm98182a12.81.2024.07.08.11.08.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 11:09:03 -0700 (PDT)
-Message-ID: <d83ff8c4-15de-4e20-9c27-eb0247184b5f@linaro.org>
-Date: Mon, 8 Jul 2024 20:08:58 +0200
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U42852Dn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720463221; x=1721068021; i=markus.elfring@web.de;
+	bh=nlMaB/JpuH88DM3GoVX7G0Uuyms0smFzf26TAoL12eY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=U42852DnVa/l/aji1gejCv+ivNU+NkM4U5x6NGXf5TvqMP9Xk2pH/t4Jhzq7X3XP
+	 EbD4aiGoae03rLAynmSTj7EcqkN6Jwr1fCcLTNkoFZQsJtpT8hJFyZIqDGsNFpdd4
+	 8bIOvTlKrNCaZ3EpRcXQChvanqNrz+C6yAB44ejdhm9s98rz7IBnk/ZJJ4LriY+Kp
+	 bH998OUSPjblxjKtXkmw08Myiw9N0yqq7hPxVgkW3TwpNtb67yStLOK4r4qOvxWU4
+	 JUroRYfaehz5sQUiK1JL1ikR5EJhq0+vdqCFLF1s3P/aUQIcyyKTwqFhJLl4m0WiE
+	 M3TBaNM7ILgLHTVvpg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYu16-1svjin0mFE-00P4Ko; Mon, 08
+ Jul 2024 20:27:01 +0200
+Message-ID: <25435c69-d33b-49fe-be7f-c0d93af639fc@web.de>
+Date: Mon, 8 Jul 2024 20:26:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,90 +42,46 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: starqltechn: add new features
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- phone-devel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com>
- <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
- <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Sam Protsenko <semen.protsenko@linaro.org>, Vinod Koul <vkoul@kernel.org>
+References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L1Gdda1KHAXM3MhKUbikQbsc/6T6hLXGu6hHFu4HvtGFPADfB02
+ WlMPZMzYETWo0QrMiYcSyNHt23xaeUr92HSMZuqJX1AfiMd5bAuPiNA8FV764pis/yZNtQZ
+ osO7PAeDwjfRYpDrD/leT18EEtrcjetiUalGglPNEOYDSSF/qelGMjCQSV4PEKzS5cnX/sZ
+ i6VHdDyQUGfeY9oufJM8A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2ZYuXBedkdA=;jzqSJq1FcYwTlwfIq9xFK4UBb9t
+ p922l9+XcoZ53L1uXsFwWz+btk37W13Xlxmrjm0SIXsCUgrESut+KhOZYXXq7w0p8ZlfQfSJ/
+ Jly2DeIhvYmlMB0I1v3D5gFM1zeyBn4j9MRGfibesQnM6oZc33Dj270/8DqhcXZTKOdpfHxCa
+ Hx0QKn0qg+cutDaq1IwA6odNYKeU6MjdkGJtzEY7HuDEsBx+AW/Zu/kvkD4uxsMXaTQbJhOYO
+ Ol1OXXagRkA3cQpUKRkmgPd20+YgCM3k5fc78/b4efLwi5HeKmeiE3Srin/gqrtSAc1ZPVWNr
+ feNTxf3FG5zDHQIajNczj7ByM3OL7Rooohtqgo4tb7gvHGi5LAV52cMxYw4J6AQt1OTfVtUyo
+ QubjONSTcweqXpH8EXexcoW5QCTOfqsOhKakO/RS2kW/N0gBtlp4bd+5y2EqnKb1pX1np5JMF
+ 0gzqWSpidzLsxMcdNhyHQS0kcbX2sS10uEq4wfXkvsDIIfqGFo/h/8npMlG8rOpNC2mDv5j6J
+ r7hIVjin5InYgLP6o0/S8UaZhJaOPZkj4jJCS8i1GRQaK6FbJGWkNGfm1Dl9PJHgqn/zoRakP
+ xBK7zMRdhcZXrcf73k6EU9KVawX5Hc7lGR3aodOs/esEouNJHvpaMEhPXur3QacaXrXELc/9x
+ w5X18yJddD2ZacBidkJEYAVDedkB98dsYeFxFtjGUgGxz1rbG/GWSv4Dl01SVumDR42soFoD7
+ SVAK3wyn1DKh+e5jyNvDLTMfQKh8n+vlhWeZyeB3ZAFG30P7z+2LCbqm7VsCBeZq+2ELNgv4e
+ RSu8ygyWqtmYw9Kx/3Kvy2+r8/WlsB+r2WaPTiCbSdH8g=
 
-On 8.07.2024 5:54 PM, Dzmitry Sankouski wrote:
-> вт, 18 июн. 2024 г. в 17:12, Konrad Dybcio <konrad.dybcio@linaro.org>:
->>
->>
-> ...
->>
->>>       gpio-reserved-ranges = <0 4>, <27 4>, <81 4>, <85 4>;
->>
->> Do you know what these are for?
->>
->> Konrad
-> 
-> <85 4> is spi for fingerprint.
-> <27 4> is spi for eSE(embedded Secure Element)
-> The rest shouldn't be reserved.
+> Return negative -ENOMEM instead of positive ENOMEM.
 
-Thanks for digging this up!
+Would you like to refer to the function name =E2=80=9Cexynos5_usbdrd_phy_p=
+robe=E2=80=9D
+in the summary phrase?
 
-Please add a comment for it, like in x1e80100-crd.dts
-
-Konrad
+Regards,
+Markus
