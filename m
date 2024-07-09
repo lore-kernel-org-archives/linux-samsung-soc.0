@@ -1,153 +1,141 @@
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5534D15534D
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jul 2024 11:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9AF15A874
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jul 2024 12:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523886; cv=none; b=h3zhxOUH/XU6a7bgRak518wf5UCYtnAc+u4an0hwNiouWF0kwRaR0VzwDnGXOlQEJ6bgjLwfcnsEr4SIK3Lh7qDF3s6NY+DPuPcWcIeTaTNFbiqa+YOmZQI+USo3otKIpWcZvbug4UOu8zQB/529/ylHvE4wvQeFMK0TtGN75Yg=
+	t=1720529998; cv=none; b=QAxvAK/c5Gm1YVX9bwRDGbX2lHCUpcRgB5zRwVQUxvAili/jIkT65LFz9wsSZM0ZZHoBAv+4YnyCe/9v7C994q306ZXoQz7XDDFWPR9qzz4T+1RzZ/tM7q8Bt31Ex8V0pwvrwyfR0v2xmCTXOAvsAiXBro7ryrSkd7iOHNRcLm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523886; c=relaxed/simple;
-	bh=q4IZnwro1hysVr+IKysyM+k1ocYPSAwKdXkEuBCYQgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pw+up/EkBVvx6o0up7HplnL/FLeySrCKkeYGQAaGZkiIYdN8xxqxyBU2rfoyMbAgrmdGslAk0AY/maSnFVDLVWtOrBAJ1U1hJoP9tuotYgz6SFzbXQyYxPHv+ZNRM9JlJ1Mn5XGxila0jET+2Vwz9uULM4xGdPHi5o/jrS2Bapk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgpqyzm5; arc=none smtp.client-ip=209.85.161.53
+	s=arc-20240116; t=1720529998; c=relaxed/simple;
+	bh=kgvsfjbzeej3OYxVir+9/eTJEO88akNuKkqf+hwCQrw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SmiH76KrZymIFfsJXZ2blc537wVGuTKYAJ7rXmB1McCovi4bPbQYInOdkgcfewk71Dm2FdH9dfewSEWDYd79eB516tGKzm+UAEv8a3ID5Cpo6ZRyGqvbh28+3Fw6SEQczWP4oeQGKiZG7HMc8oXwMC4kWot2YFhT67OvS2xkaQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uTm4SFy6; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgpqyzm5"
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5c66909738fso1219088eaf.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jul 2024 04:18:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uTm4SFy6"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77baa87743so552440866b.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jul 2024 05:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720523884; x=1721128684; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/kYqs1Q+xI1eSls+p+PjTZV9wRnUsY1aUqXWiCZsXW4=;
-        b=wgpqyzm5uc0nEdrlRqzzE/1SKmc7N6Aij23eWD7uOQCP//TKxO4jkzQa3qtdjjHyKc
-         8DMgdCLt55McWVev+PmlXfcBszHBacVzuQbKHFkh2FikIJF+iAQBaiMffDr8ywXs9I8s
-         zvKow8P7hHF9ijep8anf2ouI2QdEYEER1r6hu0TpKchjfDykkon37Kyw1F3nvwyaSRwp
-         oghe2xrlr/GiSN3HebbeHtyPTeh43D0d6aL9a5KWRW5J5Z3AmTcVObAqV/YJ6YrDgaHF
-         SwvhxP7fI5kZbGWmwtKXOcWTdJdCjwrmpmjb6FK0V00ZzZ4yNWx+UVqv5lx+mDAKObdb
-         lqtg==
+        d=linaro.org; s=google; t=1720529994; x=1721134794; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zyMaA2ktAP79nx6/5Mxk0l1yWWoFwZUP+h8kjbjB7+c=;
+        b=uTm4SFy6sa9uTMVYxlAwCiBQcZo77gWsDTEBzMpgkJaCEXBGsBzdaxBm4ixUz2BnCR
+         evgky1j8im6ys4APFa5JQEcqVjwmXHpzCek7FnN3Iv8IaOiDqDzqzZIHboqae35b1zvX
+         LWL9dmlCMrmNJHNp+FK1x4S4UddqbUPJpCLYVpcMQZJLVdoz0aSXVPQo5iOCHXZTblYr
+         +CQ0IMWTMAevUPlEQ4TjVVL8g2ysdJU3O2Y2NwKb1LznX4txF1zMvZURC23HJSq0Yy7b
+         jKdZmeP7D05wWfQppX/+gM8s30QoKkiCbj6V8zBe7lEDH43qziOUrrpHHwX/n3w2mxgI
+         8Ohw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720523884; x=1721128684;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720529994; x=1721134794;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/kYqs1Q+xI1eSls+p+PjTZV9wRnUsY1aUqXWiCZsXW4=;
-        b=lCkBON+UBOTlJ+UV6JSSpK2dbFqSvH84dMWpRA8kSDgkOsNsHfRyjfxHRFkxVRrVS5
-         FqL+ofI99USbv6hEqjIimoyrEL7zQwsLCxQKkrHXl7OCSVwpYRCPFL47Tnd2gSNUP5NN
-         g+lNRQD0fZq/m0YfaL/wRCP/deRWj+uOhG3Uq9f5rf1UK1ReWdE46hDVMlXRd1MnUrzV
-         zMnhTfONXABHOv5NQZK764JmoaRsQRHLU0JE6B9v4AtZjTCpP+vV88sjxvTg1ryTJjRh
-         vPpJpBKW4o3c6B+MdUpBZh8SMTzJng3XIXtri7y3LwEn52MDfoNWFPHX8yErRNCDUQS5
-         jPyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1DNkRlBloIedm3VvltAbV7SoM/oa4oove5zDZseIXjX4qXCas3HAQ8Lbi46Trjga5ywHuHfRN/szUF8zjAPmKsox46eRxvkmybSTgap4k5Wg=
-X-Gm-Message-State: AOJu0Yw5wfrJTCE8j8klkbg6knC/Divzo2YJyjn7uNWK1RTWtwlrzEJc
-	k3x6I1JxmEBArac8ONo3G/JCZS3adAK/3yVrJEPT/QoGESnY6JetZGyH9EzMnBLHXeZZQd0pO78
-	JFfIgDu83JlEyYOZ7HZNiDjfSom2LR26JAIPbZcu49qk6v4PmzII=
-X-Google-Smtp-Source: AGHT+IEQ9kzUHbR1gBbXXP7izJdEFiG4U52pBXGa8KT7QcUkwLTd1MGDwwCyxR5oZ7xdLEiq7TCBKMzfOJTI2/fJdRA=
-X-Received: by 2002:a05:6870:3288:b0:25e:fca:e689 with SMTP id
- 586e51a60fabf-25eaf94c51emr846195fac.10.1720523884328; Tue, 09 Jul 2024
- 04:18:04 -0700 (PDT)
+        bh=zyMaA2ktAP79nx6/5Mxk0l1yWWoFwZUP+h8kjbjB7+c=;
+        b=l1iYy5OEf3HUSEgOjqCvcWtz0hxDegueKsa1mFAPKFOA4QtsjYPCifxyLEVyfa2Fxb
+         To0jUwcSXldzdYIUlG0dyD23eBdYrL2MkibSv7XT2ADGGs7Qn2+tSYaByMQcOuisExGY
+         aT1s67JvwJ6TX7haCklwrA7eUGIbqpR1i9q4WzNTOZGf8w44ACdYbbW123z1F9tDK+sr
+         PuEO7k9I1DhHm3ALnrHaqlnnq9uWMc2DKkm3AGb3jo6Z1GUzTjSXrYWr7PMMRnwN8SAw
+         0wsuD2uj6YLqHsWYKkcv16V2lIGQX875ivQ0jhYnw2mzbm/CzshiPWRXO5ZpTweVLy2I
+         xS0w==
+X-Forwarded-Encrypted: i=1; AJvYcCV7jAilFBxZZThcBTkzyu0ZIVbvznvPIL8B8EwJAs51zO/jBTVsjI9PhQSxCcaADuPOs/WUNoEHyA+KskxKG4EhQhU6zebjL5zRIwe484P9tz0=
+X-Gm-Message-State: AOJu0Yz52TTdlwuxmFz+VszMjgeEqniM9cgpNAvuuVYsTDPIWBbjUEy5
+	8rvw4hgyeVR2aBnzWeQxxHigoGSGhxYb8TWQE3lCmRgz/vLXqG5gwgl0bnHsAU8=
+X-Google-Smtp-Source: AGHT+IFQIeObXuWwjzPQ5P94Pal4hLbHGTYuZ6cJpzJB5yZLLI58o/F8sFx6F5zODpmX82oPOJ7QOQ==
+X-Received: by 2002:a17:906:68c9:b0:a77:e48d:bb2 with SMTP id a640c23a62f3a-a780b6b17cfmr198118866b.17.1720529993825;
+        Tue, 09 Jul 2024 05:59:53 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e157bsm76643166b.80.2024.07.09.05.59.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 05:59:53 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/12] thermal/drivers: simplify probe()
+Date: Tue, 09 Jul 2024 14:59:30 +0200
+Message-Id: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708235330.103590-1-ebiggers@kernel.org> <20240708235330.103590-7-ebiggers@kernel.org>
-In-Reply-To: <20240708235330.103590-7-ebiggers@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 9 Jul 2024 12:17:53 +0100
-Message-ID: <CADrjBPq4sEamwD3+wT2p481en-J2Ee7G0f+UbXG3g3RqUMiv3w@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] scsi: ufs: exynos: Add support for Flash Memory
- Protector (FMP)
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-fscrypt@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	William McVicker <willmcvicker@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADI0jWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwNL3ZKM1KLcxBzdgqL8pFTdRHMTcwND49QUI4sUJaCegqLUtMwKsHn
+ RsbW1AIrkdShfAAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, stable@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1663;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=kgvsfjbzeej3OYxVir+9/eTJEO88akNuKkqf+hwCQrw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmjTQ5RRSnjbiXlLPhl5LMO5ohaeNBNwWB8vx7W
+ nTbN1nTmLCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZo00OQAKCRDBN2bmhouD
+ 1wRbD/4zSxySS/s259DEhJkaDdc25d/x90eolV0xLjn69nZ8s0mzMdnlWQ4MIZZBUVetoXQq0rA
+ UAhaAB2ZuzW4bnol7GTHITMuTSEE3ACJ0Vx0cae5TvQ4uK5LItk9N8xvQRsH/z9GBIyfWs55B7E
+ 8z+yRBcm/B79zJPKMNLikxQs3y1GZy7Tip8LpRaQCvJ/X/tpx4ZffAMMcklbUBaA4PvNczr31MM
+ j278W4BnIuJsg32T8+FAHLXVz0XTc34BzqYcgdFlC8eCsN6usty2kRrgmwNI1AElEdK/PIf9L5w
+ +uMCWChYVNtW0Rrq+eF95VI0hXgdgGynF3417buGiRaYhLr3WP3zPc/tm/Qby+d4SvYXya6d1ii
+ WX+ytupuXnatXPeMuUFJs1pZ78ZcVzED7NAILN+09KyXdgnzeuq9Py7V7F0T4yH3VQQM69N4Z6S
+ RKGJ+b1wlcFwfnAMjZqYV9MZOJbKtp+VQZD/bESWhBq+NVECBwdnKQM/Ty8SkW7cKQ1GG5LvLfo
+ fFiNLDcQEoMyRaF0Mor1lZYcGGKO+GUFafTA92oL6eUjBIKtWNJd99xa0a7i6WnA9za/aF1Jhor
+ IwQOu/FpEkFjyMZZYlJjLlr5d2DMIC4TlAlVp9d3KrB1XxeAoJoeHeIu8Y7wPXNL0wVd7Foetw8
+ MrCiqIxYJ4hW7eA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi Eric,
+Simplify error handling in probe() and also fix one possible issue in
+remove().
 
-On Tue, 9 Jul 2024 at 00:55, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Add support for Flash Memory Protector (FMP), which is the inline
-> encryption hardware on Exynos and Exynos-based SoCs.
->
-> Specifically, add support for the "traditional FMP mode" that works on
-> many Exynos-based SoCs including gs101.  This is the mode that uses
-> "software keys" and is compatible with the upstream kernel's existing
-> inline encryption framework in the block and filesystem layers.  I plan
-> to add support for the wrapped key support on gs101 at a later time.
->
-> Tested on gs101 (specifically Pixel 6) by running the 'encrypt' group of
-> xfstests on a filesystem mounted with the 'inlinecrypt' mount option.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
+Best regards,
+Krzysztof
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Krzysztof Kozlowski (12):
+      thermal/drivers/broadcom: fix race between removal and clock disable
+      thermal/drivers/broadcom: simplify probe() with local dev variable
+      thermal/drivers/broadcom: simplify with dev_err_probe()
+      thermal/drivers/exynos: simplify probe() with local dev variable
+      thermal/drivers/exynos: simplify with dev_err_probe()
+      thermal/drivers/hisi: simplify with dev_err_probe()
+      thermal/drivers/imx: simplify probe() with local dev variable
+      thermal/drivers/imx: simplify with dev_err_probe()
+      thermal/drivers/qcom-spmi-adc-tm5: simplify with dev_err_probe()
+      thermal/drivers/qcom-tsens: simplify with dev_err_probe()
+      thermal/drivers/generic-adc: simplify probe() with local dev variable
+      thermal/drivers/generic-adc: simplify with dev_err_probe()
 
-and
+ drivers/thermal/broadcom/bcm2835_thermal.c | 49 +++++++--------------------
+ drivers/thermal/hisi_thermal.c             |  9 ++---
+ drivers/thermal/imx_thermal.c              | 42 +++++++++++------------
+ drivers/thermal/qcom/qcom-spmi-adc-tm5.c   |  9 ++---
+ drivers/thermal/qcom/tsens.c               |  8 ++---
+ drivers/thermal/samsung/exynos_tmu.c       | 54 +++++++++++++-----------------
+ drivers/thermal/thermal-generic-adc.c      | 27 +++++++--------
+ 7 files changed, 76 insertions(+), 122 deletions(-)
+---
+base-commit: 2e0171396caa83c9d908ba2676ba59bce333b550
+change-id: 20240709-thermal-probe-a747013ed28d
 
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Tested by running the encrypt group of xfstests on my Pixel 6, using
-the Yocto development env described here
-https://git.codelinaro.org/linaro/googlelt/pixelscripts
-
-Notes on testing, in addition to above README.
-
-1. Enabled following additional kernel configs gs101_config.fragment
-CONFIG_FS_ENCRYPTION=y
-CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
-CONFIG_SCSI_UFS_CRYPTO=y
-CONFIG_BLK_INLINE_ENCRYPTION=y
-CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK=y
-CONFIG_CRYPTO_HCTR2=y
-
-2. Add meta-security layer to bblayers.conf and relevant packages to local.conf
-BBLAYERS += "/yocto-builds/yocto/meta-security"
-IMAGE_INSTALL:append = " xfstests ecryptfs-utils fscryptctl keyutils
-cryptmount "
-
-3. Rebuild/reflash Yocto rootfs
-
-bitbake virtual/kernel core-image-full-cmdline
-fastboot flash userdata core-image-full-cmdline-google-gs.rootfs.ext4
-
-4. On the device ran the following
-
-mkfs.ext4 -O encrypt /dev/sda26
-mkfs.ext4 -O encrypt /dev/sda20
-mkdir -p /mnt/scratchdev
-mkdir -p /mnt/testdev
-mount /dev/sda20 -o inlinecrypt /mnt/testdev
-mount /dev/sda26 -o inlinecrypt /mnt/scratchdev
-export TEST_DEV=/dev/sda20
-export TEST_DIR=/mnt/testdev
-export SCRATCH_DEV=/dev/sda26
-export SCRATCH_MNT=/mnt/scratchdev
-cd /usr/xfstests
-check -g encrypt
-
-All 28 tests passed
-
-<snip>
-Ran: ext4/024 generic/395 generic/396 generic/397 generic/398
-generic/399 generic/419 generic/421 generic/429 generic/435
-generic/440 generic/548 generic/549 generic/550 generic/576
-generic/580 gener9
-Not run: generic/399 generic/550 generic/576 generic/584 generic/613
-Passed all 28 tests
-
-kind regards,
-
-Peter
-
-[..]
