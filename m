@@ -1,423 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D83154452;
-	Mon,  8 Jul 2024 23:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5712156967
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jul 2024 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720482937; cv=none; b=Ao1L364nmplzXRniMcBwuqk/pq9kIpjrcd592YmWXoihP75GVB0NPAAaTvn5tKtlLWpiVjWpDBrOLZhcYHVb7KcUpfdbMSJISAMNbyknsGU4oX3c3rgxn4h2kEr+pHYwsIqGhfUVLSlSaJe193AM0Pqzc/wyTUZ23ZbSbx3O8+U=
+	t=1720522289; cv=none; b=bpS9KVp4jt2exAVMvlTove9gH8Lkre5vjJUOHx0jyLxnxfaM7/Vr/2v02a0hbZfrmb/TDiUoXfe9Gyu81BPFk/ePSXV3I5Ujsu9BpuFOijajL9qu4EbdNLFxaEMaPRw4AN7c/a7P0by8h1LE0CpNI6H7EdJBpbvaeqwKTLB6Oag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720482937; c=relaxed/simple;
-	bh=fn4+rFShGxtB+sfBV9P66AuRTIb1pLwJLIPS6WImPAI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FlvXs3qjDibaCdk9cDNqlYa1yCEsIy5YJB8jaGlmIHGNFfbi4pU87ciezVaLDRJ9owFp3j/opTVv1wyJwyVKHeNeEo6VYI0w5R3lGso2livlPkwrR6p8dJzSz/jGLsdQhyhJ6/Y0P8mqBhNgUsjq5d/5gjVi79xcC8XcDXtuHcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtBEJBhj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720522289; c=relaxed/simple;
+	bh=GuE84+tYe3IliZz36W/xwOvWAw5aen9f9pO/jTu9YLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EzpYgqxXfAJI32ELiF8iY/bfgqTmmWYFsNFvs54qgLJVBoCX1SWoJPRgLlZioiUlut0IlaQnJtd03yvtRMqNmFzGH0gIoJ4slhOOSFtOBekbfy2OycOBEete5EnQ88Q0yDD1USEMgR32QVIx8kAM8qrbJsBJ9ntv3tFjjRI5Bis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZid57NG; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtBEJBhj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25905C4AF0B;
-	Mon,  8 Jul 2024 23:55:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720482937;
-	bh=fn4+rFShGxtB+sfBV9P66AuRTIb1pLwJLIPS6WImPAI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PtBEJBhjg0b2BpTqelGWJJToLLk9hHSLZ7B8Y0pTuFSUBfe6Jx3LqteyKIYks3wIz
-	 jKzngT+4g4m4bUxjiT+PnMb8TA7OLWm/ajQL4cN+uupghEAlRFW4CNG0VBc6epykfU
-	 hDXTaSSQ05Zmef8c5JjbamliQkzIcbZZglf85/Yq6b6X0QfNZmUCIwxWZ2q8LYyB7A
-	 e5PnTEhpk3dQT8umAqNiDG4UE2VMA2vVK2tQr4Q2l68xtxdNdsZ4XGoF0ycK6alLuO
-	 AY+4PZa8db9r5uOdWjHFBzxwkqhGO+V3aHZikyktWmw2fj2hEYZQN9FsSwLaqpZq8H
-	 ucTSDG/Zdm3bA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-scsi@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	William McVicker <willmcvicker@google.com>
-Subject: [PATCH v3 6/6] scsi: ufs: exynos: Add support for Flash Memory Protector (FMP)
-Date: Mon,  8 Jul 2024 16:53:30 -0700
-Message-ID: <20240708235330.103590-7-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240708235330.103590-1-ebiggers@kernel.org>
-References: <20240708235330.103590-1-ebiggers@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZid57NG"
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25cba5eea69so2433487fac.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jul 2024 03:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720522286; x=1721127086; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
+        b=KZid57NGukekwIq+9YW7ovSClgvK3OT5wht0YGeLtLx6issn2BPNVKA9xWfqya3Q4D
+         rgrpdVUYupPbXsRQKFg2NaXugCsUps1748fntbGScIdOfZ15uvJ5Euqd4UtPVQ7yAUUY
+         fjG95ovi6Q0xR5807E7E0kr3k48JR/wihioYOzF83ahwNXcc1OEwMjglQkvns7fNdSRp
+         JCDaSRSkXEo1i4ly9PEOaZf+BHZoDgqPtGmbwqpOQ8WHtygCA8Z1Op3KmvADVJyx2eDC
+         LSycppoCDueVOLW48W7qUbmnhLISHmwsqMKQ5G6aksqXlhaaTZbfkBpG8l941JaMmZsK
+         6fwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720522286; x=1721127086;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
+        b=Ab13ojDoN2v7h9OK5Yo91Fxq5DyEHNn3S0b826pRrqepBzXPIoHNBEr2TTq9xu8yJ+
+         Kzg285wm2XxF2yjdVxKXWmq1DaUJc4icfFYtxBCV0ssb5FS/Ju0q6UrVsM65b94NJEc6
+         Lp1arde8FmddgS7vzIKvKu4bOT8jan2F0XqaE3vEeDiwDR5nMdDbUGYzSIc0kzIwVM6n
+         Q+ClR0BvH00FTVV7bUvNhALUrviA+XTUKU1fMg7bN1LSanrSDyqI7fAasrVJwHuK1RID
+         tLHzLbN4ePHdpbHCjVItCQFp0RWHDN1+LlcdM2lvVEtOdvF38hod/rVk3Oh/HPl5TYIc
+         rZUA==
+X-Forwarded-Encrypted: i=1; AJvYcCX19hY7lze0PnE/syF0wXiYdwWFHh+0Fnnk2VN+BumWE1/gQdMlFbvmpgybqunZAhbPbkejxt/+2KCAVyYh95HWpbfoOaLKK8UzYDseBNhyO50=
+X-Gm-Message-State: AOJu0YzqNHd3yxKJMXGj3bxQklTxCIXeLNXWg3Mm+W9ttL6+hO2bWqTz
+	mlUz4RLxTi7dS5FHDEjXH6B8dbC2QdHYeyRz60UME7qMQASGPvEp6/kfMEq0vkZxkRY0dImbSei
+	zkB6a4gJ1HquSdTKZmZITxuRpHogRhaeTpf31Tg==
+X-Google-Smtp-Source: AGHT+IG+y2y1lYDjW0w074p6b32KN/SNBfuH66xZOYYfG/aQ33OHnDDWnfHU1jSQkLv7VHnBWB5U5y0xOdhTHcklAQw=
+X-Received: by 2002:a05:6870:ec87:b0:254:ccac:134d with SMTP id
+ 586e51a60fabf-25eae7575dcmr1763592fac.2.1720522285808; Tue, 09 Jul 2024
+ 03:51:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 9 Jul 2024 11:51:14 +0100
+Message-ID: <CADrjBPq13+k6LM=Xs3Eof9jXJwOHmcMoJUXAR18aHfp7fEeLcw@mail.gmail.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, 8 Jul 2024 at 18:04, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Return negative -ENOMEM instead of positive ENOMEM.
+>
+> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Add support for Flash Memory Protector (FMP), which is the inline
-encryption hardware on Exynos and Exynos-based SoCs.
-
-Specifically, add support for the "traditional FMP mode" that works on
-many Exynos-based SoCs including gs101.  This is the mode that uses
-"software keys" and is compatible with the upstream kernel's existing
-inline encryption framework in the block and filesystem layers.  I plan
-to add support for the wrapped key support on gs101 at a later time.
-
-Tested on gs101 (specifically Pixel 6) by running the 'encrypt' group of
-xfstests on a filesystem mounted with the 'inlinecrypt' mount option.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- drivers/ufs/host/ufs-exynos.c | 240 +++++++++++++++++++++++++++++++++-
- 1 file changed, 234 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 88d125d1ee3c..16ad3528d80b 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -6,10 +6,13 @@
-  * Author: Seungwon Jeon  <essuuj@gmail.com>
-  * Author: Alim Akhtar <alim.akhtar@samsung.com>
-  *
-  */
- 
-+#include <asm/unaligned.h>
-+#include <crypto/aes.h>
-+#include <linux/arm-smccc.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -23,16 +26,17 @@
- #include <ufs/ufshci.h>
- #include <ufs/unipro.h>
- 
- #include "ufs-exynos.h"
- 
-+#define DATA_UNIT_SIZE		4096
-+
- /*
-  * Exynos's Vendor specific registers for UFSHCI
-  */
- #define HCI_TXPRDT_ENTRY_SIZE	0x00
- #define PRDT_PREFECT_EN		BIT(31)
--#define PRDT_SET_SIZE(x)	((x) & 0x1F)
- #define HCI_RXPRDT_ENTRY_SIZE	0x04
- #define HCI_1US_TO_CNT_VAL	0x0C
- #define CNT_VAL_1US_MASK	0x3FF
- #define HCI_UTRL_NEXUS_TYPE	0x40
- #define HCI_UTMRL_NEXUS_TYPE	0x44
-@@ -1041,12 +1045,12 @@ static int exynos_ufs_post_link(struct ufs_hba *hba)
- 
- 	exynos_ufs_establish_connt(ufs);
- 	exynos_ufs_fit_aggr_timeout(ufs);
- 
- 	hci_writel(ufs, 0xa, HCI_DATA_REORDER);
--	hci_writel(ufs, PRDT_SET_SIZE(12), HCI_TXPRDT_ENTRY_SIZE);
--	hci_writel(ufs, PRDT_SET_SIZE(12), HCI_RXPRDT_ENTRY_SIZE);
-+	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_TXPRDT_ENTRY_SIZE);
-+	hci_writel(ufs, ilog2(DATA_UNIT_SIZE), HCI_RXPRDT_ENTRY_SIZE);
- 	hci_writel(ufs, (1 << hba->nutrs) - 1, HCI_UTRL_NEXUS_TYPE);
- 	hci_writel(ufs, (1 << hba->nutmrs) - 1, HCI_UTMRL_NEXUS_TYPE);
- 	hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
- 
- 	if (ufs->opts & EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB)
-@@ -1149,10 +1153,231 @@ static inline void exynos_ufs_priv_init(struct ufs_hba *hba,
- 		ufs->rx_sel_idx = 0;
- 	hba->priv = (void *)ufs;
- 	hba->quirks = ufs->drv_data->quirks;
- }
- 
-+#ifdef CONFIG_SCSI_UFS_CRYPTO
-+
-+/*
-+ * Support for Flash Memory Protector (FMP), which is the inline encryption
-+ * hardware on Exynos and Exynos-based SoCs.  The interface to this hardware is
-+ * not compatible with the standard UFS crypto.  It requires that encryption be
-+ * configured in the PRDT using a nonstandard extension.
-+ */
-+
-+enum fmp_crypto_algo_mode {
-+	FMP_BYPASS_MODE = 0,
-+	FMP_ALGO_MODE_AES_CBC = 1,
-+	FMP_ALGO_MODE_AES_XTS = 2,
-+};
-+enum fmp_crypto_key_length {
-+	FMP_KEYLEN_256BIT = 1,
-+};
-+
-+/**
-+ * struct fmp_sg_entry - nonstandard format of PRDT entries when FMP is enabled
-+ *
-+ * @base: The standard PRDT entry, but with nonstandard bitfields in the high
-+ *	bits of the 'size' field, i.e. the last 32-bit word.  When these
-+ *	nonstandard bitfields are zero, the data segment won't be encrypted or
-+ *	decrypted.  Otherwise they specify the algorithm and key length with
-+ *	which the data segment will be encrypted or decrypted.
-+ * @file_iv: The initialization vector (IV) with all bytes reversed
-+ * @file_enckey: The first half of the AES-XTS key with all bytes reserved
-+ * @file_twkey: The second half of the AES-XTS key with all bytes reserved
-+ * @disk_iv: Unused
-+ * @reserved: Unused
-+ */
-+struct fmp_sg_entry {
-+	struct ufshcd_sg_entry base;
-+	__be64 file_iv[2];
-+	__be64 file_enckey[4];
-+	__be64 file_twkey[4];
-+	__be64 disk_iv[2];
-+	__be64 reserved[2];
-+};
-+
-+#define SMC_CMD_FMP_SECURITY	\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
-+			   ARM_SMCCC_OWNER_SIP, 0x1810)
-+#define SMC_CMD_SMU		\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
-+			   ARM_SMCCC_OWNER_SIP, 0x1850)
-+#define SMC_CMD_FMP_SMU_RESUME	\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_64, \
-+			   ARM_SMCCC_OWNER_SIP, 0x1860)
-+#define SMU_EMBEDDED			0
-+#define SMU_INIT			0
-+#define CFG_DESCTYPE_3			3
-+
-+static void exynos_ufs_fmp_init(struct ufs_hba *hba, struct exynos_ufs *ufs)
-+{
-+	struct blk_crypto_profile *profile = &hba->crypto_profile;
-+	struct arm_smccc_res res;
-+	int err;
-+
-+	/*
-+	 * Check for the standard crypto support bit, since it's available even
-+	 * though the rest of the interface to FMP is nonstandard.
-+	 *
-+	 * This check should have the effect of preventing the driver from
-+	 * trying to use FMP on old Exynos SoCs that don't have FMP.
-+	 */
-+	if (!(ufshcd_readl(hba, REG_CONTROLLER_CAPABILITIES) &
-+	      MASK_CRYPTO_SUPPORT))
-+		return;
-+
-+	/*
-+	 * The below sequence of SMC calls to enable FMP can be found in the
-+	 * downstream driver source for gs101 and other Exynos-based SoCs.  It
-+	 * is the only way to enable FMP that works on SoCs such as gs101 that
-+	 * don't make the FMP registers accessible to Linux.  It probably works
-+	 * on other Exynos-based SoCs too, and might even still be the only way
-+	 * that works.  But this hasn't been properly tested, and this code is
-+	 * mutually exclusive with exynos_ufs_config_smu().  So for now only
-+	 * enable FMP support on SoCs with EXYNOS_UFS_OPT_UFSPR_SECURE.
-+	 */
-+	if (!(ufs->opts & EXYNOS_UFS_OPT_UFSPR_SECURE))
-+		return;
-+
-+	/*
-+	 * This call (which sets DESCTYPE to 0x3 in the FMPSECURITY0 register)
-+	 * is needed to make the hardware use the larger PRDT entry size.
-+	 */
-+	BUILD_BUG_ON(sizeof(struct fmp_sg_entry) != 128);
-+	arm_smccc_smc(SMC_CMD_FMP_SECURITY, 0, SMU_EMBEDDED, CFG_DESCTYPE_3,
-+		      0, 0, 0, 0, &res);
-+	if (res.a0) {
-+		dev_warn(hba->dev,
-+			 "SMC_CMD_FMP_SECURITY failed on init: %ld.  Disabling FMP support.\n",
-+			 res.a0);
-+		return;
-+	}
-+	ufshcd_set_sg_entry_size(hba, sizeof(struct fmp_sg_entry));
-+
-+	/*
-+	 * This is needed to initialize FMP.  Without it, errors occur when
-+	 * inline encryption is used.
-+	 */
-+	arm_smccc_smc(SMC_CMD_SMU, SMU_INIT, SMU_EMBEDDED, 0, 0, 0, 0, 0, &res);
-+	if (res.a0) {
-+		dev_err(hba->dev,
-+			"SMC_CMD_SMU(SMU_INIT) failed: %ld.  Disabling FMP support.\n",
-+			res.a0);
-+		return;
-+	}
-+
-+	/* Advertise crypto capabilities to the block layer. */
-+	err = devm_blk_crypto_profile_init(hba->dev, profile, 0);
-+	if (err) {
-+		/* Only ENOMEM should be possible here. */
-+		dev_err(hba->dev, "Failed to initialize crypto profile: %d\n",
-+			err);
-+		return;
-+	}
-+	profile->max_dun_bytes_supported = AES_BLOCK_SIZE;
-+	profile->dev = hba->dev;
-+	profile->modes_supported[BLK_ENCRYPTION_MODE_AES_256_XTS] =
-+		DATA_UNIT_SIZE;
-+
-+	/* Advertise crypto support to ufshcd-core. */
-+	hba->caps |= UFSHCD_CAP_CRYPTO;
-+
-+	/* Advertise crypto quirks to ufshcd-core. */
-+	hba->quirks |= UFSHCD_QUIRK_CUSTOM_CRYPTO_PROFILE |
-+		       UFSHCD_QUIRK_BROKEN_CRYPTO_ENABLE |
-+		       UFSHCD_QUIRK_KEYS_IN_PRDT;
-+
-+}
-+
-+static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_smc(SMC_CMD_FMP_SECURITY, 0, SMU_EMBEDDED, CFG_DESCTYPE_3,
-+		      0, 0, 0, 0, &res);
-+	if (res.a0)
-+		dev_err(hba->dev,
-+			"SMC_CMD_FMP_SECURITY failed on resume: %ld\n", res.a0);
-+
-+	arm_smccc_smc(SMC_CMD_FMP_SMU_RESUME, 0, SMU_EMBEDDED, 0, 0, 0, 0, 0,
-+		      &res);
-+	if (res.a0)
-+		dev_err(hba->dev,
-+			"SMC_CMD_FMP_SMU_RESUME failed: %ld\n", res.a0);
-+}
-+
-+static inline __be64 fmp_key_word(const u8 *key, int j)
-+{
-+	return cpu_to_be64(get_unaligned_le64(
-+			key + AES_KEYSIZE_256 - (j + 1) * sizeof(u64)));
-+}
-+
-+/* Fill the PRDT for a request according to the given encryption context. */
-+static int exynos_ufs_fmp_fill_prdt(struct ufs_hba *hba,
-+				    const struct bio_crypt_ctx *crypt_ctx,
-+				    void *prdt, unsigned int num_segments)
-+{
-+	struct fmp_sg_entry *fmp_prdt = prdt;
-+	const u8 *enckey = crypt_ctx->bc_key->raw;
-+	const u8 *twkey = enckey + AES_KEYSIZE_256;
-+	u64 dun_lo = crypt_ctx->bc_dun[0];
-+	u64 dun_hi = crypt_ctx->bc_dun[1];
-+	unsigned int i;
-+
-+	/* If FMP wasn't enabled, we shouldn't get any encrypted requests. */
-+	if (WARN_ON_ONCE(!(hba->caps & UFSHCD_CAP_CRYPTO)))
-+		return -EIO;
-+
-+	/* Configure FMP on each segment of the request. */
-+	for (i = 0; i < num_segments; i++) {
-+		struct fmp_sg_entry *prd = &fmp_prdt[i];
-+		int j;
-+
-+		/* Each segment must be exactly one data unit. */
-+		if (prd->base.size != cpu_to_le32(DATA_UNIT_SIZE - 1)) {
-+			dev_err(hba->dev,
-+				"data segment is misaligned for FMP\n");
-+			return -EIO;
-+		}
-+
-+		/* Set the algorithm and key length. */
-+		prd->base.size |= cpu_to_le32((FMP_ALGO_MODE_AES_XTS << 28) |
-+					      (FMP_KEYLEN_256BIT << 26));
-+
-+		/* Set the IV. */
-+		prd->file_iv[0] = cpu_to_be64(dun_hi);
-+		prd->file_iv[1] = cpu_to_be64(dun_lo);
-+
-+		/* Set the key. */
-+		for (j = 0; j < AES_KEYSIZE_256 / sizeof(u64); j++) {
-+			prd->file_enckey[j] = fmp_key_word(enckey, j);
-+			prd->file_twkey[j] = fmp_key_word(twkey, j);
-+		}
-+
-+		/* Increment the data unit number. */
-+		dun_lo++;
-+		if (dun_lo == 0)
-+			dun_hi++;
-+	}
-+	return 0;
-+}
-+
-+#else /* CONFIG_SCSI_UFS_CRYPTO */
-+
-+static void exynos_ufs_fmp_init(struct ufs_hba *hba, struct exynos_ufs *ufs)
-+{
-+}
-+
-+static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
-+{
-+}
-+
-+#define exynos_ufs_fmp_fill_prdt NULL
-+
-+#endif /* !CONFIG_SCSI_UFS_CRYPTO */
-+
- static int exynos_ufs_init(struct ufs_hba *hba)
- {
- 	struct device *dev = hba->dev;
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct exynos_ufs *ufs;
-@@ -1196,10 +1421,12 @@ static int exynos_ufs_init(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
- 	exynos_ufs_priv_init(hba, ufs);
- 
-+	exynos_ufs_fmp_init(hba, ufs);
-+
- 	if (ufs->drv_data->drv_init) {
- 		ret = ufs->drv_data->drv_init(dev, ufs);
- 		if (ret) {
- 			dev_err(dev, "failed to init drv-data\n");
- 			goto out;
-@@ -1211,11 +1438,11 @@ static int exynos_ufs_init(struct ufs_hba *hba)
- 		goto out;
- 	exynos_ufs_specify_phy_time_attr(ufs);
- 	if (!(ufs->opts & EXYNOS_UFS_OPT_UFSPR_SECURE))
- 		exynos_ufs_config_smu(ufs);
- 
--	hba->host->dma_alignment = SZ_4K - 1;
-+	hba->host->dma_alignment = DATA_UNIT_SIZE - 1;
- 	return 0;
- 
- out:
- 	hba->priv = NULL;
- 	return ret;
-@@ -1330,11 +1557,11 @@ static int exynos_ufs_hce_enable_notify(struct ufs_hba *hba,
- 		 * The maximum segment size must be set after scsi_host_alloc()
- 		 * has been called and before LUN scanning starts
- 		 * (ufshcd_async_scan()). Note: this callback may also be called
- 		 * from other functions than ufshcd_init().
- 		 */
--		hba->host->max_segment_size = SZ_4K;
-+		hba->host->max_segment_size = DATA_UNIT_SIZE;
- 
- 		if (ufs->drv_data->pre_hce_enable) {
- 			ret = ufs->drv_data->pre_hce_enable(ufs);
- 			if (ret)
- 				return ret;
-@@ -1430,11 +1657,11 @@ static int exynos_ufs_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
- 
- 	if (!ufshcd_is_link_active(hba))
- 		phy_power_on(ufs->phy);
- 
- 	exynos_ufs_config_smu(ufs);
--
-+	exynos_ufs_fmp_resume(hba);
- 	return 0;
- }
- 
- static int exynosauto_ufs_vh_link_startup_notify(struct ufs_hba *hba,
- 						 enum ufs_notify_change_status status)
-@@ -1696,10 +1923,11 @@ static const struct ufs_hba_variant_ops ufs_hba_exynos_ops = {
- 	.setup_xfer_req			= exynos_ufs_specify_nexus_t_xfer_req,
- 	.setup_task_mgmt		= exynos_ufs_specify_nexus_t_tm_req,
- 	.hibern8_notify			= exynos_ufs_hibern8_notify,
- 	.suspend			= exynos_ufs_suspend,
- 	.resume				= exynos_ufs_resume,
-+	.fill_crypto_prdt		= exynos_ufs_fmp_fill_prdt,
- };
- 
- static struct ufs_hba_variant_ops ufs_hba_exynosauto_vh_ops = {
- 	.name				= "exynosauto_ufs_vh",
- 	.init				= exynosauto_ufs_vh_init,
--- 
-2.45.2
-
+Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
