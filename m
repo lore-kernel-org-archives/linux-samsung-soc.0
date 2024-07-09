@@ -1,136 +1,208 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8975E15ECCC
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  9 Jul 2024 13:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBEE1C230A;
+	Tue,  9 Jul 2024 16:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720530039; cv=none; b=G+OnOdetA6D80mdTfon1ZTVFG7J7Q6CmubQb7TS7G/7JBDp/+aw+TE2g+DeNOo1aGG9SAdmilNHuFb0xw2wFKgyAdD6ZdZXsBUPl9TgE0jJigGgWxW0LmPztrUKOXl+D/lev7tOn8btVxIXkWoV0lIskBj1WIHs6ThZCMjabVvA=
+	t=1720542178; cv=none; b=ITAu3yP+IF71TVF+eJfVd5WwRgLA1Jv5Vj0iNZkrqOHnvvsIhImIZ+1gEufHRXwuuLbCN25PM7RhIjr5eSC3Pabo5/obVH7h0Z6qBXDEazNaR5wlR1voSXgdzGyt1qmCVdY8Q4ut2Sz4pgthfNrC9uL1WaMnVZZ1h9/s/03hjOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720530039; c=relaxed/simple;
-	bh=+k/lazfX5D4DO7g4zI2vHTllaVZsoH4j2XRnMTI6hrs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qefuPfe7C1GumPkxvS4ngSU/u/bOAffnX+DTQ5isuFeRhPe8QEgm9kGefDIQT98d0gWnfnrVoxY2HzqbXh8b59HUQ09RccCMrdK4Aot9Rk+akQglj03UvvqTCwfbIAA/f85j4sE2oAAxMv8aQbtIZUJLsnxPH3mkFIShFkl40lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kOQvBcZl; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720542178; c=relaxed/simple;
+	bh=8082rWkAR8IgTw+ArT/i9Zh9oV0i6nYGOgdRqR/CthE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDCpffKiprG7onrHEThfpCvPyuuE+r79n95wJO/MsAarI80IQzSpzqyjP54u1c5AH1co76WS9eVhJc2IhKCYRFDn6Ks7JcRxfDw1tkJAhxJXIbrEDCnDLIJMrFBAtdxyzlfRO18onbn/o63YvV4CNFoe3XX0IEoX0aqeOs3sFEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUC5vETC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kOQvBcZl"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7523f0870cso625162066b.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jul 2024 06:00:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720530036; x=1721134836; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fKJKj4ePRCM54jEU3GVYM318cCZM40CyMC5+JEFGxVk=;
-        b=kOQvBcZlkCELTcZyoQ9HurptaBE6081pIO/Ogt3+zcYDL39CsZVM3ETJcMKvgUpg8g
-         JOzOjQTOl+477FhiC8QHqCtYqbcrZAnUqiKNY0oMtbmk20LcXy2E1KSqGWCmVc5TDYWS
-         p6Opoarmb1u3wswcN3nsGItVAjlS4a70OPiOnWBTRJuk6CkxKQiOrfPssrrXTpNae4ci
-         +/iJrQRVV2c8eZUszwKjT+MwrxzjNmKuEarSt3XSiJE31UQQWZARYZ2QF6hD9+b0d27N
-         Vhwg+lw5OiqJ0G22fqnWkcKANeQmsjL7+31WvKnqgPJxcg9wCUrzrsimgMxYGw8iu+1+
-         yx8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720530036; x=1721134836;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fKJKj4ePRCM54jEU3GVYM318cCZM40CyMC5+JEFGxVk=;
-        b=FuG8lejTrV4qlWhTTkAoKty9x9Xu6EZf1QYjYSBRQkY1vr77rMUHuZGMvgo2Vygtib
-         VVsSgObCMijwY6CJcvRR26mcyVOtcVfb+zSy1NuWKxRrNY8ttUlhiPpMmj0FTsjay4Pj
-         IxwNyn/D1ZqE7lzLBpuWkUsGWOkVvnnYh5n88tp0E6qdAMGHPsXeuw0uliRa/mFPI41H
-         zGJC1H0JKFtmkKiQLeHAGhsOInPzEjtlJlKcUtFuD1EACmxUKz41PtsPLlEFUcUwttVr
-         4sBiLeryzOK4mMn11WVm9gRylkt9lrKAhx3s4b3WazFjAu1nQstNOai+kVe7fk9uqEyK
-         LXEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJak3NmkaQJreXhvyvX/mP9/PQSU3Duf9sZNkr/hCG88In5Znh1vZZcGw4906Dd7Lsdnxdbmr/WG3+ULIK2fugU1/QPmAX+IN/dKZ2NajYMHw=
-X-Gm-Message-State: AOJu0YyhvAdi2WzYIN8eBMrVoyTO4vu0R/fg+Ug1CL5kGjY9MCDePoZZ
-	IZyoSyaKnsmi60/Tk7uJOHmTMs8L57X7sCAu4MB49P4WLHoRmVMHum3DfUnEayU=
-X-Google-Smtp-Source: AGHT+IFfkk9Ys5H4+GIS3Y5lPnmbtnsV3RBNMXH4S8d48mmpM+eZ7xVV/K5ZmahmLNMktfUV+pQZMg==
-X-Received: by 2002:a17:906:36d3:b0:a6f:b58f:ae3c with SMTP id a640c23a62f3a-a780b6b1b96mr159741866b.26.1720530036104;
-        Tue, 09 Jul 2024 06:00:36 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e157bsm76643166b.80.2024.07.09.06.00.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:00:35 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 09 Jul 2024 14:59:42 +0200
-Subject: [PATCH 12/12] thermal/drivers/generic-adc: simplify with
- dev_err_probe()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUC5vETC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA25C32782;
+	Tue,  9 Jul 2024 16:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720542178;
+	bh=8082rWkAR8IgTw+ArT/i9Zh9oV0i6nYGOgdRqR/CthE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUC5vETCz5KVR5sdZ89iOaxsISoYw5db/iXuSdBl1fsYS14xFSMnErsyxuBrTyGLm
+	 1DNobR3rYhAtYMq0u3YJAlXhLZ792OGEapN1gqx2juCvtrmN16aua+WRBM/dgMslSS
+	 qpkns/rr1bfJHg+NWuAQmP/MBYvbdlVs6BKyAB59cD73Ex0glDaO1HWMseIs1jTLq3
+	 JR8q87eo3LBDaCDSQLwcJshY21U63QqfIxZhPwx0i1/W2QuRkO+7Nm5wR4OsvggHy+
+	 VFJ2FKCMsd7q4qbUkrlcSug+Zeu8z/a8z1M8b6LmE4Kic0Fnxq9jpoph2O6zPQvoqR
+	 qU3XMa7TEyKJw==
+Date: Tue, 9 Jul 2024 10:22:55 -0600
+From: Rob Herring <robh@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: 'Sunyeal Hong' <sunyeal.hong@samsung.com>,
+	'Krzysztof Kozlowski' <krzk@kernel.org>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	'Stephen Boyd' <sboyd@kernel.org>,
+	'Conor Dooley' <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+Message-ID: <20240709162255.GA3676452-robh@kernel.org>
+References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
+ <CGME20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73@epcas2p1.samsung.com>
+ <20240707231331.3433340-2-sunyeal.hong@samsung.com>
+ <000001dad121$bf3c0a80$3db41f80$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-thermal-probe-v1-12-241644e2b6e0@linaro.org>
-References: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
-In-Reply-To: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1014;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=+k/lazfX5D4DO7g4zI2vHTllaVZsoH4j2XRnMTI6hrs=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmjTRG7Kse7IUgMVRX4NLV90g5K2qD30euBH5Pl
- gWGaMK8maKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZo00RgAKCRDBN2bmhouD
- 18nEEACI7gxKJvuvASog8vwzRg+a3PvfwZZHrDeguyKmTBJ46V5YCiPTvPJWRVtWUqdAMUfcsAW
- IhEdMHzSmWOUHTcfTzDHc8O7vvAT8KCZjGFJ43RMUZb3he1BN3Hp06JDNSqEf43CuJg+v+5a545
- X5eNDx4RWWWh9zgEO9QzlypsgvXdE4LK4IPu1rs1ChmI8pswR04JWPcfOWCFhLuNGaByjtoPYQs
- U4lSOh77uqNdYjaSuxJa0xSdFyKJtxO0prRNorCSpZ3gV1xZv2zG82eAQk7TwM0bSgWEq7qg/2A
- YjlXyoPq9ql12lRZM+95d5OmHGaouY7kK+uWEDUBu+OcEtEizqh2+nieYVSapi1VlfMNRV3n9vq
- Pzq6vxcnyu4p4GjdKVYkG12RIcI5nLVWkuTA66ZwV5e4OSgs/JpkAok1I5ohrJjx8hL/JesxirT
- 6KLStUBfXk6SIqMuRSdiPu0hiwweitRaR51TkzYUNaurLAyaOkorxIAoWsJOImpTw9lOp/7Qjbc
- i5DLWLYegu0qdnia+oFrLWRyZ6bLRZ/lRQgBvq04AViCRNSyKbaDwJ6CiHd1ZKotEHRNIQ+cRj+
- h7OhqavBXLHl7a8nYZlx08NNjImhGkT0HKk6NShnr2C+3pQXATuTFyePUpudMTQSEG0jiDqlcDj
- lMHGtvzQpjie/sw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001dad121$bf3c0a80$3db41f80$@samsung.com>
 
-Error handling in probe() can be a bit simpler with dev_err_probe().
+On Mon, Jul 08, 2024 at 03:59:40PM +0530, Alim Akhtar wrote:
+> Hello Sunyeal
+> 
+> > -----Original Message-----
+> > From: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > Sent: Monday, July 8, 2024 4:43 AM
+> > To: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
+> > <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
+> > Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
+> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Rob
+> > Herring <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>
+> > Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; Sunyeal Hong <sunyeal.hong@samsung.com>
+> > Subject: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+> > bindings
+> > 
+> > Add dt-schema for Exynos Auto v920 SoC clock controller.
+> Prefer to have Exynos Auto -> ExynosAuto to match with the naming convention and the UM.
+> 
+> > Add device tree clock binding definitions for below CMU blocks.
+> > 
+> > - CMU_TOP
+> > - CMU_PERIC0
+> > 
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > ---
+> >  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
+> >  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
+> >  2 files changed, 306 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> >  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> > b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> > new file mode 100644
+> > index 000000000000..ade74d6e90c0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clo
+> > +++ ck.yaml
+> > @@ -0,0 +1,115 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> > +http://devicetree.org/schemas/clock/samsung,exynosautov920-
+> > clock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos Auto v920 SoC clock controller
+> > +
+> > +maintainers:
+> > +  - Sunyeal Hong <sunyeal.hong@samsung.com>
+> > +  - Chanwoo Choi <cw00.choi@samsung.com>
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > +
+> > +description: |
+> > +  Exynos Auto v920 clock controller is comprised of several CMU units,
+> > +generating
+> > +  clocks for different domains. Those CMU units are modeled as separate
+> > +device
+> > +  tree nodes, and might depend on each other. Root clocks in that clock
+> > +tree are
+> > +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI
+> > (32768 Hz).
+> > +  The external OSCCLK must be defined as fixed-rate clock in dts.
+> > +
+> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using
+> > + PLLs and  dividers; all other clocks of function blocks (other CMUs)
+> > + are usually  derived from CMU_TOP.
+> > +
+> > +  Each clock is assigned an identifier and client nodes can use this
+> > + identifier  to specify the clock which they consume. All clocks
+> > + available for usage  in clock consumer nodes are defined as
+> > + preprocessor macros in  'include/dt-
+> > bindings/clock/samsung,exynosautov920.h' header.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynosautov920-cmu-top
+> > +      - samsung,exynosautov920-cmu-peric0
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: samsung,exynosautov920-cmu-top
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (38.4 MHz)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: samsung,exynosautov920-cmu-peric0
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (38.4 MHz)
+> > +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> > +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +            - const: noc
+> > +            - const: ip
+> These are too generic name, please add peric0_noc and peric0_ip, and this is to match with the UM.
+> I am sure in future you would like to add other IPs like USI, I2C etc for the peric0 block
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/thermal/thermal-generic-adc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Names are local to the block, so adding the block name is redundant.
 
-diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-index d08bff91ac3d..ee3d0aa31406 100644
---- a/drivers/thermal/thermal-generic-adc.c
-+++ b/drivers/thermal/thermal-generic-adc.c
-@@ -131,12 +131,8 @@ static int gadc_thermal_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	gti->channel = devm_iio_channel_get(dev, "sensor-channel");
--	if (IS_ERR(gti->channel)) {
--		ret = PTR_ERR(gti->channel);
--		if (ret != -EPROBE_DEFER)
--			dev_err(dev, "IIO channel not found: %d\n", ret);
--		return ret;
--	}
-+	if (IS_ERR(gti->channel))
-+		return dev_err_probe(dev, PTR_ERR(gti->channel), "IIO channel not found\n");
- 
- 	ret = gadc_thermal_read_linear_lookup_table(dev, gti);
- 	if (ret < 0)
+Wouldn't USI and I2C clocks be outputs? This property is input clocks.
 
--- 
-2.43.0
+The names and descriptions should be defined at the top level and then 
+here should be just 'minItems: 3' (And above 'maxItems: 1').
 
+Rob
