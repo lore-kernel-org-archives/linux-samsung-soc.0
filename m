@@ -1,51 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBEE1C230A;
-	Tue,  9 Jul 2024 16:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2404A1B86ED;
+	Tue,  9 Jul 2024 18:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542178; cv=none; b=ITAu3yP+IF71TVF+eJfVd5WwRgLA1Jv5Vj0iNZkrqOHnvvsIhImIZ+1gEufHRXwuuLbCN25PM7RhIjr5eSC3Pabo5/obVH7h0Z6qBXDEazNaR5wlR1voSXgdzGyt1qmCVdY8Q4ut2Sz4pgthfNrC9uL1WaMnVZZ1h9/s/03hjOU=
+	t=1720548847; cv=none; b=mQ7g+MppP3xQHxQNsAWplaIybgscaMZk1v1kBMMxA8m3oC2fOUkrQwNdIrP10TFpvL5FK0OOrDatCZ5M3ZHNnlmZhrYJSI4tMdxrOJ8tqHw8l0mvPNFDFbCEEh/x472aQayny6EAuJnel7X0CPjE4Giy19PMdhWvTFAc9w7ET7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542178; c=relaxed/simple;
-	bh=8082rWkAR8IgTw+ArT/i9Zh9oV0i6nYGOgdRqR/CthE=;
+	s=arc-20240116; t=1720548847; c=relaxed/simple;
+	bh=OkowgpgSGdOlOcmFTSzXiX4gK6EF938iLA84IR85IRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDCpffKiprG7onrHEThfpCvPyuuE+r79n95wJO/MsAarI80IQzSpzqyjP54u1c5AH1co76WS9eVhJc2IhKCYRFDn6Ks7JcRxfDw1tkJAhxJXIbrEDCnDLIJMrFBAtdxyzlfRO18onbn/o63YvV4CNFoe3XX0IEoX0aqeOs3sFEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUC5vETC; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=GtYnlp/5yJnsUaf7dxGBfVwbBuIp2MD9CH89rAB4nGWfXAtsGUH4EaOJNZOLCuLody1LIzP6KBHW7cpc4jMXC1paYhYvTtVFczw3xGKePDS+LYWOMVkD4AMuW7wHjP54hdDhN2UESYtTmdJ5u3TpmD6ss0AU2z89kt6wDTeOv9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYb+UqUe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUC5vETC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA25C32782;
-	Tue,  9 Jul 2024 16:22:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYb+UqUe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FC8C3277B;
+	Tue,  9 Jul 2024 18:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542178;
-	bh=8082rWkAR8IgTw+ArT/i9Zh9oV0i6nYGOgdRqR/CthE=;
+	s=k20201202; t=1720548846;
+	bh=OkowgpgSGdOlOcmFTSzXiX4gK6EF938iLA84IR85IRw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aUC5vETCz5KVR5sdZ89iOaxsISoYw5db/iXuSdBl1fsYS14xFSMnErsyxuBrTyGLm
-	 1DNobR3rYhAtYMq0u3YJAlXhLZ792OGEapN1gqx2juCvtrmN16aua+WRBM/dgMslSS
-	 qpkns/rr1bfJHg+NWuAQmP/MBYvbdlVs6BKyAB59cD73Ex0glDaO1HWMseIs1jTLq3
-	 JR8q87eo3LBDaCDSQLwcJshY21U63QqfIxZhPwx0i1/W2QuRkO+7Nm5wR4OsvggHy+
-	 VFJ2FKCMsd7q4qbUkrlcSug+Zeu8z/a8z1M8b6LmE4Kic0Fnxq9jpoph2O6zPQvoqR
-	 qU3XMa7TEyKJw==
-Date: Tue, 9 Jul 2024 10:22:55 -0600
-From: Rob Herring <robh@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: 'Sunyeal Hong' <sunyeal.hong@samsung.com>,
-	'Krzysztof Kozlowski' <krzk@kernel.org>,
-	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
-	'Chanwoo Choi' <cw00.choi@samsung.com>,
-	'Michael Turquette' <mturquette@baylibre.com>,
-	'Stephen Boyd' <sboyd@kernel.org>,
-	'Conor Dooley' <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
- bindings
-Message-ID: <20240709162255.GA3676452-robh@kernel.org>
-References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
- <CGME20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73@epcas2p1.samsung.com>
- <20240707231331.3433340-2-sunyeal.hong@samsung.com>
- <000001dad121$bf3c0a80$3db41f80$@samsung.com>
+	b=AYb+UqUep5QeY5siW5Vh3TDhn5Yg8/TNan1enSZl6MkWY5Cjdy41as7syj6TqwBop
+	 Z2n/onK6O2I/uIPtNER3t8GP1aVzUcekAOKgDv00U3uqcbK+8R4GZesAzXDWvDqXPx
+	 x82SgABlWWVIJx04k81RvMtzLDWDXGoQYeZCVQ9wUEJ90jr9S3yk/7v3aRi9UuFF1G
+	 ph9g0t6nle6jEx815WZ3pjstrUToNvbaBx76Nb1lKusy+17/gqLJbPsm4BcWjVdanf
+	 aB4Tw9kzzi6jpUUbf2tFXeq5vG5+7DVOQIBcF0PSzR7q3gi3uN0PAQf7I7Ui66I1uJ
+	 aXA0qigTpZ7Mw==
+Date: Tue, 9 Jul 2024 11:14:04 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	William McVicker <willmcvicker@google.com>
+Subject: Re: [PATCH v3 6/6] scsi: ufs: exynos: Add support for Flash Memory
+ Protector (FMP)
+Message-ID: <20240709181404.GA1945@sol.localdomain>
+References: <20240708235330.103590-1-ebiggers@kernel.org>
+ <20240708235330.103590-7-ebiggers@kernel.org>
+ <CADrjBPq4sEamwD3+wT2p481en-J2Ee7G0f+UbXG3g3RqUMiv3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -54,155 +51,95 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000001dad121$bf3c0a80$3db41f80$@samsung.com>
+In-Reply-To: <CADrjBPq4sEamwD3+wT2p481en-J2Ee7G0f+UbXG3g3RqUMiv3w@mail.gmail.com>
 
-On Mon, Jul 08, 2024 at 03:59:40PM +0530, Alim Akhtar wrote:
-> Hello Sunyeal
+On Tue, Jul 09, 2024 at 12:17:53PM +0100, Peter Griffin wrote:
+> Hi Eric,
 > 
-> > -----Original Message-----
-> > From: Sunyeal Hong <sunyeal.hong@samsung.com>
-> > Sent: Monday, July 8, 2024 4:43 AM
-> > To: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
-> > <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
-> > Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
-> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Rob
-> > Herring <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>
-> > Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> > kernel@vger.kernel.org; Sunyeal Hong <sunyeal.hong@samsung.com>
-> > Subject: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
-> > bindings
-> > 
-> > Add dt-schema for Exynos Auto v920 SoC clock controller.
-> Prefer to have Exynos Auto -> ExynosAuto to match with the naming convention and the UM.
-> 
-> > Add device tree clock binding definitions for below CMU blocks.
-> > 
-> > - CMU_TOP
-> > - CMU_PERIC0
-> > 
-> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> On Tue, 9 Jul 2024 at 00:55, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > Add support for Flash Memory Protector (FMP), which is the inline
+> > encryption hardware on Exynos and Exynos-based SoCs.
+> >
+> > Specifically, add support for the "traditional FMP mode" that works on
+> > many Exynos-based SoCs including gs101.  This is the mode that uses
+> > "software keys" and is compatible with the upstream kernel's existing
+> > inline encryption framework in the block and filesystem layers.  I plan
+> > to add support for the wrapped key support on gs101 at a later time.
+> >
+> > Tested on gs101 (specifically Pixel 6) by running the 'encrypt' group of
+> > xfstests on a filesystem mounted with the 'inlinecrypt' mount option.
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > > ---
-> >  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
-> >  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
-> >  2 files changed, 306 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/samsung,exynosautov920-
-> > clock.yaml
-> >  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
-> > clock.yaml
-> > b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
-> > clock.yaml
-> > new file mode 100644
-> > index 000000000000..ade74d6e90c0
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
-> > clo
-> > +++ ck.yaml
-> > @@ -0,0 +1,115 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +$id:
-> > +http://devicetree.org/schemas/clock/samsung,exynosautov920-
-> > clock.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Samsung Exynos Auto v920 SoC clock controller
-> > +
-> > +maintainers:
-> > +  - Sunyeal Hong <sunyeal.hong@samsung.com>
-> > +  - Chanwoo Choi <cw00.choi@samsung.com>
-> > +  - Krzysztof Kozlowski <krzk@kernel.org>
-> > +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > +
-> > +description: |
-> > +  Exynos Auto v920 clock controller is comprised of several CMU units,
-> > +generating
-> > +  clocks for different domains. Those CMU units are modeled as separate
-> > +device
-> > +  tree nodes, and might depend on each other. Root clocks in that clock
-> > +tree are
-> > +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI
-> > (32768 Hz).
-> > +  The external OSCCLK must be defined as fixed-rate clock in dts.
-> > +
-> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using
-> > + PLLs and  dividers; all other clocks of function blocks (other CMUs)
-> > + are usually  derived from CMU_TOP.
-> > +
-> > +  Each clock is assigned an identifier and client nodes can use this
-> > + identifier  to specify the clock which they consume. All clocks
-> > + available for usage  in clock consumer nodes are defined as
-> > + preprocessor macros in  'include/dt-
-> > bindings/clock/samsung,exynosautov920.h' header.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - samsung,exynosautov920-cmu-top
-> > +      - samsung,exynosautov920-cmu-peric0
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 3
-> > +
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 3
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: samsung,exynosautov920-cmu-top
-> > +
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: External reference clock (38.4 MHz)
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: oscclk
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: samsung,exynosautov920-cmu-peric0
-> > +
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: External reference clock (38.4 MHz)
-> > +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
-> > +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: oscclk
-> > +            - const: noc
-> > +            - const: ip
-> These are too generic name, please add peric0_noc and peric0_ip, and this is to match with the UM.
-> I am sure in future you would like to add other IPs like USI, I2C etc for the peric0 block
+> 
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> 
+> and
+> 
+> Tested-by: Peter Griffin <peter.griffin@linaro.org>
+> 
+> Tested by running the encrypt group of xfstests on my Pixel 6, using
+> the Yocto development env described here
+> https://git.codelinaro.org/linaro/googlelt/pixelscripts
+> 
+> Notes on testing, in addition to above README.
+> 
+> 1. Enabled following additional kernel configs gs101_config.fragment
+> CONFIG_FS_ENCRYPTION=y
+> CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+> CONFIG_SCSI_UFS_CRYPTO=y
+> CONFIG_BLK_INLINE_ENCRYPTION=y
+> CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK=y
+> CONFIG_CRYPTO_HCTR2=y
+> 
+> 2. Add meta-security layer to bblayers.conf and relevant packages to local.conf
+> BBLAYERS += "/yocto-builds/yocto/meta-security"
+> IMAGE_INSTALL:append = " xfstests ecryptfs-utils fscryptctl keyutils
+> cryptmount "
+> 
+> 3. Rebuild/reflash Yocto rootfs
+> 
+> bitbake virtual/kernel core-image-full-cmdline
+> fastboot flash userdata core-image-full-cmdline-google-gs.rootfs.ext4
+> 
+> 4. On the device ran the following
+> 
+> mkfs.ext4 -O encrypt /dev/sda26
+> mkfs.ext4 -O encrypt /dev/sda20
+> mkdir -p /mnt/scratchdev
+> mkdir -p /mnt/testdev
+> mount /dev/sda20 -o inlinecrypt /mnt/testdev
+> mount /dev/sda26 -o inlinecrypt /mnt/scratchdev
+> export TEST_DEV=/dev/sda20
+> export TEST_DIR=/mnt/testdev
+> export SCRATCH_DEV=/dev/sda26
+> export SCRATCH_MNT=/mnt/scratchdev
+> cd /usr/xfstests
+> check -g encrypt
+> 
+> All 28 tests passed
+> 
+> <snip>
+> Ran: ext4/024 generic/395 generic/396 generic/397 generic/398
+> generic/399 generic/419 generic/421 generic/429 generic/435
+> generic/440 generic/548 generic/549 generic/550 generic/576
+> generic/580 gener9
+> Not run: generic/399 generic/550 generic/576 generic/584 generic/613
+> Passed all 28 tests
+> 
+> kind regards,
+> 
 
-Names are local to the block, so adding the block name is redundant.
+Thanks!  This is similar to what I did.  But, to get the inlinecrypt mount
+option to be used during the tests it's necessary to do the following:
 
-Wouldn't USI and I2C clocks be outputs? This property is input clocks.
+    export EXT_MOUNT_OPTIONS="-o inlinecrypt"
 
-The names and descriptions should be defined at the top level and then 
-here should be just 'minItems: 3' (And above 'maxItems: 1').
+The following message will appear in the kernel log:
 
-Rob
+    fscrypt: AES-256-XTS using blk-crypto (native)
+
+- Eric
