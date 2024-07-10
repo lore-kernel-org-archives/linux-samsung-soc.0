@@ -1,196 +1,207 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3F223776
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 02:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B643C092
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 05:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720578897; cv=none; b=UCgF6b24JyszQ1MAVTi7imISw0LD7z1LF2E+7gHg+2GSs+RBZ5ReGWBt4QQnhBm+V5n6vBlTYvhvJst/WIkIV5JETQ0riLlqaniDmvNvIw3o8plsvVfqvIShlVfyJDfv39yZHlvBfBSeryMJAPEURLjL0arQ50ZK9s4mTvnJvyo=
+	t=1720590782; cv=none; b=lyPb1ZcxsALCDEKrmd4fhPbwKCHSZ7Wuy2I+NR0m84PFvK46VHjESlptovGDydlCrSbzNhvhdZ957ih+A0OZ0ZODx/Lq+ghDC7lUwuOwKJnPGMurpwFuy1OyfOnDEoGS9hn2p7p2zZ5DMjrG5NnW8FNI0czLobBATA7RHKHLEco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720578897; c=relaxed/simple;
-	bh=GQhZ9NiweAuXcUzMZDobgANyOOU4DoNB9IAhUaTU288=;
+	s=arc-20240116; t=1720590782; c=relaxed/simple;
+	bh=8hfhVXtmivDk9qhAnKVzg4Bk9X/W2xf78uaXkISjgQ0=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=cvXlnhLH1yrZlug3DBT+ARpLRUJtjZVKckgUoAKzzaacHSQe/yxaxR8r6OufNzMGwYzyz/uRsqYEofkqQM0XpsbSd/mhpnY+PuikBu6JKzyhYstQlXOJQQrTyTvrsEo5q8RDLkcLFhx55hIgWNwJRoqjPz0AgL9JN2S6PFO4mk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cxZCyDY8; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=mtdVNwiw5MC15cWAlfLsxGdXiXHjLfi42nIUTsZmxBX5olBcbM73NanSjRyVG7v0VObG44ebSXLt0BSjxmhlfpIRitVUVMI4EeM/xxZPttSWLcGVyZc0TpJ7uiQdwi5c5fb6NxQEuH/f4/vHhI9VrSsf2em6AgY5Z07UH5/HHug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UC+1GgwV; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cxZCyDY8"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UC+1GgwV"
 Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240710023453epoutp0301f82da768e7a0368e150d3352640f7e~guWNKe30t0773507735epoutp03L
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 02:34:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240710023453epoutp0301f82da768e7a0368e150d3352640f7e~guWNKe30t0773507735epoutp03L
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240710055257epoutp01410b556771ad8edf792a5b907061cf76~gxDJHssjP1965419654epoutp01b
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 05:52:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240710055257epoutp01410b556771ad8edf792a5b907061cf76~gxDJHssjP1965419654epoutp01b
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720578893;
-	bh=GQhZ9NiweAuXcUzMZDobgANyOOU4DoNB9IAhUaTU288=;
+	s=mail20170921; t=1720590777;
+	bh=8hfhVXtmivDk9qhAnKVzg4Bk9X/W2xf78uaXkISjgQ0=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=cxZCyDY8FdHvnGbWY4F+s4xcuNtZN5kuq1LzpaCKMDSTF0T+oVXgNoYC+CjDkC18Z
-	 gNcOccN6U9b1DQ4lhrdU/zds2gMSPoZF0y9yTM9OJVKi4TmiwevbtBZFEWnXdM6Ewq
-	 tO8XzR3Hh1iXEgY93Z9mjPy6Iurh0FSMQZ3IE4dc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023453epcas5p1480efc2119468f7bee3f379b7fd6e9be~guWMx_ItE0967409674epcas5p1B;
-	Wed, 10 Jul 2024 02:34:53 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WJhlb2Qzyz4x9Q2; Wed, 10 Jul
-	2024 02:34:51 +0000 (GMT)
+	b=UC+1GgwVGLxZheF9vcjw6dsPq+pK2UMRXTs4xRYodB89r+THeLjKeTyhglCiGi3QR
+	 zsSoH09Np51RgNGU7QWOyzOOCacTPRLgbtM+eh0Sz1ZJ1NvAnxhXWP0gE2iRa39Jg3
+	 FLetdch0NuY20kxlqfEjgHH1fDc4WM8OUYO6NRG8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240710055257epcas5p2ca2020f2b498e6ba02fe1b503a2ab908~gxDImwzzW0341403414epcas5p2e;
+	Wed, 10 Jul 2024 05:52:57 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WJn8749Cnz4x9Q1; Wed, 10 Jul
+	2024 05:52:55 +0000 (GMT)
 Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	16.2A.11095.B43FD866; Wed, 10 Jul 2024 11:34:51 +0900 (KST)
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9F.C2.06857.7B12E866; Wed, 10 Jul 2024 14:52:55 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240710023450epcas5p144d272af968fa2897bd7a87f0e9d7b7a~guWKbAGgi0428204282epcas5p1Z;
-	Wed, 10 Jul 2024 02:34:50 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240710055255epcas5p4f29d8f70ff4b75534f55fc770ae9bc96~gxDGlp3s21066510665epcas5p4C;
+	Wed, 10 Jul 2024 05:52:55 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023450epsmtrp12dd603a4386918c3f504e65c6d224533~guWKaHn8v0997209972epsmtrp1Y;
-	Wed, 10 Jul 2024 02:34:50 +0000 (GMT)
-X-AuditID: b6c32a49-423b770000012b57-30-668df34bfdce
+	20240710055255epsmtrp1a6bdfae554fb911d36dcb443eac7ca5b~gxDGk7bAA2502825028epsmtrp19;
+	Wed, 10 Jul 2024 05:52:55 +0000 (GMT)
+X-AuditID: b6c32a4b-88bff70000021ac9-70-668e21b7eeba
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9A.1C.18846.A43FD866; Wed, 10 Jul 2024 11:34:50 +0900 (KST)
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	03.8F.19057.7B12E866; Wed, 10 Jul 2024 14:52:55 +0900 (KST)
 Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20240710023448epsmtip1bce226b48afaba14252ccadac227b492~guWIm4V5X2932829328epsmtip18;
-	Wed, 10 Jul 2024 02:34:48 +0000 (GMT)
+	20240710055253epsmtip142a87c7b3d2c929dea3534b36e90fbc3~gxDFJRx_w1587315873epsmtip1T;
+	Wed, 10 Jul 2024 05:52:53 +0000 (GMT)
 From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'sunyeal.hong'" <sunyeal.hong@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <000201dad26f$b18c3690$14a4a3b0$@samsung.com>
-Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
-Date: Wed, 10 Jul 2024 08:04:47 +0530
-Message-ID: <015601dad271$bcd53e00$367fba00$@samsung.com>
+To: "'Eric Biggers'" <ebiggers@kernel.org>, "'Peter Griffin'"
+	<peter.griffin@linaro.org>
+Cc: <linux-scsi@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-fscrypt@vger.kernel.org>, "'Avri	Altman'" <avri.altman@wdc.com>,
+	"'Bart Van Assche'" <bvanassche@acm.org>, "'Martin K . Petersen'"
+	<martin.petersen@oracle.com>, =?iso-8859-1?Q?'Andr=E9_Draszik'?=
+	<andre.draszik@linaro.org>, "'William McVicker'" <willmcvicker@google.com>
+In-Reply-To: <20240708234911.GA1730@sol.localdomain>
+Subject: RE: [PATCH v2 6/6] scsi: ufs: exynos: Add support for Flash Memory
+ Protector (FMP)
+Date: Wed, 10 Jul 2024 11:22:52 +0530
+Message-ID: <017e01dad28d$68911050$39b330f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQHhk3nlAbaaqcQDPX93AAGcPnKhsNHoffA=
+Thread-Index: AQE4iBClICFx+yLUSaJn1yRJb6SfhQJ5B3Y7AVtVE0cC5CRYggHlXsdaAlc50ciy3GCRkA==
 Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmpq735940g3ULBCzW7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndw
-	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0IlKCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
-	Elul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMeeeOsxT8FquY+PgfUwPjFuEuRk4O
-	CQETiQu3ZjB1MXJxCAnsZpS482QOlPOJUeJo6z9GOKdvcicTTMvtCZNZIBI7GSXOfV/NDOG8
-	YJS41NrCClLFJqArsWNxGxtIQkTgHpPEgx/tYIOZBdYxSmyeeYQdpIpTwEqi/U0zUDsHh7CA
-	t8T71hyQMIuAqsT8L1+YQWxeAUuJlXeuskPYghInZz5hAbGZBbQlli18zQxxkoLEz6fLwBaL
-	CPhJTD1+EapGXOLlUZBVXEA1Ozgktr06wgiyS0LAReL6XAWIXmGJV8e3sEPYUhIv+9ug7GyJ
-	4xdnsUHYFRLdrR+h4vYSOx/dZAEZwyygKbF+lz7EKj6J3t9PmCCm80p0tAlBVKtKNL+7ygJh
-	S0tM7O5mhbA9JA682cg0gVFxFpLHZiF5bBaSB2YhLFvAyLKKUTK1oDg3PbXYtMAwL7UcHuHJ
-	+bmbGMEpWMtzB+PdBx/0DjEycTAeYpTgYFYS4Z1/oztNiDclsbIqtSg/vqg0J7X4EKMpMLQn
-	MkuJJucDs0BeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1MMoJ1
-	L8T39snrHatrYWm9fDzLrWbbah3bJa6rvrIt1PrfxbIztG3mezVvbg3GMi6doKCHHy9G+lRn
-	XS1e+U/xqUQ7f7L9nQ7Ha6v/tj5u3OA72eO+xF+H4qsBCxZdmnl8pUSYPY8X7/sLHUfKZEJ3
-	7plSyr/0WpqWH6vyrrVf9FSDH3Ff+Dyv9otqsqzS/fzsV9NbNd9wH1t5pK5d47FaibibuMAC
-	pvwtxZOFFsSsnLVMoG5Z36kp7O6iGe/fH7zfYB/uf7lnocIsgxevb/77XXRJjmV/z5o31vfj
-	GdUP2S4y3XJ938VFptEvRKXvPds/ccPCKws+sPfuUS1Z9nlXOR/bfs6jMhoG7oU7nmm8UGIp
-	zkg01GIuKk4EAEObiUNKBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCSnK7X5940gye/NS3W7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV0bvhLNsBRPE
-	Kn4d/MvcwHhcqIuRk0NCwETi9oTJLF2MXBxCAtsZJW78PskKkZCWuL5xAjuELSyx8t9zdoii
-	Z4wSO4+eZAZJsAnoSuxY3MYGYosIPGGSuPShHKSIWWATo8S53TfZIDoWMklc2fEarINTwEqi
-	/U0zkM3BISzgLfG+NQckzCKgKjH/yxewEl4BS4mVd66yQ9iCEidnPmEBsZkFtCWe3nwKZy9b
-	CDFSQkBB4ufTZawQR/hJTD1+EapGXOLl0SPsExiFZyEZNQvJqFlIRs1C0rKAkWUVo2hqQXFu
-	em5ygaFecWJucWleul5yfu4mRnAEagXtYFy2/q/eIUYmDsZDjBIczEoivPNvdKcJ8aYkVlal
-	FuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MK2rn7WJOYXBMzlnFvOB
-	jKJZz3KuR/or17Bu1Lwrojx/7R8J6SmRs3z6jW/xtKf/E13o98blupZNe+KfG8m5PQL/3hQH
-	mwRNVD17cS9v4R7frM89qV2GpbNnnOjxyI+9Gzt5SShb9PMvd1V9Wqwj9rb2sBY+P+X4S3dL
-	tqQKo/SaqJhLf1zvOeaqlQnffqXufsxpRd1txQ1/hC+/2J56KuTHslKva7tz/ou1ts6+f8fm
-	IuuGeXzpLf3stv0V1g0zn1UmmUc/3crv8bHSZ7umVcb8poif3goLRX53hrHJP2FyndrgJSIy
-	9fOapWd4pjq2TBeafq5y+corXKYZAZqaMsekeD79/GwQ927vAnFLJZbijERDLeai4kQAKJFF
-	ni8DAAA=
-X-CMS-MailID: 20240710023450epcas5p144d272af968fa2897bd7a87f0e9d7b7a
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmpu52xb40g+O7JCy2vNrMYvHy51U2
+	i2kffjJbrN3zh9ni1bxvLBYzzu9jsui+voPNYvnxf0wWG2b8Y7FY9ek/owOXx+Ur3h4LNpV6
+	bFrVyeZx59oeNo+PT2+xeHzeJOfRfqCbKYA9KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTM
+	wFDX0NLCXEkhLzE31VbJxSdA1y0zB+g6JYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpB
+	Sk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2xsX2CawFbXoVH1qaWBoY9+p0MXJySAiYSDz8
+	dpkZxBYS2M0osbSJpYuRC8j+xCix8/o3KOcbo8SZS2sZYTqeTnjCDtGxl1Fi3YNqiKIXjBIb
+	135jAkmwCehK7FjcxgZiiwhEScw4f4QZpIhZ4AmTxLql21hAEpxAk15fvswKYgsLxEq8W7YI
+	bAOLgKrE6qVzgQZxcPAKWEosbPUFCfMKCEqcnPkErJVZQE/ixtQpbBC2tsSyha+ZIY5TkPj5
+	dBkrxN4wifYbu6DqxSVeHj3CDnKDhMAeDomN908yQTS4SKxu3s0GYQtLvDq+hR3ClpJ42d8G
+	ZWdLHL84C6qmQqK79SNU3F5i56ObUAv4JHp/PwG7WUKAV6KjTQiiRFWi+d1VFghbWmJidzcr
+	hO0hMf//JbYJjIqzkLw2C8lrs5C8NgvJCwsYWVYxSqYWFOempxabFhjnpZbDIzw5P3cTIzjx
+	annvYHz04IPeIUYmDsZDjBIczEoivPNvdKcJ8aYkVlalFuXHF5XmpBYfYjQFhvdEZinR5Hxg
+	6s8riTc0sTQwMTMzM7E0NjNUEud93To3RUggPbEkNTs1tSC1CKaPiYNTqoHJd1qEubv9GoPz
+	P/747e64vD9xokahFPft9RqB+dr1z86ZvOg0OL9Cbel1/59sl3W+WJ5R/nzojOntaYGzRUI9
+	k7Jl+VatLYgXuxdUMDnha8HsNbMCta3LXBdo/Q5aZ7rCcUF4gee+G9Fzivqqr8+9u67r8Nz5
+	z9yMbuufKhdax376oxmXS4/bd2U+hgXTFt4QlHv4fWHoJFcfjwz7uxO2X3tvqLevLf9KZSeL
+	BvvBSa/WLMi0Xp2dq5Uan1Fx6El3A+f5sLV5NjXNZ/8J7jpdV2HAe/6N4QOdn8Xsp9O26WSf
+	Vj94f2Vl/UMXX9uaH7k2PqeMtE1eP5z84VHNc/boayrskxTWiMjIux7LPdusxFKckWioxVxU
+	nAgAfOChGEUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSnO52xb40g6lHWSy2vNrMYvHy51U2
+	i2kffjJbrN3zh9ni1bxvLBYzzu9jsui+voPNYvnxf0wWG2b8Y7FY9ek/owOXx+Ur3h4LNpV6
+	bFrVyeZx59oeNo+PT2+xeHzeJOfRfqCbKYA9issmJTUnsyy1SN8ugSvj+nuWgt0KFbO2xjQw
+	vpPsYuTkkBAwkXg64Ql7FyMXh5DAbkaJC3OmMUIkpCWub5zADmELS6z89xyq6BmjxO5fy5hA
+	EmwCuhI7FrexgdgiAlESu79tACtiFnjFJNHzew1Ux3kmif47D5hBqjiB9r2+fJkVxBYWiJb4
+	dHECWDeLgKrE6qVzgaZycPAKWEosbPUFCfMKCEqcnPmEBcRmFjCQuH+ogxXC1pZYtvA1M8R1
+	ChI/ny5jhTgiTKL9xi6oenGJl0ePsE9gFJ6FZNQsJKNmIRk1C0nLAkaWVYySqQXFuem5xYYF
+	Rnmp5XrFibnFpXnpesn5uZsYwbGnpbWDcc+qD3qHGJk4GA8xSnAwK4nwzr/RnSbEm5JYWZVa
+	lB9fVJqTWnyIUZqDRUmc99vr3hQhgfTEktTs1NSC1CKYLBMHp1QDU+zMs/+v37n4oypyw+zP
+	nNnv1+YvyH0le69Ilmfj1MSJ/p/EC/5Ienm7Rq70cO7WWbxh0VKxTLkLyY+uPfSoD9K9t3Ny
+	zGLfSxMuz9jr7TAhrPtq15pQgXCe89vZbyXViaxJ4zr8o/v7zunRtyPfZslLyaZ9DDvVVpK+
+	S8FUa6HGygoR+4VMZ3WsTOyOdz958/Fw18GX168qtF6v2NY/s/+pkeSxX01TxMtjnMX9a7v3
+	vC9+IddwdMHfWwcOuXAfkpysYf5yWu7rDZcMbrC51/bwWHJwrj28mzvrcOGH/6+s5i7ZazNd
+	bPdefq+mJknzFBGmztm3fjIcXvDaeuWaijWLaoyMz60MFGiK3uMgVazEUpyRaKjFXFScCADD
+	+ZJFLAMAAA==
+X-CMS-MailID: 20240710055255epcas5p4f29d8f70ff4b75534f55fc770ae9bc96
 X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240707231445epcas2p18815fee7d176f63619d244d836ab64fc
-References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
-	<CGME20240707231445epcas2p18815fee7d176f63619d244d836ab64fc@epcas2p1.samsung.com>
-	<20240707231331.3433340-4-sunyeal.hong@samsung.com>
-	<000601dad12e$19ff3f30$4dfdbd90$@samsung.com>
-	<000201dad26f$b18c3690$14a4a3b0$@samsung.com>
+X-CMS-RootMailID: 20240708234916epcas5p1c94255e4c8c77e2929d62144e2277fc8
+References: <20240702072510.248272-1-ebiggers@kernel.org>
+	<20240702072510.248272-7-ebiggers@kernel.org>
+	<CADrjBPoWVq-eu4Wa6_hrkk067tnZGC82UCJDyjSRGoG254w6vg@mail.gmail.com>
+	<20240708202630.GA47857@sol.localdomain>
+	<CGME20240708234916epcas5p1c94255e4c8c77e2929d62144e2277fc8@epcas5p1.samsung.com>
+	<20240708234911.GA1730@sol.localdomain>
 
-Hello Sunyeal,
+Hello Eric,
 
 > -----Original Message-----
-> From: sunyeal.hong <sunyeal.hong=40samsung.com>
-> Sent: Wednesday, July 10, 2024 7:50 AM
-> To: 'Alim Akhtar' <alim.akhtar=40samsung.com>; 'Krzysztof Kozlowski'
-> <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
-> <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
-> Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: RE: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for pl=
-l_531x
->=20
-> Hello Alim,
->=20
-> > -----Original Message-----
-> > From: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Sent: Monday, July 8, 2024 8:58 PM
-> > To: 'Sunyeal Hong' <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
-> > <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> > 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
-> > <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
-> > Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
-> > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > linux- kernel=40vger.kernel.org
-> > Subject: RE: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for
-> > pll_531x
-> >
-> > Hello Sunyeal,
-> >
-> > > -----Original Message-----
-> > > From: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> > > Sent: Monday, July 8, 2024 4:44 AM
-> > > To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
-> > > <s.nawrocki=40samsung.com>; Chanwoo Choi
-> <cw00.choi=40samsung.com>; Alim
-> > > Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
-> > > <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob
-> > > Herring <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
-> > > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > > linux- kernel=40vger.kernel.org; Sunyeal Hong
-> > > <sunyeal.hong=40samsung.com>
-> > > Subject: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for
-> > > pll_531x
-> > >
-> > > pll531x PLL is used in Exynos Auto v920 SoC for shared pll.
-> > > pll531x: Integer/fractional PLL with mid frequency FVCO (800 to 3120
-> > > MHz)
-> > >
-> > > PLL531x
-> > > FOUT =3D (MDIV + F/2=5E32-F=5B31=5D) * FIN/(PDIV x 2=5ESDIV)
-> > >
-> > Any reason for not mentioning equation for integer PLL?
-> >
-> If the F value is 0, it operates as an integer PLL.
-Thanks for clarification, it is good to mention the same in the commit mess=
-age.=20
-
-=5Bsnip=5D
-> > > --
-> > > 2.45.2
-> >
->=20
-
-
+> From: Eric Biggers <ebiggers=40kernel.org>
+> Sent: Tuesday, July 9, 2024 5:19 AM
+> To: Peter Griffin <peter.griffin=40linaro.org>
+> Cc: linux-scsi=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org; li=
+nux-
+> fscrypt=40vger.kernel.org; Alim Akhtar <alim.akhtar=40samsung.com>; Avri
+> Altman <avri.altman=40wdc.com>; Bart Van Assche <bvanassche=40acm.org>;
+> Martin K . Petersen <martin.petersen=40oracle.com>; Andr=E9=20Draszik=0D=
+=0A>=20<andre.draszik=40linaro.org>;=20William=20McVicker=20<willmcvicker=
+=40google.com>=0D=0A>=20Subject:=20Re:=20=5BPATCH=20v2=206/6=5D=20scsi:=20u=
+fs:=20exynos:=20Add=20support=20for=20Flash=0D=0AMemory=0D=0A>=20Protector=
+=20(FMP)=0D=0A>=20=0D=0A>=20On=20Mon,=20Jul=2008,=202024=20at=2001:26:30PM=
+=20-0700,=20Eric=20Biggers=20wrote:=0D=0A>=20>=20Hi=20Peter,=0D=0A>=20>=0D=
+=0A>=20>=20On=20Thu,=20Jul=2004,=202024=20at=2002:26:05PM=20+0100,=20Peter=
+=20Griffin=20wrote:=0D=0A>=20>=20>=20Do=20you=20know=20how=20these=20FMP=20=
+registers=20(FMPSECURITY0=20etc)=20relate=20to=20the=0D=0A>=20>=20>=20UFSPR=
+*=20registers=20set=20in=20the=20existing=20exynos_ufs_config_smu()?=20The=
+=0D=0A>=20>=20>=20UFS_LINK=20spec=20talks=20about=20UFSPR(FMP),=20so=20I=20=
+had=20assumed=20the=20FMP=0D=0A>=20>=20>=20support=20would=20be=20writing=
+=20these=20same=20registers=20but=20via=20SMC=20call.=0D=0A>=20>=20>=0D=0A>=
+=20>=20>=20I=20think=20by=20the=20looks=20of=20things=0D=0A>=20>=20>=0D=0A>=
+=20>=20>=20=23define=20UFSPRSECURITY=200x010=0D=0A>=20>=20>=20=23define=20U=
+FSPSBEGIN0=200x200=0D=0A>=20>=20>=20=23define=20UFSPSEND0=200x204=0D=0A>=20=
+>=20>=20=23define=20UFSPSLUN0=200x208=0D=0A>=20>=20>=20=23define=20UFSPSCTR=
+L0=200x20C=0D=0A>=20>=20>=0D=0A>=20>=20>=20relates=20to=20the=20following=
+=20registers=20in=20gs101=20spec=0D=0A>=20>=20>=0D=0A>=20>=20>=20FMPSECURIT=
+Y0=200x0010=0D=0A>=20>=20>=20FMPSBEGIN0=200x2000=0D=0A>=20>=20>=20FMPSEND0=
+=200x2004=0D=0A>=20>=20>=20FMPSLUN0=200x2008=0D=0A>=20>=20>=20FMPSCTRL0=200=
+x200C=0D=0A>=20>=20>=0D=0A>=20>=20>=20And=20the=20SMC=20calls=20your=20call=
+ing=20set=20those=20same=20registers=20as=0D=0A>=20>=20>=20exynos_ufs_confi=
+g_smu()=20function.=20Although=20it=20is=20hard=20to=20be=20certain=0D=0A>=
+=20>=20>=20as=20I=20don't=20have=20access=20to=20the=20firmware=20code.=20C=
+ertainly=20the=20comment=0D=0A>=20>=20>=20below=20about=20FMPSECURITY0=20im=
+plies=20that=20:)=0D=0A>=20>=20>=0D=0A>=20>=20>=20With=20that=20in=20mind=
+=20I=20think=20exynos_ufs_fmp_init()=20function=20in=20this=0D=0A>=20>=20>=
+=20patch=20needs=20to=20be=20better=20integrated=20with=20the=0D=0A>=20>=20=
+>=20EXYNOS_UFS_OPT_UFSPR_SECURE=20flag=20and=20the=20existing=0D=0A>=20>=20=
+>=20exynos_ufs_config_smu()=20function=20that=20is=20currently=20just=20dis=
+abling=0D=0A>=20>=20>=20decryption=20on=20platforms=20where=20it=20can=20ac=
+cess=20the=20UFSPR(FMP)=20regs=20via=0D=0A>=20mmio.=0D=0A>=20>=0D=0A>=20>=
+=20I=20think=20that=20is=20all=20correct.=20=20For=20some=20reason,=20on=20=
+gs101=20the=20FMP=0D=0A>=20>=20registers=20are=20not=20accessible=20by=20th=
+e=20=22normal=20world=22,=20and=20SMC=20calls=20need=0D=0Ato=0D=0A>=20be=20=
+used=20instead.=0D=0A>=20>=20The=20sequences=20of=20SMC=20calls=20originate=
+d=20from=20Samsung's=20Linux=20driver=20code=0D=0A>=20for=20FMP.=0D=0A>=20>=
+=20So=20I=20know=20they=20are=20the=20magic=20incantations=20that=20are=20n=
+eeded,=20but=20I=20don't=0D=0A>=20>=20have=20access=20to=20the=20source=20c=
+ode=20or=20documentation=20for=20them.=20=20It=20does=0D=0A>=20>=20seem=20c=
+lear=20that=20one=20of=20the=20things=20they=20must=20do=20is=20write=20the=
+=20needed=0D=0Avalues=0D=0A>=20to=20the=20FMP=20registers.=0D=0A>=20>=0D=0A=
+>=20>=20I'd=20hope=20that=20these=20same=20SMC=20calls=20also=20work=20on=
+=20Exynos-based=20SoCs=20that=0D=0A>=20>=20do=20make=20the=20FMP=20register=
+s=20accessible=20to=20the=20=22normal=20world=22,=20and=0D=0A>=20>=20theref=
+ore=20they=20can=20just=20be=20used=20on=20all=20Exynos-based=20SoCs=20and=
+=0D=0A>=20>=20ufs-exynos=20won't=20need=20two=20different=20code=20paths.=
+=20=20But=20I=20don't=20have=20a=0D=0A>=20>=20way=20to=20confirm=20this=20m=
+yself.=20=20Until=20someone=20is=20able=20to=20confirm=20this,=20I=0D=0A>=
+=20>=20think=20we=20need=20to=20make=20the=20FMP=20support=20depend=20on=0D=
+=0A>=20>=20EXYNOS_UFS_OPT_UFSPR_SECURE=20so=20that=20it=20doesn't=20conflic=
+t=20with=0D=0A>=20>=20exynos_ufs_config_smu()=20which=20runs=20when=0D=0A>=
+=20=21EXYNOS_UFS_OPT_UFSPR_SECURE.=0D=0A>=20>=0D=0A>=20=0D=0A>=20These=20sa=
+me=20SMC=20calls=20can=20be=20found=20in=20the=20downstream=20source=20for=
+=20other=0D=0A>=20Exynos-based=20SoCs.=20=20I=20suspect=20that=20exynos_ufs=
+_config_smu()=20should=20be=0D=0A>=20removed,=20and=20exynos_ufs_fmp_init()=
+=20should=20run=20regardless=20of=0D=0A>=20EXYNOS_UFS_OPT_UFSPR_SECURE.=0D=
+=0A>=20It=20still=20would=20need=20to=20be=20tested,=20though,=20which=20I'=
+m=20not=20able=20to=20do.=20=20(And=0D=0A>=20especially=20as=20a=20cryptogr=
+aphy=20feature,=20this=20*must*=20be=20tested...)=20=20So=20for=0D=0Anow=20=
+I'm=0D=0A>=20going=20to=20make=20the=20FMP=20support=20conditional=20on=0D=
+=0A>=20EXYNOS_UFS_OPT_UFSPR_SECURE.=0D=0A>=20=0D=0ASMU=20controls=20the=20s=
+ecurity=20access=20aspect=20of=20the=20FMP,=20one=20can=20have=20a=20usecas=
+e=0D=0Awhere=20one=20wants=20to=20enable=20inline=20encryption=20using=20FM=
+P=20in=20a=20non-secure=0D=0Amode/world=20after=20a=20secure=20boot=20of=20=
+the=20system=0D=0Aand=20in=20another=20case,=20configure=20FMP=20in=20secur=
+e=20mode/world=20during=20secure=20boot.=0D=0AI=20am=20not=20sure=20how=20i=
+t=20is=20designed=20in=20gs101=20though.=0D=0ACurrently,=20exynos_ufs_confi=
+g_smu()=20just=20allows=20SMU=20registers=20modification=20by=0D=0Anon-secu=
+re=20world.=0D=0A=0D=0A>=20-=20Eric=0D=0A=0D=0A
