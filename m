@@ -1,175 +1,138 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022398120F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 06:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CACB1EEF8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 06:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592545; cv=none; b=Lk9GUOxSf7JsagPS0r/6WBMv9sSVoQQJrR1Y0QD8KF61tTtEVfhGRe5z0YvdG0pSqcoRk2GcqXYMXVX5VmAbT9P2gs7GOtyR4+sZVykgK4yoYnxu468e6YFa3DKCKptbPRUcHJbiZLhDtoCxVqdzEjMp4j7WvH6gNuO3oD8+JM4=
+	t=1720593920; cv=none; b=sXbJ/BkpCiwjIOZ7dl6AvOnugLiM0p3nv6nGH/fbH56fupaqZHwAJyeqWUHfTQJPxC9+AzaNv3RElOoL4NFDIzr7HUpDzwoYgptdCsaBa/MHvSVmx2R12/kmCXUz5GZOAFnCVPWHBPtjAba0VPQoeHjcam7Dxoy+EMyqEgj7+uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592545; c=relaxed/simple;
-	bh=vVwtCG1Wk5vw++EUY18cgyQ+iamwAosBKbNCTQvHoNE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=IdQYkRA0FA0Rbh5dYioNJD1J+2Gxa8xTeLOg0ZmKwSe84aPgdrAfkIVMlt++YeUvTlhC2MoDnWeqPVf0BIJ9RYmjGYJiy5dvBdHsfLnaVeoosNc/I5uMxtuL8kypkw5owCl/uhK2coQ9Ix1fpci+Awf14/pnYQv5haNrlMiueSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XHlanHHX; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1720593920; c=relaxed/simple;
+	bh=b3Wexf/9lut/LUtyb3GEMQrMT5qsMZ/VXrXaUdAmjts=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TPUfZIpSO+VOTQ4DlCSk1mazWjehyPEE3xpm9HOLWGsd/UAedREzRJ+RKl8cGKwLb0HGSVZdRKbqx74s0oZHxIt6wHMkQ2HDtKbucWSA471WyKP+qtPGP7SLP5LKOPEO7oyCOtkydWr0wSsqtswIPNmsX8PuxZqLuJKAyzi/l2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CRVpibdL; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XHlanHHX"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240710062220epoutp043aaafff985c266876e9b01be0f22f83d~gxcy-F3fs2749027490epoutp04c
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2024 06:22:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240710062220epoutp043aaafff985c266876e9b01be0f22f83d~gxcy-F3fs2749027490epoutp04c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720592540;
-	bh=vVwtCG1Wk5vw++EUY18cgyQ+iamwAosBKbNCTQvHoNE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=XHlanHHXQcrP6/Si0j2ipmX63tpNUBbAv283MGTjFFCdr1QuiNrqOD3RU1jlXJSA3
-	 rYO/TF2Q/yPmn5Mus3fW4fi2hv6fpcFvIyg8j8HkfydhRoJNBWKTikCqsnKhxnv3We
-	 Oa+sfDU4AQru7saQO36p+lbOG6LyJwI2nnfOGVgk=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240710062220epcas5p42a9c1687f7f66623b28cf41c8312395d~gxcyT8JL11011510115epcas5p4e;
-	Wed, 10 Jul 2024 06:22:20 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WJnp15cxxz4x9Q6; Wed, 10 Jul
-	2024 06:22:17 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C6.F2.19174.9982E866; Wed, 10 Jul 2024 15:22:17 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240710062217epcas5p39061375551ea8f73d659d823c1dbef55~gxcvx2xv80685906859epcas5p3S;
-	Wed, 10 Jul 2024 06:22:17 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240710062217epsmtrp27eba2bf6b9986ba6f57369b47a1b7b22~gxcvxEN8P1386113861epsmtrp2V;
-	Wed, 10 Jul 2024 06:22:17 +0000 (GMT)
-X-AuditID: b6c32a50-87fff70000004ae6-68-668e2899aa98
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	27.63.19057.9982E866; Wed, 10 Jul 2024 15:22:17 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240710062215epsmtip1144ec5f39739cf3a42179766e39eb1d4~gxcuPOHQY0230202302epsmtip1W;
-	Wed, 10 Jul 2024 06:22:15 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Eric Biggers'" <ebiggers@kernel.org>, <linux-scsi@vger.kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-	"'Avri Altman'" <avri.altman@wdc.com>, "'Bart	Van Assche'"
-	<bvanassche@acm.org>, "'Martin K . Petersen'" <martin.petersen@oracle.com>,
-	"'Peter Griffin'" <peter.griffin@linaro.org>,
-	=?utf-8?Q?'Andr=C3=A9_Draszik'?= <andre.draszik@linaro.org>, "'William
- McVicker'" <willmcvicker@google.com>
-In-Reply-To: <20240708235330.103590-3-ebiggers@kernel.org>
-Subject: RE: [PATCH v3 2/6] scsi: ufs: core: fold ufshcd_clear_keyslot()
- into its caller
-Date: Wed, 10 Jul 2024 11:52:14 +0530
-Message-ID: <018001dad291$82e2e650$88a8b2f0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CRVpibdL"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a77bf336171so89718866b.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jul 2024 23:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720593917; x=1721198717; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aZECrEA5tQWlK6pbaSqNy3VIVWi6gzN6CRcwSGtkk8=;
+        b=CRVpibdLDvDZbERDK+5NllLdwSsccseZ6HMUn6OjoEV0jKMdaKuzoPqZU4b680tOmx
+         K5eZu61aJa7hxLtE1lcYwV0PxdhaNgKAQ0/bXs0tBzqhRs+PuOC0yvXoRu3MUiHEMx6I
+         84k7UV7fzdA7NWvz2lRSDQWeAfn+5S4kfv32ZUoy3tgbIczBa3GsskYNVYuLkrH/8Wst
+         2pmOF3Eh8vraztUEe1svNlbMb8jHQPS1188RA7nIgsdq8JYOymhsiUq6EifAyFwKFOKv
+         XWkanaSDpMkJDUaWrNKQGXOCYjMZqDAxNIgUVbsfCxzSm2kDw6r2xjBsviQcvdHUEItb
+         OUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720593917; x=1721198717;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7aZECrEA5tQWlK6pbaSqNy3VIVWi6gzN6CRcwSGtkk8=;
+        b=vKuiRaEYuul5AzxO/vKUW2531HHHkzVNO4Mbk/U2Z4in5X0SDrNQjjPnCUDrKqU5AR
+         kz8rJkGZM4ary/Ayof6yXbRLku37i0R3+OUZ1M/EfXRLoJ56YfwSssQ5pOPWRgztStys
+         idaboRw9zmfCej/HCh4aIaqtchQsaiUsSIEBy/9O9TWFa5IjjX/iy7QLXYSYvCquj5Jl
+         o04ILH32kUBHyKHj5cXsAjRYGD6bhZ1zRPwYAcGEpGL2J5BRXNAdQCdTc/Yu//YIDBJt
+         9IDXc5iLtz/mIJye0JDaqO3GEU9+6NJoxwa4djSKWTIo6lQv7kfTbh/VY+nzTOYB3Bww
+         tY3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ/HzrSSshQauWI8eynbillmJ6Doo2+TVkEKjOlRejOuuBRjsf3xhv26wHwLBHfb7eH7FLvEw5B9Wb9gB8+A38/jnObemTjb41Nj3TkKkqADk=
+X-Gm-Message-State: AOJu0Yyuv+2PBddyrw3+YYvNX4k0Kd27OSNPlP+cUgCk1r95mT6Bik5K
+	bpbCbxQWCGPz0JiQCFm/ckWsl6vsLQYStfaKLV79OgDf1G7lHxIu0tMX9WnrXak=
+X-Google-Smtp-Source: AGHT+IHw00t1Zg30xrx1hACKh7awa0kbStIosk2q3dxs2TJLXa5CTmZFvqt9t2YMS5YHAWLuzCeAww==
+X-Received: by 2002:a17:907:60d2:b0:a6f:e0f0:d669 with SMTP id a640c23a62f3a-a780d218c40mr341081266b.12.1720593916943;
+        Tue, 09 Jul 2024 23:45:16 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f620sm132214766b.209.2024.07.09.23.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 23:45:16 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 10 Jul 2024 07:45:07 +0100
+Subject: [PATCH] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to
+ FIELD_PREP()
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHC4eaVKc/l097EGvITZfSx67wqzAJOHFqtAZR24KyyAEqBcA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmuu5Mjb40g0m9GhZbXm1msXj58yqb
-	xbQPP5kt1u75w2zxat43FosZ5/cxWXRf38Fmsfz4PyaLDTP+sVis+vSf0YHL4/IVb48Fm0o9
-	Nq3qZPO4c20Pm8fHp7dYPD5vkvNoP9DNFMAelW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pm
-	YKhraGlhrqSQl5ibaqvk4hOg65aZA3SdkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUg
-	JafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE74+esl2wF86QrJk87ytrAOFWqi5GTQ0LARGLB
-	21mMXYxcHEICexgl7m39zALhfGKUeHF7JyuE841R4unMLnaYlr+NV9kgEnsZJQ7cfswEkhAS
-	eMEosflBLIjNJqArsWNxGxuILSLgIXG+/yJYM7PAFyaJdy/Uuxg5ODgFrCR2tYqBhIUFoiTm
-	vNsLVsIioCpxZMFLFpASXgFLiQUzbUHCvAKCEidnPmGBmKItsWzha2aIcxQkfj5dxgqxyUni
-	8O5uRogacYmXR4+wg5wpIbCHQ6J93Wo2kJkSAi4S319lQvQKS7w6vgXqLSmJz+/2skHY2RLH
-	L86Csiskuls/QtXYS+x8dBPsNGYBTYn1u/QhVvFJ9P5+wgQxnVeio00IolpVovndVRYIW1pi
-	Ync3K4TtIdHf3sY2gVFxFpLHZiF5bBaSB2YhLFvAyLKKUSq1oDg3PTXZtMBQNy+1HB7byfm5
-	mxjBKVcrYAfj6g1/9Q4xMnEwHmKU4GBWEuGdf6M7TYg3JbGyKrUoP76oNCe1+BCjKTC0JzJL
-	iSbnA5N+Xkm8oYmlgYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTLoN7mGB
-	WX72swob2VZ5pd+aJn9+V37ljPOVDtO8hS7zKfLY1C1rmvxqltaz6rW2ETvW5Dt/PPJ/Y7xw
-	XuOjIr5jEza9czUW+P3mwrb9Ule33cs2c1bn6l7DqbC55bTkypgDrL9SPTNNT3x74mO+ZUH4
-	A3c3q3MFb3bY5rCyNV1z6Dl3pPneee1ntsGTdCZMEBdj/ntS9ujx/vb55RqbnINlw8Rav3m6
-	/VR2NnzD+E3hw5wtASHs5/c4RBicvRefLTf9m4JLTei1xviqo7HWvbmBidP3nG/9/WnFhh5W
-	M76Z5woWJ7dcygrid516YxeLqaD/vHVReT/vrJx9YWrprXlLNl2L0drIxRj9N/WfhBJLcUai
-	oRZzUXEiAFj7pJFCBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnO5Mjb40g33XeS22vNrMYvHy51U2
-	i2kffjJbrN3zh9ni1bxvLBYzzu9jsui+voPNYvnxf0wWG2b8Y7FY9ek/owOXx+Ur3h4LNpV6
-	bFrVyeZx59oeNo+PT2+xeHzeJOfRfqCbKYA9issmJTUnsyy1SN8ugStjzaGSgqfCFad/bmZs
-	YJwr0MXIySEhYCLxt/EqWxcjF4eQwG5GiS0ne5kgEtIS1zdOYIewhSVW/nsOZgsJPGOU2Lqp
-	BsRmE9CV2LG4jQ3EFhHwkuhqncQCMohZ4AeTxN+VRxkhpu5klLj0+zNQFQcHp4CVxK5WMZAG
-	YYEIiXMvboMNZRFQlTiy4CULSAmvgKXEgpm2IGFeAUGJkzOfsIDYzALaEk9vPoWzly18zQxx
-	m4LEz6fLWCFucJI4vLubEaJGXOLl0SPsExiFZyEZNQvJqFlIRs1C0rKAkWUVo2RqQXFuem6x
-	YYFRXmq5XnFibnFpXrpecn7uJkZw5Glp7WDcs+qD3iFGJg7GQ4wSHMxKIrzzb3SnCfGmJFZW
-	pRblxxeV5qQWH2KU5mBREuf99ro3RUggPbEkNTs1tSC1CCbLxMEp1cBU+ybH5/2lFRfjo2/M
-	b22PlqzrF9BzMU1QWDcx44u8wJMP3OdupEzsnXf3qvkip92fmB95LXcJbU841i+x7ZiQw8/3
-	4S4sWQ5P+PZ0Cpx+G3ZZdsITo6jpa9Qspxvtme79p+lTuuxftZkRGSdZMmInR7ff8WxqWP77
-	c2DzmnuPXXbVxDtGXj/c1c3Vdreh7E+1urDGK4n805H7JKcuuG9gp8UQdH9W9dRN5Us2Bgaf
-	tGZY/2qO5utZ0gEBd05zcO40Dwt1mvI7VWffzS9Pd23rcnmdLGKkuj5GQO7Thkt7dopc/+lw
-	q4FPc87GiyLqOfKGF3+sYFuyY7NN2VTJtV1GUSu+ckje0uS7en+Tg/8BJZbijERDLeai4kQA
-	X2fh4CsDAAA=
-X-CMS-MailID: 20240710062217epcas5p39061375551ea8f73d659d823c1dbef55
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240708235538epcas5p22007c4a0ff63569c6f08d5a3f476685e
-References: <20240708235330.103590-1-ebiggers@kernel.org>
-	<CGME20240708235538epcas5p22007c4a0ff63569c6f08d5a3f476685e@epcas5p2.samsung.com>
-	<20240708235330.103590-3-ebiggers@kernel.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAPItjmYC/x2MWwqAIBAArxL73YLay7pK9FG55UKYKEQh3T3pc
+ wZmEkQKTBGGIkGgiyOfLoMsC1jt7HZCNplBCVWLTgr09sGN6TDoA3lcqO21MpVWsoEcZbnx/Q/
+ H6X0/orbl02AAAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
+Use of FIELD_PREP_CONST() was a thinko - it's meant to be used for
+(constant) initialisers, not constant values.
 
+Use FIELD_PREP() where possible. It has better error checking and is
+therefore the preferred macro to use in those cases.
 
-> -----Original Message-----
-> From: Eric Biggers <ebiggers=40kernel.org>
-> Sent: Tuesday, July 9, 2024 5:23 AM
-> To: linux-scsi=40vger.kernel.org
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-fscrypt=40vger.kernel.org;=
- Alim
-> Akhtar <alim.akhtar=40samsung.com>; Avri Altman <avri.altman=40wdc.com>;
-> Bart Van Assche <bvanassche=40acm.org>; Martin K . Petersen
-> <martin.petersen=40oracle.com>; Peter Griffin <peter.griffin=40linaro.org=
->;
-> Andr=C3=A9=20Draszik=20<andre.draszik=40linaro.org>;=20William=20McVicker=
-=0D=0A>=20<willmcvicker=40google.com>=0D=0A>=20Subject:=20=5BPATCH=20v3=202=
-/6=5D=20scsi:=20ufs:=20core:=20fold=20ufshcd_clear_keyslot()=20into=20its=
-=0D=0A>=20caller=0D=0A>=20=0D=0A>=20From:=20Eric=20Biggers=20<ebiggers=40go=
-ogle.com>=0D=0A>=20=0D=0A>=20Fold=20ufshcd_clear_keyslot()=20into=20its=20o=
-nly=20remaining=20caller.=0D=0A>=20=0D=0A>=20Reviewed-by:=20Bart=20Van=20As=
-sche=20<bvanassche=40acm.org>=0D=0A>=20Reviewed-by:=20Peter=20Griffin=20<pe=
-ter.griffin=40linaro.org>=0D=0A>=20Signed-off-by:=20Eric=20Biggers=20<ebigg=
-ers=40google.com>=0D=0A>=20---=0D=0AReviewed-by:=20Alim=20Akhtar=20<alim.ak=
-htar=40samsung.com>=0D=0A=0D=0A>=20=20drivers/ufs/core/ufshcd-crypto.c=20=
-=7C=2016=20+++++-----------=0D=0A>=20=201=20file=20changed,=205=20insertion=
-s(+),=2011=20deletions(-)=0D=0A>=20=0D=0A>=20diff=20--git=20a/drivers/ufs/c=
-ore/ufshcd-crypto.c=20b/drivers/ufs/core/ufshcd-=0D=0A>=20crypto.c=0D=0A>=
-=20index=20debc925ae439..b4980fd91cee=20100644=0D=0A>=20---=20a/drivers/ufs=
-/core/ufshcd-crypto.c=0D=0A>=20+++=20b/drivers/ufs/core/ufshcd-crypto.c=0D=
-=0A>=20=40=40=20-93,31=20+93,25=20=40=40=20static=20int=20ufshcd_crypto_key=
-slot_program(struct=0D=0A>=20blk_crypto_profile=20*profile,=0D=0A>=20=0D=0A=
->=20=20=09memzero_explicit(&cfg,=20sizeof(cfg));=0D=0A>=20=20=09return=20er=
-r;=0D=0A>=20=20=7D=0D=0A>=20=0D=0A>=20-static=20int=20ufshcd_clear_keyslot(=
-struct=20ufs_hba=20*hba,=20int=20slot)=0D=0A>=20+static=20int=20ufshcd_cryp=
-to_keyslot_evict(struct=20blk_crypto_profile=20*profile,=0D=0A>=20+=09=09=
-=09=09=20=20=20=20=20=20=20const=20struct=20blk_crypto_key=20*key,=0D=0A>=
-=20+=09=09=09=09=20=20=20=20=20=20=20unsigned=20int=20slot)=0D=0A>=20=20=7B=
-=0D=0A>=20+=09struct=20ufs_hba=20*hba=20=3D=0D=0A>=20+=09=09container_of(pr=
-ofile,=20struct=20ufs_hba,=20crypto_profile);=0D=0A>=20=20=09/*=0D=0A>=20=
-=20=09=20*=20Clear=20the=20crypto=20cfg=20on=20the=20device.=20Clearing=20C=
-FGE=0D=0A>=20=20=09=20*=20might=20not=20be=20sufficient,=20so=20just=20clea=
-r=20the=20entire=20cfg.=0D=0A>=20=20=09=20*/=0D=0A>=20=20=09union=20ufs_cry=
-pto_cfg_entry=20cfg=20=3D=20=7B=7D;=0D=0A>=20=0D=0A>=20=20=09return=20ufshc=
-d_program_key(hba,=20&cfg,=20slot);=20=20=7D=0D=0A>=20=0D=0A>=20-static=20i=
-nt=20ufshcd_crypto_keyslot_evict(struct=20blk_crypto_profile=20*profile,=0D=
-=0A>=20-=09=09=09=09=20=20=20=20=20=20=20const=20struct=20blk_crypto_key=20=
-*key,=0D=0A>=20-=09=09=09=09=20=20=20=20=20=20=20unsigned=20int=20slot)=0D=
-=0A>=20-=7B=0D=0A>=20-=09struct=20ufs_hba=20*hba=20=3D=0D=0A>=20-=09=09cont=
-ainer_of(profile,=20struct=20ufs_hba,=20crypto_profile);=0D=0A>=20-=0D=0A>=
-=20-=09return=20ufshcd_clear_keyslot(hba,=20slot);=0D=0A>=20-=7D=0D=0A>=20-=
-=0D=0A>=20=20bool=20ufshcd_crypto_enable(struct=20ufs_hba=20*hba)=20=20=7B=
-=0D=0A>=20=20=09if=20(=21(hba->caps=20&=20UFSHCD_CAP_CRYPTO))=0D=0A>=20=20=
-=09=09return=20false;=0D=0A>=20=0D=0A>=20--=0D=0A>=202.45.2=0D=0A=0D=0A=0D=
-=0A
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index df52b78a120b..0cc5c4249447 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -607,7 +607,7 @@ exynos5_usbdrd_usbdp_g2_v4_ctrl_pma_ready(struct exynos5_usbdrd_phy *phy_drd)
+ 
+ 	reg = readl(regs_base + EXYNOS850_DRD_SECPMACTL);
+ 	reg &= ~SECPMACTL_PMA_REF_FREQ_SEL;
+-	reg |= FIELD_PREP_CONST(SECPMACTL_PMA_REF_FREQ_SEL, 1);
++	reg |= FIELD_PREP(SECPMACTL_PMA_REF_FREQ_SEL, 1);
+ 	/* SFR reset */
+ 	reg |= (SECPMACTL_PMA_LOW_PWR | SECPMACTL_PMA_APB_SW_RST);
+ 	reg &= ~(SECPMACTL_PMA_ROPLL_REF_CLK_SEL |
+@@ -1123,19 +1123,19 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+ 	reg &= ~SSPPLLCTL_FSEL;
+ 	switch (phy_drd->extrefclk) {
+ 	case EXYNOS5_FSEL_50MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 7);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 7);
+ 		break;
+ 	case EXYNOS5_FSEL_26MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 6);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 6);
+ 		break;
+ 	case EXYNOS5_FSEL_24MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 2);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 2);
+ 		break;
+ 	case EXYNOS5_FSEL_20MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 1);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 1);
+ 		break;
+ 	case EXYNOS5_FSEL_19MHZ2:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 0);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 0);
+ 		break;
+ 	default:
+ 		dev_warn(phy_drd->dev, "unsupported ref clk: %#.2x\n",
+
+---
+base-commit: 82d01fe6ee52086035b201cfa1410a3b04384257
+change-id: 20240710-phy-field-prep-be6982d38215
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
