@@ -1,88 +1,121 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3324917BB6;
-	Fri, 12 Jul 2024 05:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E4014D714;
+	Fri, 12 Jul 2024 09:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720761121; cv=none; b=DX+HYIoa9VUREOB/gNiuizlxY28nRaf9zZujifNZuPckJGtrKcFC+/8I3W2R+vpMo2iYND0zaZxiRlAtddTyjaVai88wAoZVQ1GChZtk270B6kxzbbDlSkRDqLHMErk1ZMoZdNg36VlMzkx1fReNqp73LsJe9fWoVN0RE3B3KNw=
+	t=1720777933; cv=none; b=En7l0QXZ/cDmz8EJKXR9/Ha9ym+YQEZ4Uwdeq3bLLKFcmaH5Wqm4TFCXt/35ajBdDQhhw/uOC8jPIoulaLNZXaYrGn5DlkDHL7v9IJRCSvDK1fcwrfKZZn9TO9ylSUYLJcSxoVIoxOec4JZK98snTLpPjXtgL7n20n4qpnZxBRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720761121; c=relaxed/simple;
-	bh=BUfEUvhWXNX4qKdtnJmxmKSGdoO7upq5iS8gxLM1oqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jeE1e9fH4Y1qPn3r9a00mnJoPLC9sAmjCNeTWyxKe1kLnDgtLr9YS70tFhqEwBlPVVMGPPp6hAxS2IRs5ic+buHS8Swc3lEuKxFlwptP97eU/4/6YWZxp1uH0j4O/+kKTBiFPYCUvhOeyHFq6uL9SeMoVsfXdnnAcVWofy71+Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9RadSWB; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720777933; c=relaxed/simple;
+	bh=Fl758Lbh3U7r3qwMeOeC068iOhZAyZs+9551apx3XuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dq2In2wO9AadOdQJAJcvdGEjbD8K/OhuScoWVbWTHbPj6GKKebr2k8OUGC/5KbaTQFs1l/IrmStVwfH/xOovRtGbExXx0ZtR5OVvVoL88e3eLNBrxhN3Y+EV9z2HjJzv+C6E1BJIrDuH9HAOVjV8ZYTvEmT82cqrlYKDkfb95fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfKin0kY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9RadSWB"
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d9dd7e5f6eso869066b6e.2;
-        Thu, 11 Jul 2024 22:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720761119; x=1721365919; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1xdXM1xefvbib+SCCoqACgMJZqpDx6wgZvNzxH3nooc=;
-        b=N9RadSWB1a4twB6QEO4xWNZjQKaOUOFZdkbe99Qd8T8kpNHg6iBgRt7eAeM/ZB6vUv
-         K29xMKr4+7hVdfeKR2FdZu7vX4FSe/mcMqlPPXODngw/ZOQk6sELE3S+aaWQhnMJe9u9
-         dvpWmWF7PXgeTDar0oO8Y/PZuTxqHrSmUHO8g0nGzTrD6yicSqR/XWDzpLNhuy9y2ND2
-         DdMKdEsKthhkJWUWUWP0Xqfs7plH2YG1OAQDut82kaObGifemErgxyfWzAztQCj38/1p
-         w0NTnKUF4P6d/cQ7dteel4mJMEzIuWX3+pkMXFgmife444R32QkCs0KoiNzI2+1ZYYyC
-         XAwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720761119; x=1721365919;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1xdXM1xefvbib+SCCoqACgMJZqpDx6wgZvNzxH3nooc=;
-        b=V/k8DDtKIkEgMslQ2HuXIXd56NLvlAamY0RvnCvTTmIaoyaCXyDC+6QMo0hDQeD0l6
-         8of8FmUMlubdx5IXygNlrsAc0fJW0dUHSFe8R1G64m5D7G6pANk7l96jDeo3bapnkK0x
-         GFl0T4v4DHXLrPUYNlPKMGiW4kt0hPkesu/K6w892vtGR4kHKap077Va2BNTvS5NUJRK
-         rBAh+YEy+CjhSuIALD/CEsfUttGwLEMlgcKOZU5Tc5SWA05hz6ful7ACCXn/hrBe/dL8
-         G6SVWPkkgik0n0yU4q8VKuMCuTAoyGo6e+HmaSkgNpHy9wCJLGHB4J7Q/WOmNFL7ZASA
-         oeZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMUa5ZSOnNN7SlSmCIbix8MJjtrrBDZjkuccSymSvI0mUMAoxG5/G2hIJhSLbWEsgYcf6GuEpXSpEdH/GssOCwG3ZNcKy+NrcyGAOlFqXRfZuNBhy5UJMIBZ4dkPEX/r7DvRg0fiOjihZTntFu9c4=
-X-Gm-Message-State: AOJu0Yz3z25J3Qbu3WUbexnh4ETyIC20q+X/e8s953UHZM5Mmdt4iXn/
-	o6Rcb4ZR/XjPzE1Y5OWlQz3JIRAyekxYXuAbKQLlzP7bXbMqfrUB
-X-Google-Smtp-Source: AGHT+IFWoXaex25DyxV/7If9eCC2vtVHuS0rQ7MKDZI+ZXuVIDcyRW5yjW2niu9hjIIZWdxvG1AI+Q==
-X-Received: by 2002:aca:2b03:0:b0:3da:a032:24b8 with SMTP id 5614622812f47-3daa03231fbmr4471341b6e.19.1720761119024;
-        Thu, 11 Jul 2024 22:11:59 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:acda:de52:5c83:f72d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b54edbc49sm4036306b3a.22.2024.07.11.22.11.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 22:11:58 -0700 (PDT)
-Date: Thu, 11 Jul 2024 22:11:55 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Sangwon Jee <jeesw@melfas.com>,
-	Joonyoung Shim <jy0922.shim@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Removal of MSC-5000/5080 touchscreen/touchkey drivers?
-Message-ID: <ZpC7G0AVMB98og6H@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfKin0kY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57222C32782;
+	Fri, 12 Jul 2024 09:52:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720777932;
+	bh=Fl758Lbh3U7r3qwMeOeC068iOhZAyZs+9551apx3XuI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IfKin0kYJ+79JXJqxoCueZ3pzQIxv3ZL7sxUgimO39yNxQ7vzhL6BfRABAWRGfKH5
+	 wU6IveRj41ScWHy+nrNz9OEMHfUKXnpXEUKQLlVgs8ssHAsrPB3XQ+yOQI4PQwEpQW
+	 HToZSL7qeddwK1WQmcHb9DzsK/BMvLJ8IwF939rXZmCosYLh/57sJCvqmYh8i3woOJ
+	 OS9k3/7b4AqAmWgosJ3lIAndalDIEOaio1/FBvbJaDIJ6D13eIwVyydqRwvfTaMReS
+	 DvL61s2zxQAmEz24K36VE9Q4wNg1ONEqccWDP1Y17S+yP4d5edEtU5I+HYJxL/mjdx
+	 LStYKUXPMJdaQ==
+Message-ID: <cf02eb9b-2304-4db5-96f9-cfe89037faad@kernel.org>
+Date: Fri, 12 Jul 2024 11:52:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Removal of MSC-5000/5080 touchscreen/touchkey drivers?
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Sangwon Jee <jeesw@melfas.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <ZpC7G0AVMB98og6H@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ZpC7G0AVMB98og6H@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 12/07/2024 07:11, Dmitry Torokhov wrote:
+> Hi,
+> 
+> Sorry for a somewhat wide and random distribution, but I was wondering
+> if anyone knows if drivers/input/touchscreen/mcs5000_ts.c and
+> drivers/input/keyboard/mcs_touchkey.c are still relevant these days?
+> 
+> Looking at Melfas web-site it looks like these were the 1st generation
+> of their chips, manufactured 2000-2007. The drivers were contributed by
+> Samsung long time ago, they rely on custom platform data (no DT support)
+> and as far as I can see we never had a user of them in mainline.
+> 
+> Should I simply remove them? Does anyone know?
 
-Sorry for a somewhat wide and random distribution, but I was wondering
-if anyone knows if drivers/input/touchscreen/mcs5000_ts.c and
-drivers/input/keyboard/mcs_touchkey.c are still relevant these days?
+Digging in history, commit claims this was for S3C6410 NCP board (with
+Samsung S3C6410 SoC), which had a board-file:
+arch/arm/mach-s3c64xx/mach-ncp.c
+But the touchscreen was never added to the board file, thus mainline
+kernel never had it fully working.
 
-Looking at Melfas web-site it looks like these were the 1st generation
-of their chips, manufactured 2000-2007. The drivers were contributed by
-Samsung long time ago, they rely on custom platform data (no DT support)
-and as far as I can see we never had a user of them in mainline.
+The NCP board file was finally removed in v6.3 in commit:
+743c8fbb90ca4c02bdf4087fa9f1885ddd85041b
 
-Should I simply remove them? Does anyone know?
+I say drop the driver.
 
-Thanks.
+Best regards,
+Krzysztof
 
--- 
-Dmitry
