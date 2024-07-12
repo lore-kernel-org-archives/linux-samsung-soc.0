@@ -1,121 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E4014D714;
-	Fri, 12 Jul 2024 09:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E3C172BDE
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jul 2024 14:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777933; cv=none; b=En7l0QXZ/cDmz8EJKXR9/Ha9ym+YQEZ4Uwdeq3bLLKFcmaH5Wqm4TFCXt/35ajBdDQhhw/uOC8jPIoulaLNZXaYrGn5DlkDHL7v9IJRCSvDK1fcwrfKZZn9TO9ylSUYLJcSxoVIoxOec4JZK98snTLpPjXtgL7n20n4qpnZxBRU=
+	t=1720796096; cv=none; b=GzZuZh8FhaQe1XYnbeOqMBby0x2hYeLjjmhtpP1D7D+vpfYTCX9tWnrsJJb6VItwUYJk4jsVGbwZMhyF7CaYtYKIz1KGpQec9e41+cgIK6kP8jFCN1R4oTuEPwAjgNrO3KAWUzDVXdJBoH7ly5N4VHbgWVn0a1g8ysx0eWeufk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777933; c=relaxed/simple;
-	bh=Fl758Lbh3U7r3qwMeOeC068iOhZAyZs+9551apx3XuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dq2In2wO9AadOdQJAJcvdGEjbD8K/OhuScoWVbWTHbPj6GKKebr2k8OUGC/5KbaTQFs1l/IrmStVwfH/xOovRtGbExXx0ZtR5OVvVoL88e3eLNBrxhN3Y+EV9z2HjJzv+C6E1BJIrDuH9HAOVjV8ZYTvEmT82cqrlYKDkfb95fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfKin0kY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720796096; c=relaxed/simple;
+	bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LoCUAbMd742xr/H1EJtei+6dBbx6aaeZqrZvCMD8/5hfphL4vfA7wSVqPoKBkS9Z9u6iX5BjyNWqyPzou54mrlEkHFqyxu76AgQBjscHfpqpZYIXsL+jDX4uJerahhgQjDcFhEb6fv0UgPXT032fA9SS3MqZL9cOFC+qpnpI4ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dwe/ODxS; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfKin0kY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57222C32782;
-	Fri, 12 Jul 2024 09:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720777932;
-	bh=Fl758Lbh3U7r3qwMeOeC068iOhZAyZs+9551apx3XuI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IfKin0kYJ+79JXJqxoCueZ3pzQIxv3ZL7sxUgimO39yNxQ7vzhL6BfRABAWRGfKH5
-	 wU6IveRj41ScWHy+nrNz9OEMHfUKXnpXEUKQLlVgs8ssHAsrPB3XQ+yOQI4PQwEpQW
-	 HToZSL7qeddwK1WQmcHb9DzsK/BMvLJ8IwF939rXZmCosYLh/57sJCvqmYh8i3woOJ
-	 OS9k3/7b4AqAmWgosJ3lIAndalDIEOaio1/FBvbJaDIJ6D13eIwVyydqRwvfTaMReS
-	 DvL61s2zxQAmEz24K36VE9Q4wNg1ONEqccWDP1Y17S+yP4d5edEtU5I+HYJxL/mjdx
-	 LStYKUXPMJdaQ==
-Message-ID: <cf02eb9b-2304-4db5-96f9-cfe89037faad@kernel.org>
-Date: Fri, 12 Jul 2024 11:52:08 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwe/ODxS"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eede876fcbso538011fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jul 2024 07:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720796093; x=1721400893; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
+        b=dwe/ODxSoHzs57C2ar+EytAtmV/DwRbrKTn3lVdr1EXQSqbLHVGI6ihfqChwyAPE2b
+         nKVGgmwIebc1dz2nimDeb9TbwGEyq4bMdFUbZmkK6kZYoUJL5mckrE/7U5wcLzQqe9/o
+         BOe5dOSE8/Xn5w0Bt+PHMF0ZguC8sQJ/XoItHZV9+x3+pzuxPZhVOsy1vjJbiV/ZtCTU
+         eHf6ZIyWCaY+hiyCp3MB7M0Y6AJVtFkyLnrY1fqmsD7v2jYlJ43yfZrXopmzZc2Dgw+p
+         +3rrm4hgxSj1WC5oyo7yoi2sCRUktEWyp3zPDlL22MYYBzYzuED0G3rdbwVmdUmGsU2U
+         6azw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720796093; x=1721400893;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
+        b=q5RDYQpt8eqPFCwHsggrXGCEIPcEKfgXjnenu7Ys7erI4u3eEnmJFNE/O24PAzJI2V
+         4SwC+kyhmFY08xbD6cQkANJcrcaki3+jA9zT/pOZVre7UVlDHEK0l9V4c+bER/heaDR8
+         7QpxMQR5hWDerYT67Ns7obqKLdYQPQdwLnCHw2FbkXSRH4qWAtDxMCuF1oMn091JRwmT
+         FOcC6vbfICOWRKfMIvBxnmyVh/EIQoKY/Qlcn428lXLuqPrnnb/W4uFKGqNkYIqoimUB
+         ZQ81dQXzStnDOYQXShJzJTT4uhPaE2I3kxTr546aAq+ym/Qs0ThTwwBAXRLyhy06eHTW
+         TTWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiG9I7dfmzkFj5a9uH2zP3SuNBqCp5Ocynf0Qq9S7rxHelskR5ptKz9P0kQEndZUWhvq9tssgqA/r3ht5WHMmcccPtjOQVLMmC5XbUBQMzphE=
+X-Gm-Message-State: AOJu0Yxv5NIxcetUfAQ4P3ckQ0xtSfXhX5K7bsCyfMitQVZit8Jm4RSG
+	0/5mkhvN2NFrijYIkkjoDHer49soJ3OL/P5zl7B5pwryRPIf2+Br5skuOCOerwk=
+X-Google-Smtp-Source: AGHT+IHvPxH1nBAWvxsjHSCNyZ9t61rhyU1cxyB6YJQEzy0OWWC+/dfZi6vmuDEorYBOF0SyCrzU7w==
+X-Received: by 2002:a2e:3c16:0:b0:2ec:4d48:75f3 with SMTP id 38308e7fff4ca-2eeb3198617mr74112911fa.45.1720796091727;
+        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8491dsm10421734f8f.45.2024.07.12.07.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
+Message-ID: <58e355454db3670157645c0b6e727d8058ef0324.camel@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: serial: samsung: fix maxItems for
+ gs101 & document earlycon requirements
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Sam
+ Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+ kernel-team@android.com, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org
+Date: Fri, 12 Jul 2024 15:54:50 +0100
+In-Reply-To: <20240711212359.GA3023490-robh@kernel.org>
+References: 
+	<20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
+	 <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
+	 <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
+	 <e2f4a37e7c31d26449125a6265239c88162a1085.camel@linaro.org>
+	 <20240711212359.GA3023490-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Removal of MSC-5000/5080 touchscreen/touchkey drivers?
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Sangwon Jee <jeesw@melfas.com>, Joonyoung Shim <jy0922.shim@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <ZpC7G0AVMB98og6H@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZpC7G0AVMB98og6H@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 12/07/2024 07:11, Dmitry Torokhov wrote:
-> Hi,
-> 
-> Sorry for a somewhat wide and random distribution, but I was wondering
-> if anyone knows if drivers/input/touchscreen/mcs5000_ts.c and
-> drivers/input/keyboard/mcs_touchkey.c are still relevant these days?
-> 
-> Looking at Melfas web-site it looks like these were the 1st generation
-> of their chips, manufactured 2000-2007. The drivers were contributed by
-> Samsung long time ago, they rely on custom platform data (no DT support)
-> and as far as I can see we never had a user of them in mainline.
-> 
-> Should I simply remove them? Does anyone know?
+Hi Rob,
 
-Digging in history, commit claims this was for S3C6410 NCP board (with
-Samsung S3C6410 SoC), which had a board-file:
-arch/arm/mach-s3c64xx/mach-ncp.c
-But the touchscreen was never added to the board file, thus mainline
-kernel never had it fully working.
+On Thu, 2024-07-11 at 15:23 -0600, Rob Herring wrote:
+> On Thu, Jul 11, 2024 at 05:09:50PM +0100, Andr=C3=A9 Draszik wrote:
+> > Hi Rob,
+> >=20
+> > On Thu, 2024-07-11 at 09:51 -0600, Rob Herring wrote:
+> > > On Wed, Jul 10, 2024 at 7:29=E2=80=AFAM Andr=C3=A9 Draszik <andre.dra=
+szik@linaro.org> wrote:
+> > > > --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> > > > +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> > > > @@ -145,6 +145,20 @@ allOf:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,uart-fif=
+osize
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg-io-width: fals=
+e
+> > >=20
+> > > blank line between properties
+> >=20
+> > Do mean before clocks: below and before clock-names: below?=20
+>=20
+> Yes.
+>=20
+> > We don't do that normally,
+> > at least none of the bindings I looked at do that. Or did I misundersta=
+nd?
+>=20
+> That style is pretty universal. If in doubt, look at example-schema.yaml=
+=20
+> for best practices. The exception is only for cases like this:
+>=20
+> =C2=A0 foo: true
+> =C2=A0 bar: true
 
-The NCP board file was finally removed in v6.3 in commit:
-743c8fbb90ca4c02bdf4087fa9f1885ddd85041b
+example-schema.yaml doesn't have an example for that, so I suspect that's w=
+hy
+many (Samsung?) bindings ended up without the blank line. I have fixed it f=
+or
+this schema in the next version in
+https://lore.kernel.org/all/20240712-gs101-uart-binding-v4-1-24e9f8d4bdcb@l=
+inaro.org/
 
-I say drop the driver.
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 2
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ - const: uart
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ - const: clk_uart_baud0
+> > >=20
+> > > Which clock is pclk and ipclk?
+> >=20
+> > uart is pclk, clk_uart_baud0 is ipclk.
+> >=20
+> > > 'baud' would be sufficient for the
+> > > name. 'clk_' and 'uart' are redundant because it's all clocks and the=
+y
+> > > are all for the uart.
+> >=20
+> > TBH, this patch is just following the existing style & names as already=
+ exist for
+> > various other SoCs in this same file. Furthermore, up until this patch =
+the default
+> > from this file applies, which is:
+> >=20
+> > =C2=A0 clock-names:
+> > =C2=A0=C2=A0=C2=A0 description: N =3D 0 is allowed for SoCs without int=
+ernal baud clock mux.
+> > =C2=A0=C2=A0=C2=A0 minItems: 2
+> > =C2=A0=C2=A0=C2=A0 items:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: uart
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
+>=20
+> Then don't duplicate it. Ideally, the names are defined at the top level=
+=20
+> and the conditional schema just limits the number of clocks, and this is=
+=20
+> an example of why we want it that way. I have no context to see if this=
+=20
+> is consistent or not.
 
-Best regards,
-Krzysztof
+I've fixed it in https://lore.kernel.org/all/20240712-gs101-uart-binding-v4=
+-1-24e9f8d4bdcb@linaro.org/
+
+Hopefully you'll that's more acceptable :-)
+
+Cheers,
+Andre'
 
