@@ -1,183 +1,123 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E3C172BDE
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jul 2024 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D8E176AB5
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jul 2024 17:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796096; cv=none; b=GzZuZh8FhaQe1XYnbeOqMBby0x2hYeLjjmhtpP1D7D+vpfYTCX9tWnrsJJb6VItwUYJk4jsVGbwZMhyF7CaYtYKIz1KGpQec9e41+cgIK6kP8jFCN1R4oTuEPwAjgNrO3KAWUzDVXdJBoH7ly5N4VHbgWVn0a1g8ysx0eWeufk0=
+	t=1720804188; cv=none; b=q1R9i25EDaOBgVR8oblogh4Dnvu3mMnIUVnmyaovNdQoC09zfOCzOyVVWwa03qfTuUSOzciKrL3VY8uv3dFZV/Ri3yK5CtSV9mecFZ5Pey9irUI/M6myEpTIi+isBjzGbTRlBPa6mpFLYUYVIYLvjI/4+xYX95HFDBWSgZb/Dcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796096; c=relaxed/simple;
-	bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LoCUAbMd742xr/H1EJtei+6dBbx6aaeZqrZvCMD8/5hfphL4vfA7wSVqPoKBkS9Z9u6iX5BjyNWqyPzou54mrlEkHFqyxu76AgQBjscHfpqpZYIXsL+jDX4uJerahhgQjDcFhEb6fv0UgPXT032fA9SS3MqZL9cOFC+qpnpI4ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dwe/ODxS; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1720804188; c=relaxed/simple;
+	bh=IvYiOk43NNLFvoIso1SMpTkb2IyLTMaSDdcgZBde4sM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rXYS7XHGyFenJsRSGmR6dFtApxJxppCjmMk/F0OhPAkL/cIfQ0Jl8RQ+WABRkkYHzbFRaSKB0TwpI4gGqzPeTxxwTlrFA69yFVTei1gbZuuNrbw7Rdli7cQrJe7v/pdq7Tm3DdfoWH02oO/siY9h/hd7WJaqYELCpodJ0/m0J0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IB5B9ht1; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwe/ODxS"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eede876fcbso538011fa.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jul 2024 07:54:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IB5B9ht1"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c25beae1so258638866b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Jul 2024 10:09:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720796093; x=1721400893; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-        b=dwe/ODxSoHzs57C2ar+EytAtmV/DwRbrKTn3lVdr1EXQSqbLHVGI6ihfqChwyAPE2b
-         nKVGgmwIebc1dz2nimDeb9TbwGEyq4bMdFUbZmkK6kZYoUJL5mckrE/7U5wcLzQqe9/o
-         BOe5dOSE8/Xn5w0Bt+PHMF0ZguC8sQJ/XoItHZV9+x3+pzuxPZhVOsy1vjJbiV/ZtCTU
-         eHf6ZIyWCaY+hiyCp3MB7M0Y6AJVtFkyLnrY1fqmsD7v2jYlJ43yfZrXopmzZc2Dgw+p
-         +3rrm4hgxSj1WC5oyo7yoi2sCRUktEWyp3zPDlL22MYYBzYzuED0G3rdbwVmdUmGsU2U
-         6azw==
+        d=linaro.org; s=google; t=1720804184; x=1721408984; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fnhm523hS4IDFhkj8U4RWRolcD19Piba7MrN9aiVgQE=;
+        b=IB5B9ht1UpjPgaKNp3hX4EaNj7ilkCF7om9IWRRprM5l97yh1/wzDcybyGnY+/TQcj
+         i1Xeygq7aP6FHHfYTh+ohhvEeOlqU/PgcvIL0px24xIvmQiW3YwNGdfxFdZexld85Yf5
+         ATsWIkksb1zfsFyyRTTVCUHMxvlhw6Wn/K0fQaLj+jhMsuhGPc0rH7G4VRjwCTrSCmeT
+         6n3izTnz6zA46Leeeg6JKYEL42IJHFz7K8090HdhU/OvMGBrazWiLQRhlAeh4SfSsIV4
+         LjMCguGW8Z+8lVsfYK5MLhv1bWszm0tbLxzvg5ZGm4in5NCkE1BAn0fl0gfxGF7kaW6D
+         eKUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796093; x=1721400893;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-        b=q5RDYQpt8eqPFCwHsggrXGCEIPcEKfgXjnenu7Ys7erI4u3eEnmJFNE/O24PAzJI2V
-         4SwC+kyhmFY08xbD6cQkANJcrcaki3+jA9zT/pOZVre7UVlDHEK0l9V4c+bER/heaDR8
-         7QpxMQR5hWDerYT67Ns7obqKLdYQPQdwLnCHw2FbkXSRH4qWAtDxMCuF1oMn091JRwmT
-         FOcC6vbfICOWRKfMIvBxnmyVh/EIQoKY/Qlcn428lXLuqPrnnb/W4uFKGqNkYIqoimUB
-         ZQ81dQXzStnDOYQXShJzJTT4uhPaE2I3kxTr546aAq+ym/Qs0ThTwwBAXRLyhy06eHTW
-         TTWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiG9I7dfmzkFj5a9uH2zP3SuNBqCp5Ocynf0Qq9S7rxHelskR5ptKz9P0kQEndZUWhvq9tssgqA/r3ht5WHMmcccPtjOQVLMmC5XbUBQMzphE=
-X-Gm-Message-State: AOJu0Yxv5NIxcetUfAQ4P3ckQ0xtSfXhX5K7bsCyfMitQVZit8Jm4RSG
-	0/5mkhvN2NFrijYIkkjoDHer49soJ3OL/P5zl7B5pwryRPIf2+Br5skuOCOerwk=
-X-Google-Smtp-Source: AGHT+IHvPxH1nBAWvxsjHSCNyZ9t61rhyU1cxyB6YJQEzy0OWWC+/dfZi6vmuDEorYBOF0SyCrzU7w==
-X-Received: by 2002:a2e:3c16:0:b0:2ec:4d48:75f3 with SMTP id 38308e7fff4ca-2eeb3198617mr74112911fa.45.1720796091727;
-        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8491dsm10421734f8f.45.2024.07.12.07.54.50
+        d=1e100.net; s=20230601; t=1720804184; x=1721408984;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fnhm523hS4IDFhkj8U4RWRolcD19Piba7MrN9aiVgQE=;
+        b=MRp6ckWHOf7pg0FkES+NCQ4ZYAWqiQBVs/aUgAeyUewpQ+dozvJdl1IzB0Tcl89+6L
+         EBPwvkLv6G8nYXL03f29mxtifipvcZ/D7/yQTivzdWpX+4+ogEabge7K7/00lytJBd6S
+         rObcv/hks2AVforKUX+SqcIDQWnufsqlB9U/NxLookLW9rmx85EFneTGGM2YjIZDEeTW
+         lmKcdDHKFQtd5w2scMk1OwV3uCizVn3vpxqhCSpFs00FuvIS2PKCPe8T3VG6MrbuHIFH
+         ix2oEN0IR/w8paB0qmz9xypMMVKF8fEqgAMF69540VTX5r3ndLmG/yUQpbUNu+TgRvnd
+         9aXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUO2E75FDlJg76g/FFWk66OldxG4Uu/KNBrwWXhjuTjrSy4Oo7ofOIdZJTXDJ/0/d74Vqd5H3TSjK43byA4x6ePVSL9dz2TPe4dCaPEeSRdEks=
+X-Gm-Message-State: AOJu0YztxDbUqmgKGlq1jBR/w4WjW8IMoFYXC07HqxJnEw3weha2s8oR
+	eGfzL61Tc0QRqQ4vCwVJjoxt+t1zHC5pgcOXmQEYHB5uMiTTQcXbRQOoEPLE6Js=
+X-Google-Smtp-Source: AGHT+IG4TH6RpE92PDuHakkWNmOybXTmwNcx+nqarKFaRp+ljxkRFFwn0hjm78OZrfbRQp1qxbfQAw==
+X-Received: by 2002:a17:907:3f12:b0:a72:7736:9e03 with SMTP id a640c23a62f3a-a780b881c7cmr1089046766b.52.1720804184549;
+        Fri, 12 Jul 2024 10:09:44 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f0esm363750466b.194.2024.07.12.10.09.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
-Message-ID: <58e355454db3670157645c0b6e727d8058ef0324.camel@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: serial: samsung: fix maxItems for
- gs101 & document earlycon requirements
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org
-Date: Fri, 12 Jul 2024 15:54:50 +0100
-In-Reply-To: <20240711212359.GA3023490-robh@kernel.org>
-References: 
-	<20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
-	 <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
-	 <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
-	 <e2f4a37e7c31d26449125a6265239c88162a1085.camel@linaro.org>
-	 <20240711212359.GA3023490-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+        Fri, 12 Jul 2024 10:09:44 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v4 0/2] gs101 oriole: UART clock fixes
+Date: Fri, 12 Jul 2024 18:09:42 +0100
+Message-Id: <20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFdjkWYC/4XOsW7CMBCA4VdBnnvRnW0gZeI9KgZjXxKL1EZ3U
+ dQW5d0JMLRbx3/59N+MsmRWc9jcjPCcNdeyhn/bmDiE0jPktLaxaD16h9ArIUGpBViVy5TDCHG
+ s8aJgYRecbbELdObWrMRVuMtfT/7jtHYn9ROmQTj8ouQQ311LtqG9323JAkEoSbhJEvQnX45jL
+ kFqU6V/mEPWqcr383h2D/nl7OmfudkBwjbFc5vQY6L4Fz4ty3IHts1uLA0BAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-Hi Rob,
+Hi,
 
-On Thu, 2024-07-11 at 15:23 -0600, Rob Herring wrote:
-> On Thu, Jul 11, 2024 at 05:09:50PM +0100, Andr=C3=A9 Draszik wrote:
-> > Hi Rob,
-> >=20
-> > On Thu, 2024-07-11 at 09:51 -0600, Rob Herring wrote:
-> > > On Wed, Jul 10, 2024 at 7:29=E2=80=AFAM Andr=C3=A9 Draszik <andre.dra=
-szik@linaro.org> wrote:
-> > > > --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > @@ -145,6 +145,20 @@ allOf:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,uart-fif=
-osize
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg-io-width: fals=
-e
-> > >=20
-> > > blank line between properties
-> >=20
-> > Do mean before clocks: below and before clock-names: below?=20
->=20
-> Yes.
->=20
-> > We don't do that normally,
-> > at least none of the bindings I looked at do that. Or did I misundersta=
-nd?
->=20
-> That style is pretty universal. If in doubt, look at example-schema.yaml=
-=20
-> for best practices. The exception is only for cases like this:
->=20
-> =C2=A0 foo: true
-> =C2=A0 bar: true
+This series fixes a long-standing issue in the gs101 clocking / uart
+handling.
 
-example-schema.yaml doesn't have an example for that, so I suspect that's w=
-hy
-many (Samsung?) bindings ended up without the blank line. I have fixed it f=
-or
-this schema in the next version in
-https://lore.kernel.org/all/20240712-gs101-uart-binding-v4-1-24e9f8d4bdcb@l=
-inaro.org/
+We can now disable clocks that had previously been marked critical, and
+still get a working earlycon.
 
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 2
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- - const: uart
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- - const: clk_uart_baud0
-> > >=20
-> > > Which clock is pclk and ipclk?
-> >=20
-> > uart is pclk, clk_uart_baud0 is ipclk.
-> >=20
-> > > 'baud' would be sufficient for the
-> > > name. 'clk_' and 'uart' are redundant because it's all clocks and the=
-y
-> > > are all for the uart.
-> >=20
-> > TBH, this patch is just following the existing style & names as already=
- exist for
-> > various other SoCs in this same file. Furthermore, up until this patch =
-the default
-> > from this file applies, which is:
-> >=20
-> > =C2=A0 clock-names:
-> > =C2=A0=C2=A0=C2=A0 description: N =3D 0 is allowed for SoCs without int=
-ernal baud clock mux.
-> > =C2=A0=C2=A0=C2=A0 minItems: 2
-> > =C2=A0=C2=A0=C2=A0 items:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: uart
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
->=20
-> Then don't duplicate it. Ideally, the names are defined at the top level=
-=20
-> and the conditional schema just limits the number of clocks, and this is=
-=20
-> an example of why we want it that way. I have no context to see if this=
-=20
-> is consistent or not.
+There is a preparatory patch, and then a patch to drop an incorrect clock
+counting work-around. That 2nd patch is essentially the last remaining patch
+[1] with all review comments addressed, from the series [2] that was sent
+earlier this year, see lore links below.
 
-I've fixed it in https://lore.kernel.org/all/20240712-gs101-uart-binding-v4=
--1-24e9f8d4bdcb@linaro.org/
+Patch 2 can not come before or without patch 1.
 
-Hopefully you'll that's more acceptable :-)
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-Cheers,
-Andre'
+[1] https://lore.kernel.org/all/20240130093812.1746512-6-andre.draszik@linaro.org/
+[2] https://lore.kernel.org/all/20240130093812.1746512-1-andre.draszik@linaro.org/
+[3] https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/
+
+Changes in v4:
+- new patch "clk: samsung: gs101: allow earlycon to work unconditionally"
+- update commit message for patch 2
+- Link to v3: https://lore.kernel.org/r/20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org
+
+---
+André Draszik (2):
+      clk: samsung: gs101: allow earlycon to work unconditionally
+      clk: samsung: gs101: don't mark non-essential (UART) clocks critical
+
+ drivers/clk/samsung/clk-gs101.c | 106 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 102 insertions(+), 4 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240430-gs101-non-essential-clocks-2-6a3280fa1be8
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
