@@ -1,107 +1,156 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C4E1862B1
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2024 09:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B0118C34F;
+	Mon, 15 Jul 2024 12:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721035324; cv=none; b=FmS4Z8gpLhehtKimox6/WShIf7eFzvVZD5rjemBmDsEaG3ezPbMkLrR1gw1TrRmi6OWA4/6xfj/vmTjKGqOqgRFroGXZ+uHm+tF9Ckqh4Ocu2FUGnEaUxBQI+JV1oK5/bBNqWzBPk8XeG6cLWSaeBiMZwx1dryS2guS5Qe0Z5Cs=
+	t=1721048113; cv=none; b=WiUeR1EeNeYZWzYwGe5uqEokXJhV6M3omixa86Q6VHE5hLgI6nrQgXbRMrNmTPNRBJVE6GVMMemS49gRoHjsjoWdoUV1pI9rPf71TgjslVWWDci+9RdLINmh++q+sPJwgFUqQH81Mbw7LSO2WRqJf9FdAEZn+HEQnI4s2FsCfUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721035324; c=relaxed/simple;
-	bh=gQwFkfYUsyCNMfYcisVu8rGAr0bAMxYc/UTVv9C0Lws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OSGGqnfjV4n1+J48XFZcAOnqytXe7TDEf4mqfVoNYNHrZdRtJRX6uurYwA86f8ghX8jHkaBtuSu328N7Ci9Jx3vfFQ/TyYp73/2GQJHxcmf+rXyb6yY3Q5GHBB2YIomPpyKxkSVqX0n9N9AIctwX11BEThHqbHEwmccZLiqJGhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pDiQVj0m; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721048113; c=relaxed/simple;
+	bh=joW1dUBhJoxnwAipx4tWr4333aQdsreO5ngTla7wYSs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dcbzrRE0mrzgF8GX+8mWTpWJoSNr4JTPsuobNpvLaE5tmh3KcB/GLoGvPu/5u2rkYe5CUZM/ATXHoyR+ssPEwecq/Zr7yVXCSlYxOkKKW8A4ClhbE+My0W5gRYejU7dUc9Fw80b/c8buQAVsiCBFrSdiL1V5a1VrONip3lbjs9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fs1FI234; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pDiQVj0m"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eede876fccso24924161fa.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2024 02:22:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs1FI234"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so277050a12.1;
+        Mon, 15 Jul 2024 05:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721035321; x=1721640121; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uzUrcSKPOx3F10gumq/RtLo0BiUspDhF63mAJeflmlw=;
-        b=pDiQVj0mKE7a5n/IbC55rtkNVGYTYeCowQ4c/Ekt42J73wRE/WRu8w8ToXgWNDj88D
-         JjqkvfIbEYd9fCj89AY51o7wkIWEH4EEGJJ8hUEyDVq/CuAPsM9d1XKp3OB6AjjQD6nC
-         MqS2g6XF/EX5CBcm+x2Y2h+kJL0zkWVWCGba6N75GDEEkRqGjfjer3YV8ifUffxXf9pO
-         tPTkxHxZ9qcxGcWEKdc5qzDk+aaI6ivV275z1WOj23WCNPerM3NyxhUQj4Kk760V8/w9
-         Lz8KrtoTQ1UGiF3jR1QEWEIKWI/xFQ7Qf2Hi3ELJ0ueA0knA3TR8Is8B6eS9BJQ6hgkP
-         gFag==
+        d=gmail.com; s=20230601; t=1721048110; x=1721652910; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l4oxwn9faJBZWNYakjxQw34lzbdzSD9MrW7c7EhtXGw=;
+        b=fs1FI234eRSSTEHb0G1e9uznsBVrTpQRjc+fcgpFgNmyh+7G7xUszq7msvbfxjgash
+         53pRWD3ZQKyaek7zwXTbnS5horLFEeAnX30jjnk1cuV+vppJP0WChXqmb2zzrc6ukSW9
+         HcIu4QvM2b3lI2WnllbEnFb/G3YuU1kFVVmLNGELVY+Hx8+5aO7NdcmnIaR9s/txmspJ
+         yA9JVZ+qB7f9IJe9svB3kFyBhePKSW7eubABni7/UyBhN6b9ncuiRDdOOQFSYd/YDcCG
+         QxsSyAkRKJzp5WdoLHMvYILFloQF/t76yFMBt1PCVVi5/1ZWw7W9XEhc0j4EXdqPlqof
+         Uwgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721035321; x=1721640121;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzUrcSKPOx3F10gumq/RtLo0BiUspDhF63mAJeflmlw=;
-        b=obytvlh7TuD5cjXWbI93gjPjUl2vgmXt4hQQlSARZGtbAZPRkAZAM+hjXwTV4xSGHu
-         M2jURKB7KwbLXxZPJNDQNGY1z7cPCBK96dE1ZUMU8Xr7gThhVj5WGSB/3GrznbUPPJTI
-         P+M+rFlySP0mlJfrjBf0Uqaxq1if+WIb/eVI4e88NldEmQklGVxUNrusoj0rgLNEUPdO
-         fxNJzjArvPVcKs7FRhHK/3Uh5wVjcmZjOZptia+M3JTs8BBmgSxaoovPTtB/BUGRnbr/
-         oFsUB+0/YX7MW6jJM5x31Vre0hYHi/25xdTPGVYB0YPDPoNZsx+nvjkBNNbwEaQo+DiR
-         LYyg==
-X-Forwarded-Encrypted: i=1; AJvYcCX340tvYcFoFylttpLITNf+Nn9TKKRn/itFeYijidjINovPXKPO7IdBqEfuPwPYJ7W30tVyCQ2mFNSvUMbKy8AYbmSiDw46b/9p2QBxf6CTjt8=
-X-Gm-Message-State: AOJu0Yz0+SMWo2skHEmv/oylhEHR77efquIKq4vanMP4w4WwOQmFda3X
-	BiHkmgnXnLk8EXKONvsojkti9vQ5EumnuuQ0aPFoIlTFwsDz1XZf+WB2Xo4su04=
-X-Google-Smtp-Source: AGHT+IF/+AJbHLXohqSQ0XRGQc/GKg4cNhF8cuLtHAuiUlm5z+UVxHHPYV/1+FE6SNp+cer/mIRn8g==
-X-Received: by 2002:a2e:9dd3:0:b0:2ee:8777:f86a with SMTP id 38308e7fff4ca-2eeb3188d1cmr119886761fa.37.1721035320730;
-        Mon, 15 Jul 2024 02:22:00 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:e709:abf9:48b3:5079? ([2a05:6e02:1041:c10:e709:abf9:48b3:5079])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3680dafbec3sm5764675f8f.85.2024.07.15.02.21.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 02:22:00 -0700 (PDT)
-Message-ID: <343175eb-ac00-4a41-844d-ae1c9901cf1d@linaro.org>
-Date: Mon, 15 Jul 2024 11:21:59 +0200
+        d=1e100.net; s=20230601; t=1721048110; x=1721652910;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l4oxwn9faJBZWNYakjxQw34lzbdzSD9MrW7c7EhtXGw=;
+        b=Ou+xfFdIcSf0AWXLvMel3aEl0z8T3/qxQTSFmXUy7fqfEZNYBfLAojdEX2q53y5MWw
+         cHk7fc7SfZ10n3jEVJEgvHmY1X0OEVOfyYVS4eL951BpT7QHKer40oMCO1IQXGTUs3V6
+         O1R3mRZw4TfUlobet8yUvsqjopgCDLCCn2j4BJnDQEU6slSS220GU/M3Uk5LfPDbO7i/
+         EQ1R0oGaFbAVWTSjeuClit74CKmbjzYjUIYEyuYXOlUAeB4jHyy/5piyQ6cA/eqQi0MK
+         DH9zKAzTK+HAtEqnmhMGsE3U891vGW0rEggJE1CuizfnDr6tAZq8hb002aLSNHhBrwCK
+         m8Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWccPQX8pY0Sbnx+W7pF6Kg2AA9wboy7IsCUeeLlQApTSRcJIrlSdSNhHDz/p3BcMPZZ5FjlWCgCoxfZJErYmc0lfdEUQ19YGlx2FdKOP2Tc00dXNseiGXoaSFHEJ+0NrWyg8V+OCjshG4l7a/OIDvqUBYjjknG2Ie4gcGBVUeucEO6RGvt2c0MSmTzJJ2ctH0f/SGiV/xaJxn6iOXb7FhY8kEnBAs=
+X-Gm-Message-State: AOJu0Yzox9RTLdMsIR+E4RljzsnJtnuOTB7WWE3iuf3QxfSu5RsUdXSK
+	Zndf8CRsEvzVhoWqBfrotvkn1v48IQFyeATus8nDc+iTIyjPMNabWutMNZ4O
+X-Google-Smtp-Source: AGHT+IFiuhD+U3uimNCwm9sMXN3yk+88hpselw5hq29H3RlOMCChzciDUtnwlTqLtREIV1f6gBzhyw==
+X-Received: by 2002:a50:d7c9:0:b0:59a:442d:67bd with SMTP id 4fb4d7f45d1cf-59a442d68acmr4790387a12.20.1721048109582;
+        Mon, 15 Jul 2024 05:55:09 -0700 (PDT)
+Received: from tablet.my.domain (ip-37-248-157-210.multi.internet.cyfrowypolsat.pl. [37.248.157.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62165sm3333307a12.87.2024.07.15.05.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 05:55:09 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v2 0/9] power: supply: max77693: Toggle charging/OTG based
+ on extcon status
+Date: Mon, 15 Jul 2024 14:55:02 +0200
+Message-Id: <20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/12] thermal/drivers: simplify probe()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Amit Kucheria <amitk@kernel.org>,
- Thara Gopinath <thara.gopinath@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, stable@vger.kernel.org
-References: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACYclWYC/3WNzQ6CMBCEX4Xs2TWlFRFPvofh0J8FNhFKWtJgC
+ O9uJV49fjOZbzaIFJgi3IsNAiWO7KcM8lSAHfTUE7LLDFLIi6hkhaNe6/raKMx16CkgrYv1EzZ
+ kTG20uylLkNdzoI7Xw/xsMw8cFx/ex1Eqv+nPqcRfZypRoLNSN1QZ1ynx6EfNr7P1I7T7vn8Ak
+ w8nUL4AAAA=
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, 
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2480;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=joW1dUBhJoxnwAipx4tWr4333aQdsreO5ngTla7wYSs=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmlRwo9PihOl5L28LE9qP4hgOpnfxfXs8CFPp05
+ CKvz5ISW/+JAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZpUcKAAKCRCzu/ihE6BR
+ aB0vD/90CLEESM73nmoes655DvnKe9FoKfY0xRcn8DjYELj1oRQsnFmYNzH+Hm4TLWm5wE7Styi
+ FGgmxM/d/ffqC87fdmUpqsmntH5snyajqNAmA7NSPg31xUhoD/MyuEnDc+pm5p4Lngr3iGKPmz1
+ 1RT4MMjLoc1eATadbdTl0bohDfQd5sV1gWsb475Tu7GoevaUzvAs4boj38JKMQtstZ3r5J7Jymm
+ FUgbSioMlcAlF+Hnz6vfgY89jkfwwbbzrtDnp0azbXjm3kS3LBWlttOS9hPHdTe+sLgPs7hfk9a
+ wp6ETUNq0YdSNRUvqJDmJBR014OIxJWOJ/LQfTpr51PSDSa7ALYJAU+lM+CLcX2iaEbxzBqkh0m
+ HvBAhGcYLq+U7tMg1xQbhbQD/MfR0435xZq6I9911JcbyaarK1U+HUnpbqq4i6+OgN2dxHpiPfS
+ w5PowAQzE96/3BfURYLYtzuPTljJrKZzxjIaP9rsezom8vF7Ih4SB90gLUFBrpbq+JrvDIaPpIQ
+ bGFxTcWR2A/5qX3P+WuNsaUfn+lVSbGFCYBY2mbEdJjyDfVYjfscHaMsp9zZRSSOMdOvqna3K6g
+ lFfRsiFhkAZTl4EkZEh+EueB3kMOHgMYSxovU7GgyunqAIc+h1udPKU02Ri5HxMOY9rrqvisyjn
+ 0p9vpp5IDI5eFxw==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-On 09/07/2024 14:59, Krzysztof Kozlowski wrote:
-> Simplify error handling in probe() and also fix one possible issue in
-> remove().
-> 
-> Best regards,
-> Krzysztof
-> 
-> ---
+This patchset does the following:
 
-Applied, thanks
+- Add CURRENT_MAX and INPUT_CURRENT_MAX power supply properties to
+  expose the "fast charge current" (maximum current from charger to
+  battery) and "CHGIN input current limit" (maximum current from
+  external supply to charger).
 
+- Add functions for toggling charging and OTG modes.
+
+- Add an extcon-based handler that enables charging or OTG depending
+  on the cable type plugged in. The extcon device to use for cable
+  detection can be specified in the device tree, and is entirely
+  optional.
+
+The extcon listener implementation is inspired by the rt5033 charger
+driver (commit 8242336dc8a8 ("power: supply: rt5033_charger: Add cable
+detection and USB OTG supply")).
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+See v1 for old description:
+
+https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
+---
+Changes in v2:
+- Changed to use monitored-battery for charge current value
+- Both current limit variables are now set by the CHARGER regulator
+- Link to v1: https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
+
+---
+Artur Weber (9):
+      dt-bindings: power: supply: max77693: Add monitored-battery property
+      dt-bindings: power: supply: max77693: Add maxim,usb-connector property
+      regulator: max77693: Set fast charge current in MAX77693 CHARGER regulator
+      power: supply: max77693: Expose CURRENT_MAX property
+      power: supply: max77693: Set charge current limits during init
+      power: supply: max77693: Add USB extcon detection for enabling charging
+      power: supply: max77693: Add support for detecting and enabling OTG
+      ARM: dts: samsung: exynos4212-tab3: Add battery node with charge current value
+      ARM: dts: samsung: exynos4212-tab3: Add USB connector node
+
+ .../bindings/power/supply/maxim,max77693.yaml      |  15 ++
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  19 ++
+ drivers/power/supply/Kconfig                       |   1 +
+ drivers/power/supply/max77693_charger.c            | 273 ++++++++++++++++++++-
+ drivers/regulator/max77693-regulator.c             |  34 ++-
+ include/linux/mfd/max77693-private.h               |  11 +
+ 6 files changed, 340 insertions(+), 13 deletions(-)
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240525-max77693-charger-extcon-9ebb7bad83ce
+
+Best regards,
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Artur Weber <aweber.kernel@gmail.com>
 
