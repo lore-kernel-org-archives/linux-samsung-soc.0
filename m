@@ -1,61 +1,61 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BE31A0AE1;
-	Tue, 16 Jul 2024 19:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62FF1A2567;
+	Tue, 16 Jul 2024 19:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721158576; cv=none; b=ZaYYdWYlXVmcP8ACktjPFOAZHH20jcw5eQpISuxnP8rqFLg87fztTn5OFnlQryiATlP31OFQmg5UMvO7+WIEJJnc0O4poH3QfMKWFUo1QkDMDDbJH053Uv1ozZQypHC2i+wmOqFGC0yczI8ijaFYxpubGQMaBqvkgK1CBhRgW0k=
+	t=1721158577; cv=none; b=Tmggi/XbFkzgsjsr5iywRn2fbbhW/FTonNwHucmgVtpXz0brvEnTREzRLuu/oX9ZhKLqEfzOYwfu+bUj9EcQ3HsIx/Ri3aMLl5DCj+8PjfoRrh1i/peiGcob8ol6r36nAaza+Ztf1Kn5fuBlZlvd0ZyJXuDgH0i+u+Xk9zUVLJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721158576; c=relaxed/simple;
-	bh=kRA4IN8ePpMhvEmnz3nL0gqG3GSrRJhVEROFFuuelnw=;
+	s=arc-20240116; t=1721158577; c=relaxed/simple;
+	bh=kZc38XdF9J7Id3WKk5iS9WywnIhRIPd2R91vYOlsxIo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uEulexWJbO0lBHmvQDIusvyjmI52gFsUHxcjau8m2ElPRSds4Ld3vG84sYIEXeLfgC03hHyxWZSgmhX63bAidrOwwsyLhexIkUnAqBFg4qd00y8cDheotPN40MzKBswqt9CUghGxOuJtytO986EJ9dUEI2TILbHQIrLiaiMICNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/iw3FJW; arc=none smtp.client-ip=209.85.167.49
+	 In-Reply-To:To:Cc; b=Ut068LOLUMrwRRrBcaVPfCGmRW0iQ6wGMU5skwxZcl2Lsn3H9FB3RH/rwTuibkOdswnNfokxpns+zqnW+H1cBGWNxDM+dtd0y+xyF7/2LE0k1IqikECBC+AWWZ8PcwvAN4mdohc6hNGSYFpQTgwaJpYzif8ko4koT5ovDNMvonA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hF8FSSyV; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/iw3FJW"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea3e499b1so6757637e87.3;
-        Tue, 16 Jul 2024 12:36:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hF8FSSyV"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52e9fe05354so8247799e87.1;
+        Tue, 16 Jul 2024 12:36:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721158572; x=1721763372; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721158574; x=1721763374; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zkVqmaJ3bQDbMwukoPoGZjFlLSEsjSTGIlSAZx5ZdTc=;
-        b=A/iw3FJWsugQG/sWDdillegxBl5Lf5tAIUOP3hH3pIqDzwuQ+nDQob0ssgn5g7EQXk
-         dlQP96jnFA5wx4cKRn+BF5RsnScIFoAGR0RG5Q1/X62Od13eekTnFs/osx/gVsPZCxzr
-         8fQGEc8MzlzUb8bH4nYfCpj5fjffl7axzqAwSGf+1ndTLd1I18TwhzZh4FWn417d96CY
-         lQvRw3q7pyS5sMv/WZCQH4gniSADj25moXQbFYp766NrEvR0s2W9unDG7V5KOMA6JGsb
-         3cLSSOE82/gOhyAAC4NKM8mPMIsqAy0s4QnB4l2Q8WKEHZY6YaI792uws8aR6LLEuREw
-         Crsg==
+        bh=rnjxgp7kjcmRmm6EMnRppGXf/dgi+VwpwgW9tfRhMgE=;
+        b=hF8FSSyVuKulYkPtByyZC2caGvs4rUbp9U3NNf9+DeBB/vWGWNqZJFer8GcCONHNv+
+         75iSyWaKB7k4ZPhVa66VJxQmWjvCNGlXJwFU6p0RKevGGmjVw9DheKNLuIWuETVxcVbF
+         X3vi32eBqKUGgVW31KobZ3wdDMhePYM9U7bdW0xB5lGuydK6gKtFBpXpqT3HeyRMAceG
+         Ue76fLYW+0vxAu6lwkUuF43HfNzzeF+6GdldADZ5LHWgpzbzZgNgDRo4LVxkZ5pMXk2+
+         e1UI0mH8I44xLMrndIc8Jakt0UPzlS5uw0fJFJoPyfIxufJGGaJflF5kyPd8sHDa/iBq
+         axuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721158572; x=1721763372;
+        d=1e100.net; s=20230601; t=1721158574; x=1721763374;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zkVqmaJ3bQDbMwukoPoGZjFlLSEsjSTGIlSAZx5ZdTc=;
-        b=YbWa/0uFcdlmy//Kr7yAeW3PiBJOEKXmK2WOLB7cj09tQV6v+CbwQmDMwit6HciEmV
-         Sl0zgF0tNzLrEPnEDpFlLL0UVeOtw6m6Us5ANDQhaz21VxMrWTPTYil03i0DtLRqxBgA
-         ywRMLYSDW3RL2fjzYtDS8kwvIXIJgRAa5zHTnUJuPhW+wMtOhFdYQfBY9bjpw1OirrN8
-         x97ef0VnvcX8c0VzTVFUAcZt74AiNwfcL/psFbO2AA7Ai6F5iYL+2eKGqA1ATg0gu+um
-         c81FBqEUUiNv05TTrurzyr0n8hYUz7lVRv57chHDBgM9CCaa8PAakFstRJtkaTw156yI
-         zYOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcn6K3uM2OIZp0n4rX6zQU6es18R92wAeZXBVHaRkrHe0hTiAQ6yZJjUJ1aZc6gGw6PHCqoSN2y0UbvEzsEsjKmnF1M9mQqYfrs2GtbQlsmBRPUew3+fXUc4glb/pwFsn8fjrx2nKldUlN6ewyBoGrpODBWEkzsUiWd+5CGAB3wr0PT4amtiyEQBqIpA==
-X-Gm-Message-State: AOJu0YzbrbEi11EU7rJTl77hJ0G63BeIo0fa/1bSNdECF6IvdPltGx8e
-	2d2fKtib/06TWkHf/vOqVFad3DjbMDwTnDIjNLJozN6ptU7cScutC5/s+ZCK
-X-Google-Smtp-Source: AGHT+IGnX3CLorykajazWKWogJk2rX8Y//FVpxzsXuFPvUFjaHwLasjuA1fP2OqPdHVhBphICnVTfQ==
-X-Received: by 2002:a05:6512:ea5:b0:52e:e3c3:643f with SMTP id 2adb3069b0e04-52ee3c3678dmr100229e87.2.1721158572198;
-        Tue, 16 Jul 2024 12:36:12 -0700 (PDT)
+        bh=rnjxgp7kjcmRmm6EMnRppGXf/dgi+VwpwgW9tfRhMgE=;
+        b=huNQkRHSe4Uv0yBfi0G/iNL7JJ/0nSdi2CbnaY+t/cHx263vGAC6c8SJZAYRpy72o5
+         dYcS1cRxSG2Z2aARrKZNbucoAIdT7Qna0P5E2RTBDzySTVnJpP7U94Ut3Pc+NVsVNZjI
+         ADSv+jvjv4szxfuyNBpXKOljpBgYk66ycnDEA0i2zk2U4R3xKgxV9F2u9cbcd6QbL5Lu
+         SIuXQd+G72t5onKZ0nWfPQygBy8SXrnzC1ytHcRifH8vL6L5jc3A5eqYtdBbA8linUvG
+         vPbfUvSRrocVQamoQPKv9NTLh/134cdyZeKHevqQeCq/HAG9XJQaU6Eh8CPCtFc09IqW
+         3O0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEnn1p5iVPCzlQacw4fDsvNxaxnO5sMkD9vpJChQXXrdWmle5+S+wn03M0O5fTNlpvnPMIcH1mZkXzqf6gGuMK/R+GbTNj+IGC1gmpyblKxHD3eDR92soQKzGidC4BP/tY7KPeieOBhrK3UuMM2nLQGf5du9gdteaQvAwycqaljBJoaxST9D9SVggqxA==
+X-Gm-Message-State: AOJu0YxamallhuRZkFM9bMLTJUkqE/OcuKsHZH2c18mZdJIx1NshxJ40
+	t0u4CyF8Vms1SopUtHifA2o0qtegWwl0ZcEcCtjICcQLX73cpqjy
+X-Google-Smtp-Source: AGHT+IEeZ3SFWEj0QEXEEoO3+anCbcm3+7q0QDnCBkC0PvJ5cV0brC6ICCVAyuSjUqWufgfMk4F9jg==
+X-Received: by 2002:ac2:4c51:0:b0:52c:df55:e11a with SMTP id 2adb3069b0e04-52edef0fd96mr2791413e87.9.1721158573816;
+        Tue, 16 Jul 2024 12:36:13 -0700 (PDT)
 Received: from tablet.my.domain (ip-37-248-155-75.multi.internet.cyfrowypolsat.pl. [37.248.155.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff888sm351179866b.159.2024.07.16.12.36.10
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff888sm351179866b.159.2024.07.16.12.36.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 12:36:11 -0700 (PDT)
+        Tue, 16 Jul 2024 12:36:13 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Tue, 16 Jul 2024 21:36:05 +0200
-Subject: [PATCH 1/6] ASoC: dt-bindings: midas-audio: Declare required
- properties for GPIO jack det
+Date: Tue, 16 Jul 2024 21:36:06 +0200
+Subject: [PATCH 2/6] ASoC: dt-bindings: midas-audio: Add separate
+ compatible for tab3 audio
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
+Message-Id: <20240716-midas-audio-tab3-v1-2-a53ea075af5a@gmail.com>
 References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
 In-Reply-To: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -74,76 +74,86 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1696;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1838;
  i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=kRA4IN8ePpMhvEmnz3nL0gqG3GSrRJhVEROFFuuelnw=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmlsumJ0V+COUPAxavH67ZS0qnpcO76wHZHK5lv
- geo2L0oxQeJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZpbLpgAKCRCzu/ihE6BR
- aPPOD/wKi/Nb2uSx6AOwG9LvT3LXHsOPLW3mZR/q7VRFoal+IN4cxdmskcvO4LmOofT+suNcxcY
- JU5dHuYzlhHx+MM9uW7WbQjRwJfKpWzCJ55eTsoS4KHGWOpZeVzi6WmSsVQpbqrWovuoA/W0hKB
- BxcWaJWDhWXEjsiX1t7/A9lZ4g7rmB0uliy+H7uFHb9QOgRV6psbTghHkZv7Te3xKQvMgN9Mqw8
- 567U7/WVpPhsSLWgbJkbjfpPSp+4zEAIfiyvi/bm9Mq3U5CDh37cKorsarrnAADQ5eh260mw1a2
- eijOzom4xnWqhL2YfGbZ1zaaODZLsZzd3l6IfV2cFAN1Tu7qbHZLqW6xkb5/m/G7/btNKpeSDCw
- 3j5vO07I6e+ztsAge0Zdqa0JvPJ6tovcFtNVNxqDuP+BQVZC4YNnS0AtHjSNlAz+04yBltbSL4U
- iHnVBBoZkfmbjo/wAbX4RP6VvPQvHLMYnoaJkMLs2XTYuW4p9Rnblorkv5+LVIH6zrAVUTAYszQ
- u0/Yq0XmF3gTNHoE21FR9gffxZEQPT5mlsFySCcJ2w0xlqO/o5h1v6tTxIoDRIK2nz7vThIZfnW
- iLWb8osU+7tFtGEnR6BBSSainBA9wTrefrWInn4ut773iy1ClzzhxTK2BoEPdfjYVdzlrS6Z4Ll
- efxDhawJ080G2BA==
+ bh=kZc38XdF9J7Id3WKk5iS9WywnIhRIPd2R91vYOlsxIo=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmlsumsPoqCAI8cW0KbaScyKgmrrOduFOo76LFY
+ 7k5iNdmbwqJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZpbLpgAKCRCzu/ihE6BR
+ aEl+D/98v0szvIvYfkIlyM9Ho2TMMq/P9iQp6dFi3ejlZGfpoRtanj55fwQooSHWCX4P494dyGc
+ IpLiOa6/Q6uehbPrZu304EpAjVG0dwBPbcKxFfEWskXmUi3R756PX0SC+ySben/gsJS6t0J+hqI
+ k+zMn764MIMdpcEYWIWDOXt3WtZ1EviGT9G6S72wn6Mhki8Q1HafINDYvY0ySJldqMfmdYHTBqd
+ 4UxhISrgIsK6eGgsqry3fmxxmufjnyNGjQ/FrgKTvvdcZ8bdXTwDBBxP2/Zecnx2zHXtQiinTNB
+ IqEYBITzxGiik1ty6BnL3iV8WA7zU/vsjVJCB/eJaiTDVnIE5L5Y7IBZ90/CEUab/lLBtcv1f0p
+ NzLt+b5Bby9AmE4N0yxEV/SbtiZmx+VX8WCyj6sNvO3IYiA1FjWP6Dfxb5LoJVdFGNGOPZadiXH
+ XGRqxg8y8LFhADdiVW7pv+oGqvBlnbmuEo6RIT8OZU7bT5fn7c5harGXg2Hn9xPPopmpKgtNyCJ
+ Ms6ox7qufUPyBAiG4NhBHavpewXxuWlNmVRV8E0OyBpGWtCVsA/f0DAGhYH9oRL1sJ5rSEU8gon
+ qhIS+/F90H2b10yLISaeQVOEmcVq/1H2ykj7abSQmrPUwyT1gfVuXA6SN741EDsqcJh0Mk37zg+
+ HDTE87vbf2UPpPA==
 X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
  fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-GPIO jack detection requires an IIO channel and the detection threshold
-to work. Explicitly declare the requirement in DT schema.
+Unlike the Midas, the Galaxy Tab 3 8.0 does not have a main/sub mic
+bias regulator, but it does have a separate headset mic bias regulator.
 
-Fixes: 0a590ecc672a ("ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection")
+Add a new compatible for the Tab 3's audio and declare required
+regulators separately based on the provided compatible.
+
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- .../bindings/sound/samsung,midas-audio.yaml        | 29 +++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+ .../bindings/sound/samsung,midas-audio.yaml        | 30 +++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-index 69ddfd4afdcd..e7af3c09de38 100644
+index e7af3c09de38..fd9eb054a278 100644
 --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
 +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-@@ -9,9 +9,6 @@ title: Samsung Midas audio complex with WM1811 codec
- maintainers:
-   - Sylwester Nawrocki <s.nawrocki@samsung.com>
+@@ -11,7 +11,11 @@ maintainers:
  
--allOf:
--  - $ref: sound-card-common.yaml#
--
  properties:
    compatible:
-     const: samsung,midas-audio
-@@ -102,6 +99,32 @@ required:
-   - mic-bias-supply
-   - submic-bias-supply
+-    const: samsung,midas-audio
++    oneOf:
++      - const: samsung,midas-audio
++      - items:
++          - const: samsung,tab3-audio
++          - const: samsung,midas-audio
  
-+allOf:
-+  - $ref: sound-card-common.yaml#
-+
+   cpu:
+     type: object
+@@ -96,8 +100,6 @@ required:
+   - cpu
+   - codec
+   - audio-routing
+-  - mic-bias-supply
+-  - submic-bias-supply
+ 
+ allOf:
+   - $ref: sound-card-common.yaml#
+@@ -125,6 +127,28 @@ allOf:
+       required:
+         - samsung,headset-button-threshold-microvolt
+ 
 +  - if:
-+      oneOf:
-+        - required: [ headset-detect-gpios ]
-+        - required: [ headset-key-gpios ]
++      properties:
++        compatible:
++          const: samsung,midas-audio
++
 +    then:
 +      required:
-+        - io-channels
-+        - io-channel-names
++        - mic-bias-supply
++        - submic-bias-supply
 +
 +  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,tab3-audio
++
++    then:
 +      required:
++        - headset-mic-bias-supply
 +        - headset-detect-gpios
-+    then:
-+      required:
-+        - samsung,headset-4pole-threshold-microvolt
-+
-+  - if:
-+      required:
 +        - headset-key-gpios
-+    then:
-+      required:
-+        - samsung,headset-button-threshold-microvolt
 +
  unevaluatedProperties: false
  
