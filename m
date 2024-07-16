@@ -1,61 +1,61 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D5A1A2FD9;
-	Tue, 16 Jul 2024 19:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DF61A3BA0;
+	Tue, 16 Jul 2024 19:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721158580; cv=none; b=G01MNZW8bNOMzQD5SYwQDzzHgyzN17QB6pVM5XrVYvhQj/DoKTHgilvFr8RY3qKB3TYCwp3wtK4XCUhWoAzVIuVTLv0fFXKDX+pkAFMlNGnau7di/XsYruHP19WAIoVg4wP96qiPRgQR2G2WqiGCldQaOY8YGHzJ7NcO1X0VyGw=
+	t=1721158582; cv=none; b=WRRXOzNUGj7Uw62VRlfqnzKZpXmdm7V1vUCN68cNbZrkGKUzQiz9Uif8YIm/Gb1ha1QnbsPZ26nXqgtCoSU11LyHpcS5bjmYYOP8IXhyrHxRMICaf84Fs9aLOwmeEmlRZOyVclhZKgY8FAAjQ1HXS26/g5FVg8XxxTtFIxr6CqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721158580; c=relaxed/simple;
-	bh=QgWGYzqvHsjqfBL4j0SgJZ5JxQSnDNVwolJTCMyITN8=;
+	s=arc-20240116; t=1721158582; c=relaxed/simple;
+	bh=ARfPMWOv0SHpy06dIP7WT5PvXZ721GbF2s37aIb18PQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pvFNE5OEgJ696DffWAW0rCS1J2wlXO8YuvA/jNuWm9eCIoUp71afUAy10dT/AMi7jHGGM27k62pl6y2zwC1MEr9PE9I3W/d0dZ3X92ClFXscQw+I9qbplS2LA/mAznf+cT5eyGAnHpkmVjIRTLpvAxznl5H5q9I6dTvMmkd0MRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYsZUjP3; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:To:Cc; b=PQJtiyUvjSnby6kZL4bn6biuZ8eA3cjl/cplpxBZNEx8AWe3DJCGbUpSMmrLceU21DYcaJKjcjg7J3IK72iL3UjVeyuieHbme42w85JCIvfu3Oxv/eybfHfg6XdzP04qRb6EHeSa1YpRYmWS/Yq2g6bLJwn/2c9/lpfAAXDgUEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KgI1qDWF; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYsZUjP3"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so173802a12.0;
-        Tue, 16 Jul 2024 12:36:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KgI1qDWF"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e9fe05354so8247926e87.1;
+        Tue, 16 Jul 2024 12:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721158577; x=1721763377; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721158579; x=1721763379; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cdmhceYALpkKcbsJDvNnxErW9Bwb3l3qwVd9O86b7xA=;
-        b=YYsZUjP3J5XHC3nO9oE++7dZgPs2QeZLJ8x7wq8eGEgP8EwaPhUYvgfXsHlHzphh1G
-         nte9OZiyNPTSMmaI+a6iO9eo8ynDDI9udXC7dLNvXkC2IC1npd2GwIgmwTYmRVY6llTf
-         K3h3U2PZslSMRIfUrtReXiwDqkZkoSxMsmfVpA3chiD69O6uCZB127ofK3O1J8HMyFOj
-         XBY1Cdic/Mk5eJDxapPLM+yeSnQda8gMXUPLZVDrQzKfciIR+EcxlXmfpEY3h/ZGT3BE
-         AX6CuBz8vOxNcChTOnVgPPUluzb+bqGjeHC/Wv9IAZykfvxg/SiOMKttmyLUJxBZm3vc
-         ei1g==
+        bh=6ao2+yhO25BW94L0DTHDolzXtIQQDTYjkbFtt5d8f1Y=;
+        b=KgI1qDWFeP87JY+cix4PZGu9TZJ6I07fOSEkodhMidbGZ1Z9+/dJhE93i4TaT5dAeb
+         h4WAJdQNtRpJd6a7QTJMa/VIAXEZVqzPHLlVNAdX6aPVkkRqad6jm5R1L2o+lVu33KOX
+         kXPCvkBLu7O6NtBbVC48A/ZXwat/fgRRZtcgmSIC0F/8EZwgEnZdKqtUd+FIeH+9DKfJ
+         rh5I8AgKClP3rwJGkKfOlYzU/KEsNdi+vTiQddmNxz0TZR1Kl3+ZAmDp0LvhnXyXVu44
+         c38mucv96pXf+i50ZT651UnpcboHSTEDISszqqkC5LyfQF4diHdNDDV9xK+4NApaGs/Q
+         NVrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721158577; x=1721763377;
+        d=1e100.net; s=20230601; t=1721158579; x=1721763379;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cdmhceYALpkKcbsJDvNnxErW9Bwb3l3qwVd9O86b7xA=;
-        b=lSLHWXDUwxkN/aJX0dO3ElDZHZWxLgK90G3dIfUTat97yZtFlAGBvL6Q0610obTF8o
-         5nmN31dwnaNg20j5I9pHdmY7FkPlkAPaAb5rET5rQrryKng2WmzUQU73GsSYR9RL1DpT
-         lEzCZpc8AzsG7Eh/rQAC06Ym5YLYYOG76kzH0RxUYMi5iB7SquVLn+IO/Umn/VkAJBKj
-         ZZV3f8EyZR8feMsFYmzOB8WYGsXavPRSZYKswKGuDxRXXBJd3lDz2asg+5djaTZkHhjc
-         cPYn+Rp0KNmqI7XrVLsYW/jq2HBxfk8+FkgiIMZuYlY9SDLU9Fwvtz7kdmsq49RYW5F+
-         osvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWY8s0vWz40R2jmc5F2Wo3V7b15EaW8flKs5qif79zZNt9R2ewQGd/oWAcuQhVo7Jea7RExU8z63rV2ERFsuddAl6N/cyWVEMx3cE1p7ve+iyAgtRFUC3R66wrYk9K8K2egoQSs2hKGPlzYlgpdlslSFD92envoYun8xwUqrx1dvVavEqKLRfylCJPJPA==
-X-Gm-Message-State: AOJu0Yyjm09DLMVSJY56zWxaMKTrTLVRteHOjC0uWoCNDyyXAUZ5VEuy
-	fGE/6ELhiW5zUBXScEeWA2JYmgvbpCQ7IFlRKNoWphS0kO8tozql
-X-Google-Smtp-Source: AGHT+IGvh218FLNwg88O/PK8HFP5c4wmFuV+wVaZLuf0WdA4vfqo6k1ykFWmZsh9n9V46AYNgDEzPw==
-X-Received: by 2002:a17:906:3084:b0:a75:1923:eb2e with SMTP id a640c23a62f3a-a79eda9537fmr249643566b.14.1721158576959;
-        Tue, 16 Jul 2024 12:36:16 -0700 (PDT)
+        bh=6ao2+yhO25BW94L0DTHDolzXtIQQDTYjkbFtt5d8f1Y=;
+        b=vRfD/Fz/z1/jWCab81EeId3T19pufenJ0GYlkap3QQPKMocca3zp29uZ8XZRC/Pmlt
+         M7DbyfDYgfqmvyXBQAh4fYw6IuT8r6XJni97ArVbzVzp1EABh+c/ZWrzlrnNvXlwtwHe
+         hQxN6iUTzCJUcnd8q8qwx587wbJY6hncGxmSozOCNOapPzlRlFNrnSMU3uwAFfdX+LU0
+         VmFFVE4/qsQEzPAp10iwKxemnFRoII+vpKqpTlJnvlkEU6GJVHZqlHo61A82LZklH5LJ
+         i38gpo5cLHgxIwbFz74hqc7Nrd7jb91ZgJjVlq3CNmh4pN2ncr3AEDgnP3oyJg9RWlRu
+         zAFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjopP5hmv/vHDuk4WyYC5Zp2RTNp+S5fszwIcToT0TRO/y9ztNaZdn0nODG9kFadKPgdiimlNybl5uOTpgCJ8E8AJuwKDy7R7bEx35us+tb0NBMGIB4+XM3lbu5qoU8mOFCK4jmsAWnGQ8zykddRVv8smL83c8gQJLMpxJqUX4TY6tbgAnymi7krAtBg==
+X-Gm-Message-State: AOJu0YzyulXsUpp4LmF+mrFWN+UiZ3N0LcXUyX8/kUrifnghNKERPe10
+	549ACdox0KO0k45cYtbm2UFji0JojxXtYsYVPP95bRr6M5Fr+FPd
+X-Google-Smtp-Source: AGHT+IFkRmQe5TImVkHM6E7h56pQbLBV1vW69bTzrfWCQRoN5lpzKl9uVosaSFSsHQArFyqN4QNI7g==
+X-Received: by 2002:a05:6512:1095:b0:52c:df4e:3343 with SMTP id 2adb3069b0e04-52edef1e238mr2252485e87.16.1721158578766;
+        Tue, 16 Jul 2024 12:36:18 -0700 (PDT)
 Received: from tablet.my.domain (ip-37-248-155-75.multi.internet.cyfrowypolsat.pl. [37.248.155.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff888sm351179866b.159.2024.07.16.12.36.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff888sm351179866b.159.2024.07.16.12.36.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 12:36:16 -0700 (PDT)
+        Tue, 16 Jul 2024 12:36:18 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Tue, 16 Jul 2024 21:36:08 +0200
-Subject: [PATCH 4/6] ARM: dts: samsung: exynos4212-tab3: Add MCLK2 clock to
- WM1811 codec config
+Date: Tue, 16 Jul 2024 21:36:09 +0200
+Subject: [PATCH 5/6] ARM: dts: samsung: exynos4212-tab3: Drop interrupt
+ from WM1811 codec
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240716-midas-audio-tab3-v1-4-a53ea075af5a@gmail.com>
+Message-Id: <20240716-midas-audio-tab3-v1-5-a53ea075af5a@gmail.com>
 References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
 In-Reply-To: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -74,53 +74,49 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1158;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1008;
  i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=QgWGYzqvHsjqfBL4j0SgJZ5JxQSnDNVwolJTCMyITN8=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmlsunUETQ1dVc8FKwNP4+eeUj5fugkIRozC1vV
- igRSF+i0/KJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZpbLpwAKCRCzu/ihE6BR
- aMP7D/0WPdFsO2koC9szvz/Srxq22hpYb8obGNYBICHfaV95VXvIUO7yej2P93XYB6MyxN4+xPv
- 0tRGWFVpkZfnVY6ya1VyZGlnBHdFiEDIngTXio9DiR2quosMa+fpZ8m+NCPGZfQiOUwc6RcALMD
- uARnkFNwfaO4jfWFV46MLO4kTheAz1ga/CMnE+MnqFZt/9eH+qasHV4cvLkmszVmTlbm0xXLfVC
- 4/rJRgwcgv/VfMVGIZRp3zjrpTOwU0E8MTBGRvilVAuOcqk2IVg7bps29g0Sgo0MpH2rpA4Vjaz
- hiXpyqa8S8omd+j6s8AEHsuqbQu3J7UwaaYqvu8KRqV2PpsfeRgASmOwbSXAcvwk4T6Ed7RbwX8
- 8bcRmA1WzI1IDGoxq82oayH4fp5BSROkEuN38qWinFqkvkY0F0H90yrrNacEYQSof2bkNiqu26/
- n/G3CbrpYAtbdBeXIBtBQEm/+E2QcVnjf95e0YAKzKU+O5vojLWZ8n0qCyPwDgCuGGPYY1igV6S
- H0QRrkusT7PUBfukJlwZi1cXsTK3LR+o/cpJQkWg/EfMmH01pKmYunXh03/RmeSytGnPTzIZnD0
- D3nFoU4mv3wnKQH+jpreCQ5cEJchKxtjOtKllQ0LnSlKqB27Wrx44mhJ/rZHtG1lC4V+shrn5QB
- EhTXzlmz3ie6uVg==
+ bh=ARfPMWOv0SHpy06dIP7WT5PvXZ721GbF2s37aIb18PQ=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmlsun+S8d7apjV+2i66/BusXgB+Lto8fFrZeHB
+ qCztdKgpQSJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZpbLpwAKCRCzu/ihE6BR
+ aI+UD/46s2uHxY+r4mRPl9cETVr1ho/j3Bye7t9T6q892CXKsEj9j3mcoJn/jc5L5M3u/vfmhXr
+ qOwcMG7kxtLFWgXfB3pGXelLWi+2LAqFiWTEQ22PMrqV40aG433UZDql/yAofoG2L0UYrBRVk7v
+ hPxLoBOU0kvTNgPaXFPVLnkmoH/rrAW/1HeYwtrpO/ArU626mjRFsVlCA8UVWIVZJDtuGlcpoyX
+ C+ncH3PoVNvUsbnQZmrgAZwsOg/+3WNiIChR1WNU9vReCjyRO/5+HFC57oOWhRJmfF+bTTL3Exe
+ Qr4N/mWtRuIleXnzuMNXfbFsn50R1GsefHB7xt1rOwFjkv8OoviPAZwi2DSoAgC7CI4pP186Oiz
+ h+x2V6gG3Wy2BxCiiEB8k+2syoh3fWBkK5Q5DOgM0jV+d1C6JYJTE32YMw2VNJcuONg7XJvN4Ie
+ aujLXrkfszeAjd6eUUqcPKgGLpt+QD1EkrCnqjJZRMELguPdoHmZQB82xRNnuLc9QJWfUkF4Nle
+ i/+wecu4v5Kk3d0oKdiTniIX7fbX6naoN3h0/5+DYkfzqUPLbAF3P44TAib0Lo8UImDVGDa8Kvg
+ t2gQxhOsQfJjP5rwpVQpP0nClgC3XXKlR6D45wzlveg73Hg9FG9KEYQGhSi8e0SDVz4tv8t0hS4
+ zKKBpr2VLNjN7yQ==
 X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
  fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-In the schematics, the MCLK2 pin is shown as connected to CODEC_CLK32K,
-which is derived from the same 32KHZ_PMIC clock as Bluetooth/WiFi and
-GPS clocks. 32KHZ_PMIC is connected to the BTCLK pin, represented in
-mainline as S2MPS11_CLK_BT.
+This was initially copied from the Midas DTSI, but there is no
+proof that the same interrupt is also used on the Tab 3. The pin
+listed as the interrupt here is GPIO_HDMI_CEC on the Midas,
+but for the Tab 3 it is the headset button GPIO - GPIO_EAR_SEND_END.
 
-Add the MCLK2 clock to the WM1811 codec clock property to properly
-describe the hardware.
+Drop the interrupt, since there is no proof that it is used.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 45003967406a..46bdd0681afe 100644
+index 46bdd0681afe..2f39f3c0661e 100644
 --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
 +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -535,8 +535,9 @@ &i2c_4 {
- 	wm1811: audio-codec@1a {
- 		compatible = "wlf,wm1811";
- 		reg = <0x1a>;
--		clocks = <&pmu_system_controller 0>;
--		clock-names = "MCLK1";
-+		clocks = <&pmu_system_controller 0>,
-+			 <&s5m8767_osc S2MPS11_CLK_BT>;
-+		clock-names = "MCLK1", "MCLK2";
+@@ -540,8 +540,6 @@ wm1811: audio-codec@1a {
+ 		clock-names = "MCLK1", "MCLK2";
  		interrupt-controller;
  		#interrupt-cells = <2>;
- 		interrupt-parent = <&gpx3>;
+-		interrupt-parent = <&gpx3>;
+-		interrupts = <6 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
 
 -- 
 2.45.2
