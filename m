@@ -1,73 +1,114 @@
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3167C13C;
-	Mon, 22 Jul 2024 17:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C1E770E6
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 18:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721670898; cv=none; b=DDRvAt1hWkukyGXh4WBVLS4m2y+ze0Zih+rVOVtYucCvmp/p9xoS+ANHtmpASrcECP/4COlxLdERk2DlmpVTtfR3FkrmHvmHYrOX/G+40+Z372IsDTBzNJ75IlPySiRsYOYszbdhc+Ral/YJLjtTeXx3uuFOPUrnn6CRu+NBgvg=
+	t=1721673601; cv=none; b=f9J0Wbz/Si/3Detc9Gb8/tIOmOvtIF3I255sl+VJo20eZmxHHvBTFFwXlATmlcDtc+5CmWgB9r+kxLhIpUARZoj9VJq9h4f5aoq33JZ2F/okuXHICuD2C1IE9r4JUvZrTBqelaOd2SgkCXa3MgYvmwcfNtp6QkI5nA0+LJrIhBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721670898; c=relaxed/simple;
-	bh=tTFV7zk4wwXKze0dSQKpph7TsFyabr3+7UzKTScePo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bpsZd1acyn8H+VJMQaCkmuB1o/0q0I/iEiQFjwnu0UqZSIABZaBLFnReaO3cH48zgJLXyY8aui2p3r04XZZtAi5Aay5SBs3jx2gtrfBFUfFBv96BH3905G8EaN9tmnTgW4jV7gmW+flqD0xt9Jk+ONVJnRNLnRpvW7YpmLBGstc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=lnZ12k2r; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	s=arc-20240116; t=1721673601; c=relaxed/simple;
+	bh=jiivNKC7lQbRfNg1Kjpt39Y+ifXLk9Fuixvd9EbV8+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b6X/vZz4r6KBU7u9KDl6L4RiuU7DcgA7vC5V/r5XJr7tAoC90pPzGvnOxmYu+oPhfiPeYqsuIJQ3cMTwhAjduGL9LEQaECs63a4L1ED7lLkqmL0edXgK6Gli6GiWM+H8KHC6yj+vpQDVtL4TrXu1EBsGHpdDzQqCgl1RySEfC3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e/wE/RZQ; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="lnZ12k2r"
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WSSbZ2FZWzlgVnF;
-	Mon, 22 Jul 2024 17:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1721670887; x=1724262888; bh=tTFV7zk4wwXKze0dSQKpph7T
-	sFyabr3+7UzKTScePo0=; b=lnZ12k2rkRvAez4AiH3xE3EP1D20myHNsJPOMWxX
-	8bhLCUrympXW0D/25hUwjMBS7XTiq+8saGCaXctZAL1vx0Xd9vhtC0P8pioP6xU2
-	aZxny/I3oZwmXw8nXlH1jlxBG8GokfYqjNVlz/ZZB9EQ/Fn2wJDkc5oggAbjL9Zt
-	TAMGTc4Zh112RiMUhcKzBs4PLfJJMBpz2ngMKr7RnlRFKQVddbRDpBtZK3ryMte0
-	OqBtzm5OnrSUwllV4h7kq0FBQyvQKLXBgPUduPHPZfFwhLa+QshlaU/TNPKHMQTf
-	3DGngkzkSX67yYOpiaG8io9ptq1u3l8sG/hQOZvVUirJxA==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 1-ZWSxRy_cuE; Mon, 22 Jul 2024 17:54:47 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WSSbT2wYLzlgTGW;
-	Mon, 22 Jul 2024 17:54:45 +0000 (UTC)
-Message-ID: <8474f605-f92c-4b03-8f41-ed6d35f012a2@acm.org>
-Date: Mon, 22 Jul 2024 10:54:43 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/wE/RZQ"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-66526e430e0so48939257b3.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 11:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721673598; x=1722278398; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r1c97fZFJ3UOJw/ZZR/BLt9bIZt0krqS+WJPVRsmyTw=;
+        b=e/wE/RZQWHKigEckl6HNT959oxaZ7ZC4jQi2uz1f11XBtrOdCSL2IOvOfawiqHTWY4
+         tqpzp4yG3rGi4ZGCajXWslVG50XnJXqXKtX+dIta6m1COUOZeOsXLqdsuRKGm+lcFfAd
+         JR7M7CRlc7TXZ0rXSmKvHAsASWPu6j+7RUNhKb4V4Lyj19ngD64lp2Z++aHEu5b7U6Pf
+         Ng3r19lk1eFB3CC7zBBxHg5eVdm4OpHmDC6YJnPRWt4cWfKlH0JM28FzAIhjLRct+CSC
+         3JWKtX4DABpBOXkQCTldq7Go43GrHCZZMcGdG730JvLrdyojYM/YDhr5Sqqzs1tknvAc
+         q5wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721673598; x=1722278398;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r1c97fZFJ3UOJw/ZZR/BLt9bIZt0krqS+WJPVRsmyTw=;
+        b=lUs6voQBuxcvg/JSOQPvfP0KFuc+O6ExvlYeBVF0SNzrbq5+IOcOKvaq9edj6uihe6
+         32gsMSdBHeQ1SOUHuIr5eu7D7FyPm9XeTwh59CmgVpf8+NoO9owZ5CUlxXvdE0mOll/x
+         OQP9dVSU3xYGBUBwESPugoOx2Tu5YH0WahGxsVJ8RIu75c/jW1DaDy2MEdKWYnTvxSe7
+         Q8h4PmxqZXPX96/ET8iSmZeO7D+6XfEgD1u4GEfynPKjPBxnzF9vAg6BvVfOBoR9bTu+
+         FFmHfuQgLXEZgi9Cr/OoENIHip6ygWQ+nxnq0HKXXmvR6D/SxO6nYX8qbFLxZOhkRMlh
+         KK+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUbPmf/TPYCYmEEHT/lcsD0dz+D+Vakro5rQbzF0006A/vdf6lKyJ9rgxqrXMozSAty5x9Ej0V0Z0CM55oGdpTLSv0NFUyMeyLLmnM16AgFPUE=
+X-Gm-Message-State: AOJu0YykgvSVmp6JEN2G816Ab4w0dXuWk8sHtBYTFUMdSy69ffyQ4FqR
+	WnCkCh0W4HAqwo82o17T7DsuWemw6bZ1GzC6h11ngIGb2gQQYdZef1OgtxguGZ3SAbx095RHyqo
+	xTiJ6lBAgJMCkrGOrs4IXesQareaC0dbD5ZF/mQ==
+X-Google-Smtp-Source: AGHT+IEReHOHNiIFa0oMgVRxlCG9RA8ftspFBW9UmBDqwYk4Nh57Mi8IAfbccJjJtUaTYgJaPpM1V++zASopTbzE/EM=
+X-Received: by 2002:a05:690c:2e0d:b0:64a:7e85:9a94 with SMTP id
+ 00721157ae682-66ad91c36aamr79649327b3.21.1721673598539; Mon, 22 Jul 2024
+ 11:39:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: Don't resume FMP when crypto support
- disabled
-To: Eric Biggers <ebiggers@kernel.org>, linux-scsi@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-fscrypt@vger.kernel.org,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- William McVicker <willmcvicker@google.com>
-References: <20240721183840.209284-1-ebiggers@kernel.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240721183840.209284-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CGME20240719120944eucas1p29318fb588150b15f60f637fbea48271f@eucas1p2.samsung.com>
+ <20240719120853.1924771-1-m.majewski2@samsung.com>
+In-Reply-To: <20240719120853.1924771-1-m.majewski2@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 22 Jul 2024 13:39:47 -0500
+Message-ID: <CAPLW+4m0xG5yHOT_ucGdrOhLZvjhga8caqHQZmVH6HHKUnBgkw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Add initial Exynos 850 support to the thermal driver
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/21/24 11:38 AM, Eric Biggers wrote:
-> If exynos_ufs_fmp_init() did not enable FMP support, then
-> exynos_ufs_fmp_resume() should not execute the FMP-related SMC calls.
+Hi Mateusz,
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+
+On Fri, Jul 19, 2024 at 7:09=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
+>
+> This series adds initial Exynos 850 support to the thermal driver
+> together with its requirements (tmu_temp_mask fix, making data->clk
+> optional, adding the new string to dt-bindings), while also cleaning up
+> a bit (using DEFINE_SIMPLE_DEV_PM_OPS and removing some outdated
+> information from dt-bindings).
+>
+> Mateusz Majewski (6):
+>   drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
+>   drivers/thermal/exynos: use tmu_temp_mask consistently
+>   drivers/thermal/exynos: check IS_ERR(data->clk) consistently
+>   dt-bindings: thermal: samsung,exynos: add exynos850-tmu string
+>   drivers/thermal/exynos: add initial Exynos 850 support
+>   dt-bindings: thermal: samsung,exynos: remove outdated information on
+>     trip point count
+>
+>  .../thermal/samsung,exynos-thermal.yaml       |  33 ++-
+>  drivers/thermal/samsung/exynos_tmu.c          | 279 +++++++++++++++---
+>  2 files changed, 270 insertions(+), 42 deletions(-)
+>
+> --
+
+Thank you for the contribution! Did you by chance test it on any
+hardware, perhaps on E850-96 board? Just noticed there are no dts
+changes in this series (or as separate patches). If no -- I'll be glad
+to assist you on that, if you can share dts definitions for E850-96
+and the testing instructions with me.
+
+Thanks!
+
+> 2.45.1
+>
+>
