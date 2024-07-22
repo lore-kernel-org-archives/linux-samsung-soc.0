@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2166B381BA;
-	Mon, 22 Jul 2024 07:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C54415252D;
+	Mon, 22 Jul 2024 07:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634806; cv=none; b=YmuXBeWvLhF2QXHTQCILogMaSuPurRpBSnNY1fEcptqJ2uVa0LEhGOClGX54kiLectYUx78q/haAJn8jqQvWZ6CHzDGC0SmalGlGvUN1rdFxC+UFse1GnM9NwHnbAlZT/hxixYF7h8dMwvllaao0R7fF3RBC4XqiY5qQsN2tS7w=
+	t=1721635018; cv=none; b=uzumqsuoV6vPNVucdCmbsW+E9UXKQy8OLD3XWFiIMjRczBLUh4L2FYfMP679sPNDtiPhOg+cFtmaM7VjiBxw3imy1csouY30snvtf8z0rH+LK7PrZ6nM0atDLOYLShvh69a5s+8x7LougoScYfc9STL8SoWnNrnn6qxUFZqTrtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634806; c=relaxed/simple;
-	bh=kUn9nFEOr2iq3hY7ICcDWptl8xXfbYZnb4qhiBByKns=;
+	s=arc-20240116; t=1721635018; c=relaxed/simple;
+	bh=COQMtfBNJwfO8uljz2p9okL45TamVuQg+CNbtYLtpZM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hSubJ4w9hdvFASBPldh4Wao1Km32aZW0IlgJB2AF0QAEKCrs1l+8vrsUWJmQUJfIrXcamyFzSHadJ96+wVpMHunANA2z1shb/6pRwrKzlW1zbjd2IAtZM2iKcVfu9pz+6qfXPZSUJV/y7AxAnfZ0k7c+9xY7rPWWUoK2TDKVGhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEjjZxBJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=BkEU74y3d7HPNHIaP0ti0tOAT0D2awTF3IC/RC0BmTOk/PznWY2E9lAP93oNbO1iwv6gbYLZUGF1uwaW0GKBb1+BpweSq5vMTnsUjFWe7wH4LBpFJyk7nEkY116baOP6S8e2bZi0Ur1YF6mSSlBqd+6CldR9h0uJr0bnEajJhBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sbawr4QQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEjjZxBJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B8E7C116B1;
-	Mon, 22 Jul 2024 07:53:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sbawr4QQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B32EC116B1;
+	Mon, 22 Jul 2024 07:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721634805;
-	bh=kUn9nFEOr2iq3hY7ICcDWptl8xXfbYZnb4qhiBByKns=;
+	s=k20201202; t=1721635018;
+	bh=COQMtfBNJwfO8uljz2p9okL45TamVuQg+CNbtYLtpZM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FEjjZxBJjguPhRvKfb4aYvein3eXH7A2czb+nli12nXC1IdtWnbWqKvDtn6dE2ydd
-	 podxdqn1Qz08Yx7wkqq6x0nohDZThL4KGocFUmK6dE+OvV0gDZxBzYULbuyAyZ7jTa
-	 P4JxzeHB2pk0TxNGYzqc8CSWa2vn1rhdkqm6bsgTabCR421aLB5vQFsAag+f5dXm4V
-	 E6tK2XImq6ZcD0Hg34/8uTLYe/lawXfN7tsZfgpoH45zonyIZcuLzzVabr+Emfkh1T
-	 BGyI6KLRThr8lSc9IR6EuC5ff7FQrNyXzYT5qgmz3puzrSjosnf2RH7bUIc+XFIaBs
-	 b3peUhxYXJi9w==
-Message-ID: <7517b8c1-b46f-498f-bffe-dcecb0914305@kernel.org>
-Date: Mon, 22 Jul 2024 09:53:20 +0200
+	b=Sbawr4QQYzw5QLZVw8zvAqKoy7urqCgbWgYlzmZaBYFN9RPr+ZzuP9p7jhtK0/laG
+	 QO8/5fCc8oNhng7DxdUzK5Rd3qkKXj4jcXdKOVhShzba0OXRgg4aXW5defW8lq0AMx
+	 Jmv4ieATVzjO7dM7fpnr/FrHFdEGkhyrqrVTOlZV13e76LA3nlFh6DDhpDFN5N2Eiv
+	 a7XCfPvcz8MDOnKOtsb0Vl1Ny7WHHojLiYi8VUWXbiQzXw2+/yA2uda+v5kR6u4RGq
+	 EpzJfNw+cTG4HIoojCtpiwjtV2KFQQHAirTQ7N89ZBtshELZ9ynJugep+jglGHE7hS
+	 MidUhEHCxk8Sw==
+Message-ID: <ebe3853e-aa69-417c-ad0d-efe58a0dd1b9@kernel.org>
+Date: Mon, 22 Jul 2024 09:56:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] ASoC: dt-bindings: midas-audio: Add separate
- compatible for tab3 audio
+Subject: Re: [PATCH 6/6] ARM: dts: samsung: exynos4212-tab3: Drop dummy mic
+ bias regulators
 To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
@@ -44,7 +44,7 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
 References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
- <20240716-midas-audio-tab3-v1-2-a53ea075af5a@gmail.com>
+ <20240716-midas-audio-tab3-v1-6-a53ea075af5a@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,20 +90,63 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240716-midas-audio-tab3-v1-2-a53ea075af5a@gmail.com>
+In-Reply-To: <20240716-midas-audio-tab3-v1-6-a53ea075af5a@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 16/07/2024 21:36, Artur Weber wrote:
-> Unlike the Midas, the Galaxy Tab 3 8.0 does not have a main/sub mic
-> bias regulator, but it does have a separate headset mic bias regulator.
-> 
-> Add a new compatible for the Tab 3's audio and declare required
-> regulators separately based on the provided compatible.
+> Add the samsung,tab3-audio compatible that makes mic bias regulators
+> non-required, and drop the dummy main/sub mic bias regulators that
+> don't exist in hardware.
 > 
 > Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 20 ++------------------
+>  1 file changed, 2 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> index 2f39f3c0661e..a140f86d399b 100644
+> --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> @@ -286,20 +286,6 @@ display_3v3_supply: voltage-regulator-3 {
+>  		enable-active-high;
+>  	};
+>  
+> -	mic_bias_reg: voltage-regulator-4 {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "MICBIAS_LDO_2.8V";
+> -		regulator-min-microvolt = <2800000>;
+> -		regulator-max-microvolt = <2800000>;
+> -	};
+> -
+> -	submic_bias_reg: voltage-regulator-5 {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "SUB_MICBIAS_LDO_2.8V";
+> -		regulator-min-microvolt = <2800000>;
+> -		regulator-max-microvolt = <2800000>;
+> -	};
+> -
+>  	earmic_bias_reg: voltage-regulator-6 {
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This should be voltage-regulator-4.
+
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "EAR_MICBIAS_LDO_2.8V";
+> @@ -310,14 +296,12 @@ earmic_bias_reg: voltage-regulator-6 {
+>  	};
+>  
+>  	sound: sound {
+> -		compatible = "samsung,midas-audio";
+> +		compatible = "samsung,tab3-audio", "samsung,midas-audio";
+>  		model = "TAB3";
+> -		mic-bias-supply = <&mic_bias_reg>;
+> -		submic-bias-supply = <&submic_bias_reg>;
+> -		headset-mic-bias-supply = <&earmic_bias_reg>;
+>  
+
+You just added this line. Organize patches or code in a way that does
+not move it within one patchset.
+
 
 Best regards,
 Krzysztof
