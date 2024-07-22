@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA3C1BC40;
-	Mon, 22 Jul 2024 06:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0206B14D2B7;
+	Mon, 22 Jul 2024 07:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721630068; cv=none; b=PEkAanbUyJ3+LFIme1HdI/Uf0Nfz7h73rndLmW/iY/Ak1jyPhm5zJye/eUBkYv5wGx7Zcg6Oo5xKrJk0JKez3xagfmNCKPE42910Epj5LOyGRxjI+zuISSI07CAzus0rLqO6t1FOFBak9Bdafw7Asi+/cjQubBKg+eozbQXQigQ=
+	t=1721634320; cv=none; b=NANsJnpK1dGUi9dSdmgNYQSly8C2LHfHn87HUQVjhdzCyIeQaJCElhtAYLNaT72ast62zpNjvXwaoGDMir2W/qWDp6zvmFAFPTv/LclxyfsprPItiNuyMzGzUPfWlsUrXQ+3eyOEitniVAgdPePIkuwav4C1rVWb1eXi8Pu/Bqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721630068; c=relaxed/simple;
-	bh=GbJKaqxK+MeKpofMt1tINVbJk1zdx7SlcWgSDkygXaE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WUWPPVT4ccZWLkzgB/PjPfiFflbY1PZ0bFwqvskCaaMDrFjhMHxKzSocLColnK7vv1+BFs6GeUMF0syPAYRTLr8pOyA2pB45/j7CcWOE8TJebSEvT9pVRSubAxeU8zVM+4Y9+I+EXYdrfdT6Gj/7FWysAje0JR99uOyzyEDk6u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVv4+6jB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721634320; c=relaxed/simple;
+	bh=+MaJBgjNtkARNpfQULTFjsybhHCcQiUPkH4lCQ3ICrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0s2JLnENX0ABfjQo0w5FZ6zLneMXfykO50sfNKf0uM9zoUJVUyJ0eYvhWdhShjqyszgOYFi3b4M1i/7rbXRXI7o2sYWRacT1ICjjgnUXfaSrBxgTcd9tBWSGtqraYNF1jFq8OUKQkoWL5fgQHDTCD3MUSmjiCEAf9ENVrx23/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMF+IQLT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVv4+6jB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903A2C116B1;
-	Mon, 22 Jul 2024 06:34:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMF+IQLT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6301C116B1;
+	Mon, 22 Jul 2024 07:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721630068;
-	bh=GbJKaqxK+MeKpofMt1tINVbJk1zdx7SlcWgSDkygXaE=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=pVv4+6jB6wSz0fIMyeGhRXD0WjllADSyMXSc1vkUcidfsnEAmwCMB04ZNpW4leJtq
-	 uFznkL1OibEYQ7fzZsXF3pZ6iCfAiXAUPRSgBeGx5KTApTSgflb51vsmonauZNBEkO
-	 yDy3nd3uLJE9xI7Sfk+o28fvZEuY578iH5zXV19kbZPFOmvYk74yflZt0dttoSopCK
-	 wPoUs4N0AuFflSpIs9d7UmXFaLX3UeKVyu+3RwZEDjIEeFS3XCGZmZ40BxXRxJBWRN
-	 QwrL6WAErzSccurMoqONaRn+8/haeqiXKE7y47kj75meWkgteSzwBQxiOiUOfwtR7t
-	 BxPnG1Xjd6idQ==
-Message-ID: <39897871-b750-4901-9f72-823d3703ca50@kernel.org>
-Date: Mon, 22 Jul 2024 08:34:21 +0200
+	s=k20201202; t=1721634319;
+	bh=+MaJBgjNtkARNpfQULTFjsybhHCcQiUPkH4lCQ3ICrc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TMF+IQLTfIOn1GM/iKUWiDlYdlwjQus76rNAFKeGl3C6ZgudWeVxFThu3ulTlkWOF
+	 K6Ad4YZzCvttCJTkzNwIGlTOuXaHYkNtOhllocd+qirET9kMz/fo1JKKgc3c8K0w5r
+	 hEcgkwH9eaYxOHc5yOHZccd4OHUpJAyZLxpR6qZHtgOpsL53UuLBKyEfyEwX+Lo9Cn
+	 TekuTvOebkI2EEHQCXKhPhPvnnBIMQOjrIVI67FlTaaW6Ha9BNm7/6O/iDZJIC8Gee
+	 G+8oxIkm7Mkj515FhXVY6+HYTcDOUSNop0BR5VslQMrOdFDiPQeMCpeLCroyj4XdvI
+	 6A7EcuziLw68Q==
+Message-ID: <bdb3a8fd-2f49-4b97-bedd-4d65ee2a1d79@kernel.org>
+Date: Mon, 22 Jul 2024 09:45:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: samsung: Don't register clkdev lookup for the
- fixed rate clocks
+Subject: Re: [PATCH 1/6] ASoC: dt-bindings: midas-audio: Declare required
+ properties for GPIO jack det
+To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
+ <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>
-References: <CGME20240510065909eucas1p20067042a45b26e0a58110ff439dcc1b8@eucas1p2.samsung.com>
- <20240510065901.535124-1-m.szyprowski@samsung.com>
- <6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com>
- <77380bf6-8651-4373-bb7d-3fc0497417c0@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -93,33 +90,47 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <77380bf6-8651-4373-bb7d-3fc0497417c0@kernel.org>
+In-Reply-To: <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/07/2024 08:26, Krzysztof Kozlowski wrote:
-> On 18/07/2024 14:20, Artur Weber wrote:
->> On 10.05.2024 08:59, Marek Szyprowski wrote:
->>> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
->>> clkdev entries") revealed that clock lookup is registered for all fixed
->>> clocks. The mentioned commit added a check if the registered name is not
->>> too long. This fails for some clocks registered for Exynos542x SoCs family.
->>> This lookup is a left-over from early common clock framework days, not
->>> really needed nowadays, so remove it to avoid further issues.
->>
->> This commit causes a warning to appear during startup on Exynos 4x12:>
->>  > [    0.000000] exynos4_clk_register_finpll: failed to lookup parent clock xusbxti, assuming fin_pll clock frequency is 24MHz
->>  > [    0.000000] Exynos4x12 clocks: sclk_apll = 400000000, sclk_mpll = 800000000
->>  >                	sclk_epll = 96000000, sclk_vpll = 108000000, arm_clk = 800000000
->>
->> The warning seems to come from exynos4_clk_register_finpll in
->> drivers/clk/samsung/clk-exynos4.c, where clk_get fails with error code -2.
+On 16/07/2024 21:36, Artur Weber wrote:
+> GPIO jack detection requires an IIO channel and the detection threshold
+> to work. Explicitly declare the requirement in DT schema.
 > 
+> Fixes: 0a590ecc672a ("ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection")
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  .../bindings/sound/samsung,midas-audio.yaml        | 29 +++++++++++++++++++---
+>  1 file changed, 26 insertions(+), 3 deletions(-)
 > 
-> Indeed, so clk_hw_register_clkdev() was needed for clk_get(). I have a
-> fix for this.
+> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+> index 69ddfd4afdcd..e7af3c09de38 100644
+> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
+> @@ -9,9 +9,6 @@ title: Samsung Midas audio complex with WM1811 codec
+>  maintainers:
+>    - Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  
+> -allOf:
+> -  - $ref: sound-card-common.yaml#
+> -
+>  properties:
+>    compatible:
+>      const: samsung,midas-audio
+> @@ -102,6 +99,32 @@ required:
+>    - mic-bias-supply
+>    - submic-bias-supply
+>  
+> +allOf:
+> +  - $ref: sound-card-common.yaml#
+> +
+> +  - if:
+> +      oneOf:
 
-... and of course thanks for the report!
+This won't work if you have both detect and key gpios. I think you want
+anyOf here.
+
 
 Best regards,
 Krzysztof
