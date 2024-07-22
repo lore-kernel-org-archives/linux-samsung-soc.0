@@ -1,84 +1,120 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C82629AF;
-	Sun, 21 Jul 2024 18:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF317580;
+	Mon, 22 Jul 2024 05:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721587179; cv=none; b=tlxj5dOfk79AwclyACENqD7hWJZF32c3F5nFHclb9M7pRhLD685yPaGUWYjRP8I/U4UgEnxaNxs+Q6zX1ZQKRFP8vCV3HxJu7oE9cJd6mIWsGqLFeX6PewcxqbFii63VMpeftbUpzxh1peaQEwwxBFe+cT15RpFW4b+6NywK99w=
+	t=1721627342; cv=none; b=sV6FjpD94fOEmvqBltHsRn8mYLEASVDTA3zjrTIOGb0NeK3+P7N1BanLIW2DxR40fAg7K3ZMyda5ROJP5NGWlY1VAGvUQRqj/BSzOo5vBCJS5emKn2RBdpm9bxnonRs8DqSpP6umbWIIIQjGFk2Gc8SEAf33DDOqHrmnY9qyLiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721587179; c=relaxed/simple;
-	bh=AgVYzcqSthU3IfcGkK+WHU67vqvwlxreaFp0UMGnL3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jdmQSRQRfK6Oytt62JMVy4sbFq5jQVIJFMl06P3Ix+dGm34osAgHk+QJW9BDurPJLOqQQb10ldogE3ABqEe9ekM8PjgpvSxy7I7GzXNjGvlP2eIi1xLifXTLq4hltS/W6igGZUK6pqb5UxgPGLcb+vB14aGJhtOTF5mo15ykcD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rb/F/fxK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721627342; c=relaxed/simple;
+	bh=XzEok5NcFCLF0H8YZyRLoUBL2fVIZ6Kor2YGKH0dzu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kl8d994v6BezHiDs472TBzugddK1MZVdOxSWz5+qqS0Ya3bkWKnLSyQ8H46+C5INygAk/ejgx0VzB5eddFM6FKqsDtY3fE9U6JBrawBqU2ZVFQdW+QYk4fobo+FWmW3wMTHSy03es5mLjnfz1QbCPSS8jk7UhxR5LN8Ib4VR08k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnOUMEHX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rb/F/fxK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F077C116B1;
-	Sun, 21 Jul 2024 18:39:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnOUMEHX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07AA8C116B1;
+	Mon, 22 Jul 2024 05:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721587178;
-	bh=AgVYzcqSthU3IfcGkK+WHU67vqvwlxreaFp0UMGnL3s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Rb/F/fxKDNUd3AsChSWPanpUHCSUOBZZFxoyum40o/Z253XKPYa39MV+Z1ePD6c6V
-	 RmwL7NQYZlIz7O7yuRHYn4tOlh1FpBa1jcYCmnpSN62Mc/pgap6R8YuCkwBi+GxMSQ
-	 ijToz47fmtQbe+VTT6wnJOpXC5u5d0ex0zo4c5/X9suulAweqduzF1JgPk/DJZVGbf
-	 ZklOJnORn4JjqmK9YvFYDg84MC9heH2GPgileLHainKsgqf5aWovav6ul9eEd+IGJc
-	 e6/9rYQgt1IQ5YmHjHleH+0O9QKhqzkYmbRv6JvWacFr/s0JY9IlxfuzntbATFubVn
-	 qOMxS8F9z756A==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-scsi@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	William McVicker <willmcvicker@google.com>
-Subject: [PATCH] scsi: ufs: exynos: Don't resume FMP when crypto support disabled
-Date: Sun, 21 Jul 2024 11:38:40 -0700
-Message-ID: <20240721183840.209284-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=k20201202; t=1721627342;
+	bh=XzEok5NcFCLF0H8YZyRLoUBL2fVIZ6Kor2YGKH0dzu4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cnOUMEHXuHMTLZqfDbCQfoqpZenGtC9oXxXYliTXLR08UrYxtKbJs6ZPaNeQxqMiG
+	 y0dt0vCWFpkd5XnJVRRc8k3gFgeLM8VcpIDJcLtX74x19OH9Tjuc7U/pN6T4DPlcky
+	 OZdz5D4t7X1+xl5RDQJ0luN+TOfHAamE54zie1yXOEa57yxCVBjtI6C3BDmTJcGLHA
+	 lvjwZxW/or4ssSNT3IUJykmSB2T61wSaXpAK+WPu116X1s4G6KKBZpFP/NjHjJkz8w
+	 sjZuUQkCrJs1aWxN4RUP6SFOXeqyvNHnSoxAR6XMYQnlxDvVWFp6KMmII9AMi00HFO
+	 N1aGuNOaRgfIw==
+Message-ID: <b4a83536-aa42-4512-8b75-68b81561669c@kernel.org>
+Date: Mon, 22 Jul 2024 07:48:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/9] dt-bindings: power: supply: max77693: Add
+ monitored-battery property
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com>
+ <20240715-max77693-charger-extcon-v2-1-0838ffbb18c3@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240715-max77693-charger-extcon-v2-1-0838ffbb18c3@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Eric Biggers <ebiggers@google.com>
+On 15/07/2024 14:55, Artur Weber wrote:
+> Add the monitored-battery property, so that its constant charge current
+> property can be used to specify the current limit to use for fast charge
+> (when plugged into a wall charger).
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v2:
+> - Switched to monitored-battery property from separate fast charge
+>   current property
+> ---
+>  .../devicetree/bindings/power/supply/maxim,max77693.yaml         | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-If exynos_ufs_fmp_init() did not enable FMP support, then
-exynos_ufs_fmp_resume() should not execute the FMP-related SMC calls.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fixes: c96499fcb403 ("scsi: ufs: exynos: Add support for Flash Memory Protector (FMP)")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- drivers/ufs/host/ufs-exynos.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 16ad3528d80b..9ec318ef52bf 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1291,10 +1291,13 @@ static void exynos_ufs_fmp_init(struct ufs_hba *hba, struct exynos_ufs *ufs)
- 
- static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
- {
- 	struct arm_smccc_res res;
- 
-+	if (!(hba->caps & UFSHCD_CAP_CRYPTO))
-+		return;
-+
- 	arm_smccc_smc(SMC_CMD_FMP_SECURITY, 0, SMU_EMBEDDED, CFG_DESCTYPE_3,
- 		      0, 0, 0, 0, &res);
- 	if (res.a0)
- 		dev_err(hba->dev,
- 			"SMC_CMD_FMP_SECURITY failed on resume: %ld\n", res.a0);
-
-base-commit: 2c9b3512402ed192d1f43f4531fb5da947e72bd0
--- 
-2.45.2
+Best regards,
+Krzysztof
 
