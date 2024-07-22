@@ -1,122 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01301B27D;
-	Mon, 22 Jul 2024 06:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ED217BA5
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 06:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721629591; cv=none; b=JV93MEewrBo2uuwuwLtVfbRwab8TbrgAwdMDg2drCLfL3ftCtEVaa87bLbXU2RCmcNrmhX/nMuwC41t7pc3YdrUXyvX+kt/wwwqJyQ7OzqdrZVQYop5T8KBar9kpjXw5OR0Jh3s6kVuorRDccF9y6mrBji85KEeCF/h8qOgn0CQ=
+	t=1721629997; cv=none; b=QksHtR2rroHEQuGfdSPFwcCIRsBoxZEIqucUrU1tAhVXrwG2rLifez9oxxzq7NBRvWeLpfRgXZM48JXY+zDXYboOGnyBdxY6sJcIjhkQM3wPzuu9+szRcP14FYulq1PMX25iiKNFDtAgB9uO3iHguZlMerPRK1UrzEhsZFZaAvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721629591; c=relaxed/simple;
-	bh=Vgd8rz6VKz/PJ87x6t7II+oz16zTQhbiVEanCi29xrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WPAzT09RTHqZ4vQ6Fu6sW7vsDbChfrtyMMTLiC1NwyYI6bu0PJMLOfAAJxDADVbDQvdkkrcpxGy2sWX2KzgJWHn379jjfLJArEQ1nbhUdzQBb0EcgJs49MztSFtCXumRl9aD2elxuB3TW8o7oFmDKatwBtcG+djXF1Y7zaOyI0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMF1jSnU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721629997; c=relaxed/simple;
+	bh=PN1n9CaTCL1HxBSjtyOCIXUtDYrf4lCA00khcB/7w3M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EAFljb/lsGeakR3X4ZZFGaopRj3rX0FWUmUBwuOC7zojh6ghV5Cm7Q8zXX/JxCJDzKsaTfKv8EGzpjcqPKU1kDhhyWjwEtOOimwf5KbMB6gQapbYnJmP96TckfNH8KlFS5JpGGzvKWPqQTMPA1ADL4cdf9kstMPKa7YmHc+RA4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wUsowPXU; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMF1jSnU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73EE3C116B1;
-	Mon, 22 Jul 2024 06:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721629590;
-	bh=Vgd8rz6VKz/PJ87x6t7II+oz16zTQhbiVEanCi29xrI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cMF1jSnUM3g8UKZBXAeAvrzu1xpXuosIAhSzJf25GImqxovZiK3DVwxahVMXSeLP4
-	 VKvdT0MD/QvpEpjIHe/tWbOhNkvxaPNSaMicMZ4F8l4Cg1/tuQWm1ORU3NIxet1d1s
-	 BMu2UpsVeJXUcU8YkxY4jYlBKXg822J8td7gjJocyOzt29MnsHrwlAy5rKQAdPxvrH
-	 ONiDwqgU1YAHg0B++2LthoQAfSHobS2ay000z22JYpRGA62xPnYf0ca3zqnzZEEu7z
-	 ri1pGB8G09hXasm6yFyuRNa4qV+fOydNygKhGUBbd/Ks2leiSnl590KYlfT1tCcSAZ
-	 ibVLpMOVK6Fdg==
-Message-ID: <77380bf6-8651-4373-bb7d-3fc0497417c0@kernel.org>
-Date: Mon, 22 Jul 2024 08:26:24 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wUsowPXU"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so4175158a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Jul 2024 23:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721629993; x=1722234793; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xj+wDOWyCzvjTCTUDA0Y6iSTZh2VAEBUpnU4/tK6YAQ=;
+        b=wUsowPXUagBJ12OFgMUSU5mPxKiturgnOj7jXKFuAT6uDHbA5h419IIYYXdCaHucV/
+         e4koGNChj3y7HzMlsnF80WSFVbueRrRzD+kbM6zzl+Lusn6EQaXp6a7Itdft0xhhzns+
+         8G+9oYFqIMKjG/BgumiUleIFJZOxAgjAzasp5mY08MiTa4TbfEqlDib61iUdB8LdSAzs
+         3+TLAQ10iDLzlv2oCAjbVzQYatDKVtUwiaWRsA4YlW5/apw63S4HF0rPB0zQjbWKEA9E
+         WVLfieW7LJQ5Vqg+8443A/TPHkcA8XNcZFPH4f8uZOqINzn8su1IwC1/9M7QVjKDbqT+
+         meAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721629993; x=1722234793;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xj+wDOWyCzvjTCTUDA0Y6iSTZh2VAEBUpnU4/tK6YAQ=;
+        b=ps2semPJjcRMK4Q7k4sf8V/VN9asekKNwCrO55t8eRgpFWg58k+XK2gezCE/4FHd7O
+         EVgS355pHiL7akfBBfzbzpFOV5UEhCbOHmNYToN9UD9oPlHxk0pLGJ43YKZ+w90RJmPL
+         Zn/dUq/dzBRNmYFkypf8lu7MrQK5EJm3trPiUxoxaz6pRBB7pvB9UybS4aKF29hE8xze
+         0UcfZ0CcodM4uGjTUCdG5VRJlMPk/6Q9zLyUjiJfSixR0UEwHusV93RrchtlyXgDME/i
+         YnFMdefZuPcy9CqOFchqBrFkcGjAeQgluqrDAV4ybxZkwHqmX7hChRbuNPkKby+7nT+P
+         yPmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrf2FBLzhUCY2xiJ/zMHR32zMJvQHVsrBxoR1NwU4ymrLIa/mb5f5meUCXV9zfZGbPLvnlIbjxSxZYimnbbeQvVMD2OOm+12aI7jxX1yKxnpo=
+X-Gm-Message-State: AOJu0YyxLOvAZ8LuK9e2uLyVqqbxCLHJU1I5yocX+6flsOYQv55u9/F+
+	IeieQvdFAGOxhVCKn5qc8U8mRnDxY/buXEZpKxBznFIsBpAK2XRHNuaVFLxjgyM=
+X-Google-Smtp-Source: AGHT+IFZgwQ8kBjg7wQirGUAy1IQokyWZyFwi8jSTwEZ3OWVxp38Ndo890Qs2NlTwlbxjDVAmkOW7A==
+X-Received: by 2002:a50:c05b:0:b0:57d:455:d395 with SMTP id 4fb4d7f45d1cf-5a2caf4e97fmr9818292a12.7.1721629992621;
+        Sun, 21 Jul 2024 23:33:12 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a4c7e67af1sm3319217a12.56.2024.07.21.23.33.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 23:33:12 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Artur Weber <aweber.kernel@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: samsung: fix getting Exynos4 fin_pll rate from external clocks
+Date: Mon, 22 Jul 2024 08:33:09 +0200
+Message-ID: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: samsung: Don't register clkdev lookup for the
- fixed rate clocks
-To: Artur Weber <aweber.kernel@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>
-References: <CGME20240510065909eucas1p20067042a45b26e0a58110ff439dcc1b8@eucas1p2.samsung.com>
- <20240510065901.535124-1-m.szyprowski@samsung.com>
- <6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/07/2024 14:20, Artur Weber wrote:
-> On 10.05.2024 08:59, Marek Szyprowski wrote:
->> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
->> clkdev entries") revealed that clock lookup is registered for all fixed
->> clocks. The mentioned commit added a check if the registered name is not
->> too long. This fails for some clocks registered for Exynos542x SoCs family.
->> This lookup is a left-over from early common clock framework days, not
->> really needed nowadays, so remove it to avoid further issues.
-> 
-> This commit causes a warning to appear during startup on Exynos 4x12:>
->  > [    0.000000] exynos4_clk_register_finpll: failed to lookup parent clock xusbxti, assuming fin_pll clock frequency is 24MHz
->  > [    0.000000] Exynos4x12 clocks: sclk_apll = 400000000, sclk_mpll = 800000000
->  >                	sclk_epll = 96000000, sclk_vpll = 108000000, arm_clk = 800000000
-> 
-> The warning seems to come from exynos4_clk_register_finpll in
-> drivers/clk/samsung/clk-exynos4.c, where clk_get fails with error code -2.
+Commit 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the
+fixed rate clocks") claimed registering clkdev lookup is not necessary
+anymore, but that was not entirely true: Exynos4210/4212/4412 clock code
+still relied on it to get the clock rate of xxti or xusbxti external
+clocks.
 
+Drop that requirement by accessing already registered clk_hw when
+looking up the xxti/xusbxti rate.
 
-Indeed, so clk_hw_register_clkdev() was needed for clk_get(). I have a
-fix for this.
+Reported-by: Artur Weber <aweber.kernel@gmail.com>
+Closes: https://lore.kernel.org/all/6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com/
+Fixes: 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the fixed rate clocks")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clk/samsung/clk-exynos4.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index a026ccca7315..28945b6b0ee1 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1040,19 +1040,20 @@ static unsigned long __init exynos4_get_xom(void)
+ static void __init exynos4_clk_register_finpll(struct samsung_clk_provider *ctx)
+ {
+ 	struct samsung_fixed_rate_clock fclk;
+-	struct clk *clk;
+-	unsigned long finpll_f = 24000000;
++	unsigned long finpll_f;
++	unsigned int parent;
+ 	char *parent_name;
+ 	unsigned int xom = exynos4_get_xom();
+ 
+ 	parent_name = xom & 1 ? "xusbxti" : "xxti";
+-	clk = clk_get(NULL, parent_name);
+-	if (IS_ERR(clk)) {
++	parent = xom & 1 ? CLK_XUSBXTI : CLK_XXTI;
++
++	finpll_f = clk_hw_get_rate(ctx->clk_data.hws[parent]);
++	if (!finpll_f) {
+ 		pr_err("%s: failed to lookup parent clock %s, assuming "
+ 			"fin_pll clock frequency is 24MHz\n", __func__,
+ 			parent_name);
+-	} else {
+-		finpll_f = clk_get_rate(clk);
++		finpll_f = 24000000;
+ 	}
+ 
+ 	fclk.id = CLK_FIN_PLL;
+-- 
+2.43.0
 
