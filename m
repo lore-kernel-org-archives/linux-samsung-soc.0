@@ -1,106 +1,227 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C5413C818;
-	Tue, 23 Jul 2024 10:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2AF152534
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2024 14:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721730842; cv=none; b=aAioX7qxB52HfZtNrBH97+m8uew9Vdkm/HVfx5dC7h4DLllXxyqHWNgwHXK5zo9FdAiXp97ckCD4U3iyRxC1yKJ35PobJWo0f4PyKTKiNvZN7pFzIFrnnj9++pT/PeMfobTVHdWM1Iz6e21RZbwL6pwoE38rS/OvCp3WkKGvw08=
+	t=1721744224; cv=none; b=oR/iIXp26k1PYhDUsViI8fLH9LAD82thyzJeTc+lKQrUzomJreZCQbVDcGNrDOI4vhPlK1ZzMmLPo/9FIMv4J80lEGUcbziTaIhYCMnBu/w0BPWSYQkIFlnWTU8aG7U+FX9AhUfYO06r2bxz9/vZnhiZLtp/K3ZphGIPLLkzB1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721730842; c=relaxed/simple;
-	bh=YuVwqKdXt1E8MkGQq6NQ2AXq+9zlpqlhszfi98LBZXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJ1yxne76JOqJpoUbfXY2eZXGDEUN55sexwFpAPnphLMnABJssckbEgmhKvuzAa2fchlxk+ER+9jP0RmPXnnuWRBqCImVlfaiI2duqZkCFQU+Jjplb7veE9fSMh74/AYCWTJ+VPT6n2hfnzw+xeKniYijDu8zXb7TcmpdCLoNnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HiTZk/jQ; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721744224; c=relaxed/simple;
+	bh=DokAt3REwYburQaPky05gjnMoWXv28kQ8L7i12RmZ2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=HIlJbJrDwyYfyPxurdMSTVacOWsMRC7uiw70pgv7bYavYyz1EYLhG35IqE5SRo/+lBBmKfwrcoOeZwdy9r4iShUsoabUJLKap5c6M+ArSlAnlP3k8pLby66zxD6B20RtFg+ecT1HGNRUCCg2b0FaX0uUc6TrDJa1UVUH67bz+Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Tp++tmdi; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HiTZk/jQ"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f04c29588so2641929e87.3;
-        Tue, 23 Jul 2024 03:34:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721730839; x=1722335639; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cz8+Y1QSeSSuHfxWaaeZn1X4P75aV5338HCWDu/yjTA=;
-        b=HiTZk/jQ1zVFd/oaZiH9vy7eeKLe9kHBDViYr36uJiGCdsnUUdfWwHbgovRYaDLIoo
-         CFLMkv4lrVk0yZL0dJXYFiKpE8wfO8T7YBdQA3Auasi8AAHShU3TIfe78ybmsSu82fsB
-         sjnaEZZSGmIo+CchQWy1S8PxuiA4HuS1C1EGWzxcjfvAArfa6BMzqQE0HNSbDgA5GBqw
-         rC+K7V1Z66w/WP/nyMYiL3k4Dk4L3nW9m9wcMLovT3IqdVKK832eQ/t00xZ/Tu5zTFhM
-         6xhVCFnnvUPUq5VakpUAkCb3D+p/fHXt8LbG3VGRTFfhdDKWBNYON+uIaPikmzyxxD94
-         YY4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721730839; x=1722335639;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cz8+Y1QSeSSuHfxWaaeZn1X4P75aV5338HCWDu/yjTA=;
-        b=XaTIidKICK7s6PRpTruPNGhJZJ1DSDExxApIXQwsBLXSVIbJaGVHwgLjPzuhyjzIU8
-         ol/U0zJFZOAr9PWckpQasseUYKZj5QVcqve468eDmxUX2qy7jVf3942cK05Eingg8Rl0
-         pzUjAQG9mOrZv52XeXlpm8E9ESJ+mYLCmfL7hRPBlC+AHCvIgCJ8AOS5aPqDvsiKoV7A
-         tMYXOQzPtvgNcYHw5DmoJEe7QKDz6pBIKmm8/cbKHpIvpzK8MOVWhgufKuYyob+SPCaY
-         lwg7V0cF3NIOR1/SdhMXbBf4d70PcNX3k+IDVjnJUZFMXXPSMGVthBZYKxINr9nqAW9w
-         YYkA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2A+EuOBrikkcBtBRnj7USFw8uGqXyxK9XqprVwhugHNIMVZQVjSyhaXhqhms/he+9Qk4y9cpkNUbU6Ajqj2Znj9hL7KyyZDrlkEdojD7A2FmErNGYCmNSjlb80wAqua8TTGRlil2AsdLxyO1YskSIcztxPw4f8YkPN8fWNSNYLU1mwlo1g2PzTOI=
-X-Gm-Message-State: AOJu0YxiUKa59vfkWlG0H3hK3ztsaNVGxCPfc3BfXRx7qYxZ658r1M3Z
-	THc+u/9g2kz+Us5T/9wX5NDIMh+V8Td7rIhOnR1T+o76ho48XRFM
-X-Google-Smtp-Source: AGHT+IFjnE70mtfjkdEyZtp93m8AclelDcFP6Zxzv9/eLhU2xaX0d/Zs+3zxDczpL4HXw4gB75j6Ug==
-X-Received: by 2002:a05:6512:3b82:b0:52c:d8e9:5d8b with SMTP id 2adb3069b0e04-52efb7c7e96mr6589657e87.25.1721730838585;
-        Tue, 23 Jul 2024 03:33:58 -0700 (PDT)
-Received: from [192.168.8.101] ([37.31.142.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8bed67sm521179566b.124.2024.07.23.03.33.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 03:33:57 -0700 (PDT)
-Message-ID: <249c4534-2fb5-4968-a761-473fe9faca96@gmail.com>
-Date: Tue, 23 Jul 2024 12:33:55 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tp++tmdi"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240723141655euoutp019f2da894fd8cc046ff3725b6f11dc716~k3T3ev-7I3253332533euoutp01U
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2024 14:16:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240723141655euoutp019f2da894fd8cc046ff3725b6f11dc716~k3T3ev-7I3253332533euoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721744215;
+	bh=FMZuGVWWsRbasuE+xwjGAfo5VkxSVrg2vk1+uKbDH9I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Tp++tmdiiZXtlwgv6otx4eHx3Zz5Mcl09xU3nrbxX0eGdTRZMqJsyL/Up48hKwRK3
+	 vmugfxrdaUcCISYQi9BhNP5+Qv+tXLgVS7PWXlqSuGvciyyiIYeYkirbAREFSgoat5
+	 BeN3T7TUwErOCMGmEqT6S+zw8ZBVnUyKvnoqRYEw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240723141654eucas1p27e8df6cdd970fdc8b6b3e87b7cb8c8c9~k3T3F7wAc0973109731eucas1p2D;
+	Tue, 23 Jul 2024 14:16:54 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 17.E9.09875.65BBF966; Tue, 23
+	Jul 2024 15:16:54 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240723141654eucas1p2deadd470e2ceda1601042dad4acfc17e~k3T2iYk3f1687516875eucas1p2H;
+	Tue, 23 Jul 2024 14:16:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240723141654eusmtrp151b8102f680066a81154f58785982620~k3T2hmF6Z1462214622eusmtrp17;
+	Tue, 23 Jul 2024 14:16:54 +0000 (GMT)
+X-AuditID: cbfec7f4-131ff70000002693-2a-669fbb5666b3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 58.46.08810.65BBF966; Tue, 23
+	Jul 2024 15:16:54 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240723141653eusmtip2de4eb2ab058d9df0509ecd6d9d145e33~k3T1sJZx12309623096eusmtip20;
+	Tue, 23 Jul 2024 14:16:53 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 0/6] Add initial Exynos 850 support to the thermal
+ driver
+Date: Tue, 23 Jul 2024 16:16:37 +0200
+Message-ID: <20240723141638.374742-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <CAPLW+4m0xG5yHOT_ucGdrOhLZvjhga8caqHQZmVH6HHKUnBgkw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: fix getting Exynos4 fin_pll rate from
- external clocks
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBKsWRmVeSWpSXmKPExsWy7djP87phu+enGbzrN7Z4MG8bm8X3LdeZ
+	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
+	+2Uqs8X/PTvYLZ487GOzeN63j8lBwGPNvDWMHjtn3WX3WLznJZPHplWdbB53ru1h89i8pN6j
+	b8sqRo/Pm+QCOKK4bFJSczLLUov07RK4Mu51nGIvOC5TsbFlGlMD4z6xLkZODgkBE4kfm58x
+	gdhCAisYJTZ9cO5i5AKyvzBKTD14kAnC+cwo8ebUJ5YuRg6wjneb4yHiyxklji+awgzhtDJJ
+	TJrWywIyik3AQOLBm2XsILaIgJ7Eupmv2EGKmAU2s0hceDqTFSQhLOAvsWDjN7DdLAKqEhdW
+	TgCzeQVsJdb+/cgMcZ+8RO/+PrA4p0CgxPy935ghagQlTs58AraMGaimeetssCskBKZzSlw+
+	uZ0NotlFom3RXShbWOLV8S3sELaMxOnJPSwQdr7EjM3voV6rkLh70AvCtJb4eIYZxGQW0JRY
+	v0sfothR4uW864wQFXwSN94KQhzAJzFp23RmiDCvREebEES1qsTxPZOg/pCWeNJymwnC9pDY
+	vfcC6wRGxVlIXpmF5JVZCHsXMDKvYhRPLS3OTU8tNspLLdcrTswtLs1L10vOz93ECExsp/8d
+	/7KDcfmrj3qHGJk4GA8xSnAwK4nwPnk1N02INyWxsiq1KD++qDQntfgQozQHi5I4r2qKfKqQ
+	QHpiSWp2ampBahFMlomDU6qBqVpmUSBnz4NXbq4XQ54wllhNz1RddMd0SuexbUccBI5cnbQi
+	pqW5p1fw1RbrCTfv+okryaoLvWL8cumKcEbW+9t+Ez9uaDZNWLiHl+vQvHMmx9O5lBqqtveI
+	Js9YJTmFs277BY7NhwWWxlrflZUWudWxtX5bgNO+D/7m5v/c+IWOVaqmh1ozCb7Z+8iw+c6L
+	cymTJVYueZ6rznuZVe1Ty/3fwe5zdj2+2+VTZ+P5/CbnvZmr1+3RvNwffkbhVLNW0CpZu6Pz
+	p3KbtjEbNMQUMP1jkY61s+ra9F37x8E/ZruenEyNerKhI59zw6Qa0eLvwfWcfmsrxGR3mt78
+	dvZ+wbmlX8PfNf1fKH/9msLTVCWW4oxEQy3mouJEAKzKaVbbAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7phu+enGTxaL2DxYN42NovvW64z
+	WazZe47JYt5nWYv5R86xWpw/v4HdYtPja6wWl3fNYbP43HuE0WLG+X1MFgubWtgtJh6bzGwx
+	98tUZov/e3awWzx52Mdm8bxvH5ODgMeaeWsYPXbOusvusXjPSyaPTas62TzuXNvD5rF5Sb1H
+	35ZVjB6fN8kFcETp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
+	pRbp2yXoZdzrOMVecFymYmPLNKYGxn1iXYwcHBICJhLvNsd3MXJyCAksZZQ4ONMJxJYQkJY4
+	/GUKO4QtLPHnWhdbFyMXUE0zk8T26ZtYQRJsAgYSD94sAysSEdCTWDfzFTtIEbPAQRaJvtdX
+	mEESwgK+Er03FrOA2CwCqhIXVk5gArF5BWwl1v79yAyxQV6id38fWJxTIFBi/t5vzBAX8Ui8
+	2rCfEaJeUOLkzCdgc5iB6pu3zmaewCgwC0lqFpLUAkamVYwiqaXFuem5xYZ6xYm5xaV56XrJ
+	+bmbGIFxuO3Yz807GOe9+qh3iJGJg/EQowQHs5II75NXc9OEeFMSK6tSi/Lji0pzUosPMZoC
+	3T2RWUo0OR+YCPJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGphW
+	K6u4ZDvKKUUuLj69aq3t0e1xKbbrHsyZpfF68Zno1ib3SBl3mVe2zUkvH560XfbkluWk38sv
+	z/4c5Xcin4v3lNDNKd7y1xx61mg5c7FbhyXP27w0MMfBYEPMq7+fZO/6vnrWXmd5TtyUcUnc
+	VBl1b5e1Qr6bjN0nMRluCg1uZpeW/Bo7ccvdpjm/5/eknuBdZ7ibfcYeN5mjCu1n2t5osc7c
+	zrB8UWTp8tKOh385n3uamUmJTvNLFAgzenzqaNz3U20SG/eZGra82R3GXdIhv8a9zrUo2H7t
+	pvOvPJ0P6f9n3jA9YY3X0XPfTh09Pul9v8d6vZWlM/vFjz02Mcpw8BX/6iT9+9NiRc+3N2KV
+	WIozEg21mIuKEwH9+gNETAMAAA==
+X-CMS-MailID: 20240723141654eucas1p2deadd470e2ceda1601042dad4acfc17e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240723141654eucas1p2deadd470e2ceda1601042dad4acfc17e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240723141654eucas1p2deadd470e2ceda1601042dad4acfc17e
+References: <CGME20240723141654eucas1p2deadd470e2ceda1601042dad4acfc17e@eucas1p2.samsung.com>
 
-On 22.07.2024 08:33, Krzysztof Kozlowski wrote:
-> Commit 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the
-> fixed rate clocks") claimed registering clkdev lookup is not necessary
-> anymore, but that was not entirely true: Exynos4210/4212/4412 clock code
-> still relied on it to get the clock rate of xxti or xusbxti external
-> clocks.
-> 
-> Drop that requirement by accessing already registered clk_hw when
-> looking up the xxti/xusbxti rate.
-> 
-> Reported-by: Artur Weber <aweber.kernel@gmail.com>
-> Closes: https://lore.kernel.org/all/6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com/
-> Fixes: 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the fixed rate clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi :)
 
-Seems to fix the warning for me on the Samsung Galaxy Tab 3 8.0, so:
+> Thank you for the contribution! Did you by chance test it on any
+> hardware, perhaps on E850-96 board? Just noticed there are no dts
+> changes in this series (or as separate patches). If no -- I'll be glad
+> to assist you on that, if you can share dts definitions for E850-96
+> and the testing instructions with me.
 
-Tested-by: Artur Weber <aweber.kernel@gmail.com> # Exynos4212
+I did test it on our copy of E850-96. I used this for testing:
 
-Thanks for the patch!
+diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+index f1c8b4613cbc..cffc173fd059 100644
+--- a/arch/arm64/boot/dts/exynos/exynos850.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
+@@ -617,6 +617,53 @@ sysreg_cmgp: syscon@11c20000 {
+ 			clocks = <&cmu_cmgp CLK_GOUT_SYSREG_CMGP_PCLK>;
+ 		};
+ 
++		tmuctrl_0: tmu@10070000{
++			compatible = "samsung,exynos850-tmu";
++			reg = <0x10070000 0x800>;
++			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
++			#thermal-sensor-cells = <0>;
++		};
++
++		thermal-zones {
++			test_thermal: test-thermal{
++				polling-delay-passive = <0>;
++				polling-delay = <0>;
++				thermal-sensors = <&tmuctrl_0>;
++				trips {
++					test_40000: test-40000 {
++						temperature = <40000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++					test_50000: test-50000 {
++						temperature = <50000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++					test_60000: test-60000 {
++						temperature = <60000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++					test_70000: test-70000 {
++						temperature = <70000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++					test_80000: test-80000 {
++						temperature = <80000>;
++						hysteresis = <1000>;
++						type = "passive";
++					};
++					test_crit: test-crit {
++						temperature = <90000>;
++						hysteresis = <1000>;
++						type = "critical";
++					};
++				};
++			};
++		};
++
+ 		usbdrd: usb@13600000 {
+ 			compatible = "samsung,exynos850-dwusb3";
+ 			ranges = <0x0 0x13600000 0x10000>;
 
-Best regards
-Artur
+I did not post this because it would probably need some more thought,
+and it probably wouldn't get merged until this series does anyway I
+think? During testing I couldn't get readings higher than 35C, but the
+values reacted to CPU load as expected. Also, Marek had physical access
+to the board while I was testing it and has confirmed that the values
+are realistic. Some more testing was done with some combination of
+lowering the trip points, emul_temp and those temporary changes:
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index bd52663f1a5a..8db3f9039e7a 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -941,6 +941,7 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+ {
+ 	struct exynos_tmu_data *data = id;
+ 
++	pr_info("interrupt\n");
+ 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+ 
+ 	mutex_lock(&data->lock);
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index 72b302bf914e..0864179526e2 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -232,13 +232,11 @@ emul_temp_store(struct device *dev, struct device_attribute *attr,
+ 
+ 	mutex_lock(&tz->lock);
+ 
+-	if (!tz->ops.set_emul_temp)
++	if (!tz->ops.set_emul_temp) {
+ 		tz->emul_temperature = temperature;
+-	else
+-		ret = tz->ops.set_emul_temp(tz, temperature);
+-
+-	if (!ret)
+ 		__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
++	} else
++		ret = tz->ops.set_emul_temp(tz, temperature);
+ 
+ 	mutex_unlock(&tz->lock);
+ 
