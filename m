@@ -1,66 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BD6158858;
-	Tue, 23 Jul 2024 18:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01813C3F5;
+	Tue, 23 Jul 2024 19:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759380; cv=none; b=TqQChhcuIXyXU04l1pgOgchqy5rgQQ9nqqnnKX1XTF5UB/2oLU8hICizNQbzYGECvBviGrdJ7nfe/bBgTwZoybnIx57YIy7MGQQ9dJVqF+9vh0DvbxtPZZ5ErEXO7KQT1U2J/9ydxLCzupN8EHGNS8JyGky9fal2xW5MMDdi3HI=
+	t=1721762681; cv=none; b=dBLe6oSihYn6ICVYFVKY0oD9RQImTIjH72OmvEEXwDifouuqSOFSp1P0sSZ2Sq8b1bn3Tbv4zMjiEDgukpJ3/f820rADecf5EvdkxNZ5fnku/qOWperMCcS35/ihRhCCpirKaFEc4PWsRWgyiHy/TcGvsid0sFY6xtCnDZFJD7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759380; c=relaxed/simple;
-	bh=4u5YSN2hcaCst37P8Vgp49+pWvdyei/yGShNl4vfJBg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=R0jBc8jsymu8uErRfvxlXnjW+CKBZzfGP9oQk2uxp2oBp6BH/Qbi4vENDkfWCzD469ZdMD+snGMnKhRjy2GWiLIvYzrmDt/fR8nsTOX7CO+B7Y7yuMcLZRJQcls8sj7sWd8811wGtLEXvqBEKcMAJ21sBh9m7V3MYIHAb0986IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pe3Hf/vm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721762681; c=relaxed/simple;
+	bh=2DRmsMG6kRZYBP6pQwNntBFkhKv/vMvD1XVjf+i6onU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXyk81RkpckarqDkStqXpe6shL43dWQGNuwGZZ2LKW80UpmPLoQmwl8gj+m2UViw6VPnEWgIlMDWHQT+m3CpIqIKs+H08e6h1BHE/uAl0KGVEYCciA0msvTUv/fSFsbKqAw5c9Nz+hjcgRQ6weG/MXNTPgKW0ZH3yYQgT7JkbjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmvUYNz3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pe3Hf/vm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD941C4AF0B;
-	Tue, 23 Jul 2024 18:29:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmvUYNz3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0E9C4AF0E;
+	Tue, 23 Jul 2024 19:24:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721759379;
-	bh=4u5YSN2hcaCst37P8Vgp49+pWvdyei/yGShNl4vfJBg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Pe3Hf/vmwj+ATt3V8Sc17DFMY+tfBKdMhgY52OvNhy+4pPvcpmo97o+lOCqAzIv31
-	 KqUz+IeoU9H9mQMF+D9IIHcZ9BqF/ZoKW8LY38CBoK3Y2cHymnAWhQtLsX2AE2V3A8
-	 9K8wQYvkUUBzFy0JTM5zVk8Yf/zC3Y60YOH05HI/UN7NHFtx3uzGQ/MNdcbrLSVB1m
-	 uLYNDA9K2dNzVAUZRnkkq1vRGOnrmiks5JWe75jLHzujUCx691qYTaJlDJK+MtH7F+
-	 APPCCMNS8fckE2tntkGfH8ZGBFknbhiu417m732BHeKvcnl3BGG5khg/1tEM5Gy52P
-	 xfcMYhezitB7Q==
-Message-ID: <9f94278d72b54071490e8c08aa9a1dff.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1721762680;
+	bh=2DRmsMG6kRZYBP6pQwNntBFkhKv/vMvD1XVjf+i6onU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nmvUYNz3ONMuK2pG4a893R+elit1FD5m6kh1P896luOy5uwOzX8kZDrGQVNTyTnnR
+	 y7BpXGhUNhVO3ImibjUZ5DjhYqCIiysJx7NyXrRg81gThR+FA2gBV4nH/pF8reKv8R
+	 QpblgoYkzh14gnlr9uVsQSycwqV9qR1vObIsOYXmq0Am9Be7u2valoMpvILoY61i11
+	 14q6uz9e+OCzNzf8iCyxuZhQPFm1siJ/XEnkV2+PQYaA7lZjgU7RnSOZyNhX4YnZzb
+	 yfU2TwaeBdyr9INR4b/3GgBl2kpLFdSMn2/fAf9eswgvQOuCvXlYSPiLqMu1djtWZa
+	 zuw2r5+F3YLhQ==
+Date: Tue, 23 Jul 2024 13:24:39 -0600
+From: Rob Herring <robh@kernel.org>
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 6/6] dt-bindings: thermal: samsung,exynos: remove
+ outdated information on trip point count
+Message-ID: <20240723192439.GA986360-robh@kernel.org>
+References: <CGME20240723141723eucas1p18f5675128aa380857f4c854b5a851e34@eucas1p1.samsung.com>
+ <20240723141715.374786-1-m.majewski2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
-References: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] clk: samsung: fix getting Exynos4 fin_pll rate from external clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Artur Weber <aweber.kernel@gmail.com>, stable@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Sam Protsenko <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Date: Tue, 23 Jul 2024 11:29:37 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723141715.374786-1-m.majewski2@samsung.com>
 
-Quoting Krzysztof Kozlowski (2024-07-21 23:33:09)
-> Commit 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the
-> fixed rate clocks") claimed registering clkdev lookup is not necessary
-> anymore, but that was not entirely true: Exynos4210/4212/4412 clock code
-> still relied on it to get the clock rate of xxti or xusbxti external
-> clocks.
->=20
-> Drop that requirement by accessing already registered clk_hw when
-> looking up the xxti/xusbxti rate.
->=20
-> Reported-by: Artur Weber <aweber.kernel@gmail.com>
-> Closes: https://lore.kernel.org/all/6227c1fb-d769-462a-b79b-abcc15d3db8e@=
-gmail.com/
-> Fixes: 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the =
-fixed rate clocks")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+On Tue, Jul 23, 2024 at 04:17:14PM +0200, Mateusz Majewski wrote:
+> Hi :)
+> 
+> > > +      temperature thresholds. The trip points will be set dynamically in
+> > > +      runtime, which means there is no limit on the number of trip points.
+> > 
+> > How can the hardware change how many trip points it supports?
+> 
+> Would just removing the whole "The trip points..." sentence be ok? I see
+> how it is more confusing than helpful.
 
-Applied to clk-next
+If the old text had nothing to do with the h/w, then I suppose so. I 
+would have assumed the h/w supports some number of thresholds causing 
+some action whether an interrupt or some sort of shutdown.
+
+Rob
