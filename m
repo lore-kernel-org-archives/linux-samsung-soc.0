@@ -1,571 +1,192 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60F9BE58
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2024 00:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721692951; cv=none; b=HeOJaOmxEEMcgGIum5Fti8eaMrJH6yrDK2EhLWD6xf8EYKNm720SB/CYl3W8XPWWDuivjPR79iSfP3rPfoDCU4txF0zOZwbhAQTXcvIcprEg8G3DagJoEQCVSHlViQeqpT4V1IuRgpq12mor10lv675keRKF52G9lnvuC2HSnuU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721692951; c=relaxed/simple;
-	bh=vhjf08mbkj4INKoV7kY2CKVrz0EAYDmf1royEH39T4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QARogSopQ46JnGEzinxserV1hhgCL9+t/OoLdDWolb+qwfSd2Dlk1G7R0AblvcysjnAILRpnbR4PHQ/ige0XRHdWeelZ6eToMDBqUsCKSE2Ce4nTBAnY11ALzwjkSEQH5xEap90bP1s5L2qJryAdy9HXQ4mbiWdTV2aLKo0a39s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SGRKYaW+; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B993B32C8B;
+	Tue, 23 Jul 2024 00:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721695968; cv=fail; b=d0+e7RTqbWVv872KhW632oWin5troBz/dzcEB0O3YYf320Fpv7hL3LFWnheu91L6AcbIwTuZ99Ns94tcXROFYR4yOV9j7zxVgMqoFGjp/9TLH0lJ/wjAxN45lPTBrXx7MMCNPPrJcF9ntIKVlgO9C3WvfzXImkIZkmm93IN/0+0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721695968; c=relaxed/simple;
+	bh=uKhGfL6Z2ES+sXAYRWpQpcAcrfyQXWgXiFwe2FZD6Ao=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=k7fKEVqIVEtoTvfjbxMxG/cRT07Rxp7HOngW5HavfYNSIgITMMhLK32+ppM7N3g56kaQ6+N3CoHrO8u/ANPJM4k1ahERz+gCeMQnd45gcvFzyreeh+qZ9fKG52YO5SbTH2SPA6Ev3YB4/dTOwCHOhRyrlzsKr+qBwlfqeSDLpds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WcOza7KS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=oThe8Nv0; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SGRKYaW+"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6659e81bc68so51116807b3.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 17:02:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WcOza7KS";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="oThe8Nv0"
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MKtns2018961;
+	Tue, 23 Jul 2024 00:52:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=hGjaAMsKsU65M0
+	X5VQyI33k+6eEJAkAedy+zz42nAmQ=; b=WcOza7KSsADKHQJC1iL5GZqFbcQxE3
+	PpPG9/hb/EH70xFu1n7X9EtihAb1cRhZPia5Pr+2de1B90HOsp1VYFTFeXfpFcHT
+	J39DT0/qTaXOcKlfr4TiQCt6d5C04R134MWS0xk/ri1D4WBYC5znSj/ClpwwjTb0
+	r3phiQMvDK6wdKrp1VsgCVpe/r8KfuLFqvilrcm44s1UijF38nNfiwquV0y3un9M
+	OIm3xKRHar1+Y11B6eEhCdJYPQ4IF8+DGa55Ao1w4v4G0+/gYDJKxLDnYZYkpro+
+	Osl1wnoar4azhbyX0oPmiuNGZ8La41E/D6CMHArgdjmmyL7dEbPp3yDA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hg10v5tp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Jul 2024 00:52:34 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46MMq7Lq024617;
+	Tue, 23 Jul 2024 00:52:33 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2045.outbound.protection.outlook.com [104.47.66.45])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h2a0r3b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Jul 2024 00:52:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LWkr3NhywYC05zHSvHmTx7kq/VeFRTNivHN8sgR3acDk2dk9fTdRbUUKLTf1g/cLuUu15Y7QnRjdLSM8Cc8IV9NiWo7trWO4IY5qXiHvazmQmPc/v4kBc4W32huK9AVfQ4gIRX5Z5mLlJrIDiI5ngP93Zp1vTjWhQ7R1hsi6054z/bbYT+NM+cfVJWCkCgOvFcue3iseTnY+dNT/Obpn6pgmtTmOTFkCZQmQGTlGuiu7Rg9pws0NP+65osKV63qsJbZWpMq3juFdyoc8EiNVsfbq3dSshdqL2N3cbczNGflmD2jshfJUXv824v3g0RuoFpfF84y6cKSYvoBCrlwEUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hGjaAMsKsU65M0X5VQyI33k+6eEJAkAedy+zz42nAmQ=;
+ b=WfNOYvTmOb83BpcFQSoLZg+DnyxXQvZk4/QmLMqe+0fxVGJwiisN/YBp0h9kLuVRt6CiXOOdg8C4j/7/u6Bygmzp+w0GJ6bVj5+YpkOhFzP++lDGNYPvmMD0CNiOqMSH+rgO1A3/yirKX4lnd2aVDD8hBqSrHJsbKnPvkDPAIypBtAL33YYzEhTYjUbHhFW6PYzPYAYxMKV0Y7BrC5WOpGdpQ1FP2/6eplOL4qcrVFwBW1KjLhK9fR2mymANZDQxMRvkcRTIjIAxXtaEarIOJS2vlKVY+tI+9ahkxy0EUnH4FZGwNk45oD4XmY7oeKBZvteFPUA8UsnsTgkP+sbsGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721692948; x=1722297748; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jHdT0nY+srvI4gjyCrkvE6Ta/xBloNN8P3uthZUAq7Q=;
-        b=SGRKYaW+p/IHk9vn6vXqhH8ZfTy2jOXNiy6OThTi+T0uZ3OHq3hT68l+wGgF4v916A
-         NRqlXR9D7Xm6wWKM99ODMpH2rTjDq0ghQ7bZraDbgLF3HlM0ZYoy3bjSKJFPVmzMEURv
-         ZjM6tTAW1vHhVZQq2HJ/bN61tBZmryBeGO0HV9jp5uGVgeHhz+pVUWOXqpKAIgmwIu1o
-         g2esP7x9l0URm/t7ox420SMDphtRZAzaYvbsU9BsjH44UTAh8x2MznIrnaPtLR+mN3Ry
-         FfSkhceTbgtoNNDBPKVxTUBJh31kExt+i6nGVRfDQd8GBY8tWNhc3WcmcFx3xvn+T6yS
-         rUMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721692948; x=1722297748;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jHdT0nY+srvI4gjyCrkvE6Ta/xBloNN8P3uthZUAq7Q=;
-        b=Ek1fCeFc3XgA58DsVGX8TEISDUuxdNp3hd7kWC8u6gKHar6JTl0bH/9gGkAbzofyrh
-         XCPp7+r9bb7ccy0+sBsHp8zCJhwpClkQd+n21A+AjaORgveTuyN3+jlKLLU+hqpEdDKk
-         L6cidhfuqrPO+esRBw01eBQxsWn6tA9ZNB0m8isUBqWPdQi+mqRUScvZPWm80eferd04
-         ZwFrSdrEzyQWQc6ZJHVGgbUt2rKjH3ultWQwiikJWVl9hfhsZDrzge+Gl8dyc++27pBr
-         0Z+QVSXn1ffcPIDd1UhDlrt93/koBO9YGQw+12DsvD9bWSE4XJ+WEmYgNWYLXxaFFqXc
-         pIng==
-X-Forwarded-Encrypted: i=1; AJvYcCVM0Lzh8h34WhDUdb0KFo4Vv2avWLQctKvU5LV7TRnLFzdCNkvswB3+hpZIhpHvl2O3bZauqimzT8YIgyfzO0VDj/NYXaz5ySoEbP3WgpYvW2Y=
-X-Gm-Message-State: AOJu0Yz5FDEZeC74MjFh60Yf7ePNcNalM25kWgEspOzi/Lf3gU0JDB3m
-	0yUS7GdPkDpYbvOJHxeNJmvUupyk0yPSWrwMRXd/TqKNRhWHB9KgKjllb0zfYggbpuEuAWm/HIo
-	bFUCiqYgDOsJa/kySgdYt3HNrm54vVVmXaTu80g==
-X-Google-Smtp-Source: AGHT+IHLIof1OMOBy91GVdpBWeeU3HO/VbU+jVbUE6NfXw24Kem4yq/cGajhacazi/09DgHnOPQrieibdqoiGU/z58Q=
-X-Received: by 2002:a05:690c:4287:b0:65f:8afe:9ba6 with SMTP id
- 00721157ae682-66ad88da3b3mr87089567b3.14.1721692947508; Mon, 22 Jul 2024
- 17:02:27 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hGjaAMsKsU65M0X5VQyI33k+6eEJAkAedy+zz42nAmQ=;
+ b=oThe8Nv0V2pOhKIYzs7A5UgsWaD5DgouGZPIorMLcfOvpFSAkXnO/yvpZTwB5c3uFOT8h7Y/ZULZZgF/B9Bb1/Od5K4flO3c6QN7PasQE9xEvACU5JOdpX3+JxAu9n4l4NHOX46SmzC4d5d37JCgfHGS7YkH6fZkG4XtQo2f4IQ=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by DS0PR10MB8128.namprd10.prod.outlook.com (2603:10b6:8:204::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.32; Tue, 23 Jul
+ 2024 00:52:30 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
+ 00:52:30 +0000
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Peter Griffin
+ <peter.griffin@linaro.org>,
+        =?utf-8?Q?Andr=C3=A9?= Draszik
+ <andre.draszik@linaro.org>,
+        William McVicker <willmcvicker@google.com>
+Subject: Re: [PATCH] scsi: ufs: exynos: Don't resume FMP when crypto support
+ disabled
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240721183840.209284-1-ebiggers@kernel.org> (Eric Biggers's
+	message of "Sun, 21 Jul 2024 11:38:40 -0700")
+Organization: Oracle Corporation
+Message-ID: <yq1plr5c4l8.fsf@ca-mkp.ca.oracle.com>
+References: <20240721183840.209284-1-ebiggers@kernel.org>
+Date: Mon, 22 Jul 2024 20:52:26 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: LO0P265CA0013.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:355::8) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240719120948eucas1p13f3dc8f3aba56027da720d36c6057040@eucas1p1.samsung.com>
- <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-6-m.majewski2@samsung.com>
-In-Reply-To: <20240719120853.1924771-6-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 22 Jul 2024 19:02:16 -0500
-Message-ID: <CAPLW+4n6XB3fm8KQA=6_2z8ay9pDPtu-VFgAaW5imZkRH2ywkg@mail.gmail.com>
-Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850 support
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|DS0PR10MB8128:EE_
+X-MS-Office365-Filtering-Correlation-Id: 842e9fa0-9973-4b41-ba18-08dcaab1bb32
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dGXLxZ6I5T4Coi2JPjUL1rnn09ar7bC+Ez0FqpVAOClJRbkNeuoknOqaajVj?=
+ =?us-ascii?Q?9B2gLudL38dQWi0PcZzwFaf0hWzRGL1s09sgdIy6vKOrYtcFXvBW9fdH2A1p?=
+ =?us-ascii?Q?IiyZVO8HNL1+xImNYq9arBP3S0aH6inwUcJF1/06BJfcwRUA38IApGnRTPc8?=
+ =?us-ascii?Q?GTioox2gIMV0rILKjuTzkjF+VppQfw65VjjvV8CEPk1RnfKhkHwUkhojsR9Q?=
+ =?us-ascii?Q?t+KoPRCd2nXP+7z63quioBgYGNBtjZab+S/eIwFV393hsncvGoGEbA8wuQyr?=
+ =?us-ascii?Q?dnP2MbzhwR/h08P3mStBZ6iq9XDPt4AvMKvSqXx70z4+pF/bntLwmbYhWQtB?=
+ =?us-ascii?Q?D9EzjoPDyof+hdEuXpwZIEwqFw0qK9pxX6soILSE3zC685SFyqZZS7Uua4fY?=
+ =?us-ascii?Q?3BRF/LcoBtqqz1ynOzeMALGBDZmonM2zuzt+B49sDuZm7RnGHcViwwKFDWy9?=
+ =?us-ascii?Q?fCI1cjzdIIrx1X5/mwmug2GfwptAvDa1LbXmtqKQtwrfRoBHjdw3U9TrwLYs?=
+ =?us-ascii?Q?ynaMPVH6xt0J+uWggrZiFGOJgJLEdx2eW/m5wQpPOXL+DEmAHI0RyPpIbuED?=
+ =?us-ascii?Q?7vXXQD3DxoB31MY001BospDjL+lgMkJoDFRVb9zyQ14eJgwzw4TNI9vvBk9T?=
+ =?us-ascii?Q?KroQDLvWuwbGUH6rts00a52H4KvI7/YF/WJN87hi7zZ3qy1qtMCUuWPLcjI0?=
+ =?us-ascii?Q?fUh56k3vEAi1oD6r0DElGJUQsfmxDUvKCADJ0dPpeIW7K7HDoy0iYY7vJtpv?=
+ =?us-ascii?Q?Cr5BOKqWShS6LDorQw2Zv2V8jNTnEQo737yWd2rN/E2/m8MPvH+Wl0Sl0z8s?=
+ =?us-ascii?Q?cowRXpy0tliavluFAjWkHNHO/HTq+SKI6Mso36uINk9okkk6228rXPbrjcuB?=
+ =?us-ascii?Q?eZ1aBXtfD6kaZqJUXbsVKM1vWxa6HbHeYt0h6268HSpZ2EobV9QBBfI9LdOx?=
+ =?us-ascii?Q?E9sDyRGXaAI2Rd0MB50sTEv8RVv4ZsVE+/6CfW56pizpUXUVW8dGgSVjs4aI?=
+ =?us-ascii?Q?vEn6fpoozXCku542nXjaUKKv5F7f2vBgWDHT59sHYs5FEXAFn0CiG0NUj1Ef?=
+ =?us-ascii?Q?aDVgRHDQJAW7y81GZ39FZuNHEmntDJ11JBRI9z8JptjkKfHLcYajd2sn9HXN?=
+ =?us-ascii?Q?gYxLPPVZ6CehM4dkkHG2IwK4pC90Nfo+CdzcuduY3oAJkKSnCoaFlRIr+6FB?=
+ =?us-ascii?Q?TttEvEYqh8MoJYZD8CsdIRH1r6kEZX32sYqRfmI2f/6kTHhji//fpu/WCNtg?=
+ =?us-ascii?Q?w9rLAXGpWK1bSgYdqrVM2cdI8mEKFRhrp5UWUjdNV7FvMHgEy2+Ocxwvl7RS?=
+ =?us-ascii?Q?Bu9XsbcEn96n1ZqMz/d8RXJxmWQJ25bSSAuJLkq7Rq3EuQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AOruSX36iT1aVxixmedbTTQs/XFRqmVu301u2dLwXpKFJN+PsB1ycralM0K2?=
+ =?us-ascii?Q?AL4x86Fqv+cEbfO2kr7AMeSv6rup2+8nb4+aC73nSLSecVYIvTIFIGv/DLck?=
+ =?us-ascii?Q?zfYnz/fXJsTzTSg2dqnE4XUzmH/gULrpz1bdeA5v5hZ50PPXzrUrtjhM1BY/?=
+ =?us-ascii?Q?+IoTSZxK9URna2gS7L8/EUZMtsdQpS19YSgKZN0ixZ2eGb/vzGRxIVy4A7JP?=
+ =?us-ascii?Q?Je4DnxM2UTGtWT27Ww+Nwd7O6PqRymF2Y4rQrYZr1BVNWnU0vZv8e6i9wlCH?=
+ =?us-ascii?Q?VpXxCwmcuxcMvlxBixnut43v4ehk+g2oOUGZ3fYbSDHqzlkVG1RseX0jDqlm?=
+ =?us-ascii?Q?YxOswCBcfSsUDZfXuQ7RvDIJMmvsHjGFvUXVlLG20WtSBpKHAKFHjX3YDDEu?=
+ =?us-ascii?Q?UalzosXL5mSydLxc1yVkNEOEe5uKrqlgJrzCoeo4fa4Rnq3XAMDB+vqvPkxT?=
+ =?us-ascii?Q?QrqTZfY5F303vB2c6IGt1C0Sul0Cdf7C4le4xuMd7tcf6IdDqktWtlK5SttY?=
+ =?us-ascii?Q?6NAOkcpluylunktHLUCMPArUCI1DEbECpKi/JrgKRyjQv18qR6pt7AIlbbc8?=
+ =?us-ascii?Q?pFHsxYpoFKBnqgCcCr2N8Zf/nvsDLzp/HOo49JY2qtqrtzbtr9XhhcfOPza6?=
+ =?us-ascii?Q?qnA+e3aXIiihs180/oi0SRe8hPFreDa4YnEGWMu7ALwKs60VCDIkzPnge2g/?=
+ =?us-ascii?Q?phDJVyQA8VpB71xuZy02gVQDCkPBLWzX0OKQ9kmhzVMaWjacN4Jm+EbYwaNZ?=
+ =?us-ascii?Q?exs5RkDEN9J7RifkLITdzgzsxLuZM8F1gFdMuI8fsYNOckUCLcmYkjAmZLZP?=
+ =?us-ascii?Q?JTGS/DHcB8Y5kz6gFvmd6+EeIk2fsCbC06ThYAgmDe0thN5yjC9CvhcfqPRf?=
+ =?us-ascii?Q?qe76YBhiJ8JWpCTQkvm3WV2gMivqeDszEXNYXSp2hnpTtk9B/ZIA/Jseahx1?=
+ =?us-ascii?Q?5n0a3Id9j7fCAp4J1qEHw1JpSAqLkc+7R/vhYYcWhKxQT/cGF12d8K8dKCKT?=
+ =?us-ascii?Q?o3n+WKzbFaF9TWqRYanKrGO5CkX9b3mz+rokdyd7088ZPGBzgyrdemhseUOh?=
+ =?us-ascii?Q?NwTgDRzGtWm0uag8xEbuPVHQo0HRUlEX/HCSc6H3p7HKNqgS3MtMwG8ji7wM?=
+ =?us-ascii?Q?u53mpwWqj91s/0sQsHQTL6MTR9iYee24hXkLfoIck8pWcj+gy0EOn/iP2M3J?=
+ =?us-ascii?Q?BlzwmtjtEJzzxeTP7k3+16rA1svmdIjWqyAtrhk7XufOQufM6nyuQuoEmZXz?=
+ =?us-ascii?Q?ygU9Abbvdsy2jA9lX+J1qM48Xqm+PeKBNcMXMP9/jTkQcnpiKhi6viEdQQ/G?=
+ =?us-ascii?Q?ZtZ1zPaw45uu54HBKVeOnpiHb5LSwstr54HhUM1Dw+hlz43siNpqhCspXaN2?=
+ =?us-ascii?Q?9TWAjFbDGkfPupcObiBakipaU7wLCx3y/Xo7oevnHZmnj7aEJAvzh/09J/QY?=
+ =?us-ascii?Q?aSR/2HWu52pPudfyswkqwpF+7BTT2tP1dNx5qUDg6KqwCm9ZPuwu76xd7Rsx?=
+ =?us-ascii?Q?h7EhmnvpylVuVow8OvVQuetqiNhKB83vs4cBcA3oW4c5gaWaAuMWtBqW9iff?=
+ =?us-ascii?Q?xz9z3EfwW4B2oorQ8pyJT95hXV780hgUqWV3WO73UbN56y2Q2JeDx4o15Efe?=
+ =?us-ascii?Q?Qg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	3pzE9z7qUY4qk8Oy24LmPPNNK85AS7R+ZRarPpAtjIL3iQkFa7RdODtsLeEQlZH8+clDWPFClIYwtABgoe51966Qy3/II7oGUTJbasY6jO4kyAEnukCXuX6KPq1NPpmhxo5Mn5/TbMvAnXDk5bGTXNXldERecg0sNakD2z+8InHs56PWYOvceuc/D54rLpCHr5RXlmWC/2C7mk6Rpfq3pdfwvqYwYZpR0SCRRZXXC1LOjGjfYbaV7h+FTIjZJwUbUioz+PjtrkZTEfooFCgcu2LMpdFggNW7UWjld0pi8/QR1UWaHgNWj0FRFiQaUj8VzePm+Nig2wO9gkLDJUIswPacYvqasY0P6cBBBeEUxhO8D9oobYyf+Irdxzjy+jJ6BqCSYdOtkmmYlXkXdD/r8djitxutrlTgtJbSs4BBkJsjpoxN5WvdwukpwB3zH7cTxmKQrL+fBhPsihJPITxfH7LyKLLPi6FIddb/BtnxdB6NFIbVWiAfMKEKAznPjJ/Y7NPrJL4CrpzjeQoWUVznqEXmby2vmFulaC5mOdrNy40qjFva69tsB+YTUY2qMqTLk4EJDDNAdcB3Pbu1k2yCOYcq8ZCy6+g15gPVdl8ZEd0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 842e9fa0-9973-4b41-ba18-08dcaab1bb32
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 00:52:30.7213
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DaShmInISJLVxGiH283+u5kDM3Ui6I7UuKddc4nz7+G9rBUCYcpzTCOKTvEIcqX+yCJr1fsSrdRR5vcz0AYfS2eCrvjpIG9BzCXuC2jiNHg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB8128
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_18,2024-07-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 mlxlogscore=753 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407230004
+X-Proofpoint-ORIG-GUID: WCx_ZigEsaTGVv9a2tOUDCAdvLMuV5Bw
+X-Proofpoint-GUID: WCx_ZigEsaTGVv9a2tOUDCAdvLMuV5Bw
 
-On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> This is loosely adapted from an implementation available at
-> https://gitlab.com/Linaro/96boards/e850-96/kernel/-/blob/android-exynos-4=
-.14-linaro/drivers/thermal/samsung/exynos_tmu.c
 
-Not sure if it's going to be helpful to you, but we also uploaded the
-downstream k5.10 a while back, and it features a bit different TMU
-driver implementation [1].
+Eric,
 
-[1] https://gitlab.com/Linaro/96boards/e850-96/kernel/-/tree/android-exynos=
--5.10-linaro/drivers/thermal/samsung?ref_type=3Dheads
+> If exynos_ufs_fmp_init() did not enable FMP support, then
+> exynos_ufs_fmp_resume() should not execute the FMP-related SMC calls.
 
-> Some differences from that implementation:
-> - unlike that implementation, we do not use the ACPM mechanism, instead
->   we just access the registers, like we do for other SoCs,
+Applied to 6.11/scsi-staging, thanks!
 
-Do you know what are the possible implications of not using ACPM? As I
-understand, ACPM is a Samsung's downstream framework which uses APM
-(Active Power Management) IP block internally to act as an IPC
-mechanism, which makes it possible to offload any PM related
-operations (which might get quite heavy, if we are to belive the TRM
-description of APM) from CPU to APM. I'm not against the direct
-registers access based implementation (in fact, I'm not sure how that
-APM/ACPM thing can be implemented in upstreamable way and if it's
-worth it at all). Just curious if we understand what we are
-potentially missing out, and if at some point we'll be forced to
-implement that ACPM thing anyway (for something else)?
-
-> - the SoC is supposed to support multiple sensors inside one unit. The
->   vendor implementation uses one kernel device per sensor, we would
->   probably prefer to have one device for all sensors, have
->   #thermal-sensor-cells =3D <1> and so on. We implemented this, but we
->   could not get the extra sensors to work on our hardware so far. This
->   might be due to a misconfiguration and we will probably come back to
->   this, however our implementation only supports a single sensor for
->   now,
-> - the vendor implementation supports disabling CPU cores as a cooling
->   device. We did not attempt to port this, and this would not really fit
->   this driver anyway.
->
-> Additionally, some differences from the other SoCs supported by this
-> driver:
-> - this SoC does not require a clock to work correctly, so we need an
->   exception for data->clk,
-
-Not sure if that's true, as already discussed in my comments for the
-previous patches. Looks like one clock is still needed, which is the
-PCLK bus clock (to interface registers) which might simultaneously act
-as an operating (functional) clock.
-
-> - we do not really constrain the e-fuse information like the other SoCs
->   do (data->{min,max}_efuse_value). In our tests, those values (as well
->   as the raw sensor values) were much higher than in the other SoCs, to
->   the degree that reusing the data->{min,max}_efuse_value from the other
->   SoCs would cause instant critical temperature reset on boot,
-> - this SoC provides more information in the e-fuse data than other SoCs,
->   so we read some values inside exynos850_tmu_initialize instead of
->   hardcoding them in exynos_map_dt_data.
->
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 214 +++++++++++++++++++++++++--
->  1 file changed, 202 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
-ng/exynos_tmu.c
-> index f0de72a62fd7..bd52663f1a5a 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -116,6 +116,43 @@
->  #define EXYNOS7_EMUL_DATA_SHIFT                        7
->  #define EXYNOS7_EMUL_DATA_MASK                 0x1ff
->
-> +/* Exynos850 specific registers */
-> +#define EXYNOS850_TMU_REG_AVG_CON              0x58
-
-Exynos850 TRM says AVG_CONTROL offset is 0x38, and 0x58 is actually
-for THRESHOLD0_TEMP_RISE3_2 register.
-
-> +#define EXYNOS850_TMU_REG_CONTROL1             0x24
-> +#define EXYNOS850_TMU_REG_COUNTER_VALUE0       0x30
-> +#define EXYNOS850_TMU_REG_COUNTER_VALUE1       0x34
-> +#define EXYNOS850_TMU_REG_CURRENT_TEMP1_0      0x40
-
-In TRM, this register is called CURRENT_TEMP0_1. Maybe change 1_0 -> 0_1?
-
-> +#define EXYNOS850_TMU_REG_THD_TEMP0_RISE       0x50
-> +#define EXYNOS850_TMU_REG_THD_TEMP0_FALL       0x60
-> +#define EXYNOS850_TMU_REG_TRIM0                        0x3C
-> +
-> +#define EXYNOS850_TMU_AVG_CON_SHIFT            18
-
-Maybe rename it to something like EXYNOS850_TMU_T_AVG_MODE_SHIFT, to
-avoid confusion with AVG_CONTROL register? That belongs to TRIMINFO2
-register, if I understand it correctly, not to AVG_CONTROL.
-
-> +#define EXYNOS850_TMU_AVG_MODE_MASK            0x7
-
-I'd suggest to group all the definitions here as such:
-
-#define REG1_OFFSET
-#define REG1_FIELD1_OFFSET
-#define REG1_FIELD2_OFFSET
-...empty line...
-#define REG2_OFFSET
-#define REG2_FIELD1_OFFSET
-#define REG2_FIELD2_OFFSET
-...etc...
-
-Or otherwise each shift/mask constant should contain its register name
-as a prefix, to avoid confusion. But right now it's kinda hard to
-understand what belongs to what :) But that's just a nitpick.
-
-> +#define EXYNOS850_TMU_BGRI_TRIM_MASK           0xF
-
-Suggest using GENMASK() macro whenever possible.
-
-> +#define EXYNOS850_TMU_BGRI_TRIM_SHIFT          20
-> +#define EXYNOS850_TMU_CLK_SENSE_ON_MASK                0xffff
-> +#define EXYNOS850_TMU_CLK_SENSE_ON_SHIFT       16
-> +#define EXYNOS850_TMU_DEM_ENABLE               1
-> +#define EXYNOS850_TMU_DEM_SHIFT                        4
-
-Instead of above two values, it could be just BIT(4) for
-EXYNOS850_TMU_DEM_ENABLE?
-
-> +#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK     0xffff
-> +#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT    0
-> +#define EXYNOS850_TMU_LPI_MODE_MASK            1
-> +#define EXYNOS850_TMU_LPI_MODE_SHIFT           10
-> +#define EXYNOS850_TMU_T_BUF_SLOPE_SEL_MASK     0xF
-> +#define EXYNOS850_TMU_T_BUF_SLOPE_SEL_SHIFT    18
-> +#define EXYNOS850_TMU_T_BUF_VREF_SEL_MASK      0x1F
-> +#define EXYNOS850_TMU_T_BUF_VREF_SEL_SHIFT     18
-> +#define EXYNOS850_TMU_TEM1051X_SENSE_VALUE     0x028A
-> +#define EXYNOS850_TMU_TEM1456X_SENSE_VALUE     0x0A28
-
-I'd pull those two values under shift/mask definitions. Also, please
-use lowercase characters for hex values, here and in all other places.
-
-> +#define EXYNOS850_TMU_TEMP_SHIFT               9
-> +#define EXYNOS850_TMU_TRIMINFO_SHIFT           4
-> +#define EXYNOS850_TMU_T_TRIM0_MASK             0xF
-> +#define EXYNOS850_TMU_T_TRIM0_SHIFT            18
-> +#define EXYNOS850_TMU_VBEI_TRIM_MASK           0xF
-> +#define EXYNOS850_TMU_VBEI_TRIM_SHIFT          8
-> +#define EXYNOS850_TMU_VREF_TRIM_MASK           0xF
-> +#define EXYNOS850_TMU_VREF_TRIM_SHIFT          12
-> +
->  #define EXYNOS_FIRST_POINT_TRIM                        25
->  #define EXYNOS_SECOND_POINT_TRIM               85
->
-> @@ -133,6 +170,7 @@ enum soc_type {
->         SOC_ARCH_EXYNOS5420_TRIMINFO,
->         SOC_ARCH_EXYNOS5433,
->         SOC_ARCH_EXYNOS7,
-> +       SOC_ARCH_EXYNOS850,
->  };
->
->  /**
-> @@ -231,13 +269,16 @@ static int code_to_temp(struct exynos_tmu_data *dat=
-a, u16 temp_code)
->
->  static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_i=
-nfo)
->  {
-> -       u16 tmu_temp_mask =3D
-> -               (data->soc =3D=3D SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MA=
-SK
-> -                                               : EXYNOS_TMU_TEMP_MASK;
-> +       u16 tmu_temp_mask =3D (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
-> +                            data->soc =3D=3D SOC_ARCH_EXYNOS850) ?
-> +                                   EXYNOS7_TMU_TEMP_MASK :
-> +                                   EXYNOS_TMU_TEMP_MASK;
-> +       int tmu_85_shift =3D (data->soc =3D=3D SOC_ARCH_EXYNOS850) ?
-> +                                  EXYNOS850_TMU_TEMP_SHIFT :
-> +                                  EXYNOS_TRIMINFO_85_SHIFT;
-
-Something seems off to me here. How come the shift value for EXYNOS7
-case is 8, but the mask is actually 9 bits long? Does it mean the
-first error field is 8 bits long, and the second error field is 9 bits
-long for EXYNOS7? I don't have the Exynos7 manual, so it's just a
-hunch. But if it's true, maybe this shift value has to be added in
-your [PATCH 2/6] to fix Exynos7 case?
-
-Also, just an idea: those values (and other similar values) could be
-pre-calculated somewhere during the probe, stored in some struct (e.g.
-_variant or _chip) and then just used here. Stylistically, instead of
-the ternary operator, maybe switch one would easier to read? Again,
-those are very minor nitpicks.
-
->
->         data->temp_error1 =3D trim_info & tmu_temp_mask;
-> -       data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
-> -                               tmu_temp_mask);
-> +       data->temp_error2 =3D ((trim_info >> tmu_85_shift) & tmu_temp_mas=
-k);
->
-
-No need for the left-most and right-most brackets.
-
->         if (!data->temp_error1 ||
->             (data->min_efuse_value > data->temp_error1) ||
-> @@ -245,9 +286,8 @@ static void sanitize_temp_error(struct exynos_tmu_dat=
-a *data, u32 trim_info)
->                 data->temp_error1 =3D data->efuse_value & tmu_temp_mask;
->
->         if (!data->temp_error2)
-> -               data->temp_error2 =3D
-> -                       (data->efuse_value >> EXYNOS_TRIMINFO_85_SHIFT) &
-> -                       tmu_temp_mask;
-> +               data->temp_error2 =3D (data->efuse_value >> tmu_85_shift)=
- &
-> +                                   tmu_temp_mask;
->  }
->
->  static int exynos_tmu_initialize(struct platform_device *pdev)
-> @@ -588,6 +628,129 @@ static void exynos7_tmu_initialize(struct platform_=
-device *pdev)
->         sanitize_temp_error(data, trim_info);
->  }
->
-> +static void exynos850_tmu_set_low_temp(struct exynos_tmu_data *data, u8 =
-temp)
-> +{
-> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_FALL + 1=
-2, 0,
-> +                              temp);
-> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-> +                             EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, true);
-> +}
-> +
-> +static void exynos850_tmu_set_high_temp(struct exynos_tmu_data *data, u8=
- temp)
-> +{
-> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 1=
-2, 16,
-> +                              temp);
-> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, true);
-> +}
-> +
-> +static void exynos850_tmu_disable_low(struct exynos_tmu_data *data)
-> +{
-> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-> +                             EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, false);
-> +}
-> +
-> +static void exynos850_tmu_disable_high(struct exynos_tmu_data *data)
-> +{
-> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, false);
-> +}
-> +
-> +static void exynos850_tmu_set_crit_temp(struct exynos_tmu_data *data, u8=
- temp)
-> +{
-> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 0=
-, 16,
-> +                              temp);
-> +       exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
-> +                             EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
-> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 7, true);
-> +}
-> +
-> +static void exynos850_tmu_initialize(struct platform_device *pdev)
-> +{
-> +       struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
-> +       int cal_type;
-
-Please make it u32.
-
-> +       unsigned int avg_mode, buf, bgri, vref, vbei;
-
-Suggest renaming buf -> reg, and maybe make it u32.
-
-> +
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> +       cal_type =3D (buf & EXYNOS5433_TRIMINFO_CALIB_SEL_MASK) >>
-> +                  EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT;
-> +       data->reference_voltage =3D (buf >> EXYNOS850_TMU_T_BUF_VREF_SEL_=
-SHIFT) &
-> +                                 EXYNOS850_TMU_T_BUF_VREF_SEL_MASK;
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
-> +                   EXYNOS850_TMU_TRIMINFO_SHIFT);
-> +       data->gain =3D (buf >> EXYNOS850_TMU_T_BUF_SLOPE_SEL_SHIFT) &
-> +                    EXYNOS850_TMU_T_BUF_SLOPE_SEL_MASK;
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
-> +                   2 * EXYNOS850_TMU_TRIMINFO_SHIFT);
-> +       avg_mode =3D (buf >> EXYNOS850_TMU_AVG_CON_SHIFT) &
-> +                  EXYNOS850_TMU_AVG_MODE_MASK;
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
-> +                   3 * EXYNOS850_TMU_TRIMINFO_SHIFT);
-> +       bgri =3D (buf >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
-> +              EXYNOS850_TMU_T_TRIM0_MASK;
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
-> +                   4 * EXYNOS850_TMU_TRIMINFO_SHIFT);
-> +       vref =3D (buf >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
-> +              EXYNOS850_TMU_T_TRIM0_MASK;
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
-> +                   5 * EXYNOS850_TMU_TRIMINFO_SHIFT);
-
-For cases like that, maybe introduce some macro like:
-
-    #define EXYNOS850_TRIMINFO_OFFSET(n)    (EXYNOS_TMU_REG_TRIMINFO +
-(n) * EXYNOS850_TMU_TRIMINFO_SHIFT)
-
-and use it everywhere?
-
-> +       vbei =3D (buf >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
-> +              EXYNOS850_TMU_T_TRIM0_MASK;
-> +
-> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> +       sanitize_temp_error(data, buf);
-> +
-> +       switch (cal_type) {
-> +       case EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING:
-> +               data->cal_type =3D TYPE_TWO_POINT_TRIMMING;
-> +               break;
-> +       case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
-
-Add "fallthrough;" here? Or maybe just remove above line at all?
-
-> +       default:
-> +               data->cal_type =3D TYPE_ONE_POINT_TRIMMING;
-> +               break;
-> +       }
-> +
-> +       dev_info(&pdev->dev, "Calibration type is %d-point calibration\n"=
-,
-> +                cal_type ? 2 : 1);
-> +
-> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_AVG_CON);
-> +       buf &=3D ~(EXYNOS850_TMU_AVG_MODE_MASK);
-
-No need for brackets.
-
-> +       buf &=3D ~(EXYNOS850_TMU_DEM_ENABLE << EXYNOS850_TMU_DEM_SHIFT);
-> +       if (avg_mode) {
-> +               buf |=3D avg_mode;
-> +               buf |=3D (EXYNOS850_TMU_DEM_ENABLE << EXYNOS850_TMU_DEM_S=
-HIFT);
-> +       }
-> +       writel(buf, data->base + EXYNOS850_TMU_REG_AVG_CON);
-> +
-> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
-> +       buf &=3D ~(EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK
-> +                << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT);
-> +       buf |=3D EXYNOS850_TMU_TEM1051X_SENSE_VALUE
-> +              << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT;
-> +       writel(buf, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
-> +
-> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
-> +       buf &=3D ~(EXYNOS850_TMU_CLK_SENSE_ON_MASK
-> +                << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT);
-> +       buf |=3D EXYNOS850_TMU_TEM1051X_SENSE_VALUE
-> +              << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT;
-> +       writel(buf, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
-> +
-> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_TRIM0);
-> +       buf &=3D ~(EXYNOS850_TMU_BGRI_TRIM_MASK << EXYNOS850_TMU_BGRI_TRI=
-M_SHIFT);
-> +       buf &=3D ~(EXYNOS850_TMU_VREF_TRIM_MASK << EXYNOS850_TMU_VREF_TRI=
-M_SHIFT);
-> +       buf &=3D ~(EXYNOS850_TMU_VBEI_TRIM_MASK << EXYNOS850_TMU_VBEI_TRI=
-M_SHIFT);
-
-Why not define this mask value like this instead:
-
-    #define EXYNOS850_TMU_VBEI_TRIM_MASK        GENMASK(11,8)
-
-And then you'll be able to do just:
-
-    buf &=3D ~EXYNOS850_TMU_VBEI_TRIM_MASK;
-
-The same goes for all similar cases.
-
-> +       buf |=3D (bgri << EXYNOS850_TMU_BGRI_TRIM_SHIFT);
-> +       buf |=3D (vref << EXYNOS850_TMU_VREF_TRIM_SHIFT);
-> +       buf |=3D (vbei << EXYNOS850_TMU_VBEI_TRIM_SHIFT);
-
-Brackets are not needed.
-
-> +       writel(buf, data->base + EXYNOS850_TMU_REG_TRIM0);
-> +
-> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_CONTROL1);
-> +       buf &=3D ~(EXYNOS850_TMU_LPI_MODE_MASK << EXYNOS850_TMU_LPI_MODE_=
-SHIFT);
-> +       writel(buf, data->base + EXYNOS850_TMU_REG_CONTROL1);
-> +}
-> +
->  static void exynos4210_tmu_control(struct platform_device *pdev, bool on=
-)
->  {
->         struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
-> @@ -679,7 +842,8 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *d=
-ata, unsigned int val,
->
->                 val &=3D ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIF=
-T);
->                 val |=3D (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
-> -               if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
-> +               if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
-> +                   data->soc =3D=3D SOC_ARCH_EXYNOS850) {
->                         val &=3D ~(EXYNOS7_EMUL_DATA_MASK <<
->                                 EXYNOS7_EMUL_DATA_SHIFT);
->                         val |=3D (temp_to_code(data, temp) <<
-> @@ -709,7 +873,8 @@ static void exynos4412_tmu_set_emulation(struct exyno=
-s_tmu_data *data,
->                 emul_con =3D EXYNOS5260_EMUL_CON;
->         else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433)
->                 emul_con =3D EXYNOS5433_TMU_EMUL_CON;
-> -       else if (data->soc =3D=3D SOC_ARCH_EXYNOS7)
-> +       else if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
-> +                data->soc =3D=3D SOC_ARCH_EXYNOS850)
->                 emul_con =3D EXYNOS7_TMU_REG_EMUL_CON;
->         else
->                 emul_con =3D EXYNOS_EMUL_CON;
-> @@ -766,6 +931,12 @@ static int exynos7_tmu_read(struct exynos_tmu_data *=
-data)
->                 EXYNOS7_TMU_TEMP_MASK;
->  }
->
-> +static int exynos850_tmu_read(struct exynos_tmu_data *data)
-> +{
-> +       return readw(data->base + EXYNOS850_TMU_REG_CURRENT_TEMP1_0) &
-> +              EXYNOS7_TMU_TEMP_MASK;
-> +}
-> +
->  static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
->  {
->         struct exynos_tmu_data *data =3D id;
-> @@ -794,7 +965,8 @@ static void exynos4210_tmu_clear_irqs(struct exynos_t=
-mu_data *data)
->         if (data->soc =3D=3D SOC_ARCH_EXYNOS5260) {
->                 tmu_intstat =3D EXYNOS5260_TMU_REG_INTSTAT;
->                 tmu_intclear =3D EXYNOS5260_TMU_REG_INTCLEAR;
-> -       } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
-> +       } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
-> +                  data->soc =3D=3D SOC_ARCH_EXYNOS850) {
->                 tmu_intstat =3D EXYNOS7_TMU_REG_INTPEND;
->                 tmu_intclear =3D EXYNOS7_TMU_REG_INTPEND;
->         } else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433) {
-> @@ -845,6 +1017,9 @@ static const struct of_device_id exynos_tmu_match[] =
-=3D {
->         }, {
->                 .compatible =3D "samsung,exynos7-tmu",
->                 .data =3D (const void *)SOC_ARCH_EXYNOS7,
-> +       }, {
-> +               .compatible =3D "samsung,exynos850-tmu",
-> +               .data =3D (const void *)SOC_ARCH_EXYNOS850,
->         },
->         { },
->  };
-> @@ -957,6 +1132,21 @@ static int exynos_map_dt_data(struct platform_devic=
-e *pdev)
->                 data->min_efuse_value =3D 15;
->                 data->max_efuse_value =3D 100;
->                 break;
-> +       case SOC_ARCH_EXYNOS850:
-> +               data->tmu_set_low_temp =3D exynos850_tmu_set_low_temp;
-> +               data->tmu_set_high_temp =3D exynos850_tmu_set_high_temp;
-> +               data->tmu_disable_low =3D exynos850_tmu_disable_low;
-> +               data->tmu_disable_high =3D exynos850_tmu_disable_high;
-> +               data->tmu_set_crit_temp =3D exynos850_tmu_set_crit_temp;
-> +               data->tmu_initialize =3D exynos850_tmu_initialize;
-> +               data->tmu_control =3D exynos4210_tmu_control;
-> +               data->tmu_read =3D exynos850_tmu_read;
-> +               data->tmu_set_emulation =3D exynos4412_tmu_set_emulation;
-> +               data->tmu_clear_irqs =3D exynos4210_tmu_clear_irqs;
-> +               data->efuse_value =3D 55;
-> +               data->min_efuse_value =3D 0;
-> +               data->max_efuse_value =3D 511;
-> +               break;
->         default:
->                 dev_err(&pdev->dev, "Platform not supported\n");
->                 return -EINVAL;
-> @@ -1051,7 +1241,7 @@ static int exynos_tmu_probe(struct platform_device =
-*pdev)
->                 return ret;
->
->         data->clk =3D devm_clk_get(dev, "tmu_apbif");
-> -       if (IS_ERR(data->clk))
-> +       if (IS_ERR(data->clk) && data->soc !=3D SOC_ARCH_EXYNOS850)
->                 return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to =
-get clock\n");
->
->         data->clk_sec =3D devm_clk_get(dev, "tmu_triminfo_apbif");
-> --
-> 2.45.1
->
->
+-- 
+Martin K. Petersen	Oracle Linux Engineering
