@@ -1,1327 +1,571 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075F482CA
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 22:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60F9BE58
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2024 00:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721687630; cv=none; b=r4Yvv9Z/XcJ7LnW/tOj2peBiYleGwxlkrqYjO+tKiLJ57iypwUqzVydo+ZYtaGwm0Y9Y54It/FSHPoETkXOB2RwZrOrMtmCaGOHeRqKOc73TsBofa27pE4jBSoabPbFRxOl3IveRrKZz1gpJlXg7a/8kzRFPCsnQK5d1UXwGhhw=
+	t=1721692951; cv=none; b=HeOJaOmxEEMcgGIum5Fti8eaMrJH6yrDK2EhLWD6xf8EYKNm720SB/CYl3W8XPWWDuivjPR79iSfP3rPfoDCU4txF0zOZwbhAQTXcvIcprEg8G3DagJoEQCVSHlViQeqpT4V1IuRgpq12mor10lv675keRKF52G9lnvuC2HSnuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721687630; c=relaxed/simple;
-	bh=1qw/Y/pJGdYJoP89EMr+s+Nx81kw46PPYysCfN3TZ6I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=lg5kWPudswfedICDbe2l2w6exZfc+vfgy2ttkTFU01rk29zLYrKGkL9jqWfA3NkdkVxTeRxdGb0YV2ZWlvuj+kP93TQT43b5Uh8CWZAJitriWQ1HtbbIFTJcS7/xIgscP3eqo3r0cSMb8n4Iq9Y40VKERT1fbfM2Zz4GweDqAP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UZBiE96d; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1721692951; c=relaxed/simple;
+	bh=vhjf08mbkj4INKoV7kY2CKVrz0EAYDmf1royEH39T4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QARogSopQ46JnGEzinxserV1hhgCL9+t/OoLdDWolb+qwfSd2Dlk1G7R0AblvcysjnAILRpnbR4PHQ/ige0XRHdWeelZ6eToMDBqUsCKSE2Ce4nTBAnY11ALzwjkSEQH5xEap90bP1s5L2qJryAdy9HXQ4mbiWdTV2aLKo0a39s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SGRKYaW+; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UZBiE96d"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240722223342epoutp028c81a1cd29968f39dbdf30e0474d5e09~kqcVt9OEW3005730057epoutp02B
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 22:33:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240722223342epoutp028c81a1cd29968f39dbdf30e0474d5e09~kqcVt9OEW3005730057epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721687623;
-	bh=c2cdGWtvoVG6tluq6LVhS7EhYRtZCWoSzpLlaZux+ec=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UZBiE96dcA9lfSsMQgNVtnd769tlrUf7gK1H7lTSXDFrvuXgWlBIIELmvgPVFOUdg
-	 Rk2VQryg4RnhXmbSWGYi6ekZBHKWtf9WR8bfPOGL5++a0T5NNT9YQikR4tcannolVi
-	 M/4+HtwjuR48oyeCKqdypgEZspzJJwwoWQkmNxlA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240722223342epcas2p27a365fc895f4fb745d3741b9379b9b81~kqcVZEQ2r1733217332epcas2p2Y;
-	Mon, 22 Jul 2024 22:33:42 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WSZnK6tcgz4x9Pv; Mon, 22 Jul
-	2024 22:33:41 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EB.34.10012.54EDE966; Tue, 23 Jul 2024 07:33:41 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240722223341epcas2p499b4ab7179577972de0b0324be2005ba~kqcUHfOYX1651716517epcas2p4w;
-	Mon, 22 Jul 2024 22:33:41 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240722223341epsmtrp21ac49f5127093c8489fc26cc8f84cea7~kqcUFMPFc3065730657epsmtrp2L;
-	Mon, 22 Jul 2024 22:33:41 +0000 (GMT)
-X-AuditID: b6c32a47-ea1fa7000000271c-0c-669ede4587af
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	98.79.08456.54EDE966; Tue, 23 Jul 2024 07:33:41 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.60]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240722223340epsmtip16afcea393b21b4077869b7dc0d16e4af~kqcTz-3yY1005910059epsmtip1P;
-	Mon, 22 Jul 2024 22:33:40 +0000 (GMT)
-From: Sunyeal Hong <sunyeal.hong@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
-Subject: [PATCH v4 4/4] clk: samsung: add top clock support for ExynosAuto
- v920 SoC
-Date: Tue, 23 Jul 2024 07:33:33 +0900
-Message-ID: <20240722223333.1137947-5-sunyeal.hong@samsung.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SGRKYaW+"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6659e81bc68so51116807b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2024 17:02:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721692948; x=1722297748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jHdT0nY+srvI4gjyCrkvE6Ta/xBloNN8P3uthZUAq7Q=;
+        b=SGRKYaW+p/IHk9vn6vXqhH8ZfTy2jOXNiy6OThTi+T0uZ3OHq3hT68l+wGgF4v916A
+         NRqlXR9D7Xm6wWKM99ODMpH2rTjDq0ghQ7bZraDbgLF3HlM0ZYoy3bjSKJFPVmzMEURv
+         ZjM6tTAW1vHhVZQq2HJ/bN61tBZmryBeGO0HV9jp5uGVgeHhz+pVUWOXqpKAIgmwIu1o
+         g2esP7x9l0URm/t7ox420SMDphtRZAzaYvbsU9BsjH44UTAh8x2MznIrnaPtLR+mN3Ry
+         FfSkhceTbgtoNNDBPKVxTUBJh31kExt+i6nGVRfDQd8GBY8tWNhc3WcmcFx3xvn+T6yS
+         rUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721692948; x=1722297748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jHdT0nY+srvI4gjyCrkvE6Ta/xBloNN8P3uthZUAq7Q=;
+        b=Ek1fCeFc3XgA58DsVGX8TEISDUuxdNp3hd7kWC8u6gKHar6JTl0bH/9gGkAbzofyrh
+         XCPp7+r9bb7ccy0+sBsHp8zCJhwpClkQd+n21A+AjaORgveTuyN3+jlKLLU+hqpEdDKk
+         L6cidhfuqrPO+esRBw01eBQxsWn6tA9ZNB0m8isUBqWPdQi+mqRUScvZPWm80eferd04
+         ZwFrSdrEzyQWQc6ZJHVGgbUt2rKjH3ultWQwiikJWVl9hfhsZDrzge+Gl8dyc++27pBr
+         0Z+QVSXn1ffcPIDd1UhDlrt93/koBO9YGQw+12DsvD9bWSE4XJ+WEmYgNWYLXxaFFqXc
+         pIng==
+X-Forwarded-Encrypted: i=1; AJvYcCVM0Lzh8h34WhDUdb0KFo4Vv2avWLQctKvU5LV7TRnLFzdCNkvswB3+hpZIhpHvl2O3bZauqimzT8YIgyfzO0VDj/NYXaz5ySoEbP3WgpYvW2Y=
+X-Gm-Message-State: AOJu0Yz5FDEZeC74MjFh60Yf7ePNcNalM25kWgEspOzi/Lf3gU0JDB3m
+	0yUS7GdPkDpYbvOJHxeNJmvUupyk0yPSWrwMRXd/TqKNRhWHB9KgKjllb0zfYggbpuEuAWm/HIo
+	bFUCiqYgDOsJa/kySgdYt3HNrm54vVVmXaTu80g==
+X-Google-Smtp-Source: AGHT+IHLIof1OMOBy91GVdpBWeeU3HO/VbU+jVbUE6NfXw24Kem4yq/cGajhacazi/09DgHnOPQrieibdqoiGU/z58Q=
+X-Received: by 2002:a05:690c:4287:b0:65f:8afe:9ba6 with SMTP id
+ 00721157ae682-66ad88da3b3mr87089567b3.14.1721692947508; Mon, 22 Jul 2024
+ 17:02:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLJsWRmVeSWpSXmKPExsWy7bCmua7rvXlpBosuqVk8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7Y8eI7S8GGTuaK9i23GRsY
-	11xn6mLk5JAQMJH4u2s+axcjF4eQwA5Gicm9UxghnE+MEofPt0I53xglJh4/Dtcy+XMTC0Ri
-	L6PE3/NT2CGcj4wSd9rmATkcHGwCuhJ//jmAxEUE9jBJbDm/hAnEYRY4yyhxd84CsCJhgVCJ
-	qS8zQKayCKhK7D53DyzMK2AvsfpKFsQyeYmLa56zgYQ5BRwkJt9SAAnzCghKnJz5hAXEZgYq
-	ad46mxlkuoTAQg6J5zc+s0L0uki8W7+BDcIWlnh1fAs7hC0l8fndXqh4vsTk62+ZIJobGCWu
-	/etmhkjYSyw68xPsHmYBTYn1u/RBTAkBZYkjt6D28kl0HP7LDhHmlehoE4JoVJP4dOUy1BAZ
-	iWMnnkHZHhL7NzaDtQoJTGaUeNWtOIFRYRaSb2Yh+WYWwt4FjMyrGMVSC4pz01OLjQqM4TGc
-	nJ+7iRGcbrXcdzDOePtB7xAjEwfjIUYJDmYlEd4nr+amCfGmJFZWpRblxxeV5qQWH2I0BYb0
-	RGYp0eR8YMLPK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBSVw9
-	/nace97m3RLf8ufUxPx0nTlrp3148e8JewpC2tz2VotuuWZ3+MgPj4qa2AWb/y09qWbc+axX
-	+6CwaU7TNVcJq/nrChmn/j53O8d8w7Tdgl4/ljUsfjfrgbLGhU0vd555+mzOhUVrQnL9275Z
-	JbX4cljxX2CR/m+s1bF1SfvCS1FiexIkOj9OmdFuHaIdfuPPle0qH8qTOVdU/0i4eCHoz/dr
-	btqRtdGTP3TumfBRd4JMeOBC6Y9/d7L/aph9Xe9yb8ZsF6dc878mTuFJrhYzTBLe2tq2HXFb
-	zHulVFs4rflUTpfBG8nH0eGv981M9ovbZR4RdGNHy95Dyd8X/epfklFvtoRnDfe9vROCtyux
-	FGckGmoxFxUnAgCYm/uzQAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnK7rvXlpBhcusVo8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZex4
-	8Z2lYEMnc0X7ltuMDYxrrjN1MXJySAiYSEz+3MTSxcjFISSwm1Gi7/s6VoiEjMTGhv/sELaw
-	xP2WI6wQRe8ZJea96wdyODjYBHQl/vxzAImLCBxikpj4+SnYJGaBy4wSx+5OZgbpFhYIlpg0
-	6wqYzSKgKrH73D12kGZeAXuJ1VeyIBbIS1xc85wNJMwp4CAx+ZYCSFgIqGLWy2tgnbwCghIn
-	Zz5hAbGZgcqbt85mnsAoMAtJahaS1AJGplWMkqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmb
-	GMGxoaW1g3HPqg96hxiZOBgPMUpwMCuJ8D55NTdNiDclsbIqtSg/vqg0J7X4EKM0B4uSOO+3
-	170pQgLpiSWp2ampBalFMFkmDk6pBqbQoqzdRe3/ZrU9nOl3oDT3nPO3g1P0Ft7vZTZPvBYu
-	L9Q79/pm43OJDiUWzQ3T2Cw6vkQxHH0yzaJq8p87e4QnV014abwhVrpyTsIPlmP6+19Ui3ou
-	+Gj4vkbzaLScm31a9IvZ94Uapt1MurD8ascM1sNN1ZX9mzuL1s62U9v418GY8UX/CcmA1wZu
-	fW27711+OO9ShvjNyYKqcq/2rl2j2Sfblfl5x7FP6/Tvet7aZa/JtV9AZ0vVP/WM5lSb7P4H
-	kySiXXIjJp7RZJ0wbfkara8sZw/On817fsO8f19s1k1i3hLClJj64Py9vjvWHI3Jddn8NeeX
-	fTVjtjR4VOb+4fTcp586t+wrltL6kFGnxFKckWioxVxUnAgAMp+LAPwCAAA=
-X-CMS-MailID: 20240722223341epcas2p499b4ab7179577972de0b0324be2005ba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240722223341epcas2p499b4ab7179577972de0b0324be2005ba
-References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
-	<CGME20240722223341epcas2p499b4ab7179577972de0b0324be2005ba@epcas2p4.samsung.com>
+References: <CGME20240719120948eucas1p13f3dc8f3aba56027da720d36c6057040@eucas1p1.samsung.com>
+ <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-6-m.majewski2@samsung.com>
+In-Reply-To: <20240719120853.1924771-6-m.majewski2@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 22 Jul 2024 19:02:16 -0500
+Message-ID: <CAPLW+4n6XB3fm8KQA=6_2z8ay9pDPtu-VFgAaW5imZkRH2ywkg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850 support
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This adds support for CMU_TOP which generates clocks for all the
-function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
-CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
-and they will generate bus clocks.
+On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
+>
+> This is loosely adapted from an implementation available at
+> https://gitlab.com/Linaro/96boards/e850-96/kernel/-/blob/android-exynos-4=
+.14-linaro/drivers/thermal/samsung/exynos_tmu.c
 
-Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
----
- drivers/clk/samsung/Makefile             |    1 +
- drivers/clk/samsung/clk-exynosautov920.c | 1173 ++++++++++++++++++++++
- 2 files changed, 1174 insertions(+)
- create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
+Not sure if it's going to be helpful to you, but we also uploaded the
+downstream k5.10 a while back, and it features a bit different TMU
+driver implementation [1].
 
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 3056944a5a54..f1ba48758c78 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -21,6 +21,7 @@ obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7885.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov9.o
-+obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynosautov920.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-gs101.o
- obj-$(CONFIG_S3C64XX_COMMON_CLK)	+= clk-s3c64xx.o
- obj-$(CONFIG_S5PV210_COMMON_CLK)	+= clk-s5pv210.o clk-s5pv210-audss.o
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-new file mode 100644
-index 000000000000..c17d25e3c9a0
---- /dev/null
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -0,0 +1,1173 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024 Samsung Electronics Co., Ltd.
-+ * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
-+ *
-+ * Common Clock Framework support for ExynosAuto v920 SoC.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <dt-bindings/clock/samsung,exynosautov920.h>
-+
-+#include "clk.h"
-+#include "clk-exynos-arm64.h"
-+
-+/* NOTE: Must be equal to the last clock ID increased by one */
-+#define CLKS_NR_TOP			(DOUT_CLKCMU_TAA_NOC + 1)
-+#define CLKS_NR_PERIC0			(CLK_DOUT_PERIC0_I3C + 1)
-+
-+/* ---- CMU_TOP ------------------------------------------------------------ */
-+
-+/* Register Offset definitions for CMU_TOP (0x11000000) */
-+#define PLL_LOCKTIME_PLL_MMC			0x0004
-+#define PLL_LOCKTIME_PLL_SHARED0		0x0008
-+#define PLL_LOCKTIME_PLL_SHARED1		0x000c
-+#define PLL_LOCKTIME_PLL_SHARED2		0x0010
-+#define PLL_LOCKTIME_PLL_SHARED3		0x0014
-+#define PLL_LOCKTIME_PLL_SHARED4		0x0018
-+#define PLL_LOCKTIME_PLL_SHARED5		0x0018
-+#define PLL_CON0_PLL_MMC			0x0140
-+#define PLL_CON3_PLL_MMC			0x014c
-+#define PLL_CON0_PLL_SHARED0			0x0180
-+#define PLL_CON3_PLL_SHARED0			0x018c
-+#define PLL_CON0_PLL_SHARED1			0x01c0
-+#define PLL_CON3_PLL_SHARED1			0x01cc
-+#define PLL_CON0_PLL_SHARED2			0x0200
-+#define PLL_CON3_PLL_SHARED2			0x020c
-+#define PLL_CON0_PLL_SHARED3			0x0240
-+#define PLL_CON3_PLL_SHARED3			0x024c
-+#define PLL_CON0_PLL_SHARED4			0x0280
-+#define PLL_CON3_PLL_SHARED4			0x028c
-+#define PLL_CON0_PLL_SHARED5			0x02c0
-+#define PLL_CON3_PLL_SHARED5			0x02cc
-+
-+/* MUX */
-+#define CLK_CON_MUX_MUX_CLKCMU_ACC_NOC		0x1000
-+#define CLK_CON_MUX_MUX_CLKCMU_APM_NOC		0x1004
-+#define CLK_CON_MUX_MUX_CLKCMU_AUD_CPU		0x1008
-+#define CLK_CON_MUX_MUX_CLKCMU_AUD_NOC		0x100c
-+#define CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK0	0x1010
-+#define CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK1	0x1014
-+#define CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK2	0x1018
-+#define CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK3	0x101c
-+#define CLK_CON_MUX_MUX_CLKCMU_CMU_BOOST	0x1020
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL0_CLUSTER	0x1024
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL0_DBG	0x1028
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL0_SWITCH	0x102c
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL1_CLUSTER	0x1030
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL1_SWITCH	0x1034
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL2_CLUSTER	0x1038
-+#define CLK_CON_MUX_MUX_CLKCMU_CPUCL2_SWITCH	0x103c
-+#define CLK_CON_MUX_MUX_CLKCMU_DNC_NOC		0x1040
-+#define CLK_CON_MUX_MUX_CLKCMU_DPTX_DPGTC	0x1044
-+#define CLK_CON_MUX_MUX_CLKCMU_DPTX_DPOSC	0x1048
-+#define CLK_CON_MUX_MUX_CLKCMU_DPTX_NOC		0x104c
-+#define CLK_CON_MUX_MUX_CLKCMU_DPUB_DSIM	0x1050
-+#define CLK_CON_MUX_MUX_CLKCMU_DPUB_NOC		0x1054
-+#define CLK_CON_MUX_MUX_CLKCMU_DPUF0_NOC	0x1058
-+#define CLK_CON_MUX_MUX_CLKCMU_DPUF1_NOC	0x105c
-+#define CLK_CON_MUX_MUX_CLKCMU_DPUF2_NOC	0x1060
-+#define CLK_CON_MUX_MUX_CLKCMU_DSP_NOC		0x1064
-+#define CLK_CON_MUX_MUX_CLKCMU_G3D_NOCP		0x1068
-+#define CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH	0x106c
-+#define CLK_CON_MUX_MUX_CLKCMU_GNPU_NOC		0x1070
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI0_NOC		0x1074
-+#define CLK_CON_MUX_MUX_CLKCMU_ACC_ORB		0x1078
-+#define CLK_CON_MUX_MUX_CLKCMU_GNPU_XMAA	0x107c
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI1_MMC_CARD	0x1080
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI1_NOC		0x1084
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI1_USBDRD	0x1088
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI2_ETHERNET	0x108c
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI2_NOC		0x1090
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI2_NOC_UFS	0x1094
-+#define CLK_CON_MUX_MUX_CLKCMU_HSI2_UFS_EMBD	0x1098
-+#define CLK_CON_MUX_MUX_CLKCMU_ISP_NOC		0x109c
-+#define CLK_CON_MUX_MUX_CLKCMU_M2M_JPEG		0x10a0
-+#define CLK_CON_MUX_MUX_CLKCMU_M2M_NOC		0x10a4
-+#define CLK_CON_MUX_MUX_CLKCMU_MFC_MFC		0x10a8
-+#define CLK_CON_MUX_MUX_CLKCMU_MFC_WFD		0x10ac
-+#define CLK_CON_MUX_MUX_CLKCMU_MFD_NOC		0x10b0
-+#define CLK_CON_MUX_MUX_CLKCMU_MIF_NOCP		0x10b4
-+#define CLK_CON_MUX_MUX_CLKCMU_MIF_SWITCH	0x10b8
-+#define CLK_CON_MUX_MUX_CLKCMU_MISC_NOC		0x10bc
-+#define CLK_CON_MUX_MUX_CLKCMU_NOCL0_NOC	0x10c0
-+#define CLK_CON_MUX_MUX_CLKCMU_NOCL1_NOC	0x10c4
-+#define CLK_CON_MUX_MUX_CLKCMU_NOCL2_NOC	0x10c8
-+#define CLK_CON_MUX_MUX_CLKCMU_PERIC0_IP	0x10cc
-+#define CLK_CON_MUX_MUX_CLKCMU_PERIC0_NOC	0x10d0
-+#define CLK_CON_MUX_MUX_CLKCMU_PERIC1_IP	0x10d4
-+#define CLK_CON_MUX_MUX_CLKCMU_PERIC1_NOC	0x10d8
-+#define CLK_CON_MUX_MUX_CLKCMU_SDMA_NOC		0x10dc
-+#define CLK_CON_MUX_MUX_CLKCMU_SNW_NOC		0x10e0
-+#define CLK_CON_MUX_MUX_CLKCMU_SSP_NOC		0x10e4
-+#define CLK_CON_MUX_MUX_CLKCMU_TAA_NOC		0x10e8
-+#define CLK_CON_MUX_MUX_CLK_CMU_NOCP		0x10ec
-+#define CLK_CON_MUX_MUX_CLK_CMU_PLLCLKOUT	0x10f0
-+#define CLK_CON_MUX_MUX_CMU_CMUREF		0x10f4
-+
-+/* DIV */
-+#define CLK_CON_DIV_CLKCMU_ACC_NOC		0x1800
-+#define CLK_CON_DIV_CLKCMU_APM_NOC		0x1804
-+#define CLK_CON_DIV_CLKCMU_AUD_CPU		0x1808
-+#define CLK_CON_DIV_CLKCMU_AUD_NOC		0x180c
-+#define CLK_CON_DIV_CLKCMU_CIS_MCLK0		0x1810
-+#define CLK_CON_DIV_CLKCMU_CIS_MCLK1		0x1814
-+#define CLK_CON_DIV_CLKCMU_CIS_MCLK2		0x1818
-+#define CLK_CON_DIV_CLKCMU_CIS_MCLK3		0x181c
-+#define CLK_CON_DIV_CLKCMU_CPUCL0_CLUSTER	0x1820
-+#define CLK_CON_DIV_CLKCMU_CPUCL0_DBG		0x1824
-+#define CLK_CON_DIV_CLKCMU_CPUCL0_SWITCH	0x1828
-+#define CLK_CON_DIV_CLKCMU_CPUCL1_CLUSTER	0x182c
-+#define CLK_CON_DIV_CLKCMU_CPUCL1_SWITCH	0x1830
-+#define CLK_CON_DIV_CLKCMU_CPUCL2_CLUSTER	0x1834
-+#define CLK_CON_DIV_CLKCMU_CPUCL2_SWITCH	0x1838
-+#define CLK_CON_DIV_CLKCMU_DNC_NOC		0x183c
-+#define CLK_CON_DIV_CLKCMU_DPTX_DPGTC		0x1840
-+#define CLK_CON_DIV_CLKCMU_DPTX_DPOSC		0x1844
-+#define CLK_CON_DIV_CLKCMU_DPTX_NOC		0x1848
-+#define CLK_CON_DIV_CLKCMU_DPUB_DSIM		0x184c
-+#define CLK_CON_DIV_CLKCMU_DPUB_NOC		0x1850
-+#define CLK_CON_DIV_CLKCMU_DPUF0_NOC		0x1854
-+#define CLK_CON_DIV_CLKCMU_DPUF1_NOC		0x1858
-+#define CLK_CON_DIV_CLKCMU_DPUF2_NOC		0x185c
-+#define CLK_CON_DIV_CLKCMU_DSP_NOC		0x1860
-+#define CLK_CON_DIV_CLKCMU_G3D_NOCP		0x1864
-+#define CLK_CON_DIV_CLKCMU_G3D_SWITCH		0x1868
-+#define CLK_CON_DIV_CLKCMU_GNPU_NOC		0x186c
-+#define CLK_CON_DIV_CLKCMU_HSI0_NOC		0x1870
-+#define CLK_CON_DIV_CLKCMU_ACC_ORB		0x1874
-+#define CLK_CON_DIV_CLKCMU_GNPU_XMAA		0x1878
-+#define CLK_CON_DIV_CLKCMU_HSI1_MMC_CARD	0x187c
-+#define CLK_CON_DIV_CLKCMU_HSI1_NOC		0x1880
-+#define CLK_CON_DIV_CLKCMU_HSI1_USBDRD		0x1884
-+#define CLK_CON_DIV_CLKCMU_HSI2_ETHERNET	0x1888
-+#define CLK_CON_DIV_CLKCMU_HSI2_NOC		0x188c
-+#define CLK_CON_DIV_CLKCMU_HSI2_NOC_UFS		0x1890
-+#define CLK_CON_DIV_CLKCMU_HSI2_UFS_EMBD	0x1894
-+#define CLK_CON_DIV_CLKCMU_ISP_NOC		0x1898
-+#define CLK_CON_DIV_CLKCMU_M2M_JPEG		0x189c
-+#define CLK_CON_DIV_CLKCMU_M2M_NOC		0x18a0
-+#define CLK_CON_DIV_CLKCMU_MFC_MFC		0x18a4
-+#define CLK_CON_DIV_CLKCMU_MFC_WFD		0x18a8
-+#define CLK_CON_DIV_CLKCMU_MFD_NOC		0x18ac
-+#define CLK_CON_DIV_CLKCMU_MIF_NOCP		0x18b0
-+#define CLK_CON_DIV_CLKCMU_MISC_NOC		0x18b4
-+#define CLK_CON_DIV_CLKCMU_NOCL0_NOC		0x18b8
-+#define CLK_CON_DIV_CLKCMU_NOCL1_NOC		0x18bc
-+#define CLK_CON_DIV_CLKCMU_NOCL2_NOC		0x18c0
-+#define CLK_CON_DIV_CLKCMU_PERIC0_IP		0x18c4
-+#define CLK_CON_DIV_CLKCMU_PERIC0_NOC		0x18c8
-+#define CLK_CON_DIV_CLKCMU_PERIC1_IP		0x18cc
-+#define CLK_CON_DIV_CLKCMU_PERIC1_NOC		0x18d0
-+#define CLK_CON_DIV_CLKCMU_SDMA_NOC		0x18d4
-+#define CLK_CON_DIV_CLKCMU_SNW_NOC		0x18d8
-+#define CLK_CON_DIV_CLKCMU_SSP_NOC		0x18dc
-+#define CLK_CON_DIV_CLKCMU_TAA_NOC		0x18e0
-+#define CLK_CON_DIV_CLK_ADD_CH_CLK		0x18e4
-+#define CLK_CON_DIV_CLK_CMU_PLLCLKOUT		0x18e8
-+#define CLK_CON_DIV_DIV_CLKCMU_CMU_BOOST	0x18ec
-+#define CLK_CON_DIV_DIV_CLK_CMU_NOCP		0x18f0
-+
-+static const unsigned long top_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_MMC,
-+	PLL_LOCKTIME_PLL_SHARED0,
-+	PLL_LOCKTIME_PLL_SHARED1,
-+	PLL_LOCKTIME_PLL_SHARED2,
-+	PLL_LOCKTIME_PLL_SHARED3,
-+	PLL_LOCKTIME_PLL_SHARED4,
-+	PLL_LOCKTIME_PLL_SHARED5,
-+	PLL_CON0_PLL_MMC,
-+	PLL_CON3_PLL_MMC,
-+	PLL_CON0_PLL_SHARED0,
-+	PLL_CON3_PLL_SHARED0,
-+	PLL_CON0_PLL_SHARED1,
-+	PLL_CON3_PLL_SHARED1,
-+	PLL_CON0_PLL_SHARED2,
-+	PLL_CON3_PLL_SHARED2,
-+	PLL_CON0_PLL_SHARED3,
-+	PLL_CON3_PLL_SHARED3,
-+	PLL_CON0_PLL_SHARED4,
-+	PLL_CON3_PLL_SHARED4,
-+	PLL_CON0_PLL_SHARED5,
-+	PLL_CON3_PLL_SHARED5,
-+	CLK_CON_MUX_MUX_CLKCMU_ACC_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_APM_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_AUD_CPU,
-+	CLK_CON_MUX_MUX_CLKCMU_AUD_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK0,
-+	CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK1,
-+	CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK2,
-+	CLK_CON_MUX_MUX_CLKCMU_CIS_MCLK3,
-+	CLK_CON_MUX_MUX_CLKCMU_CMU_BOOST,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL0_CLUSTER,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL0_DBG,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL0_SWITCH,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL1_CLUSTER,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL1_SWITCH,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL2_CLUSTER,
-+	CLK_CON_MUX_MUX_CLKCMU_CPUCL2_SWITCH,
-+	CLK_CON_MUX_MUX_CLKCMU_DNC_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPTX_DPGTC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPTX_DPOSC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPTX_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPUB_DSIM,
-+	CLK_CON_MUX_MUX_CLKCMU_DPUB_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPUF0_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPUF1_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_DPUF2_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_DSP_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_G3D_NOCP,
-+	CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH,
-+	CLK_CON_MUX_MUX_CLKCMU_GNPU_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI0_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_ACC_ORB,
-+	CLK_CON_MUX_MUX_CLKCMU_GNPU_XMAA,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI1_MMC_CARD,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI1_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI1_USBDRD,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI2_ETHERNET,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI2_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI2_NOC_UFS,
-+	CLK_CON_MUX_MUX_CLKCMU_HSI2_UFS_EMBD,
-+	CLK_CON_MUX_MUX_CLKCMU_ISP_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_M2M_JPEG,
-+	CLK_CON_MUX_MUX_CLKCMU_M2M_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_MFC_MFC,
-+	CLK_CON_MUX_MUX_CLKCMU_MFC_WFD,
-+	CLK_CON_MUX_MUX_CLKCMU_MFD_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_MIF_NOCP,
-+	CLK_CON_MUX_MUX_CLKCMU_MIF_SWITCH,
-+	CLK_CON_MUX_MUX_CLKCMU_MISC_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_NOCL0_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_NOCL1_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_NOCL2_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_PERIC0_IP,
-+	CLK_CON_MUX_MUX_CLKCMU_PERIC0_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_PERIC1_IP,
-+	CLK_CON_MUX_MUX_CLKCMU_PERIC1_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_SDMA_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_SNW_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_SSP_NOC,
-+	CLK_CON_MUX_MUX_CLKCMU_TAA_NOC,
-+	CLK_CON_MUX_MUX_CLK_CMU_NOCP,
-+	CLK_CON_MUX_MUX_CLK_CMU_PLLCLKOUT,
-+	CLK_CON_MUX_MUX_CMU_CMUREF,
-+	CLK_CON_DIV_CLKCMU_ACC_NOC,
-+	CLK_CON_DIV_CLKCMU_APM_NOC,
-+	CLK_CON_DIV_CLKCMU_AUD_CPU,
-+	CLK_CON_DIV_CLKCMU_AUD_NOC,
-+	CLK_CON_DIV_CLKCMU_CIS_MCLK0,
-+	CLK_CON_DIV_CLKCMU_CIS_MCLK1,
-+	CLK_CON_DIV_CLKCMU_CIS_MCLK2,
-+	CLK_CON_DIV_CLKCMU_CIS_MCLK3,
-+	CLK_CON_DIV_CLKCMU_CPUCL0_CLUSTER,
-+	CLK_CON_DIV_CLKCMU_CPUCL0_DBG,
-+	CLK_CON_DIV_CLKCMU_CPUCL0_SWITCH,
-+	CLK_CON_DIV_CLKCMU_CPUCL1_CLUSTER,
-+	CLK_CON_DIV_CLKCMU_CPUCL1_SWITCH,
-+	CLK_CON_DIV_CLKCMU_CPUCL2_CLUSTER,
-+	CLK_CON_DIV_CLKCMU_CPUCL2_SWITCH,
-+	CLK_CON_DIV_CLKCMU_DNC_NOC,
-+	CLK_CON_DIV_CLKCMU_DPTX_DPGTC,
-+	CLK_CON_DIV_CLKCMU_DPTX_DPOSC,
-+	CLK_CON_DIV_CLKCMU_DPTX_NOC,
-+	CLK_CON_DIV_CLKCMU_DPUB_DSIM,
-+	CLK_CON_DIV_CLKCMU_DPUB_NOC,
-+	CLK_CON_DIV_CLKCMU_DPUF0_NOC,
-+	CLK_CON_DIV_CLKCMU_DPUF1_NOC,
-+	CLK_CON_DIV_CLKCMU_DPUF2_NOC,
-+	CLK_CON_DIV_CLKCMU_DSP_NOC,
-+	CLK_CON_DIV_CLKCMU_G3D_NOCP,
-+	CLK_CON_DIV_CLKCMU_G3D_SWITCH,
-+	CLK_CON_DIV_CLKCMU_GNPU_NOC,
-+	CLK_CON_DIV_CLKCMU_HSI0_NOC,
-+	CLK_CON_DIV_CLKCMU_ACC_ORB,
-+	CLK_CON_DIV_CLKCMU_GNPU_XMAA,
-+	CLK_CON_DIV_CLKCMU_HSI1_MMC_CARD,
-+	CLK_CON_DIV_CLKCMU_HSI1_NOC,
-+	CLK_CON_DIV_CLKCMU_HSI1_USBDRD,
-+	CLK_CON_DIV_CLKCMU_HSI2_ETHERNET,
-+	CLK_CON_DIV_CLKCMU_HSI2_NOC,
-+	CLK_CON_DIV_CLKCMU_HSI2_NOC_UFS,
-+	CLK_CON_DIV_CLKCMU_HSI2_UFS_EMBD,
-+	CLK_CON_DIV_CLKCMU_ISP_NOC,
-+	CLK_CON_DIV_CLKCMU_M2M_JPEG,
-+	CLK_CON_DIV_CLKCMU_M2M_NOC,
-+	CLK_CON_DIV_CLKCMU_MFC_MFC,
-+	CLK_CON_DIV_CLKCMU_MFC_WFD,
-+	CLK_CON_DIV_CLKCMU_MFD_NOC,
-+	CLK_CON_DIV_CLKCMU_MIF_NOCP,
-+	CLK_CON_DIV_CLKCMU_MISC_NOC,
-+	CLK_CON_DIV_CLKCMU_NOCL0_NOC,
-+	CLK_CON_DIV_CLKCMU_NOCL1_NOC,
-+	CLK_CON_DIV_CLKCMU_NOCL2_NOC,
-+	CLK_CON_DIV_CLKCMU_PERIC0_IP,
-+	CLK_CON_DIV_CLKCMU_PERIC0_NOC,
-+	CLK_CON_DIV_CLKCMU_PERIC1_IP,
-+	CLK_CON_DIV_CLKCMU_PERIC1_NOC,
-+	CLK_CON_DIV_CLKCMU_SDMA_NOC,
-+	CLK_CON_DIV_CLKCMU_SNW_NOC,
-+	CLK_CON_DIV_CLKCMU_SSP_NOC,
-+	CLK_CON_DIV_CLKCMU_TAA_NOC,
-+	CLK_CON_DIV_CLK_ADD_CH_CLK,
-+	CLK_CON_DIV_CLK_CMU_PLLCLKOUT,
-+	CLK_CON_DIV_DIV_CLKCMU_CMU_BOOST,
-+	CLK_CON_DIV_DIV_CLK_CMU_NOCP,
-+};
-+
-+static const struct samsung_pll_clock top_pll_clks[] __initconst = {
-+	/* CMU_TOP_PURECLKCOMP */
-+	PLL(pll_531x, FOUT_SHARED0_PLL, "fout_shared0_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_SHARED0, PLL_CON3_PLL_SHARED0, NULL),
-+	PLL(pll_531x, FOUT_SHARED1_PLL, "fout_shared1_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_SHARED1, PLL_CON3_PLL_SHARED1, NULL),
-+	PLL(pll_531x, FOUT_SHARED2_PLL, "fout_shared2_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_SHARED2, PLL_CON3_PLL_SHARED2, NULL),
-+	PLL(pll_531x, FOUT_SHARED3_PLL, "fout_shared3_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_SHARED3, PLL_CON3_PLL_SHARED3, NULL),
-+	PLL(pll_531x, FOUT_SHARED4_PLL, "fout_shared4_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_SHARED4, PLL_CON3_PLL_SHARED4, NULL),
-+	PLL(pll_531x, FOUT_SHARED5_PLL, "fout_shared5_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_SHARED5, PLL_CON3_PLL_SHARED5, NULL),
-+	PLL(pll_531x, FOUT_MMC_PLL, "fout_mmc_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_MMC, PLL_CON3_PLL_MMC, NULL),
-+};
-+
-+/* List of parent clocks for Muxes in CMU_TOP */
-+PNAME(mout_shared0_pll_p) = { "oscclk", "fout_shared0_pll" };
-+PNAME(mout_shared1_pll_p) = { "oscclk", "fout_shared1_pll" };
-+PNAME(mout_shared2_pll_p) = { "oscclk", "fout_shared2_pll" };
-+PNAME(mout_shared3_pll_p) = { "oscclk", "fout_shared3_pll" };
-+PNAME(mout_shared4_pll_p) = { "oscclk", "fout_shared4_pll" };
-+PNAME(mout_shared5_pll_p) = { "oscclk", "fout_shared5_pll" };
-+PNAME(mout_mmc_pll_p) = { "oscclk", "fout_mmc_pll" };
-+
-+PNAME(mout_clkcmu_cmu_boost_p) = { "dout_shared2_div3", "dout_shared1_div4",
-+				   "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_cmu_cmuref_p) = { "oscclk", "dout_cmu_boost" };
-+
-+PNAME(mout_clkcmu_acc_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "dout_shared5_div1",
-+				 "dout_shared3_div1", "oscclk" };
-+
-+PNAME(mout_clkcmu_acc_orb_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared1_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "fout_shared5_pll",
-+				 "fout_shared3_pll", "oscclk" };
-+
-+PNAME(mout_clkcmu_apm_noc_p) = { "dout_shared2_div2", "dout_shared1_div4",
-+				 "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_aud_cpu_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				 "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "dout_shared4_div3" };
-+
-+PNAME(mout_clkcmu_aud_noc_p) = { "dout_shared2_div2", "dout_shared4_div2",
-+				 "dout_shared1_div2", "dout_shared2_div3" };
-+
-+PNAME(mout_clkcmu_cpucl0_switch_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				       "dout_shared2_div2", "dout_shared4_div2" };
-+
-+PNAME(mout_clkcmu_cpucl0_cluster_p) = { "fout_shared2_pll", "fout_shared4_pll",
-+					"dout_shared0_div2", "dout_shared1_div2",
-+					"dout_shared2_div2", "dout_shared4_div2",
-+					"dout_shared2_div3", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_cpucl0_dbg_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				    "dout_shared4_div2", "dout_shared0_div4" };
-+
-+PNAME(mout_clkcmu_cpucl1_switch_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				       "dout_shared2_div2", "dout_shared4_div2" };
-+
-+PNAME(mout_clkcmu_cpucl1_cluster_p) = { "fout_shared2_pll", "fout_shared4_pll",
-+					"dout_shared0_div2", "dout_shared1_div2",
-+					"dout_shared2_div2", "dout_shared4_div2",
-+					"dout_shared2_div3", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_cpucl2_switch_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				       "dout_shared2_div2", "dout_shared4_div2" };
-+
-+PNAME(mout_clkcmu_cpucl2_cluster_p) = { "fout_shared2_pll", "fout_shared4_pll",
-+					"dout_shared0_div2", "dout_shared1_div2",
-+					"dout_shared2_div2", "dout_shared4_div2",
-+					"dout_shared2_div3", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_dnc_noc_p) = { "dout_shared1_div2", "dout_shared2_div2",
-+				 "dout_shared0_div3", "dout_shared4_div2",
-+				 "dout_shared1_div3", "dout_shared2_div3",
-+				 "dout_shared1_div4", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_dptx_noc_p) = { "dout_shared4_div2", "dout_shared2_div3",
-+				  "dout_shared1_div4", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_dptx_dpgtc_p) = { "oscclk", "dout_shared2_div3",
-+				    "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_dptx_dposc_p) = { "oscclk", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_dpub_noc_p) = { "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "dout_shared1_div4",
-+				 "dout_shared2_div4", "dout_shared4_div4",
-+				 "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_dpub_dsim_p) = { "dout_shared2_div3", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_dpuf_noc_p) = { "dout_shared4_div2", "dout_shared1_div3",
-+				   "dout_shared2_div3", "dout_shared1_div4",
-+				   "dout_shared2_div4", "dout_shared4_div4",
-+				   "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_dsp_noc_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				 "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "fout_shared5_pll", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_g3d_switch_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				    "dout_shared2_div2", "dout_shared4_div2" };
-+
-+PNAME(mout_clkcmu_g3d_nocp_p) = { "dout_shared2_div3", "dout_shared1_div4",
-+				  "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_gnpu_noc_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				  "dout_shared2_div2", "dout_shared0_div3",
-+				  "dout_shared4_div2", "dout_shared2_div3",
-+				  "fout_shared5_pll", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_hsi0_noc_p) = { "dout_shared4_div2", "dout_shared2_div3",
-+				  "dout_shared1_div4", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_hsi1_noc_p) = { "dout_shared2_div3", "dout_shared1_div4",
-+				  "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_hsi1_usbdrd_p) = { "oscclk", "dout_shared2_div3",
-+				     "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_hsi1_mmc_card_p) = { "oscclk", "dout_shared2_div2",
-+				       "dout_shared4_div2", "fout_mmc_pll" };
-+
-+PNAME(mout_clkcmu_hsi2_noc_p) = { "dout_shared4_div2", "dout_shared2_div3",
-+				  "dout_shared1_div4", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_hsi2_noc_ufs_p) = { "dout_shared4_div2", "dout_shared2_div3",
-+				      "dout_shared1_div4", "dout_shared2_div2" };
-+
-+PNAME(mout_clkcmu_hsi2_ufs_embd_p) = { "oscclk", "dout_shared2_div3",
-+				       "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_hsi2_ethernet_p) = { "oscclk", "dout_shared2_div2",
-+				       "dout_shared0_div3", "dout_shared1_div3" };
-+
-+PNAME(mout_clkcmu_isp_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "fout_shared5_pll",
-+				 "fout_shared3_pll", "oscclk" };
-+
-+PNAME(mout_clkcmu_m2m_noc_p) = { "dout_shared0_div3", "dout_shared4_div2",
-+				 "dout_shared2_div3", "dout_shared1_div4" };
-+
-+PNAME(mout_clkcmu_m2m_jpeg_p) = { "dout_shared0_div3", "dout_shared4_div2",
-+				  "dout_shared2_div3", "dout_shared1_div4" };
-+
-+PNAME(mout_clkcmu_mfc_mfc_p) = { "dout_shared0_div3", "dout_shared4_div2",
-+				 "dout_shared2_div3", "dout_shared1_div4" };
-+
-+PNAME(mout_clkcmu_mfc_wfd_p) = { "dout_shared0_div3", "dout_shared4_div2",
-+				 "dout_shared2_div3", "dout_shared1_div4" };
-+
-+PNAME(mout_clkcmu_mfd_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "fout_shared5_pll",
-+				 "fout_shared3_pll", "oscclk" };
-+
-+PNAME(mout_clkcmu_mif_switch_p) = { "fout_shared0_pll", "fout_shared1_pll",
-+				    "fout_shared2_pll", "fout_shared4_pll",
-+				    "dout_shared0_div2", "dout_shared1_div2",
-+				    "dout_shared2_div2", "fout_shared5_pll" };
-+
-+PNAME(mout_clkcmu_mif_nocp_p) = { "dout_shared2_div3", "dout_shared1_div4",
-+				  "dout_shared2_div4", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_misc_noc_p) = { "dout_shared4_div2", "dout_shared2_div3",
-+				  "dout_shared1_div4", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_nocl0_noc_p) = { "dout_shared0_div2", "dout_shared1_div2",
-+				   "dout_shared2_div2", "dout_shared0_div3",
-+				   "dout_shared4_div2", "dout_shared1_div3",
-+				   "dout_shared2_div3", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_nocl1_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				   "dout_shared4_div2", "dout_shared1_div3",
-+				   "dout_shared2_div3", "fout_shared5_pll",
-+				   "fout_shared3_pll", "oscclk" };
-+
-+PNAME(mout_clkcmu_nocl2_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				   "dout_shared4_div2", "dout_shared1_div3",
-+				   "dout_shared2_div3", "fout_shared5_pll",
-+				   "fout_shared3_pll", "oscclk" };
-+
-+PNAME(mout_clkcmu_peric0_noc_p) = { "dout_shared2_div3", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_peric0_ip_p) = { "dout_shared2_div3", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_peric1_noc_p) = { "dout_shared2_div3", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_peric1_ip_p) = { "dout_shared2_div3", "dout_shared2_div4" };
-+
-+PNAME(mout_clkcmu_sdma_noc_p) = { "dout_shared1_div2", "dout_shared2_div2",
-+				  "dout_shared0_div3", "dout_shared4_div2",
-+				  "dout_shared1_div3", "dout_shared2_div3",
-+				  "dout_shared1_div4", "fout_shared3_pll" };
-+
-+PNAME(mout_clkcmu_snw_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "fout_shared5_pll",
-+				 "fout_shared3_pll", "oscclk" };
-+
-+PNAME(mout_clkcmu_ssp_noc_p) = { "dout_shared2_div3", "dout_shared1_div4",
-+				  "dout_shared2_div2", "dout_shared4_div4" };
-+
-+PNAME(mout_clkcmu_taa_noc_p) = { "dout_shared2_div2", "dout_shared0_div3",
-+				 "dout_shared4_div2", "dout_shared1_div3",
-+				 "dout_shared2_div3", "fout_shared5_pll",
-+				 "fout_shared3_pll", "oscclk" };
-+
-+static const struct samsung_mux_clock top_mux_clks[] __initconst = {
-+	/* CMU_TOP_PURECLKCOMP */
-+	MUX(MOUT_SHARED0_PLL, "mout_shared0_pll", mout_shared0_pll_p,
-+	    PLL_CON0_PLL_SHARED0, 4, 1),
-+	MUX(MOUT_SHARED1_PLL, "mout_shared1_pll", mout_shared1_pll_p,
-+	    PLL_CON0_PLL_SHARED1, 4, 1),
-+	MUX(MOUT_SHARED2_PLL, "mout_shared2_pll", mout_shared2_pll_p,
-+	    PLL_CON0_PLL_SHARED2, 4, 1),
-+	MUX(MOUT_SHARED3_PLL, "mout_shared3_pll", mout_shared3_pll_p,
-+	    PLL_CON0_PLL_SHARED3, 4, 1),
-+	MUX(MOUT_SHARED4_PLL, "mout_shared4_pll", mout_shared4_pll_p,
-+	    PLL_CON0_PLL_SHARED4, 4, 1),
-+	MUX(MOUT_SHARED5_PLL, "mout_shared5_pll", mout_shared5_pll_p,
-+	    PLL_CON0_PLL_SHARED5, 4, 1),
-+	MUX(MOUT_MMC_PLL, "mout_mmc_pll", mout_mmc_pll_p,
-+	    PLL_CON0_PLL_MMC, 4, 1),
-+
-+	/* BOOST */
-+	MUX(MOUT_CLKCMU_CMU_BOOST, "mout_clkcmu_cmu_boost",
-+	    mout_clkcmu_cmu_boost_p, CLK_CON_MUX_MUX_CLKCMU_CMU_BOOST, 0, 2),
-+	MUX(MOUT_CLKCMU_CMU_CMUREF, "mout_clkcmu_cmu_cmuref",
-+	    mout_clkcmu_cmu_cmuref_p, CLK_CON_MUX_MUX_CMU_CMUREF, 0, 1),
-+
-+	/* ACC */
-+	MUX(MOUT_CLKCMU_ACC_NOC, "mout_clkcmu_acc_noc",
-+	    mout_clkcmu_acc_noc_p, CLK_CON_MUX_MUX_CLKCMU_ACC_NOC, 0, 3),
-+	MUX(MOUT_CLKCMU_ACC_ORB, "mout_clkcmu_acc_orb",
-+	    mout_clkcmu_acc_orb_p, CLK_CON_MUX_MUX_CLKCMU_ACC_ORB, 0, 3),
-+
-+	/* APM */
-+	MUX(MOUT_CLKCMU_APM_NOC, "mout_clkcmu_apm_noc",
-+	    mout_clkcmu_apm_noc_p, CLK_CON_MUX_MUX_CLKCMU_APM_NOC, 0, 2),
-+
-+	/* AUD */
-+	MUX(MOUT_CLKCMU_AUD_CPU, "mout_clkcmu_aud_cpu",
-+	    mout_clkcmu_aud_cpu_p, CLK_CON_MUX_MUX_CLKCMU_AUD_CPU, 0, 3),
-+	MUX(MOUT_CLKCMU_AUD_NOC, "mout_clkcmu_aud_noc",
-+	    mout_clkcmu_aud_noc_p, CLK_CON_MUX_MUX_CLKCMU_AUD_NOC, 0, 2),
-+
-+	/* CPUCL0 */
-+	MUX(MOUT_CLKCMU_CPUCL0_SWITCH, "mout_clkcmu_cpucl0_switch",
-+	    mout_clkcmu_cpucl0_switch_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL0_SWITCH,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_CPUCL0_CLUSTER, "mout_clkcmu_cpucl0_cluster",
-+	    mout_clkcmu_cpucl0_cluster_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL0_CLUSTER,
-+	    0, 3),
-+	MUX(MOUT_CLKCMU_CPUCL0_DBG, "mout_clkcmu_cpucl0_dbg",
-+	    mout_clkcmu_cpucl0_dbg_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL0_DBG,
-+	    0, 2),
-+
-+	/* CPUCL1 */
-+	MUX(MOUT_CLKCMU_CPUCL1_SWITCH, "mout_clkcmu_cpucl1_switch",
-+	    mout_clkcmu_cpucl1_switch_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL1_SWITCH,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_CPUCL1_CLUSTER, "mout_clkcmu_cpucl1_cluster",
-+	    mout_clkcmu_cpucl1_cluster_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL1_CLUSTER,
-+	    0, 3),
-+
-+	/* CPUCL2 */
-+	MUX(MOUT_CLKCMU_CPUCL2_SWITCH, "mout_clkcmu_cpucl2_switch",
-+	    mout_clkcmu_cpucl2_switch_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL2_SWITCH,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_CPUCL2_CLUSTER, "mout_clkcmu_cpucl2_cluster",
-+	    mout_clkcmu_cpucl2_cluster_p, CLK_CON_MUX_MUX_CLKCMU_CPUCL2_CLUSTER,
-+	    0, 3),
-+
-+	/* DNC */
-+	MUX(MOUT_CLKCMU_DNC_NOC, "mout_clkcmu_dnc_noc",
-+	    mout_clkcmu_dnc_noc_p, CLK_CON_MUX_MUX_CLKCMU_DNC_NOC, 0, 3),
-+
-+	/* DPTX */
-+	MUX(MOUT_CLKCMU_DPTX_NOC, "mout_clkcmu_dptx_noc",
-+	    mout_clkcmu_dptx_noc_p, CLK_CON_MUX_MUX_CLKCMU_DPTX_NOC, 0, 2),
-+	MUX(MOUT_CLKCMU_DPTX_DPGTC, "mout_clkcmu_dptx_dpgtc",
-+	    mout_clkcmu_dptx_dpgtc_p, CLK_CON_MUX_MUX_CLKCMU_DPTX_DPGTC, 0, 2),
-+	MUX(MOUT_CLKCMU_DPTX_DPOSC, "mout_clkcmu_dptx_dposc",
-+	    mout_clkcmu_dptx_dposc_p, CLK_CON_MUX_MUX_CLKCMU_DPTX_DPOSC, 0, 1),
-+
-+	/* DPUB */
-+	MUX(MOUT_CLKCMU_DPUB_NOC, "mout_clkcmu_dpub_noc",
-+	    mout_clkcmu_dpub_noc_p, CLK_CON_MUX_MUX_CLKCMU_DPUB_NOC, 0, 3),
-+	MUX(MOUT_CLKCMU_DPUB_DSIM, "mout_clkcmu_dpub_dsim",
-+	    mout_clkcmu_dpub_dsim_p, CLK_CON_MUX_MUX_CLKCMU_DPUB_DSIM, 0, 1),
-+
-+	/* DPUF */
-+	MUX(MOUT_CLKCMU_DPUF0_NOC, "mout_clkcmu_dpuf0_noc",
-+	    mout_clkcmu_dpuf_noc_p, CLK_CON_MUX_MUX_CLKCMU_DPUF0_NOC, 0, 3),
-+	MUX(MOUT_CLKCMU_DPUF1_NOC, "mout_clkcmu_dpuf1_noc",
-+	    mout_clkcmu_dpuf_noc_p, CLK_CON_MUX_MUX_CLKCMU_DPUF1_NOC, 0, 3),
-+	MUX(MOUT_CLKCMU_DPUF2_NOC, "mout_clkcmu_dpuf2_noc",
-+	    mout_clkcmu_dpuf_noc_p, CLK_CON_MUX_MUX_CLKCMU_DPUF2_NOC, 0, 3),
-+
-+	/* DSP */
-+	MUX(MOUT_CLKCMU_DSP_NOC, "mout_clkcmu_dsp_noc",
-+	    mout_clkcmu_dsp_noc_p, CLK_CON_MUX_MUX_CLKCMU_DSP_NOC, 0, 3),
-+
-+	/* G3D */
-+	MUX(MOUT_CLKCMU_G3D_SWITCH, "mout_clkcmu_g3d_switch",
-+	    mout_clkcmu_g3d_switch_p, CLK_CON_MUX_MUX_CLKCMU_G3D_SWITCH, 0, 2),
-+	MUX(MOUT_CLKCMU_G3D_NOCP, "mout_clkcmu_g3d_nocp",
-+	    mout_clkcmu_g3d_nocp_p, CLK_CON_MUX_MUX_CLKCMU_G3D_NOCP, 0, 2),
-+
-+	/* GNPU */
-+	MUX(MOUT_CLKCMU_GNPU_NOC, "mout_clkcmu_gnpu_noc",
-+	    mout_clkcmu_gnpu_noc_p, CLK_CON_MUX_MUX_CLKCMU_GNPU_NOC, 0, 3),
-+
-+	/* HSI0 */
-+	MUX(MOUT_CLKCMU_HSI0_NOC, "mout_clkcmu_hsi0_noc",
-+	    mout_clkcmu_hsi0_noc_p, CLK_CON_MUX_MUX_CLKCMU_HSI0_NOC, 0, 2),
-+
-+	/* HSI1 */
-+	MUX(MOUT_CLKCMU_HSI1_NOC, "mout_clkcmu_hsi1_noc",
-+	    mout_clkcmu_hsi1_noc_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_NOC,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_HSI1_USBDRD, "mout_clkcmu_hsi1_usbdrd",
-+	    mout_clkcmu_hsi1_usbdrd_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_USBDRD,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_HSI1_MMC_CARD, "mout_clkcmu_hsi1_mmc_card",
-+	    mout_clkcmu_hsi1_mmc_card_p, CLK_CON_MUX_MUX_CLKCMU_HSI1_MMC_CARD,
-+	    0, 2),
-+
-+	/* HSI2 */
-+	MUX(MOUT_CLKCMU_HSI2_NOC, "mout_clkcmu_hsi2_noc",
-+	    mout_clkcmu_hsi2_noc_p, CLK_CON_MUX_MUX_CLKCMU_HSI2_NOC,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_HSI2_NOC_UFS, "mout_clkcmu_hsi2_noc_ufs",
-+	    mout_clkcmu_hsi2_noc_ufs_p, CLK_CON_MUX_MUX_CLKCMU_HSI2_NOC_UFS,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_HSI2_UFS_EMBD, "mout_clkcmu_hsi2_ufs_embd",
-+	    mout_clkcmu_hsi2_ufs_embd_p, CLK_CON_MUX_MUX_CLKCMU_HSI2_UFS_EMBD,
-+	    0, 2),
-+	MUX(MOUT_CLKCMU_HSI2_ETHERNET, "mout_clkcmu_hsi2_ethernet",
-+	    mout_clkcmu_hsi2_ethernet_p, CLK_CON_MUX_MUX_CLKCMU_HSI2_ETHERNET,
-+	    0, 2),
-+
-+	/* ISP */
-+	MUX(MOUT_CLKCMU_ISP_NOC, "mout_clkcmu_isp_noc",
-+	    mout_clkcmu_isp_noc_p, CLK_CON_MUX_MUX_CLKCMU_ISP_NOC, 0, 3),
-+
-+	/* M2M */
-+	MUX(MOUT_CLKCMU_M2M_NOC, "mout_clkcmu_m2m_noc",
-+	    mout_clkcmu_m2m_noc_p, CLK_CON_MUX_MUX_CLKCMU_M2M_NOC, 0, 2),
-+	MUX(MOUT_CLKCMU_M2M_JPEG, "mout_clkcmu_m2m_jpeg",
-+	    mout_clkcmu_m2m_jpeg_p, CLK_CON_MUX_MUX_CLKCMU_M2M_JPEG, 0, 2),
-+
-+	/* MFC */
-+	MUX(MOUT_CLKCMU_MFC_MFC, "mout_clkcmu_mfc_mfc",
-+	    mout_clkcmu_mfc_mfc_p, CLK_CON_MUX_MUX_CLKCMU_MFC_MFC, 0, 2),
-+	MUX(MOUT_CLKCMU_MFC_WFD, "mout_clkcmu_mfc_wfd",
-+	    mout_clkcmu_mfc_wfd_p, CLK_CON_MUX_MUX_CLKCMU_MFC_WFD, 0, 2),
-+
-+	/* MFD */
-+	MUX(MOUT_CLKCMU_MFD_NOC, "mout_clkcmu_mfd_noc",
-+	    mout_clkcmu_mfd_noc_p, CLK_CON_MUX_MUX_CLKCMU_MFD_NOC, 0, 3),
-+
-+	/* MIF */
-+	MUX(MOUT_CLKCMU_MIF_SWITCH, "mout_clkcmu_mif_switch",
-+	    mout_clkcmu_mif_switch_p, CLK_CON_MUX_MUX_CLKCMU_MIF_SWITCH, 0, 3),
-+	MUX(MOUT_CLKCMU_MIF_NOCP, "mout_clkcmu_mif_nocp",
-+	    mout_clkcmu_mif_nocp_p, CLK_CON_MUX_MUX_CLKCMU_MIF_NOCP, 0, 2),
-+
-+	/* MISC */
-+	MUX(MOUT_CLKCMU_MISC_NOC, "mout_clkcmu_misc_noc",
-+	    mout_clkcmu_misc_noc_p, CLK_CON_MUX_MUX_CLKCMU_MISC_NOC, 0, 2),
-+
-+	/* NOCL0 */
-+	MUX(MOUT_CLKCMU_NOCL0_NOC, "mout_clkcmu_nocl0_noc",
-+	    mout_clkcmu_nocl0_noc_p, CLK_CON_MUX_MUX_CLKCMU_NOCL0_NOC, 0, 3),
-+
-+	/* NOCL1 */
-+	MUX(MOUT_CLKCMU_NOCL1_NOC, "mout_clkcmu_nocl1_noc",
-+	    mout_clkcmu_nocl1_noc_p, CLK_CON_MUX_MUX_CLKCMU_NOCL1_NOC, 0, 3),
-+
-+	/* NOCL2 */
-+	MUX(MOUT_CLKCMU_NOCL2_NOC, "mout_clkcmu_nocl2_noc",
-+	    mout_clkcmu_nocl2_noc_p, CLK_CON_MUX_MUX_CLKCMU_NOCL2_NOC, 0, 3),
-+
-+	/* PERIC0 */
-+	MUX(MOUT_CLKCMU_PERIC0_NOC, "mout_clkcmu_peric0_noc",
-+	    mout_clkcmu_peric0_noc_p, CLK_CON_MUX_MUX_CLKCMU_PERIC0_NOC, 0, 1),
-+	MUX(MOUT_CLKCMU_PERIC0_IP, "mout_clkcmu_peric0_ip",
-+	    mout_clkcmu_peric0_ip_p, CLK_CON_MUX_MUX_CLKCMU_PERIC0_IP, 0, 1),
-+
-+	/* PERIC1 */
-+	MUX(MOUT_CLKCMU_PERIC1_NOC, "mout_clkcmu_peric1_noc",
-+	    mout_clkcmu_peric1_noc_p, CLK_CON_MUX_MUX_CLKCMU_PERIC1_NOC, 0, 1),
-+	MUX(MOUT_CLKCMU_PERIC1_IP, "mout_clkcmu_peric1_ip",
-+	    mout_clkcmu_peric1_ip_p, CLK_CON_MUX_MUX_CLKCMU_PERIC1_IP, 0, 1),
-+
-+	/* SDMA */
-+	MUX(MOUT_CLKCMU_SDMA_NOC, "mout_clkcmu_sdma_noc",
-+	    mout_clkcmu_sdma_noc_p, CLK_CON_MUX_MUX_CLKCMU_SDMA_NOC, 0, 3),
-+
-+	/* SNW */
-+	MUX(MOUT_CLKCMU_SNW_NOC, "mout_clkcmu_snw_noc",
-+	    mout_clkcmu_snw_noc_p, CLK_CON_MUX_MUX_CLKCMU_SNW_NOC, 0, 3),
-+
-+	/* SSP */
-+	MUX(MOUT_CLKCMU_SSP_NOC, "mout_clkcmu_ssp_noc",
-+	    mout_clkcmu_ssp_noc_p, CLK_CON_MUX_MUX_CLKCMU_SSP_NOC, 0, 2),
-+
-+	/* TAA */
-+	MUX(MOUT_CLKCMU_TAA_NOC, "mout_clkcmu_taa_noc",
-+	    mout_clkcmu_taa_noc_p, CLK_CON_MUX_MUX_CLKCMU_TAA_NOC, 0, 3),
-+};
-+
-+static const struct samsung_div_clock top_div_clks[] __initconst = {
-+	/* CMU_TOP_PURECLKCOMP */
-+
-+	/* BOOST */
-+	DIV(DOUT_CLKCMU_CMU_BOOST, "dout_clkcmu_cmu_boost",
-+	    "mout_clkcmu_cmu_boost", CLK_CON_DIV_DIV_CLKCMU_CMU_BOOST, 0, 2),
-+
-+	/* ACC */
-+	DIV(DOUT_CLKCMU_ACC_NOC, "dout_clkcmu_acc_noc",
-+	    "mout_clkcmu_acc_noc", CLK_CON_DIV_CLKCMU_ACC_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_ACC_ORB, "dout_clkcmu_acc_orb",
-+	    "mout_clkcmu_acc_orb", CLK_CON_DIV_CLKCMU_ACC_ORB, 0, 4),
-+
-+	/* APM */
-+	DIV(DOUT_CLKCMU_APM_NOC, "dout_clkcmu_apm_noc",
-+	    "mout_clkcmu_apm_noc", CLK_CON_DIV_CLKCMU_APM_NOC, 0, 3),
-+
-+	/* AUD */
-+	DIV(DOUT_CLKCMU_AUD_CPU, "dout_clkcmu_aud_cpu",
-+	    "mout_clkcmu_aud_cpu", CLK_CON_DIV_CLKCMU_AUD_CPU, 0, 3),
-+	DIV(DOUT_CLKCMU_AUD_NOC, "dout_clkcmu_aud_noc",
-+	    "mout_clkcmu_aud_noc", CLK_CON_DIV_CLKCMU_AUD_NOC, 0, 4),
-+
-+	/* CPUCL0 */
-+	DIV(DOUT_CLKCMU_CPUCL0_SWITCH, "dout_clkcmu_cpucl0_switch",
-+	    "mout_clkcmu_cpucl0_switch",
-+	    CLK_CON_DIV_CLKCMU_CPUCL0_SWITCH, 0, 3),
-+	DIV(DOUT_CLKCMU_CPUCL0_CLUSTER, "dout_clkcmu_cpucl0_cluster",
-+	    "mout_clkcmu_cpucl0_cluster",
-+	    CLK_CON_DIV_CLKCMU_CPUCL0_CLUSTER, 0, 3),
-+	DIV(DOUT_CLKCMU_CPUCL0_DBG, "dout_clkcmu_cpucl0_dbg",
-+	    "mout_clkcmu_cpucl0_dbg",
-+	    CLK_CON_DIV_CLKCMU_CPUCL0_DBG, 0, 4),
-+
-+	/* CPUCL1 */
-+	DIV(DOUT_CLKCMU_CPUCL1_SWITCH, "dout_clkcmu_cpucl1_switch",
-+	    "mout_clkcmu_cpucl1_switch",
-+	    CLK_CON_DIV_CLKCMU_CPUCL1_SWITCH, 0, 3),
-+	DIV(DOUT_CLKCMU_CPUCL1_CLUSTER, "dout_clkcmu_cpucl1_cluster",
-+	    "mout_clkcmu_cpucl1_cluster",
-+	    CLK_CON_DIV_CLKCMU_CPUCL1_CLUSTER, 0, 3),
-+
-+	/* CPUCL2 */
-+	DIV(DOUT_CLKCMU_CPUCL2_SWITCH, "dout_clkcmu_cpucl2_switch",
-+	    "mout_clkcmu_cpucl2_switch",
-+	    CLK_CON_DIV_CLKCMU_CPUCL2_SWITCH, 0, 3),
-+	DIV(DOUT_CLKCMU_CPUCL2_CLUSTER, "dout_clkcmu_cpucl2_cluster",
-+	    "mout_clkcmu_cpucl2_cluster",
-+	    CLK_CON_DIV_CLKCMU_CPUCL2_CLUSTER, 0, 3),
-+
-+	/* DNC */
-+	DIV(DOUT_CLKCMU_DNC_NOC, "dout_clkcmu_dnc_noc",
-+	    "mout_clkcmu_dnc_noc", CLK_CON_DIV_CLKCMU_DNC_NOC, 0, 4),
-+
-+	/* DPTX */
-+	DIV(DOUT_CLKCMU_DPTX_NOC, "dout_clkcmu_dptx_noc",
-+	    "mout_clkcmu_dptx_noc", CLK_CON_DIV_CLKCMU_DPTX_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_DPTX_DPGTC, "dout_clkcmu_dptx_dpgtc",
-+	    "mout_clkcmu_dptx_dpgtc", CLK_CON_DIV_CLKCMU_DPTX_DPGTC, 0, 3),
-+	DIV(DOUT_CLKCMU_DPTX_DPOSC, "dout_clkcmu_dptx_dposc",
-+	    "mout_clkcmu_dptx_dposc", CLK_CON_DIV_CLKCMU_DPTX_DPOSC, 0, 5),
-+
-+	/* DPUB */
-+	DIV(DOUT_CLKCMU_DPUB_NOC, "dout_clkcmu_dpub_noc",
-+	    "mout_clkcmu_dpub_noc", CLK_CON_DIV_CLKCMU_DPUB_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_DPUB_DSIM, "dout_clkcmu_dpub_dsim",
-+	    "mout_clkcmu_dpub_dsim", CLK_CON_DIV_CLKCMU_DPUB_DSIM, 0, 4),
-+
-+	/* DPUF */
-+	DIV(DOUT_CLKCMU_DPUF0_NOC, "dout_clkcmu_dpuf0_noc",
-+	    "mout_clkcmu_dpuf0_noc", CLK_CON_DIV_CLKCMU_DPUF0_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_DPUF1_NOC, "dout_clkcmu_dpuf1_noc",
-+	    "mout_clkcmu_dpuf1_noc", CLK_CON_DIV_CLKCMU_DPUF1_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_DPUF2_NOC, "dout_clkcmu_dpuf2_noc",
-+	    "mout_clkcmu_dpuf2_noc", CLK_CON_DIV_CLKCMU_DPUF2_NOC, 0, 4),
-+
-+	/* DSP */
-+	DIV(DOUT_CLKCMU_DSP_NOC, "dout_clkcmu_dsp_noc",
-+	    "mout_clkcmu_dsp_noc", CLK_CON_DIV_CLKCMU_DSP_NOC, 0, 4),
-+
-+	/* G3D */
-+	DIV(DOUT_CLKCMU_G3D_SWITCH, "dout_clkcmu_g3d_switch",
-+	    "mout_clkcmu_g3d_switch", CLK_CON_DIV_CLKCMU_G3D_SWITCH, 0, 3),
-+	DIV(DOUT_CLKCMU_G3D_NOCP, "dout_clkcmu_g3d_nocp",
-+	    "mout_clkcmu_g3d_nocp", CLK_CON_DIV_CLKCMU_G3D_NOCP, 0, 3),
-+
-+	/* GNPU */
-+	DIV(DOUT_CLKCMU_GNPU_NOC, "dout_clkcmu_gnpu_noc",
-+	    "mout_clkcmu_gnpu_noc", CLK_CON_DIV_CLKCMU_GNPU_NOC, 0, 4),
-+
-+	/* HSI0 */
-+	DIV(DOUT_CLKCMU_HSI0_NOC, "dout_clkcmu_hsi0_noc",
-+	    "mout_clkcmu_hsi0_noc", CLK_CON_DIV_CLKCMU_HSI0_NOC, 0, 4),
-+
-+	/* HSI1 */
-+	DIV(DOUT_CLKCMU_HSI1_NOC, "dout_clkcmu_hsi1_noc",
-+	    "mout_clkcmu_hsi1_noc", CLK_CON_DIV_CLKCMU_HSI1_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_HSI1_USBDRD, "dout_clkcmu_hsi1_usbdrd",
-+	    "mout_clkcmu_hsi1_usbdrd", CLK_CON_DIV_CLKCMU_HSI1_USBDRD, 0, 4),
-+	DIV(DOUT_CLKCMU_HSI1_MMC_CARD, "dout_clkcmu_hsi1_mmc_card",
-+	    "mout_clkcmu_hsi1_mmc_card", CLK_CON_DIV_CLKCMU_HSI1_MMC_CARD, 0, 9),
-+
-+	/* HSI2 */
-+	DIV(DOUT_CLKCMU_HSI2_NOC, "dout_clkcmu_hsi2_noc",
-+	    "mout_clkcmu_hsi2_noc", CLK_CON_DIV_CLKCMU_HSI2_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_HSI2_NOC_UFS, "dout_clkcmu_hsi2_noc_ufs",
-+	    "mout_clkcmu_hsi2_noc_ufs", CLK_CON_DIV_CLKCMU_HSI2_NOC_UFS, 0, 4),
-+	DIV(DOUT_CLKCMU_HSI2_UFS_EMBD, "dout_clkcmu_hsi2_ufs_embd",
-+	    "mout_clkcmu_hsi2_ufs_embd", CLK_CON_DIV_CLKCMU_HSI2_UFS_EMBD, 0, 3),
-+	DIV(DOUT_CLKCMU_HSI2_ETHERNET, "dout_clkcmu_hsi2_ethernet",
-+	    "mout_clkcmu_hsi2_ethernet", CLK_CON_DIV_CLKCMU_HSI2_ETHERNET, 0, 3),
-+
-+	/* ISP */
-+	DIV(DOUT_CLKCMU_ISP_NOC, "dout_clkcmu_isp_noc",
-+	    "mout_clkcmu_isp_noc", CLK_CON_DIV_CLKCMU_ISP_NOC, 0, 4),
-+
-+	/* M2M */
-+	DIV(DOUT_CLKCMU_M2M_NOC, "dout_clkcmu_m2m_noc",
-+	    "mout_clkcmu_m2m_noc", CLK_CON_DIV_CLKCMU_M2M_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_M2M_JPEG, "dout_clkcmu_m2m_jpeg",
-+	    "mout_clkcmu_m2m_jpeg", CLK_CON_DIV_CLKCMU_M2M_JPEG, 0, 4),
-+
-+	/* MFC */
-+	DIV(DOUT_CLKCMU_MFC_MFC, "dout_clkcmu_mfc_mfc",
-+	    "mout_clkcmu_mfc_mfc", CLK_CON_DIV_CLKCMU_MFC_MFC, 0, 4),
-+	DIV(DOUT_CLKCMU_MFC_WFD, "dout_clkcmu_mfc_wfd",
-+	    "mout_clkcmu_mfc_wfd", CLK_CON_DIV_CLKCMU_MFC_WFD, 0, 4),
-+
-+	/* MFD */
-+	DIV(DOUT_CLKCMU_MFD_NOC, "dout_clkcmu_mfd_noc",
-+	    "mout_clkcmu_mfd_noc", CLK_CON_DIV_CLKCMU_MFD_NOC, 0, 4),
-+
-+	/* MIF */
-+	DIV(DOUT_CLKCMU_MIF_NOCP, "dout_clkcmu_mif_nocp",
-+	    "mout_clkcmu_mif_nocp", CLK_CON_DIV_CLKCMU_MIF_NOCP, 0, 4),
-+
-+	/* MISC */
-+	DIV(DOUT_CLKCMU_MISC_NOC, "dout_clkcmu_misc_noc",
-+	    "mout_clkcmu_misc_noc", CLK_CON_DIV_CLKCMU_MISC_NOC, 0, 4),
-+
-+	/* NOCL0 */
-+	DIV(DOUT_CLKCMU_NOCL0_NOC, "dout_clkcmu_nocl0_noc",
-+	    "mout_clkcmu_nocl0_noc", CLK_CON_DIV_CLKCMU_NOCL0_NOC, 0, 4),
-+
-+	/* NOCL1 */
-+	DIV(DOUT_CLKCMU_NOCL1_NOC, "dout_clkcmu_nocl1_noc",
-+	    "mout_clkcmu_nocl1_noc", CLK_CON_DIV_CLKCMU_NOCL1_NOC, 0, 4),
-+
-+	/* NOCL2 */
-+	DIV(DOUT_CLKCMU_NOCL2_NOC, "dout_clkcmu_nocl2_noc",
-+	    "mout_clkcmu_nocl2_noc", CLK_CON_DIV_CLKCMU_NOCL2_NOC, 0, 4),
-+
-+	/* PERIC0 */
-+	DIV(DOUT_CLKCMU_PERIC0_NOC, "dout_clkcmu_peric0_noc",
-+	    "mout_clkcmu_peric0_noc", CLK_CON_DIV_CLKCMU_PERIC0_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_PERIC0_IP, "dout_clkcmu_peric0_ip",
-+	    "mout_clkcmu_peric0_ip", CLK_CON_DIV_CLKCMU_PERIC0_IP, 0, 4),
-+
-+	/* PERIC1 */
-+	DIV(DOUT_CLKCMU_PERIC1_NOC, "dout_clkcmu_peric1_noc",
-+	    "mout_clkcmu_peric1_noc", CLK_CON_DIV_CLKCMU_PERIC1_NOC, 0, 4),
-+	DIV(DOUT_CLKCMU_PERIC1_IP, "dout_clkcmu_peric1_ip",
-+	    "mout_clkcmu_peric1_ip", CLK_CON_DIV_CLKCMU_PERIC1_IP, 0, 4),
-+
-+	/* SDMA */
-+	DIV(DOUT_CLKCMU_SDMA_NOC, "dout_clkcmu_sdma_noc",
-+	    "mout_clkcmu_sdma_noc", CLK_CON_DIV_CLKCMU_SDMA_NOC, 0, 4),
-+
-+	/* SNW */
-+	DIV(DOUT_CLKCMU_SNW_NOC, "dout_clkcmu_snw_noc",
-+	    "mout_clkcmu_snw_noc", CLK_CON_DIV_CLKCMU_SNW_NOC, 0, 4),
-+
-+	/* SSP */
-+	DIV(DOUT_CLKCMU_SSP_NOC, "dout_clkcmu_ssp_noc",
-+	    "mout_clkcmu_ssp_noc", CLK_CON_DIV_CLKCMU_SSP_NOC, 0, 4),
-+
-+	/* TAA */
-+	DIV(DOUT_CLKCMU_TAA_NOC, "dout_clkcmu_taa_noc",
-+	    "mout_clkcmu_taa_noc", CLK_CON_DIV_CLKCMU_TAA_NOC, 0, 4),
-+};
-+
-+static const struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initconst = {
-+	FFACTOR(DOUT_SHARED0_DIV1, "dout_shared0_div1",
-+		"mout_shared0_pll", 1, 1, 0),
-+	FFACTOR(DOUT_SHARED0_DIV2, "dout_shared0_div2",
-+		"mout_shared0_pll", 1, 2, 0),
-+	FFACTOR(DOUT_SHARED0_DIV3, "dout_shared0_div3",
-+		"mout_shared0_pll", 1, 3, 0),
-+	FFACTOR(DOUT_SHARED0_DIV4, "dout_shared0_div4",
-+		"mout_shared0_pll", 1, 4, 0),
-+	FFACTOR(DOUT_SHARED1_DIV1, "dout_shared1_div1",
-+		"mout_shared1_pll", 1, 1, 0),
-+	FFACTOR(DOUT_SHARED1_DIV2, "dout_shared1_div2",
-+		"mout_shared1_pll", 1, 2, 0),
-+	FFACTOR(DOUT_SHARED1_DIV3, "dout_shared1_div3",
-+		"mout_shared1_pll", 1, 3, 0),
-+	FFACTOR(DOUT_SHARED1_DIV4, "dout_shared1_div4",
-+		"mout_shared1_pll", 1, 4, 0),
-+	FFACTOR(DOUT_SHARED2_DIV1, "dout_shared2_div1",
-+		"mout_shared2_pll", 1, 1, 0),
-+	FFACTOR(DOUT_SHARED2_DIV2, "dout_shared2_div2",
-+		"mout_shared2_pll", 1, 2, 0),
-+	FFACTOR(DOUT_SHARED2_DIV3, "dout_shared2_div3",
-+		"mout_shared2_pll", 1, 3, 0),
-+	FFACTOR(DOUT_SHARED2_DIV4, "dout_shared2_div4",
-+		"mout_shared2_pll", 1, 4, 0),
-+	FFACTOR(DOUT_SHARED3_DIV1, "dout_shared3_div1",
-+		"mout_shared3_pll", 1, 1, 0),
-+	FFACTOR(DOUT_SHARED3_DIV2, "dout_shared3_div2",
-+		"mout_shared3_pll", 1, 2, 0),
-+	FFACTOR(DOUT_SHARED3_DIV3, "dout_shared3_div3",
-+		"mout_shared3_pll", 1, 3, 0),
-+	FFACTOR(DOUT_SHARED3_DIV4, "dout_shared3_div4",
-+		"mout_shared3_pll", 1, 4, 0),
-+	FFACTOR(DOUT_SHARED4_DIV1, "dout_shared4_div1",
-+		"mout_shared4_pll", 1, 1, 0),
-+	FFACTOR(DOUT_SHARED4_DIV2, "dout_shared4_div2",
-+		"mout_shared4_pll", 1, 2, 0),
-+	FFACTOR(DOUT_SHARED4_DIV3, "dout_shared4_div3",
-+		"mout_shared4_pll", 1, 3, 0),
-+	FFACTOR(DOUT_SHARED4_DIV4, "dout_shared4_div4",
-+		"mout_shared4_pll", 1, 4, 0),
-+	FFACTOR(DOUT_SHARED5_DIV1, "dout_shared5_div1",
-+		"mout_shared5_pll", 1, 1, 0),
-+	FFACTOR(DOUT_SHARED5_DIV2, "dout_shared5_div2",
-+		"mout_shared5_pll", 1, 2, 0),
-+	FFACTOR(DOUT_SHARED5_DIV3, "dout_shared5_div3",
-+		"mout_shared5_pll", 1, 3, 0),
-+	FFACTOR(DOUT_SHARED5_DIV4, "dout_shared5_div4",
-+		"mout_shared5_pll", 1, 4, 0),
-+};
-+
-+static const struct samsung_cmu_info top_cmu_info __initconst = {
-+	.pll_clks		= top_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(top_pll_clks),
-+	.mux_clks		= top_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(top_mux_clks),
-+	.div_clks		= top_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(top_div_clks),
-+	.fixed_factor_clks	= top_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(top_fixed_factor_clks),
-+	.nr_clk_ids		= CLKS_NR_TOP,
-+	.clk_regs		= top_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
-+};
-+
-+static void __init exynosautov920_cmu_top_init(struct device_node *np)
-+{
-+	exynos_arm64_register_cmu(NULL, np, &top_cmu_info);
-+}
-+
-+/* Register CMU_TOP early, as it's a dependency for other early domains */
-+CLK_OF_DECLARE(exynosautov920_cmu_top, "samsung,exynosautov920-cmu-top",
-+	       exynosautov920_cmu_top_init);
-+
-+/* ---- CMU_PERIC0 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_PERIC0 (0x10800000) */
-+#define PLL_CON0_MUX_CLKCMU_PERIC0_IP_USER	0x0600
-+#define PLL_CON0_MUX_CLKCMU_PERIC0_NOC_USER	0x0610
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_I3C		0x1000
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI00_USI	0x1004
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI01_USI	0x1008
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI02_USI	0x100c
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI03_USI	0x1010
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI04_USI	0x1014
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI05_USI	0x1018
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI06_USI	0x101c
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI07_USI	0x1020
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI08_USI	0x1024
-+#define CLK_CON_MUX_MUX_CLK_PERIC0_USI_I2C	0x1028
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_I3C		0x1800
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI00_USI	0x1804
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI01_USI	0x1808
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI02_USI	0x180c
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI03_USI	0x1810
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI04_USI	0x1814
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI05_USI	0x1818
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI06_USI	0x181c
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI07_USI	0x1820
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI08_USI	0x1824
-+#define CLK_CON_DIV_DIV_CLK_PERIC0_USI_I2C	0x1828
-+
-+static const unsigned long peric0_clk_regs[] __initconst = {
-+	PLL_CON0_MUX_CLKCMU_PERIC0_IP_USER,
-+	PLL_CON0_MUX_CLKCMU_PERIC0_NOC_USER,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_I3C,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI00_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI01_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI02_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI03_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI04_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI05_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI06_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI07_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI08_USI,
-+	CLK_CON_MUX_MUX_CLK_PERIC0_USI_I2C,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_I3C,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI00_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI01_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI02_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI03_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI04_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI05_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI06_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI07_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI08_USI,
-+	CLK_CON_DIV_DIV_CLK_PERIC0_USI_I2C,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_PERIC0 */
-+PNAME(mout_peric0_ip_user_p) = { "oscclk", "dout_clkcmu_peric0_ip" };
-+PNAME(mout_peric0_noc_user_p) = { "oscclk", "dout_clkcmu_peric0_noc" };
-+PNAME(mout_peric0_usi_p) = { "oscclk", "mout_peric0_ip_user" };
-+
-+static const struct samsung_mux_clock peric0_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_PERIC0_IP_USER, "mout_peric0_ip_user",
-+	    mout_peric0_ip_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_IP_USER, 4, 1),
-+	MUX(CLK_MOUT_PERIC0_NOC_USER, "mout_peric0_noc_user",
-+	    mout_peric0_noc_user_p, PLL_CON0_MUX_CLKCMU_PERIC0_NOC_USER, 4, 1),
-+	/* USI00 ~ USI08 */
-+	MUX(CLK_MOUT_PERIC0_USI00_USI, "mout_peric0_usi00_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI00_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI01_USI, "mout_peric0_usi01_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI01_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI02_USI, "mout_peric0_usi02_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI02_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI03_USI, "mout_peric0_usi03_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI03_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI04_USI, "mout_peric0_usi04_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI04_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI05_USI, "mout_peric0_usi05_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI05_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI06_USI, "mout_peric0_usi06_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI06_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI07_USI, "mout_peric0_usi07_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI07_USI, 0, 1),
-+	MUX(CLK_MOUT_PERIC0_USI08_USI, "mout_peric0_usi08_usi",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI08_USI, 0, 1),
-+	/* USI_I2C */
-+	MUX(CLK_MOUT_PERIC0_USI_I2C, "mout_peric0_usi_i2c",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_USI_I2C, 0, 1),
-+	/* USI_I3C */
-+	MUX(CLK_MOUT_PERIC0_I3C, "mout_peric0_i3c",
-+	    mout_peric0_usi_p, CLK_CON_MUX_MUX_CLK_PERIC0_I3C, 0, 1),
-+};
-+
-+static const struct samsung_div_clock peric0_div_clks[] __initconst = {
-+	/* USI00 ~ USI08 */
-+	DIV(CLK_DOUT_PERIC0_USI00_USI, "dout_peric0_usi00_usi",
-+	    "mout_peric0_usi00_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI00_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI01_USI, "dout_peric0_usi01_usi",
-+	    "mout_peric0_usi01_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI01_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI02_USI, "dout_peric0_usi02_usi",
-+	    "mout_peric0_usi02_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI02_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI03_USI, "dout_peric0_usi03_usi",
-+	    "mout_peric0_usi03_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI03_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI04_USI, "dout_peric0_usi04_usi",
-+	    "mout_peric0_usi04_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI04_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI05_USI, "dout_peric0_usi05_usi",
-+	    "mout_peric0_usi05_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI05_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI06_USI, "dout_peric0_usi06_usi",
-+	    "mout_peric0_usi06_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI06_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI07_USI, "dout_peric0_usi07_usi",
-+	    "mout_peric0_usi07_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI07_USI,
-+	    0, 4),
-+	DIV(CLK_DOUT_PERIC0_USI08_USI, "dout_peric0_usi08_usi",
-+	    "mout_peric0_usi08_usi", CLK_CON_DIV_DIV_CLK_PERIC0_USI08_USI,
-+	    0, 4),
-+	/* USI_I2C */
-+	DIV(CLK_DOUT_PERIC0_USI_I2C, "dout_peric0_usi_i2c",
-+	    "mout_peric0_usi_i2c", CLK_CON_DIV_DIV_CLK_PERIC0_USI_I2C, 0, 4),
-+	/* USI_I3C */
-+	DIV(CLK_DOUT_PERIC0_I3C, "dout_peric0_i3c",
-+	    "mout_peric0_i3c", CLK_CON_DIV_DIV_CLK_PERIC0_I3C, 0, 4),
-+};
-+
-+static const struct samsung_cmu_info peric0_cmu_info __initconst = {
-+	.mux_clks		= peric0_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(peric0_mux_clks),
-+	.div_clks		= peric0_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(peric0_div_clks),
-+	.nr_clk_ids		= CLKS_NR_PERIC0,
-+	.clk_regs		= peric0_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(peric0_clk_regs),
-+	.clk_name		= "dout_clkcmu_peric0_noc",
-+};
-+
-+static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
-+{
-+	const struct samsung_cmu_info *info;
-+	struct device *dev = &pdev->dev;
-+
-+	info = of_device_get_match_data(dev);
-+	exynos_arm64_register_cmu(dev, dev->of_node, info);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id exynosautov920_cmu_of_match[] = {
-+	{
-+		.compatible = "samsung,exynosautov920-cmu-peric0",
-+		.data = &peric0_cmu_info,
-+	},
-+};
-+
-+static struct platform_driver exynosautov920_cmu_driver __refdata = {
-+	.driver = {
-+		.name = "exynosautov920-cmu",
-+		.of_match_table = exynosautov920_cmu_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = exynosautov920_cmu_probe,
-+};
-+
-+static int __init exynosautov920_cmu_init(void)
-+{
-+	return platform_driver_register(&exynosautov920_cmu_driver);
-+}
-+core_initcall(exynosautov920_cmu_init);
--- 
-2.45.2
+[1] https://gitlab.com/Linaro/96boards/e850-96/kernel/-/tree/android-exynos=
+-5.10-linaro/drivers/thermal/samsung?ref_type=3Dheads
 
+> Some differences from that implementation:
+> - unlike that implementation, we do not use the ACPM mechanism, instead
+>   we just access the registers, like we do for other SoCs,
+
+Do you know what are the possible implications of not using ACPM? As I
+understand, ACPM is a Samsung's downstream framework which uses APM
+(Active Power Management) IP block internally to act as an IPC
+mechanism, which makes it possible to offload any PM related
+operations (which might get quite heavy, if we are to belive the TRM
+description of APM) from CPU to APM. I'm not against the direct
+registers access based implementation (in fact, I'm not sure how that
+APM/ACPM thing can be implemented in upstreamable way and if it's
+worth it at all). Just curious if we understand what we are
+potentially missing out, and if at some point we'll be forced to
+implement that ACPM thing anyway (for something else)?
+
+> - the SoC is supposed to support multiple sensors inside one unit. The
+>   vendor implementation uses one kernel device per sensor, we would
+>   probably prefer to have one device for all sensors, have
+>   #thermal-sensor-cells =3D <1> and so on. We implemented this, but we
+>   could not get the extra sensors to work on our hardware so far. This
+>   might be due to a misconfiguration and we will probably come back to
+>   this, however our implementation only supports a single sensor for
+>   now,
+> - the vendor implementation supports disabling CPU cores as a cooling
+>   device. We did not attempt to port this, and this would not really fit
+>   this driver anyway.
+>
+> Additionally, some differences from the other SoCs supported by this
+> driver:
+> - this SoC does not require a clock to work correctly, so we need an
+>   exception for data->clk,
+
+Not sure if that's true, as already discussed in my comments for the
+previous patches. Looks like one clock is still needed, which is the
+PCLK bus clock (to interface registers) which might simultaneously act
+as an operating (functional) clock.
+
+> - we do not really constrain the e-fuse information like the other SoCs
+>   do (data->{min,max}_efuse_value). In our tests, those values (as well
+>   as the raw sensor values) were much higher than in the other SoCs, to
+>   the degree that reusing the data->{min,max}_efuse_value from the other
+>   SoCs would cause instant critical temperature reset on boot,
+> - this SoC provides more information in the e-fuse data than other SoCs,
+>   so we read some values inside exynos850_tmu_initialize instead of
+>   hardcoding them in exynos_map_dt_data.
+>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 214 +++++++++++++++++++++++++--
+>  1 file changed, 202 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
+ng/exynos_tmu.c
+> index f0de72a62fd7..bd52663f1a5a 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -116,6 +116,43 @@
+>  #define EXYNOS7_EMUL_DATA_SHIFT                        7
+>  #define EXYNOS7_EMUL_DATA_MASK                 0x1ff
+>
+> +/* Exynos850 specific registers */
+> +#define EXYNOS850_TMU_REG_AVG_CON              0x58
+
+Exynos850 TRM says AVG_CONTROL offset is 0x38, and 0x58 is actually
+for THRESHOLD0_TEMP_RISE3_2 register.
+
+> +#define EXYNOS850_TMU_REG_CONTROL1             0x24
+> +#define EXYNOS850_TMU_REG_COUNTER_VALUE0       0x30
+> +#define EXYNOS850_TMU_REG_COUNTER_VALUE1       0x34
+> +#define EXYNOS850_TMU_REG_CURRENT_TEMP1_0      0x40
+
+In TRM, this register is called CURRENT_TEMP0_1. Maybe change 1_0 -> 0_1?
+
+> +#define EXYNOS850_TMU_REG_THD_TEMP0_RISE       0x50
+> +#define EXYNOS850_TMU_REG_THD_TEMP0_FALL       0x60
+> +#define EXYNOS850_TMU_REG_TRIM0                        0x3C
+> +
+> +#define EXYNOS850_TMU_AVG_CON_SHIFT            18
+
+Maybe rename it to something like EXYNOS850_TMU_T_AVG_MODE_SHIFT, to
+avoid confusion with AVG_CONTROL register? That belongs to TRIMINFO2
+register, if I understand it correctly, not to AVG_CONTROL.
+
+> +#define EXYNOS850_TMU_AVG_MODE_MASK            0x7
+
+I'd suggest to group all the definitions here as such:
+
+#define REG1_OFFSET
+#define REG1_FIELD1_OFFSET
+#define REG1_FIELD2_OFFSET
+...empty line...
+#define REG2_OFFSET
+#define REG2_FIELD1_OFFSET
+#define REG2_FIELD2_OFFSET
+...etc...
+
+Or otherwise each shift/mask constant should contain its register name
+as a prefix, to avoid confusion. But right now it's kinda hard to
+understand what belongs to what :) But that's just a nitpick.
+
+> +#define EXYNOS850_TMU_BGRI_TRIM_MASK           0xF
+
+Suggest using GENMASK() macro whenever possible.
+
+> +#define EXYNOS850_TMU_BGRI_TRIM_SHIFT          20
+> +#define EXYNOS850_TMU_CLK_SENSE_ON_MASK                0xffff
+> +#define EXYNOS850_TMU_CLK_SENSE_ON_SHIFT       16
+> +#define EXYNOS850_TMU_DEM_ENABLE               1
+> +#define EXYNOS850_TMU_DEM_SHIFT                        4
+
+Instead of above two values, it could be just BIT(4) for
+EXYNOS850_TMU_DEM_ENABLE?
+
+> +#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK     0xffff
+> +#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT    0
+> +#define EXYNOS850_TMU_LPI_MODE_MASK            1
+> +#define EXYNOS850_TMU_LPI_MODE_SHIFT           10
+> +#define EXYNOS850_TMU_T_BUF_SLOPE_SEL_MASK     0xF
+> +#define EXYNOS850_TMU_T_BUF_SLOPE_SEL_SHIFT    18
+> +#define EXYNOS850_TMU_T_BUF_VREF_SEL_MASK      0x1F
+> +#define EXYNOS850_TMU_T_BUF_VREF_SEL_SHIFT     18
+> +#define EXYNOS850_TMU_TEM1051X_SENSE_VALUE     0x028A
+> +#define EXYNOS850_TMU_TEM1456X_SENSE_VALUE     0x0A28
+
+I'd pull those two values under shift/mask definitions. Also, please
+use lowercase characters for hex values, here and in all other places.
+
+> +#define EXYNOS850_TMU_TEMP_SHIFT               9
+> +#define EXYNOS850_TMU_TRIMINFO_SHIFT           4
+> +#define EXYNOS850_TMU_T_TRIM0_MASK             0xF
+> +#define EXYNOS850_TMU_T_TRIM0_SHIFT            18
+> +#define EXYNOS850_TMU_VBEI_TRIM_MASK           0xF
+> +#define EXYNOS850_TMU_VBEI_TRIM_SHIFT          8
+> +#define EXYNOS850_TMU_VREF_TRIM_MASK           0xF
+> +#define EXYNOS850_TMU_VREF_TRIM_SHIFT          12
+> +
+>  #define EXYNOS_FIRST_POINT_TRIM                        25
+>  #define EXYNOS_SECOND_POINT_TRIM               85
+>
+> @@ -133,6 +170,7 @@ enum soc_type {
+>         SOC_ARCH_EXYNOS5420_TRIMINFO,
+>         SOC_ARCH_EXYNOS5433,
+>         SOC_ARCH_EXYNOS7,
+> +       SOC_ARCH_EXYNOS850,
+>  };
+>
+>  /**
+> @@ -231,13 +269,16 @@ static int code_to_temp(struct exynos_tmu_data *dat=
+a, u16 temp_code)
+>
+>  static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_i=
+nfo)
+>  {
+> -       u16 tmu_temp_mask =3D
+> -               (data->soc =3D=3D SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MA=
+SK
+> -                                               : EXYNOS_TMU_TEMP_MASK;
+> +       u16 tmu_temp_mask =3D (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                            data->soc =3D=3D SOC_ARCH_EXYNOS850) ?
+> +                                   EXYNOS7_TMU_TEMP_MASK :
+> +                                   EXYNOS_TMU_TEMP_MASK;
+> +       int tmu_85_shift =3D (data->soc =3D=3D SOC_ARCH_EXYNOS850) ?
+> +                                  EXYNOS850_TMU_TEMP_SHIFT :
+> +                                  EXYNOS_TRIMINFO_85_SHIFT;
+
+Something seems off to me here. How come the shift value for EXYNOS7
+case is 8, but the mask is actually 9 bits long? Does it mean the
+first error field is 8 bits long, and the second error field is 9 bits
+long for EXYNOS7? I don't have the Exynos7 manual, so it's just a
+hunch. But if it's true, maybe this shift value has to be added in
+your [PATCH 2/6] to fix Exynos7 case?
+
+Also, just an idea: those values (and other similar values) could be
+pre-calculated somewhere during the probe, stored in some struct (e.g.
+_variant or _chip) and then just used here. Stylistically, instead of
+the ternary operator, maybe switch one would easier to read? Again,
+those are very minor nitpicks.
+
+>
+>         data->temp_error1 =3D trim_info & tmu_temp_mask;
+> -       data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+> -                               tmu_temp_mask);
+> +       data->temp_error2 =3D ((trim_info >> tmu_85_shift) & tmu_temp_mas=
+k);
+>
+
+No need for the left-most and right-most brackets.
+
+>         if (!data->temp_error1 ||
+>             (data->min_efuse_value > data->temp_error1) ||
+> @@ -245,9 +286,8 @@ static void sanitize_temp_error(struct exynos_tmu_dat=
+a *data, u32 trim_info)
+>                 data->temp_error1 =3D data->efuse_value & tmu_temp_mask;
+>
+>         if (!data->temp_error2)
+> -               data->temp_error2 =3D
+> -                       (data->efuse_value >> EXYNOS_TRIMINFO_85_SHIFT) &
+> -                       tmu_temp_mask;
+> +               data->temp_error2 =3D (data->efuse_value >> tmu_85_shift)=
+ &
+> +                                   tmu_temp_mask;
+>  }
+>
+>  static int exynos_tmu_initialize(struct platform_device *pdev)
+> @@ -588,6 +628,129 @@ static void exynos7_tmu_initialize(struct platform_=
+device *pdev)
+>         sanitize_temp_error(data, trim_info);
+>  }
+>
+> +static void exynos850_tmu_set_low_temp(struct exynos_tmu_data *data, u8 =
+temp)
+> +{
+> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_FALL + 1=
+2, 0,
+> +                              temp);
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, true);
+> +}
+> +
+> +static void exynos850_tmu_set_high_temp(struct exynos_tmu_data *data, u8=
+ temp)
+> +{
+> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 1=
+2, 16,
+> +                              temp);
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, true);
+> +}
+> +
+> +static void exynos850_tmu_disable_low(struct exynos_tmu_data *data)
+> +{
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, false);
+> +}
+> +
+> +static void exynos850_tmu_disable_high(struct exynos_tmu_data *data)
+> +{
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, false);
+> +}
+> +
+> +static void exynos850_tmu_set_crit_temp(struct exynos_tmu_data *data, u8=
+ temp)
+> +{
+> +       exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 0=
+, 16,
+> +                              temp);
+> +       exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
+> +                             EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
+> +       exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
+> +                             EXYNOS7_TMU_INTEN_RISE0_SHIFT + 7, true);
+> +}
+> +
+> +static void exynos850_tmu_initialize(struct platform_device *pdev)
+> +{
+> +       struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
+> +       int cal_type;
+
+Please make it u32.
+
+> +       unsigned int avg_mode, buf, bgri, vref, vbei;
+
+Suggest renaming buf -> reg, and maybe make it u32.
+
+> +
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +       cal_type =3D (buf & EXYNOS5433_TRIMINFO_CALIB_SEL_MASK) >>
+> +                  EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT;
+> +       data->reference_voltage =3D (buf >> EXYNOS850_TMU_T_BUF_VREF_SEL_=
+SHIFT) &
+> +                                 EXYNOS850_TMU_T_BUF_VREF_SEL_MASK;
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
+> +                   EXYNOS850_TMU_TRIMINFO_SHIFT);
+> +       data->gain =3D (buf >> EXYNOS850_TMU_T_BUF_SLOPE_SEL_SHIFT) &
+> +                    EXYNOS850_TMU_T_BUF_SLOPE_SEL_MASK;
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
+> +                   2 * EXYNOS850_TMU_TRIMINFO_SHIFT);
+> +       avg_mode =3D (buf >> EXYNOS850_TMU_AVG_CON_SHIFT) &
+> +                  EXYNOS850_TMU_AVG_MODE_MASK;
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
+> +                   3 * EXYNOS850_TMU_TRIMINFO_SHIFT);
+> +       bgri =3D (buf >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
+> +              EXYNOS850_TMU_T_TRIM0_MASK;
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
+> +                   4 * EXYNOS850_TMU_TRIMINFO_SHIFT);
+> +       vref =3D (buf >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
+> +              EXYNOS850_TMU_T_TRIM0_MASK;
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO +
+> +                   5 * EXYNOS850_TMU_TRIMINFO_SHIFT);
+
+For cases like that, maybe introduce some macro like:
+
+    #define EXYNOS850_TRIMINFO_OFFSET(n)    (EXYNOS_TMU_REG_TRIMINFO +
+(n) * EXYNOS850_TMU_TRIMINFO_SHIFT)
+
+and use it everywhere?
+
+> +       vbei =3D (buf >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
+> +              EXYNOS850_TMU_T_TRIM0_MASK;
+> +
+> +       buf =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +       sanitize_temp_error(data, buf);
+> +
+> +       switch (cal_type) {
+> +       case EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING:
+> +               data->cal_type =3D TYPE_TWO_POINT_TRIMMING;
+> +               break;
+> +       case EXYNOS5433_TRIMINFO_ONE_POINT_TRIMMING:
+
+Add "fallthrough;" here? Or maybe just remove above line at all?
+
+> +       default:
+> +               data->cal_type =3D TYPE_ONE_POINT_TRIMMING;
+> +               break;
+> +       }
+> +
+> +       dev_info(&pdev->dev, "Calibration type is %d-point calibration\n"=
+,
+> +                cal_type ? 2 : 1);
+> +
+> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_AVG_CON);
+> +       buf &=3D ~(EXYNOS850_TMU_AVG_MODE_MASK);
+
+No need for brackets.
+
+> +       buf &=3D ~(EXYNOS850_TMU_DEM_ENABLE << EXYNOS850_TMU_DEM_SHIFT);
+> +       if (avg_mode) {
+> +               buf |=3D avg_mode;
+> +               buf |=3D (EXYNOS850_TMU_DEM_ENABLE << EXYNOS850_TMU_DEM_S=
+HIFT);
+> +       }
+> +       writel(buf, data->base + EXYNOS850_TMU_REG_AVG_CON);
+> +
+> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
+> +       buf &=3D ~(EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK
+> +                << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT);
+> +       buf |=3D EXYNOS850_TMU_TEM1051X_SENSE_VALUE
+> +              << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT;
+> +       writel(buf, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
+> +
+> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
+> +       buf &=3D ~(EXYNOS850_TMU_CLK_SENSE_ON_MASK
+> +                << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT);
+> +       buf |=3D EXYNOS850_TMU_TEM1051X_SENSE_VALUE
+> +              << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT;
+> +       writel(buf, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
+> +
+> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_TRIM0);
+> +       buf &=3D ~(EXYNOS850_TMU_BGRI_TRIM_MASK << EXYNOS850_TMU_BGRI_TRI=
+M_SHIFT);
+> +       buf &=3D ~(EXYNOS850_TMU_VREF_TRIM_MASK << EXYNOS850_TMU_VREF_TRI=
+M_SHIFT);
+> +       buf &=3D ~(EXYNOS850_TMU_VBEI_TRIM_MASK << EXYNOS850_TMU_VBEI_TRI=
+M_SHIFT);
+
+Why not define this mask value like this instead:
+
+    #define EXYNOS850_TMU_VBEI_TRIM_MASK        GENMASK(11,8)
+
+And then you'll be able to do just:
+
+    buf &=3D ~EXYNOS850_TMU_VBEI_TRIM_MASK;
+
+The same goes for all similar cases.
+
+> +       buf |=3D (bgri << EXYNOS850_TMU_BGRI_TRIM_SHIFT);
+> +       buf |=3D (vref << EXYNOS850_TMU_VREF_TRIM_SHIFT);
+> +       buf |=3D (vbei << EXYNOS850_TMU_VBEI_TRIM_SHIFT);
+
+Brackets are not needed.
+
+> +       writel(buf, data->base + EXYNOS850_TMU_REG_TRIM0);
+> +
+> +       buf =3D readl(data->base + EXYNOS850_TMU_REG_CONTROL1);
+> +       buf &=3D ~(EXYNOS850_TMU_LPI_MODE_MASK << EXYNOS850_TMU_LPI_MODE_=
+SHIFT);
+> +       writel(buf, data->base + EXYNOS850_TMU_REG_CONTROL1);
+> +}
+> +
+>  static void exynos4210_tmu_control(struct platform_device *pdev, bool on=
+)
+>  {
+>         struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
+> @@ -679,7 +842,8 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *d=
+ata, unsigned int val,
+>
+>                 val &=3D ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIF=
+T);
+>                 val |=3D (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
+> -               if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
+> +               if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                   data->soc =3D=3D SOC_ARCH_EXYNOS850) {
+>                         val &=3D ~(EXYNOS7_EMUL_DATA_MASK <<
+>                                 EXYNOS7_EMUL_DATA_SHIFT);
+>                         val |=3D (temp_to_code(data, temp) <<
+> @@ -709,7 +873,8 @@ static void exynos4412_tmu_set_emulation(struct exyno=
+s_tmu_data *data,
+>                 emul_con =3D EXYNOS5260_EMUL_CON;
+>         else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433)
+>                 emul_con =3D EXYNOS5433_TMU_EMUL_CON;
+> -       else if (data->soc =3D=3D SOC_ARCH_EXYNOS7)
+> +       else if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                data->soc =3D=3D SOC_ARCH_EXYNOS850)
+>                 emul_con =3D EXYNOS7_TMU_REG_EMUL_CON;
+>         else
+>                 emul_con =3D EXYNOS_EMUL_CON;
+> @@ -766,6 +931,12 @@ static int exynos7_tmu_read(struct exynos_tmu_data *=
+data)
+>                 EXYNOS7_TMU_TEMP_MASK;
+>  }
+>
+> +static int exynos850_tmu_read(struct exynos_tmu_data *data)
+> +{
+> +       return readw(data->base + EXYNOS850_TMU_REG_CURRENT_TEMP1_0) &
+> +              EXYNOS7_TMU_TEMP_MASK;
+> +}
+> +
+>  static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
+>  {
+>         struct exynos_tmu_data *data =3D id;
+> @@ -794,7 +965,8 @@ static void exynos4210_tmu_clear_irqs(struct exynos_t=
+mu_data *data)
+>         if (data->soc =3D=3D SOC_ARCH_EXYNOS5260) {
+>                 tmu_intstat =3D EXYNOS5260_TMU_REG_INTSTAT;
+>                 tmu_intclear =3D EXYNOS5260_TMU_REG_INTCLEAR;
+> -       } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7) {
+> +       } else if (data->soc =3D=3D SOC_ARCH_EXYNOS7 ||
+> +                  data->soc =3D=3D SOC_ARCH_EXYNOS850) {
+>                 tmu_intstat =3D EXYNOS7_TMU_REG_INTPEND;
+>                 tmu_intclear =3D EXYNOS7_TMU_REG_INTPEND;
+>         } else if (data->soc =3D=3D SOC_ARCH_EXYNOS5433) {
+> @@ -845,6 +1017,9 @@ static const struct of_device_id exynos_tmu_match[] =
+=3D {
+>         }, {
+>                 .compatible =3D "samsung,exynos7-tmu",
+>                 .data =3D (const void *)SOC_ARCH_EXYNOS7,
+> +       }, {
+> +               .compatible =3D "samsung,exynos850-tmu",
+> +               .data =3D (const void *)SOC_ARCH_EXYNOS850,
+>         },
+>         { },
+>  };
+> @@ -957,6 +1132,21 @@ static int exynos_map_dt_data(struct platform_devic=
+e *pdev)
+>                 data->min_efuse_value =3D 15;
+>                 data->max_efuse_value =3D 100;
+>                 break;
+> +       case SOC_ARCH_EXYNOS850:
+> +               data->tmu_set_low_temp =3D exynos850_tmu_set_low_temp;
+> +               data->tmu_set_high_temp =3D exynos850_tmu_set_high_temp;
+> +               data->tmu_disable_low =3D exynos850_tmu_disable_low;
+> +               data->tmu_disable_high =3D exynos850_tmu_disable_high;
+> +               data->tmu_set_crit_temp =3D exynos850_tmu_set_crit_temp;
+> +               data->tmu_initialize =3D exynos850_tmu_initialize;
+> +               data->tmu_control =3D exynos4210_tmu_control;
+> +               data->tmu_read =3D exynos850_tmu_read;
+> +               data->tmu_set_emulation =3D exynos4412_tmu_set_emulation;
+> +               data->tmu_clear_irqs =3D exynos4210_tmu_clear_irqs;
+> +               data->efuse_value =3D 55;
+> +               data->min_efuse_value =3D 0;
+> +               data->max_efuse_value =3D 511;
+> +               break;
+>         default:
+>                 dev_err(&pdev->dev, "Platform not supported\n");
+>                 return -EINVAL;
+> @@ -1051,7 +1241,7 @@ static int exynos_tmu_probe(struct platform_device =
+*pdev)
+>                 return ret;
+>
+>         data->clk =3D devm_clk_get(dev, "tmu_apbif");
+> -       if (IS_ERR(data->clk))
+> +       if (IS_ERR(data->clk) && data->soc !=3D SOC_ARCH_EXYNOS850)
+>                 return dev_err_probe(dev, PTR_ERR(data->clk), "Failed to =
+get clock\n");
+>
+>         data->clk_sec =3D devm_clk_get(dev, "tmu_triminfo_apbif");
+> --
+> 2.45.1
+>
+>
