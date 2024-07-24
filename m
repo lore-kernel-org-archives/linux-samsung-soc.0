@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE835158871;
-	Wed, 24 Jul 2024 10:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5C9D29E;
+	Wed, 24 Jul 2024 10:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721815928; cv=none; b=Up68s+FDJpmWBxrbhnoylmrHu/B6GlNJGqxZCZBK09tftMEPqeUI2Gcf1MrGh6T9fkJXc5zr6yQUS/VKpKPv2YVjOL0ic+xeaoeNmKMiE+6q5N38g6Y3daZyM43vkFTOHX6qL2UFXp/UVEnlAHY5EPDOTHvNO8GOqxoBciS6RZE=
+	t=1721816023; cv=none; b=Eyc2hc6cm/kUsd7zrQkUtgNZgdVgbTmFIM0iPVUUdQQx1Sr/ZJHTMGeA2AiMkD0M0Oz8spVPYjmzHBkwpU4mEYcZZ+ego5glCdDiErsksgfbdRl42KDAzALPM8X15Co+yGCPrZ0bAn+dXgEQc8XLzG7rNcdDcTFWLItyaKx1Jew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721815928; c=relaxed/simple;
-	bh=Uqbvr11D9AdAvRrO/Gx+qH47OKL06kpUfqsqfplLr44=;
+	s=arc-20240116; t=1721816023; c=relaxed/simple;
+	bh=VPMViaiQtUnl7K4tOhb7cgYc3z77zlCvNnfuMRgdLsY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YOI9iqqHv/NjQWinHZ4LQKGcRmkqGPnV2HJAumFJhfxBNmSov08xnxIIgM+Jv4OKs4y3fDADw2m+PaWmQ5zuXRE7Ghh49tVTHY0WctEOoO2NTT4mXhbKMJi6EjE6cd3cNCHqbJeXnsspcOeJ3RfVfLqVJVQrqyg6qyYuXjS4hco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyhsA9nH; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HXisxLOCBPEuAYgtMRuEJhhELf9E4vDzyStKvEwBwUaAvRmU+tUc+H47H0U4Z78WMb9+aqrHOjco6w2Ac74VAZfeep6h8WXffb2wv8ZNkXUmDSWm0GKfNdNe9QkhcQPWYWqyqPrfnmoSHBT77/5dtgoCl0G/LrLg46ZiZlmnaGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWjktpXl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyhsA9nH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C163C4AF0C;
-	Wed, 24 Jul 2024 10:12:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWjktpXl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999CFC32782;
+	Wed, 24 Jul 2024 10:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721815928;
-	bh=Uqbvr11D9AdAvRrO/Gx+qH47OKL06kpUfqsqfplLr44=;
+	s=k20201202; t=1721816022;
+	bh=VPMViaiQtUnl7K4tOhb7cgYc3z77zlCvNnfuMRgdLsY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AyhsA9nHW5INzi1KByBWIblUwgL59r4vkjiK5TJdPIP4Y+QGqwnJmudUSFfb4v+2K
-	 DvD5MgWjcYh1RlxhAuwUiwaPOF1tATyEOteGpUFM5OIsTpTUpUU7j0WjTVJyU+ValF
-	 ZVWQYlLTNHcjH8xITeWv0rRZ80shTwkkZOcpScL3wb+j+R++Smx9qER+XT0fTy1Gq6
-	 3cFNwVwWt56RkVAkCp8S2d2CTwAIe+O6lPE2r0vh/WkfQiHC5OBMRYUlUBK0InkkwQ
-	 5R8AHESTtcWQty8ShWW2G7kVRYVmHrShUU0oGeKqoOqrarOAO9DfPToh83OZHiPQ1X
-	 cBWYgcrdSBASQ==
-Message-ID: <18f5565f-11f5-49ce-a816-366cff25b703@kernel.org>
-Date: Wed, 24 Jul 2024 12:12:03 +0200
+	b=gWjktpXlUyk9//YwpYGWU1kIWQXAnlt5Np/CzzxSNqhyP93uc1KNiP87xvSs9w/g4
+	 f/jaUTeCSBmyiqViOhZ+KKnJJkBo7NAyLQj17tZdONFVVNfOZZHyz761kDJi8ImOwy
+	 o7M74GZmJ3qPOyq0881mpc3Ob47OwekqkRFkF77lpLsUcCoKgGGahEM09o8xs9h4mQ
+	 XkI+/uFRBfE9W4ESUd1eaugNl6hXu/bkTBnWUkqvI2WUTNp8jjwxIynXtL16wUVQVf
+	 0H+YWkH91L+SF/du+MdicUZloyfJxy6yTEg/P6OcaNbVSGflZydcEAumlwTkVMsjsU
+	 oZakZQUKPXGzw==
+Message-ID: <73922d54-2fb2-480b-a2af-1b1454429d52@kernel.org>
+Date: Wed, 24 Jul 2024 12:13:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
+Subject: Re: [PATCH v4 2/4] arm64: dts: exynos: add initial CMU clock nodes in
+ ExynosAuto v920
 To: Sunyeal Hong <sunyeal.hong@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -47,8 +47,8 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
- <CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
- <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+ <CGME20240722223341epcas2p1b08b47cfefa981a2b31aad7878e3db64@epcas2p1.samsung.com>
+ <20240722223333.1137947-3-sunyeal.hong@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,177 +94,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+In-Reply-To: <20240722223333.1137947-3-sunyeal.hong@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 23/07/2024 00:33, Sunyeal Hong wrote:
-> Add dt-schema for ExynosAuto v920 SoC clock controller.
-> Add device tree clock binding definitions for below CMU blocks.
-> 
-> - CMU_TOP
-> - CMU_PERIC0
+> Add cmu_top, cmu_peric0 clock nodes and
+> switch USI clocks instead of dummy fixed-rate-clock.
 > 
 > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
-> ---
->  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
->  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
->  2 files changed, 306 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
->  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> new file mode 100644
-> index 000000000000..90f9f17da959
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/samsung,exynosautov920-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung ExynosAuto v920 SoC clock controller
-> +
-> +maintainers:
-> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +
-> +description: |
-> +  ExynosAuto v920 clock controller is comprised of several CMU units, generating
-> +  clocks for different domains. Those CMU units are modeled as separate device
-> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
-> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
-> +  The external OSCCLK must be defined as fixed-rate clock in dts.
-> +
-> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
-> +  dividers; all other clocks of function blocks (other CMUs) are usually
-> +  derived from CMU_TOP.
-> +
-> +  Each clock is assigned an identifier and client nodes can use this identifier
-> +  to specify the clock which they consume. All clocks available for usage
-> +  in clock consumer nodes are defined as preprocessor macros in
-> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynosautov920-cmu-top
-> +      - samsung,exynosautov920-cmu-peric0
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynosautov920-cmu-top
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (38.4 MHz)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynosautov920-cmu-peric0
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (38.4 MHz)
-> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
-> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: noc
-> +            - const: ip
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Clock controller node for CMU_PERIC0
-> +  - |
-> +    #include <dt-bindings/clock/samsung,exynosautov920.h>
-> +
-> +    cmu_peric0: clock-controller@10800000 {
-> +        compatible = "samsung,exynosautov920-cmu-peric0";
-> +        reg = <0x10800000 0x8000>;
-> +        #clock-cells = <1>;
-> +
-> +        clocks = <&xtcxo>,
-> +                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
-> +                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
-> +        clock-names = "oscclk",
-> +                      "noc",
-> +                      "ip";
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h b/include/dt-bindings/clock/samsung,exynosautov920.h
-> new file mode 100644
-> index 000000000000..ad89728a4396
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/samsung,exynosautov920.h
-> @@ -0,0 +1,191 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
-> + * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
-> + *
-> + * Device Tree binding constants for ExynosAuto v920 clock controller.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
-> +#define _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
-> +
-> +/* CMU_TOP */
-> +#define FOUT_SHARED0_PLL		1
-> +#define FOUT_SHARED1_PLL		2
-> +#define FOUT_SHARED2_PLL		3
-> +#define FOUT_SHARED3_PLL		4
-> +#define FOUT_SHARED4_PLL		5
-> +#define FOUT_SHARED5_PLL		6
-> +#define FOUT_MMC_PLL			7
-> +
-> +/* MUX in CMU_TOP */
-> +#define MOUT_SHARED0_PLL		101
 
-This is some odd numbering. Numbers start from 0 or 1 and are continuous.
+Thank you for your patch. There is something to discuss/improve.
 
+>  	cpus: cpus {
+>  		#address-cells = <2>;
+>  		#size-cells = <0>;
+> @@ -182,6 +172,28 @@ chipid@10000000 {
+>  			reg = <0x10000000 0x24>;
+>  		};
+>  
+> +		cmu_peric0: clock-controller@10800000 {
+> +			compatible = "samsung,exynosautov920-cmu-peric0";
+> +			reg = <0x10800000 0x8000>;
+> +			#clock-cells = <1>;
+> +
+> +			clocks = <&xtcxo>,
+> +				 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
+> +				 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
+> +			clock-names = "oscclk",
+> +				      "noc",
+> +				      "ip";
+> +		};
+> +
+> +		cmu_top: clock-controller@11000000 {
+
+This does not look ordered. Please read DTS coding style.
 
 Best regards,
 Krzysztof
