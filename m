@@ -1,125 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8F913D898;
-	Tue, 23 Jul 2024 20:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB8623BF;
+	Wed, 24 Jul 2024 06:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721768235; cv=none; b=K/s3Q8g5L8fStSlRK5FDhotVyCyzbZVs2s2pHdxZfbfsYs7L8QPQWbzjx6GNxmAdh4h41aruwWYKdjU0+Uh0iRRQL5crjws5Vb2BFFo6XnLHkiteOymJVhJfcUwW1aAaWKLfFqU1vigYG9AS9nJnwNL0bXLV3qBBRLZ53u8dUyk=
+	t=1721801112; cv=none; b=Fyqw3I9CWx6nfQQYfn40Vz3XP3pPP7DbacNebgIjNL5M/fn5+xMcZPR6Bjo91SvixFUh9h5Tubvj5g6KnMBCZroCRfCGYtBPAXAasgz0d47E/b8p6VTveKRyCIHKZaG1V+bTDUC+UTHwHYS7tS16gjT9tE5/BpjREyeizU//25o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721768235; c=relaxed/simple;
-	bh=bUppBWqZH2uLys4TfLAbBxHCtv32OZjdBJVR4LSQNHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Grxx1JrLouetW9AOLEhLszhFRpq4Laf6fvgJ/TGd/bwSjduoQZc0GrP759I4X0hNJbtT3u1gXXfO45iamNkvjowcchMLKYJ31VR340G18/zEYLQYfI8dl2hdM73NfLaH0eGur3nuIiqC19IHScWWqfNNYnR94IooBleXkH0jhMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rInKOLlY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721801112; c=relaxed/simple;
+	bh=NxVtYJJ3z1OoFhssqyiYJT/N/u7b/FvNj4qvvEapLxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZ4K/Vql3j++fg+wIQTxPK5LVy82HPbGkWkp09QQICdAbb254LA6uTO+sqzBdMOGmCGxCk5B1Ip00vvRWEUG+8REycKrXOINprgMB/D0G3hS54IYDxfmAQgHkD/zoRSawvbfjAGB8bF9Wz2WAisW6xBWZSx2pgQ7tGYL7EgvNzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kv+4BCwx; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rInKOLlY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EC0C4AF09;
-	Tue, 23 Jul 2024 20:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721768235;
-	bh=bUppBWqZH2uLys4TfLAbBxHCtv32OZjdBJVR4LSQNHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rInKOLlYARp2bm42ZHYHmmhJMT2LQ0QLzVRmo/rTy+vCUxHU4zLDx3y9Z9JzyNhuu
-	 jMQjAPU0VUltwAsf9tkxAfGY6mcM+LxG2AFtR7L+MNKk8bgnIdpOSDmxv/X5h7ZC3W
-	 TUja5feINGe5X1EN1oC+s2uZshIJhKO5/eu5CSUiMWToMDDIutDuBhtIN3HK+6HH5M
-	 9IMXoA8PcVIFA5cvOt/i5mgHzYHBIzMPoc2mYSisiuGoKx+iipYIMRAvIxIjuqJ7HY
-	 +dSwtsnpQxJptJi11yAZ2BmbZSEnY+q9RlRjxaf/wj/84EUhhjRzgS1JcfFS9BFO+a
-	 bVo+2i/TLilwA==
-Date: Tue, 23 Jul 2024 15:57:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sunyeal Hong <sunyeal.hong@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-Message-ID: <20240723205714.GA1093352-robh@kernel.org>
-References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
- <CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
- <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kv+4BCwx"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5c667b28c82so303865eaf.1;
+        Tue, 23 Jul 2024 23:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721801110; x=1722405910; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L72rzBlP/G9oUEAncjGrZ3wLUVvLS5Pa33V4pN1/77I=;
+        b=Kv+4BCwxGxQTj1Q4Qg3dxmoBIFSGhWE6O53V5Bm4R5L+KYrCm7pmG0DzHeTnaxDxLw
+         iQypEHxJV7ZT4wtZLUJMYD4zGMhYUmrDeqhwld8WfOPakS+VJeUEpxH47GmsOG0jm24N
+         N4DZo52Rsq1MqYQp/BgG5UE1Ga3L7I8iql2uPYtMdrJ52PdolLAlPkwX/QjWdJUoX6+4
+         McU+0yfYRrvLw8L2eCvSevwQ0Jozyqqs3+L8vNktkSvewHsqU8N24FrwdUmf5Cqk6AgP
+         ZC633XaviWxEU4G1pfduR2epeYE6nncGmzJbjlY8RcErJ0Ij56zNVVVnhaxMHN3O2t2A
+         FWxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721801110; x=1722405910;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L72rzBlP/G9oUEAncjGrZ3wLUVvLS5Pa33V4pN1/77I=;
+        b=dg0k7IqnVZEVn7Ru26q30rSBjRAMUsk/ds9BF91w1WXud/6eTm5HXdbJRYrS3g6/N1
+         YBZ04HXrpZA720PlkraAEeOQ/bmL9lk6K5cgaS5rcnelGIaIB7VprlaE7vGjaMXxfdfy
+         gtPYYYRbzmLKbF3jWHOZieRZdqnY1GVOkkuBkEe4nvDFDDK6EayWvwgxu+tRnZDtqh9i
+         cK+n/eH9fPcLd2DYj6rsKURLS2OsOpfbA5A7WgMpOuDsQZf7Pu4p/0QaJykby4pGqonz
+         rpdjSNkbYyfW7og8w/5hUKJPfVQ2fiBInTopWA0UcuTwq9p9r9bV+54FYDVvnhLZBqAp
+         0nPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmZqgggcS8saNWp63FBz29tyH3IeQQu5dwmYHLvBR0cnPFOYsgg8hjGdoAAeRuiKoIsCt1rnLKFM7s0vPeK3R4scIy0RoHI/oELWmF6R6UUN1cuMEYe7uamP7UUQrFq1di0DG+qKG1grTYkOP7uarm2wnwdbGoPqexFvhOpp8dL/EkjwUrecIX52lu
+X-Gm-Message-State: AOJu0YyxEBMNN8DdnopHATAhgwFmUoj9jPOfBnOAQcK9cI+zOp3P/mY7
+	YwcUwPyCCz42NvngraJWTZ5SDHgEWtbk14QbZi3Dus+0AmSFaXMcvM+0m8vd9jSUK+r9DoxR5F6
+	JIlnIiqFeMTvCxIRAVSjFYJNHp5A=
+X-Google-Smtp-Source: AGHT+IG62pNB/TIqr706ceimvNTt0OCJZA56dGyadNFdz0GmSRDb3F3dRZvy33laMIYf16b44L8ZuOwHdOCUx94M1d8=
+X-Received: by 2002:a05:6820:2607:b0:5ce:3ccb:2118 with SMTP id
+ 006d021491bc7-5d5a20a59camr358135eaf.3.1721801110263; Tue, 23 Jul 2024
+ 23:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722223333.1137947-2-sunyeal.hong@samsung.com>
+References: <CGME20240719120945eucas1p2aa5e35f78daa7ec1ea07f512180db468@eucas1p2.samsung.com>
+ <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-2-m.majewski2@samsung.com>
+In-Reply-To: <20240719120853.1924771-2-m.majewski2@samsung.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 24 Jul 2024 11:34:53 +0530
+Message-ID: <CANAwSgRe4zmi67tttOiYswRGzU8choBfiYXy1y+-2_ntg_mZ3A@mail.gmail.com>
+Subject: Re: [PATCH 1/6] drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 23, 2024 at 07:33:30AM +0900, Sunyeal Hong wrote:
-> Add dt-schema for ExynosAuto v920 SoC clock controller.
-> Add device tree clock binding definitions for below CMU blocks.
-> 
-> - CMU_TOP
-> - CMU_PERIC0
-> 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+Hi Mateusz,
+
+On Fri, 19 Jul 2024 at 17:40, Mateusz Majewski <m.majewski2@samsung.com> wrote:
+>
+> SIMPLE_DEV_PM_OPS is deprecated, as noted next to its definition.
+>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 > ---
->  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
->  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
->  2 files changed, 306 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
->  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> new file mode 100644
-> index 000000000000..90f9f17da959
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/samsung,exynosautov920-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung ExynosAuto v920 SoC clock controller
-> +
-> +maintainers:
-> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +
-> +description: |
-> +  ExynosAuto v920 clock controller is comprised of several CMU units, generating
-> +  clocks for different domains. Those CMU units are modeled as separate device
-> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
-> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
-> +  The external OSCCLK must be defined as fixed-rate clock in dts.
-> +
-> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
-> +  dividers; all other clocks of function blocks (other CMUs) are usually
-> +  derived from CMU_TOP.
-> +
-> +  Each clock is assigned an identifier and client nodes can use this identifier
-> +  to specify the clock which they consume. All clocks available for usage
-> +  in clock consumer nodes are defined as preprocessor macros in
-> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynosautov920-cmu-top
-> +      - samsung,exynosautov920-cmu-peric0
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 3
+>  drivers/thermal/samsung/exynos_tmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 96cffb2c44ba..9b7ca93a72f1 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1150,8 +1150,8 @@ static int exynos_tmu_resume(struct device *dev)
+>         return 0;
+>  }
+>
+> -static SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
+> -                        exynos_tmu_suspend, exynos_tmu_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
+> +                               exynos_tmu_suspend, exynos_tmu_resume);
+>  #define EXYNOS_TMU_PM  (&exynos_tmu_pm)
+>  #else
+>  #define EXYNOS_TMU_PM  NULL
 
-Move the descriptions and names here. Then in the if/then schemas just 
-set the number of items to 1 or 3 as appropriate.
+You can drop the CONFIG_PM_SLEEP guard and use pm_sleep_ptr macro for
+exynos_tmu_pm.
 
-Rob
+Thanks
+-Anand
