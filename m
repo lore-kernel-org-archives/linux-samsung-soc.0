@@ -1,68 +1,68 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E3E2599
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jul 2024 00:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9032901
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jul 2024 01:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721869008; cv=none; b=r3PbftCCtsD30uJNZaafoWcxqsHsFzgw4muI+h2sdvGOnSUkg4H8UiHPwB9GcvScrqvVUtq0SlrXZbMA+oA+CpM4qCkUr2ffUYR9Hmm5CkyL3qRlgqB5wskaPXMjEgC6+au6TF4HfHfEwhsB96yU722iH+y4/Aq0zpkJSdecvIU=
+	t=1721869584; cv=none; b=H6JV8etRvKtaBN8+0zHsOorfNLaPbx1eSNW2tiXGkzmPrFIXyceBPhHSfstveCntWlLg/jHKkWn2ebGr6Zft3PDT/2otiNfpujN6nxCANnbBg0k8WsfmggE9lOox6RqBrmBCH6aSpQJwbMN1H/nbY1fq+82L7JPzHbYwFZnsmog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721869008; c=relaxed/simple;
-	bh=PGxObZitrHONB8DARS3qQLkgOiWYASPux5Uxri9IFCo=;
+	s=arc-20240116; t=1721869584; c=relaxed/simple;
+	bh=TB3Hm6XGbDPgJII4XztCnvOepjpz+iOC6LrCU/y/ZPM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nI4AgksbEbzqcaUkVGyfbDCsxUT3Mz75cNbMflsM8E8o9T/wvDXMJjTQgbpxe5CqCusEAOBbq/esC+IHlFqmghXQB7ZicxbNF+GS341mjPw2kitmq1XuwqO+fNqW4xGAdoP65oo19xJgk5d0/1M7bc6VF8xXcclK2/qy440182I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yaUj+OEF; arc=none smtp.client-ip=209.85.128.179
+	 To:Cc:Content-Type; b=FAc2OMkdJIfo8/b6+kBEGTjWOZ9oVMGTaZiXtBhsMFQ/WScRD0g1ISpZFyNij6H4XbkZwsyBYDuS21qXY1l3wQyiRjFBl0TwtxuTiBKFrMmiGeUiPEZmLPmdpmpmOXaoreJiic/oJxayrGJpERl1W9wCnRqkjwadQ9Y7WpG9VBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lS3IR5Hq; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yaUj+OEF"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6519528f44fso3971927b3.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2024 17:56:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lS3IR5Hq"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-64f4fd64773so4703717b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2024 18:06:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721869006; x=1722473806; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721869582; x=1722474382; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YD3jeRCk+f0mBi38ATBp9QnVYA+oraXbIZZVdMF7rHg=;
-        b=yaUj+OEFzuiPOmtkitwl51CBImJ2z6v4YjfT46+lCgVWRiy5MA7ktwaxVop7ZNNKCF
-         qJiKwUiNwe0p482PTN2+kVUL+e1KTGSBj9RCIwTL20hUmBZLEXjwTrxJUQSbA8OU010i
-         ex2sfAPJJ+E7uYYja3IOQjfXcKfI4ohjzjSf/J0Kp/BuMYPff9DjtMY8Zi+Y+o98Lvhc
-         634bxnxLnoueKnnM9faoGLgrU7I+FEu2enpA//jvSRnGWOvzovigV3J2nqu9y/1ggFu3
-         a0dq4TJEMevjUfl5ocTVgWbfxTRSZwY08eP/ZHs1FuQq+A2+/x0yo3eCAH6Jp8/6L0Li
-         40zA==
+        bh=TB3Hm6XGbDPgJII4XztCnvOepjpz+iOC6LrCU/y/ZPM=;
+        b=lS3IR5HqhWfIYa++7rheKl0hzgWUpgEDVF9gecKmvuauZBqQlpkcFMqtuH3NSyJIsX
+         JsPl0P8ruIa+BBF0MKwAQWU1P8qG/d02hP07tNVf+sxTDG2n6z53OnN/GX2WYd7FA62J
+         KWosg+nCObovqeRDgzDGCQrfW4gc/evvPEj4HuT45nQyxoHOHEcatXqS8jgT7NrvlVUF
+         yncoQih/nKl/O9hBRUNu/p37oiZwotrnJY5+6zGE+yWO/+/ji69O2R0vwJmCElSMFGCE
+         SgEYqdto1VJS6CEOVebbGCYpygqzM0NDUBO5SO0YIjWXfRs0p7eNb65l7RBKCXIoWAKk
+         XIkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721869006; x=1722473806;
+        d=1e100.net; s=20230601; t=1721869582; x=1722474382;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YD3jeRCk+f0mBi38ATBp9QnVYA+oraXbIZZVdMF7rHg=;
-        b=rBEhBTZtGbSSqvM8967wPq8Xh1CeqMNDhGBKlEEglq9+WGi9kqVOg1t5oMAIeY7Jiq
-         hhoVVwQmYURYrRJx9Ex5TsCKV9fsjo+FEh5rGT2960WhxzldyASw0nAmTKPdngQvxPF0
-         e2sMIZTiO1T5QAJ/r79KzzQF3A+AYWcUaOjxM+3kZZtdE+H0DaIOzC+qtxP3vdsQpNbq
-         ufefV5tMi9Th3L9wndN7J6w7bokDLYGRbXggL567V0XFaXSHfbt7J6P0fN2/3eZVruKO
-         yhqlGdRmoIqaCQglO1cOonL+qcm/XzsuXlmVN/EJPBYXRE98tuyEMtOOe7mFlEPLMHME
-         0ylg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXe4vIZB5m8GAxUTnDUypxUoCTGag2Z3Ee/yJS5FTaA7033pZhlHmtQieW1OaydloSRcI91xrhgslPyZ9bsxqn1m9ImKZSANGIjOtMgSA3Jdk=
-X-Gm-Message-State: AOJu0YyDIkDN9Tl1qJ+48NkTZPJH48Zf4lHTQxIBXgc9abWqy3JbfeG9
-	I6UzV39wORgY90FOqZz3nv99v8mNV/lAyLk7QUUHdyNv/o86+U9L9+LWCRg9NWHvzIHs5OPn/QZ
-	hDAFoocL+YXMzQ6XVXGCrsnbyanU5vVpqM5bCKQ==
-X-Google-Smtp-Source: AGHT+IHuSuD8Y03E9T2N4n9K7jxp0O14PtidV2gQH1LBB+ld5W02YV9xlOBvrKBjjyo65ew6CM85i4knKatAz3yFl1M=
-X-Received: by 2002:a81:8245:0:b0:652:e91f:a1bc with SMTP id
- 00721157ae682-675b8908043mr3207417b3.3.1721869006269; Wed, 24 Jul 2024
- 17:56:46 -0700 (PDT)
+        bh=TB3Hm6XGbDPgJII4XztCnvOepjpz+iOC6LrCU/y/ZPM=;
+        b=DM2ox8a/cKRCakj934+w9OQsfVYEayY7j6uTn+iN9rkBagW+xZiCf8ls3R+zHqRs0q
+         wRU1Xq0il7tTkAJaGfviHEUZniBNzr/Ra0fZz0p3cAjBhyKPsHgEqCn4iLLD7IjHjYii
+         aN4nArcr6R/fqCvcHfVe0mzZFH39bG0SrxNdh6eMQYaZRLzUtFDlf/x0fk1Kv2Bs6M6C
+         oQV0GhfaJLatKvRcSa0OMM5/QkrkxikmfuEYDMDcyA+iv+obFOfn/LsYAy4Vtjh5x8my
+         ipgkOSVbJ3P2hViewTVYH8C5BcMNMPm45E2AseZj9JChNZkzFFNWbyN1/zHtm+qcZfgh
+         ofBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLpW2qWWCmtB8RVc2xxenKaIsDNbkjl2sMFDzlS5p82AWgOdhY3rUIGOiOwzQw8xLboV+uCpRPx8zx96W7GfvFBWVyB2BiC9kb/oQk+fUPtpk=
+X-Gm-Message-State: AOJu0Yysvunqiu8kSgG82sm59E97qkN/TUFhKbm6EHGFY1hmfUlh9upC
+	VlPe3bCpvaNFeKbT7Mg6EMJLsAoYT27oT1M7otxo0hTl5rghOuydt+yzAiMHUl0Rc8PCrlpTAJt
+	aVdwfwxD2y9ZpVA85TLe6Qsnu3S2cEI0J2QJy/w==
+X-Google-Smtp-Source: AGHT+IEOV7O5I0pX0ll/iJ+MoyJB63BQHQXFPzbiOz03qd8h58aQ5h7oPXvbm2HxBtsw/y3yAhYUHuLdyclrxpZ+OBY=
+X-Received: by 2002:a0d:e306:0:b0:618:2381:2404 with SMTP id
+ 00721157ae682-675b8336633mr3139137b3.44.1721869581819; Wed, 24 Jul 2024
+ 18:06:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240724153105eucas1p2f46f2128ba9ce4dc42a5d952cd816c38@eucas1p2.samsung.com>
- <CAPLW+4n6XB3fm8KQA=6_2z8ay9pDPtu-VFgAaW5imZkRH2ywkg@mail.gmail.com> <20240724153058.914693-1-m.majewski2@samsung.com>
-In-Reply-To: <20240724153058.914693-1-m.majewski2@samsung.com>
+References: <CGME20240724153125eucas1p26cded41c82d3a851a7a4d845a81a3e29@eucas1p2.samsung.com>
+ <CAPLW+4nYfVytXnpDs02QQGms59dL+=pAv7NMNPK6Ymsemmi_cw@mail.gmail.com> <20240724153118.914714-1-m.majewski2@samsung.com>
+In-Reply-To: <20240724153118.914714-1-m.majewski2@samsung.com>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 24 Jul 2024 19:56:12 -0500
-Message-ID: <CAPLW+4ktoygdOcy1_isdhsWvfnziR+wzhs8OtUwsn7E2y7HFzQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850 support
+Date: Wed, 24 Jul 2024 20:06:10 -0500
+Message-ID: <CAPLW+4mg6XG=NzpKZ-j4L_djpYgaRv3rWJh5=ny3me3bngsLxg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Add initial Exynos 850 support to the thermal driver
 To: Mateusz Majewski <m.majewski2@samsung.com>
 Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -77,74 +77,18 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Jul 24, 2024 at 10:31=E2=80=AFAM Mateusz Majewski
 <m.majewski2@samsung.com> wrote:
 >
-> > I'd suggest to group all the definitions here as such:
-> >
-> > #define REG1_OFFSET
-> > #define REG1_FIELD1_OFFSET
-> > #define REG1_FIELD2_OFFSET
-> > ...empty line...
-> > #define REG2_OFFSET
-> > #define REG2_FIELD1_OFFSET
-> > #define REG2_FIELD2_OFFSET
-> > ...etc...
-> >
-> > Or otherwise each shift/mask constant should contain its register name
-> > as a prefix, to avoid confusion. But right now it's kinda hard to
-> > understand what belongs to what :) But that's just a nitpick.
+> > Btw, I'm
+> > curious what is the reason for implementing TMU? Do you have some use
+> > cases where it's needed?
 >
-> I came up with this:
->
-> /* Exynos850 specific registers */
-> #define EXYNOS850_TMU_REG_CURRENT_TEMP0_1       0x40
-> #define EXYNOS850_TMU_REG_THD_TEMP0_RISE        0x50
-> #define EXYNOS850_TMU_REG_THD_TEMP0_FALL        0x60
-> #define EXYNOS850_TMU_TEMP_SHIFT                9
->
-> #define EXYNOS850_TMU_TRIMINFO_SHIFT            4
-> #define EXYNOS850_TMU_TRIMINFO_OFFSET(n) \
->         (EXYNOS_TMU_REG_TRIMINFO + (n) * EXYNOS850_TMU_TRIMINFO_SHIFT)
-> #define EXYNOS850_TMU_T_TRIM0_SHIFT             18
->
-> #define EXYNOS850_TMU_REG_CONTROL1              0x24
-> #define EXYNOS850_TMU_LPI_MODE_MASK             1
-> #define EXYNOS850_TMU_LPI_MODE_SHIFT            10
->
-> #define EXYNOS850_TMU_REG_COUNTER_VALUE0        0x30
-> #define EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK      0xffff
-> #define EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT     0
->
-> #define EXYNOS850_TMU_REG_COUNTER_VALUE1        0x34
-> #define EXYNOS850_TMU_CLK_SENSE_ON_MASK         0xffff
-> #define EXYNOS850_TMU_CLK_SENSE_ON_SHIFT        16
->
-> #define EXYNOS850_TMU_REG_AVG_CON               0x38
-> #define EXYNOS850_TMU_AVG_MODE_MASK             0x7
-> #define EXYNOS850_TMU_DEM_ENABLE                BIT(4)
->
-> #define EXYNOS850_TMU_REG_TRIM0                 0x3c
-> #define EXYNOS850_TMU_TRIM0_MASK                0xf
-> #define EXYNOS850_TMU_VBEI_TRIM_SHIFT           8
-> #define EXYNOS850_TMU_VREF_TRIM_SHIFT           12
-> #define EXYNOS850_TMU_BGRI_TRIM_SHIFT           20
->
-> #define EXYNOS850_TMU_TEM1051X_SENSE_VALUE      0x028a
-> #define EXYNOS850_TMU_TEM1456X_SENSE_VALUE      0x0a28
->
+> Not really AFAIK? Mostly because we have the hardware, are familiar with
+> this driver, and have some time to do this :)
 
-Looks better, thanks!
+No complaints from my side! Wish more folks were working on this
+platform :) Please let me know if I can assist you in any way. Hope in
+v2 you can account for the TMU clock I enabled in [1], and test it.
 
-> This also omits some definitions that were in v1, as they had the same
-> value and they were the same thing anyway. For instance, I dropped
-> EXYNOS850_TMU_T_BUF_VREF_SEL_MASK in favor of
-> EXYNOS_TMU_REF_VOLTAGE_MASK, and have a single EXYNOS850_TMU_TRIM0_MASK
-> instead of EXYNOS850_TMU_BGRI_TRIM_MASK, EXYNOS850_TMU_VREF_TRIM_MASK,
-> EXYNOS850_TMU_VBEI_TRIM_MASK and EXYNOS850_TMU_T_TRIM0_MASK. Also,
->
-> > Suggest using GENMASK() macro whenever possible.
->
-> This would make me have a separate mask for each of these again. Maybe
-> if this driver gets refactored in the future to use u32_get_bits() and
-> so on this would make more sense?
+Thanks!
 
-Sure, that was just a suggestion, don't have a strong opinion on that
-one. If you don't like it, feel free to skip it for now.
+[1] https://lore.kernel.org/linux-samsung-soc/20240723163311.28654-1-semen.=
+protsenko@linaro.org/
