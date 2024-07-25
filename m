@@ -1,67 +1,67 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9483D2901
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jul 2024 00:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E3E2599
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jul 2024 00:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721868184; cv=none; b=PGsJnMCFFjkeXpGYU86+xhc9BeaMqha+ehMDuOH6ZWPps+EgaJzho12Sf7M0G01tey3p/aKkiyvwXaG5SGf0FqsOXMxX5noO+3KkhVSi3FJwBqnlWC3FZSCFW2ilV4tQqdsUKVVsvVbG6cA00Nvi1RI4B31yOBeLPD+DtFcS4vw=
+	t=1721869008; cv=none; b=r3PbftCCtsD30uJNZaafoWcxqsHsFzgw4muI+h2sdvGOnSUkg4H8UiHPwB9GcvScrqvVUtq0SlrXZbMA+oA+CpM4qCkUr2ffUYR9Hmm5CkyL3qRlgqB5wskaPXMjEgC6+au6TF4HfHfEwhsB96yU722iH+y4/Aq0zpkJSdecvIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721868184; c=relaxed/simple;
-	bh=HzbEhyH6CQSKj5F4Dm9OyKDhIk+BLndEJ2P5QSXbuBc=;
+	s=arc-20240116; t=1721869008; c=relaxed/simple;
+	bh=PGxObZitrHONB8DARS3qQLkgOiWYASPux5Uxri9IFCo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zmb2FGmeSlFQbwPjTilZ+vzhYk5fOAkrSAYkBunELgU1/mtjmMbRTzVYcHdBAt/2PUmVp2l7RimWWTrSIjqweki0pKkXivc/JwyFjb0wz5di/zG0UuJZ/WOtbuKKWVY76n+9FHYK9G3R6N1qgpXRxB3XImeWxJQPhJPKwq/1EY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dd5HV44l; arc=none smtp.client-ip=209.85.128.171
+	 To:Cc:Content-Type; b=nI4AgksbEbzqcaUkVGyfbDCsxUT3Mz75cNbMflsM8E8o9T/wvDXMJjTQgbpxe5CqCusEAOBbq/esC+IHlFqmghXQB7ZicxbNF+GS341mjPw2kitmq1XuwqO+fNqW4xGAdoP65oo19xJgk5d0/1M7bc6VF8xXcclK2/qy440182I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yaUj+OEF; arc=none smtp.client-ip=209.85.128.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dd5HV44l"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-66498fd4f91so3367237b3.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2024 17:43:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yaUj+OEF"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6519528f44fso3971927b3.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2024 17:56:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721868181; x=1722472981; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721869006; x=1722473806; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B70bSWuCWRs3nWRGRO/RkaDvHlyVjKHulybl7m4sgL4=;
-        b=dd5HV44l564U7Hihb1kaYcnLYEHQTqPyb8gZu16LRQ+9n/coOFfdwypTI35FDAzclm
-         vtdvjpCWskCvekdhKk6RbEsKJbHD4CVO/EFHdCpDJkea9Qg09tWPD6BqVRsjMxYZY+B9
-         05CQ6AJojyJbO8xV/NXtiNOcoqFs3ievtZSUea9DT310aqOePOMowUQWiIy3DgmJlqh6
-         kVmNMOKREEVGqLMXtbDZogywiY28kBT6WqoTvaEA4rSQNtF5ZWarJH/P7wEq8yhCUlRa
-         5Ou7FFwIAbae5snWpjwVxyz3VVTsl9twTLchTeBhju5s7aJ9eUm+gzoKidvy/Si63K/x
-         L2DA==
+        bh=YD3jeRCk+f0mBi38ATBp9QnVYA+oraXbIZZVdMF7rHg=;
+        b=yaUj+OEFzuiPOmtkitwl51CBImJ2z6v4YjfT46+lCgVWRiy5MA7ktwaxVop7ZNNKCF
+         qJiKwUiNwe0p482PTN2+kVUL+e1KTGSBj9RCIwTL20hUmBZLEXjwTrxJUQSbA8OU010i
+         ex2sfAPJJ+E7uYYja3IOQjfXcKfI4ohjzjSf/J0Kp/BuMYPff9DjtMY8Zi+Y+o98Lvhc
+         634bxnxLnoueKnnM9faoGLgrU7I+FEu2enpA//jvSRnGWOvzovigV3J2nqu9y/1ggFu3
+         a0dq4TJEMevjUfl5ocTVgWbfxTRSZwY08eP/ZHs1FuQq+A2+/x0yo3eCAH6Jp8/6L0Li
+         40zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721868181; x=1722472981;
+        d=1e100.net; s=20230601; t=1721869006; x=1722473806;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B70bSWuCWRs3nWRGRO/RkaDvHlyVjKHulybl7m4sgL4=;
-        b=IlOnIMHZ8sz0+AOsDtkfQHQBHXuUX0I+3XKS/LvmJ9mAbwia/L2TgIGB6k0qtxLO2W
-         SGzuInJ6PrZbarFLPxnDeLIPkAZxeJnZn5KXAN18FBavIvw2wbaRw2VpS2nPUAJdfJhF
-         Nb4H/hoMtmnb3U41ss5xesonNVXxlq/sSZAD2f5uimZylkoBwiyUXrhr5QQbD3+abv6B
-         3rUu2dxoUjV7SQ+4I7Zc4g12/jVSxQS6kQQMOv36FwtJIj4GAxe/I0IdpIoYF0SIp/7u
-         cprUHj4C5dxNUUwkYiN/ysfmqoPYCr60RJNkcli5hRTbw3PCbw/gDjc1/ZX75Lun9QNh
-         3K9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVji3svykV9BxyMDfJB/TgE2TxOMZOXLWlx6UiX6c2EiZc8bkmyqYm0wMQzijgHxAJytlAek+TOmrvgTL+TmjNsHauie96deaOxCVbLXnz0eZo=
-X-Gm-Message-State: AOJu0YwY61bdf19BR3JQT1QDKcZd5WDGh+TFI8VbSkAUHjKkuxfIOeZ7
-	5As5kf6PqZoYJC4FVAlduBw14QxPjjCg3mCo/WXdMBWpN5YuLbh7ZmMkaPzv51n1iJBGeIHUyVD
-	zh+e39nr9iGKm2qPfuXZHCCWVMUVzz6Gvh4eZZA==
-X-Google-Smtp-Source: AGHT+IF7TiDuCEDbkwAje2qhS79WnbULiVERVV5UlHJQtoQ73YEMnKzJNC/LRpC29OM5Ud1uZxWCLaC1cLUPPwArDFs=
-X-Received: by 2002:a81:7c8a:0:b0:65f:7cee:43b with SMTP id
- 00721157ae682-675b4f3e950mr2941187b3.19.1721868181502; Wed, 24 Jul 2024
- 17:43:01 -0700 (PDT)
+        bh=YD3jeRCk+f0mBi38ATBp9QnVYA+oraXbIZZVdMF7rHg=;
+        b=rBEhBTZtGbSSqvM8967wPq8Xh1CeqMNDhGBKlEEglq9+WGi9kqVOg1t5oMAIeY7Jiq
+         hhoVVwQmYURYrRJx9Ex5TsCKV9fsjo+FEh5rGT2960WhxzldyASw0nAmTKPdngQvxPF0
+         e2sMIZTiO1T5QAJ/r79KzzQF3A+AYWcUaOjxM+3kZZtdE+H0DaIOzC+qtxP3vdsQpNbq
+         ufefV5tMi9Th3L9wndN7J6w7bokDLYGRbXggL567V0XFaXSHfbt7J6P0fN2/3eZVruKO
+         yhqlGdRmoIqaCQglO1cOonL+qcm/XzsuXlmVN/EJPBYXRE98tuyEMtOOe7mFlEPLMHME
+         0ylg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXe4vIZB5m8GAxUTnDUypxUoCTGag2Z3Ee/yJS5FTaA7033pZhlHmtQieW1OaydloSRcI91xrhgslPyZ9bsxqn1m9ImKZSANGIjOtMgSA3Jdk=
+X-Gm-Message-State: AOJu0YyDIkDN9Tl1qJ+48NkTZPJH48Zf4lHTQxIBXgc9abWqy3JbfeG9
+	I6UzV39wORgY90FOqZz3nv99v8mNV/lAyLk7QUUHdyNv/o86+U9L9+LWCRg9NWHvzIHs5OPn/QZ
+	hDAFoocL+YXMzQ6XVXGCrsnbyanU5vVpqM5bCKQ==
+X-Google-Smtp-Source: AGHT+IHuSuD8Y03E9T2N4n9K7jxp0O14PtidV2gQH1LBB+ld5W02YV9xlOBvrKBjjyo65ew6CM85i4knKatAz3yFl1M=
+X-Received: by 2002:a81:8245:0:b0:652:e91f:a1bc with SMTP id
+ 00721157ae682-675b8908043mr3207417b3.3.1721869006269; Wed, 24 Jul 2024
+ 17:56:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240724153056eucas1p193056deacd26701e60519fa0466269f5@eucas1p1.samsung.com>
- <CAPLW+4katjgDUS+e4+iYt+Cz_pKizLFUxqV4KGnbQ5ekAq9Mvw@mail.gmail.com> <20240724153037.914681-1-m.majewski2@samsung.com>
-In-Reply-To: <20240724153037.914681-1-m.majewski2@samsung.com>
+References: <CGME20240724153105eucas1p2f46f2128ba9ce4dc42a5d952cd816c38@eucas1p2.samsung.com>
+ <CAPLW+4n6XB3fm8KQA=6_2z8ay9pDPtu-VFgAaW5imZkRH2ywkg@mail.gmail.com> <20240724153058.914693-1-m.majewski2@samsung.com>
+In-Reply-To: <20240724153058.914693-1-m.majewski2@samsung.com>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 24 Jul 2024 19:42:50 -0500
-Message-ID: <CAPLW+4mEDJy7hXfQEzLdHuRfTAsRVuHqxh7VC_goR90DVXo3Cg@mail.gmail.com>
+Date: Wed, 24 Jul 2024 19:56:12 -0500
+Message-ID: <CAPLW+4ktoygdOcy1_isdhsWvfnziR+wzhs8OtUwsn7E2y7HFzQ@mail.gmail.com>
 Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850 support
 To: Mateusz Majewski <m.majewski2@samsung.com>
 Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
@@ -74,98 +74,77 @@ Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 10:30=E2=80=AFAM Mateusz Majewski
+On Wed, Jul 24, 2024 at 10:31=E2=80=AFAM Mateusz Majewski
 <m.majewski2@samsung.com> wrote:
 >
-> > It feels like there is an error for Exynos7 case there. Take a look at
-> > this commit:
+> > I'd suggest to group all the definitions here as such:
 > >
-> >     aef27b658b43 ("thermal: exynos: use sanitize_temp_error() in
-> > exynos7_tmu_initialize()")
+> > #define REG1_OFFSET
+> > #define REG1_FIELD1_OFFSET
+> > #define REG1_FIELD2_OFFSET
+> > ...empty line...
+> > #define REG2_OFFSET
+> > #define REG2_FIELD1_OFFSET
+> > #define REG2_FIELD2_OFFSET
+> > ...etc...
 > >
-> > I think that commit just forgets to update the shift value for Exynos7
-> > properly. This code:
-> >
-> >     data->temp_error1 =3D trim_info & tmu_temp_mask;
-> >     data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
-> >                 EXYNOS_TMU_TEMP_MASK);
-> >
-> > in case of Exynos7 becomes:
-> >
-> >     data->temp_error1 =3D trim_info & 0x1ff;    // mask =3D 9 bits
-> >     data->temp_error2 =3D (trim_info >> 8) & 0xff;
-> >
-> > it contradicts itself, because it takes 9 rightmost bits for error1,
-> > and then uses 1 of those bits for error2 too. It's obvious that if 9
-> > bits are already used for error1, then for error2 it has to be shifted
-> > by 9 bits, not 8.
-> >
-> > That's why I think your patch 2/6 is legit and useful on its own, and
-> > it's actually a good catch on your part! But the shift value has to be
-> > fixed as well (for Exynos7). It's not ideal you don't have the
-> > hardware to test it, but it just screams *bug* to me :) Also, maybe we
-> > can ask someone who has Exynos7 hardware to test it for us?
+> > Or otherwise each shift/mask constant should contain its register name
+> > as a prefix, to avoid confusion. But right now it's kinda hard to
+> > understand what belongs to what :) But that's just a nitpick.
 >
-> I thought about it for a bit and finally realized that Exynos7 only
-> supports one point trimming. That is why in that commit, the original
-> exynos7_tmu_initialize did not do anything with temp_error2. So
-> temp_error2 will never be used in Exynos7. The real "fix" I guess is to
-> only calculate temp_error2 if two point trimming is used, which is
-> possible with a very small reordering of exynos7_tmu_initialize. But
-> then the shift value will never be reachable in Exynos7 anyway. What do
-> you think about this? I feel like it's worth it to change the shift
-> value just because the code is a bit confusing anyway.
+> I came up with this:
+>
+> /* Exynos850 specific registers */
+> #define EXYNOS850_TMU_REG_CURRENT_TEMP0_1       0x40
+> #define EXYNOS850_TMU_REG_THD_TEMP0_RISE        0x50
+> #define EXYNOS850_TMU_REG_THD_TEMP0_FALL        0x60
+> #define EXYNOS850_TMU_TEMP_SHIFT                9
+>
+> #define EXYNOS850_TMU_TRIMINFO_SHIFT            4
+> #define EXYNOS850_TMU_TRIMINFO_OFFSET(n) \
+>         (EXYNOS_TMU_REG_TRIMINFO + (n) * EXYNOS850_TMU_TRIMINFO_SHIFT)
+> #define EXYNOS850_TMU_T_TRIM0_SHIFT             18
+>
+> #define EXYNOS850_TMU_REG_CONTROL1              0x24
+> #define EXYNOS850_TMU_LPI_MODE_MASK             1
+> #define EXYNOS850_TMU_LPI_MODE_SHIFT            10
+>
+> #define EXYNOS850_TMU_REG_COUNTER_VALUE0        0x30
+> #define EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK      0xffff
+> #define EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT     0
+>
+> #define EXYNOS850_TMU_REG_COUNTER_VALUE1        0x34
+> #define EXYNOS850_TMU_CLK_SENSE_ON_MASK         0xffff
+> #define EXYNOS850_TMU_CLK_SENSE_ON_SHIFT        16
+>
+> #define EXYNOS850_TMU_REG_AVG_CON               0x38
+> #define EXYNOS850_TMU_AVG_MODE_MASK             0x7
+> #define EXYNOS850_TMU_DEM_ENABLE                BIT(4)
+>
+> #define EXYNOS850_TMU_REG_TRIM0                 0x3c
+> #define EXYNOS850_TMU_TRIM0_MASK                0xf
+> #define EXYNOS850_TMU_VBEI_TRIM_SHIFT           8
+> #define EXYNOS850_TMU_VREF_TRIM_SHIFT           12
+> #define EXYNOS850_TMU_BGRI_TRIM_SHIFT           20
+>
+> #define EXYNOS850_TMU_TEM1051X_SENSE_VALUE      0x028a
+> #define EXYNOS850_TMU_TEM1456X_SENSE_VALUE      0x0a28
+>
 
-Good catch! Yes, makes total sense to me. I think it's like you said,
-would be better to do both:
+Looks better, thanks!
 
-1. For 1-point trimming architectures: don't calculate error2, to
-avoid confusion
-2. For 9-bit temp length architectures: always set the shift variable
-to 9, again, to avoid confusion and possible bugs
+> This also omits some definitions that were in v1, as they had the same
+> value and they were the same thing anyway. For instance, I dropped
+> EXYNOS850_TMU_T_BUF_VREF_SEL_MASK in favor of
+> EXYNOS_TMU_REF_VOLTAGE_MASK, and have a single EXYNOS850_TMU_TRIM0_MASK
+> instead of EXYNOS850_TMU_BGRI_TRIM_MASK, EXYNOS850_TMU_VREF_TRIM_MASK,
+> EXYNOS850_TMU_VBEI_TRIM_MASK and EXYNOS850_TMU_T_TRIM0_MASK. Also,
+>
+> > Suggest using GENMASK() macro whenever possible.
+>
+> This would make me have a separate mask for each of these again. Maybe
+> if this driver gets refactored in the future to use u32_get_bits() and
+> so on this would make more sense?
 
-As I see it, the actual reason why that confusion happened in the
-first place, is that the data is not really separated from the code in
-this driver. Right now exynos_tmu_match[] table contains SOC_ARCH_*
-constants for each compatible, and actual features for each platform
-are devised in run-time (e.g. in exynos_map_data_data() switch, and
-all other places where data->soc is checked). Because of all those
-"ifs" the code looks very non-linear, hard to read, bug prone, and may
-even reduce the performance. A better approach would be to extract all
-possible data into some const structure containing all features for
-each platform, and assign that const structure to corresponding .data
-for each compatible. Maybe also add .temp_length field containing 8 or
-9 accordingly. Having all that done, all the platform features will be
-known at compile time and collected in one place, simplifying the
-actual driver's code (most of all those ifs and switches will go
-away). One example of such approach is drivers/watchdog/s3c2410_wdt.c.
-This way the sanitize function could look something like this:
-
-8<-------------------------------------------------------------------------=
------->8
-static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info=
-)
-{
-    data->temp_error1 =3D trim_info & data->tmu_temp_mask;
-    if (!data->temp_error1 ||
-         data->temp_error1 < data->min_efuse_value  ||
-         data->temp_error1 > data->max_efuse_value)
-             data->temp_error1 =3D data->efuse_value & data->tmu_temp_mask;
-
-    if (data->cal_type =3D=3D ONE_POINT_TRIMMING)
-        return;
-
-    data->temp_error2 =3D (trim_info >> data->tmu_temp_shift) &
-data->tmu_temp_mask;
-    if (!data->temp_error2)
-        data->temp_error2 =3D (data->efuse_value >>
-data->tmu_temp_shift) & data->tmu_temp_mask;
-}
-8<-------------------------------------------------------------------------=
------->8
-
-So this data driven approach doesn't leave much space for mistakes.
-Anyways, I'm not asking you to do such rework, it's just my
-understanding on the cause of such issues.
-
-Thanks!
+Sure, that was just a suggestion, don't have a strong opinion on that
+one. If you don't like it, feel free to skip it for now.
