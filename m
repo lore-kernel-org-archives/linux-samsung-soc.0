@@ -1,61 +1,61 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A32619925A;
-	Thu, 25 Jul 2024 10:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21DE1993A3;
+	Thu, 25 Jul 2024 10:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721904053; cv=none; b=Riyh0inLWWv7yJTyr0UoIqWsySbnJYTKUEs2sni3GjIPqIyJRJcZiMjjXr0u1ShPgcXDAgUlQFxgR7hg2zkE68pdP6PheZC+bSl9yD3sPNi7qFsGbqZumEv9ngOwH1AR70dS3F2Fp90p2aAbW8jOxt/wWx/z4QRkoIjgem3h9d0=
+	t=1721904054; cv=none; b=DKaPEPyJsKLbUnDXNXG2BuCSvLLzEJwYhNTmQaHFPwGHC8+rBTyho0x4c2VmE45y7xLNNf72hsnQcZV4oUPbpI4X+cU3ocCPLoj8uqQLLEINO1GqdxBbvukruSAYZlDQwcfkhRQWoHWtYO7YFTmbBxj88loE5ali7rsKwMhalOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721904053; c=relaxed/simple;
-	bh=roUKo7CFEIQkN7A/oDyigzzuh8PFW77vS/znRSNpqcY=;
+	s=arc-20240116; t=1721904054; c=relaxed/simple;
+	bh=KWNNuFqNb/S25IX+uh0qv+bi86RJdKP7RJ0/PuyXSXs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=opxPH+OcOI6VLJfVboTE8GQdcqdOctklS9IdTj8C/iJgiGR4ek3cQK79QFim6a7PQY8+AsT2lsAPWMtEkqdb6bfRFIXfN0DSr9Qh+R65dxnSStJgcG9oR2cQ6WHqy6zP9F2u+DhLWJTCgWjI3i2qjTFXvQbArZ6bbUArU70tH0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czzxg8O6; arc=none smtp.client-ip=209.85.218.51
+	 In-Reply-To:To:Cc; b=c/qvZt++mLYUtyR5qOU8MhlnZkkFPoAt8JW4CDDqsLGMyFT6TIvGuJ84nV1I7flIpsYfFg9ZcMOzGjrblmPZ8aiSrk7cBYUst8Saqk/nXN+6wPXzbCKZjUYuH29T07m/sb5nDX/1ibmtRbuUEDNVQNLMApKOCrbmJkoYZQ0aheo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iex0OlHN; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czzxg8O6"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a81bd549eso34566966b.3;
-        Thu, 25 Jul 2024 03:40:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iex0OlHN"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so43731166b.1;
+        Thu, 25 Jul 2024 03:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721904050; x=1722508850; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721904051; x=1722508851; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SJECV00aSZJvcUel7cdkOHAoSvIhtNZxcjf7hQkKcCw=;
-        b=czzxg8O6WlboPN0FkI928eErt9Dxd9XY8aVa72yny6Hzg9vOEbXaP0mYxBan7Q2W9P
-         weYoX+L/GeOrw+CyOIFdhnDfLYNaabn01e0eRHheKGBjggV7BlgBROrtGNQEFvrkXcLB
-         8jvM0AC1N74yvHOFewUpUfG5t524DBzjCvotZMCfDKTslJYrow8ln+ePe4lFedwgYBR+
-         rw9kJNl3yLe1Ugln5KdMznGGmxbxby1g595yhSTSFjBYnFhkYTb4LcJ62SrI7pw5VqCe
-         7woz9ehpOaKXGhvc93b9kDMMikmDgggxPIfG2phkt0xUVbIGn08trRO8xLBt8uJUgt6K
-         CyXw==
+        bh=nf6VPiGgpzV4Bh7OdZ3UQlM8J+Hh+6fmABD4788z7Ds=;
+        b=iex0OlHNXQ8RXvOIevwO5HZ94lCMKHyJGsEg82tlKecLYQUpEzuq7B9ZIZCGiQMnWo
+         u4C9bLgZNt4A9dLm8BHzmHCpOI7MGoCUPTnzai16SYL8m22c2VWDxYm+pNSZwWeDax1W
+         dJCu04Fuwf0hnhDLYJavqolpZ0c96qkF/dHNI4uDwLeqcgupZ0dG18pWK6Jjn2WNRPlt
+         S1Gx8RinG3l52qOFcMdv2AqD/SLXvFBuaAqh+0MrGQcWrQAA6biIHtwg+ubFqK5WxmDK
+         CcZXX3NOq3PHHAz6ffSZsnRG0vo0a4FUUuTjGZN9uyoSvwTZgd6wYrKf2W/Ryy9hVvZW
+         1hqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721904050; x=1722508850;
+        d=1e100.net; s=20230601; t=1721904051; x=1722508851;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SJECV00aSZJvcUel7cdkOHAoSvIhtNZxcjf7hQkKcCw=;
-        b=q0YIUxgGOpnnN3aGb1WZyze+RJ5eK4DmBeOYSkclCPBjS71dRVgqv5gv0Q2FcCj1TR
-         SXGL624EU+t5IyQ17p9HU0spqMax6zFUICljK12UbzGlcx5EwPXv0fOqd056fqpf5K8+
-         gDVtiALmq+fXNjt9VjQBZUFAXPLv/jAVaBt1cFR7oISk2XeDNzLt3f0O8//cgXATqnZi
-         eO6OJE2g+OqnVgmweds32Cyb6ADM9ma7vz2iY42U3JN4xFOpjjqLdWmnpZJJSrATekG0
-         eeGshS1la5f7Itlijya6E2uaxRn25dw5c109GUnsFpUvZlqGTY5mV6fepTIrQhhJApxq
-         UYaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4rLitF5NDFfWeswXG+Pp7sT98QqYaqBBjelOgToSFZUU3pFbXYiuFod1+V0jf1+XS1wkREjY9cSRlYUq0dUZgQHnUEO+uhUv5/NuKbfUSaw7a8TzsyooidyeJZIRwQAUU7MkOJkItjA6c0hywEFdODjJWqDlY2O0T6yCqEkNXxTNUaLKIQkVEy0duww==
-X-Gm-Message-State: AOJu0Yw8LRz7IxEJgDLcfcTMQUcQK583r7XS+4MIqZwpvlAUH5GTrGIn
-	UGMVQWXR//vfE4l4dOpoFApEZiYrxn2Hzw5YBUHqrqsf2JmY0Hab
-X-Google-Smtp-Source: AGHT+IEikXKg04ARhssW/AiIZZ8R+Aawhsoiu6JlzbB2M604sKuPaZz7gj0BaIJjX9DPfSg/iy3gQg==
-X-Received: by 2002:a17:907:2da0:b0:a7a:b43e:86cf with SMTP id a640c23a62f3a-a7ac4f2ab39mr183502066b.27.1721904049824;
-        Thu, 25 Jul 2024 03:40:49 -0700 (PDT)
+        bh=nf6VPiGgpzV4Bh7OdZ3UQlM8J+Hh+6fmABD4788z7Ds=;
+        b=fEorfXwy+jlB2Y6YlybebygUPpvG2EIwgwsc2q7dlpNA0z+YahsDpho6Ow+kfgdwtj
+         MOxQ2vF+XFMaytba857PR27WpL+vhGnFdTH0HefGdf7fUSUiMvdNyg7MuWo0FPrWViGj
+         lmtWfuqxV9rL+jh9NsqeOE5T+pGjMkZXvLYXnKu5feGIB4ypXYXOeN2yyV2qgFomihhE
+         3ssHpbJOO2dnzvfk166Img6FZKiFRV/gwTFBNb+BsVxIUJcHShhjW8clM7+lbLdIeV91
+         gJG+KDaL2PoPRG66hITQystjsBWOvXuPr+6mPAPVR6MYr3x8aDqEPKasN/dEAOc/8jdj
+         RzdA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1yQSHihT5MRJS3neYSbuSwgAuRKiZIzdxVlNfjdONrWGMG7ZxdR7i38FrRT+kc0IiHCu109XHQ9I4B9RgmLDQrRj+p6jOkIhbaC/zAFOKpfcE91ra7jm573kY0dKWkZYEuCBdeBEJ7etkyqNOkCE7zLwHFSQhqpZ4WKHeUhFVCdHgV1G0SMDGFJ1upg==
+X-Gm-Message-State: AOJu0Yzjksd5z2kAKXbIKtbbzadUFnVQiIcm3zh9BjdF7eODZJtkNr//
+	TsSoHoDnImPArluLyIArbL3MGtBkV+maaSxSOwfUyWIC+FS4EepK
+X-Google-Smtp-Source: AGHT+IHFHN1eSuVeoNBYHF2aEjmsl6zUvRBRtaleADXs7+Y8AS7m0pQ7TJ12ZESC7WgwBTmMXOPAkw==
+X-Received: by 2002:a17:906:7d7:b0:a77:e55a:9e87 with SMTP id a640c23a62f3a-a7ac503afd5mr124692966b.48.1721904051139;
+        Thu, 25 Jul 2024 03:40:51 -0700 (PDT)
 Received: from tablet.my.domain (83.25.114.69.ipv4.supernova.orange.pl. [83.25.114.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm58342066b.38.2024.07.25.03.40.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm58342066b.38.2024.07.25.03.40.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 03:40:49 -0700 (PDT)
+        Thu, 25 Jul 2024 03:40:50 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Thu, 25 Jul 2024 12:40:39 +0200
-Subject: [PATCH v2 5/6] ARM: dts: samsung: exynos4212-tab3: Drop interrupt
- from WM1811 codec
+Date: Thu, 25 Jul 2024 12:40:40 +0200
+Subject: [PATCH v2 6/6] ARM: dts: samsung: exynos4212-tab3: Drop dummy mic
+ bias regulators
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-midas-audio-tab3-v2-5-dbc055c27879@gmail.com>
+Message-Id: <20240725-midas-audio-tab3-v2-6-dbc055c27879@gmail.com>
 References: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
 In-Reply-To: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -74,49 +74,75 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1008;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1778;
  i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=roUKo7CFEIQkN7A/oDyigzzuh8PFW77vS/znRSNpqcY=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmoiuoBrt7EUoGhEmOO8WCtfUWJBFniV6o+8yE6
- vbj8W7rcDmJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqIrqAAKCRCzu/ihE6BR
- aBRfEACHwk02sNzZBwZL27qnehvZU1Yr3TFZM3stZBQtbXYCvaZOQcanMkSbrEXmhE2UqoewjjL
- mt7agvyDUS5t4vKOkBebEYId0cwbRjxAGyUedp3W6Gr20KcKj9aLu0RY4MhwTIWjGWB4hCS8fzG
- dqW6VI1UbjknCPN8Jewz23CvEzfPNCX1zn4nSbn8SVnlFJMSskcHz483SayDq1bMXewIwezVVOn
- 6TnIbQ3QHhvQO3sYLTzx9yq343Fw65KIID4TQ4v8DQ9wNpTE+f1paYrmtMdgAwl6iTMr3+mnyiF
- lGO0qyVuaxsfH+yk4jqDM0LeOJJmPd7NRVKuJeIDzDxe8EgznXNmSQmX5mMwTa11X9nctd6Sfvs
- hZFniRjJXTkGWFct22DAGwQs5D6imFAESRSzgCYLXZQlVnb/68OwBPeQpTLSjxD/FrMnyYjPcry
- T+Z3g8dqOIJ4VXkZs25RNUjioKEv/LlBasIbtzjH9LECs7s64uhuZTwISccP9jRSRpkCbiB5v6a
- OSSZ1eR+LjRVUznq/kFpAMG+3Di1ugIlj/1br8t8fNd1gDQN9PeS2B0mHKkXx/SSl1pVa8z82Xl
- Q+5b5Ia1IHl3AhxVLLMYr1v5dnxih6uwXbVkTCMk3mty2Ax8JKuk4TnPQvM3gIrntdLhraH/0h9
- w6jy4bw3fPm9gew==
+ bh=KWNNuFqNb/S25IX+uh0qv+bi86RJdKP7RJ0/PuyXSXs=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmoiuo73T/jCYrP6aHYU23aYR987wIqfIeBMOOC
+ hJQMnOR0w+JAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqIrqAAKCRCzu/ihE6BR
+ aK5rD/9YmUzevnGSNsQKWo7b6UYIap/vF5Ks+XvjbkRyABXZjCQqmDJNf4tZ1hk8z5HG2CJlAsp
+ 4wqetvaNMjlckh1dvtY/5ow7vQ4t0l/FhPQomwabSjSQJ2zoHldeMcI5bpIr+B4yQUkpeh0QgeR
+ f1R+ZvcV3OFkBcFz4UQQ7h18yvW7LATZfxfi2LhNQVx9tl9M3fV1smoaJs1mOijiuMxu5X4TVYs
+ ulA3Hnuc4bNPzpKk/Kt0FrgG8+Cd8qL+Vb3mPK0E5I+zkMdTzj8YsknziktUnXA57w/pvfLEELY
+ sxTIQj6o2SptMltnODm54rcL3pGE/vhFmczWypdGORSSd6wMFBULknd15yqWC1jsf6Mj10czEfk
+ WTjGLe0F2cR4JRIsv9461y6ELZf4D++V8Gii7zggeGdYjp2Av2Mu95QZjwlyhDFoRylmR5HofuF
+ sTGBN24AiXzxR711sm3AeBXaA3gQwmsMBMIUXXtN4u0FtBbiaupV7Cljsm6Iq+Br/duy5fzG02s
+ 2gHszWlqzdzqV3rF5+hHLIr6kgNVS8TIu2OyKQ93sS4pzotT32zA8aQ8BTocD4QvbknTnjDYsUr
+ V+1DVS5TxV7Yr44a4XW+ZU12UBnVWefTyhzc24V9SvPuGo+/zWmIMJEWwo+a7IhDwovRyHhAi6R
+ 0Kn8Id6ffUiAvPw==
 X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
  fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-This was initially copied from the Midas DTSI, but there is no
-proof that the same interrupt is also used on the Tab 3. The pin
-listed as the interrupt here is GPIO_HDMI_CEC on the Midas,
-but for the Tab 3 it is the headset button GPIO - GPIO_EAR_SEND_END.
-
-Drop the interrupt, since there is no proof that it is used.
+Add the samsung,tab3-audio compatible that makes mic bias regulators
+non-required, and drop the dummy main/sub mic bias regulators that
+don't exist in hardware.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+Changes in v2:
+- Rename earmic bias reg node to voltage-regulator-4
+---
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
 diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 5106bb752b7d..70e3091062f9 100644
+index 70e3091062f9..553ddc3d42da 100644
 --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
 +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -540,8 +540,6 @@ wm1811: audio-codec@1a {
- 		clock-names = "MCLK1", "MCLK2";
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--		interrupt-parent = <&gpx3>;
--		interrupts = <6 IRQ_TYPE_LEVEL_HIGH>;
+@@ -286,21 +286,7 @@ display_3v3_supply: voltage-regulator-3 {
+ 		enable-active-high;
+ 	};
  
- 		gpio-controller;
- 		#gpio-cells = <2>;
+-	mic_bias_reg: voltage-regulator-4 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "MICBIAS_LDO_2.8V";
+-		regulator-min-microvolt = <2800000>;
+-		regulator-max-microvolt = <2800000>;
+-	};
+-
+-	submic_bias_reg: voltage-regulator-5 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "SUB_MICBIAS_LDO_2.8V";
+-		regulator-min-microvolt = <2800000>;
+-		regulator-max-microvolt = <2800000>;
+-	};
+-
+-	earmic_bias_reg: voltage-regulator-6 {
++	earmic_bias_reg: voltage-regulator-4 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "EAR_MICBIAS_LDO_2.8V";
+ 		regulator-min-microvolt = <2800000>;
+@@ -310,10 +296,8 @@ earmic_bias_reg: voltage-regulator-6 {
+ 	};
+ 
+ 	sound: sound {
+-		compatible = "samsung,midas-audio";
++		compatible = "samsung,tab3-audio", "samsung,midas-audio";
+ 		model = "TAB3";
+-		mic-bias-supply = <&mic_bias_reg>;
+-		submic-bias-supply = <&submic_bias_reg>;
+ 
+ 		lineout-sel-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
+ 
 
 -- 
 2.45.2
