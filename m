@@ -1,61 +1,61 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74D51990CD;
-	Thu, 25 Jul 2024 10:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520FE1991B4;
+	Thu, 25 Jul 2024 10:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721904048; cv=none; b=Hbjy1ru7WWZrj5ToadUIhhTq18mvYcDR3FUABqz7bJDrNGn+egbv//ejosvBFgOCf2NYTcgOzOXBncDhttqypzWYetO8bbgsKThR8cTCfxyL/gNgE546URor0wBnsKr+/MLs43+S5tk0ad5zwNSM1r6ph5RFoT8KabtHSXF9WDQ=
+	t=1721904050; cv=none; b=FgbovF/ecOlnG4jk+mQAU8b2AdomaegcSREDloNv9UMVsBZNB0rIjebRrcIh9QC8HC2NJKmRsfkLDxD/QnqfEI/oIt34yVq2LCczSjPd5tgomwMQZ5GzvivZ++fYgFr3S8KMPv5TJKl3tpfu4SHjOXHpfbGOp/HVvftokeF5d7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721904048; c=relaxed/simple;
-	bh=/IfLGEvhoqbrXs/mPhWyyuqb+s7Bk3eCuOnYTVRjQvM=;
+	s=arc-20240116; t=1721904050; c=relaxed/simple;
+	bh=GMcA/CSZ2AnnqzHK3pWs0min7yshm+f3JahQWfU+ihQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t8ie35GIFtuCEF1Sc1toiXgZ3ozJL3zQ1UgLkFxcsd/gC4No3T/KKevfqbLTnrVkk3hHviCZSSIom9mP1BDqcaJiEYiWUm8pe6kEIZB+H770ZloTR7C2qIHBOzJkK4LAJ9pUQUqPSFXgWDcCfwHiQeswRdtdrT0cCvahN/k9Qf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IP5PgDgs; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:To:Cc; b=P3qD/I9XPxCrAD9CJb+lDTrrKrimEaqxrNTzGEY/GMCDRX4CYGFwF9KW7TA0OPEJ4Wub2hy9Nt9L/myxtL/qDhVv2DMuweDDYbFwFacDO5vqGktJufCldOZquJCX2DvMBl7pJnXLRYrxa98rT5n0ETrY9TmVopTQRyRy0HPUjf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hc24KfH+; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IP5PgDgs"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a3458bf989so922118a12.0;
-        Thu, 25 Jul 2024 03:40:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hc24KfH+"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso39608266b.0;
+        Thu, 25 Jul 2024 03:40:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721904045; x=1722508845; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721904046; x=1722508846; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/BT1ETjGdxc1ofYe6xfqubr4qkHhr85Rz6D2FNj+D4g=;
-        b=IP5PgDgsAcJXAu9ViIrikJ+qXJGyxK66b8DKFHGeskW98TO6ok4GUxDFu6rfkz77F8
-         LqbfernDhpLxiTJHR0MhRwbII1DMn2IndELpw8N0Gre3JfGhSlimwxByu2bwkHaip3gC
-         zo0qzZCDeqYHEKdBPsbj0ClbsYNA4fh/sDJ1Kr+HUqQFV1Gm7lagwBBwCO6tzFW78TT7
-         oDiUhD57JRoX97NNUZEazDx2bL7EF4QnzMk6qEIuAvQm5tsF18uXhDV94pO3SVd3dNQ7
-         CnFuzt7y5Ml8AKYo9/zAfpymH7RNI4PIQYvJnwoabSiNmK/tpGYi0qWEb2QrC2XE/mYO
-         MeKA==
+        bh=6jgZAm73Hf/bhFqyp8PoWdCzqWnz2LzHMQrAjO6S6u8=;
+        b=Hc24KfH+v0Xoj1Gnl9OipeVHrAycfeJHLF7paFZdfxdFVlD5rlLbAAC8sJilMnUAhH
+         qTK2XvQdeZ0DR6O931G/OK+hS2OhtBBwTSR9PUYLhjzxw0C+Gcs9+foPuSf/IdB4/5UM
+         OugCmxSoEpIYLzZjb6aZ/PRov3kGu7vQz8WRBsMj5cP7vt4KANTmnJsBYHENlqpETAet
+         nLf/rXFYKIoGcmn5Gari6Z77n+XjCRxQN4jPtmbV9WmwjSpl1O9r/jWy1MK8QhiqzXNe
+         bAWO80UKAi8hkUY0e3mKGg9F70smmoveDWZikzVSvXEGOnnpBRrcEiY5Usr7VN129Z39
+         Jabw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721904045; x=1722508845;
+        d=1e100.net; s=20230601; t=1721904046; x=1722508846;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/BT1ETjGdxc1ofYe6xfqubr4qkHhr85Rz6D2FNj+D4g=;
-        b=o1anXAeDKz8YrAfGIq4kjRt8H2JTH/Pq3NA8+WH06HuNmUmsWVn7K//6a2WN9OoUzk
-         wTo0cfhhsLMtDxDEl9pycF51XH05asrEkFRokUujq0FxY+mTCkfLTVQGQRhOGVnvfS+9
-         7bd4JJQI9oX6EA7zTud+6k/vNvmWVOJNFYOFeafyM/dJsBo7+x2NuLwXr5+28UWaf8up
-         wim8+ofw3Dl5QINlmi2RjfzayKG84mpgQ0/1zq89hw7/GGqOKQV/0T6O1gOfFjwxSQtM
-         4e91v3ZHqihxghsCIw3jHuOkhzNXNQuDvnqGlK7YalKiK9DgZQzllW4d7OIAV6ZUgl/L
-         ZU2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYPg41QJAkCE5lZnr0JF35LnwPfUaymMchrlivFazYORZ3EpUVMo/obx81nzyM/eKz4GkG2eRzZu0yDtAqwDtBpYhs+5kjyqB5iWa45paNQ18jgJMIZN88+CVmoxudzZKjbtXFhKmWMR6e/NI63fqEdoSCF22ZBM9afdPbfhrgsI2d0C48K+4cH6LDXA==
-X-Gm-Message-State: AOJu0YyILy6ED0PuamO/o/SavQC7sAM+iCdjPR3jIiOTFfeC1Mu462+7
-	YJJkhy8yJ20etUmWVHfyx8Ill2QFpnnuBmHiy/XXsq2oIOrtGvYY
-X-Google-Smtp-Source: AGHT+IGV5STZLw87HTmp51t5/YRKLVMWBZVnchanMigxTA6+DYmh2GOpfpud+QG6bDPjnYECDGQPhw==
-X-Received: by 2002:a17:907:3fa4:b0:a7a:9144:e256 with SMTP id a640c23a62f3a-a7ac4d7bf13mr189732966b.6.1721904044993;
-        Thu, 25 Jul 2024 03:40:44 -0700 (PDT)
+        bh=6jgZAm73Hf/bhFqyp8PoWdCzqWnz2LzHMQrAjO6S6u8=;
+        b=qJUDuK57mEuZgV0Xls47tZMuQ7AdxQ9eND8rf/5S7cDOZCY3k3aA5rW8Pilu6cEymm
+         AOSBiVhcej8C5mGIKGnstgX5Zx5Cd4bGx5lbGCJS2y3efzgDgPJ5rR5D9dc3BmoP3Fx6
+         Ty7Q1FMB8TxAGRXolFACQMI8+g02EqL7aQOmp99KTWBr2AUcmSv9Gw/eLAUo7H72L8BC
+         Ng1Pmk5PTcTXrgzp/E3SAKR6LNyNKXa8ALO4a+3VKydvwCf/iKuu6a3+7162ELYC/HFZ
+         msgdn+x1LEs79kOgtZy/41fjjk+TvS0dXn/NCfadP/pDRldoZPMWrCZ/BJawq03EnUOQ
+         jWNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtlAaESSgzqYsfUgHOUPLlpGJnJxXL+cZfDQ1ivoBc0xy8E3MNPPs/xwDm5+oN5lns6SHaMKJxjyM3okEav1leCdLJtFqGon43HbDjCO+fxJZxyc4E9zHXYbcd7KLBz6+bB8xJGqxVGb5uFdUEOm2JP7xB/q+6nsACVmZ31YhJKZsubCJhlKQzzligAw==
+X-Gm-Message-State: AOJu0Yx/i1UQJNXKQymkwueHbbsmq5FI+cUpRu68zsnZdVtyNNgMF0dh
+	7FJ6jyC35gvRsy5LKzH+UG/KJ4Q1PSSm8NdVCbJ/GzFe5Ni8bEqz
+X-Google-Smtp-Source: AGHT+IGovJSsZSFuA3Rq17j+OMkIEqicFAzp2LhAj97sWOxPvJ5mqgOjmYbaykRF1W4HiOM0VjAsiA==
+X-Received: by 2002:a17:907:318a:b0:a7a:a33e:47b5 with SMTP id a640c23a62f3a-a7acb9b7230mr120125566b.69.1721904046538;
+        Thu, 25 Jul 2024 03:40:46 -0700 (PDT)
 Received: from tablet.my.domain (83.25.114.69.ipv4.supernova.orange.pl. [83.25.114.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm58342066b.38.2024.07.25.03.40.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm58342066b.38.2024.07.25.03.40.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 03:40:44 -0700 (PDT)
+        Thu, 25 Jul 2024 03:40:46 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Thu, 25 Jul 2024 12:40:36 +0200
-Subject: [PATCH v2 2/6] ASoC: dt-bindings: midas-audio: Add separate
- compatible for tab3 audio
+Date: Thu, 25 Jul 2024 12:40:37 +0200
+Subject: [PATCH v2 3/6] ARM: dts: samsung: exynos4212-tab3: Fix headset
+ mic, add jack detection
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240725-midas-audio-tab3-v2-2-dbc055c27879@gmail.com>
+Message-Id: <20240725-midas-audio-tab3-v2-3-dbc055c27879@gmail.com>
 References: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
 In-Reply-To: <20240725-midas-audio-tab3-v2-0-dbc055c27879@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -72,94 +72,85 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1905;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1894;
  i=aweber.kernel@gmail.com; h=from:subject:message-id;
- bh=/IfLGEvhoqbrXs/mPhWyyuqb+s7Bk3eCuOnYTVRjQvM=;
- b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmoiuoO0ZE2wk3i+nYkt8Ex24aMWi3VFBpdFQCH
- A9vUABb0DeJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqIrqAAKCRCzu/ihE6BR
- aPM3D/9DuGk/DVvmkKZFs7V6thby1GbdhHaTN4tv22CBr/GctAXE5hXXS4sc9yxw7OIcIwgmTEB
- yKHS5JGvJ1ie3vKM2ATVt0J9RKyJLeoPc0lftseWw958rmbpKHbOa+Vec6bWIOOS31bQ244fTrj
- Xo4qY1Q2cuFJEzta6dILYzdcs66/jU3hafxGNWLfBkp6flE+BsSwgiPK8X/MJqPLvdRRmpRDxi5
- j0gLZieogu48aRVKlxIRBXiHzSXCaCb68q/4iY0i9BVN+QimdKkJlUxjF2kRhlmr4eyzEYKucnb
- BvjIKjSr3Q+TeCV0bw+37EPiyrxGshzRLCKj/NQDa+dFVq2rwo574RcL2S/mZQidVVg3D8/U/P7
- LImrSvFMCG+ZrKxAc+VyD+UJSjYAXEHGPK9Y3w2Sb8/R0ZetrtE+tck3ai2NP8WZVjNS13+DMPa
- qUI6bSu3Vo0EyrrjTVYykgvxXXVYq9N3T7c1eb81Ua/ziGamV4o7J3jvbyHsrYvmnqId8tL5o/5
- 77n0K9uvx9z/vGq2QoiMgYqJrKxRmtXeQ6KtqrFOGcltePtKnQcWOHvoP5yR8ZF0vcJnuILm7wF
- WPeRf5rDc0PUK67nj8l6PeC/wvsnGoPlxUbqH3wuKWp2t4FFBYq/UmriyehsjGcFmbG1+7zC9hV
- tdHhEHpieUYWpLw==
+ bh=GMcA/CSZ2AnnqzHK3pWs0min7yshm+f3JahQWfU+ihQ=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmoiuoa1y6zAZghDGX5n5/kjHDjOkdleE4d6VW9
+ MNmqhpGxGmJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqIrqAAKCRCzu/ihE6BR
+ aOxRD/9hAoKjY6o689I2hWMx51UiaLiHANSV1D4QZtTyRJEgFD3qpVpxqD3AcUx/801XjwvsIXq
+ 00/9B/gR3i3SiSwK+hduFutC2wb0bdxodLGGcMWIfnNzjGFTN/KCuSe+sZoe25Rh/cFvsWNLWX1
+ +gv4KezzrPiIDvI3R4AwXIHnwkZ+gpNxQQyMuJNP6wNjh8H1Hs9ew0778etASf2itDcj8eME2VQ
+ jmHoDRs21JiN4YrihRB55REl8QlLqK3FqJ/LbtZmKFoW33QcUY7FPID08AGGV4Q+BIjmclQAw1E
+ /S7tqFGiZ7gI3JGjEs3USUCZwzBtA8cRSMFq+H3pZU2W5IFagHV9q9nwWJCB9TDxIk9AKgNv8qx
+ wBmMqnEgK+8I42k/KdjbIz0CU5QNzbVEb6szGD6UCKl0LzP6iKcVPMTUYVAI9q/itAEAaxwFNEj
+ WC1fA7FWvqJJe5VJ2B1NHO+9kMS1LfwK1gAcXDjru8InSBWqEMuu8cyexm66GWpVrli3pVrwyfk
+ 5L/MZv0FT+fH3/8PuR6I0HhDS9X7WiZFJczmCV4vEwbu7DvIO1ejuqx08dZ0AsJZJVnZJmWaWJe
+ G4dtFJAU2IJtZrYf7cMQdjr05HeZYeGlASY9BDVgD5NHn7MkrJaiRNCtFM9/86aHJCKPBhu7njI
+ CyMvpywuh5Iiw2Q==
 X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
  fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-Unlike the Midas, the Galaxy Tab 3 8.0 does not have a main/sub mic
-bias regulator, but it does have a separate headset mic bias regulator.
+Set up headset mic bias regulator and add the necessary properties to
+the samsung,midas-audio node to allow for headset jack detection.
 
-Add a new compatible for the Tab 3's audio and declare required
-regulators separately based on the provided compatible.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- .../bindings/sound/samsung,midas-audio.yaml        | 30 +++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+Changes in v2:
+- Move headset-mic-bias-supply property next to other headset properties
+---
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-index 5483421a6fd3..cb6105a6b216 100644
---- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-+++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-@@ -11,7 +11,11 @@ maintainers:
+diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+index 9bc05961577d..bbafd4ece5f7 100644
+--- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
++++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+@@ -300,12 +300,31 @@ submic_bias_reg: voltage-regulator-5 {
+ 		regulator-max-microvolt = <2800000>;
+ 	};
  
- properties:
-   compatible:
--    const: samsung,midas-audio
-+    oneOf:
-+      - const: samsung,midas-audio
-+      - items:
-+          - const: samsung,tab3-audio
-+          - const: samsung,midas-audio
- 
-   cpu:
-     type: object
-@@ -96,8 +100,6 @@ required:
-   - cpu
-   - codec
-   - audio-routing
--  - mic-bias-supply
--  - submic-bias-supply
- 
- allOf:
-   - $ref: sound-card-common.yaml#
-@@ -125,6 +127,28 @@ allOf:
-       required:
-         - samsung,headset-button-threshold-microvolt
- 
-+  - if:
-+      properties:
-+        compatible:
-+          const: samsung,midas-audio
++	earmic_bias_reg: voltage-regulator-6 {
++		compatible = "regulator-fixed";
++		regulator-name = "EAR_MICBIAS_LDO_2.8V";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpm0 0 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
 +
-+    then:
-+      required:
-+        - mic-bias-supply
-+        - submic-bias-supply
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,tab3-audio
-+
-+    then:
-+      required:
-+        - headset-mic-bias-supply
-+        - headset-detect-gpios
-+        - headset-key-gpios
-+
- unevaluatedProperties: false
+ 	sound: sound {
+ 		compatible = "samsung,midas-audio";
+ 		model = "TAB3";
+ 		mic-bias-supply = <&mic_bias_reg>;
+ 		submic-bias-supply = <&submic_bias_reg>;
  
- examples:
++		lineout-sel-gpios = <&gpj1 2 GPIO_ACTIVE_HIGH>;
++
++		headset-mic-bias-supply = <&earmic_bias_reg>;
++		headset-detect-gpios = <&gpx0 4 GPIO_ACTIVE_LOW>;
++		headset-key-gpios = <&gpx3 6 GPIO_ACTIVE_LOW>;
++		samsung,headset-4pole-threshold-microvolt = <710 2000>;
++		samsung,headset-button-threshold-microvolt = <0 130 260>;
++		io-channel-names = "headset-detect";
++		io-channels = <&adc 0>;
++
+ 		audio-routing = "HP", "HPOUT1L",
+ 				"HP", "HPOUT1R",
+ 
+@@ -351,6 +370,11 @@ wlan_pwrseq: sdhci3-pwrseq {
+ 	};
+ };
+ 
++&adc {
++	vdd-supply = <&ldo3_reg>;
++	status = "okay";
++};
++
+ &bus_acp {
+ 	devfreq = <&bus_dmc>;
+ 	status = "okay";
 
 -- 
 2.45.2
