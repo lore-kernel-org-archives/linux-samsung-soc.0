@@ -1,179 +1,217 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154DE168C7
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 15:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2BF17C223
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 16:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722007039; cv=none; b=B2mkj/zHuk6DV/JvAtrxcYfN596q+9WlH+nWZ5rU33V5mgCXckwZWQWVwSx7ubefaqJkd7G2OuBox4wp1xWicGLe4LmYAs/iYqgB/6vl97O1M9IQSkWfetYdcbcg2WRoU6Cj/eTcYCalEpfZt+L9V6GsXWy9DL7tIroTTaYWQLw=
+	t=1722010122; cv=none; b=MximJ5mdZJJMDFaIEBEaYSnXO96N31UHWzpkC08JUCtMv8Dl9qyGU3v2X67j+AAedVal6couCn0xLCV9BcpnD7ukLk0mfpyVJooJrNOHStmYmsRlNxeOi246NjXzqOVgsQZjm39r9lf1JZEB26TY1HguY5eV2tT5qDp+stWNgLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722007039; c=relaxed/simple;
-	bh=Kh2EmKRnIzKsX1QsBp0T4Gqr6Uw5Lr9ktVvyTCM4dyo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ND3jL5ewIqCMQ54DbxEPcqudMGF5V58O64j0N2JkR1uAVKLG8UA85DRNlV8iVk03nT0TfTCc9Xw6unXRXHiSU6Pzitq+6KBSTJbbouLRyzFVUgOWF4LHjGj7m8GtVEduyFKUjhmcClyj2qtG8UDbG4cuyTZ+9KFzcmUtzdhJ3Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VApsODoC; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722010122; c=relaxed/simple;
+	bh=skBAE2wesYoy2bVElzMmdUPRGrWUP3sR6xLdiakitaw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=qNStqIUzCiinvGeBxEoa0TuJbUjPv4k6yPY8ZcvXnfke0nqmD81rDFMPMdDgc6kXM7jZQ9RrtYbM22CVIxumRlPxxcqTaTVdP1zP6NX1TqO+WWwrIfVMetoqL+QnWc/TDDQw/TJzrj34dI9SCc/0VErQpdgnG8COXXArMQv0VUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Zu1C/Ckc; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VApsODoC"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-427b1d4da32so18396165e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 08:17:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722007036; x=1722611836; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TX38zlb9MOxIJNDEgb9YWH7GVDZ/sgMkCnZQXoDOuOM=;
-        b=VApsODoC6OQAp1GWBq8hGDGcEaRJy0UdhHMAirZn0wvt+zJBQ7F4JnXRF02PvOQ+M/
-         HqEU6syYURrWIMQM1+sQ/bwWyGXFdIEAC+vfP897w8pJvULAA8T5osNDjzUsnopco5kL
-         iqzg0kkuOKSzeHcPh5CoeWGI2eiwXi59w5vqr0dLmbOja3NxaM/KxyYLkW4XxksvFBEd
-         rkvGPovafgOILOLJNvrhQY8scTnch6M0iSc5NPJd5GHIDshhE6NB87zX8sAq1qFvIqB+
-         MZZOcdIOsDac+U4fiosQh44Ss8NLbhF8ybbZt0gwCSlGI5C+Hzd5x2DGNIUCOVVwK1Va
-         KpXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722007036; x=1722611836;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TX38zlb9MOxIJNDEgb9YWH7GVDZ/sgMkCnZQXoDOuOM=;
-        b=WorSzglT5oaSlhyqKQDruEVlTWvysX2nkRTX4YOeuaIzbzBu4VX0OzP+qz+lRk1UZb
-         MIJWYa3gv97iKvzpfdoj4qNlX7Wi0EzUormIRwoE/vJgMTHJxD9UWpzGxGWZ+GsVuPNR
-         BcjFZ6yUuKxy3KeWlfTRpi4OZ+a2uYjJgc62OLKSfJJno/pHzqEr8TQbjuyRDpMDExW5
-         bIX2AXSc0rSq10hOj+eUhxHZHo+JUQ33qTS8cDcZi8uHxi4WFDcDW+zz/oQmHDkM3JbO
-         Niga5J/HR4LPxqrygU4uyU1Jq4IVwgU1gcM23ab9tjdcyoR9orV3NGcJC4sJhfD1eapX
-         K5kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCRs9aPw13J6xwogVDquiXeh6dVOONwpgqvl7U+Pcji9p5b8wtSjTPZtjskaKVhorDJY62sk0Shc7aX+n/wf4GibJZ+LJvN023UbllToSchU0=
-X-Gm-Message-State: AOJu0Yw2cvIJpG2lRITC/+wjfAnM+S19gaUVHesERda38pJL/m6+ldnY
-	lx4B04MA3lAHXV4bhTQ9Z/CBL0jUmpYF1B6zKe+Mys/q0U2HjR1RJrQHJga8HgE=
-X-Google-Smtp-Source: AGHT+IEiSU2LED1cE3t9Ou/VFGjstbNy6SUV5w3usiuVDiv0mt877k6eAW3qFGh9ZiTt/EzcGcEUCg==
-X-Received: by 2002:a5d:61d0:0:b0:36b:33eb:f0d6 with SMTP id ffacd0b85a97d-36b33ebf24cmr4630428f8f.2.1722007036220;
-        Fri, 26 Jul 2024 08:17:16 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9576sm5528350f8f.31.2024.07.26.08.17.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 08:17:15 -0700 (PDT)
-Message-ID: <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
-Date: Fri, 26 Jul 2024 17:17:14 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Zu1C/Ckc"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240726160831epoutp03ccee5d3570ff48fa3c11bbf7e3511f2a~lzxKxIzWH0340303403epoutp03b
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 16:08:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240726160831epoutp03ccee5d3570ff48fa3c11bbf7e3511f2a~lzxKxIzWH0340303403epoutp03b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722010111;
+	bh=JEMlsGv2heq2/bCUd9HGf0eeVSnui/IoDxccYtogt7M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Zu1C/CkcYI/OS4gYEYW/NY7ZkGUY1LAHnZmiqqLRlkvW06Nv7xro1PDJ4NCzs5usr
+	 AreQDUBqetxZYBEyC1TpQqDSKxojo3hc2bbyqRSzkCyPtA9ghOTmP6tAsDK57VH6sJ
+	 5hwsfzZ53uVI6ZxO/yh7btxsSoi7xQ5zzJR0Xvu0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240726160831epcas5p323b67f0669d0e79f66dbf0385f7788f2~lzxKXq2Br0259002590epcas5p3L;
+	Fri, 26 Jul 2024 16:08:31 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WVt315Wzsz4x9Pp; Fri, 26 Jul
+	2024 16:08:29 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E5.CD.08855.DF9C3A66; Sat, 27 Jul 2024 01:08:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240726160828epcas5p4044c63bbbf1a07881fbfdf4994d2d2bc~lzxH14fFp0113301133epcas5p4I;
+	Fri, 26 Jul 2024 16:08:28 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240726160828epsmtrp2634c1f7cece6b6f6a0ed69c225688d2a~lzxH0_vI41215412154epsmtrp2z;
+	Fri, 26 Jul 2024 16:08:28 +0000 (GMT)
+X-AuditID: b6c32a44-15fb870000002297-05-66a3c9fd24e3
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2F.7D.19367.CF9C3A66; Sat, 27 Jul 2024 01:08:28 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240726160826epsmtip25a1e12f192d97b1027ac1397cf36cdac~lzxF6oDGK0750807508epsmtip2Q;
+	Fri, 26 Jul 2024 16:08:26 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Sam
+ Protsenko'" <semen.protsenko@linaro.org>
+Cc: "'Peter Griffin'" <peter.griffin@linaro.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, "'Chanwoo	Choi'" <cw00.choi@samsung.com>,
+	"'Marek Szyprowski'" <m.szyprowski@samsung.com>, "'Peter Griffin'"
+	<peter.griffin@linaro.org>, "'Jaewon Kim'" <jaewon02.kim@samsung.com>,
+	"'Mateusz Majewski'" <m.majewski2@samsung.com>, "'Henrik Grimler'"
+	<henrik@grimler.se>, "'David Virag'" <virag.david003@gmail.com>, "'Artur
+ Weber'" <aweber.kernel@gmail.com>, "'Raymond Hackley'"
+	<raymondhackley@protonmail.com>
+In-Reply-To: <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
+Subject: RE: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
+Date: Fri, 26 Jul 2024 21:38:24 +0530
+Message-ID: <00de01dadf76$0d25ffa0$2771fee0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Jaewon Kim <jaewon02.kim@samsung.com>,
- Mateusz Majewski <m.majewski2@samsung.com>,
- Henrik Grimler <henrik@grimler.se>, David Virag <virag.david003@gmail.com>,
- Artur Weber <aweber.kernel@gmail.com>,
- Raymond Hackley <raymondhackley@protonmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIxRuuGU4BfprLt44pSxzrfoREBGwGQlGJMAb8/M4UBon8187E0yI0Q
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmhu7fk4vTDOaeVbH42/uP3eL6l+es
+	Fm+X7GK02NFwhNVi7+ut7BabHl9jtbi8aw6bxYzz+5gsJh6bzGyx9shddosNM/6xWJzZeZzN
+	4nkfUOL4+8eMDnweO2fdZfc4euUeq8eda3vYPDYvqffoadvE5NG3ZRWjx+dNcgHsUdk2GamJ
+	KalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUAnKymUJeaUAoUC
+	EouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOyMx53bmYs
+	mClVceL9aZYGxgeiXYwcHBICJhLT/th3MXJxCAnsZpQ4dvI0E4TziVFi5YU+Zjin9d8WoAwn
+	WMfz0w+gEjsZJdbvPcIK4bxglPjw8xgLSBWbgK7EjsVtbCC2iECexPSbm1lAipgFjrJI9H/6
+	ywyS4BSwk3j4+QxYkbCAq8TqHasZQWwWAVWJ7zc+ADWwc/AKWEpMdwaJ8goISpyc+QRsPLOA
+	tsSyha+ZIQ5SkPj5dBkrxCo3icYpExkhasQlXh49wg6yVkLgCofEhO0XoBpcJFYf/88OYQtL
+	vDq+BcqWkvj8bi8bhJ0tcfziLCi7QqK79SNUjb3Ezkc3WUBhxyygKbF+lz7ELj6J3t9PmCBB
+	yivR0SYEUa0q0fzuKguELS0xsbubFcL2kFj1Yy3zBEbFWUg+m4Xks1lIPpiFsGwBI8sqRsnU
+	guLc9NRk0wLDvNRyeHQn5+duYgSnZy2XHYw35v/TO8TIxMF4iFGCg1lJhHfZ/YVpQrwpiZVV
+	qUX58UWlOanFhxhNgYE9kVlKNDkfmCHySuINTSwNTMzMzEwsjc0MlcR5X7fOTRESSE8sSc1O
+	TS1ILYLpY+LglGpgWlm1fsXB2T98i3ibc+f2xd1IP6X5+/326xbTb81xrbGUDX/xd36B+M5F
+	4vVy05VvLnwlf0to4r6sNa8rvir5931UrDnruDBphcZZn69eke/V/c5/S99gX2b727lwT+Rj
+	B8tLZoZcZ/7vWjQ/aPvJVZ+WWrq+8vI/4B/kuSf/yrTvO3WcDlwoUDipOY07K9PwUm703Mfe
+	rnfmsU31WeGhIJqixRWzzfFP3xndG9Vbmlbtrtjwba7I+diu7uTaerVpBpWbzpx+GHo5+fvB
+	9qmf9n3nD3/p8tP0guPZur8z639J3BFKyDgzycvQPD8y5Pu/P+LV1uum+Owq7xPwv/DsC0fT
+	6l8ySeqrizgqBTW9tJVYijMSDbWYi4oTAfpCC1lYBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsWy7bCSvO6fk4vTDH7NkLX42/uP3eL6l+es
+	Fm+X7GK02NFwhNVi7+ut7BabHl9jtbi8aw6bxYzz+5gsJh6bzGyx9shddosNM/6xWJzZeZzN
+	4nkfUOL4+8eMDnweO2fdZfc4euUeq8eda3vYPDYvqffoadvE5NG3ZRWjx+dNcgHsUVw2Kak5
+	mWWpRfp2CVwZrd/nshfckaz4d+YZUwPjQtEuRk4OCQETieenHzB3MXJxCAlsZ5S4s28rK0RC
+	WuL6xgnsELawxMp/z9khip4xSiyYupwNJMEmoCuxY3EbmC0ikCdx7chGVpAiZoGzLBKnVx2B
+	6vjCKHGwtZ0JpIpTwE7i4eczYB3CAq4Sq3esZgSxWQRUJb7f+MDSxcjOwStgKTHdGSTKKyAo
+	cXLmExYQm1lAW+Lpzadw9rKFr5khjlOQ+Pl0GSvEDW4SjVMmMkLUiEu8PHqEfQKj8Cwko2Yh
+	GTULyahZSFoWMLKsYhRNLSjOTc9NLjDUK07MLS7NS9dLzs/dxAiOT62gHYzL1v/VO8TIxMF4
+	iFGCg1lJhHfZ/YVpQrwpiZVVqUX58UWlOanFhxilOViUxHmVczpThATSE0tSs1NTC1KLYLJM
+	HJxSDUySb2ZU2rZPF2GJv5Qwh3eSxN/7n+8USz6Mn57kNpm5O+RhlfWcsB+b56jFbXLa+0Zz
+	tjL/lzCNr81efwUOHJrx8Wmb7bqvWbYeVm7qLpc4hQs2pgaVPlgRN399/PrUFdKNpzISNrr/
+	v5vk+tamWjz675PMw0lhqs/tFv0OlPth9s+6qFDf+YRJL7t/zWOrdxECz07mn1xgb2o+pbyP
+	aRLD+UT/ZVz7o+8vvX/r/saTc4uf5PH0tS64m/rm5PN49f2n0gUl+/5WbJ/747peYu3C40e4
+	LNXN7P56zzvzL//DxiOrPmobPVq5fkFQQonyTu6jHYyf5eN0Q37Pjv6bvMzDYM2tqk0sVfLe
+	56o9XrMpsRRnJBpqMRcVJwIAuHPchD4DAAA=
+X-CMS-MailID: 20240726160828epcas5p4044c63bbbf1a07881fbfdf4994d2d2bc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240726151721epcas5p10d25ffeae074e4be35471a4799cfbd65
 References: <20240129204717.9091-1-semen.protsenko@linaro.org>
- <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+	<8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org>
+	<CGME20240726151721epcas5p10d25ffeae074e4be35471a4799cfbd65@epcas5p1.samsung.com>
+	<ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
 
-On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
-> On 29/01/2024 21:47, Sam Protsenko wrote:
->> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
->>
->> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->> ---
->>  MAINTAINERS | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 939f6dd0ef6a..77c10cc669f8 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -19281,6 +19281,16 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
->>  F:	Documentation/devicetree/bindings/sound/samsung*
->>  F:	sound/soc/samsung/
->>  
->> +SAMSUNG EXYNOS850 SoC SUPPORT
->> +M:	Sam Protsenko <semen.protsenko@linaro.org>
->> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->> +L:	linux-samsung-soc@vger.kernel.org
-> 
-> Sorry, but I am still against individual SoC entries in maintainers,
-> like I replied multiple times and pointed to the updated
-> get_maintainers.pl script to fetch emails from boards.
 
-I retract my earlier statement.
 
-Some background: I was really hoping that scripts/get_maintainers.pl
-patch, which adds fetching emails from files (e.g. DTS), will be picked
-up, but it has been few years, few resends and there is no conclusion. I
-don't think it will be ever merged, thus this email.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
+> Sent: Friday, July 26, 2024 8:47 PM
+> To: Sam Protsenko <semen.protsenko=40linaro.org>
+> Cc: Alim Akhtar <alim.akhtar=40samsung.com>; Peter Griffin
+> <peter.griffin=40linaro.org>; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org; Chanwoo Ch=
+oi
+> <cw00.choi=40samsung.com>; Marek Szyprowski
+> <m.szyprowski=40samsung.com>; Peter Griffin <peter.griffin=40linaro.org>;
+> Jaewon Kim <jaewon02.kim=40samsung.com>; Mateusz Majewski
+> <m.majewski2=40samsung.com>; Henrik Grimler <henrik=40grimler.se>; David
+> Virag <virag.david003=40gmail.com>; Artur Weber <aweber.kernel=40gmail.co=
+m>;
+> Raymond Hackley <raymondhackley=40protonmail.com>
+> Subject: Re: =5BPATCH=5D MAINTAINERS: Add entry for Samsung Exynos850 SoC
+>=20
+> On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
+> > On 29/01/2024 21:47, Sam Protsenko wrote:
+> >> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
+> >>
+> >> Signed-off-by: Sam Protsenko <semen.protsenko=40linaro.org>
+> >> ---
+> >>  MAINTAINERS =7C 10 ++++++++++
+> >>  1 file changed, 10 insertions(+)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS index
+> >> 939f6dd0ef6a..77c10cc669f8 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> =40=40 -19281,6 +19281,16 =40=40 B:	mailto:linux-samsung-
+> soc=40vger.kernel.org
+> >>  F:	Documentation/devicetree/bindings/sound/samsung*
+> >>  F:	sound/soc/samsung/
+> >>
+> >> +SAMSUNG EXYNOS850 SoC SUPPORT
+> >> +M:	Sam Protsenko <semen.protsenko=40linaro.org>
+> >> +L:	linux-arm-kernel=40lists.infradead.org (moderated for non-subscrib=
+ers)
+> >> +L:	linux-samsung-soc=40vger.kernel.org
+> >
+> > Sorry, but I am still against individual SoC entries in maintainers,
+> > like I replied multiple times and pointed to the updated
+> > get_maintainers.pl script to fetch emails from boards.
+>=20
+> I retract my earlier statement.
+>=20
+> Some background: I was really hoping that scripts/get_maintainers.pl patc=
+h,
+> which adds fetching emails from files (e.g. DTS), will be picked up, but =
+it has
+> been few years, few resends and there is no conclusion. I don't think it =
+will be
+> ever merged, thus this email.
+>=20
+> Since C files do not have in-file =22maintainer=22 entry and particular d=
+rivers have
+> MAINTAINERS-file entries, then why DTS should be different?
+>=20
+Not sure what was the discussion in past, do you think this need some discu=
+ssion in LPC?=20
 
-Since C files do not have in-file "maintainer" entry and particular
-drivers have MAINTAINERS-file entries, then why DTS should be different?
+> I'll take the patch after merge window.
+>=20
+> +Cc few other folks,
+>=20
+> I understand that with lei/lore filters one can easily track patches sent=
+ for
+> particular boards or SoCs, but being listed in MAINTAINERS have a bit big=
+ger
+> meaning. Therefore if any of you consider / want to add themself to
+> MAINTAINERS for particular DTS, then go ahead. By DTS I
+> mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC (e.g=
+.
+> Exynos850 like here).
+>=20
+Actually it is being confusing. Completely agreed that  =22MAINTAINERS have=
+ a bit bigger=22.
+By adding each DTS/SoC/Board MAINTAINERS entry, are those members expected =
+to send pull requests?
+If so, that leads to more confusion and overhead.=20
 
-I'll take the patch after merge window.
 
-+Cc few other folks,
+> Best regards,
+> Krzysztof
 
-I understand that with lei/lore filters one can easily track patches
-sent for particular boards or SoCs, but being listed in MAINTAINERS have
-a bit bigger meaning. Therefore if any of you consider / want to add
-themself to MAINTAINERS for particular DTS, then go ahead. By DTS I
-mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC
-(e.g. Exynos850 like here).
-
-Best regards,
-Krzysztof
 
