@@ -1,424 +1,110 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC1E17A906
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 11:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AA31CD3D
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 15:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721991710; cv=none; b=hpEFdiQ+npLhAFR9qZmO92I1b3dTQfCvjDMHa61kb+ESYwpF/uLnCm8KAe4xQJgf+3m8gI7gGaCXFMkTjHVP5HW7bzMmx7ROboK1AZ8jz4rwA3VqiudNaddmIa13HKaBu/7NyIAiPq/zOb0hGHROeGxOWiqxwXF/3BreEiYir4c=
+	t=1722006233; cv=none; b=PZMl9T2Tnj6+sbBSA4x/8jMqMMjOtu61rmRZLmuqpnvA7gYo8Iv5oYkSo5FwadARSG+i3zszsrOMUXvtDwBifVn5GzoT7SqW5XJrUaXRPGc0EM8kqGr4NXzkSlZa2Dt22cQGYVVCDF1T17RoNFwAteiv7LJqg64qAhSDUdkRpVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721991710; c=relaxed/simple;
-	bh=zQ2+gDeiPf9CiNsgXp+CCGUYLTxnIQxkzR6m3P+aU7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=VwFEMPM6a8INrtr1N8Tc9ZN8zygiy5ZBOYL2+CjkBfjDvq5Qw28VvMBWX9WUrc9bK4qW7/k50hEcQn/1GEza/6M2Ozko+xDqAtOz8i60i9Dr8rIsxQzp+hcaylLHvqlan9UPnR8BxVwjFUPl0rbr6/r8PJmGcSEP1E4A69bQXPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=slQv8NWL; arc=none smtp.client-ip=210.118.77.11
+	s=arc-20240116; t=1722006233; c=relaxed/simple;
+	bh=BMGxaSXqdPMq+4pPEklbnF3dYHS0Wrz39i3IzGixcGw=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=aKh38XmzLCHXoaznmlopshfyW/rTWg8dqPbobwtc/Q4iFlm1dBqO0xEK8VZMXiiJZ3R3Tk4LNWR0OIkvE/JSdUQIGtQu4sru+qhYmAtSsGl4m3+ViU2X4jqPj9isoy85UYttYHInD049ejtRVPKv7dM5s/2wCKARBEvZ0dqYXTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=m12twyTo; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="slQv8NWL"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240726110142euoutp0153c4d2d4947fe2d9921464050b18c47f~lvlRhTsZN0353203532euoutp01c
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 11:01:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240726110142euoutp0153c4d2d4947fe2d9921464050b18c47f~lvlRhTsZN0353203532euoutp01c
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="m12twyTo"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240726150349euoutp0215c00fb5b0a2fcc82709efda7e825d51~ly4q_9MK30882908829euoutp02B
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 15:03:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240726150349euoutp0215c00fb5b0a2fcc82709efda7e825d51~ly4q_9MK30882908829euoutp02B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721991702;
-	bh=PR+//AUGtX3oXehWtz9OmipJug99cq/9RVo6GE3O8Fo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=slQv8NWLclUV5ZMXCv7wAYJSpBjnNHQYpvyWd1tQ0y11RMss5erdW7KWxRrRNjcN2
-	 ut49hPZjckWy1r9etuHRryefDfwioOqjnjKKZ8Zb4YsI8Lucc0zDW49mDXUSZgJ4ZQ
-	 XcJlvRaYvAbUAA2MXSNAQ6gC9+pg6+vf6wWQG9PI=
+	s=mail20170921; t=1722006229;
+	bh=BMGxaSXqdPMq+4pPEklbnF3dYHS0Wrz39i3IzGixcGw=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=m12twyTo4XtaxMpq2/9KsGvuWqVHSPMLIhLqzC5ZZzv+uPy/CtX4vv9rLs+yvqaJu
+	 V+b+T052U0H1b6XVXDTMIMX4pZSsZGvtQR5igYPbopIAQDlVoFkYrV+wv49KXWWlk+
+	 MjSJKPS6+AfB58Sb/I9n+teQm1HfxwEEdVK125ik=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240726110141eucas1p12bfb72a228f99dc5f2b9fe0f7ff5d23c~lvlRJ51_80293902939eucas1p1t;
-	Fri, 26 Jul 2024 11:01:41 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 4E.FB.09624.51283A66; Fri, 26
-	Jul 2024 12:01:41 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240726110141eucas1p279c474e8737dcf4752808a20219e12d4~lvlQi2lWv1980819808eucas1p2d;
-	Fri, 26 Jul 2024 11:01:41 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240726110141eusmtrp2dc4214e02e5ba516a9f5adf1c1865b48~lvlQhYUXn1722117221eusmtrp2j;
-	Fri, 26 Jul 2024 11:01:41 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-fd-66a38215aaf7
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id A7.27.08810.41283A66; Fri, 26
-	Jul 2024 12:01:40 +0100 (BST)
-Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
-	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240726110140eusmtip219dc7f492cf628101bbceb121ce52512~lvlPooRcz2391923919eusmtip2h;
-	Fri, 26 Jul 2024 11:01:40 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
-	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
-	Moon <linux.amoon@gmail.com>
-Subject: [PATCH v2 5/6] drivers/thermal/exynos: add initial Exynos850
- support
-Date: Fri, 26 Jul 2024 13:01:09 +0200
-Message-ID: <20240726110114.1509733-6-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240726110114.1509733-1-m.majewski2@samsung.com>
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240726150348eucas1p2794c2d6fe56e7b20f94687c472348a67~ly4qX60890600606006eucas1p2z;
+	Fri, 26 Jul 2024 15:03:48 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-61-66a3bad46e4e
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 5F.AA.09624.4DAB3A66; Fri, 26
+	Jul 2024 16:03:48 +0100 (BST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsWy7djPc7qiTYvTDNqeyVk8mLeNzeL7lutM
-	Fmv2nmOymPdZ1mL+kXOsFufPb2C32PT4GqvF5V1z2Cw+9x5htJhxfh+TxbqNt9gtFja1sFtM
-	PDaZ2WLul6nMFv/37GC3ePKwj83ied8+JgdBjzXz1jB67Jx1l91j8Z6XTB6bVnWyedy5tofN
-	Y/OSeo++LasYPT5vkgvgiOKySUnNySxLLdK3S+DKuL33PUvB84SKr6f72RsYtwR2MXJySAiY
-	SDw4/Z+li5GLQ0hgBaPEvpOfGCGcL4wSp5/eZ4VwPjNKzP4wgRWm5cb3v1CJ5YwSc3b1sUM4
-	rUwS7V9fMoFUsQkYSDx4swwsISKwmFGi8cc7sBZmgSfMEj9fLWYEqRIW8Jc4tnwrcxcjBweL
-	gKrE12+iIGFeATuJn6t2MkGsk5fo3d8HZnMK2EssmfSREaJGUOLkzCcsIDYzUE3z1tnMIPMl
-	BKZzSizYd5UZotlFYnn3JHYIW1ji1fEtULaMxP+d86EW5EvM2PyeBeQGCYEKibsHvSBMa4mP
-	Z8AuYxbQlFi/Sx+i2FFi2qmvTBAVfBI33gpCHMAnMWnbdGaIMK9ER5sQRLWqxPE9k6BOkZZ4
-	0nIbaqWHxKwjK1gmMCrOQvLKLCSvzELYu4CReRWjeGppcW56arFhXmq5XnFibnFpXrpecn7u
-	JkZgmjv97/inHYxzX33UO8TIxMF4iFGCg1lJhHfZ/YVpQrwpiZVVqUX58UWlOanFhxilOViU
-	xHlVU+RThQTSE0tSs1NTC1KLYLJMHJxSDUwiuUzxh9NOOZx7wf7neI2dUaPlWotjJ2adiG0S
-	L/hRF3TtnP284EUM5ZUH7x4xWyrQf/rzuZbeoBm/JBYYbfzGlred2/AudzrbyQ1hyV9KzzEk
-	/CmR2vjpGMckLR3tOkW+2JaK3IcV8xg3x29smfn9et0PxreznjanvX1Ypl9yP9jqfJOHkviH
-	+DM3T+0TWG6/5/vHk9GmLHse3fKemh3So9a7K+tNxXY3GWuBh5XhIQc+/e0SjbykWh60R/h4
-	RvDns8ucpm8VzsvUdt75wUhzflsuw5pXTSyW008eb3dcNbm3SHIBf+LTq4vYG7l+NDoe+pPM
-	+/mJv9pj7WPZCeHa86TtndYGTsvUKhBYW6TEUpyRaKjFXFScCADaDljd4gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsVy+t/xe7oiTYvTDD422Fo8mLeNzeL7lutM
-	Fmv2nmOymPdZ1mL+kXOsFufPb2C32PT4GqvF5V1z2Cw+9x5htJhxfh+TxbqNt9gtFja1sFtM
-	PDaZ2WLul6nMFv/37GC3ePKwj83ied8+JgdBjzXz1jB67Jx1l91j8Z6XTB6bVnWyedy5tofN
-	Y/OSeo++LasYPT5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rez
-	SUnNySxLLdK3S9DLuL33PUvB84SKr6f72RsYtwR2MXJySAiYSNz4/pe1i5GLQ0hgKaPE8dsn
-	2SES0hKHv0yBsoUl/lzrYoMoamaSuNt6mwUkwSZgIPHgzTKwIhGB5YwSm9s9QGxmgXfMEu3n
-	/UBsYQFfiSUv9zN1MXJwsAioSnz9JgoS5hWwk/i5aicTxHx5id79fWA2p4C9xJJJHxlBbCGg
-	mvu9qxkh6gUlTs58wgIxXl6ieets5gmMArOQpGYhSS1gZFrFKJJaWpybnltsqFecmFtcmpeu
-	l5yfu4kRGJHbjv3cvINx3quPeocYmTgYDzFKcDArifAuu78wTYg3JbGyKrUoP76oNCe1+BCj
-	KdDZE5mlRJPzgSkhryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qB
-	Kf92Vvflqsf9bc0eu2pq9Ob8drqa+CJTcm2x1EypjVc2a7E8DU+rYXYSXSk7XdxvdlLRI+m7
-	rXu4LimpL/906dphDsE4j6kbFy35vjZeX8VpqnLiTLPidadSGmLMT0XsTi/PZyxgEZDyC23N
-	6vzAmbB668SH057x2IT11JyflPhnFUN0wuF6ruySJRER8078MC3/lG7TErzFWTvG9srdxkkr
-	QirvcVa8CT3y4eED83O3UufE9HzeLmnjkZXPf66gyshLcPfPmDKhd+sXXno+j4vDJ9L4a33X
-	BKalO89vsl+yx1/j7eu8aaxnb7u9OizTs+xCQcir/lNRRatlDpqpchu/imfsfd+6gyPKwU1W
-	iaU4I9FQi7moOBEAPPB4LVEDAAA=
-X-CMS-MailID: 20240726110141eucas1p279c474e8737dcf4752808a20219e12d4
-X-Msg-Generator: CA
+Mime-Version: 1.0
+Subject: RE: [PATCH v2 0/6] Add initial Exynos850 support to the thermal
+ driver
+Reply-To: m.majewski2@samsung.com
+Sender: Mateusz Majewski <m.majewski2@samsung.com>
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
+	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
+	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR
+	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
+	Moon <linux.amoon@gmail.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20240726110114.1509733-1-m.majewski2@samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20240726150348eucms1p356a6209b11c81924a1dac027555466cd@eucms1p3>
+Date: Fri, 26 Jul 2024 17:03:48 +0200
+X-CMS-MailID: 20240726150348eucms1p356a6209b11c81924a1dac027555466cd
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240726110141eucas1p279c474e8737dcf4752808a20219e12d4
-X-EPHeader: CA
+X-RootMTR: 20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a
+X-EPHeader: Mail
+X-ConfirmMail: N,general
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20240726110141eucas1p279c474e8737dcf4752808a20219e12d4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNKsWRmVeSWpSXmKPExsWy7djP87pXdi1OM7i2TNHiwbxtbBbft1xn
+	sliz9xyTxbzPshbzj5xjtTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNZtvMVusbCphd1i
+	4rHJzBZzv0xltvi/Zwe7xZOHfWwWz/v2MTkIeqyZt4bRY+esu+wei/e8ZPLYtKqTzePOtT1s
+	HpuX1Hv0bVnF6PF5k1wARxSXTUpqTmZZapG+XQJXxo63kxkLXrFWvN/znrWB8R1LFyMnh4SA
+	icSHP01MXYxcHEICKxgl5tz7zdjFyMHBKyAo8XeHMEiNsECgxLHGNWD1QgKKEp3b37BBxI0k
+	Dr3YBWazCRhIPHizjB1kjojAVSaJZ08/gTnMAk+YJSZcmwK1jVdiRvtTKFtaYvvyrYwgNqeA
+	vcSSSR8ZIeKiEjdXv2WHsd8fmw8VF5FovXeWGcIWlHjwczdUXEbi5IJlUHaxxMu1l6BqKiSO
+	L5kONcdcYtPcNawgNq+Ar8T129PBbmARUJW4//cbK8jDEgIuEmue8IGEmQXkJba/ncMMEmYW
+	0JRYv0sfosJR4vaeCoiBAhJrTsyBWiQhsbXlCStEJ5/EpG3TmWGe3THvCROErSpxfM8kZpjH
+	n7TcZprAqDQLEdCzkOydhbB3ASPzKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k/NxNjMD0dvrf
+	8U87GOe++qh3iJGJg/EQowQHs5II77L7C9OEeFMSK6tSi/Lji0pzUosPMUpzsCiJ86qmyKcK
+	CaQnlqRmp6YWpBbBZJk4OKUamKaYXhJnW+PK9LCQJ8cswvJgzNG2mgjrzM6eCu5zMx79vC8h
+	NJVlkVJQzBfFfeLmhQvFLjJ13Jyl+0j4RuRZYTW34MbFQU5GXAFhE/O/Ps//4yGx4Ea61pm1
+	kgc3zBDZxv10zU329ptvQ68vDk2vW1BdeHGn6hGlgxEZ1+9kp03nXhnz7OecZzJyD25/DPt7
+	L25Cm318hdnfeqVwxVfCfr0+3wwjdgWvnNj6JntvpMT9l5v/JNTF92oVi5Rc7Ne4Fnz+ZF7o
+	z/POU5Zxa6p5Jf5Jczyz+0WAOktrvtfRBT9tOQW/TZp07VLv8r/d89+EG7DfkNa55dy/KMIt
+	U7G+NWfh4zVHqqY3VKlf4lkuq8RSnJFoqMVcVJwIAJTCqDDeAwAA
+X-CMS-RootMailID: 20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a
 References: <20240726110114.1509733-1-m.majewski2@samsung.com>
-	<CGME20240726110141eucas1p279c474e8737dcf4752808a20219e12d4@eucas1p2.samsung.com>
+	<CGME20240726110133eucas1p1a20d4fae252520ea6747bc1101c9d59a@eucms1p3>
 
-This is loosely adapted from an implementation available at
-https://gitlab.com/Linaro/96boards/e850-96/kernel/-/blob/android-exynos-4.14-linaro/drivers/thermal/samsung/exynos_tmu.c
-Some differences from that implementation:
-- unlike that implementation, we do not use the ACPM mechanism, instead
-  we just access the registers, like we do for other SoCs,
-- the SoC is supposed to support multiple sensors inside one unit. The
-  vendor implementation uses one kernel device per sensor, we would
-  probably prefer to have one device for all sensors, have
-  #thermal-sensor-cells = <1> and so on. We implemented this, but we
-  could not get the extra sensors to work on our hardware so far. This
-  might be due to a misconfiguration and we will probably come back to
-  this, however our implementation only supports a single sensor for
-  now,
-- the vendor implementation supports disabling CPU cores as a cooling
-  device. We did not attempt to port this, and this would not really fit
-  this driver anyway.
+Forgot to mention it in the cover letter, but as discussed in v1 in
+https://lore.kernel.org/lkml/CAPLW+4nfEjP4FDjRJORyyKk46x4VfFAcMuK88jXUT_LJoP1N_g@mail.gmail.com,
+this requires support for the TMU clock to run, available in
+https://lore.kernel.org/lkml/20240723163311.28654-2-semen.protsenko@linaro.org.
+This series builds fine without this, only it is not possible to write a
+devicetree source for this without the mentioned series, so as I
+understand it is ok for this to be in review anyway?
 
-Additionally, some differences from the other SoCs supported by this
-driver:
-- we do not really constrain the e-fuse information like the other SoCs
-  do (data->{min,max}_efuse_value). In our tests, those values (as well
-  as the raw sensor values) were much higher than in the other SoCs, to
-  the degree that reusing the data->{min,max}_efuse_value from the other
-  SoCs would cause instant critical temperature reset on boot,
-- this SoC provides more information in the e-fuse data than other SoCs,
-  so we read some values inside exynos850_tmu_initialize instead of
-  hardcoding them in exynos_map_dt_data.
-
-Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
----
-v1 -> v2: rename and reorder some registers, use the correct register
-  offset for EXYNOS850_TMU_REG_AVG_CON, make the clock required,
-  additionally do some minor style changes.
-
- drivers/thermal/samsung/exynos_tmu.c | 191 +++++++++++++++++++++++++--
- 1 file changed, 182 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 087a09628e23..2618a81fca53 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -117,6 +117,41 @@
- #define EXYNOS7_EMUL_DATA_SHIFT			7
- #define EXYNOS7_EMUL_DATA_MASK			0x1ff
- 
-+/* Exynos850 specific registers */
-+#define EXYNOS850_TMU_REG_CURRENT_TEMP0_1	0x40
-+#define EXYNOS850_TMU_REG_THD_TEMP0_RISE	0x50
-+#define EXYNOS850_TMU_REG_THD_TEMP0_FALL	0x60
-+
-+#define EXYNOS850_TMU_TRIMINFO_SHIFT		4
-+#define EXYNOS850_TMU_TRIMINFO_OFFSET(n) \
-+	(EXYNOS_TMU_REG_TRIMINFO + (n) * EXYNOS850_TMU_TRIMINFO_SHIFT)
-+#define EXYNOS850_TMU_T_TRIM0_SHIFT		18
-+
-+#define EXYNOS850_TMU_REG_CONTROL1		0x24
-+#define EXYNOS850_TMU_LPI_MODE_MASK		1
-+#define EXYNOS850_TMU_LPI_MODE_SHIFT		10
-+
-+#define EXYNOS850_TMU_REG_COUNTER_VALUE0	0x30
-+#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK	0xffff
-+#define EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT	0
-+
-+#define EXYNOS850_TMU_REG_COUNTER_VALUE1	0x34
-+#define EXYNOS850_TMU_CLK_SENSE_ON_MASK		0xffff
-+#define EXYNOS850_TMU_CLK_SENSE_ON_SHIFT	16
-+
-+#define EXYNOS850_TMU_REG_AVG_CON		0x38
-+#define EXYNOS850_TMU_AVG_MODE_MASK		0x7
-+#define EXYNOS850_TMU_DEM_ENABLE		BIT(4)
-+
-+#define EXYNOS850_TMU_REG_TRIM0			0x3c
-+#define EXYNOS850_TMU_TRIM0_MASK		0xf
-+#define EXYNOS850_TMU_VBEI_TRIM_SHIFT		8
-+#define EXYNOS850_TMU_VREF_TRIM_SHIFT		12
-+#define EXYNOS850_TMU_BGRI_TRIM_SHIFT		20
-+
-+#define EXYNOS850_TMU_TEM1051X_SENSE_VALUE	0x028a
-+#define EXYNOS850_TMU_TEM1456X_SENSE_VALUE	0x0a28
-+
- #define EXYNOS_FIRST_POINT_TRIM			25
- #define EXYNOS_SECOND_POINT_TRIM		85
- 
-@@ -134,6 +169,7 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS5420_TRIMINFO,
- 	SOC_ARCH_EXYNOS5433,
- 	SOC_ARCH_EXYNOS7,
-+	SOC_ARCH_EXYNOS850,
- };
- 
- /**
-@@ -232,12 +268,14 @@ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
- 
- static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
- {
--	u16 tmu_temp_mask =
--		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MASK
--						: EXYNOS_TMU_TEMP_MASK;
--	int tmu_85_shift =
--		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_SHIFT
--						: EXYNOS_TRIMINFO_85_SHIFT;
-+	u16 tmu_temp_mask = (data->soc == SOC_ARCH_EXYNOS7 ||
-+			     data->soc == SOC_ARCH_EXYNOS850) ?
-+				    EXYNOS7_TMU_TEMP_MASK :
-+				    EXYNOS_TMU_TEMP_MASK;
-+	int tmu_85_shift = (data->soc == SOC_ARCH_EXYNOS7 ||
-+			    data->soc == SOC_ARCH_EXYNOS850) ?
-+				   EXYNOS7_TMU_TEMP_SHIFT :
-+				   EXYNOS_TRIMINFO_85_SHIFT;
- 
- 	data->temp_error1 = trim_info & tmu_temp_mask;
- 	if (!data->temp_error1 ||
-@@ -587,6 +625,114 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
- 	sanitize_temp_error(data, trim_info);
- }
- 
-+static void exynos850_tmu_set_low_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_FALL + 12, 0,
-+			       temp);
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, true);
-+}
-+
-+static void exynos850_tmu_set_high_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 12, 16,
-+			       temp);
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, true);
-+}
-+
-+static void exynos850_tmu_disable_low(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS_TMU_INTEN_FALL0_SHIFT + 0, false);
-+}
-+
-+static void exynos850_tmu_disable_high(struct exynos_tmu_data *data)
-+{
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 1, false);
-+}
-+
-+static void exynos850_tmu_set_crit_temp(struct exynos_tmu_data *data, u8 temp)
-+{
-+	exynos_tmu_update_temp(data, EXYNOS850_TMU_REG_THD_TEMP0_RISE + 0, 16,
-+			       temp);
-+	exynos_tmu_update_bit(data, EXYNOS_TMU_REG_CONTROL,
-+			      EXYNOS_TMU_THERM_TRIP_EN_SHIFT, true);
-+	exynos_tmu_update_bit(data, EXYNOS7_TMU_REG_INTEN,
-+			      EXYNOS7_TMU_INTEN_RISE0_SHIFT + 7, true);
-+}
-+
-+static void exynos850_tmu_initialize(struct platform_device *pdev)
-+{
-+	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-+	u32 cal_type, avg_mode, reg, bgri, vref, vbei;
-+
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(0));
-+	cal_type = (reg & EXYNOS5433_TRIMINFO_CALIB_SEL_MASK) >>
-+		   EXYNOS5433_TRIMINFO_CALIB_SEL_SHIFT;
-+	data->reference_voltage = (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
-+				  EXYNOS_TMU_REF_VOLTAGE_MASK;
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(1));
-+	data->gain = (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
-+		     EXYNOS_TMU_BUF_SLOPE_SEL_MASK;
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(2));
-+	avg_mode = (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) &
-+		   EXYNOS850_TMU_AVG_MODE_MASK;
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(3));
-+	bgri = (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) & EXYNOS850_TMU_TRIM0_MASK;
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(4));
-+	vref = (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) & EXYNOS850_TMU_TRIM0_MASK;
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(5));
-+	vbei = (reg >> EXYNOS850_TMU_T_TRIM0_SHIFT) & EXYNOS850_TMU_TRIM0_MASK;
-+
-+	data->cal_type = cal_type == EXYNOS5433_TRIMINFO_TWO_POINT_TRIMMING ?
-+				 TYPE_TWO_POINT_TRIMMING :
-+				 TYPE_ONE_POINT_TRIMMING;
-+
-+	reg = readl(data->base + EXYNOS850_TMU_TRIMINFO_OFFSET(0));
-+	sanitize_temp_error(data, reg);
-+
-+	dev_info(&pdev->dev, "Calibration type is %d-point calibration\n",
-+		 cal_type ? 2 : 1);
-+
-+	reg = readl(data->base + EXYNOS850_TMU_REG_AVG_CON);
-+	reg &= ~EXYNOS850_TMU_AVG_MODE_MASK;
-+	reg &= ~EXYNOS850_TMU_DEM_ENABLE;
-+	if (avg_mode) {
-+		reg |= avg_mode;
-+		reg |= EXYNOS850_TMU_DEM_ENABLE;
-+	}
-+	writel(reg, data->base + EXYNOS850_TMU_REG_AVG_CON);
-+
-+	reg = readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
-+	reg &= ~(EXYNOS850_TMU_EN_TEMP_SEN_OFF_MASK
-+		 << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT);
-+	reg |= EXYNOS850_TMU_TEM1051X_SENSE_VALUE
-+	       << EXYNOS850_TMU_EN_TEMP_SEN_OFF_SHIFT;
-+	writel(reg, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE0);
-+
-+	reg = readl(data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
-+	reg &= ~(EXYNOS850_TMU_CLK_SENSE_ON_MASK
-+		 << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT);
-+	reg |= EXYNOS850_TMU_TEM1051X_SENSE_VALUE
-+	       << EXYNOS850_TMU_CLK_SENSE_ON_SHIFT;
-+	writel(reg, data->base + EXYNOS850_TMU_REG_COUNTER_VALUE1);
-+
-+	reg = readl(data->base + EXYNOS850_TMU_REG_TRIM0);
-+	reg &= ~(EXYNOS850_TMU_TRIM0_MASK << EXYNOS850_TMU_BGRI_TRIM_SHIFT);
-+	reg &= ~(EXYNOS850_TMU_TRIM0_MASK << EXYNOS850_TMU_VREF_TRIM_SHIFT);
-+	reg &= ~(EXYNOS850_TMU_TRIM0_MASK << EXYNOS850_TMU_VBEI_TRIM_SHIFT);
-+	reg |= bgri << EXYNOS850_TMU_BGRI_TRIM_SHIFT;
-+	reg |= vref << EXYNOS850_TMU_VREF_TRIM_SHIFT;
-+	reg |= vbei << EXYNOS850_TMU_VBEI_TRIM_SHIFT;
-+	writel(reg, data->base + EXYNOS850_TMU_REG_TRIM0);
-+
-+	reg = readl(data->base + EXYNOS850_TMU_REG_CONTROL1);
-+	reg &= ~(EXYNOS850_TMU_LPI_MODE_MASK << EXYNOS850_TMU_LPI_MODE_SHIFT);
-+	writel(reg, data->base + EXYNOS850_TMU_REG_CONTROL1);
-+}
-+
- static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-@@ -676,7 +822,8 @@ static u32 get_emul_con_reg(struct exynos_tmu_data *data, unsigned int val,
- 
- 		val &= ~(EXYNOS_EMUL_TIME_MASK << EXYNOS_EMUL_TIME_SHIFT);
- 		val |= (EXYNOS_EMUL_TIME << EXYNOS_EMUL_TIME_SHIFT);
--		if (data->soc == SOC_ARCH_EXYNOS7) {
-+		if (data->soc == SOC_ARCH_EXYNOS7 ||
-+		    data->soc == SOC_ARCH_EXYNOS850) {
- 			val &= ~(EXYNOS7_EMUL_DATA_MASK <<
- 				EXYNOS7_EMUL_DATA_SHIFT);
- 			val |= (temp_to_code(data, temp) <<
-@@ -706,7 +853,8 @@ static void exynos4412_tmu_set_emulation(struct exynos_tmu_data *data,
- 		emul_con = EXYNOS5260_EMUL_CON;
- 	else if (data->soc == SOC_ARCH_EXYNOS5433)
- 		emul_con = EXYNOS5433_TMU_EMUL_CON;
--	else if (data->soc == SOC_ARCH_EXYNOS7)
-+	else if (data->soc == SOC_ARCH_EXYNOS7 ||
-+		 data->soc == SOC_ARCH_EXYNOS850)
- 		emul_con = EXYNOS7_TMU_REG_EMUL_CON;
- 	else
- 		emul_con = EXYNOS_EMUL_CON;
-@@ -761,6 +909,12 @@ static int exynos7_tmu_read(struct exynos_tmu_data *data)
- 		EXYNOS7_TMU_TEMP_MASK;
- }
- 
-+static int exynos850_tmu_read(struct exynos_tmu_data *data)
-+{
-+	return readw(data->base + EXYNOS850_TMU_REG_CURRENT_TEMP0_1) &
-+	       EXYNOS7_TMU_TEMP_MASK;
-+}
-+
- static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
- {
- 	struct exynos_tmu_data *data = id;
-@@ -787,7 +941,8 @@ static void exynos4210_tmu_clear_irqs(struct exynos_tmu_data *data)
- 	if (data->soc == SOC_ARCH_EXYNOS5260) {
- 		tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT;
- 		tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR;
--	} else if (data->soc == SOC_ARCH_EXYNOS7) {
-+	} else if (data->soc == SOC_ARCH_EXYNOS7 ||
-+		   data->soc == SOC_ARCH_EXYNOS850) {
- 		tmu_intstat = EXYNOS7_TMU_REG_INTPEND;
- 		tmu_intclear = EXYNOS7_TMU_REG_INTPEND;
- 	} else if (data->soc == SOC_ARCH_EXYNOS5433) {
-@@ -838,6 +993,9 @@ static const struct of_device_id exynos_tmu_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos7-tmu",
- 		.data = (const void *)SOC_ARCH_EXYNOS7,
-+	}, {
-+		.compatible = "samsung,exynos850-tmu",
-+		.data = (const void *)SOC_ARCH_EXYNOS850,
- 	},
- 	{ },
- };
-@@ -950,6 +1108,21 @@ static int exynos_map_dt_data(struct platform_device *pdev)
- 		data->min_efuse_value = 15;
- 		data->max_efuse_value = 100;
- 		break;
-+	case SOC_ARCH_EXYNOS850:
-+		data->tmu_set_low_temp = exynos850_tmu_set_low_temp;
-+		data->tmu_set_high_temp = exynos850_tmu_set_high_temp;
-+		data->tmu_disable_low = exynos850_tmu_disable_low;
-+		data->tmu_disable_high = exynos850_tmu_disable_high;
-+		data->tmu_set_crit_temp = exynos850_tmu_set_crit_temp;
-+		data->tmu_initialize = exynos850_tmu_initialize;
-+		data->tmu_control = exynos4210_tmu_control;
-+		data->tmu_read = exynos850_tmu_read;
-+		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
-+		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
-+		data->efuse_value = 55;
-+		data->min_efuse_value = 0;
-+		data->max_efuse_value = 511;
-+		break;
- 	default:
- 		dev_err(&pdev->dev, "Platform not supported\n");
- 		return -EINVAL;
--- 
-2.45.1
-
+By the way, I am going to have some more time to help with the upstream
+kernel, and have access to most of the supported SoCs. If you feel that
+it is appropriate, I would be very happy to become one of the
+maintainers of this driver :)
