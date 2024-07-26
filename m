@@ -1,69 +1,68 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2AF3CF7E
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 18:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B850038DEE
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 18:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722017300; cv=none; b=pcJkRq2hzVPNY+eXBQP8+QjJab4jwBRHpfP788bq5H81Kk9leC1YqxWgtdMWObS6PNRW2M68Z+80QfsEWe3FClzAbkgsPQ93zXYwVdGaxR/CC+tJ9WdrjMZUeNpacbE1Pa7xMQSw+UA6qQ89WcXPtbrxWoRYbQC/Ibnr0giJGew=
+	t=1722018459; cv=none; b=GuraT2TnQjvLYYScEbXE8CZrhBgf+JZktNLMf/gm+C6hrM7tS0qRvXJolhXM+ZBMKqrU0xeBMTjGv4byX7ByvChvCYxwGtQxhQUIiwbkBGcuoVO0D1aubmnua64mFfHSMVX9kzBWinKVlqbinUz9snW8zbqt++HzxVPVSxB1NIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722017300; c=relaxed/simple;
-	bh=GxmoYIeBXMGpKO1+bZK55byxlD5ApVDBz7Iy5st0gJg=;
+	s=arc-20240116; t=1722018459; c=relaxed/simple;
+	bh=6EykVPTZYFydFQcBWpX4LI9GsdVlmbMDoZiRWXXhD6Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KXNyTPY+sPFSWzDVjAS42vw35l+rIrhpc6W4F46yrxsd/m3ycpJSKRDUyglxnaHj8bkIDa0FylNGVyAHIgnxeOq1Q1oTXNhbCKncwJZuaMZETKvNNEq1kRkiHetnBS1xFNOhzaEaJRRZYaVOsNTmv5jBYpnSdT9UW1PDYKbv49E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+QyDVFn; arc=none smtp.client-ip=209.85.128.171
+	 To:Cc:Content-Type; b=gAvMwcOYXk/7NpPwSvMtS1ZAxYFZpwAFUZQxpMZ4eIHL4TJGQN2kqNwKMYqbs0tCE95zvd2RrYqESQCsAMqIzimwWR9GXI+i+sjvahmroCCtA/JXwU7WkQ7Ju3mVdv/0I+1SWZduldmGY5x+vD2nPTS65FScV8vEq2trh0RHK5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gxRE+7Tt; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+QyDVFn"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-65fdfd7b3deso24283487b3.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 11:08:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxRE+7Tt"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-663dd13c0bbso24261097b3.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 11:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722017296; x=1722622096; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722018457; x=1722623257; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
-        b=D+QyDVFnMmZxdzlFjgXelWCHAnLdsGVHFOxt2VFwIJkwtoIXZzhD/jPVg5QLc0c1Hf
-         7cVQ/ThOopBOi1uN0rW5tFccw1G/UnkNjY8Tb69lN+h1BNS6MNDE0sxefbcvUxQUgz9m
-         F/ESNm1sGRL/Qmlz5xtExaUhEiVGWQ4udY/iuRsV9BeyqiW1k+Sur+Z6edhHiw4b4kpA
-         DXvio62XKbwKagkIjgIdfOLYznce+5Erd00GTTCmM1+fYV1bb5Z/8w9husIdHMUtbknT
-         QdBQWE4ZNHHxrvhIwW1JRRUov1de6Uuq+/A0s2Gx+mTevJNWPPSBWc9k3suD7EggcTah
-         dUGg==
+        bh=PyXLE5+5Swdlu0x6Wri+janyRxYEWn8w2PU12UcKNGU=;
+        b=gxRE+7TtIbf52twj4oUrMgE6qa2JlCqZr2VXameRwKPxuPNHeDeRcu4arZZW8qQ31i
+         VaOY23j7AliWALkRQYpcTvqPAe+GP7mXnXXeIym6ZSGwk9FwL0fspalDWEOtbvmnbdeL
+         KwgUohUjCamVo6Eed/gxUFw2sKUso7S58z2zJuFBXhGSPXkCcDyhM2zQJlsDZlIejSoX
+         Zf0Bgg3zkn/QuhxEbi0X6gzfE68qIo68jw8Cbv8M9qzmCcEV3V/4+BUmbUKRGqm9ngLO
+         d1njV13IO9PGd6FhxvP89ziCLxOAc/QYXJw8W3YGQKBlS2uT6IX28BUx0bWVXOW+sV2f
+         CDhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722017296; x=1722622096;
+        d=1e100.net; s=20230601; t=1722018457; x=1722623257;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
-        b=BZkx7j6XFzCx06+k62RdQceELaY33zySNNonwYSJR/K8POJ4dz6FZ3EJZQAKYy1Vrd
-         B2TCuKzYWQjY5R6jJUSoD7bp3YVDMKNrw9sZjjIMcp60LNbCgfS+xHu+NfBskXv2tWk9
-         RuXYFjI4Dq5pXI0nrHDHqSEiX+Yey7zpvEvi6RsHZLJpkPvkSauU3BYwhN/ewO7y+DGM
-         MzdWdH4zXsNPk0MVfMEUu5oAEu5TlosE2kBFqO0xFHrXsMcsmL4Pa46Z2GZBsAM9lGgs
-         4ULsd2sGa9wqPZCddSEXwGNIIieN4uAui80MjZ1jAfyRFgufoNYiYFBII2rigBWd8Kbe
-         4T/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtT81BFJfqKGDMMZWFe5Fx9txzZiyt4r44lBEgn4v2/0XLbngYnGioFIsDragDyVC7odFQOaVUsQGgnvmYL2cc/Sx130CungJbSstoYHzqhco=
-X-Gm-Message-State: AOJu0Yw+86A/S5FB80RMuFV2ZTFjVsmgOw5yhj2Y3b/Okc5rCBezFVMs
-	ftuHwlPWndncqBhuFTI9wNgFxQWo5gT/3nDnQyJe5gUR9Aas34cqZJY+K1aKEfpJ5ly8bohK1Kt
-	AsHpRCHzbeP0R5s2wGAGgqInZds8Lfoc1ORGM9w==
-X-Google-Smtp-Source: AGHT+IFkESiWao/vWnFp/DsXlGOMMM3aoXRS1ZwQbcgc7JCIUzd6EJnTYt77j/BQJ878gOluPtcgh7p7GqV6PD/zXX0=
-X-Received: by 2002:a05:690c:4a01:b0:64a:e2ab:be33 with SMTP id
- 00721157ae682-67a073b4271mr7940997b3.22.1722017296429; Fri, 26 Jul 2024
- 11:08:16 -0700 (PDT)
+        bh=PyXLE5+5Swdlu0x6Wri+janyRxYEWn8w2PU12UcKNGU=;
+        b=ej3j23CjU1fUs7/3UmurRggqM+QjlaOik2Lwh/8B4XwWYXgKqjB9thQNSHBU7K2mzr
+         W45X6mdTDPfEcMAdbmRk8xbVO3bM/CuC6fi1jmXNnpu+UT2geSPeGhDlug0Y0u02tD9i
+         rnXlzsJl8BFOgmXC35azOh567IZ3PeDf72uVMU2nusJ7Cg3EnoDEvvcxuxGOWhB1Px31
+         jwgNEsY/pJgg80zbnCFTWsTe6Y5kSzDpn4rHvP8Lvsz4ETAm2gtULF5uN62eCzc9vrMo
+         Um/d9tE/DM1R24EWos1BNGhYc5tBuHy1B5fiR1z2zoIM2pIzU+OJBqMBdRelYLMIHgoH
+         bdRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVox97jWaWD8c9K3ISXDxNs++YX3kfRaGwBpxuNwpgN5uSubaGHRWzu94MjjAlx7F09WyVoZZL9ghH4ZlACa1uEaHqsZD5kdbt9XX4TRG6I4X8=
+X-Gm-Message-State: AOJu0YwT8paKmAzZk/SaHWbXBne3Lv+4zLOCEJrVdMzxHeZ04SMJY/1Z
+	QeFu+w230W6UhIw4vOcPA0gbsg+8VXYSJiQDVrkR7uPI6AOu19gbilwD07htyO+Xx0wwpenIsZO
+	eQGgDYsqFypAGrngRzsS8lvXmLtA2P3XXqvsv/g==
+X-Google-Smtp-Source: AGHT+IGu+fZfm0OlFYIELI6yk25RKnnuCGjlhcQl4HnDPQGENb9SW/oXMTgqpBNFbF9MFabxhl8bPpc+MSo694zdG/0=
+X-Received: by 2002:a0d:ee43:0:b0:651:6cf1:76b with SMTP id
+ 00721157ae682-67a06ede805mr6762737b3.22.1722018456817; Fri, 26 Jul 2024
+ 11:27:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240726110136eucas1p2c100992bb710acb5a12bb294401d4aeb@eucas1p2.samsung.com>
- <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-3-m.majewski2@samsung.com>
-In-Reply-To: <20240726110114.1509733-3-m.majewski2@samsung.com>
+References: <CGME20240726110138eucas1p27f33fb42af84ba7938703796c3f80727@eucas1p2.samsung.com>
+ <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-4-m.majewski2@samsung.com>
+In-Reply-To: <20240726110114.1509733-4-m.majewski2@samsung.com>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jul 2024 13:08:05 -0500
-Message-ID: <CAPLW+4n==hm=tiDOZ14LMw-nWGbu22m2rh7nEJyUR6f0AwzOAg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] drivers/thermal/exynos: use pm_sleep_ptr instead
- of conditional compilation
+Date: Fri, 26 Jul 2024 13:27:26 -0500
+Message-ID: <CAPLW+4mN5sntZj5UcXXazZq6a_Ra7Ssuz-qLJk9N0egp1W9r=A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] drivers/thermal/exynos: improve sanitize_temp_error
 To: Mateusz Majewski <m.majewski2@samsung.com>
 Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
@@ -79,49 +78,105 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
 <m.majewski2@samsung.com> wrote:
 >
-> Slightly simpler and nothing is lost if _suspend and _resume functions
-> are built unconditionally.
+> There are two minor issues regarding this function.
 >
-> Suggested-by: Anand Moon <linux.amoon@gmail.com>
+> One is that it attempts to calculate the second calibration value even
+> if 1-point trimming is being used; in this case, the calculated value is
+> probably not useful and is never used anyway. Changing this also
+> requires a minor reordering in Exynos5433 initialization function, so
+> that we know which type of trimming is used before we call
+> sanitize_temp_error.
+>
+> The second issue is that the function is not very consistent when it
+> comes to the use of Exynos7-specific parameters. This seems to not be an
+> issue in practice, in part because some of these issues are related to
+> the mentioned calculation of the second calibration value. However,
+> fixing this makes the code a bit less confusing, and will be required
+> for Exynos850 which has 9-bit temperature values and uses 2-point
+> trimming.
+>
 > Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 > ---
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
->  drivers/thermal/samsung/exynos_tmu.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+> v1 -> v2: reworked to change shift instead of only mask and to also fix
+>   the 2-point trimming issue.
+>
+>  drivers/thermal/samsung/exynos_tmu.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
 >
 > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
 ng/exynos_tmu.c
-> index 9b7ca93a72f1..b68e9755c933 100644
+> index b68e9755c933..087a09628e23 100644
 > --- a/drivers/thermal/samsung/exynos_tmu.c
 > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1132,7 +1132,6 @@ static void exynos_tmu_remove(struct platform_devic=
-e *pdev)
->                 clk_unprepare(data->clk_sec);
+> @@ -111,6 +111,7 @@
+>  #define EXYNOS7_TMU_REG_EMUL_CON               0x160
+>
+>  #define EXYNOS7_TMU_TEMP_MASK                  0x1ff
+> +#define EXYNOS7_TMU_TEMP_SHIFT                 9
+>  #define EXYNOS7_PD_DET_EN_SHIFT                        23
+>  #define EXYNOS7_TMU_INTEN_RISE0_SHIFT          0
+>  #define EXYNOS7_EMUL_DATA_SHIFT                        7
+> @@ -234,20 +235,23 @@ static void sanitize_temp_error(struct exynos_tmu_d=
+ata *data, u32 trim_info)
+>         u16 tmu_temp_mask =3D
+>                 (data->soc =3D=3D SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MA=
+SK
+>                                                 : EXYNOS_TMU_TEMP_MASK;
+> +       int tmu_85_shift =3D
+> +               (data->soc =3D=3D SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_SH=
+IFT
+> +                                               : EXYNOS_TRIMINFO_85_SHIF=
+T;
+>
+>         data->temp_error1 =3D trim_info & tmu_temp_mask;
+> -       data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+> -                               EXYNOS_TMU_TEMP_MASK);
+> -
+>         if (!data->temp_error1 ||
+>             (data->min_efuse_value > data->temp_error1) ||
+>             (data->temp_error1 > data->max_efuse_value))
+> -               data->temp_error1 =3D data->efuse_value & EXYNOS_TMU_TEMP=
+_MASK;
+> +               data->temp_error1 =3D data->efuse_value & tmu_temp_mask;
+>
+> -       if (!data->temp_error2)
+> -               data->temp_error2 =3D
+> -                       (data->efuse_value >> EXYNOS_TRIMINFO_85_SHIFT) &
+> -                       EXYNOS_TMU_TEMP_MASK;
+> +       if (data->cal_type =3D=3D TYPE_TWO_POINT_TRIMMING) {
+> +               data->temp_error2 =3D (trim_info >> tmu_85_shift) & tmu_t=
+emp_mask;
+> +               if (!data->temp_error2)
+> +                       data->temp_error2 =3D
+> +                               (data->efuse_value >> tmu_85_shift) &
+> +                               tmu_temp_mask;
+> +       }
 >  }
 >
-> -#ifdef CONFIG_PM_SLEEP
->  static int exynos_tmu_suspend(struct device *dev)
->  {
->         exynos_tmu_control(to_platform_device(dev), false);
-> @@ -1152,15 +1151,11 @@ static int exynos_tmu_resume(struct device *dev)
+>  static int exynos_tmu_initialize(struct platform_device *pdev)
+> @@ -510,7 +514,6 @@ static void exynos5433_tmu_initialize(struct platform=
+_device *pdev)
+>         int sensor_id, cal_type;
 >
->  static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
->                                 exynos_tmu_suspend, exynos_tmu_resume);
-> -#define EXYNOS_TMU_PM  (&exynos_tmu_pm)
-> -#else
-> -#define EXYNOS_TMU_PM  NULL
-> -#endif
+>         trim_info =3D readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> -       sanitize_temp_error(data, trim_info);
 >
->  static struct platform_driver exynos_tmu_driver =3D {
->         .driver =3D {
->                 .name   =3D "exynos-tmu",
-> -               .pm     =3D EXYNOS_TMU_PM,
-> +               .pm     =3D pm_sleep_ptr(&exynos_tmu_pm),
->                 .of_match_table =3D exynos_tmu_match,
->         },
->         .probe =3D exynos_tmu_probe,
+>         /* Read the temperature sensor id */
+>         sensor_id =3D (trim_info & EXYNOS5433_TRIMINFO_SENSOR_ID_MASK)
+> @@ -532,6 +535,8 @@ static void exynos5433_tmu_initialize(struct platform=
+_device *pdev)
+>                 break;
+>         }
+>
+> +       sanitize_temp_error(data, trim_info);
+> +
+>         dev_info(&pdev->dev, "Calibration type is %d-point calibration\n"=
+,
+>                         cal_type ?  2 : 1);
+>  }
 > --
 > 2.45.1
 >
