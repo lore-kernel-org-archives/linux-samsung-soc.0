@@ -1,58 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA45F63CB;
-	Fri, 26 Jul 2024 16:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0105918AEA
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 17:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722012267; cv=none; b=GJFyEG90S5QmIoBRlHwuP69Dmk+FbTNROxPG9R6h6ohURGtuFsFbN2VBNjCKiB9wg23/LSjnzM/fCV3G9cl00mufGSxW46rbPvd2Uqi37K0S7RLZAtsplGQLRfh9bPREYs1ltGx7Ij/EDlSUTNP1dAHEqWC6TQoNs+zMMdyiIJk=
+	t=1722016586; cv=none; b=QHyhzf0UWIDMP1O52YuFd19h63JrBUy6BgDA6B/efH5SacN1VNm0/+v5+IZdWfeBoPZV9UIvMVU2mGqyxGZCg5RnKw2BRBjXgrBuqVZTJ6M+fGFV0pS4OTj4SN0C7ovUVxb6oAAwYpPmBq/SkefArxTTVxBYyr8pDhSwe3DJjb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722012267; c=relaxed/simple;
-	bh=9youBC6MiVIpwrFNTCy5T5voV/G4s6p+REdUfBArF/U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=iD/ehvqG/+a0k0Nf5DDcAyWOnOugI96fcxM11TQspPMbV+ALJBIg58Se2pASnMm4zxCNsBKzV/WLx8qhEEwQmzoeVDX08anr7oPfhPRiHYx8h4hoLpYc8O+DbQt09PD8CWUZNPcUvhwTx4u+pNlPVcE7ZSba+O4Ec3fT1PodY/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StIKHOPn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722016586; c=relaxed/simple;
+	bh=D0JVdJPhPCLp5esR4XLwLE5OGpidKIvLh93BHT5WLxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OE37tx19mnOZjAw/arpeReq5wm1wYwgxqcgPoAZRXNlf93vDjlSIlTyOxPdx5DPkZc23FEcfPgLqA3MIw76hENSCf9rtWBGqV9NVNAuovODsBJoNNbdtqzC1LG6NB0qYPy1JWxtivoCyO/DQeEowvx5v59lPOpmMs200ERAoUaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hmk4H21h; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StIKHOPn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8DFC32782;
-	Fri, 26 Jul 2024 16:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722012267;
-	bh=9youBC6MiVIpwrFNTCy5T5voV/G4s6p+REdUfBArF/U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=StIKHOPnykRDZZRdGrF3Oxugwi6NJfR+EwNkf912hwC3yVs7BnhXqKQwAHh8ws4zb
-	 NC5Vh5GqtBS94AzcftxjmbHPVB8GKjwGbLyRaKCkYSuPhpI+ka7Kxig+698BUqzh7V
-	 Xyjso+5vyujXGYutg9D1tN6RVeFn9Rf6xN6+9fYnwmSmuAMli7FA/eeeK9quYd+4nQ
-	 24yhOYdD3Cy4IxQNcTYdOyQ3FyDuqmdjSEgOi06LplH82poCadqBc1NqfzBwV8Vcjo
-	 l5SgS7NytDp3pFygYTy6/Dl3OkJ7+ldIuvX1x1JhcXsDbGIqtAQXzysw3qHw07FLMu
-	 2upLbZJGTWlUw==
-Message-ID: <936d1eaa5089b2b2834bb60dd10ceae4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hmk4H21h"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so2283925276.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 10:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722016584; x=1722621384; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DhUrBslr8NYAo9/MyQYN73x0EDRASpHspmRycm+GNrI=;
+        b=hmk4H21hNCE2HaZfJCJd67DSwkAcmdhWfb2i4z4d+VkBenwhonIVE79nB6yOfXcQlQ
+         FOnK66DRu7tJBylr2GhuX7qW2eT+XseSkpdden2AAHg5qRnBlguILlrXDLMPWVp5E5bb
+         0tNvcXbDlO0WEeBEAHc6NoG0mI1sTA7O3rht2kQ4C6m7UCRjLlUqtZ+ywmvNcKSTLTkV
+         XR8hOnXiTJZ/W3JZCH76znHlk5mQ8kfeIRFH2ZV8hVH/a6fA256Ft4wzvLwGMaej6KpQ
+         qMJqKKVgTEkNHaNnoDGslZlbSIdoxmwHOXp53w4qE0hK/OvYRrHPYbGMgm9SGrpMzub8
+         R1XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722016584; x=1722621384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DhUrBslr8NYAo9/MyQYN73x0EDRASpHspmRycm+GNrI=;
+        b=xPPbsvquTWp6A4eVBY86UMXx/MHEppHrjEJwvsfoD0qREyIF+ZsCDqHPNOiagYez5z
+         CEBOUL2VryxqzN1/l9GL7xWPL4N2Zh7nebkL3BHZ6njA3F2orSsIx+1qJ9g/Z9nlpGMv
+         W8VE3cHwHdU7WLeKUJEjwhV4sxt/0SOuE6LHmfmGVB/B2GbhP9kf3MTGrffqZFxGAP5b
+         kqCmZVEVbKk58Y4BSQc/27+lNFSJ/TseF5Z6rqGhmBKfKUoH7eM8HZLbZ7XfcTpueM76
+         PByfSsPGKdsDp7gZgIeRnmNIVAKsygYWBhtOwZFUrNd23kUi8PnGhpDIx0qKfGmsYRCV
+         wHPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUe+876XZE/srBZTNyTQPf/atvp0uOKZK/tIeoQO0DRlphgnmyEN0iKpYMyv8ANT93Oh5nUC1m2r2arB+Q1mlVLCKYIpn51l6a1ZA6F5ipc6w8=
+X-Gm-Message-State: AOJu0YxASMuYmhXN4EocAwqXQnxRkejAguDq6sNLRY4mItMA5AdisoiP
+	LaKPN3caiIgkalqySuUzBoTOS+CsxmRBhxCnF0s7ZmtRTm8wwOXCnxx8Q0PkiGzXSDXlRYUHW+T
+	iYmlR1qUhdy7FT4S/jVMCq7ZlgQjAC+mUP9cAkQ==
+X-Google-Smtp-Source: AGHT+IFRD79UEjDaEHKHCsvV9s7KnHcAuekNi2ZVuvc9B/6COZfuwaKlCuHkfaA1N/a3WtELB0IlOea81E3BIThlJOo=
+X-Received: by 2002:a25:ab11:0:b0:e0b:1407:e322 with SMTP id
+ 3f1490d57ef6-e0b544485afmr656498276.1.1722016583941; Fri, 26 Jul 2024
+ 10:56:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org> <ace0b95ad77fe044881068a4cf1944e10b306730.camel@linaro.org>
+In-Reply-To: <ace0b95ad77fe044881068a4cf1944e10b306730.camel@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 26 Jul 2024 12:56:12 -0500
+Message-ID: <CAPLW+4nrxXOz_gaKR6dLZxiNW5AEMUZRMcmAyzpnd_GKzdVdnw@mail.gmail.com>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to FIELD_PREP()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <298d204a7d9c8dce1f1a2f180b12bd3887ea4802.camel@linaro.org>
-References: <20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org> <d17567eb0ad9a6082d55ca016771abbc.sboyd@kernel.org> <298d204a7d9c8dce1f1a2f180b12bd3887ea4802.camel@linaro.org>
-Subject: Re: [PATCH v4 0/2] gs101 oriole: UART clock fixes
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 26 Jul 2024 09:44:25 -0700
-User-Agent: alot/0.10
 
-Quoting Andr=C3=A9 Draszik (2024-07-25 00:12:48)
->=20
-> I didn't think that was necessary (and no, I don't have a binding update =
-at
-> the moment). It gets the clock associated with the serial port (of_stdout=
-),
-> if any, and works off that.
->=20
-> Did I miss something?
+On Fri, Jul 26, 2024 at 1:02=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
+>
+> Hi,
+>
+> On Wed, 2024-07-10 at 07:45 +0100, Andr=C3=A9 Draszik wrote:
+> > Use of FIELD_PREP_CONST() was a thinko - it's meant to be used for
+> > (constant) initialisers, not constant values.
+> >
+> > Use FIELD_PREP() where possible. It has better error checking and is
+> > therefore the preferred macro to use in those cases.
+> >
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> Any comments on this patch?
+>
 
-No, I missed it. I was thinking it was the chosen node but it's actually
-the serial node.
+Looks good to me:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+> Cheers,
+> Andre'
+>
+>
