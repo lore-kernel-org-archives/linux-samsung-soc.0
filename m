@@ -1,102 +1,127 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0105918AEA
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 17:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2AF3CF7E
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 18:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722016586; cv=none; b=QHyhzf0UWIDMP1O52YuFd19h63JrBUy6BgDA6B/efH5SacN1VNm0/+v5+IZdWfeBoPZV9UIvMVU2mGqyxGZCg5RnKw2BRBjXgrBuqVZTJ6M+fGFV0pS4OTj4SN0C7ovUVxb6oAAwYpPmBq/SkefArxTTVxBYyr8pDhSwe3DJjb0=
+	t=1722017300; cv=none; b=pcJkRq2hzVPNY+eXBQP8+QjJab4jwBRHpfP788bq5H81Kk9leC1YqxWgtdMWObS6PNRW2M68Z+80QfsEWe3FClzAbkgsPQ93zXYwVdGaxR/CC+tJ9WdrjMZUeNpacbE1Pa7xMQSw+UA6qQ89WcXPtbrxWoRYbQC/Ibnr0giJGew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722016586; c=relaxed/simple;
-	bh=D0JVdJPhPCLp5esR4XLwLE5OGpidKIvLh93BHT5WLxQ=;
+	s=arc-20240116; t=1722017300; c=relaxed/simple;
+	bh=GxmoYIeBXMGpKO1+bZK55byxlD5ApVDBz7Iy5st0gJg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OE37tx19mnOZjAw/arpeReq5wm1wYwgxqcgPoAZRXNlf93vDjlSIlTyOxPdx5DPkZc23FEcfPgLqA3MIw76hENSCf9rtWBGqV9NVNAuovODsBJoNNbdtqzC1LG6NB0qYPy1JWxtivoCyO/DQeEowvx5v59lPOpmMs200ERAoUaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hmk4H21h; arc=none smtp.client-ip=209.85.219.176
+	 To:Cc:Content-Type; b=KXNyTPY+sPFSWzDVjAS42vw35l+rIrhpc6W4F46yrxsd/m3ycpJSKRDUyglxnaHj8bkIDa0FylNGVyAHIgnxeOq1Q1oTXNhbCKncwJZuaMZETKvNNEq1kRkiHetnBS1xFNOhzaEaJRRZYaVOsNTmv5jBYpnSdT9UW1PDYKbv49E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+QyDVFn; arc=none smtp.client-ip=209.85.128.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hmk4H21h"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so2283925276.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 10:56:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+QyDVFn"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-65fdfd7b3deso24283487b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2024 11:08:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722016584; x=1722621384; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722017296; x=1722622096; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DhUrBslr8NYAo9/MyQYN73x0EDRASpHspmRycm+GNrI=;
-        b=hmk4H21hNCE2HaZfJCJd67DSwkAcmdhWfb2i4z4d+VkBenwhonIVE79nB6yOfXcQlQ
-         FOnK66DRu7tJBylr2GhuX7qW2eT+XseSkpdden2AAHg5qRnBlguILlrXDLMPWVp5E5bb
-         0tNvcXbDlO0WEeBEAHc6NoG0mI1sTA7O3rht2kQ4C6m7UCRjLlUqtZ+ywmvNcKSTLTkV
-         XR8hOnXiTJZ/W3JZCH76znHlk5mQ8kfeIRFH2ZV8hVH/a6fA256Ft4wzvLwGMaej6KpQ
-         qMJqKKVgTEkNHaNnoDGslZlbSIdoxmwHOXp53w4qE0hK/OvYRrHPYbGMgm9SGrpMzub8
-         R1XA==
+        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
+        b=D+QyDVFnMmZxdzlFjgXelWCHAnLdsGVHFOxt2VFwIJkwtoIXZzhD/jPVg5QLc0c1Hf
+         7cVQ/ThOopBOi1uN0rW5tFccw1G/UnkNjY8Tb69lN+h1BNS6MNDE0sxefbcvUxQUgz9m
+         F/ESNm1sGRL/Qmlz5xtExaUhEiVGWQ4udY/iuRsV9BeyqiW1k+Sur+Z6edhHiw4b4kpA
+         DXvio62XKbwKagkIjgIdfOLYznce+5Erd00GTTCmM1+fYV1bb5Z/8w9husIdHMUtbknT
+         QdBQWE4ZNHHxrvhIwW1JRRUov1de6Uuq+/A0s2Gx+mTevJNWPPSBWc9k3suD7EggcTah
+         dUGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722016584; x=1722621384;
+        d=1e100.net; s=20230601; t=1722017296; x=1722622096;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DhUrBslr8NYAo9/MyQYN73x0EDRASpHspmRycm+GNrI=;
-        b=xPPbsvquTWp6A4eVBY86UMXx/MHEppHrjEJwvsfoD0qREyIF+ZsCDqHPNOiagYez5z
-         CEBOUL2VryxqzN1/l9GL7xWPL4N2Zh7nebkL3BHZ6njA3F2orSsIx+1qJ9g/Z9nlpGMv
-         W8VE3cHwHdU7WLeKUJEjwhV4sxt/0SOuE6LHmfmGVB/B2GbhP9kf3MTGrffqZFxGAP5b
-         kqCmZVEVbKk58Y4BSQc/27+lNFSJ/TseF5Z6rqGhmBKfKUoH7eM8HZLbZ7XfcTpueM76
-         PByfSsPGKdsDp7gZgIeRnmNIVAKsygYWBhtOwZFUrNd23kUi8PnGhpDIx0qKfGmsYRCV
-         wHPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUe+876XZE/srBZTNyTQPf/atvp0uOKZK/tIeoQO0DRlphgnmyEN0iKpYMyv8ANT93Oh5nUC1m2r2arB+Q1mlVLCKYIpn51l6a1ZA6F5ipc6w8=
-X-Gm-Message-State: AOJu0YxASMuYmhXN4EocAwqXQnxRkejAguDq6sNLRY4mItMA5AdisoiP
-	LaKPN3caiIgkalqySuUzBoTOS+CsxmRBhxCnF0s7ZmtRTm8wwOXCnxx8Q0PkiGzXSDXlRYUHW+T
-	iYmlR1qUhdy7FT4S/jVMCq7ZlgQjAC+mUP9cAkQ==
-X-Google-Smtp-Source: AGHT+IFRD79UEjDaEHKHCsvV9s7KnHcAuekNi2ZVuvc9B/6COZfuwaKlCuHkfaA1N/a3WtELB0IlOea81E3BIThlJOo=
-X-Received: by 2002:a25:ab11:0:b0:e0b:1407:e322 with SMTP id
- 3f1490d57ef6-e0b544485afmr656498276.1.1722016583941; Fri, 26 Jul 2024
- 10:56:23 -0700 (PDT)
+        bh=A0k1VjbXgRbh6rHMNc26/2pKAqBtNwTa1NeFJwoSY3w=;
+        b=BZkx7j6XFzCx06+k62RdQceELaY33zySNNonwYSJR/K8POJ4dz6FZ3EJZQAKYy1Vrd
+         B2TCuKzYWQjY5R6jJUSoD7bp3YVDMKNrw9sZjjIMcp60LNbCgfS+xHu+NfBskXv2tWk9
+         RuXYFjI4Dq5pXI0nrHDHqSEiX+Yey7zpvEvi6RsHZLJpkPvkSauU3BYwhN/ewO7y+DGM
+         MzdWdH4zXsNPk0MVfMEUu5oAEu5TlosE2kBFqO0xFHrXsMcsmL4Pa46Z2GZBsAM9lGgs
+         4ULsd2sGa9wqPZCddSEXwGNIIieN4uAui80MjZ1jAfyRFgufoNYiYFBII2rigBWd8Kbe
+         4T/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUtT81BFJfqKGDMMZWFe5Fx9txzZiyt4r44lBEgn4v2/0XLbngYnGioFIsDragDyVC7odFQOaVUsQGgnvmYL2cc/Sx130CungJbSstoYHzqhco=
+X-Gm-Message-State: AOJu0Yw+86A/S5FB80RMuFV2ZTFjVsmgOw5yhj2Y3b/Okc5rCBezFVMs
+	ftuHwlPWndncqBhuFTI9wNgFxQWo5gT/3nDnQyJe5gUR9Aas34cqZJY+K1aKEfpJ5ly8bohK1Kt
+	AsHpRCHzbeP0R5s2wGAGgqInZds8Lfoc1ORGM9w==
+X-Google-Smtp-Source: AGHT+IFkESiWao/vWnFp/DsXlGOMMM3aoXRS1ZwQbcgc7JCIUzd6EJnTYt77j/BQJ878gOluPtcgh7p7GqV6PD/zXX0=
+X-Received: by 2002:a05:690c:4a01:b0:64a:e2ab:be33 with SMTP id
+ 00721157ae682-67a073b4271mr7940997b3.22.1722017296429; Fri, 26 Jul 2024
+ 11:08:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org> <ace0b95ad77fe044881068a4cf1944e10b306730.camel@linaro.org>
-In-Reply-To: <ace0b95ad77fe044881068a4cf1944e10b306730.camel@linaro.org>
+References: <CGME20240726110136eucas1p2c100992bb710acb5a12bb294401d4aeb@eucas1p2.samsung.com>
+ <20240726110114.1509733-1-m.majewski2@samsung.com> <20240726110114.1509733-3-m.majewski2@samsung.com>
+In-Reply-To: <20240726110114.1509733-3-m.majewski2@samsung.com>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 26 Jul 2024 12:56:12 -0500
-Message-ID: <CAPLW+4nrxXOz_gaKR6dLZxiNW5AEMUZRMcmAyzpnd_GKzdVdnw@mail.gmail.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to FIELD_PREP()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 26 Jul 2024 13:08:05 -0500
+Message-ID: <CAPLW+4n==hm=tiDOZ14LMw-nWGbu22m2rh7nEJyUR6f0AwzOAg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] drivers/thermal/exynos: use pm_sleep_ptr instead
+ of conditional compilation
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Anand Moon <linux.amoon@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2024 at 1:02=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
-inaro.org> wrote:
+On Fri, Jul 26, 2024 at 6:01=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
 >
-> Hi,
+> Slightly simpler and nothing is lost if _suspend and _resume functions
+> are built unconditionally.
 >
-> On Wed, 2024-07-10 at 07:45 +0100, Andr=C3=A9 Draszik wrote:
-> > Use of FIELD_PREP_CONST() was a thinko - it's meant to be used for
-> > (constant) initialisers, not constant values.
-> >
-> > Use FIELD_PREP() where possible. It has better error checking and is
-> > therefore the preferred macro to use in those cases.
-> >
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> >  drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> Any comments on this patch?
->
-
-Looks good to me:
+> Suggested-by: Anand Moon <linux.amoon@gmail.com>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
 
 Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-> Cheers,
-> Andre'
+>  drivers/thermal/samsung/exynos_tmu.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 >
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
+ng/exynos_tmu.c
+> index 9b7ca93a72f1..b68e9755c933 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1132,7 +1132,6 @@ static void exynos_tmu_remove(struct platform_devic=
+e *pdev)
+>                 clk_unprepare(data->clk_sec);
+>  }
+>
+> -#ifdef CONFIG_PM_SLEEP
+>  static int exynos_tmu_suspend(struct device *dev)
+>  {
+>         exynos_tmu_control(to_platform_device(dev), false);
+> @@ -1152,15 +1151,11 @@ static int exynos_tmu_resume(struct device *dev)
+>
+>  static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
+>                                 exynos_tmu_suspend, exynos_tmu_resume);
+> -#define EXYNOS_TMU_PM  (&exynos_tmu_pm)
+> -#else
+> -#define EXYNOS_TMU_PM  NULL
+> -#endif
+>
+>  static struct platform_driver exynos_tmu_driver =3D {
+>         .driver =3D {
+>                 .name   =3D "exynos-tmu",
+> -               .pm     =3D EXYNOS_TMU_PM,
+> +               .pm     =3D pm_sleep_ptr(&exynos_tmu_pm),
+>                 .of_match_table =3D exynos_tmu_match,
+>         },
+>         .probe =3D exynos_tmu_probe,
+> --
+> 2.45.1
 >
