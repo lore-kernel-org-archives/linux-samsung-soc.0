@@ -1,69 +1,71 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C908513CFA5
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2024 12:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D471D1448E7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2024 12:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722255933; cv=none; b=ilGF3t358IlN/bEA7HbbUWdDOPr9zsWJX98f74Z9uvuAbPmo39OREWxpiYv8sQEkEm0pgy/dkKgKnsvK9jQ61ABA85vfj28cN8LxTKa75Y9vu7vIyvIi24YIDi/S9T+gsyaHbEGyzT9f3/ApA6bw7JW2nwhmfTwCS88oUzSAOr0=
+	t=1722256275; cv=none; b=lRogT8d66FM/kXJrxbImYFRwpDBkGAAb+4i49LvmFq284D34+tv+Qvsz6h5p3jjOoDI2jTF46VotPpZ0BuEC3BTwYJDONhI5Bovr9xS5ix2Mp5gJOjxLMmzLXGOkT/s9PSRDQRpttrZeXSaPbARNoLcoZFWN8SKgny4KmgF1xBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722255933; c=relaxed/simple;
-	bh=zoJNAWTqU5I4En/2CudM5+XKxxwTYQiPO48asS9+YYQ=;
+	s=arc-20240116; t=1722256275; c=relaxed/simple;
+	bh=DNhanqTWJd/OkgCTvbBYdOC5y5bwxHTguZCfFa1RUyo=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Bv+BDTqJYUNVN8hxUG+SbpfmeEvWwPmgAQQxMusxTs9QMHAG4LAPmO7883Z2uDFuVRt+CFBLF1b7V7vKdgt9Z9tC99e/Gy22A5h5270ycfR+JnKNBW27gCREfPiJVuvC/kp3ITbksEk0ve7ZXwdRIaIR50ktzm+RZm26inia/Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yE/gIvEa; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version:Content-Type; b=T5g6P1zJzS5DqcUe+hLHwyPamUIKzfDlKXH9IY5G/EvUZ87n+kpEDmh/HrwZI/wTvX7f8JtsIw04OWCxACym+tJkPWC/xnr/v+iCx44h7TmJAZz4JVTva4MU29yd43bajeKg1e0odq/Id+QlnLhYXjvF7z4pTxwoxCf6cPrERbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xx2+iyqK; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yE/gIvEa"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso16482115e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2024 05:25:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xx2+iyqK"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f04c1e58eso4258591e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722255930; x=1722860730; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722256272; x=1722861072; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1Vg2xuu/qj9ECyM8Dr9YGng2AyXJU9jC/IuVj2yW73I=;
-        b=yE/gIvEa9wfw7tguWYc1BjwoPkRLIOTSS2hk16QeBc4AaWzog5Hk9/INO4qFCLi03u
-         w8YLUZ8Uwy7joddF6wB2AkMY1UjqdBtAOfsk/LGxnMFPsR+eqnLMLHd/xVZp9JEwRaIU
-         7vJ/F/uMMHLUUCosyvmCszOvLu5kpWhzcE2l0W/umv/9oLV+k0CAxPtL1LLkPzB1eiSv
-         ZBu47h4TGvv8NsMPpKJNv4vQNZG30Yc6NGTE2ksR9QNBHHaWH2FwgIEBgMuIueCy0lJX
-         l6C9MQjBFkjUySPHlJPLEjVukZ28aJJHxON2DsUQp4sYmANoWsxUqed5dzjFrGDvTzii
-         Rsrg==
+        bh=Y7hmd3mWm1gQNax1rdnBwm9X3nvRpjYNFyOf3EAYVg8=;
+        b=Xx2+iyqK2xILW5rbylj88DdGnDjEPkDH+GfKyPJl4dz359q+EUq4MihYUQQ14EkytO
+         hVHNdZk4bPDRfMAeRccC1KWZu70IfX1gTaUDAtAI5/4krI4reRk2R52Eva/2R7hQz7RI
+         QbfG9Y5XK0fqiaQu+U5eGXu7WJwBkmh8S1rVvxurWwOl2aWWuAZwVyw5rC3bTGap9hFP
+         Q7LWHzxwjd/18vb9++74fFlNqm1swXhp8r7+io8UhyZXOgII3h0O31RNi8Bi8LHnM3YB
+         K0yteUmWUUzWqD4zAttuaPkv8NguKKsLPkxQaL1NtQnI/cHhaZtc89T3l6ZK5ZRco/ui
+         w00w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722255930; x=1722860730;
+        d=1e100.net; s=20230601; t=1722256272; x=1722861072;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1Vg2xuu/qj9ECyM8Dr9YGng2AyXJU9jC/IuVj2yW73I=;
-        b=Su5KcmBN3LpdolJGi4jvEvVLxNT8iPZ6fI6WPcd1Ynt7PkqQo8TlSqGnHM1QT6FfJk
-         BHY60lz8Zxw4ObsWnreuqLz8xLq54iaAvc4gBV4vhkvYRotMOZoxB9YCCjNKQSqwxJ7y
-         hvTsDeh50Pjtjovg76SMJ7WOGw+mVzwK1hTagYegkFBcdGAZuVUaoJJGrPMXf8QQRsnh
-         k2+aSWzJyGWVZ50KZGORWCQlRZPLfUuPNgTga276N6UE3zVcCUkNePRUUpUQW4LbgZyJ
-         1CMrxIzG8fIWzwGlS37TFpQEXZX0Te17ywAg7fMdeUkf0AKg6R7Dzexx22LyLoVYR3/R
-         rd5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTBKKJxsin+VptUWlVFphODcB43/pwhYm6XFn+z0muSb/nvmTXN5FS0XoYxcs0udtwzLHLLliOwkaLpjyk0JFG015vsi56/GnT9oQ7grgi/pk=
-X-Gm-Message-State: AOJu0Yzob6af4UzeUFl5owqkGngWdlhlQgamTjUwZJ5h0HG+iQOsxkp7
-	zz8D92WpP/PUA9ELWqD1UexX/RUENbcq0XXrK+ZN4n8WWRu7iMfAWrxQub/C0EdCVvAdsisewZ6
-	E
-X-Google-Smtp-Source: AGHT+IGfQ0DfbRYah7VUQ+O319MFuvGe4DU48MT7LDMj/XnO9W5q8Gd1ah6ZEaKqZXrpjptMvpXK/A==
-X-Received: by 2002:a5d:670f:0:b0:367:f104:d9e8 with SMTP id ffacd0b85a97d-36b5d08b9c4mr4285810f8f.47.1722255929593;
-        Mon, 29 Jul 2024 05:25:29 -0700 (PDT)
+        bh=Y7hmd3mWm1gQNax1rdnBwm9X3nvRpjYNFyOf3EAYVg8=;
+        b=MQEa6wszqmzuwkQ6AoLHBe/YmVE5JZyLkN4xDC2orR4We5aQ8LjbA6ry5T66l/D7kr
+         KmYydcTbh6G+BAHSy6bPRP4CLzTWP689LnJNI442wvzf/gg1xKp/gfq02m4Xjv1g7GV/
+         yGjjnvL3KpUbr6LkdoMXiGTpFPIKqyZMxxCyCKMxV28j12qKEuJX6j92AL5SurX++DQ7
+         RrW0vcBdvYk96XGZXLlc+xQwE+1GcqcAS8z3cqY8KRriDaAz9JluXKarRTMZFMf3+hAe
+         0VXj8AXue6JbATk64uQPTR9Qo4s+mDV++qmhimWRBjrAorZMuJlkfIj17urVfWUYmKT4
+         j7EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWkcYK2jk9Jqw2aTyI9iKWXnF8BA3lIdG+uyVSzFAzoczEiAmioI/UFhFlqh9SHdwj3Qa7b5IPhV9eCGM8ul+EG58DzfCUc3FuGSlSxK+ddIE=
+X-Gm-Message-State: AOJu0YyO/Fa0heATyZ8nfotoTzQNEkWbxO1IYFJvvkTmIhMRVFyVbmCi
+	CAAnq+etAdTXi8i62P61DHHh9mVT4tKR0HcvYUyAQJQjSa/oEwLcUpSRVchy6h8=
+X-Google-Smtp-Source: AGHT+IHmZcVRj+OQubC+Y9JLE+mJvdVS0zZVFUn2gdyL1G0hR405kWsdn6atd1FZXPPAZ9g+dW56PA==
+X-Received: by 2002:ac2:4f07:0:b0:52c:df55:e110 with SMTP id 2adb3069b0e04-5309b26928bmr7668841e87.12.1722256271901;
+        Mon, 29 Jul 2024 05:31:11 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b3686227csm12113664f8f.99.2024.07.29.05.25.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab22ff1sm501973966b.35.2024.07.29.05.31.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 05:25:28 -0700 (PDT)
+        Mon, 29 Jul 2024 05:31:11 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, patches@opensource.cirrus.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20240708152530.19306-2-u.kleine-koenig@baylibre.com>
-References: <20240708152530.19306-2-u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH] ARM: s3c: Drop explicit initialization of struct
- i2c_device_id::driver_data to 0
-Message-Id: <172225592831.279717.8096070043448420240.b4-ty@linaro.org>
-Date: Mon, 29 Jul 2024 14:25:28 +0200
+To: David Virag <virag.david003@gmail.com>
+Cc: phone-devel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240713180607.147942-3-virag.david003@gmail.com>
+References: <20240713180607.147942-3-virag.david003@gmail.com>
+Subject: Re: [PATCH] arm64: dts: exynos: exynos7885-jackpotlte: Correct RAM
+ amount to 4GB
+Message-Id: <172225627029.280610.17022654796794760064.b4-ty@linaro.org>
+Date: Mon, 29 Jul 2024 14:31:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -71,24 +73,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.1
 
 
-On Mon, 08 Jul 2024 17:25:30 +0200, Uwe Kleine-König wrote:
-> The wlf-gf-module driver doesn't use the driver_data member of struct
-> i2c_device_id, so don't explicitly initialize this member.
+On Sat, 13 Jul 2024 19:58:32 +0200, David Virag wrote:
+> All known jackpotlte variants have 4GB of RAM, let's use it all.
+> RAM was set to 3GB from a mistake in the vendor provided DTS file.
 > 
-> This prepares putting driver_data in an anonymous union which requires
-> either no initialization or named designators. But it's also a nice
-> cleanup on its own.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] ARM: s3c: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-      https://git.kernel.org/krzk/linux/c/c652cfd1d31ebcb54fba1fc19dcd8691c5ba9474
+[1/1] arm64: dts: exynos: exynos7885-jackpotlte: Correct RAM amount to 4GB
+      https://git.kernel.org/krzk/linux/c/d281814b8f7a710a75258da883fb0dfe1329c031
 
 Best regards,
 -- 
