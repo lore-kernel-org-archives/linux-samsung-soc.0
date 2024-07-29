@@ -1,346 +1,203 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E985158DA7
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2024 16:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2442B9D2;
+	Mon, 29 Jul 2024 17:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722269525; cv=none; b=k6P877nD1gj1ZaDnS6LhZucG+DTN2iT7ycVfKZEGquH7lcbx0rxTSj6hJdv+lzEL+B7bmjPoTke5RtVQUusZ6j41d3H+76VcuJ71yRzP3fIYtW+M828bHIxH7QZXWdpDe6u9myWxfr4Gu1TBNwRsCGoHIZPujICnPJyxF+WrhAQ=
+	t=1722275270; cv=none; b=Ta+KN703QsTn+wFChOytTWAmQ7MbN6E3Od4DiGvjCGWikPDLfZ+sVDMgMTHtkRr6N9F+nS1wNZeZuuWDvnFwoxFhanh2ct+/xyK23e3g7eLo5xO2tnZhf9VL8fkz6rV41HOqRV1htarurBC828IYegbkVYY30amT2zt9hSEMnTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722269525; c=relaxed/simple;
-	bh=NaY+2CkI6SOg52Efr47A/pv+X9x7twLt8m/g6af3SAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=nzfl3pooG7d2Jjk3ZKrD5VmI4HGKjhWqo3zdw09/QO0nqXENSNIhabFOXpNx3Oj1QYl1hZkpMDH+MqcIpSNHddA1nNYZrn6qIiALej/LkYI/fb+dG3b2quVB+xnn00NyGb/cLy3VoQS6xERv4KA2ASkChDxxQcx2h5awI41nfO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rNm9SlNT; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1722275270; c=relaxed/simple;
+	bh=ZBeCVq76s1YcWohvGVE5wNLt+NvZAu6jcfawXYj2BqM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=meUyNCgcPHwtlypJd0GotFnZqXtwKOuWLXTrgO0LbtbF49OatwO2LWAEzjzQiE43t+9pOb88anHSfj4EB0PLoK/+5dx8li8z99rA3ROFvpVgY69/H6UrcJ92CkTX0Xkfdb/MhBzyRtiLU/nIQPVzgFGjgc95+iRipmSEPKVi57k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IqbhU3Fl; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rNm9SlNT"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240729161159epoutp02403f099c26cbd90c7c38e30b0a983a1f~muwDKopdV1988719887epoutp02H
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2024 16:11:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240729161159epoutp02403f099c26cbd90c7c38e30b0a983a1f~muwDKopdV1988719887epoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722269519;
-	bh=9L/goxeiyr+ov9kjUZNbh1NnOXc0mWNWTmljliLuAjQ=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=rNm9SlNTUPtOIvYsXAxJ4dp3AnMDcUAkj7aDbW2sGOa1bDyd//lylGv2v70oREJ9Z
-	 btkikaQ2LJ5d1+PlpeZ3qC962iPcUAAGxFJAppkxGyz9p2paZ8vuC9yLAVY1KFaWVc
-	 yiAAo9p2Dnr5iYoULwfOlyflJldv7ZWKNqosZo+s=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240729161158epcas5p1986600c359db7c9b891ce886706c5427~muwCKVrds1255512555epcas5p1D;
-	Mon, 29 Jul 2024 16:11:58 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WXjzc6ZDCz4x9Pp; Mon, 29 Jul
-	2024 16:11:56 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0C.25.19863.C4FB7A66; Tue, 30 Jul 2024 01:11:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8~muawmDE0Q3250532505epcas5p1P;
-	Mon, 29 Jul 2024 15:47:36 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240729154736epsmtrp28471d52e7a82b16720048d80053df401~muawlaJOf0726007260epsmtrp2Z;
-	Mon, 29 Jul 2024 15:47:36 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-56-66a7bf4ce896
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C0.FE.19367.899B7A66; Tue, 30 Jul 2024 00:47:36 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240729154734epsmtip1c8e462bd54e09b35ed685921f00a7b82~muau8TE9J2717127171epsmtip1c;
-	Mon, 29 Jul 2024 15:47:34 +0000 (GMT)
-From: Vishnu Reddy <vishnu.reddy@samsung.com>
-To: krzysztof.kozlowski@linaro.org, s.nawrocki@samsung.com,
-	alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-Subject: [PATCH v4] pinctrl: samsung: Add support for pull-up and pull-down
-Date: Mon, 29 Jul 2024 21:06:31 +0530
-Message-Id: <20240729153631.24536-1-vishnu.reddy@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAKsWRmVeSWpSXmKPExsWy7bCmpq7P/uVpBns26ls8mLeNzeLmgZ1M
-	Fntfb2W3mPJnOZPFpsfXWC02z//DaHF51xw2ixnn9zFZLNr6hd3i4Yc97BaH37SzOnB73Lm2
-	h81j85J6j74tqxg9Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LI
-	S8xNtVVy8QnQdcvMATpKSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhb
-	XJqXrpeXWmJlaGBgZApUmJCd8e/AUuaC/Q4V1468YGtgXG/WxcjJISFgIrF4xhHWLkYuDiGB
-	PYwSm278YYdwPjFKTJt/hBGkCsyZNUEPpuPys8lQRTsZJTa3b2SFKGplkvg0txTEZhPQlfi8
-	5CwLiC0ikC+x8sI/JpAGZoGLjBL/tuwHaxAW8JaYd3QWG4jNIqAqseT/WyYQm1fAVuLzs6Ns
-	ENvkJVZvOMAM0iwhsI9dYtLb1cwQCReJDy9+QRUJS7w6voUdwpaS+PxuL1Q8WWL971NAcQ4g
-	O0eiZ5oCRNhe4sCVOSwgYWYBTYn1u/QhwrISU0+tAzuBWYBPovf3EyaIOK/EjnkwtprEsUnT
-	WSFsGYnOFTcYIWwPiVM3X7GCjBQSiJXoPGI/gVF2FsKCBYyMqxilUguKc9NTk00LDHXzUsvh
-	8ZScn7uJEZzUtAJ2MK7e8FfvECMTB+MhRgkOZiUR3vgrS9OEeFMSK6tSi/Lji0pzUosPMZoC
-	g2wis5Rocj4wreaVxBuaWBqYmJmZmVgamxkqifO+bp2bIiSQnliSmp2aWpBaBNPHxMEp1cDU
-	2vMkKJHzzf1DK9Ryy86bOHyfOfUNk/nNB7vfVlssN7pZX1zOOEG+5uKvZX5rr0meX75X5cCD
-	/BkW3TyzJq/rZm/+s76r0fn+7/iPYluXxSx3mxm/juGZyNRF8qd6zf/9Fiqb8P6MiWjKCa15
-	by7ZRXyVs+vtKO9unrVoIdfL/XXnQuzrml4/O9fJ/f3Arjx1c9aylZ0n5V4I7ErpZP/65+u8
-	6wanWW+d0l/7sPjfLUsr2a+5a4y53q1+pV5SteDCsX2Hvp7maNxhkLBhgqjacY6Ib9ItzuKb
-	mc2q53gJnL3Lf4T1XXIG64NieZUSdd95XNmvOZl77JyU2LZ96nZviHzfX/El3f/Zypa5so9O
-	KrEUZyQaajEXFScCAErpZkLzAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkluLIzCtJLcpLzFFi42LZdlhJTnfGzuVpBj9+iVo8mLeNzeLmgZ1M
-	Fntfb2W3mPJnOZPFpsfXWC02z//DaHF51xw2ixnn9zFZLNr6hd3i4Yc97BaH37SzOnB73Lm2
-	h81j85J6j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4Mr4d2Apc8F+h4prR16wNTCuN+ti5OSQ
-	EDCRuPxsMjuILSSwnVHiXLMDRFxG4sOdLcwQtrDEyn/PgWq4gGqamSQaVn9iAUmwCehKfF5y
-	FswWESiWuPJ6HxNIEbPATUaJvq1fwBLCAt4S847OYgOxWQRUJZb8f8sEYvMK2Ep8fnaUDWKD
-	vMTqDQeYJzDyLGBkWMUomlpQnJuem1xgqFecmFtcmpeul5yfu4kRHFpaQTsYl63/q3eIkYmD
-	8RCjBAezkghv/JWlaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5lXM6U4QE0hNLUrNTUwtSi2Cy
-	TBycUg1M7Zs0s259Vzl5IqRm2rdp8m3/zyzxuvTjAedPid1PCxxWzTt6VyblbXZIqFY584LE
-	ihdeMc35reW67fJZLyVcmW41xX2JXub3NuW6wjutxT9eHtkrb3OqqETD6ntes5FUq59SsZwz
-	j94Zw7Aji+dnXGY2c77pvmPj9Rdtv7T2itgudTJYUSP2TT6cX2rTVZGVN7uXyYlkhd/avf3Z
-	zcWd119fafi69fIuVb77Fyp1t3wIXDCp9dS8BzKcG29dZTsqYyu3ximmMlBjy8Ub7VlmdhfE
-	/wal6hkZm8acn2d2yPB6lV2ouZ6CBsdM3uCOT/m1n6dH3HZYaJRaeci+89bU70/DDwduYlrZ
-	bXSS4WGAEktxRqKhFnNRcSIA9pwtXZwCAAA=
-X-CMS-MailID: 20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8
-References: <CGME20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8@epcas5p1.samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IqbhU3Fl"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-36858357bb7so1579722f8f.2;
+        Mon, 29 Jul 2024 10:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722275267; x=1722880067; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pnyl1Fm6dnpc6MtOd4c54WB7CEXHNdORrEgIOaBPmMw=;
+        b=IqbhU3FlB4HSCGZtB5zXTbGnj47gG7l79dUjsKx7G/g3aHRMDzwJZdRAYta3coLSoW
+         2eTferrNB54nomYtS3gmZIIMNkHooeODwzPXJB/VOTk458l5MQvwOPIshrPOyTCTL3Ww
+         hkXS4zGMdEJ+EGWOadJi9xtx/6V70ZEKIjyzRnRalvaRh07PI2qXkcEvofR+tcraAV/J
+         01doOVOchQgOz6yxKg+IW62UaUsucYUzzwRhRnB6u66UrAEeeMlwzms6ERMWXWiKEDQZ
+         mNFXl5DjoKqcCs8PmsbrDYLGaPBNIZPCSHA6hu1rRWoV7EBlVLoXKiqPWNsOQVM9XW77
+         75Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722275267; x=1722880067;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pnyl1Fm6dnpc6MtOd4c54WB7CEXHNdORrEgIOaBPmMw=;
+        b=b0EUVOn9qEEhsyIDQaZNXuO64hAE3H06EG0I2vX9XBrQGNyCLbANdNDiQWV/WEWXCd
+         7gv8CzJBeN38lUCPj0nvYpdaS3l58zhW8m4HczG7eh4ONyM21qf2xGIS+1HQvAZBWRIR
+         YIppc+pModbLHUnkUjrr3hTyYPyBal/EzHdNA3xgJsoA9/THwK67y9utgHqCfiBzn2dD
+         PfIX5RJb8SetMVi4Ce8rzVkaxk85QG3E6ZghRC7+myq8FhsBamK9Oh6dCyeIG/3aTEAT
+         zBrk5fC2mnDMJ/V4WLwFerSrEgrBmchHq/TSBHNH1Us8R3nPN8ls9rUWc5eyHteqgY+2
+         cAOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTCf8+1sdlT5hPiiEJ1Qpz88Luek0VGvOsKh0V7X3MbS0Bb9oGESrAseEGAndpSVxhW197PvkqWSwKTyH719CKyVOsdHp10XaDwBjNz+rA9HLoTIIuTFx1gyrX5e66zHhgq5tjId1Py+Vu6K0YLaPpbN2m1vFr0JLEia1j0/XCv3m4BBwNTdqaa4Mvd2pk3OngJ/mxHM78DcMCxBjT/etL7yUUUfI=
+X-Gm-Message-State: AOJu0YyYdJK6vf1q5+FKzvMFXr/Gytr6ZFyNBN3/IRCsqJuQwTf7BuUX
+	uTXVN3V9E0qOxPLiVqwo+NODNtNgxaYPPDYvBTJd8nUiwPHgMzb1WY2Kbw==
+X-Google-Smtp-Source: AGHT+IHLvm7BPEtc9W0QLw+jMFn9fEXLREx620qqvb1/GY1x18fNukgK4rt67upiSgT2nwwCGAPipg==
+X-Received: by 2002:adf:f5cd:0:b0:367:8a87:ada2 with SMTP id ffacd0b85a97d-36b5cefd2fdmr5004948f8f.26.1722275266424;
+        Mon, 29 Jul 2024 10:47:46 -0700 (PDT)
+Received: from tablet.my.domain ([37.30.0.99])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367fc8a7sm12716550f8f.59.2024.07.29.10.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 10:47:45 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v3 00/10] power: supply: max77693: Toggle charging/OTG
+ based on extcon status
+Date: Mon, 29 Jul 2024 19:47:34 +0200
+Message-Id: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALbVp2YC/3XOyw6CMBAF0F8hXVvTh9jiyv8wLvqYQhOhpCUNh
+ vDvFmKiG5Z3JvfMLChB9JDQrVpQhOyTD0MJ/FQh06mhBextyYgRdiE1q3GvZiGuDcdlHVuIGOb
+ JhAE3oLXQykpuAJX2GMH5eZcfz5I7n6YQ3/uhTLfp1+Tk0MwUE2wNUw3U2jpO7m2v/OtsQo82M
+ 7OfI+jxb5kVh0gundOaSsP/nXVdP5ss+r0GAQAA
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, 
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4799;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=ZBeCVq76s1YcWohvGVE5wNLt+NvZAu6jcfawXYj2BqM=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBmp9W98Mdnl67vI2rkeJCCu+vhxYNNREfuNvBtU
+ n3iwxgaY3mJAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCZqfVvQAKCRCzu/ihE6BR
+ aJJ7EACYEfWhfKcmtoLfb+s8cjo4YaBDhaY44DbG+hWpObrevEb3Cpe/nVxC4tyH7FWqVWjWk5k
+ 3+CDF3t38H355pscftMTQTs23cosdgkh2ZfJsb81CitzFJKCehwXWiVbY2fbP+w5dqmn8KsI5wi
+ eKSuI5VAT8RQNkGyIC+jawaqIOWUqtTZKHXwT8xWudcJHmZkvp+NYZoyfMvWAfiN/Po+Vy5wjmZ
+ kAOnWBvg2Y+qhcIfTlEis97pM0XcY74ADiN6iuoulT5J76WGt3qDXh44WXNNYH7KveVixrhb8Nd
+ xGYkDx7fAMoGA8OxroyZyhs9D8cp3p+wIhEyqTKKAzdbtRD7nD1Obr9mJT5mRgFZlTIInIChzw8
+ qtvaxMPvJxYs9w2ncs3miYwde4cVO8AdpXn4lhlehk0w+Jvbt+R3lphytX9eWyk/j4siTeKCcuh
+ 0QdyjozRefV0okQk5hHr7ZlHa4KoNatXq9Xz/iUt6wRhRZWhrzsGHsLabTwfbGbQfuyEdoJcU28
+ v8dFlpAjksS1PRcPuw4V0TSbvBD5WfEzpc3PR2W/Ir5VzzLHam4eFoC7V55hRfRcTcN8FvQB4dy
+ TveJfBzV3bPIvEjwMuva42sQi79JkC57dgtWiATjUOapf7jus1P9NlSv/lU9EpL1bDA2Ja/kjcu
+ b/FUadLBbleBGoQ==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
-Gpiolib framework has the implementation of setting up the
-PUD configuration for GPIO pins but there is no driver support.
+This patchset does the following:
 
-Add support to handle the PUD configuration request from the
-userspace in samsung pinctrl driver.
+- Add CURRENT_MAX and INPUT_CURRENT_MAX power supply properties to
+  expose the "fast charge current" (maximum current from charger to
+  battery) and "CHGIN input current limit" (maximum current from
+  external supply to charger).
 
-Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
+- Add functions for toggling charging and OTG modes.
+
+- Add an extcon-based handler that enables charging or OTG depending
+  on the cable type plugged in. The extcon device to use for cable
+  detection can be specified in the device tree, and is entirely
+  optional.
+
+The extcon listener implementation is inspired by the rt5033 charger
+driver (commit 8242336dc8a8 ("power: supply: rt5033_charger: Add cable
+detection and USB OTG supply")).
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 14 ++++
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    | 14 ++++
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 77 ++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.h    | 21 ++++++
- 4 files changed, 126 insertions(+)
+v3 no longer uses the CHARGER regulator to manage the power status, and
+that's for two reasons:
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-index 85ddf49a5188..d3d8672f74dc 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
-@@ -40,6 +40,19 @@ static const struct samsung_pin_bank_type bank_type_alive = {
- #define S5P_OTHERS_RET_MMC		(1 << 29)
- #define S5P_OTHERS_RET_UART		(1 << 28)
- 
-+#define S5P_PIN_PULL_DISABLE		0
-+#define S5P_PIN_PULL_DOWN		1
-+#define S5P_PIN_PULL_UP			2
-+
-+static void s5pv210_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	unsigned int  *pud_val = drvdata->pud_val;
-+
-+	pud_val[PUD_PULL_DISABLE] = S5P_PIN_PULL_DISABLE;
-+	pud_val[PUD_PULL_DOWN] = S5P_PIN_PULL_DOWN;
-+	pud_val[PUD_PULL_UP] = S5P_PIN_PULL_UP;
-+}
-+
- static void s5pv210_retention_disable(struct samsung_pinctrl_drv_data *drvdata)
- {
- 	void __iomem *clk_base = (void __iomem *)drvdata->retention_ctrl->priv;
-@@ -133,6 +146,7 @@ static const struct samsung_pin_ctrl s5pv210_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(s5pv210_pin_bank),
- 		.eint_gpio_init = exynos_eint_gpio_init,
- 		.eint_wkup_init = exynos_eint_wkup_init,
-+		.pud_value_init	= s5pv210_pud_value_init,
- 		.suspend	= exynos_pinctrl_suspend,
- 		.resume		= exynos_pinctrl_resume,
- 		.retention_data	= &s5pv210_retention_data,
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index c5d92db4fdb1..68715c09baa9 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -63,6 +63,10 @@
- #define EINT_CON_MASK		0xF
- #define EINT_CON_LEN		4
- 
-+#define S3C_PIN_PULL_DISABLE	0
-+#define S3C_PIN_PULL_DOWN	1
-+#define S3C_PIN_PULL_UP		2
-+
- static const struct samsung_pin_bank_type bank_type_4bit_off = {
- 	.fld_width = { 4, 1, 2, 0, 2, 2, },
- 	.reg_offset = { 0x00, 0x04, 0x08, 0, 0x0c, 0x10, },
-@@ -255,6 +259,15 @@ static int s3c64xx_irq_get_trigger(unsigned int type)
- 	return trigger;
- }
- 
-+static void s3c64xx_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	unsigned int  *pud_val = drvdata->pud_val;
-+
-+	pud_val[PUD_PULL_DISABLE] = S3C_PIN_PULL_DISABLE;
-+	pud_val[PUD_PULL_DOWN] = S3C_PIN_PULL_DOWN;
-+	pud_val[PUD_PULL_UP] = S3C_PIN_PULL_UP;
-+}
-+
- static void s3c64xx_irq_set_handler(struct irq_data *d, unsigned int type)
- {
- 	/* Edge- and level-triggered interrupts need different handlers */
-@@ -797,6 +810,7 @@ static const struct samsung_pin_ctrl s3c64xx_pin_ctrl[] __initconst = {
- 		.nr_banks	= ARRAY_SIZE(s3c64xx_pin_banks0),
- 		.eint_gpio_init = s3c64xx_eint_gpio_init,
- 		.eint_wkup_init = s3c64xx_eint_eint0_init,
-+		.pud_value_init	= s3c64xx_pud_value_init,
- 	},
- };
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 623df65a5d6f..15aa1b71c025 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -997,6 +997,77 @@ static int samsung_pinctrl_unregister(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static void samsung_pud_value_init(struct samsung_pinctrl_drv_data *drvdata)
-+{
-+	unsigned int  *pud_val = drvdata->pud_val;
-+
-+	pud_val[PUD_PULL_DISABLE] = EXYNOS_PIN_PUD_PULL_DISABLE;
-+	pud_val[PUD_PULL_DOWN] = EXYNOS_PIN_PID_PULL_DOWN;
-+	pud_val[PUD_PULL_UP] = EXYNOS_PIN_PID_PULL_UP;
-+}
-+
-+/*
-+ * Enable or Disable the pull-down and pull-up for the gpio pins in the
-+ * PUD register.
-+ */
-+static void samsung_gpio_set_pud(struct gpio_chip *gc, unsigned int offset,
-+				 unsigned int value)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	const struct samsung_pin_bank_type *type = bank->type;
-+	void __iomem *reg;
-+	unsigned int data, mask;
-+
-+	reg = bank->pctl_base + bank->pctl_offset;
-+	data = readl(reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+	mask = (1 << type->fld_width[PINCFG_TYPE_PUD]) - 1;
-+	data &= ~(mask << (offset * type->fld_width[PINCFG_TYPE_PUD]));
-+	data |= value << (offset * type->fld_width[PINCFG_TYPE_PUD]);
-+	writel(data, reg + type->reg_offset[PINCFG_TYPE_PUD]);
-+}
-+
-+/*
-+ * Identify the type of PUD config based on the gpiolib request to enable
-+ * or disable the PUD config.
-+ */
-+static int samsung_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct samsung_pin_bank *bank = gpiochip_get_data(gc);
-+	struct samsung_pinctrl_drv_data *drvdata = bank->drvdata;
-+	unsigned int value;
-+	int ret = 0;
-+	unsigned long flags;
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_BIAS_DISABLE:
-+		value = drvdata->pud_val[PUD_PULL_DISABLE];
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		value = drvdata->pud_val[PUD_PULL_DOWN];
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		value = drvdata->pud_val[PUD_PULL_UP];
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	ret = clk_enable(drvdata->pclk);
-+	if (ret) {
-+		dev_err(drvdata->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
-+	raw_spin_lock_irqsave(&bank->slock, flags);
-+	samsung_gpio_set_pud(gc, offset, value);
-+	raw_spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	clk_disable(drvdata->pclk);
-+
-+	return ret;
-+}
-+
- static const struct gpio_chip samsung_gpiolib_chip = {
- 	.request = gpiochip_generic_request,
- 	.free = gpiochip_generic_free,
-@@ -1006,6 +1077,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
- 	.direction_output = samsung_gpio_direction_output,
- 	.to_irq = samsung_gpio_to_irq,
- 	.add_pin_ranges = samsung_add_pin_ranges,
-+	.set_config = samsung_gpio_set_config,
- 	.owner = THIS_MODULE,
- };
- 
-@@ -1237,6 +1309,11 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 	if (ctrl->eint_wkup_init)
- 		ctrl->eint_wkup_init(drvdata);
- 
-+	if (ctrl->pud_value_init)
-+		ctrl->pud_value_init(drvdata);
-+	else
-+		samsung_pud_value_init(drvdata);
-+
- 	ret = samsung_gpiolib_register(pdev, drvdata);
- 	if (ret)
- 		goto err_unregister;
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index d50ba6f07d5d..a1e7377bd890 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -61,6 +61,25 @@ enum pincfg_type {
- #define PIN_CON_FUNC_INPUT		0x0
- #define PIN_CON_FUNC_OUTPUT		0x1
- 
-+/* Values for the pin PUD register */
-+#define EXYNOS_PIN_PUD_PULL_DISABLE	0x0
-+#define EXYNOS_PIN_PID_PULL_DOWN	0x1
-+#define EXYNOS_PIN_PID_PULL_UP		0x3
-+
-+/*
-+ * enum pud_index - Possible index values to access the pud_val array.
-+ * @PUD_PULL_DISABLE: Index for the value of pud disable
-+ * @PUD_PULL_DOWN: Index for the value of pull down enable
-+ * @PUD_PULL_UP: Index for the value of pull up enable
-+ * @PUD_MAX: Maximum value of the index
-+ */
-+enum pud_index {
-+	PUD_PULL_DISABLE,
-+	PUD_PULL_DOWN,
-+	PUD_PULL_UP,
-+	PUD_MAX,
-+};
-+
- /**
-  * enum eint_type - possible external interrupt types.
-  * @EINT_TYPE_NONE: bank does not support external interrupts
-@@ -261,6 +280,7 @@ struct samsung_pin_ctrl {
- 
- 	int		(*eint_gpio_init)(struct samsung_pinctrl_drv_data *);
- 	int		(*eint_wkup_init)(struct samsung_pinctrl_drv_data *);
-+	void		(*pud_value_init)(struct samsung_pinctrl_drv_data *drvdata);
- 	void		(*suspend)(struct samsung_pinctrl_drv_data *);
- 	void		(*resume)(struct samsung_pinctrl_drv_data *);
- };
-@@ -307,6 +327,7 @@ struct samsung_pinctrl_drv_data {
- 	struct samsung_pin_bank		*pin_banks;
- 	unsigned int			nr_banks;
- 	unsigned int			nr_pins;
-+	unsigned int			pud_val[PUD_MAX];
- 
- 	struct samsung_retention_ctrl	*retention_ctrl;
- 
+- Regulator enable/disable behavior was interfering with how the power
+  supply driver worked (we occasionally got "unbalanced disables"
+  errors when switching charging state, despite checking for the
+  regulator status with regulator_is_enabled() - the CHARGER reg would
+  report as enabled despite the enable count being 0).
+  This broke OTG insertion if the OTG cable was plugged in first, and
+  sometimes caused warnings on unsuspend.
+
+- Changing the charging values directly in the power supply driver is
+  less opaque and lets us avoid bringing in a dependency on regulators.
+
+It also splits the current limits back into two properties:
+INPUT_CURRENT_LIMIT and CONSTANT_CHARGE_CURRENT_MAX. Again, there are
+two reasons for this split:
+
+- They are two separate current controls, one for USB->charger and one
+  for charger->battery, and they have different limits (0-2.1A for CC
+  vs 60mA-2.58A for input). Given that the power supply core has the
+  properties for both values separately, it's more logical to present
+  them as such.
+
+- It's safer to keep these separate; CONSTANT_CHARGE_CURRENT_MAX is
+  pretty explicitly only set *once* - at probe time with a safe value
+  specified in the DT. This way, INPUT_CURRENT_LIMIT is safer to modify
+  since in the event of an invalid value the CC current will hold back
+  the extra current thus preventing damage to the battery.
+
+The latter is relevant as I'm working on a follow-up patchset that
+allows for controlling the charging parameters using power supply
+properties/sysfs properties rather than the CHARGER regulator.
+
+Note that the CHARGER regulator gets disabled automatically if it's
+not used, which will disable charging if it was auto-enabled by the
+extcon code. This can be worked around by re-attaching the cable, or
+more properly by removing the CHARGER regulator from DT for devices
+that use the extcon-based charger management, as has been done in the
+Galaxy Tab 3 8.0 DTSI.
+
+See v1 for old description:
+
+https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
+---
+Changes in v3:
+- Drop uses of CHARGER regulator, manage registers directly in power
+  supply driver instead
+- Link to v2: https://lore.kernel.org/r/20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com
+
+Changes in v2:
+- Changed to use monitored-battery for charge current value
+- Both current limit variables are now set by the CHARGER regulator
+- Link to v1: https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
+
+---
+Artur Weber (10):
+      dt-bindings: power: supply: max77693: Add monitored-battery property
+      dt-bindings: power: supply: max77693: Add maxim,usb-connector property
+      power: supply: max77693: Expose input current limit and CC current properties
+      power: supply: max77693: Set charge current limits during init
+      power: supply: max77693: Add USB extcon detection for enabling charging
+      power: supply: max77693: Add support for detecting and enabling OTG
+      power: supply: max77693: Set up charge/input current according to cable type
+      ARM: dts: samsung: exynos4212-tab3: Add battery node with charge current value
+      ARM: dts: samsung: exynos4212-tab3: Add USB connector node
+      ARM: dts: exynos4212-tab3: Drop CHARGER regulator
+
+ .../bindings/power/supply/maxim,max77693.yaml      |  15 +
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  22 +-
+ drivers/power/supply/Kconfig                       |   1 +
+ drivers/power/supply/max77693_charger.c            | 302 ++++++++++++++++++++-
+ include/linux/mfd/max77693-private.h               |  12 +
+ 5 files changed, 337 insertions(+), 15 deletions(-)
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240525-max77693-charger-extcon-9ebb7bad83ce
+
+Best regards,
 -- 
-2.17.1
+Artur Weber <aweber.kernel@gmail.com>
 
