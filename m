@@ -1,268 +1,235 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4348719884C
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2024 09:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B73198858
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2024 11:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722331765; cv=none; b=bXBh6t9N6B2Y5rbjYAY3IpjW96ZeORablJ1rG7KkWyZ44Lbmu8DMt33auHT7pjbUP1h4X6/eudzzYTW9q50e3GfDIR8toOrsUbt4HaqTvTn+4ZvijY5SJoZM9+a80n3inplNUaNUklzcSmBCAOcVU/84335PGs57MtfrC7xcZJY=
+	t=1722338194; cv=none; b=mwGJ6kATVqsE6vaa8StF8gVlYcogJ6x8kPgZxJcgaljwGo+Fd9ac6bqq3cQULgWr6PA/zuSFTxg220rc/va0UP8acGqzA1XIu5FfOR2xEprKk3aVrfSzGETrBQent2lauTyWl4RcwODTFx6YWs6JEEVpqAkbLwXp7EKHYkW5ORE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722331765; c=relaxed/simple;
-	bh=/DQN7wlFhNjwCgjwCxxGMwnhQyoM++N1SKCx7cit4/U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=YZrpdNIhm4iwsWiol65KEWcuuksn3VKDhcYRItAfwIpCktbUpVLHLPie45Gt/r8cmO7tQ8d+pUbmNz1GuGrr2YRiNNpcz7vlylQj0znzKWkQhiQmDH+BbgmHcWgXauL3lV42y/IaVx/70jp7tm/TTNdj2dSIPukW1cKljp9dx7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SFXNpOYw; arc=none smtp.client-ip=203.254.224.25
+	s=arc-20240116; t=1722338194; c=relaxed/simple;
+	bh=iTUhhoRU5HL63irCLUt43QUjivIRS8EstPcnmxLQCro=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=SreNrB98ygvScXkSM02xXHwN91mQaSokB85I903CrEnELzUa7TCa92npuwbSGy2Vf8fMe3/zYfNhCBPVorEnsPt/JxNVNTN5X2UI1UDdeaOWJeDwy8QxWcd+OiRirYsYQQ+KEZc6LSU22H5eT3RMZKCC+MdBGL/vlfkdox2/MeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WStXUzTd; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SFXNpOYw"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240730092921epoutp0235f7878696b71368caa2392eeb2aed91~m85yHI7680217102171epoutp02P
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2024 09:29:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240730092921epoutp0235f7878696b71368caa2392eeb2aed91~m85yHI7680217102171epoutp02P
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WStXUzTd"
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240730111630epoutp01c832b653a1fc8029372e8e4764134b92~m_XWRSjW-0516905169epoutp01E
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2024 11:16:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240730111630epoutp01c832b653a1fc8029372e8e4764134b92~m_XWRSjW-0516905169epoutp01E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722331761;
-	bh=9b1qcCuUR7o7NGrHlrpGFEmYOKSdxWxtM6MB+MAmgLo=;
+	s=mail20170921; t=1722338190;
+	bh=WG4pekMnekNHbH9qbttvlmoxeH6/97stlcOmnMH/o0w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SFXNpOYwo8BmmmWD2u+g92Px6zNjPdRnVqAX40xMx1NX6/cVIxx0D3cQALfwq2+xB
-	 P+gQu8Z+w4zsuJwJGL9eerp0+tmhqtg0oQh8Kf6QaKB5puYcVfg9FyFrOQKvhZJaOb
-	 GgjBqyZXrJwRXA76aZGVv9aDsMk9aLqyf2bB1kZw=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240730092920epcas5p4447fa999c715be1609600c1e72fa5d20~m85xfTQzh2477224772epcas5p4B;
-	Tue, 30 Jul 2024 09:29:20 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WY90Z4pSkz4x9Q1; Tue, 30 Jul
-	2024 09:29:18 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	94.6E.19863.E62B8A66; Tue, 30 Jul 2024 18:29:18 +0900 (KST)
+	b=WStXUzTdFSAWfGhrCCgk2CsH4F9ichXLAuAV2/TVFBAU768k8m5t8jJaSTMZWrK4a
+	 Vu/Vdrxk7H7XFcisW6nsSIUOOUuzjypTQ9+sqCZEqp40i1VYW4hK8p1++67Iuc6BOK
+	 ebdj7NrHuuHfY6IS9q1A2qFdRY+tUaf1Aluib+WA=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240730111630epcas1p14390fa39cdc2bfe461401c914432bd47~m_XVnwNq21944719447epcas1p13;
+	Tue, 30 Jul 2024 11:16:30 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.136]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WYCNF23t7z4x9Pt; Tue, 30 Jul
+	2024 11:16:29 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	16.54.09623.D8BC8A66; Tue, 30 Jul 2024 20:16:29 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240730092913epcas5p18c3be42421fffe1a229f83ceeca1ace0~m85rcfx2k2928429284epcas5p1I;
-	Tue, 30 Jul 2024 09:29:13 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240730111628epcas1p2c9daa7b7e637f4d66814584519b4b1bf~m_XUL2RDT2584725847epcas1p2F;
+	Tue, 30 Jul 2024 11:16:28 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240730092913epsmtrp1582accd759d37c1ddd9160e1f0635809~m85rbOdrs2361923619epsmtrp1N;
-	Tue, 30 Jul 2024 09:29:13 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-11-66a8b26e4aa5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8B.AF.07567.962B8A66; Tue, 30 Jul 2024 18:29:13 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240730092910epsmtip263adb5695f1726963bdef87ff92e4ced~m85n3k4uT2111521115epsmtip26;
-	Tue, 30 Jul 2024 09:29:09 +0000 (GMT)
-From: Swathi K S <swathi.ks@samsung.com>
-To: krzk@kernel.org, robh@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	conor+dt@kernel.org, richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
-	andrew@lunn.ch, alim.akhtar@samsung.com, linux-fsd@tesla.com
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
-	alexandre.torgue@foss.st.com, peppe.cavallaro@st.com, joabreu@synopsys.com,
-	swathi.ks@samsung.com, rcsekar@samsung.com, ssiddha@tesla.com,
-	jayati.sahu@samsung.com, pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: [PATCH v4 4/4] arm64: dts: fsd: Add Ethernet support for PERIC
- Block of FSD SoC
-Date: Tue, 30 Jul 2024 14:46:48 +0530
-Message-Id: <20240730091648.72322-5-swathi.ks@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240730091648.72322-1-swathi.ks@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WTe0xbVRzHd+5tewsKuQLOI1Fk10k2DIyOAodtTI2LXrNHSPaHhkxqQy+U
-	AKX0trrNuOEDp10oA2FDwoCwLbwcj1K6MqHQUovCRmGO51KBdVWh4xE6mbgxpJTpf5/v731+
-	5xw+HuDmBfPTZUpGIRNnUjxfjr5nZ3iETFubGnXnSwqtzJwHaKpCz0M2uxlHP3QOYKjc9hUH
-	VVoGuMhpvUug8e52DFn6LmPot+p5LrLZmgk0qNdwkdYxwkXTs++jX6+X81CpzYgh9cg9LqpY
-	vcpF1qqtaLn/PkDVbQ8ItOZqA2h6sYNAZYMGLrLc+BNHax0GAlVPVXHRg5Zx4s2XaF3dOEY7
-	C9oIur3MTtBVWhWtrf+WR7dePk23G9wYvWAc5tEaXT2gTUYB7fy7E6d1XW5AP/niIkG7tSGJ
-	/kkZ+6SMWMIoQhlZSrYkXZaWQB08KnpbFBMbJYgQxKM4KlQmzmISqAOHEiPeSc9c3wsV+rE4
-	U7VuShSzLLVr/z5FtkrJhEqzWWUCxcglmXKhPJIVZ7EqWVqkjFHuEURF7Y5ZD/woQ3rphpkn
-	r91+PH/22VxQEKIGPnxICmH+TCmmBr78ALIDwOULbo5XLAFobRndFMsAtoxUEmrA30i5M/Gc
-	194JYJdpAnhFHgZ1JecIT10euQOO1l4jPI4gMheDRXNDuEfgZBcOxzVOjicqkEyCfU478DCH
-	fA12VPy0wX7kHqh7OIF5J3wFNjR34x72IffCmjnXRiFIXvKBo983496gA3C5bYjr5UA426sj
-	vBwMZwq+3mQRbNAMc7wshfZ/CnlefgN23y7neM6Gkzth0/VdXvPLsKSvcWMGnPSH+Y/ubc7j
-	Bw0VT/lVuOoa2Sz5ItRfWdhsRcPeHx/i3rVoAHQ5rNg5EFL2f4sqAOpBMCNns9KYlBi5IELG
-	fPLfvaVkZ2nBxusPTzSAhubVSDPA+MAMIB+ngvxEt6+kBvhJxCdOMopskUKVybBmELO+wUI8
-	+PmU7PXvI1OKBML4KGFsbKwwPjpWQL3g58q7KAkg08RKJoNh5IziaR7G9wnOxWpLHUGWwVs/
-	3wyTHy4sxI6Xroy58PeoOZa31dfsgnGfPbJE78gRFvLykLGmStQ/dv+bg1Tg3Bx3oWml/vHk
-	h9VjTWpTgspoPmuLzMAmkx1Dmo7kXHd0Q+/w4trnWxqneN2zZ47FVxRtO3JGj5tE8dd87Jai
-	09v/GtJdVcIP9tYtceWs6Y+aLcbvxh3FKdhA/6d19sG8ZjpndH7RNwxvvXXyF8vS8v53W0Pz
-	D2eZnNV4z7T9dWfMSMZ5xYmwsrtPircV9EQ62OQLQ/7WU/ik+ZnwQ2clkreY/eakuInG/Meh
-	0iNHK3+vCU+Q0TcHd1eeqmG1x1IN+mK1tUTjzpmnOKxULAjHFaz4X76UnUKGBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvG7mphVpBpvnGVv8fDmN0eLBvG1s
-	FufvHmK2WLP3HJPFnPMtLBbzj5xjtXh67BG7xc0DO5ksjpxawmRxb9E7Vovz5zewW1zY1sdq
-	senxNVaLh6/CLS7vmsNmMeP8PiaLrmtPWC3m/V3LanFsgZjFt9NvGC0Wbf3CbvH/9VZGi4cf
-	9rBbzLqwg9XiyJkXzBb/9+xgt1j0YAGrxZeNN9kdZDy2rLzJ5PG0fyu7x85Zd9k9Fmwq9di0
-	qpPNY/OSeo+dOz4zebzfd5XNo2/LKkaPg/sMPZ7+2MvssWX/Z0aPf01z2T0+b5IL4IvisklJ
-	zcksSy3St0vgylh85hBbwQqVit5XPA2M/XJdjBwcEgImErdvCXYxcnEICexmlPh18jZzFyMn
-	UFxS4lPzVFYIW1hi5b/n7CC2kEAzk8Ten24gNpuAhsT1FdvZQZpFBCYwSaz/tJ8JxGEWuMgs
-	0XzqI1iHsECExKsF55hAbBYBVYk9844ygti8AlYSW77fYoLYIC+xesMBsM2cAtYSy9++ZobY
-	ZiUxaeElxgmMfAsYGVYxSqYWFOem5yYbFhjmpZbrFSfmFpfmpesl5+duYgTHpZbGDsZ78//p
-	HWJk4mA8xCjBwawkwht/ZWmaEG9KYmVValF+fFFpTmrxIUZpDhYlcV7DGbNThATSE0tSs1NT
-	C1KLYLJMHJxSDUy2h3yzziZzyBgzGfEk+c7bF/8r3nJCesK3kHDm6FUFert+FG+aJljTM2/O
-	woY9+SfKT5dFfKha0SC88h23+u4j/g92l/9YnRCtaJZ3SfilC4/S5MTLJtdcl+WbpH1vsN6p
-	G/TZXnddtmjNwf1ei5qnR9xbfdLNaceGUqsXNmZla1T2ivIt+b0jJyFmxp4TuxZ2nr9f88ru
-	hvDv6qP6gR2CDbf3fffj/B6l+2eW138DHdkQ045NvG2sCtOj9gT+P8t1iO//U0njhoLrjbtU
-	b1gfqi+car3r+ZOr85N7Bb3F0hKnFQRIlq++91Dk7GKRuLSu3gfx4Umugtfsll0OFFOUmr9T
-	2r24O6CGsWzfKiWW4oxEQy3mouJEAELiedQ6AwAA
-X-CMS-MailID: 20240730092913epcas5p18c3be42421fffe1a229f83ceeca1ace0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240730092913epcas5p18c3be42421fffe1a229f83ceeca1ace0
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
-	<CGME20240730092913epcas5p18c3be42421fffe1a229f83ceeca1ace0@epcas5p1.samsung.com>
+	20240730111628epsmtrp1128ee3505d0d846ff8c0b0dfd011e84d~m_XULDdtD2131621316epsmtrp1N;
+	Tue, 30 Jul 2024 11:16:28 +0000 (GMT)
+X-AuditID: b6c32a36-ef9ff70000002597-27-66a8cb8d115f
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D8.B2.08456.C8BC8A66; Tue, 30 Jul 2024 20:16:28 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.111.204]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240730111628epsmtip175657043f67ee07388915da8265b8bd3~m_XT5nk2u0603306033epsmtip17;
+	Tue, 30 Jul 2024 11:16:28 +0000 (GMT)
+From: Kwanghoon Son <k.son@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, conor+dt@kernel.org, tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kwanghoon
+	Son <k.son@samsung.com>
+Subject: [PATCH v2 3/3] clk: samsung: exynosautov9: add dpum clock support
+Date: Tue, 30 Jul 2024 20:15:35 +0900
+Message-Id: <20240730111535.135301-4-k.son@samsung.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240730111535.135301-1-k.son@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmgW7v6RVpBl1nWC0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtWid81VJovz5zewW2x6fI3V4mPPPVaLGef3MVlcPOVq8X/PDnaLw2/aWS3+
+	XdvIYrFq1x9GBz6P9zda2T12zrrL7rFpVSebx+Yl9R59W1YxenzeJBfAFpVtk5GamJJapJCa
+	l5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0rJJCWWJOKVAoILG4WEnf
+	zqYov7QkVSEjv7jEVim1ICWnwLRArzgxt7g0L10vL7XEytDAwMgUqDAhO+PDvyfMBU0aFTf3
+	NbI1MN5U6mLk5JAQMJFouL2asYuRi0NIYAejxJlNp5ggnE+MErPmHWOGcL4xSuzvu8IG07L8
+	zkOolr1AiUm/WSGcL4wSTa1nmECq2ATUJZa0rWUHSYgIHAcavKQbrIVZYCWjxINVT1hAqoQF
+	vCTaHk9jB7FZBFQldu7bwQpi8wqYSxz8tQFoOQfQPnmJxQ8kQMKcAhYSza+OsUOUCEqcnAkx
+	hhmopHnrbLBbJQQWckisb57FCNHrItF/0BbibGGJV8e3sEPYUhIv+9ug7GyJox/3Qr1WInF9
+	1iJWCNtYYv/SyUwgY5gFNCXW79KHWMUn8e5rDyvEdF6JjjYhmCNvdZZDNIpKnHn6EWqgh0RX
+	y3do8HQzSjx6eIRlAqP8LCQPzELywCyEZQsYmVcxiqUWFOempxYbFhjBYzU5P3cTIzjBapnt
+	YJz09oPeIUYmDsZDjBIczEoivPFXlqYJ8aYkVlalFuXHF5XmpBYfYjQFhu5EZinR5Hxgis8r
+	iTc0sTQwMTMyNrEwNDNUEuc9c6UsVUggPbEkNTs1tSC1CKaPiYNTqoFJ/sOlkAWcLM1xVZNb
+	clcJ/LBNfD8xYJ/Ep3Wyjh7J8wPmL1e5NXvjuhMMvLmKOdYmFdsOZnC2MOeES+10Om0Y4vJK
+	9FvQD2cJddWtrrrnX59PPyB5UKnZbktoeMQ/0eSFi+YqGuwIXf04WV3ymKvhNn4nH5Y7ktrG
+	DDcmlT400zsw/8nrGX8eTCs8oOnkeTrQx/c4l8wXnvp7J7sKFLxND51y3/v79dadbUz35869
+	9NL7y9IFcRucn8dZejIti/v+I2zu473X52+ZtfG2d4O4fN7kvbddb+/1YVgme87Rmem6wtf2
+	n80X+Z1vP2A1vaEfzrf18jTO9St/rdzzL/S9ipadybmoDb/aZqgvfLVVWYmlOCPRUIu5qDgR
+	ABvugtM5BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLLMWRmVeSWpSXmKPExsWy7bCSnG7P6RVpBp+Py1k8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKtF75qrTBbnz29gt9j0+Bqrxceee6wWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxWLVrj+MDnwe72+0snvsnHWX3WPTqk42j81L6j36tqxi9Pi8SS6ALYrLJiU1J7MstUjf
+	LoEr48O/J8wFTRoVN/c1sjUw3lTqYuTkkBAwkVh+5yFjFyMXh5DAbkaJ9/OfsUIkRCU6LjcC
+	JTiAbGGJw4eLIWo+MUpMWdTGDFLDJqAusaRtLTtIQkTgMqPE/wWTwCYxC6xllHg65Qk7SJWw
+	gJdE2+NpYDaLgKrEzn07wDbwCphLHPy1gRlig7zE4gcSIGFOAQuJ5lfHwMqFgEo2LD/KAlEu
+	KHFy5hMwmxmovHnrbOYJjAKzkKRmIUktYGRaxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yf
+	u4kRHCNaWjsY96z6oHeIkYmD8RCjBAezkghv/JWlaUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+	v73uTRESSE8sSc1OTS1ILYLJMnFwSjUw7bAqmtr5+ZhQ9ap9y1ySti1/H3KH6cSBY9+yVvIY
+	PNZhPJa45fu/V53f5ytNDe4T9eWQSL3Kl/436k19f4N4sHmPqoa1zNuI5ScF792vq1rH+dox
+	/5KdVFOi3YOCU13zF7/cvqfL+PSk1YsVr7+acCQj/TU3p2UYw0KzPtbU9h7jFLG2L9ri7WV3
+	MuS5onPT7dmUnFqZVput3a6iuT7+xoPN7MYp+//PkbYonhZ0NsV/1vtbpz6aLcox6fUX4N2k
+	q+d1p99gEe/cqyVXK5ir2Rh+XPKukF26wuLtp4N75sRrN0o3W4ordVvN2BP31jSwT+R4Rq92
+	X3eDmUaqb+KU+Qol/7WXPp427Qf/KUslluKMREMt5qLiRADLXxN4AAMAAA==
+X-CMS-MailID: 20240730111628epcas1p2c9daa7b7e637f4d66814584519b4b1bf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240730111628epcas1p2c9daa7b7e637f4d66814584519b4b1bf
+References: <20240730111535.135301-1-k.son@samsung.com>
+	<CGME20240730111628epcas1p2c9daa7b7e637f4d66814584519b4b1bf@epcas1p2.samsung.com>
 
-The FSD SoC contains two instances of Synopsys DWC QoS Ethernet IP, one in
-FSYS0 block and other in PERIC block.
+Add dpum clock for exynosautov9.
 
-Adds device tree node for Ethernet in PERIC Block and enables the same for
-FSD platform.
-
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Jayati Sahu <jayati.sahu@samsung.com>
-Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 ---
- arch/arm64/boot/dts/tesla/fsd-evb.dts      |  9 ++++
- arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi | 56 ++++++++++++++++++++++
- arch/arm64/boot/dts/tesla/fsd.dtsi         | 27 +++++++++++
- 3 files changed, 92 insertions(+)
+ drivers/clk/samsung/clk-exynosautov9.c | 83 ++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/tesla/fsd-evb.dts b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-index 2c37097c709a..80ca120b3d7f 100644
---- a/arch/arm64/boot/dts/tesla/fsd-evb.dts
-+++ b/arch/arm64/boot/dts/tesla/fsd-evb.dts
-@@ -73,6 +73,15 @@
- 	};
+diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
+index f04bacacab2c..3569748b30a9 100644
+--- a/drivers/clk/samsung/clk-exynosautov9.c
++++ b/drivers/clk/samsung/clk-exynosautov9.c
+@@ -20,6 +20,7 @@
+ #define CLKS_NR_TOP			(GOUT_CLKCMU_PERIS_BUS + 1)
+ #define CLKS_NR_BUSMC			(CLK_GOUT_BUSMC_SPDMA_PCLK + 1)
+ #define CLKS_NR_CORE			(CLK_GOUT_CORE_CMU_CORE_PCLK + 1)
++#define CLKS_NR_DPUM			(CLK_GOUT_DPUM_SYSMMU_D3_CLK + 1)
+ #define CLKS_NR_FSYS0			(CLK_GOUT_FSYS0_PCIE_GEN3B_4L_CLK + 1)
+ #define CLKS_NR_FSYS1			(CLK_GOUT_FSYS1_USB30_1_ACLK + 1)
+ #define CLKS_NR_FSYS2			(CLK_GOUT_FSYS2_UFS_EMBD1_UNIPRO + 1)
+@@ -1076,6 +1077,85 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
+ 	.clk_name		= "dout_clkcmu_core_bus",
  };
  
-+&ethernet_1 {
-+	status = "okay";
++/* ---- CMU_DPUM ---------------------------------------------------------- */
 +
-+	fixed-link {
-+		speed = <1000>;
-+		full-duplex;
-+	};
++/* Register Offset definitions for CMU_DPUM (0x18c00000) */
++#define PLL_CON0_MUX_CLKCMU_DPUM_BUS_USER				0x0600
++#define CLK_CON_DIV_DIV_CLK_DPUM_BUSP					0x1800
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DECON		0x202c
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DMA		0x2030
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DPP		0x2034
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D0_DPUM_IPCLKPORT_CLK_S1	0x207c
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D1_DPUM_IPCLKPORT_CLK_S1	0x2084
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D2_DPUM_IPCLKPORT_CLK_S1	0x208c
++#define CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D3_DPUM_IPCLKPORT_CLK_S1	0x2094
++
++static const unsigned long dpum_clk_regs[] __initconst = {
++	PLL_CON0_MUX_CLKCMU_DPUM_BUS_USER,
++	CLK_CON_DIV_DIV_CLK_DPUM_BUSP,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DECON,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DMA,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DPP,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D0_DPUM_IPCLKPORT_CLK_S1,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D1_DPUM_IPCLKPORT_CLK_S1,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D2_DPUM_IPCLKPORT_CLK_S1,
++	CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D3_DPUM_IPCLKPORT_CLK_S1,
 +};
 +
- &fin_pll {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-index cb437483ff6e..6f4658f57453 100644
---- a/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
-@@ -437,6 +437,62 @@
- 		samsung,pin-pud = <FSD_PIN_PULL_DOWN>;
- 		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
- 	};
++PNAME(mout_dpum_bus_user_p) = { "oscclk", "dout_clkcmu_dpum_bus" };
 +
-+	eth1_tx_clk: eth1-tx-clk-pins {
-+		samsung,pins = "gpf2-0";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_DOWN>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV6>;
-+	};
++static const struct samsung_mux_clock dpum_mux_clks[] __initconst = {
++	MUX(CLK_MOUT_DPUM_BUS_USER, "mout_dpum_bus_user",
++	    mout_dpum_bus_user_p, PLL_CON0_MUX_CLKCMU_DPUM_BUS_USER, 4, 1),
++};
 +
-+	eth1_tx_data: eth1-tx-data-pins {
-+		samsung,pins = "gpf2-1", "gpf2-2", "gpf2-3", "gpf2-4";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV6>;
-+	};
++static const struct samsung_div_clock dpum_div_clks[] __initconst = {
++	DIV(CLK_DOUT_DPUM_BUSP, "dout_dpum_busp", "mout_dpum_bus_user",
++	    CLK_CON_DIV_DIV_CLK_DPUM_BUSP, 0, 3),
++};
 +
-+	eth1_tx_ctrl: eth1-tx-ctrl-pins {
-+		samsung,pins = "gpf2-5";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV6>;
-+	};
++static const struct samsung_gate_clock dpum_gate_clks[] __initconst = {
++	GATE(CLK_GOUT_DPUM_ACLK_DECON, "gout_dpum_decon_aclk",
++	     "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DECON, 21,
++	     0, 0),
++	GATE(CLK_GOUT_DPUM_ACLK_DMA, "gout_dpum_dma_aclk", "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DMA, 21,
++	     0, 0),
++	GATE(CLK_GOUT_DPUM_ACLK_DPP, "gout_dpum_dpp_aclk", "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_DPUM_IPCLKPORT_ACLK_DPP, 21,
++	     0, 0),
++	GATE(CLK_GOUT_DPUM_SYSMMU_D0_CLK, "gout_dpum_sysmmu_d0_clk",
++	     "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D0_DPUM_IPCLKPORT_CLK_S1, 21,
++	     0, 0),
++	GATE(CLK_GOUT_DPUM_SYSMMU_D1_CLK, "gout_dpum_sysmmu_d1_clk",
++	     "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D1_DPUM_IPCLKPORT_CLK_S1, 21,
++	     0, 0),
++	GATE(CLK_GOUT_DPUM_SYSMMU_D2_CLK, "gout_dpum_sysmmu_d2_clk",
++	     "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D2_DPUM_IPCLKPORT_CLK_S1, 21,
++	     0, 0),
++	GATE(CLK_GOUT_DPUM_SYSMMU_D3_CLK, "gout_dpum_sysmmu_d3_clk",
++	     "mout_dpum_bus_user",
++	     CLK_CON_GAT_GOUT_BLK_DPUM_UID_SYSMMU_D3_DPUM_IPCLKPORT_CLK_S1, 21,
++	     0, 0),
++};
 +
-+	eth1_phy_intr: eth1-phy-intr-pins {
-+		samsung,pins = "gpf2-6";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
-+	};
++static const struct samsung_cmu_info dpum_cmu_info __initconst = {
++	.mux_clks		= dpum_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(dpum_mux_clks),
++	.div_clks		= dpum_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(dpum_div_clks),
++	.gate_clks		= dpum_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(dpum_gate_clks),
++	.nr_clk_ids		= CLKS_NR_DPUM,
++	.clk_regs		= dpum_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(dpum_clk_regs),
++	.clk_name		= "dout_clkcmu_dpum_bus",
++};
 +
-+	eth1_rx_clk: eth1-rx-clk-pins {
-+		samsung,pins = "gpf3-0";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV6>;
-+	};
-+
-+	eth1_rx_data: eth1-rx-data-pins {
-+		samsung,pins = "gpf3-1", "gpf3-2", "gpf3-3", "gpf3-4";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV6>;
-+	};
-+
-+	eth1_rx_ctrl: eth1-rx-ctrl-pins {
-+		samsung,pins = "gpf3-5";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV6>;
-+	};
-+
-+	eth1_mdio: eth1-mdio-pins {
-+		samsung,pins = "gpf3-6", "gpf3-7";
-+		samsung,pin-function = <FSD_PIN_FUNC_2>;
-+		samsung,pin-pud = <FSD_PIN_PULL_UP>;
-+		samsung,pin-drv = <FSD_PIN_DRV_LV4>;
-+	};
- };
+ /* ---- CMU_FSYS0 ---------------------------------------------------------- */
  
- &pinctrl_pmu {
-diff --git a/arch/arm64/boot/dts/tesla/fsd.dtsi b/arch/arm64/boot/dts/tesla/fsd.dtsi
-index cc67930ebf78..670f6a852542 100644
---- a/arch/arm64/boot/dts/tesla/fsd.dtsi
-+++ b/arch/arm64/boot/dts/tesla/fsd.dtsi
-@@ -1027,6 +1027,33 @@
- 			phy-mode = "rgmii-id";
- 			status = "disabled";
- 		};
-+
-+		ethernet_1: ethernet@14300000 {
-+			compatible = "tesla,fsd-ethqos";
-+			reg = <0x0 0x14300000 0x0 0x10000>;
-+			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_PTP_REF_I>,
-+				 <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_ACLK_I>,
-+				 <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_HCLK_I>,
-+				 <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_RGMII_CLK_I>,
-+				 <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_RX_I>,
-+				 <&clock_peric PERIC_BUS_D_PERIC_IPCLKPORT_EQOSCLK>,
-+				 <&clock_peric PERIC_BUS_P_PERIC_IPCLKPORT_EQOSCLK>,
-+				 <&clock_peric PERIC_EQOS_PHYRXCLK_MUX>,
-+				 <&clock_peric PERIC_EQOS_PHYRXCLK>,
-+				 <&clock_peric PERIC_DOUT_RGMII_CLK>;
-+			clock-names = "ptp_ref", "master_bus", "slave_bus", "tx", "rx",
-+				      "master2_bus", "slave2_bus", "eqos_rxclk_mux",
-+				      "eqos_phyrxclk", "dout_peric_rgmii_clk";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&eth1_tx_clk>, <&eth1_tx_data>, <&eth1_tx_ctrl>,
-+				    <&eth1_phy_intr>, <&eth1_rx_clk>, <&eth1_rx_data>,
-+				    <&eth1_rx_ctrl>, <&eth1_mdio>;
-+			local-mac-address = [00 00 00 00 00 00];
-+			iommus = <&smmu_peric 0x0 0x1>;
-+			phy-mode = "rgmii-id";
-+			status = "disabled";
-+		};
- 	};
- };
- 
+ /* Register Offset definitions for CMU_FSYS2 (0x17700000) */
+@@ -2085,6 +2165,9 @@ static const struct of_device_id exynosautov9_cmu_of_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynosautov9-cmu-core",
+ 		.data = &core_cmu_info,
++	}, {
++		.compatible = "samsung,exynosautov9-cmu-dpum",
++		.data = &dpum_cmu_info,
+ 	}, {
+ 		.compatible = "samsung,exynosautov9-cmu-fsys0",
+ 		.data = &fsys0_cmu_info,
 -- 
-2.17.1
+2.39.2
 
