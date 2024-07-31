@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF961AAE22;
-	Wed, 31 Jul 2024 09:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5BF1AAE22;
+	Wed, 31 Jul 2024 09:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722418052; cv=none; b=oCoKmbcCGRWcLaALqgEZ4T47IAjUBdiaOtxkC/kkL3zRPB1YJI+JDyaGzx+/jB4+LnkzDJZS5bEg/FmDI8O/XSNDHsza9FSqHHI+IwhXWsbU5vVMDZp8KRTio3aWL/RqgfbrzH6wFp+eN5M1wbHdWr2EGMdvcKM9KzWgJLFsxDY=
+	t=1722419138; cv=none; b=sTmCHAOUQ4Dh/afCAKSJt+7L0oSri9UsLzoHKO+wPIVoCiM98GXhpPrTNy7jJzA/wFd77QzYbadYn2tlxeJbXvs71rQqO6JzNUE7HUHrUsIgOGaSwzBR5cO2xq7HtVJ/UCSPbWzcjdiOzxgNa/fxh3VdAh70hvWDLRWcPC4gOXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722418052; c=relaxed/simple;
-	bh=wISHkIrzb8fMOTZI5h9VT+UmufHbg9FYJZdELPaFx2Y=;
+	s=arc-20240116; t=1722419138; c=relaxed/simple;
+	bh=7+5jjOBwASMXayjPqC+OEoM/5sIwvSdy7dR4ojUz7uI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hV/dIA04C7yFck1J1/rHVJcJBK9AuxtosNCdCpEWrLobhFhkNv2S9OeUflpNTHRnG1/5bFTchHlfqF+BiNkH/MMk2V9Ky5tlThkivHwFrGeZ+c7PFs162Sqbcs1PDKfpNAHUTMHS3xe0pbNi70Qb2LsHfYc6h9NJ3b9NE27DFJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mB7eJF0Q; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rqCptZyQWYdp6P1tym7v2Fyq72WmC/Qe77fbdarBkiFYGiHwKCW/EeAxH0AzKRycboaZB9hG9liKZZIN9CIzUjPGdfCz8cVoK28B2F02jbFgzeRgHKYsyanXV6g6ehOPP42F6SufZUNDyeW6wa1JQrZVSIqbbiqeYl86gzVf9j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSvUncQH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mB7eJF0Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20EFDC4AF0C;
-	Wed, 31 Jul 2024 09:27:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSvUncQH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823C1C116B1;
+	Wed, 31 Jul 2024 09:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722418051;
-	bh=wISHkIrzb8fMOTZI5h9VT+UmufHbg9FYJZdELPaFx2Y=;
+	s=k20201202; t=1722419137;
+	bh=7+5jjOBwASMXayjPqC+OEoM/5sIwvSdy7dR4ojUz7uI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mB7eJF0Ql1fEdaTij7QFJTMO3x8+E0pbNZS0mTxl+07smF+y2RsSQZyKi+zBIA3+/
-	 CYeOCrV7q29EKdT7YjwYYzDK0BTze3Y8651+F7rPoeW+GuexGfBRdRYYK6orzwgU26
-	 Zs1JyHxS9ZUWws6+c0J0WuC8yW2eN1SfhgEaB1w64jSfyfnxlqQftsRMsFZ/UzZCZd
-	 +bPz+J8qy+lI7eXOzK265li8iHnslvXh3sgGvv7rhVrwQ2W28qCrar4tBf4Geycig+
-	 ytFcAK6M29sDpZGXVMlnaEqdqcuL2lw3pdxxlgGFKNPNFmJNq770WGByFCP9Wi5RVt
-	 tg4vuCBA0ww8A==
-Message-ID: <db84ee7d-dfd8-4e15-9745-01b1a76566ad@kernel.org>
-Date: Wed, 31 Jul 2024 11:27:24 +0200
+	b=VSvUncQHgCU6fVRQaELTJfNQbC3PEdLEpAvQuOmMkKkNlCo2nVvKgi2Ss5sFPBqql
+	 X1NT773C67h8tz3TUdt0VNeH0KlxwfIYZRDE1787pyP+teGSqO+F5vSGR5XNS+heRp
+	 QbZLVk3xfHvGpUzfZye4Bny5VU9PgqUi4/nohqCRFbAb0e8rhUotmlxkS0jU4KJ7L1
+	 w8qxgLw3zg5NIjCDV5xvRQlXiJbYFQJKl5eO9Q2Tqebtby003rEcRXEbfJRqIISCQv
+	 eOmcB8oiWMed2HdR70+RgPTAo+9VIIBzF9X1US5PoyzwKnun4IRm+R5vqZi78161CZ
+	 UEHBxMVk2jPyw==
+Message-ID: <00f652ab-86dd-4169-84a8-df5de582ef2a@kernel.org>
+Date: Wed, 31 Jul 2024 11:45:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,22 +35,26 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-To: Sunyeal Hong <sunyeal.hong@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
- <CGME20240730071227epcas2p278017961013950cd75c4266eda45c236@epcas2p2.samsung.com>
- <20240730071221.2590284-2-sunyeal.hong@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: thermal: samsung: add myself as maintainer
+ of the driver
+To: Mateusz Majewski <m.majewski2@samsung.com>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Anand Moon <linux.amoon@gmail.com>
+References: <CGME20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a@eucas1p2.samsung.com>
+ <20240730012019.1680121-1-m.majewski2@samsung.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -94,122 +98,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240730071221.2590284-2-sunyeal.hong@samsung.com>
+In-Reply-To: <20240730012019.1680121-1-m.majewski2@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/07/2024 09:12, Sunyeal Hong wrote:
-> Add dt-schema for ExynosAuto v920 SoC clock controller.
-> Add device tree clock binding definitions for below CMU blocks.
-> 
-> - CMU_TOP
-> - CMU_PERIC0
-> 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
-> ---
->  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
->  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
->  2 files changed, 306 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
->  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> new file mode 100644
-> index 000000000000..d5c50997107d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/samsung,exynosautov920-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung ExynosAuto v920 SoC clock controller
-> +
-> +maintainers:
-> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
-> +  - Chanwoo Choi <cw00.choi@samsung.com>
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> +
-> +description: |
-> +  ExynosAuto v920 clock controller is comprised of several CMU units, generating
-> +  clocks for different domains. Those CMU units are modeled as separate device
-> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
-> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
-> +  The external OSCCLK must be defined as fixed-rate clock in dts.
-> +
-> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
-> +  dividers; all other clocks of function blocks (other CMUs) are usually
-> +  derived from CMU_TOP.
-> +
-> +  Each clock is assigned an identifier and client nodes can use this identifier
-> +  to specify the clock which they consume. All clocks available for usage
-> +  in clock consumer nodes are defined as preprocessor macros in
-> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,exynosautov920-cmu-top
-> +      - samsung,exynosautov920-cmu-peric0
+On 30/07/2024 03:20, Mateusz Majewski wrote:
+> As discussed in
+> https://lore.kernel.org/lkml/e73e1a14-dfa0-4a36-bc6e-5d6421553788@kernel.org
 
-Maybe I misinterpreted previous discussion, but I had impression that
-binding was incomplete and you wanted to add more devices?
-
-> +
-> +  clocks:
-> +    minItems: 1
-> +    items:
-> +      - description: External reference clock (38.4 MHz)
-> +      - description: Block NOC clock (from CMU_TOP)
-> +      - description: Block IP clock (from CMU_TOP)
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: oscclk
-> +      - const: noc
-> +      - const: ip
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - reg
-> +
-> +if:
-
-There was allOf here. It should stay - it saves you indentation when
-this grows.
-
-> +  properties:
-> +    compatible:
-> +      enum:
-> +        - samsung,exynosautov920-cmu-top
-> +
-> +then:
-> +  properties:
-> +    clocks:
-> +      maxItems: 1
-> +
-> +    clock-names:
-> +      maxItems: 1
-> +
-> +else:
-> +  if:
-
-No nested if:else:if:. See the other examples.
-
-
+Commit msg should have its own rationale. You can add external reference
+to support it, but external reference cannot be the sole reason of doing
+something.
 
 Best regards,
 Krzysztof
