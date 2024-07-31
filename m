@@ -1,134 +1,132 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B34A38F83
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 18:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450514; cv=none; b=QQxxAtU1XqAqX/LzlRDdZIX3gStTKiSFteLChMaR5a5k+Qblw50ux4U3BpxjORseTsrG+zGxM2HSvQYuwNJ2saxSAzCgbzCgdeG0b8CqpT5bq/1SF1V8JqVXNjYkgG5xrgST9nRQdrG1pVl+Y3iRT/EtkCJdh3V27k8xKoIT03c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450514; c=relaxed/simple;
-	bh=LoEnpyZdjxa7YTVgUWETn4KKToh/DGNRLXn0j7zShNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U8wpl9LLBJ5m+6EnnSdb215eukRJtcvYxmDrVPvoDHtBt4TdggBYf/7G5d1h5FeYMylaIUK6fYHY07EcM46cwzJND0Hs+VcWs20n6+268KNhOvqBzsSKoBHYw4jAMSgXk7utm3Xdt8nJaISqVoMC9diV8JP9K2DoQy/BKshtagw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fTRlVpUZ; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8DC161314;
+	Wed, 31 Jul 2024 19:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722453226; cv=pass; b=mA+pEQJpsdUaN+dMvq0i41PfstHPcxv16PkoTxplwf3y7xe4tOeKLDYQhOvA+orZnDeLre9bY84EPYG1Ummy/UeC10regIJbydsKttZX90zLM5Zx/afhbg7uvTc17Hmdk8XlGBhZ2p3Pc2b+jKt0PsSHsE+N5oUP1DEMXm2noxU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722453226; c=relaxed/simple;
+	bh=NZoJXqLy6vZhc05SjrTiCHFxzwDxKYHyUwWMAWN1DMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=grgHSR024C/BWd7TUF2gHpY2csYcP1DqmIpPwqd+kl0qGHrqB+J/PrH0W7VMYS8wCwghFsDmeFLJbCJLImU/gX574jEz5aUUld2ZZpuuPS7IYHHXdo3OnfgZmqySOzyBQUcYtzfMc5GGKC/gf+9g/86L3l4ZW6X+DNdxB2kKJvw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=qEDwW4M6; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fTRlVpUZ"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-64b417e1511so48576477b3.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 11:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722450512; x=1723055312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UZQiTCpakrmI/hG6ccbr7ADOzk36Y11Q6omsUDXJBR0=;
-        b=fTRlVpUZjpANWrl0L+1w4U2oH+cg6on3TOfnNlqP+RpU5YVwetu+X44S/ZFjp/YRko
-         5/vgKh47+F+DG3GRIR0aKa0pHhn/rGK0A3NM3YhQlfktPs106c0u+zm91Vvf109Z/ncv
-         u7UVpE+iunWcJNcacUJc3rO2kQ8vrEFq68RmfB5al8w33KDMJVhAWSdsNGcJZPT6yqWy
-         atKEiZgVw692VQ4woDAu7Xl6Ay/6T5pLeUJpwedmpkfWtkeS26kimn5M+KES8sMrxBIY
-         3mcAb2UAVCcFEPHVzXZw2HDgkjgeR9tmfpyfTNY4mQowUTWIdBtSnqd3SzTQRL4AAFx5
-         1N2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722450512; x=1723055312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UZQiTCpakrmI/hG6ccbr7ADOzk36Y11Q6omsUDXJBR0=;
-        b=PKWZDb80oipu2TF2g9VarxfQZAk23g+fTxwtrKPBtkq4F9EbrJEX6AKYdWvzV/Gh+q
-         B3C5bDVF6d9ONy2jhNc7NUHN7+Ns9w/sLxuM8B0xoaGc+B8CoaFGcjEGwDiWEv5t4sAo
-         8aA7VbDuVB2htyYdZd2xKHNgnPt5+wQC8g3BgGoZvYD1obMBjP4DEP4S4NF8CKFsQOO0
-         BRDwArppO1/G5KoMFVm3SXWx7hwqydIrx96ffYEDfyuqdqabiPxYgLpkVgtkcnfDTEQ/
-         56MrrFPYHSF/pobzpE6a2bZbVawn7FWoQ9ck7WJm2VLCc9B3Qreq9xvwPiarRzBDckur
-         cRxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfIDJR6Iq66LF9cTLPYZ/oHCdpB28rscQ0eixBf9PST/Mo+/a/QU5gl2UpuPmznx4oIh2BeecGMP0iFUNIuL0g77ZywjCKDnzKfIsBwgoRT2E=
-X-Gm-Message-State: AOJu0Yw+6cBzyb3FhZG0Cq2T+2jIznXEQNyBuQak7lFx0Owhxn0C2Jrd
-	Q5eNOD100BkXsMPoROsquWDSh7LqyO+icBFV80+odcVCqeL+nfHcP/ry6p+3lvYj4r51SRqoffh
-	enW7T1mWveaK4TKCcqYBBL4APRfzab0sv+vCU+Q==
-X-Google-Smtp-Source: AGHT+IGkcmUq+gWGlEnHu1TDME5ReG9CGFf/FdG16ffSla45VUSMcNw0dtEakvWLuX/KIOkHadrm/0K0Fv9MS3xe+7E=
-X-Received: by 2002:a81:9e0f:0:b0:651:a00f:698a with SMTP id
- 00721157ae682-67a0a136bdfmr151536777b3.38.1722450512137; Wed, 31 Jul 2024
- 11:28:32 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="qEDwW4M6"
+Received: from darkstar.musicnaut.iki.fi (85-76-100-193-nat.elisa-mobile.fi [85.76.100.193])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4WZ1wG4sN1zyQf;
+	Wed, 31 Jul 2024 22:13:34 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1722453219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKNVn6TfX89GWfjIM0Jaen4pOYmILV2qL8jp0k43Fn8=;
+	b=qEDwW4M66WNuY45SArOnCaxXp7QfJZUIZxO2cY19UkdOFMc6EEYHuKVDHlXzKFRS8XKbhq
+	VqqvxLaAzaYV13ztrjOjdQbPpCsadMRmScwbbjPkWLR9+H3AnJd1jPsfkegX/D4vbvP3Ul
+	33r2w/V+jEaRFLClsQ7UsjY5rKZzH54=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1722453219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKNVn6TfX89GWfjIM0Jaen4pOYmILV2qL8jp0k43Fn8=;
+	b=Jfyw1d2Knad26sGf6oXlIzSPvanRQvdMpHOcxwKmv6kvOZqgpontBeibOGoYWK+Oiqho7k
+	5e3YHhqTqhpEqOGXJ4AR10qyuSCPlCufqARgN0NCB/JdEhF2xC1zmXkbv+qBmBnVAs5hnz
+	JNY+msDThwLJUG01+1RVwU8LdFKTdEI=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1722453219; a=rsa-sha256; cv=none;
+	b=dA0q57eRsz7dG4S4uC6uc/jooWpGeO5R8w8QHbFHSOlFLEYcxLZgsE+bi74s0zB3Q6uyGK
+	oh47LKfeAh4dWREJi9VsIfCbtXhlsb7ccYoYxZ4rKLaemaM3DaeYCBHxKeQTYMK9+BS2V1
+	jnXX/HuCOxG/kKw7mfVXa3pZ7c2qOrQ=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+Date: Wed, 31 Jul 2024 22:13:32 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Richard Earnshaw <richard.earnshaw@arm.com>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Ramana Radhakrishnan <ramanara@nvidia.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	debian-arm@lists.debian.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Message-ID: <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129204717.9091-1-semen.protsenko@linaro.org>
- <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org> <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
-In-Reply-To: <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 31 Jul 2024 13:28:21 -0500
-Message-ID: <CAPLW+4nxhQRzaEZzxZEOPKpdDxN1mCrpURYPN3+tUa_W+2G06g@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>, 
-	Mateusz Majewski <m.majewski2@samsung.com>, Henrik Grimler <henrik@grimler.se>, 
-	David Virag <virag.david003@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
-	Raymond Hackley <raymondhackley@protonmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 
-On Fri, Jul 26, 2024 at 10:17=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
-> > On 29/01/2024 21:47, Sam Protsenko wrote:
-> >> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
-> >>
-> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> >> ---
-> >>  MAINTAINERS | 10 ++++++++++
-> >>  1 file changed, 10 insertions(+)
-> >>
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index 939f6dd0ef6a..77c10cc669f8 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -19281,6 +19281,16 @@ B:  mailto:linux-samsung-soc@vger.kernel.org
-> >>  F:  Documentation/devicetree/bindings/sound/samsung*
-> >>  F:  sound/soc/samsung/
-> >>
-> >> +SAMSUNG EXYNOS850 SoC SUPPORT
-> >> +M:  Sam Protsenko <semen.protsenko@linaro.org>
-> >> +L:  linux-arm-kernel@lists.infradead.org (moderated for non-subscribe=
-rs)
-> >> +L:  linux-samsung-soc@vger.kernel.org
-> >
-> > Sorry, but I am still against individual SoC entries in maintainers,
-> > like I replied multiple times and pointed to the updated
-> > get_maintainers.pl script to fetch emails from boards.
->
-> I retract my earlier statement.
->
-> Some background: I was really hoping that scripts/get_maintainers.pl
-> patch, which adds fetching emails from files (e.g. DTS), will be picked
-> up, but it has been few years, few resends and there is no conclusion. I
-> don't think it will be ever merged, thus this email.
->
-> Since C files do not have in-file "maintainer" entry and particular
-> drivers have MAINTAINERS-file entries, then why DTS should be different?
->
-> I'll take the patch after merge window.
->
+Hi,
 
-Thank you, Krzysztof! I'll happily look after this platform. Please
-let me know if you want me to rebase/resend this patch.
+On Wed, Jul 31, 2024 at 07:29:29PM +0200, Arnd Bergmann wrote:
+> === early ARMv6 ===
+> 
+> This is the ARM1136r0p in NXP i.MX31 and OMAP24xx, which in
+> practice means just the Nokia N8xx tablet.
+> It causes a lot of pain to support in the kernel since it
+> requires special hacks to support in SMP-enabled kernels.
 
-> +Cc few other folks,
->
-> I understand that with lei/lore filters one can easily track patches
-> sent for particular boards or SoCs, but being listed in MAINTAINERS have
-> a bit bigger meaning. Therefore if any of you consider / want to add
-> themself to MAINTAINERS for particular DTS, then go ahead. By DTS I
-> mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC
-> (e.g. Exynos850 like here).
->
-> Best regards,
-> Krzysztof
->
+FWIW, I have been never able to boot N8x0 unless CONFIG_SMP was disabled
+(but haven't tested recently if the situation has changed). And probably
+nobody else is anymore even booting these with modern kernels. Common
+distro kernel support for N8x0 would be unlikely anyway due to bootloader
+and memory limitations.
+
+These tablets are not very attractive for hobbyists anymore as the display
+support got broken and eventually deleted due to bitrot. There has been
+some out-of-tree patches/interest to regain display and other features,
+but no major progress really in 10 years or so. The last major mainline
+feature was adding Retu watchdog support that allowed the device to stay
+on longer than 30 seconds after the boot (the hardware watchdog cannot
+be disabled).
+
+I guess in OMAP-land N8x0 is one of the least used/active boards, so if
+it causes "a lot of pain" then maybe could be a candidate for deprecation.
+But with custom kernel config, the board has been pretty stable overall
+between the releases for limited use cases.
+
+> === OMAP1 ===
+> 
+> This is now the only ARMv4T/ARMv5 platform with no
+> DT support, making it a target for removal at some
+> point. Unlike PXA, there are still users, but it seems
+> there are no current plans for a DT conversion.
+> 
+> I would suggest going through the five boards
+> individually to see which ones we can remove in 2025
+> and keep the remaining ones for the moment.
+
+Here situation hasn't changed - all of the boards are equally
+important/useful, at least from a maintainer point of view. The routine
+I use to test/debug kernel releases relies on all of them.
+
+A.
