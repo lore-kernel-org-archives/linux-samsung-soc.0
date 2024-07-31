@@ -1,132 +1,87 @@
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8DC161314;
-	Wed, 31 Jul 2024 19:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453226; cv=pass; b=mA+pEQJpsdUaN+dMvq0i41PfstHPcxv16PkoTxplwf3y7xe4tOeKLDYQhOvA+orZnDeLre9bY84EPYG1Ummy/UeC10regIJbydsKttZX90zLM5Zx/afhbg7uvTc17Hmdk8XlGBhZ2p3Pc2b+jKt0PsSHsE+N5oUP1DEMXm2noxU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453226; c=relaxed/simple;
-	bh=NZoJXqLy6vZhc05SjrTiCHFxzwDxKYHyUwWMAWN1DMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grgHSR024C/BWd7TUF2gHpY2csYcP1DqmIpPwqd+kl0qGHrqB+J/PrH0W7VMYS8wCwghFsDmeFLJbCJLImU/gX574jEz5aUUld2ZZpuuPS7IYHHXdo3OnfgZmqySOzyBQUcYtzfMc5GGKC/gf+9g/86L3l4ZW6X+DNdxB2kKJvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=qEDwW4M6; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6C716DC3B;
+	Wed, 31 Jul 2024 19:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722453244; cv=none; b=hAzzgvVX0+EhNBZ6LfUdNV5KGlZVlx1qPAk0Df90BYYvh7UKKXC9qSjIcN7Sgr6aO5rrJkRx5lxAjyTBqVS+r8wloPeMyxHXAm3KZD+JpsKV7yQ0xiCsuwtqGiWwi7Mg8A1ek27C0ei9H8R4iDqYiwRYU20gQovqS2VlCn8ck/k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722453244; c=relaxed/simple;
+	bh=1c8G2pZa29Ew7kwVpnYpj8oBYtzfUhHAnb6RGT6xepI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/gsJI5LTR7IZAQ+lWKINyZegTRISEp862eazkayvUU98gFe9eIXRw8f0gzLXcj2iJeVOd4fb1uc2u/bu1Mty2iBr167tKQn0onzJBiUv5P/nIFgr7wgsqNcQTbMu+16y7YJdn0W2fMfd2L88blfBrCVn1iYozZUslOGhMUK1O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1CIpg6u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="qEDwW4M6"
-Received: from darkstar.musicnaut.iki.fi (85-76-100-193-nat.elisa-mobile.fi [85.76.100.193])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: aaro.koskinen)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4WZ1wG4sN1zyQf;
-	Wed, 31 Jul 2024 22:13:34 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1722453219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKNVn6TfX89GWfjIM0Jaen4pOYmILV2qL8jp0k43Fn8=;
-	b=qEDwW4M66WNuY45SArOnCaxXp7QfJZUIZxO2cY19UkdOFMc6EEYHuKVDHlXzKFRS8XKbhq
-	VqqvxLaAzaYV13ztrjOjdQbPpCsadMRmScwbbjPkWLR9+H3AnJd1jPsfkegX/D4vbvP3Ul
-	33r2w/V+jEaRFLClsQ7UsjY5rKZzH54=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1722453219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKNVn6TfX89GWfjIM0Jaen4pOYmILV2qL8jp0k43Fn8=;
-	b=Jfyw1d2Knad26sGf6oXlIzSPvanRQvdMpHOcxwKmv6kvOZqgpontBeibOGoYWK+Oiqho7k
-	5e3YHhqTqhpEqOGXJ4AR10qyuSCPlCufqARgN0NCB/JdEhF2xC1zmXkbv+qBmBnVAs5hnz
-	JNY+msDThwLJUG01+1RVwU8LdFKTdEI=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1722453219; a=rsa-sha256; cv=none;
-	b=dA0q57eRsz7dG4S4uC6uc/jooWpGeO5R8w8QHbFHSOlFLEYcxLZgsE+bi74s0zB3Q6uyGK
-	oh47LKfeAh4dWREJi9VsIfCbtXhlsb7ccYoYxZ4rKLaemaM3DaeYCBHxKeQTYMK9+BS2V1
-	jnXX/HuCOxG/kKw7mfVXa3pZ7c2qOrQ=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
-Date: Wed, 31 Jul 2024 22:13:32 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Richard Earnshaw <richard.earnshaw@arm.com>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Ramana Radhakrishnan <ramanara@nvidia.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
-	debian-arm@lists.debian.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Message-ID: <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1CIpg6u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96322C4AF0C;
+	Wed, 31 Jul 2024 19:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722453243;
+	bh=1c8G2pZa29Ew7kwVpnYpj8oBYtzfUhHAnb6RGT6xepI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n1CIpg6ug7GHwMQY90/n8p498muCtyLRnJpWeX+6l3bP8+L2LOKRi962Zl6N4BYo3
+	 2E6eHHteDrhcW2yZJx8oVAjfCT78IWt6iid9qFuc/E4XQBxZU0QLyxIEyW6ymm/lpN
+	 dn/vO913nj28ytrmWvOG+1RX18M3FX2W/jYph/a74ZqIACylt+Vti8sTOOqNTKsvzi
+	 0Aec2w8KUuSoAZ6yjQncf/6xPY0yywnsT7oE6iwBSa2gklg4jsl45sbHzE98y7kYwG
+	 0PKOzOloSgq16Ls+Wtzzp9cOQHnluOOQ+EQOG5jewNxnUZNDB3Wl9y+ww3NJmriRD5
+	 kUvu9pJw1Jilw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: samsung: Use of_property_present()
+Date: Wed, 31 Jul 2024 13:12:54 -0600
+Message-ID: <20240731191312.1710417-16-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Use of_property_present() to test for property presence rather than
+of_find_property(). This is part of a larger effort to remove callers
+of of_find_property() and similar functions. of_find_property() leaks
+the DT struct property and data pointers which is a problem for
+dynamically allocated nodes which may be freed.
 
-On Wed, Jul 31, 2024 at 07:29:29PM +0200, Arnd Bergmann wrote:
-> === early ARMv6 ===
-> 
-> This is the ARM1136r0p in NXP i.MX31 and OMAP24xx, which in
-> practice means just the Nokia N8xx tablet.
-> It causes a lot of pain to support in the kernel since it
-> requires special hacks to support in SMP-enabled kernels.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-FWIW, I have been never able to boot N8x0 unless CONFIG_SMP was disabled
-(but haven't tested recently if the situation has changed). And probably
-nobody else is anymore even booting these with modern kernels. Common
-distro kernel support for N8x0 would be unlikely anyway due to bootloader
-and memory limitations.
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 623df65a5d6f..855d6d99a253 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -823,16 +823,16 @@ static struct samsung_pmx_func *samsung_pinctrl_create_functions(
+ 		struct device_node *func_np;
+ 
+ 		if (!of_get_child_count(cfg_np)) {
+-			if (!of_find_property(cfg_np,
+-			    "samsung,pin-function", NULL))
++			if (!of_property_present(cfg_np,
++			    "samsung,pin-function"))
+ 				continue;
+ 			++func_cnt;
+ 			continue;
+ 		}
+ 
+ 		for_each_child_of_node(cfg_np, func_np) {
+-			if (!of_find_property(func_np,
+-			    "samsung,pin-function", NULL))
++			if (!of_property_present(func_np,
++			    "samsung,pin-function"))
+ 				continue;
+ 			++func_cnt;
+ 		}
+-- 
+2.43.0
 
-These tablets are not very attractive for hobbyists anymore as the display
-support got broken and eventually deleted due to bitrot. There has been
-some out-of-tree patches/interest to regain display and other features,
-but no major progress really in 10 years or so. The last major mainline
-feature was adding Retu watchdog support that allowed the device to stay
-on longer than 30 seconds after the boot (the hardware watchdog cannot
-be disabled).
-
-I guess in OMAP-land N8x0 is one of the least used/active boards, so if
-it causes "a lot of pain" then maybe could be a candidate for deprecation.
-But with custom kernel config, the board has been pretty stable overall
-between the releases for limited use cases.
-
-> === OMAP1 ===
-> 
-> This is now the only ARMv4T/ARMv5 platform with no
-> DT support, making it a target for removal at some
-> point. Unlike PXA, there are still users, but it seems
-> there are no current plans for a DT conversion.
-> 
-> I would suggest going through the five boards
-> individually to see which ones we can remove in 2025
-> and keep the remaining ones for the moment.
-
-Here situation hasn't changed - all of the boards are equally
-important/useful, at least from a maintainer point of view. The routine
-I use to test/debug kernel releases relies on all of them.
-
-A.
