@@ -1,107 +1,134 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0823FB9F
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 18:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B34A38F83
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 18:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450353; cv=none; b=G6LK3IIPumkv3+Zk3tDLqiU+ZBxlRysCce0sJQ9/8RJjuqIjDNSCM5SWxS0AfOZajLq/T8OkSOKGbwp/JN01EorDhqKBX0uvYTFlsZQtjpboz7cL89sY03/gOnLxLIkgEPYg0nhBhtcYaziqg1SuzMw4vY5KMjUBNLYvwdo4KjU=
+	t=1722450514; cv=none; b=QQxxAtU1XqAqX/LzlRDdZIX3gStTKiSFteLChMaR5a5k+Qblw50ux4U3BpxjORseTsrG+zGxM2HSvQYuwNJ2saxSAzCgbzCgdeG0b8CqpT5bq/1SF1V8JqVXNjYkgG5xrgST9nRQdrG1pVl+Y3iRT/EtkCJdh3V27k8xKoIT03c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450353; c=relaxed/simple;
-	bh=SbypRaxK4y7FOUc04r7g6F2EtP4Xxirop8YZAKga7xs=;
+	s=arc-20240116; t=1722450514; c=relaxed/simple;
+	bh=LoEnpyZdjxa7YTVgUWETn4KKToh/DGNRLXn0j7zShNU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nOb1wuYedNx/QEYZ2X+DEAnoZLpioj9adyuiFTne5vGzwCMpUYNfW0Ovi61E+B282sbBMSZ95eVP8FJ3zNmqQvzejyJ/VuWy6zs4R6tMisJxT4S800mww999v9G6jFuSAGnMTyObm0GQjX4QWiEHFHNI2J2+8v6BPpj8N2+0c+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zaxsW9mp; arc=none smtp.client-ip=209.85.128.181
+	 To:Cc:Content-Type; b=U8wpl9LLBJ5m+6EnnSdb215eukRJtcvYxmDrVPvoDHtBt4TdggBYf/7G5d1h5FeYMylaIUK6fYHY07EcM46cwzJND0Hs+VcWs20n6+268KNhOvqBzsSKoBHYw4jAMSgXk7utm3Xdt8nJaISqVoMC9diV8JP9K2DoQy/BKshtagw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fTRlVpUZ; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zaxsW9mp"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6687f2f0986so43342697b3.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 11:25:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fTRlVpUZ"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-64b417e1511so48576477b3.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 11:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722450349; x=1723055149; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722450512; x=1723055312; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gdzxLzu2RkJLVHNIZ4Z2FLUcNDJnzadZxmlA7ncYpvs=;
-        b=zaxsW9mpK2SKBOsbgkBkWzaWWfsYmcOyKJaN+SS2EiSv/sNmFCIfI76m0/qE0AFb+y
-         jEAdWikJrUORrMdYl7eGld3cNgIQA2XU/JPAMcf4hLg7fMxVdGuBby0qIsE6NZD6gN87
-         bbNeJcLGhoHdBxAp5vdN9iWSGv/yd1wcBK7VTXhprGT4tT+njSOX1FuuFfitQSd8g5/m
-         uQSCDkoh3Ja8UpvUGDMU8og9La9kLGY3lN6Vra1L6Du3R11uzetJfhxPS0DcSGAwfStE
-         gzWCGzzDZvFtN3AhLMlw5SSQlS+C9t/+7qtZF7suE72AvEqONgTe08/NRyP1ud7QwHxu
-         qiHw==
+        bh=UZQiTCpakrmI/hG6ccbr7ADOzk36Y11Q6omsUDXJBR0=;
+        b=fTRlVpUZjpANWrl0L+1w4U2oH+cg6on3TOfnNlqP+RpU5YVwetu+X44S/ZFjp/YRko
+         5/vgKh47+F+DG3GRIR0aKa0pHhn/rGK0A3NM3YhQlfktPs106c0u+zm91Vvf109Z/ncv
+         u7UVpE+iunWcJNcacUJc3rO2kQ8vrEFq68RmfB5al8w33KDMJVhAWSdsNGcJZPT6yqWy
+         atKEiZgVw692VQ4woDAu7Xl6Ay/6T5pLeUJpwedmpkfWtkeS26kimn5M+KES8sMrxBIY
+         3mcAb2UAVCcFEPHVzXZw2HDgkjgeR9tmfpyfTNY4mQowUTWIdBtSnqd3SzTQRL4AAFx5
+         1N2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722450349; x=1723055149;
+        d=1e100.net; s=20230601; t=1722450512; x=1723055312;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gdzxLzu2RkJLVHNIZ4Z2FLUcNDJnzadZxmlA7ncYpvs=;
-        b=NiW3XVah1PX8kZUHUPrdYlQ2/QhIY9qs51Po7YNXTqP6s7UlBvY4SC3JpPxlTqbHYJ
-         q7IuE4idm1WIl3VFIyaVn8t3ra2mRbQdeX0cqiyYeDvfq6SkW50udc1U7aqSXfsapBcH
-         D26rEE27TBQSMhIqO19JFX9CBdAB2I8SDqp5TvQdJ8P9j+nvkb4Aa2FtGQwVhDnsf4o4
-         Uq5O6ipCf5dlid1UDbKy3si5SideTZ/1XRPkGMHgPNJs7zFuDSDXVMLX85sHIpcJhi60
-         aKHW/tk/vdAaZzBsBSLQQAyDTPuVUE6iwjPjUIuAcTRj8MP1ag6frkWmLs6Daczm1MtW
-         stAA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3BdDLNfFna18qVVNIgwuSl2qkrRS0rHbVbCrqouZ1RSxW1EqoIJeyluiPOusfmmdSBgAqKqA6d/8SRqY3fAUlR14IwPG3xmvb3hC5uBOIDVA=
-X-Gm-Message-State: AOJu0YzfUDxfYIVWzvnxV6LLGX4wLu98+/aIOiIntpA/14sjEZXf4ppP
-	BepknoDJGKOs5GD9lyjbzHkBQDNPUj98EcYYXhwoeYqaoqHc3ADXyp9CmS/hWAj5X4hfG+a3eQX
-	sXDZvMW/q3HTQsUWVPa4CVEtZxS+YPe2Uf6fZag==
-X-Google-Smtp-Source: AGHT+IF0KfSlWB047Omd2PMOsZLUTxv2++sjbYGOlV9vhnSEfTHz8IYHfgmHBSw8qekBtE8MJoZfDGTkjDqE6mB+3vU=
-X-Received: by 2002:a05:690c:d87:b0:64b:ead:3e3f with SMTP id
- 00721157ae682-67a07b757bemr205779687b3.22.1722450349254; Wed, 31 Jul 2024
- 11:25:49 -0700 (PDT)
+        bh=UZQiTCpakrmI/hG6ccbr7ADOzk36Y11Q6omsUDXJBR0=;
+        b=PKWZDb80oipu2TF2g9VarxfQZAk23g+fTxwtrKPBtkq4F9EbrJEX6AKYdWvzV/Gh+q
+         B3C5bDVF6d9ONy2jhNc7NUHN7+Ns9w/sLxuM8B0xoaGc+B8CoaFGcjEGwDiWEv5t4sAo
+         8aA7VbDuVB2htyYdZd2xKHNgnPt5+wQC8g3BgGoZvYD1obMBjP4DEP4S4NF8CKFsQOO0
+         BRDwArppO1/G5KoMFVm3SXWx7hwqydIrx96ffYEDfyuqdqabiPxYgLpkVgtkcnfDTEQ/
+         56MrrFPYHSF/pobzpE6a2bZbVawn7FWoQ9ck7WJm2VLCc9B3Qreq9xvwPiarRzBDckur
+         cRxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfIDJR6Iq66LF9cTLPYZ/oHCdpB28rscQ0eixBf9PST/Mo+/a/QU5gl2UpuPmznx4oIh2BeecGMP0iFUNIuL0g77ZywjCKDnzKfIsBwgoRT2E=
+X-Gm-Message-State: AOJu0Yw+6cBzyb3FhZG0Cq2T+2jIznXEQNyBuQak7lFx0Owhxn0C2Jrd
+	Q5eNOD100BkXsMPoROsquWDSh7LqyO+icBFV80+odcVCqeL+nfHcP/ry6p+3lvYj4r51SRqoffh
+	enW7T1mWveaK4TKCcqYBBL4APRfzab0sv+vCU+Q==
+X-Google-Smtp-Source: AGHT+IGkcmUq+gWGlEnHu1TDME5ReG9CGFf/FdG16ffSla45VUSMcNw0dtEakvWLuX/KIOkHadrm/0K0Fv9MS3xe+7E=
+X-Received: by 2002:a81:9e0f:0:b0:651:a00f:698a with SMTP id
+ 00721157ae682-67a0a136bdfmr151536777b3.38.1722450512137; Wed, 31 Jul 2024
+ 11:28:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723163311.28654-1-semen.protsenko@linaro.org>
- <172243565547.42492.1072397968108986657.b4-ty@linaro.org> <ee392e1e-bdb7-4cbd-8b43-00ec0efd5026@kernel.org>
-In-Reply-To: <ee392e1e-bdb7-4cbd-8b43-00ec0efd5026@kernel.org>
+References: <20240129204717.9091-1-semen.protsenko@linaro.org>
+ <8659d79a-e18e-4591-be9e-817d0ab63b75@linaro.org> <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
+In-Reply-To: <ae202942-fdc0-4913-bd37-c167440807af@linaro.org>
 From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 31 Jul 2024 13:25:38 -0500
-Message-ID: <CAPLW+4mxtTj5VGi4LYwU-8F9hsSgDe+yxAsON=rXUhxGWHCCXg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Mateusz Majewski <m.majewski2@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Date: Wed, 31 Jul 2024 13:28:21 -0500
+Message-ID: <CAPLW+4nxhQRzaEZzxZEOPKpdDxN1mCrpURYPN3+tUa_W+2G06g@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>, 
+	Mateusz Majewski <m.majewski2@samsung.com>, Henrik Grimler <henrik@grimler.se>, 
+	David Virag <virag.david003@gmail.com>, Artur Weber <aweber.kernel@gmail.com>, 
+	Raymond Hackley <raymondhackley@protonmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 9:22=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Fri, Jul 26, 2024 at 10:17=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> On 31/07/2024 16:20, Krzysztof Kozlowski wrote:
-> >
-> > On Tue, 23 Jul 2024 11:33:10 -0500, Sam Protsenko wrote:
-> >> Add a constant for TMU PCLK clock. It acts simultaneously as an
-> >> interface clock (to access TMU registers) and an operating clock which
-> >> makes TMU IP-core functional.
+> On 30/01/2024 08:29, Krzysztof Kozlowski wrote:
+> > On 29/01/2024 21:47, Sam Protsenko wrote:
+> >> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
 > >>
+> >> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> >> ---
+> >>  MAINTAINERS | 10 ++++++++++
+> >>  1 file changed, 10 insertions(+)
 > >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index 939f6dd0ef6a..77c10cc669f8 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -19281,6 +19281,16 @@ B:  mailto:linux-samsung-soc@vger.kernel.org
+> >>  F:  Documentation/devicetree/bindings/sound/samsung*
+> >>  F:  sound/soc/samsung/
+> >>
+> >> +SAMSUNG EXYNOS850 SoC SUPPORT
+> >> +M:  Sam Protsenko <semen.protsenko@linaro.org>
+> >> +L:  linux-arm-kernel@lists.infradead.org (moderated for non-subscribe=
+rs)
+> >> +L:  linux-samsung-soc@vger.kernel.org
 > >
-> > Applied, thanks!
-> >
-> > [1/2] dt-bindings: clock: exynos850: Add TMU clock
-> >       https://git.kernel.org/krzk/linux/c/01ce1bf22adc0d09d906319787091=
-ce784cb9914
-> > [2/2] clk: samsung: exynos850: Add TMU clock
-> >       https://git.kernel.org/krzk/linux/c/79b918aa997acd5066c7962502b1d=
-aaae76b6911
+> > Sorry, but I am still against individual SoC entries in maintainers,
+> > like I replied multiple times and pointed to the updated
+> > get_maintainers.pl script to fetch emails from boards.
 >
-> Hashes got mixed, but the commits are properly applied:
-> https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=3Dn=
-ext/clk
+> I retract my earlier statement.
+>
+> Some background: I was really hoping that scripts/get_maintainers.pl
+> patch, which adds fetching emails from files (e.g. DTS), will be picked
+> up, but it has been few years, few resends and there is no conclusion. I
+> don't think it will be ever merged, thus this email.
+>
+> Since C files do not have in-file "maintainer" entry and particular
+> drivers have MAINTAINERS-file entries, then why DTS should be different?
+>
+> I'll take the patch after merge window.
 >
 
-Thanks for handling this!
+Thank you, Krzysztof! I'll happily look after this platform. Please
+let me know if you want me to rebase/resend this patch.
 
+> +Cc few other folks,
+>
+> I understand that with lei/lore filters one can easily track patches
+> sent for particular boards or SoCs, but being listed in MAINTAINERS have
+> a bit bigger meaning. Therefore if any of you consider / want to add
+> themself to MAINTAINERS for particular DTS, then go ahead. By DTS I
+> mean: particular boards (e.g. Galaxy Tab 3 family) or particular SoC
+> (e.g. Exynos850 like here).
+>
 > Best regards,
 > Krzysztof
 >
