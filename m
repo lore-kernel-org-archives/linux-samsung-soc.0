@@ -1,123 +1,107 @@
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAD5381A4
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 17:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0823FB9F
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 18:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722448636; cv=none; b=qqDIU+gN0loVuROSAaeR3HU0nyJ5fDTpm4mW98Gfp/H5JI81RBhdExL4ucEFkzlkskowT7la9L0NVf8E5m76FEwkHdOb9gwv54t3DLoT7pwIif2aBqdqc7zgMsVPASYzbUrh827ilnCstksmIaDOJjpTeTW+zRe8tYLEdqU43uQ=
+	t=1722450353; cv=none; b=G6LK3IIPumkv3+Zk3tDLqiU+ZBxlRysCce0sJQ9/8RJjuqIjDNSCM5SWxS0AfOZajLq/T8OkSOKGbwp/JN01EorDhqKBX0uvYTFlsZQtjpboz7cL89sY03/gOnLxLIkgEPYg0nhBhtcYaziqg1SuzMw4vY5KMjUBNLYvwdo4KjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722448636; c=relaxed/simple;
-	bh=vSCPvaer4rWQ1UBgyW1jMTJqLr4UMAnrs3thKEX6Wro=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gh3vDyT7udW3axc8k7nifKJTjJiFEhOtjVL40ww5BGCcGsg0gegw9kJNk5ZdRwYVY+2DRh30F4uLkQ6qpH+ELQeBEjig9OiNO8YIJr3WaLrCs8+7cgNE1kjeDsYJZZXoUogs3RHGESMUlTtm8EEKSiubdlf7Q4e0eImQ4N/jSTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FALnvXDf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mMVPtsNa; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1722450353; c=relaxed/simple;
+	bh=SbypRaxK4y7FOUc04r7g6F2EtP4Xxirop8YZAKga7xs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nOb1wuYedNx/QEYZ2X+DEAnoZLpioj9adyuiFTne5vGzwCMpUYNfW0Ovi61E+B282sbBMSZ95eVP8FJ3zNmqQvzejyJ/VuWy6zs4R6tMisJxT4S800mww999v9G6jFuSAGnMTyObm0GQjX4QWiEHFHNI2J2+8v6BPpj8N2+0c+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zaxsW9mp; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FALnvXDf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mMVPtsNa"
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 1D6D81147257;
-	Wed, 31 Jul 2024 13:57:14 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 31 Jul 2024 13:57:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722448634;
-	 x=1722535034; bh=6+E3g9zljbVIYX9WNURbWHgefCN+EF1iNrL+yfKjfSk=; b=
-	FALnvXDfjWj39c4t2+N3ljAlOb74QLlmR1eOdN29if2Ehh1hRrpw0m+UorAJEJto
-	eXcmBByeVHwlGPfmpoFsDnGMJdOw/fYh1WUIEV7ndOvbO+kR1RFc3z8YOMdvDLuW
-	aUTr9MsTB1FjAmXbMimybsnoE3NlrwDs3I4CE87lSgFlWSgemqfwL68652KFLsO1
-	7uvjheZ2b3Ep3QQwuWCdoddc9DSYfFpBMR2u6sUUh7UdNKQeG8fVwrDNu8Mh6r5W
-	GpkE0l1bj4CYH3XnUdLPyGYGg18hDqb9AMrrPhmT1jeN0MsA25c7KXD1CFYEiTF8
-	xpcolpgw4uFwIsletrI0CQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722448634; x=
-	1722535034; bh=6+E3g9zljbVIYX9WNURbWHgefCN+EF1iNrL+yfKjfSk=; b=m
-	MVPtsNa0N/q70IxkP4uD7GwNB0lwACfeA4aQDHyc24lJUBiDRQc0PbWRSzqJxFlP
-	s/ilbP/osS0A6omD+fuYd9SWi2C1Sr3UP3AuqZEoL+MNjf3JIGwIkK2niLJ1AJLu
-	4ykSbK1Tgx9+fdJI+nW8UwiqpsaTVmg00SaerYZvC46McXH1xzOUEgtKBf0OJnQp
-	cX3BxOsvZkJSCUPM5dDKxIminaFhpGtSZtyP9MTxRlqVSQoH8PkZPIzcgA0CB9B6
-	tN619ejckR1GV2Cv5DgIuyq0j5iygHgvz5Bhl6NP7Z892ncT5HH9UA0KZn+c/iRZ
-	LeVdfEbw2zqmuQMXgrehg==
-X-ME-Sender: <xms:-XqqZu87Jau5-WdKFnblRKgmhQly7SzuNLkf6P4GZvvoqUQ-w31ndg>
-    <xme:-XqqZuta_RwiE8VgOz1E51SoQ7F_95V6plYKJAxLWc0NRBq9NE8VGc8WQsUn1dA3s
-    76d8E-41rQzafUeHjQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeigdduudelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffh
-    iefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggp
-    rhgtphhtthhopedt
-X-ME-Proxy: <xmx:-nqqZkAwk4nMOTK0iLsmE4AAhXHNJzB6EawHgtOL-BkniR4exNMs8A>
-    <xmx:-nqqZmd36BBh1pTYb-iF-dIWCx9Fk8mvX3uZaWKo4drnTF474qsXZA>
-    <xmx:-nqqZjMlea_EFE9VvlvGF7xkFBqwjLDYP0NO73sHshn8ctK2piDK2g>
-    <xmx:-nqqZglF65NKUB3QIvEj61qK8AZ44LNYpYVk3rUEa9seTgc9dgXNTA>
-    <xmx:-nqqZsriKaizY0NNvHlsc_Q21CgzXsxRvRhJyJSKf76XoAarNmC2pWv6>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id D393EB6008D; Wed, 31 Jul 2024 13:57:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zaxsW9mp"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6687f2f0986so43342697b3.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 11:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722450349; x=1723055149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gdzxLzu2RkJLVHNIZ4Z2FLUcNDJnzadZxmlA7ncYpvs=;
+        b=zaxsW9mpK2SKBOsbgkBkWzaWWfsYmcOyKJaN+SS2EiSv/sNmFCIfI76m0/qE0AFb+y
+         jEAdWikJrUORrMdYl7eGld3cNgIQA2XU/JPAMcf4hLg7fMxVdGuBby0qIsE6NZD6gN87
+         bbNeJcLGhoHdBxAp5vdN9iWSGv/yd1wcBK7VTXhprGT4tT+njSOX1FuuFfitQSd8g5/m
+         uQSCDkoh3Ja8UpvUGDMU8og9La9kLGY3lN6Vra1L6Du3R11uzetJfhxPS0DcSGAwfStE
+         gzWCGzzDZvFtN3AhLMlw5SSQlS+C9t/+7qtZF7suE72AvEqONgTe08/NRyP1ud7QwHxu
+         qiHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722450349; x=1723055149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gdzxLzu2RkJLVHNIZ4Z2FLUcNDJnzadZxmlA7ncYpvs=;
+        b=NiW3XVah1PX8kZUHUPrdYlQ2/QhIY9qs51Po7YNXTqP6s7UlBvY4SC3JpPxlTqbHYJ
+         q7IuE4idm1WIl3VFIyaVn8t3ra2mRbQdeX0cqiyYeDvfq6SkW50udc1U7aqSXfsapBcH
+         D26rEE27TBQSMhIqO19JFX9CBdAB2I8SDqp5TvQdJ8P9j+nvkb4Aa2FtGQwVhDnsf4o4
+         Uq5O6ipCf5dlid1UDbKy3si5SideTZ/1XRPkGMHgPNJs7zFuDSDXVMLX85sHIpcJhi60
+         aKHW/tk/vdAaZzBsBSLQQAyDTPuVUE6iwjPjUIuAcTRj8MP1ag6frkWmLs6Daczm1MtW
+         stAA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3BdDLNfFna18qVVNIgwuSl2qkrRS0rHbVbCrqouZ1RSxW1EqoIJeyluiPOusfmmdSBgAqKqA6d/8SRqY3fAUlR14IwPG3xmvb3hC5uBOIDVA=
+X-Gm-Message-State: AOJu0YzfUDxfYIVWzvnxV6LLGX4wLu98+/aIOiIntpA/14sjEZXf4ppP
+	BepknoDJGKOs5GD9lyjbzHkBQDNPUj98EcYYXhwoeYqaoqHc3ADXyp9CmS/hWAj5X4hfG+a3eQX
+	sXDZvMW/q3HTQsUWVPa4CVEtZxS+YPe2Uf6fZag==
+X-Google-Smtp-Source: AGHT+IF0KfSlWB047Omd2PMOsZLUTxv2++sjbYGOlV9vhnSEfTHz8IYHfgmHBSw8qekBtE8MJoZfDGTkjDqE6mB+3vU=
+X-Received: by 2002:a05:690c:d87:b0:64b:ead:3e3f with SMTP id
+ 00721157ae682-67a07b757bemr205779687b3.22.1722450349254; Wed, 31 Jul 2024
+ 11:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 31 Jul 2024 19:56:51 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Mark Brown" <broonie@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, "Krzysztof Kozlowski" <krzk@kernel.org>
-Message-Id: <df0a82f6-a6a2-4d4f-b91b-acea7921bfed@app.fastmail.com>
-In-Reply-To: <ZqpzAB2x1-C7V4AS@google.com>
-References: <ZqmkfEijDcE--F0L@google.com>
- <f71e9bfd-2407-4f16-a94c-d80715777b1b@app.fastmail.com>
- <3aa5c9d9-2b19-4797-964d-97e2dd325f3e@sirena.org.uk>
- <ZqpzAB2x1-C7V4AS@google.com>
-Subject: Re: mach-crag6410.c staying or going?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240723163311.28654-1-semen.protsenko@linaro.org>
+ <172243565547.42492.1072397968108986657.b4-ty@linaro.org> <ee392e1e-bdb7-4cbd-8b43-00ec0efd5026@kernel.org>
+In-Reply-To: <ee392e1e-bdb7-4cbd-8b43-00ec0efd5026@kernel.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 31 Jul 2024 13:25:38 -0500
+Message-ID: <CAPLW+4mxtTj5VGi4LYwU-8F9hsSgDe+yxAsON=rXUhxGWHCCXg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Mateusz Majewski <m.majewski2@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024, at 19:23, Dmitry Torokhov wrote:
-> On Wed, Jul 31, 2024 at 01:10:25PM +0100, Mark Brown wrote:
->> On Wed, Jul 31, 2024 at 02:06:00PM +0200, Arnd Bergmann wrote:
->> > On Wed, Jul 31, 2024, at 04:42, Dmitry Torokhov wrote:
->> 
->> > > I would like to remove platform data suppirt from samsung-keypad driver;
->> > > mach-crag6410.c is the only user of samsung_keypad_platdata structure.
->> 
->> > Unfortunately we are a bit stuck here and there is no good answer
->> > for it. I think this board file is holding up more cleanups than
->> > any other and I'd love to get rid of it, but Mark is still using
->> > the machine, and probably relies on it more than anyone else
->> > needs the other board files.
->> 
->> While I am using the device I don't care at all about the keypad driver,
->> I don't use the keypad at all so that could just be removed as far as
->> I'm concerned.
+On Wed, Jul 31, 2024 at 9:22=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> Nah, if it is still used I can convert properly, especially if you can
-> try my patches.
+> On 31/07/2024 16:20, Krzysztof Kozlowski wrote:
+> >
+> > On Tue, 23 Jul 2024 11:33:10 -0500, Sam Protsenko wrote:
+> >> Add a constant for TMU PCLK clock. It acts simultaneously as an
+> >> interface clock (to access TMU registers) and an operating clock which
+> >> makes TMU IP-core functional.
+> >>
+> >>
+> >
+> > Applied, thanks!
+> >
+> > [1/2] dt-bindings: clock: exynos850: Add TMU clock
+> >       https://git.kernel.org/krzk/linux/c/01ce1bf22adc0d09d906319787091=
+ce784cb9914
+> > [2/2] clk: samsung: exynos850: Add TMU clock
+> >       https://git.kernel.org/krzk/linux/c/79b918aa997acd5066c7962502b1d=
+aaae76b6911
 >
-> Should the warning about removal after '24 be removed then?
+> Hashes got mixed, but the commits are properly applied:
+> https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=3Dn=
+ext/clk
+>
 
-As promised, I have now sent my email about the wider board
-deprecation timeline, see
+Thanks for handling this!
 
-https://lore.kernel.org/linux-arm-kernel/2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com/T/#u
-
-Let's see if we can agree on a plan for removing more of the
-other boards first, and then add consistent warnings to the
-ones that are on the way out.
-
-     arnd
+> Best regards,
+> Krzysztof
+>
