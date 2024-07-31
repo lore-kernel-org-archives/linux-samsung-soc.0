@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5BF1AAE22;
-	Wed, 31 Jul 2024 09:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB2A16B395
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 09:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722419138; cv=none; b=sTmCHAOUQ4Dh/afCAKSJt+7L0oSri9UsLzoHKO+wPIVoCiM98GXhpPrTNy7jJzA/wFd77QzYbadYn2tlxeJbXvs71rQqO6JzNUE7HUHrUsIgOGaSwzBR5cO2xq7HtVJ/UCSPbWzcjdiOzxgNa/fxh3VdAh70hvWDLRWcPC4gOXc=
+	t=1722419242; cv=none; b=jFhFY9LUM4n41RppCI1ymQvKl74tsQXAegwwDWemZarFUCl4MrYVwtUIt8AzLZHK1zTJdI19lbgxgxGUXMBr90FFK6BhOjaiR1eLS59iLCsaUyM7tplF5FwBq+D4CRfPgpQgeXdymjBYzGUfVKJx0mkgkFzTXvzhRz+QUQ9cysc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722419138; c=relaxed/simple;
-	bh=7+5jjOBwASMXayjPqC+OEoM/5sIwvSdy7dR4ojUz7uI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rqCptZyQWYdp6P1tym7v2Fyq72WmC/Qe77fbdarBkiFYGiHwKCW/EeAxH0AzKRycboaZB9hG9liKZZIN9CIzUjPGdfCz8cVoK28B2F02jbFgzeRgHKYsyanXV6g6ehOPP42F6SufZUNDyeW6wa1JQrZVSIqbbiqeYl86gzVf9j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSvUncQH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722419242; c=relaxed/simple;
+	bh=8It0ysfU0uibFYFNmaM9ZtiCas4WAgqcP4A2NJeMVrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AkZhgYD/MdPnneUf6pOhPgodV1Jp5A17pHUs6gyZBL2ICvKdGNKKhZ37cpumeHneEroIpehWQK0uv8GuihTQVXOuPrGSKP2VQMyZAOmR+JvTaVmThM1iViuhVAUWdi8sdV0ng7vCONq9QFcKY6X72vAA34fI7t8JnciffCvxyCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1tAn5GC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSvUncQH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 823C1C116B1;
-	Wed, 31 Jul 2024 09:45:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1tAn5GC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E924C4AF0E;
+	Wed, 31 Jul 2024 09:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722419137;
-	bh=7+5jjOBwASMXayjPqC+OEoM/5sIwvSdy7dR4ojUz7uI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VSvUncQHgCU6fVRQaELTJfNQbC3PEdLEpAvQuOmMkKkNlCo2nVvKgi2Ss5sFPBqql
-	 X1NT773C67h8tz3TUdt0VNeH0KlxwfIYZRDE1787pyP+teGSqO+F5vSGR5XNS+heRp
-	 QbZLVk3xfHvGpUzfZye4Bny5VU9PgqUi4/nohqCRFbAb0e8rhUotmlxkS0jU4KJ7L1
-	 w8qxgLw3zg5NIjCDV5xvRQlXiJbYFQJKl5eO9Q2Tqebtby003rEcRXEbfJRqIISCQv
-	 eOmcB8oiWMed2HdR70+RgPTAo+9VIIBzF9X1US5PoyzwKnun4IRm+R5vqZi78161CZ
-	 UEHBxMVk2jPyw==
-Message-ID: <00f652ab-86dd-4169-84a8-df5de582ef2a@kernel.org>
-Date: Wed, 31 Jul 2024 11:45:30 +0200
+	s=k20201202; t=1722419241;
+	bh=8It0ysfU0uibFYFNmaM9ZtiCas4WAgqcP4A2NJeMVrU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=H1tAn5GCvo+mbcoJXJ/1FjcLl8SnAQQ7ojATZScG4tjwaw0no81YF3nqUHlxnu7qS
+	 U8G150ZpSeRwS/MdBM24/ddb6GMcqxnY6xaWg+3JGiTyztNYZhKy6iVqK0OMUb0+/y
+	 2z3NrgMvsBnOtMNzZYv7fYy9FOIqLs8G3txAKWW8WG56YNuVJkqi88y3Fgf1B4+8Fq
+	 41WOkrZDBzy7ECfR6s4Pc3c1qrLeOwSpLvkg065INRU0Olh6kq0ph6bP+omeUcsefF
+	 4agx4uERtcUqj+q7RItbJG60dcIaUBd9P33cwn4Ng1rot6r8Ogpfg/mhOxRGEgsly5
+	 uILd6pwFh5e0A==
+Message-ID: <975ae247-0186-44fd-94e1-d7b5e113f02a@kernel.org>
+Date: Wed, 31 Jul 2024 11:47:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,26 +35,12 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: thermal: samsung: add myself as maintainer
- of the driver
-To: Mateusz Majewski <m.majewski2@samsung.com>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Anand Moon <linux.amoon@gmail.com>
-References: <CGME20240730012027eucas1p2882c9c45e4d2203916af28ad86493a9a@eucas1p2.samsung.com>
- <20240730012019.1680121-1-m.majewski2@samsung.com>
-Content-Language: en-US
+Subject: Re: mach-crag6410.c staying or going?
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+References: <ZqmkfEijDcE--F0L@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -98,17 +84,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240730012019.1680121-1-m.majewski2@samsung.com>
+In-Reply-To: <ZqmkfEijDcE--F0L@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/07/2024 03:20, Mateusz Majewski wrote:
-> As discussed in
-> https://lore.kernel.org/lkml/e73e1a14-dfa0-4a36-bc6e-5d6421553788@kernel.org
+On 31/07/2024 04:42, Dmitry Torokhov wrote:
+> Hi,
+> 
+> I would like to remove platform data suppirt from samsung-keypad driver;
+> mach-crag6410.c is the only user of samsung_keypad_platdata structure.
+> 
+> I started converting it to software nodes, but I noticed the following
+> message:
+> 
+> ../arch/arm/mach-s3c/s3c64xx.c:423:9: note: '#pragma message: The
+> platform is deprecated and scheduled for removal. Please reach to the
+> maintainers of the platform and linux-samsung-soc@vger.kernel.org if you
+> still use it.Without such feedback, the platform will be removed after
+> 2024.'
+> 
+> So is this board/platform being dropped? If so when?
 
-Commit msg should have its own rationale. You can add external reference
-to support it, but external reference cannot be the sole reason of doing
-something.
+get_maintainers.pl would tell you whom to Cc... yeah, platform will go
+away some day. Maybe when last board @Mark get broken? We do not have
+specific deadline, but I don't think it is worth keeping it past 2025.
+
 
 Best regards,
 Krzysztof
