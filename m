@@ -1,87 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB721AE868
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 12:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721C193079
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 14:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427829; cv=none; b=gPLLR9/1KZOc/SlUTWC33g8b91jsomcUpKxeN+v9BJNhMdf1UYZuZ0SGetPN446hYT3D5rm4hD8ZanDeWyKz9QvUiQPC5K5Qhk6s3HqM3dMdXtsdtdrBjXuzK73aaQfQJAqojOabiyd/AFdlc4mJ9TNdLjCOAnoAxNa336eWFUY=
+	t=1722435661; cv=none; b=mfIGObQIAKQere7+E+Ko4Rs5IoJjDuggj16juq8gNDzSe8920I4wVHbJs1vCMm4gx8gWXwgwEFQXePvzYCe6mS4BIh3q3uQOlQrFZFSoRmmEygSV//XfotneFp21tNdvJmmhhj1m5wHgVGcBwc3pEQPpqkRK+pJeY7Ye3G7A8OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722427829; c=relaxed/simple;
-	bh=rkWgzrrPt+dOSsSepG4wRRSNktPHJkVEwqddP5JZ4r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k225liZjPDehKFf/EopHaAVXw6rN8kdJ15esOpDCwXY4mF0vFemBP1W59NSlh+rRGiNwIf6fZde7H4F435ISwNXDQDb9qZQ7sYIGUUxbGmuX7FUCe3+0vnJ7ZTamOF8mbVxdIYCJDzn3IlJs9DWdVyR0lXzZBGSLUTVkjNJ/CX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUULM952; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722435661; c=relaxed/simple;
+	bh=ytvkCSgLKlKnXnV2Hzh3Ns/9Jy05DqiloCwaHB1hxzI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=T2S6ewf3oTvMoJSEsQIHAyxBJdWzqAWXrXjETnjE/w6W/zn8nyvMC6zaZnTP4WxJyyEFXTFhxevIfllRMIH0ITD13ZA/nR0g4IaLszkm/3AN5iTetl5gXXOhG7Grlt8oiPIJzRgY2sZJIlhlOs1Da8FFX0Z86wn9oZnwF4jTlo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mc8UuMdW; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUULM952"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 289F3C116B1;
-	Wed, 31 Jul 2024 12:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722427829;
-	bh=rkWgzrrPt+dOSsSepG4wRRSNktPHJkVEwqddP5JZ4r8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GUULM952WU7HNPQu875E90LxEKinxkwqkbOJ91hKYK+F29pdYi09j6Jq8Qr/7/6TP
-	 /2xooTgGBjvZVo6LqWfUPFXaOef4r+ot4wYV0EEYu87Hgm1ADBbYgwOTSSMpIHTXnP
-	 ZQdAMbsqBZtEevW9sxQM8Pn7+WJ08fzZ7IMlBDa4IvnHN63w+PT1TT6SysFm3DbNgS
-	 1lNFwfbSkcxUBw/6ncTzrU4hihEKmg0xQWrryKHYBsusZOe/gUCzPPCVP1dMaiZudQ
-	 DhEwrM+PibgKCSP62FpZbn3MUm7b0IVNF5K+yBYPl5l4320itNeX3kfeG/FN+ZWTDz
-	 wATiue7DtZflw==
-Date: Wed, 31 Jul 2024 13:10:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-samsung-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: mach-crag6410.c staying or going?
-Message-ID: <3aa5c9d9-2b19-4797-964d-97e2dd325f3e@sirena.org.uk>
-References: <ZqmkfEijDcE--F0L@google.com>
- <f71e9bfd-2407-4f16-a94c-d80715777b1b@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mc8UuMdW"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3685b9c8998so2518301f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 07:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722435657; x=1723040457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gSqOaofEO5POC+mJL3PUsgfCrvCN5J6u6ZevBKAvHRU=;
+        b=Mc8UuMdWXpeCBj8ossOCq4MFPvTwTLnDaOpM+OFH16yUN/iPVDln12fg1w+E/8ittV
+         f34384WqFIgYZqUq6a1csuMGq5Djz8AZP0l9GgPZQVE818v6qVg3fT+uraKXbr/l6lH0
+         tnOyoC946e37iCNa25sFqsXAIhjyuHWiPk6UHTGTHk8ehAjXXcj45Vg+si4fLYNIZ9s9
+         2b1lcQ6zBjk3Zfyf9WpSRD/H8HFkK/ftaACUmB3d0xmQSgTgUh3CcwS+UD57hWBkKvwM
+         2sP+G/qQw6s1K/CQP4/oeYFAcBTOeQTvOqXzmf9/Uua/82DeGbe6zKYjdmFRwSK3xge5
+         eW4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722435657; x=1723040457;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gSqOaofEO5POC+mJL3PUsgfCrvCN5J6u6ZevBKAvHRU=;
+        b=wzeTukTMuvqd1A4Hn5jRuuiS9GOuRwzIju7y2VZa6Q6vvN/HY7QRFzVFJltWdGvt6j
+         pfW3uH1y6TTe12fqCFlwbCOCwXFbggBjJMSQFYMH4IyxlSxVIzuEgA2Uo1aKT+q0oR8u
+         skZlHSUagfua3S/r4+s8ZMuD+i0hwt1w7wIWb5fyD4dXhsasiGg3Wmt0wfFAFONzMsX7
+         1Joe7UIR0ejOPefk9XU0Y9hR/z21R7mT1KlWwe/RbBw0VPk3+hh3NUSmn9z/XebfYqNG
+         5mtjN6zU+OdNQv386Q9HXjVmHJGuoTTrXGB5TUSrLQGxv+JhFnj+8WYBOPg7z5Kkc8tv
+         LcJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWioICAB01dFebvFFB3UNJm4pOMb8L6Hr+LCLSeJY2kBzbHFk99f/KJe38PS4SvI6Mt2C1VxWGPi++VduhL/gZ3Nw2JPTFDxhShKiuRFFClCCQ=
+X-Gm-Message-State: AOJu0YzDdeCaIk9GM8hUlPbH1p1kz/PowpJKIq5/ds5HWJ1VG3xBzQz6
+	oWbTyd1Uzhk/JnsdtcYErslQSfUo9R1lX8E6wqXCoBFcYEpL9egICzUOtPJvItBuRAGfbiOu3mR
+	z
+X-Google-Smtp-Source: AGHT+IF8cZAUIzwi2BdvTEoaAp7Ev+Xb+P31buCoG7nk0jYrnENn135x7PpsFSsL2dKIwhDwVzjNAw==
+X-Received: by 2002:adf:e30d:0:b0:368:87ca:3d85 with SMTP id ffacd0b85a97d-36b5cf00512mr8502223f8f.29.1722435657126;
+        Wed, 31 Jul 2024 07:20:57 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c02b1sm17292561f8f.9.2024.07.31.07.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 07:20:56 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Mateusz Majewski <m.majewski2@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20240723163311.28654-1-semen.protsenko@linaro.org>
+References: <20240723163311.28654-1-semen.protsenko@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
+Message-Id: <172243565547.42492.1072397968108986657.b4-ty@linaro.org>
+Date: Wed, 31 Jul 2024 16:20:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JWcxrsxV8rosNjuH"
-Content-Disposition: inline
-In-Reply-To: <f71e9bfd-2407-4f16-a94c-d80715777b1b@app.fastmail.com>
-X-Cookie: You are number 6!  Who is number one?
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
 
---JWcxrsxV8rosNjuH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, 23 Jul 2024 11:33:10 -0500, Sam Protsenko wrote:
+> Add a constant for TMU PCLK clock. It acts simultaneously as an
+> interface clock (to access TMU registers) and an operating clock which
+> makes TMU IP-core functional.
+> 
+> 
 
-On Wed, Jul 31, 2024 at 02:06:00PM +0200, Arnd Bergmann wrote:
-> On Wed, Jul 31, 2024, at 04:42, Dmitry Torokhov wrote:
+Applied, thanks!
 
-> > I would like to remove platform data suppirt from samsung-keypad driver;
-> > mach-crag6410.c is the only user of samsung_keypad_platdata structure.
+[1/2] dt-bindings: clock: exynos850: Add TMU clock
+      https://git.kernel.org/krzk/linux/c/01ce1bf22adc0d09d906319787091ce784cb9914
+[2/2] clk: samsung: exynos850: Add TMU clock
+      https://git.kernel.org/krzk/linux/c/79b918aa997acd5066c7962502b1daaae76b6911
 
-> Unfortunately we are a bit stuck here and there is no good answer
-> for it. I think this board file is holding up more cleanups than
-> any other and I'd love to get rid of it, but Mark is still using
-> the machine, and probably relies on it more than anyone else
-> needs the other board files.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-While I am using the device I don't care at all about the keypad driver,
-I don't use the keypad at all so that could just be removed as far as
-I'm concerned.
-
---JWcxrsxV8rosNjuH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaqKbAACgkQJNaLcl1U
-h9CBCQf/StvRQmsNoFtDCNs3WavXS5InaM2R8eleULdPvOdrN2RLt4hpubo7k3WN
-08+IcAEQfYzuDILYo+xPmM1R25lpz7wxyACHxxXd3v/g/PC6jZCCn0b0LlIOcdvN
-tDJ6iAcaXIqnFga3xjJ9el0RMoz5SAUuBeIg2WJZFtmIKOa0VpWmXDk7PzYj0YfI
-5eAc33lQJUEi8kiEPTy12dAqmQIt41ffU8Y7R3Kr8y2fuX4JWpWsj/469V6CXzbR
-ytSz9OQ1xCJu2EmEUleF2dIX2QJ2Keyjbn8TDTroTgXTV+eQSXJxmhbXfMwVUC2P
-w26xV9najJZpnfufKGOOmH3omHI+qA==
-=CVse
------END PGP SIGNATURE-----
-
---JWcxrsxV8rosNjuH--
