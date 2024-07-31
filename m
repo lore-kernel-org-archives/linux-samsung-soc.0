@@ -1,51 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC461145A11;
-	Tue, 30 Jul 2024 22:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0367D28E7
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 02:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722380035; cv=none; b=lFNRg0O+UgPPS0IIBa9xL8CpQp5XmARgQp8iQIjlT677ds/8VfLmfV1AzN4Q0I8JtU+jVrSGcH7tkQ2m2y43iAok8vjscRqIJmpdsMLV+FG1wonUIrJJ3s+CHk4UkAGrZXhtHXANLjkgE6FeXQVQ3G4nfsK3NXBtMstRWrVwXIA=
+	t=1722393730; cv=none; b=oI8MXtUxSTYWlc1Kao7EOXJKxRzDnh7A7oA+k2NZiPFaXMpE7ediQlqWBRiJdkNRcnESMDDC58/nTSPAp+fYrsfsDuti0VaUpclBv7pBgt7Y6StImN60DqXm52FNVneyj8MfkhlMdEUeHJrHbJjnl3+bk1y2K3jHc8t0wCHv4AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722380035; c=relaxed/simple;
-	bh=HpXhV53Er0DLqL6TAISGEB0zOD1kAAYMDSkgzUGihCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntazAFaR7IPVulR4xIXsG6EE4K22lq9V+DsiiFcD7R0BuSrV0eimZJ1qM0Cxx5fLrreSFn8LX2eAtF7Bb8mueTSpY8VWSrX9HOzeOJgYaxNIVp9tzTF2V+qYaY0HAuFmQDds3Z10M2phv2vi2cDIyVLxC2fRJttfsXxZlYs1gqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=toTl3Ykp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722393730; c=relaxed/simple;
+	bh=yKIt4RHVuiK7oxdellYCbKb+icg84eSU/D3zZPmELVM=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jUSkTU4hdGUBYswhoh/60WNXEtccYkl81An1u/kIGtSCDJQ9Ve/8/2Q0F/6hqhzOoX/u7qjpR+5F7iBPCK2tXtIJJ9VUdwN9kYBuzkHsq/XEcdpd09K+46rTLhupbARBMqWGdX/p2N7a/bX0VY1JIVxFyW2kbEiLHGKV0dE158s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FuH7Q1i5; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="toTl3Ykp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BEF2C32782;
-	Tue, 30 Jul 2024 22:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722380035;
-	bh=HpXhV53Er0DLqL6TAISGEB0zOD1kAAYMDSkgzUGihCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=toTl3Ykpi6+D+r6/A1EbVI394RDQsGwlgf0Z29mCPKp8NZesVf6UjD8Weq5WgJDkW
-	 +A0xGQNhlt6mJQ/vDYltwYNI71+AzlFI8GCKLp6GH13Sy7ZpV/fnZwot1Sh6BVOWVM
-	 7NpJBWq881oEq0zEu/HmABcNPeQ6M+3cAMEGpmx2vjMUgmknKkO+kdSyu36czrvExL
-	 yWEIo4/EiYAqfRHQ40FmRa9CcLl0KzFClMIzKoP8iB3BGA/WDDbZ/hxGK9aBj1pnzn
-	 VT5Oa2aiZRsQwe4H52ly7wMTbd8zPtF5jpNks3wCGR1ShTVTALCbHon5S33tDwWEOL
-	 c4NnWxoZ6U1IA==
-Date: Wed, 31 Jul 2024 00:53:50 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
-	Elie Morisse <syniurge@gmail.com>, Shyam Sundar S K <shyam-sundar.s-k@amd.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Baruch Siach <baruch@tkos.co.il>, Dong Aisheng <aisheng.dong@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
-	Vignesh R <vigneshr@ti.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, openbmc@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: don't use ',' after delimiters
-Message-ID: <emgv23ln3n7kut7pc3xj2xynge3arjmeddhbd5jowsp62t4k2r@es6i352stdpk>
-References: <20240730220401.3649-2-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FuH7Q1i5"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d19c525b5so3560761b3a.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2024 19:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722393728; x=1722998528; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2yNToOQj6POlNRrh+5w4EnVtpcv4XG/AsalJEWTahmY=;
+        b=FuH7Q1i5PM+Ynhgv/fOKpC3I2N45PVU71d8diXBC+mqFaADP3DN9fZahW6ETa1NDD7
+         tip33CjPfw9BgEuDPWe4F6KI9yTF0b0KPeNL2ScyyKHnGLYCqj0jzfi/eO3SvsBz1SJ2
+         oZ6pdeIWkpzNBZnEuBPUvNtOa1KWoZ0+hN8+YZ1nMIWZdO7iXFNd1cZTOeXdAINWT6DD
+         cu1ofdLRWl1tjVIbr1kC0lrlJ30ypIZVVB9dqOK/Ig5LFporwmf3Fo5JIa1WwVYcR0mP
+         NBSSTH8v+uIczdWAJV2Fh05Oow2T4WTzTRLQjcKZBt4Ruki0Bc5rI0ha63t1Dnhyyuvd
+         63aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722393728; x=1722998528;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2yNToOQj6POlNRrh+5w4EnVtpcv4XG/AsalJEWTahmY=;
+        b=Z6ibRAqzszkPBvD+zYLHD1Aa/xXb3AcWDCQEHDoj6GDw/lQtgUPvPO+sFCsnvzojgw
+         bI/G7DJMoQtq/W6IXONOqSfunowjvSvy7EknNPUHPLoMWvdD7PjYQjJOuOZyVFOe4Zao
+         4a3dEryoLGzdrqds+Xwzz8/hXXvc29HmCeZZF3EGtydByZbM+DIi/T+C9FqUtU0CI7Fr
+         6JyqD9fTZM0eRORG7b0CyHqafBPWJq+f4nd3dp19OlRD28c4XcTOhGjj9bcTIn3FPYe0
+         t7nkS8Qi6OZdHcqyFCVtlJRVDNcqzxOXNtJhMNKvK2Z+p0CNNR2jrGuAf9PqOpgqUcdX
+         ayRQ==
+X-Gm-Message-State: AOJu0Ywgm1nuX/lczdWPzOw5QeGK6XTvm7JOdhKCbQFTM6+3xqC1KocE
+	3yCk3TRSOqRI1eycwnminJ470r2aCJlWIUdFLmEd89Wu63mys3g0yk3Y+w==
+X-Google-Smtp-Source: AGHT+IEAaW05KxsDjYsb21JqXGaGTDbmh9NoRJtnE3+Vx8rHaB/WlSgJOe2/ExbF3LaBwscRafQDcA==
+X-Received: by 2002:a05:6a00:9a6:b0:70a:f3de:3f2 with SMTP id d2e1a72fcca58-70ece9ec023mr12753017b3a.3.1722393727959;
+        Tue, 30 Jul 2024 19:42:07 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1d80:5c93:e030:d766])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead812316sm9088197b3a.101.2024.07.30.19.42.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 19:42:07 -0700 (PDT)
+Date: Tue, 30 Jul 2024 19:42:04 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: mach-crag6410.c staying or going?
+Message-ID: <ZqmkfEijDcE--F0L@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -54,22 +62,24 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730220401.3649-2-wsa+renesas@sang-engineering.com>
 
-Hi Wolfram,
+Hi,
 
-On Wed, Jul 31, 2024 at 12:01:59AM GMT, Wolfram Sang wrote:
-> Delimiters are meant to be last, no need for a ',' there. Remove a
-> superfluous newline in the ali1535 driver while here.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> @Andi: These changes are super trivial so I put them into one patch. Let
-> me know if you prefer broken out patches. I think it is better if it
-> goes through your tree, but I can also take if you prefer.
+I would like to remove platform data suppirt from samsung-keypad driver;
+mach-crag6410.c is the only user of samsung_keypad_platdata structure.
 
-It's OK... I will leave it for a few days more and then merge it.
+I started converting it to software nodes, but I noticed the following
+message:
 
-Thanks,
-Andi
+../arch/arm/mach-s3c/s3c64xx.c:423:9: note: '#pragma message: The
+platform is deprecated and scheduled for removal. Please reach to the
+maintainers of the platform and linux-samsung-soc@vger.kernel.org if you
+still use it.Without such feedback, the platform will be removed after
+2024.'
+
+So is this board/platform being dropped? If so when?
+
+Thanks.
+
+-- 
+Dmitry
