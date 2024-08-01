@@ -1,110 +1,87 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1A316CD09
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 21:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05ADE1C9EB9;
+	Thu,  1 Aug 2024 00:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463016; cv=none; b=fN4pzvAETaRlFCFlCeUq9+/xnLZbDcMeOCBAMH1hkOvgcmrTMlhftk4Kd4acQXWITJtjxVfHvFRhPt0G1vl2t3um9mD5MHrKC909R3IqtQAgi06vIXsvas3aQFhYenyb0rnR8QD7rmJK3w84PZxqY5B+OS7GQ5k2rtZIGGtFGpg=
+	t=1722471487; cv=none; b=kCCx4GYDIpB1e4jGrdeMm+PbEutOj2B/0AHqSS0QI62IYcQl2I3FXFddKIqZVYE8UsrE98D1Kr87z3Iibqj7NIDOtKvzuVTCmsXE0ey/kymmYEZ7VYGeFklOfNy0Wr6KJQiNv85qmzvwdK8ufU2OkgIJnlFdlz9t9/awLcFprzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463016; c=relaxed/simple;
-	bh=cXsPzIMnBYFbWpD0A990EW8Nt5iOKxaRg4d5AY+77yQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aO7lZgvcyjMDC7CEvpZuUsVp1FuKj5N8w/hBMh9/K/5wedo46ji2nWl5YO3Hx8/s1hW0m4fb+0sy4lRwxeb6A7HPxQ6Zh8i0SktSTfn//fWXhJ6mYiq0HKFvsAd/ne6dIJ7p00bBlLiiG9Qb0NYtkpl2ko8UGUUJlQJP/LiAmo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YKJW7soD; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722471487; c=relaxed/simple;
+	bh=EzrHojQbHayY1rc4Q/zx5hfkqvcJ3zN/wIqGJ5/06xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqAl1btv7obiIlVsdKJ5JXUbA93KKIKnrDT6eSmgYeQBNJjt8AYYR5ujV/+LDKZYBu0npLfZn8dPRHeLqF3p+TxWpjdLrwfTuRylf1nHUNwxDYJE1VWHwko0JYTFFlTvsRz+TIRBXizF7kmTZ8EflRrQD2MOW5hUNYRKDz0vxOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=b3H4//d9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKJW7soD"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-64b417e1511so50249427b3.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2024 14:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722463014; x=1723067814; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cXsPzIMnBYFbWpD0A990EW8Nt5iOKxaRg4d5AY+77yQ=;
-        b=YKJW7soDJNsaYbCt/Xd5ysFcVt+H7DfswW445aKKyw3GoMImHzJHMIjAELcutDX+Dr
-         sWqu5mRkBqutcssVmyW0EeJF6i1QvcdaZ8G1cjrZNC/E9cCHsv+4fDAsUzP95ipFo2+y
-         /LJmBFrH4UrneCXWVjKcqsiH6m6vpcmiPRtYbkj7e6ofXOsr114ilF0wCiHfUNUrMB4n
-         3L+kgINg3kwZPMBqaJAMUMUSiMhbMOYAJH75Ppo4c8yRU4SEHaCH73pG7YcfvMibLtSI
-         X3fy/KaWY3UFrV4YbHnMpCHlZ+de09l0bSJOT297uLu4B+aBljaTFMsTWmIMrP3nwa3S
-         H44w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722463014; x=1723067814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cXsPzIMnBYFbWpD0A990EW8Nt5iOKxaRg4d5AY+77yQ=;
-        b=aapnlxtQ5EfwqIQxmmoPNzexD8ncOPPYMNFizrh9uwpD0Wt/nTT2WA4sVU3CPnGqJi
-         wMCTDKJlv6WRtJA8kHTpDFAnRIzSgZhSey5PtYG1OhBpApjY97jKBetbZ8Yfmwys+a1K
-         02BxiDvgk1enz3OhVNcWq0EE8UCGwphkRI083dAPgQoHHu4uXOUxXbH2wDUKX+WlgBQ1
-         C/for0BImhHvPqjUo/fpnEq1nt3C+sokhaSJHGfwNnAHo8KH6Ymsviq8rGqoqFuitGQo
-         0LcZrWXRK4pAx1w7k+hKUNP6R1/R8V025uxNBYDKW7ANMM+mj7db7ANpZ7R+TZkcYA9W
-         FZ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWImT498EtS7f1tE1SNuijg4DKKA1H3a9OgRdDUfC3h6n9b7utf8nFirwKqPBNdwbGdi0uXpn+XowpLZVbbSpw0nIERWBU6tloOU0AVj/Us9VI=
-X-Gm-Message-State: AOJu0YzPUta5Gvkxe4XHY7USC3dY9XNzdtC7Bdy/o2rV/sao2y3qWoWF
-	a8cNUyzrHdkrq1WOVm/2zU+GeMFpbPfmXK/PNhZXMCL48F/nsWQrDjQ2KPlmpKfVJtlGZ8uNFC3
-	6IjuxmF9KiAvedobeR+b3yNmxTOvUOSz5CrJXwQ==
-X-Google-Smtp-Source: AGHT+IEhllkbb8d88rX/PNnVUAXDMYaDCfgcN1jChWefJZEk1zg4xkCycJucKr7VsSwOKCXczbmQnMZH/Oduhi8rWRk=
-X-Received: by 2002:a0d:f781:0:b0:62f:37c9:77bc with SMTP id
- 00721157ae682-6874658d58dmr5252057b3.0.1722463014013; Wed, 31 Jul 2024
- 14:56:54 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="b3H4//d9"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AuM3/GrAXMsIi+A6go0Z7DzaZf+OKFjJLl1R8WuyiaQ=; b=b3H4//d9d9Sj9u8/iuUX6VS8hJ
+	itlx2ImLOk1GIbcKJysTVZN8bH/N5E8cd0RMt/WLQ0iJ9tjJfuuWT5yAJPd7kIdFGKJajB0vQeOaG
+	LYN5nVREqSuvMjHn4Y5qidUDtq4bnAAilU8lsPp8kHwn18fk3gOrVAV6B7whjF1BYodo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZJVq-003isF-Os; Thu, 01 Aug 2024 02:17:46 +0200
+Date: Thu, 1 Aug 2024 02:17:46 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: krzk@kernel.org, robh@kernel.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	conor+dt@kernel.org, richardcochran@gmail.com,
+	mcoquelin.stm32@gmail.com, alim.akhtar@samsung.com,
+	linux-fsd@tesla.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
+	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
+	ssiddha@tesla.com, jayati.sahu@samsung.com,
+	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v4 3/4] arm64: dts: fsd: Add Ethernet support for FSYS0
+ Block of FSD SoC
+Message-ID: <62872c29-0032-4ad8-b771-d57469950c75@lunn.ch>
+References: <20240730091648.72322-1-swathi.ks@samsung.com>
+ <CGME20240730092907epcas5p1b81eaf13a57535e32e11709602aeee06@epcas5p1.samsung.com>
+ <20240730091648.72322-4-swathi.ks@samsung.com>
+ <1090d2c2-196f-4635-90a0-c73ded00cead@lunn.ch>
+ <00b301dae303$d065caf0$713160d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240731211456eucas1p1b15c30b57274ef5837b57e594d061f43@eucas1p1.samsung.com>
- <CAPLW+4=WsGikZ6qOi8dWg4wFsVbhp29cv=DKP06jc4TQn=yUeQ@mail.gmail.com> <20240731211444.59315-1-m.majewski2@samsung.com>
-In-Reply-To: <20240731211444.59315-1-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 31 Jul 2024 16:56:42 -0500
-Message-ID: <CAPLW+4k-K8xCcHzZ77=diLGJyw2SKQMGzYAywEKwhxAtJaDZ7A@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] dt-bindings: thermal: samsung,exynos: remove
- outdated information on trip point count
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Anand Moon <linux.amoon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00b301dae303$d065caf0$713160d0$@samsung.com>
 
-On Wed, Jul 31, 2024 at 4:14=E2=80=AFPM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> > Do I understand it correctly that the patch actually removes an
-> > outdated description of *driver* implementation, and not outdated
-> > hardware description?
->
-> Correct.
->
-> > If so, then maybe it makes sense to rework the
-> > patch title and commit message in a way Rob suggests. I.e. rather than
-> > stating that the patch removes an outdated information, instead
-> > mention it removes *software* (driver) description which was
-> > incorrectly added earlier. Because bindings are only meant for
-> > hardware description and should be completely independent of driver's
-> > side of things. Also in that case it probably doesn't make much sense
-> > referencing that commit for using set_trips ops. Just my two cents.
->
-> Makes sense, what do you think about this?
->
-> dt-bindings: thermal: samsung,exynos: remove driver-specific information
->
-> The number of supported trip points was only limited by the driver
-> implementation at the time, which mapped each trip point defined in the
-> devicetree source file to a hardware trip point. An implementation that
-> does not have this limitation is possible; indeed, that is how the
-> driver works currently. Therefore, this information should be removed
-> from the bindings description, which are meant to be independent from
-> the details of the driver implementation.
+> > What is the interface connected to? A switch?
+> 
+> Hi Andrew, 
+> Thanks for the quick review. AFAIK, this has been discussed earlier. I am
+> providing the links to the same here for quick reference. 
+> 
+> [1] https://lkml.org/lkml/2024/7/29/419
+> [2] https://lkml.org/lkml/2024/6/6/817
+> [3] https://lkml.org/lkml/2024/6/6/507
+> [4] https://lkml.org/lkml/2023/8/14/1341
+> 
+> Please let us know if you have any further queries on this.
 
-Looks good to me. But you already have my R-b tag :) More important if
-it's ok with Rob.
+Ah, O.K.
+
+It would make sense to add to the commit message something like:
+
+The Ethernet interface is connected to a switch, which Linux is not
+managing.
+
+Part of the purpose of the commit message is to answer questions
+reviewers might have. This is one such question.
+
+	  Andrew
