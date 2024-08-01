@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003B8141987;
-	Thu,  1 Aug 2024 07:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2378BE0;
+	Thu,  1 Aug 2024 08:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722498520; cv=none; b=M1mBlCqPZRy+YHqpD4YWPBh1fsqBZpEEnz1/CUmsmWx33nmAipFmX68M3EiNOIaPmrW/HjnC2uOJ68xdLSgiSXAcLmRm1h7Qp3FMi0uqPiSA1yyURB1RZ3Jr/xImBxKGghfPyFdvDLLw0fYNlqxUl13cN2aTPVYdoz+Mm1fIeJk=
+	t=1722499459; cv=none; b=Uh5+whMlHkIMQWvkZ5+NK2JagZ5mJAomXYNModeFDFVE/yd+xDu2UHvqKCC3gbsXBG3CcWqcloxsumX0qgpAweUZOuNG6tzRjCT6SrGz0NL4M3WytgQU81plPK/2/79DCLESPrFUnqhKWkIh99KWfgF+aiUaldpV74T1cpuQdPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722498520; c=relaxed/simple;
-	bh=e9cIP3qhP1pkmPzNuPzboByz/ORYieGo9xdt3NHBKSY=;
+	s=arc-20240116; t=1722499459; c=relaxed/simple;
+	bh=mmv79naFxibF9Te2hX+j/d0ubjLkPOmqzoUx5PXhplo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K5Ab/Lezn5qX8a5mCg59OqBBCIYCAHuJlMI7uH3Vkn+42h1AicRrt3ai1ru8ZG9MSv551gMPyDQhIRr3rZ56wTq6w12CUtTlDFkW+GPapOd0LMRhJ1IOEfvKWVHChSTKuheRouyypSrKIEamEaVc/fneDqlWHEBp/nq72zjLwQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUnRlaZZ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=KuaGphV6exiLI89Y+jci3RPMsV1qmlfBwObclHclKk7iApJFc7jYKMbNN+4pRVqCG/8YiziTX+DGzjsF5AMxjOxHM/VY8C3sp6gsfheYgy7j+ruhdLHO4ML6pWBpHhGj7R0QBmTYBEpMKGdqWlhWr6sr7eeZ8zEzgH7vcjzHnHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCE0LAKE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUnRlaZZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36CF1C4AF0A;
-	Thu,  1 Aug 2024 07:48:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCE0LAKE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F8BC4AF0A;
+	Thu,  1 Aug 2024 08:04:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722498519;
-	bh=e9cIP3qhP1pkmPzNuPzboByz/ORYieGo9xdt3NHBKSY=;
+	s=k20201202; t=1722499458;
+	bh=mmv79naFxibF9Te2hX+j/d0ubjLkPOmqzoUx5PXhplo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tUnRlaZZ4uRmLHNtQEGp7hGgeDpdLABYtPPHhNCa2loIoEVtDD1gG5FxYWlBFk+BM
-	 qgtpBCwTD8N6BFoOYe02JZRgdb+h5wmpOBf56dvzsY2Cbv3bZTQAp36PVDx/VoGDxo
-	 Upb2Ueio6U5Q5e1tuUNuTTST5BMr8UQ0K+h2cW1mfrb8pnqWi/oONEBgWQ9m62WZti
-	 WCRxkt77N2bmH8N4mfCTqfdAp26BIT7iYOo6Hoz3BQoMPxKao111di7PfvsnKrTVQp
-	 k/Bd2biwG/+TDNZ1kLeyBmtBfjnVuhiqgg6MsS0+L6nRDpNYSUD8IAWZtQ20NlSuCz
-	 KFNIPqdOi+OMQ==
-Message-ID: <0775329b-48cb-426d-a488-0413fc3231d0@kernel.org>
-Date: Thu, 1 Aug 2024 09:48:33 +0200
+	b=hCE0LAKEvabPVigEDzCpRsKMPYLSoWaYYT95fjHjDDmOYjowQvYg4X3bPQC7qZL50
+	 Y8fEor74Y66ueoYppcKP71Ov17yVOow3um1RKRWx7ql7LRkfC8keAT8zpos541qg99
+	 MWl5wrFH51ZIBkTbI0lhKqwgbbdCnaeNbu0Atq9zCxY+8RtD9umHnWQrEQHOaASV2D
+	 byzTDjosHvbNtfnOblZXg0+EaBoZmIHFtHaQiWbEGxTq0tMu4GIKcICHNQbXtlP32Z
+	 ClrFK1eCOYtqqUmHVS9F9OX1T2zMqS8ZXCet5NrMOMHnAOukgsxChkF2MueigyZSH5
+	 Zt3R4VJMH9iOg==
+Message-ID: <f5e8b8ca-33c7-4725-b751-fc9d76959423@kernel.org>
+Date: Thu, 1 Aug 2024 10:04:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,24 +35,26 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MAINTAINERS: thermal: samsung: add myself as
- maintainer of the driver
-To: Mateusz Majewski <m.majewski2@samsung.com>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, ALIM AKHTAR <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Anand Moon <linux.amoon@gmail.com>
-References: <CGME20240731211356eucas1p287adaf8a55c7c3e37c9ac8b36069b788@eucas1p2.samsung.com>
- <20240731211346.59027-1-m.majewski2@samsung.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Richard Earnshaw <richard.earnshaw@arm.com>,
+ Richard Sandiford <richard.sandiford@arm.com>,
+ Ramana Radhakrishnan <ramanara@nvidia.com>, Nicolas Pitre
+ <nico@fluxnic.net>, Mark Brown <broonie@kernel.org>,
+ Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+ Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+ Nikita Shubin <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,24 +100,29 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240731211346.59027-1-m.majewski2@samsung.com>
+In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/07/2024 23:13, Mateusz Majewski wrote:
-> I am familiar with the code of this driver, having contributed to it
-> before. I also have access to most of the supported SoCs for testing. I
-> am going to have more time to help with this code, so I would love to do
-> so slightly more formally.
+On 31/07/2024 19:29, Arnd Bergmann wrote:
+> We removed a lot of the unused board files at the beginning of
+> 2023, and I'd like to plan ahead for other hardware and feature
+> support that can be removed after the next stable kernel
+> (linux-6.12).
 > 
-> This has been discussed previously in
-> https://lore.kernel.org/lkml/e73e1a14-dfa0-4a36-bc6e-5d6421553788@kernel.org
-> where Krzysztof Kozlowski (as one of the existing maintainers of this
-> driver) has reacted positively to the idea of this.
+> TL;DR: I think we can deprecate toolchain support for ARMv4
+> (pre-thumb), iWMMXt, BE32 and OABI (-mabi=apcs-gnu) *if* that
+> helps gcc-15, as we'll likely not need those any more after
+> gcc-14 will be too old to build new kernels (ca. 2030).
 > 
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> I hope we can keep reducing the number of non-DT board files a
+> lot further, but I still expect this to take several more years
+> before it is DT-only. Please reply here if you are using any
+> of them so we can spare them once more.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+All this (and what was below the quote) looks reasonable to me,
+including Samsung S3C64xx and keeping support for RPi 1 (I was using it
+till ~3 years ago).
 
 Best regards,
 Krzysztof
