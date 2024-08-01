@@ -1,206 +1,190 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186DC1EB491
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Aug 2024 04:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0851528379
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Aug 2024 06:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722485629; cv=none; b=FGTBkmb92yIntaeu77bPOTOZwWOXZvdwyVW7uBhrNSq1SJY5DiCTnLgmgcZxOhKN7TEv5IO5FhhjDil2agfCVMhEOyaPzMmDYSbBjxk7hqJsnQe9k/yDCnO5BUp2LOTwLoK4liHd/qsjHzIRYsf3rWKp90UpoHZjNHGJX5tytP0=
+	t=1722493410; cv=none; b=XYnXJUl2RuXixVRUbyDP3v9LvE/KnEC/8e1F1WnvN82jRa+nkMDyURVj2ae4K07oFJdeKdWjhwLOeIb3PJRfV56uiraEXNtvvFwBMUpw+6wV4Z7C3iiA3LTeweeJTZQOL8mRF2Z/4IaEDmDJcq7sbmThIY0Ue2k5Ctl6eMiMch0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722485629; c=relaxed/simple;
-	bh=+cfTOUzv+LVlulSr6iUU5MPVrfyWiiftyxhDQGOkhNo=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=k6sKFMZrJegn0xI4tOsFTR5ac+6YwskaE6PK9UlfzSR3h15R6hL45kK668AlDzjH+oidmydDc3MwLOa1h4m7se3sYt7/8BOHip+Ubz3ozTM3IMgaWjbhtao7RQJbM5WGPWFl5iqIT4FbGEp4WAYlQ8wJBgGYM/gVq3IDnTlyH5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=K7OFvuV/; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1722493410; c=relaxed/simple;
+	bh=1SwrbJUZHfMzIQKHR3lTTS9SNSFL2B4mHLLktBqi0gA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YeKkwZiW2pyM3MQlXZCVSX/Y1QsMzuTB3oYbIpXv/CUzpYzZ1DADOlTYEtdCTQ+9BU3ihlzxtLGbAdQr+AY6VMGZurN1v7nlYlNj/OcJvNSncQaS3+SfN4oday0Zkf4wlh5W6qEwJxEBQbMg/tDGidNto7qliDkn8LMThWonsdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=aKxIgCt0; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K7OFvuV/"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240801041345epoutp02d5456f887d90ceb434064a3fad03564e~nf4zFtQIo0965709657epoutp020
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Aug 2024 04:13:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240801041345epoutp02d5456f887d90ceb434064a3fad03564e~nf4zFtQIo0965709657epoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722485625;
-	bh=XItVE+m8CpCnLpz6ExorA5UqxCTZmmA9PM7LAoUbK9U=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=K7OFvuV/ozhaglGkV6LhmcQdNZQdR+mDI9eOY4sLd2u3g1XamAAw+69Hin67NyHEe
-	 nIMxoSMpVvaBPCzCPUXiCSOy4Dz559EPeASfYUf8EtggRQXcLDhwFiEs4Xjgt+hw06
-	 BeS8j+lroKX8LOwZsrvw4zt6ewKziqvDKY/v0b00=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240801041344epcas5p39c078d961cf831b00de9830ef9c5f8c0~nf4ycwOnY2705327053epcas5p3h;
-	Thu,  1 Aug 2024 04:13:44 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WZFvV51dlz4x9Q1; Thu,  1 Aug
-	2024 04:13:42 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6D.F9.19863.67B0BA66; Thu,  1 Aug 2024 13:13:42 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240801032241epcas5p3c284ec65cdd5d6eb770b1af06747f508~nfMN_cvjA2606026060epcas5p3A;
-	Thu,  1 Aug 2024 03:22:41 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240801032241epsmtrp1bc470cec1a28796352af628a1753fa65~nfMN8CFo12653726537epsmtrp1J;
-	Thu,  1 Aug 2024 03:22:41 +0000 (GMT)
-X-AuditID: b6c32a50-c73ff70000004d97-ed-66ab0b7642c2
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	36.26.07567.18FFAA66; Thu,  1 Aug 2024 12:22:41 +0900 (KST)
-Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240801032237epsmtip26e9eb8be422daf7609918d629cb7a981~nfMKSjxO00572505725epsmtip2-;
-	Thu,  1 Aug 2024 03:22:37 +0000 (GMT)
-From: "Swathi K S" <swathi.ks@samsung.com>
-To: "'Andrew Lunn'" <andrew@lunn.ch>
-Cc: <krzk@kernel.org>, <robh@kernel.org>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
-	<mcoquelin.stm32@gmail.com>, <alim.akhtar@samsung.com>,
-	<linux-fsd@tesla.com>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<alexandre.torgue@foss.st.com>, <peppe.cavallaro@st.com>,
-	<joabreu@synopsys.com>, <rcsekar@samsung.com>, <ssiddha@tesla.com>,
-	<jayati.sahu@samsung.com>, <pankaj.dubey@samsung.com>,
-	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <62872c29-0032-4ad8-b771-d57469950c75@lunn.ch>
-Subject: RE: [PATCH v4 3/4] arm64: dts: fsd: Add Ethernet support for FSYS0
- Block of FSD SoC
-Date: Thu, 1 Aug 2024 08:52:35 +0530
-Message-ID: <011701dae3c2$10c864e0$32592ea0$@samsung.com>
+	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="aKxIgCt0"
+Date: Thu, 1 Aug 2024 08:22:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
+	t=1722493403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uNXO5Sbe1R3I7INxDUElbIWLts6spK8XiLpLcF786pk=;
+	b=aKxIgCt05edjo1D67ATWPa6sDjDircW5G4zgDLOmXhbGRQMxkpIpIStYg2JJUitUVHXrCI
+	ipY9x5t2/JwAtU5+j43e2UjJUQ/74aKXt49A7KceNpI0Aw0T+lkAGv18qX8+Dma3ue3i2f
+	XN9/DCVLWnKWJ1jKZaREYIZPvKdCEhY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Henrik Grimler <henrik@grimler.se>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+	Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 00/10] power: supply: max77693: Toggle charging/OTG
+ based on extcon status
+Message-ID: <20240801062253.GA2681@l14.localdomain>
+References: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQD2Gw94KDf30OIcDBeWExyH9iGvOgKN91N8AfSZAbcBCoUV+wG7NgImAhEbw32zkIHVgA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVTTZRTHe357pzMbsPRhGeHQg5DgFgMeDIoTHPl1slpxzPCP5ho/XgK2
-	tRcSzkFMEQ9LxstJwx1GRGAB5stkNAiQ9xwII0VOWCAIO/ISziNFoAFtbBT/fe597r3fe+9z
-	Lp3kUUPj0FOkKkIhFadxqW7khk5//8CMZ+sSebZCX7Q8cw6g8fIGKrKMdpDQxZYBDJVZcsno
-	664BCrL23KehkbZGDHX1VmForPIhBVksV2hosEFLQYbJYQqamD2EbjeVUVGppRVDmuEpCipf
-	+YGCeiq2osW+PwCqNP5JQ2tzRoAmHjXTkG7QREFdN6dJaK3ZREOV4xWUqBfw+poRDLcWGml4
-	o26UhlcY1LihNp+KX6vKwRtNCxhua71DxbX1tQBvb+Xj1qUWEl5/fQHgqyf0NHzB4C3ccjg1
-	IpkQJxAKH0IqkSWkSJMiuW/FiaJFIaE8fiA/HIVxfaTidCKSG3NAGLg/Jc2+Eq5PhjhNbXcJ
-	xUold+9rEQqZWkX4JMuUqkguIU9IkwvkQUpxulItTQqSEqp9fB7vlRB74JHU5MnlPor8qefR
-	/kd67DgocdcABh2yBPDWTz1AA9zoHqxmAFtNZS7jMYDGx0UuYxHAq0OzlI2Us213XQ8tAJ7+
-	Vu8ypgFc0tauR1FZAbBS20pzMJu1E5brv8QcTGINUOAXgywHM1ivwvNGM9nBnqyPYEHbGHAw
-	2R7/y1f31nOZrHCoKV1zsTs0n58iO+u8BH+cLyM5O/KBy9YLFKfWB3DlYqNLaxvsXj5DcjQH
-	WbMMuNbZ4hohBj7RjpCd7Alnf66nOZkDZwrzXCyCddo7rphkOPqkmOrk12HbUJndT7cL+MPL
-	TXud7hfh2d5LLt0tsODpFOb0M6GpfIN94crcsKukF2yottGKAFe3aTTdptF0m0bQ/a9WAci1
-	gEPIlelJhCREzg+UEp/99+USWboBrN9MgNAE6q6sBHUAjA46AKSTuGymh7km0YOZIM7MIhQy
-	kUKdRig7QIh94cUkzvMSmf3opCoRXxDOE4SGhgrCg0P53G3MuVP6BA9WklhFpBKEnFBs5GF0
-	Buc4pnojXxYdlWRTNn+S++nJ2KJoTXVJbCwRLTvCElK35wuu9QN9e0m/33PeV3cIw3b2nx64
-	UcD23iPQRV7eZZaPn2gM+D7+nazves59/H5mRL5lXFQs6GXe9ksPTnwo2OclcMvNsWrmV+9D
-	P338amLTEo9NOpYdFz964WjEwdU4dbehPe/6vG1m+45jp/ofPJgY2O85lvN3ffM37GcylGFn
-	tmaRPxwTHf5L6v5y+ep0za57FZ6li7vD1qBYcVLyXp5RZPpdfcAvxnzoYHAV4+2xeV929t1S
-	idXc55X5uXGwu7PvtyAGzBb9OmkbnLj0T+6NPblR1fNzt242DcE33+1J5ewO8+eSlclifgBJ
-	oRT/CynIYzS8BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42LZdlhJXrfx/6o0gydnhC1+vpzGaPFg3jY2
-	i/N3DzFbrNl7jslizvkWFov5R86xWjw99ojd4uaBnUwWR04tYbK4t+gdq8X58xvYLS5s62O1
-	2PT4GqvFw1fhFpd3zWGzmHF+H5NF17UnrBbz/q5ltTi2QMzi2+k3jBaLtn5ht/j/eiujxcMP
-	e9gtZl3YwWpx5MwLZov/e3awWyx6sIDVQdpjy8qbTB5P+7eye+ycdZfdY8GmUo9NqzrZPDYv
-	qffYueMzk8f7fVfZPPq2rGL0OLjP0OPpj73MHlv2f2b0+Nc0l93j8ya5AL4oLpuU1JzMstQi
-	fbsErozHP0+zFvwWrjj7YS5TA+MkwS5GTg4JAROJqQduMXYxcnEICexmlLh1/TgrREJS4lPz
-	VChbWGLlv+fsEEXPGCV+ndvDBpJgE9CSWNS3jx3EFhFQkZg3dwoTSBGzwCtWiQenp7BAdBxn
-	kpg9YS4TSBWngLXEzK0nWUBsYYEYiRkrWsHiLEDdF6ffB5vEK2Ap0TXjP5QtKHFy5hOgeg6g
-	qXoSbRsZQcLMAvIS29/OYYa4TkHi59NlrBBHhEn8XbOTCaJGXOLozx7mCYzCs5BMmoUwaRaS
-	SbOQdCxgZFnFKJlaUJybnptsWGCYl1quV5yYW1yal66XnJ+7iRGcZrQ0djDem/9P7xAjEwfj
-	IUYJDmYlEV6hkyvThHhTEiurUovy44tKc1KLDzFKc7AoifMazpidIiSQnliSmp2aWpBaBJNl
-	4uCUamByXLJgETcD14Grj5dNn5Stf64noZFtmrJ/p/CSSefe/88zXbhl+6qw87Gv3p0I+mP8
-	NMFkZc6dHRKTJ3//b2X2Zs6MPVvtS28Zchzp26SSLWWpep2viTGtMqftAY/yc7//rxy4QnQ+
-	HNk7c+H0hSfXCOcx/2/0m3b2aZOjnarz/5pUeTUuho1XauY8OqQio2A7X4Cb+8e0Sy2BR19u
-	rxK7n3nNcEXyzObXBUHee5Jr5Mru7q2ayZOUKdS43fUjj4ZjWIPgnysKLbfeb5/n/3rRnlBe
-	3U+7FxwMLlxRrXr8eoPnhh+qEpOeJT0Q1jLfu2lp/bL+LcfvWX/+kr9VtsTRY7KyoVii5DUH
-	k7ct52Y3KLEUZyQaajEXFScCAHVCPkaiAwAA
-X-CMS-MailID: 20240801032241epcas5p3c284ec65cdd5d6eb770b1af06747f508
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240730092907epcas5p1b81eaf13a57535e32e11709602aeee06
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
-	<CGME20240730092907epcas5p1b81eaf13a57535e32e11709602aeee06@epcas5p1.samsung.com>
-	<20240730091648.72322-4-swathi.ks@samsung.com>
-	<1090d2c2-196f-4635-90a0-c73ded00cead@lunn.ch>
-	<00b301dae303$d065caf0$713160d0$@samsung.com>
-	<62872c29-0032-4ad8-b771-d57469950c75@lunn.ch>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+Hi Artur,
 
-
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: 01 August 2024 05:48
-> To: Swathi K S <swathi.ks@samsung.com>
-> Cc: krzk@kernel.org; robh@kernel.org; davem@davemloft.net;
-> edumazet@google.com; kuba@kernel.org; pabeni@redhat.com;
-> conor+dt@kernel.org; richardcochran@gmail.com;
-> mcoquelin.stm32@gmail.com; alim.akhtar@samsung.com; linux-
-> fsd@tesla.com; netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com; linux-
-> arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> alexandre.torgue@foss.st.com; peppe.cavallaro@st.com;
-> joabreu@synopsys.com; rcsekar@samsung.com; ssiddha@tesla.com;
-> jayati.sahu@samsung.com; pankaj.dubey@samsung.com;
-> ravi.patel@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH v4 3/4] arm64: dts: fsd: Add Ethernet support for
-FSYS0
-> Block of FSD SoC
+On Mon, Jul 29, 2024 at 07:47:34PM +0200, Artur Weber wrote:
+> This patchset does the following:
 > 
-> > > What is the interface connected to? A switch?
-> >
-> > Hi Andrew,
-> > Thanks for the quick review. AFAIK, this has been discussed earlier. I
-> > am providing the links to the same here for quick reference.
-> >
-> > [1]
-> > https://protect2.fireeye.com/v1/url?k=137f9a1c-72027264-137e1153-74fe4
-> > 85fffb1-6e7bf5aa53b8cc75&q=1&e=46ff39bb-87c6-4b24-9cee-
-> a6ed900a5b7f&u=
-> > https%3A%2F%2Flkml.org%2Flkml%2F2024%2F7%2F29%2F419
-> > [2]
-> > https://protect2.fireeye.com/v1/url?k=dca2820d-bddf6a75-dca30942-74fe4
-> > 85fffb1-9b7f4695da0bf0b8&q=1&e=46ff39bb-87c6-4b24-9cee-
-> a6ed900a5b7f&u=
-> > https%3A%2F%2Flkml.org%2Flkml%2F2024%2F6%2F6%2F817
-> > [3]
-> > https://protect2.fireeye.com/v1/url?k=552d5dcd-3450b5b5-552cd682-74fe4
-> > 85fffb1-3bb7c6c469af30f5&q=1&e=46ff39bb-87c6-4b24-9cee-
-> a6ed900a5b7f&u=
-> > https%3A%2F%2Flkml.org%2Flkml%2F2024%2F6%2F6%2F507
-> > [4]
-> > https://protect2.fireeye.com/v1/url?k=c613c4f6-a76e2c8e-c6124fb9-74fe4
-> > 85fffb1-469219b2dcdd3e0e&q=1&e=46ff39bb-87c6-4b24-9cee-
-> a6ed900a5b7f&u=
-> > https%3A%2F%2Flkml.org%2Flkml%2F2023%2F8%2F14%2F1341
-> >
-> > Please let us know if you have any further queries on this.
+> - Add CURRENT_MAX and INPUT_CURRENT_MAX power supply properties to
+>   expose the "fast charge current" (maximum current from charger to
+>   battery) and "CHGIN input current limit" (maximum current from
+>   external supply to charger).
 > 
-> Ah, O.K.
+> - Add functions for toggling charging and OTG modes.
 > 
-> It would make sense to add to the commit message something like:
+> - Add an extcon-based handler that enables charging or OTG depending
+>   on the cable type plugged in. The extcon device to use for cable
+>   detection can be specified in the device tree, and is entirely
+>   optional.
 > 
-> The Ethernet interface is connected to a switch, which Linux is not
-managing.
+> The extcon listener implementation is inspired by the rt5033 charger
+> driver (commit 8242336dc8a8 ("power: supply: rt5033_charger: Add cable
+> detection and USB OTG supply")).
 
-Thanks for the suggestion and it makes sense.  Will update the commit
-message this way in the next version.
+Tested on exynos4412-i9305 (after applying the changes in patch 8 - 10
+to exynos4412-midas.dtsi).  It works well, device correctly identifies
+a usb cable connected to charger or a usb cable connected to computer,
+and sets a limit of 1.8 A and 0.5 A in the two cases.
 
+I did notice that device does not always detect cable insertion, so I
+can occassionally get two de-attach events in a row.  Cable was
+inserted between 428 and 462 in below log snippet:
+
+[  389.458399] max77693-muic max77693-muic: external connector is attached(chg_type:0x3, prev_chg_type:0x3)
+[  389.469765] max77693-charger max77693-charger: fast charging. connector type: 6
+[  428.151857] max77693-muic max77693-muic: external connector is detached(chg_type:0x3, prev_chg_type:0x0)
+[  428.160319] max77693-charger max77693-charger: not charging. connector type: 13
+[  462.156048] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
+[  469.881925] max77693-muic max77693-muic: external connector is attached(chg_type:0x3, prev_chg_type:0x3)
+[  469.890049] max77693-charger max77693-charger: fast charging. connector type: 6
+
+but this is probably an issue in extcon driver though rather than
+charger.
+
+I have not tested so that MHL still works, as I do not have access to
+that cable at the moment, will try it in a few days.
+
+Best regards
+Henrik Grimler
+
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > 
-> Part of the purpose of the commit message is to answer questions reviewers
-> might have. This is one such question.
+> v3 no longer uses the CHARGER regulator to manage the power status, and
+> that's for two reasons:
 > 
-> 	  Andrew
-
-Regards, 
-Swathi
-
+> - Regulator enable/disable behavior was interfering with how the power
+>   supply driver worked (we occasionally got "unbalanced disables"
+>   errors when switching charging state, despite checking for the
+>   regulator status with regulator_is_enabled() - the CHARGER reg would
+>   report as enabled despite the enable count being 0).
+>   This broke OTG insertion if the OTG cable was plugged in first, and
+>   sometimes caused warnings on unsuspend.
+> 
+> - Changing the charging values directly in the power supply driver is
+>   less opaque and lets us avoid bringing in a dependency on regulators.
+> 
+> It also splits the current limits back into two properties:
+> INPUT_CURRENT_LIMIT and CONSTANT_CHARGE_CURRENT_MAX. Again, there are
+> two reasons for this split:
+> 
+> - They are two separate current controls, one for USB->charger and one
+>   for charger->battery, and they have different limits (0-2.1A for CC
+>   vs 60mA-2.58A for input). Given that the power supply core has the
+>   properties for both values separately, it's more logical to present
+>   them as such.
+> 
+> - It's safer to keep these separate; CONSTANT_CHARGE_CURRENT_MAX is
+>   pretty explicitly only set *once* - at probe time with a safe value
+>   specified in the DT. This way, INPUT_CURRENT_LIMIT is safer to modify
+>   since in the event of an invalid value the CC current will hold back
+>   the extra current thus preventing damage to the battery.
+> 
+> The latter is relevant as I'm working on a follow-up patchset that
+> allows for controlling the charging parameters using power supply
+> properties/sysfs properties rather than the CHARGER regulator.
+> 
+> Note that the CHARGER regulator gets disabled automatically if it's
+> not used, which will disable charging if it was auto-enabled by the
+> extcon code. This can be worked around by re-attaching the cable, or
+> more properly by removing the CHARGER regulator from DT for devices
+> that use the extcon-based charger management, as has been done in the
+> Galaxy Tab 3 8.0 DTSI.
+> 
+> See v1 for old description:
+> 
+> https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
+> ---
+> Changes in v3:
+> - Drop uses of CHARGER regulator, manage registers directly in power
+>   supply driver instead
+> - Link to v2: https://lore.kernel.org/r/20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com
+> 
+> Changes in v2:
+> - Changed to use monitored-battery for charge current value
+> - Both current limit variables are now set by the CHARGER regulator
+> - Link to v1: https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
+> 
+> ---
+> Artur Weber (10):
+>       dt-bindings: power: supply: max77693: Add monitored-battery property
+>       dt-bindings: power: supply: max77693: Add maxim,usb-connector property
+>       power: supply: max77693: Expose input current limit and CC current properties
+>       power: supply: max77693: Set charge current limits during init
+>       power: supply: max77693: Add USB extcon detection for enabling charging
+>       power: supply: max77693: Add support for detecting and enabling OTG
+>       power: supply: max77693: Set up charge/input current according to cable type
+>       ARM: dts: samsung: exynos4212-tab3: Add battery node with charge current value
+>       ARM: dts: samsung: exynos4212-tab3: Add USB connector node
+>       ARM: dts: exynos4212-tab3: Drop CHARGER regulator
+> 
+>  .../bindings/power/supply/maxim,max77693.yaml      |  15 +
+>  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  22 +-
+>  drivers/power/supply/Kconfig                       |   1 +
+>  drivers/power/supply/max77693_charger.c            | 302 ++++++++++++++++++++-
+>  include/linux/mfd/max77693-private.h               |  12 +
+>  5 files changed, 337 insertions(+), 15 deletions(-)
+> ---
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240525-max77693-charger-extcon-9ebb7bad83ce
+> 
+> Best regards,
+> -- 
+> Artur Weber <aweber.kernel@gmail.com>
+> 
