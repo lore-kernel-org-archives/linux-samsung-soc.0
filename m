@@ -1,57 +1,57 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12A0146D42;
-	Sun,  4 Aug 2024 21:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA4E1494C1;
+	Sun,  4 Aug 2024 21:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722808552; cv=none; b=d67+O7d57Yy+1WpO48CTVhB/G5QFf83uQsiz4WVwsMnhm4A39gQMt/iNV/PISIIf5fCy8ZTlVL0j+2hKl+zT3E+siI59YTVw4dm1j+2p9GcmbDcIPF2kccuXEs9F6p7e5BZ5e6wHvoGLtIFOpC9gO66+s39lgKK04TfJWBuTDgE=
+	t=1722808557; cv=none; b=eok4uoNCiu5X5jtxCGnFfoqCjW1T3mf1yZo26sWME+RSX0BLfky5zrEhQeqWH+y6BdnhEL7oXSBKYHevC6em5BqREl3Wu89eUdbbhUOc4qyeSM/K/9rxmyq7a1oBZqB2NVUBgIFOE+b1+DvVe013J3MCa7l5FUb+pod7J6U4TE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722808552; c=relaxed/simple;
-	bh=L9h/I1bRtHA/LEehkkjeUGWWcCxc1Gd492hfXf19b+o=;
+	s=arc-20240116; t=1722808557; c=relaxed/simple;
+	bh=iG9PZzihT2CWtwlyrF7+awf8YPX68bP/Q6A8dLj3B0I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I2Mjzq9CQHtkLLwf+BdYseEsIrMzO3F/jb5uzb7nUJOzISOHKGif69WmI7NNoeLRt1hoAWyPWESyv+lyT61m3rHEFBVlzI2su9sQ1vzrhUYsERZPY0YNCNipxfDI2EigCIjV3HflN+1lnTChrtFqJ8R2jEjFhY0gAhAvXJPMaPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J550nWxp; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version; b=YojaGmM0Ur7ScBoI/OS1pZn5hwxOvDndU2HjM0HTEKroaogFNcaO8lmiebUJSC1Ffh0rOCOZ17/4RJEjcwJQGFACMBxzMbNSUr8YxlJfSMSfxKF2a83hAwhVhYIy2d2mpu4gaPHTW6R4IQ+bTh8gj6oVDlckIYemVnh7PGDoYUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcQIxm9G; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J550nWxp"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a94aa5080so359752666b.3;
-        Sun, 04 Aug 2024 14:55:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcQIxm9G"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530d0882370so206510e87.3;
+        Sun, 04 Aug 2024 14:55:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722808549; x=1723413349; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722808554; x=1723413354; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7LiFeuD7Lh8CbdxP7qC+zRPV9T1KjTmFlYXzr7Hej/8=;
-        b=J550nWxpPPWsn5vDpuzhy/pIIUkXdLEsZ3Gfj5biBnvkaheDbdpskcc330EMb6rkZr
-         LjP6lv71fU5AxqDztkbs3jwZcBlMp3EyDCJL0DbdZPvgiMkNhWRtXpQp9jt9nsWcaAQu
-         jEOvTlFaoGdHJf0MPthRshOC0lE+qCkdjksVJMSeDFGHwd1zVtUaCKYe07OrJWh590Te
-         tZ71KQGrG82pKaia1AszrKp9wYeriZCyfBiJVY/U//zhtSx5/3Nw58c3Xtwqjt/S3j2K
-         2S8WXZAO4kHs0RlTH2uVcHQJ74Dnt1oPLKAY/3BhvqcYgyWzGezR5UQTkCt5kYEp4d0A
-         jILA==
+        bh=2mrhFPOA10bN9OR7jponwlQQntJxF13+NNdEHk1/zbE=;
+        b=gcQIxm9GqAKum7S6qYcXmNEYUCalQHAIJDx0mWCgfedewLW8xiZ2h+3XFNU7pvrjjf
+         x+US7rtBQITFmF6wrvqzqsZ4uGyJJXkKcyVy/gRNUQgGF9KO0GmqkNV1R9pMmmH8lD1i
+         GzSt5R58DKefd5Vw/Kvck0Yof8cUMhL6ni2pMeBzE7pOUK+6BoobLL8zUwJqKhkcu0P7
+         x5iPTOnKTUzSnMv57UkICY7qPa5inRGShXW3ahpX1cV2y8HpiPI/U2P1tuzFLYeBC/Ri
+         Es3v2+GAKRs6h1sW1dCo+HT/qBZjQDD2JJBYoOCUd48qWUU1vAnm0ma4tHInqta8wwNc
+         FSGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722808549; x=1723413349;
+        d=1e100.net; s=20230601; t=1722808554; x=1723413354;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7LiFeuD7Lh8CbdxP7qC+zRPV9T1KjTmFlYXzr7Hej/8=;
-        b=BBP01Q3qeiVXgYpQMKG3sw6RnON7pTgQuu0KwLwIDT/iC8+FTXOLLK/HNtzCJQFL1x
-         +0CZCjGTDC2gpHa89Tu4etcFRlFkeRE6StK+9rB68gVXcyqjojONHTTFDPbRLW/mhb0r
-         AOGE46+LIl9z1lFCaIDW7+dc20yC1fuMZpRUYGhsqB/fJ9IffTrYkoKNmDDmdQtpbpKn
-         D/KjBvc5S63Mrbp+W06khT80Mvn97Wl2asclxjIlqTqfg00//xaCmjblwBzzGTiufgdS
-         29JfTfn3TDjMUcOrtUvJotGEgUk4hlshTXjVLIGNHi3q6g6imjXASUyV70+lVlozpvrI
-         jFNA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+KAPRf577pSGJ8OopzroA2V0R8Podqr7/YS1MLzNyUSxiGv2bcRn530bBJgyl+JZI9GD1VVMUB0Nh4vu0tmzeUZRu9pxfSxlAsjKtlV1l5WENqRTqx4zywHlDtsGr6OHdpNwdpWPRQ7v5b+0yiBZ1Vceok3kMfeL9VPih3LJQDI2j6heHcxNHxmgTU+j5sorWjfEFY06Y6X1kwlyVEletrc2EZ7h/e3KVHKys8XJNVqtvO35pH4qeHSMDR0MHVj10
-X-Gm-Message-State: AOJu0Ywmr5+bx+dlSb5yp2g7uD9X1EB+7lf/LtelM401XG6fdHbhLMKp
-	VRN8+O6if/pw2qbQWsQhtSNeINchI4UYIn1MXY+wq+ZBygKoC7uO
-X-Google-Smtp-Source: AGHT+IEKN70BYeMW7wJVS7P3SD6EXI6/VsIuEQuswfFLL8lEQzYCSy9ZqIS3EMAs+17voEHk2RUS7w==
-X-Received: by 2002:a17:907:6096:b0:a7a:a892:8e05 with SMTP id a640c23a62f3a-a7dc5070840mr776870966b.33.1722808548962;
-        Sun, 04 Aug 2024 14:55:48 -0700 (PDT)
+        bh=2mrhFPOA10bN9OR7jponwlQQntJxF13+NNdEHk1/zbE=;
+        b=FbkQUj7eZqWtzViM3c6+LItjsmHYwCffa1hxQAA8Aak6Q3qiyzucKHRDsVQdksNqlf
+         lLR9JmZUAytjDLjQaRPXfweB0l/XpcwxnpQlxERB+I3XVkDWk+KJ8cQdKCGJcRD4Cda+
+         HdJ3jnVG1GsvLcqX4NGvjbsjDK8E2YXGhwetSfEcqu7A/mo6QtvDTaF6W9zQ6Jd7xj/K
+         eYmJ68dZFG9xwnw2zN+Duzah3UBiTz8e2rRaOe7r+r6d6OJH9g4mfz9QCxPblKiNXWKp
+         v4viAw3ySq0bmnTCT2wEFfT1ItTYDUyu9QVAbadXpurA/HK2PEh9Aiu8wGQxDow151Xi
+         Ee4A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7fgQNw2AIKq0wq5Gp7gLFXkz1n9yROGwxvdiqAQX6Jto1d/eYRYnxS2jqMbV6jB9wPdG0NhDP4IXfsKpzJPnoHGk259G0Ah8/1bA7rF9rgXFjx+dYxwdmM6KQkcwMvPVOQi18ZsMTZBh0YC5UZfqrDVsoTBEN851Y3jtzEpohQAB5Qi1igazKxhDF7e+tfKNqIoqEtmnL7BRg+fQw5Rpn3IPeKmVEQC7c7Fclmz8ei/tI62JbhRgOGWhAsEUXKRJ4
+X-Gm-Message-State: AOJu0Yx2D2kExcCsRPCnCDzDgQC5K3TR43lFjA3bmoFHa9tp8ot8kEK9
+	Ahz/bn53ekYg/N4PdlBxfQaFaYT5BcHxIamUXXTpDHNPftpDB2sS
+X-Google-Smtp-Source: AGHT+IEGWbiEQg/exi1Z48CX1tnMKkyEbNXIAJdnBvBNQOjhcm8r0tNUiJsfxT1egdx0cOSk4VH1ug==
+X-Received: by 2002:a05:6512:3f27:b0:52e:faf0:410 with SMTP id 2adb3069b0e04-530bb366727mr6856914e87.1.1722808554282;
+        Sun, 04 Aug 2024 14:55:54 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.47
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:55:48 -0700 (PDT)
+        Sun, 04 Aug 2024 14:55:53 -0700 (PDT)
 From: David Virag <virag.david003@gmail.com>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -65,8 +65,8 @@ To: Vinod Koul <vkoul@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
 	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
 	Sam Protsenko <semen.protsenko@linaro.org>,
 	David Virag <virag.david003@gmail.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>
@@ -77,9 +77,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 09/13] clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
-Date: Sun,  4 Aug 2024 23:53:54 +0200
-Message-ID: <20240804215458.404085-10-virag.david003@gmail.com>
+Subject: [PATCH 10/13] usb: dwc3: exynos: Add support for Exynos7885
+Date: Sun,  4 Aug 2024 23:53:55 +0200
+Message-ID: <20240804215458.404085-11-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
 References: <20240804215458.404085-1-virag.david003@gmail.com>
@@ -91,153 +91,28 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Exynos7885 SoC has a DWC3 USB Controller with Exynos USB PHY which in
-theory supports USB3 SuperSpeed, but is only used as USB2 in all known
-devices.
-
-These clocks are needed for everything related to USB.
-
-While at it, also remove the CLK_SET_RATE_PARENT capability of
-CLK_MOUT_FSYS_USB30DRD_USER, since it's not actually needed.
+Add Exynos7885 compatible string. As 7885 has the same clocks as 850, it
+can reuse the data for Exynos850.
 
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos7885.c | 73 ++++++++++++++++++++++------
- 1 file changed, 59 insertions(+), 14 deletions(-)
+ drivers/usb/dwc3/dwc3-exynos.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
-index a0c9b7cc6942..637257a6f10e 100644
---- a/drivers/clk/samsung/clk-exynos7885.c
-+++ b/drivers/clk/samsung/clk-exynos7885.c
-@@ -20,7 +20,7 @@
- #define CLKS_NR_TOP			(CLK_MOUT_SHARED1_PLL + 1)
- #define CLKS_NR_CORE			(CLK_GOUT_TREX_P_CORE_PCLK_P_CORE + 1)
- #define CLKS_NR_PERI			(CLK_GOUT_WDT1_PCLK + 1)
--#define CLKS_NR_FSYS			(CLK_MOUT_FSYS_USB30DRD_USER + 1)
-+#define CLKS_NR_FSYS			(CLK_FSYS_USB30DRD_REF_CLK + 1)
- 
- /* ---- CMU_TOP ------------------------------------------------------------- */
- 
-@@ -686,38 +686,66 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
- /* ---- CMU_FSYS ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_FSYS (0x13400000) */
--#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER	0x0100
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER	0x0120
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER	0x0140
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER	0x0160
--#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER	0x0180
--#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK	0x2030
--#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN	0x2034
--#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK	0x2038
--#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN	0x203c
--#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK	0x2040
--#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN	0x2044
-+#define PLL_LOCKTIME_PLL_USB				0x0000
-+#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER		0x0100
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER		0x0120
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER		0x0140
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER		0x0160
-+#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER		0x0180
-+#define PLL_CON0_PLL_USB				0x01a0
-+#define CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE		0x200c
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK		0x2030
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN		0x2034
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK		0x2038
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN		0x203c
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK		0x2040
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN		0x2044
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL	0x2068
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0	0x206c
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1	0x2070
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY	0x2074
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK		0x2078
- 
- static const unsigned long fsys_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_USB,
- 	PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
-+	PLL_CON0_PLL_USB,
-+	CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK,
- };
- 
-+static const struct samsung_pll_rate_table pll_usb_rate_table[] __initconst = {
-+	PLL_35XX_RATE(26 * MHZ, 50000000U, 400, 13, 4),
-+};
-+
-+static const struct samsung_pll_clock fsys_pll_clks[] __initconst = {
-+	PLL(pll_1418x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_USB, PLL_CON0_PLL_USB,
-+	    pll_usb_rate_table),
-+};
-+
-+
- /* List of parent clocks for Muxes in CMU_FSYS */
- PNAME(mout_fsys_bus_user_p)		= { "oscclk", "dout_fsys_bus" };
- PNAME(mout_fsys_mmc_card_user_p)	= { "oscclk", "dout_fsys_mmc_card" };
- PNAME(mout_fsys_mmc_embd_user_p)	= { "oscclk", "dout_fsys_mmc_embd" };
- PNAME(mout_fsys_mmc_sdio_user_p)	= { "oscclk", "dout_fsys_mmc_sdio" };
- PNAME(mout_fsys_usb30drd_user_p)	= { "oscclk", "dout_fsys_usb30drd" };
-+PNAME(mout_usb_pll_p)			= { "oscclk", "fout_usb_pll" };
- 
- static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_FSYS_BUS_USER, "mout_fsys_bus_user", mout_fsys_bus_user_p,
-@@ -731,12 +759,16 @@ static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	MUX_F(CLK_MOUT_FSYS_MMC_SDIO_USER, "mout_fsys_mmc_sdio_user",
- 	      mout_fsys_mmc_sdio_user_p, PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
- 	      4, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
-+	MUX(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
- 	      mout_fsys_usb30drd_user_p, PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
--	      4, 1, CLK_SET_RATE_PARENT, 0),
-+	      4, 1),
-+	nMUX_F(CLK_MOUT_USB_PLL, "mout_usb_pll", mout_usb_pll_p,
-+	    PLL_CON0_PLL_USB, 4, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
-+	GATE(CLK_FSYS_USB20PHY_CLKCORE, "clk_fsys_usb20phy_clkcore", "mout_usb_pll",
-+	     CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_GOUT_MMC_CARD_ACLK, "gout_mmc_card_aclk", "mout_fsys_bus_user",
- 	     CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK, 21, 0, 0),
- 	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
-@@ -752,9 +784,22 @@ static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_MMC_SDIO_SDCLKIN, "gout_mmc_sdio_sdclkin",
- 	     "mout_fsys_mmc_sdio_user", CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
- 	     21, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_20PHYCTRL, "clk_fsys_usb30drd_aclk_20phyctrl",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_0, "clk_fsys_usb30drd_aclk_30phyctrl_0",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_1, "clk_fsys_usb30drd_aclk_30phyctrl_1",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_BUS_CLK_EARLY, "clk_fsys_usb30drd_bus_clk_early",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_REF_CLK, "clk_fsys_usb30drd_ref_clk", "mout_fsys_usb30drd_user",
-+	     CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK, 21, 0, 0),
-+
- };
- 
- static const struct samsung_cmu_info fsys_cmu_info __initconst = {
-+	.pll_clks		= fsys_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(fsys_pll_clks),
- 	.mux_clks		= fsys_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(fsys_mux_clks),
- 	.gate_clks		= fsys_gate_clks,
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index 9a6e988d165a..5cd4dc2e0a67 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -185,6 +185,9 @@ static const struct of_device_id exynos_dwc3_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos7-dwusb3",
+ 		.data = &exynos7_drvdata,
++	}, {
++		.compatible = "samsung,exynos7885-dwusb3",
++		.data = &exynos850_drvdata,
+ 	}, {
+ 		.compatible = "samsung,exynos850-dwusb3",
+ 		.data = &exynos850_drvdata,
 -- 
 2.46.0
 
