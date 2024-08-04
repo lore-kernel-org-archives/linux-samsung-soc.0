@@ -1,57 +1,57 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA4E1494C1;
-	Sun,  4 Aug 2024 21:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63112149C70;
+	Sun,  4 Aug 2024 21:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722808557; cv=none; b=eok4uoNCiu5X5jtxCGnFfoqCjW1T3mf1yZo26sWME+RSX0BLfky5zrEhQeqWH+y6BdnhEL7oXSBKYHevC6em5BqREl3Wu89eUdbbhUOc4qyeSM/K/9rxmyq7a1oBZqB2NVUBgIFOE+b1+DvVe013J3MCa7l5FUb+pod7J6U4TE8=
+	t=1722808563; cv=none; b=A9/H3nNAAf+1LShKyWZ7Gj2Yqnma5hmhVd0z/W3tIWQYG8Wov9sXzj2Jgj1+OHCIP9Gaw8i5OXuwakyWUt14d3mEq5/vtP8iZtQAm+XQagBEpn6wQ6uCPxql2wBQEJaffcRex8o4fcJDlhefUfVPr51yoq0GAXesws7sFjzCiLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722808557; c=relaxed/simple;
-	bh=iG9PZzihT2CWtwlyrF7+awf8YPX68bP/Q6A8dLj3B0I=;
+	s=arc-20240116; t=1722808563; c=relaxed/simple;
+	bh=1xsKURzT8hkjZPvyA7SMPHfuIFkrXRkCBe12bxg1vAA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YojaGmM0Ur7ScBoI/OS1pZn5hwxOvDndU2HjM0HTEKroaogFNcaO8lmiebUJSC1Ffh0rOCOZ17/4RJEjcwJQGFACMBxzMbNSUr8YxlJfSMSfxKF2a83hAwhVhYIy2d2mpu4gaPHTW6R4IQ+bTh8gj6oVDlckIYemVnh7PGDoYUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcQIxm9G; arc=none smtp.client-ip=209.85.167.51
+	 MIME-Version; b=dsmI2wo6sfFE3qcRSEXygqwyiGORWVB41iRKc1xvej2t66hJmO/fjDopNXLiWGpu8ThWPYARpKJiWQe8mxv/VER5uMO71KzqhiXX1ZtZhJEsnx9UiDPHdqoREpWaJGVxjhiUJF5SP6qMOSKiHm/1G1KQh6AosBlANDU5qWs6K6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hRinLTLG; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcQIxm9G"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530d0882370so206510e87.3;
-        Sun, 04 Aug 2024 14:55:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRinLTLG"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367963ea053so6581232f8f.2;
+        Sun, 04 Aug 2024 14:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722808554; x=1723413354; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722808560; x=1723413360; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2mrhFPOA10bN9OR7jponwlQQntJxF13+NNdEHk1/zbE=;
-        b=gcQIxm9GqAKum7S6qYcXmNEYUCalQHAIJDx0mWCgfedewLW8xiZ2h+3XFNU7pvrjjf
-         x+US7rtBQITFmF6wrvqzqsZ4uGyJJXkKcyVy/gRNUQgGF9KO0GmqkNV1R9pMmmH8lD1i
-         GzSt5R58DKefd5Vw/Kvck0Yof8cUMhL6ni2pMeBzE7pOUK+6BoobLL8zUwJqKhkcu0P7
-         x5iPTOnKTUzSnMv57UkICY7qPa5inRGShXW3ahpX1cV2y8HpiPI/U2P1tuzFLYeBC/Ri
-         Es3v2+GAKRs6h1sW1dCo+HT/qBZjQDD2JJBYoOCUd48qWUU1vAnm0ma4tHInqta8wwNc
-         FSGQ==
+        bh=d4k5kEk4WdJ7BTyBcpyDwtCLf6kDcGSB5mtdTxdCNTM=;
+        b=hRinLTLGpGo51NE7/kJAqOqFM/KN4YBSqae3TVKZvfcp153Ed3wXkiMzjKuo3diido
+         A1kYNt0vQ0DL6neKLwSTxevGTlz+70xmDvUtqn3S0MPr0zY2vvcmFVEfXM3qIHHIdynB
+         5Ro+6A6gWISobZeKKjCX41U0zaB8aIyaRmb6VIRLGWcL/DZrm3GBW5b+MCb8yF8+/0yq
+         fbbAbS8BbrBk+aUM9ZICMEDEMYcyI6ZHE7xd0uoWqjpoC5Vs2VG0ZVCaZ1wH1SzFnwWr
+         jJxTslIj6mhcUGY/VPtpZGK229bjue6gHpz7hYQJVpN+g3KGSQ+mtCS5Uiv5FbcmihGU
+         sP9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722808554; x=1723413354;
+        d=1e100.net; s=20230601; t=1722808560; x=1723413360;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2mrhFPOA10bN9OR7jponwlQQntJxF13+NNdEHk1/zbE=;
-        b=FbkQUj7eZqWtzViM3c6+LItjsmHYwCffa1hxQAA8Aak6Q3qiyzucKHRDsVQdksNqlf
-         lLR9JmZUAytjDLjQaRPXfweB0l/XpcwxnpQlxERB+I3XVkDWk+KJ8cQdKCGJcRD4Cda+
-         HdJ3jnVG1GsvLcqX4NGvjbsjDK8E2YXGhwetSfEcqu7A/mo6QtvDTaF6W9zQ6Jd7xj/K
-         eYmJ68dZFG9xwnw2zN+Duzah3UBiTz8e2rRaOe7r+r6d6OJH9g4mfz9QCxPblKiNXWKp
-         v4viAw3ySq0bmnTCT2wEFfT1ItTYDUyu9QVAbadXpurA/HK2PEh9Aiu8wGQxDow151Xi
-         Ee4A==
-X-Forwarded-Encrypted: i=1; AJvYcCX7fgQNw2AIKq0wq5Gp7gLFXkz1n9yROGwxvdiqAQX6Jto1d/eYRYnxS2jqMbV6jB9wPdG0NhDP4IXfsKpzJPnoHGk259G0Ah8/1bA7rF9rgXFjx+dYxwdmM6KQkcwMvPVOQi18ZsMTZBh0YC5UZfqrDVsoTBEN851Y3jtzEpohQAB5Qi1igazKxhDF7e+tfKNqIoqEtmnL7BRg+fQw5Rpn3IPeKmVEQC7c7Fclmz8ei/tI62JbhRgOGWhAsEUXKRJ4
-X-Gm-Message-State: AOJu0Yx2D2kExcCsRPCnCDzDgQC5K3TR43lFjA3bmoFHa9tp8ot8kEK9
-	Ahz/bn53ekYg/N4PdlBxfQaFaYT5BcHxIamUXXTpDHNPftpDB2sS
-X-Google-Smtp-Source: AGHT+IEGWbiEQg/exi1Z48CX1tnMKkyEbNXIAJdnBvBNQOjhcm8r0tNUiJsfxT1egdx0cOSk4VH1ug==
-X-Received: by 2002:a05:6512:3f27:b0:52e:faf0:410 with SMTP id 2adb3069b0e04-530bb366727mr6856914e87.1.1722808554282;
-        Sun, 04 Aug 2024 14:55:54 -0700 (PDT)
+        bh=d4k5kEk4WdJ7BTyBcpyDwtCLf6kDcGSB5mtdTxdCNTM=;
+        b=OkA2lcj+8J4jZ8hWBWi2WzkXwhDrKg3bNg42sUJyEutqsBfHX2lunVCJBH9NsSHkam
+         3MclS+2tZgMr9wvCRv3upd3cr0uScHKR+scFnc8cIGVcmR5PCiQ6IMyQhJHCBuyFonOK
+         f5xSpk63Smb4cqkcJJTwtGrnD8teVsHJzze2uyzCGCLg+YyUhD9qsL+6eiz5H3xenfcR
+         5MzLaAUJuyCe8CzPfjP+Z1+KJ4pl5X673ESEnuq2yLMZkxBjVYChNoG1kox09Bhe5ZjH
+         sCcHW7H6yqG5RXxK0OQfnKsb8fs5iJTeI/0tr+GnJziDQbrRnNN9uKZUZsgqMZ0yl/h/
+         qhCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUM7Vvuq4oLn6ki4GoR7fdzQ+hzW45i5vQe1A7YOAe57UTNGQhcJh2Zu6g0lhU4N2iRLWFY8T1aseJl7bkpk+6+N0oQXA9GmWScq5TVyTWdkIqvNpk4PvV63iONFE/YDCKNDDX2exa8MBQCjkO8NGJ9zfPFTR95jYghLI+pCVU7FSaeMtm/8y8Dwgt6ZqEo+4ku/qtloy7hPeyZnPHRFx773cwiyVUK5rEsFkP94aP0xneisJ3+Cx6/09smhujSgZWE
+X-Gm-Message-State: AOJu0YzLnbGm98kYFgQQANyf4aTQ4TejSS+MwJezx97d+0nVfV2YBxHZ
+	aDRT+igjXe/pM5nw+ulTGoiTLjkryy+V0L7qJ7k7q2l3nZDdEyf3
+X-Google-Smtp-Source: AGHT+IGf9W8CS+wMJJjKQCCJ+OVnp7SviYwepgVgg4+3B6dPNlrnF9LQx7EcXysSlGhIi1PQyxQyOw==
+X-Received: by 2002:adf:f2ce:0:b0:368:3ef7:3929 with SMTP id ffacd0b85a97d-36bbc0ff3b8mr8121645f8f.22.1722808559625;
+        Sun, 04 Aug 2024 14:55:59 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.53
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:55:53 -0700 (PDT)
+        Sun, 04 Aug 2024 14:55:59 -0700 (PDT)
 From: David Virag <virag.david003@gmail.com>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -65,8 +65,8 @@ To: Vinod Koul <vkoul@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Sam Protsenko <semen.protsenko@linaro.org>,
 	David Virag <virag.david003@gmail.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>
@@ -77,9 +77,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 10/13] usb: dwc3: exynos: Add support for Exynos7885
-Date: Sun,  4 Aug 2024 23:53:55 +0200
-Message-ID: <20240804215458.404085-11-virag.david003@gmail.com>
+Subject: [PATCH 11/13] phy: exynos5-usbdrd: support Exynos7885 USB PHY
+Date: Sun,  4 Aug 2024 23:53:56 +0200
+Message-ID: <20240804215458.404085-12-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
 References: <20240804215458.404085-1-virag.david003@gmail.com>
@@ -91,28 +91,89 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Exynos7885 compatible string. As 7885 has the same clocks as 850, it
-can reuse the data for Exynos850.
+The Exynos7885 SoC has an Exynos USB PHY that theoretically supports
+USB3 SuperSpeed, but all known devices using it only have USB2 and the
+vendor driver has USB3 function stubbed out, so we'll only support USB2.
+
+Apart from this mysterius USB3 capability, it's the closest to Exynos850
+out of those supported. Unlike other SoCs though, this one doesn't set
+the reference clock by default, so we have to set it manually.
+For this, create a set_ref_clk_rate property in drvdata that can be set
+to a predefined value to set the clockrate to.
 
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
- drivers/usb/dwc3/dwc3-exynos.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c    | 21 +++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-index 9a6e988d165a..5cd4dc2e0a67 100644
---- a/drivers/usb/dwc3/dwc3-exynos.c
-+++ b/drivers/usb/dwc3/dwc3-exynos.c
-@@ -185,6 +185,9 @@ static const struct of_device_id exynos_dwc3_match[] = {
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index df52b78a120b..466c72d8a93c 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -367,6 +367,7 @@ struct exynos5_usbdrd_phy_drvdata {
+ 	int n_clks;
+ 	const char * const *core_clk_names;
+ 	int n_core_clks;
++	u32 set_ref_clk_rate;
+ 	const char * const *regulator_names;
+ 	int n_regulators;
+ 	u32 pmu_offset_usbdrd0_phy;
+@@ -1361,6 +1362,10 @@ static int exynos5_usbdrd_phy_clk_handle(struct exynos5_usbdrd_phy *phy_drd)
+ 		return dev_err_probe(phy_drd->dev, -ENODEV,
+ 				     "failed to find phy reference clock\n");
+ 
++	/* Exynos7885 SoC has reference clock unset by default */
++	if (phy_drd->drv_data->set_ref_clk_rate)
++		clk_set_rate(ref_clk, phy_drd->drv_data->set_ref_clk_rate);
++
+ 	ref_rate = clk_get_rate(ref_clk);
+ 	ret = exynos5_rate_to_clk(ref_rate, &phy_drd->extrefclk);
+ 	if (ret)
+@@ -1460,6 +1465,19 @@ static const struct exynos5_usbdrd_phy_drvdata exynos7_usbdrd_phy = {
+ 	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
+ };
+ 
++static const struct exynos5_usbdrd_phy_drvdata exynos7885_usbdrd_phy = {
++	.phy_cfg                = phy_cfg_exynos850,
++	.phy_ops                = &exynos850_usbdrd_phy_ops,
++	.pmu_offset_usbdrd0_phy = EXYNOS7885_PHY_CTRL_USB20,
++	.clk_names		= exynos5_clk_names,
++	.n_clks			= ARRAY_SIZE(exynos5_clk_names),
++	.core_clk_names		= exynos5_core_clk_names,
++	.n_core_clks		= ARRAY_SIZE(exynos5_core_clk_names),
++	.regulator_names	= exynos5_regulator_names,
++	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
++	.set_ref_clk_rate       = 50 * MHZ,
++};
++
+ static const struct exynos5_usbdrd_phy_drvdata exynos850_usbdrd_phy = {
+ 	.phy_cfg		= phy_cfg_exynos850,
+ 	.phy_ops		= &exynos850_usbdrd_phy_ops,
+@@ -1663,6 +1681,9 @@ static const struct of_device_id exynos5_usbdrd_phy_of_match[] = {
  	}, {
- 		.compatible = "samsung,exynos7-dwusb3",
- 		.data = &exynos7_drvdata,
+ 		.compatible = "samsung,exynos7-usbdrd-phy",
+ 		.data = &exynos7_usbdrd_phy
 +	}, {
-+		.compatible = "samsung,exynos7885-dwusb3",
-+		.data = &exynos850_drvdata,
++		.compatible = "samsung,exynos7885-usbdrd-phy",
++		.data = &exynos7885_usbdrd_phy
  	}, {
- 		.compatible = "samsung,exynos850-dwusb3",
- 		.data = &exynos850_drvdata,
+ 		.compatible = "samsung,exynos850-usbdrd-phy",
+ 		.data = &exynos850_usbdrd_phy
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index ce1a3790d6fb..04ef93625eab 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -657,6 +657,9 @@
+ #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
+ #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
+ 
++/* For Exynos7885 */
++#define EXYNOS7885_PHY_CTRL_USB20				(0x674)
++
+ /* For Tensor GS101 */
+ #define GS101_SYSIP_DAT0					(0x810)
+ #define GS101_SYSTEM_CONFIGURATION				(0x3A00)
 -- 
 2.46.0
 
