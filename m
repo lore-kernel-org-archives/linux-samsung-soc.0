@@ -1,57 +1,57 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CC413A87C;
-	Sun,  4 Aug 2024 21:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145BB13A87C;
+	Sun,  4 Aug 2024 21:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722808515; cv=none; b=DPNCvGTrMpc1vYbnQF8sqYMGDu4Q7PvclB1tdy95EBWaHRRVr9E2XpqrrcTghH7SAg5PCXMGVROk+uZnebUM1rMWIqiw3YMJJNY+sGy2bvtGyXPWeGruS+nA/XrfhKS+mLTp1L2b4eGfw0z2zQnlZj+SA7zc/8ytr3680NLnCTA=
+	t=1722808520; cv=none; b=AEpl0OkCM/1/bu8WwIQXz+D/uF3ki2GDjbuyxG/iP0Zbwhsk/TH9+qYevDYx0hCzSW5j0vFwZeNozNJ0O0L87Mrt6vKEBsaGlUd8PiiPc01/oO7rLXNJvQZ1Db9Mdk9eUoQXDYLtrvtF1bZz4VFwSjN/vNhMedHQEALtFCqthYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722808515; c=relaxed/simple;
-	bh=Fyt9dr9fRY9eNM7k6FcruT0K5N4TjeBkONEGv0G4ZxA=;
+	s=arc-20240116; t=1722808520; c=relaxed/simple;
+	bh=N3zVM9WjxApsrr59Be3h9gRQpWe/tK+ERo+/QuIitcg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UgikxGM2ojAeUywYauEvlIuNnjVZ/Xk/9r49NcPpdFL7U+HY4c9rjk0bbdasQrlrENBEIeAc01o73FCy2O/2wRu5oa/uTfBkXMN04Bbc1BuRWBDA2MiQjIm2LKDCKbjYRogIf0hyNz9dpeJ2qVTe6RJcHsTdwgR6Px9iWG/ALtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYDLQb1R; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=QnDS+VF5D9jZD5wQYMaMVnlhFD08uZlZg+DIgOmqACYpDqIuUZk27CSFVdGr/nWpmM6COWbNNwF83ZtnafL6kY00fSfOEehvHJpfYvK37MSbK0QcOMzG0HXN7sTlI/Y0uN8rKuOF7/4f3GwZ4lxS9TipP8QY96M57n/GQ/Im7II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLBqrNX+; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYDLQb1R"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so1208956366b.1;
-        Sun, 04 Aug 2024 14:55:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLBqrNX+"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5b5b67d0024so6985354a12.0;
+        Sun, 04 Aug 2024 14:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722808512; x=1723413312; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722808517; x=1723413317; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z5rhR3+v2dU7aRSLZ6OU5clgVv9vaFNsSw8Xkl+ANI8=;
-        b=lYDLQb1RgZUZRPNkHEkZeiuROD/f9KEl9xbU6Adpvsn6KWfIy0nVPT3MjgGwqM9wV4
-         yheKpZJPlzUU6aDhV/MrnDEKCROnN1uRYE6MoxB0C4kkns00qCh7BQ0QmaJE9UdO6MIE
-         ewcpsk+3K+RcVjqGSokyPMo7cA8hD0syJPtWKJts115tZs9x1KRo56D0+8b1X7jtUUs2
-         u9YTrBtjPtPXNJ6c65tbZEqFlSi+1JJ+JUWQKuJLWqBtXKT5zECJq9wdoAyCL5rINnXx
-         XFQ5E4OE/G5+VZK9esaqh/hty1QKvbDyEQftoyG//BBecuGNSrWtMXH6alDyXyg5SFXb
-         gvig==
+        bh=BnqKBVLkVbPU4IXqUitU7Vb8AZX6hoKEj/nS2/Cpby8=;
+        b=mLBqrNX+vIuwsqDcFvc3u5Op4qxo0WsU80YRrtE/oZGKVOhpQ7yUzvcJlGbdysKWnL
+         Qpk0fRgohOPWktN/6HrPJ3Y/cODi4xXvqPPULbK1PYujx7LVT2FnhtZnhMp8kL3VuciW
+         AAQQfPLuDPzqW3VruvL9BsPPOIthavizuXZhgU9Dzlap/GjfdMPM6CbPJPB3kJxjEHKw
+         a2Y4npwbJ3z0RXeCGZgINg8PAs0F3cwUu+NZ8J+zPdPrxos6xRFvRV1amnJFWnVr9VvN
+         dyM0crUrZqQSqtagNKH8M5iqWEw3hy220OtZEENHzbdynqodJf3RFeMZjEAjQYyMIMe7
+         MPXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722808512; x=1723413312;
+        d=1e100.net; s=20230601; t=1722808517; x=1723413317;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=z5rhR3+v2dU7aRSLZ6OU5clgVv9vaFNsSw8Xkl+ANI8=;
-        b=LcJIZXmkH1Zdz9M+nc3C7aDG23bWl1RO0rQhnzHp7qxme03IdYv5FQcoVvhndp4++H
-         Znm20QrZnBRl4Qv3IoOcWd7gfjqU1QW66B2fy+k3opHV+ChFVeXTLx5sak2mmWBu0ruS
-         b/XQb4EuPeBs4qt0cLIPsYdoGlM+FEMpWMfipO78Ynu4LRZhoKFp4EYtmr3czlrooCO3
-         wk4754rc5x2ZzzrXmrBHcDf8SOvXj/w2EwdlXccXev02MIWTkmfAiJhGtrZliFVEq7VL
-         5seOuJ2m9sX7o8E8nVED133M6KT81s/gMehBBqUYov2zATDkwwKZeHevXnlKgSki+YZE
-         sgdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKhAB0PTsQ1zFrnDCB3WzMkQtIWy+v/6YXhQd3Ss9cgxDH5/ViK6OyForAYqeyJRybStjqLSxtpA0D/4Hmcme0UlMC+9PadHJ8wBb2eFpzZXXTbn2LDU72jEnxz1qjmheepxwt70MJ+JHC6H+rP/uS1xosPz0vvy97GwZ0BsLbxrgW+x8f4yRUj7CiHldVrvuHW00G2SR/ycreWUSjoeDyjbdjhTnuN7tPzO2pD/l00arYF2QhNeUcHfQSjJChPyv5
-X-Gm-Message-State: AOJu0Yxh4ynv2Yc1RWxTtDQ4UaRco6//kP8Bt4xdkMiUf+HLEFUHJu8x
-	9pK+4ldoduNqSdg6qp68jduvaPAL97q78c2NeEib/WMU2vwxkVBc
-X-Google-Smtp-Source: AGHT+IGzaq4YPYNj2lalwb5MlAOxdlQf/QYs24OQsJ6f2k6Wa9MSyqE9gN6Oy/V21lb4i0xGRTiEbA==
-X-Received: by 2002:a17:907:3f8b:b0:a7a:a6e1:2c60 with SMTP id a640c23a62f3a-a7dc5148422mr690105766b.61.1722808512146;
-        Sun, 04 Aug 2024 14:55:12 -0700 (PDT)
+        bh=BnqKBVLkVbPU4IXqUitU7Vb8AZX6hoKEj/nS2/Cpby8=;
+        b=sQIxB8SJdL3r32NO2wqOr4N5PIBAtSNGJNybMYH8xvmvrSvPB2bRlsciN4eOc507AY
+         CtqjjvBJfoemTVn/Y8FzWIWfrYbWi1lkBy6PAUoQAH3m4h1t3uRAWZIXEf3lUaVFgSbl
+         0I2WXH66PhlKZQBUcU4CyOhPLyTAu2sRPsAeXvv/UPHBV4u9klvSLK+2YsQiNiop12Ta
+         8O/3UEY/nLbuWfeSgRqYVzMD1lqmpMwQbIq/7uFMjcofrRIcHA039phEiSrYnRMhiJiB
+         n/nMP+fa9lVoz2YFmqqLOqyA5JrC+OolKFAhizg5rcQilkEfQeEFb8vJDi70a2ggKC2b
+         AAjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBJK7kDTZh7ez8arcJpdk9dfa8X1ZBCF+5rU4hZFiL0TpRHlV6T/jdKytcxlgW8KCXp5BosS1k+zFdrXipaE+AumiS1gKgjJ9wQxxU/oCjVdmJQ/HQENT5Y6gudDpKnhS7JH4zXgqv14O5r9L1fGby5mupreeF82gswcXwXkBTdznukThQ2nWgOSMCKytmtPeqA17mRr99QnUDL7SrfpyuRere41W2RksB0iqzdipBlrwD5clQTh7dXajWq6sBksAi
+X-Gm-Message-State: AOJu0Yx+VNbX3UwGsjfHMjObJs7pI5xXuAVQS3RveM12IcS9UTFLUNVm
+	V2/f/K0vur0Tuwxo2aPIxiZZ7hjjm1pwqJLDyiLFarr4R78VfCS+
+X-Google-Smtp-Source: AGHT+IFtygrQuiSBintHx5W6ocZLAzQsG+1XvtKEK77LBl6f8+VAzKFjAwdsj0j0dO3Bx/GbHi1UqQ==
+X-Received: by 2002:a17:907:2d06:b0:a7d:a080:bb7 with SMTP id a640c23a62f3a-a7dc4fdfe6dmr762216066b.36.1722808517365;
+        Sun, 04 Aug 2024 14:55:17 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.11
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:55:11 -0700 (PDT)
+        Sun, 04 Aug 2024 14:55:17 -0700 (PDT)
 From: David Virag <virag.david003@gmail.com>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -77,9 +77,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 02/13] dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
-Date: Sun,  4 Aug 2024 23:53:47 +0200
-Message-ID: <20240804215458.404085-3-virag.david003@gmail.com>
+Subject: [PATCH 03/13] dt-bindings: clock: exynos7885: Add indices for USB clocks
+Date: Sun,  4 Aug 2024 23:53:48 +0200
+Message-ID: <20240804215458.404085-4-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
 References: <20240804215458.404085-1-virag.david003@gmail.com>
@@ -91,26 +91,58 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add indices for missing MUX clocks from PLLs in CMU_TOP.
+Exynos7885 SoC has a DWC3 USB Controller with Exynos USB PHY which in
+theory supports USB3 SuperSpeed, but is only used as USB2 in all known
+devices.
+
+These, of course, need some clocks.
+Add indices for these clocks.
 
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
- include/dt-bindings/clock/exynos7885.h | 2 ++
- 1 file changed, 2 insertions(+)
+ include/dt-bindings/clock/exynos7885.h | 30 ++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
 diff --git a/include/dt-bindings/clock/exynos7885.h b/include/dt-bindings/clock/exynos7885.h
-index 54cfccff8508..4ce86810b10d 100644
+index 4ce86810b10d..cfede84b46b9 100644
 --- a/include/dt-bindings/clock/exynos7885.h
 +++ b/include/dt-bindings/clock/exynos7885.h
-@@ -69,6 +69,8 @@
- #define CLK_GOUT_FSYS_MMC_EMBD		58
- #define CLK_GOUT_FSYS_MMC_SDIO		59
- #define CLK_GOUT_FSYS_USB30DRD		60
-+#define CLK_MOUT_SHARED0_PLL		61
-+#define CLK_MOUT_SHARED1_PLL		62
+@@ -134,16 +134,24 @@
+ #define CLK_GOUT_WDT1_PCLK		43
  
- /* CMU_CORE */
- #define CLK_MOUT_CORE_BUS_USER			1
+ /* CMU_FSYS */
+-#define CLK_MOUT_FSYS_BUS_USER		1
+-#define CLK_MOUT_FSYS_MMC_CARD_USER	2
+-#define CLK_MOUT_FSYS_MMC_EMBD_USER	3
+-#define CLK_MOUT_FSYS_MMC_SDIO_USER	4
+-#define CLK_GOUT_MMC_CARD_ACLK		5
+-#define CLK_GOUT_MMC_CARD_SDCLKIN	6
+-#define CLK_GOUT_MMC_EMBD_ACLK		7
+-#define CLK_GOUT_MMC_EMBD_SDCLKIN	8
+-#define CLK_GOUT_MMC_SDIO_ACLK		9
+-#define CLK_GOUT_MMC_SDIO_SDCLKIN	10
+-#define CLK_MOUT_FSYS_USB30DRD_USER	11
++#define CLK_MOUT_FSYS_BUS_USER			1
++#define CLK_MOUT_FSYS_MMC_CARD_USER		2
++#define CLK_MOUT_FSYS_MMC_EMBD_USER		3
++#define CLK_MOUT_FSYS_MMC_SDIO_USER		4
++#define CLK_GOUT_MMC_CARD_ACLK			5
++#define CLK_GOUT_MMC_CARD_SDCLKIN		6
++#define CLK_GOUT_MMC_EMBD_ACLK			7
++#define CLK_GOUT_MMC_EMBD_SDCLKIN		8
++#define CLK_GOUT_MMC_SDIO_ACLK			9
++#define CLK_GOUT_MMC_SDIO_SDCLKIN		10
++#define CLK_MOUT_FSYS_USB30DRD_USER		11
++#define CLK_MOUT_USB_PLL			12
++#define CLK_FOUT_USB_PLL			13
++#define CLK_FSYS_USB20PHY_CLKCORE		14
++#define CLK_FSYS_USB30DRD_ACLK_20PHYCTRL	15
++#define CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_0	16
++#define CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_1	17
++#define CLK_FSYS_USB30DRD_BUS_CLK_EARLY		18
++#define CLK_FSYS_USB30DRD_REF_CLK		19
+ 
+ #endif /* _DT_BINDINGS_CLOCK_EXYNOS_7885_H */
 -- 
 2.46.0
 
