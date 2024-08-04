@@ -1,71 +1,47 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233A83B290
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Aug 2024 15:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AE213C66A;
+	Sun,  4 Aug 2024 17:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722783670; cv=none; b=PbkRG9wH2l6fGQk37Lnj6rZ81lyVYaQKJYr4KxDWEfpgzUydk2zkZXl66YkGpkMg4ZTcG30J2GhIEQtfb4zaBpJ54m4iuttGws2VpldoFMhsgw8q4d8RbHepK35VE2BLZrTwl+IlmsOxRFe4v3ooIuhD+PG9TfFRGTOH7HNksJU=
+	t=1722793930; cv=none; b=RxIuqCkLm579Y7FOFWkObrE0rSQhv+TD0/YRH076DjIERPbqhIFZFsaRHliiH0HZLSzBZQ8f2se2JxDSXqRuQ926WCKPy8R48k2nd62+HQ++YnIiIOa+SsUrUXoG6JkUpz1LG5Xi836uXSSeFK+0gDsBJY8lc1omGzkWuZYAIGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722783670; c=relaxed/simple;
-	bh=CajBkE4wLrtMnRKOYpFG7Sh2NuylE8/OeJTwiS7Hdfs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dhhOlyLJP6RCIT1fFNbXlA3F+WGjKqKZxDbhSwWe9N0NscOCKEjA+wC9/ezWtcFNrOZVMXhGnNFB3lsFDf6e97+2Tk6x2zdZM/yKss7fDZt7Ar9nSZ+bEtbqOtnlVdTeF5PfcsHlrDQUCHNBZ21MjbEYITmrOCh/QJlN4X006NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C2KSGKeH; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722793930; c=relaxed/simple;
+	bh=Us0lXeHWzyR7k9ugOLi0cBmrKAZznLPVB/DSKGK+xlY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lI7lF3G3V5Fr7WifgDtg+rSl06jOOv1TV6SuIU+DqqZl305BVZOXhl2yTc0USyfS90+1yFX16mMlXGJnlqB3MH11u7Zd15AGbnDi9z6ioCDmePtQaI2FNcuAGqVBt42hUsxdZRwk8uRdkiKR40Y3uMfuMY4UfZiamLc0/Bftj5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjKSPxcJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C2KSGKeH"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7aada2358fso790084666b.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Aug 2024 08:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722783667; x=1723388467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nEjWa4pkzcfMlCjLYLkJWGX9WM6UqKyJJKuJ1PAMiNg=;
-        b=C2KSGKeHLw4GE6q6T6YzgXbRWfPd1I5z5W19+CFRkTKgPzzy1IhnPGuVTbiOE8kUUM
-         G7e+dB9z+G+6xB0wA5Fo07RyjeWo7c59HnJEA6vzlOJjVnxklEh0FIxsx3YuFqmYKbjX
-         owsXdUBr4rAXqo4W/PKxka02cmJq0F7z8UwdNcEe+Kxk5x4O1k5G86RRxtAksjARt7aV
-         hoxNdK85O39DtVWNtHQReyBuDdwv8PLIpHMnhrxw3VZ1XUKcrXoNUlrfMoLth5ZQq2XY
-         CcHUsXgvxCAx8LYncNainSCGZzsVfsOm5ExsQYBY54M2rQ1rRO5TeuXc3mtv8K2aP2t7
-         Ey4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722783667; x=1723388467;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nEjWa4pkzcfMlCjLYLkJWGX9WM6UqKyJJKuJ1PAMiNg=;
-        b=Ll6SJvlHCD32RJcgeNpJ6E+s8vy+lXFZOpng1SHvsxIqFSTSZb+snGdKHiorzXLaLI
-         9xauK1TJipnobu6c+A5Cguxx74OuSUx4c2dwHROsUJr51KCnoXv7xR8Y0k9PMgpQNPjH
-         7grVWCHEPzTIRwZHmVt+BJ/GcLQg8jPthDhMC+nYMylGli9/JbpznbbUtvOXvKQSK37F
-         lrl1wjX29aVBMg88z1oz6CrjvM4gTLzek0XY62ZEybXqcp2aff2s3K4S/dAHV0viy0oY
-         zmWc1qE8V43FGbwvQHxKLBjkIXURJ9rKkYsB28dI9yxFG/asJf1V4gQHqsq1UUPBxTKP
-         oyYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Ya6APONfFX4/YI+ch77+79nY5NGFo8TLM6VSDuGrvlZnl8HNzyUJmTiiCj2HjJzjXmisYZPthL+tQT1Kckmd0HykKp2FYxFKtrxBbXxgyfw=
-X-Gm-Message-State: AOJu0Yz/hV9laPApXiq11YiKAWtzrS6Kp972y4Ku1ZaybR3xHXZtPZhb
-	akF+wWHlmFTXH9y+CHe6P0R2JMOB0S3P/4TO0Uxt0fjkCR4xvoScX7QatwMtxCE=
-X-Google-Smtp-Source: AGHT+IFgQvjuEQMq5i8PxyVFOfHu5y8cX1lv6VnDLI0y40anOtcoAyMQrpAuVCM/qRgiuCYX9vZoyw==
-X-Received: by 2002:a17:907:9406:b0:a7a:952b:95cf with SMTP id a640c23a62f3a-a7dbe66cc25mr826648966b.32.1722783667303;
-        Sun, 04 Aug 2024 08:01:07 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3cbesm338973566b.5.2024.08.04.08.01.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 08:01:06 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung Exynos850 SoC
-Date: Sun,  4 Aug 2024 17:01:04 +0200
-Message-ID: <172278365082.32845.11234581938403878166.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240129204717.9091-1-semen.protsenko@linaro.org>
-References: <20240129204717.9091-1-semen.protsenko@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjKSPxcJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F001C4AF1D;
+	Sun,  4 Aug 2024 17:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722793930;
+	bh=Us0lXeHWzyR7k9ugOLi0cBmrKAZznLPVB/DSKGK+xlY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=GjKSPxcJCs71o677BS6gX5usbzQ4C6Bu4IuTBO0snjW3uFuCli48wzWShb2eAfm+x
+	 pjMW4mZSdyZWJGszs5blrOcGJXXzFbFT82tFH1hg2OHlq4igguH10oiQBwOa5TivXo
+	 E1sF6IM0Athg3VoSNpvvZibf/us0Mt4t87zT2QB3/CSTHDjP+vFC3jJh8VGEAQuN6M
+	 5yrHib9uPrZ0j7CtENPTl5r4CltEb3hCnmbomhlCalOIMlgHEizTygXcUqx15mLNJk
+	 eNSyhbywwKaHYy8g1tmZ+A7WuaoIHhi1smPVP6xY6MqYuQji/7+d4wbWlMgofXRX4E
+	 frstCGG0HyonA==
+From: Vinod Koul <vkoul@kernel.org>
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
+Message-Id: <172279392602.406224.4966447752583319349.b4-ty@kernel.org>
+Date: Sun, 04 Aug 2024 23:22:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -73,19 +49,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
-On Mon, 29 Jan 2024 14:47:17 -0600, Sam Protsenko wrote:
-> Add maintainers entry for the Samsung Exynos850 SoC based platforms.
+On Mon, 08 Jul 2024 12:04:33 -0500, Dan Carpenter wrote:
+> Return negative -ENOMEM instead of positive ENOMEM.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] MAINTAINERS: Add entry for Samsung Exynos850 SoC
-      https://git.kernel.org/krzk/linux/c/265e472e12da17af754f584b6a2f11cedb94fe49
+[1/1] phy: exynos5-usbdrd: fix error code in probe()
+      commit: 3a07703a523045cbdb0a5fa5e0902a9145ee43e9
 
 Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Vinod Koul <vkoul@kernel.org>
+
