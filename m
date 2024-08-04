@@ -1,201 +1,138 @@
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D032025740
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Aug 2024 10:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3985B28DC3
+	for <linux-samsung-soc@vger.kernel.org>; Sun,  4 Aug 2024 14:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722769188; cv=none; b=ERktYQiOU/0ggHsRBlFw2VpX588FsrDYWYqfjsgnGUiWUTGRnIgyrOHQ2Wk72lpprgc+slfj/jcZzg061aSKNT6pR1CwtO6tuq4WHrMuxzm/CzSrDcEFu3OblxoWIwcPnYjR8pXYGppB+Lpy2VoaLiNkYiw+FzIAxo8KoH0VGpk=
+	t=1722782721; cv=none; b=nYnKCYIhiCkFBKbGYyx6F07MrbChPyUgS1aQTz1WGkhuTY/hJGDRKkItg96ebJX9gcN0DkxEnM/Xu53Tdj1nfuih6F0ck3SEC9BR8dTmkW09Zx5h8BB4LfDyedenI3dzq+dNSIJiUMqPcwJy5bpuoUNuOJ3bZj38SzMmIHlrqbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722769188; c=relaxed/simple;
-	bh=L5Vrw3PKvawaKJnULY9jEBAZo/94igeafx99+6TgBFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KR/7V5lBj4cS8ibS0T2aKUX9gM5x9Oz3bv1YMd4+7BCUx4jvku3LZZY4a3GrSnj17q+D8Fk1tZpojLsvEs9fgDp1lQkPgmUNXD32qsbXc0i9ECTI2WbZWp9IuVnVMBkqJtCStD8sYb0luPFKe0hXkJR9XT3xcMwYep4y1EUBPOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=cbzRaOqp; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
+	s=arc-20240116; t=1722782721; c=relaxed/simple;
+	bh=ja/WRY7qWEdFokc+854bwjOG9bPcZWoeywCeMuOVl0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ndkMcjmtxkQ6q2Db/Fdzc6D1BX02peEMyVVc26AYGq9sCzgT/fy7DXK4zf+plDIodpatYzd/yhQMbsIAR2AqNPjDu/Q1l4RWGsifvjNRfKyYU5LUvPLvx800JcsnD3L5SEC7uLUYQiuGLNzYqv1/uKRBz8WNuHT+SQQ/gvx0a+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C0J6pKcd; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="cbzRaOqp"
-Date: Sun, 4 Aug 2024 12:59:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1722769181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D73264s0rVgukFWFnLR+vhWZQ06smgTwC5awVs888Oo=;
-	b=cbzRaOqpNdt0nkCPe1REyNFoxFAt3LxF1sfg91oYwLswUpazCyM3ajF/GDqm52fr6A49ut
-	S2Z0/jlSgpicapb27uC9ISakign8gj+erkvowgPE/jVRKjQsRIEmVHz8vk1amegcFFTZv4
-	gBZpGNFFqaJgL28qqk5Tm1WWbX6b0xw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
-	Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 00/10] power: supply: max77693: Toggle charging/OTG
- based on extcon status
-Message-ID: <20240804105937.GA20421@l14.localdomain>
-References: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
- <20240801062253.GA2681@l14.localdomain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C0J6pKcd"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so149229341fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Aug 2024 07:45:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722782718; x=1723387518; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=uveUaKWiRIu/1q5oQg+yRhQp6pVwq0OEl+VifrCXN44=;
+        b=C0J6pKcdNviCS/Q0zb05o0ZKhLSgdxXHAzxj1fF3Fh/TcdnfkDfvffiZ1Z0Zrj+iap
+         ZgLOMb/dr+g3SW73aW/yykAcdBV/YLjxUC0C64Mag2gi26sytftwM4/PoqJInDGNnZVj
+         61Nar63rsfhMqgNYrjA4UJ7zq6vDuL6Ol3sm3ImQBbf+pDJJ83Dtr6UcsmiR5GaewMZ5
+         hNheat8ATYRdiYdy5K0SBSgVudy0mge2kX19NsMewbGP3DXmyrflQcEPenA+RabbJw/b
+         bzxlCTkT3CiWF2WqSCHkw8BQBNnKYwHvvXu2PJ81Nw2X/076GbVMK/wSHBMB07byyXES
+         9/HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722782718; x=1723387518;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uveUaKWiRIu/1q5oQg+yRhQp6pVwq0OEl+VifrCXN44=;
+        b=Nrw9RxZmKR1hZYyQbZAu758Q+GEZ9SBlwGTlkP4c9ABFwGMwRtYtC3tej1sIm40dex
+         5TU/g+g69Tn/46SQq1mntwO0ok5jxLputMdfhzZz2XMRhICP7XQeg+kaLiKYZYqzuUmt
+         Q49/TBkhkXjRme6GbqSKz4de4t1xLoW4VI9lExPfTW39ATSLtmGpKiHVeb3Ux30nB1QF
+         7KrVpbTYhV6fYN6qG/7f3MMrvtL3MqldSTvDFDyzNt8lJJ1exMN08sXz09PXubrcXyGe
+         ygwtDCmfu8Kd8Y84CsslQldDJ5IgLanLLGrTfRxWiiVliHqjDbg5esFocTRWOahJ9tHM
+         mDkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfZfWFotVUJcqbUADOkGKUMPIOwJ8jTFi4t0V9hRePwUnK/IMAQuEcEVl5QNMC3Sf7eIDVnQ4aMJgmKu5LsrSe7w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfueiL5J/bTGQLnjrXlxo0gqEqcJoY09Pzfbg/nm5LPHRyEt2X
+	+QsmiX9WF+zoLIAJcbvmKpNH21Wu0OpWLnp2p6cSMIwWCxelvUoqcVR/tEOzK9A=
+X-Google-Smtp-Source: AGHT+IFMEO0GkKF1j6HJbZQl4lCU8LhHH9oPTp4LSqjlAaGRsc94dzplAAfOLGynJHT11AUyLre0Yw==
+X-Received: by 2002:a2e:8696:0:b0:2ef:228a:1b86 with SMTP id 38308e7fff4ca-2f15aabd05fmr59048221fa.21.1722782718050;
+        Sun, 04 Aug 2024 07:45:18 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baba5f2sm164586765e9.26.2024.08.04.07.45.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 07:45:17 -0700 (PDT)
+Message-ID: <e9963fb7-b963-49b4-96a3-3637f9892784@linaro.org>
+Date: Sun, 4 Aug 2024 16:45:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801062253.GA2681@l14.localdomain>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] pinctrl: samsung: Add support for pull-up and
+ pull-down
+To: Vishnu Reddy <vishnu.reddy@samsung.com>, s.nawrocki@samsung.com,
+ alim.akhtar@samsung.com, linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+References: <CGME20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8@epcas5p1.samsung.com>
+ <20240729153631.24536-1-vishnu.reddy@samsung.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240729153631.24536-1-vishnu.reddy@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi again Artur,
+On 29/07/2024 17:36, Vishnu Reddy wrote:
+> Gpiolib framework has the implementation of setting up the
+> PUD configuration for GPIO pins but there is no driver support.
+> 
+> Add support to handle the PUD configuration request from the
+> userspace in samsung pinctrl driver.
+> 
+> Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
+> ---
 
-On Thu, Aug 01, 2024 at 08:23:26AM +0200, Henrik Grimler wrote:
-> Hi Artur,
-> 
-> On Mon, Jul 29, 2024 at 07:47:34PM +0200, Artur Weber wrote:
-> > This patchset does the following:
-> > 
-> > - Add CURRENT_MAX and INPUT_CURRENT_MAX power supply properties to
-> >   expose the "fast charge current" (maximum current from charger to
-> >   battery) and "CHGIN input current limit" (maximum current from
-> >   external supply to charger).
-> > 
-> > - Add functions for toggling charging and OTG modes.
-> > 
-> > - Add an extcon-based handler that enables charging or OTG depending
-> >   on the cable type plugged in. The extcon device to use for cable
-> >   detection can be specified in the device tree, and is entirely
-> >   optional.
-> > 
-> > The extcon listener implementation is inspired by the rt5033 charger
-> > driver (commit 8242336dc8a8 ("power: supply: rt5033_charger: Add cable
-> > detection and USB OTG supply")).
-> 
-> Tested on exynos4412-i9305 (after applying the changes in patch 8 - 10
-> to exynos4412-midas.dtsi).  It works well, device correctly identifies
-> a usb cable connected to charger or a usb cable connected to computer,
-> and sets a limit of 1.8 A and 0.5 A in the two cases.
-> 
-> I did notice that device does not always detect cable insertion, so I
-> can occassionally get two de-attach events in a row.  Cable was
-> inserted between 428 and 462 in below log snippet:
-> 
-> [  389.458399] max77693-muic max77693-muic: external connector is attached(chg_type:0x3, prev_chg_type:0x3)
-> [  389.469765] max77693-charger max77693-charger: fast charging. connector type: 6
-> [  428.151857] max77693-muic max77693-muic: external connector is detached(chg_type:0x3, prev_chg_type:0x0)
-> [  428.160319] max77693-charger max77693-charger: not charging. connector type: 13
-> [  462.156048] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
-> [  469.881925] max77693-muic max77693-muic: external connector is attached(chg_type:0x3, prev_chg_type:0x3)
-> [  469.890049] max77693-charger max77693-charger: fast charging. connector type: 6
-> 
-> but this is probably an issue in extcon driver though rather than
-> charger.
-> 
-> I have not tested so that MHL still works, as I do not have access to
-> that cable at the moment, will try it in a few days.
-
-MHL now tested on exynos4412-i9300 as well.  It works, and the series
-fixes so that we can hotplug the cable (with a few patches to make
-sii9324 use extcon as well), before we had to connect cable before
-boot and rely on bootloader to setup everything.  Thanks!
-
-> > Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-
-Tested-by: Henrik Grimler <henrik@grimler.se>
+Where is the changelog? What happened with this patch?
 
 Best regards,
-Henrik Grimler
+Krzysztof
 
-> > v3 no longer uses the CHARGER regulator to manage the power status, and
-> > that's for two reasons:
-> > 
-> > - Regulator enable/disable behavior was interfering with how the power
-> >   supply driver worked (we occasionally got "unbalanced disables"
-> >   errors when switching charging state, despite checking for the
-> >   regulator status with regulator_is_enabled() - the CHARGER reg would
-> >   report as enabled despite the enable count being 0).
-> >   This broke OTG insertion if the OTG cable was plugged in first, and
-> >   sometimes caused warnings on unsuspend.
-> > 
-> > - Changing the charging values directly in the power supply driver is
-> >   less opaque and lets us avoid bringing in a dependency on regulators.
-> > 
-> > It also splits the current limits back into two properties:
-> > INPUT_CURRENT_LIMIT and CONSTANT_CHARGE_CURRENT_MAX. Again, there are
-> > two reasons for this split:
-> > 
-> > - They are two separate current controls, one for USB->charger and one
-> >   for charger->battery, and they have different limits (0-2.1A for CC
-> >   vs 60mA-2.58A for input). Given that the power supply core has the
-> >   properties for both values separately, it's more logical to present
-> >   them as such.
-> > 
-> > - It's safer to keep these separate; CONSTANT_CHARGE_CURRENT_MAX is
-> >   pretty explicitly only set *once* - at probe time with a safe value
-> >   specified in the DT. This way, INPUT_CURRENT_LIMIT is safer to modify
-> >   since in the event of an invalid value the CC current will hold back
-> >   the extra current thus preventing damage to the battery.
-> > 
-> > The latter is relevant as I'm working on a follow-up patchset that
-> > allows for controlling the charging parameters using power supply
-> > properties/sysfs properties rather than the CHARGER regulator.
-> > 
-> > Note that the CHARGER regulator gets disabled automatically if it's
-> > not used, which will disable charging if it was auto-enabled by the
-> > extcon code. This can be worked around by re-attaching the cable, or
-> > more properly by removing the CHARGER regulator from DT for devices
-> > that use the extcon-based charger management, as has been done in the
-> > Galaxy Tab 3 8.0 DTSI.
-> > 
-> > See v1 for old description:
-> > 
-> > https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
-> > ---
-> > Changes in v3:
-> > - Drop uses of CHARGER regulator, manage registers directly in power
-> >   supply driver instead
-> > - Link to v2: https://lore.kernel.org/r/20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com
-> > 
-> > Changes in v2:
-> > - Changed to use monitored-battery for charge current value
-> > - Both current limit variables are now set by the CHARGER regulator
-> > - Link to v1: https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
-> > 
-> > ---
-> > Artur Weber (10):
-> >       dt-bindings: power: supply: max77693: Add monitored-battery property
-> >       dt-bindings: power: supply: max77693: Add maxim,usb-connector property
-> >       power: supply: max77693: Expose input current limit and CC current properties
-> >       power: supply: max77693: Set charge current limits during init
-> >       power: supply: max77693: Add USB extcon detection for enabling charging
-> >       power: supply: max77693: Add support for detecting and enabling OTG
-> >       power: supply: max77693: Set up charge/input current according to cable type
-> >       ARM: dts: samsung: exynos4212-tab3: Add battery node with charge current value
-> >       ARM: dts: samsung: exynos4212-tab3: Add USB connector node
-> >       ARM: dts: exynos4212-tab3: Drop CHARGER regulator
-> > 
-> >  .../bindings/power/supply/maxim,max77693.yaml      |  15 +
-> >  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  22 +-
-> >  drivers/power/supply/Kconfig                       |   1 +
-> >  drivers/power/supply/max77693_charger.c            | 302 ++++++++++++++++++++-
-> >  include/linux/mfd/max77693-private.h               |  12 +
-> >  5 files changed, 337 insertions(+), 15 deletions(-)
-> > ---
-> > base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> > change-id: 20240525-max77693-charger-extcon-9ebb7bad83ce
-> > 
-> > Best regards,
-> > -- 
-> > Artur Weber <aweber.kernel@gmail.com>
-> > 
