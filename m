@@ -1,57 +1,57 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBB813B787;
-	Sun,  4 Aug 2024 21:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A9D143889;
+	Sun,  4 Aug 2024 21:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722808536; cv=none; b=tA9o9d/XsJ4F13cRAa7Ql5qKNSTuU+g0beGsy/raFBHFBrxfdqMVJy3i97muBES8vFBAN6OCypz7vj5GI8rvc6Mk7PkyhncfcJ25G3Ga/2anxx9xmlMHM/bScYpGifae4m0JsB6yP64gEydRstUqx+untRiuMbiZDyEOUp9zcVA=
+	t=1722808541; cv=none; b=loLDgHF1ZXB7paM/ehibz9yQsZjrEQE7MURArmtTHmFXl4h6ffUDX+ruXGJxDf5SfVUSBr34dSrZxw+dmmaQLb+kNSVgMTufSzBBr4bRC7UOKGONBS7iWjwQkuCQsd0103X+pY7dF2+jnLOpAhNZqMBTUnNVuIGshHhuYroUAZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722808536; c=relaxed/simple;
-	bh=4/DkRLV7xByXRQcbc5nqh5AJ8ipCaycYCKoYIJaOIuk=;
+	s=arc-20240116; t=1722808541; c=relaxed/simple;
+	bh=R/zw8++6HAxfElOjT2EQc7bEpx1XnGqUafF3RUDJMjA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QER93BOZldJ07S1I4gkZ3NiU3sDw8uJkZinLCwoJ+p9IPeOJt9Dww/ND43/lB0VzQHTgVtjdQB5UzdHefbKtAWPszxWPB5h/C4FqC0J0I3Ek6oS3wHdd+z8pt9jP/494J/lr4vXgp2QA7YHdxzvtbyZbRs1N/SZrZwby6Ynav0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6n189cX; arc=none smtp.client-ip=209.85.167.44
+	 MIME-Version; b=XBNIOmw/VdKktbC3poo8DoC0xX4RYnI3cdJtIr43XR4JxXXj3QKTGcnB0/z7qbtv3Rr/x6lyjVLa9XEAT2eIftLdUo1G5lxuSa4DT2O7Nz/1dTaJHXToX6uRoBwj320eyamEp1j0WtVonbOagG5MpaZOh9JGLhVMZuPvZn73bXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXfPiDoI; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6n189cX"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efd855adbso13547786e87.2;
-        Sun, 04 Aug 2024 14:55:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXfPiDoI"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so13799833a12.3;
+        Sun, 04 Aug 2024 14:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722808533; x=1723413333; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722808539; x=1723413339; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ohIik8tuxkZdOhXKBGYVU1TaY9NMG4VqeNOE6YapqQ4=;
-        b=d6n189cXUXMOj1dxxzZ2xv4EyG5EyDtxBbUH7MD4Jjfa93VrN9p2ypV728i7Rs81FO
-         XEozKunj0i4T+Sd4wbGzC/+Ioe+RK/xzhWUd6wo28VuaVnbNQAAKQhtkM0BMUfeo9UuL
-         Lu+T4jThiHXMACotctVW1x4lmqlX/S11yzfIPxUKdPloQ1AYAcmrVYsNcy67FuZHaSBT
-         DxLkAPLnUIhwgYZVmEmjavhN1M7nDjmeTMPh7eax5Ak5x/NLRP24WehSnyDkj6PpMj0w
-         zZS36TXwMLuEKj7lqF6FFXh0vih0XwodfssUxFNNtS9ZAE3R2qhmtwywio/n5fFj3u/S
-         4wjw==
+        bh=PylIu4FUXlrxZkJ16yikQYZXRyjRIiQcGN1Zbu3DKVI=;
+        b=UXfPiDoIi8WhQKQ91Tik9ov3gCoNzhBMtBvhlfhzIfYnpHie0gykjpJwy1aq+x7GDM
+         glgTE95F5CFgkok39Ik0OGnaurQp53+fQEDdFS2UPsPdIrM4HC8uq218Dh2xryIrklZq
+         rvUZQ1BBy0SKBuGExVDJ8m5LKV9qytFl8FPzdPiqYqVDHK/XicLCOLULo7MS/vHi+pUG
+         W0sq66sW8PeHAL7o8erIXYYrtUZovt8lwlPfs3hCK35iq0G3Ntgv7gdVOLrXbNqGI0fP
+         MWTHlZla9BvOZADbDd/PWDzP7YfUKA/U4FFcLkwQr/xZrbLT3w+VY+Lk8ayxrmDUaps9
+         WHxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722808533; x=1723413333;
+        d=1e100.net; s=20230601; t=1722808539; x=1723413339;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ohIik8tuxkZdOhXKBGYVU1TaY9NMG4VqeNOE6YapqQ4=;
-        b=cRNqaEfFt2+j5gWnBkwBnjilqOCO3Np/U0WzNSsPCDWLpi+mknwMObPVhFc61p65tL
-         XFmrZgcLD7YV2y0poDeII/V3IO//U7/BFg/MBO9BBi1xIqMgVvuXarLJGI9w1phX05ZR
-         9zEW3CSzX3gEe1Y4RQv+FaR5e7aSGYORx/epTzLi3CTsdootHQnYte4YYJJGWiXQEo5C
-         o8Kmz4i+G3N3dpFK/rwonKvRMHvKbz7GfwRWEI//739OJrfiOMXZtWDbctjbGb6C2oeg
-         OJaTrEBZECGo81L1mGOWJWmVH4Y/TYoKRBpGbqW6EfU/vkZDz+KL4HQ/VoI7a+H5ykwt
-         rxrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkbWLmO1YmduC2HHWgS9q0j33kbzVK4ZNZd4GpTVA5T1AKfxxdC72XQhAYBk9A4tM0/5LWYYSMFiGt/0SJ@vger.kernel.org, AJvYcCVIwp06zftGy32CV6UqvjR5W1AF9iqKlGhE6Spf37qvRfiEJm5NA6EP6a0cvugFs5lZtE9S7j4mPdHR@vger.kernel.org, AJvYcCVbb6V9Q3Zbe3VQISKTO2c8q1EF/jv4b/e1Hb2HUrz201w29wLxgKmKzvtX3qkoadz34WKDDr7blgGt@vger.kernel.org, AJvYcCVcyb6EZurpLGbF37odVrnp2lvkY0djwXc5E4r0HfMulw+a4wBWCZuKiKxRVRHUaCJ9NFx8m4tgTBZt@vger.kernel.org, AJvYcCW3wCBnCCSSmS67+CHVPJzIEjic61r/j9PuxHFeFRYCfIvKfMs1bH3oP3fQt1ySz2HoBNkNgtRydtGV33ErQJPldoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjSLFgXK8XCjRXO14vvSDaQCzjlsQejjPDtimoxf6xts5vOiyr
-	VxJ/C5JTHLtaQfGKjNDrMn5/q30t4vrivLZUlKhRNXYS/WOP80UT
-X-Google-Smtp-Source: AGHT+IGf4XNWbs7YR4aHSGzZXOop9qGrIJwSKWyF5QLUzVLZlUFd//3fW5Z7Dds3H/8T66ieEG+8Fw==
-X-Received: by 2002:a05:6512:3041:b0:52c:cc38:592c with SMTP id 2adb3069b0e04-530bb30790emr6307202e87.0.1722808533083;
-        Sun, 04 Aug 2024 14:55:33 -0700 (PDT)
+        bh=PylIu4FUXlrxZkJ16yikQYZXRyjRIiQcGN1Zbu3DKVI=;
+        b=FRBI+xMB36yLCNr/v+8fRIiDGxTV2VDn6WUCnqq8w/GSssMquGmN7jPfiN4YRlj+jt
+         CJVOalzsdDtNrBVk+yCRwpHZZz0rDyXSN3B4VcRik7YEQ4Lly7RIqcn1LkMuYLZO4S2B
+         rIdCfKg7uFBojzIS5OQRmS4dO7VFeCrMFV73KahO5C8iK6yIv5cKL7D4fIX1PMsBuOuF
+         kYZqpf5YqacYZZfq1PA6fV9h0u4YuMuuo3nVfts8Ux/OmpQeBvuNZ5Noi8uJycRXedUm
+         sYznzUKu8C/tXJSE7V3paS5mPe3JfDH2KfES6w/EX+fHPG3RxnzGJZlGzJ3UziPK3jJ9
+         710g==
+X-Forwarded-Encrypted: i=1; AJvYcCXHU/O/kGWaSvpKkU5RTXPpZaOIpnUHGR12X3qVC3CDFHouWH5BwIDCYtKAsZblOCp7ieZ0MrrYwAvQX0amm2CLs5q1kCgcKUZUelBd/wvruYb3KxHZCMai69YamxPyBKVcyOPE6gz0vD7B2MJbXYm05OVQJZCVjWsACYvwPe2PfpJ6q1QKnE7fpoe70/VWbFKCB84bV6or9FT+ltCDhcoKu59jHkgkSWvqLgYaJggRpCUE3KpAgwBR8wJZRCrbSDgy
+X-Gm-Message-State: AOJu0YwTTC5IyEkrSjNQGPBHNa2S7K0anpnOZUStqDoHQj2TBi8rgwU3
+	ESR4yJjDH7zRPRZkMc9D/TwjqHA/PetKsYZfqQCv0zb6p/jLUiob
+X-Google-Smtp-Source: AGHT+IFCXWpLgSy0HdFQC/k8f0PkI2xtHfzFl1y3lC9hTOOBbO3phvAsUzemOzvmYEc2XBt/IzotOA==
+X-Received: by 2002:a17:906:d25f:b0:a7d:391f:17af with SMTP id a640c23a62f3a-a7dc50a47c2mr719346366b.51.1722808538364;
+        Sun, 04 Aug 2024 14:55:38 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.31
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:55:32 -0700 (PDT)
+        Sun, 04 Aug 2024 14:55:38 -0700 (PDT)
 From: David Virag <virag.david003@gmail.com>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -65,8 +65,8 @@ To: Vinod Koul <vkoul@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Sam Protsenko <semen.protsenko@linaro.org>,
 	David Virag <virag.david003@gmail.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>
@@ -77,9 +77,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 06/13] clk: samsung: exynos7885: Update CLKS_NR_FSYS after bindings fix
-Date: Sun,  4 Aug 2024 23:53:51 +0200
-Message-ID: <20240804215458.404085-7-virag.david003@gmail.com>
+Subject: [PATCH 07/13] clk: samsung: exynos7885: Add missing MUX clocks from PLLs in CMU_TOP
+Date: Sun,  4 Aug 2024 23:53:52 +0200
+Message-ID: <20240804215458.404085-8-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
 References: <20240804215458.404085-1-virag.david003@gmail.com>
@@ -91,27 +91,85 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update CLKS_NR_FSYS to the proper value after a fix in DT bindings.
-This should always be the last clock in a CMU + 1.
+In Exynos7885 (and seemingly all modern Exynos SoCs) all PLLs have a MUX
+attached to them controlled by bit 4 in the PLL's CON0 register.
+
+These MUXes can select between OSCCLK or the PLL's output, essentially
+making the PLL bypassable.
+
+These weren't modeled in the driver because the vendor provided drivers
+didn't model it properly, instead setting them when updating the PMS
+values.
+
+Not having them modeled didn't cause any problems in this case, since
+these MUXes were set to the PLL's output by default, but this is not the
+case everywhere in this SoC.
 
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos7885.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos7885.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
-index f7d7427a558b..87387d4cbf48 100644
+index 87387d4cbf48..a0c9b7cc6942 100644
 --- a/drivers/clk/samsung/clk-exynos7885.c
 +++ b/drivers/clk/samsung/clk-exynos7885.c
-@@ -20,7 +20,7 @@
- #define CLKS_NR_TOP			(CLK_GOUT_FSYS_USB30DRD + 1)
+@@ -17,7 +17,7 @@
+ #include "clk-exynos-arm64.h"
+ 
+ /* NOTE: Must be equal to the last clock ID increased by one */
+-#define CLKS_NR_TOP			(CLK_GOUT_FSYS_USB30DRD + 1)
++#define CLKS_NR_TOP			(CLK_MOUT_SHARED1_PLL + 1)
  #define CLKS_NR_CORE			(CLK_GOUT_TREX_P_CORE_PCLK_P_CORE + 1)
  #define CLKS_NR_PERI			(CLK_GOUT_WDT1_PCLK + 1)
--#define CLKS_NR_FSYS			(CLK_GOUT_MMC_SDIO_SDCLKIN + 1)
-+#define CLKS_NR_FSYS			(CLK_MOUT_FSYS_USB30DRD_USER + 1)
+ #define CLKS_NR_FSYS			(CLK_MOUT_FSYS_USB30DRD_USER + 1)
+@@ -162,6 +162,10 @@ static const struct samsung_pll_clock top_pll_clks[] __initconst = {
+ 	    NULL),
+ };
  
- /* ---- CMU_TOP ------------------------------------------------------------- */
++/* List of parent clocks for Muxes in CMU_TOP */
++PNAME(mout_shared0_pll_p)	= { "oscclk", "fout_shared0_pll" };
++PNAME(mout_shared1_pll_p)	= { "oscclk", "fout_shared1_pll" };
++
+ /* List of parent clocks for Muxes in CMU_TOP: for CMU_CORE */
+ PNAME(mout_core_bus_p)		= { "dout_shared0_div2", "dout_shared1_div2",
+ 				    "dout_shared0_div3", "dout_shared0_div3" };
+@@ -189,6 +193,12 @@ PNAME(mout_fsys_mmc_sdio_p)	= { "dout_shared0_div2", "dout_shared1_div2" };
+ PNAME(mout_fsys_usb30drd_p)	= { "dout_shared0_div4", "dout_shared1_div4" };
  
+ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
++	/* TOP */
++	MUX(CLK_MOUT_SHARED0_PLL, "mout_shared0_pll", mout_shared0_pll_p,
++	    PLL_CON0_PLL_SHARED0, 4, 1),
++	MUX(CLK_MOUT_SHARED1_PLL, "mout_shared1_pll", mout_shared1_pll_p,
++	    PLL_CON0_PLL_SHARED1, 4, 1),
++
+ 	/* CORE */
+ 	MUX(CLK_MOUT_CORE_BUS, "mout_core_bus", mout_core_bus_p,
+ 	    CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
+@@ -232,17 +242,17 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
+ 
+ static const struct samsung_div_clock top_div_clks[] __initconst = {
+ 	/* TOP */
+-	DIV(CLK_DOUT_SHARED0_DIV2, "dout_shared0_div2", "fout_shared0_pll",
++	DIV(CLK_DOUT_SHARED0_DIV2, "dout_shared0_div2", "mout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV2, 0, 1),
+-	DIV(CLK_DOUT_SHARED0_DIV3, "dout_shared0_div3", "fout_shared0_pll",
++	DIV(CLK_DOUT_SHARED0_DIV3, "dout_shared0_div3", "mout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV3, 0, 2),
+ 	DIV(CLK_DOUT_SHARED0_DIV4, "dout_shared0_div4", "dout_shared0_div2",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV4, 0, 1),
+-	DIV(CLK_DOUT_SHARED0_DIV5, "dout_shared0_div5", "fout_shared0_pll",
++	DIV(CLK_DOUT_SHARED0_DIV5, "dout_shared0_div5", "mout_shared0_pll",
+ 	    CLK_CON_DIV_PLL_SHARED0_DIV5, 0, 3),
+-	DIV(CLK_DOUT_SHARED1_DIV2, "dout_shared1_div2", "fout_shared1_pll",
++	DIV(CLK_DOUT_SHARED1_DIV2, "dout_shared1_div2", "mout_shared1_pll",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV2, 0, 1),
+-	DIV(CLK_DOUT_SHARED1_DIV3, "dout_shared1_div3", "fout_shared1_pll",
++	DIV(CLK_DOUT_SHARED1_DIV3, "dout_shared1_div3", "mout_shared1_pll",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV3, 0, 2),
+ 	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "dout_shared1_div2",
+ 	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
 -- 
 2.46.0
 
