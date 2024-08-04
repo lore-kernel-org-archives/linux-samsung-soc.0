@@ -1,57 +1,57 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145BB13A87C;
-	Sun,  4 Aug 2024 21:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D7913A87C;
+	Sun,  4 Aug 2024 21:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722808520; cv=none; b=AEpl0OkCM/1/bu8WwIQXz+D/uF3ki2GDjbuyxG/iP0Zbwhsk/TH9+qYevDYx0hCzSW5j0vFwZeNozNJ0O0L87Mrt6vKEBsaGlUd8PiiPc01/oO7rLXNJvQZ1Db9Mdk9eUoQXDYLtrvtF1bZz4VFwSjN/vNhMedHQEALtFCqthYY=
+	t=1722808526; cv=none; b=HwoxXQ+dBoiiO7aMnfFMKhrnWOU6cNrsk6qnjCCnCF21cLQLevPxTGPh+wQimYPziikDgKm+vmADPAZaDZJhq28jOU2ZVTI8Ys5YWJE+vrnPR3HWVHPxwqiH3b/ceNR9bPNT6sZ7ljKtko1R6+xsWyjtbCooKzvhuY0XSDKp94A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722808520; c=relaxed/simple;
-	bh=N3zVM9WjxApsrr59Be3h9gRQpWe/tK+ERo+/QuIitcg=;
+	s=arc-20240116; t=1722808526; c=relaxed/simple;
+	bh=q4Ku6pFSV2ow+XrfdLqGqmJQxCqO1DZV/loKv1Jvq3Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QnDS+VF5D9jZD5wQYMaMVnlhFD08uZlZg+DIgOmqACYpDqIuUZk27CSFVdGr/nWpmM6COWbNNwF83ZtnafL6kY00fSfOEehvHJpfYvK37MSbK0QcOMzG0HXN7sTlI/Y0uN8rKuOF7/4f3GwZ4lxS9TipP8QY96M57n/GQ/Im7II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLBqrNX+; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=TgnlTJBIZxnzRt8NHOnv16tL17kBwOH8IwuPSzcbweZ5ffBmOzilMuh7BdnQbL+ImPbCc+LpwL/Dk4DyfXYELkAMye1lcSynIl9b5piC6UYXhPWruGvheQgMsKkaQpCPDS4fFBzTaS087U9+c196M7+NmUlG7kciQSG+42+2hLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VyhkxYEq; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLBqrNX+"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5b5b67d0024so6985354a12.0;
-        Sun, 04 Aug 2024 14:55:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyhkxYEq"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa4ca9d72so1159639266b.0;
+        Sun, 04 Aug 2024 14:55:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722808517; x=1723413317; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722808523; x=1723413323; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BnqKBVLkVbPU4IXqUitU7Vb8AZX6hoKEj/nS2/Cpby8=;
-        b=mLBqrNX+vIuwsqDcFvc3u5Op4qxo0WsU80YRrtE/oZGKVOhpQ7yUzvcJlGbdysKWnL
-         Qpk0fRgohOPWktN/6HrPJ3Y/cODi4xXvqPPULbK1PYujx7LVT2FnhtZnhMp8kL3VuciW
-         AAQQfPLuDPzqW3VruvL9BsPPOIthavizuXZhgU9Dzlap/GjfdMPM6CbPJPB3kJxjEHKw
-         a2Y4npwbJ3z0RXeCGZgINg8PAs0F3cwUu+NZ8J+zPdPrxos6xRFvRV1amnJFWnVr9VvN
-         dyM0crUrZqQSqtagNKH8M5iqWEw3hy220OtZEENHzbdynqodJf3RFeMZjEAjQYyMIMe7
-         MPXg==
+        bh=IAWeL7Nun9ZYhbxsfj7pwIcuKQrCXh/qT58VXqHCCDU=;
+        b=VyhkxYEqGpQ+YZYhAK6QKxaymFk17yXWQiZlW60mSue7Xuj8Wtrhmrst7LzUw5K8mw
+         COObkIHffAbg5+jsCfpeA0P3Ccq6usJ5J2cG8XYTteO5XaBk9vkLyWPxxBnjDv9IOsB+
+         roreG2eCTkjCRT4D1oOCq1to+ozgXZMKk7qhvd3x8UUToiXv0aXedSv5lRBf99393yDQ
+         UhN05zXxALATWNUgi2PVZp9uK+d0aYxaTgY08cavWAneTKgo0h+njs5ixp+nzpebpwZo
+         WW6wVc8Q3pH2/aVoCIDPJqkwHEWXlL42L+qA4SYc0joG72+mgz9tbcaoeLej8/DYMQND
+         MkIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722808517; x=1723413317;
+        d=1e100.net; s=20230601; t=1722808523; x=1723413323;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BnqKBVLkVbPU4IXqUitU7Vb8AZX6hoKEj/nS2/Cpby8=;
-        b=sQIxB8SJdL3r32NO2wqOr4N5PIBAtSNGJNybMYH8xvmvrSvPB2bRlsciN4eOc507AY
-         CtqjjvBJfoemTVn/Y8FzWIWfrYbWi1lkBy6PAUoQAH3m4h1t3uRAWZIXEf3lUaVFgSbl
-         0I2WXH66PhlKZQBUcU4CyOhPLyTAu2sRPsAeXvv/UPHBV4u9klvSLK+2YsQiNiop12Ta
-         8O/3UEY/nLbuWfeSgRqYVzMD1lqmpMwQbIq/7uFMjcofrRIcHA039phEiSrYnRMhiJiB
-         n/nMP+fa9lVoz2YFmqqLOqyA5JrC+OolKFAhizg5rcQilkEfQeEFb8vJDi70a2ggKC2b
-         AAjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBJK7kDTZh7ez8arcJpdk9dfa8X1ZBCF+5rU4hZFiL0TpRHlV6T/jdKytcxlgW8KCXp5BosS1k+zFdrXipaE+AumiS1gKgjJ9wQxxU/oCjVdmJQ/HQENT5Y6gudDpKnhS7JH4zXgqv14O5r9L1fGby5mupreeF82gswcXwXkBTdznukThQ2nWgOSMCKytmtPeqA17mRr99QnUDL7SrfpyuRere41W2RksB0iqzdipBlrwD5clQTh7dXajWq6sBksAi
-X-Gm-Message-State: AOJu0Yx+VNbX3UwGsjfHMjObJs7pI5xXuAVQS3RveM12IcS9UTFLUNVm
-	V2/f/K0vur0Tuwxo2aPIxiZZ7hjjm1pwqJLDyiLFarr4R78VfCS+
-X-Google-Smtp-Source: AGHT+IFtygrQuiSBintHx5W6ocZLAzQsG+1XvtKEK77LBl6f8+VAzKFjAwdsj0j0dO3Bx/GbHi1UqQ==
-X-Received: by 2002:a17:907:2d06:b0:a7d:a080:bb7 with SMTP id a640c23a62f3a-a7dc4fdfe6dmr762216066b.36.1722808517365;
-        Sun, 04 Aug 2024 14:55:17 -0700 (PDT)
+        bh=IAWeL7Nun9ZYhbxsfj7pwIcuKQrCXh/qT58VXqHCCDU=;
+        b=LNST5+Tvvpa7Xm8aWL5MTZJ4fB/0mc8/x8Vio0T7vEWpdhMiT9LxRubrdUHcJAdKS1
+         TgyApYnMvS5tKzQyQveLrCArYOMFOTtBALcw+v1X3bBhJbrvT+a2lbCWkdZqLrjyitDJ
+         lqlly7cmOJMkQrEwGwzzr9xUiKvvbRfmvwAsZKUMm+NtzAftG2GMV6Q/FVc74pxrBK4Q
+         QCavO/j88yGork6XHMdMdEjksrNAR6jbFFyiwdKMoLEd6jJHeLHdbpkGwEGqcOzgEdeU
+         IQXGw8b/HKPnpgvr6BFo3RmjSwjSiPv0uI4SEKKkDs/+Zw/nzl7ZXMS/R/0vFUmTkjhu
+         0BrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGJr8QzTnd6F8ZUmfb3TTzvUGlRf9cKnsNaqJI1+WFOh0UIJGb+6JWa7TfWq9a+8+bWXLpKOQsF7pFDB7Pu/plIzoxynGq0Ua0SlDaGDIbWown3ZA+Ozq6DC90TYRXuV+mA0A4FA7Vl71LpiMZgbs8IxWuGYvt6tO78jYLFUPn4soM1FgLBBlhCAEiNW5M+M8GSd7mSCHDm9T3iP5DumeI2voBb895CFcydQDf1wdFwh5NOCmTFLZ6N6BKIfmo3VRq
+X-Gm-Message-State: AOJu0YyW94OOXsLl0WUUWOdTChTREElZE4iOrmL6slzRaZKIq3kQHHSb
+	t0KeN+uFC9x6nVA9wLd/X6uV+1bIxg3cZGG9YVKX2swTQr4axBST
+X-Google-Smtp-Source: AGHT+IHgEEDrTSF0voUwvDDCfjCGSv0d/UaByu12LrTyy3FIYy3fv13CItLVvOLTPykh2j0xtVTI2w==
+X-Received: by 2002:a17:907:7207:b0:a7a:bc34:a4c9 with SMTP id a640c23a62f3a-a7dc5101505mr659446366b.69.1722808522604;
+        Sun, 04 Aug 2024 14:55:22 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.16
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:55:17 -0700 (PDT)
+        Sun, 04 Aug 2024 14:55:22 -0700 (PDT)
 From: David Virag <virag.david003@gmail.com>
 To: Vinod Koul <vkoul@kernel.org>,
 	Kishon Vijay Abraham I <kishon@kernel.org>,
@@ -65,8 +65,8 @@ To: Vinod Koul <vkoul@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Peter Griffin <peter.griffin@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
 	Sam Protsenko <semen.protsenko@linaro.org>,
 	David Virag <virag.david003@gmail.com>,
 	Marek Szyprowski <m.szyprowski@samsung.com>
@@ -77,9 +77,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 03/13] dt-bindings: clock: exynos7885: Add indices for USB clocks
-Date: Sun,  4 Aug 2024 23:53:48 +0200
-Message-ID: <20240804215458.404085-4-virag.david003@gmail.com>
+Subject: [PATCH 04/13] dt-bindings: phy: samsung,usb3-drd-phy: Add Exynos7885 support
+Date: Sun,  4 Aug 2024 23:53:49 +0200
+Message-ID: <20240804215458.404085-5-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
 References: <20240804215458.404085-1-virag.david003@gmail.com>
@@ -91,58 +91,35 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Exynos7885 SoC has a DWC3 USB Controller with Exynos USB PHY which in
-theory supports USB3 SuperSpeed, but is only used as USB2 in all known
-devices.
-
-These, of course, need some clocks.
-Add indices for these clocks.
+Document Exynos7885 compatible.
+Exynos7885 USB PHY has two clocks (ref and phy) like Exynos850, which
+are already described in bindings.
 
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
- include/dt-bindings/clock/exynos7885.h | 30 ++++++++++++++++----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos7885.h b/include/dt-bindings/clock/exynos7885.h
-index 4ce86810b10d..cfede84b46b9 100644
---- a/include/dt-bindings/clock/exynos7885.h
-+++ b/include/dt-bindings/clock/exynos7885.h
-@@ -134,16 +134,24 @@
- #define CLK_GOUT_WDT1_PCLK		43
+diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+index 16321cdd4919..bf993d738bce 100644
+--- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+@@ -30,6 +30,7 @@ properties:
+       - samsung,exynos5420-usbdrd-phy
+       - samsung,exynos5433-usbdrd-phy
+       - samsung,exynos7-usbdrd-phy
++      - samsung,exynos7885-usbdrd-phy
+       - samsung,exynos850-usbdrd-phy
  
- /* CMU_FSYS */
--#define CLK_MOUT_FSYS_BUS_USER		1
--#define CLK_MOUT_FSYS_MMC_CARD_USER	2
--#define CLK_MOUT_FSYS_MMC_EMBD_USER	3
--#define CLK_MOUT_FSYS_MMC_SDIO_USER	4
--#define CLK_GOUT_MMC_CARD_ACLK		5
--#define CLK_GOUT_MMC_CARD_SDCLKIN	6
--#define CLK_GOUT_MMC_EMBD_ACLK		7
--#define CLK_GOUT_MMC_EMBD_SDCLKIN	8
--#define CLK_GOUT_MMC_SDIO_ACLK		9
--#define CLK_GOUT_MMC_SDIO_SDCLKIN	10
--#define CLK_MOUT_FSYS_USB30DRD_USER	11
-+#define CLK_MOUT_FSYS_BUS_USER			1
-+#define CLK_MOUT_FSYS_MMC_CARD_USER		2
-+#define CLK_MOUT_FSYS_MMC_EMBD_USER		3
-+#define CLK_MOUT_FSYS_MMC_SDIO_USER		4
-+#define CLK_GOUT_MMC_CARD_ACLK			5
-+#define CLK_GOUT_MMC_CARD_SDCLKIN		6
-+#define CLK_GOUT_MMC_EMBD_ACLK			7
-+#define CLK_GOUT_MMC_EMBD_SDCLKIN		8
-+#define CLK_GOUT_MMC_SDIO_ACLK			9
-+#define CLK_GOUT_MMC_SDIO_SDCLKIN		10
-+#define CLK_MOUT_FSYS_USB30DRD_USER		11
-+#define CLK_MOUT_USB_PLL			12
-+#define CLK_FOUT_USB_PLL			13
-+#define CLK_FSYS_USB20PHY_CLKCORE		14
-+#define CLK_FSYS_USB30DRD_ACLK_20PHYCTRL	15
-+#define CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_0	16
-+#define CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_1	17
-+#define CLK_FSYS_USB30DRD_BUS_CLK_EARLY		18
-+#define CLK_FSYS_USB30DRD_REF_CLK		19
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_7885_H */
+   clocks:
+@@ -168,6 +169,7 @@ allOf:
+             enum:
+               - samsung,exynos5250-usbdrd-phy
+               - samsung,exynos5420-usbdrd-phy
++              - samsung,exynos7885-usbdrd-phy
+               - samsung,exynos850-usbdrd-phy
+     then:
+       properties:
 -- 
 2.46.0
 
