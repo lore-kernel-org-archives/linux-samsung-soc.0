@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECFF13D601;
-	Mon,  5 Aug 2024 05:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34CF2837D;
+	Mon,  5 Aug 2024 05:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722836720; cv=none; b=FoXZVJCe+B2zEcn3VUc47c52u4b7ZcmGjCSiueHHyPa77Dtq9WXmaTaKfLNI9XXN0SCWgZPLPl2qa9bAgk4ZXpmF95pUmUvBHPda/vm41MLcXcpz9k4HgsoPxPsfhXAY7RgnAP2F3/ZIGNsnp3y0oKJoR7n2xE07s9qm+ol3SLc=
+	t=1722836773; cv=none; b=nFeFBdw1JTqLBybppfEqu0JTjWbq442sYoj6SbBt3uUEneTn67rygpY9jCQ0hoAEsInbQqcUJ6GuD6H+voFObtZa+XzvmEIlvW/6JztksEYOPG7E6IMlSLdwdLUJdHOHKNq6nLQZaz2UT79FeD3xUlF/ltq9ZwPzsSQxJcv5TLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722836720; c=relaxed/simple;
-	bh=c9ISY6CZqx2OzD7ZMw/Kti8Mv5SYlnFZUPf5cZqh5e4=;
+	s=arc-20240116; t=1722836773; c=relaxed/simple;
+	bh=OX4mw95bH+8CnLRQqNyeIxX1GaKdWCVLc4sNyDYegJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AGu0qPgv3FmMnOVHudgpZYACsdOS5YAG5ohKz0i1YwChWITgJB+m7wlwb1bIIAMTflE5QXqn8v4Xmhzp6lxQPxR89WRCEWsgnexBZjVOaQuiijXG3Dazoloq49w3CeRp3iL0lQ0B7+yKlpEEkHih8jNku0iSVq7CBvKFLXfC6bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1DTEL2c; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=oxWmdSh6v6lIyd2fyaJCmBI9PxzD73VxJ7meXGvZ13hswYDbCQ5D+1jtJgH5AS96fVTEZXFbqfJ90bpT/cK9YJTRkV70jUsLSE0eEaUdaEUz7OOGQ08svnwFU3lQyg7X1UsWjEphNx+k6ITMyY9svELlq7DJeIi0BhnhIeIM2wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atcsxrd2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1DTEL2c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D07C32782;
-	Mon,  5 Aug 2024 05:45:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atcsxrd2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC43FC32782;
+	Mon,  5 Aug 2024 05:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722836719;
-	bh=c9ISY6CZqx2OzD7ZMw/Kti8Mv5SYlnFZUPf5cZqh5e4=;
+	s=k20201202; t=1722836772;
+	bh=OX4mw95bH+8CnLRQqNyeIxX1GaKdWCVLc4sNyDYegJ0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o1DTEL2cBDdppmejf7TVItRg75avUrvN0z25URX4jyq3WRHT670yhR1mcCTudyUFy
-	 BPESjvaIMjQtLXmxSHINrjPQvIYSUUZQ4qo8YtKVXmFZUht3UVB5QaX5kuzMhwGJzO
-	 Cv32JhmN3jZ4NmiOop4mbY3TgqWMXRqlVzI4uNwukgG7i9gBNsKIXO67URk/HIDzyO
-	 M3nH8AU1CSzdhg9UnbDYjzl7yKcVmuUhBnKJuxtCANflcDqIrInPWRIs603Ef+BvOn
-	 BELNwHtmZIw4OB3eTjAnDMjJKF0mGRgk+CK5aYcjgk+We7VcwbDTZbOKCtud3XXZiL
-	 PUjP2CuJpbyeA==
-Message-ID: <229538e5-f9db-4f2f-a0ac-13ecb7d3f7ba@kernel.org>
-Date: Mon, 5 Aug 2024 07:45:09 +0200
+	b=atcsxrd23L06+R3ao6qfq0jYTYOifASuqNNAg2/e2X42ntk2CYwIhOnBz8R+lin/+
+	 BXoLvHoEFoaHYG+4ryVUiAyBVWCubnEJ7AI9ziWaNA+Cmoe9lngGNGoHNGgrHXwVQ5
+	 awPDjAoYIaeOngYpUplLQfnKwAQzE6oCNaI+ev7Hpk2EnNR09RcNKkzid4tPijrdnD
+	 8Q35/SSHbiJV8lkaUALZaETcZ+Zg9icTNEDFCKdNPXZpUhqK0GImBmckUtspvqwyuP
+	 WXGC4GrLCBHIm6muztkYHSB8Uye389dNbIBrcMi3rIMds4dLN7UmcDsK/KUbqU4Cx3
+	 XITcBR/1v1yPg==
+Message-ID: <f928633d-072f-4b76-a22b-634e635a17c0@kernel.org>
+Date: Mon, 5 Aug 2024 07:46:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/13] Add USB support to Exynos7885
+Subject: Re: [PATCH 04/13] dt-bindings: phy: samsung,usb3-drd-phy: Add
+ Exynos7885 support
 To: David Virag <virag.david003@gmail.com>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -45,8 +46,8 @@ To: David Virag <virag.david003@gmail.com>, Vinod Koul <vkoul@kernel.org>,
  Chanwoo Choi <cw00.choi@samsung.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Sam Protsenko <semen.protsenko@linaro.org>,
  Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
@@ -54,6 +55,7 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240804215458.404085-1-virag.david003@gmail.com>
+ <20240804215458.404085-5-virag.david003@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,27 +101,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
+In-Reply-To: <20240804215458.404085-5-virag.david003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/08/2024 23:53, David Virag wrote:
-> This set of patches adds support for USB on the Exynos7885 SoC.
+> Document Exynos7885 compatible.
+> Exynos7885 USB PHY has two clocks (ref and phy) like Exynos850, which
+> are already described in bindings.
 > 
-> The Exynos7885 has a DWC3 compatible USB controller and an Exynos USB
-> PHY that theoretically supports USB3 SuperSpeed, but is not implemented
-> in any known device. The vendor kernel also stubs out USB3 functions, so
-> we do not support it.
-> 
-> While at it, since we need some new clocks implemented, also fix some
-> issues with the existing clock driver/bindings.
-> 
-> p.s.: Not realizing the USB PLL has a MUX on it made me waste I don't
-> even want to know how much time on troubleshooting why it's not
-> working...
+> Signed-off-by: David Virag <virag.david003@gmail.com>
 
-If there is going to be any new version, please split between subsystems
-into: clock+DTS, phy and usb.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
