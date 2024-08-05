@@ -1,122 +1,147 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F618026;
-	Mon,  5 Aug 2024 12:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AAB24B29;
+	Mon,  5 Aug 2024 13:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722861783; cv=none; b=byIIb2Fgba6E5pI6wXV/oho2HmA0Jj+dyCyaSDUyIpjwvXP28KywqmFmN5yYTNLRYiI1qLnGAGL2fhATiCBcfDD3uNHGNdMir6gB00rohA4X9qrQNijApl5nGgceAd4pBsWlT77psqAbYj2pMZYSYEDQtGxISxpqzu8/G19nptI=
+	t=1722865085; cv=none; b=SzBtXx42OjZVGk3at10oVGBILbOAjNuQqYkMJE+jSgBvUPPnLJKQAblTjAKkChKYLKAepC2eypaSQD9p7mzDojngXEfTKzy4UIbXXfEUloeO8W4HWRe6dE49wavsoB7tk+wK/kt+0RS9O4pGxl3wo95HFo57QSZ5TCJ/9MQXpp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722861783; c=relaxed/simple;
-	bh=YW/qg94iZPhUR0tp0hVHRnEk+cNH6Dflx/IRgbrrdEg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=agVf64gKrH7TvG+noxxKa3hVFRRtEbb4s/yudJ0rbznLGxLGtwGsmuYe6K+vp6mtov4A17e5auaMr0kdiITcAQqT8bXrOfBb/G0zV/7m9l4DdW58xGGOQuqBxVRNmQyMSnT7tfhXVha0Y34SaZDv8+QLJ0v9RD8YkZjX4xRoRtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGoICLhP; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722865085; c=relaxed/simple;
+	bh=uFldj6qUVCej+JdtYmdsx1hKFbZYzXr1fL2QxzwwoI4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=YLEFhvtRSeqiPAxdL6wgR+CX3PWfHtNG6zt8DWDtzXA4WDUMmFyYXyJQZ9bDWQfjbOf4QAMJnSOVDfNoh13NGbfnIkBqpoqGeqeu6WyHvKkXJhI8OV6+VrCuduJyQ7Zm/JBMjbPYrqFPBGiyCPD96Ir5DhOzZ6cI1oVf/uMaek4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=vmSbAT9X; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rnZi/E8P; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGoICLhP"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso10828713e87.3;
-        Mon, 05 Aug 2024 05:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722861780; x=1723466580; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YW/qg94iZPhUR0tp0hVHRnEk+cNH6Dflx/IRgbrrdEg=;
-        b=fGoICLhPyAVMHwnKk9iRx+P9eQ1vjUYwJxG/VMA+KWNuLFpjzxh9OQtPuM776EK7Cv
-         Lu1vS2ITPcAViLqRwo/llvfkjf0kJ3RWOvvbPTx/ppFbdNoxobq0zQiitE2wxh++6Qni
-         iTj79S4NLtwW8cZCfc2BS52r+FMxQXkY2RmgyzJb3sG93pS43Na/+QCUnAXxA3HEHuUU
-         ngeb59o3W3fY6vfuK+N4bg0/rYQJ1bYQ97yR4HVzzhyGVaMeP8l83GNFjcRtfXstMY+9
-         N4werS22uPi5m9P6X3NVXglIsCZ3uXpqk1WRapeQyA45lJWkay3zkNBganXN0tesxcWy
-         Yrlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722861780; x=1723466580;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YW/qg94iZPhUR0tp0hVHRnEk+cNH6Dflx/IRgbrrdEg=;
-        b=NokhRQYsBbMkjJEckYHbiEs3iGj0giPIateWtZdMxzO41KjvwxAil/CcnB1A97jf/e
-         vIgudV5DLKs5eVFDv2cJejhaCunoGO34eVmnBLcCBGM4RBQiLaI8kcgFJX+nh0mhfGBk
-         a7c98WlhGllNYQbx4p28unD817ErFetv8+EIU03KtLdj25YB9ERvkVMRc76yRbTqcJNx
-         MQYHHXv/Z4qGDptI15rB250z2wPrkYN+hn7IqmpTBN6eDFFhSZjDRRBCmOm157JZUSS5
-         8ZZpkpM3s52zufYxipZt+Q1xYJplEwg3ML+0D1baKHAfCtujLXpk4emOCz8DJujLOnBY
-         ypgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDKOtlymDJRrpcU4F/ABlMDWpabHjxJQ/uaUe3L+u73maK3E+bhmAyzFJkevZxhfbRdwgzcPEWnQJFjUWxCA3A9yijeY712uEFF4B2q7BXUgizcEFbbb9103E5FSAPhZ1t91mt20I10oPDvLpDLvG+V0JHpdvyE/PE57ieaShEWggFTBC/rX+mIFMWO3YxVNDcM3mJXGmv/CtXEKaqCEAo0rTdRPkcdQ1wvle/dwWDDwwiQS8gWQvz2XkBbQlfGMNe
-X-Gm-Message-State: AOJu0YwkBHO9UdV4CuMDfFu3ZfOoH1sVwS/IIqe4tw8pCoVFE80cH7ot
-	uHCgsXN5wqITKkHrvx9BWZ9OLc70PH+cyy++iG/UGWIcndMR9bC0
-X-Google-Smtp-Source: AGHT+IGrn/fiiMQfSHP2zwcfkB4NJ3UgsNTVBkuKqly9QoxA5DBgXyicWcuWmKSOBQoaeHciBly7ag==
-X-Received: by 2002:a05:6512:398a:b0:52c:df83:a740 with SMTP id 2adb3069b0e04-530bb38cfc7mr9005249e87.30.1722861779774;
-        Mon, 05 Aug 2024 05:42:59 -0700 (PDT)
-Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d14sm447805066b.22.2024.08.05.05.42.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 05:42:59 -0700 (PDT)
-Message-ID: <5af8048741215bdafa5d8f7bf6ab8dec3cd7aed0.camel@gmail.com>
-Subject: Re: [PATCH 06/13] clk: samsung: exynos7885: Update CLKS_NR_FSYS
- after bindings fix
-From: David Virag <virag.david003@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,  Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thinh
- Nguyen <Thinh.Nguyen@synopsys.com>, =?ISO-8859-1?Q?Andr=E9?= Draszik
- <andre.draszik@linaro.org>, Peter Griffin <peter.griffin@linaro.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Date: Mon, 05 Aug 2024 14:44:01 +0200
-In-Reply-To: <bd7c76a6-b7a5-4f8d-8081-95b6cdb39186@kernel.org>
-References: <20240804215458.404085-1-virag.david003@gmail.com>
-	 <20240804215458.404085-7-virag.david003@gmail.com>
-	 <bd7c76a6-b7a5-4f8d-8081-95b6cdb39186@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="vmSbAT9X";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rnZi/E8P"
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id DC1E61151B99;
+	Mon,  5 Aug 2024 09:38:01 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Mon, 05 Aug 2024 09:38:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1722865081;
+	 x=1722951481; bh=6FNRvRdqPMxYH148flW+90w5EFkoq4YHv2pLfv40G6o=; b=
+	vmSbAT9XQ3YgIDeU7+AcK1Rv8NvIULbBFrL6GghxgXdjysQ/GllO/hKJ0MwiYu2v
+	+ZqONJ2O2OT7fescPDDlFX/5Uarp9F3CQBUQxcMzU0HNzAlUz7cGIVvEtsLz2zUp
+	0aaWVHcjhCqe52171OS3soeLka4VIGC1Dn9nAPsSnLAiYRD6E3s3bTTIla7+IJwv
+	kO3+tWzvndCBvDhTilVm9aXQgn7tbP8Dh+TDO2XdisssZ7afhgfIM60AfUS7tF8i
+	+eYY76Tb3/F6WpN4Kk8LHejHOz+CdnJd7RzfLNyD0J+3+XLtl3CdpbTe+rbrxwCe
+	XDPQzEKMcWTI/8+6ADHdVg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722865081; x=
+	1722951481; bh=6FNRvRdqPMxYH148flW+90w5EFkoq4YHv2pLfv40G6o=; b=r
+	nZi/E8P1oxPW2qYR8VlDqzWWqUlKFP1F3SXNsFS8rnbQBLVYmnIj8KkbQnsxP0RQ
+	FBjKGP4pXls83tPtkLtCDm/iCbIu0D321oTqjp6UcpVB0DV+tOMK7GVePPB7z3bG
+	ZyJ9CkxQPCPZ0H/K8O7k749LO/URep8ClsiF0PqFrgt5De9Drj4+/J0ljbMOoO2H
+	z/QAVKot27GwrAxzHOwampqq+7MiDkvvOeuGyeJllP7ttHd0eXEXYuNJyXNfvQXQ
+	JSex973Bx7ZKBZkZkixiimOOxAB0/MSU3We0aFS2/95yTf9/Fh7DbKbiS+uyfnre
+	LW+M/SxrlFxOJ26mIzPag==
+X-ME-Sender: <xms:uNWwZn-EFLxaoOhWeAWQ74g7dnpRctZnwPVyiQ_RtOEE0gpGC3jqmA>
+    <xme:uNWwZjug0BLuq-8cdJUtwxYTbmv1ny6vYTKYyas4vp6qdp-NheC3hRunFmRCs-7OH
+    OzKtIw2C5vNGu8L5Fo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeigdeikecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:uNWwZlCTjUpPdAwj4Jygs3lbWiC-OPG9ZMATbwDcOv9elMCxUW8QTA>
+    <xmx:uNWwZjcFRWMnJJwIFcwXZOvIamYqagySX-rfLn8zu-e3NlptAPWbPw>
+    <xmx:uNWwZsNmCgQXh7fW5jufQNXlpK9TpzzEwORl5sVOUyk-Na1PmKTNrQ>
+    <xmx:uNWwZlmPa2cFjJQkAeJn2QnVXep_39jgJZNozvTpjnOlUtvjgvNt-w>
+    <xmx:udWwZvhnO2swBmA0qpIC-3ql38TQj_u0uTac5skJBjTi5AFSQMES-YJQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A09FCB6008D; Mon,  5 Aug 2024 09:38:00 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Mon, 05 Aug 2024 15:37:03 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Tony Lindgren" <tony@atomide.com>
+Cc: "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Richard Earnshaw" <richard.earnshaw@arm.com>,
+ "Richard Sandiford" <richard.sandiford@arm.com>,
+ "Ramana Radhakrishnan" <ramanara@nvidia.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>
+Message-Id: <6aaefebc-c7b0-4b1e-a9ee-5621c3339bed@app.fastmail.com>
+In-Reply-To: <20240805123003.GA5123@atomide.com>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+ <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
+ <ea475f27-af7c-4060-bff7-a78389174236@app.fastmail.com>
+ <eb91d092-259c-4896-a06d-363c1a62712c@app.fastmail.com>
+ <20240805123003.GA5123@atomide.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On Mon, Aug 5, 2024, at 14:30, Tony Lindgren wrote:
+> * Arnd Bergmann <arnd@arndb.de> [240805 07:58]:
+>> Thinking about this some more, I wonder if we should just
+>> change the Kconfig dependencies now (for 6.12, possibly backported)
+>> and forbid ARM1136r0, i.e. OMAP2 and i.MX31, from being enabled
+>> in combination with SMP.
+>> 
+>> This would immediately prevent the bug you are seeing and
+>> allow the cleanups we've been wanting to do for a while,
+>> and it would avoid the larger-scale rework that I had
+>> planned (moving armv6 into an armv5 kernel).
+>> 
+>> The main reason we didn't do this in the past was that it broke
+>> Tony's workflow of testing omap2plus_defconfig across all
+>> platforms, but I assume this all changed with the new group
+>> maintainership anyway.
+>
+> Yes please go ahead, no objection from me.
+>
+> Also related, the 2430 support could be dropped as AFAIK there
+> are no active users for it. It's similar to the 2420 support
+> that n8x0 use, and only 2420 support should be kept.
 
-On Mon, 2024-08-05 at 07:49 +0200, Krzysztof Kozlowski wrote:
-> On 04/08/2024 23:53, David Virag wrote:
-> > Update CLKS_NR_FSYS to the proper value after a fix in DT bindings.
-> > This should always be the last clock in a CMU + 1.
-> >=20
-> > Signed-off-by: David Virag <virag.david003@gmail.com>
-> > ---
-> > =C2=A0drivers/clk/samsung/clk-exynos7885.c | 2 +-
->=20
-> This needs fixes and Cc-stable tag, same as the binding.
+I've taken a look at this, and my feeling is that we would
+not gain much dropping 2430 since it has very little unique
+hardware, except for a few files in mach-omap2 and drivers/clk.
 
-Would it fix ef4923c8e052 ("clk: samsung: exynos7885: do not define number =
-of clocks in bindings")?
-Or would it fix cd268e309c29 ("dt-bindings: clock: Add bindings for Exynos7=
-885 CMU_FSYS")?
+Keeping it around as long as 2420 seems to be less work
+overall, so I won't send patches to drop this one. If anyone
+else wants to remove it, please go ahead.
 
-I'm guessing the former, but technically the latter introduced
-the problem and the former transferred it to the clk driver.
+While looking at 2430 support, I did notice that musb support
+got lost in the DT conversion, which you mentioned as being
+incomplete at the time. This does mean it's almost certainly
+not been used for over a decade with an upstream kernel.
 
-For kernel 6.1, this fix wouldn't work, as we'd need a fix in the
-dt-bindings instead (perhaps the dt-bindings fix should include
-this fix there).
-
-How would this work?
-
->=20
-> Best regards,
-> Krzysztof
->=20
-
-Best regards,
-David
+      Arnd
