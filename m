@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DFED53B;
-	Mon,  5 Aug 2024 05:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23457D53B;
+	Mon,  5 Aug 2024 05:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722836842; cv=none; b=hadp5AxlHuVpACBgymoFZ/9CBTHEZw2doWZQxIW2axCAztqrY87Ahxb4r2l3zQadIZ7NlUGoAKU8oroWM4aDBfM40bPv7UA7rXG3JPsH2wvcMqf3Ga4ZqGoONYe+t+H5WYadKZPrDkTl6J/GF33FtARZ6IgX5zn7RDjzcBlL44Q=
+	t=1722836956; cv=none; b=P+eka8CBQ4ibX7ORRzgDgJ8BsytKEQv2Ep7P6l+nrBvcCT/Eu/e3j0QWiZ7QfZuf7d5D6U3y0/hrfFQfRz54F0KN9Z0VO9dmjIX+H2ETBtV/hb6PBdDLU9dZOWKVVsEHQu+8e1pX5XJm+Vf46FFaHY0wmJyhTZBjshZgnic+Gqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722836842; c=relaxed/simple;
-	bh=6t39BiCMdos+o3UnVR65fSMzXPglK2uy2qedIpZNPW4=;
+	s=arc-20240116; t=1722836956; c=relaxed/simple;
+	bh=pxEKzFZiFMtocBxlcdg7ZCb1KjDsl/JJ5A2A+tGtILY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nTXQ+0Vod2VLTIRgApUuReKMbqadS+wN/F5dfm7EaKqpXdTRz68aKdHeCcVJd0leT+9f5KRuVyWVvIfGkHCMTQevhWnsX+iB79BMpYK0kGMyWqwOKrWn+Shw1+VLA2heRkqrFt/tkoIPhtRzVYL08g590eyXD2ubUmX5o5rRudU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYmErHLP; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=m9gdtu2QeGL9OjaRFz9E70dxaF69akr1i/woqfNfRoBCRGXPx2zeLRUDdFr4ceFIPZP6t7ltHIR3VX5uuL79c/HVnYiqMbuPFdGTmn0Tz+HmHjwZW3dVSB3jHIA3qDDCPh7aEj85McjNwKGyfZMe4x9EbkoZwg29yvh/ic8ZLGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQSFN21H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYmErHLP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926ABC32782;
-	Mon,  5 Aug 2024 05:47:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQSFN21H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56E1C32782;
+	Mon,  5 Aug 2024 05:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722836841;
-	bh=6t39BiCMdos+o3UnVR65fSMzXPglK2uy2qedIpZNPW4=;
+	s=k20201202; t=1722836955;
+	bh=pxEKzFZiFMtocBxlcdg7ZCb1KjDsl/JJ5A2A+tGtILY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qYmErHLPhTUCd4E4UsCXAfjbYFjhL+A7PrqX/ptaJLdhN2/y4UAM6ywbWUDq/IvI8
-	 dajUP2E4bE5DT3MHgyFOzAEgrYhcIZy5PojKG+ppzy2OWt5UV/EYyriy03pIU087L0
-	 nGgyQWVjdu+Jki7SFLXVQ3mscjX0IIzJj1TjQsocVnnwgFsFPWXg6J/G878C8TB+cS
-	 Pyqkl0Rj8XHC03ASn/frWpRhxNoqj4208LaQeixcwYKmkFxjyOccoyJ8qD9+CmsF78
-	 pn0mSD2HdSRT0DzhoSrgHOPUQyup6ozrNvBchwrwtcp6CzBzIlpxLilRwDyvaq63S0
-	 CMdGoNn6cqpeg==
-Message-ID: <3cbd3c49-e164-4bab-9a05-fdcbc01ee08b@kernel.org>
-Date: Mon, 5 Aug 2024 07:47:12 +0200
+	b=uQSFN21H9/m0hkrIEe1Mi5pmTOdkHvFg6o4TpKW4NgxLIeaq1UzIS5mHhisqg9I8v
+	 B4OIXkkfVIhAV9DHGZgVyjgTUWeTy/LdBVwRN8Md9ckF324IipiQ9/KVnAWKY5H++N
+	 tH2HI4GrFNskXbnq4HDJfcvBcB44MgMPHQhHCy/E57wWd7+TYlBWH+ACU+bXqWh1kc
+	 ykC65U9/Bk6d30CbSqXkyWOLesXvKYpgeq1gaN3aOQ2rpvImSV/eXAta+iW//gQleZ
+	 XySe4W66RX41Fe3Ayyt4Yk2ArVA7S8t9Jsy8kv/oqOom6jqs94jN5Ug89AdWZ2D9Ht
+	 58Lt9eFYio3dg==
+Message-ID: <bd7c76a6-b7a5-4f8d-8081-95b6cdb39186@kernel.org>
+Date: Mon, 5 Aug 2024 07:49:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/13] dt-bindings: usb: samsung,exynos-dwc3: Add
- Exynos7885 support
+Subject: Re: [PATCH 06/13] clk: samsung: exynos7885: Update CLKS_NR_FSYS after
+ bindings fix
 To: David Virag <virag.david003@gmail.com>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -55,7 +55,7 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240804215458.404085-1-virag.david003@gmail.com>
- <20240804215458.404085-6-virag.david003@gmail.com>
+ <20240804215458.404085-7-virag.david003@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,33 +101,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240804215458.404085-6-virag.david003@gmail.com>
+In-Reply-To: <20240804215458.404085-7-virag.david003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/08/2024 23:53, David Virag wrote:
-> Exynos7885 SoC has a DWC3 compatible USB controller, so it can reuse the
-> existing Exynos glue layer. Clocks are the same as on Exynos850.
-> Document Exynos7885 compatible.
+> Update CLKS_NR_FSYS to the proper value after a fix in DT bindings.
+> This should always be the last clock in a CMU + 1.
 > 
 > Signed-off-by: David Virag <virag.david003@gmail.com>
 > ---
->  .../devicetree/bindings/usb/samsung,exynos-dwc3.yaml         | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-> index 2b3430cebe99..3ec849ef4bdb 100644
-> --- a/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-> +++ b/Documentation/devicetree/bindings/usb/samsung,exynos-dwc3.yaml
-> @@ -16,6 +16,7 @@ properties:
->        - samsung,exynos5250-dwusb3
->        - samsung,exynos5433-dwusb3
->        - samsung,exynos7-dwusb3
-> +      - samsung,exynos7885-dwusb3
->        - samsung,exynos850-dwusb3
+>  drivers/clk/samsung/clk-exynos7885.c | 2 +-
 
-This should be compatible with exynos850, so you need oneOf: adding
-items with two compatibles.
+This needs fixes and Cc-stable tag, same as the binding.
 
 Best regards,
 Krzysztof
