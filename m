@@ -1,49 +1,58 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0515FD16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA57149001
 	for <linux-samsung-soc@vger.kernel.org>; Mon,  5 Aug 2024 21:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722894698; cv=none; b=CnLbcXEv274DDO1ZubffrQel4BjEIeDpwIqCjc1uQo9mX21AAVUOP7Ll2APO7Fc/MNl9EI6yh4hoe8X0O2+UCI+pctLmdbjA3ZYvzKvYR3CSY+1wG1w8yE3DZHxR5/xXmNlOBbOSKi6fz1oLlAgFna+GR9gLki1JrpplbI8xOhY=
+	t=1722894698; cv=none; b=u+jXyqt/pfWl/H0yNqP2mwL/bOrS2GbUYB4bnRl62zHtj26qp1sK6kEU3JheEMeMf0oXg+yNz2haivXnZZ4f+ujp0sbWiC10MdrorxfZQQASx+JuXcDHvcJyIN3l/U/WPgfHTRZ0EWJQp9JFwA7edw7JYVX+MtonVcN16iN8ebI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722894698; c=relaxed/simple;
-	bh=nJ1vUo2Ufp68zcuf1iqmoZKx5P1bR6GonT+G1DeZl7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xw8ykEux5cw4OQ+EVhAnW5gaXthvBLgmOPA20FG/ANVoUkwHCXf0go7zY+aUVoZbgfyyYCLMXEU2I6kHEMb56SjY6FDKJvkm9mDD5N2AIa1bnsgcM5fvwMMqt1+3VFF3jDNOe168gsPYr9H3hrpgd2e09VMxOU7KmapFYUEpSUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=h4t1huwM; arc=none smtp.client-ip=194.117.254.33
+	bh=7QEoIsXVIp4jLETDDEw0Gsz9F76DdGmqRqMdFAG+/xo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ltXOdfaOM1gSc35CYfYQvjE+R0YQyVA79px51DEWzE14LDCc0GCo1wbZ5uGn3F2TnQGtKQwYieyZ1Wv74EKyJd3CoSAzAkF4wvDkMoYShvh18dmn0ovpNWrwufcIqYMQtu0ghAl+K5oiFxv7rAr8Xz2HYC6glp638bF85ONxCXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Z+ALS5GG; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="h4t1huwM"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Z+ALS5GG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=LKaIkakCgP1OJn4iZqkkYHeziSGxZPmIwKaM52VVkTg=; b=h4t1hu
-	wMTsC9qc3C62TVIeqEMaY8+r5sMMSzM6uVLCks/6/s2gcfVmHLWFGslDo+/DL5ZX
-	8fQBRD0bx/TH7ibjtPGxRsYfZFSRsbyQR5PD5PEK2krIinLg/vyrTuPycKaSe6nQ
-	0antjRyQ4njYi/5T+hdQDPFZWzPuE87Kgnmsb58fZ15aO71Vou28g//dj601/bwU
-	xkpQIKrIGdXN5JXM38nsQAtDDU2UPkJ0yZpP4RC1U1nwoUOMT9QJw1Lc2d33cEg7
-	/dt36q75UQRBiji0CXiYWR6L1sFUXgpufLNgTpLiVoWUA8bJ3/rOiz/cIMJRRvQ5
-	st/Pj9rKvSyyXneQ==
-Received: (qmail 18193 invoked from network); 5 Aug 2024 23:51:29 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Aug 2024 23:51:29 +0200
-X-UD-Smtp-Session: l3s3148p1@e37srfYe5JpehhYC
+	:mime-version:content-transfer-encoding; s=k1; bh=Kld3gE4SblWVR0
+	7LYX02//HCfm7mI5jj4CnBnZsYvAk=; b=Z+ALS5GGswuWZfAv42bigkQU+z1T1U
+	FAgPUWZj9zB10tkOLDWO/uV9oAuv/zKGSM1jtOQp07yru0thSeXbU6jZuqEKDFij
+	FoOmL387TPexlhFcaYeICrnDT91mF3xRRzcBC1+fu6E5CbNX0QMBp05gKi4x7rcy
+	Q/mH/hXllgQsajTSgZqWPy7gtuoYhMZ+C92qE7HsHgedRGmag1H7SA6HIn+Oo5ZS
+	nu++LjsVROUyMF+NJqNo1/WUzFRWiJspN9ySW/ctqT7hBfpP7skDXZEHRBL8ONW4
+	7DU7q0vb2M3fKR1H8kvj4Z8M4MV+r+Y5JPVtYiXrjJrGZmBVRQ45MKsQ==
+Received: (qmail 18004 invoked from network); 5 Aug 2024 23:51:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Aug 2024 23:51:25 +0200
+X-UD-Smtp-Session: l3s3148p1@2RexrfYe4JRehhYC
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-media@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andrey Utkin <andrey_utkin@fastmail.com>,
+	Benoit Parrot <bparrot@ti.com>,
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Eugen Hristev <eugen.hristev@collabora.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Ismael Luceno <ismael@iodev.co.uk>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 4/8] media: fimc-is: use 'time_left' variable with wait_event_timeout()
-Date: Mon,  5 Aug 2024 23:51:17 +0200
-Message-ID: <20240805215123.3528-5-wsa+renesas@sang-engineering.com>
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 0/8] media: use 'time_left' instead of 'timeout' with wait_*() functions
+Date: Mon,  5 Aug 2024 23:51:13 +0200
+Message-ID: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
-References: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -52,53 +61,55 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a confusing pattern in the kernel to use a variable named
-'timeout' to store the result of wait_event_timeout() causing
-patterns like:
+Changes since v1:
+* fixed another occasion in the allegro driver (Thanks, Michael)
+* added tags (Thanks Ismael and Thierry)
+* rebased to 6.11-rc1
 
-        timeout = wait_event_timeout(...)
+There is a confusing pattern in the kernel to use a variable named 'timeout' to
+store the result of wait_*() functions causing patterns like:
+
+        timeout = wait_for_completion_timeout(...)
         if (!timeout) return -ETIMEDOUT;
 
-with all kinds of permutations. Use 'time_left' as a variable to make the
-code self explaining.
+with all kinds of permutations. Use 'time_left' as a variable to make the code
+obvious and self explaining. Also correct the type of the variable if
+the original code got it wrong.
 
-Fix to the proper variable type 'long' while here.
+This is part of a tree-wide series. The rest of the patches can be found here:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/media/platform/samsung/exynos4-is/fimc-core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-core.c b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-index aae74b501a42..adfc2d73d04b 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-core.c
-@@ -822,7 +822,7 @@ static int fimc_clk_get(struct fimc_dev *fimc)
- static int fimc_m2m_suspend(struct fimc_dev *fimc)
- {
- 	unsigned long flags;
--	int timeout;
-+	long time_left;
- 
- 	spin_lock_irqsave(&fimc->slock, flags);
- 	if (!fimc_m2m_pending(fimc)) {
-@@ -833,12 +833,12 @@ static int fimc_m2m_suspend(struct fimc_dev *fimc)
- 	set_bit(ST_M2M_SUSPENDING, &fimc->state);
- 	spin_unlock_irqrestore(&fimc->slock, flags);
- 
--	timeout = wait_event_timeout(fimc->irq_queue,
--			     test_bit(ST_M2M_SUSPENDED, &fimc->state),
--			     FIMC_SHUTDOWN_TIMEOUT);
-+	time_left = wait_event_timeout(fimc->irq_queue,
-+				       test_bit(ST_M2M_SUSPENDED, &fimc->state),
-+				       FIMC_SHUTDOWN_TIMEOUT);
- 
- 	clear_bit(ST_M2M_SUSPENDING, &fimc->state);
--	return timeout == 0 ? -EAGAIN : 0;
-+	return time_left == 0 ? -EAGAIN : 0;
- }
- 
- static int fimc_m2m_resume(struct fimc_dev *fimc)
+Because these patches are generated, I audit them before sending. This is why I
+will send series step by step. Build bot is happy with these patches, though.
+No functional changes intended.
+
+
+Wolfram Sang (8):
+  media: allegro: use 'time_left' variable with
+    wait_for_completion_timeout()
+  media: atmel-isi: use 'time_left' variable with
+    wait_for_completion_timeout()
+  media: bdisp: use 'time_left' variable with wait_event_timeout()
+  media: fimc-is: use 'time_left' variable with wait_event_timeout()
+  media: platform: exynos-gsc: use 'time_left' variable with
+    wait_event_timeout()
+  media: solo6x10: use 'time_left' variable with
+    wait_for_completion_timeout()
+  media: tegra-vde: use 'time_left' variable with
+    wait_for_completion_interruptible_timeout()
+  media: ti: cal: use 'time_left' variable with wait_event_timeout()
+
+ drivers/media/pci/solo6x10/solo6x10-p2m.c     |  8 +++----
+ .../media/platform/allegro-dvt/allegro-core.c | 24 +++++++++----------
+ drivers/media/platform/atmel/atmel-isi.c      |  8 +++----
+ .../media/platform/nvidia/tegra-vde/h264.c    | 10 ++++----
+ .../platform/samsung/exynos-gsc/gsc-core.c    | 10 ++++----
+ .../platform/samsung/exynos4-is/fimc-core.c   | 10 ++++----
+ .../media/platform/st/sti/bdisp/bdisp-v4l2.c  | 10 ++++----
+ drivers/media/platform/ti/cal/cal.c           |  8 +++----
+ 8 files changed, 44 insertions(+), 44 deletions(-)
+
 -- 
 2.43.0
 
