@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D57142651;
-	Mon,  5 Aug 2024 05:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496B0143C41;
+	Mon,  5 Aug 2024 05:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722837150; cv=none; b=Jc59UwkTEmUNGU9hmRiUOGYx2pfyYWFvpCP2z8dhRknTOXQ8MaZkTTcXyAxSg0Itgcumyw58pWBuIIWUYBi4y4+1eDEVdMP4/wuPD+2Pc9YkWJZfCzqO3P+WEfMxR5UEv/Q9l7OtzQY6KOdqDuIdkhfw0GOWsmL53UWSWWgGI+M=
+	t=1722837188; cv=none; b=D2NovEzWOTG0OJhzGInBbaTq5MB9hkcNV9N/avB8FvTWCrsniK6+ZnAhxZpQi6S8i2UBh4DYE0Qj9EDCSFt+KAjwer4A8S7KnLDFLwm+uWc0XSAH59t6ETEUJcaBqCD8TCci0vQuVPUGHGWDhogUQXmUZGhZK/gquNuTPTULSfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722837150; c=relaxed/simple;
-	bh=YSOGC0ll/HZTi32eQZcYOxcv4IbOfzKRmxJSx8fOPtU=;
+	s=arc-20240116; t=1722837188; c=relaxed/simple;
+	bh=6fI3BFOTIGTzYg//O5lLuo/uj0wTMTOT0xK83qAJsXY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kjYtwxLu9F/YqWyTG+tWNBcwED1+Li61jkSHXHLVV5rF55zntEfztGYql7yeRI/AhQm9iYA4xyWYIspP2+e5dUVZm+wPc1rbGXVr7Itwl4112t8O+mvPe1W763C+VOBUMDThWBqoBd+AhMTaPWMXTXi3gAm9yg/mPX6+V0dXu+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ker6FPoM; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=szOt3RnjAKjCmmRTTVaVrh+2odI4qyTpoF8zmxbDvHTeuqCHFfLWXjZoilTsLj+uy4ZCwT9xYhEIgzMAEGMR73vKKWpapCxIx75BBX4XQLe4uqrdTzoFqZ23+u6flOg88dke/N+MYs+njhQrjfpKyEvbLgeimoSwIVyXdcn/dTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SEtKm0zI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ker6FPoM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DCF7C32782;
-	Mon,  5 Aug 2024 05:52:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SEtKm0zI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775BAC32782;
+	Mon,  5 Aug 2024 05:53:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722837150;
-	bh=YSOGC0ll/HZTi32eQZcYOxcv4IbOfzKRmxJSx8fOPtU=;
+	s=k20201202; t=1722837188;
+	bh=6fI3BFOTIGTzYg//O5lLuo/uj0wTMTOT0xK83qAJsXY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ker6FPoMcdzVgx51nZIGUzErw7TqRD+hHMqM9u8GUM9HslbWl/Pwq6s9T+4LcTUgF
-	 nt7i/MZ0bwmuoLOanpRUlqjU088h6B/hkzg4bCvrnTgRg16FchyaSu0WmHU0n0BDT7
-	 n18D/2cS7lgSYAncVWcI36JCqutaUlXKojMbGRmLKNEJQRRXxTTfgBn768YnqtEICK
-	 xacoMstC0UAX4V81moi0IUMyF3KX0fC1LLQvxV2eMSLkaOihIXqzf9FcLyehFIywKX
-	 zXYRicPre2INjVrL9aYI/iZRVvBI0j/kuxsZ2gs9ewGtImMvhfCY6U2QQIsWWNIb4S
-	 jSMqY3tGjsaog==
-Message-ID: <07907c20-b9f8-4721-9899-39083fea672a@kernel.org>
-Date: Mon, 5 Aug 2024 07:52:19 +0200
+	b=SEtKm0zIgpDbCRKdgzYsycRcly7i0iks9ktsgpuWWMQg3n4bQfqb9UKVehWkdqvPp
+	 UqmzGUxcbSdJb3HY1YMbSYFQtOzNOMyHOjdO5jo42auPgy4epb5GFQd4Dfl3Cgtzei
+	 ejt26hZLJW2RSV8cCDWwcLjuqpDb2j4QOuy5AJzxMCYuVK2abbGw+F8zdRNfgAA++w
+	 P6sHlcQO7q6o+MKRWxb5ThKp9zVjIcTomNd4brYpjzFP7bxmeeg8NEtNd6K8M+zkIE
+	 h6JQFurMQcuKGfoOFxK4cpkCgCjbtDZtJEWjOAunSNNN3WEqidzsrlWkicMOiRoku/
+	 SYTk2wVhWOkOA==
+Message-ID: <fe9931ac-4b20-4fe8-aa91-9d9cca7e9770@kernel.org>
+Date: Mon, 5 Aug 2024 07:52:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/13] phy: exynos5-usbdrd: support Exynos7885 USB PHY
+Subject: Re: [PATCH 12/13] arm64: dts: exynos: Enable USB in Exynos7885
 To: David Virag <virag.david003@gmail.com>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -54,7 +54,7 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240804215458.404085-1-virag.david003@gmail.com>
- <20240804215458.404085-12-virag.david003@gmail.com>
+ <20240804215458.404085-13-virag.david003@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,40 +100,61 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240804215458.404085-12-virag.david003@gmail.com>
+In-Reply-To: <20240804215458.404085-13-virag.david003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 04/08/2024 23:53, David Virag wrote:
-> The Exynos7885 SoC has an Exynos USB PHY that theoretically supports
-> USB3 SuperSpeed, but all known devices using it only have USB2 and the
-> vendor driver has USB3 function stubbed out, so we'll only support USB2.
+> Add USB controller and USB PHY controller nodes to Exynos7885 SoC DTSI
 > 
-> Apart from this mysterius USB3 capability, it's the closest to Exynos850
-> out of those supported. Unlike other SoCs though, this one doesn't set
-> the reference clock by default, so we have to set it manually.
-> For this, create a set_ref_clk_rate property in drvdata that can be set
-> to a predefined value to set the clockrate to.
+> The SoC theoretically supports USB3 SuperSpeed, but is not implemented
+> in any known device. The vendor kernel also stubs out USB3 functions, so
+> we do not support it.
+> 
+> It is though, perfectly capable of USB 2.0 high-speed mode, both as host
+> and device.
 > 
 > Signed-off-by: David Virag <virag.david003@gmail.com>
 > ---
->  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 21 +++++++++++++++++++++
->  include/linux/soc/samsung/exynos-regs-pmu.h |  3 +++
->  2 files changed, 24 insertions(+)
+>  arch/arm64/boot/dts/exynos/exynos7885.dtsi | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 > 
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index df52b78a120b..466c72d8a93c 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -367,6 +367,7 @@ struct exynos5_usbdrd_phy_drvdata {
->  	int n_clks;
->  	const char * const *core_clk_names;
->  	int n_core_clks;
-> +	u32 set_ref_clk_rate;
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7885.dtsi b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
+> index 008228fb319a..1352c64d132e 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7885.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
+> @@ -463,6 +463,41 @@ i2c_7: i2c@11cd0000 {
+>  			clock-names = "i2c";
+>  			status = "disabled";
+>  		};
+> +
+> +		usbdrd: usb@13600000 {
+> +			compatible = "samsung,exynos7885-dwusb3";
+> +			ranges = <0x0 0x13600000 0x10000>;
+> +			clocks = <&cmu_fsys CLK_FSYS_USB30DRD_BUS_CLK_EARLY>,
+> +				 <&cmu_fsys CLK_FSYS_USB30DRD_REF_CLK>;
+> +			clock-names = "bus_early", "ref";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			status = "disabled";
+> +
+> +			usbdrd_dwc3: usb@0 {
+> +				compatible = "snps,dwc3";
+> +				reg = <0x0 0x10000>;
+> +				interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
+> +				phys = <&usbdrd_phy 0>;
+> +				phy-names = "usb2-phy";
+> +				/*
+> +				 * SoC in theory supports SS but no device has it.
+> +				 * Actual capabilities unknown.
+> +				 */
+> +				maximum-speed = "high-speed";
+> +			};
+> +		};
+> +
+> +		usbdrd_phy: phy@135d0000 {
 
-Rate is in unsigned long.
-
-
+Keep the nodes ordered by unit address.
 
 Best regards,
 Krzysztof
