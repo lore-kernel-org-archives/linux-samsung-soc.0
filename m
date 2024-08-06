@@ -1,230 +1,166 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4506B1C8FB7;
-	Tue,  6 Aug 2024 12:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21101EB46
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Aug 2024 12:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722946304; cv=none; b=gqHd9GS2bQ4T3vf/q+jiEKVHjMYvtTrx8ryVrvmDqBLeAQF00gi0qB+UkBKZBEHN8k76xmA8OeLQNPl4JkZUmbpBIgQeisFvOj0jDWVSvmZTG6PgP842eJLZUvZHyucUwd9hNNYiU2+oAlWJS4MJCIRElAIS9FiTK9bOOh2LZlM=
+	t=1722948491; cv=none; b=HJXutDrOzSyMN89/Vq2DoiFh4Bu5XWc4Cm8Kb8nSYsHWlvAJ25b/BuRSsVtdGDUif+CReG2FE2YYJITAy409RmlorCrMdmawHkJAWm7qu5QCjMnTSirPb0gVys+0sBM0L4CTOSbzyBCruezX9gL/GeEEvPiEn4S2gMvK2S+rlms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722946304; c=relaxed/simple;
-	bh=8wZWTlDutoIdgkQonWtbC7fK/3x1PokJPYQxOF+5Oho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MLFE9juGWF3cbmcqMlZiYbXVzRPV/KLtTvXPwSgRL/NmmsEjS469SIocpEhbp3AzVTa04Na7fWRTSy36YSzjEtkW2BI3B9vUM3jalgzUew/pQRK4zOA1S2cMCEJSJ3P5fDiU4uc611JH4EIrwYQ9ftp0qadigsqVPop4yjrbIhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/cbiPiP; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722948491; c=relaxed/simple;
+	bh=GMG33s26NIQZt1+FocIteInfnpZsdoU1Jna78RBP0TE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=AhMS09DROAtdaFPOkCOSPOcU+DrrnN8n/HtVS52/3P5aNh1kVxJdB/S6fvUV+qomwc0OJaTv2V2iyLmqJJhWvhZjDikO4fUlXlvoL1vWfoB2vZ361zK1KcN8O7+06iqrCCHw16xi2NoqBFUy6j0hR1qW2Z+ofCmU8mHw6LmiEnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=sGfssVKc; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/cbiPiP"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f01e9f53e3so9255781fa.1;
-        Tue, 06 Aug 2024 05:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722946300; x=1723551100; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0if134XhdeRkEUYfkA+1CHXu+GQYSvk7tXr14DRvpMU=;
-        b=E/cbiPiPKhpRLz7L/eHH0ZXUFDP1nlPc5M/Lr6G5dhq6z9r7MPxemZHcmfcscazZ55
-         6Kk3pAyw/T8hqKq+prTmB2rJNBPyqLOSBhl72uXEyXJHpvATh/ZumwJBF3Gi8Gn7qvrZ
-         RQHWoDhFdnE7HbfBLOLEz9990BqGHkHpa4R9b5UxuPic7//PGwckoY/1HZCqDbiRI20x
-         nTqtSdia1Np2r2GY3qbgSH6/mnAGyAUws9vjINroheMEtyZIWw403qeLws9B7P8Td76H
-         eeeWF2KwFVYz4uRPRAxKfwMb0ita17LquqDaJr0Da4L4eCLZaTrLGOIcLyCW+di2ei77
-         FaSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722946300; x=1723551100;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0if134XhdeRkEUYfkA+1CHXu+GQYSvk7tXr14DRvpMU=;
-        b=UXwNaTQuTvMtE8ZzqFFQBaX9iomBHG6Bqvds8NurNqeyjSZBWRNZeVQ+3KTKO0ylrd
-         0zXzyQC70Bvo7cGvRn5Lzi1uGML4pIdZmXVhVn0YipN1enb2kQHhHXDkKLkCsH91AEH0
-         Qd+tMUuPMy5IwuBWCV4p1JB/M0sY9cnYHfhFqo3AQ9+vVXTL4m+ah41RzI9nXYhdDeFb
-         QKe61ETVBnz/vh18IizvKeeeEXRJxQyM3/lC/GzqsFOrmMX7DrbHhgoIyKep6APFlrmg
-         30cPYcIPsMF0LvRYc6lhwTPp3BliZaC7ueu7LtWUqNlZSwi4ggPrzZr/BJMOrMFAUq1t
-         HToQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuF4OzueuVvf+ObYtgBl2IxG3xvQdibXuJTLfs026Cxx+eT88WHpaY5bNL1sVJlWPl0rSIESuwJFyUf/pPbg59XaYcLIgiUMcp4YmNucH0BteOj+b7Sf2ygl4XHWbw/i5/bj+ubHp2rRHAC5ITZ9G02m/W/lZfAgYAWy4EA5CIzWwP7w==
-X-Gm-Message-State: AOJu0YwcLe6pokf2WKNb77M+DSpDOq0i94wWK1zZeT2ghVzhtzGIi1T1
-	a4yWp7SRIKqBfER0rPhGx6sVhqopdEMRPbtRcZ7YkIpwsi/hLRlyDSLxKkxj
-X-Google-Smtp-Source: AGHT+IHmc+4jNVeC/deUHpKRZGlhx97wH6E6XkbGg1ilLroKPhmyzIRoqWZ0tQUgZPOVpADW7upZfw==
-X-Received: by 2002:a05:6512:234c:b0:52e:d0f8:2d43 with SMTP id 2adb3069b0e04-530bb3810d0mr12841061e87.17.1722946300245;
-        Tue, 06 Aug 2024 05:11:40 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9ecb546sm542080366b.224.2024.08.06.05.11.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:11:39 -0700 (PDT)
-From: David Virag <virag.david003@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	David Virag <virag.david003@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 7/7] clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
-Date: Tue,  6 Aug 2024 14:11:50 +0200
-Message-ID: <20240806121157.479212-8-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240806121157.479212-1-virag.david003@gmail.com>
-References: <20240806121157.479212-1-virag.david003@gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sGfssVKc"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240806124806epoutp049169882c400dfe90fba9e162d78c41b6~pJIUC-Eyb1120911209epoutp04b
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  6 Aug 2024 12:48:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240806124806epoutp049169882c400dfe90fba9e162d78c41b6~pJIUC-Eyb1120911209epoutp04b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722948486;
+	bh=QEtNHtSIRpFLQ01HmiZiDyTT4HWV/qbWxmK/lhObWlk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=sGfssVKcBnEYKetXdCIFBGoQdZ6RrWlYwzrk2zfk8wek5bS9PK+EVkSxgibzEUWjU
+	 sqTOan5J2NOGOJlwF/U5/zeR1lLJcg7b4hFtxgP7XPd70Q03MZ3hmP3jXh72ueadLy
+	 syIAx13ZmyrNAnCSr+RFQJdmNsH98L0VtA0N51Z4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240806124805epcas5p2d53b355c44898279dde28938c1bdb6c5~pJITmwos-1377113771epcas5p29;
+	Tue,  6 Aug 2024 12:48:05 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WdY4h0hJsz4x9Pp; Tue,  6 Aug
+	2024 12:48:04 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	63.03.09640.38B12B66; Tue,  6 Aug 2024 21:48:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e~pImVVCbEx2322623226epcas5p1B;
+	Tue,  6 Aug 2024 12:09:10 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240806120910epsmtrp282af1e81e0f56b730bc118d524d22f05~pImVNyaKs0294202942epsmtrp2K;
+	Tue,  6 Aug 2024 12:09:10 +0000 (GMT)
+X-AuditID: b6c32a49-aabb8700000025a8-e9-66b21b83dae5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C6.E8.08456.66212B66; Tue,  6 Aug 2024 21:09:10 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240806120909epsmtip2899fc7b950568b76927de86a555ad74d~pImTaRr0G1162811628epsmtip2M;
+	Tue,  6 Aug 2024 12:09:08 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [PATCH] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
+Date: Tue,  6 Aug 2024 17:27:14 +0530
+Message-Id: <20240806115714.29828-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmhm6z9KY0g60/zS2e7pjJanF/8WcW
+	i0Obt7Jb3Dywk8ni4sy7LBZ9Lx4yW2x6fI3V4vKuOWwWPRu2slrMOL+PyWLtkbvsFss2/WGy
+	WLT1C7sDr8fiPS+ZPDat6mTzuHNtD5vH5iX1Hn1bVjF6fN4k53Hq62f2APaobJuM1MSU1CKF
+	1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoGuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZBx7NYC/4JlSx
+	q30vYwPjDIEuRk4OCQETiS3zvzJ3MXJxCAnsZpT413qMDcL5xCgxpWE1lPONUaLvziNmmJZl
+	d/8xQST2Mkr0X/0L1d/KJNHzZhGQw8HBJqArcXZ7DkiDiECqxKt1a1lBapgFljBJLDryjAmk
+	RljASWLbWSWQGhYBVYmnzRNZQWxeAVuJXZe2skIsk5dYveEA2HwJgY/sEp8+/IZKuEhcvvmM
+	EcIWlnh1fAs7hC0l8fndXjYIO1ni8aKXUFfnSKzfM4UFwraXOHBlDgvIDcwCmhLrd+lDhGUl
+	pp5axwRiMwvwSfT+fsIEEeeV2DEPxlaTmHPnB9QJMhKHVy+FOsFDYtfiE2DjhQRiJb6eusc8
+	gVF2FsKGBYyMqxglUwuKc9NTi00LDPNSy+ERlZyfu4kRnAi1PHcw3n3wQe8QIxMH4yFGCQ5m
+	JRHertINaUK8KYmVValF+fFFpTmpxYcYTYFhNpFZSjQ5H5iK80riDU0sDUzMzMxMLI3NDJXE
+	eV+3zk0REkhPLEnNTk0tSC2C6WPi4JRqYNKwnff6vOtNvfXLbri9N9LWjNDrT/8++6aArTev
+	yJ3Dyy/oCPxR1LRz8TvOKa0nvpB5baEzvzjbv6uXjVVdmtatLDiZ+W3agWNHC2ewRO6cMmfe
+	TIHYiTccPISjPtvWJT9bWPLjSavc4qhz+T5G/Vc8w4UXLpXlm3/opkNd5q881tg1/jILp3S0
+	LlqQfmfj//gpnC+m1rpP9MmNuf/unaL1pasJsbrOMaXryvhPT3sWse1RruD+RA+NlDOTCli/
+	/3h58eKa/PlyFvU2s28escyRMu7VeJ2tHz05+Pos2z6+ebGZsdM3Mvm9OG8y8Ra3UMbKbo8z
+	h2Ttr5/USrdQ1b/Y0pz4a+vX2Z/0XwsymiixFGckGmoxFxUnAgABejHdDQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCLMWRmVeSWpSXmKPExsWy7bCSvG6a0KY0gx8NxhZPd8xktbi/+DOL
+	xaHNW9ktbh7YyWRxceZdFou+Fw+ZLTY9vsZqcXnXHDaLng1bWS1mnN/HZLH2yF12i2Wb/jBZ
+	LNr6hd2B12PxnpdMHptWdbJ53Lm2h81j85J6j74tqxg9Pm+S8zj19TN7AHsUl01Kak5mWWqR
+	vl0CV8aBRzPYC74JVexq38vYwDhDoIuRk0NCwERi2d1/TF2MXBxCArsZJd7e+M0GkZCR+N92
+	jB3CFpZY+e85mC0k0Mwk8eKfehcjBwebgK7E2e05IGERgXSJSXe+soDMYRZYxySxc+VEVpAa
+	YQEniW1nlUBqWARUJZ42g4Q5OXgFbCV2XdrKCjFeXmL1hgPMExh5FjAyrGKUTC0ozk3PLTYs
+	MMpLLdcrTswtLs1L10vOz93ECA5ILa0djHtWfdA7xMjEwXiIUYKDWUmEt6t0Q5oQb0piZVVq
+	UX58UWlOavEhRmkOFiVx3m+ve1OEBNITS1KzU1MLUotgskwcnFINTAyrF7o4/z555/Lp6dJX
+	rxau9SuRvLRs67Mti2I5trw/XbXe5Y7/LanfwfauJ9UFRbacvGWbdy5x05ENMVGZp1icQs0v
+	a8s96Vt/vy/3ofBO7ykp87cwf7pjpvqvbc0F3qWs/5JDnJNc/tUq5hiKXH1+5UtK1BOJGesd
+	DbcGHv/6SF+Q8UHe4imi1jNVtPKDXvHmOhtVx53ZNPnL57OMl3uNJ4gfNr/ezvN0ofAXPt+S
+	vQKprDs2xj6RjHm21+L+jbfqrDzHTy2cFlHQ87d+woq4zpCI5a9YJgVt1Z8500tdU35ThI3t
+	FzHXLZNYnLV2/UzS5Vgh7ip1wznZ9M+WpKRKhqWsZjtUlibOWFH1jVuJpTgj0VCLuag4EQAk
+	pH9wtwIAAA==
+X-CMS-MailID: 20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e
+References: <CGME20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Exynos7885 SoC has a DWC3 USB Controller with Exynos USB PHY which in
-theory supports USB3 SuperSpeed, but is only used as USB2 in all known
-devices.
+There is a possibility of getting page fault if the overall
+buffer size is not aligned to 256bytes. Since MFC does read
+operation only and it won't corrupt the data values even if
+it reads the extra bytes.
+Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
+and V4L2_PIX_FMT_NV21M pixel format.
 
-These clocks are needed for everything related to USB.
-
-While at it, also remove the CLK_SET_RATE_PARENT capability of
-CLK_MOUT_FSYS_USB30DRD_USER, since it's not actually needed.
-
-Signed-off-by: David Virag <virag.david003@gmail.com>
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos7885.c | 71 ++++++++++++++++++++++------
- 1 file changed, 57 insertions(+), 14 deletions(-)
+ .../media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c    | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
-index a0c9b7cc6942..fc42251731ed 100644
---- a/drivers/clk/samsung/clk-exynos7885.c
-+++ b/drivers/clk/samsung/clk-exynos7885.c
-@@ -20,7 +20,7 @@
- #define CLKS_NR_TOP			(CLK_MOUT_SHARED1_PLL + 1)
- #define CLKS_NR_CORE			(CLK_GOUT_TREX_P_CORE_PCLK_P_CORE + 1)
- #define CLKS_NR_PERI			(CLK_GOUT_WDT1_PCLK + 1)
--#define CLKS_NR_FSYS			(CLK_MOUT_FSYS_USB30DRD_USER + 1)
-+#define CLKS_NR_FSYS			(CLK_FSYS_USB30DRD_REF_CLK + 1)
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+index 73f7af674c01..03c957221fc4 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -498,8 +498,8 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_mfc_ctx *ctx)
+ 	case V4L2_PIX_FMT_NV21M:
+ 		ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
+ 		ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
+-		ctx->luma_size = calc_plane(ctx->stride[0], ctx->img_height);
+-		ctx->chroma_size = calc_plane(ctx->stride[1], (ctx->img_height / 2));
++		ctx->luma_size = calc_plane(ctx->img_width, ctx->img_height);
++		ctx->chroma_size = calc_plane(ctx->img_width, (ctx->img_height >> 1));
+ 		break;
+ 	case V4L2_PIX_FMT_YUV420M:
+ 	case V4L2_PIX_FMT_YVU420M:
+@@ -539,9 +539,11 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_mfc_ctx *ctx)
+ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+ {
+ 	unsigned int mb_width, mb_height;
++	unsigned int default_size;
  
- /* ---- CMU_TOP ------------------------------------------------------------- */
+ 	mb_width = MB_WIDTH(ctx->img_width);
+ 	mb_height = MB_HEIGHT(ctx->img_height);
++	default_size = (mb_width * mb_height) * 256;
  
-@@ -686,30 +686,56 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
- /* ---- CMU_FSYS ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_FSYS (0x13400000) */
--#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER	0x0100
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER	0x0120
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER	0x0140
--#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER	0x0160
--#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER	0x0180
--#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK	0x2030
--#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN	0x2034
--#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK	0x2038
--#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN	0x203c
--#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK	0x2040
--#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN	0x2044
-+#define PLL_LOCKTIME_PLL_USB				0x0000
-+#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER		0x0100
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER		0x0120
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER		0x0140
-+#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER		0x0160
-+#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER		0x0180
-+#define PLL_CON0_PLL_USB				0x01a0
-+#define CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE		0x200c
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK		0x2030
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN		0x2034
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK		0x2038
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN		0x203c
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK		0x2040
-+#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN		0x2044
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL	0x2068
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0	0x206c
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1	0x2070
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY	0x2074
-+#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK		0x2078
- 
- static const unsigned long fsys_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_USB,
- 	PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
- 	PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
-+	PLL_CON0_PLL_USB,
-+	CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK,
- 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY,
-+	CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK,
-+};
-+
-+static const struct samsung_pll_rate_table pll_usb_rate_table[] __initconst = {
-+	PLL_35XX_RATE(26 * MHZ, 50000000U, 400, 13, 4),
-+};
-+
-+static const struct samsung_pll_clock fsys_pll_clks[] __initconst = {
-+	PLL(pll_1418x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_USB, PLL_CON0_PLL_USB,
-+	    pll_usb_rate_table),
- };
- 
- /* List of parent clocks for Muxes in CMU_FSYS */
-@@ -718,6 +744,7 @@ PNAME(mout_fsys_mmc_card_user_p)	= { "oscclk", "dout_fsys_mmc_card" };
- PNAME(mout_fsys_mmc_embd_user_p)	= { "oscclk", "dout_fsys_mmc_embd" };
- PNAME(mout_fsys_mmc_sdio_user_p)	= { "oscclk", "dout_fsys_mmc_sdio" };
- PNAME(mout_fsys_usb30drd_user_p)	= { "oscclk", "dout_fsys_usb30drd" };
-+PNAME(mout_usb_pll_p)			= { "oscclk", "fout_usb_pll" };
- 
- static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	MUX(CLK_MOUT_FSYS_BUS_USER, "mout_fsys_bus_user", mout_fsys_bus_user_p,
-@@ -731,12 +758,16 @@ static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
- 	MUX_F(CLK_MOUT_FSYS_MMC_SDIO_USER, "mout_fsys_mmc_sdio_user",
- 	      mout_fsys_mmc_sdio_user_p, PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
- 	      4, 1, CLK_SET_RATE_PARENT, 0),
--	MUX_F(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
-+	MUX(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
- 	      mout_fsys_usb30drd_user_p, PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
--	      4, 1, CLK_SET_RATE_PARENT, 0),
-+	      4, 1),
-+	nMUX_F(CLK_MOUT_USB_PLL, "mout_usb_pll", mout_usb_pll_p,
-+	    PLL_CON0_PLL_USB, 4, 1, CLK_SET_RATE_PARENT, 0),
- };
- 
- static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
-+	GATE(CLK_FSYS_USB20PHY_CLKCORE, "clk_fsys_usb20phy_clkcore", "mout_usb_pll",
-+	     CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE, 21, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_GOUT_MMC_CARD_ACLK, "gout_mmc_card_aclk", "mout_fsys_bus_user",
- 	     CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK, 21, 0, 0),
- 	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
-@@ -752,9 +783,21 @@ static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_MMC_SDIO_SDCLKIN, "gout_mmc_sdio_sdclkin",
- 	     "mout_fsys_mmc_sdio_user", CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
- 	     21, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_20PHYCTRL, "clk_fsys_usb30drd_aclk_20phyctrl",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_0, "clk_fsys_usb30drd_aclk_30phyctrl_0",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_1, "clk_fsys_usb30drd_aclk_30phyctrl_1",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_BUS_CLK_EARLY, "clk_fsys_usb30drd_bus_clk_early",
-+	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY, 21, 0, 0),
-+	GATE(CLK_FSYS_USB30DRD_REF_CLK, "clk_fsys_usb30drd_ref_clk", "mout_fsys_usb30drd_user",
-+	     CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK, 21, 0, 0),
- };
- 
- static const struct samsung_cmu_info fsys_cmu_info __initconst = {
-+	.pll_clks		= fsys_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(fsys_pll_clks),
- 	.mux_clks		= fsys_mux_clks,
- 	.nr_mux_clks		= ARRAY_SIZE(fsys_mux_clks),
- 	.gate_clks		= fsys_gate_clks,
+ 	if (IS_MFCV12(ctx->dev)) {
+ 		switch (ctx->src_fmt->fourcc) {
+@@ -549,8 +551,8 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+ 		case V4L2_PIX_FMT_NV21M:
+ 			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+ 			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+-			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
+-			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
++			ctx->luma_size = ALIGN(default_size, 256);
++			ctx->chroma_size = ALIGN(default_size / 2, 256);
+ 			break;
+ 		case V4L2_PIX_FMT_YUV420M:
+ 		case V4L2_PIX_FMT_YVU420M:
 -- 
-2.46.0
+2.17.1
 
