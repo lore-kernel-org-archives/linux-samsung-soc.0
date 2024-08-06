@@ -1,50 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828321C37A9;
-	Tue,  6 Aug 2024 14:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0C71BC08F;
+	Tue,  6 Aug 2024 14:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955147; cv=none; b=EGXkAKyQeId82VEMnpzc6GB7U+xtMzACvqkFgVg0adfT0OQiBYbs6sCCn8s5kUCD7UYG4RrWPCiZrG53gPNMvHcEzQtZ6QhFuQ+j7a2dnImQ1H3iZZLjD2pB8+T2896CbRkU7cnE7ZsdAjScfJ+CrHOh5SuaRXt0sluICI6Ee1g=
+	t=1722956270; cv=none; b=ZGNcfpwbPzRRqQRRNSikM7NT27x2TsvM+23w77Wtcg/zjw4CuBZJWDDjd9j/Bq6chh7JJ7RJC0OGyK3Msw6akbQLrwotUeIdsX9njcFVun6i+6nvQNiWtmEM0fuUhk5e+8j4uUj80YwVIXBMg5tb8nWRHj/kEJCs0cNuj79veFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955147; c=relaxed/simple;
-	bh=LlJd0JqfCFMd1ko3jYxgFwtygfqrxveC1OJ2+6g06nY=;
+	s=arc-20240116; t=1722956270; c=relaxed/simple;
+	bh=WvUKeYGEnDCMv+ueazaSl3PBo1+JLiRTjhrQ6VKYw0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CahjqVJfnyrLjukLWPobK/lKgm8s2EZrV0mN0ud2C9ZN36j4EFZqin7KmXyeWdQyw/LmFpdZkISNHZI9IiC1+EXMalyTwhLm9CiXi3Rzxv4RO+8GGgpGpVRzFCZ+axvVkSJhZHNm0dYevf/nL73AxyvuqRscuAAkzzJxv0z1SNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3qkA1Xb; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnNfSHwymi0GpJFC1Ub3ZzGQwQPnW+fBpE5IcaYZPqSKCw8RzigMqSOx4CeCjOfivaOMDOFWM99pMeeZ3XmDUi2MC39Za8DF70yvBU/VSxI375EcbQfycX+ToGWBWD59OoYkNxalzdKJR43MSLord1yedjwOTA0SBTvNHLsb2SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rV4GqNrJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3qkA1Xb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA88DC4AF09;
-	Tue,  6 Aug 2024 14:39:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rV4GqNrJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AADC4AF12;
+	Tue,  6 Aug 2024 14:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722955147;
-	bh=LlJd0JqfCFMd1ko3jYxgFwtygfqrxveC1OJ2+6g06nY=;
+	s=k20201202; t=1722956270;
+	bh=WvUKeYGEnDCMv+ueazaSl3PBo1+JLiRTjhrQ6VKYw0Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d3qkA1XbArqai7eQhaDGl6mj2urFZL6dyjGarkuGqyfZ5pCxxr1RHoYYkp3OLZ8kv
-	 vemAaT5KGTATs+McDjNeb3LJDyHfax5boLJmitgptdsFytXjZcxf4mn0IMEekmDyYU
-	 GEmRKo7qRgqA/QbcDVEwwnEF6xnmj6hx4zlNNDCg9BCPstIX9Hn+KwhkrTeZHv97YP
-	 nZy6YQsiW1FffZR6WhWc663CUxJr0UDA0Q3bMt4KOgCsfqwEdnEIyX/8Ma7cP0/Cxc
-	 OB9NA5NI93UZ6y1ExyOZCbRpgOZ4iFyqWPzrZ56GRB7zO1D+j7vv4nySkRB6u4+CpJ
-	 /UHyhC1pUUF9w==
-Date: Tue, 6 Aug 2024 08:39:05 -0600
+	b=rV4GqNrJfetI/fwIhKY+0Wo5JSVDXU4OgOt9bnDmMHKmri6JYdaWmUF5bZxtGCEQB
+	 e4yzlsC5qpzB6Xn6lDkrKsrqxpHikymw0WYNJUcspOQNFGWJ0FRtP02OM9AMAZQrl0
+	 L7rop4/B1k0t6PoOat3/X9rRz4Q0UK7KQkMnxP4KAIIlTUXRyKKS+FhWqKt90Na8OW
+	 qOzEnC6xD8dmQGece5TAEWe6zkiIGooO62y0PCNkQRI3Dvx7aLQbylH67f5LYO1r5R
+	 Ab6Z/OcZTY5VHXQOCEggiW+zfKaHT4NIfsQmMZm9XWmuZvfFoJ9j+yQ3J0r0yUWn5G
+	 QzinxQ5lWN3BA==
+Date: Tue, 6 Aug 2024 08:57:48 -0600
 From: Rob Herring <robh@kernel.org>
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Anand Moon <linux.amoon@gmail.com>
-Subject: Re: [PATCH v2 6/6] dt-bindings: thermal: samsung,exynos: remove
- outdated information on trip point count
-Message-ID: <20240806143905.GA1484799-robh@kernel.org>
-References: <CGME20240731211456eucas1p1b15c30b57274ef5837b57e594d061f43@eucas1p1.samsung.com>
- <20240731211444.59315-1-m.majewski2@samsung.com>
+To: Swathi K S <swathi.ks@samsung.com>
+Cc: krzk@kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
+	richardcochran@gmail.com, mcoquelin.stm32@gmail.com, andrew@lunn.ch,
+	alim.akhtar@samsung.com, linux-fsd@tesla.com,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
+	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
+	ssiddha@tesla.com, jayati.sahu@samsung.com,
+	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v4 1/4] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Message-ID: <20240806145748.GA1502402-robh@kernel.org>
+References: <20240730091648.72322-1-swathi.ks@samsung.com>
+ <CGME20240730092855epcas5p49902519f31bddcfe7da8f4b96a7d0527@epcas5p4.samsung.com>
+ <20240730091648.72322-2-swathi.ks@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -53,34 +56,166 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240731211444.59315-1-m.majewski2@samsung.com>
+In-Reply-To: <20240730091648.72322-2-swathi.ks@samsung.com>
 
-On Wed, Jul 31, 2024 at 11:14:42PM +0200, Mateusz Majewski wrote:
-> > Do I understand it correctly that the patch actually removes an
-> > outdated description of *driver* implementation, and not outdated
-> > hardware description?
+On Tue, Jul 30, 2024 at 02:46:45PM +0530, Swathi K S wrote:
+> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+> Ethernet YAML schema to enable the DT validation.
 > 
-> Correct.
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+> ---
+>  .../devicetree/bindings/net/snps,dwmac.yaml   |  5 +-
+>  .../devicetree/bindings/net/tesla,ethqos.yaml | 91 +++++++++++++++++++
+>  2 files changed, 94 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/tesla,ethqos.yaml
 > 
-> > If so, then maybe it makes sense to rework the
-> > patch title and commit message in a way Rob suggests. I.e. rather than
-> > stating that the patch removes an outdated information, instead
-> > mention it removes *software* (driver) description which was
-> > incorrectly added earlier. Because bindings are only meant for
-> > hardware description and should be completely independent of driver's
-> > side of things. Also in that case it probably doesn't make much sense
-> > referencing that commit for using set_trips ops. Just my two cents.
-> 
-> Makes sense, what do you think about this?
-> 
-> dt-bindings: thermal: samsung,exynos: remove driver-specific information
-> 
-> The number of supported trip points was only limited by the driver
-> implementation at the time, which mapped each trip point defined in the
-> devicetree source file to a hardware trip point. An implementation that
-> does not have this limitation is possible; indeed, that is how the
-> driver works currently. Therefore, this information should be removed
-> from the bindings description, which are meant to be independent from
-> the details of the driver implementation.
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 3eb65e63fdae..0da11fe98cec 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -98,6 +98,7 @@ properties:
+>          - snps,dwxgmac-2.10
+>          - starfive,jh7100-dwmac
+>          - starfive,jh7110-dwmac
+> +        - tesla,fsd-ethqos
+>  
+>    reg:
+>      minItems: 1
+> @@ -121,7 +122,7 @@ properties:
+>  
+>    clocks:
+>      minItems: 1
+> -    maxItems: 8
+> +    maxItems: 10
+>      additionalItems: true
+>      items:
+>        - description: GMAC main clock
+> @@ -133,7 +134,7 @@ properties:
+>  
+>    clock-names:
+>      minItems: 1
+> -    maxItems: 8
+> +    maxItems: 10
+>      additionalItems: true
+>      contains:
+>        enum:
+> diff --git a/Documentation/devicetree/bindings/net/tesla,ethqos.yaml b/Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> new file mode 100644
+> index 000000000000..9246b0395126
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/tesla,ethqos.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/tesla,ethqos.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: FSD Ethernet Quality of Service
+> +
+> +maintainers:
+> +  - Swathi K S <swathi.ks@samsung.com>
+> +
+> +description:
+> +  dwmmac based tesla ethernet devices which support Gigabit
+> +  ethernet.
 
-LGTM
+Please write complete sentences.
+
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: tesla,fsd-ethqos.yaml
+
+???
+
+Filename matching compatible means for compatible string 
+"tesla,fsd-ethqos" the filename should be tesla,fsd-ethqos.yaml.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 5
+> +    maxItems: 10
+> +
+> +  clock-names:
+> +    minItems: 5
+> +    maxItems: 10
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  phy-mode:
+> +    $ref: ethernet-controller.yaml#/properties/phy-connection-type
+
+No need for this. phy-mode should already be included by snps,dwmac.yaml 
+including ethernet-controller.yaml.
+
+Though you may want to define what subset of modes are valid.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - iommus
+> +  - phy-mode
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/fsd-clk.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    ethernet_1: ethernet@14300000 {
+
+Drop unused label.
+
+> +              compatible = "tesla,fsd-ethqos";
+> +              reg = <0x0 0x14300000 0x0 0x10000>;
+> +              interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+> +              clocks = <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_PTP_REF_I>,
+> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_ACLK_I>,
+> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_HCLK_I>,
+> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_RGMII_CLK_I>,
+> +                       <&clock_peric PERIC_EQOS_TOP_IPCLKPORT_CLK_RX_I>,
+> +                       <&clock_peric PERIC_BUS_D_PERIC_IPCLKPORT_EQOSCLK>,
+> +                       <&clock_peric PERIC_BUS_P_PERIC_IPCLKPORT_EQOSCLK>,
+> +                       <&clock_peric PERIC_EQOS_PHYRXCLK_MUX>,
+> +                       <&clock_peric PERIC_EQOS_PHYRXCLK>,
+> +                       <&clock_peric PERIC_DOUT_RGMII_CLK>;
+> +              clock-names = "ptp_ref",
+> +                            "master_bus",
+> +                            "slave_bus",
+> +                            "tx",
+> +                            "rx",
+> +                            "master2_bus",
+> +                            "slave2_bus",
+> +                            "eqos_rxclk_mux",
+> +                            "eqos_phyrxclk",
+> +                            "dout_peric_rgmii_clk";
+> +              pinctrl-names = "default";
+> +              pinctrl-0 = <&eth1_tx_clk>, <&eth1_tx_data>, <&eth1_tx_ctrl>,
+> +                          <&eth1_phy_intr>, <&eth1_rx_clk>, <&eth1_rx_data>,
+> +                          <&eth1_rx_ctrl>, <&eth1_mdio>;
+> +              iommus = <&smmu_peric 0x0 0x1>;
+> +              phy-mode = "rgmii-id";
+> +    };
+> +
+> +...
+> -- 
+> 2.17.1
+> 
