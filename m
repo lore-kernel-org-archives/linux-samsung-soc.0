@@ -1,171 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6E11386BF;
-	Wed,  7 Aug 2024 15:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0567D3F5;
+	Wed,  7 Aug 2024 17:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723044033; cv=none; b=Ue9DL0skDW5O87VhxYqrjd2h28zdskKEtmjbVEbVQ0NywuCtC3+wigR3SSSUvJ/S0AaCjJ00b1JxO2/ndUCo+StyI7saSF7mjcUi1E5xkjXou5I3jIM0caUtVDdvrQoGGYbjVVvLgPkMmRn74ZyggjEJPQEXYJAqpNtHMSGYHO8=
+	t=1723051721; cv=none; b=Mhky9J1/TuR67i59M9c5GWao3aXEDyChcgtj1C+CYz5m5XGgNNhC6sdXiwAxVV9GEaAGbEZ7Uke0f7XUFE6UW/b/iRMS4qzgMAQzXAlBjrF+dh9MwDR5QBcwqRicHYo5UKv150Egg68mAcNFCiRo2whSk1lOvjua6E9QcXWwBck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723044033; c=relaxed/simple;
-	bh=YlpQmJrhyECWPsq0lnBnTlqDrRPIPgf4q9XConLogmU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=mCq1ofPwsJxTE6fLTbf4yqD2jWoFUF8g/lP/ouhN9kVQ3PSVK7Fbdj5aG46cRyV45LMEwnWlwErJeZdcA304tHG83U4W0lecvU8KzVurHRgydWgkHNUj+dgSwYKdMV1dhZfvDwI5DI+rRIBbd8PeLNqqG4y5rlkljqXh3TT1xIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJh1EBTW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723051721; c=relaxed/simple;
+	bh=MUALS8Umpq1keJgbRfbbRTcK0j1X8drt15taBBEiMbw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ms74Gz5umapLz1oLc+XpY+anwLnf0W1kFKs0R3/eFsY5pnsKNZkHTwOXOKHaXQX83dLLWZtBn2IijBTaRBizi8TPRYTzKum0PRDlWXCFCuWj63/4Mj3+mnmKy7txtWLU/2Du4ZP67SfqZXLSfNlXlu361Aulx7SmOaD3+xcH3rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2b8pU1Z; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJh1EBTW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FCBC32781;
-	Wed,  7 Aug 2024 15:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723044030;
-	bh=YlpQmJrhyECWPsq0lnBnTlqDrRPIPgf4q9XConLogmU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=dJh1EBTWR1/j4GE727DyeNk0zlpojwDLkRuKfcgQBeA7u1KbhwlFp11PkKoX+Zmh9
-	 YWlB3joHo4B/IwI24kE4v3ofvQQ9SIP0kOX1gr/5tDsKxuK/Mp4mtjQmP9zVzTJ7ol
-	 Viq3zgtDy5ZVXsQkmTs8YRwu27diSg5r8YQwH3wef/YmrFvkFB31c+VHrIvAerEHeb
-	 dBkjVBcihcukYJ1KIO04wcAXC6GRIxq0dVnCZ8VKJoOE2G0SEjfhtM8Fr+19CCSbrI
-	 VaRkGft6pQzvxNe4qVnOy3i82rdWz5Nq4KP7dKiUGA5m6miqwk+bxFowRLHzRUi/YD
-	 jH6iBwM+yyZ9A==
-Date: Wed, 07 Aug 2024 09:20:28 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2b8pU1Z"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so33936a12.2;
+        Wed, 07 Aug 2024 10:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723051718; x=1723656518; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BpG2opqgTiMlM/9bwByG7p5GesbXYmkZCBUf7QukF2s=;
+        b=d2b8pU1Z/B363hNdrSJNrFriWHEYg2HG4Ro0UT5hx0UKNN2bE1c/dm4ahtSlkwxivQ
+         me2+OZfcV444+OpaCFx+PWkRydAHkKQWCbXSaIl3ZEW9ADb3V+Z9Qls5R2I8FbGw26YH
+         PUPkHnyX4W384985pSgSjHgGscxHwZ6BQYl3zNhY5SiJk5nFBupwgwXDNL9hxtRFu7I0
+         nB3aZ1slvE9qEEufp6i1U8DjVKnlh9qy7R2/H/IkwkWMzdT7RjCUW1MZE8MovJALBzMl
+         +D+qAE9cI9BgzQ9KBUnwu9+5nqyGk9GkOnkR1hJS0lS1TmApxb1JpAKsp2Hi/EnSVWF2
+         dN6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723051718; x=1723656518;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BpG2opqgTiMlM/9bwByG7p5GesbXYmkZCBUf7QukF2s=;
+        b=ecuekpBUhHkyVYNJeMkN7107LuSCY10pHon15HF+1NBQQNCRsqjkoUAVAOTOzEIYua
+         WxU0umiVvcukhTZz31U8aacXnLmciwFe8ksLFVobnffASmfSrZ2eF2L9mu8Mv2CSvAUd
+         L65g53uslHGn2c6+zuckH8cXfE6zIhc2r/sj1CgpLdXVhUItW0C6Ir74k/6SqkkoYCab
+         J3ctLXvqz4Gi1g5TAA53v4SNI/SGEO6PJ91Sm6TX5QI1h9Esv3ICTLxT22YFEYTK1L9j
+         XBOzg8PUylTb1qn+2eXiKylGj++08MbLjt+43LAZWwdazOABfhpUx0dJ9Z5H7IucLEfJ
+         mY7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWoU55XCaD/cbW+YS/xS8c1JXINdN9qb2a8IsRjUdefsGOiPj7WmLE7xk6GUFeAwoYUKMmF2V+iBOYTPGu+za6bTPMTQHXf5v4hrwYI3JaZNwGziiKkLmtDJmrbcI+sN75JVpm39B9ZIwKP3MNSWPPMZcAnVYEhav7ZSZo5VnLV6BDY1D0=
+X-Gm-Message-State: AOJu0YxukKA7y13v1Y4sEVB+ue5W2hVHrH4F3XopYINV8532RWvdFUjy
+	8U3ibgksG4/G19oC5pbINmZeY24Jj/y9RSHNFPBDdvxzQrKV67nM
+X-Google-Smtp-Source: AGHT+IFyQ6tRnNYtpE0HntxxHcQ/7t4dWy9ZE8DPyHF015sSEv6HtzNOSolIxpqZww1lGBr2ZcuEFQ==
+X-Received: by 2002:a05:6402:718:b0:5a2:3453:aaf2 with SMTP id 4fb4d7f45d1cf-5b7f3cc5469mr13608697a12.10.1723051717370;
+        Wed, 07 Aug 2024 10:28:37 -0700 (PDT)
+Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83b82f308sm7200821a12.63.2024.08.07.10.28.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 10:28:37 -0700 (PDT)
+Message-ID: <225a94c3d0e8f70238aa9a486e7752ad6cb20283.camel@gmail.com>
+Subject: Re: [PATCH v1 08/10] arm64: dts: exynos: Add initial support for
+ exynos8895 SoC
+From: David Virag <virag.david003@gmail.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Sylwester
+ Nawrocki <s.nawrocki@samsung.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Wed, 07 Aug 2024 19:29:51 +0200
+In-Reply-To: <5274b8a1-b81c-3979-ed6c-3572f6a6cfc2@gmail.com>
+References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+	 <20240807082843.352937-9-ivo.ivanov.ivanov1@gmail.com>
+	 <e6b4e0d8-7183-4ff4-a373-cb1c0c98d993@kernel.org>
+	 <5274b8a1-b81c-3979-ed6c-3572f6a6cfc2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
-In-Reply-To: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <172304385992.2508266.17941443539158891783.robh@kernel.org>
-Subject: Re: [PATCH v2 00/10] Add minimal Exynos8895 SoC and SM-G950F
- support
 
+On Wed, 2024-08-07 at 14:20 +0300, Ivaylo Ivanov wrote:
+>=20
+> On 8/7/24 12:20, Krzysztof Kozlowski wrote:
+> > On 07/08/2024 10:28, ivo.ivanov.ivanov1@gmail.com=C2=A0wrote:
+> > > From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+[snip]
+> > >=20
+> > > +
+> > > +	timer {
+> > > +		compatible =3D "arm,armv8-timer";
+> > > +		/* Hypervisor Virtual Timer interrupt is not
+> > > wired to GIC */
+> > > +		interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8)
+> > > | IRQ_TYPE_LEVEL_LOW)>,
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0 <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8)
+> > > | IRQ_TYPE_LEVEL_LOW)>,
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0 <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8)
+> > > | IRQ_TYPE_LEVEL_LOW)>,
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0 <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8)
+> > > | IRQ_TYPE_LEVEL_LOW)>;
+> > > +		clock-frequency =3D <26000000>;
+> > Hm? I think this was explicitly disallowed.
+>=20
+> It's weird. Without the clock-frequency property it fails early
+> during the
+>=20
+> boot process and I can't get any logs from pstore or simple-
+> framebuffer.
+>=20
+> Yet it's not set on similar platforms (exynos7885, autov9). Perhaps I
+>=20
+> could alias the node and set it in the board device tree..? That
+> doesn't
+>=20
+> sound right.
 
-On Wed, 07 Aug 2024 12:08:48 +0300, Ivaylo Ivanov wrote:
-> Hi folks,
-> 
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
-> 
-> When sending out the V1 series it turned out that I had sendemail.from
-> enabled for some reason. I'm really sorry for the inconvenience caused by
-> that.
-> 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC.
-> 
-> The support added in this series consists of:
-> * cpus
-> * pinctrl
-> * gpio
-> * simple-framebuffer
-> * pstore
-> 
-> This is enough to reach a minimal initramfs shell using an upstream kernel.
-> More platform support will be added in the future.
-> 
-> The preferred way to boot this device is by using a small shim bl called
-> uniLoader [1], which packages the mainline kernel and DT and jumps to
-> the kernel. This is done in order to work around some issues caused by
-> the stock, and non-replacable Samsung S-Boot bootloader. For example,
-> S-Boot leaves the decon trigger control unset, which causes the framebuffer
-> to not refresh.
-> 
-> [1] https://github.com/ivoszbg/uniLoader
-> 
-> Changes in v2:
-> - No patch changes were made, only fixed the issues with my git send-email
-> 
-> Kind regards,
-> 
-> Ivaylo.
-> 
-> Ivaylo Ivanov (10):
->   dt-bindings: arm: cpus: Add Samsung Mongoose M2
->   dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
->   soc: samsung: exynos-chipid: add exynos8895 SoC support
->   dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
->   pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
->   dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
->   dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
->   arm64: dts: exynos: Add initial support for exynos8895 SoC
->   dt-bindings: arm: samsung: Document dreamlte board binding
->   arm64: dts: exynos: Add initial support for Samsung Galaxy S8
-> 
->  .../devicetree/bindings/arm/cpus.yaml         |    1 +
->  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
->  .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
->  .../samsung,pinctrl-wakeup-interrupt.yaml     |    1 +
->  .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
->  .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
->  arch/arm64/boot/dts/exynos/Makefile           |    1 +
->  .../boot/dts/exynos/exynos8895-dreamlte.dts   |  126 ++
->  .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1378 +++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  253 +++
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  137 ++
->  drivers/pinctrl/samsung/pinctrl-exynos.h      |   10 +
->  drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
->  drivers/soc/samsung/exynos-chipid.c           |    1 +
->  15 files changed, 1920 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> 
-> --
-> 2.34.1
-> 
-> 
-> 
+This sounds like CNTFRQ_EL0 is not set properly by the firmware.
+Now, if I read the documentation properly, this can be only set from
+EL3, which in your case is... not easy.
 
+On my Galaxy A8 2018 (Exynos7885) I remember the old Android 8
+bootloader not being able to boot mainline, but Android 9 bootloaders
+did. I did not take the time to check if it was related to this, but it
+is my guess.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Your best bet is that maybe Samsung decided to fix this on the latest
+bootloader, and upgrading will fix it. (Though if it's already on an
+Android 9 based bootloader and it's still broken, my guess is a newer
+version won't fix it, but who knows)
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Or... Exynos8895 has a known bootrom vulnerability, you could force the
+SoC into USB Download mode, and use the exploit to boot into a patched
+bootloader. This is of course pretty tedious.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+Your only actually relistic choice is submitting without this line and
+manually adding it while actually using the phone (or making the
+chainloaded bootloader/boot wrapper add it).
 
-  pip3 install dtschema --upgrade
+Not optimal, but it is what it is...
 
-
-New warnings running 'make CHECK_DTBS=y exynos/exynos8895-dreamlte.dtb' for 20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com:
-
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@164b0000: 'bt-hostwake', 'gpa0', 'gpa1', 'gpa2', 'gpa3', 'gpa4', 'key-power', 'key-voldown', 'key-volup', 'key-wink', 'pcie_wake', 'uart1-btsleep', 'uart1-bus', 'uart1-default', 'wlan_host_wake' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@13e60000: 'gph0', 'gph1', 'gph3' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@14080000: 'gph2' does not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@11050000: 'gpi0', 'gpi1', 'ufs-refclk-out', 'ufs-rst-n' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@11430000: 'bt-btwake', 'bt-en', 'cfg-wlanen', 'gpj0', 'gpj1', 'pcie0_clkreq', 'pcie0_clkreq_output', 'pcie0_perst', 'pcie1_clkreq', 'pcie1_clkreq_output', 'pcie1_perst', 'sd2-bus-width1', 'sd2-bus-width4', 'sd2-clk', 'sd2-clk_fast_slew_rate_1x', 'sd2-clk_fast_slew_rate_2x', 'sd2-clk_fast_slew_rate_3x', 'sd2-clk_fast_slew_rate_4x', 'sd2-cmd' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@15a30000: 'gpb2', 'hsi2c0-bus', 'speedy-bus' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@104d0000: 'gpb1', 'gpd0', 'gpd1', 'gpd2', 'gpd3', 'gpe7', 'gpf1', 'hs-i2c14-bus', 'hsi2c10-bus', 'hsi2c11-bus', 'hsi2c12-bus', 'hsi2c5-bus', 'hsi2c6-bus', 'hsi2c7-bus', 'hsi2c8-bus', 'hsi2c9-bus', 'motor_mode', 'motor_rst_n', 'pwm-tout1', 'spi2-bus', 'spi2-cs', 'spi2-cs-func', 'spi3-bus', 'spi3-cs', 'spi3-cs-func', 'spi4-bus', 'spi4-cs', 'spi4-cs-func', 'spi5-bus', 'spi5-cs', 'spi5-cs-func', 'uart0-bus', 'uart2-bus-dual', 'uart2-bus-single', 'uart3-bus-dual', 'uart3-bus-single', 'uart4-bus-dual', 'uart4-bus-single', 'uart5-bus-dual', 'uart5-bus-single' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@10980000: 'decon_f_te_off', 'decon_f_te_on', 'gpb0', 'gpc0', 'gpc1', 'gpc2', 'gpc3', 'gpe1', 'gpe2', 'gpe3', 'gpe4', 'gpe5', 'gpe6', 'gpf0', 'gpg0', 'gpk0', 'hrm-irq', 'hrm-irqidle', 'hrm-irqsleep', 'hsi2c1-bus', 'hsi2c1-bus-in', 'hsi2c13-bus', 'hsi2c14-bus', 'hsi2c15-bus', 'hsi2c16-bus', 'hsi2c17-bus', 'hsi2c18-bus', 'hsi2c19-bus', 'hsi2c2-bus', 'hsi2c2-bus-in', 'hsi2c20-bus', 'hsi2c21-bus', 'hsi2c22-bus', 'hsi2c23-bus', 'hsi2c24-bus', 'hsi2c25-bus', 'hsi2c26-bus', 'hsi2c27-bus', 'hsi2c27-bus-in', 'hsi2c28-bus', 'hsi2c28-bus-in', 'hsi2c29-bus', 'hsi2c3-bus', 'hsi2c3-bus-in', 'hsi2c30-bus', 'hsi2c31-bus', 'hsi2c32-bus', 'hsi2c4-bus', 'hsi2c4-bus-in', 'spi0-bus', 'spi0-cs', 'spi0-cs-func', 'spi1-bus', 'spi1-cs', 'spi1-cs-func', 'spi10-bus', 'spi10-cs', 'spi10-cs-func', 'spi11-bus', 'spi11-cs', 'spi11-cs-func', 'spi12-bus', 'spi12-cs', 'spi12-cs-func', 'spi13-bus', 'spi13-cs', 'spi13-cs-func', 'spi14-bus', 'spi14-cs', 'spi14-cs-func', 'spi15-bus', 'spi15-cs', 'spi15-cs-func', 'spi6-bus', 'spi6-cs', 'spi6-cs-func', 'spi7-bus', 'spi7-cs', 'spi7-cs-func', 'spi8-bus', 'spi8-bus-suspend', 'spi8-cs', 'spi8-cs-func', 'spi8-cs-func-suspend', 'spi9-bus', 'spi9-cs', 'spi9-cs-func', 'spi9-idle', 'uart10-bus-dual', 'uart10-bus-single', 'uart11-bus-dual', 'uart11-bus-single', 'uart12-bus-dual', 'uart12-bus-single', 'uart13-bus-dual', 'uart13-bus-single', 'uart14-bus-dual', 'uart14-bus-single', 'uart15-bus-dual', 'uart15-bus-single', 'uart6-bus-dual', 'uart6-bus-single', 'uart7-bus-dual', 'uart7-bus-single', 'uart8-bus-dual', 'uart8-bus-single', 'uart9-bus-dual', 'uart9-bus-single' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-
-
-
-
+Best Regards,
+David
 
