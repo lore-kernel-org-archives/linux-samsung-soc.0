@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAC21CB335;
-	Wed,  7 Aug 2024 09:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49DA1CB30B;
+	Wed,  7 Aug 2024 09:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723021774; cv=none; b=hn73Q9/0Wcry2CZAvZr6oIVC4Rk3zJk+ybVZKCYEhJ5yNaiOMV1eU/YNAPowr8R+3U0cl3EtTD0dUMortsOGf3XTkoKOFuYqfmiw/D0y3DKLcHt0a9x+XZLD5Tue3jrFoWVSkUmqJbPS65BSrctvLYpucz4kuGJK4dgBtAWUF4o=
+	t=1723021857; cv=none; b=EWGAI9QrNE7WFFvTcbPCQmVZJWMeKgpRtD0vE/uw3qtE2Gcf0O+FNzvdjpGmTXFDALIHDgFKLgZufOoyEL7RBDdgPT0CAVK9iSpHmW0vffCn2CArLimp8t8ZCnF2tYHmkf2UTyXtqnRI8mZ640mM/hP6I29VaTz7ERkV7fx4MYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723021774; c=relaxed/simple;
-	bh=0WlnqTrOzmXNNs0iLMZLxaQmT6Sc0KJXZuV7pr4+9v0=;
+	s=arc-20240116; t=1723021857; c=relaxed/simple;
+	bh=VU++CE5msKYoAqUyR3mGZ/8V4ywx58Hkn97zVCsqh+E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mwEVG6saVDFuzCb6NOAR2404+4YSvl3cPS+TjZPvsD8/k2QF/jLkE32o3a57erD5fX+9TfUfeHJ60yYPmwPn1pPXu4CBWQKLvasIJopcCEHxgmqIrxu88pYTIbTINEiK3zqP1vHtiG7tjm56dt8aXmg5kfTH3BD3Vjl7iY3ysdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZOU1nkc+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=lETelTPAQUjwPc4mhgy/UtJguHAZ0AWKadw1sEGiEl0wHWGEM96oO9HBbQybKbWzlzRtdEX3sBSUgVbW7QOBBKrnhBW7a2RFJ3ZLbStgiE4fv8IMZ9vwp1i0l8f9EbljwZaJuaW95+7ZIzaaJYtJaBTP72VSqLi6lceTM3BYCHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAHdZ77f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOU1nkc+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 700EDC32782;
-	Wed,  7 Aug 2024 09:09:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAHdZ77f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40C50C4AF09;
+	Wed,  7 Aug 2024 09:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723021773;
-	bh=0WlnqTrOzmXNNs0iLMZLxaQmT6Sc0KJXZuV7pr4+9v0=;
+	s=k20201202; t=1723021856;
+	bh=VU++CE5msKYoAqUyR3mGZ/8V4ywx58Hkn97zVCsqh+E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZOU1nkc+IEykOO9A8UyqtkUfCrXxwkslkDGY6cxl4EOi2OpxsZYcutxxBZTeRbCIM
-	 Lch80sQQUhJwmtO47tA034zgOyqvAJ5vAU/LinsKW852aGiHbbMQIWq4WBcTfJw4Px
-	 klGX4+hByW5m9lz1VpWmpHV//wTFXTPpOIVAIY3D7BZPW7dOD1UtI+otU8tchJGNg+
-	 wtB9le4tuJAcVl9QdEGUUnqL/r0kj+7yR5bbNA30/8wR5bxziV66nqmNbFKEXEAWby
-	 EP3zo/kZKwqaliA996/8T+lY90pS9fS4sjlBBS9fI79uuXkmJMsOXhooAajK/aFuGk
-	 Y/VVH7DWz/wmg==
-Message-ID: <84283d1a-fe69-4adf-a93f-8d31a7a18c63@kernel.org>
-Date: Wed, 7 Aug 2024 11:09:28 +0200
+	b=rAHdZ77fP00qPBigA4sQAZpVQgG/LeWNTttDFl47C6RDRqVfpxPZ7jRMaPhuJSGyr
+	 rg9gnqLb0QprF5jUZvKkc4p82/zFqF6OIKJPufbCxPA8C4DNHWlqGH+CE7Gnaa/Uz5
+	 P7DQY6+5VhsOi/mCcsf+ZzqkCvEd+CIYEXnyFaDTJrepxuRuuwkf14QUj31W7qVpZU
+	 DRQbywdiDSlyTWY2YiqhjtuA7h+SfORI7CMrnJRpq5Xpr8SNWQq3lzPsFJ0YWadNEq
+	 AXerh2dbs22lFBsE9cnin0tEniaBQP817CtSWAJLRYtSb8zqQJejCYlkvLtR0boqKo
+	 24vWR3J+//aGA==
+Message-ID: <e6f26cca-0266-492a-9e80-0894952b94b9@kernel.org>
+Date: Wed, 7 Aug 2024 11:10:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+Subject: Re: [PATCH v1 01/10] dt-bindings: arm: cpus: Add Samsung Mongoose M2
+To: ivo.ivanov.ivanov1@gmail.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
- <f217cd23-88a3-e8d5-641b-482734c8f2e0@gmail.com>
+ <20240807082843.352937-2-ivo.ivanov.ivanov1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,19 +90,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <f217cd23-88a3-e8d5-641b-482734c8f2e0@gmail.com>
+In-Reply-To: <20240807082843.352937-2-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/08/2024 11:06, Ivaylo Ivanov wrote:
-> Unfortunately, it turned out that I have an issue with my git
+On 07/08/2024 10:28, ivo.ivanov.ivanov1@gmail.com wrote:
+> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > 
-> configuration. I'm sorry for the inconvenience, I'll resend a V2
+> Add a compatible for the Samsung Mongoose M2, found in exynos8895.
 > 
-> without the sendemail.from.
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
+> index f308ff6c3..76df786ae 100644
+> --- a/Documentation/devicetree/bindings/arm/cpus.yaml
+> +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+> @@ -188,6 +188,7 @@ properties:
+>        - nvidia,tegra132-denver
+>        - nvidia,tegra186-denver
+>        - nvidia,tegra194-carmel
+> +      - samsung,mongoose-m2
+>        - qcom,krait
 
-"From" header is not a problem. It's ok. Did you mean something else?
+Please keep the list ordered, so s goes after q.
 
 Best regards,
 Krzysztof
