@@ -1,61 +1,59 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A4C1C9DD6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CA51E4871
 	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Aug 2024 11:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723031901; cv=none; b=Ki3b44dnG84xpfwl6hwBnJN4jh+GeaiU/Q7+A63eTwJoYURMGKwMzY6eyEYDym1kInaO5guEtMmrV5emCp8r1FisSJwPHMvfjIAGA+LMB+dOjiTn6LBe7OeD82kj/8VwGDhltPZlTgZwDlG5cXjT/DFsPloc94PHBs1lkdgp8R0=
+	t=1723031902; cv=none; b=DirOt9R93fmGCvHYIYH3uXePJg+QP/Zw54FkMpgYhdBfspkDs1wiOqfqmxbJ9jGbMEU/bKFD+1KFK01a/EJz87YLS0Z7hRXwGJwCDerRAGGkMBs7vQEYh7z7rNix0Fj+1bYlg2umo4JS8iKmgevDxhzOmBv76nqT8uA2fSAk74E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723031901; c=relaxed/simple;
-	bh=C0WfsFjQ+8vm0W8joRCkaLKnopigm0TpDNtG9k6jpMU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rWPUaP0xEQFA1MK70xo7Th8kHnXz+c3kl3cIL3w4wDVbgB6ZRYBT3kdOSm917rbFLIuP9GLC0K44ZEO1iVEm/xVebMjqAuzPmmdCQJ4xQc8rzZ9NBY998I3XqR31B4fzo4jP0kmAdjM5jkFmDhIXc0Pj9USfyXkE0lopmvuN9p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k2eSwrGT; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1723031902; c=relaxed/simple;
+	bh=OFBYbEbxE7IS+Qv7SDH4FfPtfE7Rg5E1zGlU0PewGMg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VKPPBxujG2X/iXSTTUZ4DwKoTW5+Jf/5z9gDbGNeJBEFbpCDhbRN5yGi76gf49Hn8nhcS1Gjy6KPWIIKjJEYkHM9HqObBP/+aAxm+PSgEAxPjKqJQIvbkcr2WoD1IMLmoXwOPcRK52DwUC6204sAPQfYW6kxdMpQ0y795jhfvhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blJDFxq/; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k2eSwrGT"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a728f74c23dso202229366b.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blJDFxq/"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f16d2f2b68so27545101fa.3
         for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Aug 2024 04:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1723031899; x=1723636699; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CMjvgficlM8E7OFHsCNQI4tsZ98VKn4/e3uEzM8rqJg=;
-        b=k2eSwrGT4N10qW1QpzRMc4fNJ+UOskao7bA0kjY4HGQynu6b4FfP9Y/pCdZ9vejS3n
-         UhZSueJakcbj9bE5EZYA3ZZ1S0c6B4xPsuLI0WySCC3wp5JaCLgzXNELHzcFW15pKE+2
-         /dugAdewdcCbuOI9A5awbaWyxbhmuoA/bpAw0ZDs/szv/meJL5WtrkK60IJwSPJWciHM
-         pu+CduJsxt3RGbnNUhMHP8dMK6TyxECk+xxei8nT/cq58QArjnn+MmcrLXo/MSbN07Da
-         dh5ZOqxBabsm/rXLxhanXBQHJfsy5EmqG898G4ZKT+u8ZYKHFVdj7nnbUCK2YT3QG2Ps
-         CxSA==
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QvuttAjkPLAVMHVOXYUgt5mVS3UMEYPJRu5N4V28dSg=;
+        b=blJDFxq/ORTmJmQPqk1w9Avq2jTyUhku4gIdJJi+XXJxTE+WrkbqWk5m27q7bQa5Dt
+         sqnkZyLiIHorhiCxkxlKytI8jaXyamYmpokBPlv5mefysHB3MFdD/w1sAjGl4tf3P/5m
+         7jMMMP76TbGgqufgR1hkY3kmuA0HM4Fg6sF/R0i5sc8y/hNAmBBeg1NDFnFyKtbMEgBV
+         DZLYtWbbX6gBsnF8V1eqxNqR22XcZm4bu2FoL7U61Ngt7sBWq6WD+TA3xNXDI3BWEpBs
+         NdY+Lf8iXGRXQvQ0FMsmQvwO42bQBsRu2Tna+Y4Z2kVJGc148ngyrZzM37D/kgtK3QtQ
+         maKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723031899; x=1723636699;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CMjvgficlM8E7OFHsCNQI4tsZ98VKn4/e3uEzM8rqJg=;
-        b=se2DuypwHlbKTWi1cAnedMUuNeZGaf6sLtG7A2t84YYeynDyFgPfFRmpsGG2ci9cCS
-         nlmnNX6+7uPB8gSD+D2221fVj8s9oyMQfgbd55orYtgTdjq2PRy0QwxjtJKDRyPWBjpX
-         7dPeDHuUX7au+19HKZQQwsnPU6IRnD31Nc16A3KlfSwtTGDsW5PZ7aOPKUN1SwTHRIST
-         oF2z+00waoZ37XsM9/JBRwPJGrVKt/L9SdQd/3wXALC0mgOpc1nR+poa4LAcclJzId31
-         QmWPp3fVl0xpFZfJjGEldC9L1Afyug+rjsj4zm0+V+0XeKTwoCkI/vxUXqYzhi/lh8P6
-         yTZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTZPGclAZ9caPM5906FbpBmeZGwmcK9dHLEAR8iNL6kDBDBeiMRBK0LkMacxSu8H4ZskT2Z9McxDLWkSKUCvukO+Z/SsFf16Yh7wCzXE6kNvM=
-X-Gm-Message-State: AOJu0YzZGcW9euqHN1nK89bb580pyxtlWhHzbTIytH6BGBFmSza3H7uy
-	9PICbJHFdP9sl+MaXQohipaUvqxDDL9xjTzNYkUX0oXjVasbIAe8vW8d1lggz+o=
-X-Google-Smtp-Source: AGHT+IFX/mnj8z/gOU4S/Qjsm2FR4qQxyCrhiZEmvGKW7LyZfNdC7JaX0Q3SxwF74ucLtHDokfAeBQ==
-X-Received: by 2002:a17:907:1c19:b0:a6f:4fc8:2666 with SMTP id a640c23a62f3a-a7dc506ce86mr1394858366b.44.1723031898724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QvuttAjkPLAVMHVOXYUgt5mVS3UMEYPJRu5N4V28dSg=;
+        b=U3wb+2RLQ1O22nWwD21Z+COJMFaEXvPSnrOVYCaOSlhdRvesKTtQuuDXnjbuyke0IB
+         6xQmDNm79mJ5Gn+EvhCQKcQC9fUOQ/Lon78LWs0PNRETvZhethjPQqyKhGBLiNTRc/Kw
+         dAXrpLj2jQLkEU6Vo07WV0XQS++KxoVXAihxyPNABG18rMLfs2g6lCtp9aCRNaM7WZyi
+         T31sECAoUYIOXAFmmbfuFUCL64CGxg6emYmIfSf63eIjA0lM+RISokl9BuFhr4tQLYnE
+         8ScEUHnS5YdME67J8HpQUUjQUWdr1btUGD3fKMjNp33QxPtGA/EDutpNV1RiPVqrDuXa
+         b5lA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+40BGJfkhtfVFA8mrpW0RKu0diOvf26jaq3DkRtq2rtuby9pPY20NpL7d0szyDvJyfpSzSm5iOdyJw3VuAowTf6IZPoycgIbQBuJ+xO0gcYQ=
+X-Gm-Message-State: AOJu0YzLzpGFJIWtInI3BLuaSLqKopl21QpoElsl1KVrXxH0RrfXI8t3
+	gHX7HESkEYHgFtMb9vBXoVvMvyicDXDDOKdQjGH8K08mvpry4v5u1TxgQJbVkAU=
+X-Google-Smtp-Source: AGHT+IFMahW1ZeQ+4SdbQZtKjEpytqYR6C40gi+5yPvZkfOWWpUhdF1d4i/TPsvRGYmNl8byMwOdqg==
+X-Received: by 2002:a2e:b790:0:b0:2ef:2c3c:512a with SMTP id 38308e7fff4ca-2f15ab5cce3mr148444871fa.42.1723031898236;
         Wed, 07 Aug 2024 04:58:18 -0700 (PDT)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d45239sm631017466b.119.2024.08.07.04.58.18
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d45239sm631017466b.119.2024.08.07.04.58.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Aug 2024 04:58:18 -0700 (PDT)
+        Wed, 07 Aug 2024 04:58:17 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 07 Aug 2024 12:58:18 +0100
-Subject: [PATCH v2 1/2] tty: serial: samsung_tty: drop unused argument to
- irq handlers
+Subject: [PATCH v2 0/2] tty: serial: samsung_tty: simple cleanups
+Date: Wed, 07 Aug 2024 12:58:17 +0100
+Message-Id: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,9 +62,10 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240807-samsung-tty-cleanup-v2-1-1db5afc9d41b@linaro.org>
-References: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
-In-Reply-To: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAFlhs2YC/32NTQqDMBBGryKz7pQk/iBd9R7iYqoTHbCJJCoV8
+ e5NPUCX78H3vgMiB+EIj+yAwJtE8S6BuWXQjeQGRukTg1GmULWqMNI7rm7AZdmxm5jcOqO1xLr
+ UJZm6gLScA1v5XNWmTTxKXHzYr5NN/+z/3qZRIVV1n9PL5trycxJHwd99GKA9z/ML995HELcAA
+ AA=
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -79,68 +78,31 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-The 'irq' argument is not used in any of the callees, we can just drop
-it and simplify the code.
+While looking through the samsung tty driver, I've spotted a few things that
+can be simplified by removing unused function arguments and by avoiding some
+duplicated variables and casting.
 
-No functional changes.
+There are no functional changes here.
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/tty/serial/samsung_tty.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Changes in v2:
+- fix -Wdiscarded-qualifiers warnings
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org
 
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index dc35eb77d2ef..1c6d0ffe5649 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -855,7 +855,7 @@ static irqreturn_t s3c24xx_serial_rx_chars_pio(void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t s3c24xx_serial_rx_irq(int irq, void *dev_id)
-+static irqreturn_t s3c24xx_serial_rx_irq(void *dev_id)
- {
- 	struct s3c24xx_uart_port *ourport = dev_id;
- 
-@@ -928,7 +928,7 @@ static void s3c24xx_serial_tx_chars(struct s3c24xx_uart_port *ourport)
- 		s3c24xx_serial_stop_tx(port);
- }
- 
--static irqreturn_t s3c24xx_serial_tx_irq(int irq, void *id)
-+static irqreturn_t s3c24xx_serial_tx_irq(void *id)
- {
- 	struct s3c24xx_uart_port *ourport = id;
- 	struct uart_port *port = &ourport->port;
-@@ -950,11 +950,11 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
- 	irqreturn_t ret = IRQ_HANDLED;
- 
- 	if (pend & S3C64XX_UINTM_RXD_MSK) {
--		ret = s3c24xx_serial_rx_irq(irq, id);
-+		ret = s3c24xx_serial_rx_irq(id);
- 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
- 	}
- 	if (pend & S3C64XX_UINTM_TXD_MSK) {
--		ret = s3c24xx_serial_tx_irq(irq, id);
-+		ret = s3c24xx_serial_tx_irq(id);
- 		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
- 	}
- 	return ret;
-@@ -971,11 +971,11 @@ static irqreturn_t apple_serial_handle_irq(int irq, void *id)
- 	if (pend & (APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO)) {
- 		wr_regl(port, S3C2410_UTRSTAT,
- 			APPLE_S5L_UTRSTAT_RXTHRESH | APPLE_S5L_UTRSTAT_RXTO);
--		ret = s3c24xx_serial_rx_irq(irq, id);
-+		ret = s3c24xx_serial_rx_irq(id);
- 	}
- 	if (pend & APPLE_S5L_UTRSTAT_TXTHRESH) {
- 		wr_regl(port, S3C2410_UTRSTAT, APPLE_S5L_UTRSTAT_TXTHRESH);
--		ret = s3c24xx_serial_tx_irq(irq, id);
-+		ret = s3c24xx_serial_tx_irq(id);
- 	}
- 
- 	return ret;
+---
+André Draszik (2):
+      tty: serial: samsung_tty: drop unused argument to irq handlers
+      tty: serial: samsung_tty: cast the interrupt's void *id just once
 
+ drivers/tty/serial/samsung_tty.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240806-samsung-tty-cleanup-ffae1515a284
+
+Best regards,
 -- 
-2.46.0.rc2.264.g509ed76dc8-goog
+André Draszik <andre.draszik@linaro.org>
 
