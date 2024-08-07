@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8872F1CCB2B;
-	Wed,  7 Aug 2024 09:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3453D1C0DE5
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Aug 2024 10:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723022577; cv=none; b=A+kJbrGKtuqHabXZdtIM8USKlDepE751o2TJjaJ6V5JNPhOTZoeQD+sgZlx0Y2A+XQK08BLMFhPZV3yHLvUWdfL22uWaA7ze8Wv3IAGRJkzlx5FpFeRptIYP8/NHvTzg7GUxyn70fZ5Z25jjFx74Qsf+wKn0rleSzxomzp9icaQ=
+	t=1723027782; cv=none; b=SxinF2j3Xk/0vYiJ0VJ9A6DJCJECuP0sGJo2mjuxOXhUvvg1kp3JydrKP2FYzje5wM5noPFPGUUA1jvmNaThF1czcnjQ3vVeOVPo+reaSK1hPazQkSTiAiAYJm/eFqXjLkkRA3JFLv9C6yHEEKhc1gn1ApR6xWZEEHiMOG+ujfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723022577; c=relaxed/simple;
-	bh=MEpgyBqa/MtgNTX9ShLP9jGGGWgu9mr/N/3Yti8fh08=;
+	s=arc-20240116; t=1723027782; c=relaxed/simple;
+	bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WPki9r8UocDwwrBjkpVISAXxloF9KEgDoTduOsYP8NRVDeEc45o95wPyvcRc8bryVtgbOwdfoniwBiyIS0Yx/yYRVcKCuv9g8QJNmllXFUHcRvG0Y26kbSI5QGYjv7kf3LADqNBNX5tp3VRBgqPWAPaHoj2iaurI+z4Z3B7vOrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2Gw/vFI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Q8hU3WX1RZeynn0dfSLY1obhlQ3tZEs1a3VKz85tGmuthHSpj7BUO1VCXyHmGckwst5Hs0swUSZnJN11Izv/tuLRoPKpqasjPAYNzdd2uTZY58ABGkKMnlVZCdmTPfq6wfwXfxdswGjLseKSCoqNW+5uioux/fhtCCupkm09k/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xosc+3ok; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2Gw/vFI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174CDC32782;
-	Wed,  7 Aug 2024 09:22:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723022577;
-	bh=MEpgyBqa/MtgNTX9ShLP9jGGGWgu9mr/N/3Yti8fh08=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O2Gw/vFIijALA40hfRKDrBgTnq/ZDrjV4p/At88kDYZ4G45SBskTerSRKyjCsR3UF
-	 xTZmhGq8mfrn2yywEVUceofm1VudXnjvPAZj2Uv35FUYtX3bnC/xXIQueURIBidDsP
-	 LPSr3+6J0ssD+i7l+n+Q2q2Ji80eN0Zb4T7kaB/gFmJ2M1BisWxL5pQYAgnwMpQ6gJ
-	 2jTWlO/4RUxVM9IeOxyjt3yMi7SSghdwPkdzWSGaGMub3LiFKd6Pps5bdhzpFyWt5P
-	 Y2BfNi2267t7SX69eYCYibKNi388zxZcQm8IxFO3B+tcRtoBwVarC+hPqB5fqvXzhx
-	 pR7x+gM24gwQQ==
-Message-ID: <811ac81c-9220-4918-a3f8-d52519a367b0@kernel.org>
-Date: Wed, 7 Aug 2024 11:22:50 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xosc+3ok"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so168274266b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Aug 2024 03:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723027779; x=1723632579; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
+        b=xosc+3okh0nio5SOFOISjCL6L7mHRsHPMLR5GEcud3OhGiH0TBD3t/QDW5SlQn/tFD
+         JoOgOubnH/gFWcl60NMzvSRHnCGb4H6L2Umcnep8QNBI/qDu5pb8AbwOFmcYwn69czI3
+         bEEq9X8i2NM/mEBaVN0OLgaref7U8EygNDp36qiUAeygbAetf/j1KGFtOJCFfESWoaaq
+         BMmMRNnzHP1FmkvodI768ZcJcfN6TiFe6KhpuHmq5ZIMPI1ZQjUeZl92yM2duAs2TPQm
+         txrHSmyiHWlkcUtz/X/xepgVr0EDu6H+rGNkH+HuQauhbT5LXXoTqFNHK2b97cJMPx5N
+         1W6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723027779; x=1723632579;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yyfk8X7hQAsUD9G+4fe4CzUE4boCyIRsCV8/4Z21Gnc=;
+        b=G7FdfXe1BBIDArAR06kx+DlNo/Td+NTDiHhthAGZL3hBNiSpS/AyFu6fVOCCXioRvG
+         cbtLT7RN4OUdt0a7xcTYFkp09z+o0ekgUlW9BbWbZijcIp/EAJuqQ9dMI7FBA7eI8m8a
+         WXuKZBmkaEn8wtczOM8dGla3OBER/nOZh9zbA/ZYYVzmFxbPbKH6G0eCcgaBG7Efrgxq
+         rQkaoH8mdYMq6AGts3Sici+hwFmtpS0ABL0+db8xITn46+EOArJWB+0CigEsaXPwhbSU
+         HPspfPPHz3iwPJmjfmpX6JqRJWezRN1jn5FO0ZGl2YYusF0MhqpG5SDEcUPFkKr1PrKy
+         mcsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm2Hz2n4rPlNg52XHE0LO5VcudfmmtU9o9B8o85IPYOtR3UAldFuq3pkKlOESsWxbKZKMNTAK2KswBupOwvb1VmvwbY9gggLzW4+xA7aWbGdk=
+X-Gm-Message-State: AOJu0YwlZOqU9Tx0e9FmNR6++8WktEmyzlPmiHmnhgC5hsyZzygXoL5R
+	XigDLqh3tl8hY9aDFnyc5nZP52hP7rUR0DYtNaMyLhLepPQEKPc35KelWXjosqw=
+X-Google-Smtp-Source: AGHT+IHSY0bmLDfSGhbBtnMDOvhC7FSiF7eS5TVjfR9u4hhBM5eeMK2YDYd/3F4hcgHZfhOFJjWUHA==
+X-Received: by 2002:a17:906:6a09:b0:a7a:bae8:f2a1 with SMTP id a640c23a62f3a-a7dc50a2f0fmr1328523566b.42.1723027779415;
+        Wed, 07 Aug 2024 03:49:39 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.215])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0cc4fsm633411866b.77.2024.08.07.03.49.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 03:49:38 -0700 (PDT)
+Message-ID: <2e639150-5c7e-4ef4-b54e-b25b10fc9313@linaro.org>
+Date: Wed, 7 Aug 2024 11:49:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,86 +61,23 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] tty: serial: samsung_tty: drop unused argument to irq
+ handlers
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
+ <20240806-samsung-tty-cleanup-v1-1-a68d3abf31fe@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240806-samsung-tty-cleanup-v1-1-a68d3abf31fe@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/08/2024 11:08, Ivaylo Ivanov wrote:
-> Hi folks,
-> 
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
-> 
-> When sending out the V1 series it turned out that I had sendemail.from
-> enabled for some reason. I'm really sorry for the inconvenience caused by
-> that.
-> 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC.
-> 
 
-No, no no. One big patchset per 24h. You got fast feedback not to send v2.
-
-Implement all comments you already received.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
