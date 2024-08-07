@@ -1,184 +1,147 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6FE2A1D6
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Aug 2024 03:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521581C9DCF;
+	Wed,  7 Aug 2024 08:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723000586; cv=none; b=g+hSpJaB/4J1Ba4ybuDj82PksFLg543191l43RKOxd9b3iOlSVbnyxrCdFQ/2OcUsOAL65nmKfEo2jrzAA0ptE2hPKejdN+gh1C4H2fK9wBmQEg41QFLC8j5B/R1vkLc0HmUXOWo/ATyF8ZweMAxO31DXeMV6uappAavnbKnsLQ=
+	t=1723019332; cv=none; b=uE8fMIKSTqbspAaGrnqHC9etr/bO/JLThlJtI2m7O8vIgZ/TiJRuzc4TVDBkJTlZOw0QTLjHLq6bVIfCaJiICVKDyMzXloZejUSebct6jVM+fFqL8EtDC1tc8V7UXwGOTa1jrbC63pKKWHKqyCSAY0mfgDjiRuc54ymZR0FdW78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723000586; c=relaxed/simple;
-	bh=FzNLjTPfou6CK/yKMp4OHflCEackPGU8SxE//ZWgKJ0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=NwpiXm5u1GKT+0ODOtkh97HWJE7EjsL/AzhdefSrF2AYvU6VLSK8UbCf0Tc9A0Bbdv66NN5CULF1MSS9fDKEwwoaPK/Q5ccclhnSEg8LByk2uZUE9ZOLbp3rBdwRIEcdXhAonAE+xfR/enxFj5WCrSxRAiayfUK25ueRYy4YRjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=nQtyPQ0T; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1723019332; c=relaxed/simple;
+	bh=x+DSZanT0Z62jq7icA50jY0H3B2SM0juf/t2bXEtfVM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JACMHmet9PEBM8Dusa3DlAzcWJTkK7XvJf0h2fEBbov9NTHWIBA/grK6ovLNIOYMFPirHyXSl2JvQgZWohaQ83C50CRfSZ7KPuPhHQhto+c8Nddx+mk4VaLhb8P8r9/64E9FdLKZM13vfwnfpoBM2KjoMvzG+8X6fBQzDF75oNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0X2SmB8; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nQtyPQ0T"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240807031621epoutp02acf397612b7c946c8530f27e5b585745~pU_ZSw2YA2582525825epoutp02p
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Aug 2024 03:16:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240807031621epoutp02acf397612b7c946c8530f27e5b585745~pU_ZSw2YA2582525825epoutp02p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723000581;
-	bh=4S8yRftVJB84hYtDxOLjR85E5LvSHUbCJOtjuuOSh5w=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=nQtyPQ0T81tRfWdNHejeFF2yCw5KRDf2QVv2BqPrHSRFhpwyCBwDd/MKCcvGin3xv
-	 wYyyKDpPieFjn5ai/OjTv/UKTN52rLutpDwxsJHPaSwMmhTr69BZ76rKXguGKFOsXl
-	 6eiXMZs+8DAOZlW5z3DnaNNXUtDCjxiuRoF6Do2M=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240807031620epcas5p4bac06811e6add2dd2ada0d762caeb6b6~pU_YX2d7J0870508705epcas5p49;
-	Wed,  7 Aug 2024 03:16:20 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WdwLV2W3Bz4x9Q2; Wed,  7 Aug
-	2024 03:16:18 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	11.8E.09743.207E2B66; Wed,  7 Aug 2024 12:16:18 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240807031558epcas5p444e86f971799210e63d8f3a66371bd94~pU_EKzGBK0870508705epcas5p4I;
-	Wed,  7 Aug 2024 03:15:58 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240807031558epsmtrp23583b006dd7cf9168cfd8076b0a39f78~pU_EJyQXC3064330643epsmtrp2f;
-	Wed,  7 Aug 2024 03:15:58 +0000 (GMT)
-X-AuditID: b6c32a4a-3b1fa7000000260f-64-66b2e7022925
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	36.A6.07567.EE6E2B66; Wed,  7 Aug 2024 12:15:58 +0900 (KST)
-Received: from FDSFTE582 (unknown [107.122.82.121]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240807031556epsmtip232e4158e6232bfa47649be5e895ae26f~pU_Ci4ihJ2295922959epsmtip2H;
-	Wed,  7 Aug 2024 03:15:56 +0000 (GMT)
-From: "Vishnu Reddy" <vishnu.reddy@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>,
-	<s.nawrocki@samsung.com>, <alim.akhtar@samsung.com>,
-	<linus.walleij@linaro.org>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <pankaj.dubey@samsung.com>,
-	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <e9963fb7-b963-49b4-96a3-3637f9892784@linaro.org>
-Subject: RE: [PATCH v4] pinctrl: samsung: Add support for pull-up and
- pull-down
-Date: Wed, 7 Aug 2024 08:45:54 +0530
-Message-ID: <00c701dae878$1f1ced80$5d56c880$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0X2SmB8"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so18328541fa.2;
+        Wed, 07 Aug 2024 01:28:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723019328; x=1723624128; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xHQXGFpfBnq0ynH+7iAXymSNRta5OaZ+nbnM9m911LU=;
+        b=X0X2SmB8R9ZpeJgu/y0uw4a9UUyWFaPktQc6HjekeK/iYj61+ORgKOoC/qdbLeEPxl
+         WEsFHIPnpxu8wrMs1NFX66cHXAR6ULlNEaHX/kp3zdjyFWUsoCFy3OcVOQS6ZL34/91b
+         J3UK4Ya0iESQ+SkeyvIOsZ3Y7StQtKDsP9bWYmIZ85qiU2ecR9Xjul6xyQ5huDNpsLfK
+         JQy1KNBSBxRcFC8fXEw06msxE8Xg8txynlM2J0dg7xbXbkOL5feH03orz5f18qDgCbPd
+         y0Ji7Lbz4Iyl2njDRzQ3gAP/2ljLsbv0dIRcndZEoInEy6fkuw0chFMARcnJH0pmyp+Z
+         VdXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723019328; x=1723624128;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xHQXGFpfBnq0ynH+7iAXymSNRta5OaZ+nbnM9m911LU=;
+        b=tkm6kzthYWKQm41Z1JqlitspYNniuep99XrI4Ohrnfgw39D5oxqRBngUR6v/1gWWfY
+         A1Al7AbcUDrU3f802LZlJU/1nodnKJAISQ8BD2eL/1JmDPezwqIdpJrPr3dQDuoGJqFu
+         FFzrKbgLK9IA263hhzm2xpj3pXAh3T2BjjyINaJb64+nXieWxJpRlkVI0nfch/EGuHEG
+         4Zc/r0NYVmrCLimYJNha33u11XqeUt+h4CbvGP/+5a3OUNs2UVo16l1jW8JDPqMUdWUm
+         0vPFq11OusB5BheNbRpZ4J4y2oPqLd6pwwjjclrLjGLG83qR/mGSEky9zvY88LKckmh6
+         +XRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVou1mG9TSHMGGCXFC38oZ3JLVi8puDJAY1L3+dveybAQHom7ZA++flY/OQTlW9cuyMySRLGbzSNB59TURCQ9VWWbYw990+YPPW6MlTwtybywVxF+U+gdb/WpFuQcc+Uy+/0MMuiSsaPiIvO4oKbEFaOLOi/F8p25ULkWLwTPluFcuZZJ0=
+X-Gm-Message-State: AOJu0Yxmz0c3Fb7NJO/nau7+2Gcl3ZwIJvvsl9PJ2PGy+e5wKZh930S3
+	101danF8ZraHAIIGznVdSREQZUzAbcOxK6WdriONHovgAjmBTsgt
+X-Google-Smtp-Source: AGHT+IEK5dSBqWc3i7uzRm9tZ26iz9CxU/757qeiU79fIRrJyEIVR+ffQg9fJVHOwWedCLSRXyXq4Q==
+X-Received: by 2002:a2e:8703:0:b0:2ec:1810:e50a with SMTP id 38308e7fff4ca-2f15aafdc9fmr112987951fa.32.1723019327950;
+        Wed, 07 Aug 2024 01:28:47 -0700 (PDT)
+Received: from ivaylo-desktop.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290579fb34sm18168505e9.14.2024.08.07.01.28.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 01:28:47 -0700 (PDT)
+From: ivo.ivanov.ivanov1@gmail.com
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+Date: Wed,  7 Aug 2024 11:28:32 +0300
+Message-Id: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJjDs2r5CFDDZj4rtEoUnejfp+kLAG3jwHHAfOZ+Paw7XfJQA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmpi7T801pBou3cVs8mLeNzeLmgZ1M
-	Fntfb2W3mPJnOZPFpsfXWC02z//DaHF51xw2ixnn9zFZLNr6hd3i4Yc97BaH37SzOnB73Lm2
-	h81j85J6j74tqxg9Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LI
-	S8xNtVVy8QnQdcvMATpKSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhb
-	XJqXrpeXWmJlaGBgZApUmJCd8WTqO8aCOQIVl+ZsYmpgXMzbxcjJISFgItG6eDJjFyMXh5DA
-	bkaJjUtusoEkhAQ+MUr87VCASHxjlPj9dzI7TMeWfR1QRXsZJY5O4YUoesEosXPmd5YuRg4O
-	NgF9ieYbEiA1IgITGSWm3QIbxCzwkFFi4v1PrCAJTgE7iVN9+8BsYYFAibtr5oMNZRFQkVg1
-	/yhYnFfAUuLcxW1MELagxMmZT1hAbGYBeYntb+cwQxykIPHz6TJWiGVOEh8OfIeqEZc4+rOH
-	GWSxhMBaDomX756yQTS4SCxc9xDqG2GJV8e3QNlSEp/f7YWqSZZY//sUO8gzEgI5Ej3TFCDC
-	9hIHrswB+5FZQFNi/S59iLCsxNRT65gg1vJJ9P5+wgQR55XYMQ/GVpM4Nmk6K4QtI9G54gbj
-	BEalWUg+m4Xks1lIPpiFsG0BI8sqRsnUguLc9NRi0wKjvNRyeHQn5+duYgSnWC2vHYwPH3zQ
-	O8TIxMF4iFGCg1lJhLc5fFOaEG9KYmVValF+fFFpTmrxIUZTYHBPZJYSTc4HJvm8knhDE0sD
-	EzMzMxNLYzNDJXHe161zU4QE0hNLUrNTUwtSi2D6mDg4pRqYYm5+K8lSWVor3/LuarLgRtYV
-	Wn/ObHtW/XeuyZQ9q1YY2Ut6+kxaZaEq+F/vlfK0D6e88vR4p1U8z2QIPcNT5C76IcTUtm1j
-	LHfblFffvL22d/z3//UkSsMrJohZ+ZKz8TfBVb7xq+1klvKee5vw1/zKy/cVs1TDFs9Y5mWr
-	6hNYWNbnfGp12dr8Kb/a+6u5BTfEqoUbJ84OOvf0ysdr2g05f59cyna5mWHEt3rlDYeN333T
-	EuuvN12+lJPsrs67/5FA9KugDzo2c9fubppTdIDjq7RJexDrJ/Zta0O7fF7u6IotWFC54PTh
-	VxvkNS8nNj6b+764UevXXMPHD849fnsx58mPdWU7hJo+Z/TxKrEUZyQaajEXFScCAGGhK2Y6
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSvO67Z5vSDBqOCls8mLeNzeLmgZ1M
-	Fntfb2W3mPJnOZPFpsfXWC02z//DaHF51xw2ixnn9zFZLNr6hd3i4Yc97BaH37SzOnB73Lm2
-	h81j85J6j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4Mp4MvUdY8EcgYpLczYxNTAu5u1i5OSQ
-	EDCR2LKvg62LkYtDSGA3o8TE93/ZIRIyEh/ubGGGsIUlVv57zg5R9IxRor37AGMXIwcHm4C+
-	RPMNCZC4iMBkRol9bT1gRcwCzxklNr2YxwTRcZBRYsHnaawgozgF7CRO9e0Ds4UF/CW2THvA
-	CGKzCKhIrJp/FCzOK2Apce7iNiYIW1Di5MwnLCA2s4C2RO/DVkYIW15i+9s5UOcpSPx8ugys
-	V0TASeLDge9Q9eISR3/2ME9gFJ6FZNQsJKNmIRk1C0nLAkaWVYySqQXFuem5yYYFhnmp5XrF
-	ibnFpXnpesn5uZsYwfGmpbGD8d78f3qHGJk4GA8xSnAwK4nwNodvShPiTUmsrEotyo8vKs1J
-	LT7EKM3BoiTOazhjdoqQQHpiSWp2ampBahFMlomDU6qBqfwKB19MfmuHsZdtoEDmQiWR6pSc
-	T09m5qmmvFxm+vtNhNvZ6822HyZz+eqEXyr9KBibkL669WvEW92QyxnlxwwPSG08svbS4Q5h
-	28QW1/rQPzsFNs0pTjewWCWvcijEaVvi6X129zo72m5Ou2RS3JBdrrX2gP+Elns13zw1rjAK
-	rX7+xOZX8wdBlxVzbjgwbdrpKhByf8ZBC80aVsv9qn+X681Icb6TIH/0sgbnDqX7Ov6XmovZ
-	DW/wTje+29K6tILZgu+J8Ryd5X9iEmfWPzt9s7ShyvHMj9ru+TNVy2NKNre3+XSeL0o5v+OD
-	pUbzdZ9/rXwPl7Sm3Zn2l9vGqWmnSXRsfuqbDcXH7qsqsRRnJBpqMRcVJwIANBPJrCYDAAA=
-X-CMS-MailID: 20240807031558epcas5p444e86f971799210e63d8f3a66371bd94
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8
-References: <CGME20240729154736epcas5p111a53e297c7f8c3122bf491cabaf74b8@epcas5p1.samsung.com>
-	<20240729153631.24536-1-vishnu.reddy@samsung.com>
-	<e9963fb7-b963-49b4-96a3-3637f9892784@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 
+Hi folks,
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: 04 August 2024 20:15
-> To: Vishnu Reddy <vishnu.reddy@samsung.com>;
-> s.nawrocki@samsung.com; alim.akhtar@samsung.com;
-> linus.walleij@linaro.org
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; linux-gpio@vger.kernel.org; linux-
-> kernel@vger.kernel.org; pankaj.dubey@samsung.com;
-> ravi.patel@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH v4] pinctrl: samsung: Add support for pull-up and pull-
-> down
-> 
-> On 29/07/2024 17:36, Vishnu Reddy wrote:
-> > Gpiolib framework has the implementation of setting up the PUD
-> > configuration for GPIO pins but there is no driver support.
-> >
-> > Add support to handle the PUD configuration request from the userspace
-> > in samsung pinctrl driver.
-> >
-> > Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
-> > ---
-> 
-> Where is the changelog? What happened with this patch?
+This series adds initial SoC support for the Exynos 8895 SoC and also
+initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
+dreamlte.
 
-Sorry, I missed to include changelog in all previous version of patches.
-I will take care this part in future, below are the changelogs:
+The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
+and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
+and dreamlte, but it should be really easy to adapt for the other devices
+with the same SoC.
 
-changes in v4:
-- Update code in s5pv210_pud_value_init and s3c64xx_pud_value_init
-functions for storing the pud values into array using macro names
-instead of loop.
-- Removed unnecessary and weird style comments.
-- Updated proper comments.
-- Fixed typo errors.
-- Updated macro names based on suggestions which got in v3 review
-comments.
+The support added in this series consists of:
+* cpus
+* pinctrl
+* gpio
+* simple-framebuffer
+* pstore
 
-changes in v3:
-- Add new code to get the s5pv210 and s3c64xx and other exynos
-series of pull down, pull up and disable values into an array and use
-it in set config function for pud configuration.
-- Add clock enable and disable setting while accessing registers.
+This is enough to reach a minimal initramfs shell using an upstream kernel.
+More platform support will be added in the future.
 
-changes in v2:
-- Updated the macro names based on review comment that suggested
-to follow the naming conventions according the file how previous macro
-names defined.
+The preferred way to boot this device is by using a small shim bl called
+uniLoader [1], which packages the mainline kernel and DT and jumps to
+the kernel. This is done in order to work around some issues caused by
+the stock, and non-replacable Samsung S-Boot bootloader. For example,
+S-Boot leaves the decon trigger control unset, which causes the framebuffer
+to not refresh. 
 
-Do let me know if I need to revise the patch or you are okay to consider
-above changelog?
+[1] https://github.com/ivoszbg/uniLoader
 
-Regards,
-Vishnu Reddy
-> 
-> Best regards,
-> Krzysztof
+Kind regards,
 
+Ivaylo.
+
+Ivaylo Ivanov (10):
+  dt-bindings: arm: cpus: Add Samsung Mongoose M2
+  dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
+  soc: samsung: exynos-chipid: add exynos8895 SoC support
+  dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
+  pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
+  dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
+  dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
+  arm64: dts: exynos: Add initial support for exynos8895 SoC
+  dt-bindings: arm: samsung: Document dreamlte board binding
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S8
+
+ .../devicetree/bindings/arm/cpus.yaml         |    1 +
+ .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+ .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
+ .../samsung,pinctrl-wakeup-interrupt.yaml     |    1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
+ arch/arm64/boot/dts/exynos/Makefile           |    1 +
+ .../boot/dts/exynos/exynos8895-dreamlte.dts   |  126 ++
+ .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1378 +++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  253 +++
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  137 ++
+ drivers/pinctrl/samsung/pinctrl-exynos.h      |   10 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+ drivers/soc/samsung/exynos-chipid.c           |    1 +
+ 15 files changed, 1920 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
+
+-- 
+2.34.1
 
