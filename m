@@ -1,157 +1,155 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506E01D1757
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Aug 2024 08:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1613A3F0;
+	Wed,  7 Aug 2024 09:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723020562; cv=none; b=dcXBteIYNwG73YuJgh8ojHeHHoORuymdeEkQ4dBPrPHW4bpaRBFEk0flsAF2ko7GrXd0G6iVSJ/rj8815ATCRRLkgDbWV8RlAaQlzm2/amHwRRSpiyu9rN1SgYBHIh21l4vdXzRvpOmZF/IC3byROlMPS7vRdXjTLD1hhi284ug=
+	t=1723021613; cv=none; b=H3iCVuSKzdWq32vLckdG+bhp5G+azaKc0MZK8j6Lfsy9rmvxJwj+8YXas8OYzzXQsZVnpj7C2i2QtwghlyRXRvkD345ycDGIiyAflW1iH144SYkLmkxiKfsz5MD6S0Qlg9JVFBiGK7hzCm7F8X1G2h9UhOmVoIaC8lJHpsylM7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723020562; c=relaxed/simple;
-	bh=6zp2AKjGs39uCt5CueCwmJOX3eOvD7ilpXgKjzFAtWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=hsiNvpcDBcnzIbOiqJhHLjuU8yVRPHxsRE493bMxnOc7lHbIoJZXrs4wLV0AlHbhRWTK/uiNBcbuPC1Pw8O3MKZ1hJxBedlktfZLqb3SwsGpZG7+cpMzoAjbO6xxEpN00aPtYwj0bgPDDwIBDbt69GZDt2gAA2Zb2DFdikfM5aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cSPqMXr5; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1723021613; c=relaxed/simple;
+	bh=LoM9qznV0IlQTaUDNlfNn2R0PKStHWfD+gtr7Cl9FwE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RjITB7jqrYtgAyj4xcHbSnJZFnfngtI79xB20gJtMu+zo7+q98zwDP7BsMOPovHdPFgiFGGp3ZVruK9ZfWPhn4t5TCNzk3vHVJ6ogb0daHn3id2Gd+4mEGZpITNj1ojbp8ZJ46pFFN1J/Mh+LDd9bg5sgkWUCJYHBK5bSDwjsdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J75ezucW; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cSPqMXr5"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240807084918euoutp01eca13aeb990798baa7c49a7566c3d622~pZhG9nn3T1585615856euoutp01B
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  7 Aug 2024 08:49:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240807084918euoutp01eca13aeb990798baa7c49a7566c3d622~pZhG9nn3T1585615856euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723020558;
-	bh=qLPy4vqwS3UYK5ED/m7wWzuPP6EHMShGRR/7bXdjUuk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cSPqMXr5GxOfRCUdfrByGOCJFqIOyT4Mi1m7RPaqXRjGZyiLU33shMPb7x5+CP96Q
-	 N+ARd9OaCcSbIKLta1edj6x/RfykDkE94biqQWDdUmGl6skgXvfUOguokJBZQ/end0
-	 e43t00TYryewiZEd6wwP+3HlQh9V5LzJew7qsIEM=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240807084918eucas1p2983c6169f3c321294ad5738d1e5ff21f~pZhGm6y3T2755327553eucas1p2K;
-	Wed,  7 Aug 2024 08:49:18 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 65.6D.09875.E0533B66; Wed,  7
-	Aug 2024 09:49:18 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240807084917eucas1p28c675c9da74f0de0bb09689819202c39~pZhGCjcHV2756427564eucas1p2V;
-	Wed,  7 Aug 2024 08:49:17 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240807084917eusmtrp16e830202fa79ded18448cca1cfa911ab~pZhF_hFIP0287102871eusmtrp1a;
-	Wed,  7 Aug 2024 08:49:17 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-a7-66b3350e5b33
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 5B.01.08810.D0533B66; Wed,  7
-	Aug 2024 09:49:17 +0100 (BST)
-Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
-	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240807084916eusmtip225c4b7cc8c78e2c81c1b8f555d8dab3f~pZhFAmDNl1786617866eusmtip27;
-	Wed,  7 Aug 2024 08:49:16 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Mateusz Majewski <m.majewski2@samsung.com>, Bartlomiej Zolnierkiewicz
-	<bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob
-	Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
-	Moon <linux.amoon@gmail.com>
-Subject: [PATCH v3 6/6] dt-bindings: thermal: samsung,exynos: remove
- driver-specific information
-Date: Wed,  7 Aug 2024 10:48:25 +0200
-Message-ID: <20240807084829.1037303-7-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240807084829.1037303-1-m.majewski2@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J75ezucW"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so10541705e9.3;
+        Wed, 07 Aug 2024 02:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723021610; x=1723626410; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WSRzgmeCCQAVMTySTj2A9ia0afQrp/O2UyDWk6Pf3Yc=;
+        b=J75ezucWR/oAFMejVlIKTkxp2jLjVvvkrfES980lXO7UO2HkRX8pM4sid7Q0GkBuRq
+         4ikABTAEdppsrPBT77hHfawqCJpaD8xk3j+VKaIw3omAW7DXAKNC5yyti4gsh2VCSgJ5
+         g5ViSTOd+rfL/Tehb+NvS9ufgQFC5qkiTfPTQPaTWLluZZ8+RvDyiQ13tZZKXAgSs7WW
+         zVEEb/XAiE959LtfOJCTpXPTR1+cn0tqBB9OhcOuXTVpIFibOSUU17SbG6D+9SMXslS1
+         JfSOVAJSkZU7QEoh2EG4Yb48yIedpb6wgrWjrZcuXf2l/M8Yn8CmTRnkN9K/e2w6iV4a
+         DI1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723021610; x=1723626410;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSRzgmeCCQAVMTySTj2A9ia0afQrp/O2UyDWk6Pf3Yc=;
+        b=JbsWkkfbTMVMIYDGNIFmhGcuO10euLNWt+7boGxMi04JWbduF4vhRTfVR6K1t7OxYq
+         8TZAobFX24bgTR6GKoFglumayrTA2M05I9CWjPg2oIQKzXKXPXbJW9grbJKBfMdBqjPt
+         c/tdAvoX+jFe5o1Q5V4VB/wk98b4Fysxqpm6AxfJfhbUdXQYpigUIFBVdBofHMWfWAE9
+         G+I64DA9CzFc026dTDnzviHV/4jFfqEB9T62xXlZ0IVXqroNTxPAY7li65TxexAlppQU
+         VfXCpcfiBH3/kccxVUZjldl6ShMDhxoM1ndonScCfKx1J20WrGuu98D0pG6IUf2tkwJu
+         z8yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhPiD+6vOmuwND4bqYQn5fvfkB32l2i6BOeQ11UJDXpHgKAm0m7LnSt4TrNYfXKTLBE4C3PzGxCT4rEqsRJKoBfA9LTKGt3IRvTOHithxq/dQJbWPu6F4BJs/JLywGTP4BUimIb33pCOoJeUDLeHQRVPIJPKrJHFuim9MRtxZdmv51svs=
+X-Gm-Message-State: AOJu0Yy3oyBtK7SGQEYJc1P5L1iOZMjgHlNceM9rv0JkKJgAwEGL4MfR
+	5x4QuuXUw/+JLE1ws4Q1papBjAFV3Ipy9VdVmWQUKUrtUK1OqyGc
+X-Google-Smtp-Source: AGHT+IFMpoUHlHWlbkB3eohP4eK2zXUuP2QcpgMIHU2OX7c3gSoOvpg1ry/bFrW4WKHnDulUPU3WsQ==
+X-Received: by 2002:a05:600c:578e:b0:425:5ec3:570b with SMTP id 5b1f17b1804b1-428f7668cfdmr55636105e9.35.1723021609617;
+        Wed, 07 Aug 2024 02:06:49 -0700 (PDT)
+Received: from [192.168.1.106] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06dfb4sm15336788f8f.103.2024.08.07.02.06.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Aug 2024 02:06:49 -0700 (PDT)
+Message-ID: <f217cd23-88a3-e8d5-641b-482734c8f2e0@gmail.com>
+Date: Wed, 7 Aug 2024 12:06:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djP87p8ppvTDPZ9FrF4MG8bm8X3LdeZ
-	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi3Ubb7FbLGxqYbeY
-	eGwys8XcL1OZLf7v2cFu8eRhH5vF8759TA6CHmvmrWH02DnrLrvH4j0vmTw2repk87hzbQ+b
-	x+Yl9R59W1YxenzeJBfAEcVlk5Kak1mWWqRvl8CV8f7WXaaCPt6Kr0+9Ghifc3UxcnJICJhI
-	rJ/xnqmLkYtDSGAFo8SLjpPsEM4XRokFdxuZIZzPjBKbX25l62LkAGuZOCUHIr6cUaJhwSOo
-	9lYmiT9v7zCCzGUTMJB48GYZ2CgRgcWMEo0/3rGCOMwCT5glfr5aDFYlLJAk8fR2AzuIzSKg
-	KvG/rY8FxOYVsJPoOPyHCeJCeYne/X1gNqeAvcSS7m4miBpBiZMzn4DVMwPVNG+dDXarhMBk
-	TonOc7ugml0kzt/9xQJhC0u8Or6FHcKWkTg9uQcqni8xY/N7FojfKiTuHvSCMK0lPp5hBjGZ
-	BTQl1u/Shyh2lOh6uIMJooJP4sZbQYgD+CQmbZvODBHmlehoE4KoVpU4vmcSM4QtLfGk5TbU
-	WR4SG9ZcYJzAqDgLySuzkLwyC2HvAkbmVYziqaXFuempxUZ5qeV6xYm5xaV56XrJ+bmbGIFJ
-	7vS/4192MC5/9VHvECMTB+MhRgkOZiUR3ubwTWlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT
-	5FOFBNITS1KzU1MLUotgskwcnFINTGVRxgwSsdzMmaKCP3pi9nVsfXQjulT69jRRRVb7RVOE
-	vBXKnYWNFy/Ki7+uLSn4Krs43mtSy2P155P+L13VNzW8Nur1gTVGP3l502JLu8QtOM4WRaxl
-	jS4rVJ3jJ/tltdcnv90vKtUnrY86zrbl/uYgxuCwr2wSv2JsLR7ESBpNOLJ15v2ThQ903b9a
-	7m58d1RuVuj81TVK4hdM6lOFGV5a32Y4v6PBetbMPns+bfN3YkdbhS/Hhm8WMpScIbMsLPnH
-	QoG2K51+AUk7vYUOb5u13TLmvUXBvKrn3at8ytoqv11jnsXiPmX6bh0v1rj938KOme1aeHG6
-	tCBn3czMj3or/b21XZe1SmS6sDYpsRRnJBpqMRcVJwIAtkV1VeEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsVy+t/xe7q8ppvTDA5eV7N4MG8bm8X3LdeZ
-	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi3Ubb7FbLGxqYbeY
-	eGwys8XcL1OZLf7v2cFu8eRhH5vF8759TA6CHmvmrWH02DnrLrvH4j0vmTw2repk87hzbQ+b
-	x+Yl9R59W1YxenzeJBfAEaVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
-	k5Kak1mWWqRvl6CX8f7WXaaCPt6Kr0+9Ghifc3UxcnBICJhITJyS08XIxSEksJRRYsffdUxd
-	jJxAcWmJw1+msEPYwhJ/rnWxQRQ1M0msbH8IlmATMJB48GYZmC0isJxRYnO7B4jNLPCOWaL9
-	vB+ILSyQILHxXS8biM0ioCrxv62PBcTmFbCT6Dj8B2qZvETv/j4wm1PAXmJJdzeYLQRU0/tl
-	JzNEvaDEyZlPWCDmy0s0b53NPIFRYBaS1CwkqQWMTKsYRVJLi3PTc4sN9YoTc4tL89L1kvNz
-	NzEC43HbsZ+bdzDOe/VR7xAjEwfjIUYJDmYlEd7m8E1pQrwpiZVVqUX58UWlOanFhxhNge6e
-	yCwlmpwPTAh5JfGGZgamhiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1MemEf
-	nO6Z6Qme19wmGzjLfI7pm4iDNkUf3518m9g3rS5FhMvtZmBEQJ9RbIrvsYzV6+8zJFxYcPfo
-	hsVeTaK6JjuYxc83OnNNuOF5e5LM/L5Hv/zKKvp/Na8oD94xY1eJ3hmlKf8f2b9+avMrptCS
-	Sbjuq+fRgPkL7JoyP6Q+N8haKnJ30srJ86p5LplM3lVxMmPm5vzkJ+wNCeoy190/HV2+1e1j
-	57WZN6zX8x5zS//PwRKjEbzw5Lao/LYa+SSxfQsCdi97tnqZtumfXUvn8R+udTuj0/2D41Uh
-	+8mLC72Y3LctuLr405JTzzxuTXecdnJ75acKL4GI23LX94cZ/xOf/VQkKNh69bPsqXWpTEos
-	xRmJhlrMRcWJAIRJbWdQAwAA
-X-CMS-MailID: 20240807084917eucas1p28c675c9da74f0de0bb09689819202c39
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240807084917eucas1p28c675c9da74f0de0bb09689819202c39
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240807084917eucas1p28c675c9da74f0de0bb09689819202c39
-References: <20240807084829.1037303-1-m.majewski2@samsung.com>
-	<CGME20240807084917eucas1p28c675c9da74f0de0bb09689819202c39@eucas1p2.samsung.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v1 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The number of supported trip points was only limited by the driver
-implementation at the time, which mapped each trip point defined in the
-devicetree source file to a hardware trip point. An implementation that
-does not have this limitation is possible; indeed, that is how the
-driver works currently. Therefore, this information should be removed
-from the bindings description, which are meant to be independent of
-the details of the driver implementation.
+Unfortunately, it turned out that I have an issue with my git
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
----
-v2 -> v3: reword the commit message to be easier to understand in
-  context of dt-bindings.
-v1 -> v2: remove an unnecessary sentence.
+configuration. I'm sorry for the inconvenience, I'll resend a V2
 
- .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+without the sendemail.from.
 
-diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-index b8c0bb7f4263..b85b4c420cd3 100644
---- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-+++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
-@@ -40,11 +40,7 @@ properties:
-   interrupts:
-     description: |
-       The Exynos TMU supports generating interrupts when reaching given
--      temperature thresholds. Number of supported thermal trip points depends
--      on the SoC (only first trip points defined in DT will be configured)::
--       - most of SoC: 4
--       - samsung,exynos5433-tmu: 8
--       - samsung,exynos7-tmu: 8
-+      temperature thresholds.
-     maxItems: 1
- 
-   reg:
--- 
-2.45.1
 
+On 8/7/24 11:28, ivo.ivanov.ivanov1@gmail.com wrote:
+> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>
+> Hi folks,
+>
+> This series adds initial SoC support for the Exynos 8895 SoC and also
+> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
+> dreamlte.
+>
+> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
+> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
+> and dreamlte, but it should be really easy to adapt for the other devices
+> with the same SoC.
+>
+> The support added in this series consists of:
+> * cpus
+> * pinctrl
+> * gpio
+> * simple-framebuffer
+> * pstore
+>
+> This is enough to reach a minimal initramfs shell using an upstream kernel.
+> More platform support will be added in the future.
+>
+> The preferred way to boot this device is by using a small shim bl called
+> uniLoader [1], which packages the mainline kernel and DT and jumps to
+> the kernel. This is done in order to work around some issues caused by
+> the stock, and non-replacable Samsung S-Boot bootloader. For example,
+> S-Boot leaves the decon trigger control unset, which causes the framebuffer
+> to not refresh. 
+>
+> [1] https://github.com/ivoszbg/uniLoader
+>
+> Kind regards,
+>
+> Ivaylo.
+>
+> Ivaylo Ivanov (10):
+>   dt-bindings: arm: cpus: Add Samsung Mongoose M2
+>   dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
+>   soc: samsung: exynos-chipid: add exynos8895 SoC support
+>   dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
+>   pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
+>   dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
+>   dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
+>   arm64: dts: exynos: Add initial support for exynos8895 SoC
+>   dt-bindings: arm: samsung: Document dreamlte board binding
+>   arm64: dts: exynos: Add initial support for Samsung Galaxy S8
+>
+>  .../devicetree/bindings/arm/cpus.yaml         |    1 +
+>  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+>  .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
+>  .../samsung,pinctrl-wakeup-interrupt.yaml     |    1 +
+>  .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
+>  .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
+>  arch/arm64/boot/dts/exynos/Makefile           |    1 +
+>  .../boot/dts/exynos/exynos8895-dreamlte.dts   |  126 ++
+>  .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1378 +++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  253 +++
+>  .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  137 ++
+>  drivers/pinctrl/samsung/pinctrl-exynos.h      |   10 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+>  drivers/soc/samsung/exynos-chipid.c           |    1 +
+>  15 files changed, 1920 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
+>
