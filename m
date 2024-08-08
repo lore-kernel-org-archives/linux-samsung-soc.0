@@ -1,111 +1,108 @@
-Received: from sonic314-21.consmr.mail.sg3.yahoo.com (sonic314-21.consmr.mail.sg3.yahoo.com [106.10.240.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A702C78274
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 06:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E8C188CC1;
+	Thu,  8 Aug 2024 07:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723099606; cv=none; b=HR5BEaPF/LRQE/Qezdm3X76gJcpty3ehOZxsAGnD4612ezF+1KKN8brTnW+WpYhsj6HYxOBqsnpOhVYduLoIKSUZwEbVcgHN042ASq3V0Lb2ITGEKViPQdFnj+zytxjzyD1RHL8/kP94Vibh6wOaClbCTugDCkHjleHl9bEE/SQ=
+	t=1723101684; cv=none; b=N4EA29dw/Jmxm3FDOXBxlyQwluIeqTyq/SstzQ5GTFS+7oC12UEqGS0iHG3LaawfEXeij1qkicLVVH8HYmAVdBNb7p8KOzg+8XP+l0jdRmDEErhBpKitOcdcRDxdqup/XBt2KOfnqNGv3F3JRFdeYZOGyufoH2zZJRmFSSJxwAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723099606; c=relaxed/simple;
-	bh=nFyODy9OicDiOkfnpYUJWbFCcOEef8Vr45lsPx9Sphg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FMSV9xnV54XVWRdjv9DL7SO/42gUIHdzLlddDEqcD1uUuxmSFTgMX2Aeldh/5FH8rnEe9oMWSOfZdaOJZpTk12vNY05jSSuY1g9YT0qZoxHSfnDC8p+DfZe+eV1fxsiE6+onY9GWqT10E+Wrr6xwcIJB55BtKgp6gQGPYrKw6UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=s7OZ/bM8; arc=none smtp.client-ip=106.10.240.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+	s=arc-20240116; t=1723101684; c=relaxed/simple;
+	bh=7BfLjeSNWYLtfiVwI4qnNPVY41XKITqmCd0FBS0N6uU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EoBjv9gvkvmlcNVr7dEFAXTFWzxrtlOKJgLGnAkhYVIMGQXTR1BFI5v0Mb9T5GI4/cE/9PGu6p3xdBrHkWdlnW/v8TgOQbogPQmR72/nTJgKTLUAnQYowrLRAgZQuL+iK3iquyUW6H0JgYH1UKZadjXbkJd+jX4dVUrqDpNg0+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HG72xKB9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="s7OZ/bM8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723099602; bh=nFyODy9OicDiOkfnpYUJWbFCcOEef8Vr45lsPx9Sphg=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=s7OZ/bM8Tq5RGM2Zmjunt+IOH1Jy360CKaE2WESrjsg6BaSJHN2D1JiUyFJVKimPexwkT9pg7kYpOpD9yrvIbhYpqiIyAkozy8Nu6hFnc587xVqCpu0r8lsoFedJygEsvJU1zkn2QKVOoxBw43ZaQrzER50scTTei9omGpimdw8uJzSakPBPrKU8mluB5HDhngOenTSfqP1FcoVPk3q3L0gK6GOQtk7IK0nVkQezv3BQSSRz22ESJNmP96PCclFVfUcWa1KwTPy8zVIQoX/k7wMoYv62DYsG0drOMYM3owvcT4sBGBCdtKiv5j0eYNVKgl2X27EEyPXOU5P2dnLgsQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723099602; bh=LIkj0V82a67f/ZYi3NTw3foj1LR3QbBdRioVF0hVhm/=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=DX/v1RyfjraODswE7bQJKMOV2htWclyl6/ispYkrpBUo4VlS2bR5gVOIXNOjXOB1qpH58CPxRhED+j79YUCRXw5jLreczUFXi6w1YLMv/iPgGMVwrvwpRro9XVAirJsNuUqEc6UuGzn8nEfHGT0K+BgDD1gsALdL0spwS7rZJWMJWqQjBEpW0YpgTTgHb9vsVlhN/fC9q7JLeGCPn0vu8vselBM+mxFfkEm1DQKwYqKu1piVGM1cfMEvuguhXdXFd9JRsrewHCdYGDPrznlgoXgWRIDF+ap3O1tzbNYRFfgA+aUCZphvPTve9auxi1hNXSEe2g/T4eWW4qL54SWR0Q==
-X-YMail-OSG: J2t94YcVM1kZc21kIsisdiHmdbjcEUmVEDL_sWygRWmmxjWs5ahrGv8A2H_BLGc
- Od887yX5fFT2Pd7W4be4PcmZeWjrBg9QAzhgJnGXgE8vkAUr620UWu_xU5hEFsW3kG20HbMkbiT0
- yDWtKbSKx0jKTaF38otS4PS3kD4uaQZMquydu.w0V8GSmlB2G_eNTaUVFgIztqPhgrZ9X5ZknTLA
- JYmbXhHIMzRBjGrnlwQpW3WqGcC52f.n9CbvNgYnaeKLsgcGvwtMI6nDmmCQPXkjxuuVMqx0TmP.
- XpOiga9xv05YzHVjkGLh.fB5WMbaREaFEBWfA3l4cZ6CUQUVk0tow6ra4GtS6gBxEo_yVF2ke.55
- p8FoihpYSR3_Xc8meKiW.962ZGsNtK7jG2Ady4_thLFgd4wEEbmcalKtgRyJUVVEjLu1Bqt0e7Hd
- T4YdPuy4hWAPl5pYiVxrBK9.cn..0U8ffc6ruitasl7gBxsTpyiH2WX_seEFB2zTJNxSyC92gkpy
- zCPLbOccLLJZcQosU6Gm4FhwD5g43LJ3xY.FNGtgureUifn4mCIiDEgo3PNjj9e7mBFP5NG6Tngj
- _q1QFbks5Fkwws2.rz25tnoXyh6pYAAvPj989LzxGCkkC10LbmrDoFq3J04z3HN.kKkNht7RRvjf
- bxpbU3w.qxUOjIWcaBaWrk.3u1s8SzwT4qPEOpOuMd3SAowu0WEV1dld35v0lCIhy_XYktcVsDo3
- aiO20JDMKcIkvX53qnqgSA1DDatIu.Jo9GWviHkLjuqsRAEhzeoif.Pkjo_RGY5JSOMLNpjdRjHc
- BKZogzaXb16GAEql7.YfmwCyCUr8Bnh5AiFl4eDkckI94gGH.Q2pvjjiA830FchnzrwlugdbrHH4
- e_aaeKG2zG4PtpivSUpU99Pq3L77ZVY.R3IX6fHNCgF1clcTLun5owEAhNUcT1p5r41uwIGHd942
- F1Mn1w8Xpl5Z7K9oGfTq_72IufvK87yRWIkOHKEqOSA.ZOYEmj07rAK20pV6aVUrimXOnHVgi5vm
- Q6hx29anzjabc2uOLOggRDnWfxivG91XgskBVQBnmukFR5YF.vP2ryJQwZJhXUqRQBBGXRMRFKdN
- GEagUQnazRdsSnrK81H8Q6JHSo8qFeINF1n5S0EVpMj_oPN4KRBuWtapniAe.OdWuSeqfJNeo1X.
- dwhKMd4kUXOC9CjyS7kqNPvVfQ7ElANRj8sLpQiWRHhCAdgOe6wGbARpclz9DlC8BR6B0vdj3_9a
- pIFAE6Y1gev6Dkr_bl9sCbJHn4.CnnRIOnFa5u4CYZGsN0jIMaZCh1u97A8_HkosifYb0LvGNZZz
- iAh3AiHAM.ChDnbiIkVx5tA1HN4CC8zg4Wbqe_tyL11A3Q0pm5IvEIVrnzzbghARq.tvzNQ8c2YB
- 2tybuWpMWY3vClJ50J.Y02hafFCbsS6cokMJDEUTGvCn6z2UPcYQwGwdYu1MbJugnfFkkbj8rMIr
- yQ7tPdiGBwmYJQEmT30eTS.5nwVEcuQhSfSzRx9fqCO_Sad_.iwzWO.FLBwYhlz3do_qt4BTZ2EQ
- JnqzsTy.Nz0GjTHFRgwoeKom.HGTaUDyF8cEJ77lq9nYlOUXIUZJTKtK_2tBFHEN.LnJsb1vGOyf
- 31uNSCZZx97nP7dul13WXFAISRY1VsJ0NaRulcNDLb4jMD._YIk7wqVU5DuNuyQBuIQpej86nHFk
- xEW_413IZMdH_KBHlG2Q9bjqA8obTW4.evQzIqKstBLnbg9V5mFuVZIYdRFAEa.v31Q9X9PSv35C
- BngHkr5jidkvjqMV0Brjq0TJJmthuwOmEFnhE2yXaBCn5fJ6XLR4EiN3T0jNFFoKSPjJpnK9Maem
- NO1BZW.mSLkSVSiustaMPML7suRXXnTcbYTT4BfTI0.8Hxy09EdsjPiVlhT4keDzW_UTSi0dwmMh
- p1kJIDbGlP9XufkH1hXSYY5vQGW.auH0AgtnwRmwF6N6MPUf9LJ.9sXgalYJjOz7mjLPOFJVumJv
- CrIL5MxREOSUbLETZpQ.TrOzz6xyJGOLwj4gOD235RMVWHwM2foDIceeWTAqI2llG.4f8puXhcB3
- kt8U3lIu55USb7hQyeytVHaTTkcBr9AWu4cnz75nRPEoIqFucJrhfWSFwhFYz3RnBFGQ7rBqJW2V
- 7eUjMK2aN1NuhDIfqceyEYYwzVcHBHgykhyJDnQShWN1uI8BUmTVtwxNtcN5oasecvo.YZjemXrT
- z2eyPsBgJ2UpAjSHTJvIHkB77XSJhUIxrk9tlezILdumEo.YlB0haDhGCg40ZbmTYiex6ZTgEwG8
- -
-X-Sonic-MF: <kwangson@yahoo.com>
-X-Sonic-ID: 770b26d2-00b8-470e-8f18-6d930f6e4f3a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.sg3.yahoo.com with HTTP; Thu, 8 Aug 2024 06:46:42 +0000
-Received: by hermes--production-sg3-fc85cddf6-2xn87 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0de0f388ebe636e1f855371397096932;
-          Thu, 08 Aug 2024 06:26:22 +0000 (UTC)
-Message-ID: <83d53dacdfaa4ccb3b1034702b1f6075e67743b4.camel@yahoo.com>
-Subject: Re: [PATCH v2 0/3] dpum clock support for Exynos Auto v9 SoC
-From: Kwanghoon Son <kwangson@yahoo.com>
-To: Kwanghoon Son <k.son@samsung.com>, krzk@kernel.org,
- s.nawrocki@samsung.com,  cw00.choi@samsung.com, alim.akhtar@samsung.com,
- mturquette@baylibre.com,  sboyd@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Thu, 08 Aug 2024 15:26:19 +0900
-In-Reply-To: <20240730111535.135301-1-k.son@samsung.com>
-References: <CGME20240730111628epcas1p30976a7c1192749ff7997be5685d52c49@epcas1p3.samsung.com>
-	 <20240730111535.135301-1-k.son@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HG72xKB9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1603AC32782;
+	Thu,  8 Aug 2024 07:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723101684;
+	bh=7BfLjeSNWYLtfiVwI4qnNPVY41XKITqmCd0FBS0N6uU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HG72xKB9nUAF9nH7TihcuXt1UpAXJQDDHBNaExeyNt+bX+zdssbi8OiIEdQShzF1b
+	 sJDfW1sCK7Tim/Fa4yej347BPQ0Kj/QMT6YbYH/HEJgVbVy+KBOflFbIhMGVgXWx/J
+	 PcLhfQzmzJs0baNr6tA7uz3QWojJfdriKxJ0azUou/iV7g64B3j8XsHxuVSEqgXrPm
+	 JI8xSabPoLfVRXvnoYjTiFTafUcjZeXef5GKGCyQ119dfgt4t+mfbqwv2ARNl5rHEF
+	 kEVZW4Uxvbv/YJp+nXevO/eqkA+jjDyEAobLG4IlHEgsyy3cNhGjdZnClj4T7K/qBX
+	 Qx/AQP4lo1m+w==
+Message-ID: <b5c94688-1419-4d21-82a2-2da6ad96967f@kernel.org>
+Date: Thu, 8 Aug 2024 09:21:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.22612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] dpum clock support for Exynos Auto v9 SoC
+To: Kwanghoon Son <kwangson@yahoo.com>, Kwanghoon Son <k.son@samsung.com>,
+ s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <CGME20240730111628epcas1p30976a7c1192749ff7997be5685d52c49@epcas1p3.samsung.com>
+ <20240730111535.135301-1-k.son@samsung.com>
+ <83d53dacdfaa4ccb3b1034702b1f6075e67743b4.camel@yahoo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <83d53dacdfaa4ccb3b1034702b1f6075e67743b4.camel@yahoo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-07-30 at 20:15 +0900, Kwanghoon Son wrote:
-> DPUM (Display Processing Unit Main) is main dpu for Exynosautov9.
+On 08/08/2024 08:26, Kwanghoon Son wrote:
+> On Tue, 2024-07-30 at 20:15 +0900, Kwanghoon Son wrote:
+>> DPUM (Display Processing Unit Main) is main dpu for Exynosautov9.
+> 
+> A gentle ping..
 
-A gentle ping..
+It has been just a week, so very early for ping. Unless you ping
+colleagues to provide you review?
 
-> =C2=A0=C2=A0=C2=A0=20
-> This patches enable clock for dpum, sysmmu(iommu).
->=20
-> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
-> ---
-> Changes in v2:
-> - Squash patch 1,2 to make headers with schema.
->=20
-> Kwanghoon Son (3):
-> =C2=A0 dt-bindings: clock: exynosautov9: add dpum clock
-> =C2=A0 arm64: dts: exynosautov9: add dpum clock DT nodes
-> =C2=A0 clk: samsung: exynosautov9: add dpum clock support
->=20
-> =C2=A0.../clock/samsung,exynosautov9-clock.yaml=C2=A0=C2=A0=C2=A0=C2=A0 |=
- 19 +++++
-> =C2=A0arch/arm64/boot/dts/exynos/exynosautov9.dtsi=C2=A0 | 11 +++
-> =C2=A0drivers/clk/samsung/clk-exynosautov9.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 83
-> +++++++++++++++++++
-> =C2=A0.../dt-bindings/clock/samsung,exynosautov9.h=C2=A0 | 11 +++
-> =C2=A04 files changed, 124 insertions(+)
->=20
->=20
-> base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+Best regards,
+Krzysztof
 
