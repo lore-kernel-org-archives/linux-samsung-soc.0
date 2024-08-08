@@ -1,46 +1,33 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30242F23;
-	Thu,  8 Aug 2024 07:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52411185E6E;
+	Thu,  8 Aug 2024 07:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723102290; cv=none; b=rb7pFXSlUxyD9X7TzXtu7s9bGDC8wCMrxSL73ON26zyyRsgsExvVD8cyK1Vv4AzZbXq/P7C26II833/5LZxcmVEqcsha+Vop3Mk6cw196a686jo6V2qDNNdJ0bQOHgEk7JkhL4C9QsA9NmxOwUKXmnta9qURrx0SuXKp5nNHYEE=
+	t=1723103839; cv=none; b=nBzqnB008TVlGE/iNS/rs2juIznZ+MW9nyLVVkNqlrt6sQeaQpcdSvl/SiE4OwSWJpKl6+NTwTPH9RWcWiUjQwAhz+jPckEbLjnXMEEPpdWOQVhDcGk5FosmK7+tYNQp/tKX6dMlKO34gjrQLeLaq793Of9cqdtyxsw4ybCNUSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723102290; c=relaxed/simple;
-	bh=bBIpJNc2pO4tu95IBDbY0/YhHLZIFPk+R8FGA5Hud68=;
+	s=arc-20240116; t=1723103839; c=relaxed/simple;
+	bh=qNP1UakDsZGQ04BDFP62Iy3U81TTUfzEhBZQ0cJbHkU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o9RSepotkXftCELvvZxBLyzyVFlkmFlxJ9FwY2HqnlkUZ6fbc/Drhoy4vofJmRF0+hpM4Y+8t+gD9r6LKMg8LgE5ewYFAgAmQLqQn4QduZVmrHIA5JfXZ7MmlaodUMYl5qSPLQPpL2z8BOooNcJROKDuBMocDZcLMoOBkxvp7xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so1334655e87.0;
-        Thu, 08 Aug 2024 00:31:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723102287; x=1723707087;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Gszn4bTEcR0D4FRrJZtWUth+w4ELc3I3pKmXqIK+nY=;
-        b=kO3yRrTJm5ArKv+88Ggpc1GhtdGmRiWMPgUj0+pyO+kKLu6IsTNDqkMO8ciWF6OY7U
-         ZWBnX4Ym5T3DQL55EZ5G64/FGcJr4MRm9OuOcyW7Z5YsC2wyfCSNgSe4rUrDYxgzHW8z
-         qtugQK4XSkfKBashTIdl6/YllVS6ldTPw3VtYckhZxFStyMfi1T/klnt+YnPKbx1zV4v
-         IgDfhRA7kQcGp3kx4HFkEv7QAYMnkVgVL+hKxqCsf6oXbVV3osJHU3n+YN2TYhu8s0I+
-         YTJMPrDaAXa8+C5OtzTRXGeak8R7qrOjHFgt85dXnzM7HL0YVYF+yBEoG1jLKW5d0ifC
-         lstQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2GBt2KYUQriYlRULVAXiDVi/SosxBKdKpnAxkNsdxKPAxLTNMi5HAMnERJjRKnWlW3ItVa/PE9ha/Alg9TqT7o1KOS/ZaijGhVp9ngtK4eXYeHKPp2UbyQ2k+6HZYxLgLrSHKjHdF01/as2gEFy0ZAXQjDvyciLyDkdMhS2jIulfEVgbGE0EZ0ta+YrI=
-X-Gm-Message-State: AOJu0YztfGNTwKreto0sAHgeLRlLlwU+YtGzK1uZANg4n9UNkgTvTol3
-	QosFIUA1KInSvrS24Lsd91wZbXLkjEIREU2wrf1Z/zbQ1I+0nryg
-X-Google-Smtp-Source: AGHT+IEZy/a/MqdksQQcam9t4oDsMY2JYY1I1etnpQV8uVPdJTZsT4Uvwjk1xr7Td1B0Jh9dvLOFBQ==
-X-Received: by 2002:a05:6512:3e1d:b0:52c:deb9:904b with SMTP id 2adb3069b0e04-530e58769c5mr882431e87.38.1723102286668;
-        Thu, 08 Aug 2024 00:31:26 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec285bsm706758666b.188.2024.08.08.00.31.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 00:31:26 -0700 (PDT)
-Message-ID: <65ce2214-dad5-4a73-8806-07aab5404cf8@kernel.org>
-Date: Thu, 8 Aug 2024 09:31:24 +0200
+	 In-Reply-To:Content-Type; b=P5EpPh5PkYzOXjNrhs3kbw+AbHxfgMQkzXM5TXhQLNDCUBXet2JvCKNKzv2y5hYYvDkeIdkGFzK6h35ozVisGugsFfaJdBOm1gn8anUH9lZ2ql4KADqWARn7IwTi3sT5zf9JTJoKzqUEPugk1EqiBrAYUxJjB1eY3/dBuMKn5mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WK3+V5E0; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WK3+V5E0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 364A6C32782;
+	Thu,  8 Aug 2024 07:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723103838;
+	bh=qNP1UakDsZGQ04BDFP62Iy3U81TTUfzEhBZQ0cJbHkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WK3+V5E0m9iRdM9svCRKKkQEROaRsdwPNcrvfiXd3sj3IJvmbCD8kIdkGSer7kW0M
+	 hujnFYUFFMOhxGsrn5BjDnjAiocn/0heyTNYBcIJINrlXgIZE/2/dowAWtnwuU8yUe
+	 aiUtuzv6Y48MieSXKBTWyXgza7WJ6YiUYzfAs+QIRVOaMWgX42HrInagMl8+CwUTXi
+	 EM5m7im0ycxt1We9hR4ZiJv5iQ5jIMvixgaTi01C2amSxmjZG1idZZIV646jptU4WH
+	 /6Xzr/OEu5DmfxPNnVo5LnMc+k1vic+lviexwSayvl9ZymVfCz0IqKXzaa2G2vZl/B
+	 pMRpP7uSGHm4w==
+Message-ID: <1a7db82e-72ee-496c-a501-54c7dd05cd41@kernel.org>
+Date: Thu, 8 Aug 2024 09:57:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,114 +35,96 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] tty: serial: samsung_tty: cast the interrupt's
- void *id just once
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
- <20240807-samsung-tty-cleanup-v2-2-1db5afc9d41b@linaro.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: exynosautov9: add dpum clock
+To: Kwanghoon Son <k.son@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, conor+dt@kernel.org, tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240730111535.135301-1-k.son@samsung.com>
+ <CGME20240730111628epcas1p1148cf2853a9d2fc6decbd4ce50f23715@epcas1p1.samsung.com>
+ <20240730111535.135301-2-k.son@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240807-samsung-tty-cleanup-v2-2-1db5afc9d41b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240730111535.135301-2-k.son@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 07. 08. 24, 13:58, André Draszik wrote:
-> The interrupt handler routines and helpers are casting the 'void *'
-> pointer to 'struct exynos_uart_port *' all over the place.
+On 30/07/2024 13:15, Kwanghoon Son wrote:
+> Add dpum clock definitions and compatibles.
 > 
-> There is no need for that, we can do the casting once and keep passing
-> the 'struct exynos_uart_port *', simplifying the code and saving a few
-> lines of code.
-> 
-> No functional changes.
-...
-> @@ -944,17 +939,17 @@ static irqreturn_t s3c24xx_serial_tx_irq(void *id)
->   /* interrupt handler for s3c64xx and later SoC's.*/
->   static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
->   {
-> -	const struct s3c24xx_uart_port *ourport = id;
-> -	const struct uart_port *port = &ourport->port;
-> +	struct s3c24xx_uart_port *ourport = id;
-> +	struct uart_port *port = &ourport->port;
->   	u32 pend = rd_regl(port, S3C64XX_UINTP);
->   	irqreturn_t ret = IRQ_HANDLED;
->   
->   	if (pend & S3C64XX_UINTM_RXD_MSK) {
-> -		ret = s3c24xx_serial_rx_irq(id);
-> +		ret = s3c24xx_serial_rx_irq(ourport);
->   		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
->   	}
->   	if (pend & S3C64XX_UINTM_TXD_MSK) {
-> -		ret = s3c24xx_serial_tx_irq(id);
-> +		ret = s3c24xx_serial_tx_irq(ourport);
->   		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
->   	}
->   	return ret;
-> @@ -963,19 +958,19 @@ static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
->   /* interrupt handler for Apple SoC's.*/
->   static irqreturn_t apple_serial_handle_irq(int irq, void *id)
->   {
-> -	const struct s3c24xx_uart_port *ourport = id;
-> -	const struct uart_port *port = &ourport->port;
-> +	struct s3c24xx_uart_port *ourport = id;
-> +	struct uart_port *port = &ourport->port;
+> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
+> ---
+>  .../clock/samsung,exynosautov9-clock.yaml     | 19 +++++++++++++++++++
+>  .../dt-bindings/clock/samsung,exynosautov9.h  | 11 +++++++++++
+>  2 files changed, 30 insertions(+)
 
-No need to remove const from port here and above, right? (Only from 
-ourport.)
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (26 MHz)
+> +            - description: CMU_DPUM bus clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_clkcmu_dpum_bus
 
-Other than that, LGTM.
+We need to stop calling input clocks by full name. Rob already pointed
+it out for GS101 and we fixed the approach there. This binding already
+uses above syntax, but I think we can start with proper approach even if
+it leads to inconsistency. So please come with description of this clock
+(not clock name - see GS101) and name, e.g. "bus".
 
-thanks,
--- 
-js
-suse labs
+BTW, in the future, please ping after two weeks or better even: relax,
+and help out by reviewing other patches on the mailing lists in order to
+relieve the burden of maintainers and move your patches higher up the list.
+
+Best regards,
+Krzysztof
 
