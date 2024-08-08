@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E8C188CC1;
-	Thu,  8 Aug 2024 07:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBAB184101;
+	Thu,  8 Aug 2024 07:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723101684; cv=none; b=N4EA29dw/Jmxm3FDOXBxlyQwluIeqTyq/SstzQ5GTFS+7oC12UEqGS0iHG3LaawfEXeij1qkicLVVH8HYmAVdBNb7p8KOzg+8XP+l0jdRmDEErhBpKitOcdcRDxdqup/XBt2KOfnqNGv3F3JRFdeYZOGyufoH2zZJRmFSSJxwAU=
+	t=1723101844; cv=none; b=IRSf8Y/CkOMWyiI51nHjdvGc+aTIXm1+oVYRLBhGhXkdarRZ+OsFmuybiZcj3aAphRjxXmWQwm0TBGnjR+D8yElxLsEer706QWb/KQ9EQBhNgqn/Ama3ZDK85D9FWG1GfewTM8KUZZf/BCckvBgTgp9JVgrOw57fhI5bEKhxNIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723101684; c=relaxed/simple;
-	bh=7BfLjeSNWYLtfiVwI4qnNPVY41XKITqmCd0FBS0N6uU=;
+	s=arc-20240116; t=1723101844; c=relaxed/simple;
+	bh=PJXUR1X97gr/ZryqJBp43/1AgA4kgN3qWCxWeyj5I3s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EoBjv9gvkvmlcNVr7dEFAXTFWzxrtlOKJgLGnAkhYVIMGQXTR1BFI5v0Mb9T5GI4/cE/9PGu6p3xdBrHkWdlnW/v8TgOQbogPQmR72/nTJgKTLUAnQYowrLRAgZQuL+iK3iquyUW6H0JgYH1UKZadjXbkJd+jX4dVUrqDpNg0+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HG72xKB9; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=OzHwV4Da4KX7N9WqVSQqIeqXcDXVtQCfU69HQlYMQF7iVj8SFhrU3jqDe/YTefjMOeDUsyXgOMl8QUBUnoMf9giJ66C1enIk6wtvAmJtTpPDVpqXsK1NO3jZYlyaKA9BMvzN1tbNHhcHIrU161QyiS3IAxRoHi0uXvmD15kU5nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPruvz2R; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HG72xKB9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1603AC32782;
-	Thu,  8 Aug 2024 07:21:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPruvz2R"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4DBDC32782;
+	Thu,  8 Aug 2024 07:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723101684;
-	bh=7BfLjeSNWYLtfiVwI4qnNPVY41XKITqmCd0FBS0N6uU=;
+	s=k20201202; t=1723101844;
+	bh=PJXUR1X97gr/ZryqJBp43/1AgA4kgN3qWCxWeyj5I3s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HG72xKB9nUAF9nH7TihcuXt1UpAXJQDDHBNaExeyNt+bX+zdssbi8OiIEdQShzF1b
-	 sJDfW1sCK7Tim/Fa4yej347BPQ0Kj/QMT6YbYH/HEJgVbVy+KBOflFbIhMGVgXWx/J
-	 PcLhfQzmzJs0baNr6tA7uz3QWojJfdriKxJ0azUou/iV7g64B3j8XsHxuVSEqgXrPm
-	 JI8xSabPoLfVRXvnoYjTiFTafUcjZeXef5GKGCyQ119dfgt4t+mfbqwv2ARNl5rHEF
-	 kEVZW4Uxvbv/YJp+nXevO/eqkA+jjDyEAobLG4IlHEgsyy3cNhGjdZnClj4T7K/qBX
-	 Qx/AQP4lo1m+w==
-Message-ID: <b5c94688-1419-4d21-82a2-2da6ad96967f@kernel.org>
-Date: Thu, 8 Aug 2024 09:21:17 +0200
+	b=rPruvz2RzFgEHCd3QCVVttNjVUhUEoXVbidjNohJ+jKzN03rcE5BHbHXoXdBlRZHa
+	 NgtN+p+5leIL7UMAwycOrJEIikNYxMLGiE8Ss1ffWEcnG8Sji5hDD/XlJxlB6WLcg2
+	 KTahPObWrQzBc2ZLpSqM4N0ZErdUHzFUi/DWFYxJxe9t+XQAISDHlBoS82iCY5plBh
+	 uNvnFtVoNHRRWXnhBN45N+b9zMTPvRjoFgkNxxbjpaU1FhkJmgxhcMjE3hOG+TcSBN
+	 0ga280OOOCS0j54/BMw3KyvnMpWC8/PF5fLPE1rrIbkftDm/WOBVQz3lamiFXKbG2Z
+	 9qTDgsWX9Nk9Q==
+Message-ID: <10ec9c87-5b31-4a1c-83aa-bc0ef548c1e0@kernel.org>
+Date: Thu, 8 Aug 2024 09:23:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] dpum clock support for Exynos Auto v9 SoC
-To: Kwanghoon Son <kwangson@yahoo.com>, Kwanghoon Son <k.son@samsung.com>,
- s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <CGME20240730111628epcas1p30976a7c1192749ff7997be5685d52c49@epcas1p3.samsung.com>
- <20240730111535.135301-1-k.son@samsung.com>
- <83d53dacdfaa4ccb3b1034702b1f6075e67743b4.camel@yahoo.com>
+Subject: Re: [PATCH 0/2] tty: serial: samsung_tty: simple cleanups
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org>
+ <2024080714-spongy-wannabe-7a9e@gregkh>
+ <5e73f1b405e06f9ee796d3b7002933f75613728a.camel@linaro.org>
+ <cef7b260-7f47-4acd-9d6c-d26b7f8cc7bf@linaro.org>
+ <62c027a1692c1b80652b58147d4ff215a0ada88b.camel@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,18 +94,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <83d53dacdfaa4ccb3b1034702b1f6075e67743b4.camel@yahoo.com>
+In-Reply-To: <62c027a1692c1b80652b58147d4ff215a0ada88b.camel@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/08/2024 08:26, Kwanghoon Son wrote:
-> On Tue, 2024-07-30 at 20:15 +0900, Kwanghoon Son wrote:
->> DPUM (Display Processing Unit Main) is main dpu for Exynosautov9.
+On 07/08/2024 15:58, André Draszik wrote:
+> On Wed, 2024-08-07 at 14:53 +0100, Tudor Ambarus wrote:
+>> Same on my side. Any idea why CONFIG_WERROR is not enabled by more
+>> archs? I see just the two:
+>> arch/x86/configs/i386_defconfig:CONFIG_WERROR=y
+>> arch/x86/configs/x86_64_defconfig:CONFIG_WERROR=y
 > 
-> A gentle ping..
+> I can't answer that, but it's an opt-in these days, see
+> b339ec9c229a ("kbuild: Only default to -Werror if COMPILE_TEST").
+> Surely if the concern at the time was runtime testing, then that
+> runtime testing CI infra could have disabled CONFIG_WERROR instead of
+> globally disabling it for everybody.
 
-It has been just a week, so very early for ping. Unless you ping
-colleagues to provide you review?
+You are supposed to look for warnings not rely on errors. The same for
+building with W=1...
 
 Best regards,
 Krzysztof
