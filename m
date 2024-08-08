@@ -1,147 +1,129 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from sonic306-19.consmr.mail.sg3.yahoo.com (sonic306-19.consmr.mail.sg3.yahoo.com [106.10.241.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72EA0189F50
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA2713AA31
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 10:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.241.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723111029; cv=none; b=DMUQK1az8P15/EpuKXmE6Wd27STt9M1/1VkmX8pG7XGJl9JqgvYlABdF0e4sG5ACVjL8NOFW61ZbDHepc5VQFIgEVFcin6/Mq3CRsceT09OFlQREZp/g4Y4BVahQutFe+P7n9ngIWlbDDCJMckUEE+p8EPzjpj4/ubgajR4iqOk=
+	t=1723111922; cv=none; b=ozv39SwCnKQQP560gMg0XAM+QpF3uamcujsDqlMgE9Inr8Swwua2db/sD34Cym2xTZmk94sIPwtFSS9wXbldLwBoPeiBluOQBe23GXxpRsVfaDJTpjRvEiPEWcYg5jTFWoCvRy857PJ3KOnEdZGK6onvkpegeJATsnVnPLaZZVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723111029; c=relaxed/simple;
-	bh=BCc3JMeiVU/pbaDkOckj9tlDKP3uaM6hbtGH0PHfALk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9MmG9jYQ3jLko40Ygn/ZJm9yKrfotU5vm9GxTumg0FjyhO0GtJ6sSajjEoERQquyqIolK94uEFn9gKQb5I6exEyRqwYn0CX7pLENs5++GiYncO+rOpRX2pnwPOVbKNtER7Flauh7wtv1SU20qlGYEI5XVWJHp1EXsAZYOGdqOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PA9KRask; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723111922; c=relaxed/simple;
+	bh=a0/nCekGh2WgXi/OWW+jnX8eQoFJmjmVu1/ImqeeH+s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LSjfoe75C9LDg3D/AebeI8BY/IVEG24qU9rjWCyFbxuwP0k3bW7frjvOlWHLx8a332UIEaAOmJwvpIH1NSjsE12kj9nTp5RJXQy6BD/ughB3sTgTCBT9ggl5Kx+yrtvCIIkCBz9tdrz/wcLWnRsLQ2L1yrCNATbil86ltBTBaI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pdwbpELb; arc=none smtp.client-ip=106.10.241.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PA9KRask"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso989886a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 02:57:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723111025; x=1723715825; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wGmpPT++dxS0VwVrHHvITcmSKbRjA6D6vdhXmz2ZdyI=;
-        b=PA9KRaskFT/E3zHE3icU9Ueh/Am7h3ywvXbUpwEDlsHvLWHOYlebcFw46IvCkHP2oT
-         wKqOa7xucEy9b47+3BJSxrhWVn8iCWFSSSOYM/XdILfVCnkt/WuUutfcK8SPjTg5l0LE
-         PoLny+iqGLv66Qfk4un5cW83nNMAlxb4CxtUbdlFqfep4XxtST5BnLKaG9zoGflgAvxN
-         ArWHXKhD9w6ELV9k6r+voHLA1gd2pxMqRlhuAVRsVkgR0H6y2KGD2Do/IB+QoYyyVVL7
-         nrZvW38TEI0x2DkMghXzMkSKnlzIhEXLRPtwcrjefxznwNdN9vkBT83IKpfs0hY+B8/e
-         o9mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723111025; x=1723715825;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wGmpPT++dxS0VwVrHHvITcmSKbRjA6D6vdhXmz2ZdyI=;
-        b=BLYa8dK8ieUb0ctESMQSIKwpQVFGV8ZEIwnfnacEK84RI/Pm7QDw37IJln7kuzaDog
-         FBOmDxpyo576y8+DnFkixHCdThPVohQvmSjuXVDdoibNLNErwAI44+IzpT4ZJV9pwBYk
-         +blgHdiiOZHXRovm9haqWEZka/15iVZCza2WMReElEsZvoMdgTWmLJ+U8fxilxE8sn3E
-         qcV/HPUa2P2SYTmFmO06+/A/aCKbVSUDXqnrOSlC2n0e+XSnQ4CF16gAnqOm2ga5Pb2O
-         lsM+SECS3fRQ/0VHgYVrQbhU5tvoDOUUijfk0H+VTo2rjCVVcKa0vhvdQOISjJo04Sx0
-         ytcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfOOcTNzMD1bQtn6YN92Wgtj8v6H+Ni/dQzYgsx2c2DqoD/Y0+rQWjvVAHeHXbQt/eetSfV5i2ibp3JgHbBq0InFbbE30KHca49XKirEDD+cs=
-X-Gm-Message-State: AOJu0Yzp8pzG0daYRVQ/ExN3khVIkO1vsCJMeSw+8ui2pzdfH2Jq0INO
-	G1z75sHiN5oI2XGtimp9EhtXzYlvJpRVAGGs7XdI1r2ScvQfr5qAsluTiBKn1IC2lLDmhGrcoo/
-	x
-X-Google-Smtp-Source: AGHT+IFe3lArDXHLFN9+vIQ2xudce7dStaP5T9pFhGDsyWTJCn+t8VuWCIKjDVbHkGDtMuboeY5P9g==
-X-Received: by 2002:a05:6402:35ce:b0:58c:2a57:b1e7 with SMTP id 4fb4d7f45d1cf-5bbb218daadmr1093950a12.8.1723111024719;
-        Thu, 08 Aug 2024 02:57:04 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c41ec9sm490339a12.42.2024.08.08.02.57.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 02:57:04 -0700 (PDT)
-Message-ID: <4230387d-0413-4da8-b55a-ac708af05e34@linaro.org>
-Date: Thu, 8 Aug 2024 11:57:02 +0200
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pdwbpELb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723111917; bh=YtGze27uA3MUcvh4sOOHW30uM5jDuuNft8Y//6DQec0=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=pdwbpELbnN5GnFvGrtwIkQATjSO2kri7ROvlbTcDGcbcbn0+0PeeI8jo91PGfTbKOkFVJe8VBrM4jzlbtG1Z6sCA1scSJAYSUL5mJuuZ2ruaR4wdvoaTyIR0jO9LusQmIMuBc2YVEvk/cJPdpPTsfwyHMVYf0UXQWi4gJBqNXjWyxKZHoLYFBVWuxc5xwNOriM7ph+WpLLpN7wwli5FDjDzsr/8Hwye1KXP5nC/O+Ylx/VzbVjLhPqvEb9I9ESxdRe4F7lqMIA0AIi37FRMeJ1c+afE0wTlB8k4Shw849B7pPS2tLKfJOt0yLoS2uZ+7Kh2XsciOKGYQENndFi/NLg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723111917; bh=pTeW0IlahLW+ASrBUmid6lc+1Fcb3v3uvbKFjlu7w9v=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=oCBQwbDNUaO3fh3LInm+LojooAWnIdQ1emRJwhi0+tQUyYc2vaLnk08ZQXOBQQeBNWiPYgseC8ekD5SY1B9cqIx6foTMPktAvMXmwV97WqXYG50j41FY6kAO4Vi9rPn02aHVyC0IruZmH+TdDibYu5B4UQsf91JpUM3U/D1vpZa8nWeK1GJZ55QklYRxgbeVcQGJ60XKZKzL9dk9FqTIs2jLcHkl5oM8WzRYJGrdZO9jq9eNiE6p3QNOnGAAbYEYwQTyxzNQGdWS0+feLH/4o94bHqm2ZMFTkZTEPhoyyRPOpYF0yohWSMSNSHCdm2EJx/VlFGOFpGkFVCfqtdzPfg==
+X-YMail-OSG: Acv03P4VM1nfFzFd5SEBTrFKqCrnVrsLs2sVPTOSCCQaRZLUzFp1RQuZWd85GGh
+ yNE1_TODgTXt.wxb6u9miWaYlhXWdoo41sf5eQbr5XtYAfAXeZu6RCqF8F0ZXK6y7TyOw6BcRw27
+ LbTOevK1lsWIrmSJOx7_e8LepP5ffRr00YR6WEcbBp1urLQ6aVHZZ5RA4pW52mNQeXXkahEA3j7p
+ 0Y3afMoHwOPi6f8hjEkzfaQLHvGmouNuRpXn.ocRYSzM73po5D9Rkpozy43lQQXelTbpQFLfc.s7
+ k1WKiAepxeZxFXbfV67wAfFPhz9iTbu2NQbgyEHBWTittyJC2esBiMGwBC6T3lFkHVgAveP4_q3K
+ VttDqUFndYytMmSkYNH6itsacdC52REDNUOIlfwgioXqrmJ9HF3J7ApV7cuigDiKJRHRFcECx3PA
+ p_xzpNr3ACnZoAoGzz1P6sf6Fpa.OeNDkzLgz4ZhoG9VDHT8cbIPCafZ3uTmzaTIo0DZY5gTsn8h
+ v_2dfhbKOIly5eTg2ADamrORtz4NIlnPYKspZHNZsO0cgqrs7zjR_pUnXPFo5INqtWo4BJgJ8SVZ
+ 3ufgtvxiuKyJ1gEerPTsdIaoZtlrZjHgW4uwCaLhTknVzJEv39xDbJjCfwdLbo6XXH1MBTd74ol_
+ My4LGpab9LSQcTfV2IQfOmwHusEL0RCaqcbMMLDzGdCgYrTJD3wqQjH8x6KANQSsV.yq3fukbudP
+ 3MRpV4hOA2QaybSo8.._IBu8w5FLyefHLEZTRMrmyNeYR3jdw2.mr1QrflnbCSFwVd0ssbpDsYGk
+ 1WZjGhqdT_QoNZUlgAukzmTcqMm_gZNnGY0UdPrOlAuFmwIMdayEyaKpeTGV0LY.IssddRpnDTEV
+ 0oWVilqXWQHBDcZUqrHvTgOdEN3wyZvlq9PNqQM7nivd2D9n85l3w97MMQgPO9Ci6kUlvrRWmg_M
+ WqYOTqq5GAKWcFhjxZpxXWQQGhfb74D1Eap5zo29Qfngs3ry7n9oJDTaxPAlMVMRiJqqDnhIlUBD
+ jNiJPMOwX.eOIZM0UZBjdSITYXpZRvyQIx6vcCDOaxaTAQVPTSKAkE0i05I.be4mMK5aQYJOXHVF
+ .HiHtJvKsYx0xkZkPiIOLGXkxwsZRwal550UOyYI.Dk5LiAYw05qkyE0eaujONqcx7fzMgYELRn9
+ PwTo.r0aAggcpqx4sea96q_xpbxbUb4BOgu2_4sjbFltstHcJKQd5UAScbyOaNt0LuU.gJMSGhEK
+ _mbE7dysiAYZcF95indzXu_738mrj3G_ivz8RQUvUp44Jn.8m58_wkiEw4WLb8rVBdQa8ha5FpIx
+ xFFNx22xSkRHRLTDsKLW7BChW8JD87GOBDkkPahey1xYSSQuScKt4hOicjGLWzwlhJ41GAK_qJ1r
+ elVSxxdXF8jZk1tRViMhx.nCugoDcLVqEQTqk7e7F4vXGz.Kxvo0NB_2CoM3YwZa7gHz1pKqRG7G
+ ABQksBJZmM.i7RhVjG6gEneOmn6VFx6BB2W7QvLbQrP0PgKrpVjFx67_aK3Ebrb8vYiXNqqyTjxg
+ xKKpeEh4UwpAVT8TgNp0Eref..Ogfok.gRIecmUh_POfy2XHUGH7K5LL9u1Us71kcofWxc6pNAph
+ XmowtCkStNU26nw0Jyneg7f_hzOhSO6hqBww2XSG_getonFjL2hlQypcVarHwbetUJtCPGes4jGL
+ du.LzeyRYg7gBneOpAOmw6d9rsl3vu6dYBmefRgy.HZQKS3_5m4HuXMTHGXNrxy_h8RsbTM.pZPF
+ yQJE4WaInPugdiClVPcqJkhuxR9_gsVDkRpt5BEtuHww9DwL6xWgXf3Pvcr9LQxaYwaht4w11d99
+ OTzsUXYdjdcOH_.5ALg4upfOWvQpzJf0uSf8hh9ZKZ1N800NPFw3AIaWYEY3bTJDJHoLalUERz7f
+ i3JaRJ0.YcARAeEt0_hzBqOmjro34zkbxaqFFDVaGK8KkG4t8wQbUB0o2QV5Igzc2fFfCeyFHVIs
+ w3g1KVitzYFegJEwB.rbxPv2FCQNBCr49NPDDm7a6IZCiS4_K2O0qPFNP6sF6ZhPDvGgXlIwCYaJ
+ 4d10w0_71jYfjHryCnPOxcUF6xsNn2rKN6XhzEW7d2.mDtV4UxBr9kRgftjF_KltYoFyde.0PgXG
+ mXW1jeBY0xIl2_Rl0x_69FWU768PrH2ZkXxxR1ul.VCC0ceX5JcTXvZ3CZppSmwTwdmMiw5OOQtD
+ qyOWfpITvDCOoNYNgCOoyMRyKa4hLk79mTTLfDG5iDjeR6cwlNtjweadXvr3dXQ--
+X-Sonic-MF: <kwangson@yahoo.com>
+X-Sonic-ID: 4ce2f831-bb3d-44da-a703-607e492cf863
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.sg3.yahoo.com with HTTP; Thu, 8 Aug 2024 10:11:57 +0000
+Received: by hermes--production-sg3-fc85cddf6-kzxtv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 719bc7da6e47d6736d4c9dcb1b1f957f;
+          Thu, 08 Aug 2024 09:51:37 +0000 (UTC)
+Message-ID: <48be93dc376d115d93b9d79f157e31d7cfedea15.camel@yahoo.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: exynosautov9: add dpum clock
+From: Kwanghoon Son <kwangson@yahoo.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Kwanghoon Son
+ <k.son@samsung.com>,  s.nawrocki@samsung.com, cw00.choi@samsung.com,
+ alim.akhtar@samsung.com,  mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org,  tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Thu, 08 Aug 2024 18:51:34 +0900
+In-Reply-To: <1a7db82e-72ee-496c-a501-54c7dd05cd41@kernel.org>
+References: <20240730111535.135301-1-k.son@samsung.com>
+	 <CGME20240730111628epcas1p1148cf2853a9d2fc6decbd4ce50f23715@epcas1p1.samsung.com>
+	 <20240730111535.135301-2-k.son@samsung.com>
+	 <1a7db82e-72ee-496c-a501-54c7dd05cd41@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt
- binding
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: m.szyprowski@samsung.com, hverkuil-cisco@xs4all.nl, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
- aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-References: <CGME20240808083027epcas5p153e64139a5e71448b1ea3f04af1df2bd@epcas5p1.samsung.com>
- <20240808081815.88711-1-aakarsh.jain@samsung.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240808081815.88711-1-aakarsh.jain@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22544 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 08/08/2024 10:18, Aakarsh Jain wrote:
-> s5p-mfc bindings to json-schema is already merged with
-> this commit 538af6e5856b ("dt-bindings: media: s5p-mfc:
-> convert bindings to json-schema"). Remove s5p-mfc.txt
-> file.
-> 
-> Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to json-schema")
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> changelog:
-> v1->v2
-> Add Fixes tag suggested by Krzysztof
-> v2->v3
-> Aligned Fixes tag in oneline and corrected commit message
-> Link: https://patchwork.kernel.org/project/linux-media/patch/20240213045733.63876-1-aakarsh.jain@samsung.com/
+On Thu, 2024-08-08 at 09:57 +0200, Krzysztof Kozlowski wrote:
+> On 30/07/2024 13:15, Kwanghoon Son wrote:
+> > Add dpum clock definitions and compatibles.
+> >=20
+> > Signed-off-by: Kwanghoon Son <k.son@samsung.com>
+> > ---
+> >  .../clock/samsung,exynosautov9-clock.yaml     | 19 +++++++++++++++++++
+> >  .../dt-bindings/clock/samsung,exynosautov9.h  | 11 +++++++++++
+> >  2 files changed, 30 insertions(+)
+>=20
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (26 MHz)
+> > +            - description: CMU_DPUM bus clock (from CMU_TOP)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +            - const: dout_clkcmu_dpum_bus
+>=20
+> We need to stop calling input clocks by full name. Rob already pointed
+> it out for GS101 and we fixed the approach there. This binding already
+> uses above syntax, but I think we can start with proper approach even if
+> it leads to inconsistency. So please come with description of this clock
+> (not clock name - see GS101) and name, e.g. "bus".
 
-Something got corrupted in your changelog.
+True. I'll look over GS101 more and work in v3.
 
+>=20
+> BTW, in the future, please ping after two weeks or better even: relax,
+> and help out by reviewing other patches on the mailing lists in order to
+> relieve the burden of maintainers and move your patches higher up the lis=
+t.
 
-Best regards,
-Krzysztof
+I'll keep in mind.
+Thanks for advice.
+
+Kwang.
+
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
