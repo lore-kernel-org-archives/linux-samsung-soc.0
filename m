@@ -1,202 +1,139 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B0819047D
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 14:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C1F18B49B
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 14:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723128182; cv=none; b=Oxuk32SF6R3kP7P4bMmwzurmz2uS6OoccQWvHmYHG1ccF1Hc+JBdicGlOswTTyni7S6jbmfPTSpH3n+1dhju9sKH7mKDzPEF4mM+90EmqegYYmSbRNUyvWOF4oDnaUuWv45y5VnlxJR5r2nWHAxhUMcuGYi+jpHymt4izq+be/Y=
+	t=1723128965; cv=none; b=tXI1qNbicY0H4dUTfiRSnBphi2+MuTafVOSaI1FVGw9wsiiLZQMNnII/BnmOUrvNspnPH6xBHmH2/l++YHSnhpuOv9ZxnKtcEOEG7ZNstYBXkgfI2B/VbI/637eA4mnYdxFCJbyBxUllzcLWe+KIiSGoAymgcf4IfyMPryuqrV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723128182; c=relaxed/simple;
-	bh=nXzI2w3ThoiSRcRj8fOXuTW+n6yOdH+9/0PqUvo2i28=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NB2jlvbXXbrROJq4QoKsymCQSRlv4wwiN0z1OGbBmFsR5eEo/atms6lTE4bnuFSdCwugbfMxmfUr7WmjkC4ANLSq4ADPEDsMNs0A9yYrTkHTC8qBLoeR/RyjMfVPE7sAKzqQebjlVVmeqqGo8oHmjZn3bW0LLG32CDQcd1M/4Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hv2lfC8G; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723128965; c=relaxed/simple;
+	bh=3uV1fuMQTRFXuTNBkDloolIsfEw6mH5RqeD6IH0xgHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=JclyF92/8/NGDw/hYx1verjlaNF608qg6rZ/JHphLcUNSaVpy9ZbzFhwyIw+x7HOTntlnI/hlmsxpWhyoPTCnPUzu02gBx+k2rtsf4aR6j0WdudRQvZC15HV59d7drrBoUPsuyaLkeKVQvczoVum49u7jwFjcvLmMDsYilB0uEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=euaPm5W2; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hv2lfC8G"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7aa086b077so106624466b.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 07:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723128178; x=1723732978; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g4eCyKnwzwhvgvotyhGHB+vsH3GCQ4YaY3HQS5YaZiA=;
-        b=hv2lfC8GPDvHKbCqcIwGJEJojnr8ll21jubKjS+FIjcE08d7VoI8t3+rPF3VhYuM1C
-         YtlXejnCFiIB+sT1fs/jaJkkJ/OtbV6iiZxCR95HKG3ZCefKEa3QOd0hGJEQ/1V6Ud/v
-         S8zIU8lW6B7Nt57vTOEGfvD1DrCA2gIjjhdDwztuYjZYEH7IQeWZu4IZJ17kERMxQvf9
-         rlnUuxcOREEg/ZFukOLRFo07LWgNZChWk2aWvBUd6hFH/paFbcowt8YzmUz/qTTjRn9J
-         LqehT7fryJ7B8eXZtEces9cgXxCcaimh/OcnSMdXuC3m5EE6R2zMB2We9FYfKh2kZqNR
-         wFMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723128178; x=1723732978;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g4eCyKnwzwhvgvotyhGHB+vsH3GCQ4YaY3HQS5YaZiA=;
-        b=JrClEVSY/q6X/5lJjuELxPHsgYAXiX5wcQaqug6nhfz3l2OdCHjfW6cWAgyS4jMJR+
-         VuM3+2vNq05q3mhh4Z5EMDJgQuD/++EQnfv6BGeAUcAIIBh36h0zyAQt+jEdZJdRwkNG
-         NM4kFJrtKuWxDeztZ4ySIIQCZvUDzrPa286wC/nSqa8xgNtM+xnzUEojg/cBm4DSkuav
-         5/rwr/X8LLAMZ115WZAVcVY6HUy0NKbw0cegUwJ73D11+wob6JHyuvXRdGRw2wjnapRV
-         oJv0xOEZFGUoaD1H29Msq1+VAgOJaM9rEPoKmtrUyh+X/crZFWPpnEsB5qLGHHvhxijy
-         MFEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWy4+U2VUNdP0yH7JZPrBhLCyejF/LpM0drA4ohb/2ol9Pmi3TY4w08vkMPRHRXb6r3pB4sTcpbyBS6V+Xs4oe8fotUJjeDr/6dp9OEXani8h4=
-X-Gm-Message-State: AOJu0YzvByEE23m0OC3HykCW5cOqaPtQa/rR0/9sb7Bfgc1ZmOc4giGN
-	gkHhUlCMLvBiZZ+BmSw9rbCKw9ygCee1OKGtqH62YN1tMz4N07UlOAtuwlQ6HP4=
-X-Google-Smtp-Source: AGHT+IHqbohN5vuse2tZu05wgsB0D/3481cW3wuuO9L9OkxukplhEORcbJpoFFUAYLw6KR5UnB87lg==
-X-Received: by 2002:a17:907:da6:b0:a7a:c106:3640 with SMTP id a640c23a62f3a-a8090eff092mr152706366b.66.1723128177570;
-        Thu, 08 Aug 2024 07:42:57 -0700 (PDT)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e80e04sm759298966b.175.2024.08.08.07.42.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 07:42:57 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 08 Aug 2024 15:43:01 +0100
-Subject: [PATCH v6 20/20] clk: imx: drop imx_register_uart_clocks()
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="euaPm5W2"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240808145600epoutp0168eef0304e8b8fc587b7690d41d11249~pyKjltx681320613206epoutp01e
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 14:56:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240808145600epoutp0168eef0304e8b8fc587b7690d41d11249~pyKjltx681320613206epoutp01e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723128960;
+	bh=iNHEhsKUx1AEHn4RcoaHOHCYihBFYUXlK4KIGR/VKI4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=euaPm5W2EvDLHTi3jNAj9v4Fep8mgfIhmfJUG+Iaxia6p5YGyNCzw3+Us/+aFAsna
+	 rIf6KOCUoeDQcFdcQsAsJ7KhSikXgkFpUt8cXG5MQqSVumTIwoFaPrVurVfRxU2U8q
+	 ZL/8hiNULWnYGyQPxQ8jgTk4mFEnGch0qi4m067Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240808145558epcas5p2c825edfc5676142867b54dee74fdac81~pyKiPHUfs2090620906epcas5p2r;
+	Thu,  8 Aug 2024 14:55:58 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WfqqK0hG5z4x9Pr; Thu,  8 Aug
+	2024 14:55:57 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	99.71.09640.C7CD4B66; Thu,  8 Aug 2024 23:55:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111~pxW00INr_1294112941epcas5p3h;
+	Thu,  8 Aug 2024 13:56:45 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240808135645epsmtrp2a2c13c9a9563ffaaf1c17b590ae4e28e~pxW0zGl0S1652216522epsmtrp2V;
+	Thu,  8 Aug 2024 13:56:45 +0000 (GMT)
+X-AuditID: b6c32a49-a57ff700000025a8-d9-66b4dc7c889c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	63.BB.08456.D9EC4B66; Thu,  8 Aug 2024 22:56:45 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240808135643epsmtip14a883be020d8fe2f9098ecd4adea68f2~pxWy2ngIn3179631796epsmtip1h;
+	Thu,  8 Aug 2024 13:56:43 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [PATCH v4] dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
+Date: Thu,  8 Aug 2024 19:14:32 +0530
+Message-Id: <20240808134432.50073-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmlm7NnS1pBs/fmVs83TGT1eL+4s8s
+	Foc2b2W3uHlgJ5PFxZl3WSz6Xjxkttj0+BqrxeVdc9gsejZsZbWYcX4fk8XaI3fZLZZt+sNk
+	sWjrF3YHXo/Fe14yeWxa1cnmcefaHjaPzUvqPfq2rGL0+LxJzuPU18/sAexR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QNcqKZQl5pQChQISi4uV
+	9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzTlzex1Jwhb3i
+	35rLjA2Md9i6GDk4JARMJM5e4QQxhQR2M0pscOhi5AQyPzFKHP9a1sXIBWR/Y5S4c/QOK0gC
+	pPzK4dUsEIm9jBJrV69ngehoZZJ4sFoSZBCbgK7E2e05IGERgVSJV+vWsoLUMwssYZJYdOQZ
+	E0hCWMBbYsWud+wgNouAqsSDyTvBbF4BW4m1jauZIZbJS6zecIAZpFlC4CW7xNUp06ASLhJH
+	Vsxjg7CFJV4d38IOYUtJfH63FyqeLPF40Uuo+hyJ9XumsEDY9hIHrsxhATmUWUBTYv0ufYiw
+	rMTUU+vAbmMW4JPo/f2ECSLOK7FjHoytJjHnzg9oQMhIHF69lBHC9pDoeHCYDRIOsRJn5k1g
+	m8AoOwthwwJGxlWMkqkFxbnpqcWmBYZ5qeXwSErOz93ECE6AWp47GO8++KB3iJGJg/EQowQH
+	s5IIb3P4pjQh3pTEyqrUovz4otKc1OJDjKbAMJvILCWanA9MwXkl8YYmlgYmZmZmJpbGZoZK
+	4ryvW+emCAmkJ5akZqemFqQWwfQxcXBKNTBFM/r135v85M/td4fEvK6sLTv5WOzI1h4tS8/q
+	nuzoB4U3rFZGcj52//77jFT2Lma17XdPBx2UWani2/d0aqrN+aziKmfpc2cTm858KlzPMpM1
+	d3pfQ1j9B4fvx1Llz9UIyq5i8xTq9RWNb7Bq2xTi82+KY8vmZMYPQWt/XNGMizXoWW/Klrzk
+	jFineVHov7/tDtJb1lp/lonZvaPukcOObTdLBecFzGc1OnDU8/BOi1/b722KXT3xppntpub6
+	WXZZB3vO2e7Y27v3+99e9h2RBlEqVyMO/RYPV1LjZ4416vjrJD5Z++ky/dtM5/qYDKrPJCkm
+	Xt56ZsLHjJ6iApt3509uTOngrVFZMYE5+awSS3FGoqEWc1FxIgA/gwlKCQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGLMWRmVeSWpSXmKPExsWy7bCSnO7cc1vSDHZd47J4umMmq8X9xZ9Z
+	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jou1R+6yWyzb9IfJ
+	YtHWL+wOvB6L97xk8ti0qpPN4861PWwem5fUe/RtWcXo8XmTnMepr5/ZA9ijuGxSUnMyy1KL
+	9O0SuDJOXN7HUnCFveLfmsuMDYx32LoYOTkkBEwkrhxezdLFyMUhJLCbUeLrrYWsEAkZif9t
+	x9ghbGGJlf+es0MUNTNJTLswGaiDg4NNQFfi7PYckBoRgXSJSXe+gg1iFljHJLFz5USwQcIC
+	3hIrdr0DG8QioCrxYPJOMJtXwFZibeNqZogF8hKrNxxgnsDIs4CRYRWjZGpBcW56brFhgVFe
+	arlecWJucWleul5yfu4mRnBQamntYNyz6oPeIUYmDsZDjBIczEoivM3hm9KEeFMSK6tSi/Lj
+	i0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpakFoEk2Xi4JRqYNoTPEX0q7DwtHvbTDb9jjqv
+	wt2pFBTr9PNRx2PLM19nxiWULsq9Knx6+sNebbXbTOVHJlzf8V5KfE2Ayv5PZ7pvu5xmYmCb
+	LvfhXKd/q+3s8l6z81H8K9NFijUc57o0Pt1gu8qYy+G75p7+K5NnZX55uCu551nPLf85HEFf
+	WFXKnjgZ5GQaFLgvn/dB8BIbx3/tn2kOkSkrbgoEqtcV/Vgka7j1zhF9VtdXez8qBMr9fhQt
+	kaIkmfes1vW8n5hY+3+WU1cmX+WV2OqWdLL7XIH6Nq+sRY/j9n+rEf2W+sH6nkTMvbSWi55N
+	v+SWlUpOP7ThQ7T/fK0jAWmHFnwWSBTNiJSLv37uaPlxxrZlXkosxRmJhlrMRcWJAOUkQJC5
+	AgAA
+X-CMS-MailID: 20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111
+References: <CGME20240808135645epcas5p37c6bf0c6ad8efbe43e8451874900c111@epcas5p3.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240808-gs101-non-essential-clocks-2-v6-20-e91c537acedc@linaro.org>
-References: <20240808-gs101-non-essential-clocks-2-v6-0-e91c537acedc@linaro.org>
-In-Reply-To: <20240808-gs101-non-essential-clocks-2-v6-0-e91c537acedc@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Abel Vesa <abelvesa@kernel.org>, 
- Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- imx@lists.linux.dev, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
 
-There are no users of this anymore in the tree and the clk core
-implements something similar now, we can remove
-imx_register_uart_clocks().
+s5p-mfc bindings to json-schema is already merged with
+this commit 538af6e5856b ("dt-bindings: media: s5p-mfc:
+convert bindings to json-schema"). Remove s5p-mfc.txt
+file.
 
-Do so.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Fixes: 538af6e5856b ("dt-bindings: media: s5p-mfc: convert bindings to json-schema")
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
 ---
- drivers/clk/imx/clk.c | 72 ---------------------------------------------------
- drivers/clk/imx/clk.h |  7 -----
- 2 files changed, 79 deletions(-)
+changelog:
+v1->v2
+Add Fixes tag suggested by Krzysztof
+v2->v3
+Aligned Fixes tag in oneline and corrected commit message
+Link: https://patchwork.kernel.org/project/linux-media/patch/20240213045733.63876-1-aakarsh.jain@samsung.com/
+v3->v4
+Placed changelog at proper place
+ Documentation/devicetree/bindings/media/s5p-mfc.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index df83bd939492..5f998e56a4ed 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -154,77 +154,5 @@ void imx_cscmr1_fixup(u32 *val)
- 	return;
- }
- 
--#ifndef MODULE
--
--static bool imx_keep_uart_clocks;
--static int imx_enabled_uart_clocks;
--static struct clk **imx_uart_clocks;
--
--static int __init imx_keep_uart_clocks_param(char *str)
--{
--	imx_keep_uart_clocks = 1;
--
--	return 0;
--}
--__setup_param("earlycon", imx_keep_uart_earlycon,
--	      imx_keep_uart_clocks_param, 0);
--__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
--	      imx_keep_uart_clocks_param, 0);
--
--void imx_register_uart_clocks(void)
--{
--	unsigned int num __maybe_unused;
--
--	imx_enabled_uart_clocks = 0;
--
--/* i.MX boards use device trees now.  For build tests without CONFIG_OF, do nothing */
--#ifdef CONFIG_OF
--	if (imx_keep_uart_clocks) {
--		int i;
--
--		num = of_clk_get_parent_count(of_stdout);
--		if (!num)
--			return;
--
--		if (!of_stdout)
--			return;
--
--		imx_uart_clocks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
--		if (!imx_uart_clocks)
--			return;
--
--		for (i = 0; i < num; i++) {
--			imx_uart_clocks[imx_enabled_uart_clocks] = of_clk_get(of_stdout, i);
--
--			/* Stop if there are no more of_stdout references */
--			if (IS_ERR(imx_uart_clocks[imx_enabled_uart_clocks]))
--				return;
--
--			/* Only enable the clock if it's not NULL */
--			if (imx_uart_clocks[imx_enabled_uart_clocks])
--				clk_prepare_enable(imx_uart_clocks[imx_enabled_uart_clocks++]);
--		}
--	}
--#endif
--}
--
--static int __init imx_clk_disable_uart(void)
--{
--	if (imx_keep_uart_clocks && imx_enabled_uart_clocks) {
--		int i;
--
--		for (i = 0; i < imx_enabled_uart_clocks; i++) {
--			clk_disable_unprepare(imx_uart_clocks[i]);
--			clk_put(imx_uart_clocks[i]);
--		}
--	}
--
--	kfree(imx_uart_clocks);
--
--	return 0;
--}
--late_initcall_sync(imx_clk_disable_uart);
--#endif
--
- MODULE_DESCRIPTION("Common clock support for NXP i.MX SoC family");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index aa5202f284f3..314730f848f7 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -11,13 +11,6 @@ extern bool mcore_booted;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
- void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
--#ifndef MODULE
--void imx_register_uart_clocks(void);
--#else
--static inline void imx_register_uart_clocks(void)
--{
--}
--#endif
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
- void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count);
- 
-
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+deleted file mode 100644
+index e69de29bb2d1..000000000000
 -- 
-2.46.0.rc2.264.g509ed76dc8-goog
+2.17.1
 
