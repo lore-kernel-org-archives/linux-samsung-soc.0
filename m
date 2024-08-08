@@ -1,46 +1,33 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3BC186E25;
-	Thu,  8 Aug 2024 08:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61500183CCB;
+	Thu,  8 Aug 2024 09:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723106131; cv=none; b=TZXT6ZHxD5u0zqwTssNWlQ7Nc7J3yJ5NrTx8KjpQoGZ0t5JZIHMwyo2hkdIctoRGTXBo2ORLBmHEAeqp/4/bEGCACA/9qk9aDTFr/2XCdXHoke9Nk0nSCMMjF3uncRbbDh0I0DNQVwfNskY33hazHXOYJ4iFewR6ZlaDZaC3uoc=
+	t=1723109968; cv=none; b=EJP122RdF9DUdWpD/yIjo4LvRq3/PGAfay+qFeGltvJA3bwySIKX8k6tueznxxvqHyJlpQDWCHF/RC5gE8/lpL4VPu8nXqK9/iJ5sU0nhKFGtI7N1t14rsozZEo9EMAxlRg+L8yKx+NRFn7urRmN3b51pqr+s9+aiOx04eYi9iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723106131; c=relaxed/simple;
-	bh=WL4iIRRN715jPLHIegzkLvUCR++i9gQ7KUAjS9a4JPs=;
+	s=arc-20240116; t=1723109968; c=relaxed/simple;
+	bh=S6uVSWM0fVB47Wnkpa/QXKdTn2ezvJoHADvHg7pwr8M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N+kN2Mm2eGWOq9FvnYaRS+L3mYITwmkXaKt8keQkTSczjQGX/89dvlqI6DqY2z6LvXnlaS6db1dEVNA5tEw4hZXyJGi8wkNaUjtQXamgiihAWzIOKZYiPDcfWwuHxMtinuI+8E/XG9T+KbMifnKHc+ZQNZHbTKN7DHgh6Vcim6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6117aso254203a12.0;
-        Thu, 08 Aug 2024 01:35:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723106128; x=1723710928;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sdYWVuEmycbO2vOTakIM2XMnfgL7Y/edBOmDpUcN5Wo=;
-        b=ETd8A6eHfMweQcU49GdAhxFWyMdFbIJ1QJgv6ysNAufGEFpVyqR2NlZrvhqAEJobED
-         61qouhLkK3RLbDDtybYWaIWSIB5YQhhZpj3qDu2bAhI1N7+ymS6y9TblbQEXoAGvABTr
-         tSbPwjWRdr23tfefk2Z8Wwp3abnaoW55nHAihU+kxhIRy+Evzcn3+Un48KhARmuZvcIK
-         phZ8pAqg1H5kmOQkUVbOCTSBDFwyoGdKZTqHrWMjJrCu6spSRLC2CJrF5581/eIe81Wb
-         Fyig2I8zMHMbapKUe8ORblxqXnX7FuKr49M009tfWoSijppIN+te4/YNH604pX8hLbJR
-         /L8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3pMyCt+vG1ikubFQUF/joQS1hZLFEj/UEcq/vLX1ab5OvrvrJdK8UqWve7hPNWTtMhcHaH5YA8kUWzc=@vger.kernel.org, AJvYcCWMhWWr8yFDy4QvS+OFw/XFyG5JIjdczQEiZUvwLsM4zvjV6R6ETch/CANoee8NGOKoTnJ2ot7bzd0CNksML5HjQuk=@vger.kernel.org, AJvYcCX3ez+UphBYWYphswcaIVbtIf1xK//iqmCvz46OnsYV8CIAuqulRen6nXkPupvy/N17XE4qfeKxp65XMmTT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEi7tPqfnjRM64z6ZUruSLfj5mNUhnDp10Q+HvH/pOK4B56Mzw
-	0Ufquzvj95lmskOudOg4IdZQUdL+dy4L7MpfQ3pQceqCOUdduOl1
-X-Google-Smtp-Source: AGHT+IG2yBZGQoCrRa6isN3rDSiGVzIgqQn+5eZrZDAmUHd1rawM39VifjGbRTrgZJOz0mjPH/n6hg==
-X-Received: by 2002:a05:6402:13d3:b0:5a1:f9bc:7f13 with SMTP id 4fb4d7f45d1cf-5bbb235ae4dmr1375124a12.22.1723106127762;
-        Thu, 08 Aug 2024 01:35:27 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2d3473dsm401613a12.63.2024.08.08.01.35.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Aug 2024 01:35:27 -0700 (PDT)
-Message-ID: <6ea8f8fd-97b8-4c47-b042-cb8d64efebad@kernel.org>
-Date: Thu, 8 Aug 2024 10:35:26 +0200
+	 In-Reply-To:Content-Type; b=S9p+Oo66p6+aO60kMXirmbmauXFQr/WE84AZRRNlXmiwrxHJas7ISe0XHK8iRgSlYtfNoeWPz9n9JaGtniz0KG8In6J/Fi/BZ8KbJmY8p1UaFWb/eKa+eCCZwkZDgJp7dD76Wm+MZdGmwkYLfNVOvFXfqJIPw91cTVXXGxwhO2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6c2bDlX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6c2bDlX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334FFC32782;
+	Thu,  8 Aug 2024 09:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723109967;
+	bh=S6uVSWM0fVB47Wnkpa/QXKdTn2ezvJoHADvHg7pwr8M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n6c2bDlXBPhXJqlwY+K4UPv6A+2oJ5MZfqt+SaFXmwdqruBUsysc/9yb6NPrj7Shv
+	 Jz+nsD5Zb5hIRC1QmwiqFOoQtX8e7OnR3iLwIXRdOoFIl1PPSX/fnMp38Znk+jJWX6
+	 RQzsrJBhZcdo9L3rSj9MNDCFLM3e/NUNdHlXglhiZ32+eMWuXgIkf7GRukuLjGfUmp
+	 kQgQKVStrEaBGQrRdb6JmEsPtQ4px/jKAGDszyQMCeL1Ll5bysZdQLVzLQkboJnUHu
+	 UF41qevTtbQVNBG7ckGAPFQOeogqoHnfxq6kf1JZOljRTnPBShk03IK799A4CS/r/3
+	 Utcf+lddang5w==
+Message-ID: <d79d4eb3-0328-4164-a72a-ff0b6e84d5cc@kernel.org>
+Date: Thu, 8 Aug 2024 11:39:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,89 +35,132 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] tty: serial: samsung_tty: cast the interrupt's
- void *id just once
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20240808-samsung-tty-cleanup-v3-0-494412f49f4b@linaro.org>
- <20240808-samsung-tty-cleanup-v3-2-494412f49f4b@linaro.org>
+Subject: Re: [PATCH v2 6/7] clk: samsung: clk-pll: Add support for pll_1418x
+To: David Virag <virag.david003@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240806121157.479212-1-virag.david003@gmail.com>
+ <20240806121157.479212-7-virag.david003@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240808-samsung-tty-cleanup-v3-2-494412f49f4b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240806121157.479212-7-virag.david003@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 08. 08. 24, 10:11, André Draszik wrote:
-> The interrupt handler routines and helpers are casting the 'void *'
-> pointer to 'struct exynos_uart_port *' all over the place.
+On 06/08/2024 14:11, David Virag wrote:
+> pll1418x is used in Exynos7885 SoC for USB PHY clock.
+> Operation-wise it is very similar to pll0822x, except that MDIV is only
+> 9 bits wide instead of 10, and we use the CON1 register in the PLL
+> macro's "con" parameter instead of CON3 like this:
 > 
-> There is no need for that, we can do the casting once and keep passing
-> the 'struct exynos_uart_port *', simplifying the code and saving a few
-> lines of code.
+> 	PLL(pll_1418x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
+> 	    PLL_LOCKTIME_PLL_USB, PLL_CON0_PLL_USB,
+> 	    pll_usb_rate_table),
 > 
-> No functional changes.
+> Technically the PLL should work fine with pll0822x code if the PLL
+> tables are correct, but it's more "correct" to actually update the mask.
 > 
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: David Virag <virag.david003@gmail.com>
 > ---
-> v3: undo too eager removal of 'const' where unnecessary (Jiri)
+>  drivers/clk/samsung/clk-pll.c | 20 ++++++++++++++++----
+>  drivers/clk/samsung/clk-pll.h |  1 +
+>  2 files changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 4be879ab917e..c61a2810737c 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -430,6 +430,9 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+>  #define PLL0822X_LOCK_STAT_SHIFT	(29)
+>  #define PLL0822X_ENABLE_SHIFT		(31)
+>  
+> +/* PLL1418x is similar to PLL0822x, except that MDIV is one bit smaller */
+> +#define PLL1418X_MDIV_MASK		(0x1FF)
+> +
+>  static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
+>  						  unsigned long parent_rate)
+>  {
+> @@ -438,7 +441,10 @@ static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
+>  	u64 fvco = parent_rate;
+>  
+>  	pll_con3 = readl_relaxed(pll->con_reg);
+> -	mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL0822X_MDIV_MASK;
+> +	if (pll->type != pll_1418x)
+> +		mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL0822X_MDIV_MASK;
+> +	else
+> +		mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL1418X_MDIV_MASK;
+>  	pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
+>  	sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
+>  
+> @@ -468,9 +474,14 @@ static int samsung_pll0822x_set_rate(struct clk_hw *hw, unsigned long drate,
+>  
+>  	/* Change PLL PMS values */
+>  	pll_con3 = readl_relaxed(pll->con_reg);
+> -	pll_con3 &= ~((PLL0822X_MDIV_MASK << PLL0822X_MDIV_SHIFT) |
+> -			(PLL0822X_PDIV_MASK << PLL0822X_PDIV_SHIFT) |
+> -			(PLL0822X_SDIV_MASK << PLL0822X_SDIV_SHIFT));
+> +	if (pll->type != pll_1418x)
+> +		pll_con3 &= ~((PLL0822X_MDIV_MASK << PLL0822X_MDIV_SHIFT) |
+> +				(PLL0822X_PDIV_MASK << PLL0822X_PDIV_SHIFT) |
+> +				(PLL0822X_SDIV_MASK << PLL0822X_SDIV_SHIFT));
 
-LGTM now
+I think this part could be simpler. If I read it correctly, only mdiv
+mask is different, so create local variable mdiv_mask and set it in
+if-else block accordingly to the type. Then here you have
+non-conditional code:
+pll_con3 &= ~((mdiv_mask << PLL0822X_MDIV_SHIFT) |
 
-Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-> v2: fix -Wdiscarded-qualifiers, sorry
 
-thanks,
--- 
-js
-suse labs
+Best regards,
+Krzysztof
 
