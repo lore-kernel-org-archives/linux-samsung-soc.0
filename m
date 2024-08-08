@@ -1,60 +1,60 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5838918C349
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAFB18E02D
 	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 14:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126280; cv=none; b=Pr+MLZ+gzzibLjeU3kk9Qekr4TVqhiVXSQ7kahanawmGZBzwLenA+s92iM9IZf45k2HHysXic+DeJCp1HSyS/F5V8lNkLcjE4vp2cEmzPzBgbkE52QQJpkGIKxsr1ctRRPDyb3rsEBf7FbS9VbdqTgbpaeM0dJ3Lgmaul6RgE+U=
+	t=1723126281; cv=none; b=XsDROXtPHRFx/OM+9YVm6TGpP1k2GDpS6p2HYF36/hGqHZ4moEEBtMfn86t8U4CNApuXfR4zS7p2j4fndpIXBjrvruFyFSAKtCh3KjZ8Yc+H6pjy7X+zSLmqzaGrDhjgUNTXZ8Ja22GbXYlGl9z1RCNkl48enKID13COeXA2O4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723126280; c=relaxed/simple;
-	bh=95AlyDaddNiZMDEmIhO07GExNxqtyCYVTGs9vpQrW4o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K3F9UD2lipasGSI0/BA2E/kFA4bl9eamZUbGeqWBOfSYYbEEUNWuwK/LCSYw+H/ove6qOWCH1FfGf5ZNyhcIZ/ym0Puydfh8uAcoq8aPTSZk58na22uzXhWkFU4B9hk7uk5cxZCI833z+2SV/zej4G/wwLMDG9FvwajDHnSMqU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jXEuY1x5; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1723126281; c=relaxed/simple;
+	bh=quFHR8pTn+F+xGctBH9cf3497p01fCYxd5i3Wn9fVPM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=p3z2trneI5OuEw5AhMsUp0OuWVxQxXxAuyQgIv02BxrBTEbJJx4vU5+L0WvCEk8P3aZzfI4ABNyU45JRXLjnr59ZKPeW4TYGQkoCGzKc4VtpoLUzlV6JUWg0TeIfyQwexQaSNpe3VV64o//wiySSQMeQteVO/VcXtjsYpRwevz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hIK83puT; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXEuY1x5"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so1189070a12.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hIK83puT"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1618684a12.1
         for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 07:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1723126277; x=1723731077; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wieDPHjSPi1ZLsan7+O0Z+D8NjoHSP8ahDa0aetrxpk=;
-        b=jXEuY1x5jqvkjYo/pjvy57/hMeQsF5QoEm2BXzXtMpl+Vhw9JyAN28KqPe8AaaO1jY
-         FXCnF6O1k3psGedbj2U/ynlcMpJjInFoIL051vPDbIFnjxfuCjlTMn68BvwGId3bjT98
-         MORRsSBrlS516z0wK0a4yCodInvIzEYSbIYZEmbZCX2NBFzR37ZIGvfNUL3AfBi72YWL
-         ecxfpDD9JZrxd9MN96c5YY1YqozVtkkqdPlRVYsoVhIhDkbfgF/SiUpnDYeEKtl8UiXI
-         5CFD1yGxEoZxXQ2KGSrfCk881CxXwJV9zrUJFP1uDrOqL2YEhPg8/mgVhY3J20PX1rsx
-         KMFA==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UaLjrFsw9Zi0L/EdvO9DIKyYpEUrx6lEBXaptLR+VmU=;
+        b=hIK83puTKdcgW8oz8MhVeFbIDB97g2ochkIYEKNgLkpdkuhZPC2xs+tu7mcj4lJWCg
+         SnKXv/JYOlmLeZUOprA/RHTBpLdYL4cVeeYnyvv6AEXRkzYW+6NJxfUzE2g+TPonKgQA
+         iRbbfGlEZgI71tBNaM90ArBgdA/h20waFpnYBDsENRVVUCBBftO4DOiuEasCWABX4Xfc
+         FDWt3S87BaoxhA4/RkTc3mm6FkV/srYWjFHy1QGj5y89C7/2cQRIWVdk0EKpvH5vc3h+
+         Iv9BlIvbzZpPmY/I3B98mCjcdXJoPQoNxEttb6m9VOvsdD4FhcE5cnMyeoIIvIRrE8ma
+         jCqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723126277; x=1723731077;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wieDPHjSPi1ZLsan7+O0Z+D8NjoHSP8ahDa0aetrxpk=;
-        b=Fp5OYmyJ7SBKGx6Z8Or3J5ulJcs7MuYw1x/SuLrCZNLlW6mpTIS0QSk2cPO6rIJEle
-         8sJW43n9P3PXOTee62iAEbcDXdRhN+vNun6Snha3K8e+Y7TT6G4HBqmSZG6p70DkaTLA
-         Uv0ghLyLy7vo5i2pJe26MbHJ7K5swoZzFizVgnFSFohpDzPVYQw8ZdhukZRtLL9VwdX/
-         Z7r/HLYYTgBkjrW8ywawYAjthXbBoJzTexUfIR1Ed9nRhZwqOVH2HpLKpETme5H+gSfX
-         75rnr5QQ6N70US6OtQCa8S/W+X/Y5+QtobnNx+plnLhamGyncx9iv/UJsJrHmNytnHas
-         7sjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyXQJoPcFyjvS+mI3SLi6BmpZ41+IUi7/6iQuJEG3tQGYBWNDW/2Te7RY/kiDXllSE/6brlhovnSws3EAAEBXaNjbCLWTksNsj5BBvXWN8kdA=
-X-Gm-Message-State: AOJu0YwTCN9IfxG09mhSFGtA6QMLrlLZ3PlRQJRdm6PH3lwhWgSx/9G5
-	cR199F6QgnP8t1fhwQnkVVoQWv3ioarEVExKZRiTmrZTFDEHxs7jE/nDicWS0+A=
-X-Google-Smtp-Source: AGHT+IHdqxblFw4szqgN7ofHM/QU50Nzna/i6RgnPnDiQEz7rQf3FzXP5OyidprWJ44HWP8e2NZg+Q==
-X-Received: by 2002:a05:6402:11c8:b0:5a0:f8a2:9cf4 with SMTP id 4fb4d7f45d1cf-5bbb2234eacmr1617101a12.25.1723126276628;
-        Thu, 08 Aug 2024 07:11:16 -0700 (PDT)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UaLjrFsw9Zi0L/EdvO9DIKyYpEUrx6lEBXaptLR+VmU=;
+        b=FdSmUYFteF4OO48HHF99bkUbpZJjnDOYawZ29MG+Z3AMGQ6df+DFYAMjZV7OymnN5h
+         612e5w/4EJZby+el/TZNdJ0N/Kbf6s3NScUzYCkR2UCqjIy9yGlf40XuBpVr0V2SafH1
+         XWxaMdbuegowPgn7oaP2vexD+Q2A4JRdfBSDpkZ6qRZLPO9inJh7tT9WnIRKJJwKBsHt
+         dKqa50zbP4auMaSidd5UsjYR9BSkGpKLgHxaNpIzALA6RlvhxEm7Vv+R+nJSRJcg/2X5
+         MUzUt2Zsxti9fENC1Qo3XAHKIh1/lFxshZab/Z8DxCrzN9G5kJuHSWTmz0Y4X5SnyOb6
+         VNng==
+X-Forwarded-Encrypted: i=1; AJvYcCVx6fI+MNjMwv/pJmkJwEXDIGt15OseCJ7ZtMkYi74sPU6ubjwKHNJU/GbSlYCVqXU9bfRe60T+9TBuXNlmu6dloQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH0yKhB0QolYwRiyed26b0G9TmVdbu8Bp433cbGw4w3staokbu
+	MF9HipbFMSO4VZpy1wrZOPF7HVVkLRCnor0JwSWjSZulCgh81Ym0E8/isS9gnt0=
+X-Google-Smtp-Source: AGHT+IF2Z+gOOpOJVUcuLSGq7/jhh5CJfmmh1hSytACnK5GYE20eb1XtkmCCnKm8aJbOYVVy6x+hag==
+X-Received: by 2002:a05:6402:3585:b0:5a2:bfd1:b892 with SMTP id 4fb4d7f45d1cf-5bbb3c41273mr1981407a12.11.1723126277143;
+        Thu, 08 Aug 2024 07:11:17 -0700 (PDT)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
         by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c29f79sm671761a12.33.2024.08.08.07.11.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 08 Aug 2024 07:11:16 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v5 00/20] clk: help OF platforms with their stdout
- (earlycon) clocks during early boot
-Date: Thu, 08 Aug 2024 15:11:14 +0100
-Message-Id: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
+Date: Thu, 08 Aug 2024 15:11:15 +0100
+Subject: [PATCH v5 01/20] clk: bump stdout clock usage for earlycon
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,11 +63,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAALStGYC/4XOsU7DMBCA4VepPHPRne2koRPvgRhc+5JYDTY6R
- xFQ5d1xykCZOv7Lp/+qCkvkok6HqxJeY4k51WifDspPLo0MMdRWGrVFaxDGQkiQcgIuhdMS3Qx
- +zv5SQEPnjO5xcHTmXlXiQ3iInzf+9a32IPkdlknY/aFkEJ9NT7qho+1a0kDgUhBugrjyHS8vc
- 0xOcpNl3M0pliXL1+14Nbv86xzpwdxqAKEN/twHtBjI38P73WrvNf1As1UzhI4ZA9uO/2nbtv0
- AZwaD7VsBAAA=
+Message-Id: <20240808-gs101-non-essential-clocks-2-v5-1-11cffef0634e@linaro.org>
+References: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
+In-Reply-To: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
  Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -86,132 +84,199 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-Hi,
+On some platforms, earlycon depends on the bootloader setup stdout
+clocks being retained. In some cases stdout UART clocks (or their
+parents) can get disabled during loading of other drivers (e.g. i2c)
+causing earlycon to stop to work sometime into the boot, halting the
+whole system.
 
-On at least two plaforms, i.MX and the Exynos-derivative gs101,
-earlycon depends on the bootloader setup stdout clocks being retained.
-In some cases stdout UART clocks (or their parents) can get disabled
-during loading of other drivers (e.g. i2c or UART driver init) causing
-earlycon to stop to work sometime into the boot, halting the whole
-system, see e.g. [3].
+Since there are at least two platforms where that is the case, i.MX and
+the Exynos-derivative gs101, this patch adds some logic to the clk core
+to detect these clocks if earlycon is enabled, to bump their usage
+count as part of of_clk_add_hw_provider() and of_clk_add_provider(),
+and to release them again at the end of init.
 
-Code exists in the i.MX clock drivers to deal with that by temporarily
-bumping the reference count of the relevant stdout clocks during early
-boot.
+This way code duplication in affected platforms can be avoided.
 
-While gs101 doesn't have such code, some UART clocks had been marked
-'critical' for a different reason originally, and by accident
-worked-around the same problem. v4 of this series proposed addition of
-similar code to gs101 to be able to drop the 'critical' flag from its
-clocks, but Stephen suggested to move all this into the clk core
-instead.
-
-This series now does that:
-* instead of duplicating such code to gs101, teaches the clk core to
-  deal with stdout clocks during early boot, similar to the existing
-  support in i.MX
-  This is hooked into of_clk_add_hw_provider() and
-  of_clk_add_provider()
-* updates gs101 to remove the 'critical' flag from affected clocks, as
-  not necessary. This is essentially the last remaining patch [1] with
-  all review comments addressed, from the series [2] that was sent
-  earlier this year, see lore links below.
-* updates i.MX to remove the now-unnecessary platform specific code in
-  its clock drivers. I believe this also plugs a memory and extra clock
-  reference leak at least on imx7ulp, see below.
-
-Note 1: For the avoidance of doubt, any of the above is relevant only
-        if earlycon and OF are enabled, behaviour is based on the
-        'earlycon' kernel command line parameter.
-        As this is meant to also replace i.MX specific code, the
-        'earlyprintk' is also supported (since it was supported on
-        i.MX)
-
-Note 2: On i.MX, at least clk-imx7ulp.c calls
-        imx_register_uart_clocks() twice (once for each compatible),
-        but imx_register_uart_clocks() can not handle that and will
-        leak memory and clock references in that case.
-        The new clk core code handles multiple invocations without such
-        issues.
-
-Note 3: I am not in a position to test any of the i.MX changes and
-        would appreciate feedback. In particular with these changes
-        stdout clocks are enabled when of_clk_add_hw_provider() or
-        of_clk_add_provider() return, but:
-        * some i.MX platforms did some reparenting or frequency changes
-          in the old approach before enabling stdout clocks. I believe
-          they're all unrelated to stdout, though
-        * some i.MX platforms enabled stdout clocks before the call to
-          of_clk_add_hw_provider() or of_clk_add_provider(). Again, I
-          don't think that difference is going to be relevant.
+The general idea is based on similar code in the i.MX clock driver, but
+this here is a bit more generic as in general (e.g. on gs101) clocks
+can come from various different clock units (driver instances) and
+therefore it can be necessary to run this code multiple times until all
+required stdout clocks have probed.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
-[1] https://lore.kernel.org/all/20240130093812.1746512-6-andre.draszik@linaro.org/
-[2] https://lore.kernel.org/all/20240130093812.1746512-1-andre.draszik@linaro.org/
-[3] https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/
-
-Changes in v5:
-- move stdout uart clock handling from gs101 into clk core (Stephen)
-- update i.MX to drop now-unnecessary code
-- update series' subject due to changed scope
-- Link to v4: https://lore.kernel.org/r/20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org
-
-Changes in v4:
-- new patch "clk: samsung: gs101: allow earlycon to work unconditionally"
-- update commit message for patch 2
-- Link to v3: https://lore.kernel.org/r/20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org
-
 ---
-André Draszik (20):
-      clk: bump stdout clock usage for earlycon
-      clk: samsung: gs101: don't mark non-essential (UART) clocks critical
-      clk: imx: imx25: drop call to imx_register_uart_clocks()
-      clk: imx: imx27: drop call to imx_register_uart_clocks()
-      clk: imx: imx35: drop call to imx_register_uart_clocks()
-      clk: imx: imx5: drop call to imx_register_uart_clocks()
-      clk: imx: imx6q: drop call to imx_register_uart_clocks()
-      clk: imx: imx6sl: drop call to imx_register_uart_clocks()
-      clk: imx: imx6sll: drop call to imx_register_uart_clocks()
-      clk: imx: imx6sx: drop call to imx_register_uart_clocks()
-      clk: imx: imx6ul: drop call to imx_register_uart_clocks()
-      clk: imx: imx7d: drop call to imx_register_uart_clocks()
-      clk: imx: imx7ulp: drop calls to imx_register_uart_clocks()
-      clk: imx: imx8mm: drop call to imx_register_uart_clocks()
-      clk: imx: imx8mn: drop call to imx_register_uart_clocks()
-      clk: imx: imx8mp: drop call to imx_register_uart_clocks()
-      clk: imx: imx8mq: drop call to imx_register_uart_clocks()
-      clk: imx: imx8ulp: drop call to imx_register_uart_clocks()
-      clk: imx: imx93: drop call to imx_register_uart_clocks()
-      clk: imx: drop imx_register_uart_clocks()
-
  drivers/clk/clk.c               | 129 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk-imx25.c     |   2 -
- drivers/clk/imx/clk-imx27.c     |   2 -
- drivers/clk/imx/clk-imx35.c     |   2 -
- drivers/clk/imx/clk-imx5.c      |   6 --
- drivers/clk/imx/clk-imx6q.c     |   2 -
- drivers/clk/imx/clk-imx6sl.c    |   2 -
- drivers/clk/imx/clk-imx6sll.c   |   2 -
- drivers/clk/imx/clk-imx6sx.c    |   2 -
- drivers/clk/imx/clk-imx6ul.c    |   2 -
- drivers/clk/imx/clk-imx7d.c     |   2 -
- drivers/clk/imx/clk-imx7ulp.c   |   4 --
- drivers/clk/imx/clk-imx8mm.c    |   2 -
- drivers/clk/imx/clk-imx8mn.c    |   2 -
- drivers/clk/imx/clk-imx8mp.c    |   2 -
- drivers/clk/imx/clk-imx8mq.c    |   2 -
- drivers/clk/imx/clk-imx8ulp.c   |   2 -
- drivers/clk/imx/clk-imx93.c     |   2 -
- drivers/clk/imx/clk.c           |  72 ----------------------
- drivers/clk/imx/clk.h           |   7 ---
- drivers/clk/samsung/clk-gs101.c |   7 +--
- 21 files changed, 132 insertions(+), 123 deletions(-)
----
-base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
-change-id: 20240430-gs101-non-essential-clocks-2-6a3280fa1be8
+ drivers/clk/samsung/clk-gs101.c |   1 +
+ 2 files changed, 130 insertions(+)
 
-Best regards,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7264cf6165ce..03c5d80e833c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4923,6 +4923,131 @@ static void clk_core_reparent_orphans(void)
+ 	clk_prepare_unlock();
+ }
+ 
++/**
++ * struct of_clk_stdout_clks - holds data that is required for handling extra
++ * references to stdout clocks during early boot.
++ *
++ * On some platforms, earlycon depends on the bootloader setup stdout clocks
++ * being retained. In some cases stdout UART clocks (or their parents) can get
++ * disabled during loading of other drivers (e.g. i2c) causing earlycon to stop
++ * to work sometime into the boot, halting the system.
++ *
++ * Having logic to detect these clocks if earlycon is enabled helps with those
++ * cases by bumping their usage count during init. The extra usage count is
++ * later dropped at the end of init.
++ *
++ * @bump_refs: whether or not to add the extra stdout clock references
++ * @lock: mutex protecting access
++ * @have_all: whether or not we have acquired all clocks, to handle cases of
++ *            clocks coming from different drivers / instances
++ * @clks: clocks associated with stdout
++ * @n_clks: number of clocks associated with stdout
++ */
++static struct of_clk_stdout_clks {
++	bool bump_refs;
++
++	struct mutex lock;
++	bool have_all;
++	struct clk **clks;
++	size_t n_clks;
++} of_clk_stdout_clks = {
++	.lock = __MUTEX_INITIALIZER(of_clk_stdout_clks.lock),
++};
++
++static int __init of_clk_bump_stdout_clocks_param(char *str)
++{
++	of_clk_stdout_clks.bump_refs = true;
++	return 0;
++}
++__setup("earlycon", of_clk_bump_stdout_clocks_param);
++__setup_param("earlyprintk", of_clk_keep_stdout_clocks_earlyprintk,
++	      of_clk_bump_stdout_clocks_param, 0);
++
++static void of_clk_bump_stdout_clocks(void)
++{
++	size_t n_clks;
++
++	/*
++	 * We only need to run this code if required to do so and only ever
++	 * before late initcalls have run. Otherwise it'd be impossible to know
++	 * when to drop the extra clock references again.
++	 *
++	 * This generally means that this only works if on affected platforms
++	 * the clock drivers have been built-in (as opposed to being modules).
++	 */
++	if (!of_clk_stdout_clks.bump_refs)
++		return;
++
++	n_clks = of_clk_get_parent_count(of_stdout);
++	if (!n_clks || !of_stdout)
++		return;
++
++	mutex_lock(&of_clk_stdout_clks.lock);
++
++	/*
++	 * We only need to keep trying if we have not succeeded previously,
++	 * i.e. if not all required clocks were ready during previous attempts.
++	 */
++	if (of_clk_stdout_clks.have_all)
++		goto out_unlock;
++
++	if (!of_clk_stdout_clks.clks) {
++		of_clk_stdout_clks.n_clks = n_clks;
++
++		of_clk_stdout_clks.clks = kcalloc(of_clk_stdout_clks.n_clks,
++					      sizeof(*of_clk_stdout_clks.clks),
++					      GFP_KERNEL);
++		if (!of_clk_stdout_clks.clks)
++			goto out_unlock;
++	}
++
++	/* assume that this time we'll be able to grab all required clocks */
++	of_clk_stdout_clks.have_all = true;
++	for (size_t i = 0; i < n_clks; ++i) {
++		struct clk *clk;
++
++		/* we might have grabbed this clock in a previous attempt */
++		if (of_clk_stdout_clks.clks[i])
++			continue;
++
++		clk = of_clk_get(of_stdout, i);
++		if (IS_ERR(clk)) {
++			/* retry next time if clock has not probed yet */
++			of_clk_stdout_clks.have_all = false;
++			continue;
++		}
++
++		if (clk_prepare_enable(clk)) {
++			clk_put(clk);
++			continue;
++		}
++		of_clk_stdout_clks.clks[i] = clk;
++	}
++
++out_unlock:
++	mutex_unlock(&of_clk_stdout_clks.lock);
++}
++
++static int __init of_clk_drop_stdout_clocks(void)
++{
++	for (size_t i = 0; i < of_clk_stdout_clks.n_clks; ++i) {
++		clk_disable_unprepare(of_clk_stdout_clks.clks[i]);
++		clk_put(of_clk_stdout_clks.clks[i]);
++	}
++
++	kfree(of_clk_stdout_clks.clks);
++
++	/*
++	 * Do not try to acquire stdout clocks after late initcalls, e.g.
++	 * during further module loading, as we then wouldn't have a way to
++	 * drop the references (and associated allocations) ever again.
++	 */
++	of_clk_stdout_clks.bump_refs = false;
++
++	return 0;
++}
++late_initcall_sync(of_clk_drop_stdout_clocks);
++
+ /**
+  * struct of_clk_provider - Clock provider registration structure
+  * @link: Entry in global list of clock providers
+@@ -5031,6 +5156,8 @@ int of_clk_add_provider(struct device_node *np,
+ 
+ 	fwnode_dev_initialized(&np->fwnode, true);
+ 
++	of_clk_bump_stdout_clocks();
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(of_clk_add_provider);
+@@ -5073,6 +5200,8 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 
+ 	fwnode_dev_initialized(&np->fwnode, true);
+ 
++	of_clk_bump_stdout_clocks();
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index 85098c61c15e..1759eb23263b 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -9,6 +9,7 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
++#include <linux/of_clk.h>
+ #include <linux/platform_device.h>
+ 
+ #include <dt-bindings/clock/google,gs101.h>
+
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.46.0.rc2.264.g509ed76dc8-goog
 
