@@ -1,133 +1,112 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791C8188CC8
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 08:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB85189519
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 08:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723104711; cv=none; b=sKcLx0hpvjvugwuUGaUAYtvXcJpk6MrtUZFq0TTWHjg7FaAIIavgJaKgx/5nEjsCcmjMJYH13+dYRj7H4mHIEFn9hxck5PxCAhwkpx22XZaYgQCzkd1vgYurGAscpjpqSsXPqSLTA4i40GBL666C4e3dJU9NVmNJQZe281Myucc=
+	t=1723104715; cv=none; b=ggXfWMFt1QhD2UE6kCsFk/Hgq7eH6+bU41bl/GTk7FCJffIeMitrnlRHMKAMn15X4Xlrw5qxo5tla3GZx/l2v3zTA4I6qH4LfXXMLBPmhJ8YsJQdOBAIoa8YloJM5Nk0J0ED467WEx0S/yuzmPCSp0TrCjSJtN2O9lOBPMyx2pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723104711; c=relaxed/simple;
-	bh=CVEB7K/HCGlXrmGy1RHGDaOx+otbdb1A+vDSXRc53ho=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k9hz4AQrD47q3I0nJ2v5Q72koxSdGXtw9QK9V8EJnMli2+222b6Z30rTWfeQMx0SWU7G6QMLPrWlwXc8rtn82K8JvHRXFbRv/+jtDSrvzYkqb0ZmvLOjpA0ew+FDSnm7PcN3PplqcNN90y2+2lux1J8ssuT9NwBEbK+U3NlnlVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xgDZiU/m; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1723104715; c=relaxed/simple;
+	bh=yFsoJ9mu3l1qUsrZE7X9Q80arAgVjyJqIpjxngrCFmg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=twXsRrz19i+qj1Y1t1H0w2R8wt9KjAm7hGJqXvApCKq5uTN8vGHtYNtWOlicceFN5JmgeI0BraDQDYURA9sSCbgCYlFAwLWmzxqSv/k8C7SN69E/G8bDSJS3x3j8ONL/I/ov2yCIfU9nn+23bTD94eBleiHxqZeP0+Z8y5JhRfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=spiRVyoL; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xgDZiU/m"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428243f928cso4326435e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 01:11:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="spiRVyoL"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so85144566b.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 01:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723104708; x=1723709508; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=imaAmnxdmHHr/VbTzYVPQHsek2dIIM4b+CpPCVUc4QY=;
-        b=xgDZiU/mmXSCM0pVR2Cc+MO/1i0tlrW9G5Jr2jcdofeWxNNnGu7tbEvA/ZiMVbZGRD
-         82SCrDghR0IMOerEw10fDW6MOkrJVR+sCPVb5ytW6Sgq+cEnoMc0v5kPeXHVo0ke0suj
-         dTf6HAPqdT6eRaMalPkQpW7//cRERLXZ5OOMTgkoNdA1HViH/21QafaXcjWTUMvpRaiE
-         QIwIFbmgxTSJUDSYCzZKRsWbJA+Rr4T0Bm77Y0l6KZmeihO/nDVRAlXx6Avh0DDss0hP
-         jE65s+EYK393vA7YwWL7zXFwLIBruM9F0G4roGzco5NAACXunMiFGl0tiUAZCXrxOTGx
-         gT7w==
+        d=linaro.org; s=google; t=1723104712; x=1723709512; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFAHdHbSCvCmFdkOYebjZm00aZdGB/6GINbpF7hXjDk=;
+        b=spiRVyoL/ErlczPt/AYCOjLeH/x9NjzO6GpXdLcnZjG54TZImphYZ/KU82+09OqaH+
+         ld6wbTrnmJ6y+9iEU6hvKCBRr84mH1nSRFQlqaGZ+dOc1H072/KADVbl7F1btV4ne/yq
+         iAQ3E7fLOCJ+Vc51nJIJKWrgJTxfTSc+E9sdZvLYnGH+BDJvYpoiVRUlDTragrD6c6fW
+         UQ28M5+2vDWzeijN+3h/IcO76+XwjQgCGSQgCiaUpcQoOezMJUT8pXCI8F0WVYi7N+zz
+         agfVt9oR2UJDe1TX0SPmb3W9uy/10Ibhxs/w+0lOvJUXrE4sZkgUZGEM+eiFs9uNQN0q
+         Ey/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723104708; x=1723709508;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=imaAmnxdmHHr/VbTzYVPQHsek2dIIM4b+CpPCVUc4QY=;
-        b=w79I1OARZhZNW3A3pIlxDs7Beq8fQdFWzXNlfSlncX+YEMJD9i//1eRAEK2az6bNO0
-         0T2epHE1OBUfCiZ7dAcfa3gwkXg96Ctjmp4QjHmoAuZF3ShKnFd77fZ9j1g4/NOBOd61
-         q5ZV0Q7WMm0gRG9UACzMs9l2cdAdZn+rOyXwIlhPTaxMDfxeiilndz8sG3CWjMrKy6NA
-         bRT6ZLSUxUxjO1kUOdy72V+/ztRBr4kCSWUgImnCiqjDJAMZWNTmdAmTltejKYJy5rh7
-         I8agM9MWKXjfdMOgwI3Fi4OqvEmknsLBi7HHcKdj3a56nReSZRK9iEj18Hege/e6+gFH
-         QqQg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7z9nqaZW7wx9mfJ5/P7O2roczCjO0kI+qpo+l8bJOLomVuQI0nRuAi4D6nEmYcXyKEqvaNGtzb8O3Qv4dBZke9WKAZg98xLyo9Rq0NtodgL4=
-X-Gm-Message-State: AOJu0YyCxOJ+KTwBAnEJua2V53bT/aq1XhwvzfgaqYhnK9YzO0LqNNJ4
-	2rO1UQ30Ub5gOy3KP72CH9Ym0+JDT6EfFKScvslDXoy0dJ+nZ6mTp0XAMBFqAfQ=
-X-Google-Smtp-Source: AGHT+IEjup3Gwty6V8M2pYX9RIBvrefx+VP/F13Y4OSUeerPt73EPMRI9epzxgCdxc3p3/S1ybwB3A==
-X-Received: by 2002:a05:600c:cc3:b0:426:6389:94c4 with SMTP id 5b1f17b1804b1-4290af238e7mr8354375e9.37.1723104707669;
-        Thu, 08 Aug 2024 01:11:47 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm9864665e9.12.2024.08.08.01.11.46
+        d=1e100.net; s=20230601; t=1723104712; x=1723709512;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gFAHdHbSCvCmFdkOYebjZm00aZdGB/6GINbpF7hXjDk=;
+        b=OIvT2fys6jXyr3Cr2rGv6vfqLL8/1OyBuqeuZZjn62H8MO6Fia2k6NYW5oR0j4thKp
+         od7ngUCfacTsWXhzj1oI21IJzu36fGsQEIyOZ6GH8cu0VL/sDuInS/voMzo77puS7Vqi
+         hE0iWX3tXsaKD4VONIXVPTGGyCmai27tbw2HPWhyCHxZjIxavXZaaCAnaQ8x8WSDUbE1
+         YbOGveh2iovSxNb4BnTirUQ7CBsC8LpRRtpuipmaCJk2HsungVBOzF1G6Tjb3bBWR3c+
+         lE1dQ61xcZPsP+4ERmaDU6o5XScNB/xKR+rb6SFcxNjpwoDBl2k/1F3DAHVSyCOrccn2
+         5Alw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbGxGiR2LrDsk0FVaVPrr7OtJGZHYrtQ+OGgbEJdWugbNNLBEzdLdqZBNK03BK8rdafOibRvqZGOckUdEuSAn6G7Td41898r381EBEnDRkEA0=
+X-Gm-Message-State: AOJu0YyTvs71YWV6Pt9JlbOtz7JB+zSqPO0Gh/J/UmijSt3LOn1WBQhD
+	SUoc9NRNYyyyC2RNhCeppDZ5AKSxqMa/Uqe3Ic9ixzgBk071sEY/cJSbG4lA+Qk=
+X-Google-Smtp-Source: AGHT+IFVHcQpOJ1IA30E9TCFE76Yp+RCOzBaCHLeFkPrR8+hAGw9wBBdmQAK0dZ+KGxkQvl/jx5+kg==
+X-Received: by 2002:a17:907:970c:b0:a7d:cf4f:1817 with SMTP id a640c23a62f3a-a80907c9862mr69351666b.0.1723104711847;
+        Thu, 08 Aug 2024 01:11:51 -0700 (PDT)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c578sm716931166b.73.2024.08.08.01.11.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 01:11:47 -0700 (PDT)
-Message-ID: <a8a532a86732393e20f9cce2c9c1145f379477cd.camel@linaro.org>
-Subject: Re: [PATCH v2 2/2] tty: serial: samsung_tty: cast the interrupt's
- void *id just once
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski
- <krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Date: Thu, 08 Aug 2024 09:11:45 +0100
-In-Reply-To: <65ce2214-dad5-4a73-8806-07aab5404cf8@kernel.org>
-References: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
-	 <20240807-samsung-tty-cleanup-v2-2-1db5afc9d41b@linaro.org>
-	 <65ce2214-dad5-4a73-8806-07aab5404cf8@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+        Thu, 08 Aug 2024 01:11:51 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v3 0/2] tty: serial: samsung_tty: simple cleanups
+Date: Thu, 08 Aug 2024 09:11:50 +0100
+Message-Id: <20240808-samsung-tty-cleanup-v3-0-494412f49f4b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMZ9tGYC/33NTQ6CMBCG4auYrh3Tlh/RlfcwLgY6hSbYkhYaC
+ eHuFlaaGJfvl8wzCwvkDQV2PSzMUzTBOJsiOx5Y06FtCYxKzSSXOa94CQGfYbItjOMMTU9opwG
+ 0RhKFKFBWOUuXgydtXrt6f6TuTBidn/cnUWzrfy8K4IBlpTKsdSY03Xpj0buT8y3bwCg/kfNvR
+ CZEqLpA3VxULuovZF3XN5XmeiH8AAAA
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Thu, 2024-08-08 at 09:31 +0200, Jiri Slaby wrote:
-> On 07. 08. 24, 13:58, Andr=C3=A9 Draszik wrote:
-> > The interrupt handler routines and helpers are casting the 'void *'
-> > pointer to 'struct exynos_uart_port *' all over the place.
-> >=20
-> > There is no need for that, we can do the casting once and keep passing
-> > the 'struct exynos_uart_port *', simplifying the code and saving a few
-> > lines of code.
-> >=20
-> > No functional changes.
-> ...
-> > @@ -944,17 +939,17 @@ static irqreturn_t s3c24xx_serial_tx_irq(void *id=
-)
-> > =C2=A0 /* interrupt handler for s3c64xx and later SoC's.*/
-> > =C2=A0 static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
-> > =C2=A0 {
-> > -	const struct s3c24xx_uart_port *ourport =3D id;
-> > -	const struct uart_port *port =3D &ourport->port;
-> > +	struct s3c24xx_uart_port *ourport =3D id;
-> > +	struct uart_port *port =3D &ourport->port;
-> > =C2=A0=C2=A0	u32 pend =3D rd_regl(port, S3C64XX_UINTP);
-> > =C2=A0=C2=A0	irqreturn_t ret =3D IRQ_HANDLED;
-> > =C2=A0=20
-> > =C2=A0=C2=A0	if (pend & S3C64XX_UINTM_RXD_MSK) {
-> > -		ret =3D s3c24xx_serial_rx_irq(id);
-> > +		ret =3D s3c24xx_serial_rx_irq(ourport);
-> > =C2=A0=C2=A0		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
-> > =C2=A0=C2=A0	}
-> > =C2=A0=C2=A0	if (pend & S3C64XX_UINTM_TXD_MSK) {
-> > -		ret =3D s3c24xx_serial_tx_irq(id);
-> > +		ret =3D s3c24xx_serial_tx_irq(ourport);
-> > =C2=A0=C2=A0		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
-> > =C2=A0=C2=A0	}
-> > =C2=A0=C2=A0	return ret;
-> > @@ -963,19 +958,19 @@ static irqreturn_t s3c64xx_serial_handle_irq(int =
-irq, void *id)
-> > =C2=A0 /* interrupt handler for Apple SoC's.*/
-> > =C2=A0 static irqreturn_t apple_serial_handle_irq(int irq, void *id)
-> > =C2=A0 {
-> > -	const struct s3c24xx_uart_port *ourport =3D id;
-> > -	const struct uart_port *port =3D &ourport->port;
-> > +	struct s3c24xx_uart_port *ourport =3D id;
-> > +	struct uart_port *port =3D &ourport->port;
->=20
-> No need to remove const from port here and above, right? (Only from=20
-> ourport.)
+While looking through the samsung tty driver, I've spotted a few things that
+can be simplified by removing unused function arguments and by avoiding some
+duplicated variables and casting.
 
-Jiri, you're right of course.
+There are no functional changes here.
 
-Thanks,
-A.
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v3:
+- undo too eager removal of 'const' where unnecessary (Jiri)
+- Link to v2: https://lore.kernel.org/r/20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org
+
+Changes in v2:
+- fix -Wdiscarded-qualifiers warnings
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20240806-samsung-tty-cleanup-v1-0-a68d3abf31fe@linaro.org
+
+---
+André Draszik (2):
+      tty: serial: samsung_tty: drop unused argument to irq handlers
+      tty: serial: samsung_tty: cast the interrupt's void *id just once
+
+ drivers/tty/serial/samsung_tty.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240806-samsung-tty-cleanup-ffae1515a284
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
