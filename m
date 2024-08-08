@@ -1,130 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52411185E6E;
-	Thu,  8 Aug 2024 07:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791C8188CC8
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 08:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723103839; cv=none; b=nBzqnB008TVlGE/iNS/rs2juIznZ+MW9nyLVVkNqlrt6sQeaQpcdSvl/SiE4OwSWJpKl6+NTwTPH9RWcWiUjQwAhz+jPckEbLjnXMEEPpdWOQVhDcGk5FosmK7+tYNQp/tKX6dMlKO34gjrQLeLaq793Of9cqdtyxsw4ybCNUSg=
+	t=1723104711; cv=none; b=sKcLx0hpvjvugwuUGaUAYtvXcJpk6MrtUZFq0TTWHjg7FaAIIavgJaKgx/5nEjsCcmjMJYH13+dYRj7H4mHIEFn9hxck5PxCAhwkpx22XZaYgQCzkd1vgYurGAscpjpqSsXPqSLTA4i40GBL666C4e3dJU9NVmNJQZe281Myucc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723103839; c=relaxed/simple;
-	bh=qNP1UakDsZGQ04BDFP62Iy3U81TTUfzEhBZQ0cJbHkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P5EpPh5PkYzOXjNrhs3kbw+AbHxfgMQkzXM5TXhQLNDCUBXet2JvCKNKzv2y5hYYvDkeIdkGFzK6h35ozVisGugsFfaJdBOm1gn8anUH9lZ2ql4KADqWARn7IwTi3sT5zf9JTJoKzqUEPugk1EqiBrAYUxJjB1eY3/dBuMKn5mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WK3+V5E0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723104711; c=relaxed/simple;
+	bh=CVEB7K/HCGlXrmGy1RHGDaOx+otbdb1A+vDSXRc53ho=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=k9hz4AQrD47q3I0nJ2v5Q72koxSdGXtw9QK9V8EJnMli2+222b6Z30rTWfeQMx0SWU7G6QMLPrWlwXc8rtn82K8JvHRXFbRv/+jtDSrvzYkqb0ZmvLOjpA0ew+FDSnm7PcN3PplqcNN90y2+2lux1J8ssuT9NwBEbK+U3NlnlVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xgDZiU/m; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WK3+V5E0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 364A6C32782;
-	Thu,  8 Aug 2024 07:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723103838;
-	bh=qNP1UakDsZGQ04BDFP62Iy3U81TTUfzEhBZQ0cJbHkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WK3+V5E0m9iRdM9svCRKKkQEROaRsdwPNcrvfiXd3sj3IJvmbCD8kIdkGSer7kW0M
-	 hujnFYUFFMOhxGsrn5BjDnjAiocn/0heyTNYBcIJINrlXgIZE/2/dowAWtnwuU8yUe
-	 aiUtuzv6Y48MieSXKBTWyXgza7WJ6YiUYzfAs+QIRVOaMWgX42HrInagMl8+CwUTXi
-	 EM5m7im0ycxt1We9hR4ZiJv5iQ5jIMvixgaTi01C2amSxmjZG1idZZIV646jptU4WH
-	 /6Xzr/OEu5DmfxPNnVo5LnMc+k1vic+lviexwSayvl9ZymVfCz0IqKXzaa2G2vZl/B
-	 pMRpP7uSGHm4w==
-Message-ID: <1a7db82e-72ee-496c-a501-54c7dd05cd41@kernel.org>
-Date: Thu, 8 Aug 2024 09:57:12 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xgDZiU/m"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428243f928cso4326435e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 01:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723104708; x=1723709508; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=imaAmnxdmHHr/VbTzYVPQHsek2dIIM4b+CpPCVUc4QY=;
+        b=xgDZiU/mmXSCM0pVR2Cc+MO/1i0tlrW9G5Jr2jcdofeWxNNnGu7tbEvA/ZiMVbZGRD
+         82SCrDghR0IMOerEw10fDW6MOkrJVR+sCPVb5ytW6Sgq+cEnoMc0v5kPeXHVo0ke0suj
+         dTf6HAPqdT6eRaMalPkQpW7//cRERLXZ5OOMTgkoNdA1HViH/21QafaXcjWTUMvpRaiE
+         QIwIFbmgxTSJUDSYCzZKRsWbJA+Rr4T0Bm77Y0l6KZmeihO/nDVRAlXx6Avh0DDss0hP
+         jE65s+EYK393vA7YwWL7zXFwLIBruM9F0G4roGzco5NAACXunMiFGl0tiUAZCXrxOTGx
+         gT7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723104708; x=1723709508;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=imaAmnxdmHHr/VbTzYVPQHsek2dIIM4b+CpPCVUc4QY=;
+        b=w79I1OARZhZNW3A3pIlxDs7Beq8fQdFWzXNlfSlncX+YEMJD9i//1eRAEK2az6bNO0
+         0T2epHE1OBUfCiZ7dAcfa3gwkXg96Ctjmp4QjHmoAuZF3ShKnFd77fZ9j1g4/NOBOd61
+         q5ZV0Q7WMm0gRG9UACzMs9l2cdAdZn+rOyXwIlhPTaxMDfxeiilndz8sG3CWjMrKy6NA
+         bRT6ZLSUxUxjO1kUOdy72V+/ztRBr4kCSWUgImnCiqjDJAMZWNTmdAmTltejKYJy5rh7
+         I8agM9MWKXjfdMOgwI3Fi4OqvEmknsLBi7HHcKdj3a56nReSZRK9iEj18Hege/e6+gFH
+         QqQg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7z9nqaZW7wx9mfJ5/P7O2roczCjO0kI+qpo+l8bJOLomVuQI0nRuAi4D6nEmYcXyKEqvaNGtzb8O3Qv4dBZke9WKAZg98xLyo9Rq0NtodgL4=
+X-Gm-Message-State: AOJu0YyCxOJ+KTwBAnEJua2V53bT/aq1XhwvzfgaqYhnK9YzO0LqNNJ4
+	2rO1UQ30Ub5gOy3KP72CH9Ym0+JDT6EfFKScvslDXoy0dJ+nZ6mTp0XAMBFqAfQ=
+X-Google-Smtp-Source: AGHT+IEjup3Gwty6V8M2pYX9RIBvrefx+VP/F13Y4OSUeerPt73EPMRI9epzxgCdxc3p3/S1ybwB3A==
+X-Received: by 2002:a05:600c:cc3:b0:426:6389:94c4 with SMTP id 5b1f17b1804b1-4290af238e7mr8354375e9.37.1723104707669;
+        Thu, 08 Aug 2024 01:11:47 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm9864665e9.12.2024.08.08.01.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 01:11:47 -0700 (PDT)
+Message-ID: <a8a532a86732393e20f9cce2c9c1145f379477cd.camel@linaro.org>
+Subject: Re: [PATCH v2 2/2] tty: serial: samsung_tty: cast the interrupt's
+ void *id just once
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>,  Alim Akhtar <alim.akhtar@samsung.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Date: Thu, 08 Aug 2024 09:11:45 +0100
+In-Reply-To: <65ce2214-dad5-4a73-8806-07aab5404cf8@kernel.org>
+References: <20240807-samsung-tty-cleanup-v2-0-1db5afc9d41b@linaro.org>
+	 <20240807-samsung-tty-cleanup-v2-2-1db5afc9d41b@linaro.org>
+	 <65ce2214-dad5-4a73-8806-07aab5404cf8@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: exynosautov9: add dpum clock
-To: Kwanghoon Son <k.son@samsung.com>, s.nawrocki@samsung.com,
- cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, conor+dt@kernel.org, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240730111535.135301-1-k.son@samsung.com>
- <CGME20240730111628epcas1p1148cf2853a9d2fc6decbd4ce50f23715@epcas1p1.samsung.com>
- <20240730111535.135301-2-k.son@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240730111535.135301-2-k.son@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 30/07/2024 13:15, Kwanghoon Son wrote:
-> Add dpum clock definitions and compatibles.
-> 
-> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
-> ---
->  .../clock/samsung,exynosautov9-clock.yaml     | 19 +++++++++++++++++++
->  .../dt-bindings/clock/samsung,exynosautov9.h  | 11 +++++++++++
->  2 files changed, 30 insertions(+)
+On Thu, 2024-08-08 at 09:31 +0200, Jiri Slaby wrote:
+> On 07. 08. 24, 13:58, Andr=C3=A9 Draszik wrote:
+> > The interrupt handler routines and helpers are casting the 'void *'
+> > pointer to 'struct exynos_uart_port *' all over the place.
+> >=20
+> > There is no need for that, we can do the casting once and keep passing
+> > the 'struct exynos_uart_port *', simplifying the code and saving a few
+> > lines of code.
+> >=20
+> > No functional changes.
+> ...
+> > @@ -944,17 +939,17 @@ static irqreturn_t s3c24xx_serial_tx_irq(void *id=
+)
+> > =C2=A0 /* interrupt handler for s3c64xx and later SoC's.*/
+> > =C2=A0 static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
+> > =C2=A0 {
+> > -	const struct s3c24xx_uart_port *ourport =3D id;
+> > -	const struct uart_port *port =3D &ourport->port;
+> > +	struct s3c24xx_uart_port *ourport =3D id;
+> > +	struct uart_port *port =3D &ourport->port;
+> > =C2=A0=C2=A0	u32 pend =3D rd_regl(port, S3C64XX_UINTP);
+> > =C2=A0=C2=A0	irqreturn_t ret =3D IRQ_HANDLED;
+> > =C2=A0=20
+> > =C2=A0=C2=A0	if (pend & S3C64XX_UINTM_RXD_MSK) {
+> > -		ret =3D s3c24xx_serial_rx_irq(id);
+> > +		ret =3D s3c24xx_serial_rx_irq(ourport);
+> > =C2=A0=C2=A0		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
+> > =C2=A0=C2=A0	}
+> > =C2=A0=C2=A0	if (pend & S3C64XX_UINTM_TXD_MSK) {
+> > -		ret =3D s3c24xx_serial_tx_irq(id);
+> > +		ret =3D s3c24xx_serial_tx_irq(ourport);
+> > =C2=A0=C2=A0		wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
+> > =C2=A0=C2=A0	}
+> > =C2=A0=C2=A0	return ret;
+> > @@ -963,19 +958,19 @@ static irqreturn_t s3c64xx_serial_handle_irq(int =
+irq, void *id)
+> > =C2=A0 /* interrupt handler for Apple SoC's.*/
+> > =C2=A0 static irqreturn_t apple_serial_handle_irq(int irq, void *id)
+> > =C2=A0 {
+> > -	const struct s3c24xx_uart_port *ourport =3D id;
+> > -	const struct uart_port *port =3D &ourport->port;
+> > +	struct s3c24xx_uart_port *ourport =3D id;
+> > +	struct uart_port *port =3D &ourport->port;
+>=20
+> No need to remove const from port here and above, right? (Only from=20
+> ourport.)
 
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +            - description: CMU_DPUM bus clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: dout_clkcmu_dpum_bus
+Jiri, you're right of course.
 
-We need to stop calling input clocks by full name. Rob already pointed
-it out for GS101 and we fixed the approach there. This binding already
-uses above syntax, but I think we can start with proper approach even if
-it leads to inconsistency. So please come with description of this clock
-(not clock name - see GS101) and name, e.g. "bus".
-
-BTW, in the future, please ping after two weeks or better even: relax,
-and help out by reviewing other patches on the mailing lists in order to
-relieve the burden of maintainers and move your patches higher up the list.
-
-Best regards,
-Krzysztof
+Thanks,
+A.
 
