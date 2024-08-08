@@ -1,60 +1,61 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAFB18E02D
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 14:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036518E05A
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  8 Aug 2024 14:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126281; cv=none; b=XsDROXtPHRFx/OM+9YVm6TGpP1k2GDpS6p2HYF36/hGqHZ4moEEBtMfn86t8U4CNApuXfR4zS7p2j4fndpIXBjrvruFyFSAKtCh3KjZ8Yc+H6pjy7X+zSLmqzaGrDhjgUNTXZ8Ja22GbXYlGl9z1RCNkl48enKID13COeXA2O4Y=
+	t=1723126281; cv=none; b=l+u0E0vPWoPmKpgYAr9zwKaWG+U1rKfzqqnmEP5c+zAU6aHLBGrVayinEsHHHU3BM1EOQjDtSwtxY2ZE42WM2b1QAFWbk6dQf5nAzaCgyq/TKTTMiLQyAiJt1gpQybsdYIZHRqE2A0o9n6YPHl3FCn783pm+fqn3jDGfCGo9skE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723126281; c=relaxed/simple;
-	bh=quFHR8pTn+F+xGctBH9cf3497p01fCYxd5i3Wn9fVPM=;
+	bh=YJSi6uCRK0b9FvCZAgAg7fTVxuzjlsUrLU2YoRGNUgc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p3z2trneI5OuEw5AhMsUp0OuWVxQxXxAuyQgIv02BxrBTEbJJx4vU5+L0WvCEk8P3aZzfI4ABNyU45JRXLjnr59ZKPeW4TYGQkoCGzKc4VtpoLUzlV6JUWg0TeIfyQwexQaSNpe3VV64o//wiySSQMeQteVO/VcXtjsYpRwevz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hIK83puT; arc=none smtp.client-ip=209.85.208.50
+	 In-Reply-To:To:Cc; b=ZfmE7C917wDx5/zNFdQQm1XtZ+6phKrbOI+1FXSX/aIPHJs1FIdHP4t9l6GgreAyRw+gPeJLv1mno1J5isgyxg6emJJj6bBYBbeo7buVxQhE5fAE2M442j+gUd2XbzNcqMi8jcXGs9J/vUcxNkiPGZ9jdkP6UsfTDZt/tsjpK8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcDoRYW6; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hIK83puT"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1618684a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 07:11:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcDoRYW6"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso1079916a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2024 07:11:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723126277; x=1723731077; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723126278; x=1723731078; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UaLjrFsw9Zi0L/EdvO9DIKyYpEUrx6lEBXaptLR+VmU=;
-        b=hIK83puTKdcgW8oz8MhVeFbIDB97g2ochkIYEKNgLkpdkuhZPC2xs+tu7mcj4lJWCg
-         SnKXv/JYOlmLeZUOprA/RHTBpLdYL4cVeeYnyvv6AEXRkzYW+6NJxfUzE2g+TPonKgQA
-         iRbbfGlEZgI71tBNaM90ArBgdA/h20waFpnYBDsENRVVUCBBftO4DOiuEasCWABX4Xfc
-         FDWt3S87BaoxhA4/RkTc3mm6FkV/srYWjFHy1QGj5y89C7/2cQRIWVdk0EKpvH5vc3h+
-         Iv9BlIvbzZpPmY/I3B98mCjcdXJoPQoNxEttb6m9VOvsdD4FhcE5cnMyeoIIvIRrE8ma
-         jCqA==
+        bh=i61g3HqvXtrI0H4Wdt6BZeDZIZP41pUUULE7Fmxi5BU=;
+        b=xcDoRYW6y8VXLyWK6fSh64Xf2+KWetmtvJDPu0bwE2sU1sDFIIAbB9L+wpoP6wFKJ1
+         oUVAli0Iabbrgqxx+vfmCANTWuvA9BkX2S/ssRc7zLnsIF283YB2HF8gYcLUhdhzbSyV
+         AAj+fme1XRjIrl4pfMOiU9GkCouQ1KphTj3cgLCegzglpzR3bHu6nzKnCHoKX0/y+nnF
+         CBr+2Sc5TGM/krC4My7pELYgkpPf8WYIWPu0pUwJvspVbUta5G7OTCUDRsS3aZnN+Cft
+         VWeVl3bdUaZmfgYQIygJ5uFz61Cr7CCRHdacp1FInTzN+21E6suakm0Iqlg2Plp9rT3c
+         FKjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723126277; x=1723731077;
+        d=1e100.net; s=20230601; t=1723126278; x=1723731078;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UaLjrFsw9Zi0L/EdvO9DIKyYpEUrx6lEBXaptLR+VmU=;
-        b=FdSmUYFteF4OO48HHF99bkUbpZJjnDOYawZ29MG+Z3AMGQ6df+DFYAMjZV7OymnN5h
-         612e5w/4EJZby+el/TZNdJ0N/Kbf6s3NScUzYCkR2UCqjIy9yGlf40XuBpVr0V2SafH1
-         XWxaMdbuegowPgn7oaP2vexD+Q2A4JRdfBSDpkZ6qRZLPO9inJh7tT9WnIRKJJwKBsHt
-         dKqa50zbP4auMaSidd5UsjYR9BSkGpKLgHxaNpIzALA6RlvhxEm7Vv+R+nJSRJcg/2X5
-         MUzUt2Zsxti9fENC1Qo3XAHKIh1/lFxshZab/Z8DxCrzN9G5kJuHSWTmz0Y4X5SnyOb6
-         VNng==
-X-Forwarded-Encrypted: i=1; AJvYcCVx6fI+MNjMwv/pJmkJwEXDIGt15OseCJ7ZtMkYi74sPU6ubjwKHNJU/GbSlYCVqXU9bfRe60T+9TBuXNlmu6dloQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH0yKhB0QolYwRiyed26b0G9TmVdbu8Bp433cbGw4w3staokbu
-	MF9HipbFMSO4VZpy1wrZOPF7HVVkLRCnor0JwSWjSZulCgh81Ym0E8/isS9gnt0=
-X-Google-Smtp-Source: AGHT+IF2Z+gOOpOJVUcuLSGq7/jhh5CJfmmh1hSytACnK5GYE20eb1XtkmCCnKm8aJbOYVVy6x+hag==
-X-Received: by 2002:a05:6402:3585:b0:5a2:bfd1:b892 with SMTP id 4fb4d7f45d1cf-5bbb3c41273mr1981407a12.11.1723126277143;
+        bh=i61g3HqvXtrI0H4Wdt6BZeDZIZP41pUUULE7Fmxi5BU=;
+        b=Nm1OIoeSjxuRvb2PfVmidpWNSlJdvbrMjsmwJlmPr3tsf1LiYr2kKv2NjmEjsRrDap
+         CTfbSAqJ6HU+D02+QenIcJRn8xK29dVQ8KCMw0d68/VD4LTAAWrTVP1DzVfUbqatpvZe
+         Huo6lEdo1jylV6/Bitoyx1ggKbh1l1gdeRgkyoTxj1+2QmIaoMWSpDJ3AqbQFuImmd/l
+         mlQFyxxZhMIKVxQKADiTtYd5lZQDxac4OqrZjezTYzCfl4x/SVjzZUSmWNK0nnfCwkbh
+         NZk74AnWGBVgZuIQD+z2l+gmc2szjCH4CTMqhACeqOYBxyL7tZdrwf/3dvdt0b2mRSNQ
+         ySnw==
+X-Forwarded-Encrypted: i=1; AJvYcCX83VpsCDq/m05Ym+x6ChtaIG/lNtfvExIe9TeCAm6JeFtmI3j4Zrib+sjD0V0gAhoFaIH2BgeHEQX/2KBUohjX4vBINosD4JWqDGorw8ogRwM=
+X-Gm-Message-State: AOJu0YxcfWnWzohC0GEf/Kxzcd8MdIi/X/R415aeXDEZKM6bwxit1QyT
+	9wCJFtkA4kRj39QvwHGqbm5qJIlQWDZiS52q9xF3ky/roSwhq+oP3goVrZbPLm4=
+X-Google-Smtp-Source: AGHT+IEiMhOMDiTpZBQDmYwk/4O0X4rmiXEoHQeeCddSIXSmt9SZ1xmlKbwP23bfJ7piM3Yp2IjSiw==
+X-Received: by 2002:a05:6402:2354:b0:5b8:34a9:7fd9 with SMTP id 4fb4d7f45d1cf-5bbb23c7b6dmr1889019a12.27.1723126277640;
         Thu, 08 Aug 2024 07:11:17 -0700 (PDT)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c29f79sm671761a12.33.2024.08.08.07.11.16
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c29f79sm671761a12.33.2024.08.08.07.11.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 07:11:16 -0700 (PDT)
+        Thu, 08 Aug 2024 07:11:17 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 08 Aug 2024 15:11:15 +0100
-Subject: [PATCH v5 01/20] clk: bump stdout clock usage for earlycon
+Date: Thu, 08 Aug 2024 15:11:16 +0100
+Subject: [PATCH v5 02/20] clk: samsung: gs101: don't mark non-essential
+ (UART) clocks critical
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240808-gs101-non-essential-clocks-2-v5-1-11cffef0634e@linaro.org>
+Message-Id: <20240808-gs101-non-essential-clocks-2-v5-2-11cffef0634e@linaro.org>
 References: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
 In-Reply-To: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -84,198 +85,90 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-On some platforms, earlycon depends on the bootloader setup stdout
-clocks being retained. In some cases stdout UART clocks (or their
-parents) can get disabled during loading of other drivers (e.g. i2c)
-causing earlycon to stop to work sometime into the boot, halting the
-whole system.
+The peric0_top1_ipclk_0 and peric0_top1_pclk_0 are the clocks going to
+peric0/uart_usi, with pclk being the bus clock. Without pclk running,
+any bus access will hang.
+Unfortunately, in commit d97b6c902a40 ("arm64: dts: exynos: gs101:
+update USI UART to use peric0 clocks") the gs101 DT ended up specifying
+an incorrect pclk in the respective node and instead the two clocks
+here were marked as critical.
 
-Since there are at least two platforms where that is the case, i.MX and
-the Exynos-derivative gs101, this patch adds some logic to the clk core
-to detect these clocks if earlycon is enabled, to bump their usage
-count as part of of_clk_add_hw_provider() and of_clk_add_provider(),
-and to release them again at the end of init.
+As a side-effect and by accident, having them 'critical' also
+worked-around a problem where earlycon stops to work sometime into the
+boot for two reasons:
+    * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to be
+      running, but because earlycon doesn't deal with clocks that
+      parent will be disabled when none of the other drivers that
+      actually deal with clocks correctly require it to be running and
+      the real serial driver (which does deal with clocks) hasn't taken
+      over yet
+    * hand-over between earlycon and serial driver appears to be
+      fragile and clocks get enabled and disabled a few times, which
+      also causes register access to hang while earlycon is still
+      active
+(A wordier explanation can also be found in [1])
 
-This way code duplication in affected platforms can be avoided.
+Since then, the DT has been updated to use the correct clock in
+commit 21e4e8807bfc ("arm64: dts: exynos: gs101: use correct clocks for
+usi_uart"). Furthermore, the clk core now helps OF platforms with their
+stdout (earlycon) clocks during early boot and thereby avoids the
+problem described above.
 
-The general idea is based on similar code in the i.MX clock driver, but
-this here is a bit more generic as in general (e.g. on gs101) clocks
-can come from various different clock units (driver instances) and
-therefore it can be necessary to run this code multiple times until all
-required stdout clocks have probed.
+The driver here can now be corrected and the work-arounds removed. Do
+so.
 
+Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/ [1]
+Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/clk/clk.c               | 129 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk-gs101.c |   1 +
- 2 files changed, 130 insertions(+)
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7264cf6165ce..03c5d80e833c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4923,6 +4923,131 @@ static void clk_core_reparent_orphans(void)
- 	clk_prepare_unlock();
- }
- 
-+/**
-+ * struct of_clk_stdout_clks - holds data that is required for handling extra
-+ * references to stdout clocks during early boot.
-+ *
-+ * On some platforms, earlycon depends on the bootloader setup stdout clocks
-+ * being retained. In some cases stdout UART clocks (or their parents) can get
-+ * disabled during loading of other drivers (e.g. i2c) causing earlycon to stop
-+ * to work sometime into the boot, halting the system.
-+ *
-+ * Having logic to detect these clocks if earlycon is enabled helps with those
-+ * cases by bumping their usage count during init. The extra usage count is
-+ * later dropped at the end of init.
-+ *
-+ * @bump_refs: whether or not to add the extra stdout clock references
-+ * @lock: mutex protecting access
-+ * @have_all: whether or not we have acquired all clocks, to handle cases of
-+ *            clocks coming from different drivers / instances
-+ * @clks: clocks associated with stdout
-+ * @n_clks: number of clocks associated with stdout
-+ */
-+static struct of_clk_stdout_clks {
-+	bool bump_refs;
-+
-+	struct mutex lock;
-+	bool have_all;
-+	struct clk **clks;
-+	size_t n_clks;
-+} of_clk_stdout_clks = {
-+	.lock = __MUTEX_INITIALIZER(of_clk_stdout_clks.lock),
-+};
-+
-+static int __init of_clk_bump_stdout_clocks_param(char *str)
-+{
-+	of_clk_stdout_clks.bump_refs = true;
-+	return 0;
-+}
-+__setup("earlycon", of_clk_bump_stdout_clocks_param);
-+__setup_param("earlyprintk", of_clk_keep_stdout_clocks_earlyprintk,
-+	      of_clk_bump_stdout_clocks_param, 0);
-+
-+static void of_clk_bump_stdout_clocks(void)
-+{
-+	size_t n_clks;
-+
-+	/*
-+	 * We only need to run this code if required to do so and only ever
-+	 * before late initcalls have run. Otherwise it'd be impossible to know
-+	 * when to drop the extra clock references again.
-+	 *
-+	 * This generally means that this only works if on affected platforms
-+	 * the clock drivers have been built-in (as opposed to being modules).
-+	 */
-+	if (!of_clk_stdout_clks.bump_refs)
-+		return;
-+
-+	n_clks = of_clk_get_parent_count(of_stdout);
-+	if (!n_clks || !of_stdout)
-+		return;
-+
-+	mutex_lock(&of_clk_stdout_clks.lock);
-+
-+	/*
-+	 * We only need to keep trying if we have not succeeded previously,
-+	 * i.e. if not all required clocks were ready during previous attempts.
-+	 */
-+	if (of_clk_stdout_clks.have_all)
-+		goto out_unlock;
-+
-+	if (!of_clk_stdout_clks.clks) {
-+		of_clk_stdout_clks.n_clks = n_clks;
-+
-+		of_clk_stdout_clks.clks = kcalloc(of_clk_stdout_clks.n_clks,
-+					      sizeof(*of_clk_stdout_clks.clks),
-+					      GFP_KERNEL);
-+		if (!of_clk_stdout_clks.clks)
-+			goto out_unlock;
-+	}
-+
-+	/* assume that this time we'll be able to grab all required clocks */
-+	of_clk_stdout_clks.have_all = true;
-+	for (size_t i = 0; i < n_clks; ++i) {
-+		struct clk *clk;
-+
-+		/* we might have grabbed this clock in a previous attempt */
-+		if (of_clk_stdout_clks.clks[i])
-+			continue;
-+
-+		clk = of_clk_get(of_stdout, i);
-+		if (IS_ERR(clk)) {
-+			/* retry next time if clock has not probed yet */
-+			of_clk_stdout_clks.have_all = false;
-+			continue;
-+		}
-+
-+		if (clk_prepare_enable(clk)) {
-+			clk_put(clk);
-+			continue;
-+		}
-+		of_clk_stdout_clks.clks[i] = clk;
-+	}
-+
-+out_unlock:
-+	mutex_unlock(&of_clk_stdout_clks.lock);
-+}
-+
-+static int __init of_clk_drop_stdout_clocks(void)
-+{
-+	for (size_t i = 0; i < of_clk_stdout_clks.n_clks; ++i) {
-+		clk_disable_unprepare(of_clk_stdout_clks.clks[i]);
-+		clk_put(of_clk_stdout_clks.clks[i]);
-+	}
-+
-+	kfree(of_clk_stdout_clks.clks);
-+
-+	/*
-+	 * Do not try to acquire stdout clocks after late initcalls, e.g.
-+	 * during further module loading, as we then wouldn't have a way to
-+	 * drop the references (and associated allocations) ever again.
-+	 */
-+	of_clk_stdout_clks.bump_refs = false;
-+
-+	return 0;
-+}
-+late_initcall_sync(of_clk_drop_stdout_clocks);
-+
- /**
-  * struct of_clk_provider - Clock provider registration structure
-  * @link: Entry in global list of clock providers
-@@ -5031,6 +5156,8 @@ int of_clk_add_provider(struct device_node *np,
- 
- 	fwnode_dev_initialized(&np->fwnode, true);
- 
-+	of_clk_bump_stdout_clocks();
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(of_clk_add_provider);
-@@ -5073,6 +5200,8 @@ int of_clk_add_hw_provider(struct device_node *np,
- 
- 	fwnode_dev_initialized(&np->fwnode, true);
- 
-+	of_clk_bump_stdout_clocks();
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
+---
+v5: update commit message
+
+v4:
+- the earlycon issue described in the commit message in previous
+  versions of this patch is gone with "clk: samsung: gs101: allow
+  earlycon to work unconditionally", so no need to mention anything
+
+v3:
+- add git commit SHA1s (Krzysztof)
+- add link to wordier description of earlycon issue
+
+v2:
+- commit message typo fixed
+- collect Reviewed-by: tags
+---
+ drivers/clk/samsung/clk-gs101.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
 diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 85098c61c15e..1759eb23263b 100644
+index 1759eb23263b..0c963e72e8bd 100644
 --- a/drivers/clk/samsung/clk-gs101.c
 +++ b/drivers/clk/samsung/clk-gs101.c
-@@ -9,6 +9,7 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/of.h>
-+#include <linux/of_clk.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/clock/google,gs101.h>
+@@ -3947,20 +3947,18 @@ static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
+ 	     "gout_peric0_peric0_top0_pclk_9", "mout_peric0_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_9,
+ 	     21, 0, 0),
+-	/* Disabling this clock makes the system hang. Mark the clock as critical. */
+ 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0,
+ 	     "gout_peric0_peric0_top1_ipclk_0", "dout_peric0_usi0_uart",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_IPCLK_0,
+-	     21, CLK_IS_CRITICAL, 0),
++	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_2,
+ 	     "gout_peric0_peric0_top1_ipclk_2", "dout_peric0_usi14_usi",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_IPCLK_2,
+ 	     21, CLK_SET_RATE_PARENT, 0),
+-	/* Disabling this clock makes the system hang. Mark the clock as critical. */
+ 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0,
+ 	     "gout_peric0_peric0_top1_pclk_0", "mout_peric0_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_PCLK_0,
+-	     21, CLK_IS_CRITICAL, 0),
++	     21, 0, 0),
+ 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_2,
+ 	     "gout_peric0_peric0_top1_pclk_2", "mout_peric0_bus_user",
+ 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_PCLK_2,
 
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
