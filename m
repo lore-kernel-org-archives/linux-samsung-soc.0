@@ -1,161 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8734934CDD;
-	Fri,  9 Aug 2024 05:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88DB2905;
+	Fri,  9 Aug 2024 07:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723182566; cv=none; b=kKw3uZbAo+pTM9jz3cwREOV0yLrro5lK8EBxTUwU8hTreuDm8g1b/kP5Q/VCITatv1pY8HCnzMf+m+SRx9MvioHnqDY9bonxJWQJrS7rsSmK5yyQFf2avErrrM3S+2Uqzg0eKf6Bz0J+OJpYzkkPLoJbyXAakzYDiov6OECKnbU=
+	t=1723186921; cv=none; b=rzFvYbgsSkXZDo1QlgHNAMKBUbefVdFZdBy3hvOSyRw8HJsEHT11AIAFx/06zsVOVO7cDfCDBiihz8Jwf8QIeQtpwZwt49oU2CyQrH/CL8v9o2Tk1F7pUNKixXzQBKHrpe1uM1qn0CHSP4yAtQ3PeOoXsDIGh0hfFExFZHBpIVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723182566; c=relaxed/simple;
-	bh=12XbqWay4D68Qp40QHYpSukXZCMh8XhXyK8jkIHuWzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZiyueiRZHjEgbV0YS7k+z+UybHNlftftQyxyffOiJBaX5bzqk5Zs0XnruAXWmcpjWtm5mC0g97Xe04xwFIIj03Fgn5J/l0w67PMCJtB4YaD4pHvQrf9lKh+U4pvExMN8sfx4lhoL4kYRfbh61e7TAD9fpBPkZ/9pyl39pYzhhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEHpStzt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723186921; c=relaxed/simple;
+	bh=TA0O4kSV44StmXvhPbMfiwpf5ZbF8TrR1o+iGXvKaXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pX/Ny+aYxCVK7vIEeIWb54o2KE/Y9V53PrZe1O58sdDV27Bx3FahOZL0IexnBihEuDOWPjxL1JRXi9KjuhuVZ1ecNl39iaGgENrkRRSKnks2A6CaepV2Ici4IgoHsDTNempeUR8ipYyRBsPJ1qgl8sYygmAs4RT8vFGQuQWuayM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i0kZDnkL; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEHpStzt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7857AC32782;
-	Fri,  9 Aug 2024 05:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723182566;
-	bh=12XbqWay4D68Qp40QHYpSukXZCMh8XhXyK8jkIHuWzA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EEHpStztJHMpUTADsJGXfHr7x9SGMACJQ7l6nIy6P6tjKLzrWEvBr3HwdXyrDSpLG
-	 b96p3F7rJbFpuRFCU6n20oO4c33OEUIXiYhSwYSz3Tf+BPjEOOZcxIO6Ra+5xBWRv9
-	 MXFc2+Gmo6LdSFbiyTjdX6QjuyEYiNit0qb+xMK/H7ADhpLVBbmXTZ44pZzFdhVzyw
-	 CNfSk0c6ul1ADKfMUhxLTpEwL9s//Xzd81ssImJMRH6D+6ynrekaNLkbYclyx/VheZ
-	 kCIqI+JoTd//YLADS4+iJCDCFJR4sWlNatranNA51M6ve/3njfHCEZYNek59xyHeZw
-	 o5RTNtLHZPhMQ==
-Message-ID: <a29c1c92-0f22-4fe3-a965-8561f6dba059@kernel.org>
-Date: Fri, 9 Aug 2024 07:49:19 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i0kZDnkL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723186920; x=1754722920;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=TA0O4kSV44StmXvhPbMfiwpf5ZbF8TrR1o+iGXvKaXg=;
+  b=i0kZDnkLMdnjV3r56AxjuoR2JNYdXWhnTTYUvn3QuSqGxh17ZKWWPAVR
+   /Ny/+gaOfLmMuG985rs2TXo6nckP/24nHxFl0+sOFEj40uZdVakinIJrW
+   1mW+RBpMLW0UTUydkP2sag9Oln0h/uSMPym3WGBwGZyLmkOb66yU/0QHA
+   dDGFN3xZJD7xBrg0thWYJMEwHI7hIJODTxN5F5vUo2/n48poJ46w9wBou
+   BTVCVYv1OOq9aMZzBO4kT1g9luvRP2/21obNAG/pk2EmpAIQYdRaIt8+c
+   VXa4Zpny5w9QsjwUjSA3q5oTpx9szrc7zpYgOe/Lubrwv24GjYSXt7lFG
+   A==;
+X-CSE-ConnectionGUID: 4scePCzaRba3FZeRfMGbTw==
+X-CSE-MsgGUID: j2T815PzSYqoPUctVY6Vmg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11158"; a="21160449"
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="21160449"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 00:01:58 -0700
+X-CSE-ConnectionGUID: DuVKJJ5CQTyckkJNOaf2MA==
+X-CSE-MsgGUID: PjcgnyvjRHutAiVLuDL2sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,275,1716274800"; 
+   d="scan'208";a="57447822"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 09 Aug 2024 00:01:54 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scJdI-00077G-11;
+	Fri, 09 Aug 2024 07:01:52 +0000
+Date: Fri, 9 Aug 2024 15:01:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Subject: Re: [PATCH 2/2] tty: serial: samsung_tty: cast the interrupt's void
+ *id just once
+Message-ID: <202408091405.QtjNlf8Z-lkp@intel.com>
+References: <20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 08/10] arm64: dts: exynos: Add initial support for
- exynos8895 SoC
-To: David Virag <virag.david003@gmail.com>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com>
- <20240807082843.352937-9-ivo.ivanov.ivanov1@gmail.com>
- <e6b4e0d8-7183-4ff4-a373-cb1c0c98d993@kernel.org>
- <5274b8a1-b81c-3979-ed6c-3572f6a6cfc2@gmail.com>
- <225a94c3d0e8f70238aa9a486e7752ad6cb20283.camel@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <225a94c3d0e8f70238aa9a486e7752ad6cb20283.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe@linaro.org>
 
-On 07/08/2024 19:29, David Virag wrote:
-> On Wed, 2024-08-07 at 14:20 +0300, Ivaylo Ivanov wrote:
->>
->> On 8/7/24 12:20, Krzysztof Kozlowski wrote:
->>> On 07/08/2024 10:28, ivo.ivanov.ivanov1@gmail.com wrote:
->>>> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> [snip]
->>>>
->>>> +
->>>> +	timer {
->>>> +		compatible = "arm,armv8-timer";
->>>> +		/* Hypervisor Virtual Timer interrupt is not
->>>> wired to GIC */
->>>> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8)
->>>> | IRQ_TYPE_LEVEL_LOW)>,
->>>> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8)
->>>> | IRQ_TYPE_LEVEL_LOW)>,
->>>> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8)
->>>> | IRQ_TYPE_LEVEL_LOW)>,
->>>> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8)
->>>> | IRQ_TYPE_LEVEL_LOW)>;
->>>> +		clock-frequency = <26000000>;
->>> Hm? I think this was explicitly disallowed.
->>
->> It's weird. Without the clock-frequency property it fails early
->> during the
->>
->> boot process and I can't get any logs from pstore or simple-
->> framebuffer.
->>
->> Yet it's not set on similar platforms (exynos7885, autov9). Perhaps I
->>
->> could alias the node and set it in the board device tree..? That
->> doesn't
->>
->> sound right.
-> 
-> This sounds like CNTFRQ_EL0 is not set properly by the firmware.
-> Now, if I read the documentation properly, this can be only set from
-> EL3, which in your case is... not easy.
-> 
-> On my Galaxy A8 2018 (Exynos7885) I remember the old Android 8
-> bootloader not being able to boot mainline, but Android 9 bootloaders
-> did. I did not take the time to check if it was related to this, but it
-> is my guess.
-> 
-> Your best bet is that maybe Samsung decided to fix this on the latest
-> bootloader, and upgrading will fix it. (Though if it's already on an
-> Android 9 based bootloader and it's still broken, my guess is a newer
-> version won't fix it, but who knows)
+Hi Andr�,
 
-If you can update your device to newer Android and it fixes the issue,
-then please drop the property. If this does not work, then please add a
-comment like: /* Non-updatable, broken stock Samsung bootloader does not
-configure CNTFRQ_EL0 */
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Krzysztof
+[auto build test WARNING on 1e391b34f6aa043c7afa40a2103163a0ef06d179]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Draszik/tty-serial-samsung_tty-drop-unused-argument-to-irq-handlers/20240806-234342
+base:   1e391b34f6aa043c7afa40a2103163a0ef06d179
+patch link:    https://lore.kernel.org/r/20240806-samsung-tty-cleanup-v1-2-a68d3abf31fe%40linaro.org
+patch subject: [PATCH 2/2] tty: serial: samsung_tty: cast the interrupt's void *id just once
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240809/202408091405.QtjNlf8Z-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240809/202408091405.QtjNlf8Z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408091405.QtjNlf8Z-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/tty/serial/samsung_tty.c: In function 's3c64xx_serial_handle_irq':
+>> drivers/tty/serial/samsung_tty.c:948:45: warning: passing argument 1 of 's3c24xx_serial_rx_irq' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     948 |                 ret = s3c24xx_serial_rx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:856:68: note: expected 'struct s3c24xx_uart_port *' but argument is of type 'const struct s3c24xx_uart_port *'
+     856 | static irqreturn_t s3c24xx_serial_rx_irq(struct s3c24xx_uart_port *ourport)
+         |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+>> drivers/tty/serial/samsung_tty.c:952:45: warning: passing argument 1 of 's3c24xx_serial_tx_irq' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     952 |                 ret = s3c24xx_serial_tx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:927:68: note: expected 'struct s3c24xx_uart_port *' but argument is of type 'const struct s3c24xx_uart_port *'
+     927 | static irqreturn_t s3c24xx_serial_tx_irq(struct s3c24xx_uart_port *ourport)
+         |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   drivers/tty/serial/samsung_tty.c: In function 'apple_serial_handle_irq':
+   drivers/tty/serial/samsung_tty.c:969:45: warning: passing argument 1 of 's3c24xx_serial_rx_irq' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     969 |                 ret = s3c24xx_serial_rx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:856:68: note: expected 'struct s3c24xx_uart_port *' but argument is of type 'const struct s3c24xx_uart_port *'
+     856 | static irqreturn_t s3c24xx_serial_rx_irq(struct s3c24xx_uart_port *ourport)
+         |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+   drivers/tty/serial/samsung_tty.c:973:45: warning: passing argument 1 of 's3c24xx_serial_tx_irq' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     973 |                 ret = s3c24xx_serial_tx_irq(ourport);
+         |                                             ^~~~~~~
+   drivers/tty/serial/samsung_tty.c:927:68: note: expected 'struct s3c24xx_uart_port *' but argument is of type 'const struct s3c24xx_uart_port *'
+     927 | static irqreturn_t s3c24xx_serial_tx_irq(struct s3c24xx_uart_port *ourport)
+         |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+
+
+vim +948 drivers/tty/serial/samsung_tty.c
+
+   938	
+   939	/* interrupt handler for s3c64xx and later SoC's.*/
+   940	static irqreturn_t s3c64xx_serial_handle_irq(int irq, void *id)
+   941	{
+   942		const struct s3c24xx_uart_port *ourport = id;
+   943		const struct uart_port *port = &ourport->port;
+   944		u32 pend = rd_regl(port, S3C64XX_UINTP);
+   945		irqreturn_t ret = IRQ_HANDLED;
+   946	
+   947		if (pend & S3C64XX_UINTM_RXD_MSK) {
+ > 948			ret = s3c24xx_serial_rx_irq(ourport);
+   949			wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_RXD_MSK);
+   950		}
+   951		if (pend & S3C64XX_UINTM_TXD_MSK) {
+ > 952			ret = s3c24xx_serial_tx_irq(ourport);
+   953			wr_regl(port, S3C64XX_UINTP, S3C64XX_UINTM_TXD_MSK);
+   954		}
+   955		return ret;
+   956	}
+   957	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
