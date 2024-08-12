@@ -1,62 +1,61 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1281817F4F2
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2024 13:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE4317C7B3
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2024 13:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469665; cv=none; b=Se5hDrQeca6qPk4n7uymrunq3xy5m14DHFTFd8lE6UsDFA+zyG2PGXGkv03Aj0leWyQreuvZnaH29y25HW30kg8Ci+oK5u/W4WQCorhBvnfzO14PWeuMscEAgTGKU8FerD5r/YuzYkMhzkW/6hS/7Q/+fCRsXuQpOOIranusUmQ=
+	t=1723469666; cv=none; b=f24j1o+onhYZvrUXT+O41K9B9QF+aiUeXrysnXrhYdTAylpY40HayLrvC22hmJqRWNpbMROLJ0oGT9gmUCP56RPh8gsALx9vOuerxVQwHti/VfFh9ejVQPlV+kcGubBxbP1VOE9y6l3nrioaOk00XBgWWxgQljnmoamF3G4sPBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469665; c=relaxed/simple;
-	bh=xgfyKZmDDIbZTBcHgkC4HQRuoKCVphYVJo2Oqeoz2yg=;
+	s=arc-20240116; t=1723469666; c=relaxed/simple;
+	bh=gmw7sdXN++0ul8rDzvdEpJ8YQFeG56dlD4XcPKrvG+o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m2nDqI5FpvLro2DiRn8LZE4cj0Bs/5ijvOjSv5c3zPI6t7lwsobiVvkfy32Isf/etDrcXHhzk93kIXCP4YMyXAGS5l5xQrSM6qqK1vT4qfoRh04Gugnrd646IqvuKMQ9ifMXGSvFa1OqHf0kMd9CRtCYGXc/+y8HgsRejsqW/Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T42yi9ZR; arc=none smtp.client-ip=209.85.208.181
+	 In-Reply-To:To:Cc; b=KcpuOa0RBNWWMg/2rQcyVxNiF5QZSfLS2v802Qy6dg0EzClpBbK+XVe0CQy8aKPFQZhPsSs8U6a+mhUum9TPwQJq8Gj8qxMsGo5XWf52FgUN2pct23IvRbQ/sPByI5ftgFwzd+SoOKP+N5COMhmd/qDXGIRW23XP88mB/M4/XpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tA/IspX3; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T42yi9ZR"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f149845fbaso45830471fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2024 06:34:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tA/IspX3"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso32318665e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2024 06:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723469661; x=1724074461; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723469662; x=1724074462; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uOJ0Ss5PZ4IloZXXvkJRBvwO+cKYa9b2eKV5tMzUF90=;
-        b=T42yi9ZRQi7mcGBQuq95A4B9nSNoH6e+zy8IVONQZIDamNg1WFLsDZVrym/ZyuqxdN
-         GXvByXue2HhXSiOvnL3pmqLNr6Ob85zhSLvhJyOPyIOZqkI5uvo9rtcPPpLxXWyqDlW7
-         i7IK5xiEgie2TIt0fcHdYObLU8g6uONoO+ahPnGuRre8OvPhG+FY7ixt4JPZBdRbNSEf
-         gT4ZbgPNm25HXGebuZp0lBMBvFEaBnscMmrPft2nuuO7fdfQZNQASuAeLp/wgaog+Fac
-         V3hAbqdZNal56taQ3bMuZGYt7T7PdM8Gi9rYbOCDCex7iP0buZFe+iEyarsHCzpFPFFo
-         oNtg==
+        bh=lgTXsPloyXfID4jwvyIhu24dRWJVHUfhWh9HifazGOU=;
+        b=tA/IspX3w4/C7hCvLciY9JOjCNz/Z+KX9nal8rPo7Vx9zBl2t8RMQWOTDZw/aoHqot
+         LuZYf30nD4HtYFtReos3XMet9o6c04kjeBGj6S4REmSd1+UP0Ht2fBSMy1tJ/rQGqcq1
+         RCaGdQNd4Ivk4+RGaghWWPeowShcAh6V6hoRZjC/oQSL2n0pVvfo0D7pWG14Y6P5mnXG
+         AguHiwotV7iJpmDKGgAAhoLxibZWjZQDd4G0qugJAOExKCOEWBEZuixC7ymJr/NPXpMV
+         UJl7LRVEubW+mBU19fu5DITTAG+cwrHIc7LTv66zHAp7OeFph/hZ4+/pL1PuDV9Xh+zi
+         ZxgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723469661; x=1724074461;
+        d=1e100.net; s=20230601; t=1723469662; x=1724074462;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uOJ0Ss5PZ4IloZXXvkJRBvwO+cKYa9b2eKV5tMzUF90=;
-        b=oA69l4K0L4q8RCoorFaq99YuR8BxIAviHvy2RoUljGiAgF8kZe6UosK33Qj06ts389
-         7gCeaINMZBS+pPtoElS2i147y6gd5ZFD6r15dKJtER0jqzfUmapzv33yYcdmGNn7Lhqp
-         2aC/DsUi5hCqcP35O+9Rdwjwl+Ies/4+LoaWx+p5Ly633atHcl1UYKhZ+0Npm7LMxVvE
-         8rU+O+8Xlt+06gBKmx+7xy21XDkmlIZ3ITOuY5CkNAYstF3av1wAWR1eSM0KIAzM5yLU
-         0Owtviibi4HzLO0bfVHZLlE1OACqYvAJ3hgZaBa0uUbAxnbILHe9DBYNlMHUiDq2q2bJ
-         oi2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIxMrjNvag1LHKfE8wfvBPJDbW8jL9tLWma8Z9A/ZH8oOYKDxSlPE9AihCVZFviKPTLoC4ldtemtThf3q/tS0MoaUnKK6E312wg4P11aLvBnI=
-X-Gm-Message-State: AOJu0YwoV9efimv1vosU31o4/0WzzTy1w4CGgrZzxkQh58s1NOFG+wC3
-	0epaxZWmKICs4zysbEoIpmQTbyhDBIHIPPUkoXJjQYlI2rjGq6SwDGBiDTXvi8G2VP1Qzl61jBF
-	J
-X-Google-Smtp-Source: AGHT+IHQihxBmTwZO+gpopSrog1h4Zwo6nfMe5CMTYHEB+GBFOYD57QnlF7TYHYQZ5mGOjHQLKtWjw==
-X-Received: by 2002:a2e:9985:0:b0:2f2:9c23:3412 with SMTP id 38308e7fff4ca-2f2b7156ee5mr2174791fa.23.1723469660887;
-        Mon, 12 Aug 2024 06:34:20 -0700 (PDT)
+        bh=lgTXsPloyXfID4jwvyIhu24dRWJVHUfhWh9HifazGOU=;
+        b=lm5vSiP+Vjs3ERBgHwco0h4KfDdd0JZDPg/FBuw52xMMwzzd9rF5CQLlubG+g3xqq1
+         ON2ksL21bfr0kgZ57votq7zmjdMbkV9Z8MgkeL25YaE1blktnVNw5yG4/NaoXdbCeShs
+         m4mqZfLofJc8l7cGvgt/+oDF3QiXlUsz2Libenn4/gBdKx47SKAq8BA/cttZKYpddsVw
+         I3Q5MeddfYvGQWUj6vmbSRG0+rIkbCtgHNEqy8iksnaDw52e8ucDBYNQDtgy0OiBrDqm
+         NL1SMz0cvMPU0J9JWua1cMi2TpIYbAwLiOMufQS6SVAm6mlAqQi0RDVefEarqulouIzV
+         4Cfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrtkqjGyRjgQFJh+NNgFSGZvahl0kAMFWHuxV1hkN4Afqz7+Gx7nEahnq/jJyjQEwqEaVI35AmR7Y23XYEFt9LrQ9F3tTfMTyosMPZuQG0cSg=
+X-Gm-Message-State: AOJu0YzGYCM2cQWbjQYHspnU9h9XrSz9uhrLijoje5ZIddr5D7gzC3/X
+	qRqvvb9wIhSxWWQmrTXAE6CjR6UpRMAsD3Qcy1QaRLOthvZhuM0Y19y//J8hVe4=
+X-Google-Smtp-Source: AGHT+IG2U+2ivgdNzf99p2ylaUjGb2UicWlTptEg4n0FqVE6AqYOjcDIhqYbh/ow3uzGl5LVUnouOg==
+X-Received: by 2002:a05:600c:154d:b0:426:602d:a246 with SMTP id 5b1f17b1804b1-429d48976c4mr3808995e9.32.1723469662493;
+        Mon, 12 Aug 2024 06:34:22 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 06:34:20 -0700 (PDT)
+        Mon, 12 Aug 2024 06:34:21 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 12 Aug 2024 15:33:55 +0200
-Subject: [PATCH 1/9] memory: atmel-ebi: use scoped device node handling to
- simplify error paths
+Date: Mon, 12 Aug 2024 15:33:56 +0200
+Subject: [PATCH 2/9] memory: atmel-ebi: simplify with scoped for each OF
+ child loop
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-1-5065a8f361d2@linaro.org>
+Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-2-5065a8f361d2@linaro.org>
 References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -83,103 +82,66 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2456;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1350;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=xgfyKZmDDIbZTBcHgkC4HQRuoKCVphYVJo2Oqeoz2yg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9RWiZUzjyUB45cY5GRGscQmhk2n/JWQ8eCU
- OV6qDjUvVSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPUQAKCRDBN2bmhouD
- 1xyXD/4zIloc9i56JR/7avOvWMonHwPMgxrw6eW1Ql3uMGbouCHddr07MRZROHf7FHGtaDBNSzW
- mxhzYldkGPh7W1K5fj9UFeZ2zvkfrn+rQdUhG83d4r5ihSPYCQzBxKNTUvwKDDrn2jZ/DWAjmfh
- TxjAUuNnwbSkd43KLCkjRjmKHg1bCsuc/NromW6Jla20roeAfx6ousA8KIh8deLOJvUSd9IjoTP
- vhWCOrq414zR2AtAX4vd2IsPJM2zqwKIUt/ZXVvpV6IA6I5emax215uBPI/tq0XEaLTbW5dH/v8
- JpZBGwkHxrkWhFaXEUS01fvJMEE2G+rqeMxi9GJGQSITpOae42sKZXL7jCxwsDsQ5zgfRwWGvJ5
- veNYQdH4lAPRjl8MUL3h1K42k3GfVx4S1i+6PqIyC7vk7MOfuUV2WBitHAcxMyjcQMbj8XsjyvB
- iMMGFF8VDH2oE6eJ4aaUv+Co83vS2sYyoIH7BWNGxvSW2ajjcesSADyFhNMcoelmhpGZTckxESl
- 82l1O1qvrtFb0986Is0vJ6OhgHDX/Eja/dCxlk9T+SvRzZha67Ecrv1oWVyttwKxwqIrlMjdM0L
- b7iludiktLPGaXEtTrzpL2Xl3GZiWkzR9es+685yu7ltUGzpJVSzqu8GN4yqwd4riFxIzLgCaj2
- TMtGaSenJiohE3g==
+ bh=gmw7sdXN++0ul8rDzvdEpJ8YQFeG56dlD4XcPKrvG+o=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9SBLK2/VucpJF/zx5ZBYvmfrRBNn21ar0oB
+ 3a/Cv0noJqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPUgAKCRDBN2bmhouD
+ 1+yYD/4qcA8Bj3tzEWx6jyRjX8fDvf+bTdrauIEu4tdm0NhBSOPEGsMhDXH6CgHSvmu29T1Kvz4
+ ZwZ+2AAdDjZmdWXiU9FiAnN0Q33OjNkDRlCR8sEXjyPyOmXnjgzL40SEALgNKIZi4bpTvB8XX2L
+ X1RJgqy8kocB79a8itpXzdUz9K6D9nHmPXj31YzY8qhiq3bGZrMX0UayHyFFwZXzC4+MvpXbxpE
+ 0IGsNG3fZTX84XsBX8bMvnV/Dz6Qh52B2e5+3gd9szOpKHYQjmw8sqJO+VzdNJ8WexnOV1SJE7I
+ qd4gUgPlThSU/cCUNWlsl0UmvrA2ksWUVvqU0BKHOj/SEmh6VCnJ0sCtEB9v3sjVC0uH/KDQedm
+ 1gwdxLTsFJugS6pDjZd3lpOH26QeWPz35qwz2kWyoFTFFhMDtygj7NtFrX/rXbXI2P/ykR8PKo5
+ TYETYdEEHdUE+q6d8/kWbMERlzyuEcyKeCTWOndMO1tmQOyoV2g2JgD4a1ubtmwr/LSLRU4YldQ
+ mAqYO/LNC3hE9xUwtG4Zyb+KI3NZLLfTdEOYgTIIA6HLUEPlN3wrmq/7UsP+t1+DPndJVaruZn0
+ t50YYT/Qalyd0LGdIKkExmcImtEVJs7HbFZn784DibyT6IaArLfY99yM9caNxxgpedYMxOdsMT9
+ lDEND5PW7HyCZAw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+Use scoped for_each_available_child_of_node_scoped() when iterating over
+device nodes to make code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/atmel-ebi.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+ drivers/memory/atmel-ebi.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
-index e8bb5f37f5cb..fcbfc2655d8d 100644
+index fcbfc2655d8d..abc6c067b5f1 100644
 --- a/drivers/memory/atmel-ebi.c
 +++ b/drivers/memory/atmel-ebi.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2013 Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
-@@ -517,7 +518,7 @@ static int atmel_ebi_dev_disable(struct atmel_ebi *ebi, struct device_node *np)
+@@ -518,7 +518,7 @@ static int atmel_ebi_dev_disable(struct atmel_ebi *ebi, struct device_node *np)
  static int atmel_ebi_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
--	struct device_node *child, *np = dev->of_node, *smc_np;
-+	struct device_node *child, *np = dev->of_node;
+-	struct device_node *child, *np = dev->of_node;
++	struct device_node *np = dev->of_node;
  	struct atmel_ebi *ebi;
  	int ret, reg_cells;
  	struct clk *clk;
-@@ -541,30 +542,24 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+@@ -592,7 +592,7 @@ static int atmel_ebi_probe(struct platform_device *pdev)
  
- 	ebi->clk = clk;
+ 	reg_cells += val;
  
--	smc_np = of_parse_phandle(dev->of_node, "atmel,smc", 0);
-+	struct device_node *smc_np __free(device_node) = of_parse_phandle(dev->of_node,
-+									  "atmel,smc", 0);
+-	for_each_available_child_of_node(np, child) {
++	for_each_available_child_of_node_scoped(np, child) {
+ 		if (!of_property_present(child, "reg"))
+ 			continue;
  
- 	ebi->smc.regmap = syscon_node_to_regmap(smc_np);
--	if (IS_ERR(ebi->smc.regmap)) {
--		ret = PTR_ERR(ebi->smc.regmap);
--		goto put_node;
--	}
-+	if (IS_ERR(ebi->smc.regmap))
-+		return PTR_ERR(ebi->smc.regmap);
+@@ -602,10 +602,8 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+ 				child);
  
- 	ebi->smc.layout = atmel_hsmc_get_reg_layout(smc_np);
--	if (IS_ERR(ebi->smc.layout)) {
--		ret = PTR_ERR(ebi->smc.layout);
--		goto put_node;
--	}
-+	if (IS_ERR(ebi->smc.layout))
-+		return PTR_ERR(ebi->smc.layout);
- 
- 	ebi->smc.clk = of_clk_get(smc_np, 0);
- 	if (IS_ERR(ebi->smc.clk)) {
--		if (PTR_ERR(ebi->smc.clk) != -ENOENT) {
--			ret = PTR_ERR(ebi->smc.clk);
--			goto put_node;
--		}
-+		if (PTR_ERR(ebi->smc.clk) != -ENOENT)
-+			return PTR_ERR(ebi->smc.clk);
- 
- 		ebi->smc.clk = NULL;
- 	}
--	of_node_put(smc_np);
- 	ret = clk_prepare_enable(ebi->smc.clk);
- 	if (ret)
- 		return ret;
-@@ -615,10 +610,6 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+ 			ret = atmel_ebi_dev_disable(ebi, child);
+-			if (ret) {
+-				of_node_put(child);
++			if (ret)
+ 				return ret;
+-			}
+ 		}
  	}
  
- 	return of_platform_populate(np, NULL, NULL, dev);
--
--put_node:
--	of_node_put(smc_np);
--	return ret;
- }
- 
- static __maybe_unused int atmel_ebi_resume(struct device *dev)
 
 -- 
 2.43.0
