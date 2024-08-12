@@ -1,131 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB14D432;
-	Mon, 12 Aug 2024 06:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF1B17C7B1
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2024 13:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444296; cv=none; b=F9L7zAlpPnz4E8XGyfg8H1EfbrXhaoMG5JevuYN1pRh6jnZ6ENpHwav0sDpn/RkN09Xe0GSUYCxW++CxjbUVdI3m0FdxsHpDmtoHvtyOvsvl1p1p2uZ3okDXTKgccHwqRcX8v5MSCXingKfos5zVGS5/cDKNsCeALFZ2vg9y/kY=
+	t=1723469662; cv=none; b=PAAIYQ+avyscx+Tz19vuc2tcX7xK979HOQ+9+Q73Yr3GRCkUasZfbrq21XVgXo9QhNYdwFv3FTDokFuxG7ZsZ74HfZX6oIzxCrq6GGqsL6hyE/XGVt1yqvGoWviH1I39F05cssGui6dXD+lVfiSUXQicIuI82u/bcMTsixaqFTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444296; c=relaxed/simple;
-	bh=60DY5iuLdcY6j3C24czN24ek6VofQAK/gr4oVohJ0bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MH+Ql4zMf3h2fvQzwX1tYCpkyzLN5zcfW59XawuB3fGf2dVgXUss2TYPGrfVwxgKN8HN1Khq2fDym3TP/2XBXjv+wHqdJzBRKihSxOZ9mmJjmRWkIjx/PtesA0FG/aPXDiQI7RCqGSeKHJlCBmsKBXQlVJcfTmu9d8olooIHkC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLPYIMoq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723469662; c=relaxed/simple;
+	bh=H8kaYJ2UVmG5D5geD0TuiFhX+chgtcGynCXf+srDSxY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kX+sInMKu/03p2ij5U51/HOs3w88coMun9ATT54DUV/khcT0N4LJ859tUocc6HBT4hyQ1z6oA+0Xa0qE9134pVr73thVDzgA+oIeAFVl7LeVa+CLkxrBT6nUd22HJ3GFQ8CuLh5kH4hR83QL3gWsq6wxoxmUUvAHlmEjdNfvU1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B/RlCLib; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLPYIMoq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE6FC32782;
-	Mon, 12 Aug 2024 06:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723444295;
-	bh=60DY5iuLdcY6j3C24czN24ek6VofQAK/gr4oVohJ0bc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CLPYIMoqxc1NGyyezYOT7hZ7diUUyv9L4D4BNDgcXR/y5SwCRvxiZiDLoHWqC/yQl
-	 YhVqBH+v5tUPfxe8FIoTuAygdPU4yp5md3QTkVG6xtezirmVwxVohXnF8VhgNmwMzB
-	 Cx5AP+vlXYFWD6NuCSN3lbvT1+/rT/ygwM6UrQ70aFORTnHdZE/qwblBHp3CunVW+4
-	 TV+nFwFwUO38zR40Z4B7cE18BQFZUrl13xdZeiB/DNozpaxRH0NBpTeyNzU5c0IO98
-	 MmeaTnxsckiAGHLMe+JvCMA3m5brsDvnzW0B4hKLIdF24Q8/6W3e1AfgnsCf3LgEGs
-	 cSIm9dKYGeLPg==
-Message-ID: <c6ff2c78-df8a-446d-a87a-6e5349e43195@kernel.org>
-Date: Mon, 12 Aug 2024 08:31:28 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/RlCLib"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso32914335e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2024 06:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723469659; x=1724074459; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQ9EsAfNWCNGsBTp/zuUJbg/d9ugsX/M8WUijMQTUKU=;
+        b=B/RlCLiboOa05eYGpMv10D6TmWYyR22SBQSOC2IWMGDOZ2rCPRfYfiFTHKXDhRTa4A
+         wK8ImB5PkIS9QPCP9GMM1iJRJH/TQs8GgqDpXsvqphLZLO8URFhMgmEfE+Y3dLEQMDTY
+         hRxIVugkoOrsn+j0WRUq6ImeC8o70+akTRZUkV8//JcIu0ry8xR1RHcqe7fXoZfWTwRG
+         FR0AsICtzAKe8/Fo/EBGc6yX1plOG06/Woou+Q2G3GsIyjICy9uHnMWRgNl3ojyjpR1D
+         xmJm0GV+dujkuMKiH5Q07A6hpNPQnoEqPC+VCUr7VOx3CR3J34lAuPYgxQR8m5L3Rouy
+         MThg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723469659; x=1724074459;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hQ9EsAfNWCNGsBTp/zuUJbg/d9ugsX/M8WUijMQTUKU=;
+        b=BvN7NahdDIRsEGWbq0PJO2KXUmWAQJ3GANiU1j93mmxRq1InYqBpTTMCFOL1nOC8Wf
+         PrHl+NcqBrmUBbnGEmIf2vGtLCkejebBHHRhGOD68yglORlx1kCwQ9AsF8IY1W8Wrx1B
+         zO/tf0bFfO0fH6qEFw3HStYGqVgACCgxa7rl8GGAxK2TwhiO7VN5jkYFe0ZjWMI7+zbo
+         O7CdbjkdYIu30BB4Tvl6b7qrAzrpsQtFKp7qA+5CJira/teWes4NhYxwV73bpUAutOOF
+         98tktPosiBmVKrriVjmFZZOWPVRutVhqKnA1GMFkg+oaNXgZKKSFBx6IdhNhS4AvduGy
+         Q15A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwlKvXNjMTyU1dtTqb4bLx1HDac0/JZWr7A5pSRkWas7Wv9lFRiegTqtnrmodjZq4L+D0aPHDce6k9qgBRRuN0gJHq4WSyg7aqZ0CZO+j+RHk=
+X-Gm-Message-State: AOJu0YzKRHrKBzdXW/u2OAVS0RM3HmrJwS7rKp49oZ5dCdXMt/r6FZZI
+	Eyl4HXS9C+vBVa+Ge96Ui07YVgR8lzAyXWPNhu/lPFh6JaYYqoB3vYiXtDiM0cA=
+X-Google-Smtp-Source: AGHT+IE1KeUxZr45wg8GO4bkox3rQPd8HA1lfti7444qmFnozdlwHtMIevcYiwqGJFzIO6QVhDVBxg==
+X-Received: by 2002:a05:600c:4584:b0:426:6379:3b4f with SMTP id 5b1f17b1804b1-429d4893818mr3637485e9.31.1723469659100;
+        Mon, 12 Aug 2024 06:34:19 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 06:34:18 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/9] memory: simplify with scoped/cleanup.h for device
+ nodes
+Date: Mon, 12 Aug 2024 15:33:54 +0200
+Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- 'Sunyeal Hong' <sunyeal.hong@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>,
- 'Conor Dooley' <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
- <CGME20240730071227epcas2p278017961013950cd75c4266eda45c236@epcas2p2.samsung.com>
- <20240730071221.2590284-2-sunyeal.hong@samsung.com>
- <db84ee7d-dfd8-4e15-9745-01b1a76566ad@kernel.org>
- <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEIPumYC/x3MQQqDMBAF0KvIrDtggtjqVaQLdb51oCYh0VIR7
+ 25w+TbvoISoSNQWB0X8NKl3GeZR0Dj37gNWySZb2qp8GcvjF73bAs/sJ3ZewGFbecHi484itcA
+ MjW3Mk3IRIib93333Ps8Lb52N/24AAAA=
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1576;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=H8kaYJ2UVmG5D5geD0TuiFhX+chgtcGynCXf+srDSxY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9Og7Sl9/SIc/9Vq1Ixg2W4m32wK6q+8y6zQ
+ qEYeFt7MrWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPTgAKCRDBN2bmhouD
+ 102+D/9BLrZ01YnrGcAHBZt6bd8l0wpghqUDKqb9lER9jW5q0eqdTUBYaEZqhXWLrhZz04wW8V5
+ 2PvdATezI856kVuXZ1VeKecXXA08oXa/3aDd74af9fkb29HcPi9nI8siB8e3pvF3JmpJ6CEsvdW
+ HYxvlI6TDyB+SbKbBwCHcNa4y5nRFoOGL95+dqqyLOA7c+G4GfT3UOjHLgHLWVJn/AV58Al3ich
+ Mskup0lPkDu8E+E9knsiT79x9k3yInyo3RdLYJUvcogoSo0kUTvc/EgkcE3ZlfZ2MngHqI/xS4m
+ N+4HpTRy6fTKNzfFC4ZfjfMxDG1/0cEUoHQbkg9FTRhQ9gfnoASVNByBYrK/x9IL7t0ephvaZzX
+ xNec+GhbAUCJrt5QJ+nhnbUm2vvy7Cpp25r1rQdHd79LOz26GrAt+BuAyn7tWl/nYeXhE4B0/g1
+ cu0KLmKDs5LnZZEeNOn9kCMMAiFXcg/Qto8KT/LgVMJfFHsYp5qwHOdsVs3YPEPsLLKg2JUj4iB
+ KLxYPUjJ2YYp7kNh47gDwIi0ffiHZlW+tv74fd6NdwJgC9J2W20sQZlwbqAM+Sno19sJ/N8jHsJ
+ NS67XppXifcWhqGsVg7elPMvkGNQ85Pc4GM1kI0Kv47VZ+0RfbiFlrd4R0lRHelSBcTp1CHLZ6k
+ 3tWtClDb4DnY3oA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On 11/08/2024 18:54, Alim Akhtar wrote:
-> Hi Krzysztof
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Wednesday, July 31, 2024 2:57 PM
->> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Sylwester Nawrocki
-> [snip]
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - samsung,exynosautov920-cmu-top
->>> +      - samsung,exynosautov920-cmu-peric0
->>
->> Maybe I misinterpreted previous discussion, but I had impression that
->> binding was incomplete and you wanted to add more devices?
->>
-> There are other CMU controller blocks likes any other Exynos SoC. 
-> Are you suggesting to add all of them? 
-> In the above case cmu_top provides clocks to cmu_peric0. 
-> And I think the subject patch Intension is to add binding for this clock tree. 
-
-I want the bindings to be complete, because previous review indicated
-there are more devices.
+Make code a bit simpler and smaller by using cleanup.h when handling
+device nodes.
 
 Best regards,
 Krzysztof
+
+---
+Krzysztof Kozlowski (9):
+      memory: atmel-ebi: use scoped device node handling to simplify error paths
+      memory: atmel-ebi: simplify with scoped for each OF child loop
+      memory: samsung: exynos5422-dmc: use scoped device node handling to simplify error paths
+      memory: stm32-fmc2-ebi: simplify with scoped for each OF child loop
+      memory: tegra-mc: simplify with scoped for each OF child loop
+      memory: tegra124-emc: simplify with scoped for each OF child loop
+      memory: tegra20-emc: simplify with scoped for each OF child loop
+      memory: tegra30-emc: simplify with scoped for each OF child loop
+      memory: ti-aemif: simplify with scoped for each OF child loop
+
+ drivers/memory/atmel-ebi.c              | 35 +++++++++++----------------------
+ drivers/memory/samsung/exynos5422-dmc.c | 31 +++++++++++------------------
+ drivers/memory/stm32-fmc2-ebi.c         |  8 +-------
+ drivers/memory/tegra/mc.c               | 11 +++--------
+ drivers/memory/tegra/tegra124-emc.c     |  7 ++-----
+ drivers/memory/tegra/tegra20-emc.c      |  7 ++-----
+ drivers/memory/tegra/tegra30-emc.c      |  7 ++-----
+ drivers/memory/ti-aemif.c               | 13 ++++--------
+ 8 files changed, 37 insertions(+), 82 deletions(-)
+---
+base-commit: cf4d89333014d387065aa296160aaec5cec04cc5
+change-id: 20240812-cleanup-h-of-node-put-memory-dd6de1b92917
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
