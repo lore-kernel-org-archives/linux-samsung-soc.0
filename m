@@ -1,95 +1,67 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF613A244;
-	Tue, 13 Aug 2024 08:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FBD19A288
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Aug 2024 10:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723538277; cv=none; b=UotYX9DooCNSurL2HyjRerMX4RICQonFhwuiGbrz5UeezR99SlqUn0kPUkkO4F5eTfrx4aQw01Xms6Wl4jtFc9kwc9xc9zSUtc5xnOeWY+poVp8+nOhcgsJi9B+bo0q0jef9g9jlXciK2gVFBFqwe7v6FS5DFcwfR0ECaETSbYM=
+	t=1723546244; cv=none; b=GlXWJa6hwwno/HuGTLPgX2d8e6VldNQKr1ztTSyfvkNodAK4T2qK5tSVxoqx3+GjghOtmcXn1X64pWP0O7OsWAAV/JYFiG+CCrTcDFIIN/pR+Zd7z1j9IeGa5s6whd8PQ/MKEGkREmsA8qR+gB6JFnAm+RParOr5FfSfe452WzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723538277; c=relaxed/simple;
-	bh=0zit28vkJLoveJCnlYRWpnW1iA4PdjPohhk+xYzQHsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elslGyqYsogEhzdVNWI4gnCm65YGWgEn/Yux4KN7PxtlcnJpFrEB/qL/d6mbgbi6R38XEQq0tgK7t//zg8nhJP0Gl2T0AQaSEFvFCQB9f/plI85nGiFLmbJN2ldeJgilLV9o+5JW+2cUzojjCBLHUrlTt34M307LFIfvOuGYhiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVt12rVZ; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVt12rVZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723538276; x=1755074276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0zit28vkJLoveJCnlYRWpnW1iA4PdjPohhk+xYzQHsw=;
-  b=AVt12rVZS7chSJiBlSnVIQn8D4bN7gN+fEqm0ftX0orELyYs2lk1ATrE
-   NCX3TsXsYeSsIKn6ShZ2Cqu0sGYYaKTJpgEEP7eYXnlOA4ZSh0EASUHIl
-   09ANYmBpUqo8+NOSu221szukoZtWtG4COLG8FJ/myHmn65AJaLzkD+oUc
-   BojYXbEj5s9yszRIPvQPh6bNR4O0X2+/wM6/kXlxnACsTcdqxflND61SU
-   9KKFSS4bFQU9eUbt5TpE1NwgF/wOFNrG2uA7BVaIkLtVqMq+825Vp8yyw
-   fc9vj0k1nXOMn0AtJB/JnX1wqSbCKaT5O46pmed7rs5MH8zAQHJNw6Q07
-   g==;
-X-CSE-ConnectionGUID: BnLDNvT6QFiLc+KoJiNhxQ==
-X-CSE-MsgGUID: irZw0gC/S2+jfN81oGUc5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21544192"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21544192"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:37:55 -0700
-X-CSE-ConnectionGUID: NFUyk0GPR9WJTDrF79fqSg==
-X-CSE-MsgGUID: qta44cKjSb2kZSSuYxwWPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="62986362"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:37:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdn2L-0000000Ef5r-0xTf;
-	Tue, 13 Aug 2024 11:37:49 +0300
-Date: Tue, 13 Aug 2024 11:37:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
-Message-ID: <ZrsbXMVy1Dsi4UZe@smile.fi.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1723546244; c=relaxed/simple;
+	bh=6fBO+zUNttTv85cOPVUd74Qeg6C6ICKHVmno6fckW3M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AMeJldllwn/McdHRjnQbse6Qwu9ILwwC8wyJxXhH7f5S9AYf6c8fIGoRSUiWhItE/+UziFBudxk+OMHnXjf7c1FcLoQKWnup2ywJnLWl02uQPfkySAtDSNBO6c1UE85Ud2/89mcz69qTdnNI7NF5HEKpBMal+idFVVyzmmAf5UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wjp6R3rpcznVZM;
+	Tue, 13 Aug 2024 18:49:19 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC4C61800A0;
+	Tue, 13 Aug 2024 18:50:38 +0800 (CST)
+Received: from cgs.huawei.com (10.244.148.83) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 13 Aug 2024 18:50:38 +0800
+From: Gaosheng Cui <cuigaosheng1@huawei.com>
+To: <linux@armlinux.org.uk>, <krzk@kernel.org>, <alim.akhtar@samsung.com>,
+	<cuigaosheng1@huawei.com>
+CC: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH -next] ARM: SAMSUNG: Remove unused s3c_init_uart_irqs() declaration
+Date: Tue, 13 Aug 2024 18:50:37 +0800
+Message-ID: <20240813105037.1178393-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200011.china.huawei.com (7.221.188.251)
 
-On Thu, Jun 06, 2024 at 07:09:30PM +0300, Andy Shevchenko wrote:
-> Replace open coded kmemdup_array(), which does an additional
-> overflow check.
+The s3c_init_uart_irqs() has not been used since
+commit 2a8d7bddf273 ("ARM: SAMSUNG: Remove uart irq handling from
+plaform code"), so remove it.
 
-...
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+ arch/arm/mach-s3c/irq-uart-s3c64xx.h | 2 --
+ 1 file changed, 2 deletions(-)
 
->   clk: mmp: Switch to use kmemdup_array()
-
->   clk: visconti: Switch to use kmemdup_array()
-
-Any news for these two?
-
+diff --git a/arch/arm/mach-s3c/irq-uart-s3c64xx.h b/arch/arm/mach-s3c/irq-uart-s3c64xx.h
+index 78eccdce95a7..e754b0359c8a 100644
+--- a/arch/arm/mach-s3c/irq-uart-s3c64xx.h
++++ b/arch/arm/mach-s3c/irq-uart-s3c64xx.h
+@@ -12,5 +12,3 @@ struct s3c_uart_irq {
+ 	unsigned int	 parent_irq;
+ };
+ 
+-extern void s3c_init_uart_irqs(struct s3c_uart_irq *irq, unsigned int nr_irqs);
+-
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
