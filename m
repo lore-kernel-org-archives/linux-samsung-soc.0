@@ -1,137 +1,164 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269D21B4C24
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 15:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA0A1B8E94;
+	Wed, 14 Aug 2024 16:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723647873; cv=none; b=TJ+g98Zmzt1DiPFS/LOCTeoTZt06nmkHedJt01u9HL9Qh/vIrTLx8DZrXA/DTpluZuCJhhnemr73WBPklatSR/1TP1KH8t68Q9hI+BNGHXYTgF8M1JGFfULvVmmh4/AV/3bd1FAZjSlXceSUrM2FlX+kgPoSlz7ji/ylSayECxc=
+	t=1723653528; cv=none; b=JK79yAHbfEsZXWmsTbDNr0P/CgEbTNHZXjDjxJAwz541cRiZmo0eAKSnoRbZ9efp7Mr7U/RVoPM/pMQO6WDLfuLJ6MMulSNAe9+UPuJPv8U02FpES24g69k7kxoGYA0pLJ6XdALYsgUvVxKmMicsDxb+zlVI9CT1bErSjkGX0DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723647873; c=relaxed/simple;
-	bh=OoJl37VhWa2/ok3yWXn0smE+qe2VclKzB2yD7J0hAwk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A0QZ8XWG+gOmyHwWoZleTn6qep1+0x387dN7i3pX9GZrGLCba0rPPMSzvzkcdo62rK7Hd68GJeHfwSvyEd65bYpr0qQg2QSFiFRg05P+1qw7KASBnJRnB/88zQosB+dmPa96U/U7yc7LavOPeEaTRZUDvwcIxGkADwl8ygkkqJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pdS568tv; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pdS568tv"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-368526b1333so609335f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 08:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723647870; x=1724252670; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ACUznNue5Vc1PvREpF5uL8d3frSCLJ2XL4UNUgbbF6Q=;
-        b=pdS568tvUza2UEI4RAWVRTasjZ4Rk2RWjZ/u9U5hltwn0ye8WDmEAJMPTu/Dn9UNS5
-         XS256qiK8h4BKzp29peHYAgJc/yH18Nmoz7lTmJSV+rOeXgHZvkIsps0K+1H8muiLZUf
-         Nvpnp467wUma71cs7GYegcX0TG6Pb2YqVNvZmNRcqwBgzf0rtDgISBUfR5g6PMpNeijs
-         voI7Ynvs39+fuBgED6KMqvHmsqPWiA0Av4zwHaIf6ExEbuRyr61RQ/fOPleKkltRtwOo
-         rKdkGj55it/rtP1GJF9rD/rasTv3yl3ADgBWnUW7WwnJS1I7is26aLbP2xO96B9rYLk9
-         Enbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723647870; x=1724252670;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ACUznNue5Vc1PvREpF5uL8d3frSCLJ2XL4UNUgbbF6Q=;
-        b=l+j2GWiNdqC+9QVkLCvtDz/6AHydTgEoWK7lBAqmda4JEz5SPAC9+beDShnm73aDkq
-         7giOzXcjQWgu5jkNVZ/7LjliTDnJeWWfmzFehpVbkILurphkyw6FzBx0or5z0+fAEE1S
-         vPQLSBazNa4LFSv9cLgcZwAQ1N6UDDdwVA410RKDlj+vIEunGRc9mr0m8XKpQmDVd8Zc
-         X+k5a03OEDYRU4tykm80mQx2XPemhs0dZT2/MLiKwuu8Ij+3VUF364T2mvCDoTLCcroa
-         DRjTJ9F10o9Dsd5+mXTGUnnhWqe+4mPjewv+ZblWIB41t3q2Rm6mU0itazbnRHVQHI5d
-         S4xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDRheIbUu5OYc/s1QiDFwY5jnRIoqswDevUDECjhYie6oJxF/eGckpjzwXs5m2wiZfvn80faxs/Km1IaYNeNZ4Auj2r09P8umVrfqX0XWo2Do=
-X-Gm-Message-State: AOJu0YzaTbK/bijwIhhXz68tm+LvS8rkfC6FHfBmzCTOXOJarkEuu7AO
-	rBmDNr4C3gq2eH7oUtiuKEVtCL+EqCyZahhY29GHIVEq0a5emhwgzIvK2UiuhUI=
-X-Google-Smtp-Source: AGHT+IF+u9tmYTlfOnF0EY/D0BDpgP+0OTvzQjNTeJeoB9+1fHj7S8CddXYLDq5O/F0RKg2kn5vuxw==
-X-Received: by 2002:adf:f3ce:0:b0:36b:bb7b:9244 with SMTP id ffacd0b85a97d-3716e3eaecamr5350141f8f.1.1723647870395;
-        Wed, 14 Aug 2024 08:04:30 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7cfbasm22313425e9.45.2024.08.14.08.04.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2024 08:04:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 14 Aug 2024 17:04:11 +0200
-Subject: [PATCH 7/7] regulator: scmi: Simplify with scoped for each OF
- child loop
+	s=arc-20240116; t=1723653528; c=relaxed/simple;
+	bh=CO8qOzi03Ld/YkeV8tQJ54g2seyyF0fq96e3Yln3LZ8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=csXVI6rocq17FQHTy+SncvtFKrXvqOcRKhDzA8SirK0y08t5EknXFptm8mTa+UCKeI5C/AWUCx/33qBI2eygZ8oqPyKtq667vgvLh83dpNJqGJP9j569luQPmfN7SAAELjpD3QKmzySsGIXIwlbCzmG9UDhj22GeEyCcKqLJxeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkYlC4h9Mz6K6D2;
+	Thu, 15 Aug 2024 00:35:19 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3B165140C98;
+	Thu, 15 Aug 2024 00:38:36 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
+ 2024 17:38:35 +0100
+Date: Wed, 14 Aug 2024 17:38:34 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
+	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 1/9] memory: atmel-ebi: use scoped device node handling
+ to simplify error paths
+Message-ID: <20240814173834.000002c8@Huawei.com>
+In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-1-5065a8f361d2@linaro.org>
+References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
+	<20240812-cleanup-h-of-node-put-memory-v1-1-5065a8f361d2@linaro.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-cleanup-h-of-node-put-regulator-v1-7-87151088b883@linaro.org>
-References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
-In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1391;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=OoJl37VhWa2/ok3yWXn0smE+qe2VclKzB2yD7J0hAwk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvMdt9P9crcfh3Lp+LZmfqSw+yRnKP3vsTTgTz
- 4j9XGKy5+2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZrzHbQAKCRDBN2bmhouD
- 14guEACS3kV18JgvbTMljOcJKLNuprPK6EWt3rzyAwJz6S/prQ5m8/dJcjR0LfXPOSIKpr8T07P
- RjGOLmrYXsdGs5RKuWilAcUETR+HBy75Fd7L6qWKvOgiEkF3f/zxxnrGJr1TywAhiJzNyZxnc7e
- D1oX9a00U9Nq/G7TzzId+WggIZVkMhVb6Wjvy6bMT13co6O7OJ3S2DwWuqW7vrG/rt09V6amwTJ
- c6fr5IINXgPXbfdgZMIlT3hSoZP5vCY+3hIUGQgFPNOtjR8oFIR7BHtnTgftiqqg2U0a2B7RdYv
- PIRFwmhK1wP5Ld75kd11lTS47+YajB59ydM6XTotcBcPYK5fTlwqInYN2s6SX1igw8axui7mYsT
- X8kDCi6zpnihNFTmXGZlTK5gqt+yZrPnMWUGyBl54qGI8nTq9zw9zGGNdp2ZAFPUFU2ARCibepr
- orZZAgeDiuFQUSQaaHd5uYLBmthqW3vWYl1uxEpgbX6l+0tvLNwN2//N9rM9sEnvHkwbLkhunWV
- 9gw9jKHQVdg4JHI3Fw2hzYoFwshNDapb7HWbJa0qU8g0nyVCFAvdfJix3aqSJwiQIkLO5dAbsJI
- l2VZSD4h0HLaesOv1QiiAOvn8x5X1Js77S24usuDWoCHb0yL60XqMFejLhdxqcKPm+rWOYnvO7r
- HL18HE2d+32PggQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
+On Mon, 12 Aug 2024 15:33:55 +0200
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/regulator/scmi-regulator.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> Obtain the device node reference with scoped/cleanup.h to reduce error
+> handling and make the code a bit simpler.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/drivers/regulator/scmi-regulator.c b/drivers/regulator/scmi-regulator.c
-index 29ab217297d6..9df726f10ad1 100644
---- a/drivers/regulator/scmi-regulator.c
-+++ b/drivers/regulator/scmi-regulator.c
-@@ -297,7 +297,7 @@ static int process_scmi_regulator_of_node(struct scmi_device *sdev,
- static int scmi_regulator_probe(struct scmi_device *sdev)
- {
- 	int d, ret, num_doms;
--	struct device_node *np, *child;
-+	struct device_node *np;
- 	const struct scmi_handle *handle = sdev->handle;
- 	struct scmi_regulator_info *rinfo;
- 	struct scmi_protocol_handle *ph;
-@@ -341,13 +341,11 @@ static int scmi_regulator_probe(struct scmi_device *sdev)
- 	 */
- 	of_node_get(handle->dev->of_node);
- 	np = of_find_node_by_name(handle->dev->of_node, "regulators");
--	for_each_child_of_node(np, child) {
-+	for_each_child_of_node_scoped(np, child) {
- 		ret = process_scmi_regulator_of_node(sdev, ph, child, rinfo);
- 		/* abort on any mem issue */
--		if (ret == -ENOMEM) {
--			of_node_put(child);
-+		if (ret == -ENOMEM)
- 			return ret;
--		}
- 	}
- 	of_node_put(np);
- 	/*
+Hi,
 
--- 
-2.43.0
+Comments inline.
+> ---
+>  drivers/memory/atmel-ebi.c | 29 ++++++++++-------------------
+>  1 file changed, 10 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
+> index e8bb5f37f5cb..fcbfc2655d8d 100644
+> --- a/drivers/memory/atmel-ebi.c
+> +++ b/drivers/memory/atmel-ebi.c
+> @@ -6,6 +6,7 @@
+>   * Copyright (C) 2013 Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/clk.h>
+>  #include <linux/io.h>
+>  #include <linux/mfd/syscon.h>
+> @@ -517,7 +518,7 @@ static int atmel_ebi_dev_disable(struct atmel_ebi *ebi, struct device_node *np)
+>  static int atmel_ebi_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct device_node *child, *np = dev->of_node, *smc_np;
+> +	struct device_node *child, *np = dev->of_node;
+>  	struct atmel_ebi *ebi;
+>  	int ret, reg_cells;
+>  	struct clk *clk;
+> @@ -541,30 +542,24 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+>  
+>  	ebi->clk = clk;
+>  
+> -	smc_np = of_parse_phandle(dev->of_node, "atmel,smc", 0);
+> +	struct device_node *smc_np __free(device_node) = of_parse_phandle(dev->of_node,
+> +									  "atmel,smc", 0);
+Trivial:
+I'd line break this as
+> +	struct device_node *smc_np __free(device_node) =
+		of_parse_phandle(dev->of_node, "atmel,smc", 0);
+
+>  
+>  	ebi->smc.regmap = syscon_node_to_regmap(smc_np);
+> -	if (IS_ERR(ebi->smc.regmap)) {
+> -		ret = PTR_ERR(ebi->smc.regmap);
+> -		goto put_node;
+> -	}
+> +	if (IS_ERR(ebi->smc.regmap))
+> +		return PTR_ERR(ebi->smc.regmap);
+>  
+>  	ebi->smc.layout = atmel_hsmc_get_reg_layout(smc_np);
+> -	if (IS_ERR(ebi->smc.layout)) {
+> -		ret = PTR_ERR(ebi->smc.layout);
+> -		goto put_node;
+> -	}
+> +	if (IS_ERR(ebi->smc.layout))
+> +		return PTR_ERR(ebi->smc.layout);
+>  
+>  	ebi->smc.clk = of_clk_get(smc_np, 0);
+>  	if (IS_ERR(ebi->smc.clk)) {
+> -		if (PTR_ERR(ebi->smc.clk) != -ENOENT) {
+> -			ret = PTR_ERR(ebi->smc.clk);
+> -			goto put_node;
+> -		}
+> +		if (PTR_ERR(ebi->smc.clk) != -ENOENT)
+> +			return PTR_ERR(ebi->smc.clk);
+>  
+>  		ebi->smc.clk = NULL;
+>  	}
+> -	of_node_put(smc_np);
+
+The large change in scope is a bit inelegant as it now hangs on to
+the smc_np much longer than before.
+
+Maybe it's worth pulling out the modified code as a 
+atem_eb_probe_smc(struct device_node *smc_np, struct atmel_ebi_smc *smc )
+
+or something like with a struct_group to define the atmel_ebi_smc
+
+That would keep the tight scope for the data and generally simplify it
+a bit.
+
+>  	ret = clk_prepare_enable(ebi->smc.clk);
+>  	if (ret)
+>  		return ret;
+> @@ -615,10 +610,6 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	return of_platform_populate(np, NULL, NULL, dev);
+> -
+> -put_node:
+> -	of_node_put(smc_np);
+> -	return ret;
+>  }
+>  
+>  static __maybe_unused int atmel_ebi_resume(struct device *dev)
+> 
 
