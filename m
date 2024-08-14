@@ -1,60 +1,60 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE41B4C3D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 17:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2951B373D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 18:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658401; cv=none; b=mnJmXXDJQyTFAaHT8X9SfMtSZvI/5mxL3CTvPXfNlsura6Whqe84Xfz2hbeHacgtOo7QZW0oLXaJtBwCZ/Nv8zHAG/o0zxPCQVrnDzV7OLMguey+BH+9JqfoOUDFL3vsUmok2P9URu8MmvjuwnS+YRyq+MRYrxlRHzw+unMCmT0=
+	t=1723658478; cv=none; b=HNnsZXY+3My4Nz1JGol8tclunH6ly+3+oBPQtwj2XnRbuGTCFNke20imXprc+xjalHqzTe6HsNW3U/eYssoECWS3jy53glZDZt4nwWCiYjZn6LaEN3VL/DlrVCvuSr4Fdsd1YCYvsSBrrjcsoLfWY/u7rb8ByVvtNYQRGSCk+gA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658401; c=relaxed/simple;
-	bh=gK4sRcaloHcln7TAZ92Aeomv4OGrsTEcLGBDbt0X824=;
+	s=arc-20240116; t=1723658478; c=relaxed/simple;
+	bh=D9ysdIZnNkauYSLlh1fFwfnLMxelm3xkTf9ZAYk0HCc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mc3vmFyWTJ/mddbbP4rG4j+AGvaNnVgMg3bOP7Wq96T6KrG+m3GsDv9Rx8RfCDr7/wg8jpATMKpxeUOlRcEZtsiY4L4Ejr55DDbKVXzfCw3MMkpToU3rnZrLKEs+qNosJKP4pYRUqjXB5j4O4eVwgwmNvlRauGE3uiZ1y/Zmut4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xLhnetR5; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:Content-Type; b=dXDfJnZJbYO04h2OhWUmsvyfQDLuwC+JvsfNWLgpxSXWmaZ2r8DoIrpQp6Fn5MGmREHlegQ2xdWrNIUZssPA++vl/jg1QGUcEXIGlSSWu1RuJBJAQ/MXvY/2/BFa8mBu0TtXwZBjDnOgvHBZ242Ac6gyE6tSO2vvUGVYyOs9GPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y6z33loG; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xLhnetR5"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso580255e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 10:59:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y6z33loG"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530e062217eso171492e87.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 11:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723658397; x=1724263197; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723658475; x=1724263275; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=e+0+18kAd1ntL3CjGet64KYdk8UF+VMULzQLsO5d54Y=;
-        b=xLhnetR55buFiABKFeBzWOcMjZ8dTUU/qL86wAkRHXLEl/4PIe4rMXbXDThQJPw+Oe
-         Llovii2JIP7UGH3shLUXZXMauOEiuW+BIbg9ZPB2nMaPEp7iPduCQFCbenZYhtkdNCly
-         0a86I1TiFFjb4xuJvv1fV3j5P4irtDXazo3YJvXRKW2lvcBzmPmthDM/pL3ig75HJmwC
-         GRwRh17Nat0v3HQ3DxwsY2FuniP6T/kxD7gKESugofxEvCFUuTII9EkB+SzNqwKQ3T93
-         NtpU3T5W1Q1ME3+wmIZtNng5S0SOcvYu7HHvfP0RuvoDCGtRFaTSRJg2TZzydOBjWJ1J
-         2zvg==
+        bh=EqWT7co9LLm+zY9hTxt/0Ma/Ff/Hf5HofKmeJ3F+uhw=;
+        b=Y6z33loGUjgahZXlYZFmBzkaWuX9jqrfVMgLAID2zKiGMs8DJ++nD9TBrxAzxQ1LQi
+         MwLGURb/TY7UBZmxVuNN3we/qu6mPXvNKg4DOfgoRTU4SbP9SSDtLyFmIbHO2jSXL78m
+         FDkyHATXJn6nOkvWn2VHsghzITtAV8AH2MmmuyF0aNl/xYM2zSR4j9CROvegE5ZlbkLK
+         rZX3W8cFiRQOiYIELUjJ5t0A3P4Y+ACdZA8mSooHpWKeLmdM/ZnGfN/+7aUUQBZeyV1f
+         IIuoQbODIm9/GLMl4J9uJYxS31KGXE4Mhlit0elAhXNSRh43RkPjvLmbvKvXMrD4IJ71
+         ooag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723658397; x=1724263197;
+        d=1e100.net; s=20230601; t=1723658475; x=1724263275;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e+0+18kAd1ntL3CjGet64KYdk8UF+VMULzQLsO5d54Y=;
-        b=CKJF9KlKaRhtKiDUt5yC2b4AX7C0TxpGMu6LO+k5N3+wfABkFqnvylfDAr2H9Cd/7Z
-         uQMa5uAQJSpD52nQoyL+aE2dgS8ygqUJ9WIXiKw6QhCMpgLQfaw/DtL/JOTK71PGvNEH
-         5xCXsXIHJ6rpCmNwJyIrgnUaVuCTFv1cU0UQz03kGIkv9mdvkMFcmwSeZy6yR6atcVWy
-         k9YwS0EgEtYA2mgaIM7EIiVNTUCddidOIGlSzv/LQW2x4IlOPwaAVV1uQwUb46FIJ0yC
-         bkg3k67u6yhhs0Fz8jBGOFRfybaCqk4O+ddL7Oiypi2XkthNmb97J0J8ikwHRCtOAKjS
-         aEaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrcCUYINxnON01nM5nTKSoiRm6tiJr4ZbmFEGjs28pKlPRrX+UjIZICRO+lAoCCak7QSeX1CUXI1gkRK/K/2ffWhA5HVB87wukNG9zjN6j4Rg=
-X-Gm-Message-State: AOJu0YywyFLibNKwrvkO6L5cXJVIa1IaHVyPiZcRxqUUM7d8hBoK7jhD
-	Z8YDxKOKwl3m8UOV1UTTelUwIYbMn7eA+zSeASSo5B7nFjksoRilvQWN/jznwi4=
-X-Google-Smtp-Source: AGHT+IHv1VcCnmzCbrSFCmf9TtFXDTUTp/2jtxGlOatGsJT2eISwIhRuCQHwm7HglJURgLzYox3Nqg==
-X-Received: by 2002:a7b:c385:0:b0:429:d43e:db9e with SMTP id 5b1f17b1804b1-429dd26701dmr20162985e9.36.1723658396976;
-        Wed, 14 Aug 2024 10:59:56 -0700 (PDT)
+        bh=EqWT7co9LLm+zY9hTxt/0Ma/Ff/Hf5HofKmeJ3F+uhw=;
+        b=MdfXbd/H08ZoPOuehrAuQGkNLWhHTTdPGehqvw9y0Iqns6BsaxeWxYfWH4eUOMofjc
+         2a+O8U+Zd6gFnihOoJSj6sXUh71+Pwtbk8SMTl0BYrkuLO+1x/T7aX1V6oKFHbOvRxFo
+         GYSoiMh52pOZdgUbwY87w9MVWu1+AZtmCf4JeyNsg2nNg7hha/5/TFWkiJWsvtkLgYfS
+         Yfm3fK8ciRL+czb22ExVxRkf6EaN2Dfise/I67MLnlB48Bgzx6tdz3HJjWiRzrAHGwKW
+         +7VcpxEj1esjeBKqhFf4lBh6tzqmgWup1hwsOqDl9dNTDu4yZmRyvmTb8aQQlpa+oLjz
+         5EVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQvio41yWlVWc+0BXsvCzMXjgXqCPSCdQ9R+L+D+BrVpeinfZpq4+JqyDtZMY4ykRg6qir0ABoqFVDSvhBElgBmivzfbT2K407xiTSyBcJ2g0=
+X-Gm-Message-State: AOJu0Yz0ZSnXg/nGjPTwoFOaMXIdKb6UkHDVppgbpbgHXhz7wzinKbMk
+	g5d9M561fMXBycQrYHCId2kKONGLquqbvg+0hKeXDD8Q/fWWaVMPbl/gO/HxJUA=
+X-Google-Smtp-Source: AGHT+IGOY+fHGA681Phv/bb+Nvm64Jh5qeSZOPlkH6pYx8qHLZa9/HUqI8ecTFDDn08I8Aj9PH7V0g==
+X-Received: by 2002:a05:6512:687:b0:52c:d27b:ddcb with SMTP id 2adb3069b0e04-532eda8e7ecmr2795696e87.3.1723658474687;
+        Wed, 14 Aug 2024 11:01:14 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c93714asm13400232f8f.27.2024.08.14.10.59.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded28cdasm26871565e9.16.2024.08.14.11.01.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 10:59:56 -0700 (PDT)
-Message-ID: <64af1408-d3c8-495b-a69c-7a0718eadfc4@linaro.org>
-Date: Wed, 14 Aug 2024 19:59:54 +0200
+        Wed, 14 Aug 2024 11:01:12 -0700 (PDT)
+Message-ID: <03b93d98-5722-4592-9346-30a3b4f95d1f@linaro.org>
+Date: Wed, 14 Aug 2024 20:01:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,8 +62,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] memory: stm32-fmc2-ebi: simplify with scoped for each
- OF child loop
+Subject: Re: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
+ child loop
 To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>,
  Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -79,8 +79,8 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>,
  linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
  linux-tegra@vger.kernel.org
 References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
- <20240812-cleanup-h-of-node-put-memory-v1-4-5065a8f361d2@linaro.org>
- <20240814174502.00003b2c@Huawei.com>
+ <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
+ <20240814175541.00002023@Huawei.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -127,51 +127,57 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240814174502.00003b2c@Huawei.com>
+In-Reply-To: <20240814175541.00002023@Huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/08/2024 18:45, Jonathan Cameron wrote:
-> On Mon, 12 Aug 2024 15:33:58 +0200
+On 14/08/2024 18:55, Jonathan Cameron wrote:
+> On Mon, 12 Aug 2024 15:34:03 +0200
 > Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 > 
 >> Use scoped for_each_available_child_of_node_scoped() when iterating over
 >> device nodes to make code a bit simpler.
 >>
 >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Might be worth using dev_err_probe() in here. Otherwise LGTM
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Nothing wrong with this patch, but I think you can add a precusor
+> that will make this neater.
+> 
+> Jonathan
 > 
 >> ---
->>  drivers/memory/stm32-fmc2-ebi.c | 8 +-------
->>  1 file changed, 1 insertion(+), 7 deletions(-)
+>>  drivers/memory/ti-aemif.c | 13 ++++---------
+>>  1 file changed, 4 insertions(+), 9 deletions(-)
 >>
->> diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
->> index 1c63eeacd071..7167e1da56d3 100644
->> --- a/drivers/memory/stm32-fmc2-ebi.c
->> +++ b/drivers/memory/stm32-fmc2-ebi.c
->> @@ -1573,29 +1573,25 @@ static int stm32_fmc2_ebi_setup_cs(struct stm32_fmc2_ebi *ebi,
->>  static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
->>  {
->>  	struct device *dev = ebi->dev;
->> -	struct device_node *child;
->>  	bool child_found = false;
->>  	u32 bank;
->>  	int ret;
->>  
->> -	for_each_available_child_of_node(dev->of_node, child) {
->> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->>  		ret = of_property_read_u32(child, "reg", &bank);
->>  		if (ret) {
->>  			dev_err(dev, "could not retrieve reg property: %d\n",
->>  				ret);
->> -			of_node_put(child);
->>  			return ret;
-> 			return dev_err_probe(dev, "could not retrieve reg property\n");
-> perhaps?
+>> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+>> index e192db9e0e4b..cd2945d4ec18 100644
+>> --- a/drivers/memory/ti-aemif.c
+>> +++ b/drivers/memory/ti-aemif.c
+>> @@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
+>>  	int ret = -ENODEV;
+>>  	struct device *dev = &pdev->dev;
+>>  	struct device_node *np = dev->of_node;
+>> -	struct device_node *child_np;
+>>  	struct aemif_device *aemif;
+>>  	struct aemif_platform_data *pdata;
+>>  	struct of_dev_auxdata *dev_lookup;
+>> @@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
+>>  		 * functions iterate over these nodes and update the cs data
+>>  		 * array.
+>>  		 */
+>> -		for_each_available_child_of_node(np, child_np) {
+>> +		for_each_available_child_of_node_scoped(np, child_np) {
+>>  			ret = of_aemif_parse_abus_config(pdev, child_np);
+>> -			if (ret < 0) {
+>> -				of_node_put(child_np);
+>> +			if (ret < 0)
+>>  				goto error;
+> I'd precede this patch with use of
+> devm_clk_get_enabled()
+> 
+> That would avoid what looks like potential mixed devm and not issues
+> and let you return here.
 
-New patch for that... but just mind that deferred probe cannot happen
-here, so only part of dev_err_probe() benefits would be used.
+Yep, that would be useful.
 
 Best regards,
 Krzysztof
