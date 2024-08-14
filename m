@@ -1,127 +1,238 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DA31B1409;
-	Wed, 14 Aug 2024 16:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C2C1BD000
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 17:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723654548; cv=none; b=WNX1hD1NWmzGLxOJ65KnIiYHPpMOdOMeUuLI4YygjbgC6GO3ixZ4iuHav1Tsh8Tj7KOj4Qd7wa4eDQEfEO1ADHJJowilQK+M7x8knntsYBHC5HuEEMMyDeFu9k8WXPeQ0ulfFZBphvGx6THKrekUyOy2l08dKJqdfKxNM7nRU4A=
+	t=1723658206; cv=none; b=iBQ/1KzoKFoO9Llhrmb/3AcM6oZ1vCSc2OO9zbGMh+voX4pyNp5dPB3ClYgCqyt+IcEsEuZKd0fBXoCuuGllW0Ctv3Mumfvga4y9pzZmkB0af34/KmpvMtViQQjabIkTWjbX6Dm6d3Pyz6jQPR8jYOM3y+SeZC056DejmUHrvns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723654548; c=relaxed/simple;
-	bh=8ky1iVr+QEbGU+/PZctjOx0svo6AKnLXMM6XA2nqJDc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YP/cC8ZBgPJDRL/S2fqFTkdjtFiwlwaQb2q5novPk/2xYHPdxPhEjksRAAh2/+oDPvbrftgT83j985if5asVWJY0AC4j/rD5tiUjP40DYst/X0n81HqcY3+ESt5Sq1dBO1UnyoWuX3spKkzcwWf25aXPRqwqEWNy2x/GQmDXfTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WkZ7h5yf1z6K9Jv;
-	Thu, 15 Aug 2024 00:53:04 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7930B1400CD;
-	Thu, 15 Aug 2024 00:55:43 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 14 Aug
- 2024 17:55:42 +0100
-Date: Wed, 14 Aug 2024 17:55:41 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Santosh Shilimkar
-	<ssantosh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
- child loop
-Message-ID: <20240814175541.00002023@Huawei.com>
-In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
-References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
-	<20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723658206; c=relaxed/simple;
+	bh=d/MSdp3XR7zwtKYXz5Ikpz+56FamxFrWPxRngdr7nz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FrljlR4F8/xNX+0h5sT8gdXkflPnez5Q2wv2NVmQXChuVYguyrmqRAoZwELIYRfZKeu11aC6BbahuSOMfqhuoh+bp1OMwqKY2+u6gs9JU+qXrn5fJIBTK65MRSxmHfvk+E5qU4npQiFSO53TzAvLBLuY+RtD/9QrJx+1+s6KA7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uvApKgPA; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uvApKgPA"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so413625e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 10:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723658203; x=1724263003; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGAlIu8HRdwci3BUYdRQApMszL3LHUSsEB5CKbPjVuA=;
+        b=uvApKgPAxgpOcUl+O0gVnWbB6fiebb7J0X88AfWbsNUgjL/hOsAlzlVzVfVsGygKiO
+         q/BqLO56Tr3B3uuqQvl40xYXrL2RjA5SgGIsaAOrbj7UQFeDICxFBfzpgZCO03Dtza7n
+         7w2LPFiqg1FSHB6HEwZyejuX1xhpY5aVP5LV8/pn0/iyzpgErGmJQkaGNioiLEqe0HMx
+         w4b+yNhVIPEgtOgGmW7/kGBBjjSQQu2FK5UvdtDNLyxv7E9JCN/mKm9G/h4DaDe59S0h
+         FHUkRbZ24hzByNw6py8myzd1qgFQcFRBP1su4CtZn5RO9K3yu3nSutOQ9mQ1cGUAvx/l
+         ud9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723658203; x=1724263003;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nGAlIu8HRdwci3BUYdRQApMszL3LHUSsEB5CKbPjVuA=;
+        b=nespW3HWyqXJYWtSR4wtk2lNEb6hFL2ycFaluTSJHVw7etuhBYBjv3Lmrmw/RWJsGL
+         f6fEZOLCjThNlRgEsMS1xkggzRscdQdFm6/MkRySA+oMGCEWzd7eFEpjV/3olVDoFcjh
+         51kMaiwpMCH6AW2gc42AG9LWFA+O2TUww/srSMNyeSQ1CuImoZ8SM5QTYe9FwoUNRdHG
+         Aed9dS5hC419AP7M3k0uttBm3THrwDZnYaTLO5txi6ZBwBsTYf1Hgf95e3LfUhd2B/Fm
+         Wbr08gjPb3FPmpnnuYtPnXfJxrpTbGj4C/Zxt28u92c34JWxQe1yEZmPy6K8s1OlIZgv
+         BIuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7WN9mD0icEnC49VXFSZMe9TLz7Qx1PLDeJmdSDiIEQwrPYLoHWWOCO42gyogEjHe3QZNgwfGXpbLrUnIqv/aU555/9bReLiI9UtjgHoNT/nI=
+X-Gm-Message-State: AOJu0YzMZdxbbrKs1yhG4y1ZbgnO0kvqu/gF2+wE4W672lNylNRPAsCo
+	dJWLIzCwkDMCHQqEiqDwM7zsVbQ2Arf/mFkNvePPLfF4lf+97DNLn0EVQjudWMM=
+X-Google-Smtp-Source: AGHT+IHy7MlPKBiE3muUasS7PsbtV4vMEkDoQV8kAmuJW+tCODVoKU4QrStZeUKOymcCcAV8ND7NZw==
+X-Received: by 2002:a05:600c:1f87:b0:428:1e8c:ff75 with SMTP id 5b1f17b1804b1-429dd268f26mr25564275e9.35.1723658202684;
+        Wed, 14 Aug 2024 10:56:42 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded4de91sm27151585e9.34.2024.08.14.10.56.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 10:56:42 -0700 (PDT)
+Message-ID: <0ad7c0a5-67d5-4a28-ba0c-76e7b96d1a81@linaro.org>
+Date: Wed, 14 Aug 2024 19:56:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] memory: atmel-ebi: use scoped device node handling to
+ simplify error paths
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba
+ <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-tegra@vger.kernel.org
+References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
+ <20240812-cleanup-h-of-node-put-memory-v1-1-5065a8f361d2@linaro.org>
+ <20240814173834.000002c8@Huawei.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240814173834.000002c8@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Mon, 12 Aug 2024 15:34:03 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-
-> Use scoped for_each_available_child_of_node_scoped() when iterating over
-> device nodes to make code a bit simpler.
+On 14/08/2024 18:38, Jonathan Cameron wrote:
+> On Mon, 12 Aug 2024 15:33:55 +0200
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Nothing wrong with this patch, but I think you can add a precusor
-that will make this neater.
-
-Jonathan
-
-> ---
->  drivers/memory/ti-aemif.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
+>> Obtain the device node reference with scoped/cleanup.h to reduce error
+>> handling and make the code a bit simpler.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-> index e192db9e0e4b..cd2945d4ec18 100644
-> --- a/drivers/memory/ti-aemif.c
-> +++ b/drivers/memory/ti-aemif.c
-> @@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
->  	int ret = -ENODEV;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> -	struct device_node *child_np;
->  	struct aemif_device *aemif;
->  	struct aemif_platform_data *pdata;
->  	struct of_dev_auxdata *dev_lookup;
-> @@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
->  		 * functions iterate over these nodes and update the cs data
->  		 * array.
->  		 */
-> -		for_each_available_child_of_node(np, child_np) {
-> +		for_each_available_child_of_node_scoped(np, child_np) {
->  			ret = of_aemif_parse_abus_config(pdev, child_np);
-> -			if (ret < 0) {
-> -				of_node_put(child_np);
-> +			if (ret < 0)
->  				goto error;
-I'd precede this patch with use of
-devm_clk_get_enabled()
-
-That would avoid what looks like potential mixed devm and not issues
-and let you return here.
-
-
-> -			}
->  		}
->  	} else if (pdata && pdata->num_abus_data > 0) {
->  		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
-> @@ -402,13 +399,11 @@ static int aemif_probe(struct platform_device *pdev)
->  	 * child will be probed after the AEMIF timing parameters are set.
->  	 */
->  	if (np) {
-> -		for_each_available_child_of_node(np, child_np) {
-> +		for_each_available_child_of_node_scoped(np, child_np) {
->  			ret = of_platform_populate(child_np, NULL,
->  						   dev_lookup, dev);
-> -			if (ret < 0) {
-> -				of_node_put(child_np);
-> +			if (ret < 0)
->  				goto error;
-> -			}
->  		}
->  	} else if (pdata) {
->  		for (i = 0; i < pdata->num_sub_devices; i++) {
+> Hi,
 > 
+> Comments inline.
+>> ---
+>>  drivers/memory/atmel-ebi.c | 29 ++++++++++-------------------
+>>  1 file changed, 10 insertions(+), 19 deletions(-)
+>>
+>> diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
+>> index e8bb5f37f5cb..fcbfc2655d8d 100644
+>> --- a/drivers/memory/atmel-ebi.c
+>> +++ b/drivers/memory/atmel-ebi.c
+>> @@ -6,6 +6,7 @@
+>>   * Copyright (C) 2013 Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+>>   */
+>>  
+>> +#include <linux/cleanup.h>
+>>  #include <linux/clk.h>
+>>  #include <linux/io.h>
+>>  #include <linux/mfd/syscon.h>
+>> @@ -517,7 +518,7 @@ static int atmel_ebi_dev_disable(struct atmel_ebi *ebi, struct device_node *np)
+>>  static int atmel_ebi_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>> -	struct device_node *child, *np = dev->of_node, *smc_np;
+>> +	struct device_node *child, *np = dev->of_node;
+>>  	struct atmel_ebi *ebi;
+>>  	int ret, reg_cells;
+>>  	struct clk *clk;
+>> @@ -541,30 +542,24 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+>>  
+>>  	ebi->clk = clk;
+>>  
+>> -	smc_np = of_parse_phandle(dev->of_node, "atmel,smc", 0);
+>> +	struct device_node *smc_np __free(device_node) = of_parse_phandle(dev->of_node,
+>> +									  "atmel,smc", 0);
+> Trivial:
+> I'd line break this as
+>> +	struct device_node *smc_np __free(device_node) =
+> 		of_parse_phandle(dev->of_node, "atmel,smc", 0);
+
+Yeah, I have troubles with this constructor+destructor syntaxes. They
+are way past 80 and 100 column, so maybe indeed should be wrapped at '='.
+
+> 
+>>  
+>>  	ebi->smc.regmap = syscon_node_to_regmap(smc_np);
+>> -	if (IS_ERR(ebi->smc.regmap)) {
+>> -		ret = PTR_ERR(ebi->smc.regmap);
+>> -		goto put_node;
+>> -	}
+>> +	if (IS_ERR(ebi->smc.regmap))
+>> +		return PTR_ERR(ebi->smc.regmap);
+>>  
+>>  	ebi->smc.layout = atmel_hsmc_get_reg_layout(smc_np);
+>> -	if (IS_ERR(ebi->smc.layout)) {
+>> -		ret = PTR_ERR(ebi->smc.layout);
+>> -		goto put_node;
+>> -	}
+>> +	if (IS_ERR(ebi->smc.layout))
+>> +		return PTR_ERR(ebi->smc.layout);
+>>  
+>>  	ebi->smc.clk = of_clk_get(smc_np, 0);
+>>  	if (IS_ERR(ebi->smc.clk)) {
+>> -		if (PTR_ERR(ebi->smc.clk) != -ENOENT) {
+>> -			ret = PTR_ERR(ebi->smc.clk);
+>> -			goto put_node;
+>> -		}
+>> +		if (PTR_ERR(ebi->smc.clk) != -ENOENT)
+>> +			return PTR_ERR(ebi->smc.clk);
+>>  
+>>  		ebi->smc.clk = NULL;
+>>  	}
+>> -	of_node_put(smc_np);
+> 
+> The large change in scope is a bit inelegant as it now hangs on to
+> the smc_np much longer than before.
+> 
+> Maybe it's worth pulling out the modified code as a 
+> atem_eb_probe_smc(struct device_node *smc_np, struct atmel_ebi_smc *smc )
+> 
+> or something like with a struct_group to define the atmel_ebi_smc
+> 
+> That would keep the tight scope for the data and generally simplify it
+> a bit.
+
+
+Are you speaking about any particular code optimization/performance
+concerns or readability? Because scope in the latter, I believe, is not
+the problem here. The entire point of __free() is that you do not care
+about scope of variable or destructor. You know it will be freed, sooner
+or later. If it happens later - no problem, anyway we don't have to
+"think" about this variable or cleaning up because of __free().
+
+Best regards,
+Krzysztof
 
