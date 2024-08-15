@@ -1,100 +1,101 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E9F1553BD;
-	Thu, 15 Aug 2024 05:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2641A4F16;
+	Thu, 15 Aug 2024 14:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723699759; cv=none; b=lGqPMyLHpaAk6HG1Cwo7d+rZ84OyqpYchQbD/3BYvSvq7kNfkWKRwadk3GaDf/GZ1zNNLbaT3GEPiW4d7/dqJGiLGkbIr5TPN/m1d/C/Ie8XlJflfhwyjnKig6/9eeX43csFNxE/itH8+J8go3ZbHywmS1H5YBOKE5Eg8ny+DVg=
+	t=1723733032; cv=none; b=IwJq7ZKkHrHBL3eDkCcKkX7gilkLTGEGEcwSK0z1clVRMZHkdGUm+xj2ohmPNhIWJaLa6/Xq+WZ6ghIneREu/yeAE3txaRw6B+AAnlmV+KGa8XkNLswfs2mFW6od/10tZIar5cNp0R1Mu9YTuJQkpk3DSCiQIV2N2di52kreXK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723699759; c=relaxed/simple;
-	bh=2a9AgodhrhH3CTPo5Xri+BdzgtYXv5AFaphVQ/5mojw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ASwqkPwlgb+EeB/ctYjTaq4IWRjO2R2jNYJMBqLyLC+yuIWzsScYfLIfxY6ze0HdwO3uC5LKteEMs2AiZ0FqCnpKE+uTB828rJOWX32H64vfAA2gRAUlSJRNSnd3+mjlRUI5D21GYFa7zZGZXTAPqsuB00u7SbNFzQbdmto+uAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OaEJrADA; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1723733032; c=relaxed/simple;
+	bh=qNXtgRVvIfrKa1tEBu1adkGaXzTG53J14ad/70fCQNI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NRDtcUMI4ZD3aDdP9xym4kBORGLNviYrfgwFv/HsY7YSJZS+AWUl9rdrPAG6+qdMz6TtL/wFoR4W0G6976ehJaV9C71FrzJyUYwX6ZoYHjwzBQwn1IWb19SZIqVT7kJpZ3UVnVgvTfmWetFdVgf/dAP60SYIZsGNRdp5+eEDO7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=us/C0sRy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OaEJrADA"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f3b8eb3df5so2407181fa.1;
-        Wed, 14 Aug 2024 22:29:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723699756; x=1724304556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rZS64AVtiuq4By/oS75dC4kq1+h/gjy5AfNcubB/vso=;
-        b=OaEJrADA7/Vx2gncSWZPSgLgO27Q38i2zjZMARiwFFpAkFgH+SzzM1CPJw4kZ6NRp3
-         2JoeJzxgllADbuR0MjgLC/y8fKt53YGceFU98WfJcbYcbWiv8vDpyvEkvC6CfkEYxwcq
-         tvu2I+r8P/AlURxoeTBA5H7grruYPp9cYVNsUAeXT4EGyeiownvB7dhbxO+FK7i/xImQ
-         gWnIE64EYhx/I0naUG05LW3KsTVBlwPkcl+BpP55Z2uO0ex2SLVuiYmpG8qB2nsfmfDe
-         M/kPElH7etUwKic5vNAQwFgMcBdKIhypbwzbaaY6Sv2jXnEDNE90gtXHDln9iSMR89/Z
-         zdng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723699756; x=1724304556;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rZS64AVtiuq4By/oS75dC4kq1+h/gjy5AfNcubB/vso=;
-        b=O2+DDNxzFaCpHhXZJf4I5Z3FHllZkv/TrQ5j+WN/fZn3saTx9k7C/ySy2tHlvGF76v
-         zYdnkl/10CWSkqBvH3dwOe1raP8wh9aXqYkYR9pT8tSf1PlZslk45qToSze+O3IgLI3S
-         JBO6uykByiSCWreASkOCaZGw/s3kIYDpjI/yVt07zjp++7lV63MkfVu+PFD4efZlzeEG
-         owP20L6Cj5yrQTPCasN9NCyiZFz5+WYbGkia99aOTNacSgnWuK5gqF3cP3NY2furyOD/
-         tTViFPfkA/3iKVXSs7f7ShHYSjThjWtEGcJ33b42OleokktbUdZg4D6AILBCbd6rsKdA
-         gWjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpL7avb062dGUBshborqqQmJ8oBMKzvOAEJNCFEo/GylTnQFc67kyGqc0wBD9pDsu2T/3eCj9EGFpmHOidO2KvtlT0VrCVHiSDD0FN9TumjEap3hiX98iijhDEOrw5LJ1sY25RntQKGcoKHKuYtpuM9zresVU8puxp25paSTfI+MTnH56zW4EXiAk=
-X-Gm-Message-State: AOJu0Yyq5rPUaCdId5PseTdJW0/3YL9ApiWiQEUYwZX0Byaxrhj6LbnV
-	BIybTNwKA8kSXQJDzgtyec5UuWEFNZMPuEKQzM7gIpLe3vBiaGM6
-X-Google-Smtp-Source: AGHT+IGycwR4CF+14CvU4aVgAtzgZxOGWE6QAjBwpP5moXbwFV6NbNV7ekPWJ2Phb4XyRpTlTbWbrg==
-X-Received: by 2002:a05:651c:8d:b0:2f2:9f39:3e58 with SMTP id 38308e7fff4ca-2f3aa301372mr28041681fa.48.1723699755321;
-        Wed, 14 Aug 2024 22:29:15 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b746cf56sm863451fa.18.2024.08.14.22.29.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 22:29:14 -0700 (PDT)
-Message-ID: <f591cbac-8bbf-4112-b619-c6eb2e5de05e@gmail.com>
-Date: Thu, 15 Aug 2024 08:29:13 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="us/C0sRy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BC3C4AF0D;
+	Thu, 15 Aug 2024 14:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723733032;
+	bh=qNXtgRVvIfrKa1tEBu1adkGaXzTG53J14ad/70fCQNI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=us/C0sRysdNk+b24vnxGtukGbKypNfY/npvz00anvIta46Ldceq00UUporLwhQZJ3
+	 zQQbfPmh9fWGZbLsoxb6IY5gTFfoDbjmw22fbpI5aMypYU2BP+pxF6djh1KPQHrEC2
+	 yjR2ECz+PGwhvr1EQfyf08KlOo7A88bk5J8YvOj5h+eG82BQb1li6LLJSJreoIkkoF
+	 oRpDkGJmRICKv6DQT6q2c4RJTeujv8zlIWnjQqwHFJ2d+WNif11PYWnD1vDtkiNfO1
+	 i7ZJoKD1z/cTiORUzuXNPyhm/ME1m0IxIWCqgFdH5ePyostpi+Egi1XeNIfnL0gCBh
+	 m17wJLcVtE/dg==
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
+References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
+Subject: Re: [PATCH 0/7] regulator: Use scoped device node handling to
+ simplify error paths
+Message-Id: <172373302924.48987.479533999298131046.b4-ty@kernel.org>
+Date: Thu, 15 Aug 2024 15:43:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] regulator: bd96801: Use scoped device node handling
- to simplify error paths
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
- <20240814-cleanup-h-of-node-put-regulator-v1-2-87151088b883@linaro.org>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-2-87151088b883@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On 8/14/24 18:04, Krzysztof Kozlowski wrote:
-> Obtain the device node reference with scoped/cleanup.h and use scoped
-> for_each_child_of_node_scoped() to reduce error handling and make the
-> code a bit simpler.  Add also brackets {} over outer for loop for code
-> readability.
+On Wed, 14 Aug 2024 17:04:04 +0200, Krzysztof Kozlowski wrote:
+> Make code a bit smaller/simpler, with less of_node_put() thanks to
+> cleanup.h.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Best regards,
+> Krzysztof
+> 
 
-Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Applied to
 
-Yours,
-	-- Matti
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Thanks!
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+[1/7] regulator: bd718x7: Use scoped device node handling to simplify error paths
+      commit: 83c7cdeef5b22a73336eb18a59c7b4d63ec26659
+[2/7] regulator: bd96801: Use scoped device node handling to simplify error paths
+      commit: f372c262d4cfe31f0b67e8ae1a8ec9bf7c52d57b
+[3/7] regulator: max8997: Use scoped device node handling to simplify error paths
+      commit: ea13bd391d1b8f62ae2347bde7a174059d7f3f0d
+[4/7] regulator: s5m8767: Use scoped device node handling to simplify error paths
+      commit: 34a3f95941e0dfee750f2fd28faed4c8cd7ee42c
+[5/7] regulator: qcom-rpmh: Simplify with scoped for each OF child loop
+      commit: 17636d443fbe376d5192a7ce6a444aa45ce45541
+[6/7] regulator: qcom-smd: Simplify with scoped for each OF child loop
+      commit: d4cd75b8eff72d65dab63668d5d883d72dda0426
+[7/7] regulator: scmi: Simplify with scoped for each OF child loop
+      commit: 99cf5db9cdd39136fd5dbd10bda833aa0f870452
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
