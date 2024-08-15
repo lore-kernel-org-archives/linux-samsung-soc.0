@@ -1,60 +1,59 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2951B373D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 18:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29C92E64A;
+	Thu, 15 Aug 2024 05:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723658478; cv=none; b=HNnsZXY+3My4Nz1JGol8tclunH6ly+3+oBPQtwj2XnRbuGTCFNke20imXprc+xjalHqzTe6HsNW3U/eYssoECWS3jy53glZDZt4nwWCiYjZn6LaEN3VL/DlrVCvuSr4Fdsd1YCYvsSBrrjcsoLfWY/u7rb8ByVvtNYQRGSCk+gA=
+	t=1723698937; cv=none; b=HD+9J1NGmsVgaehnRc/0s/PjOdfwDvxIp8XZBdJOsFPVbQW49hw3I/c6wJBe3cralEPc9uMF8thSHnwn2eZt3KIGfhkRAYfy5yaC+pCI5kAfZnyWJm2Mx2adXdxjBlLosJ1MfvuCsZnrYbFTM6lrKG4NhgzfTeXOVJ/5n3rwYSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723658478; c=relaxed/simple;
-	bh=D9ysdIZnNkauYSLlh1fFwfnLMxelm3xkTf9ZAYk0HCc=;
+	s=arc-20240116; t=1723698937; c=relaxed/simple;
+	bh=FTpidOG8cdUwdkqLhqS7826a0ol9deT8Ic8FFg1dXQY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dXDfJnZJbYO04h2OhWUmsvyfQDLuwC+JvsfNWLgpxSXWmaZ2r8DoIrpQp6Fn5MGmREHlegQ2xdWrNIUZssPA++vl/jg1QGUcEXIGlSSWu1RuJBJAQ/MXvY/2/BFa8mBu0TtXwZBjDnOgvHBZ242Ac6gyE6tSO2vvUGVYyOs9GPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y6z33loG; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=pZKnKDRPxdPOHLflFfTF9wS3MJBK90U4M232fFymcJyFtDMP+f5YQxCOgPz9sZmLkcGc5ISjH1AnUTkrLdZKE8qEvUbeOQWrcAvn3X3IRdkHQAwHYpwSPANwQwfvHAGRiMc9MJxH9n2uRbr4j9Dv3WTe0UxrSrmv4NCzNYRareI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9OXKooB; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y6z33loG"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-530e062217eso171492e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2024 11:01:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9OXKooB"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efef496ccso450290e87.1;
+        Wed, 14 Aug 2024 22:15:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723658475; x=1724263275; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqWT7co9LLm+zY9hTxt/0Ma/Ff/Hf5HofKmeJ3F+uhw=;
-        b=Y6z33loGUjgahZXlYZFmBzkaWuX9jqrfVMgLAID2zKiGMs8DJ++nD9TBrxAzxQ1LQi
-         MwLGURb/TY7UBZmxVuNN3we/qu6mPXvNKg4DOfgoRTU4SbP9SSDtLyFmIbHO2jSXL78m
-         FDkyHATXJn6nOkvWn2VHsghzITtAV8AH2MmmuyF0aNl/xYM2zSR4j9CROvegE5ZlbkLK
-         rZX3W8cFiRQOiYIELUjJ5t0A3P4Y+ACdZA8mSooHpWKeLmdM/ZnGfN/+7aUUQBZeyV1f
-         IIuoQbODIm9/GLMl4J9uJYxS31KGXE4Mhlit0elAhXNSRh43RkPjvLmbvKvXMrD4IJ71
-         ooag==
+        d=gmail.com; s=20230601; t=1723698934; x=1724303734; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BlmMnfZnyk9sQ31EPnuWHDN6TPycLzZuMRASfe7DhFU=;
+        b=X9OXKooBteugvr80n5fo3H4igKtysXX7X7eQmFzsxAkIIz8Sc4m0b+VeiaJ1GbNyLD
+         /IP1WFR6Qx2Vcs4gahjfRQIqoEa5rUe+rqROTYfVBDaIvyl1p2qz+qz3llwVnMCv5IvO
+         1kqy+Cgx3m5eKBErC9PNt94GCKRe7jkYhzVzf1u1m1hD6OJNwFDUrUxlZ0uHRthBv6MF
+         CQlrASP7lPcv3qQcgCdsobVxtZC7S330RvOO6sFKClow2HOvUVsOIQ6SP4Dc0HvyBy6Y
+         WGnsVz12xe6hreOF5Lr4Z5oOdrerag70IaTFaHX8j55C8NpZsj8ubXS8Xbqpg2iAACs2
+         BiCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723658475; x=1724263275;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EqWT7co9LLm+zY9hTxt/0Ma/Ff/Hf5HofKmeJ3F+uhw=;
-        b=MdfXbd/H08ZoPOuehrAuQGkNLWhHTTdPGehqvw9y0Iqns6BsaxeWxYfWH4eUOMofjc
-         2a+O8U+Zd6gFnihOoJSj6sXUh71+Pwtbk8SMTl0BYrkuLO+1x/T7aX1V6oKFHbOvRxFo
-         GYSoiMh52pOZdgUbwY87w9MVWu1+AZtmCf4JeyNsg2nNg7hha/5/TFWkiJWsvtkLgYfS
-         Yfm3fK8ciRL+czb22ExVxRkf6EaN2Dfise/I67MLnlB48Bgzx6tdz3HJjWiRzrAHGwKW
-         +7VcpxEj1esjeBKqhFf4lBh6tzqmgWup1hwsOqDl9dNTDu4yZmRyvmTb8aQQlpa+oLjz
-         5EVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQvio41yWlVWc+0BXsvCzMXjgXqCPSCdQ9R+L+D+BrVpeinfZpq4+JqyDtZMY4ykRg6qir0ABoqFVDSvhBElgBmivzfbT2K407xiTSyBcJ2g0=
-X-Gm-Message-State: AOJu0Yz0ZSnXg/nGjPTwoFOaMXIdKb6UkHDVppgbpbgHXhz7wzinKbMk
-	g5d9M561fMXBycQrYHCId2kKONGLquqbvg+0hKeXDD8Q/fWWaVMPbl/gO/HxJUA=
-X-Google-Smtp-Source: AGHT+IGOY+fHGA681Phv/bb+Nvm64Jh5qeSZOPlkH6pYx8qHLZa9/HUqI8ecTFDDn08I8Aj9PH7V0g==
-X-Received: by 2002:a05:6512:687:b0:52c:d27b:ddcb with SMTP id 2adb3069b0e04-532eda8e7ecmr2795696e87.3.1723658474687;
-        Wed, 14 Aug 2024 11:01:14 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded28cdasm26871565e9.16.2024.08.14.11.01.11
+        d=1e100.net; s=20230601; t=1723698934; x=1724303734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BlmMnfZnyk9sQ31EPnuWHDN6TPycLzZuMRASfe7DhFU=;
+        b=eObl++m2ZmDL08TRHlEKzztpPWfkAZrxsLK0J56f9aDe/ELa3DeZHFLWEKwD8qkRqg
+         dZTmoyWon0wNAmYWDFHth4n187BzpntS9kHI9dXTmrqpNPv3xoAJyPs65NI/TpZAEdCS
+         aUgVasu4+Z4JoEEtT7mY7Pd2fmfMmkXlVHjApLz/KDXkqIIY6JKhP2xZinzxGa9+EccO
+         4+uHtIU3Gzn8M4EQLuC4GUcORnm14+6Bu/a4Jfa07miLW7GXO3g8c9sWVb4IGWffTGlk
+         Yt2nBbJz26CeDrb6gbF448N9jVctY2pIqaiZRr5qdInUN9brl+on8y6iyIJAZk66z5b/
+         rAIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD1GPKrq7ic190Slytt7FuzAvMow6RUFcWCOduZmceXb93Awmc29gBSIEnE53iNl1A7L0e2l2NGHTj1Q7DCWrD0uLcFUV2QVbmjIL4voS+ZFDyZOZ5fP6jQGb6JEWrJdtKI2p+uBg4M+RCbpo+5weZj5kaFl40xn/t53fyZuxwzRTCt87n3teJNDA=
+X-Gm-Message-State: AOJu0Yz7CP10TZOqp8BnMdLS2SQG8uwVUlomTzAcw0T5tskvZlLRARbR
+	Z9EGoWyUKNp0aLucRXlwzoKhf23iIp8pR347F8ZKxau2fWPupOJjvg1L3w==
+X-Google-Smtp-Source: AGHT+IFDckC/7w4xnBRZxUCAEKN6Sz0PyXZEyt9EmhlTiXEASI3OMzRo88vx9HWFpiahjrZdSE3V5Q==
+X-Received: by 2002:a05:6512:104e:b0:52c:8a6b:6071 with SMTP id 2adb3069b0e04-53308099ac6mr399847e87.30.1723698933071;
+        Wed, 14 Aug 2024 22:15:33 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d4243d5sm84560e87.245.2024.08.14.22.15.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2024 11:01:12 -0700 (PDT)
-Message-ID: <03b93d98-5722-4592-9346-30a3b4f95d1f@linaro.org>
-Date: Wed, 14 Aug 2024 20:01:09 +0200
+        Wed, 14 Aug 2024 22:15:32 -0700 (PDT)
+Message-ID: <daca2d03-d52d-41a3-bf68-0f524aaa603c@gmail.com>
+Date: Thu, 15 Aug 2024 08:15:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -62,123 +61,41 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
- child loop
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba
- <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-tegra@vger.kernel.org
-References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
- <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
- <20240814175541.00002023@Huawei.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240814175541.00002023@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/7] regulator: bd718x7: Use scoped device node handling
+ to simplify error paths
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, arm-scmi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240814-cleanup-h-of-node-put-regulator-v1-0-87151088b883@linaro.org>
+ <20240814-cleanup-h-of-node-put-regulator-v1-1-87151088b883@linaro.org>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240814-cleanup-h-of-node-put-regulator-v1-1-87151088b883@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 14/08/2024 18:55, Jonathan Cameron wrote:
-> On Mon, 12 Aug 2024 15:34:03 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On 8/14/24 18:04, Krzysztof Kozlowski wrote:
+> Obtain the device node reference with scoped/cleanup.h and use scoped
+> for_each_child_of_node_scoped() to reduce error handling and make the
+> code a bit simpler.
 > 
->> Use scoped for_each_available_child_of_node_scoped() when iterating over
->> device nodes to make code a bit simpler.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Nothing wrong with this patch, but I think you can add a precusor
-> that will make this neater.
-> 
-> Jonathan
-> 
->> ---
->>  drivers/memory/ti-aemif.c | 13 ++++---------
->>  1 file changed, 4 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
->> index e192db9e0e4b..cd2945d4ec18 100644
->> --- a/drivers/memory/ti-aemif.c
->> +++ b/drivers/memory/ti-aemif.c
->> @@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
->>  	int ret = -ENODEV;
->>  	struct device *dev = &pdev->dev;
->>  	struct device_node *np = dev->of_node;
->> -	struct device_node *child_np;
->>  	struct aemif_device *aemif;
->>  	struct aemif_platform_data *pdata;
->>  	struct of_dev_auxdata *dev_lookup;
->> @@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
->>  		 * functions iterate over these nodes and update the cs data
->>  		 * array.
->>  		 */
->> -		for_each_available_child_of_node(np, child_np) {
->> +		for_each_available_child_of_node_scoped(np, child_np) {
->>  			ret = of_aemif_parse_abus_config(pdev, child_np);
->> -			if (ret < 0) {
->> -				of_node_put(child_np);
->> +			if (ret < 0)
->>  				goto error;
-> I'd precede this patch with use of
-> devm_clk_get_enabled()
-> 
-> That would avoid what looks like potential mixed devm and not issues
-> and let you return here.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Yep, that would be useful.
+Acked-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Best regards,
-Krzysztof
+Thanks Krzysztof! I've been a bit cautious to what comes to using the 
+cleanup attribute. Well, I suppose it's a time for me to admit it 
+simplifies things - even if it breaks the rules which were carved to a 
+stone for a long time :) So ... Thanks!
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
