@@ -1,57 +1,57 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B0513BC11;
-	Fri, 16 Aug 2024 17:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EB81C378B;
+	Fri, 16 Aug 2024 17:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723830854; cv=none; b=ccxMPgFRga9UVz7tnbm8Dsmt964e3WQDgtgrPeK7FczDVxxy4ObHP3iqtZgSe/ZahnctY6ucXA5UAICWKX2fwa//235rZ9xr8n9VdwlSksBw0B/s4d+ex5KS6UU8nxB9BNbPJAwu/rwNkQZOvaqQWravYGGmwuxSbnS7jyt+lT4=
+	t=1723830855; cv=none; b=TXkVomEsqEM8dQmXtm6+FM6q3D2+4t9KCBDtNuzGQ13wgqgUudnxHGldDMJ4otJYC9hM498gkmqgAFk3phvVnxRZnsifTHfOyyzBENQ5sDykx+l8nlfKw462mYUkYWnSRUuNmnlpHTsG0Be78U59QQB7dZLotOCDMld1XP2+H7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723830854; c=relaxed/simple;
-	bh=fOT+2RH0b2NeZzP27R+TY1UCyUhHuazKUQl6EroAhqo=;
+	s=arc-20240116; t=1723830855; c=relaxed/simple;
+	bh=RiiMU6aNeuQq8tq5MMf1ZW7No4e5f/Q4G7CqOxz9gfM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l+HIYyPIBc1cXzAL3I4GSUhCQVTUtiknveZtkhBOZ/1pytQFObiiU5xn60WUMXUkF8vERVshy730Fn1jpnB2wxS9QIUHuGiJf1Ufe8mpFiU9glrbCjdAsFFvUcqXNHjERzyIDOsbvvXfOi6nbAhJZmI76XRhHIQdx1hvFueQTFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7nbNrEJ; arc=none smtp.client-ip=209.85.208.47
+	 MIME-Version; b=lvkcgDa9A6XcEA1Ne6Xc05KyXZIx7tf6n+TRhEh0D44FTXa2K4lPFRdjupvfgQunHXidR0pZjd7heyEcJt71sz3g1WfYukYFzfmAaJ6jTqLse3sTlDkQdr9/xVZEKw0TsvbNfD9YGAd0Cj6lxGYAWzCOXNmselZ10FbfG46hTDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpLv1b5u; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7nbNrEJ"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bec4fc82b0so2909940a12.1;
-        Fri, 16 Aug 2024 10:54:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpLv1b5u"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a975fb47eso288304766b.3;
+        Fri, 16 Aug 2024 10:54:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723830851; x=1724435651; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723830852; x=1724435652; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UYjogMBtNSopjmDaf3XCuzNg5vZISggYzr30XJ9QRhI=;
-        b=T7nbNrEJyWuRaAJ4sqEA+DGPhFyz1rFTwIqhSI6PD1b3LOgiltpr8gF4zYWQmo3mHI
-         Z0n0rag93Y47hADzXbj1zYMrdZcltaRIR2jrE+IBiR61z9dN+2vCqwnjgVx6D4YVL5Le
-         7rOJ956eBnqGOZosOHafQWaRiwhe/IkD2qvS7nIfp17/xPUvWt2Dv9DVFQLEhk3IQBpQ
-         o8T/4+O5J4L430TLOXZfKq52Xfyk0HSZ8WBozaakf0u9wA8yaROs0op1+8mZws3HI9mw
-         78NLiXmyc9F5sXsie22o0PKgYMk5X0YwluW9ilsY1XsadVLJr7E9bI51wqWbfEy3JgIq
-         KFUQ==
+        bh=d2Gyar9xXpBSBPcKMcJ2JXR0iJfwNB8oavimTCcz6ws=;
+        b=XpLv1b5ux8BbuMarVGOI3vuTojHBIJuBEglcrUfmP4C10/c4pt2zXMkR40dC1YoyOt
+         SIZBSC6skpUxej04t9sHIdQ2JCsLdJYYZ16a1wA4pa/RAdH0iQb3zN7Bg9VdWrARnZXk
+         ElRhUCFxAPBIvljOOS12bAD8i8s/cWGBcDiWNewHnYZjemNm9pZ4cClDmYSoI5cR4pv0
+         0rDIA1qUT6h+IauIKMoetJonY9bNk3plKK+s+mIkk+JLbu6c6I5vojNXS6ifdBMa0n6G
+         cBp/K+kYKQL+t6+cxdkadgmEOJoHpPMMEyebKpsr8u+qViH0N3mk6L0eegStoZ6QUbJo
+         sFzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723830851; x=1724435651;
+        d=1e100.net; s=20230601; t=1723830852; x=1724435652;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UYjogMBtNSopjmDaf3XCuzNg5vZISggYzr30XJ9QRhI=;
-        b=ckGC3BVWAn9Mstb7XdQ0SQDRmX+PUvwppyYqsiWms3ZegsJV9QzzrCxl+eyPzDq5Jl
-         g9jfWwB9ttOtGfBUje862GeYa6IU0EExENk9Pat1SAjZeqSH2dcto6LkWWg1oFGGxzld
-         PORGLE25KQUVfi8TytDWKYOhujBEx2vR6XvAYtPeD+JolKzdp0ujU+2XI8Yc6WBuSEE2
-         TA7EfSc7MVsPD4dN1eYWR6XSjrCYnUxPPQveIDxTer+sqMd5mFBDb5vG2WzCmCNBV0me
-         38YVzPDQqNEwYZv707S1pftv1/z0/GR8FJxVH9MzrLvaC5yHG7QKozUyhQoo9C27bI/b
-         assg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUAkH3jqfioUc6oZdpe19cvefcySlgJgWtlXAXPSpmOyWmS3idlufXk7APBI8jbNpbYlu8CBIgauEENIliOfDQ7t2DyrIrEhrCzaf7rc4QoA0vW+HrjTzE9a9hPGx01rT0fWxQbrxJgpK/pSxw8vJl9myBgD43KstW79uLlnVGOOri6M9IRABOyRg=
-X-Gm-Message-State: AOJu0YwJlHRrhCeY7BhkiKWDX6bm/eiMy1GkOELLMHTbcuJlRUvt4pdP
-	ekQ0SO2e67KMEsYhXuIBkZ3hy1LxjQx/OJwO7ZOq+iSkGh4jvlOK
-X-Google-Smtp-Source: AGHT+IEhrh56okZbmvy9C8HwDNy5xwpiZQq52uQq/hi8jnlhVoMry9g9W6uYptcJ6SG8XC/2yTyWnQ==
-X-Received: by 2002:a17:907:7d8b:b0:a77:c051:36a9 with SMTP id a640c23a62f3a-a8394dc741bmr339367066b.9.1723830850657;
-        Fri, 16 Aug 2024 10:54:10 -0700 (PDT)
+        bh=d2Gyar9xXpBSBPcKMcJ2JXR0iJfwNB8oavimTCcz6ws=;
+        b=qyRHutG+k5xUT8vRQslazcfwjv1bXZe6f+u2ahqK8QJY/NE0/T/GU4z4g6vgKEmQJ3
+         dkVXCPzj8wI3UBWCneSWD59VTIpbfY8KVMhDFi9d08059Bh7+0c1RMSs2LyGNdaijz15
+         0TsiGWzqyHZrNwp1UmMLZeEpU8b5N4XzzqfHdCvhhCt3411PoGqOn2ekMsmGYhNNKOQm
+         BRKSXEYmZn5jAQMIa7z4gacw8z3m81iKghCw6zQhlAkr2yZLknvZoSNyYmmmXmSH6q+a
+         /6b1mLwKvjPq/h88PNqQUo58SMkhqEmFNPlGnSyHYXIFE+TWvL81XFWf6RLywcU4I6k9
+         13fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLsSdpgR67inglZvqzTqb5w4Zeeql+Y49IhcIVmQ3nHK5fMvQ2Mgr5aZOgAnd2j3oVGgaYZOXxuPVofIWBTxyw0pdfzWLOds96++Vxlv+nmOecZrEDOLOKiHbC9PfuNnTnfToHiBQTCW26LsZJ/YzELX6X4nTYWZzmZ2V2eMLgZgN1nphPD0r36NE=
+X-Gm-Message-State: AOJu0YwO7EbQvDKKHo635GuKMxb8I7ocLhfr+sTPBE1OqV4z13TOu+bI
+	sTcSNsM0lBHN3J6XF80dSlceW6IJnrA0Bd63nNnPL4gjdcGofy9D
+X-Google-Smtp-Source: AGHT+IH8xPC7HF4XYWVv5PE7SDBI+Vce4ObV3z7/ckDEnTizalhYsSty9QXLnAy+hHhqn0YI+RZD4g==
+X-Received: by 2002:a17:907:6d02:b0:a80:f747:30c4 with SMTP id a640c23a62f3a-a83928a6336mr239444866b.1.1723830852086;
+        Fri, 16 Aug 2024 10:54:12 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a83838c66b6sm290520866b.16.2024.08.16.10.54.09
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a83838c66b6sm290520866b.16.2024.08.16.10.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 10:54:10 -0700 (PDT)
+        Fri, 16 Aug 2024 10:54:11 -0700 (PDT)
 From: David Virag <virag.david003@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -64,9 +64,9 @@ Cc: David Virag <virag.david003@gmail.com>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] clk: samsung: clk-pll: Add support for pll_1418x
-Date: Fri, 16 Aug 2024 19:50:31 +0200
-Message-ID: <20240816175034.769628-2-virag.david003@gmail.com>
+Subject: [PATCH v3 2/2] clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+Date: Fri, 16 Aug 2024 19:50:32 +0200
+Message-ID: <20240816175034.769628-3-virag.david003@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240816175034.769628-1-virag.david003@gmail.com>
 References: <20240816175034.769628-1-virag.david003@gmail.com>
@@ -78,99 +78,156 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-pll1418x is used in Exynos7885 SoC for USB PHY clock.
-Operation-wise it is very similar to pll0822x, except that MDIV is only
-9 bits wide instead of 10, and we use the CON1 register in the PLL
-macro's "con" parameter instead of CON3 like this:
+Exynos7885 SoC has a DWC3 USB Controller with Exynos USB PHY which in
+theory supports USB3 SuperSpeed, but is only used as USB2 in all known
+devices.
 
-	PLL(pll_1418x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
-	    PLL_LOCKTIME_PLL_USB, PLL_CON0_PLL_USB,
-	    pll_usb_rate_table),
+These clocks are needed for everything related to USB.
 
-Technically the PLL should work fine with pll0822x code if the PLL
-tables are correct, but it's more "correct" to actually update the mask.
+While at it, also remove the CLK_SET_RATE_PARENT capability of
+CLK_MOUT_FSYS_USB30DRD_USER, since it's not actually needed.
 
 Signed-off-by: David Virag <virag.david003@gmail.com>
 ---
 Changes in v2:
-  - None
+  - Remove unnecessary blank lines
 
 Changes in v3:
-  - Simplify set_rate part
+  - None
 
- drivers/clk/samsung/clk-pll.c | 18 +++++++++++++++---
- drivers/clk/samsung/clk-pll.h |  1 +
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ drivers/clk/samsung/clk-exynos7885.c | 71 ++++++++++++++++++++++------
+ 1 file changed, 57 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 4be879ab917e..4307cd534ee6 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -430,6 +430,9 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
- #define PLL0822X_LOCK_STAT_SHIFT	(29)
- #define PLL0822X_ENABLE_SHIFT		(31)
+diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
+index a0c9b7cc6942..fc42251731ed 100644
+--- a/drivers/clk/samsung/clk-exynos7885.c
++++ b/drivers/clk/samsung/clk-exynos7885.c
+@@ -20,7 +20,7 @@
+ #define CLKS_NR_TOP			(CLK_MOUT_SHARED1_PLL + 1)
+ #define CLKS_NR_CORE			(CLK_GOUT_TREX_P_CORE_PCLK_P_CORE + 1)
+ #define CLKS_NR_PERI			(CLK_GOUT_WDT1_PCLK + 1)
+-#define CLKS_NR_FSYS			(CLK_MOUT_FSYS_USB30DRD_USER + 1)
++#define CLKS_NR_FSYS			(CLK_FSYS_USB30DRD_REF_CLK + 1)
  
-+/* PLL1418x is similar to PLL0822x, except that MDIV is one bit smaller */
-+#define PLL1418X_MDIV_MASK		(0x1FF)
+ /* ---- CMU_TOP ------------------------------------------------------------- */
+ 
+@@ -686,30 +686,56 @@ static const struct samsung_cmu_info core_cmu_info __initconst = {
+ /* ---- CMU_FSYS ------------------------------------------------------------ */
+ 
+ /* Register Offset definitions for CMU_FSYS (0x13400000) */
+-#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER	0x0100
+-#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER	0x0120
+-#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER	0x0140
+-#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER	0x0160
+-#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER	0x0180
+-#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK	0x2030
+-#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN	0x2034
+-#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK	0x2038
+-#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN	0x203c
+-#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK	0x2040
+-#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN	0x2044
++#define PLL_LOCKTIME_PLL_USB				0x0000
++#define PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER		0x0100
++#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER		0x0120
++#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER		0x0140
++#define PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER		0x0160
++#define PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER		0x0180
++#define PLL_CON0_PLL_USB				0x01a0
++#define CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE		0x200c
++#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK		0x2030
++#define CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN		0x2034
++#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK		0x2038
++#define CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN		0x203c
++#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK		0x2040
++#define CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN		0x2044
++#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL	0x2068
++#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0	0x206c
++#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1	0x2070
++#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY	0x2074
++#define CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK		0x2078
+ 
+ static const unsigned long fsys_clk_regs[] __initconst = {
++	PLL_LOCKTIME_PLL_USB,
+ 	PLL_CON0_MUX_CLKCMU_FSYS_BUS_USER,
+ 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_CARD_USER,
+ 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_EMBD_USER,
+ 	PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
+ 	PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
++	PLL_CON0_PLL_USB,
++	CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE,
+ 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK,
+ 	CLK_CON_GAT_GOUT_FSYS_MMC_CARD_SDCLKIN,
+ 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_I_ACLK,
+ 	CLK_CON_GAT_GOUT_FSYS_MMC_EMBD_SDCLKIN,
+ 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_I_ACLK,
+ 	CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
++	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL,
++	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0,
++	CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1,
++	CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY,
++	CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK,
++};
 +
- static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
- 						  unsigned long parent_rate)
- {
-@@ -438,7 +441,10 @@ static unsigned long samsung_pll0822x_recalc_rate(struct clk_hw *hw,
- 	u64 fvco = parent_rate;
- 
- 	pll_con3 = readl_relaxed(pll->con_reg);
--	mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL0822X_MDIV_MASK;
-+	if (pll->type != pll_1418x)
-+		mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL0822X_MDIV_MASK;
-+	else
-+		mdiv = (pll_con3 >> PLL0822X_MDIV_SHIFT) & PLL1418X_MDIV_MASK;
- 	pdiv = (pll_con3 >> PLL0822X_PDIV_SHIFT) & PLL0822X_PDIV_MASK;
- 	sdiv = (pll_con3 >> PLL0822X_SDIV_SHIFT) & PLL0822X_SDIV_MASK;
- 
-@@ -456,7 +462,12 @@ static int samsung_pll0822x_set_rate(struct clk_hw *hw, unsigned long drate,
- {
- 	const struct samsung_pll_rate_table *rate;
- 	struct samsung_clk_pll *pll = to_clk_pll(hw);
--	u32 pll_con3;
-+	u32 mdiv_mask, pll_con3;
++static const struct samsung_pll_rate_table pll_usb_rate_table[] __initconst = {
++	PLL_35XX_RATE(26 * MHZ, 50000000U, 400, 13, 4),
++};
 +
-+	if (pll->type != pll_1418x)
-+		mdiv_mask = PLL0822X_MDIV_MASK;
-+	else
-+		mdiv_mask = PLL1418X_MDIV_MASK;
++static const struct samsung_pll_clock fsys_pll_clks[] __initconst = {
++	PLL(pll_1418x, CLK_FOUT_USB_PLL, "fout_usb_pll", "oscclk",
++	    PLL_LOCKTIME_PLL_USB, PLL_CON0_PLL_USB,
++	    pll_usb_rate_table),
+ };
  
- 	/* Get required rate settings from table */
- 	rate = samsung_get_pll_settings(pll, drate);
-@@ -468,7 +479,7 @@ static int samsung_pll0822x_set_rate(struct clk_hw *hw, unsigned long drate,
+ /* List of parent clocks for Muxes in CMU_FSYS */
+@@ -718,6 +744,7 @@ PNAME(mout_fsys_mmc_card_user_p)	= { "oscclk", "dout_fsys_mmc_card" };
+ PNAME(mout_fsys_mmc_embd_user_p)	= { "oscclk", "dout_fsys_mmc_embd" };
+ PNAME(mout_fsys_mmc_sdio_user_p)	= { "oscclk", "dout_fsys_mmc_sdio" };
+ PNAME(mout_fsys_usb30drd_user_p)	= { "oscclk", "dout_fsys_usb30drd" };
++PNAME(mout_usb_pll_p)			= { "oscclk", "fout_usb_pll" };
  
- 	/* Change PLL PMS values */
- 	pll_con3 = readl_relaxed(pll->con_reg);
--	pll_con3 &= ~((PLL0822X_MDIV_MASK << PLL0822X_MDIV_SHIFT) |
-+	pll_con3 &= ~((mdiv_mask << PLL0822X_MDIV_SHIFT) |
- 			(PLL0822X_PDIV_MASK << PLL0822X_PDIV_SHIFT) |
- 			(PLL0822X_SDIV_MASK << PLL0822X_SDIV_SHIFT));
- 	pll_con3 |= (rate->mdiv << PLL0822X_MDIV_SHIFT) |
-@@ -1317,6 +1328,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
- 			init.ops = &samsung_pll35xx_clk_ops;
- 		break;
- 	case pll_1417x:
-+	case pll_1418x:
- 	case pll_0818x:
- 	case pll_0822x:
- 	case pll_0516x:
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index ffd3d52c0dec..1efbe4c446d0 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -30,6 +30,7 @@ enum samsung_pll_type {
- 	pll_2650x,
- 	pll_2650xx,
- 	pll_1417x,
-+	pll_1418x,
- 	pll_1450x,
- 	pll_1451x,
- 	pll_1452x,
+ static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
+ 	MUX(CLK_MOUT_FSYS_BUS_USER, "mout_fsys_bus_user", mout_fsys_bus_user_p,
+@@ -731,12 +758,16 @@ static const struct samsung_mux_clock fsys_mux_clks[] __initconst = {
+ 	MUX_F(CLK_MOUT_FSYS_MMC_SDIO_USER, "mout_fsys_mmc_sdio_user",
+ 	      mout_fsys_mmc_sdio_user_p, PLL_CON0_MUX_CLKCMU_FSYS_MMC_SDIO_USER,
+ 	      4, 1, CLK_SET_RATE_PARENT, 0),
+-	MUX_F(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
++	MUX(CLK_MOUT_FSYS_USB30DRD_USER, "mout_fsys_usb30drd_user",
+ 	      mout_fsys_usb30drd_user_p, PLL_CON0_MUX_CLKCMU_FSYS_USB30DRD_USER,
+-	      4, 1, CLK_SET_RATE_PARENT, 0),
++	      4, 1),
++	nMUX_F(CLK_MOUT_USB_PLL, "mout_usb_pll", mout_usb_pll_p,
++	    PLL_CON0_PLL_USB, 4, 1, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
++	GATE(CLK_FSYS_USB20PHY_CLKCORE, "clk_fsys_usb20phy_clkcore", "mout_usb_pll",
++	     CLK_CON_GAT_CLK_FSYS_USB20PHY_CLKCORE, 21, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_GOUT_MMC_CARD_ACLK, "gout_mmc_card_aclk", "mout_fsys_bus_user",
+ 	     CLK_CON_GAT_GOUT_FSYS_MMC_CARD_I_ACLK, 21, 0, 0),
+ 	GATE(CLK_GOUT_MMC_CARD_SDCLKIN, "gout_mmc_card_sdclkin",
+@@ -752,9 +783,21 @@ static const struct samsung_gate_clock fsys_gate_clks[] __initconst = {
+ 	GATE(CLK_GOUT_MMC_SDIO_SDCLKIN, "gout_mmc_sdio_sdclkin",
+ 	     "mout_fsys_mmc_sdio_user", CLK_CON_GAT_GOUT_FSYS_MMC_SDIO_SDCLKIN,
+ 	     21, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_FSYS_USB30DRD_ACLK_20PHYCTRL, "clk_fsys_usb30drd_aclk_20phyctrl",
++	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_20PHYCTRL, 21, 0, 0),
++	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_0, "clk_fsys_usb30drd_aclk_30phyctrl_0",
++	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_0, 21, 0, 0),
++	GATE(CLK_FSYS_USB30DRD_ACLK_30PHYCTRL_1, "clk_fsys_usb30drd_aclk_30phyctrl_1",
++	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_ACLK_30PHYCTRL_1, 21, 0, 0),
++	GATE(CLK_FSYS_USB30DRD_BUS_CLK_EARLY, "clk_fsys_usb30drd_bus_clk_early",
++	     "mout_fsys_bus_user", CLK_CON_GAT_GOUT_FSYS_USB30DRD_BUS_CLK_EARLY, 21, 0, 0),
++	GATE(CLK_FSYS_USB30DRD_REF_CLK, "clk_fsys_usb30drd_ref_clk", "mout_fsys_usb30drd_user",
++	     CLK_CON_GAT_GOUT_FSYS_USB30DRD_REF_CLK, 21, 0, 0),
+ };
+ 
+ static const struct samsung_cmu_info fsys_cmu_info __initconst = {
++	.pll_clks		= fsys_pll_clks,
++	.nr_pll_clks		= ARRAY_SIZE(fsys_pll_clks),
+ 	.mux_clks		= fsys_mux_clks,
+ 	.nr_mux_clks		= ARRAY_SIZE(fsys_mux_clks),
+ 	.gate_clks		= fsys_gate_clks,
 -- 
 2.46.0
 
