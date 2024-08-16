@@ -1,135 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0671DDF5;
-	Fri, 16 Aug 2024 15:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BC41BE227;
+	Fri, 16 Aug 2024 17:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723822846; cv=none; b=Jg9Axy2jcAgNA+B/ThSenTLK7ipb9WKKyw6hk0SNlxUZhg1DKXeDlCgy7DUcPUO+gz7rJyVQu3oKA8rIphhLd058k1QwEbQKpskntBjFBwl4nFcp4BZjnMCGjXCW26Y1VVGScIB+ziY5/SOkGPzb59xelXaFJweDVgUU5XPQAS0=
+	t=1723830852; cv=none; b=nYPnh+cScMEQ8vm00uODnnW2DnuuRO3cNfjfl0WDfpsarXDC9+GcSVznMnXHsEw+wMqrA0k0Gxvld5OGui7hoMQCDsVxM1yA1Qvay+uvbMD7tjbR+Pez1DN3NrwGfSf+GHHQvC9YbCD9v6+PZsonfxfjM6N6zk9KUcF79/W1MkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723822846; c=relaxed/simple;
-	bh=s5xPHWl9Hp3bK8OiyJg3sXrToRCCGMBKSEElvw86CVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZKtZyMU6a8V5M2aIXP60v7S+AakIzax8POQ2R8PrlmNaHbG4qPIAytY4KH26fzXBiEl4h8cAPyWWLgdBFwPTKg499eJKTe99b2gjupAHJj1KrF+g7t56zE/5IEZZO5wzEmzJcvelb/rcTMKfp1aqFgzRuSEKvn6OQqPNN8s5MtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B3l497tn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723830852; c=relaxed/simple;
+	bh=8vgOupAH9q3Pi0C1YgjJiYJ1t6r81pGgJFXgCydFQk4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lXJuS+Fm9IuEX79bL7TOIMAvXuPCOwSun/VqWzX0KvCvV+kImpWnUq+LWaOcdvpU5HI/w1lqX9HmUx1xHVaMynmx8wLgrCtmSNgAbt60iQMTc0H+osiDKCrwSkALbGSL2vL1pUA4q0tqEatJOb4ByJFiTU8NAITvxHy0g7FiVXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HECkA8lJ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3l497tn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BB8C32782;
-	Fri, 16 Aug 2024 15:40:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723822846;
-	bh=s5xPHWl9Hp3bK8OiyJg3sXrToRCCGMBKSEElvw86CVE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B3l497tn3B12WsQ5ObXXui8/RU+jgZAr8/RMpUXMd9+geIryseMBncYOO6k5bY+cn
-	 wbobUGvDw70jemzkKx7lxaTwxsCPD7Eo5lbJn44aD7mB+6TKL41ZNgHdqJ7fu7Z1or
-	 gg0VaELZLsulUUorgFnEH4eHMcpOKAKXyt6YoTgYMdI+wlBPaqwtPJ2nIF+1W9rBFg
-	 1UM1f9cRIZvtRrctpT6M20UWSwdcXFeTwhS3aMm2av0CNw3p5EFY+cdhsk69Er7upJ
-	 x2yDad2OOPvcFZGtEEM2MvzAqp0dTZP9Du6KTby9J62D4rsd8rOM7bsTu+rLOU3IZD
-	 HBNNIMBUTTv+g==
-Message-ID: <f91048f3-2a97-493f-a35c-0e8f184d77d6@kernel.org>
-Date: Fri, 16 Aug 2024 17:40:37 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HECkA8lJ"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a80eab3945eso254657166b.1;
+        Fri, 16 Aug 2024 10:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723830850; x=1724435650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X3ztZ41qtkgTnqop04iLTUGQriZy+0ASCXL8BXf6h5Y=;
+        b=HECkA8lJ2Hq8gFfrPBVmGgehzhYqXmHHNldqVilCRJxa8Qvxc7ulb9G/V4H9CRquU8
+         /BhRk2Vd71ZJX32Z1gOq6Gt4Gy89ntJjypCySWfCoevJ68wP2XN1pauUoOhZchCwifpj
+         gw82zelJ27qOIm9Xw1enti2+mHbD2VVTEkpcqJMRiO7ko8d4yS7u31MCd24oA2tZuFls
+         Y+W16tr9ImsLpyU3awwt2y/j0Iu+tZc3QuPbPciM+JLnOqqFYv3jPUvLIxVyog1Tn2N0
+         T25ZrWKiycDYtFkPJpDrSeHvk5/vpY+YCFmu/W7dPDx6nvvypmLG+0XWm7y6yxNs5Nrs
+         gHFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723830850; x=1724435650;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X3ztZ41qtkgTnqop04iLTUGQriZy+0ASCXL8BXf6h5Y=;
+        b=EZS6VFx2hIYrIz9iF7Q8ZiXGW21CN1/Rt3XiWDFNyz1Rk8L9O2gBd758zxfXA+eg+H
+         6smgBUGH7HLrZO4L8qudb6MNMlVAoEUnAxkaAzxkPxH781gyksMOSZfUP+xgZPnRs9mo
+         hMDGXs19+zYfhrj6PiEYTTgRFXK9l1MrVqZi59Qzu535DkhwoFm/433Q/GpUtMLv5yov
+         K1fCxeQoeuqGGQrUAQZsOHbkhESaWL95+MOUKMuKEyqF5FboYFzeW5dRIRkE7V6/n/FE
+         +pXhlqtqGCYSHyKDAf8ln1CSfzIkfdLfFFC9EqrPFLicor3sHBhSAR9ZcpZsiOjV3cgO
+         AODQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOzxEhls+tYcsgOUj5SpeZ7XDYNWPHiRzb68JiUbUVUU4cKduL92GOIXtrep+3amGvUyp1Zo+WjYwyGhauGvvGh424heF8L/TjlZaQggIk1ppaAB3DVDRhMbnCCwKieoCWuvGFPza9mfvHc3rDjhfVbMWStsZjyxF9TxY7B2TU+PDavs3f8+2cnqc=
+X-Gm-Message-State: AOJu0Yz+OzmwJc0JoVGO4bwcYbgUtN6vmTIG/XBMWq6XfQ7rTCz3rU99
+	s06viWiOtVkjdFCC/gUB98nJ7QIqJcbzWlgOgqpVOJWACnovBM5B
+X-Google-Smtp-Source: AGHT+IEutHQ7iq7C56qtT3zYVqrbjNKJ6AJuAvMzjeNo6nfJ5fGmO556NBhvcd7YavhyfF6nAR5WDg==
+X-Received: by 2002:a17:907:c889:b0:a7a:bece:6223 with SMTP id a640c23a62f3a-a83928a9f5emr259160466b.6.1723830849232;
+        Fri, 16 Aug 2024 10:54:09 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a83838c66b6sm290520866b.16.2024.08.16.10.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 10:54:08 -0700 (PDT)
+From: David Virag <virag.david003@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: David Virag <virag.david003@gmail.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Add USB clocks to Exynos7885
+Date: Fri, 16 Aug 2024 19:50:30 +0200
+Message-ID: <20240816175034.769628-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/10] power: supply: max77693: Set charge current
- limits during init
-To: Artur Weber <aweber.kernel@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
- <20240816-max77693-charger-extcon-v4-4-050a0a9bfea0@gmail.com>
- <9dbaacdb-5f9c-48d4-a56a-a19ca8809344@kernel.org>
- <021f5a99-bbee-4d4c-b36e-49339030b869@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <021f5a99-bbee-4d4c-b36e-49339030b869@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/08/2024 16:25, Artur Weber wrote:
-> 
-> 
-> On 16.08.2024 11:54, Krzysztof Kozlowski wrote:
->> On 16/08/2024 10:19, Artur Weber wrote:
->>> @@ -732,6 +794,15 @@ static int max77693_charger_probe(struct platform_device *pdev)
->>>   	chg->dev = &pdev->dev;
->>>   	chg->max77693 = max77693;
->>>   
->>> +	psy_cfg.drv_data = chg;
->>> +
->>> +	chg->charger = devm_power_supply_register(&pdev->dev,
->>> +						  &max77693_charger_desc,
->>> +						  &psy_cfg);
->>> +	if (IS_ERR(chg->charger))
->>> +		return dev_err_probe(&pdev->dev, PTR_ERR(chg->charger),
->>> +				     "failed: power supply register\n");
->>
->> This code move is not explained in the commit msg. At least I could not
->> find it. Please explain why you need it in the commit msg.
-> 
-> This is done because the call to power_supply_get_battery_info in
-> max77693_dt_init requires chg->charger to be set. (I was considering
-> putting this in the commit message, can't remember why I didn't do it.
-> I'll add it in the next version.)
+This set of patches adds the clocks necessary for USB on the Exynos7885
+SoC.
 
-I think that's wrong. Power supply is being available to the system
-before it is being configured.
+Earlier versions of the set also contained some fixes for issues with
+the existing driver/bindings, which have been applied now.
 
-Best regards,
-Krzysztof
+Changes in v2:
+- Split from full patchset.
+- Added Cc-stable tags and fixes tag to update CLKS_NR_FSYS patch
+- Blank line fixes
+
+Changes in v3:
+- Remove already applied patches
+- Simplify PLL support patch
+
+David Virag (2):
+  clk: samsung: clk-pll: Add support for pll_1418x
+  clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+
+ drivers/clk/samsung/clk-exynos7885.c | 71 ++++++++++++++++++++++------
+ drivers/clk/samsung/clk-pll.c        | 18 +++++--
+ drivers/clk/samsung/clk-pll.h        |  1 +
+ 3 files changed, 73 insertions(+), 17 deletions(-)
+
+-- 
+2.46.0
 
