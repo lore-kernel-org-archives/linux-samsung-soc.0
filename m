@@ -1,157 +1,112 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026C01BC9EB
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2024 10:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C97A1BC083;
+	Fri, 16 Aug 2024 14:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805710; cv=none; b=D1Qb9Js+HS02lsObc0hyJQQhZorgPj0Sn7sTLbr/ZWQTWrN8iOhFRbu4acZF9datY/iVOSDE3h4SFIjoyYBC1NIOnnSbXZVwlLP9ECq2fOvoEXwY0YmDPgn2HH2dHfO4/HWsR+PZ0UipzkxK6O8/pTwwyCznniGGmvfBcc0e0+I=
+	t=1723818352; cv=none; b=lenmJcHLaqZc0LR//BaJh5Imoa+GO05lKW2nVVRSENXCBEf+os5dLxU0XAaVQen2GPfmnH6bILh0m89bifF/YVJpXGCuPZ9HBFskyLNZRdKgv98EzNcCioGaCkMiZ+67XaPJ33DyM1x+Wjfd784/rIxOKzJWN/MzheMJy8U63PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805710; c=relaxed/simple;
-	bh=XVq1bAp1DPzbReC84gkm7B7jCsUc7V7wiEW2r5jKKFs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=njIMgMv4i47u55kwiJksSb91EvOUCqhpGJkLQCTwQ0032/JIxW7FcVDpCrfLyms1zTlhpO8G5pxn2yftJSWcsi8JZLRLokh4/BqwgGoXNm4gJPkimJz9X3S6QKHvAB2Aw6ihmEUdObONs2KQtpLiCiU/MWM9/NOlFMTQBny9TWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZRn6+op; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723818352; c=relaxed/simple;
+	bh=PGPKe9Z2HXEC0gw5dqeKqhDeaAxArswdRASSszm5pnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=giLzPSUgu78BcWx/kgkFtIEQsvbdiDSAMnye+1AJExjRBoty5OoD9S1LoNa9XdK+1RpaICKwJyy/02CpF5eZVeo4F7uPjo1CwC05OL3wB6gZfjIOJR/ki5mQd9lRP20JxSk6o6YyefBNZvZmcEbYYeY7zf4BZdRq3LoQFxotu24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwDejNxY; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZRn6+op"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42803bbf842so18564565e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2024 03:55:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwDejNxY"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso2583307e87.2;
+        Fri, 16 Aug 2024 07:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723805705; x=1724410505; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xzZC0M9EYFXrRYfn9TDzsNDqOMCKTr68cWUMx7V2XT4=;
-        b=KZRn6+opKv1rX7QwuZfaN4+JWsagBSk88vsI8bSJKVWdhq7c3t4ZPl7bP8tY0hBLD4
-         DCp+KtbrPX2T1aMxr1jKu3Puhb5ff8wOlktdaMHaw32efycibL+qIrib0d3lOdHqhS7X
-         dCSVLTnVTB2Hu7NenfuSE1aKGEXzCHsbvbvHeh3gUWmkMhZCKY178wbxH3WR++hgb2Bz
-         7PwRfg7b3Z3uMYueQBXjArkvvedfAO5LKkUvaX7DG8KgDCafC7ol1eP726Dhy7RYrN9A
-         +TL70pDSmHuz/dtjMxJ44g5nDFuvKS289LbfyInfY4ik/eyXSdg21QaiZfHDbfkpTOLO
-         JpIw==
+        d=gmail.com; s=20230601; t=1723818348; x=1724423148; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=18z5iNYHQLy9IQXidEg4MX75zOC+06viB9VWsJ8MHWg=;
+        b=NwDejNxYHIV/tLd6M2WnTfvnMHKxhcDG7N2LmdbD7aDuYFGh/xY2QCTRQmkxyRQNgf
+         3WvYPRNQwpQyv1CNgu2EpHp9qMLBhkOsQjhHQU3FmTVzrjBQkREr8GCoS4mGVWBlMDRy
+         E9Lqu1a3FSe65MeaxxYAFTzMSyN79xUGqho1MggV/94T+H2h1yhi/D/rGtS0xjG8/b9J
+         mSksL8gmSOVfgiMD+0Re0S2uMyV9Qfu3BtVBps5K9cO4k/7kOz1jZeupUxk7lpaLYDHG
+         CNgVWlVY0j6dMAdXQQ3Rl+LaoZPOfNvd+++LJRlEvvrzhwHf5KruevifqhtpZHl1SL9d
+         C+wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723805705; x=1724410505;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xzZC0M9EYFXrRYfn9TDzsNDqOMCKTr68cWUMx7V2XT4=;
-        b=afPGHolrPAcd4VLh1tBbThEc1yoPEgHZ+PAh6wuB8F9n9wYXQ3/Aodk/1/YFi7JX2F
-         2PeV9I/I8D6drLgaUHLwU52Q8EqVey550iMpomIHp1PltTdYbDAMdM/hWOxkJ1Nw1vv9
-         ze6B3qvc4kBlngNx/6w272VD5HAWS6Bw3qEvesypdpJO4HiZSWmS9MRM6kd1kDuDhAa3
-         2JM0L//YeAW1iOUrNxfXuNWAEP/wdh1cLH+VlgxhRhbcyBQCzSqmXn5wdDZTyHVhs+j7
-         nmu4sksLDD8IgabGGWOZT+MGgdZa/eTUfmTXnynWbmSiKFXdJWd9wN1PkzoRAYDuBzSs
-         GaEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp6PvWh+OHwRx5hLATZ3WdizXPbjw0nI4hYlbUJU6endFssv93qboqO6qR5R0NZQCcTRQAlnvtufxWWXMuQSFklyt+2Bowwkr1j/JwBbp6p8Q=
-X-Gm-Message-State: AOJu0YxUPE3mrbsdoBtoijc58dCKoAaNX3d1a+88ZqvdGzz/AvrZr+yQ
-	R7Or3yXY3wDcWtR8ElWLw35yJvfHMlQJy5010XuL6ZclFlHRPYr5u8NiLAqAClA=
-X-Google-Smtp-Source: AGHT+IHjZHJdqi78iF456VbGb6wR7RxT96NknEiGEFoYeO6BRf1QVX7lFBSfHR9ooukIBdApMHs1NQ==
-X-Received: by 2002:a05:600c:208:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-429ed7d6481mr18549855e9.26.1723805705202;
-        Fri, 16 Aug 2024 03:55:05 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.55.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 03:55:04 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 12:54:37 +0200
-Subject: [PATCH v2 13/13] memory: ti-aemif: simplify with scoped for each
- OF child loop
+        d=1e100.net; s=20230601; t=1723818348; x=1724423148;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=18z5iNYHQLy9IQXidEg4MX75zOC+06viB9VWsJ8MHWg=;
+        b=X/bEgm3qeG3k1hGv5A+zsb5uVLdKQf/ZIEVkextz7iY2651ZkeC1zmlULDcplDvoU3
+         7kzNVn9sk1dMQLJxFqWuXoRg0GmnN7JU/qb5ZO5cIBExAlRa7aDfS7o4vunSGq1cgmTZ
+         y8XYOeF9N/THMWJuLiWqe5P1u4hCVXTGilmU4UPq/3T3oUoCgfmxcnMlHnOxOX3TzD4b
+         FNs16/3mOsjOvHw19NXztLCN4QoQYmygs9FM0tuVSzgYP50xuYfajh+l51cPAlo/IXjx
+         r6TJZkz5QxJmOvnYRJ1wj9zcsTt1B8fdJuCDnhlETEvutcpxkEKJzzrCqcxheFBeP4U5
+         U+dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGtbVVRRWtZgxU6iygSStJW5Y5okxQsDU05Pg9KkT96+F4BSqEGA04bG+EIKMC0yjEZb0z9bGrgak+s9N5L5sncsU=@vger.kernel.org, AJvYcCUjXaYdqmwCCXNG6q1Z7QmPzIjmRbtk85a/9vqR1GsMl/GziSvO2YDTEtmZ/c+EKuBlRr/NJZu2TpcL@vger.kernel.org, AJvYcCV3KHsylzKR5UNMJMCDxv5SOKW6B5itx051hZ8CTnidv0jH5NwTG6lER1YupqvKOucyob+NQGWPOTA=@vger.kernel.org, AJvYcCVo3HYiQ0x0VwyxMMdpoElQGm1/fVkt2rhdhe45BcD/txZ8kVsLaMQ5dkKwUu93zV4xoiTn8pYJz0XZ1yoO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxbQ1RPpshXJeisXgJloQog5loK8LNiQibjxhUFjCz01dfckr1
+	+e5KtfoiOuaWbYx0Wd2OgeKiSQoLFcw1YMfRUDoEEp4ldnnyY7YqO248sQ==
+X-Google-Smtp-Source: AGHT+IHwlZ63+TDjPwfyTB1uqKHtWzOZKBvQ7+La0DArb8wjIj6kPTSWKuM2IfOtSlb+ALHVhWRtGQ==
+X-Received: by 2002:a05:6512:220b:b0:52e:9b92:4999 with SMTP id 2adb3069b0e04-5331c690ce0mr2188241e87.2.1723818347989;
+        Fri, 16 Aug 2024 07:25:47 -0700 (PDT)
+Received: from [192.168.0.124] (ip-31-0-120-26.multi.internet.cyfrowypolsat.pl. [31.0.120.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396d5eesm262532566b.225.2024.08.16.07.25.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Aug 2024 07:25:47 -0700 (PDT)
+Message-ID: <021f5a99-bbee-4d4c-b36e-49339030b869@gmail.com>
+Date: Fri, 16 Aug 2024 16:25:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/10] power: supply: max77693: Set charge current
+ limits during init
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
+ Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
+ Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
+ <20240816-max77693-charger-extcon-v4-4-050a0a9bfea0@gmail.com>
+ <9dbaacdb-5f9c-48d4-a56a-a19ca8809344@kernel.org>
+Content-Language: en-US
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <9dbaacdb-5f9c-48d4-a56a-a19ca8809344@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-13-9eed0ee16b78@linaro.org>
-References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
-In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1869;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=XVq1bAp1DPzbReC84gkm7B7jCsUc7V7wiEW2r5jKKFs=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/yjJOSs+fjUCguca37Fmp1Np6bS/o8AycYV
- q1DSeQLoR6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v8gAKCRDBN2bmhouD
- 1z3+D/4vIO8HONcnYaJfvUTePd6DMbBbn9F/+h5JlkVZ9zuC6/FNYFAdsOVvol0buCd7GaQWZvB
- xkVBikxYPZ/SpZ/juDJ1odkOaVuG+6NFpphe6DNYNdwhio6ejIUqUcPYrgF88Lkc315GuP4WaHh
- LQrpEtjlApG1WaiWbwIyWH2Pe6aYg6XG2Qt5641TUI4xcOu9mdemiA6giWEpFo8OS1fA3vgDolp
- YQWUT5h/oXmzvUoFRt6nTrOWpdPc0cUcectO/1sJxCzVAn6+idbkM/UCEF6dxovgd0Xq1rbtS8Y
- HSlVMFGLgkJ1ujF1QHVdPYR8Ms0Qgsk3cJUMNbvRKw4BWCyPBa9GM+1gp8V+5O4ozHdWYpNwdNJ
- WTVSTv3lSokPa/71tY2WlqDaLwd5Wz/5Cd3NxPrCYKSIti5jI5aF2DkO5fF1NES8LHwVKhwiBPh
- 1GDrE73cb3PgoZQaGrPa8bA6QZNnFoZ0Isw68JLrfs8DvnyGnS0kJmGZsxZvO10+6iu7fv3BMeP
- /yJ5siDXH5HJP4f8bqPef8kK6KkDxp25JKag4raVN91XG1UeuBdgU+0dIOlTfpGHsfvIgcvemJ6
- N8nBHo+dkh0vyPbMITPZEbJASGRHeSS++0db3mzSmkBWtUYQx4Abnd2BV8WH1C0z24W+pTT3FS9
- U08Yg6h2nsqgtDA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/memory/ti-aemif.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-index bb9c8132d8c0..7b48303f183b 100644
---- a/drivers/memory/ti-aemif.c
-+++ b/drivers/memory/ti-aemif.c
-@@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
- 	int ret = -ENODEV;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct device_node *child_np;
- 	struct aemif_device *aemif;
- 	struct aemif_platform_data *pdata;
- 	struct of_dev_auxdata *dev_lookup;
-@@ -366,12 +365,10 @@ static int aemif_probe(struct platform_device *pdev)
- 		 * functions iterate over these nodes and update the cs data
- 		 * array.
- 		 */
--		for_each_available_child_of_node(np, child_np) {
-+		for_each_available_child_of_node_scoped(np, child_np) {
- 			ret = of_aemif_parse_abus_config(pdev, child_np);
--			if (ret < 0) {
--				of_node_put(child_np);
-+			if (ret < 0)
- 				return ret;
--			}
- 		}
- 	} else if (pdata && pdata->num_abus_data > 0) {
- 		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
-@@ -394,13 +391,11 @@ static int aemif_probe(struct platform_device *pdev)
- 	 * child will be probed after the AEMIF timing parameters are set.
- 	 */
- 	if (np) {
--		for_each_available_child_of_node(np, child_np) {
-+		for_each_available_child_of_node_scoped(np, child_np) {
- 			ret = of_platform_populate(child_np, NULL,
- 						   dev_lookup, dev);
--			if (ret < 0) {
--				of_node_put(child_np);
-+			if (ret < 0)
- 				return ret;
--			}
- 		}
- 	} else if (pdata) {
- 		for (i = 0; i < pdata->num_sub_devices; i++) {
+On 16.08.2024 11:54, Krzysztof Kozlowski wrote:
+> On 16/08/2024 10:19, Artur Weber wrote:
+>> @@ -732,6 +794,15 @@ static int max77693_charger_probe(struct platform_device *pdev)
+>>   	chg->dev = &pdev->dev;
+>>   	chg->max77693 = max77693;
+>>   
+>> +	psy_cfg.drv_data = chg;
+>> +
+>> +	chg->charger = devm_power_supply_register(&pdev->dev,
+>> +						  &max77693_charger_desc,
+>> +						  &psy_cfg);
+>> +	if (IS_ERR(chg->charger))
+>> +		return dev_err_probe(&pdev->dev, PTR_ERR(chg->charger),
+>> +				     "failed: power supply register\n");
+> 
+> This code move is not explained in the commit msg. At least I could not
+> find it. Please explain why you need it in the commit msg.
 
--- 
-2.43.0
+This is done because the call to power_supply_get_battery_info in
+max77693_dt_init requires chg->charger to be set. (I was considering
+putting this in the commit message, can't remember why I didn't do it.
+I'll add it in the next version.)
 
+Best regards
+Artur
