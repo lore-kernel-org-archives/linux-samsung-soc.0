@@ -1,61 +1,61 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581041BBBE0
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2024 10:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026C01BC9EB
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2024 10:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805707; cv=none; b=P5vdqBwuRFTQP6zgQ4j7NYgzmEcj4fKFjbi1Ne3PUkZtVUSshrPMasdjJYO9Af+EevjQ9zE/G2ywx/xrHnHcJJhqI5gkgwU9H63wSFixrXDWk5wl08ZkBLWYwBTh391UWyZWG1slV5uBDBYsx/lOims9nE/InwqhFCADF4xBvbA=
+	t=1723805710; cv=none; b=D1Qb9Js+HS02lsObc0hyJQQhZorgPj0Sn7sTLbr/ZWQTWrN8iOhFRbu4acZF9datY/iVOSDE3h4SFIjoyYBC1NIOnnSbXZVwlLP9ECq2fOvoEXwY0YmDPgn2HH2dHfO4/HWsR+PZ0UipzkxK6O8/pTwwyCznniGGmvfBcc0e0+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805707; c=relaxed/simple;
-	bh=sLKW5NlUarRy9P9QN6fIhLPqmjJ63FYokcmqbGYfWRo=;
+	s=arc-20240116; t=1723805710; c=relaxed/simple;
+	bh=XVq1bAp1DPzbReC84gkm7B7jCsUc7V7wiEW2r5jKKFs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LwN7/TIMWZAjgT7zCcyabTpOmFt4zTFGjq5fonnYQaXaLVPriokTRDK6cBdNBDTB00L8QXIl+vvFmK7AWRwbI3aZoLyCW4VAjVjw++0szHmcnPMhHUCgDJoyIIkPZo2Pi/ObKZ+TlkNqGOl4p5i1tDZ/PBL8BdDME6pRdrjnqiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OjYMvv1m; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:To:Cc; b=njIMgMv4i47u55kwiJksSb91EvOUCqhpGJkLQCTwQ0032/JIxW7FcVDpCrfLyms1zTlhpO8G5pxn2yftJSWcsi8JZLRLokh4/BqwgGoXNm4gJPkimJz9X3S6QKHvAB2Aw6ihmEUdObONs2KQtpLiCiU/MWM9/NOlFMTQBny9TWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZRn6+op; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjYMvv1m"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428243f928fso18662895e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2024 03:55:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZRn6+op"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42803bbf842so18564565e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2024 03:55:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723805704; x=1724410504; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723805705; x=1724410505; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sr/Bjb9gFmI1Ph7TbTdrGjwvQKhvfIr9sm0jS+XptdU=;
-        b=OjYMvv1mQ1GVTLtiQpH7vHela0nXJpHtdfjNPDFMBytf7Px3cP3CHrgArhvlTigQen
-         mbDlQ4LCMwDURdEtifl8v+LPhY+81bbdqhi74db1r5D14IX6c98mWVpTfDIHz4rnIpoo
-         L6eBg6dKyoP2Al6ZRBGRYF/LkCNIzhdkR4vibRotd75K/Ck1cFWIOeWZ0VI8P4so4nLV
-         zAmKBNCx0rag/X/Ytikj80plLAP/RFg2R3Bv3+O0CRcx3hp0JPh1+Czc53SwicmZ0hm8
-         zP5PUj4iGxAUsUev+2mRsMTqfF1DJLe8RJJb5gotpVVKYLHdpWtyrE+rUvWaq8J+G/m1
-         jjFA==
+        bh=xzZC0M9EYFXrRYfn9TDzsNDqOMCKTr68cWUMx7V2XT4=;
+        b=KZRn6+opKv1rX7QwuZfaN4+JWsagBSk88vsI8bSJKVWdhq7c3t4ZPl7bP8tY0hBLD4
+         DCp+KtbrPX2T1aMxr1jKu3Puhb5ff8wOlktdaMHaw32efycibL+qIrib0d3lOdHqhS7X
+         dCSVLTnVTB2Hu7NenfuSE1aKGEXzCHsbvbvHeh3gUWmkMhZCKY178wbxH3WR++hgb2Bz
+         7PwRfg7b3Z3uMYueQBXjArkvvedfAO5LKkUvaX7DG8KgDCafC7ol1eP726Dhy7RYrN9A
+         +TL70pDSmHuz/dtjMxJ44g5nDFuvKS289LbfyInfY4ik/eyXSdg21QaiZfHDbfkpTOLO
+         JpIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723805704; x=1724410504;
+        d=1e100.net; s=20230601; t=1723805705; x=1724410505;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sr/Bjb9gFmI1Ph7TbTdrGjwvQKhvfIr9sm0jS+XptdU=;
-        b=NKZd3Tv4cE7WeHnt/gk2ZyzKekhv/PY6GsnFXpqtelbgQCOqpXXaXZ+7RdLuVkxy5r
-         p2JDEcMRlZ7JThberbBCZrAJvhgzqOOSl7VOBn0AIE4/EKuguje5dqiRWsYj8NuqGcLe
-         Viffg4W8iyaE24gfFSxsEja8lcfKMpnnI34jMFyFA/jV3uBL2+ruf0O2eVBMb/ehIk7F
-         HhMCk4Cxtve9YPUtetNWFaFfoPeFMKnh03rO2pxa9o/sduhSKkr3KR63tLl0H8zjoJzc
-         XLKaqNJpRosQ72qtp/SadQEmsG8dlj4iFvN7HSfivmjAoftPerBChuLYRsfKK/36KuCF
-         usWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhqhrlGpTiXEkAKoHqjPPydZptxccTHmF+FVDPwrU5UYKFe2LYTdBBT3iWXfqc9pJjJIGpa5Z/DcXMiqR25bNdMBFnFJmK1CcfwNw2oqSZNF0=
-X-Gm-Message-State: AOJu0YzEUqnhMP6ZTrA8zcHbUZZKD3CpXgfYlrCCf/WKM0kiw8lvFSt5
-	6rXRyuzsFgtgwjY8QjEdaoBtrHzCVn1aWTQv36tvsM4ermlpXCenRdPsSoimlto=
-X-Google-Smtp-Source: AGHT+IHb5s6ZOWiwXyP6F+jIPWHsZbVQ1dRLhQ/L4QjqU83lUzy6ofpXe6PirIt9dJ+aARfVbvTAsA==
-X-Received: by 2002:a05:6000:ec4:b0:371:844f:e07 with SMTP id ffacd0b85a97d-37194315732mr1838165f8f.10.1723805703804;
-        Fri, 16 Aug 2024 03:55:03 -0700 (PDT)
+        bh=xzZC0M9EYFXrRYfn9TDzsNDqOMCKTr68cWUMx7V2XT4=;
+        b=afPGHolrPAcd4VLh1tBbThEc1yoPEgHZ+PAh6wuB8F9n9wYXQ3/Aodk/1/YFi7JX2F
+         2PeV9I/I8D6drLgaUHLwU52Q8EqVey550iMpomIHp1PltTdYbDAMdM/hWOxkJ1Nw1vv9
+         ze6B3qvc4kBlngNx/6w272VD5HAWS6Bw3qEvesypdpJO4HiZSWmS9MRM6kd1kDuDhAa3
+         2JM0L//YeAW1iOUrNxfXuNWAEP/wdh1cLH+VlgxhRhbcyBQCzSqmXn5wdDZTyHVhs+j7
+         nmu4sksLDD8IgabGGWOZT+MGgdZa/eTUfmTXnynWbmSiKFXdJWd9wN1PkzoRAYDuBzSs
+         GaEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp6PvWh+OHwRx5hLATZ3WdizXPbjw0nI4hYlbUJU6endFssv93qboqO6qR5R0NZQCcTRQAlnvtufxWWXMuQSFklyt+2Bowwkr1j/JwBbp6p8Q=
+X-Gm-Message-State: AOJu0YxUPE3mrbsdoBtoijc58dCKoAaNX3d1a+88ZqvdGzz/AvrZr+yQ
+	R7Or3yXY3wDcWtR8ElWLw35yJvfHMlQJy5010XuL6ZclFlHRPYr5u8NiLAqAClA=
+X-Google-Smtp-Source: AGHT+IHjZHJdqi78iF456VbGb6wR7RxT96NknEiGEFoYeO6BRf1QVX7lFBSfHR9ooukIBdApMHs1NQ==
+X-Received: by 2002:a05:600c:208:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-429ed7d6481mr18549855e9.26.1723805705202;
+        Fri, 16 Aug 2024 03:55:05 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.55.02
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.55.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 03:55:03 -0700 (PDT)
+        Fri, 16 Aug 2024 03:55:04 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 12:54:36 +0200
-Subject: [PATCH v2 12/13] memory: ti-aemif: simplify with
- devm_clk_get_enabled()
+Date: Fri, 16 Aug 2024 12:54:37 +0200
+Subject: [PATCH v2 13/13] memory: ti-aemif: simplify with scoped for each
+ OF child loop
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-12-9eed0ee16b78@linaro.org>
+Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-13-9eed0ee16b78@linaro.org>
 References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
 In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -80,123 +80,77 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2695;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1869;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=sLKW5NlUarRy9P9QN6fIhLPqmjJ63FYokcmqbGYfWRo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/xx0XSFMIPdFQTm4JsvW1nfOTyJJMoinp2O
- kk2gGkLpXKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v8QAKCRDBN2bmhouD
- 13OSD/4riPyN506VHZZ2EtdCDx+J9tg/8JMuyGK6I2fpgTQ/UApIm8QW28ZbKP6Gi4RGaYPLju2
- gsf2u14b70xcxQIsZQ0/4SaYjDmdyBfWtO7eiEPax9Ib3ezPylJMPsH0oSRv//ITyMXKC99xC/f
- LgjNORmCyfpeum/TIb+/wgJZfIsRcuscyK0xJVvf9KnipkclzhvsK+gZGCpj2HaXsBa3mRgBegY
- weZX5najE0BjcG+6o9LNJyCW8zuXfJ5jwNUSbG6zCGHFHV4nF+Hn6yGr9mhswoD/FQ6sl5WO2gi
- 9wGfXT0evEkmVKRgBfEGpOS58HPNPidZ1vm7kOImjVP1URT47cFw0KKF0lm8B8Ah3YXo8k8Wsmy
- jvSOvU9NI5IL0iIcFM+tFqcpIz9oyg0M8bxPFDjgkXONJMDo/iDvq/LIyIzWELnYMKEbpKbnMpw
- PH84I+h5hz++T0WuBEKiwAYRBuXVsnJkMtJA7XHBjjaISe5K9a6xBYNDGkpleHhkaozEUcn7pQ5
- NyBlJOjDbmx4CPXuGGm6GKBwBCjPj1kslTvLNQUeDPaU84L+J9Q8nFNbrDS2bKjwrJ0YFx6n8MV
- 71F+bp26PTcPmIYfGGMF+V0i4HBYaBDhYviK1uQE4rEP5Pu6mMVip5QJMvadXyXyCOyGSopSgoB
- muVoxO1VS66+nzg==
+ bh=XVq1bAp1DPzbReC84gkm7B7jCsUc7V7wiEW2r5jKKFs=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/yjJOSs+fjUCguca37Fmp1Np6bS/o8AycYV
+ q1DSeQLoR6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v8gAKCRDBN2bmhouD
+ 1z3+D/4vIO8HONcnYaJfvUTePd6DMbBbn9F/+h5JlkVZ9zuC6/FNYFAdsOVvol0buCd7GaQWZvB
+ xkVBikxYPZ/SpZ/juDJ1odkOaVuG+6NFpphe6DNYNdwhio6ejIUqUcPYrgF88Lkc315GuP4WaHh
+ LQrpEtjlApG1WaiWbwIyWH2Pe6aYg6XG2Qt5641TUI4xcOu9mdemiA6giWEpFo8OS1fA3vgDolp
+ YQWUT5h/oXmzvUoFRt6nTrOWpdPc0cUcectO/1sJxCzVAn6+idbkM/UCEF6dxovgd0Xq1rbtS8Y
+ HSlVMFGLgkJ1ujF1QHVdPYR8Ms0Qgsk3cJUMNbvRKw4BWCyPBa9GM+1gp8V+5O4ozHdWYpNwdNJ
+ WTVSTv3lSokPa/71tY2WlqDaLwd5Wz/5Cd3NxPrCYKSIti5jI5aF2DkO5fF1NES8LHwVKhwiBPh
+ 1GDrE73cb3PgoZQaGrPa8bA6QZNnFoZ0Isw68JLrfs8DvnyGnS0kJmGZsxZvO10+6iu7fv3BMeP
+ /yJ5siDXH5HJP4f8bqPef8kK6KkDxp25JKag4raVN91XG1UeuBdgU+0dIOlTfpGHsfvIgcvemJ6
+ N8nBHo+dkh0vyPbMITPZEbJASGRHeSS++0db3mzSmkBWtUYQx4Abnd2BV8WH1C0z24W+pTT3FS9
+ U08Yg6h2nsqgtDA==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use devm_clk_get_enabled() to drop clock prepare/unprepare parts and
-make code simpler.
+Use scoped for_each_available_child_of_node_scoped() when iterating over
+device nodes to make code a bit simpler.
 
-Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 ---
-
-Changes in v2:
-1. New patch
----
- drivers/memory/ti-aemif.c | 29 ++++++-----------------------
- 1 file changed, 6 insertions(+), 23 deletions(-)
+ drivers/memory/ti-aemif.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-index 360f2705b1ff..bb9c8132d8c0 100644
+index bb9c8132d8c0..7b48303f183b 100644
 --- a/drivers/memory/ti-aemif.c
 +++ b/drivers/memory/ti-aemif.c
-@@ -344,14 +344,10 @@ static int aemif_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, aemif);
- 
--	aemif->clk = devm_clk_get(dev, NULL);
-+	aemif->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(aemif->clk))
- 		return dev_err_probe(dev, PTR_ERR(aemif->clk), "cannot get clock 'aemif'\n");
- 
--	ret = clk_prepare_enable(aemif->clk);
--	if (ret)
--		return ret;
--
- 	aemif->clk_rate = clk_get_rate(aemif->clk) / MSEC_PER_SEC;
- 
- 	if (np && of_device_is_compatible(np, "ti,da850-aemif"))
-@@ -360,10 +356,8 @@ static int aemif_probe(struct platform_device *pdev)
- 		aemif->cs_offset = pdata->cs_offset;
- 
- 	aemif->base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(aemif->base)) {
--		ret = PTR_ERR(aemif->base);
--		goto error;
--	}
-+	if (IS_ERR(aemif->base))
-+		return PTR_ERR(aemif->base);
- 
- 	if (np) {
- 		/*
-@@ -376,7 +370,7 @@ static int aemif_probe(struct platform_device *pdev)
+@@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
+ 	int ret = -ENODEV;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct device_node *child_np;
+ 	struct aemif_device *aemif;
+ 	struct aemif_platform_data *pdata;
+ 	struct of_dev_auxdata *dev_lookup;
+@@ -366,12 +365,10 @@ static int aemif_probe(struct platform_device *pdev)
+ 		 * functions iterate over these nodes and update the cs data
+ 		 * array.
+ 		 */
+-		for_each_available_child_of_node(np, child_np) {
++		for_each_available_child_of_node_scoped(np, child_np) {
  			ret = of_aemif_parse_abus_config(pdev, child_np);
- 			if (ret < 0) {
- 				of_node_put(child_np);
--				goto error;
-+				return ret;
- 			}
+-			if (ret < 0) {
+-				of_node_put(child_np);
++			if (ret < 0)
+ 				return ret;
+-			}
  		}
  	} else if (pdata && pdata->num_abus_data > 0) {
-@@ -391,7 +385,7 @@ static int aemif_probe(struct platform_device *pdev)
- 		if (ret < 0) {
- 			dev_err(dev, "Error configuring chip select %d\n",
- 				aemif->cs_data[i].cs);
--			goto error;
-+			return ret;
- 		}
- 	}
- 
-@@ -405,7 +399,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
+@@ -394,13 +391,11 @@ static int aemif_probe(struct platform_device *pdev)
+ 	 * child will be probed after the AEMIF timing parameters are set.
+ 	 */
+ 	if (np) {
+-		for_each_available_child_of_node(np, child_np) {
++		for_each_available_child_of_node_scoped(np, child_np) {
+ 			ret = of_platform_populate(child_np, NULL,
  						   dev_lookup, dev);
- 			if (ret < 0) {
- 				of_node_put(child_np);
--				goto error;
-+				return ret;
- 			}
+-			if (ret < 0) {
+-				of_node_put(child_np);
++			if (ret < 0)
+ 				return ret;
+-			}
  		}
  	} else if (pdata) {
-@@ -420,21 +414,10 @@ static int aemif_probe(struct platform_device *pdev)
- 	}
- 
- 	return 0;
--error:
--	clk_disable_unprepare(aemif->clk);
--	return ret;
--}
--
--static void aemif_remove(struct platform_device *pdev)
--{
--	struct aemif_device *aemif = platform_get_drvdata(pdev);
--
--	clk_disable_unprepare(aemif->clk);
- }
- 
- static struct platform_driver aemif_driver = {
- 	.probe = aemif_probe,
--	.remove_new = aemif_remove,
- 	.driver = {
- 		.name = "ti-aemif",
- 		.of_match_table = of_match_ptr(aemif_of_match),
+ 		for (i = 0; i < pdata->num_sub_devices; i++) {
 
 -- 
 2.43.0
