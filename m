@@ -1,127 +1,96 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2436B13B2AF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 18:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E2E1DC488
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 19:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724092005; cv=none; b=Y7RJeXaJIPvHYgLwXRdnpOFdHyl7vgVmDlRRYyAh5BX/CnsIv4tTA5Qt90NcOo6igvv/7mtabEJRJqHobKURPy274UqujFjoo9xcjejJvh0D9/Zu5ZeFBDt7+3/DEvZoyFwjx/6Amr8pWx83qdFWcMr3ioYiI7u6HnbbxNPH41g=
+	t=1724097357; cv=none; b=FRK0UYzugEPLfB+cb5TvS6FuOUOPFRlYyP6Fy96iEa6RPB71uB07+L58EY7w1MEbeFKWBPiSjuRkAmhLdtvn2QoMAVBjzHz6fpChgss26JJ0Ll/yNmbRIlIXy/18yapc2bwBuF66zK5qgvwW/Ngt6hL/DUMNUfA6ZwhY93Y1Qmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724092005; c=relaxed/simple;
-	bh=5MQnDfQg0C24LyZXg2Cg/3e2ntF9Sd8G/H/VwrXWHOY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uGEPUO3LSAfqHsbakQqhwmm0oQHNAnstO5pbLvxrS06vEf0iI8e8KuLSN4CrQETW32Gx+01HN5HJKo8OqTuTi7QQ6lRECQD9ywcsBQwlkssrkovnlTBlOgRfqeyPJoppmh/G4IpnRabeXL7GBVUIM2Iw2rLFJ4eeekcWT8e2Ohg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r94+SewC; arc=none smtp.client-ip=209.85.219.179
+	s=arc-20240116; t=1724097357; c=relaxed/simple;
+	bh=56kHQwtpg1lPKjewNCAFNUEpIF/ZSEbFuo5zwprX+pI=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fH9Zs5UMDGxBWaBT8EqzatTj6L49wmNIWikaLBcronQLHdoV3to4cmerB/dQaMG+jZfnSCqrNjYc/nAEAVC+XktKEvjmR5mfxdaSjbvz/tS2RKKgOagpna2LV0glGkoplvvJy9VFejm1o+2rjjJB8Qr0u8MdPGYazYtKDnuSdyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZPB7fugQ; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r94+SewC"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e115ef5740dso4916038276.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 11:26:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZPB7fugQ"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4281faefea9so37041375e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 12:55:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724092003; x=1724696803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YByhFPkfPzhPmiVtK1Ws9JjJ1pYxs/CDLFifKBG4kvY=;
-        b=r94+SewCvBw9PC5AHGQ/dXFBYInfKnffrEO74tFNDeaUyxJNiHFkZFiw4EUDsm0Z0G
-         1kQz9C7ygwjomXOu7x2kCGEXCRQvvZTEdfosP6OLqWgMXYHC5uqgLmjPNa7GTKoa/8tH
-         b/aoym83kFmZ76ygu+kxKUY8xGpZJPtRDph85hXob0C+zhQus27fyvfHUD9P1S8cfF19
-         +sZ9k5IjZLphsulJ2/88YvuDWXy44KUnbFynV75Pj6OoXf7PUNvgX9342SoW1Pf0MWAd
-         755gyhqWOafaYWebPM2ZtBmP8ldlz/qgJQ0q9pYHEV00p0AFZ75XPd/zXho4miU2RveI
-         qtYg==
+        d=linaro.org; s=google; t=1724097354; x=1724702154; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1SIXjnL9/zmUd0fcfye8I+jXnw5Z8DSrvcZ8Np3gZyU=;
+        b=ZPB7fugQQcIjo6QSAXEgsjT+aitpSEJ7LdI5r6MBul+RniSRrmFudM0oN7w8gd0dwC
+         dt8ulzKyDrdGLDde2FG3Z5higKjodONQ799xQeDVaXng/SJRqJ7nWX3cYQuGukqhKZXu
+         lC5GdXDLhtxg09stttbqDAQ/ifN8RX0O8MDDhJysYL3Ls2HLkZXxzl2Xve8TT1o19GUJ
+         WvWMS69MvrIPrWsScLUeC18Ptc9fYiigEoNLJlULAEEDEREs0jGRrYTJ+s7NQsYCluzB
+         7WGsqkMd/JCxb9SoCVi3dMVLR2HMLW/bNR+WtJPS3o3jgr0D0Nvl6oN4JH0mR8ylk891
+         AZwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724092003; x=1724696803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1724097354; x=1724702154;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YByhFPkfPzhPmiVtK1Ws9JjJ1pYxs/CDLFifKBG4kvY=;
-        b=WpQMCVMIGpRUpzXu0uixSCFQMqI1gpm3itheukcHGmjeH7zILvkT3nh15aILib1F2w
-         4NROEI1Er8nTaK0GDUMsH3jNs5VpVCfkIqeI0MyJAQwX9liKTwYuGRpZsX01d9vRrdUu
-         iFD+V7eaoDK1U5PuTLlBpohNZQQTEgfGcCUvYKudGwj+W6JVUeCkFAPuIAJfkt2YFJGP
-         izV7XakwNB+UkG/WkaBZOzt2Xm9qQc0whL+I8TSyejpb1z6iVvCKlY6Wrb2G8i2Ue+rT
-         VkqnCosCp7daigzbNms7QpE4ycK5bmfRQlHFiKkjvoWmxBBurtQmwSrDaGfLBjqiVUCP
-         o70w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvKYpCSbd/bMc0LvujKJ4t3QgX3fTO60gbi6gvAE9TFtkX9WQIQZLS9TbLbWJqZIkntfJFx0aVIPGXk/Pz/kYpifblspxrO6gE5vKX9BpPr9Q=
-X-Gm-Message-State: AOJu0YwlSrY0AB8CCKGdtaovFYhWtMx8ZYSRQfbBs2ntD5xg8bWv9OWj
-	3u4YXNNX0g296j1LE7r1t1mxcWHjg9G1iBgbAI6Gj0NmtFuVuGWaOmuu0hwU4xM/+wrSRnI2IPX
-	2DjS5SbHYM3M+0ImOlVOJ1/JS6LkQWirmEC94WA==
-X-Google-Smtp-Source: AGHT+IEnQ0qhBRiMEKWo4R6ABVuJRwuK7fIq2ZUycjGU2s/QR0txn5fcF8ylMq7Q69EGdS8HtwEP9XdhC3f4Twu2WTI=
-X-Received: by 2002:a05:690c:2d07:b0:64a:e7ec:f3d with SMTP id
- 00721157ae682-6b1b8ce933cmr111378807b3.18.1724092003131; Mon, 19 Aug 2024
- 11:26:43 -0700 (PDT)
+        bh=1SIXjnL9/zmUd0fcfye8I+jXnw5Z8DSrvcZ8Np3gZyU=;
+        b=mVLHgDp0zHrWLEY9CQ9Qp4dZCFmZZDb6lSxJp78dLAxhdz2OLT5VrhJw6n6NSGnuZd
+         3+dSy7tEeVqFkAaW7tmKmtsWfG4vvPTQw3QMYJlodBHfw++rrP+q3xoCikpISrdGUbCT
+         hn9pB2DLij7O1bg+GR6sKg+vlir/PiaHlY8kvuiSn6ZgldhUn8mXurc9uDSc7y1XrvlS
+         b9LDbBb4XZ5Z7faAkO0JcZd2tORGOZW66lMIJ6J9WvWPSrXsvBN8CRT4aaKPSe//FHDd
+         dWkeMXr81htngtR9CpgT23eg6JzEAHxsmkDb84+ejAKoE7dIHPyaSh4EFoksXRjgHrFM
+         2EhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAcQqDsNj0zkcYUOY+aelEIkgQ/XB1xbUAyRKVNH4pSjH/W1Y0eIQYJfDD7RWvsbyvItjd7RiEeNM7YnqjXTOAPo6QOoRrflgZTdPoGfBA/AA=
+X-Gm-Message-State: AOJu0YxIQ/dYJpOxKWBlvuQHX+vZ0ASInqsXjbLy/knQ0dHb9/tExjvi
+	Coww2W7N8jBccBpeLO3TKcJKxoa5D/zi5XKjopo6bsibAkh7Ge3i9Kr46Gk9lvyFvDFYdEQOEWt
+	P
+X-Google-Smtp-Source: AGHT+IEIMesZrsjAsrBCHt62mqeJkbFhD1Zoif7mP2C75jr9Zqo9nsQfgVItQh8BA+hL1eweWpL7vQ==
+X-Received: by 2002:adf:f54e:0:b0:367:340e:d6e6 with SMTP id ffacd0b85a97d-371946a330emr8076461f8f.41.1724097353863;
+        Mon, 19 Aug 2024 12:55:53 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bf0b0cc99fsm172687a12.49.2024.08.19.12.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 12:55:53 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
+References: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: samsung: exynos-usi: add missing
+ constraints
+Message-Id: <172409735248.112951.16161782902762535598.b4-ty@linaro.org>
+Date: Mon, 19 Aug 2024 21:55:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 19 Aug 2024 13:26:31 -0500
-Message-ID: <CAPLW+4ksmXNwdACEzwBaK_VKubZ=SSduNCakkaBn8JRgHTYnoQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: samsung: exynos-usi: add missing constraints
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Sun, Aug 18, 2024 at 12:28=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
+
+On Sun, 18 Aug 2024 19:28:04 +0200, Krzysztof Kozlowski wrote:
 > Properties with variable number of items per each device are expected to
 > have widest constraints in top-level "properties:" block and further
 > customized (narrowed) in "if:then:".  Add missing top-level constraints
 > for reg, clocks and clock-names.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> 
+> 
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Applied, thanks!
 
->  .../bindings/soc/samsung/exynos-usi.yaml          | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yam=
-l b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> index 8b478d6cdc30..f80fcbc3128b 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> @@ -32,11 +32,16 @@ properties:
->        - enum:
->            - samsung,exynos850-usi
->
-> -  reg: true
-> +  reg:
-> +    maxItems: 1
->
-> -  clocks: true
-> +  clocks:
-> +    maxItems: 2
->
-> -  clock-names: true
-> +  clock-names:
-> +    items:
-> +      - const: pclk
-> +      - const: ipclk
->
->    ranges: true
->
-> @@ -113,9 +118,7 @@ then:
->          - description: Operating clock for UART/SPI/I2C protocol
->
->      clock-names:
-> -      items:
-> -        - const: pclk
-> -        - const: ipclk
-> +      maxItems: 2
->
->    required:
->      - reg
-> --
-> 2.43.0
->
+[1/1] dt-bindings: samsung: exynos-usi: add missing constraints
+      https://git.kernel.org/krzk/linux/c/84236ed0a2b1d40a0b72e8dde4b18d641263f5f9
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
