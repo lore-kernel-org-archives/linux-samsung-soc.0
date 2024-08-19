@@ -1,73 +1,73 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5FF15A87F;
-	Mon, 19 Aug 2024 04:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4E714A4F7
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 05:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724043525; cv=none; b=RfwVOBZFEhFdVdjSgnWk6vA0BDppGyOtpl5fgiFzieYYxm56hn+wAj6ltD91uUiyrzPn3px6MlffWfhd+2oVy/1H9H1JimpfNoNUAQv1SwuaU6GtteLT7e0BmIpWgLSe9Tg2uMNUCgm7JXwgL4wIJcbXrre0aR6mtKXHYnb6I9o=
+	t=1724045068; cv=none; b=KDdC7gcjUmwuDMdhHz0qJDK36GjVaO8zmsth4oTRDxHBmW4msJjb4r/eqHyGDkzbndI+bZf0QrzK4b25+Irw35HoZINkfhA+TaW5ltS+gtpmRI7MaR/mU383etR8mYlmyDGXw9BHPTZ1GWK7dLlNzURcD4Dr3jtsYFXz7HKMNgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724043525; c=relaxed/simple;
-	bh=pujRvm4ARPdX6ZSe8VlYOOI1pXoBBQFVAweJDtzA4fA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gh3C1ybF8rnKkPqZ69AgsDdagsXSEMZaMllgQaS07JcstSVovNN/x9vG+7fS1yuOh4oiWnix4RDWTn9kHZnZCIjW+oYZM0Lk6nA7auoDWrb7zx0gmXmhenGvGX0E8Sc7NSQHnrkFWisbvPeAJBjo7KcI+0qHBDBbe1dl6nXQlIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOegargB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724045068; c=relaxed/simple;
+	bh=AkyWJ9I6Hd2zktck1kauTocadzukvCDLU9FEN2IAB8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=cNEI1e7zuxBujk89cvZ/pt0oyj/ZTYDLwm9r4VWF3o229LGApOqjaDuYQ/a5TgJub27h6HyI9W12Chmcp4VM+8TpO7tFQhzmzAInewVffLfBuiptxhlUgaOpu01rctcbFay3hJqhHp1pe9StQ+Qu1aZfmxcPZSLvH0IBEejgs/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y0Po6SJn; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOegargB"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20219a0fe4dso12788645ad.2;
-        Sun, 18 Aug 2024 21:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724043523; x=1724648323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mcaRHM3+7D0S7NodLplOw/AYGyYPhnOV3W4X3E8TpD0=;
-        b=XOegargB0Baubnb0XGTm1rpMhRq6rbFhv72wL28uR4VYZaeoDqrbgEaO2IxqBxt2ji
-         atLztTbLjvWcJ0nNKK886fLW3MVk2uPDPum5EWOks5JZHpAK8lckTYd1vXr/eaSC2Ega
-         KEeeVhHo7WyvXprFfbmTlhZxcdz8wL6FI5awDRhGTc/FpHv/NM/sralpaMGMyYuiATzE
-         XyY0mWVjHdWmtb0kGyCCG7i1Cgo55izVCzIUrUygxAO08CUIl+f0/T/UZ/4B2OzubcgX
-         SniGLzz68uHtAB3md4miRyHp3j6fthTSeevv9GxdQ+A6nCX9HLODl0108x+7tF/2hz30
-         Hh1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724043523; x=1724648323;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mcaRHM3+7D0S7NodLplOw/AYGyYPhnOV3W4X3E8TpD0=;
-        b=vvF7AN1s5yS6UYCRJRyLbAlzHcE18/R8MHu0iiEgSttOVOonxaFEFMF9cJSbc84PgH
-         zFS9Qy2y/zbaLb/tpLQ+/lKlJ0SqS28/F2q7PNr4cY1w/FxFdVE67PPx3aB1hT0m7EZe
-         czcj0Xbj7FIDW9c76I5BnvoWe+sgh4NHGhjFkeQcam+DKi+Ep4PaGNWo7WLfZsVChNY3
-         g/QZWMnATcqoPvhpzaKDwQywB0kdx4L8XIp06SFHHwa1UIz3tk2SLTSOVCB9y34vmf09
-         hIlQZrfOj7A40tSYJhPcm5JlSiZvKgA670ZmHarSKtRcQ+cqbDo4R8Dl6Sb8eCljGKSx
-         aVUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtoJrpgD7U5Nl5AD9FrP+GtApFm0dWdR2m1Pbzsx/0XlIRM1D4k/OfdNSWusyW6KQ+hIlLY8UE+JhdDrlPXqIHYQG1Iy6d1h2adYXcXItqRLceuXLMLlJ3ddN7ZjNUBPVtXaSn1RauLHAHCJ6YZsNI84BbUZp9v59p30xBhBjvMhvinwQiJqmM6nNS
-X-Gm-Message-State: AOJu0YwqkUP23cBFneZnrtkh2MxU6DJ8lU1M523XDYQnCkhqTdNm9Kez
-	xgoZzH+RRvdaN7fwVPMVx85DcRNs9RgDtVfKnZ2IvvJXEdrbqhtK
-X-Google-Smtp-Source: AGHT+IHM1aUHr6FlaVm7qvuOxYje+ccNPFOl/JhsZ8ri8UtXMzODBg9MkExumxB7dA0FrEYWROONhg==
-X-Received: by 2002:a17:902:cec9:b0:202:1033:8d25 with SMTP id d9443c01a7336-202195f9591mr81380085ad.35.1724043522899;
-        Sun, 18 Aug 2024 21:58:42 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:4eb5:4500:6efc:6c24])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-202068497b4sm43483445ad.269.2024.08.18.21.58.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 21:58:42 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: [PATCH 14/14] ARM: s3c: crag6410 - convert GPIO lookup tables to property entries
-Date: Sun, 18 Aug 2024 21:58:11 -0700
-Message-ID: <20240819045813.2154642-15-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y0Po6SJn"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240819052424epoutp022d15a9c1f87d57afe795c80dd3530edb~tCdoAgAXl0971309713epoutp02G
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 05:24:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240819052424epoutp022d15a9c1f87d57afe795c80dd3530edb~tCdoAgAXl0971309713epoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724045064;
+	bh=bAiZEbXYaEhIP7FM2a6MyvX2CrU3Y1JE6JPzxHX7HAU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Y0Po6SJnCNtN33a7Dp5XkFrUCg3tuRyybEw/aDNCHMIYAN/zlcCXdgzxzSbAI+SCu
+	 m5ik8XQ4ZY6AZgps8d/VR2LYpmPiFazFlCzq8twHYEflO6AX82uVe1TfhMNv2QPVM0
+	 QFDrRkYxuFA3WVbaF0OraW3v/dOKOnqPZmh+xxHo=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20240819052423epcas2p2cbedbda7effaae51b81ebcbae498de71~tCdng6sp30710607106epcas2p2g;
+	Mon, 19 Aug 2024 05:24:23 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WnLck6xfjz4x9Px; Mon, 19 Aug
+	2024 05:24:22 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	84.B2.08901.607D2C66; Mon, 19 Aug 2024 14:24:22 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240819052422epcas2p4f2ee384824a64e1b6f074de972ab3ffc~tCdmXWhvG2696526965epcas2p4K;
+	Mon, 19 Aug 2024 05:24:22 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240819052422epsmtrp1edc7d232126eda390e105220902a74a3~tCdmWiqDf1581915819epsmtrp1h;
+	Mon, 19 Aug 2024 05:24:22 +0000 (GMT)
+X-AuditID: b6c32a43-a0fff700000022c5-69-66c2d7064af7
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	35.EE.08456.607D2C66; Mon, 19 Aug 2024 14:24:22 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240819052422epsmtip1d769f6b163ea3e70a01967b7afe8d541~tCdmGB5P91811018110epsmtip11;
+	Mon, 19 Aug 2024 05:24:22 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH v6 2/4] arm64: dts: exynos: add initial CMU clock nodes in
+ ExynosAuto v920
+Date: Mon, 19 Aug 2024 14:24:13 +0900
+Message-ID: <20240819052416.2258976-3-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -75,252 +75,144 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmmS7b9UNpBkfPm1g8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7YuuYPW0GLeEXThk3sDYxL
+	hboYOTgkBEwkPjaEdTFycQgJ7GCUmN/8mRHC+cQosej6VijnG6PE0oM3WbsYOcE6fk4/ygKR
+	2Mso8f7+Pqiqj4wS618tYQKZyyagK/HnnwNIXERgD5PElvMgcS4OZoGzjBJ35yxgBxklLBAj
+	sff7QzYQm0VAVWLSxc3MIDavgL3EzMsPmSDWyUtcXPMcrIZTwEHizMtzLBA1ghInZz4Bs5mB
+	apq3zmYGWSAhMJND4u/iLqhmF4mNDydA3S0s8er4FnYIW0riZX8blJ0vMfn6WyaI5gZGiWv/
+	upkhEvYSi878ZAd5h1lAU2L9Ln1IiClLHLkFtZdPouPwX3aIMK9ER5sQRKOaxKcrl6GGyEgc
+	O/EMyvaQePPoDBsksCYzSqyYcZFtAqPCLCTvzELyziyExQsYmVcxiqUWFOempyYbFRjCozg5
+	P3cTIzjhajnvYLwy/5/eIUYmDsZDjBIczEoivN0vD6YJ8aYkVlalFuXHF5XmpBYfYjQFBvZE
+	ZinR5Hxgys8riTc0sTQwMTMzNDcyNTBXEue91zo3RUggPbEkNTs1tSC1CKaPiYNTqoHJx8dP
+	tET9xI1Nk09W8MTdbfiRdHCb/ObzQRUbHy2w5665JdGouG7hs5VGX3s7ZZQPx9puEhNhU5gv
+	JWSbuD790tFPvjrn/ULuppscWPC39QXXtsPG+f5KkhcZD+/vK1wRGLvW42rZpcecSQ/vlOx6
+	IHh9i+WJl4bMvYX/QnMUGGrkGHW/CxgqebeK6rdsVFomwJ//ZfXMqx+2/svazecxYyO3RkSb
+	/uIpWscf9C17NlNKav+bIywmYYlznnYlWnoGdwaHeSSsj9TnTvZ+LH6yYRLvD2XlRYZ2CoZL
+	WDWmfL6zge1GsPqPLfy3/MTSarh6q7nZ68In/nWboS+/UEphs9VTsynHZxx64pbPtFuJpTgj
+	0VCLuag4EQC9637vQQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnC7b9UNpBjP7xC0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Mrau
+	+cNW0CJe0bRhE3sD41KhLkZODgkBE4mf04+ydDFycQgJ7GaUWLT6KzNEQkZiY8N/dghbWOJ+
+	yxFWiKL3jBIHr7UBJTg42AR0Jf78cwCJiwgcYpKY+Pkp2CRmgcuMEsfuTgabJCwQJTG5YyXY
+	JBYBVYlJFzeDxXkF7CVmXn7IBLFBXuLimudsIDangIPEmZfnWEBsIaCam9d+M0LUC0qcnPkE
+	LM4MVN+8dTbzBEaBWUhSs5CkFjAyrWKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI4N
+	La0djHtWfdA7xMjEwXiIUYKDWUmEt/vlwTQh3pTEyqrUovz4otKc1OJDjNIcLErivN9e96YI
+	CaQnlqRmp6YWpBbBZJk4OKUamHp8zlk9iVFdwqxn/0xa8twDi9N5fmuzEg8ovq1cySgnz1aW
+	sm72pmXZv0I/5ertKPyR1DNVZU8ek9qLmhcy3hrbs+Z4bZgXGvds2ZwJiQI8oWoyXb4pYiK7
+	plX1f4qPyNI5H+FWt/j59Qkb+z9abwpn/VElmd1cevXXM2e+VvvQtI0f25gVVhzyYF1sO7VQ
+	58fme6uYuHyK3Of6bI/+fDS65UhgvtWvGY/a6h/271g14a6j5Xo9ZeEb++XUvwS1s9T+mPJK
+	vVNq3smkLbH7Pu9gipdcXndz7acJEYa9HuKSN/hOml/zSZnr/sHxaehCqetZDPYvEsQuzQtV
+	aar/eZkpqmiXv0F3UfVyRW9HJZbijERDLeai4kQA48vjXPwCAAA=
+X-CMS-MailID: 20240819052422epcas2p4f2ee384824a64e1b6f074de972ab3ffc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819052422epcas2p4f2ee384824a64e1b6f074de972ab3ffc
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+	<CGME20240819052422epcas2p4f2ee384824a64e1b6f074de972ab3ffc@epcas2p4.samsung.com>
 
-Static property entries support defining GPIOs and are more similar to
-device tree properties and are not prone to losing link between device
-and a lookup table because of changes in device name. Convert the board
-to use them.
+Add cmu_top, cmu_peric0 clock nodes and
+switch USI clocks instead of dummy fixed-rate-clock.
 
-This also fixes issue with recent conversion to GPIO descriptors
-where GPIO lookup tables were specifying incorrect GPIO chip name
-("GPIO<N>" vs "GP<N>").
-
-Fixes: 10a366f36e2a ("ASoC: wm1250-ev1: Convert to GPIO descriptors")
-Fixes: a45cf3cc72dd ("spi: s3c64xx: Convert to use GPIO descriptors")
-Fixes: 9a5ed0bac86e ("regulator: wm831x: Convert to use GPIO descriptors")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
 ---
- arch/arm/mach-s3c/devs.c          |  35 ----------
- arch/arm/mach-s3c/devs.h          |   1 -
- arch/arm/mach-s3c/mach-crag6410.c | 108 ++++++++++++++++++------------
- 3 files changed, 67 insertions(+), 77 deletions(-)
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 40 +++++++++++++------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-s3c/devs.c b/arch/arm/mach-s3c/devs.c
-index 31827cfc5700..e24967cc648b 100644
---- a/arch/arm/mach-s3c/devs.c
-+++ b/arch/arm/mach-s3c/devs.c
-@@ -336,38 +336,3 @@ void __init dwc2_hsotg_set_platdata(struct dwc2_hsotg_plat *pd)
- 		npd->phy_exit = s3c_usb_phy_exit;
- }
- #endif /* CONFIG_S3C_DEV_USB_HSOTG */
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index c1c8566d74f5..91882b37fdb3 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -6,6 +6,7 @@
+  *
+  */
+ 
++#include <dt-bindings/clock/samsung,exynosautov920.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/soc/samsung,exynos-usi.h>
+ 
+@@ -38,17 +39,6 @@ xtcxo: clock {
+ 		clock-output-names = "oscclk";
+ 	};
+ 
+-	/*
+-	 * FIXME: Keep the stub clock for serial driver, until proper clock
+-	 * driver is implemented.
+-	 */
+-	clock_usi: clock-usi {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <200000000>;
+-		clock-output-names = "usi";
+-	};
 -
--#ifdef CONFIG_S3C64XX_DEV_SPI0
--static struct resource s3c64xx_spi0_resource[] = {
--	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
--	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
--};
--
--struct platform_device s3c64xx_device_spi0 = {
--	.name		= "s3c6410-spi",
--	.id		= 0,
--	.num_resources	= ARRAY_SIZE(s3c64xx_spi0_resource),
--	.resource	= s3c64xx_spi0_resource,
--	.dev = {
--		.dma_mask		= &samsung_device_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	},
--};
--
--void __init s3c64xx_spi0_set_platdata(int src_clk_nr, int num_cs)
--{
--	struct s3c64xx_spi_info pd;
--
--	/* Reject invalid configuration */
--	if (!num_cs || src_clk_nr < 0) {
--		pr_err("%s: Invalid SPI configuration\n", __func__);
--		return;
--	}
--
--	pd.num_cs = num_cs;
--	pd.src_clk_nr = src_clk_nr;
--	pd.cfg_gpio = s3c64xx_spi0_cfg_gpio;
--
--	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
--}
--#endif /* CONFIG_S3C64XX_DEV_SPI0 */
-diff --git a/arch/arm/mach-s3c/devs.h b/arch/arm/mach-s3c/devs.h
-index 2737990063b1..90a86ade3570 100644
---- a/arch/arm/mach-s3c/devs.h
-+++ b/arch/arm/mach-s3c/devs.h
-@@ -27,7 +27,6 @@ extern struct platform_device *s3c24xx_uart_src[];
+ 	cpus: cpus {
+ 		#address-cells = <2>;
+ 		#size-cells = <0>;
+@@ -192,6 +182,19 @@ gic: interrupt-controller@10400000 {
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
- extern struct platform_device s3c64xx_device_iis0;
- extern struct platform_device s3c64xx_device_iis1;
--extern struct platform_device s3c64xx_device_spi0;
- 
- extern struct platform_device s3c_device_fb;
- extern struct platform_device s3c_device_hsmmc0;
-diff --git a/arch/arm/mach-s3c/mach-crag6410.c b/arch/arm/mach-s3c/mach-crag6410.c
-index 6aa74db08af9..a7a25239793e 100644
---- a/arch/arm/mach-s3c/mach-crag6410.c
-+++ b/arch/arm/mach-s3c/mach-crag6410.c
-@@ -435,7 +435,6 @@ static struct platform_device *crag6410_devs0[] __initdata = {
- 
- static struct platform_device *crag6410_devs1[] __initdata = {
- 	&crag6410_dm9k_device,
--	&s3c64xx_device_spi0,
- 	&crag6410_mmgpio,
- 	&crag6410_lcd_powerdev,
- 	&crag6410_backlight_device,
-@@ -654,22 +653,13 @@ static struct wm831x_pdata crag_pmic_pdata = {
- 	.touch = &touch_pdata,
- };
- 
--/*
-- * VDDARM is eventually ending up as a regulator hanging on the MFD cell device
-- * "wm831x-buckv.1" spawn from drivers/mfd/wm831x-core.c.
-- *
-- * From the note on the platform data we can see that this is clearly DVS1
-- * and assigned as dcdc1 resource to the MFD core which sets .id of the cell
-- * spawning the DVS1 platform device to 1, then the cell platform device
-- * name is calculated from 10*instance + id resulting in the device name
-- * "wm831x-buckv.11"
-- */
--static struct gpiod_lookup_table crag_pmic_gpiod_table = {
--	.dev_id = "wm831x-buckv.11",
--	.table = {
--		GPIO_LOOKUP("GPIOK", 0, "dvs", GPIO_ACTIVE_HIGH),
--		{ },
--	},
-+static const struct property_entry crag_pmic_properties[] = {
-+	PROPERTY_ENTRY_GPIO("dvs-gpios",
-+			    SAMSUNG_GPIO_NODE('K'), 0, GPIO_ACTIVE_HIGH),
-+	{ }
-+};
-+static const struct software_node crag_pmic_swnode = {
-+	.properties = crag_pmic_properties,
- };
- 
- static struct i2c_board_info i2c_devs0[] = {
-@@ -680,6 +670,7 @@ static struct i2c_board_info i2c_devs0[] = {
- 	{ I2C_BOARD_INFO("wm8312", 0x34),
- 	  .platform_data = &crag_pmic_pdata,
- 	  .irq = S3C_EINT(23),
-+	  .swnode = &crag_pmic_swnode,
- 	},
- };
- 
-@@ -774,17 +765,22 @@ static struct wm831x_pdata glenfarclas_pmic_pdata = {
- 	.disable_touch = true,
- };
- 
--static struct gpiod_lookup_table crag_wm1250_ev1_gpiod_table = {
--	/* The WM1250-EV1 is device 0027 on I2C bus 1 */
--	.dev_id = "1-0027",
--	.table = {
--		GPIO_LOOKUP("GPION", 12, "clk-ena", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 12, "clk-sel0", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 13, "clk-sel1", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 14, "osr", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOL", 8, "master", GPIO_ACTIVE_HIGH),
--		{ },
--	},
-+static const struct property_entry crag_wm1250_ev1_properties[] = {
-+	PROPERTY_ENTRY_GPIO("clk-ena-gpios",
-+			    SAMSUNG_GPIO_NODE('N'), 12, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("clk-sel0-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 12, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("clk-sel1-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 13, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("osr-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 14, GPIO_ACTIVE_HIGH),
-+	PROPERTY_ENTRY_GPIO("master-gpios",
-+			    SAMSUNG_GPIO_NODE('L'), 8, GPIO_ACTIVE_HIGH),
-+	{ }
-+};
++		cmu_peric0: clock-controller@10800000 {
++			compatible = "samsung,exynosautov920-cmu-peric0";
++			reg = <0x10800000 0x8000>;
++			#clock-cells = <1>;
 +
-+static const struct software_node crag_wm1250_ev1_swnode = {
-+	.properties = crag_wm1250_ev1_properties,
- };
- 
- static struct i2c_board_info i2c_devs1[] = {
-@@ -797,7 +793,8 @@ static struct i2c_board_info i2c_devs1[] = {
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x24) },
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x25) },
- 	{ I2C_BOARD_INFO("wlf-gf-module", 0x26) },
--	{ I2C_BOARD_INFO("wm1250-ev1", 0x27), },
-+	{ I2C_BOARD_INFO("wm1250-ev1", 0x27),
-+          .swnode = &crag_wm1250_ev1_swnode, },
- };
- 
- static struct s3c2410_platform_i2c i2c1_pdata = {
-@@ -887,15 +884,48 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
- 
- static struct dwc2_hsotg_plat crag6410_hsotg_pdata;
- 
--static struct gpiod_lookup_table crag_spi0_gpiod_table = {
--	.dev_id = "s3c6410-spi.0",
--	.table = {
--		GPIO_LOOKUP_IDX("GPIOC", 3, "cs", 0, GPIO_ACTIVE_LOW),
--		GPIO_LOOKUP_IDX("GPION", 5, "cs", 1, GPIO_ACTIVE_LOW),
--		{ },
--	},
-+static const struct software_node_ref_args crag6410_spi0_gpio_refs[] = {
-+	SOFTWARE_NODE_REFERENCE(SAMSUNG_GPIO_NODE('C'), 3, GPIO_ACTIVE_LOW),
-+	SOFTWARE_NODE_REFERENCE(SAMSUNG_GPIO_NODE('N'), 5, GPIO_ACTIVE_LOW),
-+};
++			clocks = <&xtcxo>,
++				 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
++				 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
++			clock-names = "oscclk",
++				      "noc",
++				      "ip";
++		};
 +
-+static const struct property_entry crag6410_spi0_properties[] __initconst = {
-+	PROPERTY_ENTRY_REF_ARRAY("cs-gpios", crag6410_spi0_gpio_refs),
-+	{ }
- };
+ 		syscon_peric0: syscon@10820000 {
+ 			compatible = "samsung,exynosautov920-peric0-sysreg",
+ 				     "syscon";
+@@ -213,7 +216,8 @@ usi_0: usi@108800c0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+-			clocks = <&clock_usi>, <&clock_usi>;
++			clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
++				 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
+ 			clock-names = "pclk", "ipclk";
+ 			status = "disabled";
  
-+static const struct resource crag6410_spi0_resource[] __initconst = {
-+	[0] = DEFINE_RES_MEM(S3C_PA_SPI0, SZ_256),
-+	[1] = DEFINE_RES_IRQ(IRQ_SPI0),
-+};
+@@ -224,7 +228,8 @@ serial_0: serial@10880000 {
+ 				interrupts = <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&uart0_bus>;
+-				clocks = <&clock_usi>, <&clock_usi>;
++				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
++					 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
+ 				clock-names = "uart", "clk_uart_baud0";
+ 				samsung,uart-fifosize = <256>;
+ 				status = "disabled";
+@@ -254,6 +259,15 @@ pinctrl_peric1: pinctrl@10c30000 {
+ 			interrupts = <GIC_SPI 781 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		cmu_top: clock-controller@11000000 {
++			compatible = "samsung,exynosautov920-cmu-top";
++			reg = <0x11000000 0x8000>;
++			#clock-cells = <1>;
 +
-+static const struct s3c64xx_spi_info crag6410_spi0_platform_data __initconst = {
-+	.num_cs = 2,
-+	.cfg_gpio = s3c64xx_spi0_cfg_gpio,
-+};
++			clocks = <&xtcxo>;
++			clock-names = "oscclk";
++		};
 +
-+static const struct platform_device_info crag6410_spi0_info __initconst = {
-+	.name		= "s3c6410-spi",
-+	.id		= 0,
-+	.res		= crag6410_spi0_resource,
-+	.num_res	= ARRAY_SIZE(crag6410_spi0_resource),
-+	.data		= &crag6410_spi0_platform_data,
-+	.size_data	= sizeof(crag6410_spi0_platform_data),
-+	.dma_mask	= DMA_BIT_MASK(32),
-+	.properties	= crag6410_spi0_properties,
-+};
-+
-+static void __init crag6410_setup_spi0(void)
-+{
-+	struct platform_device *pd;
-+	int err;
-+
-+	pd = platform_device_register_full(&crag6410_spi0_info);
-+	err = PTR_ERR_OR_ZERO(pd);
-+	if (err)
-+		pr_err("failed to create spi0 device: %d\n", err);
-+}
-+
- static void __init crag6410_machine_init(void)
- {
- 	/* Open drain IRQs need pullups */
-@@ -922,19 +952,15 @@ static void __init crag6410_machine_init(void)
- 	s3c_fb_set_platdata(&crag6410_lcd_pdata);
- 	dwc2_hsotg_set_platdata(&crag6410_hsotg_pdata);
- 
--	gpiod_add_lookup_table(&crag_pmic_gpiod_table);
- 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
--	gpiod_add_lookup_table(&crag_wm1250_ev1_gpiod_table);
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
--	gpiod_add_lookup_table(&crag_spi0_gpiod_table);
--	s3c64xx_spi0_set_platdata(0, 2);
--
- 	pwm_add_table(crag6410_pwm_lookup, ARRAY_SIZE(crag6410_pwm_lookup));
- 	platform_add_devices(crag6410_devs0, ARRAY_SIZE(crag6410_devs0));
- 
- 	crag6410_setup_keypad();
- 	crag6410_setup_gpio_keys();
-+	crag6410_setup_spi0();
- 
- 	platform_add_devices(crag6410_devs1, ARRAY_SIZE(crag6410_devs1));
- 
+ 		pinctrl_alive: pinctrl@11850000 {
+ 			compatible = "samsung,exynosautov920-pinctrl";
+ 			reg = <0x11850000 0x10000>;
 -- 
-2.46.0.184.g6999bdac58-goog
+2.45.2
 
