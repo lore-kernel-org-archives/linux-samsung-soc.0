@@ -1,131 +1,158 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9197F208A4;
-	Mon, 19 Aug 2024 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689A615B992;
+	Mon, 19 Aug 2024 09:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724055601; cv=none; b=I59bJD4atz0Y+Q10b1McYoNGRL4IdPiLPaPho60/MRcqQEaFZg8Mvywky8YHdDMXL1pLFZYrWQbyGFERPAdfvR4rgXTYo8192c75BkETRcgoQJ1DSMSgnFuuJuR9jiXbY7Cb593tjRprFexKnjIqHtW3cuMGddLpXH86KSOaS/8=
+	t=1724059054; cv=none; b=dBt+2bnTLdHntmiYsUPCS7tuEUbcqIM2MplOVzETnlElXAjYRz/4Fp2u7Pt9drL+kNX0kSA+cbWTZ04W9An7RMlalHdcdxmLpvmkvpGJLGczUzt5YHUhI9KKNqHqDRdS3CrAI3cAYFiKr/fwm8urG7tBBANCmGPZOLfM0etM8X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724055601; c=relaxed/simple;
-	bh=Nouv1Dmsj8RfgcNwsiQ+zvpCbcVDYDMltRGUv/xjAqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VUkJ4qK76Gunnt0MHDdwxdmDfClbOr4ehPp3nzwREC++UXrjOwSe6QKUh2ATS9mL9dLuMxYo3d0qGLmeVf8sXsKS+WrxhWA48gz1y8euD26UwGijHMx+b0XA1je5RXEq4m0mI3uLhUUpPD0rTTBP5Yruw+liXnqC3yBxvmej6v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso33654935e9.1;
-        Mon, 19 Aug 2024 01:19:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724055598; x=1724660398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AUYUJLRw3TtbPkMZU63P542FQWJqsbgCa/2jFZaO0fE=;
-        b=YtnZRyVCZvwwdOTS6UMacdnJRZdcS1VM3iKYJ3TPJ9ed9WFWoMoe/t4E+689NBxAci
-         rsEpcvV0yTH/1X9nVujGKsZVa9sYfj6EfLkMP48sw1wxPQzpJdAuxgOUwkGMy8z6/VMl
-         ucH0JnlP6hbe6MumnftEg4K+MRSGpUsCELucBsvxjQ4crOVxfKJzQ4d11AWsLMceGnk3
-         fKeXDVYJA0aiigl+xPIwW/ThZM9bsuEYYhGGtEly+CDtJthLxz9BOomgTHNtGR6NKulg
-         KnTn0YzVh5Sn/gLjE1dv1vuaHSMXuudFysK12pCUqkaU0CFMKv94PgFGt0iQMHgVtf8G
-         kk2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWjafHrBIzTKsI7AuuvswNUC3js6nNOx8csE+jydL7YEPKKBSm/RVxP4ymT7hOqVSqbkvYN8XPP3JRY11tmsCkFbZkNLBs3sl4wzfpr++T+ZTyCxtT3CBvbCpnxB5AckZfPNn+iAPSLnavRB86ZiiD7drfEsyPaytJQBQDyvw6Z7ev/gtQXYRj182QmL7TwtCNrhem1pWH+l3AXOVGOIq9PIgBTdRL
-X-Gm-Message-State: AOJu0Yw/MAR3CoKut9uSYaoD/n47dIsplNC1M3t/6hrmQqG5CFklAZ5I
-	/hXfojKrTMpT3+ueCKwkYfmcxnnL3fXNoX05GvjLP4kPaUE03wb6
-X-Google-Smtp-Source: AGHT+IHFbZ0xIu4V8B12eur1z2oMlUHsadyUlMiAVvi2bhhhOQxH8YyisZyXZiXRYgozYAZBhPnxYA==
-X-Received: by 2002:a05:600c:3c99:b0:426:6220:cb57 with SMTP id 5b1f17b1804b1-42aa82651fcmr38918415e9.25.1724055597563;
-        Mon, 19 Aug 2024 01:19:57 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429ded29fcfsm155437865e9.20.2024.08.19.01.19.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 01:19:56 -0700 (PDT)
-Date: Mon, 19 Aug 2024 10:19:53 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sunyeal Hong <sunyeal.hong@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-Message-ID: <nqokjhodd4g3l7s5ukvhirytv4poiusgd5hgv2ntn3ekyolzyd@zmxxtwjgkqmp>
-References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
- <CGME20240819052422epcas2p4db394defd5f298658f7841af3649ac6f@epcas2p4.samsung.com>
- <20240819052416.2258976-2-sunyeal.hong@samsung.com>
+	s=arc-20240116; t=1724059054; c=relaxed/simple;
+	bh=IqniPhbCmZxI9RtQPRoTeIcqNs7wU34N4HJzmRdKoLc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XnSs4y+OLx6Lh9x4VytrK8HLsM/YUMBDtuSLMAxeerfzc2oQGBsWXykUKNnQoZfytqopgNZ7vbNE8qTQv/mjM1gySGe2k+gJrmqOzR03xq/jf6oSqKC12kMMiQ13xvcywhskrapWNn2JXCM4tBhtcFXVPjMzvX4hZQRwDTFcnBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ud6JcAod; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dpx3IjKI; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ud6JcAod";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dpx3IjKI"
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 7209B1150836;
+	Mon, 19 Aug 2024 05:17:31 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Mon, 19 Aug 2024 05:17:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724059051;
+	 x=1724145451; bh=oVEsI+flW84gQwRAmwbOjMNDy4XUMPgz5I0zP431mCw=; b=
+	Ud6JcAodEHQ43uv1js/tvbMDGmKlleBjvQ6u3go/ut4c3Lye59mh73AB9ZURu+QP
+	nX4ddZM8RS0/XZPugidUx/gmJ50LF8P1aTv8l8yhMBW1VYazgP7/W5KQdakOoY32
+	YgC/1e8V81u8v2n/oC9CfsYGLotiHSQf8rHrYrvKHi0Pov+ZHBhhhVdQx5WibfmF
+	xLY54sj+u6RXlfPNhrLF7tgtqVC2PjqFio2TKqlCCJEOIGGiDHVhlVTFvUMkvKpr
+	PwC8ZDADO1x8AZyLLjOCRp0cHwoWpDrYghFRLOwSNHCB80MIR0uumX59MuRj+hDO
+	lQr4UN9klr8j1zgvNgpqLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724059051; x=
+	1724145451; bh=oVEsI+flW84gQwRAmwbOjMNDy4XUMPgz5I0zP431mCw=; b=d
+	px3IjKIcF4HxkvSSk5sCZglQnDctnDggwja+d6Kh4CHa00U07cyAijWSfsVxfH4r
+	S4JJ19trSBargI08bB3TqB9sOwpSfdssjIfjO7x9Gxa+F+NF4NvGSDEAtuzwexT+
+	LXdQ9XhzCR4cXg+rc19x1QImDCk+xSf2GPGUdqybPhvVi07bGX6GbpBKHUhbou1/
+	nFmP/GQQPDJHHujeVieUKOAHD8l0cdGkxc3UeT2zkyr8yHTT7aYi3WEWrnQoO9Zi
+	kKJwU+8s5gEAVyyLWOiLW9rUdXDjMKeFvns/yzV631d8mVhk4tVvLZ1OcvARvtt2
+	F43Lem5NomunH/xhHFLSg==
+X-ME-Sender: <xms:qg3DZqJ_-mqNyRF3xoP8OYz9XE-yiNJ6gfN5K7kI4WT0UxpAcbcMUQ>
+    <xme:qg3DZiIAogjVOCE-Y3pdBEksPOxiGKEwrOqxlVZ6LS4lA8veYrrAU-8s-IVpihotw
+    VgX9ENxCYv-YZtrBAo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddugedgudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdeh
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehrihgthhgrrhgurdgvrghrnhhshh
+    grfiesrghrmhdrtghomhdprhgtphhtthhopehrihgthhgrrhgurdhsrghnughifhhorhgu
+    segrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrd
+    hukhdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomhdprhgtphhtthhopehg
+    rhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnh
+    hitghosehflhhugihnihgtrdhnvghtpdhrtghpthhtoheprghlvgigrghnughrvgdrthho
+    rhhguhgvsehfohhsshdrshhtrdgtohhmpdhrtghpthhtoheprhhosggvrhhtrdhjrghrii
+    hmihhksehfrhgvvgdrfhhrpdhrtghpthhtohepughmihhtrhihrdhtohhrohhkhhhovhes
+    ghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:qg3DZqvy0Ms2WN7rlf3dz4MxENrFR6kIkTgACjD-LxGv2-K2cXEOhg>
+    <xmx:qg3DZvZghMZgwu5eS-WPU40pW-W7a00Uxahb0RKVH2NXaPEdmSetTA>
+    <xmx:qg3DZhYRhmgPElU9UfovaioVay8uZpslc0qtf-aCpofExIB2V2qx6w>
+    <xmx:qg3DZrCmnUkR7NK99ddqCqeg4JqU15x0_EhEwfAPXeLya6Gxh1uLgA>
+    <xmx:qw3DZlKGdeVByaaXHPLKuFZ-JosMCVLnz0C0L16UR87QpTmN63jer7r1>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 54ECE16005F; Mon, 19 Aug 2024 05:17:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240819052416.2258976-2-sunyeal.hong@samsung.com>
+Date: Mon, 19 Aug 2024 11:17:08 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeremy J. Peper" <jeremy@jeremypeper.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Richard Earnshaw" <richard.earnshaw@arm.com>,
+ "Richard Sandiford" <richard.sandiford@arm.com>,
+ "Ramana Radhakrishnan" <ramanara@nvidia.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+ "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+ "Tony Lindgren" <tony@atomide.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ debian-arm@lists.debian.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>
+Message-Id: <790bf2c4-2ecf-429c-8e28-ad5807ffed7a@app.fastmail.com>
+In-Reply-To: <3413899.e9J7NaK4W3@earth>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+ <3413899.e9J7NaK4W3@earth>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 02:24:12PM +0900, Sunyeal Hong wrote:
-> Add dt-schema for ExynosAuto v920 SoC clock controller.
-> Add device tree clock binding definitions for below CMU blocks.
-> 
-> - CMU_TOP
-> - CMU_PERIC0
-> 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
- +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (38.4 MHz)
-> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
-> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: noc
-> +            - const: ip
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynosautov920-cmu-peric1
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (38.4 MHz)
-> +            - description: CMU_PERIC1 NOC clock (from CMU_TOP)
-> +            - description: CMU_PERIC1 IP clock (from CMU_TOP)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: noc
-> +            - const: ip
+On Thu, Aug 15, 2024, at 21:53, jeremy@jeremypeper.com wrote:
+> For the Buffalo devices we still have a lot of folks using Marvell Kirkwood, 
+> Orion5x and MV78100 NAS devices. In a world where SATA provides the cheapest $ 
+> per TB storage and Gigabit Ethernet is still standard they end up being 
+> surprisingly relevant for hobbyists.  
+>
+> The two pre-DTB device files that we're still using are:
+> mach-mv78xx0/buffalo-wxl-setup.c
+> mach-orion5x/terastation_pro2-setup.c
+>
+> If those can stick around for the next LTS kernel that should give me 
+> sufficient 
+> time to try converting them to DTS like the other Orion5x/Kirkwood 
+> devices.
 
-This is the same peric0, so combine them and clocks could be just:
+Right, the plan was always to keep them for this year's LTS kernel,
+which is almost certainly going to be 6.12. This should be enough
+for Debian Trixie.
 
-items:
-  - description: External reference clock (38.4 MHz)
-  - description: CMU_PERICn NOC clock (from CMU_TOP)
-  - description: CMU_PERICn IP clock (from CMU_TOP)
+I expect that the terastation pro2 is going to be fairly easy to
+convert to DT as there is already support for similar Orion5x
+machines. In this case I would just remove all the Orion5x board
+files and you can add a dts file later on. The bit I'm unsure
+about here is legacy PCI support. I see that the board file enables
+both PCI and PCIe, but I don't know if both are actually used,
+or if everything is on PCIe.
 
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynosautov920-cmu-misc
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (38.4 MHz)
-> +            - description: CMU_MISC NOC clock (from CMU_MISC)
+I have some old patches for separating orion legacy PCI from
+PCIe support, as only the latter has a modern driver (shared
+with kirkwood and armadaxp). If you can confirm that the machine
+actually uses PCI, I can dig those out from my backups.
 
-Similarly:
+The WXL machine is going to be more work since there is currently
+no DT support for mv78xx0, but everything except the pin controller
+should at least have a driver since this SoC is somewhere between
+Kirkwood and Dove. Having a hack for the pin controller similar
+to what orion5x has is probably fine, especially if you only
+need to support one machine.
 
-- description: CMU_MISC/CMU_HSI0 NOC clock (from CMU_MISC)
+Let me know if you need any help during the conversion.
+
+    Arnd
