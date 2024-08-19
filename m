@@ -1,137 +1,127 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99AC189BA1;
-	Mon, 19 Aug 2024 17:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2436B13B2AF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 18:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724087671; cv=none; b=P8aae0hZQo1Et2qu6Lq1oc9xL//rMzj+UUUDd/OPJaxMzibpDIIqOmnQD9WsQiuX+h0pzMZSMHsJr8AubonXzlueaRE3SeS25p5oGj9jL73GCdgdKqm3/mKcjTUhauhBTGyjZNis1KxvYH88EGfCAL+fQ8yM9wjJGYQv6eqyuhw=
+	t=1724092005; cv=none; b=Y7RJeXaJIPvHYgLwXRdnpOFdHyl7vgVmDlRRYyAh5BX/CnsIv4tTA5Qt90NcOo6igvv/7mtabEJRJqHobKURPy274UqujFjoo9xcjejJvh0D9/Zu5ZeFBDt7+3/DEvZoyFwjx/6Amr8pWx83qdFWcMr3ioYiI7u6HnbbxNPH41g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724087671; c=relaxed/simple;
-	bh=GVD02NQubyS0tdG5zYO8erIAmlqeCCAzjJYLVCvYX3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJDFwgvuduB8E/1JYW0ebQ5G0C49w/cI4f4gIzIqa04QzKVJghtyucgkaSI4BYiwuzrOeacuKbQUMbdDDqeLIm+Fjjz53I3jraiLioFAaVWUt3UU8XGuiRGe0cNSiapmxhbRfsIJ7cNz/8Q0s0RS681e6Mq8ewdXFC5KzW1wUvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzQ+zbk7; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724092005; c=relaxed/simple;
+	bh=5MQnDfQg0C24LyZXg2Cg/3e2ntF9Sd8G/H/VwrXWHOY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uGEPUO3LSAfqHsbakQqhwmm0oQHNAnstO5pbLvxrS06vEf0iI8e8KuLSN4CrQETW32Gx+01HN5HJKo8OqTuTi7QQ6lRECQD9ywcsBQwlkssrkovnlTBlOgRfqeyPJoppmh/G4IpnRabeXL7GBVUIM2Iw2rLFJ4eeekcWT8e2Ohg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r94+SewC; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzQ+zbk7"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-201f2b7fe0dso29326455ad.1;
-        Mon, 19 Aug 2024 10:14:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r94+SewC"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e115ef5740dso4916038276.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2024 11:26:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724087669; x=1724692469; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+1W3i8+g2sQNzk6r7xamyZJgO74Cx+unIizekLB9TE=;
-        b=LzQ+zbk7P2by+8NnmBElxU5qHX1mVm6SzKqnORXDToAPY9XIX8jmmxs2eXJDw2FTh5
-         /yMZ46lNvvO4A90aAvQjH+WWuxfOWi4ucokD3PH9aiy0qvpdh4/xTEJNlS8lk3b5u76G
-         HOkVT3XwlWauiyslMCia+6eiuVvB34KmjVz7lmE478CkpQEMT9C7igeFNvNXi2ZQdPED
-         xU9RP54ECRT8CHpnwVPWhXsJfHQnh0Qq2Nn6XbbzfqpFKt+RNFO6sQCjYRlhjH1ebva/
-         zxfSqq+9z2fgq2nv2WQk5V5WPLB8hgepAKWuyo1jjxduQ7vHPmuvFWKLM4mQIDWb4JrI
-         waSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724087669; x=1724692469;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1724092003; x=1724696803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T+1W3i8+g2sQNzk6r7xamyZJgO74Cx+unIizekLB9TE=;
-        b=XuByH4Dn3G+lC7z62jAjYvgPX99+iUER/5ZRPr42UUZizxpP9cyHITj7QcUSK+DQbz
-         Q0ladsqVRNHzsw6CKFjg6j4aOkChLCIumpZ2c/ikA2e/X1O6sxvVtM1gBxRPyL8DItp8
-         Kg1Lhs+jNkOJYyrdwuVVS1U0dbGIH9m8rxgSQ4gtOSisr2KwYiivbgo0GzUtvom1820r
-         TtX3tSKjJqI+5v+z7h+vG3BHeS3rX9KJGQemA+X5WSCwz9w6IdEvgibMY6G7WRTFrnwy
-         dX8xMWanG2AK9d3DfQngpIODxz/dv410SLZEuwI8h023DWUW4vOdFFvGa3IQ/p3Vp3u7
-         yGAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA9VCj7s2m7F1kQtyxJjmIEGSDmLNZfv9T2yjR1qlAhG+dKvn6Nl4t2OvQDoQwLGyEsLptm55dyLWLNO39EDVN0c72Q6QWIQ8PCo+21EC8mOjJz/pch+g3SL+3DXRrBpQiQX/GsI9LexISP3aDhvojWVP76uZImmxgyxfdVKN/pNC3eWq1Tc0mnYrIHgcPqcehGWnYVxDfWCRk1NkC18usM8ZXSwTDe0E=
-X-Gm-Message-State: AOJu0YyAD7ZCHgAa+RyScLBOYrU8RkGgtdOo6mAD13f28bi4x2vQljf1
-	Hp0pJMQmJVkgHgUdPc/KuFQjLbvtLHtcFXoP08+djEKNAU6PtYgh
-X-Google-Smtp-Source: AGHT+IGbr2onx4ALkUToG2oYkiUzveBUM0PwKcKZAeoti+0kD3JnIpr3+bOL7x2PCFhQQkIUjj3OUg==
-X-Received: by 2002:a17:902:e84b:b0:202:18de:b419 with SMTP id d9443c01a7336-20218deb7a8mr81679975ad.63.1724087668636;
-        Mon, 19 Aug 2024 10:14:28 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:f80c:1483:bced:7f88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-202592bdf7fsm6166015ad.181.2024.08.19.10.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2024 10:14:28 -0700 (PDT)
-Date: Mon, 19 Aug 2024 10:14:25 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 09/14] dt-bindings: input: samsung,s3c6410-keypad:
- introduce compact binding
-Message-ID: <ZsN9cXx2eoGP8ugW@google.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-10-dmitry.torokhov@gmail.com>
- <dbs44pwxfhsnmdzsd32mp7rlhq6w5fanu5bakuisxmyz2ehbtd@cdfr26oicjll>
- <ZsNpdhKlLYegkosN@google.com>
- <20240819-backstab-fanatic-54788c691f9c@spud>
+        bh=YByhFPkfPzhPmiVtK1Ws9JjJ1pYxs/CDLFifKBG4kvY=;
+        b=r94+SewCvBw9PC5AHGQ/dXFBYInfKnffrEO74tFNDeaUyxJNiHFkZFiw4EUDsm0Z0G
+         1kQz9C7ygwjomXOu7x2kCGEXCRQvvZTEdfosP6OLqWgMXYHC5uqgLmjPNa7GTKoa/8tH
+         b/aoym83kFmZ76ygu+kxKUY8xGpZJPtRDph85hXob0C+zhQus27fyvfHUD9P1S8cfF19
+         +sZ9k5IjZLphsulJ2/88YvuDWXy44KUnbFynV75Pj6OoXf7PUNvgX9342SoW1Pf0MWAd
+         755gyhqWOafaYWebPM2ZtBmP8ldlz/qgJQ0q9pYHEV00p0AFZ75XPd/zXho4miU2RveI
+         qtYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724092003; x=1724696803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YByhFPkfPzhPmiVtK1Ws9JjJ1pYxs/CDLFifKBG4kvY=;
+        b=WpQMCVMIGpRUpzXu0uixSCFQMqI1gpm3itheukcHGmjeH7zILvkT3nh15aILib1F2w
+         4NROEI1Er8nTaK0GDUMsH3jNs5VpVCfkIqeI0MyJAQwX9liKTwYuGRpZsX01d9vRrdUu
+         iFD+V7eaoDK1U5PuTLlBpohNZQQTEgfGcCUvYKudGwj+W6JVUeCkFAPuIAJfkt2YFJGP
+         izV7XakwNB+UkG/WkaBZOzt2Xm9qQc0whL+I8TSyejpb1z6iVvCKlY6Wrb2G8i2Ue+rT
+         VkqnCosCp7daigzbNms7QpE4ycK5bmfRQlHFiKkjvoWmxBBurtQmwSrDaGfLBjqiVUCP
+         o70w==
+X-Forwarded-Encrypted: i=1; AJvYcCUvKYpCSbd/bMc0LvujKJ4t3QgX3fTO60gbi6gvAE9TFtkX9WQIQZLS9TbLbWJqZIkntfJFx0aVIPGXk/Pz/kYpifblspxrO6gE5vKX9BpPr9Q=
+X-Gm-Message-State: AOJu0YwlSrY0AB8CCKGdtaovFYhWtMx8ZYSRQfbBs2ntD5xg8bWv9OWj
+	3u4YXNNX0g296j1LE7r1t1mxcWHjg9G1iBgbAI6Gj0NmtFuVuGWaOmuu0hwU4xM/+wrSRnI2IPX
+	2DjS5SbHYM3M+0ImOlVOJ1/JS6LkQWirmEC94WA==
+X-Google-Smtp-Source: AGHT+IEnQ0qhBRiMEKWo4R6ABVuJRwuK7fIq2ZUycjGU2s/QR0txn5fcF8ylMq7Q69EGdS8HtwEP9XdhC3f4Twu2WTI=
+X-Received: by 2002:a05:690c:2d07:b0:64a:e7ec:f3d with SMTP id
+ 00721157ae682-6b1b8ce933cmr111378807b3.18.1724092003131; Mon, 19 Aug 2024
+ 11:26:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240819-backstab-fanatic-54788c691f9c@spud>
+References: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240818172804.121666-1-krzysztof.kozlowski@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 19 Aug 2024 13:26:31 -0500
+Message-ID: <CAPLW+4ksmXNwdACEzwBaK_VKubZ=SSduNCakkaBn8JRgHTYnoQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: samsung: exynos-usi: add missing constraints
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 05:48:06PM +0100, Conor Dooley wrote:
-> On Mon, Aug 19, 2024 at 08:49:10AM -0700, Dmitry Torokhov wrote:
-> > On Mon, Aug 19, 2024 at 03:02:07PM +0200, Krzysztof Kozlowski wrote:
-> > > On Sun, Aug 18, 2024 at 09:58:06PM -0700, Dmitry Torokhov wrote:
-> 
-> > > 
-> > > > +      - keypad,num-columns
-> > > > +      - keypad,num-rows
-> > > > +
-> > > >  required:
-> > > >    - compatible
-> > > >    - reg
-> > > >    - interrupts
-> > > > -  - samsung,keypad-num-columns
-> > > > -  - samsung,keypad-num-rows
-> > > > +
-> > > > +if:
-> > > 
-> > > put allOf: here and this within allOf, so you the "if" could grow in the
-> > > future.
-> > 
-> > Hmm, there is already "allOf" at the beginning of the file, so adding
-> > another one results in complaints about duplicate "allOf". I can move it
-> > all to the top, like this:
-> > 
-> > allOf:
-> >   - $ref: input.yaml#
-> >   - $ref: matrix-keymap.yaml#
-> >   - if:
-> >       required:
-> >         - linux,keymap
-> >     then:
-> >       properties:
-> >         samsung,keypad-num-columns: false
-> >         samsung,keypad-num-rows: false
-> >       patternProperties:
-> >         '^key-[0-9a-z]+$': false
-> >     else:
-> >       properties:
-> >         keypad,num-columns: false
-> >         keypad,num-rows: false
-> >       required:
-> >         - samsung,keypad-num-columns
-> >         - samsung,keypad-num-rows
-> > 
-> > Is this OK? I don't quite like that "tweaks" are listed before main
-> > body of properties.
-> 
-> The normal thing to do is to put the allOf at the end, not the start, in
-> cases like this, for the reason you mention.
+On Sun, Aug 18, 2024 at 12:28=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for reg, clocks and clock-names.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-I see, thanks. It would be nice if it could combine several "allOf"s
-into one internally.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Thanks.
-
--- 
-Dmitry
+>  .../bindings/soc/samsung/exynos-usi.yaml          | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yam=
+l b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> index 8b478d6cdc30..f80fcbc3128b 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> @@ -32,11 +32,16 @@ properties:
+>        - enum:
+>            - samsung,exynos850-usi
+>
+> -  reg: true
+> +  reg:
+> +    maxItems: 1
+>
+> -  clocks: true
+> +  clocks:
+> +    maxItems: 2
+>
+> -  clock-names: true
+> +  clock-names:
+> +    items:
+> +      - const: pclk
+> +      - const: ipclk
+>
+>    ranges: true
+>
+> @@ -113,9 +118,7 @@ then:
+>          - description: Operating clock for UART/SPI/I2C protocol
+>
+>      clock-names:
+> -      items:
+> -        - const: pclk
+> -        - const: ipclk
+> +      maxItems: 2
+>
+>    required:
+>      - reg
+> --
+> 2.43.0
+>
