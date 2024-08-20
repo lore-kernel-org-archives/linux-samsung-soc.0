@@ -1,36 +1,37 @@
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A15A1849;
-	Tue, 20 Aug 2024 06:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF3F18E36B;
+	Tue, 20 Aug 2024 06:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724136370; cv=none; b=IhZNY2HRtIrplztU11phZdWnLpfZaoCZsJuUsPGP5uXVoNcMk14SZ0fD987l7Go5L2RSmxnZRLIuUGSxKNtsunmMzdHpz0Z8Le4GCXgq8sU1EENlW9VFId63C1hvZr36mRUKqkR6YG7jDFY2yESV/qzR7PKwR6IR74RcArDsxYQ=
+	t=1724136564; cv=none; b=khLmNfy5mN41K6Y/iZ2hhAuZxDEnPuuVowbyrbVmbxUWBSN+39V8yzfAMxrjfaYy1QA15WAoCZS8e7kDnmgX8qXhyasjAGfW3N0kpE6IVFxSq4UNuZ5X/qvyJ2i1a+pehA5z+m9czLX2b+kL8tosGaCfHJjPMY9/ldMyDPaJC0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724136370; c=relaxed/simple;
+	s=arc-20240116; t=1724136564; c=relaxed/simple;
 	bh=hlhdFi5V1f0wXOwX08iasKeQHCJ0GHrGJirf5kJpTfM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c1+Mc02qRqWOi1jFLTUv8PLQuMOpr/eqdr+7z3TICAu4DNLFV1jyhn5ul5M8hqPlaTsIR48J07Pa8gtH7JlpsrBULacmB3mhF1e2D3OhzFrr9EtJ0u9+tSU6vWPUzwqmqd78PS2dyxg75K0V/uVPPandWl5LmZssonA9aJcQbao=
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HwCumMof44k1dDHZ07wCNdClSf4f6pJdsiDYVElYEKD6O/6D072VJwtWckId4oaLq+JfZTuUR1WwJ9wR4tln6hru08RSZQxpGCHavZe14fgHTx48M+1vm17Ck9z8E6jZFp/q8FrYMKQJn216XXSwCoRhuSdH4Wct4kK/zeCJesg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wp0LD0b31zfbdL;
-	Tue, 20 Aug 2024 14:44:04 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wp0QX3blKzpTHd;
+	Tue, 20 Aug 2024 14:47:48 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1084F180105;
-	Tue, 20 Aug 2024 14:46:04 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C4B914037B;
+	Tue, 20 Aug 2024 14:49:18 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 20 Aug
- 2024 14:46:03 +0800
+ 2024 14:49:17 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <stern@rowland.harvard.edu>, <gregkh@linuxfoundation.org>,
 	<krzk@kernel.org>, <alim.akhtar@samsung.com>, <linux-usb@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] usb: xhci: Simplify with scoped for each OF child loop
-Date: Tue, 20 Aug 2024 14:53:03 +0800
-Message-ID: <20240820065303.560125-1-ruanjinjie@huawei.com>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next RESEND] usb: xhci: Simplify with scoped for each OF child loop
+Date: Tue, 20 Aug 2024 14:56:35 +0800
+Message-ID: <20240820065635.560427-1-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemh500013.china.huawei.com (7.202.181.146)
 
 Use scoped for_each_available_child_of_node_scoped() when iterating over
