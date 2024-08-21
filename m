@@ -1,108 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07411CE711;
-	Wed, 21 Aug 2024 11:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5297A1A4AA2
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2024 11:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724239691; cv=none; b=Db3UE99te7XN8EZB4sOiAIT9k26nOn9m3yVGCZK7OaXESfPa1V9HZmwZK/ExWfnkuY2uzqduN0u9oZNI0mR6bmfwOd1Gk7JsFnU5JdvU6APzeVmnRchkrxuBFOZiR+iQruT+1NfUdMKV3uhBZhiJJmG6aTmOLBi+BaNuW5peiTg=
+	t=1724239743; cv=none; b=QLnjCYdk3bbXPOtYzVX4agS1mwsdnu8iyQUKlp1cNbtr9a9V/v5fssOMdrq9iPFv/8Z8KXzuVJvMoZ4U5YXTrVooVzBcZ8QtwBwBLB1QcAdxgXCTrE1O5T40k57QX9yYWzgvGF5tqLCLK7Sd3CJlSDtIuvTE38adWPkZBEv5VSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724239691; c=relaxed/simple;
-	bh=rsOjgXzxWSfZgIhZgFMdl8mYki910cdB11l6UklY/tQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ghx3HtoylBO8t5rDt8nbGnwOcpB3+CRQins1yy/6UVVwGTu85kAgnxmXp+UG5BmOpbR01DpQ1/pN4wKSPvD1FZFSvYJW4GRyjTH2hEkJgSq/5bPg0zXIne9vELWWhJ42UJX5t3Tg/8uyypU+uANinraYcuj1eXGqUZzUKbueiYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqJ9SUBb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724239743; c=relaxed/simple;
+	bh=M0Ooxo685v1POc7S1dTi/xgY7XnRXJDx1Ns73h4LP4A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KKwM0oiSEhdfCtxsVfWDRYcDa1QngQ4p7fUcOr5fn3jKqMkwxvJC2Ninha3g99Q/s7fvNJ73oNJa2xbnJaNuTWrF4muv3u8xRfxA4fSY18iDj1gdtq5Cft0N/EZq6+/+qeVv0Cj6pm7DiCd1R7gSqkWFbqyuGRhUbLaaK+s+KKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ttied4kT; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqJ9SUBb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D998EC32782;
-	Wed, 21 Aug 2024 11:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724239690;
-	bh=rsOjgXzxWSfZgIhZgFMdl8mYki910cdB11l6UklY/tQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YqJ9SUBbd46lH+o7RhQyt70u3FnSb9uDe/g3Atz67Yd5mzD6fTxO0pCYoNYxkeO/X
-	 25Ajb0ZY7vcMv2/6EAhhgbZ0gRyacl1O1Nv0223C3Xe1feL21kByuBmKedzVXoppVW
-	 b3lbxd9J9sDBxxp/lcfQ51X4oaadSYK31UwmzufcZWf9VVa47SHf4JlH/2E1N0vXgG
-	 vPsWaL5TNlo5lyzOExjLdDVURbNOG2Nv0+/Ec72xOwtf/ec598FSTVLGIbTQ8D8d7o
-	 lWACxUnvzOQy5MGT3pngjmWg0KmQWTiBNnN5y1HkdqXLGzaf7kFjV4gFdNt52n0CBK
-	 I0CVYZIw4aSXQ==
-Message-ID: <2971669b-48d7-4627-bca2-4e09b9ce3b3a@kernel.org>
-Date: Wed, 21 Aug 2024 13:28:05 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ttied4kT"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280921baa2so9112665e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2024 04:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724239738; x=1724844538; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2U98PhHfsQe7q0eoibYZl509/CH1f8+DFvvWpqdj0Cg=;
+        b=Ttied4kT1+lfu/pbXW2WlALfx6LV1sZxy96Ei1ukPpSUXEaWyBAq/2oWLRBz4qj1rx
+         mBb9uUiQWMid7rTeCJljTvdNWzxmNasgQsZCaZCOcnfKdBm8R007hNSuacD1c2pt8XkS
+         q94dYBYrOHHQ82fSbvmvouUAMC2sBa1MkrYAyq1sRTdm5rPgXms2KsiG3D+Zd1vHKUjs
+         1YlcLlFIjYnOzZJIVhBF+SQBHEl/ESSpAidq/2cPPbK+rsrqhpGORhJoc/5VxU55Y1FZ
+         SKV78G5jueEci5fc8ExB4d6ECKnOwNNWRGhpfjwsH78cpk7P7uc7Bt/U5+rKQry/nK8d
+         9miA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724239738; x=1724844538;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2U98PhHfsQe7q0eoibYZl509/CH1f8+DFvvWpqdj0Cg=;
+        b=UPR+3ZpuyDf+ZXy70aKc4KMxaFIGz9xb+gRKy7NWnMWbN7EVhtV5fUV92i0rHBapn8
+         GkgAAeNZKp5L+HQYqnBPGe5BdzerZsY988D7IhQvKhVdfHp8lrTl+N94TGGeieuZRXzj
+         cDUWk67Qr3e0ALSOLopT5aQbdig0viUdCNv3U382pAVnD8EhI80pFDEEstbAIfR8ScBe
+         o34W0DxAJ6uAnUe2RlnR7eFMRA7GtwXDyDRd35d8HpihKHC8aMfs759kyNhQYXni/PO+
+         TmiHFuaPqF3t3HGH9WVidwTn1TtPMxcs1r6QQGJjQ38+tlYJcvMIgDzi+Dso6EKC1vIP
+         Ud7g==
+X-Gm-Message-State: AOJu0YwQLTkziTKE/ipnXWKT1ieXywM/j5wys4mnaeiZM64SIxeIjd2s
+	bmsdcP6X0C+gSwYOqT95SKBkaoDGapmFD0aesQ4yJMOosS+I9quOuOBBfSzzW5u60DOYWLdKpm+
+	V
+X-Google-Smtp-Source: AGHT+IEIuQbc89lIhEz/EoJLwbR+11BG8ia7GTtZCJ5M/PeGK9/JE2t6rDDT3qG5CyMk8VcRiLyGDg==
+X-Received: by 2002:a05:6000:154d:b0:362:4aac:8697 with SMTP id ffacd0b85a97d-372fd4d1195mr817938f8f.0.1724239738366;
+        Wed, 21 Aug 2024 04:28:58 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189897926sm15446926f8f.87.2024.08.21.04.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2024 04:28:57 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, David Virag <virag.david003@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240816175034.769628-1-virag.david003@gmail.com>
+References: <20240816175034.769628-1-virag.david003@gmail.com>
+Subject: Re: [PATCH v3 0/2] Add USB clocks to Exynos7885
+Message-Id: <172423973629.252925.10167794996873239462.b4-ty@linaro.org>
+Date: Wed, 21 Aug 2024 13:28:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: exynosautov9: Add dpum SysMMU
-To: Kwanghoon Son <k.son@samsung.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e@epcas1p3.samsung.com>
- <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On 19/08/2024 09:55, Kwanghoon Son wrote:
-> Add System Memory Management Unit(SysMMU) for dpum also called iommu.
-> 
-> This sysmmu is version 7.4, which has same functionality as exynos850.
-> 
-> DPUM has 4 dma channel, each channel is mapped to one iommu.
-> 
-> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 
-And droppped, this does not build.
+On Fri, 16 Aug 2024 19:50:30 +0200, David Virag wrote:
+> This set of patches adds the clocks necessary for USB on the Exynos7885
+> SoC.
+> 
+> Earlier versions of the set also contained some fixes for issues with
+> the existing driver/bindings, which have been applied now.
+> 
+> Changes in v2:
+> - Split from full patchset.
+> - Added Cc-stable tags and fixes tag to update CLKS_NR_FSYS patch
+> - Blank line fixes
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] clk: samsung: clk-pll: Add support for pll_1418x
+      https://git.kernel.org/krzk/linux/c/4e39e5b84361924006f4d7cf81e049a2793079a6
+[2/2] clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+      https://git.kernel.org/krzk/linux/c/011a9de99793c3a2ee612ff3e0ce293dcbea6df0
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
