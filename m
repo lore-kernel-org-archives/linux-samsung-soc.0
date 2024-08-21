@@ -1,210 +1,261 @@
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AE74409;
-	Tue, 20 Aug 2024 16:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DB3762F7
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2024 02:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724171643; cv=none; b=MBLTbAEvKwo3OF4aaaVVQlgwPJ9ONP6ra0i94ltO81+1K4tc/M3e2EXNMMVF+/4gUjQ4zNdyjvLveG9EDrisd9h5cB5aPMlE5zIHfNBAb7OGjRhtCBQUvyf258NmFVBaiaixYLtMiDMBtRyt+KSMh+vO2dQ5BCdWUl0yY8+iX4E=
+	t=1724206994; cv=none; b=Cu59G2g6/YtSOQSSSc5dAQSnOCP/qS6loKHqhX2YZqracy1uXIRmunPo6FO2EmhO2zPJ8Oybomv4MFmWW22f2igMu7Rk53SGOzHFARqfokUqva3nsGMYHRbHbvUUACtJuAaL4orbBszWHkY8qCedBS4N5iA7599fvRNrnYu48nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724171643; c=relaxed/simple;
-	bh=/XoyeLhJOMdiV+fck/gfdRhWNFn3uUSCiXd8QjDtXkY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jKGEZ0DTgQUI4wQIWG1zRI+7ZMZtMjlZfkEJvL35/d3/OgjJruWHNjht2H/kKDy2iRgLErszK+zdqhcOGixvgQVG4gFMW5NQa/oiNf5N8oYUZvRTzFk1ZkYzEQh7Ii2DacWkhc2xSM8s1iDjl61khuwfEodwFWZ1LhcOG9mzOww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LSoMR42Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WmELDH8r; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1724206994; c=relaxed/simple;
+	bh=MDFxxokvwSehvPaitY9/bnuWRDl/z0DoPWL9HFTKuKw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=namkmjjU7z/kdQO5QO7FKpQuDQ4s7+wZ+Nen480E7NyrQwRlJIxTea+903ghTzszjm9RoTKkFl5p3UU8Ro0bwcel2cGvaNYoc749zYfmlwNnl3TbC7SiifoIzWyY6jsP0mKEf9iUF8yoLCJXMq4gXF3A4dj9naCLa85qphH2gBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UO8UOVEc; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LSoMR42Z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WmELDH8r"
-Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C921A114C014;
-	Tue, 20 Aug 2024 12:33:59 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-01.internal (MEProxy); Tue, 20 Aug 2024 12:33:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724171639;
-	 x=1724258039; bh=8tm+zjOSeS2e198Z0q8BGjvR8eFaaeCScshlT6M34Ho=; b=
-	LSoMR42ZnljNCZWUuf7Ica3R0rDI6eRJhXUvyFRyDuBYFeicQnpQanK996a3ISjd
-	4VhlX5YOedVagec2Sr7ez8ceJrUkfhz7Mqan3WAw6s0FVLDGCGUxS/vhuNrO4IUB
-	6I4mNa7P+qlGqGaS7NjRXktBVC7hmrMjNgNgvjaZj5dHhfI18xQYSNLEbriNpXQI
-	c37VkY96s4q3lvce4SLlzTAuHqaHdxcwmzIPn1foqxYcrpb0AOKNicV85iAJ1ZOI
-	a6n+2EhuSqG7ElMk0iurDxyLUfTClZFCwXf4ixVVcdGKfFjS0MXPgRaoo7ATgmHb
-	hF5WYYMqAQKaCSJEYUl8Bw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724171639; x=
-	1724258039; bh=8tm+zjOSeS2e198Z0q8BGjvR8eFaaeCScshlT6M34Ho=; b=W
-	mELDH8rysxjw5IYDfLIY+0HilcaqCfRCPxflKRMP1anRUl5RY/H9jdQ++kzVnMDD
-	+DxYTILmuM/A7jUsDx1n5vLx+REXq8hGJPFM4HIrDnG1F8bJcUqZr0Sf4bpyD4aa
-	usaEk/0AwucMYQrY+yJvOzUlFqZ2V+j3o4FtWmhYMlmHzigVxNJ6sI6PY1XS0gMR
-	qmUg/tvKiEDwl72ZfFjH4SIHrlf4fV/YRWTGm+CYdLew8oxY9kV9TyW3EnBrEyhj
-	2trh7VXrc4hnAfb2TmrytSbAwOV7TyP5I/HNq36iQIEybdGhVGls89J9acC0pFCD
-	NvHiBtVCVK6dirEkNGS5g==
-X-ME-Sender: <xms:dsXEZoOC7cAle-HVCC7Dw2WLLhPQ5_bj9i9fMLE6b_eXdOgyuxP7Bg>
-    <xme:dsXEZu9fHLuPDfxnJcx3T_i4I35s0yKjkISESzhdIwqKZWDsuAuzk1M_yRBvCDylK
-    dhB9jcQ_-Fokk87vv0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduiedguddttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhitghhrghrugdrvggrrhhnsh
-    hhrgifsegrrhhmrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrshgrnhguihhfohhr
-    ugesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrgh
-    druhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohep
-    ghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
-    hnihgtohesfhhluhignhhitgdrnhgvthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdht
-    ohhrghhuvgesfhhoshhsrdhsthdrtghomhdprhgtphhtthhopehrohgsvghrthdrjhgrrh
-    iimhhikhesfhhrvggvrdhfrhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhv
-    sehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:dsXEZvTq-dKl0lHys-_p-n7a9nMxhxbzi4iAWVPcngckaFzZilkNMQ>
-    <xmx:dsXEZguuU9O6deysSeuR5eh-pGeZ0niR4EO71DH1rKczmXtrRvOjmw>
-    <xmx:dsXEZgfBZmEnkWq5T4Z0mzs84wxYiqDwevvMkiRQS1oXaXUVJEfdzg>
-    <xmx:dsXEZk0Wh0_Pts4MK2CoQ3Ud9neqA7_jVdYlEq89y1k1F5hzP0ZEww>
-    <xmx:d8XEZhtXFSrnVvDvhy8nN-Jczcl9jszmuXz26pvi1AtXyeeSZ2XQx5ba>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id CB64F16005F; Tue, 20 Aug 2024 12:33:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UO8UOVEc"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240821022309epoutp0195b7efa050b3f53ede1220eb0c16a233~tnR8o4Vnb1491914919epoutp01V
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2024 02:23:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240821022309epoutp0195b7efa050b3f53ede1220eb0c16a233~tnR8o4Vnb1491914919epoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724206989;
+	bh=mVMg/IOWly8egM9jRq031+T+1t+Ts9bbv+eIW6D8tps=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=UO8UOVEcWEZbDf+voKozFNpnlbAgnglA89ld0BehoC11VW+OpkvkGAG1g/oz09Ftf
+	 pchG+socXtlxK+amGs4MlbWz3zBt1AFl85Q1wRH9NwCIBG9ciVwYimhYzC+GbJTa5e
+	 3n8L3h6NrCtRvve8o9ox/emAK1y7oVNIdl11eFyM=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240821022308epcas2p32350663bdd11d1647835871e1cea700a~tnR8Hn0HW1553115531epcas2p3q;
+	Wed, 21 Aug 2024 02:23:08 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WpVVh2gp3z4x9QF; Wed, 21 Aug
+	2024 02:23:08 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	01.32.10016.C8F45C66; Wed, 21 Aug 2024 11:23:08 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240821022307epcas2p3b055f417a3e13a5b7285976b2ab236cf~tnR62_WnM1553115531epcas2p3j;
+	Wed, 21 Aug 2024 02:23:07 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240821022307epsmtrp2c35cffb371068b52981b7a036fd7d867~tnR62E2Gy2345123451epsmtrp2x;
+	Wed, 21 Aug 2024 02:23:07 +0000 (GMT)
+X-AuditID: b6c32a48-505b770000002720-02-66c54f8cbdcb
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F3.3F.08964.B8F45C66; Wed, 21 Aug 2024 11:23:07 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240821022307epsmtip2351a783eed5b135cb5a7f1abb941109c~tnR6lE-1j2804028040epsmtip2h;
+	Wed, 21 Aug 2024 02:23:07 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Kwanghoon Son'" <k.son@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo	Choi'" <cw00.choi@samsung.com>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Michael Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <9ee0efad7a27202e6b830996b5ee661a2d350b84.camel@samsung.com>
+Subject: RE: [PATCH v6 4/4] clk: samsung: add top clock support for
+ ExynosAuto v920 SoC
+Date: Wed, 21 Aug 2024 11:23:07 +0900
+Message-ID: <0a0101daf371$0f2025b0$2d607110$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 20 Aug 2024 16:33:27 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Richard Earnshaw" <Richard.Earnshaw@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, "Russell King" <linux@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Richard Sandiford" <richard.sandiford@arm.com>,
- "Ramana Radhakrishnan" <ramanara@nvidia.com>,
- "Nicolas Pitre" <nico@fluxnic.net>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Mark Brown" <broonie@kernel.org>,
- "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
- "Tony Lindgren" <tony@atomide.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>
-Message-Id: <80c0dd7d-6b4b-40ae-a4f4-09bb890ba26b@app.fastmail.com>
-In-Reply-To: <5c7f9469-78ad-4092-8e93-bfb41028ca34@arm.com>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <e19821dc-01b8-4801-88ce-4c33d1a9fd63@arm.com>
- <8f8c07c6-d138-491c-9ca0-72f82779b2d2@app.fastmail.com>
- <5c7f9469-78ad-4092-8e93-bfb41028ca34@arm.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQLQL30DU0UysUOS1ES52gTWByyh0gCAc2uXAiz2ascBkCr+LgIuZJbKAN2O2QCwDDRsQA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmqW6P/9E0g84N/BYP5m1js1iz9xyT
+	xfUvz1kt5h85x2rRu+Yqk8X58xvYLTY9vsZq8bHnHqvF5V1z2CxmnN/HZHHxlKvF/z072C0O
+	v2lntfh3bSOLA5/H+xut7B6bVnWyeWxeUu/Rt2UVo8fnTXIBrFHZNhmpiSmpRQqpecn5KZl5
+	6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAdyoplCXmlAKFAhKLi5X07WyK8ktL
+	UhUy8otLbJVSC1JyCswL9IoTc4tL89L18lJLrAwNDIxMgQoTsjPmtXcwFjxXr9jdcZ61gfGu
+	QhcjJ4eEgInE8r6TjF2MXBxCAjsYJS7saGCFcD4xSuz5P5UJwvnGKHF3bjMjTMu7ZXvZIRJ7
+	GSX2LdnJDOG8ZJSYMHcrC0gVm4C+xOru22wgCRGBVmaJmf1TwbYwC6xjlNg88wg7SBWngKdE
+	65WlzCC2sECkxMX9bWA7WARUJfZOOgBUw8HBK2Ap0bYxFyTMKyAocXLmE7AFzALaEssWvmaG
+	OElB4ufTZawQcRGJ2Z1tYHERgTCJthMtYEdICJzhkNi9rJEVosFFYuWOnUwQtrDEq+Nb2CFs
+	KYnP7/ayQdj5EpOvv2WCaG5glLj2rxtqm73EojM/wY5jFtCUWL9LH8SUEFCWOHIL6jY+iY7D
+	f9khwrwSHW1CEI1qEp+uXIYaIiNx7MQz5gmMSrOQfDYLyWezkHwzC2HXAkaWVYxiqQXFuemp
+	xUYFJvDoTs7P3cQITsRaHjsYZ7/9oHeIkYmD8RCjBAezkghv98uDaUK8KYmVValF+fFFpTmp
+	xYcYTYFBPZFZSjQ5H5gL8kriDU0sDUzMzAzNjUwNzJXEee+1zk0REkhPLEnNTk0tSC2C6WPi
+	4JRqYJKxeHW2/NpHL9lzE1ha7FYnhCW6L7t9e9LsK0lO5t6c8YcvXpFJPRUdHd9Us07ef7nl
+	ac59HtU/u84f4qqen5vrMTdegP1+XY7Q3gmLlyvfEElZtuIe/8zbBhp2pkHJRlHiH/peitvK
+	pBT9f9HjUbNy597PJmuYLO0tyoV+camyvTt2xuKNzey7tSofws3FdvIX5Vf8UDh5s9XqTNAn
+	+y3qe1knXPt1ZtWvFd88ZarCj/svyP27LLZK6EJsx7aaOVrr9zU4vGC+Ydi2qrHl7OLfu023
+	G19KS1V6ca66bPUukVpXu65pk84oVbi9mPUsvu+8mP3ctp7ruuxLxKzWfPTKW2lqtzGl6dXp
+	RTox9kosxRmJhlrMRcWJAEsrwqtNBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvG63/9E0g4knJC0ezNvGZrFm7zkm
+	i+tfnrNazD9yjtWid81VJovz5zewW2x6fI3V4mPPPVaLy7vmsFnMOL+PyeLiKVeL/3t2sFsc
+	ftPOavHv2kYWBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4MtbM
+	/sVa8EGtYsWX/4wNjA/kuxg5OSQETCTeLdvL3sXIxSEksJtRYtvrSSwQCRmJjQ3/2SFsYYn7
+	LUdYIYqeM0qc3drDDJJgE9CXWN19mw0kISLQzSxxYfZRsFHMApsYJc7tvskG0fKWSeLNm0tg
+	LZwCnhKtV5aC2cIC4RKntxwFs1kEVCX2TjoA1M3BwStgKdG2MRckzCsgKHFy5hOwk5gFtCV6
+	H7YywtjLFr5mhjhPQeLn02WsEHERidmdbWBxEYEwibYTLWwTGIVnIRk1C8moWUhGzULSvoCR
+	ZRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnBUamnuYNy+6oPeIUYmDsZDjBIczEoi
+	vN0vD6YJ8aYkVlalFuXHF5XmpBYfYpTmYFES5xV/0ZsiJJCeWJKanZpakFoEk2Xi4JRqYFrP
+	rWV5dyZrTRNXx3z5Bb/3W5uIPK+9+z+Wgfn57duyX5cds5Oac2T3h1Mz9IIstV6srC532FvP
+	rh372ey+qMAa1btqfIu+5HVP2O+/PGP6+WU1/623PMkzemad/4PDpP2i5VFrS531Ecyme8I5
+	LqZ8l83+wBLd/f9Xhzq/m5SUGePi3fu2b3xt6vVqwfrZH08m33h9bUOe3AOuhIxtX/ZyBrzb
+	41t7/ckp+WvS2/9vEVxo7XPoD8dykVIn8akxPeueSh3d6WdeI+6g/un2qTnK789/Kf9fPfHh
+	qeiQSdv+C+hEJRp+S2yQLyheXBk03U/G4t3njXoP47rPGMoZznk61cInKsnMtl548zOdmkwl
+	luKMREMt5qLiRADBrH9aOQMAAA==
+X-CMS-MailID: 20240821022307epcas2p3b055f417a3e13a5b7285976b2ab236cf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
+	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
+	<7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
+	<087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
+	<9ee0efad7a27202e6b830996b5ee661a2d350b84.camel@samsung.com>
 
-On Tue, Aug 20, 2024, at 16:58, Richard Earnshaw wrote:
-> On 02/08/2024 16:12, Arnd Bergmann wrote:
->>>> === iWMMXt ===
->>>>
->>>> I'm not aware of any remaining users for iWMMXt, and we dropped
->>>> support for ARMv7 PJ4 CPUs (MMP2, Berlin) already, so the
->>>> only supported hardware that even has this is Intel/Marvell
->>>> PXA and MMP1.
->>>>
->>>> Dropping support from gcc is probably a good idea now,
->>>> it is already unsupported in clang.
->>>
->>> We marked iWMMXt as deprecated in gcc-14 and will likely remove support 
->>> in GCC-15.  We expect to continue supporting these as Armv5T cores, but 
->>> not the iwmmxt (or other XScale) extensions.  
->> 
->> Ok, good to know. The kernel doesn't actually have a build
->> time dependency on gcc's xscale or iwmmxt support aside from the
->> one assembly file we build with gcc -march=xscale.
->
-> I think you mean -mcpu=xscale (-march=xscale isn't recognized), or 
-> perhaps you mean -march=iwmmxt? 
+Hello Kwanghoon,
 
-We currently use "-Wa,-mcpu=iwmmxt", sorry for the mixup.
+> -----Original Message-----
+> From: Kwanghoon Son <k.son=40samsung.com>
+> Sent: Tuesday, August 20, 2024 6:54 PM
+> To: sunyeal.hong <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
+> <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>; 'Ch=
+anwoo
+> Choi' <cw00.choi=40samsung.com>; 'Alim Akhtar' <alim.akhtar=40samsung.com=
+>;
+> 'Michael Turquette' <mturquette=40baylibre.com>; 'Stephen Boyd'
+> <sboyd=40kernel.org>; 'Rob Herring' <robh=40kernel.org>; 'Conor Dooley'
+> <conor+dt=40kernel.org>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org
+> Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support for
+> ExynosAuto v920 SoC
+>=20
+> On Tue, 2024-08-20 at 10:50 +0900, sunyeal.hong wrote:
+> > Hello Kwanghoon,
+> >
+> > > -----Original Message-----
+> > > From: Kwanghoon Son <k.son=40samsung.com>
+> > > Sent: Monday, August 19, 2024 6:32 PM
+> > > To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Krzysztof Kozlowski
+> > > <krzk=40kernel.org>; Sylwester Nawrocki <s.nawrocki=40samsung.com>;
+> > > Chanwoo Choi <cw00.choi=40samsung.com>; Alim Akhtar
+> > > <alim.akhtar=40samsung.com>; Michael Turquette
+> > > <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob
+> > > Herring <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
+> > > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> > > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> > > linux- kernel=40vger.kernel.org
+> > > Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support f=
+or
+> > > ExynosAuto v920 SoC
+> > >
+> > > On Mon, 2024-08-19 at 14:24 +0900, Sunyeal Hong wrote:
+> > > > This adds support for CMU_TOP which generates clocks for all the
+> > > > function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
+> > > > CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this
+> > > > block and they will generate bus clocks.
+> > > >
+> > > > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > > > ---
+> > > >  drivers/clk/samsung/Makefile             =7C    1 +
+> > > >  drivers/clk/samsung/clk-exynosautov920.c =7C 1173
+> > > > ++++++++++++++++++++++
+> > > >  2 files changed, 1174 insertions(+)  create mode 100644
+> > > > drivers/clk/samsung/clk-exynosautov920.c
+> > > >
+> > > > diff --git a/drivers/clk/samsung/Makefile
+> > > > b/drivers/clk/samsung/Makefile index 3056944a5a54..f1ba48758c78
+> > > > 100644
+> > > > --- a/drivers/clk/samsung/Makefile
+> > > > +++ b/drivers/clk/samsung/Makefile
+> > > > =40=40 -21,6 +21,7 =40=40 obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=
+=3D clk-
+> > > exynos7.o
+> > > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos7885.o
+> > > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynos850.o
+> > > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov9.o
+> > > > +obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-exynosautov920.o
+> > > >  obj-=24(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+=3D clk-gs101.o
+> > > >  obj-=24(CONFIG_S3C64XX_COMMON_CLK)	+=3D clk-s3c64xx.o
+> > > >  obj-=24(CONFIG_S5PV210_COMMON_CLK)	+=3D clk-s5pv210.o clk-s5pv210-
+> > > audss.o
+> > > > diff --git a/drivers/clk/samsung/clk-exynosautov920.c
+> > > > b/drivers/clk/samsung/clk-exynosautov920.c
+> > > > new file mode 100644
+> > > > index 000000000000..c17d25e3c9a0
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/samsung/clk-exynosautov920.c
+> > >
+> > > =5Bsnip=5D
+> > >
+> > > > +=7D;
+> > > > +
+> > > > +static const struct samsung_cmu_info peric0_cmu_info __initconst =
+=3D
+> =7B
+> > > > +	.mux_clks		=3D peric0_mux_clks,
+> > > > +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
+> > > > +	.div_clks		=3D peric0_div_clks,
+> > > > +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
+> > > > +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
+> > > > +	.clk_regs		=3D peric0_clk_regs,
+> > > > +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
+> > > > +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
+> > >
+> > > same question.
+> > > Isn't it =22noc=22?
+> > > https://lore.kernel.org/linux-samsung-
+> > > soc/58dfae564a4a624e464c7803a309f1f07b5ae83d.camel=40samsung.com/
+> > >
+> > > In my case(autov9), if put wrong clk_name dmesg will show that,
+> > > exynos_arm64_register_cmu: could not enable bus clock ...; err =3D -2
+> > >
+> > > Kwang.
+> > >
+> > >
+> >
+> > clk_name follows the guide document provided by hw. v9 is bus, but v920
+> uses noc.
+>=20
+> What I mean,
+>=20
+> .clk_name		=3D =22dout_clkcmu_peric0_noc=22, // wrong
+> .clk_name		=3D =22noc=22, // correct
+>=20
+> Because there is no clock-names =22dout_clkcmu_peric0_noc=22 in
+> exynos/exynosautov920.dtsi.
+>=20
 
->>>> === big-endian ARMv7 (BE8) kernel ===
->>>>
->>>> This is very different from BE32 mode in making more sense
->>>> from a kernel point of view. In theory any ARMv7 hardware
->>>> should work, though a lot of drivers are buggy. I am not
->>>> aware of any actual use cases, though in theory it can be
->>>> helpful for testing big-endian userspace when one has
->>>> access to Arm hardware but no other big-endian machine.
->>>>
->>>> We should probably keep this a few more years in both
->>>> toolchain and kernel, unless it starts causing actual
->>>> problems. I don't think anyone is testing it any more
->>>> though.
->>>>
->>>> Side-note: netbsd has a armv7+be8 variant, so clang will
->>>> likely keep supporting be8 even if gcc ends up dropping it
->>>> in the future.
->> 
->> Do you have any comments on BE8 support? I would imagine
->> that having two (mostly) unused big-endian targets in
->> the compiler still complicates things a bit.
->
-> The compiler/assembler largely treat BE8 and BE32 the same; the linker 
-> then byte-swaps the BE8 instructions during linking to generate BE8 
-> images (this is mostly why we need mapping symbols).  That won't really 
-> change if we drop BE32 support.  So I don't think we gain much from 
-> this.
+The clk_name written here has nothing to do with the device tree. Please lo=
+ok at the code carefully.
 
-Right, makes sense. I can never remember the way this is
-actually implemented
+Best Regards,
+Sunyeal
 
->> Ok. I can certainly confirm that we regularly run into
->> build problems with -mabi=apcs in the kernel, usually
->> because of the incompatible structure alignment rules.
->> If binutils are dropping support, that also means we will
->> eventually stop supporting it in the kernel.
->
-> This is primarily about the arm-elf (as opposed to arm-eabi) object 
-> file format, -mabi=apcs doesn't change that.  There are some options in 
-> gcc relating to the old APCS that I'd really like to get rid of (in 
-> particular -mapcs-frame (aka -mapcs)), but that's a separate issue.
+> But if you tested your patch and working fine, ignore my comment.
+>=20
+> Kwang.
+>=20
+> >
+> > Best Regards,
+> > sunyeal
+> >
 
-I think I mixed this up as well, what we use for OABI kernels
-is "-mabi=apcs-gnu", which creates an "ELF 32-bit LSB relocatable,
-ARM, version 1 (ARM)" OABI  file instead of "ELF 32-bit LSB
-relocatable, ARM, EABI5 version 1 (SYSV)".
 
-We still use "-mapcs-frame" whenever we enable CONFIG_FRAME_POINTER
-(aka -fno-omit-frame-pointer). Frame pointers used to be required
-for a number of things in the kernel, now there are only two
-places that don't work with the modern unwinder:
-
-- CONFIG_ARCH_CORRECT_STACKTRACE_ON_KRETPROBE -- this should
-  be on someone's TODO list, no idea why the implementation was
-  never completed for this.
-
-- OABI (-mabi=apcs-gnu) kernels, for the in-kernel stack unwinder
-
-Neither of those is particularly important I think, so deprecating
--mapcs-frame along with -mabi=apcs-gnu for new gcc versions should
-be from the kernel perspective.
-
-I'll also send a patch to make both OABI and OABI_COMPAT support
-depend on StrongARM, based on the earlier discussion. That way
-dropping StrongARM (but not armv4 or fa526) in the future will also
-eliminate OABI and nwfpe.
-
-       Arnd
