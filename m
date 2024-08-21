@@ -1,176 +1,108 @@
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BC31B2ECB;
-	Wed, 21 Aug 2024 10:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07411CE711;
+	Wed, 21 Aug 2024 11:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724235829; cv=none; b=S0Ou1E00Jd31Gm6Gv0V/QiKOaAKOfVIt88H8sRb4w55biTal8uyNjw7DWsrc/dhLcnmT0s6FbDwt+ZYy9RzQSxNSQTOLaJvWV2BWdziZ+TWDCUdmYtLveG7GPN4zYZyDFdAzGBjcQNgvOKDzfZSq97chgYmaEEeP3g0f1+OnPXg=
+	t=1724239691; cv=none; b=Db3UE99te7XN8EZB4sOiAIT9k26nOn9m3yVGCZK7OaXESfPa1V9HZmwZK/ExWfnkuY2uzqduN0u9oZNI0mR6bmfwOd1Gk7JsFnU5JdvU6APzeVmnRchkrxuBFOZiR+iQruT+1NfUdMKV3uhBZhiJJmG6aTmOLBi+BaNuW5peiTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724235829; c=relaxed/simple;
-	bh=Z2O1BIwzKLfp9MUBsaV5TLSLjRVX0FvhU8f2ETMverc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=PQ/lSQs4+N8imt0SYJEbVLYF/DSbp2aJGl5Oi/rogiJQwKsFu6OO7TUCIEL6n/1Zgr6/VgGSLMkSC+2NQeUy5YhsDQGEATlw0mslDDkyIRCCJdc9PxDaGdVbQ+QdqxADRIHDM6+D+xGoiUWVOByayzlem7i5a9HhpWbe+/eb04w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OUzK94bQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jtNyDz+w; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1724239691; c=relaxed/simple;
+	bh=rsOjgXzxWSfZgIhZgFMdl8mYki910cdB11l6UklY/tQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ghx3HtoylBO8t5rDt8nbGnwOcpB3+CRQins1yy/6UVVwGTu85kAgnxmXp+UG5BmOpbR01DpQ1/pN4wKSPvD1FZFSvYJW4GRyjTH2hEkJgSq/5bPg0zXIne9vELWWhJ42UJX5t3Tg/8uyypU+uANinraYcuj1eXGqUZzUKbueiYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqJ9SUBb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OUzK94bQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jtNyDz+w"
-Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4F011114FDA5;
-	Wed, 21 Aug 2024 03:51:26 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-04.internal (MEProxy); Wed, 21 Aug 2024 03:51:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1724226686;
-	 x=1724313086; bh=lxaTuQ67supVBazauuDO1cZaNg6VSSGIXpqcmIQHamY=; b=
-	OUzK94bQrq9+v8zOLVgNxlaKTtJpdmBKbSz8E+uYJ0YY2JfmxFJLFLyc6zFpNMfy
-	+ADFTlnI6ykBkXlj2/hOSnzIlRoHReSyxkeTNgAASVtJ7+pPL0LUlRcu4AS8Za5e
-	6SXVH7/4No7ls2O84v+PeWcKP19IX+tzAZ3V84wysy7fao06abA6A0NLqQQIdBFE
-	+naKXMIp0qwkXmCjt4qk8hJCoQo4weh7BMuGcX/o0ucvToE+k9/OdjzbjDVz8yHV
-	qWfpubICrE4vbArsMfSXE8z/0mTARnU8NJGZzBXvwsnYCp/EoEzGI5gfk57UVP9n
-	LSh+OFAbX8sPNv1dqGooLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724226686; x=
-	1724313086; bh=lxaTuQ67supVBazauuDO1cZaNg6VSSGIXpqcmIQHamY=; b=j
-	tNyDz+wPtAostZuntuLXDs5T7GTb3odXchCsJVgeJ+xFFgMBM6tv0hpDCiyxKJBa
-	KcyjM7zPcC8vyBTqCanWsV8AgwJH1LDwWPp0onkuxSzzMgOggPmlCpmzYX2DLER1
-	hj69NfnVKCcVqAs2caQyp5NAUkcMbIKeCkJHhh5/4v7TEikdOyyJAnIqa+Zf1hkB
-	/6pnpDjXOX/9uya4e5z6XgVWpwuubS8iaWY5fVJr3vFRZZ3AqZDNfKbpkpjeZWZY
-	FgAVS871ofaccQd1ypTeRSk++axCxZdQYmH3ILMOMwNHYkAfNY3/j7B7NeQxcylx
-	u5ULWyzIuNLEEFTTTEndA==
-X-ME-Sender: <xms:fJzFZnodR2Dw668YZfsk2Kxehyr0XVUgPruqra8MBK2WwZT5yRDtlg>
-    <xme:fJzFZhpFMSPvfotX9MuEc0Vh44ZnzyVXDIP-bmOkwjHRYijROy1Xl29aP83D-NyYl
-    BnBiktZsGrBDQI1cJg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddujedguddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
-    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhitghhrghrugdrvggrrhhnsh
-    hhrgifsegrrhhmrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrshgrnhguihhfohhr
-    ugesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrgh
-    druhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohep
-    ghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
-    hnihgtohesfhhluhignhhitgdrnhgvthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdht
-    ohhrghhuvgesfhhoshhsrdhsthdrtghomhdprhgtphhtthhopehrohgsvghrthdrjhgrrh
-    iimhhikhesfhhrvggvrdhfrhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhv
-    sehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:fJzFZkMgaHdX5CaTgdpf7JLneO-JB21RhtWNhan8nMSBi1u5CPlYZA>
-    <xmx:fJzFZq5a-YC4clj9TZOqXmYjyAcjbNT1klLxNCwje15lSJefSwiarA>
-    <xmx:fJzFZm60T6pUcCOS3JNIZge1G01eCXNvs435xawZrro9AKWWd753cg>
-    <xmx:fJzFZihDWVrNFzpIyuCZIZZS0T5sZA4oKYmsTDDvKCARS7fZcoji9Q>
-    <xmx:fpzFZiPnh3MyPtpJ7DvIwFXXNejSccFI0J2ChBj6HpPdJ9080GryxsJ8>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 6008B16005E; Wed, 21 Aug 2024 03:51:24 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqJ9SUBb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D998EC32782;
+	Wed, 21 Aug 2024 11:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724239690;
+	bh=rsOjgXzxWSfZgIhZgFMdl8mYki910cdB11l6UklY/tQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YqJ9SUBbd46lH+o7RhQyt70u3FnSb9uDe/g3Atz67Yd5mzD6fTxO0pCYoNYxkeO/X
+	 25Ajb0ZY7vcMv2/6EAhhgbZ0gRyacl1O1Nv0223C3Xe1feL21kByuBmKedzVXoppVW
+	 b3lbxd9J9sDBxxp/lcfQ51X4oaadSYK31UwmzufcZWf9VVa47SHf4JlH/2E1N0vXgG
+	 vPsWaL5TNlo5lyzOExjLdDVURbNOG2Nv0+/Ec72xOwtf/ec598FSTVLGIbTQ8D8d7o
+	 lWACxUnvzOQy5MGT3pngjmWg0KmQWTiBNnN5y1HkdqXLGzaf7kFjV4gFdNt52n0CBK
+	 I0CVYZIw4aSXQ==
+Message-ID: <2971669b-48d7-4627-bca2-4e09b9ce3b3a@kernel.org>
+Date: Wed, 21 Aug 2024 13:28:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 21 Aug 2024 07:51:04 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Alexander Dahl" <ada@thorsis.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Russell King" <linux@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Richard Earnshaw" <richard.earnshaw@arm.com>,
- "Richard Sandiford" <richard.sandiford@arm.com>,
- "Ramana Radhakrishnan" <ramanara@nvidia.com>,
- "Nicolas Pitre" <nico@fluxnic.net>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Mark Brown" <broonie@kernel.org>,
- "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
- "Tony Lindgren" <tony@atomide.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
- "Nicolas Ferre" <nicolas.ferre@microchip.com>
-Message-Id: <96558a17-8c90-4092-a0b0-e128574f3d89@app.fastmail.com>
-In-Reply-To: <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: exynosautov9: Add dpum SysMMU
+To: Kwanghoon Son <k.son@samsung.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e@epcas1p3.samsung.com>
+ <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 21, 2024, at 06:15, Alexander Dahl wrote:
-> Am Wed, Jul 31, 2024 at 07:29:29PM +0200 schrieb Arnd Bergmann:
->> === ARMv5 ===
->> 
->> About one third of all supported platforms use ARMv5,
->> but most of these are near their end of support. Notably
->> there are still new SAM9 variants from Microchip that are
->> meant as backward-compatible replacements for their
->> older variants.
->> 
->> Debian still supports these, but the lack of FPU and
->> atomics makes this harder, so I expect this to become
->> an unofficial port in the future.
->
-> FWIW, these are not only replacements, but actually new boards are
-> designed with SAM9X60 for example.
+On 19/08/2024 09:55, Kwanghoon Son wrote:
+> Add System Memory Management Unit(SysMMU) for dpum also called iommu.
+> 
+> This sysmmu is version 7.4, which has same functionality as exynos850.
+> 
+> DPUM has 4 dma channel, each channel is mapped to one iommu.
+> 
+> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 
-Right, but I would assume that most of those board
-designs using it are done because someone needs an
-ARMv5 design in order to run a certain piece of
-software, or because they are already invested in
-Microchip's SAM9 ecosystem in other products.
+And droppped, this does not build.
 
-For someone starting from scratch, there would be few
-reasons to pick a SAM9 over e.g. an STM32MP1 with a
-Cortex-A7 that is more capable in most ways but half
-the cost.
+Best regards,
+Krzysztof
 
-> Not all have .dts files in mainline kernel, though.  Would that
-> improve or change things with regard to long term platform support, if
-> the .dts files were upstream?
-
-I think upstreaming the dts files is mostly an advantage for
-maintaining the specific boards, as it allows easier
-integration into CI test environments and lets developers
-see which drivers are used by a platform. Having at
-least a couple of products with full dts files in addition
-to the reference boards does help though.
-
-For the at91 platform support itself in the kernel,
-I don't see a real risk at the moment. There are a few
-areas that make ARMv5 support risky in the long run:
-
-- Debian support for the softfloat "armel" port will
-  likely be moved into an inofficial port in the future,
-  which in turn makes it harder for average kernel
-  developers to test things. 
-
-- There are discussions about making SMP support
-  mandatory for all architectures in the kernel.
-  If it gets to this, ARMv4T and ARMv5 support may
-  need to end, unlike ARMv6K and up.
-
-- Even longer in the future, all 32-bit kernel
-  support will end. I don't expect this to happen
-  for another 15 years, but the writing is on the
-  wall.
-
-      Arnd
