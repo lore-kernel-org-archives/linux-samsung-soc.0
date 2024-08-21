@@ -1,221 +1,176 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92E01CBEA7
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2024 09:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BC31B2ECB;
+	Wed, 21 Aug 2024 10:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724232645; cv=none; b=i5amOJAqw4mYGy+Gn5t5RB2qubpXY4oUOEE3cxuKAhGN2CXXeBzeiXOPr+HbyCqEkhbAgSXzTr7cVI34/q0YcoGieYmwFBiOwFmGNP0IiJsziwGwAdEo212/q0HicBny1pciIg2TH1w1r5m6GG7EDM1PNz71NjW05SRZnsPFmIA=
+	t=1724235829; cv=none; b=S0Ou1E00Jd31Gm6Gv0V/QiKOaAKOfVIt88H8sRb4w55biTal8uyNjw7DWsrc/dhLcnmT0s6FbDwt+ZYy9RzQSxNSQTOLaJvWV2BWdziZ+TWDCUdmYtLveG7GPN4zYZyDFdAzGBjcQNgvOKDzfZSq97chgYmaEEeP3g0f1+OnPXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724232645; c=relaxed/simple;
-	bh=2PuRZJKFX+8h0wsjkRdFM+YPsqggo8jMLYDszFQP/bc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=VIqllFnl4knrrl3KmfFlMcWH/k7mUv8PE6UX2kTSArJj1ONDP77squpwh/kQYgCDk0HvCWvY+Q+BPLhKGLqrNufJJgYFflVn7ttkZ1vILL63eJIh6JJchoUPLQ3u8m2sp/JNzMDgqndlnQsyPrDoxsjahPz/5mguzNBXneRArFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lufqcsL1; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1724235829; c=relaxed/simple;
+	bh=Z2O1BIwzKLfp9MUBsaV5TLSLjRVX0FvhU8f2ETMverc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=PQ/lSQs4+N8imt0SYJEbVLYF/DSbp2aJGl5Oi/rogiJQwKsFu6OO7TUCIEL6n/1Zgr6/VgGSLMkSC+2NQeUy5YhsDQGEATlw0mslDDkyIRCCJdc9PxDaGdVbQ+QdqxADRIHDM6+D+xGoiUWVOByayzlem7i5a9HhpWbe+/eb04w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OUzK94bQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jtNyDz+w; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lufqcsL1"
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240821093040epoutp024d92412ac26797d2605a72806a4af82a~ttHOKF07d0927209272epoutp02X
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2024 09:30:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240821093040epoutp024d92412ac26797d2605a72806a4af82a~ttHOKF07d0927209272epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724232640;
-	bh=CxHZ2IhgFN32ZaNM/qm3PeYWoU6m4YH2ghNdcMmsBoA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=lufqcsL17OHpldqG8bD85whP1L2G6GFvjQR9g6qb36N3S4gHNrzkbVovRrAZ5OG89
-	 5X8JY5wCieY3qPQx/5ovWmuZhdajOyrd99oWeL6LkNAgSk7RHs9/Ew961fK2lWE346
-	 9W3/EtABNRrMeuVdcrEdeMhhqHm3X1QBWU2j7ptg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240821093040epcas2p245fb6cafe86a41e66bc39e4b00f42d7c~ttHNw_NZL2681226812epcas2p2P;
-	Wed, 21 Aug 2024 09:30:40 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Wpgzz59MTz4x9Pp; Wed, 21 Aug
-	2024 09:30:39 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	39.C9.10431.FB3B5C66; Wed, 21 Aug 2024 18:30:39 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240821093039epcas2p390bf443819db218a0a94b424fece7961~ttHMxiScs1394613946epcas2p3q;
-	Wed, 21 Aug 2024 09:30:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240821093039epsmtrp28b101ad940a3d663af57ea05db3a209b~ttHMwixhX0970509705epsmtrp2J;
-	Wed, 21 Aug 2024 09:30:39 +0000 (GMT)
-X-AuditID: b6c32a45-da1ff700000028bf-d7-66c5b3bf6441
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.D2.08964.EB3B5C66; Wed, 21 Aug 2024 18:30:38 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240821093038epsmtip201075943f081dfbd771ba19e1ed25993~ttHMehQTc2427824278epsmtip2U;
-	Wed, 21 Aug 2024 09:30:38 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Kwanghoon Son'"
-	<k.son@samsung.com>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo	Choi'" <cw00.choi@samsung.com>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>, "'Michael Turquette'" <mturquette@baylibre.com>,
-	"'Stephen Boyd'" <sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>,
-	"'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <8a729db0-f587-42b6-8003-789091986324@kernel.org>
-Subject: RE: [PATCH v6 4/4] clk: samsung: add top clock support for
- ExynosAuto v920 SoC
-Date: Wed, 21 Aug 2024 18:30:38 +0900
-Message-ID: <0aa001daf3ac$c8a5bb40$59f131c0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OUzK94bQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jtNyDz+w"
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4F011114FDA5;
+	Wed, 21 Aug 2024 03:51:26 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-04.internal (MEProxy); Wed, 21 Aug 2024 03:51:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1724226686;
+	 x=1724313086; bh=lxaTuQ67supVBazauuDO1cZaNg6VSSGIXpqcmIQHamY=; b=
+	OUzK94bQrq9+v8zOLVgNxlaKTtJpdmBKbSz8E+uYJ0YY2JfmxFJLFLyc6zFpNMfy
+	+ADFTlnI6ykBkXlj2/hOSnzIlRoHReSyxkeTNgAASVtJ7+pPL0LUlRcu4AS8Za5e
+	6SXVH7/4No7ls2O84v+PeWcKP19IX+tzAZ3V84wysy7fao06abA6A0NLqQQIdBFE
+	+naKXMIp0qwkXmCjt4qk8hJCoQo4weh7BMuGcX/o0ucvToE+k9/OdjzbjDVz8yHV
+	qWfpubICrE4vbArsMfSXE8z/0mTARnU8NJGZzBXvwsnYCp/EoEzGI5gfk57UVP9n
+	LSh+OFAbX8sPNv1dqGooLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1724226686; x=
+	1724313086; bh=lxaTuQ67supVBazauuDO1cZaNg6VSSGIXpqcmIQHamY=; b=j
+	tNyDz+wPtAostZuntuLXDs5T7GTb3odXchCsJVgeJ+xFFgMBM6tv0hpDCiyxKJBa
+	KcyjM7zPcC8vyBTqCanWsV8AgwJH1LDwWPp0onkuxSzzMgOggPmlCpmzYX2DLER1
+	hj69NfnVKCcVqAs2caQyp5NAUkcMbIKeCkJHhh5/4v7TEikdOyyJAnIqa+Zf1hkB
+	/6pnpDjXOX/9uya4e5z6XgVWpwuubS8iaWY5fVJr3vFRZZ3AqZDNfKbpkpjeZWZY
+	FgAVS871ofaccQd1ypTeRSk++axCxZdQYmH3ILMOMwNHYkAfNY3/j7B7NeQxcylx
+	u5ULWyzIuNLEEFTTTEndA==
+X-ME-Sender: <xms:fJzFZnodR2Dw668YZfsk2Kxehyr0XVUgPruqra8MBK2WwZT5yRDtlg>
+    <xme:fJzFZhpFMSPvfotX9MuEc0Vh44ZnzyVXDIP-bmOkwjHRYijROy1Xl29aP83D-NyYl
+    BnBiktZsGrBDQI1cJg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddujedguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
+    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhitghhrghrugdrvggrrhhnsh
+    hhrgifsegrrhhmrdgtohhmpdhrtghpthhtoheprhhitghhrghrugdrshgrnhguihhfohhr
+    ugesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrgh
+    druhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtohep
+    ghhrvghgohhrhidrtghlvghmvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
+    hnihgtohesfhhluhignhhitgdrnhgvthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdht
+    ohhrghhuvgesfhhoshhsrdhsthdrtghomhdprhgtphhtthhopehrohgsvghrthdrjhgrrh
+    iimhhikhesfhhrvggvrdhfrhdprhgtphhtthhopegumhhithhrhidrthhorhhokhhhohhv
+    sehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:fJzFZkMgaHdX5CaTgdpf7JLneO-JB21RhtWNhan8nMSBi1u5CPlYZA>
+    <xmx:fJzFZq5a-YC4clj9TZOqXmYjyAcjbNT1klLxNCwje15lSJefSwiarA>
+    <xmx:fJzFZm60T6pUcCOS3JNIZge1G01eCXNvs435xawZrro9AKWWd753cg>
+    <xmx:fJzFZihDWVrNFzpIyuCZIZZS0T5sZA4oKYmsTDDvKCARS7fZcoji9Q>
+    <xmx:fpzFZiPnh3MyPtpJ7DvIwFXXNejSccFI0J2ChBj6HpPdJ9080GryxsJ8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 6008B16005E; Wed, 21 Aug 2024 03:51:24 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: ko
-Thread-Index: AQLQL30DU0UysUOS1ES52gTWByyh0gCAc2uXAiz2ascBkCr+LgIuZJbKAN2O2QABhTlqKwKclZoJAbQXYwQCPTKgC6/ME8mA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmhe7+zUfTDJ71q1s8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKtF75qrTBbnz29gt9j0+Bqrxceee6wWl3fNYbOYcX4fk8XFU64W//fsYLc4
-	/Kad1eLftY0sDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM64ufgxS8E/kYqna64wNjD2
-	CHYxcnJICJhIvL3yjBXEFhLYwSjx5WF4FyMXkP2JUeLa0xVMEM43RokZ7SuZYDp+ndzDCJHY
-	yyjRMmsZM4TzklGi5/s9dpAqNgF9idXdt9lAEiICrcwSB588ZwFxmAXWMUpsnnkErIpTwE6i
-	bW8bI4gtLBApcXE/hM0ioCrR9+8fmM0rYClxZ0sfC4QtKHFy5hMwm1lAW2LZwtfMEDcpSPx8
-	uowVIi4iMbuzDSwuIpAn8WfxDbAnJAROcEjM3nsNKMEB5LhI/NorCtErLPHq+BZ2CFtK4vO7
-	vWwQdr7E5OtvoXobgKHxrxtqmb3EojM/2UHmMAtoSqzfpQ8xUlniyC2o0/gkOg7/ZYcI80p0
-	tAlBNKpJfLpyGWqIjMSxE8+YJzAqzULy2Cwkj81C8swshF0LGFlWMYqlFhTnpqcWGxUYwmM7
-	OT93EyM4DWu57mCc/PaD3iFGJg7GQ4wSHMxKIrzdLw+mCfGmJFZWpRblxxeV5qQWH2I0BQb1
-	RGYp0eR8YCbIK4k3NLE0MDEzMzQ3MjUwVxLnvdc6N0VIID2xJDU7NbUgtQimj4mDU6qBSa3D
-	yue2YnGv/bfnKi0CG29MOvXq2ZfOG6+fzFPlX8oUHBlaFxnQbcPme7CR58Jv++9vK7vefnx1
-	2yuv2X7at9U9mcePTpqy0+ngSWXzixfyddR7ftUw/vixImfuXav28rakt+HrVPx8Z6oLCx34
-	kPdApn/x+2mrjMpWNUj/L2fYt+ahRdzx1syq7sMXNbkm7GWq+lV39L9QK+/ej5t2LKx4fuGt
-	3Sk5jb/Hkp8u9H64OOIoy8vsNtczRyS2dZdf3LC5RbHszvmK+08PrZJtmz7xRbGaTyD3hFNV
-	YW6Ni9do19g92LRNXtSjKU2j7M+Cv593rGU5+1NN7LRXYJDpjb2X93xRZcjWiVU0u3V82QQl
-	luKMREMt5qLiRAB29iPoTAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvO7+zUfTDCYqWTyYt43NYs3ec0wW
-	1788Z7WYf+Qcq0XvmqtMFufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxcVTrhb/9+xgtzj8
-	pp3V4t+1jSwOfB7vb7Sye2xa1cnmsXlJvUffllWMHp83yQWwRnHZpKTmZJalFunbJXBlLH25
-	mbHgkkjFpVOz2BsYbwh0MXJySAiYSPw6uYexi5GLQ0hgN6PE6ed/GCESMhIbG/6zQ9jCEvdb
-	jrBCFD1nlGjqesMKkmAT0JdY3X2bDSQhItDNLPFo7S4mEIdZYBOjxLndN9kgWtaySPy4sZYN
-	pIVTwE6ibW8b2A5hgXCJ01uOMoPYLAKqEn3//oHFeQUsJe5s6WOBsAUlTs58AmYzC2hL9D5s
-	ZYSxly18zQxxn4LEz6fLWCHiIhKzO9vA4iICeRJ/Ft9gmsAoPAvJqFlIRs1CMmoWkvYFjCyr
-	GCVTC4pz03OLDQsM81LL9YoTc4tL89L1kvNzNzGCo1JLcwfj9lUf9A4xMnEwHmKU4GBWEuHt
-	fnkwTYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv+IveFCGB9MSS1OzU1ILUIpgsEwenVAPTtLWF
-	G6RDNLdOU56hXHlikkeI27KA85b7arb0B60zX5X0NKFZV8A+89qD4/ITJZYKuN2c1KHlXzfD
-	+oytxZxpCjtZlgpmKcevErFlrv9udjWOs+mkXWne8Qur/poy3rpstGda7Af9vtbefQ6iRvNO
-	H798Zcvetaf7nx+xebX0Ww+PWbfSprp2+0Jz3oh0l5wIzXVKwm8X7ve+EV/8XnHKJTeTawvk
-	ch9Kl/dlTGlI8c9RNbppc3fyudhX7/W+r19Q9MPj6Kk/Hs83dM7eq2E8wfEZU/H5fyLZb2Nf
-	bJyzs5avyMtw5yzZ98LPL8z73eJrbRK/ti763MJU3lXvdu7KOzS1SepoXM6lFWu1S689UmIp
-	zkg01GIuKk4EALsYRJQ5AwAA
-X-CMS-MailID: 20240821093039epcas2p390bf443819db218a0a94b424fece7961
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12
-References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
-	<CGME20240819052422epcas2p258a29e773ebdd60573078c21f7a7da12@epcas2p2.samsung.com>
-	<20240819052416.2258976-5-sunyeal.hong@samsung.com>
-	<7f77dcc41173f2a20a0264b6242ecdac6ea85ad9.camel@samsung.com>
-	<087401daf2a3$4ae602f0$e0b208d0$@samsung.com>
-	<9ee0efad7a27202e6b830996b5ee661a2d350b84.camel@samsung.com>
-	<0a0101daf371$0f2025b0$2d607110$@samsung.com>
-	<76a46e34-fc22-477d-a2e6-4767e65a73c4@kernel.org>
-	<0a7b01daf398$9465d090$bd3171b0$@samsung.com>
-	<8a729db0-f587-42b6-8003-789091986324@kernel.org>
+Date: Wed, 21 Aug 2024 07:51:04 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Alexander Dahl" <ada@thorsis.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Richard Earnshaw" <richard.earnshaw@arm.com>,
+ "Richard Sandiford" <richard.sandiford@arm.com>,
+ "Ramana Radhakrishnan" <ramanara@nvidia.com>,
+ "Nicolas Pitre" <nico@fluxnic.net>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>,
+ "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+ "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+ "Tony Lindgren" <tony@atomide.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Alexandre Torgue" <alexandre.torgue@foss.st.com>,
+ "Nicolas Ferre" <nicolas.ferre@microchip.com>
+Message-Id: <96558a17-8c90-4092-a0b0-e128574f3d89@app.fastmail.com>
+In-Reply-To: <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+ <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello Krzysztof,
+On Wed, Aug 21, 2024, at 06:15, Alexander Dahl wrote:
+> Am Wed, Jul 31, 2024 at 07:29:29PM +0200 schrieb Arnd Bergmann:
+>> === ARMv5 ===
+>> 
+>> About one third of all supported platforms use ARMv5,
+>> but most of these are near their end of support. Notably
+>> there are still new SAM9 variants from Microchip that are
+>> meant as backward-compatible replacements for their
+>> older variants.
+>> 
+>> Debian still supports these, but the lack of FPU and
+>> atomics makes this harder, so I expect this to become
+>> an unofficial port in the future.
+>
+> FWIW, these are not only replacements, but actually new boards are
+> designed with SAM9X60 for example.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: Wednesday, August 21, 2024 5:02 PM
-> To: sunyeal.hong <sunyeal.hong=40samsung.com>; 'Kwanghoon Son'
-> <k.son=40samsung.com>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Alim Akhtar'
-> <alim.akhtar=40samsung.com>; 'Michael Turquette' <mturquette=40baylibre.c=
-om>;
-> 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob Herring' <robh=40kernel.org>; '=
-Conor
-> Dooley' <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: Re: =5BPATCH v6 4/4=5D clk: samsung: add top clock support for
-> ExynosAuto v920 SoC
->=20
-> On 21/08/2024 09:06, sunyeal.hong wrote:
-> >>>>>>> +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
-> >>>>>>
-> >>>>>> same question.
-> >>>>>> Isn't it =22noc=22?
-> >>>>>> https://lore.kernel.org/linux-samsung-
-> >>>>>> soc/58dfae564a4a624e464c7803a309f1f07b5ae83d.camel=40samsung.com/
-> >>>>>>
-> >>>>>> In my case(autov9), if put wrong clk_name dmesg will show that,
-> >>>>>> exynos_arm64_register_cmu: could not enable bus clock ...; err =3D
-> >>>>>> -2
-> >>>>>>
-> >>>>>> Kwang.
-> >>>>>>
-> >>>>>>
-> >>>>>
-> >>>>> clk_name follows the guide document provided by hw. v9 is bus, but
-> >>>>> v920
-> >>>> uses noc.
-> >>>>
-> >>>> What I mean,
-> >>>>
-> >>>> .clk_name		=3D =22dout_clkcmu_peric0_noc=22, // wrong
-> >>>> .clk_name		=3D =22noc=22, // correct
-> >>>>
-> >>>> Because there is no clock-names =22dout_clkcmu_peric0_noc=22 in
-> >>>> exynos/exynosautov920.dtsi.
-> >>>>
-> >>>
-> >>> The clk_name written here has nothing to do with the device tree.
-> >>> Please
-> >> look at the code carefully.
-> >>
-> >> Hm? I see in the code clearly:
-> >>
-> >> 	clk_get(dev, cmu->clk_name);
-> >>
-> >> Where cmu is the discussed struct.
-> >>
-> >> If you claim it does not have anything to do with DT, then what is it
-> for?
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >
-> > In general, clk_get is used via the clk_name declared in the DT.
-> >
-> > However, the question asked here is the parent clock name of peric0_noc=
-,
-> so it is unrelated to the device tree.
->=20
-> No. The question was about clk_name entry in cmu info used directly for
-> clk_get.
->=20
+Right, but I would assume that most of those board
+designs using it are done because someone needs an
+ARMv5 design in order to run a certain piece of
+software, or because they are already invested in
+Microchip's SAM9 ecosystem in other products.
 
-I have verified that peric0 has a dev parameter and that it should use a cl=
-k_name that matches the clock-names declared in the device tree. I will upd=
-ate the patch with a fix.
+For someone starting from scratch, there would be few
+reasons to pick a SAM9 over e.g. an STM32MP1 with a
+Cortex-A7 that is more capable in most ways but half
+the cost.
 
-Best Regards,
-sunyeal
+> Not all have .dts files in mainline kernel, though.  Would that
+> improve or change things with regard to long term platform support, if
+> the .dts files were upstream?
 
->=20
-> Best regards,
-> Krzysztof
->=20
+I think upstreaming the dts files is mostly an advantage for
+maintaining the specific boards, as it allows easier
+integration into CI test environments and lets developers
+see which drivers are used by a platform. Having at
+least a couple of products with full dts files in addition
+to the reference boards does help though.
 
+For the at91 platform support itself in the kernel,
+I don't see a real risk at the moment. There are a few
+areas that make ARMv5 support risky in the long run:
 
+- Debian support for the softfloat "armel" port will
+  likely be moved into an inofficial port in the future,
+  which in turn makes it harder for average kernel
+  developers to test things. 
+
+- There are discussions about making SMP support
+  mandatory for all architectures in the kernel.
+  If it gets to this, ARMv4T and ARMv5 support may
+  need to end, unlike ARMv6K and up.
+
+- Even longer in the future, all 32-bit kernel
+  support will end. I don't expect this to happen
+  for another 15 years, but the writing is on the
+  wall.
+
+      Arnd
