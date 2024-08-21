@@ -1,161 +1,118 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE0C3FD4;
-	Wed, 21 Aug 2024 03:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D831C6B5;
+	Wed, 21 Aug 2024 06:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724210398; cv=none; b=MEOZh/G5iobPh/ZX7dDH9mJajmaRemgCF2MWl/H1VRZ8Jqed0pjtbzzemd4E7iI9gXEgPwKyxdeqewGJHAkQTas5eEmnpz4xTE+6XVM7o+YkDZMQuuo/U/oe9yiWM8tG6cSK5dpK6bOyDSoR5u2AZAS1h6g00sGhtT+lY13DVuI=
+	t=1724220976; cv=none; b=UJamXgw+p74OU1AKHHWGHFQgBBI9YOtxwmNnyBfA4kzAS3f+rEKhL2+GbJtIbJH/BZRL5cBEEyDJkJGGK59//mPpZoEaCqnvNsSsIsLXE+OfxoN7ajBNaorv+Vn2a0C4j2onFR0HFo3TMUBTe0DyE6pq6xRX9VWwr2jt+9xBqwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724210398; c=relaxed/simple;
-	bh=ekc4UKG/naBvDE7oIUAwIWugkmXwGjS/9YxfRmEW5/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n5w342UT1hPj3o+TOSqs1H8AJYB70NkKc804X3YxPWmf/T/SHi/v87mwjVGsiaTZyXk7+TcUc4m92iwarbzxYGF3uU7etxYHZ9Bp86V7yKK7e52CZD0G8n3ThF9yDH6a+rDCXGpPd4N36bsTFZ1FQ/Hh5YkxNehSrFPDT/7ZyRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WpWm618MCz1j6jw;
-	Wed, 21 Aug 2024 11:19:50 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id D75211400CA;
-	Wed, 21 Aug 2024 11:19:51 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 21 Aug 2024 11:19:51 +0800
-Message-ID: <83c57ee0-b1e4-7232-ac74-e910b5db12a5@huawei.com>
-Date: Wed, 21 Aug 2024 11:19:50 +0800
+	s=arc-20240116; t=1724220976; c=relaxed/simple;
+	bh=2reMS2abFjEmmGXQTd14XspYdvQzuU9J6ti19gknrkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXED2MzYc+RP5ICPN2/8KxNrYSx+sTayOUVj2bzTYFbfUFI2/tkLRq4M12aos/oEU9c3If1bURsQZLlxSLBPKW999kwORtTOLCqMRLGOaPbQoApKKMXKnEJom8mUYubMnaRLS0Snpazq6eMfQjbDWjOkRS510bSW/zsrRA+A5ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=rN8rTzS6; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="rN8rTzS6"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 436C31483149;
+	Wed, 21 Aug 2024 08:15:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724220971; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=Dl+RoD6QZnQpgIOZGmiiMtYBsjlYnty3EcuCmVpqaWg=;
+	b=rN8rTzS6B47nDtgh0bW6AFWjjIozngRnDBW6pZv45yItrXTHwBTmmttPyqMaLTMStiSIEi
+	yV/E7s7yof3gwAhslgS0MLUTZ3MEE5BkzJhG28/JTqIcEKDSsrKtQB/GOpbhmyuEHOTwu5
+	AlyX75vLVxoRZD4nUDZhCms9VtdgRnjyavhObZFj8SFXZ0xomrbTNwi0nBF1s/ISwFAEs+
+	hEzvlsTZALbtVBgtSTaLEeg6L+759lTusg2F5I3+WWbTpswiznNUMdbv/j77owvv4aG9dh
+	8uvNF+ysV25Qj+TG+dgJ27Mymop0dj+psGftwkkjQv+DXNQ9MPbcmNAOqZ4zMg==
+Date: Wed, 21 Aug 2024 08:15:55 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Richard Earnshaw <richard.earnshaw@arm.com>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Ramana Radhakrishnan <ramanara@nvidia.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	debian-arm@lists.debian.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Message-ID: <20240821-moonlike-winnings-fcee547a16b2@thorsis.com>
+Mail-Followup-To: Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Richard Earnshaw <richard.earnshaw@arm.com>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Ramana Radhakrishnan <ramanara@nvidia.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	debian-arm@lists.debian.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next RESEND] usb: xhci: Simplify with scoped for each OF
- child loop
-Content-Language: en-US
-To: Alan Stern <stern@rowland.harvard.edu>
-CC: <gregkh@linuxfoundation.org>, <krzk@kernel.org>,
-	<alim.akhtar@samsung.com>, <linux-usb@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240820065635.560427-1-ruanjinjie@huawei.com>
- <435bde54-aa08-47d1-8fe0-980bcc577803@rowland.harvard.edu>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <435bde54-aa08-47d1-8fe0-980bcc577803@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hello Arnd,
 
-
-On 2024/8/20 21:46, Alan Stern wrote:
-> On Tue, Aug 20, 2024 at 02:56:35PM +0800, Jinjie Ruan wrote:
->> Use scoped for_each_available_child_of_node_scoped() when iterating over
->> device nodes to make code a bit simpler.
->>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  drivers/usb/host/ehci-exynos.c | 9 ++-------
->>  drivers/usb/host/ohci-exynos.c | 9 ++-------
->>  2 files changed, 4 insertions(+), 14 deletions(-)
+Am Wed, Jul 31, 2024 at 07:29:29PM +0200 schrieb Arnd Bergmann:
+> === ARMv5 ===
 > 
-> The patch changes ehci-exynos.c and ohci-exynos.c.  So then why does the 
-> Subject: line say "xhci"?
+> About one third of all supported platforms use ARMv5,
+> but most of these are near their end of support. Notably
+> there are still new SAM9 variants from Microchip that are
+> meant as backward-compatible replacements for their
+> older variants.
+> 
+> Debian still supports these, but the lack of FPU and
+> atomics makes this harder, so I expect this to become
+> an unofficial port in the future.
 
-git log --oneline drivers/usb/host/* shows this subject a lot, so adopt it.
+FWIW, these are not only replacements, but actually new boards are
+designed with SAM9X60 for example.
 
-> 
-> The contents of the patch look okay.
-> 
-> Alan Stern
-> 
->> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
->> index f40bc2a7a124..e3a961d3f5fc 100644
->> --- a/drivers/usb/host/ehci-exynos.c
->> +++ b/drivers/usb/host/ehci-exynos.c
->> @@ -48,7 +48,6 @@ struct exynos_ehci_hcd {
->>  static int exynos_ehci_get_phy(struct device *dev,
->>  				struct exynos_ehci_hcd *exynos_ehci)
->>  {
->> -	struct device_node *child;
->>  	struct phy *phy;
->>  	int phy_number, num_phys;
->>  	int ret;
->> @@ -66,26 +65,22 @@ static int exynos_ehci_get_phy(struct device *dev,
->>  		return 0;
->>  
->>  	/* Get PHYs using legacy bindings */
->> -	for_each_available_child_of_node(dev->of_node, child) {
->> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->>  		ret = of_property_read_u32(child, "reg", &phy_number);
->>  		if (ret) {
->>  			dev_err(dev, "Failed to parse device tree\n");
->> -			of_node_put(child);
->>  			return ret;
->>  		}
->>  
->>  		if (phy_number >= PHY_NUMBER) {
->>  			dev_err(dev, "Invalid number of PHYs\n");
->> -			of_node_put(child);
->>  			return -EINVAL;
->>  		}
->>  
->>  		phy = devm_of_phy_optional_get(dev, child, NULL);
->>  		exynos_ehci->phy[phy_number] = phy;
->> -		if (IS_ERR(phy)) {
->> -			of_node_put(child);
->> +		if (IS_ERR(phy))
->>  			return PTR_ERR(phy);
->> -		}
->>  	}
->>  
->>  	exynos_ehci->legacy_phy = true;
->> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
->> index bfa2eba4e3a7..1379e03644b2 100644
->> --- a/drivers/usb/host/ohci-exynos.c
->> +++ b/drivers/usb/host/ohci-exynos.c
->> @@ -37,7 +37,6 @@ struct exynos_ohci_hcd {
->>  static int exynos_ohci_get_phy(struct device *dev,
->>  				struct exynos_ohci_hcd *exynos_ohci)
->>  {
->> -	struct device_node *child;
->>  	struct phy *phy;
->>  	int phy_number, num_phys;
->>  	int ret;
->> @@ -55,26 +54,22 @@ static int exynos_ohci_get_phy(struct device *dev,
->>  		return 0;
->>  
->>  	/* Get PHYs using legacy bindings */
->> -	for_each_available_child_of_node(dev->of_node, child) {
->> +	for_each_available_child_of_node_scoped(dev->of_node, child) {
->>  		ret = of_property_read_u32(child, "reg", &phy_number);
->>  		if (ret) {
->>  			dev_err(dev, "Failed to parse device tree\n");
->> -			of_node_put(child);
->>  			return ret;
->>  		}
->>  
->>  		if (phy_number >= PHY_NUMBER) {
->>  			dev_err(dev, "Invalid number of PHYs\n");
->> -			of_node_put(child);
->>  			return -EINVAL;
->>  		}
->>  
->>  		phy = devm_of_phy_optional_get(dev, child, NULL);
->>  		exynos_ohci->phy[phy_number] = phy;
->> -		if (IS_ERR(phy)) {
->> -			of_node_put(child);
->> +		if (IS_ERR(phy))
->>  			return PTR_ERR(phy);
->> -		}
->>  	}
->>  
->>  	exynos_ohci->legacy_phy = true;
->> -- 
->> 2.34.1
->>
+Not all have .dts files in mainline kernel, though.  Would that
+improve or change things with regard to long term platform support, if
+the .dts files were upstream?
+
+Greets
+Alex
+
