@@ -1,66 +1,66 @@
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D5215098E;
-	Wed, 21 Aug 2024 16:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F14F1AF4E0;
+	Wed, 21 Aug 2024 16:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724259442; cv=none; b=acg3YpKgY8e78OmTA9WChH6mBuf3aMd9z0UxMfeADVFQ3oB5eJFZNl1gsL3ankCZpzaVY4LncI7lsO80+5nRM+Zngwjd4bogAZSdYD4HjU8Oea9zokZB+RjFXJVrr2NJm6FE6mlSkx153X0Z1MWdUtXmHsOYKiLmFvNZ6QwdS2Y=
+	t=1724259455; cv=none; b=E6Wv6VYUUKzHPEhJdEYmvWzQljlQnOsTKFEOYOubphzcklEf2z+0cyBh4zDeHXtJWf3RbE5vxrj6i2YFN6mEF3aVLrsEATmBzm0iE2XKUkyBETTNQsNZ0gf24Wi4omkyAxX0hVsJynEjy1wJ311miDHVRlruUmz7kVmpZCNk2Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724259442; c=relaxed/simple;
-	bh=HiQQB5BPqoIy9hzhjqXMK/0ng7SnxS/RfC+abHKR8lk=;
+	s=arc-20240116; t=1724259455; c=relaxed/simple;
+	bh=1FrgQQaRlzsG5xoexbs2EiOqTtb1mHgQz5BJFGDDCSY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XQiPV6c3zyqXksYlxWJ6VXn//JD2l9zYhNHODIUOHgY44gtN3C4G4BK2+80HVOWsdz3r6zV35NtBE8rcuDh3w43FIBRfPaIO8oBUAu6EGq6kGb/QPl/Yiwx/82gw+qemdXeLcW3GLrxzHMQQFYt2CmfFLOQUbOoLVRa4VffyODE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxUyYIsb; arc=none smtp.client-ip=209.85.160.50
+	 To:Cc:Content-Type; b=HZpJIr3bIyUrELDeGy6fKa4ZFw8fobiNVDbOt2NkUgcdilhE59jUvhh/VrDGk2CSue7IVyANNws9cFKz6eJyIYwHH3ZztxMbf09kNabeqI8ZXMc9LxAZXifv52dRZmIQn+/ciEpEUY4THzK+LKd6UB+vbdT8CeSGhK1UJ2aiAJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtLMjcIJ; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxUyYIsb"
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-270263932d5so3288736fac.2;
-        Wed, 21 Aug 2024 09:57:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtLMjcIJ"
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-70b3b62025dso4712449a34.0;
+        Wed, 21 Aug 2024 09:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724259440; x=1724864240; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724259452; x=1724864252; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HiQQB5BPqoIy9hzhjqXMK/0ng7SnxS/RfC+abHKR8lk=;
-        b=MxUyYIsbPDW3acpbFuR3oq6+p1jz6qiBYtMohUtP0wVv18o+budpySC+hkq1fsHU6N
-         xNWdZSeJNUrmNsEUfxoHivCrUPgqxoEKYRcN5O90EQsKB2to+k+iHMGABmrpi5Im4lzw
-         AhhA1L0W95YeMjpE3mNf/Dl8xRxg8NFOGeZb5Uytu1dThdJ/QT2aSW9FEZr753wmkJ0n
-         Te+VZwFC7pFRZf5q/kbtfWzoCz6TSwui41iU38gpwFUyXnuQDtkBCRGsmS75GMJno/mB
-         W4l/c6TYlkK8dXYiBbF6TK0nWmjcAV4c091G9TmEogcPCr4cjbrk1fsuc8QdcycJsXFf
-         fMCQ==
+        bh=1FrgQQaRlzsG5xoexbs2EiOqTtb1mHgQz5BJFGDDCSY=;
+        b=QtLMjcIJuNrqRIzqMyKlTiDb9tEJtZhIKWAGdjWWL66y0Xt+RpnqWGzbV5YLXVFPvu
+         ra3AyFFEfORJJpDW1zANe38+3sMa8lGxsPPuej3879C5ECfN87mzElY92PnMz0Nwikqs
+         0x9xc5xV1n3PTCJHf7JDNomiuMUhL8QBUpF5ZhS+OtNdGLDQr+xiajhb6G8Ex+jFdK/H
+         b3QpufeEvsvr4CQQEdRUtc+974tEWHRzZacQqtsatkPw6L/TNdmxBotI8j8zCblrCg8v
+         3wogmfXtunpQa5T6wWLTaUFupyMbXqHQbHNdMpgXRiBfVJUPdKnBg6n8ZU+Gu4ClftJf
+         Gvow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724259440; x=1724864240;
+        d=1e100.net; s=20230601; t=1724259452; x=1724864252;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HiQQB5BPqoIy9hzhjqXMK/0ng7SnxS/RfC+abHKR8lk=;
-        b=rci3LY2LMOE9zQqgMUOgZkF6JU2NMWXx0uOw9VJAB+jJ2L1WFxs+M1eknx0+KnzDq8
-         fqdKD4pdXbNxlcRhN2WDEJ33YCYWSXfQLwwNjSGP2zw93CEcnOf0k3ixMfAbzyJ16e+Q
-         a49ItnzlRS8xoVg0z1FGtIvP0I709cSuy1ckG4Z+lck/V93GCcNv71/Id352BNrP4S4H
-         C87BS/zopFBY+t0a4Lo3hiQhys/GK+e7sWCR2g0hAqA++dljuplpPmt0krU8fiUiplon
-         yHOY2D1xP0TAN+NmXx1jkQ1PMeSpdoOIKw6JoCV/y3Kj7sv4hqH1D7q284b9T6NrueAa
-         Gucg==
-X-Forwarded-Encrypted: i=1; AJvYcCWClwzThylNiYVhjV2JaPJiXINDTez1owil62rfVd8FKOTxBdvpulTtO2A79z92JlSEVLZtMw2upsD0I/Q=@vger.kernel.org, AJvYcCX4nIx3mYBePa6m2L7kDqAIlmicQQEgP6vsrprIjZNo3Hkh3yIHM4jEkM9XDY7CWWuUWlDEvGaGsxe3@vger.kernel.org, AJvYcCXXkkFTVBmU0xE8+pXlRxIQzQM/eBR/L2xVsYnko2AFopWmdRmmQ4G87WSYLNofUBbtP8nFABRkGYlcU4fuLH29UGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqgga1MyQS1YFTLtgspKjFUJt0tUEGgZ7G32vOwKWZc3+j9VsQ
-	s1fvWOkLWX1183zv2LY2K7Z3UxxUeh6U4dRBU4z5MYaUaKxgyAk97cMq6i8nBLHlfsgIjHjVwcR
-	v/LEsyHiKXY+f1bufSMVTw5hYbAk=
-X-Google-Smtp-Source: AGHT+IFZpKlokvxuqGz8vE2ZpUILfWKw/N2m7OGMXJILmuUO3YUFksxquBEIoOwrBY9kdySTdYjjfYu3aJGgXibKhM4=
-X-Received: by 2002:a05:6870:968b:b0:261:290:a089 with SMTP id
- 586e51a60fabf-2737ef6e791mr3144976fac.28.1724259440233; Wed, 21 Aug 2024
- 09:57:20 -0700 (PDT)
+        bh=1FrgQQaRlzsG5xoexbs2EiOqTtb1mHgQz5BJFGDDCSY=;
+        b=CH8pIqfcYSRqaQqmo+uNxSHAgY03cwiZz3uKUiEvsRK385fwIhmDgOaGdtxaqVeDID
+         sDP5iiNnMeWnJjDgwagPfUxLmHxmRuBV3GxyBpOFunVpn6+2zp4qY7J4i3ktNXsEQtmN
+         H7s9nfu8Mu2E2+0djspJdXyljtrN36HpRC+7LL0rrBagmlXS0TatwUMgp8uv+0SEGGWX
+         3ynL+sTCAxlaP4+/zNy5ommTIFjT2Y2AZdVoW/U3UcEZ+2ubFbt/CAz2efRdmVCKdOiZ
+         6RnVMdff4a3JvCZZU0IZqMJaKvDjbOXce9eWOqm3218nmf+IGQhuxmvCyvQfQ2v3sYml
+         Y4gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWB56dmR8llzJOJyrbJ6qmvGAAminNDQ/YqDvaHPHK/CHk/vxAdvQTifb8AliAMhFAkoD9gH2HaHunENg=@vger.kernel.org, AJvYcCWf358y9ySfCTkKqp+v185qHvRis8RLfRusqd8cC7inUxNkZbG1NQOmjXzzz5WCMX4FP1HEISmc0dZr@vger.kernel.org, AJvYcCWl0FWpoL2PSC9I+TvHVCTPja4t0Er8q2WVFIJSVnoD3RfhdSDXEie+e6LYutzmKWVwicyiF8AaR2im//3M4yocoPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh7lkI/8Oty/daxRHEUpsLQiAVwuz5nSroHv6fAfWTnaSSnEB8
+	rIkUlOJqUNeyfKu2hiAzINkZPZKg2J5s7JVsJUKx/sgcK3vM+tux4PcwF8WYCxrGvSJMFNCBfRw
+	jNdlQvxioZrUUbs0jxGfPgOMKtek=
+X-Google-Smtp-Source: AGHT+IEIA1o9HmWn6YZU01KInLt1ALprygAJCnPqjYakidAhi7RUIozLV04SGzZx1EmpG28D1ed6rEdc6UoVW2m5t1U=
+X-Received: by 2002:a05:6871:b25:b0:25e:14e9:10c9 with SMTP id
+ 586e51a60fabf-2737eec46b1mr3111271fac.6.1724259452578; Wed, 21 Aug 2024
+ 09:57:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240821071856.2335529-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240821071856.2335529-1-ruanjinjie@huawei.com>
+References: <20240821071752.2335406-1-ruanjinjie@huawei.com>
+In-Reply-To: <20240821071752.2335406-1-ruanjinjie@huawei.com>
 From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 21 Aug 2024 22:27:03 +0530
-Message-ID: <CANAwSgSegd76nPmNj_tWNa+-hvK-7oQ=zRky5B+LUw7wmks_bQ@mail.gmail.com>
-Subject: Re: [PATCH -next v2] usb: ehci-exynos: Simplify with scoped for each
+Date: Wed, 21 Aug 2024 22:27:16 +0530
+Message-ID: <CANAwSgRzWGtPEOp29Jq8wWHE0BQcQwY-_tCAJQ1sgCA=QU3nxw@mail.gmail.com>
+Subject: Re: [PATCH -next v2] usb: ohci-exynos: Simplify with scoped for each
  OF child loop
 To: Jinjie Ruan <ruanjinjie@huawei.com>
 Cc: stern@rowland.harvard.edu, gregkh@linuxfoundation.org, krzk@kernel.org, 
@@ -71,7 +71,7 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Jinjie,
 
-On Wed, 21 Aug 2024 at 12:42, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On Wed, 21 Aug 2024 at 12:40, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
 >
 > Use scoped for_each_available_child_of_node_scoped() when iterating over
 > device nodes to make code a bit simpler.
@@ -79,7 +79,9 @@ On Wed, 21 Aug 2024 at 12:42, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
 > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
+
 Reviewed-by: Anand Moon <linux.amoon@gmail.com>
 
 Thanks
+
 -Anand
