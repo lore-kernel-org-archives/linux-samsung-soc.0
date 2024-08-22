@@ -1,171 +1,96 @@
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2081.outbound.protection.outlook.com [40.107.255.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914DF19470;
-	Thu, 22 Aug 2024 09:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724317794; cv=fail; b=OUftIn4v3yPKwn1KUMEt4P/aqW6ZckQJqSRTKnC7V2qb+zGsPwoHz7M1ZS5IRUoHEdinS7yLvCmONyhA0YPVzhCzGJauYWZ/KLVnCKUsffeig72ITF1ELyGYHGl32jHlusPAXoF86VoiES3qaWGQpYnYQdQqx3+MZMDj4/6WmUw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724317794; c=relaxed/simple;
-	bh=nYke78oC27zNBxONQO5NcvUD+MUDQYuW9mudnPxYSgc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=F2FXlJ1V6gcYeF88aPgj+/VKCg+0MK5NeF6/rgfwF0R1FDqQ29HOJYe3eiE8jFwjV80cAxcjMjCojxdtXdCGAx/ATy1SRvyXMVTN3GzlL/cpzYwmPK6QU+9uAhTtd3C00c832Klzoat2Mr4bXiT1uaNCogXGTCFF0/89iOIbiKk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KV//SAUe; arc=fail smtp.client-ip=40.107.255.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987FA16F0CA
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Aug 2024 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724319516; cv=none; b=SAds/CEil26NKSqgjKln8USqBYzenSBRNNQRNjMMfOUJiA/5MwR4+vyodPRioUqrsKQQNdEq7Q3O9HExJuw0rPR63pA1y/HmF0FBlT2HqBOiCeeled+JhbFdCNkvSc9Cvq68XGBRHlzntxsUxQ001Zt7ycXfy8dFn1xplYtNFPY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724319516; c=relaxed/simple;
+	bh=111O/5/1ojVV7OI8NIPGIbmOFNtTVFkol4UsxQyR9uU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gOaZ0ufig7zAVcBkHxsVonhoP1wmeg+drw+A7dHvrCPh8VLgkDHXTGmmyl2SKDaqEG5oJml6kfPGJb2Cn+VzHQ0p5VXpi4Paondyjql5qO5Sd+KZa7vNFvmiCeI3hR7x+CGBB9I5WdTCWBoAuE1R5xXI15dj5BcL64RJLOq95kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fWONRY/9; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KV//SAUe"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QPOdKv6W4jf0GM2UT0BgkfoXnhRQUvbQKTktN0xZqLJF+q91TsPRRTZh+Hm0aTZ7uodQasuE278nhBLYJlNkEQ9nyhDqkwn0Bbq3cUS2TOrUw6kePqOqQSIOPgfKKVq5rmcRzUcKFYkQ1B8SM0IccJ+tdgmq/N7RliVS/cOYXIUayboXzCVAgG6Q/qyJE7uAQt2lwirkQ33/yL7BjSz792Xohi6tPASWKV+JiGZARSVagAIRpPPZoQ+81YOLQh8vMBuaZcGIg5cTivPiS1fWqKoH9rjfpLE4nLh1fONco3luQe73OjrJQEHlohBnOUClEuA9N1jq8NOfZaki4752ig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tAKXJHhlmiEe/bEm3eU1F3I6PANSb+CKNpLIjKQj1lg=;
- b=HxjUJiAY7r93yTPCREcO8sh43jsMUv2JsqnlwhNTXMQaw4txPlTJtBjqJJrXjI6Tzy6Nqc47AcvJ1ctfNeUfkP/LryKw4vizbqqzv4wYud6UH8FYIb8hf1LGLD7axfgmrlZ0YAD9OUoyoCY4mYzDEludyBPAh4K0yQ/6Io9cXpzChmuc1blKrQZ/HYOLmpFu2yvmpxbrjxeFMUFLTtZNDkqb6+uW76MNBSkNlUq9igrsVVlRrNzA6CcQYUS5FQ6jzqzrtB+7bGa4fcoKjSL7TFl6a45DybxbZPie2dh7wU40PBTh7LQxMTcuU+MO4Po+egAk0SobvRstFu4HkzGJ6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tAKXJHhlmiEe/bEm3eU1F3I6PANSb+CKNpLIjKQj1lg=;
- b=KV//SAUewwXeXnCNW1y0GW827Ckh2SAofUcW/gsY53z/dl4MY9pqK7bYDvXBsYXbFGxi+wa6DChZ/kuJI3fYIoQgGnnIQCNuBcwjex784Xdiexl3ygTfWuRLRfJhq+wqjf0WPBXIMLD4Ofv4un0n5Ha+VY+73vC1U8/ZLIzP84KyLyImKrx2lRjCbs7WswdlXQpjT1XYUFfQwh/bxoCmuN6/q4mfwTzasTSld2vPdzF6dlNhcoDz88f+554lxrGH5IPuLoUCAltikHtCQOXH1KX9tQdZTHRI1CHhp4WPevWiO8bZhGFQj4pZHKzx7hE+dJIV13ke3M0r10ZIqRx77Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5724.apcprd06.prod.outlook.com (2603:1096:301:f4::9)
- by OSQPR06MB7251.apcprd06.prod.outlook.com (2603:1096:604:29b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.25; Thu, 22 Aug
- 2024 09:09:47 +0000
-Received: from PUZPR06MB5724.apcprd06.prod.outlook.com
- ([fe80::459b:70d3:1f01:e1d6]) by PUZPR06MB5724.apcprd06.prod.outlook.com
- ([fe80::459b:70d3:1f01:e1d6%3]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
- 09:09:47 +0000
-From: Yuesong Li <liyuesong@vivo.com>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	krzk@kernel.org
-Cc: alim.akhtar@samsung.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yuesong Li <liyuesong@vivo.com>
-Subject: [PATCH v1] drivers:drm:exynos_drm_gsc:Fix wrong assignment in gsc_bind()
-Date: Thu, 22 Aug 2024 17:09:27 +0800
-Message-Id: <20240822090927.1444466-1-liyuesong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0188.jpnprd01.prod.outlook.com
- (2603:1096:404:ba::32) To PUZPR06MB5724.apcprd06.prod.outlook.com
- (2603:1096:301:f4::9)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fWONRY/9"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36830a54b34so34147f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Aug 2024 02:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724319513; x=1724924313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kcAP1+UzidHHBut/wkiIQwc08/qanMcQw9/HOzcokdI=;
+        b=fWONRY/9UMTzGG2Qzqvg0H7UBr3TB1U+gX5960uBT4/SWB360FJTy7nM/VXeoqAKQ2
+         94cVylOhpoJ+8qh+jovXrAPviM5FaGdMQgarRt//YbuzpR6VMQPrXt5KKizz9K37WkJ9
+         NT794Gzmzebjzbznq8rHw3dQnjBF/T/cIm3ddqWArD6wq/y2ol9SdbfmVXBUU72AZoaL
+         X9N2fb2WtQDXGiBzkvhvZwyQ/ooOIEbbMBCD2P2epP4CnyGqtKvRBhcNJY78tBfqB4W7
+         olua1koQa4puJthRGptKzKCgY02bGzzVOfogOGcVbymO6X78KGMIMoUNhZXBKmMlIiad
+         zTWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724319513; x=1724924313;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kcAP1+UzidHHBut/wkiIQwc08/qanMcQw9/HOzcokdI=;
+        b=typZx/iu2f+9m4bra3f+wZvoiQdXq2259CWRbJFmoXCdlM6nMag4MotvV2AYkhamiH
+         B0+PfOOtzuVFqRdgqfWmq5g6I+gS35a0U9reARTNqn0FIRbdR1kE107dTJ8khwaNxBdy
+         MGl8cNqboKJwSv6AgywrQcMVDk4tM7HPlPczRm2s3NhyhUw0awE/xDEwj8gy5fDcU4bJ
+         fxj/CgM1Q8hjP58+NrSFs1PgMqtz4FVZqfH9vegY9XjSvieDIsCM58wwTwFWE9OnNOpo
+         d66QW3p4HQszcoQcRCXqgup9Va0uP5hJFHMim04GhjyXqhSrlwjzHrjHk8YFyPv/rtY/
+         kyvA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3O2S25uwHMUdR9BEMN/qnYtU7EJOqe3ThJCaEDCDIHdxTZz7flJRjkN3wP5ig6/koZCysHwJc2nxxtDQcvr7IKA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH5zFB5a/eGIdOZi1vaOQIy3e5CrGPQzo7C/U+GYEa0zGmhp1N
+	dynNZ5UOHiQ5NiE8ja/8yZGxpZtIqfdztFwV++y/jBSKDOMbBR08wEY0MaGGmQA=
+X-Google-Smtp-Source: AGHT+IFJFErUAThi7f4GEL5kxSEupuPH+kbml2cXMv40hedr33cHGawmpp718dh+i0XjTApnjQJUxQ==
+X-Received: by 2002:a5d:5e0f:0:b0:36b:b2a1:ef74 with SMTP id ffacd0b85a97d-372fd82f725mr1321582f8f.8.1724319512802;
+        Thu, 22 Aug 2024 02:38:32 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730817a5acsm1221805f8f.64.2024.08.22.02.38.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 02:38:32 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Kwanghoon Son <k.son@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+References: <CGME20240819075546epcas1p355a3c85ffcea2c43e8f1b2c69a0f3b4e@epcas1p3.samsung.com>
+ <20240819-add_sysmmu-v1-1-799c0f3f607f@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynosautov9: Add dpum SysMMU
+Message-Id: <172431951098.22090.17586720049616945954.b4-ty@linaro.org>
+Date: Thu, 22 Aug 2024 11:38:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5724:EE_|OSQPR06MB7251:EE_
-X-MS-Office365-Filtering-Correlation-Id: 802edba2-e0f7-4828-fca5-08dcc28a2b66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?R78pIjoiFNnXvFSEcXncDAsQ/bjyXfmb+7KYx9eLpZlLHVGdZIaIP/R2MI1s?=
- =?us-ascii?Q?HRlGfye0/wcOJieC45/d8trePwv1Wd/G1jh8lC7sLQTZw4g9CR+WWrMCOumw?=
- =?us-ascii?Q?ro6jvsuopZHPC2SWhxWptOHeL/mYcEGWI7+68ESwYTLa1eQtFXrjCXxP1ALP?=
- =?us-ascii?Q?PWFQaJPNXmPhcwFN7dLMWJYO6ABJ9HnHkrkeS9fxmfGT55/XzEETawfm/Q/d?=
- =?us-ascii?Q?7Ovw6EM0IVgqJfXawEdv/S4Pcqb26Nw7vC6hTv2zR4R9zyvS2CSMIagAC2YG?=
- =?us-ascii?Q?HvSM9imljLMboZQ9SgFnNJ4F0LBFsUp7jCgaxHM925VEJUJx/nRhAfmaKPhv?=
- =?us-ascii?Q?lxjf7lr3NKEdWEtxgWEgCCxb/eMtzAj7YO+A6BSbOxftAYJ4QfBAt54EWjgh?=
- =?us-ascii?Q?nXfbyEyg/BkLYdhfl0b4eswQLa46TMzPGYboDui2brvowe8I+VYubqWGBSGx?=
- =?us-ascii?Q?y7O9un4vRylqO1eB3CKDs/3SlVqPAC2Du9MM3vwOIfkBSg7j0rm0r1aTum8g?=
- =?us-ascii?Q?p/FwPjqs5RJ3cViVkUwyr4xxVq2W75bnxlhmLHCRvpKvQh/lyQtq9a+7YgWl?=
- =?us-ascii?Q?2xrzFmoVtuCOIt0PP04U5dmnxJ4n30MYSdimwS/+qwmnMu5FDLsZuU/G8rR7?=
- =?us-ascii?Q?3i02gifSylnT5OnFmaN+QvWP6lZLSDyN08175gHeXyanSk6E2+AADQgnMBpK?=
- =?us-ascii?Q?auz65/lMVf+x2bOWmQLF1D95BhJBXvAkhzEiix2f0My1CZeBd71QWotkoHwK?=
- =?us-ascii?Q?10LtT45x8Z702sBQ/aezrbDNRNRmpumQh2HiW6e55JNTr0xWgyv/hL+xmUMP?=
- =?us-ascii?Q?P3YpGCWtQJtwyvn3sRQ7fFdKlqu87HgBDubWipHEdElY5HvkSvbo/JgLvsL3?=
- =?us-ascii?Q?k5prxdodf1Sm7BeM4qRU0jr4ZDXFi0bBHtKqR4eg1s4LH+Bo5+87HGxEjBhG?=
- =?us-ascii?Q?qQygNSXKR4f5kWddIRw5AychBKlfw4RcGwtSDThE9E3KS3ZnM9VPb4jE/Bs4?=
- =?us-ascii?Q?PoTMF6EWrkUdbxKXKbfFYBn6A4ogpr7OuRyE6q6nn8Pd8bMXoTFlfLYwViCe?=
- =?us-ascii?Q?PvRKUQHKaQ8IjvlDeYrKXHT/I2/Lme+Q31TUzIkIJdTO0gOW9Z6WPzXu7DPY?=
- =?us-ascii?Q?1cG8KxhEulSn2G5Jq8BLT9Ur1eHC4ihZEIeIwaRIDmjzlX8q79ASVYYAFeq9?=
- =?us-ascii?Q?Kyj5Hi/ckVqETwsE2ZtKy0+N8EjLfYZ/MQbGcRaOVezey4YIC2DWOcOIkR4+?=
- =?us-ascii?Q?n82Mk9Mw1JpWkj8jiFD3U5mXKdU48bGoojPeRkJ2165GdgtOGqCBepjhREXH?=
- =?us-ascii?Q?F6H60v6TV8VZTIDCYStEQxw5mjcnRWrBh6H3TEsbdblhoMDMOgMWxDi2pPPb?=
- =?us-ascii?Q?7BTfJZe/DPdhJpUQ7/326BMvINzSb0vDYn5caqIOG3rWzYupBw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5724.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aMHsu3SYabYKCE0fT0Emy5VQ/HX1eyjjGmbOYSu4F1nYmqyw7xUXqSbo/09x?=
- =?us-ascii?Q?KOIrnn03xHVWhWjfjTEucI8jv+hHqSOxeUXD1HvP4DgxLU2RZ22NKbND/rSj?=
- =?us-ascii?Q?MunosXfzZHhFWzpAzniQie4HIbj3HvhxlNVKRkoN6JQ8Pfo5tO9LknaiFJnU?=
- =?us-ascii?Q?z8urtNjpTAPz26fyOzGtMH0GCPk81dJDRdFmue4t7W+LRmg1U/d+o0GsE4S/?=
- =?us-ascii?Q?pZtQDcuLJWOh5cM/djVxrFcP72PeKwGSQQIAk41l42JReoISQMtQ1+ZVKaTd?=
- =?us-ascii?Q?u4z9mpXEkvxjJuYeULT8m3kDzQyD6y6qzL8/SEh66DrVS/I3s2yxM6+Iq5+0?=
- =?us-ascii?Q?sAC2NUSCxsSzr17OdJpW6IVfTcC/eVPj6euEo7meTGR8yzJjq5GeS80qAePQ?=
- =?us-ascii?Q?jqDrNRDkUeqGITtq+5OwGdL5RoquSGkwwVP3+IcvvNByPzNK5WW/JFM8BbbM?=
- =?us-ascii?Q?Fp9RTrUTDb82dSyTa4MzCg6WQObKpYPie6watbif23STT7ur+TuWUMfqjCNI?=
- =?us-ascii?Q?4TPqG/C9gHWdDY8lSK01f9MDzQvgYNr2tMET+d5LEXUP1tY3P+4v+E4ND47D?=
- =?us-ascii?Q?k0zP0cVYFFSjlQQow/5TgDrex4OythFPPiIfqIPMfB1fErKRjF71ZWCH7qAm?=
- =?us-ascii?Q?T9R/+UKFzgs3OQRzGff22CYq+XJmLag+uj020Hi2iDT6uO6iJ4g0UzRx+pjT?=
- =?us-ascii?Q?gU0XDNSgwhOXkzyO0r4xofDInplJKyKJoJPoZfwr5CJS0+lymelHQipznMDj?=
- =?us-ascii?Q?KPax6a/rrDeFpVVbvPgjGv/WhZmuLXwSeON0JByxxCZu3OAkBHUSczV06R0n?=
- =?us-ascii?Q?64PfbSTnJ99SekA7kPkGf8vKWfEfW70kiaIDTKzbfAKA2FXYfvgetJGyc3kM?=
- =?us-ascii?Q?s8WJ2z4LUX1q2KFGHFoCuoiiaHvzCdkycyUHjNzh7dArWVT3hnP1TIdpo/N0?=
- =?us-ascii?Q?JQxG6J/7CdOeCVBtMNprA6rd2u8xeKjWmyd0rWU2TEOwcvwlWqfWDa7oj0UC?=
- =?us-ascii?Q?VrGqUOy+lP9+rKkQe/kgJhn5h5T2BYROfRrPZUbm0QeRP4Wh6vDSzWJ9KcvI?=
- =?us-ascii?Q?DM3I66xfymcbysheEID1nOBs48tInvVKTcTMsD1TDEhcdCOF4uS/RTPG4Bro?=
- =?us-ascii?Q?8tCRS8W51BDDNoS5Dbd9EldAuHXEdSq82hzxubw34VrSKUGVvO72yvnNsQRM?=
- =?us-ascii?Q?5PrYIa+GpHRiGXF+BRU64/YsihHSZ1wJbYIgdy5m9pagc7yJ+1O590j4McVr?=
- =?us-ascii?Q?W8xTX3V7yvlyAK/5UfeXcV9BnT6osQnepuhFMrxaAuHKXtbqwVvk175wyP4o?=
- =?us-ascii?Q?Yb4a8zt3eEa09v6A3GEtDTKUeGoeZMzdyLryRk07O6W1xFr1OhIOeGwuxTmr?=
- =?us-ascii?Q?1SKXch4tLCXugPP8ElbGy2mvIsAVg8idShji1JS4GTH32Ek+2DPtLDmlj9HM?=
- =?us-ascii?Q?fShioqNpdevF+GHjAY41WgFeL+8qUcb28fmOpgV9b9oO/gDszsQajQykA/ZK?=
- =?us-ascii?Q?F2cNHcjptfhze1J3Gl4xipPcABiMhu00pi8TbdUS33eXg/gIaz+pFmlwi4TW?=
- =?us-ascii?Q?qjVwa0phNDqu+UN60wUmgw989YVQ3wwqzqaFrZyV?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 802edba2-e0f7-4828-fca5-08dcc28a2b66
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5724.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Aug 2024 09:09:47.0980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zEpXmEFRHs6IZ2Vrpyxt4sPS1wnu6n60NuTqJ0hJc/Ff3ybEKa/uHb+wHVQNVY96tF5tf/JC7VHuzeKeUNggRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7251
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-cocci reported a double assignment problem. Upon reviewing previous
-commits, it appears this may actually be an incorrect assignment.
 
-Fixes: 8b9550344d39 ("drm/ipp: clean up debug messages")
-Signed-off-by: Yuesong Li <liyuesong@vivo.com>
----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, 19 Aug 2024 16:55:45 +0900, Kwanghoon Son wrote:
+> Add System Memory Management Unit(SysMMU) for dpum also called iommu.
+> 
+> This sysmmu is version 7.4, which has same functionality as exynos850.
+> 
+> DPUM has 4 dma channel, each channel is mapped to one iommu.
+> 
+> 
+> [...]
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 1b111e2c3347..752339d33f39 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1174,7 +1174,7 @@ static int gsc_bind(struct device *dev, struct device *master, void *data)
- 	struct exynos_drm_ipp *ipp = &ctx->ipp;
- 
- 	ctx->drm_dev = drm_dev;
--	ctx->drm_dev = drm_dev;
-+	ipp->drm_dev = drm_dev;
- 	exynos_drm_register_dma(drm_dev, dev, &ctx->dma_priv);
- 
- 	exynos_drm_ipp_register(dev, ipp, &ipp_funcs,
+Applied, thanks!
+
+[1/1] arm64: dts: exynosautov9: Add dpum SysMMU
+      https://git.kernel.org/krzk/linux/c/71e0b08ed2a98e5ab5eb255fc86cda04205b141e
+
+Best regards,
 -- 
-2.34.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
