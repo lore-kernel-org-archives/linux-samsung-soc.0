@@ -1,130 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459328493;
-	Fri, 23 Aug 2024 06:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3943E1F94D;
+	Fri, 23 Aug 2024 07:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724393183; cv=none; b=WZVaFonfMQcXBoYik48B2AucikmVgRi3VGXOnTT2yep1tU/KLb/h8dGlKUkg63fGexX2JvFDHkvkGAGSj0zceeh9D0qIeDGI4SrlNpm+/gk/L+FL2R8B1tT6qLC3tz7ZMZef6TZ4aU4bN0/annzpQWaP1WOaiDb5LtVIu1VoYB4=
+	t=1724397329; cv=none; b=mG9Ko7wk8hMs7P6PLpeMAhP9deF3WWkYXX9qpyKfKaCLBblD/g6dmTUy9WwD2tmaCrNdaaBpZRv8oP3W2PkL3pM6UqmZfvDyu96Tv1EXXH16ySlV3l8VvCVM4wbEM7n7RVBg9bs10AZrvFOTJXI7E+R+UcgzwFgmPBTyP8FSYgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724393183; c=relaxed/simple;
-	bh=jmbLtTkZS/y57ZDd6J/B0tGDIHosHbqAOSgVT8+XvuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nTpYowAohdJ2wce2v3/uv7x+Hi06ccpM3YiEQPtRZ1Ks1rQDSfDgkuOeam3hDQP/mKxSyxh9HUzlnUcE7eUcP6KKdnTVCbzKHHHZqZmJWKI8RaGb3ndeJRaavYvWct/efzVcgYFLKS0kXfIDwynfAYsiIc8ecQzhTGrigFcM9vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3Y6fe+S; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724397329; c=relaxed/simple;
+	bh=QyCcTe4msHaqfiC+96ztmrrkM0zY+X6wSGRlFtH4bMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLggVc43/16bPdGmYysfZ+DxlVoVWTmECsN5ClHlRfvp2CsHnxuIKZVMX3CVWamanlGUOvYPKOSZ0itw+ThjaUG4nk4s8IU7C2HtWwyipo+/MogtouaIE2v9i57WjXiOL89bSdkfKi4aYx39gu8LCdYZXBTuk3ifDi/h5gsK8EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dC+ig9bo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3Y6fe+S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B21C32786;
-	Fri, 23 Aug 2024 06:06:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dC+ig9bo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FAF3C32786;
+	Fri, 23 Aug 2024 07:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724393182;
-	bh=jmbLtTkZS/y57ZDd6J/B0tGDIHosHbqAOSgVT8+XvuA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S3Y6fe+Sf4IUbcX9ee9QTUF+Tm3+Op8ikmwcnwzW/r/XLzX4GqahNw6Dp+kUBV1Jo
-	 lI747BUr+FeKDn0hmp+UMyrevOxEwiqWSLfb6JtwzIYuE71Pi0f8cOSdwmIc7/gug/
-	 wCdkmhn+yp3unun/b/a88hNtitP7lpLVBoLt1WZJ1IXBnS2GDmmwgH8CPGlBc14xrg
-	 QaJ/PsnBlTxQphz/6GuSHW/aDrpHQuZ9KxdkTrK3mHaGzBHjuAKaDme25VBPKBabxm
-	 23u4+VPoQtRc5mZhPye8oPwqoUchRLfup67PTapGdiy9Jmipg+O7Um6hjylooKyYHP
-	 T1Wxkang8YfMA==
-Message-ID: <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
-Date: Fri, 23 Aug 2024 08:06:17 +0200
+	s=k20201202; t=1724397328;
+	bh=QyCcTe4msHaqfiC+96ztmrrkM0zY+X6wSGRlFtH4bMA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dC+ig9bokeCIZz28A0VmS4yeNf9cfatW193Y0Y6P+XjjwWqYnUP7uxfgrYQreE0ND
+	 tAAuhIQlXAsN3FodGpST0dAaCW8DrXSS2fHC71e5u2q/nFLpnWySM3gBd04s0b/bLt
+	 obNkVD9H2j1o2HRB8PLz7/S9Hy87OqunqWzEJAfj/+nfMTbrDW4hQNBlvGK3/HRO5q
+	 BM9cnqQhYBMiY0B3T4R6FRJ3matftWnbE4N6P+bb3e+Ddqemmx755xTWiF2s4Ynhxu
+	 +BqC2Nf02HzPBSxtitUsKfYeiyXBUD5R5jVqqBWTaby/Aw+Df5uAn3GJbUjLowKy0I
+	 fVVwLeOq9FA7A==
+Date: Fri, 23 Aug 2024 09:15:20 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sunyeal Hong <sunyeal.hong@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/4] arm64: dts: exynos: add initial CMU clock nodes
+ in ExynosAuto v920
+Message-ID: <bailwkwaxw27rtzgvjkapmmhjwearm7pjlstzc52qr4dgbaxsk@unpiayefy4py>
+References: <20240821232652.1077701-1-sunyeal.hong@samsung.com>
+ <CGME20240821232656epcas2p2fa72bd9565570c26616aaa640d75eef3@epcas2p2.samsung.com>
+ <20240821232652.1077701-3-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
- acquire mutex
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
- <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
- <Zsd-aVM6504L_hqi@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zsd-aVM6504L_hqi@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240821232652.1077701-3-sunyeal.hong@samsung.com>
 
-On 22/08/2024 20:07, Dmitry Torokhov wrote:
-> On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
->> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
->>> Guard notation is more compact and ensures that the mutex will be
->>> released when control leaves the function.
->>>
->>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->>> ---
->>>  drivers/input/keyboard/samsung-keypad.c | 8 ++------
->>>  1 file changed, 2 insertions(+), 6 deletions(-)
->>>
->>
->> You need to include cleanup.h (unless some other patch already did it
->> and I missed it?)
+On Thu, Aug 22, 2024 at 08:26:50AM +0900, Sunyeal Hong wrote:
+> Add cmu_top, cmu_peric0 clock nodes and
+> switch USI clocks instead of dummy fixed-rate-clock.
 > 
-> Guard for mutexes defined in mutex.h which is pulled in indirectly, and
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> ---
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 40 +++++++++++++------
+>  1 file changed, 27 insertions(+), 13 deletions(-)
 
-guard() is not in mutex.h and in general we are including headers for
-the things directly used in the unit.
-
-> cleanup.h is included there.
-> 
-> If we want to list all the headers that we need instead of relying on
-
-Fixing existing code is another thing. I only propose to add new code
-with the header.
-
-I don't have strong opinion anyway, so:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In the future, please remember about correct order of patches. Nothing
+can depend on the DTS, thus DTS is always the last. No need to resend
+for that.
 
 Best regards,
 Krzysztof
