@@ -1,121 +1,89 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2233F1885A0;
-	Fri, 23 Aug 2024 15:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10E918BB8F
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Aug 2024 16:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724427689; cv=none; b=IHe5y8leNjxiwjFaFHFewET3MsXNscWZYm6cA9VXQvhEBphAkl/iM3cqBHa4J6m+ICwbZkZDiZ3ybWGj7BXQkwZI6ckE6MHh27CROm9fwS18wPDReDOHbZvM37Ldh41Z4qo3ZOjdec08jS2OpsFwyLJNS+Qq7yjdbRDtJeF5Olo=
+	t=1724428806; cv=none; b=pJtDTVh8DJcwNrsPvjDOhp2rMvY6v1KukZaK7gvzZHpm1FyzhWEDnvYN1DFryQWt0a0zgGxezFiWVTK4wVC4FuNu6RnuRi+G2i3E0H1i4AE7R89IFn+rgO8tKJ5OaM1CxzKW5fhaqQ8Qd3Tq6OrhFKhUVlD/srPBmDyhJODoGbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724427689; c=relaxed/simple;
-	bh=qP3S+M0CNpnU2TUfkRgYP57VQtavU5PL8tYvXdirsYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7fFCVPJ/dbVWh0BnnDkqPzht/0nUvxxbGjdhbDFW+3lgrBQWYGloe+abqpj6M6MCoEcsVUYsQNoKq7zpCxXYc+4UJtNRhfPEO0pBvHXjM63a50xP2gTbe/59CpGpohcJDzvHFIKzFoS/ikFDw/wNFxeDDopoC5y9BYKDkZZefU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2JJMKPg; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724428806; c=relaxed/simple;
+	bh=N9Q+HfstvZrc3Uyj8dpSq40+6yhOtXrkXeQ5BkBE9Xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sVwXpHShqYAMf9nnurg+MDQ+dTnb+Tyh+rGfJJGgPybI4sotZYlltHqq9vAmv/is7ZcupXIVOtbv4We+t5NJKNeLlYqsi+mmVi73fNWrdu/8HhTZDiDEkLZai0gLWy0qC+nLEZ5f9ZsTrTzjMTX5eSdRUi1Xz49rwSR5No/0dTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Iiwad0iV; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2JJMKPg"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7142a93ea9cso1668061b3a.3;
-        Fri, 23 Aug 2024 08:41:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Iiwad0iV"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-533461323cdso2490482e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Aug 2024 09:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724427687; x=1725032487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YjB9ZMnHKgYRM/l7XHxIgiTwIdgJ4z4hI/q0GewkKyo=;
-        b=Z2JJMKPgm/l+uGwcmzfUmuQTprRXtpDDEAlTmVo9Zw2hJCl6xEvd1/vJAlSRTueCa/
-         NevLmG2h4rE2onDP2qUUmZuYOwJgcBwMfWzDirJmbkX04t4GtEtF6f9/AHMblSxeLTLG
-         fwtpklLokPQP5igravkIlgbPtxisANk+XZjcrzgiCY9cUNNCmvl8R1rKzQcgSJsj2iqM
-         Udl+lsYkYbueadyVtZH3OP2qzf03LFTSFozWW+C7IOiZFlNuQEb1rVYVQe3Ylr315ao3
-         iuYDu4WhCpynUsC7a6Ya7vXp0gHWyGqpmWqYrKSzIb4P8UmA1HgUPlcxydUq5vqCqhmW
-         ivfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724427687; x=1725032487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1724428803; x=1725033603; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YjB9ZMnHKgYRM/l7XHxIgiTwIdgJ4z4hI/q0GewkKyo=;
-        b=ULigvQTP/BaIsbVNqozFyYBqdMbrTYvQvAR4ByYRojKGDq7CqwlMi7OZ3T7lUMz9G0
-         14FHiRPyKSyz0eGDaiLF62N/JG52kbvg8W49XoFz94S4RcEVSibOYZovdR+HD9fH/bNV
-         AWYzTGBEGddhED6xEZIbgNI/pQEJ1oXmMfWWOOPx5hFSZkhlkghZBo+32JBaa3sfHcVE
-         +P/ieSOvkjBJsb4/3pvPZgNrJZG2hyNPfoqnjB281q4JSi6qzd4ivEnQ3Gd73TijBxGs
-         glzH8nnU1wLXBPMHpqFqtYuoc/xj3KqRxeM7SKeJZYH8gvml851xt1TAdOVu9lf8bN5x
-         SbEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHg56ILwZ1VO59sYGAMN3nK9NZspf4+7XTqk01/afW90a6BrNb9qxft3HJqt2U316BifJAayiyOiIO@vger.kernel.org, AJvYcCVoV9+kAGVhgbQ08MquZP+3K8i8X+cDRukvigZeWIj3cgU3CUbnOfUDsSPZq5eQCZjSGdA/TFoEwzzfV2C++NdOUl0=@vger.kernel.org, AJvYcCX7FgqvoS3WRKd04EY2Em51hU3iwQcdBzVzrD7Qr6+RYFBmWreF32lkmacGwkiBwK9KvsNWW/zSWVGue9Q=@vger.kernel.org, AJvYcCXeo23jwlnE9tRSUVxdx2mgq5PNNortajSVtHqGL8GgoF5uiPvVHT4UzUm1p8U0nYdvvz9GCzmeW9gfWyY2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJiBkc3L83Qnz1V2AhhyPFW9Ej/akt1kTtzUTLN8AYWRhI4y7z
-	khn436hWEpn6DKfjMHU9OR0gyfJhi8N0eb0GW7RA99YTchOD9/Dx
-X-Google-Smtp-Source: AGHT+IFuyqyaZHnTmSqiJ3FlOdH0Cc0Z5cRjdNS0bL90sFcrAxgdrMRqebKNcikPNQpMrVWtXPIGDQ==
-X-Received: by 2002:a05:6a00:4f8d:b0:714:2d0d:8a90 with SMTP id d2e1a72fcca58-71445772525mr3202824b3a.9.1724427686966;
-        Fri, 23 Aug 2024 08:41:26 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:75c:5a5a:d7dc:18f6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acdcf7dsm2914549a12.50.2024.08.23.08.41.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 08:41:26 -0700 (PDT)
-Date: Fri, 23 Aug 2024 08:41:23 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
- acquire mutex
-Message-ID: <Zsito5oUdhNBg6Nn@google.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
- <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
- <Zsd-aVM6504L_hqi@google.com>
- <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
- <ZshJMRCe4LvpYNmZ@google.com>
- <e0f8dfd7-7232-4814-a5c9-58acd5c11d53@kernel.org>
+        bh=N9Q+HfstvZrc3Uyj8dpSq40+6yhOtXrkXeQ5BkBE9Xc=;
+        b=Iiwad0iVu258zc/Oqitvsvpcp77cYcfVRtrErPCrrzbY1n7eWb0M4IWsouWyn/FVMD
+         QC0evnXVtfiTNNkndOJniMSABAjTrilzlrxkM2yF8w+/mlQDkmSJWvQZC6nW4UosyNpK
+         y22ZhrScMOXJVw4rRjW3a5QFd7qcJtkfPXO1dx6ofEZl7FoQebvE6RTCNbRSz27IrtSx
+         DSFsx2K/WWCfyYZ9pSPzNrbU7B2U8gXsUvhvNl8JqAyFT+kLqX/6cKjzf2xREr4w8/Um
+         iQGSM/a1QFsJNIwkRD2DnJVMsXAgSCwMZcMP2Fu9jeT31owhD1hQExuSxljO42SJyKrj
+         /jzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724428803; x=1725033603;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N9Q+HfstvZrc3Uyj8dpSq40+6yhOtXrkXeQ5BkBE9Xc=;
+        b=r7qf6ep5x3WZ/fAelqFEJ7B3XXZrX3ZUYsmqm4j/hCDUf5K6q3LAFF/yr1Q3LOvIxr
+         RDgs9ZQI3rRdVF3KPUxfz9upxmPGx/dmypCvPU35jPuK570aCGjzOKMuEMuZdR0sxQtK
+         bH0u+BwROU7Lsu6pTPGRe38wgptzl7ts2hUWIgFXfHAA/x1CQs6j/0JF5CPxyruCP4w3
+         g8ZgVmPFoaCwE6xMcelbal5fXgfoyija0smtaDXL3PyR/mhJEwhF/QjsCzLiqN32HV8u
+         L2X5UbsrjhPQeHZc96UTHkYEZLFLiljXpL/fEwCLDLg/cbl5zXFa0dZlO7VaOQGhsDi+
+         xgFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6VvqPnss8nMyznqTU/+yVzQORm3NDaE0kWvLqzCEiXRq0PjzOkRI+2/bShvljw1D7q/qm1MvEpFiijgaWHftGZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHeVDgZxmQ5XFLUO6Oieg+GgVualRK76KAz9xliNZ1MSD4bpEZ
+	LYSSVGjtRd9HcbAUPF1a22m/cogVCcz39NcOoVBPntaUITAJqcb0fi/xET2dP2H9akGN1ZulIej
+	6gxkqkxHeWy619SexDxeF2MtKLplXX/tk6aoFlqlNgHtGBe5F
+X-Google-Smtp-Source: AGHT+IH08LPEDFU5VHx7AqFMaGHbX23x27JBvOmuBNgaED1KnPIFyOCr2R1LWU/ISWTOYE+H7pGSrEdTHvtQQQj5kqg=
+X-Received: by 2002:a05:6512:3088:b0:52c:9e82:a971 with SMTP id
+ 2adb3069b0e04-5343882d1ccmr1899018e87.7.1724428802573; Fri, 23 Aug 2024
+ 09:00:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0f8dfd7-7232-4814-a5c9-58acd5c11d53@kernel.org>
+References: <20240807082843.352937-1-ivo.ivanov.ivanov1@gmail.com> <20240807082843.352937-7-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240807082843.352937-7-ivo.ivanov.ivanov1@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Aug 2024 17:59:51 +0200
+Message-ID: <CACRpkdYdJn3jSmur6q3+NrURFTQJO5tcxV=aTGXk7JfPyN1=ng@mail.gmail.com>
+Subject: Re: [PATCH v1 06/10] dt-bindings: pinctrl: samsung: add
+ exynos8895-wakeup-eint compatible
+To: ivo.ivanov.ivanov1@gmail.com
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2024 at 10:52:54AM +0200, Krzysztof Kozlowski wrote:
-> On 23/08/2024 10:32, Dmitry Torokhov wrote:
-> > On Fri, Aug 23, 2024 at 08:06:17AM +0200, Krzysztof Kozlowski wrote:
-> >> On 22/08/2024 20:07, Dmitry Torokhov wrote:
-> >>> On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
-> >>>>> Guard notation is more compact and ensures that the mutex will be
-> >>>>> released when control leaves the function.
-> >>>>>
-> >>>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >>>>> ---
-> >>>>>  drivers/input/keyboard/samsung-keypad.c | 8 ++------
-> >>>>>  1 file changed, 2 insertions(+), 6 deletions(-)
-> >>>>>
-> >>>>
-> >>>> You need to include cleanup.h (unless some other patch already did it
-> >>>> and I missed it?)
-> >>>
-> >>> Guard for mutexes defined in mutex.h which is pulled in indirectly, and
-> >>
-> >> guard() is not in mutex.h and in general we are including headers for
-> >> the things directly used in the unit.
-> > 
-> > Oh, but it is:
-> > 
-> > https://elixir.bootlin.com/linux/v6.10/source/include/linux/mutex.h#L196
-> > 
-> > DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
-> 
-> That's DEFINE_GUARD, not guard().
+On Wed, Aug 7, 2024 at 10:28=E2=80=AFAM <ivo.ivanov.ivanov1@gmail.com> wrot=
+e:
 
-OK, I see what you mean. I believe that cleanup.h is too low level to
-include directly by anyone who does not actually define a new guard or
-destructor routine. The concrete implementations of needed guards and
-all necessary support is pulled together with the headers defining the
-primary objects (mutex, spinlock, etc).
+> From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>
+> Add a dedicated compatible for exynos8895.
+>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 
-Thanks.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
--- 
-Dmitry
+I expect that Krzysztof pick these up unless he has already.
+
+Yours,
+Linus Walleij
