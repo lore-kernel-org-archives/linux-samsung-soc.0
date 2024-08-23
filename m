@@ -1,121 +1,132 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FD13D8A0;
-	Fri, 23 Aug 2024 08:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D2F1474D7;
+	Fri, 23 Aug 2024 08:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724401975; cv=none; b=oNQfDdwgurGFZY0HINo04zM74tTNkRQnX7qUKV46DJZDh0BbCb0FE5DzDf4tS/DhDqFslV9Gi+hwkoQrfPffAUNUdMiMlmZKSqhgwDDAonMbyUS/bI4emhT3OngUatA90YtEurTtRSgGQt+6KpiAifL3+9cULqLB73Bg/K0RJyo=
+	t=1724403180; cv=none; b=X4GqHLf5i/NLtj1/4mzALaquaZFbuDfBB06GTC4wosDQb/NgRT4LmcUV6XWhZgm9YSrHBisud+e2g80zBa4Wu+/C7g0xb4ghr2O/aaRxpuJj7CqyfkfvPvCHKAaNsWNfyGqOJW3ytn3FSqVzGaK8kP2F4y35ySqbNxKVgGNLwpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724401975; c=relaxed/simple;
-	bh=NV8JjnDoRrxNVYgq/FNfOB/FO+JK04wojIRoTm2lX5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YR17uLZcP8N37RlgA8g/bKG8atiqumxvFWmIpL7nvP3OPYD+SNscfPRJgVo8fvUHuQGBgCy+dCrJL3iSE1smZAxJwQGvccQwUwmnbMlR3dULNlfZfihGEtyyvpy9gJiQr/1gbYaye6QOQXa8B53DfVt97ZGWcD5EUHnuu+6fP9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C0U9E0bY; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724403180; c=relaxed/simple;
+	bh=jAZUNSCTbHtTAT0sSpKgfRRhAh8SlMCuJUduXH9mB7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BBgjsD/bPyG8GfOfYA0CppYYoMpG3cyJyAF7M93vTcrCj5EW5SbtpZG08BjJI1yDDFwrlTgWt76lj0y/u3RUKYSOBposDKNgX8TjM5qZhH3jNx0psQwS163c7ZEnFn1C9KXXGEdPmDI/RKPaJnGZ/D6IFe80xZFN/u7lCKx/gZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R09RmYji; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0U9E0bY"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5d5b22f97b7so1700430eaf.2;
-        Fri, 23 Aug 2024 01:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724401973; x=1725006773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yp4pKPaH9PczaTr8JGBibTa2Z0QRF52/s5tchcuFGOI=;
-        b=C0U9E0bYFAYT4WWhxso7ZK0VOaSBh3cO0KjWcR9mkXpn8Bwt+8n3TSA8U6U3zxYi4K
-         7rITDdCg4hQQDMWe9ZLGQ59IXp5eMP02zVT4c+kOtA328Ax8ZkWSBm83+QldwSV8DeG7
-         bUQM4UlGX88QPmZ6WMxYYahX6SkrTVxXwQRLC7LvqDQ7ZdkjGOPNprIniT3iqhuR7ArN
-         jO5ppjJ7mZn2ydwB4lKC/rvjmQ2KKZTVy1iWXi8TlH8PNjkvs1ZYW+30SMDwPb1JkBGB
-         CVW+Qb5vvYS1mziGJyEc4sUlQbFG/Cs6kqDZoPM59thZS756DIeG6wZE+Lz3AAO8lnzp
-         wzaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724401973; x=1725006773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yp4pKPaH9PczaTr8JGBibTa2Z0QRF52/s5tchcuFGOI=;
-        b=iFjjkjkGXkTqIHdGvyU7YBcFBnj4UVmftvkGuVHsw00WyvDmkkz+hqVBb6siNyNrcd
-         tQ78MfIqlUPLrVEwnadCCYR8o+vu0QtnzOfyTjf08JGeALpkEaJESdvb9VJta3tK6usC
-         Q96ttN94jELRGsjEVdQEBuOZDleRgukGO0jbQz0afF2sWXhVLU/qeg9rYuWZT3Uovn7T
-         hR9zmtuBimDWzzr7WtNmbBdE/lMaNgPlYfHN+tTgcxhFV/lhHZ1VOW08ZeT73FviqEJx
-         RGVOs3xc+hL0LEHVoIAsRWTRAJR4XdCnvpCvntuvrdY8ihX2iAaiWlyW7//434Kjzg7U
-         9R0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7F4jsRSdadxhzc9HIIJu7Y87fwGqy5q/nl7ACqmceKLe1/39VkjhJ6t8oAkBxQGiqZsKPp5Z9LB9Dy5Oz@vger.kernel.org, AJvYcCVSbE81i4OMkPlAWmBod8n8ttX+GGclcMD9Bh2klapzJpgef2UPL0Vh6JxhQZ8DEpYasB9mbvoUyJO9@vger.kernel.org, AJvYcCVseVnVP+PFEwVLKLo8fMYnnR2+Gdhy26Js1TSxT7qCpd1G+L4gknWvdInu7KHBqzCLbJxWbVqYXtFBYbs=@vger.kernel.org, AJvYcCXywFmnvJ/2UcNa3i+fNce8OUE4lF/Z0xIBXZicD8/pxMKS4ssCKljxFEWVYZx++suJPGkZdgi0RqOSgehWd5RWHL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA+sb2XhCy56+Ta2vNXXef4phcGrAsG5/LaTUI96gINsNhdoG2
-	k/KGvFWVFNCwu+tXKWpIDYJLSZgZJad81l+KLH51Bzmv6rVsOt/d
-X-Google-Smtp-Source: AGHT+IEsGrMIBnE5i9swqXq/Apvogdiy73ZTSN5iJnCeHN2vFAylF26K8eA1Sr+N3GDp+gdG1bTwQg==
-X-Received: by 2002:a05:6358:52c1:b0:1ac:cdba:8c87 with SMTP id e5c5f4694b2df-1b5c3a4e88bmr144912155d.10.1724401972541;
-        Fri, 23 Aug 2024 01:32:52 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:ccdb:6951:7a5:be1b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9acabbf3sm2265501a12.29.2024.08.23.01.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2024 01:32:52 -0700 (PDT)
-Date: Fri, 23 Aug 2024 01:32:49 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
- acquire mutex
-Message-ID: <ZshJMRCe4LvpYNmZ@google.com>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
- <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
- <Zsd-aVM6504L_hqi@google.com>
- <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R09RmYji"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829E2C32786;
+	Fri, 23 Aug 2024 08:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724403179;
+	bh=jAZUNSCTbHtTAT0sSpKgfRRhAh8SlMCuJUduXH9mB7A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R09RmYjiwtTqkfNMmTKr4TVTin70hUYiOpGx+It/8f4eXUYTtl8Ie1GCdLKCNW2xz
+	 E6Jk8hTjXowNmJ3zMIpQLkyDJ587Ykafxye2NscNSPef0NSiM83y09yJvAV06bgCH9
+	 b4Z1MiC/f/hJaPW225ar2Al0709airtUWZ2ZlS093ibcry2R3f37MfgwoNHxLm3/3Q
+	 j8dcqrpGcsTGHYZ3ZH6ZpiLnzL/yokhOV72Y8UE14Rcexrt8zGOgJySPcH8hxK0VAS
+	 6v6vlrgZGEpaqrn5o4i+Ul1P3Cx9F0UOpXpGiN46gd2gqYjMjn1htCU7bJ62wyjO3C
+	 SuI9wFv0jMK5A==
+Message-ID: <e0f8dfd7-7232-4814-a5c9-58acd5c11d53@kernel.org>
+Date: Fri, 23 Aug 2024 10:52:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/14] Input: samsung-keypad - use guard notation to
+ acquire mutex
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <20240819045813.2154642-7-dmitry.torokhov@gmail.com>
+ <e6xkutxnpu7acvm5qfyyces4estm4ihc3rzczqpnxrbrkptdm2@6lwrlssvtt3v>
+ <Zsd-aVM6504L_hqi@google.com>
+ <0afadefb-ecb1-4ec8-a862-bfa06d171457@kernel.org>
+ <ZshJMRCe4LvpYNmZ@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZshJMRCe4LvpYNmZ@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 08:06:17AM +0200, Krzysztof Kozlowski wrote:
-> On 22/08/2024 20:07, Dmitry Torokhov wrote:
-> > On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
-> >> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
-> >>> Guard notation is more compact and ensures that the mutex will be
-> >>> released when control leaves the function.
-> >>>
-> >>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> >>> ---
-> >>>  drivers/input/keyboard/samsung-keypad.c | 8 ++------
-> >>>  1 file changed, 2 insertions(+), 6 deletions(-)
-> >>>
-> >>
-> >> You need to include cleanup.h (unless some other patch already did it
-> >> and I missed it?)
-> > 
-> > Guard for mutexes defined in mutex.h which is pulled in indirectly, and
+On 23/08/2024 10:32, Dmitry Torokhov wrote:
+> On Fri, Aug 23, 2024 at 08:06:17AM +0200, Krzysztof Kozlowski wrote:
+>> On 22/08/2024 20:07, Dmitry Torokhov wrote:
+>>> On Thu, Aug 22, 2024 at 05:48:33PM +0200, Krzysztof Kozlowski wrote:
+>>>> On Sun, Aug 18, 2024 at 09:58:03PM -0700, Dmitry Torokhov wrote:
+>>>>> Guard notation is more compact and ensures that the mutex will be
+>>>>> released when control leaves the function.
+>>>>>
+>>>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>>>> ---
+>>>>>  drivers/input/keyboard/samsung-keypad.c | 8 ++------
+>>>>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>>>>
+>>>>
+>>>> You need to include cleanup.h (unless some other patch already did it
+>>>> and I missed it?)
+>>>
+>>> Guard for mutexes defined in mutex.h which is pulled in indirectly, and
+>>
+>> guard() is not in mutex.h and in general we are including headers for
+>> the things directly used in the unit.
 > 
-> guard() is not in mutex.h and in general we are including headers for
-> the things directly used in the unit.
-
-Oh, but it is:
-
-https://elixir.bootlin.com/linux/v6.10/source/include/linux/mutex.h#L196
-
-DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
-
+> Oh, but it is:
 > 
-> > cleanup.h is included there.
-> > 
-> > If we want to list all the headers that we need instead of relying on
+> https://elixir.bootlin.com/linux/v6.10/source/include/linux/mutex.h#L196
 > 
-> Fixing existing code is another thing. I only propose to add new code
-> with the header.
-> 
-> I don't have strong opinion anyway, so:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
 
-Thanks!
+That's DEFINE_GUARD, not guard().
 
--- 
-Dmitry
+Best regards,
+Krzysztof
+
