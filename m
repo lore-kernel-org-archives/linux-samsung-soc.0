@@ -1,244 +1,610 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE7126AED
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2024 11:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E3514431C
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2024 11:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724670398; cv=none; b=JNctnm4BHIAHvjonSoqNU1wDaqBqhx3Wnq6Mpxkz2rA8wHY8kFU6Lgh+VHF7rDCwoQhHUaRflAG60BqQN78PNQ3gtuuioERfH+o9VK/bfpUPOxmu6D3NsXZxwtqmsOkGLyZNf2MVTu5/N2XH0stDt0ST/VlCIUQw2nmQNhsVjIA=
+	t=1724671926; cv=none; b=Jax345s/+JuCDC6v/aAjtvh2LP7d6THpcyLcI8IoDpNzAvqIumcnQIw3V1hO8eS8TISbtdp3rxXMOOV9N4cFVYSwIWkZZj0J5uqTHDBxsrhFhdK55KQYZc3bwoPfxdCEzBfudoIx9HRjksfWcOGnII3gXZxmbzTsfDuD59V0USo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724670398; c=relaxed/simple;
-	bh=hXznDGQITta+08NuXER7F2848SoRDvtPwc4E1tng3qk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=HpryWJnoL+Dtbkq21QxQiq/z8mJ1yd8G9D/FrK1pX5JtUFRP7CCSjPlLSGzdxI6ZEEzgXLT0oXus3ThqoKaTwrk0aU5uT3k+SWZhHEKYJdkYJJETmaJD7kkVF7L3gVBdi6rQsIBVxECOJHnMV10OOh2qp8eL1RVMMtUBg4OXPEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=heOhfeQR; arc=none smtp.client-ip=203.254.224.24
+	s=arc-20240116; t=1724671926; c=relaxed/simple;
+	bh=7GYM9SZsgGgN/ZC+AO1EScM+TL+WniMacfJbyVMO5sY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=sTmnnnNksl/b0kJ8AmiX4DXA5vQvzH+L3yOzbxjuPKxlOfaQ3b7oHN21JtgGwmtWyIL4BfJsPNOD5SnV35FA5gud/1HCLQpGKGS52wWgN9qXTOjo21nPZ8dGnq1T/rWdj3QkSkrlnk5El5F/R0Cq6nj29XNpHHxs4qXcDM13fvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rJBfiGmS; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="heOhfeQR"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240826105849epoutp016b00c4353992599f40b95fd341d02b99~vQinU5Lt12437824378epoutp01p
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2024 10:58:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240826105849epoutp016b00c4353992599f40b95fd341d02b99~vQinU5Lt12437824378epoutp01p
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rJBfiGmS"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240826113155euoutp0162649c6dde43ae53d0bd404e2ef6d8b4~vQ-gT00Uh2978729787euoutp019
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2024 11:31:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240826113155euoutp0162649c6dde43ae53d0bd404e2ef6d8b4~vQ-gT00Uh2978729787euoutp019
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724669929;
-	bh=hXznDGQITta+08NuXER7F2848SoRDvtPwc4E1tng3qk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=heOhfeQRa3F+jq+EkeORFCm+ZzM+I7DDWngAFGjjoSZu16BA74mjxz3/nlCGZ3Mel
-	 Iht7jzTwJtxvy468P33SSLTAIZOzFfasA0GcVykFPcZqVyX6vljeNXsF4wZJCjIyPF
-	 Degd2rKWaRpcPTBX8Mkd6TbXjaqVgeqXX+riyuN8=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240826105849epcas5p4c81296b7ffc53e25220de46a38c902b7~vQimyf3CV1254012540epcas5p4E;
-	Mon, 26 Aug 2024 10:58:49 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WsnjM27cwz4x9Pq; Mon, 26 Aug
-	2024 10:58:47 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F1.E6.09640.7EF5CC66; Mon, 26 Aug 2024 19:58:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240826091344epcas5p221ef522aaa6f6e943f7351f8fa688a49~vPG3Y-cSP1090210902epcas5p2s;
-	Mon, 26 Aug 2024 09:13:44 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240826091344epsmtrp22097ab86f7386a89292a152ae132f11f~vPG3YKFYi1679016790epsmtrp29;
-	Mon, 26 Aug 2024 09:13:44 +0000 (GMT)
-X-AuditID: b6c32a49-a57ff700000025a8-74-66cc5fe7708c
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	44.A4.08964.8474CC66; Mon, 26 Aug 2024 18:13:44 +0900 (KST)
-Received: from FDSFTE308 (unknown [107.122.81.79]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240826091342epsmtip2ec2b811249dadd1050111632ca995943~vPG008zF21793917939epsmtip2B;
-	Mon, 26 Aug 2024 09:13:41 +0000 (GMT)
-From: "Aakarsh Jain" <aakarsh.jain@samsung.com>
-To: "'Nicolas Dufresne'" <nicolas@ndufresne.ca>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Cc: <m.szyprowski@samsung.com>, <andrzej.hajda@intel.com>,
-	<mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-	<krzysztof.kozlowski+dt@linaro.org>, <linux-samsung-soc@vger.kernel.org>,
-	<gost.dev@samsung.com>, <aswani.reddy@samsung.com>,
-	<pankaj.dubey@samsung.com>
-In-Reply-To: 
-Subject: RE: [PATCH] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
-Date: Mon, 26 Aug 2024 14:43:41 +0530
-Message-ID: <0ccb01daf798$409fb8f0$c1df2ad0$@samsung.com>
+	s=mail20170921; t=1724671915;
+	bh=J0TRlNzlQxarkx8fTMeGEK/wTpXLvUaZJK/z/pLCxpw=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=rJBfiGmSk+lPz4XKUeekfGjWXQg21ihOGBXbxmTqCXDlQznDFJosmUuBkv5Y2EK4e
+	 om5jIi+FIx3mCGkr35nMyBEcMJcd6bYCWLuu3/ChsNUiPMzeU5UU1GAchTdg8h8e+g
+	 O7gUgjhnNHsZ2JO9rIgMRhhWlyahbbv1X45Nd9NM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240826113154eucas1p215e61cae3ea247a4f0be7236770b3a88~vQ-f2_jZr2099320993eucas1p2z;
+	Mon, 26 Aug 2024 11:31:54 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id D7.E2.09875.AA76CC66; Mon, 26
+	Aug 2024 12:31:54 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5~vQ-fTt_Vw2403124031eucas1p1B;
+	Mon, 26 Aug 2024 11:31:53 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240826113153eusmtrp1cc3868864f5e0b54f42078487d53aaf1~vQ-fSYEWr0936009360eusmtrp1P;
+	Mon, 26 Aug 2024 11:31:53 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-01-66cc67aac0e3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.9C.09010.9A76CC66; Mon, 26
+	Aug 2024 12:31:53 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240826113152eusmtip19dda6fdfcaddae49e386f803f2530b50~vQ-eKSvr02755627556eusmtip1c;
+	Mon, 26 Aug 2024 11:31:52 +0000 (GMT)
+Message-ID: <ef729a47-b7f9-48b6-a14d-692565ef1d38@samsung.com>
+Date: Mon, 26 Aug 2024 13:31:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE+FHJLEG7bRbSgl/2Ewycw4h6AZQMC8PEqAYm+p/azMPFrUIAdsFPw
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOJsWRmVeSWpSXmKPExsWy7bCmhu7z+DNpBi232CzuL/7MYnFo81Z2
-	i5sHdjJZXJx5l8Wi78VDZotNj6+xWlzeNYfNomfDVlaLGef3MVmsPXKX3WLZpj9MFp9O7WS2
-	WLT1C7sDr8fiPS+ZPDat6mTzuHNtD5vH5iX1HptfdDN79G1ZxejxeZOcx6mvn9kDOKKybTJS
-	E1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOATlZSKEvMKQUK
-	BSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGc0dO5m
-	LJhrXdG0qIupgXGTRRcjJ4eEgInEyen7WLsYuTiEBHYzSuyceo8ZJCEk8IlRon+rBkTiG6PE
-	0/fzGGE6zr54yQyR2MsoMW/+EyYI5zmjxLIDG9hBqtgE9CXun+oBmysiMItRovPlYkYQh1mg
-	l0ni7fZDQC0cHJwCvBIT/lmDNAgLuEksuLSAFcRmEVCV2H98IwuIzStgKdF/5gQbhC0ocXLm
-	E7A4s4C2xLKFr5khTlKQ+Pl0GSvISBGgOdN2J0KUiEsc/dkDdqmEwA0OiQNtL9gg6l0k3u17
-	CPWOsMSr41vYIWwpic/v9kLVJEs8XvQSan6OxPo9U1ggbHuJA1fmsIDsYhbQlFi/Sx8iLCsx
-	9dQ6Joi9fBK9v58wQcR5JXbMg7HVJObc+cEKYctIHF69lHECo9IsJJ/NQvLZLCQvzELYtoCR
-	ZRWjZGpBcW56arFpgWFeajk8wpPzczcxglO0lucOxrsPPugdYmTiYDzEKMHBrCTCK3f5ZJoQ
-	b0piZVVqUX58UWlOavEhRlNgcE9klhJNzgdmibySeEMTSwMTMzMzE0tjM0Mlcd7XrXNThATS
-	E0tSs1NTC1KLYPqYODilGpi0Hn2UFVy9I3EKS43zN1HFb/EbDB3lpu+Wqf2pMcX8oXeAvaVo
-	Ril3Vdumnx3rGu/dXMJwoq368J4nOty1Lj5CC9atv9Xdcjr+ztG2B5tZfQ9ERy45fW7uFWcZ
-	wSefr7SL8N94YMY1v2XSPXdnC9lLtwsPL1zXKSI/J9T4/ZTXG0OlZz1oeH0i4+qMF3ofL7HN
-	VX4RtIm54t1JE+/Cnv8tJbEXE7cLfJV7VR6baveh4c2CF/33foQqmxz9NdnUIYThTspx1oQI
-	toPxS4rdoyZPmLuwxfL8UouyWcEin3/x6nM/Cm++/z52En/JMutvOWI1c7QfdzBe6z54/E1l
-	Ud2H7d+mV2u/cOGd9MHh1/UKJZbijERDLeai4kQAEDhZ4FoEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsWy7bCSvK6H+5k0gwdXVSzuL/7MYnFo81Z2
-	i5sHdjJZXJx5l8Wi78VDZotNj6+xWlzeNYfNomfDVlaLGef3MVmsPXKX3WLZpj9MFp9O7WS2
-	WLT1C7sDr8fiPS+ZPDat6mTzuHNtD5vH5iX1HptfdDN79G1ZxejxeZOcx6mvn9kDOKK4bFJS
-	czLLUov07RK4Mnpn7mQsOKRTcaZvE2MD43mVLkZODgkBE4mzL14ydzFycQgJ7GaUWL9iCitE
-	Qkbif9sxdghbWGLlv+dgtpDAU0aJ26elQWw2AX2J+6d6WEGaRQTmMEr8nXqUEcRhFpjKJPGz
-	fQfU2HOMEj86VgJlODg4BXglJvyzBukWFnCTWHBpAdg2FgFVif3HN7KA2LwClhL9Z06wQdiC
-	EidnPgGLMwtoSzy9+RTOXrbwNTPEdQoSP58uYwUZLwI0c9ruRIgScYmjP3uYJzAKz0IyaRaS
-	SbOQTJqFpGUBI8sqRsnUguLc9NxiwwLDvNRyveLE3OLSvHS95PzcTYzgONXS3MG4fdUHvUOM
-	TByMhxglOJiVRHjlLp9ME+JNSaysSi3Kjy8qzUktPsQozcGiJM4r/qI3RUggPbEkNTs1tSC1
-	CCbLxMEp1cB04mDr7Xl+UZv0vMMObLWp6KxxOr3T3FTQXqBSsNL41sTVXJ9Ory559ui2SLLe
-	3MDPHzfJW6YfPGS+o7LLL1X+9jGuxlnqodxRTlbL1/k+mxDpHfLrikPxNX5P26CzdTICT3t3
-	1mvrbFqVwsw5acahw/y8IebWlQfWXfjc7txTlFUf4GMgn3S3/GfTLdeL+hNmhq6vu7nlu0vA
-	x03a4ZHtPWorj3y34Z+kOztCUSYssuZr1AanqEjl+ZNVRF7O2L49mrl/5a+DLLPez13XtCVT
-	RG650JJ+AYVfj7J5C/VKOi59DvWZH3uhu+6xaN4l0yu2u1+a/21g+s1zWJ3rg2fbLatrXFff
-	3H6cs9WHd5ISS3FGoqEWc1FxIgC97wxAQgMAAA==
-X-CMS-MailID: 20240826091344epcas5p221ef522aaa6f6e943f7351f8fa688a49
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] thermal/of: Use the .should_bind() thermal
+ zone callback
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+	<linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui
+	<rui.zhang@intel.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Mateusz Majewski'
+	<m.majewski2@samsung.com>, linux-amlogic@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <2236794.NgBsaNRSFp@rjwysocki.net>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djPc7qr0s+kGUx5J2wx77Osxd7XW9kt
+	Fszmtri8aw6bxefeI4wWM87vY7JY2NTCbjHx2GRmizOnL7FaPHnYx+bA5bFm3hpGj8V7XjJ5
+	3Lm2h81j85J6jy1X21k8+rasYvT4vEkugD2KyyYlNSezLLVI3y6BK+NYWwtLwb0WxoozM8+y
+	NzC+yeli5OSQEDCR2Ha6k7mLkYtDSGAFo8Sxhe2sEM4XRom+p+/ZIJzPjBJTlr9nhml52t7K
+	BGILCSxnlOj5ywNR9JFRYtrEr+wgCV4BO4kL7WfAGlgEVCWmrD7FCBEXlDg58wkLiC0qIC9x
+	/9YMsHphgQiJFY8msoHYIgJBEmvnzgLbzCxwn0ni2/+3YIOYBcQlbj2ZD7aZTcBQouttF1gD
+	p4C+xP/1yxghauQlmrfOBntIQqCZU+LM1TtA2ziAHBeJtpdREB8IS7w6voUdwpaROD25hwWi
+	vp1RYsHv+0wQzgRGiYbntxghqqwl7pz7xQYyiFlAU2L9Ln2IsKNE16GjzBDz+SRuvBWEuIFP
+	YtK26VBhXomONiGIajWJWcfXwa09eOES8wRGpVlIwTILyZezkHwzC2HvAkaWVYziqaXFuemp
+	xUZ5qeV6xYm5xaV56XrJ+bmbGIEp6/S/4192MC5/9VHvECMTB+MhRgkOZiURXrnLJ9OEeFMS
+	K6tSi/Lji0pzUosPMUpzsCiJ86qmyKcKCaQnlqRmp6YWpBbBZJk4OKUamNrilxmzGKVOEtD/
+	Ih24Zq/KftZTHxc6NNxb2h54vnKt8aPsrXMLCxeu/Rmvo7JtQeDBLa7p6YH9k7V+ifXJXPwz
+	RVBuksnvOL8pbk8tuY9ckUhMVinyYy3aEhGTHP8lR63+5sZFi5Lld9lXbn2RVtZyVtGWJ/T4
+	ny/1LOUZP2ZFpW0/MV926fx3ayJ+vPhxYG2h9YOla3/1XEsuUIyMkz818/gO3zU8hfbVnye0
+	v7x0zD3E7rab6s2/iwVPhX9pveQp8XfxncnfuXd8W9T317VyesmmNGOnsDkyy5jDCtwcS7w4
+	pKLm6dx5Uupz5fHLjvnnlibOEG0tnP3sXTLjXqW6Jtmv2+f1lYtPsLv+/6MSS3FGoqEWc1Fx
+	IgDZz/r8yAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsVy+t/xu7or08+kGbz9qmIx77Osxd7XW9kt
+	Fszmtri8aw6bxefeI4wWM87vY7JY2NTCbjHx2GRmizOnL7FaPHnYx+bA5bFm3hpGj8V7XjJ5
+	3Lm2h81j85J6jy1X21k8+rasYvT4vEkugD1Kz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP
+	0Ng81srIVEnfziYlNSezLLVI3y5BL+NYWwtLwb0WxoozM8+yNzC+yeli5OSQEDCReNreytTF
+	yMUhJLCUUeLknD1MEAkZiZPTGlghbGGJP9e62CCK3jNKbL82B6yIV8BO4kL7GWYQm0VAVWLK
+	6lOMEHFBiZMzn7CA2KIC8hL3b81gB7GFBSIk2t82g8VFBIIk7s/7wwIylFngMZPEhqmPwYqE
+	BIIlfj4/BraAWUBc4taT+WA2m4ChRNdbkCs4OTgF9CX+r1/GCFFjJtG1tQvKlpdo3jqbeQKj
+	0Cwkd8xCMmoWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIzSbcd+btnBuPLV
+	R71DjEwcjIcYJTiYlUR45S6fTBPiTUmsrEotyo8vKs1JLT7EaAoMjInMUqLJ+cA0kVcSb2hm
+	YGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fEwSnVwLT+e9SHzc5LPH5nSudPVN56
+	SthR4Hx0z8yTzN9irvg+ztZpWzm5Xd//ndNLW56a0s/r7jU6TG4UynA86lP8Qf/hMa20PRGu
+	D3bV3Fgy+zjrtyPTrxoqKW4rXHpAVHLPxh9TZ/Xb/WksUTuQteuItG99Erduw7HHmf9aF7lF
+	t7p8WGWu2XTGZl/05XuTDl89rlB8ZFNagfCNjx+UD29Xy7IWWzNZLm5vVPDcI3rzwlb3X9jw
+	4eOkd74NvMe4NlnfOuETmHZ48mGBjUvbODqTGcSKlp94ceZostnKTcuzc1xaOr0y+yROZyb6
+	vPsacD60TEB60qOI67sPr4t7GdSc3bct9MYHT7t57CfEjU8c3OChxFKckWioxVxUnAgAZTRw
+	rFsDAAA=
+X-CMS-MailID: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e
-References: <CGME20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e@epcas5p1.samsung.com>
-	<20240806115714.29828-1-aakarsh.jain@samsung.com>
-	<3765b1674e276afdc302def55327396a0a29cc63.camel@ndufresne.ca> 
+X-RootMTR: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
+References: <2205737.irdbgypaU6@rjwysocki.net>
+	<2236794.NgBsaNRSFp@rjwysocki.net>
+	<CGME20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5@eucas1p1.samsung.com>
 
+On 19.08.2024 18:30, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Make the thermal_of driver use the .should_bind() thermal zone callback
+> to provide the thermal core with the information on whether or not to
+> bind the given cooling device to the given trip point in the given
+> thermal zone.  If it returns 'true', the thermal core will bind the
+> cooling device to the trip and the corresponding unbinding will be
+> taken care of automatically by the core on the removal of the involved
+> thermal zone or cooling device.
+>
+> This replaces the .bind() and .unbind() thermal zone callbacks which
+> assumed the same trip points ordering in the driver and in the thermal
+> core (that may not be true any more in the future).  The .bind()
+> callback would walk the given thermal zone's cooling maps to find all
+> of the valid trip point combinations with the given cooling device and
+> it would call thermal_zone_bind_cooling_device() for all of them using
+> trip point indices reflecting the ordering of the trips in the DT.
+>
+> The .should_bind() callback still walks the thermal zone's cooling maps,
+> but it can use the trip object passed to it by the thermal core to find
+> the trip in question in the first place and then it uses the
+> corresponding 'cooling-device' entries to look up the given cooling
+> device.  To be able to match the trip object provided by the thermal
+> core to a specific device node, the driver sets the 'priv' field of each
+> trip to the corresponding device node pointer during initialization.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+This patch landed recently in linux-next as commit 6d71d55c3b12 
+("thermal/of: Use the .should_bind() thermal zone callback"). In my 
+tests I found that it breaks booting some on my test boars: Exynos-based 
+(OdroidXU4 with ARM32 bit kernel from multi_v7_defconfig) and Amlogic 
+Meson based boards (OdroidC4, VIM3 with ARM64 defconfig+some debug 
+options). Reverting $subject on top of next-20240823 together with 
+c1ee6e1f68f5 ("thermal: core: Clean up trip bind/unbind functions") and 
+526954900465 ("thermal: core: Drop unused bind/unbind functions and 
+callbacks") due to compile dependencies fixes the issue.
 
-> -----Original Message-----
-> From: Aakarsh Jain <aakarsh.jain=40samsung.com>
-> Sent: 07 August 2024 17:23
-> To: 'Nicolas Dufresne' <nicolas=40ndufresne.ca>; 'linux-arm-
-> kernel=40lists.infradead.org' <linux-arm-kernel=40lists.infradead.org>; '=
-linux-
-> media=40vger.kernel.org' <linux-media=40vger.kernel.org>; 'linux-
-> kernel=40vger.kernel.org' <linux-kernel=40vger.kernel.org>
-> Cc: 'm.szyprowski=40samsung.com' <m.szyprowski=40samsung.com>;
-> 'andrzej.hajda=40intel.com' <andrzej.hajda=40intel.com>;
-> 'mchehab=40kernel.org' <mchehab=40kernel.org>; 'hverkuil-cisco=40xs4all.n=
-l'
-> <hverkuil-cisco=40xs4all.nl>; 'krzysztof.kozlowski+dt=40linaro.org'
-> <krzysztof.kozlowski+dt=40linaro.org>; 'linux-samsung-soc=40vger.kernel.o=
-rg'
-> <linux-samsung-soc=40vger.kernel.org>; 'gost.dev=40samsung.com'
-> <gost.dev=40samsung.com>; 'aswani.reddy=40samsung.com'
-> <aswani.reddy=40samsung.com>; 'pankaj.dubey=40samsung.com'
-> <pankaj.dubey=40samsung.com>
-> Subject: RE: =5BPATCH=5D media: s5p-mfc: Corrected NV12M/NV21M plane-size=
-s
->=20
-> Hi Nocolas,
->=20
-> > -----Original Message-----
-> > From: Nicolas Dufresne <nicolas=40ndufresne.ca>
-> > Sent: 06 August 2024 20:08
-> > To: Aakarsh Jain <aakarsh.jain=40samsung.com>; linux-arm-
-> > kernel=40lists.infradead.org; linux-media=40vger.kernel.org; linux-
-> > kernel=40vger.kernel.org
-> > Cc: m.szyprowski=40samsung.com; andrzej.hajda=40intel.com;
-> > mchehab=40kernel.org; hverkuil-cisco=40xs4all.nl;
-> > krzysztof.kozlowski+dt=40linaro.org; linux-samsung-soc=40vger.kernel.or=
-g;
-> > gost.dev=40samsung.com; aswani.reddy=40samsung.com;
-> > pankaj.dubey=40samsung.com
-> > Subject: Re: =5BPATCH=5D media: s5p-mfc: Corrected NV12M/NV21M plane-
-> sizes
-> >
-> > Hi Jain,
-> >
-> > I haven't dig much, but I have a quick question below.
-> >
-> > Le mardi 06 ao=C3=BBt=202024=20=C3=A0=2017:27=20+0530,=20Aakarsh=20Jain=
-=20a=20=C3=A9crit=20:=0D=0A>=20>=20>=20There=20is=20a=20possibility=20of=20=
-getting=20page=20fault=20if=20the=20overall=20buffer=0D=0A>=20>=20>=20size=
-=20is=20not=20aligned=20to=20256bytes.=20Since=20MFC=20does=20read=20operat=
-ion=20only=0D=0A>=20>=20>=20and=20it=20won't=20corrupt=20the=20data=20value=
-s=20even=20if=20it=20reads=20the=20extra=20bytes.=0D=0A>=20>=20>=20Correcte=
-d=20luma=20and=20chroma=20plane=20sizes=20for=20V4L2_PIX_FMT_NV12M=20and=0D=
-=0A>=20>=20>=20V4L2_PIX_FMT_NV21M=20pixel=20format.=0D=0A>=20>=0D=0A>=20>=
-=20Have=20you=20re-run=20v4l2=20compliance=20?=20(better=20be=20safe=20then=
-=20sorry).=0D=0A>=20>=0D=0A>=20I=20ran=20v4l2-compliance=20and=20didn't=20f=
-ound=20any=20issue=20wrt=20to=20the=20changes=20added=20in=0D=0A>=20this=20=
-patch.=0D=0A>=20Please=20find=20the=20v4l2-compliance=20report=20attached.=
-=0D=0A>=20=0D=0A>=20>=20>=0D=0A>=20>=20>=20Signed-off-by:=20Aakarsh=20Jain=
-=20<aakarsh.jain=40samsung.com>=0D=0A>=20>=20>=20---=0D=0A>=20>=20>=20=20..=
-./media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c=20=20=20=20=7C=2010=20+++=
-+++-=0D=0A>=20---=0D=0A>=20>=20>=20=201=20file=20changed,=206=20insertions(=
-+),=204=20deletions(-)=0D=0A>=20>=20>=0D=0A>=20>=20>=20diff=20--git=20a/dri=
-vers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c=0D=0A>=20>=20>=20b/dri=
-vers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c=0D=0A>=20>=20>=20index=
-=2073f7af674c01..03c957221fc4=20100644=0D=0A>=20>=20>=20---=20a/drivers/med=
-ia/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c=0D=0A>=20>=20>=20+++=20b/drive=
-rs/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c=0D=0A>=20>=20>=20=40=40=
-=20-498,8=20+498,8=20=40=40=20static=20void=20s5p_mfc_dec_calc_dpb_size_v6(=
-struct=0D=0A>=20>=20s5p_mfc_ctx=20*ctx)=0D=0A>=20>=20>=20=20=09case=20V4L2_=
-PIX_FMT_NV21M:=0D=0A>=20>=20>=20=20=09=09ctx->stride=5B0=5D=20=3D=20ALIGN(c=
-tx->img_width,=0D=0A>=20>=20S5P_FIMV_NV12MT_HALIGN_V6);=0D=0A>=20>=20>=20=
-=20=09=09ctx->stride=5B1=5D=20=3D=20ALIGN(ctx->img_width,=0D=0A>=20>=20S5P_=
-FIMV_NV12MT_HALIGN_V6);=0D=0A>=20>=20>=20-=09=09ctx->luma_size=20=3D=20calc=
-_plane(ctx->stride=5B0=5D,=20ctx->img_height);=0D=0A>=20>=20>=20-=09=09ctx-=
->chroma_size=20=3D=20calc_plane(ctx->stride=5B1=5D,=20(ctx-=0D=0A>=20>=20>i=
-mg_height=20/=202));=0D=0A>=20>=20>=20+=09=09ctx->luma_size=20=3D=20calc_pl=
-ane(ctx->img_width,=20ctx-=0D=0A>=20>=20>img_height);=0D=0A>=20>=20>=20+=09=
-=09ctx->chroma_size=20=3D=20calc_plane(ctx->img_width,=20(ctx-=0D=0A>=20>=
-=20>img_height=20>>=0D=0A>=20>=20>=20+1));=0D=0A>=20>=0D=0A>=20>=20These=20=
-size=20needs=20to=20match=20the=20sizes=20reported=20through=20TRY_FMT=20(a=
-nd=0D=0A>=20>=20S_FMT)=20sizeimage=20for=20each=20planes.=20Is=20this=20cod=
-e=20being=20call=20withing=0D=0A>=20>=20try_fmt=20?=20Will=20these=20value=
-=20match=20or=20will=20this=20change=20cause=20the=20value=20to=20miss-=0D=
-=0A>=20match=20?=0D=0A>=20>=0D=0A>=20This=20code=20is=20getting=20called=20=
-within=20try_fmt.=20In=20MFC=20driver=20we=20are=20not=20returning=0D=0A>=
-=20any=20sizes=20in=20TRY_FMT.=20We=20are=20only=20validating=20codec=20and=
-=20the=20pixel=20format.=20We=0D=0A>=20are=20setting=20luma,=20chroma=20and=
-=20stride=20size=20in=20S_FMT=20to=20inform=20user=20space=20for=0D=0A>=20f=
-urther=20buffer=20allocation.=20So,=20this=20change=20is=20not=20going=20to=
-=20cause=20any=20mismatch.=0D=0A>=20=0D=0A>=20>=20The=20reason=20is=20that=
-=20correct=20value=20is=20needed=20for=20allocating=20this=20memory=0D=0A>=
-=20>=20from=20the=20outside=20(like=20using=20a=20DMAbuf=20Heap).=20Perhaps=
-=20its=20all=20right,=20let=20me=0D=0A>=20know.=0D=0A>=20>=0D=0A>=20>=20Nic=
-olas=0D=0A>=20>=0D=0A>=20>=20>=20=20=09=09break;=0D=0A>=20>=20>=20=20=09cas=
-e=20V4L2_PIX_FMT_YUV420M:=0D=0A>=20>=20>=20=20=09case=20V4L2_PIX_FMT_YVU420=
-M:=0D=0A>=20>=20>=20=40=40=20-539,9=20+539,11=20=40=40=20static=20void=0D=
-=0A>=20s5p_mfc_dec_calc_dpb_size_v6(struct=0D=0A>=20>=20>=20s5p_mfc_ctx=20*=
-ctx)=20=20static=20void=20s5p_mfc_enc_calc_src_size_v6(struct=0D=0A>=20>=20=
->=20s5p_mfc_ctx=20*ctx)=20=20=7B=0D=0A>=20>=20>=20=20=09unsigned=20int=20mb=
-_width,=20mb_height;=0D=0A>=20>=20>=20+=09unsigned=20int=20default_size;=0D=
-=0A>=20>=20>=0D=0A>=20>=20>=20=20=09mb_width=20=3D=20MB_WIDTH(ctx->img_widt=
-h);=0D=0A>=20>=20>=20=20=09mb_height=20=3D=20MB_HEIGHT(ctx->img_height);=0D=
-=0A>=20>=20>=20+=09default_size=20=3D=20(mb_width=20*=20mb_height)=20*=2025=
-6;=0D=0A>=20>=20>=0D=0A>=20>=20>=20=20=09if=20(IS_MFCV12(ctx->dev))=20=7B=
-=0D=0A>=20>=20>=20=20=09=09switch=20(ctx->src_fmt->fourcc)=20=7B=0D=0A>=20>=
-=20>=20=40=40=20-549,8=20+551,8=20=40=40=20static=20void=20s5p_mfc_enc_calc=
-_src_size_v6(struct=0D=0A>=20>=20s5p_mfc_ctx=20*ctx)=0D=0A>=20>=20>=20=20=
-=09=09case=20V4L2_PIX_FMT_NV21M:=0D=0A>=20>=20>=20=20=09=09=09ctx->stride=
-=5B0=5D=20=3D=20ALIGN(ctx->img_width,=0D=0A>=20>=20S5P_FIMV_NV12M_HALIGN_V6=
-);=0D=0A>=20>=20>=20=20=09=09=09ctx->stride=5B1=5D=20=3D=20ALIGN(ctx->img_w=
-idth,=0D=0A>=20>=20S5P_FIMV_NV12M_HALIGN_V6);=0D=0A>=20>=20>=20-=09=09=09ct=
-x->luma_size=20=3D=20ctx->stride=5B0=5D=20*=20ALIGN(ctx-=0D=0A>=20>=20>img_=
-height,=2016);=0D=0A>=20>=20>=20-=09=09=09ctx->chroma_size=20=3D=20=20ctx->=
-stride=5B0=5D=20*=20ALIGN(ctx-=0D=0A>=20>=20>img_height=20/=202,=2016);=0D=
-=0A>=20>=20>=20+=09=09=09ctx->luma_size=20=3D=20ALIGN(default_size,=20256);=
-=0D=0A>=20>=20>=20+=09=09=09ctx->chroma_size=20=3D=20ALIGN(default_size=20/=
-=202,=20256);=0D=0A>=20>=20>=20=20=09=09=09break;=0D=0A>=20>=20>=20=20=09=
-=09case=20V4L2_PIX_FMT_YUV420M:=0D=0A>=20>=20>=20=20=09=09case=20V4L2_PIX_F=
-MT_YVU420M:=0D=0A=0D=0AGentle=20reminder=20to=20review=20this=20patch.=0D=
-=0A=0D=0A
+On Odroid C4 I see the following warnings before the boards hangs:
+
+BUG: sleeping function called from invalid context at 
+kernel/locking/rwsem.c:1578
+in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 263, name: 
+systemd-udevd
+preempt_count: 1, expected: 0
+RCU nest depth: 0, expected: 0
+4 locks held by systemd-udevd/263:
+  #0: ffff0000013768f8 (&dev->mutex){....}-{3:3}, at: 
+__driver_attach+0x90/0x1ac
+  #1: ffff80008349e1a0 (thermal_list_lock){+.+.}-{3:3}, at: 
+__thermal_cooling_device_register.part.0+0x154/0x2f4
+  #2: ffff000000988700 (&tz->lock){+.+.}-{3:3}, at: 
+thermal_zone_cdev_binding+0x84/0x1e4
+  #3: ffff8000834b8a98 (devtree_lock){....}-{2:2}, at: 
+of_get_next_child+0x2c/0x80
+irq event stamp: 7936
+hardirqs last  enabled at (7935): [<ffff8000812b1700>] 
+_raw_spin_unlock_irqrestore+0x74/0x78
+hardirqs last disabled at (7936): [<ffff8000812b0b14>] 
+_raw_spin_lock_irqsave+0x84/0x88
+softirqs last  enabled at (7302): [<ffff8000800b13dc>] 
+handle_softirqs+0x4cc/0x4e4
+softirqs last disabled at (7295): [<ffff8000800105b0>] 
+__do_softirq+0x14/0x20
+CPU: 3 UID: 0 PID: 263 Comm: systemd-udevd Not tainted 6.11.0-rc3+ #15264
+Hardware name: Hardkernel ODROID-C4 (DT)
+Call trace:
+  dump_backtrace+0x94/0xec
+  show_stack+0x18/0x24
+  dump_stack_lvl+0x90/0xd0
+  dump_stack+0x18/0x24
+  __might_resched+0x144/0x248
+  __might_sleep+0x48/0x98
+  down_write+0x28/0xe8
+  kernfs_remove+0x34/0x58
+  sysfs_remove_dir+0x54/0x70
+  __kobject_del+0x40/0xb8
+  kobject_put+0x104/0x124
+  of_node_put+0x18/0x28
+  of_get_next_child+0x4c/0x80
+  thermal_of_should_bind+0xec/0x28c
+  thermal_zone_cdev_binding+0x104/0x1e4
+  __thermal_cooling_device_register.part.0+0x194/0x2f4
+  thermal_of_cooling_device_register+0x3c/0x54
+  of_devfreq_cooling_register_power+0x220/0x298
+  devfreq_cooling_em_register+0x48/0xa8
+  panfrost_devfreq_init+0x294/0x320 [panfrost]
+  panfrost_device_init+0x16c/0x5c8 [panfrost]
+  panfrost_probe+0xbc/0x194 [panfrost]
+  platform_probe+0x68/0xdc
+  really_probe+0xbc/0x298
+  __driver_probe_device+0x78/0x12c
+  driver_probe_device+0x40/0x164
+  __driver_attach+0x9c/0x1ac
+  bus_for_each_dev+0x74/0xd4
+  driver_attach+0x24/0x30
+  bus_add_driver+0xe4/0x208
+  driver_register+0x60/0x128
+  __platform_driver_register+0x28/0x34
+  panfrost_driver_init+0x20/0x1000 [panfrost]
+  do_one_initcall+0x68/0x300
+  do_init_module+0x60/0x224
+  load_module+0x1b0c/0x1cb0
+  init_module_from_file+0x84/0xc4
+  idempotent_init_module+0x18c/0x284
+  __arm64_sys_finit_module+0x64/0xa0
+  invoke_syscall+0x48/0x110
+  el0_svc_common.constprop.0+0x40/0xe8
+  do_el0_svc_compat+0x20/0x3c
+  el0_svc_compat+0x44/0xe0
+  el0t_32_sync_handler+0x98/0x148
+  el0t_32_sync+0x194/0x198
+
+=============================
+[ BUG: Invalid wait context ]
+6.11.0-rc3+ #15264 Tainted: G        W
+-----------------------------
+systemd-udevd/263 is trying to lock:
+ffff0000000e5948 (&root->kernfs_rwsem){++++}-{3:3}, at: 
+kernfs_remove+0x34/0x58
+other info that might help us debug this:
+context-{4:4}
+4 locks held by systemd-udevd/263:
+  #0: ffff0000013768f8 (&dev->mutex){....}-{3:3}, at: 
+__driver_attach+0x90/0x1ac
+  #1: ffff80008349e1a0 (thermal_list_lock){+.+.}-{3:3}, at: 
+__thermal_cooling_device_register.part.0+0x154/0x2f4
+  #2: ffff000000988700 (&tz->lock){+.+.}-{3:3}, at: 
+thermal_zone_cdev_binding+0x84/0x1e4
+  #3: ffff8000834b8a98 (devtree_lock){....}-{2:2}, at: 
+of_get_next_child+0x2c/0x80
+stack backtrace:
+CPU: 3 UID: 0 PID: 263 Comm: systemd-udevd Tainted: G W          
+6.11.0-rc3+ #15264
+Tainted: [W]=WARN
+Hardware name: Hardkernel ODROID-C4 (DT)
+Call trace:
+  dump_backtrace+0x94/0xec
+  show_stack+0x18/0x24
+  dump_stack_lvl+0x90/0xd0
+  dump_stack+0x18/0x24
+  __lock_acquire+0x9fc/0x21a0
+  lock_acquire+0x200/0x340
+  down_write+0x50/0xe8
+  kernfs_remove+0x34/0x58
+  sysfs_remove_dir+0x54/0x70
+  __kobject_del+0x40/0xb8
+  kobject_put+0x104/0x124
+  of_node_put+0x18/0x28
+  of_get_next_child+0x4c/0x80
+  thermal_of_should_bind+0xec/0x28c
+  thermal_zone_cdev_binding+0x104/0x1e4
+  __thermal_cooling_device_register.part.0+0x194/0x2f4
+  thermal_of_cooling_device_register+0x3c/0x54
+  of_devfreq_cooling_register_power+0x220/0x298
+  devfreq_cooling_em_register+0x48/0xa8
+  panfrost_devfreq_init+0x294/0x320 [panfrost]
+  panfrost_device_init+0x16c/0x5c8 [panfrost]
+  panfrost_probe+0xbc/0x194 [panfrost]
+  platform_probe+0x68/0xdc
+  really_probe+0xbc/0x298
+  __driver_probe_device+0x78/0x12c
+  driver_probe_device+0x40/0x164
+  __driver_attach+0x9c/0x1ac
+  bus_for_each_dev+0x74/0xd4
+  driver_attach+0x24/0x30
+  bus_add_driver+0xe4/0x208
+  driver_register+0x60/0x128
+  __platform_driver_register+0x28/0x34
+  panfrost_driver_init+0x20/0x1000 [panfrost]
+  do_one_initcall+0x68/0x300
+  do_init_module+0x60/0x224
+  load_module+0x1b0c/0x1cb0
+  init_module_from_file+0x84/0xc4
+  idempotent_init_module+0x18c/0x284
+  __arm64_sys_finit_module+0x64/0xa0
+  invoke_syscall+0x48/0x110
+  el0_svc_common.constprop.0+0x40/0xe8
+  do_el0_svc_compat+0x20/0x3c
+  el0_svc_compat+0x44/0xe0
+  el0t_32_sync_handler+0x98/0x148
+  el0t_32_sync+0x194/0x198
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu:     2-...!: (0 ticks this GP) idle=2aac/1/0x4000000000000000 
+softirq=798/798 fqs=4
+rcu:     3-...!: (0 ticks this GP) idle=28a4/1/0x4000000000000000 
+softirq=1007/1007 fqs=4
+rcu:     (detected by 0, t=6505 jiffies, g=349, q=46 ncpus=4)
+Sending NMI from CPU 0 to CPUs 2:
+Sending NMI from CPU 0 to CPUs 3:
+rcu: rcu_preempt kthread timer wakeup didn't happen for 6483 jiffies! 
+g349 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402
+rcu:     Possible timer handling issue on cpu=1 timer-softirq=260
+rcu: rcu_preempt kthread starved for 6484 jiffies! g349 f0x0 
+RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=1
+rcu:     Unless rcu_preempt kthread gets sufficient CPU time, OOM is now 
+expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:I stack:0     pid:16    tgid:16 ppid:2      
+flags:0x00000008
+Call trace:
+  __switch_to+0xe0/0x124
+  __schedule+0x318/0xc30
+  schedule+0x50/0x15c
+  schedule_timeout+0xac/0x134
+  rcu_gp_fqs_loop+0x16c/0x8b4
+  rcu_gp_kthread+0x280/0x314
+  kthread+0x124/0x128
+  ret_from_fork+0x10/0x20
+rcu: Stack dump where RCU GP kthread last ran:
+Sending NMI from CPU 0 to CPUs 1:
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu:     2-...!: (0 ticks this GP) idle=2aac/1/0x4000000000000000 
+softirq=798/798 fqs=4
+rcu:     3-...!: (0 ticks this GP) idle=28a4/1/0x4000000000000000 
+softirq=1007/1007 fqs=4
+rcu:     (detected by 0, t=26013 jiffies, g=349, q=46 ncpus=4)
+Sending NMI from CPU 0 to CPUs 2:
+Sending NMI from CPU 0 to CPUs 3:
+
+Let me know if I can help debugging this issue further.
+
+> ---
+>
+> v2 -> v3: Reorder (previously [14/17])
+>
+> v1 -> v2:
+>     * Fix a build issue (undefined symbol)
+>
+> This patch only depends on the [06/14] introducing the .should_bind()
+> thermal zone callback:
+>
+> https://lore.kernel.org/linux-pm/9334403.CDJkKcVGEf@rjwysocki.net/
+>
+> ---
+>   drivers/thermal/thermal_of.c |  171 ++++++++++---------------------------------
+>   1 file changed, 41 insertions(+), 130 deletions(-)
+>
+> Index: linux-pm/drivers/thermal/thermal_of.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_of.c
+> +++ linux-pm/drivers/thermal/thermal_of.c
+> @@ -20,37 +20,6 @@
+>   
+>   /***   functions parsing device tree nodes   ***/
+>   
+> -static int of_find_trip_id(struct device_node *np, struct device_node *trip)
+> -{
+> -	struct device_node *trips;
+> -	struct device_node *t;
+> -	int i = 0;
+> -
+> -	trips = of_get_child_by_name(np, "trips");
+> -	if (!trips) {
+> -		pr_err("Failed to find 'trips' node\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	/*
+> -	 * Find the trip id point associated with the cooling device map
+> -	 */
+> -	for_each_child_of_node(trips, t) {
+> -
+> -		if (t == trip) {
+> -			of_node_put(t);
+> -			goto out;
+> -		}
+> -		i++;
+> -	}
+> -
+> -	i = -ENXIO;
+> -out:
+> -	of_node_put(trips);
+> -
+> -	return i;
+> -}
+> -
+>   /*
+>    * It maps 'enum thermal_trip_type' found in include/linux/thermal.h
+>    * into the device tree binding of 'trip', property type.
+> @@ -119,6 +88,8 @@ static int thermal_of_populate_trip(stru
+>   
+>   	trip->flags = THERMAL_TRIP_FLAG_RW_TEMP;
+>   
+> +	trip->priv = np;
+> +
+>   	return 0;
+>   }
+>   
+> @@ -290,39 +261,9 @@ static struct device_node *thermal_of_zo
+>   	return tz_np;
+>   }
+>   
+> -static int __thermal_of_unbind(struct device_node *map_np, int index, int trip_id,
+> -			       struct thermal_zone_device *tz, struct thermal_cooling_device *cdev)
+> -{
+> -	struct of_phandle_args cooling_spec;
+> -	int ret;
+> -
+> -	ret = of_parse_phandle_with_args(map_np, "cooling-device", "#cooling-cells",
+> -					 index, &cooling_spec);
+> -
+> -	if (ret < 0) {
+> -		pr_err("Invalid cooling-device entry\n");
+> -		return ret;
+> -	}
+> -
+> -	of_node_put(cooling_spec.np);
+> -
+> -	if (cooling_spec.args_count < 2) {
+> -		pr_err("wrong reference to cooling device, missing limits\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	if (cooling_spec.np != cdev->np)
+> -		return 0;
+> -
+> -	ret = thermal_zone_unbind_cooling_device(tz, trip_id, cdev);
+> -	if (ret)
+> -		pr_err("Failed to unbind '%s' with '%s': %d\n", tz->type, cdev->type, ret);
+> -
+> -	return ret;
+> -}
+> -
+> -static int __thermal_of_bind(struct device_node *map_np, int index, int trip_id,
+> -			     struct thermal_zone_device *tz, struct thermal_cooling_device *cdev)
+> +static bool thermal_of_get_cooling_spec(struct device_node *map_np, int index,
+> +					struct thermal_cooling_device *cdev,
+> +					struct cooling_spec *c)
+>   {
+>   	struct of_phandle_args cooling_spec;
+>   	int ret, weight = THERMAL_WEIGHT_DEFAULT;
+> @@ -334,104 +275,75 @@ static int __thermal_of_bind(struct devi
+>   
+>   	if (ret < 0) {
+>   		pr_err("Invalid cooling-device entry\n");
+> -		return ret;
+> +		return false;
+>   	}
+>   
+>   	of_node_put(cooling_spec.np);
+>   
+>   	if (cooling_spec.args_count < 2) {
+>   		pr_err("wrong reference to cooling device, missing limits\n");
+> -		return -EINVAL;
+> +		return false;
+>   	}
+>   
+>   	if (cooling_spec.np != cdev->np)
+> -		return 0;
+> -
+> -	ret = thermal_zone_bind_cooling_device(tz, trip_id, cdev, cooling_spec.args[1],
+> -					       cooling_spec.args[0],
+> -					       weight);
+> -	if (ret)
+> -		pr_err("Failed to bind '%s' with '%s': %d\n", tz->type, cdev->type, ret);
+> -
+> -	return ret;
+> -}
+> -
+> -static int thermal_of_for_each_cooling_device(struct device_node *tz_np, struct device_node *map_np,
+> -					      struct thermal_zone_device *tz, struct thermal_cooling_device *cdev,
+> -					      int (*action)(struct device_node *, int, int,
+> -							    struct thermal_zone_device *, struct thermal_cooling_device *))
+> -{
+> -	struct device_node *tr_np;
+> -	int count, i, trip_id;
+> -
+> -	tr_np = of_parse_phandle(map_np, "trip", 0);
+> -	if (!tr_np)
+> -		return -ENODEV;
+> -
+> -	trip_id = of_find_trip_id(tz_np, tr_np);
+> -	if (trip_id < 0)
+> -		return trip_id;
+> -
+> -	count = of_count_phandle_with_args(map_np, "cooling-device", "#cooling-cells");
+> -	if (count <= 0) {
+> -		pr_err("Add a cooling_device property with at least one device\n");
+> -		return -ENOENT;
+> -	}
+> +		return false;
+>   
+> -	/*
+> -	 * At this point, we don't want to bail out when there is an
+> -	 * error, we will try to bind/unbind as many as possible
+> -	 * cooling devices
+> -	 */
+> -	for (i = 0; i < count; i++)
+> -		action(map_np, i, trip_id, tz, cdev);
+> +	c->lower = cooling_spec.args[0];
+> +	c->upper = cooling_spec.args[1];
+> +	c->weight = weight;
+>   
+> -	return 0;
+> +	return true;
+>   }
+>   
+> -static int thermal_of_for_each_cooling_maps(struct thermal_zone_device *tz,
+> -					    struct thermal_cooling_device *cdev,
+> -					    int (*action)(struct device_node *, int, int,
+> -							  struct thermal_zone_device *, struct thermal_cooling_device *))
+> +static bool thermal_of_should_bind(struct thermal_zone_device *tz,
+> +				   const struct thermal_trip *trip,
+> +				   struct thermal_cooling_device *cdev,
+> +				   struct cooling_spec *c)
+>   {
+>   	struct device_node *tz_np, *cm_np, *child;
+> -	int ret = 0;
+> +	bool result = false;
+>   
+>   	tz_np = thermal_of_zone_get_by_name(tz);
+>   	if (IS_ERR(tz_np)) {
+>   		pr_err("Failed to get node tz by name\n");
+> -		return PTR_ERR(tz_np);
+> +		return false;
+>   	}
+>   
+>   	cm_np = of_get_child_by_name(tz_np, "cooling-maps");
+>   	if (!cm_np)
+>   		goto out;
+>   
+> +	/* Look up the trip and the cdev in the cooling maps. */
+>   	for_each_child_of_node(cm_np, child) {
+> -		ret = thermal_of_for_each_cooling_device(tz_np, child, tz, cdev, action);
+> -		if (ret) {
+> +		struct device_node *tr_np;
+> +		int count, i;
+> +
+> +		tr_np = of_parse_phandle(child, "trip", 0);
+> +		if (tr_np != trip->priv) {
+>   			of_node_put(child);
+> -			break;
+> +			continue;
+> +		}
+> +
+> +		/* The trip has been found, look up the cdev. */
+> +		count = of_count_phandle_with_args(child, "cooling-device", "#cooling-cells");
+> +		if (count <= 0)
+> +			pr_err("Add a cooling_device property with at least one device\n");
+> +
+> +		for (i = 0; i < count; i++) {
+> +			result = thermal_of_get_cooling_spec(child, i, cdev, c);
+> +			if (result)
+> +				break;
+>   		}
+> +
+> +		of_node_put(child);
+> +		break;
+>   	}
+>   
+>   	of_node_put(cm_np);
+>   out:
+>   	of_node_put(tz_np);
+>   
+> -	return ret;
+> -}
+> -
+> -static int thermal_of_bind(struct thermal_zone_device *tz,
+> -			   struct thermal_cooling_device *cdev)
+> -{
+> -	return thermal_of_for_each_cooling_maps(tz, cdev, __thermal_of_bind);
+> -}
+> -
+> -static int thermal_of_unbind(struct thermal_zone_device *tz,
+> -			     struct thermal_cooling_device *cdev)
+> -{
+> -	return thermal_of_for_each_cooling_maps(tz, cdev, __thermal_of_unbind);
+> +	return result;
+>   }
+>   
+>   /**
+> @@ -502,8 +414,7 @@ static struct thermal_zone_device *therm
+>   
+>   	thermal_of_parameters_init(np, &tzp);
+>   
+> -	of_ops.bind = thermal_of_bind;
+> -	of_ops.unbind = thermal_of_unbind;
+> +	of_ops.should_bind = thermal_of_should_bind;
+>   
+>   	ret = of_property_read_string(np, "critical-action", &action);
+>   	if (!ret)
+>
+>
+>
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
