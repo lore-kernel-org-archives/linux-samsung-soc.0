@@ -1,177 +1,120 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C6819ADA2
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2024 20:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29293199E98;
+	Tue, 27 Aug 2024 09:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724705393; cv=none; b=R3astwzzSZ0g8n0aikN/x5C9TtDgolIYv7NTRkU/aSZj0x27ZwDKIxK4Zx63Bfo6Ic/QMjqptJDe7XvuYtI2oYJHBIA6S4Xd625xDhpDGU9h4OkYNe6sKqTP1E3PNIscMK67llNyettZkhZm5JqusKYOq5tb5rA0yxZvj7BjiDA=
+	t=1724749854; cv=none; b=jES8CxVm1HRtVsLz6wZohd52sudq7UJFRjDUwLyt3oeZ78FIE8etyQr7KKf++Ee8z4L1kcWU9LKkEWlvhfaZa8Uu32fZQzL5vgCnZpapUwnaK4Dr9YwabkE0TMDsQyYmn5dgvyWnsJjn26YXZtKkI7J7kiV8g0bi4z0EBE5G+u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724705393; c=relaxed/simple;
-	bh=7CwGDAI4+fDUbBMkZSzTE7nNHqjO0muqXNuxv74F2Ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=qfPTJJLAqvk/b7YvbE/isfNxWZBg9rmH937QjRC3mnp7PqCFlxp7Pv/Sv2CcpGPrVu1zn7fy4LRFNevqNPZgsDZFAdajBM/G9k2/I+QjxWEPUHnPo2+LfvNiDslE0nWFuUqPzRiDJtsN9LFo+7UwtGfOS9tKF8LI+/0o7Ci1Gbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=J7nfFFY+; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1724749854; c=relaxed/simple;
+	bh=Ph0NMpctBBMJI2VXAYQA68VEoEvGhK1dxZSD7BVeu5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUzxl0zd+Qqg2zhMwLcVkM7iVfuihJ3bbG3jigct/4G09ryojpLQfIz8PCouObwRIEUiLR84dg7xSrG8siySe6mjREclb6T8Jp8gORUHkTL7/Irc4kR7mZQli5NinMbCEf6JxfnVhp1V9hlbPDOR2JuR+gUbIxD7pWnW+tX2QcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+MBzs9U; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="J7nfFFY+"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240826204948euoutp02c6d686d5ba72b5ffd7574a2379733cb7~vYmm8eUjP1330813308euoutp02i
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2024 20:49:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240826204948euoutp02c6d686d5ba72b5ffd7574a2379733cb7~vYmm8eUjP1330813308euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724705388;
-	bh=4rebIsHgGpe9kjnkdd2isgLAS+T1XfSGDMjRcmic9Iw=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=J7nfFFY++U7ersfvpQKsiGvI+XD44S4VbJllaKj+oaMHLqoza9c7IgiRbTwkYWW1q
-	 u0aYmVAkaQ+6qiwagoPzwtR94keBIiMgW5an9ellz45SfjK+xW5RE1cDjdXabCoA+W
-	 dkXIItnO463XZFZx4xomutsfOEhLkRe34XBiGMCg=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240826204947eucas1p2ca45b0683afb530c6bf3559f690b3604~vYmmMF54M0153901539eucas1p2v;
-	Mon, 26 Aug 2024 20:49:47 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id B9.ED.09624.B6AECC66; Mon, 26
-	Aug 2024 21:49:47 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240826204947eucas1p2f648781e2a641fef11d61f55e777c708~vYmlijHxe0150201502eucas1p2p;
-	Mon, 26 Aug 2024 20:49:47 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240826204947eusmtrp28267c42beacf04153164872f0848c566~vYmlh8z2e0801108011eusmtrp2G;
-	Mon, 26 Aug 2024 20:49:47 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-ea-66ccea6b9da6
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C3.6B.08810.A6AECC66; Mon, 26
-	Aug 2024 21:49:46 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240826204946eusmtip1e907729c0ac54601310fd3d59378378f~vYmktAT171021410214eusmtip1N;
-	Mon, 26 Aug 2024 20:49:46 +0000 (GMT)
-Message-ID: <0e710ff1-4ff4-403a-b85d-b1e51c03378a@samsung.com>
-Date: Mon, 26 Aug 2024 22:49:45 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+MBzs9U"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-371b098e699so4172510f8f.2;
+        Tue, 27 Aug 2024 02:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724749851; x=1725354651; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUDMwSOVzCwin1tEwK4cDn6YsjG1LnqHU+GKwmkIe50=;
+        b=A+MBzs9UkMAwpKzmpnQDtqDMdCmiIua0P5+TO2+uPQj7Me9EbpzXcq+Vm/3I0HP6L5
+         x0cEtpblD2eVw7W+lJ6vvnjPO7oGBPq+sKZ31LqBVQMmExhUnAtZJvUmUKRO5pM8UG+V
+         PFAnlPZVX5DEdRryN3PJfXf8gbSk60vqvqFlXx57tOAXksJvCJTdlei1/rnYa5T6ogZr
+         MxXOTk9ezgbo3jnVppjGwsCVT/swEiOPgrPWO/qVAh32KfzWjkl3hqyWiWQeaEYsdbYJ
+         TDgsFOqE0d+AgWYlyalOnw41d+HIbUUKhc7gwy7GqRPJ0OmjK95wdfcxqZiF7KEkhiw2
+         w7cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724749851; x=1725354651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUDMwSOVzCwin1tEwK4cDn6YsjG1LnqHU+GKwmkIe50=;
+        b=t22mZC26QnrXdjMcdLCYvZ/F1dIUFkHqbEKMlu0A5oDVzH4FZeYOVGYuFjt+0larvi
+         01gCmRh6LKfSfeBqIhwZswtTS54U4Gonzd5YWbjDEcZMrxE938P0BpqtnqCRBgc9lARU
+         Y3DJbi2i2c3SKyoC8slfK/XAijheP4G4B0ybHzv4O73OVPXv+ToSCyLcaJJ0ThpH2SIA
+         FGqOmi1EgWkGa8QKBqaAvEjczIQjxYUPm/2Ujkb4UQGI29AqVB9DZiu+Hxo5shUsCJpO
+         ejLg64RREaoyv8TMUtsYEWyjSSi5F2R8AvGt/c+e3gB57k+Q5nIIZ/W6eCLvJhWCMXB3
+         FyCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpRVTe4zC/tAnjtTyOrzf/yvqGm4268UmSyRWfnJ/fx1AiEbO7+Hm8e4/S6Qk0onmopVtpw+Fd+20AZ6x2XmslOp0=@vger.kernel.org, AJvYcCWJBPeByA8g5Ul2aoUzOiiuhSdT/Kz176tRpDlSjLsdl1TyOFfI1IlkuBda9HfFYIVvSNXu7YW03BKejoQ=@vger.kernel.org, AJvYcCWwWvv78XgI5XlzxwO7IdK+PjTMXiG2aKDyueAV3bRKxbW2zt5q2KB5/WPdgQj9ru0SyNFuEcWDtEw=@vger.kernel.org, AJvYcCXT+Bt1UADzm8bOSBE1K1cZnrHdqD6Ow3VHmcqu9lA3V5ZH/QsonsVXfOjJxN00VMLmqsdSa83bi2vtN2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZpjRLpPt5ZPORneWWhXT4X1M9iYKeasCKjleOaVrs72iI2IAA
+	3fVuEeMRkzTx7x6CibfgrRNz3jyfJdryI12Su90cWif7B18nU0ihg5BStqGQ
+X-Google-Smtp-Source: AGHT+IGYtoHYOJ2PcFSTafy/B2ZibGnK7dhVczhUYYtN+TBGrut3NSlAXIamQEahFjD3bsCWtNx5fQ==
+X-Received: by 2002:adf:ed4a:0:b0:36d:3421:5a23 with SMTP id ffacd0b85a97d-37311862d8amr10260081f8f.26.1724749850865;
+        Tue, 27 Aug 2024 02:10:50 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730811001fsm12590489f8f.20.2024.08.27.02.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 02:10:50 -0700 (PDT)
+Date: Tue, 27 Aug 2024 11:10:48 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 07/13] memory: tegra-mc: simplify with scoped for each
+ OF child loop
+Message-ID: <lyuvpbh2zx4hhqrcwnc2xearyekttfcyn7jdt2eatkpew5dgwk@jp6sopvdng3c>
+References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
+ <20240816-cleanup-h-of-node-put-memory-v2-7-9eed0ee16b78@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 12/14] thermal/of: Use the .should_bind() thermal
- zone callback
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
-	<linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Daniel
-	Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>,
-	Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Linux Samsung SOC
-	<linux-samsung-soc@vger.kernel.org>, Mateusz Majewski
-	<m.majewski2@samsung.com>, linux-amlogic@lists.infradead.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CAJZ5v0gOqNi+-Hi8uyeEJ9dHzhwU6GyL6t_7Xjt5Knf2yJmH-w@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHKsWRmVeSWpSXmKPExsWy7djP87rZr86kGez4rWkx77Osxd7XW9kt
-	Fszmtri8aw6bxefeI4wWM87vY7JY2NTCbjHx2GRmi7lfpjJbnDl9idXiycM+NgdujzXz1jB6
-	LN7zkslj06pONo871/aweWxeUu+x5Wo7i0ffllWMHp83yQVwRHHZpKTmZJalFunbJXBlvGr1
-	LpgoVrHz5D7GBsZ2oS5GTg4JAROJ3k3P2bsYuTiEBFYwSky4cokNwvnCKNFy/CwThPOZUeL0
-	2xmMMC3vJu1khUgsZ5SY+rwbquUjo0TP/PssIFW8AnYS++f+YgexWQRUJXZfeA8VF5Q4OfMJ
-	mC0qIC9x/9YMsBphgQiJFY8msoHYIgLaEksWXWUGGcossJZZYs+vjWANzALiEreezGcCsdkE
-	DCW63naBNXAKBEpMfjyLEaJGXqJ562ywZgmBdk6J9V8+AjVwADkuEv/nykC8ICzx6vgWdghb
-	RuL/zvlMUPWMEgt+34dyJjBKNDy/BfW0tcSdc7/YQAYxC2hKrN+lDxF2lOg6dJQZYj6fxI23
-	ghA38ElM2jYdKswr0dEGDWw1iVnH18GtPXjhEvMERqVZSMEyC8mXs5B8Mwth7wJGllWM4qml
-	xbnpqcWGeanlesWJucWleel6yfm5mxiBSez0v+OfdjDOffVR7xAjEwfjIUYJDmYlEV65yyfT
-	hHhTEiurUovy44tKc1KLDzFKc7AoifOqpsinCgmkJ5akZqemFqQWwWSZODilGphULv5Z1fFr
-	66oinpArhjEOxVM+7xVmsaiIzJC5dWidaeOjLdzTmb+72U5q/vSfsenBxF8bo/0b1iy5+fZH
-	696pbfNPbIy7MP/n1ethZgv+KrrZ7WLa5195/oDldo55rNvq1F64zdk5a/8e5cMxPZEdM29s
-	tzCfu1d+x39WN/1/PZLZvHtWOrdERHXZiW78/XGd+vJjUbc1j2ZFNPfEb/y0dP9xyaCeFrVw
-	v4OtKZliVTku9fpiHb42vlXXWYK/NS36sP7lsu2Tj12a+4shaKbA2Z9d9Vu+N/V5n71haSqd
-	f/RvcNtJ+dc1Aln6RvNXN9Uef+m6Zzdn7pxVFf/sYmR+SorkyM9QLpvt/jt52o2HSizFGYmG
-	WsxFxYkAm1Q7kNEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xu7pZr86kGcxpt7CY91nWYu/rrewW
-	C2ZzW1zeNYfN4nPvEUaLGef3MVksbGpht5h4bDKzxdwvU5ktzpy+xGrx5GEfmwO3x5p5axg9
-	Fu95yeSxaVUnm8eda3vYPDYvqffYcrWdxaNvyypGj8+b5AI4ovRsivJLS1IVMvKLS2yVog0t
-	jPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyXrV6F0wUq9h5ch9jA2O7UBcjJ4eE
-	gInEu0k7WbsYuTiEBJYySvz/38EIkZCRODmtgRXCFpb4c62LDaLoPaNEy4YuFpAEr4CdxP65
-	v9hBbBYBVYndF95DxQUlTs58AmaLCshL3L81A6xGWCBCov1tM1hcREBbYsmiq8wgNrPAWmaJ
-	Bdv4IRYsZpLo//qJCSIhLnHryXwwm03AUKLrLcgVnBycAoESkx/PYoSoMZPo2toFZctLNG+d
-	zTyBUWgWkjtmIRk1C0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG7bZjPzfv
-	YJz36qPeIUYmDsZDjBIczEoivHKXT6YJ8aYkVlalFuXHF5XmpBYfYjQFBsZEZinR5Hxg2sgr
-	iTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamCSOdqxfKbTpJA9zrrv
-	bz0+KPOrqvf7uYyJ/oJM+wV+Bdu7Kd3XTDtlmJD83aaoRN/5Zmn+C42cWRq77ydOsoqtSPqb
-	Wlhq/0N23iT2v7GFK/rsdXZcXJ7gbP3+hH5+o/oJpi2d2fuy0+LnpVSpSyzb5M+bbcDz753C
-	o1VRvzufKrS2zdUpMos++4FhW6vDw0s9lyT3qT9SuPIxi8m/Q6Ql83bXvLdvltbPztZ3qnfe
-	vunv87KHLz1MLn9be1L9v6LRiqg93P0bHP+pH2OY87T1Znzi/3/Vvf0XMt2kszOeVfYKH9iX
-	e/DPR3nRWTpn1TYYMKUW/C/wfnj9Mbe3EtO9GJEflm0KVrcKDjjN6VdiKc5INNRiLipOBABb
-	MTeTYwMAAA==
-X-CMS-MailID: 20240826204947eucas1p2f648781e2a641fef11d61f55e777c708
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5
-References: <2205737.irdbgypaU6@rjwysocki.net>
-	<CGME20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5@eucas1p1.samsung.com>
-	<2236794.NgBsaNRSFp@rjwysocki.net>
-	<ef729a47-b7f9-48b6-a14d-692565ef1d38@samsung.com>
-	<CAJZ5v0gOqNi+-Hi8uyeEJ9dHzhwU6GyL6t_7Xjt5Knf2yJmH-w@mail.gmail.com>
-
-On 26.08.2024 14:14, Rafael J. Wysocki wrote:
-> On Mon, Aug 26, 2024 at 1:32 PM Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> On 19.08.2024 18:30, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Make the thermal_of driver use the .should_bind() thermal zone callback
->>> to provide the thermal core with the information on whether or not to
->>> bind the given cooling device to the given trip point in the given
->>> thermal zone.  If it returns 'true', the thermal core will bind the
->>> cooling device to the trip and the corresponding unbinding will be
->>> taken care of automatically by the core on the removal of the involved
->>> thermal zone or cooling device.
->>>
->>> This replaces the .bind() and .unbind() thermal zone callbacks which
->>> assumed the same trip points ordering in the driver and in the thermal
->>> core (that may not be true any more in the future).  The .bind()
->>> callback would walk the given thermal zone's cooling maps to find all
->>> of the valid trip point combinations with the given cooling device and
->>> it would call thermal_zone_bind_cooling_device() for all of them using
->>> trip point indices reflecting the ordering of the trips in the DT.
->>>
->>> The .should_bind() callback still walks the thermal zone's cooling maps,
->>> but it can use the trip object passed to it by the thermal core to find
->>> the trip in question in the first place and then it uses the
->>> corresponding 'cooling-device' entries to look up the given cooling
->>> device.  To be able to match the trip object provided by the thermal
->>> core to a specific device node, the driver sets the 'priv' field of each
->>> trip to the corresponding device node pointer during initialization.
->>>
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> This patch landed recently in linux-next as commit 6d71d55c3b12
->> ("thermal/of: Use the .should_bind() thermal zone callback")
-> It has been fixed since and it is commit  94c6110b0b13c6416146 now.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="abklfs4xggqotwky"
+Content-Disposition: inline
+In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-7-9eed0ee16b78@linaro.org>
 
 
-Confirmed. Thanks for fixing it and sorry for the noise.
+--abklfs4xggqotwky
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 16, 2024 at 12:54:31PM GMT, Krzysztof Kozlowski wrote:
+> Use scoped for_each_child_of_node_scoped() when iterating over device
+> nodes to make code a bit simpler.
+>=20
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/memory/tegra/mc.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
 
-> Bottom line is that it was calling of_node_put() too many times due to
-> a coding mistake.
->
->> In my tests I found that it breaks booting some on my test boars: Exynos-based
->> (OdroidXU4 with ARM32 bit kernel from multi_v7_defconfig) and Amlogic
->> Meson based boards (OdroidC4, VIM3 with ARM64 defconfig+some debug
->> options). Reverting $subject on top of next-20240823 together with
->> c1ee6e1f68f5 ("thermal: core: Clean up trip bind/unbind functions") and
->> 526954900465 ("thermal: core: Drop unused bind/unbind functions and
->> callbacks") due to compile dependencies fixes the issue.
-> Thanks for the report!
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Acked-by: Thierry Reding <treding@nvidia.com>
 
+--abklfs4xggqotwky
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbNmBgACgkQ3SOs138+
+s6HLAhAAi/EQlm5bG5bcOINffasOb6M7H/oNaZ63dq8ZIqrgswqUPp2xC9nGDqM4
+Q1OHj25oegvp1694wFJl4yi9qAS2ECKwd1p8Z0fwTos6qnwb/ld2+RQWWN248uXy
+/On6/enVLCGowDmeF6246lFqPsw8beIbLc548MwImyHKnOjkoPcmkDhhH0rIcfBN
+t/Bhvct5nwgkvl/+7QDMm6b6/hUsLzD7t67S+Ht5gI8ZsdDqqLpNGSwePcKtVwOL
+JjZOBAcQni6LV8ksFGjih6SHY9qfXilN65haVGLkgGsscCgeYMBIc3Jd6joKjVGD
+YgXTHTYbrqrGJPFntZnT5TX+3x5uUx+qwedKQGtv1mAvZaLqv6HtoAsuXtirs9pT
+Ra9v0l9R7P0wdZ2kya2Ddjpq2FAEA4F2jsf4vu/wrYZUIYND8BkzUPu1VjWmrSEi
+YS6efssv5Q1A+3lCoFhtPACUe5S7e4SboZr0maW+GR8mCCn41qwfKgmaPZqoVYEm
+NIyvB56K6p6ojafQJkj0fro2+t87NWOlfA7hIC1buWyoeIfOxJIhT4pU3ZWux8yM
+STj3cF83Rl/dEg0I+/SJCqPDWOTFIunGyLYjVQZBnq5LS4HPsfRXYZkm+okx/6LA
+fkBTbYyNPRjUuI5jGJnNlmn9r9nrZDxe1EvaN6EKJRWY8X7CTqI=
+=WUPZ
+-----END PGP SIGNATURE-----
+
+--abklfs4xggqotwky--
