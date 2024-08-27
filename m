@@ -1,117 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330FC17C69;
-	Tue, 27 Aug 2024 11:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678F31A00E3
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2024 12:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724758789; cv=none; b=btjaatJy/1fLW7YYS97tCEFYaUDDEE+Y2rKSveRvAImj048Ff040dMFFDVgaXalrXKqVwsZ+OhikLoQvbzIslaHX12wdrpo0zkIFflVDOcAfGcFhNfxOW9KFm0YWAlHi1PJYnjRQ0hozDt3YZE4muoGS7zVkkjR55ltbZ/ER/EE=
+	t=1724761006; cv=none; b=gJ8ZHKXQDb7KpkhIfwdeqdOzXGKERC/BNtU+bBSkHq0vih43ewV4E9p3Dm9f7wLjOt7+1/UirTlzQ6UtXrRlu2vCC5vIxVl/RprK1PaFT9+fHN1101iwl5DKaGNikqm3//HCp3twagyxtl3sAfJtx0swkXh22nq4wth5qFZIHrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724758789; c=relaxed/simple;
-	bh=5aiCA1KifFkP5iaGWPQMv96TRmb7TG8TWiOnSHnr4Kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A57ecCJOIR7HmpL0C/Mznp9JQ71V0Ssm7VCXYIlylIdR//3+Sv4ZWXRhWUnBA/uVEgg5bY6sDkEkPHFVka19gOkUIxmpLIW9GFTZ2zk2/X3nZr1fHdeHGCofBtL/EMjhjqfwr871ilAs6BPZfq1etl8htTXGiy2kLy58k+mF8uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKhx1CcT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724761006; c=relaxed/simple;
+	bh=nep7vEaigqYcGCVuwcX1KbQzok96E19XfomX5Tfihx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V85ISYCOJGSi7VKmHdcvJZz4KCA1DBJJTbUgB2usb3QbCEnATKXUBV9KrHyMwRh31Ouuym8l0nYHux+5WtiO8WpRw1bQX+pMIm/j7SWveCjHougfFa+MJHJ7gL6eZOukV8we/egw8vS0fmPVpZykvZsUDfP6RUHRTI4hPDUCqPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mt1DyWL7; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKhx1CcT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F47C4CB0E;
-	Tue, 27 Aug 2024 11:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724758788;
-	bh=5aiCA1KifFkP5iaGWPQMv96TRmb7TG8TWiOnSHnr4Kw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YKhx1CcTr13AVlW0lGluSP/OG0ne45wnDwcoKh8pDLTC0OIk+BAsyIUXH9ItJe4t8
-	 t1ZpjPPAeOA+ppxDYHyXDRye0UcGIc3txxzQvZCV5tSKUJZUzNpr2i/BD0MRz19pMR
-	 TV5SBzTc6CmNVfWHfwkDtO7AzFh0S4McBfL/bW6qA/ERj24Tqwt+CpGLj8EATxTibM
-	 dKLGdtQLm/kM/utcSOUjycu1NYjbmzCRJkeGMtzz8PEDTiBOwaAO8dVOhScTd7gUlz
-	 9YZtq+saUkSTu/cGyYUKAuqA9RyFRFEr80QDkJNCHo5Ez7vsq/9b1A/C3LUWfTEFVi
-	 KFEEzgc10Ct5A==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-27045e54272so3511423fac.0;
-        Tue, 27 Aug 2024 04:39:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEbRHJilkQcYWG4siwt/uVIoJc8zP7Ib/u6Tku6zGZtiRTCb5vnYNZ7hubVXt3k/2xu9fK1BpzxqIF+98=@vger.kernel.org, AJvYcCUU+lWfBrvS2boZQgYeKVja8nGvUYnsIMxoXMs/op0VHc66KT+g7Blp1vCh1YTZ9S07Gm61pBJmUpO/8bGI534vBWI=@vger.kernel.org, AJvYcCWRY6s8wwSx4/I6gV7JIfKkjcREFl+GAqXmsh0PsNw6KcbYN+eVB6Z1iy6Eedp/6HTuc9BBpIVDhNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmUFjSuCY1+2NnRPpTT7cHHsLfPiwhVQnjTWLIGYSltZUmRH4G
-	Zf4KdW6lty4b0+fsQ2SeNM+mFVKpV2SP7B0nnFQYs/yN4tIeVWCsPcmIv9+B19+xeHyH5q4nQFg
-	TZkV8qqceoYYzSlWo6SUKJweRUdA=
-X-Google-Smtp-Source: AGHT+IF/Xn74FPzWxUMpobK5eYPXxi3H+e7CiAt/e1busK+TNSBvd20Vw3Rlp2wN4ZY8to/DMozxHrLIKv+WBrNjWJ4=
-X-Received: by 2002:a05:6870:e249:b0:270:4637:40fa with SMTP id
- 586e51a60fabf-273e675c7a1mr13625626fac.48.1724758787990; Tue, 27 Aug 2024
- 04:39:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mt1DyWL7"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42b964d7526so2396305e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2024 05:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724761003; x=1725365803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oEwWKAl5wGRDwroJblbu7pL64awe1nGTFISfN3cbkak=;
+        b=Mt1DyWL7027yn8BbKvGaau4Cewu7Ammk8oGoY86JdOzp9NZgv5/e96+4yZdnTkepbt
+         oDvOdyal2LJpFDk4c8kqOVPD+ECJmbuZhn7/RMSJzIncI52Pt5dFP5adoGxExErB3Mvr
+         QQVFdsDrtvJanTsMMxohG4E59l0FPLhYvWWy9ZaPJC4axyucRiejgL0Y0dBQKtCVSjIA
+         y0suQmW7ISRve0AxVOrThBzbltmVaghBSro2Zqx47ENJdPK/cavjDmApS2jfyJYE6AJu
+         xjuEs7LpThkCCWdH1B6+HB0oWegCcKz1XTq0DkgRpu+QhpcALDVPgZsmElJbMFiNzDA7
+         FlZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724761003; x=1725365803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oEwWKAl5wGRDwroJblbu7pL64awe1nGTFISfN3cbkak=;
+        b=t766LeKehdxcNfjt3yHQk7+J20FEx5dCN7ze/XeQIToc8da6PNWK1xRWlFc03D1Q7w
+         Y6lpfMIYJyFnW/wuIub78SgUAqm9I2VBBXV/owteXsLwklgQsRs7V/wa0tYI1/KN12dD
+         1Jgx97Q9Uq0qdOmoo1R5uwrkIp+DoA4f/Q7cO/JSODjv9bEnwffdnv7URMYOWece2J7R
+         51+TGosYYRYwsAHSh3bHJc98EvR6HPSXvhrdJ/qDeTs6PO7C2Mfmf8Pwr4NTZ6TE3YBe
+         hbOJr5CgdMf6bLhVELbWSqs8wf1L16dS4NKoScSXmSpwhZvoKzUgio9YB8Cy8fldgHvA
+         BKFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw7gMhmbEyxovud7G2uI9xEaLmwGaG87QrukV9KlIKHk7/AYxFTWxatlT0BAw/nCz8zu+tptLuPeamjj3z/MBhRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLvDwf2dJI84ZT1BLBUPAHW9rtrD/kpwJ3Y/vOGkek4KGnx3ca
+	EXVxDLqV8Jb249y+/YNoHTc3rapB0kO/w1jY1glMBIiizcLnpLXpgf5PBUE5ZIE=
+X-Google-Smtp-Source: AGHT+IGI2jkuW2aZw6VxP7IpTsq60+7tPJdvBVRUUpM0SYoTCjpfgtxRq+29vHOWeEMfK0msqpZx+Q==
+X-Received: by 2002:a05:6000:154f:b0:368:4c5:12ec with SMTP id ffacd0b85a97d-3731191d5c5mr5082598f8f.8.1724761002343;
+        Tue, 27 Aug 2024 05:16:42 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.222.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730815b7e3sm12998658f8f.53.2024.08.27.05.16.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 05:16:41 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	arm@kernel.org,
+	soc@kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/3] samsung: drivers for v6.12
+Date: Tue, 27 Aug 2024 14:16:33 +0200
+Message-ID: <20240827121638.29707-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2205737.irdbgypaU6@rjwysocki.net> <CGME20240826113153eucas1p110e90b4cd98aa70601770fe93d7aa1e5@eucas1p1.samsung.com>
- <2236794.NgBsaNRSFp@rjwysocki.net> <ef729a47-b7f9-48b6-a14d-692565ef1d38@samsung.com>
- <CAJZ5v0gOqNi+-Hi8uyeEJ9dHzhwU6GyL6t_7Xjt5Knf2yJmH-w@mail.gmail.com> <0e710ff1-4ff4-403a-b85d-b1e51c03378a@samsung.com>
-In-Reply-To: <0e710ff1-4ff4-403a-b85d-b1e51c03378a@samsung.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 27 Aug 2024 13:39:36 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h2pF3E_Ni1D7_6jB0NpQrkhcZ6tCCmww8CX02-5qAYEw@mail.gmail.com>
-Message-ID: <CAJZ5v0h2pF3E_Ni1D7_6jB0NpQrkhcZ6tCCmww8CX02-5qAYEw@mail.gmail.com>
-Subject: Re: [PATCH v3 12/14] thermal/of: Use the .should_bind() thermal zone callback
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, 
-	Mateusz Majewski <m.majewski2@samsung.com>, linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 26, 2024 at 10:49=E2=80=AFPM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> On 26.08.2024 14:14, Rafael J. Wysocki wrote:
-> > On Mon, Aug 26, 2024 at 1:32=E2=80=AFPM Marek Szyprowski
-> > <m.szyprowski@samsung.com> wrote:
-> >> On 19.08.2024 18:30, Rafael J. Wysocki wrote:
-> >>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >>>
-> >>> Make the thermal_of driver use the .should_bind() thermal zone callba=
-ck
-> >>> to provide the thermal core with the information on whether or not to
-> >>> bind the given cooling device to the given trip point in the given
-> >>> thermal zone.  If it returns 'true', the thermal core will bind the
-> >>> cooling device to the trip and the corresponding unbinding will be
-> >>> taken care of automatically by the core on the removal of the involve=
-d
-> >>> thermal zone or cooling device.
-> >>>
-> >>> This replaces the .bind() and .unbind() thermal zone callbacks which
-> >>> assumed the same trip points ordering in the driver and in the therma=
-l
-> >>> core (that may not be true any more in the future).  The .bind()
-> >>> callback would walk the given thermal zone's cooling maps to find all
-> >>> of the valid trip point combinations with the given cooling device an=
-d
-> >>> it would call thermal_zone_bind_cooling_device() for all of them usin=
-g
-> >>> trip point indices reflecting the ordering of the trips in the DT.
-> >>>
-> >>> The .should_bind() callback still walks the thermal zone's cooling ma=
-ps,
-> >>> but it can use the trip object passed to it by the thermal core to fi=
-nd
-> >>> the trip in question in the first place and then it uses the
-> >>> corresponding 'cooling-device' entries to look up the given cooling
-> >>> device.  To be able to match the trip object provided by the thermal
-> >>> core to a specific device node, the driver sets the 'priv' field of e=
-ach
-> >>> trip to the corresponding device node pointer during initialization.
-> >>>
-> >>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >> This patch landed recently in linux-next as commit 6d71d55c3b12
-> >> ("thermal/of: Use the .should_bind() thermal zone callback")
-> > It has been fixed since and it is commit  94c6110b0b13c6416146 now.
->
->
-> Confirmed. Thanks for fixing it and sorry for the noise.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Thank you!
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-And it wasn't noise.  You reported the problem as soon as you saw it
-and before you could see the fix.  Somebody else saw it earlier, but
-there's nothing wrong with that.
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.12
+
+for you to fetch changes up to 259f5082721f1d17b4e5b9dc2bb430821afd95aa:
+
+  dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding (2024-08-26 14:34:51 +0200)
+
+----------------------------------------------------------------
+Samsung SoC drivers for v6.12
+
+1. Improve Samsung USI (Universal Serial Interface) DT binding,
+2. Cleanup old Samsung MFC TXT binding.
+
+----------------------------------------------------------------
+Aakarsh Jain (1):
+      dt-bindings: media: s5p-mfc: Remove s5p-mfc.txt binding
+
+Krzysztof Kozlowski (1):
+      dt-bindings: samsung: exynos-usi: add missing constraints
+
+ Documentation/devicetree/bindings/media/s5p-mfc.txt       |  0
+ .../devicetree/bindings/soc/samsung/exynos-usi.yaml       | 15 +++++++++------
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
