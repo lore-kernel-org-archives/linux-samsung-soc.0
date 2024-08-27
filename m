@@ -1,114 +1,131 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987851A0B10
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2024 12:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761218; cv=none; b=EWrJOSTkEtghyQPvksS6MAg3z4vTcjKO1vZM2SqhbPxFIv3qPDnLypWJWWuPlR/T0nrwGfx4um75snpZXQsnZyMArBIddeuiYdGPejQ1MaTIuzKs60RU/JKlfBjLcI0oxmFGhoF+Y1ShcHuKwDeQFpmoif6U1rXcXejByIKflA4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761218; c=relaxed/simple;
-	bh=hPKFaWEwOaTEBTuH3e8c+46iBkaH7ro4nsEsef3YavQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQfQO41hDsPQ4XhAIhaFyJYGz8Mh3g6b5oUZ4Cl7al5jjGsmntkuQc4TNcPVTz5gdfzCv2oBfAKYxR2DUnw7tp9z9+V4R8s/MkGEiDwApslZX5MqSZ+muZq/S6ubDbMPsN+DnVCo2nDxbxBO+hfWTGVgfjZjKQN4Hhb6GZZ3T8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ivuIv5/2; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51E81CE6E7;
+	Tue, 27 Aug 2024 16:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724777543; cv=pass; b=bHVMWJsY+ltma7LX5i8fSN/dgr6jkGHT3UZkIPjOfs3uouGf0w374fpL+t3Yd/XLn6pLK1YkfBky7XJ7E3uPibVTvWSG6KPKF/ElSWBOrvbY3SRFtcC+xDugtrIr7qj6GTSqeE9FUMdoyayLpl9HvoSgu5fRY7t0RcZ23Dzg6SI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724777543; c=relaxed/simple;
+	bh=SdgFpzzLedIEKAkguxPGHN9/qwQWneX547RqSrqEkJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpAKAc2SScICnh3K4Uk5taI9FZGjsoCyePsYhm9h0d90tUd76UGoS0TDz04PxQLE6fRzsV60UwDFC0oHrZGy03zTK3jwcy5Hlz7hqhj5tDOpB5ttWapxxDvKf85EgfkGYfFSpb+0GOOAwF0UuVuTPwEv6TRk1U46F4u/f9L1VPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=OpKB9Yrm; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ivuIv5/2"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4280ac10b7cso3589275e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2024 05:20:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724761214; x=1725366014; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HIsTjVY/9B3Lg0x8GUp3KD2J/JTusOKcRSUTrZvqKe0=;
-        b=ivuIv5/29ImbmVoktkjhaOeZ3HwB1H0BoEiyT8mNLmxNOIs28XCtqIKGbFwmiM6Thh
-         ybfGeL+aekuATrp8o4TRyr7mvd3CV/54m9kFfOQVl2Rp9sNvUEMjr4JGRurN+Ih3V5s1
-         QY62JdMnfx/ESHlYQp6J+EEg/Ovzu4YMbidYBMkcCPF0M2qtyuQdm46tAqkrSyFWipqE
-         0EOHJg6m6atC73TREdqyPDGfhVMI6Hoy5yJ2ImHCmAou3cTbW0CaRIWx5LyEt40GPo9H
-         IboNlV9GchqzPiIghqWu8wbDHDjUGePCYuq3NtRwpgL/cDKO1klmaAmhDGTewZ6kpRkL
-         lcMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724761214; x=1725366014;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HIsTjVY/9B3Lg0x8GUp3KD2J/JTusOKcRSUTrZvqKe0=;
-        b=n5KCN/5CTE4XcJ6hYmsZlriO0pQN5dz8PthtON1SDTW9CgmSOdedi3GUqKo7XgtLEk
-         1XsGe9JOtXDqCDmDAsodNhcQOMDuJRc7yty2sPqtwNKpNyMNvmqaZP6ZSd6CzSzkKmG6
-         O6twfGrKFDmKRvF9bnuHLmYstBCn95SbVt2PK4b6TBFpWX/aRU3j32MW987pNBEoO6WK
-         gSF+Qis9kAxFfmWWDoJVKqND/VKB8cH38ENzUJRcMzNDbyTrrAQq+4k8ImZ6wgWUZvZ5
-         ONAq1wWFQD7hEkSZ2HH+FTPyGknQeX9+HLz5frzcBp9Nn1mXPVd8GLuPHV0ezyjxlrLv
-         aqqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBuM8RZyVsl8gQdJn0f4ur4Dvf9w3nLuufg8+K1Opc7rzoFhkidAf81qOuqWFkTRIFFn1ODFSa2/eDMYHxw/zJUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT8eV+GjBxmlGD2+HfgWDmfCgMr8CbU9G0m4tpbPxD8ubE/M5d
-	7q86HFKsAftfe0+Qn6cRahGm5bgpwiurgNKNnDa3sjsrAOXC5TDofewP8QVEpSA=
-X-Google-Smtp-Source: AGHT+IG7i+eJRpMoQOnkdmCfoetSOU/Ebdq4Tdm/WCPxTSYkVwHF2O1bCXT1ZVNBiOJqcbCk+GKFmg==
-X-Received: by 2002:a05:600c:4f92:b0:426:6cd1:d104 with SMTP id 5b1f17b1804b1-42acca0a4f2mr60118695e9.4.1724761213899;
-        Tue, 27 Aug 2024 05:20:13 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abefc626fsm222544605e9.31.2024.08.27.05.20.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 05:20:13 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] pinctrl: samsung: drivers for v6.12
-Date: Tue, 27 Aug 2024 14:20:10 +0200
-Message-ID: <20240827122011.30158-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="OpKB9Yrm"
+ARC-Seal: i=1; a=rsa-sha256; t=1724777519; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bwIumnAotVC8L8yTnDIJ27UUlcC1PksE78uao2ODkkufl04cSH8JCCogCmrlG5qYZ4bqXwpAq86gVwzplDnQcLzVtc1FxhP1AdtkfI8+IHmNHJhNDDHDaNPXYNQ7kNt5ix099nvgkp6nPRuXGeI29KXMiKbIhSJsdSv4b3yAWlk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1724777519; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bYimh/iNRBlXEJfDnSGl77olRxlPtpIHOnaA2x9TrmI=; 
+	b=RD1pKMmVbmawE7lCeTfRZtyqt8TXqLOYOEXBxSgTVShiubYZ4b+DoygxqYbjyQevJ9Q/iuG975SzoBiA5+e4mNJh3BjOvE5V5v8RkTjAeURbXe3YHEx0QM2nb4jKPzUFWX76+r+4tpMJxw/pZwi41Cy5ghydDXkWyCf2S97ZPhA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724777519;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=bYimh/iNRBlXEJfDnSGl77olRxlPtpIHOnaA2x9TrmI=;
+	b=OpKB9YrmWW3ouB1HwEkLL4oUqdqaKrXgi1GZEm5DD+wiVoAl3NquUSWmuh/JxPcO
+	1ELuWZ5FEZKOjF2CCzxuQp9ptPNzLbbdEFBX/1SCJjnAlb0kpVLHd+948hgHE+3L8mF
+	52nTZraLSb5xTQvtsNl0NC/ieYRVoCBXdgz/azKE=
+Received: by mx.zohomail.com with SMTPS id 1724777517787364.44684154521156;
+	Tue, 27 Aug 2024 09:51:57 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 010D010604BD; Tue, 27 Aug 2024 18:51:52 +0200 (CEST)
+Date: Tue, 27 Aug 2024 18:51:52 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Artur Weber <aweber.kernel@gmail.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>, 
+	Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>, Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
+Subject: Re: [PATCH v4 08/10] ARM: dts: samsung: exynos4212-tab3: Add battery
+ node with charge current value
+Message-ID: <ekqydclwg6dx6ydqcm3tanyho636hxtwpx3cnpj7c4dwpdxa2d@bbzaqvkoajrg>
+References: <20240816-max77693-charger-extcon-v4-0-050a0a9bfea0@gmail.com>
+ <20240816-max77693-charger-extcon-v4-8-050a0a9bfea0@gmail.com>
+ <f2d19e20-9177-4b30-9781-6904cc1d1638@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2ugqlblyosjqwmlb"
+Content-Disposition: inline
+In-Reply-To: <f2d19e20-9177-4b30-9781-6904cc1d1638@kernel.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/224.300.3
+X-ZohoMailClient: External
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+--2ugqlblyosjqwmlb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-are available in the Git repository at:
+Hi,
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-6.12
+On Fri, Aug 16, 2024 at 12:03:32PM GMT, Krzysztof Kozlowski wrote:
+> On 16/08/2024 10:19, Artur Weber wrote:
+> > This value was verified by comparing register dumps of the MAX77693
+> > charger with on mainline with a downstream kernel under Android; the
+> > value on downstream was set to 1.8 amps when charging with a proper
+> > charger.
+> >=20
+> > Add it to a new battery node and pass it to the MAX77693 charger
+> > so that the fast charge current setting can be used for charging.
+> >=20
+> > Tested-by: Henrik Grimler <henrik@grimler.se>
+> > Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Switched to monitored-battery
+> > ---
+> >  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+>=20
+> For next version, please split DTS into separate patchset and provide in
+> changelog (---) lore link to power supply patchset with bindings. It
+> will be easier for Sebastian to apply entire set for psy.
 
-for you to fetch changes up to 39dbbd4e6778ac5580313ba34409855250633c61:
+I'm fine with a splitted series of course, but I am also perfectly
+fine with applying partial patchsets. I know at least some SoC
+maintainers like this style of a combined patch series, since they
+basically get an automatic push notification that the dependencies
+have been merged. It also makes testing easier of course :)
 
-  pinctrl: samsung: Use kmemdup_array instead of kmemdup for multiple allocation (2024-08-23 15:40:55 +0200)
+-- Sebastian
 
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v6.12
+--2ugqlblyosjqwmlb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-1. Few cleanups: use more appropriate of_property_present(), use scoped
-   OF nodes handling and switch to kmemdup_array().
+-----BEGIN PGP SIGNATURE-----
 
-2. Implement configuring pull-up and pull-down via GPIOLIB.
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbOBCIACgkQ2O7X88g7
++pqhmRAAj/YUAksIichzuOKkEA9JWrEqtvZqm9QMWiY8zHymBBNObZKbUjHa+OBZ
+jsx8GMQ1+4lnap1Llsyq9MJTQuaICNaNChUd+gAsnAbXW0Fsf+BumCD8Kd0Wu6U9
+BugLOA/kYnaMd5nSeclaE+BshGj6wxySqkBvEU2dyFaVmBygHAx+6XAgJT8Q4682
+a4gntdDDh3m8x44b1rg6frZoXR0TSome93wGIQGAYWpmuan49kAf1rt9/wFXWMys
+79VOMPX57pIVl0kKYFFWefrqsTM/faMyzxxbyx980DB1GzvpEbMW/C3dX9vHhqlX
+uKbBW18dkWGIKCfO95ZPVhXjpg+HiTpcN3GTW4O6IoOi+buq5Y/pg8wWk740f7Ck
+7bKbmE7ay480qnjVGq/pdu6XVdTyoBr+vifztJYiD78JuQgrP2sHWBShmAEa/fU3
+iicuyYE6txTYaEocVrWjVFr4k2eZYA6B4ELeeyAONgIsvIFJe3QK6Ui///lXovSL
+Z4jYdo8TQV4WDKgLIQzJNk5EG/HGQFKrcDkcnbzQX442xmXMqEY5KQVeNeeceSwN
+PsCop9CbI11zJ40LPP/ydENbhzmG2bgQyEAgAmrZ85YxtBS4wH5b7uVSJfQK4l7h
+Aui4+8U3tPCiE/h6ovxqV5pN/CebJ/LOSeDJyp7kcvmOUgs6gco=
+=5DI8
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Peng Fan (1):
-      pinctrl: samsung: Use scope based of_node_put() cleanups
-
-Rob Herring (Arm) (1):
-      pinctrl: samsung: Use of_property_present()
-
-Shen Lichuan (1):
-      pinctrl: samsung: Use kmemdup_array instead of kmemdup for multiple allocation
-
-Vishnu Reddy (1):
-      pinctrl: samsung: Add support for pull-up and pull-down
-
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c |  14 ++++
- drivers/pinctrl/samsung/pinctrl-exynos.c     |  16 +---
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c    |  14 ++++
- drivers/pinctrl/samsung/pinctrl-samsung.c    | 108 ++++++++++++++++++++++-----
- drivers/pinctrl/samsung/pinctrl-samsung.h    |  21 ++++++
- 5 files changed, 141 insertions(+), 32 deletions(-)
+--2ugqlblyosjqwmlb--
