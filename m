@@ -1,183 +1,207 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A87019C540
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Sep 2024 12:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65737200129
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Sep 2024 07:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725281429; cv=none; b=hovWtgasDO56ZRGEXE6V2dTkIg4HX2p1NX0Zigp7fS00ywV75njVPyhs1U8DgpkaIxh0wTkL0yZ2Bahs2l/uzANVxCwNCiTdz4o61DHyq83qOTL/QF+f6wBLks4BdYm4h3RQXzILX+rk3gMwUERGzLHL39GDhIpTJJZVFwff1KI=
+	t=1725348015; cv=none; b=K3iv6uxwtHh8P1SvKOVkHiK7RI8p8o7U3fk+4vPUKCpNKJ+14wh46CEHK8jAGpSWfPuQtVErElS08yF+L6J6uMqi6fTbsPYxsMVzhyxwuxxUZo54G2zUQB1P/ofhuk3PRimnJCPgRNoeNUIpX6BjWqIefujQ096dkXlmQuMHIxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725281429; c=relaxed/simple;
-	bh=oOLgdqKaqIoYmrt80N2TWv861dQVRS2CRaQHLQS7ngs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bewfKoSVDHZGoIRBIF4uANXcsm9oOKiDdyIsTBW9QgpjLTUwHu1z6BwaxokSuof7d4gocNw8KNy2RHbOGxJAGJUtTVNe+XvsXVJxGEw76JrjjwqGl/RtbRtfMdO+BF0iZDUuKN/C/Pq7oU9BzK+nAX4JmrtFxzZEYZRHGXtxGVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YuFQT7k1; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725348015; c=relaxed/simple;
+	bh=rtgDhsbqm35GHC11I3GwCh+rR+829viIN/jTvn5fWHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=GIV7G1c0ZDaAmp6hABo9Hmup2EAzsLt++Y4OxT8hhMjh/E+Aq6ImnyYGaoeZztQffrVbipmSBbOcLld8nHYr2/gMmbwtu3YgzrdzYCItaJ+jmAFHPutSC1nK9GEjbHzR1CBhI8tn/pjcLJx5rB/+LqMU9xWQx1UUP3H3Gm+BxNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n1VIFgZZ; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuFQT7k1"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-371ba7e46easo2799760f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Sep 2024 05:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725281425; x=1725886225; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v4zZp0vvL8qAqOWFo0YibynCaMgnBEJ9RqtvAY0A5+A=;
-        b=YuFQT7k1WfcQ4nlU6Xl6MymfndYQ7zEWslxkoyW5lDk7C+LQ+CpU5DYQmkKwRvfJ7T
-         brHBe0ziZ0AMK2ri0IxhQQeJ73cVE85PYV3M1YJheE3u2tZ05AnrG4ngOxY5ysfk9emA
-         dXK/pLxGrkIjfbxyQO0HMuSrM5vJPYkq2zwfIHumHWlbzf15UyprdUthazrgzUWLskJK
-         Hc8b/uHIkAWlkW3ikRAOAxtiAcsyYAqK37vHQfdXi0RPfzoiJZ9AysfctL6lU4Iv0Iz3
-         Iuzyr3ur/3ycDKetqI4i9zG2FS+68xDtNYX2ma+9u3XCzM8bceyiiNShQZ7avWSC5Uri
-         Tj0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725281425; x=1725886225;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v4zZp0vvL8qAqOWFo0YibynCaMgnBEJ9RqtvAY0A5+A=;
-        b=ZSm2JU3FMNV0uaN8OL7T6KGngCbCtPV5kFuIcDpN9+pzKUpmhBeMpE2+s6LZJQm1BI
-         oBz+TlnX9dSMVWA/CjOZrdARHrvRe9dmrIqtC56n0E4IWy2vuEHxblC0Yn5+4S8Q+TJH
-         zz9AIK5wkS3Ro8o6rCHzInJfoPODiAC1kgGEVzwtcb3Rbkzt6dxXyNfAwVohpv59j12Z
-         MFRJDI+LOpq9Q7wP6wPOYlF3VF6/YZ9cdTeTAQargLAQdOSz/K7tasAPIPqQoSg0BYGH
-         9pEOk7qYxc1+/N1TF3K4MrowrRWWb5yU39ve43Gh0tb+agQEGsMz0W9U+we0xqA+VrYd
-         S7ug==
-X-Forwarded-Encrypted: i=1; AJvYcCV1O+XVq7l7dPLhW+21CGfCp0SHUAZMezEn+RiUGqZet7/YxtEZpDpEsZgwMEeDke/dDm1brFumlYPdDrFJ02YkJg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9wBmbo4TMAl6vKMeS4QNDVsLBJIpShjzbGkKs/YziemX+0yGW
-	MuaQzdpM5LJuXqmERqafwe/z2mYU3cPkhmTQUaNaAZ8gXr2YezhnzcGRrokBLJs=
-X-Google-Smtp-Source: AGHT+IHFfdhySS3bPqgfC/v2cGnExHRAs4Obow5fte98bTQ+aBzvgmgBl+9odUWSSlOqKZmpiyXt7Q==
-X-Received: by 2002:adf:f550:0:b0:368:48e6:5056 with SMTP id ffacd0b85a97d-374bcead8cemr5185465f8f.22.1725281425119;
-        Mon, 02 Sep 2024 05:50:25 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3749ee40d5asm11399232f8f.11.2024.09.02.05.50.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 05:50:24 -0700 (PDT)
-Message-ID: <664344db-5a60-46c4-b108-38ca1b4e1a13@linaro.org>
-Date: Mon, 2 Sep 2024 14:50:23 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n1VIFgZZ"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240903072006euoutp02d62357323a01279fe6170c7527552e19~xqt7W2hel3093530935euoutp02D
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Sep 2024 07:20:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240903072006euoutp02d62357323a01279fe6170c7527552e19~xqt7W2hel3093530935euoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1725348006;
+	bh=65/2SJVng6lo7el3hUE88dgFRt6/tL+Cj7xnrVtuP/w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n1VIFgZZP9Gj2KJ/lsKfgSQQl/xgHYasM5NDQwi7MOVYjDyP7frNZEqfy+cofOAyr
+	 t4bfYBt7urH3lXNzwKGxV8VvzB5kXjIBFvOBXV8ei8ZMuunU4s7fvllD1sbTzXGeXJ
+	 PU0cKRGxtwklfzTCQ9hpJywFdqU9UdYQHi8NrKfY=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240903072005eucas1p2a9cd2d95d5469422f749dbb64a7cce8f~xqt6yR9TN1361813618eucas1p2Z;
+	Tue,  3 Sep 2024 07:20:05 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 0C.1B.09875.5A8B6D66; Tue,  3
+	Sep 2024 08:20:05 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e~xqt6TA2tt0454704547eucas1p2S;
+	Tue,  3 Sep 2024 07:20:05 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240903072005eusmtrp280e043ecaedc2accfd500370f6e10ced~xqt6SI37t1499014990eusmtrp27;
+	Tue,  3 Sep 2024 07:20:05 +0000 (GMT)
+X-AuditID: cbfec7f4-9acd8a8000002693-6d-66d6b8a5f5b0
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 34.A7.19096.5A8B6D66; Tue,  3
+	Sep 2024 08:20:05 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240903072004eusmtip13cee34ab07b41ab79b033a209c143bf0~xqt5ZmHIj1257912579eusmtip1L;
+	Tue,  3 Sep 2024 07:20:04 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui
+	<rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring
+	<robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, Anand
+	Moon <linux.amoon@gmail.com>
+Subject: Re: [PATCH v3 3/6] drivers/thermal/exynos: improve
+ sanitize_temp_error
+Date: Tue,  3 Sep 2024 09:19:55 +0200
+Message-ID: <20240903071957.2577486-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <664344db-5a60-46c4-b108-38ca1b4e1a13@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] drivers/thermal/exynos: improve
- sanitize_temp_error
-To: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Anand Moon <linux.amoon@gmail.com>
-References: <20240807084829.1037303-1-m.majewski2@samsung.com>
- <CGME20240807084912eucas1p20af043b96b6d741a0c7d7ae36efe5ac5@eucas1p2.samsung.com>
- <20240807084829.1037303-4-m.majewski2@samsung.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240807084829.1037303-4-m.majewski2@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djP87pLd1xLMzi1T9HiwbxtbBbft1xn
+	sliz9xyTxbzPshbzj5xjtTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNZtvMVusbCphd1i
+	4rHJzBZzv0xltvi/Zwe7xZOHfWwWz/v2MTkIeqyZt4bRY+esu+wei/e8ZPLYtKqTzePOtT1s
+	HpuX1Hv0bVnF6PF5k1wARxSXTUpqTmZZapG+XQJXRtf+XsaCQ+IVrY/WsDcwThXuYuTkkBAw
+	kfjffoili5GLQ0hgBaNEY/caJpCEkMAXRolzKzwhEp8ZJW5dn84E03Hv6V4miMRyRomrJ3ey
+	QzitTBJTTreAVbEJGEg8eLOMHcQWEdCTaHzfBtbBLHCTRaK78SRYkbBAoMSsz4/AilgEVCXO
+	PLnLCmLzCthJ7OvcywaxTl7i4prnYDYnUPzbvK1sEDWCEidnPmEBsZmBapq3zmYGWSAhMJlT
+	4v2xi+wQzS4S9+dMYoGwhSVeHd8CFZeR+L9zPtQ/+RIzNr8HquEAsisk7h70gjCtJT6eYQYx
+	mQU0Jdbv0ocodpT4e2MTM0QFn8SNt4IQB/BJTNo2HSrMK9HRJgRRrSpxfM8kZghbWuJJy22o
+	lR4SPZdXsk9gVJyF5JVZSF6ZhbB3ASPzKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMAk
+	d/rf8S87GJe/+qh3iJGJg/EQowQHs5IIb+zGq2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeVVT
+	5FOFBNITS1KzU1MLUotgskwcnFINTOHrj/f7h9w2vKefbTJxr5TT57ZUvd49x4wS+BkfPp7R
+	XfK30TuXt8rz2+PDL3emJi30TYnWUGt8sdPc7yobf6itf+OxZ2tyk7ZFuPmsXxhRofVp9+ea
+	jBOvHRbU2oqsSkm4fTfctPhuldTEh0f+2rw/arFcv+yC3utpb1LO7fxiaCwR3nL29YGvShm7
+	U9zEJ0bvUeeZ27R7Vu7JqdbvN20LWndtv8K+b5uMQ11fCJ/6Y2h6ZecE/Tr1xxpLWjbYtehp
+	m7fbVQbPr8ooNfCQsnlu/nljbc7vVSfUD+k2/FKxnf3v79TVJ8Nq/M8oH0o2+tulm9VQxJps
+	tmkH5wmxWWmS63bIB85+6pf4Zbm1uhJLcUaioRZzUXEiAKAbgrbhAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsVy+t/xu7pLd1xLM3h4l9XiwbxtbBbft1xn
+	sliz9xyTxbzPshbzj5xjtTh/fgO7xabH11gtLu+aw2bxufcIo8WM8/uYLNZtvMVusbCphd1i
+	4rHJzBZzv0xltvi/Zwe7xZOHfWwWz/v2MTkIeqyZt4bRY+esu+wei/e8ZPLYtKqTzePOtT1s
+	HpuX1Hv0bVnF6PF5k1wAR5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6d
+	TUpqTmZZapG+XYJeRtf+XsaCQ+IVrY/WsDcwThXuYuTkkBAwkbj3dC9TFyMXh5DAUkaJIyv3
+	skEkpCUOf5nCDmELS/y51sUGUdTMJPF0xU+wIjYBA4kHb5aBFYkI6Ek0vm9jArGZBZ6zSFzo
+	tgCxhQX8JeYvmAIWZxFQlTjz5C4riM0rYCexrxNmmbzExTXPwWxOoPi3eVvBbCEBHolXG/Yz
+	QtQLSpyc+YQFYr68RPPW2cwTGAVmIUnNQpJawMi0ilEktbQ4Nz232EivODG3uDQvXS85P3cT
+	IzAmtx37uWUH48pXH/UOMTJxMB5ilOBgVhLhjd14NU2INyWxsiq1KD++qDQntfgQoynQ3ROZ
+	pUST84FJIa8k3tDMwNTQxMzSwNTSzFhJnJftyvk0IYH0xJLU7NTUgtQimD4mDk6pBiYlfoat
+	3/3PsrztuzDx21YO5W3X9nQVzhKXjBEyP7h5YmJx27sdT/TDRZl0Xi3m/7ON0XWVfv3f8tab
+	r9U/yz17+mBtJ2+h7JUvdyq2Fgr/XDnzt/jKtpC5New8auxnFGPuxGzPN5l/Y4P6gsXaK0Pu
+	8ldOqu1fH5p8wC3a9MWEmUufyxebf3qrZz2vt2hOxK6CpiuiEm0ZcVInsu91H3qp73qt8FAM
+	x1t9P5tz+k7/+ufOnvljsf7X3fLCpm6yU2fsU2qzX2dXnMZR0LO/5eMPjWsWq2fe+CN77pjF
+	fWdrg4UHQ0/yO0155OPJW3dV/l/zS6b6uIRa0U0eohxJ9kdCbsnbfQp9PO+q6nnf9/uUWIoz
+	Eg21mIuKEwHPSSp0UgMAAA==
+X-CMS-MailID: 20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e
+References: <CGME20240903072005eucas1p20eec517c32d39e7aef17e6a2c2ad4b6e@eucas1p2.samsung.com>
 
-On 07/08/2024 10:48, Mateusz Majewski wrote:
-> There are two minor issues regarding this function.
-> 
-> One is that it attempts to calculate the second calibration value even
-> if 1-point trimming is being used; in this case, the calculated value is
-> probably not useful and is never used anyway. Changing this also
-> requires a minor reordering in Exynos5433 initialization function, so
-> that we know which type of trimming is used before we call
-> sanitize_temp_error.
-> 
-> The second issue is that the function is not very consistent when it
-> comes to the use of Exynos7-specific parameters. This seems to not be an
-> issue in practice, in part because some of these issues are related to
-> the mentioned calculation of the second calibration value. However,
-> fixing this makes the code a bit less confusing, and will be required
-> for Exynos850 which has 9-bit temperature values and uses 2-point
-> trimming.
+Hello :)
 
-May I suggest to convert this function to a specific soc ops to be put 
-in the struct exynos_tmu_data ?
+> May I suggest to convert this function to a specific soc ops to be put
+> in the struct exynos_tmu_data ?
 
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
-> v1 -> v2: reworked to change shift instead of only mask and to also fix
->    the 2-point trimming issue.
-> 
->   drivers/thermal/samsung/exynos_tmu.c | 23 ++++++++++++++---------
->   1 file changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index b68e9755c933..087a09628e23 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -111,6 +111,7 @@
->   #define EXYNOS7_TMU_REG_EMUL_CON		0x160
->   
->   #define EXYNOS7_TMU_TEMP_MASK			0x1ff
-> +#define EXYNOS7_TMU_TEMP_SHIFT			9
->   #define EXYNOS7_PD_DET_EN_SHIFT			23
->   #define EXYNOS7_TMU_INTEN_RISE0_SHIFT		0
->   #define EXYNOS7_EMUL_DATA_SHIFT			7
-> @@ -234,20 +235,23 @@ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
->   	u16 tmu_temp_mask =
->   		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_MASK
->   						: EXYNOS_TMU_TEMP_MASK;
-> +	int tmu_85_shift =
-> +		(data->soc == SOC_ARCH_EXYNOS7) ? EXYNOS7_TMU_TEMP_SHIFT
-> +						: EXYNOS_TRIMINFO_85_SHIFT;
->   
->   	data->temp_error1 = trim_info & tmu_temp_mask;
-> -	data->temp_error2 = ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
-> -				EXYNOS_TMU_TEMP_MASK);
-> -
->   	if (!data->temp_error1 ||
->   	    (data->min_efuse_value > data->temp_error1) ||
->   	    (data->temp_error1 > data->max_efuse_value))
-> -		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
-> +		data->temp_error1 = data->efuse_value & tmu_temp_mask;
->   
-> -	if (!data->temp_error2)
-> -		data->temp_error2 =
-> -			(data->efuse_value >> EXYNOS_TRIMINFO_85_SHIFT) &
-> -			EXYNOS_TMU_TEMP_MASK;
-> +	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
-> +		data->temp_error2 = (trim_info >> tmu_85_shift) & tmu_temp_mask;
-> +		if (!data->temp_error2)
-> +			data->temp_error2 =
-> +				(data->efuse_value >> tmu_85_shift) &
-> +				tmu_temp_mask;
-> +	}
->   }
->   
->   static int exynos_tmu_initialize(struct platform_device *pdev)
-> @@ -510,7 +514,6 @@ static void exynos5433_tmu_initialize(struct platform_device *pdev)
->   	int sensor_id, cal_type;
->   
->   	trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
-> -	sanitize_temp_error(data, trim_info);
->   
->   	/* Read the temperature sensor id */
->   	sensor_id = (trim_info & EXYNOS5433_TRIMINFO_SENSOR_ID_MASK)
-> @@ -532,6 +535,8 @@ static void exynos5433_tmu_initialize(struct platform_device *pdev)
->   		break;
->   	}
->   
-> +	sanitize_temp_error(data, trim_info);
-> +
->   	dev_info(&pdev->dev, "Calibration type is %d-point calibration\n",
->   			cal_type ?  2 : 1);
->   }
+Like this?
 
+static void exynos4210_sanitize_temp_error(struct exynos_tmu_data *data,
+					   u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
+	WARN_ON_ONCE(data->cal_type == TYPE_TWO_POINT_TRIMMING);
+}
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+static void exynos5433_sanitize_temp_error(struct exynos_tmu_data *data,
+					   u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS_TMU_TEMP_MASK;
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+		data->temp_error2 = (trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+				    EXYNOS_TMU_TEMP_MASK;
+		if (!data->temp_error2)
+			data->temp_error2 = (data->efuse_value >>
+					     EXYNOS_TRIMINFO_85_SHIFT) &
+					    EXYNOS_TMU_TEMP_MASK;
+	}
+}
+
+static void exynos7_sanitize_temp_error(struct exynos_tmu_data *data,
+					u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS7_TMU_TEMP_MASK;
+	WARN_ON_ONCE(data->cal_type == TYPE_TWO_POINT_TRIMMING);
+}
+
+static void exynos850_sanitize_temp_error(struct exynos_tmu_data *data,
+					   u32 trim_info)
+{
+	data->temp_error1 = trim_info & EXYNOS7_TMU_TEMP_MASK;
+	if (!data->temp_error1 ||
+	    (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & EXYNOS7_TMU_TEMP_MASK;
+
+	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+		data->temp_error2 = (trim_info >> EXYNOS7_TMU_TEMP_SHIFT) &
+				    EXYNOS7_TMU_TEMP_MASK;
+		if (!data->temp_error2)
+			data->temp_error2 = (data->efuse_value >>
+					     EXYNOS7_TMU_TEMP_SHIFT) &
+					    EXYNOS_TMU_TEMP_MASK;
+	}
+}
+
+Or maybe we could put tmu_temp_mask and tmu_85_shift in data instead,
+and have one function like this:
+
+static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+{
+	data->temp_error1 = trim_info & data->tmu_temp_mask;
+	if (!data->temp_error1 || (data->min_efuse_value > data->temp_error1) ||
+	    (data->temp_error1 > data->max_efuse_value))
+		data->temp_error1 = data->efuse_value & data->tmu_temp_mask;
+
+	if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+		data->temp_error2 = (trim_info >> data->tmu_85_shift) &
+				    data->tmu_temp_mask;
+		if (!data->temp_error2)
+			data->temp_error2 =
+				(data->efuse_value >> data->tmu_85_shift) &
+				data->tmu_temp_mask;
+	}
+}
+
+Thank you,
+Mateusz
