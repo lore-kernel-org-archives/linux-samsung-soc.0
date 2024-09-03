@@ -1,58 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A21898EA;
-	Tue,  3 Sep 2024 14:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C547C143748;
+	Tue,  3 Sep 2024 14:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725373609; cv=none; b=dYVhwvMfiPYCM4MNoS70oYF3v981izzBz681DUPt4P2DD0J4q7hfVbszdReoLGoZfJHVmEOqE96ASs+aH7SPxh2u6d7czAumbNo7tBK7nXFV4/n1Ff/v5H2ABQ8UNFJ9TpwQE5M4fwTSJIPdX1Bq7f5Ve+CAma4bFZ7DZGw60Cg=
+	t=1725374705; cv=none; b=RKPga6KtGKthQBilukkq69cAFi4eUPAAy42WFTlinBHDdS+NRDOV1zfVezCUx/cKS5YvUaEVjy36ixUo53UnaqIfkxNacni22lBQUZKXmY4gKj9RcHosjpVn3Wh2cJDJekmFD6Wm+iLrUgZraWMOi6Y11UfVCrSqwJOU+JOjWik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725373609; c=relaxed/simple;
-	bh=1EzdlpZs3q7uuOeXlGHHUIIkv3ehXf+bom0i5XRFrho=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=EAZue5KCfBa/LdfHuj/qdcevMhT3caoRbwa742e2oOQkcLWv/N/cEYEw3OamyX0Z1i7GWmkSP9EW4K4wEUYEyJqkBC84baz3jsJz4LPAnq+4R+QqakjgVeMKj+cVoEWQJag7gxK9NsmOPXmBkrkvHuW61T+jJWVwH7a84QvDnWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9kNe6Bj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725374705; c=relaxed/simple;
+	bh=kjwW4yZWDbOS3yre+iyQ+sO3btkOk+be3br7emWnx/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dIiPNE7dMqCqInvL6pdN0IASmqV/rTbvp318jsUz9pwS0Fi3bVqdVk9MCoeYeCu67sGqrUXIwIr5RkOV+tydNEh/G7MNbQxJy5/YLZgehQ1yXyPmB0QkcHrZkkcHVsbmnGSR4P37H0QahkiGjFguhnxSCxG6GfGXeZOJwrRf+dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNKw7RLt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9kNe6Bj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D9AC4CEC4;
-	Tue,  3 Sep 2024 14:26:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNKw7RLt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C3FFC4CEC4;
+	Tue,  3 Sep 2024 14:45:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725373609;
-	bh=1EzdlpZs3q7uuOeXlGHHUIIkv3ehXf+bom0i5XRFrho=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=F9kNe6BjuehbUTMfgcTXZIuqk8Qh8Xp1IcFCkosaNvDqNOGmscr9+MYuz48BeNEQg
-	 6BZr8yBGtq9t3hHo1qeXpgxPfh7ocAerglY2A+VghxDgvCmfUgf73EzQQsa9d/5ZhN
-	 uKBQbBHBXyXhjgnj+QeF5+9iZxa9WSl/0sOIWtxeNX8ClgkMoRuDb9jbBwASrIULto
-	 mRvwfbYww/HFKWJFynNsDFsh93CABXF8hXl49zqXkEk3OKRcOQUzjiF7DISn1Z6XUv
-	 AdMtJL0YL7s/Oq/ToZEz1Chr/v0tosGOhG3SuYEARO8dBy2uBHexUX+T4jCilyDpKN
-	 J7Xrq6OKIxWlQ==
-Date: Tue, 03 Sep 2024 09:26:48 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1725374705;
+	bh=kjwW4yZWDbOS3yre+iyQ+sO3btkOk+be3br7emWnx/s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fNKw7RLtWD+h+MVwSWb/heFmaDKUYskWslKnV2N4m/iIlCf4H7bLTJ+kaDdBI401P
+	 NPXeN9Pc9xnw7ODvmFgzKYA1LEz+/quhBboE5/UKUEeoerqReoH50aswqQhshgRcL9
+	 j5RcFhpMDmTHfK+tZrmKBtcjZgJ0HzIxqEsfEv94YYMvuH6z26JuUNaXOHLWE6Ggv6
+	 1W6S+4Pd1HS3xqyhH8KbJyptIbRM3lgQv1wvMOR79jEaFyTOIZbmKgten3tlVPwYhd
+	 LemBoGugplfgYGw+KV0F6F33m2wTYkqDQ6ofDGKS2MRzHEYbCQa6v8cGwE89qwN99u
+	 pb0Suyy9KekMw==
+Message-ID: <03e65361-790b-441e-b8e2-b8db4ffc6603@kernel.org>
+Date: Tue, 3 Sep 2024 16:45:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-In-Reply-To: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 References: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
-Message-Id: <172537335246.875854.15313329352879668341.robh@kernel.org>
-Subject: Re: [PATCH v3 00/10] Add minimal Exynos8895 SoC and SM-G950F
- support
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Tue, 03 Sep 2024 15:44:19 +0300, Ivaylo Ivanov wrote:
+On 03/09/2024 14:44, Ivaylo Ivanov wrote:
 > Hi folks,
 > 
 > This series adds initial SoC support for the Exynos 8895 SoC and also
@@ -63,112 +105,14 @@ On Tue, 03 Sep 2024 15:44:19 +0300, Ivaylo Ivanov wrote:
 > and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
 > and dreamlte, but it should be really easy to adapt for the other devices
 > with the same SoC.
-> 
-> The support added in this series consists of:
-> * cpus
-> * pinctrl
-> * gpio
-> * simple-framebuffer
-> * pstore
-> 
-> This is enough to reach a minimal initramfs shell using an upstream kernel.
-> More platform support will be added in the future.
-> 
-> The preferred way to boot this device is by using a small shim bl called
-> uniLoader [1], which packages the mainline kernel and DT and jumps to
-> the kernel. This is done in order to work around some issues caused by
-> the stock, and non-replacable Samsung S-Boot bootloader. For example,
-> S-Boot leaves the decon trigger control unset, which causes the framebuffer
-> to not refresh.
-> 
-> [1] https://github.com/ivoszbg/uniLoader
-> 
-> Changes in v2:
-> - No patch changes were made, only fixed the issues with my git send-email
-> 
-> Changes in v3:
-> - Added a-b tags by Rob Herring and Linus Walleij
-> - Ordered the Samsung Mongoose M2 compatible in cpus.yaml
-> - Ordered the EXYNOS8895 information in exynos-chipid.c
-> - Made the commit message for pinctrl support more detailed
-> - Made the commit message for exynos-pmu.yaml more detailed
-> - Fixed suffixes for the exynos8895 pinctrl device tree
-> - Removed redundant nodes from the exynos8895 pinctrl device tree
-> - Made the arm-a53-pmu node cover only the Cortex A53 cores
-> - Added a comment mentioning the lack of a PMU model for Mongoose cores
-> - Added a comment mentioning the issue with CNTFRQ_EL0
-> - Removed the redundant fixed rate clocks wrapper
-> - Ordered the nodes by the DTS coding style in all 8895 DT files
-> - Removed the redundant status property from the simple-framebuffer node
-> - Switch to dual licensing (GPL-2.0 OR BSD-3-Clause) for the DT files
-> 
-> Kind regards,
-> 
-> Ivaylo.
-> 
-> Ivaylo Ivanov (10):
->   dt-bindings: arm: cpus: Add Samsung Mongoose M2
->   dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
->   soc: samsung: exynos-chipid: add exynos8895 SoC support
->   dt-bindings: pinctrl: samsung: Add compatible for Exynos8895 SoC
->   pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
->   dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible
->   dt-bindings: soc: samsung: exynos-pmu: Add exynos8895 compatible
->   arm64: dts: exynos: Add initial support for exynos8895 SoC
->   dt-bindings: arm: samsung: Document dreamlte board binding
->   arm64: dts: exynos: Add initial support for Samsung Galaxy S8
-> 
->  .../devicetree/bindings/arm/cpus.yaml         |    1 +
->  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
->  .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
->  .../samsung,pinctrl-wakeup-interrupt.yaml     |    1 +
->  .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
->  .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
->  arch/arm64/boot/dts/exynos/Makefile           |    1 +
->  .../boot/dts/exynos/exynos8895-dreamlte.dts   |  126 ++
->  .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1092 +++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  249 ++++
->  .../pinctrl/samsung/pinctrl-exynos-arm64.c    |  137 +++
->  drivers/pinctrl/samsung/pinctrl-exynos.h      |   10 +
->  drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
->  drivers/soc/samsung/exynos-chipid.c           |    1 +
->  15 files changed, 1630 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> 
-> --
-> 2.34.1
-> 
-> 
-> 
 
+How did you resolve this comment:
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+"I do not believe this was tested. See maintainer SoC profile for
+Samsung Exynos."
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+?
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y exynos/exynos8895-dreamlte.dtb' for 20240903124429.107076-1-ivo.ivanov.ivanov1@gmail.com:
-
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@11430000: 'sd2-clk_fast_slew_rate_1x-pins', 'sd2-clk_fast_slew_rate_2x-pins', 'sd2-clk_fast_slew_rate_3x-pins', 'sd2-clk_fast_slew_rate_4x-pins' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@164b0000: gpa1-gpio-bank:#interrupt-cells: 2 was expected
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: pinctrl@164b0000: 'key-power', 'key-voldown', 'key-volup', 'key-wink', 'pcie_wake-pins', 'wlan_host_wake-pins' do not match any of the regexes: '^(initial|sleep)-state$', '^[a-z0-9-]+-pins$', '^[a-z]+[0-9]*-gpio-bank$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl.yaml#
-
-
-
-
+Best regards,
+Krzysztof
 
