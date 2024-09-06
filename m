@@ -1,56 +1,57 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CED1D0140
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Sep 2024 14:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B392E1D1729
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Sep 2024 14:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725631522; cv=none; b=AlG6ZHhvXJNisTGy1z5mZo882y0LmgSOB1ckmpIhXMuFun/4c38iGLTJHdtCvKA3Sr/hMq6zm/1Ovyr91sed1hZxasPWrAd8f7PP47+v4eMIlSU0SPz39lIx3B03IU4uA7qnu6jqwQ5NbgCB8fmgek0j+s9Ya44+C3JqA6ALltk=
+	t=1725631523; cv=none; b=VtwmHvvBNZNpsBzH47AXfFPdMlfpInNu+u6Q6wpOt44tI78IqWiQ3xiXdMnfO1izkQbq4dlx3SzGz+seSh9O0ZuVuDjgthylbiolDYYUsiSrmVOEKagpPuBg9YGQnyD9y1XkTwOgnjk0RJ0NAdNcpEbLvK6Wj0sB1toAEU4WlSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725631522; c=relaxed/simple;
-	bh=INmpE9Xt6+2n5aTSRPZNuCInq4AObUwjZW5w3K2QuXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8LNO/BnTejU+VuszwKlLdOd/8A+/UmINxfVShFyWVNfl+Xl4tMACduknQzRhNEv/Y6DeFIARnK04OgcfOwBkQ76L2KnDgiEORV6aoA6oz5COd9u+hPo6fdC88P6uRkAmFF6k5T6KvW9FSyaKap6FGwq3tS7zxtO9ednybrOes0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U61Qa0OM; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1725631523; c=relaxed/simple;
+	bh=1gxZd7jfXTJpSVtVW8NQ2hU7R1ZEPlzfguzkm9wMGhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HzaUy4fyQecbIq20qANqGhovxk8Tjy27w6f/YdHYyMGwKVj9Sz/qrxKCarSo+SeKFoZn1woly96Cu39NdF31aG0FPuqiZM2Wpf0mfxqe/+YD5u3jl1qpcwPpOpbTY2X5IGvOZC9Y6zYSZAQhd44vLY+DIWA+/XNus45p7EIPIt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=maSUKp4u; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U61Qa0OM"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c245580f52so250297a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Sep 2024 07:05:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="maSUKp4u"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8a765f980dso15228266b.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Sep 2024 07:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725631519; x=1726236319; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0KtTAkDnPVtI+Xf63+eqBvZoy4RV22T/taS47u19/A=;
-        b=U61Qa0OMWmfsWN8pJU7a80m1IGQ35QpW+gvbix67e8uEwrnqDM4yWVAb/lrgvN/LIK
-         R7ceG/taTAyYcWBwbI3zkWDfmz3mlDpx90S11KcVAApfIqBYcXpS3Dxxavo+1x2oTNx8
-         Am81IRnrKi5KQP+jXytAIMLwlIvLlx+2gr3M3nlsxZwuQDDyrxYW3t4hE8RGj61/EPZj
-         6sFExM3Mc0oKY/epG5b7Vf057sjwbdnM8YNsV6uxCCKHRk0OSsfhf4qNPfsIeryPgxXA
-         kELIuRUXOW2Ve4VhA767fRpXsQZEOwYuv8xSuK6NXiKfcZIeK7mTSxsShN1zcxmXhsdh
-         1Iyw==
+        d=linaro.org; s=google; t=1725631520; x=1726236320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7sTKA9799tNHggSqxU2/u6jwP6G56MM3BVuVl/Oq12g=;
+        b=maSUKp4ucmACX+yQRIF2qwh2es+nh9k6uFVg6QlSfaO5/9MIU03/g8zJrIzqqw6E4x
+         ii8q3qBJ8W0ULuZNOnZRLFRv7JobNGhS76cRHjTg4m8mgh2TsNKKg99sf0i9VSRwjjTD
+         QjkZTkhO/wpPBafIXu10Xbf9jS7TfQtL+mczgl6slZQdulBdNUtcY5Es88Qp3/F2f7hc
+         Fv5PBU0WJDsbxzkTMdO8e5XdURQcrW5qveShGtUalcdydR7s1AKVtYkAyOL9kGpIaE6p
+         Asc4zqADqP8UJ8Lw9mmY3zMxA08y1VYUzEqs2PKGaIFEt7BRhhwdu0K587fgR1Eb6AJx
+         O92Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725631519; x=1726236319;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C0KtTAkDnPVtI+Xf63+eqBvZoy4RV22T/taS47u19/A=;
-        b=LHWUql/Q61vPNzN3kgOsgQGAkumAz8c6JruYiB7I1ZQfvewSsClUV0rKyLN862odWD
-         q+FnWVi3u8huxcXn+gy/nzQOl5vN6WS1VZ24a3fiYMXIodskUf19DXjqzN4ePYmiLGCf
-         kuulcFBeC907oz6JgDvRlYkeoK6bEXZpSkAMDObFMfH7ib17LTuNh2nHypUjgDhtG/b/
-         P/fjOB7ZXZLrq236wxBwDFff03mfeZPXSqZR+c3HnhoshS8b/0qG84YGvmmezKsgrLJ0
-         V24djWfI7NvbiXpId9zKlROyjo386POkyiDxItf3rz1SAk7Eqb2R0frinPenyISuF4d6
-         8udw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJnTUmAD8k9UI83oxo91Cn/pITpR9KUKKml2P7mYGXmHQl+3joYNqEwsPmAfpSYIA+bNAyhJRn2tocLme5lF0AAg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3phS2fXrrpFZFND8U25dXS7cigbZ+kJOvUziGPImvUNDfr76b
-	KJo2nQ7Rganl59macX/CZuuOmCYejdI6zcyBL/2w6Z5bZEjcZF9MNNk9PJnNzfJAmDyJewfKB0o
-	X
-X-Google-Smtp-Source: AGHT+IH4jOU5C15cfCX8P2TTmcku2hXBGZeYp52ClIPdrcJIGyBSc1Si/kzrYhGwc89fJNBRbV5OjQ==
-X-Received: by 2002:a17:907:da3:b0:a79:a1b2:1a5e with SMTP id a640c23a62f3a-a8a88909224mr102991566b.10.1725631517829;
-        Fri, 06 Sep 2024 07:05:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725631520; x=1726236320;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7sTKA9799tNHggSqxU2/u6jwP6G56MM3BVuVl/Oq12g=;
+        b=gjCrDF2bAsy5PeG2KiDfECtVETA3FjcPkYJ+I3wZgRFPk8tKTKskJLdCTHUgJwbkqv
+         MB1Lo6EEe6YJ4dN/4Ekrpo1/CXBY8C88cEpi3gFO0kztC10io5UJ19qoo86BBr470+mo
+         IUWLLD1RHcP83ZlaVdyvZ2k7yvcC9oAHJngCAZf/N+s1kjDFRc9GicrqmpDqewmGVHlp
+         xTxHGKy0Larfu5Rrnb3qHaEie45AnC0WQZP60yUlXTdhC5FWz5goJzxLAAEQSyNfd4GL
+         8tjiry1FYuvtMBZnhoyp+U1muzlsGOaH6T9FDakgghwujSFpK/RlZFuQHwvHfDiXJZeI
+         9BpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG6zcbQGETWtiCFc/1U0uBBoDbKKZ1QHXqi3aB6dAOe6d9XGzv0MEWgd++QRwjx2UUmoWpeRAR2psS0mTctLxsPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqqroWr9EFm8konbRlu/Hq9CNwKiDwTEJ9MewBIDj4ZscFm8th
+	iYPtSPLKrGw0IbbNa7gNjBOhib0lvv+StRj/lWdEOWdfO53Jh98nKuXHina3X0Y=
+X-Google-Smtp-Source: AGHT+IFKZwtHtV9PO6LP/3lo8dMOMciYzMRKwbxAmyvhPemXsrkNEfo4BYYP6vzoUfeFVdSPS1fmxQ==
+X-Received: by 2002:a17:907:25c9:b0:a86:9e3f:fdc8 with SMTP id a640c23a62f3a-a8a885fb901mr127136166b.4.1725631519392;
+        Fri, 06 Sep 2024 07:05:19 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a7e223498sm162319666b.196.2024.09.06.07.05.16
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8a7e223498sm162319666b.196.2024.09.06.07.05.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2024 07:05:17 -0700 (PDT)
+        Fri, 06 Sep 2024 07:05:18 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Olof Johansson <olof@lixom.net>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -61,10 +62,12 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 1/2] arm64: dts: minor improvements for v6.12
-Date: Fri,  6 Sep 2024 16:05:11 +0200
-Message-ID: <20240906140513.71307-1-krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 2/2] ARM: dts: minor improvements for v6.12
+Date: Fri,  6 Sep 2024 16:05:12 +0200
+Message-ID: <20240906140513.71307-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240906140513.71307-1-krzysztof.kozlowski@linaro.org>
+References: <20240906140513.71307-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -79,37 +82,28 @@ The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt64-cleanup-6.12
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git tags/dt-cleanup-6.12
 
-for you to fetch changes up to a4b3f197bcd17ea81605f3121a459dece448e877:
+for you to fetch changes up to c7b44ed960ddecb3604d1e273494a932f00f384b:
 
-  arm64: dts: sprd: move/add SPDX license to top of the file (2024-08-12 12:09:54 +0200)
-
-----------------------------------------------------------------
-Minor improvements in ARM64 DTS for v6.12
-
-1. APM: correct node name to match bindings.
-2. Spreadtrum: correct node names to match bindings, order properties to
-   match DTS coding style and put SPDX identifier at top of the file as
-   expected usually.
+  ARM: dts: nuvoton: wpcm450: align LED and GPIO keys node name with bindings (2024-08-12 12:07:04 +0200)
 
 ----------------------------------------------------------------
-Marek Vasut (1):
-      arm64: dts: apm: storm: Rename menetphy@3 to ethernet-phy@3
+Minor improvements in ARM DTS for v6.12
 
-Stanislav Jakubek (3):
-      arm64: dts: sprd: rename SDHCI and fuel gauge nodes to match bindings
-      arm64: dts: sprd: reorder clock-names after clocks
-      arm64: dts: sprd: move/add SPDX license to top of the file
+1. Realview: correct unit addresses (e.g. drop when not valid).
+2. Nuvoton: correct node name to match bindings.
 
- arch/arm64/boot/dts/apm/apm-storm.dtsi        |  2 +-
- arch/arm64/boot/dts/sprd/sc2731.dtsi          |  5 ++--
- arch/arm64/boot/dts/sprd/sc9836-openphone.dts |  3 +-
- arch/arm64/boot/dts/sprd/sc9836.dtsi          |  3 +-
- arch/arm64/boot/dts/sprd/sc9860.dtsi          |  3 +-
- arch/arm64/boot/dts/sprd/sc9863a.dtsi         |  8 ++---
- arch/arm64/boot/dts/sprd/sharkl64.dtsi        |  3 +-
- arch/arm64/boot/dts/sprd/sp9860g-1h10.dts     |  3 +-
- arch/arm64/boot/dts/sprd/ums512.dtsi          |  4 +--
- arch/arm64/boot/dts/sprd/whale2.dtsi          | 43 ++++++++++++++-------------
- 10 files changed, 37 insertions(+), 40 deletions(-)
+----------------------------------------------------------------
+Krzysztof Kozlowski (1):
+      ARM: dts: nuvoton: wpcm450: align LED and GPIO keys node name with bindings
+
+Rob Herring (Arm) (1):
+      arm: dts: realview: Add/drop missing/spurious unit-addreses
+
+ arch/arm/boot/dts/arm/arm-realview-eb-mp.dtsi                       | 2 +-
+ arch/arm/boot/dts/arm/arm-realview-pb11mp.dts                       | 2 +-
+ arch/arm/boot/dts/arm/arm-realview-pba8.dts                         | 2 +-
+ arch/arm/boot/dts/arm/arm-realview-pbx-a9.dts                       | 2 +-
+ arch/arm/boot/dts/nuvoton/nuvoton-wpcm450-supermicro-x9sci-ln4f.dts | 6 +++---
+ 5 files changed, 7 insertions(+), 7 deletions(-)
