@@ -1,209 +1,171 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0B0AD2D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Sep 2024 00:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1505AD2C
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Sep 2024 00:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725842018; cv=none; b=R1QUU9BnxSkSkbaLk3M9BrVWwup6uylTgGIcy0ILVWWEwN61/WkJCpgkjIUPIA8j6MaNKkU+dBTJWEkzhdOmihjPFsmJiWkffH0QBekyn7jjJhc1DROkm9rLJtZWDdkpWniFAKFCtZLL3sLKZZMQ1hWNIAPYJFfKnUyZp2MnLyA=
+	t=1725842814; cv=none; b=GHJI4JsMVFAkmOEM4AmPrM1PweZCYBZxRR7w9CfhXg3SdNlzHExyzdO+er3gi0PGmqs0spvh7NGCWozPfLj2SSFzl4Pd6HJDPa8GpcRbWzqf90M5fqDBmlvi5FjNldy0uyb3Ee2LRfokkE1itc355tk77ISewudxhb2QFrfPncc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725842018; c=relaxed/simple;
-	bh=yuiodnLwX1gKqsZQT9/F0FJf4NvUQMCuqjDYplqpbck=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=NdTJvVQH5KHbz4JUGFzqWgT9rViOk+VRxZBmphTbUmgwr3cm9kIyw/6h8JGx3PlM+AGEMFDfrLs2O/iVHLlizXqTY20SG2sHqNHYOuKPj+HWEeCqZvd0Al6gooKfWcd4hNym5PT6FVxwluFSp4gQkJ1mKFm5OcvFY/OkzrbVU2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GOHj1aG4; arc=none smtp.client-ip=203.254.224.25
+	s=arc-20240116; t=1725842814; c=relaxed/simple;
+	bh=gvdQbHbRPpINpuIoL1MUbXMPTmg3A04PfCTGXJPY1Hc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=sfKYj1maWZ5J+zByFO8E9GhPXKKSB5Ecgn1DuA57NOvmNsv8bo/v84QneHF+P3hSaVj0BImiJ3WYStQSCSCd4EBXHQujjBk7savKEdVxtEjchiuZlEA1o3pueNNTx2v4LSBDdeB7siZ3tkEemfszAlkSPoLTSnJ6zpA/ks03HOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FNS8/4/U; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GOHj1aG4"
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240909003326epoutp0273b3e9980503cb1a6866d6b3950ee9d9~zbCk6hdVn3122531225epoutp02e
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Sep 2024 00:33:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240909003326epoutp0273b3e9980503cb1a6866d6b3950ee9d9~zbCk6hdVn3122531225epoutp02e
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FNS8/4/U"
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240909004643epoutp049659fac7193adf59e18beab4174365a9~zbOLlxehh0646806468epoutp04d
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Sep 2024 00:46:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240909004643epoutp049659fac7193adf59e18beab4174365a9~zbOLlxehh0646806468epoutp04d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1725842006;
-	bh=1G+ASTI4bMzmwPy0O5lazP8/CD+An6upXbu/zYW46Rc=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=GOHj1aG4UmnJwaGzvVVtIUliZcmlZ4AdkBGgdjbOWWvrmF/KfRumfXXLeUT/iwlHK
-	 rKZ4gPW67rReH2NZiC+iY1CmIqZRK13/9IiA6jktzBg9T/4nAq63uGsRflPRqq0c3q
-	 yS5LhIezxISAhZx+U7vW1gDEsdqdXKPkizoTWUc0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	s=mail20170921; t=1725842804;
+	bh=3VVnHyYRvCtJ4gJTZWNhyOaT9J94FBZBPDqZvJPYXC8=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=FNS8/4/UVFz6LCFNvvmIq/GcxiObgd4IpUw1Zw3SwCy7kh+DLwZrqD3mqQ7/fJL7P
+	 JZT9jXRWOctuca7plGj3/S2tq53X9rV1gztXHpjO+DMbbQW97Kp/dm6kS9hntHhTjg
+	 1M8QRcEcLd7w7H0WUflUcGEvqhZ5ixL83s+e9UGw=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
 	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240909003326epcas1p350e5fd5906e45056a43c1aade062ecd1~zbCkqJ8Mr0118901189epcas1p3n;
-	Mon,  9 Sep 2024 00:33:26 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.232]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4X279J6cXnz4x9Pq; Mon,  9 Sep
-	2024 00:33:24 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	87.FE.19509.4524ED66; Mon,  9 Sep 2024 09:33:24 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240909003324epcas1p1ca105cce3f7ba7f60724e0272c169fb9~zbCi4HLdq0834108341epcas1p1i;
-	Mon,  9 Sep 2024 00:33:24 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240909003324epsmtrp28853f99e55b593fcf893c85c56dd07e7~zbCi3gsF30427904279epsmtrp2z;
-	Mon,  9 Sep 2024 00:33:24 +0000 (GMT)
-X-AuditID: b6c32a4c-17bc070000004c35-a0-66de4254604a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	64.97.19367.4524ED66; Mon,  9 Sep 2024 09:33:24 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240909003324epsmtip1bb587d6b5395fa477c6043a1eae0ea71~zbCipoIhV0362103621epsmtip1Z;
-	Mon,  9 Sep 2024 00:33:24 +0000 (GMT)
-From: =?ks_c_5601-1987?B?tOvAzrHiL1RpemVuIFBsYXRmb3JtIExhYihTUikvu++8usD8wNo=?=
-	<inki.dae@samsung.com>
-To: <airlied@linux.ie>, <daniel@ffwll.ch>
-Cc: <dri-devel@lists.freedesktop.org>, <linux-samsung-soc@vger.kernel.org>
-In-Reply-To: <20240906091331.34244-1-inki.dae@samsung.com>
-Subject: RE: [GIT PULL] exynos-drm-next
-Date: Mon, 9 Sep 2024 09:33:23 +0900
-Message-ID: <13aa01db024f$e0ff20d0$a2fd6270$@samsung.com>
+	20240909004643epcas1p32569c05f39bbd85476bfe36125d81ec2~zbOLUrNKw3010030100epcas1p3P;
+	Mon,  9 Sep 2024 00:46:43 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.237]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4X27Sf1ntpz4x9Q3; Mon,  9 Sep
+	2024 00:46:42 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A3.9F.09623.2754ED66; Mon,  9 Sep 2024 09:46:42 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240909004641epcas1p3a3879721c9f81a063209cf7a752b36c0~zbOJYZ7J90217302173epcas1p3j;
+	Mon,  9 Sep 2024 00:46:41 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240909004641epsmtrp1feeb9b11e7746a436158709ac9d46e71~zbOJXukzS1914619146epsmtrp1d;
+	Mon,  9 Sep 2024 00:46:41 +0000 (GMT)
+X-AuditID: b6c32a36-ef9ff70000002597-0c-66de45727854
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	22.32.08964.1754ED66; Mon,  9 Sep 2024 09:46:41 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.211]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240909004641epsmtip2be86283fa81de34554794ad08f1c6736~zbOJJROvE2137621376epsmtip2I;
+	Mon,  9 Sep 2024 00:46:41 +0000 (GMT)
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie, daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Subject: [RESEND GIT PULL] exynos-drm-next
+Date: Mon,  9 Sep 2024 09:46:41 +0900
+Message-Id: <20240909004641.406858-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKnWCNG2FAPxsLYb1AQ/rvYmFL7hgGws9RMsKho9SA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdljTQDfE6V6aweQ/Oha9504yWfzfNpHZ
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIKsWRmVeSWpSXmKPExsWy7bCmrm6R6700g/utLBa9504yWfzfNpHZ
 	4srX92wWM87vY3Jg8dj7bQGLx/ZvD1g97ncfZ/L4vEkugCUq2yYjNTEltUghNS85PyUzL91W
 	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
-	I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITvj/7Fl7AXrJSu2LznK2MD4SLiL
-	kZNDQsBE4tWnN2xdjFwcQgJ7GCWW/f8E5XxilLi9tpsRpArM2fnREKZjaeNXqKKdjBL/nt9i
-	hnBeMkocaXjKBlLFJpAhcbd9MSuILSKgKdH1oIsJxGYW8JKYueMoC4jNKWAlMWHXT7ANwgLq
-	Eid2rAerZxFQkVh2EKKXV8BS4uT3b+wQtqDEyZlPWCDmGEksWT0faqa8xPa3c5ghrlOQ+Pl0
-	GdReK4nGWWdZIWpEJGZ3tkHVfGSXeHOMDcJ2kfhx6S5UXFji1fEt7BC2lMTnd3vBvpQQmMwo
-	cef6ChYIZwajxOGf1xkhqowl9i+dDHUFn8S7rz1A2ziA4rwSHW1CECVKEscu3oAql5C4sGQi
-	G0SJh8TdfYETGBVnIXltFpLXZiF5bRaSFxYwsqxilEotKM5NT002LDDUzUsth0d5cn7uJkZw
-	mtTy2cH4ff1fvUOMTByMhxglOJiVRHj77e6lCfGmJFZWpRblxxeV5qQWH2I0BYb4RGYp0eR8
-	YKLOK4k3NLE0MDEzMjaxMDQzVBLnPXOlLFVIID2xJDU7NbUgtQimj4mDU6qBiSkh2mqa48O/
-	v1Ivi/JsdCuep3vgx1rXpQ2hOjMrr2daOtmfSrlkmOB0QEX2kE/Dh71/1dfr/fDtvs78Plxi
-	yzP5MP6qa7euh8md73BN3PjxnOhR3xCjlkg2F9Yfh8OdH8+wWvPlvsGS82opnZ8sZ5iXHjJ+
-	ELBLU2KpUJTNfJsdZw8snJ2hVlZw0UVM5v+TnAJ1xes7TznOb7mUUV7TxbrD4fb/w7yz5I2v
-	9uVNsYs5dEhUr4uTj+VsvdOSRYsyTzlkCrVe2MU634QlimvLmUK+r4kx5vfSFEw27asrldqv
-	s+T7erMKZ8f3MdU3Gs2Urc8c3dv25u3ET4eaBQ83L97TtkDR5Z3IP9UL++f8VmIpzkg01GIu
-	Kk4EAA2fMp4cBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnG6I0700g1/LeS16z51ksvi/bSKz
-	xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV8b/Y8vY
-	C9ZLVmxfcpSxgfGRcBcjJ4eEgInE0savbF2MXBxCAtsZJW5unc/axcgBlJCQ2LKVA8IUljh8
-	uBikXEjgOaPEqZX1IDabQJrEpLn7WUFsEQFtiRNrpoDZzAI+Et923WaEGNnNKLF28y0mkASn
-	gJXEhF0/GUFsYQF1iRM71oM1sAioSCw7uBjM5hWwlDj5/Rs7hC0ocXLmExaIoSYSjYe7oWx5
-	ie1v5zBD3K8g8fPpMqgjrCQaZ52FOkJEYnZnG/MERuFZSEbNQjJqFpJRs5C0LGBkWcUomlpQ
-	nJuem1xgqFecmFtcmpeul5yfu4kRHBtaQTsYl63/q3eIkYmD8RCjBAezkghvv929NCHelMTK
-	qtSi/Pii0pzU4kOM0hwsSuK8yjmdKUIC6YklqdmpqQWpRTBZJg5OqQYmzWZnqbPB69RWcU/g
-	4ts3qdzicnWF35vwPn/XXZ3ceqmSx3wSOiYxr/q182z5TDstuy8xAebaR+T2+TWsZH7md6Gw
-	uObPtISzP2I2Ntm+LhVbZ5lkZxhySU8h/avthaWzul/zaaiteX3wp0xaaOp0wzf8Xswiq03n
-	WIl2CkTdnKB/7OeXC0XpYr9X+uuVqB5i0S96qnxJYvqUrEltxSwvxC0tfn1j0whaJx79b06Z
-	4ofXfT1KomZ1yw9nZ09cHHJJv8niQV+hnO9GLrNDGw62uhwONz4780cd853LxVNmrZO+bsOp
-	M0m5zfXqH9ZPbmf6eqSZXi3esnBKfIbmsXz/nAsTGcJTw6PnzbGa/laJpTgj0VCLuag4EQCn
-	dqjH/AIAAA==
-X-CMS-MailID: 20240909003324epcas1p1ca105cce3f7ba7f60724e0272c169fb9
+	I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITuj98x+toKtQhXzXi5kbGD8xdfF
+	yMkhIWAicfH8ReYuRi4OIYEdjBKXXt9ngXA+MUocfLESyvnGKHHv0j1WuJYv+1ghEnsZJeZd
+	7GOEcL4wSlz8+pERpIpNQFVi4or7bCC2CJD9dtJjZhCbWcBN4s/SsywgtrCAlsTNhVeBJnFw
+	sADVPJ6qBhLmFbCSOHnrMjvEMnmJmZe+s0PEBSVOznzCAjFGXqJ562ywuyUEtrFLTD6wmxmi
+	wUVi5o7vTBC2sMSr41ugBklJvOxvY4domMwocef6ChYIZwajxOGf1xkhqowl9i+dzARyEbOA
+	psT6XfoQ2/gk3n3tATtUQoBXoqNNCKJaSeLYxRtQnRISF5ZMZIOwPSSWbGgDu0FIIFZi3+YW
+	lgmMcrOQ/DALyQ+zEJYtYGRexSiWWlCcm55abFhgBI/K5PzcTYzgtKZltoNx0tsPeocYmTgY
+	DzFKcDArifD2291LE+JNSaysSi3Kjy8qzUktPsRoCgzUicxSosn5wMSaVxJvaGJpYGJmZGxi
+	YWhmqCTOe+ZKWaqQQHpiSWp2ampBahFMHxMHp1QDk4vvvdexsiHhX+7OVjE69TS17ug+/R9T
+	qrbtvbrwvOfDEtXlZcFRNS0KarqXywVNV89fbbQkht9+/7kp7Wt7ZkvpqYcGezqu+rHlVPar
+	Osv/2R1qF9/bX+Wx9TlUtEXnb4qbhW1b8tGG03Jdh358ZFy/q4y168ql37et/pg8ilqrl7bn
+	xOvcb4YPTue+qTOc9D99auvWsLBU5chzqhzyezjyd3W3zNZgvLSq3EDh9ErT9Cf7p2rtiDwx
+	/ftKTvGfh9VPespt3rJpo+kN8V/r7i7qLmA7Z/jF6tXuukSxbPP3WvrPlR9MO1s7a112+6TI
+	jdc7DK8dTzUw0py+YFrKv2+hOsfz4lymHX3E2RP2NlmJpTgj0VCLuag4EQD7JXMk9AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsWy7bCSvG6h6700g7dLZSx6z51ksvi/bSKz
+	xZWv79ksZpzfx+TA4rH32wIWj+3fHrB63O8+zuTxeZNcAEsUl01Kak5mWWqRvl0CV0bvmf1s
+	BVuFKua9XMjYwPiLr4uRk0NCwETi4pd9rF2MXBxCArsZJeat28HexcgBlJCQ2LKVA8IUljh8
+	uBii5BOjxLs3c5lBetkEVCUmrrjPBmKLCKhLPLi8kBHEZhbwkHi/ZzU7iC0soCVxc+FVVpA5
+	LED1j6eqgYR5BawkTt66zA5xgrzEzEvf2SHighInZz5hgRgjL9G8dTbzBEa+WUhSs5CkFjAy
+	rWKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93ECA48Lc0djNtXfdA7xMjEwXiIUYKDWUmE
+	t9/uXpoQb0piZVVqUX58UWlOavEhRmkOFiVxXvEXvSlCAumJJanZqakFqUUwWSYOTqkGJqOf
+	uYabxMuDmY8pF90TnqE15ebpOpfb237LVB2/cDP445LYt8nKnT4MCu/KpFwmGCz49tM/78+V
+	lsr49B+yYpdNp2g4VMdYvhQ7cKtli3jMBHvx0JWzjbsFjfT3bJ5T8zbL6OaxBS7SvvWfFWyb
+	LCTe7jBse8pjduzZqZ8i5/n8bsSost9ZG1VS/vbgRFGd0E9c3dM0tvTJHYy/P/Vl4MLpE2Z+
+	nNG5kj139VVxUf8slhMJK47nPXTonjvhl1LCn0mzP39zn3wheO626gPdk066JLF5mbM0zjPw
+	kmqKr6jT2X1On6+G487xIpHmgAN3/I3m73xSc/P7Z/lYL/l1FxYyfb2l/efdF33lCUslFimx
+	FGckGmoxFxUnAgBs5e/4qwIAAA==
+X-CMS-MailID: 20240909004641epcas1p3a3879721c9f81a063209cf7a752b36c0
 X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240906091343epcas1p4e83ab2ca25edbed8e129f2c6a9f7292d
-References: <CGME20240906091343epcas1p4e83ab2ca25edbed8e129f2c6a9f7292d@epcas1p4.samsung.com>
-	<20240906091331.34244-1-inki.dae@samsung.com>
+X-CMS-RootMailID: 20240909004641epcas1p3a3879721c9f81a063209cf7a752b36c0
+References: <CGME20240909004641epcas1p3a3879721c9f81a063209cf7a752b36c0@epcas1p3.samsung.com>
 
 Hi Dave and Daniel,
 
-There was my mistake. One patch not related to Exynos was included to this
-PR.
-I will resend it again.
+   Just three cleanups and one fixup.
+
+Please kindly let me know if there is any problem.
 
 Thanks,
 Inki Dae
 
-> -----Original Message-----
-> From: Inki Dae <daeinki@gmail.com> On Behalf Of Inki Dae
-> Sent: Friday, September 6, 2024 6:14 PM
-> To: airlied@linux.ie; daniel@ffwll.ch
-> Cc: dri-devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org
-> Subject: [GIT PULL] exynos-drm-next
-> 
-> Hi Dave and Daniel,
-> 
->    Just three cleanups and one fixup.
-> 
-> Please kindly let me know if there is any problem.
-> 
-> Thanks,
-> 
-> 
-> The following changes since commit
-> b1aa0491fad27f030c94ed42c873c3f46f5e7364:
-> 
->   drm/xe: Fix merge fails related to display runtime PM (2024-09-02
-> 14:14:07 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos
-> tags/exynos-drm-next-for-v6.12
-> 
-> for you to fetch changes up to 94ebc3d3235c5c516f67315059ce657e5090e94b:
-> 
->   drivers:drm:exynos_drm_gsc:Fix wrong assignment in gsc_bind() (2024-09-
-> 06 16:08:30 +0900)
-> 
-> ----------------------------------------------------------------
-> Three cleanups
-> - Drop stale exynos file pattern from MAINTAINERS file
->   The old "exynos" directory is removed from MAINTAINERS as Samsung Exynos
->   display bindings have been relocated. This resolves a warning
->   from get_maintainers.pl about no files matching the outdated directory.
-> 
-> - Constify struct exynos_drm_ipp_funcs
->   By making struct exynos_drm_ipp_funcs constant, the patch enhances
-> security
->   by moving the structure to a read-only section of memory.
->   This change results in a slight reduction in the data section size.
-> 
-> - Remove unnecessary code
->   The function exynos_atomic_commit is removed as it became redundant
->   after a previous update. This cleans up the code and eliminates
->   unused function declarations.
-> 
-> One fixup
-> - Fix wrong assignment in gsc_bind()
->   A double assignment in gsc_bind() was flagged by the cocci tool and
->   corrected to fix an incorrect assignment, addressing a potential issue
->   introduced in a prior commit.
-> 
-> ----------------------------------------------------------------
-> Christophe JAILLET (1):
->       drm/exynos: Constify struct exynos_drm_ipp_funcs
-> 
-> Krzysztof Kozlowski (1):
->       dt-bindings: MAINTAINERS: drop stale exynos file pattern
-> 
-> Kwanghoon Son (1):
->       drm/exynos: Remove unnecessary code
-> 
-> Simona Vetter (1):
->       MAINATINERS: update drm maintainer contacts
-> 
-> Yuesong Li (1):
->       drivers:drm:exynos_drm_gsc:Fix wrong assignment in gsc_bind()
-> 
->  .mailmap                                   |  4 ++++
->  Documentation/gpu/introduction.rst         | 10 ++++-----
->  Documentation/gpu/todo.rst                 | 34 +++++++++++++++----------
-----
-> -
->  MAINTAINERS                                |  7 +++---
->  drivers/gpu/drm/exynos/exynos_drm_drv.h    |  4 ----
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c   |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c    |  4 ++--
->  drivers/gpu/drm/exynos/exynos_drm_scaler.c |  2 +-
->  8 files changed, 33 insertions(+), 34 deletions(-)
+The following changes since commit e066e9aa4d9c869c92d1d03647472e4ce96c0919:
 
+  MAINATINERS: update drm maintainer contacts (2024-09-03 20:07:57 +0200)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.12
+
+for you to fetch changes up to 94ebc3d3235c5c516f67315059ce657e5090e94b:
+
+  drivers:drm:exynos_drm_gsc:Fix wrong assignment in gsc_bind() (2024-09-06 16:08:30 +0900)
+
+----------------------------------------------------------------
+Three cleanups
+- Drop stale exynos file pattern from MAINTAINERS file
+  The old "exynos" directory is removed from MAINTAINERS as Samsung Exynos
+  display bindings have been relocated. This resolves a warning
+  from get_maintainers.pl about no files matching the outdated directory.
+
+- Constify struct exynos_drm_ipp_funcs
+  By making struct exynos_drm_ipp_funcs constant, the patch enhances
+  security by moving the structure to a read-only section of memory.
+  This change results in a slight reduction in the data section size.
+
+- Remove unnecessary code
+  The function exynos_atomic_commit is removed as it became redundant
+  after a previous update. This cleans up the code and eliminates
+  unused function declarations.
+
+One fixup
+- Fix wrong assignment in gsc_bind()
+  A double assignment in gsc_bind() was flagged by the cocci tool and
+  corrected to fix an incorrect assignment, addressing a potential issue
+  introduced in a prior commit.
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      drm/exynos: Constify struct exynos_drm_ipp_funcs
+
+Krzysztof Kozlowski (1):
+      dt-bindings: MAINTAINERS: drop stale exynos file pattern
+
+Kwanghoon Son (1):
+      drm/exynos: Remove unnecessary code
+
+Yuesong Li (1):
+      drivers:drm:exynos_drm_gsc:Fix wrong assignment in gsc_bind()
+
+ MAINTAINERS                                | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_drv.h    | 4 ----
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c   | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c    | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c | 2 +-
+ 5 files changed, 4 insertions(+), 9 deletions(-)
