@@ -1,119 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0488C1B2533;
-	Mon,  9 Sep 2024 08:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DDE17557C;
+	Mon,  9 Sep 2024 08:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725870470; cv=none; b=ABcU6gyL89Uxj2C2aH+tyx9AN8DKWAUxgn7KiKXF5uq2Zq2wPuNVWeaE6ScGnnobZ2nZqJw0OqfNJUdDWcBmiigP3w/3LYrOP7lnEYqitn9nRm8km+D539KyFh+bYxEDxsO+PhsdjhvwQlpmsOFOeIqpuPKWy0FXx/QKc8yvvDE=
+	t=1725871374; cv=none; b=lew2v8MgHrsaee6hr0SyC/KrUf7yqZDeZDqHw654qMbj2k8GM8u19TjYLWngLPI84oRRA+qmTgJabGk521NkQDPkbzrLwbWh9dgCA1zRmFVWTQZvGwqzsn+ybICGi2+JzKuRuPcf5lzXgsJUN6tM5lm6RDgiNR9pNTwiiJYv8sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725870470; c=relaxed/simple;
-	bh=WyIvNqdNKKmL6xpa/BWrmRO2x83uTD/WR+8Mx0NufFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gLKuWl8B6nt4Nc1SmTJWwq4HYcb4cP/SAmCWC41L6cIpUzLV95nG6MGPR+wVk+RP3NG/GASU74pENsmOtEeLkxQ8xFfoTpKvao+JRHPIBCLQb040levuDbmvvwHBkKICViLJXnDkWauPvDxZCamFzVR3Uigyvpr6PibbucMNDRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5H8p8P4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725871374; c=relaxed/simple;
+	bh=xKd1F8AMa6iLEMCT5CxTZYVGKrUpbi5VyPWC8eqSoic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eYCNCIryL0pagnP0/RyiyQXOwGidjcB7o7MNGkz5NJQZswYjdPlOrsQ/XCGoxSCWSWt14ijt1kAxtT9jS4HttHtXW70wvB9mCU/XOg4qb5C3qiHVu+jwB1TQrLo498OxxrlGPHGxWAKKYGdh7UwmewxFaeGu5jpw3S9iIklYLb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RTyp0qfk; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5H8p8P4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B71C4CEC5;
-	Mon,  9 Sep 2024 08:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725870469;
-	bh=WyIvNqdNKKmL6xpa/BWrmRO2x83uTD/WR+8Mx0NufFI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S5H8p8P41rAs6xS/Wctiio5eVJHHdY05UYVKBtZyLSqSv2dckUxe2V0ZrfA/icEhX
-	 N43P5pOpvuPHqy7wuz8TAGJ8n1VCtbkoMgaGLWp0smBWduZb3InNTSI9zqJAFGbNUg
-	 QxTDpTty3+7O5jB85tAVHKADErSkVbWdvYQrPUR9fWhC6cjWJX6z5urbtJumEiKp6s
-	 zNeecFXPPAbxcgl7csO2KSlDahyD7diQEeLOCGElJtSxn/sEeQGvzwfRp5dDSXq/mJ
-	 fPWm2K10SoKoOn/QU97TJjwtDxUvygsMGicfGhihqH80a/aP3Lcw2jyDo8S3JE8NxD
-	 R/KwkKDC481ww==
-Message-ID: <57eafe1a-2838-4380-88a9-4fa95d37bfb1@kernel.org>
-Date: Mon, 9 Sep 2024 10:27:41 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RTyp0qfk"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-206b9455460so32806635ad.0;
+        Mon, 09 Sep 2024 01:42:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725871372; x=1726476172; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0V7TB65jfCSDJctjTYijcIn0PZ8E4sHEf+LCXzJaNM=;
+        b=RTyp0qfkKdPK/BnSvWvWIxKP2W1s08PqxevkhQyragPhS7CAiG58ut/exsq/q2E1aL
+         41t3hF2FNIILbXd4q/tRSy1kXe5oo0eps2WzPP/mLLPtnGw9/n7nia/OQwhwKLfvkmPr
+         sJCd7/fU9lcCUmR1Z5MP2jFELxOCA1pJxywfGfF+7FjnG3G8CnN3nLbeLGBCuiPauqtN
+         smtcokn8RJs9LCBwMt7f5q8IIYFKNa6AhHiw9BkyxKh++Hf/buRvCV5kLjZSFedcBw6q
+         uDoBhM4ptKRk2s0lVbcVUHKHSOl/O/aKALE/t0yILqmbhOpliuNoQ7oUvkKmT3qNMOCj
+         tppA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725871372; x=1726476172;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D0V7TB65jfCSDJctjTYijcIn0PZ8E4sHEf+LCXzJaNM=;
+        b=PmTkBcTIVqW7VUKFbcA2uPP9J1ay2u8yzF7Rb/Ewp/I+8l8jUzAgLocv/7IgkIObZd
+         Az8dsFdNcqxX2JXx+YFHl11eqkDvV/4lYV2cgoUC41sDFgIUX91zUfmX+I+1MCiMWi5M
+         dwo7x1DiriVclhu0ckXMbtpP0QbZdtadeazBaFsARHhpnFCvABkA8edhrpHUVXPRp2en
+         edrm/2Y2M3cmUoEFFwrwFOQWaeA7Q5uNp5lRzudn/CfCtWAQOtjpehqOanNdSG5GEn4M
+         ICdcbcfgdlqa1oIr2HcjKOj997x27Nx/gmzvJPutqJktic2OjdjcrKZiOJRx3OfNm/T3
+         e8uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfdDAzFRvVORXfWlmS0RH1KSlvyy37Hn1c0fJl/WR19JojdfPkxCgNrac/Yk2vUYeAvgWDmiMq4Cj95M4=@vger.kernel.org, AJvYcCWvhKbArDRDHvVIbO1oXlI+rovoUyZdiSp/oFMbHcy4aHJfm+IGsNWxWbsPF7FsJbb1yhmie9O5KmEUOShG@vger.kernel.org, AJvYcCXEM6eKIdWsrpWv6ZCa9QFtJcZtkWICDrnZxFrAsFNOi+T6yegStVVUK0/I8sNTxZ06LL5+Q5fZGWlJD904gu3mG9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSGPthkk5vPxPoWVMs8wjnukIgiOtX7S4cVwrRoVSHWQ/osKs0
+	YARw3jhCS0fSoxEE8wCMZvJHl7pUmNkwdJW1RS7eVtM6YPmeSZ9h
+X-Google-Smtp-Source: AGHT+IEmpzqq7HlCYQ/AwpVz0yP4We+SivUqNdMDBseS85lpNBrSETaIY8zGm3Y4FctQy56+TfqyvA==
+X-Received: by 2002:a17:902:f54d:b0:206:b618:1d96 with SMTP id d9443c01a7336-206ee75720fmr151653315ad.0.1725871371805;
+        Mon, 09 Sep 2024 01:42:51 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20710f1d663sm29678675ad.188.2024.09.09.01.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2024 01:42:51 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev,
+	Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH v4 0/3] tty: serial: samsung: Serial fixes for Apple A7-A11 SoCs
+Date: Mon,  9 Sep 2024 16:37:24 +0800
+Message-ID: <20240909084222.3209-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] drm/exynos: gsc: Fix typo in comment
-To: Shen Lichuan <shenlichuan@vivo.com>, inki.dae@samsung.com,
- sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@gmail.com,
- simona@ffwll.ch
-Cc: alim.akhtar@samsung.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-References: <20240909080620.35245-1-shenlichuan@vivo.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240909080620.35245-1-shenlichuan@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2024 10:06, Shen Lichuan wrote:
-> Replace 'initailization' with 'initialization' in the comment.
-> 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> index 1b111e2c3347..fc5fc65823c6 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -1286,7 +1286,7 @@ static int gsc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	/* context initailization */
-> +	/* context initialization */
+Hi,
 
-@vivo.com, please fix all typos given subsystem in one run. One patch or
-few patches in one patchset. Not one typo per patch.
+This series fixes issues with serial on A7-A11 SoCs. The changes do not
+seem to affect existing M1 and up users so they can be applied
+unconditionally.
 
-Best regards,
-Krzysztof
+Firstly, these SoCs require 32-bit writes on the serial port. This only
+manifested in earlycon as reg-io-width in device tree is consulted for
+normal serial writes.
+
+Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+enable. Accessing these bits in addition to the original RXTO and RXTO
+enable bits will allow serial rx to work correctly on those SoCs.
+
+Changes in v4:
+  - Removed fake Reviewed-by tag added by accident... need to stop
+    making stupid mistakes that wastes everyone's time. The remaining
+    Reviewed-by is real as far as I am aware.
+
+Changes in v3:
+  - v2 did not declare itself as v2 in subject line... resend as v3.
+
+Changes in v2:
+  - Mention A7-A11 in the comment about changing register accesses to
+    MMIO32.
+
+  - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+    entries for consistency.
+
+v1: https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towinchenmi@gmail.com
+v2: https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towinchenmi@gmail.com
+v3: https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towinchenmi@gmail.com
+
+Nick Chan
+---
+
+Nick Chan (3):
+  tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
+  tty: serial: samsung: Fix A7-A11 serial earlycon SError
+  tty: serial: samsung: Fix serial rx on Apple A7-A9
+
+ drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+ include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+ 2 files changed, 30 insertions(+), 16 deletions(-)
+
+
+base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+-- 
+2.46.0
 
