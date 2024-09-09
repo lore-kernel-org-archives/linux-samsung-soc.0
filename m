@@ -1,168 +1,119 @@
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2059.outbound.protection.outlook.com [40.107.255.59])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E121B1409;
-	Mon,  9 Sep 2024 08:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725869198; cv=fail; b=e2geAV7c6EvDTCaatDjcmXHmcueAFS0wWHibGRdJWnMg3zkWxr+Olj4WI5Ge52wfNH497sF1vEF/+pYCjlnHa0FB6LyOaevblCXtZi6eJL3lde/LoNOPdin7D0TI70qhLVHaCi6sBrMRshV1q8hT/5yNG5JjKQKqdTLFPsMr60Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725869198; c=relaxed/simple;
-	bh=R1mexuM7Lu4mk2WGgSCMQPtkTtXWX+c0JLbP8OcXSG4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OllatJNnGsg2a83CxelNswa/4UmhWQJp2uWp6iibvItklpjoKPHBP9alEdKiqK5xK0fBDkEeHKgDY/4syDwChkGw4CSOb4qNw2uaMXH7wRIQdSv8ne0c7fPz8K6y9FUZc1pLUzLSvpsQnd2brAbGMYCkMc31Vq3jeqd7/gJm9uk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gCjWGfSG; arc=fail smtp.client-ip=40.107.255.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0488C1B2533;
+	Mon,  9 Sep 2024 08:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725870470; cv=none; b=ABcU6gyL89Uxj2C2aH+tyx9AN8DKWAUxgn7KiKXF5uq2Zq2wPuNVWeaE6ScGnnobZ2nZqJw0OqfNJUdDWcBmiigP3w/3LYrOP7lnEYqitn9nRm8km+D539KyFh+bYxEDxsO+PhsdjhvwQlpmsOFOeIqpuPKWy0FXx/QKc8yvvDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725870470; c=relaxed/simple;
+	bh=WyIvNqdNKKmL6xpa/BWrmRO2x83uTD/WR+8Mx0NufFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gLKuWl8B6nt4Nc1SmTJWwq4HYcb4cP/SAmCWC41L6cIpUzLV95nG6MGPR+wVk+RP3NG/GASU74pENsmOtEeLkxQ8xFfoTpKvao+JRHPIBCLQb040levuDbmvvwHBkKICViLJXnDkWauPvDxZCamFzVR3Uigyvpr6PibbucMNDRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5H8p8P4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gCjWGfSG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J69YG6mQz5lmktMPtEW7nPW7j17bgEOBg+80h9jIA7J0QfR7f5TeyZUK9ajnMHfVPOuEcqwov8B3f7PPv4oYMIMx+6aFn2YU0U4S2SQ49Zfq81lhWqAvQkM7JkBxy0O8saD2eJTaIfAb+Q97CxxXSRq+wfVX4cFghPmbyytR0dMAOh7fqyiDtU5xr+pD3g71zQ/VGDUuPINUOT1rTPTuqlYxQoWAhOuldDbyt+Uzu299n5FI8xfQvzQ49Oj2U9PbCCzOZ8f8aZfUYrcXkioH3M8qES7ku9B9T7+OG7K7Urzs+nc3zi/cLM3Fj6/LTy+NoWXUIu82yj+1k0N/iGAkhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QEl0d5Yp1LoVDmRqwC18nPJtFWOQ0PO2uavKQK+hIfs=;
- b=gGReZg8AgHjCN2C7Z6GCn8yibcYndTEMvwg2BJSxiXbj+VulpojRlHKQXhW64RnmTWWvyxumHMC+s0d8N798ggLERNNSSZqgZf5dszm4PSiAxFL5i2HBrXuNTPRAi04IXkA2AMs2hlCnfcqXjFkklbE7CRH/xO+Sc5BvbQZrwyMZaJ+28oRzMO/jQo5prKN8n2ozjL2DTighW0WjEetAWlJda+Z7n5Kv/W3OOkcBdqeLpgL8iSDkD4afmgCUrkbrm6/HdZV4U0cfskbAr3i5kRjCAte2Nc+e3ZoU1BqW8WpJ/ciGShcv7zNeOU9c6f+N5AqV86WVMhgHtxQg4zMy9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QEl0d5Yp1LoVDmRqwC18nPJtFWOQ0PO2uavKQK+hIfs=;
- b=gCjWGfSGZDafx+7qDo7lNxpHpAriWFiE1FULrzGYRJYsZPiirVliTKkICta+cmtxe/ijQW+7KAWOM7BV6AmM23VGssLnJmvvQq2oizc8yOXkTlxJErIs05E2iT2vgVlcY9RXfY0YgQvj2I+zP1ZAHDFG3lxj9/WG9eLCmne5lavGwUbqtW4DBcM5gutBhB223DOtB3Ox398yPvJWtwhq6dWY0lwW835mwus+ah6yoGLotkTtbajaueqDinmwgcfj/VbjBVx/enkcKWg9pER63EoScztKcSb/fUeu29PH2MadXt0nWSxJR7C4I6QfX0IMP9WwgBS5tQPotQsDPeyJsg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TYZPR06MB6328.apcprd06.prod.outlook.com (2603:1096:400:363::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.22; Mon, 9 Sep
- 2024 08:06:32 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7918.024; Mon, 9 Sep 2024
- 08:06:32 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	krzk@kernel.org
-Cc: alim.akhtar@samsung.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] drm/exynos: gsc: Fix typo in comment
-Date: Mon,  9 Sep 2024 16:06:20 +0800
-Message-Id: <20240909080620.35245-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:4:196::15) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5H8p8P4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B71C4CEC5;
+	Mon,  9 Sep 2024 08:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725870469;
+	bh=WyIvNqdNKKmL6xpa/BWrmRO2x83uTD/WR+8Mx0NufFI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S5H8p8P41rAs6xS/Wctiio5eVJHHdY05UYVKBtZyLSqSv2dckUxe2V0ZrfA/icEhX
+	 N43P5pOpvuPHqy7wuz8TAGJ8n1VCtbkoMgaGLWp0smBWduZb3InNTSI9zqJAFGbNUg
+	 QxTDpTty3+7O5jB85tAVHKADErSkVbWdvYQrPUR9fWhC6cjWJX6z5urbtJumEiKp6s
+	 zNeecFXPPAbxcgl7csO2KSlDahyD7diQEeLOCGElJtSxn/sEeQGvzwfRp5dDSXq/mJ
+	 fPWm2K10SoKoOn/QU97TJjwtDxUvygsMGicfGhihqH80a/aP3Lcw2jyDo8S3JE8NxD
+	 R/KwkKDC481ww==
+Message-ID: <57eafe1a-2838-4380-88a9-4fa95d37bfb1@kernel.org>
+Date: Mon, 9 Sep 2024 10:27:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TYZPR06MB6328:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7434ca5-e3e3-4983-0ca7-08dcd0a65119
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hpuMStoWGVaTDlNqkDyGdge4TiAJ60hFDWXku2kqvU2WTpgvahYuph4u7w4m?=
- =?us-ascii?Q?0jnZVrgD8Q6FYl95++gwSgLpQRXC5lhdYNGOLwv9UTYSVY37wYBLioTbw7Ip?=
- =?us-ascii?Q?aJchLH+nSkDFl3RQzqxmWcnwx6zofL6onjyn898sECArojfJXs3sOIO7T4Yv?=
- =?us-ascii?Q?B9ONLW4hM6r5GMojoUMeOrPuQpSidra2vqYypbwk4t1MtHBfu0rlEBGP50zZ?=
- =?us-ascii?Q?fpeQMawXL7KRld7acdbzIc5O5SDjK1Llw6PbdMWC+5itIlPJKxjossVCj8w+?=
- =?us-ascii?Q?7L8LR596I1q39f0jrS7Eo9JFNYLOgcGJpNWOuDI0YtaRTjXgarXcat1CoL5s?=
- =?us-ascii?Q?buRm7ILOdX3xFT+HmO9xYGVvLOPJ2NjfzTWYG2IyhXer3bFj7KWFKXCHwwee?=
- =?us-ascii?Q?gT7a/PROmbTwXjQRVnfjERv8Q+xvvLBTCdPc2WHZzsFjmaMa954yll6xlYFa?=
- =?us-ascii?Q?JVqmzfpgBMnVupeqI4ENmbo6YW3eIb7kTcemfUARX5zWBHKrBxSqI2edJnpA?=
- =?us-ascii?Q?4m4biH/p6GQaXlbusIMg/SEiQRwQx4eOaBchAhiySV+A5k7A7HkOeriU5h9x?=
- =?us-ascii?Q?2Rn+X6nKXCyBAFferPIK2BicBQF7M60grciyg6Z5xGvoDNYN/IwxHYZjZlyx?=
- =?us-ascii?Q?guduFhArJrbSgdfau6XlYn5AJBQwcCLx/S26fIBrnjJiyc9KSGFZD9CBT936?=
- =?us-ascii?Q?gN+0uzciqsFBvqTxAUiTVHIoNGvt8WnpnhmqWkWOlS8Z6km7iSwmh6zjdi35?=
- =?us-ascii?Q?UhP1JSqC4y/af0Yc8UoZO6R+Lfph6htRln/YWauD9SxuLph90L48or/O/xUG?=
- =?us-ascii?Q?E9gmQOmjVzES2rbEal+pfooxKjuW5uzyjPeJ/Q8dK8uuE/ym7blJdLEelNRR?=
- =?us-ascii?Q?PBgWvuVrnxGTWWQX9DL0ZAnW5oh6DUTTgddqWTb4odKX8dt2Cd0dTZQF90HZ?=
- =?us-ascii?Q?XVv4OGT+TrZTNbrMb1r2mJB8bHYU7FXIpsmNkM6gCiD3MoAsfxQIc3sfF5Qe?=
- =?us-ascii?Q?E6GRTgT9ruy5qO0rx97vIVzACk1+z1NuQejEigTVFaV1rcHm/+qcQUoGnXJt?=
- =?us-ascii?Q?Ad3aZI9MEP1Gb5Dl98YQArsx5smoHj/Kcgn5pa6C4jN2gxmOZR0kXlL2BHVa?=
- =?us-ascii?Q?LR/jw1eLAoBEFEdjSt24XYNzSO6w9TGJ4u7O5cRMsPfWuybL0MQkXXli2OvL?=
- =?us-ascii?Q?NnAJG+ZO9GGoB2T23k/u7iXqkGfbL+nc+7E0ecf2hM2JxQ9Bansucujtr7z0?=
- =?us-ascii?Q?p7m1MaiLW+W+vK03cuooL8sVZ4OMYgXVubr9DpXCteu73EbcmUeOcaTl6Y8b?=
- =?us-ascii?Q?vCVXME58hekRch6e5nQ6/yl+ZV0nudHnb0mMnQtZ+qM3GMy9Rw172MyVo1HG?=
- =?us-ascii?Q?urcLNCYo9CmhvYB0rl0G1aAjC5ZZyEtLhaVhN0FNWxkY0LPdRg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JZ4eW/NxY/14DzqhY8T0Y+OJnsiSob0XOiegdmynq46ohy0vVM2SSI0AEhrm?=
- =?us-ascii?Q?XCmQAFWtIPdkDoSMMeQv4HRx5LQp5xKe0tZpib+NCC3LT3Om9s1FRi1yi+ub?=
- =?us-ascii?Q?k7ZsDdWY3+tsZ+kZ/7y0hjQwbnUDSbCiEOq6rExk4XhSYofBMOK6vpnzaAFl?=
- =?us-ascii?Q?+eyPmYOt1VRRh9eFeaxIo6cHcWgPoTjphd4xB2LrJ4RwhSS57Ls4Xc0OidnN?=
- =?us-ascii?Q?dTN7nCNUGKBOqJ79ItLXol+YZ4XLQfezdaVCdzQByvFfUWWIY7rw4NzUEpTr?=
- =?us-ascii?Q?8lcudQeUJp6QWmSoPgif0/OZIQDaDUc6+bQiWpYCI+ONpy8DxPotPBbDF3Am?=
- =?us-ascii?Q?AJHFxLNiBDU8qVF9Vu0XhBkbhqvp72Fkhmf14YTWkXVE7Jhjuw9olpMVvZYw?=
- =?us-ascii?Q?zrfOHrM9rRlGH1G/EGpcINhH1LJBVWQDdxgkF5SCni8w7Tb7dm38x1Ivfdjh?=
- =?us-ascii?Q?benRfGptXE6TF5+bsPbpdw5SsPJzgJWhTx853vZFklFK4RucpcNzTX2DTl6h?=
- =?us-ascii?Q?nbRtQpX8sWQ6W3vfoJwuIj99d6SFSVarcbH8Js/A/fz1pM63Vfg2RUBhLQph?=
- =?us-ascii?Q?dcya9CuaitJCtdLtzTdC1Ny5h9vxxWsroXz3OlQpm1KQRJVCHqqa1sl3zb4x?=
- =?us-ascii?Q?Qv0qGTzmUpQl6ymA1iV0taiL16LN60Xd0/JXNqZnFv1xT79UmbpKFA6gLxGL?=
- =?us-ascii?Q?t7F5EKzjdKaEoq1VZzp2w28US4rPCWk/lBj2A0fAujAUmQtozYs9iNq+lpM5?=
- =?us-ascii?Q?JDx9zZpgwM1Kdb74ukdaz5lNvrwVhyv9sveKs4GPFy5nk6FbZ5NZiI6HRHul?=
- =?us-ascii?Q?RPjMargV2gXubLjuhyNn/HAMh7rCSA6+s58mxpQuTBeMbJFGc5/e8wu6HpaU?=
- =?us-ascii?Q?f9qWtrFo+rXxAkRMwgsWox2+Hd8Ghs5nhyy2xBuld16eA6ptNO+P/CgRLk53?=
- =?us-ascii?Q?ThPKeQWusKv2WSuQZPnIvLIHpXA11nu4RCDEYfubHhwEjILHI2u0k9rvtWCq?=
- =?us-ascii?Q?jgx/Lz+f2xq39EAHk6oNaGw3K6YX0cwwjBEgg87FCqMjh7knPscyeXc4dEiC?=
- =?us-ascii?Q?UbOWEyzgEbkcxYuwUItxk7NFYwlskC56FN1WEv3Cjic3+fux/UxOxF2xu7Rh?=
- =?us-ascii?Q?IO+Wn1g6C+AkFRXk1FsZGobFtzMRyFD63jkGxnLcoj/14BB7fGNbJPLtftIX?=
- =?us-ascii?Q?z5K2XBvsxvOgNP0s0HQeXQxmYqgBC1kjKWfYXtYjkEa+ILMhp5FOWuceUp7b?=
- =?us-ascii?Q?HRylJP9HdINMn7oNqOYJ0kKtLqtefOGKuFII01zX5MI6Dqo9OfRICUyc1N+8?=
- =?us-ascii?Q?WKGDXgfzfI1KJyOhfnUS1k6R/YQ0K7j/WkolNfhNFJc/aD3N6fsnk3IgT0pb?=
- =?us-ascii?Q?GzBRAv5CWVjLqtYwEhRbri9EUYBSC3tThlzh6LbgPKVEvwzqgHd/AE03+ADw?=
- =?us-ascii?Q?aK2F4WCZvpGkrIfxxkmWdU5JpyqmcdD/rt8RkH/gQ816Ask1q2hZDZtfrHB3?=
- =?us-ascii?Q?BinmQVBC+yVGXb7CXAFCTomMe9AMXWynQuujwaXZwdzGce4QhKfRm3AN0ZAW?=
- =?us-ascii?Q?RYZUnVk6Hn2eej6+3XONg+LymEyecIRI5qPJ83de?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7434ca5-e3e3-4983-0ca7-08dcd0a65119
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 08:06:32.5774
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ny0kVSDai1DHscvRezT1iZA2BDslt4JnovkyFAhJOOh2NdnebRk8NWeDI0PqrfNQf/fbMrhQr3+lkyf4tlocRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6328
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drm/exynos: gsc: Fix typo in comment
+To: Shen Lichuan <shenlichuan@vivo.com>, inki.dae@samsung.com,
+ sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: alim.akhtar@samsung.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240909080620.35245-1-shenlichuan@vivo.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240909080620.35245-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Replace 'initailization' with 'initialization' in the comment.
+On 09/09/2024 10:06, Shen Lichuan wrote:
+> Replace 'initailization' with 'initialization' in the comment.
+> 
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> index 1b111e2c3347..fc5fc65823c6 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> @@ -1286,7 +1286,7 @@ static int gsc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	/* context initailization */
+> +	/* context initialization */
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+@vivo.com, please fix all typos given subsystem in one run. One patch or
+few patches in one patchset. Not one typo per patch.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 1b111e2c3347..fc5fc65823c6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1286,7 +1286,7 @@ static int gsc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	/* context initailization */
-+	/* context initialization */
- 	ctx->id = pdev->id;
- 
- 	platform_set_drvdata(pdev, ctx);
--- 
-2.17.1
+Best regards,
+Krzysztof
 
