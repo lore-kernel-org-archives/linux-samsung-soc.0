@@ -1,239 +1,158 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F0B1B86DC;
-	Mon,  9 Sep 2024 11:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C501B9B24;
+	Mon,  9 Sep 2024 13:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879667; cv=none; b=dwPhPKcn1D6ixBW0+8w3KcIEsVFbHIQJAP5Map/Eoq1n+/yoiFQFOwjZmRdmLcsZUq9UuKv6MXoOdgiRjDwJk/sEN2RXSwSaIsnH/eJlUbPsXl64cgX310IPNkAS6cNkJ80riTOXR+fyol62412UPzrLE3R2+z+ZXcQvbCEmuOc=
+	t=1725887428; cv=none; b=lvdHr3qoXsPlW42GtWl4tdwpvOJZ4gK+w37XmGIwKpnJTPmNA1W/jb10L0pUAfAtjR19dkAbX58mu8XJGn+ivgbdwN4LH0at4u6Q/xbHM8HW6EC3vERFziZsFB2fSU9U+BdqOd4euNh5ngeRpZ6seKtjMJgHzFqvpF9HVi34bjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879667; c=relaxed/simple;
-	bh=Z7xGCT06OCZ/m+rGKk5QoYgmcvYZaPJ7LbrMKN+waiw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GZSLlo3IixqWQtHw5Odpo4VE6UbBiUDgAQqkQw0ozlGnSwpNHvJqvGjAfVfYRHt+rc/YNcexg07wbiwygFfnl0bs3XCyrHCRAkp+N+Y7grnNhN5pZxWUv7Ph0jv+OTgYaf2aVRlMjbCVbLOkoDiJ2kS7x9VR/EtLWl4pWH/QJWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BcmlnMr9; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725887428; c=relaxed/simple;
+	bh=FOb9cDj+LeGDsiMg28ppP3KCfoC0waIPwBP00Op7h7I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=alhgLLAXlM5i4ME0l0o+yVPOK8eeXjE0/9MRJLI07QISmgWTyGkRqaPqgApo5h5Yrt50e4FwxPqQY6AlfHxqtuVOtz5kSWyo4xfz47QvEEMd5hwge9Yb4WDfI835wyhMqESAgJHY35MZPHZkf0cYw92d3AEjJejZF+fn/OpEF6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=iwaqh3Vb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lVioyOQP; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BcmlnMr9"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so536480766b.1;
-        Mon, 09 Sep 2024 04:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725879664; x=1726484464; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOIysbZqVm4Kknw5BnD1Y7WRyTq4GEatzBCOcYtP3fM=;
-        b=BcmlnMr9WppSUWmlrsf28k4azbDyCtkAf4WCvOlsNh3+Ukg+LRTfzmLw5M3TkNqGWP
-         i8NmPdMqybDvpQgJo86DIeC4kLy9+82nVJ+6PBqL3kIaev+Lq1w5fEMhU8iL1C8JsFyE
-         qQcaJ74ubHzvRGZHSuhpjB9uu5gnlxG+vikr/sesI1h2D74c67xdAx7Rg7hnC0sPHlkZ
-         IVQgiwjIVM3LMEbBzkW759mbd+r0ZaVasRC41UiASFh0bqlvQuz7dhWiaiknBroUUCk3
-         pcJPFsxipgJIPvkXwH8rO+IR0AMOLlkCmj8yPFlI36A36EE2QtvCPi+zSj5yZLOeFen0
-         jUHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725879664; x=1726484464;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oOIysbZqVm4Kknw5BnD1Y7WRyTq4GEatzBCOcYtP3fM=;
-        b=J6nYDMb+X1Up4kOZDgOfEo1P8xfghQZ4CZlW6KR6wrdt8j/IasRhVpn/JYIzB2Ekai
-         EPWILkaCd0SJF0Lyto2y025abBe85dtPdjmdFWGO5ySwjKS61KzWKaXb/hQCGxu0GwMW
-         1hMU0hEfbtt2WeMW7riT5YXNdqfcvsRKGU9H3Gr6oXu/zQJwvCcpvhEoZcsFGtBfESHb
-         prwRK9AGmAe2xjeGcAQ2hjQyG1XzIgdck8vzcMmAPuNtmHYFTLiEYj++JFx77wBhS5Ih
-         pLHjQAT6Us2flDxyhEW+b2PW2X01pZg3QunzxJa3OSwcrSwh9kdGvcw6pUnchoYwuvpA
-         eZOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOdNCLJDBFwcWxt/nDoayyh2fNLH5PpQ8eXDXkw0DLTvqajGHJ8edfgQT+0gQOyGmHa+W5O7R4NWQxrw==@vger.kernel.org, AJvYcCVr87sfHoN4SiuoNWgg8PfAEikvT6Fxs2ca8JXsgU29zYBiSE6gPT77G4q28ldPEPIok+duWoT66yrvHWYf@vger.kernel.org, AJvYcCXxTeqiiWFozziIpBUJ/sOY+vMA53zdDbtcPgmL0LbzFumf89VvZt9Po7U/Bo6L/lEedMpGVWXSxXee@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMUlWqU7gV++lJuLCcfWoHmFrEE+ap2toPDm7eG4vYgZhjv0/0
-	iSjjDzlQSBD2EVSFSeKVWuT30hc8YRheskqHI+7mxaLXQtQgZHuK
-X-Google-Smtp-Source: AGHT+IERiUM6or4Hqjr/zTyzV0Z99LS3XXqRaeX2fjq5xdwd6VWNywvTTOo39tbB/wWK72tlTayvhg==
-X-Received: by 2002:a17:907:72c4:b0:a8d:2c00:949a with SMTP id a640c23a62f3a-a8d2c009911mr446146166b.9.1725879664492;
-        Mon, 09 Sep 2024 04:01:04 -0700 (PDT)
-Received: from ivaylo-desktop.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5dc74sm322649666b.208.2024.09.09.04.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Sep 2024 04:01:03 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/10] arm64: dts: exynos: Add initial support for Samsung Galaxy S8
-Date: Mon,  9 Sep 2024 14:00:17 +0300
-Message-Id: <20240909110017.419960-11-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="iwaqh3Vb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lVioyOQP"
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id AE6311380188;
+	Mon,  9 Sep 2024 09:10:25 -0400 (EDT)
+Received: from phl-imap-13 ([10.202.2.103])
+  by phl-compute-07.internal (MEProxy); Mon, 09 Sep 2024 09:10:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1725887425;
+	 x=1725973825; bh=hZmFB4zZqsK/lqmaZT6pZoo+wceOfyxthIa1HVadf+Y=; b=
+	iwaqh3Vbcq58OuQaQSBvCXnuaPO69yL+rbF6X1Vt6CeonoomrDaAL3Cz+KtOC303
+	glVVO0D2EUj1klePj8h5sQ52SBe7ejzOYBm0mazavBmDxMY3J9VkRPyBDIj2nTwC
+	wS3BMz30Wsw37mvNyUeA6AkQRqGZRvkihcI1XaFU0yN8R0GCCzHYk9oztQHt+RUM
+	w+uprG2zyz0vShXPC5Y5llMhazvo9hpFnmfgQVBKrh4u1RPqqEirq7qMmwZqSyTu
+	750vlH/VNeUkeUdfotfLSWEZ9JobGZYAgUORGlz6OMhwivJFVMKY4reCzQlg4QF0
+	Z4KFxk4DPnm6t/ULlHIH/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1725887425; x=
+	1725973825; bh=hZmFB4zZqsK/lqmaZT6pZoo+wceOfyxthIa1HVadf+Y=; b=l
+	VioyOQP42MXQxqXbCMj7fp3PTTeQ1R7FETY5rdSVPo/jXrC7l2S6zRWwVFpQ5xYS
+	Y+4Qp9PF4Xo4+HgesfwP49RRSkAiyQQkP/204rOBK3cOazwJL1GjXcUZl7XiEtXG
+	XyjCUIs64cCj++lcgH/tJjIvzA+vCN8NbzOXR6E+vrOH7O92DqmADe3dsVE/nveK
+	P8aD6N700Qaf+xu18NNYcGjlZdieRBuB57lwycz3MgP+CtLGceMr7IUREkQFBwSf
+	3abCFNBxOambv9Yecvf5HNA7hJFJVVEnuAqMqnnzL/tQQmmzKQb/VzBwpTY7bzbO
+	HkqvErpZ4kVQ7Nu6290Tg==
+X-ME-Sender: <xms:wfPeZp_KlBfGdgbKnue9xuMPSs6vXzOXPLbsmuhi60qGWLC048-6Sw>
+    <xme:wfPeZts776ysby-xTITgx-Ml3TL9BrCARzwFLxpNmEN5dUlo512Dr6gm2xPOr0Oay
+    hvB-lFaW-0q6dctNYE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeijedggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedflfgrnhhnvgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvth
+    eqnecuggftrfgrthhtvghrnhephfeuuedtteeigeekieffjedvgfetvdelgffhkeettedv
+    veehieegfeffgfeiffetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdr
+    nhgvthdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehtohifihhntghhvghnmhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhirhhi
+    shhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihksehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrih
+    hnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhlihhn
+    uhigrdguvghvpdhrtghpthhtoheprghlihhmrdgrkhhhthgrrhesshgrmhhsuhhnghdrtg
+    homhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhsrghmshhunhhgqdhsohgtsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:wfPeZnCW56APoNKMia-eB44-4XJLrEWwOMaIWZRMQz27II4eFc2pjw>
+    <xmx:wfPeZtcZ56e8XyEKz3_R-gfyk1UfLYKxumZYJ6wemzthZik7aEpTgg>
+    <xmx:wfPeZuPuFJ_L1SCUzdo78KP74XZvuHUnR22OJVkiy6BM1l8dr0y-fw>
+    <xmx:wfPeZvlEtB6d6IhLxLuZgrWlwc0x4WAAv5doPT6GZInS9zMwCFAhSw>
+    <xmx:wfPeZlpeYuIYyn2ApEWOGwT3322zXzYJk7fTAS1UHDvZZ7TY4q_yEuu5>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5B4241F00083; Mon,  9 Sep 2024 09:10:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 09 Sep 2024 15:10:04 +0200
+From: "Janne Grunau" <j@jannau.net>
+To: "Nick Chan" <towinchenmi@gmail.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ linux-serial@vger.kernel.org
+Cc: asahi@lists.linux.dev
+Message-Id: <d7c611c3-f2da-40a7-9b47-ebbdf6ddf321@app.fastmail.com>
+In-Reply-To: <20240909084222.3209-1-towinchenmi@gmail.com>
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+Subject: Re: [PATCH v4 0/3] tty: serial: samsung: Serial fixes for Apple A7-A11 SoCs
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Samsung Galaxy S8 (SM-G950F), codenamed dreamlte, is a mobile phone
-from 2017. It features 4GB RAM, 64GB UFS 2.1, Exynos 8895 SoC and a
-1440x2960 Super AMOLED display.
+Hej,
 
-This initial device tree enables SimpleFB, PSTORE and GPIO keys.
+On Mon, Sep 9, 2024, at 10:37, Nick Chan wrote:
+> Hi,
+>
+> This series fixes issues with serial on A7-A11 SoCs. The changes do not
+> seem to affect existing M1 and up users so they can be applied
+> unconditionally.
+>
+> Firstly, these SoCs require 32-bit writes on the serial port. This only
+> manifested in earlycon as reg-io-width in device tree is consulted for
+> normal serial writes.
+>
+> Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+> enable. Accessing these bits in addition to the original RXTO and RXTO
+> enable bits will allow serial rx to work correctly on those SoCs.
+>
+> Changes in v4:
+>   - Removed fake Reviewed-by tag added by accident... need to stop
+>     making stupid mistakes that wastes everyone's time. The remaining
+>     Reviewed-by is real as far as I am aware.
+>
+> Changes in v3:
+>   - v2 did not declare itself as v2 in subject line... resend as v3.
+>
+> Changes in v2:
+>   - Mention A7-A11 in the comment about changing register accesses to
+>     MMIO32.
+>
+>   - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+>     entries for consistency.
+>
+> v1: 
+> https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towinchenmi@gmail.com
+> v2: 
+> https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towinchenmi@gmail.com
+> v3: 
+> https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towinchenmi@gmail.com
+>
+> Nick Chan
+> ---
+>
+> Nick Chan (3):
+>   tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
+>   tty: serial: samsung: Fix A7-A11 serial earlycon SError
+>   tty: serial: samsung: Fix serial rx on Apple A7-A9
+>
+>  drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+>  include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+>  2 files changed, 30 insertions(+), 16 deletions(-)
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../boot/dts/exynos/exynos8895-dreamlte.dts   | 126 ++++++++++++++++++
- 2 files changed, 127 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
+whole series tested on M1 Max and M2 Pro
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index d7f2191c2..18f5a3eed 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -7,5 +7,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos7-espresso.dtb		\
- 	exynos7885-jackpotlte.dtb	\
- 	exynos850-e850-96.dtb		\
-+	exynos8895-dreamlte.dtb		\
- 	exynosautov9-sadk.dtb		\
- 	exynosautov920-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts b/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-new file mode 100644
-index 000000000..3a376ab2b
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dts
-@@ -0,0 +1,126 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S8 (dreamlte/SM-G950F) device tree source
-+ *
-+ * Copyright (c) 2024, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-+ */
-+
-+/dts-v1/;
-+#include "exynos8895.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy S8 (SM-G950F)";
-+	compatible = "samsung,dreamlte", "samsung,exynos8895";
-+	chassis-type = "handset";
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer: framebuffer@cc000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0xcc000000 (1440 * 2960 * 4)>;
-+			width = <1440>;
-+			height = <2960>;
-+			stride = <(1440 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3c800000>,
-+		      <0x0 0xc0000000 0x40000000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		ramoops@92000000 {
-+			compatible = "ramoops";
-+			reg = <0 0x92000000 0x8000>;
-+			record-size = <0x4000>;
-+			console-size = <0x4000>;
-+		};
-+
-+		cont_splash_mem: framebuffer@cc000000 {
-+			reg = <0 0xcc000000 (1440 * 2960 * 4)>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup &key_wink>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		/* Typically used for Bixby. Map it as a camera button for now */
-+		wink-key {
-+			label = "Camera";
-+			linux,code = <KEY_CAMERA>;
-+			gpios = <&gpa0 6 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa0-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+
-+	key_wink: key-wink-pins {
-+		samsung,pins = "gpa0-6";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS7_PIN_DRV_LV1>;
-+	};
-+};
--- 
-2.34.1
+Tested-by: Janne Grunau <j@jannau.net>
 
+best regards
+janne
