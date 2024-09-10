@@ -1,137 +1,135 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDDD18C347
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2024 09:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C7F18C002;
+	Tue, 10 Sep 2024 12:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725962380; cv=none; b=cAFfduc0XLbVn9vm5+O+dyZuvEddjnLucpGYVs2/jXRsRmseSHh1jdDsf0KcXhH6y8RpFIWTGJH6CjiNxGPpdVpAx9RdlYpdSnNW1hl6o5p3NiLnuzNhfA2/8Q4Ip9cw4tIDuQtTvTMAGx9qR2+sSzA0V8Jqoena71t30S+1kqM=
+	t=1725970914; cv=none; b=Fgiwmg1LpDq2www6NdOGDWsGFBhPrPAUPDXoqo9+RaBxy0KEVgaVgPgUbnKu5J3tmD3qEJNCuHowT5P70LHmcn3xCvKFSqXim4KzrKm3R3GTQ+QlJW0CWwy7HiUMLDyxUUOQ8lLItU1C1ES3UPl6um06T4nvIP6YfOTIfST4Vo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725962380; c=relaxed/simple;
-	bh=cPN+c5d1qbghZwAgbLbBKbGa0droBLNlCAHDEF+wklI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sicK/L2CXiQ9BsNCDkix0Js3II9f23rD6REjDCJx7dm2UXsoMNOr3C+cs5MyV7WMP3nAX/2gZ+gCjdSJYwGE7efui4g5z17MwGu2PHFQyNnTT0GCprhl2TEfnDz1+bs1DpwYbyRuCKOrkoqrLYC5uacB2UW/iZvZhTpFUUo0lUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gDEaBBBa; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gDEaBBBa"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374bfc395a5so3148710f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2024 02:59:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725962375; x=1726567175; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxZS7VLlvlNcdBPu4dATlqzqCH0SG09iCapcqr1ry4w=;
-        b=gDEaBBBaUoUF56F+rRo9PuyFWwCDXHMu9g8K4zUwzDGwMpXycdSh6VN8oSHKoKmQDX
-         CBycD7ciOZ1IR/0FyHTBJwSQFgwXanXz3ol8xbl5RK83QGEK0N3oWqobPdcp8bRdgAsN
-         zJRHd79Wx0r0r8VkECdsWZb8CG0MTWwIVMwwCsEcAmeXjwPTxuTluhZM7GsBiOTSBwrj
-         GicQeuUF2tjHfHAcuM2wfkPOGx4ZbqH0giOqp7i7zEgqh4hK1Pa1zjBQx5YIUhcLJEEI
-         cCWTNWPXEUubsUXMUR3rMj8TS/LnZJsaKYVFX+QI/MiP7LRzRAcFnOJ6btWsJUUwXo6H
-         JbkQ==
+	s=arc-20240116; t=1725970914; c=relaxed/simple;
+	bh=aWfFAIjnFqxFCQIzG6XpLXOSvr2sHf9fixe7SOEw2m0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6FoGkT/RSSU+uWAVzddQOsvfsvVuMo8GlYE5whGDS7nBs9XAo+Yyv8p6JGEs0los4VSa1cauAS2Lj1HN4hhB0TOXjo4N81tJ/7htsn4giqb4Bo5Jt7zbaxY2PBIfIIK0fgEOliMsj8n/4ujhp4e7stiDzjfHeF33sgjvCFaF3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so9948864a12.1;
+        Tue, 10 Sep 2024 05:21:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725962375; x=1726567175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OxZS7VLlvlNcdBPu4dATlqzqCH0SG09iCapcqr1ry4w=;
-        b=mUrIjezW7VDZPPv0JdMgikm/P04tHqmYJym09wl8sljFxb2G3WvfT+ulm8RCiHwSjV
-         Si+PR6m3/YGMPUHNCH6FOCjRTHdfUUYM5eQKzZpGtHzM2wMqiXJhhbjhD2JLJIUftxgV
-         TR3sOmq+FDn8qagERN16p9JR8ceN8d3Q/VmO09r/21SmDSUUOyP0x1ym/+lhwmA1E1T1
-         /G/WcoeVtR5icUBJOcLr+m4o+Hna6A3UlmmrnVOdJp8xhkvYvndwciDWSIr37eEX5woS
-         7Az5oyjHjAnSmJ4ldDkAbR/DGakawI9+YVf8fqYg9RPztVLQiOtzK9xxI60uG3cYEr5Q
-         XlhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbyDITfHzUuJ42d6QydS+o8NO2HlyiRgRcfABoL2qJtya8U7Smf7LrXnkv8/sonvYTTc0S1BIekTvHyMxXYDptvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsuA8z10CX/vghZqrGU/VcA8d1mtHuhbcMw/zBJcPEDYTqBfsx
-	VbNsENOM7hWRIBncOZR54bRoO6Bwf2i8k6zkICjLUYs6cv51JBSFzYsN5hlLy5k=
-X-Google-Smtp-Source: AGHT+IEtmAPvqyyaWuRoKy32eCJyGneGNTbPJN2tRd224P8AECPcesi7ike/qTX7P5GRwYiq+pSdJw==
-X-Received: by 2002:a5d:46ca:0:b0:374:c3e4:d6e3 with SMTP id ffacd0b85a97d-378a89fd45fmr1331874f8f.5.1725962375253;
-        Tue, 10 Sep 2024 02:59:35 -0700 (PDT)
-Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a072sm8465192f8f.2.2024.09.10.02.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Sep 2024 02:59:34 -0700 (PDT)
-Date: Tue, 10 Sep 2024 11:59:33 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: dmitry.baryshkov@linaro.org, Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 27/28] gcc-sdm845: Add general purpose clock ops
-Message-ID: <uevafpb6r7rfutiqrm5asfvv7zfxcb3acrlxqpispele5er52x@eegonpzqlm7j>
-References: <20240719-starqltechn_integration_upstream-v4-0-a7f644821941@gmail.com>
- <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
+        d=1e100.net; s=20230601; t=1725970910; x=1726575710;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jtL/PblOPvTiBziYi45g/5MNCyZDNQrsbh2MH421pI8=;
+        b=mSev5XNOkZFtOE8PumjMyAvzFR2FGNN1pzYb7miQ/ORB+tHJBFAYfss3h2IFZUt3zl
+         HXJiBVfdIhfR3RJr56S1ALiAYR7ms3EUOKYaOK7P2Tz0LQkWxrk2XdOFvjI6pXtbCWFX
+         tlTDrQg3gpTYqu0mjC1cVEmPu3OWY5KBAAhTm1AmwvsKN0M9szlPkz+Zk+ZaFeRAHl2+
+         VbqiUBXxKBSLw2GH2a4uChcxgit6VrPxr3dIGWsOPOVj2x+N7CMK9DBxWTfLJdg7Uo/O
+         Lj/FHQ8BJqwIvKiBmSSdRO0bvDh8Sl/s9tqhaUERnnz7qrSN0awQiPlz9mjzwiOlPDF2
+         4YUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY8gUMuznyUKWsbiU64PK+DUUQkCxqGefGuLNnza2P8iTfD8PFQRnLcqSwAuOZ7xXm6hf6i5dEBEbDOCPd/G4Y4t8=@vger.kernel.org, AJvYcCW3vaVcGP7PF9z+90poImNutcmWIM35mZZeQFDTeYQ6BpLGGdpmGq7xbVXzujTdj0Lbq2t83BamRfhg6lL5@vger.kernel.org, AJvYcCWkUO9pUtR4smvN8Fzye1l8xHwKXIi9oOLU7/1d1klim+p6Map/sQHMHmvx93XyLWx+HIAgbMXH9OaIaZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN+0h9hM/lTMLV4HN0dIyxtN/9pZtoIPf4nerqLIHCUwW1eIQj
+	5ASMlyv8P9QYret8SiXNdocYW1PJDNKEyWWVGJYHt7/VH72oLa96EfOHOor15DMYkg==
+X-Google-Smtp-Source: AGHT+IG2KRchwIJb1k65PNrQ1fNQ1P6NkfMRQPHMulrwsY/a+R/7o2D/sfV0vVhVrSfdwU5foT8Zzw==
+X-Received: by 2002:a17:907:72d1:b0:a8d:6372:2d38 with SMTP id a640c23a62f3a-a8ffabc1d72mr65833266b.18.1725970910095;
+        Tue, 10 Sep 2024 05:21:50 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25950a7fsm478208566b.57.2024.09.10.05.21.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Sep 2024 05:21:49 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3d8d3ebbdso1524395a12.0;
+        Tue, 10 Sep 2024 05:21:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMeESwmvwUBsMWSRREvwuZWBOsYN8FKW6DBXzmW9Ri1NW7E2+s3AfRMO5O8yASzMBKoBmPMYF9RhBusfg=@vger.kernel.org, AJvYcCX+e+vmcsQ5g2RqDyQjk6IdlCbeBoSqMci3Yq1JGnBwad+mRfl9rlwVo8oB5FczwueDHJX2YGdFbLoOwSBeljB+iVI=@vger.kernel.org, AJvYcCXze1M1aRNRLpqW3Ny2UlDmJ/1NI058taU25F+RghQGAH/lUMRubyByJDUBLsQKHp6EHZUJw/GCSL3/XMhU@vger.kernel.org
+X-Received: by 2002:a05:6402:84b:b0:5c3:ce35:d165 with SMTP id
+ 4fb4d7f45d1cf-5c4015e753dmr3713449a12.12.1725970909356; Tue, 10 Sep 2024
+ 05:21:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d2rlzxmgwshy2k4w"
-Content-Disposition: inline
-In-Reply-To: <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
-
-
---d2rlzxmgwshy2k4w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240909084222.3209-1-towinchenmi@gmail.com>
+In-Reply-To: <20240909084222.3209-1-towinchenmi@gmail.com>
+From: Neal Gompa <neal@gompa.dev>
+Date: Tue, 10 Sep 2024 14:21:13 +0200
+X-Gmail-Original-Message-ID: <CAEg-Je_f5aCyH4+ENb4Tn2XezkPu3YtYP4HRC0LXZHc1TMdhgA@mail.gmail.com>
+Message-ID: <CAEg-Je_f5aCyH4+ENb4Tn2XezkPu3YtYP4HRC0LXZHc1TMdhgA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] tty: serial: samsung: Serial fixes for Apple
+ A7-A11 SoCs
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On Fri, Jul 19, 2024 at 03:55:04PM +0300, Dzmitry Sankouski wrote:
-> SDM845 has "General Purpose" clocks that can be muxed to
-> SoC pins to clock various external devices.
-> Those clocks may be used as e.g. PWM sources for external peripherals.
->=20
-> GPCLK can in theory have arbitrary value depending on the use case, so
-> the concept of frequency tables, used in rcg2 clock driver, is not
-> efficient, because it allows only defined frequencies.
->=20
-> Introduce clk_rcg2_gp_ops, which automatically calculate clock
-> mnd values for arbitrary clock rate.
->=20
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+On Mon, Sep 9, 2024 at 10:42=E2=80=AFAM Nick Chan <towinchenmi@gmail.com> w=
+rote:
+>
+> Hi,
+>
+> This series fixes issues with serial on A7-A11 SoCs. The changes do not
+> seem to affect existing M1 and up users so they can be applied
+> unconditionally.
+>
+> Firstly, these SoCs require 32-bit writes on the serial port. This only
+> manifested in earlycon as reg-io-width in device tree is consulted for
+> normal serial writes.
+>
+> Secondly, A7-A9 SoCs seems to use different bits for RXTO and RXTO
+> enable. Accessing these bits in addition to the original RXTO and RXTO
+> enable bits will allow serial rx to work correctly on those SoCs.
+>
+> Changes in v4:
+>   - Removed fake Reviewed-by tag added by accident... need to stop
+>     making stupid mistakes that wastes everyone's time. The remaining
+>     Reviewed-by is real as far as I am aware.
+>
+> Changes in v3:
+>   - v2 did not declare itself as v2 in subject line... resend as v3.
+>
+> Changes in v2:
+>   - Mention A7-A11 in the comment about changing register accesses to
+>     MMIO32.
+>
+>   - Use BIT() macro for new entries, and change the existing APPLE_S5L_*
+>     entries for consistency.
+>
+> v1: https://lore.kernel.org/linux-samsung-soc/20240907111431.2970-1-towin=
+chenmi@gmail.com
+> v2: https://lore.kernel.org/linux-samsung-soc/20240908075904.12133-1-towi=
+nchenmi@gmail.com
+> v3: https://lore.kernel.org/linux-samsung-soc/20240908090939.2745-1-towin=
+chenmi@gmail.com
+>
+> Nick Chan
 > ---
->  drivers/clk/qcom/clk-rcg.h    |   1 +
->  drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++++++=
-++++--
->  drivers/clk/qcom/gcc-sdm845.c |  19 ++---
->  drivers/pwm/pwm-clk.c         |   5 ++
+>
+> Nick Chan (3):
+>   tty: serial: samsung: Use BIT() macro for APPLE_S5L_*
+>   tty: serial: samsung: Fix A7-A11 serial earlycon SError
+>   tty: serial: samsung: Fix serial rx on Apple A7-A9
+>
+>  drivers/tty/serial/samsung_tty.c | 22 ++++++++++++++++------
+>  include/linux/serial_s3c.h       | 24 ++++++++++++++----------
+>  2 files changed, 30 insertions(+), 16 deletions(-)
+>
+>
+> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+> --
+> 2.46.0
+>
+>
 
-I don't understand why a change to some qcom clk implementation detail
-needs a change to drivers/pwm/pwm-clk.c in the same commit. I guess if
-the change to drivers/pwm/pwm-clk.c is needed it should better go into a
-separate patch with an appropriate commit log?!
+Whole series LGTM.
 
-Best regards
-Uwe
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
---d2rlzxmgwshy2k4w
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbgGIIACgkQj4D7WH0S
-/k7x2AgAluuv/f/FtpsMhu/tAKjHUOr1Y+1vUefo+pFCKzhUDjMyHMtIz8by9GsE
-1pZ9fiw/to0h6iyEctQmMN3sqoMqkEwL4aKMYb9WOopkDgY36I7oAWjXs4mio6Ed
-DPguLwTovw/p+OJMmgb/ndu5GNyQCb9AsmjekXGIx4ZVDJPX3pc8v/DX5HQj2y3x
-sCi8NmmXABsckLz42oxrky2ZGcNmFddqBJxJdgjVcXfa5BEetdtLnUhmtmhiKyJy
-g1rWCprL53Lj1ZWKLdQgu6yiNCQK9LS45ETRzHX8idzAODnagfx6by+X58QljgMg
-i72ZlH212j1K035K3UHJar7Lo0D7FQ==
-=xssr
------END PGP SIGNATURE-----
-
---d2rlzxmgwshy2k4w--
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
