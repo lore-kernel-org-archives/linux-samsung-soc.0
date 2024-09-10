@@ -1,91 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634DC17E010;
-	Tue, 10 Sep 2024 07:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDDD18C347
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2024 09:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725953826; cv=none; b=MIY7wcb8vz17VVkcK6UdDbT+MTGEYpdQF3CKCsp7MzH2FtxBOpaKjMkHBTvOfXrbAlRTS3j+AG9LlrOb+qrOfsDWOMGTfO+4Pl+5ZwFy5h22TiE5hWk1HqFlDXJcZwJTb5gRjfYsY3JEAGEMreanVvuhOeAo1e+WfUSg8WUe1/w=
+	t=1725962380; cv=none; b=cAFfduc0XLbVn9vm5+O+dyZuvEddjnLucpGYVs2/jXRsRmseSHh1jdDsf0KcXhH6y8RpFIWTGJH6CjiNxGPpdVpAx9RdlYpdSnNW1hl6o5p3NiLnuzNhfA2/8Q4Ip9cw4tIDuQtTvTMAGx9qR2+sSzA0V8Jqoena71t30S+1kqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725953826; c=relaxed/simple;
-	bh=l23NYfXeykSrpfi1JGToBjVhZyQnctbe5iVzH/S067U=;
+	s=arc-20240116; t=1725962380; c=relaxed/simple;
+	bh=cPN+c5d1qbghZwAgbLbBKbGa0droBLNlCAHDEF+wklI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIiqfClCnQQPkW5YUEC+95upaI4cguGtBZ4NCzdWwIbJeP7KkF/yaModfdgeU3x5rIpnUEQsnlG63lvyeVWIkvFpUnCTsWTmI67lCOiXT/VZm06hfFrYLxFhuQk+W+iOVi5eQWOD3qovfxmDqiY4P7j7BzzSgsOrkEwP3FmxO2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHtY7DKd; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=sicK/L2CXiQ9BsNCDkix0Js3II9f23rD6REjDCJx7dm2UXsoMNOr3C+cs5MyV7WMP3nAX/2gZ+gCjdSJYwGE7efui4g5z17MwGu2PHFQyNnTT0GCprhl2TEfnDz1+bs1DpwYbyRuCKOrkoqrLYC5uacB2UW/iZvZhTpFUUo0lUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gDEaBBBa; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHtY7DKd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2623FC4CEC8;
-	Tue, 10 Sep 2024 07:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725953826;
-	bh=l23NYfXeykSrpfi1JGToBjVhZyQnctbe5iVzH/S067U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BHtY7DKdzrRxb+w+efU8gdL1Ohwx3mHCczD9LdA3i75lpD6MctmpQq0QZfHQ4aIJq
-	 LP8s88YI0tLNbFT1/AUxiLz+TWhVHP7+ysui4PcD4B2SArEZiB0PQFM9UCrgBIis9s
-	 uuFU3Ipz5UI1j0oXmrBFg8xWOs3kUnnytyf7hLVlozStMLb4Quj+kUAD/b87JPUeRJ
-	 xPJhX+JmiKMWDz2Mml3HThBlG2JH3pqI9XVDo1JalOLXRAv8FzJMjYQOygwdTO+XAV
-	 QWy3nkUjhziK3kOzNl2ci/VTPEZ/WeYJTKzAb624zKHu4IZMZQ4Ybxukt4WQiDl259
-	 PfHkOnkrnapIw==
-Date: Tue, 10 Sep 2024 09:37:02 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] Add minimal Exynos8895 SoC and SM-G950F support
-Message-ID: <4rtzyvspsrtqhxx6er3pr2tmidfhyvipckrxmszx5zltp3ahbk@q66bxawsmtqm>
-References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gDEaBBBa"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-374bfc395a5so3148710f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2024 02:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725962375; x=1726567175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxZS7VLlvlNcdBPu4dATlqzqCH0SG09iCapcqr1ry4w=;
+        b=gDEaBBBaUoUF56F+rRo9PuyFWwCDXHMu9g8K4zUwzDGwMpXycdSh6VN8oSHKoKmQDX
+         CBycD7ciOZ1IR/0FyHTBJwSQFgwXanXz3ol8xbl5RK83QGEK0N3oWqobPdcp8bRdgAsN
+         zJRHd79Wx0r0r8VkECdsWZb8CG0MTWwIVMwwCsEcAmeXjwPTxuTluhZM7GsBiOTSBwrj
+         GicQeuUF2tjHfHAcuM2wfkPOGx4ZbqH0giOqp7i7zEgqh4hK1Pa1zjBQx5YIUhcLJEEI
+         cCWTNWPXEUubsUXMUR3rMj8TS/LnZJsaKYVFX+QI/MiP7LRzRAcFnOJ6btWsJUUwXo6H
+         JbkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725962375; x=1726567175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OxZS7VLlvlNcdBPu4dATlqzqCH0SG09iCapcqr1ry4w=;
+        b=mUrIjezW7VDZPPv0JdMgikm/P04tHqmYJym09wl8sljFxb2G3WvfT+ulm8RCiHwSjV
+         Si+PR6m3/YGMPUHNCH6FOCjRTHdfUUYM5eQKzZpGtHzM2wMqiXJhhbjhD2JLJIUftxgV
+         TR3sOmq+FDn8qagERN16p9JR8ceN8d3Q/VmO09r/21SmDSUUOyP0x1ym/+lhwmA1E1T1
+         /G/WcoeVtR5icUBJOcLr+m4o+Hna6A3UlmmrnVOdJp8xhkvYvndwciDWSIr37eEX5woS
+         7Az5oyjHjAnSmJ4ldDkAbR/DGakawI9+YVf8fqYg9RPztVLQiOtzK9xxI60uG3cYEr5Q
+         XlhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbyDITfHzUuJ42d6QydS+o8NO2HlyiRgRcfABoL2qJtya8U7Smf7LrXnkv8/sonvYTTc0S1BIekTvHyMxXYDptvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsuA8z10CX/vghZqrGU/VcA8d1mtHuhbcMw/zBJcPEDYTqBfsx
+	VbNsENOM7hWRIBncOZR54bRoO6Bwf2i8k6zkICjLUYs6cv51JBSFzYsN5hlLy5k=
+X-Google-Smtp-Source: AGHT+IEtmAPvqyyaWuRoKy32eCJyGneGNTbPJN2tRd224P8AECPcesi7ike/qTX7P5GRwYiq+pSdJw==
+X-Received: by 2002:a5d:46ca:0:b0:374:c3e4:d6e3 with SMTP id ffacd0b85a97d-378a89fd45fmr1331874f8f.5.1725962375253;
+        Tue, 10 Sep 2024 02:59:35 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a072sm8465192f8f.2.2024.09.10.02.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Sep 2024 02:59:34 -0700 (PDT)
+Date: Tue, 10 Sep 2024 11:59:33 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: dmitry.baryshkov@linaro.org, Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 27/28] gcc-sdm845: Add general purpose clock ops
+Message-ID: <uevafpb6r7rfutiqrm5asfvv7zfxcb3acrlxqpispele5er52x@eegonpzqlm7j>
+References: <20240719-starqltechn_integration_upstream-v4-0-a7f644821941@gmail.com>
+ <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d2rlzxmgwshy2k4w"
 Content-Disposition: inline
-In-Reply-To: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
 
-On Mon, Sep 09, 2024 at 02:00:07PM +0300, Ivaylo Ivanov wrote:
-> Hi folks,
-> 
-> This series adds initial SoC support for the Exynos 8895 SoC and also
-> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
-> dreamlte.
-> 
-> The Exynos 8895 SoC is also used in S8 Plus (dream2lte), Note 8 (greatlte)
-> and Meizu 15 Plus (m1891). Currently DT is added for the Exynos 8895 SoC
-> and dreamlte, but it should be really easy to adapt for the other devices
-> with the same SoC. It has been tested with dtbs_check W=1 and results
-> in no warnings.
-> 
-> The support added in this series consists of:
-> * cpus
-> * pinctrl
-> * gpio
-> * simple-framebuffer
-> * pstore
-> 
-> This is enough to reach a minimal initramfs shell using an upstream kernel.
-> More platform support will be added in the future.
-> 
-> The preferred way to boot this device is by using a small shim bl called
-> uniLoader [1], which packages the mainline kernel and DT and jumps to
-> the kernel. This is done in order to work around some issues caused by
-> the stock, and non-replacable Samsung S-Boot bootloader. For example,
-> S-Boot leaves the decon trigger control unset, which causes the framebuffer
-> to not refresh. 
-> 
-> [1] https://github.com/ivoszbg/uniLoader
-> 
 
-FYI,
-It is too late in the cycle for me to pick up any of these patches.
-Also due to some travel and events, I might be slower in review, but I
-will review them before next merge window opens.
+--d2rlzxmgwshy2k4w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Hello,
 
+On Fri, Jul 19, 2024 at 03:55:04PM +0300, Dzmitry Sankouski wrote:
+> SDM845 has "General Purpose" clocks that can be muxed to
+> SoC pins to clock various external devices.
+> Those clocks may be used as e.g. PWM sources for external peripherals.
+>=20
+> GPCLK can in theory have arbitrary value depending on the use case, so
+> the concept of frequency tables, used in rcg2 clock driver, is not
+> efficient, because it allows only defined frequencies.
+>=20
+> Introduce clk_rcg2_gp_ops, which automatically calculate clock
+> mnd values for arbitrary clock rate.
+>=20
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  drivers/clk/qcom/clk-rcg.h    |   1 +
+>  drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++++++=
+++++--
+>  drivers/clk/qcom/gcc-sdm845.c |  19 ++---
+>  drivers/pwm/pwm-clk.c         |   5 ++
+
+I don't understand why a change to some qcom clk implementation detail
+needs a change to drivers/pwm/pwm-clk.c in the same commit. I guess if
+the change to drivers/pwm/pwm-clk.c is needed it should better go into a
+separate patch with an appropriate commit log?!
+
+Best regards
+Uwe
+
+--d2rlzxmgwshy2k4w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbgGIIACgkQj4D7WH0S
+/k7x2AgAluuv/f/FtpsMhu/tAKjHUOr1Y+1vUefo+pFCKzhUDjMyHMtIz8by9GsE
+1pZ9fiw/to0h6iyEctQmMN3sqoMqkEwL4aKMYb9WOopkDgY36I7oAWjXs4mio6Ed
+DPguLwTovw/p+OJMmgb/ndu5GNyQCb9AsmjekXGIx4ZVDJPX3pc8v/DX5HQj2y3x
+sCi8NmmXABsckLz42oxrky2ZGcNmFddqBJxJdgjVcXfa5BEetdtLnUhmtmhiKyJy
+g1rWCprL53Lj1ZWKLdQgu6yiNCQK9LS45ETRzHX8idzAODnagfx6by+X58QljgMg
+i72ZlH212j1K035K3UHJar7Lo0D7FQ==
+=xssr
+-----END PGP SIGNATURE-----
+
+--d2rlzxmgwshy2k4w--
