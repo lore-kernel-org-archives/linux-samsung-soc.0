@@ -1,315 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA617BEC7;
-	Fri, 13 Sep 2024 21:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726264523; cv=none; b=MVvSHcovw5Yi2KV6/lWKKPJ4C8zGS2BTTD0ZfClMlWEAROPZH2rpboO6sFjGwdFGvxY58i7SkIiSgJD/SvNAMRmhFfr3I+uEXv89vhpJrCqOyniuAu8qPgtR5ckrJcw/GHuRSWMdy8b6UpOdj3vDfiUmBgJuaz4Q1yd+pg4ekYs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726264523; c=relaxed/simple;
-	bh=q6149tWf9a83IHhHEMU2VwoiZlrZy13ezqBewO8qXZM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3696433D5;
+	Sat, 14 Sep 2024 08:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726303157; cv=pass; b=srsmMcSIJ+W5XWJ+8EBBu2IyxZcU08+eYhSYu161+XANKyz6Pww7dm0ecBt8sfkvB2QkuDuMkuDeiSITkNGbV/cGQOfEXZKFvsOT9+6cEYhjzTnduRxzhRGbagPkRP5AjCQDjBbf6ke6dcNH1HV1ilNQfr9+zu2XYLkgZKYDBwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726303157; c=relaxed/simple;
+	bh=pfSJVhTniD/TEI8prxwxup12Sbw+prmH32swhXL3LQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcsuYDbuWAUT87YcEqOy+FEPIAKObB1KrATnnyCW0rBG6ubFiXKzrgraCnr5P8DX2JQnMsWSK5/p9BGKIOCy0q0FRSOARE5xH4y9VRLbXCLXeZyNAsdyByWEfeZoV8JypDfeGWMZMdf7LWYjedBmjkfBPiRGjJrsctihbkobcmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcQMUsYv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=La1Z/G55fHQep/l+nANHaaft687CgjRp46uxOd4FJowgEEc448Z5M/opkHf3RtXzbsi0d0+yGb71V/rC4NPx6CNiqKpGqygyikG2qXfzk52snEyqHbJfboD0zkulcjdCBvNXmbgDjLpOGXr/gUZ+ZJ8+rPfeA6D/0luuF0FV14w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=UD9rh84s; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcQMUsYv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66B8EC4CECC;
-	Fri, 13 Sep 2024 21:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726264522;
-	bh=q6149tWf9a83IHhHEMU2VwoiZlrZy13ezqBewO8qXZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WcQMUsYvo9iMfCXqKzz6WfBOeSf3QnxCe7qBB55jtluaLCdkajX3PK+h6pyWyBX07
-	 PnEet5lNBh2xMOHyEUtFlosiTzo3hwcMA6t3RS+egfoow2NGG+5Npxa7L2SoCr/Fwq
-	 +7PxDup8jdlmXiDh0wY+Xr8SAzjC+G1FGXhlQ9FtrV5qrJACiTJ7rzq5GLGeGaPylO
-	 GB8gfB5GU9GIUuRgX2zsW3uP0oSuG9V+oz/AGRvxv9tI7ACCSGFP0+5eFAjyG+icUO
-	 Rv2Mvreqixc/gkn8utok04BwajsZETiwRjz2Yoy/B6F6jeyNk8jWAZP9/okZ+fjhXI
-	 EJdZKnyjanX/A==
-Date: Fri, 13 Sep 2024 16:55:21 -0500
-From: Rob Herring <robh@kernel.org>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="UD9rh84s"
+ARC-Seal: i=1; a=rsa-sha256; t=1726303126; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MLOmakQrtsg4TH4ciQgVKKbaYfee0msm0gpHo0IRm2TCR1PjW/dhublzRh0fRtGTGALhk45SIBObhSMIdaclT1VZ9llt1dpmAWq4/rrRaZnP0TlystVIRu8JLbEtT5I9dAY40SMVINghKRE66+gmMtnaXLBPvrGwUkoll0SY1iU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726303126; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ej6QX9G1dmM07ksR/FVgVBTC5gPecCY6T1R8JXBXxZk=; 
+	b=QY6lMDWN3HqBg2CDOf4cd+x4CEh43tB3mXTwIHABzoMI9JNSgz3eCEZESG2I+hR6nX15ncOa5pdT8gmwe3yMArbB0phGyXskFZyfoOp4NyvlZWvqyKpCJ2GuN5ZhbcTzbw8Mtg8QOC6CbLtFeId2ZLx38RRRTlrcB5KrD33AbT0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726303126;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Ej6QX9G1dmM07ksR/FVgVBTC5gPecCY6T1R8JXBXxZk=;
+	b=UD9rh84s/7G9dAEtd71GxxzLUEpLcscRJ47S8/+Pe+224BS1cdckHNW/uTnB9dg5
+	ie+cQG6VuPJdexJ7jiJPsrCstd7qabLh6ikWCE7quHAz3dCrzp0Zv10KpGsPVcL2ajR
+	EzZkbOiu/30stenQoIDwq5734cnSfpNxAyU85Jbc=
+Received: by mx.zohomail.com with SMTPS id 1726303124615201.60398788551277;
+	Sat, 14 Sep 2024 01:38:44 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 3FFFB1060578; Sat, 14 Sep 2024 10:38:28 +0200 (CEST)
+Date: Sat, 14 Sep 2024 10:38:28 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	cros-qcom-dts-watchers@chromium.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 05/27] dt-bindings: mfd: add maxim,max77705
-Message-ID: <20240913215521.GA864207-robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Simona Vetter <simona@ffwll.ch>, cros-qcom-dts-watchers@chromium.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 01/27] power: supply: add undervoltage health status
+ property
+Message-ID: <uta55qswxp43tdziertbwvopytx26kjanouxfffvkjfnhrkwj2@bwoyfygw3pp7>
 References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-5-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-1-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r7xlkoqbyyg5k4lc"
+Content-Disposition: inline
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-1-2d2efd5c5877@gmail.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
+X-ZohoMailClient: External
+
+
+--r7xlkoqbyyg5k4lc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-5-2d2efd5c5877@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 06:07:48PM +0300, Dzmitry Sankouski wrote:
-> Add maxim,max77705 core binding part.
-> 
+Hi,
+
+On Fri, Sep 13, 2024 at 06:07:44PM GMT, Dzmitry Sankouski wrote:
+> Add POWER_SUPPLY_HEALTH_UNDERVOLTAGE status for power supply
+> to report under voltage lockout failures.
+>=20
 > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> 
 > ---
-> Changes in v4:
-> - change dts example intendation from tabs
->  to spaces
-> - remove interrupt-names property
-> - remove obvious reg description
-> - split long(>80) lines
-> ---
->  .../devicetree/bindings/mfd/maxim,max77705.yaml    | 169 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 170 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> new file mode 100644
-> index 000000000000..40a67d15e312
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
-> @@ -0,0 +1,169 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX77705 Companion Power Management IC and USB Type-C interface IC
-> +
-> +maintainers:
-> +  - Dzmitry Sankouski <dsankouski@gmail.com>
-> +
-> +description: |
-> +  This is a part of device tree bindings for Maxim MAX77705 multi functional
-> +  device.
-> +
-> +  The Maxim MAX77705 is a Companion Power Management and Type-C
-> +  interface IC which includes charger, fuelgauge, LED, haptic motor driver and
-> +  Type-C management IC.
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77705
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  charger:
-> +    $ref: /schemas/power/supply/power-supply.yaml
-> +    additionalProperties: true
 
-No, true is only valid for incomplete schemas (i.e. common ones included 
-by another complete schema).
+This is missing updates to
+Documentation/ABI/testing/sysfs-class-power and
+drivers/power/supply/power_supply_sysfs.c
+(POWER_SUPPLY_HEALTH_TEXT).
 
-And since you reference another schema, you want 'unevaluatedProperties' 
-instead if you want to use any properties defined in power-supply.yaml.
+Greetings,
 
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-charger
-> +
-> +    required:
-> +      - compatible
-> +      - monitored-battery
-> +
-> +  fuel_gauge:
+-- Sebastian
 
-fuel-gauge
-
-> +    $ref: /schemas/power/supply/power-supply.yaml
-> +    type: object
-> +    additionalProperties: true
-> +    description: MAX77705 fuel gauge with ModelGauge m5 EZ algorithm support.
-
-blank line
-
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-fuel-gauge
-> +
-> +      shunt-resistor-micro-ohms:
-> +        description: |
-
-Don't need '|'.
-
-> +          The value of current sense resistor in microohms.
-> +
-> +    required:
-> +      - compatible
-> +      - shunt-resistor-micro-ohms
-> +      - monitored-battery
-> +      - power-supplies
-> +
-> +  haptic:
-> +    type: object
-> +    additionalProperties: false
-
-blank line
-
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-haptic
-> +
-> +      haptic-supply: true
-> +
-> +      pwms:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - compatible
-> +      - haptic-supply
-> +      - pwms
-> +
-> +  leds:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      Up to 4 LEDs supported. One LED is represented by one child node.
-
-blank line
-
-> +    properties:
-> +      compatible:
-> +        const: maxim,max77705-led
-> +
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^led@[0-3]$":
-> +        type: object
-> +        $ref: /schemas/leds/common.yaml#
-
-blank line
-
-> +        properties:
-> +          reg:
-> +            description:
-> +              LED index.
-
-blank line
-
-> +        unevaluatedProperties: false
-
-blank line
-
-> +        required:
-> +          - reg
-> +
-> +    required:
-> +      - compatible
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        pmic@66 {
-> +            compatible = "maxim,max77705";
-> +            reg = <0x66>;
-> +            interrupt-parent = <&pm8998_gpios>;
-> +            interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-> +            pinctrl-0 = <&chg_int_default>;
-> +            pinctrl-names = "default";
-> +
-> +            leds {
-> +                compatible = "maxim,max77705-led";
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                led@1 {
-> +                    reg = <1>;
-> +                    label = "red:usr1";
-> +                };
-> +
-> +                led@2 {
-> +                    reg = <2>;
-> +                    label = "green:usr2";
-> +                };
-> +
-> +                led@3 {
-> +                    reg = <3>;
-> +                    label = "blue:usr3";
-> +                };
-> +            };
-> +
-> +            max77705_charger: charger {
-> +                compatible = "maxim,max77705-charger";
-> +                monitored-battery = <&battery>;
-> +            };
-> +
-> +            fuel_gauge {
-> +                compatible = "maxim,max77705-fuel-gauge";
-> +                monitored-battery = <&battery>;
-> +                power-supplies = <&max77705_charger>;
-> +                rsense = <5>;
-
-Not documented.
-
-> +            };
-> +
-> +
-> +            haptic {
-> +                compatible = "maxim,max77705-haptic";
-> +                haptic-supply = <&vib_regulator>;
-> +                pwms = <&vib_pwm 0 50000>;
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b65cfa1d322d..59d027591e34 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14064,6 +14064,7 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
->  F:	Documentation/devicetree/bindings/*/maxim,max14577.yaml
->  F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
->  F:	Documentation/devicetree/bindings/*/maxim,max77693.yaml
-> +F:	Documentation/devicetree/bindings/*/maxim,max77705*.yaml
->  F:	Documentation/devicetree/bindings/*/maxim,max77843.yaml
->  F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
->  F:	drivers/*/*max77843.c
-> 
-> -- 
+>  include/linux/power_supply.h | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 910d407ebe63..8682e6466544 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -58,6 +58,7 @@ enum {
+>  	POWER_SUPPLY_HEALTH_OVERHEAT,
+>  	POWER_SUPPLY_HEALTH_DEAD,
+>  	POWER_SUPPLY_HEALTH_OVERVOLTAGE,
+> +	POWER_SUPPLY_HEALTH_UNDERVOLTAGE,
+>  	POWER_SUPPLY_HEALTH_UNSPEC_FAILURE,
+>  	POWER_SUPPLY_HEALTH_COLD,
+>  	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
+>=20
+> --=20
 > 2.39.2
-> 
+>=20
+
+--r7xlkoqbyyg5k4lc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmblS3wACgkQ2O7X88g7
++prRCxAAlhYUU4yJX7NEhfMbNTVWhURSBhobZ62HayXzgdpD6Mq48r79Maug7GC9
+GT0mcYXyGLCZjLkte5Qn0695klYG9JsIWdZqOdQV7fgHhH6gDBkFYghMVv8NVnXF
+Pmcmwc1QOCjmDp37EkvxjXKOc+XNdnVuAlSwpnP3zkXKtexwe3kvZtD3qLToP7vs
+Q+6qA8/9KVvC83i5VqrHUoWdkR514ZI8YcPzjStj6FecIRitH0xtOm9inpeLj1tv
+fFcknMQkRSdNAarhfpZNzFLoyOSpImY/yeUEx3qFUqKNGtDZVkXvWNHVaEEEtxih
++1mX44QV5thBOSuKfuIA0deafptEjaP/eXhQEwS619aqDJd7J+JBmnZAdlmiBLqK
+iEsBgTeThbx7RuOvBvRUVYPlUPG1jpYBgfWT4OT6w7x9tkkfemxU/JT1tXJNmKAp
+onm6UftL9rF/olPVoXIL4AZ8QhsLkGQ+2iDNWaUbcvhWdEAo0AFnJNIRJHdbUT4a
+fPlTrlZ5DO/ufGCPj7rbPehkVjKD/apDK84Dp8mQrIjlzuxqMacWFBv0Szrj9k4L
+ZpUae4iBOygN1fXd6M8w3SvZw+9JOixLL/1vm2Av8vJwMYUUt4eNInyN4Pr1cjMh
+Rd6zPpSmphSU+AgGnN70hqkRetW7+zUoyFzoKWtQeWApkEdHhVE=
+=Gfk0
+-----END PGP SIGNATURE-----
+
+--r7xlkoqbyyg5k4lc--
