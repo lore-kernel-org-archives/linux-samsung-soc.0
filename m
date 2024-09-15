@@ -1,173 +1,79 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7B71D1F68;
-	Sat, 14 Sep 2024 18:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8569D18C1F;
+	Sun, 15 Sep 2024 18:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726337137; cv=none; b=O1beia1fkOkTPNLH/RbuntUF6Cu6DaxvSPr+St5nnI8VNqY+gA2g+OWySKwtc/yLpGSJQF7XkkIgcOLJzvlVT+w8s8DTm4SG3OPfRDWhRWrN0q2TBETICOcNhgONCLSh1pq3kriT17SspYTZLi3Ng13vHWJXiPybZMVpmyqY+bU=
+	t=1726423361; cv=none; b=VJb30SIuyyxVreoNREtXpYMF8CzrFSuSMu8DxXyhO02YJIabEPIlXbuImQYYSnK0lDeKxyp3RHI/ZkGfohqazmJXBH3ZlFziC+I2KgLhUnNHlwo/Qse747lxg6u9u8oYDfHD9xOKKcdwny1BrC9XVFVxTk23Z0dIC6jWdcH57Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726337137; c=relaxed/simple;
-	bh=bX3hfSvdivSwqj787dVv//EFjHQaHvkTiKg8rAMVnOA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=adN/PMw4l+Ga50LgxDlUCrktuXVE4NNctJ9wies+GyKnizvj6MtKCsTuanNHM0awIbSKFoZE3PCHG8j8QLID7ZfRc1bZ5NNtCgnBt7Z6hsQOfRTXA9zG6Cb6R1TyLYAaLJRobUeZyUDG6rmfVhS8O1veiX6ihTrFpeahj1OHHPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PiLdGvn1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1726423361; c=relaxed/simple;
+	bh=6k4/XHECOk225ChNvXsCNWtARIZ1ghjxB8A7Nh3z5KQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzfY3xfIK6Xo4cvjw3m/1mGCntyzVdDW+WPG/M+SVDjcIS8YqKkkXUapztRX07sqW21aDE+Cl8vIKe2+QuIXWiX/Rqrvjem6rqrujKFWZGZwyaoYZIb2ErwLrn6Yy5cvW8ECh4USzV52lLjp24lyTMerES5TEOGgc8rwNSQbgiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6Eug6aW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PiLdGvn1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726337133;
-	bh=bX3hfSvdivSwqj787dVv//EFjHQaHvkTiKg8rAMVnOA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PiLdGvn1mF6o4/igmFmYwt5NOUNLrTMBo7g10pSJbl3riizN5P9WV2t2abw5+N255
-	 aO1EQTfE76P2tfpvQZQk+L3/VHoMZY8W5ghfjmBZ2tQ5F195dUQe91afNPmrJmudjL
-	 SWyfRqs6wd5mKbN0RbolVG1gGKW2GsmKo7Y+N+HktoHBx9siqcljeiIfKrQFXj2PdV
-	 OV3+QjiSUq1qFFDir/FJSFq/BrgvB+uLn56QVKmhPpj2FmGXPxHrAiA8QF07TalXIu
-	 sx3VltxJ7gjejJniMqPAiLqeDEVHdg5WiH0pqh+uT72zfLYbRYHwAXyKRxn9MzgIr6
-	 KXvLG5dFRG1aw==
-Received: from localhost (unknown [188.27.55.48])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7F83C17E360F;
-	Sat, 14 Sep 2024 20:05:33 +0200 (CEST)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 14 Sep 2024 21:04:57 +0300
-Subject: [PATCH 4/4] clk: Drop obsolete devm_clk_bulk_get_all_enable()
- helper
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6Eug6aW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57AC1C4CEC3;
+	Sun, 15 Sep 2024 18:02:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726423361;
+	bh=6k4/XHECOk225ChNvXsCNWtARIZ1ghjxB8A7Nh3z5KQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m6Eug6aWR9x4kUqyS4PO7NemgW8AwX3Jjyaoe7jXxpMK18+8dGP5WRYHFIshC7f54
+	 NlSkxNQ/IkczZXmjHBdZ47bhbKtd7DfIP1Xe5lBiUvonpPIlD9P7s8igM15wAkqgwl
+	 5AQFI/aOlZZYETRdp2cmbFyuyHwc1uOhaAM1LmfjiBJCqoV+eycGaHhmUvNa90jXqv
+	 Np3VcMfYNNRMxb1O906JwoeNl4541mXV7pAecd0YEy5Q/Ax4zC32yQiobq6fhlD7e9
+	 sEbhxNehp8Nyx/qBOxgHVqRJKnDZqW2xTJCwSzIYh7k7aolKojXhXcwVkD3OSUDPnl
+	 1qedABguKbt6Q==
+Date: Sun, 15 Sep 2024 20:02:32 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: f.fangjian@huawei.com, broonie@kernel.org, linus.walleij@linaro.org, 
+	heiko@sntech.de, krzk@kernel.org, orsonzhai@gmail.com, 
+	baolin.wang@linux.alibaba.com, ldewangan@nvidia.com, thierry.reding@gmail.com, 
+	jonathanh@nvidia.com, alim.akhtar@samsung.com, zhang.lyra@gmail.com, 
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, opensourec.kernel@vivo.com
+Subject: Re: [PATCH v1] spi: fix typo in the comment
+Message-ID: <gccw6hkujwcbrb5mdokvscg5xdyvj35hwgmvpatbb2am72zrak@4sxtmkr3jg4j>
+References: <20240914095213.298256-1-yanzhen@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240914-clk_bulk_ena_fix-v1-4-ce3537585c06@collabora.com>
-References: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
-In-Reply-To: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240914095213.298256-1-yanzhen@vivo.com>
 
-Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
-clocks") added devm_clk_bulk_get_all_enable() function, but missed to
-return the number of clocks stored in the clk_bulk_data table referenced
-by the clks argument.  Without knowing the number, it's not possible to
-iterate these clocks when needed, hence the argument is useless and
-could have been simply removed.
+Hi Yan,
 
-A new helper devm_clk_bulk_get_all_enabled() has been introduced, which
-is consistent with devm_clk_bulk_get_all() in terms of the returned
-value.
+On Sat, Sep 14, 2024 at 05:52:13PM GMT, Yan Zhen wrote:
+> Correctly spelled comments make it easier for the reader to understand
+> the code.
+> 
+> Replace 'progrom' with 'program' in the comment &
+> replace 'Recevie' with 'Receive' in the comment &
+> replace 'receieved' with 'received' in the comment &
+> replace 'ajacent' with 'adjacent' in the comment &
+> replace 'trasaction' with 'transaction' in the comment &
+> replace 'pecularity' with 'peculiarity' in the comment &
+> replace 'resiter' with 'register' in the comment &
+> replace 'tansmition' with 'transmission' in the comment &
+> replace 'Deufult' with 'Default' in the comment &
+> replace 'tansfer' with 'transfer' in the comment &
+> replace 'settign' with 'setting' in the comment.
+> 
+> 
 
-Drop the obsolete function since all users switched to the new helper.
+For what it matters, there are two blank lines here.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/clk/clk-devres.c | 32 --------------------------------
- include/linux/clk.h      | 22 ----------------------
- 2 files changed, 54 deletions(-)
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 4203aaaa7544..14a657f336fe 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -218,38 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
- 	clk_bulk_put_all(devres->num_clks, devres->clks);
- }
- 
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks)
--{
--	struct clk_bulk_devres *devres;
--	int ret;
--
--	devres = devres_alloc(devm_clk_bulk_release_all_enable,
--			      sizeof(*devres), GFP_KERNEL);
--	if (!devres)
--		return -ENOMEM;
--
--	ret = clk_bulk_get_all(dev, &devres->clks);
--	if (ret > 0) {
--		*clks = devres->clks;
--		devres->num_clks = ret;
--	} else {
--		devres_free(devres);
--		return ret;
--	}
--
--	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
--	if (!ret) {
--		devres_add(dev, devres);
--	} else {
--		clk_bulk_put_all(devres->num_clks, devres->clks);
--		devres_free(devres);
--	}
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
--
- int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
- 					       struct clk_bulk_data **clks)
- {
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 158c5072852e..b607482ca77e 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
- int __must_check devm_clk_bulk_get_all(struct device *dev,
- 				       struct clk_bulk_data **clks);
- 
--/**
-- * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consumer (managed)
-- * @dev: device for clock "consumer"
-- * @clks: pointer to the clk_bulk_data table of consumer
-- *
-- * Returns success (0) or negative errno.
-- *
-- * This helper function allows drivers to get all clocks of the
-- * consumer and enables them in one operation with management.
-- * The clks will automatically be disabled and freed when the device
-- * is unbound.
-- */
--
--int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--					      struct clk_bulk_data **clks);
--
- /**
-  * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consumer (managed)
-  * @dev: device for clock "consumer"
-@@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
- 	return 0;
- }
- 
--static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
--						struct clk_bulk_data **clks)
--{
--	return 0;
--}
--
- static inline int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
- 						struct clk_bulk_data **clks)
- {
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
--- 
-2.46.0
-
+Thanks,
+Andi
