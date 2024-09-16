@@ -1,60 +1,59 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D61315C122
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 16:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED57155A3C
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 16:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505913; cv=none; b=uy3xrT+Ekq9Z+gsoEqGUgPNoBSIJ7mISLYD+lYy5jvaINHEwD2tLN1Y8758M0xiDzRm35fFtr7avZA/nRHSpvx8HPC1iEQZ4AZLuLlNNFBWNDaQ731oCRr8YjKTbh0anJT2lHPGVuYEfmLgx+dzTsLZ+P/cCWfuskAKDTdpBuLI=
+	t=1726505913; cv=none; b=Q454FYDmZ61CUgKg7JHVpuEM/XFGET59j3wESxlqyu+oRxtYvte7NvfTti0NRUiAoh9svq3Ue5RRR+gqN/+IwVJeGM25PnpeuPaKYmQ3pOnfUDCPtf4Xr6p6THTBbXRe9JnMOHkAZlKzX5YyqkMqbwJecsJt1/b51cz7qIUnCQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726505913; c=relaxed/simple;
-	bh=K3lXrcROTvdy6rGll9oP1BBWq/QYqnRnIwHnaiLNNwQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=luNqjvYXkcA/AwJ768jXlM5j/t2fHoCfxua1v8wjPVEcOwKnLVylgtB+Bx3fqij7AJYwgIzeMgiHrJ6opP8nn4E54lgkj9sMINVPBgM4I+5dHUOSEyq1bc+CprGghQA2AfZ65ukPzKXUpShRj0Op3fbAfkQ2gEGflZKvO4Q0vkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XUgctqN5; arc=none smtp.client-ip=209.85.167.48
+	bh=s6i/fzSPozPo95wcaQqCNYjDpPyZpQB4dqJyJ9WhGrI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LCwbg5Xr5D4eP+auBqizZfOGuMbjbqlsgjFmlmZIZ6VMtw4ihU2EAKJKy2yr04T/6lFW0UMcWG9PfHW9xWDXAtMS6vlfxINjs2u/0nDw5CCi4ce4I0QdPJM1YEaPhQbYPMhXNrmCv9gLbP5StVi7jhaNTQdwcWX5j7JZOV/L8X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6XYr9Pl; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XUgctqN5"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53653682246so5380294e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 09:58:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6XYr9Pl"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso777665866b.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 09:58:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726505909; x=1727110709; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yk/h5FBiZK67j4ccJbtxk7Fvu6fYbqtAXQZenT1Ni5Y=;
-        b=XUgctqN5GYvPs/3K/Gyq0CMAgbcLGK/yz+l466y/NHAO0+aOSC5GtHDrcaTrljkY3F
-         hLdmSfdlQXIOuqf4v/Xg+tvNRmLBZ29kfS2zXVXPKgbTMIVB8SBjTf/covrO6zZKdm3S
-         3EZHkqPbZgge10Th0quLe0YD/sAJuVcCqNm3uiV0RTgec0CFi3Wa2X2sRT9dH81BJ0pG
-         gCqRWj54eEVhwjmnrmXQmekeSsYjBaSdm7zQML55PGtHuo51Q78izmL9CKYBdCQwFC30
-         TYURZ4jtyIYltINA7AKMJ5hkQgHaEJ8OQlnI3L7fMlodcIVeRwUpNiWCP8Qhmi08/Cka
-         akqg==
+        d=linaro.org; s=google; t=1726505908; x=1727110708; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=80BvolWRqd+vCna2rvdnH0ppBYcL8z4URj2M0qkUhYY=;
+        b=n6XYr9Pl0ECrNc2Upp/dfkDWAdMmj9WUOxGs+5YnNhFARRvTVrzvf1DGj9cAicv43g
+         lWCdITfHdM4/CqxULBHlpUTCdIcyp3yYGhGUK1kAk6XxyDxo4D2FtsbAGQkwvd2PNWoL
+         dd75Rtz/NS3+jW/KQWuRIJ23utscl5EwGOiumRlQN+snOK1FjLFZmWe/VnwwXq0csYc6
+         5V9zenJWYKcdK6C106A2jsV6hxOTf42rmyHvQtonuHCBgwlZTCIFwzxy3X0dcSEPj1uR
+         43svYl66t08jerwvB4za7i/ZYHXuf6KnlGHwKPXrLPyo/IWFF8VlHfapnTDDZaiApNIr
+         HQTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726505909; x=1727110709;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yk/h5FBiZK67j4ccJbtxk7Fvu6fYbqtAXQZenT1Ni5Y=;
-        b=fVJMLYMwrct9t34ieYu1tx022Z2/UMFwzeocyu7JmKDMBXBP209KVEYPY3rlvBsQSq
-         RPT+dpgZ1lrxOS3ZcpGo+4JIR+njFGk2nH5QltxlZqjsYKYVzXwXw1dsxUZMLaMBp8lz
-         uCFvkWIMQfFJBOvD0lWnc/zwsClzn7bBl57GjE+UvbYVj92J+4XqEX6Rwte9wXy4IC/1
-         qQWn7TymBhei74stAoTnKeFzIATynrZcwGHVzmEYJJOqvpgKKvntqflICeC2w9e/aGwy
-         ha/pl4AIQypkBMCCA+sYbgPH2ItsbteldNiGeErbZxg8EpLeizm4X1jZMnWn0yKh1uIB
-         dQFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMT/noN8RdHDEjnIBAQvaNGwgRzHJHTfb1n/3zxvKGnErscTm9lLxZELaFD4NAslrJUV5JmtEcbbL8019INJrH4A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YywnrXHhxjQ8jV9qf9dygwCujRBkZY+Pa7Ohwouw4L6PA1Uqbcm
-	cqcnPjLtgrQs7Yu/xQ9oeaAcc8pQTe1+lR04aMhpkCioQIVeU3l0HFLJkNDUzBg=
-X-Google-Smtp-Source: AGHT+IG1GyB4Uzmr1jsA2DlRryPeboo71WZg5vEXsdjAHjoidTLA1PP/1PSbdjCuFfXWUR7lA/E6iA==
-X-Received: by 2002:a05:6512:15a1:b0:52e:999b:7c01 with SMTP id 2adb3069b0e04-53678feb0c0mr8003888e87.48.1726505908290;
-        Mon, 16 Sep 2024 09:58:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726505908; x=1727110708;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=80BvolWRqd+vCna2rvdnH0ppBYcL8z4URj2M0qkUhYY=;
+        b=mV57fBwnn9A6jrO3bNlVY0Bq9Ix71CHoN1P7SlB5FIJuv+RFK1kyKYuCPQMyGwiK+J
+         V0phrK6mRH7KczXR9go331DleVrgwFJAP/bPc/paKeRNHKSCVziAns//E/8OZASyQx6w
+         /pZkOL92qFGWluRoDatl5MBV88bUtDR65eMMpRTvUjd698A8Qrhh0HOs6lUWd6o5jAbX
+         xVuB+R01nKORj0US6ZPB6hZkltTeDCiSMVnjPOLm/gvS8pPVlnqYuI0AzWhpDF4h6OTh
+         WY8kWwIeYN5I+4DvHcb/1ovCeojim6kruYs8uuUd3zmhKjhR5faWHtINzj2ktMZBgXNn
+         tzcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJJW+THtDge9lt5h6SwAUvFwrjhnLubBumnPkTXARDNFzJWfK/WQ/HwWoYlXhW9kTwB4EHuYst3BHzNQG+SllfaQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZrlFPR+C8Dv1YTtJP6lHF9ZLOnSJEfzCPFSmwz572Qkl/Zg6c
+	+2uRdc6z9jBU9A85akq97bduACiGMx/8oiP2v/VEBsp9xWhminngK5stOE/Aj/0=
+X-Google-Smtp-Source: AGHT+IF4ndpzFvHoUkc20adekDMu808u/yL3lssD9NKD3r/HJwjqBzQjqBvlnzv0kYnwmnQBQIJpgQ==
+X-Received: by 2002:a17:907:2ce6:b0:a86:b46b:860a with SMTP id a640c23a62f3a-a90296775ddmr1482776066b.54.1726505907790;
+        Mon, 16 Sep 2024 09:58:27 -0700 (PDT)
 Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90979ceb67sm32992966b.219.2024.09.16.09.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 16 Sep 2024 09:58:27 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 16 Sep 2024 17:58:26 +0100
-Subject: [PATCH 1/3] arm64: defconfig: enable Maxim max20339
+Subject: [PATCH 0/3] Google Pixel 6 (oriole): max20339 enabling
+Date: Mon, 16 Sep 2024 17:58:25 +0100
+Message-Id: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,9 +62,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240916-max20339-dts-v1-1-2f7ed7c24e83@linaro.org>
-References: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org>
-In-Reply-To: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org>
+X-B4-Tracking: v=1; b=H4sIALFj6GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Mz3dzECiMDY2NL3ZSSYt1kA1NDi2QLw6QkY0sloJaCotS0zAqwcdG
+ xtbUA0r3MVl4AAAA=
 To: Catalin Marinas <catalin.marinas@arm.com>, 
  Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -77,27 +76,35 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-Enable the Maxim max20339 as this is used by the gs101-oriole (Google
-Pixel 6) board.
+Hi,
+
+These patches enable the Maxim MAX20339 overvoltage protector with load
+switches for Google Pixel 6 (Oriole).
+
+The driver and binding have been proposed as part of
+https://lore.kernel.org/all/20240916-max20339-v1-0-b04ce8e8c471@linaro.org/
+
+This is the first device behind the USB plug and can gate all incoming
+power as well as protecting the input path from overvoltages.
+
+Its load switches are used for wireless charging and for OTG.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+André Draszik (3):
+      arm64: defconfig: enable Maxim max20339
+      arm64: dts: exynos: gs101-oriole: enable max20339 OVP
+      MAINTAINERS: add myself for Google Tensor SoC
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5fdbfea7a5b2..c43df2164201 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -778,6 +778,7 @@ CONFIG_REGULATOR_HI655X=y
- CONFIG_REGULATOR_LP873X=m
- CONFIG_REGULATOR_MAX77620=y
- CONFIG_REGULATOR_MAX8973=y
-+CONFIG_REGULATOR_MAX20339=m
- CONFIG_REGULATOR_MAX20411=m
- CONFIG_REGULATOR_MP8859=y
- CONFIG_REGULATOR_MT6315=m
+ MAINTAINERS                                        |  1 +
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 51 ++++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |  1 +
+ 3 files changed, 53 insertions(+)
+---
+base-commit: 7083504315d64199a329de322fce989e1e10f4f7
+change-id: 20240916-max20339-dts-c0518c81bb39
 
+Best regards,
 -- 
-2.46.0.662.g92d0881bb0-goog
+André Draszik <andre.draszik@linaro.org>
 
