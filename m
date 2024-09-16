@@ -1,232 +1,182 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from a7-29.smtp-out.eu-west-1.amazonses.com (a7-29.smtp-out.eu-west-1.amazonses.com [54.240.7.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442FB144304;
-	Mon, 16 Sep 2024 09:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92001155300;
+	Mon, 16 Sep 2024 12:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726478521; cv=none; b=LnKiaiUPKDa4OxPWBBBaeXIRlDBFxwzoDrXUEa7ALPMZ8J/Dm/YFcDL7WPghgYK+SbZB332ilK52Pg3SB5zrp8hPjCyuJMMtQlYsUIi95atw5D5qReiQZc6oo/gDFFxWHR3NjxtCNPbIu8jHY3NQvh76mJ7AscnHI5MB6oJAh2I=
+	t=1726488508; cv=none; b=moyQoJPOET2ic1I+i7s+huV9r+S+OZ03ceAsV0/KBysMYuh8zRquoWD63kzJ3HoenejFJ7vAyuKB5URDIi9NKaOhhO+a0JeBoLaahrz6aUWSd3D3QSOnqzRFnRizaBFQcw0vmWPlwxUysAflQqLV4D6YtLc2vQUDJgvSIIf/P7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726478521; c=relaxed/simple;
-	bh=A5qBoko8pAMwveL+v901lMUwnWa5DeXCPvgTk3pPW/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQmml5eCETbDg17bidwTZAA8VDHoSR10kPGIFa95eMYkZPJmIqKFUEa1yQ98kUFfsd89Cf14LPUvpWgKykO8al05CnNhcwBGnxmAX9MF/4njxeFNIIgYQhd7x6aBJ9NUobuRljfFJim7tKA1/wm40j8vg4+yCV9cprBsDO5jvtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsPGQlYB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726488508; c=relaxed/simple;
+	bh=VW9wIzceX735i9yX1DBCBq4IDNjS/8cghksJ8RpmIAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hrjMy7t4GfSYm5RKOfywTzM702qejHpQJQu6O9b0W65wBGaMv23l0Z6JNc8sWjF3QdZ7MnYX+IJN8neRxEvSIA/JS3VYjwL6otxjA+JvD+Dw2i2VzXwBIxI8FcTWznUA6UbvsBqd4SaQZd9yiuXVdICYQPjaxqnm7HYUC1fi23Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BiCCPcW7; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=D0+zkQ9J; arc=none smtp.client-ip=54.240.7.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsPGQlYB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D82BC4CEC4;
-	Mon, 16 Sep 2024 09:22:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726478521;
-	bh=A5qBoko8pAMwveL+v901lMUwnWa5DeXCPvgTk3pPW/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsPGQlYBPSTiFJMXX9gAj5l7zVJTiyzJzXpksrqR1WURfgNlsR0edZrPFBFebfxPh
-	 1naZciVddWbs2v5+7UTUIxbnrMUVzYbF5ER+r4g7G90IE6v7I0XAKjcFMgpbg4pig/
-	 wQ1XSQ+SdxEj2650FQa2tjaQT0SoQ+ylNtYEqDp9dTqjaKiOECALJJSYA7VNitOgMh
-	 AjMnnhcHLCDsPFpPK6KW1AURzv0wx3qvnIOHepmhmYrEopdQjswknmjwCMOOKs1mS4
-	 TWRHOApsZFFUD1JA6Wcz85YIauCpiAwmve4uFw0m7r0nd+IqVpw4u51eyKxUASgxfI
-	 5W4F6EODAOv9w==
-Date: Mon, 16 Sep 2024 11:21:57 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 15/27] regulator: add s2dos05 regulator support
-Message-ID: <35liocltjuxv3gjueuvpaytx44crebbc4c63atztakuq5dfpax@bquve7tkrvtx>
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-15-2d2efd5c5877@gmail.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BiCCPcW7";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="D0+zkQ9J"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726488505;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=VW9wIzceX735i9yX1DBCBq4IDNjS/8cghksJ8RpmIAs=;
+	b=BiCCPcW7FpAQ9cCduF+vD7iu7ISsJXjdWA445Ch7452VshuCOIpIApAaQy8cMBIC
+	pXQUxV2vp3KZ+5kmYJYUUFnfdLWh5LvY/RyeDpEPhxao8hrpMvSGkBCWk2Qsc7F8d+g
+	WPK3OkXvJcs4UwIPEjtqeegvzC2CnBo5L4D5K55UmdNcOhiC9pDzhD5g4b782q+C5au
+	dqEXBSdiRQvA8wEBfBF9O+eoUmIktQvEC2mzW+wVHh20IEa3gjLBs5K4LUisms3hvOD
+	3nW0Nh/ImCNiacG+A1CbN6F3q665uf+IGFGxoDKtvYyZ9CZRvTdCSo5kZC0omIMUT9n
+	oa2kbvt3OQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726488505;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=VW9wIzceX735i9yX1DBCBq4IDNjS/8cghksJ8RpmIAs=;
+	b=D0+zkQ9JwNw3ps90exTefnChDf6Q6MI3liaa3ZfKUbaUdywcVt1KjhlXOEPgnZL/
+	V5uPjAWBrBl45bxrM5a8nPqyOqKkGVGVJvY5QC0VOm5YxPHqO9zqhPHx2qt9TPiQUwP
+	BLsDok/7f9aroB4ixEojZ1d2d31QKY//z8BRcnjE=
+Message-ID: <01020191fabbea05-14368d2a-b504-4fad-b1a1-48435821d7f1-000000@eu-west-1.amazonses.com>
+Date: Mon, 16 Sep 2024 12:08:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-15-2d2efd5c5877@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] clk: Drop obsolete devm_clk_bulk_get_all_enable()
+ helper
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org
+References: <20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com>
+ <20240914-clk_bulk_ena_fix-v1-4-ce3537585c06@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240914-clk_bulk_ena_fix-v1-4-ce3537585c06@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.16-54.240.7.29
 
-On Fri, Sep 13, 2024 at 06:07:58PM +0300, Dzmitry Sankouski wrote:
-> S2dos05 has 1 buck and 4 LDO regulators, used for powering
-> panel/touchscreen.
+Il 14/09/24 20:04, Cristian Ciocaltea ha scritto:
+> Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> return the number of clocks stored in the clk_bulk_data table referenced
+> by the clks argument.  Without knowing the number, it's not possible to
+> iterate these clocks when needed, hence the argument is useless and
+> could have been simply removed.
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> A new helper devm_clk_bulk_get_all_enabled() has been introduced, which
+> is consistent with devm_clk_bulk_get_all() in terms of the returned
+> value.
 > 
+> Drop the obsolete function since all users switched to the new helper.
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 
-...
+This should probably be done in two (three?) cycles if we want to avoid
+immutable branches... but anyway, for the commit itself:
 
-> +#include <linux/bug.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/slab.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/driver.h>
-> +#include <linux/regulator/machine.h>
-> +#include <linux/regulator/of_regulator.h>
-> +#include <linux/mfd/samsung/core.h>
-> +#include <linux/regulator/s2dos05.h>
-> +#include <linux/i2c.h>
-> +
-> +struct s2dos05_data {
-> +	struct regmap *regmap;
-> +	struct device *dev;
-> +};
-> +
-> +static const struct regulator_ops s2dos05_ops = {
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Keep definitions together. This goes down, after all declarations and
-macros.
-
-> +	.list_voltage		= regulator_list_voltage_linear,
-> +	.map_voltage		= regulator_map_voltage_linear,
-> +	.is_enabled		= regulator_is_enabled_regmap,
-> +	.enable			= regulator_enable_regmap,
-> +	.disable		= regulator_disable_regmap,
-> +	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-> +	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
-> +	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
-> +	.set_active_discharge	= regulator_set_active_discharge_regmap,
-> +};
-> +
-> +#define _BUCK(macro)	S2DOS05_BUCK##macro
-> +#define _buck_ops(num)	s2dos05_ops##num
-> +
-> +#define _LDO(macro)	S2DOS05_LDO##macro
-> +#define _REG(ctrl)	S2DOS05_REG##ctrl
-> +#define _ldo_ops(num)	s2dos05_ops##num
-> +#define _MASK(macro)	S2DOS05_ENABLE_MASK##macro
-> +#define _TIME(macro)	S2DOS05_ENABLE_TIME##macro
-> +
-
-...
-
-> +
-> +static struct regulator_desc regulators[S2DOS05_REGULATOR_MAX] = {
-
-This should be const.
-
-> +		// name, id, ops, min_uv, uV_step, vsel_reg, enable_reg
-> +		LDO_DESC("ldo1", _LDO(1), &_ldo_ops(), _LDO(_MIN1),
-> +			_LDO(_STEP1), _REG(_LDO1_CFG),
-> +			_REG(_EN), _MASK(_L1), _TIME(_LDO), _REG(_LDO1_CFG)),
-> +		LDO_DESC("ldo2", _LDO(2), &_ldo_ops(), _LDO(_MIN1),
-> +			_LDO(_STEP1), _REG(_LDO2_CFG),
-> +			_REG(_EN), _MASK(_L2), _TIME(_LDO), _REG(_LDO2_CFG)),
-> +		LDO_DESC("ldo3", _LDO(3), &_ldo_ops(), _LDO(_MIN2),
-> +			_LDO(_STEP1), _REG(_LDO3_CFG),
-> +			_REG(_EN), _MASK(_L3), _TIME(_LDO), _REG(_LDO3_CFG)),
-> +		LDO_DESC("ldo4", _LDO(4), &_ldo_ops(), _LDO(_MIN2),
-> +			_LDO(_STEP1), _REG(_LDO4_CFG),
-> +			_REG(_EN), _MASK(_L4), _TIME(_LDO), _REG(_LDO4_CFG)),
-> +		BUCK_DESC("buck1", _BUCK(1), &_buck_ops(), _BUCK(_MIN1),
-> +			_BUCK(_STEP1), _REG(_BUCK_VOUT),
-> +			_REG(_EN), _MASK(_B1), _TIME(_BUCK), _REG(_BUCK_CFG)),
-> +};
-> +
-> +static int s2dos05_pmic_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-> +	struct of_regulator_match *rdata = NULL;
-> +	struct s2dos05_data *s2dos05;
-> +	struct regulator_config config = { };
-> +	unsigned int rdev_num = ARRAY_SIZE(regulators);
-> +	int i, ret;
-> +
-> +	s2dos05 = devm_kzalloc(dev, sizeof(struct s2dos05_data),
-> +				GFP_KERNEL);
-
-sizeof(*)
-
-> +	if (!s2dos05)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, s2dos05);
-> +
-> +	rdata = devm_kcalloc(dev, rdev_num, sizeof(*rdata), GFP_KERNEL);
-> +	if (!rdata)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < rdev_num; i++)
-> +		rdata[i].name = regulators[i].name;
-> +
-> +	s2dos05->regmap = iodev->regmap_pmic;
-> +	s2dos05->dev = dev;
-> +	if (!dev->of_node)
-> +		dev->of_node = dev->parent->of_node;
-> +
-> +	for (i = 0; i < rdev_num; i++) {
-> +		struct regulator_dev *regulator;
-> +
-> +		config.init_data = rdata[i].init_data;
-> +		config.of_node = rdata[i].of_node;
-> +		config.dev = dev;
-> +		config.driver_data = s2dos05;
-> +		regulator = devm_regulator_register(&pdev->dev,
-> +						&regulators[i], &config);
-> +		if (IS_ERR(regulator)) {
-> +			ret = PTR_ERR(regulator);
-> +			dev_err(&pdev->dev, "regulator init failed for %d\n",
-> +				i);
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct platform_device_id s2dos05_pmic_id[] = {
-> +	{ "s2dos05-regulator" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(platform, s2dos05_pmic_id);
-> +
-> +static struct platform_driver s2dos05_platform_driver = {
-> +	.driver = {
-> +		.name = "s2dos05",
-> +	},
-> +	.probe = s2dos05_pmic_probe,
-> +	.id_table = s2dos05_pmic_id,
-> +};
-> +module_platform_driver(s2dos05_platform_driver);
-> +
-> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
-> +MODULE_DESCRIPTION("SAMSUNG s2dos05 Regulator Driver");
-
-s/SAMSUNG/Samsung/
-
-Also, your Kconfig used different name, so please use one - probably
-Samsung.
-
-This applies to MFD patch as well.
-
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/regulator/s2dos05.h b/include/linux/regulator/s2dos05.h
-> new file mode 100644
-> index 000000000000..2e89fcbce769
-> --- /dev/null
-> +++ b/include/linux/regulator/s2dos05.h
-> @@ -0,0 +1,73 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-
-Are you sure that here (and other places) you want any newer GPL? This
-is quite odd. Does original code (from which you took 2016 copyrights)
-have this as well?
-
-Best regards,
-Krzysztof
-
+> ---
+>   drivers/clk/clk-devres.c | 32 --------------------------------
+>   include/linux/clk.h      | 22 ----------------------
+>   2 files changed, 54 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+> index 4203aaaa7544..14a657f336fe 100644
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
+> @@ -218,38 +218,6 @@ static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
+>   	clk_bulk_put_all(devres->num_clks, devres->clks);
+>   }
+>   
+> -int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> -					      struct clk_bulk_data **clks)
+> -{
+> -	struct clk_bulk_devres *devres;
+> -	int ret;
+> -
+> -	devres = devres_alloc(devm_clk_bulk_release_all_enable,
+> -			      sizeof(*devres), GFP_KERNEL);
+> -	if (!devres)
+> -		return -ENOMEM;
+> -
+> -	ret = clk_bulk_get_all(dev, &devres->clks);
+> -	if (ret > 0) {
+> -		*clks = devres->clks;
+> -		devres->num_clks = ret;
+> -	} else {
+> -		devres_free(devres);
+> -		return ret;
+> -	}
+> -
+> -	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
+> -	if (!ret) {
+> -		devres_add(dev, devres);
+> -	} else {
+> -		clk_bulk_put_all(devres->num_clks, devres->clks);
+> -		devres_free(devres);
+> -	}
+> -
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+> -
+>   int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+>   					       struct clk_bulk_data **clks)
+>   {
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 158c5072852e..b607482ca77e 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -495,22 +495,6 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
+>   int __must_check devm_clk_bulk_get_all(struct device *dev,
+>   				       struct clk_bulk_data **clks);
+>   
+> -/**
+> - * devm_clk_bulk_get_all_enable - Get and enable all clocks of the consumer (managed)
+> - * @dev: device for clock "consumer"
+> - * @clks: pointer to the clk_bulk_data table of consumer
+> - *
+> - * Returns success (0) or negative errno.
+> - *
+> - * This helper function allows drivers to get all clocks of the
+> - * consumer and enables them in one operation with management.
+> - * The clks will automatically be disabled and freed when the device
+> - * is unbound.
+> - */
+> -
+> -int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> -					      struct clk_bulk_data **clks);
+> -
+>   /**
+>    * devm_clk_bulk_get_all_enabled - Get and enable all clocks of the consumer (managed)
+>    * @dev: device for clock "consumer"
+> @@ -1052,12 +1036,6 @@ static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
+>   	return 0;
+>   }
+>   
+> -static inline int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+> -						struct clk_bulk_data **clks)
+> -{
+> -	return 0;
+> -}
+> -
+>   static inline int __must_check devm_clk_bulk_get_all_enabled(struct device *dev,
+>   						struct clk_bulk_data **clks)
+>   {
