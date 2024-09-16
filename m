@@ -1,110 +1,109 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED57155A3C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 16:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A84215B14F
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 19:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505913; cv=none; b=Q454FYDmZ61CUgKg7JHVpuEM/XFGET59j3wESxlqyu+oRxtYvte7NvfTti0NRUiAoh9svq3Ue5RRR+gqN/+IwVJeGM25PnpeuPaKYmQ3pOnfUDCPtf4Xr6p6THTBbXRe9JnMOHkAZlKzX5YyqkMqbwJecsJt1/b51cz7qIUnCQg=
+	t=1726515736; cv=none; b=kFd83nbEYSGdKNKxwtqm26RUe2/OGV0o4u9YS7bKUSXAqps2zGmyOvBMfMVDhgfjs/E3MLt/7c2YnGWSKzDLMH+aWAzTalprsf+QMYAatO/CmAl1EukF4r46FXLA1HlofciHv6tABmDLAi3Z2COTHO8qnrmzjGhywsaaQOlxVr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726505913; c=relaxed/simple;
-	bh=s6i/fzSPozPo95wcaQqCNYjDpPyZpQB4dqJyJ9WhGrI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LCwbg5Xr5D4eP+auBqizZfOGuMbjbqlsgjFmlmZIZ6VMtw4ihU2EAKJKy2yr04T/6lFW0UMcWG9PfHW9xWDXAtMS6vlfxINjs2u/0nDw5CCi4ce4I0QdPJM1YEaPhQbYPMhXNrmCv9gLbP5StVi7jhaNTQdwcWX5j7JZOV/L8X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6XYr9Pl; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1726515736; c=relaxed/simple;
+	bh=lcyglchujBFBYarX+9+nRRvNPewZg/te6keYre7+4yU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yx7uV/GaDth5Qw20QeAQeDSiPiM2p55Bx0sfh18JBuBiIGNVHih65U9p53ckDqyWAZRsAvrWe60XOQKScVBP9h3aW8RdSnUwKqyz7lBD0QqCRM6pawM0oRYudMHt/Va7izvhpOIbpfDtEg2GeS1ySuPf6kCojzuHSHgQHybd2oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qg958p/w; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6XYr9Pl"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso777665866b.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 09:58:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qg958p/w"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e04a6feef3so2423380b6e.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 12:42:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726505908; x=1727110708; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=80BvolWRqd+vCna2rvdnH0ppBYcL8z4URj2M0qkUhYY=;
-        b=n6XYr9Pl0ECrNc2Upp/dfkDWAdMmj9WUOxGs+5YnNhFARRvTVrzvf1DGj9cAicv43g
-         lWCdITfHdM4/CqxULBHlpUTCdIcyp3yYGhGUK1kAk6XxyDxo4D2FtsbAGQkwvd2PNWoL
-         dd75Rtz/NS3+jW/KQWuRIJ23utscl5EwGOiumRlQN+snOK1FjLFZmWe/VnwwXq0csYc6
-         5V9zenJWYKcdK6C106A2jsV6hxOTf42rmyHvQtonuHCBgwlZTCIFwzxy3X0dcSEPj1uR
-         43svYl66t08jerwvB4za7i/ZYHXuf6KnlGHwKPXrLPyo/IWFF8VlHfapnTDDZaiApNIr
-         HQTg==
+        d=linaro.org; s=google; t=1726515734; x=1727120534; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Vae9vaF6ym0VDAA7RUapTpBvo3oRMpI6vM8EcaxDOw=;
+        b=qg958p/w8pJztKTRswHxgHWg83toM/Dv9zqSi/r5EQwxtgj9MCpjfDOCHO8vXeIfI5
+         X0mm7V0RCPYcY1hUWsxbiXmM7xzUeu5geoaXJUh6gY7NVTfyDy7PlaIfh/FM3hD0jYay
+         bg7yneAwiu/0eMwIBthH+6ewVoHE3J68EPfKLB5dM9bIFBdmWzjGbsJuzeSla1UKsqr8
+         YB2SdoFUnfZNyqMlM4pfAsWzTyqGAKVGHPiCwHmQog476c8G41/AMNoy9UgWTPeH8ypC
+         tnzTo4Fh5X4TrZpEmaJ9JggTuXOKidsgZGrlyWGU7QYz0pUAS3G4uDRnsqV1jDaKZGIr
+         bc8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726505908; x=1727110708;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=80BvolWRqd+vCna2rvdnH0ppBYcL8z4URj2M0qkUhYY=;
-        b=mV57fBwnn9A6jrO3bNlVY0Bq9Ix71CHoN1P7SlB5FIJuv+RFK1kyKYuCPQMyGwiK+J
-         V0phrK6mRH7KczXR9go331DleVrgwFJAP/bPc/paKeRNHKSCVziAns//E/8OZASyQx6w
-         /pZkOL92qFGWluRoDatl5MBV88bUtDR65eMMpRTvUjd698A8Qrhh0HOs6lUWd6o5jAbX
-         xVuB+R01nKORj0US6ZPB6hZkltTeDCiSMVnjPOLm/gvS8pPVlnqYuI0AzWhpDF4h6OTh
-         WY8kWwIeYN5I+4DvHcb/1ovCeojim6kruYs8uuUd3zmhKjhR5faWHtINzj2ktMZBgXNn
-         tzcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJJW+THtDge9lt5h6SwAUvFwrjhnLubBumnPkTXARDNFzJWfK/WQ/HwWoYlXhW9kTwB4EHuYst3BHzNQG+SllfaQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZrlFPR+C8Dv1YTtJP6lHF9ZLOnSJEfzCPFSmwz572Qkl/Zg6c
-	+2uRdc6z9jBU9A85akq97bduACiGMx/8oiP2v/VEBsp9xWhminngK5stOE/Aj/0=
-X-Google-Smtp-Source: AGHT+IF4ndpzFvHoUkc20adekDMu808u/yL3lssD9NKD3r/HJwjqBzQjqBvlnzv0kYnwmnQBQIJpgQ==
-X-Received: by 2002:a17:907:2ce6:b0:a86:b46b:860a with SMTP id a640c23a62f3a-a90296775ddmr1482776066b.54.1726505907790;
-        Mon, 16 Sep 2024 09:58:27 -0700 (PDT)
-Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90979ceb67sm32992966b.219.2024.09.16.09.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 09:58:27 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH 0/3] Google Pixel 6 (oriole): max20339 enabling
-Date: Mon, 16 Sep 2024 17:58:25 +0100
-Message-Id: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org>
+        d=1e100.net; s=20230601; t=1726515734; x=1727120534;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Vae9vaF6ym0VDAA7RUapTpBvo3oRMpI6vM8EcaxDOw=;
+        b=PV0G3cqq/mdacM/ER+4OJGpYhGV2pQ078/H5W3VhqbIk9GyuOtgNWpCRDUTP4Q1hcv
+         bb3QtHlBnMoeHKFhDUkr95h0qvTyKSLxT8T/Ho4w2sb36fm2yonmTdCKZDNdWf9Cd8FV
+         pj7kPhmL34Xb+/AmkTx4yKuV8ZPjpFsvhAKiMhZdBEhGoJnBYCfAKeeK8ZJxc+hkMxes
+         or65lkLvJbonsJxPDMWeLZf2BW7j2gEeMOO+qZAFVoYxDe54xerOiV0hvrpiVFeXdApT
+         8uaX9P+XrYqXY+cMGQAdkWcaBEsropMw6kPbR6Dj7Zv3BO3HeDoXd3q98iKyGxpvtz3q
+         1zww==
+X-Forwarded-Encrypted: i=1; AJvYcCWZZQl8Sd2WtOShSmOYZtVHhi9Q+pXFfhiwxZNiXVXS7dFxvYiXi6tix4vfcUkvQ5+p4fY/ZdyhtwhsknUmXvbO0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPmvtnZx5/55FuoTEPRFIyiy0fQu123NpOBRA/LOoBiuOZFkY7
+	W4ghTzbr9IK86Dq5r5oH6HssyNeNTo+CQlsDDQ8vpOXyEikLyNe8NwSKPHHt7DdLs5K71f3mPWD
+	/w7sF9EUkPVnWo4w+Onvj9b2ofJtuqqxImeg1eQ==
+X-Google-Smtp-Source: AGHT+IEHRJqyTEP7TNGkPq0m/qtvbDXGv+SBsWnxLIdk1XL9NbvM1jaSDfshFTukNMQc8kU5usEIX11Xxvcs27pmdok=
+X-Received: by 2002:a05:6808:1a1f:b0:3e0:456a:9f66 with SMTP id
+ 5614622812f47-3e071a8512emr10131270b6e.3.1726515734157; Mon, 16 Sep 2024
+ 12:42:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIALFj6GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0Mz3dzECiMDY2NL3ZSSYt1kA1NDi2QLw6QkY0sloJaCotS0zAqwcdG
- xtbUA0r3MVl4AAAA=
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+References: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org> <20240916-max20339-dts-v1-3-2f7ed7c24e83@linaro.org>
+In-Reply-To: <20240916-max20339-dts-v1-3-2f7ed7c24e83@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 16 Sep 2024 20:42:03 +0100
+Message-ID: <CADrjBPoOZu_79OaXaq=5KzUT=eEhRdESwK7Np74Nsjx7cTRm8g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] MAINTAINERS: add myself for Google Tensor SoC
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Andr=C3=A9,
 
-These patches enable the Maxim MAX20339 overvoltage protector with load
-switches for Google Pixel 6 (Oriole).
+On Mon, 16 Sept 2024 at 17:58, Andr=C3=A9 Draszik <andre.draszik@linaro.org=
+> wrote:
+>
+> Add myself as maintainer for the Google Tensor SoC alongside Peter.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2cdd7cacec86..b6edb21b4f2d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9669,6 +9669,7 @@ T:        git git://git.kernel.org/pub/scm/linux/ke=
+rnel/git/chrome-platform/linux.git
+>  F:     drivers/firmware/google/
+>
+>  GOOGLE TENSOR SoC SUPPORT
+> +M:     Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-The driver and binding have been proposed as part of
-https://lore.kernel.org/all/20240916-max20339-v1-0-b04ce8e8c471@linaro.org/
+Please update this to: -
 
-This is the first device behind the USB plug and can gate all incoming
-power as well as protecting the input path from overvoltages.
++R:     Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-Its load switches are used for wireless charging and for OTG.
+The definition of which is
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
-André Draszik (3):
-      arm64: defconfig: enable Maxim max20339
-      arm64: dts: exynos: gs101-oriole: enable max20339 OVP
-      MAINTAINERS: add myself for Google Tensor SoC
+R: Designated *Reviewer*: FullName <address@domain>
+These reviewers should be CCed on patches.
 
- MAINTAINERS                                        |  1 +
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 51 ++++++++++++++++++++++
- arch/arm64/configs/defconfig                       |  1 +
- 3 files changed, 53 insertions(+)
----
-base-commit: 7083504315d64199a329de322fce989e1e10f4f7
-change-id: 20240916-max20339-dts-c0518c81bb39
+regards,
 
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Peter
