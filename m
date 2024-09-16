@@ -1,79 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8569D18C1F;
-	Sun, 15 Sep 2024 18:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8932148304;
+	Mon, 16 Sep 2024 09:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726423361; cv=none; b=VJb30SIuyyxVreoNREtXpYMF8CzrFSuSMu8DxXyhO02YJIabEPIlXbuImQYYSnK0lDeKxyp3RHI/ZkGfohqazmJXBH3ZlFziC+I2KgLhUnNHlwo/Qse747lxg6u9u8oYDfHD9xOKKcdwny1BrC9XVFVxTk23Z0dIC6jWdcH57Yo=
+	t=1726477755; cv=none; b=ks2S40liodGUCBgAwOQDZOJfmqR0Nspt8DCjOWisteGqmwAUmAh3Fl8uYtttZQT1F0xHdLYUj20zSWh3BuBcitwPiEJIapZFGEP91wZqPBPWCrxR03fHeWng6FzIE7ks4FxoxfkNKdyItdufhrz5HtmoBNKF6hLyhU3nXJyFRV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726423361; c=relaxed/simple;
-	bh=6k4/XHECOk225ChNvXsCNWtARIZ1ghjxB8A7Nh3z5KQ=;
+	s=arc-20240116; t=1726477755; c=relaxed/simple;
+	bh=6bAu07qqR/oy28Hk63f8SgDGRZgodwoDApVLtXIhnKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzfY3xfIK6Xo4cvjw3m/1mGCntyzVdDW+WPG/M+SVDjcIS8YqKkkXUapztRX07sqW21aDE+Cl8vIKe2+QuIXWiX/Rqrvjem6rqrujKFWZGZwyaoYZIb2ErwLrn6Yy5cvW8ECh4USzV52lLjp24lyTMerES5TEOGgc8rwNSQbgiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6Eug6aW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jh5r38Ox5cEBfGy568TCGNWyvQE5ofmf5Tl8mBcLPleVUZywEW4Iug2L+TjGURBRCqF3IjBLZZ6NcV1DSOzxwKPfL8Zzy5skwQOiHofvSCbiLPEK9c9HXZFnqM/55kffiSsKXskmxOGBBEFgDEta9kj3OO5405GJjc2DypJID2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWEPET8G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6Eug6aW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57AC1C4CEC3;
-	Sun, 15 Sep 2024 18:02:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWEPET8G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20F3C4CEC4;
+	Mon, 16 Sep 2024 09:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726423361;
-	bh=6k4/XHECOk225ChNvXsCNWtARIZ1ghjxB8A7Nh3z5KQ=;
+	s=k20201202; t=1726477754;
+	bh=6bAu07qqR/oy28Hk63f8SgDGRZgodwoDApVLtXIhnKU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m6Eug6aWR9x4kUqyS4PO7NemgW8AwX3Jjyaoe7jXxpMK18+8dGP5WRYHFIshC7f54
-	 NlSkxNQ/IkczZXmjHBdZ47bhbKtd7DfIP1Xe5lBiUvonpPIlD9P7s8igM15wAkqgwl
-	 5AQFI/aOlZZYETRdp2cmbFyuyHwc1uOhaAM1LmfjiBJCqoV+eycGaHhmUvNa90jXqv
-	 Np3VcMfYNNRMxb1O906JwoeNl4541mXV7pAecd0YEy5Q/Ax4zC32yQiobq6fhlD7e9
-	 sEbhxNehp8Nyx/qBOxgHVqRJKnDZqW2xTJCwSzIYh7k7aolKojXhXcwVkD3OSUDPnl
-	 1qedABguKbt6Q==
-Date: Sun, 15 Sep 2024 20:02:32 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Yan Zhen <yanzhen@vivo.com>
-Cc: f.fangjian@huawei.com, broonie@kernel.org, linus.walleij@linaro.org, 
-	heiko@sntech.de, krzk@kernel.org, orsonzhai@gmail.com, 
-	baolin.wang@linux.alibaba.com, ldewangan@nvidia.com, thierry.reding@gmail.com, 
-	jonathanh@nvidia.com, alim.akhtar@samsung.com, zhang.lyra@gmail.com, 
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, opensourec.kernel@vivo.com
-Subject: Re: [PATCH v1] spi: fix typo in the comment
-Message-ID: <gccw6hkujwcbrb5mdokvscg5xdyvj35hwgmvpatbb2am72zrak@4sxtmkr3jg4j>
-References: <20240914095213.298256-1-yanzhen@vivo.com>
+	b=jWEPET8GkRDhZlgwScXUjeqyarWO78GNRYSkz/w8ZpRRjHhDg/XQPWVoclsA0hYkW
+	 43B9rmTeVO5JALDYDUutwRRZlkYiPuHA7uh4MFiDsNjD9rsrkldQS9EQ22TUVhGMcB
+	 2KYpxXEdqqs/fIUpwTSHAJV0V2lW8QHCBC6VEgnUY58JJJenIgWHYXVdHrS/N9KvNV
+	 QvZJYvNXyVXO/B/csMhAztgdAD5RW4jz0EjaEB/3de/xQ07rsOqVTVZ/Yl1gAJrR1J
+	 XyR/AaG/dFz0Wt4jqE+QmPLDXu2sZcqPkoXrEOYRoemvRnBf1B2cJPPU5LWecB+Jrc
+	 dEjtkixUyXY6w==
+Date: Mon, 16 Sep 2024 11:09:11 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
+	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 14/27] mfd: sec-core: add s2dos05 support
+Message-ID: <konn3okav5pzval7cjbuhjgesvhhf7a2cmuz3cxsob4nn6sxgq@nz2bc3i3acx6>
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-14-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240914095213.298256-1-yanzhen@vivo.com>
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-14-2d2efd5c5877@gmail.com>
 
-Hi Yan,
-
-On Sat, Sep 14, 2024 at 05:52:13PM GMT, Yan Zhen wrote:
-> Correctly spelled comments make it easier for the reader to understand
-> the code.
+On Fri, Sep 13, 2024 at 06:07:57PM +0300, Dzmitry Sankouski wrote:
+> S2dos05 is a panel/touchscreen PMIC, often found in
+> Samsung phones. We define 2 sub-devices for which drivers will
+> be added in subsequent patches.
 > 
-> Replace 'progrom' with 'program' in the comment &
-> replace 'Recevie' with 'Receive' in the comment &
-> replace 'receieved' with 'received' in the comment &
-> replace 'ajacent' with 'adjacent' in the comment &
-> replace 'trasaction' with 'transaction' in the comment &
-> replace 'pecularity' with 'peculiarity' in the comment &
-> replace 'resiter' with 'register' in the comment &
-> replace 'tansmition' with 'transmission' in the comment &
-> replace 'Deufult' with 'Default' in the comment &
-> replace 'tansfer' with 'transfer' in the comment &
-> replace 'settign' with 'setting' in the comment.
-> 
-> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  drivers/mfd/sec-core.c           | 11 +++++++++++
+>  include/linux/mfd/samsung/core.h |  1 +
+>  2 files changed, 12 insertions(+)
 
-For what it matters, there are two blank lines here.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+Best regards,
+Krzysztof
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-
-Thanks,
-Andi
