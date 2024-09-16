@@ -1,60 +1,60 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AB15921D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D61315C122
 	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 16:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726505913; cv=none; b=AIZFrKbtUnA6O8UFDlkdhOJ+9QuMf0eSglORW3t64ODmpHnNhqygv91r9WdpfuRzWkVZq+lmuOsDFXteovAJoOc2peyqxtBwJovs73OW9dJUJmKwYTHO5yXZ8s/VvjeFS8XH08hvBH5FBG+ocfxYzrWJ2kMpg3Ua/Eke0CNpr8A=
+	t=1726505913; cv=none; b=uy3xrT+Ekq9Z+gsoEqGUgPNoBSIJ7mISLYD+lYy5jvaINHEwD2tLN1Y8758M0xiDzRm35fFtr7avZA/nRHSpvx8HPC1iEQZ4AZLuLlNNFBWNDaQ731oCRr8YjKTbh0anJT2lHPGVuYEfmLgx+dzTsLZ+P/cCWfuskAKDTdpBuLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726505913; c=relaxed/simple;
-	bh=Ss6gV6KoFmAdg0J9ELwBTb2pxCTiB9/8V66BGMLwpSQ=;
+	bh=K3lXrcROTvdy6rGll9oP1BBWq/QYqnRnIwHnaiLNNwQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kc1oDLnBMUJybaPjSJ8RKj93KkboOOU9uiYkWUOR//SglChbVRWmJ27XS6duElADhiWj97xm0cTo5J7tvrhQwDPg0jlPPdqbVWZs/dd4F6AyEHk4LsT64hcsF1/iTcFyV7r5xnfuxc9HSaezLRZrXQFaOztvSCneVSDbB3r+770=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VR1ZGriI; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:To:Cc; b=luNqjvYXkcA/AwJ768jXlM5j/t2fHoCfxua1v8wjPVEcOwKnLVylgtB+Bx3fqij7AJYwgIzeMgiHrJ6opP8nn4E54lgkj9sMINVPBgM4I+5dHUOSEyq1bc+CprGghQA2AfZ65ukPzKXUpShRj0Op3fbAfkQ2gEGflZKvO4Q0vkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XUgctqN5; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VR1ZGriI"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d100e9ce0so586437166b.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XUgctqN5"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53653682246so5380294e87.1
         for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Sep 2024 09:58:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1726505909; x=1727110709; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kkXSCl90OLgwAeRvpNGzT2qKg9IVxF5VpqwKkA/VtMo=;
-        b=VR1ZGriIfF6n8mZYz2dFhv6xDsUc0m7rLKucu+yYzSKQe25KzRk804DnA9JmOhqmAn
-         kBezIaGGg2inE2lBRc5RjB16iXhEcmi2Sd4DsowQbeLNCRTbDBtEjjh5mfApfHt7Ph7O
-         Lip86U+18D+vQbc7FwPsqKa1pHUYkvqsk9r4qhc8Exod00Fkskfd9KXPx5o17dFkdw8B
-         Tjv3PxKjsPFT+LTZWQ5reXOIuYXaja+BT2+m6ZJOLF+tdSo8BL+XBhpdNHRwDnflyQWS
-         SWc8z5KTQa/t0uGVo2eiIpGQsKw+GAe6SExNRMg7snLWD+fAnKjGPIM3Gk05taW9vMG6
-         Nd4g==
+        bh=yk/h5FBiZK67j4ccJbtxk7Fvu6fYbqtAXQZenT1Ni5Y=;
+        b=XUgctqN5GYvPs/3K/Gyq0CMAgbcLGK/yz+l466y/NHAO0+aOSC5GtHDrcaTrljkY3F
+         hLdmSfdlQXIOuqf4v/Xg+tvNRmLBZ29kfS2zXVXPKgbTMIVB8SBjTf/covrO6zZKdm3S
+         3EZHkqPbZgge10Th0quLe0YD/sAJuVcCqNm3uiV0RTgec0CFi3Wa2X2sRT9dH81BJ0pG
+         gCqRWj54eEVhwjmnrmXQmekeSsYjBaSdm7zQML55PGtHuo51Q78izmL9CKYBdCQwFC30
+         TYURZ4jtyIYltINA7AKMJ5hkQgHaEJ8OQlnI3L7fMlodcIVeRwUpNiWCP8Qhmi08/Cka
+         akqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1726505909; x=1727110709;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kkXSCl90OLgwAeRvpNGzT2qKg9IVxF5VpqwKkA/VtMo=;
-        b=Y7paBjivMvV4gAz+1tWNxi0Z1RKssnnpI3B4gP9e6rclPWtWXSs0J6pCtaKK98E80W
-         ORN1cR30nRMbKK0edFaF07frNjLSzGy9QIQr2tCftatzQsU9670LrMe7tQCXKXdMsBlE
-         2eeUG9wYHlrF86+66Mx61HadmlzuSjqgff56S+xtu3ArLEFCCe8ak6Rl/vlcw1jJ9IIO
-         LSfcpWAz2/9UnE2byIKHFvTDV3i4YifFtewG2K5ld0JV73PmXcgiX4C1S9SsKzOoLu7t
-         ZH/hG1IQJilh+zDuoMJLU3zSU5dzW2MZRjBknJ505LD38n73wdQHp9ppluwcRFb9dcII
-         9MJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUt/QDsLte8wSZ6AbNVHL3Hknq5fDm74uCt1qoqNW+H4vV/TuFZ7Li6ul5YuGDmEvx1dFE8/mFSC4dEd0KOiTOALw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiQFIm7Qjm68NZtuRY3IfCXN+Ndk3cJY89cKppaGqxGdkEkNIP
-	QiZ+ebMn/CS8Wy3RJs8DO6EdKtsDcLweK81Hst+HyPWBoIq429/6Uc6DQDohZOY=
-X-Google-Smtp-Source: AGHT+IG8dh+X7wZY1cb84r7WJlZM+YVfRmpBzj+gbX68DS4yZ1mEVHyrVMiyu3tma0D7kvq39y4DbQ==
-X-Received: by 2002:a17:906:d555:b0:a8d:5e1a:8d80 with SMTP id a640c23a62f3a-a902961ab79mr1721767666b.40.1726505909325;
-        Mon, 16 Sep 2024 09:58:29 -0700 (PDT)
+        bh=yk/h5FBiZK67j4ccJbtxk7Fvu6fYbqtAXQZenT1Ni5Y=;
+        b=fVJMLYMwrct9t34ieYu1tx022Z2/UMFwzeocyu7JmKDMBXBP209KVEYPY3rlvBsQSq
+         RPT+dpgZ1lrxOS3ZcpGo+4JIR+njFGk2nH5QltxlZqjsYKYVzXwXw1dsxUZMLaMBp8lz
+         uCFvkWIMQfFJBOvD0lWnc/zwsClzn7bBl57GjE+UvbYVj92J+4XqEX6Rwte9wXy4IC/1
+         qQWn7TymBhei74stAoTnKeFzIATynrZcwGHVzmEYJJOqvpgKKvntqflICeC2w9e/aGwy
+         ha/pl4AIQypkBMCCA+sYbgPH2ItsbteldNiGeErbZxg8EpLeizm4X1jZMnWn0yKh1uIB
+         dQFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMT/noN8RdHDEjnIBAQvaNGwgRzHJHTfb1n/3zxvKGnErscTm9lLxZELaFD4NAslrJUV5JmtEcbbL8019INJrH4A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YywnrXHhxjQ8jV9qf9dygwCujRBkZY+Pa7Ohwouw4L6PA1Uqbcm
+	cqcnPjLtgrQs7Yu/xQ9oeaAcc8pQTe1+lR04aMhpkCioQIVeU3l0HFLJkNDUzBg=
+X-Google-Smtp-Source: AGHT+IG1GyB4Uzmr1jsA2DlRryPeboo71WZg5vEXsdjAHjoidTLA1PP/1PSbdjCuFfXWUR7lA/E6iA==
+X-Received: by 2002:a05:6512:15a1:b0:52e:999b:7c01 with SMTP id 2adb3069b0e04-53678feb0c0mr8003888e87.48.1726505908290;
+        Mon, 16 Sep 2024 09:58:28 -0700 (PDT)
 Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90979ceb67sm32992966b.219.2024.09.16.09.58.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90979ceb67sm32992966b.219.2024.09.16.09.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2024 09:58:29 -0700 (PDT)
+        Mon, 16 Sep 2024 09:58:27 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 16 Sep 2024 17:58:28 +0100
-Subject: [PATCH 3/3] MAINTAINERS: add myself for Google Tensor SoC
+Date: Mon, 16 Sep 2024 17:58:26 +0100
+Subject: [PATCH 1/3] arm64: defconfig: enable Maxim max20339
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240916-max20339-dts-v1-3-2f7ed7c24e83@linaro.org>
+Message-Id: <20240916-max20339-dts-v1-1-2f7ed7c24e83@linaro.org>
 References: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org>
 In-Reply-To: <20240916-max20339-dts-v1-0-2f7ed7c24e83@linaro.org>
 To: Catalin Marinas <catalin.marinas@arm.com>, 
@@ -77,25 +77,26 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-Add myself as maintainer for the Google Tensor SoC alongside Peter.
+Enable the Maxim max20339 as this is used by the gs101-oriole (Google
+Pixel 6) board.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- MAINTAINERS | 1 +
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2cdd7cacec86..b6edb21b4f2d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9669,6 +9669,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git
- F:	drivers/firmware/google/
- 
- GOOGLE TENSOR SoC SUPPORT
-+M:	André Draszik <andre.draszik@linaro.org>
- M:	Peter Griffin <peter.griffin@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5fdbfea7a5b2..c43df2164201 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -778,6 +778,7 @@ CONFIG_REGULATOR_HI655X=y
+ CONFIG_REGULATOR_LP873X=m
+ CONFIG_REGULATOR_MAX77620=y
+ CONFIG_REGULATOR_MAX8973=y
++CONFIG_REGULATOR_MAX20339=m
+ CONFIG_REGULATOR_MAX20411=m
+ CONFIG_REGULATOR_MP8859=y
+ CONFIG_REGULATOR_MT6315=m
 
 -- 
 2.46.0.662.g92d0881bb0-goog
