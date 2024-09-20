@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317E1E4B2;
-	Fri, 20 Sep 2024 12:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7131E4B2;
+	Fri, 20 Sep 2024 12:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836049; cv=none; b=RQ7njh6c/1Z1iznBWwRwxxvvbiGtBlWjTi9aFPeWQyYXaf4EvT360LK+gpB9QgW+aU/2fUc19hRpHGn+C9MyYeyYwufz030bWvAIxUobmOEcIKeUAhE01eSjdBGWk5KXoXlGF3qfB+GUOtsoP5ORZ+FEDKY6NYfhEP/A4iryWC0=
+	t=1726836205; cv=none; b=jw+N8QG0ENgH6+zs+WAgEB1P2dtFHfsLHT0mIveqjVKqXDwlbZ3sveA5MKhehdlGeqpZd/jWHO7Mz6IsT3fLsO1bO2cPBPIr8915ip/5NDQ/gSt/1TUHuybxWvyen8dUVnI2rh42pVf43plQIZCBtmYv+hLJ38mR7TgV2MyWRYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836049; c=relaxed/simple;
-	bh=+jfR1XeRU+m7AtoWuJb16GMK+Un011ipJtUW+b5eEK0=;
+	s=arc-20240116; t=1726836205; c=relaxed/simple;
+	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BABYtZCyM0Yri71xcyJGtvWXLrk2Yht2Vy5TKgfttyzpzTvgFXc4EDsoERbWspMMLNO09ZFkiYwDSZlVW97ZKC/vAV2YgRI18VyIJ9/ExvwM9ESWDn4zS+xqn/m2BaArC5L8C/FhdOcSmscMN663UiwxloUOZ7Clj/e5izCajf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVn1Ry9C; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HHVToTzU43QfbdIJ/YYOOj5U7pyeJVpv8rHjFK/LMIH3IoC56mvFevNY99+I9t93oAhoBWtyim+ZFPvl+Y59PKtgQQHwoackJVsATyq76gw38qBa7CNTnI7120BQnYGh17K4Usnoqs5ALNbz6rOMGTvVE1rxy8fGvoGHsT8ehg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLBxDlQE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVn1Ry9C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED12C4CEC3;
-	Fri, 20 Sep 2024 12:40:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLBxDlQE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB329C4CEC3;
+	Fri, 20 Sep 2024 12:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726836049;
-	bh=+jfR1XeRU+m7AtoWuJb16GMK+Un011ipJtUW+b5eEK0=;
+	s=k20201202; t=1726836204;
+	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aVn1Ry9CamWpFP3xB9ltitw7mVRuE1p5tC+vG4aQ86XUkT4NCqLm/OlcjH36i9F3a
-	 6tfFyCin4KcO9Z+5UKhqNuvCv8zRUUC4zXkO9k0GgV6OQO5eGkG42As3Srgowv0MUT
-	 m7f2JZfNw0poRGnbA35xge39KGxFpX6GV3SiguFs8IH1idKO3oDXG3Gz2jdifF43GW
-	 V8CrRiGwRk1YkkecIiZggfJc/TKQ9yrToivRdAvWpjnz0Ckjga/6DHEU4Z/QlKteW6
-	 Kps7Dn0JRGhHfSEc99i3LJxjCzfrl8nKGcgkt/Mrf2Esz2emGVPrOoBiRSbgOUuKLG
-	 SEnfFBsWOfhKA==
-Message-ID: <f64c303e-8a88-4aee-9110-ee4a06a3d67f@kernel.org>
-Date: Fri, 20 Sep 2024 14:40:42 +0200
+	b=cLBxDlQEtybkGjB66prbdRTwZuBVdzT93kUTdR0i6MoOYAGSOV5dwl0Bcx+3muMET
+	 JyKipgaSRytC2OkVEijHgzDMjlOLTPQGX/7quMhwcq7mGcit45CM1fNZYErugdSMLb
+	 F2A5DTBtb6IiKdf6Baj55A7zFYrMTTYXCYABGfk25TWjxfX74o25D4Ytr/1dk1L6y9
+	 yqRQ6O9e+emHBprJyrd734OAs2+E77Y8lTyS56q2I5E0gmBD7D4p3x9CIkaSAV8Pxt
+	 hGgTvEFhyfCX4iyVFTulFkQBxrr35pJr8yKmpIElqE0OiIgONeAWLhzz0CVAea4CLm
+	 UPv6zRRU4ZfCQ==
+Message-ID: <04ad8ea5-2c76-4007-b9ad-87b935072b8b@kernel.org>
+Date: Fri, 20 Sep 2024 14:43:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,14 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] drm/exynos: exynos7_drm_decon: fix suspended
- condition in decon_commit()
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alim Akhtar <alim.akhtar@samsung.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
- <20240919-exynosdrm-decon-v1-2-6c5861c1cb04@disroot.org>
+Subject: Re: [PATCH v2] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+To: Inbaraj E <inbaraj.e@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
+References: <CGME20240919124112epcas5p1527a15ea137d853dee5625902769580e@epcas5p1.samsung.com>
+ <20240919123954.33000-1-inbaraj.e@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,21 +88,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240919-exynosdrm-decon-v1-2-6c5861c1cb04@disroot.org>
+In-Reply-To: <20240919123954.33000-1-inbaraj.e@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 17:11, Kaustabh Chakraborty wrote:
-> decon_commit() gets called during atomic_enable. At this stage, DECON is
-> suspended, and thus the function refuses to run. Fix the suspended
-> condition checking in decon_commit().
+On 19/09/2024 14:39, Inbaraj E wrote:
+> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
+> block. When we gate ACLK or PCLK, the clock framework will subsequently
+> disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
+> system level halt.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
+> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
+> streaming through pm_runtime_put system is getting halted. So marking
+> PLL_CAM_CSI as critical to prevent disabling.
 
-If this is a fix, then you miss fixes tag and cc-stable. However the
-explanation seems just incomplete. This looked like a intentional code,
-so you should explain really why original approach was wrong.
+No, please do not send new versions while discussion is going.
+
+See my replies in previous version.
+
+Also, if this stays, then you miss Cc-stable.
 
 Best regards,
 Krzysztof
