@@ -1,58 +1,58 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF304D8D0
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Sep 2024 04:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0349F22309
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Sep 2024 04:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726805563; cv=none; b=tKAOWaDsl0s+EmRCXqbr4vQtlcSEiLYLegHvq7hNsevrwpjMuVAtOUx+BsbV60UGNLiMqZ7OEdLTgqFKupo6143OTP9T0maEMRhKSPohOJUMfBk/T0h4e6Q9IGouNjF/Eiy9pGQre8pX1pdAaKgx8FtRYpErQnl/hi+yyuKevpY=
+	t=1726807452; cv=none; b=lkDsGlA91Ovs55ESEjxdL2U/lYi2828R/zRhwxlDRHuNlCsVJD1ccwBfUZRnBQS0iyjRfeEMFXoFfrShP0q22x5XU5plp8tW/49hVfI0FgRzir1RDRmS9rMLFJEs9ywkqllnA5gGw9ar7j5SwQbHOXAdXwoJA8e1B3gz2QJydjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726805563; c=relaxed/simple;
-	bh=v/JP9+dnSPQ/EzDmys6ognVMWUo7kv+BV4Dmyx0DlF0=;
+	s=arc-20240116; t=1726807452; c=relaxed/simple;
+	bh=dXQ4KZEjnb/YAaEmi62WIa7KI4i7ms8EM3iQe0mTNyY=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Mkzj0SdqbGaMbtq/tVYw9xUSKxavS8bkPU7Wz90/5YW6kexUd6c6ckx7hie1y3F51+jNDL8KjURXe5g0Xqnf5sLmxmZ5YzBcWOwKF3ulutHMCPsXlQbr6utwPdTC2EQPj/doVl9mBE2vlAWw+TMsklvNweEX60KIjRUEzEsWwgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FxDHTec9; arc=none smtp.client-ip=203.254.224.33
+	 Content-Type:References; b=VX5L2rxcqEiV+BtCkrryYIT6Kl+cTjMoDgwyO1pIUmmwQExXAynH1jIWzcX5//sqoovqxfv1Wkt/4AroPrCbQUTxQa214Yq6tLpNFyFV7gmG3Y0yj9fK4pBQqb89dHv2DgGmlS6etD2DuRt1j9n+ndCE/sWaBfboiUZh22ZpyDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Gr7i9BhJ; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FxDHTec9"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240920041238epoutp036f2083a7bbf234517b1bb5a254254cf5~22IGbnosG2330023300epoutp03f
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Sep 2024 04:12:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240920041238epoutp036f2083a7bbf234517b1bb5a254254cf5~22IGbnosG2330023300epoutp03f
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Gr7i9BhJ"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240920044407epoutp01d6d093926e5cf202e3a4f1b74c034288~22jlgmGD90475704757epoutp01g
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Sep 2024 04:44:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240920044407epoutp01d6d093926e5cf202e3a4f1b74c034288~22jlgmGD90475704757epoutp01g
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726805558;
-	bh=aBM3hbgXChryLwT6K57OXYPNbI0aIxRu0X2/9XMYaJI=;
+	s=mail20170921; t=1726807447;
+	bh=KrrZvreUocZnG1ZsUMTCFrbAlt2M8tG4240a84PDK/A=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=FxDHTec9yj2ZZGn2dZOGPeHAHmEYDya7ADLOi8hAEcywN53TjC07rj7GHM2DK3AtM
-	 1DTXJ3xjd9+qQjJeJ7Yva7vAC/MGx8rnoYHV2Uq7/cpFtWZHE8u8oLEQNT53vHUJDD
-	 gDHR33Xo6hV4GxbWpXL9wkU7ZNqhe+nEQ8FWLi3I=
+	b=Gr7i9BhJgKE4HLpxxxBMPt1M/tWez5MZrjDMtH/kR5IFLmnXfA5iSLp6qwAOYxWQi
+	 WuaOV6ZEIBh4/dxqJb/XM2Cn6FyhdcF6w6wOz2gsDJmJMjAYihNxB39vrhCfxEYMUm
+	 RL4NlTSN4vVgpCY3V+bIEGh1E6969lNC54eMc7WA=
 Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240920041237epcas5p11a04bf5cd4d28dd4d318c503ffa93c3b~22IF-IkVg1270012700epcas5p1t;
-	Fri, 20 Sep 2024 04:12:37 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4X8zW8244Wz4x9Q0; Fri, 20 Sep
-	2024 04:12:36 +0000 (GMT)
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240920044406epcas5p34e75d9b0445e4bd42179653e26df6c3f~22jlFLVMB1233612336epcas5p3q;
+	Fri, 20 Sep 2024 04:44:06 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4X90CS6V65z4x9QL; Fri, 20 Sep
+	2024 04:44:04 +0000 (GMT)
 Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
 	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E5.C5.19863.236FCE66; Fri, 20 Sep 2024 13:12:34 +0900 (KST)
+	BD.4B.19863.49DFCE66; Fri, 20 Sep 2024 13:44:04 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240920040449epcas5p196b268539c2dabd69045a45af241ebcc~22BRjN6bu2174021740epcas5p1l;
-	Fri, 20 Sep 2024 04:04:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240920041559epcas5p22b8f5ce6dd97df2c852fd4a04cf918ee~22LBji84I0647406474epcas5p2D;
+	Fri, 20 Sep 2024 04:15:59 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240920040449epsmtrp2d3c54926f2f4f80f95fe32eb8f921242~22BRihgkX2326523265epsmtrp2G;
-	Fri, 20 Sep 2024 04:04:49 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-3c-66ecf6325074
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8E.D9.19367.164FCE66; Fri, 20 Sep 2024 13:04:49 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	20240920041559epsmtrp28b5b36fc70a24e0eba301afd59a5309f~22LBi2H_K2949829498epsmtrp24;
+	Fri, 20 Sep 2024 04:15:59 +0000 (GMT)
+X-AuditID: b6c32a50-c73ff70000004d97-76-66ecfd946373
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	70.26.08456.FF6FCE66; Fri, 20 Sep 2024 13:15:59 +0900 (KST)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20240920040447epsmtip12931110a4a3846ee98848d5ba8423091~22BP9Q0Yl2097220972epsmtip1V;
-	Fri, 20 Sep 2024 04:04:47 +0000 (GMT)
+	20240920041557epsmtip26fe6da3caf5963ad4bbb3afbcac3ae7d~22K-988FJ0323603236epsmtip2x;
+	Fri, 20 Sep 2024 04:15:57 +0000 (GMT)
 From: "Inbaraj E" <inbaraj.e@samsung.com>
 To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
 	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
@@ -60,53 +60,54 @@ To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
 	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
 	<s.nawrocki@samsung.com>
 Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
+In-Reply-To: 
 Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-Date: Fri, 20 Sep 2024 09:34:46 +0530
-Message-ID: <011101db0b12$3c75edc0$b561c940$@samsung.com>
+Date: Fri, 20 Sep 2024 09:45:56 +0530
+Message-ID: <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsr6Fq/7A=
+Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsr6Fq/7CAAAL6cA==
 Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmpq7RtzdpBvfXilo8mLeNzeL6l+es
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmpu6Uv2/SDHo+GFk8mLeNzeL6l+es
 	FjcP7GSyOH9+A7vFx557rBaXd81hs5hxfh+TxcVTrhaLtn5htzj8pp3V4t+1jSwO3B7vb7Sy
 	e2xa1cnm0bdlFaPH501yASxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
 	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
-	S/PS9fJSS6wMDQyMTIEKE7Izznxbz1TwW7jiw9setgbGfQJdjJwcEgImErPvf2PsYuTiEBLY
-	wyhx5egMRpCEkMAnRomth2ohEkD2h5utbDAd108fZodI7GSUeDtzFhOE85JRYmHjS1aQKjYB
-	TYmbR/+BzRURWMok0XnvBztIglnATGLL3ftgRZwCdhJLju0GiwsLuEjM+HeJGcRmEVCVmDLv
-	JBOIzStgKXGw6xozhC0ocXLmExaIOfIS29/OYYY4SUHi59NlYDNFBPwkjq97zQxRIy5x9GcP
-	VM1SDoljreEQtovE/JNToN4Rlnh1fAs7hC0l8fndXqi4j8T+Ob8YIewMiWPbl7NC2PYSB67M
-	AbqBA2i+psT6XfoQYVmJqafWMUGs5ZPo/f2ECSLOK7FjHoytLDHzyH2o8ZISOy/vZJnAqDQL
-	yWezkHw2C8kHsxC2LWBkWcUolVpQnJuemmxaYKibl1oOj/Hk/NxNjOBEqxWwg3H1hr96hxiZ
-	OBgPMUpwMCuJ8Ip/eJkmxJuSWFmVWpQfX1Sak1p8iNEUGN4TmaVEk/OBqT6vJN7QxNLAxMzM
-	zMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQamhWp8c267T+rzDL4+7b6ZocvvaTK2
-	+5+xau3ftihar2HCohb+By5S3ku8BZ+ZT5xTLi2TqX5E/IYf695DkR+9vmUvPHY7YJV8ao7K
-	Bmap0rIAwbdcn6eczPluEPS9dv4HqfKbph/25ZicyzW51PZv4hrHgHztizN3RNyeMzF/p/LJ
-	JAMnY03zO4c4ynfMLb7vvDpx9ne99Oqj6WcXzSm7x3WutTVAvcCAe32JfeicrGfaMb9tkmOM
-	St2i8//otqrNnciUpaYzzz9h7qYbaZziM2eV3W5wnvz2Sx7Hlb1rV1+RKVC8yyiywOn7lI3F
-	e3QOxr5a1DPlY9PE/8y2E3az3inQX3+2e2n+gphJ5048UmIpzkg01GIuKk4EAONOJwk9BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTjfxy5s0g4MTOSwezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErowz39YzFfwWrvjwtoetgXGfQBcjJ4eE
-	gInE9dOH2bsYuTiEBLYzSrQ0dTBBJCQlZv+ezg5hC0us/Pccqug5o8S8A4tYQBJsApoSN4/+
-	YwRJiAisZZLo2L6SESTBLGAhsfzPdTaIjgVMErenzwcbxSlgJ7Hk2G4wW1jARWLGv0vMIDaL
-	gKrElHknwVbzClhKHOy6xgxhC0qcnPmEBWKotkTvw1aoBfIS29/OYYY4T0Hi59NlrCC2iICf
-	xPF1r5khasQljv7sYZ7AKDwLyahZSEbNQjJqFpKWBYwsqxhFUwuKc9NzkwsM9YoTc4tL89L1
-	kvNzNzGC40wraAfjsvV/9Q4xMnEwHmKU4GBWEuEV//AyTYg3JbGyKrUoP76oNCe1+BCjNAeL
-	kjivck5nipBAemJJanZqakFqEUyWiYNTqoFJaJPKuvUX4xX4qw91qHTNy5dmmnvrdlDkhdTL
-	08+Gfjm37G+GaVrTqknSpQE3Hv489W2P8fOeuqopX+Vy1jqFXW54+rnrvClvDdcyD93Ib9Pn
-	NFspOwZM8HL+s6X44vsVCb1dt9il5bNnfBB89mq6psWE76seH6pbvv/z3d857FLva/O39Ry8
-	LvaIWYvLOD+EkX+ly4OW2MYpTPW9PPxfmB4s0Ap5dvfvlUX37yz3uZ9rc7JXYt3j/5YNMVan
-	3v5ep759hZTerH/l/y/5cvck95/ep844+/HO8xPTFIp+Vlk7Oi9rlc46djj/WZit0IKtzS9s
-	wu7zJHTuPPK3aXLWzkucKm55/SJ37lzM3r5ISYmlOCPRUIu5qDgRAPzvJKYiAwAA
-X-CMS-MailID: 20240920040449epcas5p196b268539c2dabd69045a45af241ebcc
+	S/PS9fJSS6wMDQyMTIEKE7IzDh1sZyyYI1dxfdFStgbGZskuRk4OCQETid9TDrKD2EICexgl
+	jhyog7A/MUpcWl/ZxcgFZH9jlJj3cRIbTMO0+UsZIRJ7GSVm3LrCDuG8ZJR4uW0NWBWbgKbE
+	zaP/wKpEBJYySXTe+wG2g1nATGLL3fusXYwcHJwCvBIT/lmDhIUFXCRm/LvEDBJmEVCV+PHE
+	GCTMK2ApcWLtfUYIW1Di5MwnLBBTtCWWLXzNDHGQgsTPp8tYQWwRgTCJZVMPMkPUiEsc/dnD
+	DHKChMBKDomDs9aBrZUA2jXxlTFEr7DEq+Nb2CFsKYnP7/ZCPekjsX/OL0YIO0Pi2PblrBC2
+	vcSBK3NYQMYwA724fpc+RFhWYuqpdUwQa/kken8/YYKI80rsmAdjK0vMPHIfarykxM7LO1km
+	MCrNQvLZLCSfzULywSyEbQsYWVYxSqUWFOempyabFhjq5qWWw6M7OT93EyM4xWoF7GBcveGv
+	3iFGJg7GQ4wSHMxKIrziH16mCfGmJFZWpRblxxeV5qQWH2I0BQb3RGYp0eR8YJLPK4k3NLE0
+	MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qBqTPjXv97q85VZ6ZP26p7xWl+
+	w3/p4J028Xef7H8isG3769p19788+zv3iZPKRf6A+wfyt5/r2Sp/NuOr0QJhjeO160pkMxqk
+	+qwvxgcm6r2XuuvGs5Tnhf2Dj/tfBu1e+TPBa0JjfnBVT0HCHZ9y1osLXFZ+sOGqYQ2QqDz5
+	OSmb/1LT4oPfpmnWHROYfMt1qoaKndU5g/sTWfdpcNgUsOlkLfBlmmKz58XPx4nHj7PsefWq
+	drJEhAB/XqRahPvdc7IXPk8qcdS99th47Q2eezJpZXfaHW+fV7jBuWXdE8V4+5Q3BR4fTq3z
+	25uSZh7u0uwxvSV/ysvdimmbS8TDbS95+HCKTfZP5lnAO8PCUomlOCPRUIu5qDgRAKoVYL06
+	BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvO7/b2/SDBZd47B4MG8bm8X1L89Z
+	LW4e2Mlkcf78BnaLjz33WC0u75rDZjHj/D4mi4unXC0Wbf3CbnH4TTurxb9rG1kcuD3e32hl
+	99i0qpPNo2/LKkaPz5vkAliiuGxSUnMyy1KL9O0SuDJWv17MXLBWtuLOeccGxkkSXYycHBIC
+	JhLT5i9l7GLk4hAS2M0oMeH0TRaIhKTE7N/T2SFsYYmV/56zQxQ9Z5S4c3kOI0iCTUBT4ubR
+	f2DdIgJrmSQ6tq8ESzALWEgs/3OdDaJjIZPEh+61QA4HB6cAr8SEf9YgNcICLhIz/l1iBgmz
+	CKhK/HhiDBLmFbCUOLH2PiOELShxcuYTFoiR2hK9D1sZYexlC18zQxynIPHz6TJWEFtEIExi
+	2dSDzBA14hJHf/YwT2AUnoVk1Cwko2YhGTULScsCRpZVjJKpBcW56bnFhgVGeanlesWJucWl
+	eel6yfm5mxjBkaaltYNxz6oPeocYmTgYDzFKcDArifCKf3iZJsSbklhZlVqUH19UmpNafIhR
+	moNFSZz32+veFCGB9MSS1OzU1ILUIpgsEwenVAPTiqBVj+3mF1YfVV5+Sk2uLVOx4TVniM5r
+	9myd2F1b9oSJyWWLsonXt9xeXfD2hF+26YOKNw8l/M+fF7fenH97vqgShyX/wacS709obauW
+	OlaSbhuee128szX7lM57yz9lojH+gQv+OvOm9S/gtZhZu0rW7cDajrn+Lefm3Dp/0mW359VE
+	1coV12f2bdlk51VxbZpn8OKEjN2PL1+cbdvH/8zgiob1/B/+ap8tzBL6zxbU8i0vSVuqEVZf
+	O6E559GEeJF3e15sMCt/0fs2Keh+X2X7C9Pyivc9O639488/6t3Q66F+p7vE8p5kewNLTYx2
+	VZ6j2IppvNPNfNi3sS5Z6X9gSdSNDXUfreIUvimxFGckGmoxFxUnAgDPZTGxIwMAAA==
+X-CMS-MailID: 20240920041559epcas5p22b8f5ce6dd97df2c852fd4a04cf918ee
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
@@ -118,67 +119,108 @@ References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3
 	<20240917101016.23238-1-inbaraj.e@samsung.com>
 	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
 	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
-	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
+	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org> 
 
 
 
 > -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 19 September 2024 17:33
-> To: Inbaraj E <inbaraj.e@samsung.com>; 'Stephen Boyd'
-> <sboyd@kernel.org>; alim.akhtar@samsung.com; cw00.choi@samsung.com;
-> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; mturquette@baylibre.com; s.nawrocki@samsung.com
-> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-> 
-> On 19/09/2024 13:33, Inbaraj E wrote:
+> From: Inbaraj E <inbaraj.e=40samsung.com>
+> Sent: 20 September 2024 09:35
+> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Stephen Boyd'
+> <sboyd=40kernel.org>; 'alim.akhtar=40samsung.com'
+> <alim.akhtar=40samsung.com>; 'cw00.choi=40samsung.com'
+> <cw00.choi=40samsung.com>; 'linux-clk=40vger.kernel.org' <linux-
+> clk=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
+> kernel=40vger.kernel.org>; 'linux-samsung-soc=40vger.kernel.org' <linux-
+> samsung-soc=40vger.kernel.org>; 'mturquette=40baylibre.com'
+> <mturquette=40baylibre.com>; 's.nawrocki=40samsung.com'
+> <s.nawrocki=40samsung.com>
+> Cc: 'pankaj.dubey=40samsung.com' <pankaj.dubey=40samsung.com>;
+> 'gost.dev=40samsung.com' <gost.dev=40samsung.com>
+> Subject: RE: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+>=20
+>=20
+>=20
+> > -----Original Message-----
+> > From: Krzysztof Kozlowski <krzk=40kernel.org>
+> > Sent: 19 September 2024 17:33
+> > To: Inbaraj E <inbaraj.e=40samsung.com>; 'Stephen Boyd'
+> > <sboyd=40kernel.org>; alim.akhtar=40samsung.com;
+> cw00.choi=40samsung.com;
+> > linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> > linux-samsung- soc=40vger.kernel.org; mturquette=40baylibre.com;
+> > s.nawrocki=40samsung.com
+> > Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com
+> > Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critica=
+l
 > >
+> > On 19/09/2024 13:33, Inbaraj E wrote:
+> > >
+> > >
+> > >> -----Original Message-----
+> > >> From: Stephen Boyd <sboyd=40kernel.org>
+> > >> Sent: 19 September 2024 15:51
+> > >> To: Inbaraj E <inbaraj.e=40samsung.com>; alim.akhtar=40samsung.com;
+> > >> cw00.choi=40samsung.com; krzk=40kernel.org; linux-clk=40vger.kernel.=
+org;
+> > >> linux- kernel=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org=
+;
+> > >> mturquette=40baylibre.com; s.nawrocki=40samsung.com
+> > >> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com; Inbaraj E
+> > >> <inbaraj.e=40samsung.com>
+> > >> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as
+> > >> critical
+> > >>
+> > >> Quoting Inbaraj E (2024-09-17 03:10:16)
+> > >>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
+> > >>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock
+> framework
+> > >> will
+> > >>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
+> > >>> PLL_CAM_CSI is causing sytem level halt.
+> > >>>
+> > >>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
+> > >>> CSI stop streaming through pm_runtime_put system is getting halted.
+> > >>> So marking PLL_CAM_CSI as critical to prevent disabling.
+> > >>>
+> > >>> Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
+> > >>> ---
+> > >>
+> > >> Please add a fixes tag. Although this is likely a band-aid fix
+> > >> because marking something critical leaves it enabled forever.
+> > >
+> > > Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
+> > > supplying clock even for CMU SFR access of CSI block, so we can't
+> > > gate this.
 > >
-> >> -----Original Message-----
-> >> From: Stephen Boyd <sboyd@kernel.org>
-> >> Sent: 19 September 2024 15:51
-> >> To: Inbaraj E <inbaraj.e@samsung.com>; alim.akhtar@samsung.com;
-> >> cw00.choi@samsung.com; krzk@kernel.org; linux-clk@vger.kernel.org;
-> >> linux- kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> >> mturquette@baylibre.com; s.nawrocki@samsung.com
-> >> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com; Inbaraj E
-> >> <inbaraj.e@samsung.com>
-> >> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-> >>
-> >> Quoting Inbaraj E (2024-09-17 03:10:16)
-> >>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
-> >>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock framework
-> >> will
-> >>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
-> >>> PLL_CAM_CSI is causing sytem level halt.
-> >>>
-> >>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
-> >>> CSI stop streaming through pm_runtime_put system is getting halted.
-> >>> So marking PLL_CAM_CSI as critical to prevent disabling.
-> >>>
-> >>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> >>> ---
-> >>
-> >> Please add a fixes tag. Although this is likely a band-aid fix
-> >> because marking something critical leaves it enabled forever.
-> >
-> > Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-> > supplying clock even for CMU SFR access of CSI block, so we can't gate
-> > this.
-> 
-> Hm, I am not so sure. The CMU driver should just take appropriate clock.
-> Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
+> > Hm, I am not so sure. The CMU driver should just take appropriate clock=
+.
+> > Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
+>=20
+> As per HW design, PLL_CAM_CSI is responsible for suppling clock to CSI SF=
+R,
+> CMU SFR and some internal block of CAM_CSI. In this some of the clock is =
+not
+> handled by any driver but it is required for CSI to work properly. For ex=
+ample
+> CSI NOC clock. So this is the reason we are marking PLL_CAM_CSI as critic=
+al.
+>
 
-As per HW design, PLL_CAM_CSI is responsible for suppling clock to
-CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some of
-the clock is not handled by any driver but it is required for CSI to
-work properly. For example CSI NOC clock. So this is the reason we
-are marking PLL_CAM_CSI as critical.
+This is clock hierarchy for CMU_CAM_CSI block.
 
-> 
-> 
-> Best regards,
-> Krzysztof
+PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
+			=7C
+			=7C----> DIVIDER --------> CMU_SFR clock
+			=7C
+			=7C----> DIVIDER --------> CSI NOC clock.=20
+
+Regards,
+Inbaraj E
+> >
+> >
+> > Best regards,
+> > Krzysztof
+
 
 
