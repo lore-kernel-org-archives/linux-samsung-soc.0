@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04391E50B;
-	Fri, 20 Sep 2024 12:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23291E498;
+	Fri, 20 Sep 2024 12:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726835803; cv=none; b=jDT/EwWQ/tzyf9sTSBKbPnkD5eAQqIRWYG9onQD0uXmkYvyiAgCEztIfkvQ2dENf3RI+y0WPkdq8MByrEMvUHHjTI9y6sKx/LtlEpBx2M1V2uhbow/srAKNE9Jh11krGNOgUUXBrQA6JjU5NL8D+UW8zJYxUJKTtxgBGb2RLRIU=
+	t=1726836004; cv=none; b=rH3zJaL3Yu/AhWm//nP7ecxjDsCgSZ2D+aCfPCcUyPHFKwkrBaMLdepDIk78Mm3heTep7/M8pLjiYqZu+j5k9Ku7rvekkqYD6lVaofct2vzRcI+b8kKJ8xEYZc4IZWXn7GNquBqEgFsVDIk9yEzl5wiausTORZP81zJpSGQcBrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726835803; c=relaxed/simple;
-	bh=sX+koPWYyb+HTqwuKE13tVkzTG40JdkQAM3ue8rQglA=;
+	s=arc-20240116; t=1726836004; c=relaxed/simple;
+	bh=i4aFSN6dWz0hQZR6rK26wm7u+ZlA+VxyTcGU90KfME0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F61mX90YUueZOhYKHZuNmh5CxfcHecBTT5jyvz2mTJdAC4AH+ISzDO7jaYUhc6gvZMajqMDM+Nv8oJMORp8IKkVnLw+Jo0wMxQNRAY5s6OdmPwLOqueoxudN5VvUnDuo7txew2JY14aTOhfs3SloYr8eB7BhfShdC5jtM/COCK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8ONaiyr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=JWEiaziIABmZpzBqONGmYXXb7MDXxCjYwNkF2xj+3Rf7XQE98ogPKmY2ZJoSQKxLtbFItg9oFpRuq5AZ2Hx87b3zNlRj9eveYZy4Yiqc6ZlW1UfnTqrpTSfzhRpiCqfrycWu4EYiRJOv9VGFaatbCKuVXScpnMi10Gv467JZvWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZB2rOvF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8ONaiyr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F3A9C4CEC3;
-	Fri, 20 Sep 2024 12:36:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZB2rOvF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA163C4CEC3;
+	Fri, 20 Sep 2024 12:39:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726835802;
-	bh=sX+koPWYyb+HTqwuKE13tVkzTG40JdkQAM3ue8rQglA=;
+	s=k20201202; t=1726836002;
+	bh=i4aFSN6dWz0hQZR6rK26wm7u+ZlA+VxyTcGU90KfME0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i8ONaiyrkkfQtVxEJVVQNoAHSJkbJ9ZKCr+RPWPGlNzL7jsKMoY/v1NdqMnOvY+Um
-	 lxC8vTsLc9Guq1RH2cxfKfGRfeUvV+Ifd4daK+eVrlX2xybCQk6EKSG530bmaFgSRF
-	 x6bpWfRbUcXME2bqVJf95P+Crx2sQNjYCgWm3CXoFXJBYOaMFx7WPnUGYQsTkDCPEC
-	 5hWqXD6rRwLan4Ds4pPrThkYJU0NiTOXKPI8bERv5TsZUIpcuen4mIXrIWaDp1stBk
-	 BnjlzIQcKmPvEGKw7848BUtG8VSVKn2eMv2SyLAnDJdE56KbWN/WN2F+XF5BjkZyx7
-	 ij9q3AJut3uAw==
-Message-ID: <1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
-Date: Fri, 20 Sep 2024 14:36:37 +0200
+	b=fZB2rOvFr0DN6W8H2zkjOYMqjmFyaqVNOpeGjLoXWkbsmwAXAbKSu4I5LHLnoCMNk
+	 IE15PrFa6Rj2fdnMPWa2rTCttS8qjUwpiG0gQ9glUi96Z/ce+G10wQgWloTgz6p+zD
+	 pmIqSjoY7sjCjgG/FgZtVDxKPn1SmCuLM/hm/qjwrpIQp+1/4gwCjEveNcUIaFdUbm
+	 NnuJcnsPB7FTrWzR88QfDjK6AzHxlkCJ2qO++SrAst0U86jMYv0E8rr1kT3905Q9T/
+	 FZW9yxLJafx3tSmTcNjPNSDOGsjhDrenCmCaaSCOArB5O1HhwCXzZIVUaqX+Irm92n
+	 CEA2rCYM37Low==
+Message-ID: <32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
+Date: Fri, 20 Sep 2024 14:39:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-To: Inbaraj E <inbaraj.e@samsung.com>, 'Stephen Boyd' <sboyd@kernel.org>,
- alim.akhtar@samsung.com, cw00.choi@samsung.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- mturquette@baylibre.com, s.nawrocki@samsung.com
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
- <20240917101016.23238-1-inbaraj.e@samsung.com>
- <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
- <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
- <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
- <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
+ exynos7870 compatible
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: airlied@gmail.com, alim.akhtar@samsung.com, conor@kernel.org,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ inki.dae@samsung.com, kyungmin.park@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, robh@kernel.org, simona@ffwll.ch,
+ sw0312.kim@samsung.com, tzimmermann@suse.de
+References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+ <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,100 +92,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+In-Reply-To: <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/09/2024 06:15, Inbaraj E wrote:
+On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
+> Add the compatible string of Exynos7870 to the existing list.
 > 
-> 
->> -----Original Message-----
->> From: Inbaraj E <inbaraj.e@samsung.com>
->> Sent: 20 September 2024 09:35
->> To: 'Krzysztof Kozlowski' <krzk@kernel.org>; 'Stephen Boyd'
->> <sboyd@kernel.org>; 'alim.akhtar@samsung.com'
->> <alim.akhtar@samsung.com>; 'cw00.choi@samsung.com'
->> <cw00.choi@samsung.com>; 'linux-clk@vger.kernel.org' <linux-
->> clk@vger.kernel.org>; 'linux-kernel@vger.kernel.org' <linux-
->> kernel@vger.kernel.org>; 'linux-samsung-soc@vger.kernel.org' <linux-
->> samsung-soc@vger.kernel.org>; 'mturquette@baylibre.com'
->> <mturquette@baylibre.com>; 's.nawrocki@samsung.com'
->> <s.nawrocki@samsung.com>
->> Cc: 'pankaj.dubey@samsung.com' <pankaj.dubey@samsung.com>;
->> 'gost.dev@samsung.com' <gost.dev@samsung.com>
->> Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->>
->>
->>
->>> -----Original Message-----
->>> From: Krzysztof Kozlowski <krzk@kernel.org>
->>> Sent: 19 September 2024 17:33
->>> To: Inbaraj E <inbaraj.e@samsung.com>; 'Stephen Boyd'
->>> <sboyd@kernel.org>; alim.akhtar@samsung.com;
->> cw00.choi@samsung.com;
->>> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org;
->>> linux-samsung- soc@vger.kernel.org; mturquette@baylibre.com;
->>> s.nawrocki@samsung.com
->>> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com
->>> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->>>
->>> On 19/09/2024 13:33, Inbaraj E wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Stephen Boyd <sboyd@kernel.org>
->>>>> Sent: 19 September 2024 15:51
->>>>> To: Inbaraj E <inbaraj.e@samsung.com>; alim.akhtar@samsung.com;
->>>>> cw00.choi@samsung.com; krzk@kernel.org; linux-clk@vger.kernel.org;
->>>>> linux- kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
->>>>> mturquette@baylibre.com; s.nawrocki@samsung.com
->>>>> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com; Inbaraj E
->>>>> <inbaraj.e@samsung.com>
->>>>> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as
->>>>> critical
->>>>>
->>>>> Quoting Inbaraj E (2024-09-17 03:10:16)
->>>>>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
->>>>>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock
->> framework
->>>>> will
->>>>>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
->>>>>> PLL_CAM_CSI is causing sytem level halt.
->>>>>>
->>>>>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
->>>>>> CSI stop streaming through pm_runtime_put system is getting halted.
->>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
->>>>>>
->>>>>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
->>>>>> ---
->>>>>
->>>>> Please add a fixes tag. Although this is likely a band-aid fix
->>>>> because marking something critical leaves it enabled forever.
->>>>
->>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
->>>> supplying clock even for CMU SFR access of CSI block, so we can't
->>>> gate this.
->>>
->>> Hm, I am not so sure. The CMU driver should just take appropriate clock.
->>> Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
->>
->> As per HW design, PLL_CAM_CSI is responsible for suppling clock to CSI SFR,
->> CMU SFR and some internal block of CAM_CSI. In this some of the clock is not
->> handled by any driver but it is required for CSI to work properly. For example
->> CSI NOC clock. So this is the reason we are marking PLL_CAM_CSI as critical.
->>
-> 
-> This is clock hierarchy for CMU_CAM_CSI block.
-> 
-> PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
-> 			|
-> 			|----> DIVIDER --------> CMU_SFR clock
-> 			|
-> 			|----> DIVIDER --------> CSI NOC clock. 
-> 
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 
-And what is the problem in adding proper handling in the driver? You
-just described case valid for 99% of SoC components.
+... and the DTS is <please provide lore ink in changelog>?
+
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
