@@ -1,95 +1,96 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19ED4194123
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Sep 2024 09:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AA21E505;
+	Tue, 24 Sep 2024 13:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727083184; cv=none; b=g9nBE3OPW32vAGBcX19B1ypg7uvb0p1xyBAGh9lBCw9J93HxENRvhnjhnSMq+9uMJW/BtsFi0LOLNNU+O6w26iLFJ9jBo0w9PaxKXD5TcDnagm3wv5FZqrSdyIm8nZJdll6qw+mb9eE1yebF9SoWOOFc0JHtI1HREpTuQYjJOhA=
+	t=1727185222; cv=none; b=SozSCzv/iUktLuF5oTSIxqtiP5NQoHYFT4+fDslLrPurK85fH2SAFkIZPqjYpnWv5YOIPtgb71gj/uLocv6nYXdPZ+BEoqjlnvN4AKg8bgrI/u+uaHG2zOFxWgJ1S/kyqQGeumNA8S4G7lTtUgy/UwfdUDdHm9PW1WHsZi2gB5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727083184; c=relaxed/simple;
-	bh=HbqLKOB9xBC4YcqZ9WHS6O6Bgu6BSSEF109W9pv461c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rr9oMzif6kmCO+piaZsci0d540SXE8DTf/WqYdBpLQhdXaRUDWyOUsGLRflvyFRr3mnUmxKYHKrAz42YED7DYYw+zcuhlzEdzbeVy8AZU+FRt5ElhTAXYVrtaOMSCTcxiPNDihnXk1FRl65ZNefCkb0rrOtjgKkzhJl3c6cfOE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dUHtDjqY; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727185222; c=relaxed/simple;
+	bh=1EN5pN+OaMzjvva2ElQGivllGskZlYeNnbvkbiNDCGE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HQnNpUZmtniE+hX0FcUR5GaKRQnBf5ccZ5ngp52NAASh/GWQi4Bogww+wQhBOlfqApv5AnmbI1GXrlbQaiI9HruRD8+5OE7Y8w436j3geQBCQmaVa9FcvgLHH8lJ2uptAK73taPz51NsMLqT4g2rKFvZZVG3qeDE4pqsSPCQWWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.com; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=dscdQn5n; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dUHtDjqY"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so38488321fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Sep 2024 02:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727083181; x=1727687981; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HbqLKOB9xBC4YcqZ9WHS6O6Bgu6BSSEF109W9pv461c=;
-        b=dUHtDjqYlOr8kpmIf4INscMeuPuy/TGibkEBehqkddXcesdMteAm5CbFv1CjGQAhMf
-         lebb1SnoIdxiQFoDOcwnGncWczWunpY15YDvwDdWmdU5wqyv18Od5jltcvHV0e37PEux
-         gEuEO88Nk7K/w2rilAWm7HsKN4IGd1RTAJscE/2De14DfVNnJA/hu+9R0ijC14WS5IEP
-         FAW3yZzpe4W8WOHnWBXH0RLHBpLjIkPk0VELsdNxXop36GJpdF/WIF5TqpLvSb0Jdb0B
-         dX+naykkKlgvDL40hiBnvETybwhvZJxUoyn9DVzIaBG5cSoEUD+9dTeBUioZcZ15VbVu
-         EGMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727083181; x=1727687981;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HbqLKOB9xBC4YcqZ9WHS6O6Bgu6BSSEF109W9pv461c=;
-        b=ftpjoFok4Vi7MHC6xdaUNvDcthgSmgWUJvMTRvYCl2xSKx7B667twKngewetH8eUgi
-         xdqnOsx8GGEDgeQ4AuOecNJ1uuz12+4zBTuJbBFxlQGXbQtW8miG3kLaWbqpW7yFvAP3
-         F8G2o2M5gUXPaLAmjv+EiFmmWYwXX47F6DkQX2G9uMYP8Y0zt2oeQwqF7PqMlKKqM9U7
-         Nd+7P1BfsCh8sTfMXUBdHXmqmKgAzNISQCxIfgHoH7alOIFqS7ijIg0MR5PCcXlTpjH6
-         iisXXi91+wCH3HLQT1I8Heu2Ma/oApUqxKumLZa6JYF6wQTY45S+6g9YuGAzvf35N+SY
-         8QKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJz08Z+AZkGjxHRgbwdW+Bx8hg/4MZ6lem7ZkdIA6a8dUy8blOUr2RUjIFbKpeFpv4uKf0cUnEFI3n9p7bA5B21w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIFmRY2JU+KX7U6hL4y+0T50K+TunUb2qn1qA+mn0VmUAsSYhk
-	CI4MinliZj/DZwh+A+YRSC2SRe+I0a6SOnQHDUWbU75o6ej+Ls08IaXzkJ5TsfNOnImAlXVx0kr
-	ByW+DTQIf2kiZuofwjcxKSEu7LJwvISupHXIblg==
-X-Google-Smtp-Source: AGHT+IFbnNUzhyuTeh31UmTh58QKRDJU5vK7TVaf97G8j3XcTVc7O/NrrT0g/ySQvM7uYWrGz4NvSm3Q+S61lZ6eSEw=
-X-Received: by 2002:a05:6512:10cf:b0:533:45a1:88fc with SMTP id
- 2adb3069b0e04-536ad180123mr5184682e87.30.1727083181276; Mon, 23 Sep 2024
- 02:19:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="dscdQn5n"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RIEd/+3RUZ5FAc5/2lhcwWi5vz2ND8NO2C1zeGC37t8=; b=dscdQn5nW9VwStRMkAIgbD6ASW
+	IRHhJctdQbv3K2aATWWIubCJ8QfPJFQDRrkM6dxmkYiaH1bZ3C/t81hZAaxx12FcLGJjERkNnArLZ
+	k3PiciPhsX8UjxrRfocFnl+JfPk1NGbmYdafgSqi/nFAyc0thIzXFGabw/cwaAeVDdI6lu5bXhtDJ
+	LrDCj6ctnnbVUIluPTRciUq/GZ50iAAhOQtNFFbrJFO9T9N+GQgrDqdjQCIW3UnJdnZOKVmiMCp7N
+	1k0r5hVYgmi1plBFhKXbpnefAjDYLEm42an9dzQi9ZXZ5Tpi6oQ+Xi/fH9CxZztpebqJS5VDyC2N+
+	ZHsmXAfA==;
+Received: from [63.135.74.212] (helo=rainbowdash)
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1st5ly-003YDw-Tj; Tue, 24 Sep 2024 14:40:11 +0100
+Received: from ben by rainbowdash with local (Exim 4.98)
+	(envelope-from <ben@rainbowdash>)
+	id 1st5ly-00000000UFR-3j6O;
+	Tue, 24 Sep 2024 14:40:10 +0100
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-spi@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH 1/2] spi: s3c64xx: fix timeout counters in flush_fifo
+Date: Tue, 24 Sep 2024 14:40:08 +0100
+Message-Id: <20240924134009.116247-2-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.37.2.352.g3c44437643
+In-Reply-To: <20240924134009.116247-1-ben.dooks@codethink.co.uk>
+References: <20240924134009.116247-1-ben.dooks@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com> <20240909110017.419960-6-ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20240909110017.419960-6-ivo.ivanov.ivanov1@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 23 Sep 2024 11:19:30 +0200
-Message-ID: <CACRpkdY=Q5JyLdPE8EdhaKE+J2j5DZMvf2Nan79yB6x5RWFusw@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] pinctrl: samsung: Add exynos8895 SoC pinctrl configuration
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: srv_ts003@codethink.com
 
-On Mon, Sep 9, 2024 at 1:00=E2=80=AFPM Ivaylo Ivanov
-<ivo.ivanov.ivanov1@gmail.com> wrote:
+In the s3c64xx_flush_fifo() code, the loops counter is post-decremented
+in the do { } while(test && loops--) condition. This means the loops is
+left at the unsigned equivalent of -1 if the loop times out. The test
+after will never pass as if tests for loops == 0.
 
-> Add support for the pin-controller found on the Exynos8895 SoC
-> used in Samsung Galaxy S8 and S8 Plus phones.
->
-> It has a newly applied pinctrl register layer for FSYS0 with a
-> different bank type offset that consists of the following bit
-> fields:
->
-> CON: 4, DAT: 1, PUD: 2, DRV: 3, CONPDN: 2, PUDPDN: 2
->
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+ drivers/spi/spi-s3c64xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 833c58c88e40..6ab416a33966 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -245,7 +245,7 @@ static void s3c64xx_flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+ 	loops = msecs_to_loops(1);
+ 	do {
+ 		val = readl(regs + S3C64XX_SPI_STATUS);
+-	} while (TX_FIFO_LVL(val, sdd) && loops--);
++	} while (TX_FIFO_LVL(val, sdd) && --loops);
+ 
+ 	if (loops == 0)
+ 		dev_warn(&sdd->pdev->dev, "Timed out flushing TX FIFO\n");
+@@ -258,7 +258,7 @@ static void s3c64xx_flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+ 			readl(regs + S3C64XX_SPI_RX_DATA);
+ 		else
+ 			break;
+-	} while (loops--);
++	} while (--loops);
+ 
+ 	if (loops == 0)
+ 		dev_warn(&sdd->pdev->dev, "Timed out flushing RX FIFO\n");
+-- 
+2.37.2.352.g3c44437643
 
-I expect either Krzysztof will queue this or it will come in through
-some other tree.
-
-Yours,
-Linus Walleij
