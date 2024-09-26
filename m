@@ -1,220 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8696F12BEBB;
-	Wed, 25 Sep 2024 23:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EAA1171C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2024 05:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727306670; cv=none; b=qI2KcHz70sN89WXhbiIzswZ1AT2NvZuVLZzI0/z3A+q6eARt8PgYzjEoigWHlOyK3YyxWSTugDXQprDYPlo56p+EMSChSYRDFekm08dc1ckueSyn37Gozii94qR+dFU6gfxlm1ADO4PR/w6zWMS4Wg6zj42zVcnqg6WNETTZWls=
+	t=1727328811; cv=none; b=YI1AF8AxinHcg6g+oUwYC98jXJtw9DuftoVMfq6lds7C0WsRk0/O8hrHjpm2GdX9CjmGznOoAh9EFg33ZQcgkaHTfOJLueOC9qMh/WTH9xa85XQ3DV975Zy1UgTBL14cfGMky8TOj+6smCa9D0gEdXkHh2nXbf88oAGC4fSC/N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727306670; c=relaxed/simple;
-	bh=g3zNEuACkNKKF7DM2e0wUsD+QK9yDA1CFZXE6cxfm0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MxXLqJ/pNN/WxH9zl2KS1VrVK9xkIvwBBpBPSfjiWIZx3m+lVVXQEGWg/2saD2/T3AnLd37zqGlMvhXQGVbq57UvG+8TADNmh9M6MF+SAGkNeP5flGkv1N6PYizDW5y9l0AvoukJcqfeHlofwlPjPy6bTch/1ykzeKFJubL6CkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rf0TTza1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727328811; c=relaxed/simple;
+	bh=OteZm7UCS8Cr2hd8aM1zJvixiDPEt3tI5iRbHy9YyEA=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To:Cc:Content-Type:
+	 References; b=JyswW29dAeIapaeq0+m8oaGayHY5vCrgAdVm4ajuZyc73ZRDOW4O9GrLNjWNWrhbELRvJZKPDtldBkptd8ab/a4S0qKSz9GbA83zCQ0mR8rpGUtyEHX5qKYBJohioWtU7jSWI3Xc4UU3ITNVTCzOvWuvbir08xG+nQX6uec2DHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=aKlPOYwZ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rf0TTza1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF87C4CEC3;
-	Wed, 25 Sep 2024 23:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727306670;
-	bh=g3zNEuACkNKKF7DM2e0wUsD+QK9yDA1CFZXE6cxfm0Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rf0TTza1S3p1YALqFQOCom6Jm3i4y+VPz/1puW5DS6e880ny5qmARn/pd/8fBs2t1
-	 H+kU9g7OoIXdRgMnbqXMAo+xn2K5IUNrX4Um6d5Kx2D1e+tYvFeSWoKQT3bgdXYj9W
-	 0v+KcOIMJVKUH7cPijm0cHyM4JbEemZro3q2q5sfvola1hxVqM08tWdooSdOpDAU+3
-	 aiJfMwgHXTFKN9GUXQ6RPKAeW/mkp6MDVGOlgzW67u/JFmuwPnvqM1S3qKzAI2Jpn3
-	 EENwc0xldR/ocJgJZoovineWQvpe46VBWPrN2Bc4wCqf26JtgRzGd9xNEDw/AIKaA2
-	 wRYObDcnba5wg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Conor Dooley <conor@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Andy Gross <agross@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Jim Quinlan <james.quinlan@broadcom.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-media@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH] dt-bindings: Fix array property constraints
-Date: Wed, 25 Sep 2024 18:24:06 -0500
-Message-ID: <20240925232409.2208515-1-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="aKlPOYwZ"
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240926052611epoutp010644dc8e65082178da2707bbc913e7b5~4tABs1uTL0188401884epoutp01z
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2024 05:26:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240926052611epoutp010644dc8e65082178da2707bbc913e7b5~4tABs1uTL0188401884epoutp01z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727328371;
+	bh=9MAi+qFyft85MmmfbtuAWfV4Vpr9g/bP51pxJnrvTco=;
+	h=From:Date:Subject:To:Cc:References:From;
+	b=aKlPOYwZbZ7egGMQyef9CMifaiz12t/34qpapcTdvwcvWJZtG9CT8PKy18S/iz68J
+	 8AEFyla1OJrUOrtHzAobNrSljywp0U55ZaDvLuih5AfNTbyCebrrFKASZLilbUZujY
+	 1oKbmVwx3YAc2psbqnYAPXSay78fGiz2P/dU6ONc=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240926052610epcas1p4c520927c06690173cc2b1a078bea8eb4~4tABMvxm91544115441epcas1p4m;
+	Thu, 26 Sep 2024 05:26:10 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.38.233]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XDhsF2hF8z4x9QC; Thu, 26 Sep
+	2024 05:26:09 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CB.1D.09725.170F4F66; Thu, 26 Sep 2024 14:26:09 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240926052608epcas1p39e2db7b275e944285d0925b3e5c649b9~4s--oEo5x1059110591epcas1p3p;
+	Thu, 26 Sep 2024 05:26:08 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240926052608epsmtrp10fb74bd6b61fe702eb46b60a65e40fb4~4s--nQ1Ue3004130041epsmtrp1K;
+	Thu, 26 Sep 2024 05:26:08 +0000 (GMT)
+X-AuditID: b6c32a37-1f3ff700000025fd-0b-66f4f07128b2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FD.B1.08964.070F4F66; Thu, 26 Sep 2024 14:26:08 +0900 (KST)
+Received: from [127.0.1.1] (unknown [10.113.111.204]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240926052608epsmtip2095f62459e88af80410b6dcd5d10990c~4s--UaHIR0725407254epsmtip23;
+	Thu, 26 Sep 2024 05:26:08 +0000 (GMT)
+From: Kwanghoon Son <k.son@samsung.com>
+Date: Thu, 26 Sep 2024 14:25:39 +0900
+Subject: [PATCH] drm/exynos: remove unused prototype for crtc
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240926-remove_crtc-v1-1-9a20062444cb@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAFLw9GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+	vPSU3UzU4B8JSMDIxMDSyNT3aLU3Pyy1PjkopJkXUszE/OkxMTEJNPkFCWgjoKi1LTMCrBp0bG
+	1tQC2pY2CXQAAAA==
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,  Kwanghoon
+	Son <k.son@samsung.com>
+X-Mailer: b4 0.14.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmnm7hhy9pBlNa+S1OXF/EZPFg3jY2
+	iytf37NZTLo/gcWid81VJovz5zewW5xtesNusenxNVaLy7vmsFnMOL+PyWL2u/3sFjMmv2Rz
+	4PHY+20Bi8fOWXfZPTat6mTzuN99nMlj85J6j74tqxg9Pm+SC2CPyrbJSE1MSS1SSM1Lzk/J
+	zEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpUSaEsMacUKBSQWFyspG9nU5Rf
+	WpKqkJFfXGKrlFqQklNgWqBXnJhbXJqXrpeXWmJlaGBgZApUmJCdsWj7J/aC1ZwVv5eUNDBO
+	5Ohi5OSQEDCR+LT0CHMXIxeHkMAORomnx3+zgiSEBD4xStz7xgmR+MYocXlmDwtMx+YPDawQ
+	ib2MEr82LmCDcF4xSsz9sIMRpIpNQF1iSdtadhCbRUBV4l7HdzBbWMBWoufUbLAVvAKCEidn
+	PgGbyiwgL7H97RxmiLiDxN83E1lAhkoIrGGU2Hf5F5gjItDHJLHpSD87iMMssIlR4tzFdVBH
+	CUt83r2GDcJeyiFx56UAhO0i8e7QBWaYmlfHt7BD2FISL/vboOxsiaMf90L1lkhcn7WIFcI2
+	lti/dDJTFyMH0DJNifW79CEu5ZN497WHFSQsIcAr0dEmBGHKS9zqLIdoFJU48/Qj1EAPicdT
+	jjFDgjRWounvCcYJjPKzkLw/C8n7sxB2LWBkXsUollpQnJueWmxYYAyP1OT83E2M4LSqZb6D
+	cdrbD3qHGJk4GA8xSnAwK4nwTrr5MU2INyWxsiq1KD++qDQntfgQoykwEiYyS4km5wMTe15J
+	vKGJpYGJmZGxiYWhmaGSOO+ZK2WpQgLpiSWp2ampBalFMH1MHJxSDUz5/83SJDdeVPfcVXp+
+	hnKC9KPsub1hgS0SNQ/e3KlwP/fMeWmHtt8tncNrDZl3HxTR4vOonlq0vEZs/tPSnDiBvsXx
+	Kqv+bGAyr+pNeSQXvf1Pr2jJnSvn4r+3zGMsYFsZ96ldSqpe95Va7+0pM+8a8RwPvioxf25A
+	8CmPa1kRD4+sMmTPbnBp+SO8QsmlwzDERqAiV55Z5dxC7XUvHM6Zsh8OuHukLOFTz9w9+t+c
+	I+uDbkdv33p9mUligaVj0cPjDnUlAnaVzYoPnYOqPe1flL0K/munmpzAvKbub723edD+vzUN
+	q+090xuFRTpe7pux+e3m1UU/mrgtZy6K5BUsYehv++XFZHzIRalOiaU4I9FQi7moOBEAw9Zf
+	kTQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSvG7Bhy9pBr+uq1qcuL6IyeLBvG1s
+	Fle+vmezmHR/AotF75qrTBbnz29gtzjb9IbdYtPja6wWl3fNYbOYcX4fk8Xsd/vZLWZMfsnm
+	wOOx99sCFo+ds+6ye2xa1cnmcb/7OJPH5iX1Hn1bVjF6fN4kF8AexWWTkpqTWZZapG+XwJWx
+	aPsn9oLVnBW/l5Q0ME7k6GLk5JAQMJHY/KGBtYuRi0NIYDejxPyTv1ghEqISHZcbGbsYOYBs
+	YYnDh4shal4wSmw5ep0FpIZNQF1iSdtadhCbRUBV4l7HdzBbWMBWoufUbLA5vAKCEidnPmEB
+	mcMsoCmxfpc+SJhZQF5i+9s5zBAlDhJ/30xkgVi7hlFiDshILg4RgQlMEt+ubWEBcZgFNjNK
+	LJ69nQmiSlji8+41bBMYBWYh2TELYccsJDsWMDKvYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvX
+	S87P3cQIjhctzR2M21d90DvEyMTBeIhRgoNZSYR30s2PaUK8KYmVValF+fFFpTmpxYcYpTlY
+	lMR5xV/0pggJpCeWpGanphakFsFkmTg4pRqYeDkSkhSnymovuy3Jetf6RLrpkym1z/hm63+8
+	J1X+6ZCGjj77fLN8tb+Mv7+c5F/K4mC5KH5/0snz78yv72ZMMn7Od8Y28P4BuQJBhUPVP/58
+	5JV/GpRg/Khy+oNexRPaKW/TzRytFd+dPs0nv1vweLnyQoG58me39gmp7+bVmc144T9HaPK8
+	5u05Wb3M26M+LXxbNu2OZlNEmFKqtMdkD8sjnT3eCjuDLhpWGyXUnI3P/2Td4npD/2W49CaJ
+	tFPW65+WhnHP/cT7dm/E/TDuZIawgr8/ehaXtxy1C194dKlhSIfGgkwOZSGLHMN9+jslNQty
+	b6Tdjl/yeMIXni8npQxfK9vueXO/w+WJ3yslluKMREMt5qLiRAAPJMRQBgMAAA==
+X-CMS-MailID: 20240926052608epcas1p39e2db7b275e944285d0925b3e5c649b9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240926052608epcas1p39e2db7b275e944285d0925b3e5c649b9
+References: <CGME20240926052608epcas1p39e2db7b275e944285d0925b3e5c649b9@epcas1p3.samsung.com>
 
-Schemas for array properties should only have 1 level of array
-constraints (e.g. items, maxItems, minItems). Sometimes the old
-encoding of all properties into a matrix leaked into the schema, and
-didn't matter for validation. Now the inner constraints are just
-silently ignored as json-schema array keywords are ignored on scalar
-values.
+exynos_drm_crtc_wait_pending_update, exynos_drm_crtc_finish_update
+are not used anymore.
 
-Generally, keep the inner constraints and drop the outer "items". With
-gicv3 "mbi-alias" property, it is more appropriately a uint32 or uint64
-as it is an address and size depends on "#address-cells".
-
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 ---
- Documentation/devicetree/bindings/cache/l2c2x0.yaml  |  5 ++---
- .../devicetree/bindings/dma/dma-common.yaml          |  7 +++----
- .../bindings/interrupt-controller/arm,gic-v3.yaml    | 12 +++++-------
- .../devicetree/bindings/media/i2c/thine,thp7312.yaml |  3 +--
- .../bindings/memory-controllers/exynos-srom.yaml     |  5 ++---
- .../devicetree/bindings/pci/brcm,stb-pcie.yaml       |  5 ++---
- .../devicetree/bindings/soc/qcom/qcom,smp2p.yaml     |  3 +--
- 7 files changed, 16 insertions(+), 24 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/cache/l2c2x0.yaml b/Documentation/devicetree/bindings/cache/l2c2x0.yaml
-index d7840a5c4037..10c1a900202f 100644
---- a/Documentation/devicetree/bindings/cache/l2c2x0.yaml
-+++ b/Documentation/devicetree/bindings/cache/l2c2x0.yaml
-@@ -100,9 +100,8 @@ properties:
-       filter. Addresses in the filter window are directed to the M1 port. Other
-       addresses will go to the M0 port.
-     $ref: /schemas/types.yaml#/definitions/uint32-array
--    items:
--      minItems: 2
--      maxItems: 2
-+    minItems: 2
-+    maxItems: 2
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 0ed4f2b8595a..1815374c38df 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -19,9 +19,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+ 					enum exynos_drm_output_type out_type,
+ 					const struct exynos_drm_crtc_ops *ops,
+ 					void *context);
+-void exynos_drm_crtc_wait_pending_update(struct exynos_drm_crtc *exynos_crtc);
+-void exynos_drm_crtc_finish_update(struct exynos_drm_crtc *exynos_crtc,
+-				   struct exynos_drm_plane *exynos_plane);
  
-   arm,io-coherent:
-     description: indicates that the system is operating in an hardware
-diff --git a/Documentation/devicetree/bindings/dma/dma-common.yaml b/Documentation/devicetree/bindings/dma/dma-common.yaml
-index ea700f8ee6c6..fde5160b5d29 100644
---- a/Documentation/devicetree/bindings/dma/dma-common.yaml
-+++ b/Documentation/devicetree/bindings/dma/dma-common.yaml
-@@ -32,10 +32,9 @@ properties:
-       The first item in the array is for channels 0-31, the second is for
-       channels 32-63, etc.
-     $ref: /schemas/types.yaml#/definitions/uint32-array
--    items:
--      minItems: 1
--      # Should be enough
--      maxItems: 255
-+    minItems: 1
-+    # Should be enough
-+    maxItems: 255
- 
-   dma-channels:
-     $ref: /schemas/types.yaml#/definitions/uint32
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-index 5f051c666cbe..f3247a47f9ee 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-@@ -132,10 +132,9 @@ properties:
-       Address property. Base address of an alias of the GICD region containing
-       only the {SET,CLR}SPI registers to be used if isolation is required,
-       and if supported by the HW.
--    $ref: /schemas/types.yaml#/definitions/uint32-array
--    items:
--      minItems: 1
--      maxItems: 2
-+    oneOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - $ref: /schemas/types.yaml#/definitions/uint64
- 
-   ppi-partitions:
-     type: object
-@@ -223,9 +222,8 @@ patternProperties:
-           (u32, u32) tuple describing the untranslated
-           address and size of the pre-ITS window.
-         $ref: /schemas/types.yaml#/definitions/uint32-array
--        items:
--          minItems: 2
--          maxItems: 2
-+        minItems: 2
-+        maxItems: 2
- 
-     required:
-       - compatible
-diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-index 535acf2b88a9..bc339a7374b2 100644
---- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-@@ -135,8 +135,7 @@ properties:
- 
-           data-lanes:
-             $ref: /schemas/media/video-interfaces.yaml#/properties/data-lanes
--            items:
--              maxItems: 4
-+            maxItems: 4
-             description:
-               This property is for lane reordering between the THP7312 and the imaging
-               sensor that it is connected to.
-diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-index 10a2d97e5f8b..a5598ade399f 100644
---- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-@@ -66,9 +66,8 @@ patternProperties:
- 
-       samsung,srom-timing:
-         $ref: /schemas/types.yaml#/definitions/uint32-array
--        items:
--          minItems: 6
--          maxItems: 6
-+        minItems: 6
-+        maxItems: 6
-         description: |
-           Array of 6 integers, specifying bank timings in the following order:
-           Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
-diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-index 0925c520195a..2ad1652c2584 100644
---- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-@@ -92,9 +92,8 @@ properties:
-       may have two component regions -- base and extended -- so
-       this information cannot be deduced from the dma-ranges.
-     $ref: /schemas/types.yaml#/definitions/uint64-array
--    items:
--      minItems: 1
--      maxItems: 3
-+    minItems: 1
-+    maxItems: 3
- 
-   resets:
-     minItems: 1
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
-index 141d666dc3f7..1ba1d419e83b 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
-@@ -55,8 +55,7 @@ properties:
- 
-   qcom,smem:
-     $ref: /schemas/types.yaml#/definitions/uint32-array
--    items:
--      maxItems: 2
-+    maxItems: 2
-     description:
-       Two identifiers of the inbound and outbound smem items used for this edge.
- 
+ /* This function gets crtc device matched with out_type. */
+ struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device *drm_dev,
+
+---
+base-commit: 684a64bf32b6e488004e0ad7f0d7e922798f65b6
+change-id: 20240925-remove_crtc-9647baaab5cd
+
+Best regards,
 -- 
-2.45.2
+Kwanghoon Son <k.son@samsung.com>
 
