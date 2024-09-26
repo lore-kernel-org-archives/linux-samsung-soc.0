@@ -1,60 +1,60 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA61AC441;
-	Thu, 26 Sep 2024 09:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E961AC8BB;
+	Thu, 26 Sep 2024 09:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727344074; cv=none; b=R3xSatgZrteB6SeKyQPPfhwhI7LOE+Ex57terIziQzFmU+a7ozRLSGOBFMPGiMdWKuu6vOIhsdHr2o/+3Kw2glqkxcLChbY6rUoOXnYXRiaMQZpPqeNtn0o8X0C29Gv2e9yqu06wemRGnYREFvOpHeoR/tNCeDWtPq5HZWON5eI=
+	t=1727344077; cv=none; b=KUK3OTgSV0kLOuKZfpZUfiq+Shia3vyhJsAJ+YEQhFq3JWWlVIEChiZwvkAfx/4R/fP951ZAGHDmCQxBPmfqwiR4XQe6QBJOdtPuj6dg3+i5C/cvEu8nT6crkO2r55g2Hm5q9KnkCTV8oz6O/5yd9FSB83G8Z04vkunLHQdEPUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727344074; c=relaxed/simple;
-	bh=fgn53cgjo7oCyIWaru75fu5gGxwR1HUplPMF2u7z1c0=;
+	s=arc-20240116; t=1727344077; c=relaxed/simple;
+	bh=+y5dIaEAV6sUyjaV2E2BF1doVtTB4Tk8i4VgnMDtrGQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m/MYrZhNNEcyiHRZxS4qF70jduKrBVmAQzDFcYE/vhVIMpxfImgcIRx61z6OGDc6q1bxCLxvgbbYWxQwKj5yfxigWcuOJwe2qGU7DpNVw1ryEk+CVszI0j53TviYjiIw7F0b9iTTBi+zf7ceNxhSPlAXTcYyL+2AkY0yW5dzkIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I9xzEa6J; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=sNesNzNotqgVIU98likFRi3O2/8chBEvr2KDa7OaKWjh8jUcMTbHQ53Xq60aGr+yWfWy0bR2c1egjHeNsk/gDhS8IGDWDnz1N/AGCuO3CA0xj0S3OlRp27QBWO8NB8kRWVm+GrjtvL7STFPrzvxg/JZr8cESlVdDvpswXnHAKw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZXPygB3; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9xzEa6J"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53654e2ed93so1007304e87.0;
-        Thu, 26 Sep 2024 02:47:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZXPygB3"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-535dc4ec181so885628e87.3;
+        Thu, 26 Sep 2024 02:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727344071; x=1727948871; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727344074; x=1727948874; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lsTYuGlxrhKxiHfQk8/AidAyypQojxBx32/1wunnGHw=;
-        b=I9xzEa6JuSMRfHrmRXGO1Xth6X+fHf8mOKo2rAXDFlVfjq0rYGIEUCzPe0zDAT3NH1
-         839e2MpGmpK8OqfsdZUUG3OJUFcL+6viJjIKi6JRhfuXLkPjtSumRaYLSHnZEBGG9qPm
-         nq7qOcAEVO7CCWrhADO10gidtfqrX5/q2MVf8xQctTpRpsPKSdvZvxheOVVVwlAmLcMl
-         QiwOnuSyjnaY/X0NSJDG7jwngxph9CxtvFBC2ySzG5G7Lcm8dp2GMUsIl8wiLEVkAt3t
-         NBrUao1/KZbI1BMYrsZN3+xhIhUBTHuoPEYdn4e7iLBnxYetsRQWB8aknOKpQ0e/li0L
-         qEZQ==
+        bh=lDocX/tVZKzpPZS+CkRFcDMxBjoP9yU3G0DgObObyyM=;
+        b=JZXPygB3uKhkN4GMtYZo3ZYCaLFnFXVUImrvW+OG1EFtcAoK1huavbGz87h/N9TwF2
+         8poa0Pm35kVl8HfYLbAwDwVXcfGk7AjywsMWRQ4HgVB7RbXaRvyt9UxVd532NL1H7pvi
+         ptocZU/B8Us6kFFu5z4Hs63bSvck+1FAMsK4ejx+v6ezsO/pM7CPlEH85gvASC+scHnm
+         aR/anlTBXIMszJumQ67IpZP6EsEMdwKub2SLZ5RuuEs2Od1IJaVBrzMwh87XdnLyV7Rl
+         bENvjR5TURuxti36x4ftNKA/aCeQdX9kKMSgjDPLxL936IpHwwQKt2+pQkOH0AYgDM8O
+         MgYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727344071; x=1727948871;
+        d=1e100.net; s=20230601; t=1727344074; x=1727948874;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lsTYuGlxrhKxiHfQk8/AidAyypQojxBx32/1wunnGHw=;
-        b=LFcWUPWnYgzAjOEHHqzNdHhO9jH0/KR2iMdfUijsNCiDG3I2trQKs7AvJrI49RrV/W
-         v7DdS480aa51+SxETkT3D0FLbmd/g9gPQaKB7uJdoWBnwf0lH2lUoGnzSss4FzsJ2NBX
-         dNtvgiT4ncek4TQCV3GKFSo0Wb2x06kGOrcajBNe1NcgEBkDsKxohmVrIxw3y1w0iSeJ
-         jzSdQLlxUO9JIB1yGsh5QapapLgJr7d0SGaSKYBpZdblsRy0b5iZGXKrDyhlDmWFajKx
-         znZ/JCMo+NyZ8kVjqm/ovq4OxIjSkbNhl6kNafjVA1TtuUYp+Zqd0wAv/7TUQ2iqfZBe
-         mdmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8wJNWngxhKhCGV9aitJbmnMLXpgfz9gjftZ+CTmcTYmPRe/XgO8OhP+pq87PEy9GDT7xwRRAuNxc2oncHFQCr6/A=@vger.kernel.org, AJvYcCWeNXmIhLxIwFVC85aTCUR6upSIdQNWDwP1S33Z8qQnnInWsPEUSBswrocFSB57ib1UaRYyXAgJhitA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6oHYfgaXZvCrsD3JUalPthh7757wk5TylIYp1EY5vkGZKK+/s
-	KjtILf8QpJJDJTZ62eu6kmTjIZgwx1FBF4ZURvLLxRcnG/2CrO4v
-X-Google-Smtp-Source: AGHT+IFCLTGyAs9CivJacP027VtGlWbk3TGkau2AsoGtLu3wYDxxmyEFsE4tqWQiDDXt2yKy5+22Gw==
-X-Received: by 2002:ac2:568c:0:b0:536:9ef0:d854 with SMTP id 2adb3069b0e04-53877530b7emr3455906e87.32.1727344070389;
-        Thu, 26 Sep 2024 02:47:50 -0700 (PDT)
+        bh=lDocX/tVZKzpPZS+CkRFcDMxBjoP9yU3G0DgObObyyM=;
+        b=bwLerJL6r7fcvJzaqiUBJb+lSGt1+tD0IM1QE451oIIBBj8xoAWeuYbzNV+Bsw/0oe
+         QceM3GcgjGYKj7iRWrVOWKlHaIVWX4qGtII2wCd/LhZIxLxTrOnImL5aBY3+amkA2XyC
+         tEYLGBCRalGFf90cEQjcoaxuOK++iWh1jOlGrrEmpW85KyNFGATStQ02pYbd/vDBAd6G
+         tVO73MbrM/xdykJ/Spp4huLdGtFdAA4cSYA92XS7MA6QKydVa3jTj08t1rjaJQYhC8Px
+         aDoy60myCSO69SxCeoaWLz14xO4I3g7WNN5anCdTInn6CWUO60uWV5NDePT/4Zn92APK
+         DpDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYEbZqCAA9rlnVOJf7/nKfi2wai3R3d1giDmqwonIf6Clk/UoMEcAHTRlcShZCBJFpQkWhMBJd8idp@vger.kernel.org, AJvYcCX2ku6kMr2HIwNl0zXM0WY0gEGf6N/YS9zx86hNjdAnqTbVkxN684E4ZQ6qXAi9sRwDmn2PcF3kVgKLNU1hQ1SEOjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSJ2e165O7nJs2x7agEvcr0t3Yaf31XLIn1qBwYyXFOc2YmXIT
+	amZ82KHMJdYuvT7Rumu15VZTFj1ysVXwiEwW5tqegnHGX284TDNC
+X-Google-Smtp-Source: AGHT+IFLac8oKPcjIKzN66vLATjMOcvWhvWIMVJxNVu1Bl1MqnCcQlu3Ie6U/g3N+xLKosf8tds8yA==
+X-Received: by 2002:a05:6512:239a:b0:52f:df:db40 with SMTP id 2adb3069b0e04-53877566141mr3799681e87.56.1727344073350;
+        Thu, 26 Sep 2024 02:47:53 -0700 (PDT)
 Received: from [127.0.1.1] (mm-20-1-84-93.mgts.dynamic.pppoe.byfly.by. [93.84.1.20])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-537a8648a60sm750311e87.199.2024.09.26.02.47.47
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-537a8648a60sm750311e87.199.2024.09.26.02.47.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 02:47:49 -0700 (PDT)
+        Thu, 26 Sep 2024 02:47:52 -0700 (PDT)
 From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 26 Sep 2024 12:47:30 +0300
-Subject: [PATCH v5 1/3] dt-bindings: mfd: add samsung,s2dos05
+Date: Thu, 26 Sep 2024 12:47:31 +0300
+Subject: [PATCH v5 2/3] mfd: sec-core: add s2dos05 support
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240617-starqltechn_integration_upstream-v5-1-ea1109029ba5@gmail.com>
+Message-Id: <20240617-starqltechn_integration_upstream-v5-2-ea1109029ba5@gmail.com>
 References: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
 In-Reply-To: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -72,155 +72,79 @@ To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  devicetree@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727344064; l=4482;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727344064; l=2079;
  i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=fgn53cgjo7oCyIWaru75fu5gGxwR1HUplPMF2u7z1c0=;
- b=E67BzRTMx000M4UGeqkGFg5iUysW87cYybYD0JSzIpKkOy619SQHZPbx6QkzWi7vTpdya+psp
- OQac6af13+dCNzoezIpN73Up8oq0vQa6+Yrp3MCXYhpKneRRDjQzhUd
+ bh=+y5dIaEAV6sUyjaV2E2BF1doVtTB4Tk8i4VgnMDtrGQ=;
+ b=9FI3Ue8VpjtURJG8/hNPG/Ureilw30Fr4AIqE8d/7GajkKeQLkcxnmxhMObcLN037hxdInUSA
+ q+Hg4azkMZKAeZp5xSguqDuLnRFo+WuE+LA3QhPpUrL7ZFraMjW3X4A
 X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
  pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Add samsung,s2dos05 MFD module binding.
+S2DOS05 is a panel/touchscreen PMIC, often found in
+Samsung phones. We define regulator sub-device for which driver will
+be added in subsequent patch. The device also has ADC for power and
+current measurements.
 
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-
 ---
-Changes in v4:
-- split long(>80) lines
-- fix indentation
-- merge with regulators binding
-- drop pmic suffix
-- drop unused labels in example
-- correct description
-
 Changes in v5:
-- simplify regulator-name in examples
-- remove index from single buck regulator
-- fix example indentation
-- replace example hex numbers to decimal
+- fix commit description: S2DOS05 in capital letters
+- fix commit description: only 1 sub device will be
+  added in subsequent patches.
 ---
- Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml | 99 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- MAINTAINERS                                                |  2 +-
- 2 files changed, 100 insertions(+), 1 deletion(-)
+ drivers/mfd/sec-core.c           | 11 +++++++++++
+ include/linux/mfd/samsung/core.h |  1 +
+ 2 files changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml b/Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml
-new file mode 100644
-index 000000000000..b85285720c16
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml
-@@ -0,0 +1,99 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/samsung,s2dos05.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index a6b0d7300b2d..cdfe738e1d76 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -34,6 +34,10 @@ static const struct mfd_cell s5m8767_devs[] = {
+ 	},
+ };
+ 
++static const struct mfd_cell s2dos05_devs[] = {
++	{ .name = "s2dos05-regulator", },
++};
 +
-+title: Samsung S2DOS05 Power Management IC
-+
-+maintainers:
-+  - Dzmitry Sankouski <dsankouski@gmail.com>
-+
-+description:
-+  This is a device tree bindings for S2DOS family of Power Management IC (PMIC).
-+
-+  The S2DOS05 is a companion power management IC for the panel and touchscreen
-+  in smart phones. Provides voltage regulators and
-+  ADC for power/current measurements.
-+
-+  Regulator section has 4 LDO and 1 BUCK regulators and also
-+  provides ELVDD, ELVSS, AVDD lines.
-+
-+properties:
-+  compatible:
-+    const: samsung,s2dos05
-+
-+  reg:
-+    maxItems: 1
-+
-+  regulators:
-+    patternProperties:
-+      "^buck|ldo[1-4]$":
-+        type: object
-+        $ref: /schemas/regulator/regulator.yaml#
-+        unevaluatedProperties: false
-+
-+        required:
-+          - regulator-name
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - regulators
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@60 {
-+            compatible = "samsung,s2dos05";
-+            reg = <0x60>;
-+
-+            regulators {
-+                ldo1 {
-+                    regulator-active-discharge = <1>;
-+                    regulator-min-microvolt = <1500000>;
-+                    regulator-max-microvolt = <2000000>;
-+                    regulator-name = "ldo1";
-+                };
-+
-+                ldo2 {
-+                    regulator-active-discharge = <1>;
-+                    regulator-boot-on;
-+                    regulator-min-microvolt = <1800000>;
-+                    regulator-max-microvolt = <1800000>;
-+                    regulator-name = "ldo2";
-+                };
-+
-+                ldo3 {
-+                    regulator-active-discharge = <1>;
-+                    regulator-boot-on;
-+                    regulator-min-microvolt = <3000000>;
-+                    regulator-max-microvolt = <3000000>;
-+                    regulator-name = "ldo3";
-+                };
-+
-+                ldo4 {
-+                    regulator-active-discharge = <1>;
-+                    regulator-min-microvolt = <2700000>;
-+                    regulator-max-microvolt = <3775000>;
-+                    regulator-name = "ldo4";
-+                };
-+
-+                buck {
-+                    regulator-active-discharge = <1>;
-+                    regulator-min-microvolt = <850000>;
-+                    regulator-max-microvolt = <2100000>;
-+                    regulator-name = "buck";
-+                };
-+            };
-+        };
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5e467ba71e3b..6a6c769a341a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20468,7 +20468,7 @@ L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
- B:	mailto:linux-samsung-soc@vger.kernel.org
- F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
--F:	Documentation/devicetree/bindings/mfd/samsung,s2m*.yaml
-+F:	Documentation/devicetree/bindings/mfd/samsung,s2*.yaml
- F:	Documentation/devicetree/bindings/mfd/samsung,s5m*.yaml
- F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.yaml
- F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.yaml
+ static const struct mfd_cell s2mps11_devs[] = {
+ 	{ .name = "s2mps11-regulator", },
+ 	{ .name = "s2mps14-rtc", },
+@@ -83,6 +87,9 @@ static const struct of_device_id sec_dt_match[] = {
+ 	{
+ 		.compatible = "samsung,s5m8767-pmic",
+ 		.data = (void *)S5M8767X,
++	}, {
++		.compatible = "samsung,s2dos05",
++		.data = (void *)S2DOS05,
+ 	}, {
+ 		.compatible = "samsung,s2mps11-pmic",
+ 		.data = (void *)S2MPS11X,
+@@ -339,6 +346,10 @@ static int sec_pmic_probe(struct i2c_client *i2c)
+ 		sec_devs = s5m8767_devs;
+ 		num_sec_devs = ARRAY_SIZE(s5m8767_devs);
+ 		break;
++	case S2DOS05:
++		sec_devs = s2dos05_devs;
++		num_sec_devs = ARRAY_SIZE(s2dos05_devs);
++		break;
+ 	case S2MPA01:
+ 		sec_devs = s2mpa01_devs;
+ 		num_sec_devs = ARRAY_SIZE(s2mpa01_devs);
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index a212b9f72bc9..750274d41fc0 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -37,6 +37,7 @@ struct gpio_desc;
+ 
+ enum sec_device_type {
+ 	S5M8767X,
++	S2DOS05,
+ 	S2MPA01,
+ 	S2MPS11X,
+ 	S2MPS13X,
 
 -- 
 2.39.2
