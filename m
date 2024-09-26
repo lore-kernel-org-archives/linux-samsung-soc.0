@@ -1,230 +1,138 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C1C1A76DF;
-	Thu, 26 Sep 2024 08:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA77613B7BE;
+	Thu, 26 Sep 2024 09:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727339784; cv=none; b=sNTSdVCUpepO3O8PoVE9lg4C9JzanEZrFhIOb7pBE1XdHbyEGtZFhqbroeeq8CC6ecUlDm3zPI7yayLazwBO/nxl9Tuj85RUyAlLO2JFhGbGXgc2UAsm0NlHyvvbAc/l5isQaJfLxqYrqeL8lvZsSjoIKXidrsRAnsAZlN45yOk=
+	t=1727344071; cv=none; b=fLaN4LzLZl5ntFz1HC9mdSrYuoJ4RvJmLcTan2LqzhmBWzYYdUSPIZme5DjZJJErHtxSxRFuMTw/frdnwd+5FHM7f8ge8OqTDapC9ffsU4FnSdBOT8uN4dTBBdT+djgFmrIeYYmNy8dM1M85TJm10wyOFjV1gAVqCjlGv4yWZ7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727339784; c=relaxed/simple;
-	bh=0vx2wLHIP341Fcw6qUhYwA5kM6D965fe51U5NDuNykk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5SfY7IiZbxUm309tSk3epAhTSWi24rD4JaC28BYvPuD3rs84gvOliRIQ17vUhzc08+dqqXlWOqT5DZhr4JCDTliYcuZPpxPMTaWg1WtEuTzAXcK3pYS59qzUlGyFbvoFYmD392sdfNeVwulOy4TALPnMbmv/US8RdtQYY6/gqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DBecXBrH; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1727344071; c=relaxed/simple;
+	bh=adZodwCXV3E1L2yUgVldd9HT85Tc8Q6aMcqWnivfDwM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y3FTtiWGPk9VXkANPm6IwGJjefWSt064MhxZo+hgctQoDAaA/TNSFJP/zVF/D+uwkLfbpmiewztOBmds6Ts2zD7OmeUHNJZ4XP3La3XWyNtzFb1qLgC7q1mKctesGm+afbo1RcCglhxUN4qDOXpwBpGXOuHn6ibt0Pzgs2PUq1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOqIVSXC; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DBecXBrH"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CFCEF169;
-	Thu, 26 Sep 2024 10:34:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727339692;
-	bh=0vx2wLHIP341Fcw6qUhYwA5kM6D965fe51U5NDuNykk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DBecXBrHZnJ73ugoSwlvEFZl5HNOOcuYbIIdgLX1AkDR6PH7vK9Arte2y8mICEzuh
-	 DXLodimMtWBjICZsq8QJw6rUDxSmTNStU9keIPkEqgc1e45rvdlA7HJY/31ZgKMTlG
-	 9tBNMwgZHEvdG1BfpH27Ivag8bjqyiquObr5/TM0=
-Date: Thu, 26 Sep 2024 11:36:17 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Jim Quinlan <james.quinlan@broadcom.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix array property constraints
-Message-ID: <20240926083617.GA29582@pendragon.ideasonboard.com>
-References: <20240925232409.2208515-1-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOqIVSXC"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365c512b00so940175e87.3;
+        Thu, 26 Sep 2024 02:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727344068; x=1727948868; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G9cLIStHYD0jPVaz7NpQ1Asc2qCOkfbRpKZ83f4Snlg=;
+        b=BOqIVSXC7zpxh7moKSjg6FfhbJPBC+nKtusGEGag/tU4V/g4cojz8LIUnbnOACbPYI
+         IflG324WWQ4/YHm3ocD8TgFQfqqxbgUA+aGXFL5VxjWM+Opwsnamd/7Q2iMcnqoMOAZQ
+         b/7pfWYF+h4ptdwrz6ykp7jc5AIl0ftnNWc8pOgTKVOxvxoFfk8nt4PyZ8li08wcPaow
+         7BzHCrgrtbmBgW+zp/UYVvBmxYkbiPh3jPOIVkWjU47kZoAKRz2izTwgJgIxexziZyu5
+         KeyxINYUN+g8Kk4tOfVM4lltzWOUJ/9+oC35Hix/cEgWX3gziqNYRH2quBqtmatzsIAi
+         BumA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727344068; x=1727948868;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G9cLIStHYD0jPVaz7NpQ1Asc2qCOkfbRpKZ83f4Snlg=;
+        b=VM16+qAjucObApe6EvVQpbOZe80FFfl9HN1mYNhTEX8bcY+C8Hb3xie4xXF+iAhNgq
+         M633utTSrqhyR/v3ahBVx/vu1zmFLKyh6MiTgwmTypq5oxegwHaEZgVbDCsU8iaIykh1
+         TcN7v9E3hmUipuy463BR4ceUeTzjWy+tmEYjQh+KhVbg0d9dzgmj7lEn4BcGpGkkNsJ1
+         ZJdlN4v6OmjVFATKmaPib4Hg6MMC8hbNDxUYXmGuOPhO6Zo0hakXzY8/1/6Q9cPp00w1
+         tfDi5Aey8IeiuyypRZRtbEa1dQSbfx/vTopOmMTPiduyhgwViB4HaCx7ECk0DrLlYBZN
+         M7Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB5MOf81O1vwLawiPqo2/qo+uSj9cBjY4BEXWXIN147v1M5Y46fEUrbtWG9vR+u2gaeF8IMeESfQ89@vger.kernel.org, AJvYcCW426uhSjVeqjwdRl42KFQVbvzoOSzXEKf/EUfO5UvoJZLqlQqmyDQmdPBOkxBufgNETpuu6yFNvNDXfRlsAgj6cwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5xbLoxNGscK30xm2b9iLYQmqBdRpQJz5tagBmbHgCNqsU3G9T
+	0XggM2uzqyOhZxjDK6dqMspixigfB/v3QC5rnA8+VU2+qctqmkYC
+X-Google-Smtp-Source: AGHT+IF8AkpbjtMaVmDx8uVEdeLGSdKTUIqsBooH7i09P+qWwj/WQOkiBqbXWlb3Lo3jGMxG2NiYFQ==
+X-Received: by 2002:a05:6512:3b8d:b0:52e:9619:e26a with SMTP id 2adb3069b0e04-5387754d154mr3982172e87.26.1727344067252;
+        Thu, 26 Sep 2024 02:47:47 -0700 (PDT)
+Received: from [127.0.1.1] (mm-20-1-84-93.mgts.dynamic.pppoe.byfly.by. [93.84.1.20])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-537a8648a60sm750311e87.199.2024.09.26.02.47.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 02:47:46 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v5 0/3] Add Samsung s2dos05 pmic support
+Date: Thu, 26 Sep 2024 12:47:29 +0300
+Message-Id: <20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240925232409.2208515-1-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALIt9WYC/43O0Q6CIBQG4FdxXEdDULCueo/WHOJR2RQNkNWc7
+ x66tbqry//fzvefBTmwGhw6JwuyELTTo4khPyRIddK0gHUdM6KEZoSnAjsv7b33oDpTauOhtdL
+ Hm3KenLcgB1ypghc5qWgDDEWmkg5wZaVRXYTM3PexnCw0+rHvXm8xd9r50T73NwLb2vdi8XsxM
+ EwwsIZzTkkqpLq0g9T9UY0D2vCQfcBTyv4AswjSmkJT5yovhPgG13V9Ad5rAaM2AQAA
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727344064; l=2341;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=adZodwCXV3E1L2yUgVldd9HT85Tc8Q6aMcqWnivfDwM=;
+ b=Tn4jQZ2eXo+tK+U1h/u5mTg0RCZvgQW/TnpGA60guWpEnw/m1tn3Qj8KR92m67q/mkTQ10Cud
+ /GwmdImG2xWAAixIxYrgrV1INeSVqTOtIlQa8HNcaUdxOD2TbHjeGrJ
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi Rob,
+The S2DOS05 is a companion power management IC for the panel and touchscreen
+in smart phones. Provides voltage regulators and
+ADC for power/current measurements.
 
-Thank you for the patch.
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v5:
+- Split patchset per subsystem
+- Rewrite cover letter
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
 
-On Wed, Sep 25, 2024 at 06:24:06PM -0500, Rob Herring (Arm) wrote:
-> Schemas for array properties should only have 1 level of array
-> constraints (e.g. items, maxItems, minItems). Sometimes the old
-> encoding of all properties into a matrix leaked into the schema, and
-> didn't matter for validation. Now the inner constraints are just
-> silently ignored as json-schema array keywords are ignored on scalar
-> values.
-> 
-> Generally, keep the inner constraints and drop the outer "items". With
-> gicv3 "mbi-alias" property, it is more appropriately a uint32 or uint64
-> as it is an address and size depends on "#address-cells".
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-I haven't followed what changed in the validation tools, but this is
-definitely less confusing. Thanks for improving the experience.
+Changes in version 3:
+- s2dos05 driver converted to MFD
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Changes in version 2:
+- s2dos05 regulator:
+  - hex to decimal in regulator values
+  - fix compatible value
+  - remove interrupt specific code, because it's
+    empty in vendor kernel, and I cannot test it on
+    available hardware anyway.
 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/cache/l2c2x0.yaml  |  5 ++---
->  .../devicetree/bindings/dma/dma-common.yaml          |  7 +++----
->  .../bindings/interrupt-controller/arm,gic-v3.yaml    | 12 +++++-------
->  .../devicetree/bindings/media/i2c/thine,thp7312.yaml |  3 +--
->  .../bindings/memory-controllers/exynos-srom.yaml     |  5 ++---
->  .../devicetree/bindings/pci/brcm,stb-pcie.yaml       |  5 ++---
->  .../devicetree/bindings/soc/qcom/qcom,smp2p.yaml     |  3 +--
->  7 files changed, 16 insertions(+), 24 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/cache/l2c2x0.yaml b/Documentation/devicetree/bindings/cache/l2c2x0.yaml
-> index d7840a5c4037..10c1a900202f 100644
-> --- a/Documentation/devicetree/bindings/cache/l2c2x0.yaml
-> +++ b/Documentation/devicetree/bindings/cache/l2c2x0.yaml
-> @@ -100,9 +100,8 @@ properties:
->        filter. Addresses in the filter window are directed to the M1 port. Other
->        addresses will go to the M0 port.
->      $ref: /schemas/types.yaml#/definitions/uint32-array
-> -    items:
-> -      minItems: 2
-> -      maxItems: 2
-> +    minItems: 2
-> +    maxItems: 2
->  
->    arm,io-coherent:
->      description: indicates that the system is operating in an hardware
-> diff --git a/Documentation/devicetree/bindings/dma/dma-common.yaml b/Documentation/devicetree/bindings/dma/dma-common.yaml
-> index ea700f8ee6c6..fde5160b5d29 100644
-> --- a/Documentation/devicetree/bindings/dma/dma-common.yaml
-> +++ b/Documentation/devicetree/bindings/dma/dma-common.yaml
-> @@ -32,10 +32,9 @@ properties:
->        The first item in the array is for channels 0-31, the second is for
->        channels 32-63, etc.
->      $ref: /schemas/types.yaml#/definitions/uint32-array
-> -    items:
-> -      minItems: 1
-> -      # Should be enough
-> -      maxItems: 255
-> +    minItems: 1
-> +    # Should be enough
-> +    maxItems: 255
->  
->    dma-channels:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-> index 5f051c666cbe..f3247a47f9ee 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-> @@ -132,10 +132,9 @@ properties:
->        Address property. Base address of an alias of the GICD region containing
->        only the {SET,CLR}SPI registers to be used if isolation is required,
->        and if supported by the HW.
-> -    $ref: /schemas/types.yaml#/definitions/uint32-array
-> -    items:
-> -      minItems: 1
-> -      maxItems: 2
-> +    oneOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - $ref: /schemas/types.yaml#/definitions/uint64
->  
->    ppi-partitions:
->      type: object
-> @@ -223,9 +222,8 @@ patternProperties:
->            (u32, u32) tuple describing the untranslated
->            address and size of the pre-ITS window.
->          $ref: /schemas/types.yaml#/definitions/uint32-array
-> -        items:
-> -          minItems: 2
-> -          maxItems: 2
-> +        minItems: 2
-> +        maxItems: 2
->  
->      required:
->        - compatible
-> diff --git a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> index 535acf2b88a9..bc339a7374b2 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/thine,thp7312.yaml
-> @@ -135,8 +135,7 @@ properties:
->  
->            data-lanes:
->              $ref: /schemas/media/video-interfaces.yaml#/properties/data-lanes
-> -            items:
-> -              maxItems: 4
-> +            maxItems: 4
->              description:
->                This property is for lane reordering between the THP7312 and the imaging
->                sensor that it is connected to.
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> index 10a2d97e5f8b..a5598ade399f 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
-> @@ -66,9 +66,8 @@ patternProperties:
->  
->        samsung,srom-timing:
->          $ref: /schemas/types.yaml#/definitions/uint32-array
-> -        items:
-> -          minItems: 6
-> -          maxItems: 6
-> +        minItems: 6
-> +        maxItems: 6
->          description: |
->            Array of 6 integers, specifying bank timings in the following order:
->            Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
-> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> index 0925c520195a..2ad1652c2584 100644
-> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> @@ -92,9 +92,8 @@ properties:
->        may have two component regions -- base and extended -- so
->        this information cannot be deduced from the dma-ranges.
->      $ref: /schemas/types.yaml#/definitions/uint64-array
-> -    items:
-> -      minItems: 1
-> -      maxItems: 3
-> +    minItems: 1
-> +    maxItems: 3
->  
->    resets:
->      minItems: 1
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
-> index 141d666dc3f7..1ba1d419e83b 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.yaml
-> @@ -55,8 +55,7 @@ properties:
->  
->    qcom,smem:
->      $ref: /schemas/types.yaml#/definitions/uint32-array
-> -    items:
-> -      maxItems: 2
-> +    maxItems: 2
->      description:
->        Two identifiers of the inbound and outbound smem items used for this edge.
->  
+---
+Dzmitry Sankouski (3):
+      dt-bindings: mfd: add samsung,s2dos05
+      mfd: sec-core: add s2dos05 support
+      regulator: add s2dos05 regulator support
 
+ Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml |  99 ++++++++++++++++++++++++++++++++++++++
+ MAINTAINERS                                                |   4 +-
+ drivers/mfd/sec-core.c                                     |  11 +++++
+ drivers/regulator/Kconfig                                  |   8 ++++
+ drivers/regulator/Makefile                                 |   1 +
+ drivers/regulator/s2dos05-regulator.c                      | 176 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/samsung/core.h                           |   1 +
+ include/linux/regulator/s2dos05.h                          |  73 ++++++++++++++++++++++++++++
+ 8 files changed, 371 insertions(+), 2 deletions(-)
+---
+base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+
+Best regards,
 -- 
-Regards,
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-Laurent Pinchart
