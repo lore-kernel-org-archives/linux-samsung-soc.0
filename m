@@ -1,174 +1,129 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413291171C
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2024 05:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D31414B959;
+	Thu, 26 Sep 2024 06:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727328896; cv=none; b=q+b75dxUx4II56FKPuSQdkyNea1ozuSUUbgwxhtvQq11ionwagriYzNRYnZqd6CO+H5ap/R3cAZnbShRjo8qXVg5cNLYwixVy1LA2TCZ0ffb93Ce8DB9sphrp8xehureXxCY14bteRaP14my52UkGe5Secxva+KHc1xSR3ToFQ8=
+	t=1727331389; cv=none; b=X4pVXLEEcjuRKNbM5GXXW73PoTDFgsiypNoGNTvN+uMmfeyGwS73s2iekjWIrlwub33ikxFCRXqAROJ4aijrJADUMmuKlPmfmMDHKQaMvTXW0+IZlwofmGJxOjTvIye3ywvLEAXyl/HhRdjp9N5v4FRalPazRlvN/Z6MSvzDfYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727328896; c=relaxed/simple;
-	bh=swXyTAcLgwrpOR7vwZIp8q1pyVRfiEN01n1XjACumU4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=obxE9xd/Sg9ku5/Lo0TL4fxDgYcr1DDhNDuaMGthFCaNq7UyRH1J14eKZUbq4Eb0URg9KMQWO6CWjxTMsWl0oqKrFcvoKyDtrkoI3rOZb7Gs3RCNl3jf6w9ptw4sbIkVUWTPMWqFjLhkl/XqQlnLJ7EsIUXIzCPYJjqB/Ap/YEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=i5cT+yIJ; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1727331389; c=relaxed/simple;
+	bh=3Vs65vxF0JYd2tOmEA+pE3SUApfli6KPsD8WX6RvMsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AzbQaGFDBwyxu+knlf+AFBQxSltLzeroltfJ1KYk1kJn5XbCP0x+AQeBk1PP2m4XezHXgdtKtgwEXQAzR+QtPq/vFmkMoPFfcggj43mbqzmlUbXxj99jWA2W/bWnsmcINbPcXI8NFmna+MYL9urhcXztTJMkA3elfns7xdzqhJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWyW51A6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="i5cT+yIJ"
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240926053452epoutp033edc8198d4b4cfbff80343a1b0133c57~4tHnBHAsa1814818148epoutp03q
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2024 05:34:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240926053452epoutp033edc8198d4b4cfbff80343a1b0133c57~4tHnBHAsa1814818148epoutp03q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727328892;
-	bh=swXyTAcLgwrpOR7vwZIp8q1pyVRfiEN01n1XjACumU4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=i5cT+yIJpWuYg8ayC/EMU15wlvMH2VIbUs5utAx6s+jYofMb8ezLl8GYp/4KZqJkH
-	 9GpZipF24hzsqRiE3+7RRyyjJEkYibLG8oOq9+04iC4J43/q62tEh+1KWO5dQdGio1
-	 Rgx12/ACxTAi3YIFTj7pbXw0tTeBKEA6wFk7W23U=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240926053451epcas1p4c26022781b0e48c369a986b2e79b0e02~4tHmcMMla0679906799epcas1p48;
-	Thu, 26 Sep 2024 05:34:51 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.237]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XDj3G0Plcz4x9Q8; Thu, 26 Sep
-	2024 05:34:50 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	01.7F.09725.972F4F66; Thu, 26 Sep 2024 14:34:49 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510~4tHkoAwy11368013680epcas1p2f;
-	Thu, 26 Sep 2024 05:34:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240926053449epsmtrp115837797407d31f4abe8a41f921962b0~4tHknD2Wt0333203332epsmtrp1I;
-	Thu, 26 Sep 2024 05:34:49 +0000 (GMT)
-X-AuditID: b6c32a37-1f3ff700000025fd-48-66f4f279057b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8F.49.19367.972F4F66; Thu, 26 Sep 2024 14:34:49 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240926053449epsmtip12248e1a358afba040f90ca5bfa99b6d0~4tHkRAQg_0521205212epsmtip1K;
-	Thu, 26 Sep 2024 05:34:49 +0000 (GMT)
-Message-ID: <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
-Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
- exynos7870 compatible
-From: Kwanghoon Son <k.son@samsung.com>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, Krzysztof Kozlowski
-	<krzk@kernel.org>
-Cc: airlied@gmail.com, alim.akhtar@samsung.com, conor@kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	inki.dae@samsung.com, kyungmin.park@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, robh@kernel.org, simona@ffwll.ch,
-	sw0312.kim@samsung.com,  tzimmermann@suse.de
-Date: Thu, 26 Sep 2024 14:34:49 +0900
-In-Reply-To: <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWyW51A6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D516C4CEC6;
+	Thu, 26 Sep 2024 06:16:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727331389;
+	bh=3Vs65vxF0JYd2tOmEA+pE3SUApfli6KPsD8WX6RvMsA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tWyW51A6NurOK+svHi0PTid99U8HRGdeI2eRuw85eFiHMLc0UkeTTSxq97OzHLTZt
+	 8SnIk3thGNsDuKzpJNLTTQNm39ZA43c3YfGeddHBNSU9pHP0nfGUw8rjlwMcissVHl
+	 YS+5sEU+BDDoM6aNIbJWFQmITTfRUlvl5XEv2Hl0zn/SCosDxegxeAAjaYAQlfa4xD
+	 nEXUCeeuPx8WQTY3ZOj6nV3ipwpEGRWxqV9wsZp29FPjFCSHBNv/d8G7gkcCspRsAx
+	 PTQL0E3hexJSzeeONkLq7tQjbrIHJ5tBfukynDIneCX/WmrFzpVYtBm7/oY182QTZD
+	 neaHCmLVtkakw==
+Message-ID: <fd29fd5e-ad24-49a5-ab5a-549b455489f5@kernel.org>
+Date: Thu, 26 Sep 2024 08:16:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmnm7lpy9pBgc2WlicuL6IyeLBvG1s
-	FiunrmKzmH/kHKvFla/v2Swm3Z/AYvHn33k2i/PnN7BbnG16w26x6fE1VovLu+awWcw4v4/J
-	YuHHrSwWbZ3LWC3+79nBbjH73X52ixmTX7JZbHkzkdVByOPkus1MHnu/LWDx2DnrLrvHplWd
-	bB7zTgZ63O8+zuSxeUm9R9+WVYwem09Xe3zeJBfAFZVtk5GamJJapJCal5yfkpmXbqvkHRzv
-	HG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQP0k5JCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jE
-	Vim1ICWnwLRArzgxt7g0L10vL7XEytDAwMgUqDAhO2Pd4SmsBRt5Kua8m8DewHiTs4uRk0NC
-	wETi8LMm5i5GLg4hgR2MEkdnrWWBcD4xStzaepUVpArM6Tsa18XIAdax/0IKRM1ORonH109B
-	NbxnlFjWuIMVpIhXwEPi+a8kkF5hgUSJpQtb2UBsNgF1iSVta9lBbBGBKIn7qw+CbWYWWMMs
-	sfH8ZWaQBIuAqsTn30fAFnMKWEu8md3FCGIzC2hLLFv4GqxGVEBeouHhCTCbV0BQ4uTMJ2BH
-	SAh84JBY8LaZCeI3F4nZixawQNjCEq+Ob2GHsKUkXva3QdnZEkc/7mWDsEskrs9axAphG0vs
-	XzqZCeQZZgFNifW79CFu4JN497WHFRIQvBIdbUIQprzErc5yiEZRiTNPP0IN9JB4e/I7EyR4
-	mlgkpt/8zzaBUX4Wkm9mIflgFsKyBYzMqxjFUguKc9NTiw0LjOFxmpyfu4kRnKq1zHcwTnv7
-	Qe8QIxMH4yFGCQ5mJRHeSTc/pgnxpiRWVqUW5ccXleakFh9iNAWG6URmKdHkfGC2yCuJNzSx
-	NDAxMzI2sTA0M1QS5z1zpSxVSCA9sSQ1OzW1ILUIpo+Jg1Oqgalc01zo8tsS98Osj92UAl0E
-	FaNv6zW+ZdosyBktlcaXUzuZ/9Jbjvs/nGctKClvumimKrHM//4ipzniC2zXdM2dbJ3UZX7O
-	0OWZQe3zybEvp3pzf/ZVNG5h+XLudnXgwxyWGb8d9k2VefTsYAb/dLmF5jYdGvIKGdFTZ6+Q
-	vXjGx9c16uTnrJWTF0+VT14QK/ZEunHCf+WmDrFXGyIvcprMjdLrefVjxg2bMIVnn+dWsy7M
-	nj6Ze3rcssNdjiqrZK0EEmf+k3Blu3XSpSl69QbHTottjM3BX/ROJz+b0udinH1B0mPp+3KT
-	M7aPZiv+17yQHHNkcQl/6YXKO+lR4ld5t7oo8D771b9eYfnFR0osxRmJhlrMRcWJAEa0uZRe
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSnG7lpy9pBvf/i1mcuL6IyeLBvG1s
-	FiunrmKzmH/kHKvFla/v2Swm3Z/AYvHn33k2i/PnN7BbnG16w26x6fE1VovLu+awWcw4v4/J
-	YuHHrSwWbZ3LWC3+79nBbjH73X52ixmTX7JZbHkzkdVByOPkus1MHnu/LWDx2DnrLrvHplWd
-	bB7zTgZ63O8+zuSxeUm9R9+WVYwem09Xe3zeJBfAFcVlk5Kak1mWWqRvl8CV0XryBVPBCp6K
-	nptbWRsYL3F2MXJwSAiYSOy/kNLFyMUhJLCdUeLV+adsXYycQHFRiY7LjYwQNcIShw8Xg4SF
-	BN4ySsw5XAAS5hXwkHj+KwkkLCyQKLF0YStYJ5uAusSStrXsILaIQLTE+1cLmUDGMwusZZbo
-	3LWMBSTBIqAq8fn3EVYQm1PAWuLN7C5GiBu2Mks8fXWWGSTBLKAp0br9NzuErS2xbOFrsLio
-	gLxEw8MTYDavgKDEyZlPWCYwCs5C0jILScssJGULGJlXMYqmFhTnpucmFxjqFSfmFpfmpesl
-	5+duYgRHpVbQDsZl6//qHWJk4mA8xCjBwawkwjvp5sc0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK
-	4rzKOZ0pQgLpiSWp2ampBalFMFkmDk6pBia3lwdduHpuX/qfFfaGb7fPT4OexWor7Jb57uyq
-	ePjgAvcta/919yJ//eV5l742rjhEKWKpuuRdN6sl768sbt+reY5H0vuyA9+Mhy8fdf4/sCr6
-	RPhVHp1rdpObvA/8ufX2jUDFjFM9k+b6z7cOuXXHewuXG6fJ6jjP+BseRtvufrVTvLR4pUje
-	9agVF3W8rtq7Vxlsa1Sb0Rm2Le7cnZyGdYczrm5KFdgmc/Z33Zrl8579DbpgF7HxdcSv2xWB
-	cR/tVyvUHM6t+bqb3eu3h0BY3al7pZP/R5b1h+zL/XKYe+uO7wcP852tMglLNN7pLv/i9O8f
-	/Nbf+DbbHb+YNFOu2fFHsWnntYDmPecTGbhPK7EUZyQaajEXFScCAGYfEWY5AwAA
-X-CMS-MailID: 20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
-	<20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
-	<32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
-	<7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
-	<1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
-	<8e0672ad3fd72f69d2bdb5687e778c86@disroot.org>
-	<ef786b8b-32c0-457a-9e14-ed7bd9f04172@kernel.org>
-	<d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
-	<CGME20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510@epcas1p2.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: Fix array property constraints
+To: "Rob Herring (Arm)" <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Paul Elder <paul.elder@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20240925232409.2208515-1-robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240925232409.2208515-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-09-25 at 20:05 +0000, Kaustabh Chakraborty wrote:
-> On 2024-09-25 19:56, Krzysztof Kozlowski wrote:
-> > On 25/09/2024 21:36, Kaustabh Chakraborty wrote:
-> > > On 2024-09-25 19:25, Krzysztof Kozlowski wrote:
-> > > > On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
-> > > > > On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
-> > > > > > On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
-> > > > > > > Add the compatible string of Exynos7870 to the existing list.
-> > > > > > >=20
-> > > > > > > Signed-off-by: Kaustabh Chakraborty <kauschluss=40disroot.org=
->
-> > > > > >=20
-> > > > > > ... and the DTS is <please provide lore ink in changelog>?
-> > > > >=20
-> > > > > Didn't quite understand. The patch adds the compatible string
-> > > > > for Exynos7870 DECON in documentation. There's no DTS involved
-> > > > > in here, right?
-> > > >=20
-> > > > Provide lore link to the DTS submission.
-> > >=20
-> > > There aren't any DTS submissions *yet* which use the compatible.
-> > > Is that an issue?
-> > >=20
-> >=20
-> > Yeah, users are supposed to be upstream. Not downstream.
->=20
-> I understand that. I had plans to submit it in the future.
-> If that's how it's meant to be done, I'll have to revisit this
-> submission at a later date then.
+On 26/09/2024 01:24, Rob Herring (Arm) wrote:
+> Schemas for array properties should only have 1 level of array
+> constraints (e.g. items, maxItems, minItems). Sometimes the old
+> encoding of all properties into a matrix leaked into the schema, and
+> didn't matter for validation. Now the inner constraints are just
+> silently ignored as json-schema array keywords are ignored on scalar
+> values.
+> 
+> Generally, keep the inner constraints and drop the outer "items". With
+> gicv3 "mbi-alias" property, it is more appropriately a uint32 or uint64
+> as it is an address and size depends on "#address-cells".
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-Hi, may I ask for reason that you don't submit dts?
-I am asking because I wonder if there is an issue related to DPP.
-
-https://lore.kernel.org/linux-samsung-soc/2e4d3d180f535e57d9cb98e7bac1d14b5=
-1ffc5d4.camel=40gmail.com/=23t
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
-kwang.
-
->=20
-> >=20
-> > Best regards,
-> > Krzysztof
+Krzysztof
 
