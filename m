@@ -1,122 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAFD1DFF7;
-	Sat, 28 Sep 2024 12:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C8136352;
+	Sat, 28 Sep 2024 16:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727528064; cv=none; b=b7/O/H/b9t/s2ZeijF9+ymPs9a7EqCkRSExjj+s6XoGYBeksNkKE8UTtuSTWGE5PUjrYiKerUswokh9u/i4M0cWv2FApmJbK+rr3wsALe6SyWfkh27wKjaSdB1Kz8xV5gwsSW6YMfQV0qwlhnfOm8oiHT4h6p0qFk3+Y1MuqqXA=
+	t=1727540753; cv=none; b=Fq1FwiBemZyuZ6j5XP0OpUWmDeeJ6sRq0sQ12BWgJyEnNJElDUPsIbp/WqchX66rrM6j3vH4NueBmJ9qNXaozvRag10wPA6l+ahxpOzIU3MTWMpGG6dGrAkYJ5mZ7d4eMtJF94VZbzA2BdVcWeHaapY87HVTXgW5DW/do+ddGUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727528064; c=relaxed/simple;
-	bh=7eInjk8rKWyJEFU9PAt4bj5scGmoe6yY4T/+7Mmv3DI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jTVR1tLrzLTO7EOuBCWHULi3TDdFNOL+FM/REI8KA5AGVeFrcvltshH8DlvcRrALD7qIecQngtg1FLfB4I0hcFeGTD5vdJVlv4WxcpUZX62DjStj5GDDv8eJrXDN9gTcuxqyaJe2tAJ4HQfBrmLHJRnE1x7F3uCxHuJNoqkzKuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqRkZFV7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727540753; c=relaxed/simple;
+	bh=V5mT+wVYjQpoHBouSd/nQpnt5/+4LDMm5lqddyF74tk=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=NHmsjX7J0mEzisQX+I5LoJTexPDNF/1FVitRL77o9SUAHURXABos++cmOwOHTEL7HY1pPdRGneUmv30OScxLPcS78DeK03qv+8v8LSH3yKbBYOyY8jHciKXApKAq5vRJeWZlJbuOjuLk+u34OxxeL0RuQHZ1k1Dap0gJ/Z/mjyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mkaMcpZY; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqRkZFV7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E05C4CEC3;
-	Sat, 28 Sep 2024 12:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727528064;
-	bh=7eInjk8rKWyJEFU9PAt4bj5scGmoe6yY4T/+7Mmv3DI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LqRkZFV77cIrmf6br7qf8CLcSZyVl+gQIO82hLutSbNFQ3TaAynPG0BoK+C0g/X8Y
-	 tLLVFpKYZf0TPdOXkMnhlYz2uQ7EF5BTg0zE/O7tpIuWTrB9xLFnyTjadShhEWBu7B
-	 cDMDDh77iyPWPpQYXwGZtV9MTl6MW4dXrV2u10WnBRlNZIM+VnG92U25OWaH4SpY6x
-	 GPPgwTFEOat5MOIlMzhjs8KFAI/hOCTEaNb1iz/YHO2Ym0XmJN3rec71q+9fOY4gnL
-	 6y0L4ov/cLHlL6ixCopFm5KoXjIsUr2qqz2EUmFOZtzprhWqGWTlT/UXwswGXPc6Pt
-	 +Q6k6EnLpv6dg==
-Message-ID: <100dff5a-a07a-487f-b1a4-50c3e94804b0@kernel.org>
-Date: Sat, 28 Sep 2024 14:54:18 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mkaMcpZY"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 6A7F523CA1;
+	Sat, 28 Sep 2024 18:25:43 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id srQnTbUPZUl5; Sat, 28 Sep 2024 18:25:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1727540742; bh=V5mT+wVYjQpoHBouSd/nQpnt5/+4LDMm5lqddyF74tk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=mkaMcpZYJIz+xBxoWJGqd0rIqHSd0s2VEQxFWmfpn97RgDQH+fRMlM3BFEW/C3kcX
+	 ifY0AtfwLRrLX51ObBThq0YbPMdrSI1UHG5YFYKt+jI3Nw6THBWNMtuZAMyeBlKX4f
+	 5soS39s708vXjvon9WsGEBPan0orpu3HEHgryvb1t2Ve7OnAxaLxVpTd9OwvJFP4NA
+	 tO+NmZinLmsbx6tauEXHDsIO9Jxv3DwyN3DkiRwQO3kKv6D1jMG29P+MEBICwGYw20
+	 Wqqk7z5eqAjTJR4o0/IdzDYwnDCP1Av4tUXyZ2dPGQauDtMdIYnfE2TFEwZFkAlDsK
+	 fyAlSOANWAAcQ==
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/10] ARM: dts: samsung: exynos4212-tab3: Add battery
- node with charge current value
-To: Artur Weber <aweber.kernel@gmail.com>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, Henrik Grimler <henrik@grimler.se>,
- Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
- Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>
-References: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
- <20240729-max77693-charger-extcon-v3-8-02315a6869d4@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729-max77693-charger-extcon-v3-8-02315a6869d4@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Date: Sat, 28 Sep 2024 16:25:42 +0000
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Kwanghoon Son <k.son@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, airlied@gmail.com,
+ alim.akhtar@samsung.com, conor@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, inki.dae@samsung.com,
+ kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, robh@kernel.org,
+ simona@ffwll.ch, sw0312.kim@samsung.com, tzimmermann@suse.de, kauschluss
+ <kauschluss@disroot.org>
+Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
+ exynos7870 compatible
+In-Reply-To: <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
+References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+ <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
+ <32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
+ <7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
+ <1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
+ <8e0672ad3fd72f69d2bdb5687e778c86@disroot.org>
+ <ef786b8b-32c0-457a-9e14-ed7bd9f04172@kernel.org>
+ <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
+ <CGME20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510@epcas1p2.samsung.com>
+ <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
+Message-ID: <91447671a12d04e177a7a54e7facc5df@disroot.org>
+X-Sender: kauschluss@disroot.org
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 29/07/2024 19:47, Artur Weber wrote:
-> This value was verified by comparing register dumps of the MAX77693
-> charger with on mainline with a downstream kernel under Android; the
-> value on downstream was set to 1.8 amps when charging with a proper
-> charger.
+On 2024-09-26 05:34, Kwanghoon Son wrote:
+> On Wed, 2024-09-25 at 20:05 +0000, Kaustabh Chakraborty wrote:
+>> On 2024-09-25 19:56, Krzysztof Kozlowski wrote:
+>> > On 25/09/2024 21:36, Kaustabh Chakraborty wrote:
+>> > > On 2024-09-25 19:25, Krzysztof Kozlowski wrote:
+>> > > > On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
+>> > > > > On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
+>> > > > > > On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
+>> > > > > > > Add the compatible string of Exynos7870 to the existing list.
+>> > > > > > > 
+>> > > > > > > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> > > > > > 
+>> > > > > > ... and the DTS is <please provide lore ink in changelog>?
+>> > > > > 
+>> > > > > Didn't quite understand. The patch adds the compatible string
+>> > > > > for Exynos7870 DECON in documentation. There's no DTS involved
+>> > > > > in here, right?
+>> > > > 
+>> > > > Provide lore link to the DTS submission.
+>> > > 
+>> > > There aren't any DTS submissions *yet* which use the compatible.
+>> > > Is that an issue?
+>> > > 
+>> > 
+>> > Yeah, users are supposed to be upstream. Not downstream.
+>> 
+>> I understand that. I had plans to submit it in the future.
+>> If that's how it's meant to be done, I'll have to revisit this
+>> submission at a later date then.
 > 
-> Add it to a new battery node and pass it to the MAX77693 charger
-> so that the fast charge current setting can be used for charging.
+> Hi, may I ask for reason that you don't submit dts?
+
+It's not that I don't want, I have nowhere to submit it to yet. As
+pointed out by Krzysztof, support for exynos7870 doesn't exist in
+upstream. I'll get back to this after I get that finished.
+
+> I am asking because I wonder if there is an issue related to DPP.
+
+Exynos7870 doesn't have DPP blocks as far as I could tell. Let me
+know if I misunderstood anything.
+
 > 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v2:
-> - Switched to monitored-battery
-> ---
-
-Please ping me or resend DTS when the bindings got accepted to power
-supply tree.
-
-Best regards,
-Krzysztof
-
+> https://lore.kernel.org/linux-samsung-soc/2e4d3d180f535e57d9cb98e7bac1d14b51ffc5d4.camel@gmail.com/#t
+> 
+> Best regards,
+> kwang.
+> 
+>> 
+>> > 
+>> > Best regards,
+>> > Krzysztof
