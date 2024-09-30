@@ -1,96 +1,111 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F184C189B98
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2024 10:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7395B188006;
+	Mon, 30 Sep 2024 10:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727692511; cv=none; b=h2wNqtmj87D0K5YpIs15ndJ1yOg2SazN1d2z8T2I9kNlceeJ7KUhSE78er4NEgxemUNxJutEY+vJgpc0/rb3lbBi3YtjtJktNaOuoP+lVLmhpwvKgwEsM0nTf8hS7uk6IBAFT5TzVbq2gejlFrHYkYWK9fY25fS+9ZzQ0HV18Hg=
+	t=1727692656; cv=none; b=PuR/en2zN04jmsIRcMr1UPNh7Qs4SDhKs6z1pBje0QeBIKEuww/u7XNQE5uY6Jef0WYy4Oe20v8HibFCg9zUA2BRz/3llvZin4ov3TZN9Q73FxRzUTJBksdksnnFQ5kfsvOT73XDpAafCfsIrKvKUbOKKYZiONeb3vg+5PCeRR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727692511; c=relaxed/simple;
-	bh=ejnBLgwJqqjFwgJjER+8c8E0QM4KFSEIDR4O47AjrSc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=VYBiXwaf1cVreJMUOlu/YtmWeuA2lOQDRIfi9U+iRnpHs8FPYirxraArPNGYQ+HdTbZdDsSCwOYaswQZ+b05h3rIp0hyRigLaPOs/Bb71hCCiJvIYUK2YpWjeMCygUfR+3zx0bkypDPvcAkOT1/bf4k7iF9ksONHNlrhmGgKE54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lLKzlMdY; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727692656; c=relaxed/simple;
+	bh=F2Vvp+NmQj/IeNOudf2Wx4PHmRHU5jUFSv49IeAJxKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PPCAzKmlZQFkIlgcl4dnk6EvSO2RIhGKBZV18qTMJJqh9/6nmWuBuqV9eypSCLToDfyAGG3Pcq11lYU2UIIL8Uvq6zhdnRJp8Fz5FSnQKkaoWMqPIuPmwJMap9AXc+tL3Sk7zIS05yLZkWzthvkK4/US38Uaf48UWC2T6+Vlj0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fp9hWN+Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lLKzlMdY"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42f5a663ed5so4036535e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2024 03:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727692508; x=1728297308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lji+21mQIO7A8/WgDulZAHnUlZFcbKgkhCSPgy/WRJg=;
-        b=lLKzlMdY7BMklU0BalUJ8Eoe+pYdCzTYN3tIgShCgqX+jcCTUU7tQZne6RmFx0t4Ty
-         RWu3aTj6J6M1F5xU7MmXkC70scCMIRYiuRfPidNHIwrwo1xGdyYr+1AdjrVUR57dP0R3
-         pUMKn6IRUy28KQ7AGlgRqfyMqW+ANVGwCJjuHqW+sHh/gqpjK+MlOLoUuEWyorNbWJoM
-         cILPn5JnO/v4DrLgIjDHXlnz+6q2gHOc3OFiZRU6K7UgvkoY05MZz0No9SCjzUfd5VhR
-         Ult+G27BEh7zYbS8i5n7X9wiya3CsLBWN8yPjGwvRL8bGnGa7c6RZX+drAxxGJp82YIi
-         QTCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727692508; x=1728297308;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lji+21mQIO7A8/WgDulZAHnUlZFcbKgkhCSPgy/WRJg=;
-        b=JqgSEdFXdeQXOCWKE9LgCt+bdQCp1hZj+LwPXFr8GrwZldBEzEa2uuBnc623BmoBgG
-         ngsLVdr/EQ98auXZ1WJ1RplIFHEZQBs5x9HxaQN+eP5W/uDZ4p2mzsdxCXp/DJyIibJC
-         67bKQSX6k8jpQjsgQxedS5omKw8jbV9p0M4zmoVrha9KSib/3tJxtJGCeO5jq0w7/8TY
-         XCUVL/A/vMih4V1M+SckQ4WDj2Nefhd7uUgteseH694QgmXNaK7t7YNE+bXyqaQAP+O2
-         hk+D/kfTj0iSqaBq7pr9DSDo3LEv5sX2IaS+Jflx8htiKrrSpLALes7FzNbs+xmOcVoh
-         hMAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLNrpkbEFG5V/9SqtEHxlxzHRoMciP9hzlZZr9xjenoS5JDIXW9DLNibSPFqF6u9AbGQnxcnJmbNbZyhFDPFw7AQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA5RAqaB9TXRhnJXh0zuZdA8J8y5BIzgsM3wPm/raxiJoiLtQh
-	dAxqFJNkgAtw4i/AFxvpqG42+yGZYM3VPp9Y4P6FOwx+eqizdyt9VwX+Cdd3IJI=
-X-Google-Smtp-Source: AGHT+IEIv3YIzxOMyD91tGVpjiLG4v6GYnFW1k0S/haEur6YF7vfhxTGVB0CNUixANKDjBDthZ0ixA==
-X-Received: by 2002:a05:600c:190c:b0:42c:b55f:f4f with SMTP id 5b1f17b1804b1-42f584981bdmr38307095e9.6.1727692508272;
-        Mon, 30 Sep 2024 03:35:08 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec11bsm100090265e9.23.2024.09.30.03.35.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 03:35:07 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
- alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
- sunyeal.hong@samsung.com, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240927102104.3268790-1-ruanjinjie@huawei.com>
-References: <20240927102104.3268790-1-ruanjinjie@huawei.com>
-Subject: Re: [PATCH] clk: samsung: Fix out-of-bound access of
- of_match_node()
-Message-Id: <172769250641.25036.8404145862785909939.b4-ty@linaro.org>
-Date: Mon, 30 Sep 2024 12:35:06 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fp9hWN+Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B81C4CEC7;
+	Mon, 30 Sep 2024 10:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727692655;
+	bh=F2Vvp+NmQj/IeNOudf2Wx4PHmRHU5jUFSv49IeAJxKM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fp9hWN+Y3Ar1LfSJtmua0/ydmprkWyWW123tvhvw/MpHKlGNFrhZwy6rgeUFSJ0u7
+	 7nMRM3peyG0eRXmnhP20spKm+K/29AQ04Y4/i5QJRSZyJKv0RgvkhEvCb3lkaGmeAb
+	 wvMZrJmIOI84X+9takmKHWv/Cnq3yWCnujuiNL0YQg4GMlN/vqBRciSDfkldtcRvCr
+	 8X4CbYIMghk4tnwPS1DSYDauMrzArgepq365jZh6/DLMm/2o64EdM9m82lkM1JmXw3
+	 pNKFmsmgXNR8FEwj0wdlAmeRQf6gJD5fYm2AfCJMok//BBy1y3PJPMJxtSGBAEEmSq
+	 6C5lZWcWoQpLg==
+Message-ID: <ec670e21-91a8-4ba9-96b0-cf641fda3179@kernel.org>
+Date: Mon, 30 Sep 2024 12:37:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] clk: samsung: Fixes PLL locktime for PLL142XX used on
+ FSD platfom
+To: Varada Pavani <v.pavani@samsung.com>, aswani.reddy@samsung.com,
+ pankaj.dubey@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+ alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: gost.dev@samsung.com, stable@vger.kernel.org
+References: <20240926144513.71349-1-v.pavani@samsung.com>
+ <CGME20240926144743epcas5p2047d01217bf90d6d52ec97c9b3094c82@epcas5p2.samsung.com>
+ <20240926144513.71349-3-v.pavani@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240926144513.71349-3-v.pavani@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
+On 26/09/2024 16:45, Varada Pavani wrote:
+> Add PLL locktime for PLL142XX controller.
 
-On Fri, 27 Sep 2024 18:21:04 +0800, Jinjie Ruan wrote:
-> Currently, there is no terminator entry for exynosautov920_cmu_of_match,
-> hence facing below KASAN warning,
+You marked it as fixes. Please describe the observable bug and its
+impact. See submitting patches and stable kernel rules.
+
 > 
-> 	==================================================================
-> 	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
-> 	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] clk: samsung: Fix out-of-bound access of of_match_node()
-      https://git.kernel.org/krzk/linux/c/f37d898d2cd0790a7328bb4865fba4a9810c75a0
-
+> Fixes: 4f346005aaed ("clk: samsung: fsd: Add initial clock support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
+> ---
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Krzysztof
 
