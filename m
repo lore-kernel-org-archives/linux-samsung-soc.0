@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7395B188006;
-	Mon, 30 Sep 2024 10:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17B217C9AC;
+	Mon, 30 Sep 2024 10:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727692656; cv=none; b=PuR/en2zN04jmsIRcMr1UPNh7Qs4SDhKs6z1pBje0QeBIKEuww/u7XNQE5uY6Jef0WYy4Oe20v8HibFCg9zUA2BRz/3llvZin4ov3TZN9Q73FxRzUTJBksdksnnFQ5kfsvOT73XDpAafCfsIrKvKUbOKKYZiONeb3vg+5PCeRR8=
+	t=1727692706; cv=none; b=TvLpeykiD7f46EfB06aGyBI7UejToIyZq3UFxUVBM5Sg5M8Qc5Pk6yf6gcnadOLx+CV5xfgpLBdXLhEy81MJHfuK9FgStDrPcnakZ5ZlrEFDY7YXiMW/9YgYsoPPGGTFlQjdc/XuQXFyo05M+XtbnYypHRsCEnF+0SFs1YJkV4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727692656; c=relaxed/simple;
-	bh=F2Vvp+NmQj/IeNOudf2Wx4PHmRHU5jUFSv49IeAJxKM=;
+	s=arc-20240116; t=1727692706; c=relaxed/simple;
+	bh=UWwity0Uuzi1ZW50u+WRO9MbiPplLnVBffAAYFc9z0c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PPCAzKmlZQFkIlgcl4dnk6EvSO2RIhGKBZV18qTMJJqh9/6nmWuBuqV9eypSCLToDfyAGG3Pcq11lYU2UIIL8Uvq6zhdnRJp8Fz5FSnQKkaoWMqPIuPmwJMap9AXc+tL3Sk7zIS05yLZkWzthvkK4/US38Uaf48UWC2T6+Vlj0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fp9hWN+Y; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hi1pCp7KwxY0Jr2WvJLFiTqMOuoOHX9l1/8S7fSlSZrTc2uQmxFNERTDm2fdoz7EL+W9WT1sTWkx9sagz4T1k6Bv0LDApDKy+pfg2cXUoGv9F8Rd6bOYruCo9DgjRHGv5Mmbm6tVb2Z7Tps7lVJkQk0QP4fCnYxrv7FRFlEQJRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtS7fgzu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fp9hWN+Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B81C4CEC7;
-	Mon, 30 Sep 2024 10:37:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtS7fgzu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B3EC4CEC7;
+	Mon, 30 Sep 2024 10:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727692655;
-	bh=F2Vvp+NmQj/IeNOudf2Wx4PHmRHU5jUFSv49IeAJxKM=;
+	s=k20201202; t=1727692705;
+	bh=UWwity0Uuzi1ZW50u+WRO9MbiPplLnVBffAAYFc9z0c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fp9hWN+Y3Ar1LfSJtmua0/ydmprkWyWW123tvhvw/MpHKlGNFrhZwy6rgeUFSJ0u7
-	 7nMRM3peyG0eRXmnhP20spKm+K/29AQ04Y4/i5QJRSZyJKv0RgvkhEvCb3lkaGmeAb
-	 wvMZrJmIOI84X+9takmKHWv/Cnq3yWCnujuiNL0YQg4GMlN/vqBRciSDfkldtcRvCr
-	 8X4CbYIMghk4tnwPS1DSYDauMrzArgepq365jZh6/DLMm/2o64EdM9m82lkM1JmXw3
-	 pNKFmsmgXNR8FEwj0wdlAmeRQf6gJD5fYm2AfCJMok//BBy1y3PJPMJxtSGBAEEmSq
-	 6C5lZWcWoQpLg==
-Message-ID: <ec670e21-91a8-4ba9-96b0-cf641fda3179@kernel.org>
-Date: Mon, 30 Sep 2024 12:37:29 +0200
+	b=CtS7fgzudPtZk0LkkXTueiEPdcWh2+rCaEI1uAK/wQf7UN3C71aY/XyHEeweJ3E/G
+	 jcOSC0C0MWU3Seo0TNsomRfKITuaVHwmHPZV6edAlTiWykrVV8+hStTrVgynrIBNUO
+	 zU6EELm8ZfOYJ4Mv3n7eILF3Pk0wd9yGoVkUb2oCiPoOS4fv8mW/w+KNl6g+tds8vZ
+	 lbdo5LPf7Cxw4KOENrTpbFqnZkSuFvLTXtrfzUSmjMJ6EezVNJAXsTWNrnLXfYYBQU
+	 7ee8iPtJCcEHgFHCaBG4PUcSa+cv2/1eZkN67zgfhWSYunKEEDi1+q+eEtYwFdnMD/
+	 FjqmxDgAEqHWw==
+Message-ID: <db137748-2379-427d-bc3d-bc40ad9e9ca9@kernel.org>
+Date: Mon, 30 Sep 2024 12:38:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,19 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: samsung: Fixes PLL locktime for PLL142XX used on
- FSD platfom
+Subject: Re: [PATCH 0/2] clk: samsung: Update PLL locktime and samsung
+ function
 To: Varada Pavani <v.pavani@samsung.com>, aswani.reddy@samsung.com,
  pankaj.dubey@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com,
  alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
  linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: gost.dev@samsung.com, stable@vger.kernel.org
-References: <20240926144513.71349-1-v.pavani@samsung.com>
- <CGME20240926144743epcas5p2047d01217bf90d6d52ec97c9b3094c82@epcas5p2.samsung.com>
- <20240926144513.71349-3-v.pavani@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: gost.dev@samsung.com
+References: <CGME20240926144716epcas5p330d6374d8b647f45e056143f237a55aa@epcas5p3.samsung.com>
+ <20240926144513.71349-1-v.pavani@samsung.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -91,21 +90,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240926144513.71349-3-v.pavani@samsung.com>
+In-Reply-To: <20240926144513.71349-1-v.pavani@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/09/2024 16:45, Varada Pavani wrote:
-> Add PLL locktime for PLL142XX controller.
-
-You marked it as fixes. Please describe the observable bug and its
-impact. See submitting patches and stable kernel rules.
-
+> This patch series updates samsung clock driver with common samsung
+> CCF function and defines locktime value for PLL142XX controller.
 > 
-> Fixes: 4f346005aaed ("clk: samsung: fsd: Add initial clock support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
-> ---
+> Varada Pavani (2):
+>   clk: samsung: Use samsung CCF common function
+
+Where is this patch?
+
+>   clk: samsung: Fixes PLL locktime for PLL142XX used on FSD platfom
+
 Best regards,
 Krzysztof
 
