@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F92717CA17;
-	Mon, 30 Sep 2024 11:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A197BAEC;
+	Mon, 30 Sep 2024 11:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727696193; cv=none; b=hNUFpwwZBkMRY+U8c8a4UI3dg6Nu7UMdq5k5MXCociIhsC1jBU8HT0dbNAdgu4/d4CsLYXK3wWDD4obb4iwud3kgqGPubVZYL5kDF4W/yrihNVnEDNiQQmCzWOLLMZx+nzpp4ZCAJ1aaLkvfG9fGPxClNDdSjE+zK+oOHHNvgeA=
+	t=1727696260; cv=none; b=lQc/heZxtCuc2b8bV8tXlc/iRUaffp+vaffs9TMIEROhAE8LvTcS+6hD5gFwa70QsNiVXIAiZHFZlGrvNOkonzmMHNZg015s/es6UzhhmUs1skCEU1xFs9KuP0vnl1Qsw0L7ESPRcwLPGFBXCR5Dgp9/Y1LDzhFFt4hN23eKBmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727696193; c=relaxed/simple;
-	bh=bMmMOfCi1FnNsXF2Epr8ZFa6gc2aQa3wVmSiK4GUDj8=;
+	s=arc-20240116; t=1727696260; c=relaxed/simple;
+	bh=I7dVY/AP4rcuasxluLu8ehh6h4DVVK1QYBMDXtHh2xo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WySWjf2muOoJYAlWu3iBT2duwD5RPsiX3Ck6Fs9ekIpE7xofL86j/gu7JCjp1z1yXc/CvEp7uDS2W2P8Ln2pU54Y3tSJVWy8T39ETafrS3DgNvJIiyni4aqqfGA4oeA/vEKKxt0mmPJtTNC/wwoUJ/gCWGfFb45KDumOwBPJvEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7PAdV0k; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=h0zxSMJfgZ51GMWyewueUFM+NpdfQIgZFCBRMSqNFypGWYKBX4vfNUs+Sv1M1TuKZsVRIHguQ4Yhn+sxzsPJyojGJW70XHea8vWeYF27FEA8Vw5NE+rnQC03eHnSigS/H52yNgl24VyBnb0D9wQdYS66OwLUOhDuYmTMc07r134=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsOuWPbb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7PAdV0k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FB0C4CEC7;
-	Mon, 30 Sep 2024 11:36:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsOuWPbb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9182C4CEC7;
+	Mon, 30 Sep 2024 11:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727696193;
-	bh=bMmMOfCi1FnNsXF2Epr8ZFa6gc2aQa3wVmSiK4GUDj8=;
+	s=k20201202; t=1727696259;
+	bh=I7dVY/AP4rcuasxluLu8ehh6h4DVVK1QYBMDXtHh2xo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P7PAdV0kEPOOMid1CR016o0gAiQem+vmKByb/qcURY+nHCvBxtk7SM6btl/eHW24T
-	 7FgNDslI20xjtYQtsi+BPpxhzDUo1fBUMNZ3dDsqll6Erubzx70xucwyrXDJRGOwLp
-	 Sdz7DI0dLpwry6sYqaQeiLg2TvXAisjS4GWPkSiGRbqczJzJOGmrujhZA0U6HcKvDE
-	 XmZutIGELgls+Bmlf4EEwhEu1cTNtQHp5V/JrQFk1KgVc+X4bJpJtTkhUk/v2JxWJV
-	 mb0bsG2c0P8oTVxDUkPfcGd9PgJffQ3yw9WXpVJ2qLNA5IldRlOtWlZbyAY93VbLjU
-	 HkBDHCO3iurlQ==
-Message-ID: <db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
-Date: Mon, 30 Sep 2024 13:36:28 +0200
+	b=BsOuWPbbdI66ra9G56Xyl/KIHzpEurfCYxBeC8mC0aM3LYQNhwGXb/gd4Q+tHANpw
+	 ZhT6Y6qR7RUQewdB8WhcKfGLXGcohq2JxUOE4AxpLoD4Ay1T1rD+HbyzxJbwZJ9bPd
+	 i3PR1AzG5MoPLg9IyP6/xDZc0oM1NehXmXqVbKe/Fdt/uI2J7cVVyydmGhiiigQCYX
+	 CuXQOeSc2szAjxsEj1w21KoWH0nCKJ6JTJP3pj88ibTkiwAvpKNqd3cL+trQgzYJmb
+	 bv6p46MwE9BpI6/nUKERfwcmsOwIElugnS4652EhFdlAgWG2LuICl6TPnJ1NzWFi68
+	 NhGCzcAJbxC6g==
+Message-ID: <c3d4c5b5-6c94-4f19-9de1-8f124a91475e@kernel.org>
+Date: Mon, 30 Sep 2024 13:37:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,20 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc and
- hsi0/1 clock support
-To: Sunyeal Hong <sunyeal.hong@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
- <CGME20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d@epcas2p4.samsung.com>
- <20240912103856.3330631-3-sunyeal.hong@samsung.com>
+Subject: Re: [PATCH 3/3] arm64: dts: exynosautov920: add watchdog DT node
+To: Taewan Kim <trunixs.kim@samsung.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
+References: <20240913080325.3676181-1-trunixs.kim@samsung.com>
+ <CGME20240913080347epcas2p46fd90107fe54b8eab3a031cf2fbd592c@epcas2p4.samsung.com>
+ <20240913080325.3676181-4-trunixs.kim@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,44 +92,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240912103856.3330631-3-sunyeal.hong@samsung.com>
+In-Reply-To: <20240913080325.3676181-4-trunixs.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/09/2024 12:38, Sunyeal Hong wrote:
-> Like CMU_PERIC1, this provides clocks for USI09 ~ USI17, USI_I2C and USI_I3C.
-> Like CMU_MISC, this provides clocks for MISC, GIC and OTP.
-> Like CMU_HSI0, this provides clocks for PCIE.
-> Like CMU_HSI1, this provides clocks for USB and MMC.
+On 13/09/2024 10:03, Taewan Kim wrote:
+> From: Byoungtae Cho <bt.cho@samsung.com>
 > 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> Adds two watchdog devices for ExynosAutoV920 SoC.
+> 
+> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
 > ---
-
-...
-
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index c1c8566d74f5..de210f8e5599 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -297,6 +297,26 @@ pinctrl_aud: pinctrl@1a460000 {
+>  			compatible = "samsung,exynosautov920-pinctrl";
+>  			reg = <0x1a460000 0x10000>;
+>  		};
 > +
->  static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
->  {
->  	const struct samsung_cmu_info *info;
-> @@ -1154,6 +1431,19 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
->  	{
->  		.compatible = "samsung,exynosautov920-cmu-peric0",
->  		.data = &peric0_cmu_info,
-> +	}, {
-> +		 .compatible = "samsung,exynosautov920-cmu-peric1",
-> +		 .data = &peric1_cmu_info,
-> +	}, {
-> +		 .compatible = "samsung,exynosautov920-cmu-misc",
-> +		 .data = &misc_cmu_info,
-> +	}, {
-> +		.compatible = "samsung,exynosautov920-cmu-hsi0",
-> +		.data = &hsi0_cmu_info,
-> +	}, {
-> +		.compatible = "samsung,exynosautov920-cmu-hsi1",
-> +		.data = &hsi1_cmu_info,
-> +	}, {
+> +		watchdog_cl0: watchdog@10060000 {
 
-This is unrelated change. Please rebase.
+Does not look like placed in correct location. 1a46 > 1006. Please
+follow DTS coding style in all your works.
 
 Best regards,
 Krzysztof
