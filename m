@@ -1,108 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F13A194083;
-	Mon, 30 Sep 2024 17:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7A62B9A5
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2024 18:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727718319; cv=none; b=F5iWvoYdPJi0LOyWjzu8UGdUJXkL0DbnPEwtSeyeJIZWeCxAKLAfGuTHubPjfJuHsf8QXfbauapquEKo1spkTGjjJrihUAQVNCf0y1UyaoYOzmfCLqx6gxU9kU7LGcwboG9d3A18Db81VrWkwnNm/QAFUH3qKBsGeD0xfz8/OF8=
+	t=1727720666; cv=none; b=Tr4unXXNtI11ScDbXD4TkFALmTecWJQGh01nBoEPu0OLivY9xwWovsYomqGrUi1F4iH39GwtefOYapzRQgWXDA6HglmIfYHTV4VnanMNGyVScGClTkccoYdvKj9j44mYcoVl9K+C/sViBHJKBo+cFVcNjfTn2vxrp6rWyvhiCeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727718319; c=relaxed/simple;
-	bh=N9PcVf6d20XVgwqXUKJQ/WsjzZiQvzlNNHjxcrEJbos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oV8317uS9BG052cmeF+SYQrD22iJDlh2bu02+1RzTR7/bx6QC5KdJ6KG7gL/yqwqDPiCML8EvKScwQjlj7STRf4S393pdmDRfH6yfIjleeS4VFp8ivGxEaLInyVLhGXFKrfFDhCFJkNPqKfi9fTh9vN74lEBEBh/AJ4+2IdqK60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3E5kif4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727720666; c=relaxed/simple;
+	bh=1GMXmfbMI11IFqnuSW1DzOOQUjZN84hJ6CcAPUad+BY=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=hWFqVaX/U7D3epx46GSgbF/2mAhVaxTQBID7rjp70Wp5n5ytQLiqeFL0E7WYKYHKWQe+GfNoSbj/YQ+xVef/1QgtCP4Ts6xIvQhrRppsVGtuorBZ5apfgVRqu1uTAfW8+MOQPmU/Y/ILQvNstJCPwhAhlj3RLThASnCJ3efGaeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=JtbJTx21; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3E5kif4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 046A0C4CEC7;
-	Mon, 30 Sep 2024 17:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727718318;
-	bh=N9PcVf6d20XVgwqXUKJQ/WsjzZiQvzlNNHjxcrEJbos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3E5kif4FekWKp4jQ8Nd/PHkquJXE8NyTc4PdmB24Ug/hajOrrI0x8Y7rHgUsTXsP
-	 15GFEAkQGjCyKc+Irt4WIWygIM5HVFhfgtwHf7CxtRZRa+VnJlkdD5r1wm3WaP8Gxs
-	 GgTgLC0SCh1unx3fpHOxzpPmjYeU7S/BuDF9V8avG+vlt4Ay9307JZBBgrMy3MQU58
-	 QtvfLUrat5QIBhz9K7WCc6tU7HYPGQdEm4aLiVWei7MuwFf0QG9y6zEpT5JZEzehIx
-	 HIYPD4ErIF27o69PWCMBs4IpAm9JioYtXWKDgn0NWOVm82GUQHu47tqeOSBhFqjN63
-	 0/EEIW0Q8T5wQ==
-Date: Mon, 30 Sep 2024 19:45:14 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] spi: s3c64xx: fix timeout counters in flush_fifo
-Message-ID: <bnni7zksylihkrtd5kje3hjy2wg2rt5pnbyxrxgwdn73mkadav@fogqavrpxqzm>
-References: <20240924134009.116247-1-ben.dooks@codethink.co.uk>
- <20240924134009.116247-2-ben.dooks@codethink.co.uk>
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="JtbJTx21"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1727720661; x=1727979861;
+	bh=1GMXmfbMI11IFqnuSW1DzOOQUjZN84hJ6CcAPUad+BY=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=JtbJTx21o+/FeGHGAZKIKhMkBTgUT8qq25z8xLH/ost0WUEU8+SXugOe+s5Dy7pWw
+	 XQ3+uuOL5QCBrHpSDayLY/qjtFbCJuZv++ru1PcuWcbibn/6Nrvm6QYFSZMb3xgeDZ
+	 b9ZzrPuZzzTnJe2+xgIO6PLYG1SqS1eFPXdjOoy//IY3DKcK3eJxa0R8Tnvv9pgmfg
+	 lYj2pGLBVSyRF/r4mygqLWZFC6tnYBJjbU+h3Fp1hGT2pCM7Xv4DcW4pES++IRPrEp
+	 ij4PED7gT0zyp3kC140/+t1ItTH1byzOOLJs/+23LdJeJrkxNGdIUWXhKaungR2Y1B
+	 YBfusHzr3AEYQ==
+Date: Mon, 30 Sep 2024 18:24:16 +0000
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+From: rbredhat <rbredhat@pm.me>
+Subject: Exynos 9810 and Galaxy S9 (starlte)
+Message-ID: <ox4aoUGD6zuhCHC7_mLpi2rzRKjicwSSI-S2L3fhvgVT-es-WoXTm2bYukU7QuWqmGjCO6Xn7rDZtafsHu-SW2OHaPhB8Y91gxEkLcK25nk=@pm.me>
+Feedback-ID: 52807168:user:proton
+X-Pm-Message-ID: 78c83e658227cffe33550731ac77d4ccdc8d7e05
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240924134009.116247-2-ben.dooks@codethink.co.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ben,
+Hi,
 
-On Tue, Sep 24, 2024 at 02:40:08PM GMT, Ben Dooks wrote:
-> In the s3c64xx_flush_fifo() code, the loops counter is post-decremented
-> in the do { } while(test && loops--) condition. This means the loops is
-> left at the unsigned equivalent of -1 if the loop times out. The test
-> after will never pass as if tests for loops == 0.
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+As a Galaxy S9 (G960F, starlte) owner I'm glad to see the progress on addin=
+g the Exynos SoC to the mainstream. Is there any chance that the Exynos 981=
+0 will be added as well? There are a huge number of devices based on this S=
+oC:
+ - https://doc.samsungmobile.com/sm-g960f/dbt/doc.html
+ - https://doc.samsungmobile.com/sm-g965f/dbt/doc.html
+ - https://doc.samsungmobile.com/sm-n960f/dbt/doc.html
+ - https://doc.samsungmobile.com/sm-n770f/dbt/doc.html
+ - https://doc.samsungmobile.com/sm-t575/dbt/doc.html
+ - https://doc.samsungmobile.com/sm-t577u/xac/doc.html
 
-Fixes: 230d42d422e7 ("spi: Add s3c64xx SPI Controller driver")
-Cc: <stable@vger.kernel.org> # v2.6.33+
+Currently only the last two devices receive security updates. The rest are =
+using severely outdated kernel and drivers. For some devices there is Linea=
+geOS support, but there kernel has not been updated for more than a year:
+https://wiki.lineageos.org/devices/starlte/
+https://github.com/LineageOS/android_kernel_samsung_exynos9810
 
-> ---
->  drivers/spi/spi-s3c64xx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 833c58c88e40..6ab416a33966 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -245,7 +245,7 @@ static void s3c64xx_flush_fifo(struct s3c64xx_spi_driver_data *sdd)
->  	loops = msecs_to_loops(1);
->  	do {
->  		val = readl(regs + S3C64XX_SPI_STATUS);
-> -	} while (TX_FIFO_LVL(val, sdd) && loops--);
-> +	} while (TX_FIFO_LVL(val, sdd) && --loops);
+I am able to build a kernel from source code, but the 4.9 branch is no long=
+er supported. My attempts to use a fresh version of the kernel failed due t=
+o my lack of programming experience. I have created a document listing the =
+components of some of the devices, perhaps it will be useful. I can send th=
+e ods file if needed.
 
-Do you think a better fix would be to have a "long loops" as I
-don't think we need such a big data type for basically 4 * HZ.
+https://kdrive.infomaniak.com/app/share/1019122/185f83dd-e5f7-4224-bc76-ebc=
+3e7ccb821
 
-And this becomes (loops >= 0);
+Some device versions have Qualcomm SDM845 SoC and are already supported in =
+mainstream. It might make it easier to add support for Exynos 9810 based de=
+vices. For example,
+https://lore.kernel.org/all/20240926-starqltechn_integration_upstream-v5-0-=
+d2084672ff2f@gmail.com/
 
-The same below.
+Best
 
-BTW, it's good you sent these patches separately as this needs to
-be ported to the stable kernels.
 
-In any case,
-
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-
-Thanks,
-Andi
-
->  
->  	if (loops == 0)
->  		dev_warn(&sdd->pdev->dev, "Timed out flushing TX FIFO\n");
-> @@ -258,7 +258,7 @@ static void s3c64xx_flush_fifo(struct s3c64xx_spi_driver_data *sdd)
->  			readl(regs + S3C64XX_SPI_RX_DATA);
->  		else
->  			break;
-> -	} while (loops--);
-> +	} while (--loops);
->  
->  	if (loops == 0)
->  		dev_warn(&sdd->pdev->dev, "Timed out flushing RX FIFO\n");
-> -- 
-> 2.37.2.352.g3c44437643
-> 
