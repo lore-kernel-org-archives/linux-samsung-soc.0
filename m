@@ -1,174 +1,86 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100A1C7B7F
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2024 14:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1064E19D06E
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2024 14:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792162; cv=none; b=HOKSMSTvrONCWhGHS5tnq8f8AP5x5c0U+RNMahcCvAfz8gchtDml7WOihQjzCd7YzYKiC5GyDFqecYcQDLw9QBdgKZ4xjihNurX0BvtzPkm0I2CuEi7DzATpNaUHBjEAp3Ngmhi+f2BVwHrPN0dSOg6NYs0j30UmejmonB/iN1Q=
+	t=1727792661; cv=none; b=SnQAIkSMsH1Vy9M53FNqyrHDU1Sjtdvl5j0toTd+K2Y8daRkMeI3yGfzRjd7lbGw1lTXZzobjGPRIM75lBQCkFSzIC0FI5HuNU/AkhEt3BJwevGy3RBZ4hhBL3k3jwYOjPQgM2acGdIbgmB819Ky/ULEBr4dztUPdD3Oooi9/UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792162; c=relaxed/simple;
-	bh=coLwseDCM6znTuSriRNR7Ug5LwHb1xNJUeaXyoJAILA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Vc4T9xfacuFfdZcYSNXveYLJZlmzUM+DHbGuNRbuMFzse34eqXF1hzD8uvWP9Vu2mfQWZJLHpuErt0usXO6lfIGJ3pAtztncFzIRdkw9lCEb1Sct9Eiaiw1mT+rkhjpPTlyIrYibGi69PYqUzKAKW9VQuI4v0zbb4NKACnv9Umo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fGLpMqly; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1727792661; c=relaxed/simple;
+	bh=l5BM5b5k2TCeltBEWllLsPAl1pVOeHprS9AfvY9vl3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bg9NxrT+Vw6NM1IXu9AmLYXJ06LeKeNM4Bs5sLNndbynI3qLrEhRgTI0//dQ/rCj53CcVFGPoBatFwQP/KGNmRGYDeZNNshMhT/VJ26Hqtwn5hna3ondr12wm+aVlklhmGDKslrxVfZ0/5BcefJtjPN1Uk9cJFytREa2ySqVG60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D9PUZspV; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fGLpMqly"
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241001141553epoutp04d914db311ceedf58e7a44a70f0491067~6Wc8lIJO90371003710epoutp04D
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2024 14:15:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241001141553epoutp04d914db311ceedf58e7a44a70f0491067~6Wc8lIJO90371003710epoutp04D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727792153;
-	bh=coLwseDCM6znTuSriRNR7Ug5LwHb1xNJUeaXyoJAILA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=fGLpMqlymKhU22lS/S4BEBkCjC9Ieb1N/TQ+8927r9tEw+x3PMJQAFDK4uoZTYiPV
-	 9bpPgVnBNeF0mM3yjE0OZea+yfSR+qtNHGqnmVOzT1IygL29Ijuq6/wiVmQnhKfbC6
-	 fKZGfrL4myzb7kx4FVRoJIjTw8xKRNPtQFzh/zgM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241001141552epcas5p36d4744c337c6b572f50097609a080e8c~6Wc79W1S70168401684epcas5p3J;
-	Tue,  1 Oct 2024 14:15:52 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XJ0N72nG2z4x9Pt; Tue,  1 Oct
-	2024 14:15:51 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	74.AC.09800.7140CF66; Tue,  1 Oct 2024 23:15:51 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241001133437epcas5p2ca35fbd3f31aec3997b3907e9c25330a~6V47DI5li0314703147epcas5p2i;
-	Tue,  1 Oct 2024 13:34:37 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241001133437epsmtrp24b5c78c1b9ba399ceec0f9c7eac1c02c~6V47Cc8PY2026620266epsmtrp2i;
-	Tue,  1 Oct 2024 13:34:37 +0000 (GMT)
-X-AuditID: b6c32a4b-23fff70000002648-e4-66fc04173135
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BC.E1.18937.D6AFBF66; Tue,  1 Oct 2024 22:34:37 +0900 (KST)
-Received: from FDSFTE353 (unknown [107.122.81.138]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241001133435epsmtip2fb48c75c78d7a04f435c7bea4fa83472~6V45IQYES0214202142epsmtip2H;
-	Tue,  1 Oct 2024 13:34:35 +0000 (GMT)
-From: "Varada Pavani" <v.pavani@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Cc: <aswani.reddy@samsung.com>, <pankaj.dubey@samsung.com>,
-	<gost.dev@samsung.com>, <stable@vger.kernel.org>
-In-Reply-To: <f8b36300-cf7e-4cdc-b1d4-ed4a64453d4e@kernel.org>
-Subject: RE: [PATCH 2/2] clk: samsung: Fixes PLL locktime for PLL142XX used
- on FSD platfom
-Date: Tue, 1 Oct 2024 19:04:34 +0530
-Message-ID: <009601db1406$a8f5ec50$fae1c4f0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D9PUZspV"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5398e33155fso3616721e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Oct 2024 07:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727792658; x=1728397458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l5BM5b5k2TCeltBEWllLsPAl1pVOeHprS9AfvY9vl3M=;
+        b=D9PUZspVorhQtsRqfM5wsx/gttEoAbJ81qsgaxxtysDkPGiodxQz8tX82vPdKVbeh3
+         UHeKYdcWoeO4nXam/lPEgxs2G/CnBJxblUOAhvopKeKQUw3rxSudWwT5WqZwt+U2g2mm
+         G/QBEXgpXTVoEm50FBllIsX3RM9EifxGZGMIFfnspvCTeegjANensnwRotenaT8YzyZh
+         ODbH+bxye3rkhybmVKjo1RJAsPfprhgTXaKLBzqcrwP+n23ZCv8zY8F2ELOaDkmiMu/T
+         B0YLrawa8BOmi4AnKVhe9f2YLkRh7+1aVsgSXEGAqTqNUN0roRI2CsjRCsa8PMR0aQWK
+         UWXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727792658; x=1728397458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l5BM5b5k2TCeltBEWllLsPAl1pVOeHprS9AfvY9vl3M=;
+        b=j2pckROkHclvpe9RJvDPFFvuvNHSoLWQ+QqKTh3tfn4m6ZYrwZwVLMmn85+qDNBJxr
+         OOnGvGsloT0hfzWdKhvfEFGM8/+kpZ99vkGGl0yEigdkWvVGkHEFNZsFrWBUkjkJ5QX1
+         EMwqbXXGSW86dmYNHpp7qupyHFdMNA5ywdzv925HlSsrIUvj2IqXlFzCtdfkh9ga2A5A
+         kRDtbDTF80e1UDnOMj37JtcZO+GP8/Lt5gcZ0e5a7cRx8yGtQ+wnPVQmB2b7+J3Or28c
+         TYSAAslU+vCQtZ6eKw/4aPG5AXCNiDYLVlDel2MD3pIKt5b04k3pPmarTnz8ZAuF0zYh
+         miJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEgY9xiNDFYBBMw1lgVVTJtI8lY11mo1zZPe7RmbV9xP4+TUjZt2oK5Nhe61amkk95PwOfx25jmh279a9cLJa4XA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOKh/Mdf2i9W6QjzptyfRs+kBV7S+HtKUxWTyVSQTSnZqEL1Pz
+	jq9nbdDWGZgfjFp0bWKLZzijL29DRQ3lRAIIc7Gt7dWzn6KX2+7cOZpGzHin3UXtqzMvGGAeNwT
+	GlZZSusHeSZus0SBe+ndUtRv7yhH0UQjivWmYoQ==
+X-Google-Smtp-Source: AGHT+IGh+SAH0HiND+WOSGwD/VcAkilCZpxlY30ljLulS1hHuVO95SRQIQeLKJV15FnjaJtEFiG6shIsDh0YJ3psq+g=
+X-Received: by 2002:a05:6512:39c7:b0:539:918c:512c with SMTP id
+ 2adb3069b0e04-539918c5352mr4435735e87.57.1727792658142; Tue, 01 Oct 2024
+ 07:24:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240920154508.1618410-1-ivo.ivanov.ivanov1@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 1 Oct 2024 16:24:07 +0200
+Message-ID: <CACRpkdYoVnG6dSpawFvkj-2KthNKWnfo8h_icx+-5_JLoHVDcw@mail.gmail.com>
+Subject: Re: [PATCH v5 00/10] Add minimal Exynos8895 SoC and SM-G950F support
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHgPYoJbOScyTLaZbJAwfQ0Jvmx2AF7r+vcAuu0B8cCMRhRVbIyzYtw
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmlq44y580g9l9fBYP5m1jszi0eSu7
-	xfUvz1ktbh7YyWRx/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVqsWjrF3aLw2/aWS3+
-	XdvIYrFg4yNGBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
-	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
-	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGfc37iFreAXT8XxTY/ZGxjv
-	c3UxcnJICJhIrPg+l72LkYtDSGA3o0Tn8j3MEM4nRondz18hOHPePGaFaVm65jhUy05Gicur
-	V0JVvWCUeH24gRGkik1AR2L3y+WsIAkRgT1MEmeXXwNrZxbIk2i6vZMNxOYUsJO4OGkpM4gt
-	LBAjsXXndjCbRUBF4ub/BhYQm1fAUuJ9wwJ2CFtQ4uTMJywQc7Qlli18zQxxkoLEz6fLwOaL
-	CLhJXN62iR2iRlzi6M8esOskBPZwSDReXgz1g4vE+zfrmSBsYYlXx7ewQ9hSEp/f7QU6jgPI
-	TpZo/8QNEc6RuLR7FVS5vcSBK3NYQEqYBTQl1u/ShwjLSkw9tY4JYi2fRO/vJ1DlvBI75sHY
-	ShI7d0yAsiUknq5ewzaBUWkWks9mIflsFpIPZiFsW8DIsopRMrWgODc9tdi0wDgvtRwe48n5
-	uZsYwelYy3sH46MHH/QOMTJxMB5ilOBgVhLhvXfoZ5oQb0piZVVqUX58UWlOavEhRlNgcE9k
-	lhJNzgdmhLySeEMTSwMTMzMzE0tjM0Mlcd7XrXNThATSE0tSs1NTC1KLYPqYODilGphW1WQ6
-	yj/n0H0R5XKE7/syzdbo+fMDfj1h0PS1C+/ObCrzYFoQ8PHNerEQxUfbjCfFpMaF62kzvEm5
-	ctGy7779xjgBlRer/315/CRiver3WRH7I1Xc9Rr7l5v3TZnM4ta/d4JTz4cVJ49Xppl1TnGJ
-	ubV8Oe+y1rfnfZh/nLXxeT1/UlHQ3Nf/S5YuPriyMK7cl8P0QcQh145b8aU6k1kLUwKDag8m
-	Tz/08Nti4cS4wN/cVazsXwwT+LpEZJnt3Jfc+Sl1Nj+EV33G7Eu9JqJLp1ipBO/knhvj9+VB
-	JE+VnnfGP0GuH0+0ouwWhG2/xio774Q1m5VlR9iNXywrwieaHf/5srIhdMX0Occ3syuxFGck
-	GmoxFxUnAgChRDaDUAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsWy7bCSvG7ur99pBh/vqVk8mLeNzeLQ5q3s
-	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
-	d20ji8WCjY8YHfg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgyri6
-	aQpTwXWeigOrJ7M2MO7i6mLk5JAQMJFYuuY4excjF4eQwHZGiXMb2pghEhISO7+1QtnCEiv/
-	PYcqesYocXFiLytIgk1AR2L3y+WsIAkRgWNMEt8nngJLMAsUSdxt+M4CYgsJvGaUeHbBE8Tm
-	FLCTuDhpKdhUYYEoia+zXoHVsAioSNz83wBm8wpYSrxvWMAOYQtKnJz5hAViprZE78NWRhh7
-	2cLXUNcpSPx8ugxsr4iAm8TlbZvYIWrEJY7+7GGewCg8C8moWUhGzUIyahaSlgWMLKsYRVML
-	inPTc5MLDPWKE3OLS/PS9ZLzczcxgmNRK2gH47L1f/UOMTJxMB5ilOBgVhLhvXfoZ5oQb0pi
-	ZVVqUX58UWlOavEhRmkOFiVxXuWczhQhgfTEktTs1NSC1CKYLBMHp1QD09wlVvd4fZmEHnkV
-	fBJgOC3aWaCXMsvvAuvD2Hl9xiY/nnvHau2esDdF4WrQrOXz5de6hOVPYy7XEr9etUXr/jI1
-	Xaa16TxafmZXFz5qCT5yrWNna9lHr73X17B1mZpwrVibnq74rji6JVPzTKi62L/I3j3Rv0TO
-	CQbpfH9fN1u0YrYYT4Y1g9SeTRfuBjxiO/uXN0D9WEDg1C+fe12zZ31f2jel/vCCx01Rf2LM
-	vq57sWtvxK0vfy++r9rS98vm1of895mFkokd08qObGz6fUVlTdOztbsnTg2XEA5ffGRbco1O
-	+D79BF+HyuVPbaru8RsJJVbPMXLRd03bNH8NQ4Lcv1bW6ZuP9wSxfzrMrMRSnJFoqMVcVJwI
-	AMgGTCI0AwAA
-X-CMS-MailID: 20241001133437epcas5p2ca35fbd3f31aec3997b3907e9c25330a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67
-References: <20240930111859.22264-1-v.pavani@samsung.com>
-	<CGME20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67@epcas5p2.samsung.com>
-	<20240930111859.22264-3-v.pavani@samsung.com>
-	<f8b36300-cf7e-4cdc-b1d4-ed4a64453d4e@kernel.org>
 
+On Fri, Sep 20, 2024 at 5:45=E2=80=AFPM Ivaylo Ivanov
+<ivo.ivanov.ivanov1@gmail.com> wrote:
 
+> This series adds initial SoC support for the Exynos 8895 SoC and also
+> initial board support for Samsung Galaxy S8 phone (SM-G950F), codenamed
+> dreamlte.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
-> Sent: 30 September 2024 18:05
-> To: Varada Pavani <v.pavani=40samsung.com>; s.nawrocki=40samsung.com;
-> cw00.choi=40samsung.com; alim.akhtar=40samsung.com;
-> mturquette=40baylibre.com; sboyd=40kernel.org; linux-samsung-
-> soc=40vger.kernel.org; linux-clk=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
-> Cc: aswani.reddy=40samsung.com; pankaj.dubey=40samsung.com;
-> gost.dev=40samsung.com; stable=40vger.kernel.org
-> Subject: Re: =5BPATCH 2/2=5D clk: samsung: Fixes PLL locktime for PLL142X=
-X used
-> on FSD platfom
->=20
-> On 30/09/2024 13:18, Varada Pavani wrote:
-> > Add PLL locktime for PLL142XX controller.
-> >
->=20
-> So you send the same? Or something new? Please provide proper changelog
-> and mark patches as v2/v3 or RESEND.
->=20
-> But anyway this cannot be RESEND as I explicitly asked for fixing.
->=20
-> <form letter>
-> This is a friendly reminder during the review process.
->=20
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and ei=
-ther
-> implement all requested changes or keep discussing them.
->=20
-> Thank you.
-> </form letter>
->=20
-> Best regards,
-> Krzysztof
+The pinctrl stuff looks OK to me but I expect Krzysztof to queue it up
+and send me a pull request, he keeps the order around the Exynos
+pin control code and bindings.
 
-Sorry, have sent the same patch again. As I need to post one patch alone wh=
-ich got
-missed due to internal technical issue. Next time onwards will make sure to=
- mark the
-patches as V2/V3 or RESEND accordingly.
-
-Regards,
-Varada Pavani
-
+Yours,
+Linus Walleij
