@@ -1,138 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168991CDA02
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  1 Oct 2024 19:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F11CDFBE;
+	Tue,  1 Oct 2024 20:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727811224; cv=none; b=F3Cx3bncHaKgBVoFhOSs5aJHFzix0dMjFdp5Om/Z+Qvc5xG1OLUEdeeIupG7HO8m07spYsxE1rM/qtkySHolYylCaPfwgYqo9GPC6cBu9KcY+Na6L6M8qBXnplkX6XMJZu+IJd3vr5HYpZhxQixCXjEYtOOTiKgr/HUSpcJNyoI=
+	t=1727812812; cv=none; b=TvnNSn7BrlNSmeRtYkgVKJSif76oP0+D/O50sL7TAocJA+7i7WKXhmkEHFROgmrIUtH8fHb1QwWLtsrNoB/JtZxxH9y6CuYQx+7H9PP5XCHxlyhkSx/+9naGwlae7TXgtGIlAXWmXDE/BXWsMGFl/bz6t+mInGsC0eoWnhCYsJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727811224; c=relaxed/simple;
-	bh=PcfUQw15Fp2R1vnMKp5yfXhMUsDQUDEarFYdUhEOmHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LR7BNf5OPUNI+gCxS80Fph2a4V+b+45m4JVvDMComnoDhpqRm/8Nd+Jp+tFfvhRsZNpAoekpOGxxXzu4wjQlxvE3dv3Z9Y3vSo+WNVIyCtlDITV8qUxR1A72aVI92sclfXotuD/bmBGPpHV/pLR6pWOE/C5kWoKECUa6+3sIuIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIPvt0oK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727812812; c=relaxed/simple;
+	bh=9nxNhpLrx3HJEq9JhEouMSM4YNgGI4tmenEeJnI7KaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uv3R5UQQFHXY4/67gY2qRHQb+mwRPUm3qcOsVmfUDEEcZVtVOt8oQ/WURwSl0yTqJLLneMGENwRtqOYM/oHnRU0UYRWe7Wl01C78Gj57mHI0i1PYOj669xWpRdebsWaSrFHuXvgS4PHfbCD8JyhSiNgmAe0Rd365/lWom24HPwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dOvEmBvP; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIPvt0oK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249E1C4CEC6;
-	Tue,  1 Oct 2024 19:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727811223;
-	bh=PcfUQw15Fp2R1vnMKp5yfXhMUsDQUDEarFYdUhEOmHI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tIPvt0oKxwVGzrXyTIVsfUSukRvJPSnIFzMuQrL/1keVjzpiEMGq6oyQ+HsAx5Xs2
-	 vxhY9CSSjCX58YgphUVt5dRN77ZLHZeYylzu0c1lUWJxL5zZrghvXMQHmQyHfUoah5
-	 oK126JHJ498SWC8hm63WXsFmfU3K9jcayMUkmPXPZDcmVmfq3DBg/g1VrO9SrnNPpP
-	 vH8W3Zb196l2JCrBfzTzc/QsnNh0jYH6+WQAZnSxgSebjuqj4ySRHj6bPhknMhzElg
-	 moC7pUiOSCFS4iSe8G6FXmMbBRTqyR7mkLq1a+5SyjYdgnKoTjCKq4aSrlLNVxRs7/
-	 /eZFjSoTSOaeQ==
-Message-ID: <0132178d-2698-477a-b899-a22649e15635@kernel.org>
-Date: Tue, 1 Oct 2024 21:33:38 +0200
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dOvEmBvP"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b7259be6fso32127965ad.0;
+        Tue, 01 Oct 2024 13:00:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1727812810; x=1728417610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Txj9X25LmbjQ//MeIX5ksz2p7RxnM6sQFO6w2mk7FrQ=;
+        b=dOvEmBvPamriXlYTdJUeJ9JQvPEsV1ben9lzbzUIZ9HHbp6mjkLrFvfD57QabzUaJB
+         V2gdZu8k7TzvpK1KuHoS66KnKzlZ4wK2VqJax/ZHSS6mL7dwbpAvl/nuUn/62/XS90Em
+         Aka6+MMWmkYEcsQrU0LBKhoBgKANnIR56KLtUEJEwSdnIzTsF8IXVODbKlZrDC27FHdz
+         92s05d8QmhKxpJRxydrQZJCGamh98WDF5Kn0yY5W9Z24feRNEAZjvpGZ5iKozCenWnMt
+         HWXYrAL/qpaKMZEZCgcPN/jWYKXsLUdhRpC+7WGmeXgOe4gmcI7Zp4SNUuUEogol/UTU
+         zlVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727812810; x=1728417610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Txj9X25LmbjQ//MeIX5ksz2p7RxnM6sQFO6w2mk7FrQ=;
+        b=XkRfivHwdkmMi4gaWKS6ihyScQy1pq8M4cuvzfsN5myCGFebeqFNIAGN0hOsrxKY6Q
+         2uM3YS0WcW2alRxhqlonuHvmHPmBj307DYpNym7eauCFb9sTqxAGbN/rsyHbVBFe8VOq
+         gxdAGpZ5/0HGnPQ4fFCEfur+TJis2+zvXuz1zuIWzRgBscCaLviGkCJ2+DJKylsIVNBz
+         +xe5HmSsvwW3u6HI5fLkH6XMW7JnCwMj3hQZCkm1ROPPS/ehZ/M5M92R4M+YfWGSLsUt
+         03m8fEBVOEnmsJBgwPjLsvjtd+4fHLGvs8DrYtQEHBt8WfBlcUs3lFuLks5Vx/4byG+d
+         j2Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm2Ob+/N7wM2+qQiEIpr8YY8foSjEtEq5QVt7yPWbdiPyCw24khEGCuGLnq3DPkvyVZgL5wKA5mshODPFO8lWEh5s=@vger.kernel.org, AJvYcCUvP2ABPXHjVCEHtiTZXMISl7fM4EIV6M5sSQp3lH7j4BsUFhuUZxfuBI/PxGw9p7swPmtdJsNmx6F3KH60TqCR3g8=@vger.kernel.org, AJvYcCVnyPRPZW3NyGU+cogkxCaN5uaKZpP2zQUfA2Lp9qk+gaigz7rfwqChBNU7eBXsytc+g9H1JtohGyBCoS2ssA==@vger.kernel.org, AJvYcCXQSogziQtb+6seRW1XzSswGYxW2/6Wwq/HmJ406haVaerMnqdy3ZAhA1xFqDaZ0OW93wM268qAI2H+oCue@vger.kernel.org, AJvYcCXhvF4W249EWiW+p19ai52nZrFS2WWM6U/od8qEwHJA8BY7L1I3He302PNsrxCHiK7BIqjONqtyza1Csg==@vger.kernel.org, AJvYcCXp0UkWtIuxP2TqvPclKZ9AvVCpjzlZBonvD+AXzpV5OVyhH7bP5XgksugCpFUteSFdPjJ+2sKRmsjezBw=@vger.kernel.org, AJvYcCXyTT7hSFmdWLNJLiMj+BcLHPz+eEqUisava0LsHpnFPBM60zi/66AzJxmdYtyeDIMc5HFPzIvxSZfc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz19uYRHGJY3WLqWa6hEI580EU49boq0L+G2N0VOfw/13iQj+hj
+	OhiWQSusLBL81ZHkQPqhoM/tL53k7Jl0IbEFx/7+Nq82eDNAF4GYBfjR9aOb+r8BRXUbRqRJjbP
+	vR44ZFJERoWVzKcTKioZrcpKoDAo=
+X-Google-Smtp-Source: AGHT+IEzN68oFH6UETNrpbvCGpopcDsigqPvgYKygFNF7D6FUqPz4x1zQ8ZA7UoZNXXUi84OPMM6AhdceSvhM1DdNJ4=
+X-Received: by 2002:a17:902:e550:b0:20b:720d:734 with SMTP id
+ d9443c01a7336-20bc5a5cd06mr11151925ad.41.1727812809889; Tue, 01 Oct 2024
+ 13:00:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Exynos 9810 and Galaxy S9 (starlte)
-To: rbredhat <rbredhat@pm.me>
-Cc: Henrik Grimler <henrik@grimler.se>,
- "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
- alim.akhtar@samsung.com, markuss.broks@gmail.com
-References: <ox4aoUGD6zuhCHC7_mLpi2rzRKjicwSSI-S2L3fhvgVT-es-WoXTm2bYukU7QuWqmGjCO6Xn7rDZtafsHu-SW2OHaPhB8Y91gxEkLcK25nk=@pm.me>
- <20241001120130.GA6468@samsung-a5>
- <822f317e-d4f2-41de-a6be-162ab79b87b3@linaro.org>
- <SvziwnUV8woHQyfcdXtUC5VrRm3CRYA70oLsNewuzfe_l8gNKLCIBSnzK7AFyPinT-0lXclz8y7gbmADEKusYChGHan-aHCmJJQZJGKG2tE=@pm.me>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <SvziwnUV8woHQyfcdXtUC5VrRm3CRYA70oLsNewuzfe_l8gNKLCIBSnzK7AFyPinT-0lXclz8y7gbmADEKusYChGHan-aHCmJJQZJGKG2tE=@pm.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240930223550.353882-1-rosenp@gmail.com> <20240930223550.353882-3-rosenp@gmail.com>
+In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 1 Oct 2024 21:59:58 +0200
+Message-ID: <CAFBinCB1Rz+C=Tj+RJAL5KZbk9K7cnpF_uR6rKkMeqyCuDBo4A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Antoine Tenart <atenart@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Jesper Nilsson <jesper.nilsson@axis.com>, 
+	Lars Persson <lars.persson@axis.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
+	"maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>, Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
+	Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>, Arnd Bergmann <arnd@arndb.de>, 
+	Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+	Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
+	Robert Eckelmann <longnoserob@gmail.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
+	"moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
+	"moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, 
+	"open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT" <kernel@dh-electronics.com>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/10/2024 20:59, rbredhat wrote:
-> Krzysztof, Henrik, thank you for the reply.
-> 
-> First of all thanks to everyone who is working on adding support for older devices to the linux kernel and alternative OS (such as Lineageos and Postmarketos).
-> 
->> Just FYI, the original email was sent to me already in private and I
->> responded. Although I am still confused what is actually the question here.
-> 
-> As an outside observer I see a lot of work has been done over the last 4 years to add support for Exynos9* based SoCs to the kernel. I understand that my question is rather directed to 
+Hello Rosen,
 
-I have 100% opposite feeling. I see absolutely 0 (zero) work done over
-last 4 years to add support for Exynos9* based SoCs to the kernel.
+when you re-send this, please drop the Amlogic files.
+
+On Tue, Oct 1, 2024 at 12:36=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+[...]
+>  arch/arm/boot/dts/amlogic/meson6-atv1200.dts                    | 2 +-
+This file was dropped with [0]
+
+>  arch/arm/boot/dts/amlogic/meson8-minix-neo-x8.dts               | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8b-ec100.dts                     | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8b-mxq.dts                       | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8b-odroidc1.dts                  | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8m2-mxiii-plus.dts               | 2 +-
+These got updated with [1]
 
 
-> Samsung and I was wondering if it is possible that all 
-
-It's very tricky to answer to your emails because of lack of proper
-wrapping. :(
-
-> Exynos9* based SoCs will get at least basic support in mainstream anytime soon. 
-
-No, they will not. No one from Samsung works on this. Probably one
-person from community, thus with very limited resources, might be
-working on it. So outcome is unlikely.
-
-> If the answer is no, as a potential consumer I would like to know if Samsung is going to adopt Qualcomm's practices in mainstreming code for at least its newer SoCs?
-
-Yeah, you should ask Samsung... but to my knowledge Samsung does not
-care at all and will not support mainline on anything else than
-Exynos850 and few Auto SoCs (there are few awesome folks from Samsung
-who cared and still care about mainline). So answer is: Samsung is not
-going to adopt Qualcomm practices.
-
-> 
-> From a hardware point of view Samsung devices are amazing and very robust. I can tell the old flagship models are still popular especially among the elderly users. But from a software point of view it is not safe to continue using my Galaxy anymore. It makes me sad and a little angry but I think its time to put this smartphone in the drawer and move on.
-
-Well, we all know that :). Want long support, although still not
-mainline, buy Google Pixel. For every other Android phone you are on
-your own after two years.
-
-Best regards,
-Krzysztof
-
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git/commi=
+t/?h=3Dv6.13/arm-dt&id=3De2a3f11ae11c9f9ee780bf49f00a69f12dce3529
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git/commi=
+t/?h=3Dv6.13/arm-dt&id=3D7947fd2d350e6057e7514459c7ee2db39d1096a2
