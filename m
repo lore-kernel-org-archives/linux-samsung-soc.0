@@ -1,86 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126E01FBA;
-	Wed,  2 Oct 2024 00:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2314285;
+	Wed,  2 Oct 2024 03:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727829541; cv=none; b=AferV39o+9Xc9Lrsn/upIOTBDei/acnWMUljRY0aHbgFrEXbg/rd6PqL7qkjevwdZ+Box7jxvVOQSju35OFTpu0PFlph8A44oKo6CNueg3okj5U3PiwXW9dXWdV3gxzFEYQLwI6FhJWq+3M26/4TicT1U8RLZfIU9RykkVX1C9s=
+	t=1727840945; cv=none; b=WEUNxlV8+MgG3jnsRYK+WxgrvpH2/nH3o1kAsEzxJLWWeYSbwPRc6xSi3Cupnkwungp8pez3EoMGqt1qpMAwVO2MC1dpB3CqGOE/62O0op77LKKmELJ9mg/gaOoZA6unDQ8iFkQDk+tVlNeoO/EzZcW42zTmaFbNxhSiZCnoKew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727829541; c=relaxed/simple;
-	bh=ybaVeV8JJYACSNev74TAhL/xyOhbNnHvUWwUmKf5R/c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dSKDq4rx5/V/QFfkz8NPcB5N0IwEGvNmgNTCLNFcj9iLGq2h2E7ypA9I0HuJwLy7GPWVezW4lkJmNJT857v1Cj0msqJC10zCp/wLqdrx1vvOJTD4RPeBXgi5O55mQHTR4/a6xpmgmEj/ogXC/oaCcAW108EYE+jAViFfWaJXiE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzGsgvYZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727840945; c=relaxed/simple;
+	bh=nAEKTIpBmymWLR+e+hBkypCfwSNJotZOEB0oMjBgW3A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qU4qu5t4/IvrbAjRIHOfoleV9IjSX2VsStbe7p6d9KuKAvjxUy3Sne1aR7UcUDdljiGu09nRo/X9lqJn/dqmhkADqy5qf/ep0YVtFFbmfAH3i6ywGTOT5cGQ79SQVrzqmbK80v8ivDLl/v11KksWtydxxLGEK9z/ApbSZ81MrCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af2UjTVf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzGsgvYZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFCBC4CECF;
-	Wed,  2 Oct 2024 00:38:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af2UjTVf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4181CC4CEDE;
+	Wed,  2 Oct 2024 03:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727829540;
-	bh=ybaVeV8JJYACSNev74TAhL/xyOhbNnHvUWwUmKf5R/c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CzGsgvYZv8CDHY2i3ESOjhc0Tg+OfnEQVbpDGD+kaSOwr2iJ6qxd0oqoZdPZThaXA
-	 O0Vmh5zVHgjEVWM8pWoVJXkMpYMEWNFPkdZnqGjYNCYSwwW+loQGt/QbMtCi1XD9On
-	 J8TgiU3gwRdOJQz1dvKJ/pW5Ckt79B9D6L0xGDJmUzDFTGueOH1/dhGvQS5ICyWzVz
-	 x9Ttwrermh5WpO8v5F+esVQQOzw/Tq4Gj+ioJ5kRZJITskBiNt03Iaprn1EQfp5mxM
-	 zbkqY2AQ04FNDkLsvefNp8w73KBcRMRCyfKfPYThdxVlSLgqDTk24VDQdW66eNZTNr
-	 itXUHcwIzPBJA==
-From: Mark Brown <broonie@kernel.org>
-To: linux-spi@vger.kernel.org, Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-In-Reply-To: <20240924134009.116247-2-ben.dooks@codethink.co.uk>
-References: <20240924134009.116247-1-ben.dooks@codethink.co.uk>
- <20240924134009.116247-2-ben.dooks@codethink.co.uk>
-Subject: Re: (subset) [PATCH 1/2] spi: s3c64xx: fix timeout counters in
- flush_fifo
-Message-Id: <172782953761.2314893.16208330510622172964.b4-ty@kernel.org>
-Date: Wed, 02 Oct 2024 01:38:57 +0100
+	s=k20201202; t=1727840945;
+	bh=nAEKTIpBmymWLR+e+hBkypCfwSNJotZOEB0oMjBgW3A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Af2UjTVfNh6y+KURqioy4b8Bj7Yu5BpvrE0pOuTAaCdsWVGE8VQdAPbay4eP9DqPg
+	 vWMLCMNoxrjpq2dgf0Gkki5SuP7pwmk7jkH2meg7cuorJVxX/VF75raABEWvzkaMHi
+	 vhhxdgRpR3b7B5ke0UhpF0oO9c3sZ7F6qfo5LaAZzh2DiImZJl6yUno80Km9y1f2VX
+	 IIlH0yPKwIL8OBus0S8hdF72eqSA5xm2L3CztnHUgtzPMXEtvUhtadchDi41GC6Mt7
+	 Ca1gozPG5gv1ZiW5uDRIVS53lJA/EuDl2IF4CK5RlPgdKNeNXNE2aGU70QMIY0HzW0
+	 QHOaUeFAAHJ5A==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso3508049e87.0;
+        Tue, 01 Oct 2024 20:49:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU661jgz/RIJbG4I37sjlHY3+HzjQEq7gdF3hUcdHNTqpJqoLo0lqmrSpyuZ9FWIaJ7qAqpJA5JFg0sUI8=@vger.kernel.org, AJvYcCV+Cs2ku4ehqOX+Oh6O0c0nXx03CyRRLXgLxU3A2i20bBxB6kXMm82GnkAf3cJ6PYbSV8fdfwJLbbHf@vger.kernel.org, AJvYcCV1+A6ZS+WbvIGf8Oot2kDzfX105XuFz2P1BAj/XMviEnFPv8p2TfUBjP8MUtAcmZExLXaia8Xa5cON69FyZQ0A5VQ=@vger.kernel.org, AJvYcCVMBJQwYCSFMza8IPE3D+jHKERc/eKG3omuh803Q9pZrSDzn/93OWeG7FDY0MyU18keSs03DDc5Ox024+1n@vger.kernel.org, AJvYcCWHJjjzj4RYf0AsB4l92mkzOw1nxzH1Gs9Iwt9jaS2C3FZzq6aB00+HuKqaLBATpHapJGipzN43fbQqzw==@vger.kernel.org, AJvYcCX883rMsdrqX0C6mjzpQurRlWxQnMalH/ciVzAlU/RCFXR6X23psV42EuBhGaZXhh71ygKJ5sNub3yYcWkQ31eTC+I=@vger.kernel.org, AJvYcCXCv/TcvRRVr9Obu0dV+R7BwUqRgfoLhwPOqGjR7NslHV0xdMZaWl/2pT0EzB3CdO8X30BKd3qzI2MK67C25w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxawILxQDjtxV1LowJsGy0NsPmVrhfogDqntUvlsjvZf5/UgGn4
+	lwIHAGJYrzwU//EUBxyo66XHRGZacaF5q+pWuYQcVC+Dlu30Ziy1w7lRicL4vPNisRFkGWWfORh
+	+igKRnseEmiUU0UIZI7FOYGs5MA==
+X-Google-Smtp-Source: AGHT+IEqtnQCtoRUlnvKJ/juvutRb8LD+WF2Ji1IL7egoXyMFlaAGJMVK219VrK0qM0doCIPbjzZD5sR9nPD1sht5+g=
+X-Received: by 2002:a05:6512:1113:b0:533:4638:df40 with SMTP id
+ 2adb3069b0e04-539a067f65cmr743356e87.27.1727840943291; Tue, 01 Oct 2024
+ 20:49:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+References: <20240930223550.353882-1-rosenp@gmail.com> <20240930223550.353882-3-rosenp@gmail.com>
+In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 1 Oct 2024 22:48:50 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKNMhUy3HUAanod27FnJAz35w7FLp7tp0Uo3SeVbG7EGw@mail.gmail.com>
+Message-ID: <CAL_JsqKNMhUy3HUAanod27FnJAz35w7FLp7tp0Uo3SeVbG7EGw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Antoine Tenart <atenart@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Jesper Nilsson <jesper.nilsson@axis.com>, 
+	Lars Persson <lars.persson@axis.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
+	"maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>, Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
+	Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>, Arnd Bergmann <arnd@arndb.de>, 
+	Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+	Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
+	Robert Eckelmann <longnoserob@gmail.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
+	"moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
+	"moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, 
+	"open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT" <kernel@dh-electronics.com>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 24 Sep 2024 14:40:08 +0100, Ben Dooks wrote:
-> In the s3c64xx_flush_fifo() code, the loops counter is post-decremented
-> in the do { } while(test && loops--) condition. This means the loops is
-> left at the unsigned equivalent of -1 if the loop times out. The test
-> after will never pass as if tests for loops == 0.
-> 
-> 
+On Mon, Sep 30, 2024 at 5:36=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> Fixes dtc warnings:
 
-Applied to
+Unfortunately we cannot make this change treewide. Any platform that
+relies on the ATAGS to DT bootloader support in the kernel
+decompressor expects /memory.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/2] spi: s3c64xx: fix timeout counters in flush_fifo
-      commit: 68a16708d2503b6303d67abd43801e2ca40c208d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Rob
