@@ -1,61 +1,61 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC38322071
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048521862F
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727847231; cv=none; b=IfwKwtFCbRJMJhRjGMFclBy76DZacnVdOvZTrn+rqHtB22rmI1QiwO8DljylAgEg3hR5nkhKTUMMt8EHVVJKB+rz9z1LiuJXLA2XYTo2+vpU662N0G6kPG/Qla43kjyghPE8zXg7C++3tjBu5HUnv2nXyt9jMNaIAM43kTErBnk=
+	t=1727847238; cv=none; b=XP5cBBG9+iJm3ZAJOXs7o65cqm3WSzSot0evM5HevjOMV8kPWaiYMEJO2bPq8g5L2AUwkijuCKAlpZB70pCLldpJe6FA638UvDsZJ0L9GR9p0qJ60ZKaN1NLAVBbV7GAaFlQI4QCN0WbJbqnFqtQFOIztS1jNBMkAHFNNF8c/po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727847231; c=relaxed/simple;
-	bh=2IasgynumCz2PlrBNsOErOTHOXXEsINpHik6DHniQLQ=;
+	s=arc-20240116; t=1727847238; c=relaxed/simple;
+	bh=zD3Fqrdk+2mk+4/FhEqoW9Ka1t9XF5ZY/Jkvbv4kLXk=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=Y2g8/AyPySNmF1l0ksoHgyb4Djz263rU69HS4XZ4jPtLzPk0URVI5w0wqcx2VqHusNBf+EJiJJB/F5FN6p22MoqCcWvCJtiCAy7y0gxmxTR9nqihY5s9ygyZvZ41d3OsKkfpDxKxK5inWCHeI5M7NSYQ9X4d84d5kQVb48vL/Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vKXbMH5F; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=Fnu5CYjUY5a6F6zAqMO2+LCBmVa3O62qXTSkaCRkR20yliHwyUdLcPldVpnVl4PvQx1E8xOvag+7pZfFU1/X/pmfRR7elU8FqzNlgNJ/mMC62A/sFTmz/Q+/nTv+eXz/83EnHpwvLBCzzCt3pyCn1qZssez6pNCKgJob0nkInEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=u6cjT/ET; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vKXbMH5F"
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241002053343epoutp029f038a2c1c59a4b4948eb360807fc68a~6i_VEPru32858728587epoutp02Q
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241002053343epoutp029f038a2c1c59a4b4948eb360807fc68a~6i_VEPru32858728587epoutp02Q
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="u6cjT/ET"
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241002053348epoutp0131fb22d619aea07201e12c97a943e2b2~6i_ZE69X62650226502epoutp01I
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241002053348epoutp0131fb22d619aea07201e12c97a943e2b2~6i_ZE69X62650226502epoutp01I
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727847223;
-	bh=5UHtMAoSAU9RlCmE9YmphOFxtehz5jmservIkITXERY=;
+	s=mail20170921; t=1727847228;
+	bh=kFQL8xYZO0lCk/0/PkinzPR6Z+jedHzaBTtn2WRjdQg=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=vKXbMH5F/YbWGsr5I4t6St4TGgxsMjM2+qSDEU3QQ34bvxbl1IfloU3HPkq5hx3gc
-	 iNI5hWFd9y0VjRvInzazl5hnrOj+1Ko0vW6ZmiCEd4S6C8lla+TNDP5ANjZEyqvFgL
-	 Usf9dGXgKkrjtKWgA47Qh7IBLGQZXSIad+IOQuaA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	b=u6cjT/ET58OQxmPU7gncWmsmWe4LdC4rz7wObXqa/pman7n1kKxxc28MUwuV5czp4
+	 W4FgfgQ9ZmX7EX//146l8JucwdFgeca5AAhlVQpfTFcLZp3AWflS5c5kAF0oYWq40q
+	 x0Y6ZXt27X97KEKcr+4WG5+3pfKZdtiEN1qSdijQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
 	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20241002053343epcas1p3b403cb30eaca8500517d0e5292f20f3a~6i_UxY8DP0767607676epcas1p3B;
-	Wed,  2 Oct 2024 05:33:43 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.132]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XJNlB3lsCz4x9Pt; Wed,  2 Oct
-	2024 05:33:42 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	06.30.08588.63BDCF66; Wed,  2 Oct 2024 14:33:42 +0900 (KST)
+	20241002053347epcas1p3d173cb04844c43dd86b3b54306790dec~6i_Yr1V_K3208932089epcas1p3k;
+	Wed,  2 Oct 2024 05:33:47 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.36.133]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XJNlG4Sckz4x9Q3; Wed,  2 Oct
+	2024 05:33:46 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AB.57.09398.63BDCF66; Wed,  2 Oct 2024 14:33:42 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
 	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241002053342epcas1p41e1434d5a9d08e8afd343a4036d87ded~6i_TYCZqr1369013690epcas1p42;
+	20241002053342epcas1p4ea84fa3c156342a087f77dc2a1fc2bc5~6i_TglJ7y1369513695epcas1p4_;
 	Wed,  2 Oct 2024 05:33:42 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241002053342epsmtrp29b2a9060b839a94253fecf93dad852b5~6i_TXLkRT3067930679epsmtrp2Q;
+	20241002053342epsmtrp21e0c67fb6e75237da715b3890131992f~6i_Tfe3Yn3067930679epsmtrp2S;
 	Wed,  2 Oct 2024 05:33:42 +0000 (GMT)
-X-AuditID: b6c32a33-aadb87000000218c-c2-66fcdb3609a9
+X-AuditID: b6c32a39-39fff700000024b6-88-66fcdb360189
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	05.66.07371.53BDCF66; Wed,  2 Oct 2024 14:33:41 +0900 (KST)
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	50.94.08229.53BDCF66; Wed,  2 Oct 2024 14:33:42 +0900 (KST)
 Received: from [127.0.1.1] (unknown [10.113.111.204]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241002053341epsmtip15c4b739c2d67e88ad37d2804d0daf606~6i_TErmYT1899818998epsmtip1O;
+	20241002053341epsmtip1f50982418579fc737f81d7b640898644~6i_TN5fJP1899818998epsmtip1P;
 	Wed,  2 Oct 2024 05:33:41 +0000 (GMT)
 From: Kwanghoon Son <k.son@samsung.com>
-Date: Wed, 02 Oct 2024 14:33:22 +0900
-Subject: [PATCH WIP 2/7] drm/exynos: Add Exynosautov9 decon
+Date: Wed, 02 Oct 2024 14:33:24 +0900
+Subject: [PATCH WIP 4/7] drm/exynos: exynos DPTX hw
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,3082 +63,6671 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-auto9-v1-2-c4dc3385f415@samsung.com>
+Message-Id: <20241002-auto9-v1-4-c4dc3385f415@samsung.com>
 In-Reply-To: <20241002-auto9-v1-0-c4dc3385f415@samsung.com>
 To: Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,  David Virag
 	<virag.david003@gmail.com>,  Sam Protsenko <semen.protsenko@linaro.org>
 Cc: linux-samsung-soc@vger.kernel.org, Kwanghoon Son <k.son@samsung.com>
 X-Mailer: b4 0.14.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZdlhTX9fs9p80g2sLhSwezNvGZjHp/gQW
-	i941V5kszp/fwG4x4/w+JovnfUDi+PvHjA7sHjtn3WX32LSqk83jzrU9bB59W1YxenzeJBfA
-	GpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0hpJC
-	WWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLRArzgxt7g0L10vL7XEytDAwMgUqDAh
-	O+PhlilMBY2tbBVvj01namDc0sbaxcjJISFgIjH732mWLkYuDiGBHYwSvTcvMoMkhAQ+MUr0
-	z/KFSHxjlLh56xZcx5KdP6A69jJK3Jj/gxXCecUocejeCkaQKjYBdYklbWvZQWwWAVWJ/19+
-	MoHYwgLWEm1L9rGB2LwCghInZz5hAbGZBeQltr+dwwwRt5I483Mp2BxOoPpVt56C2SICpxkl
-	/s9VhKj3kJjxbB07xEXCEp93r2EDOUJCoJFD4sT684wQCReJPc0f4IpeHd8CZUtJfH63lw3C
-	zpY4+hHGLpG4PmsR1JvGEvuXTgY6mgNomabE+l36EHv5JN597WEFCUsI8Ep0tAlBmPIStzrL
-	IRpFJc48/Qg10ENi8uN+Nkjw9DFKrNt2g2kCo/wsJN/PQvL9LIRlCxiZVzGKpRYU56anJhsW
-	GMKjNTk/dxMjOC1qGe9gvDz/n94hRiYOxkOMEhzMSiK89w79TBPiTUmsrEotyo8vKs1JLT7E
-	aAqMg4nMUqLJ+cDEnFcSb2hiaWBiZmRsYmFoZqgkznvmSlmqkEB6YklqdmpqQWoRTB8TB6dU
-	A9M27pMc9V7OXRv5lvR3xN/seruWuVvo4IMUATPb64H6pYq5r8oWqX0veSNtoTJjQoHcxVXf
-	zCPi3e4Gxa1et+mA1Oq6a9tuz+DgmGx0ol28NveqRwSj9WqW1Xvln2QIqjxnYnJ+kfrt9KNG
-	3m+GH4rF3HsaN19oDl5XknXJVIK9S+6DIUe8cFXXIgnnYNVwVw27oq1Vv2RSPp6MnuwzxXW9
-	qM2fAPNg1W4f+1XJ2d7S2/3WJXsqmXY5MVlZRpdMEuyMbk4LEfgeUz3330HFyT9ddOo1T03h
-	mzfhfnft9x866YsmvKuvf/3//vO6CQuNpuX055d19/479qLmF4dtZXdNobnXGWHrvrBX0dVK
-	LMUZiYZazEXFiQCeU4ggFAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnK7p7T9pBr8umFg8mLeNzWLS/Qks
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZdlhTV9fs9p80g54f6hYP5m1js5h0fwKL
+	Re+aq0wW589vYLeYcX4fk8XzPiBx/P1jRgd2j52z7rJ7bFrVyeZx59oeNo++LasYPT5vkgtg
+	jcq2yUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6Q0mh
+	LDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFqgV5yYW1yal66Xl1piZWhgYGQKVJiQ
+	nfF+3g6mgkOzeCrmNM5haWCc/J2zi5GTQ0LAROLh/UXsXYxcHEICOxglPl7ZwgbhfGKU2LV9
+	OiOE841R4vv0F2wwLSt7brJCJPYySqz4/ZMJwnnFKPH67HRWkCo2AXWJJW1r2UFsFgFViUub
+	DjCC2MICxhK71zaygNi8AoISJ2c+AbOZBeQltr+dw9zFyAEUt5Joe+INEuYUsJZYdespWKuI
+	wGlGif9zFSHKPSRmPFvHDnGQsMTn3WvAzpYQaOWQONnawASRcJGYcP8fC0zRq+NboBqkJD6/
+	2wv1TbbE0Y8wdonE9VmLWCFsY4n9SyczgdzDLKApsX6XPsRePol3X3tYQcISArwSHW1CEKa8
+	xK3OcohGUYkzTz9CDfSQeLJ+CgskdPoYJU6umcI+gVF+FpLnZyF5fhbCsgWMzKsYxVILinPT
+	U4sNC0zh0Zqcn7uJEZwWtSx3ME5/+0HvECMTB+MhRgkOZiUR3nuHfqYJ8aYkVlalFuXHF5Xm
+	pBYfYjQFRsFEZinR5HxgYs4riTc0sTQwMTMyNrEwNDNUEuc9c6UsVUggPbEkNTs1tSC1CKaP
+	iYNTqoGp4MvatZuSM9f9NtvYI7fZUNxxxosAwc0/7ri1hW+MF/h7NehHsvjS+pzM5l9rpq1t
+	T3hhIeMnFDi3xMO7hZ1BODry0D+G9AjnqICsri2FdSeX3ZYwU3Znj5sx8//Tna8yFq9Zmr37
+	+rzpmz44VMdMYZu8wDFzh/6kvTmHmgQEnnKbLIz3veddr6NtmTuvnKW0RfFlK+utzIKSs21W
+	U68G/NBk/uhen9aj/7zn85I5U5aW7z2wQOP0uft3NtdsnrmWbSL3yXf3qybceb+yRSTIKnXp
+	A5UpC64mXPm0/v7lCZdOLdrjd1V7wp0ytub7ShkZvBdnTZf4tF3gvNjPpXFTpIqXTL+/Vel2
+	laeD945H7EosxRmJhlrMRcWJAHmv5goUBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHLMWRmVeSWpSXmKPExsWy7bCSnK7Z7T9pBiuuMlo8mLeNzWLS/Qks
 	Fr1rrjJZnD+/gd1ixvl9TBbP+4DE8fePGR3YPXbOusvusWlVJ5vHnWt72Dz6tqxi9Pi8SS6A
-	NYrLJiU1J7MstUjfLoEr4+GWKUwFja1sFW+PTWdqYNzSxtrFyMkhIWAisWTnD5YuRi4OIYHd
-	jBLv/u5jhkiISnRcbmTsYuQAsoUlDh8uhqh5wSjR2PmQEaSGTUBdYknbWnYQm0VAVeL/l59M
-	ILawgLVE25J9bCA2r4CgxMmZT1hA5jALaEqs36UPEmYWkJfY/nYOM0SJlcSZn0vBRgoB2Wt3
-	vgG7jRNozKpbTxlB9ooInGOUuPZnLztEs4fEjGfr2CHuFJb4vHsN2wRGwVlI1s1CWDcLyboF
-	jMyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGC40BLYwfjvfn/9A4xMnEwHmKU4GBW
-	EuG9d+hnmhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFewxmzU4QE0hNLUrNTUwtSi2CyTBycUg1M
-	rz1mHbE7kXJhsYGmajLnRsZ5TYZeTQezWTpWVbTkd/mFLn1pdFhCcc8b6czZvklX35tcuue2
-	KJrxw/7o096bJtjqyz3cxMPec8H04espna56rglvWAKDpNJO2H66wlgvzN7TPV9A8lHKvPKy
-	D70l30/LzvnfMfst78qncQUC5sL/J36XYqjU/WX5r0QtUFEtuL54fb4Rk1/L5Q/bf8znylGK
-	W/XBdfrcLXJrbX1PnorM2Vu85NqPv+1S82KzCnqZHmo0b47xcy3rtE+y8s54HHElIi4uY8l9
-	6xt88y6pdBcnN3zffuXq1pMvb7Dt3NjGkxW24uTFtESFAxfuGtvlnTpya8INu+iOLMfbKoVK
-	LMUZiYZazEXFiQDqitLE8gIAAA==
-X-CMS-MailID: 20241002053342epcas1p41e1434d5a9d08e8afd343a4036d87ded
+	NYrLJiU1J7MstUjfLoEr4/28HUwFh2bxVMxpnMPSwDj5O2cXIyeHhICJxMqem6xdjFwcQgK7
+	GSVut1xnhkiISnRcbmTsYuQAsoUlDh8uhqh5wSgx+3svO0gNm4C6xJK2tWA2i4CqxKVNBxhB
+	bGEBY4ndaxtZQGxeAUGJkzOfsIDMYRbQlFi/Sx8kzCwgL7H97RxmkDCvgJVE2xNvkLAQkLl2
+	5xtWEJtTwFpi1a2njCBrRQTOMUpc+7OXHaLXQ2LGs3XsEGcKS3zevYZtAqPgLCTbZiFsm4Vk
+	2wJG5lWMkqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMFRoKW5g3H7qg96hxiZOBgPMUpw
+	MCuJ8N479DNNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTUgtQimCwTB6dU
+	AxPbm0UcP1ri3Yw8n9yd3nYjqDPrivLZ1RWSAQ85Q7c84g4Jsdj+YXV4d6aT22NXVdPTIZ+O
+	xnJ3+P4u1by+LH35R4agtWosbUGBYdunlStvmvRGo/BrwNxXZorrWmy3dhlJ60S8f3ex6kGt
+	74mJv+J9Rd4JJa2180xgUAjL2clxy3Xq7YK1O63+LjnMK2qbKj2t1FlTeY2JTFMxx7ytTCWr
+	5jm7fGY9zfv+dofttrlZiw4u6PVQ2/D/9tVzn6Y7PPrUca7zkeZhkZMzVTze3n/wNU9Lz3t2
+	TPavn9pzmNmTNxWtnOxc/fC7tXDv1an+tZEO9VNcxKpFg/6+D3swJcfq94/1yeaz5jxKe5zx
+	45sSS3FGoqEWc1FxIgCpv6ZK8QIAAA==
+X-CMS-MailID: 20241002053342epcas1p4ea84fa3c156342a087f77dc2a1fc2bc5
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241002053342epcas1p41e1434d5a9d08e8afd343a4036d87ded
+X-CMS-RootMailID: 20241002053342epcas1p4ea84fa3c156342a087f77dc2a1fc2bc5
 References: <20241002-auto9-v1-0-c4dc3385f415@samsung.com>
-	<CGME20241002053342epcas1p41e1434d5a9d08e8afd343a4036d87ded@epcas1p4.samsung.com>
+	<CGME20241002053342epcas1p4ea84fa3c156342a087f77dc2a1fc2bc5@epcas1p4.samsung.com>
+
+I didn't touch codes from vendor kernel.
+It's really bad form.
 
 Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos9_decon.c | 1765 ++++++++++++++++++++++++++++++++
- drivers/gpu/drm/exynos/regs-decon9.h   | 1244 ++++++++++++++++++++++
- 2 files changed, 3009 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dp.c             | 5038 ++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_dp.h             |  964 ++++
+ .../gpu/drm/exynos/exynos_drm_dp_link_training.c   |  586 +++
+ 3 files changed, 6588 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos9_decon.c b/drivers/gpu/drm/exynos/exynos9_decon.c
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dp.c b/drivers/gpu/drm/exynos/exynos_drm_dp.c
 new file mode 100644
-index 000000000000..d51922eeeabd
+index 000000000000..920080b15519
 --- /dev/null
-+++ b/drivers/gpu/drm/exynos/exynos9_decon.c
-@@ -0,0 +1,1765 @@
++++ b/drivers/gpu/drm/exynos/exynos_drm_dp.c
+@@ -0,0 +1,5038 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include <linux/clk.h>
-+#include <linux/component.h>
++/*
++ * Samsung ExynosAuto DRM Display Port driver
++ *
++ * Copyright (C) 2018 Samsung Electronics Co.Ltd
++ */
 +#include <linux/console.h>
-+#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/of_graph.h>
++#include <linux/component.h>
++#include <linux/module.h>
 +#include <linux/platform_device.h>
-+#include <linux/irq.h>
-+#include <linux/iopoll.h>
-+
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_vblank.h>
-+#include <drm/drm_mode.h>
-+#include <drm/drm_blend.h>
-+#include <drm/drm_fourcc.h>
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_framebuffer.h>
++#include <linux/of_gpio.h>
++#include <linux/of_graph.h>
++#include <linux/phy/phy.h>
++#include <linux/of_device.h>
++#include <video/of_display_timing.h>
 +#include <video/videomode.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
 +
-+#include "exynos_drm_fb.h"
-+#include "exynos_dpp.h"
-+#include "exynos_dpu_dma.h"
++#include <drm/drm_atomic_helper.h>	/* drm_atomic_helperxxx */
++
++#include <drm/drm_edid.h>
++#include <drm/display/drm_dp_helper.h>
++#include <drm/display/drm_dp_mst_helper.h>
++#include <drm/display/drm_dsc_helper.h>
++
++#include <drm/drm_of.h>
++#include <drm/drm_probe_helper.h>
++
 +#include "exynos_drm_crtc.h"
-+#include "exynos_drm_drv.h"
-+#include "exynos_drm_plane.h"
++#include "exynos_drm_dp.h"
 +
-+#include "regs-decon9.h"
-+
-+enum decon_type {
-+	EXYNOS9_DECON0 = 0,
-+	EXYNOS9_DECON1 = 1,
-+	EXYNOS9_DECON2 = 2,
-+};
-+
-+/* PD : Porter-Duff */
-+enum decon_blend_pd_func {
-+	PD_FUNC_CLEAR = 0x0,
-+	PD_FUNC_COPY = 0x1,
-+	PD_FUNC_DESTINATION = 0x2,
-+	PD_FUNC_SOURCE_OVER = 0x3,
-+	PD_FUNC_DESTINATION_OVER = 0x4,
-+	PD_FUNC_SOURCE_IN = 0x5,
-+	PD_FUNC_DESTINATION_IN = 0x6,
-+	PD_FUNC_SOURCE_OUT = 0x7,
-+	PD_FUNC_DESTINATION_OUT = 0x8,
-+	PD_FUNC_SOURCE_A_TOP = 0x9,
-+	PD_FUNC_DESTINATION_A_TOP = 0xa,
-+	PD_FUNC_XOR = 0xb,
-+	PD_FUNC_PLUS = 0xc,
-+	PD_FUNC_USER_DEFINED = 0xd,
-+};
-+
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * ALPHA_MULT_SRC_SEL_ALPHA0 : ALPHA_MULT = WINx_ALPHA_0_F * WINx_ALPHA_0_F
-+ * ALPHA_MULT_SRC_SEL_ALPHA1 : ALPHA_MULT = WINx_ALPHA_1_F * WINx_ALPHA_0_F
-+ * ALPHA_MULT_SRC_SEL_AF     : ALPHA_MULT = Af (Foreground incoming pixel-alpha) * WINx_ALPHA_0_F
-+ * ALPHA_MULT_SRC_SEL_AB     : ALPHA_MULT = Ab (Background incoming pixel-alpha) * WINx_ALPHA_0_F
++ * Copyright (C) 2019 Samsung Electronics Co.Ltd
 + */
-+enum decon_blend_alpha_mult_src {
-+	ALPHA_MULT_SRC_SEL_ALPHA0 = 0x0,
-+	ALPHA_MULT_SRC_SEL_ALPHA1 = 0x1,
-+	ALPHA_MULT_SRC_SEL_AF = 0x2,
-+	ALPHA_MULT_SRC_SEL_AB = 0x3,
++#include <linux/delay.h> /* udelay */
++#include <linux/err.h> /* EBUSY, EINVAL */
++#include <linux/export.h> /* EXPORT_SYMBOL */
++#include <linux/io.h> /* for use 'readl()', 'writel()' functions */
++#include <linux/kernel.h> /* DIV_ROUND_CLOSEST */
++#include <linux/printk.h> /* pr_xxx */
++#include <linux/types.h> /* uint32_t, __iomem, ... */
++#include <video/mipi_display.h>
++#include <drm/drm_mipi_dsi.h> /* MIPI_DSI_* */
++#include <linux/iopoll.h> /* readx_poll_timeout_atomic */
++
++#define MAX_LANE				4
++
++#define SYSTEM_DEVICE_VERSION			(0x0000)
++#define DEVICE_VERSION				(0xFFFFFFFF << 0)
++
++#define SYSTEM_SW_RESET_CONTROL			(0x0004)
++#define SW_RESET				(0x01 << 0)
++
++#define SYSTEM_CLK_CONTROL			(0x0008)
++#define GFMUX_STATUS_TXCLK			(0x03 << 8)
++#define GFMUX_STATUS_TXCLK_ON			(0x02)
++#define TXCLK_SEL				(0x01 << 5)
++#define TXCLK_SEL_MODE				(0x01 << 4)
++#define OSC_CLK_SEL				(0x01 << 0)
++
++#define SYSTEM_MAIN_LINK_BANDWIDTH		(0x000C)
++#define LINK_BW_SET			        (0x1F << 0)
++
++#define SYSTEM_MAIN_LINK_LANE_COUNT		(0x0010)
++#define LANE_COUNT_SET			        (0x07 << 0)
++
++#define SYSTEM_SW_FUNCTION_ENABLE		(0x0014)
++#define SW_FUNC_EN			        (0x01 << 0)
++
++#define SYSTEM_COMMON_FUNCTION_ENABLE		(0x0018)
++#define HDCP22_FUNC_EN				(0x01 << 4)
++#define HDCP13_FUNC_EN				(0x01 << 3)
++#define GTC_FUNC_EN				(0x01 << 2)
++#define PCS_FUNC_EN				(0x01 << 1)
++#define AUX_FUNC_EN				(0x01 << 0)
++
++#define SYSTEM_SST1_FUNCTION_ENABLE		(0x001C)
++#define SST1_LH_PWR_ON_STATUS			(0x01 << 5)
++#define SST1_LH_PWR_ON				(0x01 << 4)
++#define SST1_AUDIO_FIFO_FUNC_EN			(0x01 << 2)
++#define SST1_AUDIO_FUNC_EN			(0x01 << 1)
++#define SST1_VIDEO_FUNC_EN			(0x01 << 0)
++
++#define SYSTEM_SST2_FUNCTION_ENABLE		(0x0020)
++
++#define SYSTEM_SST3_FUNCTION_ENABLE		(0x0030)
++
++#define SYSTEM_SST4_FUNCTION_ENABLE		(0x0034)
++
++#define SYSTEM_MISC_CONTROL			(0x0024)
++#define MISC_CTRL_EN				(0x01 << 1)
++#define HDCP_HPD_RST				(0x01 << 0)
++
++#define SYSTEM_HPD_CONTROL			(0x0028)
++#define HPD_HDCP				(0x01 << 30)
++#define HPD_DEGLITCH_COUNT			(0x3FFF << 16)
++#define HPD_STATUS				(0x01 << 8)
++#define HPD_EVENT_UNPLUG			(0x01 << 7)
++#define HPD_EVENT_PLUG				(0x01 << 6)
++#define HPD_EVENT_IRQ				(0x01 << 5)
++#define HPD_EVENT_CTRL_EN			(0x01 << 4)
++#define HPD_FORCE				(0x01 << 1)
++#define HPD_FORCE_EN				(0x01 << 0)
++
++#define SYSTEM_PLL_LOCK_CONTROL			(0x002C)
++#define PLL_LOCK_STATUS				(0x01 << 4)
++#define PLL_LOCK_FORCE				(0x01 << 3)
++#define PLL_LOCK_FORCE_EN			(0x01 << 2)
++
++#define SYSTEM_INTERRUPT_CONTROL		(0x0100)
++#define SW_INTR_CTRL				(0x01 << 1)
++#define INTR_POL				(0x01 << 0)
++
++#define SYSTEM_INTERRUPT_REQUEST		(0x0104)
++#define IRQ_MST					(0x01 << 3)
++#define IRQ_STR2				(0x01 << 2)
++#define IRQ_STR1				(0x01 << 1)
++#define IRQ_COMMON				(0x01 << 0)
++
++#define SYSTEM_IRQ_COMMON_STATUS		(0x0108)
++#define HDCP_ENC_EN_CHG				(0x01 << 22)
++#define HDCP_LINK_CHK_FAIL			(0x01 << 21)
++#define HDCP_R0_CHECK_FLAG			(0x01 << 20)
++#define HDCP_BKSV_RDY				(0x01 << 19)
++#define HDCP_SHA_DONE				(0x01 << 18)
++#define HDCP_AUTH_STATE_CHG			(0x01 << 17)
++#define HDCP_AUTH_DONE				(0x01 << 16)
++#define HPD_IRQ_FLAG				(0x01 << 11)
++#define HPD_CHG					(0x01 << 10)
++#define HPD_LOST				(0x01 << 9)
++#define HPD_PLUG_INT				(0x01 << 8)
++#define AUX_REPLY_RECEIVED			(0x01 << 5)
++#define AUX_ERR					(0x01 << 4)
++#define PLL_LOCK_CHG				(0x01 << 1)
++#define SW_INTR					(0x01 << 0)
++
++#define SYSTEM_IRQ_COMMON_STATUS_MASK		(0x010C)
++#define MST_BUF_OVERFLOW_MASK			(0x01 << 23)
++#define HDCP_ENC_EN_CHG_MASK			(0x01 << 22)
++#define HDCP_LINK_CHK_FAIL_MASK			(0x01 << 21)
++#define HDCP_R0_CHECK_FLAG_MASK			(0x01 << 20)
++#define HDCP_BKSV_RDY_MASK			(0x01 << 19)
++#define HDCP_SHA_DONE_MASK			(0x01 << 18)
++#define HDCP_AUTH_STATE_CHG_MASK		(0x01 << 17)
++#define HDCP_AUTH_DONE_MASK			(0x01 << 16)
++#define HPD_IRQ_MASK				(0x01 << 11)
++#define HPD_CHG_MASK				(0x01 << 10)
++#define HPD_LOST_MASK				(0x01 << 9)
++#define HPD_PLUG_MASK				(0x01 << 8)
++#define AUX_REPLY_RECEIVED_MASK			(0x01 << 5)
++#define AUX_ERR_MASK				(0x01 << 4)
++#define PLL_LOCK_CHG_MASK			(0x01 << 1)
++#define SW_INTR_MASK				(0x01 << 0)
++
++#define SYSTEM_DEBUG				(0x0200)
++#define AUX_HPD_CONTROL				(0x01 << 2)
++#define CLKGATE_DISABLE				(0x01 << 1)
++
++#define SYSTEM_DEBUG_LH_PCH			(0x0204)
++#define SST4_LH_PSTATE				(0x01 << 28)
++#define SST4_LH_PCH_FSM_STATE			(0x0F << 24)
++#define SST3_LH_PSTATE				(0x01 << 20)
++#define SST3_LH_PCH_FSM_STATE			(0x0F << 16)
++#define SST2_LH_PSTATE				(0x01 << 12)
++#define SST2_LH_PCH_FSM_STATE			(0x0F << 8)
++#define SST1_LH_PSTATE				(0x01 << 4)
++#define SST1_LH_PCH_FSM_STATE			(0x0F << 0)
++
++#define AUX_CONTROL				(0x1000)
++#define AUX_POWER_DOWN				(0x01 << 16)
++#define AUX_REPLY_TIMER_MODE			(0x03 << 12)
++#define AUX_REPLY_TIMER_VAL(_v_)		((_v_) << 12)
++#define AUX_RETRY_TIMER				(0x07 << 8)
++#define AUX_PN_INV				(0x01 << 1)
++#define REG_MODE_SEL				(0x01 << 0)
++
++#define AUX_TRANSACTION_START			(0x1004)
++#define AUX_TRAN_START				(0x01 << 0)
++
++#define AUX_BUFFER_CLEAR			(0x1008)
++#define AUX_BUF_CLR				(0x01 << 0)
++
++#define AUX_ADDR_ONLY_COMMAND			(0x100C)
++#define ADDR_ONLY_CMD				(0x01 << 0)
++
++#define AUX_REQUEST_CONTROL			(0x1010)
++#define REQ_COMM				(0x0F << 28)
++#define REQ_COMM_VAL(_v_)			((_v_) << 28)
++#define REQ_ADDR				(0xFFFFF << 8)
++#define REQ_ADDR_VAL(_v_)			((_v_) << 8)
++#define REQ_LENGTH				(0x3F << 0)
++
++#define AUX_COMMAND_CONTROL			(0x1014)
++#define DEFER_CTRL_EN				(0x01 << 8)
++#define DEFER_COUNT				(0x7F << 0)
++
++#define AUX_MONITOR_1				(0x1018)
++#define AUX_BUF_DATA_COUNT			(0x7F << 24)
++#define AUX_DETECTED_PERIOD_MON			(0x1FF << 12)
++#define AUX_CMD_STATUS				(0x0F << 8)
++#define AUX_RX_COMM				(0x0F << 4)
++#define AUX_LAST_MODE				(0x01 << 3)
++#define AUX_BUSY				(0x01 << 2)
++#define AUX_REQ_WAIT_GRANT			(0x01 << 1)
++#define AUX_REQ_SIGNAL				(0x01 << 0)
++
++#define AUX_MONITOR_2				(0x101C)
++#define AUX_ERROR_NUMBER			(0xFF << 0)
++
++#define AUX_TX_DATA_SET0			(0x1030)
++#define TX_DATA_3				(0xFF << 24)
++#define TX_DATA_2				(0xFF << 16)
++#define TX_DATA_1				(0xFF << 8)
++#define TX_DATA_0				(0xFF << 0)
++
++#define AUX_TX_DATA_SET1			(0x1034)
++#define TX_DATA_7				(0xFF << 24)
++#define TX_DATA_6				(0xFF << 16)
++#define TX_DATA_5				(0xFF << 8)
++#define TX_DATA_4				(0xFF << 0)
++
++#define AUX_TX_DATA_SET2			(0x1038)
++#define TX_DATA_11				(0xFF << 24)
++#define TX_DATA_10				(0xFF << 16)
++#define TX_DATA_9				(0xFF << 8)
++#define TX_DATA_8				(0xFF << 0)
++
++#define AUX_TX_DATA_SET3			(0x103C)
++#define TX_DATA_15				(0xFF << 24)
++#define TX_DATA_14				(0xFF << 16)
++#define TX_DATA_13				(0xFF << 8)
++#define TX_DATA_12				(0xFF << 0)
++
++#define AUX_RX_DATA_SET0			(0x1040)
++#define RX_DATA_3				(0xFF << 24)
++#define RX_DATA_2				(0xFF << 16)
++#define RX_DATA_1				(0xFF << 8)
++#define RX_DATA_0				(0xFF << 0)
++
++#define AUX_RX_DATA_SET1			(0x1044)
++#define RX_DATA_7				(0xFF << 24)
++#define RX_DATA_6				(0xFF << 16)
++#define RX_DATA_5				(0xFF << 8)
++#define RX_DATA_4				(0xFF << 0)
++
++#define AUX_RX_DATA_SET2			(0x1048)
++#define RX_DATA_11				(0xFF << 24)
++#define RX_DATA_10				(0xFF << 16)
++#define RX_DATA_9				(0xFF << 8)
++#define RX_DATA_8				(0xFF << 0)
++
++#define AUX_RX_DATA_SET3			(0x104C)
++#define RX_DATA_15				(0xFF << 24)
++#define RX_DATA_14				(0xFF << 16)
++#define RX_DATA_13				(0xFF << 8)
++#define RX_DATA_12				(0xFF << 0)
++
++#define GTC_CONTROL				(0x1100)
++#define GTC_DELTA_ADJ_EN			(0x01 << 2)
++#define IMPL_OPTION				(0x01 << 1)
++#define GTC_TX_MASTER				(0x01 << 0)
++
++#define GTC_WORK_ENABLE				(0x1104)
++#define GTC_WORK_EN				(0x01 << 0)
++
++#define GTC_TIME_CONTROL			(0x1108)
++#define TIME_PERIOD_SEL				(0x03 << 28)
++#define TIME_PERIOD_FRACTIONAL			(0xFFFFF << 8)
++#define TIME_PERIOD_INT1			(0x0F << 4)
++#define TIME_PERIOD_INT2			(0x0F << 0)
++
++#define GTC_ATTEMPT_CONTROL			(0x110C)
++#define GTC_STATE_CHANGE_CTRL			(0x01 << 8)
++#define NUM_GTC_ATTEMPT				(0xFF << 0)
++
++#define GTC_TX_VALUE_MONITOR			(0x1110)
++#define GTC_TX_VAL				(0xFFFFFFFF << 0)
++
++#define GTC_RX_VALUE_MONITOR			(0x1114)
++#define GTC_RX_VAL				(0xFFFFFFFF << 0)
++
++#define GTC_STATUS_MONITOR			(0x1118)
++#define FREQ_ADJ_10_3				(0xFF << 8)
++#define FREQ_ADJ_2_0				(0x07 << 5)
++#define TXGTC_LOCK_DONE_FLAG			(0x01 << 1)
++#define RXGTC_LOCK_DONE_FLAG			(0x01 << 0)
++
++#define AUX_GTC_DEBUG				(0x1200)
++#define DEBUG_STATE_SEL				(0xFF << 8)
++#define DEBUG_STATE				(0xFF << 0)
++
++#define MST_ENABLE				(0x2000)
++#define MST_EN					(0x01 << 0)
++
++#define MST_VC_PAYLOAD_UPDATE_FLAG		(0x2004)
++#define VC_PAYLOAD_UPDATE_FLAG			(0x01 << 0)
++
++#define MST_STREAM_1_ENABLE			(0x2010)
++#define STRM_1_EN				(0x01 << 0)
++
++#define MST_STREAM_1_HDCP_CTRL			(0x2014)
++#define STRM_1_HDCP22_TYPE			(0x01 << 1)
++#define STRM_1_HDCP_EN				(0x01 << 0)
++
++#define MST_STREAM_1_X_VALUE			(0x2018)
++#define MST_STREAM_X_VALUE(sst_id)		(MST_STREAM_1_X_VALUE + (0x10 * (sst_id)))
++#define STRM_VALUE				(0xFF << 0)
++
++#define MST_STREAM_1_Y_VALUE			(0x201C)
++#define MST_STREAM_Y_VALUE(sst_id)		(MST_STREAM_1_Y_VALUE + (0x10 * (sst_id)))
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_01_08	(0x2050)
++#define VC_PAYLOAD_ID_TIMESLOT_01		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_02		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_03		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_04		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_05		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_06		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_07		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_08		(0x03 << 0)
++#define VC_PAYLOAD_ID_MASK(mask)		(~(0x07 << (mask)))
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_09_16	(0x2054)
++#define VC_PAYLOAD_ID_TIMESLOT_09		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_10		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_11		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_12		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_13		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_14		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_15		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_16		(0x03 << 0)
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_17_24	(0x2058)
++#define VC_PAYLOAD_ID_TIMESLOT_17		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_18		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_19		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_20		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_21		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_22		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_23		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_24		(0x03 << 0)
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_25_32	(0x205C)
++#define VC_PAYLOAD_ID_TIMESLOT_25		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_26		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_27		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_28		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_29		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_30		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_31		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_32		(0x03 << 0)
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_33_40	(0x2060)
++#define VC_PAYLOAD_ID_TIMESLOT_33		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_34		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_35		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_36		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_37		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_38		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_39		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_40		(0x03 << 0)
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_41_48	(0x2064)
++#define VC_PAYLOAD_ID_TIMESLOT_41		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_42		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_43		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_44		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_45		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_46		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_47		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_48		(0x03 << 0)
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_49_56	(0x2068)
++#define VC_PAYLOAD_ID_TIMESLOT_49		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_50		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_51		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_52		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_53		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_54		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_55		(0x03 << 4)
++#define VC_PAYLOAD_ID_TIMESLOT_56		(0x03 << 0)
++
++#define MST_VC_PAYLOAD_ID_TIMESLOT_57_63	(0x206C)
++#define VC_PAYLOAD_ID_TIMESLOT_57		(0x03 << 28)
++#define VC_PAYLOAD_ID_TIMESLOT_58		(0x03 << 24)
++#define VC_PAYLOAD_ID_TIMESLOT_59		(0x03 << 20)
++#define VC_PAYLOAD_ID_TIMESLOT_60		(0x03 << 16)
++#define VC_PAYLOAD_ID_TIMESLOT_61		(0x03 << 12)
++#define VC_PAYLOAD_ID_TIMESLOT_62		(0x03 << 8)
++#define VC_PAYLOAD_ID_TIMESLOT_63		(0x03 << 4)
++
++#define MST_ETC_OPTION				(0x2070)
++#define ALLOCATE_TIMESLOT_CHECK_TO_ACT		(0x01 << 1)
++#define HDCP22_LVP_TYPE				(0x01 << 0)
++
++#define MST_BUF_STATUS				(0x2064)
++#define STRM_2_BUF_OVERFLOW			(0x01 << 5)
++#define STRM_1_BUF_OVERFLOW			(0x01 << 4)
++#define STRM_2_BUF_OVERFLOW_CLEAR		(0x01 << 1)
++#define STRM_1_BUF_OVERFLOW_CLEAR		(0x01 << 0)
++
++#define PCS_CONTROL				(0x3000)
++#define FEC_READY				(0x01 << 9)
++#define FEC_FUNC_EN				(0x01 << 8)
++#define LINK_TRAINING_PATTERN_SET		(0x07 << 4)
++#define LINK_TRAINING_PATTERN_SET_VAL(_v_)	((_v_) << 4)
++#define BYTE_SWAP				(0x01 << 3)
++#define BIT_SWAP				(0x01 << 2)
++#define SCRAMBLE_RESET_VALUE			(0x01 << 1)
++#define SCRAMBLE_BYPASS				(0x01 << 0)
++
++#define PCS_LANE_CONTROL			(0x3004)
++#define LANE_DATA_INV_EN			(0x01 << 20)
++#define LANE3_DATA_INV				(0x01 << 19)
++#define LANE2_DATA_INV				(0x01 << 18)
++#define LANE1_DATA_INV				(0x01 << 17)
++#define LANE0_DATA_INV				(0x01 << 16)
++#define LANE3_MAP				(0x03 << 12)
++#define LANE3_MAP_VAL(_v_)			((_v_) << 12)
++#define LANE2_MAP				(0x03 << 8)
++#define LANE2_MAP_VAL(_v_)			((_v_) << 8)
++#define LANE1_MAP				(0x03 << 4)
++#define LANE1_MAP_VAL(_v_)			((_v_) << 4)
++#define LANE0_MAP				(0x03 << 0)
++
++#define PCS_TEST_PATTERN_CONTROL		(0x3008)
++#define TEST_PATTERN				(0x3F << 8)
++#define LINK_QUALITY_PATTERN_SET		(0x07 << 0)
++
++#define PCS_TEST_PATTERN_SET0			(0x300C)
++#define TEST_80BIT_PATTERN_SET0			(0xFFFFFFFF << 0)
++
++#define PCS_TEST_PATTERN_SET1			(0x3010)
++#define TEST_80BIT_PATTERN_SET1			(0xFFFFFFFF << 0)
++
++#define PCS_TEST_PATTERN_SET2			(0x3014)
++#define TEST_80BIT_PATTERN_SET2			(0xFFFF << 0)
++
++#define PCS_DEBUG_CONTROL			(0x3018)
++#define FEC_FLIP_CDADJ_CODES_CASE4		(0x01 << 6)
++#define FEC_FLIP_CDADJ_CODES_CASE2		(0x01 << 5)
++#define FEC_DECODE_EN_4TH_SEL			(0x01 << 4)
++#define FEC_DECODE_DIS_4TH_SEL			(0x01 << 3)
++#define PRBS7_OPTION				(0x01 << 2)
++#define DISABLE_AUTO_RESET_ENCODE		(0x01 << 1)
++#define PRBS31_EN				(0x01 << 0)
++
++#define PCS_HBR2_EYE_SR_CONTROL			(0x3020)
++#define HBR2_EYE_SR_CTRL			(0x03 << 16)
++#define HBR2_EYE_SR_COUNT			(0xFFFF << 0)
++
++#define PCS_SA_CRC_CONTROL_1			(0x3100)
++#define SA_CRC_CLEAR				(0x01 << 13)
++#define SA_CRC_SW_COMPARE			(0x01 << 12)
++#define SA_CRC_LN3_PASS				(0x01 << 11)
++#define SA_CRC_LN2_PASS				(0x01 << 10)
++#define SA_CRC_LN1_PASS				(0x01 << 9)
++#define SA_CRC_LN0_PASS				(0x01 << 8)
++#define SA_CRC_LN3_FAIL				(0x01 << 7)
++#define SA_CRC_LN2_FAIL				(0x01 << 6)
++#define SA_CRC_LN1_FAIL				(0x01 << 5)
++#define SA_CRC_LN0_FAIL				(0x01 << 4)
++#define SA_CRC_LANE_3_ENABLE			(0x01 << 3)
++#define SA_CRC_LANE_2_ENABLE			(0x01 << 2)
++#define SA_CRC_LANE_1_ENABLE			(0x01 << 1)
++#define SA_CRC_LANE_0_ENABLE			(0x01 << 0)
++
++#define PCS_SA_CRC_CONTROL_2			(0x3104)
++#define SA_CRC_LN0_REF				(0xFFFF << 16)
++#define SA_CRC_LN0_RESULT			(0xFFFF << 0)
++
++#define PCS_SA_CRC_CONTROL_3			(0x3108)
++#define SA_CRC_LN1_REF				(0xFFFF << 16)
++#define SA_CRC_LN1_RESULT			(0xFFFF << 0)
++
++#define PCS_SA_CRC_CONTROL_4			(0x310C)
++#define SA_CRC_LN2_REF				(0xFFFF << 16)
++#define SA_CRC_LN2_RESULT			(0xFFFF << 0)
++
++#define PCS_SA_CRC_CONTROL_5			(0x3110)
++#define SA_CRC_LN3_REF				(0xFFFF << 16)
++#define SA_CRC_LN3_RESULT			(0xFFFF << 0)
++
++#define HDCP13_STATUS				(0x4000)
++#define REAUTH_REQUEST				(0x01 << 7)
++#define AUTH_FAIL				(0x01 << 6)
++#define HW_1ST_AUTHEN_PASS			(0x01 << 5)
++#define BKSV_VALID				(0x01 << 3)
++#define ENCRYPT					(0x01 << 2)
++#define HW_AUTHEN_PASS				(0x01 << 1)
++#define AKSV_VALID				(0x01 << 0)
++
++#define HDCP13_CONTROL_0			(0x4004)
++#define SW_STORE_AN				(0x01 << 7)
++#define SW_RX_REPEATER				(0x01 << 6)
++#define HW_RE_AUTHEN				(0x01 << 5)
++#define SW_AUTH_OK				(0x01 << 4)
++#define HW_AUTH_EN				(0x01 << 3)
++#define HDCP13_ENC_EN				(0x01 << 2)
++#define HW_1ST_PART_ATHENTICATION_EN		(0x01 << 1)
++#define HW_2ND_PART_ATHENTICATION_EN		(0x01 << 0)
++
++#define HDCP13_CONTROL_1			(0x4008)
++#define DPCD_REV_1_2				(0x01 << 3)
++#define HW_AUTH_POLLING_MODE			(0x01 << 1)
++#define HDCP_INT				(0x01 << 0)
++
++#define HDCP13_AKSV_0				(0x4010)
++#define AKSV0					(0xFFFFFFFF << 0)
++
++#define HDCP13_AKSV_1				(0x4014)
++#define AKSV1					(0xFF << 0)
++
++#define HDCP13_AN_0				(0x4018)
++#define AN0					(0xFFFFFFFF << 0)
++
++#define HDCP13_AN_1				(0x401C)
++#define AN1					(0xFFFFFFFF << 0)
++
++#define HDCP13_BKSV_0				(0x4020)
++#define BKSV0					(0xFFFFFFFF << 0)
++
++#define HDCP13_BKSV_1				(0x4024)
++#define BKSV1					(0xFF << 0)
++
++#define HDCP13_R0_REG				(0x4028)
++#define R0					(0xFFFF << 0)
++
++#define HDCP13_BCAPS				(0x4030)
++#define BCAPS					(0xFF << 0)
++
++#define HDCP13_BINFO_REG			(0x4034)
++#define BINFO					(0xFF << 0)
++
++#define HDCP13_DEBUG_CONTROL			(0x4038)
++#define CHECK_KSV				(0x01 << 2)
++#define REVOCATION_CHK_DONE			(0x01 << 1)
++#define HW_SKIP_RPT_ZERO_DEV			(0x01 << 0)
++
++#define HDCP13_AUTH_DBG				(0x4040)
++#define DDC_STATE				(0x07 << 5)
++#define AUTH_STATE				(0x1F << 0)
++
++#define HDCP13_ENC_DBG				(0x4044)
++#define ENC_STATE				(0x07 << 3)
++
++#define HDCP13_AM0_0				(0x4048)
++#define AM0_0					(0xFFFFFFFF << 0)
++
++#define HDCP13_AM0_1				(0x404C)
++#define AM0_1					(0xFFFFFFFF << 0)
++
++#define HDCP13_WAIT_R0_TIME			(0x4054)
++#define HW_WRITE_AKSV_WAIT			(0xFF << 0)
++
++#define HDCP13_LINK_CHK_TIME			(0x4058)
++#define LINK_CHK_TIMER				(0xFF << 0)
++
++#define HDCP13_REPEATER_READY_WAIT_TIME		(0x405C)
++#define HW_RPTR_RDY_TIMER			(0xFF << 0)
++
++#define HDCP13_READY_POLL_TIME			(0x4060)
++#define POLLING_TIMER_TH			(0xFF << 0)
++
++#define HDCP13_STREAM_ID_ENCRYPTION_CONTROL	(0x4068)
++#define STRM_ID_ENC_UPDATE			(0x01 << 7)
++#define STRM_ID_ENC				(0x7F << 0)
++
++#define HDCP22_SYS_EN				(0x4400)
++#define SYSTEM_ENABLE				(0x01 << 0)
++
++#define HDCP22_CONTROL				(0x4404)
++#define HDCP22_BYPASS_MODE			(0x01 << 1)
++#define HDCP22_ENC_EN				(0x01 << 0)
++
++#define HDCP22_CONTROL				(0x4404)
++#define HDCP22_BYPASS_MODE			(0x01 << 1)
++#define HDCP22_ENC_EN				(0x01 << 0)
++
++#define HDCP22_STREAM_TYPE			(0x4454)
++#define STREAM_TYPE				(0x01 << 0)
++
++#define HDCP22_LVP				(0x4460)
++#define LINK_VERIFICATION_PATTERN		(0xFFFF << 0)
++
++#define HDCP22_LVP_GEN				(0x4464)
++#define LVP_GEN					(0x01 << 0)
++
++#define HDCP22_LVP_CNT_KEEP			(0x4468)
++#define LVP_COUNT_KEEP_ENABLE			(0x01 << 0)
++
++#define HDCP22_LANE_DECODE_CTRL			(0x4470)
++#define ENHANCED_FRAMING_MODE			(0x01 << 3)
++#define LVP_EN_DECODE_ENABLE			(0x01 << 2)
++#define ENCRYPTION_SIGNAL_DECODE_ENABLE		(0x01 << 1)
++#define LANE_DECODE_ENABLE			(0x01 << 0)
++
++#define HDCP22_SR_VALUE				(0x4480)
++#define SR_VALUE				(0xFF << 0)
++
++#define HDCP22_CP_VALUE				(0x4484)
++#define CP_VALUE				(0xFF << 0)
++
++#define HDCP22_BF_VALUE				(0x4488)
++#define BF_VALUE				(0xFF << 0)
++
++#define HDCP22_BS_VALUE				(0x448C)
++#define BS_VALUE				(0xFF << 0)
++
++#define HDCP22_RIV_XOR				(0x4490)
++#define RIV_XOR_LOCATION			(0x01 << 0)
++
++#define HDCP22_RIV_0				(0x4500)
++#define RIV_KEY_0				(0xFFFFFFFF << 0)
++
++#define HDCP22_RIV_1				(0x4504)
++#define RIV_KEY_1				(0xFFFFFFFF << 0)
++
++#define SST1_MAIN_CONTROL			(0x5000)
++#define MVID_MODE				(0x01 << 11)
++#define MAUD_MODE				(0x01 << 10)
++#define MVID_UPDATE_RATE			(0x03 << 8)
++#define VIDEO_MODE				(0x01 << 6)
++#define ENHANCED_MODE				(0x01 << 5)
++#define ODD_TU_CONTROL				(0x01 << 4)
++
++#define SST1_MAIN_FIFO_CONTROL			(0x5004)
++#define CLEAR_AUDIO_FIFO			(0x01 << 3)
++#define CLEAR_PIXEL_MAPPING_FIFO		(0x01 << 2)
++#define CLEAR_MAPI_FIFO				(0x01 << 1)
++#define CLEAR_GL_DATA_FIFO			(0x01 << 0)
++
++#define SST1_GNS_CONTROL			(0x5008)
++#define RS_CTRL					(0x01 << 0)
++
++#define SST1_SR_CONTROL				(0x500C)
++#define SR_COUNT_RESET_VALUE			(0x1FF << 16)
++#define SR_REPLACE_BS_COUNT			(0x1F << 4)
++#define SR_START_CTRL				(0x01 << 1)
++#define SR_REPLACE_BS_EN			(0x01 << 0)
++
++#define SST1_INTERRUPT_MONITOR			(0x5020)
++#define INT_STATE				(0x01 << 0)
++
++#define SST1_INTERRUPT_STATUS_SET0		(0x5024)
++#define VSC_SDP_TX_INCOMPLETE			(0x01 << 9)
++#define MAPI_FIFO_UNDER_FLOW			(0x01 << 8)
++#define VSYNC_DET				(0x01 << 7)
++
++#define SST1_INTERRUPT_STATUS_SET1		(0x5028)
++#define AFIFO_UNDER				(0x01 << 7)
++#define AFIFO_OVER				(0x01 << 6)
++
++#define SST1_INTERRUPT_MASK_SET0		(0x502C)
++#define VSC_SDP_TX_INCOMPLETE_MASK		(0x01 << 9)
++#define MAPI_FIFO_UNDER_FLOW_MASK		(0x01 << 8)
++#define VSYNC_DET_MASK				(0x01 << 7)
++
++#define SST1_INTERRUPT_MASK_SET1		(0x5030)
++#define AFIFO_UNDER_MASK			(0x01 << 7)
++#define AFIFO_OVER_MASK				(0x01 << 6)
++
++#define SST1_MVID_CALCULATION_CONTROL		(0x5040)
++#define MVID_GEN_FILTER_TH			(0xFF << 8)
++#define MVID_GEN_FILTER_EN			(0x01 << 0)
++
++#define SST1_MVID_MASTER_MODE			(0x5044)
++#define MVID_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_NVID_MASTER_MODE			(0x5048)
++#define NVID_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_MVID_SFR_CONFIGURE			(0x504C)
++#define MVID_SFR_CONFIG				(0xFFFFFF << 0)
++
++#define SST1_NVID_SFR_CONFIGURE			(0x5050)
++#define NVID_SFR_CONFIG				(0xFFFFFF << 0)
++
++#define SST1_MVID_MONITOR			(0x5054)
++#define MVID_MON				(0xFFFFFF << 0)
++
++#define SST1_MAUD_CALCULATION_CONTROL		(0x5058)
++#define M_AUD_GEN_FILTER_TH			(0xFF << 8)
++#define M_AUD_GEN_FILTER_EN			(0x01 << 0)
++
++#define SST1_MAUD_MASTER_MODE			(0x505C)
++#define MAUD_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_NAUD_MASTER_MODE			(0x5060)
++#define NAUD_MASTER				(0xFFFFFF << 0)
++
++#define SST1_MAUD_SFR_CONFIGURE			(0x5064)
++#define MAUD_SFR_CONFIG				(0xFFFFFF << 0)
++
++#define SST1_NAUD_SFR_CONFIGURE			(0x5068)
++#define NAUD_SFR_CONFIG				(0xFFFFFF << 0)
++
++#define SST1_NARROW_BLANK_CONTROL		(0x506C)
++#define NARROW_BLANK_EN				(0x01 << 1)
++#define VIDEO_FIFO_FLUSH_DISABLE		(0x01 << 0)
++
++#define SST1_LOW_TU_CONTROL			(0x5070)
++#define NULL_TU_CONTROL				(0x01 << 1)
++#define HALF_FREQUENCY_CONTROL			(0x01 << 0)
++
++#define SST1_ACTIVE_SYMBOL_INTEGER_FEC_OFF	(0x5080)
++#define ACTIVE_SYMBOL_INTEGER_FEC_OFF		(0x3F << 0)
++
++#define SST1_ACTIVE_SYMBOL_FRACTION_FEC_OFF	(0x5084)
++#define ACTIVE_SYMBOL_FRACTION_FEC_OFF		(0x3FFFFFFF << 0)
++
++#define SST1_ACTIVE_SYMBOL_THRESHOLD_FEC_OFF	(0x5088)
++#define ACTIVE_SYMBOL_THRESHOLD_FEC_OFF		(0x0F << 0)
++
++#define SST1_ACTIVE_SYMBOL_THRESHOLD_SEL_FEC_OFF	(0x508C)
++#define ACTIVE_SYMBOL_THRESHOLD_SEL_FEC_OFF	(0x01 << 0)
++
++#define SST1_ACTIVE_SYMBOL_INTEGER_FEC_ON	(0x5090)
++#define ACTIVE_SYMBOL_INTEGER_FEC_ON		(0x3F << 0)
++
++#define SST1_ACTIVE_SYMBOL_FRACTION_FEC_ON	(0x5094)
++#define ACTIVE_SYMBOL_FRACTION_FEC_ON		(0x3FFFFFFF << 0)
++
++#define SST1_ACTIVE_SYMBOL_THRESHOLD_FEC_ON	(0x5098)
++#define ACTIVE_SYMBOL_THRESHOLD_FEC_ON		(0x0F << 0)
++
++#define SST1_ACTIVE_SYMBOL_THRESHOLD_SEL_FEC_ON	(0x509C)
++#define ACTIVE_SYMBOL_THRESHOLD_SEL_FEC_ON	(0x01 << 0)
++
++#define SST1_FEC_DISABLE_SEND_CONTROL		(0x5100)
++#define FEC_DISABLE_SEND_CONTROL		(0x01 << 0)
++
++#define SST1_VIDEO_CONTROL			(0x5400)
++#define STRM_VALID_MON				(0x01 << 10)
++#define STRM_VALID_FORCE			(0x01 << 9)
++#define STRM_VALID_CTRL				(0x01 << 8)
++#define DYNAMIC_RANGE_MODE			(0x01 << 7)
++#define DYNAMIC_RANGE_VAL(_v_)			((_v_) << 7)
++#define BPC					(0x07 << 4)
++#define BPC_VAL(_v_)				((_v_) << 4)
++#define COLOR_FORMAT				(0x03 << 2)
++#define VSYNC_POLARITY				(0x01 << 1)
++#define VSYNC_POLARITY_VAL(_v_)			((_v_) << 1)
++#define HSYNC_POLARITY				(0x01 << 0)
++
++#define SST1_VIDEO_ENABLE			(0x5404)
++#define VIDEO_EN				(0x01 << 0)
++
++#define SST1_VIDEO_MASTER_TIMING_GEN		(0x5408)
++#define VIDEO_MASTER_TIME_GEN			(0x01 << 0)
++
++#define SST1_VIDEO_MUTE				(0x540C)
++#define VIDEO_MUTE				(0x01 << 0)
++
++#define SST1_VIDEO_FIFO_THRESHOLD_CONTROL	(0x5410)
++#define GL_FIFO_TH_CTRL				(0x01 << 5)
++#define GL_FIFO_TH_VALUE			(0x1F << 0)
++
++#define SST1_VIDEO_HORIZONTAL_TOTAL_PIXELS	(0x5414)
++#define H_TOTAL_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_VERTICAL_TOTAL_PIXELS	(0x5418)
++#define V_TOTAL_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_HORIZONTAL_FRONT_PORCH	(0x541C)
++#define H_F_PORCH_MASTER			(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_HORIZONTAL_BACK_PORCH	(0x5420)
++#define H_B_PORCH_MASTER			(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_HORIZONTAL_ACTIVE		(0x5424)
++#define H_ACTIVE_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_VERTICAL_FRONT_PORCH		(0x5428)
++#define V_F_PORCH_MASTER			(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_VERTICAL_BACK_PORCH		(0x542C)
++#define V_B_PORCH_MASTER			(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_VERTICAL_ACTIVE		(0x5430)
++#define V_ACTIVE_MASTER				(0xFFFFFFFF << 0)
++
++#define SST1_VIDEO_DSC_STREAM_CONTROL_0		(0x5434)
++#define DSC_ENABLE				(0x01 << 4)
++#define SLICE_COUNT_PER_LINE			(0x07 << 0)
++
++#define SST1_VIDEO_DSC_STREAM_CONTROL_1		(0x5438)
++#define CHUNK_SIZE_1				(0xFFFF << 16)
++#define CHUNK_SIZE_0				(0xFFFF << 0)
++
++#define SST1_VIDEO_DSC_STREAM_CONTROL_2		(0x543C)
++#define CHUNK_SIZE_3				(0xFFFF << 16)
++#define CHUNK_SIZE_2				(0xFFFF << 0)
++
++#define SST1_VIDEO_BIST_CONTROL			(0x5450)
++#define CTS_BIST_EN				(0x01 << 17)
++#define CTS_BIST_TYPE				(0x03 << 15)
++#define CTS_BIST_TYPE_VAL(_v_)			((_v_) << 15)
++#define BIST_PRBS7_SEED				(0x7F << 8)
++#define BIST_USER_DATA_EN			(0x01 << 4)
++#define BIST_EN					(0x01 << 3)
++#define BIST_WIDTH				(0x01 << 2)
++#define BIST_TYPE				(0x03 << 0)
++
++#define SST1_VIDEO_BIST_USER_DATA_R		(0x5454)
++#define BIST_USER_DATA_R			(0x3FF << 0)
++
++#define SST1_VIDEO_BIST_USER_DATA_G		(0x5458)
++#define BIST_USER_DATA_G			(0x3FF << 0)
++
++#define SST1_VIDEO_BIST_USER_DATA_B		(0x545C)
++#define BIST_USER_DATA_B			(0x3FF << 0)
++
++#define SST1_VIDEO_DEBUG_FSM_STATE		(0x5460)
++#define DATA_PACK_FSM_STATE			(0x3F << 16)
++#define LINE_FSM_STATE				(0x07 << 8)
++#define PIXEL_FSM_STATE				(0x07 << 0)
++
++#define SST1_VIDEO_DEBUG_MAPI			(0x5464)
++#define MAPI_UNDERFLOW_STATUS			(0x01 << 0)
++
++#define SST1_VIDEO_DEBUG_ACTV_SYM_STEP_CNTL	(0x5468)
++#define ACTV_SYM_STEP_CNT_VAL			(0x3FF << 1)
++#define ACTV_SYM_STEP_CNT_EN			(0x01 << 0)
++
++#define SST1_VIDEO_DEBUG_HOR_BLANK_AUD_BW_ADJ	(0x546C)
++#define HOR_BLANK_AUD_BW_ADJ			(0x01 << 0)
++
++#define SST1_AUDIO_CONTROL			(0x5800)
++#define DMA_REQ_GEN_EN				(0x01 << 30)
++#define SW_AUD_CODING_TYPE			(0x07 << 27)
++#define AUD_DMA_IF_LTNCY_TRG_MODE		(0x01 << 26)
++#define AUD_DMA_IF_MODE_CONFIG			(0x01 << 25)
++#define AUD_ODD_CHANNEL_DUMMY			(0x01 << 24)
++#define AUD_M_VALUE_CMP_SPD_MASTER		(0x07 << 21)
++#define DMA_BURST_SEL				(0x07 << 18)
++#define AUDIO_BIT_MAPPING_TYPE			(0x03 << 16)
++#define PCM_SIZE				(0x03 << 13)
++#define AUDIO_CH_STATUS_SAME			(0x01 << 5)
++#define AUD_GTC_CHST_EN				(0x01 << 1)
++
++#define SST1_AUDIO_ENABLE			(0x5804)
++#define AUDIO_EN				(0x01 << 0)
++
++#define SST1_AUDIO_MASTER_TIMING_GEN		(0x5808)
++#define AUDIO_MASTER_TIME_GEN			(0x01 << 0)
++
++#define SST1_AUDIO_DMA_REQUEST_LATENCY_CONFIG	(0x580C)
++#define AUD_DMA_ACK_STATUS			(0x01 << 21)
++#define AUD_DMA_FORCE_ACK			(0x01 << 20)
++#define AUD_DMA_FORCE_ACK_SEL			(0x01 << 19)
++#define AUD_DMA_REQ_STATUS			(0x01 << 18)
++#define AUD_DMA_FORCE_REQ_VAL			(0x01 << 17)
++#define AUD_DMA_FORCE_REQ_SEL			(0x01 << 16)
++#define MASTER_DMA_REQ_LTNCY_CONFIG		(0xFF << 0)
++
++#define SST1_AUDIO_MUTE_CONTROL			(0x5810)
++#define AUD_MUTE_UNDRUN_EN			(0x01 << 5)
++#define AUD_MUTE_OVFLOW_EN			(0x01 << 4)
++#define AUD_MUTE_CLKCHG_EN			(0x01 << 1)
++
++#define SST1_AUDIO_MARGIN_CONTROL		(0x5814)
++#define FORCE_AUDIO_MARGIN			(0x01 << 16)
++#define AUDIO_MARGIN				(0x1FFF << 0)
++
++#define SST1_AUDIO_DATA_WRITE_FIFO		(0x5818)
++#define AUDIO_DATA_FIFO				(0xFFFFFFFF << 0)
++
++#define SST1_AUDIO_GTC_CONTROL			(0x5824)
++#define AUD_GTC_DELTA				(0xFFFFFFFF << 0)
++
++#define SST1_AUDIO_GTC_VALID_BIT_CONTROL	(0x5828)
++#define AUDIO_GTC_VALID_CONTROL			(0x01 << 1)
++#define AUDIO_GTC_VALID				(0x01 << 0)
++
++#define SST1_AUDIO_3DLPCM_PACKET_WAIT_TIMER	(0x582C)
++#define AUDIO_3D_PKT_WAIT_TIMER			(0x3F << 0)
++
++#define SST1_AUDIO_BIST_CONTROL			(0x5830)
++#define SIN_AMPL				(0x0F << 4)
++#define AUD_BIST_EN				(0x01 << 0)
++
++#define SST1_AUDIO_BIST_CHANNEL_STATUS_SET0	(0x5834)
++#define CHNL_BIT1				(0x03 << 30)
++#define CLK_ACCUR				(0x03 << 28)
++#define FS_FREQ					(0x0F << 24)
++#define CH_NUM					(0x0F << 20)
++#define SOURCE_NUM				(0x0F << 16)
++#define CAT_CODE				(0xFF << 8)
++#define MODE					(0x03 << 6)
++#define PCM_MODE				(0x07 << 3)
++#define SW_CPRGT				(0x01 << 2)
++#define NON_PCM					(0x01 << 1)
++#define PROF_APP				(0x01 << 0)
++
++#define SST1_AUDIO_BIST_CHANNEL_STATUS_SET1	(0x5838)
++#define CHNL_BIT2				(0x0F << 4)
++#define WORD_LENGTH				(0x07 << 1)
++#define WORD_MAX				(0x01 << 0)
++
++#define SST1_AUDIO_BUFFER_CONTROL		(0x583C)
++#define MASTER_AUDIO_INIT_BUFFER_THRD		(0x7F << 24)
++#define MASTER_AUDIO_BUFFER_THRD		(0x3F << 18)
++#define MASTER_AUDIO_BUFFER_EMPTY_INT_MASK	(0x01 << 17)
++#define MASTER_AUDIO_CHANNEL_COUNT		(0x1F << 12)
++#define MASTER_AUDIO_BUFFER_LEVEL		(0x7F << 5)
++#define MASTER_AUDIO_BUFFER_LEVEL_BIT_POS	(5)
++#define AUD_DMA_NOISE_INT_MASK			(0x01 << 4)
++#define AUD_DMA_NOISE_INT			(0x01 << 3)
++#define AUD_DMA_NOISE_INT_EN			(0x01 << 2)
++#define MASTER_AUDIO_BUFFER_EMPTY_INT		(0x01 << 1)
++#define MASTER_AUDIO_BUFFER_EMPTY_INT_EN	(0x01 << 0)
++
++#define SST1_AUDIO_CHANNEL_1_4_REMAP		(0x5840)
++#define AUD_CH_04_REMAP				(0x3F << 24)
++#define AUD_CH_03_REMAP				(0x3F << 16)
++#define AUD_CH_02_REMAP				(0x3F << 8)
++#define AUD_CH_01_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_5_8_REMAP		(0x5844)
++#define AUD_CH_08_REMAP				(0x3F << 24)
++#define AUD_CH_07_REMAP				(0x3F << 16)
++#define AUD_CH_06_REMAP				(0x3F << 8)
++#define AUD_CH_05_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_9_12_REMAP		(0x5848)
++#define AUD_CH_12_REMAP				(0x3F << 24)
++#define AUD_CH_11_REMAP				(0x3F << 16)
++#define AUD_CH_10_REMAP				(0x3F << 8)
++#define AUD_CH_09_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_13_16_REMAP		(0x584C)
++#define AUD_CH_16_REMAP				(0x3F << 24)
++#define AUD_CH_15_REMAP				(0x3F << 16)
++#define AUD_CH_14_REMAP				(0x3F << 8)
++#define AUD_CH_13_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_17_20_REMAP		(0x5850)
++#define AUD_CH_20_REMAP				(0x3F << 24)
++#define AUD_CH_19_REMAP				(0x3F << 16)
++#define AUD_CH_18_REMAP				(0x3F << 8)
++#define AUD_CH_17_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_21_24_REMAP		(0x5854)
++#define AUD_CH_24_REMAP				(0x3F << 24)
++#define AUD_CH_23_REMAP				(0x3F << 16)
++#define AUD_CH_22_REMAP				(0x3F << 8)
++#define AUD_CH_21_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_25_28_REMAP		(0x5858)
++#define AUD_CH_28_REMAP				(0x3F << 24)
++#define AUD_CH_27_REMAP				(0x3F << 16)
++#define AUD_CH_26_REMAP				(0x3F << 8)
++#define AUD_CH_25_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_29_32_REMAP		(0x585C)
++#define AUD_CH_32_REMAP				(0x3F << 24)
++#define AUD_CH_31_REMAP				(0x3F << 16)
++#define AUD_CH_30_REMAP				(0x3F << 8)
++#define AUD_CH_29_REMAP				(0x3F << 0)
++
++#define SST1_AUDIO_CHANNEL_1_2_STATUS_CTRL_0	(0x5860)
++#define MASTER_AUD_GP0_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP0_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP0_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP0_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_1_2_STATUS_CTRL_1	(0x5864)
++#define MASTER_AUD_GP0_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_3_4_STATUS_CTRL_0	(0x5868)
++#define MASTER_AUD_GP1_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP1_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP1_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP1_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_3_4_STATUS_CTRL_1	(0x586C)
++#define MASTER_AUD_GP1_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_5_6_STATUS_CTRL_0	(0x5870)
++#define MASTER_AUD_GP2_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP2_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP2_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP2_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_5_6_STATUS_CTRL_1	(0x5874)
++#define MASTER_AUD_GP2_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_7_8_STATUS_CTRL_0	(0x5878)
++#define MASTER_AUD_GP3_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP3_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP3_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP3_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_7_8_STATUS_CTRL_1	(0x587C)
++#define MASTER_AUD_GP3_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_9_10_STATUS_CTRL_0	(0x5880)
++#define MASTER_AUD_GP4_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP4_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP4_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP4_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_9_10_STATUS_CTRL_1	(0x5884)
++#define MASTER_AUD_GP4_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_11_12_STATUS_CTRL_0	(0x5888)
++#define MASTER_AUD_GP5_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP5_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP5_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP5_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_11_12_STATUS_CTRL_1	(0x588C)
++#define MASTER_AUD_GP5_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_13_14_STATUS_CTRL_0	(0x5890)
++#define MASTER_AUD_GP6_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP6_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP6_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP6_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_13_14_STATUS_CTRL_1	(0x5894)
++#define MASTER_AUD_GP6_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_15_16_STATUS_CTRL_0	(0x5898)
++#define MASTER_AUD_GP7_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP7_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP7_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP7_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_15_16_STATUS_CTRL_1	(0x589C)
++#define MASTER_AUD_GP7_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_17_18_STATUS_CTRL_0	(0x58A0)
++#define MASTER_AUD_GP8_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP8_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP8_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP8_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_17_18_STATUS_CTRL_1	(0x58A4)
++#define MASTER_AUD_GP8_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_19_20_STATUS_CTRL_0	(0x58A8)
++#define MASTER_AUD_GP9_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP9_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP9_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP9_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_19_20_STATUS_CTRL_1	(0x58AC)
++#define MASTER_AUD_GP9_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_21_22_STATUS_CTRL_0	(0x58B0)
++#define MASTER_AUD_GP10_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP10_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP10_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP10_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_21_22_STATUS_CTRL_1	(0x58B4)
++#define MASTER_AUD_GP10_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_23_24_STATUS_CTRL_0	(0x58B8)
++#define MASTER_AUD_GP11_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP11_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP11_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP11_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_23_24_STATUS_CTRL_1	(0x58BC)
++#define MASTER_AUD_GP11_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_25_26_STATUS_CTRL_0	(0x58C0)
++#define MASTER_AUD_GP12_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP12_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP12_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP12_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_25_26_STATUS_CTRL_1	(0x58C4)
++#define MASTER_AUD_GP12_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_27_28_STATUS_CTRL_0	(0x58C8)
++#define MASTER_AUD_GP13_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP13_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP13_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP13_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_27_28_STATUS_CTRL_1	(0x58CC)
++#define MASTER_AUD_GP13_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_29_30_STATUS_CTRL_0	(0x58D0)
++#define MASTER_AUD_GP14_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP14_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP14_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP14_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_29_30_STATUS_CTRL_1	(0x58D4)
++#define MASTER_AUD_GP14_STA_4			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_31_32_STATUS_CTRL_0	(0x58D8)
++#define MASTER_AUD_GP15_STA_3			(0xFF << 24)
++#define MASTER_AUD_GP15_STA_2			(0xFF << 16)
++#define MASTER_AUD_GP15_STA_1			(0xFF << 8)
++#define MASTER_AUD_GP15_STA_0			(0xFF << 0)
++
++#define SST1_AUDIO_CHANNEL_31_32_STATUS_CTRL_1	(0x58DC)
++#define MASTER_AUD_GP15_STA_4			(0xFF << 0)
++
++#define SST1_STREAM_IF_CRC_CONTROL_1		(0x58E0)
++#define IF_CRC_CLEAR				(0x01 << 13)
++#define IF_CRC_PASS				(0x01 << 12)
++#define IF_CRC_FAIL				(0x01 << 8)
++#define IF_CRC_SW_COMPARE			(0x01 << 4)
++#define IF_CRC_EN				(0x01 << 0)
++
++#define SST1_STREAM_IF_CRC_CONTROL_2		(0x58E4)
++#define IF_CRC_R_REF				(0xFF << 16)
++#define IF_CRC_R_RESULT				(0xFF << 0)
++
++#define SST1_STREAM_IF_CRC_CONTROL_3		(0x58E8)
++#define IF_CRC_G_REF				(0xFF << 16)
++#define IF_CRC_G_RESULT				(0xFF << 0)
++
++#define SST1_STREAM_IF_CRC_CONTROL_4		(0x58EC)
++#define IF_CRC_B_REF				(0xFF << 16)
++#define IF_CRC_B_RESULT				(0xFF << 0)
++
++#define SST1_AUDIO_DEBUG_MARGIN_CONTROL		(0x5900)
++#define AUDIO_DEBUG_MARGIN_EN			(0x01 << 6)
++#define AUDIO_DEBUG_MARGIN_VAL			(0x3F << 0)
++
++#define SST1_SDP_SPLITTING_CONTROL		(0x5C00)
++#define SDP_SPLITTING_EN			(0x01 << 0)
++
++#define SST1_INFOFRAME_UPDATE_CONTROL		(0x5C04)
++#define HDR_INFO_UPDATE				(0x01 << 4)
++#define AUDIO_INFO_UPDATE			(0x01 << 3)
++#define AVI_INFO_UPDATE				(0x01 << 2)
++#define MPEG_INFO_UPDATE			(0x01 << 1)
++#define SPD_INFO_UPDATE				(0x01 << 0)
++
++#define SST1_INFOFRAME_SEND_CONTROL		(0x5C08)
++#define HDR_INFO_SEND				(0x01 << 4)
++#define AUDIO_INFO_SEND				(0x01 << 3)
++#define AVI_INFO_SEND				(0x01 << 2)
++#define MPEG_INFO_SEND				(0x01 << 1)
++#define SPD_INFO_SEND				(0x01 << 0)
++
++#define SST1_INFOFRAME_SDP_VERSION_CONTROL	(0x5C0C)
++#define INFOFRAME_SDP_HB3_SEL			(0x01 << 1)
++#define INFOFRAME_SDP_VERSION_SEL		(0x01 << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_TYPE		(0x5C10)
++#define SPD_TYPE				(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_REUSE_PACKET_CONTROL	(0x5C14)
++#define SPD_REUSE_EN				(0x01 << 0)
++
++#define SST1_PPS_SDP_CONTROL			(0x5C20)
++#define PPS_SDP_CHANGE_STATUS			(0x01 << 2)
++#define PPS_SDP_FRAME_SEND_ENABLE		(0x01 << 1)
++#define PPS_SDP_UPDATE				(0x01 << 0)
++
++#define SST1_VSC_SDP_CONTROL_1			(0x5C24)
++#define VSC_TOTAL_BYTES_IN_SDP			(0xFFF << 8)
++#define VSC_CHANGE_STATUS			(0x01 << 5)
++#define VSC_FORCE_PACKET_MARGIN			(0x01 << 4)
++#define VSC_FIX_PACKET_SEQUENCE			(0x01 << 3)
++#define VSC_EXT_VESA_CEA			(0x01 << 2)
++#define VSC_SDP_FRAME_SEND_ENABLE		(0x01 << 1)
++#define VSC_SDP_UPDATE				(0x01 << 0)
++
++#define SST1_VSC_SDP_CONTROL_2			(0x5C28)
++#define VSC_SETUP_TIME				(0xFFF << 20)
++#define VSC_PACKET_MARGIN			(0x1FFF << 0)
++
++#define SST1_MST_WAIT_TIMER_CONTROL_1		(0x5C2C)
++#define AUDIO_WAIT_TIMER			(0x1FFF << 16)
++#define INFOFRAME_WAIT_TIMER			(0x1FFF << 0)
++
++#define SST1_MST_WAIT_TIMER_CONTROL_2		(0x5C30)
++#define PPS_WAIT_TIMER				(0x1FFF << 16)
++#define VSC_PACKET_WAIT_TIMER			(0x1FFF << 0)
++
++#define SST1_INFOFRAME_AVI_PACKET_DATA_SET0	(0x5C40)
++#define AVI_DB4					(0xFF << 24)
++#define AVI_DB3					(0xFF << 16)
++#define AVI_DB2					(0xFF << 8)
++#define AVI_DB1					(0xFF << 0)
++
++#define SST1_INFOFRAME_AVI_PACKET_DATA_SET1	(0x5C44)
++#define AVI_DB8					(0xFF << 24)
++#define AVI_DB7					(0xFF << 16)
++#define AVI_DB6					(0xFF << 8)
++#define AVI_DB5					(0xFF << 0)
++
++#define SST1_INFOFRAME_AVI_PACKET_DATA_SET2	(0x5C48)
++#define AVI_DB12				(0xFF << 24)
++#define AVI_DB11				(0xFF << 16)
++#define AVI_DB10				(0xFF << 8)
++#define AVI_DB9					(0xFF << 0)
++
++#define SST1_INFOFRAME_AVI_PACKET_DATA_SET3	(0x5C4C)
++#define AVI_DB13				(0xFF << 0)
++
++#define SST1_INFOFRAME_AUDIO_PACKET_DATA_SET0	(0x5C50)
++#define AUDIO_DB4				(0xFF << 24)
++#define AUDIO_DB3				(0xFF << 16)
++#define AUDIO_DB2				(0xFF << 8)
++#define AUDIO_DB1				(0xFF << 0)
++
++#define SST1_INFOFRAME_AUDIO_PACKET_DATA_SET1	(0x5C54)
++#define AUDIO_DB8				(0xFF << 24)
++#define AUDIO_DB7				(0xFF << 16)
++#define AUDIO_DB6				(0xFF << 8)
++#define AUDIO_DB5				(0xFF << 0)
++
++#define SST1_INFOFRAME_AUDIO_PACKET_DATA_SET2	(0x5C58)
++#define AVI_DB10				(0xFF << 8)
++#define AVI_DB9					(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET0	(0x5C60)
++#define SPD_DB4					(0xFF << 24)
++#define SPD_DB3					(0xFF << 16)
++#define SPD_DB2					(0xFF << 8)
++#define SPD_DB1					(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET1	(0x5C64)
++#define SPD_DB8					(0xFF << 24)
++#define SPD_DB7					(0xFF << 16)
++#define SPD_DB6					(0xFF << 8)
++#define SPD_DB5					(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET2	(0x5C68)
++#define SPD_DB12				(0xFF << 24)
++#define SPD_DB11				(0xFF << 16)
++#define SPD_DB10				(0xFF << 8)
++#define SPD_DB9					(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET3	(0x5C6C)
++#define SPD_DB16				(0xFF << 24)
++#define SPD_DB15				(0xFF << 16)
++#define SPD_DB14				(0xFF << 8)
++#define SPD_DB13				(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET4	(0x5C70)
++#define SPD_DB20				(0xFF << 24)
++#define SPD_DB19				(0xFF << 16)
++#define SPD_DB18				(0xFF << 8)
++#define SPD_DB17				(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET5	(0x5C74)
++#define SPD_DB24				(0xFF << 24)
++#define SPD_DB23				(0xFF << 16)
++#define SPD_DB22				(0xFF << 8)
++#define SPD_DB21				(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_PACKET_DATA_SET6	(0x5C78)
++#define SPD_DB25				(0xFF << 0)
++
++#define SST1_INFOFRAME_MPEG_PACKET_DATA_SET0	(0x5C80)
++#define MPEG_DB4				(0xFF << 24)
++#define MPEG_DB3				(0xFF << 16)
++#define MPEG_DB2				(0xFF << 8)
++#define MPEG_DB1				(0xFF << 0)
++
++#define SST1_INFOFRAME_MPEG_PACKET_DATA_SET1	(0x5C84)
++#define MPEG_DB8				(0xFF << 24)
++#define MPEG_DB7				(0xFF << 16)
++#define MPEG_DB6				(0xFF << 8)
++#define MPEG_DB5				(0xFF << 0)
++
++#define SST1_INFOFRAME_MPEG_PACKET_DATA_SET2	(0x5C88)
++#define MPEG_DB10				(0xFF << 8)
++#define MPEG_DB9				(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_REUSE_PACKET_HEADER_SET	(0x5C90)
++#define SPD_REUSE_HB3				(0xFF << 24)
++#define SPD_REUSE_HB2				(0xFF << 16)
++#define SPD_REUSE_HB1				(0xFF << 8)
++#define SPD_REUSE_HB0				(0xFF << 0)
++
++#define SST1_INFOFRAME_SPD_REUSE_PACKET_PARITY_SET	(0x5C94)
++#define SPD_REUSE_PB3				(0xFF << 24)
++#define SPD_REUSE_PB2				(0xFF << 16)
++#define SPD_REUSE_PB1				(0xFF << 8)
++#define SPD_REUSE_PB0				(0xFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_0		(0x5CA0)
++#define HDR_INFOFRAME_DATA_0			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_1		(0x5CA4)
++#define HDR_INFOFRAME_DATA_1			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_2		(0x5CA8)
++#define HDR_INFOFRAME_DATA_2			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_3		(0x5CAC)
++#define HDR_INFOFRAME_DATA_3			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_4		(0x5CB0)
++#define HDR_INFOFRAME_DATA_4			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_5		(0x5CB4)
++#define HDR_INFOFRAME_DATA_5			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_6		(0x5CB8)
++#define HDR_INFOFRAME_DATA_6			(0xFFFFFFFF << 0)
++
++#define SST1_HDR_PACKET_DATA_SET_7		(0x5CBC)
++#define HDR_INFOFRAME_DATA_7			(0xFFFFFFFF << 0)
++
++/* PPS03[31:24], PPS02[23:16], PPS01[15:8], PPS00[7:0] */
++#define PPS0xN(val)				(val)
++#define PPS1xN(val)				(val << 8)
++#define PPS2xN(val)				(val << 16)
++#define PPS3xN(val)				(val << 24)
++
++#define SST1_PPS_SDP_PAYLOAD_0			(0x5D00)
++#define PPS_SDP_DATA_0				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_1			(0x5D04)
++#define PPS_SDP_DATA_1				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_2			(0x5D08)
++#define PPS_SDP_DATA_2				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_3			(0x5D0C)
++#define PPS_SDP_DATA_3				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_4			(0x5D10)
++#define PPS_SDP_DATA_4				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_5			(0x5D14)
++#define PPS_SDP_DATA_5				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_6			(0x5D18)
++#define PPS_SDP_DATA_6				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_7			(0x5D1C)
++#define PPS_SDP_DATA_7				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_8			(0x5D20)
++#define PPS_SDP_DATA_8				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_9			(0x5D24)
++#define PPS_SDP_DATA_9				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_10			(0x5D28)
++#define PPS_SDP_DATA_10				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_11			(0x5D2C)
++#define PPS_SDP_DATA_11				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_12			(0x5D30)
++#define PPS_SDP_DATA_12				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_13			(0x5D34)
++#define PPS_SDP_DATA_13				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_14			(0x5D38)
++#define PPS_SDP_DATA_14				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_15			(0x5D3C)
++#define PPS_SDP_DATA_15				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_16			(0x5D40)
++#define PPS_SDP_DATA_16				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_17			(0x5D44)
++#define PPS_SDP_DATA_17				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_18			(0x5D48)
++#define PPS_SDP_DATA_18				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_19			(0x5D4C)
++#define PPS_SDP_DATA_19				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_20			(0x5D50)
++#define PPS_SDP_DATA_20				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_21			(0x5D54)
++#define PPS_SDP_DATA_21				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_22			(0x5D58)
++#define PPS_SDP_DATA_22				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_23			(0x5D5C)
++#define PPS_SDP_DATA_23				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_24			(0x5D60)
++#define PPS_SDP_DATA_24				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_25			(0x5D64)
++#define PPS_SDP_DATA_25				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_26			(0x5D68)
++#define PPS_SDP_DATA_26				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_27			(0x5D6C)
++#define PPS_SDP_DATA_27				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_28			(0x5D70)
++#define PPS_SDP_DATA_28				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_29			(0x5D74)
++#define PPS_SDP_DATA_29				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_30			(0x5D78)
++#define PPS_SDP_DATA_30				(0xFFFFFFFF << 0)
++
++#define SST1_PPS_SDP_PAYLOAD_31			(0x5D7C)
++#define PPS_SDP_DATA_31				(0xFFFFFFFF << 0)
++
++#define SST1_VSC_SDP_DATA_PAYLOAD_FIFO		(0x5D80)
++#define VSC_SDP_DATA_PAYLOAD_FIFO		(0xFFFFFFFF << 0)
++
++/* PHY register */
++#define DEFAULT_SFR_CNT				54
++
++#define CMN_REG0009				(0x0024)
++#define ANA_AUX_TX_LVL_CTRL			(0x0F << 3)
++#define ANA_AUX_TX_LVL_CTRL_VAL(_v_)		((_v_) << 3)
++
++#define CMN_REG00A2				(0x0288)
++#define LANE_MUX_SEL_DP_LN3			(0x01 << 7)
++#define LANE_MUX_SEL_DP_LN2			(0x01 << 6)
++#define LANE_MUX_SEL_DP_LN1			(0x01 << 5)
++#define LANE_MUX_SEL_DP_LN0			(0x01 << 4)
++#define DP_LANE_EN_LN3				(0x01 << 3)
++#define DP_LANE_EN_LN2				(0x01 << 2)
++#define DP_LANE_EN_LN1				(0x01 << 1)
++#define DP_LANE_EN_LN0				(0x01 << 0)
++
++#define CMN_REG00A3				(0x028C)
++#define DP_TX_LINK_BW				(0x03 << 5)
++#define DP_TX_LINK_BW_VAL(_v_)			((_v_) << 5)
++#define OVRD_RX_CDR_DATA_MODE_EXIT		(0x01 << 4)
++
++#define CMN_REG00B4				(0x02D0)
++#define ROPLL_SSC_EN				(0x01 << 1)
++
++#define CMN_REG00E3				(0x038C)
++#define DP_INIT_RSTN				(0x01 << 3)
++#define DP_CMN_RSTN				(0x01 << 2)
++#define DP_CMN_RSTN_VAL(_v_)			((_v_) << 2)
++#define CDR_WATCHDOG_EN				(0x01 << 1)
++
++#define TRSV_REG0204				(0x0810)
++#define LN0_TX_DRV_LVL_CTRL			(0x1F << 0)
++
++#define TRSV_REG0215				(0x0854)
++#define LN0_ANA_TX_SER_TXCLK_INV	(0x01 << 1)
++
++#define TRSV_REG0400				(0x1000)
++#define OVRD_LN1_TX_DRV_BECON_LFPS_OUT_EN	(0x01 << 5)
++
++#define TRSV_REG0404				(0x1010)
++#define LN1_TX_DRV_LVL_CTRL			(0x1F << 0)
++
++#define TRSV_REG0415				(0x1054)
++#define LN1_ANA_TX_SER_TXCLK_INV	(0x01 << 1)
++
++#define TRSV_REG0604				(0x1810)
++#define LN2_TX_DRV_LVL_CTRL			(0x1F << 0)
++
++#define TRSV_REG0615				(0x1854)
++#define LN2_ANA_TX_SER_TXCLK_INV	(0x01 << 1)
++
++#define TRSV_REG0800				(0x2000)
++#define OVRD_LN3_TX_DRV_BECON_LFPS_OUT_EN	(0x01 << 5)
++
++#define TRSV_REG0804				(0x2010)
++#define LN3_TX_DRV_LVL_CTRL			(0x1F << 0)
++
++#define TRSV_REG0815				(0x2054)
++#define LN3_ANA_TX_SER_TXCLK_INV	(0x01 << 1)
++
++#define MAX_SLICE_COUNT 4
++#define SST_REG(reg) (reg + (0x1000 * sst_id))
++
++DEFINE_CAL_REGS_FUNCS(dp_link, MAX_DP_CNT);
++DEFINE_CAL_REGS_FUNCS(dp_phy, MAX_DP_CNT);
++
++const u32 phy_default_value[DEFAULT_SFR_CNT][2] = {
++	{ 0x0830, 0x07 }, { 0x085C, 0x80 }, { 0x1030, 0x07 }, { 0x105C, 0x80 },
++	{ 0x1830, 0x07 }, { 0x185C, 0x80 }, { 0x2030, 0x07 }, { 0x205C, 0x80 },
++	{ 0x0228, 0x38 }, { 0x0104, 0x44 }, { 0x0248, 0x44 }, { 0x038C, 0x02 },
++	{ 0x0878, 0x04 }, { 0x1878, 0x04 }, { 0x0898, 0x77 }, { 0x1898, 0x77 },
++	{ 0x0054, 0x01 }, { 0x00E0, 0x38 }, { 0x0060, 0x24 }, { 0x0064, 0x77 },
++	{ 0x0070, 0x76 }, { 0x0234, 0xE8 }, { 0x0AF4, 0x15 }, { 0x1AF4, 0x15 },
++	{ 0x081C, 0xE5 }, { 0x181C, 0xE5 }, { 0x091C, 0x1F }, { 0x191C, 0x1F },
++	{ 0x0928, 0x7C }, { 0x1928, 0x7C }, { 0x0994, 0x14 }, { 0x1994, 0x14 },
++	{ 0x099C, 0x48 }, { 0x199C, 0x48 }, { 0x09A4, 0x0B }, { 0x09A8, 0x62 },
++	{ 0x19A4, 0x0B }, { 0x19A8, 0x62 }, { 0x09B8, 0x3E }, { 0x19B8, 0x3E },
++	{ 0x09E4, 0x05 }, { 0x09E8, 0x02 }, { 0x09EC, 0x02 }, { 0x19E4, 0x05 },
++	{ 0x19E8, 0x02 }, { 0x19EC, 0x02 }, { 0x0A34, 0x1C }, { 0x1A34, 0x1C },
++	{ 0x0A98, 0x2F }, { 0x1A98, 0x2F }, { 0x0C30, 0x0C }, { 0x0C48, 0x08 },
++	{ 0x1C30, 0x0C }, { 0x1C48, 0x08 },
 +};
 +
-+enum decon_blend_mode {
-+	DECON_BLENDING_NONE = 0x0,
-+	DECON_BLENDING_PREMULT = 0x1,
-+	DECON_BLENDING_COVERAGE = 0x2,
-+	DECON_BLENDING_MAX = 0x3,
++const u32 phy_tune_parameters[4][4][4] = {
++	/* {amp, post, pre, idrv} */
++	{
++		/* Swing Level_0 */
++		{ 0x21, 0x10, 0x42, 0xE5 }, /* Pre-emphasis Level_0 */
++		{ 0x25, 0x14, 0x42, 0xE5 }, /* Pre-emphasis Level_1 */
++		{ 0x26, 0x17, 0x43, 0xE5 }, /* Pre-emphasis Level_2 */
++		{ 0x2B, 0x1C, 0x43, 0xE7 }, /* Pre-emphasis Level_3 */
++	},
++	{
++		/* Swing Level_1 */
++		{ 0x26, 0x10, 0x42, 0xE7 }, /* Pre-emphasis Level_0 */
++		{ 0x2B, 0x15, 0x42, 0xE7 }, /* Pre-emphasis Level_1 */
++		{ 0x2B, 0x18, 0x43, 0xE7 }, /* Pre-emphasis Level_2 */
++		{ 0x2B, 0x18, 0x43, 0xE7 }, /* Pre-emphasis Level_3 */
++	},
++	{
++		/* Swing Level_2 */
++		{ 0x2A, 0x10, 0x42, 0xE7 }, /* Pre-emphasis Level_0 */
++		{ 0x2B, 0x15, 0x43, 0xE7 }, /* Pre-emphasis Level_1 */
++		{ 0x2B, 0x15, 0x43, 0xE7 }, /* Pre-emphasis Level_2 */
++		{ 0x2B, 0x15, 0x43, 0xE7 }, /* Pre-emphasis Level_3 */
++	},
++	{
++		/* Swing Level_3 */
++		{ 0x2B, 0x10, 0x43, 0xE7 }, /* Pre-emphasis Level_0 */
++		{ 0x2B, 0x10, 0x43, 0xE7 }, /* Pre-emphasis Level_1 */
++		{ 0x2B, 0x10, 0x43, 0xE7 }, /* Pre-emphasis Level_2 */
++		{ 0x2B, 0x10, 0x43, 0xE7 }, /* Pre-emphasis Level_3 */
++	},
 +};
 +
-+enum decon_win_alpha_coef {
-+	BND_COEF_ZERO = 0x0,
-+	BND_COEF_ONE = 0x1,
-+	BND_COEF_AF = 0x2,
-+	BND_COEF_1_M_AF = 0x3,
-+	BND_COEF_AB = 0x4,
-+	BND_COEF_1_M_AB = 0x5,
-+	BND_COEF_PLANE_ALPHA0 = 0x6,
-+	BND_COEF_1_M_PLANE_ALPHA0 = 0x7,
-+	BND_COEF_PLANE_ALPHA1 = 0x8,
-+	BND_COEF_1_M_PLANE_ALPHA1 = 0x9,
-+	BND_COEF_ALPHA_MULT = 0xA,
-+	BND_COEF_1_M_ALPHA_MULT = 0xB,
-+};
-+
-+enum decon_rgb_order {
-+	DECON_RGB = 0x0,
-+	DECON_GBR = 0x1,
-+	DECON_BRG = 0x2,
-+	DECON_BGR = 0x4,
-+	DECON_RBG = 0x5,
-+	DECON_GRB = 0x6,
-+};
-+
-+enum decon_op_mode {
-+	DECON_VIDEO_MODE = 0,
-+	DECON_MIPI_COMMAND_MODE = 1,
-+	/* TODO: ADD DP command mode */
-+};
-+
-+enum decon_te_mode { DECON_HW_TRIG = 0, DECON_SW_TRIG };
-+
-+enum decon_set_trig { DECON_TRIG_MASK = 0, DECON_TRIG_UNMASK };
-+
-+enum decon_te_from {
-+	DECON_TE_FROM_DDI0 = 0,
-+	DECON_TE_FROM_DDI1 = 1,
-+	DECON_TE_FROM_DDI2 = 2,
-+	MAX_DECON_TE_FROM_DDI = 3,
-+};
-+
-+enum decon_out_type {
-+	DECON_OUT_DSI0 = 1 << 0,
-+	DECON_OUT_DSI1 = 1 << 1,
-+	DECON_OUT_DSI = DECON_OUT_DSI0 | DECON_OUT_DSI1,
-+	DECON_OUT_DP0_SST1 = 1 << 4,
-+	DECON_OUT_DP0_SST2 = 1 << 5,
-+	DECON_OUT_DP0_SST3 = 1 << 6,
-+	DECON_OUT_DP0_SST4 = 1 << 7,
-+	DECON_OUT_DP1_SST1 = 1 << 8,
-+	DECON_OUT_DP1_SST2 = 1 << 9,
-+	DECON_OUT_DP1_SST3 = 1 << 10,
-+	DECON_OUT_DP1_SST4 = 1 << 11,
-+	DECON_OUT_DP0 = DECON_OUT_DP0_SST1 | DECON_OUT_DP0_SST2 |
-+			DECON_OUT_DP0_SST3 | DECON_OUT_DP0_SST4,
-+	DECON_OUT_DP1 = DECON_OUT_DP1_SST1 | DECON_OUT_DP1_SST2 |
-+			DECON_OUT_DP1_SST3 | DECON_OUT_DP1_SST4,
-+	DECON_OUT_DP = DECON_OUT_DP0 | DECON_OUT_DP1,
-+
-+	DECON_OUT_WB = 1 << 12,
-+};
-+
-+enum decon_dsi_mode {
-+	DSI_MODE_SINGLE = 0,
-+	DSI_MODE_DUAL_DSI,
-+	DSI_MODE_DUAL_DISPLAY,
-+	DSI_MODE_NONE
-+};
-+
-+enum decon_irq {
-+	DECON_IRQ_FS = 0,
-+	DECON_IRQ_FD,
-+	DECON_IRQ_EXT,
-+	DECON_IRQ_DQE_DIM_S,
-+	DECON_IRQ_DQE_DIM_E,
-+};
-+
-+struct decon_mode {
-+	enum decon_op_mode op_mode;
-+	enum decon_dsi_mode dsi_mode;
-+	enum decon_te_mode te_mode;
-+};
-+
-+struct decon_urgent {
-+	u32 rd_en;
-+	u32 rd_hi_thres;
-+	u32 rd_lo_thres;
-+	u32 rd_wait_cycle;
-+	u32 wr_en;
-+	u32 wr_hi_thres;
-+	u32 wr_lo_thres;
-+	bool dta_en;
-+	u32 dta_hi_thres;
-+	u32 dta_lo_thres;
-+};
-+
-+struct decon_vendor_pps {
-+	unsigned int initial_xmit_delay;
-+	unsigned int initial_dec_delay;
-+	unsigned int scale_increment_interval;
-+	unsigned int final_offset;
-+};
-+
-+struct decon_config {
-+	enum decon_out_type out_type;
-+	unsigned int image_height;
-+	unsigned int image_width;
-+	unsigned int out_bpc;
-+	struct decon_mode mode;
-+	unsigned int fps;
-+};
-+
-+struct win_color_map {
-+	bool en;
-+	u32 val;
-+};
-+
-+struct decon_win_config {
-+	u32 x, y, w, h;
-+	u32 start_time;
-+	u32 alpha;
-+	enum decon_blend_mode blend_mode;
-+	struct win_color_map color_map;
-+	u32 dpp_type;
-+};
-+
-+#define IS_DECON0(decon_idx) ((decon_idx) & 1 ? 0 : 1)
-+#define IS_DSC0(dsc_idx) ((dsc_idx) & 1 ? 0 : 1)
-+
-+struct decon_cal_info {
-+	u32 id;
-+	const char *name;
-+};
-+
-+#define DECON_CAL_INFO(_type) [(_type)] = { .id = (_type), .name = #_type }
-+
-+#define DECON_VIDEO_MODE_WIDTH_MIN 160
-+#define DECON_COMMAND_MODE_WIDTH_MIN 16
-+#define DECON_WIDTH_MAX 8192
-+#define DECON_HEIGHT_MIN 8
-+#define DECON_HEIGHT_MAX 8192
-+
-+struct decon_win {
-+	u32 idx;
-+	struct decon_win_config config;
-+	struct exynos_dpp_context *dpp;
-+	struct exynos_drm_plane plane;
-+	struct exynos_drm_plane_config plane_config;
-+};
-+
-+struct decon_context {
-+	u32 idx;
-+	u32 plane_mask;
-+	enum decon_type type;
-+	struct device *dev;
-+	struct drm_device *drm_dev;
-+	struct exynos_drm_crtc *crtc;
-+	struct decon_win *win;
-+	u32 win_cnt;
-+	u32 win_max;
-+	u32 disable_mask;
-+	struct videomode v_mode;
-+	struct decon_config config;
-+
-+	struct clk *aclk;
-+
-+	u32 irq_fd; /* frame done */
-+
-+	/* device ops */
-+	const struct decon_cal_ops *cal_ops;
-+
-+	bool is_colormap;
-+
-+	bool fake_vblank;
-+	struct delayed_work dwork;
-+	void __iomem *regs[3]; /* main, sub0, sub1*/
-+};
-+
-+#ifndef MSEC
-+#define MSEC (1000)
-+#endif
-+
-+#define MAX_WIN_PER_DECON 8
-+
-+enum {
-+	DPUM_DECON0 = 0,
-+	DPUM_DECON1,
-+
-+	DPUS0_DECON0,
-+	DPUS0_DECON1,
-+
-+	DPUS1_DECON0,
-+	DPUS1_DECON1,
-+
-+	MAX_EXYNOS910_DECON,
-+};
-+
-+enum decon_idma_type {
-+	IDMA_GF0 = 0,
-+	IDMA_G0,
-+	IDMA_VG0,
-+	IDMA_G1,
-+	IDMA_GF1,
-+	IDMA_G2 = 5,
-+	IDMA_VG1,
-+	IDMA_G3,
-+	IOTF0,
-+	IOTF1,
-+	IDMA_NONE,
-+};
-+
-+enum decon_fifo_mode {
-+	DECON_FIFO_00K = 0,
-+	DECON_FIFO_04K,
-+	DECON_FIFO_08K,
-+	DECON_FIFO_12K,
-+	DECON_FIFO_16K,
-+	DECON_FIFO_20K,
-+	DECON_FIFO_24K,
-+	DECON_FIFO_28K,
-+};
-+
-+enum decon_dsc_path {
-+	DECON_DSC_NONE = 0x0,
-+	DECON0_DSC_ENC0 = 0x1,
-+	DECON1_DSC_ENC1 = 0x2,
-+	DECON0_DSCC_DSC_ENC01 = 0xB,
-+};
-+
-+enum decon_outif_path {
-+	DECON0_OUTFIFO0_DSIMIF0 = 0x1,
-+	DECON0_OUTFIFO0_DSIMIF1 = 0x2,
-+	DECON0_SPLITTER_OUTFIFO01_DSIMIF01 = 0x3,
-+	DECON0_OUTFIFO0_DPIF = 0x8,
-+	DECON1_OUTFIFO0_DSIMIF = 0x1,
-+	DECON1_OUTFIFO0_DPIF = 0x8,
-+};
-+
-+enum decon_connection {
-+	DECON0_OUT0_TO_DSIM0 = 0,
-+	DECON0_OUT1_TO_DSIM0 = 1,
-+	DECON1_OUT0_TO_DSIM0 = 2,
-+
-+	DECON0_OUT0_TO_DSIM1 = 0,
-+	DECON0_OUT1_TO_DSIM1 = 1,
-+	DECON1_OUT0_TO_DSIM1 = 2,
-+
-+	DECON0_OUT0_TO_DP = 0,
-+	DECON1_OUT0_TO_DP = 1,
-+};
-+
-+static void __iomem *regs_decon[MAX_EXYNOS910_DECON];
-+static inline uint32_t decon_read(u32 idx, u32 offset)
-+{
-+	return readl(regs_decon[idx] + offset);
-+}
-+static inline void decon_write(u32 idx, u32 offset, u32 val)
-+{
-+	writel(val, regs_decon[idx] + offset);
-+}
-+static inline void decon_write_mask(u32 idx, u32 offset, u32 val, u32 mask)
-+{
-+	uint32_t old = decon_read(idx, offset);
-+	val = (val & mask) | (old & ~mask);
-+	decon_write(idx, offset, val);
-+}
-+
-+static void __iomem *regs_decon_con[MAX_EXYNOS910_DECON];
-+static inline uint32_t decon_con_read(u32 idx, u32 offset)
-+{
-+	return readl(regs_decon_con[idx] + offset);
-+}
-+static inline void decon_con_write(u32 idx, u32 offset, u32 val)
-+{
-+	writel(val, regs_decon_con[idx] + offset);
-+}
-+static inline void decon_con_write_mask(u32 idx, u32 offset, u32 val, u32 mask)
-+{
-+	uint32_t old = decon_con_read(idx, offset);
-+	val = (val & mask) | (old & ~mask);
-+	decon_con_write(idx, offset, val);
-+}
-+static void __iomem *regs_decon_global[MAX_EXYNOS910_DECON];
-+static inline uint32_t decon_global_read(u32 idx, u32 offset)
-+{
-+	return readl(regs_decon_global[idx] + offset);
-+}
-+static inline void decon_global_write(u32 idx, u32 offset, u32 val)
-+{
-+	writel(val, regs_decon_global[idx] + offset);
-+}
-+static inline void decon_global_write_mask(u32 idx, u32 offset, u32 val,
-+					   u32 mask)
-+{
-+	uint32_t old = decon_global_read(idx, offset);
-+	val = (val & mask) | (old & ~mask);
-+	decon_global_write(idx, offset, val);
-+}
-+static void __iomem *regs_win[MAX_EXYNOS910_DECON * 8];
-+static inline uint32_t win_read(u32 idx, u32 offset)
-+{
-+	return readl(regs_win[idx] + offset);
-+}
-+static inline void win_write(u32 idx, u32 offset, u32 val)
-+{
-+	writel(val, regs_win[idx] + offset);
-+}
-+static inline void win_write_mask(u32 idx, u32 offset, u32 val, u32 mask)
-+{
-+	uint32_t old = win_read(idx, offset);
-+	val = (val & mask) | (old & ~mask);
-+	win_write(idx, offset, val);
-+}
-+static void __iomem *regs_winctrl[MAX_EXYNOS910_DECON * 8];
-+static inline uint32_t winctrl_read(u32 idx, u32 offset)
-+{
-+	return readl(regs_winctrl[idx] + offset);
-+}
-+static inline uint32_t winctrl_read_mask(u32 idx, u32 offset, u32 mask)
-+{
-+	uint32_t val = winctrl_read(idx, offset);
-+	val &= (mask);
-+	return val;
-+}
-+static inline void winctrl_write(u32 idx, u32 offset, u32 val)
-+{
-+	writel(val, regs_winctrl[idx] + offset);
-+}
-+static inline void winctrl_write_mask(u32 idx, u32 offset, u32 val, u32 mask)
-+{
-+	uint32_t old = winctrl_read(idx, offset);
-+	val = (val & mask) | (old & ~mask);
-+	winctrl_write(idx, offset, val);
-+}
-+
-+#define to_regwin_idx(decon_idx, win_idx) \
-+	((decon_idx) * MAX_WIN_PER_DECON + (win_idx))
-+
-+static inline u32 decon_reg_dmaid2chmap(u32 dma_id)
-+{
-+	switch (dma_id) {
-+	case 0:
-+		return IDMA_GF0;
-+	case 1:
-+		return IDMA_G0;
-+	case 2:
-+		return IDMA_G1;
-+	case 3:
-+		return IDMA_GF1;
-+	case 4:
-+		return IDMA_VG0;
-+	case 5:
-+		return IDMA_G2;
-+	case 6:
-+		return IDMA_VG1;
-+	case 7:
-+		return IDMA_G3;
-+	default:
-+		return IDMA_NONE;
-+	}
-+}
-+
-+static void decon_reg_set_window_channel(u32 decon_idx, u32 win_idx, u32 dma_id)
-+{
-+	u32 val, mask;
-+	u32 ch_type = decon_reg_dmaid2chmap(dma_id);
-+
-+	val = WIN_CHMAP_F(1, ch_type);
-+	mask = WIN_CHMAP_MASK(1);
-+	winctrl_write_mask(to_regwin_idx(decon_idx, win_idx),
-+			   DATA_PATH_CONTROL_WIN, val, mask);
-+}
-+
-+/*
-+ * argb_color : 32-bit
-+ * A[31:24] - R[23:16] - G[15:8] - B[7:0]
-+ */
-+static void decon_reg_set_window_colormap(u32 decon_idx, u32 win_idx,
-+					  u32 argb_color)
-+{
-+	u32 val, mask;
-+	u32 mc_alpha = 0, mc_red = 0;
-+	u32 mc_green = 0, mc_blue = 0;
-+
-+	mc_alpha = (argb_color >> 24) & 0xFF;
-+	mc_red = (argb_color >> 16) & 0xFF;
-+	mc_green = (argb_color >> 8) & 0xFF;
-+	mc_blue = (argb_color >> 0) & 0xFF;
-+
-+	val = WIN_MAPCOLOR_A_F(mc_alpha) | WIN_MAPCOLOR_R_F(mc_red);
-+	mask = WIN_MAPCOLOR_A_MASK | WIN_MAPCOLOR_R_MASK;
-+	win_write_mask(to_regwin_idx(decon_idx, win_idx), WIN_COLORMAP_0, val,
-+		       mask);
-+
-+	val = WIN_MAPCOLOR_G_F(mc_green) | WIN_MAPCOLOR_B_F(mc_blue);
-+	mask = WIN_MAPCOLOR_G_MASK | WIN_MAPCOLOR_B_MASK;
-+	win_write_mask(to_regwin_idx(decon_idx, win_idx), WIN_COLORMAP_1, val,
-+		       mask);
-+}
-+
-+/* ALPHA_MULT selection used in (a',b',c',d') coefficient */
-+static void decon_reg_set_win_alpha_mult(u32 decon_idx, u32 win_idx,
-+					 enum decon_blend_alpha_mult_src a_sel)
-+{
-+	u32 val, mask;
-+
-+	val = WIN_ALPHA_MULT_SRC_SEL_F(a_sel);
-+	mask = WIN_ALPHA_MULT_SRC_SEL_MASK;
-+	win_write_mask(to_regwin_idx(decon_idx, win_idx), WIN_CONTROL_0, val,
-+		       mask);
-+}
-+
-+static void decon_reg_set_win_func(u32 decon_idx, u32 win_idx,
-+				   enum decon_blend_pd_func pd_func)
-+{
-+	u32 val, mask;
-+
-+	val = WIN_FUNC_F(pd_func);
-+	mask = WIN_FUNC_MASK;
-+	win_write_mask(to_regwin_idx(decon_idx, win_idx), WIN_CONTROL_0, val,
-+		       mask);
-+}
-+
-+static void decon_reg_set_win_sub_coeff(u32 decon_idx, u32 win_idx, u32 fgd,
-+					u32 bgd, u32 fga, u32 bga)
-+{
-+	u32 val, mask;
-+
-+	/*
-+	 * [ Blending Equation ]
-+	 * Color : Cr = (a x Cf) + (b x Cb)  <Cf=FG pxl_C, Cb=BG pxl_C>
-+	 * Alpha : Ar = (c x Af) + (d x Ab)  <Af=FG pxl_A, Ab=BG pxl_A>
-+	 *
-+	 * [ User-defined ]
-+	 * a' = WINx_FG_ALPHA_D_SEL : Af' that is multiplied by FG Pixel Color
-+	 * b' = WINx_BG_ALPHA_D_SEL : Ab' that is multiplied by BG Pixel Color
-+	 * c' = WINx_FG_ALPHA_A_SEL : Af' that is multiplied by FG Pixel Alpha
-+	 * d' = WINx_BG_ALPHA_A_SEL : Ab' that is multiplied by BG Pixel Alpha
++const struct dp_support_video support_videos[] = {
++	/*               width,     hsync,    height,   vsync, vbackporch,
++	 *                   hfrontporch,hbackporch, vfrontporch, pixel_clk, v_sync_pol,    h_sync_pol,    vic, name
 +	 */
++	{ V640X480P60, 640, 16, 96, 48, 480, 10, 2, 33, 25200000, SYNC_NEGATIVE,
++	  SYNC_NEGATIVE, 1, "V640X480P60" },
++	{ V640X480P30, 640, 16, 96, 48, 480, 10, 2, 33, 12600000, SYNC_NEGATIVE,
++	  SYNC_NEGATIVE, 1, "V640X480P30" },
++	{ V720X480P60, 720, 16, 62, 60, 480, 9, 6, 30, 27027000, SYNC_NEGATIVE,
++	  SYNC_NEGATIVE, 2, "V720X480P60" },
++	{ V720X576P50, 720, 12, 64, 68, 576, 5, 5, 39, 27000000, SYNC_NEGATIVE,
++	  SYNC_NEGATIVE, 17, "V720X576P50" },
++	{ V1280X800P60RB, 1280, 48, 32, 80, 800, 3, 6, 14, 71000000,
++	  SYNC_NEGATIVE, SYNC_POSITIVE, 0, "V1280X800P60RB" },
++	{ V1280X720P60, 1280, 110, 40, 220, 720, 5, 5, 20, 74250000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 4, "V1280X720P60" },
++	{ V1366X768P60, 1366, 70, 143, 213, 768, 3, 3, 24, 85500000,
++	  SYNC_POSITIVE, SYNC_NEGATIVE, 0, "V1366X768P60" },
++	{ V1280X1024P60, 1280, 48, 112, 248, 1024, 1, 3, 38, 108000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 0, "V1280X1024P60" },
++	{ V1920X1080P24, 1920, 638, 44, 148, 1080, 4, 5, 36, 74250000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 32, "V1920X1080P24" },
++	{ V1920X1080P25, 1920, 528, 44, 148, 1080, 4, 5, 36, 74250000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 33, "V1920X1080P25" },
++	{ V1920X1080P30, 1920, 88, 44, 148, 1080, 4, 5, 36, 74250000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 34, "V1920X1080P30" },
++	{ V1600X900P60RB, 1600, 24, 80, 96, 900, 1, 3, 96, 108000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 0, "V1600X900P60RB" },
++	{ V1920X1080P60, 1920, 88, 44, 148, 1080, 4, 5, 36, 148500000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 16, "V1920X1080P60" },
++	{ V1920X1200P60, 1920, 48, 32, 80, 1200, 3, 6, 26, 154000000,
++	  SYNC_NEGATIVE, SYNC_POSITIVE, 16, "V1920X1200P60" },
++	{ V1920X1200P60P, 1920, 48, 32, 80, 1200, 3, 6, 26, 154128000,
++	  SYNC_NEGATIVE, SYNC_POSITIVE, 16, "V1920X1200P60P" },
++	{ V1920X1200P30, 1920, 48, 32, 80, 1200, 3, 6, 26, 77000000,
++	  SYNC_NEGATIVE, SYNC_POSITIVE, 16, "V1920X1200P30" },
++	{ V1920X1200P30P, 1920, 48, 32, 80, 1200, 3, 6, 26, 77064000,
++	  SYNC_NEGATIVE, SYNC_POSITIVE, 16, "V1920X1200P30P" },
++	{ V3840X2160P24, 3840, 1276, 88, 296, 2160, 8, 10, 72, 297000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 93, "V3840X2160P24" },
++	{ V3840X2160P25, 3840, 1056, 88, 296, 2160, 8, 10, 72, 297000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 94, "V3840X2160P25" },
++	{ V3840X2160P30, 3840, 176, 88, 296, 2160, 8, 10, 72, 297000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 95, "V3840X2160P30" },
++	{ V4096X2160P24, 4096, 1020, 88, 296, 2160, 8, 10, 72, 297000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 98, "V4096X2160P24" },
++	{ V4096X2160P25, 4096, 968, 88, 128, 2160, 8, 10, 72, 297000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 99, "V4096X2160P25" },
++	{ V4096X2160P30, 4096, 88, 88, 128, 2160, 8, 10, 72, 297000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 100, "V4096X2160P30" },
++	{ V3840X2160P50, 3840, 1056, 88, 296, 2160, 8, 10, 72, 594000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 96, "V3840X2160P50" },
++	{ V3840X2160P60, 3840, 176, 88, 296, 2160, 8, 10, 72, 594000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 97, "V3840X2160P60" },
++	{ V4096X2160P50, 4096, 968, 88, 128, 2160, 8, 10, 72, 594000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 101, "V4096X2160P50" },
++	{ V4096X2160P60, 4096, 88, 88, 128, 2160, 8, 10, 72, 594000000,
++	  SYNC_POSITIVE, SYNC_POSITIVE, 102, "V4096X2160P60" },
++	/* Used for ICAS */
++	{ V1560X700P60, 1560, 30, 40, 70, 700, 9, 2, 20, 74562000,
++	  SYNC_NEGATIVE, SYNC_NEGATIVE, 20, "V1560X700P60" },
++	{ V800X400P60, 800, 112, 128, 136, 400, 10, 10, 25, 31399200,
++	  SYNC_NEGATIVE, SYNC_NEGATIVE, 20, "V800X400P60" },
++	{ V1120X780P60, 1120, 125, 1, 16, 780, 77, 1, 10, 65600000,
++	  SYNC_NEGATIVE, SYNC_NEGATIVE, 20, "V1120X780P60" },
++	/* Used for AR HUD */
++	{ V1440X720P60, 1440, 32, 8, 32, 720, 16, 22, 2, 66000000,
++	  SYNC_POSITIVE, SYNC_NEGATIVE, 20, "V1440X720P60" },
++	{ V1440X2560P60, 1440, 96, 64, 160, 2560, 27, 24, 6, 276300000,
++	  SYNC_POSITIVE, SYNC_NEGATIVE, 20, "V1440X2560P60" },
++	{ V1800X900P60, 1800, 166, 101, 67, 900, 12, 10, 10, 119400000,
++	  SYNC_POSITIVE, SYNC_NEGATIVE, 20, "V1800X900P60" },
++};
 +
-+	val = (WIN_FG_ALPHA_D_SEL_F(fgd) | WIN_BG_ALPHA_D_SEL_F(bgd) |
-+	       WIN_FG_ALPHA_A_SEL_F(fga) | WIN_BG_ALPHA_A_SEL_F(bga));
-+	mask = (WIN_FG_ALPHA_D_SEL_MASK | WIN_BG_ALPHA_D_SEL_MASK |
-+		WIN_FG_ALPHA_A_SEL_MASK | WIN_BG_ALPHA_A_SEL_MASK);
-+	win_write_mask(to_regwin_idx(decon_idx, win_idx), WIN_CONTROL_1, val,
-+		       mask);
-+}
-+
-+static void decon_reg_set_win_plane_alpha(u32 decon_idx, u32 win_idx, u32 a0,
-+					  u32 a1)
++int dp_regs_desc_init(u32 dp_id, struct dp_regs *regs)
 +{
-+	u32 val, mask;
++	cal_regs_desc_check(dp_id, MAX_DP_CNT, __func__);
 +
-+	val = WIN_ALPHA1_F(a1) | WIN_ALPHA0_F(a0);
-+	mask = WIN_ALPHA1_MASK | WIN_ALPHA0_MASK;
-+	win_write_mask(to_regwin_idx(decon_idx, win_idx), WIN_CONTROL_0, val,
-+		       mask);
-+}
-+
-+static void decon_reg_set_win_blend_config(u32 decon_idx, u32 win_idx,
-+					   struct decon_win_config *config)
-+{
-+	enum decon_blend_pd_func pd_func = PD_FUNC_USER_DEFINED;
-+	u32 af_d = BND_COEF_ONE, ab_d = BND_COEF_ZERO, af_a = BND_COEF_ONE,
-+	    ab_a = BND_COEF_ZERO;
-+
-+	switch (config->blend_mode) {
-+	case DECON_BLENDING_COVERAGE:
-+		af_d = BND_COEF_ALPHA_MULT;
-+		ab_d = BND_COEF_1_M_ALPHA_MULT;
-+		af_a = BND_COEF_ALPHA_MULT;
-+		ab_a = BND_COEF_1_M_ALPHA_MULT;
-+		break;
-+	case DECON_BLENDING_PREMULT:
-+		af_d = BND_COEF_PLANE_ALPHA0;
-+		ab_d = BND_COEF_1_M_ALPHA_MULT;
-+		af_a = BND_COEF_PLANE_ALPHA0;
-+		ab_a = BND_COEF_1_M_ALPHA_MULT;
-+		break;
-+	case DECON_BLENDING_NONE:
-+		pd_func = PD_FUNC_COPY;
-+		pr_debug("%s:%d none blending mode\n", __func__, __LINE__);
-+		break;
-+	default:
-+		pr_warn("%s:%d undefined blending mode\n", __func__, __LINE__);
-+		break;
-+	}
-+
-+	/* We use 'ALPHA_MULT_SRC_SEL_AF' alpha mode only */
-+	decon_reg_set_win_alpha_mult(decon_idx, win_idx, ALPHA_MULT_SRC_SEL_AF);
-+	decon_reg_set_win_plane_alpha(decon_idx, win_idx, config->alpha, 0x00);
-+	decon_reg_set_win_func(decon_idx, win_idx, pd_func);
-+	if (pd_func == PD_FUNC_USER_DEFINED)
-+		decon_reg_set_win_sub_coeff(decon_idx, win_idx, af_d, ab_d,
-+					    af_a, ab_a);
-+}
-+
-+static inline u32 win_start_pos(int x, int y)
-+{
-+	return (WIN_STRPTR_Y_F(y) | WIN_STRPTR_X_F(x));
-+}
-+
-+static inline u32 win_end_pos(int x, int y, u32 w, u32 h)
-+{
-+	return (WIN_ENDPTR_Y_F(y + h - 1) | WIN_ENDPTR_X_F(x + w - 1));
-+}
-+
-+static void decon_reg_set_window_enable_colormap(u32 decon_idx, u32 win_idx,
-+						 u32 en)
-+{
-+	u32 val, mask;
-+
-+	val = en ? ~0 : 0;
-+	mask = WIN_MAPCOLOR_EN_F(0);
-+	winctrl_write_mask(to_regwin_idx(decon_idx, win_idx),
-+			   DATA_PATH_CONTROL_WIN, val, mask);
-+}
-+
-+/* Decon window setting procedure
-+ *
-+ * 1. decon_reg_clear_window_update_req()
-+ * 2. decon_reg_set_window_config()
-+ * 3. decon_reg_set_window_enable()
-+ * 4. decon_reg_set_window_update_req()
-+ */
-+
-+static void decon_reg_set_window_enable(u32 decon_idx, u32 win_idx, u32 dma_id)
-+{
-+	u32 mask;
-+
-+	decon_reg_set_window_channel(decon_idx, win_idx, dma_id);
-+	mask = WIN_EN_F(0);
-+	winctrl_write_mask(to_regwin_idx(decon_idx, win_idx),
-+			   DATA_PATH_CONTROL_WIN, ~0, mask);
-+}
-+
-+static void decon_reg_set_window_disable(u32 decon_idx, u32 win_idx)
-+{
-+	u32 mask;
-+
-+	mask = WIN_EN_F(0);
-+	winctrl_write_mask(to_regwin_idx(decon_idx, win_idx),
-+			   DATA_PATH_CONTROL_WIN, 0, mask);
-+	decon_reg_set_window_channel(decon_idx, win_idx, IDMA_GF0);
-+}
-+
-+static void decon_reg_set_window_config(u32 decon_idx, u32 win_idx,
-+					struct decon_win_config *config)
-+{
-+	u32 start_pos = win_start_pos(config->x, config->y);
-+	u32 end_pos = win_end_pos(config->x, config->y, config->w, config->h);
-+
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_START_POSITION,
-+		  start_pos);
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_END_POSITION, end_pos);
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_START_TIME_CONTROL,
-+		  config->start_time);
-+
-+	decon_reg_set_window_enable_colormap(decon_idx, win_idx,
-+					     config->color_map.en);
-+	decon_reg_set_window_colormap(decon_idx, win_idx,
-+				      config->color_map.val);
-+
-+	decon_reg_set_win_blend_config(decon_idx, win_idx, config);
-+}
-+
-+static void decon_reg_clear_window_config(u32 decon_idx, u32 win_idx)
-+{
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_CONTROL_0, 0);
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_CONTROL_1, 0);
-+
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_START_POSITION, 0);
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_END_POSITION, 0);
-+	win_write(to_regwin_idx(decon_idx, win_idx), WIN_START_TIME_CONTROL, 0);
-+}
-+
-+static void decon_reg_set_window_update_req(u32 decon_idx, u32 win_idx)
-+{
-+	u32 mask;
-+
-+	mask = SHD_UP_REQ;
-+	winctrl_write_mask(to_regwin_idx(decon_idx, win_idx), UPDATE_REQ_WIN,
-+			   ~0, mask);
-+}
-+
-+static u32 decon_reg_get_window_status(u32 decon_idx, u32 win_idx)
-+{
-+	/* FIXME: Due to HW restrictions, cannot use to the shadow register
-+	 * of winctrl(WINx_EN_F bit) in auto9. As an alternative, use the
-+	 * WIN_END_POSITION value to check the status.
-+	 */
-+	return win_read(to_regwin_idx(decon_idx, win_idx),
-+			WIN_END_POSITION + WIN_SHD_OFFSET) ?
-+		       1 :
-+		       0;
-+}
-+
-+static int decon_reg_reset(u32 decon_idx)
-+{
-+	int tries;
-+
-+	decon_write_mask(decon_idx, GLOBAL_CONTROL, ~0, GLOBAL_CONTROL_SRESET);
-+	for (tries = 2000; tries; --tries) {
-+		if (~decon_read(decon_idx,
-+				GLOBAL_CONTROL & GLOBAL_CONTROL_SRESET))
-+			break;
-+		udelay(10);
-+	}
-+
-+	if (!tries) {
-+		pr_err("failed to reset Decon\n");
-+		return -EBUSY;
-+	}
++	cal_regs_desc_save(dp_link, regs->link_addr, __func__, REGS_DP, dp_id);
++	cal_regs_desc_save(dp_phy, regs->phy_addr, __func__, REGS_DPPHY, dp_id);
 +
 +	return 0;
 +}
-+
-+static void __decon_reg_set_enable(u32 decon_idx)
++void dp_reg_sw_reset(u32 id)
 +{
-+	u32 val, mask;
++	u32 cnt = 10;
++	u32 state;
 +
-+	val = ~0;
-+	mask = (GLOBAL_CONTROL_DECON_EN | GLOBAL_CONTROL_DECON_EN_F);
-+	decon_write_mask(decon_idx, GLOBAL_CONTROL, val, mask);
++	dp_link_write_mask(id, SYSTEM_SW_RESET_CONTROL, ~0, SW_RESET);
++
++	do {
++		state = dp_link_read(id, SYSTEM_SW_RESET_CONTROL) & SW_RESET;
++		cnt--;
++		udelay(1);
++	} while (state && cnt);
++
++	if (!cnt)
++		cal_log_err(id, "%s is timeout.\n", __func__);
++}
++void dp_reg_phy_reset(u32 id, u32 en)
++{
++	if (en)
++		dp_phy_write_mask(id, CMN_REG00E3, DP_CMN_RSTN_VAL(0),
++				  DP_CMN_RSTN);
++	else {
++		dp_phy_write(id, CMN_REG00E3, DP_INIT_RSTN | CDR_WATCHDOG_EN);
++
++		udelay(1);
++
++		dp_phy_write(id, CMN_REG00E3,
++			     DP_INIT_RSTN | DP_CMN_RSTN | CDR_WATCHDOG_EN);
++	}
 +}
 +
-+static void __decon_reg_set_disable(u32 decon_idx)
++void dp_reg_phy_init_setting(u32 id)
 +{
-+	u32 val, mask;
++	int i;
 +
-+	val = 0;
-+	mask = (GLOBAL_CONTROL_DECON_EN | GLOBAL_CONTROL_DECON_EN_F);
-+	decon_write_mask(decon_idx, GLOBAL_CONTROL, val, mask);
++	for (i = 0; i < DEFAULT_SFR_CNT; i++)
++		dp_phy_write(id, phy_default_value[i][0],
++			     phy_default_value[i][1]);
++
++	dp_phy_write_mask(id, CMN_REG0009, DP_CMN_RSTN_VAL(0xD),
++			  ANA_AUX_TX_LVL_CTRL);
 +}
 +
-+static void decon_reg_set_disable_per_frame(u32 decon_idx)
-+{
-+	decon_write_mask(decon_idx, GLOBAL_CONTROL, 0,
-+			 GLOBAL_CONTROL_DECON_EN_F);
-+}
-+
-+static void decon_reg_set_operation_mode(u32 decon_idx, enum decon_op_mode mode)
-+{
-+	u32 val, mask;
-+
-+	mask = GLOBAL_CONTROL_OPERATION_MODE_F;
-+
-+	if (mode == DECON_MIPI_COMMAND_MODE)
-+		val = GLOBAL_CONTROL_OPERATION_MODE_CMD_F;
-+	else
-+		val = GLOBAL_CONTROL_OPERATION_MODE_VIDEO_F;
-+
-+	decon_write_mask(decon_idx, GLOBAL_CONTROL, val, mask);
-+}
-+
-+static void decon_reg_set_blender_bg_image_size(u32 decon_idx, u32 width,
-+						u32 height)
-+{
-+	u32 val, mask;
-+
-+	val = BLENDER_BG_HEIGHT_F(height) | BLENDER_BG_WIDTH_F(width);
-+	mask = BLENDER_BG_HEIGHT_MASK | BLENDER_BG_WIDTH_MASK;
-+	decon_write_mask(decon_idx, BLENDER_BG_IMAGE_SIZE_0, val, mask);
-+}
-+
-+static u32 decon_reg_get_run_status(u32 decon_idx)
-+{
-+	u32 val;
-+
-+	val = decon_read(decon_idx, GLOBAL_CONTROL);
-+	if (val & GLOBAL_CONTROL_RUN_STATUS)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int decon_reg_wait_run_status_timeout(u32 decon_idx,
-+					     unsigned long timeout)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = read_poll_timeout_atomic(decon_reg_get_run_status, val, val, 100,
-+				       timeout, false, decon_idx);
-+	if (ret)
-+		pr_err("decon%u wait timeout decon run status(%u)\n", decon_idx,
-+		       val);
-+
-+	return ret;
-+}
-+
-+/* Determine that DECON is perfectly shuttled off through
-+ * checking this function
-+ */
-+static int decon_reg_wait_run_is_off_timeout(u32 decon_idx,
-+					     unsigned long timeout)
-+{
-+	u32 val;
-+	int ret;
-+
-+	ret = read_poll_timeout_atomic(decon_reg_get_run_status, val, !val, 100,
-+				       timeout, false, decon_idx);
-+	if (ret)
-+		pr_err("decon%u wait timeout decon run is shut-off(%u)\n",
-+		       decon_idx, val);
-+
-+	return ret;
-+}
-+
-+/*
-+ * API is considering real possible Display Scenario
-+ * such as following examples
-+ *  < Single display >
-+ *  < Dual/Triple display >
-+ *  < Dual display + DP >
-+ *
-+ * Modify/add configuration cases if necessary
-+ * "Resource Confliction" will happen if enabled simultaneously
-+ *
-+ * it's in EVT1
-+ * Total of SRAM = 28k (4k * 7ea)
-+ *  DECON0 + DECON1 <= under 28k
-+ * The SRAM should be combinated in accordance with the scenario
-+ * without "resource conflicts"
-+ *
-+ * DECON0 : ~5k (DSC supported dual DSI and dual DSC)
-+ * DECON1 : ~3k (not supported dual DSI and      DSC)
-+ *
-+ *   OF0    OF1    CAPA
-+ *  SRAM0  SRAM0    2K (Shared)
-+ *  SRAM1  SRAM4    4K
-+ *  SRAM2  SRAM5    4K
-+ *  SRAM3  SRAM6    4K
-+ */
-+static void decon_reg_set_sram_share(u32 decon_idx,
-+				     enum decon_fifo_mode fifo_mode)
++u32 dp_reg_phy_get_link_bw(u32 id)
 +{
 +	u32 val = 0;
-+	u32 id = IS_DECON0(decon_idx) ? 0 : 1;
 +
-+	switch (fifo_mode) {
-+	case DECON_FIFO_04K:
-+		if (id == 0)
-+			val = SRAM0_SHARE_ENABLE_F;
-+		else
-+			val = SRAM1_SHARE_ENABLE_F;
++	val = dp_phy_read_mask(id, CMN_REG00A3, DP_TX_LINK_BW) >> 5;
++
++	switch (val) {
++	case 0x03:
++		val = LINK_RATE_8_1Gbps;
 +		break;
-+	case DECON_FIFO_08K:
-+		if (id == 0)
-+			val = SRAM1_SHARE_ENABLE_F | SRAM4_SHARE_ENABLE_F;
-+		else
-+			val = SRAM2_SHARE_ENABLE_F | SRAM5_SHARE_ENABLE_F;
-+		break;
-+	case DECON_FIFO_12K:
-+		if (id == 0)
-+			val = SRAM1_SHARE_ENABLE_F | SRAM4_SHARE_ENABLE_F |
-+			      SRAM0_SHARE_ENABLE_F;
-+		else
-+			val = SRAM3_SHARE_ENABLE_F | SRAM6_SHARE_ENABLE_F |
-+			      SRAM0_SHARE_ENABLE_F;
-+		break;
-+	case DECON_FIFO_16K:
-+		if (id == 0)
-+			val = SRAM1_SHARE_ENABLE_F | SRAM4_SHARE_ENABLE_F |
-+			      SRAM2_SHARE_ENABLE_F | SRAM5_SHARE_ENABLE_F;
-+		else
-+			val = SRAM2_SHARE_ENABLE_F | SRAM5_SHARE_ENABLE_F |
-+			      SRAM3_SHARE_ENABLE_F | SRAM6_SHARE_ENABLE_F;
-+		break;
-+	case DECON_FIFO_20K:
-+		if (id == 0)
-+			val = SRAM1_SHARE_ENABLE_F | SRAM4_SHARE_ENABLE_F |
-+			      SRAM3_SHARE_ENABLE_F | SRAM6_SHARE_ENABLE_F |
-+			      SRAM0_SHARE_ENABLE_F;
-+		else
-+			val = SRAM2_SHARE_ENABLE_F | SRAM5_SHARE_ENABLE_F |
-+			      SRAM3_SHARE_ENABLE_F | SRAM6_SHARE_ENABLE_F |
-+			      SRAM0_SHARE_ENABLE_F;
-+		break;
-+	case DECON_FIFO_24K:
-+		if (id == 0)
-+			val = SRAM0_SHARE_ENABLE_F | SRAM4_SHARE_ENABLE_F |
-+			      SRAM2_SHARE_ENABLE_F | SRAM5_SHARE_ENABLE_F |
-+			      SRAM3_SHARE_ENABLE_F | SRAM6_SHARE_ENABLE_F;
-+		else
-+			val = SRAM1_SHARE_ENABLE_F | SRAM4_SHARE_ENABLE_F |
-+			      SRAM2_SHARE_ENABLE_F | SRAM5_SHARE_ENABLE_F |
-+			      SRAM3_SHARE_ENABLE_F | SRAM6_SHARE_ENABLE_F;
-+		break;
-+	case DECON_FIFO_28K:
-+		val = ALL_SRAM_SHARE_ENABLE;
-+		break;
-+	case DECON_FIFO_00K:
-+		val = ALL_SRAM_SHARE_DISABLE;
-+		break;
++	case 0x02:
 +	default:
++		val = LINK_RATE_5_4Gbps;
 +		break;
-+	}
-+
-+	decon_write(decon_idx, SRAM_SHARE_ENABLE, val);
-+}
-+
-+static void decon_reg_set_outfifo_size_ctl0(u32 decon_idx, u32 width,
-+					    u32 height)
-+{
-+	u32 val;
-+	u32 th, mask;
-+
-+	/* OUTFIFO_0 */
-+	val = OUTFIFO_HEIGHT_F(height) | OUTFIFO_WIDTH_F(width);
-+	mask = OUTFIFO_HEIGHT_MASK | OUTFIFO_WIDTH_MASK;
-+	decon_write(decon_idx, OUTFIFO_SIZE_CONTROL_0, val);
-+
-+	/* may be implemented later by considering 1/2H transfer */
-+	th = OUTFIFO_TH_1H_F; /* 1H transfer */
-+	mask = OUTFIFO_TH_MASK;
-+	decon_write_mask(decon_idx, OUTFIFO_TH_CONTROL_0, th, mask);
-+}
-+
-+static void decon_reg_set_outfifo_rgb_order(u32 decon_idx,
-+					    enum decon_rgb_order order)
-+{
-+	u32 val, mask;
-+
-+	val = OUTFIFO_PIXEL_ORDER_SWAP_F(order);
-+	mask = OUTFIFO_PIXEL_ORDER_SWAP_MASK;
-+	decon_write_mask(decon_idx, OUTFIFO_DATA_ORDER_CONTROL, val, mask);
-+}
-+
-+static void decon_reg_clear_interrupt_all(u32 decon_idx)
-+{
-+	u32 mask;
-+
-+	mask = (DPU_FRAME_DONE_INT_EN | DPU_FRAME_START_INT_EN);
-+	decon_write_mask(decon_idx, INTERRUPT_PENDING, ~0, mask);
-+
-+	mask = (DPU_RESOURCE_CONFLICT_INT_EN | DPU_TIME_OUT_INT_EN);
-+	decon_write_mask(decon_idx, EXTRA_INTERRUPT_PENDING, ~0, mask);
-+}
-+
-+static void decon_reg_set_dsc_path(u32 decon_idx, enum decon_dsc_path dpath)
-+{
-+	u32 mask;
-+
-+	mask = DSC_PATH_MASK;
-+
-+	decon_write_mask(decon_idx, DATA_PATH_CONTROL_2, DSC_PATH_F(dpath),
-+			 mask);
-+}
-+
-+static void decon_reg_set_outif_path(u32 decon_idx, enum decon_outif_path opath)
-+{
-+	u32 mask;
-+
-+	mask = OUTIF_PATH_MASK;
-+
-+	decon_write_mask(decon_idx, DATA_PATH_CONTROL_2, OUTIF_PATH_F(opath),
-+			 mask);
-+}
-+
-+/*  <SEL_ATB relation between DECON and DPTX>
-+DPUM ATB0 DP0_SST1
-+     ATB1 DP0_SST2
-+     ATB2 X(non wired)
-+     ATB3 X(non wired)
-+DPUS0 ATB0 DP0_SST3
-+      ATB1 DP0_SST4
-+      ATB2 DP1_SST1
-+      ATB3 DP1_SST2
-+DPUS1 ATB0 DP1_SST3
-+      ATB1 DP1_SST4
-+      ATB2 X(non wired)
-+      ATB3 X(non wired) */
-+static u32 decon_reg_get_sel_atb(u32 decon_idx, enum decon_out_type out_type)
-+{
-+	u32 sel_atb =
-+		0x4; /* The ATB reset value is 0x4.(DP does not drive any ATB path) */
-+
-+	switch (out_type) {
-+	case DECON_OUT_DP0_SST1:
-+	case DECON_OUT_DP0_SST3:
-+	case DECON_OUT_DP1_SST3:
-+		sel_atb = 0x0;
++	case 0x01:
++		val = LINK_RATE_2_7Gbps;
 +		break;
-+	case DECON_OUT_DP0_SST2:
-+	case DECON_OUT_DP0_SST4:
-+	case DECON_OUT_DP1_SST4:
-+		sel_atb = 0x1;
++	case 0x00:
++		val = LINK_RATE_1_62Gbps;
 +		break;
-+	case DECON_OUT_DP1_SST1:
-+		sel_atb = 0x2;
-+		break;
-+	case DECON_OUT_DP1_SST2:
-+		sel_atb = 0x3;
-+		break;
-+	default:
-+		pr_err("decon %u, invalid out_type = %#x\n", decon_idx,
-+		       out_type);
-+		break;
-+	}
-+
-+	return DP_CONNECTION_SEL_ATB_F(sel_atb);
-+}
-+
-+static void decon_reg_set_output(u32 decon_idx, enum decon_out_type out_type)
-+{
-+	u32 con_ctrl, out_if, sel_if, sel_atb = 0x4; /* IF: Interface */
-+
-+	if (out_type & DECON_OUT_DSI) {
-+		if (decon_idx > DPUM_DECON1)
-+			return;
-+
-+		if (out_type & DECON_OUT_DSI0) {
-+			if (IS_DECON0(decon_idx)) {
-+				/*
-+				 * DSIM can be connected with any DSIMIF.
-+				 * Below two combinations are possible.
-+				 * 1. OUT0 + OUTFIFO0_DSIMIF0
-+				 * 2. OUT1 + OUTFIFO0_DSIMIF1
-+				 */
-+				out_if = DECON0_OUTFIFO0_DSIMIF0;
-+				sel_if = DECON0_OUT0_TO_DSIM0;
-+			} else {
-+				out_if = DECON1_OUTFIFO0_DSIMIF;
-+				sel_if = DECON1_OUT0_TO_DSIM0;
-+			}
-+			con_ctrl = DSIM0_CONNECTION_CONTROL;
-+
-+			decon_reg_set_outif_path(decon_idx, out_if);
-+			decon_con_write_mask(decon_idx, con_ctrl, sel_if,
-+					     DSIM_CONNECTION_DSIM_MASK);
-+		}
-+		if (out_type & DECON_OUT_DSI1) {
-+			if (IS_DECON0(decon_idx)) {
-+				/*
-+				 * DSIM can be connected with any DSIMIF.
-+				 * Below two combinations are possible.
-+				 * 1. OUT0 + OUTFIFO0_DSIMIF0
-+				 * 2. OUT1 + OUTFIFO0_DSIMIF1
-+				 */
-+				out_if = DECON0_OUTFIFO0_DSIMIF1;
-+				sel_if = DECON0_OUT1_TO_DSIM1;
-+			} else {
-+				out_if = DECON1_OUTFIFO0_DSIMIF;
-+				sel_if = DECON1_OUT0_TO_DSIM1;
-+			}
-+			con_ctrl = DSIM1_CONNECTION_CONTROL;
-+
-+			decon_reg_set_outif_path(decon_idx, out_if);
-+			decon_con_write_mask(decon_idx, con_ctrl, sel_if,
-+					     DSIM_CONNECTION_DSIM_MASK);
-+		}
-+	}
-+
-+	if (out_type & DECON_OUT_DP) {
-+		sel_atb = decon_reg_get_sel_atb(decon_idx, out_type);
-+
-+		if (IS_DECON0(decon_idx)) {
-+			out_if = DECON0_OUTFIFO0_DPIF;
-+			sel_if = DP_CONNECTION_SEL_F(DECON0_OUT0_TO_DP) |
-+				 sel_atb;
-+			con_ctrl = DP0_CONNECTION_CONTROL_0;
-+		} else {
-+			out_if = DECON1_OUTFIFO0_DPIF;
-+			sel_if = DP_CONNECTION_SEL_F(DECON1_OUT0_TO_DP) |
-+				 sel_atb;
-+			con_ctrl = DP1_CONNECTION_CONTROL_0;
-+		}
-+
-+		decon_reg_set_outif_path(decon_idx, out_if);
-+		decon_con_write_mask(decon_idx, con_ctrl, sel_if,
-+				     DP_CONNECTION_SEL_MASK |
-+					     DP_CONNECTION_SEL_ATB_MASK);
-+	}
-+}
-+
-+static void decon_reg_set_te(u32 decon_idx, struct decon_mode mode,
-+			     enum decon_set_trig trig)
-+{
-+	u32 val, mask;
-+
-+	if (mode.op_mode == DECON_VIDEO_MODE)
-+		return;
-+
-+	if (mode.te_mode == DECON_SW_TRIG) {
-+		val = (trig == DECON_TRIG_UNMASK) ? SW_TRIG_EN : 0;
-+		mask = HW_TRIG_EN | SW_TRIG_EN;
-+	} else { /* DECON_HW_TRIG */
-+		val = (trig == DECON_TRIG_UNMASK) ? HW_TRIG_EN :
-+						    HW_TRIG_MASK_DECON;
-+		mask = HW_TRIG_EN | HW_TRIG_MASK_DECON;
-+	}
-+
-+	decon_write_mask(decon_idx, HW_SW_TRIG_CONTROL, val, mask);
-+}
-+
-+static void decon_reg_set_update_req_global(u32 decon_idx)
-+{
-+	decon_global_write_mask(decon_idx, SHADOW_REG_UPDATE_REQ, ~0,
-+				SHADOW_REG_UPDATE_REQ_GLOBAL);
-+}
-+
-+static void decon_reg_set_interrupt(u32 decon_idx, u32 en)
-+{
-+	u32 val, mask;
-+
-+	decon_reg_clear_interrupt_all(decon_idx);
-+
-+	if (en) {
-+		val = (DPU_FRAME_DONE_INT_EN | DPU_FRAME_START_INT_EN |
-+		       DPU_EXTRA_INT_EN | DPU_INT_EN);
-+
-+		decon_write_mask(decon_idx, INTERRUPT_ENABLE, val,
-+				 INTERRUPT_ENABLE_MASK);
-+		pr_debug("decon %u, interrupt val = %x\n", decon_idx, val);
-+
-+		val = (DPU_RESOURCE_CONFLICT_INT_EN | DPU_TIME_OUT_INT_EN);
-+		decon_write(decon_idx, EXTRA_INTERRUPT_ENABLE, val);
-+	} else {
-+		mask = (DPU_EXTRA_INT_EN | DPU_INT_EN);
-+		decon_write_mask(decon_idx, INTERRUPT_ENABLE, 0, mask);
-+	}
-+}
-+
-+static u32 decon_reg_clear_extra_interrupt(u32 decon_idx)
-+{
-+	u32 reg = EXTRA_INTERRUPT_PENDING;
-+	u32 val = decon_read(decon_idx, reg);
-+
-+	if (val & DPU_RESOURCE_CONFLICT_INT_PEND) {
-+		decon_write(decon_idx, reg, DPU_RESOURCE_CONFLICT_INT_PEND);
-+		pr_warn("decon%u INFO0: SRAM_RSC & DSC = 0x%x\n", decon_idx,
-+			decon_read(decon_idx, RESOURCE_OCCUPANCY_INFO_0));
-+		pr_warn("decon%u INFO1: DMA_CH_RSC= 0x%x\n", decon_idx,
-+			decon_read(decon_idx, RESOURCE_OCCUPANCY_INFO_1));
-+		pr_warn("decon%u INFO2: WIN_RSC= 0x%x\n", decon_idx,
-+			decon_read(decon_idx, RESOURCE_OCCUPANCY_INFO_2));
-+	}
-+
-+	/*
-+	 * Timeout interrupt is occurred when aclk counter is over
-+	 * 'DECONx_TIME_OUT_VALUE'.
-+	 * This counter value is reset by FRAME_DONE signal
-+	 */
-+	if (val & DPU_TIME_OUT_INT_PEND) {
-+		decon_write(decon_idx, reg, DPU_TIME_OUT_INT_PEND);
-+		pr_warn("decon%u time out interrupt occured!\n", decon_idx);
-+		pr_warn("decon%u maybe stuck now!\n", decon_idx);
 +	}
 +
 +	return val;
 +}
 +
-+static u32 decon_reg_clear_interrupt(u32 decon_idx, enum decon_irq irq)
++void dp_reg_phy_set_link_bw(u32 id, u8 link_rate)
 +{
-+	u32 pending_val = decon_read(decon_idx, INTERRUPT_PENDING);
++	u32 val = 0;
 +
-+	if (irq == DECON_IRQ_FS && (pending_val & DPU_FRAME_START_INT_PEND)) {
-+		/* Clear Interrupt */
-+		decon_write(decon_idx, INTERRUPT_PENDING,
-+			    DPU_FRAME_START_INT_PEND);
++	switch (link_rate) {
++	case LINK_RATE_8_1Gbps:
++		val = 0x03;
++		break;
++	case LINK_RATE_5_4Gbps:
++		val = 0x02;
++		break;
++	case LINK_RATE_2_7Gbps:
++		val = 0x01;
++		break;
++	case LINK_RATE_1_62Gbps:
++		val = 0x00;
++		break;
++	default:
++		val = 0x02;
 +	}
 +
-+	if (irq == DECON_IRQ_FD && (pending_val & DPU_FRAME_DONE_INT_PEND)) {
-+		/* Clear Interrupt */
-+		decon_write(decon_idx, INTERRUPT_PENDING,
-+			    DPU_FRAME_DONE_INT_PEND);
++	dp_phy_write_mask(id, CMN_REG00A3, DP_TX_LINK_BW_VAL(val),
++			  DP_TX_LINK_BW);
++}
++
++void dp_reg_phy_mode_setting(u32 id)
++{
++	u32 lane_config_val = 0;
++	u32 lane_en_val = 0;
++
++	lane_config_val = LANE_MUX_SEL_DP_LN3 | LANE_MUX_SEL_DP_LN2 |
++			  LANE_MUX_SEL_DP_LN1 | LANE_MUX_SEL_DP_LN0;
++	lane_en_val = DP_LANE_EN_LN3 | DP_LANE_EN_LN2 | DP_LANE_EN_LN1 |
++		      DP_LANE_EN_LN0;
++
++	if (dp_reg_phy_get_link_bw(id) < LINK_RATE_5_4Gbps) {
++		dp_phy_write_mask(id, TRSV_REG0215, ~0,
++				  LN0_ANA_TX_SER_TXCLK_INV);
++		dp_phy_write_mask(id, TRSV_REG0415, ~0,
++				  LN1_ANA_TX_SER_TXCLK_INV);
++		dp_phy_write_mask(id, TRSV_REG0615, ~0,
++				  LN2_ANA_TX_SER_TXCLK_INV);
++		dp_phy_write_mask(id, TRSV_REG0815, ~0,
++				  LN3_ANA_TX_SER_TXCLK_INV);
++	} else {
++		dp_phy_write_mask(id, TRSV_REG0215, 0,
++				  LN0_ANA_TX_SER_TXCLK_INV);
++		dp_phy_write_mask(id, TRSV_REG0415, 0,
++				  LN1_ANA_TX_SER_TXCLK_INV);
++		dp_phy_write_mask(id, TRSV_REG0615, 0,
++				  LN2_ANA_TX_SER_TXCLK_INV);
++		dp_phy_write_mask(id, TRSV_REG0815, 0,
++				  LN3_ANA_TX_SER_TXCLK_INV);
 +	}
 +
-+	if (irq == DECON_IRQ_EXT && (pending_val & DPU_EXTRA_INT_PEND)) {
-+		/* Clear Interrupt */
-+		decon_write(decon_idx, INTERRUPT_PENDING, DPU_EXTRA_INT_PEND);
-+		decon_reg_clear_extra_interrupt(decon_idx);
-+	}
-+
-+	return pending_val;
++	dp_phy_write(id, CMN_REG00A2, lane_config_val | lane_en_val);
 +}
 +
-+#define SHADOW_UPDATE_TIMEOUT (50 * 1000)
-+
-+static u32 decon_reg_get_window_update_req(u32 decon_idx, u32 win_idx)
-+{
-+	return winctrl_read_mask(to_regwin_idx(decon_idx, win_idx),
-+				 UPDATE_REQ_WIN, SHD_UP_REQ);
-+}
-+
-+static u32 decon_reg_get_shadow_update_req(u32 decon_idx)
-+{
-+	return decon_global_read(decon_idx, SHADOW_REG_UPDATE_REQ);
-+}
-+
-+static void decon_reg_set_bpc(u32 decon_idx, u32 bpc)
++static void dp_reg_phy_ssc_enable(u32 id, u32 en)
 +{
 +	u32 val;
 +
-+	val = (bpc == 10) ? GLOBAL_CONTROL_TEN_BPC_MODE_F : 0;
-+
-+	decon_write_mask(decon_idx, GLOBAL_CONTROL, val,
-+			 GLOBAL_CONTROL_TEN_BPC_MODE_MASK);
++	val = en ? ~0 : 0;
++	dp_phy_write_mask(id, CMN_REG00B4, val, ROPLL_SSC_EN);
 +}
 +
-+static int decon_reg_set_config(u32 decon_idx, struct decon_config config)
++void dp_reg_wait_phy_pll_lock(u32 id)
 +{
-+	enum decon_rgb_order rgb_order = DECON_RGB;
++	u32 cnt = 165; /* wait for 150us + 10% margin */
++	u32 state;
 +
-+	/* OUTFIFO_PIXEL_ORDER_SWAP_F
-+	  * Use DECON_BGR at raw image transfer to DSIM.
-+	  * Use DECON_RGB at compressed stream tranfer to DSIM.
-+	  * Use DECON_RGB at DP connection.
-+	  *
-+	  * TODO : if DSC feature added, code must be modified like this.
-+	  * if((config->out_type & DECON_OUT_DSI) && (DSC==DISABLE))
-+	  * 	rgb_order = DECON_BGR;
-+	  * else
-+	  * 	rgb_order = DECON_RGB;
++	do {
++		state = dp_link_read(id, SYSTEM_PLL_LOCK_CONTROL) &
++			PLL_LOCK_STATUS;
++		cnt--;
++		udelay(1);
++	} while (!state && cnt);
++
++	if (!cnt)
++		cal_log_err(id, "%s is timeout.\n", __func__);
++}
++
++void dp_reg_set_lane_count(u32 id, u8 lane_cnt)
++{
++	dp_link_write(id, SYSTEM_MAIN_LINK_LANE_COUNT, lane_cnt);
++}
++
++u32 dp_reg_get_lane_count(u32 id)
++{
++	return dp_link_read(id, SYSTEM_MAIN_LINK_LANE_COUNT);
++}
++
++void dp_reg_set_enhanced_mode(u32 id, u32 en)
++{
++	int i = 0;
++	u32 val;
++
++	val = en ? ~0 : 0;
++
++	for (i = 0; i < MAX_SST_CNT; i++)
++		dp_link_write_mask(id, SST1_MAIN_CONTROL + 0x1000 * i, val,
++				   ENHANCED_MODE);
++}
++
++void dp_reg_set_training_pattern(u32 id, dp_training_pattern pattern)
++{
++	dp_link_write_mask(id, PCS_TEST_PATTERN_CONTROL, 0,
++			   LINK_QUALITY_PATTERN_SET);
++	dp_link_write_mask(id, PCS_CONTROL,
++			   LINK_TRAINING_PATTERN_SET_VAL(pattern),
++			   LINK_TRAINING_PATTERN_SET);
++}
++
++void dp_reg_scrambling_enable(u32 id, bool enable)
++{
++	dp_link_write_mask(id, PCS_CONTROL, !enable, SCRAMBLE_BYPASS);
++}
++
++void dp_reg_set_phy_tune(u32 id, u32 phy_lane_num, u32 amp_lvl, u32 pre_emp_lvl)
++{
++	u32 addr = 0;
++	u32 val = 0;
++	int i;
++
++	switch (phy_lane_num) {
++	case 0:
++		addr = TRSV_REG0204;
++		break;
++	case 1:
++		addr = TRSV_REG0404;
++		break;
++	case 2:
++		addr = TRSV_REG0604;
++		break;
++	case 3:
++		addr = TRSV_REG0804;
++		break;
++	default:
++		addr = TRSV_REG0204;
++		break;
++	}
++
++	for (i = AMP; i <= IDRV; i++) {
++		val = phy_tune_parameters[amp_lvl][pre_emp_lvl][i];
++		dp_phy_write(id, addr + i * 4, val);
++	}
++}
++
++static void dp_reg_set_phy_voltage_and_pre_emphasis(u32 id, u8 *voltage,
++						    u8 *pre_emphasis)
++{
++	dp_reg_set_phy_tune(id, 0, voltage[0], pre_emphasis[0]);
++	dp_reg_set_phy_tune(id, 1, voltage[1], pre_emphasis[1]);
++	dp_reg_set_phy_tune(id, 2, voltage[2], pre_emphasis[2]);
++	dp_reg_set_phy_tune(id, 3, voltage[3], pre_emphasis[3]);
++}
++
++void dp_reg_set_voltage_and_pre_emphasis(u32 id, u8 *voltage, u8 *pre_emphasis)
++{
++	dp_reg_set_phy_voltage_and_pre_emphasis(id, voltage, pre_emphasis);
++}
++
++static void dp_reg_common_function_enable(u32 id, u32 en)
++{
++	u32 val;
++
++	val = en ? ~0 : 0;
++
++	dp_link_write_mask(id, SYSTEM_COMMON_FUNCTION_ENABLE, val, PCS_FUNC_EN);
++	dp_link_write_mask(id, SYSTEM_COMMON_FUNCTION_ENABLE, val, AUX_FUNC_EN);
++}
++
++static void dp_reg_sst_function_enable(u32 id, u32 sst_id, u32 en)
++{
++	u32 reg_offset = 0;
++
++	switch (sst_id) {
++	case 0:
++		reg_offset = SYSTEM_SST1_FUNCTION_ENABLE;
++		break;
++	case 1:
++		reg_offset = SYSTEM_SST2_FUNCTION_ENABLE;
++		break;
++	case 2:
++		reg_offset = SYSTEM_SST3_FUNCTION_ENABLE;
++		break;
++	case 3:
++		reg_offset = SYSTEM_SST4_FUNCTION_ENABLE;
++		break;
++	default:
++		reg_offset = SYSTEM_SST1_FUNCTION_ENABLE;
++	}
++
++	dp_link_write_mask(id, reg_offset, en, SST1_VIDEO_FUNC_EN);
++}
++
++static void dp_reg_set_sst_stream_enable(u32 id, u32 sst_id, u32 en)
++{
++	dp_link_write_mask(id, MST_STREAM_1_ENABLE + 0x10 * sst_id, en,
++			   STRM_1_EN);
++}
++
++static void
++dp_reg_set_common_interrupt_mask(u32 id, enum dp_interrupt_mask param, u8 set)
++{
++	u32 val = set ? ~0 : 0;
++
++	switch (param) {
++	case HOTPLUG_CHG_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HPD_CHG_MASK);
++		break;
++	case HPD_LOST_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HPD_LOST_MASK);
++		break;
++	case PLUG_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HPD_PLUG_MASK);
++		break;
++	case HPD_IRQ_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HPD_IRQ_MASK);
++		break;
++	case RPLY_RECEIV_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   AUX_REPLY_RECEIVED_MASK);
++		break;
++	case AUX_ERR_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   AUX_ERR_MASK);
++		break;
++	case HDCP_LINK_CHECK_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HDCP_R0_CHECK_FLAG_MASK);
++		break;
++	case HDCP_LINK_FAIL_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HDCP_LINK_CHK_FAIL_MASK);
++		break;
++	case HDCP_R0_READY_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   HDCP_R0_CHECK_FLAG_MASK);
++		break;
++	case PLL_LOCK_CHG_INT_MASK:
++		dp_link_write_mask(id, SYSTEM_IRQ_COMMON_STATUS_MASK, val,
++				   PLL_LOCK_CHG_MASK);
++		break;
++	case ALL_INT_MASK:
++		dp_link_write(id, SYSTEM_IRQ_COMMON_STATUS_MASK, 0xFF);
++		break;
++	default:
++		break;
++	}
++}
++
++static void dp_reg_set_sst_interrupt_mask(u32 id, u32 sst_id,
++					  enum dp_interrupt_mask param, u8 set)
++{
++	u32 val = set ? ~0 : 0;
++
++	switch (param) {
++	case VIDEO_FIFO_UNDER_FLOW_MASK:
++		dp_link_write_mask(id,
++				   SST1_INTERRUPT_MASK_SET0 + 0x1000 * sst_id,
++				   val, MAPI_FIFO_UNDER_FLOW_MASK);
++		break;
++	case VSYNC_DET_INT_MASK:
++		dp_link_write_mask(id,
++				   SST1_INTERRUPT_MASK_SET0 + 0x1000 * sst_id,
++				   val, VSYNC_DET_MASK);
++		break;
++	case ALL_INT_MASK:
++		dp_link_write(id, SST1_INTERRUPT_MASK_SET0 + 0x1000 * sst_id,
++			      0xFF);
++		dp_link_write(id, SST1_INTERRUPT_STATUS_SET1 + 0x1000 * sst_id,
++			      0xFF);
++		break;
++	default:
++		break;
++	}
++}
++
++void dp_reg_set_hpd_interrupt(u32 id, u32 en)
++{
++	u32 val = en ? ~0 : 0;
++
++	dp_link_write(id, SYSTEM_IRQ_COMMON_STATUS, ~0);
++	/*
++	 * TODO : Check the PLUG_IN Interrupt of DP_LINK
++	 * The role of PLUG_IN is by HPD_GPIO.
++	 * So, Enabling DP's PLUG_IN IRQ is redundant.
++	 * The Problem occurred because the PLUG_IN IRQ of DP_LINK
++	 * was working in the reset sequence when boot.
++	 * (The DP suspend and Link_training are overlapped.)
 +	 */
-+	if (config.out_type & DECON_OUT_DSI)
-+		rgb_order = DECON_BGR;
 +
-+	decon_reg_set_operation_mode(decon_idx, config.mode.op_mode);
-+	decon_reg_set_blender_bg_image_size(decon_idx,
-+					    (config.mode.dsi_mode ==
-+					     DSI_MODE_DUAL_DSI) ?
-+						    (config.image_width * 2) :
-+						    config.image_width,
-+					    config.image_height);
-+	decon_reg_set_bpc(decon_idx, config.out_bpc);
-+	decon_reg_clear_interrupt_all(decon_idx);
-+	decon_reg_set_outfifo_size_ctl0(decon_idx, config.image_width,
-+					config.image_height);
-+	decon_reg_set_sram_share(decon_idx, DECON_FIFO_08K);
++	dp_reg_set_common_interrupt_mask(id, HPD_IRQ_INT_MASK, val);
++	/* dp_reg_set_common_interrupt_mask(id, HOTPLUG_CHG_INT_MASK, val); */
++	dp_reg_set_common_interrupt_mask(id, HPD_LOST_INT_MASK, val);
++	/* dp_reg_set_common_interrupt_mask(id, PLUG_INT_MASK, val); */
++}
 +
-+	decon_reg_set_outfifo_rgb_order(decon_idx, rgb_order);
-+	decon_reg_set_output(decon_idx, config.out_type);
++void dp_reg_set_plug_interrupt(u32 id, u32 en)
++{
++	u32 val = en ? ~0 : 0;
++
++	dp_link_write(id, SYSTEM_IRQ_COMMON_STATUS, ~0);
++	/*
++	 * TODO : Check the PLUG_IN Interrupt of DP_LINK
++	 * DP plug_in/Out is abnormal work after S2R without this code.
++	 */
++
++	dp_reg_set_common_interrupt_mask(id, HPD_IRQ_INT_MASK, val);
++	dp_reg_set_common_interrupt_mask(id, HOTPLUG_CHG_INT_MASK, val);
++	dp_reg_set_common_interrupt_mask(id, HPD_LOST_INT_MASK, val);
++	dp_reg_set_common_interrupt_mask(id, PLUG_INT_MASK, val);
++}
++
++#define FIN_MHZ 24
++#define DEGLITCH_UDELAY 10
++
++u32 dp_reg_get_hpd_status(u32 id)
++{
++	u32 val, cnt = 2; /* minimum retry count of double */
++
++	/* try to wait until HPD_DEGLITCH_COUNT which is counted at 24 MHz */
++	val = dp_link_read_mask(id, SYSTEM_HPD_CONTROL, HPD_DEGLITCH_COUNT) >>
++	      16;
++	cnt *= (val / (FIN_MHZ * DEGLITCH_UDELAY));
++
++	do {
++		val = dp_link_read_mask(id, SYSTEM_HPD_CONTROL, HPD_STATUS);
++		if (val)
++			break;
++
++		udelay(DEGLITCH_UDELAY);
++		cnt--;
++	} while (!val && cnt);
++
++	if (!cnt && !val)
++		cal_log_err(id, "HPD_STATUS waiting timeout(%#x)\n",
++			    dp_link_read(id, SYSTEM_HPD_CONTROL));
++
++	return val;
++}
++
++u32 dp_reg_get_int_and_clear(u32 id, dp_irq_reg_type_t irq_reg)
++{
++	u32 val = 0;
++	u32 irq_status_reg = 0;
++
++	switch (irq_reg) {
++	case DP_IRQ_REG_SST1_SET0:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET0;
++		break;
++	case DP_IRQ_REG_SST2_SET0:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET0 + 0x1000;
++		break;
++	case DP_IRQ_REG_SST3_SET0:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET0 + 0x2000;
++		break;
++	case DP_IRQ_REG_SST4_SET0:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET0 + 0x3000;
++		break;
++	case DP_IRQ_REG_SST1_SET1:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET1;
++		break;
++	case DP_IRQ_REG_SST2_SET1:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET1 + 0x1000;
++		break;
++	case DP_IRQ_REG_SST3_SET1:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET1 + 0x2000;
++		break;
++	case DP_IRQ_REG_SST4_SET1:
++		irq_status_reg = SST1_INTERRUPT_STATUS_SET1 + 0x3000;
++		break;
++	case DP_IRQ_REG_SYSTEM:
++	default:
++		irq_status_reg = SYSTEM_IRQ_COMMON_STATUS;
++		break;
++	}
++
++	val = dp_link_read(id, irq_status_reg);
++	dp_link_write(id, irq_status_reg, ~0);
++
++	return val;
++}
++
++static void dp_reg_set_daynamic_range(u32 id, u32 sst_id,
++				      enum dynamic_range_type dynamic_range)
++{
++	dp_link_write_mask(id, SST1_VIDEO_CONTROL + 0x1000 * sst_id,
++			   DYNAMIC_RANGE_VAL(dynamic_range),
++			   DYNAMIC_RANGE_MODE);
++}
++
++static void dp_reg_set_video_bist_mode(u32 id, u32 sst_id, u32 en)
++{
++	u32 val = en ? ~0 : 0;
++
++	dp_link_write_mask(id, SST1_VIDEO_CONTROL + 0x1000 * sst_id, val,
++			   STRM_VALID_FORCE | STRM_VALID_CTRL);
++	dp_link_write_mask(id, SST1_VIDEO_BIST_CONTROL + 0x1000 * sst_id, val,
++			   BIST_EN);
++}
++
++static void dp_reg_video_format_setting(u32 id,
++					struct dp_video_info dp_video_info)
++{
++	u32 val = 0;
++	struct dp_support_video *vm = &dp_video_info.vm;
++
++	u32 sst_id = dp_video_info.sst_id;
++
++	val += vm->vactive;
++	val += vm->vfront_porch;
++	val += vm->vsync_len;
++	val += vm->vback_porch;
++	dp_link_write(id, SST1_VIDEO_VERTICAL_TOTAL_PIXELS + 0x1000 * sst_id,
++		      val);
++
++	val = 0;
++	val += vm->hactive;
++	val += vm->hfront_porch;
++	val += vm->hsync_len;
++	val += vm->hback_porch;
++	dp_link_write(id, SST1_VIDEO_HORIZONTAL_TOTAL_PIXELS + 0x1000 * sst_id,
++		      val);
++
++	val = vm->vactive;
++	dp_link_write(id, SST1_VIDEO_VERTICAL_ACTIVE + 0x1000 * sst_id, val);
++
++	val = vm->vfront_porch;
++	dp_link_write(id, SST1_VIDEO_VERTICAL_FRONT_PORCH + 0x1000 * sst_id,
++		      val);
++
++	val = vm->vback_porch;
++	dp_link_write(id, SST1_VIDEO_VERTICAL_BACK_PORCH + 0x1000 * sst_id,
++		      val);
++
++	val = vm->hactive;
++	dp_link_write(id, SST1_VIDEO_HORIZONTAL_ACTIVE + 0x1000 * sst_id, val);
++
++	val = vm->hfront_porch;
++	dp_link_write(id, SST1_VIDEO_HORIZONTAL_FRONT_PORCH + 0x1000 * sst_id,
++		      val);
++
++	val = vm->hback_porch;
++	dp_link_write(id, SST1_VIDEO_HORIZONTAL_BACK_PORCH + 0x1000 * sst_id,
++		      val);
++
++	val = vm->vsync_pol;
++	dp_link_write_mask(id, SST1_VIDEO_CONTROL + 0x1000 * sst_id,
++			   VSYNC_POLARITY_VAL(val), VSYNC_POLARITY);
++
++	val = vm->hsync_pol;
++	dp_link_write_mask(id, SST1_VIDEO_CONTROL + 0x1000 * sst_id, val,
++			   HSYNC_POLARITY);
++}
++
++static bool is_dsc_en(u32 id, u32 sst_id)
++{
++	u32 val = dp_link_read_mask(
++		id, SST_REG(SST1_VIDEO_DSC_STREAM_CONTROL_0), DSC_ENABLE);
++
++	return val ? true : false;
++}
++
++static void dp_reg_set_dsc_pps_sdp_control(u32 id, u32 sst_id)
++{
++	u32 val;
++
++	val = PPS_SDP_UPDATE;
++	dp_link_write(id, SST_REG(SST1_PPS_SDP_CONTROL), val);
++
++	val |= PPS_SDP_FRAME_SEND_ENABLE;
++	dp_link_write(id, SST_REG(SST1_PPS_SDP_CONTROL), val);
++}
++
++static void dp_reg_set_dsc_pps(u32 id, u32 sst_id, u8 *pps, u32 en)
++{
++	u32 pps_val;
++	int i;
++
++	/* DSC pps */
++	for (i = 0; i < MAX_PPS_NUM; i += SZ_4) {
++		/* Clear PPS */
++		if (!en) {
++			dp_link_write(id, SST_REG(SST1_PPS_SDP_PAYLOAD_0) + i,
++				      0);
++			continue;
++		}
++
++		pps_val = 0;
++		pps_val |= PPS0xN(pps[i + 0]);
++		pps_val |= PPS1xN(pps[i + 1]);
++		pps_val |= PPS2xN(pps[i + 2]);
++		pps_val |= PPS3xN(pps[i + 3]);
++
++		dp_link_write(id, SST_REG(SST1_PPS_SDP_PAYLOAD_0) + i, pps_val);
++		cal_log_debug(id, "PPS_SDP_PAYLOAD_%02d(%03d~%03d) 0x%.8X\n",
++			      i / SZ_4, (i + SZ_4 - 1), i, pps_val);
++	}
++
++	if (en)
++		dp_reg_set_dsc_pps_sdp_control(id, sst_id);
++}
++
++static void dp_reg_set_dsc_en(u32 id, u32 sst_id, u32 slice_cnt, u32 en)
++{
++	u32 val = 0;
++
++	if (slice_cnt > MAX_SLICE_COUNT && en) {
++		cal_log_err(id, "slice count(%u) not supported\n", slice_cnt);
++		slice_cnt = MAX_SLICE_COUNT;
++	}
++
++	if (en) {
++		val |= DSC_ENABLE;
++		val |= slice_cnt & SLICE_COUNT_PER_LINE;
++	}
++
++	dp_link_write(id, SST_REG(SST1_VIDEO_DSC_STREAM_CONTROL_0), val);
++	cal_log_debug(id, "SST%u DSC_STREAM_CONTROL_0: %#x\n", sst_id + 1, val);
++
++	/* If FEC is not ready then ignore it */
++	if (!dp_link_read_mask(id, PCS_CONTROL, FEC_READY))
++		return;
++
++	val = en ? ~0 : 0;
++	dp_link_write_mask(id, PCS_DEBUG_CONTROL, ~val, FEC_DECODE_DIS_4TH_SEL);
++	dp_link_write_mask(id, PCS_DEBUG_CONTROL, val, FEC_DECODE_EN_4TH_SEL);
++	dp_link_write_mask(id, PCS_CONTROL, val, FEC_FUNC_EN);
++}
++
++static void dp_reg_set_dsc_stream(u32 id, u32 sst_id, struct dp_dsc dsc, u32 en)
++{
++	u32 val[2] = {
++		0,
++	};
++	int i;
++	u8 slice_cnt = dsc.slice_count;
++	u16 chunk_size = dsc.chunk_size;
++
++	/* request disable but already disabled */
++	if (!en && !is_dsc_en(id, sst_id))
++		return;
++
++	/* request enable but dsc is not required */
++	if (en && !dsc.enable)
++		return;
++
++	for (i = 0; i < slice_cnt && en; i++) {
++		if (i < MAX_SLICE_COUNT / 2)
++			val[0] |= (chunk_size << (i % 2) * 16);
++		else
++			val[1] |= (chunk_size << (i % 2) * 16);
++	}
++	dp_link_write(id, SST_REG(SST1_VIDEO_DSC_STREAM_CONTROL_1), val[0]);
++	dp_link_write(id, SST_REG(SST1_VIDEO_DSC_STREAM_CONTROL_2), val[1]);
++
++	if (en) {
++		cal_log_info(id, "SST%u, slice count(%u), chunk_size(%u)\n",
++			     sst_id + 1, slice_cnt, chunk_size);
++
++		cal_log_debug(id, "DSC_STREAM_CONTROL_1: %#x, CONTROL_2: %#x\n",
++			      val[0], val[1]);
++	}
++
++	dp_reg_set_dsc_pps(id, sst_id, dsc.pps, en);
++	dp_reg_set_dsc_en(id, sst_id, slice_cnt, en);
++}
++
++void dp_reg_set_dsc_fec(u32 id, u32 en)
++{
++	u32 val = en ? ~0 : 0;
++
++	dp_link_write_mask(id, PCS_CONTROL, val, FEC_READY);
++}
++
++static u32 dp_reg_get_ls_clk(u32 id)
++{
++	u32 val;
++	u32 ls_clk;
++
++	val = dp_reg_phy_get_link_bw(id);
++
++	if (val == LINK_RATE_8_1Gbps)
++		ls_clk = 810000000;
++	else if (val == LINK_RATE_5_4Gbps)
++		ls_clk = 540000000;
++	else if (val == LINK_RATE_2_7Gbps)
++		ls_clk = 270000000;
++	else /* LINK_RATE_1_62Gbps */
++		ls_clk = 162000000;
++
++	return ls_clk;
++}
++
++static void dp_reg_set_video_clock(u32 id, u32 sst_id, u32 pixelclock)
++{
++	u32 stream_clk = 0;
++	u32 ls_clk = 0;
++	u32 mvid_master = 0;
++	u32 nvid_master = 0;
++
++	stream_clk = pixelclock / 1000;
++	ls_clk = dp_reg_get_ls_clk(id) / 1000;
++
++	mvid_master = stream_clk >> 1;
++	nvid_master = ls_clk;
++
++	dp_link_write(id, SST1_MVID_MASTER_MODE + 0x1000 * sst_id, mvid_master);
++	dp_link_write(id, SST1_NVID_MASTER_MODE + 0x1000 * sst_id, nvid_master);
++
++	dp_link_write(id, SST1_MVID_SFR_CONFIGURE + 0x1000 * sst_id,
++		      stream_clk);
++	dp_link_write(id, SST1_NVID_SFR_CONFIGURE + 0x1000 * sst_id, ls_clk);
++}
++
++static void dp_reg_set_active_symbol(u32 id, u32 sst_id, u32 pixelclock, u8 bpc)
++{
++	u64 TU_off = 0; /* TU Size when FEC is off*/
++	u64 TU_on = 0; /* TU Size when FEC is on*/
++	u32 bpp = 0; /* Bit Per Pixel */
++	u32 lanecount = 0;
++	u32 bandwidth = 0;
++	u32 integer_fec_off = 0;
++	u32 fraction_fec_off = 0;
++	u32 threshold_fec_off = 0;
++	u32 integer_fec_on = 0;
++	u32 fraction_fec_on = 0;
++	u32 threshold_fec_on = 0;
++	u32 clk = 0;
++
++	switch (bpc) {
++	case BPC_8:
++		bpp = 24;
++		break;
++	case BPC_10:
++		bpp = 30;
++		break;
++	default:
++		bpp = 18;
++		break;
++	}
++
++	/* if DSC on, bpp / 3 */
++	if (is_dsc_en(id, sst_id))
++		bpp /= 3;
++
++	/* change to Mbps from bps of pixel clock*/
++	clk = pixelclock / 1000;
++
++	bandwidth = dp_reg_get_ls_clk(id) / 1000;
++	if (dp_link_read(id, MST_ENABLE) & MST_EN)
++		lanecount =
++			MAX_LANE; /* In MST mode, number of lanes become 4 */
++	else
++		lanecount = dp_reg_get_lane_count(id);
++
++	TU_off = ((clk * bpp * 32) * 10000000000) / (lanecount * bandwidth * 8);
++	TU_on = (TU_off * 1000) / 976;
++
++	integer_fec_off = (u32)(TU_off / 10000000000);
++	fraction_fec_off =
++		(u32)((TU_off - (integer_fec_off * 10000000000)) / 10);
++	integer_fec_on = (u32)(TU_on / 10000000000);
++	fraction_fec_on = (u32)((TU_on - (integer_fec_on * 10000000000)) / 10);
++
++	if (integer_fec_off <= 2)
++		threshold_fec_off = 7;
++	else if (integer_fec_off > 2 && integer_fec_off <= 5)
++		threshold_fec_off = 8;
++	else /* integer_fec_off > 5 */
++		threshold_fec_off = 9;
++
++	if (integer_fec_on <= 2)
++		threshold_fec_on = 7;
++	else if (integer_fec_on > 2 && integer_fec_on <= 5)
++		threshold_fec_on = 8;
++	else /* integer_fec_on > 5 */
++		threshold_fec_on = 9;
++
++	cal_log_debug(
++		id,
++		"fec_off(int: %d, frac: %d, thr: %d), fec_on(int: %d, frac: %d, thr: %d)\n",
++		integer_fec_off, fraction_fec_off, threshold_fec_off,
++		integer_fec_on, fraction_fec_on, threshold_fec_on);
++
++	dp_link_write_mask(id,
++			   SST1_ACTIVE_SYMBOL_INTEGER_FEC_OFF + 0x1000 * sst_id,
++			   integer_fec_off, ACTIVE_SYMBOL_INTEGER_FEC_OFF);
++	dp_link_write_mask(
++		id, SST1_ACTIVE_SYMBOL_FRACTION_FEC_OFF + 0x1000 * sst_id,
++		fraction_fec_off, ACTIVE_SYMBOL_FRACTION_FEC_OFF);
++	dp_link_write_mask(
++		id, SST1_ACTIVE_SYMBOL_THRESHOLD_FEC_OFF + 0x1000 * sst_id,
++		threshold_fec_off, ACTIVE_SYMBOL_FRACTION_FEC_OFF);
++
++	dp_link_write_mask(id,
++			   SST1_ACTIVE_SYMBOL_INTEGER_FEC_ON + 0x1000 * sst_id,
++			   integer_fec_on, ACTIVE_SYMBOL_INTEGER_FEC_ON);
++	dp_link_write_mask(id,
++			   SST1_ACTIVE_SYMBOL_FRACTION_FEC_ON + 0x1000 * sst_id,
++			   fraction_fec_on, ACTIVE_SYMBOL_FRACTION_FEC_OFF);
++	dp_link_write_mask(
++		id, SST1_ACTIVE_SYMBOL_THRESHOLD_FEC_ON + 0x1000 * sst_id,
++		threshold_fec_on, ACTIVE_SYMBOL_THRESHOLD_FEC_ON);
++}
++
++static void dp_reg_aux_ch_buf_clr(u32 id)
++{
++	dp_link_write_mask(id, AUX_BUFFER_CLEAR, 1, AUX_BUF_CLR);
++}
++
++static void dp_reg_aux_defer_ctrl(u32 id, u32 en)
++{
++	u32 val = en ? ~0 : 0;
++
++	dp_link_write_mask(id, AUX_COMMAND_CONTROL, val, DEFER_CTRL_EN);
++}
++
++static void dp_reg_set_aux_reply_timeout(u32 id)
++{
++	dp_link_write_mask(id, AUX_CONTROL,
++			   AUX_REPLY_TIMER_VAL(AUX_TIMEOUT_1800us),
++			   AUX_REPLY_TIMER_MODE);
++}
++
++static void dp_reg_set_aux_ch_command(u32 id,
++				      enum aux_ch_command_type aux_ch_mode)
++{
++	dp_link_write_mask(id, AUX_REQUEST_CONTROL, REQ_COMM_VAL(aux_ch_mode),
++			   REQ_COMM);
++}
++
++static void dp_reg_set_aux_ch_address(u32 id, u32 aux_ch_address)
++{
++	dp_link_write_mask(id, AUX_REQUEST_CONTROL,
++			   REQ_ADDR_VAL(aux_ch_address), REQ_ADDR);
++}
++
++static void dp_reg_set_aux_ch_length(u32 id, u32 aux_ch_length)
++{
++	dp_link_write_mask(id, AUX_REQUEST_CONTROL, aux_ch_length - 1,
++			   REQ_LENGTH);
++}
++
++static void dp_reg_aux_ch_send_buf(u32 id, u8 *aux_ch_send_buf,
++				   u32 aux_ch_length)
++{
++	int i;
++
++	for (i = 0; i < aux_ch_length; i++) {
++		dp_link_write_mask(id, AUX_TX_DATA_SET0 + ((i / 4) * 4),
++				   (aux_ch_send_buf[i] << ((i % 4) * 8)),
++				   (0x000000FF << ((i % 4) * 8)));
++	}
++}
++
++static void dp_reg_aux_ch_received_buf(u32 id, u8 *aux_ch_received_buf,
++				       u32 aux_ch_length)
++{
++	int i;
++
++	for (i = 0; i < aux_ch_length; i++) {
++		aux_ch_received_buf[i] =
++			(dp_link_read_mask(id, AUX_RX_DATA_SET0 + ((i / 4) * 4),
++					   0xFF << ((i % 4) * 8)) >>
++			 (i % 4) * 8);
++	}
++}
++
++static int dp_reg_set_aux_ch_operation_enable(u32 id)
++{
++	u32 cnt = 5000;
++	u32 state;
++	u32 val0, val1;
++
++	dp_link_write_mask(id, AUX_TRANSACTION_START, 1, AUX_TRAN_START);
++
++	do {
++		state = dp_link_read(id, AUX_TRANSACTION_START) &
++			AUX_TRAN_START;
++		cnt--;
++		udelay(10);
++	} while (state && cnt);
++
++	if (!cnt) {
++		cal_log_err(id, "AUX_TRAN_START waiting timeout.\n");
++		return -ETIME;
++	}
++
++	val0 = dp_link_read(id, AUX_MONITOR_1);
++	val1 = dp_link_read(id, AUX_MONITOR_2);
++
++	if ((val0 & AUX_CMD_STATUS) != 0x00 || val1 != 0x00) {
++		cal_log_err(id, "AUX_MONITOR_1 : 0x%X, AUX_MONITOR_2 : 0x%X\n",
++			    val0, val1);
++		cal_log_err(
++			id,
++			"AUX_CONTROL : 0x%X, AUX_REQUEST_CONTROL : 0x%X, AUX_COMMAND_CONTROL : 0x%X\n",
++			dp_link_read(id, AUX_CONTROL),
++			dp_link_read(id, AUX_REQUEST_CONTROL),
++			dp_link_read(id, AUX_COMMAND_CONTROL));
++
++		udelay(400);
++		return -EIO;
++	}
 +
 +	return 0;
 +}
 +
-+static int decon_reg_set_enable(u32 decon_idx, struct decon_config config)
++int dp_reg_aux_write(u32 id, u32 comm, u32 address, u32 length, u8 *data)
 +{
 +	int ret = 0;
++	int retry_cnt = AUX_RETRY_COUNT;
 +
-+	decon_reg_set_config(decon_idx, config);
-+	// if (config.dsc.enable)
-+	// 	decon_reg_set_dsc(decon_idx, config.dsc);
-+	// else
-+	decon_reg_set_dsc_path(decon_idx, DECON_DSC_NONE);
-+	__decon_reg_set_enable(decon_idx);
-+	decon_reg_set_update_req_global(decon_idx);
-+	decon_reg_wait_run_status_timeout(decon_idx, 20 * 1000);
-+	decon_reg_set_te(decon_idx, config.mode, DECON_TRIG_UNMASK);
++	while (retry_cnt > 0) {
++		dp_reg_aux_ch_buf_clr(id);
++		dp_reg_aux_defer_ctrl(id, 1);
++		dp_reg_set_aux_reply_timeout(id);
++		dp_reg_set_aux_ch_command(id, comm);
++		dp_reg_set_aux_ch_address(id, address);
++		dp_reg_set_aux_ch_length(id, length);
++		if (comm == DPCD_WRITE)
++			dp_reg_aux_ch_send_buf(id, data, length);
++
++		ret = dp_reg_set_aux_ch_operation_enable(id);
++		if (ret == 0) {
++			ret = length;
++			break;
++		}
++		retry_cnt--;
++	}
 +
 +	return ret;
 +}
 +
-+static int decon_reg_set_disable(u32 decon_idx, struct decon_mode mode)
++int dp_reg_aux_read(u32 id, u32 comm, u32 address, u32 length, u8 *data)
 +{
 +	int ret = 0;
-+	const int timeout_value = 1000 / 60 * 12 / 10 + 5;
++	int retry_cnt = AUX_RETRY_COUNT;
 +
-+	if (!decon_reg_get_run_status(decon_idx)) {
-+		pr_info("already IDLE status\n");
-+		return 0;
++	while (retry_cnt > 0) {
++		dp_link_write(id, AUX_REQUEST_CONTROL, 0);
++		dp_reg_set_aux_ch_command(id, comm);
++		dp_reg_set_aux_ch_address(id, address);
++		if (length)
++			dp_reg_set_aux_ch_length(id, length);
++		dp_reg_aux_ch_buf_clr(id);
++		dp_reg_aux_defer_ctrl(id, 1);
++		dp_reg_set_aux_reply_timeout(id);
++
++		ret = dp_reg_set_aux_ch_operation_enable(id);
++		if (ret == 0) {
++			dp_reg_aux_ch_received_buf(id, data, length);
++			ret = length;
++			break;
++		}
++		retry_cnt--;
 +	}
 +
-+	decon_reg_set_te(decon_idx, mode, DECON_TRIG_MASK);
++	return ret;
++}
 +
-+	decon_reg_set_disable_per_frame(decon_idx);
-+	decon_reg_set_update_req_global(decon_idx);
++int dp_reg_dpcd_write_burst(u32 id, u32 address, u32 length, u8 *data)
++{
++	int ret = 0, transferred = 0;
++	u32 i, buf_length, length_calculation;
 +
-+	ret = decon_reg_wait_run_is_off_timeout(decon_idx,
-+						timeout_value * MSEC);
-+	if (!ret) {
-+		decon_reg_reset(decon_idx);
-+		return 0;
++	length_calculation = length;
++	for (i = 0; i < length; i += AUX_DATA_BUF_COUNT) {
++		if (length_calculation >= AUX_DATA_BUF_COUNT) {
++			buf_length = AUX_DATA_BUF_COUNT;
++			length_calculation -= AUX_DATA_BUF_COUNT;
++		} else {
++			buf_length = length % AUX_DATA_BUF_COUNT;
++			length_calculation = 0;
++		}
++
++		ret = dp_reg_aux_write(id, DPCD_WRITE, address + i, buf_length,
++				       data + i);
++		if (ret <= 0) {
++			cal_log_err(id, "DPCD write burst fail\n");
++			break;
++		}
++
++		transferred += ret;
++	}
++
++	return transferred;
++}
++
++int dp_reg_dpcd_read_burst(u32 id, u32 address, u32 length, u8 *data)
++{
++	int ret = 0, transferred = 0;
++	u32 i, buf_length, length_calculation;
++
++	length_calculation = length;
++
++	for (i = 0; i < length; i += AUX_DATA_BUF_COUNT) {
++		if (length_calculation >= AUX_DATA_BUF_COUNT) {
++			buf_length = AUX_DATA_BUF_COUNT;
++			length_calculation -= AUX_DATA_BUF_COUNT;
++		} else {
++			buf_length = length % AUX_DATA_BUF_COUNT;
++			length_calculation = 0;
++		}
++
++		ret = dp_reg_aux_read(id, DPCD_READ, address + i, buf_length,
++				      data + i);
++		if (ret <= 0) {
++			cal_log_err(id, "DPCD read burst fail\n");
++			break;
++		}
++
++		transferred += ret;
++	}
++
++	return transferred;
++}
++
++static void dp_reg_set_lane_map(u32 id, u32 lane0, u32 lane1, u32 lane2,
++				u32 lane3)
++{
++	dp_link_write_mask(id, PCS_LANE_CONTROL, lane0, LANE0_MAP);
++	dp_link_write_mask(id, PCS_LANE_CONTROL, LANE1_MAP_VAL(lane1),
++			   LANE1_MAP);
++	dp_link_write_mask(id, PCS_LANE_CONTROL, LANE2_MAP_VAL(lane2),
++			   LANE2_MAP);
++	dp_link_write_mask(id, PCS_LANE_CONTROL, LANE3_MAP_VAL(lane3),
++			   LANE3_MAP);
++}
++
++static void dp_reg_set_lane_map_config(u32 id)
++{
++	dp_reg_set_lane_map(id, 0, 1, 2, 3);
++}
++
++static void dp_reg_lh_p_ch_power(u32 id, u32 sst_id, u32 en)
++{
++	u32 cnt = 20 * 1000; /* wait 1ms */
++	u32 state;
++	u32 reg_offset = 0;
++	u32 val;
++
++	val = en ? ~0 : 0;
++
++	switch (sst_id) {
++	case 3:
++		reg_offset = SYSTEM_SST4_FUNCTION_ENABLE;
++		break;
++	case 2:
++		reg_offset = SYSTEM_SST3_FUNCTION_ENABLE;
++		break;
++	case 1:
++		reg_offset = SYSTEM_SST2_FUNCTION_ENABLE;
++		break;
++	case 0:
++	default:
++		reg_offset = SYSTEM_SST1_FUNCTION_ENABLE;
++	}
++
++	dp_link_write_mask(id, reg_offset, val, SST1_LH_PWR_ON);
++
++	do {
++		state = dp_link_read_mask(id, reg_offset,
++					  SST1_LH_PWR_ON_STATUS);
++		cnt--;
++		udelay(1);
++	} while ((en ^ state) && cnt);
++	/*
++	 * en xor state
++	 * if (en), do while (!state) = en(1), state(0)
++	 * else, do while(state) = en(0), state(1)
++	 */
++
++	if (!(en ^ state) && !cnt) {
++		cal_log_err(id, "%s on is timeout[%d].\n", __func__, state);
++		cal_log_err(id, "SYSTEM_CLK_CONTROL[0x%08x]\n",
++			    dp_link_read(id, SYSTEM_CLK_CONTROL));
++		cal_log_err(id, "SYSTEM_PLL_LOCK_CONTROL[0x%08x]\n",
++			    dp_link_read(id, SYSTEM_PLL_LOCK_CONTROL));
++		cal_log_err(id, "SYSTEM_DEBUG[0x%08x]\n",
++			    dp_link_read(id, SYSTEM_DEBUG));
++		cal_log_err(id, "SYSTEM_DEBUG_LH_PCH[0x%08x]\n",
++			    dp_link_read(id, SYSTEM_DEBUG_LH_PCH));
++		cal_log_err(id, "SST%d_VIDEO_CONTROL[0x%08x]\n", sst_id + 1,
++			    dp_link_read(id,
++					 SST1_VIDEO_CONTROL + 0x1000 * sst_id));
++		cal_log_err(id, "SST%d_VIDEO_DEBUG_FSM_STATE[0x%08x]\n",
++			    sst_id + 1,
++			    dp_link_read(id, SST1_VIDEO_DEBUG_FSM_STATE +
++						     0x1000 * sst_id));
++		cal_log_err(id, "SST%d_VIDEO_DEBUG_MAPI[0x%08x]\n", sst_id + 1,
++			    dp_link_read(id, SST1_VIDEO_DEBUG_MAPI +
++						     0x1000 * sst_id));
++		cal_log_err(id, "SYSTEM_SW_FUNCTION_ENABLE[0x%08x]\n",
++			    dp_link_read(id, SYSTEM_SW_FUNCTION_ENABLE));
++		cal_log_err(id, "SYSTEM_COMMON_FUNCTION_ENABLE[0x%08x]\n",
++			    dp_link_read(id, SYSTEM_COMMON_FUNCTION_ENABLE));
++		cal_log_err(id, "SYSTEM_SST%d_FUNCTION_ENABLE[0x%08x]\n",
++			    sst_id + 1, dp_link_read(id, reg_offset));
++	}
++}
++
++static void dp_reg_sw_function_en(u32 id, u32 en)
++{
++	dp_link_write_mask(id, SYSTEM_SW_FUNCTION_ENABLE, en, SW_FUNC_EN);
++}
++
++int dp_reg_get_link_clock(u32 id)
++{
++	int val = 0;
++
++	val = dp_link_read_mask(id, SYSTEM_CLK_CONTROL, GFMUX_STATUS_TXCLK);
++
++	/* If PHY_PLL goes to lock and video data is transferred from DECON
++	   then GFMUX_STATUS_TXCLK changes from OSC_CLK to TXCLK */
++	return val & GFMUX_STATUS_TXCLK_ON;
++}
++
++bool dp_reg_get_sst_pstate(u32 id)
++{
++	u32 val = 0;
++
++	u32 mask = SST1_LH_PSTATE | SST2_LH_PSTATE | SST3_LH_PSTATE |
++		   SST4_LH_PSTATE;
++	val = dp_link_read_mask(id, SYSTEM_DEBUG_LH_PCH, mask);
++
++	if (val)
++		return true;
++	else
++		return false;
++}
++
++static u32 dp_reg_get_lh_power_status(u32 id, u32 sst_id)
++{
++	u32 val = 0;
++	u32 reg_offset = 0;
++
++	switch (sst_id) {
++	case 0:
++		reg_offset = SYSTEM_SST1_FUNCTION_ENABLE;
++		break;
++	case 1:
++		reg_offset = SYSTEM_SST2_FUNCTION_ENABLE;
++		break;
++	case 2:
++		reg_offset = SYSTEM_SST3_FUNCTION_ENABLE;
++		break;
++	case 3:
++		reg_offset = SYSTEM_SST4_FUNCTION_ENABLE;
++		break;
++	default:
++		reg_offset = SYSTEM_SST1_FUNCTION_ENABLE;
++	}
++
++	val = dp_link_read_mask(id, reg_offset, SST1_LH_PWR_ON_STATUS);
++	val |= dp_link_read_mask(id, reg_offset, SST1_VIDEO_FUNC_EN);
++
++	return val;
++}
++
++static void dp_reg_phy_init(u32 id)
++{
++	dp_reg_phy_reset(id, 1);
++	dp_reg_phy_init_setting(id);
++	dp_reg_phy_mode_setting(id);
++	dp_reg_phy_ssc_enable(id, 0);
++	dp_reg_phy_reset(id, 0);
++	dp_reg_wait_phy_pll_lock(id);
++}
++
++void dp_reg_phy_disable(u32 id)
++{
++	dp_reg_phy_reset(id, 1);
++	dp_phy_write(id, CMN_REG00A2, 0x00);
++}
++
++void dp_reg_init(u32 id)
++{
++	dp_reg_phy_init(id);
++	dp_reg_common_function_enable(id, 1);
++	dp_reg_sw_function_en(id, 1);
++	dp_reg_set_lane_map_config(id);
++}
++
++void dp_reg_deinit(u32 id)
++{
++	dp_reg_common_function_enable(id, 0);
++	dp_reg_sw_function_en(id, 0);
++}
++
++static u8 dp_reg_find_hw_bpc_value(u8 bpc)
++{
++	u8 ret;
++	switch (bpc) {
++	case 6:
++		ret = BPC_6;
++		break;
++	case 8:
++		ret = BPC_8;
++		break;
++	case 10:
++		ret = BPC_10;
++		break;
++	default:
++		ret = BPC_8;
++		break;
++	}
++
++	return ret;
++}
++
++void dp_reg_set_video_config(u32 id, struct dp_video_info dp_video_info)
++{
++	u32 sst_id = -1;
++	u8 bpc = 0;
++	u8 range = 0;
++
++	sst_id = dp_video_info.sst_id;
++	bpc = dp_reg_find_hw_bpc_value(dp_video_info.bpc);
++	range = dp_video_info.dyn_range;
++
++	dp_reg_set_daynamic_range(id, sst_id, (range) ? CEA_RANGE : VESA_RANGE);
++	dp_link_write_mask(id, SST1_VIDEO_CONTROL + 0x1000 * sst_id,
++			   BPC_VAL(bpc), BPC); /* 0 : 6bits, 1 : 8bits */
++	dp_link_write_mask(id, SST1_VIDEO_CONTROL + 0x1000 * sst_id, 0,
++			   COLOR_FORMAT); /* RGB */
++	dp_reg_video_format_setting(id, dp_video_info);
++	dp_reg_set_video_clock(id, sst_id, dp_video_info.vm.pixelclock);
++	/* DSC: Note that dsc_en should be called first to set active_symbol properly */
++	dp_reg_set_dsc_stream(id, sst_id, dp_video_info.dsc, 1);
++	dp_reg_set_active_symbol(id, sst_id, dp_video_info.vm.pixelclock, bpc);
++	dp_link_write_mask(id, SST1_VIDEO_MASTER_TIMING_GEN + 0x1000 * sst_id,
++			   ~0, VIDEO_MASTER_TIME_GEN);
++	dp_link_write_mask(id, SST1_MAIN_CONTROL + 0x1000 * sst_id, 0,
++			   VIDEO_MODE);
++}
++
++void dp_reg_set_bist_video_config(u32 id, struct dp_video_info dp_video_info,
++				  u8 type)
++{
++	u32 sst_id = -1;
++	u8 bpc = 0;
++	u8 range = 0;
++
++	sst_id = dp_video_info.sst_id;
++	bpc = dp_reg_find_hw_bpc_value(dp_video_info.bpc);
++	range = dp_video_info.dyn_range;
++
++	if (type < CTS_COLOR_RAMP) {
++		dp_reg_set_video_config(id, dp_video_info);
++		dp_link_write_mask(id,
++				   SST1_VIDEO_BIST_CONTROL + 0x1000 * sst_id,
++				   type, BIST_TYPE);
++		dp_link_write_mask(id,
++				   SST1_VIDEO_BIST_CONTROL + 0x1000 * sst_id, 0,
++				   CTS_BIST_EN);
 +	} else {
-+		__decon_reg_set_disable(decon_idx);
-+		decon_reg_set_update_req_global(decon_idx);
++		if (type == CTS_COLOR_SQUARE_CEA)
++			dp_video_info.dyn_range = CEA_RANGE;
++		else
++			dp_video_info.dyn_range = VESA_RANGE;
++		dp_reg_set_video_config(id, dp_video_info);
 +
-+		ret = decon_reg_wait_run_is_off_timeout(decon_idx,
-+							timeout_value * MSEC);
-+		decon_reg_clear_interrupt_all(decon_idx);
++		dp_link_write_mask(id,
++				   SST1_VIDEO_BIST_CONTROL + 0x1000 * sst_id,
++				   CTS_BIST_TYPE_VAL(type - CTS_COLOR_RAMP),
++				   CTS_BIST_TYPE);
++		dp_link_write_mask(id,
++				   SST1_VIDEO_BIST_CONTROL + 0x1000 * sst_id,
++				   ~0, CTS_BIST_EN);
 +	}
 +
-+	return ret;
++	dp_reg_set_video_bist_mode(id, sst_id, 1);
++
++	cal_log_info(
++		id, "set bist video config res:%dx%d range:%d bpc:%d type:%d\n",
++		dp_video_info.vm.hactive, dp_video_info.vm.vactive,
++		(range) ? 1 : 0, (bpc) ? 1 : 0, type);
 +}
 +
-+static void decon_reg_enable_window(u32 decon_idx, u32 win_idx,
-+				    struct decon_win_config *config)
++void dp_reg_start(u32 id, u32 sst_id)
 +{
-+	if (!config) {
-+		pr_err("window%d config is NULL\n", win_idx);
++	dp_reg_sst_function_enable(id, sst_id, 1);
++	dp_reg_set_sst_stream_enable(id, sst_id, 1);
++	dp_reg_set_sst_interrupt_mask(id, sst_id, VIDEO_FIFO_UNDER_FLOW_MASK,
++				      0);
++	dp_link_write_mask(id, SST1_VIDEO_ENABLE + 0x1000 * sst_id, 1,
++			   VIDEO_EN);
++	dp_reg_lh_p_ch_power(id, sst_id, 1);
++}
++
++static void dp_reg_wait_vsync_interrupt_status(u32 id, u32 sst_id)
++{
++	u32 cnt = 500; /* waiting time:50ms */
++	u32 state;
++	u32 irq_status_reg = SST1_INTERRUPT_STATUS_SET0 + (0x1000 * sst_id);
++
++	do {
++		state = dp_link_read_mask(id, irq_status_reg, VSYNC_DET_MASK);
++		cnt--;
++		udelay(100);
++	} while (!state && cnt);
++
++	if (!cnt)
++		cal_log_err(id, "%s is timeout.\n", __func__);
++}
++
++void dp_reg_stop(u32 id, u32 sst_id)
++{
++	u32 offset = 0x1000 * sst_id;
++	struct dp_video_info dp_vi;
++
++	memset(&dp_vi, 0, sizeof(struct dp_video_info));
++
++	if (!dp_reg_get_lh_power_status(id, sst_id)) {
++		cal_log_info(id, "already IDLE status(sst=%d)\n", sst_id);
 +		return;
 +	}
 +
-+	decon_reg_set_window_config(decon_idx, win_idx, config);
-+	decon_reg_set_window_enable(decon_idx, win_idx, config->dpp_type);
++	dp_reg_set_sst_interrupt_mask(id, sst_id, VIDEO_FIFO_UNDER_FLOW_MASK,
++				      0);
++	dp_link_write_mask(id, SST1_VIDEO_ENABLE + offset, 0, VIDEO_EN);
++	dp_reg_get_int_and_clear(id, DP_IRQ_REG_SST1_SET0 + sst_id);
++	dp_reg_wait_vsync_interrupt_status(id, sst_id);
++	dp_link_write_mask(id, SST1_VIDEO_MASTER_TIMING_GEN + offset, 0,
++			   VIDEO_MASTER_TIME_GEN);
++	dp_link_write_mask(id, SST1_VIDEO_ENABLE + offset, 0, VIDEO_EN);
++	dp_reg_lh_p_ch_power(id, sst_id, 0);
++
++	/* DSC: DSC disable should be called after checking check LH_PWR_ON_STATUS[5] = 1'b0 */
++	dp_reg_set_dsc_stream(id, sst_id, dp_vi.dsc, 0);
++
++	dp_link_write_mask(id, SST1_MAIN_FIFO_CONTROL + offset, ~0,
++			   CLEAR_MAPI_FIFO);
++	dp_reg_get_int_and_clear(id, DP_IRQ_REG_SST1_SET0 + sst_id);
++	dp_reg_set_sst_stream_enable(id, sst_id, 0);
 +}
 +
-+static void decon_reg_disable_window(u32 decon_idx, u32 win_idx)
++void dp_reg_set_mst_en(u32 id, u32 en)
 +{
-+	decon_reg_clear_window_config(decon_idx, win_idx);
-+	decon_reg_set_window_disable(decon_idx, win_idx);
++	u32 val = en ? ~0 : 0;
++	dp_link_write_mask(id, MST_ENABLE, val, MST_EN);
 +}
 +
-+static int decon_reg_enable(u32 decon_idx, struct decon_config config)
++void dp_reg_set_strm_x_y(u32 id, u32 sst_id, u32 x_val, u32 y_val)
 +{
-+	int ret = 0;
-+
-+	ret = decon_reg_set_enable(decon_idx, config);
-+	if (ret)
-+		return ret;
-+
-+	decon_reg_set_interrupt(decon_idx, 1);
-+
-+	return ret;
++	cal_log_info(id, "SST:%d, x:%d, y:%d\n", sst_id + 1, x_val, y_val);
++	dp_link_write_mask(id, MST_STREAM_X_VALUE(sst_id), x_val, STRM_VALUE);
++	dp_link_write_mask(id, MST_STREAM_Y_VALUE(sst_id), y_val, STRM_VALUE);
 +}
 +
-+static int decon_reg_disable(u32 decon_idx, struct decon_config config)
++void dp_reg_set_vcpi_timeslot(u32 id, u32 sst_id, u32 start, u32 size)
 +{
-+	int ret = 0;
++	int i;
++	u32 val[8] = {0, }, shift_val;
++	int timeslot_start = start - 1;
++	int timeslot_end = timeslot_start + size;
++	int start_offset = timeslot_start / 8;
++	int end_offset = timeslot_end / 8;
 +
-+	decon_reg_set_interrupt(decon_idx, 0);
++	if (timeslot_end <= MAX_VC_PAYLOAD_TIMESLOT) {
++		val[start_offset] =
++			dp_link_read(id, MST_VC_PAYLOAD_ID_TIMESLOT_01_08 +
++						 4 * start_offset);
 +
-+	ret = decon_reg_set_disable(decon_idx, config.mode);
-+	if (ret)
-+		return ret;
++		for (i = timeslot_start; i < timeslot_end; i++) {
++			/* bit masking first */
++			shift_val = 28 - ((i * 4) % 32);
++			val[i / 8] &= VC_PAYLOAD_ID_MASK(shift_val);
++			/* save sst_id into timeslot bit */
++			val[i / 8] |= sst_id << shift_val;
++		}
 +
-+	return ret;
-+}
-+
-+struct decon_dev_data {
-+	const u32 nr_decon;
-+	const u32 nr_win;
-+	const struct decon_cal_ops *cal_ops;
-+};
-+
-+static const struct decon_dev_data exynos910_decon = {
-+	.nr_decon = 2,
-+	.nr_win = 8,
-+};
-+
-+static const struct of_device_id decon_driver_dt_match[] = {
-+	{ .compatible = "samsung,exynos910-decon",
-+	  .data = (void *)&exynos910_decon },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, decon_driver_dt_match);
-+
-+static struct decon_win *plane_to_decon_win(struct drm_plane *e)
-+{
-+	return container_of(to_exynos_plane(e), struct decon_win, plane);
-+}
-+
-+/* ARGB value */
-+#define COLOR_MAP_VALUE 0x00ff0000
-+
-+static void decon_set_win_color_map(struct decon_win *window, bool en)
-+{
-+	struct decon_win_config *config = &window->config;
-+
-+	config->color_map.en = en;
-+	config->color_map.val = COLOR_MAP_VALUE;
-+}
-+
-+static enum drm_mode_status
-+decon_mode_valid(struct exynos_drm_crtc *crtc,
-+		 const struct drm_display_mode *mode)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+
-+	/* DECON use only video mode */
-+	if ((mode->hdisplay < DECON_VIDEO_MODE_WIDTH_MIN) ||
-+	    (mode->hdisplay > DECON_WIDTH_MAX) || (mode->hdisplay % 2)) {
-+		drm_err(ctx->drm_dev, "mode hdisplay(%d) is bad\n",
-+			mode->hdisplay);
-+		return MODE_BAD_HVALUE;
++		for (i = start_offset; i <= end_offset; i++)
++			dp_link_write(id,
++				      MST_VC_PAYLOAD_ID_TIMESLOT_01_08 + 4 * i,
++				      val[i]);
++	} else {
++		cal_log_err(id, "Over MAX_VC_PAYLOAD_TIMESLOT\n");
 +	}
 +
-+	if ((mode->vdisplay < DECON_HEIGHT_MIN) ||
-+	    (mode->vdisplay > DECON_WIDTH_MAX)) {
-+		drm_err(ctx->drm_dev, "mode vdisplay(%d) is bad\n",
-+			mode->vdisplay);
-+		return MODE_BAD_VVALUE;
++	for (i = start_offset; i <= end_offset; i++)
++		cal_log_info(id, "MST_VC_PAYLOAD_ID_TIMESLOT_%d = 0x%8x\n", i,
++			     dp_link_read(id, MST_VC_PAYLOAD_ID_TIMESLOT_01_08 +
++						      4 * i));
++}
++
++static void dp_reg_reset_vcpi_timeslot(u32 id)
++{
++	u32 i;
++
++	for (i = MST_VC_PAYLOAD_ID_TIMESLOT_01_08;
++	     i <= MST_VC_PAYLOAD_ID_TIMESLOT_57_63; i += 4)
++		dp_link_write(id, i, 0);
++}
++
++void dp_reg_remove_vcpi_timeslot(u32 id, u32 sst_id)
++{
++	int i;
++	int idx = 0;
++	int vcpi_idx[5] = {
++		0,
++	};
++	int vcpi_num[5] = {
++		0,
++	};
++	int vcpi_start = 0;
++	u32 tmp;
++	u32 sst_idx = sst_id + 1;
++
++	if (!dp_link_read_mask(id, MST_ENABLE, MST_EN))
++		return;
++
++	for (i = 0; i <= MAX_VC_PAYLOAD_TIMESLOT; i++) {
++		tmp = dp_link_read_mask(id,
++					MST_VC_PAYLOAD_ID_TIMESLOT_01_08 +
++						(4 * (int)(i / 8)),
++					0x7 << (28 - (i % 8) * 4)) >>
++		      (28 - (i % 8) * 4);
++		if (sst_idx != tmp)
++			vcpi_num[tmp]++;
++
++		if (i == 0)
++			vcpi_idx[idx] = tmp;
++		else if (vcpi_idx[idx] != tmp) {
++			idx++;
++			vcpi_idx[idx] = tmp;
++		}
 +	}
 +
-+	return MODE_OK;
-+}
++	dp_reg_reset_vcpi_timeslot(id);
++	for (i = 0; i <= MAX_SST_CNT; i++) {
++		if (i > 0)
++			vcpi_start += vcpi_num[vcpi_idx[i - 1]];
 +
-+static void decon_atomic_begin(struct exynos_drm_crtc *crtc)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+
-+	decon_reg_set_te(ctx->idx, ctx->config.mode, DECON_TRIG_MASK);
-+}
-+
-+static enum decon_blend_mode to_decon_blend_mode(u16 drm_blend_mode)
-+{
-+	switch (drm_blend_mode) {
-+	case DRM_MODE_BLEND_PIXEL_NONE:
-+		return DECON_BLENDING_NONE;
-+
-+	case DRM_MODE_BLEND_COVERAGE:
-+		return DECON_BLENDING_COVERAGE;
-+
-+	case DRM_MODE_BLEND_PREMULTI:
-+	default:
-+		return DECON_BLENDING_PREMULT;
-+	}
-+}
-+
-+static void decon_update_plane(struct exynos_drm_crtc *crtc,
-+			       struct exynos_drm_plane *plane)
-+{
-+	struct exynos_drm_plane_state *state =
-+		to_exynos_plane_state(plane->base.state);
-+	struct decon_context *ctx = crtc->ctx;
-+	struct decon_win *window = plane_to_decon_win(&plane->base);
-+	struct decon_win_config *config = &window->config;
-+	struct exynos_drm_rect *rect = &state->crtc;
-+	struct drm_device *drm_dev = ctx->drm_dev;
-+	struct exynos_drm_private *priv = drm_dev->dev_private;
-+	struct exynos_dpu_dma_context *dma_ctx = dev_get_drvdata(priv->dma_dev);
-+
-+	ctx->plane_mask |= drm_plane_mask(&plane->base);
-+
-+	config->x = state->crtc.x;
-+	config->y = state->crtc.y;
-+	config->w = state->crtc.w;
-+	config->h = state->crtc.h;
-+	config->start_time = 0;
-+	config->alpha = state->base.alpha >> 8;
-+	config->blend_mode = to_decon_blend_mode(state->base.pixel_blend_mode);
-+	config->dpp_type = window->dpp->type;
-+
-+	decon_set_win_color_map(window, ctx->is_colormap);
-+
-+	dpp_update(window->dpp, 0, state);
-+	dpu_dma_update(dma_ctx, 0, state);
-+
-+	decon_reg_enable_window(ctx->idx, window->idx, config);
-+
-+	drm_dbg(ctx->drm_dev, "WINDOW-%d(%s)(%4d, %4d, %4d, %4d)", window->idx,
-+		dev_name(window->dpp->dev), rect->x, rect->y, rect->w, rect->h);
-+}
-+
-+static void decon_disable_plane(struct exynos_drm_crtc *crtc,
-+				struct exynos_drm_plane *plane)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+	struct decon_win *window = plane_to_decon_win(&plane->base);
-+
-+	ctx->plane_mask |= drm_plane_mask(&plane->base);
-+
-+	decon_reg_disable_window(ctx->idx, window->idx);
-+
-+	ctx->disable_mask |= (1 << window->idx);
-+
-+	drm_dbg(ctx->drm_dev, "WINDOW-%d(%s)\n", window->idx,
-+		dev_name(window->dpp->dev));
-+}
-+
-+static void decon_atomic_flush(struct exynos_drm_crtc *crtc)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+	struct drm_crtc_state *state = crtc->base.state;
-+	struct drm_plane *plane;
-+	bool req_global = true;
-+
-+	synchronize_irq(ctx->irq_fd);
-+
-+	drm_for_each_plane_mask(plane, ctx->drm_dev, ctx->plane_mask) {
-+		struct decon_win *window = plane_to_decon_win(plane);
-+
-+		/* window update first to guarantee dma stop during dpp_disable */
-+		decon_reg_set_window_update_req(ctx->idx, window->idx);
-+
-+		// if (ctx->disable_mask & (1 << window->idx))
-+		// 	dpp_disable(window->dpp);
-+
-+		/* If at least one window is running, there is no need to set
-+		 * global update
-+		 */
-+		if (req_global &&
-+		    decon_reg_get_window_status(ctx->idx, window->idx))
-+			req_global = false;
-+	}
-+	ctx->disable_mask = 0;
-+
-+	if (drm_atomic_crtc_needs_modeset(state) || req_global)
-+		decon_reg_set_update_req_global(ctx->idx);
-+
-+	/* In case of fake vblank, it make vblank after 1 vsync time(16ms) */
-+	// if (ctx->fake_vblank)
-+	// 	drm_crtc_handle_vblank(&crtc->base);
-+	// schedule_delayed_work(&ctx->dwork, msecs_to_jiffies(16));
-+
-+	decon_reg_set_te(ctx->idx, ctx->config.mode, DECON_TRIG_UNMASK);
-+	exynos_crtc_handle_event(crtc);
-+
-+	drm_dbg(ctx->drm_dev, "flushed\n");
-+}
-+
-+static void decon_config_print(struct decon_config *config)
-+{
-+	struct decon_context *ctx =
-+		container_of(config, struct decon_context, config);
-+	char *str_output = NULL;
-+
-+	drm_dbg(ctx->drm_dev, "Operation Mode: %s\n",
-+		config->mode.op_mode ? "MIPI Command" : "Video");
-+	if (config->mode.op_mode == DECON_MIPI_COMMAND_MODE)
-+		drm_info(ctx->drm_dev, "Trigger Mode: %s\n",
-+			 config->mode.te_mode ? "SW" : "HW");
-+
-+	if (config->out_type & DECON_OUT_DSI0)
-+		str_output = "DSI0";
-+	else if (config->out_type & DECON_OUT_DSI1)
-+		str_output = "DSI1";
-+	else if (config->out_type & DECON_OUT_DP0)
-+		str_output = "DP0";
-+	else if (config->out_type & DECON_OUT_DP1)
-+		str_output = "DP1";
-+
-+	drm_info(ctx->drm_dev, "Output: %s\n", str_output);
-+}
-+
-+static void decon_set_mode(struct exynos_drm_crtc *crtc)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+	struct decon_mode *mode = &(ctx->config.mode);
-+	enum decon_out_type out_type = 0;
-+	struct drm_encoder *encoder;
-+
-+	drm_for_each_encoder_mask(encoder, crtc->base.dev,
-+				  crtc->base.state->encoder_mask)
-+		// TODO: make read port number and get it.
-+		out_type = DECON_OUT_DP0_SST1;
-+
-+	if (out_type & DECON_OUT_DP)
-+		mode->op_mode = DECON_VIDEO_MODE;
-+
-+	ctx->config.out_type = out_type;
-+}
-+
-+static void decon_enable(struct exynos_drm_crtc *crtc)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+
-+	drm_display_mode_to_videomode(&crtc->base.mode, &ctx->v_mode);
-+
-+	ctx->config.image_width = ctx->v_mode.hactive;
-+	ctx->config.image_height = ctx->v_mode.vactive;
-+	ctx->config.fps = drm_mode_vrefresh(&crtc->base.mode);
-+
-+	decon_set_mode(crtc);
-+
-+	decon_reg_enable(ctx->idx, ctx->config);
-+
-+	enable_irq(ctx->irq_fd);
-+
-+	decon_config_print(&ctx->config);
-+	drm_info(ctx->drm_dev, "enabled! crtc[%d] = %dx%d-%dHz (%d out_bpc)\n",
-+		 crtc->base.base.id, ctx->config.image_width,
-+		 ctx->config.image_height, ctx->config.fps,
-+		 ctx->config.out_bpc);
-+}
-+
-+static void decon_disable(struct exynos_drm_crtc *crtc)
-+{
-+	struct decon_context *ctx = crtc->ctx;
-+
-+	disable_irq(ctx->irq_fd);
-+}
-+
-+static const struct exynos_drm_crtc_ops decon_crtc_ops = {
-+	.atomic_enable = decon_enable,
-+	.atomic_disable = decon_disable,
-+	.mode_valid = decon_mode_valid,
-+	.atomic_begin = decon_atomic_begin,
-+	.update_plane = decon_update_plane,
-+	.disable_plane = decon_disable_plane,
-+	.atomic_flush = decon_atomic_flush,
-+};
-+
-+/* H/W goes to stop or reset state when OS restarting during h/w operation */
-+static void decon_reset(struct decon_context *ctx, int rpm_req)
-+{
-+	int ret;
-+	struct decon_config config = { 0 };
-+
-+	ret = decon_reg_disable(ctx->idx, config);
-+	if (ret) {
-+		drm_err(ctx->drm_dev, "failed to try job_abort\n");
++		if (vcpi_num[vcpi_idx[i]] && vcpi_idx[i]) {
++			dp_reg_set_vcpi_timeslot(id, vcpi_idx[i],
++						 vcpi_start + 1,
++						 vcpi_num[vcpi_idx[i]]);
++		}
 +	}
 +}
 +
-+static enum drm_plane_type decon_get_win_type(int win_idx, int last_idx)
++int dp_reg_wait_for_vcpi_update(u32 id)
 +{
-+	if (win_idx == 0)
-+		return DRM_PLANE_TYPE_PRIMARY;
-+	else if (win_idx == last_idx)
-+		return DRM_PLANE_TYPE_CURSOR;
-+	else
-+		return DRM_PLANE_TYPE_OVERLAY;
-+};
++	u32 cnt = 3000;
++	u32 val;
 +
-+static const u32 dpp_gf_formats[] = {
-+	DRM_FORMAT_ARGB8888,	DRM_FORMAT_ABGR8888,	DRM_FORMAT_RGBA8888,
-+	DRM_FORMAT_BGRA8888,	DRM_FORMAT_XRGB8888,	DRM_FORMAT_XBGR8888,
-+	DRM_FORMAT_RGBX8888,	DRM_FORMAT_BGRX8888,	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_BGR565,	DRM_FORMAT_ARGB2101010, DRM_FORMAT_ABGR2101010,
-+	DRM_FORMAT_RGBA1010102, DRM_FORMAT_BGRA1010102,
-+};
++	dp_link_write(id, MST_VC_PAYLOAD_UPDATE_FLAG, VC_PAYLOAD_UPDATE_FLAG);
 +
-+static bool exynos_crtc_handle_vblank(struct exynos_drm_crtc *exynos_crtc)
-+{
-+	return drm_crtc_handle_vblank(&exynos_crtc->base);
-+}
++	do {
++		val = dp_link_read(id, MST_VC_PAYLOAD_UPDATE_FLAG) &
++		      VC_PAYLOAD_UPDATE_FLAG;
++		cnt--;
++		udelay(10);
++	} while (val && cnt);
 +
-+static void exynos_crtc_delayed_vblank(struct work_struct *work)
-+{
-+	struct delayed_work *delayed_work =
-+		container_of(work, struct delayed_work, work);
-+	struct decon_context *ctx =
-+		container_of(delayed_work, struct decon_context, dwork);
-+
-+	exynos_crtc_handle_vblank(ctx->crtc);
-+}
-+
-+static int decon_bind(struct device *dev, struct device *master, void *data)
-+{
-+	struct decon_context *ctx = dev_get_drvdata(dev);
-+	struct drm_device *drm_dev = data;
-+	struct drm_plane *primary_plane = NULL;
-+	struct exynos_drm_private *priv = drm_dev->dev_private;
-+
-+	int i, ret = 0;
-+
-+	/* Release a pm_runtime opposite to xxx_reset */
-+	decon_reset(ctx, RPM_REQ_SUSPEND);
-+
-+	ctx->drm_dev = drm_dev;
-+
-+	for (i = 0; i < ctx->win_cnt; i++) {
-+		struct decon_win *win = &ctx->win[i];
-+		struct exynos_dpp_context *dpp = dev_get_drvdata(priv->dpp_dev);
-+		ctx->win[i].dpp = dpp;
-+
-+		if (!dpp)
-+			continue;
-+
-+		win->plane_config.pixel_formats = dpp_gf_formats;
-+		win->plane_config.num_pixel_formats = 14;
-+		win->plane_config.zpos = i;
-+		win->plane_config.type =
-+			decon_get_win_type(i, ctx->win_cnt - 1);
-+
-+		ret = exynos_plane_init(drm_dev, &win->plane, i,
-+					&win->plane_config);
-+		if (ret)
-+			return ret;
-+
-+		if (win->plane_config.type == DRM_PLANE_TYPE_PRIMARY)
-+			primary_plane = &win->plane.base;
-+		// if (win->plane_config.type == DRM_PLANE_TYPE_CURSOR)
-+		// 	cursor_plane = &win->plane.base;
++	if (!cnt) {
++		cal_log_err(id, "MST_VC_PAYLOAD_UPDATE_FLAG wait timeout.\n");
++		return -ETIMEDOUT;
 +	}
-+
-+	ctx->crtc = exynos_drm_crtc_create(drm_dev, primary_plane, 0,
-+					   &decon_crtc_ops, ctx);
-+
-+	INIT_DELAYED_WORK(&ctx->dwork, exynos_crtc_delayed_vblank);
-+
-+	if (IS_ERR(ctx->crtc))
-+		return PTR_ERR(ctx->crtc);
-+
-+	//encoder, connector init. not this way
-+	ctx->crtc->base.port = of_graph_get_port_by_id(dev->of_node, 0);
 +
 +	return 0;
 +}
 +
-+static void decon_unbind(struct device *dev, struct device *master, void *data)
++void dp_reg_set_mst_always_sent_act(u32 id, u32 en)
 +{
-+	struct decon_context *ctx = dev_get_drvdata(dev);
-+	decon_disable(ctx->crtc);
++	u32 val;
++
++	val = en ? ~0 : 0;
++	/*
++	 * MST_ETC_OPTION : 0x2070 : ALLOCATE_TIMESLOT_CHECK_TO_ACT[1]
++	 * L : if VC_PAYLOAD Table is not updated, ACT is not sent.
++	 * H : 'Always sent ACT' after ECF change
++	 */
++	dp_link_write_mask(id, MST_ETC_OPTION, val,
++			   ALLOCATE_TIMESLOT_CHECK_TO_ACT);
 +}
 +
-+static const struct component_ops decon_component_ops = {
-+	.bind = decon_bind,
-+	.unbind = decon_unbind,
++u32 dp_reg_read_vcpi_timeslot(u32 id, u32 index)
++{
++	if (index >= NUM_VC_PAYLOAD_SLOT)
++		index = NUM_VC_PAYLOAD_SLOT - 1;
++
++	return dp_link_read(id, MST_VC_PAYLOAD_ID_TIMESLOT_01_08 + 4 * index);
++}
++
++
++#define DEV_NAME "exynos_dp"
++#define DEFAULT_BPC 8 /* DP supports at least 8 bpc */
++
++struct dp_dev_data {
++	const enum chip_version version;
 +};
 +
-+static bool decon_get_window_update_req(struct exynos_drm_crtc *crtc)
++// static void __exynos910_drm_dp_dump_sfr(struct exynos_dp_subdev *subdev)
++// {
++// 	struct device *dev = subdev->dev;
++// 	struct dp_regs *regs = &subdev->regs;
++// 	int i;
++
++// 	if (regs->link_addr) {
++// 		print_dump_info("DP_LINK BASE(%s) +", dev_name(dev));
++// 		print_hexdump(regs->link_addr,		0x210);
++// 		print_hexdump(regs->link_addr + 0x1000,	0x60);
++// 		print_hexdump(regs->link_addr + 0x1100,	0x20);
++// 		print_hexdump(regs->link_addr + 0x2000,	0x80);
++// 		print_hexdump(regs->link_addr + 0x3000,	0x120);
++// 		/* TODO: Should be added SSTx SFR */
++// 		print_dump_info("DP_LINK BASE(%s) -", dev_name(dev));
++// 		for (i = 0; i < DP_SST_MAX; i++) {
++// 			struct exynos_dp_video_info *vi = &subdev->vi[i];
++// 			print_dump_info("DP_LINK SST%d +", i + 1);
++// 			print_hexdump(regs->link_addr + 0x5000 + (0x1000 * i), 0x108);
++// 			print_hexdump(regs->link_addr + 0x5400 + (0x1000 * i), 0x110);
++// 			if (vi->dsc.enable) {
++// 				print_hexdump(regs->link_addr + 0x5C20 + (0x1000 * i), 0x4);
++// 				print_hexdump(regs->link_addr + 0x5D00 + (0x1000 * i), 0x80);
++// 			}
++
++// 			print_dump_info("DP_LINK SST%d -", i + 1);
++// 		}
++// 	}
++
++// 	if (regs->phy_addr) {
++// 		print_dump_info("DP__PHY BASE(%s) +", dev_name(dev));
++// 		print_hexdump(regs->phy_addr,		0x428);
++// 		print_hexdump(regs->phy_addr + 0x800,	0x4D4);
++// 		print_hexdump(regs->phy_addr + 0x1000,	0xD0);
++// 		print_hexdump(regs->phy_addr + 0x10D4,	0x4);
++// 		print_hexdump(regs->phy_addr + 0x1800,	0x4D4);
++// 		print_hexdump(regs->phy_addr + 0x2000,	0xD0);
++// 		print_hexdump(regs->phy_addr + 0x20D4,	0x4);
++// 		print_dump_info("DP__PHY BASE(%s) -", dev_name(dev));
++// 	}
++// }
++
++int exynos_drm_dp_dump_sfr(struct exynos_dp_subdev *subdev)
 +{
-+	struct decon_context *ctx = crtc->ctx;
-+	struct drm_plane *plane;
++	int acquired;
 +
-+	drm_for_each_plane_mask(plane, ctx->drm_dev, ctx->plane_mask) {
-+		u32 win_idx = plane_to_decon_win(plane)->idx;
++	if (!subdev || !subdev->dev)
++		return -ENXIO;
 +
-+		if (decon_reg_get_window_update_req(ctx->idx, win_idx))
-+			return true;
-+	}
++	if (subdev->state == DP_STATE_OFF)
++		return -EBUSY;
 +
-+	return false;
++	acquired = console_trylock();
++
++	if (subdev->version == V910)
++		// __exynos910_drm_dp_dump_sfr(subdev);
++
++	if (acquired)
++		console_unlock();
++
++	return 0;
 +}
 +
-+static irqreturn_t decon_irq_handler(int irq, void *dev_id)
++void exynos_drm_dp_dpcd_status_dump(struct exynos_dp_subdev *dp)
 +{
-+	struct decon_context *ctx = dev_id;
++	u8 max_lane;
++	u8 link_lane = dp->lt_info.lane_cnt;
++	int max_rate;
++	int link_rate = drm_dp_bw_code_to_link_rate(dp->lt_info.link_rate);
++	struct device *dev = dp->dev;
++	bool enhance, tps3, tps4, dsc;
++	u8 info[DP_LINK_STATUS_SIZE];
 +
-+	// decon_reg_clear_interrupt(ctx->idx, DECON_IRQ_FS);
-+	decon_reg_clear_interrupt(ctx->idx, DECON_IRQ_FD);
++	max_rate	= drm_dp_max_link_rate(dp->dpcd);
++	max_lane	= drm_dp_max_lane_count(dp->dpcd);
++	enhance		= drm_dp_enhanced_frame_cap(dp->dpcd);
++	tps3		= drm_dp_tps3_supported(dp->dpcd);
++	tps4		= drm_dp_tps4_supported(dp->dpcd);
++	dsc		= drm_dp_sink_supports_dsc(dp->dsc_dpcd);
 +
-+	decon_reg_get_shadow_update_req(ctx->idx);
++	drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, info, DP_LINK_STATUS_SIZE);
++	dp_log_info(dev, "======= DP%d DPCD Link/Sink Dump =======\n", dp->id);
++	dp_log_info(dev, "Link:: RATE(%d) LANE(%d) ENHANCED(%d)\n",
++			max_rate, max_lane, enhance);
++	dp_log_info(dev, "       TPS3(%d) TPS4(%d)\n",
++			tps3, tps4);
++	dp_log_info(dev, "SINK:: RATE(%d) LANE(%d)\n",
++			link_rate, link_lane);
++	dp_log_info(dev, "DPCD(0x200~205) %*ph\n", DP_LINK_STATUS_SIZE, info);
 +
-+	if (ctx->config.mode.op_mode == DECON_VIDEO_MODE ||
-+	    !decon_get_window_update_req(ctx->crtc)) {
-+		drm_crtc_handle_vblank(&ctx->crtc->base);
++	if (dsc) {
++		drm_dp_dpcd_readb(&dp->aux, 0x20F, &info[0]);
++		dp_log_info(dev, "DSC_STATUS(0x20f):: %#2x\n", info[0]);
++
++		drm_dp_dpcd_read(&dp->aux, DP_FEC_STATUS, info,
++				DP_FEC_ERROR_COUNT_MSB - DP_FEC_STATUS);
++		dp_log_info(dev, "FEC_STATUS(0x280~281):: %#2x, %#2x\n",
++				info[0], info[1]);
 +	}
++	dp_log_info(dev, "======= DP%d                     =======\n", dp->id);
++}
++
++static bool exynos_drm_dp_check_dpcd_status(struct exynos_dp_subdev *dp)
++{
++	u8 link_status[DP_LINK_STATUS_SIZE];
++	int link_rate = drm_dp_bw_code_to_link_rate(dp->lt_info.link_rate);
++	u8 link_lane = dp->lt_info.lane_cnt;
++	bool status_err = false;
++
++	drm_dp_dpcd_read_link_status(&dp->aux, link_status);
++
++	if (!drm_dp_clock_recovery_ok(link_status, link_lane)) {
++		dp_log_err(dp->dev, "failed w/ LANE_CR_DONE(0x202~0x203)\n");
++		status_err = true;
++	}
++
++	if (!drm_dp_channel_eq_ok(link_status, link_lane)) {
++		dp_log_err(dp->dev, "failed w/ INTERLANE_ALIGN_DONE(0x204)\n");
++		status_err = true;
++	}
++
++	if (link_rate > drm_dp_max_link_rate(dp->dpcd)) {
++		dp_log_err(dp->dev, "failed w/ MAX_LINK_RATE\n");
++		status_err = true;
++	}
++
++	if (link_lane > drm_dp_max_lane_count(dp->dpcd)) {
++		dp_log_err(dp->dev, "failed w/ MAX_LINK_LANE\n");
++		status_err = true;
++	}
++
++	if (status_err)
++		exynos_drm_dp_dpcd_status_dump(dp);
++
++	if (dp->dp_debug.debug_hpd_irq)
++		return true;
++
++	return status_err;
++}
++
++void exynos_drm_dp_set_normal_data(struct exynos_dp_subdev *dp)
++{
++	dp_reg_set_training_pattern(dp->id, NORAMAL_DATA);
++	dp_reg_scrambling_enable(dp->id, 1);
++}
++
++static void exynos_drm_dp_hpd_changed(struct exynos_dp_subdev *dp, int state)
++{
++	struct device *dev = dp->dev;
++	int ret;
++
++	if (dp->hpd_state == state) {
++		dp_log_info(dev, "hpd same state skip %x\n", state);
++		return;
++	}
++
++	if (dp->hpd_state == HPD_CHECK) {
++		dp_log_info(dev, "hpd is being checked\n");
++		return;
++	}
++
++	dp_log_info(dev, "hpd state cur:%d -> new:%d\n", dp->hpd_state, state);
++
++	disable_irq(dp->hpd_gpio_irq);
++	if (state) {
++		dp->hpd_state = HPD_CHECK;
++		if (!dp->training_state) {
++			ret = exynos_drm_dp_link_training(dp);
++			if (ret < 0)
++				goto HPD_FAIL;
++		}
++		dp->training_state = true;
++		dp->hpd_state = HPD_PLUG;
++
++		if (state == HPD_PLUG && dp->detect)
++			dp->detect(dev);
++	} else {
++		dp->hpd_state = HPD_UNPLUG;
++		dp->training_state = false;
++
++		if (dp->detect)
++			dp->detect(dev);
++	}
++
++	dp_log_info(dp->dev, "hpd state goto %s\n", state ? "plug" : "unplug");
++	enable_irq(dp->hpd_gpio_irq);
++	return;
++
++HPD_FAIL:
++	dp_log_err(dev, "link training is failed\n");
++	dp->training_state = false;
++	dp->hpd_state = HPD_LT_FAILED;
++
++	enable_irq(dp->hpd_gpio_irq);
++	return;
++}
++
++static irqreturn_t exynos_drm_dp_irq(int irq, void *dev_id)
++{
++	struct exynos_dp_subdev *dp = dev_id;
++	struct device *dev = dp->dev;
++	u32 irq_type = 0, val;
++	int i = 0;
++	bool valid_gpio = gpio_is_valid(dp->hpd_gpio);
++	unsigned long flags;
++
++	spin_lock_irqsave(&dp->slock, flags);
++
++	/* common interrupt */
++	irq_type = dp_reg_get_int_and_clear(dp->id, DP_IRQ_REG_SYSTEM);
++
++	/* The priority for PLUG and UNPLUG behavior is HPD_GPIO than DPTX_IRQ.*/
++	if (!valid_gpio) {
++		if (irq_type & DP_IRQ_HPD_CHG)
++			dp_log_dbg(dev, "HPD_CHG detect\n");
++
++		if (irq_type & DP_IRQ_HPD_PLUG_INT) {
++			queue_delayed_work(dp->dp_wq, &dp->hpd_plug_work, 0);
++			dp_log_info(dev, "HPD_PLUG detect\n");
++		}
++	} else {
++		if (irq_type & DP_IRQ_HPD_LOST) {
++			queue_delayed_work(dp->dp_wq, &dp->hpd_unplug_work, 0);
++			dp_log_info(dev, "HPD_LOST detect\n");
++		}
++
++		if (irq_type & DP_IRQ_HPD_IRQ_FLAG) {
++			queue_delayed_work(dp->dp_wq, &dp->hpd_irq_work, 0);
++			dp_log_info(dev, "HPD_IRQ detect\n");
++		}
++
++		if (irq_type & DP_IRQ_HPD_PLUG_INT) {
++			queue_delayed_work(dp->dp_wq, &dp->hpd_plug_work, 0);
++			dp_log_info(dev, "HPD_PLUG detect\n");
++		}
++	}
++
++	if (irq_type)
++		dp_log_dbg(dev, "DP_IRQ_REG_SYSTEM=%#x\n", irq_type);
++
++	/* SST1~4 interrupt */
++	for (i = 0; i < MAX_SST_CNT; i++) {
++		val = dp_reg_get_int_and_clear(dp->id, DP_IRQ_REG_SST1_SET0 + i);
++
++		if ((val & DP_IRQ_MAPI_FIFO_UNDER_FLOW) && !irq_type)
++			dp_log_errl(dev, "SST%d FIFO_UNDER_FLOW=%#x\n",
++					i + 1, val);
++	}
++
++	spin_unlock_irqrestore(&dp->slock, flags);
 +
 +	return IRQ_HANDLED;
 +}
 +
-+static int decon_probe(struct platform_device *pdev)
++static irqreturn_t exynos_drm_dp_hpd_gpio_irq_thread(int irq, void *dev_id)
 +{
-+	int ret;
-+	struct decon_context *ctx;
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
++	struct exynos_dp_subdev *dp = dev_id;
++	struct device *dev = dp->dev;
++	unsigned long flags;
 +
-+	ctx = devm_kzalloc(dev, sizeof(struct decon_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
++	spin_lock_irqsave(&dp->slock, flags);
 +
-+	ctx->dev = dev;
-+	ctx->aclk = devm_clk_get_enabled(dev, "aclk");
-+	if (IS_ERR(ctx->aclk))
-+		return dev_err_probe(dev, PTR_ERR(ctx->aclk),
-+				     "Cannot get aclk\n");
++	if ((gpio_get_value(dp->hpd_gpio) == HPD_PLUG) &&
++			dp->hpd_state == HPD_UNPLUG) {
++		queue_delayed_work(dp->dp_wq, &dp->hpd_plug_work, 0);
++		dp_log_info(dev, "GPIO_HPD_PLUG detect\n");
++	}
++	spin_unlock_irqrestore(&dp->slock, flags);
 +
-+	ctx->irq_fd = platform_get_irq(pdev, 0);
-+	irq_set_status_flags(ctx->irq_fd, IRQ_NOAUTOEN);
-+	ret = devm_request_irq(dev, ctx->irq_fd, decon_irq_handler,
-+			       IRQF_ONESHOT, dev_name(dev), ctx);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Failed to register interrupt handler\n");
-+
-+	ctx->type = 0;
-+	ctx->win_max = 8;
-+
-+	ctx->win_cnt = 1;
-+
-+	ctx->win = devm_kzalloc(ctx->dev, sizeof(struct decon_win) * 8,
-+				GFP_KERNEL);
-+	if (!ctx->win)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "main");
-+	ctx->regs[0] = devm_ioremap_resource(dev, res);
-+	regs_win[0] = ctx->regs[0];
-+
-+	regs_decon[0] = ctx->regs[0] + 0x8000;
-+	regs_decon_con[0] = ctx->regs[0] + 0xc000;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sub0");
-+	ctx->regs[1] = devm_ioremap_resource(dev, res);
-+	regs_decon_global[0] = ctx->regs[1] + 0xa000;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sub1");
-+	ctx->regs[2] = devm_ioremap_resource(dev, res);
-+	regs_winctrl[0] = ctx->regs[2];
-+
-+	platform_set_drvdata(pdev, ctx);
-+
-+	return component_add(dev, &decon_component_ops);
++	return IRQ_HANDLED;
 +}
 +
-+struct platform_driver decon_driver = {
-+	.probe		= decon_probe,
++void exynos_drm_dp_hpd_en(struct exynos_dp_subdev *dp)
++{
++	if (dp_reg_get_hpd_status(dp->id) && !dp->training_state)
++		exynos_drm_dp_hpd_changed(dp, HPD_CHECK);
++}
++
++static void exynos_drm_dp_hpd_plug_work(struct work_struct *work)
++{
++	struct delayed_work *delay_work =
++		container_of(work, struct delayed_work, work);
++	struct exynos_dp_subdev *dp =
++		container_of(delay_work, struct exynos_dp_subdev, hpd_plug_work);
++
++	flush_delayed_work(&dp->hpd_unplug_work);
++	exynos_drm_dp_hpd_changed(dp, HPD_PLUG);
++}
++
++static void exynos_drm_dp_hpd_unplug_work(struct work_struct *work)
++{
++	struct delayed_work *delay_work =
++		container_of(work, struct delayed_work, work);
++	struct exynos_dp_subdev *dp =
++		container_of(delay_work, struct exynos_dp_subdev, hpd_unplug_work);
++
++	if (!dp->hpd_state) {
++		dp_log_err(dp->dev, "HPD is low(%d)\n", dp->hpd_state);
++		return;
++	}
++
++	exynos_drm_dp_hpd_changed(dp, HPD_UNPLUG);
++}
++
++static void exynos_drm_dp_hpd_irq_work(struct work_struct *work)
++{
++	struct delayed_work *delay_work =
++		container_of(work, struct delayed_work, work);
++	struct exynos_dp_subdev *dp =
++		container_of(delay_work, struct exynos_dp_subdev, hpd_irq_work);
++
++	flush_delayed_work(&dp->hpd_unplug_work);
++
++	if (dp->state == DP_STATE_OFF || dp->hpd_state == HPD_UNPLUG)
++		return;
++
++	if (exynos_drm_dp_check_dpcd_status(dp)) {
++		dp_log_info(dp->dev, "link training in HPD_IRQ work\n");
++		if (exynos_drm_dp_link_training(dp) < 0) {
++			dp_log_err(dp->dev, "failed link_training in HPD_IRQ work\n");
++			dp->hpd_state = HPD_IRQ;
++			dp->training_state = false;
++			if (dp->detect)
++				dp->detect(dp->dev);
++			dp_reg_set_plug_interrupt(dp->id, 1);
++			return;
++		}
++		if (dp->hpd_state == HPD_IRQ) {
++			dp->hpd_state = HPD_PLUG;
++			dp->training_state = true;
++			if (dp->detect)
++				dp->detect(dp->dev);
++			return;
++		}
++		if (dp_reg_get_sst_pstate(dp->id))
++			exynos_drm_dp_set_normal_data(dp);
++
++		if (dp->detect)
++			dp->detect(dp->dev);
++	}
++
++	if (dp->mst_irq)
++		dp->mst_irq(dp->dev);
++}
++
++static int exynos_drm_dp_init_resources(struct exynos_dp_subdev *dp, struct platform_device *pdev)
++{
++	struct resource *res;
++	struct device *dev = dp->dev;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "link_base");
++	if (res == NULL) {
++		dp_log_err(dev, "failed to find dp link memory resource for dp\n");
++		return -EINVAL;
++	}
++	dp->regs.link_addr = devm_ioremap_resource(dp->dev, res);
++
++	if (IS_ERR(dp->regs.link_addr)) {
++		dp_log_err(dev, "failed to remap io region\n");
++		return PTR_ERR(dp->regs.link_addr);
++	}
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "phy_base");
++	if (res == NULL) {
++		dp_log_err(dev, "failed to find dp phy memory resource for dp\n");
++		return -EINVAL;
++	}
++	dp->regs.phy_addr = devm_ioremap_resource(dp->dev, res);
++
++	if (IS_ERR(dp->regs.phy_addr)) {
++		dp_log_err(dev, "failed to remap io region\n");
++		return PTR_ERR(dp->regs.phy_addr);
++	}
++
++	dp_regs_desc_init(dp->id, &dp->regs);
++
++	return 0;
++}
++
++static ssize_t exynos_drm_dp_show_sfr(struct device *dev,
++				    struct device_attribute *attr, char *buf)
++{
++	struct exynos_drm_dp *dp = dev_get_drvdata(dev);
++
++	exynos_drm_dp_dump_sfr(dp->subdev);
++
++	return 0;
++}
++
++static DEVICE_ATTR(dump_sfr, S_IRUGO, exynos_drm_dp_show_sfr, NULL);
++
++static ssize_t exynos_drm_dp_show_link_lane(struct device *dev,
++				    struct device_attribute *attr, char *buf)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++	int rc;
++
++	rc = sprintf(buf, "%d\n", dp->lt_info.max_link_lane);
++
++	return rc;
++}
++
++static ssize_t exynos_drm_dp_store_link_lane(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t len)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++	int rc;
++
++	rc = kstrtou8(buf, 0, &dp->lt_info.max_link_lane);
++	if (rc < 0)
++		return rc;
++
++	return len;
++}
++
++static DEVICE_ATTR(link_lane, 0644,
++		exynos_drm_dp_show_link_lane, exynos_drm_dp_store_link_lane);
++
++static ssize_t exynos_drm_dp_show_hpd_irq(struct device *dev,
++					struct device_attribute *attr, char *buf)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++	int np;
++
++	np = sprintf(buf, "debug_hpd_irq = %d\n", dp->dp_debug.debug_hpd_irq);
++	np += sprintf(buf + np, "0: normal_op\n");
++	np += sprintf(buf + np, "1: forced occur HPD_IRQ with Link_training\n");
++	return np;
++}
++
++static ssize_t exynos_drm_dp_store_hpd_irq(struct device *dev,
++					struct device_attribute *attr,
++					const char *buf, size_t len)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++
++	if (dp->hpd_state == HPD_UNPLUG) {
++		dp_log_err(dp->dev, "hpd state unplug\n");
++		return -EACCES;
++	}
++
++	kstrtobool(buf, &dp->dp_debug.debug_hpd_irq);
++
++	queue_delayed_work(dp->dp_wq, &dp->hpd_irq_work, 0);
++
++	return len;
++}
++
++static DEVICE_ATTR(debug_hpd_irq, 0644,
++		exynos_drm_dp_show_hpd_irq, exynos_drm_dp_store_hpd_irq);
++
++static ssize_t exynos_drm_dp_show_set_lt(struct device *dev,
++					struct device_attribute *attr, char *buf)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++	int np;
++
++	np  = sprintf(buf, "debug_lt = %d\n", dp->dp_debug.debug_lt);
++	np += sprintf(buf + np, "0: normal_op\n");
++	np += sprintf(buf + np, "1: link_training - dpcd_read fail\n");
++	np += sprintf(buf + np, "2: link_training - EQ and CR fail, fixed BW by DP_Rx\n");
++	np += sprintf(buf + np, "3: link_training - EQ and CR fail, Try Step Down BW\n");
++	np += sprintf(buf + np, "4: link_training - Start Bandwidth one-step Lower from DP_Rx\n");
++	np += sprintf(buf + np, "\t\t  (eq : DP_Rx(DPCD = 8.1Gbps) -> Start BW 5.4Gbps)\n");
++	np += sprintf(buf + np, "5: link_training - No Stepdown BW from DP_Rx\n");
++	return np;
++}
++
++static ssize_t exynos_drm_dp_store_set_lt(struct device *dev,
++					struct device_attribute *attr,
++					const char *buf, size_t len)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++
++	if (dp->hpd_state == HPD_UNPLUG) {
++		dp_log_err(dp->dev, "hpd state unplug\n");
++		return -EACCES;
++	}
++
++	kstrtou32(buf, 0, &dp->dp_debug.debug_lt);
++
++	return len;
++}
++
++static DEVICE_ATTR(debug_lt, 0644,
++		exynos_drm_dp_show_set_lt, exynos_drm_dp_store_set_lt);
++
++static ssize_t sysfs_show_bist_mode(struct device *dev,
++				      struct device_attribute *attr, char *buf)
++{
++
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++
++	return sprintf(buf, "%#x(0x01.Color 0x11.Gray 0x21.Moving 0x31.PRBS)\n",
++			dp->bist_use);
++}
++
++static int bist_mode_set_config(struct exynos_drm_dp *drm_dp)
++{
++	struct drm_connector *connector = drm_dp->connector;
++	const struct drm_connector_helper_funcs *funcs
++				= connector->helper_private;
++	struct drm_display_mode *mode;
++	struct list_head *modes;
++	struct exynos_dp_video_info vi;
++
++	mutex_lock(&connector->dev->mode_config.mutex);
++
++	/* Get a list_head with modes */
++	modes = list_empty(&connector->probed_modes) ?
++			&connector->modes : &connector->probed_modes;
++	if (list_empty(modes)) {
++		/* Get a probed_modes via get_modes */
++		if (funcs && funcs->get_modes)
++			funcs->get_modes(connector);
++		modes = &connector->probed_modes;
++	}
++
++	list_for_each_entry(mode, modes, head)
++		if (mode->type & DRM_MODE_TYPE_PREFERRED)
++			break;
++
++	mutex_unlock(&connector->dev->mode_config.mutex);
++
++	exynos_drm_dp_to_videoinfo(drm_dp->encoder, mode, &vi);
++
++	exynos_drm_dp_videomode_set(drm_dp->subdev, &vi, DP_SST_1);
++
++	return 0;
++}
++
++static ssize_t sysfs_store_bist_mode(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t len)
++{
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *dp = drm_dp->subdev;
++	u8 used = dp->bist_use;
++	int rc;
++
++	rc = kstrtou32(buf, 0, &dp->bist_use);
++	if (rc < 0)
++		return rc;
++
++	/* already disabled */
++	if (!used && !dp->bist_use)
++		return len;
++
++	exynos_drm_dp_hpd_en(dp);
++	if (dp->hpd_state == HPD_UNPLUG) {
++		dp_log_err(dp->dev, "hpd state unplug\n");
++		return -EACCES;
++	}
++
++	/* Disable used sst setting */
++	if (used)
++		exynos_drm_dp_stream_disable(dp, DP_SST_1);
++
++	dp->bist_type = dp->bist_use >> DP_SST_4;
++
++	if (dp->bist_use) {
++		if (bist_mode_set_config(drm_dp) < 0)
++			return -EINVAL;
++
++		exynos_drm_dp_stream_enable(dp, DP_SST_1);
++	}
++
++	dp_log_info(dp->dev, "DP_SST_1 %s w/ bist_type(%#x)\n",
++			dp->bist_use ? "on" : "off", dp->bist_type);
++	return len;
++}
++
++static DEVICE_ATTR(bist_mode, 0644,
++		sysfs_show_bist_mode, sysfs_store_bist_mode);
++
++/*** Exposed functions for exynos_drm_dp ***/
++static int exynos_drm_dp_subdev_probe(u32 id, struct device *dev,
++		struct drm_device *drm_dev, struct exynos_dp_subdev **subdev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct exynos_dp_subdev *dp = NULL;
++	const struct dp_dev_data *match;
++	int ret = 0;
++
++	dp = devm_kzalloc(dev, sizeof(struct exynos_dp_subdev), GFP_KERNEL);
++	if (!dp)
++		return -ENOMEM;
++
++	match = of_device_get_match_data(dev);
++	if (!match) {
++		dp_log_err(dev, "Failed to get match data\n");
++		ret = -ENODEV;
++		goto err_devm_alloc;
++	}
++	dp->version = match->version;
++
++	dp->dev = &pdev->dev;
++	dp->drm_dev = drm_dev;
++	*subdev = dp;
++	dp->id = id;
++	dp->state = DP_STATE_OFF;
++	dp->training_state = false;
++
++	ret = exynos_drm_dp_init_resources(dp, pdev);
++	if (ret)
++		goto err_devm_alloc;
++
++	dp->phy = devm_phy_get(dp->dev, "dp_phy");
++	if (IS_ERR(dp->phy)) {
++		dp_log_err(dev, "failed to get dp phy\n");
++		dp->phy = NULL;
++		ret = -EPROBE_DEFER;
++		goto err_devm_alloc;
++	}
++
++	spin_lock_init(&dp->slock);
++
++	dp->hpd_gpio = of_get_named_gpio(dev->of_node, "samsung,hpd-gpio", 0);
++
++	if (gpio_is_valid(dp->hpd_gpio)) {
++		ret = devm_gpio_request_one(dp->dev, dp->hpd_gpio, GPIOF_IN, "hpd_gpio");
++		if (ret) {
++			dp_log_err(dev, "failed to get HPD_GPIO\n");
++			goto err_devm_alloc;
++		}
++
++		dp->hpd_gpio_irq = gpio_to_irq(dp->hpd_gpio);
++
++		dp_log_dbg(dev, "GPIO_HPD has been registered. GPIO(%d), irq(%d)\n",
++				dp->hpd_gpio, dp->hpd_gpio_irq);
++
++		irq_set_status_flags(dp->hpd_gpio_irq, IRQ_NOAUTOEN);
++		ret = devm_request_threaded_irq(dp->dev, dp->hpd_gpio_irq,
++					NULL, exynos_drm_dp_hpd_gpio_irq_thread,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++					dev_name(dp->dev), dp);
++		if (ret) {
++			dp_log_err(dev, "failed to request dp hpd_gpio_irq\n");
++			goto err_devm_alloc;
++		}
++	}
++
++	dp->irq = platform_get_irq(pdev, 0);
++	if (dp->irq < 0) {
++		dp_log_err(dev, "failed to request dp irq resource\n");
++		ret = dp->irq;
++		goto err_devm_alloc;
++	}
++
++	irq_set_status_flags(dp->irq, IRQ_NOAUTOEN);
++	ret = devm_request_threaded_irq(dp->dev, dp->irq, NULL,
++					exynos_drm_dp_irq, IRQF_ONESHOT,
++					dev_name(dp->dev), dp);
++	if (ret) {
++		dp_log_err(dev, "failed to request dp irq\n");
++		goto err_devm_alloc;
++	}
++
++	dp->dp_wq = create_singlethread_workqueue(dev_name(&pdev->dev));
++	if (!dp->dp_wq) {
++		dp_log_err(dev, "create dp_wq failed.\n");
++		goto err_devm_alloc;
++	}
++
++	device_create_file(dev, &dev_attr_dump_sfr);
++	device_create_file(dev, &dev_attr_link_lane);
++	device_create_file(dev, &dev_attr_bist_mode);
++	device_create_file(dev, &dev_attr_debug_hpd_irq);
++	device_create_file(dev, &dev_attr_debug_lt);
++	dp->lt_info.max_link_lane = MAX_LANE_CNT;
++	dp->dp_debug.debug_hpd_irq = 0;
++	dp->dp_debug.debug_lt = DEBUG_LT_NORMAL;
++
++	INIT_DELAYED_WORK(&dp->hpd_plug_work, exynos_drm_dp_hpd_plug_work);
++	INIT_DELAYED_WORK(&dp->hpd_unplug_work, exynos_drm_dp_hpd_unplug_work);
++	INIT_DELAYED_WORK(&dp->hpd_irq_work, exynos_drm_dp_hpd_irq_work);
++	INIT_LIST_HEAD(&dp->mst_list);
++	mutex_init(&dp->lock);
++	mutex_init(&dp->pwlock);
++
++	dp_log_info(dev, "is successfully\n");
++	return ret;
++
++err_devm_alloc:
++	dp_log_err(dev, "Failed to alloc err(%d)\n", ret);
++	devm_kfree(dev, dp);
++	return ret;
++}
++
++/* H/W goes to stop or reset state when OS restarting during h/w operation */
++static void exynos_drm_dp_reset(struct exynos_dp_subdev *dp)
++{
++	int i;
++
++	for (i = DP_SST_1; i <= DP_SST_MAX; i++)
++		dp_reg_stop(dp->id, i);
++}
++
++static void exynos_drm_dp_mst_pre_disable(struct exynos_dp_subdev *dp,
++		dp_sst_idx_t sst_idx)
++{
++	struct device *dev = dp->dev;
++	struct dp_mst_config *cfg, *tmp_cfg;
++	u32 start_slot = MST_SLOT_INIT_NUM, del_num_slot;
++	bool find = false;
++	bool hpd_en = (dp->hpd_state == HPD_UNPLUG) ? false : true;
++
++	if (list_empty(&dp->mst_list))
++		return;
++
++	/* 1. find list that has sst_idx and rewrite for new timeslot */
++	list_for_each_entry_safe(cfg, tmp_cfg, &dp->mst_list, list) {
++		if (cfg->sst_id == sst_idx) {
++			del_num_slot = cfg->num_slots;
++			list_del(&cfg->list);
++			kfree(cfg);
++			find = true;
++			continue;
++		}
++		if (find && hpd_en)
++			dp_reg_set_vcpi_timeslot(dp->id, cfg->sst_id,
++						start_slot, cfg->num_slots);
++		start_slot += cfg->num_slots;
++	}
++
++	if (!hpd_en)
++		return;
++
++	/* 2. delete of vc timeslot */
++	if (find)
++		dp_reg_set_vcpi_timeslot(dp->id, 0, start_slot, del_num_slot);
++	else
++		dp_log_err(dev, "failed to delete payload of SST%d\n", sst_idx);
++
++	/* 3. wait for generating ACT sequence */
++	dp_reg_wait_for_vcpi_update(dp->id);
++}
++
++static void exynos_drm_dp_dt_to_dp_video_info(struct exynos_dp_video_info *vi,
++		struct dp_video_info *dp_video_info)
++{
++	struct videomode *vm = &vi->vm;
++
++	dp_video_info->vm.pixelclock = vm->pixelclock;
++	dp_video_info->vm.hfront_porch = vm->hfront_porch;
++	dp_video_info->vm.hactive = vm->hactive;
++	dp_video_info->vm.hback_porch = vm->hback_porch;
++	dp_video_info->vm.hsync_len = vm->hsync_len;
++
++	dp_video_info->vm.vfront_porch = vm->vfront_porch;
++	dp_video_info->vm.vactive = vm->vactive;
++	dp_video_info->vm.vback_porch = vm->vback_porch;
++	dp_video_info->vm.vsync_len = vm->vsync_len;
++
++	dp_video_info->vm.hsync_pol = vi->hsync_pol;
++	dp_video_info->vm.vsync_pol = vi->vsync_pol;
++
++	dp_video_info->bpc = vi->bpc;
++	dp_video_info->sst_id = vi->sst_id;
++	dp_video_info->dyn_range = vi->dyn_range;
++}
++
++/* DSC */
++static void exynos_drm_dp_dsc_set(struct exynos_dp_subdev *dp,
++		struct exynos_dp_video_info *vi,
++		struct dp_video_info *dp_vi)
++{
++	/* DSC */
++	if (!drm_dp_sink_supports_dsc(dp->dsc_dpcd)) {
++		dp_vi->dsc.enable = false;
++		return;
++	}
++
++	dp_vi->dsc.enable = vi->dsc.enable;
++	if (vi->dsc.enable) {
++		dp_vi->dsc.slice_count = vi->dsc.slice_count;
++		dp_vi->dsc.chunk_size = vi->dsc.chunk_size;
++		memcpy(dp_vi->dsc.pps, &vi->dsc.pps, sizeof(dp_vi->dsc.pps));
++		drm_dp_dpcd_writeb(&dp->aux, DP_DSC_ENABLE,
++				DP_DECOMPRESSION_EN);
++	}
++}
++
++static void exynos_drm_dp_dsc_unset(struct exynos_dp_subdev *dp,
++		struct exynos_dp_video_info *vi)
++{
++	vi->dsc.enable = false;
++	/* consider DSC mode switching without HPD unplug */
++	if (drm_dp_sink_supports_dsc(dp->dsc_dpcd))
++		drm_dp_dpcd_writeb(&dp->aux, DP_DSC_ENABLE, 0);
++}
++
++void exynos_drm_dp_stream_enable(struct exynos_dp_subdev *dp, dp_sst_idx_t sst_idx)
++{
++	struct device *dev = dp->dev;
++	struct exynos_dp_video_info *vi;
++	struct dp_video_info dp_video_info;
++
++	if (!dp->hpd_state)
++		dp_log_err(dev, "HPD is low(%d)\n", dp->hpd_state);
++
++	/* Set default sst_idx */
++	if (sst_idx == DP_SST_UNKNOWN) {
++		dp_log_err(dp->dev, "sst idx is unknown\n");
++		return;
++	}
++
++	vi = &dp->vi[sst_idx - 1];
++
++	exynos_drm_dp_dt_to_dp_video_info(vi, &dp_video_info);
++
++	dp_log_info(dev, "SST%d cur_video = %dx%d-%dHz(%dbpc) in displayport_enable!!!\n",
++			vi->sst_id + 1, vi->vm.hactive, vi->vm.vactive, vi->vrefresh, vi->bpc);
++
++	exynos_drm_dp_dsc_set(dp, vi, &dp_video_info);
++
++	if (dp->bist_use)
++		dp_reg_set_bist_video_config(dp->id, dp_video_info, dp->bist_type);
++	else
++		dp_reg_set_video_config(dp->id, dp_video_info);
++
++	dp_reg_start(dp->id, vi->sst_id);
++
++	exynos_drm_dp_set_normal_data(dp);
++}
++
++void exynos_drm_dp_stream_disable(struct exynos_dp_subdev *dp, dp_sst_idx_t sst_idx)
++{
++	struct device *dev = dp->dev;
++	struct exynos_dp_video_info *vi;
++
++	dp_log_info(dev, "+, state: %d, SST%d\n", dp->state, sst_idx);
++
++	/* Set default sst_idx */
++	if (sst_idx == DP_SST_UNKNOWN) {
++		dp_log_err(dp->dev, "sst idx is unknown\n");
++		return;
++	}
++
++	vi = &dp->vi[sst_idx - 1];
++
++	exynos_drm_dp_mst_pre_disable(dp, sst_idx);
++
++	dp_reg_stop(dp->id, vi->sst_id);
++	exynos_drm_dp_dsc_unset(dp, vi);
++
++	dp_log_info(dev, "-, state: %d, SST%d\n", dp->state, sst_idx);
++}
++
++/**
++ * @cnotice
++ * @prdcode
++ * @unit_name{Exynos_dp_drv}
++ * @purpose Trigering of DP work
++ * @logic Operation the DP according to the DP and HPD status
++ * @params
++ * @param{in, dp, struct* ::exynos_dp_subdev, None}
++ * @endparam
++ * @retval{dp->hpd_state, bool, None, [false:true], None}
++ */
++bool exynos_drm_dp_is_hpd_connected(struct exynos_dp_subdev *dp)
++{
++	int old_hpd = dp->hpd_state;
++
++	mutex_lock(&dp->lock);
++	if (gpio_get_value(dp->hpd_gpio)) {
++		mutex_unlock(&dp->lock);
++		if (dp->state == DP_STATE_LINKED)
++			exynos_drm_dp_hpd_en(dp);
++	} else {
++		mutex_unlock(&dp->lock);
++		dp->hpd_state = HPD_UNPLUG;
++	}
++
++	if (old_hpd != dp->hpd_state)
++		dp_log_info(dp->dev, "DP%d hpd = %d\n", dp->id, dp->hpd_state);
++
++	return dp->hpd_state & HPD_PLUG;
++}
++
++void exynos_drm_dp_videomode_set(struct exynos_dp_subdev *dp,
++		struct exynos_dp_video_info *vi, dp_sst_idx_t sst_idx)
++{
++	struct exynos_dp_video_info *cur_vi;
++
++	/* Set default sst_idx */
++	if (sst_idx == DP_SST_UNKNOWN) {
++		dp_log_err(dp->dev, "sst idx is unknown\n");
++		return;
++	}
++
++	cur_vi = &dp->vi[sst_idx - 1];
++
++	cur_vi->sst_id = sst_idx - 1;
++	cur_vi->dyn_range = vi->dyn_range;
++	cur_vi->bpc = vi->bpc;
++	cur_vi->vrefresh = vi->vrefresh;
++	cur_vi->hsync_pol = vi->hsync_pol;
++	cur_vi->vsync_pol = vi->vsync_pol;
++	memcpy(&cur_vi->vm, &vi->vm, sizeof(struct videomode));
++
++	/* DSC */
++	cur_vi->dsc.enable = vi->dsc.enable;
++	if (vi->dsc.enable) {
++		cur_vi->dsc.slice_count = vi->dsc.slice_count;
++		cur_vi->dsc.chunk_size = vi->dsc.chunk_size;
++		memcpy(&cur_vi->dsc.pps, &vi->dsc.pps, sizeof(vi->dsc.pps));
++	}
++}
++
++static int exynos_drm_dp_start(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	int ret = 0;
++
++	dp_log_info(dev, "+, state: %d\n", dp->state);
++	if (gpio_get_value(dp->hpd_gpio) == HPD_UNPLUG) {
++		dp_log_err(dev, "DP(%d) is unplug\n", dp->id);
++		return 0;
++	}
++
++	if (dp->state == DP_STATE_LINKED) {
++		dp_log_info(dev, "DP(%d), state : %d\n", dp->id, dp->state);
++		return 0;
++	}
++	mutex_lock(&dp->pwlock);
++
++	ret = phy_power_on(dp->phy);
++	if (ret < 0) {
++		dp_log_err(dev, "cannot enable DP_PHY[%d], %d\n", dp->id, ret);
++		mutex_unlock(&dp->pwlock);
++		return ret;
++	}
++
++	dp_reg_sw_reset(dp->id);
++	dp_reg_init(dp->id);
++
++	dp_reg_set_hpd_interrupt(dp->id, 1);
++
++	dp->training_state = false;
++
++	enable_irq(dp->irq);
++	disable_irq(dp->hpd_gpio_irq);
++
++	dp->state = DP_STATE_LINKED;
++
++	mutex_unlock(&dp->pwlock);
++
++	dp_log_info(dev, "-, state: %d\n", dp->state);
++
++	return ret;
++}
++
++/*
++ * Functions below are from exynos_dp_drv.c.
++ * It would be refactored more later.
++ */
++uint32_t exynos_drm_dp_find_possible_crtc(struct exynos_drm_dp *dp, int sst_idx)
++{
++	int possible_crtcs = 0;
++	struct device_node *dp_node = dp->dev->of_node;
++	struct device_node *endp, *remote_port;
++
++	endp = of_graph_get_endpoint_by_regs(dp_node, 0, sst_idx);
++	if (endp) {
++		remote_port = of_graph_get_remote_port(endp);
++		possible_crtcs = drm_of_crtc_port_mask(dp->drm_dev, remote_port);
++		of_node_put(remote_port);
++	}
++
++	of_node_put(endp);
++
++	return possible_crtcs;
++}
++
++dp_sst_idx_t exynos_drm_dp_get_sst_idx(struct drm_encoder *encoder)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct drm_crtc *crtc = encoder->crtc;
++	struct device_node *dp_node = dp->dev->of_node;
++	struct device_node *endp, *crtc_node;
++	struct of_endpoint of_endpoint;
++
++	for_each_endpoint_of_node(dp_node, endp) {
++		crtc_node = of_graph_get_remote_port(endp);
++		if (crtc->port == crtc_node) {
++			of_node_put(crtc_node);
++			goto out;
++		}
++		of_node_put(crtc_node);
++	}
++out:
++	of_graph_parse_endpoint(endp, &of_endpoint);
++	of_node_put(endp);
++	return of_endpoint.id;
++}
++
++/* DSC */
++static bool exynos_drm_dp_supports_dsc(struct exynos_drm_dp *dp)
++{
++	struct exynos_dp_subdev *subdev = dp->subdev;
++
++	/* This version returns true regardless of FEC capability */
++	return drm_dp_sink_supports_dsc(subdev->dsc_dpcd);
++}
++
++#define MAX_SOURCE_SLICE_COUNT		4
++#define INVALID_SOURCE_SLICE_COUNT	3
++static u8 exynos_drm_dsc_get_slice_count(struct exynos_drm_dp *dp,
++		struct drm_dsc_config *dsc_cfg)
++{
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	u32 max_slice_width;
++	u8 max_slice_count, source_slice_count;
++
++	max_slice_width = drm_dp_dsc_sink_max_slice_width(subdev->dsc_dpcd);
++	if (max_slice_width < DP_DSC_MIN_SLICE_WIDTH_VALUE) {
++		dp_log_info(dp->dev, "max_slice_width %d is out of range\n",
++				max_slice_width);
++		return 0;
++	}
++
++	max_slice_count =
++		drm_dp_dsc_sink_max_slice_count(subdev->dsc_dpcd, false);
++
++
++	/* FIXME: divide by 2 to use 4-slice in UHD picture */
++	source_slice_count = min_t(u8, MAX_SOURCE_SLICE_COUNT,
++				DIV_ROUND_UP(dsc_cfg->pic_width,
++					     max_slice_width / 2));
++
++	if (source_slice_count == INVALID_SOURCE_SLICE_COUNT)
++		source_slice_count = MAX_SOURCE_SLICE_COUNT;
++
++	dp_log_kms(dp->dev, "max_slice_width %d count %d, src_slice_count %d\n",
++			max_slice_width, max_slice_count, source_slice_count);
++
++	return min_t(u8, source_slice_count, max_slice_count);
++}
++
++#define MIN_SOURCE_SLICE_HEIGHT	8
++static u16 exynos_drm_dsc_get_slice_height(struct exynos_drm_dp *dp,
++		struct drm_dsc_config *dsc_cfg)
++{
++	struct device *dev = dp->dev;
++	u16 slice_height;
++
++	if (dsc_cfg->pic_height <= 0) {
++		dp_log_info(dev, "invalid pic_height\n");
++		return 0;
++	}
++
++	/*
++	 * Guideline for slice_height
++	 * must be an integral divisor of picture height
++	 * slice_height * slice_width >=  15,000 pixels
++	 * slice_height * slice_width <= 100,000 pixels
++	 */
++	if (dsc_cfg->pic_height % 16 == 0)
++		slice_height = dsc_cfg->pic_height / 16;
++	if (dsc_cfg->pic_height % 10 == 0)
++		slice_height = dsc_cfg->pic_height / 10;
++	else
++		slice_height = dsc_cfg->pic_height / 4;
++
++	return max_t(u16, slice_height, MIN_SOURCE_SLICE_HEIGHT);
++}
++
++static int exynos_drm_dp_dsc_compute(struct drm_encoder *encoder,
++		struct exynos_dp_video_info *vi,
++		dp_sst_idx_t sst_idx)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	u8 *dsc_dpcd = subdev->dsc_dpcd;
++	struct drm_dsc_picture_parameter_set *pps;
++	struct drm_dsc_config dsc_cfg;
++
++	/* Initialize */
++	memset(&dsc_cfg, 0x0, sizeof(dsc_cfg));
++
++	dsc_cfg.dsc_version_major =
++		(dsc_dpcd[DP_DSC_REV - DP_DSC_SUPPORT] &
++		 DP_DSC_MAJOR_MASK) >> DP_DSC_MAJOR_SHIFT;
++	dsc_cfg.dsc_version_minor =
++		(dsc_dpcd[DP_DSC_REV - DP_DSC_SUPPORT] &
++		 DP_DSC_MINOR_MASK) >> DP_DSC_MINOR_SHIFT;
++
++	dsc_cfg.line_buf_depth =
++		drm_dp_dsc_sink_line_buf_depth(dsc_dpcd);
++	dsc_cfg.convert_rgb =
++		dsc_dpcd[DP_DSC_DEC_COLOR_FORMAT_CAP - DP_DSC_SUPPORT]
++			& DP_DSC_RGB;
++	dsc_cfg.simple_422 =
++		dsc_dpcd[DP_DSC_DEC_COLOR_FORMAT_CAP - DP_DSC_SUPPORT]
++			& DP_DSC_YCbCr422_Simple;
++	dsc_cfg.native_420 =
++		dsc_dpcd[DP_DSC_DEC_COLOR_FORMAT_CAP - DP_DSC_SUPPORT]
++			& DP_DSC_YCbCr420_Native;
++	dsc_cfg.native_422 =
++		dsc_dpcd[DP_DSC_DEC_COLOR_FORMAT_CAP - DP_DSC_SUPPORT]
++			& DP_DSC_YCbCr422_Native;
++	dsc_cfg.block_pred_enable =
++		dsc_dpcd[DP_DSC_BLK_PREDICTION_SUPPORT - DP_DSC_SUPPORT]
++			& DP_DSC_BLK_PREDICTION_IS_SUPPORTED;
++
++	dsc_cfg.vbr_enable = false;
++	dsc_cfg.pic_width = vi->vm.hactive;
++	dsc_cfg.pic_height = vi->vm.vactive;
++	dsc_cfg.bits_per_component = vi->bpc;
++
++	/* TODO: This version only covers case of "BPC == BPP/3". */
++	/* Compressed BPP format is multiply by 16 */
++	dsc_cfg.bits_per_pixel = vi->bpc << 4;
++
++	dsc_cfg.slice_count = exynos_drm_dsc_get_slice_count(dp, &dsc_cfg);
++	if (dsc_cfg.slice_count == 0) {
++		dp_log_info(dp->dev, "slice_count is invalid\n");
++		return -EINVAL;
++	}
++
++	dsc_cfg.slice_height = exynos_drm_dsc_get_slice_height(dp, &dsc_cfg);
++
++	dsc_cfg.slice_width =
++		DIV_ROUND_UP(dsc_cfg.pic_width, dsc_cfg.slice_count);
++
++	vi->dsc.slice_count = dsc_cfg.slice_count;
++	vi->dsc.chunk_size = dsc_cfg.slice_chunk_size;
++
++	pps = &vi->dsc.pps;
++	drm_dsc_pps_payload_pack(pps, &dsc_cfg);
++
++	return 0;
++}
++
++bool exynos_drm_dp_dsc_enable(struct drm_encoder *encoder,
++		struct exynos_dp_video_info *vi, dp_sst_idx_t sst_idx)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++
++	if (!vi)
++		return false;
++
++	if (!exynos_drm_dp_supports_dsc(dp))
++		return false;
++
++	if (exynos_drm_dp_dsc_compute(encoder, vi, sst_idx) < 0)
++		return false;
++
++	return true;
++}
++
++void exynos_drm_dp_dsc_disable(struct drm_encoder *encoder,  dp_sst_idx_t sst_idx)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++
++	/* Set default sst_idx */
++	if (sst_idx == DP_SST_UNKNOWN) {
++		dp_log_err(dp->dev, "sst idx is unknown\n");
++		return;
++	}
++}
++
++static void exynos_drm_dp_enable(struct drm_encoder *encoder)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	struct device *dev = dp->dev;
++	dp_sst_idx_t sst_idx;
++
++	dp_log_kms(dev, "exynos_drm_dp_enable\n");
++
++	if (subdev->state == DP_STATE_ON) {
++		dp_log_info(dev, "DP(%d), state : %d\n", dp->id, subdev->state);
++		return;
++	}
++
++	exynos_drm_dp_hpd_en(subdev);
++
++	sst_idx = exynos_drm_dp_get_sst_idx(encoder);
++
++	exynos_drm_dp_stream_enable(subdev, sst_idx);
++
++	subdev->state = DP_STATE_ON;
++}
++
++static void exynos_drm_dp_disable(struct drm_encoder *encoder)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	struct device *dev = dp->dev;
++	dp_sst_idx_t sst_idx;
++
++	dp_log_kms(dev, "\n");
++
++	mutex_lock(&subdev->pwlock);
++
++	if (subdev->state == DP_STATE_LINKED) {
++		dp_log_info(dev, "DP(%d), state : ON\n", dp->id);
++		mutex_unlock(&subdev->pwlock);
++		return;
++	}
++
++	sst_idx = exynos_drm_dp_get_sst_idx(encoder);
++	/* DSC */
++	exynos_drm_dp_dsc_disable(encoder, sst_idx);
++	exynos_drm_dp_stream_disable(subdev, sst_idx);
++
++	subdev->state = DP_STATE_LINKED;
++	mutex_unlock(&subdev->pwlock);
++}
++
++void exynos_drm_dp_to_videoinfo(struct drm_encoder *encoder,
++		struct drm_display_mode *mode,
++		struct exynos_dp_video_info *vi)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct device *dev = dp->dev;
++	struct dp_encoder *dp_encoder = to_encoder(encoder);
++	struct drm_display_info *dp_info =
++				&dp_encoder->dp_connector->base.display_info;
++
++	memset(vi, 0x0, sizeof(*vi));
++
++	drm_display_mode_to_videomode(mode, &vi->vm);
++	vi->vrefresh = drm_mode_vrefresh(mode);
++
++	/*
++	 * The polarity of DP is set to the inverted value of DRM.
++	 * DRM:	DRM_MODE_FLAG_PHSYNC -> DISPLAY_FLAGS_HSYNC_HIGH
++	 *	DRM_MODE_FLAG_PVSYNC -> DISPLAY_FLAGS_VSYNC_HIGH
++	 * DisplayPort: H/VSyncPolarity in HSP, VSP
++	 * 	0 = Active high pulse.
++	 * 	1 = Active low pulse.
++	 */
++	if (mode->flags & DRM_MODE_FLAG_PHSYNC)
++		vi->hsync_pol = false;
++	else
++		vi->hsync_pol = true;
++	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
++		vi->vsync_pol = false;
++	else
++		vi->vsync_pol = true;
++
++	if (!dp_info->bpc)
++		dp_info->bpc = DEFAULT_BPC;
++
++	vi->bpc = dp_info->bpc;
++
++	dp_log_kms(dev, "%s, vrefresh(%d) pclock(%d khz) \
++			hsync_pol(%d) vsync_pol(%d) bpc(%d)\n",
++			mode->name, vi->vrefresh, mode->clock,
++			vi->hsync_pol, vi->vsync_pol, vi->bpc);
++}
++
++static void exynos_drm_dp_mode_set(struct drm_encoder *encoder,
++		struct drm_display_mode *mode,
++		struct drm_display_mode *adjusted_mode)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	struct exynos_dp_video_info vi;
++	struct device *dev = dp->dev;
++	dp_sst_idx_t sst_idx;
++
++	sst_idx = exynos_drm_dp_get_sst_idx(encoder);
++	exynos_drm_dp_to_videoinfo(encoder, adjusted_mode, &vi);
++	/* DSC */
++	vi.dsc.enable = exynos_drm_dp_dsc_enable(encoder, &vi, sst_idx);
++	exynos_drm_dp_videomode_set(subdev, &vi, sst_idx);
++
++	drm_mode_copy(&dp->cur_mode, adjusted_mode);
++	dp_log_info(dev, "SST%u %s = %s-%dHz dsc %s\n",	sst_idx,
++			encoder->name, mode->name, drm_mode_vrefresh(mode),
++			vi.dsc.enable ? "compression" : "bypass");
++}
++
++static bool exynos_drm_dp_connector_set_link_status(struct drm_device *dev,
++		struct exynos_drm_dp *dp)
++{
++	struct drm_connector *connector;
++	struct drm_connector_list_iter conn_iter;
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	struct exynos_drm_dp *drm_dp;
++	struct dp_connector *dp_connector;
++	enum drm_link_status set_link_status = DRM_LINK_STATUS_GOOD;
++	enum drm_link_status old_link_status;
++	int max_link_rate = 0;
++	int root_id = dp->connector->base.id;
++	bool changed = false;
++
++	if (subdev->dpcd[DP_MAX_LINK_RATE])
++		max_link_rate =	subdev->dpcd[DP_MAX_LINK_RATE];
++
++	if ((subdev->hpd_state) &&
++		((max_link_rate != subdev->lt_info.link_rate) || !subdev->training_state))
++		set_link_status = DRM_LINK_STATUS_BAD;
++
++	drm_connector_list_iter_begin(dev, &conn_iter);
++
++	drm_for_each_connector_iter(connector, &conn_iter) {
++		if (connector->connector_type != DRM_MODE_CONNECTOR_DisplayPort)
++			continue;
++
++		if (IS_ERR_OR_NULL(connector->state))
++			continue;
++
++		drm_dp = connector_to_dp(connector);
++		if (drm_dp->output_type != dp->output_type)
++			continue;
++
++		/* This is case of DP UNPLUG */
++		if (set_link_status == DRM_LINK_STATUS_GOOD)
++			goto CHECK_LINK_STATUS;
++
++		/* pdt = peer-device-type
++		 * link_status is controled sink device in mst mode.
++		 * pdt = 0 (no device connected
++		 * ptd = 1 (Source device or SST branch device to UFP)
++		 * pdt = 2 (Device with MST branch or SST branch device to DFP)
++		 * pdt = 3 (SST Sink device or stream sink in MST)
++		 * pdt = 4 (DP-to-Legacy converter)
++		 */
++		dp_connector = to_connector(connector);
++		if (dp->is_mst && (!dp_connector->port ||
++					(dp_connector->port->pdt < DP_PEER_DEVICE_SST_SINK)))
++			continue;
++
++		if (!dp->is_mst && (connector->base.id != root_id))
++			continue;
++
++CHECK_LINK_STATUS:
++		old_link_status = connector->state->link_status;
++
++		if (set_link_status != old_link_status) {
++			dp_log_kms(dp->dev, "[CONNECTOR:%d:%s] link_status changed(%d) -> (%d)\n",
++					connector->base.id, connector->name,
++					old_link_status, set_link_status);
++			connector->state->link_status = set_link_status;
++			changed = true;
++		}
++	}
++
++	drm_connector_list_iter_end(&conn_iter);
++
++	return changed;
++}
++
++/*** connector functions ***/
++static enum drm_connector_status
++exynos_drm_dp_connector_detect(struct drm_connector *connector, bool force)
++{
++	enum drm_connector_status status = connector_status_disconnected;
++	enum drm_connector_status old_status = connector->status;
++	struct exynos_drm_dp *dp = connector_to_dp(connector);
++	struct drm_device *drm_dev = dp->drm_dev;
++	struct device *dev = dp->dev;
++	bool link_status_changed = false;
++
++	dp_log_kms(dev, "\n");
++
++	if (exynos_drm_dp_is_hpd_connected(dp->subdev))
++		status = connector_status_connected;
++
++	/* In case of MST, SST connector should be disconnected */
++	if (dp->is_mst)
++		status = connector_status_disconnected;
++
++	link_status_changed =
++		exynos_drm_dp_connector_set_link_status(drm_dev, dp);
++
++	if ((status == old_status) && link_status_changed)
++		drm_kms_helper_hotplug_event(dp->drm_dev);
++
++	dp_log_kms(dev, "status is %s\n",
++			status == connector_status_connected ? \
++			"connected" : "disconnected");
++	return status;
++};
++
++/* If native only is true, only native mode is used */
++#define for_each_dt_timings(num_timings, native_only, native_mode, __i) \
++	for ((__i) = (native_only) ? (native_mode) : 0; 		\
++	     (__i) < (num_timings) && 					\
++		     (!(native_only) || (__i) == (native_mode));	\
++	     (__i)++)	\
++
++static int exynos_drm_dp_add_mode_from_dt(struct drm_connector *connector,
++					  struct display_timings *timings)
++{
++	struct dp_connector *dp_connector = to_connector(connector);
++	struct drm_device *drm_dev = connector->dev;
++	struct videomode vm;
++	struct drm_display_mode *mode;
++	int native_mode;
++	bool native_only;
++	int mode_num = 0;
++	int index;
++
++	if (!timings)
++		return mode_num;
++
++	/* Check a out of timings->num_timings */
++	native_mode = dp_connector->native_mode;
++	if (native_mode < 0 || native_mode >= timings->num_timings)
++		native_mode = timings->native_mode;
++
++	native_only = dp_connector->native_only;
++
++	for_each_dt_timings(timings->num_timings, native_only, native_mode, index) {
++		if (videomode_from_timings(timings, &vm, index)) {
++			dp_log_err(drm_dev->dev, "index(%d) is invalid\n",
++					index);
++			continue;
++		}
++
++		mode = drm_mode_create(drm_dev);
++		if (!mode) {
++			dp_log_err(drm_dev->dev, "failed to add mode %ux%u\n",
++					vm.hactive, vm.vactive);
++			continue;
++		}
++
++		drm_display_mode_from_videomode(&vm, mode);
++
++		mode->type = DRM_MODE_TYPE_DRIVER;
++
++		if (index == native_mode)
++			mode->type |= DRM_MODE_TYPE_PREFERRED;
++
++		dp_log_dbg(drm_dev->dev, "%s, vrefresh(%d), pclock(%d khz)\n",
++				mode->name, drm_mode_vrefresh(mode), mode->clock);
++
++		drm_mode_probed_add(connector, mode);
++		mode_num++;
++	}
++
++	return mode_num;
++}
++
++int exynos_drm_dp_add_timings(struct exynos_drm_dp *dp,
++		struct drm_connector *connector)
++{
++	struct display_timings *timings = dp->timings;
++	struct device *dev = dp->dev;
++	int num_modes;
++
++	num_modes = exynos_drm_dp_add_mode_from_dt(connector, timings);
++	if (!num_modes)
++		dp_log_dbg(dev, "failed to get modes from device tree");
++
++	return num_modes;
++}
++
++static int exynos_drm_dp_get_modes(struct drm_connector *connector)
++{
++	struct exynos_drm_dp *dp = connector_to_dp(connector);
++	struct exynos_dp_subdev *subdev = dp->subdev;
++	struct device *dev = dp->dev;
++	struct edid *edid = NULL;
++	int num_modes = 0;
++	u8 support_edid;
++
++	num_modes = exynos_drm_dp_add_timings(dp, connector);
++	if (num_modes)
++		goto ret;
++
++	drm_dp_dpcd_readb(&subdev->aux, DP_RECEIVE_PORT_0_CAP_0, &support_edid);
++
++	if (support_edid & DP_LOCAL_EDID_PRESENT)
++		edid = drm_get_edid(connector, &subdev->aux.ddc);
++
++	if (edid) {
++		drm_connector_update_edid_property(connector, edid);
++		num_modes = drm_add_edid_modes(connector, edid);
++		kfree(edid);
++	}
++
++ret:
++	dp_log_kms(dev, "num_modes %d\n", num_modes);
++	return num_modes;
++}
++static enum drm_mode_status exynos_drm_dp_mode_valid(struct drm_connector *connector,
++			struct drm_display_mode *mode)
++{
++	struct exynos_drm_dp *dp = connector_to_dp(connector);
++	struct device *dev = dp->dev;
++
++	dp_log_kms(dev, "hdisplay=%d, vdisplay=%d, vrefresh=%d, clock=%d\n",
++		mode->hdisplay, mode->vdisplay, drm_mode_vrefresh(mode),
++		mode->clock * 1000);
++
++	/* TODO: return MODE_BAD if exynos_dp_drv can't support it */
++
++	return MODE_OK;
++}
++
++static void exynos_drm_dp_destroy_encoder(struct drm_encoder *encoder)
++{
++	struct exynos_drm_dp *dp = encoder_to_dp(encoder);
++	struct dp_encoder *dp_encoder = to_encoder(encoder);
++	struct device *dev = dp->dev;
++
++	dp_log_kms(dev, "encoder %d\n", encoder->base.id);
++	drm_encoder_cleanup(encoder);
++
++	kfree(dp_encoder);
++}
++
++static void exynos_drm_dp_destroy_connector(struct drm_connector *connector)
++{
++	struct dp_connector *dp_connector = to_connector(connector);
++	struct exynos_drm_dp *dp = connector_to_dp(connector);
++	struct device *dev = dp->dev;
++
++	dp_log_kms(dev, "connector %d\n", connector->base.id);
++	drm_connector_cleanup(connector);
++	kfree(dp_connector);
++}
++
++static const struct drm_encoder_funcs exynos_drm_dp_encoder_funcs = {
++	.destroy = exynos_drm_dp_destroy_encoder,
++};
++
++static const struct drm_encoder_helper_funcs
++exynos_drm_dp_encoder_helper_funcs = {
++	.enable = exynos_drm_dp_enable,
++	.disable = exynos_drm_dp_disable,
++	.mode_fixup = NULL,
++	.mode_set = exynos_drm_dp_mode_set,
++};
++
++static const struct drm_connector_funcs exynos_drm_dp_connector_funcs = {
++	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
++	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
++	.detect = exynos_drm_dp_connector_detect,
++	.destroy = exynos_drm_dp_destroy_connector,
++	.dpms = drm_helper_connector_dpms,
++	.reset = drm_atomic_helper_connector_reset,
++	.fill_modes = drm_helper_probe_single_connector_modes,
++};
++
++static const struct drm_connector_helper_funcs
++exynos_drm_dp_connector_helper_funcs = {
++	.get_modes = exynos_drm_dp_get_modes,
++	.mode_valid = exynos_drm_dp_mode_valid,
++};
++
++static struct dp_encoder *dp_encoder_alloc(struct exynos_drm_dp *dp)
++{
++	struct dp_encoder *dp_encoder;
++
++	dp_encoder = kzalloc(sizeof(*dp_encoder), GFP_KERNEL);
++	if (!dp_encoder)
++		return NULL;
++
++	dp_encoder->dp = dp;
++	dp_encoder->output_type = dp->output_type;
++	dp_encoder->sst_idx = DP_SST_UNKNOWN;
++
++	return dp_encoder;
++}
++
++static struct dp_connector *dp_connector_alloc(struct exynos_drm_dp *dp,
++					       struct dp_encoder *dp_encoder)
++{
++	struct dp_connector *dp_connector;
++
++	dp_connector = kzalloc(sizeof(*dp_connector), GFP_KERNEL);
++	if (!dp_connector)
++		return NULL;
++
++	dp_connector->dp = dp;
++	dp_connector->dp_encoder = dp_encoder;
++	dp_encoder->dp_connector = dp_connector;
++
++	return dp_connector;
++}
++
++static int exynos_drm_dp_init_encoder(struct dp_encoder *dp_encoder)
++{
++	struct exynos_drm_dp *dp = dp_encoder->dp;
++	struct drm_device *drm_dev = dp->drm_dev;
++	struct drm_encoder *encoder = &dp_encoder->base;
++	dp_sst_idx_t sst_id;
++
++	drm_encoder_init(drm_dev, encoder, &exynos_drm_dp_encoder_funcs,
++			 DRM_MODE_ENCODER_TMDS, "exynos_dp%u", dp->id);
++
++	drm_encoder_helper_add(encoder, &exynos_drm_dp_encoder_helper_funcs);
++
++	for (sst_id = DP_SST_1; sst_id <= DP_SST_MAX; sst_id++)
++		encoder->possible_crtcs |= exynos_drm_dp_find_possible_crtc(dp, sst_id);
++
++	dp_log_info(dp->dev, "Success to create %s(possible_crtcs:%#x)\n",
++		    encoder->name, encoder->possible_crtcs);
++
++	return 0;
++}
++
++static int exynos_drm_dp_init_connector(struct dp_connector *dp_connector)
++{
++	struct exynos_drm_dp *dp = dp_connector->dp;
++	struct drm_connector *connector = &dp_connector->base;
++	struct drm_encoder *encoder = &dp_connector->dp_encoder->base;
++	struct device *dev = dp->dev;
++	int ret = 0;
++
++	connector->polled = DRM_CONNECTOR_POLL_HPD;
++
++	ret = drm_connector_init(dp->drm_dev, connector,
++				 &exynos_drm_dp_connector_funcs,
++				 DRM_MODE_CONNECTOR_DisplayPort);
++	if (ret) {
++		dp_log_err(dev, "Failed to create connector %d\n", ret);
++		drm_connector_cleanup(connector);
++		return ret;
++	}
++
++	drm_connector_helper_add(connector,
++				 &exynos_drm_dp_connector_helper_funcs);
++	drm_connector_attach_encoder(connector, encoder);
++
++	dp_log_info(dev, "Success to create connector %s\n", connector->name);
++
++	return 0;
++}
++
++static int exynos_drm_dp_get_timings(struct device *dev)
++{
++	struct exynos_drm_dp *dp = dev_get_drvdata(dev);
++	struct device_node *np = dev->of_node;
++	struct device_node *timing_np;
++
++	timing_np = of_parse_phandle(np, "samsung,display-timings", 0);
++	if (!timing_np) {
++		dp_log_info(dev, "could not get display timings\n");
++		return 0;
++	}
++
++	dp->timings = of_get_display_timings(timing_np);
++	if (IS_ERR_OR_NULL(dp->timings)) {
++		dp_log_err(dev, "could not get native display timing\n");
++		of_node_put(timing_np);
++		return -EINVAL;
++	}
++	of_node_put(timing_np);
++
++	return 0;
++}
++
++static void exynos_drm_dp_get_native_mode(struct device *dev,
++					  struct dp_connector *dp_connector)
++{
++	struct device_node *np = dev->of_node;
++	int idx;
++
++	if (of_property_read_s32(np, "samsung,native-mode,idx", &idx) < 0)
++		dp_connector->native_mode = -1;
++	else
++		dp_connector->native_mode = idx;
++
++	dp_connector->native_only =
++		of_property_read_bool(np, "samsung,native-only");
++
++	of_property_read_u32(np, "samsung,native-mode,bpc",
++				&dp_connector->base.display_info.bpc);
++}
++
++static ssize_t exynos_drm_dp_aux_transfer(struct drm_dp_aux *aux,
++		struct drm_dp_aux_msg *msg)
++{
++	struct exynos_dp_subdev *subdev = to_subdev(aux);
++	struct device *dev = subdev->dev;
++	u8 *buffer = msg->buffer;
++	int transferred = 0;
++	u32 id = subdev->id;
++
++	dp_log_enter(dev);
++
++	if (subdev->state == DP_STATE_OFF)
++		return -ETIMEDOUT;
++
++	if (subdev->hpd_state == HPD_UNPLUG)
++		return -ETIMEDOUT;
++
++	if (!dp_reg_get_hpd_status(subdev->id))
++		return -ETIMEDOUT;
++
++	switch (msg->request & ~DP_AUX_I2C_MOT) {
++	case DP_AUX_NATIVE_WRITE:
++		transferred = dp_reg_dpcd_write_burst(id, msg->address,
++				msg->size, buffer);
++		break;
++	case DP_AUX_NATIVE_READ:
++		transferred = dp_reg_dpcd_read_burst(id, msg->address,
++				msg->size, buffer);
++		break;
++	case DP_AUX_I2C_WRITE:
++	case DP_AUX_I2C_WRITE_STATUS_UPDATE:
++		return dp_reg_aux_write(id, I2C_WRITE, msg->address,
++				msg->size, buffer);
++	case DP_AUX_I2C_READ:
++		return dp_reg_aux_read(id, I2C_READ, msg->address,
++				msg->size, buffer);
++	default:
++		dp_log_err(dev, "invalid msg request(%#x)\n", msg->request);
++		return -EINVAL;
++	}
++
++	return transferred > 0 ? transferred : -EBUSY;
++}
++
++static void exynos_drm_dp_subdev_detect(struct device *dev)
++{
++	struct exynos_drm_dp *dp = dev_get_drvdata(dev);
++	struct drm_device *drm_dev = dp->drm_dev;
++
++	dp_log_kms(dev, "\n");
++	drm_helper_hpd_irq_event(drm_dev);
++}
++
++static int exynos_drm_dp_subdev_bind(struct device *dev,
++		struct exynos_drm_dp *dp)
++{
++	struct exynos_dp_subdev *subdev = NULL;
++	struct drm_device *drm_dev = dp->drm_dev;
++	int ret = 0;
++
++	ret = exynos_drm_dp_subdev_probe(dp->id, dev, drm_dev, &subdev);
++	if (ret < 0)
++		return ret;
++
++	dp->subdev = subdev;
++	subdev->aux.name = kasprintf(GFP_KERNEL, "%s%d-aux", DEV_NAME, dp->id);
++	subdev->aux.transfer = exynos_drm_dp_aux_transfer;
++	subdev->aux.dev = dev;
++	subdev->aux.drm_dev = drm_dev;
++	subdev->detect = exynos_drm_dp_subdev_detect;
++	subdev->state = DP_STATE_OFF;
++
++	ret = drm_dp_aux_register(&subdev->aux);
++	if (ret) {
++		dp_log_err(dev, "failed to aux_register, %d\n", ret);
++		goto err_aux_register;
++	}
++
++	if (gpio_get_value(subdev->hpd_gpio))
++		exynos_drm_dp_reset(subdev);
++
++	dp_log_dbg(dev, "%s registered for aux_transfer\n", subdev->aux.name);
++
++	return 0;
++
++err_aux_register:
++	return ret;
++}
++
++static int exynos_drm_dp_bind(struct device *dev,
++		struct device *master, void *data)
++{
++	struct exynos_drm_dp *dp = dev_get_drvdata(dev);
++	struct dp_encoder *dp_encoder;
++	struct dp_connector *dp_connector;
++	struct drm_device *drm_dev = data;
++	int ret = 0;
++
++	dp_log_enter(dev);
++	dp->drm_dev = drm_dev;
++
++	dp_encoder = dp_encoder_alloc(dp);
++	if (IS_ERR_OR_NULL(dp_encoder))
++		goto err_encoder_init;
++	ret = exynos_drm_dp_init_encoder(dp_encoder);
++	if (ret < 0)
++		goto err_encoder_init;
++
++	dp_connector = dp_connector_alloc(dp, dp_encoder);
++	if (IS_ERR_OR_NULL(dp_connector))
++		goto err_connector_init;
++	ret = exynos_drm_dp_init_connector(dp_connector);
++	if (ret < 0)
++		goto err_connector_init;
++
++	/* Set base encoder/connector */
++	dp->encoder = &dp_encoder->base;
++	dp->connector = &dp_connector->base;
++
++	ret = exynos_drm_dp_get_timings(dev);
++	if (ret < 0)
++		goto err_connector_init;
++
++	exynos_drm_dp_get_native_mode(dev, dp_connector);
++
++	ret = exynos_drm_dp_subdev_bind(dev, dp);
++	if (ret < 0)
++		goto err_connector_init;
++
++	exynos_drm_dp_mst_init(dp_connector);
++
++	/* enable_irq end of binding */
++	if (dp->subdev)
++		enable_irq(dp->subdev->hpd_gpio_irq);
++	
++	ret = exynos_drm_dp_start(dp->subdev);
++	if (ret < 0)
++		dp_log_err(dp->dev, "cannot start DP[%d], %d\n", dp->id, ret);
++
++	dp->is_mst = false;
++
++	dp_log_exit(dev);
++
++	return 0;
++
++err_connector_init:
++	if (dp_connector)
++		exynos_drm_dp_destroy_connector(&dp_connector->base);
++err_encoder_init:
++	if (dp_encoder)
++		exynos_drm_dp_destroy_encoder(&dp_encoder->base);
++	dp_log_err(dev, "failed: drm_encoder/connector_init() : %d\n", ret);
++	return ret;
++}
++
++static void exynos_drm_dp_unbind(struct device *dev, struct device *master,
++			     void *data)
++{
++	struct exynos_drm_dp *dp = dev_get_drvdata(dev);
++	struct exynos_dp_subdev *subdev = dp->subdev;
++
++	dp_log_enter(dev);
++
++	kfree(subdev->aux.name);
++
++	destroy_workqueue(subdev->dp_wq);
++	mutex_destroy(&subdev->lock);
++	mutex_destroy(&subdev->pwlock);
++
++	drm_dp_aux_unregister(&subdev->aux);
++
++	display_timings_release(dp->timings);
++
++	flush_delayed_work(&subdev->hpd_irq_work);
++
++	disable_irq(subdev->irq);
++	disable_irq(subdev->hpd_gpio_irq);
++
++
++	dp_log_exit(dev);
++	return;
++}
++
++static const struct component_ops exynos_drm_dp_ops = {
++	.bind	= exynos_drm_dp_bind,
++	.unbind	= exynos_drm_dp_unbind,
++};
++
++static int exynos_drm_dp_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct exynos_drm_dp *dp;
++
++	struct clk *aclk, *pclk;
++	int ret = 0;
++
++	dp = devm_kzalloc(dev, sizeof(struct exynos_drm_dp),
++			  GFP_KERNEL);
++	if (!dp)
++		return -ENOMEM;
++
++	dp->dev = dev;
++	dp->bridge.of_node = dev->of_node;
++	dp->bridge.driver_private = dp;
++	drm_bridge_add(&dp->bridge);
++
++	dp->id = 0;
++	// TODO: make it proper value
++	dp->output_type = EXYNOS_DISPLAY_TYPE_NONE;
++
++	platform_set_drvdata(pdev, dp);
++
++	aclk = devm_clk_get_enabled(dp->dev, "aclk");
++	if (IS_ERR(aclk))
++		return dev_err_probe(dp->dev, PTR_ERR(aclk),
++				     "Could not get aclk clock\n");
++	pclk = devm_clk_get_enabled(dp->dev, "pclk");
++	if (IS_ERR(pclk))
++		return dev_err_probe(dp->dev, PTR_ERR(pclk),
++				     "Could not get pclk clock\n");
++
++	dp_log_info(dev, "is successfully\n");
++
++	ret = component_add(dev, &exynos_drm_dp_ops);
++	if (ret)
++		goto fail_probe;
++
++	return 0;
++
++fail_probe:
++	dp_log_err(dev, "probe failed");
++	devm_kfree(dev, dp);
++
++	return ret;
++}
++
++static void
++exynos_drm_dp_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct exynos_drm_dp *dp = dev_get_drvdata(dev);
++
++	device_remove_file(dev, &dev_attr_dump_sfr);
++	device_remove_file(dev, &dev_attr_link_lane);
++	device_remove_file(dev, &dev_attr_bist_mode);
++	device_remove_file(dev, &dev_attr_debug_hpd_irq);
++	device_remove_file(dev, &dev_attr_debug_lt);
++
++	drm_bridge_remove(&dp->bridge);
++
++	component_del(&pdev->dev, &exynos_drm_dp_ops);
++
++}
++
++static const struct dp_dev_data exynos910_dp = {
++	.version = V910,
++};
++
++static const struct of_device_id exynos_drm_dp_match[] = {
++	{ .compatible = "samsung,exynos910-dp", .data = (void *)&exynos910_dp },
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos_drm_dp_match);
++
++struct platform_driver dp_driver = {
++	.probe		= exynos_drm_dp_probe,
++	.remove_new	= exynos_drm_dp_remove,
 +	.driver		= {
-+		.name	= "exynos9-decon",
-+		.of_match_table = decon_driver_dt_match,
++		.name	= DEV_NAME,
++		.owner	= THIS_MODULE,
++		.of_match_table = exynos_drm_dp_match,
 +	},
 +};
-diff --git a/drivers/gpu/drm/exynos/regs-decon9.h b/drivers/gpu/drm/exynos/regs-decon9.h
++
++MODULE_DESCRIPTION("Samsung Specific DisplayPort Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dp.h b/drivers/gpu/drm/exynos/exynos_drm_dp.h
 new file mode 100644
-index 000000000000..e45ee71676cb
+index 000000000000..0720a9d2cd9d
 --- /dev/null
-+++ b/drivers/gpu/drm/exynos/regs-decon9.h
-@@ -0,0 +1,1244 @@
++++ b/drivers/gpu/drm/exynos/exynos_drm_dp.h
+@@ -0,0 +1,964 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later */
-+
-+#ifndef _REGS_DECON_H
-+#define _REGS_DECON_H
-+
-+#define CHK_DPU_ID(_decon_idx) (_decon_idx >> 1)
-+#define CHK_DECON_ID(_decon_idx) (_decon_idx & 0x1)
-+#define SYSREG_DPUM 0x18C20000
-+#define SYSREG_DPUS(_v) (0x1AA10000 + ((0x2 * (_v - 1)) << 20))
-+#define SYSREG_DPU(_dpu_id) \
-+	((_dpu_id == 0) ? SYSREG_DPUM : SYSREG_DPUS(_dpu_id))
-+
-+#define DISP_DPU_MIPI_PHY_CON 0x0008
-+/* _v : [0,1] */
-+#define SEL_RESET_DPHY_MASK(_v) (0x1 << (4 + (_v)))
-+#define M_RESETN_M4S4_MODULE_MASK (0x1 << 1)
-+#define M_RESETN_M4S4_TOP_MASK (0x1 << 0)
-+
-+#define DISP_DPU_TE_QACTIVE_PLL_EN 0x1010
-+#define TE_QACTIVE_PLL_EN (0x1 << 0)
-+
 +/*
-+ * [ BLK_DPU BASE ADDRESS ]
++ * Samsung ExynosAuto DRM Display Port driver Header
 + *
-+ * - CMU_DPUM			0x18C0_0000
-+ * - CMU_DPUS0 			0x1AA0_0000
-+ * - CMU_DPUS1 			0x1AC0_0000
-+ * - SYSREG_DPUM 		0x18C1_0000
-+ * - SYSREG_DPUS0 		0x1AA1_0000
-+ * - SYSREG_DPUS1 		0x1AC1_0000
-+ * - DPP_DPUM 			0x18C2_0000
-+ * - DPP_DPUS0 			0x1AA2_0000
-+ * - DPP_DPUS1 			0x1AC2_0000
-+ * - DECON0_DPUM 		0x18C3_0000
-+ * - DECON1_DPUM 		0x18C4_0000
-+ * - DECON0_DPUS0 		0x1AA3_0000
-+ * - DECON1_DPUS0 		0x1AA4_0000
-+ * - DECON0_DPUS1 		0x1AC3_0000
-+ * - DECON1_DPUS1 		0x1AC4_0000
-+ * - DPUM_DMA 			0x18C5_0000
-+ * - DPUS0_DMA 			0x1AA5_0000
-+ * - DPUS1_DMA 			0x1AC5_0000
-+ * - MIPI_DSIM0 		0x18C6_0000
-+ * - MIPI_DSIM1 		0x18C7_0000
-+ * - MIPI_DPHY 			0x18D8_0000
-+ * - SYSMMU_D0_DPUM 		0x18C8_0000
-+ * - SYSMMU_D1_DPUM 		0x18C9_0000
-+ * - SYSMMU_D2_DPUM 		0x18CA_0000
-+ * - SYSMMU_D3_DPUM 		0x18CB_0000
-+ * - SYSMMU_D0_DPUM_S 		0x18CC_0000
-+ * - SYSMMU_D1_DPUM_S 		0x18CD_0000
-+ * - SYSMMU_D2_DPUM_S 		0x18CE_0000
-+ * - SYSMMU_D3_DPUM_S 		0x18CF_0000
-+ * - SYSMMU_D0_DPUS0 		0x1AA8_0000
-+ * - SYSMMU_D1_DPUS0 		0x1AA9_0000
-+ * - SYSMMU_D2_DPUS0 		0x1AAA_0000
-+ * - SYSMMU_D3_DPUS0 		0x1AAB_0000
-+ * - SYSMMU_D0_DPUS0_S 		0x1AAC_0000
-+ * - SYSMMU_D1_DPUS0_S 		0x1AAD_0000
-+ * - SYSMMU_D2_DPUS0_S 		0x1AAE_0000
-+ * - SYSMMU_D3_DPUS0_S 		0x1AAF_0000
-+ * - SYSMMU_D0_DPUS1 		0x1AC8_0000
-+ * - SYSMMU_D1_DPUS1 		0x1AC9_0000
-+ * - SYSMMU_D2_DPUS1 		0x1ACA_0000
-+ * - SYSMMU_D3_DPUS1 		0x1ACB_0000
-+ * - SYSMMU_D0_DPUS1_S 		0x1ACC_0000
-+ * - SYSMMU_D1_DPUS1_S 		0x1ACD_0000
-+ * - SYSMMU_D2_DPUS1_S 		0x1ACE_0000
-+ * - SYSMMU_D3_DPUS1_S 		0x1ACF_0000
-+ * - PPMU_D0_DPUM 		0x18D0_0000
-+ * - PPMU_D1_DPUM 		0x18D1_0000
-+ * - PPMU_D2_DPUM 		0x18D2_0000
-+ * - PPMU_D3_DPUM 		0x18D3_0000
-+ * - PPMU_D0_DPUS0 		0x1AB0_0000
-+ * - PPMU_D1_DPUS0 		0x1AB1_0000
-+ * - PPMU_D2_DPUS0 		0x1AB2_0000
-+ * - PPMU_D3_DPUS0 		0x1AB3_0000
-+ * - PPMU_D0_DPUS1 		0x1AD0_0000
-+ * - PPMU_D1_DPUS1 		0x1AD1_0000
-+ * - PPMU_D2_DPUS1 		0x1AD2_0000
-+ * - PPMU_D3_DPUS1 		0x1AD3_0000
-+ * - BTM_D0_DPUM 		0x18D4_0000
-+ * - BTM_D1_DPUM 		0x18D5_0000
-+ * - BTM_D2_DPUM 		0x18D6_0000
-+ * - BTM_D3_DPUM 		0x18D7_0000
-+ * - BTM_D0_DPUS0 		0x1AB4_0000
-+ * - BTM_D1_DPUS0 		0x1AB5_0000
-+ * - BTM_D2_DPUS0 		0x1AB6_0000
-+ * - BTM_D3_DPUS0 		0x1AB7_0000
-+ * - BTM_D0_DPUS1 		0x1AD4_0000
-+ * - BTM_D1_DPUS1 		0x1AD5_0000
-+ * - BTM_D2_DPUS1 		0x1AD6_0000
-+ * - BTM_D3_DPUS1 		0x1AD7_0000
-+ * - VGEN_DPUM 			0x18DA_0000
-+ * - VGEN_DPUS0 		0x1ABA_0000
-+ * - VGEN_DPUS1 		0x1ADA_0000
-+ * - D_TZPC_DPUM 		0x18DB_0000
-+ * - D_TZPC_DPUS0 		0x1ABB_0000
-+ * - D_TZPC_DPUS1 		0x1ADB_0000
++ * Copyright (C) 2018 Samsung Electronics Co.Ltd
 + */
 +
-+/*
-+ *	IP			start_offset	end_offset
-+ *=================================================
-+ *	DECON0			0x8000		0x82A4
-+ * 	DECON1			0x9000 		0x92A4
-+ *	BLENDER			0x0004		0x701C
-+ *-------------------------------------------------
-+ *	DSC0			0x2000		0x2fff
-+ *	DSC1			0x3000		0x3fff
-+ *-------------------------------------------------
++#ifndef __EXYNOS_DRM_DP_H__
++#define __EXYNOS_DRM_DP_H__
++
++#include <drm/drm_crtc.h>
++#include <drm/drm_crtc_helper.h>
++
++#include <drm/display/drm_dsc.h>
++#include <drm/display/drm_dp_mst_helper.h>
++
++#include <drm/drm_bridge.h>
++#include <drm/drm_print.h>
++#include <video/videomode.h>
++
++#include "exynos_drm_drv.h"
++
++#include <linux/types.h>
++#include <linux/kernel.h> /* DIV_ROUND_CLOSEST */
++#include <linux/printk.h> /* pr_xxx */
++#include <linux/io.h> /* for use 'readl()', 'writel()' functions */
++
++#define CHECK_RANGE(param, min, max) ((min) <= (param) && (param) <= (max))
++
++enum dpu_pixel_format {
++	/* RGB 8bit display */
++	/* 4byte */
++	DPU_PIXEL_FORMAT_ARGB_8888 = 0,
++	DPU_PIXEL_FORMAT_ABGR_8888,
++	DPU_PIXEL_FORMAT_RGBA_8888,
++	DPU_PIXEL_FORMAT_BGRA_8888,
++	DPU_PIXEL_FORMAT_XRGB_8888,
++	DPU_PIXEL_FORMAT_XBGR_8888,
++	DPU_PIXEL_FORMAT_RGBX_8888,
++	DPU_PIXEL_FORMAT_BGRX_8888,
++	/* 2byte */
++	DPU_PIXEL_FORMAT_RGBA_5551,
++	DPU_PIXEL_FORMAT_BGRA_5551,
++	DPU_PIXEL_FORMAT_ABGR_4444,
++	DPU_PIXEL_FORMAT_RGBA_4444,
++	DPU_PIXEL_FORMAT_BGRA_4444,
++	DPU_PIXEL_FORMAT_RGB_565,
++	DPU_PIXEL_FORMAT_BGR_565,
++
++	/* RGB 10bit display */
++	/* 4byte */
++	DPU_PIXEL_FORMAT_ARGB_2101010,
++	DPU_PIXEL_FORMAT_ABGR_2101010,
++	DPU_PIXEL_FORMAT_RGBA_1010102,
++	DPU_PIXEL_FORMAT_BGRA_1010102,
++
++	/* YUV 8bit display */
++	/* YUV422 2P */
++	DPU_PIXEL_FORMAT_NV16,
++	DPU_PIXEL_FORMAT_NV61,
++	/* YUV422 3P */
++	DPU_PIXEL_FORMAT_YVU422_3P,
++	/* YUV420 2P */
++	DPU_PIXEL_FORMAT_NV12,
++	DPU_PIXEL_FORMAT_NV21,
++	DPU_PIXEL_FORMAT_NV12M,
++	DPU_PIXEL_FORMAT_NV21M,
++	/* YUV420 3P */
++	DPU_PIXEL_FORMAT_YUV420,
++	DPU_PIXEL_FORMAT_YVU420,
++	DPU_PIXEL_FORMAT_YUV420M,
++	DPU_PIXEL_FORMAT_YVU420M,
++	/* YUV - 2 planes but 1 buffer */
++	DPU_PIXEL_FORMAT_NV12N,
++	DPU_PIXEL_FORMAT_NV12N_10B,
++
++	/* YUV 10bit display */
++	/* YUV420 2P */
++	DPU_PIXEL_FORMAT_NV12M_P010,
++	DPU_PIXEL_FORMAT_NV21M_P010,
++
++	/* YUV420(P8+2) 4P */
++	DPU_PIXEL_FORMAT_NV12M_S10B,
++	DPU_PIXEL_FORMAT_NV21M_S10B,
++
++	/* YUV422 2P */
++	DPU_PIXEL_FORMAT_NV16M_P210,
++	DPU_PIXEL_FORMAT_NV61M_P210,
++
++	/* YUV422(P8+2) 4P */
++	DPU_PIXEL_FORMAT_NV16M_S10B,
++	DPU_PIXEL_FORMAT_NV61M_S10B,
++
++	DPU_PIXEL_FORMAT_NV12_P010,
++
++	DPU_PIXEL_FORMAT_MAX,
++};
++
++enum chip_version {
++	/* EXYNOS chip version */
++	V910,
++	V920,
++};
++
++struct dpu_panel_timing {
++	unsigned long pclk;
++	unsigned int vactive;
++	unsigned int vfp;
++	unsigned int vsa;
++	unsigned int vbp;
++
++	unsigned int hactive;
++	unsigned int hfp;
++	unsigned int hsa;
++	unsigned int hbp;
++	unsigned int fps;
++};
++
++struct dpu_format {
++	const char *name;
++	enum dpu_pixel_format dpu_fmt; /* user-interface dpu color format */
++	u32 dma_fmt_afbc; /* afbc color format to DPU_DMA */
++	u32 dma_fmt; /* color format to DPU_DMA */
++	u32 dpp_fmt; /* color format to DPP */
++};
++
++struct exynos_dsc {
++	bool enabled;
++	u32 dsc_count;
++	u32 slice_count;
++	u32 slice_width;
++	u32 slice_height;
++};
++
++/**
++ * DPU register types to be controlled
 + */
-+
-+/*
-+ * DECON registers
-+ * ->
-+ * updated by
-+ * SHADOW_REG_UPDATE_REQ[31] 		: 0x0000~0x0FFF
-+ * SHADOW_REG_UPDATE_REQ_WIN5[0] 	: 0x10E0~0x110C (0x0218[22:20],0x0214[21:20])
-+ * SHADOW_REG_UPDATE_REQ_WIN4[4] 	: 0x10B0~0x10DC (0x0218[18:16],0x0214[17:16])
-+ * SHADOW_REG_UPDATE_REQ_WIN3[3] 	: 0x1090~0x10AC (0x0218[14:12],0x0214[13:12])
-+ * SHADOW_REG_UPDATE_REQ_WIN2[2] 	: 0x1060~0x108C (0x0218[10:8] ,0x0214[9:8]  )
-+ * SHADOW_REG_UPDATE_REQ_WIN1[1] 	: 0x1030~0x105C (0x0218[6:4]  ,0x0214[5:4]  )
-+ * SHADOW_REG_UPDATE_REQ_WIN0[0] 	: 0x0004~0x001C (0x0218[2:0]  ,0x0214[1:0]  )
-+ */
-+
-+/*
-+ * DECON0 : Base Address + 0x8xxx
-+ * DECON1 : Base Address + 0x9xxx
-+ * Base Addr was defined by DT.
-+ * DPUx_DECON0 : 0x****_8000
-+ * DPUx_DECON1 : 0x****_9000
-+ * ex) DPUM_DECON0 : 0x18C3_8000
-+ */
-+
-+#define BASED_DECON0 0
-+#define BASED_DECON1 1
-+
-+#define GLOBAL_CONTROL 0x0000
-+#define GLOBAL_CONTROL_SRESET (1 << 28)
-+#define GLOBAL_CONTROL_PSLVERR_EN (1 << 24)
-+#define GLOBAL_CONTROL_TEN_BPC_MODE_F (1 << 20)
-+#define GLOBAL_CONTROL_TEN_BPC_MODE_MASK (1 << 20)
-+#define GLOBAL_CONTROL_STANDALONE_MODE_F (0x0 << 12)
-+#define GLOBAL_CONTROL_OPERATION_MODE_VIDEO_BY_TE_F (1 << 9)
-+#define GLOBAL_CONTROL_OPERATION_MODE_F (1 << 8)
-+#define GLOBAL_CONTROL_OPERATION_MODE_VIDEO_F (0 << 8)
-+#define GLOBAL_CONTROL_OPERATION_MODE_CMD_F (1 << 8)
-+#define GLOBAL_CONTROL_IDLE_STATUS (1 << 5)
-+#define GLOBAL_CONTROL_RUN_STATUS (1 << 4)
-+#define GLOBAL_CONTROL_DECON_EN (1 << 1)
-+#define GLOBAL_CONTROL_DECON_EN_F (1 << 0)
-+
-+#define RESOURCE_OCCUPANCY_INFO_0 0x0010
-+#define RESOURCE_OCCUPANCY_INFO_1 0x0014
-+#define RESOURCE_OCCUPANCY_INFO_2 0x0018
-+
-+#define SRAM_SHARE_ENABLE 0x0030
-+#define SRAM0_SHARE_ENABLE_F (1 << 0)
-+#define SRAM1_SHARE_ENABLE_F (1 << 4)
-+#define SRAM2_SHARE_ENABLE_F (1 << 8)
-+#define SRAM3_SHARE_ENABLE_F (1 << 12)
-+#define SRAM4_SHARE_ENABLE_F (1 << 16)
-+#define SRAM5_SHARE_ENABLE_F (1 << 20)
-+#define SRAM6_SHARE_ENABLE_F (1 << 24)
-+#define ALL_SRAM_SHARE_ENABLE (0x1111111 << 0)
-+#define ALL_SRAM_SHARE_DISABLE (0x0)
-+
-+#define INTERRUPT_ENABLE 0x0040
-+#define DPU_DQE_DIMMING_END_INT_EN (1 << 21)
-+#define DPU_DQE_DIMMING_START_INT_EN (1 << 20)
-+#define DPU_FRAME_DONE_INT_EN (1 << 13)
-+#define DPU_FRAME_START_INT_EN (1 << 12)
-+#define DPU_EXTRA_INT_EN (1 << 4)
-+#define DPU_INT_EN (1 << 0)
-+#define INTERRUPT_ENABLE_MASK 0x3011
-+
-+#define EXTRA_INTERRUPT_ENABLE 0x0044
-+#define DPU_RESOURCE_CONFLICT_INT_EN (1 << 8)
-+#define DPU_TIME_OUT_INT_EN (1 << 4)
-+
-+#define TIME_OUT_VALUE 0x0048
-+
-+#define INTERRUPT_PENDING 0x004C
-+#define DPU_DQE_DIMMING_END_INT_PEND (1 << 21)
-+#define DPU_DQE_DIMMING_START_INT_PEND (1 << 20)
-+#define DPU_FRAME_DONE_INT_PEND (1 << 13)
-+#define DPU_FRAME_START_INT_PEND (1 << 12)
-+#define DPU_EXTRA_INT_PEND (1 << 4)
-+
-+#define EXTRA_INTERRUPT_PENDING 0x0050
-+#define DPU_RESOURCE_CONFLICT_INT_PEND (1 << 8)
-+#define DPU_TIME_OUT_INT_PEND (1 << 4)
-+
-+#define INTERRUPT_ENABLE_SFI 0x0054
-+#define DPU_ECC_ERROR_SFI_INT_EN (1 << 5)
-+#define DPU_FRAME_DONE_SFI_INT_EN (1 << 4)
-+#define DPU_INT_EN_SFI (1 << 0)
-+
-+#define INTERRUPT_PENDING_SFI 0x0058
-+#define DPU_ECC_ERROR_SFI_INT_PEND (1 << 5)
-+#define DPU_FRAME_DONE_SFI_INT_PEND (1 << 4)
-+
-+#define HW_SW_TRIG_CONTROL 0x0070
-+#define HW_SW_TRIG_HS_STATUS (1 << 28)
-+#define HW_TRIG_SEL(_v) ((_v) << 24)
-+#define HW_TRIG_SEL_MASK (0x3 << 24)
-+#define HW_TRIG_SEL_FROM_DDI1 (1 << 24)
-+#define HW_TRIG_SEL_FROM_DDI0 (0 << 24)
-+#define HW_TRIG_SKIP(_v) ((_v) << 16)
-+#define HW_TRIG_SKIP_MASK (0xff << 16)
-+#define HW_TRIG_ACTIVE_VALUE (1 << 13)
-+#define HW_TRIG_EDGE_POLARITY (1 << 12)
-+#define SW_TRIG_EN (1 << 8)
-+#define HW_TRIG_MASK_DECON (1 << 4)
-+#define HW_SW_TRIG_TIMER_CLEAR (1 << 3)
-+#define HW_SW_TRIG_TIMER_EN (1 << 2)
-+#define HW_TRIG_EN (1 << 0)
-+
-+#define HW_SW_TRIG_TIMER 0x0074
-+
-+#define HW_TE_CNT 0x0078
-+#define HW_TRIG_CNT_B_GET(_v) (((_v) >> 16) & 0xffff)
-+#define HW_TRIG_CNT_A_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define OTF_FRAME_START_SEL 0x0080
-+#define OTF_FS_SEL_OTF(_v) ((_v) << 0)
-+
-+#define CLOCK_CONTROL_0 0x00F0
-+/*
-+ * [28] QACTIVE_PLL_VALUE = 0
-+ * [24] QACTIVE_VALUE = 0
-+ *   0: QACTIVE is dynamically changed by DECON h/w,
-+ *   1: QACTIVE is stuck to 1'b1
-+ * [16][12][8][4][0] AUTO_CG_EN_xxx
-+ */
-+/* clock gating is disabled on bringup */
-+#define CLOCK_CONTROL_0_CG_MASK (0x11111 << 0)
-+#define CLOCK_CONTROL_0_QACTIVE_MASK ((0x1 << 24) | (0x1 << 28))
-+#define CLOCK_CONTROL_0_TE_QACTIVE_PLL_ON (0x1 << 28)
-+
-+#define SPLITTER_SIZE_CONTROL_0 0x0100
-+#define SPLITTER_HEIGHT_F(_v) ((_v) << 16)
-+#define SPLITTER_HEIGHT_MASK (0x3fff << 16)
-+#define SPLITTER_HEIGHT_GET(_v) (((_v) >> 16) & 0x3fff)
-+#define SPLITTER_WIDTH_F(_v) ((_v) << 0)
-+#define SPLITTER_WIDTH_MASK (0x3fff << 0)
-+#define SPLITTER_WIDTH_GET(_v) (((_v) >> 0) & 0x3fff)
-+
-+#define SPLITTER_SPLIT_IDX_CONTROL 0x0104
-+#define SPLITTER_SPLIT_IDX_F(_v) ((_v) << 0)
-+#define SPLITTER_SPLIT_IDX_MASK (0x3fff << 0)
-+#define SPLITTER_OVERLAP_F(_v) ((_v) << 16)
-+#define SPLITTER_OVERLAP_MASK (0x7f << 16)
-+
-+#define OUTFIFO_SIZE_CONTROL_0 0x0120
-+#define OUTFIFO_HEIGHT_F(_v) ((_v) << 16)
-+#define OUTFIFO_HEIGHT_MASK (0x3fff << 16)
-+#define OUTFIFO_HEIGHT_GET(_v) (((_v) >> 16) & 0x3fff)
-+#define OUTFIFO_WIDTH_F(_v) ((_v) << 0)
-+#define OUTFIFO_WIDTH_MASK (0x3fff << 0)
-+#define OUTFIFO_WIDTH_GET(_v) (((_v) >> 0) & 0x3fff)
-+
-+#define OUTFIFO_SIZE_CONTROL_1 0x0124
-+#define OUTFIFO_1_WIDTH_F(_v) ((_v) << 0)
-+#define OUTFIFO_1_WIDTH_MASK (0x3fff << 0)
-+#define OUTFIFO_1_WIDTH_GET(_v) (((_v) >> 0) & 0x3fff)
-+
-+#define OUTFIFO_SIZE_CONTROL_2 0x0128
-+#define OUTFIFO_COMPRESSED_SLICE_HEIGHT_F(_v) ((_v) << 16)
-+#define OUTFIFO_COMPRESSED_SLICE_HEIGHT_MASK (0x3fff << 16)
-+#define OUTFIFO_COMPRESSED_SLICE_HEIGHT_GET(_v) (((_v) >> 16) & 0x3fff)
-+#define OUTFIFO_COMPRESSED_SLICE_WIDTH_F(_v) ((_v) << 0)
-+#define OUTFIFO_COMPRESSED_SLICE_WIDTH_MASK (0x3fff << 0)
-+#define OUTFIFO_COMPRESSED_SLICE_WIDTH_GET(_v) (((_v) >> 0) & 0x3fff)
-+
-+#define OUTFIFO_TH_CONTROL_0 0x012C
-+#define OUTFIFO_TH_1H_F (0x5 << 0)
-+#define OUTFIFO_TH_2H_F (0x6 << 0)
-+#define OUTFIFO_TH_F(_v) ((_v) << 0)
-+#define OUTFIFO_TH_MASK (0x7 << 0)
-+#define OUTFIFO_TH_GET(_v) ((_v) >> 0 & 0x7)
-+
-+#define OUTFIFO_DATA_ORDER_CONTROL 0x0130
-+#define OUTFIFO_PIXEL_ORDER_SWAP_F(_v) ((_v) << 4)
-+#define OUTFIFO_PIXEL_ORDER_SWAP_MASK (0x7 << 4)
-+#define OUTFIFO_PIXEL_ORDER_SWAP_GET(_v) (((_v) >> 4) & 0x7)
-+
-+#define OUTFIFO_LEVEL 0x0134
-+#define OUTFIFO_FIFO_LEVEL_F(_v) (((_v) & 0xffff) << 0)
-+
-+#define READ_URGENT_CONTROL_0 0x0140
-+#define READ_URGETN_GENERATION_EN_F (0x1 << 0)
-+
-+#define READ_URGENT_CONTROL_1 0x0144
-+#define READ_URGENT_HIGH_THRESHOLD_F(_v) ((_v) << 16)
-+#define READ_URGENT_HIGH_THRESHOLD_MASK (0xffff << 16)
-+#define READ_URGENT_HIGH_THRESHOLD_GET(_v) (((_v) >> 16) & 0xffff)
-+#define READ_URGENT_LOW_THRESHOLD_F(_v) ((_v) << 0)
-+#define READ_URGENT_LOW_THRESHOLD_MASK (0xffff << 0)
-+#define READ_URGENT_LOW_THRESHOLD_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define READ_URGENT_CONTROL_2 0x0148
-+#define READ_URGENT_WAIT_CYCLE_F(_v) ((_v) << 0)
-+#define READ_URGENT_WAIT_CYCLE_GET(_v) ((_v) >> 0)
-+
-+#define DTA_CONTROL 0x0180
-+#define DTA_EN_F (1 << 0)
-+
-+#define DTA_THRESHOLD 0x0184
-+#define DTA_HIGH_TH_F(_v) ((_v) << 16)
-+#define DTA_HIGH_TH_MASK (0xffff << 16)
-+#define DTA_HIGH_TH_GET(_v) (((_v) >> 16) & 0xffff)
-+#define DTA_LOW_TH_F(_v) ((_v) << 0)
-+#define DTA_LOW_TH_MASK (0xffff << 0)
-+#define DTA_LOW_TH_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define BLENDER_BG_IMAGE_SIZE_0 0x0200
-+#define BLENDER_BG_HEIGHT_F(_v) ((_v) << 16)
-+#define BLENDER_BG_HEIGHT_MASK (0x3fff << 16)
-+#define BLENDER_BG_HEIGHT_GET(_v) (((_v) >> 16) & 0x3fff)
-+#define BLENDER_BG_WIDTH_F(_v) ((_v) << 0)
-+#define BLENDER_BG_WIDTH_MASK (0x3fff << 0)
-+#define BLENDER_BG_WIDTH_GET(_v) (((_v) >> 0) & 0x3fff)
-+
-+#define BLENDER_BG_IMAGE_COLOR_0 0x0208
-+#define BLENDER_BG_A_F(_v) ((_v) << 16)
-+#define BLENDER_BG_A_MASK (0xff << 16)
-+#define BLENDER_BG_A_GET(_v) (((_v) >> 16) & 0xff)
-+#define BLENDER_BG_R_F(_v) ((_v) << 0)
-+#define BLENDER_BG_R_MASK (0x3ff << 0)
-+#define BLENDER_BG_R_GET(_v) (((_v) >> 0) & 0x3ff)
-+
-+#define BLENDER_BG_IMAGE_COLOR_1 0x020C
-+#define BLENDER_BG_G_F(_v) ((_v) << 16)
-+#define BLENDER_BG_G_MASK (0x3ff << 16)
-+#define BLENDER_BG_G_GET(_v) (((_v) >> 16) & 0x3ff)
-+#define BLENDER_BG_B_F(_v) ((_v) << 0)
-+#define BLENDER_BG_B_MASK (0x3ff << 0)
-+#define BLENDER_BG_B_GET(_v) (((_v) >> 0) & 0x3ff)
-+
-+#define LRMERGER_MODE_CONTROL 0x0210
-+#define LRM23_MODE_F(_v) ((_v) << 16)
-+#define LRM23_MODE_MASK (0x7 << 16)
-+#define LRM01_MODE_F(_v) ((_v) << 0)
-+#define LRM01_MODE_MASK (0x7 << 0)
-+
-+#define DATA_PATH_CONTROL_0 0x0214
-+#define WIN_MAPCOLOR_EN_F(_win) (1 << (4 * _win + 1))
-+#define WIN_EN_F(_win) (1 << (4 * _win + 0))
-+
-+#define DATA_PATH_CONTROL_1 0x0218
-+#define WIN_CHMAP_F(_win, _ch) (((_ch) & 0xf) << (4 * _win))
-+#define WIN_CHMAP_MASK(_win) (0xf << (4 * _win))
-+
-+#define DATA_PATH_CONTROL_2 0x0230
-+#define EHNANCE_PATH_F(_v) ((_v) << 12)
-+#define EHNANCE_PATH_MASK (0x7 << 12)
-+#define EHNANCE_PATH_GET(_v) (((_v) >> 12) & 0x7)
-+
-+#define DSC_PATH_F(_v) ((_v) << 4)
-+#define DSC_PATH_MASK (0xF << 4)
-+#define DSC_PATH_GET(_v) (((_v) >> 4) & 0xF)
-+
-+#define OUTIF_PATH_F(_v) ((_v) << 0)
-+#define OUTIF_PATH_MASK (0xF << 0)
-+#define OUTIF_PATH_GET(_v) (((_v) >> 0) & 0xF)
-+
-+#define COMP_OUTIF_PATH_F(_v) ((_v) << 0)
-+#define COMP_OUTIF_PATH_MASK (0xff << 0)
-+#define COMP_OUTIF_PATH_GET(_v) (((_v) >> 0) & 0xff)
-+
-+#define OTF_DITH_CONTROL 0x0270
-+#define DITH_MASK_SEL_F (1 << 1)
-+#define DITH_MASK_SPIN_F (1 << 0)
-+
-+/* DECON CRC for ASB */
-+#define CRC_LINKIF_DATA_0 0x0280
-+#define CRC_DATA_DSIMIF1_GET(_v) (((_v) >> 16) & 0xffff)
-+#define CRC_DATA_DSIMIF0_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define CRC_LINKIF_DATA_2 0x0288
-+#define CRC_DATA_DP1_GET(_v) (((_v) >> 16) & 0xffff)
-+#define CRC_DATA_DP0_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define CRC_LINKIF_CONTROL 0x028C
-+#define CRC_COLOR_SEL(_v) ((_v) << 16)
-+#define CRC_COLOR_SEL_MASK (0x3 << 16)
-+#define CRC_START (1 << 0)
-+
-+#define FRAME_COUNT 0x02A0
-+
-+/* WAIT_CYCLE_AFTER_SFR_UPDATE register is hidden for customer. */
-+#define WAIT_CYCLE_AFTER_SFR_UPDATE 0x02A4
-+#define WAIT_CYCLE_AFTER_SFR_UPDATE_F(_v) (((_v) & 0x1f) << 0)
-+
-+/* DECON DEBUG guided from SoC Team */
-+#define DECON_DEBUG_SFR_START 0x0400
-+#define DECON_DEBUG_SFR_END 0x05FC
-+
-+/* COMMON SFR DECON0 AND DECON1 */
-+#define DECON_CONIF_BASE 0x0000
-+#define DSIM0_CONIF_BASE (DECON_CONIF_BASE + 0x0000)
-+#define DSIM1_CONIF_BASE (DECON_CONIF_BASE + 0x1000)
-+#define DP0_CONIF_BASE (DECON_CONIF_BASE + 0x2000)
-+#define DP1_CONIF_BASE (DECON_CONIF_BASE + 0x3000)
-+
-+#define DSIM0_CONNECTION_CONTROL (DSIM0_CONIF_BASE + 0x0000)
-+#define DSIM1_CONNECTION_CONTROL (DSIM1_CONIF_BASE + 0x0000)
-+#define DSIM_CONNECTION_DSIM_F(_v) (((_v) & 0x3) << 0)
-+#define DSIM_CONNECTION_DSIM_GET(_v) (((_v) >> 0) & 0x3)
-+#define DSIM_CONNECTION_DSIM_MASK (0x7 << 0)
-+
-+#define DSIM0_TE_TIMEOUT_CONTROL (DSIM0_CONIF_BASE + 0x0004)
-+#define DSIM1_TE_TIMEOUT_CONTROL (DSIM1_CONIF_BASE + 0x0004)
-+#define DSIM_TE_TIMEOUT_CNT(_v) ((_v) << 0)
-+#define DSIM_TE_TIMEOUT_CNT_MASK (0xffff << 0)
-+#define DSIM_TE_TIMEOUT_CNT_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define DSIM0_START_TIME_CONTROL (DSIM0_CONIF_BASE + 0x0008)
-+#define DSIM0_START_TIME(_v) ((_v) << 0)
-+
-+#define DSIM1_START_TIME_CONTROL (DSIM1_CONIF_BASE + 0x0008)
-+#define DSIM1_START_TIME(_v) ((_v) << 0)
-+
-+#define DP0_CONNECTION_CONTROL_0 DP0_CONIF_BASE
-+#define DP1_CONNECTION_CONTROL_0 DP1_CONIF_BASE
-+#define DP_CONNECTION_SEL_ATB_F(_v) (((_v) & 0x7) << 4)
-+#define DP_CONNECTION_SEL_F(_v) (((_v) & 0x7) << 0)
-+#define DP_CONNECTION_SEL_ATB_MASK (0x7 << 4)
-+#define DP_CONNECTION_SEL_MASK (0x7 << 0)
-+#define DP_CONNECTION_SEL_GET(_v) (((_v) >> 0) & 0x7)
-+
-+/* DECON GLOBAL */
-+#define SHADOW_REG_UPDATE_REQ 0x0000
-+#define SHADOW_REG_UPDATE_REQ_GLOBAL (1 << 31)
-+#define SHADOW_REG_UPDATE_REQ_DQE (1 << 28)
-+#define SHADOW_REG_UPDATE_REQ_WIN(_win) (1 << (_win))
-+#define SHADOW_REG_UPDATE_REQ_FOR_DECON (0xff)
-+
-+#define HW_TRIG_MASK 0x0030
-+#define HW_TRIG_MASK_SECURE 0x0034
-+
-+/* BLENDER */
-+
-+#define WIN_SHD_OFFSET 0x0800
-+
-+#define WIN_SECURE_CONTROL 0x0000
-+
-+#define WIN_CONTROL_0 0x0004
-+#define WIN_ALPHA1_F(_v) (((_v) & 0xFF) << 24)
-+#define WIN_ALPHA1_MASK (0xFF << 24)
-+#define WIN_ALPHA0_F(_v) (((_v) & 0xFF) << 16)
-+#define WIN_ALPHA0_MASK (0xFF << 16)
-+#define WIN_ALPHA_GET(_v, _n) (((_v) >> (16 + 8 * (_n))) & 0xFF)
-+#define WIN_FUNC_F(_v) (((_v) & 0xF) << 8)
-+#define WIN_FUNC_MASK (0xF << 8)
-+#define WIN_FUNC_GET(_v) (((_v) >> 8) & 0xf)
-+#define WIN_SRESET (1 << 4)
-+#define WIN_ALPHA_MULT_SRC_SEL_F(_v) (((_v) & 0x3) << 0)
-+#define WIN_ALPHA_MULT_SRC_SEL_MASK (0x3 << 0)
-+
-+#define WIN_CONTROL_1 0x0008
-+#define WIN_FG_ALPHA_D_SEL_F(_v) (((_v) & 0xF) << 24)
-+#define WIN_FG_ALPHA_D_SEL_MASK (0xF << 24)
-+#define WIN_BG_ALPHA_D_SEL_F(_v) (((_v) & 0xF) << 16)
-+#define WIN_BG_ALPHA_D_SEL_MASK (0xF << 16)
-+#define WIN_FG_ALPHA_A_SEL_F(_v) (((_v) & 0xF) << 8)
-+#define WIN_FG_ALPHA_A_SEL_MASK (0xF << 8)
-+#define WIN_BG_ALPHA_A_SEL_F(_v) (((_v) & 0xF) << 0)
-+#define WIN_BG_ALPHA_A_SEL_MASK (0xF << 0)
-+
-+#define WIN_START_POSITION 0x000C
-+#define WIN_STRPTR_Y_F(_v) (((_v) & 0x3FFF) << 16)
-+#define WIN_STRPTR_X_F(_v) (((_v) & 0x3FFF) << 0)
-+
-+#define WIN_END_POSITION 0x0010
-+#define WIN_ENDPTR_Y_F(_v) (((_v) & 0x3FFF) << 16)
-+#define WIN_ENDPTR_X_F(_v) (((_v) & 0x3FFF) << 0)
-+
-+#define WIN_COLORMAP_0 0x0014
-+#define WIN_MAPCOLOR_A_F(_v) ((_v) << 16)
-+#define WIN_MAPCOLOR_A_MASK (0xff << 16)
-+#define WIN_MAPCOLOR_R_F(_v) ((_v) << 0)
-+#define WIN_MAPCOLOR_R_MASK (0x3ff << 0)
-+
-+#define WIN_COLORMAP_1 0x0018
-+#define WIN_MAPCOLOR_G_F(_v) ((_v) << 16)
-+#define WIN_MAPCOLOR_G_MASK (0x3ff << 16)
-+#define WIN_MAPCOLOR_B_F(_v) ((_v) << 0)
-+#define WIN_MAPCOLOR_B_MASK (0x3ff << 0)
-+
-+#define WIN_START_TIME_CONTROL 0x001C
-+#define WIN_START_TIME_CONTROL_F(_v) ((_v) << 0)
-+#define WIN_START_TIME_CONTROL_MASK (0x3fff << 0)
-+
-+/*
-+ * DSC registers (Base Addr = DECON_SUB0 + 0x2000)
-+ * ->
-+ * 0x2000 ~
-+ * DSC 0 : 0x0000
-+ * DSC 1 : 0x1000
-+ *
-+ * <-
-+ * DSC registers
-+ */
-+
-+#define DSC0_OFFSET 0x0000
-+#define DSC1_OFFSET 0x1000
-+
-+#define DSC_CONTROL0 0x0000
-+#define DSC_SW_RESET (0x1 << 28)
-+#define DSC_DCG_EN_REF(_v) ((_v) << 19)
-+#define DSC_DCG_EN_SSM(_v) ((_v) << 18)
-+#define DSC_DCG_EN_ICH(_v) ((_v) << 17)
-+#define DSC_DCG_EN_ALL_OFF (0x0 << 17)
-+#define DSC_DCG_EN_ALL_MASK (0x7 << 17)
-+#define DSC_BIT_SWAP(_v) ((_v) << 10)
-+#define DSC_BYTE_SWAP(_v) ((_v) << 9)
-+#define DSC_WORD_SWAP(_v) ((_v) << 8)
-+#define DSC_SWAP(_b, _c, _w) ((_b << 10) | (_c << 9) | (_w << 8))
-+#define DSC_SWAP_MASK ((1 << 10) | (1 << 9) | (1 << 8))
-+#define DSC_FLATNESS_DET_TH_MASK (0xf << 4)
-+#define DSC_FLATNESS_DET_TH_F(_v) ((_v) << 4)
-+#define DSC_SLICE_MODE_CH_MASK (0x1 << 3)
-+#define DSC_SLICE_MODE_CH_F(_v) ((_v) << 3)
-+#define DSC_CG_EN_MASK (0x1 << 1)
-+#define DSC_CG_EN_F(_v) ((_v) << 1)
-+#define DSC_DUAL_SLICE_EN_MASK (0x1 << 0)
-+#define DSC_DUAL_SLICE_EN_F(_v) ((_v) << 0)
-+
-+#define DSC_CONTROL3 0x000C
-+#define DSC_REMAINDER_F(_v) ((_v) << 12)
-+#define DSC_REMAINDER_MASK (0x3 << 12)
-+#define DSC_REMAINDER_GET(_v) (((_v) >> 12) & 0x3)
-+#define DSC_GRPCNTLINE_F(_v) ((_v) << 0)
-+#define DSC_GRPCNTLINE_MASK (0x7ff << 0)
-+#define DSC_GRPCNTLINE_GET(_v) (((_v) >> 0) & 0x7ff)
-+
-+#define DSC_CRC_0 0x0010
-+#define DSC_CRC_EN_MASK (0x1 << 16)
-+#define DSC_CRC_EN_F(_v) ((_v) << 16)
-+#define DSC_CRC_CODE_MASK (0xffff << 0)
-+#define DSC_CRC_CODE_F(_v) ((_v) << 0)
-+
-+#define DSC_CRC_1 0x0014
-+#define DSC_CRC_Y_S0_MASK (0xffff << 16)
-+#define DSC_CRC_Y_S0_F(_v) ((_v) << 16)
-+#define DSC_CRC_CO_S0_MASK (0xffff << 0)
-+#define DSC_CRC_CO_S0_F(_v) ((_v) << 0)
-+
-+#define DSC_CRC_2 0x0018
-+#define DSC_CRC_CG_S0_MASK (0xffff << 16)
-+#define DSC_CRC_CG_S0_F(_v) ((_v) << 16)
-+#define DSC_CRC_Y_S1_MASK (0xffff << 0)
-+#define DSC_CRC_Y_S1_F(_v) ((_v) << 0)
-+
-+#define DSC_CRC_3 0x001C
-+#define DSC_CRC_CO_S1_MASK (0xffff << 16)
-+#define DSC_CRC_CO_S1_F(_v) ((_v) << 16)
-+#define DSC_CRC_CG_S1_MASK (0xffff << 0)
-+#define DSC_CRC_CG_S1_F(_v) ((_v) << 0)
-+
-+#define DSC_PPS00_03 0x0020
-+#define PPS00_VER(_v) ((_v) << 24)
-+#define PPS00_VER_MASK (0xff << 24)
-+#define PPS01_ID(_v) (_v << 16)
-+#define PPS01_ID_MASK (0xff << 16)
-+#define PPS03_BPC_MASK (0x00f0 << 0)
-+#define PPS03_LBD_MASK (0x000f << 0)
-+#define PPS03_BPC_LBD(_v) (_v << 0)
-+
-+#define DSC_PPS04_07 0x0024
-+#define PPS04_COMP_CFG(_v) ((_v) << 24)
-+#define PPS04_COMP_CFG_MASK (0x3f << 24)
-+#define PPS05_BPP(_v) (_v << 16)
-+#define PPS05_BPP_MASK (0xff << 16)
-+#define PPS06_07_PIC_HEIGHT_MASK (0xffff << 0)
-+#define PPS06_07_PIC_HEIGHT(_v) (_v << 0)
-+
-+#define DSC_PPS08_11 0x0028
-+#define PPS08_09_PIC_WIDHT_MASK (0xffff << 16)
-+#define PPS08_09_PIC_WIDHT(_v) ((_v) << 16)
-+#define PPS10_11_SLICE_HEIGHT_MASK (0xffff << 0)
-+#define PPS10_11_SLICE_HEIGHT(_v) (_v << 0)
-+
-+#define DSC_PPS12_15 0x002C
-+#define PPS12_13_SLICE_WIDTH_MASK (0xffff << 16)
-+#define PPS12_13_SLICE_WIDTH(_v) ((_v) << 16)
-+#define PPS14_15_CHUNK_SIZE_MASK (0xffff << 0)
-+#define PPS14_15_CHUNK_SIZE(_v) (_v << 0)
-+
-+#define DSC_PPS16_19 0x0030
-+#define PPS16_17_INIT_XMIT_DELAY_MASK (0x3ff << 16)
-+#define PPS16_17_INIT_XMIT_DELAY(_v) ((_v) << 16)
-+#define PPS18_19_INIT_DEC_DELAY_MASK (0xffff << 0)
-+#define PPS18_19_INIT_DEC_DELAY(_v) ((_v) << 0)
-+
-+#define DSC_PPS20_23 0x0034
-+#define PPS21_INIT_SCALE_VALUE_MASK (0x3f << 16)
-+#define PPS21_INIT_SCALE_VALUE(_v) ((_v) << 16)
-+#define PPS22_23_SCALE_INC_INTERVAL_MASK (0xffff << 0)
-+#define PPS22_23_SCALE_INC_INTERVAL(_v) (_v << 0)
-+
-+#define DSC_PPS24_27 0x0038
-+#define PPS24_25_SCALE_DEC_INTERVAL_MASK (0xfff << 16)
-+#define PPS24_25_SCALE_DEC_INTERVAL(_v) ((_v) << 16)
-+/* FL : First Line */
-+#define PPS27_FL_BPG_OFFSET_MASK (0x1f << 0)
-+#define PPS27_FL_BPG_OFFSET(_v) (_v << 0)
-+
-+#define DSC_PPS28_31 0x003C
-+/* NFL : Not First Line */
-+#define PPS28_29_NFL_BPG_OFFSET_MASK (0xffff << 16)
-+#define PPS28_29_NFL_BPG_OFFSET(_v) ((_v) << 16)
-+#define PPS30_31_SLICE_BPG_OFFSET_MASK (0xffff << 0)
-+#define PPS30_31_SLICE_BPG_OFFSET(_v) (_v << 0)
-+
-+#define DSC_PPS32_35 0x0040
-+#define PPS32_33_INIT_OFFSET_MASK (0xffff << 16)
-+#define PPS32_33_INIT_OFFSET(_v) ((_v) << 16)
-+#define PPS34_35_FINAL_OFFSET_MASK (0xffff << 0)
-+#define PPS34_35_FINAL_OFFSET(_v) (_v << 0)
-+
-+#define DSC_PPS36_39 0x0044
-+#define PPS36_FLATNESS_MIN_QP_MASK (0xff << 24)
-+#define PPS36_FLATNESS_MIN_QP(_v) ((_v) << 24)
-+#define PPS37_FLATNESS_MAX_QP_MASK (0xff << 16)
-+#define PPS37_FLATNESS_MAX_QP(_v) ((_v) << 16)
-+#define PPS38_39_RC_MODEL_SIZE_MASK (0xffff << 0)
-+#define PPS38_39_RC_MODEL_SIZE(_v) (_v << 0)
-+
-+#define DSC_PPS40_43 0x0048
-+#define PPS40_RC_EDGE_FACTOR_MASK (0xff << 24)
-+#define PPS40_RC_EDGE_FACTOR(_v) ((_v) << 24)
-+#define PPS41_RC_QUANT_INCR_LIMIT0_MASK (0xff << 16)
-+#define PPS41_RC_QUANT_INCR_LIMIT0(_v) ((_v) << 16)
-+#define PPS42_RC_QUANT_INCR_LIMIT1_MASK (0xff << 8)
-+#define PPS42_RC_QUANT_INCR_LIMIT1(_v) ((_v) << 8)
-+#define PPS44_RC_TGT_OFFSET_HI_MASK (0xf << 4)
-+#define PPS44_RC_TGT_OFFSET_HI(_v) ((_v) << 4)
-+#define PPS44_RC_TGT_OFFSET_LO_MASK (0xf << 0)
-+#define PPS44_RC_TGT_OFFSET_LO(_v) ((_v) << 0)
-+
-+#define DSC_PPS44_47 0x004C
-+#define PPS44_RC_BUF_THRESH_0_MASK (0xff << 24)
-+#define PPS44_RC_BUF_THRESH_0(_v) ((_v) << 24)
-+#define PPS45_RC_BUF_THRESH_1_MASK (0xff << 16)
-+#define PPS45_RC_BUF_THRESH_1(_v) ((_v) << 16)
-+#define PPS46_RC_BUF_THRESH_2_MASK (0xff << 8)
-+#define PPS46_RC_BUF_THRESH_3(_v) ((_v) << 8)
-+#define PPS47_RC_BUF_THRESH_3_MASK (0xff << 0)
-+#define PPS47_RC_BUF_THRESH_3(_v) ((_v) << 0)
-+
-+#define DSC_PPS48_51 0x0050
-+#define PPS48_RC_BUF_THRESH_4_MASK (0xff << 24)
-+#define PPS48_RC_BUF_THRESH_4(_v) ((_v) << 24)
-+#define PPS49_RC_BUF_THRESH_5_MASK (0xff << 16)
-+#define PPS49_RC_BUF_THRESH_5(_v) ((_v) << 16)
-+#define PPS50_RC_BUF_THRESH_6_MASK (0xff << 8)
-+#define PPS50_RC_BUF_THRESH_6(_v) ((_v) << 8)
-+#define PPS51_RC_BUF_THRESH_7_MASK (0xff << 0)
-+#define PPS51_RC_BUF_THRESH_7(_v) ((_v) << 0)
-+
-+#define DSC_PPS52_55 0x0054
-+#define PPS52_RC_BUF_THRESH_8_MASK (0xff << 24)
-+#define PPS52_RC_BUF_THRESH_8(_v) ((_v) << 24)
-+#define PPS53_RC_BUF_THRESH_9_MASK (0xff << 16)
-+#define PPS53_RC_BUF_THRESH_9(_v) ((_v) << 16)
-+#define PPS54_RC_BUF_THRESH_A_MASK (0xff << 8)
-+#define PPS54_RC_BUF_THRESH_A(_v) ((_v) << 8)
-+#define PPS55_RC_BUF_THRESH_B_MASK (0xff << 0)
-+#define PPS55_RC_BUF_THRESH_B(_v) ((_v) << 0)
-+
-+#define DSC_PPS56_59 0x0058
-+#define PPS56_RC_BUF_THRESH_C_MASK (0xff << 24)
-+#define PPS56_RC_BUF_THRESH_C(_v) ((_v) << 24)
-+#define PPS57_RC_BUF_THRESH_D_MASK (0xff << 16)
-+#define PPS57_RC_BUF_THRESH_D(_v) ((_v) << 16)
-+#define PPS58_RC_RANGE_PARAM_MASK (0xff << 8)
-+#define PPS58_RC_RANGE_PARAM(_v) (_v << 8)
-+#define PPS59_RC_RANGE_PARAM_MASK (0xff << 0)
-+#define PPS59_RC_RANGE_PARAM(_v) (_v << 0)
-+#define PPS58_59_RC_RANGE_PARAM_MASK (0xFFFF << 0)
-+#define PPS58_59_RC_RANGE_PARAM(_v) (_v << 0)
-+
-+#define DSC_PPS60_63 0x005C
-+#define DSC_PPS64_67 0x0060
-+#define DSC_PPS68_71 0x0064
-+#define DSC_PPS72_75 0x0068
-+#define DSC_PPS76_79 0x006C
-+#define DSC_PPS80_83 0x0070
-+#define DSC_PPS84_87 0x0074
-+
-+#define DSC_DEBUG_EN 0x0078
-+#define DSC_DBG_EN_MASK (1 << 31)
-+#define DSC_DBG_EN(_v) ((_v) << 31)
-+#define DSC_DBG_SEL_MASK (0xffff << 0)
-+#define DSC_DBG_SEL(_v) ((_v) << 0)
-+
-+#define DSC_DEBUG_DATA 0x007C
-+
-+#define DSCC_DEBUG_EN 0x0080
-+#define DSCC_DBG_EN_MASK (1 << 31)
-+#define DSCC_DBG_EN(_v) ((_v) << 31)
-+#define DSCC_DBG_SEL_MASK (0xffff << 0)
-+#define DSCC_DBG_SEL(_v) ((_v) << 0)
-+
-+#define DSCC_DEBUG_DATA 0x0084
-+
-+/*
-+ * DQE registers (Base Addr : DECON1)
-+ * ->
-+ * 0x0000 ~
-+ * DQE 0 : 0x0000
-+ * DQE 1 : 0x1000
-+ *
-+ * <-
-+ * DQE registers
-+ */
-+
-+#define DQE0_OFFSET 0x0000
-+#define DQE1_OFFSET 0x1000
-+#define DQE_OFFSET(_id) ((_id == 0) ? DQE0_OFFSET : DQE1_OFFSET)
-+
-+#define DQE_CON(_id) (0x0000 + DQE_OFFSET(_id))
-+#define DQE_LPD_MODE_EXIT(_v) ((_v) << 24)
-+#define DQE_LPD_MODE_EXIT_MASK (1 << 24)
-+#define DQE_APS_SW_RESET(_v) ((_v) << 18)
-+#define DQE_APD_SW_RESET_MASK (1 << 18)
-+#define DQE_APD_SW_RESET_CLEAR (0 << 18)
-+#define DQE_HSC_SW_RESET(_v) ((_v) << 16)
-+#define DQE_HSC_SW_RESET_MASK (1 << 16)
-+#define DQE_HSC_SW_RESET_CLEAR (0 << 16)
-+#define PN_NEXT_CALC(_v) ((_v) << 7)
-+#define PN_NEXT_CALC_NEW (0 << 7)
-+#define PN_NEXT_CALC_OLD (1 << 7)
-+#define APS_UPGRADE_ON(_v) ((_v) << 6)
-+#define APS_UPGRADE_ON_MASK (1 << 6)
-+#define DQE_APS_ON(_v) ((_v) << 4)
-+#define DQE_APS_ON_MASK (1 << 4)
-+#define DQE_HSC_ON(_v) ((_v) << 3)
-+#define DQE_HSC_ON_MASK (1 << 3)
-+#define DQE_GAMMA_ON(_v) ((_v) << 2)
-+#define DQE_GAMMA_ON_MASK (1 << 2)
-+#define DQE_CGC_ON(_v) ((_v) << 1)
-+#define DQE_CGC_ON_MASK (1 << 1)
-+
-+#define DQE_IMG_SIZESET_0(_id) (0x0004 + DQE_OFFSET(_id))
-+#define DQE_IMG_VSIZE_0(_v) (((_v) & 0x3fff) << 16)
-+#define DQE_IMG_VSIZE_0_MASK (0x3fff << 16)
-+#define DQE_IMG_HSIZE_0(_v) (((_v) & 0x3fff) << 0)
-+#define DQE_IMG_HSIZE_0_MASK (0x3fff << 0)
-+
-+#define DQE_CGC1_RED(_id) (0x0010 + DQE_OFFSET(_id))
-+#define DQE_CGC2_RED(_id) (0x0410 + DQE_OFFSET(_id))
-+#define CGC_R_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_R_R_MASK (0x3ff << 20)
-+#define CGC_R_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_R_G_MASK (0x3ff << 10)
-+#define CGC_R_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_R_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_GREEN(_id) (0x0014 + DQE_OFFSET(_id))
-+#define DQE_CGC2_GREEN(_id) (0x0414 + DQE_OFFSET(_id))
-+#define CGC_G_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_G_R_MASK (0x3ff << 20)
-+#define CGC_G_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_G_G_MASK (0x3ff << 10)
-+#define CGC_G_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_G_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_BLUE(_id) (0x0018 + DQE_OFFSET(_id))
-+#define DQE_CGC2_BLUE(_id) (0x0418 + DQE_OFFSET(_id))
-+#define CGC_B_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_B_R_MASK (0x3ff << 20)
-+#define CGC_B_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_B_G_MASK (0x3ff << 10)
-+#define CGC_B_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_B_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_CYAN(_id) (0x001C + DQE_OFFSET(_id))
-+#define DQE_CGC2_CYAN(_id) (0x041C + DQE_OFFSET(_id))
-+#define CGC_C_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_C_R_MASK (0x3ff << 20)
-+#define CGC_C_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_C_G_MASK (0x3ff << 10)
-+#define CGC_C_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_C_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_MAGENTA(_id) (0x0020 + DQE_OFFSET(_id))
-+#define DQE_CGC2_MAGENTA(_id) (0x0420 + DQE_OFFSET(_id))
-+#define CGC_M_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_M_R_MASK (0x3ff << 20)
-+#define CGC_M_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_M_G_MASK (0x3ff << 10)
-+#define CGC_M_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_M_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_YELLOW(_id) (0x0024 + DQE_OFFSET(_id))
-+#define DQE_CGC2_YELLOW(_id) (0x0424 + DQE_OFFSET(_id))
-+#define CGC_Y_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_Y_R_MASK (0x3ff << 20)
-+#define CGC_Y_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_Y_G_MASK (0x3ff << 10)
-+#define CGC_Y_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_Y_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_WHITE(_id) (0x0028 + DQE_OFFSET(_id))
-+#define DQE_CGC2_WHITE(_id) (0x0428 + DQE_OFFSET(_id))
-+#define CGC_W_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_W_R_MASK (0x3ff << 20)
-+#define CGC_W_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_W_G_MASK (0x3ff << 10)
-+#define CGC_W_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_W_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC1_BLACK(_id) (0x002C + DQE_OFFSET(_id))
-+#define DQE_CGC2_BLACK(_id) (0x042C + DQE_OFFSET(_id))
-+#define CGC_K_R(_v) (((_v) & 0x3ff) << 20)
-+#define CGC_K_R_MASK (0x3ff << 20)
-+#define CGC_K_G(_v) (((_v) & 0x3ff) << 10)
-+#define CGC_K_G_MASK (0x3ff << 10)
-+#define CGC_K_B(_v) (((_v) & 0x3ff) << 0)
-+#define CGC_K_B_MASK (0x3ff << 0)
-+
-+#define DQE_CGC_CONTROL(_id) (0x0030 + DQE_OFFSET(_id))
-+#define CGC_MC_GAIN(_v) (((_v) & 0xfff) << 4)
-+#define CGC_MC_GAIN_MASK (0xfff << 4)
-+#define CGC_MC_EN(_v) ((_v) < 0)
-+#define CGC_MC_EN_MASK (1 < 0)
-+
-+#define DQE_GAMMALUT_R_01_00(_id) (0x0034 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_03_02(_id) (0x0038 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_05_04(_id) (0x003C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_07_06(_id) (0x0040 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_09_08(_id) (0x0044 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_11_10(_id) (0x0048 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_13_12(_id) (0x004C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_15_14(_id) (0x0050 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_17_16(_id) (0x0054 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_19_18(_id) (0x0058 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_21_20(_id) (0x005C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_23_22(_id) (0x0060 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_25_24(_id) (0x0064 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_27_26(_id) (0x0068 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_29_28(_id) (0x006C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_31_30(_id) (0x0070 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_33_32(_id) (0x0074 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_35_34(_id) (0x0078 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_37_36(_id) (0x007C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_39_38(_id) (0x0080 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_41_40(_id) (0x0084 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_43_42(_id) (0x0088 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_45_44(_id) (0x008C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_47_46(_id) (0x0090 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_49_48(_id) (0x0094 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_51_50(_id) (0x0098 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_53_52(_id) (0x009C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_55_54(_id) (0x00A0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_57_56(_id) (0x00A4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_59_58(_id) (0x00A8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_61_60(_id) (0x00AC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_63_62(_id) (0x00B0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_R_64(_id) (0x00B4 + DQE_OFFSET(_id))
-+
-+#define DQE_GAMMALUT_G_01_00(_id) (0x00B8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_03_02(_id) (0x00BC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_05_04(_id) (0x00C0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_07_06(_id) (0x00C4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_09_08(_id) (0x00C8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_11_10(_id) (0x00CC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_13_12(_id) (0x00D0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_15_14(_id) (0x00D4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_17_16(_id) (0x00D8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_19_18(_id) (0x00DC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_21_20(_id) (0x00E0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_23_22(_id) (0x00E4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_25_24(_id) (0x00E8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_27_26(_id) (0x00EC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_29_28(_id) (0x00F0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_31_30(_id) (0x00F4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_33_32(_id) (0x00F8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_35_34(_id) (0x00FC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_37_36(_id) (0x0100 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_39_38(_id) (0x0104 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_41_40(_id) (0x0108 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_43_42(_id) (0x010C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_45_44(_id) (0x0110 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_47_46(_id) (0x0114 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_49_48(_id) (0x0118 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_51_50(_id) (0x011C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_53_52(_id) (0x0120 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_55_54(_id) (0x0124 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_57_56(_id) (0x0128 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_59_58(_id) (0x012C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_61_60(_id) (0x0130 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_63_62(_id) (0x0134 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_G_64(_id) (0x0138 + DQE_OFFSET(_id))
-+
-+#define DQE_GAMMALUT_B_01_00(_id) (0x013C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_03_02(_id) (0x0140 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_05_04(_id) (0x0144 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_07_06(_id) (0x0148 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_09_08(_id) (0x014C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_11_10(_id) (0x0150 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_13_12(_id) (0x0154 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_15_14(_id) (0x0158 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_17_16(_id) (0x015C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_19_18(_id) (0x0160 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_21_20(_id) (0x0164 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_23_22(_id) (0x0168 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_25_24(_id) (0x016C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_27_26(_id) (0x0170 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_29_28(_id) (0x0174 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_31_30(_id) (0x0178 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_33_32(_id) (0x017C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_35_34(_id) (0x0180 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_37_36(_id) (0x0184 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_39_38(_id) (0x0188 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_41_40(_id) (0x018C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_43_42(_id) (0x0190 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_45_44(_id) (0x0194 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_47_46(_id) (0x0198 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_49_48(_id) (0x019C + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_51_50(_id) (0x01A0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_53_52(_id) (0x01A4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_55_54(_id) (0x01A8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_57_56(_id) (0x01AC + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_59_58(_id) (0x01B0 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_61_60(_id) (0x01B4 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_63_62(_id) (0x01B8 + DQE_OFFSET(_id))
-+#define DQE_GAMMALUT_B_64(_id) (0x01BC + DQE_OFFSET(_id))
-+
-+/*
-+ * ODD : 1,3,5,7,9,...
-+ * EVEN : 0,2,4,6,8,10,...
++typedef enum cal_regs_type {
++	REGS_NONE = 0, /* This is default type register */
++
++	REGS_IDMA, /* DPU_DMA Read/Write Layer + DPU_DMA Global(v920) */
++	REGS_ODMA, /* unused */
++	REGS_DMA_GLB, /* DPU_DMA Global(v910) */
++	REGS_DPP, /* DPP Layer(common CSC, SCL) */
++	REGS_SCL_COEF, /* SCL COEFx */
++	REGS_DPP_SRAMC, /* SRAM_CON Layer */
++	REGS_VOTF, /* unused */
++	REGS_HDR_COMM, /* HDR Common */
++
++	REGS_DECON,
++	REGS_DECON_CON,
++	REGS_DECON_SHD,
++	REGS_DECON_GLB,
++	REGS_DECON_DSC,
++	REGS_DECON_SRAMC_D,
++	REGS_DECON_SRAMC_G,
++	REGS_WIN,
++	REGS_WIN_CTRL,
++
++	REGS_DSI,
++	REGS_DSI_SYSR, /* system register */
++	REGS_DPHY,
++	REGS_DPHY_BIAS,
++
++	REGS_DP,
++	REGS_DPPHY,
++
++	REGS_TYPE_MAX
++} regs_type_t;
++
++/* This is for register dump descriptor */
++struct cal_dump_desc {
++	u32 offs;
++	u32 size;
++	const char *name; /* subpart has no name(=NULL) */
++	u32 shdw; /* shadow offset if device has */
++};
++
++struct cal_regs_desc {
++	const char *name; /* device name */
++	void __iomem *regs;
++	regs_type_t type;
++	u32 idx; /* device id */
++
++	const struct cal_dump_desc *dps; /* dumps */
++	u32 nr_dps; /* number of dumps array */
++};
++
++#define SFRDUMP_DEF(_start, _end, _shadow, _name)  \
++	{                                          \
++		.offs = _start,                    \
++		.size = ((_end) - (_start) + 0x4), \
++		.shdw = _shadow,                   \
++		.name = _name,                     \
++	}
++
++/* return compressed DSC slice width(unit: pixel cnt) */
++static inline u32 get_comp_dsc_width(const struct exynos_dsc *dsc, u32 bpc)
++{
++	unsigned int slice_width_pixels =
++		DIV_ROUND_UP(dsc->slice_width * bpc, 8);
++
++	return ALIGN(DIV_ROUND_UP(slice_width_pixels, 3), 4);
++}
++
++/* common function macro for register control file */
++/* to get cal_regs_desc */
++#define cal_regs_desc_check(id, max, name)                                     \
++	({                                                                     \
++		if (id >= max) {                                               \
++			cal_log_err(id, "dev(%s) is bigger than max_id(%d)\n", \
++				    name, max);                                \
++			BUG();                                                 \
++		}                                                              \
++	})
++
++#define cal_regs_desc_save(desc_name, _regs, _name, _type, id)               \
++	({                                                                   \
++		regs_##desc_name[id].regs = _regs;                           \
++		regs_##desc_name[id].name = _name;                           \
++		regs_##desc_name[id].type = _type;                           \
++		regs_##desc_name[id].idx = id;                               \
++		cal_log_debug(id, "%s: type(%d) regs(0x%p)\n", _name, _type, \
++			      &_regs);                                       \
++	})
++
++#define cal_dump_desc_save(desc_name, id)                                    \
++	({                                                                   \
++		regs_##desc_name[id].dps = desc_name##_dumps;                \
++		regs_##desc_name[id].nr_dps = ARRAY_SIZE(desc_name##_dumps); \
++	})
++
++/* SFR read/write */
++static inline uint32_t cal_read(struct cal_regs_desc *regs_desc,
++				uint32_t offset)
++{
++	uint32_t val = 0;
++	val = readl(regs_desc->regs + offset);
++	return val;
++}
++
++static inline void cal_write(struct cal_regs_desc *regs_desc, uint32_t offset,
++			     uint32_t val)
++{
++	writel(val, regs_desc->regs + offset);
++}
++
++static inline uint32_t cal_read_mask(struct cal_regs_desc *regs_desc,
++				     uint32_t offset, uint32_t mask)
++{
++	uint32_t val = cal_read(regs_desc, offset);
++	val &= (mask);
++	return val;
++}
++
++static inline void cal_write_mask(struct cal_regs_desc *regs_desc,
++				  uint32_t offset, uint32_t val, uint32_t mask)
++{
++	uint32_t old = cal_read(regs_desc, offset);
++	val = (val & mask) | (old & ~mask);
++	cal_write(regs_desc, offset, val);
++}
++
++#define DEFINE_CAL_REGS_FUNCS(name, size)                                      \
++	static struct cal_regs_desc regs_##name[size];                         \
++	static inline uint32_t name##_read(u32 idx, u32 offset)                \
++	{                                                                      \
++		return cal_read(&regs_##name[idx], offset);                    \
++	}                                                                      \
++	static inline uint32_t name##_read_mask(u32 idx, u32 offset, u32 mask) \
++	{                                                                      \
++		return cal_read_mask(&regs_##name[idx], offset, mask);         \
++	}                                                                      \
++	static inline void name##_write(u32 idx, u32 offset, u32 val)          \
++	{                                                                      \
++		return cal_write(&regs_##name[idx], offset, val);              \
++	}                                                                      \
++	static inline void name##_write_mask(u32 idx, u32 offset, u32 val,     \
++					     u32 mask)                         \
++	{                                                                      \
++		return cal_write_mask(&regs_##name[idx], offset, val, mask);   \
++	}
++
++/* log messages */
++#define cal_msg(func, _id, fmt, ...) \
++	func("[drm:%s(#%d)] " fmt, __func__, _id, ##__VA_ARGS__)
++
++#define cal_log_enter(id) cal_msg(pr_debug, id, "%s", "+")
++#define cal_log_exit(id) cal_msg(pr_debug, id, "%s", "-")
++
++#define cal_log_debug(id, fmt, ...) cal_msg(pr_debug, id, fmt, ##__VA_ARGS__)
++#define cal_log_warn(id, fmt, ...) cal_msg(pr_warn, id, fmt, ##__VA_ARGS__)
++#define cal_log_info(id, fmt, ...) cal_msg(pr_info, id, fmt, ##__VA_ARGS__)
++#define cal_log_err(id, fmt, ...) \
++	cal_msg(pr_err_ratelimited, id, fmt, ##__VA_ARGS__)
++
++#define cal_ops(ctx, op, args...)                                              \
++	(((ctx)->cal_ops && (ctx)->cal_ops->op) ? ((ctx)->cal_ops->op(args)) : \
++						  0)
++
++/* register dumps message */
++#define DUMP_PREFIX "[drm:DUMP] "
++#define print_dump_info(string, ...) \
++	pr_info("%s===== " string " =====\n", DUMP_PREFIX, ##__VA_ARGS__)
++
++static inline void __cal_dump_regs(struct cal_regs_desc *desc, bool shadow)
++{
++	int i;
++	u32 shdw_offs;
++
++	for (i = 0; i < desc->nr_dps; i++) {
++		const struct cal_dump_desc *dps = &desc->dps[i];
++
++		if (!dps)
++			continue;
++
++		if (shadow && !dps->shdw)
++			continue;
++
++		shdw_offs = shadow ? dps->shdw : 0x0;
++		if (dps->name)
++			print_dump_info("%s: %s %s(+0x%X)", desc->name,
++					dps->name, shadow ? "SHADOW " : "",
++					shdw_offs);
++		// print_hexdump(desc->regs + dps->offs + shdw_offs, dps->size);
++	}
++}
++
++static inline void cal_dump_regs(struct cal_regs_desc *desc)
++{
++	const struct cal_dump_desc *dps;
++
++	if (!desc || !desc->regs || !desc->dps)
++		return;
++
++	__cal_dump_regs(desc, false);
++
++	dps = &desc->dps[0];
++	if (dps->shdw)
++		__cal_dump_regs(desc, true);
++}
++
++
++#define MAX_DP_CNT 2
++#define MAX_SST_CNT 4
++#define MAX_VC_PAYLOAD_TIMESLOT 63
++#define NUM_VC_PAYLOAD_SLOT 8
++
++#define LINK_RATE_1_62Gbps 0x06
++#define LINK_RATE_2_7Gbps 0x0A
++#define LINK_RATE_5_4Gbps 0x14
++#define LINK_RATE_8_1Gbps 0x1E
++
++#define AUX_DATA_BUF_COUNT 16
++#define AUX_RETRY_COUNT 3
++#define AUX_TIMEOUT_1800us 0x03
++
++#define SYNC_POSITIVE 0
++#define SYNC_NEGATIVE 1
++
++typedef enum {
++	NORAMAL_DATA = 0,
++	TRAINING_PATTERN_1 = 1,
++	TRAINING_PATTERN_2 = 2,
++	TRAINING_PATTERN_3 = 3,
++	TRAINING_PATTERN_4 = 5,
++} dp_training_pattern;
++
++typedef enum {
++	DISABLE_PATTEN = 0,
++	D10_2_PATTERN = 1,
++	SERP_PATTERN = 2,
++	PRBS7 = 3,
++	CUSTOM_80BIT = 4,
++	HBR2_COMPLIANCE = 5,
++} dp_qual_pattern;
++
++enum aux_ch_command_type {
++	I2C_WRITE = 0x4,
++	I2C_READ = 0x5,
++	DPCD_WRITE = 0x8,
++	DPCD_READ = 0x9,
++};
++
++enum phy_tune_info {
++	AMP = 0,
++	POST_EMP = 1,
++	PRE_EMP = 2,
++	IDRV = 3,
++};
++
++enum test_pattern {
++	COLOR_BAR = 0,
++	WGB_BAR,
++	MW_BAR,
++	CTS_COLOR_RAMP,
++	CTS_BLACK_WHITE,
++	CTS_COLOR_SQUARE_VESA,
++	CTS_COLOR_SQUARE_CEA,
++};
++
++typedef enum {
++	ENABLE_SCRAM = 0,
++	DISABLE_SCRAM = 1,
++} dp_scrambling;
++
++enum dp_interrupt_mask {
++	PLL_LOCK_CHG_INT_MASK,
++	HOTPLUG_CHG_INT_MASK,
++	HPD_LOST_INT_MASK,
++	PLUG_INT_MASK,
++	HPD_IRQ_INT_MASK,
++	RPLY_RECEIV_INT_MASK,
++	AUX_ERR_INT_MASK,
++	HDCP_LINK_CHECK_INT_MASK,
++	HDCP_LINK_FAIL_INT_MASK,
++	HDCP_R0_READY_INT_MASK,
++	VIDEO_FIFO_UNDER_FLOW_MASK,
++	VSYNC_DET_INT_MASK,
++	AUDIO_FIFO_UNDER_RUN_INT_MASK,
++	AUDIO_FIFO_OVER_RUN_INT_MASK,
++
++	ALL_INT_MASK
++};
++
++enum dynamic_range_type {
++	VESA_RANGE = 0, /* (0 ~ 255) */
++	CEA_RANGE = 1, /* (16 ~ 235) */
++};
++
++enum bit_depth {
++	BPC_6 = 0,
++	BPC_8,
++	BPC_10,
++};
++
++typedef enum {
++	V640X480P60,
++	V640X480P30,
++	V720X480P60,
++	V720X576P50,
++	V1280X800P60RB,
++	V1280X720P60,
++	V1366X768P60,
++	V1280X1024P60,
++	V1920X1080P24,
++	V1920X1080P25,
++	V1920X1080P30,
++	V1600X900P60RB,
++	V1920X1080P60,
++	V1920X1200P60,
++	V1920X1200P60P,
++	V1920X1200P30,
++	V1920X1200P30P,
++	V3840X2160P24,
++	V3840X2160P25,
++	V3840X2160P30,
++	V4096X2160P24,
++	V4096X2160P25,
++	V4096X2160P30,
++	V3840X2160P50,
++	V3840X2160P60,
++	V4096X2160P50,
++	V4096X2160P60,
++	V1560X700P60,
++	V800X400P60,
++	V1120X780P60,
++	/* Used for AR HUD */
++	V1440X2560P60,
++	V1440X720P60,
++	V1800X900P60,
++	VIDEO_FORMAT_MAX,
++} videoformat;
++
++struct dp_support_video {
++	videoformat video_format;
++	u32 hactive;
++	u32 hfront_porch;
++	u32 hsync_len;
++	u32 hback_porch;
++	u32 vactive;
++	u32 vfront_porch;
++	u32 vsync_len;
++	u32 vback_porch;
++	u32 pixelclock;
++	u32 vsync_pol;
++	u32 hsync_pol;
++	u8 vic;
++	char *name;
++};
++
++#define MAX_PPS_NUM 96 /* PPS96 through PPS127 are reverved until DSC v1.2a */
++struct dp_dsc {
++	bool enable;
++	u8 slice_count;
++	u16 chunk_size;
++	u8 pps[MAX_PPS_NUM]; /* DSC Picture Paremeter Set */
++};
++
++struct dp_video_info {
++	struct dp_support_video vm;
++	unsigned int bpc; /* bits per component */
++
++	u32 sst_id; /* dp_sst_idx_t - 1 */
++	enum dynamic_range_type dyn_range;
++
++	/* DSC */
++	struct dp_dsc dsc;
++};
++
++extern const struct dp_support_video support_videos[];
++
++/*************** CP CAL APIs exposed to DP driver ***************/
++struct dp_regs {
++	void __iomem *link_addr;
++	void __iomem *phy_addr;
++};
++
++/* DP0, DP1 */
++typedef enum dp_regs_id {
++	REGS_DP0_ID = 0,
++	REGS_DP1_ID,
++	REGS_DP_ID_MAX
++} dp_regs_id_t;
++
++typedef enum dp_regs_type {
++	REGS_DP_LINK = 0,
++	REGS_DP_PHY,
++	REGS_DP_TYPE_MAX
++} dp_regs_type_t;
++
++typedef enum dp_irq_type {
++	DP_IRQ_HPD_IRQ_FLAG = (1 << 11),
++	DP_IRQ_HPD_CHG = (1 << 10),
++	DP_IRQ_HPD_LOST = (1 << 9),
++	DP_IRQ_HPD_PLUG_INT = (1 << 8),
++	DP_IRQ_MAPI_FIFO_UNDER_FLOW = (1 << 8),
++} dp_irq_type_t;
++
++typedef enum dp_irq_reg_type {
++	DP_IRQ_REG_SYSTEM,
++
++	DP_IRQ_REG_SST1_SET0,
++	DP_IRQ_REG_SST2_SET0,
++	DP_IRQ_REG_SST3_SET0,
++	DP_IRQ_REG_SST4_SET0,
++
++	DP_IRQ_REG_SST1_SET1,
++	DP_IRQ_REG_SST2_SET1,
++	DP_IRQ_REG_SST3_SET1,
++	DP_IRQ_REG_SST4_SET1,
++} dp_irq_reg_type_t;
++
++u32 dp_reg_read_vcpi_timeslot(u32 id, u32 index);
++
++void dp_reg_sw_reset(u32 id);
++void dp_reg_phy_reset(u32 id, u32 en);
++void dp_reg_phy_init_setting(u32 id);
++u32 dp_reg_phy_get_link_bw(u32 id);
++void dp_reg_phy_set_link_bw(u32 id, u8 link_rate);
++void dp_reg_phy_mode_setting(u32 id);
++void dp_reg_wait_phy_pll_lock(u32 id);
++void dp_reg_phy_disable(u32 id);
++void dp_reg_set_lane_count(u32 id, u8 lane_cnt);
++u32 dp_reg_get_lane_count(u32 id);
++void dp_reg_set_enhanced_mode(u32 id, u32 en);
++void dp_reg_set_training_pattern(u32 id, dp_training_pattern pattern);
++void dp_reg_scrambling_enable(u32 id, bool status);
++void dp_reg_set_voltage_and_pre_emphasis(u32 id, u8 *voltage, u8 *pre_emphasis);
++void dp_reg_set_phy_tune(u32 id, u32 phy_lane_num, u32 amp_lvl,
++			 u32 pre_emp_lvl);
++void dp_reg_init(u32 id);
++void dp_reg_deinit(u32 id);
++void dp_reg_set_hpd_interrupt(u32 id, u32 en);
++void dp_reg_set_plug_interrupt(u32 id, u32 en);
++u32 dp_reg_get_hpd_status(u32 id);
++u32 dp_reg_get_int_and_clear(u32 id, u32 irq_reg);
++void dp_reg_set_video_config(u32 id, struct dp_video_info dp_video_info);
++void dp_reg_set_bist_video_config(u32 id, struct dp_video_info dp_video_info,
++				  u8 type);
++void dp_reg_start(u32 id, u32 sst_id);
++void dp_reg_stop(u32 id, u32 sst_id);
++int dp_reg_aux_write(u32 id, u32 comm, u32 address, u32 length, u8 *data);
++int dp_reg_aux_read(u32 id, u32 comm, u32 address, u32 length, u8 *data);
++int dp_reg_dpcd_write_burst(u32 id, u32 address, u32 length, u8 *data);
++int dp_reg_dpcd_read_burst(u32 id, u32 address, u32 length, u8 *data);
++
++int dp_regs_desc_init(u32 dp_id, struct dp_regs *regs);
++
++void dp_reg_set_mst_en(u32 id, u32 en);
++void dp_reg_set_strm_x_y(u32 id, u32 sst_id, u32 x_val, u32 y_val);
++void dp_reg_set_vcpi_timeslot(u32 id, u32 sst_id, u32 start, u32 size);
++void dp_reg_remove_vcpi_timeslot(u32 id, u32 sst_id);
++int dp_reg_wait_for_vcpi_update(u32 id);
++void dp_reg_set_mst_always_sent_act(u32 id, u32 en);
++int dp_reg_get_link_clock(u32 id);
++bool dp_reg_get_sst_pstate(u32 id);
++void dp_reg_set_dsc_fec(u32 id, u32 en);
++
++/* log messages */
++#define dp_msg(func, dev, fmt, ...)	\
++	func(dev, fmt, ##__VA_ARGS__)
++
++#define dp_log_enter(dev)	dp_msg(DRM_DEV_DEBUG, dev, "%s", "+")
++#define dp_log_exit(dev)	dp_msg(DRM_DEV_DEBUG, dev, "%s", "-")
++
++#define dp_log_dbg(dev, f, ...)  dp_msg(DRM_DEV_DEBUG_DRIVER, dev, f, ##__VA_ARGS__)
++#define dp_log_kms(dev, f, ...)  dp_msg(DRM_DEV_DEBUG_KMS, dev, f, ##__VA_ARGS__)
++#define dp_log_info(dev, f, ...) dp_msg(DRM_DEV_INFO, dev, f, ##__VA_ARGS__)
++#define dp_log_err(dev, f, ...)  dp_msg(DRM_DEV_ERROR, dev, f, ##__VA_ARGS__)
++#define dp_log_errl(dev, f, ...) dp_msg(DRM_DEV_ERROR_RATELIMITED, dev, f, ##__VA_ARGS__)
++
++#define MAX_LANE_CNT 4
++
++enum dp_state {
++	DP_STATE_OFF,
++	DP_STATE_LINKED,
++	DP_STATE_ON,
++};
++
++enum hotplug_state {
++	HPD_UNPLUG	= 0,
++	HPD_PLUG	= BIT(0),
++	HPD_IRQ		= BIT(1),
++	HPD_CHECK	= BIT(2),
++	HPD_LT_FAILED 	= BIT(3),
++};
++
++typedef enum exynos_dp_sst_index {
++	DP_SST_UNKNOWN = 0,
++	DP_SST_1 = 1,
++	DP_SST_2 = 2,
++	DP_SST_3 = 3,
++	DP_SST_4 = 4,
++	DP_SST_MAX = DP_SST_4,
++} dp_sst_idx_t;
++
++typedef enum exynos_dp_debug_lt {
++	DEBUG_LT_NORMAL,
++	DEBUG_LT_DPCD_READ_FAIL,
++	DEBUG_LT_FAIL_FIXED_BW,
++	DEBUG_LT_FAIL_TRY_BW_DOWN,
++	DEBUG_LT_BW_LOWER,
++	DEBUG_LT_BW_NO_STEPDOWN,
++} dp_debug_lt;
++
++struct exynos_dp_video_info {
++	struct videomode vm;	/* clock & resolution & porch */
++	bool hsync_pol;		/* polarity */
++	bool vsync_pol;		/* polarity */
++	unsigned int bpc;	/* bits per component */
++	unsigned int vrefresh; /* vrefresh freq */
++
++	u32 sst_id;	/* dp_sst_idx_t - 1 */
++	enum dynamic_range_type dyn_range;
++
++	/* DSC */
++	struct {
++		bool enable;
++		u8 slice_count;
++		u16 chunk_size;
++		struct drm_dsc_picture_parameter_set pps;
++	} dsc;
++};
++struct exynos_dp_lt_info {
++	int link_rate;
++	u8 max_link_lane;
++	u8 lane_cnt;
++	u8 enhanced_frame_cap;
++
++	u8 voltage_swing[MAX_LANE_CNT];
++	u8 pre_emphasis[MAX_LANE_CNT];
++};
++
++struct exynos_dp_subdev {
++	struct device			*dev;
++
++	enum chip_version		version;
++
++	/* Filled by me: drm related */
++	struct drm_device		*drm_dev;
++	/* filled from super-dev: drm related */
++	struct drm_dp_aux		aux;
++	void (*detect)(struct device *);
++	void (*mst_config)(struct device *, bool is_mst);
++	void (*mst_irq)(struct device *);
++	u8 dpcd[DP_RECEIVER_CAP_SIZE];
++	u8 dsc_dpcd[DP_DSC_RECEIVER_CAP_SIZE];
++	u8 fec_capable;
++	bool force_dsc_dis;		/* dsc disable forcibly */
++	bool mst_dsc_en;		/* dsc enable w/ mst_hub over DP-SST */
++	u8 downstream_ports[DP_RECEIVER_CAP_SIZE];
++	struct list_head mst_list;
++
++	u32 id;
++	int irq;
++	int hpd_gpio;
++	int hpd_gpio_irq;
++
++	struct phy *phy;
++	spinlock_t slock;
++
++	struct workqueue_struct *dp_wq;
++	struct delayed_work hpd_plug_work;
++	struct delayed_work hpd_unplug_work;
++	struct delayed_work hpd_irq_work;
++
++	struct dp_regs regs;
++
++	enum dp_state state;
++	struct exynos_dp_lt_info lt_info;
++
++	int hpd_state;
++	bool training_state;
++	u32 bist_use;
++	enum test_pattern bist_type;
++	struct exynos_dp_video_info vi[DP_SST_MAX];
++
++	struct mutex	lock;
++	struct mutex	pwlock;
++
++	/* DEBUG */
++	struct {
++		bool debug_hpd_irq;
++		dp_debug_lt debug_lt;
++	} dp_debug;
++};
++
++#define MST_SLOT_INIT_NUM 1
++struct dp_mst_config {
++	struct list_head list;
++	int sst_id;
++	int num_slots;
++
++	u32 x_val;
++	u32 y_val;
++};
++
++
++enum msg_aux_client_type {
++	MSG_AUX_CLIENT,			/* supported messaging aux client */
++	SKIP_MSG_AUX_CLIENT,		/* not supported messaing aux client */
++	FIX_TOPOLOGY_WITH_MST_HUB,
++	/* This is the mode for testing
++	 * not support messaing aux client with DP MST HUB.
++	 * The MST topology contsructs by reading Device-tree,
++	 * not using Messaing aux client.
++	 * After then the sequence works as a device that
++	 * supports Messaing aux client. it's just for test.
 +	 */
++};
 +
-+#define GAMMA_R_LUT_ODD(_v) (((_v) & 0x7ff) << 16)
-+#define GAMMA_R_LUT_ODD_MASK (0x7ff << 16)
-+#define GAMMA_R_LUT_EVEN(_v) (((_v) & 0x7ff) << 0)
-+#define GAMMA_R_LUT_EVEN_MASK (0x7ff << 0)
++struct dp_encoder {
++	struct drm_encoder		base;
++	struct drm_encoder		*remote_base;
++	struct dp_connector		*dp_connector;
++	struct exynos_drm_dp		*dp;
++	dp_sst_idx_t			sst_idx;
++	enum exynos_drm_output_type	output_type;
 +
-+#define DQE_APS_GAIN(_id) (0x01C0 + DQE_OFFSET(_id))
-+#define APS_ST(_v) (((_v) & 0xff) << 16)
-+#define APS_ST_MASK (0xff << 16)
-+#define APS_NS(_v) (((_v) & 0xff) << 8)
-+#define APS_NS_MASK (0xff << 8)
-+#define APS_LT(_v) (((_v) & 0xff) << 0)
-+#define APS_LT_MASK (0xff << 0)
++	int				mst_pbn;
++	int				mst_slots;
++};
 +
-+#define DQE_APS_WEIGHT(_id) (0x01C4 + DQE_OFFSET(_id))
-+#define APS_PL_W2(_v) (((_v) & 0xf) << 16)
-+#define APS_PL_W2_MASK (0xf << 16)
-+#define APS_PL_W1(_v) (((_v) & 0xf) << 0)
-+#define APS_PL_W1_MASK (0xf << 0)
++struct dp_connector {
++	struct drm_connector		base;
++	struct drm_connector		*remote_base;
++	struct drm_dp_mst_port		*port;
++	struct dp_encoder		*dp_encoder;
++	struct exynos_drm_dp		*dp;
++	enum drm_connector_status	status;
 +
-+#define DQE_APS_CTMODE(_id) (0x01C8 + DQE_OFFSET(_id))
-+#define APS_CTMODE(_v) (((_v) & 0x3) << 0)
-+#define APS_CTMODE_MASK (0x3 << 0)
++	int				native_mode;
++	bool				native_only;
++};
 +
-+#define DQE_APS_PPEN(_id) (0x01CC + DQE_OFFSET(_id))
-+#define APS_PP_EN(_v) ((_v) << 0)
-+#define APS_PP_EN_MASK (1 << 0)
++struct drm_remote {
++	struct drm_device		*drm_dev;
++	int (*detect)(struct dp_connector *rdp_con,
++			     enum drm_connector_status status,
++			     struct drm_device *drm_dev);
++};
 +
-+#define DQE_APS_TDRMINMAX(_id) (0x01D0 + DQE_OFFSET(_id))
-+#define APS_TDR_MAX(_v) (((_v) & 0x3ff) << 16)
-+#define APS_TDR_MAX_MASK (0x3ff << 16)
-+#define APS_TDR_MIN(_v) (((_v) & 0x3ff) << 0)
-+#define APS_TDR_MIN_MASK (0x3ff << 0)
++struct exynos_drm_dp {
++	struct drm_encoder		*encoder;
++	struct drm_connector		*connector;
++	struct drm_device		*drm_dev;
++	struct device			*dev;
 +
-+#define DQE_APS_AMBIENT_LIGHT(_id) (0x01D4 + DQE_OFFSET(_id))
-+#define APS_AMBIENT_LIGHT(_v) (((_v) & 0xff) << 0)
-+#define APS_AMBIENT_LIGHT_MASK (0xff << 0)
++	u32				id;
++	enum exynos_drm_output_type	output_type;
++	struct display_timings		*timings;
++	struct drm_display_mode         cur_mode;
++	/* mst */
++	bool				is_mst;
++	unsigned long			used_sst;
++	struct drm_dp_mst_topology_mgr mst_mgr;
++	enum msg_aux_client_type	skip_messaging_aux_client;
 +
-+#define DQE_APS_BACK_LIGHT(_id) (0x01D8 + DQE_OFFSET(_id))
-+#define APS_BACK_LIGHT(_v) (((_v) & 0xff) << 0)
-+#define APS_BACK_LIGHT_MASK (0xff << 0)
++	struct exynos_dp_subdev		*subdev;
 +
-+#define DQE_APS_DSTEP(_id) (0x01DC + DQE_OFFSET(_id))
-+#define APS_DSTEP(_v) (((_v) & 0x3f) << 0)
-+#define APS_DSTEP_MASK (0x3f << 0)
++	/* vmst */
++	struct drm_bridge		bridge;
++	struct drm_remote		remote[DP_SST_MAX];
++};
 +
-+#define DQE_APS_THRESHOLD(_id) (0x01E4 + DQE_OFFSET(_id))
-+#define APS_THRESHOLD_3(_v) (((_v) & 0x3) << 4)
-+#define APS_THRESHOLD_3_MASK (0x3 << 4)
-+#define APS_THRESHOLD_2(_v) (((_v) & 0x3) << 2)
-+#define APS_THRESHOLD_2_MASK (0x3 << 2)
-+#define APS_THRESHOLD_1(_v) (((_v) & 0x3) << 0)
-+#define APS_THRESHOLD_1_MASK (0x3 << 0)
++#if IS_ENABLED(CONFIG_DRM_EXYNOS9_DP)
++int exynos_drm_dp_dump_sfr(struct exynos_dp_subdev *subdev);
++void exynos_drm_dp_stream_enable(struct exynos_dp_subdev *dp, dp_sst_idx_t sst_idx);
++void exynos_drm_dp_stream_disable(struct exynos_dp_subdev *dp, dp_sst_idx_t sst_idx);
++bool exynos_drm_dp_is_hpd_connected(struct exynos_dp_subdev *dp);
++void exynos_drm_dp_videomode_set(struct exynos_dp_subdev *dp,
++		struct exynos_dp_video_info *vi, dp_sst_idx_t sst_idx);
++void exynos_drm_dp_hpd_en(struct exynos_dp_subdev *dp);
++int exynos_drm_dp_link_training(struct exynos_dp_subdev *dp);
++void exynos_drm_dp_set_normal_data(struct exynos_dp_subdev *dp);
++void exynos_drm_dp_dpcd_status_dump(struct exynos_dp_subdev *dp);
 +
-+#define DQE_APS_GAIN_LIMIT(_id) (0x01E8 + DQE_OFFSET(_id))
-+#define APS_GAIN_LIMIT(_v) (((_v) & 0x3ff) << 0)
-+#define APS_GAIN_LIMIT_MASK (0x3ff << 0)
-+
-+#define DQE_APS_DIMMING_DONE_INTR(_id) (0x01EC + DQE_OFFSET(_id))
-+#define APS_DIMMING_IN_PROGRESS(_v) ((_v) << 0)
-+#define APS_DIMMING_IN_PROGRESS_MASK (1 << 0)
-+
-+#define DQE_APS_LT_CALC_AB_SHIFT(_id) (0x01F0 + DQE_OFFSET(_id))
-+#define APS_LT_CALC_AB_SHIFT(_v) (((_v) & 0x3) << 0)
-+#define APS_LT_CALC_AB_SHIFT_MASK (0x3 << 0)
-+
-+#define DQE_HSC_CONTROL(_id) (0x0204 + DQE_OFFSET(_id))
-+#define HSC_PPSC_ON(_v) (((_v) & 0x1) << 5)
-+#define HSC_PPSC_ON_MASK (0x1 << 5)
-+#define HSC_YCOMP_ON(_v) (((_v) & 0x1) << 4)
-+#define HSC_YCOMP_ON_MASK (0x1 << 4)
-+#define HSC_TSC_ON(_v) (((_v) & 0x1) << 3)
-+#define HSC_TSC_ON_MASK (0x1 << 3)
-+#define HSC_DITHER_ON(_v) (((_v) & 0x1) << 2)
-+#define HSC_DITHER_ON_MASK (0x1 << 2)
-+#define HSC_PPHC_ON(_v) (((_v) & 0x1) << 1)
-+#define HSC_PPHC_ON_MASK (0x1 << 1)
-+#define HSC_SKIN_ON(_v) (((_v) & 0x1) << 0)
-+#define HSC_SKIN_ON_MASK (0x1 << 0)
-+
-+#define DQE_HSC_PPSCGAIN_RGB(_id) (0x0208 + DQE_OFFSET(_id))
-+#define HSC_PPSC_GAIN_B(_v) (((_v) & 0x3ff) << 20)
-+#define HSC_PPSC_GAIN_B_MASK (0x3ff << 20)
-+#define HSC_PPSC_GAIN_G(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_PPSC_GAIN_G_MASK (0x3ff << 10)
-+#define HSC_PPSC_GAIN_R(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_PPSC_GAIN_R_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_PPSCGAIN_CMY(_id) (0x020C + DQE_OFFSET(_id))
-+#define HSC_PPSC_GAIN_Y(_v) (((_v) & 0x3ff) << 20)
-+#define HSC_PPSC_GAIN_Y_MASK (0x3ff << 20)
-+#define HSC_PPSC_GAIN_M(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_PPSC_GAIN_M_MASK (0x3ff << 10)
-+#define HSC_PPSC_GAIN_C(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_PPSC_GAIN_C_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_ALPHASCALE_SHIFT(_id) (0x0210 + DQE_OFFSET(_id))
-+#define HSC_ALPHA_SHIFT2(_v) (((_v) & 0x1f) << 20)
-+#define HSC_ALPHA_SHIFT2_MASK (0x1f << 20)
-+#define HSC_ALPHA_SHIFT1(_v) (((_v) & 0xff) << 8)
-+#define HSC_ALPHA_SHIFT1_MASK (0xff << 8)
-+#define HSC_ALPHA_SCALE(_v) (((_v) & 0xf) << 0)
-+#define HSC_ALPHA_SCALE_MASK (0xf << 0)
-+
-+#define DQE_HSC_POLY_CURVE0(_id) (0x0214 + DQE_OFFSET(_id))
-+#define HSC_POLY_CURVE_3(_v) (((_v) & 0x3ff) << 20)
-+#define HSC_POLY_CURVE_3_MASK (0x3ff << 20)
-+#define HSC_POLY_CURVE_2(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_POLY_CURVE_2_MASK (0x3ff << 10)
-+#define HSC_POLY_CURVE_1(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_POLY_CURVE_1_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_POLY_CURVE1(_id) (0x0218 + DQE_OFFSET(_id))
-+#define HSC_POLY_CURVE_6(_v) (((_v) & 0x3ff) << 20)
-+#define HSC_POLY_CURVE_6_MASK (0x3ff << 20)
-+#define HSC_POLY_CURVE_5(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_POLY_CURVE_5_MASK (0x3ff << 10)
-+#define HSC_POLY_CURVE_4(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_POLY_CURVE_4_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_SKIN_S(_id) (0x021C + DQE_OFFSET(_id))
-+#define HSC_SKIN_S2(_v) (((_v) & 0x3ff) << 16)
-+#define HSC_SKIN_S2_MASK (0x3ff << 16)
-+#define HSC_SKIN_S1(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_SKIN_S1_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_PPHCGAIN_RGB(_id) (0x0220 + DQE_OFFSET(_id))
-+#define HSC_PPHC_GAIN_B(_v) (((_v) & 0x3ff) << 20)
-+#define HSC_PPHC_GAIN_B_MASK (0x3ff << 20)
-+#define HSC_PPHC_GAIN_G(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_PPHC_GAIN_G_MASK (0x3ff << 10)
-+#define HSC_PPHC_GAIN_R(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_PPHC_GAIN_R_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_PPHCGAIN_CMY(_id) (0x0224 + DQE_OFFSET(_id))
-+#define HSC_PPHC_GAIN_Y(_v) (((_v) & 0x3ff) << 20)
-+#define HSC_PPHC_GAIN_Y_MASK (0x3ff << 20)
-+#define HSC_PPHC_GAIN_M(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_PPHC_GAIN_M_MASK (0x3ff << 10)
-+#define HSC_PPHC_GAIN_C(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_PPHC_GAIN_C_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_TSC_YCOMP(_id) (0x0228 + DQE_OFFSET(_id))
-+#define HSC_Y_COMP_RATIO(_v) (((_v) & 0xf) << 12)
-+#define HSC_Y_COMP_RATIO_MASK (0xf << 12)
-+#define HSC_TSC_GAIN(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_TSC_GAIN_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_POLY_CURVE2(_id) (0x022C + DQE_OFFSET(_id))
-+#define HSC_POLY_CURVE_8(_v) (((_v) & 0x3ff) << 10)
-+#define HSC_POLY_CURVE_8_MASK (0x3ff << 10)
-+#define HSC_POLY_CURVE_7(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_POLY_CURVE_7_MASK (0x3ff << 0)
-+
-+#define DQE_HSC_PARTIAL_CON(_id) (0x0230 + DQE_OFFSET(_id))
-+#define HSC_ROI_SAME(_v) (((_v) & 0x1) << 2)
-+#define HSC_ROI_SAME_MASK (0x1 << 2)
-+#define HSC_PARTIAL_UPDATE_METHOD(_v) (((_v) & 0x1) << 1)
-+#define HSC_PARTIAL_UPDATE_METHOD_MASK (0x1 << 1)
-+#define HSC_IMG_PARTIAL_FRAME(_v) (((_v) & 0x1) << 0)
-+#define HSC_IMG_PARTIAL_FRAME_MASK (0x1 << 0)
-+
-+#define DQE_APS_PARTIAL_CON(_id) (0x0234 + DQE_OFFSET(_id))
-+#define APS_ROI_SAME(_v) (((_v) & 0x1) << 2)
-+#define APS_ROI_SAME_MASK (0x1 << 2)
-+#define APS_PARTIAL_UPDATE_METHOD(_v) (((_v) & 0x1) << 1)
-+#define APS_PARTIAL_UPDATE_METHOD_MASK (0x1 << 1)
-+#define APS_IMG_PARTIAL_FRAME(_v) (((_v) & 0x1) << 0)
-+#define APS_IMG_PARTIAL_FRAME_MASK (0x1 << 0)
-+
-+#define DQE_APS_FULL_IMG_SIZESET(_id) (0x0238 + DQE_OFFSET(_id))
-+#define APS_FULL_IMG_VSIZE(_v) (((_v) & 0x3fff) << 16)
-+#define APS_FULL_IMG_VSIZE_MASK (0x3fff << 16)
-+#define APS_FULL_IMG_HSIZE(_v) (((_v) & 0x3fff) << 0)
-+#define APS_FULL_IMG_HSIZE_MASK (0x3fff << 0)
-+
-+#define DQE_APS_PARTIAL_ROI_UP_LEFT_POS(_id) (0x023C + DQE_OFFSET(_id))
-+#define APS_ROI_Y1(_v) (((_v) & 0x3fff) << 16)
-+#define APS_ROI_Y1_MASK (0x3fff << 16)
-+#define APS_ROI_X1(_v) (((_v) & 0x3fff) << 0)
-+#define APS_ROI_X1_MASK (0x3fff << 0)
-+
-+#define DQE_HSC_SKIN_H(_id) (0x0240 + DQE_OFFSET(_id))
-+#define HSC_SKIN_H2(_v) (((_v) & 0x3ff) << 16)
-+#define HSC_SKIN_H2_MASK (0x3ff << 16)
-+#define HSC_SKIN_H1(_v) (((_v) & 0x3ff) << 0)
-+#define HSC_SKIN_H1_MASK (0x3ff << 0)
-+
-+#define DQE_APS_PARTIAL_IBSI_01_00(_id) (0x0308 + DQE_OFFSET(_id))
-+#define APS_IBSI_01(_v) (((_v) & 0xffff) << 16)
-+#define APS_IBSI_01_MASK (0xffff << 16)
-+#define APS_IBSI_00(_v) (((_v) & 0xffff) << 0)
-+#define APS_IBSI_00_MASK (0xffff << 0)
-+
-+#define DQE_APS_PARTIAL_IBSI_11_10(_id) (0x030C + DQE_OFFSET(_id))
-+#define APS_IBSI_11(_v) (((_v) & 0xffff) << 16)
-+#define APS_IBSI_11_MASK (0xffff << 16)
-+#define APS_IBSI_10(_v) (((_v) & 0xffff) << 0)
-+#define APS_IBSI_10_MASK (0xffff << 0)
-+
-+#define DQE_HSC_FULL_PXL_NUM(_id) (0x0310 + DQE_OFFSET(_id))
-+#define HSC_FULL_PXL_NUM(_v) (((_v) & 0xfffffff) << 0)
-+#define HSC_FULL_PXL_NUM_MASK (0xfffffff << 0)
-+
-+#define DQE_APS_FULL_PXL_NUM(_id) (0x0320 + DQE_OFFSET(_id))
-+#define APS_FULL_PXL_NUM(_v) (((_v) & 0xfffffff) << 0)
-+#define APS_FULL_PXL_NUM_MASK (0xfffffff << 0)
-+
-+#define DQE_LPD_DATA_CONTROL(_id) (0x0400 + DQE_OFFSET(_id))
-+#define LPD_WR_OR_RD_DIRECTION(_v) (((_v) & 0x1) << 31)
-+#define LPD_WR_OR_RD_DIRECTION_MASK (0x1 << 31)
-+#define LPD_ADDR(_v) (((_v) & 0x7f) << 24)
-+#define LPD_ADDR_MASK (0x7f << 24)
-+#define LPD_DATA(_v) (((_v) & 0xfffff) << 0)
-+#define LPD_DATA_MASK (0xfffff << 0)
-+
-+#define DQE_VER(_id) (0x0500 + DQE_OFFSET(_id))
-+#define DQE_VER_F(_v) ((_v) << 0)
-+#define SQE_VER_GET(_v) (((_v) >> 0) & 0xffffffff)
-+
-+/*
-+ * TELLTALE registers (Base Addr : DECON1)
-+ * ->
-+ * 0x4000 ~
-+ * TELLTALE0~15 : 0x4100~0x417C
-+ * TELLTALE_CRC_DATA0~7 : 0x4200~0x421C
-+ * FS_CRC_DATA : 0x4220
-+ *
-+ * <-
-+ * TELLTALE registers
-+ */
-+
-+#define TELLTALE_CON 0x4000
-+#define CRC_DATA_SEL_TELLTALE(_v) (((_v) & 0x3) << 20)
-+#define CRC_DATA_SEL_TELLTALE_R (0x2 << 20)
-+#define CRC_DATA_SEL_TELLTALE_G (0x1 << 20)
-+#define CRC_DATA_SEL_TELLTALE_B (0 << 20)
-+#define FS_CRC_EN(_v) (((_v) & 0x1) << 16)
-+#define FS_CRC_EN_MASK (1 << 16)
-+#define ENABLE_TELLTALE_F(_v) (((_v) & 0xffff) << 0)
-+
-+#define TELLTALE_WIN_RESERVE 0x4004
-+#define RESERVE_WIN_DECON0(_win) (0 << ((_win) * 4))
-+#define RESERVE_WIN_DECON1(_win) (1 << ((_win) * 4))
-+#define RESERVE_WIN_IDLE(_win) (0x3 << ((_win) * 4))
-+#define RESERVE_WIN7(_v) (((_v) & 0x3) << 28)
-+#define RESERVE_WIN7_DECON0 (0 << 28)
-+#define RESERVE_WIN7_DECON1 (1 << 28)
-+#define RESERVE_WIN7_IDLE (0x3 << 28)
-+#define RESERVE_WIN6(_v) (((_v) & 0x3) << 24)
-+#define RESERVE_WIN6_DECON0 (0 << 24)
-+#define RESERVE_WIN6_DECON1 (1 << 24)
-+#define RESERVE_WIN6_IDLE (0x3 << 24)
-+#define RESERVE_WIN5(_v) (((_v) & 0x3) << 20)
-+#define RESERVE_WIN5_DECON0 (0 << 20)
-+#define RESERVE_WIN5_DECON1 (1 << 20)
-+#define RESERVE_WIN5_IDLE (0x3 << 20)
-+#define RESERVE_WIN4(_v) (((_v) & 0x3) << 16)
-+#define RESERVE_WIN4_DECON0 (0 << 16)
-+#define RESERVE_WIN4_DECON1 (1 << 16)
-+#define RESERVE_WIN4_IDLE (0x3 << 16)
-+#define RESERVE_WIN3(_v) (((_v) & 0x3) << 12)
-+#define RESERVE_WIN3_DECON0 (0 << 12)
-+#define RESERVE_WIN3_DECON1 (1 << 12)
-+#define RESERVE_WIN3_IDLE (0x3 << 12)
-+#define RESERVE_WIN2(_v) (((_v) & 0x3) << 8)
-+#define RESERVE_WIN2_DECON0 (0 << 8)
-+#define RESERVE_WIN2_DECON1 (1 << 8)
-+#define RESERVE_WIN2_IDLE (0x3 << 8)
-+#define RESERVE_WIN1(_v) (((_v) & 0x3) << 4)
-+#define RESERVE_WIN1_DECON0 (0 << 4)
-+#define RESERVE_WIN1_DECON1 (1 << 4)
-+#define RESERVE_WIN1_IDLE (0x3 << 4)
-+#define RESERVE_WIN0(_v) (((_v) & 0x3) << 0)
-+#define RESERVE_WIN0_DECON0 (0 << 0)
-+#define RESERVE_WIN0_DECON1 (1 << 0)
-+#define RESERVE_WIN0_IDLE (0x3 << 0)
-+
-+#define TELLTALE_START_POSITION(_v) (0x4100 + ((_v) * 8))
-+#define TELLTALE_STRPTR_Y_F(_v) (((_v) & 0x3fff) << 16)
-+#define TELLTALE_STRPTR_X_F(_v) (((_v) & 0x3fff) << 0)
-+
-+#define TELLTALE_END_POSITION(_v) (0x4104 + ((_v) * 8))
-+#define TELLTALE_ENDPTR_Y_F(_v) (((_v) & 0x3fff) << 16)
-+#define TELLTALE_ENDPTR_X_F(_v) (((_v) & 0x3fff) << 0)
-+
-+#define TELLTALE_CRC_DATA(_v) (0x4200 + ((_v) * 4))
-+#define TELLTALE_ODD_CRC_DATA(_v) (((_v) & 0xffff) << 16)
-+#define TELLTALE_ODD_DATA_GET(_v) (((_v) >> 16) & 0xffff)
-+#define TELLTALE_EVEN_CRC_DATA(_v) (((_v) & 0xffff) << 0)
-+#define TELLTALE_EVEN_CRC_DATA_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define FS_CRC_DATA 0x4220
-+#define FS_CRC_DATA_F(_v) (((_v) & 0xffff) << 0)
-+#define FS_CRC_DATA_GET(_v) (((_v) >> 0) & 0xffff)
-+
-+#define DATA_PATH_CONTROL_WIN (0x0000)
-+
-+#define UPDATE_CONTROL_WIN (0x0010)
-+#define SHD_UP_REQ_MASK_ALLOW (1 << 0)
-+#define SHD_UP_REQ_MASK_BLOCK (1 << 1)
-+
-+#define UPDATE_REQ_WIN (0x0014)
-+#define SHD_UP_REQ (1 << 0)
++uint32_t exynos_drm_dp_find_possible_crtc(struct exynos_drm_dp *dp, int sst_idx);
++dp_sst_idx_t exynos_drm_dp_get_sst_idx(struct drm_encoder *encoder);
++int exynos_drm_dp_add_timings(struct exynos_drm_dp *dp,
++			struct drm_connector *connector);
++struct drm_connector *exynos_drm_dp_find_connector
++				(struct drm_encoder *encoder);
++void exynos_drm_dp_to_videoinfo(struct drm_encoder *encoder,
++		struct drm_display_mode *mode,
++		struct exynos_dp_video_info *vi);
++bool exynos_drm_dp_dsc_enable(struct drm_encoder *encoder,
++		struct exynos_dp_video_info *vi,
++		dp_sst_idx_t sst_idx);
++void exynos_drm_dp_dsc_disable(struct drm_encoder *encoder,
++		dp_sst_idx_t sst_idx);
++#else
++static inline int exynos_drm_dp_dump_sfr(struct exynos_dp_subdev *subdev)
++{
++	return 0;
++}
++static inline void exynos_drm_dp_stream_enable(struct exynos_dp_subdev *dp, dp_sst_idx_t sst_idx)
++{
++}
++static inline void exynos_drm_dp_stream_disable(struct exynos_dp_subdev *dp, dp_sst_idx_t sst_idx)
++{
++}
++static inline bool exynos_drm_dp_is_hpd_connected(struct exynos_dp_subdev *dp)
++{
++	return false;
++}
++static inline void exynos_drm_dp_videomode_set(struct exynos_dp_subdev *dp,
++		struct exynos_dp_video_info *vi, dp_sst_idx_t sst_idx)
++{
++}
++static inline void exynos_drm_dp_hpd_en(struct exynos_dp_subdev *dp)
++{
++}
++static inline int exynos_drm_dp_link_training(struct exynos_dp_subdev *dp)
++{
++	return 0;
++}
++static inline void exynos_drm_dp_set_normal_data(struct exynos_dp_subdev *dp)
++{
++}
++static inline void exynos_drm_dp_dpcd_status_dump(struct exynos_dp_subdev *dp)
++{
++}
++static inline uint32_t exynos_drm_dp_find_possible_crtc(struct exynos_drm_dp *dp, int sst_idx)
++{
++	return 0;
++}
++static inline dp_sst_idx_t exynos_drm_dp_get_sst_idx(struct drm_encoder *encoder)
++{
++	return DP_SST_UNKNOWN;
++}
++static inline int exynos_drm_dp_add_timings(struct exynos_drm_dp *dp,
++			struct drm_connector *connector)
++{
++	return 0;
++}
++static inline struct drm_connector *exynos_drm_dp_find_connector
++				(struct drm_encoder *encoder)
++{
++	return NULL;
++}
++static inline void exynos_drm_dp_to_videoinfo(struct drm_encoder *encoder,
++		struct drm_display_mode *mode,
++		struct exynos_dp_video_info *vi)
++{
++}
++static inline bool exynos_drm_dp_dsc_enable(struct drm_encoder *encoder,
++		struct exynos_dp_video_info *vi,
++		dp_sst_idx_t sst_idx)
++{
++	return false;
++}
++static inline void exynos_drm_dp_dsc_disable(struct drm_encoder *encoder,
++		dp_sst_idx_t sst_idx)
++{
++}
 +
 +#endif
++
++#if IS_ENABLED(CONFIG_DRM_EXYNOS9_DP_MST)
++extern int exynos_drm_dp_mst_init(struct dp_connector *dp_connector);
++extern void exynos_drm_dp_mst_dump_topology(struct seq_file *m,
++			      struct drm_dp_mst_topology_mgr *mgr);
++extern bool exynos_dp_mst_cap(struct exynos_dp_subdev *dp);
++#else
++static inline int exynos_drm_dp_mst_init(struct dp_connector *dp_connector)
++{
++	return 0;
++}
++
++static inline void exynos_drm_dp_mst_dump_topology(struct seq_file *m,
++			      struct drm_dp_mst_topology_mgr *mgr)
++{
++}
++
++static inline bool exynos_dp_mst_cap(struct exynos_dp_subdev *dp)
++{
++	return false;
++}
++#endif
++
++#if IS_ENABLED(CONFIG_DRM_EXYNOS9_DP_MST_TOPOLOGY)
++extern int exynos_drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
++				 struct drm_device *dev, struct drm_dp_aux *aux,
++				 int max_dpcd_transaction_bytes, int max_payloads,
++				 int max_lane_count, int max_link_rate,
++				 int conn_base_id);
++extern void exynos_drm_dp_mst_mapping_sst_id_to_vcpi(struct drm_dp_mst_topology_mgr *mgr,
++		struct drm_dp_mst_port *port, int sst_idx);
++extern int exynos_drm_dp_update_payload_part1(struct drm_dp_mst_topology_mgr *mgr);
++extern int exynos_drm_dp_clear_update_payload(struct drm_dp_mst_topology_mgr *mgr);
++#else
++static inline int exynos_drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
++				 struct drm_device *dev, struct drm_dp_aux *aux,
++				 int max_dpcd_transaction_bytes, int max_payloads,
++				 int max_lane_count, int max_link_rate,
++				 int conn_base_id)
++
++{
++	return 0;
++}
++static inline void exynos_drm_dp_mst_mapping_sst_id_to_vcpi(struct drm_dp_mst_topology_mgr *mgr,
++		struct drm_dp_mst_port *port, int sst_idx)
++{
++}
++static inline int exynos_drm_dp_update_payload_part1(struct drm_dp_mst_topology_mgr *mgr)
++{
++	return 0;
++}
++static inline int exynos_drm_dp_clear_update_payload(struct drm_dp_mst_topology_mgr *mgr)
++{
++	return 0;
++}
++#endif
++
++#define to_subdev(nm)		container_of(nm, struct exynos_dp_subdev, nm)
++#define to_encoder(nm)		container_of(nm, struct dp_encoder, base)
++#define to_connector(nm)	container_of(nm, struct dp_connector, base)
++#define encoder_to_dp(nm)	to_encoder(nm)->dp
++#define connector_to_dp(nm)	to_connector(nm)->dp
++#define to_dp_sst(id, sst)	((id * DP_SST_4) + (sst - 1))
++
++#endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dp_link_training.c b/drivers/gpu/drm/exynos/exynos_drm_dp_link_training.c
+new file mode 100644
+index 000000000000..460beba0a946
+--- /dev/null
++++ b/drivers/gpu/drm/exynos/exynos_drm_dp_link_training.c
+@@ -0,0 +1,586 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Samsung ExynosAuto DRM Display Port Link_Training driver.
++ *
++ * Copyright (C) 2020 Samsung Electronics Co.Ltd
++ */
++
++#include <linux/err.h>
++
++#include "exynos_drm_dp.h"
++
++static void exynos_dp_dump_symbol_error(struct exynos_dp_subdev *dp)
++{
++	int i;
++	struct device *dev = dp->dev;
++	u8 info[MAX_LANE_CNT * 2] = {0, };
++	unsigned int offset = DP_SINK_COUNT + 0x10;
++	size_t size = sizeof(info);
++
++	drm_dp_dpcd_read(&dp->aux, offset, info, size);
++	for (i = 0; i < size; i = i + 2)
++		dp_log_info(dev, "SYMBOL_ERROR_COUNT(addr:%#4x), %02x, %02x\n",
++			    offset, info[i], info[i + 1]);
++};
++
++static void exynos_dp_set_phy_training_lane_set(u32 id,
++		u8 *dpcd_buf, struct exynos_dp_lt_info *lt_info)
++{
++	int i;
++	u8 *drive_current = lt_info->voltage_swing;
++	u8 *pre_emphasis = lt_info->pre_emphasis;
++	u8 lane_cnt = lt_info->lane_cnt;
++	u8 max_reach_value = 0;
++
++	for (i = 0; i < lane_cnt; i++) {
++		dp_reg_set_phy_tune(id, i, drive_current[i],
++				pre_emphasis[i] >> DP_TRAIN_PRE_EMPHASIS_SHIFT);
++
++		if (drive_current[i] >= DP_TRAIN_VOLTAGE_SWING_LEVEL_2)
++			max_reach_value |= (DP_TRAIN_MAX_SWING_REACHED);
++		else
++			max_reach_value &= ~(DP_TRAIN_MAX_SWING_REACHED);
++
++		if (pre_emphasis[i] >= DP_TRAIN_PRE_EMPH_LEVEL_2)
++			max_reach_value |= (DP_TRAIN_MAX_PRE_EMPHASIS_REACHED);
++		else
++			max_reach_value &= ~(DP_TRAIN_MAX_PRE_EMPHASIS_REACHED);
++
++		dpcd_buf[i] = drive_current[i] | pre_emphasis[i] | max_reach_value;
++	}
++}
++
++static void exynos_dp_dsc_prepare(struct exynos_dp_subdev *dp, bool enable)
++{
++	int ret;
++
++	if (!drm_dp_sink_supports_dsc(dp->dsc_dpcd))
++		return;
++
++	ret = drm_dp_dpcd_writeb(&dp->aux, DP_DSC_ENABLE,
++				enable ? DP_DECOMPRESSION_EN : 0);
++	if (ret < 0) {
++		dp_log_err(dp->dev,
++				"Failed to %s sink decompression\n",
++				enable ? "enable" : "disable");
++		dp->dsc_dpcd[0] = 0; /* deactivate DSC/FEC capable */
++		return;
++	} else {
++		dp_log_info(dp->dev,
++				"Success to %s sink decompression\n",
++				enable ? "enable" : "disable");
++	}
++
++	/* Set FEC ready of DP source device */
++	if (drm_dp_sink_supports_fec(dp->fec_capable)) {
++		/* Write 1 to clear the FEC_STATUS bit */
++		drm_dp_dpcd_writeb(&dp->aux, DP_FEC_STATUS,
++			DP_FEC_DECODE_EN_DETECTED | DP_FEC_DECODE_DIS_DETECTED);
++
++		ret = drm_dp_dpcd_writeb(&dp->aux, DP_FEC_CONFIGURATION,
++				enable ? DP_FEC_READY : 0);
++		if (ret < 0) {
++			dp_log_err(dp->dev,
++				"Failed to %s sink fec\n",
++				enable ? "enable" : "disable");
++			return;
++		}
++		dp_log_info(dp->dev,
++				"success to %s sink fec\n",
++				enable ? "enable" : "disable");
++		dp_reg_set_dsc_fec(dp->id, enable);
++	}
++}
++
++static void exynos_dp_phy_init(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	u32 id = dp->id;
++	u8 dpcd_val[2];
++
++	dpcd_val[0] = dp->lt_info.link_rate;
++	dpcd_val[1] = dp->lt_info.lane_cnt;
++
++	dp_reg_phy_reset(id, 1);
++	dp_reg_phy_init_setting(id);
++
++	dp_reg_phy_set_link_bw(id, dpcd_val[0]);
++
++	dp_reg_phy_mode_setting(id);
++
++	dp_reg_set_lane_count(id, dpcd_val[1]);
++
++	dp_log_info(dev, "link_rate = %d Mbps, lane_cnt = %x\n",
++			drm_dp_bw_code_to_link_rate(dpcd_val[0])/100, dpcd_val[1]);
++
++	if (dp->lt_info.enhanced_frame_cap) {
++		dp_reg_set_enhanced_mode(id, 1);
++		dpcd_val[1] |= DP_ENHANCED_FRAME_CAP;
++	}
++
++	/* wait for 60us - Exynosauto9 DPTX PHY spec */
++	udelay(60);
++
++	dp_reg_phy_reset(id, 0);
++
++	drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, dpcd_val, 2);
++
++	dp_reg_wait_phy_pll_lock(id);
++
++	/* SCRAMBLING_DISABLE, TRAINING_PATTERN_1 */
++	dp_reg_set_training_pattern(id, TRAINING_PATTERN_1);
++	dp_reg_scrambling_enable(id, 0);
++
++	dpcd_val[0] = DP_LINK_SCRAMBLING_DISABLE | DP_TRAINING_PATTERN_1;
++	drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET, dpcd_val[0]);
++}
++
++static int exynos_dp_reduced_link_rate(u8 link_rate, u8 test_mode)
++{
++	if (test_mode == DEBUG_LT_BW_NO_STEPDOWN)
++		link_rate = DP_LINK_BW_1_62;
++
++	switch (link_rate) {
++	case DP_LINK_BW_8_1:
++		return DP_LINK_BW_5_4;
++	case DP_LINK_BW_5_4:
++		return DP_LINK_BW_2_7;
++	case DP_LINK_BW_2_7:
++		return DP_LINK_BW_1_62;
++	case DP_LINK_BW_1_62:
++	default:
++		return -EINVAL;
++	}
++}
++
++static bool exynos_drm_dp_get_lt_info(struct exynos_dp_subdev *dp)
++{
++	int link_rate;
++	u8 lane_cnt = drm_dp_max_lane_count(dp->dpcd);
++	u8 enhanced_frame_cap;
++
++	link_rate = dp->dpcd[DP_MAX_LINK_RATE];
++	lane_cnt = min(lane_cnt, dp->lt_info.max_link_lane);
++
++	if (!link_rate || !lane_cnt)
++		return false;
++
++	if (dp->dp_debug.debug_lt == DEBUG_LT_BW_LOWER) {
++		link_rate = exynos_dp_reduced_link_rate(link_rate, dp->dp_debug.debug_lt);
++
++		if (link_rate < 0)
++			return false;
++	}
++
++	if (!exynos_dp_mst_cap(dp))
++		enhanced_frame_cap = drm_dp_enhanced_frame_cap(dp->dpcd);
++	else
++		enhanced_frame_cap = 0;
++
++	dp->lt_info.link_rate = (u8)link_rate;
++	dp->lt_info.lane_cnt = lane_cnt;
++	dp->lt_info.enhanced_frame_cap = enhanced_frame_cap;
++
++	return true;
++}
++
++/*
++ * About retry times.
++ * The DP 1.4 spec defines retry times in Figure 3-20 : Clock Recovery Sequence of Link Training.
++ * Any one of the following true: - LANEx_CR_DONE?
++ * #1: Maximum voltage swing reached?
++ * #2: AUX w/o LANEx_CR_DONE with the same ADJ_REQ 'five times'? - voltage_retry_no
++ * #3: AUX_ACK w/o LANEx_CR_DONE '10 times'? - cr_retry_no
++ * LT_CR_RETRY_CNT = Clock Recovery Retry
++ * LT_VS_RETRY_CNT = Voltage_Swing Retry
++ */
++#define LT_CR_RETRY_CNT	10
++#define LT_VS_RETRY_CNT	5
++static bool
++exynos_drm_dp_lt_clock_recovery(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	struct exynos_dp_lt_info lt_info;
++	u32 id = dp->id;
++
++	u8 link_status[DP_LINK_STATUS_SIZE];
++	u8 lane_cnt = dp->lt_info.lane_cnt;
++	u8 dpcd_buf[MAX_LANE_CNT] = {0, };
++
++	int cr_retry_no;
++	int voltage_retry_no = 1;
++	int i;
++
++	dp_log_info(dev, "Start Clock Recovery(CR)\n");
++
++	for (i = 0; i < MAX_LANE_CNT; i++) {
++		lt_info.voltage_swing[i] = 0;
++		lt_info.pre_emphasis[i] = 0;
++	}
++	lt_info.lane_cnt = lane_cnt;
++
++	for (cr_retry_no = 0;
++			cr_retry_no < LT_CR_RETRY_CNT; cr_retry_no++) {
++
++		exynos_dp_set_phy_training_lane_set(id, dpcd_buf, &lt_info);
++
++		dp_log_dbg(dev, "(CR) Try TRAINING_LANEx_SET: %02x %02x %02x %02x\n",
++				dpcd_buf[0], dpcd_buf[1], dpcd_buf[2], dpcd_buf[3]);
++		drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, dpcd_buf, lane_cnt);
++
++		drm_dp_link_train_clock_recovery_delay(&dp->aux, dp->dpcd);
++
++		drm_dp_dpcd_read_link_status(&dp->aux, link_status);
++
++		if (drm_dp_clock_recovery_ok(link_status, lane_cnt)) {
++			goto LT_CR_DONE;
++		}
++
++		for (i = 0; i < lane_cnt; i++) {
++			if (lt_info.voltage_swing[i] == DP_TRAIN_VOLTAGE_SWING_LEVEL_3) {
++				dp_log_info(dev, "LANE_CR_FAIL - Maximum Voltage swing reached(%02x)\n",
++						lt_info.voltage_swing[i]);
++				goto LT_CR_FAIL;
++			}
++
++			lt_info.voltage_swing[i] = drm_dp_get_adjust_request_voltage(link_status, i);
++			lt_info.pre_emphasis[i] = drm_dp_get_adjust_request_pre_emphasis(link_status, i);
++		}
++
++		for (i = 0; i < lane_cnt; i++) {
++			if (lt_info.voltage_swing[i] == dp->lt_info.voltage_swing[i]) {
++				if (voltage_retry_no == LT_VS_RETRY_CNT) {
++					dp_log_info(dev, "LANE_CR_FAIL - Same ADJ_REQ_Voltage %d times(%02x)\n",
++							voltage_retry_no, lt_info.voltage_swing[i]);
++					goto LT_CR_FAIL;
++				} else {
++					voltage_retry_no++;
++					break;
++				}
++			} else if (i == lane_cnt-1) {
++				voltage_retry_no = 1;
++			}
++		}
++		memcpy(&dp->lt_info.voltage_swing, lt_info.voltage_swing,
++				sizeof(dp->lt_info.voltage_swing));
++	}
++
++	dp_log_info(dev, "LANE_CR_FAIL - Maximum Retry %d times\n", cr_retry_no);
++
++LT_CR_FAIL:
++	dp_log_info(dev, "TRAINING_LANEx_SET: %02x %02x %02x %02x\n",
++			dpcd_buf[0], dpcd_buf[1], dpcd_buf[2], dpcd_buf[3]);
++	return false;
++
++LT_CR_DONE:
++	memcpy(&dp->lt_info.voltage_swing, lt_info.voltage_swing,
++			sizeof(dp->lt_info.voltage_swing));
++	memcpy(&dp->lt_info.pre_emphasis, lt_info.pre_emphasis,
++			sizeof(dp->lt_info.pre_emphasis));
++	dp_log_info(dev, "LANE_CR_DONE - TRAINING_LANEx_SET : %02x %02x %02x %02x\n",
++			dpcd_buf[0], dpcd_buf[1], dpcd_buf[2], dpcd_buf[3]);
++	return true;
++}
++
++static u8
++exynos_drm_dp_lt_training_pattern(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	u32 id = dp->id;
++	u8 link_rate = dp->dpcd[DP_MAX_LINK_RATE];
++
++	if (drm_dp_tps4_supported(dp->dpcd) && link_rate == DP_LINK_BW_8_1) {
++		dp_reg_set_training_pattern(id, TRAINING_PATTERN_4);
++		dp_reg_scrambling_enable(id, 1);
++		dp_log_dbg(dev, "TPS4_supported\n");
++		return DP_TRAINING_PATTERN_4;
++	}
++
++	dp_reg_scrambling_enable(id, 0);
++
++	if (drm_dp_tps3_supported(dp->dpcd) && link_rate >= DP_LINK_BW_5_4) {
++		dp_reg_set_training_pattern(id, TRAINING_PATTERN_3);
++		dp_log_dbg(dev, "TPS3_supported\n");
++		return DP_TRAINING_PATTERN_3;
++	}
++
++	dp_reg_set_training_pattern(id, TRAINING_PATTERN_2);
++	dp_log_dbg(dev, "TPS2_supported\n");
++	return DP_TRAINING_PATTERN_2;
++}
++
++#define EQ_RETRY_CNT	5
++static bool
++exynos_drm_dp_lt_equalization(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	struct exynos_dp_lt_info *lt_info = &dp->lt_info;
++	u32 id = dp->id;
++
++	u8 link_status[DP_LINK_STATUS_SIZE];
++	u8 lane_cnt = dp->lt_info.lane_cnt;
++	u8 dpcd_buf[MAX_LANE_CNT] = {0, };
++	u8 training_pattern;
++
++	int i;
++	int eq_retry_no;
++	bool cr_done, eq_done;
++
++	training_pattern = exynos_drm_dp_lt_training_pattern(dp);
++
++	dp_log_info(dev, "Start Equalization(EQ) - TPS%d supported\n",
++			(training_pattern > DP_TRAINING_PATTERN_3) ? 4 : training_pattern);
++
++	if (training_pattern != DP_TRAINING_PATTERN_4)
++		training_pattern |= DP_LINK_SCRAMBLING_DISABLE;
++
++	drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET, training_pattern);
++
++	for (eq_retry_no = 0; eq_retry_no < EQ_RETRY_CNT; eq_retry_no++) {
++
++		exynos_dp_set_phy_training_lane_set(id, dpcd_buf, lt_info);
++
++		dp_log_dbg(dev, "(EQ) Try TRAINING_LANEx_SET: %02x %02x %02x %02x\n",
++				dpcd_buf[0], dpcd_buf[1], dpcd_buf[2], dpcd_buf[3]);
++		drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, dpcd_buf, lane_cnt);
++
++		drm_dp_link_train_channel_eq_delay(&dp->aux, dp->dpcd);
++
++		drm_dp_dpcd_read_link_status(&dp->aux, link_status);
++
++		cr_done = drm_dp_clock_recovery_ok(link_status, lane_cnt);
++
++		if (!cr_done) {
++			dp_log_info(dev, "LANE_CR_FAIL in LT_EQ\n");
++			goto LT_EQ_FAIL;
++		}
++
++		eq_done = drm_dp_channel_eq_ok(link_status, lane_cnt);
++
++		if (cr_done && eq_done)
++			goto LT_EQ_DONE;
++
++		exynos_dp_dump_symbol_error(dp);
++
++		for (i = 0; i < lane_cnt; i++)
++			lt_info->pre_emphasis[i] = drm_dp_get_adjust_request_pre_emphasis(link_status, i);
++	}
++
++	dp_log_info(dev, "LANE_EQ_FAIL, Maximum Retry %d times\n", eq_retry_no);
++
++LT_EQ_FAIL:
++	dp_log_info(dev, "TRAINING_LANEx_SET: %02x %02x %02x %02x\n",
++			dpcd_buf[0], dpcd_buf[1], dpcd_buf[2], dpcd_buf[3]);
++	return false;
++
++LT_EQ_DONE:
++	dp_log_info(dev, "LANE_EQ_DONE - TRAINING_LANEx_SET: %02x %02x %02x %02x\n",
++			dpcd_buf[0], dpcd_buf[1], dpcd_buf[2], dpcd_buf[3]);
++	return true;
++}
++
++static bool exynos_dp_link_training_skip_reduce_bw_parse(struct device *dev)
++{
++	return of_property_read_bool(dev->of_node,
++			"samsung,lt_skip_reduce_bw");
++}
++
++#define LT_RETRY_CNT	4
++/**
++ * @cnotice
++ * @prdcode
++ * @unit_name{Exynos_dp_drv}
++ * @purpose Operate DP Full link training with RX
++ * @logic Operate DP Full link training with DP RX
++ * @params
++ * @param{in, dp, struct* ::exynos_dp_subdev, None}
++ * @endparam
++ * @retval{ret, int, 0, <= 0, < 0}
++ */
++static int exynos_dp_full_link_training(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	struct exynos_drm_dp *drm_dp = dev_get_drvdata(dev);
++	u32 id = dp->id;
++	int lt_retry_cnt;
++	int link_rate;
++	bool debug_lt =
++		((dp->dp_debug.debug_lt == DEBUG_LT_FAIL_FIXED_BW) ||
++		 (dp->dp_debug.debug_lt == DEBUG_LT_FAIL_TRY_BW_DOWN)) ? true : false;
++	bool cr_done = false;
++	bool eq_done = false;
++	bool lt_done = false;
++
++	if (!dp->hpd_state) {
++		dp_log_err(dev, "HPD is Low in Full Link Training\n");
++		return -EBUSY;
++	}
++
++	if (!exynos_drm_dp_get_lt_info(dp)) {
++		dp_log_err(dev, "Invalid values of link_rate(%x) or lane_cnt(%x)\n",
++				dp->dpcd[DP_MAX_LINK_RATE], drm_dp_max_lane_count(dp->dpcd));
++		return -EINVAL;
++	}
++	dp_log_info(dev, "Start Full Link Training + : DP_REV%02x\n", dp->dpcd[DP_DPCD_REV]);
++
++	/*
++	 * This is work-around code when using DP MST serializer.
++	 * Link-training succedds only in SST mode in DP MST with TPS4.
++	 * Added this sequence for Link-Training called by HPD_IRQ event.
++	 */
++	if (drm_dp_tps4_supported(dp->dpcd))
++		dp_reg_set_mst_en(id, 0);
++
++	for (lt_retry_cnt = 0; lt_retry_cnt < LT_RETRY_CNT; lt_retry_cnt++) {
++		if (!dp->hpd_state) {
++			dp_log_err(dev, "HPD is Low in Full Link_Training\n");
++			return -EINVAL;
++		}
++
++		exynos_dp_phy_init(dp);
++
++		cr_done = exynos_drm_dp_lt_clock_recovery(dp);
++
++		if (cr_done) {
++			eq_done = exynos_drm_dp_lt_equalization(dp);
++			if (eq_done && !debug_lt)
++				goto LINK_TRAINING_END;
++		}
++
++		if (exynos_dp_link_training_skip_reduce_bw_parse(dev) ||
++			(drm_dp->skip_messaging_aux_client == SKIP_MSG_AUX_CLIENT) ||
++			(dp->dp_debug.debug_lt == DEBUG_LT_FAIL_FIXED_BW))
++			goto LINK_TRAINING_END;
++
++		link_rate = exynos_dp_reduced_link_rate(dp->lt_info.link_rate, dp->dp_debug.debug_lt);
++
++		if (link_rate < 0)
++			goto LINK_TRAINING_END;
++		else
++			dp->lt_info.link_rate = link_rate;
++	}
++
++LINK_TRAINING_END:
++	lt_done = cr_done && eq_done && !debug_lt;
++	dp_log_info(dev, "%s Full Link Training -\n", lt_done ? "Finished" : "Failed");
++	drm_dp_dpcd_writeb(&dp->aux, DP_TRAINING_PATTERN_SET, 0);
++
++	return lt_done ? 0 : -EINVAL;
++}
++
++static void exynos_dp_mst_configure(struct exynos_dp_subdev *dp, bool is_mst)
++{
++	struct device *dev = dp->dev;
++
++	if (dp->mst_config && is_mst)
++		dp->mst_config(dev, is_mst);
++	dp_log_info(dev, "DP link use %s protocol\n", is_mst ? "MST" : "SST");
++}
++
++static int exynos_dp_get_dpcd_receiver_capability(struct exynos_dp_subdev *dp)
++{
++	u8 extend_val[DP_RECEIVER_CAP_SIZE] = {0,};
++	struct device_node *np = dp->dev->of_node;
++	int ret = 0;
++
++	ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd, sizeof(dp->dpcd));
++
++	if (ret < 0)
++		return ret;
++
++	if (dp->dp_debug.debug_lt == DEBUG_LT_DPCD_READ_FAIL)
++		return -EBUSY;
++
++	if (dp->dpcd[DP_TRAINING_AUX_RD_INTERVAL] & DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT) {
++		drm_dp_dpcd_read(&dp->aux, DP_DP13_DPCD_REV, extend_val, sizeof(extend_val));
++		if (extend_val[DP_DPCD_REV] > dp->dpcd[DP_DPCD_REV])
++			memcpy(dp->dpcd, extend_val, sizeof(extend_val));
++	}
++
++	/* clear first before read */
++	dp->dsc_dpcd[0] = 0;
++	dp->fec_capable = 0;
++	/* DSC and FEC DPCD if DP rev >= 1.4 but some MST_HUB uses 1.2 */
++	if (dp->dpcd[DP_DPCD_REV] >= DP_DPCD_REV_12) {
++		dp->force_dsc_dis =
++			of_property_read_bool(np, "samsung,force-dsc-dis");
++		dp->mst_dsc_en =
++			of_property_read_bool(np, "samsung,mst-dsc-en");
++		/* skip read DSC capability */
++		if (dp->force_dsc_dis)
++			return ret;
++
++		drm_dp_dpcd_read(&dp->aux, DP_DSC_SUPPORT, dp->dsc_dpcd,
++				sizeof(dp->dsc_dpcd));
++		drm_dp_dpcd_readb(&dp->aux, DP_FEC_CAPABILITY, &dp->fec_capable);
++	}
++	return ret;
++}
++
++/**
++ * @cnotice
++ * @prdcode
++ * @unit_name{Exynos_dp_drv}
++ * @purpose DP link training
++ * @logic Check the HPD state and disable DP irq<br>
++ * and than running the DP link_training<br>
++ * If the link_training is successful and in MST mode, excute MST opeation.
++ * @params
++ * @param{in, dp, struct* ::exynos_dp_subdev, None}
++ * @endparam
++ * @retval{ret, int, 0, <= 0, < 0}
++ */
++int exynos_drm_dp_link_training(struct exynos_dp_subdev *dp)
++{
++	struct device *dev = dp->dev;
++	bool is_mst;
++	int ret = 0;
++
++	if (!dp->hpd_state) {
++		dp_log_info(dev, "hpd is low in link training\n");
++		return 0;
++	}
++
++	dp_log_info(dev, "exynos_drm_dp_link_training\n");
++	dp_reg_set_plug_interrupt(dp->id, 0);
++
++	dp_log_info(dev, "exynos_drm_dp_link_training1\n");
++
++	ret = exynos_dp_get_dpcd_receiver_capability(dp);
++
++	if (ret < 0) {
++		dp_log_err(dev, "DPCD read error(ret=%d)\n", ret);
++		goto LT_END;
++	}
++
++	dp_log_info(dev, "exynos_drm_dp_link_training2\n");
++	mutex_lock(&dp->lock);
++	ret = exynos_dp_full_link_training(dp);
++	mutex_unlock(&dp->lock);
++
++	if (ret < 0) {
++		exynos_drm_dp_dpcd_status_dump(dp);
++		goto LT_END;
++	}
++
++	is_mst = exynos_dp_mst_cap(dp);
++	exynos_dp_dsc_prepare(dp, true);
++	dp_log_info(dev, "exynos_drm_dp_link_training3\n");
++
++	if (is_mst) {
++		exynos_drm_dp_set_normal_data(dp);
++
++		drm_dp_dpcd_read(&dp->aux, DP_DOWNSTREAM_PORT_0,
++				dp->downstream_ports,
++				sizeof(dp->downstream_ports));
++		dp_reg_set_mst_en(dp->id, 1);
++	}
++
++	if (dp->hpd_state == HPD_CHECK)
++		exynos_dp_mst_configure(dp, is_mst);
++
++LT_END:
++	dp_reg_set_plug_interrupt(dp->id, 1);
++	return ret;
++}
++
 
 -- 
 2.39.2
