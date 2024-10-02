@@ -1,61 +1,61 @@
 Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB9517BC9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212E5262BE
 	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727847228; cv=none; b=afZD/IN60/z/w5bDXBCMRo0EToseGAEmANojikB9rf65RBbI9mgYbQbIt+X0FvOkikx+/dNrJfh9Bg48PCh6wa/1zrcO/4Z5DCCbvMbTMMzvbrRbxi56KkSd3VPzD25YlTuYlqn+GxKhw2OH3w3cnWVw88JSCk5kp0Q1+Qev1GE=
+	t=1727847228; cv=none; b=IQr22Q9KU+DBdFn4SYEj/whIB/0eKlQfvD4xCGS99I6rLGEX5nHoAEp7DFr0KFWsjjsKfIrFKH1qGMVt1R7PnSiDkLJc6XwUU1shTil03xLPN+j0tZkq7u7rwN4vDOWr5JXPkwEUB2reQrwo4JV8oyzcmycs6UXHDgjwiHkFGG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727847228; c=relaxed/simple;
-	bh=AYt9HbnMlVAkAH9Ou4f44/1bT4rEBIZnxNJUcVxyBqs=;
+	bh=xAdk25w4QKBHSXEZfL6SPJTxfBiBM9PNbijifYklXJY=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=Ebb9EqM1CSS2KuxCM/8P2FRcGVCiZHMMhhOooeCgm/Wm8psIWl4XxTqzevPHKxFy2BrOPfmhyk8l/oxQdqHWzsEi4pF4D41nfbcIYmVHN5gC03aOCO6tMLiaxRZImN95bA2GPQURzPQv6rwTurg5TFAs+vCmL6cMjK6XEGjwR1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Sf+FpBEf; arc=none smtp.client-ip=203.254.224.24
+	 Content-Type:References; b=fjAuioAHjz8qBu4JPJSm//36PnM9xuyzyZ2UbQBCNcSK984nnycYX0Z7gWju2kProxsT8ZYhYjrTOD1aZcDX+rfbC0XIuxkNOVlh4vzlbsKsgDt42+4Zx60TqwM/6i1NDAkFA4eEXbwqAzIf9RQ+oUx+YfXhQbw0FNnQh+ul5H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vD7KFuSh; arc=none smtp.client-ip=203.254.224.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sf+FpBEf"
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241002053343epoutp01a738fcf9b9b4f4f17ce70a2a01b14f7d~6i_UqWejf2683926839epoutp01c
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241002053343epoutp01a738fcf9b9b4f4f17ce70a2a01b14f7d~6i_UqWejf2683926839epoutp01c
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vD7KFuSh"
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241002053344epoutp015182fa777a7c3bd2925ef74fb531842b~6i_VUkF7O2636226362epoutp01R
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  2 Oct 2024 05:33:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241002053344epoutp015182fa777a7c3bd2925ef74fb531842b~6i_VUkF7O2636226362epoutp01R
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727847223;
-	bh=efV7gYOkc1545B/kHNDZCPpG9+JtazR+zlGrOLL/G6Q=;
+	s=mail20170921; t=1727847224;
+	bh=g2CWJMGP+z3zs4RAaBiaihDLbhVvbgYytCML7kcMty4=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=Sf+FpBEfp/HpyW/zBYjYEs6UyuPM8tHyE17b6afiVMtcLIe67jkCzvhP1SGa/rY9y
-	 HfKDLs9QLkWM5udk2O1KlrmAkpZDcL+eWSC+dFKi0INxTimvGXPaCGvzaKwxr2MdJM
-	 hA0Kna66Rzxisz45BzB4AqPP7BYRezNyXU2W/nwQ=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20241002053343epcas1p43de84711d51812919f990beed389c76f~6i_UXelDz1369013690epcas1p4_;
+	b=vD7KFuSh2cS5r+1//Is4h4M24xnbtdJZQd42JcFjWgRYzOJXQ+aMOd1JRWwEwgwOL
+	 ToR7PbpCTfm5vgL+5w8f5x8hxZ9cCGTwdna0fNInkvrWzBbODS8/7X33N4AsCHGQ4O
+	 9OT+O5xDBmAYygbyj+Hj1FumttQd9at8pN0ZnPHA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20241002053343epcas1p3eec5d62868b2ae02ac3fd3b045f43685~6i_U75zxR3208932089epcas1p3a;
 	Wed,  2 Oct 2024 05:33:43 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.232]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XJNlB3B0zz4x9QF; Wed,  2 Oct
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.235]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XJNlB4fcVz4x9Q9; Wed,  2 Oct
 	2024 05:33:42 +0000 (GMT)
 Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	86.46.19363.63BDCF66; Wed,  2 Oct 2024 14:33:42 +0900 (KST)
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	86.30.08588.63BDCF66; Wed,  2 Oct 2024 14:33:42 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
 	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241002053342epcas1p3acd53584280abe264a8b90a743279ff2~6i_TX7xUi3203832038epcas1p3f;
+	20241002053342epcas1p3c6973ab4e15e4f360deb8a3b58cebc04~6i_TnPPDR3203832038epcas1p3h;
 	Wed,  2 Oct 2024 05:33:42 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241002053342epsmtrp1322d9adbfba079862952ae38953b9133~6i_TXIAzr1554915549epsmtrp1Z;
+	20241002053342epsmtrp159ca82b1f1ba94f8e737122b18b0f6f0~6i_TmcjmP1554915549epsmtrp1a;
 	Wed,  2 Oct 2024 05:33:42 +0000 (GMT)
-X-AuditID: b6c32a4c-02dff70000004ba3-a5-66fcdb36d950
+X-AuditID: b6c32a33-aadb87000000218c-c4-66fcdb36a286
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CF.84.08229.53BDCF66; Wed,  2 Oct 2024 14:33:41 +0900 (KST)
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	62.74.08227.63BDCF66; Wed,  2 Oct 2024 14:33:42 +0900 (KST)
 Received: from [127.0.1.1] (unknown [10.113.111.204]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241002053341epsmtip11da2f932f130140931c413515ccd5271~6i_TJfBSQ2184921849epsmtip14;
-	Wed,  2 Oct 2024 05:33:41 +0000 (GMT)
+	20241002053342epsmtip17b1160eb0218b1c735ed591da9e95e1a~6i_TXmFCi1646816468epsmtip1S;
+	Wed,  2 Oct 2024 05:33:42 +0000 (GMT)
 From: Kwanghoon Son <k.son@samsung.com>
-Date: Wed, 02 Oct 2024 14:33:23 +0900
-Subject: [PATCH WIP 3/7] drm/exynos: Add drivers on drv.c
+Date: Wed, 02 Oct 2024 14:33:26 +0900
+Subject: [PATCH WIP 6/7] phy: samsung,dp-video-phy: Add exynosautov9 dp phy
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -63,111 +63,101 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241002-auto9-v1-3-c4dc3385f415@samsung.com>
+Message-Id: <20241002-auto9-v1-6-c4dc3385f415@samsung.com>
 In-Reply-To: <20241002-auto9-v1-0-c4dc3385f415@samsung.com>
 To: Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,  David Virag
 	<virag.david003@gmail.com>,  Sam Protsenko <semen.protsenko@linaro.org>
 Cc: linux-samsung-soc@vger.kernel.org, Kwanghoon Son <k.son@samsung.com>
 X-Mailer: b4 0.14.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdlhTV9fs9p80g/OrRC0ezNvGZjHp/gQW
-	i941V5kszp/fwG4x4/w+JovnfUDi+PvHjA7sHjtn3WX32LSqk83jzrU9bB59W1YxenzeJBfA
-	GpVtk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQN0hpJC
-	WWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwLRArzgxt7g0L10vL7XEytDAwMgUqDAh
-	O2PV7l62gkkCFZ+nODUwvuLtYuTkkBAwkVi44AZbFyMXh5DAHkaJz7tOM0E4nxglNjVMYoRw
-	vjFKTN66gh2mpevaSWaIxF5Gie/df6CqXjFKLFi3mBWkik1AXWJJ21qgDg4OFgFVid3z9UDC
-	wgKWEpcnXmQCsXkFBCVOznzCAmIzC8hLbH87hxkibiXxY/plRhCbU8BaYtWtp2C2iMBpRon/
-	cxUh6j0kZjxbB3WQsMTn3WvAfpAQ+MsuMfdZIyNEwkXi7YO7zDBFr45vgWqQknjZ3wZlZ0sc
-	/biXDcIukbg+axErhG0ssX/pZCaQ+5kFNCXW79KH2Msn8e5rDytIWEKAV6KjTQjClJe41VkO
-	0SgqcebpR6iBHhKzts+CBlUfo8TKKTfZJjDKz0Ly/Swk389CWLaAkXkVo1RqQXFuemqyYYGh
-	bl5qOTxek/NzNzGCE6OWzw7G7+v/6h1iZOJgPMQowcGsJMJ779DPNCHelMTKqtSi/Pii0pzU
-	4kOMpsBomMgsJZqcD0zNeSXxhiaWBiZmRsYmFoZmhkrivGeulKUKCaQnlqRmp6YWpBbB9DFx
-	cEo1MNVNnMBZ6PRt50bDo6sPxd962dtSuPJ2yewINRmJcjMFxpY/6b9OzPv2p/PL/UfhTy+p
-	z3x9b2tO3ZntX9dmtvxaF2Ap+iuD+dI2338yx6+I+H6xudz74unOZhlf0+JI1RVCobtb2x8u
-	vP/27U+h5o8zN3qFr16h/Tln4v+li7hVgjlXeF5/wpUlfYopduoTz/kxLEKb/t3nkj0h/3+v
-	P8PS5/sebly0TPfMHbs9ylqpV/UsL/7/2fna/rGAV/OSwA09qfLKNxzrah9cX95we+aElZW6
-	gktCpzReNf3oaXtX8Gqt6QUGxeZY/4TMn7deC5fH2l8RjA37dbRGM4ijK4ttYQKrxcqTLuua
-	JkvyTsxQYinOSDTUYi4qTgQAwwOxOBUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsWy7bCSnK7p7T9pBg/7LCwezNvGZjHp/gQW
-	i941V5kszp/fwG4x4/w+JovnfUDi+PvHjA7sHjtn3WX32LSqk83jzrU9bB59W1YxenzeJBfA
-	GsVlk5Kak1mWWqRvl8CVsWp3L1vBJIGKz1OcGhhf8XYxcnJICJhIdF07ydzFyMUhJLCbUeL4
-	tg1sEAlRiY7LjYxdjBxAtrDE4cPFEDUvGCXa9nxhAalhE1CXWNK2lh2khkVAVWL3fD2QsLCA
-	pcTliReZQGxeAUGJkzOfsICUMAtoSqzfpQ8SZhaQl9j+dg4zRImVxI/plxlBbCEge+3ON6wg
-	NqeAtcSqW08ZQdaKCJxjlLj2Zy87RLOHxIxn69ghzhSW+Lx7DdsERsFZSNbNQlg3C8m6BYzM
-	qxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxgsNfS3MH4/ZVH/QOMTJxMB5ilOBgVhLh
-	vXfoZ5oQb0piZVVqUX58UWlOavEhRmkOFiVxXvEXvSlCAumJJanZqakFqUUwWSYOTqkGJvtZ
-	0ZNk5ziEKxsUM4TVs1ZfOSXjJpjVuW6y2B6nn1/WLu7h515gFvTmzs2WxxX5124zMrCz/1c+
-	GNl49PObkESxOiNm30C5r+vu56VO2xsYU/CBKcYjhf+2qvrZupXnr4f+FVGM81WdcsXaznNF
-	S6W65etS449VbHsyZETuH+fgt+HW7F58g7n37hpn197JdZNmW/08nvpOdGe7vk3uxo1Z0aZu
-	oTLHfnzdHL5L6HjszTb+o9s/eiR4VVzSXbq267LgjEmMRnfUuqrYo7ZsuSz81In970K2vsLo
-	9bmnPB8e/neQ/0qG18aJy759ift6SPb1NOeVb1pmHWzP6wibqSe+d+1Pnmd3eMU5kjf+UGIp
-	zkg01GIuKk4EACi57K3uAgAA
-X-CMS-MailID: 20241002053342epcas1p3acd53584280abe264a8b90a743279ff2
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPKsWRmVeSWpSXmKPExsWy7bCmrq7Z7T9pBttfqVo8mLeNzWLS/Qks
+	Fr1rrjJZnD+/gd1ixvl9TBbP+4DE8fePGR3YPXbOusvusWlVJ5vHnWt72Dz6tqxi9Pi8SS6A
+	NSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoDCWF
+	ssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgWmBXnFibnFpXrpeXmqJlaGBgZEpUGFC
+	dsbD1R+YC7q5K24d6WVpYJzL2cXIySEhYCJxYNM/li5GLg4hgR2MEgvO3maGcD4xSux8cJ4R
+	wvnGKDHnRydTFyMHWMvV7WkQ8b2MEr+n34PqeMUo8XnHN2aQuWwC6hJL2tayg9gsAqoSrx/s
+	ZwSxhQW8JTb+28EEYvMKCEqcnPmEBcRmFpCX2P52DjNE3EriQPsBMJtTwFpi1a2nYL0iAqcZ
+	Jf7PVYSo95CY8WwdO8QPwhKfd69hAzlCQqCRQ+LK1XtQCReJdefvM8EUvTq+BSouJfGyvw3K
+	zpY4+nEvG4RdInF91iJWCNtYYv/SyWAfMwtoSqzfpQ+xl0/i3dceVkhA8Ep0tAlBmPIStzrL
+	IRpFJc48/Qg10ENi2e5GVkjw9DFKXOt7wjiBUX4Wku9nIfl+FsKyBYzMqxjFUguKc9NTkw0L
+	DOGRmpyfu4kRnBK1jHcwXp7/T+8QIxMH4yFGCQ5mJRHee4d+pgnxpiRWVqUW5ccXleakFh9i
+	NAXGwURmKdHkfGBSziuJNzSxNDAxMzI2sTA0M1QS5z1zpSxVSCA9sSQ1OzW1ILUIpo+Jg1Oq
+	gan61smaqtK//So7oopls7d8ENK5uf3/ujOJh5Z/zAmcvkl5q/r2OfrNnuctuS5M3m6WZHU4
+	72//LrVQh8N9LJNm5UboczWcMLbf/eCgxPUNhuaHMvm4PKa/P+z0z5ol8prVg64Ve4VX3phd
+	8uV5kaUyw3Tu71HK8ber1Y4Wrp9+6UmhPL9/youAj1/n6jYnqC06K7FVv0OUzzF8SqmBZumM
+	CbKS/pM/zknaeWvaYnsNphnaFh3XzzzytE0L3mh+K3aNgYbMAiXu8KksjbvZ0t1fPWl527+I
+	5/FpNXELNcMb1lPuJ041nfUxJEd422ErQ1sL7jdMJ1uyk1lMDm1cuFlS/cr15Neb1PZ8M2d8
+	/EyJpTgj0VCLuag4EQCTONWGEgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsWy7bCSnK7Z7T9pBn8ucFo8mLeNzWLS/Qks
+	Fr1rrjJZnD+/gd1ixvl9TBbP+4DE8fePGR3YPXbOusvusWlVJ5vHnWt72Dz6tqxi9Pi8SS6A
+	NYrLJiU1J7MstUjfLoEr4+HqD8wF3dwVt470sjQwzuXsYuTgkBAwkbi6Pa2LkYtDSGA3o8TK
+	+59Zuhg5geKiEh2XGxkhaoQlDh8uhqh5wSjx5sNiNpAaNgF1iSVta9lBbBYBVYnXD/YzgtjC
+	At4SG//tYAKxeQUEJU7OfMICModZQFNi/S59kDCzgLzE9rdzmCFKrCQOtB8As4WA7LU737CC
+	2JwC1hKrbj1lBNkrInCOUeLan73sEM0eEjOerWOHuFNY4vPuNWwTGAVnIVk3C2HdLCTrFjAy
+	r2KUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI4ALa0djHtWfdA7xMjEwXiIUYKDWUmE
+	996hn2lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1MO3s
+	+G/ckbVvvtsWeWm3kKzypJ6e8IjmR0aevS/OHxD7Mj3g995dfqoTXW7zzDz31VpcO5RJ/Oy+
+	NfOurPV7tTkwi+3gwtfPOivk9mb7ujE5WD7+5273IyZo8WnxwFkqfY6uU1wrfNdJbAufd/nm
+	zEVdt6o/FkjGeNQt8pJR5Jm7ecKzvd42k01ffNolyic696T4cs22xFuct2WCPi1tVkp9dN8o
+	47Sj86Odby69Stm5SPpo3QMNzyuqCXpvp93zCb1+jHGW/k/FDsebnvEKeYIrDJ/v912/UGRn
+	qXHwt6QX2xsdQx8/fBY7PSXkS2lGxjLTnd2bT505EGcTPl85OrByd9353t9rxSymTJoZo6DE
+	UpyRaKjFXFScCADjpmOG7wIAAA==
+X-CMS-MailID: 20241002053342epcas1p3c6973ab4e15e4f360deb8a3b58cebc04
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241002053342epcas1p3acd53584280abe264a8b90a743279ff2
+X-CMS-RootMailID: 20241002053342epcas1p3c6973ab4e15e4f360deb8a3b58cebc04
 References: <20241002-auto9-v1-0-c4dc3385f415@samsung.com>
-	<CGME20241002053342epcas1p3acd53584280abe264a8b90a743279ff2@epcas1p3.samsung.com>
+	<CGME20241002053342epcas1p3c6973ab4e15e4f360deb8a3b58cebc04@epcas1p3.samsung.com>
+
+I think this should refactoring to set offset on dt-binding.
+In exynosautov9 there are 2 dp phy.
+
+It will better like
+
+dp_0: dp-phy {
+    offset = <dp_0_value>;
+}
+
+dp_1: dp-phy {
+    offset = <dp_1_value>;
+}
 
 Signed-off-by: Kwanghoon Son <k.son@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 11 ++++++++++-
- drivers/gpu/drm/exynos/exynos_drm_drv.h |  3 +++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/phy/samsung/phy-exynos-dp-video.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 7c59e1164a48..3071b85e4c18 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -160,6 +160,15 @@ struct exynos_drm_driver_info {
-  */
- static struct exynos_drm_driver_info exynos_drm_drivers[] = {
+diff --git a/drivers/phy/samsung/phy-exynos-dp-video.c b/drivers/phy/samsung/phy-exynos-dp-video.c
+index a636dee07585..0ba929315abd 100644
+--- a/drivers/phy/samsung/phy-exynos-dp-video.c
++++ b/drivers/phy/samsung/phy-exynos-dp-video.c
+@@ -58,6 +58,10 @@ static const struct exynos_dp_video_phy_drvdata exynos5420_dp_video_phy = {
+ 	.phy_ctrl_offset	= EXYNOS5420_DPTX_PHY_CONTROL,
+ };
+ 
++static const struct exynos_dp_video_phy_drvdata exynosautov9_dp_video_phy = {
++	.phy_ctrl_offset	= 0x073c,
++};
++
+ static const struct of_device_id exynos_dp_video_phy_of_match[] = {
  	{
-+		DRV_PTR(dpp_driver, CONFIG_DRM_EXYNOS9_DECON),
-+		DRM_COMPONENT_DRIVER
-+	}, {
-+		DRV_PTR(dpu_dma_driver, CONFIG_DRM_EXYNOS9_DECON),
-+		DRM_COMPONENT_DRIVER
-+	}, {
-+		DRV_PTR(decon_driver, CONFIG_DRM_EXYNOS9_DECON),
-+		DRM_COMPONENT_DRIVER
-+	}, {
- 		DRV_PTR(fimd_driver, CONFIG_DRM_EXYNOS_FIMD),
- 		DRM_COMPONENT_DRIVER
+ 		.compatible = "samsung,exynos5250-dp-video-phy",
+@@ -65,8 +69,11 @@ static const struct of_device_id exynos_dp_video_phy_of_match[] = {
  	}, {
-@@ -172,7 +181,7 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
- 		DRV_PTR(mixer_driver, CONFIG_DRM_EXYNOS_MIXER),
- 		DRM_COMPONENT_DRIVER
- 	}, {
--		DRV_PTR(dp_driver, CONFIG_DRM_EXYNOS_DP),
-+		DRV_PTR(dp_driver, CONFIG_DRM_EXYNOS9_DP),
- 		DRM_COMPONENT_DRIVER
- 	}, {
- 		DRV_PTR(dsi_driver, CONFIG_DRM_EXYNOS_DSI),
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 23646e55f142..6a1129b69b97 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -199,6 +199,7 @@ struct drm_exynos_file_private {
- struct exynos_drm_private {
- 	struct device *g2d_dev;
- 	struct device *dma_dev;
-+	struct device *dpp_dev;
- 	void *mapping;
+ 		.compatible = "samsung,exynos5420-dp-video-phy",
+ 		.data = &exynos5420_dp_video_phy,
++	}, {
++		.compatible = "samsung,exynosautov9-dp-video-phy",
++		.data = &exynosautov9_dp_video_phy,
+ 	},
+-	{ },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
  
- 	/* for atomic commit */
-@@ -254,6 +255,8 @@ static inline int exynos_drm_check_fimc_device(struct device *dev)
- }
- #endif
- 
-+extern struct platform_driver dpp_driver;
-+extern struct platform_driver dpu_dma_driver;
- extern struct platform_driver fimd_driver;
- extern struct platform_driver exynos5433_decon_driver;
- extern struct platform_driver decon_driver;
 
 -- 
 2.39.2
