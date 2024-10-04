@@ -1,109 +1,94 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6E215B97E;
-	Fri,  4 Oct 2024 13:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412C91D9A6D;
+	Fri,  4 Oct 2024 14:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728049086; cv=none; b=bvE1GgZDIwfziq6g9cZM1/FwEzQhDXdD3AS3ASIOEbx9FwLN4SNjB4gMYa5u5U6mC54VhvkDZ0ENVrtejJTtZGkydfsJp2NaE3FGv0txMy1dt8mHAxSZegCFblD/bO77xuQp77RVopSDOBxF9clweegvofg4jVVKg4j9qx3MMyA=
+	t=1728053900; cv=none; b=HA7f2rmiC0HASJEj5EzUWD35i1tLokB6QsJBqByqbsrLJvwsr4oyWmdKDD+fIPVWEsquT8qFkk2v9MmiXGrAg3kSm7nNmt923ZwApAx6LGkJ0q73R8soSFs+V/35n6V+fIY9yS208QzODMz+1kDGPbqgC73mKHihlnOmoom8sKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728049086; c=relaxed/simple;
-	bh=mVBO5k105eWD0yEN7U6lJL6b+1SCBIusfw11IwgJtPU=;
+	s=arc-20240116; t=1728053900; c=relaxed/simple;
+	bh=hdx+Nlnqh49HdIrn5ECqFiAYUAa+WEBCnBFbH03L0U8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uIPnIM7hW77QmCkiyMIVxl6gqphv43vbNVjBPWWsP6XzFB8KI3DQuYeG05HqTpH4l8CGdwRkF8ECSHyg7ofRU7P/pp0dOcsojAvRwbiL/QqFZL9PVZ1HorIm8g9W3iKE1/zzlGoDVwRjwjIQtly3jUCa1JHGkOMeCsMEpZK1RCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WV4vQLOO; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mtsndAeGhjRaw3bW/h8hfDdU8/DQRLg3Vp+YHFOVvtFlTH18ez/NyJ2lbiBg2TSA7Ssqi3dbykO9b45Sq6CfX11WX+r7fhJvZanZm+h5ihgulwfl2UZenxGbJlCH2jMKPkHSiAxTYd7CU2rBsBYyBSUt3aFsFACb/xhfUAnR96Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBxKL3Ds; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WV4vQLOO"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71dea49e808so480667b3a.1;
-        Fri, 04 Oct 2024 06:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728049085; x=1728653885; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVLq22bs+1l9xY9JOZ8imSDy5KmOLVk2kQhCSbpcWNE=;
-        b=WV4vQLOOWUtxnVRWvgQe+/5Mn44GrJebxYIjZhAd4TdM+3ngkhCghXZbF01rxeI0DY
-         orEoJf7ephi2DH7zeiavAcq/rFfETbKHHNTV+qtixEh0VZBpClCtgUwHtT7mcQZgWubk
-         6LARIch/Qbp0Ox4O8IFOswNotjHHYwUZF9NUMwsyhxYWqxwJYmubywIKCp3F814KaVjq
-         zleMSz6K3Dm7SsXh+3AawPCwFSFQR+zrTMXIAzrmMkGcc7z7+wIW4FTHR59VYB5LL5GE
-         2H9alEWEFVGP2btHSF8k4p9mil2S9z4rpieNuwrUmWBxxrNXgKjPgV6BUX3/u2Iqz08q
-         zDIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728049085; x=1728653885;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TVLq22bs+1l9xY9JOZ8imSDy5KmOLVk2kQhCSbpcWNE=;
-        b=J+eRbU/FQlQH8myjPOpKmsU2G774ewA5N7L0UTJC74rda+BClJycrmL+t4Vo/WkDlz
-         8bc+c7IZDfNQanyamLqwMC3D+/y5rhoMDHM3pMYbkRclvxU4nTELr3VlNtbnk7K8L+5U
-         yA/ENawAYqqe9LwDuk0XyLtR89bxjkVKmhqcXCx2671fiLXk8jtXfQoaXRbGlb+xzXd+
-         ca14oStDmQrPrgpBSW4DtXXZwGXxtyG451VPTOGfKDdV4rWp+C7W2AJ88RbjZMA6UGJY
-         oNjgx0coR1RL4/LxT6AnXe3nfpGBr5iCv0hdYJjMvHsdQcatG2w1UYXKNn0vk3wbM8sR
-         q5gA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKORlfR47rSn7fKoQ7dVP/cDy6lYgidfgBfA+DAkjU9klwrmXPqoMLETwqC2gIk2JY6qRtqbq1R9bnKlZnKy+OIsc=@vger.kernel.org, AJvYcCWJ5SS/n1cB03HNWnFNfNQA8snz4MtavwyzKK+EVg42VhdJ9+WtUhK2q2R2m7FzLiQQagl7Yg682oOg@vger.kernel.org, AJvYcCX4vVNTphmVXkFZdmOZk/+xDZ74Q/c+oWD4MkuNZVDtYo5ZuX7LImcwXjRO0JvB7p+LOJLhOoqgQ9c7vvGv@vger.kernel.org, AJvYcCXQniSoFx4uFCJmKeIwTvmSOKFLV07zyM7kptqVJemTo9PtWRiP3vexdvZdCFdnElbZO4z7TZPnf+NMHjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl8eGKrC+n/sX2T8s6j9EtvGbHDbN0nZxPEo8JlLmfUggWYhBp
-	ft3bB772+hLmg8v4hLL221OBjcFYxHQn5v5MJ1l3XBH3usQGipXj
-X-Google-Smtp-Source: AGHT+IGhEdASi+MxAhYr/5O4xJ1vTIjCaytgyNSnCaXtwTaIfB45CRoPQcP/88bkABWIesSJDpwwIg==
-X-Received: by 2002:a05:6a21:9204:b0:1d3:b38:891 with SMTP id adf61e73a8af0-1d6dfa22f7cmr5043217637.6.1728049084632;
-        Fri, 04 Oct 2024 06:38:04 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1b2:add:2542:c298])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9def6ddsm3181637b3a.154.2024.10.04.06.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 06:38:04 -0700 (PDT)
-Date: Fri, 4 Oct 2024 06:38:01 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBxKL3Ds"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6FC3C4CEC6;
+	Fri,  4 Oct 2024 14:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728053899;
+	bh=hdx+Nlnqh49HdIrn5ECqFiAYUAa+WEBCnBFbH03L0U8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fBxKL3DsUpoP+JinPpudeiel+njsclMIT6jbhTpYmITwoloJRv9FKqNNiD5ph0hnu
+	 5faD0whmMiBTR7Nz/88Ak18WYLsE52Q0uhymh0x7AxkJxDrgD8PCQ3S3QSiigRHpyF
+	 W59ARwSudAfO8NEOcYPGa3y9zAaFpx4nwpjuHCIvSQDLrQJO9x2o+aMJRdbMuh/S09
+	 1fKHViikT4dbYtVAl9zB50rJO6gMV60zYIamcgyGcXBMNEBz1ens/7gegntv9w9Y1V
+	 Ab0tV7vj5FC6h4pWus2y3EcBzwyKUVPfPnck+Bab7BsyVIMAZCRO/XCJwQIMLh7gOP
+	 yIJtfLjjUBOsA==
+Date: Fri, 4 Oct 2024 15:58:15 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
 Subject: Re: [PATCH 00/14] Remove support for platform data from samsung
  keypad
-Message-ID: <Zv_vuSrJzpN9IvXV@google.com>
+Message-ID: <76d98587-3623-4ff2-89eb-a5fe8c535293@sirena.org.uk>
 References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
  <803e3902-cec9-49ed-baff-d26e578a8ab7@app.fastmail.com>
+ <Zv_vuSrJzpN9IvXV@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2O90PREKokAOuISY"
+Content-Disposition: inline
+In-Reply-To: <Zv_vuSrJzpN9IvXV@google.com>
+X-Cookie: A bachelor is an unaltared male.
+
+
+--2O90PREKokAOuISY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <803e3902-cec9-49ed-baff-d26e578a8ab7@app.fastmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2024 at 11:40:56AM +0200, Arnd Bergmann wrote:
-> On Mon, Aug 19, 2024, at 06:57, Dmitry Torokhov wrote:
-> >
-> > This series attempts to rework samsumg=keypad driver to stop using
-> > platform data and instead rely on generic device properties only.
-> >
-> > The first 8 patches are general cleanup/facelift patches.
-> >
-> > The 9th patch introduces alternative binding that is more compact that
-> > the original one, which makes it more suitable for use in legacy (non
-> > DT) boards with static device properties. Note that the "new" binding is
-> > the standard binding for matrix keypads.
-> >
-> > Patch #10 implements the new binding in the driver, #11 converts the
-> > only user of platform data in the mainline tree to the static device
-> > properties, and #12 drops support for platform data from the driver.
-> >
-> > Patches #13 and #14 are "bonus" converting the rest of crag6410 to use
-> > software nodes/properties to describe GPIO keys, LEDs and other
-> > peripherals. Note that I believe they fix and issue with recent
-> > conversion to GPIO lookup tables - the names of gpiochip structures I
-> > think are "GP<N>" ("GPK", "GPL", etc) and not "GPIO<N>".
-> 
-> I had a (brief) look at the patches, everything looks fine to
-> me, thanks for working on this! Let's see what Mark and 
-> Krzysztof think.
+On Fri, Oct 04, 2024 at 06:38:01AM -0700, Dmitry Torokhov wrote:
+> On Mon, Aug 19, 2024 at 11:40:56AM +0200, Arnd Bergmann wrote:
 
-Mark, were you able to give this a spin? Or should I address the DT
-binding comments from Krzysztof and Connor and resent for merge?
+> > I had a (brief) look at the patches, everything looks fine to
+> > me, thanks for working on this! Let's see what Mark and=20
+> > Krzysztof think.
 
-Thanks.
+> Mark, were you able to give this a spin? Or should I address the DT
+> binding comments from Krzysztof and Connor and resent for merge?
 
--- 
-Dmitry
+Sorry, no - I've been some combination of ill, travelling and super busy
+since you posted it (sadly the bootloader for the board only supports
+booting from SD card so until I port u-boot it's not in my board farm
+and I need to specifically set it up on my desk whenver I want to do
+anything with it, especially for this where I need to poke at the
+keypad).  I've got one more week of travel next week and one of the
+major sources of super busy just got better so I'm reasonably hopeful
+I'll get to it week of the 14th but probably worth respinning.
+
+--2O90PREKokAOuISY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcAAoYACgkQJNaLcl1U
+h9CIyAf/UT+SvU5Yxhj17iZJ3+MFGVgNHn0JN6vrsQBXrossVlgZ1JP7vbl1RobZ
+cw1/99nUqLGDjOHkNBSx/2/GjaZz1gEUDCbDeVaIMifsrGd4BbtoMTfwnclyCsp6
+fvvMKx0WAzcRmvm+FdQ5KGgt6mzZDsT/u3Q15ZOJ5GHunnP+njEkRY8SzaRZZteP
+EgGtc1FFI+tDVsoIQ6DNA23I0DVy2j/HZB23y/mYEOF1JiIspwhM+JjVUKJVgU57
+piRknEy0k2sO3sJ26HhyngwWT30Zg+ud+oSB64uO4RqnGqP9B6coPbCzow4vvENE
+zTfKRFshRCxw25+aDBoBxDxERSyLew==
+=jObm
+-----END PGP SIGNATURE-----
+
+--2O90PREKokAOuISY--
