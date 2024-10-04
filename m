@@ -1,102 +1,109 @@
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AD943ABD;
-	Fri,  4 Oct 2024 04:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6E215B97E;
+	Fri,  4 Oct 2024 13:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728015090; cv=none; b=ESJmTMmKCaUV/y8/Gggfj3utp22fq2ZrYK+LLEHJSrMEs8eUyPv8tlYK1B3yR5pfIbeH/ki3KR1QVi2ZIjAT4fbakMZln6J2XzRxewzlGVLClJ/Myd8UvZerJgr04zpGivWUr/Z1tHlmNYgCVlA73467B1FeF+9rL55suumzhKU=
+	t=1728049086; cv=none; b=bvE1GgZDIwfziq6g9cZM1/FwEzQhDXdD3AS3ASIOEbx9FwLN4SNjB4gMYa5u5U6mC54VhvkDZ0ENVrtejJTtZGkydfsJp2NaE3FGv0txMy1dt8mHAxSZegCFblD/bO77xuQp77RVopSDOBxF9clweegvofg4jVVKg4j9qx3MMyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728015090; c=relaxed/simple;
-	bh=mWEOE9nswXDaTVB00jH1eq6MCyPSkMFdNPKlHkn8Yns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V1aW+BUqlgKv5zXQbpTMwUjZCJ52GBfjVgekYvfeVIvg6NfBAJ2VxMah/1yiANtai+hvQdHCmpDBvrkMnFH7vkslheUvIIRin8f5Nz5muUV9VLG+uHx9fMHf29SE7bSvnLe1sAlDOkCv6PHGXtmJsMLE+BQVyCuJ85cLE6JYcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jF3a7J9e; arc=none smtp.client-ip=209.85.160.42
+	s=arc-20240116; t=1728049086; c=relaxed/simple;
+	bh=mVBO5k105eWD0yEN7U6lJL6b+1SCBIusfw11IwgJtPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIPnIM7hW77QmCkiyMIVxl6gqphv43vbNVjBPWWsP6XzFB8KI3DQuYeG05HqTpH4l8CGdwRkF8ECSHyg7ofRU7P/pp0dOcsojAvRwbiL/QqFZL9PVZ1HorIm8g9W3iKE1/zzlGoDVwRjwjIQtly3jUCa1JHGkOMeCsMEpZK1RCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WV4vQLOO; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jF3a7J9e"
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-27d045a73easo914583fac.0;
-        Thu, 03 Oct 2024 21:11:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WV4vQLOO"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71dea49e808so480667b3a.1;
+        Fri, 04 Oct 2024 06:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728015088; x=1728619888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7KG5NyyXcoddyKNeeQDgE4xPxgRSIlRvqW3eOyOluoc=;
-        b=jF3a7J9en/K+uzKbEHu2hHbWs9BqE75H1+EHEt/Lnz1svJC4PYq46C0C4lwZABQ/CZ
-         AjTw4bSS/sEx9eLUb/VKGGp4YfoTTa+XzyRFqkw0OQ3AcdGbTD49LaJ2R8nnHWKR6J6x
-         OSuVroCUfKWR/jLRdIC5pGl8yKNQ/iYXq2DsFf/obk709MRiJqw5d9IEnZVDUqqXkMoE
-         OXUTLnqW5rvKFDf1Kbvx1hLsFUyaO5cVmu1enu78onGRMcwLU9OSYzw3yfGjW0u9iM2z
-         BD6kHfs7fNn/XTHic5QDxskUDP26UyzSXuFfKlzFXTWdzvhPMRy91948dHCtTXnfi09Y
-         7/xg==
+        d=gmail.com; s=20230601; t=1728049085; x=1728653885; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TVLq22bs+1l9xY9JOZ8imSDy5KmOLVk2kQhCSbpcWNE=;
+        b=WV4vQLOOWUtxnVRWvgQe+/5Mn44GrJebxYIjZhAd4TdM+3ngkhCghXZbF01rxeI0DY
+         orEoJf7ephi2DH7zeiavAcq/rFfETbKHHNTV+qtixEh0VZBpClCtgUwHtT7mcQZgWubk
+         6LARIch/Qbp0Ox4O8IFOswNotjHHYwUZF9NUMwsyhxYWqxwJYmubywIKCp3F814KaVjq
+         zleMSz6K3Dm7SsXh+3AawPCwFSFQR+zrTMXIAzrmMkGcc7z7+wIW4FTHR59VYB5LL5GE
+         2H9alEWEFVGP2btHSF8k4p9mil2S9z4rpieNuwrUmWBxxrNXgKjPgV6BUX3/u2Iqz08q
+         zDIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728015088; x=1728619888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7KG5NyyXcoddyKNeeQDgE4xPxgRSIlRvqW3eOyOluoc=;
-        b=Rnc6tDcuWaTsFq70bJW1O6T0xFftnvSnReYFb6U/2aKJnl/pNrAQSUYB1jsOByqfrM
-         K1ef2zUkP2rlfRk1BAwu1QhP6b8xhKq14GSBTQkV9qTrqxAMF18qP7IXBCLfc0+JY4ov
-         ux7W8FinJvu9d9JOkXjiFCQj+v2Fn+CW6kgqCT8CgluU4QJCnOY4Hco980DWNWwrKgyt
-         44/lfFX2gbnfKE7D5DEqenDGDm84nMVr2V/2jlRCXXfdytJvfXVTxpYQ9IpUxPUDClXB
-         lpoizsCJQoM2K/FbSazGo1y7Z1YN1boJssODTU2sw/8D9ZV/gbYyxxQkniWvPe/544QB
-         /6rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm/1+QqzCrz8LO/J8f+kCBTb571LFqTyksXepWH7tL0T//+llndG+sWqJS88zVDlyMn+JYjT02PDwP5k7JUBGQvDM=@vger.kernel.org, AJvYcCVr5KWmJoMEfnVIXdUI5xIJa8gw57doKFnV3+849bpsJ3/xHMynQ0wfgcJzX/A8rPEqvUw/n+5lesFM@vger.kernel.org, AJvYcCW7/7l6oBhVgQf5LYjv12SSc4rvdOqn/BANnlxRFejfX/eJl+TqA7wH6WqmKYnvYhnhDPm+JeOWduARrw==@vger.kernel.org, AJvYcCWXcl8Y92qeEKUuhOZ5q/GPw7vLEHa5CLN9VK2weOlX5MwCI5dN/T15sv/AqjIpmaa9aXc2co0MPf7nH5Y=@vger.kernel.org, AJvYcCWux2NQyF7KM9Tk3cCZAa5jaFF6vVdLDnPvkAqiMm2qkHhwyhlBy8/9XaoNTc/CafdiYPuoJsgLmdCpBJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6s5Eik8exAXCJJhKOpjVXnRq+g3fSRfQAYwF/HcftLGxgM3Hw
-	IjbbuHVmkd0JFAuPSJNNkcxFJatWSuJKoO4xIOiu0FdDewq1oa7JvWgbgvbyP9k2iRPg30WizE1
-	gYZi8M3wPSkEm5v/asAJLoFglJQM=
-X-Google-Smtp-Source: AGHT+IH/oQQS/mnVkBMVZavu+1GJwds/AMzKCb97mcp7UAcOj1YhpcUbl3S8U4Ofo7beYWzVZu+XAyXSDZXvx8Nnsww=
-X-Received: by 2002:a05:6870:2191:b0:261:1f7d:cf70 with SMTP id
- 586e51a60fabf-287c2154afamr1028179fac.36.1728015088169; Thu, 03 Oct 2024
- 21:11:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728049085; x=1728653885;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TVLq22bs+1l9xY9JOZ8imSDy5KmOLVk2kQhCSbpcWNE=;
+        b=J+eRbU/FQlQH8myjPOpKmsU2G774ewA5N7L0UTJC74rda+BClJycrmL+t4Vo/WkDlz
+         8bc+c7IZDfNQanyamLqwMC3D+/y5rhoMDHM3pMYbkRclvxU4nTELr3VlNtbnk7K8L+5U
+         yA/ENawAYqqe9LwDuk0XyLtR89bxjkVKmhqcXCx2671fiLXk8jtXfQoaXRbGlb+xzXd+
+         ca14oStDmQrPrgpBSW4DtXXZwGXxtyG451VPTOGfKDdV4rWp+C7W2AJ88RbjZMA6UGJY
+         oNjgx0coR1RL4/LxT6AnXe3nfpGBr5iCv0hdYJjMvHsdQcatG2w1UYXKNn0vk3wbM8sR
+         q5gA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKORlfR47rSn7fKoQ7dVP/cDy6lYgidfgBfA+DAkjU9klwrmXPqoMLETwqC2gIk2JY6qRtqbq1R9bnKlZnKy+OIsc=@vger.kernel.org, AJvYcCWJ5SS/n1cB03HNWnFNfNQA8snz4MtavwyzKK+EVg42VhdJ9+WtUhK2q2R2m7FzLiQQagl7Yg682oOg@vger.kernel.org, AJvYcCX4vVNTphmVXkFZdmOZk/+xDZ74Q/c+oWD4MkuNZVDtYo5ZuX7LImcwXjRO0JvB7p+LOJLhOoqgQ9c7vvGv@vger.kernel.org, AJvYcCXQniSoFx4uFCJmKeIwTvmSOKFLV07zyM7kptqVJemTo9PtWRiP3vexdvZdCFdnElbZO4z7TZPnf+NMHjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl8eGKrC+n/sX2T8s6j9EtvGbHDbN0nZxPEo8JlLmfUggWYhBp
+	ft3bB772+hLmg8v4hLL221OBjcFYxHQn5v5MJ1l3XBH3usQGipXj
+X-Google-Smtp-Source: AGHT+IGhEdASi+MxAhYr/5O4xJ1vTIjCaytgyNSnCaXtwTaIfB45CRoPQcP/88bkABWIesSJDpwwIg==
+X-Received: by 2002:a05:6a21:9204:b0:1d3:b38:891 with SMTP id adf61e73a8af0-1d6dfa22f7cmr5043217637.6.1728049084632;
+        Fri, 04 Oct 2024 06:38:04 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1b2:add:2542:c298])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71dd9def6ddsm3181637b3a.154.2024.10.04.06.38.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 06:38:04 -0700 (PDT)
+Date: Fri, 4 Oct 2024 06:38:01 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 00/14] Remove support for platform data from samsung
+ keypad
+Message-ID: <Zv_vuSrJzpN9IvXV@google.com>
+References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
+ <803e3902-cec9-49ed-baff-d26e578a8ab7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tdxrmmqyzcufupnwkdbg7lwgadizm7v3lxjirykijbml7x54ze@upbdzycdsilm> <20241003215217.GA326383@bhelgaas>
-In-Reply-To: <20241003215217.GA326383@bhelgaas>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Fri, 4 Oct 2024 06:11:17 +0200
-Message-ID: <CAMhs-H8q95jAvo65yQ5x0NxyU3Hzu0HeNQxZSa+5CHd7REgQuA@mail.gmail.com>
-Subject: Re: [PATCH] PCI: controller: Switch back to struct platform_driver::remove()
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	linux-pci@vger.kernel.org, vigneshr@ti.com, s-vadapalli@ti.com, 
-	lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org, 
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com, krzk@kernel.org, 
-	alim.akhtar@samsung.com, shawn.guo@linaro.org, songxiaowei@hisilicon.com, 
-	marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com, 
-	thierry.reding@gmail.com, jonathanh@nvidia.com, thomas.petazzoni@bootlin.com, 
-	pali@kernel.org, florian.fainelli@broadcom.com, 
-	angelogioacchino.delregno@collabora.com, ryder.lee@mediatek.com, 
-	heiko@sntech.de, kevin.xie@starfivetech.com, kishon@kernel.org, 
-	dlemoal@kernel.org, shawn.lin@rock-chips.com, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <803e3902-cec9-49ed-baff-d26e578a8ab7@app.fastmail.com>
 
-On Thu, Oct 3, 2024 at 11:52=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
-wrote:
->
-> On Thu, Oct 03, 2024 at 12:17:08PM +0200, Uwe Kleine-K=C3=B6nig wrote:
-> > Hello,
+On Mon, Aug 19, 2024 at 11:40:56AM +0200, Arnd Bergmann wrote:
+> On Mon, Aug 19, 2024, at 06:57, Dmitry Torokhov wrote:
 > >
-> > I found this patch in next as 712359cb5e9d9553c1383fc5005593aa1988efc4.
+> > This series attempts to rework samsumg=keypad driver to stop using
+> > platform data and instead rely on generic device properties only.
 > >
-> > While rebasing my patches with the same purpose I found that this patch
-> > handled the indention differently than I did for two files:
->
-> Updated 712359cb5e9d ("PCI: controller: Switch back to struct
-> platform_driver::remove()") to adopt your indentation changes and also
-> convert drivers/pci/controller/pcie-xilinx-nwl.c, thank you very much
-> for noticing this!
+> > The first 8 patches are general cleanup/facelift patches.
+> >
+> > The 9th patch introduces alternative binding that is more compact that
+> > the original one, which makes it more suitable for use in legacy (non
+> > DT) boards with static device properties. Note that the "new" binding is
+> > the standard binding for matrix keypads.
+> >
+> > Patch #10 implements the new binding in the driver, #11 converts the
+> > only user of platform data in the mainline tree to the static device
+> > properties, and #12 drops support for platform data from the driver.
+> >
+> > Patches #13 and #14 are "bonus" converting the rest of crag6410 to use
+> > software nodes/properties to describe GPIO keys, LEDs and other
+> > peripherals. Note that I believe they fix and issue with recent
+> > conversion to GPIO lookup tables - the names of gpiochip structures I
+> > think are "GP<N>" ("GPK", "GPL", etc) and not "GPIO<N>".
+> 
+> I had a (brief) look at the patches, everything looks fine to
+> me, thanks for working on this! Let's see what Mark and 
+> Krzysztof think.
 
-Thanks a lot for noticing and correcting this!
+Mark, were you able to give this a spin? Or should I address the DT
+binding comments from Krzysztof and Connor and resent for merge?
 
-Best regards,
-    Sergio Paracuellos
+Thanks.
+
+-- 
+Dmitry
