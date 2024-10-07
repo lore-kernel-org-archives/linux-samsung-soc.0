@@ -1,182 +1,143 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AA618B476
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Oct 2024 10:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863B915D5A1;
+	Mon,  7 Oct 2024 14:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728297527; cv=none; b=aE9QNJg5tf8ikhc1PXraBVtVJe+sLKv/C8i4CvI7zgnwmYZ7S/9siV5Y+fcaDQuxP3IcyGCkV2x7p0mDeL9kaKjMoBrBmaWexHy66r+2LKZuFgSrL+UA/7yZi+MSj8+7XKxNHwjmqJtEa4/KQQOGqkOrcOEOfBovJc0ftM7Hgto=
+	t=1728312611; cv=none; b=rkwde8hKbbs42l/301PuOpGmBDn4Ohdr2BuPY2k80LFIckNQ0lCxioefdvXZ8rCcuqcPqdWnudyqJgoXxGXeswvlVJcMzDYzxCFf3qNYro3x7dsNCyz2opr6nffb9vDJhk2M0TK1wyjD3R1L6zzk0DOnJcVNOoeu8L/6/8CxISY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728297527; c=relaxed/simple;
-	bh=GNU+vrwJgJNb1iZtPYojM0bx3LyUZWj4S4Y7c6YgARs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=pRFs79Hucu+GdPHRuFz0X9POCoRL26XTYsjhmr8s4Zg8mPqTwLZLOPYZzGn6dgOToB5WeatTB/LlRmAj8KNJADL6ouqifdJ0XJUIeCzrwUB99KRRQnrQbBlrPDe/WvGgW56Un6eechl74yvIeBt4mMJhaJfqkyNXTfNGDjhiMng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=k9Wg0OXq; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1728312611; c=relaxed/simple;
+	bh=VoNufGpRjlApyn8L8TeohgzkctZ1bM3y9rdgxn4V/NQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MPTW90qrsw7QhbmkjGzHdCTfeu9oXUPHGfeYl62gFny+Xc/SMNKzP1IlQJjVh+mKz8W/c0BMpsK4+uRGcQc6cmk0g/g50RVBpZp+LWSW4V6GL28cz314Y+6EgXAJHaxoWB94qsH+ADs6DobfzjGmQ7caxl89DStzh1jDtZr2lEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHItSyYN; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k9Wg0OXq"
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241007103842epoutp04ef50700b64870139e6b5346a3c2c6fbf~8JXC0gh0E0071800718epoutp04F
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  7 Oct 2024 10:38:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241007103842epoutp04ef50700b64870139e6b5346a3c2c6fbf~8JXC0gh0E0071800718epoutp04F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1728297523;
-	bh=v4/6u8K6sBjv48Tz30keWOypL8e77IpeF76bvG6qJhw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=k9Wg0OXqCP3sVRAOSwx74caTaKUmDFvyMi1+NTl+vsfdVbRZCnfnwYYsN5OrdIHgc
-	 XupN795ziRabCiin7kcq/dTsbqwb9A925ww/r/ONJs2jd2oTP2SWXRLbwOxr8pZLOe
-	 6cMEfwLhQGyHG+pcJuR2R0CzPnLB6k+VvdQBhtJg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241007103841epcas1p192eba855b1fdf30ac5dd56839d95dee0~8JXB0mbjK2252022520epcas1p1A;
-	Mon,  7 Oct 2024 10:38:41 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.36.136]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XMbGm4QcHz4x9Px; Mon,  7 Oct
-	2024 10:38:40 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.55.09406.03AB3076; Mon,  7 Oct 2024 19:38:40 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241007103839epcas1p2aa0d26f8948bf8aba33d8f11e6c8f4e6~8JW-7A5MQ2238222382epcas1p2P;
-	Mon,  7 Oct 2024 10:38:39 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241007103839epsmtrp11dbf16769e7621ea484f409e8216e997~8JW-6O-400549005490epsmtrp1K;
-	Mon,  7 Oct 2024 10:38:39 +0000 (GMT)
-X-AuditID: b6c32a35-83fff700000024be-79-6703ba309025
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6C.90.18937.F2AB3076; Mon,  7 Oct 2024 19:38:39 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241007103839epsmtip15d1d23795062623ef1c5a345df50be94~8JW-nso660375003750epsmtip1Q;
-	Mon,  7 Oct 2024 10:38:39 +0000 (GMT)
-From: =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
-	<inki.dae@samsung.com>
-To: "'Kaustabh Chakraborty'" <kauschluss@disroot.org>, "'Seung-Woo Kim'"
-	<sw0312.kim@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-	"'David Airlie'" <airlied@gmail.com>, "'Simona Vetter'" <simona@ffwll.ch>,
-	"'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>, "'Maarten Lankhorst'"
-	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
-	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'Rob Herring'"
-	<robh@kernel.org>, "'Conor Dooley'" <conor@kernel.org>
-Cc: <dri-devel@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-In-Reply-To: <20240919-exynosdrm-decon-v1-3-6c5861c1cb04@disroot.org>
-Subject: RE: [PATCH 3/6] drm/exynos: exynos7_drm_decon: fix ideal_clk by
- converting it to Hz
-Date: Mon, 7 Oct 2024 19:38:39 +0900
-Message-ID: <000001db18a5$125e9320$371bb960$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHItSyYN"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso44077951fa.3;
+        Mon, 07 Oct 2024 07:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728312608; x=1728917408; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FhMgyPiKtDfgc8NuEwrv29x0qScgu60O2NxPnzTca6s=;
+        b=OHItSyYNgY653oa8tXIfvxWMRpd+2Yeex9vv2sBSeYHRIRsOTI5DyTtWrbF43S/NhS
+         ge1kvh6oViLgFttYL1YJpABptSdQ032x3BTKGIbojbPwGdtwkb/026zmHNx/olv+klZS
+         YZ9UL1u/TZenL0ytxfI2lq3hV9Rz/kEaiyPuVCsqX6hFrvTFiVpo0pATs9LWQGccpicj
+         xLd4KArw/FfIjp1eUu241f0QDhol+mB3dRWpts/JYX0JW5Sl46afTAyd9/nbLfdvq8T3
+         MbXp+ucfsg3QnEquFLBr/EnVvQHaLBjtoPUHa7jVTnDql57ImvC60Sv8dHZvpIH66jxr
+         vMfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728312608; x=1728917408;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FhMgyPiKtDfgc8NuEwrv29x0qScgu60O2NxPnzTca6s=;
+        b=o/P9F9LQ8yKCuRY8myBlw4rntP/JnirP1u0uictTY9Rmtk/Jwqyd8fdAkq0KKwgPnd
+         FZkUYKyW4yVwivSHq/S59EuI0IaQ+sQXZV9B1r7cWFhlphigQAv1bAf1hGby2yWSSrQe
+         GTTJaHvl9R7/Flt+y6xcoblMuP9a2mMm0WaOtyEexdXBQPhZgkUakLCjo2ViPXIJrYoD
+         HPglEueQ/GkP+H962at+zlzsVV5wxWN60jU4eF9YPXq5u3dnlsXIhmbAoxuyy0dGRlO6
+         e21wHsryT4feP3gt0kLOfIJAbrdh0tXP1Q7frxYfxZ1nGhG+4NncItdFAY3Me9AVZalC
+         C/ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVDIkyLdmihDYXXe1mLQGUj8ICNNuu54oEQwywCzcOV1u2Bnvlt+gijUGcWlEtfTf+fpe9TJG7aKKPMsrDs5j1Zr9A=@vger.kernel.org, AJvYcCVG1BFb4n6y3M62MpxmCkc0TjGHuHVAOn6g2h00BtPJVGB98MJCDOoVJ60aIY/wcI0uwQFqptUqV9R5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9wbZKtxtc3CCzSQimjgUf4O70/fSKNq6ZflcE4maPaWobPaZx
+	/0rY9oznCYwz4jbIiHQgvqNHKy5ywyzg8gHvm3/6xncxzUqbbDgpy8xk9w==
+X-Google-Smtp-Source: AGHT+IFfTX/SFIKhCzC1snEFv9AIMWFpChqc/yNAQ/Aapc8+skMUPDcPs9YBqE4tfXY1tEuDM/BtEQ==
+X-Received: by 2002:a2e:851:0:b0:2fa:d0ec:4572 with SMTP id 38308e7fff4ca-2faf3c50c1cmr47965481fa.7.1728312607282;
+        Mon, 07 Oct 2024 07:50:07 -0700 (PDT)
+Received: from [127.0.1.1] (nat6-minsk-pool-46-53-210-75.telecom.by. [46.53.210.75])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2faf9ac43efsm8253791fa.45.2024.10.07.07.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Oct 2024 07:50:06 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v6 0/3] Add Samsung s2dos05 pmic support
+Date: Mon, 07 Oct 2024 17:49:58 +0300
+Message-Id: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFhWZRKEoYF0bFiO1qJqvKMjjKGhgJZvOb/AnBb7xizSEWWUA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta1AbZRT1y242CxrZBMRvGC24RWdgCmQbSBcHkKkVt9oqiJXqD+kO7IRn
-	ErMBaTvSBwxTUg1S6pQCpaGlgNFBCjQ8BGqhQhGB0gfBTqtBxRGbtGiKw0PFhMXKv3PuPXfO
-	Pd8DR+R2LADP1Bg4vYbNITFv1DoQEh6m6EbUCsfXT9FXbGdEtL3WitGffmLB6NOXx8T0jfn7
-	GP3XP+MYPT7eIqFHDzskdOtPk2L6encNRleO94nout8voHRJaYOYXunplNDV9y5K6MqKWYxu
-	d5SL42XMcHObiOn904wyXVV3JEyrpRRjaoeTmB+ODomYtvoDjKndApi2kf2Mq3VDovc72TEZ
-	HJvO6YM4TZo2PVOjjiVfTU59MTVKpaDCqGh6CxmkYXO5WHLbjsSwhMwcdxwyKJ/NyXOXElme
-	JyPiYvTaPAMXlKHlDbEkp0vP0UXpwnk2l8/TqMM1nOF5SqHYHOUW7snOmPh+BugGfAp6RrIP
-	gkqpEXjhkIiE1ppjIiPwxuVEJ4AnyiaBQP4A8P7ygughMV72yISRFodrrdEF4LRVaMiJWQBH
-	zcEejBFqOGu8jnpEfsQJFD4YGUI8BCHaAbzzox3zqLyIl6C92Ip4sC/xLjy6Mi3xYJQIhi3O
-	YtSDpUQ0nLw2JRGwDA6f/Hm1jhCBsMNZgwgrBcHFmQaxEeBut62wr1csSPxgdWnJqi8kVnD4
-	5TnHWoRtcLB7RixgX/jbULtEwAFwtqxEIgxUAHjb1oQKpBLAgUUbEFRKePFchcjjhhAh8Ivu
-	CMHtcXhv/sPVJSAhhUdK5IKahIMTU2uTEF6tL8cECQNN9oSPwTNV65JVrUtWtS5C1f9eZoBa
-	gD+n43PVHE/pqIe3nabNbQWrTz00qhOUO+fC+4EIB/0A4gjpJ939OVDLpens3n2cXpuqz8vh
-	+H4Q5T7rciTgiTSt+69oDKlUZLQiUrVZGUlTKop8UvrtjXxOTqhZA5fNcTpO/9+cCPcKOChS
-	XZufq2haWpqjSm+az+9d1PT+nXJIeguGnupQbV/u8Qk5fang/UHLo5fqX5kmZ+7KXb6umK1l
-	jrv4vg+6Gvb0+IxWDrxXtKnbFXEmc+N25Gnl1cDcX276J5omzm/Z/cLJ+NuumMHJvre5QGp0
-	yXug+ILC+ZoR9ztuarXcMkxYawOdPh8RR4qCZUkbXXFfYb+2kFmNhc1ioulYb51pOcHEwsVC
-	NHL/6/l1Y43HxzYl22ZevvJcyqlgWapMXadMMmPBb20o6+yT1T6YQBbGk7I65qsP+D/m4ufe
-	nM0q+qZop5/yLB839dnhCNuuN+KbDy2eLbV/t/xs466VpIWORwrFKQXJJMpnsFQooufZfwGz
-	VFBMcwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCIsWRmVeSWpSXmKPExsWy7bCSnK7+LuZ0g9en9C1OXF/EZPFg3jY2
-	i5VTV7FZzD9yjtXiytf3bBZ//p1nszh/fgO7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLBZ+3Mpi
-	0da5jNXi/54d7Baz3+1nt5gx+SWbxZY3E1kdBD1OrtvM5LH32wIWj52z7rJ7bFrVyeYx72Sg
-	x/3u40wem5fUe/RtWcXosfl0tcfnTXIBXFFcNimpOZllqUX6dglcGRfvPWUsOMxfsed0dgPj
-	DN4uRk4OCQETiQ1vPjN1MXJxCAlsZ5RoabnJ3sXIAZSQkNiylQPCFJY4fLgYpFxI4DmjxKlu
-	ZZAwm0CqxOvVdSCdIgLzWSSeTtrGBuIwC+xglDjatJUZYuZ5Rok9Dz4yg3RzCrhKPGjZBmYL
-	C8RI/L06HcxmEVCR2PC2hQXE5hWwlLh26QY7hC0ocXLmE7A4s4C2xNObT6FseYntb+cwQzyg
-	IPHz6TJWkItEBJwk9u1lhSgRkZjd2cY8gVF4FpJJs5BMmoVk0iwkLQsYWVYxiqYWFOem5yYX
-	GOoVJ+YWl+al6yXn525iBEe0VtAOxmXr/+odYmTiYDzEKMHBrCTCG7GGMV2INyWxsiq1KD++
-	qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qByTlYikfm+0wX4wtxfn69E/JW
-	/TZdVsEWOPO+6dvbPf0e5a2HWUQPVOi45Lw7HGrQc4Ol2thKiev6yrvpN2qkDi56urow+MD9
-	H5Wytj1JLzxm+l08fsmE08UocberAK9O+MK++eyCrvc7dB+dWmsxy+PUyYM7HUJXLhV6xnYu
-	QjW8L0jz2/ldwue8Ajf5fJ+bfb71hbnw1FZPNasP+V+TDp+aqdkmYlwV9ebviRfB7R0Nf2Yx
-	L/t2SF9q4/+1jQv3vE3Ldprlr2lt9aE2Lntaje9pvhOTqr5xPQwTv6+u4nKnevulcjanPxtu
-	3E/PnV/fUqIuVpPtfslJWtfzckfx12Vbn6YturQoydlBJOSzEktxRqKhFnNRcSIADIPioVcD
-	AAA=
-X-CMS-MailID: 20241007103839epcas1p2aa0d26f8948bf8aba33d8f11e6c8f4e6
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240919151145epcas1p3b3a76512b87498e976db249906a4f5bc
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
-	<CGME20240919151145epcas1p3b3a76512b87498e976db249906a4f5bc@epcas1p3.samsung.com>
-	<20240919-exynosdrm-decon-v1-3-6c5861c1cb04@disroot.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABb1A2cC/43QzYrDIBQF4FcprsfiTzRJV/MeQylXc5MIiWnVS
+ oeSdx9TKFNmM12eC37n4J1EDA4jOezuJGB20S2+BP2xI3YEPyB1XclEMFExzWsaE4TLlNCO/uR
+ 8wiFAKm9O13NMAWGmxja6UcyIHiUpjIGI1ATwdiyQv05TOZ4D9u726P06ljy6mJbw/ZiR5XZ9N
+ jb/N2ZJGUXZa60F4zXYz2EGN+3tMpMNz9Uv2HL5BlgVUHQC+05Z1dT1X1C9LnzjT7LaFgLnrGW
+ iNaBewXVdfwCqCUxDhwEAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728312605; l=2515;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=VoNufGpRjlApyn8L8TeohgzkctZ1bM3y9rdgxn4V/NQ=;
+ b=eFEiaI82o1Z4NeXvz2/oATe+NzWgY3VOJ18GYrIR/nJdMGdRIM/5gmtpmBJUDHR4IPIe2anGU
+ eZP6gdtJuvEAJyujedk3Xt1g68n2Za8lAETUnwL59VcH7UgR79Yw5bV
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
+The S2DOS05 is a companion power management IC for the panel and touchscreen
+in smart phones. Provides voltage regulators and
+ADC for power/current measurements.
 
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v6:
+- fix uninitialized ret variable
+- Link to v5: https://lore.kernel.org/r/20240617-starqltechn_integration_upstream-v5-0-ea1109029ba5@gmail.com
 
-> -----Original Message-----
-> From: Kaustabh Chakraborty <kauschluss@disroot.org>
-> Sent: Friday, September 20, 2024 12:11 AM
-> To: Inki Dae <inki.dae@samsung.com>; Seung-Woo Kim
-> <sw0312.kim@samsung.com>; Kyungmin Park <kyungmin.park@samsung.com>; David
-> Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Krzysztof
-> Kozlowski <krzk@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>;
-> Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard
-> <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; Rob Herring
-> <robh@kernel.org>; Conor Dooley <conor@kernel.org>
-> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; Kaustabh Chakraborty <kauschluss@disroot.org>
-> Subject: [PATCH 3/6] drm/exynos: exynos7_drm_decon: fix ideal_clk by
-> converting it to Hz
-> 
-> The clkdiv values are incorrect as ideal_clk is in kHz and the clock
-> rate of vclk is in Hz. Multiply 1000 to ideal_clk to bring it to Hz.
-> 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> index 2c4ee87ae6ec..4e4ced50ff15 100644
-> --- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> +++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-> @@ -137,7 +137,7 @@ static void decon_ctx_remove(struct decon_context *ctx)
->  static u32 decon_calc_clkdiv(struct decon_context *ctx,
->  		const struct drm_display_mode *mode)
->  {
-> -	unsigned long ideal_clk = mode->clock;
-> +	unsigned long ideal_clk = mode->clock * 1000;
+Changes in v5:
+- Split patchset per subsystem
+- Rewrite cover letter
+- Link to v4: https://lore.kernel.org/r/20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com
 
-Right. ideal_clk should be fixed with Hz.
+Changes in v4:
+- Rewrite max77705, max77705_charger, max77705_fuel_gauge from scratch
+- Reorder patches:
+  - squash max77705 subdevice bindings in core file because
+    no resources there
+  - split device tree changes
+- Use _ as space for filenames in power/supply like the majority
+- Replace gcc-845 freq_tbl frequencies patch with new approach,
+  based on automatic m/n/pre_div value generation
+- Link to v3: https://lore.kernel.org/r/20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com
 
-Thanks,
-Inki Dae
+Changes in version 3:
+- s2dos05 driver converted to MFD
 
->  	u32 clkdiv;
-> 
->  	/* Find the clock divider value that gets us closest to ideal_clk
-> */
-> 
-> --
-> 2.46.1
+Changes in version 2:
+- s2dos05 regulator:
+  - hex to decimal in regulator values
+  - fix compatible value
+  - remove interrupt specific code, because it's
+    empty in vendor kernel, and I cannot test it on
+    available hardware anyway.
 
+---
+Dzmitry Sankouski (3):
+      dt-bindings: mfd: add samsung,s2dos05
+      mfd: sec-core: add s2dos05 support
+      regulator: add s2dos05 regulator support
+
+ Documentation/devicetree/bindings/mfd/samsung,s2dos05.yaml |  99 +++++++++++++++++++++++++++++++++++++++++
+ MAINTAINERS                                                |   4 +-
+ drivers/mfd/sec-core.c                                     |  11 +++++
+ drivers/regulator/Kconfig                                  |   8 ++++
+ drivers/regulator/Makefile                                 |   1 +
+ drivers/regulator/s2dos05-regulator.c                      | 176 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/samsung/core.h                           |   1 +
+ include/linux/regulator/s2dos05.h                          |  73 ++++++++++++++++++++++++++++++
+ 8 files changed, 371 insertions(+), 2 deletions(-)
+---
+base-commit: 58ca61c1a866bfdaa5e19fb19a2416764f847d75
+change-id: 20240617-starqltechn_integration_upstream-bc86850b2fe3
+
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
