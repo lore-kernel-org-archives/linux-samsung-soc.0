@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41DB6AAD;
-	Mon,  7 Oct 2024 07:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976F46AAD;
+	Mon,  7 Oct 2024 07:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728285466; cv=none; b=YqeaUvze2nRGxzWQizt7qOzhbO0QvRRcTbpE5knnjNMQL+PnHm7uGDwCMLi6Gjz+ZHyLL25I8Pvs3OJGtwhQyYc2gFI9KMxPrH4pHjxNPeKJIIIHV09RBbL9dMrp7G8r8IFC81cjenRHnFzk4Hy/7U07hNTXhSW/RnFrnCgH7+0=
+	t=1728285514; cv=none; b=KThgWWecWhiF+TT9pkjw/J0I9AE9oGp9ntqOG2HykfIPHrL6r0xiTbsc+/XZ2Xjlj6+otcZrr54i7+XqInfyb3Or7GKPkPkzFaXpk95XNo/1Zk1HIgVBcZFelhwtjcuqJQN0g5WwJkOqzBn4dwgZT9oNxDJhcERwAY9aRTiJGsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728285466; c=relaxed/simple;
-	bh=FC+J6DQ7t7EoZvjsLC0zx/s5llveHpXizOgYJO7w5AA=;
+	s=arc-20240116; t=1728285514; c=relaxed/simple;
+	bh=QriiGE74xQCrduaJBvzT6qIYqf/YHvKBDn4tXTZDa4c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6pyGvcwDbMRQPxiM3Den8wxmn5+U9u93uDWryHJWSow5AEeqADUs4gA7w8bmzT2GFqrklUNlSercN9xeqcsIdlMTBuCzqLWLacWUHZR0NT6VMMZGnBk+WUMXGoqp272t1WmrEFwgdPEupNbSK4way6msu2JJzU9Ndkp5pcyz+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6+au246; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=XSrY0VT1/VdAStFHDUD7dvTrUFHMqsDjJsz3zGysj4KujLHVkzEyOEcsEOrWgqPnS681p4NoxCzSjU5lfIaRWogVpu8LYw5eyHL6DcNSjlKxBLp6pXUONirOZZ2TyGsKJ//I8SH28CwouiNRSkKh0Jid+dGWW6sxmF3DZqM7ACk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWm3dX9H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6+au246"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5646C4CEC6;
-	Mon,  7 Oct 2024 07:17:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWm3dX9H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27687C4CEC6;
+	Mon,  7 Oct 2024 07:18:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728285465;
-	bh=FC+J6DQ7t7EoZvjsLC0zx/s5llveHpXizOgYJO7w5AA=;
+	s=k20201202; t=1728285514;
+	bh=QriiGE74xQCrduaJBvzT6qIYqf/YHvKBDn4tXTZDa4c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B6+au2463/mLWWX3xRaC5Fju/zs2cEFxeLCvKEDJa4ip69Q9RH6c2m/B7O/Amakd2
-	 RkUAmutVjAFki+KqkETq2356pfMbQbWJ88NIp957RvpcwIQC7UJBjA6To5DFKZ1bZW
-	 +iPHMntSfXWivBT0cX9Hurz1WWJVrD5lMxF3nIGD65L4izzsS6yHi1kF982Uf8PCeh
-	 akcMUpQpNn9tAjegk+M89C5jZAUpNe61b8BfJfmbVG3WLCWrO9MvFvpzwBeKEeUygO
-	 5Do1EKmB9IFeuLd6EwHxpcQVXsyNrkhjxetYyfDQeWgQE1qa62b70KkQNG39C9gB1z
-	 2Kh7uMNmKQBZg==
-Message-ID: <70ef495e-b162-4a6c-9966-897a1a65b66b@kernel.org>
-Date: Mon, 7 Oct 2024 09:17:37 +0200
+	b=LWm3dX9HBPIxDBTtbMH/8T13JPKuYWQ5UwrR/1jf2w2TNR5yDuwdxm0YUxEB+LU4N
+	 cgsJCYn7nVq5crtbNYhaN/R7SmSSQrH5r86fJJqTgmMIH13g6kRZQA5ef4Qh99Prfo
+	 I42bxOphQs0Z7LHQuFtj0jUAHiUqyJT21zXE1VlALJJ0wZewr1EvBWspGmgZnbaZSo
+	 sPXfWsRv9nRYBVqz0bDiL+4jEHSwpAmlUblgmB0T69G4r0EAgfnBhLVtJPsW8JtAtu
+	 VXuvResWppy0wAiFRyAtcYUdC/ecVhrVY+gYWMTnvqaqi7l9irb4drVVuJDG+CrfaE
+	 q2KsIpUDO0/NA==
+Message-ID: <c79e42d6-efb8-4bea-93e0-b31505aa3162@kernel.org>
+Date: Mon, 7 Oct 2024 09:18:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/3] add clocks support for exynosauto v920 SoC
+Subject: Re: [PATCH v1 2/3] clk: samsung: exynosautov920: add peric1, misc and
+ hsi0/1 clock support
 To: Sunyeal Hong <sunyeal.hong@samsung.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
@@ -45,10 +46,11 @@ To: Sunyeal Hong <sunyeal.hong@samsung.com>,
 Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-References: <CGME20241007071338epcas2p240e751a9d59f1cfa11515c90e2d8e991@epcas2p2.samsung.com>
- <20241007071333.3011125-1-sunyeal.hong@samsung.com>
-Content-Language: en-US
+References: <20241007071333.3011125-1-sunyeal.hong@samsung.com>
+ <CGME20241007071338epcas2p38971f2dc241357031befe59e4c4a9241@epcas2p3.samsung.com>
+ <20241007071333.3011125-3-sunyeal.hong@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -92,22 +94,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241007071333.3011125-1-sunyeal.hong@samsung.com>
+In-Reply-To: <20241007071333.3011125-3-sunyeal.hong@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/10/2024 09:13, Sunyeal Hong wrote:
-> This patchset adds the CMU block below to support exynosauto v920 SoC.
-> - CMU_PERIC1
-> - CMU_MISC
-> - CMU_HSI0/1
-> 
-> Changes in v1:
->  - Rebase the patch to reflect the latest fixes
+>  static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
+>  {
+>  	const struct samsung_cmu_info *info;
+> @@ -1154,6 +1431,19 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
+>  	{
+>  		.compatible = "samsung,exynosautov920-cmu-peric0",
+>  		.data = &peric0_cmu_info,
+> +	}, {
+> +		 .compatible = "samsung,exynosautov920-cmu-peric1",
+> +		 .data = &peric1_cmu_info,
+> +	}, {
+> +		 .compatible = "samsung,exynosautov920-cmu-misc",
+> +		 .data = &misc_cmu_info,
+> +	}, {
+> +		.compatible = "samsung,exynosautov920-cmu-hsi0",
+> +		.data = &hsi0_cmu_info,
+> +	}, {
+> +		.compatible = "samsung,exynosautov920-cmu-hsi1",
+> +		.data = &hsi1_cmu_info,
+> +	}, {
+>  	},
+>  	{ }
 
-So that's a v2?
-
-Please start using b4 so your patchsets will be properly versioned.
+I did not mean "rebase blindly and ignore whatever was done"... Next
+version is v3.
 
 Best regards,
 Krzysztof
