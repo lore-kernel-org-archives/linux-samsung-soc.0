@@ -1,94 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412C91D9A6D;
-	Fri,  4 Oct 2024 14:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F65EEC9;
+	Mon,  7 Oct 2024 01:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728053900; cv=none; b=HA7f2rmiC0HASJEj5EzUWD35i1tLokB6QsJBqByqbsrLJvwsr4oyWmdKDD+fIPVWEsquT8qFkk2v9MmiXGrAg3kSm7nNmt923ZwApAx6LGkJ0q73R8soSFs+V/35n6V+fIY9yS208QzODMz+1kDGPbqgC73mKHihlnOmoom8sKU=
+	t=1728265491; cv=none; b=cQHWr5HoSob/BNa/iE0fnGKFbHhy/kVs4UStUaWuUnFV4jN8ImeG7oIkJ57AMjut3XO+XooIUb6A1jthiibhDIu0VnAalRvJFFNlbIFUSgfugTkR0x0iInnUz3Zc83Fbnm0j8Y7VuEp+++zTfZGj5swnG8EaMULL6SPe39Umw94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728053900; c=relaxed/simple;
-	bh=hdx+Nlnqh49HdIrn5ECqFiAYUAa+WEBCnBFbH03L0U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mtsndAeGhjRaw3bW/h8hfDdU8/DQRLg3Vp+YHFOVvtFlTH18ez/NyJ2lbiBg2TSA7Ssqi3dbykO9b45Sq6CfX11WX+r7fhJvZanZm+h5ihgulwfl2UZenxGbJlCH2jMKPkHSiAxTYd7CU2rBsBYyBSUt3aFsFACb/xhfUAnR96Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fBxKL3Ds; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728265491; c=relaxed/simple;
+	bh=iWEtgc3meyPdV0U09IWzeGiCzBDvK1PF1flqo/gk2Gs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YKJISfGgmFS8jBKSuFsWkvv7l21pa1CKTYRbMsShPIcAP+pwS1fjRo9xTTdLtac41OSRl/kvg1QCXaO+Nwz8bGc5RCDMVMpZcs6HK+V5JhshaE8B76BJV19Eg4Znm8lfQNGQZFXU5Qb7K1JnoZ63ZrnPTbpg/J7jnqv+dPsIYUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mfxxa8c6; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fBxKL3Ds"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6FC3C4CEC6;
-	Fri,  4 Oct 2024 14:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728053899;
-	bh=hdx+Nlnqh49HdIrn5ECqFiAYUAa+WEBCnBFbH03L0U8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fBxKL3DsUpoP+JinPpudeiel+njsclMIT6jbhTpYmITwoloJRv9FKqNNiD5ph0hnu
-	 5faD0whmMiBTR7Nz/88Ak18WYLsE52Q0uhymh0x7AxkJxDrgD8PCQ3S3QSiigRHpyF
-	 W59ARwSudAfO8NEOcYPGa3y9zAaFpx4nwpjuHCIvSQDLrQJO9x2o+aMJRdbMuh/S09
-	 1fKHViikT4dbYtVAl9zB50rJO6gMV60zYIamcgyGcXBMNEBz1ens/7gegntv9w9Y1V
-	 Ab0tV7vj5FC6h4pWus2y3EcBzwyKUVPfPnck+Bab7BsyVIMAZCRO/XCJwQIMLh7gOP
-	 yIJtfLjjUBOsA==
-Date: Fri, 4 Oct 2024 15:58:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 00/14] Remove support for platform data from samsung
- keypad
-Message-ID: <76d98587-3623-4ff2-89eb-a5fe8c535293@sirena.org.uk>
-References: <20240819045813.2154642-1-dmitry.torokhov@gmail.com>
- <803e3902-cec9-49ed-baff-d26e578a8ab7@app.fastmail.com>
- <Zv_vuSrJzpN9IvXV@google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mfxxa8c6"
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84ea25abc26so1003340241.2;
+        Sun, 06 Oct 2024 18:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728265488; x=1728870288; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uzU4HApFVdOla6cFpiLhDsurqYX2GUtT9S+gfYoFCVc=;
+        b=Mfxxa8c68Iv8T1KUSu0fdBHEuOJYG0hbHMD3v2eG1+3QIwTe/pZa38tieDitG52PsJ
+         0mP+1CwnTVbQeNTvc2vwZBFJtQ9LvcwWR5oAj0qcSAXNb656YQ/yYBUHRDGd3oJI0Yxt
+         BNaRr8zYW3VqEh6jXAoHaj6akFhnxmkyRmFGtR+XAbltFqHdL42RONAE4eddxNyKsrfq
+         oXEekSbIfqWqRZU0hNXabhZwTf/lK+u3ngZ3Zm//kLi1vLVl55hSMbDR/92+jIZmLEDY
+         zo5Gd5QQSt20jSXO3OFaaOU7Cx0c6Gk74hg3/WKxRHZ49VndMlYu/TyB3O/SrPd7K593
+         7HJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728265488; x=1728870288;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uzU4HApFVdOla6cFpiLhDsurqYX2GUtT9S+gfYoFCVc=;
+        b=ftsldEjUNoQtC8UShVQmH0SkxBmGQW47o2guM2M5Fwl7PyG7kFQuDGdB9XmCyS+iu6
+         PSqX4dUwszwbzIcthqyz7XN4/aTjFYNhmDT+bbJmMSV6p4v7CnopuxkpyeyKFOeWqFwZ
+         6wDUF2uhPyRQiIc8VRR9DUrL4ytiQ2avrw/L6637EWhs82+GQWtmOi4KFF/dk+fD39kQ
+         Sj4ysRyOYdpASNjeDvPkV485M1PDF5cBUCSi/Ng71Tukv0ezBm/Gj6U/9SVdf/Npjj2/
+         q7aiHITETma04L1Fia31dmB5AH1soR8SD/n+tOxkESlwBbqIKB1ubyTSjZfipFAu3+R7
+         iTvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUa41mGEBsxYCVDVRG3ZtDQDj+3N+PuQUN5tdjGUiM97yIAwdRHg95g6wB1Yph5e2I8Y1WxUaV4x9JZoPCtD2/OPjo=@vger.kernel.org, AJvYcCXGNMrjtFbD8ZsGF9b8JEy5anWWwe2NZ06hTes2ArQHs3vCnBe4DsoEYExe6pmvX3UapX72cUO+Rknb0fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Rw9LMHh5bEoZpSe0eu7tqpN+QqJTCuOiDxV0yipnpQfwTF7O
+	xChxa77dN/cd2si3Co5QAeOdXvLIyZ8sVGL36lSMhQ2tv67Vth/+b4kbqMRLumKOwRea69wL9v2
+	nzGVrBjZcI8q45Jic3YOAhe+4CCM=
+X-Google-Smtp-Source: AGHT+IGi4uAf0aCu5jsPGNvmsMYcFJYpM9lCgPSIHQQx9wMYlcO6+UiL7uE9lenoS0XrukOWueFat2eiVWWotzvuwQU=
+X-Received: by 2002:a05:6122:3c4e:b0:50c:6514:956d with SMTP id
+ 71dfb90a1353d-50c85583589mr5734158e0c.13.1728265488432; Sun, 06 Oct 2024
+ 18:44:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2O90PREKokAOuISY"
-Content-Disposition: inline
-In-Reply-To: <Zv_vuSrJzpN9IvXV@google.com>
-X-Cookie: A bachelor is an unaltared male.
-
-
---2O90PREKokAOuISY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240909080620.35245-1-shenlichuan@vivo.com>
+In-Reply-To: <20240909080620.35245-1-shenlichuan@vivo.com>
+From: Inki Dae <daeinki@gmail.com>
+Date: Mon, 7 Oct 2024 10:44:12 +0900
+Message-ID: <CAAQKjZN9K1GieEpG4uebJ_ygtpwbVOLD3Poy-+jQePYBwsb7Zw@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/exynos: gsc: Fix typo in comment
+To: Shen Lichuan <shenlichuan@vivo.com>
+Cc: sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@gmail.com, 
+	simona@ffwll.ch, krzk@kernel.org, alim.akhtar@samsung.com, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 06:38:01AM -0700, Dmitry Torokhov wrote:
-> On Mon, Aug 19, 2024 at 11:40:56AM +0200, Arnd Bergmann wrote:
+2024=EB=85=84 9=EC=9B=94 9=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 5:08, Sh=
+en Lichuan <shenlichuan@vivo.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Replace 'initailization' with 'initialization' in the comment.
+>
+> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_gsc.c
+> index 1b111e2c3347..fc5fc65823c6 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> @@ -1286,7 +1286,7 @@ static int gsc_probe(struct platform_device *pdev)
+>                 return ret;
+>         }
+>
+> -       /* context initailization */
+> +       /* context initialization */
 
-> > I had a (brief) look at the patches, everything looks fine to
-> > me, thanks for working on this! Let's see what Mark and=20
-> > Krzysztof think.
+Merged.
 
-> Mark, were you able to give this a spin? Or should I address the DT
-> binding comments from Krzysztof and Connor and resent for merge?
+Thanks,
+Inki Dae
 
-Sorry, no - I've been some combination of ill, travelling and super busy
-since you posted it (sadly the bootloader for the board only supports
-booting from SD card so until I port u-boot it's not in my board farm
-and I need to specifically set it up on my desk whenver I want to do
-anything with it, especially for this where I need to poke at the
-keypad).  I've got one more week of travel next week and one of the
-major sources of super busy just got better so I'm reasonably hopeful
-I'll get to it week of the 14th but probably worth respinning.
-
---2O90PREKokAOuISY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcAAoYACgkQJNaLcl1U
-h9CIyAf/UT+SvU5Yxhj17iZJ3+MFGVgNHn0JN6vrsQBXrossVlgZ1JP7vbl1RobZ
-cw1/99nUqLGDjOHkNBSx/2/GjaZz1gEUDCbDeVaIMifsrGd4BbtoMTfwnclyCsp6
-fvvMKx0WAzcRmvm+FdQ5KGgt6mzZDsT/u3Q15ZOJ5GHunnP+njEkRY8SzaRZZteP
-EgGtc1FFI+tDVsoIQ6DNA23I0DVy2j/HZB23y/mYEOF1JiIspwhM+JjVUKJVgU57
-piRknEy0k2sO3sJ26HhyngwWT30Zg+ud+oSB64uO4RqnGqP9B6coPbCzow4vvENE
-zTfKRFshRCxw25+aDBoBxDxERSyLew==
-=jObm
------END PGP SIGNATURE-----
-
---2O90PREKokAOuISY--
+>         ctx->id =3D pdev->id;
+>
+>         platform_set_drvdata(pdev, ctx);
+> --
+> 2.17.1
+>
+>
