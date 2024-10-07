@@ -1,107 +1,122 @@
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F65EEC9;
-	Mon,  7 Oct 2024 01:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB442572;
+	Mon,  7 Oct 2024 01:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728265491; cv=none; b=cQHWr5HoSob/BNa/iE0fnGKFbHhy/kVs4UStUaWuUnFV4jN8ImeG7oIkJ57AMjut3XO+XooIUb6A1jthiibhDIu0VnAalRvJFFNlbIFUSgfugTkR0x0iInnUz3Zc83Fbnm0j8Y7VuEp+++zTfZGj5swnG8EaMULL6SPe39Umw94=
+	t=1728265601; cv=none; b=nxQ3qOM4FhfhSc3DnZ9UsT0Md5NC9VJVS5yhtrIFiHSzAJGmKDtNC6fmp9NId/9CAB7C5R+MisNBGvP0JIXUsyJ7bD4kLc+1HKBgHRwZuikNd2BhobNR1PgwkTQx0GTxS0V/OD6pbxxIfLI5GhVL6uj6xrwOo39YeC3+/sdAr/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728265491; c=relaxed/simple;
-	bh=iWEtgc3meyPdV0U09IWzeGiCzBDvK1PF1flqo/gk2Gs=;
+	s=arc-20240116; t=1728265601; c=relaxed/simple;
+	bh=pL2+gFYHLLDpZRy2ohbWukK214pq77RPThQxwH9oYQc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YKJISfGgmFS8jBKSuFsWkvv7l21pa1CKTYRbMsShPIcAP+pwS1fjRo9xTTdLtac41OSRl/kvg1QCXaO+Nwz8bGc5RCDMVMpZcs6HK+V5JhshaE8B76BJV19Eg4Znm8lfQNGQZFXU5Qb7K1JnoZ63ZrnPTbpg/J7jnqv+dPsIYUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mfxxa8c6; arc=none smtp.client-ip=209.85.222.49
+	 To:Cc:Content-Type; b=fbVUf3i5SI/cxiSCLmQ3hkLBObyr0gd42bf8+hU35kAatMcbWeWAO+lhHf/ycKTrKlBKmgm0ICAC1s4dtT+zgbI6+ag6qZ2mxkGxhIJQykAjdpin7dwmqf81EtiErMoyfEnvQzWwraLhcoJAiKtqbLXrMZ0rv6MzNgpbXywmTU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8WxkcVL; arc=none smtp.client-ip=209.85.221.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mfxxa8c6"
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84ea25abc26so1003340241.2;
-        Sun, 06 Oct 2024 18:44:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8WxkcVL"
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-509bd2e944dso1195367e0c.2;
+        Sun, 06 Oct 2024 18:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728265488; x=1728870288; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728265598; x=1728870398; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uzU4HApFVdOla6cFpiLhDsurqYX2GUtT9S+gfYoFCVc=;
-        b=Mfxxa8c68Iv8T1KUSu0fdBHEuOJYG0hbHMD3v2eG1+3QIwTe/pZa38tieDitG52PsJ
-         0mP+1CwnTVbQeNTvc2vwZBFJtQ9LvcwWR5oAj0qcSAXNb656YQ/yYBUHRDGd3oJI0Yxt
-         BNaRr8zYW3VqEh6jXAoHaj6akFhnxmkyRmFGtR+XAbltFqHdL42RONAE4eddxNyKsrfq
-         oXEekSbIfqWqRZU0hNXabhZwTf/lK+u3ngZ3Zm//kLi1vLVl55hSMbDR/92+jIZmLEDY
-         zo5Gd5QQSt20jSXO3OFaaOU7Cx0c6Gk74hg3/WKxRHZ49VndMlYu/TyB3O/SrPd7K593
-         7HJQ==
+        bh=6I7P4o4lqoq+/5/fIQFIlC3dJz4di8qGjmyqkb1fWR8=;
+        b=Q8WxkcVLhMM546r5aHaedC8WURoNL2jvNLZGMEI208b4IDb4QePVi/lRRc0yOal4Gk
+         PHBU9rbldE78Py3wm7E9B8OlflNl4FHn0z/Mjev/1pS9Xp+YZ5xeAs1ygbzoQSm1RbHp
+         RIiZAfQf5nquxCrPsvOUDY7krWdT7YkiWA0SEPSnjXxM3tuLgIoS02Fie6rQYKNP80yx
+         GTjRfcp0NW2N+BnAboofLIpx/0I504P+V0GOIAvibo/gnP0XqpLMuLsSwa8Ma4mjHigV
+         E/M+M4WvkotKSpAh5pdO5+QitxfVMr6qWnn9tgL+RVw3vWXfpXxw54bs+csHQHa1H87t
+         kdPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728265488; x=1728870288;
+        d=1e100.net; s=20230601; t=1728265598; x=1728870398;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uzU4HApFVdOla6cFpiLhDsurqYX2GUtT9S+gfYoFCVc=;
-        b=ftsldEjUNoQtC8UShVQmH0SkxBmGQW47o2guM2M5Fwl7PyG7kFQuDGdB9XmCyS+iu6
-         PSqX4dUwszwbzIcthqyz7XN4/aTjFYNhmDT+bbJmMSV6p4v7CnopuxkpyeyKFOeWqFwZ
-         6wDUF2uhPyRQiIc8VRR9DUrL4ytiQ2avrw/L6637EWhs82+GQWtmOi4KFF/dk+fD39kQ
-         Sj4ysRyOYdpASNjeDvPkV485M1PDF5cBUCSi/Ng71Tukv0ezBm/Gj6U/9SVdf/Npjj2/
-         q7aiHITETma04L1Fia31dmB5AH1soR8SD/n+tOxkESlwBbqIKB1ubyTSjZfipFAu3+R7
-         iTvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUa41mGEBsxYCVDVRG3ZtDQDj+3N+PuQUN5tdjGUiM97yIAwdRHg95g6wB1Yph5e2I8Y1WxUaV4x9JZoPCtD2/OPjo=@vger.kernel.org, AJvYcCXGNMrjtFbD8ZsGF9b8JEy5anWWwe2NZ06hTes2ArQHs3vCnBe4DsoEYExe6pmvX3UapX72cUO+Rknb0fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2Rw9LMHh5bEoZpSe0eu7tqpN+QqJTCuOiDxV0yipnpQfwTF7O
-	xChxa77dN/cd2si3Co5QAeOdXvLIyZ8sVGL36lSMhQ2tv67Vth/+b4kbqMRLumKOwRea69wL9v2
-	nzGVrBjZcI8q45Jic3YOAhe+4CCM=
-X-Google-Smtp-Source: AGHT+IGi4uAf0aCu5jsPGNvmsMYcFJYpM9lCgPSIHQQx9wMYlcO6+UiL7uE9lenoS0XrukOWueFat2eiVWWotzvuwQU=
-X-Received: by 2002:a05:6122:3c4e:b0:50c:6514:956d with SMTP id
- 71dfb90a1353d-50c85583589mr5734158e0c.13.1728265488432; Sun, 06 Oct 2024
- 18:44:48 -0700 (PDT)
+        bh=6I7P4o4lqoq+/5/fIQFIlC3dJz4di8qGjmyqkb1fWR8=;
+        b=Eh78GptoyLegFivxT8xar/7B6MN/WoO012tpEgdc5UoJEO468X37U+YYkoyK7CcaY5
+         wbDAREn7Ej6/2A9lQWCxYWQf5wX3UkCQPuXUUM79b1+U79mN+6NyfGKvuyGXou5oJh12
+         kwcCWbAq+6PlHjYV3LKNFPURo4Lc2CA86JoL1jIFKqkqW0j4lAcHlADE2KZ3GZrPUIgu
+         G1MdAX9j60KRWWRZIpSkjBkki7YExpmooc0tb78vmbIeH3L4dhuGbJAYzl55RXKmDPSQ
+         8VH0nDypUiNufdbDzTen9z9ZtU4W01yl0XxO8DnvcT6xyodMl/BNad8HzMxFVafVShig
+         SMdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVS4ZMETLbUWP6K0LOdoPyk9+VK7REPi2e7HKNKsTLE4AUfMjICFXU3pDNj+VUk9fvDoqtA0WrrlGVGZ4=@vger.kernel.org, AJvYcCWn5Qt//8qVjAAblLbOXUkQNbDP9PSPRArqP88yN6i85VwWHfsgtGOgk/7QHr30+q3SAA7BUvrF04RIgnZxhITy/x0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6tu7UOA+KzI/3pNDUFxqzgNcO/4GK8orb75d2gEU4cefzjUBw
+	XH1F2KXzH5jxebo1MsiqfApdtjhBXfyxwG/XHDf6YIht/VDeG6lOTpNHUAGhbAMdQY2lZLXt+9v
+	CAApW+s3QeZRVPafHg6A06dxvIPs=
+X-Google-Smtp-Source: AGHT+IHn77otsKYlNOvgcsPX5BgvnpzzQqomM/S9P5IjJKyLNB7h0JdstqFb1GMHjr7HniWTcTfA6P2c37takKxUm+4=
+X-Received: by 2002:a05:6122:3d15:b0:50c:79a4:c4a with SMTP id
+ 71dfb90a1353d-50c855966e4mr5467687e0c.13.1728265598461; Sun, 06 Oct 2024
+ 18:46:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909080620.35245-1-shenlichuan@vivo.com>
-In-Reply-To: <20240909080620.35245-1-shenlichuan@vivo.com>
+References: <CGME20240926052608epcas1p39e2db7b275e944285d0925b3e5c649b9@epcas1p3.samsung.com>
+ <20240926-remove_crtc-v1-1-9a20062444cb@samsung.com>
+In-Reply-To: <20240926-remove_crtc-v1-1-9a20062444cb@samsung.com>
 From: Inki Dae <daeinki@gmail.com>
-Date: Mon, 7 Oct 2024 10:44:12 +0900
-Message-ID: <CAAQKjZN9K1GieEpG4uebJ_ygtpwbVOLD3Poy-+jQePYBwsb7Zw@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/exynos: gsc: Fix typo in comment
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@gmail.com, 
-	simona@ffwll.ch, krzk@kernel.org, alim.akhtar@samsung.com, 
+Date: Mon, 7 Oct 2024 10:46:02 +0900
+Message-ID: <CAAQKjZPkc+y47Pv87EmUhLJ9SFASOuMKgvvN0UXZcg11tkjaOg@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: remove unused prototype for crtc
+To: Kwanghoon Son <k.son@samsung.com>
+Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
 	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-2024=EB=85=84 9=EC=9B=94 9=EC=9D=BC (=EC=9B=94) =EC=98=A4=ED=9B=84 5:08, Sh=
-en Lichuan <shenlichuan@vivo.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+2024=EB=85=84 9=EC=9B=94 26=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 2:33, K=
+wanghoon Son <k.son@samsung.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> Replace 'initailization' with 'initialization' in the comment.
->
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_gsc.c
-> index 1b111e2c3347..fc5fc65823c6 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -1286,7 +1286,7 @@ static int gsc_probe(struct platform_device *pdev)
->                 return ret;
->         }
->
-> -       /* context initailization */
-> +       /* context initialization */
+> exynos_drm_crtc_wait_pending_update, exynos_drm_crtc_finish_update
+> are not used anymore.
 
 Merged.
 
 Thanks,
 Inki Dae
 
->         ctx->id =3D pdev->id;
 >
->         platform_set_drvdata(pdev, ctx);
+> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.h | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/e=
+xynos/exynos_drm_crtc.h
+> index 0ed4f2b8595a..1815374c38df 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+> @@ -19,9 +19,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct d=
+rm_device *drm_dev,
+>                                         enum exynos_drm_output_type out_t=
+ype,
+>                                         const struct exynos_drm_crtc_ops =
+*ops,
+>                                         void *context);
+> -void exynos_drm_crtc_wait_pending_update(struct exynos_drm_crtc *exynos_=
+crtc);
+> -void exynos_drm_crtc_finish_update(struct exynos_drm_crtc *exynos_crtc,
+> -                                  struct exynos_drm_plane *exynos_plane)=
+;
+>
+>  /* This function gets crtc device matched with out_type. */
+>  struct exynos_drm_crtc *exynos_drm_crtc_get_by_type(struct drm_device *d=
+rm_dev,
+>
+> ---
+> base-commit: 684a64bf32b6e488004e0ad7f0d7e922798f65b6
+> change-id: 20240925-remove_crtc-9647baaab5cd
+>
+> Best regards,
 > --
-> 2.17.1
+> Kwanghoon Son <k.son@samsung.com>
 >
 >
