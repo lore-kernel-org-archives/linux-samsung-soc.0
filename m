@@ -1,89 +1,116 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD796210182;
-	Fri, 11 Oct 2024 10:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5D716426;
+	Fri, 11 Oct 2024 12:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641650; cv=none; b=imYRSsN9hHt+6En44lDxKssKi3F3NOkWsYsKFnHtcVJz+U9u1sEm/bbd5AZW47SPvh10xbbhfl3uatfN/bvk0qmNZpG6uhvdpj0HQ6mvI15mtztynM/pr4O2XWy6uo1vPjD2/wWDwJLLKiUELnxS7V1cHzcKhtPDZNUMqcyQ7Po=
+	t=1728650816; cv=none; b=K+xmIopsr/djmj57Q/sd2WDdWDKfOPjmN6p4MxU/+/eejzWoY6/efMiqTfxEdpA7gzCEJadfIPwfVxOimqeZ8Z04tbjSxjNObuzK/OzuG6UFpf3dO0YJeWF9VOYY0oZlYYhjA1sYQUyJkBFFQKGfhKB1TJJujc3nByn+P2PenZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641650; c=relaxed/simple;
-	bh=REVZTIJAy9FQsHSv/lLjJzgIPSP7Spv7rDiLIhURfB0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KBkMFQI0II5QtrVPp19tjDYpj4XzcPyIJln5tW6GDz1QqV+sZkuimWESrwAaRn/pGbPfF4PHVfy4BaMrSZ1fmlDSjBrjze9n86CiiUchpIO4PoonAnbgyIMKnn7cR3RUKFyLVmlNUacxQIsznt0YJn7jN3roA40szBpOZGpG9cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWSNzcHg; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWSNzcHg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDABC4CEC3;
-	Fri, 11 Oct 2024 10:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728641650;
-	bh=REVZTIJAy9FQsHSv/lLjJzgIPSP7Spv7rDiLIhURfB0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uWSNzcHgkJ5WKx1RrP+LuntaSCnwKm7ijB1URpeFn5r0bTalwdIZTRUVC0hSwlil2
-	 PHV5dt0A1KuDaQfZ2p2mcxV/q9YUKDWvGRL+vm373tzj/urE9s7J4miGk5o/i5jfAw
-	 AHs0ADXuGjsfjcCdCrlQ9nF4s8AyQAu2KOUsANsVjAO1wwn51Uhsqf2a1b3yJ7xseg
-	 TDV6xLkrO1ysWmyQ1fwZ0d3hLJeFDv2rcp6FgyOGAUhXReZMvlzsB6b25RexMLAobQ
-	 wqtq++zVQunmw08/yNYiBqYXICvihsS6ElwffaTFAYyg0HS0yD2HtpsUbdTKLRvkBI
-	 ebBVtBxk/UmmA==
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
-References: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
-Subject: Re: [PATCH v6 0/3] Add Samsung s2dos05 pmic support
-Message-Id: <172864164727.3853713.7051380602109888746.b4-ty@kernel.org>
-Date: Fri, 11 Oct 2024 11:14:07 +0100
+	s=arc-20240116; t=1728650816; c=relaxed/simple;
+	bh=i0ed9CtLCsNM06hRXOqootR9nu6z6R79XY2MRKNYTLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fwFvDtAfmip+PYkm8ouZCC/vBBwkBawAT9MZ6+imUv3ZAtpulGLdrKsG4AekjmXnzSwkVRwlNBEI3HcDwGr1eR/dc+HyPVuBIhS/f94+yDO40LzHzIGVAW2NrL7FjW1N+Q97pihRrPl8pAg0cySTySqMrlxXoR5zpAFvCyUIYyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18D9C4CEC3;
+	Fri, 11 Oct 2024 12:46:53 +0000 (UTC)
+Message-ID: <c09e7819-a7d9-432f-baab-732e81b3f489@xs4all.nl>
+Date: Fri, 11 Oct 2024 14:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
+To: Aakarsh Jain <aakarsh.jain@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-samsung-soc@vger.kernel.org,
+ gost.dev@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com
+References: <CGME20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e@epcas5p1.samsung.com>
+ <20240806115714.29828-1-aakarsh.jain@samsung.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240806115714.29828-1-aakarsh.jain@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
 
-On Mon, 07 Oct 2024 17:49:58 +0300, Dzmitry Sankouski wrote:
-> The S2DOS05 is a companion power management IC for the panel and touchscreen
-> in smart phones. Provides voltage regulators and
-> ADC for power/current measurements.
+On 06/08/2024 13:57, Aakarsh Jain wrote:
+> There is a possibility of getting page fault if the overall
+> buffer size is not aligned to 256bytes. Since MFC does read
+> operation only and it won't corrupt the data values even if
+> it reads the extra bytes.
+> Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
+> and V4L2_PIX_FMT_NV21M pixel format.
 > 
+> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+> ---
+>  .../media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c    | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
+> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> index 73f7af674c01..03c957221fc4 100644
+> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -498,8 +498,8 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_mfc_ctx *ctx)
+>  	case V4L2_PIX_FMT_NV21M:
+>  		ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
+>  		ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
+> -		ctx->luma_size = calc_plane(ctx->stride[0], ctx->img_height);
+> -		ctx->chroma_size = calc_plane(ctx->stride[1], (ctx->img_height / 2));
+> +		ctx->luma_size = calc_plane(ctx->img_width, ctx->img_height);
+> +		ctx->chroma_size = calc_plane(ctx->img_width, (ctx->img_height >> 1));
 
-Applied to
+I don't really understand why this is changed. Looking at the implementation of
+calc_plane and the various #define values that are used here and in calc_plane,
+the number should be the same.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+I think the original code makes more sense.
 
-Thanks!
+If I missed something, let me know.
 
-[1/3] dt-bindings: mfd: add samsung,s2dos05
-      commit: ef9690c04f3b2deebf08f6a889fbe9032f75855d
-[2/3] mfd: sec-core: add s2dos05 support
-      commit: d7a5f27342a84e2999b9d1195c537832a11e85a0
-[3/3] regulator: add s2dos05 regulator support
-      commit: 2ba4dbb7b763df343df7741fca1bfda15fd1e0cb
+>  		break;
+>  	case V4L2_PIX_FMT_YUV420M:
+>  	case V4L2_PIX_FMT_YVU420M:
+> @@ -539,9 +539,11 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_mfc_ctx *ctx)
+>  static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+>  {
+>  	unsigned int mb_width, mb_height;
+> +	unsigned int default_size;
+>  
+>  	mb_width = MB_WIDTH(ctx->img_width);
+>  	mb_height = MB_HEIGHT(ctx->img_height);
+> +	default_size = (mb_width * mb_height) * 256;
+>  
+>  	if (IS_MFCV12(ctx->dev)) {
+>  		switch (ctx->src_fmt->fourcc) {
+> @@ -549,8 +551,8 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+>  		case V4L2_PIX_FMT_NV21M:
+>  			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+>  			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+> -			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
+> -			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
+> +			ctx->luma_size = ALIGN(default_size, 256);
+> +			ctx->chroma_size = ALIGN(default_size / 2, 256);
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Isn't this effectively the same as doing:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+			ctx->luma_size = ALIGN(ctx->luma_size, 256);
+			ctx->chroma_size = ALIGN(ctx->chroma_size, 256);
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I.e., the bug is that these sizes are not rounded up to a multiple of 256,
+so just add that, rather than changing code elsewhere.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I might be wrong, but this seems a much simpler solution.
 
-Thanks,
-Mark
+Regards,
+
+	Hans
+
+>  			break;
+>  		case V4L2_PIX_FMT_YUV420M:
+>  		case V4L2_PIX_FMT_YVU420M:
 
