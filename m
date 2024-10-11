@@ -1,73 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD719A2A3;
-	Thu, 10 Oct 2024 21:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD796210182;
+	Fri, 11 Oct 2024 10:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728596921; cv=none; b=bquTt1zPXO31rE1TFcuxhvSXWMYQ686tYnEQo0yOPDRMmxS2NQJl64WM4tvnRbVIf7K5fucPNcuac+8hdt+y6bBh+ogejo3XChLvR3wiI3v/bhfeyXqmThzfJc8mjf9OmHs7TmkN1gkJNA0FNkPLdXpUUezuoSGmWG4dtRUl4jM=
+	t=1728641650; cv=none; b=imYRSsN9hHt+6En44lDxKssKi3F3NOkWsYsKFnHtcVJz+U9u1sEm/bbd5AZW47SPvh10xbbhfl3uatfN/bvk0qmNZpG6uhvdpj0HQ6mvI15mtztynM/pr4O2XWy6uo1vPjD2/wWDwJLLKiUELnxS7V1cHzcKhtPDZNUMqcyQ7Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728596921; c=relaxed/simple;
-	bh=yrGcbToO/wQ5cOvuutppQRUqlBhyFYBBk1mix09MZro=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kBUU3XuZY6o6r+HoBjdvvJFZQXNPEi1m3c1UO5FLrAMtYa0dmKYyzNsa/iqcGliXGBAQFDxyfzGwHQjojmCtuJhcvFVm92FAXFCg8TUnKEQOzI2ZTuocvzq5lSNhB168QrMU++NeDX+1Z0WP/LYxPJa5KXorrqkCdCvlju3cMig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sx1nSLzC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728641650; c=relaxed/simple;
+	bh=REVZTIJAy9FQsHSv/lLjJzgIPSP7Spv7rDiLIhURfB0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=KBkMFQI0II5QtrVPp19tjDYpj4XzcPyIJln5tW6GDz1QqV+sZkuimWESrwAaRn/pGbPfF4PHVfy4BaMrSZ1fmlDSjBrjze9n86CiiUchpIO4PoonAnbgyIMKnn7cR3RUKFyLVmlNUacxQIsznt0YJn7jN3roA40szBpOZGpG9cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWSNzcHg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sx1nSLzC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CB6C4CEC5;
-	Thu, 10 Oct 2024 21:48:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWSNzcHg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDABC4CEC3;
+	Fri, 11 Oct 2024 10:14:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728596920;
-	bh=yrGcbToO/wQ5cOvuutppQRUqlBhyFYBBk1mix09MZro=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Sx1nSLzChLIagzSBRgsRR89iZcI/71SyY9dwEM1SPthQygVdPqjXIlZBX85lyovMY
-	 4uSj+0hSslIWxq3rcYzCxsexMBNBT928xFbX9sHb8iDFP3Ffcz46MV9bEeJ6ZPOOF2
-	 N4e30tTgDOuBWkrma6JWhgf2+lbFepDvJGiVD4ohH85DnPOFmX+CJrQYwUZ4B4RRPl
-	 krUYAYTK/NxAE3SZ5CYUbs015gwKvFwJzjCLkVWBUBwkkfa7zLzm65QJOj7ECJbU9W
-	 DNYqoggXyEW0g1/PWzV5jmsntzmDcHqQPy7QNGo2tAWCLH7s8XzpmPZuyqzhQ9Imoj
-	 WICABpMSAkklg==
-Message-ID: <17bc2c2193f9a909457466387a2a9b76.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1728641650;
+	bh=REVZTIJAy9FQsHSv/lLjJzgIPSP7Spv7rDiLIhURfB0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=uWSNzcHgkJ5WKx1RrP+LuntaSCnwKm7ijB1URpeFn5r0bTalwdIZTRUVC0hSwlil2
+	 PHV5dt0A1KuDaQfZ2p2mcxV/q9YUKDWvGRL+vm373tzj/urE9s7J4miGk5o/i5jfAw
+	 AHs0ADXuGjsfjcCdCrlQ9nF4s8AyQAu2KOUsANsVjAO1wwn51Uhsqf2a1b3yJ7xseg
+	 TDV6xLkrO1ysWmyQ1fwZ0d3hLJeFDv2rcp6FgyOGAUhXReZMvlzsB6b25RexMLAobQ
+	 wqtq++zVQunmw08/yNYiBqYXICvihsS6ElwffaTFAYyg0HS0yD2HtpsUbdTKLRvkBI
+	 ebBVtBxk/UmmA==
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
+References: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
+Subject: Re: [PATCH v6 0/3] Add Samsung s2dos05 pmic support
+Message-Id: <172864164727.3853713.7051380602109888746.b4-ty@kernel.org>
+Date: Fri, 11 Oct 2024 11:14:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
-References: <20241010085036.141170-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL fixes] clk: samsung: fixes for v6.12
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 10 Oct 2024 14:48:38 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-Quoting Krzysztof Kozlowski (2024-10-10 01:50:35)
-> Hi,
->=20
-> One patch with a fix for current RC.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->=20
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-fixes-6.12
->=20
-> for you to fetch changes up to a03c246d4ec836ae5827a4a16f6b9e730ec5ee8c:
->=20
->   clk: samsung: Fix out-of-bound access of of_match_node() (2024-09-30 13=
-:10:11 +0200)
->=20
-> ----------------------------------------------------------------
+On Mon, 07 Oct 2024 17:49:58 +0300, Dzmitry Sankouski wrote:
+> The S2DOS05 is a companion power management IC for the panel and touchscreen
+> in smart phones. Provides voltage regulators and
+> ADC for power/current measurements.
+> 
+> 
 
-Thanks. Pulled into clk-fixes.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/3] dt-bindings: mfd: add samsung,s2dos05
+      commit: ef9690c04f3b2deebf08f6a889fbe9032f75855d
+[2/3] mfd: sec-core: add s2dos05 support
+      commit: d7a5f27342a84e2999b9d1195c537832a11e85a0
+[3/3] regulator: add s2dos05 regulator support
+      commit: 2ba4dbb7b763df343df7741fca1bfda15fd1e0cb
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
