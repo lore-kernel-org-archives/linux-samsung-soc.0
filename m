@@ -1,113 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D518A6C8;
-	Tue, 15 Oct 2024 07:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DF91DE2C0;
+	Tue, 15 Oct 2024 09:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728975907; cv=none; b=rPIC6oRixj7RaH4QcJdXHtCzwcEI8xZB3oLvgYUXpx5gDsbefN7nOhUfexyEXFcRH/Z6d5R9jo1qsfDZnSBDy3P220XIkbuWsOLUmpekliGVvdcBfnxjQ36DXQP87KwdP6wOAgeCOQrlnsD0x3RC70fG5VTxuIsvLhYr9HyEd48=
+	t=1728982993; cv=none; b=l3DiI4lrnpdOkbPf3eabH/ywe2uFTsuG0QOdcKEAAoBYynz99xFzaAQw1xteomjW78ifurC05XBiYKL0XQVAhrgt1+jdqtViWQLhYlaiEkMc045xu74NBmvKst2Eh8LR+efqgS2DBqykn4QOKFj6eX+lAJsFj0Jpil9NpEr/9sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728975907; c=relaxed/simple;
-	bh=BfyGbB5QFkl3gj48BMwAkx+bbZdUF09NcgSDrmlh5B8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MrmvJhiLGYaMzP2U/is6t2WY0xcjytgnDlK+7PcSlgrKN07px5cfjCOQEqGQb9DM3Q1G1lVr19w/MQ6U3dW4BYWp0FrYgMsTJ3XdXgHaTqYZHsLMf8u7kQFABIZTOXL3T//nllOebgGilb6OLl9BBA8I4Vq9quCuONKDfNooe/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKhuCiWe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728982993; c=relaxed/simple;
+	bh=I8EgceGKq0kuoqB8rUvXnfOYOa5rhiMU69cDp+diTww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vs0o+MgRebu9Xa2hvSAc+VADmK3OubuA1IIn2KC3DJ132IaTUSwnfL4N6U0T96dd9EJWqve0orxp6VspqfYejU495mopcu2EDX7P1AbAUA4vnGBYqbrHRhijjBA2CY2RdPhXpm111jTJ8penXX1+JC8B5n1LJWMCUMWbTCWQCds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0XGuKRa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKhuCiWe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3423C4CEC7;
-	Tue, 15 Oct 2024 07:05:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0XGuKRa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D65BC4CEC6;
+	Tue, 15 Oct 2024 09:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728975906;
-	bh=BfyGbB5QFkl3gj48BMwAkx+bbZdUF09NcgSDrmlh5B8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UKhuCiWe86ypuPhPRiDxcS2BtYD+JKslqKQnVMwXBWeDAyR2OEJHzD4p0ciDQRCjt
-	 3fzDBu5nCYg5J7iAbB31R3ct5dPH8oR4potLtAdZ7oYpyaicPV6QtXPVJ/7dJ3zySE
-	 J/jgCVtsG32aznKYodNCc6SJE5oRkZMU0r9XBr6h4VTufwCQ1I09Q5BL6CmO11gzuf
-	 L5ShD6Pnx8XCZ93er6US472E7LNMFnPR2uzgQsZWxAN9p+x1zgPhkYr+hUVggxvg25
-	 gWAio0uFhXcLiLpUVgZrsXegHf9MgBTbfauCwF+3xY4dwNSGzh0gs67KOolqEjICJU
-	 wjtv1HcF1DFmg==
-Message-ID: <3774f3f0-7a69-4a55-a9a4-b2686bc06753@kernel.org>
-Date: Tue, 15 Oct 2024 09:05:01 +0200
+	s=k20201202; t=1728982993;
+	bh=I8EgceGKq0kuoqB8rUvXnfOYOa5rhiMU69cDp+diTww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h0XGuKRab7Ngrru0ZGkccQejmFmsBexcL5IB/IW7gX+5yqoxLBPuBRg9g/M0JbnTQ
+	 j0B8TOe2kHbIf8j0yOe6RNOWFzaSiTwP6GD4UIxR1p2xLuaouKWWBw70ZQmVpW+Thf
+	 84EzJfVk6jpw70nHPUbzy7N6Kd0S748mDleCf+T0o1YtD2KWx9ZNyq40QoJdBIiMZK
+	 Yh9uByjT0DpBPXhmPmHQUDt0AUv+zkPANZN/IcEeZXvajTOuT1vVF/orr5iS5cQWc1
+	 5nh8CJqZ3CjNU7+H9Vi4z9tyDej9hmhteLeXyqRJp5PvE66RtcUpCTBWBx1E2Bx2/s
+	 Jd/sJyPNqwaKg==
+Date: Tue, 15 Oct 2024 10:03:08 +0100
+From: Lee Jones <lee@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] regulator: add s2dos05 regulator support
+Message-ID: <20241015090308.GE8348@google.com>
+References: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
+ <20241007-starqltechn_integration_upstream-v6-3-264309aa66de@gmail.com>
+ <ZwP2jpgdESV1XJ5D@finisterre.sirena.org.uk>
+ <20241009143116.GK276481@google.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] Add Exynos990 pinctrl and chipid drivers
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241015063010.713407-1-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241015063010.713407-1-igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241009143116.GK276481@google.com>
 
-On 15/10/2024 08:30, Igor Belwon wrote:
-> Hi folks,
+On Wed, 09 Oct 2024, Lee Jones wrote:
+
+> On Mon, 07 Oct 2024, Mark Brown wrote:
 > 
-> This series adds support for the drivers for the Exynos 990 SoC. It
-> consists of the pinctrl driver and the chipid driver. The product ID
-> of this chip for chipid is 0xe9830000. The pinctrl bank types are the
-> same as in the Exynos 850 chip.
+> > On Mon, Oct 07, 2024 at 05:50:01PM +0300, Dzmitry Sankouski wrote:
+> > > S2DOS05 has 1 buck and 4 LDO regulators, used for powering
+> > > panel/touchscreen.
+> > 
+> > Reviewed-by: Mark Brown <broonie@kernel.org>
+> 
+> I think you can merge this.
 
-You split your patchsets in odd way. Bindings always go with driver.
+I didn't mean the whole set. *facepalm*
 
-Anyway, organize it per subsystem. Subsystem is:
-1. SoC
-2. pinctrl
-
-So two patchsets targeting two subsystems.
-
-Best regards,
-Krzysztof
-
+-- 
+Lee Jones [李琼斯]
