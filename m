@@ -1,75 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CCA1F819D;
-	Tue, 15 Oct 2024 20:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418901FBF5A;
+	Tue, 15 Oct 2024 21:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729024832; cv=none; b=UQ+jksWOIrpnaDZEnOBn9LrQOx5Ikkr78ci8QmwcAM7ZnuWMIY+8Pneq/ZMZTy2MNDGkD5KYY1z/DCBgoyEuCeJW4j85RbF0PrnNa+DXyy0faGXyWpAEvKx3oc0/T4qWZ9Mn0CYWI6H+DGO87ciKhGTP8JA/nqJWpM9EARHVEtA=
+	t=1729026143; cv=none; b=NVJdPgeffpc3Ix/M/nKfJ36z4TkMUxLCvQnioPgZItd0U22VbaPSDXTQbztTNuMzvpPCmTraIR4gIvzXziImhGvAh6E0VtJGEPR3+sjB6c4SQzwlPql1NhE/JeBoxGUTKKW3qdVbVIFqW4idZgqUNSXs1zC+u62943WTBK9J8WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729024832; c=relaxed/simple;
-	bh=HGOA7WlOwsWM/ZIrqK/ymoVJqcQ0J0msd+r5LRPaQL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8q14IxbjEDov8euStkGn/kSuv/WGFy0yJvqnF6wqkq2iaHinTN6wGvGW6g1RN9h8hxn5heccO/oilrv+ufN6buzab+oXutrRfRVte27vHUGTiu/Yetirb3F1xKkNv1Of9Wal4Lcm2F0mshkj4/n25TjRPHLH/Co1npQkppH4J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZ1pbpPD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729026143; c=relaxed/simple;
+	bh=oFo8Q6ugAd9MvV4AXvtFm4bsZ9qTxjvEoBmwTQDMEwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=srbqnxtz/2DhRgulUiBZonBALKkWISeyCzNFC0EpooroGwC6cgQDdRYnCSTefv1VQASlSWfvrKEO3QpqOJ5ZEnAOVFMp/7LshIgoetmUpcfc0Vd2jgiNMKbDjLt+837Y+eOvlQ2c+JZp1HqSC+cqzPkYlx2aDVbb1CICGwT4JQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=PPw6+L+0; arc=none smtp.client-ip=63.250.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZ1pbpPD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECA04C4CEC6;
-	Tue, 15 Oct 2024 20:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729024831;
-	bh=HGOA7WlOwsWM/ZIrqK/ymoVJqcQ0J0msd+r5LRPaQL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iZ1pbpPDpYS35NbY0xwEOJMVk9glk93TR5tDcjGbY1MrgdPTBsdDS1WgyS5EPp704
-	 KHplykiwMWVgcx2KwXMZ8r6JTr5RRjUkfqSSuTLaaU97J/m7onxh2++4lm6HdWbuD1
-	 Ix9MUNJLSonHIX13/u/JD2yR/bmyRpkxau5avC/JTsYl16/lAocPg0dYz8kM0skFzj
-	 1iBtpgY+0O6Rm6SnbJV704SKa0jVnUtY2F4UOu6yVGOS++EhU0dBHPOy7/1X02+ftK
-	 0iIwFl1fbfiu+TlbJW3AG9LDD2InbKzLL2iTd5zG5JocA8B4a0N0T9oQOI4VGA6jYr
-	 ZPGwjLNBaV2mA==
-Date: Tue, 15 Oct 2024 15:40:29 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Jaewon Kim <jaewon02.kim@samsung.com>,
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="PPw6+L+0"
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4XSmkg6Ddtz4wfm;
+	Tue, 15 Oct 2024 21:02:19 +0000 (UTC)
+Received: from igor-systemproductname.lan (83.8.240.202.ipv4.supernova.orange.pl [83.8.240.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4XSmkX2ZRlz8sWP;
+	Tue, 15 Oct 2024 21:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1729026134;
+	bh=oFo8Q6ugAd9MvV4AXvtFm4bsZ9qTxjvEoBmwTQDMEwM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PPw6+L+0UCB4Vb/3QhoCmCb9cD/TLr88rXv9K/zg/0SvIpAWCXUWXGTrmlF19x8Q5
+	 4pr+V4uWisEx59pHeXIux5pkZsaGS4h70EPf4Hr6YbGtgJZ3WMrjoq4eGPoeO/S7Cw
+	 pnw76r1oeQrfOfqW6bp+S1GnYaGdnMrh/2mm5T53BQSGb87GFrlc5jrwdqaxY6zOVh
+	 XxoMTUhxr+HwzJTFgIBGvlBV3bsrX7uckWEYnuqo1S9O/qSBzoxYzuUjZFO/y6ipxy
+	 fSevKkz6loDPzxjSmMhhv3elYD7QGb/UDcxbZWYe79GsxrJZoNM+4THa+ULD3yuVnk
+	 f8r+lIqMCo5UQ==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Igor Belwon <igor.belwon@mentallysanemainliners.org>,
-	linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: samsung: Add missing
- constraint for Exynos8895 interrupts
-Message-ID: <172902482869.1924248.13765121843479257360.robh@kernel.org>
-References: <20241015065848.29429-1-krzysztof.kozlowski@linaro.org>
- <20241015065848.29429-2-krzysztof.kozlowski@linaro.org>
+	David Wronek <davidwronek@gmail.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] Add minimal Exynos990 SoC and SM-N981B support
+Date: Tue, 15 Oct 2024 23:01:59 +0200
+Message-ID: <20241015210205.963931-1-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015065848.29429-2-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 
+Hi folks,
 
-On Tue, 15 Oct 2024 08:58:48 +0200, Krzysztof Kozlowski wrote:
-> Expect only one interrupt on Exynos8895 wake-up pin controller.
-> 
-> Fixes: e2d58d1e1c61 ("dt-bindings: pinctrl: samsung: add exynos8895-wakeup-eint compatible")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Cc: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
->  .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml       | 1 +
->  1 file changed, 1 insertion(+)
-> 
+This series adds initial support for the Exynos 990 SoC and also
+initial board support for the Samsung Galaxy Note20 5G (SM-N981B)
+codenamed c1s.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+The Exynos 990 SoC is also used in the S20 series, as well as in the
+Note 20 Ultra phones. Currently the device trees added are for the
+Exynos 990 SoC and c1s. The device tree has been tested with 
+dtbs_check W=1 and results in no warnings.
+
+This initial bringup consists of:
+ * cpus
+ * pinctrl
+ * gpio-keys
+ * simple-framebuffer
+ 
+This is enough to reach a shell in an initramfs. More platform support
+will be added in the future.
+
+The preferred way to boot the upstream kernel is by using a shim
+bootloader, called uniLoader [1], which works around some issues with
+the stock, non-replacable Samsung S-LK bootloader. For example, the
+stock bootloader leaves the decon trigger control unset, which causes
+the framebuffer not to refresh.
+
+Device functionality depends on the 2nd patch series:
+"Add Exynos990 pinctrl and chipid drivers"
+
+[1] https://github.com/ivoszbg/uniLoader
+
+Changes in v2:
+ - Added acked-by tag by Rob Herring
+ - Fixed two stray newlines in SoC and device DTs
+ - Fixed commit message for the c1s device tree
+ - Changed osc-clock to clock-osc and ordered nodes in SoC DT
+ - Fixed ordering in the gic node in SoC DT
+ - Fixed memory node unit address
+ - Fixed memory node reg properties, to map all available RAM
+ - Moved pinctrl binding commits to the 2nd patch series.
+
+Kind regards,
+Igor
+
+Igor Belwon (6):
+  dt-bindings: arm: cpus: Add Samsung Mongoose M5
+  dt-bindings: hwinfo: exynos-chipid: Add compatible for Exynos 990
+    chipid
+  dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990
+    boards
+  soc: samsung: exynos-chipid: Add support for Exynos 990 chipid
+  arm64: dts: exynos: Add initial support for the Exynos 990 SoC
+  arm64: dts: exynos: Add initial support for Samsung Galaxy Note20 5G
+    (c1s)
+
+ .../devicetree/bindings/arm/cpus.yaml         |   1 +
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../hwinfo/samsung,exynos-chipid.yaml         |   1 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ arch/arm64/boot/dts/exynos/exynos990-c1s.dts  |  66 ++++++
+ arch/arm64/boot/dts/exynos/exynos990.dtsi     | 194 ++++++++++++++++++
+ drivers/soc/samsung/exynos-chipid.c           |   1 +
+ 7 files changed, 270 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-c1s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990.dtsi
+
+-- 
+2.45.2
 
