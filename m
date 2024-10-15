@@ -1,116 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5D716426;
-	Fri, 11 Oct 2024 12:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9D6189B9B;
+	Tue, 15 Oct 2024 06:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728650816; cv=none; b=K+xmIopsr/djmj57Q/sd2WDdWDKfOPjmN6p4MxU/+/eejzWoY6/efMiqTfxEdpA7gzCEJadfIPwfVxOimqeZ8Z04tbjSxjNObuzK/OzuG6UFpf3dO0YJeWF9VOYY0oZlYYhjA1sYQUyJkBFFQKGfhKB1TJJujc3nByn+P2PenZA=
+	t=1728973719; cv=none; b=njD10oJbqz60NW0ClUcSZS0PbhS0Gzinsx9GvL1xlMZD6sIQ9xhjhLG18mysn0zuyfzBwb/wbZ3WYf+5BllE4aNqwrnq+IJ7YPOrPorM7qWsB2Z8QXT7rvsunlfc6tK1QJwJjmdCI/P6uB8YY9WuCeqMq2brbofoQ9PMcU8wUHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728650816; c=relaxed/simple;
-	bh=i0ed9CtLCsNM06hRXOqootR9nu6z6R79XY2MRKNYTLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fwFvDtAfmip+PYkm8ouZCC/vBBwkBawAT9MZ6+imUv3ZAtpulGLdrKsG4AekjmXnzSwkVRwlNBEI3HcDwGr1eR/dc+HyPVuBIhS/f94+yDO40LzHzIGVAW2NrL7FjW1N+Q97pihRrPl8pAg0cySTySqMrlxXoR5zpAFvCyUIYyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18D9C4CEC3;
-	Fri, 11 Oct 2024 12:46:53 +0000 (UTC)
-Message-ID: <c09e7819-a7d9-432f-baab-732e81b3f489@xs4all.nl>
-Date: Fri, 11 Oct 2024 14:46:52 +0200
+	s=arc-20240116; t=1728973719; c=relaxed/simple;
+	bh=i9CRyCmH1jmIrAYXtqp2Ol8Cit/CqxernI4YANbTw1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kmJ/OWUqEQVGygKBKhutNSEhJKwJ3fpBPh/ictPrwsDSn6rWb02f/l4q7rKdGfZLBtZw2W9zxMiIk0wGq67pmfysV1v/szQ7T5foo9K+rOv4iUYcTrOrPYNKJtrl+VlPf16N9wvQj5U9E9BEaT+YQaqmZkxflT2uk0xXaK9sCPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=aI+RI5Jj; arc=none smtp.client-ip=63.250.43.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="aI+RI5Jj"
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4XSPLX3c7mzGpTN;
+	Tue, 15 Oct 2024 06:28:36 +0000 (UTC)
+Received: from igor-systemproductname.lan (83.8.240.202.ipv4.supernova.orange.pl [83.8.240.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4XSPLN4dLYz2x9B;
+	Tue, 15 Oct 2024 06:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1728973711;
+	bh=i9CRyCmH1jmIrAYXtqp2Ol8Cit/CqxernI4YANbTw1Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aI+RI5Jj0ZuHMJrqNNHIK2d6BZ8Y9/nJP3Pzy03E32BGvPe2RKUXHle713jweG3Wx
+	 1botSQGLoy599cFXGE659COzlEQ8QMtCbffRAFB2lMRvVSCZa4AzcIHOCZrf57RVuw
+	 qsRD+/cVpRH5eT+80dBxbp6a+hlBNwIdefXYnBObvu5PmDpc5oTVaHSi4LhiJU+Y47
+	 9VaN7igxDX+FL4CluBvvs/MBvZP058A6oaoFPb5EzUfCR0mT9crcPJDB+B8ovbG0+Z
+	 DYmjknS2CnBdDWFR6wuyGVEZp2OXz9P36ONs6LfvsyzRqjaL5D7x1HZ/mfh9N7BxaF
+	 yGcazTKA0PeSw==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	david@mainlining.org
+Subject: [PATCH v1 3/7] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards.
+Date: Tue, 15 Oct 2024 08:27:42 +0200
+Message-ID: <20241015062746.713245-4-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
+References: <20241015062746.713245-1-igor.belwon@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
-To: Aakarsh Jain <aakarsh.jain@samsung.com>,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-samsung-soc@vger.kernel.org,
- gost.dev@samsung.com, aswani.reddy@samsung.com, pankaj.dubey@samsung.com
-References: <CGME20240806120911epcas5p1b0defc027a7f03ee9bf5f21036d3ae5e@epcas5p1.samsung.com>
- <20240806115714.29828-1-aakarsh.jain@samsung.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240806115714.29828-1-aakarsh.jain@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/08/2024 13:57, Aakarsh Jain wrote:
-> There is a possibility of getting page fault if the overall
-> buffer size is not aligned to 256bytes. Since MFC does read
-> operation only and it won't corrupt the data values even if
-> it reads the extra bytes.
-> Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
-> and V4L2_PIX_FMT_NV21M pixel format.
-> 
-> Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
-> ---
->  .../media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c    | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> index 73f7af674c01..03c957221fc4 100644
-> --- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> +++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
-> @@ -498,8 +498,8 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_mfc_ctx *ctx)
->  	case V4L2_PIX_FMT_NV21M:
->  		ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
->  		ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12MT_HALIGN_V6);
-> -		ctx->luma_size = calc_plane(ctx->stride[0], ctx->img_height);
-> -		ctx->chroma_size = calc_plane(ctx->stride[1], (ctx->img_height / 2));
-> +		ctx->luma_size = calc_plane(ctx->img_width, ctx->img_height);
-> +		ctx->chroma_size = calc_plane(ctx->img_width, (ctx->img_height >> 1));
+Add devicetree bindings for Exynos 990 boards. Currently the Galaxy
+Note20 5G (c1s).
 
-I don't really understand why this is changed. Looking at the implementation of
-calc_plane and the various #define values that are used here and in calc_plane,
-the number should be the same.
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I think the original code makes more sense.
-
-If I missed something, let me know.
-
->  		break;
->  	case V4L2_PIX_FMT_YUV420M:
->  	case V4L2_PIX_FMT_YVU420M:
-> @@ -539,9 +539,11 @@ static void s5p_mfc_dec_calc_dpb_size_v6(struct s5p_mfc_ctx *ctx)
->  static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
->  {
->  	unsigned int mb_width, mb_height;
-> +	unsigned int default_size;
->  
->  	mb_width = MB_WIDTH(ctx->img_width);
->  	mb_height = MB_HEIGHT(ctx->img_height);
-> +	default_size = (mb_width * mb_height) * 256;
->  
->  	if (IS_MFCV12(ctx->dev)) {
->  		switch (ctx->src_fmt->fourcc) {
-> @@ -549,8 +551,8 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
->  		case V4L2_PIX_FMT_NV21M:
->  			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
->  			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
-> -			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
-> -			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
-> +			ctx->luma_size = ALIGN(default_size, 256);
-> +			ctx->chroma_size = ALIGN(default_size / 2, 256);
-
-Isn't this effectively the same as doing:
-
-			ctx->luma_size = ALIGN(ctx->luma_size, 256);
-			ctx->chroma_size = ALIGN(ctx->chroma_size, 256);
-
-I.e., the bug is that these sizes are not rounded up to a multiple of 256,
-so just add that, rather than changing code elsewhere.
-
-I might be wrong, but this seems a much simpler solution.
-
-Regards,
-
-	Hans
-
->  			break;
->  		case V4L2_PIX_FMT_YUV420M:
->  		case V4L2_PIX_FMT_YVU420M:
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index 49884a7ab5c6..d25a17e69725 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -230,6 +230,12 @@ properties:
+               - samsung,dreamlte                # Samsung Galaxy S8 (SM-G950F)
+           - const: samsung,exynos8895
+ 
++      - description: Exynos990 based boards
++        items:
++          - enum:
++              - samsung,c1s                     # Samsung Galaxy Note20 5G (SM-N981B)
++          - const: samsung,exynos990
++
+       - description: Exynos Auto v9 based boards
+         items:
+           - enum:
+-- 
+2.45.2
 
