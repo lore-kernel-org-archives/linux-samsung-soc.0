@@ -1,107 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475BC1B0F23;
-	Wed, 16 Oct 2024 07:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8E4175D44
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Oct 2024 09:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729063236; cv=none; b=awg16LvZZlXhp4fwniostrP6vIHH7X5uvzW0wxB8eJvOuIvNgVlOss5beJ/YEhw8JLT21wAQzSlePUPmIXSlqJimmp+U70JsKwBlsZVkmBVN+RnThJx5Y0bnFhMaICOGG6sCmKPitYYU74LRjQ2zTstAs5q2AlRi4Xqf6DZCIdw=
+	t=1729070411; cv=none; b=sqxfTcQCAYMR7EPmHQMGpOPiUZIc/JTNDAb2uMx2RecXr6Hd5BvIpZgiFYShLnZ6u3EfwWaHqJVJ0aKVbup0dwvLPYvq5iQ/MXR2r9bgeYyZpV1yGUnnO7/VC7S7VhIC9iYGopHZEnv56ws7r4Z7qyTJRsFqZFe/Lvp5/Mo5r+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729063236; c=relaxed/simple;
-	bh=gsO3zWgs1hgag3fS5iDs280d1qhEO3+hKJhvrHYTRgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fG6JuDwBXiAxtmUnpaVp+rHAoTcP2VjSB1tbxOuoR64mzJwjSrrnHzNy2Ao9n0J3LuBOzwhCnHlbZkyb/P5NURJGyi2lUxcbYNbOeFs5ILTfA5a811MuDZ8EbzEtUUxK4LBsgDCHRj2UUeCOsoP8VqH7UP41rN0NySiEvvu9Dio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzV/3oHu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729070411; c=relaxed/simple;
+	bh=RQPJOVpphuMf8/iy0yH+bD+TyEeZLAeG30XrHghbWeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O04pY5YVeq1MkmGCqybmb6RsCocnm030+dJCMlSVzktam7g5ENscvgLrJpzYEuVPkwdiLQ9E/1ljA0D5rab9pDOwA35A/jjbkH4ZJgZdKiUAO/mu/Lh9tDdbHrAJjaJnEelHa/QhMk5a/yYml/I2pBnJm63SMrEIfR7DhZWYVYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SJ01iVZd; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzV/3oHu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68EE3C4CEC5;
-	Wed, 16 Oct 2024 07:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729063236;
-	bh=gsO3zWgs1hgag3fS5iDs280d1qhEO3+hKJhvrHYTRgI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bzV/3oHulXfoPGQKxypVRK9VWosD90rAG3iopYa6PSxzzWuNQIo7VbWcUJH+HcXET
-	 ro5lo5K0+d6+VG2TajkN9obVFCc4SmTnhnXRvNg48+MCh3rLgjdLaPPFIYyqMrp4G9
-	 qZ/TxqqykB9tAk53fwBn7I6vhH+3sJYeKyTHn8Shbbd4ZLfBFL++O/8UwgBTbRnYM5
-	 MAXECOahrdCM4W4Y4ETFm3zF7FZAeln51w7EXw8b4XZnoW3AyUgZWNlZCZb23x85Ez
-	 mPAkaC6HZgzuTxzpPiABm9hwxBisBTc3DhSYDaonS+Kexe9h+vNMJ8vS20D/2wBElX
-	 jO2H4uPj4+04A==
-Message-ID: <7dc638fe-2bee-4693-9bca-2732eb502724@kernel.org>
-Date: Wed, 16 Oct 2024 09:20:30 +0200
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SJ01iVZd"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c973697b52so4517696a12.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Oct 2024 02:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729070407; x=1729675207; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5UHsYaT26EZQNq2je9bzGL3QQeaelJwyg91ir27OX54=;
+        b=SJ01iVZd3mQfMYc3hdtTxI7hO++eiKVSU1J4wExeYfCMC9WXuO+yYKoiFQGrIl2YfI
+         U217Y5KMzZZV9YzJevKJ0M4+Rp3rQsH+6fXNb5J1uECh7w7GGI/AA+jYtFqcHj9uuwJ4
+         26TXrTFBzHi7SIgmbqqawNQbXr0D2oi7Se9LyNVuJCM+5sU/o/ahe0p91s5nSuhXgTpG
+         WBocGbV445JQFXlXJhuUikzoUesPczZDvFw9RYg8ME0HZpd8CcLktoFE5kbOOrshyxwZ
+         gw1Fx45xFz0pzrl2wmcsQHV+g2Rpx8zMZ9k2SiMij3+OJwjPfxY/WUddKq3r0rbQPt6B
+         Qx0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729070407; x=1729675207;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5UHsYaT26EZQNq2je9bzGL3QQeaelJwyg91ir27OX54=;
+        b=fs2MCPSpR9nCl1r2Vuxj7lfEJ3+Y28bJnZddgAmWzzXQkcLFlY+PEwPZrGIriaQV+f
+         Ty1I/r9OKrErHVk5t6kkP9JT6A9v/TforDSZacOaj419z444FFnW+1cGw6fkEJfoo2LZ
+         qaiVTVj8fze9B7CtmCdDi45x/0dvCRBd9uMDeDvdUAzZsZOUowHSPsITGn2g63c2oqZ6
+         QEJtPCJemIapbcbqqllbbssniQ0VKx4rm0hmRX001syJaX1Z+Krt6lboTi59OMMhLebR
+         JFV6YQKde+/egJjI88HT4vnGIQHkLX7px3uH7uv5npLhliZIWVrhruxilKPnxOEoJWmj
+         tj6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVidE64t2D5+ggwsQePd9PAeDD4DrvWdNOGWt4vED0IG/seZsdmwA3enObwh+9ljlcdHZUoNWh00cqoe10G3BQeUA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD8usLSRSgUTY8nKFhNwLgvfsaw/s/42dmx6IxtoyipZpWGdGG
+	lqXJtADv7UxIjWZS785zHmKw8t1yEQMv7Gy/rDWyAPY68o/JDLP6uNfiaS50+f844HugV9wkQ6J
+	i
+X-Google-Smtp-Source: AGHT+IGviRkM+4e9aY8A6JarCraMikxFu1+sSntziV1+8stCqZ1J7LpFuOdEBV7uEBE59BGKr881nQ==
+X-Received: by 2002:a17:906:7312:b0:a9a:139:5ef3 with SMTP id a640c23a62f3a-a9a01396165mr1165186566b.55.1729070407139;
+        Wed, 16 Oct 2024 02:20:07 -0700 (PDT)
+Received: from localhost (p200300f65f19e3002f38cf427133ca7b.dip0.t-ipconnect.de. [2003:f6:5f19:e300:2f38:cf42:7133:ca7b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29850a36sm160970966b.181.2024.10.16.02.20.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 02:20:06 -0700 (PDT)
+Date: Wed, 16 Oct 2024 11:20:05 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Kwanghoon Son <k.son@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, David Virag <virag.david003@gmail.com>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH WIP 4/7] drm/exynos: exynos DPTX hw
+Message-ID: <3jrf6d7c5qjegnedvr4hzwcsrnsoejxwh2sjhbwmueyd7whwwl@yyk2yc3vhwne>
+References: <20241002-auto9-v1-0-c4dc3385f415@samsung.com>
+ <CGME20241002053342epcas1p4ea84fa3c156342a087f77dc2a1fc2bc5@epcas1p4.samsung.com>
+ <20241002-auto9-v1-4-c4dc3385f415@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] dt-bindings: pinctrl: samsung: add
- exynos990-wakeup-eint compatible
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241015210450.964093-1-igor.belwon@mentallysanemainliners.org>
- <20241015210450.964093-3-igor.belwon@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241015210450.964093-3-igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5epvjj245ykhaglp"
+Content-Disposition: inline
+In-Reply-To: <20241002-auto9-v1-4-c4dc3385f415@samsung.com>
 
-On 15/10/2024 23:04, Igor Belwon wrote:
-> Add a dedicated compatible for the exynos990-wakeup-eint node.
 
-This we see from the diff. Explain the hardware, why suddenly it became
-compatible with exynos850, even though it was not.
+--5epvjj245ykhaglp
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH WIP 4/7] drm/exynos: exynos DPTX hw
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+Hello,
 
+On Wed, Oct 02, 2024 at 02:33:24PM +0900, Kwanghoon Son wrote:
+> +struct platform_driver dp_driver = {
+> +	.probe		= exynos_drm_dp_probe,
+> +	.remove_new	= exynos_drm_dp_remove,
+> +	.driver		= {
+> +		.name	= DEV_NAME,
+> +		.owner	= THIS_MODULE,
+> +		.of_match_table = exynos_drm_dp_match,
+> +	},
+> +};
+
+Since commit 0edb555a65d1, .remove_new isn't supposed to be used. Please
+use .remove instead. (By just doing s/remove_new/remove/.)
+
+Best regards
+Uwe
+
+--5epvjj245ykhaglp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcPhUIACgkQj4D7WH0S
+/k7QZgf9GtD3lwWKd0PIf4wqqcAsJ4qXGspW4jHcd+0W8tLhLykabMgHzQMSDx93
+rvQr5VInvzYVoS5P3OTS35nlII7/VI06XgzsF642Yvx95IRXs6FyWT4Rim1tLeTX
+wQ1VPVmWRLDLdJ5z5Mi8zKsiR6qxdF5jMvdZ+10nItKp5u/CeyzHWBQXYPwI9va0
+Pb9tybTA+nWF47MU5FRKEB4gio7vspu0sLmMZrfqqYD6vzcYkEFoNmmeEIFcxlz3
+QA2uo63rIfk0rxCcT8WaxkJSgCs7t714SfDZHMNTqJSOQr5xzWvMWbK3kLu1ib3p
+OHp/BgRZLs7+pDo44/hzeD1uNLqFCQ==
+=xF+b
+-----END PGP SIGNATURE-----
+
+--5epvjj245ykhaglp--
