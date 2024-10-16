@@ -1,252 +1,156 @@
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCD8212F0B;
-	Wed, 16 Oct 2024 15:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093741; cv=none; b=rnq1dhg0VV7OVBTkrskjmddicMkhksFxy/kD2Dos+L1kFDlqO2+aUNBa58RqSyOcZbEeI/IQ5angxyCmTl7uIsopOighOv8ky9jJRCU388fXIGeRzGdSDjJz0CqRgpxkSqT0WxoK+9c83iKSAMSg3nXO7ZFEusZzWpTMn8bWCOs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093741; c=relaxed/simple;
-	bh=XP0QwWuwa4XJriZLCfnu3pR+wy2G1Sg+CRRjs2JmONs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wuroj5EB48Z4uLpuvKJZsS2CnZn/YgmiZ6iBYDXMIEhL+u3MOnl4zgWv8hfDpkXZfYtLu/aAqZZbxTg+Um4RHQbWDN+8MpHHOfSeYvRYubDNQscbSIZq5dIPIr0Xb07QzLFPUvM2W5q7a7GIUMWkAfa+oqhbQzK3SkC7zJie1nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=HZK0V8us; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7941B20E021;
+	Wed, 16 Oct 2024 16:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729094869; cv=pass; b=lJmhAKDNSpWJ5D1HlGREAmTOUQKnkmGHhOHk9L9oma08g5jGsDOV4g5ho7WwZVPHp32GKCAruH6VVtEiCKxW3bhQKzgyGNwebPnba5iBQW7JjSufjudZp3mr2j5MdcC22PtXRcBdenry7W560Xni6SVgZ2V8X1W2a16YH0KL2cY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729094869; c=relaxed/simple;
+	bh=hxWI2/T47uvSF3DUHoAloTyflJwmL4doBMivhYm9tdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7c/m30NjomcNGyQMKhXtEMcGB07eO7px8insQH4s8ZYaF7KHHJV5tRW4WaLSvN0RIy0wxq2Jhct5bQckc99SyfT+XHsb7tcMsG/ZEVnTBGQnAB438riLrQHnOvoXqN9Dr4EejueacPSK7gGH1QO/5FYQ5PULT5abtvf8o36Dbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=T0PwhF4z; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="HZK0V8us"
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4XTFkf17Mhz4wjJ;
-	Wed, 16 Oct 2024 15:48:58 +0000 (UTC)
-Received: from igor-systemproductname.lan (83.8.245.91.ipv4.supernova.orange.pl [83.8.245.91])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4XTFkV4vpxz8sWR;
-	Wed, 16 Oct 2024 15:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1729093732;
-	bh=XP0QwWuwa4XJriZLCfnu3pR+wy2G1Sg+CRRjs2JmONs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HZK0V8usnIebu9D+tTGFfr5+dOO5T2Ai6qeM38tMO3bnnkYkzyi9u0fswPMfPKawP
-	 VqT6lDhE6k4Wp/GNqVvrIk9Kh5l7TiQasYbL6kVRHzxRc6m89uXWN6JnHyTIU7PIaV
-	 MmjUYsldx+2S5ifLaoGbuoazMC8Y7wbv0ZRE5hVzoBvys8hX2aJelOTgFYrOxKDvLy
-	 tCm+rkJwr7o6xqn/sV4BYg2+NBWEANFpVOtgEzC67VVIuwboTGJj8dC8VnVtsyzVtA
-	 PBZJSzETu5v1iG5N+N8gGvKLY6s8y31ELMb+bjxcZA48gpR2Hv2W6+cI+2aKFDSyYn
-	 CA8LbkO8ANZ8g==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH v3 3/3] pinctrl: samsung: Add Exynos 990 SoC pinctrl configuration
-Date: Wed, 16 Oct 2024 17:48:38 +0200
-Message-ID: <20241016154838.64515-4-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241016154838.64515-1-igor.belwon@mentallysanemainliners.org>
-References: <20241016154838.64515-1-igor.belwon@mentallysanemainliners.org>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="T0PwhF4z"
+ARC-Seal: i=1; a=rsa-sha256; t=1729094836; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AW33EU2mROFqz8gJGT9DEjsYHa6VTR4uKPZls9h6YaDHN3u3egb3b2iRAD9YlXgzbRb7x7YLUx1/28Qj1V7nl6U6xERC9pHIkprncuRy65RdAA12O5ehcArZGKAfVPpPOyx7BYfiOveOeZ+tKkkqXqv/004bXZ5wHS5WJlLyR2o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729094836; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Kr7rIycrQNv+7/aCXXtLO3K0Lzcz8kTMlFvA5SaaB3I=; 
+	b=W6Y2LmvatyAsB1rCg4h6dyWg+slJO722R03JwGEsZsiVnyrSA1WUkkTwlsaK8Vzwz3aiOF5i8+wHkwljz3CqGFDaS/Otb6P3Xbt+6xUubjSOjKZm3uhcsoCUTRvdqPVMhDQGlEouV2VeaKhUMUovIYyMw9hjJNTeORv29+GyRyk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729094835;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Kr7rIycrQNv+7/aCXXtLO3K0Lzcz8kTMlFvA5SaaB3I=;
+	b=T0PwhF4zBOxc0Feo2lU3E3y8JOWmbbtVhmy7t71xKvfpRE90OthssrtowwFmna4P
+	FdpqVKnY9LTuuL3dAUSAPKzfu5ruLcMEgok46oHleaivTuu2281O2bSQBjz0VWwpPRw
+	TXkSV6wwJU2srhgrjVFmlE3XbMXxv0vfeADOHshI=
+Received: by mx.zohomail.com with SMTPS id 1729094834938486.39137892805354;
+	Wed, 16 Oct 2024 09:07:14 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 3E82C106044F; Wed, 16 Oct 2024 18:07:09 +0200 (CEST)
+Date: Wed, 16 Oct 2024 18:07:09 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Message-ID: <bi7pxgkf6qylkcfa6x2uerfe6zyctbidwravqb4okefjctlvuu@fxmi4pt3fktu>
+References: <20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com>
+ <9ca2a9dc-b643-40ce-8177-68533d0733d1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="re7lds35svwv2quv"
+Content-Disposition: inline
+In-Reply-To: <9ca2a9dc-b643-40ce-8177-68533d0733d1@collabora.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/228.222.7
+X-ZohoMailClient: External
 
-Add SoC pinctrl configuration for the Exynos 990. The bank types
-used are the same as Exynos 850, so we can reuse its macros.
 
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
- .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 140 ++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c     |   2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h     |   1 +
- 3 files changed, 143 insertions(+)
+--re7lds35svwv2quv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+MIME-Version: 1.0
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-index c5df4f1bc600..f07c26d37442 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-@@ -627,6 +627,146 @@ const struct samsung_pinctrl_of_match_data exynos850_of_data __initconst = {
- 	.num_ctrl	= ARRAY_SIZE(exynos850_pin_ctrl),
- };
- 
-+/* pin banks of exynos990 pin-controller 0 (ALIVE) */
-+static struct samsung_pin_bank_data exynos990_pin_banks0[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS850_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+	EXYNOS850_PIN_BANK_EINTW(2, 0x080, "gpa4", 0x10),
-+	EXYNOS850_PIN_BANK_EINTN(7, 0x0A0, "gpq0"),
-+};
-+
-+/* pin banks of exynos990 pin-controller 1 (CMGP) */
-+static struct samsung_pin_bank_data exynos990_pin_banks1[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x000, "gpm0"),
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x020, "gpm1"),
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x040, "gpm2"),
-+	EXYNOS850_PIN_BANK_EINTN(1, 0x060, "gpm3"),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x080, "gpm4", 0x00),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x0A0, "gpm5", 0x04),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x0C0, "gpm6", 0x08),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x0E0, "gpm7", 0x0c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x100, "gpm8", 0x10),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x120, "gpm9", 0x14),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x140, "gpm10", 0x18),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x160, "gpm11", 0x1c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x180, "gpm12", 0x20),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x1A0, "gpm13", 0x24),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x1C0, "gpm14", 0x28),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x1E0, "gpm15", 0x2c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x200, "gpm16", 0x30),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x220, "gpm17", 0x34),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x240, "gpm18", 0x38),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x260, "gpm19", 0x3c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x280, "gpm20", 0x40),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x2A0, "gpm21", 0x44),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x2C0, "gpm22", 0x48),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x2E0, "gpm23", 0x4c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x300, "gpm24", 0x50),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x320, "gpm25", 0x54),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x340, "gpm26", 0x58),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x360, "gpm27", 0x5c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x380, "gpm28", 0x60),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x3A0, "gpm29", 0x64),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x3C0, "gpm30", 0x68),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x3E0, "gpm31", 0x6c),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x400, "gpm32", 0x70),
-+	EXYNOS850_PIN_BANK_EINTW(1, 0x420, "gpm33", 0x74),
-+
-+};
-+
-+/* pin banks of exynos990 pin-controller 2 (HSI1) */
-+static struct samsung_pin_bank_data exynos990_pin_banks2[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(4, 0x000, "gpf0", 0x00),
-+	EXYNOS850_PIN_BANK_EINTG(6, 0x020, "gpf1", 0x04),
-+	EXYNOS850_PIN_BANK_EINTG(3, 0x040, "gpf2", 0x08),
-+};
-+
-+/* pin banks of exynos990 pin-controller 3 (HSI2) */
-+static struct samsung_pin_bank_data exynos990_pin_banks3[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(2, 0x000, "gpf3", 0x00),
-+};
-+
-+/* pin banks of exynos990 pin-controller 4 (PERIC0) */
-+static struct samsung_pin_bank_data exynos990_pin_banks4[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x000, "gpp0", 0x00),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x020, "gpp1", 0x04),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x040, "gpp2", 0x08),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x060, "gpp3", 0x0C),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x080, "gpp4", 0x10),
-+	EXYNOS850_PIN_BANK_EINTG(2, 0x0A0, "gpg0", 0x14),
-+};
-+
-+/* pin banks of exynos990 pin-controller 5 (PERIC1) */
-+static struct samsung_pin_bank_data exynos990_pin_banks5[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x000, "gpp5", 0x00),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x020, "gpp6", 0x04),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x040, "gpp7", 0x08),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x060, "gpp8", 0x0C),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x080, "gpp9", 0x10),
-+	EXYNOS850_PIN_BANK_EINTG(6, 0x0A0, "gpc0", 0x14),
-+	EXYNOS850_PIN_BANK_EINTG(4, 0x0C0, "gpg1", 0x18),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x0E0, "gpb0", 0x1C),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x100, "gpb1", 0x20),
-+	EXYNOS850_PIN_BANK_EINTG(8, 0x120, "gpb2", 0x24),
-+};
-+
-+/* pin banks of exynos990 pin-controller 6 (VTS) */
-+static struct samsung_pin_bank_data exynos990_pin_banks6[] = {
-+	/* Must start with EINTG banks, ordered by EINT group number. */
-+	EXYNOS850_PIN_BANK_EINTG(7, 0x000, "gpv0", 0x00),
-+};
-+
-+static const struct samsung_pin_ctrl exynos990_pin_ctrl[] __initconst = {
-+	{
-+		/* pin-controller instance 0 ALIVE data */
-+		.pin_banks	= exynos990_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks0),
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+	}, {
-+		/* pin-controller instance 1 CMGP data */
-+		.pin_banks	= exynos990_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks1),
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+	}, {
-+		/* pin-controller instance 2 HSI1 data */
-+		.pin_banks	= exynos990_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks2),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 3 HSI2 data */
-+		.pin_banks	= exynos990_pin_banks3,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks3),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 4 PERIC0 data */
-+		.pin_banks	= exynos990_pin_banks4,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks4),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 5 PERIC1 data */
-+		.pin_banks	= exynos990_pin_banks5,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks5),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 6 VTS data */
-+		.pin_banks	= exynos990_pin_banks6,
-+		.nr_banks	= ARRAY_SIZE(exynos990_pin_banks6),
-+	},
-+};
-+
-+const struct samsung_pinctrl_of_match_data exynos990_of_data __initconst = {
-+	.ctrl		= exynos990_pin_ctrl,
-+	.num_ctrl	= ARRAY_SIZE(exynos990_pin_ctrl),
-+};
-+
- /* pin banks of exynosautov9 pin-controller 0 (ALIVE) */
- static const struct samsung_pin_bank_data exynosautov9_pin_banks0[] __initconst = {
- 	EXYNOS850_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 86c7de109bca..42e40860841b 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1479,6 +1479,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = &exynos850_of_data },
- 	{ .compatible = "samsung,exynos8895-pinctrl",
- 		.data = &exynos8895_of_data },
-+	{ .compatible = "samsung,exynos990-pinctrl",
-+		.data = &exynos990_of_data },
- 	{ .compatible = "samsung,exynosautov9-pinctrl",
- 		.data = &exynosautov9_of_data },
- 	{ .compatible = "samsung,exynosautov920-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index dc930d620f55..615048f94524 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -385,6 +385,7 @@ extern const struct samsung_pinctrl_of_match_data exynos7_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos7885_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos850_of_data;
- extern const struct samsung_pinctrl_of_match_data exynos8895_of_data;
-+extern const struct samsung_pinctrl_of_match_data exynos990_of_data;
- extern const struct samsung_pinctrl_of_match_data exynosautov9_of_data;
- extern const struct samsung_pinctrl_of_match_data exynosautov920_of_data;
- extern const struct samsung_pinctrl_of_match_data fsd_of_data;
--- 
-2.45.2
+Hi,
 
+On Wed, Oct 16, 2024 at 12:28:37PM +0300, Cristian Ciocaltea wrote:
+> On 9/26/24 1:43 PM, Cristian Ciocaltea wrote:
+> > Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+> > clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+> > return the number of clocks stored in the clk_bulk_data table referenced
+> > by the clks argument.
+> >=20
+> > That is required in case there is a need to iterate these clocks later,
+> > therefore I couldn't see any use case of this parameter and should have
+> > been simply removed from the function declaration.
+> >=20
+> > The first patch in the series provides devm_clk_bulk_get_all_enabled()
+> > variant, which is consistent with devm_clk_bulk_get_all() in terms of
+> > the returned value:
+> >=20
+> >  > 0 if one or more clocks have been stored
+> >  =3D 0 if there are no clocks
+> >  < 0 if an error occurred
+> >=20
+> > Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+> > the past form of 'enable'.
+> >=20
+> > The next two patches switch existing users of devm_clk_get_enable() to
+> > the new helper - there were only two, as of next-20240913.
+> >=20
+> > The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+> > helper.
+> >=20
+> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > ---
+> > Changes in v2:
+> > - Dropped references to 'broken' API in commit descriptions, per Mani's
+> >   suggestion
+> > - Added R-b tags from Angelo and Mani
+> > - Link to v1:
+> >   https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06=
+@collabora.com
+>=20
+> [...]
+>=20
+> This still applies cleanly on next-20241016 and there are no new users
+> of devm_clk_bulk_get_all_enable(), hence I wonder if anything else is
+> missing to get it merged.
+
+FWIW another potential user for the new function is just being added
+to the kernel:
+
+https://lore.kernel.org/linux-rockchip/20241011065140.19999-1-frawang.cn@gm=
+ail.com/
+
+Greetings,
+
+-- Sebastian
+
+--re7lds35svwv2quv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcP5KUACgkQ2O7X88g7
++pqNIA//eIgyPRPVGxCRGq0n6vayNEPD4IlGMAx1j6M7fmkBgwz/xQvRomNBkwib
+r3o3EYdHbjrcpaSr5mt28GusSOdNrv1Q3OvjHA39mft6dd2vxFkYNxJ5sZ9q0Eo6
+aUO3vkIrt1n0a+HWY7te6uMhs8n9OCs536CcLJ15p2ZsLuEpezFvbb4NU5Ydu1qs
+LdQev0ZSsMQwgUY6HCN8jL2n+pZBEv1epp/ZtHv5W4lnsKghDZMwoPLt2amZER/0
+WgnGswUGQuTPjVrJE16Uq9EI7xS5ueE8oZ3tT3ysJmWSBYvbYApM19Ud2k3Md5xr
+H8DvI99FajZa6t7DCYzv9gCOFz+59pmpJp8+H3pzkkyT9XAPHzHA/039DRY6fmIp
+WrC7EWuilOtOLYn6u5/Vqc1xwvrJETZLCmEnBPXc0IFFh/WR9ujOwevpt/JLB+yJ
+htvchSWQvmbss1Uyjep/Ou0qCtXkBfs5vRwuSBMsaxafaPSoOSkWKRQVhLEvUkXD
+QYktMUFf7ER0Fe2gqkalUqoS1YZijRisdHawJ9rDmqQGfIhxaCWNa+EnPZBwh8Y3
+ZzcBFiB4axozX9By+UtBRoCiQEbwj1+zzH6ALDSGhlWD8YUiyFUr8DlLAbMvbRvX
+3M0dA9Y/vuaxeWbIJSm5t+aMccuTWUuEtFAyHqNKykjQ5FdCOqs=
+=xIQC
+-----END PGP SIGNATURE-----
+
+--re7lds35svwv2quv--
