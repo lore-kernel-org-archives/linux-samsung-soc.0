@@ -1,90 +1,128 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96901B6D15
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Oct 2024 22:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1F518BC05;
+	Wed, 16 Oct 2024 06:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729030021; cv=none; b=KhVKgQuXPhsKlxpwL28k3w/G66u3p9b9Iyqgb+ClnYRQAV2zxgtTRl0l3KqLeBsxKFCavGDAp4FsPEHOVsKfMJoNghBzMx5W9xCCCMEUZetIvHWg/TSplWJrTrtPnPoTAy1O0oGH0RX8CoBavzI5VynGKLFsmRkqoIuAxtmhJ6w=
+	t=1729059443; cv=none; b=uRHza+CXYVhMKYsF4zwtj9gx3VM2GrRmBfwNjTaCfeLVMr1PZ26ewRXLRw6JnUBsbZkMcG1JcNOqcGWcIQdWlq4E3EjTRb3PSKKomRzn9Gm3oCvSgoH3EjQ1ZmcvVUW52OX3RHzEeZqFn006sNWofVic3RhHvS0vypAml94tsU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729030021; c=relaxed/simple;
-	bh=8pjgUnj2wUxiv+ZEhs4guDnzJ2SvwMR/Pm0VIaPIRWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DF68lUt+D7G1ESA+RZnaQUqZ5GFigFdZSmcnhNzCpNS/8phXarwTlkhnG0BKy97MDR/kyCmek5PR0Dum7wDJT73BtJ7srSi2RiQ28qPoA57ljF4qpYl+6bUTN/CVaqmQwnq907uiYURbTCyLJa3Bl/BFISOkU0q9u9szaiFA7Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F3pzaNih; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729059443; c=relaxed/simple;
+	bh=j2o1JI5+4KDVVJgJMPrHXFuEh6+VO0eeG8uZGayDRPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gh7x2/TP/8D5qil0Pvs4K7ehskuBP7N9O5MlCqNwTDSxOALpAeehkbDURHVHtDir13bu95WAbvgTHsTChdAbYJvu7hA5++rOl92DhMIts2YkKGzmjiGj9q7jmVjHeQFtl7gqgGE8Z8dT3j2LYKfaYalj4uENveMesZpxNIRloQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaFxcZdN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F3pzaNih"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so26011751fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Oct 2024 15:06:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729030018; x=1729634818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8pjgUnj2wUxiv+ZEhs4guDnzJ2SvwMR/Pm0VIaPIRWc=;
-        b=F3pzaNihtDtk7PPx9Ho/xI0GR7GlzhmOfsnAfk5RsOAjjiicurixp40s77Nna1PBz4
-         7MdcNZNqXb2unF5Tk/Nc2CXw3IWaeEQd9EUSXhz1aCsUj8WLuWRzyiHVTaEufwQZFYYo
-         CuSRgx4Wxs5NPzczp0Tu6GUf5i+CdtkzsMr3DTxnNDbNOe37tWla3VYHp7ki5NZStI9H
-         aCaawtrgG9hXtCrRcvy8bxP8FoOsqQEIJJWdheOhtiZXRkZcc6eo2s4Avy+SD3B+j78U
-         2oNTzFiFSwdvMwxaL1Uh53aGRuNxXczVrnvkD20LWBZPgRK6VzCuuB1CWsJEDE4yjVLv
-         /VVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729030018; x=1729634818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8pjgUnj2wUxiv+ZEhs4guDnzJ2SvwMR/Pm0VIaPIRWc=;
-        b=bGlcfpKWJoQiOkg6VmbXU5My1vAUBuZLOvhDAp/SjHV4++Nu9qESkQN0NFXhjD1nx/
-         ZuyetWE3vYj/WHUyk4mo3qs7ld5Ep5O9MvtrhYonIfuTzFelJwZMD4snWdfvaMMXZ+5G
-         tz4Ca+2o+nAPsD/lLzq7pLt4jGxXLVYnuV9ElmvBUMTq8L7Jc+LEtazW7jiA1rsvNYES
-         5nZI890f+fXcR5if7T7nfyN+RVVEgZE0Xe2XdGfeyK5N9D3FanEIlsvKKe9b7lslUteX
-         6UqToIrezSSwp1mxgRgMwWCSkmEGmh0Jq+bsdeSqhSthpYHjD29NW6ybj6z+YGRIFW0N
-         ZX6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXW1qcC4pZI3nCyLz/rAN7zgngg6g3ws5ZHg2hxsxknW51JZxIXp/C1tdiADQr/Tb2Iu8Mi7eAn6mmquE+Sht+JIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjoMqnfRZdA8LV5dU+7hvuMekmkNpr5vz/fESkCL0C8E2HmPzZ
-	MU6Z/3IzZmlf+fHjjs0PVJudCx6e+3zt+CeQuvubPM6+45O2dC9/iF0y5XHcy4E4I6nX4ReZOdG
-	4l4gLA9ZBOA9FGaD12mHMSZhTI/DPkHobPJPiGw==
-X-Google-Smtp-Source: AGHT+IHrewx2uW2O1wX1aY++a3xqOQG1Pr1rX9mO0IID1XuNhMOh/EDpRoDGq5POidQ1Sfd1Dv+NRfeCn4ylE3MZrOY=
-X-Received: by 2002:a2e:d09:0:b0:2fa:f5f1:2539 with SMTP id
- 38308e7fff4ca-2fb3f2472a7mr48758161fa.24.1729030017817; Tue, 15 Oct 2024
- 15:06:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaFxcZdN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BFEAC4CEC5;
+	Wed, 16 Oct 2024 06:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729059443;
+	bh=j2o1JI5+4KDVVJgJMPrHXFuEh6+VO0eeG8uZGayDRPE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iaFxcZdNmXgjJPhp9mJJT4gtNgJtamcDnzVR7GUTBI7F593gPsBW4HE/uAydBO10w
+	 oudm+CTy//YR3ozfbcdWATjyuuPgb4FSY7aqr6FLwmFk4g3/s1uQpZhYaYO/BiHj1x
+	 /dLmXLtKhgQ/dTyXM8hq96UyVfPuCWyDbxabpnkaf2yyGnxHmA/cN0PcO3L/z7wPCy
+	 YGxo6wKqbGczQluhQ1EjPh6CQpxbDAbXtBb0+UGG0k1UwT6SrFL5MV6XHNbJKitTK7
+	 eBVvIwSaIEstt25PoXbP5Y/YbG77S7LajpM90/zuGr6t+qGYltWnZvawEcQOWumTJB
+	 cZ/d4n4qfXa/g==
+Message-ID: <b5267106-27a3-48e5-9fd3-912b4c62155c@kernel.org>
+Date: Wed, 16 Oct 2024 08:17:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015065848.29429-1-krzysztof.kozlowski@linaro.org> <20241015065848.29429-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20241015065848.29429-2-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 Oct 2024 00:06:47 +0200
-Message-ID: <CACRpkdbLZwLEWBjF7KPX9pDAVseujHF6_ytD9558s1B-p0M1sg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: samsung: Add missing constraint
- for Exynos8895 interrupts
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
-	Jaewon Kim <jaewon02.kim@samsung.com>, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm: cpus: Add Samsung Mongoose M5
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ David Wronek <davidwronek@gmail.com>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241015210205.963931-1-igor.belwon@mentallysanemainliners.org>
+ <20241015210205.963931-2-igor.belwon@mentallysanemainliners.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241015210205.963931-2-igor.belwon@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 15, 2024 at 8:58=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On 15/10/2024 23:02, Igor Belwon wrote:
+> Add a compatible for the Samsung Mongoose M5 cores, found in
+> the Exynos 990.
+> 
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> Expect only one interrupt on Exynos8895 wake-up pin controller.
->
-> Fixes: e2d58d1e1c61 ("dt-bindings: pinctrl: samsung: add exynos8895-wakeu=
-p-eint compatible")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I am not going to review untested code, sorry.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Yours,
-Linus Walleij
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+Best regards,
+Krzysztof
+
