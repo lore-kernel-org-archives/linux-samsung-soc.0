@@ -1,40 +1,40 @@
 Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48011209F3E;
-	Wed, 16 Oct 2024 15:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB64209F3E;
+	Wed, 16 Oct 2024 15:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729093695; cv=none; b=ral+yZjpCXTB3bE8yiHG/VAQWzsgLjK8QMY9L4zsxbZpqbyGbq/0DiUyX/D6+/S74BNLARgSkwtrIVPO88+tQ4WeCFXgtE/rN+dD5818fRNsucTTFps7Vwi4QLOZCgtaV6VjKK0NubYIp9LR1rqfzY0KADA3+KCmTU4yvIi+M3c=
+	t=1729093701; cv=none; b=PcVH0DZFbmMw295d/YAQgNkrzX0At5ffILH53Xf+fc+70Can6PDZ6jgmmKj1r1OWQb8Z6RbOO8DdkCpKLZBGcEuka63MwkbW7GxApcmcg6WUKbvuSEOo5PgmdisPN3t87gHQ7d4U0wAGk6Rl1yF2iYjerEi9zKpzUyn5hBLeD5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729093695; c=relaxed/simple;
-	bh=S3U+b3hTaCTPOPTp+geqZoOfUjqW4wpwzav1nDtIva8=;
+	s=arc-20240116; t=1729093701; c=relaxed/simple;
+	bh=i9CRyCmH1jmIrAYXtqp2Ol8Cit/CqxernI4YANbTw1Y=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gt5ZeF6WUO/0HSczcEiERVYqlzM6qo+FORNTy22xSzc1aLWYtQ3hj1B6baKm3YLx3xGh/xpEmV1vMTLWmPOyinIqR5Z7nvZxTx1eJrM66m/TvQxqh/RsPuKFj5X/uT8Y/K0U2jN6Qf48lT2x0ooaXBOI/QCpdZsPw/sLFmTf1Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=YHvydFZZ; arc=none smtp.client-ip=63.250.43.88
+	 MIME-Version; b=PLtkCj9vOx1aQ/Hd9HW5l2u3n3RXVAGLKUBdZGF9fxK5KbgSq1DLO29MkYsn8YWDDSH0HLF5HxewlIcOBmNuKVM0IvRXDAR2lTcs+gd8DUOsA8aBuLsymaR55AIyjNzKJT+VC3lypsd4sqSkoWtagzOZHJQWcEhHdoJY0Vu+cJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=lcDDjGp1; arc=none smtp.client-ip=63.250.43.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="YHvydFZZ"
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="lcDDjGp1"
 Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4XTFjn1BdCzGpV2;
-	Wed, 16 Oct 2024 15:48:13 +0000 (UTC)
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4XTFjt2KHFzGpQ7;
+	Wed, 16 Oct 2024 15:48:18 +0000 (UTC)
 Received: from igor-systemproductname.lan (83.8.245.91.ipv4.supernova.orange.pl [83.8.245.91])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4XTFjf05T7z8sWP;
-	Wed, 16 Oct 2024 15:48:05 +0000 (UTC)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4XTFjk5kq8z8sWV;
+	Wed, 16 Oct 2024 15:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1729093688;
-	bh=S3U+b3hTaCTPOPTp+geqZoOfUjqW4wpwzav1nDtIva8=;
+	d=mentallysanemainliners.org; s=spacemail; t=1729093693;
+	bh=i9CRyCmH1jmIrAYXtqp2Ol8Cit/CqxernI4YANbTw1Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YHvydFZZ7mrHId9grQMhP5eNdlG+Phf+J7atxNdrW/hAhZxMpyKO5CR+/B1mp0cxm
-	 iKHNp5zgsiglvcog23Wo8AI0Ew4E3HKtJyt30LGQrdINdivsNG1VLb/Ctxl2Jds5t4
-	 GZxJuJZBzEcUKq8um+0Cg1KAsPz+2BwnJGkv7t6hdku191ETmhjdEy7/g5Aldf9yIj
-	 as6r8dQiUo2R2F/urOUUQGK0KpxkDXPNdNkZFG9AEGDKMG76vut9yIy/T3GIn2t9R+
-	 dbMopicBKM5d4MwfMd0/37BlenMA+xmUjJq8i3He4qnXYa8wkInjv6WRovvS0vbVZk
-	 wAku75K5lHGYA==
+	b=lcDDjGp1nogtyH9epICz7XgNWZqy8XF4V0mv/+L3H0Uepug7gHAl3x1vdo7OMsfrC
+	 kG7Uk4Uo8G1I+Njfev4RFL7j5GsHIRhhUPnrKl7nQoNqeRBca9qI/zVKiYuJ80hCOD
+	 f3hLWgknTvOZgLehgWLCFNApNiKxm5UHV/DTiEPRD6jIrQ2KdFEMRksFcd/yefJgYV
+	 /XbzFbnJWZgnhXgbZEfZ2HIKhXFWx6O0H5cGtKVcRfeQcf5EPrxnSRaLOy/NZzq2cT
+	 JjaSb6K84wAC8nEJTFF4IobMb3ATdYHThgVFoZocknYVnflE/RV1FSebz92ujrmwEZ
+	 zE91y0Hp+wajA==
 From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -45,9 +45,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Subject: [PATCH v3 1/6] dt-bindings: arm: cpus: Add Samsung Mongoose M5
-Date: Wed, 16 Oct 2024 17:47:42 +0200
-Message-ID: <20241016154747.64343-2-igor.belwon@mentallysanemainliners.org>
+Subject: [PATCH v3 3/6] dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990 boards
+Date: Wed, 16 Oct 2024 17:47:44 +0200
+Message-ID: <20241016154747.64343-4-igor.belwon@mentallysanemainliners.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
 References: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
@@ -59,27 +59,31 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a compatible for the Samsung Mongoose M5 cores, found in
-the Exynos 990.
+Add devicetree bindings for Exynos 990 boards. Currently the Galaxy
+Note20 5G (c1s).
 
 Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentation/devicetree/bindings/arm/cpus.yaml
-index e41a8aec6066..c54d20dd9d7e 100644
---- a/Documentation/devicetree/bindings/arm/cpus.yaml
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@ -207,6 +207,7 @@ properties:
-       - qcom,oryon
-       - qcom,scorpion
-       - samsung,mongoose-m2
-+      - samsung,mongoose-m5
+diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+index 49884a7ab5c6..d25a17e69725 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
++++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+@@ -230,6 +230,12 @@ properties:
+               - samsung,dreamlte                # Samsung Galaxy S8 (SM-G950F)
+           - const: samsung,exynos8895
  
-   enable-method:
-     $ref: /schemas/types.yaml#/definitions/string
++      - description: Exynos990 based boards
++        items:
++          - enum:
++              - samsung,c1s                     # Samsung Galaxy Note20 5G (SM-N981B)
++          - const: samsung,exynos990
++
+       - description: Exynos Auto v9 based boards
+         items:
+           - enum:
 -- 
 2.45.2
 
