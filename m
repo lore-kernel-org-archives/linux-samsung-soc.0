@@ -1,165 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15981DF26A;
-	Thu, 17 Oct 2024 16:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635521DF274
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2024 16:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729182375; cv=none; b=ijkwY9CmsUA55X73x1eg/dZGlcqD5lYup/ZHpkNI+aBhGXV3EOdePocnMymhPhnbxcabobwyepHZiwAemcVyLEapemVhQjnxpwMsfyEUv9gXB0tsHrFMnK/egSZ6u/EHiIOrytKi017VImbzTPvCwRuiJvvIYXFYzRnN2eKM8ls=
+	t=1729183021; cv=none; b=uWx2lF+3/uO5bqoY3SkbUuSJRmDxs2v3yCYjNkLLqkOp09cqe0wYOLxryoYe1V7PIwS83XGliUvoE9qF8tD65Ddqo26I6Tu3jhv0Id2G26oSxScbwp4IVsNLzDYIrBghQzBUCYufUXbj2iEVjswqSH4q7Lqf1K9AK8RquTrnx68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729182375; c=relaxed/simple;
-	bh=VF8QIqn/4pfgrEstD6So2AH/mIP2xJc5DvAFvI3mGVQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Aberpgl8h5di6yHfoem/mlGNVU+SdqFdAqX7IsOA8lLz+2CqRl+K/+CPLfkASIgB0Y/qpyUyNKBmg72R5B9P34vKTlXK0rkQuf2+D7s4bG/5tXNDemHvQGDsF62whRpFq0XoqcrZj9BQPYq55+96IiNGgI0nG6YviZ5+Kj5/EdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/BEC4bJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729183021; c=relaxed/simple;
+	bh=cqJ8YXSL/6G8nBCjbPilRI7C8VZJG7pdQBTkoAIYBrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gwUmu8Ag3Dw0EXITRtNLv+jcxaW3P+Ni11dp95+1cj4LqINqbmShPCdMD5VPym1pifPQLjFXt7mqiS18WcErOFV797JlgBgahIgspo7L6yrD89E9RrDoB4O1TJYnAW1CqzhIYPlL16E+IAWIO1xZT80XzcuQVBx4qQINuRA8rM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YzpdJA6Y; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/BEC4bJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 100BDC4CEC3;
-	Thu, 17 Oct 2024 16:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729182374;
-	bh=VF8QIqn/4pfgrEstD6So2AH/mIP2xJc5DvAFvI3mGVQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=V/BEC4bJH+gE5MtiIZwnnBpdmieE69ZEbTaebfVUjhOOIGkuCS2Dbqnvuu0/j4eXg
-	 pFC3CDq9Z94l7pFvoDFlD7Xw7kD0oZvIdbbC7bobiE8Af6tqfmPHf7gDpxgHR5nbrN
-	 XhTuo157DEwAlSJkNqZ3jZq8PjEAi7+L/dYf9QHC5Q7nTeFfNe2VkLqNjgGBwD88yz
-	 a9ONgY6fFUKKSjQCBdIOST9Wm+czbzU5hHn6cWquF0p6ostRXRukHGdZxrA5D6GmnN
-	 wY1Fx2E3ybeS2DyHQkqQGLd1/OrhyCg1y0fxUKGICSaFkmsdqU09j7IVyYq3miaAP1
-	 goXJqvQxkO8oQ==
-Date: Thu, 17 Oct 2024 11:26:13 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YzpdJA6Y"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eac969aso4014035e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2024 09:36:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729183018; x=1729787818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fg01EDslkFVUhzMkkUb4hB5z0mSu8A5C2uHNCojkyKY=;
+        b=YzpdJA6Y1lk+4j43KOFHjcbPs9p1BCskRb9jBTxdxe/Vyw8oXuTTgPzwFhGwvQso3c
+         ir/hBRsZbBoUv7OCeDJ8h6QUbTCf2vqscdp2/0nAfXbuDWSEy9lNaJHKu6GOrcBUS/HW
+         7ZigLN8v18y1N3T46HmLm2wNScmnlwYFNpl03DWiipo0oXotrT8ZkIRbv52mwqjpc1JC
+         Ej9HXjSH39VbfGWaN8eJC0pjNLbDNozqUPtWZ1tSmABCnMnPcEaubZKYopR06fzGysvG
+         5ygeNSPQPJIj1yOcoyTEuV78YtBM9Bxtq86RaNT2fHSqPrVPG6EB5H2GYKqV6Ymy7gtf
+         a13Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729183018; x=1729787818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fg01EDslkFVUhzMkkUb4hB5z0mSu8A5C2uHNCojkyKY=;
+        b=k9TuhXv5AMHmCYtPEpMM+UcPLTX4uopOEVrQTnLT4HEsiFJOazz4RDJHBfPGX4EhOr
+         1Pk1oPsxkheshnZ7pUqstStu9FumNYEm2CW6NxfkJbV9Dvs/vQv9kHroq/etpfMAZbQE
+         rb3moEh2Ty1xyFYlyyg9x/UuFeoLMJTEbF+cxaGIGKLRECRuB0Lh+0FU/3BR8a5FsTbj
+         p/tA3GrYPoSYiOZNHGTQFTCbPCXroq01FESRm+C4FREWV4TpMdQF11oypKb6mnSZy33x
+         Z/8/HosGtl6qUfTweJxO81Nhr1VJVYQVZdfNzHB9f5o2qJCt6lPwQf5RUtGcOfzNM6vc
+         F70g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtcZDlv4IJxGLuRe5RrXXXxAZLf4JGvUYFxhHjU5sQbTk4k3nz9qfLH0anpdyY8ufY2IDqpqKEfECPjFx/9zx0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkhQK2QlORspUSWW75t7ZHgvMmslQv5xSNCig7bAwFMy4g8PmX
+	rUyu+jIHJMp2HlKmZpS3q7bxCTGSR3qWttRCP9A9FrxhZC6tWwUiKHe0rw4YkGg=
+X-Google-Smtp-Source: AGHT+IFRSodLproKws30Fwmeh9U5gZJ48F5btqXXPZbS12I3VrKrnbwPTFo3tKyGKXkjTmOb9njy7w==
+X-Received: by 2002:a05:600c:1f12:b0:431:5226:1633 with SMTP id 5b1f17b1804b1-431587173a2mr26093615e9.6.1729183017642;
+        Thu, 17 Oct 2024 09:36:57 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc11aefsm7710376f8f.93.2024.10.17.09.36.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 09:36:57 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: jassisinghbrar@gmail.com,
+	krzk@kernel.org
+Cc: alim.akhtar@samsung.com,
+	mst@redhat.com,
+	javierm@redhat.com,
+	tzimmermann@suse.de,
+	bartosz.golaszewski@linaro.org,
+	luzmaximilian@gmail.com,
+	sudeep.holla@arm.com,
+	conor.dooley@microchip.com,
+	bjorn@rivosinc.com,
+	ulf.hansson@linaro.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	marcan@marcan.st,
+	neal@gompa.dev,
+	alyssa@rosenzweig.io,
+	broonie@kernel.org,
+	andre.draszik@linaro.org,
+	willmcvicker@google.com,
+	peter.griffin@linaro.org,
+	kernel-team@android.com,
+	vincent.guittot@linaro.org,
+	daniel.lezcano@linaro.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH v2 0/2] mailbox: add async request mechanism w/ a user
+Date: Thu, 17 Oct 2024 16:36:47 +0000
+Message-ID: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>, 
- Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
-References: <20241016154747.64343-1-igor.belwon@mentallysanemainliners.org>
-Message-Id: <172917870796.3589876.17005849369898378683.robh@kernel.org>
-Subject: Re: [PATCH v3 0/6] Add minimal Exynos990 SoC and SM-N981B support
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+This adds a simple mailbox async mechanism, similar to the one found in
+the crypto subsystem. It empowers mailbox controllers with hardware
+queue support.
+
+It then adds a user for this mechanism, the ACPM driver.
+ACPM (Alive Clock and Power Manager) is a firmware that operates on the
+APM (Active Power Management) module that handles overall power management
+activities. ACPM and masters communicate with each other using mailbox
+messages and shared memory (mmio-sram). The shared memory contains
+channel configuration data. It exposes at a specific offset into the
+memory the channel ID, message and queue lengths, pointers to the TX and
+RX queues (which are also part of the shared memory), and whether the RX
+queues work by polling or interrupts. It resembles in a way to the
+arm-scmi driver as that too uses mailbox messages and shared memory to
+communicate with the firmware.
+
+The set is marked as v2 because the mailbox core patch was already sent
+for review a few weeks ago:
+Link: https://lore.kernel.org/linux-arm-kernel/20241004165301.1979527-1-tudor.ambarus@linaro.org/
+
+If everyone is happy with the current form of the set, we'll probably
+need an immutable tag/branch to be shared between the mailbox and firmware
+trees.
+
+Thanks,
+ta
+
+Changes in v2:
+- add the exynos acpm driver - new patch.
+- extend the mailbox request with rx and tx len - let the client decide
+  how much to write and get back from the controller. The controller can
+  verify the lengths by comparing them with its channel length.
+- extend the mailbox request with flags, in particular with
+  MBOX_REQ_MAY_SLEEP. All requests that don't set this flag are
+  considered in atomic context.
+- remove a dereference that was done before checking for null.
+- update the commit message, rebased on top of v6.12-rc3.
 
 
-On Wed, 16 Oct 2024 17:47:41 +0200, Igor Belwon wrote:
-> Hi folks,
-> 
-> This series adds initial support for the Exynos 990 SoC and also
-> initial board support for the Samsung Galaxy Note20 5G (SM-N981B)
-> codenamed c1s.
-> 
-> The Exynos 990 SoC is also used in the S20 series, as well as in the
-> Note 20 Ultra phones. Currently the device trees added are for the
-> Exynos 990 SoC and c1s. The device tree has been tested with
-> dtbs_check W=1 and results in no warnings.
-> 
-> This initial bringup consists of:
->  * cpus
->  * pinctrl
->  * gpio-keys
->  * simple-framebuffer
-> 
-> This is enough to reach a shell in an initramfs. More platform support
-> will be added in the future.
-> 
-> The preferred way to boot the upstream kernel is by using a shim
-> bootloader, called uniLoader [1], which works around some issues with
-> the stock, non-replacable Samsung S-LK bootloader. For example, the
-> stock bootloader leaves the decon trigger control unset, which causes
-> the framebuffer not to refresh.
-> 
-> Device functionality depends on the 2nd patch series:
-> "Add Exynos990 pinctrl and chipid drivers"
-> 
-> [1] https://github.com/ivoszbg/uniLoader
-> 
-> Changes in v3:
->  - Move pinctrl DT nodes from the 2nd patch series
->  - Resend patches to the correct lists.
-> 
-> Changes in v2:
->  - Added acked-by tag by Rob Herring
->  - Fixed two stray newlines in SoC and device DTs
->  - Fixed commit message for the c1s device tree
->  - Changed osc-clock to clock-osc and ordered nodes in SoC DT
->  - Fixed ordering in the gic node in SoC DT
->  - Fixed memory node unit address
->  - Fixed memory node reg properties, to map all available RAM
->  - Moved pinctrl binding commits to the 2nd patch series.
-> 
-> Kind regards,
-> Igor
-> 
-> Igor Belwon (6):
->   dt-bindings: arm: cpus: Add Samsung Mongoose M5
->   dt-bindings: hwinfo: exynos-chipid: Add compatible for Exynos 990
->     chipid
->   dt-bindings: arm: samsung: samsung-boards: Add bindings for Exynos 990
->     boards
->   soc: samsung: exynos-chipid: Add support for Exynos 990 chipid
->   arm64: dts: exynos: Add initial support for the Exynos 990 SoC
->   arm64: dts: exynos: Add initial support for Samsung Galaxy Note20 5G
->     (c1s)
-> 
->  .../devicetree/bindings/arm/cpus.yaml         |    1 +
->  .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
->  .../hwinfo/samsung,exynos-chipid.yaml         |    1 +
->  arch/arm64/boot/dts/exynos/Makefile           |    1 +
->  arch/arm64/boot/dts/exynos/exynos990-c1s.dts  |  115 +
->  .../boot/dts/exynos/exynos990-pinctrl.dtsi    | 2195 +++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos990.dtsi     |  251 ++
->  drivers/soc/samsung/exynos-chipid.c           |    1 +
->  8 files changed, 2571 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-c1s.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990.dtsi
-> 
-> --
-> 2.45.2
-> 
-> 
-> 
+Tudor Ambarus (2):
+  mailbox: add async request mechanism to empower controllers w/ hw
+    queues
+  firmware: add exynos acpm driver
 
+ drivers/firmware/Kconfig                    |   1 +
+ drivers/firmware/Makefile                   |   1 +
+ drivers/firmware/samsung/Kconfig            |  11 +
+ drivers/firmware/samsung/Makefile           |   3 +
+ drivers/firmware/samsung/exynos-acpm.c      | 703 ++++++++++++++++++++
+ drivers/mailbox/mailbox.c                   | 127 +++-
+ include/linux/mailbox/exynos-acpm-message.h |  21 +
+ include/linux/mailbox_client.h              |   4 +
+ include/linux/mailbox_controller.h          |   7 +
+ include/linux/mailbox_request.h             |  33 +
+ 10 files changed, 888 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/firmware/samsung/Kconfig
+ create mode 100644 drivers/firmware/samsung/Makefile
+ create mode 100644 drivers/firmware/samsung/exynos-acpm.c
+ create mode 100644 include/linux/mailbox/exynos-acpm-message.h
+ create mode 100644 include/linux/mailbox_request.h
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y exynos/exynos990-c1s.dtb' for 20241016154747.64343-1-igor.belwon@mentallysanemainliners.org:
-
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@10430000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@10730000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@13040000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@13c30000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@15580000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@15850000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: wakeup-interrupt-controller: compatible: 'oneOf' conditional failed, one must be fixed:
-	['samsung,exynos990-wakeup-eint', 'samsung,exynos850-wakeup-eint', 'samsung,exynos7-wakeup-eint'] is too long
-	'samsung,exynos990-wakeup-eint' is not one of ['samsung,s3c2410-wakeup-eint', 'samsung,s3c2412-wakeup-eint', 'samsung,s3c64xx-wakeup-eint', 'samsung,s5pv210-wakeup-eint', 'samsung,exynos4210-wakeup-eint', 'samsung,exynos7-wakeup-eint', 'samsung,exynosautov920-wakeup-eint']
-	'samsung,exynos990-wakeup-eint' is not one of ['samsung,exynos5433-wakeup-eint', 'samsung,exynos7885-wakeup-eint', 'samsung,exynos850-wakeup-eint', 'samsung,exynos8895-wakeup-eint']
-	'samsung,exynos990-wakeup-eint' is not one of ['google,gs101-wakeup-eint', 'samsung,exynosautov9-wakeup-eint']
-	'samsung,exynos7-wakeup-eint' was expected
-	from schema $id: http://devicetree.org/schemas/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml#
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@15850000/wakeup-interrupt-controller: failed to match any schema with compatible: ['samsung,exynos990-wakeup-eint', 'samsung,exynos850-wakeup-eint', 'samsung,exynos7-wakeup-eint']
-arch/arm64/boot/dts/exynos/exynos990-c1s.dtb: /soc@0/pinctrl@15c30000: failed to match any schema with compatible: ['samsung,exynos990-pinctrl']
-
-
-
-
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
