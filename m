@@ -1,148 +1,144 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A19418732A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Oct 2024 07:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E293126AD9;
+	Fri, 18 Oct 2024 12:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729237776; cv=none; b=D1jOSAuiNqhO0NHO0zfRmJvA4L6pPDL3WBz0xSXNu9x8m97SlkEU90mblyQcGRWa5OWtvHz+uudjGUAJtD7qGSujzpCtxwhe5PaZa/GBFMRy8l/4jx3cwBZR50hrwmLrbJDTB1D0ZwI5fsZD6/CKSxi5KOg7BzwhPcFqjGT+NkQ=
+	t=1729255948; cv=none; b=p9HX1Wrhe52M/nWQlhJDu9gkvD+w7NP7jvbbajmlJUvLUX/fWuhX0CfMeqVyDZsjKidfePa9zInCKr1Mh9S8lfguS16w302rA4B62ob5ARD29rSRW2xPT8hpouEhr6yDRkwpIJuHqvC1vQwou3NEj+L0ROzSAwBdmVOShpQxbLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729237776; c=relaxed/simple;
-	bh=fYFmmsgbDiEiyuRUICJBYPFPcYvmo5MwIRakihQz3WI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2Ri58yxvnogCO0RYVBMlCTPMNaccd4wBb15I1Z46a3AoPy+D8LRkS89yefDKvb6jjDRj01uOVGLhoQOe1yiRq97AnOU3pP0PIocXKhMf3HLP0dQa6rb0I+yMp6w1ZUk9wrK6Z0D9PIuFbZhc0DPoUjXU3olBGN0J/baSMCTtRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kZcaCLHK; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729255948; c=relaxed/simple;
+	bh=vP+jMSjKUvnHMJ/iKyhbOa3zhqw3yY28FVC5prTQw+0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=O/CBE0KLDfKyfDMygSVPB1FGsCt6MmWuSK2VTt06oLGw3iYkunQai+qBCYQr78D1aP93GLRmBlFJwf4TbtXqq2YYm1v8yt1N+ayYhkoB7WROTbEKCC58X4bxdyz7YpaxJcNxwhlFAY9DUSFwKfMy8ZpFMnOE/ni1z2+dt6ttlC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNXn9uuL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kZcaCLHK"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c935d99dc5so1942935a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Oct 2024 00:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729237773; x=1729842573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ty9sh7/3y5gFz5GNITs3Hwg9LkowlZM8ANgENa9Pfco=;
-        b=kZcaCLHK8SAwLDRozbTelnnzFm/dxjmEirzU1ZCZmZXKpxTcljZsy5aenbjthhU2i6
-         WsuIatJnlEMFxKH45Xnqr8dYJ4vebJCNJGDZrSb39rUaYs0QglmhcUnCRo46P/FRtrLw
-         gBhOR0g8En69bmVBaGl4hBIDQPNDb65dX88fujsYjOnPaLJb10yJSJrcYudTnYQhlT5K
-         aI14Ht9VCINOlmXkny2TkGB9708vrIxPSk6bLDU7u8m2Lsdo/uB7XaEX4Jng0RL1eAVR
-         3UtcmX8sdMrqa5fypvPliu83e1II1QFFKhpfPgKsVv4ywfqzWvWI++VMqazrl/Tz5pm1
-         7M4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729237773; x=1729842573;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ty9sh7/3y5gFz5GNITs3Hwg9LkowlZM8ANgENa9Pfco=;
-        b=mdE6XoXyrVnTRNVZhvKAwYpd70Kto0rMGBdZ4s6d7VSmt3ZAPqjhIcJ9NvywtDwLuU
-         3RLH7qhR4tmO6vx+hYe+g7LFIxfIpqYqVJ4/d3/3+9MPJ7LvE2/4WUS1e7uQgM5d+G/Y
-         B7iF72EYHOBSC+Flh2WRS7Y7DpPhCT4c5UjHXWMRinf5CnXHgTLKJ1OcV7x+NWp2HxGq
-         75N56c/DiVInDOd1T+D8VEiaVDLQg8AeS/HCQJrRH/FA4n0t9qGWK0IvvnU0q5K2Ypwg
-         TLxSCmY4w2Hz/4Is5u89oaUS7SH8weuKuu4u52t5xck1bBtUhy5n7N0k6wcu7F20tXme
-         dLWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDFQSTmgcGgSCfOtF0dl8qmR9+MyrBSoEG0tHP/nusbPxZBjGjHw8C1y0iNXpjQIeQW1r257KyYqzPorFc5HTCGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxutYS3YL7nFGiecuBWTMlt6YvpwJboAL3ZYxvKBr3eY2eUINS8
-	RyQS40ssj6YgotCmPyNDsV2uItUi6SlwXCjrkU/+TBTJMjbSn08nQBfFn6cAHtQ=
-X-Google-Smtp-Source: AGHT+IG/3iEa6Ihs5SBiyAUaudbK/iy63r0o3DcWT7JdERnKHHOl08J+1RfF0T+/gwnXI9G/S0dZ/g==
-X-Received: by 2002:a05:6402:27d1:b0:5c5:b90a:5b78 with SMTP id 4fb4d7f45d1cf-5ca0ac53ce6mr1156975a12.5.1729237772776;
-        Fri, 18 Oct 2024 00:49:32 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ca0b0e7130sm380423a12.72.2024.10.18.00.49.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 00:49:31 -0700 (PDT)
-Message-ID: <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
-Date: Fri, 18 Oct 2024 08:49:28 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNXn9uuL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BA7C4CEC3;
+	Fri, 18 Oct 2024 12:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729255947;
+	bh=vP+jMSjKUvnHMJ/iKyhbOa3zhqw3yY28FVC5prTQw+0=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=mNXn9uuLSq8XI7FeB/Jde6ThBp6a0wXmKQppVR2qodqu68rvSdVl8d3DpYaE7uVat
+	 4883UUmgps4wex81yc1VnYND9nvewJB0Xe6dyKE+nDygj9c6+ToaLPOJ+DjLPfr509
+	 vfc4eFhUK/4cxN1mZES0Q+/o2BsCjKJSh4bo3h6WJKt3BzlYSZnHn5C+fc5nhpVUaG
+	 CnRxeqDVmOTwcgEb5OuGL6x1ftHOstIWD5MwfnyfzTjwj5WNxI+xFh8T7Hu07hWVMv
+	 tB6vbVfRn8v6EHCNc7mS+1ik+3z8kSdvvaDAiK9upiDL04/hlZvM3DBgVqroibR5GB
+	 0Xl6QPeEB/Ghg==
+Date: Fri, 18 Oct 2024 07:52:26 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
- controllers w/ hw queues
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
- javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-2-tudor.ambarus@linaro.org>
- <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ igor.belwon@mentallysanemainliners.org, linux-samsung-soc@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20241017164328.17077-1-umer.uddin@mentallysanemainliners.org>
+References: <20241017164328.17077-1-umer.uddin@mentallysanemainliners.org>
+Message-Id: <172925539756.17638.2832259722479628481.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] Add minimal Samsung Galaxy S20 Series board,
+ SM-G981B and SM-G980F support
 
-Hi, Jassi,
 
-Thanks for the review!
+On Thu, 17 Oct 2024 17:43:23 +0100, Umer Uddin wrote:
+> Hi folks,
+> 
+> This series adds initial support for the Samsung Galaxy S20 Series, also
+> initial board support for the Samsung Galaxy S20 5G (SM-G981B)
+> codenamed x1s and the Samsung Galaxy S20 (SM-G980F) codenamed
+> x1slte.
+> 
+> The S20 Series feature a lot of similarities in their configuration
+> and internally Samsung named the common devicetrees in their
+> downstream kernel 'hubble', please note hubble excludes the
+> S20 FE series and Note20 series.
+> The device trees have been tested with dtbs_check W=1
+> and results in no warnings.
+> 
+> This initial bringup consists of:
+>  * pinctrl
+>  * gpio-keys
+>  * simple-framebuffer
+> 
+> This is enough to reach a shell in an initramfs. More platform support
+> will be added in the future.
+> 
+> Just like SM-N981B, the preferred way to boot the upstream kernel is
+> by using a shim bootloader, called uniLoader [1], which works around
+> some issues with the stock, non-replacable Samsung S-LK bootloader.
+> For example, the stock bootloader leaves the decon trigger control
+> unset, which causes the framebuffer not to refresh.
+> 
+> Device functionality depends on the patch series from Igor Belwon:
+> "Add minimal Exynos990 SoC and SM-N981B support"
+> 
+> [1] https://github.com/ivoszbg/uniLoader
+> 
+> Changes in v2:
+>  - Add Samsung Galaxy S20 into device tree bindings
+>  - Add support for Samsung Galaxy S20 as well as the 5G variant now
+>  - Fix typo in Samsung Galaxy S20 5G commit message
+> 
+> Kind regards,
+> Umer
+> 
+> Umer Uddin (4):
+>   dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B
+>     and SM-G980F board
+>   arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series
+>     boards (hubble)
+>   arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G
+>     (x1s)
+>   arm64: dts: exynos: Add initial support for Samsung Galaxy S20
+>     (x1slte)
+> 
+>  .../bindings/arm/samsung/samsung-boards.yaml  |   2 +
+>  arch/arm64/boot/dts/exynos/Makefile           |   2 +
+>  .../dts/exynos/exynos990-hubble-common.dtsi   | 109 ++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos990-x1s.dts  |  23 ++++
+>  .../boot/dts/exynos/exynos990-x1slte.dts      |  17 +++
+>  5 files changed, 153 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-hubble-common.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+> 
+> --
+> 2.47.0
+> 
+> 
+> 
 
-On 10/18/24 5:17 AM, Jassi Brar wrote:
-> On Thu, Oct 17, 2024 at 11:36 AM Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->>
->> Current form of the mailbox framework doesn't allow controllers to benefit
->> of their hardware queue capabilities as the framework handles a single
->> active request at a time.
->>
->> The active request is considered completed when TX completes. But it seems
->> that TX is not in direct relation with RX,
->>
-> Correct, and it is not meant to be.
-> You are assuming there is always an RX in response to a TX, which is
 
-Not really. If there's no response expected, clients can set req->rx to
-NULL. Then the controllers know that no response is expected and can
-complete the request when TX completes.
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> not the case. Many platforms just send a message and only need to know
-> when it is sent. Many platforms only listen for incoming messages.
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-these 2 cases are covered with the req approach.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-> Many platforms have TX and RX but not as parts of one exchange. In
+  pip3 install dtschema --upgrade
 
-I don't think I understand this case. Is it related to what you describe
-below?
 
-> fact, only minority of platforms expect RX after each TX. Btw, what if
+New warnings running 'make CHECK_DTBS=y exynos/exynos990-x1s.dtb exynos/exynos990-x1slte.dtb' for 20241017164328.17077-1-umer.uddin@mentallysanemainliners.org:
 
-Right, I noticed.
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /: failed to match any schema with compatible: ['samsung,x1slte', 'samsung,exynos990']
+arch/arm64/boot/dts/exynos/exynos990-x1slte.dtb: /: failed to match any schema with compatible: ['samsung,x1slte', 'samsung,exynos990']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /: failed to match any schema with compatible: ['samsung,x1s', 'samsung,exynos990']
+arch/arm64/boot/dts/exynos/exynos990-x1s.dtb: /: failed to match any schema with compatible: ['samsung,x1s', 'samsung,exynos990']
 
-> some platform sends only and always after each receive? For these
 
-This case is covered as well with the req approach. One just needs to
-serialize the requests:
 
-ret = mbox_send_request(dc->mbox_chan, req1);
-ret = mbox_wait_request(ret, req1->wait);
-if (ret)
-	return ret;
 
-// req1 completed, send req2
-ret = mbox_send_request(dc->mbox_chan, req2);
-ret = mbox_wait_request(ret, req2->wait);
-if (ret)
-	return ret;
-	
-This shall work regardless if the client expects a response or not. If
-no response is expected, but just a TX completion, then the client can
-set req->rx = NULL.
 
-> reasons, it is left to the user to tie an incoming RX to some previous
-> TX, or not.
-
-It's possible I haven't covered all the cases, but I'm willing to
-understand them and come up with a new version with your help, where I
-address all the concerns.
-
-Cheers,
-ta
