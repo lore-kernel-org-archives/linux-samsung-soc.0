@@ -1,102 +1,78 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A07120E32F;
-	Fri, 18 Oct 2024 04:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846C217C9AC;
+	Fri, 18 Oct 2024 06:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729225084; cv=none; b=KnNyBW04rIs8DkU0G1AI1W+djmAggnWjUI0pRhC4M00WB2hzxUOzXAEuYhxtrDPAXUKhHj57buLLH7taXNWnkdpJ4ikYbKJjY6PXoynbfmAtzmiFzaaVM+p4D6wJtwFEP5fNJdV2fRKJHtaPnghwDGVB+lxhcwYoZgE/D6gw2IA=
+	t=1729232966; cv=none; b=fFyMnGNZnoRG3OxZMd1ze0qwj2Am01cZ8d8RO0eHOM1JrnrpX5V+PMYWfvvINA+83zjOg7f35c5MGsg7ujW+vlUX5kMkW87cGHHR8P4heiiP2XbFxglUUHRnz4RNZ54WTK9+bdq5cpyNPaRv6iLv3iczohHV4n8rdAfOJM22zKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729225084; c=relaxed/simple;
-	bh=U3v/6WiNUJ35uxZv6w6ULeUSkAOrx+S0t+ppI1Vtbq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1Cq3GKAlT5AWXYZV/cOnU7VAEDtFqZjK31SmIJpkFs08PA0MJ28t8zH2OrosLAuheP0BBKP7Ym+iPsKe57IOTCu9dKXvNVCVRIJ1hnVNrWSMPE1HzqCxNcqZzOzySa3Sid4ikpT0x+d7qRFTsjhsK/qVY0vKQf2IQ4o7AnpSFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mfc0NtxC; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729232966; c=relaxed/simple;
+	bh=1jCZB5uI7KIP/9tnwE/MmVN2WDZIoNWeu3AIC+yZBV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aczcQDCZF9N3Qaih0MUNZ/Z9bDsnAbvC5Tvs3wgXqQAYFqnN8qPlUt54uAZxeZkOQe+6LDa3BnhEoHJyGXw+oNpoi181aGowIAHBhKv+SXkQjMH8g079UaPXuI3+lvB7tNJfbA8azcNNPfTkqNVJFPiCFOLboIaeVWOlTZtoKbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BV3rC6PR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mfc0NtxC"
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e5f6e44727so1058899b6e.0;
-        Thu, 17 Oct 2024 21:18:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729225082; x=1729829882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U3v/6WiNUJ35uxZv6w6ULeUSkAOrx+S0t+ppI1Vtbq0=;
-        b=Mfc0NtxCU1xYO1kFuh6JpUXt2xZ+Jj7cqY9PXMtKmHvCdOd1vxEzNLWUbHYjntapkm
-         GpLUYG2jNNX4KSyD3UuDKXBS3TPwbdU8TZvaJCOraDrvCwHsSduFz7FeVao3Q0HlQ3vg
-         HKCdcSFcIjOEFgy4hKV7xpQxbcFvXPZ8g/McBeuUgW6hBuOIPcXT9hHwsutsDeeNjVS0
-         C5oPExZ+S6TuctHSHariV4THQdCxcTx0Ipwp6HAg4FZ3ahVWGVdL1Lupk3UqfuXicoOU
-         nZ1PuX403/FMdPBiAB+aDNDCkMxflxRxuE/wLdHMD9MaFWKK4TYfGygbD2dmcMSffXwL
-         eh5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729225082; x=1729829882;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U3v/6WiNUJ35uxZv6w6ULeUSkAOrx+S0t+ppI1Vtbq0=;
-        b=maiwi3+wG7qLy1bgR4iTrY2CTK0rPkM2yVdQB/oZxlCvWKjuczFivBs2G+En/JDvev
-         Vw0ZHmPh7D46HzGQKkRhOYvu5f08WWTWBS/VL0pmplmO7RSEJDrIsLp4TNsGTA2kYIYK
-         piFEzv3G/+HuldfcXe0WTI5L6pKfKJtF+NBw4iK6e/jYdoUyPnzQC8Dp495vekpa6Qyr
-         OlHRTrjonFMHeeGPg2r1lKCXkwnzRUYKGJ0Cp7uVk/eCsURUR7y/5tkp5wBqUmn5ruAo
-         q4tjsTc7QrfO6GSo8Ztuw0amz5ZTCVPJfKM5nVhGzedw2tE09ASytXzFlfLaPOtoGSKT
-         SCvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGFvHm69bOpRMwfy9HwEgNc18VZ1Pc4Kby7JTFa9E/jGUe9cWgmnkrryObCuJVDvqBfbVU9wykQU6oQPA=@vger.kernel.org, AJvYcCXiC7KwNGOlL2me8/s5LB7IxZvUVSv+z7WhKSLpTZGop9FfsOZrap9ZxD/T2gzDyBy8MzxT0xwth+dUUs8VHh9ZPwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvVyQo7C7aNggr/iYl+7gI2w+Fip78pUYDQ9oQ7FVruhe4+T7C
-	b/IJt8YRMHVPFbx8oFLGGp7i3RaikJFyUooRiIXf//FDY9586Mzs27SR5BNd583YyD3h5i1XwCX
-	gez/+NjsVbIWc5SoYU5XNLLTwONs=
-X-Google-Smtp-Source: AGHT+IHhGNdZ19+ochqKrxKWAOBSz02q8mUKgXln+6yfSiO3K7U/SH4nJVrViGUtJVSFXRjG4Z2GT3dQn56JMPDppWI=
-X-Received: by 2002:a05:6808:3086:b0:3e5:fd7f:c13f with SMTP id
- 5614622812f47-3e602c8438bmr546015b6e.11.1729225082458; Thu, 17 Oct 2024
- 21:18:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BV3rC6PR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F9FC4CEC3;
+	Fri, 18 Oct 2024 06:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729232966;
+	bh=1jCZB5uI7KIP/9tnwE/MmVN2WDZIoNWeu3AIC+yZBV8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BV3rC6PR0lBO+YkcpoI2nbnGM3i4eFvu/UgbzPOP4amqpokpL7iqvAOKYrTJQOiJt
+	 pOjxWELBFcTHXRQszFra84ezlT0anI93X+DTEUiGX7HleCiNCBdo5OVMCI7tnAAIkz
+	 c/8Xja03J3wOZWvnEv4KdDCs/J3TTEbseH6mpET0wqgRsetfahMdIDVM3R+qAQ7vnk
+	 g58/xwXTP5ELeJ1vm0Qk50tixRoFLT6AEkChIX3Ox9zX4xxiJqdvLbdoIQAx241J29
+	 OknzoobZPX24ciICgjvupyCCLSg+M1YOfVHirlCbNv7XU86OEChtqs6CFeYns+ZRMe
+	 ia1mn9YSplDnw==
+Date: Fri, 18 Oct 2024 08:29:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: arm: samsung: samsung-boards: Add
+ bindings for SM-G981B and SM-G980F board
+Message-ID: <2jlqwsolekrxydey2q2bowhrtldhsl56r4ijb5rmjiitskclpe@utspiaq5ffyk>
+References: <20241017164328.17077-1-umer.uddin@mentallysanemainliners.org>
+ <20241017164328.17077-2-umer.uddin@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org> <20241017163649.3007062-2-tudor.ambarus@linaro.org>
-In-Reply-To: <20241017163649.3007062-2-tudor.ambarus@linaro.org>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Thu, 17 Oct 2024 23:17:50 -0500
-Message-ID: <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
- controllers w/ hw queues
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com, 
-	javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org, 
-	luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com, 
-	bjorn@rivosinc.com, ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	marcan@marcan.st, neal@gompa.dev, alyssa@rosenzweig.io, broonie@kernel.org, 
-	andre.draszik@linaro.org, willmcvicker@google.com, peter.griffin@linaro.org, 
-	kernel-team@android.com, vincent.guittot@linaro.org, 
-	daniel.lezcano@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241017164328.17077-2-umer.uddin@mentallysanemainliners.org>
 
-On Thu, Oct 17, 2024 at 11:36=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linar=
-o.org> wrote:
->
-> Current form of the mailbox framework doesn't allow controllers to benefi=
-t
-> of their hardware queue capabilities as the framework handles a single
-> active request at a time.
->
-> The active request is considered completed when TX completes. But it seem=
-s
-> that TX is not in direct relation with RX,
->
-Correct, and it is not meant to be.
-You are assuming there is always an RX in response to a TX, which is
-not the case. Many platforms just send a message and only need to know
-when it is sent. Many platforms only listen for incoming messages.
-Many platforms have TX and RX but not as parts of one exchange. In
-fact, only minority of platforms expect RX after each TX. Btw, what if
-some platform sends only and always after each receive? For these
-reasons, it is left to the user to tie an incoming RX to some previous
-TX, or not.
+On Thu, Oct 17, 2024 at 05:43:24PM +0100, Umer Uddin wrote:
+> Add devicetree bindings for Samsung Galaxy S20 5G
+> and Samsung Galaxy S20 board.
+> 
+> Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml         | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> index d25a17e69..70a915240 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> @@ -234,6 +234,8 @@ properties:
+>          items:
+>            - enum:
+>                - samsung,c1s                     # Samsung Galaxy Note20 5G (SM-N981B)
+> +              - samsung,x1s                     # Samsung Galaxy S20 5G (SM-G981B)
+> +	      - samsung,x1slte			# Samsung Galaxy S20 (SM-G980F)
 
-Regards.
-Jassi
+It does not look like you tested the bindings, at least after quick
+look. Please run 'make dt_binding_check' (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+Maybe you need to update your dtschema and yamllint.
+
+Best regards,
+Krzysztof
+
