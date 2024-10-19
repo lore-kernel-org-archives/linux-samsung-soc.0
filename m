@@ -1,83 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067F11CCB38;
-	Sat, 19 Oct 2024 05:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A483818FC67;
+	Sat, 19 Oct 2024 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729317391; cv=none; b=nmy2ezZscbL5AYZwbjqCXezDI8sgGi+yd9UGkhsFebwL798ZjMnYkddf7R4qEDWpO9z4CL4vzfcU/iGu0J9bpU3psTptfo5tN+BYeyDUNes71kJj3p1jZNuzjF12dBlPmwRVl/K94z21uj/46Ru/B2IsvVwTvKNn2PkxDlwDl4Q=
+	t=1729336575; cv=none; b=M+G0Pk0qfLJe8x1abj3fSqK56UuhsVuHBq3XP8S7to13bR4F9z46eurYvZmLr7h+OfPhHiXUjwHLfU42hFtGQ/suLgvayJnWQaSls8cO3Q4iH1SBaHFjHESapMaXTB9M3cVYl0i9Zq1TCDTKJPId6aPhZn68E07a69QH3667OEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729317391; c=relaxed/simple;
-	bh=b5b4LY3dZKio27Rh7DTB+kLmPwIAeyavRYt/eXrOWjs=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=u3PsEnFn88kME1oO+g6JJ2oUI5p+f287Rd4o4tfKe2PqTchwW1IU/bcRQZnh0hdNQhWxb0ceRsxbKIScvAS5OFynKCiM6SdnjYT3fNgVTRd1ait6aGOovh9phIPPphtuOKD0V41etdyOwF+pN17KxKT6eioNBhdXrSC063MkVA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8zSQrzX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729336575; c=relaxed/simple;
+	bh=zy6eBkC6mTD47sGFuSu/kE6O5nq6hr0S/KoQYOZztNY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SPkwe222esR3OHcfLhefl+uno4tWjCyZfmoQ7/SgnNYn6IxGCV+gfMZttxCfdfZtzcS8J/FR1ICDX66xkonHMPPEoE1hnYIbBlSz2seD8Jd7GO40zOpagTs6a3z12H+EKI4aYJTjKO/Nb3S2uCBsMXQWfS/xp0iyLOb4rCHLCUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CMniy5LP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8zSQrzX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5E9C4CEC5;
-	Sat, 19 Oct 2024 05:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729317390;
-	bh=b5b4LY3dZKio27Rh7DTB+kLmPwIAeyavRYt/eXrOWjs=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=b8zSQrzX3j48lS9xgwwlNdaleIZeuC9FGNWAcOS6yg+fNeAWgvJzxkV4/QKGYLVMZ
-	 CRFG9QebUF496vvbdOddO2quSYDrBm7WzENbPXE6irTqtdmmZl4HRZzKwc/uAKwns8
-	 udFBU55QVuEaej6ppKTDg+JFsopQEwx0fbeIV0mwDcpu7PyYi0IVwJMWB4Oel9QWdh
-	 If/tuEqkD34A1FRXVSR7HkPd7Qu+lvo0fWrJYPVGr0cdnNxJntaiROfxlYd72Rd9ec
-	 AtQ2LliDUlRBQj07tO6CxcHwXr8IGRX1J4J4dpjyrVbNLT9IZzIROzccSnFi0oSbM3
-	 E4SKGvsMCy7Dw==
-Message-ID: <c0afdf9f8c9773ef83274cb119d14c90.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CMniy5LP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729336571;
+	bh=zy6eBkC6mTD47sGFuSu/kE6O5nq6hr0S/KoQYOZztNY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=CMniy5LPAE6Nbv0OawIzhTrrk1jWeUuKok05gfHqs0dlVLRnXnvjL7ULDSbVN85a2
+	 xHY748AECrXlSiAVNigckaZ65BnGbRWKrseZk8niPdtXa5fn2m7mpZLZGvta8V0pDN
+	 JCASHZ4p/D2QQYE6amkBGYjnH2NQqBNSt3g05P/jbmUg2rI7Iq5B+4caCZlSaCQLbt
+	 crQ3TZ8Sk7XWlcxWy7bWniVXeOjXaavy6/dyqHa0Jxvipz23Cm4HdqTguHu1EjnGqS
+	 4aFK+STqx4Z1GF4HQM5yVePXAm0D9l+sCTuQefSSxWC8GOuuCw5+gmHx+f6HH/OgdF
+	 rhRJ4jgiIyXXg==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9058217E1574;
+	Sat, 19 Oct 2024 13:16:11 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v4 0/4] Provide devm_clk_bulk_get_all_enabled() helper
+Date: Sat, 19 Oct 2024 14:15:59 +0300
+Message-Id: <20241019-clk_bulk_ena_fix-v4-0-57f108f64e70@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241018-clk_bulk_ena_fix-v3-1-57e8bb82460c@collabora.com>
-References: <20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com> <20241018-clk_bulk_ena_fix-v3-1-57e8bb82460c@collabora.com>
-Subject: Re: [PATCH v3 1/4] clk: Provide devm_clk_bulk_get_all_enabled() helper
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Helgaas <bhelgaas@google.com>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>
-Date: Fri, 18 Oct 2024 22:56:28 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO+UE2cC/23NSwrCMBQF0K2UjI3k03zqyH2IlCRNbbA2kmhQS
+ vduWlBEO3lwL9zzRhBtcDaCXTGCYJOLzg85lJsCmE4NJwtdkzMgiJSowgSa/lzrez52UHXrHhB
+ zrYSgTDZNC/LsGmyuF/JwzLlz8ebDc/mQ8Ny+sfIfSxgiaCxlVDDJDOJ74/teaR/U1vgLmMFEv
+ hDCVxCSkcoILhhGrdZsDaEfBCMsVxCaESas1FqSkiPzi0zT9AI46PHGPgEAAA==
+X-Change-ID: 20240912-clk_bulk_ena_fix-16ba77358ddf
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Quoting Cristian Ciocaltea (2024-10-17 16:17:29)
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 82ae1f26e634572b943d18b8d86267f0a69911a6..0d0fe364b66a8590d5e7c63dc=
-6c1e70c59d53e89 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -230,25 +239,27 @@ int __must_check devm_clk_bulk_get_all_enable(struc=
-t device *dev,
->                 return -ENOMEM;
-> =20
->         ret =3D clk_bulk_get_all(dev, &devres->clks);
-> -       if (ret > 0) {
-> -               *clks =3D devres->clks;
-> -               devres->num_clks =3D ret;
-> -       } else {
-> -               devres_free(devres);
-> -               return ret;
-> -       }
-> +       if (ret <=3D 0)
-> +               goto err_free_devres;
+Commit 265b07df758a ("clk: Provide managed helper to get and enable bulk
+clocks") added devm_clk_bulk_get_all_enable() function, but missed to
+return the number of clocks stored in the clk_bulk_data table referenced
+by the clks argument.
 
-Please don't use goto so that the diff is minimized.
+That is required in case there is a need to iterate these clocks later,
+therefore I couldn't see any use case of this parameter and should have
+been simply removed from the function declaration.
 
-> +
-> +       *clks =3D devres->clks;
-> +       devres->num_clks =3D ret;
-> =20
->         ret =3D clk_bulk_prepare_enable(devres->num_clks, *clks);
-> -       if (!ret) {
-> -               devres_add(dev, devres);
-> -       } else {
-> +       if (ret) {
->                 clk_bulk_put_all(devres->num_clks, devres->clks);
-> -               devres_free(devres);
-> +               goto err_free_devres;
+The first patch in the series provides devm_clk_bulk_get_all_enabled()
+variant, which is consistent with devm_clk_bulk_get_all() in terms of
+the returned value:
 
-		return ret;
+ > 0 if one or more clocks have been stored
+ = 0 if there are no clocks
+ < 0 if an error occurred
+
+Moreover, the naming is consistent with devm_clk_get_enabled(), i.e. use
+the past form of 'enable'.
+
+The next two patches switch existing users of devm_clk_get_enable() to
+the new helper - there were only two, as of next-20240913.
+
+The last patch drops the now obsolete devm_clk_bulk_get_all_enable()
+helper.
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v4:
+- Dropped usage of gotos in the new helper implementation to further
+  minimize the diff (Stephen)
+- Link to v3: https://lore.kernel.org/r/20241018-clk_bulk_ena_fix-v3-0-57e8bb82460c@collabora.com
+
+Changes in v3:
+- Made devm_clk_bulk_get_all_enable() use the new helper, as suggested
+  by Stephen to improve diff readability
+- Rebased series onto next-20241017
+- Link to v2: https://lore.kernel.org/r/20240926-clk_bulk_ena_fix-v2-0-9c767510fbb5@collabora.com
+
+Changes in v2:
+- Dropped references to 'broken' API in commit descriptions, per Mani's
+  suggestion
+- Added R-b tags from Angelo and Mani
+- Link to v1: https://lore.kernel.org/r/20240914-clk_bulk_ena_fix-v1-0-ce3537585c06@collabora.com
+
+---
+Cristian Ciocaltea (4):
+      clk: Provide devm_clk_bulk_get_all_enabled() helper
+      soc: mediatek: pwrap: Switch to devm_clk_bulk_get_all_enabled()
+      PCI: exynos: Switch to devm_clk_bulk_get_all_enabled()
+      clk: Drop obsolete devm_clk_bulk_get_all_enable() helper
+
+ drivers/clk/clk-devres.c                | 23 ++++++++++++-----------
+ drivers/pci/controller/dwc/pci-exynos.c |  2 +-
+ drivers/soc/mediatek/mtk-pmic-wrap.c    |  4 ++--
+ include/linux/clk.h                     | 12 +++++++-----
+ 4 files changed, 22 insertions(+), 19 deletions(-)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20240912-clk_bulk_ena_fix-16ba77358ddf
+
