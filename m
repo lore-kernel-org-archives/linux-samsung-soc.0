@@ -1,137 +1,216 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D177BA27
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817921CF7C1
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729491493; cv=none; b=hwekS4577giEpHnPgYU2IQo3vgccw/IQboSFUX/mqt2K2jzEhvfwAttJ5VrC/K3A+yJidcT2KvtIeFfhVoTMjnmThpqS/4VIzHO6HjcXn9F6VcLfkGZ2UV7wSluIyQ3Ab/UihvlJpO8yBseH0USc9AIgAGXOhKuleX7WguIMCgo=
+	t=1729492784; cv=none; b=g7tB6BV288LbFpivdwyXV504sIefGor4Mn7wygB1dqyHgU04Xm2tYo2pEctSlfNxLYKZkLtBhMuSUhDFzQ1n3RpJ5U6w98pIMMU8P8ZKBKKMozKusKwO+1HaprwAzGinqcQf5w/mNunvz5mje3dxK//+34FEwqCspvZPjfUrNys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729491493; c=relaxed/simple;
-	bh=1PKIcib9+8q3lrOU6fVnEN9cqbdUgXxB5GKCZlSw6os=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VX9AHssZ6kfIMpKF/x4kaA22aNVna9Oc8x6WwQy36Tnb+XnljZLqgml5OceFsdCOQ9vM18cGiptVMN0SkVQ5GOzuHQDICfq2qtKEHWTzsZx+sZ4At0ui/F2x/R631io5Zouy7wRfnMgyNoZO6LuwDKJfbxClMHIOG5X5hH2Apbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZH9KSgR; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729492784; c=relaxed/simple;
+	bh=yP63p3olM6y48xBFe7ix+AC1xOfxPYOA0crl2Zz54lM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=CoT4UD28/vwz2sQo+AdxsPRcy3s2JPOURgUeULBFFzf0/8A3NHsbHj2dWUF9oHvIfIV2LUi/5OcsrSA0EWfASr9hetbl0Uf10Nj5l9PKNP599jX4u2RE02Ze4jyg2kaKcA1AtO/YeLsxfgGkXvpgOplEmJvx/iZFJyqTGSH7oZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fdMzb7Z/; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZH9KSgR"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d8901cb98so3220943f8f.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2024 23:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729491490; x=1730096290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qX4zIhNfxYlQrlR7WHo7Qz8LQENp4Om9Aokp2bYEp7U=;
-        b=MZH9KSgRAo1RQipIYZKoFb0c664AGFCW4MAS2EKM1eB3sCNPPV3LYiYo9eJwBwizBY
-         G6yNEYxl0oYHr0mVh8G7mfMHVQnwkAylGPWrxYpPFxmmuWxb3Ye//vbBfO1owhTfCS2O
-         Ml4rt5Mn4bxFxa6BVYaxTBw6hgV1PacqWE1X67VYhdoiw7Y6hfAISxQBn4S/O8pV492M
-         rlN/7Fm3kAwwgeJWe4teoD0V9z4Q024qinAsCklYXu3wiYGKncPHoCUQytqxipiYtx9B
-         /T4dW6aAjJ0JnN1FbqY4195rw0wvXKrwCDWUvMV59AxPyD1Yw8TO+HzW04RYInCuIaXV
-         YVoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729491490; x=1730096290;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qX4zIhNfxYlQrlR7WHo7Qz8LQENp4Om9Aokp2bYEp7U=;
-        b=Gur8n+XW7QRcR3hK8/yP+T93qJCgK8Omp4FG8CUKf7MRlumcAdmX4H635jD+skay/j
-         Ntno9CFuZhu8/U+p+CsziT8YGhAEGyrIPsqDNHRs6iVK6Wh9v3sMIrg0lSIP184CGkcs
-         dJmfwEkyqBrt7NsOLlzBaas7H4Gvbn+XVQ197pKJ6bRu+foaUDKrG8LnCyJMsqc1bu00
-         UUm5lLULyNha9uiF29MzMjzMlAF7Hq39SWgADjVjT6JAlOOHFy/BpNwiOfdS0jBzjxu6
-         bDBs4pxLswl/hG1C2k2oVc10kLvZTiu8NCS3rUQ5xV9xiEUS77z2KLnZUM6+Zd4OQGVq
-         B2aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkF7p30kCh+S+aoVD3wAZak5dxTAAAVEg6Erc0M9qCaConKee0y3Cu0GVK/oFGiJLaoTQzAdDFBgv6vY2a4Seiew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YybkJqfLfQVaPHvxUQgS6MsFyKs/iREF1CTsUY+8CPvtmd8AQyf
-	l4NEknqfMGuC4tNgmEFCXo3tcmHUs7b3lz7xl1qNPo7owinQjJkh77dZvn/k4IQ=
-X-Google-Smtp-Source: AGHT+IFzCvQqkE64bi/xeJMd7XgYjjCcYTd15/aGONceMWdvvyWn015PNuTIjGOK5MpJw4Jfe1ZObQ==
-X-Received: by 2002:a05:6000:e83:b0:374:cee6:c298 with SMTP id ffacd0b85a97d-37d93e2492bmr9009274f8f.21.1729491489769;
-        Sun, 20 Oct 2024 23:18:09 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bb4dsm3378273f8f.97.2024.10.20.23.18.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Oct 2024 23:18:09 -0700 (PDT)
-Message-ID: <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
-Date: Mon, 21 Oct 2024 07:18:07 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fdMzb7Z/"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241021063939epoutp0218a7278882808a08d4f2757eb19b7ae6~AZIUV-_S11849118491epoutp02R
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:39:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241021063939epoutp0218a7278882808a08d4f2757eb19b7ae6~AZIUV-_S11849118491epoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729492779;
+	bh=y1rVAAUbL4XZfrYkt5r90v9JFxYMUZqPCTcgm/yJbCM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fdMzb7Z/l70wqGdlAjIsM/uBh/g7TMZMhzVCsycqFwfgKZR2aNf/FpX2jJrvjZsz4
+	 T8OHdZJhaPBEu6hRaMc1g/MSKyuQoZYym8T8TvebrZ6IQGYQt/X/zyJiuaZqk2BpDD
+	 GpcUCc4IDAVSl1gM+A9IewXV4CBR8nK3pBty5vFI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20241021063939epcas2p253d4fd6e3af9b6310857b0d4cb72570a~AZIT3Hiyh2063720637epcas2p29;
+	Mon, 21 Oct 2024 06:39:39 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.68]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XX5JV3X2Tz4x9QD; Mon, 21 Oct
+	2024 06:39:38 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DC.57.09770.A27F5176; Mon, 21 Oct 2024 15:39:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241021063938epcas2p22e0a9f4f869237ceadf4f2035778bfc7~AZIS4FlqH2063720637epcas2p24;
+	Mon, 21 Oct 2024 06:39:38 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241021063938epsmtrp1eaa5da4c43b8b32e0b92f7a621cf634a~AZIS3NkOs1158811588epsmtrp1T;
+	Mon, 21 Oct 2024 06:39:38 +0000 (GMT)
+X-AuditID: b6c32a46-00dfa7000000262a-11-6715f72a8699
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	28.99.08229.927F5176; Mon, 21 Oct 2024 15:39:37 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.55]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241021063937epsmtip261c9eb531f2414339874f3626022d22d~AZISoWHWN1927319273epsmtip2V;
+	Mon, 21 Oct 2024 06:39:37 +0000 (GMT)
+From: Taewan Kim <trunixs.kim@samsung.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
+	<alim.akhtar@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
+	Taewan Kim <trunixs.kim@samsung.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 2/3] watchdog: s3c2410_wdt: add support for
+ exynosautov920 SoC
+Date: Mon, 21 Oct 2024 15:39:02 +0900
+Message-ID: <20241021063903.793166-3-trunixs.kim@samsung.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241021063903.793166-1-trunixs.kim@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
- controllers w/ hw queues
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
- javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-2-tudor.ambarus@linaro.org>
- <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
- <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
-Content-Language: en-US
-In-Reply-To: <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmua7Wd9F0g/W7pS0ezNvGZnH/Ux+T
+	xZq955gs5h85x2rxctY9Nou9r7eyW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
+	MWnxeSaLxy//MTvweWxa1cnmcefaHjaPlWvWsHpsXlLvsfN7A7tH35ZVjB6fN8kFsEdl22Sk
+	JqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAnaykUJaYUwoU
+	CkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7onfSB
+	teCJbMXdw9eZGhjnSXYxcnJICJhInDn1gbmLkYtDSGAHo0Tn+ttsEM4nRol5vxcygVQJCXxj
+	lFizIBum4/WevVBFexkl/v/fxg7hfGSU+PqylxGkik1AS2Lb4VdMIAkRgdeMEk2978CWMAus
+	ZZKY86MNrEpYIFii6cJqsB0sAqoST/ftBrN5BWwldp+fxQqxT17i/Jv/bCA2p4CdxONjT1kg
+	agQlTs58AmYzA9U0b50NtkBCYCWHREvre6hmF4kt+9axQdjCEq+Ob2GHsKUkXva3Qdn5EitX
+	nmCCsGsk7rXtYoGw7SUWnfkJVMMBtEBTYv0ufRBTQkBZ4sgtqLV8Eh2H/7JDhHklOtqEIExV
+	ienLAiBmSEtMnLEWar+HxI3fO1ggYTWRUWL7tQ9MExgVZiF5ZhaSZ2Yh7F3AyLyKUSy1oDg3
+	PbXYqMAIHsPJ+bmbGMFJWMttB+OUtx/0DjEycTAeYpTgYFYS4VUqEU0X4k1JrKxKLcqPLyrN
+	SS0+xGgKDOqJzFKiyfnAPJBXEm9oYmlgYmZmaG5kamCuJM57r3VuipBAemJJanZqakFqEUwf
+	EwenVAOT596z28rsX5lcrAkXuSMX7rt8x+RZb64dinph0x9Wt+OK49LpC3/fKnn91fY475qu
+	Bes1L3Dt8yk8dOrm9Kxt51+c3Nzi/Mknxf/m5mt/Vumek36ooXzgwC3+lEN8XerMH1YpXxP9
+	WDzhzrSDv9J8VJc6S009Ps/x3etFEx4802xdfpOxdpK6zNmU/ob9bPPKzC46xs+ULrxsELFc
+	Wv1jsh7/nbc9t/+ekVFVE5wj58/P2WcwKe+l8eySus9u959nHQxdZ9fCcODgXw2eKW7Mryrl
+	Jk8X8T//POqFzqJzn3tmf//n/ejGuimP9gSnP5dYu0HwwLEK2c554QcK+K6ucOcW5S8IWmjz
+	cnJc8KSHT78rsRRnJBpqMRcVJwIAK2IRaEsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCLMWRmVeSWpSXmKPExsWy7bCSvK7md9F0g1fHbCwezNvGZnH/Ux+T
+	xZq955gs5h85x2rxctY9Nou9r7eyW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
+	MWnxeSaLxy//MTvweWxa1cnmcefaHjaPlWvWsHpsXlLvsfN7A7tH35ZVjB6fN8kFsEdx2aSk
+	5mSWpRbp2yVwZfRO+sBa8ES24u7h60wNjPMkuxg5OSQETCRe79nL1sXIxSEksJtRYk3XRWaI
+	hLTEkd8v2CBsYYn7LUdYIYreM0pMXX8MLMEmoCWx7fArJpCECEji7JdfjCAJZoHNTBJXpimB
+	2MICgRKvN70Gi7MIqEo83bebCcTmFbCV2H1+FivEBnmJ82/+gw3lFLCTeHzsKQuILQRUc+Uq
+	xBW8AoISJ2c+YYGYLy/RvHU28wRGgVlIUrOQpBYwMq1ilEwtKM5Nzy02LDDMSy3XK07MLS7N
+	S9dLzs/dxAiOGC3NHYzbV33QO8TIxMF4iFGCg1lJhFepRDRdiDclsbIqtSg/vqg0J7X4EKM0
+	B4uSOK/4i94UIYH0xJLU7NTUgtQimCwTB6dUA5PkdY4rx3PKViac50ri388XWVDNbmww1WV2
+	9rQ/L678ibi18oDI0s0/tu+MeeXL+v+f58cHbfXrWZhjLj2Z/Nra6lre+mV2uwu8nJy/HN57
+	ykhpx+9J7/z7zng/Vle3Fzm/edO7KTE53Xw8B82vzJ7A/6HJqmifwMTcTfZyU9fN+tS14dnK
+	AONDbK8l2KT3erQU3ry0xPOUdM2zK9+XfPIV/dWTaLd2Y+pNZ0drH3l9VpUTb884NoSrVl5/
+	MNN/1vVzb+dd3HCDP/SkZqa5hlTNhIfm+3faMR3UF6lvT5g9f3nQkj3Ox986mQUrvXlzRlH0
+	F1sqp+WONbf9b4a4aD5XX9w74dTs73nt+mYy7+wElFiKMxINtZiLihMBSIxYWgcDAAA=
+X-CMS-MailID: 20241021063938epcas2p22e0a9f4f869237ceadf4f2035778bfc7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241021063938epcas2p22e0a9f4f869237ceadf4f2035778bfc7
+References: <20241021063903.793166-1-trunixs.kim@samsung.com>
+	<CGME20241021063938epcas2p22e0a9f4f869237ceadf4f2035778bfc7@epcas2p2.samsung.com>
 
-Hi, Jassi,
+From: Byoungtae Cho <bt.cho@samsung.com>
 
-On 10/18/24 8:49 AM, Tudor Ambarus wrote:
->>> The active request is considered completed when TX completes. But it seems
->>> that TX is not in direct relation with RX,
->>>
->> Correct, and it is not meant to be.
->> You are assuming there is always an RX in response to a TX, which is
-> Not really. If there's no response expected, clients can set req->rx to
-> NULL. Then the controllers know that no response is expected and can
-> complete the request when TX completes.
-> 
->> not the case. Many platforms just send a message and only need to know
->> when it is sent. Many platforms only listen for incoming messages.
-> these 2 cases are covered with the req approach.
-> 
->> Many platforms have TX and RX but not as parts of one exchange. In
-> I don't think I understand this case. Is it related to what you describe
-> below?
-> 
->> fact, only minority of platforms expect RX after each TX. Btw, what if
-> Right, I noticed.
-> 
->> some platform sends only and always after each receive? For these
-> This case is covered as well with the req approach. One just needs to
-> serialize the requests:
-> 
-> ret = mbox_send_request(dc->mbox_chan, req1);
-> ret = mbox_wait_request(ret, req1->wait);
-> if (ret)
-> 	return ret;
-> 
-> // req1 completed, send req2
-> ret = mbox_send_request(dc->mbox_chan, req2);
-> ret = mbox_wait_request(ret, req2->wait);
-> if (ret)
-> 	return ret;
-> 	
-> This shall work regardless if the client expects a response or not. If
-> no response is expected, but just a TX completion, then the client can
-> set req->rx = NULL.
-> 
->> reasons, it is left to the user to tie an incoming RX to some previous
->> TX, or not.
+Adds the compatibles and drvdata for the ExynosAuto V920 SoC. This SoC
+is almost similar to ExynosAutoV9, but some CPU configurations are quite
+different, so it should be added. Plus it also support DBGACK like as
+GS101 SoC.
 
-Is there a specific driver that I can look at in order to understand the
-case where RX is not tied to TX? It will speed me up a little.
-Also, if you think there's a better way to enable controllers to manage
-their hardware queues, please say.
+Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
 
-Thanks,
-ta
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 686cf544d0ae..aa128099c47d 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -63,6 +63,10 @@
+ #define EXYNOS850_CLUSTER1_NONCPU_INT_EN	0x1644
+ #define EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT	0x1520
+ #define EXYNOSAUTOV9_CLUSTER1_NONCPU_INT_EN	0x1544
++#define EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT	0x1420
++#define EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN	0x1444
++#define EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT	0x1720
++#define EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN	0x1744
+ 
+ #define EXYNOS850_CLUSTER0_WDTRESET_BIT		24
+ #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
+@@ -303,6 +307,32 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+ 		  QUIRK_HAS_DBGACK_BIT,
+ };
+ 
++static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
++	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN,
++	.mask_bit = 2,
++	.mask_reset_inv = true,
++	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
++	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
++	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
++	.cnt_en_bit = 7,
++	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
++		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
++		  QUIRK_HAS_DBGACK_BIT,
++};
++
++static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
++	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN,
++	.mask_bit = 2,
++	.mask_reset_inv = true,
++	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
++	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
++	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
++	.cnt_en_bit = 7,
++	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
++		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
++		  QUIRK_HAS_DBGACK_BIT,
++};
++
+ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{ .compatible = "google,gs101-wdt",
+ 	  .data = &drv_data_gs101_cl0 },
+@@ -320,6 +350,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	  .data = &drv_data_exynos850_cl0 },
+ 	{ .compatible = "samsung,exynosautov9-wdt",
+ 	  .data = &drv_data_exynosautov9_cl0 },
++	{ .compatible = "samsung,exynosautov920-wdt",
++	  .data = &drv_data_exynosautov920_cl0 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+@@ -643,7 +675,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+ 	/* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index */
+ 	if (variant == &drv_data_exynos850_cl0 ||
+ 	    variant == &drv_data_exynosautov9_cl0 ||
+-	    variant == &drv_data_gs101_cl0) {
++	    variant == &drv_data_gs101_cl0 ||
++	    variant == &drv_data_exynosautov920_cl0) {
+ 		u32 index;
+ 		int err;
+ 
+@@ -662,6 +695,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+ 				variant = &drv_data_exynosautov9_cl1;
+ 			else if (variant == &drv_data_gs101_cl0)
+ 				variant = &drv_data_gs101_cl1;
++			else if (variant == &drv_data_exynosautov920_cl0)
++				variant = &drv_data_exynosautov920_cl1;
+ 			break;
+ 		default:
+ 			return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
+-- 
+2.47.0
+
