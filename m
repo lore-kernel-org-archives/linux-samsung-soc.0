@@ -1,179 +1,137 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D5B194151
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D177BA27
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729490742; cv=none; b=swsl/Ah7gbxtayLCNU6MPF8QsdVTABe0avWKrV0ujJMuuDvwmaD2jwVBju5Nyu9ZEIe6NK4Y2JNhCDPR3h09iEIPg6WK3/o5pxaTrtORUD3wzHApzifzm06qPE4Sl03RRonUbR6S94tC/MwSaN5bMNCgbQT185QA3B0I3r3zZIo=
+	t=1729491493; cv=none; b=hwekS4577giEpHnPgYU2IQo3vgccw/IQboSFUX/mqt2K2jzEhvfwAttJ5VrC/K3A+yJidcT2KvtIeFfhVoTMjnmThpqS/4VIzHO6HjcXn9F6VcLfkGZ2UV7wSluIyQ3Ab/UihvlJpO8yBseH0USc9AIgAGXOhKuleX7WguIMCgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729490742; c=relaxed/simple;
-	bh=IIWio+BGWaSaW21PnnxARXZp4FionUCKZk/+r1D+oG8=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=DEkFIm3wKt//RaK3WUEDTpmi2FN3fh0ZQiT2cnJCVP+Zh25r2AvuXXnGww5WpDNffabKqqhJg88WFMc/revCnrIFmMENhL2VJHG4GJBchJJh9fslwsR/XT6CV6g7Yk9StKLu+ZFdcLImS73wJcP/5VcNObLgK5aWKDQXgAecC9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g0MdSgGP; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1729491493; c=relaxed/simple;
+	bh=1PKIcib9+8q3lrOU6fVnEN9cqbdUgXxB5GKCZlSw6os=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VX9AHssZ6kfIMpKF/x4kaA22aNVna9Oc8x6WwQy36Tnb+XnljZLqgml5OceFsdCOQ9vM18cGiptVMN0SkVQ5GOzuHQDICfq2qtKEHWTzsZx+sZ4At0ui/F2x/R631io5Zouy7wRfnMgyNoZO6LuwDKJfbxClMHIOG5X5hH2Apbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZH9KSgR; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g0MdSgGP"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241021060538epoutp01e90095ead70895c824f1b712f751b7d9~AYqnI4Vyu1912219122epoutp01p
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:05:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241021060538epoutp01e90095ead70895c824f1b712f751b7d9~AYqnI4Vyu1912219122epoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729490738;
-	bh=cb03jBzckq9Uro4zVi90gsorpfxSmMqhnETvcsGXro4=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=g0MdSgGP6pbOZvRs9RMEYa2XzU2jIOV+twWysW48vjYmHvfDq+K2shIludSNSjOCd
-	 MviT5gtCmM52jFzhFQPnpGBZJoHsG8I6gakxwFXCAVoiNZHCP68ZDeXgdlUISqrWsr
-	 8BTBVTy13SWkmh4Tmb7YBK23e432fiG3Zh8ZtRFA=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20241021060537epcas2p37bee194c61b47e11eac304db9cf11964~AYqmoU-pd1337213372epcas2p3x;
-	Mon, 21 Oct 2024 06:05:37 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.68]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XX4YF2dRwz4x9Pr; Mon, 21 Oct
-	2024 06:05:37 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B8.C8.18950.03FE5176; Mon, 21 Oct 2024 15:05:36 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241021060535epcas2p1f716c45ee988775fb2a2b9790435126d~AYqkyqKGt1960619606epcas2p1W;
-	Mon, 21 Oct 2024 06:05:35 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241021060535epsmtrp2f0b46818128934af63d237155420f084~AYqkxv7BR0397203972epsmtrp2c;
-	Mon, 21 Oct 2024 06:05:35 +0000 (GMT)
-X-AuditID: b6c32a4d-1f1c070000004a06-6e-6715ef304a3a
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8E.64.08227.F2FE5176; Mon, 21 Oct 2024 15:05:35 +0900 (KST)
-Received: from KORCO119526 (unknown [10.229.18.158]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241021060535epsmtip2fea2c687d755854e22e3c927d20cbb56~AYqkfoj_F3072430724epsmtip2O;
-	Mon, 21 Oct 2024 06:05:35 +0000 (GMT)
-From: =?utf-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Wim Van Sebroeck'"
-	<wim@linux-watchdog.org>, "'Guenter Roeck'" <linux@roeck-us.net>, "'Rob
- Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
-	"'Conor Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>
-Cc: <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, "'Byoungtae Cho'" <bt.cho@samsung.com>
-In-Reply-To: <f9bbe108-1a0d-451f-a1c7-14e8aadc76b5@kernel.org>
-Subject: RE: [PATCH v2 1/3] dt-bindings: watchdog: Document ExynosAutoV920
- watchdog bindings
-Date: Mon, 21 Oct 2024 15:05:35 +0900
-Message-ID: <003f01db237f$3e707de0$bb5179a0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZH9KSgR"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d8901cb98so3220943f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2024 23:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729491490; x=1730096290; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qX4zIhNfxYlQrlR7WHo7Qz8LQENp4Om9Aokp2bYEp7U=;
+        b=MZH9KSgRAo1RQipIYZKoFb0c664AGFCW4MAS2EKM1eB3sCNPPV3LYiYo9eJwBwizBY
+         G6yNEYxl0oYHr0mVh8G7mfMHVQnwkAylGPWrxYpPFxmmuWxb3Ye//vbBfO1owhTfCS2O
+         Ml4rt5Mn4bxFxa6BVYaxTBw6hgV1PacqWE1X67VYhdoiw7Y6hfAISxQBn4S/O8pV492M
+         rlN/7Fm3kAwwgeJWe4teoD0V9z4Q024qinAsCklYXu3wiYGKncPHoCUQytqxipiYtx9B
+         /T4dW6aAjJ0JnN1FbqY4195rw0wvXKrwCDWUvMV59AxPyD1Yw8TO+HzW04RYInCuIaXV
+         YVoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729491490; x=1730096290;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qX4zIhNfxYlQrlR7WHo7Qz8LQENp4Om9Aokp2bYEp7U=;
+        b=Gur8n+XW7QRcR3hK8/yP+T93qJCgK8Omp4FG8CUKf7MRlumcAdmX4H635jD+skay/j
+         Ntno9CFuZhu8/U+p+CsziT8YGhAEGyrIPsqDNHRs6iVK6Wh9v3sMIrg0lSIP184CGkcs
+         dJmfwEkyqBrt7NsOLlzBaas7H4Gvbn+XVQ197pKJ6bRu+foaUDKrG8LnCyJMsqc1bu00
+         UUm5lLULyNha9uiF29MzMjzMlAF7Hq39SWgADjVjT6JAlOOHFy/BpNwiOfdS0jBzjxu6
+         bDBs4pxLswl/hG1C2k2oVc10kLvZTiu8NCS3rUQ5xV9xiEUS77z2KLnZUM6+Zd4OQGVq
+         B2aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkF7p30kCh+S+aoVD3wAZak5dxTAAAVEg6Erc0M9qCaConKee0y3Cu0GVK/oFGiJLaoTQzAdDFBgv6vY2a4Seiew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybkJqfLfQVaPHvxUQgS6MsFyKs/iREF1CTsUY+8CPvtmd8AQyf
+	l4NEknqfMGuC4tNgmEFCXo3tcmHUs7b3lz7xl1qNPo7owinQjJkh77dZvn/k4IQ=
+X-Google-Smtp-Source: AGHT+IFzCvQqkE64bi/xeJMd7XgYjjCcYTd15/aGONceMWdvvyWn015PNuTIjGOK5MpJw4Jfe1ZObQ==
+X-Received: by 2002:a05:6000:e83:b0:374:cee6:c298 with SMTP id ffacd0b85a97d-37d93e2492bmr9009274f8f.21.1729491489769;
+        Sun, 20 Oct 2024 23:18:09 -0700 (PDT)
+Received: from [192.168.0.157] ([82.76.204.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bb4dsm3378273f8f.97.2024.10.20.23.18.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Oct 2024 23:18:09 -0700 (PDT)
+Message-ID: <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
+Date: Mon, 21 Oct 2024 07:18:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
+ controllers w/ hw queues
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
+ javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+ luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
+ bjorn@rivosinc.com, ulf.hansson@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
+ alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
+ vincent.guittot@linaro.org, daniel.lezcano@linaro.org
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-2-tudor.ambarus@linaro.org>
+ <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
+ <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
+Content-Language: en-US
+In-Reply-To: <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKShxVw65UJgYXARO76wzJ5NcLQ6AK2VKhSAdj3/m8BY0zLI7DyOOGg
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmqa7Be9F0gyNTuC0ezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9Novz5zewW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
-	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
-	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y+PHSYwFBwQr5p39y9TA
-	eIuvi5GTQ0LAROLhm7ksXYxcHEICexgl5j47zQThfGKUWPPkJyuE841RYtGOG2wwLRv/nINK
-	7GWUmL/jKzOE85JRYvX6BcwgVWwCFhJLrn0AmyUisIFJYuqZm6wgCWaB24wSO98bg9icAnYS
-	DzpWs4DYwgJxEm23L4E1swioSsxeuoMdxOYVsJS4f+w3C4QtKHFy5hMWiDnyEtvfzmGGOElB
-	4ufTZWDzRQTcJHY+6GCGqBGRmN3ZBnadhMAZDonX81ewQjS4SPzc9xzqH2GJV8e3sEPYUhKf
-	3+2FiudLrFx5ggnCrpG417aLBcK2l1h05idQPQfQAk2J9bv0QUwJAWWJI7egTuOT6Dj8lx0i
-	zCvR0SYEYapKTF8WADFDWmLijLVsExiVZiH5axaSv2YhuX8WwqoFjCyrGKVSC4pz01OTjQoM
-	dfNSy+ERnpyfu4kRnI61fHcwvl7/V+8QIxMH4yFGCQ5mJRFepRLRdCHelMTKqtSi/Pii0pzU
-	4kOMpsDQnsgsJZqcD8wIeSXxhiaWBiZmZobmRqYG5krivPda56YICaQnlqRmp6YWpBbB9DFx
-	cEo1MFk3v33mUh3pr9NukMyYL9X1+84j7rrQZsVVtx38pt7b8Cg6ZWteT3rHpPSvEUbrflVk
-	Hmvc9VRRniGy+cChTbekZbYdsX187sTEk1yHukUZX8YtC7oQ9+9ix6L17n68XyYFT+hzffBx
-	Pe/vooNH19nlGhUant4iV7Bh5q1Z3ybaxWr8ntCZ3VW0YvqrD/2rNGIWeJjUP4tasa1h9vMH
-	1zkVAs7Eqm5O3Mjz117HsP1WB6fhI8l9YaHbKxhVH19cUDv7L9PNsJBTO3Ydfjj5j2zzBKu5
-	T3SfPUvY/kpBRvJH7ctDnypXn64WONy760pSzrZLHRoqu9fKVGk6l+n/56s/YOrA6sl74Vkm
-	e3hFFIcSS3FGoqEWc1FxIgBcolYoUAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCSvK7+e9F0g7trlS0ezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9Novz5zewW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWx
-	8eMkxoIDghXzzv5lamC8xdfFyMkhIWAisfHPOdYuRi4OIYHdjBI/+n6zQySkJY78fsEGYQtL
-	3G85AlX0nFHizPtOVpAEm4CFxJJrH5hAEiICW5gkpr86xQjiMAs8ZJT4/+oAVMtXRon+3Y9Y
-	QFo4BewkHnSsBrOFBWIkDq48ywhiswioSsxeugNsN6+ApcT9Y79ZIGxBiZMzn4DZzALaEk9v
-	PoWy5SW2v53DDHGfgsTPp8vAThIRcJPY+aCDGaJGRGJ2ZxvzBEbhWUhGzUIyahaSUbOQtCxg
-	ZFnFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcmVpaOxj3rPqgd4iRiYPxEKMEB7OS
-	CK9SiWi6EG9KYmVValF+fFFpTmrxIUZpDhYlcd5vr3tThATSE0tSs1NTC1KLYLJMHJxSDUzS
-	rDeuPQvRd186jWfy/sdJTJ5qTtLZhZvk7Rsd597oVpp167JexekDzBFflFZ8WHvj7c4lapE/
-	BdYb6Ry6/0bC4sj0KxaL+tyfV02OObI5JrX7zkf3OUF3ljHMuLv/veqxhoMahwvfe0gd2h80
-	d2X+By3bzm97VSK3qEn1bzxpfa5v4YcqycorMkJuj/8lWJXs7NMLe6+YoWQnt4A77sIXj2Az
-	y8yqcpenqsqzr+18v1sxIMOD6dmONf1phw0/zNoT83VZbZ5WdfGftNBzkrZr+Ni790/LmfGn
-	l/Gfs91dtcM//3db8PLM/3F4sa2L2umjiilcu3azr2gV5f+iIligUWGymcG4JOHS7neXJhQr
-	sRRnJBpqMRcVJwIAzR8uDzsDAAA=
-X-CMS-MailID: 20241021060535epcas2p1f716c45ee988775fb2a2b9790435126d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241010111837epcas2p11dddc10945ca0648997dccaaf4854d93
-References: <20241010111807.3635504-1-trunixs.kim@samsung.com>
-	<CGME20241010111837epcas2p11dddc10945ca0648997dccaaf4854d93@epcas2p1.samsung.com>
-	<20241010111807.3635504-2-trunixs.kim@samsung.com>
-	<f9bbe108-1a0d-451f-a1c7-14e8aadc76b5@kernel.org>
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Thursday, October 10, 2024 8:47 PM
-> To: Taewan Kim <trunixs.kim@samsung.com>; Wim Van Sebroeck <wim@linux-
-> watchdog.org>; Guenter Roeck <linux@roeck-us.net>; Rob Herring
-> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> <conor+dt@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>
-> Cc: linux-watchdog@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; Byoungtae Cho <bt.cho@samsung.com>
-> Subject: Re: [PATCH v2 1/3] dt-bindings: watchdog: Document ExynosAutoV920
-> watchdog bindings
-> 
-> On 10/10/2024 13:18, Taewan Kim wrote:
-> > From: Byoungtae Cho <bt.cho@samsung.com>
-> >
-> > Add "samsung-exynosautov920-wdt" compatible to the dt-schema document.
-> > ExynosAutoV920 is new SoC for automotive, similar to
-> > exynosautov9 but some CPU configurations are quite different.
-> >
-> > Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-> > Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
-> 
-> Shall we do the work twice?
+Hi, Jassi,
 
-I missed it by mistake, I'm sorry.
-I will push v3 with tags.
+On 10/18/24 8:49 AM, Tudor Ambarus wrote:
+>>> The active request is considered completed when TX completes. But it seems
+>>> that TX is not in direct relation with RX,
+>>>
+>> Correct, and it is not meant to be.
+>> You are assuming there is always an RX in response to a TX, which is
+> Not really. If there's no response expected, clients can set req->rx to
+> NULL. Then the controllers know that no response is expected and can
+> complete the request when TX completes.
 > 
-> <form letter>
-> This is a friendly reminder during the review process.
+>> not the case. Many platforms just send a message and only need to know
+>> when it is sent. Many platforms only listen for incoming messages.
+> these 2 cases are covered with the req approach.
 > 
-> It looks like you received a tag and forgot to add it.
+>> Many platforms have TX and RX but not as parts of one exchange. In
+> I don't think I understand this case. Is it related to what you describe
+> below?
 > 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions,
-> under or above your Signed-off-by tag. Tag is "received", when provided in
-> a message replied to you on the mailing list. Tools like b4 can help here.
-> However, there's no need to repost patches *only* to add the tags. The
-> upstream maintainer will do that for tags received on the version they
-> apply.
+>> fact, only minority of platforms expect RX after each TX. Btw, what if
+> Right, I noticed.
 > 
-> https://protect2.fireeye.com/v1/url?k=19c96b19-46525206-19c8e056-
-> 000babdfecba-8f51e01dd01bb666&q=1&e=eb401f36-1904-4376-adea-
-> 9688adb1d657&u=https%3A%2F%2Felixir.bootlin.com%2Flinux%2Fv6.5-
-> rc3%2Fsource%2FDocumentation%2Fprocess%2Fsubmitting-patches.rst%23L577
+>> some platform sends only and always after each receive? For these
+> This case is covered as well with the req approach. One just needs to
+> serialize the requests:
 > 
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
+> ret = mbox_send_request(dc->mbox_chan, req1);
+> ret = mbox_wait_request(ret, req1->wait);
+> if (ret)
+> 	return ret;
 > 
-> Best regards,
-> Krzysztof
+> // req1 completed, send req2
+> ret = mbox_send_request(dc->mbox_chan, req2);
+> ret = mbox_wait_request(ret, req2->wait);
+> if (ret)
+> 	return ret;
+> 	
+> This shall work regardless if the client expects a response or not. If
+> no response is expected, but just a TX completion, then the client can
+> set req->rx = NULL.
+> 
+>> reasons, it is left to the user to tie an incoming RX to some previous
+>> TX, or not.
 
+Is there a specific driver that I can look at in order to understand the
+case where RX is not tied to TX? It will speed me up a little.
+Also, if you think there's a better way to enable controllers to manage
+their hardware queues, please say.
 
+Thanks,
+ta
