@@ -1,164 +1,108 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5981D0DFE
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718C51D0949;
+	Mon, 21 Oct 2024 06:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729492788; cv=none; b=uLJMh5vW+GJjCaJqHO5bweRaB85GtQKEaxDFfPsKjI85MbcitFBuEcCsPzo1PyyiLgM5strdeQpFui7y2YeAH6zrbXKs5YdQSXmE89qI/+x9SajYLeysSJK7Wya3+ITrXlONSp/DVeieDQcXHiEqIHNFHbthFgrcejIcrPKXjow=
+	t=1729492911; cv=none; b=tzv/hQgMk4dFkkqwTljjmd7jEfLFlyNzvHM7T3tBOKeGCPxoxncvSn1pog2QKnS2BELhWV7roSZGS+Kg0ECEJ3YVU0AJ3R5CzEYRp25ZNg7SXV4QnLpTc0lYUYWTEbIxuDRcKIwJNwUm3nwPDqXuqzcHyAgW+eRD5BIzetw8Yq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729492788; c=relaxed/simple;
-	bh=toSZEPuA8KtW4NGZWit+YtMDDVelJFCqeH6SIX+0vSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=r3rvg2mR1VC8AYo3bkQHeCvXdtOSvgzQa7Ifpwv7JmJ0oHSKQCriwEJBlEGQcVaKM4Rg6ypsM3vU9Fbgrf6+/vmXiuR3TQBACWLI8FJb1L+ZWYiEdcAcaC5CrJ2Rg3jOq6iDG3qBrI2x9rGvq5rPt8SKKQUX9LIgt9JqJ3wq7C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=svCjVUlX; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1729492911; c=relaxed/simple;
+	bh=TubjmydGNOHZqRUoKoR2KgLruvzbPBtTXOIikZTeQrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e9Mwb1k2u2nrVASdN4gCPRebLX75HPL+JA2koi+dcQgnO4lD//tt+/AzEVZYoO/GWDouHjl0ZyYoOBfm3Bq3WcP68b9YC+VRnzK+zY15KZcQbKjjPZWmnvYwFKpqZZnfeF3V453lEkzalMsYrYViWSiM5Q37x8tBP1r8KkXzBfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0BgRBPj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="svCjVUlX"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241021063940epoutp0410fac2eb843f9aa0038553a49a22a25a~AZIUzP5xX0956809568epoutp040
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 06:39:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241021063940epoutp0410fac2eb843f9aa0038553a49a22a25a~AZIUzP5xX0956809568epoutp040
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729492780;
-	bh=QSyRVDO0W3RLAiNZJSPSIuTvox4rmOFWkLwxUqIuoeg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=svCjVUlXHVBLUOq1j8m8yM1vlISe9t+eXUbD/QvYXAPIMhl29b07C6uy5dReImasm
-	 /48iczIkGZCmqRPpBHovgrjb2NwFFM7iZ6y69EV6NvTRYIDJA2bWND0JcRwzr0u2v9
-	 TRct53kfI9MTQZxJElCtxPAhg1PLD9qUrkCSfUZQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241021063939epcas2p454e9cc22e689e4f877c2dc872993f24e~AZIUP4-u_2426824268epcas2p4P;
-	Mon, 21 Oct 2024 06:39:39 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XX5JV6mMWz4x9Q1; Mon, 21 Oct
-	2024 06:39:38 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	CF.57.09770.A27F5176; Mon, 21 Oct 2024 15:39:38 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc~AZIS9GdeQ2425624256epcas2p1x;
-	Mon, 21 Oct 2024 06:39:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241021063938epsmtrp249ea0445f9583877a9ddffb0e23e3470~AZIS8Jh482414924149epsmtrp2e;
-	Mon, 21 Oct 2024 06:39:38 +0000 (GMT)
-X-AuditID: b6c32a46-638d9a800000262a-13-6715f72a8da5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	45.F8.08227.A27F5176; Mon, 21 Oct 2024 15:39:38 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241021063937epsmtip20d8581a5f2d02f8c61d13bd58fcc11e7~AZISuxjK31927319273epsmtip2W;
-	Mon, 21 Oct 2024 06:39:37 +0000 (GMT)
-From: Taewan Kim <trunixs.kim@samsung.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
-	Taewan Kim <trunixs.kim@samsung.com>
-Subject: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-Date: Mon, 21 Oct 2024 15:39:03 +0900
-Message-ID: <20241021063903.793166-4-trunixs.kim@samsung.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241021063903.793166-1-trunixs.kim@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0BgRBPj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFA3C4CEE5;
+	Mon, 21 Oct 2024 06:41:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729492911;
+	bh=TubjmydGNOHZqRUoKoR2KgLruvzbPBtTXOIikZTeQrY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f0BgRBPjwrFxQxgy/73MEtxthnIryuKMK3eGopAG1wDiJCNtLuZ91En3Mk60kzX2y
+	 DpoKOyNs7t952exTNe4V8yrZZfmRhOg+BRrUp9u7VUlIx0P9o31TdSX1qd+N153nHb
+	 2QfI/AbA6J9sbP1M4g2/KLxVbSmPBgvgpUDcIA4BJsVYZOmz7SHogF2U6ALk36+u/w
+	 mfKGaznRQD2ES0dsjkjjk7rCavqEBZPm4hC7ucfiHJonrbo5snxcfzF+2Dxi+yqvSj
+	 hlxmwnJsITOltOG7snVR09V3ONcIEQsdMGJPUfKU/WyHoVMriLpBJDmDgyeRSqajK+
+	 fDvatVhuxhClQ==
+Message-ID: <3d313537-2bad-4a18-9fd3-b641351a2361@kernel.org>
+Date: Mon, 21 Oct 2024 08:41:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmha7Wd9F0g1V/FCwezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
-	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
-	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y+XlX4wFh7grJm7/wdTA
-	eJazi5GTQ0LAROLc48nsXYxcHEICOxglpq2+xwbhfGKU2L74MFTmG6PE5lktLDAt7zd0M0Mk
-	9jJKLFjzigXC+cgocfDgeUaQKjYBLYlth18xgSREBF4zSjT1vgNrYRb4CjS4tZUVpEpYwEPi
-	yp1mJhCbRUBV4u+dJWwgNq+ArcTWI9Og9slLnH/zHyzOKWAn8fjYUxaIGkGJkzOfgNnMQDXN
-	W2eDLZAQmMohsebUZ2aIZheJqyums0PYwhKvjm+BsqUkPr/bywZh50usXHmCCcKukbjXtgtq
-	sb3EojM/geo5gBZoSqzfpQ9iSggoSxy5BbWWT6Lj8F92iDCvREebEISpKjF9WQDEDGmJiTPW
-	Qu3xkNh+4Qg04CYySkw8tJ1tAqPCLCTPzELyzCyEvQsYmVcxiqUWFOempxYbFRjBozg5P3cT
-	IzjlarntYJzy9oPeIUYmDsZDjBIczEoivEoloulCvCmJlVWpRfnxRaU5qcWHGE2BQT2RWUo0
-	OR+Y9PNK4g1NLA1MzMwMzY1MDcyVxHnvtc5NERJITyxJzU5NLUgtgulj4uCUamAKuWrXNqOi
-	xO5Qztl3H7jfh8XN19IuaLxuu7w6TWZm1YMoo9KpOScSjy6YyPMjaAqH3PKf/f6KlZ++la58
-	7+BUeuHFXT/NDo38Eg2HyQ4586WZeJic+SpC105aV3VuWo5LkJmU1epzk49x2MooZH/KN9ml
-	Msf7nuccrdc2TS0H9k04Z6VUcvHZ1v2255jlH7OeV4uu0Nh8fL64zpp5xX+yN0VFNhkHyTKZ
-	Oq5bfLVpbeaDe/XxrmFzO6yXM0dfFDjvk+fS+ymMx9/hjuq85F6TKZcudn612fe2NFH32bKc
-	tLYIj42z7s52LH27dnrV1d/ik4y7L3knMHRnbqia/bJf1aOsJnnKugduHRe5LyqxFGckGmox
-	FxUnAgBR4/9XQgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSvK7Wd9F0g0tnmC0ezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJWx
-	8vIvxoJD3BUTt/9gamA8y9nFyMkhIWAi8X5DN3MXIxeHkMBuRomjx16wQSSkJY78hrGFJe63
-	HGGFKHrPKHHj/kZmkASbgJbEtsOvmEASIiCJs19+MYIkmAV+M0psWGAMYgsLeEhcudPMBGKz
-	CKhK/L2zBGwqr4CtxNYj01ggNshLnH/zHyzOKWAn8fjYU7C4EFDNlasvoOoFJU7OfMICMV9e
-	onnrbOYJjAKzkKRmIUktYGRaxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHB1aWjsY
-	96z6oHeIkYmD8RCjBAezkgivUolouhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeb697U4QE0hNL
-	UrNTUwtSi2CyTBycUg1Mq0892dXDaruNjXn5NpNpk9ZU7dLXaX/3xCu07F4G4zxO9QPNm3Z4
-	G2sf6fjANT26+L31k2C7Gv+l1jnnvkrksH9/LmK4K7BDZ0sq65v03ktO+y4cnn7rbmkgt6zm
-	hqOZ8ptuhVt+bF+QtmjFlFX7jezLzazPbVCX9K99uM0lL0ZwyyNdecG2uuIZjrxv3q/60ylz
-	l01SS4fphGLjy/58bjsNw1qZ5OzD+ZvPFjnVMzoHXRXlZJnM7fZv07J3cj8e5b3wZqrL8RcN
-	1tEzvVZ32o6tdKnY1VsHqw1uNHp57zU52bLR9JjadL6WsMkea29oxVzdI7SgXX7qhbVdYRz3
-	431MTGP3+056JORW+UGJpTgj0VCLuag4EQDIcTVd/QIAAA==
-X-CMS-MailID: 20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
-	<CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] Add minimal Samsung Galaxy S20 Series board,
+ SM-G981B and SM-G980F support
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: alim.akhtar@samsung.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ igor.belwon@mentallysanemainliners.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, robh@kernel.org
+References: <1c5d1274-2ea8-4cb8-a42b-04ae30bc6f1a@kernel.org>
+ <20241018162003.21648-1-umer.uddin@mentallysanemainliners.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241018162003.21648-1-umer.uddin@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Byoungtae Cho <bt.cho@samsung.com>
+On 18/10/2024 18:20, Umer Uddin wrote:
+> On Fri, 18 Oct 2024 09:14:01 +0200, Krzysztof Kozlowski wrote:
+> 
+>> What about remaining 4 GB on X1S?
+> 
+> On x1s, the remaining memory is mapped in the device specific dtsi.
 
-Adds two watchdog devices for ExynosAutoV920 SoC.
+Then it proves that this is not correctly placed - not a shared part of
+boards. Remove it from DTSI.
 
-Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
----
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index 91882b37fdb3..2b3e8debda3d 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -172,6 +172,26 @@ chipid@10000000 {
- 			reg = <0x10000000 0x24>;
- 		};
- 
-+		watchdog_cl0: watchdog@10060000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <0>;
-+		};
-+
-+		watchdog_cl1: watchdog@10070000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10070000 0x100>;
-+			interrupts = <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <1>;
-+		};
-+
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
--- 
-2.47.0
+Best regards,
+Krzysztof
 
