@@ -1,118 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4641E32BF;
-	Mon, 21 Oct 2024 09:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E9C1E2614
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 09:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729503969; cv=none; b=vAScUXudVwJ7hD4yJKYqrt9mK/iJnUp4SIiFEX4JistO/p1I/LjQ0bBtf42wY0ImBnFLXWEInTVD1FszNI8s/oyXpSW/U8/LuqigeztHJ4lI/JAbeaBM8vqvgItm0tIg4U//jlSTBc5eqScD6zMfEZ0lgMYhOTIVnTO9AA6BZrE=
+	t=1729504157; cv=none; b=MmHcnwUALexZ5Unyb84j/bIbKxCiIDIleGFksdgt/gEmMkWUyTvJU1i2r98ImUfIrCCO4UTjJqdlumKQSSXUhr+cfEpTGPPSz8y8gVir4bsrYRuQFMd+6MgXTHebUKV2oXJ7P3/d83+p8JBLOvyufw62PNF91X9/lukmdMXJ8Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729503969; c=relaxed/simple;
-	bh=Or7jA9WZ59i0sUSxjb7vT+4EdceiFQX8KEbzuE+z87Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TvulneKJQvp76ZgntOc64hW1MDB3r1O+fsxKNtpdI0ovnD7UhIhqksDK9+5+dUHB/rhG0bWrR6/YfOJMY7jmp9J2mK2BTMwibkA7mE9BsxSzoDXAq5rlzP1oMFGBPmN6cJZi8R5GqSM1u12EzoOZyo9q9zrjehv0e0is8jwVDas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asqRti+p; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729504157; c=relaxed/simple;
+	bh=Gj8N2dZGae8OqJpSRMhTyXNXVvdngzJYudBpM6aTxiY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UbtVoJ954wRxHnTPUz950ETCGmqwLQ1EJzMoH7kcGax3yRncqklnuOU4hJV6DKK+rUpP+O22YyLWG528VEoOeamAXqrUsru4K1xAVJw4fpAI+kacrBdUEPvSgbf0AsH7733ATTRP8qKO4OkfTR21rTZonK+dQnBDqLryCmR7uB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gFQQ6C4t; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asqRti+p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A602C4CEC7;
-	Mon, 21 Oct 2024 09:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729503968;
-	bh=Or7jA9WZ59i0sUSxjb7vT+4EdceiFQX8KEbzuE+z87Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=asqRti+p88JyXiGfpn7RKgiYw4+gHBAF93mSQ2jVzxWqlX/Pm6wI8BcsWlr/XEfce
-	 +0AVR2F0IQ8d8p4UaEqVJ7Wf6AFx1kerzjtpxAVfcfqIunlZVRHWHXhFOnl2jvO1Zn
-	 f6MxNk/aHM5/5N9/8BEd5J156ifYNuBgT1h1TmJAArseBPxaBxEbQDfQpHf/Wnj9Rf
-	 1ICIDWJMj6+BCTUansfAZPrTIImgyGESqk9N3znpBEJKTjLONyqdGGMP2kJ9YW/3fQ
-	 44yVmNN7q7u6+F5T7Cir4xSIsmeMELr9e/XX6aeQggUN4yT0M1QEZ88rb0/yo/tW38
-	 nb9RBnsRH2wpQ==
-Message-ID: <5e5d1e5d-e3cf-4fcb-9f9b-c1b01b5be9d8@kernel.org>
-Date: Mon, 21 Oct 2024 11:46:00 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gFQQ6C4t"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43158124a54so5678115e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 02:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729504152; x=1730108952; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Dt0PKVA5FLKZ+3oYLR6FUUb96JY8lo+lEAfjfm3pJo=;
+        b=gFQQ6C4tSjsa3kuXCCvbKQe+PePzmU8hH7LnHKdobd1j65VHaV7QpUZrzwBqerVAQb
+         MLwIxP19H01+fJkg2Pt4ZPKtYG3cVF0k8/PckipF808WPzBMDZcMB+zJTKw+Wqte/9M9
+         4uutNUXYg04GbPuttKMj3AQlT77cz4DTEBowGBtjyvl7vKsk2hsfXCgjNcWiq98l3lim
+         QEkjHgMJSh9Q/0WeI4WBnfFXUVWE39R/ngJe4DHZs2BTRdsaiCEBrCDbKv0gHO5huMiu
+         5/pe8IgLhsB5FgWClfyioB87aRmy1LcsN1IsYFa76lhzfZpojNQDL1BmXlxFH+rFzsoD
+         V0HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729504152; x=1730108952;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Dt0PKVA5FLKZ+3oYLR6FUUb96JY8lo+lEAfjfm3pJo=;
+        b=fuvkbQXRcbedjGscd2OIGOB0cNuXMcvcqAmxyAm0KyezLFX1SSZ5XpVvOUt3eB/hFt
+         B27P0lrdo8WPwqz6W8jr+HFcFiKx1zGNDNXCniU0vCocr+ajPlp+hhvHjBFMoqiorfHo
+         3zW+j0huPa9H9rcChzZe35MsUr3a4ENYWnZaccIvOqHJ5byujsXIzx8gi0adI/rJ6XS8
+         UVxjz9kfkprCsao3Q2tg2qJJC7gqLxHpfmA+cv1Ed3fAn2ZbEgfyB/eseB5pyStiQuuh
+         RRoZSRJyscfrqfKPceq3hoEDGwUQIr24cw2L3NXozm0g5cVTp5EFRBPtZ68nE/cXrewa
+         zVcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYUFKU0/Bskc2vMdtsYI1nm5h34DDBwRRR2AyoxHG6jyls98JcmtTwJyoGOMjgTWTk9y7EOTBkZit3yuEsLHocXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3jexWVZ3XR4sYVDECoqqPSBLg2VlFxWLsyAPmO0dgOVCFnNTy
+	6VE5bpjGwd3bvo6tEpLywYdR9khQoshjeXCxMzJR3CXbAACb5Bj/FEHr67bFj2o=
+X-Google-Smtp-Source: AGHT+IEYCsIBA5ybURDpuGmlpjBCB4GGptOhn+qWhkRSCHmFiYknTOVbFlAo9b7KtNdIpLz1gpmaVg==
+X-Received: by 2002:a05:600c:1c82:b0:42c:aeee:e604 with SMTP id 5b1f17b1804b1-43161697975mr34443975e9.8.1729504151681;
+        Mon, 21 Oct 2024 02:49:11 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f5c3497sm51399375e9.29.2024.10.21.02.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 02:49:11 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+ alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, kernel-team@android.com, 
+ willmcvicker@google.com
+In-Reply-To: <20241018130215.487425-1-peter.griffin@linaro.org>
+References: <20241018130215.487425-1-peter.griffin@linaro.org>
+Subject: Re: [PATCH] clk: samsung: gs101: make all ufs related clocks
+ critical
+Message-Id: <172950414928.27005.6092400710266336381.b4-ty@linaro.org>
+Date: Mon, 21 Oct 2024 11:49:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] spi: dt-bindings: samsung: Add a compatible for
- samsung,exynos8895-spi
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241020182121.377969-1-ivo.ivanov.ivanov1@gmail.com>
- <20241020182121.377969-3-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241020182121.377969-3-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 20/10/2024 20:21, Ivaylo Ivanov wrote:
-> According to the vendor kernel, the Exynos8895 SoC has an SPI
-> configuration that matches with the Exynos850 one.
-> 
-> SPI FIFO depth is 64 bytes for all SPI blocks. All blocks have DIV_4
-> as the default internal clock divider, and an internal loopback mode
-> to run a loopback test.
-> 
-> Reuse the samsung,exynos850-spi compatible.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 
-I assume this will go via SPI:
+On Fri, 18 Oct 2024 14:02:15 +0100, Peter Griffin wrote:
+> Enabling UFSHCD_CAP_HIBERN8_WITH_CLK_GATING in the UFS driver means
+> all UFS clocks are gated/ungated, which leads to the UFS IP getting
+> into a bad state and being completely non functional.
+> 
+> Downstream these clocks are all left in Automatic Clock Gate (ACG)
+> mode, and are not exposed to the UFS driver in DT. Enabling ACG is
+> ultimately what we need to do in the upstream Samsung clock driver
+> as well.
+> 
+> [...]
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied, thanks!
+
+[1/1] clk: samsung: gs101: make all ufs related clocks critical
+      https://git.kernel.org/krzk/linux/c/6aff357efc2bb060e5b400774becfd3d37644b44
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
