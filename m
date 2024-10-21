@@ -1,59 +1,59 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41F51FAC37
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 14:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9AB1D4336;
+	Mon, 21 Oct 2024 14:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729522353; cv=none; b=BzgspWn8yTFGgbJhuslkGiVVZddX3u9J57ff1Amuj8IqkNe+FA7jgqI0FzqVQaCYdycU9NOKY1BPjmxFrYpyg+26b39oAjj6rKwmWGXTZJ3PKD9JUkrXyIrHZNNJQSPXGzWxNIzoZDLD26kmzj1U5bgWPSdnYeq1vJNb2YIG6fc=
+	t=1729522789; cv=none; b=ldGckeh+hM0cqJHcTlSAjHYCud9My3xp/qMUEnFeO4QvO1QRuGwvTPXWAGbD5avlIZ33XgiT3tKBMblwTgSHdQ1ZdxOFuf3N3iv33n11g6Jgqjh4tX0nKTUsu4c8EgCzECNhmoD+zroVAJhPMUtNNCAzPXO+YR8pCtEeAbUFQwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729522353; c=relaxed/simple;
-	bh=qHkv5JDlqgqjZRZ7PQwcwLcJ3/hu2L0ISUVO1CYr6r8=;
+	s=arc-20240116; t=1729522789; c=relaxed/simple;
+	bh=c+Qi+Jx+CXTBC6SGBbwZd+QHqQ3u2ujH1bhsnaOs+tM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NfkCGcSznuVuYRKkdZcUT+DqNHyZzyIJl1Tw263g3YOGCyvoLCjy2kP4wMGfCIUBzupERQI+tvT78sCm4EKebshkxgt62wJHlR6964xYj9c23abOhtTc/0oMwiYox0IMd9nKC9sRVdTUeSAH9tv67DF0UXIR85+IcgkxbjBHJok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FbZRNizu; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=Ne9yco+NtuG/vRD8y37YrwykmuaPXljkxspWOEY9d0uAb0nhLvRRC2Luuu7QQBhSb8eTvr8DT1CfQEfAks6lOXTgAnmXq2w8JtUSK2CVxNvWnYxtctMVV9cIP5+idZXYFCx/3yRLNg308afXv3kodmJ76vEhbgO7oPBhY6BXl4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRxj5sOX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FbZRNizu"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so1611056f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2024 07:52:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRxj5sOX"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so43876765e9.1;
+        Mon, 21 Oct 2024 07:59:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729522349; x=1730127149; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729522786; x=1730127586; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QjSRnQx5O46OacBUYkVWL1KnGLuYW+NCz+8zrCnNmA8=;
-        b=FbZRNizuUuz+5GZEl+Xn6dQ4LHT8jpTIC9/cD0imTsGIRrkIQisHIy6XEaIU4E7tpr
-         2qHa/1JK6d3X4abywQgEHdzL+jqa2Qdk7yU02JHpHkD48nmslu0BxEDjT7YFMC98hob/
-         nLukdGRo8Ez3E7n3DQ64VlaBtqu3enChbAL3WCGmkjlDmMV7X739v7pTem+yMy4AnPf9
-         g7ULuw64/n2C6AS3iOf/v8iJ7yVk0wAmWjPtrNNsDCOoA4SQWKI7gWoPQDR6nO4cDbc/
-         JuJMgulCSRLQP4uLUnOu5iheZMnEpNHdhdWcFMAfAaFqAoALJH0lWLqabpTcYolXlXo/
-         0aqA==
+        bh=b2oNlw5sC6corZeG/j34t0WS9fihe4BrMBO9k5dV7z4=;
+        b=eRxj5sOXjm4J09BnG6O3xr6nyMmZMrKA/mdHjZ/e/hp5C5o23VSbFVUYKRCF4BOdOL
+         vT0PrU6m8R9mGAeTXsIci8BKACqtHiDHQcKVmD7bSAUfTdSXQa/ooT+aB7Ddx+7TMcgI
+         Y8I3NNUHKNvs0V+xXV8PaGkxPEKSF6K/guKydxQm7FodkMxSn3sXij2/HGIodK5rr8V3
+         iBvCgpKAwikXtHG0gQXe2e0DW8mp/S0VoPzkO949h32PJ75/ZLE6iC0lUXD3o1nYhwhF
+         INRn3uiXHgSxk2BCPQOYkr21jOI0DsNNb0JkgWrWC/5RIGLfIsXPq/DB6b2adK/j0heD
+         6jZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729522349; x=1730127149;
+        d=1e100.net; s=20230601; t=1729522786; x=1730127586;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjSRnQx5O46OacBUYkVWL1KnGLuYW+NCz+8zrCnNmA8=;
-        b=GXrVO4XlteghUGJNK2sSUq1dcLPzrwSdwBof6EYKIEEHHlppNklFHEw+IIgP5pZW6A
-         VY4PkyjZpsJkqHSWHJAB87l47dkQjj6mzVBhFDEfLAQA6dE+CJb6/VemnK06btt/xSg1
-         6jR32WYH1BtjgiH6YhIa27X9aFGxsFy/BQZxHnitK7mpUGTEtiwjITf6IMGH7m+IdHTU
-         SWVmfIE+88O6fv6+ayH7IlqGQU8XUwfb1uOYm6Z+lFASncwmRrF2JbmC+DovM/RsZnmb
-         ipq0fPt1HN26PZh7W6h8Klqjt0YleeNpxwvLYiHrMO8Xibg4twS1UbyM5bbNln72cCnx
-         d5qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvmrYdQTqnc5jXJoYh6w3FAD+lpNXLMUWmZMSIFGIKo3/sfm3pzF4C80IZPitBc9XKhV6/Camu4/8xnL7ajPn8JA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ+lLvQrUmQ8wZjZB4sWbQO6rCa/Dqt9LMwjBUQjCqX6wRV8xc
-	PCh2qLcM+k3N1ypOnA90P7V/MveQpavwiN4sJBunBT3bmlxVrmR6ZjfV69Wwx/c=
-X-Google-Smtp-Source: AGHT+IHR6qQguq7PH3Uh8RSkz2aVOh856iqdHv7IWaGdljT9tcnvh9y5umzoNMsFeKBw9U5YBzOTaQ==
-X-Received: by 2002:adf:e542:0:b0:37d:4f54:f9c8 with SMTP id ffacd0b85a97d-37ea21c8569mr7292650f8f.33.1729522349069;
-        Mon, 21 Oct 2024 07:52:29 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a3805esm4552502f8f.9.2024.10.21.07.52.26
+        bh=b2oNlw5sC6corZeG/j34t0WS9fihe4BrMBO9k5dV7z4=;
+        b=IZ8F4pOjP4MrrCmyGewttvFir6ovtyj/l9qJvfJQUIUjuAA6V4DlzWriVBkrtiyjSG
+         PSjkaPE0LLmMhaJBNoqQpaxbji9SSReKQnNggOeifBD+voF7sj4SoVLeRxz9CzNOpLGI
+         mX9uvajzn059U7+wV4uSFRpELEgVY8fJvdpfMc8zKtJxQ2R77yXXqAmmhFr/VQcER8GT
+         cshGcusqeMCnyM+LR46u1vbg2SyVjXE7VEUqzXLVpFlU14bF6BK7mVb94Pho0TUKKOYr
+         zlJdr1DuTeYWwPcQN5/AVmqH87mfXiHriSacs+22sl47dC5F1n/G1OnOAyzSX5N23ObI
+         motw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuCpDYuBcuIly84JwgDJfj+1bMjUBqMIX629KBvWMksdiBXc+280hYcFUbt6bXqebq5ysPBvHTZ5N4elqg@vger.kernel.org, AJvYcCVOf6qXMhJNCA70CkUjMEuU9NFvoD6MKLVJ5G6mUQAq2ht1t/25wZdHS503Vl8C6FdHTfMhoDAs1VAx@vger.kernel.org, AJvYcCX1V1MDUCWG0Zavvu3J3niGIV1PpGNi6O3wftzXVUbfJF9LMYmECr71OQqsJtYbyuDpjuFVH3fknGMk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz00vJY1Uq/xXERHOM08nhjvwyCIvqbMoQIdVyS+Zl/SdPGXoyy
+	mQP913+2OVzX6NZoxwU06bJ88k6UcXmbbAc5/QcmvFcElEpnygHK
+X-Google-Smtp-Source: AGHT+IEst292QV7hRLtR3biILTiH0zvysU6L3GW2PdM63Pg8uNswcivTzfgAQhuoJltf24mOVAd5AQ==
+X-Received: by 2002:a05:600c:1d27:b0:431:4e25:fe26 with SMTP id 5b1f17b1804b1-4316169742fmr80595915e9.27.1729522785452;
+        Mon, 21 Oct 2024 07:59:45 -0700 (PDT)
+Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4316f58ae0asm60050285e9.23.2024.10.21.07.59.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:52:28 -0700 (PDT)
-Message-ID: <5f31c010-a965-48f3-a975-efd8307316bb@linaro.org>
-Date: Mon, 21 Oct 2024 15:52:26 +0100
+        Mon, 21 Oct 2024 07:59:45 -0700 (PDT)
+Message-ID: <f472ab62-a248-4753-a2cf-a8b85ae88638@gmail.com>
+Date: Mon, 21 Oct 2024 17:59:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,91 +61,329 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-To: krzk@kernel.org
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org,
- Jassi Brar <jassisinghbrar@gmail.com>
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: Add Exynos8895 SoC CMU
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241020174825.375096-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241020174825.375096-2-ivo.ivanov.ivanov1@gmail.com>
+ <75e0b0a3-6b6c-427e-a748-329dc1237da7@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241017163649.3007062-3-tudor.ambarus@linaro.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <75e0b0a3-6b6c-427e-a748-329dc1237da7@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
+On 10/21/24 12:38, Krzysztof Kozlowski wrote:
+> On 20/10/2024 19:48, Ivaylo Ivanov wrote:
+>> Provide dt-schema documentation for Exynos8895 SoC clock controller.
+>> Add device tree clock binding definitions for the following CMU blocks:
+>>  - CMU_TOP
+>>  - CMU_FSYS0/1
+>>  - CMU_PERIC0/1
+>>  - CMU_PERIS
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>
+>> +
+>> +title: Samsung Exynos8895 SoC clock controller
+>> +
+>> +maintainers:
+>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> +  - Chanwoo Choi <cw00.choi@samsung.com>
+>> +  - Krzysztof Kozlowski <krzk@kernel.org>
+>> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> +  - Tomasz Figa <tomasz.figa@gmail.com>
+> Please drop Sylwester and Tomasz, they opted out from clocks.
+>
+>> +
+>> +description: |
+>> +  Exynos8895 clock controller is comprised of several CMU units, generating
+>> +  clocks for different domains. Those CMU units are modeled as separate device
+>> +  tree nodes, and might depend on each other. The root clock in that root tree
+>> +  is an external clock: OSCCLK (26 MHz). This external clock must be defined
+>> +  as a fixed-rate clock in dts.
+>> +
+>> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+>> +  dividers; all other clocks of function blocks (other CMUs) are usually
+>> +  derived from CMU_TOP.
+>> +
+>> +  Each clock is assigned an identifier and client nodes can use this identifier
+>> +  to specify the clock which they consume. All clocks available for usage
+>> +  in clock consumer nodes are defined as preprocessor macros in
+>> +  'include/dt-bindings/clock/samsung,exynos8895.h' header.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - samsung,exynos8895-cmu-top
+>> +      - samsung,exynos8895-cmu-fsys0
+>> +      - samsung,exynos8895-cmu-fsys1
+>> +      - samsung,exynos8895-cmu-peric0
+>> +      - samsung,exynos8895-cmu-peric1
+>> +      - samsung,exynos8895-cmu-peris
+> Alphabetical order.
+>
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 16
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 16
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+> required: block should go here (I know that other Samsung clock bindings
+> do not follow this convention).
+>
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-top
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-fsys0
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_FSYS0 BUS clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 DPGTC clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 MMC_EMBD clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 UFS_EMBD clock (from CMU_TOP)
+>> +            - description: CMU_FSYS0 USBDRD30 clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: dpgtc
+>> +            - const: mmc_embd
+> mmc
+>
+>> +            - const: ufs_embd
+> ufs
+>
+>> +            - const: usbdrd30
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-fsys1
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_FSYS1 BUS clock (from CMU_TOP)
+>> +            - description: CMU_FSYS1 MMC_CARD clock (from CMU_TOP)
+>> +            - description: CMU_FSYS1 PCIE clock (from CMU_TOP)
+>> +            - description: CMU_FSYS1 UFS_CARD clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: mmc_card
+> mmc
+> Although now I wonder, why this is different FSYS. Is it for different
+> mmc controller?
 
-On 10/17/24 5:36 PM, Tudor Ambarus wrote:
-> +static int exynos_acpm_chans_init(struct exynos_acpm *exynos_acpm)
-> +{
-> +	struct exynos_acpm_shmem_chan *shmem_chans, *shmem_chan;
-> +	struct exynos_acpm_shmem *shmem = exynos_acpm->shmem;
+FSYS0 provides clocks for embedded storages (UFS and eMMC), whereas FSYS1
 
-As Krzysztof has already noticed, I need to use the __iomem pointer
-token when referring to shmem structures. This could be caught with
-sparse as well, lesson learnt:
+clocks external storage cards (UFS and MMC cards). As far as I can tell, there's
 
-   drivers/firmware/samsung/exynos-acpm.c:493:54: sparse: sparse:
-incorrect type in argument 2 (different address spaces) @@     expected
-void [noderef] __iomem *addr @@     got unsigned int * @@
+only one MMC controller, so perhaps it could be set to drive an eMMC or an SD
 
+card. On retail devices, UFS_EMBD and MMC_CARD are used.
 
-The following changes will be needed for v3:
+Thanks for the review, will fix the issues in the next patchset.
 
---- a/drivers/firmware/samsung/exynos-acpm.c
-+++ b/drivers/firmware/samsung/exynos-acpm.c
-@@ -161,7 +161,7 @@ struct exynos_acpm_chan {
-  * @num_chans: number of channels available for this controller.
-  */
- struct exynos_acpm {
--       struct exynos_acpm_shmem *shmem;
-+       struct exynos_acpm_shmem __iomem *shmem;
-        struct exynos_acpm_chan *chans;
-        void __iomem *sram_base;
-        void __iomem *regs;
-@@ -485,8 +485,8 @@ static void __iomem *exynos_acpm_get_iomem_addr(void
-__iomem *base,
- }
+Best regards, Ivo.
 
- static void exynos_acpm_rx_queue_init(struct exynos_acpm *exynos_acpm,
--                                     struct exynos_acpm_shmem_chan
-*shmem_chan,
--                                     struct exynos_acpm_queue *rx)
-+               struct exynos_acpm_shmem_chan __iomem *shmem_chan,
-+               struct exynos_acpm_queue *rx)
- {
-        void __iomem *base = exynos_acpm->sram_base;
-
-@@ -496,8 +496,8 @@ static void exynos_acpm_rx_queue_init(struct
-exynos_acpm *exynos_acpm,
- }
-
- static void exynos_acpm_tx_queue_init(struct exynos_acpm *exynos_acpm,
--                                     struct exynos_acpm_shmem_chan
-*shmem_chan,
--                                     struct exynos_acpm_queue *tx)
-+               struct exynos_acpm_shmem_chan __iomem *shmem_chan,
-+               struct exynos_acpm_queue *tx)
- {
-        void __iomem *base = exynos_acpm->sram_base;
-
-@@ -527,8 +527,8 @@ static int exynos_acpm_alloc_cmds(struct exynos_acpm
-*exynos_acpm,
-
- static int exynos_acpm_chans_init(struct exynos_acpm *exynos_acpm)
- {
--       struct exynos_acpm_shmem_chan *shmem_chans, *shmem_chan;
--       struct exynos_acpm_shmem *shmem = exynos_acpm->shmem;
-+       struct exynos_acpm_shmem_chan __iomem *shmem_chans, *shmem_chan;
-+       struct exynos_acpm_shmem __iomem *shmem = exynos_acpm->shmem;
-        struct mbox_chan *mbox_chan, *mbox_chans;
-        struct exynos_acpm_chan *chan, *chans;
-        struct device *dev = exynos_acpm->dev;
+>
+>> +            - const: pcie
+>> +            - const: ufs_card
+> ufs
+>
+> Keep the order as in GS101 file.
+>
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-peric0
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_PERIC0 BUS clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 UART_DBG clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI00 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI01 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI02 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC0 USI03 clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: uart_dbg
+> uart
+>
+>> +            - const: usi00
+> usi0
+>
+>> +            - const: usi01
+> usi1
+>
+>> +            - const: usi02
+> usi2
+>
+>> +            - const: usi03
+> usi3
+>
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-peric1
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_PERIC1 BUS clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 SPEEDY2 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 SPI_CAM0 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 SPI_CAM1 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 UART_BT clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI04 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI05 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI06 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI07 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI08 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI09 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI10 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI11 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI12 clock (from CMU_TOP)
+>> +            - description: CMU_PERIC1 USI13 clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +            - const: speedy2
+> speedy
+>
+>> +            - const: cam0
+>> +            - const: cam1
+>> +            - const: uart_bt
+> uart
+>
+>> +            - const: usi04
+> usi4, etc
+>
+>> +            - const: usi05
+>> +            - const: usi06
+>> +            - const: usi07
+>> +            - const: usi08
+>> +            - const: usi09
+>> +            - const: usi10
+>> +            - const: usi11
+>> +            - const: usi12
+>> +            - const: usi13
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: samsung,exynos8895-cmu-peris
+>> +
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          items:
+>> +            - description: External reference clock (26 MHz)
+>> +            - description: CMU_PERIS BUS clock (from CMU_TOP)
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: oscclk
+>> +            - const: bus
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#clock-cells"
+>> +  - clocks
+>> +  - clock-names
+>> +  - reg
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  # Clock controller node for CMU_FSYS1
+>> +  - |
+>> +    #include <dt-bindings/clock/samsung,exynos8895.h>
+>> +
+>> +    cmu_fsys1: clock-controller@11400000 {
+>> +        compatible = "samsung,exynos8895-cmu-fsys1";
+>> +        reg = <0x11400000 0x8000>;
+>> +        #clock-cells = <1>;
+>> +
+>> +        clocks = <&oscclk>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_BUS>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_MMC_CARD>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_PCIE>,
+>> +                 <&cmu_top CLK_DOUT_CMU_FSYS1_UFS_CARD>;
+>> +        clock-names = "oscclk", "bus", "mmc_card",
+>> +                      "pcie", "ufs_card";
+>> +    };
+>> +
+>
+> Best regards,
+> Krzysztof
+>
