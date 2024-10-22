@@ -1,59 +1,59 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883AD1547C0
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Oct 2024 07:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F0519D063
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Oct 2024 13:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729583923; cv=none; b=UObkPFk/OO0JAkvUcBxgIq/FRTOZ7p2soSRI/St1TGZQKQWOufdSZQOZI8bDVAaargGB40EoJMqQ5hHiTVx+wpZLLZk3F6L+0RpsB168cosW6PxoPezU17O4zLXT2DPJ2xGx5nd4gDZYk9FwSLhb2k9vbn0F6AlUDo3y4xRk5io=
+	t=1729603623; cv=none; b=MXrlrdIuB8gGSDNn+JUTUg6gxXzELeR70NCtHyWTv51+1ZR/WYXqCuOCAkIFKlF+BxBmLhss94BpD8KENSr9h0Sa9Y/TGI7aRyfyBmmQufSNf9IxnxWfwbGwdSsIBtKUAAiFQjwacgP0O0YENz7iJXhB+1n/yPFnxe68GfqHHEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729583923; c=relaxed/simple;
-	bh=ACLE3k7ry8IhdWilfTDtU5ViRWT8EWufxOmVvqccizY=;
+	s=arc-20240116; t=1729603623; c=relaxed/simple;
+	bh=GMSgEW7Tyi2Ycn088qm8LQGRdQiaWvV2et2V0iZk2Ug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p3Gl6djR28acDx6N+AETP0HRExnKuoGBVIa5Z/NYVyanNN3mqwMvBJBiey3cFlxYXesqKNe9mOYF1PzOm8ozeQ+sJKwuIFy/7TXZLEOF4iW8sxSyoe/DFFceIgOpsQ25RJA0d9RqFgbHZ76adUTv0LBy8FmSyHRJIwwuY5tFNL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s/4k1Rd3; arc=none smtp.client-ip=209.85.221.45
+	 In-Reply-To:Content-Type; b=gsQBxit5GtAlaEbJcE4mUpQ2PRNFMpQW8qQWDUY9gmADYG61b559Wrq5w36ok3TZaPmMvKazBSQ1LHTh3+VZfXBYWesNFtsO+ko0MZ/rZ6AdJhixEEBkHCrEvzzzGy1COlNnBsW37joqeT7LzrqRl/3qAUfYU8cLJzb8nfDkDrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mLWTQdWt; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s/4k1Rd3"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so4817597f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Oct 2024 00:58:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mLWTQdWt"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4314c452180so44448625e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Oct 2024 06:27:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729583920; x=1730188720; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729603620; x=1730208420; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ebzEKZpU1QsVaDjvfaf3+sPH51pDYSb8RmLwVjrRqLs=;
-        b=s/4k1Rd3V8f/DNdhiOiwoUfMzGrfrRCUFCvdpqzSxkQG8ZiCPHlRJE0IzCBq8gIFeI
-         0pz1rDOPdRN4TV0zETsOkm26MlUMJROMxTNmnrpNxf0YIXI9bbeUohodirxry6WY2JEc
-         1Z5Y9QhSVTGNlyv7E8GFbrh7r8yV7u5p7CLXIfr8+0jsjWpKbhbbks7D6OtPqIpvgcVO
-         JQg7Fuv0xJj0Lgd2BlbzrwVWl2OmISl+lKbGEdWdoX4n6dLcgNGZBlNmUAs2XSodvDqR
-         PqaO18a5gwD7m3JWq6VRD/Ut72V2SKpgQiaqOOWojcyfitcgw2YhcKL5HOSzuMflScSX
-         afSw==
+        bh=IEROK7pCSLjSAGRH/qjAy3fYuYLwmgPcB6kpQVXty5w=;
+        b=mLWTQdWtm8gcJOUG0sQ/OE3xIcK4Nc4yNqzqimXilbmEY283hndachsUQewb2dMQ4k
+         g+SbJpn9wN/Ck/jve6ssiX6Yh4geCEuBoXMCUG/mLXgp/XA0VSZIxBcD78QzLw+HlEty
+         U8ma+5m6qyxsuWINVIV5Nf7uQOEjCHJEF1d/4ScN1ClBnTDwi1EtaXwp62VnuMJzYHmk
+         51HPmnrXoTe5fEhnPtPTkkPoxW+9ns+vx6meb5w89dix9rVMESeuccx9gNW75Gl2k1cr
+         aG/LbLFjNyHj5RZ4gFQZHMpMpdPxilaAuk1xxSZ73GHDAY7cj5o5seSi0riRdORstwrl
+         vBxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729583920; x=1730188720;
+        d=1e100.net; s=20230601; t=1729603620; x=1730208420;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ebzEKZpU1QsVaDjvfaf3+sPH51pDYSb8RmLwVjrRqLs=;
-        b=Rc/xSLI6JrW1OhfGmgeqHd88j4iq3Az4L31BQVkAgU6hYDMkqv4UEauavfFB3GBRui
-         DaCWNUn+WUuG9uoi4WjzN8bv55R71VT5RtflRgmlQpxXXUjjqu88L2MWMOds+V2D0d5Z
-         aYyZ1QZDFczVP9fKauhetLwNHJ67GHU2I8YNQN46bjGI75PKsPRra0Qo8G2h1ye5ol3M
-         bgMdqaodXhcz+g3RNBp66kQsMhponexEi7U8tl6m7tA2ujKk1ozRF+91W+x1g1MVDQX8
-         5a0v6lhk8wVWBinlzkkgMrhhgtTw1dST1XtYDQAQaYOQdFfHettOljkbwdp/ZqOiGs4N
-         zmDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPV/cNiFFyIIpssus/vjUL9K5/eQwO6fULRiBCPkbv/bYo6cjta7YplK1IO1+AtinI8VRuX/P0tMyxwQC0k7BXwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/5qhjBV0+iqwMCZPDHhpyA7G05oDsVOZVI+d5YOhbgfdGOGaT
-	h+MUK8lLKX7LO1xMr/cbyPt6f5zImT/mE1ff+WzXypUKuoJfbg6bhfrrsAVWMo0=
-X-Google-Smtp-Source: AGHT+IGDhMum5PAcQ3SHhrT5Fn6wbmAs5RW+1+vVA2DjTsESyf8MTIObzirLulaDFCdUAj06MnpWgw==
-X-Received: by 2002:a5d:558b:0:b0:37d:3705:84e7 with SMTP id ffacd0b85a97d-37ea21d8f6cmr13090988f8f.17.1729583919797;
-        Tue, 22 Oct 2024 00:58:39 -0700 (PDT)
-Received: from ?IPV6:2a02:2f04:9203:6000:fdac:3c35:4719:3327? ([2a02:2f04:9203:6000:fdac:3c35:4719:3327])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a47b07sm6012954f8f.25.2024.10.22.00.58.37
+        bh=IEROK7pCSLjSAGRH/qjAy3fYuYLwmgPcB6kpQVXty5w=;
+        b=HHFTOdPEtKm+i8kLeasItHFZR9OzLE6FC51Mgv0Mxpt4BuD0pMwzrCIkyukojhpWJm
+         FsJowus5cq0YTNPsY/tl+RqhaoRiw58s2rlwcBrDsu8ya/pXpSJY8HROdeqo6g9LhANC
+         ZOoIhFesD+t0EycOYERYeFWW7OeRPBELq4zRFWcyJLyAgIcZxWoAKBxIa6xkqB0rZZmg
+         9MnL03VjtU5Ez9184qYJclrjIcblF0GxARgY8zDVFaCpHGzs3t5mvhVDxzali2STX20D
+         V4l5Vae9jQvvzlkMby9Q5m8crlPhzHkLQSa04j8iBm4hFSarQj1+yrf66LF3PbGaGed0
+         DgRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtDlHyx9hHe9PoczWXYLl/HlU3ci1Qorxd/JB15vzdX/1+BcE8M+SJSLNXA4uNNMAFYqWzqUQvVyzQqB5zUPlKTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHvsl2y/0w776Z/+pZkgm3NmC3TReDoqdrR2W42q9qTmW7pwdE
+	I0tvJ5I9al3Kxo0Zmpf+0ZZ7kzRAhfvzfjDoAlovgf/b/k2wUrHdePEasuOQX6U=
+X-Google-Smtp-Source: AGHT+IGKxptddgZTqrPTJ9ZkLdCpniWZtMR9qnq+LHRGeiHCCnC8+t+eEpHxg5yn6pTcNuSGzLkDvw==
+X-Received: by 2002:adf:a184:0:b0:37d:3baa:9f34 with SMTP id ffacd0b85a97d-37ef1262743mr2327999f8f.1.1729603619815;
+        Tue, 22 Oct 2024 06:26:59 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:9203:6000:5b64:2b7c:edff:1f7a? ([2a02:2f04:9203:6000:5b64:2b7c:edff:1f7a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0ba74dbsm6631867f8f.112.2024.10.22.06.26.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 00:58:39 -0700 (PDT)
-Message-ID: <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
-Date: Tue, 22 Oct 2024 08:58:37 +0100
+        Tue, 22 Oct 2024 06:26:59 -0700 (PDT)
+Message-ID: <779fc372-a4d9-4425-a580-2173a0f6a945@linaro.org>
+Date: Tue, 22 Oct 2024 14:26:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,10 +61,11 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, jassisinghbrar@gmail.com
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
+ controllers w/ hw queues
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
+ javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
  luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
  bjorn@rivosinc.com, ulf.hansson@linaro.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -73,148 +74,145 @@ Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
  willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
  vincent.guittot@linaro.org, daniel.lezcano@linaro.org
 References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
- <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
- <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
- <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
+ <20241017163649.3007062-2-tudor.ambarus@linaro.org>
+ <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
+ <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
+ <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
+ <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
 Content-Language: en-US
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
+In-Reply-To: <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Krzysztof,
+Hi, Jassi,
 
-On 10/22/24 5:38 AM, Krzysztof Kozlowski wrote:
-
-cut
-
->>> I skimmed through the driver and I do not understand why this is
->>> firmware. You are implementing a mailbox provider/controller.
->>
->> In my case the mailbox hardware is used just to raise the interrupt to
->> the other side. Then there's the SRAM which contains the channels
->> configuration data and the TX/RX queues. The enqueue/deque is done
->> in/from SRAM. This resembles a lot with drivers/firmware/arm_scmi/, see:
->>
->> drivers/firmware/arm_scmi/shmem.c
->> drivers/firmware/arm_scmi/transports/mailbox.c
+On 10/21/24 5:32 PM, Jassi Brar wrote:
+>> On 10/18/24 8:49 AM, Tudor Ambarus wrote:
 > 
-> Wait, SCMI is an interface. Not the case here.
+>> The active request is considered completed when TX completes. But it seems
+>> that TX is not in direct relation with RX,
 > 
+> TX and RX are assumed independent operations (which they are).
+> TX is sending a message/request to the remote successfully. 'Success'
+> can be indicated by any of the three methods  TXDONE_BY_{POLLING, IRQ,
+> ACK}.
+> You seem to assume it should always be an ACK where we receive an
+> acknowledgment/response packet, which is not the case.
+
+My controller driver indeed ties TX to RX and considers the request
+completed when the RX completes.
+
+But other drivers can still complete the request at TXDONE if that's
+what they need.
+
+> 
+> ...
+> 
+>>> Correct, and it is not meant to be.
+>>> You are assuming there is always an RX in response to a TX, which is
+> 
+>> Not really. If there's no response expected, clients can set req->rx to NULL.
+> 
+> You are assuming the default behaviour is that there is a reply
+> associated with a TX, otherwise "clients can set req->rx to NULL".
+> This api can be _used_ only for protocols that expect a response for
+> each TX. For other protocols,  it is simply a passthrough wrapper (by
+> doing things like req->rx = NULL). For handling this special case of
+> Tx->Rx, maybe a higher level common helper function would be better.
+> 
+> ...
+> 
+>>> reasons, it is left to the user to tie an incoming RX to some previous
+>>> TX, or not.
+> 
+>> Is there a specific driver that I can look at in order to understand the
+>> case where RX is not tied to TX?
+> 
+>  Many...
+>  * The remote end owns sensors and can asynchronously send, say
+> thermal, notifications to Linux.
+>  * On some platform the RX may be asynchronous, that is sent later
+> with some identifying tag of the past TX.
+>  * Just reverse the roles of local and remote - remote sends us a
+> request (RX for us) and we are supposed to send a response (TX).
+
+I was hoping for a name of a driver, but I guess I can find them out
+eventually.
+> 
+>> Also, if you think there's a better way to enable controllers to manage
+>> their hardware queues, please say.
 >>
->> After the SRAM and mailbox/transport code I'll come up with two helper
->> drivers that construct the mailbox messages in the format expected by
->> the firmware. There are 2 types of messages recognized by the ACPM
->> firmware: PMIC and DVFS. The client drivers will use these helper
->> drivers to prepare a specific message. Then they will use the mailbox
->> core to send the message and they'll wait for the answer.
->>
->> This layered structure and the use of SRAM resembles with arm_scmi and
->> made me think that the ACPM driver it's better suited for
->> drivers/firmware. I'm opened for suggestions though.
+> Tying RX to TX has nothing to do with hardware queues. There can be a
+
+Right, I agree.
+
+> hardware queue and the protocol can still be
+> "local-to-remote-broadcast".
 > 
-> Sure, but then this driver cannot perform mbox_controller_register().
-> Only mailbox providers, so drivers in mailbox, use it.
+> While I don't think we need the "Rx is in relation to some past Tx"
+> api, I am open to ideas to better utilize h/w queues.
 > 
-
-Okay, I can move the driver to drivers/mailbox/.
-
-cut
-
->>>> +/**
->>>> + * struct exynos_acpm_shmem_chan - descriptor of a shared memory channel.
->>>> + *
->>>> + * @id:			channel ID.
->>>> + * @reserved:		reserved for future use.
->>>> + * @rx_rear:		rear pointer of RX queue.
->>>> + * @rx_front:		front pointer of RX queue.
->>>> + * @rx_base:		base address of RX queue.
->>>> + * @reserved1:		reserved for future use.
->>>> + * @tx_rear:		rear pointer of TX queue.
->>>> + * @tx_front:		front pointer of TX queue.
->>>> + * @tx_base:		base address of TX queue.
->>>> + * @qlen:		queue length. Applies to both TX/RX queues.
->>>> + * @mlen:		message length. Applies to both TX/RX queues.
->>>> + * @reserved2:		reserved for future use.
->>>> + * @polling:		true when the channel works on polling.
->>>> + */
->>>> +struct exynos_acpm_shmem_chan {
->>>> +	u32 id;
->>>> +	u32 reserved[3];
->>>> +	u32 rx_rear;
->>>> +	u32 rx_front;
->>>> +	u32 rx_base;
->>>> +	u32 reserved1[3];
->>>> +	u32 tx_rear;
->>>> +	u32 tx_front;
->>>> +	u32 tx_base;
->>>> +	u32 qlen;
->>>> +	u32 mlen;
->>>> +	u32 reserved2[2];
->>>> +	u32 polling;
->>>
-
-cut
-
->>>
->>> I also cannot find any piece of code setting several of above, e.g. tx_base
->>
->> I'm not writing any SRAM configuration fields, these fields are used to
->> read/retrive the channel parameters from SRAM.
+> The h/w TX queue/fifo may hold, say, 8 messages while the controller
+> transmits them to the remote. Currently it is implemented by
+> .last_tx_done() returning true as long as fifo is not full.
+> The other option, to have more than one TX in-flight, only complicates
+> the mailbox api without fetching any real benefits because the
+> protocol would still need to handle cases like Tx was successful but
+> the remote rejected the request or the Rx failed on the h/w fifo
+> (there could be rx-fifo too, right). Is where I am at right now.
 > 
-> I meany tx_base is always 0. Where is this property set? Ever?
+No worries, I'm confident we'll reach a conclusion.
 
-It's not zero. My assumption is it is set in the acpm firmware, but I
-don't have access to that to verify. Here are some debug prints made in
-the linux driver:
+It's true I implemented just my use case, but that doesn't mean that the
+"request" approach can't be extended for current users.
 
-[    0.069575][    T1] gs-acpm-ipc 17610000.mailbox:
-exynos_mbox_chan_init ID = 2 poll = 1, mlen = 16, qlen = 5
-[    0.069927][    T1] gs-acpm-ipc 17610000.mailbox:
-exynos_mbox_chan_init ID = 2 offsets: rx_base = 0x00038290 rx_front =
-0x0003828c, rx_rear = 0x00038288
-[    0.070449][    T1] gs-acpm-ipc 17610000.mailbox:
-exynos_mbox_chan_init ID = 2 offsets: tx_base = 0x000382f0 tx_front =
-0x000382ec, tx_rear = 0x000382e8
+If we replace throughout the mailbox core `void *message` with
+`struct mbox_request *req`, all the users can still do their magic,
+isn't it? The only difference would be that instead of having a
+completion structure per channel, we have a completion structure per
+request.
 
+In order to have more than one TX in-flight, we need that each TX to
+have its own completion struct. Then, for my case, if the clients expect
+a response for each TX, then it shall be the responsibility of the
+client to allocate space for RX. This is exactly what struct
+mbox_request does:
 
-tx_base contains the SRAM offset of the RX queue used in linux. The
-offset is relative to the base address of the SRAM config data.
++struct mbox_wait {
++	struct completion completion;
++	int err;
++};
++
++#define DECLARE_MBOX_WAIT(_wait) \
++	struct mbox_wait _wait = { \
++		COMPLETION_INITIALIZER_ONSTACK((_wait).completion), 0 }
++
++#define MBOX_REQ_MAY_SLEEP	BIT(0)
++
++struct mbox_request {
++	struct mbox_wait *wait;
++	void *tx;
++	void *rx;
++	unsigned int txlen;
++	unsigned int rxlen;
++	u32 flags;
++};
 
-tx_base is seen/named from the firmware's point of view, thus named TX.
-I assume the same struct is defined in the acpm firmware.
+Also, in order to have more than one TX in-flight, we need to allow
+controller drivers to bypass the mailbox core
+one-active-request-at-a-time handling. The current software queue
+handling mechanism from the mailbox core can be used as a backlog
+mechanism: if the controller driver has no space to process a new
+request (regardless if it has hardware queue or not), it can fallback to
+the backlog mechanism where one request is handled at a time. The use of
+the backlog mechanism shall be an opt-in choice.
 
+Now clients that don't care about RX are allowed to not allocate space
+for it, and consider the request completed at TX done, if that's what
+they need.
 
-Somewhere below in the linux driver I get the RX ring base address by doing:
+What am I missing?
 
-rx->base = exynos_acpm_get_iomem_addr(base, &shmem_chan->tx_base);
-
-where base is the SRAM base address of the channels configuration data.
-
-static void __iomem *exynos_acpm_get_iomem_addr(void __iomem *base,
-
-
-                                                void __iomem *addr)
-
-
-{
-
-
-        u32 offset;
-
-
-
-
-
-        offset = readl_relaxed(addr);
-
-
-        return base + offset;
-
-
-}
-
-Hope this clarifies a bit these struct members.
-Cheers,
+Thanks,
 ta
