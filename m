@@ -1,177 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6F814B94B;
-	Wed, 23 Oct 2024 09:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C464174A;
+	Wed, 23 Oct 2024 09:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674012; cv=none; b=PNEzEOgjQUoy5g+o5Fm92dIbrzf5adXwTH/JCEeCUjeKz0TVd3m/9L3u4uPJcpTZyWKSoghOLDEfisFy+MyyZ9LJe5NW52Ebp7oyQlCgwbuw9f/lfdNvzGRFk7qeDeA+Vt2fwtYE8319Ub2b8nZlP9g9fx0cla5Qwi3SM2LtZyM=
+	t=1729674104; cv=none; b=a1LrGrj9Mm9sbuq7lHWOFIMmVDFlCR94C4cagVZ0sQia7trU6OG8YCK/ofHDUEeKs3Jy6yvgjaZ1TQKurz+6xx/7MdntBlntCppoJL85SnPa2RpUuUr5MUz4apaMzFLNSSAMfnLVL1/XEp/3LbUzSux3aHmvn3N40zA3cyhAE2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674012; c=relaxed/simple;
-	bh=hfXXhjN8IBJs2miuXdU3mNQG85wax8LY7e36g/COuxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rADQAiBOGjpiOC9VtxcEbHSKM5MAD8kzb5onCZUxlT4HnmcZ8O+4F7Da/E6FD3kWR8wD8/XrhZArVQd0dP6S/IeAqMiXykL/Eku7HFb75DacqN/+tkQCUQfpjZ3En1MKgb8b3acgAiG9DSCcQBhCRN2Jb74wziQeSFBliAPDlDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t31n1GEm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729674104; c=relaxed/simple;
+	bh=PPXT5Az1WsHT/KayziijpXvUrKfC/ssnM5aOBrrYdvY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rowd3WWJ2+ZVwF43TVlZ8ms4hlYXiAjNjcJcmONfj58Oe/ycuNIMANaP/EPwmmZxJNcEJPkIAajGKGE4OziFQzHurQOt78RSIPQ04u1vhF+pH2YGZEd72EIo5d1hujbnvmc2hSeCTUr5XDKweVVvbeAI2bvkkkpp57Q4KPKrUzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDDO+O5l; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t31n1GEm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 783ADC4CEC7;
-	Wed, 23 Oct 2024 09:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729674011;
-	bh=hfXXhjN8IBJs2miuXdU3mNQG85wax8LY7e36g/COuxE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t31n1GEmRRzHzzXXxA1f+Nm+OkfDgsCiRvZrGlyDE89ZMgc09HTmRMNigyFkXdV/U
-	 Pj5L/JWTFfyjUwW0EC0tkPComEAa+ltVdZetx2WrdxxyyIq6nd9YDbpJVL1eypwQlU
-	 N+shisCk8toZ88D61nLZ+1+2uqmQKu3fbfW25C/2cIhNqePNYDldq4NUCCWjFphsR9
-	 2USemQI4SNQYT+d9HvFRGgvXv3A21NAypPo0O7BOGIEDUFgABgqL8/pneRg1pR0KEM
-	 /6tO8a7PxnjVvjsiDCRzXk6IiAl0UFyw0p6AqJQlBhs1Vi8sY8AFgztAyzKMs9HYNH
-	 QCdNWjl9sUk+w==
-Message-ID: <1e76bc70-21a6-4ac7-99ea-30a7ccf387bb@kernel.org>
-Date: Wed, 23 Oct 2024 11:00:04 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDDO+O5l"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9aa8895facso315861566b.2;
+        Wed, 23 Oct 2024 02:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729674101; x=1730278901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZZ8g03ccexKW0AVt0r8Py0OQvrq3R4oM4t3ytFYc5w=;
+        b=DDDO+O5lxLx+15OXs/NJxoAgVWPYlACNiA7LJfatnCrASDV6xq0LZOqNTcTIlxhVxj
+         rk0iSI3VxPfib2TIIbFKF30g0Y2ytXzaevEEVvC9tc+SyO16GtewGgl4qgeYqunKuRCl
+         HRq3BOM+HMn8jgn7rX/R53S6n/2PbuMqhyojgBRueSUuc5zuF2bGIxczjUKtjzxMuQdR
+         AzjNTAerc4SJQrbE+JdwG84fWAXC2nckaQyCIGa70N+yy7M+YkW25y7bXFoalFexrCoY
+         xV4hwWvfIwt4blCQ2slxk4utLqPfeTWcN43EqV+JinVkLTInGst9QjLL5DyPI9zIptzU
+         u/Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729674101; x=1730278901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eZZ8g03ccexKW0AVt0r8Py0OQvrq3R4oM4t3ytFYc5w=;
+        b=BNI1bHcdfEnUalRKVC+O3DfdT2J4pcauOvjJu8Aif9bil1y09dNWRWRXC39P9hvOrX
+         mzcHUWILBxkHhXdU1uxWmUTcIwzMU8Gc4i+klqnzlzmufuldH0BTBrdvrWwmK/yXhyCK
+         8YunMsWzC4agTUMO8JGOrOKwCr3yz6TCfzQBtZuaugqIAPJqBagJ6yb0Yj4MrkC1BlE2
+         FZyAVQ95Ma+WBz5W5yn3EXvsC+G/UGNuqzmq3hQj0YNlhR5HDSweOODhfHVmKPjBykY3
+         0IizWY/Kkm6qywRdXCdbeeLAM5Qd84ChFE8KIRoUDtoGSfCmXBCQQu4fhuaX2Q31eEdP
+         jQ1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV8w6mUkCTFu3obk2S2jQqlcEuGdOXrEKbHmrG7urNbICE4wYfkCI5+sCzrzkWPgMjgWr+gp5/T2OzR@vger.kernel.org, AJvYcCW5Iz0moOONfq63A01HZ88kQ3hKnWLDjJ7/CBXP/GcTE8n8DwN9i1vE5KCa836VK3FyPrZsUwzOjuFV@vger.kernel.org, AJvYcCX7bDRUMo5z4+CUDQZoOdxBTmlp2fMaaFSivLO+RW9FP9STRfYVRjQ7z19vc+tOhYk3zxuXWS2LGGPvNYkc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmOgRh6qZHSFbucHMqWBrJRdwQuOpZOv68Zm1u4z/BJsuZkywe
+	Cb4ZCoVgsc7zqE7IFvI88vxNxSfV32aSbBPKXWQSQBSA1OEnMZ6C
+X-Google-Smtp-Source: AGHT+IFnhZOlq5eXPBtpu2Vh+a+dV/cdp/AY/xiaG+pd+XArp9A5rMI/bDwXWr5Li75rBOIWXMD7tA==
+X-Received: by 2002:a17:907:3f0c:b0:a99:f656:2bd8 with SMTP id a640c23a62f3a-a9abf91cca8mr173667966b.42.1729674101140;
+        Wed, 23 Oct 2024 02:01:41 -0700 (PDT)
+Received: from ivaylo-T580.. ([77.85.230.22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9159a23csm442767466b.205.2024.10.23.02.01.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 02:01:40 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3]  clk: samsung: Introduce Exynos8895 clock driver
+Date: Wed, 23 Oct 2024 12:01:33 +0300
+Message-ID: <20241023090136.537395-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, jassisinghbrar@gmail.com
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
- <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
- <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
- <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
- <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/10/2024 09:58, Tudor Ambarus wrote:
-> 
->>>>
->>>> I also cannot find any piece of code setting several of above, e.g. tx_base
->>>
->>> I'm not writing any SRAM configuration fields, these fields are used to
->>> read/retrive the channel parameters from SRAM.
->>
->> I meany tx_base is always 0. Where is this property set? Ever?
-> 
-> It's not zero. My assumption is it is set in the acpm firmware, but I
+Hey folks,
 
-Where is any assignment to this member?
+This patchset adds initial clock driver support for Exynos8895 SoC,
+which allows clocking peripherals like MCT, serial buses, MMC, UFS and
+PCIE. As platform support grows in the future, other blocks like APM
+will be added.
 
+Support for the following clock management unit blocks is implemented
+in this patchset:
+ - CMU_TOP
+ - CMU_FSYS0/1
+ - CMU_PERIC0/1
+ - CMU_PERIS
 
-> don't have access to that to verify. Here are some debug prints made in
-> the linux driver:
-> 
-> [    0.069575][    T1] gs-acpm-ipc 17610000.mailbox:
-> exynos_mbox_chan_init ID = 2 poll = 1, mlen = 16, qlen = 5
-> [    0.069927][    T1] gs-acpm-ipc 17610000.mailbox:
-> exynos_mbox_chan_init ID = 2 offsets: rx_base = 0x00038290 rx_front =
-> 0x0003828c, rx_rear = 0x00038288
-> [    0.070449][    T1] gs-acpm-ipc 17610000.mailbox:
-> exynos_mbox_chan_init ID = 2 offsets: tx_base = 0x000382f0 tx_front =
-> 0x000382ec, tx_rear = 0x000382e8
-> 
-> 
-> tx_base contains the SRAM offset of the RX queue used in linux. The
-> offset is relative to the base address of the SRAM config data.
-> 
-> tx_base is seen/named from the firmware's point of view, thus named TX.
-> I assume the same struct is defined in the acpm firmware.
-> 
-> 
-> Somewhere below in the linux driver I get the RX ring base address by doing:
-> 
-> rx->base = exynos_acpm_get_iomem_addr(base, &shmem_chan->tx_base);
+Changes in v2:
+ - Drop headers for CMU_CORE and CMU_G3D
+ - Drop Sylwester and Tomasz from the dt-schema maintainers
+ - Alphabetically order compatibles in dt-schema
+ - Move the required block in dt-schema
+ - Rename clock-names items to follow the one-word convention
 
-tx_base is still 0.
+Ivaylo Ivanov (3):
+  dt-bindings: clock: Add Exynos8895 SoC
+  clk: samsung: clk-pll: Add support for pll_{1051x,1052x}
+  clk: samsung: Introduce Exynos8895 clock driver
 
-> 
-> where base is the SRAM base address of the channels configuration data.
-> 
-> static void __iomem *exynos_acpm_get_iomem_addr(void __iomem *base,
-> 
-> 
->                                                 void __iomem *addr)
-> 
-> 
-> {
-> 
-> 
->         u32 offset;
-> 
-> 
-> 
-> 
-> 
->         offset = readl_relaxed(addr);
-> 
-> 
->         return base + offset;
-> 
-> 
-> }
-> 
-> Hope this clarifies a bit these struct members.
+ .../clock/samsung,exynos8895-clock.yaml       |  240 ++
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynos8895.c          | 2803 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |    2 +
+ drivers/clk/samsung/clk-pll.h                 |    2 +
+ .../dt-bindings/clock/samsung,exynos8895.h    |  453 +++
+ 6 files changed, 3501 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos8895-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos8895.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos8895.h
 
-No, where is tx_base assigned?
-
-Best regards,
-Krzysztof
+-- 
+2.43.0
 
