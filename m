@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AE8167D80;
-	Thu, 24 Oct 2024 09:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C7117B51A;
+	Thu, 24 Oct 2024 10:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762596; cv=none; b=nF0MnhEiua4YkBhHJz7aUjDsYvwevFzAOVEVjWdHOsTt//T9TKh4GNKWn9AU+6RZy4xJdoezYB8r54VJVPnreH8h3HjmL/dincbOCWbDm6e+0bC4NzCGkD3dItIkpTPjFFlsFrxfY5p+ppvMJ2KdTPzbabXh3EBYBZkQVEAAuXk=
+	t=1729764601; cv=none; b=a5B3K+GmuIHdEPXnml/hEThfWWOeThCyfoeQiH9r0Uq+Nj5X5W9ck9manmnv3+p2NBlRm9WnFHM+NbMP4L2BiyX6DzBRRf4LrpBHVGv93mwLtJZdpZNVOt8M3zKrI2Fs2yWTX9yVLF5KgpM5DDFj1+0CWygkb5rG5hU5Cyl2s2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762596; c=relaxed/simple;
-	bh=9V8v3G8V4u5gRq40JKuzggCBQnGtC85Om4+BPdzx5xc=;
+	s=arc-20240116; t=1729764601; c=relaxed/simple;
+	bh=engmJwWWarFhbbbGk2yuL/t2q2JrqeyZFQ90uq8h+4Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MIgSIZXU/3mLlBhvL0sEW342aITDUoodf7HFnkKq59Jy0tbs3q0DcQIw7l55huBffd2rR8XzzLNjbQBBdhqovpFvWNdTrSs3ZwL9HnO8oaiafX+KQvT2Lg1rE6ySWwH+a4Cirx/9j+2ZJDXDrXMwNdkciqiH45fUOuWIladAwwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRZoc7iz; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=oi4+hPf3rBtwrxJeXzPqWY5k/vuQ0uRkK3uneL8rqhCoI08b90lhVklwdoqVV42O+KMJj/5q4xHx6/GrQ8XHaL+yOUYFLJxWJDDgRXNqq34WblNrb56TiUXRkGOaR0Pb2ey1ANn4KqbLmMZO3+LaaS0U2nlumanMqwAe6QPvFE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEqrXrDB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRZoc7iz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC4EC4CEC7;
-	Thu, 24 Oct 2024 09:36:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEqrXrDB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CE0C4CEC7;
+	Thu, 24 Oct 2024 10:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729762595;
-	bh=9V8v3G8V4u5gRq40JKuzggCBQnGtC85Om4+BPdzx5xc=;
+	s=k20201202; t=1729764601;
+	bh=engmJwWWarFhbbbGk2yuL/t2q2JrqeyZFQ90uq8h+4Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eRZoc7izynF5PK0WXh4FFr7oPs9AtRjMGAqULRKtenpCIetYPFrYCKgNIJgYm3tq9
-	 A41TEMXfNFHq5Pgg1iuP7lXy3eCKxvRStuP/N5ph9dmUJttrL4PoJIp+C+u7CEQ4Bf
-	 y9gM/Zlt6HaUwBEj4M7pd6zuOfa8vnWU5wiMvmQkpZLIFZrq5B3xTdH1GQo5y4Ntny
-	 QkjczVrQtTsvsFEgn39GwKLC7FAlhEgbTk4Oor10Y1d2Rhlo0In0UlELjOGoYu0v1e
-	 ad7RmAJGg7Iu5IppcJFx5MjsuPZg65M2Ism5oP4swd+75XuGZEW41CbC9Hx+PQbhKJ
-	 gIaPmIElACcaA==
-Message-ID: <855101b0-0102-4c77-b110-bdec12b28f29@kernel.org>
-Date: Thu, 24 Oct 2024 11:36:22 +0200
+	b=YEqrXrDBrtGgH0/gCx20QY05rgXJq9N2GRIFF6U7sVVmeONYDJioTR80LWhssYJkb
+	 wDZn8oxxamMFa2ZiYzDLBIP70hfSsxhLUf2OHhiJaMj9Aw8+XQF6Xhd15h9lmGnX8y
+	 XjF/X8COxXVWuBmMc3C/xkw4gSOQ6IL6u8ONWo5RINVfbgm1kVxqYgLK18HBka3sXX
+	 ppVZcHK/18CHYlZ2YcIw5h2byTcWCDFzVrD7l+6tM+KclekSqab6pfbb4KCUJ88i2a
+	 Qm3Q8aT085Q0VaOuyc74F2oB4JTWfFvWyKjGIF/MHcgSZbvTHdXfUdWaSGOfnmKGHE
+	 VDnq7Y8jwdWbA==
+Message-ID: <4c071100-f49c-4dcb-add8-99427fda268a@kernel.org>
+Date: Thu, 24 Oct 2024 12:09:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,25 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, jassisinghbrar@gmail.com
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
- <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
- <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
- <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
- <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
- <1e76bc70-21a6-4ac7-99ea-30a7ccf387bb@kernel.org>
- <2941d65e-8fb4-4d5a-be4b-283de2cb3274@linaro.org>
+Subject: Re: [PATCH 01/12] dt-bindings: arm: cpus: Add Samsung Mongoose M3
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com>
+ <20241024-exynos9810-v1-1-ed14d0d60d08@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,55 +95,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <2941d65e-8fb4-4d5a-be4b-283de2cb3274@linaro.org>
+In-Reply-To: <20241024-exynos9810-v1-1-ed14d0d60d08@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/10/2024 11:53, Tudor Ambarus wrote:
+On 24/10/2024 00:36, Markuss Broks wrote:
+> Add the compatible for Samsung Mongoose M3 CPU core to the schema.
 > 
-> 
-> On 10/23/24 10:00 AM, Krzysztof Kozlowski wrote:
->>>>>> I also cannot find any piece of code setting several of above, e.g. tx_base
->>>>> I'm not writing any SRAM configuration fields, these fields are used to
->>>>> read/retrive the channel parameters from SRAM.
->>>> I meany tx_base is always 0. Where is this property set? Ever?
->>> It's not zero. My assumption is it is set in the acpm firmware, but I
->> Where is any assignment to this member?
-> 
-> In probe() you'll see that exynos_acpm->shmem is a pointer in SRAM to a
-> struct exynos_acpm_shmem __iomem *shmem;
-> 
-> Then in:
-> 
-> static int exynos_acpm_chans_init()
-> {
-> 	struct exynos_acpm_shmem_chan __iomem *shmem_chans, *shmem_chan;
-> 	struct exynos_acpm_shmem __iomem *shmem = exynos_acpm->shmem;
-> 	...
-> 
-> 	shmem_chans = exynos_acpm_get_iomem_addr(exynos_acpm->sram_base,
-> 						 &shmem->chans);
-> 	...
-> }
-> 
-> shmem->chans is not initialized (or tx_base). I'm using its address in
-> SRAM (&shmem->chans) which I then read it with readl_relaxed().
-> 
-> I guess one can do the same using offsetof:
-> shmem_chans = readl_realaxed(shmem + offsetof(struct exynos_acpm_shmem,
-> 					      chans));
-> 
+> Co-authored-by: Maksym Holovach <nergzd@nergzd723.xyz>
 
-I see, the code and the naming is confusing. Two exynos_acpm_shmem_chan
-variables and one exynos_acpm_shmem. shmem_chans is used as an array,
-but nowhere pointed or indicated that it is array of some size.
+There is no such tag. Maybe you wanted Co-developed-by? But then missing
+SoB - see submitting patches.
 
-All this could be clearer if exynos_acpm_shmem_chan was packed, because
-then it is obvious it points to defined memory, but maybe packed is not
-correct here? Probably splitting all this into logical chunks would be
-useful. Like not mixing reading offsets with reading values, because I
-really have to spend a lot of time to identify which one is which in
-exynos_acpm_chans_init().
+> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+> ---
 
 Best regards,
 Krzysztof
