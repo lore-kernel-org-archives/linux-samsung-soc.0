@@ -1,59 +1,33 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC33D18BC1C;
-	Fri, 25 Oct 2024 12:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E556C1F757B;
+	Fri, 25 Oct 2024 12:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729857918; cv=none; b=lqtoZRVdCzb/IlepTmjaJ8ASDjA2Puv8JoowX+ef9/X59wpwQkgvGpJGZ+EkwX9qaMDhP135jqYD0Hd2Xh3wtHx6kwlus1lzaPfmURO9M5qbhE6l/69bY3aIFG7gBEi38Laknm6jCAiu2COZq1pGh6Pk0Zlj6B89x+ohBAEUSlk=
+	t=1729859816; cv=none; b=TH0fymlCvOzJFeeA9yHu2ALWj/yQO0jJ733tOMOnd4IgbVh6BNMglPNzTbUFF/QpLMeg8IUyi6Rr5QGV64BLK4PQvVjJOTtgwleuvhUt1rSZSWWxmaeSjngZZyIwGXL5seohH0j6a4fGWONnlJ8nHL+zjA1dLWy7xp5K5/1op1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729857918; c=relaxed/simple;
-	bh=lHAYnjjJvKtBWzjgUPBA3lwa81rtXcr5PXvNNgnAe24=;
+	s=arc-20240116; t=1729859816; c=relaxed/simple;
+	bh=AviaUlBZZ7+hKNoYNAUPRHtZzUriK4vdXQg7T26UsIk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ey2ZMktNBANTBzF4XgZUjMTNgDwC+usixdl837ivVW3ifAAM2SpsAVYbFapbEfkp5ss4Km06p9F3W5u93ujZ2lRxSFGfhmIdRRy9pik3o1RozxnXLExWygXiBqcQfLd2M8n+WbEgLOVpiVF5sP2Zck25pEe4VLrZ6e5KN67mNt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ya7iZDTm; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=fapZbP/jbn+gpTL3PJ4PjaH2/aJTTJxkDkOglVqHBHnB9S2vyrPfwX+qOaB7JhA5WasghDEURr1yTBXRBc6cSJFw4MLJC/Q6qIubzDrD1UM+GagwRnsn6VAl9ozpYM2L4jKBq87Vouw+lbL5Jt1evRW/CJTgPrre7WFxauiOb/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DabUAD8C; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ya7iZDTm"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a86e9db75b9so265085666b.1;
-        Fri, 25 Oct 2024 05:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729857914; x=1730462714; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n55Op3UqcWWU67N4sB49bAMgh41vNphv9As8fpaG8HY=;
-        b=Ya7iZDTm8tWqy0WtEGr0CU4MCIF6FmpElzocqARBxszk+qQ+bqmnF645fgvEWrpB+t
-         m34A9RQErZiVfi6qnmAvUSL+PYRlfnaqYxRXxvePI4xc03H3pn6IBNbbujuhUJ6a9UOT
-         p/fLr0SOLsMGVHPuG94WYDcYBU17zd3ngJakNdzZIZXSf4hfgZ59ELoJi5GLk3ZlHkL+
-         IOIfSZNVvf+JvRwhZ9UtpasV/GMb6S7/Ch/NlzEYshvcBmfe2/6gjcpysfJkcWSA13jR
-         AH4r4OTyrqYZcoW+Nxxoytipa4H611/SkpnHXMlJ6R4HQ8UXH9Wj5FWYS/ak07Fdueoa
-         TGig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729857914; x=1730462714;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n55Op3UqcWWU67N4sB49bAMgh41vNphv9As8fpaG8HY=;
-        b=SOOQXQx+FuBO9fwsEjLoTHQSvFF3WLZ+vqAp9ohRl+Oik7sNyo38tkeB3loI/cTFK/
-         engS/Em+uB8Xkrhq8pG7nFsVTBlV/55PW9bj12GLrc9wuklzLIHAnor+hvSg6fffsxsB
-         dNGaR+rMsoes+BM7U7r1kh+/UZgZS88LFD4VRFhOCrrZUmr4lE256yqjNoBJbYQUxsBx
-         pfUBxL3JfUeezA9djY7Swo5scIdn+L7/tyFnJe2r6lBeqzNLfEqcabkgaNZ0BleLOjgG
-         mx6gn3RFzR2uzbMJR7Eq4efTjAXS56fyywksS/xK646rSiaAdoPiv9sLzFT9/YQzDMLA
-         ABNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUoba+MLMLfXL+rGRoLJfDsRg8HaJIIuPPjduXds049ajMl6oufzEkyuYavcmVjKSv8koxrgSg65nAUokB@vger.kernel.org, AJvYcCVvqezQLfoZB+DHkl3vULVS1Hrcq6mIVpiPsdYiWlnLmp2Utxmryt6D4l+i7/L6sJb0E/K+Tb+TWhPM@vger.kernel.org, AJvYcCX8vTMJLFqMSOry1dTE2TURq8eIHSEmGRBnfFgy1ozlHorvANUnK2s55be9DTQui+Yf4yUY5iJLZ7V3stAWggUzYA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCrLsnhkO20ezCKGLCD7SArcQHpVu6hdQhEqf3z9xbhjZxvpXT
-	kS+xBeL7kE6jHItPfAvkiY3LqtsneG5n0PNviZaDqtvmEC/wUYiU
-X-Google-Smtp-Source: AGHT+IEgxndYncmXIKU0ddfgTEva136EAcXhqGZWyYOw+Fz1SxoHJQFDKEucO2k00JnM5YuW4D7XDg==
-X-Received: by 2002:a17:907:3dac:b0:a99:ce2f:b0ff with SMTP id a640c23a62f3a-a9abf8a4f1dmr912091766b.33.1729857913759;
-        Fri, 25 Oct 2024 05:05:13 -0700 (PDT)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b30d6fdd1sm64153366b.170.2024.10.25.05.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 05:05:13 -0700 (PDT)
-Message-ID: <77e2f191-3a40-4282-ac1e-d1a9069043d4@gmail.com>
-Date: Fri, 25 Oct 2024 15:05:11 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DabUAD8C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CA8C4CEE4;
+	Fri, 25 Oct 2024 12:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729859815;
+	bh=AviaUlBZZ7+hKNoYNAUPRHtZzUriK4vdXQg7T26UsIk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DabUAD8CBTJ/fcvc3I1PcvD64SdtCoiNU47bU5xiPJeACTlIzbRn5vNKsHOiDI/EM
+	 tNcOkxxaPIky8mtODB/szRydZXQ7VZtdhfglH3jKQGDb1NvuFTcO/8hjLQbxq2Cuc4
+	 R/VnmOKyEfIb7ciRw+eOUYgIM//mzezvT+6nxzz4BbPdn8ZofI2OaUZdWT+DHgOlp7
+	 MM5B6gEdo/3CVg2/E6qa5SRczQBNKSLIfxWcRWNYvIk5DxRp2d/EBIButbVpyvx5Jg
+	 ZWwhSouYaKL9kYf7p9osSKg8BSwSc0useKgER3gVWX2Cavsm8zqMC1ssopUx8jD6lZ
+	 Gggw8yUW7X+pQ==
+Message-ID: <2dae341e-2784-40ec-9a06-620c467e62bd@kernel.org>
+Date: Fri, 25 Oct 2024 14:36:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,8 +35,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/12] arm64: dts: exynos: Add initial support for
- Samsung Galaxy S9 (SM-G960F)
+Subject: Re: [PATCH v2 01/12] dt-bindings: arm: cpus: Add Samsung Mongoose M3
 To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -72,184 +45,71 @@ To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
  <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
  Maksym Holovach <nergzd@nergzd723.xyz>
 References: <20241025-exynos9810-v2-0-99ca3f316e21@gmail.com>
- <20241025-exynos9810-v2-12-99ca3f316e21@gmail.com>
+ <20241025-exynos9810-v2-1-99ca3f316e21@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20241025-exynos9810-v2-12-99ca3f316e21@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241025-exynos9810-v2-1-99ca3f316e21@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-
-On 10/25/24 14:24, Markuss Broks wrote:
-> Samsung Galaxy S9 (SM-G960F), codenamed starlte, is a mobile phone
-> released in 2017. It has 4GB of RAM, 64GB of UFS storage, Exynos9810
-> SoC and 1440x2960 Super AMOLED display.
->
-> This initial device tree enables the framebuffer pre-initialised
-> by bootloader and physical buttons of the device, with more support
-> to come in the future.
->
+On 25/10/2024 13:24, Markuss Broks wrote:
+> Add the compatible for Samsung Mongoose M3 CPU core to the schema.
+> 
 > Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
 > Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
->
+> 
 > Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile               |   1 +
->  arch/arm64/boot/dts/exynos/exynos9810-starlte.dts | 120 ++++++++++++++++++++++
->  2 files changed, 121 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 7a934499b235892eef38cd926905e02f0ce08278..6760b3d59e819fb52bc8cf4dc6877a0b9db9ce47 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos7885-jackpotlte.dtb	\
->  	exynos850-e850-96.dtb		\
->  	exynos8895-dreamlte.dtb		\
-> +	exynos9810-starlte.dtb		\
->  	exynos990-c1s.dtb		\
->  	exynosautov9-sadk.dtb		\
->  	exynosautov920-sadk.dtb
-> diff --git a/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts b/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..7e01118e591284267f155883c236ed811d5c629a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts
-> @@ -0,0 +1,120 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Samsung Galaxy S9 (starlte/SM-G960F) device tree source
-> + *
-> + * Copyright (c) 2024 Markuss Broks <markuss.broks@gmail.com>
-> + * Copyright (c) 2024 Maksym Holovach <nergzd@nergzd723.xyz>
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos9810.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +
-> +/ {
-> +	model = "Samsung Galaxy S9 (SM-G960F)";
-> +	compatible = "samsung,starlte", "samsung,exynos9810";
-> +	chassis-type = "handset";
-> +
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		framebuffer@cc000000 {
-> +			compatible = "simple-framebuffer";
-> +			reg = <0x0 0xcc000000 (1440 * 2960 * 4)>;
-> +			width = <1440>;
-> +			height = <2960>;
-> +			stride = <(1440 * 4)>;
-> +			format = "a8r8g8b8";
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-0 = <&key_power &key_voldown &key_volup &key_wink>;
-> +		pinctrl-names = "default";
-> +
-> +		power-key {
-> +			label = "Power";
-> +			linux,code = <KEY_POWER>;
-> +			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-> +			wakeup-source;
-> +		};
-> +
-> +		voldown-key {
-> +			label = "Volume Down";
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		volup-key {
-> +			label = "Volume Up";
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		/* In stock firmware used for assistant. Map it as a camera button for now */
-> +		wink-key {
-> +			label = "Camera";
-> +			linux,code = <KEY_CAMERA>;
-> +			gpios = <&gpa0 6 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x3c800000>,
-> +		      <0x8 0x80000000 0x80000000>,
 
-Sort these.
+There is never a blank line between tags. Use git log to see how people
+were doing it, if you ever have questions.
 
-> +		      <0x0 0xc0000000 0x20000000>,
-> +		      <0x0 0xe1900000 0x1e700000>;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		framebuffer@cc000000 {
-> +			reg = <0x0 0xcc000000 (1440 * 2960 * 4)>;
-> +			no-map;
-> +		};
-> +	};
-> +};
-> +
-> +&oscclk {
-> +	clock-frequency = <26000000>;
-> +};
-> +
-> +&pinctrl_alive {
-> +	key_power: key-power-pins {
-> +		samsung,pins = "gpa2-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-> +	key_voldown: key-voldown-pins {
-> +		samsung,pins = "gpa0-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-> +	key_volup: key-volup-pins {
-> +		samsung,pins = "gpa0-3";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-
-Drop empty \n.
-Otherwise looks OK to me.
-
-Best regards, Ivo
-
-> +
-> +	key_wink: key-wink-pins {
-> +		samsung,pins = "gpa0-6";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +};
->
+Best regards,
+Krzysztof
 
