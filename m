@@ -1,116 +1,185 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11181D5ABE;
-	Sat, 26 Oct 2024 12:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466C84C83;
+	Sat, 26 Oct 2024 20:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945092; cv=none; b=U2Z/1HlDPqKgQvCMv00WeKS9HPZMojemyWtMwFd1UJM4nZaSy8YGbF84DDaHNVMkvwukbWaBBvYui9GIOLdBuljmARtD/WVdoSAw1lXtNpRe3INnt+rwnormMoP9ohJ6YJILkRe6YH5Gtykbn8tKcZfwdm/4nNYMQJPKMxSpAZQ=
+	t=1729974775; cv=none; b=tiVwaJTT0vnb+r+g70FVrZ9bc3tIhmxoPy+UVnfwYOZMtbgkvFY6ylJ99Y5vpRBsc/8ZLwOufQhZ+5t0dD/QuL+CeuhZFlltp3YZugksItw1kSSnfPTpECAy7DLXPZkUO+6ePFVi90lqofdeBpzJ0tdg0LlGeP46wdOSMgmMVGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945092; c=relaxed/simple;
-	bh=McFyV9hd0zvF83FfWgRWq6Igkamoo1JqCEDwrJwkG3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jmM0iSV3ypUlQO2jvb3j8c7ovr3hlYjGcRkLHSsnsb8cvYV/EX+GzyIn/04YkIsnS6fjn1STWNt/62C/f/3HrilzXe5X57fglzB0okyvsfHdpxDz6A0YoVm1PKQw7dM6uHejG8l6JgPezusW20TOeKzpTk9JCuXtGblv4z06NM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0jQrECm; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1729974775; c=relaxed/simple;
+	bh=BVUserAhlxXaLf5vKV75bAlUGlUoUuJDtgf69pVLDu0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tBTlJzNmFVQGfdrZaG/Qo3JpAoFN5nA5hJ5TlYJFbSflVoG+brrrfF6dAskAAMFdwzc6ip5tqJYVauU8IrXbyoRewlaoasndN4S4domJnYlFhJwT0CGZVCggdkLg6Rq4SOFJU30aeNDoduSeH4J7iEAMjjSMmecr2KP+e2VoCA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UV7izDDY; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0jQrECm"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so3994634a12.1;
-        Sat, 26 Oct 2024 05:18:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UV7izDDY"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f6e1f756so3488336e87.0;
+        Sat, 26 Oct 2024 13:32:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729945089; x=1730549889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yH+o/HY3JXmwHdmBgupIEIWVJlcQTGn4DbO6wqm5C4I=;
-        b=B0jQrECmznv6TLc+9N1y+g5fZoZh1U11tg+/XVWO2p27MFNUINJkUdLe4NuEznJtmC
-         DPnaS/xS9htXAUn7kHgYkgnio95L1rdSMSJREYffnIeCGNXWIapZHUi0VOB5Et6Sg3ju
-         YTS1nWXe6yxtWe6T2uzD8pVYYdVkkGCg75mj+/fyw/JNfOGkNY/QCG8J2u2K/SAOLe5S
-         ng/7u8eArbfJK5Yu2uo1ir2nSYtDGOFQb0qiO6YbyZseYQDZYs5l3st2WtYY/R6f8ZGW
-         rq0/RfpdN2pza+AcTC+zy7izzmAl3FIt10SWv8G19XYOKmWJNLs4KkNMscXYpZekTrRT
-         LBtQ==
+        d=gmail.com; s=20230601; t=1729974771; x=1730579571; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HF90UXs9kTQIF90liDg8fx2fiF+U0Tmt00BxqVTgios=;
+        b=UV7izDDYnqUMqtPb5FujdB/PbJGf/xcd8ckGe5NTCziCzbv+fY2cyz7KzcROZlxrtf
+         kzLhg4m3+Udzq5lTCp0fE7atg1pGet9C1dQTXRXv8Te59M1b8CU2izAKTM0mbTnxCmx3
+         fQtPkwVmg5sIcl82BXY8bILK/pPlNHf/bV8pbookWdZuXpnidNpkmoB3A/0WuFqIpmoy
+         6a8ziQZn0ZKu4dzRhYiV2hvd/RoviJ5q1BL4JpadQLgpxKsKcAPjvQtUdokP4Jzf91y0
+         wdml7g8fJ/v2bi2nBtIV02vcdDq/oJ5QVySaq32CK+1uTRwZ2x7r+XvTn4mLdG7SlY/L
+         BQdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729945089; x=1730549889;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yH+o/HY3JXmwHdmBgupIEIWVJlcQTGn4DbO6wqm5C4I=;
-        b=cQWbE7zbPvkg3bwDh/WH3PiD9BULhE8eTaWo+3/8hldkzdoV/Ty8mZkeZLuu55k+Mk
-         eIj+tZzPcWBOA9nX/K2YFsY46TJkMHTzl9wvfz4k9oiy09ulP8aaIqVeFGUY+Terye2Z
-         aXK4NuFm7t2p29zQ9tYxN2kpgK7DKZ2dfr5L/UIBsIhuvFjOZfA8EocT3Qh3L8mSMyV4
-         ljS1prdDOA+xLYZQolrG5w/KGe1v/mw2fnvwbgTz+Q6v061dvmyeHEIevPpITI8lLvyT
-         M2BYskfyG+1HyzZ6MdnTVDkNlOFWqSOSlgsRA6qLBd1whkYExw2oaMhIVcQZ7wN8ln2y
-         2+CA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYf3jdDw6cLTlpoLxO98wcsskraR2cfrjf3j2AMN3E0kfUgF6iznddkZvz5M4ZbqDBxE5ora2OuKWrZcQF@vger.kernel.org, AJvYcCWlJb0gauYfdhCYCnUYq+F5qmtzBNTOfNKj58BWvhokg3eN7LFOs1DRTzn7axhF6DBA1fHjcCRLKWgg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9DtH2Gqhrnck8fikO1YZskqNzSFS8zTgZkbGHVbm60pobaKNk
-	T8sXrdZb3CQKZJr2+/+86vjDkuRHKcsTiNR/rD1G+qhRntd62qpo
-X-Google-Smtp-Source: AGHT+IFYyYwgZquxy67wBugI4PFcafIe8a40Si0QwupoEmiT4JdDegPMKfAYvoQS+vjZC9maXdtMqw==
-X-Received: by 2002:a17:907:7ea0:b0:a9a:17fb:4c40 with SMTP id a640c23a62f3a-a9de5d6e1e7mr178998366b.26.1729945088794;
-        Sat, 26 Oct 2024 05:18:08 -0700 (PDT)
-Received: from [192.168.1.102] ([94.131.202.55])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a089278sm168124866b.220.2024.10.26.05.18.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 05:18:08 -0700 (PDT)
-Message-ID: <f232dbb0-9036-46d6-83f9-27363813930d@gmail.com>
-Date: Sat, 26 Oct 2024 15:18:07 +0300
+        d=1e100.net; s=20230601; t=1729974771; x=1730579571;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HF90UXs9kTQIF90liDg8fx2fiF+U0Tmt00BxqVTgios=;
+        b=hGt2S+uNbs6iQzS/V5lE5zzqDz603LSvzoH67FhmQRcw6B2CfThdIqXM6v4tL+gqXc
+         DGOrWzfXfH4kfy1OkfyrPHjljkeJDmtFy3p4Gbi8kqqJ9Wp6iJrefLUB/KFXqo3/qc8M
+         9g97TeYI48L8QgGGVT3z1wkTg769qbGnXNZbYCr8592D0n7mzGLhLdALlD8kX3fLUnN4
+         NmY3dKpQk3/ZSNaVsCmsg8t0R8yp4H784/xIfJ9trKUQlKP/tiE6SPL1D/UIRXvCioWs
+         mSINUEJ8DZ5bBewPIGTjawvQlYCc622EoNp7bURw+yq1j/KAN7Xa2y2CA47z19K/GFIY
+         1M9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWYlcXO8u1FaDa2qz65hSAAAiG92OJxEmi3m6DU2f5ZHo+kvYnajH9fn4qBu3GuoyKKpsnzmXHZCo/u4xXm04OQHaA=@vger.kernel.org, AJvYcCWarYtd/LshD3JlHnKd6jYxycof25BUgVtL/E7V0fNvx++vtRR8NvRMxKdB6uZKn4vtC57q5ZjKomGcDqRu@vger.kernel.org, AJvYcCWqECnXD+AahIGZ8mAIxTvKH1vIxuFjQ+cg9hZc4/wUtDkwddUIBQt+ynNzf7f7iyMRUUTUWHD7Xjic@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdZbn8XHKChfQjTjNVPO0RWU9tppZm9whczmRPiFTh2/NPbDwb
+	m1+bO/zKSLKlctno4kMXKeuoCTz3Wet2isHVEwDS0kUm90TQg1XM
+X-Google-Smtp-Source: AGHT+IE3SKNbeVLeGX39XHnr0blgOLm1GkrqEWdR6tFG0Rk+a7gOlPARd7s46wjLc1DdWevwB0ADtw==
+X-Received: by 2002:a05:6512:692:b0:539:ea0f:cc43 with SMTP id 2adb3069b0e04-53b348d31eemr1162557e87.19.1729974771087;
+        Sat, 26 Oct 2024 13:32:51 -0700 (PDT)
+Received: from [192.168.1.105] ([178.136.36.129])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c9439sm595872e87.200.2024.10.26.13.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 13:32:50 -0700 (PDT)
+From: Markuss Broks <markuss.broks@gmail.com>
+Subject: [PATCH v3 00/10] Add support for Exynos9810 SoC and Samsung Galaxy
+ S9 (SM-G960F)
+Date: Sat, 26 Oct 2024 23:32:31 +0300
+Message-Id: <20241026-exynos9810-v3-0-b89de9441ea8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] arm64: dts: exynos8895: Add cmu, mct, serial_0/1
- and spi_0/1
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Mark Brown <broonie@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
- <172994467264.24870.11860096857422265131.b4-ty@linaro.org>
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <172994467264.24870.11860096857422265131.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN9RHWcC/22Qy27DIBBFf8ViXSoYHjJe9T+qLAwzdpBqk4JjJ
+ Yr878VJF67UBYsLOkf38mCFcqTCuubBMq2xxDTXoN4aFs79PBKPWDMDAVrWw+l2n1NxrRTcKyJ
+ 0znjhHavAJdMQb0/Z56nmcyxLyvene5X77b+aVXLBCaVGgVagaD/GqY9f7yFNbNescETNHxQq6
+ lzo1aCkJZBHdHtVyvR9rbOWVy/m+0K8vk9x6ZoBtFPWGARUaIJ1pt0XWS+0Ci3IAKqnFhU7fkf
+ X/FaxfErzmFIVXqYrNwBaECopAnZ172nbfgDWkkiJXwEAAA==
+X-Change-ID: 20241024-exynos9810-b3eed995b0b9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Maksym Holovach <nergzd@nergzd723.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729974770; l=4134;
+ i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
+ bh=BVUserAhlxXaLf5vKV75bAlUGlUoUuJDtgf69pVLDu0=;
+ b=v4bk8vzj3ycQNePCRW5lDbWTwIMLhmyNOm0YdSZdQ34sUyDINDF+20rcnknWCRbCrJP/wTPiG
+ H20CfUDFVtXAdep/nMEePOH0AeA9gbplUls27HUffU6b1dlOz/uoIlA
+X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
+ pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
 
+Hello,
 
+This series adds initial SoC support for the Samsung Exynos 9810
+SoC and initial board support for Samsung Galaxy S9 phone (SM-G960F),
+codenamed starlte.
 
+The Exynos 9810 SoC is also used in S9 Plus (star2lte), Note 9 (crownlte),
+and perhaps more devices. Currently only Galaxy S9 DTS file is added but it
+should be fairly simple to add support for other devices based on this SoC,
+considering they're quite similar.
 
-On 10/26/24 15:12, Krzysztof Kozlowski wrote:
-> On Wed, 23 Oct 2024 12:17:29 +0300, Ivaylo Ivanov wrote:
->> Hey folks,
->>
->> This patchset adds device tree nodes for multiple clock management unit
->> blocks, MCT, SPI and UART for Exynos8895.
->>
->> Exynos8895 uses USIv1 for most of its serial buses, except a few that
->> have been implemented in this series. Support for USIv1 and HSI2C will
->> be added in the future.
->>
->> [...]
-> NOT applied patch 4/5 - I wait for bindings to be accepted by Greg.
+The support added in this series includes:
+- cpus
+- pinctrl and gpio
+- simple-framebuffer
 
-Alright, thanks for applying the rest!
+This is enough to boot to a minimal initramfs shell.
 
-Best regards, Ivo.
+The preferred way to boot this device is by using a small shim bl called
+uniLoader [1], which packages the mainline kernel and DT and jumps to
+the kernel. This is done in order to work around some issues caused by
+the stock, and non-replacable Samsung S-Boot bootloader. For example,
+S-Boot leaves the decon trigger control unset, which causes the framebuffer
+to not refresh, so simple-framebuffer wouldn't work without a secondary loader.
+Ideally, there'll be a kernel driver for the display subsystem some day to
+resolve this issue.
 
->
-> Applied, thanks!
->
-> [1/5] dt-bindings: timer: exynos4210-mct: Add samsung,exynos8895-mct compatible
->       https://git.kernel.org/krzk/linux/c/e54eb0465e548a7c6115e336ec5cfec04bbe8747
-> [2/5] arm64: dts: exynos8895: Add clock management unit nodes
->       https://git.kernel.org/krzk/linux/c/fa986d1073805154888a788eda38d46a796346e8
-> [3/5] arm64: dts: exynos8895: Add Multi Core Timer (MCT) node
->       https://git.kernel.org/krzk/linux/c/9ad6c3bd1bcbb73e2a5723e13b9d06e2296b07e4
-> [5/5] arm64: dts: exynos8895: Add spi_0/1 nodes
->       https://git.kernel.org/krzk/linux/c/a5541d737c8de71948bcdaee912bcb6b0781af7e
->
-> Best regards,
+[1] https://github.com/ivoszbg/uniLoader
+
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+Changes in v3:
+- fix a blank line between tags (krzk)
+- align with the opening " in eint-controller (krzk)
+- sort the memory node (ivo)
+- drop the \n (ivo)
+- drop the perf patches into separate series (krzk)
+- elaborate a bit more on dt-bindings (krzk)
+- Link to v2: https://lore.kernel.org/r/20241025-exynos9810-v2-0-99ca3f316e21@gmail.com
+
+Changes in v2:
+- sort the pinctrl nodes alphabetically (ivo)
+- move the interrupts from pinctrl file to SoC dtsi (krzk)
+- move the wakeup-eint from pinctrl file to SoC dtsi (krzk)
+- sort gpio-keys pinctrl-0 and pinctrl-names (ivo)
+- rename the bixby key node to "wink" (ivo)
+- sort gpio-keys subnodes (ivo)
+- sort pinctrl_alive gpio-keys pin descriptions (ivo)
+- fix the Co-developed-by tags and add a signoff (krzk)
+
+- Link to v1: https://lore.kernel.org/r/20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com
+
+---
+Markuss Broks (10):
+      dt-bindings: arm: cpus: Add Samsung Mongoose M3
+      dt-bindings: hwinfo: samsung,exynos-chipid: Add Samsung exynos9810 compatible
+      dt-bindings: pinctrl: samsung: Add compatible for Exynos9810 SoC
+      dt-bindings: pinctrl: samsung: Add compatible for exynos9810-wakeup-eint
+      dt-bindings: soc: samsung: exynos-pmu: Add exynos9810 compatible
+      dt-bindings: arm: samsung: Document Exynos9810 and starlte board binding
+      soc: samsung: exynos-chipid: Add support for Exynos9810 SoC
+      pinctrl: samsung: Add Exynos9810 SoC specific data
+      arm64: dts: exynos: Add Exynos9810 SoC support
+      arm64: dts: exynos: Add initial support for Samsung Galaxy S9 (SM-G960F)
+
+ Documentation/devicetree/bindings/arm/cpus.yaml    |   1 +
+ .../bindings/arm/samsung/samsung-boards.yaml       |   6 +
+ .../bindings/hwinfo/samsung,exynos-chipid.yaml     |   1 +
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml           |   1 +
+ arch/arm64/boot/dts/exynos/Makefile                |   1 +
+ arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi | 503 +++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos9810-starlte.dts  | 119 +++++
+ arch/arm64/boot/dts/exynos/exynos9810.dtsi         | 273 +++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 154 +++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ drivers/soc/samsung/exynos-chipid.c                |   1 +
+ 14 files changed, 1065 insertions(+)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241024-exynos9810-b3eed995b0b9
+prerequisite-change-id: 20241026-mongoose-pmu-52240ed310cd:v1
+prerequisite-patch-id: 41ddde9c262005eda3624e381b4a0892836187de
+prerequisite-patch-id: d1b80350c60949f7f2671895518ad4b1ceb51e4a
+
+Best regards,
+-- 
+Markuss Broks <markuss.broks@gmail.com>
 
