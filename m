@@ -1,107 +1,110 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C8B1DF99F;
-	Tue, 29 Oct 2024 08:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55912036EF
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2024 08:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188994; cv=none; b=LUpsgsaTYFhopOeuMBNr9Z3HFCT+LIgEqSEkCQ6WfMeyGfZ4kGAGaXHgF8ZVJwDZtqN7AGrNExCta37uyB7u1z2ZHuCCGPb9QEFKuBlagxLnxcoA012ck6k0BHjA4Jo9gamNcefiFiMNG/+cNmejaPZ1f+dnZoXNbRPg8FR+38w=
+	t=1730189409; cv=none; b=ovWHEWJ2ZY+6HRMeQ0GbJbb2tt57JnCekgrugZ/US3TEaLnRpEBaPg7RTnC7qhoWMUQOSqfOicSblrqMSjYKITKe0I/h4J+wnlExT2U2WvNi7AmJJrq+HactdHAjwsDQGAdV9Rb2jlrtWjUDf0jXzfarSSofNv1rs8XUxGTCV8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188994; c=relaxed/simple;
-	bh=/xUZ3coZ6gf0W/FIhSNP+3W6dQQSH6hXnIrXeTA8pgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FZB2fumrZmBax9sQHnCqvLqJ6RiBu6FoXlc6V+19GTYLIi6UNv9Vjti3nxDcuR7eXCT2CFnotX/OgDlsAcOuP0jVpgQONAsgpFyUQMMomDp6KWFqmw8psSIlU7oLa7S7EiE9R2orQLNPNeoDPK+IUav2xHiwtekRcTW0O/5BXSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=E9WrE7ko; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1730189409; c=relaxed/simple;
+	bh=BiKzbp1jPxmy2zZUEQHW41SCWuFugkSatqygtUEc7hc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YAxB2H534w37UsT/03j6iEyskM7hYhlf+0JMR25EAOIAzUCd8vW3+Az5Rt9R4p+YxvvXyN7SgcfWgiFQWaKaCjnqsRdJ7T/9PfaVRDKLWlymenkmhoQUWehsRkbxUWXggLc0LsZWTMhH01IV7NKegQvYm8guuEr7Ek/P6q974Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RN5q8tOZ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="E9WrE7ko"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iFdAzUkd+0GcTyGkQ9/oIIo1dvmqpp5hrlTc3EhXZOY=; b=E9WrE7kocNrMH0KBtISYyOsT32
-	PSMSsRWWc5ttyuBz9k08bNtdV2pmnSIxLwf8TSavrfVanzPnFH+vFeWHa8X18XX4W7rs2HhWaEF39
-	lMenGv8tWDu71gfI8++INuZmUySPZj8ECT1w4N5VRO5xYI/DzO+6lz3e6/1j5NgdinKJL8R+6sYWF
-	eWDftBCWLy1wRDPEblOrOj+6ShySW3PiIVJ9DC83Ds6qlsvQRzdWknfrBAB0lg5znZL0QsVoR8zpi
-	LB5SGxCh96C1CN9NxF/9ho2aS0Rb79rGDcq/QHH7rG9oiG32K6IP9wBS4BK0I3BhMQOOMdoFjeky8
-	DpvOJkLg==;
-Received: from [185.156.123.69] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t5hAk-0002ap-A3; Tue, 29 Oct 2024 09:01:50 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>, Qiang Zhao <qiang.zhao@nxp.com>,
- Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
- Huisong Li <lihuisong@huawei.com>, Linus Walleij <linusw@kernel.org>,
- Imre Kaloz <kaloz@openwrt.org>, Karol Gugala <kgugala@antmicro.com>,
- Mateusz Holenko <mholenko@antmicro.com>, Gabriel Somlo <gsomlo@gmail.com>,
- Yinbo Zhu <zhuyinbo@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Daire McNamara <daire.mcnamara@microchip.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Duje =?utf-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>,
- Mark Brown <broonie@kernel.org>, David Wu <david.wu@rock-chips.com>,
- Jianqun Xu <jay.xu@rock-chips.com>,
- Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Izhar Ameer Shaikh <izhar.ameer.shaikh@amd.com>,
- Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>,
- linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
- linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-pm@vger.kernel.org
-Subject: Re: [PATCH] soc: Switch back to struct platform_driver::remove()
-Date: Tue, 29 Oct 2024 09:01:46 +0100
-Message-ID: <5089490.31r3eYUQgx@phil>
-In-Reply-To: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
-References: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RN5q8tOZ"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315549c4d5so6446575e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2024 01:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730189406; x=1730794206; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UJk4K1NEYom8w+Pd7ggik8xB+/zfQw0G3X6wkeyzU9U=;
+        b=RN5q8tOZgVKXEnrKnEXVPAmIR+/1kh5MED1KqpCgwG/RWQMaIMF6BuwEGhNQcY1I1w
+         ONpJUHkkNOnYuEKagFj6nL18PR/ZWsmWJVYZPs/CAyf2wEvNizrCnS7yRPkY6dV+pVFz
+         j3oPLc9k4RH6NtkZs+B4Vx2v/oJLGBYJHTz2m/hen0cSeVU0Qkw5dyp8yb0C5nzn2Kh8
+         NCRnQFqDsvRahRRIVkODAZAcBYhoZIanXaPkLkgZzL7vF7k9CK83dgIPm7uetx2GQfra
+         12gEDoIsYxOy5mn72h7Onm6MOFfVp3S2RngWm0UwmLNptuDaWixN4KFp+QE7SuqNcG1o
+         821g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730189406; x=1730794206;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UJk4K1NEYom8w+Pd7ggik8xB+/zfQw0G3X6wkeyzU9U=;
+        b=RoISdu8GKVtrEvfLzoTJm23ULWDjnCUpsW41hWGBf6efNReiqlQ7Vvr0A0j5XkdOhS
+         O+3sCBq0Mr/gdjO8Ox9hLNGrk9t0/ev86WllDmZSGhvlqZti/pCEQMAINzeVJGjpspsA
+         Vy71bFhTlf6J75C5GWY1Y3xLR6Gon4czd+ftMz7aVbIkNcDRIfMPY16W9mo679OZiB/Y
+         2cLWEo6E2GUgzJJC4OeJNFshOtvhzfiHM8A4XxMR+B6ax3xFxetaFXJZosm/CYA1zvzj
+         nORMRuZ1QQiCe2DlrbLauJsukNOoC8N/k/UJmf9wR60rGT3IuuWVKdewofZis8BBr7L4
+         yBHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTNbvsczHNKe9fDkDFn9N45Lgm1d8IDlMh/9dEhuC3FY7ul4+VSTolNM6RRXaQxkixwjONAv7wWt7Xj0bFpperAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP/NN0t5AgSdis4Nj78u4/Fcs99cA7a1OISMfRpQF7u6699cOP
+	ZTSGNiNhxsyiFCFI+QrEyXqtYRuf4UINQGQNPD1Y4VYsOmLH2TD9jmwTbfd2+4w=
+X-Google-Smtp-Source: AGHT+IHnLTXH3vKK9bio7SjMSZy36YKvL0zVstM38RToyHUADBXCTaWksKX2nxZaf0pDqrVA4QHoMg==
+X-Received: by 2002:a05:600c:5494:b0:431:4a7e:a121 with SMTP id 5b1f17b1804b1-4319ad4ee8emr37678985e9.9.1730189406260;
+        Tue, 29 Oct 2024 01:10:06 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f784sm165467485e9.19.2024.10.29.01.10.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 01:10:05 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	arm@kernel.org,
+	soc@kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL 1/3] samsung: drivers for v6.13
+Date: Tue, 29 Oct 2024 09:09:59 +0100
+Message-ID: <20241029081002.21106-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
 
-Am Dienstag, 29. Oktober 2024, 08:48:58 CET schrieb Uwe Kleine-K=F6nig:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
->=20
-> Convert all platform drivers below drivers/soc to use .remove(), with
-> the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
->=20
-> On the way do a few whitespace changes to make indention consistent.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
->  drivers/soc/rockchip/io-domain.c            | 8 ++++----
+are available in the Git repository at:
 
-=46or the Rockchip part:
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-6.13
 
+for you to fetch changes up to fd0b3581666860610ac770d4b582df42e0065c58:
 
+  soc: samsung: exynos-chipid: Add support for Exynos9810 SoC (2024-10-27 20:53:54 +0100)
+
+----------------------------------------------------------------
+Samsung SoC drivers for v6.13
+
+Add Samsung ChipID driver support for new SoCs: Exynos8895, Exynos990
+and Exynos9810.
+
+----------------------------------------------------------------
+Igor Belwon (2):
+      dt-bindings: hwinfo: exynos-chipid: Add compatible for Exynos 990 chipid
+      soc: samsung: exynos-chipid: Add support for Exynos 990 chipid
+
+Ivaylo Ivanov (2):
+      dt-bindings: hwinfo: samsung,exynos-chipid: add exynos8895 compatible
+      soc: samsung: exynos-chipid: add exynos8895 SoC support
+
+Markuss Broks (2):
+      dt-bindings: hwinfo: samsung,exynos-chipid: Add Samsung exynos9810 compatible
+      soc: samsung: exynos-chipid: Add support for Exynos9810 SoC
+
+ Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 3 +++
+ drivers/soc/samsung/exynos-chipid.c                                 | 3 +++
+ 2 files changed, 6 insertions(+)
