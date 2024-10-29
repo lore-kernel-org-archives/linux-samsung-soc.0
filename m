@@ -1,74 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8A62071FB;
-	Tue, 29 Oct 2024 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ECC21348;
+	Tue, 29 Oct 2024 15:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206511; cv=none; b=Gs2bSdGsyajVfhEsKYsH8PM9M/k+p/vDF6a0Z4BDlv654R7Lhacy8xDDMhH99rLpKoFG/HQj41G0xYL1kncsHodjfCBt0bUxIyZNlqHjIGk9BVJXqjK8OqVy5mSd2XdNweCCJlsYNdgry3SatYjmQ3IN7elSA12a8QaqacmMwLE=
+	t=1730215448; cv=none; b=t7br68SlobF9P3m+v6DoW5SKdF9fqBSr5bqv1ZLvYmUYfjZaENqVWNhEbCCfLCxDJcnA7wEhKHfy3Y9zdTuZTOA1SS8eYtQD7eHwHqrF3B989FaVkbud4bQOC/0+oEL5w9s5Sc0jE96Egxr6tBzrxjAk88/UK9NhROvkInWFUHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206511; c=relaxed/simple;
-	bh=SMDyXbB2S/Xna6nklNIq1bBj07R+0sg6UmAJM+SQqgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aOUwIQf5ITslhC0L6pRx0T84GjcCI1upznt2e/JMFZ7S1zjHv04ocR98Nh+bZ5cTM7qqDXiOE+Gd4flohJDjYR5M51oALDuTSOXYv3Ro39+lg2OZpbvUrSGTkEi3fdNihDCV2kzkjbCvnpzUSNoRRk8R7wsNwWhrqMa2guYOEes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJGiwWQz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730215448; c=relaxed/simple;
+	bh=OnfPNjPFcprKl1sN97TkhOv/xNK+Q/zpiKD+oNhDMSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duKdzRHkQpDVn8lqn6eHzuJlyjC4MZA7N5h7aiRMCl5cQzP1S5yZu/L8BS90/jxeUokGwGA283y8ckgjyavLC8gV09znVolKW9SyV2Osbwc1bwRMiCXEWJR1Kl64RSMozI9zxgY+BlQeifA6jAp50sDpKTOP8A2yCC+pRl1JAPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E31i4+n2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJGiwWQz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F200C4CEE3;
-	Tue, 29 Oct 2024 12:55:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E31i4+n2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C660FC4CECD;
+	Tue, 29 Oct 2024 15:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730206511;
-	bh=SMDyXbB2S/Xna6nklNIq1bBj07R+0sg6UmAJM+SQqgE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GJGiwWQziuAXIPGEsbIeJ67Cd8ikiouNRZJSB4eheC82PZohay8AluOa2Ue3HyJtE
-	 pvZpAEvcev+b6Ypw1kLSzCZXx+oCXKts5Hbwf/AMw624tkpy7Pbfuk2n92KojPJ0dX
-	 lPWwUiAPwMaQdBK4DroBjRkVqwGg2t3UUinbtC2zdeARkSRyRCAyvhldUlwc0wRhbN
-	 51zxRjzqAGWxCJQhIm91Qal6QN6EPuE2zefKyf1sS0QMvXhuU4XPAhCOOChUxY6/2U
-	 lPYo/+VFVOwrsbcNQBU6X43BjdcMg5tgg3l3is10WSoKOyl79a+ffyILQB89rGYWIY
-	 k9tAmBr4myx8A==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 07/10] clocksource/drivers/exynos_mct: Remove clockevents shutdown call on offlining
-Date: Tue, 29 Oct 2024 13:54:48 +0100
-Message-ID: <20241029125451.54574-8-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241029125451.54574-1-frederic@kernel.org>
-References: <20241029125451.54574-1-frederic@kernel.org>
+	s=k20201202; t=1730215448;
+	bh=OnfPNjPFcprKl1sN97TkhOv/xNK+Q/zpiKD+oNhDMSk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E31i4+n2VfP73VqUtiK+gGGwGyJPG/gqLdz1F/Xn8gtzgIte2GFbSrzS2tWamSxWl
+	 9Zw0YDHmBYpciQUj3b95NnqAHMns0WZL/efHJoyMUe+TT5Av6j75+LIOn2d10jG2Sa
+	 Y/wGc+s3uqYoxSChwozTI4vlkJhehj9XoxmAnsXi9m/WRyrUAexAyJpLI7kZGMq9cI
+	 Jv7t9zvjRKrRJHu6S4D0XxbuREDxDww2gja2p+62K9u14TvqnkkJV5ZTCLzYcENc29
+	 ekLAvwOCsdlxLy8apvJqWVnUINaro65w+MkYq8mkZm8f4/4hV8Vcja9W6w98QyEBGi
+	 YG75XcuK7bCvw==
+Date: Tue, 29 Oct 2024 10:24:02 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>, 
+	Qiang Zhao <qiang.zhao@nxp.com>, Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>, 
+	Huisong Li <lihuisong@huawei.com>, Linus Walleij <linusw@kernel.org>, 
+	Imre Kaloz <kaloz@openwrt.org>, Karol Gugala <kgugala@antmicro.com>, 
+	Mateusz Holenko <mholenko@antmicro.com>, Gabriel Somlo <gsomlo@gmail.com>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+	Mark Brown <broonie@kernel.org>, David Wu <david.wu@rock-chips.com>, 
+	Jianqun Xu <jay.xu@rock-chips.com>, Jay Buddhabhatti <jay.buddhabhatti@amd.com>, 
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, Izhar Ameer Shaikh <izhar.ameer.shaikh@amd.com>, 
+	Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>, linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	loongarch@lists.linux.dev, linux-mediatek@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] soc: Switch back to struct platform_driver::remove()
+Message-ID: <7iufjf4cnoofq63vtzrnlxneyjhmuhuaq2tqflzw6nc6xpixiu@dnyh4etii2vz>
+References: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
 
-The clockevents core already detached and unregistered it at this stage.
+On Tue, Oct 29, 2024 at 08:48:58AM GMT, Uwe Kleine-König wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/soc to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> On the way do a few whitespace changes to make indention consistent.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- drivers/clocksource/exynos_mct.c | 1 -
- 1 file changed, 1 deletion(-)
+Acked-by: Bjorn Andersson <andersson@kernel.org> # qcom parts
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index ef8cb1b71be4..e6a02e351d77 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -496,7 +496,6 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
- 		per_cpu_ptr(&percpu_mct_tick, cpu);
- 	struct clock_event_device *evt = &mevt->evt;
- 
--	evt->set_state_shutdown(evt);
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (evt->irq != -1)
- 			disable_irq_nosync(evt->irq);
--- 
-2.46.0
-
+Regards,
+Bjorn
