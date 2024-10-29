@@ -1,105 +1,107 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1587E203719
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2024 08:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD821E04A9;
+	Tue, 29 Oct 2024 09:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189413; cv=none; b=lTpzd4k/DCSUeH/9p91zBlU4YMkitInJxukcPANxLDlwT0V7XJ7UjBDxqa5UvlCvgCN3ed5NA/5mGmEXKA0/1l2GEclnRHDtS38POmw1WxQdzlLhuMnmOsrR4ST6ti/kK1ortOoO0hAqW5oWACI60ohNF6X3SYtU7Ka1LvNtmp0=
+	t=1730192646; cv=none; b=VOaPBwkUngdoL3iN5jxu4T9wmOkalbY2jyg21dePJLtv+wy8xD0hXNKmQd57yEGhg0SwdAlnY0ZF9140Fu1xfLsANzeGM4A4ma3fnXQlfo2WzxMmmY/HFn8/ukfLQQKmzFR58Ls1Do+lFrDeER9nNDYbOjtC3El0GD3/KEvkYLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189413; c=relaxed/simple;
-	bh=OBIiL49540geMYYq7nS5eOLkYE1Imle7/TDrBQNL0nY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rVEv0faXrG9cMzF0JVa9Y7CA5da7fLfRrAN3DvibjSqsJhK36lz5eLp5vIhz4sLZ2ZTItUoIzcdx/LDTAPIZ6AUygQdRiKlf17oKyBwawPYldopm4CH6Bzcw3Oo5oxa8lHVoh3pxlZL5vSFT9UYEbv6tDupl0DlKXcyY752ZMKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GeIhQlLz; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730192646; c=relaxed/simple;
+	bh=IJe8ON7eBy5QAAgaLfm92pA+IoRN4Z1tGU93HN2HGcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KAmNPX3YPKbmz3P6WW18rj0i1PPckJ2xdgcc7F7clRlzj5nUGj0p0LKDs2JN/Q9lGwU5YSPMysWlyooYpGuxdf+T1++RVY/+40LJT5JexeDrHGlw/4K0d7nhP8Mjd4zv2UCaBQTe5PKdIXSyWy9T+p7+eW4Ka4BuYq8qZfLygEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WkhI/DVq; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GeIhQlLz"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315549c4d5so6446635e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2024 01:10:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730189409; x=1730794209; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+nlHQgxHoo0N+w71NQjPtnfHRpsgGAqUyUZpSjSJNUE=;
-        b=GeIhQlLzyb1c0ziDyuEpL3iekx6aUj3zobaD0BvgULNSqZXtetEs54ILy1+fe5ooCz
-         go3+kvf/IdiN0BQBZXbadE0okEJAoDIvd62pKvE/QVT3ywb0dmnkt3cxHEO0+04v2K+W
-         xgN1WA1j7GnODP8WcU8D6iaV5+Y8O4t+3YTsV1erIoAQn+w2GSaSeXSYF0kM8Xc48MTP
-         cYYQyEXfTem9l9LAAsFRlp/KsZurPkoamj9h0DuWMCnOL1gSiUzHMMOtH/a5BAarw7FH
-         4+zB8R7tbYSIRv9aHLsqVoiXFtKkndo/88aivvjLUMHHuW+IGm9SskYHYmP7arjh8ll7
-         YXFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730189409; x=1730794209;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+nlHQgxHoo0N+w71NQjPtnfHRpsgGAqUyUZpSjSJNUE=;
-        b=H8NWmQYSn5HUCK6F4f9vB43MnyiB4FZlKrhXhuFbHM0rmT5vnhlVjQLYTQ8AsnK2P5
-         2UhvWRxpbLXBL8iyOF03pY6eh0ZCNjh5I5Cp0Du2yylFYIHRd2c+z9b3q/FNNhKBK7CD
-         wFLTzEADSZlwgb6aQM+6BXVv5mJYMMgB/Y7YEHlLNpE46rmXC/pK9a3TF23g1nlVH0Vi
-         dsAa86u/9NrHxJS5imTVKI16rlEaMdCs+KQ5KHPICSjdKvyShFUGRSQHQjnJDGGh8gHq
-         J4T9EYVGBlMT/Yt4zLjHHYdsBtQNywFjTsn8xla2TCCBWGrAl+aEkGmqvOYYSeK7jOlx
-         l0wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtKGhiEvcdeotW/UCK7bacDs/ayKg6zCwg+yRGjKW3i9jn/2RE4mEM04RFbnkpC4YKQAG4gQZXMBGNY9QLy6hhAQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQBBtNdhv0uplYI9lFmLJhMSyk/P9/nG3Cr6qXzUH6Wk86MM2D
-	3PzicuexKbieh/aOcD5FzSIw11kNggGpKlTTo1TdbXi1nBgRNkytlDWgtS20Zm0=
-X-Google-Smtp-Source: AGHT+IFBTmPkpYxqqzdZgLFMhy6wv545YoQN7O/maEIdRbbG/bFpFO5cny/nfyU9IGP8/iORnhBuaw==
-X-Received: by 2002:a05:600c:3ba4:b0:42c:c59a:ac21 with SMTP id 5b1f17b1804b1-4319ac79b20mr37591015e9.2.1730189409495;
-        Tue, 29 Oct 2024 01:10:09 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f784sm165467485e9.19.2024.10.29.01.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:10:09 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	arm@kernel.org,
-	soc@kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL 3/3] ARM: samsung: soc/mach for v6.13
-Date: Tue, 29 Oct 2024 09:10:01 +0100
-Message-ID: <20241029081002.21106-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241029081002.21106-1-krzysztof.kozlowski@linaro.org>
-References: <20241029081002.21106-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WkhI/DVq"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C68791BF204;
+	Tue, 29 Oct 2024 09:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730192635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hpAfK6tyrvwMS8L2PbzrGqnbfuzjHJrlMvInkHIHnZI=;
+	b=WkhI/DVqn/dDgEGXg5ze24s00SnuWWK8bmgYFAQaSQSgHS/3+b0O5sNNKTStjAxR/jf+4h
+	0o6b25F5CM6hzS4ApkL7rjJteF/3WsvIXr9Is7v7RNPDr1hM6SgZtytzIUP4gZ5dtlEpLg
+	COgrRCbWe5DTxWzSVRzksGVJyb597rnqQCl5AJLLhtHIb4htqmGNuaCLmKvnbildk9oQPe
+	IqjYlYEsv6PJq4Tpe9bBIT7sk8n1gJbWFWN3kIUiX2Dd+Sk2UHidAD1P51iPnXfsSARzVl
+	nu+FDRAug3FdoWJxDLz5FVgjrXmtG+m82/IUNQdOKDRvvPwaBoAqjYk9s9Gx2w==
+Date: Tue, 29 Oct 2024 10:03:47 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Joel
+ Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Qiang Zhao
+ <qiang.zhao@nxp.com>, Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+ Huisong Li <lihuisong@huawei.com>, Linus Walleij <linusw@kernel.org>, Imre
+ Kaloz <kaloz@openwrt.org>, Karol Gugala <kgugala@antmicro.com>, Mateusz
+ Holenko <mholenko@antmicro.com>, Gabriel Somlo <gsomlo@gmail.com>, Yinbo
+ Zhu <zhuyinbo@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Daire McNamara
+ <daire.mcnamara@microchip.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Michal
+ Simek <michal.simek@amd.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Duje =?UTF-8?B?TWloYW5vdmnEhw==?=
+ <duje.mihanovic@skole.hr>, Mark Brown <broonie@kernel.org>, David Wu
+ <david.wu@rock-chips.com>, Jianqun Xu <jay.xu@rock-chips.com>, Jay
+ Buddhabhatti <jay.buddhabhatti@amd.com>, Radhey Shyam Pandey
+ <radhey.shyam.pandey@amd.com>, Izhar Ameer Shaikh
+ <izhar.ameer.shaikh@amd.com>, Naman Trivedi Manojbhai
+ <naman.trivedimanojbhai@amd.com>, linux-arm-kernel@lists.infradead.org,
+ soc@lists.linux.dev, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, linux-mediatek@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] soc: Switch back to struct platform_driver::remove()
+Message-ID: <20241029100347.542b56d4@bootlin.com>
+In-Reply-To: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+References: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+Hi Uwe,
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+On Tue, 29 Oct 2024 08:48:58 +0100
+Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
 
-are available in the Git repository at:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/soc to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> On the way do a few whitespace changes to make indention consistent.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+> ---
+...
+>  drivers/soc/fsl/qe/qmc.c                    | 2 +-
+>  drivers/soc/fsl/qe/tsa.c                    | 2 +-
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-6.13
+Acked-by: Herve Codina <herve.codina@bootlin.com> # for fsl/qe/{qmc,tsa}.c
 
-for you to fetch changes up to 3a6ad95d97eb62a7b7c804ef7eeb329a1f697d00:
-
-  ASoC: samsung: Remove obsoleted declaration for s3c64xx_ac97_setup_gpio (2024-09-30 12:47:23 +0200)
-
-----------------------------------------------------------------
-Samsung mach/soc changes for v6.13
-
-Few minor cleanups in platform data headers: drop unused declarations.
-
-----------------------------------------------------------------
-Gaosheng Cui (2):
-      ARM: samsung: Remove obsoleted declaration for s3c_hwmon_set_platdata
-      ASoC: samsung: Remove obsoleted declaration for s3c64xx_ac97_setup_gpio
-
- include/linux/platform_data/asoc-s3c.h  |  2 --
- include/linux/platform_data/hwmon-s3c.h | 10 ----------
- 2 files changed, 12 deletions(-)
+Best regards,
+Hervé
