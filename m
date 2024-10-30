@@ -1,103 +1,104 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AD91E260D
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 12:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9E31E6DC2
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 12:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730289629; cv=none; b=a/COFE3WtN3n0PDJsOae0XHPgK4Dims49BF+kns/3nXD3s/rHeL7RRd4N/g/3V+UOltQMn2N4QCgupj1eRrBMTHjW+9whtC7d3j424Ok/5AN215rpirtg6aAp3RPJtzGEnztN7LiBUCs2XuKdzxGpUZpP+gfr+nEJQKjM2vOHx0=
+	t=1730289942; cv=none; b=Nhy6v4iFAuUPWwXfOk+bQrLHrvxUwkCHrU/Nk9rWsQSQTsn3rIGuL4Nosv9zoGipQcr50TjDZnyqrKdtV7oBMZCCPmvVBgy6TtCmgEO255Tpedj2XLrCK32zh7XEWV69eG3bzFPko4JMqozBeANkctoAjO8LZhZ8+T61EEjXCLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730289629; c=relaxed/simple;
-	bh=nM38MNJvKA1mecfRM7u5vCbSbJQllP2Ezo9yQDCPKDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZmfPCDA/H/XF2p2URNjtNHDQlVOvcprHutHIeoDr8OAmQlXmxieUXuQDParyLU/h6KYL7lBAjPjmjphKr+DkyWJbg/3nmGXRyYK9pMClGIjUhB//opSi6Hn2tXpt3DIae2n4uKpucgAobrS6JaGeFCfI/ko+JXzRWZ1gZFbUEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wwu1UdnX; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1730289942; c=relaxed/simple;
+	bh=i1lP8I2grHrCyE9c+t46FjNKQ7k/gGdFLb+BmlfKGdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tlhc9dAL7fQ/qDFpNHBlIkeCFFxbju8mzyqTN331x27vLkC+hcxkP5SiSBtCIQzpnwNromBLlpdsjMZrNoCM6M0iOM1ERRDE+jjzS43hD81690WLmnQua+EO9SEIG+Itg9yR/XwkK2tUps6rnRUplWN+kM1MjKke+MpvyHtJzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lSSUQXSs; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wwu1UdnX"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so60812145e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 05:00:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lSSUQXSs"
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-71811c7eb8dso3333955a34.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 05:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730289624; x=1730894424; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=heM+XH6baATko105nYV8E2040lmy0LhxFZdot+CyuRw=;
-        b=wwu1UdnXlNqqfLKebzkbOvo+TJ1bD0rSwmONnuKARwoq3V2ZViDauVnWlFv8lDx9EZ
-         wddmg0pR5LwJjoCuUaoz6qwoW5cSRm3+6S4zoqTjFWtFPgJex8dA7yvPjD5l4vCPLHIO
-         ljfmXFaYgSvNkqFIyj4qMDDxPL1rylBzjP3JdLIXXG9LzxSUcDF2jsGo9j1S/GvHcXLZ
-         y1vYILv1yZnWq6eKS8MougYlWZ+n2deKA9HMa62+ugHRYKNxgPTuJhkvBXj/fh5fbsxo
-         AU2ShtFYSBskyrUT1ndAvldyckmFh+MVmWC4CrVGW/3WSJbZRYExJiyB2yyMRx5kms4m
-         bYsQ==
+        d=linaro.org; s=google; t=1730289936; x=1730894736; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1lP8I2grHrCyE9c+t46FjNKQ7k/gGdFLb+BmlfKGdQ=;
+        b=lSSUQXSsaSOgZU2f3Daew00I6NL2+efCPSGiItNwWeeRzKSK6U54gb3nn52IIHOm0E
+         R3EW5AxP2G06TB5+Z/ZLJ1Pdk2HrWXvtMzDQUajg+cX3/OG0VpMr2xAyL2B+645X0kZi
+         U8jort3N65efeTQM7zhvjI+QbYkgrk6MSaOHx/aCWxbJarVEfdFW9oZ99juJkCGOVPNu
+         H5zdJIxuCmC1K43E+EsKeo0BzclI2HP/02K0Xz6hR7lrmABQ2UFytPvGZLKbqwxtLQ1v
+         ijuqhe8ZG1OR2H8ARNspiNoYX/EmvYi/YrSQMBCHkZ2/OAO6XcFI/uL7HF78LmNQkudF
+         mBbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730289624; x=1730894424;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=heM+XH6baATko105nYV8E2040lmy0LhxFZdot+CyuRw=;
-        b=rZhxE+cnBY1PMWvhzYq17Cv94Tbnug5J55ZMnHeRhSJZ7fZvadS+ScLb5ijantD3aj
-         cBWi9a37U5hLAmRGWKX0Rm+nHM1n+6naOM+2KnnmwJ7qFhohZ/29SsRgBGQPMTfoMX55
-         obZuTtS1jSOFP/IYiH63IX825aadECTZ1gmlWc916X2SNAVuZmzgPM6NWEdasA5xn+Xd
-         XdpIEDyxCZE+vxY3KYUO0dZm56rkIcb7PR4M11koBi2gDM/JavaB9COgWMVHGrvMFI+X
-         cqe+HpavyvVtfM60ju+j+KaulNr7cS4cI7T2UnphNUu9F94zjqjlboa17Y0gh4087CKG
-         BNKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVT9poDwTogD1kJIdTy+AR1AT+4nHfEhso/RB6w+PP/F11v3DdEYhqV0iVHE7ufzJ3cELsLJSILlcOFrQ8fEEh/Jg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWv9cKl8WwfE2ESEk9UGpMVW3brS1DLnBQTCnvtfm7Pvbu9b9F
-	YE1+8H25tNJrdyI9TNkQ6Pq9TEUZG0lqoIQ7Coui/Ce0zTMd/hcc8q/rpvOvvsk=
-X-Google-Smtp-Source: AGHT+IHdqyep7BVt0uyn5JbTz0KBCY80ohOEAxNDfe2YT8nR9HTsXFBe91fCaeMmIZfL9ezJQQxpbg==
-X-Received: by 2002:adf:ec8f:0:b0:374:b35e:ea6c with SMTP id ffacd0b85a97d-381b70ed1c3mr2049217f8f.40.1730289624347;
-        Wed, 30 Oct 2024 05:00:24 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9480e5sm19330995e9.16.2024.10.30.05.00.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 05:00:23 -0700 (PDT)
-Message-ID: <b5dcd5df-7215-4679-a6be-c45d525e8051@linaro.org>
-Date: Wed, 30 Oct 2024 12:00:22 +0000
+        d=1e100.net; s=20230601; t=1730289936; x=1730894736;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i1lP8I2grHrCyE9c+t46FjNKQ7k/gGdFLb+BmlfKGdQ=;
+        b=LXbJZUChWfwAPWDVJTuO2JGQoMEZZAQtQKt7a9FWmN0SWs+JG+XMb79Dn2ykw2TIA6
+         D/kHUw1ORhzR/MoMbo6NR5n/PiD1ZoPt88H63lWcv5kOMkFhW+NM81Z6b4j5pImPtOlG
+         Zpdw0APU5yhCfHkL1jS9+19ag+z6dBRHjj77w+tKkLU8ZXu7zyz4Xas5+6bY2yyx8Ltd
+         jvR9wAe9jbl4qHfTxZqAensbN9bk5ZP2rLS5EIf9G9GmHsoUVWbcfB8UXHnUSeQsXG1e
+         w6k9VJqI371VWwYGoiLl0Of9L8iaLi+sTd/ba5LTXnQEIyp0BZCEpCC4dyE1JXoTZSAv
+         7r0A==
+X-Forwarded-Encrypted: i=1; AJvYcCX6t5hUDioNvqMkcOEF3w8wrcBl4w6WCFXi7oaoaRuweKBL3QiQjTzj0T7SS2ecpQcJcEWIuojaIu2o171cONTYMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4sFkzfts0Ts8LnOAA8cNe9XvqW1tQNHV/M28C7qW/IZ0RnCqn
+	GzftLQnflDWBJN9CpeDoz+kqHiMOhqHN3kRr8C+x1BFeSijiz7SB/yiU838kuIxvkTRCwUV/oO1
+	oS6WZ+fUZcbbafI0bSbvz8vLy/vQ1J6eUoXEDMQ==
+X-Google-Smtp-Source: AGHT+IFn+twCzCSyeeaogqHqxJtlAhMOH/0ALCX8dQKWNuWWzUxem8EDdoP/Zy/JRJuXvAkQG9PBSSTzZU3c7V6LoE4=
+X-Received: by 2002:a05:6830:3146:b0:718:531:c190 with SMTP id
+ 46e09a7af769-7186827b1abmr13608345a34.24.1730289936015; Wed, 30 Oct 2024
+ 05:05:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/11] scsi: ufs: exynos: fix hibern8 notify callbacks
-To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
-Cc: andre.draszik@linaro.org, kernel-team@android.com,
- willmcvicker@google.com, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- ebiggers@kernel.org
 References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-11-peter.griffin@linaro.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241025131442.112862-11-peter.griffin@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20241025131442.112862-2-peter.griffin@linaro.org> <74458ba4-af0f-4c41-92f5-c6c0cb79e930@linaro.org>
+In-Reply-To: <74458ba4-af0f-4c41-92f5-c6c0cb79e930@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 30 Oct 2024 12:05:25 +0000
+Message-ID: <CADrjBPozRnsf5a0fNchbuokUK6y00SNSqEGDJ-sHojSvFzdd2w@mail.gmail.com>
+Subject: Re: [PATCH v2 01/11] scsi: ufs: exynos: Allow UFS Gear 4
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
+	martin.petersen@oracle.com, avri.altman@wdc.com, bvanassche@acm.org, 
+	krzk@kernel.org, andre.draszik@linaro.org, kernel-team@android.com, 
+	willmcvicker@google.com, linux-scsi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ebiggers@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Tudor,
 
+On Wed, 30 Oct 2024 at 08:04, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+>
+>
+>
+> On 10/25/24 2:14 PM, Peter Griffin wrote:
+> > UFS Gear 4 offers faster speeds, and better power usage so lets
+> > enable it.
+> >
+> > Currently ufshcd_init_host_params() sets UFS_HS_G3 as a default,
+> > so even if the device supports G4 we end up negotiating down to
+> > G3.
+> >
+> > For SoCs like gs101 which have a UFS major controller version
+> > of 3 or above advertise Gear 4. This then allows a Gear 4 link
+> > on Pixel 6.
+> >
+> > For earlier controller versions keep the current default behaviour
+> > of reporting G3.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>
+> some nits/personal preferences below, no need to address them
 
-On 10/25/24 2:14 PM, Peter Griffin wrote:
-> v1 of the patch which introduced the ufshcd_vops_hibern8_notify() callback
-> used a bool instead of an enum. In v2 this was updated to an enum based on
-> the review feedback in [1].
-> 
-> ufs-exynos hibernate calls have always been broken upstream as it follows
-> the v1 bool implementation.
-> 
-> [1] https://patchwork.kernel.org/project/linux-scsi/patch/001f01d23994$719997c0$54ccc740$@samsung.com/
+As I'm re-spinning anyways I'll update it like you suggest.
 
-you can use the Link tag, Link: blabla [1]
-
-A Fixes tag and maybe Cc to stable? Or maybe you chose to not backport
-it intentionally, in which case you have to add:
-Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
-
-In order to avoid scripts queuing your patch. It contains "fix" in the
-subject, there's a high probability to be queued to stable.
-
-With these addressed:
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Peter.
