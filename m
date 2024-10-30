@@ -1,59 +1,59 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1955A1DC184
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 11:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AD91E260D
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 12:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730288721; cv=none; b=OXGUEJvmAEPXsewIzV30np0RIvi2CzXNLLmrCP4zXleOW7XYCTCTQh8VG5y4A/r+eGLjAhyENifvMzkyusgLfcWcMX5YCX0nPx8vjZcROvEXzvIIseIo6WPuJ72avJ7xB347t/3fw7h2JPdkDo21v4c7ws+2njwblka0+i5f5aw=
+	t=1730289629; cv=none; b=a/COFE3WtN3n0PDJsOae0XHPgK4Dims49BF+kns/3nXD3s/rHeL7RRd4N/g/3V+UOltQMn2N4QCgupj1eRrBMTHjW+9whtC7d3j424Ok/5AN215rpirtg6aAp3RPJtzGEnztN7LiBUCs2XuKdzxGpUZpP+gfr+nEJQKjM2vOHx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730288721; c=relaxed/simple;
-	bh=w0GYEg+LFxq3vLAYtJEuPA8L1iKjtUZHq5licyRLyaE=;
+	s=arc-20240116; t=1730289629; c=relaxed/simple;
+	bh=nM38MNJvKA1mecfRM7u5vCbSbJQllP2Ezo9yQDCPKDs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lTQxN8NA99eUixGaz0HILcDNjxXnQbtrmH88LY3FaNka8TMlv+gZKi6X5XOeYDabwAOtu3YQLWqGyDHW5vlea5A+ryOSM/WbbrOYHn7kRWEatalgr+5tszNib1EGqi2ns5hcRWnO9qz12jFqgwGqnZET4Agi544z3xU6r50DYEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XDJHrvzi; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=eZmfPCDA/H/XF2p2URNjtNHDQlVOvcprHutHIeoDr8OAmQlXmxieUXuQDParyLU/h6KYL7lBAjPjmjphKr+DkyWJbg/3nmGXRyYK9pMClGIjUhB//opSi6Hn2tXpt3DIae2n4uKpucgAobrS6JaGeFCfI/ko+JXzRWZ1gZFbUEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wwu1UdnX; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XDJHrvzi"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315abed18aso60245285e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 04:45:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wwu1UdnX"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so60812145e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 05:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730288717; x=1730893517; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730289624; x=1730894424; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hRTlMMdulNS4t7Utn/teiYYlIAHmyGJd+rw2+dNOPT8=;
-        b=XDJHrvzin5IsYQWW5MfOooR+Y0/qc9/EolG5lON3y+o+STcTgsB6l9W0l/WFNEzkwK
-         jP5Gy3VXRPdQnM+0ZU4N2S8ylK6Cpx5oYt9yOwDY97wuG90fPgWkGwF0xyMbfbUdSbJI
-         sPDahCj7uv9Xa9LKsMmHnxkTGqhLNwghpGmbpUCGmRfLd2GWl7UsJjuCfSuqoS80SHxn
-         a1KheuvIX3Nxu9CEF8/0t9ZTrzaAEBETyk0s08Ekk80E4Xq/7HhlgMGTnhNfGDGfs0dL
-         oZ3YrCBoYhNeZLbjy3/1scdclWWAnbpcFNk16Nrs+c2EsKHoCsnT9rYEzP+Z7xYwhJge
-         eW0w==
+        bh=heM+XH6baATko105nYV8E2040lmy0LhxFZdot+CyuRw=;
+        b=wwu1UdnXlNqqfLKebzkbOvo+TJ1bD0rSwmONnuKARwoq3V2ZViDauVnWlFv8lDx9EZ
+         wddmg0pR5LwJjoCuUaoz6qwoW5cSRm3+6S4zoqTjFWtFPgJex8dA7yvPjD5l4vCPLHIO
+         ljfmXFaYgSvNkqFIyj4qMDDxPL1rylBzjP3JdLIXXG9LzxSUcDF2jsGo9j1S/GvHcXLZ
+         y1vYILv1yZnWq6eKS8MougYlWZ+n2deKA9HMa62+ugHRYKNxgPTuJhkvBXj/fh5fbsxo
+         AU2ShtFYSBskyrUT1ndAvldyckmFh+MVmWC4CrVGW/3WSJbZRYExJiyB2yyMRx5kms4m
+         bYsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730288717; x=1730893517;
+        d=1e100.net; s=20230601; t=1730289624; x=1730894424;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRTlMMdulNS4t7Utn/teiYYlIAHmyGJd+rw2+dNOPT8=;
-        b=tTLomBo0/SZYmkcSkBnoyspRj0YN/dln4uzigMYFgQ326WRKsgMZJ1t3nvoSpcLNd9
-         JotEay2urHNRNT6xe8u0kOOYvwRBVa4S6EWQZ14z6s1BoDVutCdKD8bXQUzAFMgeg2mm
-         pGktMh59vHDk0viPm1MRxNzEMv0cDKd43RHaJYNUhlBFcOJ8Ih9+vMEzBGErR9z/3ShY
-         heJ5XzwVyP9tMrBOna72/rj+RAhOl8M3jfJ+MWre3TRxfU9laxx6uWfAZhKYrJZL+dSy
-         64hNH7HtcZWlzPRjxAxhHzSXwAeaZ5b8Dz7PEtWB0usvHM0UnhpETgrRJWkG6chYE8iC
-         gV0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVcR0pGZP5IUCQqqT9c6TeUKYDxfLGIQoWklKRfjLNg8U/xe2BLzBQHG0E/upA23v0qbI5/WXWZe6XTQ7fXra8UZg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8adDjnDL5+jFNoTV72SQI8vZGp54fo9Ci7f8c0y/1ocQ932Ow
-	G5bWch2SzPy5GVPOW2C2D+V9yReiDQjKnIyOA+SOYurTeHiA8U5lrPOFdLbDeik=
-X-Google-Smtp-Source: AGHT+IFhRIh+9dGeOayOm15oZMXod/rBU6ExE23pj44w94j9FntXD8S6utlDgPeArlr6epPz1dO7fQ==
-X-Received: by 2002:a05:600c:35d3:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-4319ac7832dmr132578255e9.7.1730288717449;
-        Wed, 30 Oct 2024 04:45:17 -0700 (PDT)
+        bh=heM+XH6baATko105nYV8E2040lmy0LhxFZdot+CyuRw=;
+        b=rZhxE+cnBY1PMWvhzYq17Cv94Tbnug5J55ZMnHeRhSJZ7fZvadS+ScLb5ijantD3aj
+         cBWi9a37U5hLAmRGWKX0Rm+nHM1n+6naOM+2KnnmwJ7qFhohZ/29SsRgBGQPMTfoMX55
+         obZuTtS1jSOFP/IYiH63IX825aadECTZ1gmlWc916X2SNAVuZmzgPM6NWEdasA5xn+Xd
+         XdpIEDyxCZE+vxY3KYUO0dZm56rkIcb7PR4M11koBi2gDM/JavaB9COgWMVHGrvMFI+X
+         cqe+HpavyvVtfM60ju+j+KaulNr7cS4cI7T2UnphNUu9F94zjqjlboa17Y0gh4087CKG
+         BNKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVT9poDwTogD1kJIdTy+AR1AT+4nHfEhso/RB6w+PP/F11v3DdEYhqV0iVHE7ufzJ3cELsLJSILlcOFrQ8fEEh/Jg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWv9cKl8WwfE2ESEk9UGpMVW3brS1DLnBQTCnvtfm7Pvbu9b9F
+	YE1+8H25tNJrdyI9TNkQ6Pq9TEUZG0lqoIQ7Coui/Ce0zTMd/hcc8q/rpvOvvsk=
+X-Google-Smtp-Source: AGHT+IHdqyep7BVt0uyn5JbTz0KBCY80ohOEAxNDfe2YT8nR9HTsXFBe91fCaeMmIZfL9ezJQQxpbg==
+X-Received: by 2002:adf:ec8f:0:b0:374:b35e:ea6c with SMTP id ffacd0b85a97d-381b70ed1c3mr2049217f8f.40.1730289624347;
+        Wed, 30 Oct 2024 05:00:24 -0700 (PDT)
 Received: from [192.168.0.157] ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d5edsm19091545e9.26.2024.10.30.04.45.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9480e5sm19330995e9.16.2024.10.30.05.00.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 04:45:17 -0700 (PDT)
-Message-ID: <f9cb758d-28a5-44bd-9cb5-d7ac5108db1b@linaro.org>
-Date: Wed, 30 Oct 2024 11:45:15 +0000
+        Wed, 30 Oct 2024 05:00:23 -0700 (PDT)
+Message-ID: <b5dcd5df-7215-4679-a6be-c45d525e8051@linaro.org>
+Date: Wed, 30 Oct 2024 12:00:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,8 +61,7 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/11] scsi: ufs: exynos: set ACG to be controlled by
- UFS_ACG_DISABLE
+Subject: Re: [PATCH v2 10/11] scsi: ufs: exynos: fix hibern8 notify callbacks
 To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
  James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
  avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
@@ -72,64 +71,33 @@ Cc: andre.draszik@linaro.org, kernel-team@android.com,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
  ebiggers@kernel.org
 References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-10-peter.griffin@linaro.org>
+ <20241025131442.112862-11-peter.griffin@linaro.org>
 Content-Language: en-US
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241025131442.112862-10-peter.griffin@linaro.org>
+In-Reply-To: <20241025131442.112862-11-peter.griffin@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 10/25/24 2:14 PM, Peter Griffin wrote:
-> HCI_IOP_ACG_DISABLE is an undocumented register in the TRM but the
-> downstream driver sets this register so we follow suit here.
+> v1 of the patch which introduced the ufshcd_vops_hibern8_notify() callback
+> used a bool instead of an enum. In v2 this was updated to an enum based on
+> the review feedback in [1].
 > 
-> The register is already 0 presumed to be set by the bootloader as
-> the comment downstream implies the reset state is 1. So whilst this
-> is a nop currently, it should help with suspend/resume.
-
-It should help in case the bootloader changes I assume. I see
-gs101_ufs_drv_init() gets called only at probe time, via
-ufshcd_pltfrm_init().
-
+> ufs-exynos hibernate calls have always been broken upstream as it follows
+> the v1 bool implementation.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> [1] https://patchwork.kernel.org/project/linux-scsi/patch/001f01d23994$719997c0$54ccc740$@samsung.com/
 
+you can use the Link tag, Link: blabla [1]
+
+A Fixes tag and maybe Cc to stable? Or maybe you chose to not backport
+it intentionally, in which case you have to add:
+Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
+
+In order to avoid scripts queuing your patch. It contains "fix" in the
+subject, there's a high probability to be queued to stable.
+
+With these addressed:
 Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-> ---
->  drivers/ufs/host/ufs-exynos.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> index b0cbb147c7a1..fa4e61f152c4 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -76,6 +76,10 @@
->  #define CLK_CTRL_EN_MASK	(REFCLK_CTRL_EN |\
->  				 UNIPRO_PCLK_CTRL_EN |\
->  				 UNIPRO_MCLK_CTRL_EN)
-> +
-> +#define HCI_IOP_ACG_DISABLE	0x100
-> +#define HCI_IOP_ACG_DISABLE_EN	BIT(0)
-> +
->  /* Device fatal error */
->  #define DFES_ERR_EN		BIT(31)
->  #define DFES_DEF_L2_ERRS	(UIC_DATA_LINK_LAYER_ERROR_RX_BUF_OF |\
-> @@ -220,10 +224,15 @@ static int exynos_ufs_shareability(struct exynos_ufs *ufs)
->  static int gs101_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
->  {
->  	struct ufs_hba *hba = ufs->hba;
-> +	u32 reg;
->  
->  	/* Enable WriteBooster */
->  	hba->caps |= UFSHCD_CAP_WB_EN;
->  
-> +	/* set ACG to be controlled by UFS_ACG_DISABLE */
-> +	reg = hci_readl(ufs, HCI_IOP_ACG_DISABLE);
-> +	hci_writel(ufs, reg & (~HCI_IOP_ACG_DISABLE_EN), HCI_IOP_ACG_DISABLE);
-> +
->  	return exynos_ufs_shareability(ufs);
->  }
->  
