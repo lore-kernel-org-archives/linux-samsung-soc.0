@@ -1,107 +1,135 @@
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B941E7C30
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 11:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1955A1DC184
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 11:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287934; cv=none; b=ayhrwFzLXjp64W9JFzJEkPFuXwlE8aclSWMf50oY2XgyAFxPaKAqRzmCI5sryU8yro69N/0+KtRFbsui2ajrIxIu+kiT3IIWNGdB7zPJQvOmtlzrcDrjKxLokAYrju8NDHiP3I+29QGQqK4XMowmROmmIv5awNtnlmFj43G/BgY=
+	t=1730288721; cv=none; b=OXGUEJvmAEPXsewIzV30np0RIvi2CzXNLLmrCP4zXleOW7XYCTCTQh8VG5y4A/r+eGLjAhyENifvMzkyusgLfcWcMX5YCX0nPx8vjZcROvEXzvIIseIo6WPuJ72avJ7xB347t/3fw7h2JPdkDo21v4c7ws+2njwblka0+i5f5aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287934; c=relaxed/simple;
-	bh=k9O/VCkYKLFGLLz5VK9IVO5AXC7ZgN1iqzf8qQY9YxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SS1bjM5dwYxHTvquO/jN9mNSlA4RfV3Pu88wa9AgwJ5bp4WcndULmrK7NJKpnluRYDdJysHN2U6S9c42ZYQ27WuWPHoNNDAuRvfAn1cAA7v1moef5p7mfR7Q2fyjApxcWO0WsINuoH5+/GHdX/50Ty6tkRdsva9I7vDa8T8S1cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yhvrqPCo; arc=none smtp.client-ip=209.85.161.42
+	s=arc-20240116; t=1730288721; c=relaxed/simple;
+	bh=w0GYEg+LFxq3vLAYtJEuPA8L1iKjtUZHq5licyRLyaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lTQxN8NA99eUixGaz0HILcDNjxXnQbtrmH88LY3FaNka8TMlv+gZKi6X5XOeYDabwAOtu3YQLWqGyDHW5vlea5A+ryOSM/WbbrOYHn7kRWEatalgr+5tszNib1EGqi2ns5hcRWnO9qz12jFqgwGqnZET4Agi544z3xU6r50DYEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XDJHrvzi; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yhvrqPCo"
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ebc5b4190eso3697158eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 04:32:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XDJHrvzi"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315abed18aso60245285e9.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2024 04:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730287932; x=1730892732; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ZnP8od1AoS68OxrD2EKkqTHcwqcNcZbwTyrj6OQuRU=;
-        b=yhvrqPCoaLTYq2FW9XD16KFOPPIuLIVtN0MOP2QSqU+IqzuEDIHXcUizOcYprjYKgc
-         HgK4Z9imwxuTyDJlngg0k9ErEMGE0k6GXLxEaAcdxQDkVndfisrhznZUr9S1YFrWtp0S
-         OmvYjSSUFQeaTYr0lfQgYI9W2pUV/K/D9/u69LnzMjcujIazmEhG8sf39ZD4GfR9Gypm
-         haezwr1fZZKCc2y1z9t9W6jtScyyQ65LxNNAC2aLWh2FaLC/cef+Pj03orqftzJOr309
-         VSyewk7igcIagIVOyC6gHGbXxuRL1u4IIaB33Lvx466h6iBp95ay4jDM92NU0hLP/Bn7
-         8hBw==
+        d=linaro.org; s=google; t=1730288717; x=1730893517; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hRTlMMdulNS4t7Utn/teiYYlIAHmyGJd+rw2+dNOPT8=;
+        b=XDJHrvzin5IsYQWW5MfOooR+Y0/qc9/EolG5lON3y+o+STcTgsB6l9W0l/WFNEzkwK
+         jP5Gy3VXRPdQnM+0ZU4N2S8ylK6Cpx5oYt9yOwDY97wuG90fPgWkGwF0xyMbfbUdSbJI
+         sPDahCj7uv9Xa9LKsMmHnxkTGqhLNwghpGmbpUCGmRfLd2GWl7UsJjuCfSuqoS80SHxn
+         a1KheuvIX3Nxu9CEF8/0t9ZTrzaAEBETyk0s08Ekk80E4Xq/7HhlgMGTnhNfGDGfs0dL
+         oZ3YrCBoYhNeZLbjy3/1scdclWWAnbpcFNk16Nrs+c2EsKHoCsnT9rYEzP+Z7xYwhJge
+         eW0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730287932; x=1730892732;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+ZnP8od1AoS68OxrD2EKkqTHcwqcNcZbwTyrj6OQuRU=;
-        b=v3mEWBybSOmefvrpPRXRQay8twQNx1CUMRLadzlzJxRiqHoWL51Ftrio0lZutCIXVG
-         wG4arVue0I54vL1mZYLvhmj+/4r5FoXdiyeWCKFJGDQ5ma4/CZ5zUAGe56f7B3j48dQn
-         TsSGN08nQb9m9M49V1YwdvyWE6Iz9J/HaIp5PZqdtuqGO1XKsS0VkCHICv9lzJ5+JrTN
-         1CCSnBQKVwwigOqv4izsBhKqeKSY+Gu9KG1uVpnx/rxdx+jgMv2imvqoDw3aOOk/y+wK
-         MWqD4RY4nZUghD/ZKtrSrIW7+hUHRWjsy8TdWIdSMzQURCKFyf3zPN9vy1HcZifkZWPT
-         LFiA==
-X-Forwarded-Encrypted: i=1; AJvYcCV62B4SHVhlbmNjB3thKaOiZedPSv3z+gLFF9m+2DflWr6KNibBHgwWALHK5ozHmuXovcEd5EGS9srUDGD5D94ZKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOCV3/ySRibb2Lazc7iHovb7FQowfeK4VU+b6WUeexE2cZQQFv
-	lmJw0DNWuFkxOK8h5mzJEOlS8+IAuymMWZQZQB3e9kXEon4mzLnx9KDT8f2tmBCaARjNHadESd5
-	d35bsqVlprOK1Cvau9Y2c34AaZJjGBfUu7gfYww==
-X-Google-Smtp-Source: AGHT+IH5be5Mr1er2W4DdwEw1rjAXcGrKtgAvcc+9eVHVJEX4M1n7mMvnvbRCoX7iQbyEopTs/p0KKfykVLViPIPPBE=
-X-Received: by 2002:a05:6820:229c:b0:5eb:fc8c:46ad with SMTP id
- 006d021491bc7-5ec23612f9amr11574862eaf.0.1730287931746; Wed, 30 Oct 2024
- 04:32:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730288717; x=1730893517;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hRTlMMdulNS4t7Utn/teiYYlIAHmyGJd+rw2+dNOPT8=;
+        b=tTLomBo0/SZYmkcSkBnoyspRj0YN/dln4uzigMYFgQ326WRKsgMZJ1t3nvoSpcLNd9
+         JotEay2urHNRNT6xe8u0kOOYvwRBVa4S6EWQZ14z6s1BoDVutCdKD8bXQUzAFMgeg2mm
+         pGktMh59vHDk0viPm1MRxNzEMv0cDKd43RHaJYNUhlBFcOJ8Ih9+vMEzBGErR9z/3ShY
+         heJ5XzwVyP9tMrBOna72/rj+RAhOl8M3jfJ+MWre3TRxfU9laxx6uWfAZhKYrJZL+dSy
+         64hNH7HtcZWlzPRjxAxhHzSXwAeaZ5b8Dz7PEtWB0usvHM0UnhpETgrRJWkG6chYE8iC
+         gV0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVcR0pGZP5IUCQqqT9c6TeUKYDxfLGIQoWklKRfjLNg8U/xe2BLzBQHG0E/upA23v0qbI5/WXWZe6XTQ7fXra8UZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8adDjnDL5+jFNoTV72SQI8vZGp54fo9Ci7f8c0y/1ocQ932Ow
+	G5bWch2SzPy5GVPOW2C2D+V9yReiDQjKnIyOA+SOYurTeHiA8U5lrPOFdLbDeik=
+X-Google-Smtp-Source: AGHT+IFhRIh+9dGeOayOm15oZMXod/rBU6ExE23pj44w94j9FntXD8S6utlDgPeArlr6epPz1dO7fQ==
+X-Received: by 2002:a05:600c:35d3:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-4319ac7832dmr132578255e9.7.1730288717449;
+        Wed, 30 Oct 2024 04:45:17 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd97d5edsm19091545e9.26.2024.10.30.04.45.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 04:45:17 -0700 (PDT)
+Message-ID: <f9cb758d-28a5-44bd-9cb5-d7ac5108db1b@linaro.org>
+Date: Wed, 30 Oct 2024 11:45:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/11] scsi: ufs: exynos: set ACG to be controlled by
+ UFS_ACG_DISABLE
+To: Peter Griffin <peter.griffin@linaro.org>, alim.akhtar@samsung.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org
+Cc: andre.draszik@linaro.org, kernel-team@android.com,
+ willmcvicker@google.com, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ebiggers@kernel.org
 References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-9-peter.griffin@linaro.org> <436b02c6-a262-4015-92e3-454d444e877f@linaro.org>
-In-Reply-To: <436b02c6-a262-4015-92e3-454d444e877f@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 30 Oct 2024 11:32:00 +0000
-Message-ID: <CADrjBPoq2jbrMC7wBrjGxMwQ1ebTtBNRQzQ7NfE9=Gw9_4LQ6A@mail.gmail.com>
-Subject: Re: [PATCH v2 08/11] scsi: ufs: exynos: enable write line unique
- transactions on gs101
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	krzk@kernel.org, andre.draszik@linaro.org, kernel-team@android.com, 
-	willmcvicker@google.com, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ebiggers@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <20241025131442.112862-10-peter.griffin@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241025131442.112862-10-peter.griffin@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Tudor,
 
-On Wed, 30 Oct 2024 at 11:25, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 10/25/24 2:14 PM, Peter Griffin wrote:
-> > Previously just AXIDMA_RWDATA_BURST_LEN[3:0] field was set to 8.
->
-> where was this set?
 
-It is set to 0xf in exynos_ufs_post_link() function, see the following line
-hci_writel(ufs, 0xf, HCI_AXIDMA_RWDATA_BURST_LEN);
+On 10/25/24 2:14 PM, Peter Griffin wrote:
+> HCI_IOP_ACG_DISABLE is an undocumented register in the TRM but the
+> downstream driver sets this register so we follow suit here.
+> 
+> The register is already 0 presumed to be set by the bootloader as
+> the comment downstream implies the reset state is 1. So whilst this
+> is a nop currently, it should help with suspend/resume.
 
-As all other SoCs expect the current value, I've left that assignment
-in the common function, and we update it in the  gs101_ufs_post_link()
-specific hook.
+It should help in case the bootloader changes I assume. I see
+gs101_ufs_drv_init() gets called only at probe time, via
+ufshcd_pltfrm_init().
 
->
-> >
-> > To enable WLU transaction additionally we need to set Write Line
-> > Unique enable [31], Write Line Unique Burst Length [30:27] and
-> > AXIDMA_RWDATA_BURST_LEN[3:0].
-> >
-> > To support WLU transaction, both burth length fields need to be 0x3.
-> >
->
-> typo, s/burth/burst
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Will fix.
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Peter
+> ---
+>  drivers/ufs/host/ufs-exynos.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+> index b0cbb147c7a1..fa4e61f152c4 100644
+> --- a/drivers/ufs/host/ufs-exynos.c
+> +++ b/drivers/ufs/host/ufs-exynos.c
+> @@ -76,6 +76,10 @@
+>  #define CLK_CTRL_EN_MASK	(REFCLK_CTRL_EN |\
+>  				 UNIPRO_PCLK_CTRL_EN |\
+>  				 UNIPRO_MCLK_CTRL_EN)
+> +
+> +#define HCI_IOP_ACG_DISABLE	0x100
+> +#define HCI_IOP_ACG_DISABLE_EN	BIT(0)
+> +
+>  /* Device fatal error */
+>  #define DFES_ERR_EN		BIT(31)
+>  #define DFES_DEF_L2_ERRS	(UIC_DATA_LINK_LAYER_ERROR_RX_BUF_OF |\
+> @@ -220,10 +224,15 @@ static int exynos_ufs_shareability(struct exynos_ufs *ufs)
+>  static int gs101_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
+>  {
+>  	struct ufs_hba *hba = ufs->hba;
+> +	u32 reg;
+>  
+>  	/* Enable WriteBooster */
+>  	hba->caps |= UFSHCD_CAP_WB_EN;
+>  
+> +	/* set ACG to be controlled by UFS_ACG_DISABLE */
+> +	reg = hci_readl(ufs, HCI_IOP_ACG_DISABLE);
+> +	hci_writel(ufs, reg & (~HCI_IOP_ACG_DISABLE_EN), HCI_IOP_ACG_DISABLE);
+> +
+>  	return exynos_ufs_shareability(ufs);
+>  }
+>  
