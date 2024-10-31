@@ -1,111 +1,158 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9C419B3E2
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2024 12:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E193C196C6C
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2024 15:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730378122; cv=none; b=b7kg/mMXPXvHms1SZ7sOFrVQV04ZLmPJfBAl5FQnhYuVlGfOh6vJyVp9yqLUXk7TpV3NU4pWUCEc4o9yuuU1tkQHUmkWR/BLS+/H79wPwAebT21tsBPiKwFq6WOzXz5L1kRz/8t087MejYv4/81whEsmZVk0qJdPr8K1Wn8hfTw=
+	t=1730386841; cv=none; b=FBeBFfJVZoFkmBa4LS53SrzSEyCld/KdW7ucr9M68zxEAxXB3OrfyW5uULHr5Yh5GcxiVHQUNDa778N/H6j9o0unTkCiy00decmrn6Lak+HEqj+72fPag63jtMw3PeElbgXSOFH6cqwEFYnyoQeZkHuP6QPmoYx06qFn6cEcw1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730378122; c=relaxed/simple;
-	bh=HNw99ZBoCtL9gebq7HnHLHFtZ02VTCgq3uG6OiI7Lpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A2qTbQU1g86vBciFBUMsFdzFGapsgMdI4imCNIn209Wyv2ywEfa2MsoVGWIdZxXoxkgtrBCQShRTzA+wUkVMGjE/iIqEfnqis8g97cSn8phfFobXCVcGxPcAXQuddD3AIE+ybzJtksBPIgxlf5KpgFLdLHHT6NgzYXgvEoqgDJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WU8IeSpN; arc=none smtp.client-ip=209.85.210.45
+	s=arc-20240116; t=1730386841; c=relaxed/simple;
+	bh=R14f0vSyUxSrXBZKBLtQzco/Z6fxcSPip85uSlqjDW8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PAofb8NKNOUmDmqsw0x69uZh6rpUslklCgz952qpxLTvxutHoKgyVeGeQcKtMt5M5uNbT22BqQeHandebz7HiUoVlu9oQJYNatcYfBVY1yyqXyz9MIF5vT7mQiPNOUQkt3LSOmjjYvFtsJpx+TB2L4ZDtvrxcIlJZa6Ys8s6wsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QnzReAcv; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WU8IeSpN"
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7181b86a749so331883a34.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2024 05:35:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QnzReAcv"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso8688895e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2024 08:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730378119; x=1730982919; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNw99ZBoCtL9gebq7HnHLHFtZ02VTCgq3uG6OiI7Lpw=;
-        b=WU8IeSpNiAnaRF36fC/vv7+zG9kGiWFWgWmP8p3Aw6FVgF4xhmjb/fYznNZUOZuH2u
-         be1x8nBg6wuJBmFMgfK7UTo0crhdYoraukbHqoqYDTb1CHJGYxwMwOCXjIgbkJTnaCAw
-         D/Fi5/noZmiyrt+b3zzLhwe8CoFC2+AXpabfgw2lzxHjksb0US4ZHeirrGU5Dl1dIupi
-         60yrAmVUgiz/AqDQcI5DQKjeJ88KlVhGvB8SdUdSVyk+DuYJulV6mEomv3YT5BWR8WZX
-         aF0RPimWRgK/z4wdfchtSQMEsjWGgkyUsgLYkz5ldeu37w5au0EYbl0BDZy8MfTN6KcE
-         f1ZQ==
+        d=linaro.org; s=google; t=1730386837; x=1730991637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iCEaeDborMpChWpG+09oPpilTDmpwNme21uFJErGw+s=;
+        b=QnzReAcvLo+bqJUydzUTVM4Udr5mznlj3Rb2rZP+R3qMRPzYpgdfOuPqN/czBXzT9Y
+         1+X5hnR2Pn4h99xCLqrJyknMUNuDoudE9yPlGQiKGmylRaHorqhTgwR9Ec9QDPFOf5lL
+         SwKbtmKnoVxtD1YAOQA/BfW8G8biar+92CyuRt8f7DDg3+NsJ5UgAXTqQBXp+ve2pKMc
+         yxcDXhe9czFTllOFwayOyaOcljQv04atlA7Cg0BtdvRVJ4viIjSMVvTfo2ttCEdffHF+
+         fGL/1VVJMCMPk+FqrYgvBXGRyqugDVnXx/saJGDaN7h6fG3IR7HUbZr1oNzZ+1V11r3k
+         RWJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730378119; x=1730982919;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730386837; x=1730991637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HNw99ZBoCtL9gebq7HnHLHFtZ02VTCgq3uG6OiI7Lpw=;
-        b=mmrKElliMuvsW62qNUD3EO+9BiOsVkkkH9MhVA1ZFc4FjzQp5rNrvUF2kHDLQctTig
-         W3faNWEWU1olrJR5NMruOu7BqZa1r2kjqxuefKsjvFahLC63FTPpHdsH+vN84Xa7zgSI
-         RzoibYeVK6wf+EFRnwtkO+YdrgT5A3zIXWaxK7Qo+/yeBGJh0sMDhzeKI0L6umIiS0/h
-         CiDpbjSuXAb9ZI16vHFxJgsUfsayQB8tRUAOUjZUq/rTVk8e4H51Sqg3jnx8Now0B18k
-         DERROuTCisNKE5Cd82yEVQKeT09v/bJCfEU+LZKIAitqYrdM0kyG77gEs7rA+BCBNmV2
-         XHVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbP+mjewc8fTefZoZLSTYF6u2hIsKvlMZgxjV4DgM3ZC9D3VmbGNcysqRvwPw+wFtSoCJUskerYQvunA4qwarGnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzptTFP4CYfO3wBGOmw4jmQcPRA2C7TfFt3ClKkHHafN6kxZ9xt
-	ebUKkd6gms+HOlM6Y3H+63923TUmWpBiHifGrXQPsaBZ9mRnQbNbvOIX79En6sjd6DXJq1c6wUt
-	qrckd8kaYVsLnNWbVRqFzOqw9rxQu9X6TeiE+Qw==
-X-Google-Smtp-Source: AGHT+IEkKbJXyNqLSsuHdItgZxyQY+mBzja5TSh+tq+4mVxz/XjBn5K2/1nC62dW10Qg5qYRGU0KEBvvMHxYsE/WEXU=
-X-Received: by 2002:a05:6830:2b07:b0:718:9989:efac with SMTP id
- 46e09a7af769-7189989f002mr3434433a34.18.1730378119050; Thu, 31 Oct 2024
- 05:35:19 -0700 (PDT)
+        bh=iCEaeDborMpChWpG+09oPpilTDmpwNme21uFJErGw+s=;
+        b=awiVQ08yyahjevNulL9qXpZx/n4yv651z1p6L6nif5HPz5yDoypAjebyorU5lipOW5
+         H9gYCVeAn3FyjoiOLJk0vm2jROdbNpmyRp53nxHMdWxEYlBCkhqYcVff7rsQsz7qYaYP
+         6MTbBnb9X0lUf6Nxy9V1ZQrLymBv1Yw64dhWLGwwqOGAsqxdUvYpFdacY/HXiWeCrPqG
+         TmirkEnKu9a4apaXkkN9BDFVnsXfMgLqimr/gqgSt3CzIQnxexHJbMag6sfmvoqrvv/Z
+         Jx7VYVGfRMUs0TI+K/1EU5ZrSWPTJjGIzZaGjJWmuZuknnCp5OXFl6VpKJIRX5JCW2fe
+         mWtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWB0nHVZDyjLIEb8KCWfKKmR7LE/nmMBFJsNS44yXDyI6HYgkP8QCA+hNpkUv1i5JdAhSfnprLz5S2Q+cnozhPL+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc5UwmlyadwRKNl5xvyOeJGECFTu4ICh0YFtCNEicy1JkMUvZo
+	+evbIX/FfmooAMNavOZluTEygW7dZBYZK0bc91srfXm+nX0ET3H8tzQrS5vGo5g=
+X-Google-Smtp-Source: AGHT+IH+HfNSNGik5mKCBBG/5S6M1R2AxyBfXCc47oa7MI7ol35//vP5TNbBTsLrmHg9i1EHWx9Okw==
+X-Received: by 2002:a05:600c:4f14:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-4328327ec52mr1208565e9.25.1730386836669;
+        Thu, 31 Oct 2024 08:00:36 -0700 (PDT)
+Received: from gpeter-l.lan ([145.224.65.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8524sm59163225e9.5.2024.10.31.08.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:00:36 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: alim.akhtar@samsung.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	avri.altman@wdc.com,
+	bvanassche@acm.org,
+	krzk@kernel.org
+Cc: tudor.ambarus@linaro.org,
+	ebiggers@kernel.org,
+	andre.draszik@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	linux-scsi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v3 00/14] UFS cleanups and enhancements to ufs-exynos for gs101
+Date: Thu, 31 Oct 2024 15:00:19 +0000
+Message-ID: <20241031150033.3440894-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025131442.112862-1-peter.griffin@linaro.org>
- <20241025131442.112862-11-peter.griffin@linaro.org> <b5dcd5df-7215-4679-a6be-c45d525e8051@linaro.org>
-In-Reply-To: <b5dcd5df-7215-4679-a6be-c45d525e8051@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 31 Oct 2024 12:35:08 +0000
-Message-ID: <CADrjBPoRTidJbUmC-gMDaEJRkF8iPUiGHWE89WJ2=+Ja5s1mRA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] scsi: ufs: exynos: fix hibern8 notify callbacks
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, avri.altman@wdc.com, bvanassche@acm.org, 
-	krzk@kernel.org, andre.draszik@linaro.org, kernel-team@android.com, 
-	willmcvicker@google.com, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ebiggers@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Tudor,
+Hi folks,
 
-On Wed, 30 Oct 2024 at 12:00, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
->
->
-> On 10/25/24 2:14 PM, Peter Griffin wrote:
-> > v1 of the patch which introduced the ufshcd_vops_hibern8_notify() callback
-> > used a bool instead of an enum. In v2 this was updated to an enum based on
-> > the review feedback in [1].
-> >
-> > ufs-exynos hibernate calls have always been broken upstream as it follows
-> > the v1 bool implementation.
-> >
-> > [1] https://patchwork.kernel.org/project/linux-scsi/patch/001f01d23994$719997c0$54ccc740$@samsung.com/
->
-> you can use the Link tag, Link: blabla [1]
+This series provides a few cleanups, bug fixes and feature enhancements for
+the ufs-exynos driver, particularly for gs101 SoC.
 
-Will fix in v3
+Regarding cleanup we remove some unused phy attribute data that isn't
+required when EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR is not set.
 
->
-> A Fixes tag and maybe Cc to stable? Or maybe you chose to not backport
-> it intentionally, in which case you have to add:
-> Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
+Regarding bug fixes the check for EXYNOS_UFS_OPT_UFSPR_SECURE is moved
+inside exynos_ufs_config_smu() which fixes a Serror in the resume path
+for gs101.
 
-I'll add a cc stable tag, as there is no reason not to backport this fix.
+Regarding feature enhancements:
+* Gear 4 is enabled which has higher speeds and better power management.
+* WriteBooster capability is enabled for gs101 which increases write
+  performance.
+* Clock gating and hibern8 capabilities are enabled for gs101. This leads
+  to a significantly cooler phone when running the upstream kernel on
+  Pixel 6. Approximately 10 degrees cooler after 20 minutes at a shell
+  prompt.
+* AXI bus on gs101 is correctly configured for write line unique transactions
+* ACG is set to be controlled by UFS_ACG_DISABLE for gs101
 
->
-> In order to avoid scripts queuing your patch. It contains "fix" in the
-> subject, there's a high probability to be queued to stable.
->
-> With these addressed:
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Additionally in v3 I've added 2 minor cleanup patches from Tudor and also
+an update to MAINTAINERS to add myself as a reviewer and the linux-samsung-soc
+list.
 
-Thanks for the reviews!
+Note: In v1 I mentioned the phy hibern8 series in [1] that is still under
+discussion however further testing reveals hibern8 feature still works without
+the additional UFS phy register writes done in [1]. So this series can be merged
+as is and has no runtime dependencies on [1] to be functional.
 
-Peter.
+[1] https://lore.kernel.org/linux-arm-kernel/20241002201555.3332138-3-peter.griffin@linaro.org/T/
+
+regards,
+
+Peter
+
+Changes since v1:
+ - Remove superfluous struct device parameter to exynos_ufs_shareability() (Peter)
+ - Add patches 8-11 (hibern8 fixes, WLU support etc)
+
+Changes since v2:
+ - Add 2 cleanup patches from Tudor to the series and rebase (Tudor)
+ - Fixup various commit messages as per Tudors review feedback (Tudor)
+ - Collect up reviewed-by tags, and CC stable where appropriate (Peter)
+ - Add myself as a reviewer in MAINTAINERS for ufs-exynos driver
+   and add linux-samsung-soc list. (Peter)
+ - Added blank line and split hs_tx_gear/hs_rx_gear into separate lines (Tudor)
+
+Peter Griffin (12):
+  scsi: ufs: exynos: Allow UFS Gear 4
+  scsi: ufs: exynos: add check inside exynos_ufs_config_smu()
+  scsi: ufs: exynos: gs101: remove EXYNOS_UFS_OPT_BROKEN_AUTO_CLK_CTRL
+  scsi: ufs: exynos: Add EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR check
+  scsi: ufs: exynos: gs101: remove unused phy attribute fields
+  scsi: ufs: exynos: remove tx_dif_p_nsec from exynosauto_ufs_drv_init()
+  scsi: ufs: exynos: add gs101_ufs_drv_init() hook and enable
+    WriteBooster
+  scsi: ufs: exynos: enable write line unique transactions on gs101
+  scsi: ufs: exynos: set ACG to be controlled by UFS_ACG_DISABLE
+  scsi: ufs: exynos: fix hibern8 notify callbacks
+  scsi: ufs: exynos: gs101: enable clock gating with hibern8
+  MAINTAINERS: Update UFS Exynos entry
+
+Tudor Ambarus (2):
+  scsi: ufs: exynos: remove empty drv_init method
+  scsi: ufs: exynos: remove superfluous function parameter
+
+ MAINTAINERS                   |   2 +
+ drivers/ufs/host/ufs-exynos.c | 136 ++++++++++++++++++----------------
+ drivers/ufs/host/ufs-exynos.h |   2 +-
+ 3 files changed, 76 insertions(+), 64 deletions(-)
+
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
