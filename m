@@ -1,57 +1,57 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DAE1BD007
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB811BD03F
 	for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2024 15:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730386853; cv=none; b=Rf0hIVWZ0U9mllsaXJ8LAzysGPQ1BlmZdphOqDeWF0nvM1iIOGTqMxZg4ry3zc2JBfklmuIVRGMLweC1YR/ixCVukxZDeS4v9O49lWKiQldbmgm6DdR9sOZW49KlZKhJwQZhQkPMkKss6TZfqaj4jQI4nVxpAETS123aOV4YfDc=
+	t=1730386854; cv=none; b=oQdsgZGWSYk1mwOaXGbShYr8YGxHNU7yigN5Px/WBXI12y1ADpGO4E9JvdsAxcuWucoWQFqfYuAIMLCDBTFSeSUfgTyMfxkOOvVX5o9HhequmgZQpVZj1iUxdX+l5aou8ON9MImSODRJcuMunh/fUhqVJwfNhF4ycPtRrNA/ORc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730386853; c=relaxed/simple;
-	bh=cgC00Z84GRqTAZwgtEtqtGHvbN1Ns7uMwFdz59+HA28=;
+	s=arc-20240116; t=1730386854; c=relaxed/simple;
+	bh=ObJIfaZjIKHh2LbJ+suNUf2iHwIx5ihpEmFxKcO6q9c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kmk+o4GPCsz3hGAIcPgy0CLOrwBpbIprDq53hG/2yK/Oc4WuB0PGjQGzX6s/kbhZGGxmH9z8etsDxZnwNGp/KA7+Me+FXrbKUlj75+tuAjEJCc+CV4nLAOPVCjjtON+dKPFoljuWQwNdV1GlASahdzFmIlwu0UE25AhjgF2UV80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q/rFZrhS; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=a/+oiquCSxsKrZiMBiwL1MTFzEKaD4FjJJPxvZ/0XI0BNrDCAbmM/oxqZmLchsuRhvDqOsxnO8z+s/iNF47w0x2fvO7tt6wMu+tnjl0Cr+k1TAzZ7/K+6YNA30LiGIX2xe1ElvR0bjZ7jqjXXcrcdGpR4o5dmBQLn8ppnqta4rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lq8uVEcA; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/rFZrhS"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43152b79d25so9088005e9.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lq8uVEcA"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb599aac99so9278731fa.1
         for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2024 08:00:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1730386849; x=1730991649; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+843px0rCbg1sKJc99pP4x3dOG1mc5oHs0HJIyYuQ44=;
-        b=q/rFZrhSfcwcuHKJtAz4QMBdRxnNFvdnxVCVuQjDCGHhYf7/urQQNvPLSeQkXzoI5N
-         B4gBFcmDIKX2Es299zhIgnXySaNaRO4M4MCU6QqCT/iCzSjcWugD/orFTHLLX9p0Ygrv
-         Dy94Fy5dDpvfWNscJw7EDGV1zfGjDdVbhl4s0C9bMtMTegRS+xKxfvWu7KhH4fRHAMzc
-         TJJe2iZLaPWTeuz6SuNGVTyxp6zF2MF5rJSoDnWYNe2S1rX4Dx7ME+ngONWrdJOFddqB
-         AHavRboyX8vtqYMsbK2tIsHlFyUtZWr9YiOLcggYEC4Ewq+sgFxDaBPflaJRk/ytgT/I
-         bsIA==
+        bh=EGlRIDiWOIW/oUdNVyUFBt1pPENWr+qbw5BPnPtDdZA=;
+        b=Lq8uVEcAXOSLAgjGkH2DEZcfJB0trq358MH9DKZEZAfoueU2Xk94ntbcAXnBR9m+Tg
+         QxTO7l+kOHTz/iSHTbc08gKTncF0Bw67Y74ji1KBZcvVCoMBkRybHpTwnQS83Vq5ewfW
+         R0K/WxWt9NHKrPyt5vwPZEKK7fN43m4jcJ9pNrXeZI4gF7nlEdTb5QMK9AtKIEeoeJsY
+         +Iuycf+S79TryUQgzIjHGPfzHwD7rXnlqzzkDzzLuR60j/QOoj+L4t5Vuc0I0n2qA5T4
+         Y19ycdU10VLPeyn5xShjdNJt/MP5ah9amL/a2IZ4d7q4xu6N0CxfXmXrZIJTV23ixn1S
+         VjEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730386849; x=1730991649;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+843px0rCbg1sKJc99pP4x3dOG1mc5oHs0HJIyYuQ44=;
-        b=BNXocXbVVYgbBbTVMJa0GYEn4x//LSgoTkawTc9jJBizxSfv+dql5eeZgvOdp8yFcf
-         FF+mehYSy8nQg0wRvGFZGuXjcxfE6FqJBRTvnJSOHK54wUxf1Hik+KxOGGS5ov9B/m+c
-         +LYm+S+8J3wfX1XGKg4xREKBjFKaANvTdo3j/oTIvgMTljr+t0qy59wTlA8KS9HZmWzv
-         b2KNqQnzoacZo6KzQqAs5T0xeaABtiTJTTTwohJlBPL1YfBtkPVhTVRzs4l+RXPdA/34
-         fMwyTeJXBenpr6278ZvXxsMjtATI93/0QOsiBylEeWOomij8/l6p72038SqfXD8Vhjtr
-         g3PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGbJsPTwUb9Oxt8bXf5OlpjfaaZwkRlsuX3MNTl1w0BWOYzaf71v5irC+hs9PjJrm1MZ+7JvqBnzUd2L9tMrnRDQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+cn/9CMuCyX56LK6xREHc9abuixBq7bnFMprf31/Iz2RvN9fB
-	a/uya1kRUQJo1lXg5qbOBwq7l7TEa+II6HKDquqFErj1JkUMm1845SvpKjHUtaY=
-X-Google-Smtp-Source: AGHT+IFz1+UYr4hSStn9sPc2pavAOWRlpkPtO9pHTEtEu9q/PXw/hM8RRdJlrb371+ewLtzLK5Lt6Q==
-X-Received: by 2002:a05:600c:3587:b0:42c:c401:6d67 with SMTP id 5b1f17b1804b1-4327b6f464amr27709765e9.6.1730386848476;
-        Thu, 31 Oct 2024 08:00:48 -0700 (PDT)
+        bh=EGlRIDiWOIW/oUdNVyUFBt1pPENWr+qbw5BPnPtDdZA=;
+        b=iTibbKfgypulUY+hdb5hSXZpfh65J5qcfgqO/TeRz2hocXsM8/fVsH9aM9HfeucYXu
+         8jezmrqYro8Yg2d42QICdUr4n/7OuewjFEmBS6BaGVi6Kyu597o/E72hUA7kcoO37R4o
+         SczyGGbYmY5qF8ky5FIyOxeqktZsO3cXw3U0fGHewSLs7X4FfQPNT4pxgIGI9ZGqM5zu
+         5drQYQNN2oEUtALdbDtpszP0DjY/EaAqp+lICfXgPlMs2z2mU+zLceMCz/IDzJPvALL7
+         v245Lu8gRBpFXufbJjGeaULOmyQ0+h5u2Dv0lthRq7WdxP+eW/2uShDZZVf3Qmo2wq7/
+         GziA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtDLdNZ6S8zBrEjKrOZIBCQVZCByoeHOQQRsn/ZWLn4NICS6AR9JXyXoZRY7oIDGWCX8XpMtxu39J6XUZ+grw6Mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxehqXyNa7CAmtqZDOvLIiUMq74jHiHorYWxkHsS/PdPrEuGiUY
+	60r/w6TKfwBr/1BKx+XzbvYt+uRDVxzx6SAY/Vh663ykiFAeMph02u4XYuV7Cz0=
+X-Google-Smtp-Source: AGHT+IEXzbBlOP0V8hZQy8KaxBb5hcC2ucoOBrtqsnAW7CPkAU8t5qtuC/NhFTjTUjwZ36RRBVibJA==
+X-Received: by 2002:a05:6512:32ca:b0:539:93e8:7eca with SMTP id 2adb3069b0e04-53d65e02513mr162912e87.35.1730386845937;
+        Thu, 31 Oct 2024 08:00:45 -0700 (PDT)
 Received: from gpeter-l.lan ([145.224.65.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8524sm59163225e9.5.2024.10.31.08.00.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8524sm59163225e9.5.2024.10.31.08.00.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 08:00:48 -0700 (PDT)
+        Thu, 31 Oct 2024 08:00:45 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: alim.akhtar@samsung.com,
 	James.Bottomley@HansenPartnership.com,
@@ -69,9 +69,9 @@ Cc: tudor.ambarus@linaro.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v3 09/14] scsi: ufs: exynos: add gs101_ufs_drv_init() hook and enable WriteBooster
-Date: Thu, 31 Oct 2024 15:00:28 +0000
-Message-ID: <20241031150033.3440894-10-peter.griffin@linaro.org>
+Subject: [PATCH v3 07/14] scsi: ufs: exynos: gs101: remove unused phy attribute fields
+Date: Thu, 31 Oct 2024 15:00:26 +0000
+Message-ID: <20241031150033.3440894-8-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 In-Reply-To: <20241031150033.3440894-1-peter.griffin@linaro.org>
 References: <20241031150033.3440894-1-peter.griffin@linaro.org>
@@ -83,73 +83,47 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Factor out the common code into a new exynos_ufs_shareability() function
-and provide a dedicated gs101_drv_init() hook.
-
-This allows us to enable WriteBooster capability (UFSHCD_CAP_WB_EN) in a
-way that doesn't effect other SoCs supported in this driver.
-
-WriteBooster improves write speeds by enabling a pseudo SLC cache. Using
-the `fio seqwrite` test we can achieve speeds of 945MB/s with this feature
-enabled (until the cache is exhausted) before dropping back to ~260MB/s
-(which are the speeds we see without the WriteBooster feature enabled).
-
-Assuming the UFSHCD_CAP_WB_EN capability is set by the host then
-WriteBooster can also be enabled and disabled via sysfs so it is possible
-for the system to only enable it when extra write performance is required.
+Now that exynos_ufs_specify_phy_time_attr() checks the appropriate
+EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR flag. Remove the unused fields
+in gs101_uic_attr.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
-v3: update to new drv_init() protoype
----
- drivers/ufs/host/ufs-exynos.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/ufs/host/ufs-exynos.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
 diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 378c16d905c1..d59e1933b64e 100644
+index 0ac940690a15..e477ab86e3c1 100644
 --- a/drivers/ufs/host/ufs-exynos.c
 +++ b/drivers/ufs/host/ufs-exynos.c
-@@ -198,7 +198,7 @@ static inline void exynos_ufs_ungate_clks(struct exynos_ufs *ufs)
- 	exynos_ufs_ctrl_clkstop(ufs, false);
- }
+@@ -2064,26 +2064,6 @@ static const struct exynos_ufs_drv_data exynos_ufs_drvs = {
  
--static int exynosauto_ufs_drv_init(struct exynos_ufs *ufs)
-+static int exynos_ufs_shareability(struct exynos_ufs *ufs)
- {
- 	/* IO Coherency setting */
- 	if (ufs->sysreg) {
-@@ -210,6 +210,21 @@ static int exynosauto_ufs_drv_init(struct exynos_ufs *ufs)
- 	return 0;
- }
- 
-+static int gs101_ufs_drv_init(struct exynos_ufs *ufs)
-+{
-+	struct ufs_hba *hba = ufs->hba;
-+
-+	/* Enable WriteBooster */
-+	hba->caps |= UFSHCD_CAP_WB_EN;
-+
-+	return exynos_ufs_shareability(ufs);
-+}
-+
-+static int exynosauto_ufs_drv_init(struct exynos_ufs *ufs)
-+{
-+	return exynos_ufs_shareability(ufs);
-+}
-+
- static int exynosauto_ufs_post_hce_enable(struct exynos_ufs *ufs)
- {
- 	struct ufs_hba *hba = ufs->hba;
-@@ -2120,7 +2135,7 @@ static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
- 	.opts			= EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR |
- 				  EXYNOS_UFS_OPT_UFSPR_SECURE |
- 				  EXYNOS_UFS_OPT_TIMER_TICK_SELECT,
--	.drv_init		= exynosauto_ufs_drv_init,
-+	.drv_init		= gs101_ufs_drv_init,
- 	.pre_link		= gs101_ufs_pre_link,
- 	.post_link		= gs101_ufs_post_link,
- 	.pre_pwr_change		= gs101_ufs_pre_pwr_change,
+ static struct exynos_ufs_uic_attr gs101_uic_attr = {
+ 	.tx_trailingclks		= 0xff,
+-	.tx_dif_p_nsec			= 3000000,	/* unit: ns */
+-	.tx_dif_n_nsec			= 1000000,	/* unit: ns */
+-	.tx_high_z_cnt_nsec		= 20000,	/* unit: ns */
+-	.tx_base_unit_nsec		= 100000,	/* unit: ns */
+-	.tx_gran_unit_nsec		= 4000,		/* unit: ns */
+-	.tx_sleep_cnt			= 1000,		/* unit: ns */
+-	.tx_min_activatetime		= 0xa,
+-	.rx_filler_enable		= 0x2,
+-	.rx_dif_p_nsec			= 1000000,	/* unit: ns */
+-	.rx_hibern8_wait_nsec		= 4000000,	/* unit: ns */
+-	.rx_base_unit_nsec		= 100000,	/* unit: ns */
+-	.rx_gran_unit_nsec		= 4000,		/* unit: ns */
+-	.rx_sleep_cnt			= 1280,		/* unit: ns */
+-	.rx_stall_cnt			= 320,		/* unit: ns */
+-	.rx_hs_g1_sync_len_cap		= SYNC_LEN_COARSE(0xf),
+-	.rx_hs_g2_sync_len_cap		= SYNC_LEN_COARSE(0xf),
+-	.rx_hs_g3_sync_len_cap		= SYNC_LEN_COARSE(0xf),
+-	.rx_hs_g1_prep_sync_len_cap	= PREP_LEN(0xf),
+-	.rx_hs_g2_prep_sync_len_cap	= PREP_LEN(0xf),
+-	.rx_hs_g3_prep_sync_len_cap	= PREP_LEN(0xf),
+ 	.pa_dbg_opt_suite1_val		= 0x90913C1C,
+ 	.pa_dbg_opt_suite1_off		= PA_GS101_DBG_OPTION_SUITE1,
+ 	.pa_dbg_opt_suite2_val		= 0xE01C115F,
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
