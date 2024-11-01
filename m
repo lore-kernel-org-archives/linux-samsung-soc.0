@@ -1,200 +1,203 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE0514A098
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Nov 2024 05:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED13119AD93
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Nov 2024 10:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730437719; cv=none; b=jyjaDtWxuVzqF5EnlAW+CfWPq3mrI6Rd0qgofGjwCJ562ivyv1pxVk1QHK9h2r7bjeoGHvKOQUGQsEwTP/nFsbC2zWBdpGVeQqZYFRtbCyFl4XSYM4F4TFKW9Hw2fkCIRW/8OpcJhBeweQ9s+YTceUAzo4SRvWHh8ydl7i4fo9s=
+	t=1730456352; cv=none; b=WPaxBpSqn7BrE1N/gt/l+jYkdl9Siglxx3SUzxpb97u5lah5+wHEKNmtJtE0L74R+Y1k6YCOQ8IZ8GkB/P/X6vk/h/gmRYHBq+OI1YF9YX2BBMtfQ9NO7YM0dtRGDNzwCUEDY8Om9VuHzSbK2Vx/gOacxo3Hp7SDqroQjMb9E9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730437719; c=relaxed/simple;
-	bh=aE5/kRev+YPNg1qf+MQNdziHtczo4IwBVDu/BTgHClI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=eGmo3eE5oJumOcXLowq94I8m1wA3nMay3gLi8JamAm1Q9rl8vTAM/KcNia7Sqs7i+/Jmqm9dhEq7+tnFL7S9rdWaAAacprSsMVFusvmFkNcWK0qSPvVrBThwZIf9AFaiGngmctO1OvrINicO9iKL8XnizHxsyRW4RSxovjQqJlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TZfu+KSD; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1730456352; c=relaxed/simple;
+	bh=QgZZzJg9ZFJE02xI1Hrtot2oVYSJiceonkhnIgQN/h0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qstbvSfqhh5sIUC3udgi0hiAEH1gZvzp9XQKcujXvz5Lzw2iHJCQtEs5gD7LPMKZjpZ/iGbVzcoT7HCPNIudEGyAwW6lCmMD1EVqx1e9khMCwmu5AC+Gs5YPQX4s2H2NivNtphP1wao5/r+UqJWfvnoZbAhQ6qPb/ucV1nEIZDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UVlwytOd; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TZfu+KSD"
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241101050825epoutp0237f51fdf0491124db490d3ec9811ff2c~Dv_yztHif1580715807epoutp02u
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  1 Nov 2024 05:08:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241101050825epoutp0237f51fdf0491124db490d3ec9811ff2c~Dv_yztHif1580715807epoutp02u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730437705;
-	bh=w0xXnNy5pWx74xjHIAlIzJHAEUIQhIYpEbF5vLLmF/Y=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TZfu+KSDXbpbv99Glus3jh+SXuBy0AnQYkwfMKUtWzr0ylTFNHqMfIvWjFyhvjUAn
-	 dDxsIMlMi11c8zhPnD+NYgZ9UiS5K42nZvF8eiSHF9F5q24U278GCB9Z66qI24uqm2
-	 yW9yA99FHOOt0sQLo6RyBerA+TuhXTKIZjA+zw7Q=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241101050824epcas1p1168b5d209a9132be9c9b44194e690e1d~Dv_yXcSSh2980329803epcas1p1r;
-	Fri,  1 Nov 2024 05:08:24 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.135]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Xfpm74wZwz4x9QL; Fri,  1 Nov
-	2024 05:08:23 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D9.AC.09398.74264276; Fri,  1 Nov 2024 14:08:23 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241101050823epcas1p3425f5d8aad0c95efa16dff93ca103d68~Dv_w9DW932140221402epcas1p3Z;
-	Fri,  1 Nov 2024 05:08:23 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241101050823epsmtrp12f59d2924577461d5e278752c4f7fdc5~Dv_w8KvRd3107431074epsmtrp1P;
-	Fri,  1 Nov 2024 05:08:23 +0000 (GMT)
-X-AuditID: b6c32a39-39fff700000024b6-67-67246247b65e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	55.91.35203.64264276; Fri,  1 Nov 2024 14:08:23 +0900 (KST)
-Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241101050822epsmtip1d651b39b965b52490c26226570692c4d~Dv_wecxdZ1966119661epsmtip1H;
-	Fri,  1 Nov 2024 05:08:22 +0000 (GMT)
-From: =?utf-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
-	<inki.dae@samsung.com>
-To: "'Kaustabh Chakraborty'" <kauschluss@disroot.org>, "'Seung-Woo Kim'"
-	<sw0312.kim@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>,
-	"'David Airlie'" <airlied@gmail.com>, "'Simona Vetter'" <simona@ffwll.ch>,
-	"'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
-	<alim.akhtar@samsung.com>, "'Maarten Lankhorst'"
-	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
-	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'Rob Herring'"
-	<robh@kernel.org>, "'Conor Dooley'" <conor@kernel.org>
-Cc: <dri-devel@lists.freedesktop.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-In-Reply-To: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
-Subject: RE: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
-Date: Fri, 1 Nov 2024 14:08:22 +0900
-Message-ID: <000001db2c1c$12e86c50$38b944f0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UVlwytOd"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso19426621fa.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Nov 2024 03:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730456348; x=1731061148; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=le/PASSZxeUtTWMl/wNKSD8ec0kDdmO9btc+axn7CcM=;
+        b=UVlwytOd4wnrRNU85aB4M5RO1Mb7Rp0e0Jo4V/ZPhePtBbrqLFgrwhutcitcSWQ7aL
+         6JMwDMBiMfuMfnSwvUdQgpYjMdIwgUrPHuNX8z2CYNrIbjTVQxogs00hdfwFflLfvn01
+         D1yy2zBVr+uXZrXmCaKVtPHgXJWhOr4N03vmPJxcA4YEBPX8ZIGxf5s5m7HKzr+fKblv
+         WvyiDzb8vOTNFVP2d3AvrhiUBKYzgFWKixV1NJY/Sn4gQGvCHhabqT6GGHCfoY8txQli
+         2ME7P6B20li8FFUBZK5HCIC2I8j2BpQSXwfkvOccGRgSrs1qvEYMMRG3RdDwF96EK8RW
+         Y/iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730456348; x=1731061148;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=le/PASSZxeUtTWMl/wNKSD8ec0kDdmO9btc+axn7CcM=;
+        b=E05oEO2YvgbhUoYlGhScJmqMf5LDDrJBsZUsL6hXoNhh43mERu8ZSHaNe17XmfLuIv
+         3avPxmRERHQXQvZkP0uPel6XU7lmxTkTR56lSUpiLTfOr8TD7p5lyM92Un1xKb/492Fi
+         uS0/LqDf/6fCk5V/1ZjSAviTGkyZTJHa+ceUwBFJ5oRiv5hozcu/du0GrdzA0wkpSS5u
+         oxEiU5g8UiCdkhONeqmrvEMhJnk4SukXKi+nom7pHKXCsjOLvOyw4XTcQ7vlskUcS3Iv
+         DbhbNtvJJBIBJX/yftPMl3Kvv61AXDDda7oyeXI0frKxZgYOx187Htyh3LruZKEnEiHw
+         Iqpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCzn/7wP2lvgvV4wLY3yn9jW1vbZEOQ74psuvrwsHVYk46YFm23gK7wgNEAu1v4BNgXAosoAnuoVzWMbPgaJzT2A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9xjzsSnDInBuKg2H2VY+R3ETEqRy0u+dKl6HOpImRbzlr9bZg
+	1TG1eX4f9SRnI4bMy9hbR3Ts7lTnyuzPebNqG6PJ0rc7Xn4T0lJKzXok7k5bo8M=
+X-Google-Smtp-Source: AGHT+IHY7ovUMeRzJsMU5xMtc2Dvgev8mxKT+oIlhDInundzFyWvx582oufvDDooCRwUY9gtgQ/5NA==
+X-Received: by 2002:a05:651c:985:b0:2fb:569a:5543 with SMTP id 38308e7fff4ca-2fedb488babmr9537901fa.19.1730456347942;
+        Fri, 01 Nov 2024 03:19:07 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef5d6ef4sm5197031fa.48.2024.11.01.03.19.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 03:19:06 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH RFC v2 0/7] drm: add DRM HDMI Codec framework
+Date: Fri, 01 Nov 2024 12:19:01 +0200
+Message-Id: <20241101-drm-bridge-hdmi-connector-v2-0-739ef9addf9e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQETcOy7JkGSF7VbGFg+ao1ZCztJewFhWZRKtCZJGMA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTdxTft73eXUlKjoLbd2Rx7CAkMCmtUDwYuInoLtmiLCaMLSTsgEtb
-	gbbptUxdtoEsVRAnFTdKZQgiTOoYplQHTEesKDKG1SjgHCjRjQUFCg6RDsLWcrjx3/u89/m8
-	z3vfH7hQ+hANxTVaI2vQMgUkGoCcvxwli3k7J0IlP/ErSV0bPimgxurOo1TLV3aUOtFzXUTd
-	fupBqaVlN0q53WcxamD/JEY5Hg6JqFtdtShldf8koBpmzyGUuaxZRP1zoQOjjk93Y5S1agKl
-	nJMW0VtBdN/37QL64nw9QnfaRjHaYS9D6bq+9+j7h3oFdPupz+kvnXZAt/d/Qv/lWJ8e8GF+
-	sppl8lhDGKvN1eVptKoU8p1d2VuzlQlyRYwikdpEhmmZQjaFTHs3PWa7psC3DhlWxBSYfKl0
-	huPI2M3JBp3JyIapdZwxhWT1eQV6pV7GMYWcSauSaVljkkIu36j0ET/KV1d8MYvpz67bM9pT
-	hxSD8aByIMYhEQ8ba1qwchCAS4kOAFuHqlbBEwDLPJ0iHswDODhjRZ9LnKO1gC9cBHC2qQTl
-	wQSAS4v9Aj8LJVRwovwW4i+EENUInOvvFfqBkHACOPpgbKWXmNgGzQs3VhTBxBa43OnvK8YR
-	IgI2LC+t5CVEInQdOgr4OAj21fyO+GMh8Tpsbngs5GcKg94/mkX+OIRIggd+mxLxnBB4vMy8
-	YgyJUjGcvfkNxgvS4JPaMoSPg+GjXudqPhROHDFjvKAKwJHh0wgPrABe9g4DnhUHu5uqfOPh
-	Poso2NYVy7sFwumnFSJ/GhISeNAs5dkkvHrzzqoSwhunLChPoeHhGlMleM22ZjXbmtVsa1aw
-	/e9VDxA7eJHVc4UqllPolf9deK6u0AFWXnt0YgeonpqRuYAABy4AcSEZIpnRh6ukkjxm7z7W
-	oMs2mApYzgWUvsO2CEPX5ep830VrzFbEJ8rjEzbGxVOKBAX5kuSX20WslFAxRjafZfWs4blO
-	gItDiwVWD67stsLrXNqZxe92R0ztM+qimxzOJk1OeIVbYW9d3jra1HMtMzzvytGfq3LGzeqM
-	HxotH6S+kPWtx3msJNUw1PpyyY9vNr5xdXHZaXo0i96xnmtN3burMqOYMcXGOTyWk8Gbns3L
-	uAVvRuTjzJAN947ZS9h7bSkcWQ/WTxO6lrmBobsBg3AoDndFBo9cOmNBMI+sMqHySuD+LMfB
-	xvK5uKTT5iNO88L8VCaxG19CEusM29qS/i7SvsocHh8IyLn/p/qV6NBnYy3ukjbvjo/7sWFJ
-	tFgXnqUZRN4/sCWi1HEhcNr76Z7Pui49GNl8d8P2pMjIqJ3JLf2lk97qrxkS4dSMIlpo4Jh/
-	AYReaON2BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSnK57kkq6wYZOZosT1xcxWTyYt43N
-	YuXUVWwW84+cY7W48vU9m8Wff+fZLM6f38BucbbpDbvFpsfXWC0u75rDZjHj/D4mi4Uft7JY
-	tHUuY7X4v2cHu8Xsd/vZLWZMfslmseXNRFYHQY+T6zYzeez9toDFY+esu+wem1Z1snnMOxno
-	cb/7OJPH5iX1Hn1bVjF6bD5d7fF5k1wAVxSXTUpqTmZZapG+XQJXxv55B1kLGkQrFhx1aGBc
-	J9jFyMkhIWAiseXuHMYuRi4OIYHdjBKrFnexdzFyACUkJLZs5YAwhSUOHy6GKHnOKPFrxw02
-	kDibQKrE69V1IHERgfksEk8nbWMDcZgFdjBKHG3aygzRMY1R4u/FD4wg2zgFXCXaflxgArGF
-	BRwl/u2cAxZnEVCRWPjvD1icV8BS4lD3JEYIW1Di5MwnLCA2s4C2xNObT+HsZQtfM0N8oCDx
-	8+kyVhBbRMBKov32W1aIGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKygJFlFaNkakFxbnpusWGB
-	YV5quV5xYm5xaV66XnJ+7iZGcHRrae5g3L7qg94hRiYOxkOMEhzMSiK8HwqU04V4UxIrq1KL
-	8uOLSnNSiw8xSnOwKInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwtRfceD7l99fKJUs8q+96
-	Lg/rOZJ/tUNO6uz9lpPTGHZ+4haMvPIz7mFIiuAO7jc8t6w97/Jorb4rWx31rK1liad72lxZ
-	+x8nC1528bhm/Ao7Wlf74iw//0bWCWdctzGEv7i5RY07QIUnOXij4/sKmzqOd0qhff9n2z7c
-	7HPoewWnmHrozgbOhCJNhue1ocs42zM+1O9qu3vg7/7zYT8b17ROPF10/b3K0qykH3Fbzwa5
-	CscZVCQt/6E409kgeZ910cHttz/XcGZ69/Q9tdq0P+D/PSndx/+Zb5/e/XZJja7R+0I5HzG2
-	ovzS4wd5Xrjw/Yk4/SSudc3ahhLda61b6nZKv9sWov9huvyK98yzlFiKMxINtZiLihMB0+pD
-	qF0DAAA=
-X-CMS-MailID: 20241101050823epcas1p3425f5d8aad0c95efa16dff93ca103d68
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4
-References: <CGME20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4@epcas1p1.samsung.com>
-	<20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABWrJGcC/32NTQ6CMBCFr2JmbU0pFsSViYkHcGtYQDvAJNKaq
+ SEawt2d9AAu39/3VkjIhAnOuxUYF0oUgwiz34GbujCiIi8ajDZHbUutPM+qZ/KSTH4m5WII6N6
+ RVdProaqNbeoSQfYvxoE+mf2A++0KrZgTJel+899S5Cijq8L+QS+FkmfbDK4+VbbrzeVJoeN4i
+ DxCu23bD0dTIXXIAAAA
+X-Change-ID: 20240530-drm-bridge-hdmi-connector-9b0f6725973e
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4653;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=QgZZzJg9ZFJE02xI1Hrtot2oVYSJiceonkhnIgQN/h0=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnJKsY88bZNto8DqlmNoOzOCbmLPcIj7Q20qCAJ
+ JjoQmszobCJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZySrGAAKCRCLPIo+Aiko
+ 1ZMxB/9PlgUbk1D7PhNPxChE5hultBBglq08GH0Umkd+Za2/2Io/+TRzSawGpJdQvyxkjlgfR0V
+ 0y4x1NxVaNkUE0lL9SCdxQENW6FuWm204EDKSf12UssCKVaaxSBhb18R8Y5pevOS+ZxuJiSRann
+ virCc8/G78fIZmOcG+fMTmaAK3JSG29OlKMAzDUMON9dZj7DQVBpShmW5IkenDcOz9Rw7tBwDRl
+ 7MZevUXEUJa6Q458HDM/jZM4XSAiLfaB+vJISqffjuKFlvfRC99iOSplpF6789oJDrsBwunWAe6
+ n/wG5kc77eAVv8XoWMc/5iYXHHRut+GnvvCeHuKnPEFbapd6
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi Kaustabh Chakraborty,
+While porting lt9611 DSI-to-HDMI bridge driver to use HDMI Connector
+framework, I stumbled upon an issue while handling the Audio InfoFrames.
+The HDMI codec callbacks weren't receiving the drm_atomic_state, so
+there was no simple way to get the drm_connector that stayed at the end
+of the bridge chain. At the same point the drm_hdmi_connector functions
+expected to get drm_connector instance.
 
-Sorry for late.
+While looking for a way to solve the issue, I stumbled upon several
+deficiencies in existing hdmi_codec_ops implementations. Only few of the
+implementations were able to handle codec's 'plugged' callback. One
+third of the drivers didn't implement the get_eld() callback.
 
-> -----Original Message-----
-> From: Kaustabh Chakraborty <kauschluss=40disroot.org>
-> Sent: Friday, September 20, 2024 12:11 AM
-> To: Inki Dae <inki.dae=40samsung.com>; Seung-Woo Kim
-> <sw0312.kim=40samsung.com>; Kyungmin Park <kyungmin.park=40samsung.com>; =
-David
-> Airlie <airlied=40gmail.com>; Simona Vetter <simona=40ffwll.ch>; Krzyszto=
-f
-> Kozlowski <krzk=40kernel.org>; Alim Akhtar <alim.akhtar=40samsung.com>;
-> Maarten Lankhorst <maarten.lankhorst=40linux.intel.com>; Maxime Ripard
-> <mripard=40kernel.org>; Thomas Zimmermann <tzimmermann=40suse.de>; Rob He=
-rring
-> <robh=40kernel.org>; Conor Dooley <conor=40kernel.org>
-> Cc: dri-devel=40lists.freedesktop.org; linux-arm-kernel=40lists.infradead=
-.org;
-> linux-samsung-soc=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> devicetree=40vger.kernel.org; Kaustabh Chakraborty <kauschluss=40disroot.=
-org>
-> Subject: =5BPATCH 0/6=5D Samsung Exynos 7870 DECON driver support
->=20
-> This patch series aims at adding support for Exynos7870's DECON in the
-> Exynos7 DECON driver. It introduces a driver data struct so that support
-> for DECON on other SoCs can be added to it in the future.
->=20
-> It also fixes a few bugs in the driver, such as functions recieving bad
-> pointers.
->=20
-> Tested on Samsung Galaxy J7 Prime and Samsung Galaxy A2 Core.
->=20
-> Signed-off-by: Kaustabh Chakraborty <kauschluss=40disroot.org>
-> ---
-> Kaustabh Chakraborty (6):
->       drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in
-> functions
->       drm/exynos: exynos7_drm_decon: fix suspended condition in
-> decon_commit()
->       drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to Hz
->       drm/exynos: exynos7_drm_decon: properly clear channels during bind
->       drm/exynos: exynos7_drm_decon: add driver data and support for
-> Exynos7870
->       dt-bindings: display: samsung,exynos7-decon: add exynos7870
-> compatible
+Most of the issues can be solved if drm_connector handles
+hdmi-audio-codec on its own, delegating functionality to the actual
+implementation, be it a driver that implements drm_connector or
+drm_bridge.
 
-I will apply all except for the two patches below,
-=5BPATCH 2/6=5D drm/exynos: exynos7_drm_decon: fix suspended condition in d=
-econ_commit()
-=5BPATCH 6/6=5D dt-bindings: display: samsung,exynos7-decon: add exynos7870=
- compatible
+Implement such high-level framework, adding proper support for Audio
+InfoFrame generation to the LT9611 driver.
 
-Thanks,
-Inki Dae
+Several design decisions to be kept in mind:
 
->=20
->  .../display/samsung/samsung,exynos7-decon.yaml     =7C   4 +-
->  drivers/gpu/drm/exynos/exynos7_drm_decon.c         =7C 124 +++++++++++++=
------
-> ---
->  drivers/gpu/drm/exynos/regs-decon7.h               =7C  15 ++-
->  3 files changed, 90 insertions(+), 53 deletions(-)
-> ---
-> base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
-> change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
->=20
-> Best regards,
-> --
-> Kaustabh Chakraborty <kauschluss=40disroot.org>
+- drm_connector_hdmi_codec is kept as simple as possible. It implements
+  generic functionality (ELD, hotplug, registration).
 
+- drm_hdmi_connector sets up HDMI codec device if the connector
+  is setup correspondingly (either I2S or S/PDIF is marked as
+  supported).
+
+- drm_bridge_connector provides a way to link HDMI audio codec
+  funcionality in the drm_bridge with the drm_connector_hdmi_codec
+  framework.
+
+- It might be worth reverting the no_i2s_capture / no_spdif_capture
+  bits. Only TDA889x driver sets them, while it's safe to assume that
+  most of HDMI / DP devices do not support ARC / capture. I think the
+  drivers should opt-in capture support rather than having to opt-out of
+  it.
+
+This series is in the RFC stage, so some bits are underdocumented.
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Use drm_atomic_get_old_connector_for_encoder in atomic_disable() to
+  prevent it from crashing
+- Reworked HDMI codec init/exit, removing drmm_ calls (Maxime)
+- Drafted the helper to be called from .detect_ctx() that performs HDMI
+  Connector maintenance duties (Maxime)
+- Moved no_capture_mute to struct hdmi_codec_pdata
+- Link to v1: https://lore.kernel.org/r/20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org
+
+---
+Dmitry Baryshkov (7):
+      ASoC: hdmi-codec: pass data to get_dai_id too
+      ASoC: hdmi-codec: move no_capture_mute to struct hdmi_codec_pdata
+      drm/connector: implement generic HDMI codec helpers
+      drm/bridge: connector: add support for HDMI codec framework
+      drm/bridge: lt9611: switch to using the DRM HDMI codec framework
+      drm/display/hdmi: implement connector update functions
+      drm/bridge_connector: hook __drm_atomic_helper_connector_hdmi_update_edid()
+
+ drivers/gpu/drm/Makefile                           |   1 +
+ drivers/gpu/drm/bridge/adv7511/adv7511_audio.c     |   3 +-
+ drivers/gpu/drm/bridge/analogix/anx7625.c          |   3 +-
+ drivers/gpu/drm/bridge/ite-it66121.c               |   2 +-
+ drivers/gpu/drm/bridge/lontium-lt9611.c            | 170 ++++++++-----------
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c         |   3 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |   5 +-
+ .../gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c    |   3 +-
+ drivers/gpu/drm/display/drm_bridge_connector.c     | 160 ++++++++++++++++--
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c    |  56 +++++++
+ drivers/gpu/drm/drm_connector.c                    |  10 ++
+ drivers/gpu/drm/drm_connector_hdmi_codec.c         | 186 +++++++++++++++++++++
+ drivers/gpu/drm/drm_internal.h                     |   5 +
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   2 +-
+ drivers/gpu/drm/i2c/tda998x_drv.c                  |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dp.c                  |   2 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |   2 +-
+ drivers/gpu/drm/rockchip/cdn-dp-core.c             |   2 +-
+ drivers/gpu/drm/sti/sti_hdmi.c                     |   2 +-
+ include/drm/display/drm_hdmi_state_helper.h        |   4 +
+ include/drm/drm_bridge.h                           |  23 +++
+ include/drm/drm_connector.h                        |  80 +++++++++
+ include/sound/hdmi-codec.h                         |   7 +-
+ sound/soc/codecs/hdmi-codec.c                      |   4 +-
+ 24 files changed, 601 insertions(+), 136 deletions(-)
+---
+base-commit: f9f24ca362a4d84dd8aeb4b8f3ec28cb6c43dd06
+change-id: 20240530-drm-bridge-hdmi-connector-9b0f6725973e
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
