@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47B04EB50;
-	Sat,  2 Nov 2024 17:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451EF4EB50;
+	Sat,  2 Nov 2024 17:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730569385; cv=none; b=mk+bqcnbkXT6z+OvMA7psctneAki11FPUMaHmeqV5xDqrGeVXOKyVKjCFmtSId5V7rXolpDEDnRD7sVuAScTARW2e4d1GjViXx+N3ltlNJyZUOPLGPzAmMl2cyle2CsFREm+rQEs14DXrIDeMyqf52yqJdxYyzUr8p8VCkDci00=
+	t=1730569491; cv=none; b=ZviXAu7O9ftqipiQz2hyarXM8T2HGUevs0WGR2z9IYywSj5G0JGt+OgB90Z/oarfAQ2rbq8gWEPHmiQYb2SZbusXDE6PgprajCq+mfDZhyRMB4cykIx1jpwPjl0++CyNZ4XYRe+gS+KzYk67WVK3amHVbPg5CnfdGtBaHiubY9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730569385; c=relaxed/simple;
-	bh=U2CSmDapur3Jo4JKm5z6Wka0AR1ocn27ba4W1txoJHA=;
+	s=arc-20240116; t=1730569491; c=relaxed/simple;
+	bh=1E95OTbuDlNgkvn3HsUBOm3z72dwTWmD+hNd7j6udnc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V3Ml93yIiwmVEaylI/xcMxwschR7N1mDgPPH6KU4AQWBX1WKCalS44bNLsks4ZhewFy9BsNCxSvO3CIQzSkZly9Fxis9alU2dW32gpySG7CNTsUWzz8Mqi5Lge3Z1FtvTlNMz+k8YiBJz6gaDObd3fjZ8iDMCRZjNgRaG7JcxPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cp5Bg/mv; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qfiXeO7uTju9ewR2MDYp5CL1Q5lVdJwydHLG4kG9M8r040z5fWlWNPzmv6Hb7eO+ogRuihdyPQ3WJZKPIPsFNrI/+GuG9wEDmgjEyOXqelYpy+xz+H6XH/pqF4Y4jhGQByfjeKzw5FPvoT+Hr+o6iuv+QN7NCTXbA0T9/MErsEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwBOXmcB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cp5Bg/mv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0341FC4CEC3;
-	Sat,  2 Nov 2024 17:43:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwBOXmcB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72392C4CEC3;
+	Sat,  2 Nov 2024 17:44:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730569384;
-	bh=U2CSmDapur3Jo4JKm5z6Wka0AR1ocn27ba4W1txoJHA=;
+	s=k20201202; t=1730569490;
+	bh=1E95OTbuDlNgkvn3HsUBOm3z72dwTWmD+hNd7j6udnc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cp5Bg/mv/kOL/y7uDFW0AY6zoJDfLAHMVXOxWEsEB2EhnKTBx8M/JoWCkE3TSXyFM
-	 zsPi+xMglUo9ybptXu2aQAPy3mVeu2vbNJ7rwHuJNZv9j9rvhY0Mgq69I3q3jS7xrc
-	 z5x/V+JXikfxz66Rov1tOoRmGmC6KJQHeZu1rINGytaM5UJOu9d7l3k2JjIdvaeqMy
-	 T9rQHpr/1ETzEZzd/Ss/Mf4WhG1TGswDxqy8pScJaor4SUaZ/ITPPGRAYX9l3b38E9
-	 C2VCrZmYZR//EAfQge2JsD5GTxr80Fixdwh5/bytP5V2EyEe/9qkLH7brAv5Ie8NZy
-	 UvkjDLc7Q92WA==
-Message-ID: <719f9d89-f644-48bc-8be8-09c1a4de0101@kernel.org>
-Date: Sat, 2 Nov 2024 18:42:58 +0100
+	b=uwBOXmcBNICsqPln0GDA6gTREHWAO4gFYqU+HFnaXDg3SlIkKvdEEsswjpW0xVMz2
+	 9PKgMvS2CjEgZMBemOgG0STwduexpLmzfIhMrU5U5bKEL3B3IUrSebk5ls8xmPFwZu
+	 PymJ34cz6WHno9GqrC1tu+UJb8ezAbK9GdJutspYBi+I9sl3ItV6qGRLSpxZtnjSyb
+	 xctDqLahFaaEPHl03Jp7uPv3I89+y16eb+wEmZ4OFrUtoYgp9KOAqr98bNSJS14htD
+	 R8THl46nMZqP8hTAEsg5SALlptLiVcNPFD0aquk3LrLkqx2dgild2eb7FI8y/yE9bL
+	 51jqLPt+4dPbw==
+Message-ID: <d04d2b39-f1d1-4536-8ab2-764cd989d456@kernel.org>
+Date: Sat, 2 Nov 2024 18:44:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,16 +35,21 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] Add minimal Samsung Galaxy S20 Series board,
- SM-G981B and SM-G980F support
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- igor.belwon@mentallysanemainliners.org
-References: <20241030232308.72210-1-umer.uddin@mentallysanemainliners.org>
+Subject: Re: [PATCH v4 09/10] arm64: dts: exynos: Add Exynos9810 SoC support
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241028-exynos9810-v4-0-6191f9d0c0f1@gmail.com>
+ <20241028-exynos9810-v4-9-6191f9d0c0f1@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,38 +95,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241030232308.72210-1-umer.uddin@mentallysanemainliners.org>
+In-Reply-To: <20241028-exynos9810-v4-9-6191f9d0c0f1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/10/2024 00:23, Umer Uddin wrote:
-> Hi folks,
+On 28/10/2024 10:22, Markuss Broks wrote:
+> Exynos 9810 is an ARMv8 mobile SoC found in various Samsung devices,
+> such as Samsung Galaxy S9 (starlte), S9 Plus (star2lte),
+> Note 9 (crownlte) and perhaps others.
 > 
-> This series adds initial support for the Samsung Galaxy S20 Series and also
-> initial board support for the Samsung Galaxy S20 5G (SM-G981B)
-> codenamed x1s.
+> Add minimal support for this SoC, including basic stuff like:
+> - PSCI for bringing up secondary cores
+> - ARMv8 generic timer
+> - GPIO and pinctrl.
 > 
-> The S20 Series feature a lot of similarities in their configuration
-> and internally Samsung named the common devicetrees in their
-> downstream kernel 'hubble', please note hubble excludes the
-> S20 FE series and Note20 series.
-> The device trees have been tested with dtbs_check W=1
-> and results in no warnings.
-> 
-> This initial bringup consists of:
->  * pinctrl
->  * gpio-keys
->  * simple-framebuffer
-> 
-> This is enough to reach a shell in an initramfs. More platform support
-> will be added in the future.
+> The firmware coming with the devices based on this SoC is buggy
+> and doesn't configure CNTFRQ_EL0, as required by spec, so it's
+> needed to hardcode the frequency in the timer node.
+
+Thanks for the changes. All other patches were already applied - I
+dropped only DTS.
 
 Patches look good, thanks.
 
 Unfortunately, it is late in the cycle and due to some travel it is
 actually too late for me to pick it up. I will take it after the merge
 window.
-
 
 Best regards,
 Krzysztof
