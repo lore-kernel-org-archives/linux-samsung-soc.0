@@ -1,91 +1,158 @@
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9232F2E
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  3 Nov 2024 06:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2333FE;
+	Sun,  3 Nov 2024 19:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730617078; cv=none; b=qn3rH2/JCn7ZwRqWBkqnRnhZLG66b9qYD8CU2BTqRfJaQBHiUUrDo+oVMxgy+yXl0IZ621A8eBe//oTVaJpOcMcG2ZVjANi87K7CCj+7GfiBQjPMkLS2iRcRKUa5sEl6+oki8V0J41wi+OD6tPdK4wSQxHqrsm8ILUFP7+G/r6k=
+	t=1730661813; cv=none; b=W0wroOznmnED9t+7C5LbPx+WzbORBeqVcb6Idu5dobulzuaZulHPYQr1HZkHCiSsjsuo0/Qrxf2TYCfsTRE+gDoVzdIicc74SEr0XqJ+6tbPCfmtY+Fcoug1NQA/zo7XWohu7pTVIg92Glz9MFn8PJYWqtDBmG2MDqgYbe9hpy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730617078; c=relaxed/simple;
-	bh=7np/I76LHj5RuluQ3/YJmSLHvUBqTcAuqIlQuP1knkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tru/umcUrSqhffo6FSfKhiQ+MlFo8Gr2hg7kpkD/Uz29f/7HfehQtOzzcuJexavaxg7Wm2nAx0SzFWEMECDqlj4qQ404uRvpVBHbKDqzvyxrEOkUAha8eF1V48aEZWdR2D6eZTzey+i9Fo6KwZUgoWkWe1JSmH887jHrgN/qNJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhlX8Cb9; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730661813; c=relaxed/simple;
+	bh=OMuyRg4bzStPqNNN3yp859gI6JRk5cF+8sCpKoD37SE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joprAa1cY5+91VsDw+nyYCcqkoieeMx8AMKcA3xwP1eAQ//d32sGGEVOZHKL6i2MD5vEi1V3zvD0KxrAGs77nN6vmyQfkSOQy+HyTDiX/K0wSW5TGf4TnZYJb49kdURphI4xQrLWaNSE8lbm4vFwmi8zFumX01lfZgzncnZQeQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=B1smspZu; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhlX8Cb9"
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so1560185fac.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Nov 2024 23:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730617076; x=1731221876; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fS1npImPfHb20Sl7e7er9IvRC0E477hQsJ+7VA0CBuE=;
-        b=XhlX8Cb9hPa+D2zxSnv7jpB3Tl2BKh1SKouaL2nLzFZTxeKhPmqhId+PkOctHfayQ8
-         ESxGOk6Jg6Td5ZdA2qjJYEk11i1wOeOuw+7px3B4MQ/BkMYYgA5McHeHSbyIPFwDd+Fl
-         mvvrmgPTSYuebUCSC/daNHojBdNUDFpKbNkaFUQU8yRF9IWcCpQ7Y8aGJ55KYcySH487
-         dK1Scwzhx5yYDmLPU6m9KQPW567lxShgFRuET3krYxbYWCOZnYQI6UX7n/l2PAk5XCZH
-         g1ccHc+tfnnHBhgpIcNBft0bgB/IcdKf6IvNjOzGENu1HypNWxMYfKobXxF0HBAiqTav
-         x1WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730617076; x=1731221876;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fS1npImPfHb20Sl7e7er9IvRC0E477hQsJ+7VA0CBuE=;
-        b=Z8pBm+mHilnPxACRK0GDcwuxRoIPnfhsfVzOPdvjsZOxcNLZqsTwltt/nTpvVkPr3w
-         SJKpip25I/CWdahMknbvZqSypcWdR1tonRE6+WrYUlYbYVKi26Tw9+qWJAHk+uslzCbj
-         dFFgwvKjJV3s3UznEy3g1TP6crpdFfxlnJWspy7Qk5Qe7u2KZjGMrutta7zje4ZT3Shs
-         h+9UZ4u+uZ/m6+mK3ShLc3Klm8eDaIaUZ9KVyUGbCPpMlMsn6h1yNFiw56a822lrCLKT
-         upYsgxFQgbYlOy9rpzClpC8hBU0qSi9yx3pIIKGJ7eK8CPzKSF6+tLkqi+NS4j4QKtqU
-         02xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpXyn9Fpw+RSJyQ4UEV6euvdnmSGH3xT8oPyC1JiFFp9l6Q0bA94blSJZZ2NJXHrg7uEsvApjEyjQzYGXHVDR8uQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfLCDBFGlKYAsO3x+JbnfFC7bjnvELn1+yWezx+vXpqunPMWnP
-	anOAVkvXq43YZjocAt76fw7RxR5bEbUIEUnKUgeUC4j+jv6jJ8dKNT81xKFHdRz9AiAWhS/h80z
-	+YLeVeAC+AspK0Nbj7rW3czuzpzeMd2lRuJcoRw==
-X-Google-Smtp-Source: AGHT+IE+q1rK+3oCKtp9SkJcnFzCrL9vfkFECGy5BIRlaiafb9OMt6z17EkSsb1RPUubkyZ3F6wWlfWwl558mwfUioY=
-X-Received: by 2002:a05:6871:c707:b0:28f:329e:9f23 with SMTP id
- 586e51a60fabf-2949f07cb9emr7517716fac.42.1730617075872; Sat, 02 Nov 2024
- 23:57:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="B1smspZu"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=K2N0tDeGrz7QCmhPIrTtZDVUgTHAHsRgEUCvSiXLL6E=; b=B1smspZuOYOQR+09
+	Dol6frTZVigXzMffVPXGLhvEFqEkZ5g+NPVIVPyYqwcwLpoN5S62+kVO6RC8aN5l5INXps7CW68Ls
+	LTuz2wB4f1uDleO/QH7Wne/7u2z7bMdo6LxK8TXLHOYHj0MreDMlwHBIqnTKVaxtmAUBSOU6R9vMr
+	DdcoXUFCN4BwV/HwtL8PElHMwya00e9tOY76xEzJGXVVJym015wYWg+FaqfBtzAIpyqaMU3ShVNf7
+	kxtsX9xmggmkWgvn048GwBRBdeMEcH0Jj6kL9Refyybnftp0V3T2/OeGqjCAx7lfKiXqvEVwtGZYv
+	636O0oUm8RxrOlz3Mg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7gBy-00FC9O-0T;
+	Sun, 03 Nov 2024 19:23:18 +0000
+From: linux@treblig.org
+To: andrzejtp2010@gmail.com,
+	jacek.anaszewski@gmail.com,
+	s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-media@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: platform: samsung: s5p-jpeg: Remove deadcode
+Date: Sun,  3 Nov 2024 19:23:15 +0000
+Message-ID: <20241103192315.288743-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031150033.3440894-1-peter.griffin@linaro.org> <yq1wmhl6rp8.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1wmhl6rp8.fsf@ca-mkp.ca.oracle.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sun, 3 Nov 2024 06:57:45 +0000
-Message-ID: <CADrjBPp9-ucYgztdRNP81FfY0h+1s7N=LEPS2Ny=D2Vh2HsWYw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] UFS cleanups and enhancements to ufs-exynos for gs101
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
-	avri.altman@wdc.com, bvanassche@acm.org, krzk@kernel.org, 
-	tudor.ambarus@linaro.org, ebiggers@kernel.org, andre.draszik@linaro.org, 
-	kernel-team@android.com, willmcvicker@google.com, linux-scsi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Martin,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On Sun, 3 Nov 2024 at 01:36, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> Peter,
->
-> > This series provides a few cleanups, bug fixes and feature
-> > enhancements for the ufs-exynos driver, particularly for gs101 SoC.
->
-> Patches 1 and 2 were missing your SoB tags. I took the liberty of adding
-> these instead of having you resubmit. Please acknowledge that these two
-> patches should have your SoB.
+exynos3250_jpeg_operating() has been unused since it was added in 2014's
+commit 3246fdaa0ac2 ("[media] s5p-jpeg: Add support for Exynos3250 SoC")
 
-Yes those 2 patches should have my SoB, that was an oversight on my
-part.  Thanks for fixing it :)
+exynos4_jpeg_get_fifo_status(), exynos4_jpeg_get_frame_size(), and
+exynos4_jpeg_set_timer_count() have been unused since they were added by
+commit 80529ae5c137 ("[media] s5p-jpeg:  JPEG codec")
 
-Peter
+Remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../samsung/s5p-jpeg/jpeg-hw-exynos3250.c     |  5 -----
+ .../samsung/s5p-jpeg/jpeg-hw-exynos3250.h     |  1 -
+ .../samsung/s5p-jpeg/jpeg-hw-exynos4.c        | 19 -------------------
+ .../samsung/s5p-jpeg/jpeg-hw-exynos4.h        |  4 ----
+ 4 files changed, 29 deletions(-)
+
+diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
+index 637a5104d948..6657d294c10a 100644
+--- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
++++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
+@@ -427,11 +427,6 @@ void exynos3250_jpeg_clear_int_status(void __iomem *regs,
+ 	writel(value, regs + EXYNOS3250_JPGINTST);
+ }
+ 
+-unsigned int exynos3250_jpeg_operating(void __iomem *regs)
+-{
+-	return readl(regs + S5P_JPGOPR) & EXYNOS3250_JPGOPR_MASK;
+-}
+-
+ unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs)
+ {
+ 	return readl(regs + EXYNOS3250_JPGCNT) & EXYNOS3250_JPGCNT_MASK;
+diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
+index 15af928fad76..709c61ae322c 100644
+--- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
++++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
+@@ -45,7 +45,6 @@ void exynos3250_jpeg_rstart(void __iomem *regs);
+ unsigned int exynos3250_jpeg_get_int_status(void __iomem *regs);
+ void exynos3250_jpeg_clear_int_status(void __iomem *regs,
+ 						unsigned int value);
+-unsigned int exynos3250_jpeg_operating(void __iomem *regs);
+ unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs);
+ void exynos3250_jpeg_dec_stream_size(void __iomem *regs, unsigned int size);
+ void exynos3250_jpeg_dec_scaling_ratio(void __iomem *regs, unsigned int sratio);
+diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
+index 0828cfa783fe..479288fc8c77 100644
+--- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
++++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
+@@ -185,11 +185,6 @@ unsigned int exynos4_jpeg_get_int_status(void __iomem *base)
+ 	return readl(base + EXYNOS4_INT_STATUS_REG);
+ }
+ 
+-unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base)
+-{
+-	return readl(base + EXYNOS4_FIFO_STATUS_REG);
+-}
+-
+ void exynos4_jpeg_set_huf_table_enable(void __iomem *base, int value)
+ {
+ 	unsigned int	reg;
+@@ -300,22 +295,8 @@ void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size)
+ 	writel(size, base + EXYNOS4_BITSTREAM_SIZE_REG);
+ }
+ 
+-void exynos4_jpeg_get_frame_size(void __iomem *base,
+-			unsigned int *width, unsigned int *height)
+-{
+-	*width = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) &
+-				EXYNOS4_DECODED_SIZE_MASK);
+-	*height = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) >> 16) &
+-				EXYNOS4_DECODED_SIZE_MASK;
+-}
+-
+ unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base)
+ {
+ 	return readl(base + EXYNOS4_DECODE_IMG_FMT_REG) &
+ 				EXYNOS4_JPEG_DECODED_IMG_FMT_MASK;
+ }
+-
+-void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size)
+-{
+-	writel(size, base + EXYNOS4_INT_TIMER_COUNT_REG);
+-}
+diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
+index 3e2887526960..b941cc89e4ba 100644
+--- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
++++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
+@@ -35,10 +35,6 @@ void exynos4_jpeg_select_dec_h_tbl(void __iomem *base, char c, char x);
+ void exynos4_jpeg_set_encode_hoff_cnt(void __iomem *base, unsigned int fmt);
+ void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size);
+ unsigned int exynos4_jpeg_get_stream_size(void __iomem *base);
+-void exynos4_jpeg_get_frame_size(void __iomem *base,
+-			unsigned int *width, unsigned int *height);
+ unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base);
+-unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base);
+-void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size);
+ 
+ #endif /* JPEG_HW_EXYNOS4_H_ */
+-- 
+2.47.0
+
