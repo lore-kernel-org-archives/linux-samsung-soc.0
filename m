@@ -1,129 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500911AC448;
-	Mon,  4 Nov 2024 08:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26351AF0B5
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 10:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730710606; cv=none; b=CxLpkt3IyJ5nBf7sjKKCZGHnct76m2ZYvdExhpX/7adW2rdV9FHdAtvxJeQ+Pyi6noo/V7UrsU/dlTxrR4BtQm462Fc/hllprHdlMiYbRTByq7DiCg3vJD35WKsLeN4RzxprSAhs3GVAL6O/GfxHXL0Xnf6kwNUjf0ojIpHh7rY=
+	t=1730714496; cv=none; b=EB/ik6KElx4onxx10snJetxyt8vHQAw4i4cH6rHqZNnU3WCwBqOfqmq7RmR1l2naYm1VCtOSw5+O0twT606EKq0R4nuiKMKJ6x6e/TfaP/08apDnv0mgBEslJzyZZ4vW7mX4lh/D4QeWlW9lmM5UcY3+JEBR8/Oxl9za3Smo9Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730710606; c=relaxed/simple;
-	bh=+szTGwcsKaWeKFK/5HzDnnuXC33Ola+y4wswp/jEC6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MXSR/X6dzoCH5jQKPd1Wqa4qTEKg+7Xx/peMP6/GuAsOTpVXyzfmBBLxWpIuYjCDYX2BlJ+iA4N/XXb2VZIv3i9DhSifNAZgXH4XcgVNfJ+dVoD6Q+7HF8M8yDv3FDDrFWyncmGPhDFkW49Tk0FUqrq6xNWIWsDfzrFTXHuJBOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOO0eOjn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730714496; c=relaxed/simple;
+	bh=Zrm6drnbKRKxiZ6HaTfeQdUj3MvizoBOT6103YXttp0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DUqVSgIND7hq/TYjqxkzzMZkxxHlRPwsH5Ii6Kra/c5ELZKoEp0ZnQW1q+I/3/KozxaSz3DxmbFHmCs+rnlgCFuM1x16+K0a1DibS5i0UseDnsIK8tqB31jn4MVihyL/As2cXacAa1QE38Bxi83sl+L8RSh1F0TfQ2W2SE4mtoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=rHLkj8xA; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOO0eOjn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E3EBC4CED2;
-	Mon,  4 Nov 2024 08:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730710605;
-	bh=+szTGwcsKaWeKFK/5HzDnnuXC33Ola+y4wswp/jEC6Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qOO0eOjnj8pui672YjMmPaO7SXC49sx1aKP6qPoGDa+DC5KWalzOVaNGf+BVftprQ
-	 PvBqLLbFodfVCJVKmwYtdFShYLR4Ucttkt3DZtqB1IxpFLfeidlB4RZR6g7yvJ9oPD
-	 8cWqMZt/x3KRWi5yvGG5382oDRm5oevE+1iTWMvTK1ZwSzGluPGXM3dOycrxjsGz5U
-	 2r0AzPdaqppQyVkbPNNNB0tXxI7ewTJbStZPAyEyUlgliFDkwkxQ44IW0ba+2blcOS
-	 3Ziifeaq3p1tli4sm14zGy80ix9ptScSb1XajrgX/iG1FDswUmPzzN2RISONu6etQU
-	 Y03PfQibsZbQg==
-Message-ID: <3e62ecab-5f84-4610-b9a0-7bbdb44fc332@kernel.org>
-Date: Mon, 4 Nov 2024 09:56:39 +0100
+	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="rHLkj8xA"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2110a622d76so30026425ad.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Nov 2024 02:01:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1730714494; x=1731319294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uu/Hn4B1CLfNhyVjR/ZehwHt0szyrEKv0cT8lqo+PuA=;
+        b=rHLkj8xA+05SpbFnj3N3igeR7q9pxHK1P6rKg3pQM2QOmVwSCpbwlukmq+zVch6aOC
+         UL56GXy3AjIzG5wTbcmYrtyBkiSstwsNdCyFLV2uY/TvIPUn2QOl7nwd+/oMPFFs6/SN
+         UCpdgArv95pi2deaeONPAuRDAdqEabIw5p4UxRNPG1uXi6t+58BtPAsDC9owv5BGVhEO
+         f4Ns6De/5vJVRMZbA+CmDIdrRACzVMqTPwhykxFluPEeR64erU8zRxVMpaV/TIAxmUQ0
+         R2MtVQottBxhKo0htRoFvYLTk4VssAzzd3tvx84Oi3vWY7v6t+uLyIfrslAY8a0hzHJr
+         CgTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730714494; x=1731319294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uu/Hn4B1CLfNhyVjR/ZehwHt0szyrEKv0cT8lqo+PuA=;
+        b=DU+h1BaiA0g7JjzGEMOXYI3GH3tBbc3oyTqmlOqcb0kA6nUqTqOtrjd3aTvFpcTv1O
+         5poEXbQVJkg4J0i2Rc8I1b6j2G0z8YDiT7JIMwip8HqQ7otXbWeF6TQYZU1m9fgXjKAP
+         398zEZtTWZfH9r9dPyruZLKu7FNZcEtuIZn4mpwaO7Pv8oi1SvtDleqpCXrNJDCSgM8p
+         lS/+lNt/8/8AZR8dcEVjrkn6n+L8b8MF56XdNguX9mzg+KPaI8s2rRKkCK9aaCLTfdRy
+         pApUxKpFzWhDATPH+wrGdlfv/Ja05RKHV8PAPgYv03BiwCl2J2f806QGMuOte5QP5aJ9
+         XZGw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7740/Zo9+sUS20CoI6z1uyJx7xtMgrcdzJk5vzRaVGTqTDm+F1kMf/pgpbhnd5j/V5qzOocsTQ0YtwXJgKoEzZg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2tcx6cm3Ajv6m6GkdsAEupJAnIMGknYO/7Dh6SWGJOhGB9xBn
+	F7t7bXHCji1cuoUTyXsx2YJrVn4eQqutdBQzIk7qu5+900kWBl6855tRl6T5SEo=
+X-Google-Smtp-Source: AGHT+IHgX7/J/LHam24dB2LrYlnkJ97J5eC7SoQThk8VahXxNPfsknOObvyGLWAwJi3aMDlk5RiHfA==
+X-Received: by 2002:a17:903:230e:b0:20c:bf43:938e with SMTP id d9443c01a7336-210c68d3ee4mr460851495ad.15.1730714494225;
+        Mon, 04 Nov 2024 02:01:34 -0800 (PST)
+Received: from localhost.localdomain (133-32-133-31.east.xps.vectant.ne.jp. [133.32.133.31])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a5fe6sm57325185ad.149.2024.11.04.02.01.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 02:01:32 -0800 (PST)
+From: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+To: s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	kyungmin.park@samsung.com,
+	andrzej.hajda@intel.com
+Cc: linux-media@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+Subject: [PATCH v2] media: platform: exynos4-is: Fix an OF node reference leak in fimc_md_is_isp_available
+Date: Mon,  4 Nov 2024 19:01:19 +0900
+Message-Id: <20241104100119.2173052-1-joe@pf.is.s.u-tokyo.ac.jp>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: platform: exynos4-is: Fix memory leak in
- fimc_md_is_isp_available
-To: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, s.nawrocki@samsung.com,
- mchehab@kernel.org, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
- andrzej.hajda@intel.com
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20241104084529.2113302-1-joe@pf.is.s.u-tokyo.ac.jp>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241104084529.2113302-1-joe@pf.is.s.u-tokyo.ac.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2024 09:45, Joe Hattori wrote:
-> In fimc_md_is_isp_available(), of_get_child_by_name() is called to check
+In fimc_md_is_isp_available(), of_get_child_by_name() is called to check
+if FIMC-IS is available. Current code does not decrement the refcount of
+the returned device node, which causes an OF node reference leak. Fix it
+by calling of_node_put() at the end of the variable scope.
 
-Subject: We do not call it a memory leak. This is an OF node reference leak.
+Fixes: e781bbe3fecf ("[media] exynos4-is: Add fimc-is subdevs registration")
+Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+---
+Changes in v2:
+- Update the commit message.
+- Change the name of the device node according to the naming convention.
+---
+ drivers/media/platform/samsung/exynos4-is/media-dev.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> if FIMC-IS is available. Current code does not decrement the refcount of
-> the returned device node, which causes memory leak. Fix the bug by
-
-Same here.
-
-> calling of_node_put() at the end of the variable scope.
-> 
-> Fixes: e781bbe3fecf ("[media] exynos4-is: Add fimc-is subdevs registration")
-> Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-> ---
->  drivers/media/platform/samsung/exynos4-is/media-dev.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.h b/drivers/media/platform/samsung/exynos4-is/media-dev.h
-> index 786264cf79dc..3bbcab9eed6b 100644
-> --- a/drivers/media/platform/samsung/exynos4-is/media-dev.h
-> +++ b/drivers/media/platform/samsung/exynos4-is/media-dev.h
-> @@ -178,8 +178,9 @@ int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
->  #ifdef CONFIG_OF
->  static inline bool fimc_md_is_isp_available(struct device_node *node)
->  {
-> -	node = of_get_child_by_name(node, FIMC_IS_OF_NODE_NAME);
-> -	return node ? of_device_is_available(node) : false;
-> +	struct device_node *fimc_is __free(device_node) =
-
-The name convention is in such case 'child', not 'fimc_is' (since 'node'
-is taken).
-
-Best regards,
-Krzysztof
+diff --git a/drivers/media/platform/samsung/exynos4-is/media-dev.h b/drivers/media/platform/samsung/exynos4-is/media-dev.h
+index 786264cf79dc..a50e58ab7ef7 100644
+--- a/drivers/media/platform/samsung/exynos4-is/media-dev.h
++++ b/drivers/media/platform/samsung/exynos4-is/media-dev.h
+@@ -178,8 +178,9 @@ int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
+ #ifdef CONFIG_OF
+ static inline bool fimc_md_is_isp_available(struct device_node *node)
+ {
+-	node = of_get_child_by_name(node, FIMC_IS_OF_NODE_NAME);
+-	return node ? of_device_is_available(node) : false;
++	struct device_node *child __free(device_node) =
++		of_get_child_by_name(node, FIMC_IS_OF_NODE_NAME);
++	return child ? of_device_is_available(child) : false;
+ }
+ #else
+ #define fimc_md_is_isp_available(node) (false)
+-- 
+2.34.1
 
