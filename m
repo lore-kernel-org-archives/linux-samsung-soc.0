@@ -1,131 +1,166 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1C81553AA
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 03:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B00E171E70
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 07:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730690028; cv=none; b=bc0VHrOqg0M57jSx95dfQQqblKMeVnnw54jJzObst9tyEEWJ/hqZjQtlX6yc3xNi9f7Ug/1WKpGTz0ss+PgzZty06C3ER4VXmmFFOBkrMxLszITfDQ4UaueZAlF2kiZdTb06R4UPFd+Q2/5NHOc28VlMMTHAFNY3LKFtJIoe+ts=
+	t=1730706645; cv=none; b=tBz9ArRFJ/s6PXUMMv59vXQEukFIXT7I2rHavCuhvyM480gZnR13wOF4fSIh32XENihIa4tsqiXxk09xCCpbzz2Zpnyo5DFMNJFLjMeW1lCI/cdk1LnL2SEwNKnEyEqUBgPmjW/1b8LtI+A0/HjXhuQkBvKlZaLQRGtH44hprQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730690028; c=relaxed/simple;
-	bh=LqM12t5/KPiMXOoCQC1G5ffIum/U3xyTDYSYWUL3Jys=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=n2jYTGbGemRrRd+vEuVbkYJnq9uLzhN0bKye76nJcuegAGgEsibl3STK7RCNMfN/Z4goOK2AEbtA4oX8ooUngW5fmxMQVGeXXg/pkryookgbX8iDXqF9l3ggQH0qVn7fOrXxllGWV3z9kjzBI0vtoe4eITu3hE4T7o0Y5ISr3uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=brpXI+hw; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730706645; c=relaxed/simple;
+	bh=/Y28vokTpQb4d1tXRJmorOa0iViEBF2hFEc+PPDpI44=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uO3/zFzOqAsEA8ObIF+u+8GIXjv8ySAeM3IC4OQ2gNv9FcZnDzF7c9dcNwGvgv1+E6ZY9e4GAMEpmO6EpwqyGq/KEHTJWTmuI6SzgF4NzbqjKm7UUdq6Um6kh9lVSaYK0bxuoPUmWYzT7/6Kgy8HDzFQn3ypgU9wgZXY1nn7urY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VIzqfx18; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brpXI+hw"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ed67cfc1fcso2466031a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Nov 2024 19:13:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VIzqfx18"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a19bf0a1dso85102366b.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Nov 2024 23:50:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730690026; x=1731294826; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=curM5JHWqTItwQpvFipVaydSvgK/Mn5omBdYFQcRouI=;
-        b=brpXI+hwUT82LYYDifyk8s93lkkBvVuRFNiVlbw3p9FZ5LzEqkyI+i2f6413+wz6xC
-         42YT/0lsvD9LLAxhBBC/aEn/RQPpPv2NtQyHOKYAiAA4I8E0VoCN80XUjW6wcsdGhQo5
-         v6ybX4dM9apoqbnwObN9dOPSEVTrpEh3Xy+AxqGAr++qrl9X+KELSL1ZeFY3X1wUPDp+
-         kPdjhiwKOSwdTifdJJqIFQlQBmU3aWKqcTmDwiCDN1x5C5PYYoojtiVbvoVPfNazJNE2
-         XshU/nOJC+y/HJbxz00CqOaRQ4MjqSLTgmcarBlFehrdFwIZjIvXT8J5IHSvsEKq96lw
-         CH3Q==
+        d=linaro.org; s=google; t=1730706642; x=1731311442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A9nHH1n8ZLYE4cUy1f03ZslOc8OPqBEHgE84YmFhawg=;
+        b=VIzqfx18CbAbeUr9i5ZLfk7DB2zaD/c2zk4v6HrvfbjFQ8DN3atauRSs3giY1g6slf
+         5oExa81iR4hnG42Soa63Zxk63+/pSeztCpZSsjOLwQiYYHLWTOczVQcKA0Y4O+GO1RgT
+         pcBWw99bY0IvBCnoDabFJenikvUdMJRCmeHMzb8gebYUSGIq6HQbr1RrD9JS/R0+x9Sp
+         cwQK0szDeBSka2wSm4qzpkZsQnjDQ7h4mUoB5e1wTEfnQnoD5HdqS5MbS+PEWmeLtc2L
+         4sYYb1WQtqpw04xbo3GKavcvvZF9lDpiIox4JK/pjusTRaqg+PMUNLlAIZFWZfIQRf1C
+         vkHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730690026; x=1731294826;
-        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=curM5JHWqTItwQpvFipVaydSvgK/Mn5omBdYFQcRouI=;
-        b=Ec7EGl+KFDVclg2Eb+T5AYyrAvUjbtwAt6s3RiMwzPPG0UlTnnt2UC+mf1s+Dema6B
-         zzdwUDIFA1oIHYoNOjHwteXoIn23kENNaKg2vAA14C4zl0Zm7JC5+wTXFYbMGPJNH+vy
-         8SaCJHTVO5Dk5lwxZIQ7p2DBGehGHQ+ZlMWu8j8TB5DTwW1b7U1nG3ipR8jwD2oTl974
-         Jy7ifRrEp0aUzouIzQK3NASTKV3g+I0rJnm1DbyZ/3GVaM3urKFNIumZwj73W0+3nQxD
-         xHhHFnjR5TvWYNYQzp1OeauXW/8osX1natMtnTn0CHffsL0qU7mrozjjAFdc0sJisFfx
-         P5xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXcI6oBtY6hy5DM6zSAZ0km6GIXC7vVpxeoMZzu85JByCR+QdfIAfQSJgSa4jokyxr4Vis6UzLiCUGoSubMTYVKg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIyPgxdzcfjFWFybonf1/YEgcwMtzsjERE0UsL0eKjdyty2SxY
-	bDI88gnPzEa/mfuEl6Rta2d1hcfQ60ph65T2m+CfH/BaRn053jxNfEpA8A==
-X-Google-Smtp-Source: AGHT+IFn83lnoK/EDpxaIBt/m8+SjryQFVCLNbxO0iVVPjdnvAIpUl7UK+AHchKjQELZWRaTXP9FsQ==
-X-Received: by 2002:a17:90a:4811:b0:2e2:8349:239d with SMTP id 98e67ed59e1d1-2e92cf2ce03mr20646493a91.28.1730690026083;
-        Sun, 03 Nov 2024 19:13:46 -0800 (PST)
-Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fc0084asm8783053a91.51.2024.11.03.19.13.44
+        d=1e100.net; s=20230601; t=1730706642; x=1731311442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A9nHH1n8ZLYE4cUy1f03ZslOc8OPqBEHgE84YmFhawg=;
+        b=XJQTUxfCczBwC9Al+XSYW1rHq6VdiGnkybdELm0dIIIZpZQ62svjwGjg199oSj4OaN
+         4waibsR1WoSj+1yGCnPfM6yS+iISGZexvad91PTfNKBETbVfESJNECtge+3ZstrrN2JQ
+         UAhTmTZl6y3rnsrgRXvMv6LosBL+0rvXyUlkqvAb9ic76Q2UX/fOtLHEcV1YgrO3YiFU
+         69NLI7ut7xmObbVDEHOIhqEQOEkyJ+whWagIVUkR60MPv8A7LdxgcpbZbyWToyQlfnBh
+         FXqV/1eO7+3gX2xFKcsDKyNl+bKmCFkeANZ5si+DekNc0WvsVHgwW5PdwZ1YMX3YO1W6
+         /bHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhDm7KQtmgIfg0MEezSVYQkSdxo50Xj19HuW0b3Cv9PBbkm2AdYZgzZXgHFTGG8c/5lwOwdFHNBRxSKAVlKIwKmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh3E1JYbbZgBKky0V35MsA4Fm61ePWy47zaw6qNHrKJf6NIsr1
+	Z5lI+xe/DJMW6CW0e/QApASMtpvuICKYfsvdme+J/6ECFtwhMPsR4ewr3k4OAD0=
+X-Google-Smtp-Source: AGHT+IEbIfNzeLwZgrrpPLLaSv5bOleyHd6msDt353EA2HHUzNhF9o9Fa5Cuz6VIqVTylhnb+z1K8g==
+X-Received: by 2002:a17:907:74b:b0:a99:fbb6:4956 with SMTP id a640c23a62f3a-a9de6175f57mr1477251366b.10.1730706641496;
+        Sun, 03 Nov 2024 23:50:41 -0800 (PST)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5668499esm517640966b.219.2024.11.03.23.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 19:13:45 -0800 (PST)
-Sender: Inki Dae <daeinki@gmail.com>
-From: Inki Dae <inki.dae@samsung.com>
-To: airlied@linux.ie,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [GIT PULL] exynos-drm-next
-Date: Mon,  4 Nov 2024 12:13:41 +0900
-Message-Id: <20241104031341.36549-1-inki.dae@samsung.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 03 Nov 2024 23:50:40 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.13
+Date: Mon,  4 Nov 2024 08:50:36 +0100
+Message-ID: <20241104075037.13323-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Dave and Daniel,
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-   Add Decon support for Exynos7870 SoC, several fixups and cleanup.
-
-Please kindly let me know if there is any problem.
-
-Thanks,
-Inki Dae
-
-
-The following changes since commit bcfe43f0ea77c42c2154fb79b99b7d1d82ac3231:
-
-  drm/imx/dcss: include drm/drm_bridge.h header (2024-11-01 13:46:25 +1000)
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.13
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.13
 
-for you to fetch changes up to 53f4b30b05b2a9db6988cb71a785837ee64d2524:
+for you to fetch changes up to 9174fac3b302a853b78c78f2f5ad11462b0c54b0:
 
-  drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870 (2024-11-04 10:50:46 +0900)
-
-----------------------------------------------------------------
-New feature
-- Add Decon driver support for Exynos7870 SoC
-  . This patch adds driver data and support for Exynos7870 SoC
-    in the Exynos7 Decon driver
-
-Bug fixups for exynos7_drm_decon.c module
-- Properly clear channels during bind
-  . This patch implements shadow protection/unprotection to clear
-    DECON channels properly, preventing kernel panic
-- Fix ideal_clk by converting it to HZ
-  . This patch corrects the clkdiv values by converting ideal_clk to Hz
-    for consistency
-- Fix uninitialized crtc reference in functions
-  . This patch modifies functions to accept a pointer to
-    the decon_context struct to avoid uninitialized references
-
-Cleanups
-- Remove unused prototype for crtc
-  . This patch removes unused prototypes
-      exynos_drm_crtc_wait_pending_update
-      exynos_drm_crtc_finish_update
-- And just typo fixup
+  clk: samsung: Introduce Exynos8895 clock driver (2024-10-26 14:00:12 +0200)
 
 ----------------------------------------------------------------
-Kaustabh Chakraborty (4):
-      drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
-      drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to Hz
-      drm/exynos: exynos7_drm_decon: properly clear channels during bind
-      drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870
+Samsung SoC clock drivers changes for 6.13
 
-Kwanghoon Son (1):
-      drm/exynos: remove unused prototype for crtc
+1. Tesla FSD: Move number of clocks from DT binding headers to driver,
+   because these are not an ABI and might change while finishing support
+   for the hardware.
 
-Shen Lichuan (1):
-      drm/exynos: gsc: Fix typo in comment
+2. ExynosAutov920: Add clock controller drivers for PERIC1, MISC, HSI0
+   and HSI1.  Context of patch depends on a fix from fixes branch, thus
+   pull in my earlier pull request with fixes.
 
- drivers/gpu/drm/exynos/exynos7_drm_decon.c | 122 +++++++++++++++++++----------
- drivers/gpu/drm/exynos/exynos_drm_crtc.h   |   3 -
- drivers/gpu/drm/exynos/exynos_drm_gsc.c    |   2 +-
- drivers/gpu/drm/exynos/regs-decon7.h       |  15 ++--
- 4 files changed, 87 insertions(+), 55 deletions(-)
+3. Google GS101: Do not disable UFS host controller clocks, ever,
+   because gating them does not work well with UFS sleep/power savings.
+   Downstream does not gate them via OS, but uses hardware feature -
+   Automatic Clock Gating - which is not yet supported in upstream.
+
+4. Exynos8895: New SoC with initial support for clock controllers:
+   FSYS0/1, PERIC0/1, PERIS and TOP.
+
+5. Few code style improvements.
+
+----------------------------------------------------------------
+Inbaraj E (2):
+      clk: samsung: fsd: do not define number of clocks in bindings
+      dt-bindings: clock: samsung: remove define with number of clocks for FSD
+
+Ivaylo Ivanov (3):
+      dt-bindings: clock: samsung: Add Exynos8895 SoC
+      clk: samsung: clk-pll: Add support for pll_{1051x,1052x}
+      clk: samsung: Introduce Exynos8895 clock driver
+
+Jinjie Ruan (1):
+      clk: samsung: Fix out-of-bound access of of_match_node()
+
+Krzysztof Kozlowski (3):
+      Merge branch 'for-v6.13/clk-dt-bindings' into next/clk
+      Merge tag 'samsung-clk-fixes-6.12' into next/clk
+      Merge branch 'for-v6.13/clk-dt-bindings' into next/clk
+
+Peter Griffin (1):
+      clk: samsung: gs101: make all ufs related clocks critical
+
+Sunyeal Hong (2):
+      dt-bindings: clock: exynosautov920: add peric1, misc and hsi0/1 clock definitions
+      clk: samsung: exynosautov920: add peric1, misc and hsi0/1 clock support
+
+Varada Pavani (2):
+      clk: samsung: Fix block comment style warnings reported by checkpatch
+      clk: samsung: Fix errors reported by checkpatch
+
+ .../bindings/clock/samsung,exynos8895-clock.yaml   |  239 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos-audss.c             |    2 +-
+ drivers/clk/samsung/clk-exynos3250.c               |    2 +-
+ drivers/clk/samsung/clk-exynos4.c                  |    2 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c           |    2 +-
+ drivers/clk/samsung/clk-exynos5250.c               |    2 +-
+ drivers/clk/samsung/clk-exynos5260.c               |    4 +-
+ drivers/clk/samsung/clk-exynos5410.c               |    2 +-
+ drivers/clk/samsung/clk-exynos5420.c               |    6 +-
+ drivers/clk/samsung/clk-exynos7.c                  |    2 +-
+ drivers/clk/samsung/clk-exynos8895.c               | 2803 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynosautov920.c           |  290 ++
+ drivers/clk/samsung/clk-fsd.c                      |   23 +-
+ drivers/clk/samsung/clk-gs101.c                    |   10 +-
+ drivers/clk/samsung/clk-pll.c                      |    2 +
+ drivers/clk/samsung/clk-pll.h                      |    2 +
+ drivers/clk/samsung/clk-s3c64xx.c                  |    2 +-
+ drivers/clk/samsung/clk-s5pv210-audss.c            |    2 +-
+ drivers/clk/samsung/clk.c                          |    2 +-
+ include/dt-bindings/clock/fsd-clk.h                |    7 -
+ include/dt-bindings/clock/samsung,exynos8895.h     |  453 ++++
+ include/dt-bindings/clock/samsung,exynosautov920.h |   47 +
+ 23 files changed, 3873 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos8895-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos8895.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynos8895.h
