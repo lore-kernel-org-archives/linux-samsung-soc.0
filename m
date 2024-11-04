@@ -1,158 +1,131 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2333FE;
-	Sun,  3 Nov 2024 19:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1C81553AA
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 03:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730661813; cv=none; b=W0wroOznmnED9t+7C5LbPx+WzbORBeqVcb6Idu5dobulzuaZulHPYQr1HZkHCiSsjsuo0/Qrxf2TYCfsTRE+gDoVzdIicc74SEr0XqJ+6tbPCfmtY+Fcoug1NQA/zo7XWohu7pTVIg92Glz9MFn8PJYWqtDBmG2MDqgYbe9hpy4=
+	t=1730690028; cv=none; b=bc0VHrOqg0M57jSx95dfQQqblKMeVnnw54jJzObst9tyEEWJ/hqZjQtlX6yc3xNi9f7Ug/1WKpGTz0ss+PgzZty06C3ER4VXmmFFOBkrMxLszITfDQ4UaueZAlF2kiZdTb06R4UPFd+Q2/5NHOc28VlMMTHAFNY3LKFtJIoe+ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730661813; c=relaxed/simple;
-	bh=OMuyRg4bzStPqNNN3yp859gI6JRk5cF+8sCpKoD37SE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=joprAa1cY5+91VsDw+nyYCcqkoieeMx8AMKcA3xwP1eAQ//d32sGGEVOZHKL6i2MD5vEi1V3zvD0KxrAGs77nN6vmyQfkSOQy+HyTDiX/K0wSW5TGf4TnZYJb49kdURphI4xQrLWaNSE8lbm4vFwmi8zFumX01lfZgzncnZQeQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=B1smspZu; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1730690028; c=relaxed/simple;
+	bh=LqM12t5/KPiMXOoCQC1G5ffIum/U3xyTDYSYWUL3Jys=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=n2jYTGbGemRrRd+vEuVbkYJnq9uLzhN0bKye76nJcuegAGgEsibl3STK7RCNMfN/Z4goOK2AEbtA4oX8ooUngW5fmxMQVGeXXg/pkryookgbX8iDXqF9l3ggQH0qVn7fOrXxllGWV3z9kjzBI0vtoe4eITu3hE4T7o0Y5ISr3uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=brpXI+hw; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="B1smspZu"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=K2N0tDeGrz7QCmhPIrTtZDVUgTHAHsRgEUCvSiXLL6E=; b=B1smspZuOYOQR+09
-	Dol6frTZVigXzMffVPXGLhvEFqEkZ5g+NPVIVPyYqwcwLpoN5S62+kVO6RC8aN5l5INXps7CW68Ls
-	LTuz2wB4f1uDleO/QH7Wne/7u2z7bMdo6LxK8TXLHOYHj0MreDMlwHBIqnTKVaxtmAUBSOU6R9vMr
-	DdcoXUFCN4BwV/HwtL8PElHMwya00e9tOY76xEzJGXVVJym015wYWg+FaqfBtzAIpyqaMU3ShVNf7
-	kxtsX9xmggmkWgvn048GwBRBdeMEcH0Jj6kL9Refyybnftp0V3T2/OeGqjCAx7lfKiXqvEVwtGZYv
-	636O0oUm8RxrOlz3Mg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t7gBy-00FC9O-0T;
-	Sun, 03 Nov 2024 19:23:18 +0000
-From: linux@treblig.org
-To: andrzejtp2010@gmail.com,
-	jacek.anaszewski@gmail.com,
-	s.nawrocki@samsung.com,
-	mchehab@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-media@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: platform: samsung: s5p-jpeg: Remove deadcode
-Date: Sun,  3 Nov 2024 19:23:15 +0000
-Message-ID: <20241103192315.288743-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brpXI+hw"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ed67cfc1fcso2466031a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Nov 2024 19:13:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730690026; x=1731294826; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=curM5JHWqTItwQpvFipVaydSvgK/Mn5omBdYFQcRouI=;
+        b=brpXI+hwUT82LYYDifyk8s93lkkBvVuRFNiVlbw3p9FZ5LzEqkyI+i2f6413+wz6xC
+         42YT/0lsvD9LLAxhBBC/aEn/RQPpPv2NtQyHOKYAiAA4I8E0VoCN80XUjW6wcsdGhQo5
+         v6ybX4dM9apoqbnwObN9dOPSEVTrpEh3Xy+AxqGAr++qrl9X+KELSL1ZeFY3X1wUPDp+
+         kPdjhiwKOSwdTifdJJqIFQlQBmU3aWKqcTmDwiCDN1x5C5PYYoojtiVbvoVPfNazJNE2
+         XshU/nOJC+y/HJbxz00CqOaRQ4MjqSLTgmcarBlFehrdFwIZjIvXT8J5IHSvsEKq96lw
+         CH3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730690026; x=1731294826;
+        h=message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=curM5JHWqTItwQpvFipVaydSvgK/Mn5omBdYFQcRouI=;
+        b=Ec7EGl+KFDVclg2Eb+T5AYyrAvUjbtwAt6s3RiMwzPPG0UlTnnt2UC+mf1s+Dema6B
+         zzdwUDIFA1oIHYoNOjHwteXoIn23kENNaKg2vAA14C4zl0Zm7JC5+wTXFYbMGPJNH+vy
+         8SaCJHTVO5Dk5lwxZIQ7p2DBGehGHQ+ZlMWu8j8TB5DTwW1b7U1nG3ipR8jwD2oTl974
+         Jy7ifRrEp0aUzouIzQK3NASTKV3g+I0rJnm1DbyZ/3GVaM3urKFNIumZwj73W0+3nQxD
+         xHhHFnjR5TvWYNYQzp1OeauXW/8osX1natMtnTn0CHffsL0qU7mrozjjAFdc0sJisFfx
+         P5xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXcI6oBtY6hy5DM6zSAZ0km6GIXC7vVpxeoMZzu85JByCR+QdfIAfQSJgSa4jokyxr4Vis6UzLiCUGoSubMTYVKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIyPgxdzcfjFWFybonf1/YEgcwMtzsjERE0UsL0eKjdyty2SxY
+	bDI88gnPzEa/mfuEl6Rta2d1hcfQ60ph65T2m+CfH/BaRn053jxNfEpA8A==
+X-Google-Smtp-Source: AGHT+IFn83lnoK/EDpxaIBt/m8+SjryQFVCLNbxO0iVVPjdnvAIpUl7UK+AHchKjQELZWRaTXP9FsQ==
+X-Received: by 2002:a17:90a:4811:b0:2e2:8349:239d with SMTP id 98e67ed59e1d1-2e92cf2ce03mr20646493a91.28.1730690026083;
+        Sun, 03 Nov 2024 19:13:46 -0800 (PST)
+Received: from daeinki-virtual-machine.localdomain ([58.124.60.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fc0084asm8783053a91.51.2024.11.03.19.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 19:13:45 -0800 (PST)
+Sender: Inki Dae <daeinki@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+To: airlied@linux.ie,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [GIT PULL] exynos-drm-next
+Date: Mon,  4 Nov 2024 12:13:41 +0900
+Message-Id: <20241104031341.36549-1-inki.dae@samsung.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi Dave and Daniel,
 
-exynos3250_jpeg_operating() has been unused since it was added in 2014's
-commit 3246fdaa0ac2 ("[media] s5p-jpeg: Add support for Exynos3250 SoC")
+   Add Decon support for Exynos7870 SoC, several fixups and cleanup.
 
-exynos4_jpeg_get_fifo_status(), exynos4_jpeg_get_frame_size(), and
-exynos4_jpeg_set_timer_count() have been unused since they were added by
-commit 80529ae5c137 ("[media] s5p-jpeg:  JPEG codec")
+Please kindly let me know if there is any problem.
 
-Remove them.
+Thanks,
+Inki Dae
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../samsung/s5p-jpeg/jpeg-hw-exynos3250.c     |  5 -----
- .../samsung/s5p-jpeg/jpeg-hw-exynos3250.h     |  1 -
- .../samsung/s5p-jpeg/jpeg-hw-exynos4.c        | 19 -------------------
- .../samsung/s5p-jpeg/jpeg-hw-exynos4.h        |  4 ----
- 4 files changed, 29 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-index 637a5104d948..6657d294c10a 100644
---- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-+++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-@@ -427,11 +427,6 @@ void exynos3250_jpeg_clear_int_status(void __iomem *regs,
- 	writel(value, regs + EXYNOS3250_JPGINTST);
- }
- 
--unsigned int exynos3250_jpeg_operating(void __iomem *regs)
--{
--	return readl(regs + S5P_JPGOPR) & EXYNOS3250_JPGOPR_MASK;
--}
--
- unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs)
- {
- 	return readl(regs + EXYNOS3250_JPGCNT) & EXYNOS3250_JPGCNT_MASK;
-diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-index 15af928fad76..709c61ae322c 100644
---- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-+++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-@@ -45,7 +45,6 @@ void exynos3250_jpeg_rstart(void __iomem *regs);
- unsigned int exynos3250_jpeg_get_int_status(void __iomem *regs);
- void exynos3250_jpeg_clear_int_status(void __iomem *regs,
- 						unsigned int value);
--unsigned int exynos3250_jpeg_operating(void __iomem *regs);
- unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs);
- void exynos3250_jpeg_dec_stream_size(void __iomem *regs, unsigned int size);
- void exynos3250_jpeg_dec_scaling_ratio(void __iomem *regs, unsigned int sratio);
-diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-index 0828cfa783fe..479288fc8c77 100644
---- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-+++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-@@ -185,11 +185,6 @@ unsigned int exynos4_jpeg_get_int_status(void __iomem *base)
- 	return readl(base + EXYNOS4_INT_STATUS_REG);
- }
- 
--unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base)
--{
--	return readl(base + EXYNOS4_FIFO_STATUS_REG);
--}
--
- void exynos4_jpeg_set_huf_table_enable(void __iomem *base, int value)
- {
- 	unsigned int	reg;
-@@ -300,22 +295,8 @@ void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size)
- 	writel(size, base + EXYNOS4_BITSTREAM_SIZE_REG);
- }
- 
--void exynos4_jpeg_get_frame_size(void __iomem *base,
--			unsigned int *width, unsigned int *height)
--{
--	*width = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) &
--				EXYNOS4_DECODED_SIZE_MASK);
--	*height = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) >> 16) &
--				EXYNOS4_DECODED_SIZE_MASK;
--}
--
- unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base)
- {
- 	return readl(base + EXYNOS4_DECODE_IMG_FMT_REG) &
- 				EXYNOS4_JPEG_DECODED_IMG_FMT_MASK;
- }
--
--void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size)
--{
--	writel(size, base + EXYNOS4_INT_TIMER_COUNT_REG);
--}
-diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-index 3e2887526960..b941cc89e4ba 100644
---- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-+++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-@@ -35,10 +35,6 @@ void exynos4_jpeg_select_dec_h_tbl(void __iomem *base, char c, char x);
- void exynos4_jpeg_set_encode_hoff_cnt(void __iomem *base, unsigned int fmt);
- void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size);
- unsigned int exynos4_jpeg_get_stream_size(void __iomem *base);
--void exynos4_jpeg_get_frame_size(void __iomem *base,
--			unsigned int *width, unsigned int *height);
- unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base);
--unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base);
--void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size);
- 
- #endif /* JPEG_HW_EXYNOS4_H_ */
--- 
-2.47.0
+The following changes since commit bcfe43f0ea77c42c2154fb79b99b7d1d82ac3231:
 
+  drm/imx/dcss: include drm/drm_bridge.h header (2024-11-01 13:46:25 +1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos tags/exynos-drm-next-for-v6.13
+
+for you to fetch changes up to 53f4b30b05b2a9db6988cb71a785837ee64d2524:
+
+  drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870 (2024-11-04 10:50:46 +0900)
+
+----------------------------------------------------------------
+New feature
+- Add Decon driver support for Exynos7870 SoC
+  . This patch adds driver data and support for Exynos7870 SoC
+    in the Exynos7 Decon driver
+
+Bug fixups for exynos7_drm_decon.c module
+- Properly clear channels during bind
+  . This patch implements shadow protection/unprotection to clear
+    DECON channels properly, preventing kernel panic
+- Fix ideal_clk by converting it to HZ
+  . This patch corrects the clkdiv values by converting ideal_clk to Hz
+    for consistency
+- Fix uninitialized crtc reference in functions
+  . This patch modifies functions to accept a pointer to
+    the decon_context struct to avoid uninitialized references
+
+Cleanups
+- Remove unused prototype for crtc
+  . This patch removes unused prototypes
+      exynos_drm_crtc_wait_pending_update
+      exynos_drm_crtc_finish_update
+- And just typo fixup
+
+----------------------------------------------------------------
+Kaustabh Chakraborty (4):
+      drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
+      drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to Hz
+      drm/exynos: exynos7_drm_decon: properly clear channels during bind
+      drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870
+
+Kwanghoon Son (1):
+      drm/exynos: remove unused prototype for crtc
+
+Shen Lichuan (1):
+      drm/exynos: gsc: Fix typo in comment
+
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 122 +++++++++++++++++++----------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h   |   3 -
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c    |   2 +-
+ drivers/gpu/drm/exynos/regs-decon7.h       |  15 ++--
+ 4 files changed, 87 insertions(+), 55 deletions(-)
