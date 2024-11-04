@@ -1,153 +1,230 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847D41C4A2B
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 11:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C7933FE
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 17:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719764; cv=none; b=lS6yQiJilbwsYzVA2MExw1S+wwcrVoGkS8sS2PVqfzYK/hPUAez4Z/MJKaq28bfWod0xTSqJ8JBgx4EMAuxJ5TuGTS2lNMzztX/UfBzmfjpwOVGth7ssAJ4pCVwP90qKzsZRmhnbua3n6/7//kIbeMm7TOQaxcLlOw1zoY6hlm8=
+	t=1730742024; cv=none; b=FEwTZLG9qr/e3ZxcXqEcfByvn/28i1PX8ptIOuYqz2+CaBsUOERWU93tDUzBNC1QbU4jASF6NtWANR1CnRgrja7UNt2fU0f6YKnfyKWf1ZVNKDTb1qbpJ0DjqpnGXHgszYn47eg7onznOeImIOQ/oAmR4obeJN9BdOqtgmDsdDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719764; c=relaxed/simple;
-	bh=iDd8slF5N7csNOR+PtgVCK3+kkri3oqX/3EqKPO39PE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=hBs6ilUs6zPgPSEpyi/lVFRUCOk+OdXdYyUoQN7QToDpMf0D2J1Nn+/zqKGEwf0gCKOkDU1oH3qY9Gb0+dJF0cImXIpZ+hZlzXO71BdWUKfdDBDc+aipF9GkRMKaOe0KHGVKpQP474AvESaI/xEjlAoLWsaMNbH5GOzlDF2TIiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dXzmDXyP; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1730742024; c=relaxed/simple;
+	bh=tWK43UT0rLVGK8N5JwoVQQ8FvXmhIdwdzmHt370kMoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=flq0sVDNA8mHPn3m4Tx24ek1k0s9oc9MA8TNzZSTOSWjIwQaVx0X6b3eeHsW9U4SH/bJ3P/jRfiRuRtDPEt7ITqaD+8x/rcCwmbO+9xpcm07Yuecs3T9YEy1nKJ9OBhl2ciEwdapI5ehgRBpwRQkDbYE1wN4oWDYHuIp3t3zVNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pHSDTYmd; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dXzmDXyP"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241104112915epoutp012179739032f7ead29054389a1ba6dffb~EwHKNifbn2542925429epoutp01N
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  4 Nov 2024 11:29:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241104112915epoutp012179739032f7ead29054389a1ba6dffb~EwHKNifbn2542925429epoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730719755;
-	bh=u8hCNjyV4KIImElR4gHHT0N9YbPGoDH0xwSkwumilPE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=dXzmDXyP4D1IQKI+u+4p/W8hqDgs1aXri61NU55h9xLhYtt2ooPO+gkX7x2c8Nece
-	 wpuwnAs4XmXmurEXmsZ9c6ee7tq4bej4PltSiht7zAcgYNk/90bIZY29xQchP72O0T
-	 /1fxba+JnuT1XJ46lx5rsZ9MHz2bUfdNH6NN4YkE=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241104112914epcas5p1a4de3251704b4186b1ed2cc025ac63ab~EwHJ1wrR-2778827788epcas5p15;
-	Mon,  4 Nov 2024 11:29:14 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Xhq486rDBz4x9Pp; Mon,  4 Nov
-	2024 11:29:12 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	21.84.09800.800B8276; Mon,  4 Nov 2024 20:29:12 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241104112912epcas5p21f80c9615e3ba9db23428fd524106d83~EwHH2ppKt2058320583epcas5p2v;
-	Mon,  4 Nov 2024 11:29:12 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241104112912epsmtrp24cc6e92f40757ed4e60bcad5adebf9aa~EwHH05i_W2013320133epsmtrp2o;
-	Mon,  4 Nov 2024 11:29:12 +0000 (GMT)
-X-AuditID: b6c32a4b-4a7fa70000002648-dc-6728b008109c
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	77.82.18937.800B8276; Mon,  4 Nov 2024 20:29:12 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241104112910epsmtip27ee2183ec8fc729518a6bb0611aa65c5~EwHFuvfow2913929139epsmtip2s;
-	Mon,  4 Nov 2024 11:29:10 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Peter Griffin'" <peter.griffin@linaro.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<avri.altman@wdc.com>, <bvanassche@acm.org>, <krzk@kernel.org>
-Cc: <tudor.ambarus@linaro.org>, <ebiggers@kernel.org>,
-	<andre.draszik@linaro.org>, <kernel-team@android.com>,
-	<willmcvicker@google.com>, <linux-scsi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <20241031150033.3440894-15-peter.griffin@linaro.org>
-Subject: RE: [PATCH v3 14/14] MAINTAINERS: Update UFS Exynos entry
-Date: Mon, 4 Nov 2024 16:59:08 +0530
-Message-ID: <000801db2eac$c5867ea0$50937be0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pHSDTYmd"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so5443143a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Nov 2024 09:40:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730742020; x=1731346820; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5+UGF1SJ7N6ATGLoz+2LNnReJnVLPP7cyWkTa6W9KvM=;
+        b=pHSDTYmd0U6O3MXpShWr95FdAVuTuE3/PrhQrwmjKn+7USGrUzs2u1C3wZRhHL5ttl
+         b10MSB8qker8T6wPgvCnCqcVUQ21xArzpwGt9D1hFFtgOALlXlJeS+Ba4ONr6wGPC/mv
+         j41+jYYBJEezc6KKtpmg4bjdHQ+oKqVsrapkNDfje5++puuYje7Ccbm6k2oU0AeGLpfA
+         +YTPBjcYWIQ8zyePjZ7peNfIbqVCG0rDOPVuXpv9sPWQ89Znr5D8/L4llJvDHvA1s2IH
+         UVH5CiSDa0Zh9fs6zskDACRlsfC/e7fiRH8CAu+zXkfv8XE9ZanWzNgv3EPdLC0kqw30
+         2vlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730742020; x=1731346820;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5+UGF1SJ7N6ATGLoz+2LNnReJnVLPP7cyWkTa6W9KvM=;
+        b=CYf+5aWZj8jWf35XXX+d250I9o7ZbUjJHQmtdanJeKxHkDFILtzQYKtwl/UVik3Wcz
+         XcOYN9J2pr0sNKK/5CIzH46Yhq89lE7h9WPDUD1XF/vKGfweKHP4zJ7BEoKnzSacPTcV
+         tEBmj3mQHTYborPFDFr5lb0BgVbKp306co/QnVLW8H7Bh16Um6i3rxmaLzOZBXM0xtvQ
+         h36fEtpXFdvF8MQww20NnSp2R6MYa7llF9QWd6Dp+LxLUbidSYXJ7XhKSFokS+9cL8vm
+         kocZqrEc7WqyVpbPC3DilK/7IckN+AIT/hSaVXdxxsUYZaKMELeixeIiylwsZOW0WDy8
+         ovoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQlonNvIIOxUvDwrCO+MuczZ8YJ6cAUvgXRicoQvo8gYo+X9ykSuNyzMgVOg0Yu8lT6OQnGBjcUsOKerwbznV20A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcicSsDMr6HmKd8MfVDheNvJdzta63rJ9f062WdiD4809b49Qy
+	Lc5DlCOq4YA0BXs70+5UqhBVXImZ+qwLfyk8CJ5ZDzK39a/BoZ/u0d+RwJafy4U=
+X-Google-Smtp-Source: AGHT+IF4nGsBr2pEGPY+O8wE7gDx5fwAvp1q+DmMR3MQ854tS6TTG/unf2cX3aq5NfeuObTU4oyKrg==
+X-Received: by 2002:a17:907:2d27:b0:a9e:1fc7:fc11 with SMTP id a640c23a62f3a-a9e655b931cmr1415582166b.40.1730742019805;
+        Mon, 04 Nov 2024 09:40:19 -0800 (PST)
+Received: from [192.168.0.157] ([79.115.63.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d5478sm9475066b.45.2024.11.04.09.40.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 09:40:19 -0800 (PST)
+Message-ID: <ee2f1ece-30fc-44e7-bf36-1c6c8f04301d@linaro.org>
+Date: Mon, 4 Nov 2024 17:40:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/4] media: videobuf2-core: release all planes first in
+ __prepare_dmabuf()
+To: Yunke Cao <yunkec@chromium.org>, Tomasz Figa <tfiga@chromium.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org, Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ kernel-team@android.com, William McVicker <willmcvicker@google.com>,
+ linux-samsung-soc@vger.kernel.org
+References: <20240814020643.2229637-1-yunkec@chromium.org>
+ <20240814020643.2229637-3-yunkec@chromium.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240814020643.2229637-3-yunkec@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGpHNBxPlSoL7oKvevQtOJlaLn5RgKmbH/8AoOUSlyy4c80YA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCJsWRmVeSWpSXmKPExsWy7bCmhi7HBo10g6uNRhZbXm1msXj58yqb
-	xbQPP5kt1u75w2yxsZ/DYsd2EYvz5zewW2x6fI3V4vKuOWwWM87vY7Lovr6DzWL58X9MFhtm
-	/GOx+HQrzmLVp/+MDvwel694e2zbvY3VY8GmUo9pk06xeWxa1cnmcefaHjaPzUvqPT4+vcXi
-	8XmTnEf7gW6mAK6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUX
-	nwBdt8wcoA+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmp
-	JVaGBgZGpkCFCdkZ/18tYivYx1HRsPAKWwPjEvYuRk4OCQETiWcT3rF0MXJxCAnsZpRYea6J
-	DcL5xCix5OwPsCowZ8peL5iOjn8dUPGdjBKTzgdCNLxglLh6+zYjSIJNQFdix+I2sEkiIGNv
-	zXvNDuIwC8xiklj/bAFYFaeAo0THrSesILawgJPEw0XTgGwODhYBFYkt981AwrwClhLNl/vZ
-	IGxBiZMzn7CA2MwC8hLb385hhrhIQeLn02VgrSJAY5ZOzoUoEZd4efQI2FoJgSccEm++NLJC
-	1LtIrHp/CKpXWOLV8S3QsJCS+PxuLxuEnS1x/OIsKLtCorv1I1SNvcTORzdZQHYxC2hKrN+l
-	D7GLT6L39xMmkLCEAK9ER5sQRLWqRPO7qywQtrTExO5uqAs8JD48+sk4gVFxFpLHZiF5bBaS
-	D2YhLFvAyLKKUTK1oDg3PbXYtMA4L7UcHt3J+bmbGMHJW8t7B+OjBx/0DjEycTAeYpTgYFYS
-	4Z2Xqp4uxJuSWFmVWpQfX1Sak1p8iNEUGNgTmaVEk/OB+SOvJN7QxNLAxMzMzMTS2MxQSZz3
-	devcFCGB9MSS1OzU1ILUIpg+Jg5OqQamwL+PH0nP5J1x1uWXuvSG0O2xOeZz7072DjJdbfc6
-	IFSu8uWE2+fTZ2nlapV6Lhba6mi9sCfAolNijtUr5Ue6udO2X9mfMWvnwvY7dUzCipJHVltf
-	ChBKfyO6Ot/6XOss2ysFsZc/eax+O/PKRZ5wmc68wJvbl+2IWOx5LqvkxNLj/cpHJyzfoH7a
-	30mu9d19lwt8+UER/8zMNpk7yBxa33tcTvlsxBaGZ1/0H0jskd/569WJTfyr2VxMm+Yx7bCb
-	dsYo5IPuzYJdyVP/tXG0tugxZSzsN/pcyyfvavxp76HjOj8mbLYtFvYuV4j4O3Vjr1Jp373i
-	fT9EVnf/qt3BWbnIhk1Ibf6UrN7Zlz4xKbEUZyQaajEXFScCAB57Fm5nBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsWy7bCSvC7HBo10g68LxCy2vNrMYvHy51U2
-	i2kffjJbrN3zh9liYz+HxY7tIhbnz29gt9j0+BqrxeVdc9gsZpzfx2TRfX0Hm8Xy4/+YLDbM
-	+Mdi8elWnMWqT/8ZHfg9Ll/x9ti2exurx4JNpR7TJp1i89i0qpPN4861PWwem5fUe3x8eovF
-	4/MmOY/2A91MAVxRXDYpqTmZZalF+nYJXBn/Xy1iK9jHUdGw8ApbA+MS9i5GTg4JAROJjn8d
-	QDYXh5DAdkaJDeceMkMkpCWub5wAVSQssfLfczBbSOAZo8TsM7wgNpuArsSOxW1sILaIwEFG
-	ifU3c0EGMQssYpLo6NrJCtFwjFGie5kSiM0p4CjRcesJWFxYwEni4aJpQDYHB4uAisSW+2Yg
-	YV4BS4nmy/1sELagxMmZT1hASpgF9CTaNjKChJkF5CW2v50DdaaCxM+ny8CmiABNXDo5F6JE
-	XOLl0SPsExiFZyEZNAth0Cwkg2Yh6VjAyLKKUTS1oDg3PTe5wFCvODG3uDQvXS85P3cTIzhq
-	tYJ2MC5b/1fvECMTB+MhRgkOZiUR3nmp6ulCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOE
-	BNITS1KzU1MLUotgskwcnFINTJGlHLPPXJwQIiLAqca5ln+ijO1ua22dGXMLpc6lzM/8Grrs
-	yT7lu9/lDd9aGf24c7FjjTP/bdecxY90mZ+VTqk9Nv9sLZdx50Nt6a7dwcw5KbezZyxysfSp
-	LJl69PzPcNP2c7ektF7zX9H8mXX2Qh9Labc+q/KhvdUdz4VPWJxdozGv9IxPaOb/S0KaUg61
-	gaWdOYcPxi77XHDhoSTn2htKqXxnuhZwW25beN6P1/FT0HmOqTFHP65+9NHQXd+Wv2Aa18ug
-	KZsezX2jfnGFo8ol4famvzE5AbU7BBrdSzvytUN6bq+R8b58QT1mU8OWOzO9lkXudZ9lPWn3
-	+fL5EzPZvjqcfbhhtrgIf8gODiWW4oxEQy3mouJEAMqOm4lJAwAA
-X-CMS-MailID: 20241104112912epcas5p21f80c9615e3ba9db23428fd524106d83
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241031150102epcas5p2b485ea44b17629f3abd0a53fd8d172e7
-References: <20241031150033.3440894-1-peter.griffin@linaro.org>
-	<CGME20241031150102epcas5p2b485ea44b17629f3abd0a53fd8d172e7@epcas5p2.samsung.com>
-	<20241031150033.3440894-15-peter.griffin@linaro.org>
 
-Hi Peter
++linux-samsung-soc@vger.kernel.org
 
-> -----Original Message-----
-> From: Peter Griffin <peter.griffin@linaro.org>
-> Sent: Thursday, October 31, 2024 8:31 PM
-> To: alim.akhtar@samsung.com; James.Bottomley@HansenPartnership.com;
-> martin.petersen@oracle.com; avri.altman@wdc.com; bvanassche@acm.org;
-> krzk@kernel.org
-> Cc: tudor.ambarus@linaro.org; ebiggers@kernel.org;
-> andre.draszik@linaro.org; kernel-team@android.com;
-> willmcvicker@google.com; linux-scsi@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Peter Griffin <peter.griffin@linaro.org>
-> Subject: [PATCH v3 14/14] MAINTAINERS: Update UFS Exynos entry
+Hi, Yunke, Tomasz, Hans,
+
+On 8/14/24 3:06 AM, Yunke Cao wrote:
+> In the existing implementation, validating planes, checking if the planes
+> changed, releasing previous planes and reaquiring new planes all happens in
+> the same for loop.
 > 
-> Add myself as a reviewer for ufs-exynos as I'm doing various work in this
-> driver currently for gs101 SoC and would like to help review relevant
-patches.
+> Split the for loop into 3 parts
+> 1. In the first for loop, validate planes and check if planes changed.
+> 2. Call __vb2_buf_dmabuf_put() to release all planes.
+> 3. In the second for loop, reaquire new planes.
 > 
-> Additionally add the linux-samsung-soc@vger.kernel.org list as that is
-> relevant to this driver.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: Yunke Cao <yunkec@chromium.org>
+> Acked-by: Tomasz Figa <tfiga@chromium.org>
 > ---
-Thanks!
+> v3:
+> - Applied Tomasz's review comment:
+> - Rename err_put_dbuf as err_put_planes.
+> - Move code that only executed once into if (reacquired) to simply it.
+> - In error handling, only call dma_buf_put() for valid pointers.
+> ---
+>  .../media/common/videobuf2/videobuf2-core.c   | 115 +++++++++---------
+>  1 file changed, 59 insertions(+), 56 deletions(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+> index 4d232b08f950..b53d94659e30 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -1387,11 +1387,13 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
 
-Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
+cut
+> +
+> +	if (reacquired) {
 
+cut
 
+> -	/*
+> -	 * Now that everything is in order, copy relevant information
+> -	 * provided by userspace.
+> -	 */
+> -	for (plane = 0; plane < vb->num_planes; ++plane) {
+> -		vb->planes[plane].bytesused = planes[plane].bytesused;
+> -		vb->planes[plane].length = planes[plane].length;
+> -		vb->planes[plane].m.fd = planes[plane].m.fd;
+> -		vb->planes[plane].data_offset = planes[plane].data_offset;
+> -	}
+> +		/*
+> +		 * Now that everything is in order, copy relevant information
+> +		 * provided by userspace.
+> +		 */
+> +		for (plane = 0; plane < vb->num_planes; ++plane) {
+> +			vb->planes[plane].bytesused = planes[plane].bytesused;
+> +			vb->planes[plane].length = planes[plane].length;
+> +			vb->planes[plane].m.fd = planes[plane].m.fd;
+> +			vb->planes[plane].data_offset = planes[plane].data_offset;
+> +		}
 
+I'm running into an issue on my Pixel 6 device with this change.
+
+I see that this chunk of code was moved only for the `reacquired` case.
+
+> -	if (reacquired) {
+>  		/*
+>  		 * Call driver-specific initialization on the newly acquired buffer,
+>  		 * if provided.
+> @@ -1479,19 +1473,28 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+>  		ret = call_vb_qop(vb, buf_init, vb);
+>  		if (ret) {
+>  			dprintk(q, 1, "buffer initialization failed\n");
+> -			goto err;
+> +			goto err_put_vb2_buf;
+>  		}
+> +	} else {
+> +		for (plane = 0; plane < vb->num_planes; ++plane)
+> +			dma_buf_put(planes[plane].dbuf);
+>  	}
+>  
+>  	ret = call_vb_qop(vb, buf_prepare, vb);
+
+But then the above method is called, were the pixel downstream driver
+[1] tries to:
+	bufcon_dmabuf[i] = dma_buf_get(vb->planes[i].m.fd);
+
+This fails with -EBADF as the core driver did not set
+vb->planes[plane].m.fd for `!reacquired`.
+
+The following diff makes the Pixel 6 downstream driver work as before
+this change. Shall we set the relevant data copied from userspace to
+vb->planes in the `!reacquired` case again?
+
+Thanks,
+ta
+
+[1]
+https://android.googlesource.com/kernel/gs/+/refs/tags/android-15.0.0_r0.14/drivers/media/platform/exynos/mfc/mfc_enc_vb2.c#215
+
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c
+b/drivers/media/common/videobuf2/videobuf2-core.c
+index 02fe81b9be28..0acaf8deaf78 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -1365,6 +1365,18 @@ static int __prepare_userptr(struct vb2_buffer *vb)
+        return ret;
+ }
+
++static void __v2buf_set_planes(struct vb2_buffer *vb, struct vb2_plane
+*planes)
++{
++       unsigned int plane;
++
++       for (plane = 0; plane < vb->num_planes; ++plane) {
++               vb->planes[plane].bytesused = planes[plane].bytesused;
++               vb->planes[plane].length = planes[plane].length;
++               vb->planes[plane].m.fd = planes[plane].m.fd;
++               vb->planes[plane].data_offset = planes[plane].data_offset;
++       }
++}
++
+ /*
+  * __prepare_dmabuf() - prepare a DMABUF buffer
+  */
+@@ -1459,12 +1471,7 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+                 * Now that everything is in order, copy relevant
+information
+                 * provided by userspace.
+                 */
+-               for (plane = 0; plane < vb->num_planes; ++plane) {
+-                       vb->planes[plane].bytesused =
+planes[plane].bytesused;
+-                       vb->planes[plane].length = planes[plane].length;
+-                       vb->planes[plane].m.fd = planes[plane].m.fd;
+-                       vb->planes[plane].data_offset =
+planes[plane].data_offset;
+-               }
++               __v2buf_set_planes(vb, planes);
+
+                /*
+                 * Call driver-specific initialization on the newly
+acquired buffer,
+@@ -1476,6 +1483,8 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+                        goto err_put_vb2_buf;
+                }
+        } else {
++               __v2buf_set_planes(vb, planes);
++
+                for (plane = 0; plane < vb->num_planes; ++plane)
+                        dma_buf_put(planes[plane].dbuf);
+        }
