@@ -1,188 +1,203 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B93F1E0B65;
-	Tue,  5 Nov 2024 21:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D020E21620A
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Nov 2024 23:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730842137; cv=none; b=H2v2e4Tmdv0XZxffM1btiQyoN3C2qYGltRzYe+6YzbpBgFClGjAHuWVSBj6ncG7MvvdjPZbE7hmgciF89i0cNY5s4F1z4mKKLaiF5dJFIQ36FdAVBWDCk6NriIFLk4LN0PfxbEfBQmytquk/uEoJ7+vY+DOo4GL/+McjBPBWO+g=
+	t=1730850882; cv=none; b=Bq8L/fpdrxDs3cPBTD/7x9WbiDLsuJQmS7YEyBPd9P2cuiX0U39wUz0g4QachDCpHlMbWIEQOpB0mFbyTRTzYinguEHC7zVy9dRFqeKgpLPhO9mUHAz+ozpc9p3L84TJx5BQeciMPpSZZrLPn1Mv1Uci7QSrOi1umH5Ub0F8YCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730842137; c=relaxed/simple;
-	bh=ClrekfPxZQ76ZNV7DZX8QGPxXakxpQ0qHEZc3EGpDHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pIPRrObye9+W6c+iyt1AAzbR5nnA650h39zTS8SKnbpRnBF4kCna/CvK15Q4s+sS7is5C9nZeIgh4WRvAiE7tEpNXB6PWyAkI40sR5993ZCbGPAJPjod8FPjvgOOhZ7PsfyN/P+mYR8YA+kLcnFzA/PH2blbXLd7VwcyFSa06Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8Ehu90G; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730850882; c=relaxed/simple;
+	bh=+0YNPE0BApDV8D9LH1clPl6cgfACiphUM10pWrK2zik=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=CbTK7pqBQ3Br3RuqG8RGJp3I77ugIaJnUGGzOsZc5VWA1izStpBqpIGv7QwS8JiSwwbPfpOin2ICsOu/ukMqhK/SouCCNd2Y7iy0/EGdgpOopIv594vL8LtfzbHEZYze/fbbaLXtpY+XAfvF4FkxSOgBIy358hTwuEXJN3jcxB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YfC6RSr8; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8Ehu90G"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso400484a12.0;
-        Tue, 05 Nov 2024 13:28:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730842134; x=1731446934; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eP2/dmGZ6upd0meydOq+bVFxjAFfyWnPqjTOOaybaFY=;
-        b=Y8Ehu90GhTVJNDn6VrZ1xAYygTnpsWo7+avzQhe6Nd82hveHaBo2tFzggnWTSXjzC/
-         lLYW09iag1iWbxFdQHQp7Ve5b/fupuPRYopcIl39g0cchjTf/3vXFNcCzc2lNIMUReAO
-         pToysTGNYmSk1ZjT/5/pyniXEznY0Uf/9cHnD+2DWMupd4bc8hZDm1F69J3WehZUQ9pE
-         4aSO5Ml+6AbOzaHg/0UsJU0P+Qj5TUBhlks1OGD6H+2x2ssq5NOCRG655geYLtrCouhp
-         nc0OKfMWxsOcuqfnfXIj+Fq5Wiwfj4c0pFhWHf59whA/cWcytLdA6DLx+iH5XNU+uxKH
-         edPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730842134; x=1731446934;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eP2/dmGZ6upd0meydOq+bVFxjAFfyWnPqjTOOaybaFY=;
-        b=WO24XvaQ+I9SsbZiySDzkkP78DYWVPsH/sOwtAtCEMzBS+b55UPXWBiWqGCphssMqo
-         INVFTRswvXi18F32bpOEQlp1dDc/ihLAPTcrDY/PCpcDFhbqXz4Djrlf2HyBDfaTDdGg
-         VjijSb5Ef8ahm5G5zbtfwwU2SezxACybS2p+9KEssmGXpp22y/dCvnXJURUNUPqF8U4x
-         0zk/PHzsoiFhIgC+aaOhESFgLw2DcSRiowhBxDGbGguzs5DnvhzkA8mSqmy0uqcafTH1
-         3RCVGRBzdlk6mzAwwroaB+aXIylZRdD/ZqeSrm8N6BXKGQDPBPchpqdcjJs8RN0d4pbD
-         ydpw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8KYgfIHDw2pQkhX/3vkl5dGo4V7Ntz5qcaEMw+BQFqv7PPvmMAeVh4/rTa+uwqLplwD8Pfm5LrejuzWk=@vger.kernel.org, AJvYcCWrsoxmNlR8Ye+aKt+myGtbqQQtMMqFce/ompmdpoX+1P4743EZfOvpk3OVCi7OAjA1gVkDQccimQKVwVIRQ8FIaD4=@vger.kernel.org, AJvYcCXPypLIi9srPo8kAsYxnF/kTH/rSWwrev1n2XQbTWJOML4GcmhUvukENLXUl3KwgXJPUsfXdMudGfoUOV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbFAlusr6qkR7HjaWlgy5meHcuXFI4idA6nn4AdaBIhxldppcY
-	yVU3XuAk9K1lvBC28oV76XIslNufYUGmNxY+6IoOp07yY8uv7pbL
-X-Google-Smtp-Source: AGHT+IHUZAxiDAWEcZd5uQeTbY5C3HluVgi/eb5cOKQYEX/QkwtA0Jhcn5FY5SM7HLsTN2r4FykKig==
-X-Received: by 2002:a05:6402:2709:b0:5ce:c7b1:e052 with SMTP id 4fb4d7f45d1cf-5cef55266f9mr306262a12.9.1730842133414;
-        Tue, 05 Nov 2024 13:28:53 -0800 (PST)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6ac09edsm1785846a12.40.2024.11.05.13.28.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 13:28:52 -0800 (PST)
-Message-ID: <a2c66875-490f-9b8e-5683-fa4ad1fba6da@gmail.com>
-Date: Tue, 5 Nov 2024 22:28:51 +0100
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YfC6RSr8"
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241105235437epoutp047c9a16ca3b5359e79115c2ce61ad3fe5~FN7Pfg0hy3186531865epoutp04t
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Nov 2024 23:54:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241105235437epoutp047c9a16ca3b5359e79115c2ce61ad3fe5~FN7Pfg0hy3186531865epoutp04t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730850877;
+	bh=+0YNPE0BApDV8D9LH1clPl6cgfACiphUM10pWrK2zik=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=YfC6RSr8pMJqek4b1i0i0xbRWN+GOb7iJM38rdTZW/mxQD7N/6phrRq6feVzJI3cL
+	 OLA3lU62mSJSthnrJcvZ9nul2XmC851uBz9hYzxRZ0m7supKfF7X6K6IxATwk2poA4
+	 WVm90h6PlZrrVGSQJO0yaD60PPKrWevCgr8TIpSg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241105235436epcas1p2e04590c97bfe779e87e873d4e4e1ad2a~FN7OgGF8K0460104601epcas1p24;
+	Tue,  5 Nov 2024 23:54:36 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.236]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XjlYl3SDlz4x9Pt; Tue,  5 Nov
+	2024 23:54:35 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	43.6E.19363.B30BA276; Wed,  6 Nov 2024 08:54:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241105235434epcas1p1069647697127465bc9f4dd832ee22271~FN7NKDP651947819478epcas1p1M;
+	Tue,  5 Nov 2024 23:54:34 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241105235434epsmtrp1aad7ef54cfaee17e5b54ac0a40f04a4f~FN7NIzozG2958329583epsmtrp1G;
+	Tue,  5 Nov 2024 23:54:34 +0000 (GMT)
+X-AuditID: b6c32a4c-02dff70000004ba3-50-672ab03be685
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	08.41.35203.A30BA276; Wed,  6 Nov 2024 08:54:34 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241105235434epsmtip17ee608fcfacf20d1619b46f6c0bdbf89~FN7M1kP6f3005730057epsmtip1h;
+	Tue,  5 Nov 2024 23:54:34 +0000 (GMT)
+From: =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
+	<inki.dae@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: "'Kaustabh Chakraborty'" <kauschluss@disroot.org>, "'Seung-Woo Kim'"
+	<sw0312.kim@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+	"'David	Airlie'" <airlied@gmail.com>, "'Simona Vetter'" <simona@ffwll.ch>,
+	"'Krzysztof	Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Maarten	Lankhorst'"
+	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
+	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'Conor Dooley'"
+	<conor@kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+In-Reply-To: <CAL_JsqL62AvDEu3pmRLoV=2yFbHr_DfwsubtHbFS6cwXEhngHw@mail.gmail.com>
+Subject: RE: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
+Date: Wed, 6 Nov 2024 08:54:34 +0900
+Message-ID: <000001db2fde$10bc1b50$323451f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] media: platform: samsung: s5p-jpeg: Remove deadcode
-To: linux@treblig.org, andrzejtp2010@gmail.com, s.nawrocki@samsung.com,
- mchehab@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241103192315.288743-1-linux@treblig.org>
-Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <20241103192315.288743-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQETcOy7JkGSF7VbGFg+ao1ZCztJewFhWZRKAdSMimcCXGuBibQMRcpA
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUxTVxzNfW1fW0zZa2HZTWcYPHGGbnxUKHswSubGyNskS43GOMeGL+Wt
+	EKCt/ZAhyewYVFEnIhqg8uEHVEQCplREViRDJyB2ldmMZRkbrDAHIgsl4KqMreXhxn/nd3LO
+	O79z7308lmgSFfNy1QZap6bycTSI3XUrKjb6zasSVVyNL5QYHL2AEOMNXShx+UwrSjTe/o5D
+	uBf/RInlFRdKuFxXuYSzZJZL2Dw/cIgHPXUoUeO6iRDn56+xCXO5lUP84+jmEmfn+rhETdU0
+	SthnKzlvCcmh9k6E7F06xyZvWMa4pK21HCUbhnaQvx4bQMjOpkPkCXsrIDuHi8kFW5giaG9e
+	Sg5NZdO6cFqt1GTnqlVyfPvOrHeyZIlx0mhpEvEGHq6mCmg5npahiE7PzffXwcMPUPlGP6Wg
+	9Ho8NjVFpzEa6PAcjd4gx2ltdr5Wpo3RUwV6o1oVo6YNydK4uK0yv3BfXo5veBzVNkk+m7x3
+	CZjAF1FHAZ8HsQR4YaSPfRQE8USYA8CH170oM3gBbCm1cgMqEbYEoPPwhueOifu9XEbUC+Bf
+	y5fXhmkAy9wjrIAKxVRw7JgJCeBQbDMssYyvZrAwKwdOLwyufpaP7YDVtydWDSHYNrhyow4E
+	MBuLhB6n278HjyfAkqCnIihACzAhHKqdZAcwC3sNWs8/YjEbhUPflJXD8KHwbLmZxeSmw5lS
+	HwjkQuwwH7q8M4AxpMH6lk6UwSFwZsDOZbAYTleYuYyhCsCfR1vYzFAD4C3f6Jo7HvY1VyGB
+	7VhYFOzoiWWSg+Hc4nFOgIaYAB4xixg1Du+M/LjmhPB+UyXKSEj4Va3xJIiwrKtmWVfNsq6O
+	5f+sc4DdCsS0Vl+gopVSrTRaTRf+d+NKTYENrD53SUY3eNLxd0w/QHigH0AeCw8VNNBbVCJB
+	NlV0kNZpsnTGfFrfD2T+865kiV9Uavz/i9qQJU1IiktI3BqfQEgTpfhLgnvuA7QIU1EGOo+m
+	tbTuuQ/h8cUmZGPyourVyIGHgpJtl5avN5v/CI3odjwrPsgLm5cWByePlex7t/bm1PsVe0/V
+	3c19+0r6xY17Yk4u1NuHv/x4/MNDhUXLqsjc1FdGU7fUinuqFufu7m901zdrG09PTCj5KTUv
+	yzrk3cH72yRm07fTE2kYJ1P++PchxwZvYapzN+I1bxI6TZua7jxJ+yapun3qyNLOTx8VNZ8Y
+	eVAqr3j2edc1+rfuOkdtJjez7WvJ5oanOj5CTSqET0XCjJmQCM8v/e0vZKCe2e8lrZUf/JSV
+	vXIcjMY3dIzMP6ZMHcYyxXb+GUJmtPWfTmsz6pyfuN4rUzsmw+yDvmSjrXrX67s/umKFe3C2
+	PoeSSlg6PfUvhSPdYHcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSnK7VBq10g6s3TSxOXF/EZPFg3jY2
+	i5VTV7FZzD9yjtXiytf3bBZ//p1nszh/fgO7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLBZ+3Mpi
+	0da5jNXi/54d7Baz3+1nt5gx+SWbxZY3E1kdBD1OrtvM5LH32wIWj52z7rJ7bFrVyeYx72Sg
+	x/3u40wem5fUe/RtWcXosfl0tcfnTXIBXFFcNimpOZllqUX6dglcGSvW/mcp2CdXcW/nYpYG
+	xk7JLkZODgkBE4mHF/aydzFycQgJ7GaUWNO4jqWLkQMoISGxZSsHhCkscfhwMUTJc0aJ32dW
+	sID0sgmkStz49JEdxBYRUJVomvWABaSIWWATq8Tp9nYmiI5OJokrH18xglRxCgRKTD/ykBnE
+	FhZwlPi3cw5YnEVAReLx2StsINt4BSwlHvdzgYR5BQQlTs58AraMWUBbovdhKyOMvWzha2aI
+	BxQkfj5dxgoRF5GY3dnGDHGQm8Srlp+MExiFZyEZNQvJqFlIRs1C0r6AkWUVo2RqQXFuem6x
+	YYFhXmq5XnFibnFpXrpecn7uJkZwdGtp7mDcvuqD3iFGJg7GQ4wSHMxKIrzzUtXThXhTEiur
+	Uovy44tKc1KLDzFKc7AoifOKv+hNERJITyxJzU5NLUgtgskycXBKNTDN3f1l2t0TW+Zqnplx
+	+HfJqqANv7rn1E+x0zyysnCL1Ale8yQupkJb2yc2bx8c4758LvBo+LVPmUJtS0z0S6Mm9S+J
+	tlA5vaT4L29e3O1OywW7XNpL53yewqkdYDF3IY9HfGGX6ZnT+sf5PR3XiKxiv6KsUWrc0ypZ
+	sZBnRVVk923ZRboH7Xd/61RlYu/3WM+c9l+/6LHB/fMnbRq4UiNnTnn3Wjh3xjSVct348AvT
+	3u9m0p3Xf5B/mlZykWTcJSdGXXX/aSWWfA5bLLjky8WT0tT43i/ZonZrtd7JB5XJYrO2vW29
+	rtCt+Mbjw9/mliMWtzK+h9vvfsswafXnAC7NbdOTflf+39X18YDuayklluKMREMt5qLiRACh
+	MxUQXQMAAA==
+X-CMS-MailID: 20241105235434epcas1p1069647697127465bc9f4dd832ee22271
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4
+References: <CGME20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4@epcas1p1.samsung.com>
+	<20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+	<000001db2c1c$12e86c50$38b944f0$@samsung.com>
+	<CAL_JsqL62AvDEu3pmRLoV=2yFbHr_DfwsubtHbFS6cwXEhngHw@mail.gmail.com>
 
-Hi David,
+Hi Rob Herring,
 
-Thank you for the patch.
-
-On 11/3/24 20:23, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> exynos3250_jpeg_operating() has been unused since it was added in 2014's
-> commit 3246fdaa0ac2 ("[media] s5p-jpeg: Add support for Exynos3250 SoC")
-> 
-> exynos4_jpeg_get_fifo_status(), exynos4_jpeg_get_frame_size(), and
-> exynos4_jpeg_set_timer_count() have been unused since they were added by
-> commit 80529ae5c137 ("[media] s5p-jpeg:  JPEG codec")
-> 
-> Remove them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->   .../samsung/s5p-jpeg/jpeg-hw-exynos3250.c     |  5 -----
->   .../samsung/s5p-jpeg/jpeg-hw-exynos3250.h     |  1 -
->   .../samsung/s5p-jpeg/jpeg-hw-exynos4.c        | 19 -------------------
->   .../samsung/s5p-jpeg/jpeg-hw-exynos4.h        |  4 ----
->   4 files changed, 29 deletions(-)
-> 
-> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-> index 637a5104d948..6657d294c10a 100644
-> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
-> @@ -427,11 +427,6 @@ void exynos3250_jpeg_clear_int_status(void __iomem *regs,
->   	writel(value, regs + EXYNOS3250_JPGINTST);
->   }
->   
-> -unsigned int exynos3250_jpeg_operating(void __iomem *regs)
-> -{
-> -	return readl(regs + S5P_JPGOPR) & EXYNOS3250_JPGOPR_MASK;
-> -}
-> -
->   unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs)
->   {
->   	return readl(regs + EXYNOS3250_JPGCNT) & EXYNOS3250_JPGCNT_MASK;
-> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-> index 15af928fad76..709c61ae322c 100644
-> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
-> @@ -45,7 +45,6 @@ void exynos3250_jpeg_rstart(void __iomem *regs);
->   unsigned int exynos3250_jpeg_get_int_status(void __iomem *regs);
->   void exynos3250_jpeg_clear_int_status(void __iomem *regs,
->   						unsigned int value);
-> -unsigned int exynos3250_jpeg_operating(void __iomem *regs);
->   unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs);
->   void exynos3250_jpeg_dec_stream_size(void __iomem *regs, unsigned int size);
->   void exynos3250_jpeg_dec_scaling_ratio(void __iomem *regs, unsigned int sratio);
-> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-> index 0828cfa783fe..479288fc8c77 100644
-> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
-> @@ -185,11 +185,6 @@ unsigned int exynos4_jpeg_get_int_status(void __iomem *base)
->   	return readl(base + EXYNOS4_INT_STATUS_REG);
->   }
->   
-> -unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base)
-> -{
-> -	return readl(base + EXYNOS4_FIFO_STATUS_REG);
-> -}
-> -
->   void exynos4_jpeg_set_huf_table_enable(void __iomem *base, int value)
->   {
->   	unsigned int	reg;
-> @@ -300,22 +295,8 @@ void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size)
->   	writel(size, base + EXYNOS4_BITSTREAM_SIZE_REG);
->   }
->   
-> -void exynos4_jpeg_get_frame_size(void __iomem *base,
-> -			unsigned int *width, unsigned int *height)
-> -{
-> -	*width = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) &
-> -				EXYNOS4_DECODED_SIZE_MASK);
-> -	*height = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) >> 16) &
-> -				EXYNOS4_DECODED_SIZE_MASK;
-> -}
-> -
->   unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base)
->   {
->   	return readl(base + EXYNOS4_DECODE_IMG_FMT_REG) &
->   				EXYNOS4_JPEG_DECODED_IMG_FMT_MASK;
->   }
-> -
-> -void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size)
-> -{
-> -	writel(size, base + EXYNOS4_INT_TIMER_COUNT_REG);
-> -}
-> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-> index 3e2887526960..b941cc89e4ba 100644
-> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
-> @@ -35,10 +35,6 @@ void exynos4_jpeg_select_dec_h_tbl(void __iomem *base, char c, char x);
->   void exynos4_jpeg_set_encode_hoff_cnt(void __iomem *base, unsigned int fmt);
->   void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size);
->   unsigned int exynos4_jpeg_get_stream_size(void __iomem *base);
-> -void exynos4_jpeg_get_frame_size(void __iomem *base,
-> -			unsigned int *width, unsigned int *height);
->   unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base);
-> -unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base);
-> -void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size);
->   
->   #endif /* JPEG_HW_EXYNOS4_H_ */
-
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-
--- 
-Best regards,
-Jacek Anaszewski
+> -----Original Message-----
+> From: Rob Herring <robh=40kernel.org>
+> Sent: Wednesday, November 6, 2024 5:11 AM
+> To: =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20Platform=20Lab(SR)/=EC=82=BC=EC=
+=84=B1=EC=A0=84=EC=9E=90=20<inki.dae=40samsung.com>=0D=0A>=20Cc:=20Kaustabh=
+=20Chakraborty=20<kauschluss=40disroot.org>;=20Seung-Woo=20Kim=0D=0A>=20<sw=
+0312.kim=40samsung.com>;=20Kyungmin=20Park=20<kyungmin.park=40samsung.com>;=
+=20David=0D=0A>=20Airlie=20<airlied=40gmail.com>;=20Simona=20Vetter=20<simo=
+na=40ffwll.ch>;=20Krzysztof=0D=0A>=20Kozlowski=20<krzk=40kernel.org>;=20Ali=
+m=20Akhtar=20<alim.akhtar=40samsung.com>;=0D=0A>=20Maarten=20Lankhorst=20<m=
+aarten.lankhorst=40linux.intel.com>;=20Maxime=20Ripard=0D=0A>=20<mripard=40=
+kernel.org>;=20Thomas=20Zimmermann=20<tzimmermann=40suse.de>;=20Conor=0D=0A=
+>=20Dooley=20<conor=40kernel.org>;=20dri-devel=40lists.freedesktop.org;=20l=
+inux-arm-=0D=0A>=20kernel=40lists.infradead.org;=20linux-samsung-soc=40vger=
+.kernel.org;=20linux-=0D=0A>=20kernel=40vger.kernel.org;=20devicetree=40vge=
+r.kernel.org=0D=0A>=20Subject:=20Re:=20=5BPATCH=200/6=5D=20Samsung=20Exynos=
+=207870=20DECON=20driver=20support=0D=0A>=20=0D=0A>=20On=20Fri,=20Nov=201,=
+=202024=20at=2012:08=E2=80=AFAM=20=EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20Platf=
+orm=20Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=0D=0A>=20<inki.dae=40sam=
+sung.com>=20wrote:=0D=0A>=20>=0D=0A>=20>=20Hi=20Kaustabh=20Chakraborty,=0D=
+=0A>=20>=0D=0A>=20>=20Sorry=20for=20late.=0D=0A>=20>=0D=0A>=20>=20>=20-----=
+Original=20Message-----=0D=0A>=20>=20>=20From:=20Kaustabh=20Chakraborty=20<=
+kauschluss=40disroot.org>=0D=0A>=20>=20>=20Sent:=20Friday,=20September=2020=
+,=202024=2012:11=20AM=0D=0A>=20>=20>=20To:=20Inki=20Dae=20<inki.dae=40samsu=
+ng.com>;=20Seung-Woo=20Kim=0D=0A>=20>=20>=20<sw0312.kim=40samsung.com>;=20K=
+yungmin=20Park=20<kyungmin.park=40samsung.com>;=0D=0A>=20David=0D=0A>=20>=
+=20>=20Airlie=20<airlied=40gmail.com>;=20Simona=20Vetter=20<simona=40ffwll.=
+ch>;=20Krzysztof=0D=0A>=20>=20>=20Kozlowski=20<krzk=40kernel.org>;=20Alim=
+=20Akhtar=20<alim.akhtar=40samsung.com>;=0D=0A>=20>=20>=20Maarten=20Lankhor=
+st=20<maarten.lankhorst=40linux.intel.com>;=20Maxime=20Ripard=0D=0A>=20>=20=
+>=20<mripard=40kernel.org>;=20Thomas=20Zimmermann=20<tzimmermann=40suse.de>=
+;=20Rob=0D=0A>=20Herring=0D=0A>=20>=20>=20<robh=40kernel.org>;=20Conor=20Do=
+oley=20<conor=40kernel.org>=0D=0A>=20>=20>=20Cc:=20dri-devel=40lists.freede=
+sktop.org;=20linux-arm-=0D=0A>=20kernel=40lists.infradead.org;=0D=0A>=20>=
+=20>=20linux-samsung-soc=40vger.kernel.org;=20linux-kernel=40vger.kernel.or=
+g;=0D=0A>=20>=20>=20devicetree=40vger.kernel.org;=20Kaustabh=20Chakraborty=
+=0D=0A>=20<kauschluss=40disroot.org>=0D=0A>=20>=20>=20Subject:=20=5BPATCH=
+=200/6=5D=20Samsung=20Exynos=207870=20DECON=20driver=20support=0D=0A>=20>=
+=20>=0D=0A>=20>=20>=20This=20patch=20series=20aims=20at=20adding=20support=
+=20for=20Exynos7870's=20DECON=20in=20the=0D=0A>=20>=20>=20Exynos7=20DECON=
+=20driver.=20It=20introduces=20a=20driver=20data=20struct=20so=20that=0D=0A=
+>=20support=0D=0A>=20>=20>=20for=20DECON=20on=20other=20SoCs=20can=20be=20a=
+dded=20to=20it=20in=20the=20future.=0D=0A>=20>=20>=0D=0A>=20>=20>=20It=20al=
+so=20fixes=20a=20few=20bugs=20in=20the=20driver,=20such=20as=20functions=20=
+recieving=0D=0A>=20bad=0D=0A>=20>=20>=20pointers.=0D=0A>=20>=20>=0D=0A>=20>=
+=20>=20Tested=20on=20Samsung=20Galaxy=20J7=20Prime=20and=20Samsung=20Galaxy=
+=20A2=20Core.=0D=0A>=20>=20>=0D=0A>=20>=20>=20Signed-off-by:=20Kaustabh=20C=
+hakraborty=20<kauschluss=40disroot.org>=0D=0A>=20>=20>=20---=0D=0A>=20>=20>=
+=20Kaustabh=20Chakraborty=20(6):=0D=0A>=20>=20>=20=20=20=20=20=20=20drm/exy=
+nos:=20exynos7_drm_decon:=20fix=20uninitialized=20crtc=20reference=0D=0A>=
+=20in=0D=0A>=20>=20>=20functions=0D=0A>=20>=20>=20=20=20=20=20=20=20drm/exy=
+nos:=20exynos7_drm_decon:=20fix=20suspended=20condition=20in=0D=0A>=20>=20>=
+=20decon_commit()=0D=0A>=20>=20>=20=20=20=20=20=20=20drm/exynos:=20exynos7_=
+drm_decon:=20fix=20ideal_clk=20by=20converting=20it=20to=0D=0A>=20Hz=0D=0A>=
+=20>=20>=20=20=20=20=20=20=20drm/exynos:=20exynos7_drm_decon:=20properly=20=
+clear=20channels=20during=0D=0A>=20bind=0D=0A>=20>=20>=20=20=20=20=20=20=20=
+drm/exynos:=20exynos7_drm_decon:=20add=20driver=20data=20and=20support=20fo=
+r=0D=0A>=20>=20>=20Exynos7870=0D=0A>=20>=20>=20=20=20=20=20=20=20dt-binding=
+s:=20display:=20samsung,exynos7-decon:=20add=20exynos7870=0D=0A>=20>=20>=20=
+compatible=0D=0A>=20>=0D=0A>=20>=20I=20will=20apply=20all=20except=20for=20=
+the=20two=20patches=20below,=0D=0A>=20>=20=5BPATCH=202/6=5D=20drm/exynos:=
+=20exynos7_drm_decon:=20fix=20suspended=20condition=20in=0D=0A>=20decon_com=
+mit()=0D=0A>=20>=20=5BPATCH=206/6=5D=20dt-bindings:=20display:=20samsung,ex=
+ynos7-decon:=20add=20exynos7870=0D=0A>=20compatible=0D=0A>=20=0D=0A>=20Now=
+=20we=20have=20a=20warning=20in=20linux-next=20that=20samsung,exynos7870-de=
+con=20is=0D=0A>=20not=20documented.=0D=0A>=20=0D=0A>=20Please=20apply=20the=
+=20binding=20patch.=20Or=20let=20me=20know=20if=20it=20missed=206.13=20for=
+=0D=0A>=20DRM=20tree=20and=20I'll=20apply=20it.=0D=0A>=20=0D=0A=0D=0AAh...=
+=20sorry=20for=20this.=20I=20didn't=20check=20the=20warning.=20Will=20apply=
+=20the=20binding=20patch.=20I=20was=20awaiting=20the=20submission=20of=20DT=
+S.=0D=0A=0D=0AThanks,=0D=0AInki=20Dae=0D=0A=0D=0A>=20Rob=0D=0A=0D=0A=0D=0A
