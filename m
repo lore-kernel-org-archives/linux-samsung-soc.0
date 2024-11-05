@@ -1,274 +1,130 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B3E76C61
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  5 Nov 2024 05:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFAD126BF1;
+	Tue,  5 Nov 2024 20:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730784284; cv=none; b=TY+U9tt7sHwMDs3NtrmPZPr0HsfH3YLfO3wkMLCLulkUbS3kTL0iqxL5BXH6rOEwmjFIfye5AKnrGTOsWR86rH8lTkxXbF0zo/DuJgw83H5RvNkWt4nj+Xhk5iOYSzhIMaVC+/ttoC7IM2llHHHcNSAOZkcQKUYGB7CQ698jIL0=
+	t=1730837477; cv=none; b=dKkDaaeinOgdZexok/lwawChTCUb0dOs83zJKsK6x8R9vtovWdO57Uto94dHINmGDoMi29GuleE5f7YaEx9VjjCdGt5uemUV0ClP6cztWb1BNVzVaS5KwYvE1lY9b120pQZs4U5Z9wflXvGgVBB/RFoTPBrD1Jg/9btdxRC66hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730784284; c=relaxed/simple;
-	bh=4DtPGViv9kF+P0NsXbIJNdJPAbr4vfBtMnxLHNMuoR0=;
+	s=arc-20240116; t=1730837477; c=relaxed/simple;
+	bh=pUzCR3wb1F7ue7zroROqvIhqYN1kgGH2ohUVUIxI92U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nj9J767GnNK1zV7wC4sCDXhz4J+vLHPG2CIqp+K9PBWKHZaVrTOrai2oXNr2E6qW1RGluV32RU29DB64Lef78D5DnCp4k4GrH3MrKyHNcrOGH1gneXBOYJjjvd1OF4TLx3YB7hVtKAAdAuUFnCNHU7qMemV5bCGW2mS2SaZuvmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bu8gAC16; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 To:Cc:Content-Type; b=WnvNucEEpVhrbQ4m1ikrT0nhrjDM0j3wq9+Pgc7nFKS/lsc2+IcFg7YIIJ1PMcihFZJTC+rcVMqD8dWnI73LK+Sfg40jJU1uuUlnZLVWu091L6jsK3oy9LNqCEhIXa1C5VT6vpqOg9GzKWEPtXr/2fPONDM/wKLYJBkiDa/iKf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XXz9sYuJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bu8gAC16"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso4009701a91.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Nov 2024 21:24:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730784282; x=1731389082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jFhu+Ehh9YM596pjmb7Dh2hs5sKhuAIb9PMq8+bdxxU=;
-        b=bu8gAC16GTMqt/MxjDZ7bGgOOeCjPGJ6Vm5c1Gc8lndQbntpwmz/KL4OZ6JHWtgpUg
-         oeBwK3q+DMlixjayJaMiyWScLQvJjcA2puUzl2g3hP0lYBWc8Ph4wkG895accIO4aHFX
-         2tWTe4QuTS/20qGGpKftm68qL4LAGWJrvQu/c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730784282; x=1731389082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jFhu+Ehh9YM596pjmb7Dh2hs5sKhuAIb9PMq8+bdxxU=;
-        b=qlmFwSmn619FMfxLxZj+87dFBW+Cduc0sy+0Z/pztiIvBX+xEAlx+wWPhC3j80/rzi
-         PtQw+HPDkvUPHxECcqxjRJFL66yA0uOnaEGpBDC4OIyF6itAsAFIvP8LTLr+P4MAF2Qi
-         KkVM+dpJgbp73TRGn0JAmmo4GThkqk9HnvfBPU25+K5l4+0WUGCMh0/KzJ58j4ptYlIW
-         JVaE4M3Ss/ABXen9m2InKyLeQA0sQBD+fEingzydUW+7tIej/+Qh0FsqHkSdMh7d+PQ0
-         QFmTohgxQdE2oBtDd8yQ3K/UMPNHqrc2pQzn2b96SOd0t24U1uuCo803X+nn1epdVH/c
-         vPag==
-X-Forwarded-Encrypted: i=1; AJvYcCVKY6zuQDtADiLK7TXl8TCdNiU+MEwhsg0BR+Cev2eaKhvYzK6aEJ23acUJPvUwwYfSf6irJuIxVlAFNEKDicbQ0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Fcbb7sfH1VpvipdXMnywz9yV2cLWXRx27J3IDSiF+UhLtn3R
-	l9nPZvzppJiuP5CbqY0pvs2ZVV6QWN2zrjmoPODFJ/yW++9YQh/p3P0YRxYvYBk3LMt3u7olL3+
-	YGw==
-X-Google-Smtp-Source: AGHT+IF3vErbugWpD0Sivg9bDJO0p9cR0VMDQ6d92cJfFdRb+/0zfDTehuNnzZBeefcaifoeK1VRQg==
-X-Received: by 2002:a17:90a:2c0e:b0:2e2:8472:c350 with SMTP id 98e67ed59e1d1-2e8f1072989mr35194287a91.17.1730784281862;
-        Mon, 04 Nov 2024 21:24:41 -0800 (PST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com. [209.85.214.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93db18717sm8662485a91.35.2024.11.04.21.24.40
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 21:24:41 -0800 (PST)
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ca4877690so108865ad.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Nov 2024 21:24:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUYt9MIOGT9TakDKRRSXgkO6yV3aNrZ/MrX8MLR5tebzmmzq+kB6aEg9QiGXhCnnu9aW4EHZwaLgNim7oGjE6q/JA==@vger.kernel.org
-X-Received: by 2002:a17:903:120a:b0:20c:79d7:d8c9 with SMTP id
- d9443c01a7336-2115e2c51f2mr1318095ad.26.1730784280209; Mon, 04 Nov 2024
- 21:24:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XXz9sYuJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D3BC4AF0C;
+	Tue,  5 Nov 2024 20:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730837476;
+	bh=pUzCR3wb1F7ue7zroROqvIhqYN1kgGH2ohUVUIxI92U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XXz9sYuJAc4SoRb4zZkyF0KvE/yHoI0xQkdEbHA6ow3GEKjSVUwRKuQU9qhHd10Go
+	 KIQDVnr1vWd3cKDCdwiZoee3H8dH8y/vNgGgh5I+K/zQi+EQXEVIiJFDN5m71YZ94o
+	 FA2U4VVHpUfvPW9+4ftAPCfo/iENEjhdGwE9RqPbbBvasCmgkrppresShuEIq56FHf
+	 efbvVMtBaOUUTeEiaZutIlHNqeM+w3WNxkhhwpV57ZhSyLgfGpZjODmw8iXGAqhDPX
+	 mtC5ESnnwJKKXrPMTZRlXzQVQm8a7JbMCZF9x/tajIU7yrFmvCdSFfAgj4A+xL1B1E
+	 1et6S3vYGoPXQ==
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e3cdbc25a0so65565067b3.2;
+        Tue, 05 Nov 2024 12:11:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVp1N4p2zxmgHhUvVZS1/xImDfNZSfAiPfXNdTKKbCIPj0Rjmy0coNNhqEhFb2lVTCcYGnNo7rCiFeMzSkumgm+Dno=@vger.kernel.org, AJvYcCWLZeSs6SnrHdFEjt3fIE0g4yRGbqkxYP6JaTUq1sYWhYOd5WotmLfyGYQRE21VdUCJPBhG2ss7clIyKfe2@vger.kernel.org, AJvYcCX32ds08atz+uUJkSWsmZMQoGh7BxGoqSqK5tFK6lSsGdIjz6oJ/r4sfrOXMmc0XK7D+LVZSHBa3GSm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdYalWAFgYdLi22/FitiKKr+tCv+xPgNnKatb3CHpdy/woF1DQ
+	KMXKHBkNCYF5VE2tQWEluS0T/Cy7CfS+XI1yZQHlXoWQa0KlokUeg2jhMiEihIx0po3D4McTMf0
+	qBo5sBBSFV1P/yC4SxG1RtEYIEw==
+X-Google-Smtp-Source: AGHT+IGjBrKey81nl3nx8kOyR1h49mszjJqU8gpqGeS0+ZBCji4nxidLWF6J3Nufn1F4QsUGN28RJnR1wt8dJZyfAgc=
+X-Received: by 2002:a05:690c:6e03:b0:6e2:1bba:ed4c with SMTP id
+ 00721157ae682-6ea64af4defmr187913797b3.17.1730837475817; Tue, 05 Nov 2024
+ 12:11:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814020643.2229637-1-yunkec@chromium.org> <20240814020643.2229637-3-yunkec@chromium.org>
- <ee2f1ece-30fc-44e7-bf36-1c6c8f04301d@linaro.org>
-In-Reply-To: <ee2f1ece-30fc-44e7-bf36-1c6c8f04301d@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Tue, 5 Nov 2024 14:24:19 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Dpd-TdGwTRSmoqHd4xCsSQuPuL_V11nGXrZvS9x2G=2Q@mail.gmail.com>
-Message-ID: <CAAFQd5Dpd-TdGwTRSmoqHd4xCsSQuPuL_V11nGXrZvS9x2G=2Q@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] media: videobuf2-core: release all planes first in __prepare_dmabuf()
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Yunke Cao <yunkec@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
-	Peter Griffin <peter.griffin@linaro.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	kernel-team@android.com, William McVicker <willmcvicker@google.com>, 
-	linux-samsung-soc@vger.kernel.org
+References: <CGME20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4@epcas1p1.samsung.com>
+ <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org> <000001db2c1c$12e86c50$38b944f0$@samsung.com>
+In-Reply-To: <000001db2c1c$12e86c50$38b944f0$@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 5 Nov 2024 14:11:04 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL62AvDEu3pmRLoV=2yFbHr_DfwsubtHbFS6cwXEhngHw@mail.gmail.com>
+Message-ID: <CAL_JsqL62AvDEu3pmRLoV=2yFbHr_DfwsubtHbFS6cwXEhngHw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
+To: =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?= <inki.dae@samsung.com>
+Cc: Kaustabh Chakraborty <kauschluss@disroot.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Conor Dooley <conor@kernel.org>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tudor,
-
-On Tue, Nov 5, 2024 at 2:40=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro.=
-org> wrote:
+On Fri, Nov 1, 2024 at 12:08=E2=80=AFAM =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen P=
+latform Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90
+<inki.dae@samsung.com> wrote:
 >
-> +linux-samsung-soc@vger.kernel.org
+> Hi Kaustabh Chakraborty,
 >
-> Hi, Yunke, Tomasz, Hans,
+> Sorry for late.
 >
-> On 8/14/24 3:06 AM, Yunke Cao wrote:
-> > In the existing implementation, validating planes, checking if the plan=
-es
-> > changed, releasing previous planes and reaquiring new planes all happen=
-s in
-> > the same for loop.
+> > -----Original Message-----
+> > From: Kaustabh Chakraborty <kauschluss@disroot.org>
+> > Sent: Friday, September 20, 2024 12:11 AM
+> > To: Inki Dae <inki.dae@samsung.com>; Seung-Woo Kim
+> > <sw0312.kim@samsung.com>; Kyungmin Park <kyungmin.park@samsung.com>; Da=
+vid
+> > Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Krzysztof
+> > Kozlowski <krzk@kernel.org>; Alim Akhtar <alim.akhtar@samsung.com>;
+> > Maarten Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard
+> > <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; Rob Herr=
+ing
+> > <robh@kernel.org>; Conor Dooley <conor@kernel.org>
+> > Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.o=
+rg;
+> > linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > devicetree@vger.kernel.org; Kaustabh Chakraborty <kauschluss@disroot.or=
+g>
+> > Subject: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
 > >
-> > Split the for loop into 3 parts
-> > 1. In the first for loop, validate planes and check if planes changed.
-> > 2. Call __vb2_buf_dmabuf_put() to release all planes.
-> > 3. In the second for loop, reaquire new planes.
+> > This patch series aims at adding support for Exynos7870's DECON in the
+> > Exynos7 DECON driver. It introduces a driver data struct so that suppor=
+t
+> > for DECON on other SoCs can be added to it in the future.
 > >
-> > Signed-off-by: Yunke Cao <yunkec@chromium.org>
-> > Acked-by: Tomasz Figa <tfiga@chromium.org>
+> > It also fixes a few bugs in the driver, such as functions recieving bad
+> > pointers.
+> >
+> > Tested on Samsung Galaxy J7 Prime and Samsung Galaxy A2 Core.
+> >
+> > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 > > ---
-> > v3:
-> > - Applied Tomasz's review comment:
-> > - Rename err_put_dbuf as err_put_planes.
-> > - Move code that only executed once into if (reacquired) to simply it.
-> > - In error handling, only call dma_buf_put() for valid pointers.
-> > ---
-> >  .../media/common/videobuf2/videobuf2-core.c   | 115 +++++++++---------
-> >  1 file changed, 59 insertions(+), 56 deletions(-)
-> >
-> > diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/=
-media/common/videobuf2/videobuf2-core.c
-> > index 4d232b08f950..b53d94659e30 100644
-> > --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> > +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> > @@ -1387,11 +1387,13 @@ static int __prepare_dmabuf(struct vb2_buffer *=
-vb)
+> > Kaustabh Chakraborty (6):
+> >       drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference i=
+n
+> > functions
+> >       drm/exynos: exynos7_drm_decon: fix suspended condition in
+> > decon_commit()
+> >       drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to =
+Hz
+> >       drm/exynos: exynos7_drm_decon: properly clear channels during bin=
+d
+> >       drm/exynos: exynos7_drm_decon: add driver data and support for
+> > Exynos7870
+> >       dt-bindings: display: samsung,exynos7-decon: add exynos7870
+> > compatible
 >
-> cut
-> > +
-> > +     if (reacquired) {
->
-> cut
->
-> > -     /*
-> > -      * Now that everything is in order, copy relevant information
-> > -      * provided by userspace.
-> > -      */
-> > -     for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> > -             vb->planes[plane].bytesused =3D planes[plane].bytesused;
-> > -             vb->planes[plane].length =3D planes[plane].length;
-> > -             vb->planes[plane].m.fd =3D planes[plane].m.fd;
-> > -             vb->planes[plane].data_offset =3D planes[plane].data_offs=
-et;
-> > -     }
-> > +             /*
-> > +              * Now that everything is in order, copy relevant informa=
-tion
-> > +              * provided by userspace.
-> > +              */
-> > +             for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> > +                     vb->planes[plane].bytesused =3D planes[plane].byt=
-esused;
-> > +                     vb->planes[plane].length =3D planes[plane].length=
-;
-> > +                     vb->planes[plane].m.fd =3D planes[plane].m.fd;
-> > +                     vb->planes[plane].data_offset =3D planes[plane].d=
-ata_offset;
-> > +             }
->
-> I'm running into an issue on my Pixel 6 device with this change.
->
-> I see that this chunk of code was moved only for the `reacquired` case.
+> I will apply all except for the two patches below,
+> [PATCH 2/6] drm/exynos: exynos7_drm_decon: fix suspended condition in dec=
+on_commit()
+> [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add exynos7870 c=
+ompatible
 
-Thanks for the report!
+Now we have a warning in linux-next that samsung,exynos7870-decon is
+not documented.
 
-If I remember correctly the idea was that if the buffer was validated
-to be the same as given previously, there is no need to update the
-fields, because they should already be the same. However, I can see
-that this may not be true for bytesused, m.fd and data_offset in some
-scenarios.
+Please apply the binding patch. Or let me know if it missed 6.13 for
+DRM tree and I'll apply it.
 
->
-> > -     if (reacquired) {
-> >               /*
-> >                * Call driver-specific initialization on the newly acqui=
-red buffer,
-> >                * if provided.
-> > @@ -1479,19 +1473,28 @@ static int __prepare_dmabuf(struct vb2_buffer *=
-vb)
-> >               ret =3D call_vb_qop(vb, buf_init, vb);
-> >               if (ret) {
-> >                       dprintk(q, 1, "buffer initialization failed\n");
-> > -                     goto err;
-> > +                     goto err_put_vb2_buf;
-> >               }
-> > +     } else {
-> > +             for (plane =3D 0; plane < vb->num_planes; ++plane)
-> > +                     dma_buf_put(planes[plane].dbuf);
-> >       }
-> >
-> >       ret =3D call_vb_qop(vb, buf_prepare, vb);
->
-> But then the above method is called, were the pixel downstream driver
-> [1] tries to:
->         bufcon_dmabuf[i] =3D dma_buf_get(vb->planes[i].m.fd);
->
-> This fails with -EBADF as the core driver did not set
-> vb->planes[plane].m.fd for `!reacquired`.
->
-> The following diff makes the Pixel 6 downstream driver work as before
-> this change. Shall we set the relevant data copied from userspace to
-> vb->planes in the `!reacquired` case again?
->
-> Thanks,
-> ta
->
-> [1]
-> https://android.googlesource.com/kernel/gs/+/refs/tags/android-15.0.0_r0.=
-14/drivers/media/platform/exynos/mfc/mfc_enc_vb2.c#215
->
-> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c
-> b/drivers/media/common/videobuf2/videobuf2-core.c
-> index 02fe81b9be28..0acaf8deaf78 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> @@ -1365,6 +1365,18 @@ static int __prepare_userptr(struct vb2_buffer *vb=
-)
->         return ret;
->  }
->
-> +static void __v2buf_set_planes(struct vb2_buffer *vb, struct vb2_plane
-> *planes)
-> +{
-> +       unsigned int plane;
-> +
-> +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> +               vb->planes[plane].bytesused =3D planes[plane].bytesused;
-> +               vb->planes[plane].length =3D planes[plane].length;
-> +               vb->planes[plane].m.fd =3D planes[plane].m.fd;
-> +               vb->planes[plane].data_offset =3D planes[plane].data_offs=
-et;
-> +       }
-> +}
-> +
->  /*
->   * __prepare_dmabuf() - prepare a DMABUF buffer
->   */
-> @@ -1459,12 +1471,7 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
->                  * Now that everything is in order, copy relevant
-> information
->                  * provided by userspace.
->                  */
-> -               for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> -                       vb->planes[plane].bytesused =3D
-> planes[plane].bytesused;
-> -                       vb->planes[plane].length =3D planes[plane].length=
-;
-> -                       vb->planes[plane].m.fd =3D planes[plane].m.fd;
-> -                       vb->planes[plane].data_offset =3D
-> planes[plane].data_offset;
-> -               }
-
-I think it should be fine to just move the following parts outside of
-this if block and then call the buf_init op conditionally if
-(reacquired), like it was in the old code.
-
-Would you mind sending a fix patch (with a Fixes: tag)?
-
-Best regards,
-Tomasz
-
-> +               __v2buf_set_planes(vb, planes);
->
->                 /*
->                  * Call driver-specific initialization on the newly
-> acquired buffer,
-> @@ -1476,6 +1483,8 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
->                         goto err_put_vb2_buf;
->                 }
->         } else {
-> +               __v2buf_set_planes(vb, planes);
-
-I
-
-> +
->                 for (plane =3D 0; plane < vb->num_planes; ++plane)
->                         dma_buf_put(planes[plane].dbuf);
->         }
+Rob
