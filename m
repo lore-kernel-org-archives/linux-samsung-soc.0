@@ -1,97 +1,107 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0467D20514F
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Nov 2024 17:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25053824A3;
+	Wed,  6 Nov 2024 22:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912666; cv=none; b=TCra/i5cz/rqL6WnNLeXOTh8nI2cVp8cpIqMKpNjNVj52HAYcTR26evhnWmbmMor3hdjDTu3GzFtYLCEY2h/dV/O30nbbReY/vWBzTAjRK+sgH6WH36qGQEpN0+cah9Nq7yP7ZS4JCm2+OhoJkRHT3qOIPDzn5ChjPzBbEJkwig=
+	t=1730930737; cv=none; b=skaeDuqHQ3/naDblNPr6S1JIUpRWZdIvPMqACHtOk/ndaf2O6jF0U5HmWtEWIu6W64Ov0+x2Jl0lj/r5jh5imZDx3wPt7DgztEXLeyVBRMKr7IGmtV1aOpn/gmAChsrLXOec2LasmGY/A2eAn3YFC4VRLVf0CnwlgWIYXtvpKsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912666; c=relaxed/simple;
-	bh=IqW57oiCoBaCk36CniFqvizF47SHTBcgPQmGYek9qt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ak52WhCk5s1LHvYkRbXc0+dYFy87QCg0zJ37z40edu3sdeXYnpPbDuSpTOOeZYri90e3St9lc4pp/TELGJPD/IKokiRRN4NPvYNlk+z/fwgjL2yB5PIf66UnFCUP/3NlQQZLubRQBTGqVRl+lfMHMMTw2l8dqtLdwuys2xIArkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E2wpFy1V; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1730930737; c=relaxed/simple;
+	bh=5hIr4DqH344QQRXKlkjp641JXAdj+t2BweafuQTt1EA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VtKy5JTK8KYES9I2tcfX+xvBpyeqQc2PE7TK8KxwaYYm4Kbrezgc+k8Ph22A7/A/PPPRP9N+wbG9qWu5jJXwbh8rkclZamUYj9jPKlVupF8t6kWUrULCqodyVd5Pd6gt1MAy75whfS9RupzZkJynDpXPadhVRuaxB3LEsC99Mx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4cM9EmH; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E2wpFy1V"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e7086c231so6094865b3a.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2024 09:04:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4cM9EmH"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43161c0068bso2677335e9.1;
+        Wed, 06 Nov 2024 14:05:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730912664; x=1731517464; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDaQLdznzK7seqYSBe/wCoaA0MUN6ZM7xHd32DKGHh8=;
-        b=E2wpFy1V4LcM8Sjf+T9lJHkgp2HZjgkTNCNRFwG9qGmsNMUBBtUNhBb80D0twCHrzx
-         bMFYUFq+sO8wZlQpMd0bKECkSAhALJ8iTIJgzTkooIQsSkZvOLNs1hUOFAt220fGk9tS
-         yfWCygVv7RshrRCSmfy3KKk8EAzEyRbhuZBMzGPSmVh6Djt5GgUMS7IVSvPDRvxN18yv
-         gOsFRCkEV06ZGoJkNYZjArFQyAqJXhgs7SQ8XpfIS0nopGY0cE868Ar7Lo1qZldUsxmq
-         OHoQS87UBu56IM/w1wYKDuwWCfv8vD73LQ++DmK6vccFlKZNGiqybV1K2A9X/nk00Am6
-         iRRg==
+        d=gmail.com; s=20230601; t=1730930734; x=1731535534; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dqklnXtcZ0T+lSHc7mcdxj8FxKGKc9PBldQlZBXC1T4=;
+        b=J4cM9EmHIeRIhoKGWro6p5eGqXMMux6VZdTz5G0T0kYEW0682kBl9o550LMymKfnKD
+         9CDyQkcV2yy41qIblZL47ytUXr7DCwT0MJqQmsNdOKxGBU0rak9J5cEZvn4+luj8iFJF
+         ydnf560ct8UVJojGOjg+u496dN6Da+wtfzcTUGn1Q90QjeYC054yELVQtNySfaarC9k5
+         UwSm28BMHbrKuZvFZYQ3SVSkCnkfS4htvLP2RdBltvKYctNNKNog8aGLnVRCiYICJHBe
+         PqcxG249vbD4KR5U2MAGG/C28UY+docyvTlsxuhW7snhTjZgMlXTUG5/CsvOUeftSdI/
+         pDJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730912664; x=1731517464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rDaQLdznzK7seqYSBe/wCoaA0MUN6ZM7xHd32DKGHh8=;
-        b=P0S5OnG6qkDna+kHDtb5GYmvNKUKZ9vNZCRgdpPHykR43HOgW3KFzCHHgsTVxaoSTZ
-         +Ufgqnnx5QpBk6IOWLCsNyhOwZa2ZPRQQPUJf0i8DSWmyZH/ayczusSNIY2nXAMvO31a
-         9lLLK11viiTz56Y3Xuqr6E0TE8wnZlXY/h9cgGa20VWHIosRqvHgGqV+4YQCy28XUXB6
-         +bLZpiiZerq69q1DuGUoCjg1iaVDjWwy8fyAbs27PK5MYW461ZpyJ2j9m+7TGF5sM5e9
-         oVzKDDAjSsHNNVZEnWJhJDATYX9raMitdwt4lQcPTq9kcAH3rbqPhXL22VRoLuO+Xc9i
-         o4Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsw0R1WCUUQu98GByC5Aa0n2Oy2becNFYZ6TSoPB4NGH69ODPfxmvpAfofTtbMK8OW5s3Pj8y9lFs29qbW2mV51w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YytY5yaDXW1xY4D15GX60cLBwvSiwxF3sW/TA/ZKyzX6w0t9hxR
-	bgTy3nM6ZmlQrp+99EXZ8zWlozZHNgx2jvXJJ8TTdF3mzWEmKaa6Z6C605IeCg==
-X-Google-Smtp-Source: AGHT+IFTRmyv3jddEWzwMk7l4ToMoo9qEgn6PMk6nfoP7kxnLFshmvLNCipLw+gSEmO7+UOuZw7W7g==
-X-Received: by 2002:a05:6a21:3292:b0:1db:f68a:d943 with SMTP id adf61e73a8af0-1dbf68ada69mr7915594637.17.1730912664141;
-        Wed, 06 Nov 2024 09:04:24 -0800 (PST)
-Received: from google.com (128.65.83.34.bc.googleusercontent.com. [34.83.65.128])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee452a7ffesm11355388a12.23.2024.11.06.09.04.22
+        d=1e100.net; s=20230601; t=1730930734; x=1731535534;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dqklnXtcZ0T+lSHc7mcdxj8FxKGKc9PBldQlZBXC1T4=;
+        b=TCeNp7aAGA9KMywYe0LdVzoyDPoRC31dbJHtm0y0V8w6QZF3YxKUPrmhhKmwYUDbWp
+         /Ct0hreUkco3dKvybUY/bhFlBKnQXI8p4s/sSaw8cJ/eWHPWKp83xLGgRTdQk+vDV4Rn
+         KOqBjA4iX8dcvR9UD6u6kGVlWijSdjIttqjR/o/a9YLsocmx+U+eFoI/YOprA7PQCLCm
+         C2xSs5DKeJ8bu5iYXKYm1AI//0rcTBtTwvrcpM7ZraoUY/RaqlmlqaIudWUMQ/a6jKp6
+         5LSthQBi0HoTGakfu35KKwtZaJk9omvxqKfvEFM7RB9Tmnudcqf7LehFKjN757pHi+JF
+         k0Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQr/zpUBSsuZzWsaR5q+EPKT5mbK+x6zvWJ2n4KRw5aNXg9WFlaijx0XJD763TQ4kx6dRuLuXHQG7h@vger.kernel.org, AJvYcCVUrbN2or5tyLSjky/FeblpR2s0MIupRViQfJONm3bUnejNDtgeTiAi/mAVcKKZRVeMdPpzn5FO@vger.kernel.org, AJvYcCXGvrX+z2+BO60m8oIWtjbdaXL/HxkPhiDyllTGXx7eKKpou0AQKJFaKTivMTuGAT66Rw2xp26/v7u8/l8R7biEaqE=@vger.kernel.org, AJvYcCXrkcbkgfZk/RfcTSAaLGGmeL8MKW3OWYdKGlnz2YKNLm0Xn5R2nvnjrvKiFKJEb/QrCkETeIl+7rCa00tR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC4piGKxmByDw8LhuxFuWNTbh4onbzejn1cCx9bxxMqyggPhLw
+	Nri+RhaHGkm6fsmwy11yY4YsJ4rDpoXqmPbHckZz5chgK+yQ2+Y8OM053A==
+X-Google-Smtp-Source: AGHT+IE6Y7ubo9iP0AJhvaqbFPGr9/zv6r/DCkyqFoxY8CAAbQQy/4bGLHV4b4+wJnMD6OeaRvp01Q==
+X-Received: by 2002:a05:600c:4f06:b0:431:5f1b:a7c6 with SMTP id 5b1f17b1804b1-432832965d2mr183460825e9.30.1730930734049;
+        Wed, 06 Nov 2024 14:05:34 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-20b4-40af-8ae8-9c61.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:20b4:40af:8ae8:9c61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116b0eesm20288493f8f.106.2024.11.06.14.05.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 09:04:23 -0800 (PST)
-Date: Wed, 6 Nov 2024 09:04:18 -0800
-From: William McVicker <willmcvicker@google.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: tfiga@chromium.org, m.szyprowski@samsung.com, mchehab@kernel.org,
-	yunkec@chromium.org, hverkuil@xs4all.nl,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, andre.draszik@linaro.org,
-	kernel-team@android.com, stable@vger.kernel.org
-Subject: Re: [PATCH] media: videobuf2-core: copy vb planes unconditionally
-Message-ID: <ZyuhknpDgVLl39zL@google.com>
-References: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
+        Wed, 06 Nov 2024 14:05:33 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] pinctrl: samsung: fix fwnode refcount cleanup in error
+ path and update comment
+Date: Wed, 06 Nov 2024 23:04:38 +0100
+Message-Id: <20241106-samsung-pinctrl-put-v1-0-de854e26dd03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPbnK2cC/x3MTQ5AMBBA4avIrE2i9ReuIhZVg0mopoNIxN01l
+ t/ivQeEApNAmzwQ6GLh3UWoNAG7GDcT8hgNOtOFUlmFYjY53YyenT3Civ480A5NnZu8pKnUEEs
+ faOL7v3b9+3723MfqZQAAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, 
+ Thomas Abraham <thomas.abraham@linaro.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730930732; l=794;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=5hIr4DqH344QQRXKlkjp641JXAdj+t2BweafuQTt1EA=;
+ b=UW8O+ZSbS9ocVYCoSiiqQ02rZTe+4QqvnvDRkzg7Zoadme/L5yho3KU7WsPQfax8iYAh3Wjym
+ Cm+YahsvW+wDrI/MVuRCI05vflLgW6STYBl4o08MbpZsAZio+qsk7xP
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Tudor,
+The first patch completes a previous fix where one error path stayed as
+a direct return after the child nodes were acquired, and the second,
+completely trivial, updates the function name used in the comment to
+indicate where the references are released.
 
-On 11/06/2024, Tudor Ambarus wrote:
-> Copy the relevant data from userspace to the vb->planes unconditionally
-> as it's possible some of the fields may have changed after the buffer
-> has been validated.
-> 
-> Keep the dma_buf_put(planes[plane].dbuf) calls in the first
-> `if (!reacquired)` case, in order to be close to the plane validation code
-> where the buffers were got in the first place.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 95af7c00f35b ("media: videobuf2-core: release all planes first in __prepare_dmabuf()")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      pinctrl: samsung: fix fwnode refcount cleanup if platform_get_irq_optional() fails
+      pinctrl: samsung: update child reference drop comment
 
-Thanks for sending this fix! I have tested that this fixes the video playback
-issues I was seeing on my Pixel 6 device. Feel free to include my
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+change-id: 20241106-samsung-pinctrl-put-cb973a35ef52
 
-Tested-by: Will McVicker <willmcvicker@google.com>
-
-Thanks!
---Will
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
