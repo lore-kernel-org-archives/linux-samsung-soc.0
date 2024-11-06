@@ -1,114 +1,178 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659EB20D4F7;
-	Wed,  6 Nov 2024 22:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818C2383
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Nov 2024 23:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730930744; cv=none; b=PDA9VTouA3kk0KrsghYatbLbVZY7n4zEGx0qsrZnwqLddFXZ7c/snGel8sh7Hlxxsuv2LEmXMbfYYLBHxYhkDadEyAWzxp9AAEg7w1JnFPWrw3y3nLbUV2RJu3GUvdS9auCFfIPdTuNXewI4TBZ5fwK2h22E0CtURaY+8WsDe9Q=
+	t=1730936510; cv=none; b=pfAwh0SrCzKpxkGzET8k4HsqymwUahWOF1OQRbf30DZE8+yiGBpo1tlzCrqDGVKu4KjLncejmpnYHot5Fg3IxtC3Jd0/chwDooxZVdxu3KaIIot56Xd3h956mmkWXO9o5rj18m+9h45XMoRgaXbKfbmoRNZO14ucrtlofdM/6gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730930744; c=relaxed/simple;
-	bh=HZ84kAwePXH0iKsBrbTmJ8UZTEP9+KZqEVc88CIyNII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=vDqBWFw3M7M0irBGokVRSahmaloPCfUw+qsEEcTNKGtmqFxb1YXn+D1HHf6N5uVC6mWD9ZOaW9NUoOJgpadeGBipUwPwEMxzyI9KouZzwE10FnA6X8cVB+1cTqq0jDHUtTmG6BaZhucYK87gB2tyn0Eesy8nYfOeEC0yFe41jsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9Rob0+I; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730936510; c=relaxed/simple;
+	bh=Jb8BAyvd4oz2mGslbPXUUxqw+BIR393RplBHuFXMRjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eUATxtYbaIka5wi7Ktwjv/MBb84nP4/5DIG/ZyhTuEfCa9kprXT54xejfnKMQwNnruEN9ta7Ad3WYH7fb2Ho7hkSlHUkV8Klc/nzK+pJbN33mT7LuESl64qMZ9OFozIr4YJ7n+owHDWxuX0r+gvMaoZxq0SIvD/+K9LNVy95v1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g5g3hkmU; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9Rob0+I"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4c482844so160486f8f.0;
-        Wed, 06 Nov 2024 14:05:41 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g5g3hkmU"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-207115e3056so3817255ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2024 15:41:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730930739; x=1731535539; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TG5UJizDLgMxZKPQD1e03z/iuF1AG30m4Ug3E1znb/k=;
-        b=a9Rob0+IK54HjhsormB4S1WNTYbMItsuFFhaOFCIairgVF8yVx4rMNyoSqg/RCF/U1
-         cue/Nqjs8ippbPj3ORi2xsmIDwoQ4mwgUVgMUubeXXy/v/BFGfWOIrwwBNfrr58Pcm4B
-         nqHKk8HP78z9gRsJE/xb/TUxhKj9QmmW199gK/MFGyTg4xUlOjwhbSJAycrCrGx9s0XQ
-         tujeQPadqdgVloNhrVOF/iGIY/Agf9rDigGXTdLs3ULPdY+tn4+TzZtV8ucU0pTjCskd
-         UWC7yj4CePX3bD/1FVxmYRLqv3LsUBTTXpEM001ud0amON9t/pVy3Qi8Y2xofTYvlxnG
-         stgA==
+        d=chromium.org; s=google; t=1730936507; x=1731541307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gUIxV8/idxeTiaY7TjZoSjaAKD90iyIZAKQ4e5QblXw=;
+        b=g5g3hkmUrJtx14uEAFrLExE0aOWCiBupK6JY1sRg5BYFAwinFBrEIKHYd74TJIN6nj
+         FbKiZD8kwQ6AnnMOijnrhXzVmzxVm4AHACfGSeCIrWq8ke5wCn8ICb+wzdIddEzab0vn
+         FgDcY5JN+BZ6BS6Bx92bfDsKYGq9A+cns0GVE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730930739; x=1731535539;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730936507; x=1731541307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TG5UJizDLgMxZKPQD1e03z/iuF1AG30m4Ug3E1znb/k=;
-        b=ssqamVANq0a2r1PMe5eZ32uh69seDF2baBPcQwiiFFGKFKB0CTqoLRctRh2TDdQhvK
-         b48eETE3JOmicjUhnCfeCDp84Z4B8MNnrvz2NIiWvMsGSo3abPWRdpEZVEjhdOTceNkl
-         PjtNHuu73P1M4kTXWAEZhcRWBeMsw/C8e5lXk+j/VBIXWACtyaL2sPB9oMeF134s2A0R
-         VG0iVydyhJ9/0M3mnM8/zQlppd5Dh+A8LyOWDkYauoJPdhwDDhh6Ac0APoZgOsugj8Z8
-         bKaSr3AGBGDdJUMjxWNKoXEgwV5QdDDS5LJyoDWZPAEucABSuSukMDuc0V6d9ZVcauXo
-         6Zhw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6OHjATnxGHYpaKRrbOvL4f9Ahpct4SunM3CJFi3cizO9X+dfiT+XBkFqkGemiXOKo/KSV7JelqAv0@vger.kernel.org, AJvYcCUBJ3R+4mCSREES2s0QK+czZNRoEolTFl8SUk8CVlL5seG+O3Sdnfow1yN+Z2pvxchFOEWKJMsEo2YV03Tl@vger.kernel.org, AJvYcCVXv8vltnOGb6qjyt3yZYq2E+Ap/oXCGldBvmV1bf5cyBy+dDM5Kxg0Ew5tbjIJL6+d5+B71Zkd9syaBalqqay22xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRom17Q0tf+LXYIL0s9mS7uAqLnI6XESpr9/vwiDynFCN5/KXq
-	zX9eXUKbtOm/CdPxFZb+6angBZUO2bWDfQ/3HaTXolrFc2CK4KF81VvzsQ==
-X-Google-Smtp-Source: AGHT+IHseJSgbFNBVjoWiS3THi9dEo+NtqEvSttov0W6mgBFSYQFz5OMcDBoMLaZeVcaYvk10rAg0A==
-X-Received: by 2002:a5d:4106:0:b0:37c:d558:a931 with SMTP id ffacd0b85a97d-3806115902emr28098034f8f.31.1730930738992;
-        Wed, 06 Nov 2024 14:05:38 -0800 (PST)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-20b4-40af-8ae8-9c61.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:20b4:40af:8ae8:9c61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116b0eesm20288493f8f.106.2024.11.06.14.05.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 14:05:38 -0800 (PST)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 06 Nov 2024 23:04:40 +0100
-Subject: [PATCH 2/2] pinctrl: samsung: update child reference drop comment
+        bh=gUIxV8/idxeTiaY7TjZoSjaAKD90iyIZAKQ4e5QblXw=;
+        b=WpbQS6dFr/oelbehrn5ZWVLSPeeSl56X5D8Z5yDZREGNztGwpK8v3ssR5FIScPDiqm
+         eOUI5w8WmesD3d+MAgPwBAaj9gNny+nNYvvbjocl8SUA4pgn3xirUDuVx/5fRVDC/1aX
+         jA0zCzSp9VO6TuKCSYbMihC/0N79kmezvHaOifNjHQ1dVIhxNjWk6a4chFwR96qPrVdr
+         VlycqHGPqmEzHSR6dUx+p+ANgh4rz2K9nxj0tPsH07lpIoutzYbOGAZkDxwFsKTNVO5l
+         fRcaUgX3EhYOsPmCqUvjNAI7Ri7wbkA22IQDOKs3wrbEZyg1DBbbn2Vy9sc8lFcYgQ0T
+         O55w==
+X-Forwarded-Encrypted: i=1; AJvYcCVISj8xKJRaXJ4nHBQK9Ovh7M34T914zoF3uKYF1Ly0/Px/N+sGcHVyEjt0oUqNY2bcrZYW5RDbjh4keClYM1FyxQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9jF8W1FiyJxUXKgKU95XTiqzy+TFHAYO1D3BS6riA4FHstUnE
+	k/V2pprqMzpL28hyA08o8Cnmk3nWFl4Ztvlvs1wkQmec0e0Xby6ldn51M6fO/1KbNFZH65Y8ru7
+	kKQ==
+X-Google-Smtp-Source: AGHT+IFAIO54WIDG4I4tp0HztdUfn3WT9dNHRAnffePQkhmFYlADzY5P8F6XT+21wIgaBuSmqy8/Pw==
+X-Received: by 2002:a17:902:f547:b0:20d:2848:2bee with SMTP id d9443c01a7336-210c6892da8mr591295165ad.16.1730936507484;
+        Wed, 06 Nov 2024 15:41:47 -0800 (PST)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com. [209.85.214.173])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e79cf4sm197145ad.262.2024.11.06.15.41.46
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 15:41:46 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c8ac50b79so53925ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2024 15:41:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXo3GGZ4EjosU+jJrAnNfwiKIxeGLHYeo9OHVjgObi9JDM9OxB2p2pgId3byfC1YxuqcbqXgBqxEsRKfAiOLfx+dA==@vger.kernel.org
+X-Received: by 2002:a17:903:2285:b0:1f7:34e4:ebc1 with SMTP id
+ d9443c01a7336-211748fa9f8mr1764415ad.5.1730936505431; Wed, 06 Nov 2024
+ 15:41:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-samsung-pinctrl-put-v1-2-de854e26dd03@gmail.com>
-References: <20241106-samsung-pinctrl-put-v1-0-de854e26dd03@gmail.com>
-In-Reply-To: <20241106-samsung-pinctrl-put-v1-0-de854e26dd03@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, 
- Thomas Abraham <thomas.abraham@linaro.org>, 
- Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730930732; l=1049;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=HZ84kAwePXH0iKsBrbTmJ8UZTEP9+KZqEVc88CIyNII=;
- b=GY6vOISzcv48AjyktwTvRi2p1sfYnHYxMpMijViPTLIYSWCBj4YfC+77AwLWNjcrZw5AN774I
- AJUXkmiayo/C8hgHn0p2gOJGfHYpceafRuVWOX8TmTl5w5PqmY565mo
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+References: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
+In-Reply-To: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 7 Nov 2024 08:41:24 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
+Message-ID: <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
+Subject: Re: [PATCH] media: videobuf2-core: copy vb planes unconditionally
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: m.szyprowski@samsung.com, mchehab@kernel.org, yunkec@chromium.org, 
+	hverkuil@xs4all.nl, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, andre.draszik@linaro.org, 
+	kernel-team@android.com, willmcvicker@google.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 954445c72fc7 ("pinctrl: samsung: Drop redundant node parameter in
-samsung_banks_of_node_get()") modified the name of the function used to
-release child nodes from samsung_drop_banks_of_node() to
-samsung_banks_node_put(). Update the comment to use the current function
-name.
+On Wed, Nov 6, 2024 at 9:18=E2=80=AFPM Tudor Ambarus <tudor.ambarus@linaro.=
+org> wrote:
+>
+> Copy the relevant data from userspace to the vb->planes unconditionally
+> as it's possible some of the fields may have changed after the buffer
+> has been validated.
+>
+> Keep the dma_buf_put(planes[plane].dbuf) calls in the first
+> `if (!reacquired)` case, in order to be close to the plane validation cod=
+e
+> where the buffers were got in the first place.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 95af7c00f35b ("media: videobuf2-core: release all planes first in =
+__prepare_dmabuf()")
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  .../media/common/videobuf2/videobuf2-core.c   | 28 ++++++++++---------
+>  1 file changed, 15 insertions(+), 13 deletions(-)
+>
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/pinctrl/samsung/pinctrl-samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the fix.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 3ab5878b69d1..cfced7afd4ca 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1172,7 +1172,7 @@ static void samsung_banks_node_get(struct device *dev, struct samsung_pinctrl_dr
- 		else
- 			dev_warn(dev, "Missing node for bank %s - invalid DTB\n",
- 				 bank->name);
--		/* child reference dropped in samsung_drop_banks_of_node() */
-+		/* child reference dropped in samsung_banks_node_put() */
- 	}
- }
- 
+Acked-by: Tomasz Figa <tfiga@chromium.org>
 
--- 
-2.43.0
+(We probably need some tests to verify this behavior... It seems like
+the way v4l2-compliance is implemented [1] would only trigger the
+!reacquired case on most drivers.)
 
+[1] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-t=
+est-buffers.cpp#n2071
+(just queuing all imported buffers in order and re-queuing them
+exactly as they are dequeued [2])
+[2] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-t=
+est-buffers.cpp#n1299
+
+Best regards,
+Tomasz
+
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/me=
+dia/common/videobuf2/videobuf2-core.c
+> index f07dc53a9d06..c0cc441b5164 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -1482,18 +1482,23 @@ static int __prepare_dmabuf(struct vb2_buffer *vb=
+)
+>                         }
+>                         vb->planes[plane].dbuf_mapped =3D 1;
+>                 }
+> +       } else {
+> +               for (plane =3D 0; plane < vb->num_planes; ++plane)
+> +                       dma_buf_put(planes[plane].dbuf);
+> +       }
+>
+> -               /*
+> -                * Now that everything is in order, copy relevant informa=
+tion
+> -                * provided by userspace.
+> -                */
+> -               for (plane =3D 0; plane < vb->num_planes; ++plane) {
+> -                       vb->planes[plane].bytesused =3D planes[plane].byt=
+esused;
+> -                       vb->planes[plane].length =3D planes[plane].length=
+;
+> -                       vb->planes[plane].m.fd =3D planes[plane].m.fd;
+> -                       vb->planes[plane].data_offset =3D planes[plane].d=
+ata_offset;
+> -               }
+> +       /*
+> +        * Now that everything is in order, copy relevant information
+> +        * provided by userspace.
+> +        */
+> +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
+> +               vb->planes[plane].bytesused =3D planes[plane].bytesused;
+> +               vb->planes[plane].length =3D planes[plane].length;
+> +               vb->planes[plane].m.fd =3D planes[plane].m.fd;
+> +               vb->planes[plane].data_offset =3D planes[plane].data_offs=
+et;
+> +       }
+>
+> +       if (reacquired) {
+>                 /*
+>                  * Call driver-specific initialization on the newly acqui=
+red buffer,
+>                  * if provided.
+> @@ -1503,9 +1508,6 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+>                         dprintk(q, 1, "buffer initialization failed\n");
+>                         goto err_put_vb2_buf;
+>                 }
+> -       } else {
+> -               for (plane =3D 0; plane < vb->num_planes; ++plane)
+> -                       dma_buf_put(planes[plane].dbuf);
+>         }
+>
+>         ret =3D call_vb_qop(vb, buf_prepare, vb);
+> --
+> 2.47.0.199.ga7371fff76-goog
+>
