@@ -1,178 +1,133 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818C2383
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  6 Nov 2024 23:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE254188CC9
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Nov 2024 04:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730936510; cv=none; b=pfAwh0SrCzKpxkGzET8k4HsqymwUahWOF1OQRbf30DZE8+yiGBpo1tlzCrqDGVKu4KjLncejmpnYHot5Fg3IxtC3Jd0/chwDooxZVdxu3KaIIot56Xd3h956mmkWXO9o5rj18m+9h45XMoRgaXbKfbmoRNZO14ucrtlofdM/6gc=
+	t=1730952923; cv=none; b=obtz3bxmvlcNixunj6qVTWLd9tfOLp2uwyu2+ppcE4/RJbCKme+8ePpGvdYSRoHMMl1iI0ORWhg5gN1NZ7Gos6fBlfPjOKT8II837caPzPXMfGsU2/DFrCWew7mnKHN2qJiyvN1nvwWvaz70vlWqCKf1H6twGgtIM/YmQF/yUxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730936510; c=relaxed/simple;
-	bh=Jb8BAyvd4oz2mGslbPXUUxqw+BIR393RplBHuFXMRjA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eUATxtYbaIka5wi7Ktwjv/MBb84nP4/5DIG/ZyhTuEfCa9kprXT54xejfnKMQwNnruEN9ta7Ad3WYH7fb2Ho7hkSlHUkV8Klc/nzK+pJbN33mT7LuESl64qMZ9OFozIr4YJ7n+owHDWxuX0r+gvMaoZxq0SIvD/+K9LNVy95v1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=g5g3hkmU; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1730952923; c=relaxed/simple;
+	bh=SiPaqL+BmeOd+7FyFcnJgWc3ggue09Sw8p1+SLXG/JU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=WwhxZXdQyKcNrXrq8gSofRFbNlhmmRE80mkZMV7EnnSPWAG6cHULxKcjNWslYlKUCf5ODr1j5stUqX5cdpoeEUgXyrdE+MY0gjIoMB6kuYk7utJgiX0j+rdH2LUlIDmX41MCQUyjt5lKykMCmU8yuxbi03V2VTHm3T8FhH7r60o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vu5bxE0A; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g5g3hkmU"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-207115e3056so3817255ad.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2024 15:41:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730936507; x=1731541307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gUIxV8/idxeTiaY7TjZoSjaAKD90iyIZAKQ4e5QblXw=;
-        b=g5g3hkmUrJtx14uEAFrLExE0aOWCiBupK6JY1sRg5BYFAwinFBrEIKHYd74TJIN6nj
-         FbKiZD8kwQ6AnnMOijnrhXzVmzxVm4AHACfGSeCIrWq8ke5wCn8ICb+wzdIddEzab0vn
-         FgDcY5JN+BZ6BS6Bx92bfDsKYGq9A+cns0GVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730936507; x=1731541307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gUIxV8/idxeTiaY7TjZoSjaAKD90iyIZAKQ4e5QblXw=;
-        b=WpbQS6dFr/oelbehrn5ZWVLSPeeSl56X5D8Z5yDZREGNztGwpK8v3ssR5FIScPDiqm
-         eOUI5w8WmesD3d+MAgPwBAaj9gNny+nNYvvbjocl8SUA4pgn3xirUDuVx/5fRVDC/1aX
-         jA0zCzSp9VO6TuKCSYbMihC/0N79kmezvHaOifNjHQ1dVIhxNjWk6a4chFwR96qPrVdr
-         VlycqHGPqmEzHSR6dUx+p+ANgh4rz2K9nxj0tPsH07lpIoutzYbOGAZkDxwFsKTNVO5l
-         fRcaUgX3EhYOsPmCqUvjNAI7Ri7wbkA22IQDOKs3wrbEZyg1DBbbn2Vy9sc8lFcYgQ0T
-         O55w==
-X-Forwarded-Encrypted: i=1; AJvYcCVISj8xKJRaXJ4nHBQK9Ovh7M34T914zoF3uKYF1Ly0/Px/N+sGcHVyEjt0oUqNY2bcrZYW5RDbjh4keClYM1FyxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9jF8W1FiyJxUXKgKU95XTiqzy+TFHAYO1D3BS6riA4FHstUnE
-	k/V2pprqMzpL28hyA08o8Cnmk3nWFl4Ztvlvs1wkQmec0e0Xby6ldn51M6fO/1KbNFZH65Y8ru7
-	kKQ==
-X-Google-Smtp-Source: AGHT+IFAIO54WIDG4I4tp0HztdUfn3WT9dNHRAnffePQkhmFYlADzY5P8F6XT+21wIgaBuSmqy8/Pw==
-X-Received: by 2002:a17:902:f547:b0:20d:2848:2bee with SMTP id d9443c01a7336-210c6892da8mr591295165ad.16.1730936507484;
-        Wed, 06 Nov 2024 15:41:47 -0800 (PST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com. [209.85.214.173])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e79cf4sm197145ad.262.2024.11.06.15.41.46
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 15:41:46 -0800 (PST)
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c8ac50b79so53925ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2024 15:41:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXo3GGZ4EjosU+jJrAnNfwiKIxeGLHYeo9OHVjgObi9JDM9OxB2p2pgId3byfC1YxuqcbqXgBqxEsRKfAiOLfx+dA==@vger.kernel.org
-X-Received: by 2002:a17:903:2285:b0:1f7:34e4:ebc1 with SMTP id
- d9443c01a7336-211748fa9f8mr1764415ad.5.1730936505431; Wed, 06 Nov 2024
- 15:41:45 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vu5bxE0A"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241107041512epoutp0437be910e1882c9e0cf178b855317eafe~FlIDLih5s0440304403epoutp04d
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  7 Nov 2024 04:15:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241107041512epoutp0437be910e1882c9e0cf178b855317eafe~FlIDLih5s0440304403epoutp04d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730952912;
+	bh=ZnbRqmEV1gtYIYxvir7XRo+fymtToxWX3JyVjsq//eI=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Vu5bxE0AEjgpEKwNnuDMj3E//kCi3uHqJjg34bEAPOFVdK7sTvYdFE5pzZRZuPN1J
+	 oB/VVh8lG1RB5uL4sm4CcP7Z74e4REnNnddRQTWiOzlWgpIn/m4L18rnH/ItZzvPdI
+	 3EZ2UMXxcnuwlLI5DKJChj7dAi+dEAMVjzPhPprg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20241107041512epcas2p160a7a279f07e2c115de95bee2ca07d45~FlICszDrX1077410774epcas2p1B;
+	Thu,  7 Nov 2024 04:15:12 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.101]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XkTHz1JJBz4x9Q2; Thu,  7 Nov
+	2024 04:15:11 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A9.D9.09776.FCE3C276; Thu,  7 Nov 2024 13:15:11 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0~FlIBefeMC0980409804epcas2p2c;
+	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241107041510epsmtrp255e89777f10f1d6af0ed3ff3cee9118a~FlIBdr45r2957029570epsmtrp2N;
+	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
+X-AuditID: b6c32a47-d53fa70000002630-24-672c3ecf44f2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A3.DF.35203.ECE3C276; Thu,  7 Nov 2024 13:15:10 +0900 (KST)
+Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241107041510epsmtip246f6e995016448fdb6742e05465d4422~FlIBMeNXk1198011980epsmtip2y;
+	Thu,  7 Nov 2024 04:15:10 +0000 (GMT)
+From: Sowon Na <sowon.na@samsung.com>
+To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+	alim.akhtar@samsung.com, kishon@kernel.org
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	sowon.na@samsung.com
+Subject: [PATCH 0/3] Support exynosautov920 ufs phy driver
+Date: Thu,  7 Nov 2024 13:15:01 +0900
+Message-ID: <20241107041509.824457-1-sowon.na@samsung.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
-In-Reply-To: <20241106121802.2939237-1-tudor.ambarus@linaro.org>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Thu, 7 Nov 2024 08:41:24 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
-Message-ID: <CAAFQd5B51wa1dD3FzHKxsg4VaA_bHzUrFGmA19q8jUybsMuS0Q@mail.gmail.com>
-Subject: Re: [PATCH] media: videobuf2-core: copy vb planes unconditionally
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: m.szyprowski@samsung.com, mchehab@kernel.org, yunkec@chromium.org, 
-	hverkuil@xs4all.nl, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, andre.draszik@linaro.org, 
-	kernel-team@android.com, willmcvicker@google.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdljTXPe8nU66wdvT7BYP5m1js1iz9xyT
+	xfwj51gtjrb+Z7Z4Oesem8X58xvYLS7vmsNmMeP8PiaL/3t2sFv8/nmIyWLnnRPMDtwem1Z1
+	snn0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqt
+	kotPgK5bZg7QQUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLSvHS9
+	vNQSK0MDAyNToMKE7Ix1HXuYCvrZKpa9m8TewPiCpYuRk0NCwESieelDxi5GLg4hgR2MEicP
+	vWKDcD4xShz6dZEFwvnGKPFo4yX2LkYOsJZnndoQ8b2MEhPuH4Zq/8UoMXHvHCaQIjYBVYlr
+	DVUgpohApcTcZc4gJcwCvYwS/XfWgq0WFrCSuDb5GzOIzQJUvvL9P3YQmxcovufSGWaI8+Ql
+	Lq55zgYRF5Q4OfMJWC8zULx562yomnvsEuc+ukDYLhI3bl2Eek1Y4tXxLewQtpTE53d72SDs
+	fIn1D+9C2RUSdw/9h6q3l1h05ifYj8wCmhLrd+lDvKssceQW1FY+iY7Df6GhwCvR0SYE0agk
+	0XEe5G8QW0Ji1YvJUMM9JGZt+Q52pJBArET//bVMExjlZyH5ZRaSX2Yh7F3AyLyKUSy1oDg3
+	PbXYqMAYHqPJ+bmbGMEJUst9B+OMtx/0DjEycTAeYpTgYFYS4fWP0k4X4k1JrKxKLcqPLyrN
+	SS0+xGgKDN2JzFKiyfnAFJ1XEm9oYmlgYmZmaG5kamCuJM57r3VuipBAemJJanZqakFqEUwf
+	EwenVAOT672E2zHSm5/MW/1u5ux/E7tlNu9/MVtf6mfPU2P1I3u/bo57wctva8nxUHz9v+pd
+	s98taP+8IVzi9225tKodvKrVT6N9mP4IyCqo6K49GJWXGKDOu+/hxW1Mpwqmrtx36eMSh2sL
+	tjW6WHncstMP26nYN7P/gIK8+cLjx8Pry9K9/Sq2Cby4FcK6idVj4fwpUYWnAnUuTpEyikh8
+	Uvi/7SHblc6761ZOZi5686Y+5O+7OsEjK5IUAoUzO9fE6TB/ab1RdiOZY9KX5Qc5Is9f+KbF
+	4/L396vpL46Zc7vdVa4LzFr1QVPvYO5Ru+vdxRGHuw4vEj3292dg5N/L4elzdLWzlNOu8m0v
+	r1S7fGUHjxJLcUaioRZzUXEiACb0YxgZBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWy7bCSvO45O510g+lztS0ezNvGZrFm7zkm
+	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
+	ZPPo27KK0ePzJrkA5igum5TUnMyy1CJ9uwSujHUde5gK+tkqlr2bxN7A+IKli5GDQ0LAROJZ
+	p3YXIxeHkMBuRolPh/cxdTFyAsUlJL692QNlC0vcbznCClH0g1Fid1c3K0gzm4CqxLWGKpC4
+	iEAjo8TzD5OZQRxmgYmMEufnHWEH6RYWsJK4NvkbM4jNAtSw8v0/sDgvUHzPpTPMEBvkJS6u
+	ec4GEReUODnzCQuIzQwUb946m3kCI98sJKlZSFILGJlWMUqmFhTnpucWGxYY5qWW6xUn5haX
+	5qXrJefnbmIEh66W5g7G7as+6B1iZOJgPMQowcGsJMLrH6WdLsSbklhZlVqUH19UmpNafIhR
+	moNFSZxX/EVvipBAemJJanZqakFqEUyWiYNTqoFpSsbKLWmPDNj2+t5wV924Lo+ZQ1Y6gOOF
+	xoqacI5ulbVep34KFh3qt5OUcy1Wddec2Peqx1aXZ+YZ+xtOhzR+/ePc9odhpnxte1/v/JsR
+	Wj7cJiIeCSsnebvxO8+WXabTMDfP049D+rd7x/viCc5C253lHf6L8j23+3vEO+Dbb0W5POPE
+	GTN7Z5cePxZwZd1sOf7crvN8MuvZL7tfaXzo3PH3lFKl9avfP44UKv592f3e2u/sZo0jRQlc
+	1nW8VUrFLHyOq/lYrWatqPY9sOC3WOmM/B9Bhoc/X479Pd1y6rN7DzOeNs/8nT5r1/JTFQHL
+	tLv+F53eUFIdfeq7WM17p7zr5/V44kqX8f7+FazEUpyRaKjFXFScCADUHDMqzAIAAA==
+X-CMS-MailID: 20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0
+References: <CGME20241107041510epcas2p28a5506042eeca912da5b665a04c3a6f0@epcas2p2.samsung.com>
 
-On Wed, Nov 6, 2024 at 9:18=E2=80=AFPM Tudor Ambarus <tudor.ambarus@linaro.=
-org> wrote:
->
-> Copy the relevant data from userspace to the vb->planes unconditionally
-> as it's possible some of the fields may have changed after the buffer
-> has been validated.
->
-> Keep the dma_buf_put(planes[plane].dbuf) calls in the first
-> `if (!reacquired)` case, in order to be close to the plane validation cod=
-e
-> where the buffers were got in the first place.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 95af7c00f35b ("media: videobuf2-core: release all planes first in =
-__prepare_dmabuf()")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../media/common/videobuf2/videobuf2-core.c   | 28 ++++++++++---------
->  1 file changed, 15 insertions(+), 13 deletions(-)
->
+This patchset introduces ExynosAuto v920 SoC ufs phy driver as
+Generic PHY driver framework.
 
-Thanks for the fix.
+Sowon Na (3):
+  dt-bindings: phy: Add ExynosAutov920 UFS PHY bindings
+  phy: samsung-ufs: support exynosauto ufs phy driver
+  arm64: dts: exynosautov920: add ufs phy for exynosautov920 SoC
 
-Acked-by: Tomasz Figa <tfiga@chromium.org>
+ .../bindings/phy/samsung,ufs-phy.yaml         |   1 +
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |  11 ++
+ drivers/phy/samsung/Makefile                  |   1 +
+ drivers/phy/samsung/phy-exynosautov920-ufs.c  | 159 ++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c         |   9 +-
+ drivers/phy/samsung/phy-samsung-ufs.h         |   4 +
+ 6 files changed, 182 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/phy/samsung/phy-exynosautov920-ufs.c
 
-(We probably need some tests to verify this behavior... It seems like
-the way v4l2-compliance is implemented [1] would only trigger the
-!reacquired case on most drivers.)
+-- 
+2.45.2
 
-[1] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-t=
-est-buffers.cpp#n2071
-(just queuing all imported buffers in order and re-queuing them
-exactly as they are dequeued [2])
-[2] https://git.linuxtv.org/v4l-utils.git/tree/utils/v4l2-compliance/v4l2-t=
-est-buffers.cpp#n1299
-
-Best regards,
-Tomasz
-
-> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/me=
-dia/common/videobuf2/videobuf2-core.c
-> index f07dc53a9d06..c0cc441b5164 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> @@ -1482,18 +1482,23 @@ static int __prepare_dmabuf(struct vb2_buffer *vb=
-)
->                         }
->                         vb->planes[plane].dbuf_mapped =3D 1;
->                 }
-> +       } else {
-> +               for (plane =3D 0; plane < vb->num_planes; ++plane)
-> +                       dma_buf_put(planes[plane].dbuf);
-> +       }
->
-> -               /*
-> -                * Now that everything is in order, copy relevant informa=
-tion
-> -                * provided by userspace.
-> -                */
-> -               for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> -                       vb->planes[plane].bytesused =3D planes[plane].byt=
-esused;
-> -                       vb->planes[plane].length =3D planes[plane].length=
-;
-> -                       vb->planes[plane].m.fd =3D planes[plane].m.fd;
-> -                       vb->planes[plane].data_offset =3D planes[plane].d=
-ata_offset;
-> -               }
-> +       /*
-> +        * Now that everything is in order, copy relevant information
-> +        * provided by userspace.
-> +        */
-> +       for (plane =3D 0; plane < vb->num_planes; ++plane) {
-> +               vb->planes[plane].bytesused =3D planes[plane].bytesused;
-> +               vb->planes[plane].length =3D planes[plane].length;
-> +               vb->planes[plane].m.fd =3D planes[plane].m.fd;
-> +               vb->planes[plane].data_offset =3D planes[plane].data_offs=
-et;
-> +       }
->
-> +       if (reacquired) {
->                 /*
->                  * Call driver-specific initialization on the newly acqui=
-red buffer,
->                  * if provided.
-> @@ -1503,9 +1508,6 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
->                         dprintk(q, 1, "buffer initialization failed\n");
->                         goto err_put_vb2_buf;
->                 }
-> -       } else {
-> -               for (plane =3D 0; plane < vb->num_planes; ++plane)
-> -                       dma_buf_put(planes[plane].dbuf);
->         }
->
->         ret =3D call_vb_qop(vb, buf_prepare, vb);
-> --
-> 2.47.0.199.ga7371fff76-goog
->
