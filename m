@@ -1,59 +1,33 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E513C185B56;
-	Thu,  7 Nov 2024 16:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3D31F669D;
+	Fri,  8 Nov 2024 10:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730995361; cv=none; b=MIvCxNbx44cv41RYOa028dgI788ltQgEURh/XpXvdjX2NcSHX8rTlDyP/mrDxk8Nkm5/E2tCIErsZOYIrh4mWla0ZjFjNiszcjuYSW3s/3X7iHYIfumulw0c2n9Xp1IAotR1NVdoR5jRK7iVaiBbema116OVxLerjAYC0j5QygU=
+	t=1731063061; cv=none; b=g2MDVvlcOOOpa1khsLH6XAZVt8kOLE9thRr3TFtqvWno+Ry+GpdSJZiM0LDfxzQKGwp+ZrO9DODSlxBceYN0axl6Gk6kCbheCUkRMmbK9op+lPalA6d15STBevj5R25RIpIRfmy9MrExcCQNdw22/6igxk8jutIQCrZiXQ5xuOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730995361; c=relaxed/simple;
-	bh=5H8VYUSsa/rmfbbmvwzdB/Qh2fQw/jZe072rqC3lTN0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=raDmNgBgMgd3S4ETZreOzNQOhASrMCH6Sv/E1L3TrL+ywwgVqvp/ZqGFBDD+uYvgFfyFtjKoORJUAp6mO0aSS8MuNG9AmYb24sGcz3tVG+frSIaWWkha/49VUZvQmVNu0jt8Ps1/ai2oVW0xndS2MnmgdKnXlaM2xeGxCrods4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ubuq8N3t; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731063061; c=relaxed/simple;
+	bh=dk1mu5lTqhAoWaUh/fvmV70El26cHpvXmwS6kDk07AQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgoHBVfNgVhAkBHNsp1nfzAwsy7RM1iHsLSVamvjj68+bmh4Hr2O1Nd6+NF7/tftFC41md0vocKtp7Qei1FjQ8RjO5kxHgXTnBzB5QZGmiAvHtxY8CsYmqJIPRNBSu/0B+0WBqICkZXaFrTJY/D/nI4u1akoMl+C6FA1gT09iAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtGpet/S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ubuq8N3t"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so175423566b.0;
-        Thu, 07 Nov 2024 08:02:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730995357; x=1731600157; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TJvjIBgWdRVHGu4BERauGlILYwLjHhOYN8wmcaPbpjw=;
-        b=Ubuq8N3tI8Qg0vV8VaXaMhxCTqpTHIVby5L0egHdaRtWt7h8dYryXNb566Yz9kbalN
-         UqLt1ACzjlGJDyxcMBj7ujmVIrCl/4a7YMZEvWmjP6RYKhnKsei8CQDEzP+4Bvp8gnqb
-         UlCb3GU7nhEaUjIQHSxhEdS9LuQnVAgR4yLlrqeq+5bOd8Lm1Oly5mYmLbGCXiebfyDF
-         6KpXfwOKT+nHlu6AY2b93CK/9Eb5TrY8aHsJrdMHbeGBsltqGSS/+Bz5sUUPvFHlfDv5
-         stfhpywIhlHRNmbvsjGN1gCJAfwxt5yq7HySfFTc1GGMH1jj230ZzCpYT75b8lnlJCZe
-         xkeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730995357; x=1731600157;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJvjIBgWdRVHGu4BERauGlILYwLjHhOYN8wmcaPbpjw=;
-        b=ecc6esPhJzJ7HryVKAQawfslCEvPHszzUb5CfwMKndYRSsiIfNF1HlVYiopb9hgtcK
-         qskcsRbEvv3tckFNZcXO/HMnXwYPQHT5BQb8R+Xh5G1tVkP2tJ65Njkg1HBWNRXFUCtO
-         CrybtGN/mMgO+cqKAZYJbZqpq4+xNVpq6p4s/zQtyrh9kQ9ps1iGprm2sQBY61khLgO8
-         /JN03FjLQm02IAlTf3PvTatpJOjbncd1ufPx+5ld50eLohRsDEwVOpN853pvruUjj37h
-         +IHw+onZaYT0D6IP180HTRyHYmT1bC9Vrf1STPqfJLGV+IPouvHSwlUU/whXLOT7y9hU
-         +IHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa9OFZVZtLo8Hl4xY0t3NXA7zkMZT61GCsh83bkuEP/UhsxCvw0QWnR08/QovoDI1Bu65nXPhglnEB@vger.kernel.org, AJvYcCX1JDhpR8W60Xx4KB+jUHgPJf+hItKpiy5WThhLcHrNlF0Z8JMyzyq+PiS24qBE4DGM1CoR3TbtdbwVnzzF@vger.kernel.org
-X-Gm-Message-State: AOJu0YywP0u/ej5IG4nIk1O3xfGK4iYUPsTcAW7V33qxFPAe3T+iSIyZ
-	nFtbR571mewTzbG8kOT4qt9gxY7lN4//94pA1NXECwcoWxqWyTVu
-X-Google-Smtp-Source: AGHT+IFIPPiN4cxhxgS9k3tSd7lQ8QWj5rw6OUhe8AjJY3X7cg7WQ56GBHxgkVfInFoc7myICEPjJg==
-X-Received: by 2002:a17:907:9413:b0:a9a:1f8:6c9b with SMTP id a640c23a62f3a-a9de5fe7455mr4423365066b.37.1730995355539;
-        Thu, 07 Nov 2024 08:02:35 -0800 (PST)
-Received: from [192.168.1.105] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc4c7asm108284566b.96.2024.11.07.08.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 08:02:34 -0800 (PST)
-Message-ID: <cd326e01-75b8-495c-bc15-1d9ebde8c4fc@gmail.com>
-Date: Thu, 7 Nov 2024 18:02:33 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtGpet/S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1600C4CED2;
+	Fri,  8 Nov 2024 10:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731063059;
+	bh=dk1mu5lTqhAoWaUh/fvmV70El26cHpvXmwS6kDk07AQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KtGpet/SFgaXzrIBIP4cB2KDeG3SXOcEEkf6H5HkrK/cyY7Drw51ToCAmBwpUX7Gp
+	 9VY1ztHsK6rUEBUHuZimo26lPWBv+i0XNdOxFCKpXJHacu4dXkNvjYx6zAuisLXKi1
+	 FX/3v9/Z5KLV7vbmkmVM0FISHrinSqZSFRd4w6IPbYKx7s27sPFOvN1zQgHSwzIuCW
+	 Ewlh+lS3Ro7BBPvl42UZiUefkqg5qoIDnJdL4bLXWn/cicLtZOrqkRF/CkfCQ7QUKc
+	 jhRx4K1An3Ws18+qK4umaPSLAZKc54oROYsTCA4EZ5Gt8PRq1foCzMXA8b6+T8x33k
+	 w+hmdDJnFmANw==
+Message-ID: <12ac2212-e176-4d39-85fe-c7afa16dc822@kernel.org>
+Date: Fri, 8 Nov 2024 11:50:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,66 +35,96 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] arm64: dts: exynos8895: Add cmu, mct, serial_0/1
- and spi_0/1
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Mark Brown <broonie@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
- <172994467264.24870.11860096857422265131.b4-ty@linaro.org>
- <f232dbb0-9036-46d6-83f9-27363813930d@gmail.com>
+Subject: Re: [PATCH] memory: Switch back to struct platform_driver::remove()
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Paul Cercueil
+ <paul@crapouillou.net>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-tegra@vger.kernel.org
+References: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <f232dbb0-9036-46d6-83f9-27363813930d@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+On 07/11/2024 15:57, Uwe Kleine-König wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/memory to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> A few white space changes are included to make indention consistent.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
+Thank you for the patch.
+It is too late in the cycle for me to pick it up. I will take it after
+the merge window.
 
-
-On 10/26/24 15:18, Ivaylo Ivanov wrote:
->
->
-> On 10/26/24 15:12, Krzysztof Kozlowski wrote:
->> On Wed, 23 Oct 2024 12:17:29 +0300, Ivaylo Ivanov wrote:
->>> Hey folks,
->>>
->>> This patchset adds device tree nodes for multiple clock management unit
->>> blocks, MCT, SPI and UART for Exynos8895.
->>>
->>> Exynos8895 uses USIv1 for most of its serial buses, except a few that
->>> have been implemented in this series. Support for USIv1 and HSI2C will
->>> be added in the future.
->>>
->>> [...]
->> NOT applied patch 4/5 - I wait for bindings to be accepted by Greg.
-> Alright, thanks for applying the rest!
->
-> Best regards, Ivo.
-
-Bump - now that the uart patches are merged, are you gonna merge the DT
-changes after the merge window? If not, I can send a new patchset that
-includes them and also adds PMU compatible node for the mongoose cores,
-since that got merged with exynos9810.
-
-Best regards, Ivo.
-
->
->> Applied, thanks!
->>
->> [1/5] dt-bindings: timer: exynos4210-mct: Add samsung,exynos8895-mct compatible
->>       https://git.kernel.org/krzk/linux/c/e54eb0465e548a7c6115e336ec5cfec04bbe8747
->> [2/5] arm64: dts: exynos8895: Add clock management unit nodes
->>       https://git.kernel.org/krzk/linux/c/fa986d1073805154888a788eda38d46a796346e8
->> [3/5] arm64: dts: exynos8895: Add Multi Core Timer (MCT) node
->>       https://git.kernel.org/krzk/linux/c/9ad6c3bd1bcbb73e2a5723e13b9d06e2296b07e4
->> [5/5] arm64: dts: exynos8895: Add spi_0/1 nodes
->>       https://git.kernel.org/krzk/linux/c/a5541d737c8de71948bcdaee912bcb6b0781af7e
->>
->> Best regards,
+Best regards,
+Krzysztof
 
