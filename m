@@ -1,115 +1,115 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9422BB09;
-	Sat,  9 Nov 2024 16:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6598C07;
+	Sat,  9 Nov 2024 23:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731169847; cv=none; b=SxYC/ogeox4HyzFg+rePlBLTmtww7lr1vKtoHwigYQwUAh9xFxHvDNpKMzk8ppR8GT7JJmY0xKf9u9Gdnz0TXQ51sekXb7fxtKoVaBtbfW+jf+QPjDlw18Ps31IirCYjpOP8X1kuJDKU0PpU2GV+Q6gSxS0ashjHg90PoUTk09c=
+	t=1731193461; cv=none; b=eskOsWaH9WvBDGVYuN2zSh1z7/nVFsyn9d/+FXB4zfuL5H2ppvqtEJV77U99lb/dYvfxaoWJhf1ar7lOkoESdk9Y3+JESmeMEm6/F1rZC1SMSxgoriVI1AZD6ki4YBkGOruQBknNkgfVX+R41ydFnMyVohPYo9F2WcpO2uiogh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731169847; c=relaxed/simple;
-	bh=4nzEV01HerKl13JwtsONKUbgCEH5uMrLa3opUgMD+sU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cmordxizhg4ehAW0Mv5Zn9ICqvZ62br26BUTLI9+zlZScZTGHQwMZmnS9lnCEnHxrhnL1VOyXv7fPqByenlpLsVek2vJRl7Hhe0e1yVM4qBdMos7hwUJq4NWjb9derhbhVnukv/ij1y45j45882ie9G8ykFhwIz12V9Wz1tA4bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/IYTpzA; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1731193461; c=relaxed/simple;
+	bh=YDc64g70KXmRUfUMR9OpmEHuYok64UWyLD7xaEiRKTQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pJdhJq5XshBT+sMbbVoETLsKuP/SdGOIzcYXeHnrUGmGaaMJm1kL3sjRwmMX1SHisBTVCE0rDvt5aVywRNJYAITul1vjHthGDqVoXl7rNvkWVCZG8FsFLf8i6W1JgtEhkRs7jJqElersFE0Id4Xx6EYjmSirtG/JTi7Tc18tWwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLAPuVpA; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/IYTpzA"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caea61132so28139905ad.2;
-        Sat, 09 Nov 2024 08:30:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLAPuVpA"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-210e5369b7dso35697885ad.3;
+        Sat, 09 Nov 2024 15:04:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731169845; x=1731774645; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+HFu6d4lO7rqvd9CtGtNgYr/2KPNT3OuXCo4vOZrFRY=;
-        b=W/IYTpzAnK/sPvb52bME+7m/QPh9xrSGB4J4kikOvCTutjLs7/OTgPyi1oXiM+Nz4v
-         ldDm6T+Fm2ZB1QJ5L1oQofqaigeJhllEVcU8R+ldtDvQ91xYST7JHrbfx2HB68Co6CSl
-         qxqvhTPwfemjQDwZjJT8yozelN789Q+eHlPBed0jbUlGlo1KOUDyBGRuJjAF54BRtQLQ
-         4HYqRkerD1fTV+bWh2BKLjdc5+zcyxotjvPxEFlVcqTQie02NRlPEouHYSMRaaSWRDev
-         Mu0NM/LHlXKrgSaBSJYhPJRNe2/8M8fv/0vpwhNt3x9kkVidev57svOG66T5LxKG4zVB
-         GNvw==
+        d=gmail.com; s=20230601; t=1731193458; x=1731798258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDnEol/sO6VqVywxS7JlKi6+yDV4PyqK7/lKBRL3LN4=;
+        b=JLAPuVpADS01H4asYf/GKI6+DURAZ1u0xJjvQOOdHCfz2n1X2w3vAVBBDfZh7uHCof
+         pkIUY00JVqlWQzNDh8wDZbZuJcqzewq1OdUkhxuVYcLxAvOD0KVkRFePtqmaU0iB0zLH
+         JBxqr8pR91w5NHjdNhGPIWj0meu660kOFcXubfvy6aDSSxeA2DMobYTH41Ph9rFLI3Ef
+         6pT2MaI9n6ukVOMd+HHkmu0fJKOpWHZlIbph/EFOO/0fDvwz6TCUowrMzKaeXBm5mgz/
+         IOUVDIl9648Qa5f6WPx/kfTQlXEHCe1IXJP/8L+BBd3YK4766BHTOR3/y3R9M8dBFyBh
+         EcKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731169845; x=1731774645;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+HFu6d4lO7rqvd9CtGtNgYr/2KPNT3OuXCo4vOZrFRY=;
-        b=Xp8jhpsDEVMBxO6tFL6YVKresPgXrTQ7MBTVRvdpuwlM/y4awUUOM/OUyKxQkchYZp
-         VOYW0JYJLIjFpJzLem84e+c9d2kKCHojawf9cACaXrYcLecEdzzzvqn3xFoEW7f1R04S
-         YhYm4H9NA1O+KkpT14umpQYwKZeHYz45GeqK62UbVrbBjDHbnEeGLJUZ+HyOuiEpxzI3
-         roVJZzBm2LM25HND8unB+DPDFYWtazfYSLCwogm06i3SxOljVhWNiEixBvj1KhoE0b5p
-         N4fA61nNQM+1lnLcXR1nRAZv33bWXhiU48wJzJVIacBwcNBz1ngW3PVHKPplxvjlhX7F
-         dJIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKzNWohtN+/N7BfO/RXetLddzHLPGFUypOgo1N51/VkZVRT7+b8b8Aaos1Bt0drJZF0pVj4DG5yTTdB2k=@vger.kernel.org, AJvYcCUYb78ItN1vhvcGS/CFEbWXzfDNxY+OEGJ6wOvMXqp3UXPVu7TsshA16VLtqAtphqbj43sp9ln/yCdNRQ==@vger.kernel.org, AJvYcCUq5teus+MW11U6Pr63rQNLslWrmtXvbJm56syMgxHDuh15gIAKYxlNpbkq+ynsTWzCe5ZKvN03GGYpmw==@vger.kernel.org, AJvYcCV6WTwy/kMsTl4cR3SY1l+GSTRB14/ArsuWs2ueURzgBXLBwldhQ3Mdbj5gAtvl6qwQUCR6O5HNNRc=@vger.kernel.org, AJvYcCWBgv+eMtn5hSTiMJlBCT+kzthf0UeusLzYGwcaXka3YIqxJqM+oPhLNXPPu0IpM/dwzclFtMCf3KIU/sw=@vger.kernel.org, AJvYcCWPdstUmWRWJgYQKIo21l5cWyHvuoXlhgJ+T5iXz0JwITLY5ii4gF3MUGLmzIsXMFfBcIXb6sNVIhX9cMf/OGss9Xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLltKm/zeLk+pBondPtNaQTcN0wcaevBBX+HMoCU1IniDDdY4z
-	JOA1VcP5ECYKWRMWUns0Gfn4RGUGp4mIusmzMhTvrgzE4Go4kTjY
-X-Google-Smtp-Source: AGHT+IGGs2S0yCDvHRz6lhphL26+ZgfU8grAgZs942pwHOPtldd6rtgtD1s1xn3JASfB0aCkY4pxLg==
-X-Received: by 2002:a17:902:ea10:b0:210:fce4:11db with SMTP id d9443c01a7336-21183517ca8mr100546255ad.22.1731169844727;
-        Sat, 09 Nov 2024 08:30:44 -0800 (PST)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6a3f4sm47858475ad.234.2024.11.09.08.30.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 08:30:43 -0800 (PST)
-Message-ID: <3be2547e-d987-4987-9d75-30bf81cfe6cd@gmail.com>
-Date: Sat, 9 Nov 2024 08:30:40 -0800
+        d=1e100.net; s=20230601; t=1731193458; x=1731798258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tDnEol/sO6VqVywxS7JlKi6+yDV4PyqK7/lKBRL3LN4=;
+        b=KN57s9kVZArL6yue2+35USFKx9TMd2/MFNDMU9QA3PhyUYv/X94ULc7AJf/Z2cy5Sm
+         nvuAbeDqTnF0951l0UNJl78hG7cFC5ZVJ/0VMH1MwmOEGzhLDR0127H2KClVk99YKyRx
+         AoYR23L5HS/xAVmrSWqcqGbf2q1afalsdf2SXzNkoSraLk0mHGYZViKR5tzIzfiXKGsk
+         hoWmAPr311L6U7B9+YWiomIYZMtMD1Tp6hnGoOj+lnbvfMNtre3HpY/rfcGq91XyJkYF
+         o2gaO7ByM226MU1GhODNfrPYhStxBETRPyS7/DwLbie+kxppfqFLW+FULrcd6di2awaS
+         deOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbtoYLAgSnYBVRXzzxKkN91biFsKi3imYOLFi+/5XNFuF4vCcgy8myEjV8xLPQsnFl8yoYvhMPG7CklUOG@vger.kernel.org, AJvYcCWKZYQDKUYMZZ08sd/wg3VGfdotBoTEEP9iKg5HKrOdEWWv7gTxtrRBuLo3zx2rwgfCt2AKkYfaNIt3@vger.kernel.org, AJvYcCXtE9k5D/ecLpby6x/yoQnwa206kPx50qpDdpoPQaMaO68jiZ9N/aV3LO1K7nYCK087kGu8nsOFW92Z6x4BWkzSPZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzch3jwd5lVs6x0GptsLXQVKEMcC8fW4BRfgiXN9HnieBmdm1I5
+	ANvOKSb/OvlArH/EKv5nyPxbAkNNtufA83nK0GyTIi1qMo3amXTo
+X-Google-Smtp-Source: AGHT+IFe/igCtkT6IZ/6bhwjaaHJHxUvojfaLWGRCzpaPWVdfzmPczFY2/Rfp8J8r5utBgsFvW60Lg==
+X-Received: by 2002:a17:902:ea12:b0:20c:c086:4998 with SMTP id d9443c01a7336-21183d7cd04mr86046655ad.55.1731193458233;
+        Sat, 09 Nov 2024 15:04:18 -0800 (PST)
+Received: from localhost.localdomain ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5feb50bsm5847991a91.53.2024.11.09.15.04.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 15:04:17 -0800 (PST)
+From: Sota4Ever <wachiturroxd150@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Add support for Samsung Galaxy S20 FE (SM-G780F/r8s) [SoC Exynos990]
+Date: Sat,  9 Nov 2024 23:04:00 +0000
+Message-Id: <20241109230402.831-1-wachiturroxd150@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: Switch back to struct platform_driver::remove()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Markus Mayer <mmayer@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Paul Cercueil
- <paul@crapouillou.net>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Georgi Djakov <djakov@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-tegra@vger.kernel.org
-References: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hello :),
 
+I'm a newbie and I started getting interested 1 year ago.
+Well, that's the beginning,
+until I learn more about kernels and the C language,
+which is important in that.
 
-On 11/7/2024 6:57 AM, Uwe Kleine-König wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
-> 
-> Convert all platform drivers below drivers/memory to use .remove(), with
-> the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
-> 
-> A few white space changes are included to make indention consistent.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+Well, bluntly, here it is:
 
-For the brcmstb driver:
+That Samsung Galaxy S20 FE device is part of the Exynos990 SoC family,
+I saw that Igor supported that processor,
+I took advantage of it.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+It has the same functions of:
+
+* CPU
+* pintrl
+* gpio-keys
+* simple-framebuffer
+
+Just enough to reach a shell in an initramfs.
+
+The preferred way to boot the upstream kernel is by using a
+shim bootloader, called uniLoader.
+Changes: - Simply add dts from S20 FE device
+
+Special thanks to Igor for helping me with that :)
+
+Sota4Ever (2):
+  dt-bindings: arm: samsung: Add compatible for Samsung Galaxy S20 FE
+    (SM-G780F)
+  arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts  | 115 ++++++++++++++++++
+ 3 files changed, 117 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+
 -- 
-Florian
+2.34.1
 
