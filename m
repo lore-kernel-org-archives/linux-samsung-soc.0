@@ -1,103 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDC41BC4E;
-	Mon, 11 Nov 2024 20:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD813698E;
+	Mon, 11 Nov 2024 20:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356329; cv=none; b=JpP+lNumWBxMxvSCnqeEJsKEdsuS4rSMjFKdy1FCKHtBvf3x6bI0FfucooUfbtkjHMrk9IZMT4VsPl7a/Gdj9hTJJfbNcU6GhG9tsZ+OJQNuxSFUbr653oHqpTFry+GmHb8w314zuo6wR8TwnT7UzpNWK9N9zGdkKQ9Rdtk0Heg=
+	t=1731358246; cv=none; b=uvyjoarwVVjPGsIyDVznalvcqB5DfE/klR/d2rEXqY1p8SUBqEw1PdPend+DS7tnlL2/OrHTgVPtYxAl0gbHhElMofShTpgeiwfFy37LYrNVIre55LXU034h9X22D9zXTMZJcYJn1I3AG7npYPEOleR1A7UXnSTqyR5xKbT+kaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356329; c=relaxed/simple;
-	bh=t5DsLHsfXVJLaZWit2f4WmFMkD0tUkZhk7FpjCALETo=;
+	s=arc-20240116; t=1731358246; c=relaxed/simple;
+	bh=KpxZC/P8ao2LzdInQZVMA84c4VfSpNvVV342XvO09Kc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTevicbxBOAmWracM6uXHtVMXwXmoLUZ0YHqQDZ782X94ctUXmbWy/sbHqayohP0H2exbLmsxK44ffJMk/Y+6/QkB6pfWS8B2zs1AY34IUMq/v3z97ekJ8islIZxD+QbB4FAyDN994UwabHwlrrbh3r8NlDMdQFH8NH4o0oAtok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqxqfibK; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7f8ManlHyCjzvTpzg+9pMIHnexoh6hcS7RgdxlUFKpLGrhzD4O1DbrG2qQT+ln5bvYeVR7ybF30ptVtqtlVO6A7x4FxE7DPGYheuxyXFCCkA4tkFJTUgpLE1CAVU/t9uH/A/eVCV5Up0SMdK0eSvLY5k3IO3QTawyfAvSljh8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNTqKvzj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqxqfibK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B07C4CECF;
-	Mon, 11 Nov 2024 20:18:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNTqKvzj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C606C4CED4;
+	Mon, 11 Nov 2024 20:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731356328;
-	bh=t5DsLHsfXVJLaZWit2f4WmFMkD0tUkZhk7FpjCALETo=;
+	s=k20201202; t=1731358245;
+	bh=KpxZC/P8ao2LzdInQZVMA84c4VfSpNvVV342XvO09Kc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gqxqfibKGViofJ8HKYz5PSJPB7/H6OvWWhJ/kb7COtar9EoQ1MgLDvNlR1bmXyw5h
-	 EfYGFIq0amhZd+Ig3cP4u4pSXVCWFo85owkKMFuAjzwS6En24XVQzwpQ38m3qpdOny
-	 FecvGyxmlWvNZNaZXaNvj60n4qs8+PkYOPfxh9GiSAC+D0qFhXsgMkz42TOspX0Zlb
-	 M6YZRSzEDvNA6GIY6QdVdW2a3VHf7GkDMWWkQ96jwp0jPXwyBEOC7GdQ6V5kW+orht
-	 iA+5UA5Nz7BCL5j4f69dTYmc3A1GQxLXj7Wqdsc9/PLNtaADoBXVpzIWJz+51Iejqc
-	 IQLLGUsjqZ8uw==
-Date: Mon, 11 Nov 2024 20:18:44 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Sota4Ever <wachiturroxd150@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: samsung: Add compatible for
- Samsung Galaxy S20 FE (SM-G780F)
-Message-ID: <20241111-dreadlock-anaconda-e164c85d1ae7@spud>
-References: <20241109230402.831-1-wachiturroxd150@gmail.com>
- <20241109230402.831-2-wachiturroxd150@gmail.com>
+	b=KNTqKvzjrtuTP8+YPJU/gM5ZMXFSB0RpgVNc2aPCauXheFcYN7+dflGoAJShq5FHM
+	 1nErK+6N/co0TEckyf3XdLAvuDx+KWX5Oj3VB2WWDLD7DmzxcC8ebeIL92NNu/r8r7
+	 zYJXLSv+ZbJdDlXDT2BHPr+4+xjg47UJ+cmXL/B+Fn2lu0Bw6mUtIFT++DlnhYaU+2
+	 538KYmb4sd+X/qZnm26LCEJTCZn2A51M5rfdI5dbTzACj2VY4X8lrS9hblJPgS8dU2
+	 Y9SV96l1/twH2Q3a0R2n2NCealTiwk3P5ZCKsErKKPj+1eutqGyxqCoOfavqcpTTqQ
+	 ve2DEMzRI8dIw==
+Date: Mon, 11 Nov 2024 14:50:43 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sowon Na <sowon.na@samsung.com>
+Cc: kishon@kernel.org, alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, krzk+dt@kernel.org,
+	vkoul@kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
+ bindings
+Message-ID: <173135823464.1934645.11982879743240085874.robh@kernel.org>
+References: <20241111043306.1250488-1-sowon.na@samsung.com>
+ <CGME20241111043317epcas2p48ebdc4c0219c1a4bf7c0a44873c5a98e@epcas2p4.samsung.com>
+ <20241111043306.1250488-2-sowon.na@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MPVSYDEanEQ+DG5z"
-Content-Disposition: inline
-In-Reply-To: <20241109230402.831-2-wachiturroxd150@gmail.com>
-
-
---MPVSYDEanEQ+DG5z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241111043306.1250488-2-sowon.na@samsung.com>
 
-On Sat, Nov 09, 2024 at 11:04:01PM +0000, Sota4Ever wrote:
-> Add binding for the Samsung Galaxy S20 FE (SM-G780F) board, which is
-> based on the Samsung Exynos990 SoC.
->=20
-> Signed-off-by: Sota4Ever <wachiturroxd150@gmail.com>
 
-I doubt "sota4ever" is an known alias, can you use your name here
-please?
-
+On Mon, 11 Nov 2024 13:33:00 +0900, Sowon Na wrote:
+> Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
+> 
+> Signed-off-by: Sowon Na <sowon.na@samsung.com>
 > ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
+>  Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml | 1 +
 >  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
-=2Eyaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index b5ba5ffc3..168e77375 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -240,6 +240,7 @@ properties:
->          items:
->            - enum:
->                - samsung,c1s                     # Samsung Galaxy Note20 =
-5G (SM-N981B)
-> +              - samsung,r8s                     # Samsung Galaxy S20 FE =
-(SM-G780F)
->            - const: samsung,exynos990
-> =20
->        - description: Exynos Auto v9 based boards
-> --=20
-> 2.34.1
->=20
+> 
 
---MPVSYDEanEQ+DG5z
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJmpAAKCRB4tDGHoIJi
-0rizAP42h+6ryK5OuKYwHGBlhnYmZRsNL+6V9i7RBw14mZ5NXAD/WnsmQirug9Uy
-IvnvhlHbzmHxe/KvQJfQvQfNxwJr/wU=
-=oo5p
------END PGP SIGNATURE-----
+If a tag was not added on purpose, please state why and what changed.
 
---MPVSYDEanEQ+DG5z--
+Missing tags:
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+
