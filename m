@@ -1,101 +1,92 @@
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB4CA937;
-	Sun, 17 Nov 2024 12:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0219C15C0;
+	Sun, 17 Nov 2024 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731845039; cv=none; b=BIG4olsoJRRnVUwYE22ECiNIUR75fW5V5t4hP0WCN1379tu0D4seCSAHsIpRJWrXADt69xtKAFqrksBb9TbDlKF/7uFHM6mKxZoEPr2fdQvd6Wn7bY1wxx5Gy0SS7RPJf7Aft+Npckeh6bjX2rYlnKfU6SZwLBoMOm6ZN/tXASs=
+	t=1731864703; cv=none; b=N2LxR94UhTlLQsNOQRTlhWbgmHTu1ghCedBNWF9ahwzvQH7mBGyEnfe3eagZyzIQ/cAapA6mz4tEQL4EUUHoIWQvNQnZCzQ3wl85ow4u7vvOxU5usTGdQbAauOzjA6OREqPe8Ipp/w8OXOnj3LVz0fPtVPJThbmP3DIlqjX5lDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731845039; c=relaxed/simple;
-	bh=U44pX1OyuYqTVUwfaSVxarNW1wSY/enpy9dFasbbbqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uljfwCjnOpaC8TR1crB95tp8d1/HSNIp/VXC6bCUUFmsbMUIJsLiT4byj0b4Ic9WnvgdEP1Wbk/7Syf8jPd+Hd3cG+wDblGWiE+8mVRqg5YA2hPGck5ss1K3L2qEQAHAW+yLwA36kWzO5kLXRIm+WYMx96p4ZrAQHCpoJRdZdis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RA6qYfnM; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1731864703; c=relaxed/simple;
+	bh=XU3f8iOzysWsUXprwUt22rCfRKOt8VzIxFdJ24lS6Ew=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h1IWFzoL182KY/fQ4R7Kg7P2bt7Iyfg+MQPPGeegmumSPh/PRxOpbgkC0WULVXRbIi0ZxFtngoLalCtnaqeAwU0pTY9xdenO95Tps5PpYuiFMnNgp3Sg6CQ5zQAu0gmaXOKDcCnqHKv01ctp+AbhL9U3846iNL7L4v6HmBYP7ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dB38pEvz; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RA6qYfnM"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id Ce0FtKvGCPqyaCe0GtWgzY; Sun, 17 Nov 2024 13:03:48 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731845028;
-	bh=F86dYHhTvuTsM0pNGR7yup3yM38zQaZLLpJ4MuMSPEk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RA6qYfnMtS4P7V9Zq0yBEygn8/KuBN1SNPfWjxCqVfhLZr2rNX044LTOu2zPQvQsV
-	 ZvajoS82pGIMDAyx0scSznzvcZWKoJ73xGGChp8RcKsmuW20UcjNTUo/3i0tR/k7Z5
-	 eWkvkp2BvbuuL7WtJRdllnGUzVZae9YRrkAaPrwzXKIt33FNTpkDahi7Syo3sDlSmK
-	 dwORZ6R37qho4XntvmGu2/2nam4cLTXbdVngwZKJ9Y1gsiGSW5rSOp85mhVTz9Rplw
-	 WH8a65A3n3JA8zUBzgqHg9bK3e0LX73+iOB/XdAvowMObmzP4UelQd5M1rD4q/d6Tt
-	 BjLBfdpEjZfFw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Nov 2024 13:03:48 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs in exynos_irq_demux_eint16_31()
-Date: Sun, 17 Nov 2024 13:03:32 +0100
-Message-ID: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dB38pEvz"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so2253570f8f.1;
+        Sun, 17 Nov 2024 09:31:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731864700; x=1732469500; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XU3f8iOzysWsUXprwUt22rCfRKOt8VzIxFdJ24lS6Ew=;
+        b=dB38pEvzh3LILhgDAXUC9JlZjsTXuynrRZssCIP1EYZUbPuAtTDqj6KZfg0fnCjkSU
+         hjIpEAB0UG1WK+uqo/R6a79Gf/gCB7a3PjgPPzl9m+DnWd5JcCYmT0iUdL5zOpEKbK3o
+         8bwP6Moku+cs7MIE6SwDF3X1iRytCiF4tO/dgwKGGVaGY+m71Y26R+ULFZSfYid/UiNj
+         RblUxfh9gfiSZW4FMVZ3ExKBmDSdenU23v/Q8hXRdoFn2W0eZXb2jHxycg6P/harZCbr
+         Gwwj5dXgCO/VvnST5FcHnoEdW0a0Fhz3yazD3tZvhkWFSkwQgvfW/ovANN4Zj56vNkXl
+         gcnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731864700; x=1732469500;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XU3f8iOzysWsUXprwUt22rCfRKOt8VzIxFdJ24lS6Ew=;
+        b=DkBwPZ5hJouuZydHcCV2uiIgSEG+o9LJ5jry0O0Mk7g0wcl3tuBwfrvmhAQa6ON0+a
+         ScR2gyBF6p3bUxz+BFW9k/mtgOEs7OlcJWAYW73wdDCGaQE3JaqXu5/sTG2IchL9iaUg
+         v5nZgPXzmmd2ioSvOGEUFlFYFcyOTFL55W4YHYRNJvL3/e/pp3uT3smsnBWx36+n1cV4
+         1EDCP/mQD5xZZuq/dgbgMcGZO0XOX81qsDEXBHBNte5UB+Qr65o/ZvXVLBQPDvGW+qW0
+         P+T2RgeR+oe0PnE+HeI9e6uzOQ4lqOQAYp4dzDFqkPLyHTvj8akTYG+gvhwVfAmQeNld
+         KzDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/r5oS8anp/tyjraNR5kjvqlAnSKxnQHRw07ELG6lBRB2x+7ifbTAPdwpIs6QRxhVe6Mghfva3@vger.kernel.org, AJvYcCU4cPXRZbL61XmanX/h8dVcL4nQCtWz1ew3ZE+OzkE2q/dWjfSCxr5H6fQt1T3BAZDbWLk+D+9Wux9pcLPiA75RZN4=@vger.kernel.org, AJvYcCUAEKaI7v2HwfaFJ17lE7lxVYIuL4CMA4LquKBZzmhWw0Zr4Mv5MptWLRmyLxOxCeMtsHIRldrLBE3Hih81C0npjgs=@vger.kernel.org, AJvYcCWeZgrdvCgj+Lb8/9yDpFe6Hju2TE1dfxeF0ntkC+C2HEZifrtNsw7oflyO4mf6ugQdrQOfVaU3lYXZSi/2@vger.kernel.org, AJvYcCX4Zwb1d5VWDuBmuT4fa4kfn9CLit0+stmpCgTQX7deg3nnYP+RZ0w75xLOVumGHlYf+2BRqI+Q4pWwulSQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxubAau92N+EyC3chUpoNQwJEc8VqJ9GMEVUzNPHXFJL06Md12i
+	z0F44XDFf2rBCRt3+OTpXdyEMwOOsbMnIMtpIINz+WWhDBc4mp5L
+X-Google-Smtp-Source: AGHT+IGM5AOKwL/Gq+vlCdXodaTvKaKrFRZZ7omamsRPMIsQdxFKGxSowkpEpgRfKiIOKPWFsLR64Q==
+X-Received: by 2002:a05:6000:1fac:b0:382:d7a:315b with SMTP id ffacd0b85a97d-382258f0d9emr8122852f8f.11.1731864700227;
+        Sun, 17 Nov 2024 09:31:40 -0800 (PST)
+Received: from p200300c58705a8eb1a556f9921c6cbbb.dip0.t-ipconnect.de (p200300c58705a8eb1a556f9921c6cbbb.dip0.t-ipconnect.de. [2003:c5:8705:a8eb:1a55:6f99:21c6:cbbb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae1685csm10504821f8f.83.2024.11.17.09.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 09:31:39 -0800 (PST)
+Message-ID: <050e354f0d413dc39164bb72262b84b8c2038073.camel@gmail.com>
+Subject: Re: [PATCH 1/5] scsi: ufs: core: Cancel RTC work during
+ ufshcd_remove()
+From: Bean Huo <huobean@gmail.com>
+To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
+  Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>, Mike Bi <mikebi@micron.com>, Bean
+ Huo <beanhuo@micron.com>, Thomas =?ISO-8859-1?Q?Wei=DFschuh?=
+ <linux@weissschuh.net>,  Luca Porzio <lporzio@micron.com>, Asutosh Das
+ <quic_asutoshd@quicinc.com>, Can Guo <quic_cang@quicinc.com>,  Pedro Sousa
+ <pedrom.sousa@synopsys.com>, Krzysztof Kozlowski <krzk@kernel.org>, Peter
+ Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Orson Zhai
+ <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan
+ Zhang <zhang.lyra@gmail.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Santosh Y <santoshsy@gmail.com>, Namjae Jeon <linkinjeon@gmail.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org
+Date: Sun, 17 Nov 2024 18:31:32 +0100
+In-Reply-To: <20241111-ufs_bug_fix-v1-1-45ad8b62f02e@linaro.org>
+References: <20241111-ufs_bug_fix-v1-0-45ad8b62f02e@linaro.org>
+	 <20241111-ufs_bug_fix-v1-1-45ad8b62f02e@linaro.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-chained_irq_enter(() should be paired with a corresponding
-chained_irq_exit().
 
-Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
-is not called.
-
-Add a new label and a goto for fix it.
-
-Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
-
-Review with care, irq handling is sometimes tricky...
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index b79c211c0374..ac6dc22b37c9 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -636,7 +636,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
- 		if (clk_enable(b->drvdata->pclk)) {
- 			dev_err(b->gpio_chip.parent,
- 				"unable to enable clock for pending IRQs\n");
--			return;
-+			goto out;
- 		}
- 	}
- 
-@@ -652,6 +652,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
- 	if (eintd->nr_banks)
- 		clk_disable(eintd->banks[0]->drvdata->pclk);
- 
-+out:
- 	chained_irq_exit(chip, desc);
- }
- 
--- 
-2.47.0
-
+Reviewed-by: Bean Huo <beanhuo@micron.com>
