@@ -1,112 +1,158 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9402313DBBE
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 09:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D3518FDD8;
+	Mon, 18 Nov 2024 09:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731922822; cv=none; b=CUycQPjS09TfRTeNn2hqaThYe3pYL6h3kwShptwKC3LCQuE5W9RynGMRGrm1yFoRESnG9vgjOpPqE28TFUW+Fplu8G5mXFqP8rd8i/Eqk70YEB3+JTsmIsX3dZsOXtVWFDa74J0ZmPDScF5NhUHzYfvKIabHjxvf0Cdh28VB9sY=
+	t=1731923058; cv=none; b=S8VLu7XcIOu3WtkHEnPisRpfx0dhNR2b9a0N0PKUKqHVnsFyzv8T+wWzFSdqhPlcGtnTbD0UUIWgoNCRWv90Nwz5ltDzh6lW6WyTg/7m636n+yyv5lDS7/yOf6da3QFq+cm0pdMbGm51V7G/t5ZJhDst80K9RCJBo9b4elkbJgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731922822; c=relaxed/simple;
-	bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PhTwX49rwr94piOualtVGSNPTvdy1VOaknWbn/dhPyLo8d97VI4wCyHzmDRO49vDizO1fEVadeiLIo+pLmNdE0bo21Z5fiiy+dlmF1gFj9ua3sSl6/qoyHs5KJI+y7e4H68SXZq0nLb9Zut1/NMdpvIQiiEuUy0u81hzhCHZLPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZV+TU7NO; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1731923058; c=relaxed/simple;
+	bh=xkGDIVTsjYl2daXkQELzdBVqI1NqFFTGHwZ9oH4jtg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kt6EBlejTwLl19wCdDYl4ThmwhLILheDPospJg4RSp41cC2tVdDXoH+p0+xCRCAhCLZ3k9XCifoU8bIItveyzlrHCwq8LgG5jXJdP+tjjj/Mhbh/7zlxvsMEse1pPLLK2+xi/aaH19PxkIlGkiTox6JtEHaQQoaRwe6b9Neu/6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CVkichzM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZV+TU7NO"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38242abf421so738602f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 01:40:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731922819; x=1732527619; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
-        b=ZV+TU7NOJI40iDDH+7QIyyvyzwmDPk5q5oVOAM2vME0PtVYf6q8aGB9Ylnw2COb2a/
-         xz1yfCBiDQAFlDH9kPdVkuZ2/Wg6Jfgis8a7VHWrB4qHTzVzrD7qpeJORBuO8SJDtx1i
-         1pRCUsZhsu25gs7nwvqaiAn2Z3G2J3HijK3cT+5TUZKz5Q1IVna1M8lx0rbYf/suuZF4
-         FHFX6a+j5s3mLUItgNapuMxE6r0+OroRTSHWHvOIo2XyeRqf/C9N2nejc3ttesjywWE0
-         5FjNU1wp9qHzRNv3OrqMyHqZO1apq4bG3/hg59/DDZSbIdX1pazYGmMGKZdhoFikbk7A
-         J7pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731922819; x=1732527619;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
-        b=W83dNwJD/stNOsz3qxX//UwWmGrPhcz3DXsIRU7iYIFTv5YppPS5jFcwup6/kE046g
-         bIzRPKKc6IMR6zSJM9YVqYZwkuM4xLbn7ivlF64K4SkH8+cKelcazHnFRabBq54b1Naf
-         gRGZLDIM6q0FJLDsEbjikoJr+/8qsNhGxz7Eavk4VeY3tBLY/UnQTPQ1taOrHX4APkCB
-         4psS+J9FEaMO+W+AtEXcuY1PMrpQCd/OoSCv5LKU6QqPvAe1+g1DFjo35ZligPhx5Nkn
-         0xR7K8imbNzyxH86Lf7G4SkWR666hiA3dOzDrENL06nPfTiKMKuldyM1jaaPVnndQO+B
-         l5nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxDsmd6bZzCqc2cpsd825e/X7Kmsb7XMzuWl2C2yxp5Llc8QX5con9/57W4q8LwQPiomTWRLsiD9Yf6Hj4x3xStA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw03aUNzsXhLuzIByL4+Jt111XYYiZXeGIyo1IUmAhTNfzRh7iO
-	Og0PlAuV+BxULy47YYJBGqr10Bq4RVVhgZV1TUHu3ksWH+diflW592bXEaHvDqI=
-X-Google-Smtp-Source: AGHT+IGHa7gc48NoS0q6ZGoDNAksIkFsU8teJxL7tX5AMyhsKg2Sq4IjQbIZKZWs65VOlUxgPKn/cw==
-X-Received: by 2002:a05:6000:2c6:b0:374:c3e4:d6de with SMTP id ffacd0b85a97d-38225aa8607mr8472740f8f.41.1731922818924;
-        Mon, 18 Nov 2024 01:40:18 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382456ba017sm3220899f8f.97.2024.11.18.01.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 01:40:18 -0800 (PST)
-Message-ID: <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs
- in exynos_irq_demux_eint16_31()
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski
- <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
- <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Date: Mon, 18 Nov 2024 09:40:17 +0000
-In-Reply-To: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CVkichzM"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5D385B3;
+	Mon, 18 Nov 2024 10:43:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731923031;
+	bh=xkGDIVTsjYl2daXkQELzdBVqI1NqFFTGHwZ9oH4jtg8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CVkichzMiV3e0BGfVJwqOmN7JW9UFAdFwYknwJi9NFaABsS3vVTKVteKogEj7B2Uy
+	 bR5k0lZfhuetEpIa/WAnnHYEGgmjcIm+jmVePtfT5OURVmlbegALQOou8quBwgZCgj
+	 9q65vqEOFKvCU5olGrCy7664A1rYY3kWESwRkeu8=
+Date: Mon, 18 Nov 2024 11:43:58 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Ian Ray <ian.ray@ge.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
+ struct drm_display_mode
+Message-ID: <20241118094358.GK31681@pendragon.ideasonboard.com>
+References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
+ <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
+ <20241117205426.GE12409@pendragon.ideasonboard.com>
+ <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
+ <20241117233250.GK12409@pendragon.ideasonboard.com>
+ <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
+ <87plms51w4.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87plms51w4.fsf@intel.com>
 
-On Sun, 2024-11-17 at 13:03 +0100, Christophe JAILLET wrote:
-> chained_irq_enter(() should be paired with a corresponding
-> chained_irq_exit().
->=20
-> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
-> is not called.
->=20
-> Add a new label and a goto for fix it.
->=20
-> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
->=20
-> Review with care, irq handling is sometimes tricky...
+On Mon, Nov 18, 2024 at 11:26:03AM +0200, Jani Nikula wrote:
+> On Mon, 18 Nov 2024, Dmitry Baryshkov wrote:
+> > On Mon, 18 Nov 2024 at 01:33, Laurent Pinchart wrote:
+> >> On Mon, Nov 18, 2024 at 01:22:12AM +0200, Dmitry Baryshkov wrote:
+> >> > On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart wrote:
+> >> > > On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
+> >> > > > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
+> >> > > > accept const struct drm_display_mode argument. Change the mode_valid
+> >> > > > callback of drm_encoder_slave to also accept const argument.
+> >> > > >
+> >> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >> > >
+> >> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >> > >
+> >> > > On a side note, there's only two I2C slave encoder drivers left... I
+> >> > > wonder if we could so something about them. The ch7006 and sil164
+> >> > > drivers seem to be used by nouveau only, could they be moved to
+> >> > > drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
+> >> > > implementation there too, and leave it to die (or get taken out of limbo
+> >> > > and fixed) with dispnv04.
+> >> >
+> >> > Or it might be better to switch to drm_bridge. Currently we also have
+> >> > sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
+> >> > any common code to share or not. If there is some, it might be nice to
+> >> > use common framework.
+> >>
+> >> That would require porting nouveau and i915 to drm_bridge. As much as
+> >> I'd love to see that happening, I won't hold my breath.
+> >
+> > Me neither. Probably moving those two and drm_encoder_slave to nouveau
+> > is really the best course for now.
+> 
+> Granted, the dvo part of i915 is ugly, but it's also only relevant for
+> the oldest hardware i915 supports. Like 20 years old. Not sure there's
+> much return on investment in big refactoring, more risk that it breaks
+> without nobody noticing. Just let it be in i915?
 
-Well spotted, thanks.
+That's my opinion too. The gain is not worth the risk.
 
-It looks like there is a similar problem in exynos_irq_request_resources()
-in same file. It should likely call gpiochip_unlock_as_irq() if clk_enable(=
-)
-failed.
+-- 
+Regards,
 
-Care to fix that as well?
-
-That said,
-
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-
-
-Cheers,
-Andre'
-
+Laurent Pinchart
