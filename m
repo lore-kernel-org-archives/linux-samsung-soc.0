@@ -1,159 +1,173 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CBF1991AE
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 13:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC0619E998
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 15:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935860; cv=none; b=DL0izlz6OnYHPMku0KRzc8DFp59HxxuJx9go7zySH6BisYqZOKvOnzKAtx6Z4RCqk2bibyU5TV0U2GY9b1sXU/unMoYCzBv46D8lSzRI2F8qrDPayTnBaNCWPg8cUUp8LzENm4fi8DvCZH47phgXP09O3bPP3pVPM8K98uBWySU=
+	t=1731943327; cv=none; b=bhqoiEvUrUWahWlyJBe7FU86WpUem/QWEnVAb/Q8yWTrS+mtI4ejRVi6OOX4Xed8KVng0rpLVSoYw9FKbNzLtMzIRWy7EO50VFX9K7bB/9EEKWmD/lSQIN8PbriZyk45hMDhB0elfbvA9RtAfXM1azDqbc8VMIXKKM5Eh6Gf2fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935860; c=relaxed/simple;
-	bh=KU3s6sJpBDjOPdSAnNRqs2xLSFXNnDngXBG6k3abAzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdByvSTXj6dB9YjEd5bHzvpZjiH2OmETXHNMZPqSK+osgXxB2dgls3DNRaGJQdN1bg1QgBLjtFbC0MYcjUvnLtVB6ETu5AA6IN0+wlPue4BVljLzLhFM5faxV/Pt6j4ObY9Iex4HbJgsVWHRwF/B+mWIHKbhEzRUQLXFce3jvO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TR7uE+M2; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1731943327; c=relaxed/simple;
+	bh=jn5XT3hwcJVDiUuJsC/BYq6tWkmdqvb3lDZ1dl8ivUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwjRsARMflsH4owq95Al563J2NppEmtqBn/fyYpXumMHHAI9w2zyi27M+V3RjaihV6NjmBcofiZWia1wNyH2yEjv/IumyyRFiHKRPZF4BV0Zy1rup+6bpCfNU9g7ZHkszTWkMm+RyAulIqQR0Ye30XJJ/2KYsSZsmsNdpASUt0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zKUnbotV; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TR7uE+M2"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f1292a9bso4889224e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 05:17:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zKUnbotV"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3822b77da55so1641250f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 07:22:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731935855; x=1732540655; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEQ0UnPHgL8X1IzKLkITrqLzsus1TunLlu+R1N5lrJc=;
-        b=TR7uE+M2FmWoYR8uEg+m17MtCFJtn2IouUftytRJHSknZFQaa7HSm0pxyzLJbdXhGK
-         1j7pJAMuJhHa8dRYQi6kiL0GTD3ttQl4YTEteTCemjtGcFkXQyQQUF43LsGHSG7qTcyF
-         L6RXd0FOThdcdBZI7ixRibW9bZapL71t8ItBYPd6VBnpCcDdP73quLT07WRxYi69gPT0
-         AmwphaYOoXGNlubV3AxrzMVtKknjWtpPEpv/t0Ha6mXMYxQZ0eaLBR4RO66VFuJCZOgi
-         JV576AW2aL++V6PA8nz+tWSMgMaZJ20i+DBfU8JWJVYnYfyBOZLeN3hE/M83XLk78x4R
-         pEfA==
+        d=linaro.org; s=google; t=1731943324; x=1732548124; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yS/g2Uu8h88uKdC3kSKMEY90IlJiDjaSvhZlfRQ3+U8=;
+        b=zKUnbotVDS6JOrWURjZxpf86UHiOuWgrOLT9lyAoaO2gxJAmGkYTYl7jNK+abkMwiO
+         9Fzg/PigzURuTp/OGG9pudkulbQ5KhElgjKLjk1j+v1MBOWxuFwiXi11OjACb24PlEsu
+         eAOIk+Y8ySa/BMyArJ5yVXBo8nbGmjhkmrKWN+p70xP6JcnmI+bYVEcYNjTjJemmWgys
+         LfPqIQQSjQziYy7N+mw+puWP/7+0WHuZCUNDh/sS0EoPSGbrlA9rngbDDlJmNbvgCioO
+         vXknR7mVSZYRgxcwNIsIwrcHPnEPnaF1EubH8LFB6r0VW8PgwUebXv4DUdYBjrq7Mguu
+         npJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731935855; x=1732540655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QEQ0UnPHgL8X1IzKLkITrqLzsus1TunLlu+R1N5lrJc=;
-        b=Ulvtr4QT67JPUHFm+9AnKwfAM3Wq+lgPUbv6qi8mJ78feWWDALv1bEooy74CeM+iL9
-         C+W5mQwoYplfejlAZ5pXv/rmJzS24tHbA1bqTAa6zLOPxxfv06fvAMDA8fJ8EbqF0Fer
-         KR+NaSuXmSFqqJYh8B8k9GJN6lGjbko+iW5K6JQ8ymWc3nzb/CfQyo5oYyneyFRZrpVb
-         w8wlgVpq1rb5Ei2bnusi93Yl84aMK7YpoySy8vg0nRUcttM+w+RLtQv2qJE4onnA+KDh
-         X/DURE/ozYP77rCtkiCX0XgZNWl7CfzkkkgdcbgHg1AaHkEHVnOhunOhyuCzxuHNkSlU
-         x19g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4e6Mvbhjf5B0t75o7Zc91EfwmGL4WkoKIkbkCTCOnD2Nsu2qkH0BgvDApB0S90is0pXW+pXC0klU7ToyuxlBa5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzip2xx0/ivaWp4/LsNYVIlgUUQWJQip0OITBQRcHKiWk12w6cx
-	VQYEVO7wIUedY0d5afPY1mBIVFTbI3KytvWsyQI9IOo5hX1mBSEINyk/4OrH3WA=
-X-Google-Smtp-Source: AGHT+IGdzRCE2acExYOAR/Q1TPJs2CyZISyIMx5j4q3L/H9VxSQ26s/Ffm8H90fecvqfEbJsuGZxrw==
-X-Received: by 2002:a05:6512:3e07:b0:536:55a9:caf0 with SMTP id 2adb3069b0e04-53dab25f7c9mr4511337e87.0.1731935855301;
-        Mon, 18 Nov 2024 05:17:35 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da64f8cafsm1591434e87.54.2024.11.18.05.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 05:17:33 -0800 (PST)
-Date: Mon, 18 Nov 2024 15:17:31 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>, 
-	Ian Ray <ian.ray@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, 
-	Alison Wang <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Dave Airlie <airlied@redhat.com>, 
-	Gerd Hoffmann <kraxel@redhat.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, virtualization@lists.linux.dev, 
-	spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
- struct drm_display_mode
-Message-ID: <4prwsjl7nhg4u4tgyqdmgt6am5ryewslosmbezkfmyxgh2oket@zglhp7zqhfwe>
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
- <20241117205426.GE12409@pendragon.ideasonboard.com>
- <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
- <20241117233250.GK12409@pendragon.ideasonboard.com>
- <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
- <87plms51w4.fsf@intel.com>
+        d=1e100.net; s=20230601; t=1731943324; x=1732548124;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yS/g2Uu8h88uKdC3kSKMEY90IlJiDjaSvhZlfRQ3+U8=;
+        b=nzJ670xAte1PY12LT2e7dt3118iN+MkYtvsiHAPsY4KLn4+9k5D1M2GFUKQGAb7nG/
+         BzMoyL49egWi+SGafD7viC1ATR4Igp9Qdkz5PMVfXBlHQJLdletDbkrfIbagYImLkn9/
+         RvgTHY4b2zIOfE67zUPXxDNrL6BVo6uPDfJZFT3Iy4qfAaPnjk4Myd1dehfF+ATAc6yn
+         sG54hMmVAyrX0wcEJAfYl1TeWjJ1NNCS/FFxO4yCUWQME049qrrnzvOXSjn+B/qwvxyV
+         uHdXw+Gh6z3UP08iA9mXnySTeRMmZrQq5D3HAoPaVLcsxKiYhGe3yzQotv0VpEdyVQUM
+         V0AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0ONmXYpj0RTbpMFUR6F/gOUaqavMeXab/PGVa/3jNJ+JUYYRY8SrudCwRrE8YvJ+0ziQFd5vBEq9gg0mfJYAxrg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN35WTQGK6TwTPUAjmO3JpuA+JyInZsVqsJ7SDmmhEQRbjk+W4
+	1Y3S8IeAlKESz9JxQ4oIGh2oKHtEPz3p3btAofy8+0hpvMj389JiCFqZo0miicY=
+X-Google-Smtp-Source: AGHT+IF5i912SxZj9aROjXMiBc6XZF1g7Bx1Z3E6lXHo6tsdVujyqT7a1uumivdREl9IH5QQ7U8UBQ==
+X-Received: by 2002:a05:6000:69a:b0:382:2386:ceaf with SMTP id ffacd0b85a97d-38224fd034amr12681351f8f.27.1731943324150;
+        Mon, 18 Nov 2024 07:22:04 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.27])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382308532cbsm9147678f8f.88.2024.11.18.07.22.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 07:22:03 -0800 (PST)
+Message-ID: <603407a6-93c7-4d45-b171-7bbc871a3569@linaro.org>
+Date: Mon, 18 Nov 2024 15:22:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87plms51w4.fsf@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
+ controllers w/ hw queues
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
+ javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+ luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
+ bjorn@rivosinc.com, ulf.hansson@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
+ alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
+ vincent.guittot@linaro.org, daniel.lezcano@linaro.org,
+ Arnd Bergmann <arnd@arndb.de>
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-2-tudor.ambarus@linaro.org>
+ <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
+ <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
+ <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
+ <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
+ <779fc372-a4d9-4425-a580-2173a0f6a945@linaro.org>
+ <CABb+yY0bhjRYLwyo-t6djttP2bq_irX+Rad71wDX++nQV69cAw@mail.gmail.com>
+ <a2065dc8-10da-42e9-b093-b0b541ca2305@linaro.org>
+ <CABb+yY3W3Cv7a6wZhvJe80xn5sp1Y_A_nbY_=cj0U4Z1YC61vw@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CABb+yY3W3Cv7a6wZhvJe80xn5sp1Y_A_nbY_=cj0U4Z1YC61vw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18, 2024 at 11:26:03AM +0200, Jani Nikula wrote:
-> On Mon, 18 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > On Mon, 18 Nov 2024 at 01:33, Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> >>
-> >> On Mon, Nov 18, 2024 at 01:22:12AM +0200, Dmitry Baryshkov wrote:
-> >> > On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart wrote:
-> >> > > On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
-> >> > > > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-> >> > > > accept const struct drm_display_mode argument. Change the mode_valid
-> >> > > > callback of drm_encoder_slave to also accept const argument.
-> >> > > >
-> >> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> > >
-> >> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >> > >
-> >> > > On a side note, there's only two I2C slave encoder drivers left... I
-> >> > > wonder if we could so something about them. The ch7006 and sil164
-> >> > > drivers seem to be used by nouveau only, could they be moved to
-> >> > > drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
-> >> > > implementation there too, and leave it to die (or get taken out of limbo
-> >> > > and fixed) with dispnv04.
-> >> >
-> >> > Or it might be better to switch to drm_bridge. Currently we also have
-> >> > sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
-> >> > any common code to share or not. If there is some, it might be nice to
-> >> > use common framework.
-> >>
-> >> That would require porting nouveau and i915 to drm_bridge. As much as
-> >> I'd love to see that happening, I won't hold my breath.
-> >
-> > Me neither. Probably moving those two and drm_encoder_slave to nouveau
-> > is really the best course for now.
+Hi, Jassi,
+
+Sorry for the late reply, I was off for a while.
+
+On 10/29/24 3:59 PM, Jassi Brar wrote:
+>>> If your usecase is not currently handled, please let me know. We can
+>>> discuss that.
+>> It's not handled. I have a list of requirements I have to fulfill which
+>> are not covered by the mailbox core:
+>>
+>> 1/ allow multiple TX in-flight. We need to let the controller handle its
+>> hardware queue, otherwise the hardware queue has no sense at all.
+>>
+> As I said this one is currently handled by assuming TX-done by
+> depositing in the h/w queue/fifo.
+
+This may work indeed. I would have a TXDONE_BY_ACK controller. Its
+`.send_data` would be a one liner, where I just raise the interrupt to
+the firmware. TX ring would be written by `cl->tx_prepare()`.
+
+Then in the protocol driver I would do:
+ret = mbox_send_message(mbox_chan, msg);
+if (ret < 0)
+	return ret;
+
+/* TX-done when depositing in the h/w queue. */
+mbox_client_txdone(mbox_chan, 0);
+
+ret = exynos_acpm_wait_for_message_response(mbox_chan, msg);
+if (ret)
+	return ret;
+
+> You will have the same perf as with your attempt to have "multiple
+
+I'm still forced to pass all the messages to the mailbox's core software
+queue. I also don't need the locking from the core. For my case the mbox
+core just needs to do:
+
+if (chan->cl->tx_prepare)
+	chan->cl->tx_prepare(chan->cl, data);
+
+return chan->mbox->ops->send_data(chan, data);
+
+Would it make sense to introduce such a method?
+
+BTW, what are the minimum requirements for a controller to be considered
+a mailbox controller? As you saw, I'm using the mailbox controller just
+to raise the interrupt to the firmware, no messages are written to the
+controller's buffers.
+
+Does message size matter? On my device the ACPM protocol is using
+messages of 0, 2, 16 or 32 bytes, but it also allows the possibility to
+pass a pointer to an indirection command SRAM buffer, where one is able
+to write up to 412 bytes.
+
+> in-flight" while neither of these approaches handles in-flight
+> failures. We can discuss this.
+
+Do you mean that there's no retry mechanism? The crypto subsystem has
+one, we may look at what's done there if we care.
+
 > 
-> Granted, the dvo part of i915 is ugly, but it's also only relevant for
-> the oldest hardware i915 supports. Like 20 years old. Not sure there's
-> much return on investment in big refactoring, more risk that it breaks
-> without nobody noticing. Just let it be in i915?
+>> 2/ allow to tie a TX to a RX. I need to know to what TX the response
+>> corresponds to.
+>> 3/ allow multiple clients to the same channel. ACPM allows this. Support
+>> would have come as an extra patch.
+>>
+> These are nothing new. A few other platforms too have shared channels
+> and that is implemented above the mailbox.
+> 
+okay
 
-Agreed
+>> 4/ allow polling and IRQ channels for the same mailbox controller (not
+>> urgent).
+>>
+> It is very easy to populate them as separate controllers.
 
+Do you mean to call devm_mbox_controller_register() twice for the same dev?
 
--- 
-With best wishes
-Dmitry
+Thanks,
+ta
