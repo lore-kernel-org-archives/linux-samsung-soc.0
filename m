@@ -1,40 +1,59 @@
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9813E8AE;
-	Mon, 18 Nov 2024 17:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C851B0F29;
+	Mon, 18 Nov 2024 19:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731952195; cv=none; b=BCtvsNXIOwEoWVZOShOFW1tLmFqaXz1Guc+3I6vSo6tmhX+eXRIrz7Ls0pXiUt8WApqYyWNKIMYW1qXkgMcs91zLQQlclfdrofv/liLxutdl8wIyEilWS6xf81UJYAgBCiBMB7LZCxq/Eq5sKhEM/lh8064QKHO8D8is5WMKcP0=
+	t=1731957962; cv=none; b=n8dw0X2fu4uadOlazkBCbcCpktlLh1mJwY+5FUuIevDPYyxxU/+9hg/u9oI/2jEkcMzLJd2O0+o7Yl2qTZyddu0vjUgWE3Dp+JY3s4jRPwGSP6XByQoGLX+tEDfWwt2V3JEZygKKfbM1Ic2GH9Fi0NPhY7tYUp1778KJgyNlA4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731952195; c=relaxed/simple;
-	bh=s8Mcf03i/aNKLyu54XXwTZKMYXn4YbUNSZMT5ZgYmAs=;
+	s=arc-20240116; t=1731957962; c=relaxed/simple;
+	bh=IvvPfEQx8+njDlP7eg+rVy3Zr9WN9X65JlqiJMcGRGU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fbvadszj6dUDtOLqMYVWhCrhPlf75opspvR0ntgMufh/DluqWN9V6ASS9C/VO3pDjWGlQQ2KjkS2iafAnK54th3WPURfBbJcoVGMCWws0NQonR2/Ow7axy7M8n7ynHVsG1nhLQUNT2N8Nu9qXh3TrHQfuwLZ694/L9dstgDMDuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CvgZ8LmO; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	 In-Reply-To:Content-Type; b=emKaT9eNrnuIG0UloXvcc/UqrJLJUXjLsNdOXM5mHwIKCqOjWK4QRy5Wm5rEvwYzildj6nCwmErGeIJhrf1ngcwo9s7DKUPeyb7Y2omWZeIEuKOCjF3st9PRsdx+k98JyXu1OOiwByGDIhUGcjgPu7jplg4twa4COBJ4kbCpUPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGbJCi/m; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CvgZ8LmO"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id D5sftAobEYfukD5sftuvIF; Mon, 18 Nov 2024 18:49:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731952189;
-	bh=0lmL6Ml3/ySb/jedLCT0Yz+EsgzLwGRL3HflcFIhF8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=CvgZ8LmOwyswLBBlxp/vw23cwYCgi859mdP/lWv8q9+7lxWq76eKJ/6xVrMiLNWhS
-	 bDbsQAejkfjoKCbNqFu0zVKY0xH00v9QELTnn09AN1/OFDcJuN32GVZXsurra4am9u
-	 aj4QbW5uSpSjGLZJJm+ZBlVNy/ogXPNDXK0ge2iJa92vEY5vbTQ3sMXnXL/AY3VaQr
-	 PJRxLEAw3avSTxhQ5KF5si8XiwwOoao523j030lW3q7AOXZzQvdzOwShCDk82dzL+s
-	 f/Yph6pW+azXI0snt2CAWV6s5HQ1wXMvj+CdS1Z3dqtxIkUvgbyHpws92sJGQx+XmT
-	 6/XTmwg8cF9hg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 18 Nov 2024 18:49:49 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <52fb32e9-11f4-48a7-8042-0e09f26569d3@wanadoo.fr>
-Date: Mon, 18 Nov 2024 18:49:44 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGbJCi/m"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314f38d274so34322885e9.1;
+        Mon, 18 Nov 2024 11:25:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731957958; x=1732562758; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9pD0Ic6pq3x9QjpEUEJLIp8QMqGQFkQZMFW6bkNDgUM=;
+        b=NGbJCi/mlaXf66xjltm3wbnqgsr6gw4KnBQrEddbXgEMWaMazD4qgZzbvn+7DbXBV6
+         CaLTV/L8DJRMyf4NWjsXhGlwem9noMF4V+9dW9xYoSwoDhg2EVYgmT+uS5m0jdueejks
+         uW1mcA9swheFOr7nAClPVpicB/TUE3v4fShItDWPIYwF5aMJVGuu+/BZ+WGGvhVwxPXI
+         G2RglzJbD9yt/GMp2I+ysQF6Umzgq0f2j0Uv0Ie5Ic95ngq7WPp5tQc2QObd+7i20zoS
+         Tks+BUlz+PSOKvFHFXbKd7AySk/Id+R7RYoacW68qR5qsKsxcIt7LzIoCvWI5nMLKaBm
+         7KaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731957958; x=1732562758;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pD0Ic6pq3x9QjpEUEJLIp8QMqGQFkQZMFW6bkNDgUM=;
+        b=ggmUfgQC0qO9W9JgSo57CqeyKrlfx9wx0O8GIOrRU3+GwBdAtsNEcIqvfeI2xYGcHj
+         i1coJdinvGcCjKQR06Ajh/3lpH14spA/Pv52YMSkf2b8zLdkKh9ioh7ytbli0h/8AleQ
+         D+p3NVMg0EHKsImVg40ZOEHUfYgOGHswGhSHhaGP72uV2sjTddgXkvanucwzicrzJsmW
+         pHSNKzOZxfgh2dL0yrKjz8zxbRrlOo9LkEUkvTjif0bYa2LaUwqxOVOsw/s9QRLt6mV2
+         jqN5CFhWs4eJore9I+esSSuvyVEB5WvbEweK9OUo6Ufq8/QWsDU7FCnVzO0RkZd0b+Vi
+         z7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3g6H6yHx97QOikq+TiMr4Q40Ubd71N7BYpTaQKvuDUXTW/iR20tKT80OX4pAH0XrzmDDbZU6IgXKOuoJmH3YDlGM=@vger.kernel.org, AJvYcCWHldM0H9iHRVVxfij/uE5GjRs8i/yQRgxmfLQ/YZXB0QvZzmcg0q7iPxSGVgfTp8SxEbDWDA4Wha5esI8d@vger.kernel.org, AJvYcCX+hsNxE4Cez3taX/G8hikNI45TuqqpOhlr3n0cZzp0W3b6E2pb0XpLVL5t4g5uL/hktgBfcFEj3uu27cc=@vger.kernel.org, AJvYcCX5MtRSG2lcmES6Onf0jM/6BkkAV8vb+AB6B7usA2cUquzmEuwYTPZfG/JzG4RQ1gVMGjLOvnTM0FMD5MpB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRrTbAshYyfHyUO9mN9X7kmrn+ewd8wTd3KwdMVeW2CRD8C+S0
+	l+p6ihFSL5AgyekiV+2hDO3U/IS9kNSXA0R9Vq4cLAn63RfO4f04TwLomFoT
+X-Google-Smtp-Source: AGHT+IH+lcOQ8Rj8oM11CtrUWBNXK6zZA1wltL3ZBTXjDjqXIpvoTVhgtssacVRTup7RXCuDYGl00g==
+X-Received: by 2002:a05:600c:1d97:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-432df78f3demr130180715e9.26.1731957957571;
+        Mon, 18 Nov 2024 11:25:57 -0800 (PST)
+Received: from ?IPV6:2001:861:3385:e20:6384:4cf:52c5:3194? ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm172023915e9.39.2024.11.18.11.25.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 11:25:57 -0800 (PST)
+Message-ID: <8a4f69dd-b393-4e84-be3c-58f8b33bd59d@gmail.com>
+Date: Mon, 18 Nov 2024 20:25:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -42,66 +61,85 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs in
- exynos_irq_demux_eint16_31()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+Subject: Re: [PATCH 3/5] drm/sti: hda: pass const struct drm_display_mode* to
+ hda_get_mode_idx()
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>,
+ Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae
+ <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>,
+ Alison Wang <alison.wang@nxp.com>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
- <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
+ imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
+ <20241115-drm-connector-mode-valid-const-v1-3-b1b523156f71@linaro.org>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
+In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-3-b1b523156f71@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 18/11/2024 à 10:40, André Draszik a écrit :
-> On Sun, 2024-11-17 at 13:03 +0100, Christophe JAILLET wrote:
->> chained_irq_enter(() should be paired with a corresponding
->> chained_irq_exit().
->>
->> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
->> is not called.
->>
->> Add a new label and a goto for fix it.
->>
->> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only.
->>
->> Review with care, irq handling is sometimes tricky...
-> 
-> Well spotted, thanks.
-> 
-> It looks like there is a similar problem in exynos_irq_request_resources()
-> in same file. It should likely call gpiochip_unlock_as_irq() if clk_enable()
-> failed.
 
-Agreed.
 
+> Make hda_get_mode_idx() accept const struct drm_display_mode pointer
+> instead of just raw struct drm_display_mode.  This is a preparation to
+> converting the mode_valid() callback of drm_connector to accept const
+> struct drm_display_mode argument.
 > 
-> Care to fix that as well?
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-NP, I'll send a patch.
+Hi Dmitry,
 
-CJ
+Thank you for the patch.
 
-> 
-> That said,
-> 
-> Reviewed-by: André Draszik <andre.draszik@linaro.org>
-> 
-> 
-> Cheers,
-> Andre'
-> 
-> 
-> 
+Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 
+
+Regards,
+Raphaël
