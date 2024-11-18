@@ -1,123 +1,139 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D1194C6F;
-	Mon, 18 Nov 2024 10:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF942B2F2
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 10:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924726; cv=none; b=l996AAettv+sInuG74O1YzEdV6Zxg0C8QiAq5ZSYRfr5xdSHrdqgppHr9206QxNhIddSJWFNdQjXioWG9e3c2HatLnHofuZRedNwDGxOPZOSXwLrAAr3uHCgicF9zWor+SLiCfJQo9ogHGfi3he6IWLmOTlhp+f7OTcxonwxwdQ=
+	t=1731927345; cv=none; b=ACG5cWNOHAKeBWzEEbDTXkUWon8IgBuOOlyiIeyGLgsBF7Z6YKRwQdKwbmHcabPOFoA7sELsaBVrxGY2XaDOs7GgF3xchRpI5zfs0mD7LqvBrW51tM/FZjabH9Jo4xI/sgqb2xH94hg5tNOhAHWpw070QZHtrgub/MPaVidP9z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924726; c=relaxed/simple;
-	bh=tvZh19UrT7RhLG31esa3Q+Wb623PF1oP3Z3DIP8DHuU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Uz3MbpbmJEaAhydc+G2BMwcWoJPsA0wzuK9ubAjF8lWF7yeHb+LGwoRa+wCQVGSBstKKZBVlOFzzMid/LhMrnz8eGzZSyD52dhCjDYISr+opi+sROcJwPV6XP31EljgXmaJdYGtyrbg6TLtUtrKXNjr7pS81ZY2OpwhTApJMSHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbZhR4WY; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1731927345; c=relaxed/simple;
+	bh=ZcFDjxCikiIDehFzhPFoKi4SBUA/t82ryu7kG31flDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ma83/mYei6n0qTIQlV6SH27KzyT1JpjBeUYaFrx3Ifb7clkfY+nEUeTIGh2o6Xu3bTJCQ2UTrNZh/kRWVrHDLIN7PZXVWBzW/xrj3FXWwyf1p7vnQHJUTknxXpxzvuc+23y1vS9fKHU+9IzyH4oApRCRoCcaGiOSynQNJGvUHdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GcDkNeqT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbZhR4WY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731924726; x=1763460726;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=tvZh19UrT7RhLG31esa3Q+Wb623PF1oP3Z3DIP8DHuU=;
-  b=FbZhR4WYmb6BRRIbUciN7k3vn5BVeUVu5jIKVFyAhtt39SYujaptTVGl
-   cJXEuKJE2n4x3BkzVsmAby3w1e3DzKPqn3Cf9Rjl5bHS8mNWkzolPk8lf
-   arULmNOIChx8gO1hx744ziuZiyK6o/SfABU+FnOA1YGbITAgGTjnTFmdT
-   TXKvLv7knRvFdJXag4tHxtFLQ0YwgTnWcDnG5Y5fbGbWCZxBZe/5pNCR9
-   /Y2VSwNbjCt/4tYlL4zIzIihMu0NA40bje0HJVM9pH2/xFYEgJPZQG2oF
-   m0zsgqCS+j2aSOuoLks6zKeES+anChyCvvSGvzuFNiAnZ2tmXSy/M9G6z
-   Q==;
-X-CSE-ConnectionGUID: r9oZE2MdTEmlIez4SUoi8w==
-X-CSE-MsgGUID: j85yFea8TqKFeyQWpMvq2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="31723849"
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="31723849"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:12:05 -0800
-X-CSE-ConnectionGUID: YDbs2x0ITtmplL0jZe8pGw==
-X-CSE-MsgGUID: U7Vin29dRNK1mgt6lMVUiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="89100237"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.148])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:11:40 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Karol
- Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo
- Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo
- Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat
- <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin
- <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, Martyn Welch
- <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
- Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang
- <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Clark
- <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
- Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy
- Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan
- <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
- <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko
- Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?=
- Canal
- <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
- <kernel-list@raspberrypi.com>, Gurchetan Singh
- <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
- <zack.rusin@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>
-Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5/5] drm/connector: make mode_valid accept const struct
- drm_display_mode
-In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-5-b1b523156f71@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-5-b1b523156f71@linaro.org>
-Date: Mon, 18 Nov 2024 12:11:37 +0200
-Message-ID: <87jzd04zs6.fsf@intel.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GcDkNeqT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731927342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AnKB6OxF/nzSNsYCRUDY/ZZFnQ2D348/yl+VsYaNxvk=;
+	b=GcDkNeqT5VKack3IPySGyQPuLpKb4y9onkzNyDBQUQ9ryFevPCiHUF1rBrC/crGJOpGE0O
+	6Kq3KMcxeJBXina+VhhjG4RcUrNxuFQ7+Zha+us3KQZ1wOyurwPqkpQCwLIh8HeAJ3WM2q
+	z5CLsCtxCcHyovsxgjXGViIFQmuYgHI=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-SLlSSt0qOayc1ar5pwR7lQ-1; Mon, 18 Nov 2024 05:55:40 -0500
+X-MC-Unique: SLlSSt0qOayc1ar5pwR7lQ-1
+X-Mimecast-MFC-AGG-ID: SLlSSt0qOayc1ar5pwR7lQ
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9a157d028aso139650866b.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 02:55:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731927339; x=1732532139;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnKB6OxF/nzSNsYCRUDY/ZZFnQ2D348/yl+VsYaNxvk=;
+        b=ITe6esIhUFh3AUMf/FPDu7lBRMqqiGaVupSvDRA5JILyzdIo3DDp9hF8o/K2JwYJUH
+         dg3aMcsOEfgZ9MnHTwPiG9uG3Pl1Z6iDSE5lK0u9freSUN8gnul9SwxVNV3eKU0ytNdY
+         oBRDKcZyjSS8okSYy+WfLIBQPDsCrsMfa6zV5eKsJY7CH9qWs7cGkLk///h2KjoVsQ8o
+         Hhn9Rd3QjMWboeXXgdctZ4W0ZikMBDQha8kaOnc4i5VElIWEf73KMF1Il6dMgU4hFTNc
+         PUavlr/kjg2mSwX9D9IyseKg5oMl7/U/K4ZZpl2eHhdp73iv57+kHzzRgrSp8hjYYKYU
+         qIlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMoiU9l2XUWclxcTEOfnVlz52xjC1x5lX2y4YDy6uFYbBcNXMxInfCVT8r4Ga2u1WPynkLHu3YV+oVFqnkBCeM8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqYcD3BZZz05ryBLq5fooR76qs623y1sebh1zFEQuSCeTgLAyH
+	R5FcfaI0cWrVaCO1Qb5Rw4c+KvWlwSjKo3ZjHF8n6mk1i3WmHP+9yUds7v0hDqbvw1HRomfyUXf
+	KlhuyfU9TrHE71mjYUskrJYTKatszaxH7B/tptTvbpiXgnKHmAD3ZL34sgqJTH11CeCLj
+X-Received: by 2002:a17:907:d24:b0:a87:31c:c6c4 with SMTP id a640c23a62f3a-aa483420c9dmr1098523066b.24.1731927339056;
+        Mon, 18 Nov 2024 02:55:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE2vTdiBnn4PitIg3NGPzUBSRlMyCFj1MIDShUo/ICNJU5eRSVBn7pak/o015A12IJGuEwz+g==
+X-Received: by 2002:a17:907:d24:b0:a87:31c:c6c4 with SMTP id a640c23a62f3a-aa483420c9dmr1098518766b.24.1731927338635;
+        Mon, 18 Nov 2024 02:55:38 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd721sm536956766b.107.2024.11.18.02.55.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 02:55:38 -0800 (PST)
+Message-ID: <322acf33-4569-4e57-a4b5-af60cb0091b7@redhat.com>
+Date: Mon, 18 Nov 2024 11:55:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] power: supply: max17042: make interrupt shared
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org
+References: <20241118-b4-max17042-v3-0-9bcaeda42a06@gmail.com>
+ <20241118-b4-max17042-v3-1-9bcaeda42a06@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241118-b4-max17042-v3-1-9bcaeda42a06@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-> accept const struct drm_display_mode argument. Change the mode_valid
-> callback of drm_connector to also accept const argument.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi Dzmitry,
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+On 18-Nov-24 11:09 AM, Dzmitry Sankouski wrote:
+> Fuelgauge blocks often are incorporated in bigger chip,
+> which may use only 1 line for interrupts. Make interrupt
+> shared.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
--- 
-Jani Nikula, Intel
+
+> ---
+>  drivers/power/supply/max17042_battery.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+> index 496c3e1f2ee6..99bf6915aa23 100644
+> --- a/drivers/power/supply/max17042_battery.c
+> +++ b/drivers/power/supply/max17042_battery.c
+> @@ -1103,14 +1103,7 @@ static int max17042_probe(struct i2c_client *client)
+>  	}
+>  
+>  	if (client->irq) {
+> -		unsigned int flags = IRQF_ONESHOT;
+> -
+> -		/*
+> -		 * On ACPI systems the IRQ may be handled by ACPI-event code,
+> -		 * so we need to share (if the ACPI code is willing to share).
+> -		 */
+> -		if (acpi_id)
+> -			flags |= IRQF_SHARED | IRQF_PROBE_SHARED;
+> +		unsigned int flags = IRQF_ONESHOT | IRQF_SHARED | IRQF_PROBE_SHARED;
+>  
+>  		ret = devm_request_threaded_irq(&client->dev, client->irq,
+>  						NULL,
+> 
+
