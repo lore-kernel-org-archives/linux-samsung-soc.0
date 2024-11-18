@@ -1,153 +1,160 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FEC53370
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 02:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267D188A0D;
+	Mon, 18 Nov 2024 09:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731895826; cv=none; b=gMDNF2stzLlrSl+YycdfeuN8pG1qDrQbEaF5reFNuI/8n5vAJBMfIV51T3ge0YyXKiQ7stKDR5QmZwc47wz78QFuSp3FIohXXmoekrI1EZUI036g3RD8DCxa49rgv0s6Kp5z2V/QPcftV4C6BHUqMNmumnt8vBDrqFdll9VRrqw=
+	t=1731921992; cv=none; b=stbM27wlpF5WH31R93KNKKVVanEMJClQM3FoCh6Uz7MgNjsoxw1RsLrSTHO9QreT+9vnEbkNWYREtspbbt4+ExOaqJ2gamxv1ZsN0tl5a3CF0c/Wj7YlNBYBx6kpA33oDvfC2QqHGMF8Vixg5hhXL976MarBWiLHbsq9lcf9nqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731895826; c=relaxed/simple;
-	bh=2+nwIlSYQpG0rH92v0TPYYdisZdIhViNljLwg0Z/2eA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ZaLkoHvOft75eG4WdfDFCO8VFggEPvNyqVYcTY3nybyIEt4yIk5W5xZursj0/yXHgLUY8MqDmzbebWQ2iSYY8BMCLOQ3DU7htDsCYJYl/xvP8BLux56jfuAeeAUOhFdwEFZeB3C94QPWB9tOwkdJYRxDviC7F5kl8scQnoBbQJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hGDnlNRQ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1731921992; c=relaxed/simple;
+	bh=7y8SBkGv/+YxRzHcRFNsbkKg4SWkg6W8LTweSUKKcPY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IXGl6xclJ0y47wXHScZdqBoiB5iwRMS/XqJPeLhMfTSGmUmUoRgAyoZDWcnHfuR8OoW4FM0n/JWgCWt5yvOlbNo+SjZWRo/Mzs9aJKBWpq1deC0F/+U31K4/9Z27LZ+mUVmur7FQyTGrlWkVc4WPmC5fPMSgPxj03EPFCEzOsDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q6LqlZAK; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hGDnlNRQ"
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241118021013epoutp02ba68f4d4601d1dd126f3e994a3a7650f~I7hEJpvRb0574705747epoutp02i
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Nov 2024 02:10:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241118021013epoutp02ba68f4d4601d1dd126f3e994a3a7650f~I7hEJpvRb0574705747epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731895813;
-	bh=mINgoMpMMdlYTYCpgiwdm0Dg+SMqFB6I05t2LeYQtTo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hGDnlNRQMqH2LGh2L0KSXEW7xtNw6mHapBpCYMII42Op8YC1lekPtwGud8jGoJE83
-	 Ry43GvVcrXObkbrpYUoqd3Hm7H/LkGnYyFag5V7Kx/0yBRc0SU2fkqoRlSUdGIlpa+
-	 oTVS1+rcKIr2NUK1BlRnj91PjE2c98X/vsjzUCO8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241118021012epcas2p18989fe00936ba6e6b57931ed4eda4d5e~I7hDcGuyh2660526605epcas2p1N;
-	Mon, 18 Nov 2024 02:10:12 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.97]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XsB0g72gMz4x9QC; Mon, 18 Nov
-	2024 02:10:11 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D0.85.08559.302AA376; Mon, 18 Nov 2024 11:10:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65~I7hCIlWaS0163701637epcas2p31;
-	Mon, 18 Nov 2024 02:10:11 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241118021011epsmtrp255bbed424660a744d2323bf7c2d215b0~I7hCHjDCj2522625226epsmtrp2U;
-	Mon, 18 Nov 2024 02:10:11 +0000 (GMT)
-X-AuditID: b6c32a43-761ff7000000216f-1e-673aa2032ef7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	68.6C.18937.302AA376; Mon, 18 Nov 2024 11:10:11 +0900 (KST)
-Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241118021011epsmtip13ab02fa5782ed0ed6ef761f555abed7e~I7hB6jKJj3234932349epsmtip1X;
-	Mon, 18 Nov 2024 02:10:11 +0000 (GMT)
-From: Sowon Na <sowon.na@samsung.com>
-To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
-	alim.akhtar@samsung.com, kishon@kernel.org
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	sowon.na@samsung.com
-Subject: [PATCH v3 3/3] arm64: dts: exynosautov920: add ufs phy for
- ExynosAutov920 SoC
-Date: Mon, 18 Nov 2024 11:10:06 +0900
-Message-ID: <20241118021009.2858849-4-sowon.na@samsung.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241118021009.2858849-1-sowon.na@samsung.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q6LqlZAK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731921991; x=1763457991;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=7y8SBkGv/+YxRzHcRFNsbkKg4SWkg6W8LTweSUKKcPY=;
+  b=Q6LqlZAK3GrpWoAyb1IuFLpkjP83NebArx2N1iDVYp2lKRDkvvNBFNec
+   LRMf0p0u9iyaC/4PrVWi9UoqbfNwxCUv33IWtUZK3LQ6UbxqoSfdvLDnT
+   qq+qR/kL7L2Wtjsd2epxmjYJbpCOyTWDoPSJvsBQ1Dvg4BEkFLcXg0iVx
+   Q25lhrSflWPkH/1OoUvvRb1q93sqyzGe86kFOgtrWGCOQwuqUk6h21hkP
+   ZwXJybv7VqI70oAsqlmAwRytvEfTNhe2/FXR8SFq5XdBXNrtRv3QUHMWz
+   r9A9D/lQusn74rbkA4IbdCp+gmv8Us2GrE9y3mQ7ciUTwpgc0z0WPxTtM
+   g==;
+X-CSE-ConnectionGUID: lgSwWsVwQYuoAxGz7Il1eQ==
+X-CSE-MsgGUID: HDz0vglCRE6A5LBSfwxL3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="31794392"
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="31794392"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:26:30 -0800
+X-CSE-ConnectionGUID: MgkHwhaoTQqCebQt/Ozq/g==
+X-CSE-MsgGUID: HhCNlcMdTpy5FLhWGx+s5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="89572008"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.148])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:26:07 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Karol
+ Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo
+ Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo
+ Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin
+ <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, Martyn Welch
+ <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
+ Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang
+ <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Clark
+ <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
+ Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy
+ Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan
+ <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
+ <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko
+ Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?=
+ Canal
+ <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
+ <kernel-list@raspberrypi.com>, Gurchetan Singh
+ <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
+ <zack.rusin@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
+ struct drm_display_mode
+In-Reply-To: <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
+ <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
+ <20241117205426.GE12409@pendragon.ideasonboard.com>
+ <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
+ <20241117233250.GK12409@pendragon.ideasonboard.com>
+ <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
+Date: Mon, 18 Nov 2024 11:26:03 +0200
+Message-ID: <87plms51w4.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmqS7zIqt0g2fHjC0ezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
-	ZPPo27KK0ePzJrkA5qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRb
-	JRefAF23zBygg5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BeYFesWJucWleel6
-	eaklVoYGBkamQIUJ2RmPl59gLHjLUfFhxRGWBsZl7F2MnBwSAiYSnY1nmEFsIYEdjBLLz7J2
-	MXIB2Z8YJW7PP8oO55ya/JoFpmPz1YlsEImdjBKzTn5khWj/xSixemJKFyMHB5uAqsS1hioQ
-	U0SgUmLuMmeQcmaBXkaJ/jtrweYIC0RIPG9dA3YFC1D5qZ1/GEHqeQWsJfbNj4NYJS9xcc1z
-	NhCbU8BGYvbmVWDlvAKCEidnPgEbwwxU07x1NjPIfAmBr+wSd8/8ZIZodpF4sPkTI4QtLPHq
-	+Baoj6UkPr/bywZh50usf3gXyq6QuHvoP9SP9hKLzvxkB7mHWUBTYv0ufRBTQkBZ4sgtqLV8
-	Eh2H/7JDhHklOtqEIBqVJDrOz2GCsCUkVr2YDDXcQ+Ls1fMskEDrZ5Q42NvMOoFRYRaSb2Yh
-	+WYWwuIFjMyrGMVSC4pz01OTjQoM4bGbnJ+7iRGcOLWcdzBemf9P7xAjEwfjIUYJDmYlEd5L
-	rubpQrwpiZVVqUX58UWlOanFhxhNgUE9kVlKNDkfmLrzSuINTSwNTMzMDM2NTA3MlcR577XO
-	TRESSE8sSc1OTS1ILYLpY+LglGpgSu4PC/TQUzNTepVlscN/63rha01FVUVlYicZ3hXclt+c
-	xZfKaLfxt2GHgYladZ2p1uHZb6YwLot4evfF0VsRLErcTxj+zv3oG6P+w2vOMqmzXG3xarvu
-	ssVe2By2WfqVi6RN3d0Ve9OVuEtZFwWGGWzd9beQpVp//q3Knf8f1JrvD9jW9/PW+r/KGy8+
-	E5CrMqqU+3sh7n98R/vxfZcuec2N3jil+MLn2HPzl/1P3/878ee2zqcCL+9+4vv6aZtK8Np/
-	PFICFrZ6CzK6XA8/n5Z6QDAhJbdryg032cDvas3zqzbNtNgUKcRolfT4agfPd2tNhj/P9U8X
-	dH36myQY/eCPvdGjkPkGP2XWmej+VGIpzkg01GIuKk4EAAd+EEglBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSnC7zIqt0g3MLpCwezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
-	ZPPo27KK0ePzJrkA5igum5TUnMyy1CJ9uwSujMfLTzAWvOWo+LDiCEsD4zL2LkZODgkBE4nN
-	VyeydTFycQgJbGeUuH7/GBNEQkLi25s9ULawxP2WI6wgtpDAD0aJFWdkuxg5ONgEVCWuNVSB
-	9IoINDJKPP8wmRnEYRaYyChxft4RsA3CAmESbbsfsYHYLEANp3b+YQRp5hWwltg3Pw5ivrzE
-	xTXPwUo4BWwkZm9exQ5SIgRU0nkgHCTMKyAocXLmExYQmxmovHnrbOYJjAKzkKRmIUktYGRa
-	xSiaWlCcm56bXGCoV5yYW1yal66XnJ+7iREc3lpBOxiXrf+rd4iRiYPxEKMEB7OSCO8lV/N0
-	Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzKOZ0pQgLpiSWp2ampBalFMFkmDk6pBqbKrqP5l5by
-	Z74sfH2tODf70FPuzKOzA4XdVuxZu2/+ajOR+jrB63lT3LKsToVGhFwqKj+e4pPke+rpKpMc
-	k3qVVa6np/R4bHSO081b3iBi9HNJbJm7t+3kiw/XZgvJ3r5lf7BZ/OquZ3fOrQu85Ldi+kpR
-	mam5/eyOO/eeur7bduEZreA16172K1rZhxzgF7aybld4rTKLQdY20a1pl3z4VrPm+IOa2kvL
-	VzZnLvwyyTpnv/SiL7b3hTkrJk58fGSjmG3aVldha82jm09WSJ9i6dQo3XI8x3dqzgSZHkf9
-	7NDrx3dV5K5Q+9L1XCD7oGF7/u1lNfsYtfMVgpqlXO4d2/pvj0VYmtw3pzPv5JRYijMSDbWY
-	i4oTATaxYkXeAgAA
-X-CMS-MailID: 20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65
-References: <20241118021009.2858849-1-sowon.na@samsung.com>
-	<CGME20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65@epcas2p3.samsung.com>
+Content-Type: text/plain
 
-Add UFS Phy for ExynosAutov920
+On Mon, 18 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> On Mon, 18 Nov 2024 at 01:33, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>>
+>> On Mon, Nov 18, 2024 at 01:22:12AM +0200, Dmitry Baryshkov wrote:
+>> > On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart wrote:
+>> > > On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
+>> > > > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
+>> > > > accept const struct drm_display_mode argument. Change the mode_valid
+>> > > > callback of drm_encoder_slave to also accept const argument.
+>> > > >
+>> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> > >
+>> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>> > >
+>> > > On a side note, there's only two I2C slave encoder drivers left... I
+>> > > wonder if we could so something about them. The ch7006 and sil164
+>> > > drivers seem to be used by nouveau only, could they be moved to
+>> > > drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
+>> > > implementation there too, and leave it to die (or get taken out of limbo
+>> > > and fixed) with dispnv04.
+>> >
+>> > Or it might be better to switch to drm_bridge. Currently we also have
+>> > sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
+>> > any common code to share or not. If there is some, it might be nice to
+>> > use common framework.
+>>
+>> That would require porting nouveau and i915 to drm_bridge. As much as
+>> I'd love to see that happening, I won't hold my breath.
+>
+> Me neither. Probably moving those two and drm_encoder_slave to nouveau
+> is really the best course for now.
 
-Like ExynosAutov9, this also uses fixed-rate clock nodes until clock driver
-has been supported. The clock nodes are initialized on bootloader stage
-thus we don't need to control them so far.
+Granted, the dvo part of i915 is ugly, but it's also only relevant for
+the oldest hardware i915 supports. Like 20 years old. Not sure there's
+much return on investment in big refactoring, more risk that it breaks
+without nobody noticing. Just let it be in i915?
 
-Signed-off-by: Sowon Na <sowon.na@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+BR,
+Jani.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c759134c909e..505ba04722de 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -361,6 +361,17 @@ pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
- 		};
-+
-+		ufs_0_phy: phy@16e04000 {
-+			compatible = "samsung,exynosautov920-ufs-phy";
-+			reg = <0x16e04000 0x4000>;
-+			reg-names = "phy-pma";
-+			clocks = <&xtcxo>;
-+			clock-names = "ref_clk";
-+			samsung,pmu-syscon = <&pmu_system_controller>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	timer {
+
+
 -- 
-2.45.2
-
+Jani Nikula, Intel
