@@ -1,158 +1,140 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D3518FDD8;
-	Mon, 18 Nov 2024 09:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB881188A0D;
+	Mon, 18 Nov 2024 10:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731923058; cv=none; b=S8VLu7XcIOu3WtkHEnPisRpfx0dhNR2b9a0N0PKUKqHVnsFyzv8T+wWzFSdqhPlcGtnTbD0UUIWgoNCRWv90Nwz5ltDzh6lW6WyTg/7m636n+yyv5lDS7/yOf6da3QFq+cm0pdMbGm51V7G/t5ZJhDst80K9RCJBo9b4elkbJgQ=
+	t=1731924603; cv=none; b=dbbml7qqsVns0vHdTwsYMEVbNrEHdBcUPayLQWE+lGdb1nsEPA5KYuFvU6jSykZBIx/XKDG/UXHTyYR9YM3KlMqDY9kIs97xKM3RZwGvhje05pW7gEOgMgfJ59ZK/eZC0z0hBqPWNOtzozdabG8bCvYf9Zvm8DElvY3QSEUAOz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731923058; c=relaxed/simple;
-	bh=xkGDIVTsjYl2daXkQELzdBVqI1NqFFTGHwZ9oH4jtg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kt6EBlejTwLl19wCdDYl4ThmwhLILheDPospJg4RSp41cC2tVdDXoH+p0+xCRCAhCLZ3k9XCifoU8bIItveyzlrHCwq8LgG5jXJdP+tjjj/Mhbh/7zlxvsMEse1pPLLK2+xi/aaH19PxkIlGkiTox6JtEHaQQoaRwe6b9Neu/6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CVkichzM; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1731924603; c=relaxed/simple;
+	bh=OL7qRLSxG0s/rBjQDcTGXS3wtyvq3ca7DYri+vMk6u4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rRIHpAqAhqK36lCLkPxFQ4o1LWeQeEEEHcVBegiJX32ickI/TbwTgT1QCOCm/MOX2301oSt3rPzWbaVmRZIUXOyR5w51ecfFopM7hz4sisCVmJOizh+vxkz+xcdDBK4b0FbW6U9Et8iO7Ftkm26D0mqdHDz+yGjzO6PzzUKS5TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LLR5iVoR; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CVkichzM"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A5D385B3;
-	Mon, 18 Nov 2024 10:43:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731923031;
-	bh=xkGDIVTsjYl2daXkQELzdBVqI1NqFFTGHwZ9oH4jtg8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CVkichzMiV3e0BGfVJwqOmN7JW9UFAdFwYknwJi9NFaABsS3vVTKVteKogEj7B2Uy
-	 bR5k0lZfhuetEpIa/WAnnHYEGgmjcIm+jmVePtfT5OURVmlbegALQOou8quBwgZCgj
-	 9q65vqEOFKvCU5olGrCy7664A1rYY3kWESwRkeu8=
-Date: Mon, 18 Nov 2024 11:43:58 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
- struct drm_display_mode
-Message-ID: <20241118094358.GK31681@pendragon.ideasonboard.com>
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
- <20241117205426.GE12409@pendragon.ideasonboard.com>
- <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
- <20241117233250.GK12409@pendragon.ideasonboard.com>
- <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
- <87plms51w4.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLR5iVoR"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9e44654ae3so483200166b.1;
+        Mon, 18 Nov 2024 02:10:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731924600; x=1732529400; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TAawXV2Pa4jygEr1LKjVR7SSwvft3mACK3InAoqSWHI=;
+        b=LLR5iVoR67yScY5gfqC7Tnt2XqJ8SNLTSS/+PKQszj2LcdchN1JuAlBbSqoj6eeX4X
+         JVP9HgRvF+S8+B+4BYyywR+bbK+MtY2+Ht8X0CjMvBTI3kd8d0sOdc+MbJf45O8Fdly2
+         7spFtmVcQc46uZPbXv0T7bw4/udxUZ5ToFmR7wlXdG9dEe8ch2SXXOUGLo1L7g8sQaYY
+         WZixerFtlPoa9rVovTFIgz4vaLVJ1eMv5uxqJIitQejQSK/gQkn5zEQXrthXDH/1/a0h
+         J+lJpfXbh33Th0y2xfSXxxDKoCtE9VqZ1HA5erNwh5Sa1Mi6kPWYjN/kagM8aV7Q9dxV
+         ieCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731924600; x=1732529400;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TAawXV2Pa4jygEr1LKjVR7SSwvft3mACK3InAoqSWHI=;
+        b=Kx3vo2lYAMV6OUO4vqZjnXNTfrYiDHLVk6sxux2DJhLkLLwM2ipRnVlOL5tghpbQGn
+         Xjqx21lX6LFEruGgj1YCqY4Sx/Z5v8eNu5HaiTf9whEr//IXIrRv9JZn7VSOibj35Umk
+         h/hpB6DHwEKA2o1fYNqqGaM6qx2DhLqdJbUttEo3tCAyJ5rjWX7diZ7T+RjO8wQur5lB
+         5E1odCg1zV/WpeZ/j05mvlUMWo43W623nNfEXG7bLd6urmU6lnkgc78goKydVqEkzdiw
+         nqKCvqV4kzsgoYikrLi/uYaqMZHIJzfzuSyqVi8A5J61aHcJyZB42FTPq4s7xTT8Kbv8
+         RTZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF/3JAfoUd1X6x8Wk2aEHJe42NCnMWSc2jgDJBCb9vKmlZ9raYVSFRlL/o83ehgjCNVMcUiBAOjyIM@vger.kernel.org, AJvYcCUsXrK2imjUtHFfcl7wLyeEFGulWTLoSsBh5PkQ+x8b6vWTYZ6WPGP7ZbC0VkvAVoDRMH2lRXmU7L7s2nOy@vger.kernel.org, AJvYcCUu1Rxlo8EuYA8c/VdmkQnDn7HsmtC2+4ttQzd3qEzHISlaCpK5x2msXE2X00RKCzomFposxTPsBQ78axcOeYYFhLs=@vger.kernel.org, AJvYcCWlZURFKwL/3qjDKAaBHDJf6i6YtKepZq/kNaE7qbhPR7rQ/m86kZ9Xihg4siRMvhpez1iS1s6ONX7mASp1wg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Tmv5UIVv4uwQv9cbG3TFWAdGpQXRlYp93plmWRRm9N2NMx2r
+	gMz94xfvdAcisxXQI0WPvEUJZHwtShiA9WNLcmI9+7SzPGQzH1DrHW7zrQ==
+X-Google-Smtp-Source: AGHT+IEV887fK4x/zoQ5oGZPDlKSshxiegqGbDkMZtPnNY8t6w/dixHiVJbN2cH6q6ldqdSmIyhyEw==
+X-Received: by 2002:a17:906:dc8f:b0:a9a:3e33:8d9e with SMTP id a640c23a62f3a-aa48344ea5dmr1000913666b.28.1731924599829;
+        Mon, 18 Nov 2024 02:09:59 -0800 (PST)
+Received: from [127.0.1.1] ([46.53.242.72])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa20e046932sm518546366b.170.2024.11.18.02.09.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 02:09:59 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v3 0/2] power: supply: max17042: cleanup and more features
+Date: Mon, 18 Nov 2024 13:09:52 +0300
+Message-Id: <20241118-b4-max17042-v3-0-9bcaeda42a06@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87plms51w4.fsf@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHESO2cC/1WOywqDMBBFf0Vm3ZRJjEa76n+ULhI70UB9kJRgE
+ f+9USjo8lw4h7tAIO8owC1bwFN0wY1DgvySQdPpoSXmXolBoJCcY8WMZL2euUIpWJ1jaRtVaKs
+ JkjF5sm7ea49n4s6Fz+i/ezzybf136lMncoasJmFQUSFJlfe21+59bcYetk4UR/f8IYrkWiwqq
+ zQvjTZHd13XH+7E4pfiAAAA
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731924598; l=1807;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=OL7qRLSxG0s/rBjQDcTGXS3wtyvq3ca7DYri+vMk6u4=;
+ b=7jEvmdQJh8PUUcsHhePFwT0jY9Q7oH7hRJfOSJ5ZhmxOfSk4LVTGVseM/tab168KyDJjGuEed
+ k65kLp7lcysAceAGTYo5Hq9iJlKoLIzaeBx9AQ5SHr4LoG3fom71zkS
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-On Mon, Nov 18, 2024 at 11:26:03AM +0200, Jani Nikula wrote:
-> On Mon, 18 Nov 2024, Dmitry Baryshkov wrote:
-> > On Mon, 18 Nov 2024 at 01:33, Laurent Pinchart wrote:
-> >> On Mon, Nov 18, 2024 at 01:22:12AM +0200, Dmitry Baryshkov wrote:
-> >> > On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart wrote:
-> >> > > On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
-> >> > > > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-> >> > > > accept const struct drm_display_mode argument. Change the mode_valid
-> >> > > > callback of drm_encoder_slave to also accept const argument.
-> >> > > >
-> >> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> > >
-> >> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >> > >
-> >> > > On a side note, there's only two I2C slave encoder drivers left... I
-> >> > > wonder if we could so something about them. The ch7006 and sil164
-> >> > > drivers seem to be used by nouveau only, could they be moved to
-> >> > > drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
-> >> > > implementation there too, and leave it to die (or get taken out of limbo
-> >> > > and fixed) with dispnv04.
-> >> >
-> >> > Or it might be better to switch to drm_bridge. Currently we also have
-> >> > sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
-> >> > any common code to share or not. If there is some, it might be nice to
-> >> > use common framework.
-> >>
-> >> That would require porting nouveau and i915 to drm_bridge. As much as
-> >> I'd love to see that happening, I won't hold my breath.
-> >
-> > Me neither. Probably moving those two and drm_encoder_slave to nouveau
-> > is really the best course for now.
-> 
-> Granted, the dvo part of i915 is ugly, but it's also only relevant for
-> the oldest hardware i915 supports. Like 20 years old. Not sure there's
-> much return on investment in big refactoring, more risk that it breaks
-> without nobody noticing. Just let it be in i915?
+Fuelgauge blocks often are incorporated in bigger chip,
+which may use only 1 line for interrupts. Shared-irq
+handles that case by requesting irq as shared.
 
-That's my opinion too. The gain is not worth the risk.
+Maxim PMICs may include fuel gauge with additional features, which is
+out of single Linux power supply driver scope.
 
+For example, in max77705 PMIC fuelgauge has additional registers,
+like IIN_REG, VSYS_REG, ISYS_REG. Those needed to measure PMIC input
+current, system voltage and current respectively. Those measurements
+cannot be bound to any of fuelgauge properties.
+
+The solution here add and option to use max17042 driver as a MFD
+sub device, thus allowing any additional functionality be implemented as
+another sub device. This will help to reduce code duplication in MFD
+fuel gauge drivers.
+
+Make max17042 interrupt shared, and add platform driver
+version.
+
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v3:
+- pass dev pointer to probe
+- Link to v2: https://lore.kernel.org/r/20241108-b4-max17042-v2-0-f058f7a16bab@gmail.com
+
+Changes in v2:
+- drop NACKed commits
+- make shared interrupts unconditionally
+- rework descriptions
+- add platform driver version
+- Link to v1: https://lore.kernel.org/r/20241109-b4-max17042-v1-0-9e2b07e54e76@gmail.com
+
+---
+Dzmitry Sankouski (2):
+      power: supply: max17042: make interrupt shared
+      power: supply: max17042: add platform driver variant
+
+ drivers/power/supply/max17042_battery.c | 123 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 91 insertions(+), 32 deletions(-)
+---
+base-commit: ae58226b89ac0cffa05ba7357733776542e40216
+change-id: 20241108-b4-max17042-9306fc75afae
+
+Best regards,
 -- 
-Regards,
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-Laurent Pinchart
