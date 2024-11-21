@@ -1,221 +1,187 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964FE55C29;
-	Thu, 21 Nov 2024 03:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732158435; cv=fail; b=nO0tWKJ+RkcekWjcBzxO6B4tyQ+nJ7XA8/TzfX7RIen6BPU3cEYtlLwxUVpuGUAOVSdc7DQQoNQpQlEilrCDBHdgBQJMq08S0d1ZxyMnTVtSssSHsJG5b/tYEGIfIuaBZtuy5cn73JW6GnPrJ9Bc+hKmF6Et8h/jbPRi4dDLojc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732158435; c=relaxed/simple;
-	bh=UajOXdyVGflaVmjcD3t5RYaYxS0mzbZIf91W8re6/fU=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=Gg10lLhpG6d38rwR8DkMEjW1891hMo6gVhyxcG1B/9tzFFwwkG3mImhyJCSIWbXCpxm0KHeeeWiMz0HKQd3QRUkH4OVo7GdpMUTazO1AFudRg4wpukVNvavVLnx3dfLUDdgQhQ3lFIKNC37IKR6AF2y/b2DdjePDLJ13OlQi5w4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OdXdjF/T; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=A5+xiH/v; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A371D7E5B
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Nov 2024 12:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732192499; cv=none; b=eipoP7nlv3yNq5i2+sCaxMOFwIhfZ+cipebJ4iosblg5+oSr6Ky1xFajRaolbcmRPjcK1WmOLg8/3SQvEJnHGBMJE9O5gL1ezrtRGEZ1xJNOPy5nB9RQLlupojDkHhOsCosF0Xecy++pfPhPDFMjU3TwkyKBxOTvMYzKdKUk12U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732192499; c=relaxed/simple;
+	bh=LOF0ZGMzohFWkxs3N4CWYuk4rQoAdNGRuRsjFSQbJJI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PC366P4+EkZzZHYJUyHlziVMkU106yAIGGjLXzy1ByWiOw62bZIDf+y9gGBgazpFLE9zl1vY0tmn5gjnq2evvISjT0KTVDSSmWCCMTFVak38nhv6dky+sEHdgRagX55dvlD0e9Neslv0GLXep9UYJOUSVLCZfcigiyQxQTCmtOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kaSRsxYB; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OdXdjF/T";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="A5+xiH/v"
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL1fjYL009390;
-	Thu, 21 Nov 2024 03:06:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=kEZtrT4LRQlb4x2Hx/
-	A+JjBqzGwmMQYlWpR1GGC52OU=; b=OdXdjF/TG9UgifVL1XNCElH9urzKYPt6pF
-	yZ9LtNnnhKAjJ/yydook0Dakp+Ch+IkC0qCzWq/T6N/i5L0XYDVqXoP3/MO8wcpe
-	9MLIPmueN3mOYFht+7nS/HhsJiyxyFqtZw/eaAIN4/f4fDK/9PavIwi+b13hK3x6
-	HdOrKQka8pynbIEQ/AYzf1D2mru+JHfaQF6VwV0v+9Yl74h3GmqKTD0hUVS8KOIk
-	7raacLSUKI5cUhCTPRnSSHSnkStnBVXMgwzIz1sqz2LRnV9B4KddtTFMELrBgOrB
-	KcysWd/eYiSCCgL0TRMReeN1c0ASqhK+ajOlza98AeJbdcqroQHg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xk0srs8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Nov 2024 03:06:36 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL0oJ8h023119;
-	Thu, 21 Nov 2024 03:06:36 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhubgrhk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Nov 2024 03:06:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DQaj0r2VWypPAUQ7w5U5VXye7Uv/34+cDmM/RZgQ8xCqantqngl3mpygKy1DhJdZkxZlfBJ/hV4oDiDdRK6268Enf6XKvN1dxnMVU9CN4MSE2oeI6QPvs08Gy7cQQig7WRCLkPE+nuSMpZ3QXIw0WB3yEjaeu30hvuWPfx2Sr2lb/t00dB1ARjccWpP9C9dWT5u//g/gDuruvnys8rOJxjIWvIxvhz34cvw0wx7zxOD+VVG8ZDNnmyneHEzcZrVHuTi3YpIaQbFoD7XFoPGIFNMkeo+LtfjDgdf9TZ364o3NQpasC7zEmpT0+3BUxNLQOxwqv2fgC6Sh14hZ6BC29g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kEZtrT4LRQlb4x2Hx/A+JjBqzGwmMQYlWpR1GGC52OU=;
- b=vSFIn4nQe27cMJ2a/C7c0UxddHdy1e513O0froeYIdx67rFBkBRDBPGvi59SNGyFIvkAhNMKxMbZFw+4PXQYA/CbBuAUS3uxqi69fAZw7yyAIgYV/s2xxlPpeHon5Y28tyS7u4KMgVa0UOh2Ms3IAyi294oVQur57mixHU2PG8E+v2ruIw2eh5U5YHDEl7pf8DwdAZEgsXq9jT6ByUibKMUmzyPS2ECAYdvRgJTlOIVDib34Zm0FUVfMRo04G3vLTQh3yFDpS1ebXBCdYvmKZaVZxpa/G4B8REjU/mO+eZWRuU0BQQVuQp650bP/2oIQPv0KViivm/1XqzJ0tS/jIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kaSRsxYB"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431481433bdso6984375e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Nov 2024 04:34:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kEZtrT4LRQlb4x2Hx/A+JjBqzGwmMQYlWpR1GGC52OU=;
- b=A5+xiH/v/+uuSV+3dGcuJCN5jMW3od7COD/JlT1fuqW058aUPEHyTIq5a2cRy8yGxuOs7I/W424Wsn3dg5rL36aSza87n75fnidiaw/nAqPfCACK2mOvwtqr9Lb9KOj3rNRmeSfygiM6t/Hn5uvLyXY2EjAlOp3AO9WaIzjGwvs=
-Received: from SN6PR10MB2957.namprd10.prod.outlook.com (2603:10b6:805:cb::19)
- by IA1PR10MB6268.namprd10.prod.outlook.com (2603:10b6:208:3a0::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Thu, 21 Nov
- 2024 03:06:33 +0000
-Received: from SN6PR10MB2957.namprd10.prod.outlook.com
- ([fe80::72ff:b8f4:e34b:18c]) by SN6PR10MB2957.namprd10.prod.outlook.com
- ([fe80::72ff:b8f4:e34b:18c%5]) with mapi id 15.20.8158.023; Thu, 21 Nov 2024
- 03:06:33 +0000
-To: Manivannan Sadhasivam via B4 Relay
- <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
- <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
- <martin.petersen@oracle.com>,
-        Mike Bi <mikebi@micron.com>, Bean Huo
- <beanhuo@micron.com>,
-        Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>,
-        Luca
- Porzio <lporzio@micron.com>,
-        Asutosh Das <quic_asutoshd@quicinc.com>,
-        Can Guo <quic_cang@quicinc.com>,
-        Pedro Sousa
- <pedrom.sousa@synopsys.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Wang <peter.wang@mediatek.com>,
-        Stanley Jhu
- <chu.stanley@gmail.com>,
-        Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang
- <zhang.lyra@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Santosh Y <santoshsy@gmail.com>, Namjae Jeon <linkinjeon@gmail.com>,
-        manivannan.sadhasivam@linaro.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 0/5] scsi: ufs: Bug fixes for ufs core and platform drivers
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20241111-ufs_bug_fix-v1-0-45ad8b62f02e@linaro.org> (Manivannan
-	Sadhasivam via's message of "Mon, 11 Nov 2024 23:18:29 +0530")
-Organization: Oracle Corporation
-Message-ID: <yq1h681p9p5.fsf@ca-mkp.ca.oracle.com>
-References: <20241111-ufs_bug_fix-v1-0-45ad8b62f02e@linaro.org>
-Date: Wed, 20 Nov 2024 22:06:31 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0440.namprd03.prod.outlook.com
- (2603:10b6:408:113::25) To SN6PR10MB2957.namprd10.prod.outlook.com
- (2603:10b6:805:cb::19)
+        d=linaro.org; s=google; t=1732192495; x=1732797295; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=N/i4tvHGx2FYMnx6MN0glfmLiCkgFZoABcJtB1Szxd8=;
+        b=kaSRsxYBJYKxGtNM3Qnf7pzbUeoRaoXXhXe35EvwZr63gzMFmUU5/2IZqVjX0belGM
+         HgpgYwhOD0aBd6KFtw/+TYMsgOy146Fll+0ZVPPJREv/QvZFYx/IdZow83aQ4hkCavV9
+         uvFfc1qIpI+QkP3pko2454jdHuPHbLHvuaG6gSGSfqaT5U0hCWwqAhViYI2iU/xQppIS
+         Y4VigVK9gtkh99km8Uw049I2M6cgPPjbCZKCEhFrotN/rvI7csek75ovA8ifVIdXuMtA
+         92wnAwgCFjDjEyLtMtPNuziHurQkkWSGOT2zaFplJbIWfNJnI5tlRXZHc92+gQOm2dff
+         rwJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732192495; x=1732797295;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N/i4tvHGx2FYMnx6MN0glfmLiCkgFZoABcJtB1Szxd8=;
+        b=iVBE3DCYKlSeR5czolFeUpaQOPdoYWbRLm5p+H0tICrU2lCdT2hwlSDUbMhCLG1vs/
+         zB9YHyTkrtE/opvmgQ8JNzPTsKQPon7JrwASSHsaiDmwI0WKkq58Te9kevwdMkQ0lMoy
+         0ShbbYMsP5H1OR5QLRpz3MrMAvENY53ZN7hykTFSXbZlWBu2/ZZZGs/eIu+JZr7UsYQp
+         mYwuGPxUJmfheP9e3XPIk+sEo8KaB6zBo2vecLf1uEaQQC6eixJOrenlMcrV0/l/uLmx
+         QRvkcYFAFk/tFq+XfNFXoEzLHeriCMqIgCm+1nZoduDxb1LRRZLtrW6UYa6+ep28BukD
+         Bg9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXAAfrANyGqhUBXdT1Ov9etr0OTDC/N3H/1rp1hjdraCpSftsiYbfw4hq7zWn6sJ54cOWXjO4sbjRmQAxumFv2IJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Rel4o1PYrdiB+r2658ChbKOZPIwKjIA+qUp5phB174rSeKs3
+	jl2N6U8sJQir2pnSh4hrVDb1rBOAQ9aeQkGtTBCG9Rz6lMTgt3+g7e75SfqxUNU=
+X-Google-Smtp-Source: AGHT+IFKlGke7cTqcSCgSUal86CNdFGn/WCgyq25tQWYbY4OKP14AHFYRZyz5c+vckzc0fE8jbFfiA==
+X-Received: by 2002:a05:600c:35d0:b0:431:5f1c:8359 with SMTP id 5b1f17b1804b1-433489d32acmr63605165e9.15.1732192495564;
+        Thu, 21 Nov 2024 04:34:55 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254905396sm4906626f8f.15.2024.11.21.04.34.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 04:34:55 -0800 (PST)
+Message-ID: <a40ac04beb4501ad95b50f79be3495315e38a880.camel@linaro.org>
+Subject: Re: DWC3 runtime suspend on cable disconnect while UDC is active
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, Peter
+ Griffin <peter.griffin@linaro.org>, "kernel-team@android.com"
+ <kernel-team@android.com>,  linux-samsung-soc@vger.kernel.org, Alim Akhtar
+ <alim.akhtar@samsung.com>
+Date: Thu, 21 Nov 2024 12:34:54 +0000
+In-Reply-To: <20240813230625.jgkatqstyhcmpezv@synopsys.com>
+References: <269e3ad7cbdb3b97fb8dc75cae4d487ce7f908c3.camel@linaro.org>
+	 <20240809231012.lmgqemcwjdfiaxak@synopsys.com>
+	 <cd87836fbd0a030d0b52902e04167fe044ce447d.camel@linaro.org>
+	 <20240813230625.jgkatqstyhcmpezv@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR10MB2957:EE_|IA1PR10MB6268:EE_
-X-MS-Office365-Filtering-Correlation-Id: c758e781-87ad-4c89-870c-08dd09d980b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9QIBizc8AfIoUFue+0MKVHmWAw4VdMv6C3LP5jiMa04kr09J17zseJphDs9z?=
- =?us-ascii?Q?q6cMgAI4g2YR972tm5eMS36JvdW5OXVqRQgWH9DXdaO8BhxIQd/QhyJB+P0w?=
- =?us-ascii?Q?3Qczha0ejHmvELHiSWDLDK2wi80w3JfW1OyXxXaaDlgnpv43tZXyNy4Vb7lA?=
- =?us-ascii?Q?KcXj5HFzTBN+JAC6I+khR7jqj8QExj/8PhL6V7S930ez4qi8CQ2pbp1PqYpG?=
- =?us-ascii?Q?UPhUGf3Sf4NfEKd5zl6TXUjR6F/zVZc+WWmExVfmh84/g1bsYU1o8m1UZwHM?=
- =?us-ascii?Q?/qEImK/riYHiIkaGNQAYwli3ydEBT9vXGORpdj7blYDuMzqI4qllWFC/H891?=
- =?us-ascii?Q?8o9gDps8ZTzMEnSL1iYXNIWWNLvJvZsRe1aCvAQzxSTjsu6G6FS3pwJmHnLD?=
- =?us-ascii?Q?huarRQ8x8DtY3vFeCSefKEVh2Ee/N94vSrL4eIv3wnxZmt/+MT0QxMoVd6ZU?=
- =?us-ascii?Q?ovwthGghHn/Ux4jF3wOJ6m+jsMQkaJJeYJtP2HNz9eB2i0YOr6cc7GXJslP2?=
- =?us-ascii?Q?OStNoE7SdhmGxYmkzjlnF3gpQ/YwGj179UeqrK1+GjzqoF0AXzqya2V9qP4Q?=
- =?us-ascii?Q?jTjmKdPDQBw4OsMSg7ToFDbd96v5fVLIx12e8I3uZdBaxiHImPB3jshcmfog?=
- =?us-ascii?Q?ZjJQ0f+Fd9qd0hsTJd9+RkM5buNI+n4EFQiZVHh4EM+Q46JGrlZzZ8rvXcOM?=
- =?us-ascii?Q?s7DZba0WLE2w3Wvn4bmTmHriLtauipZGTJFGkqn/R05PptJInxkaA6i3JaIN?=
- =?us-ascii?Q?C36tpkoqya0M/g6csInMkdZkqmIFAYJQ0GkN3fxsxatXAUtvtqVydltGVKC5?=
- =?us-ascii?Q?pIDGKynnUBZAsCS66ya3H7M+3MUpCpUK/YLz1ntrBOMBI29qmrMgXJJqhsHZ?=
- =?us-ascii?Q?oYtzaPrde+6mQifiTCId2ThcxtG5fOeeOtS/VEwgh+4eMEa6prw/GPh8cdCd?=
- =?us-ascii?Q?ZlIKoIlGpwgsIXx+7IIL10C/Ml6sne0MhjEbenll029F9vSAV7egL7rpFO37?=
- =?us-ascii?Q?XhwI2UNiktAoeE0izZrW+qn8Aik8PNR6f3lKFGG3dVWg3XTk1dUYsDmcFRe8?=
- =?us-ascii?Q?t2NpIU8jh4+sd6kGAA4YTFWkRjVL7qDNtJEQ7RdoFtEh0fWKzkN14laM877U?=
- =?us-ascii?Q?pMsbjWTy62nF3Bcu+VIIiGXTNX1ATUKeYlhPzLJRZWfKV56dBwX5rSXnniS8?=
- =?us-ascii?Q?eGjp2qDoh+jtHBJ4P206g+BG3QDHDEVmeyfswPebJnmJxYkuMVQHgTviC3h6?=
- =?us-ascii?Q?skPUbePMYAx0Jv4aKFHqPzU/hI5gyT+iEvPHLzBygUALdHQUAdODqhOSyqBk?=
- =?us-ascii?Q?5A7WSvK9GdWom520MDowPJ5R?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB2957.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kDggRTfzFdAHGO7nMWeZvEVvZQbIohz5sU1WFqAQVR/+dZRh0+9gCC0k7sww?=
- =?us-ascii?Q?u7p8hC1m+tWRPnqc/+IFSopknncatKk1ZOyTT/VUS8ZmXD59q93hIhhRdBQ8?=
- =?us-ascii?Q?3AU4HPil2MbQhWwwRzLlLkaF0oxNdjQVSOh714u5QGNCT1/Mt0oFflrT3hqs?=
- =?us-ascii?Q?aV/RcsomeBCa86DC1yLqlAnQHrnIUXhTLmAL43SR+72gHkEJ2W1o74sdi/L1?=
- =?us-ascii?Q?t9VOINjs4SHkcUGZ47i3/S1JHJ/0PqbDwWyRNYRek+rcbCpk4SdlQurIjQ2+?=
- =?us-ascii?Q?vSg2v6axHbquUyskUDAv3NIbZ/w8aB4pT/O7UrPwt0NIoM4GjjWPD9N2vPVC?=
- =?us-ascii?Q?144ijJ00q3R75y95tsd+FFY9LmvZHTpO+v/d+VU2hfxEBg/QlpNGRpgXpTbq?=
- =?us-ascii?Q?43DYFLN5g2yldqOWJVVsw4GYS5YmikPITRXG4ySV6c4Xkaycu0TwZ3SeR7KG?=
- =?us-ascii?Q?w+qLB9Iml8Q9FyrpaNlpv1E1VqWrBdWmLBCUz8d3Ndd1uedCoQLWjjS7L6ME?=
- =?us-ascii?Q?N1IBa51+/IZNBpSlBHFno/yK2kmlzqLe4t6CFEFsiZnFtwDiHaO/LFhPlaEi?=
- =?us-ascii?Q?LuFR0xSVr5R9I1fqbaqGYq03c4Tg3bA4YgVHvwHo98wCV8ft30z5dKHvi1oF?=
- =?us-ascii?Q?KsaAnnQHRFnD2/JrYEfQgmsv7s4Nk07BgMEwmW/qoOLlzIEd/yW/g7OmpNW+?=
- =?us-ascii?Q?XnYwNivT+bVwWgfFqTyLplSw5TOQvme9UpqOn69b3gwNXCXilRaqXPNcz1aE?=
- =?us-ascii?Q?aYShGs4tn7J8I+a/94iDs6tuN1KCjmYz3PBwulYvJURnJxryPYQbGiuplSkE?=
- =?us-ascii?Q?bDm4caHr/xi+4/LYHzN66y/L+p5nRXuLRUy73VHL0AH1feZHnJB5DfRzMX10?=
- =?us-ascii?Q?ZnwkEOilwmccEdj2u80Xeh/ZO+FN+/7dO1GdKDYaCS4t443qzRZ3BQmekhqG?=
- =?us-ascii?Q?pzHgYmJIwhsDHR6kSICBqN3GkrUXBlnU0+ODqwSwwQ4uNmxEeswzqiEQwH16?=
- =?us-ascii?Q?Z7lhLA+2qt0stN9BatTLViJB8ub/KJJvnkoYgUGL/v4do5Elpub8en5rO9LJ?=
- =?us-ascii?Q?S9z8BD1cl6YaD05zBwqbMP5jZ+lb+wG2wYqtqZmyHDpGZl9d3X9HLQJ2rXVp?=
- =?us-ascii?Q?L8MfevB33k0Ijy6uL8oQkx3EbE9bxuUhAiNopHxKFhH5wEl6HibpHpY2M1ot?=
- =?us-ascii?Q?2SLj+32iYcq72o73hYMKAOjzEsfRtdTNZnUuw4Qn0/kpJGjArpuoIQJ6utez?=
- =?us-ascii?Q?Wp6XMRjm2Yjugf2KsA7efjrKvE4WRU1jzjuSE0ET0bqGPgo0kJx0MHa3tuE4?=
- =?us-ascii?Q?D3RaEpMYK12wR7ehAp4hlDeKkTfXk4fcuy0wsK/TxAXRyzNEaBF9Lrvb4pJV?=
- =?us-ascii?Q?7TB6Ozw4KCpiaJ4b0Wq7SUZrp199xDvqjVaZxWDpkylsiPnsjLtv3CiPfaui?=
- =?us-ascii?Q?ePu8GOjjXi7wAy25jlokzrQev3F6tEYkz/81+bIhMwowIwQ4g2PZkHhpRKjx?=
- =?us-ascii?Q?k5QvwN4ue6agGU11SsZHZ6RjVEhWld14duwydlHTal4CipOZXJJAF+6xUTOB?=
- =?us-ascii?Q?QorYva26yptxxqDqqX4dljZEFjSHkNCdjbIPmFlel1sVPnNmWsSPDwfpqi2z?=
- =?us-ascii?Q?IA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ZmUFZ0yMrLOo4KPk+DXf9CJO93ogj6RvoK3Cn1p292n6/nZLLTV0sK+Z3tnC3YMjcCQVoerF0oSyV/GO7BPxG5rWLMg8YS/3IyWfufqxy1Bt+ZgRcdrLpzrpwjSgLsPku6+QiE6428MfrLH7SxR3B8dIsZT0lO98HSE5hK8JLGwN+ntH6fouyqIC1+v1w+G82FjG+exTaSB8BYLPoILy1PHY2KYoJScJ+vKalew3NUPosxTgsF3IsFX10PiBvP6YP1+mza5Op7Olp/xjW5RRdAIFIdBPsJDcjbZtNM5h5w1wTyWbh2C4SyI+Cz0R1wReJAhI499XV2zxOtrXPKZrQI2f6ZvaBgMhRm/dxpBDAr+iTsQhkf1GhwBqD1AI+youJyKKsFD7Vz13+ANLCK+G0JSAgFEJVcATRCuaA7WQgm8IVQXXBpHDuu5/sObQyZ5411rbJGPHu7uRbq3bt9DGrkUifgI8Mkd6Qsh58CivtpsS/w9/XxN0Mt/OYl9uHCcpjm65Je2BgX492QREqaiEP+oXbixhXmMH5I3eRAzI3lwOGvQtQwHJ2SlpspBCz1YWvXaKIsZM4adZwRh+634Gv7IEMUk8C8TGXwmZhMoBhzg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c758e781-87ad-4c89-870c-08dd09d980b8
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB2957.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 03:06:32.9717
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KqUIU81i4abamrylcWyePBEcjvvpdL+9vNEgdpSjcpgtzZt80Q5RVwc9iRmKKXhW8PkCB7NJ4TL9T96apnWzFkfh+fZqA5+ZfLpdnWXubWE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6268
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-21_01,2024-11-20_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=801
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411210024
-X-Proofpoint-ORIG-GUID: qA5OKvEmw7LyEg_HoajS7rIZljArpiT0
-X-Proofpoint-GUID: qA5OKvEmw7LyEg_HoajS7rIZljArpiT0
+
+Hi Thinh,
+
+I'm only getting back to this now.
+
+Thank you for your insights, they were very helpful!
+
+I've added linux-samsung-soc@ as remaining issues might be specific to
+Exynos, see below.
+
+On Tue, 2024-08-13 at 23:06 +0000, Thinh Nguyen wrote:
+> On Mon, Aug 12, 2024, Andr=C3=A9 Draszik wrote:
+> > Hi Thinh,
+> >=20
+> > On Fri, 2024-08-09 at 23:10 +0000, Thinh Nguyen wrote:
+> > > On Fri, Aug 09, 2024, Andr=C3=A9 Draszik wrote:
+> > >=20
+> > > > Which part of the stack should be responsible / the entry point for
+> > > > triggering
+> > > > the dequeuing?
+> > >=20
+> > > When there's a disconnect, the UDC driver will notify the gadget
+> > > driver
+> > > via the gadget driver's disconnect() callback. The gadget driver is
+> > > supposed to do the teardown and cleanup. This includes disabling
+> > > active
+> > > endpoints. If the gadget driver disables the endpoint, then all the
+> > > active requests will be returned properly. Check documentation on
+> > > usb_ep_disable() for more info.
+> >=20
+> > Thank you Thinh for that.
+> >=20
+> > I think the problem I'm having is that nothing is actually detecting
+> > the disconnect. Based on the above, I believe I should get a
+> > dwc3_gadget_interrupt() with event->type =3D=3D DWC3_DEVICE_EVENT_DISCO=
+NNECT
+> > as the entry point for the disconnect sequence?
+>=20
+> Ok.
+>=20
+> >=20
+> > This doesn't happen, I just get one interrupt and there is just one
+> > event with type =3D=3D 6 (DWC3_DEVICE_EVENT_SUSPEND), see attached trac=
+e.
+> >=20
+> > In this trace, I've configured a network interface using CDC_ECM, and
+> > then
+> > am disconnecting the USB cable @ ~158
+> >=20
+> > Any idea what could be the reason? For testing, I've also added
+> >=20
+> > 	snps,dis-u1-entry-quirk;
+> > 	snps,dis-u2-entry-quirk;
+>=20
+> You're limitting the gadget driver to operate in usb2 speed, so
+> disabling U1/U2 won't do anything.
+>=20
+> > 	snps,usb2-gadget-lpm-disable;
+> >=20
+> > to my DT, but that doesn't seem to make a difference.
+> >=20
+> > >=20
+> >=20
+>=20
+> If you don't see a disconnect event, check your connector. Check the
+> logic for vbus detection of your connector and see why it did not clear
+> the vbusvalid signal properly on disconnect. Looks like you're using
+> UTMI, check your utmisrp_bvalid or utmiotg_vbusvalid signal on
+> disconnect.
+
+I'm a little bit further, thanks to your pointers Thinh.
+
+So in my case, vbus is not connected to the DWC3 (or phy) directly. It look=
+s
+like we can trigger a few signals via certain bits in the phy, though:
+
+UTMICTRL register:
+force_vbusvalid [5] RW Overriding vbusvalid signal
+force_bvalid    [4] RW Overriding bvalid signal
+
+HSPCTRL register:
+VBUSVLDEXTSEL [13] RW External VBUS valid select
+VBUSVLDEXT    [12] RW External VBUS valid indicator
+
+To make things work at all, the Exynos phy driver forces all 4 to be enable=
+d
+during init.
+
+If I clear three of them (force_bvalid force_vbusvalid VBUSVLDEXT) on USB
+cable disconnect, I observe the expected DWC3_DEVICE_EVENT_DISCONNECT
+interrupt, and the stack shuts everything down. So far so good.
+
+Unfortunately, this only works once: After restoring those bits and
+reconnecting the cable, USB comes up as expected, but a subsequent
+disconnect with the same sequence as during the first disconnect doesn't
+trigger the DWC3_DEVICE_EVENT_DISCONNECT event anymore (others still happen=
+,
+like DWC3_DEVICE_EVENT_SUSPEND).
+
+Kinda looks to me like either I'm still missing something, or e.g. the even=
+t
+is somehow masked.
+
+I anybody aware of anything related by any chance?
 
 
-Manivannan,
+Thanks!
+Andre
 
-> This series has several bug fixes that I encountered when the ufs-qcom
-> driver was removed and inserted back. But the fixes are applicable to
-> other platform glue drivers as well.
->
-> This series is tested on Qcom RB5 development board based on SM8250
-> SoC.
-
-Applied to 6.13/scsi-staging, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
