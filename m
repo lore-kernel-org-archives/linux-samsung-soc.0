@@ -1,134 +1,105 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B9B19E970;
-	Fri, 22 Nov 2024 22:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2C31C695;
+	Sat, 23 Nov 2024 16:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732313636; cv=none; b=ZQwmaRORjSlDCSCnv9KV3och64MmRhrF3zPxTHLM8blAT9JqR8KDvqy80LINwK4Yw+neTEFGFyQUNQt1Af0CXFND+NvvFPUuQX2lnM6/XzjIdSPzDmDPBwEUR9YY0FU7Cs8A03Iz+Do+DBX80lXR9eEWKe/u9rkFS5T1LVPqGac=
+	t=1732377656; cv=none; b=efxnng3F636nRrFlfGqgpXPZrj952xMHEes1cMj2Uk8ZLtP0RstLAQsXFc7a44W8FJwvIDhMntOe7kVS1zTVLbGAVyY9f1bMYMR8N2JSmRLyQCKnTtjwdHRKUG9PEs3adNH2Ba2GAiRxvrzL9uNR4lGFG8BxxlPVUPT9hW0Kkes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732313636; c=relaxed/simple;
-	bh=DpdC7/ZNvEIudhQajmJyElOpUZpYIkpkt/AxbbUhDTU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E9mD4LYBmgmpGP50VC7Vmj2ntMZwReY93KgnnSwRovCn0Xxkjd/EZkrHOR02w2URhU3MFYI2TpNzsU7uro5titlJ0MoJ1+TSnp9rHEZ6T2rg9BmPMHoORoX6z1R4QGRO9zmJM+nYOWLtNzUI85rYkLIvY8Km+RdlRD/t+zU+4vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrbKjt0c; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1732377656; c=relaxed/simple;
+	bh=JNyDZtalF54Y5ZrHjZNjBgokrZyQ4W+6HBOQlcOGDlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OkuZBWMrOC/iv6kxjAxg3cMPna/403S7gexxsY6hHikpwgCfYm7q4R+y464Cba+2nqGzSD90CHnY8pAF7lEPiRmL6dVWAWjN/uMCSn2vQJw1OlCS164QmGfMnR2DF3MPY+9FKf6d+cfqSrngUjxKm0nDGnAjDe0UYv8KDPt3n2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rY/hhEwK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrbKjt0c"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d41176505fso22507166d6.2;
-        Fri, 22 Nov 2024 14:13:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732313633; x=1732918433; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hjggllig1lhdLdqzta4VRtbrfyvu0W/JksHC0TyvPxI=;
-        b=WrbKjt0ck5/mtZruwNQvXnhLQ5lLLkFxq1Ed0wU5UpEUs83zpKBp3tv4g31FQH/5VA
-         jEARx20Jwbl89iwTG7IgqI6vOmUc6GIWaRcnrLueVeF25JM4sS8X3GsX1/DaXBkcorla
-         9sLXcI4w2JNmTDuRKvFk4OCPadZeOqZ3S4XXow1o7ZQOUlOIhzMmnmRCwVem06nOCjLh
-         csk+oDNwfOdyNb4QZPep5LjN5BqS9i4Oq9UzSIsvqle2ZWvVNewebps/r0pegHLDVY6x
-         aH7/P2+AiUBDzE7g+iPmZefIhjjCoHBe7T48ZAI46+mvoHtfx3wBRlES+yC/3BsmyPAV
-         icxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732313633; x=1732918433;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hjggllig1lhdLdqzta4VRtbrfyvu0W/JksHC0TyvPxI=;
-        b=ix5Q1cD3S9uwwbR4kR6+ryR1BiNoj0OOQr6MCywTtAuTvZWqZBTJUg1tfL1MAh65pw
-         RuVqmIxn1WJFFGLQozQmfeyoKKeITKw9c9xfK1K9fLsBtln27K9nVJYAD+dX7pnESEIt
-         Xm19SnOKZPFSnkpjfJlgsELLtY/kFlhfL3QSANJ7kSZktxNZ2B5TR+O22qYpkVGj5UOB
-         cPvgKsgXaWiy/QtRIj0wV9YGIqPiFNqMEzbCvDuDsWlNgbIt4ZtWCYtbQOxwD2OtSw5B
-         o5gT+0Y+T5w5O7Tbnt/zUP6j9CFhwLAzq5iaDagJeY5Ds5OFsYM4gbYsRFnkUV4CQw/i
-         VgOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8mdHERCVA/o2ptC5Zfrz1TWfafMLCVPsZnbLG3/2M4J/MhQ90//cvl2nDHbSO63E7oSR2MFcoVe3LuWo=@vger.kernel.org, AJvYcCUfygcAOM8+lpyzsDLfLhEo/RUaf7uD2YDY6PzZfUGQg4JtvLkA/Sq/Fj5nhgH9ApWq2TSN7RiHXLcRFJo=@vger.kernel.org, AJvYcCVmdwxBx0/sGnFwf8ONug/T+CDHLQugD8gVET50tUihJUM+puCraxcBbppiH6dnur7LmOEds3wAK8AlFU/SCEN+XIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjcqkrYsPPEjDbf+sxF2pHo2GXCaW4kj+yCampz3JJYiPvdVZ3
-	HDCZfKPFzw4hSd1v51kjjoozq/xSiTItzA+vzoqHS54qn4JxlrWbltgvzg==
-X-Gm-Gg: ASbGncuV+fAGBJLy0NXC1nc3fXR1+sfLsbXW4/qSx/skZgt2/YkI80HIaZPCHl0k7jZ
-	qyU09aPPK5UZ0XLdqZc6+oH3MYbfcH/Oj9mtai5twedXTj5vZs/EhhlDRXIQA8VuPGemx4UwiQ8
-	FZOnS1+GKKHr5eyBfs2Pbr/CdsNgtLwYPTkgttToKJwiAkhE0rT/bMZBI354mYDfmmX68h926tk
-	F5L7HV4liG9DZbQaUYG92wf0oX1Be9Bws9WPKJp7daVF7up14mnPvw1M0GZV5ueOoWlh6qm
-X-Google-Smtp-Source: AGHT+IHgahotrjDkGCxkLTqv0ks7LfpHmWKZFhzn74QSP3dQNY6KwyiDyyINS/ZltTaefntCRc+JvA==
-X-Received: by 2002:a05:6214:d81:b0:6d4:2a73:846f with SMTP id 6a1803df08f44-6d450e7b40amr61235776d6.11.1732313633452;
-        Fri, 22 Nov 2024 14:13:53 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b513fa5feesm130646485a.30.2024.11.22.14.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 14:13:53 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: krzk@kernel.org
-Cc: sylvester.nawrocki@gmail.com,
-	mchehab@kernel.org,
-	dron0gus@gmail.com,
-	tomasz.figa@gmail.com,
-	alim.akhtar@samsung.com,
-	kyungmin.park@samsung.com,
-	laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v3 1/2] media: mipi-csis: Add check for clk_enable()
-Date: Fri, 22 Nov 2024 22:13:48 +0000
-Message-Id: <20241122221348.3998-2-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241122221348.3998-1-jiashengjiangcool@gmail.com>
-References: <20241122221348.3998-1-jiashengjiangcool@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rY/hhEwK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3F9C4CECD;
+	Sat, 23 Nov 2024 16:00:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732377655;
+	bh=JNyDZtalF54Y5ZrHjZNjBgokrZyQ4W+6HBOQlcOGDlE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rY/hhEwKiX9QS619xQENwikFKLz0Qk02jNdpOOnsvVz0eUtGdM1PmhDH4Soo41xkh
+	 +Z8I9f5kwkQ3+qVQJM0CqCHo3Vdtx96bwz/dwgtxJmvHSS5Zs4fYXuMrEVSTGqNgBO
+	 sdVetEQHEiB34O+iYoVz7cNhBDSOie0lzspiqtE5JuCSOn1/w2MCaHWR/JyxVRcq5V
+	 +kWd7vdZFCy/EsHInQsqZzirrJqSYynUuZy29X+WDLIrHMnV7R7IQcwzNQFtdblpZe
+	 fe72V3ww6mmizN3Ras3PQcAR733ZPry59UIzsDQKz2Tn0UJ+kFUk0hPoTQ4pPvuiep
+	 naRBttdDsIusg==
+Message-ID: <a664ae24-26a7-42bd-98e2-f46d7e475b9a@kernel.org>
+Date: Sat, 23 Nov 2024 17:00:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: camif-core: Add check for clk_enable()
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Cc: sylvester.nawrocki@gmail.com, mchehab@kernel.org, dron0gus@gmail.com,
+ tomasz.figa@gmail.com, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
+ laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241122221348.3998-1-jiashengjiangcool@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241122221348.3998-1-jiashengjiangcool@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add check for the return value of clk_enable() to gurantee the success.
+On 22/11/2024 23:13, Jiasheng Jiang wrote:
+> Add check for the return value of clk_enable() to gurantee the success.
+> 
+> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Please version your patches correctly, e.g. use b4 or git format-patch
+-vX, and add changelog in cover letter or under '---' of individual
+patches describing changes from previous version.
 
-Fixes: b5f1220d587d ("[media] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI receivers")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
-
-v1 -> v2:
-
-1. Correct alignment to match open parenthesis
-
-v1 -> v2:
-
-1. Power off the phy and disble regulators when clk_enable() fails.
-2. Remove a redundant space before the label "unlock".
----
- drivers/media/platform/samsung/exynos4-is/mipi-csis.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-index 63f3eecdd7e6..452880b5350c 100644
---- a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-@@ -940,13 +940,19 @@ static int s5pcsis_pm_resume(struct device *dev, bool runtime)
- 					       state->supplies);
- 			goto unlock;
- 		}
--		clk_enable(state->clock[CSIS_CLK_GATE]);
-+		ret = clk_enable(state->clock[CSIS_CLK_GATE]);
-+		if (ret) {
-+			phy_power_off(state->phy);
-+			regulator_bulk_disable(CSIS_NUM_SUPPLIES,
-+					       state->supplies);
-+			goto unlock;
-+		}
- 	}
- 	if (state->flags & ST_STREAMING)
- 		s5pcsis_start_stream(state);
- 
- 	state->flags &= ~ST_SUSPENDED;
-- unlock:
-+unlock:
- 	mutex_unlock(&state->lock);
- 	return ret ? -EAGAIN : 0;
- }
--- 
-2.25.1
-
+Best regards,
+Krzysztof
