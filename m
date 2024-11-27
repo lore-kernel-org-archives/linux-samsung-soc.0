@@ -1,253 +1,128 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990691EE032
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 11:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF1A1E0DFC
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 11:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732705308; cv=none; b=e6AyAyfssvs+Y+9AdoHkkcB21IWgZXNlaujrmA6WXlZb6iyfI3KBpqShrz83QZEY+0jqHUaAd6U+Mz9TCCRx5zUGQ45Erm7u1ZvjUepRmHyGMswpBH5xYx1LchS/rWZzcW/ILl/JmSmycvwt8X6qmR2oDATjCV/Kk8oohVwCY0Q=
+	t=1732705752; cv=none; b=SG5SFNnI8EUd3JfbUfuZ0h4dP+TSNewJmUclkzJJAlRRa1x8B81FD6aiDCombVbzJl8prPM8thgTa2j3ojIztQCuSRZMc5w4d3UrKRyRF7cQqw+PE/ELII96eFpcmowmQOMtiKUleJQwkN6dHBWSVxxvWLVJwOz2EVEfX0ksjrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732705308; c=relaxed/simple;
-	bh=kck+d2QOFZ1QTUsEEtVgD4V3qv1m6CMUYhFTMP5YqAc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GuG7mS5bcAqnEJBDFlIk9wZf09EJ6o501VF20jbyf3QUYwwYpzphAIXQQYfUxmANyqD+trb0tW/jymV+JgC9qT7SaINmXeQmRe4+Qh+p6jxfv4+MOYNAb/DZSuBiUyy6I8j2Anvgov8+nWJzURATQyL3arW8NW6vgNIS+jyqMgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q9rQRz9L; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1732705752; c=relaxed/simple;
+	bh=KIHyVa4m2W+IgrN2rte6ZTxtItq9mIpsQ6FBYB1Vvus=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cFGWPmxSpcVZ/AMg4TtWby/57Amwq1CvdBFTSl0YvZg396+aWXXZuuN/tQT1mQvHMKin/T9+fbAWXDG26rJw381WB+HTi7U2SUPk0BuZLPqTC7yE3fgVJLlkH3C/UuzjLJbhqB6iD19A2iocZ4uAYHvoJmpYebSmoyOky4PPHRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UJFq4QYO; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q9rQRz9L"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso1065382866b.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 03:01:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJFq4QYO"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-382411ea5eeso390382f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 03:09:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732705304; x=1733310104; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lE4wmixBBgayLXBCtLCcMeypgTnpcFbWaBYeAtvt70Q=;
-        b=q9rQRz9LMmRiOkxpsDiUxa6F76ChZFOH+HPoGkGkGMCPSrAxQANlE6hLz/oRH0vEVn
-         wyt8hCNUmyklQpNRqkjlVgktGCWbtbalfyAQnbn4auXWAxzTrpukRyD0fvEiH4iGyndw
-         gpKZxhgT1C54Wfrd0LR38xkNIHA+4IAtR64OK5y4xE6MDoSW2584lvSp3r9yEXN3H+3A
-         t7/ATUoMToFvw801jVIVPhS8AkVkKrLIvJTdLq5dv+jMZIB77ygKAI4qbGvI328R0bOT
-         hYmkiOqisgemTYUwO66KxfqbD1H58SW9n53HDyVUEUQS1XNC58SHMeU5+Vv32/rpE5gn
-         ioyg==
+        d=linaro.org; s=google; t=1732705749; x=1733310549; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KIHyVa4m2W+IgrN2rte6ZTxtItq9mIpsQ6FBYB1Vvus=;
+        b=UJFq4QYO1KvssG7XYaNNKQjRiDycPZwl1qhEgeMDLXgn5oF/rnU8t6glrPlEz0Pdm0
+         BrHc5zNzRgbDhagG5jnRuEGaMaetsW16OI4cVSAHyYCkwoD/gtswQ+yucFVTnXkmX26f
+         0Ewgk9L6p6ZUxjbdj+tVEuNWjOz4YQDEWP5kOVy1l6eaJ79NQvZy4kum5X0t1GuA9s3G
+         5UiBn8STmxWKqVGkMBkppMSYf22e0r06D9riX8hnxQzJc3Z7jvZBK/NXdA2F/ec6kr7w
+         D1X/uix1iQKAl0I4F/bUOFcZNRL0pISaFKMUTypAiS2e873B5ayFzLv/2FUpXA9hNxAA
+         wOCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732705304; x=1733310104;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lE4wmixBBgayLXBCtLCcMeypgTnpcFbWaBYeAtvt70Q=;
-        b=hcu6RCmAgfJbfRDUf5K0BOpMeMMNfgo2lGhbjiCWu5CAharwfgEqfZhKyBSDrTf+UD
-         d0HxQkTM9GO01qpD2AF083aFK4eDuzicFaMipPtQSgoPu1mSRtqnRN+ZNcbwyu7z6MQO
-         Rt8VbW8v4uzmgIkQcMbRKhHsiS6U8FQTYNd6ER7d5lGmLOeTeKQzTRqLI3GQXjnj5sHe
-         ck5Cr8iCkzevojjVNcmye/wROVRAgArCatka+OSuRR1wwOcJMQat2iJH7ooLsspFRqTB
-         2A9xkTzjWYqf31SWAgCq9Yj8n5idGaUMNyz+cYn5caFmntDgxqyRx/0LOL7PSrnJ/jxd
-         vb6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVSTtAszCOV4iYzjaDxFKFYmiyodAzL6eFJ9SXQMQQoIR9Voi/W0b7G5H8IBv56B+mdo9+skq3Y6JSlHglIy67nkQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHGv04rz8hrrAe2fVyYER9fXrGzQdM9r9IltykHde7QevrxM8v
-	lVxucwruAvbASlQYYagSsmNhP4mL4E4k3omCeufHn1L/8F7HyhPvraWbyvhvAaE=
-X-Gm-Gg: ASbGncvCGbZnQq0YkGz59yQhhbyRkHNdmTemxVNFOucAXhgyPLyY+u8jEZBM8JiMTJu
-	+OW1CmmkTm2MbVQlLwQN5hSwuQPAAo4zVv/xbXVm3jNe2EXq3uZkAPKWf4c6O8o+e4HhaXE/+Uj
-	83AG7VjcEucgmHjbyfAdn6DQQEj65zQ00iVOxvpba90/LvtA9bVy5ngnA9EwPTyHmRbm86WYBwc
-	/MWI9nYSqnDu20DY58a95svxfMgCxbP0RWmQM8x40k0AIduqXOWRsRqy157yCcRdsO3QNhwa3Cu
-	TKSoOO3hyibrojskrGTqe2A5hzpMU2so2g==
-X-Google-Smtp-Source: AGHT+IEjfWpzgWvuf2PuWauL4irDzBBYokZtNaKPDwP8hTNSrJiLJvviKNCQ2xOU0CW7rCVG+Drreg==
-X-Received: by 2002:a17:906:2192:b0:aa5:e01:1471 with SMTP id a640c23a62f3a-aa5810330a4mr150052566b.37.1732705303655;
-        Wed, 27 Nov 2024 03:01:43 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b339612sm693762966b.84.2024.11.27.03.01.43
+        d=1e100.net; s=20230601; t=1732705749; x=1733310549;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KIHyVa4m2W+IgrN2rte6ZTxtItq9mIpsQ6FBYB1Vvus=;
+        b=KoNrolo1tv47+zGaRo/39NlbblmZU06KspYALEnLwo4NrDsiD6yZNYn8lCFWzpwmM2
+         4Zd3ewYVpWdNIK+bbha9Er0Ibz7mUeQLdqC2MEoEp0YhjGoOJ1+TuvPducyfxenBnWO0
+         ZzfmTL4Yfpkz65put6H8zQTvIwtxrzn0dz4ZTOgnJ4zDN3Wlp2VuKsJAdR9dxX9+ODcv
+         FmV/34Tn7hoSR9OuXkkik43eIKI+6B0twp/hg+lXOa3UyTImdERVcMi8FM2Ylt3YHh6A
+         EVP9Xu5MHHWThr19qkZmij7Xxw4duL8P0J2VlrnOjm+eHw+JQc3y+njZu0DwIdWUupUN
+         MntQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdGpIE0HynST7c7A8SZ9/9gloopmDxZnjxyUzdSnwSa6A+aFnZD8tK9RYR2rb9KBJr7G06BLUoEQ2yQO/4DolqjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEyjOOi7LTaN5CzbGpD7A6ShjNuP/Gw/lNzJOrAkH84UW7ku2R
+	GL6uILkESxgLKNbf8RBlS8VC1xxTAzlnpee7JjTgIJmp2ztlD8fybC0/utxl/TE=
+X-Gm-Gg: ASbGncvtsZqbEVI1lw1LFT+dBrgHiWPFSkk9OCwqt1techz6XR0bzA9ADbJL/fYGybK
+	hsTt4CX4zJso1F70RnQrAz3entY4d9usjclfKli+Zda31KxSfE5wiHSR9Age52C3hOt1KN01jKi
+	pd4DfBDyTBraxX67kVZNntaaoFxAIuF05NExPrJsOsS3TVgjtqVBJ8sTZqgill2vtIJEbynTsGz
+	zoeGg/8cIXzV0pj1ethtJwncrglPNivhHpiK7tSV9OujFsj9pjGvWg=
+X-Google-Smtp-Source: AGHT+IG1kjd60OoIDsm2k9fnmTAzFppDmAUl6jdHsRKDvKHyjWcAMie1uR5e6BNHQ7g7zmDFBCuRIA==
+X-Received: by 2002:a5d:6d0e:0:b0:37d:46ad:127f with SMTP id ffacd0b85a97d-385bfb1e4bamr5480665f8f.26.1732705748772;
+        Wed, 27 Nov 2024 03:09:08 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedf40sm15826667f8f.98.2024.11.27.03.09.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 03:01:43 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 27 Nov 2024 11:01:43 +0000
-Subject: [PATCH 5/6] arm64: dts: exynos: gs101-oriole: enable Maxim
- max77759 TCPCi
+        Wed, 27 Nov 2024 03:09:08 -0800 (PST)
+Message-ID: <6e53c7c71d6fecc232d6d94720c9dfa04f1fecf0.camel@linaro.org>
+Subject: Re: DWC3 runtime suspend on cable disconnect while UDC is active
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, Peter
+ Griffin <peter.griffin@linaro.org>, "kernel-team@android.com"
+ <kernel-team@android.com>,  "linux-samsung-soc@vger.kernel.org"
+ <linux-samsung-soc@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Date: Wed, 27 Nov 2024 11:09:07 +0000
+In-Reply-To: <20241125201135.kmif7pglkhitenfh@synopsys.com>
+References: <269e3ad7cbdb3b97fb8dc75cae4d487ce7f908c3.camel@linaro.org>
+	 <20240809231012.lmgqemcwjdfiaxak@synopsys.com>
+	 <cd87836fbd0a030d0b52902e04167fe044ce447d.camel@linaro.org>
+	 <20240813230625.jgkatqstyhcmpezv@synopsys.com>
+	 <a40ac04beb4501ad95b50f79be3495315e38a880.camel@linaro.org>
+	 <e40f27c2323077d9b35fac7572f30114b6e33372.camel@linaro.org>
+	 <20241125201135.kmif7pglkhitenfh@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241127-gs101-phy-lanes-orientation-dts-v1-5-5222d8508b71@linaro.org>
-References: <20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jagan Sridharan <badhri@google.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
 
-On Pixel 6 (and Pro), a max77759 companion PMIC for USB Type-C
-applications is used, which contains five functional blocks (at
-distinct I2C addresses):
-  * top
-  * charger
-  * fuel gauge
-  * TCPCi
-  * GPIO
+On Mon, 2024-11-25 at 20:11 +0000, Thinh Nguyen wrote:
+> On Thu, Nov 21, 2024, Andr=C3=A9 Draszik wrote:
+> > On Thu, 2024-11-21 at 12:34 +0000, Andr=C3=A9 Draszik wrote:
+> > > Unfortunately, this only works once: After restoring those bits and
+> > > reconnecting the cable, USB comes up as expected, but a subsequent
+> > > disconnect with the same sequence as during the first disconnect
+> > > doesn't
+> > > trigger the DWC3_DEVICE_EVENT_DISCONNECT event anymore (others still
+> > > happen,
+> > > like DWC3_DEVICE_EVENT_SUSPEND).
+> > >=20
+> > > Kinda looks to me like either I'm still missing something, or e.g. th=
+e
+> > > event
+> > > is somehow masked.
+> > >=20
+> > > I anybody aware of anything related by any chance?
+> >=20
+> > Hm, the missing DWC3_DEVICE_EVENT_DISCONNECT event comes when I insert
+> > the
+> > cable another time, i.e. after the DWC3 driver has reconfigured
+> > everything
+> > after cable attach. This throws everything off of course.
+> >=20
+> > Looks like still something wrong in phy/dwc3 interaction in the Exynos
+> > case.
+> > I'll debug a bit more.
+> >=20
+>=20
+> Ok.
 
-The TCPCi is required to detect and handle connector orientation in
-Pixel's USB PHY driver, and to configure the USB controller's role
-(host vs device).
+I have a working solution now - with snps,dis_rxdet_inp3_quirk in the DT,
+this works reliably now:
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 99 ++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+https://lore.kernel.org/r/20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7=
+fce24960b@linaro.org
+https://lore.kernel.org/r/20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7=
+fce24960b@linaro.org
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-index 387fb779bd29..5f7be0cb7418 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-+++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/usb/pd.h>
- #include "gs101-pinctrl.h"
- #include "gs101.dtsi"
- 
-@@ -90,6 +91,84 @@ eeprom: eeprom@50 {
- &hsi2c_12 {
- 	status = "okay";
- 	/* TODO: add the devices once drivers exist */
-+
-+	usb-typec@25 {
-+		compatible = "maxim,max77759", "maxim,max33359";
-+		reg = <0x25>;
-+		interrupts-extended = <&gpa8 2 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-0 = <&typec_int>;
-+		pinctrl-names = "default";
-+
-+		connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			power-role = "dual";
-+			self-powered;
-+			try-power-role = "sink";
-+			op-sink-microwatt = <2600000>;
-+			new-source-frs-typec-current = <FRS_5V_1P5A>;
-+			slow-charger-loop;
-+			/*
-+			 * max77759 operating in reverse boost mode (0xA) can
-+			 * source up to 1.5A while extboost can only do ~1A.
-+			 * Since extboost is the primary path, advertise 900mA.
-+			 */
-+			source-pdos = <PDO_FIXED(5000, 900,
-+						 (PDO_FIXED_SUSPEND
-+						  | PDO_FIXED_USB_COMM
-+						  | PDO_FIXED_DATA_SWAP
-+						  | PDO_FIXED_DUAL_ROLE))>;
-+			sink-pdos = <PDO_FIXED(5000, 3000,
-+					       (PDO_FIXED_DATA_SWAP
-+						| PDO_FIXED_USB_COMM
-+						| PDO_FIXED_HIGHER_CAP
-+						| PDO_FIXED_DUAL_ROLE))
-+				     PDO_FIXED(9000, 2200, 0)
-+				     PDO_PPS_APDO(5000, 11000, 3000)>;
-+			sink-vdos = <VDO_IDH(1, 1, IDH_PTYPE_PERIPH, 0,
-+					     IDH_PTYPE_DFP_HOST, 2, 0x18d1)
-+				     VDO_CERT(0x0)
-+				     VDO_PRODUCT(0x4ee1, 0x0)
-+				     VDO_UFP(UFP_VDO_VER1_2,
-+					     (DEV_USB2_CAPABLE
-+					      | DEV_USB3_CAPABLE),
-+					     UFP_RECEPTACLE, 0,
-+					     AMA_VCONN_NOT_REQ, 0,
-+					     UFP_ALTMODE_NOT_SUPP,
-+					     UFP_USB32_GEN1)
-+				     /* padding */ 0
-+				     VDO_DFP(DFP_VDO_VER1_1,
-+					     (HOST_USB2_CAPABLE
-+					      | HOST_USB3_CAPABLE),
-+					     DFP_RECEPTACLE, 0)>;
-+			sink-vdos-v1 = <VDO_IDH(1, 1, IDH_PTYPE_PERIPH, 0,
-+						0, 0, 0x18d1)
-+					VDO_CERT(0x0)
-+					VDO_PRODUCT(0x4ee1, 0x0)>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					usbc0_orien_sw: endpoint {
-+						remote-endpoint = <&usbdrd31_phy_orien_switch>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					usbc0_role_sw: endpoint {
-+						remote-endpoint = <&usbdrd31_dwc3_role_switch>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pinctrl_far_alive {
-@@ -106,6 +185,13 @@ key_volup: key-volup-pins {
- 		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
- 		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
- 	};
-+
-+	typec_int: typec-int-pins {
-+		samsung,pins = "gpa8-2";
-+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <GS101_PIN_PULL_UP>;
-+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
-+	};
- };
- 
- &pinctrl_gpio_alive {
-@@ -142,9 +228,16 @@ &usbdrd31_dwc3 {
- 	role-switch-default-mode = "peripheral";
- 	maximum-speed = "super-speed-plus";
- 	status = "okay";
-+
-+	port {
-+		usbdrd31_dwc3_role_switch: endpoint {
-+			remote-endpoint = <&usbc0_role_sw>;
-+		};
-+	};
- };
- 
- &usbdrd31_phy {
-+	orientation-switch;
- 	/* TODO: Update these once PMIC is implemented */
- 	pll-supply = <&reg_placeholder>;
- 	dvdd-usb20-supply = <&reg_placeholder>;
-@@ -153,6 +246,12 @@ &usbdrd31_phy {
- 	vdda-usbdp-supply = <&reg_placeholder>;
- 	vddh-usbdp-supply = <&reg_placeholder>;
- 	status = "okay";
-+
-+	port {
-+		usbdrd31_phy_orien_switch: endpoint {
-+			remote-endpoint = <&usbc0_orien_sw>;
-+		};
-+	};
- };
- 
- &usi_uart {
-
--- 
-2.47.0.338.g60cca15819-goog
+Thanks again,
+Andre'
 
