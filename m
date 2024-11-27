@@ -1,64 +1,64 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36669200BA0
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 16:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB75B2581
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732724654; cv=none; b=I9BZWiH13an7Pqolo2C1gtSEWaG8mdCsfPiffArsF1xm7xQ+LqUDY+K1gIYQNrmXboBuADIPUGjE8XQqZU/PWN6V0x2R0hSQSKYUuoNlRikktFoGeHxu+I4Vy0XXCzRAPLsAcE4qsFadcGkdBGGn7b+5JrC098+rg334qAl3xPk=
+	t=1732724834; cv=none; b=tULYDQRp9YrGZzOWCj3mOhbIWvQYTY15/JQLev4xoCpKxevd0HThyy68ehgRnvGaZtW7TxjPxZ4X6SkVQXEoar5VjZTw6r7lPg7fCz07X012SQYdR5u3EAB0RyQRIwkRX0mCXnvhJmfi4ZphO9KsQEhF6VBRKP4kK+daiHkDGy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732724654; c=relaxed/simple;
-	bh=rKda9Awu4irodPKAZZW8j0P3UYNrlv+gac9bpLX6Xnk=;
+	s=arc-20240116; t=1732724834; c=relaxed/simple;
+	bh=mOKMr2rmARyVxmtacbasnCb3Rp24G0x2C/kgLo5QtYQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XWo7OhHbw/N8SzzyYmRCiGOpsRp9TaesU6SS2tfupqlWzCuAxJ/UJZYB2s9rZsUke1VrKCgaiSj+Qn54G8udGULrQybMY7+nVUh+dakbf44t9YeoaGDLy4VuHj9uTQJClVVw9/Iq6B6Yp0mplriSNlLhFch8neAojI3k/qWqgOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wkTsPrSE; arc=none smtp.client-ip=209.85.128.48
+	 Content-Type:MIME-Version; b=Ieui3xMR2xV0uK61m3symzmP9ZNMzZ4sPoPu+IS3nK5gY1A0rPoZOehUsRqRaeupQ0ABqx7igZbaNbFPuIjVp5GsHyuUipWWqHCGLihf0uyF+a3MIqa6OXIb1ctdNePcss/aQnclJLVmfvF9M72h59Vf88GK/AHSaA7d3SNazNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PjAcdS7C; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wkTsPrSE"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434a852bb6eso15317655e9.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 08:24:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PjAcdS7C"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4349e1467fbso31459375e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 08:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732724650; x=1733329450; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732724831; x=1733329631; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=W3ci6YCIiDufTlH6QWOH+RcWY/SBARvhjUkFISOP+Eg=;
-        b=wkTsPrSEQ20h6aP0HOoF/eQMNlrO/PBotYi55eoy0YzYFlPycEfeKlMiEhXrOiOw9H
-         kFksT3vqU0zpUGQJXUB++m7fPwbmwclZ4DNSxdGP5eBoOzRDCsE1Vf8nArcrslNwA++/
-         9NUXL0qtqmfYjlx6E8fbkbutqepwQfIyIsaWoQJSWdT+Nl1TxVeSbPfk4XBqlBgPJ/ep
-         R+W5yBkF8kdrG5K3+uRA4nmtmOaEde8Q136HkBsLfs8+jKVOr3bcB3kgCfGIw00CldcK
-         +XdxZUL/Ytk3WHNLPGVpz9wCGcP3ZLTFzDl07VmRtSADJI9Eok9agp5y08iEsSxEoxHk
-         wbsw==
+        bh=mOKMr2rmARyVxmtacbasnCb3Rp24G0x2C/kgLo5QtYQ=;
+        b=PjAcdS7C7NuSfXE/iwem1j770tASQvdfBcXVXqdbEZsRrj84yX1/70KP5ofldrowCe
+         ZpLnvOQUFxQlWBlGQ+kShhuv+F3kHDlSvDb77nFbjDNyxVodq5z95xzir3oEeEqxcMaO
+         8z/oMk9vaasXfHSelCn7Gmnzio4B5fsBvs3qTZ0Q55j939Z1RxTIDVbhq0//A/GNC2KM
+         CUL5A37+VQm3As+VgDmhj1yI/0SG+djhaqe0hz77f0i6d18XuU5wOfw7Konr1juxOTwK
+         gQ81CfvZpCbuaIZcvBUnYXq+mwE8UeU+7YQsvlOSXsejECK6GR5OEi9/qrkeRqbFhhJB
+         JAtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732724650; x=1733329450;
+        d=1e100.net; s=20230601; t=1732724831; x=1733329631;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=W3ci6YCIiDufTlH6QWOH+RcWY/SBARvhjUkFISOP+Eg=;
-        b=xPuut8xqHNYxz4WYFHj49wVOPzVWIHM4LIX6NvkeJYXFt+t7jOsr3YSKtqf5quWNiA
-         opeJkbDlWsQ5p2LZIe4vkW2ujSd2guuEnsxs25+A1wlILkE47l+WjQcfDKpQrCSNShQi
-         OLecLPvIKfGSL1Ygjp4tCquNpHmSWPgMV/gqyO/JW361N4f9awDPbzsmllKNUITbcYHt
-         TtyxKP9JtBY8GnBhCG2cb9nF9VYZzivAHsea/ba/bgbuOhcLZq9lFtEfGxlGzUXnAumA
-         7thvMT4VUaCOmMTBoh/13KDBeCHp69gZzZtXDB/RqmIwXVPker8Fa0pfjidJTLykQwEo
-         T7iw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFXFZxs4X4J3bq4bouIXplLlR0reiQkfEni7fKV1TdhAtSVIk6yviTnFfvKeofkTcEFTbBoSazBGRRJ4vAO9yCxQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC/WfyfSHX8LjC9EtDk4qXDy3jFZSXOITCV1qQQmWhr9tUuQl0
-	stM2PwNuhXxBT7EvgMIOS2eu/AN+RAzMGVlTvt5RZXqRLT2tg6MlBtn2ElWWzPA=
-X-Gm-Gg: ASbGncuDDvdVkTYmfgaWmfp/zswWfGuARWVnem5obJi7Z6VpFhJFfVAUVPZP5ng/t2R
-	re0ixbD8dNKEfwuEpOpS79Pv34bMuFfM8auvE0EV1FqbKLJgqnU3Jw0+R1KThiWNAC0zCdhuE/d
-	SkYE7/swX4ACZlBxphYosQiWjOZ66WJoRZRl5fjkBedvlztzbN+0/Wl9LjaZHyi578sQ26divlr
-	xJ29FRbRODSdkFPlCS0nYUexTqzqv55fj2jJiWCkr6ycMoUJFaJhg==
-X-Google-Smtp-Source: AGHT+IGDZztPo405KuhE/5HQpdEcc6G4U1hi5a0UqN/AZl+cMPyQNrZOeFD27R5rS38JBrkH0dwofA==
-X-Received: by 2002:a05:600c:354e:b0:434:a684:9b1 with SMTP id 5b1f17b1804b1-434a9dbbfc6mr34223735e9.4.1732724650556;
-        Wed, 27 Nov 2024 08:24:10 -0800 (PST)
+        bh=mOKMr2rmARyVxmtacbasnCb3Rp24G0x2C/kgLo5QtYQ=;
+        b=Pa9YgvdPJoklsalfEYxXV5Uphtp2KFAopn8czuDInOI9W0o2kpL9fC22I0X16F6WKB
+         XVh/4ypsmIksaSIoyJXYUQhnItl174+vQQAiwRAtPkJ2QdSnOA88PCbuR+71USkErSha
+         ydCM/sNBn/G2YYd016o3IgmOZ3vXMBhG0Bo2LA6O4qJ7KCdXDoMHV3C0OfyombyNE6Tx
+         4bb5j6Fij484ps9jdKrrTGaEqjH/PrRASgXC7o9D3to0xWyyStZ/H2l7LjjyTyZMq2h0
+         8XzMdhbGu4SOhnLtNKB829eZNE8Q1m2gs2BAtJSzDTjRIGEjYYJi+p5RSkaIfkWc+6kG
+         eSjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMkL54YKcj3wm4BuRfJWzqnpf98Sy6DcRYvRD3N7w7RfnckvKGo8ZgHvEcW1X2bd6VCWrx6TzaKfJMaNz0z5kO4Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyvl4sEbSCEdv+G3ZW7dQUYU9hJoU8k58/O8lGfYV0oww8db0yn
+	hqhXgz8U52+3T7Xdfg+djZgturoTjyLNiXQJ0jKBKlM4By7J7LRIoFZlnmZH5u8=
+X-Gm-Gg: ASbGncsluBIjSkRbo0Aj9OVo0EfdqcySDJYaVjChSdAq4WV6cEhLX0uiAG/OuFWU+ks
+	VgKgJcZaA/4RovsBqUzpSLbNcIQio+AtPucX8y7h0I/BkoVLzGThJCPM6QhXERFbFP8IAv8kVdX
+	dsM1WsHz9lOSVqHjiqgDFkDtC7JnQqWK/RWxaaiYPfQzvk8cPUd3HpVRErgDi5RUXMLz2q/EppB
+	6lQc9SeGbhuK5MtmC0Jo12IN1hG42+QnjPOSsPsNgPsD2lRTM7TKg==
+X-Google-Smtp-Source: AGHT+IHUXF8Dlt2R0M0tUhRjJZfzXWTd2QVl3Kj7qIQfuLN+iAXj3NQBYlBwZKmabbvWQBuy4HyzAQ==
+X-Received: by 2002:a05:600c:474c:b0:431:5aea:95f with SMTP id 5b1f17b1804b1-434a9dc824dmr37930625e9.16.1732724830938;
+        Wed, 27 Nov 2024 08:27:10 -0800 (PST)
 Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3defsm17311830f8f.70.2024.11.27.08.24.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74efbesm25624895e9.7.2024.11.27.08.27.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 08:24:10 -0800 (PST)
-Message-ID: <813713d8ac62be0782bcf36d1d23bec5f4a3c08e.camel@linaro.org>
-Subject: Re: [PATCH 3/9] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
- require Type-C properties
+        Wed, 27 Nov 2024 08:27:10 -0800 (PST)
+Message-ID: <fba9c9df33dc2e060238a9bb3466a2fea020efde.camel@linaro.org>
+Subject: Re: [PATCH 2/9] dt-bindings: phy: samsung,usb3-drd-phy: add
+ optional orientation-switch
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Conor Dooley <conor@kernel.org>
 Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
@@ -72,12 +72,13 @@ Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
  kernel-team@android.com,  linux-phy@lists.infradead.org,
  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org
-Date: Wed, 27 Nov 2024 16:24:08 +0000
-In-Reply-To: <20241127-majorette-decorated-44dc1e7dd121@spud>
+Date: Wed, 27 Nov 2024 16:27:09 +0000
+In-Reply-To: <20241127-pushing-baboon-4afafcf8322f@spud>
 References: 
 	<20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org>
-	 <20241127-gs101-phy-lanes-orientation-phy-v1-3-1b7fce24960b@linaro.org>
-	 <20241127-majorette-decorated-44dc1e7dd121@spud>
+	 <20241127-gs101-phy-lanes-orientation-phy-v1-2-1b7fce24960b@linaro.org>
+	 <20241127-unturned-powdered-d9d1b695732d@spud>
+	 <20241127-pushing-baboon-4afafcf8322f@spud>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.1-4 
@@ -90,33 +91,33 @@ MIME-Version: 1.0
 
 Hi Conor,
 
-On Wed, 2024-11-27 at 16:00 +0000, Conor Dooley wrote:
-> On Wed, Nov 27, 2024 at 10:58:13AM +0000, Andr=C3=A9 Draszik wrote:
-> > The USB PHY on gs101 needs to be configured based on the orientation of
-> > the connector. For that the DTS needs a link between the phy's port and
-> > a TCPCi, and we'll need to inform the phy driver that it should handle
-> > the orientation (register a handler).
+Thanks for your review.
+
+On Wed, 2024-11-27 at 16:02 +0000, Conor Dooley wrote:
+> On Wed, Nov 27, 2024 at 04:00:59PM +0000, Conor Dooley wrote:
+> > On Wed, Nov 27, 2024 at 10:58:12AM +0000, Andr=C3=A9 Draszik wrote:
+> > > orientation-switch is the standard declaration to inform the Type-C
+> > > mux
+> > > layer that a remote-endpoint is capable of processing orientation
+> > > change messages.
+> > >=20
+> > > Add as an optional since not all versions of this phy currently
+> > > support
+> > > or even need the orientation-switch.
+> > >=20
+> > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > >=20
-> > Update the schema to enforce that by requiring the orientation-switch
-> > and port properties (on gs101 only).
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
 >=20
-> What is your driver doing if these are not provided? New required
-> properties are an ABI break after all and I don't see a mention of how
-> you're handling it here.
+> Actually, this patch unconditionally adds the property to the binding.
+> Is it valid for !gs101?
 
-This is hooked-in in patch 8 of this series in
-exynos5_usbdrd_setup_notifiers(). The new behaviour is gated off
+Good point. I've only made it required for gs101 in the next patch, but as-
+is, somebody could still add it (in error) in !gs101 cases.
 
-    if (device_property_present(phy_drd->dev, "orientation-switch")) {
-        ...
+I guess it's best to squash patches 3 and 4 in that case, and update it to
+disallow for !gs101.
 
-Without that property (i.e. old DTS or !gs101), the driver will behave as
-before (meaning for gs101 it will work in SS mode in one orientation only).
-
-Does that address your concern?
-
-Cheers,
+Thanks,
 Andre'
 
