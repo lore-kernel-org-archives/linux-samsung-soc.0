@@ -1,66 +1,66 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3717D1E0DE5
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 10:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF8D1E0DE8
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 10:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732705097; cv=none; b=O11Qy7VMgTdOd55ugORG4l8NqVUvivogEBwadYFqHXYO3004y8JEpUExEo3BUH0fx+vnvVGDgjmFhIjFB6zX96XMY1s/YTWucqgXXHiw2MMRSpQITHzScSft3aXx3M5aHWeY/HqkCMLpENH8GFlO3MKl195byfgylgj0t6TScc8=
+	t=1732705098; cv=none; b=OvEwX9p1KAxKO5YUNsneS25LMtZTSxim9ehLsCPrWyNHArREblGmu/XP//ekRsPHQ5ci+d3CQPSjqGK/J7Ar9VhqQv9/ZR/lP3ShQZlroM0Jq4YaIZgPr49B+L4RoDgA36t35dijVjUDasvWRd7dWA21La5p9nL1OWmixIhEMrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732705097; c=relaxed/simple;
-	bh=VjxgEP38+L+Ma4q4uehB1/JLcL29L3ctWPsdy4kfO1g=;
+	s=arc-20240116; t=1732705098; c=relaxed/simple;
+	bh=HoOWfskOM/L20/Qi5xKqj5oCq9iYQQhysTOwTI0G2Xo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ptd4UuwUxN20qwGnj+RXYoAKv7k3OUGpcoXD2W1+n6TMvLCIPtuQlaURZBItmx9qDf7FXHxtFzEDKaGLLbxzzE4i7MJTynBAnCYxxzm450xacTlVftJc6Sjl8nyytJUnESml/bOxljOdmDZ99RQrH7i+iJ7qb7lukzZ4ZsU6vi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tSnfjJYF; arc=none smtp.client-ip=209.85.167.50
+	 In-Reply-To:To:Cc; b=MwWNMk/xgMzALzahUjanPSDkieru1KjTHs4XaPKfuTKVLrtU6gsaODmPBcRZkxU1ANs3RDtbHMqlp2gMtAUe4s6KBBgxZqQ1P+smk9oCyMv0il646q7wCBeNq+O0CH0I67HzThA8Om4L4fprjrdxmNJt93Ic/SJTJkxHkqURX4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=INu+BY+B; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tSnfjJYF"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53df3078a4dso161457e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 02:58:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="INu+BY+B"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso934152666b.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2024 02:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732705093; x=1733309893; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732705094; x=1733309894; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EX57ICOKMzOs0eby+nVmHR92z2ekmaeMdJuyR8QQpCo=;
-        b=tSnfjJYFiH5cE+6qkupiG2hOfWrHY7ZaRffpPU6bl4YeOs6bDFLSFN3+RLGeGWzsWG
-         ABuB4zm2NwiyEmrzhSckmLRyqwYib8tPCfLjTb6pjEBYTG+mtzBDZcQg92C88fxDwG0d
-         xAgrrQ6kK63z30BbMrdqmgU4uw2zdy6NyU7EI6pb/pOOhruyIXGZbeYTTHLjXU4ygBvU
-         aNTii7xGLCOvECbdo52AIsTJ1clrUpYSzrudaSfTTKZMM0mXD4guIH5MAkGehQKRqyKd
-         yh657vVa7mK50yjHgZvMFztUjCEtyJhhPndiUfwXAqaufwaZvAJMoonuqtzKzU1YwRNk
-         DHgg==
+        bh=3jtF9ci8OPnOP4Hi31zRxsQ8dcNSQiS08yT+hSgOwYg=;
+        b=INu+BY+BPm2TSfOsOAdv7Ew/mRHGZVbUAopTmZ1DCG1nvN06Qv2gKcoSwJSl73v+Em
+         ecytZzjZBivNRAESQcitRPTzK97xhpbExVMBl45ygtUYtklCBpjgapcoxLRKw6Lo10gh
+         5Wj5gTjqMyg5bBWFzPhcJ5UHNZDd7lxZiC18e7TdDo6PWcXtCqYLURf/3tljvrB/2/1V
+         rV6JpgYRSn02eG5NTTg/SEpcoqvHHUx8E4GaQYmf57nSwabokKoGapRhCkD6/VJU0lhY
+         bi24aTXk06uWZLFTw9qwBl58BmeYPs+hMAJOW+qS4Q6mhtTYcLrtXzCyqqWHBOwm3xIb
+         0R5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732705093; x=1733309893;
+        d=1e100.net; s=20230601; t=1732705094; x=1733309894;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EX57ICOKMzOs0eby+nVmHR92z2ekmaeMdJuyR8QQpCo=;
-        b=VCQKvSLhqATMqps90NQQk5S1812YiUVyY1nJNTFslyCsqFVBeFXQ/ZJx8l2wuJzWon
-         epG77knN+A4S1HDPHzLHFtaUTcEQ87jrebeLvGkMcCuNsqd305Vsk871t6A9k2N0kO0b
-         /9wwVrehridhRZI+JSzaWbx9+CA1aZk/90O62J3qWwafc3B2TqRXTqwG4vZreLDLnJiv
-         VqX93uplErzM2L/Dsp4PNjIiB4eEH2VC/s7D63dnsL00qJswTZeKyQRW1ede0BS3ChBh
-         n/MJMjwsTitYFMazhhd6x7Wc1ZViCURGGMrHcA6qDQ1IUoZyJE5afPxyfAXmDdMP8vQS
-         TJ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVfRf0alfB8ShJMA3w612JHgMwHU5SATJ073BNKgteM/EfuHee3WqgU7Z8xU+p3ZsDRh1EmS0VkyiKFb9nwtte25Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5neop71NVRiFXrwSy/c8TzfvRDvopgABn1b0KiQ8o7b+fg25r
-	4t+RTvm/r8qgT2c21oepFpyaegTCJNCddNojLh1b+ITXpIpXqfzDvwCl+24zTLM=
-X-Gm-Gg: ASbGncvvCsOx9BK64QIJQN6HEaF0BrEvFR4hImKVWSEOA/p2G/c2MxjiTosxtC+R/0U
-	qc5qaB2z2pQxVO+RVTPXQpxED8cfmAjvym+H5BONYYFKA5Vsoe3IokrtQM4T1FWTCbimxPy4A8K
-	wNmd7t8E1NqilTDH8ui+SFe3Z7WcCZcQm0NQKd/h9t3hHYcMi521vnPDeGcFTZcSSSlVSJ1VEFX
-	z6hC4anrUhF6yalVt4rbHfFwTwjDlob34wOPES/BNEGhTpo4EyDihIrLHY27qknf0hSTZxVaJjb
-	QR8U+vrzIcP+0tyPdO8ef5HW4GeXn9oAJg==
-X-Google-Smtp-Source: AGHT+IEDZQbqWW03yw4ZJpKkkOp6D2uswnTAhfUmoQ8ZqjktXEwpbL7Kj9opKFu91DPbwMPyQP7BRw==
-X-Received: by 2002:a05:6512:3b06:b0:53d:ab04:54ee with SMTP id 2adb3069b0e04-53df0107235mr1294962e87.41.1732705093247;
+        bh=3jtF9ci8OPnOP4Hi31zRxsQ8dcNSQiS08yT+hSgOwYg=;
+        b=IO6rlhKwbtX7Q5Q7SvwMR0R8Cfzp2nMfyM/hR0n1THIcM37WeBZm5hybacY/4n3znq
+         srIdKxdytToT8Be2oSqbazQIPZcOKX46lwRo0iHl2TAvok840ItLSqf8EDz19MGmP+I0
+         orrKsB3VQeYTIl3NrgjkMXTdIXwfrzYNurOtNwgpyACvdlAz9LJDRwxLE/pzmAOh4NcW
+         dhgVUgwlnaqpmxo+XL414Vw9bME1PxTrZrWuCYxfRSico6LuCkvmTt4mOToLc/abx81b
+         aCtDMQQiyGLGjfXkBA2CqayaZL6+4Snk5QvaO08rpr4xEy569c0DXVXfdbqsaoZZ+dw2
+         sPHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpr13bKl5ymevg/MgDFdzd7k/XO5H4c5FWZMMYQ7iU648SvHdcTIBf2AcaFqwnrBQMsU0PCnGEuYRfNqs8R7QsZQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEbR/DLwKCDnTOxstbQpwyPPM3tXjTaC/7v9DYMQyxdngXHzz5
+	cM1nZdDM7sfhfs4+Lo5y+jM2GXlpdS3cTzfRnggcDs8VHor4mQdYIBRbtgDiFxU=
+X-Gm-Gg: ASbGncvXd1QPbH7BcvSPLEL96SeFyqmU2Hacpn6POgNEs1Pl5IGUZuDRkNstZOA7ZOH
+	iukJ6Ef5jCGo1D8MDsjqz4X92B79IoppKchZI/eq3D831Q4Ijh1pEmva0wEWnIk/xFBV3zim06b
+	KePw2oIqmg24fEFjEEeeP3d5+u+HP5d1wKYk1htj3CDCmbo9cVRXSaXNC2NoxE/CVDgjLzv1W+W
+	jaJoqbUE8s7JQGlGs2gnlrKoY2MFUHPuZFmCm6vFJQs+b/TEgieK9lJjFJumUt4myAVcsXcPLYO
+	1KPYr5KzC9X07ssF3WyYrGKJDwkTjwRvXA==
+X-Google-Smtp-Source: AGHT+IGpI0XPyLOxUc3SxNULKeFDjg8DEK2PQJHajpwT4G6OmiaLmyMslU+q4NFnVHObUoaipseY+w==
+X-Received: by 2002:a17:907:7711:b0:aa5:12dc:2e19 with SMTP id a640c23a62f3a-aa58107690fmr187546066b.52.1732705093727;
         Wed, 27 Nov 2024 02:58:13 -0800 (PST)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa54a6db906sm412183566b.41.2024.11.27.02.58.12
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa54a6db906sm412183566b.41.2024.11.27.02.58.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Nov 2024 02:58:12 -0800 (PST)
+        Wed, 27 Nov 2024 02:58:13 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 27 Nov 2024 10:58:12 +0000
-Subject: [PATCH 2/9] dt-bindings: phy: samsung,usb3-drd-phy: add optional
- orientation-switch
+Date: Wed, 27 Nov 2024 10:58:13 +0000
+Subject: [PATCH 3/9] dt-bindings: phy: samsung,usb3-drd-phy: gs101: require
+ Type-C properties
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241127-gs101-phy-lanes-orientation-phy-v1-2-1b7fce24960b@linaro.org>
+Message-Id: <20241127-gs101-phy-lanes-orientation-phy-v1-3-1b7fce24960b@linaro.org>
 References: <20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org>
 In-Reply-To: <20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -89,32 +89,32 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-orientation-switch is the standard declaration to inform the Type-C mux
-layer that a remote-endpoint is capable of processing orientation
-change messages.
+The USB PHY on gs101 needs to be configured based on the orientation of
+the connector. For that the DTS needs a link between the phy's port and
+a TCPCi, and we'll need to inform the phy driver that it should handle
+the orientation (register a handler).
 
-Add as an optional since not all versions of this phy currently support
-or even need the orientation-switch.
+Update the schema to enforce that by requiring the orientation-switch
+and port properties (on gs101 only).
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-index 1f8b35917b11..6c17a44718aa 100644
+index 6c17a44718aa..0659fc1ce13e 100644
 --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
 +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-@@ -51,6 +51,9 @@ properties:
-   "#phy-cells":
-     const: 1
+@@ -142,6 +142,8 @@ allOf:
  
-+  orientation-switch:
-+    $ref: /schemas/usb/usb-switch.yaml#/properties/orientation-switch
-+
-   port:
-     $ref: /schemas/graph.yaml#/properties/port
-     description:
+       required:
+         - reg-names
++        - orientation-switch
++        - port
+         - pll-supply
+         - dvdd-usb20-supply
+         - vddh-usb20-supply
 
 -- 
 2.47.0.338.g60cca15819-goog
