@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDF383CC1;
-	Thu, 28 Nov 2024 08:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B1985628;
+	Thu, 28 Nov 2024 08:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732781882; cv=none; b=ay2QfjRVV8m70YwrLpyG03YubISUwKy1tqYK10vazztIf+NlUd8GSEmZMkWv4P3STM9WLbnQnHSRtmMv5mFcQAPLIiE14LTKpS8yYLcNTW63NBy4nPFkWNFEO5RMLW27r7xDE4dp1YLoaTIZKI0lHFfk5X5h2qM46MIXNUKgvWI=
+	t=1732781983; cv=none; b=sVIFS0rC3VI2RRPuQeDJyaiftJF4yQvq3U5S01ydIjq5UKDFiA1WHp2oyPDBwaE0HgoakQkCFjZ0HUkJ+FiF4rm8yrrmOxk9jhw0kHivwta3d6I2eVXB5Iwfx5Iz0BiJCyFfUBCPyGXA8l7Kvn0tXS87hUGJ8pWVLQwYTIzzTC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732781882; c=relaxed/simple;
-	bh=eaJUqJCbsZi7hy1XkH+mjMCn/jPIKtO2zNY74RJZ6+4=;
+	s=arc-20240116; t=1732781983; c=relaxed/simple;
+	bh=JnmC+eGi2NJ+cE3whjArNp5/qRd1LhCM2m829NmJDeg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kEvSp59X8ilSVZCpaAcmnki1lEUwXraTNw+0cayZtfF+rr94NzkO6I8x8C/CU/tKP7qEl/PYycmFc7ExYN562X5sbUPZ35DJzu3av6nBMP4hTxBdEHlmDMMamc+J71BffJl39XB6xoXVU986fkOGVA+1sXAeiXMqnpwO2C0whZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRuF+cpI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EBusQ9RXIspZXC7XO2XwGw/NFXj7VcpKbBkzfLaMWXxqvfxN0R494rxJQ3O8I56rT1ta9Ha4/t/GCtCKwhCj+J0udJvQ1UYs4SeMrSo+XplPlEZQvO16f9GSFHDsSVaj1ZtWpCQeK2P2mEzNDX+s9649ZNQw/uLH3IO7lJ+G/o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cge+d5hj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRuF+cpI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C3CAC4CECE;
-	Thu, 28 Nov 2024 08:17:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cge+d5hj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1133BC4CECE;
+	Thu, 28 Nov 2024 08:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732781881;
-	bh=eaJUqJCbsZi7hy1XkH+mjMCn/jPIKtO2zNY74RJZ6+4=;
+	s=k20201202; t=1732781983;
+	bh=JnmC+eGi2NJ+cE3whjArNp5/qRd1LhCM2m829NmJDeg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JRuF+cpI3WKLwTt8tmD88JGC1VSZfQY+eH6/aA01JQ7zyKeUKP8LrlBJYIeI6ixQP
-	 v0uuo8/TfBuryqrnGROwQBisnVy/sixxHBiT0d9DLiHYlgx90E1UUiui/M9Vjch3gy
-	 CtJZq/cLZFDY6HG2ri7Hu2q7BRF08Wq2OfZBSU6YBvKVu/hPjO+o95XgrNMlIpfdwl
-	 cfYmsoHXibK1CwLXk4iQU9zHUNf52KcIOlu7yfjgEe/BRchWLZ/JpBubnrfc1zL7QU
-	 HR9yLrwQVDhmzZhvu9COMpJjy+ECyjJi8oq/Au5dbMHDmj7CVoANMq5XrmlPIGu2Xj
-	 /baySCDD4pRMg==
-Message-ID: <8325415b-4af9-4bef-8310-39410b10aa84@kernel.org>
-Date: Thu, 28 Nov 2024 09:17:55 +0100
+	b=Cge+d5hjIkLTVecSTedLXUwbA+T5B/2SdPvyp9ebhVb8IgMRaZnOd+7U5zmCx950O
+	 oYV/RACIg3gR5o2JRL3Ned29RHIIS/4cguAvQnG2ajrJzyX9cdWMaE1x9cged6jdCi
+	 xnmJXVK2qlinXgLwppn1L9acMGsek08xuNMhihXkoBgQtIkMQoc0kGSw+i1RzeRXJl
+	 ts6+ytlsnACoaK3xq8HqAkuzBNRxVdz7uWU/qsmgs2e7qBUbFjQFYZyoN/LhavGxUI
+	 7T60WAGCQLuCIex9sElUD0YI/Iz3rvlETqQZpdZHluaYS69w8ADTajteivYeJwDQ+z
+	 7FH1EKEcu4NFg==
+Message-ID: <b0c5e443-79e2-4e53-8813-57044a627dea@kernel.org>
+Date: Thu, 28 Nov 2024 09:19:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: usb: max33359: add max77759 flavor
+Subject: Re: [PATCH 5/6] arm64: dts: exynos: gs101-oriole: enable Maxim
+ max77759 TCPCi
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,7 +51,7 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
  devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 References: <20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
- <20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org>
+ <20241127-gs101-phy-lanes-orientation-dts-v1-5-5222d8508b71@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,24 +97,44 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-dts-v1-2-5222d8508b71@linaro.org>
+In-Reply-To: <20241127-gs101-phy-lanes-orientation-dts-v1-5-5222d8508b71@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 On 27/11/2024 12:01, André Draszik wrote:
-> On the surface, Maxim's max77759 appears identical to max33359. It
-> should still have a dedicated compatible, though, as it is a different
-> IC. This will allow for handling differences in case they are
-> discovered in the future.
+> ---
+>  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 99 ++++++++++++++++++++++
+>  1 file changed, 99 insertions(+)
 > 
-> max77759 is used on Google Pixel 6 and Pixel 6 Pro.
-> 
-> Add a dedicated compatible to allow for potential differences in the
-> future.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> index 387fb779bd29..5f7be0cb7418 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> @@ -10,6 +10,7 @@
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+> +#include <dt-bindings/usb/pd.h>
+>  #include "gs101-pinctrl.h"
+>  #include "gs101.dtsi"
+>  
+> @@ -90,6 +91,84 @@ eeprom: eeprom@50 {
+>  &hsi2c_12 {
+>  	status = "okay";
+>  	/* TODO: add the devices once drivers exist */
 
-This should be sent separately to USB.
+
+Is the TODO still valid?
+
+> +
+> +	usb-typec@25 {
+> +		compatible = "maxim,max77759", "maxim,max33359";
+> +		reg = <0x25>;
+> +		interrupts-extended = <&gpa8 2 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-0 = <&typec_int>;
+> +		pinctrl-names = "default";
+> +
+
 
 Best regards,
 Krzysztof
