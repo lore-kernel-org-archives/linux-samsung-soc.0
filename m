@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988D41863F;
-	Thu, 28 Nov 2024 08:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D77150981;
+	Thu, 28 Nov 2024 08:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732782880; cv=none; b=sigQmpNdiJcuYDzTXnwy2DqV4xfcPTX+gnXXc6FU120VdsivOR3FpR+faPThYc+57w4FkEqGXzv5xP35GlfB9OsaqH4sf+P1z/BWT0Xb4Qxg4NcQ2NSz/d8mcey6SoOogC7p3e2GOe71UT+j0iplU3sz/NUvbrpXPtSxVJjYCL4=
+	t=1732782902; cv=none; b=SG08rb3y0imi3Wz2xdMUxTIPROOIT06R4mkErxjxDz9IDAlDZ1qvJHI6IYqKF2gEJy+u4ATRk+IsoyQLUdg/3wk7kldCtH5D1Pl0AgyBKLu2hzyTHIakCAIIMV2OJMh1a+Xr62VU3qLLD2y59yuO9+oWuqJhCEcKU4I8Gn3r6vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732782880; c=relaxed/simple;
-	bh=fKYxvr19pd/krJfNZ2gsWVRBGBuyTaD9MqzoRcIuXuc=;
+	s=arc-20240116; t=1732782902; c=relaxed/simple;
+	bh=bNOHYeY1jXSpnvL6eCApbzb1dybwfN7fSu9MXDT/Js8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJEpgD8eBYI6W8E/0bxCqYv3qg8dDV8IILZCCCP0Y4sgK9Cl1tWUaS6FJM3J0WKi85F4dqtc0YNrHF4lT3/rcitTWD394VymNrrtLAqwt/8SQ+fqVxVFUS9+HbZ8x4IYQCY8t6mraxhGQL9UkhEtDwR/BbS5FuONafgR4kgVUGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtlh9Qww; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hgwZAbKWV2CyX7zgQN0YA+aYd+e3M11txytesu5E2uDNawIqjpl3/w/jqu57SM8Clswn+9lyucqD8GHafnQTO3TechRgEwzho3RhBxYAFX7taw/4wS28dSFTA6cLDDNeoNo8Nr85+5ZbDde/QZMQYeJ98LFKn8cBEn/VUpHyhKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVzLPv4G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtlh9Qww"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95130C4CECE;
-	Thu, 28 Nov 2024 08:34:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVzLPv4G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8152AC4CECE;
+	Thu, 28 Nov 2024 08:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732782880;
-	bh=fKYxvr19pd/krJfNZ2gsWVRBGBuyTaD9MqzoRcIuXuc=;
+	s=k20201202; t=1732782902;
+	bh=bNOHYeY1jXSpnvL6eCApbzb1dybwfN7fSu9MXDT/Js8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rtlh9QwwHd8Cj5867qO/2iJfjSAVJ8tfkMX2buJyjGBRYRpxitjXNMTcXu4pJx2+t
-	 NWJAGYpxohJZA9lC9+cw6EyY3GOB2hSX7nSoOxcp5beHnJEV2ej4V01plDsnLwBfek
-	 XzX8lcAWoPK0qoJusqH1eiMMEdFvfl8BlmakE0xbOMJ1ScZxgLZoy6ddHeABcdOiXq
-	 5Htw1cXLua6hzRLwGxh51yvVJJpAKUAchTi8Qdo2Y1txxDPWo432tUxT3VIXEQW5FB
-	 1kJBB56+FIdyXeByIbr0GVxYsQDq9OiyH7qPMRFltBFX8t6CMLe1F6l6uCVJBjDA6x
-	 HkllVyH/qO+bA==
-Message-ID: <285e5554-182e-492f-a4cc-d702ff43bdf0@kernel.org>
-Date: Thu, 28 Nov 2024 09:34:32 +0100
+	b=EVzLPv4G7BZ5xvoxk9Xay6qNTlxwBE52n50Mx+L3yk8jwhsFqLHdXAb0/FZTPQkzU
+	 pqLyKxkjF3RHSawe9qAorHW2lAY5D5dl9lOzWVxw0hR2LVdJncRfM0bb2YV5tozLVh
+	 BdTrM8ehnDzpbG2ICdJjQSk1wOzoogGOrdmoX0FiPsQHu5H8jSdaLNh3786VpGFW4U
+	 90pBK0yZeoFBHb/F98ansQUqw89ZZti9xbgyY0Oi/4OYamf5hF/WRvXRqHx2WXjXqM
+	 CMcqcD/jQVJ5Atn3CrhdAnNbwfbdyVGs9vmJcZE26ZbsQaj0OiGhYZ9v4vC3z0JZT/
+	 ThJw2opV9cSkw==
+Message-ID: <c9f8ae74-5d25-4d26-82f3-6a6c8331df2a@kernel.org>
+Date: Thu, 28 Nov 2024 09:34:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: exynos: gs101-oriole: enable Maxim
- max77759 TCPCi
+Subject: Re: [PATCH 6/6] arm64: dts: exynos: gs101-oriole: add pd-disable and
+ typec-power-opmode
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -51,9 +51,9 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
  devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 References: <20241127-gs101-phy-lanes-orientation-dts-v1-0-5222d8508b71@linaro.org>
- <20241127-gs101-phy-lanes-orientation-dts-v1-5-5222d8508b71@linaro.org>
- <b0c5e443-79e2-4e53-8813-57044a627dea@kernel.org>
- <663f534cd88332ecf64e575ea0cfa1f40e303373.camel@linaro.org>
+ <20241127-gs101-phy-lanes-orientation-dts-v1-6-5222d8508b71@linaro.org>
+ <7c013e0f-bb8a-45db-a5b5-71afc0ddefda@kernel.org>
+ <4a5c27922a9852c06e1832dcc63b4a448e8955e5.camel@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,23 +99,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <663f534cd88332ecf64e575ea0cfa1f40e303373.camel@linaro.org>
+In-Reply-To: <4a5c27922a9852c06e1832dcc63b4a448e8955e5.camel@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 28/11/2024 09:28, André Draszik wrote:
->>>  
->>> @@ -90,6 +91,84 @@ eeprom: eeprom@50 {
->>>  &hsi2c_12 {
->>>  	status = "okay";
->>>  	/* TODO: add the devices once drivers exist */
+On 28/11/2024 09:34, André Draszik wrote:
+> On Thu, 2024-11-28 at 09:21 +0100, Krzysztof Kozlowski wrote:
+>> On 27/11/2024 12:01, André Draszik wrote:
+>>> When the serial console is enabled, we need to disable power delivery
+>>> since serial uses the SBU1/2 pins and appears to confuse the TCPCI,
+>>> resulting in endless interrupts.
+>>>
+>>> For now, change the DT such that the serial console continues working.
+>>>
+>>> Note1: We can not have both typec-power-opmode and
+>>> new-source-frs-typec-current active at the same time, as otherwise DT
+>>> binding checks complain.
+>>>
+>>> Note2: When using a downstream DT, the Pixel boot-loader will modify
+>>> the DT accordingly before boot, but for this upstream DT it doesn't
+>>> know where to find the TCPCI node. The intention is for this commit to
+>>> be reverted once an updated Pixel boot-loader becomes available.
+>>>
+>>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 >>
->>
->> Is the TODO still valid?
+>> This should be squashed to the previous patch, including also combining
+>> commit messages.
 > 
-> Yes, there are more devices on that bus.
+> I contemplated that, but I didn't in the end so that it's easy to just
+> revert this specific patch once the boot loader is updated.
+> 
+> I would prefer to keep them as separate patches for that reason, but will
+> squash if you still think that's better.
+> 
 
-OK
+OK, can be separate.
 
 Best regards,
 Krzysztof
