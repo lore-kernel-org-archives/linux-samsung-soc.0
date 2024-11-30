@@ -1,209 +1,164 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039FA1990A7
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Nov 2024 13:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA33158845
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Nov 2024 23:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732975108; cv=none; b=lUMBr0OcW8+cRioHoQJCei4zUHz2OERELRCm3sFaj7kFbeI5mDH1aKzS9me2SUnx9hJZtZxdVNdBzBFKAZVVJcTGjfHXUJ1Bz8h93h0FkxYHb0m3iTO7lVEG8bkf/0dD9BgCA2V7errFLi3MmXQdvxUM+VugBjmd6Rh2v8Ui4+4=
+	t=1733010933; cv=none; b=sAlKDMrQUb6eUuSl1ouHMQtEjWuDu8soGifpAMBvZqCcrpJHkbWmkOFd4LUfThyH2xfMi2DTnIIS15ydQ5svNHAQALm3EIzYgDYt5S/YZnz+hRwtcizDGctCO2NWdYa9KT0qKYlfJtLYhnC7aihaj+hG1EkKRaatHaEaPziTDXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732975108; c=relaxed/simple;
-	bh=uZqTpKr93naOghYTr0iK9IfYdelZY2f/4l+5kxDMpfQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p13CraC2S7SNyH9DnFeOQ9xp6hzQDeJFZ+2sF3z3BEpgTNBrhLb7d4LboWrPzIyXq95/rjPnmFszHzDF2XehUbCQIq0FAv8LsT7sReiQSaaDy1/XMz5C6gen7W/xZPBozsADU0bDDsO2drn4nEZvSr3REjuNCgjCj8/swCYBkgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gq1uEDTA; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1733010933; c=relaxed/simple;
+	bh=h9SpCjrnoVeyG6yy+hC7dnaQqGomdEDru9YX9FtBpig=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Yxk+4aT2BX2uTOzNpFskCzjZwqWmngvhEd/Bs+00H2y3wK1mAfGodT+Oy1wfNcFghY/e7YqlU1/xqGaJ4yPIdkEcU8rsZN2T+gH7A/vizbhf4j6PIpKjIrhWVUsMNw5xjY4tsMbHC6NxlA8QWcNgPGDQKKOr0bmzJBTlOvHEVNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yE6iTeh+; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gq1uEDTA"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so25097655e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Nov 2024 05:58:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yE6iTeh+"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ffb5b131d0so29384971fa.2
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Nov 2024 15:55:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732975103; x=1733579903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSHwRqHVpOIG2JrOXS69Jq4ftU8zIW/MyIo0a+5/w9E=;
-        b=gq1uEDTA9Nub4xDl29wT/ADroBWz4lM0AgNyqgR6J6Jz5LWdUmKYca+Y+ghb5BBwpX
-         LYvfRjjwLdVbQUIjdLctBHjZwMXyxCvWuU2+cuk0+95m06HwBL2Q4SZ8rzJApdKysKP2
-         nBMPvhM8SaQzbjI7YOXZEkQpg2i5gU8vGxHghgG/kHKdaqAYqtflqWDSDikTes1juE/X
-         4cBajcTE0cpKZi1KqyXBKMua606L2loMG7stMQjYwUbrUNKRj9CojBdlXk6YjHWxKKCY
-         /nstedRMbr8IgRK1Z5rGfrNqx1mXKshtu9p2/eendKlkV1vE7JXtkRhDMTFHIyhu3uE7
-         zRwA==
+        d=linaro.org; s=google; t=1733010929; x=1733615729; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=igdGJ+6WFp5yYbSTVfMkHAFbN2LBIGOZkBsdW6CIVmA=;
+        b=yE6iTeh+7ndrnGLLQo05hhUOapS1TEw4SzI6x2wNytpBQubdztYeEIJ4Kn8HOGHQjs
+         HmvNobZyW1GTLgAwhM3/qkENBrLoWcU4tG8s8X4tbZ5d9ps/K2S4sosPStYFEN0mwaQ3
+         Y8Ryi/89z1WPH1PKz4ylUqpBEHKoKc/IA963FzYKu8EVfbVSiHLma8jzgRZiwth19WxR
+         Em5u4VDYVokIgbEO7ETbIUR8tKJfbwQCqrZd25XRCcx63HYwk83QDAOYbq9OK4/fGvKz
+         BXoAJmCPT4o+dtd08bb+NUGEIw8gBgRhmqim5G6mkyG5cr8faRVuYGqX59OBCAx/1IYv
+         bQCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732975103; x=1733579903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1733010929; x=1733615729;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OSHwRqHVpOIG2JrOXS69Jq4ftU8zIW/MyIo0a+5/w9E=;
-        b=cqMLdYfQCRpS0XKU/3wMwMedib/pUgYCtflOi8xIDm2dVSmFKDog2EXzt9EHJIcpQd
-         dsl7uV3+i5oqnA8/eXduHlEtolOJqrVLaEGhvBHvR3GLTfzdZMx2VZhcZMR8CegAIJC5
-         rrCC4omSEG2l4iQjnWb44SyB0bExwgOB88ML7ndeTLWi2qHdpFs85jf6cKhhyhcoqw0S
-         FeFxbbKozwC04gt9j44KB1/fxxOOKizIXr5S9+h2jShl/B9JNy7dT90SCW1IzMqj13LS
-         kC0HM1XYrmvUEunX5498BLund4OBXrJyhYB06ZDeqxkr+Qxcvsbft8epVWI8m0kbitzn
-         UdNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVZf9aCFdtg9UmnaGHuUXOBpeBygXZy8AXOO1Bcw1XvS2Nsxe5Cnt1AtaAPeB4nNwEf5jzYrwb/r5Y6HA14o14Yw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YysWAmKtMdEDUy8tEnzyUXUI8xZfYTDz/Mj48oWpyPVsiWX7oBh
-	txGCydUwmkIZUZR2AWFPut7282jlCyTfjAAhEKunfSFDeYJSOMOpUPEYOI3Rl6E=
-X-Gm-Gg: ASbGnctyOHzuONzemccS2RLKcXfLCBWgMA+R/DPcoyoyBVVZaL+suR20V5lwqBKEIyP
-	gzQDzvYqHoi9+QqMrEpfslLlWthTIa1QytdENfFxY3UT8VWG0owivHaIQ8qNS1RuqOwSI/EL0yP
-	RWDK0JkgCdfbyBSD+HG3TeiAax8wDjnKvmxwLfSqpXV5vpIgahlWNea6OK4lLmyHpSKIPFnLyLG
-	KdruxBAYHkKj5KHy4o2ytgQ1YVZAEswcMUteO4xoRpZcjAUpoJK5Ew=
-X-Google-Smtp-Source: AGHT+IHHBe7d5htoj70/kfSxdm+kZQjM0tjaIphEphbFBlZoaGAn1iAgRxGbS4k2FdQNlTMpb9szHA==
-X-Received: by 2002:a05:600c:1e2a:b0:434:a8ef:442f with SMTP id 5b1f17b1804b1-434a9e0b47amr130603305e9.32.1732975102930;
-        Sat, 30 Nov 2024 05:58:22 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd2db59sm7209061f8f.11.2024.11.30.05.58.21
+        bh=igdGJ+6WFp5yYbSTVfMkHAFbN2LBIGOZkBsdW6CIVmA=;
+        b=Qiuk2+fumUQbeZNjrXSt4pcbV/V90cO542n2svh1JDMAxJkIi01aOmE4PtKSKghbW7
+         iWYNn2IM1K7iAJ5A6GcuL12p74IXzAh2P7zyl9z04024pmNE832B8m8PZZuq9qMOZGsd
+         VENA/0TKOPU4MMbj7XoUfUzgnLdtCcx1SEjS8slcffcJLF+ydTeDjNKVPXP5A5pVDAdB
+         mZt2/uWa8OEnrd7d/IoRnmOYPSy9s5Lk2h9E3Vk/VT/5blUX9kqtCP4oqIOmx6su2U/L
+         aEBK9frZe28I0/3rKmgCREJV8CFcoTEjwbKNE8KhrfNx+Gs9BiJxUkXMJeDCESt+K7JQ
+         c4Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/bn73Fp4m20/kjgkm8634NUITqIgSQSwdEUpoIzW8gh2cFxbN0QIxxsA+A0wGtXPSJPzFbVKq12l8q61mjZ6Fig==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnn8tMEBVksCObc4AIiLzSYTMJl1bezigCY3SjQ8d22PFQDxpW
+	rpnPoUwR4lWeKLf2Rr8s+jovRTu6vPRPJnP9ZAEX3a+TWdgKICmHL+JpKamiDkY=
+X-Gm-Gg: ASbGncvImcoNqld0SAqqcwkO79kejJNV7pFmVG3AgRGJyU2i9B+FtIM5S59yA7/2FWZ
+	O8i3Z4s0/H/Pj6n96MQ5JV6zj306fuG+VA3LqunmFBaOvaHDqXbHTJJ3EANRwOnUhYUZ6Vj1ITq
+	mLP7FghutHziUMDwTMv4nJFUziOKq+U77Vh3PA68RhAPmN2V0NskKsbuYXd2vVhEDc1rBMEz0H8
+	bgd8F+gwtu5IrO+cltgt11Oacu0TBB8Txprme9zkN+9Jxdh1d21ZEQueg==
+X-Google-Smtp-Source: AGHT+IH/lMi82z0v/iMa3bnH3O48sOuTvGtLHugaIGP26xUYLLpIeMPo9osg0TDFc6RKyN8BchLK9A==
+X-Received: by 2002:a05:6512:124f:b0:53d:de48:7409 with SMTP id 2adb3069b0e04-53df001cb8amr5926461e87.0.1733010929250;
+        Sat, 30 Nov 2024 15:55:29 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649647dsm900706e87.195.2024.11.30.15.55.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 05:58:21 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH] devfreq: Switch back to struct platform_driver::remove()
-Date: Sat, 30 Nov 2024 14:58:11 +0100
-Message-ID: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        Sat, 30 Nov 2024 15:55:27 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+Date: Sun, 01 Dec 2024 01:55:17 +0200
+Message-Id: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4431; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=uZqTpKr93naOghYTr0iK9IfYdelZY2f/4l+5kxDMpfQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnSxn2/gYVC8rkX/fl3aGkXakkNgP43aHdtARV8 OWxfSCpITGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ0sZ9gAKCRCPgPtYfRL+ TtpSB/4zIRpdyNmt2fGjIAeqqboAJR/YHNuFmvrjp8Drq7BhxBmFEjklrLsdnM1D8xJ5bFpqfMt 3g3BmsnnVn5Ievf+Rgcjdad0fazJd8PkmhOKtpmlxhQBHOGgdt3gIMLDcreOU0uSgchS/gRERs6 OQW82e3EqDHrAE6Vc+3Qi61FU/ZlMF1nqYl1+99RsW8bvRLfXVqfnDpu8ICue/NpESiicBfveka TqbEyaEcVjC3oB+UloPneKYxzreyyW/95x403cjGd3zjLiW0e/ZY3NfQI/fj6v+QVkJWdTBa697 6PLuqyWiHcdrpQA+5R1YdF54B/MbB273AjfAkpjaeAGRTtZx
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOWlS2cC/x2MwQqDMBAFf0X23AUTFWx/RXoIyVMXNJGNLYL47
+ wYvA3OYOSlDBZk+1UmKv2RJsYh5VeRnFyewhOJka9saWxsOurJPMcLvSRlL4PW34+DeNW/XdCj
+ oqdSbYpTjOQ/f67oB3wr3/2kAAAA=
+X-Change-ID: 20241201-drm-connector-eld-mutex-8a39a35e9a38
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2285;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=h9SpCjrnoVeyG6yy+hC7dnaQqGomdEDru9YX9FtBpig=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnS6XsZ1/pqxgC30AKzvdNBVrv5HQb2dJZaZ5zn
+ VEhrpDwtKOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0ul7AAKCRCLPIo+Aiko
+ 1ew4CACbQcTx0V9Sgmz8qhhsUnlM0Vh+dbbDTDz41dhDdcEgbBBokvib8Go3fPRoR2hiD5m4p3q
+ Inrqmtu6WxnuFTZ0QoZhHX0EdGBd/UJUWQcfS5pdXJ3Xg23dIDNSEqxBkJVEmRicpeJ9ZaUAQMi
+ YdIJpl1FT2/ANTrI2tncuw5hhWL1lQ7u+U8y6VrDr5QZjFXAAeZ0Zu3y8lTuITAxcxTLjSfCapq
+ SK73gIYvnestQ4yiI9RsX3EIyujQ6z18dGKF1awnRjx9cXrXrBMiBVD5XtL8+PtSrfWgAuHy9qW
+ g8v2j0eW+fy5k2eNqU4JbP7IJfm7WWm2CTjtdsikNnIqWkIv
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers.
+The connector->eld is accessed by the .get_eld() callback. This access
+can collide with the drm_edid_to_eld() updating the data at the same
+time. Add drm_connector.eld_mutex to protect the data from concurrenct
+access.
 
-Convert all platform drivers below drivers/devfreq to use .remove(),
-with the eventual goal to drop struct platform_driver::remove_new(). As
-.remove() and .remove_new() have the same prototypes, conversion is done
-by just changing the structure member name in the driver initializer.
+The individual drivers were just compile tested. I propose to merge the
+drm_connector and bridge drivers through drm-misc, allowing other
+maintainers either to ack merging through drm-misc or merging the
+drm-misc into their tree and then picking up correcponding patch.
 
-While touching these drivers, make the alignment of the touched
-initializers consistent.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Hello,
+Dmitry Baryshkov (10):
+      drm/connector: add mutex to protect ELD from concurrent access
+      drm/bridge: anx7625: use eld_mutex to protect access to connector->eld
+      drm/bridge: ite-it66121: use eld_mutex to protect access to connector->eld
+      drm/amd/display: use eld_mutex to protect access to connector->eld
+      drm/exynos: hdmi: use eld_mutex to protect access to connector->eld
+      drm/i915/audio: use eld_mutex to protect access to connector->eld
+      drm/msm/dp: use eld_mutex to protect access to connector->eld
+      drm/radeon: use eld_mutex to protect access to connector->eld
+      drm/sti: hdmi: use eld_mutex to protect access to connector->eld
+      drm/vc4: hdmi: use eld_mutex to protect access to connector->eld
 
-this is based on Friday's next, feel free to drop changes that result in
-a conflict when you come around to apply this. I'll care for the fallout
-at a later time then. (Having said that, if you use b4 am -3 and git am
--3, there should be hardly any conflict.)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 ++
+ drivers/gpu/drm/bridge/analogix/anx7625.c         | 2 ++
+ drivers/gpu/drm/bridge/ite-it66121.c              | 2 ++
+ drivers/gpu/drm/drm_connector.c                   | 1 +
+ drivers/gpu/drm/drm_edid.c                        | 4 ++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c              | 2 ++
+ drivers/gpu/drm/i915/display/intel_audio.c        | 3 +++
+ drivers/gpu/drm/msm/dp/dp_audio.c                 | 2 ++
+ drivers/gpu/drm/radeon/radeon_audio.c             | 2 ++
+ drivers/gpu/drm/sti/sti_hdmi.c                    | 2 ++
+ drivers/gpu/drm/vc4/vc4_hdmi.c                    | 4 ++--
+ include/drm/drm_connector.h                       | 5 ++++-
+ 12 files changed, 28 insertions(+), 3 deletions(-)
+---
+base-commit: 44cff6c5b0b17a78bc0b30372bcd816cf6dd282a
+change-id: 20241201-drm-connector-eld-mutex-8a39a35e9a38
 
-This is merge window material.
-
-Best regards
-Uwe
-
- drivers/devfreq/event/exynos-nocp.c | 6 +++---
- drivers/devfreq/event/exynos-ppmu.c | 6 +++---
- drivers/devfreq/mtk-cci-devfreq.c   | 4 ++--
- drivers/devfreq/rk3399_dmc.c        | 8 ++++----
- drivers/devfreq/sun8i-a33-mbus.c    | 2 +-
- 5 files changed, 13 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/devfreq/event/exynos-nocp.c b/drivers/devfreq/event/exynos-nocp.c
-index 5edc522f715c..9480a92fc265 100644
---- a/drivers/devfreq/event/exynos-nocp.c
-+++ b/drivers/devfreq/event/exynos-nocp.c
-@@ -283,10 +283,10 @@ static void exynos_nocp_remove(struct platform_device *pdev)
- }
- 
- static struct platform_driver exynos_nocp_driver = {
--	.probe	= exynos_nocp_probe,
--	.remove_new = exynos_nocp_remove,
-+	.probe = exynos_nocp_probe,
-+	.remove = exynos_nocp_remove,
- 	.driver = {
--		.name	= "exynos-nocp",
-+		.name = "exynos-nocp",
- 		.of_match_table = exynos_nocp_id_match,
- 	},
- };
-diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
-index 7002df20a49e..a738e6145612 100644
---- a/drivers/devfreq/event/exynos-ppmu.c
-+++ b/drivers/devfreq/event/exynos-ppmu.c
-@@ -700,10 +700,10 @@ static void exynos_ppmu_remove(struct platform_device *pdev)
- }
- 
- static struct platform_driver exynos_ppmu_driver = {
--	.probe	= exynos_ppmu_probe,
--	.remove_new = exynos_ppmu_remove,
-+	.probe = exynos_ppmu_probe,
-+	.remove = exynos_ppmu_remove,
- 	.driver = {
--		.name	= "exynos-ppmu",
-+		.name = "exynos-ppmu",
- 		.of_match_table = exynos_ppmu_id_match,
- 	},
- };
-diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-devfreq.c
-index 7ad5225b0381..3938878b2279 100644
---- a/drivers/devfreq/mtk-cci-devfreq.c
-+++ b/drivers/devfreq/mtk-cci-devfreq.c
-@@ -429,8 +429,8 @@ static const struct of_device_id mtk_ccifreq_machines[] = {
- MODULE_DEVICE_TABLE(of, mtk_ccifreq_machines);
- 
- static struct platform_driver mtk_ccifreq_platdrv = {
--	.probe	= mtk_ccifreq_probe,
--	.remove_new = mtk_ccifreq_remove,
-+	.probe = mtk_ccifreq_probe,
-+	.remove = mtk_ccifreq_remove,
- 	.driver = {
- 		.name = "mtk-ccifreq",
- 		.of_match_table = mtk_ccifreq_machines,
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index d405cee92c25..158e4bbd08cc 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -473,11 +473,11 @@ static const struct of_device_id rk3399dmc_devfreq_of_match[] = {
- MODULE_DEVICE_TABLE(of, rk3399dmc_devfreq_of_match);
- 
- static struct platform_driver rk3399_dmcfreq_driver = {
--	.probe	= rk3399_dmcfreq_probe,
--	.remove_new = rk3399_dmcfreq_remove,
-+	.probe = rk3399_dmcfreq_probe,
-+	.remove = rk3399_dmcfreq_remove,
- 	.driver = {
--		.name	= "rk3399-dmc-freq",
--		.pm	= &rk3399_dmcfreq_pm,
-+		.name = "rk3399-dmc-freq",
-+		.pm = &rk3399_dmcfreq_pm,
- 		.of_match_table = rk3399dmc_devfreq_of_match,
- 	},
- };
-diff --git a/drivers/devfreq/sun8i-a33-mbus.c b/drivers/devfreq/sun8i-a33-mbus.c
-index bcf654f4ff96..a405bab1a63e 100644
---- a/drivers/devfreq/sun8i-a33-mbus.c
-+++ b/drivers/devfreq/sun8i-a33-mbus.c
-@@ -495,7 +495,7 @@ static SIMPLE_DEV_PM_OPS(sun8i_a33_mbus_pm_ops,
- 
- static struct platform_driver sun8i_a33_mbus_driver = {
- 	.probe	= sun8i_a33_mbus_probe,
--	.remove_new = sun8i_a33_mbus_remove,
-+	.remove	= sun8i_a33_mbus_remove,
- 	.driver	= {
- 		.name		= "sun8i-a33-mbus",
- 		.of_match_table	= sun8i_a33_mbus_of_match,
-
-base-commit: f486c8aa16b8172f63bddc70116a0c897a7f3f02
+Best regards,
 -- 
-2.45.2
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
