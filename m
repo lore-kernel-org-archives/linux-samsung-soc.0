@@ -1,163 +1,130 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E55168BE
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  1 Dec 2024 00:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225361D6DD8;
+	Mon,  2 Dec 2024 08:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733013885; cv=none; b=OTE8cCaBNXexq/Ym8x3S6Ql25rWLl7WDlVZItISvgspEf2Fti+VnQTVzQmQUU9X7i+V7H6QidIzd20B13s3vLDITurFTDmCO9VtUqaTW/ITs2yoa34V0Qr2XPqfSpCQiI46YUhgnGUPO8euCcJLi+Fd41bmVPYAOLRVrDyoj2sM=
+	t=1733129589; cv=none; b=RzakLbqo1H5CEQ391m6M4KaAp52n6WRebSEJ13PICpRTRPxxFYYVnk9zAPTqh7Ij93yDn76x4GJJ7znwUypFIboi9B9kJOckG1vv675/dl2e3XuZgeuyn29Ce++VUlqcFX+4GWCxKRPF0AVnJ/oMFN5GRs7fS6gotkWeFNitglY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733013885; c=relaxed/simple;
-	bh=m9cAK5FN1NFJb6UQkn9k+gemX+2/diBeTweGL7F7R7w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a15yIuUbP+HmGHQpZzyyp3bs1rGhCrRagrLr/5Ip372DZ1cqk9fldu4lPhnfH4ty6xCf+phur+MT/2Xrife05XX25W+FYALGKt/WRvPF5FMq/+IkP80AbfzAWMNnxFHWv6RX3afsTj5Zh73EqD0GOsNvjPpQcMIvLTJfmKa5dxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=atE602nR; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733129589; c=relaxed/simple;
+	bh=5ZRYXSnNLVX/dpqy5eky4CyC6h5dC+ibmrNL9B1eVqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s11A705TRYwYrQrxfpyspb/iXPwuXVhPo9iNOKlfPw8/FwGuc5WJmxmV8t/gq4rMOjnfd/2KilT2Cyrr3nIX4F2YHODFvXzVd1aTx7zuO/H9XzQKLtwmoxBqcrEUm32ptGovkU/txrun7ixcGvyzb7eaw+d9ENUunF0PYcSSsKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qe4QPO+g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="atE602nR"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d0cfb9fecaso1017587a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Nov 2024 16:44:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733013882; x=1733618682; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YDP6TwU0/tWdPmghJyb5pX8fLQAMwFaK6bFPGzZBnzs=;
-        b=atE602nROzQ6JDfkjK+qFsGSRTR6UQRSLr46LU+aPuOb+5NjKV7o1V9O7tNzHJOBmr
-         Zkz4uxypCZklDkEgUOnhPcF/bP9SrvPUavuZT7n/5qIR2bZAcmVPs5PJwnAc/Nx5Xrju
-         7gon2W19qcMaqQ53NapmdCfduBQZCL8UT4j2phPg3gzRCPp8GJF/hppFOX20Vpo/Ztdp
-         482UmEXmaVYiajbfpqCrvDiBGgwU7z3WYH+3wq8BWtrAEcU2GwIfITCCo2M4PXAWCz4J
-         BeEKT2fSOOKUfVQk7IFuzwqRu9BxyUk8MvNs46W8FD6nybVBDxfhmB64GZFRY6ugPNNJ
-         5XIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733013882; x=1733618682;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YDP6TwU0/tWdPmghJyb5pX8fLQAMwFaK6bFPGzZBnzs=;
-        b=NryRE+vaeb9Kwb3GJDv5z4KhJKpvBbrw4jxEN4+5zmQYHqcWoIml2FSIBDcee+2DeI
-         TStC85XeTrO0LNvJs+QNXN5RbIWetTylnotqBZ//Uq0nLzX0yysQuz7UySVUR82adpeg
-         Zx0WDcgdbMzuyeVHPdj4nCOA2NVRWhM6phsfBa1+a1i8klKPgXSRoYRKXxtZfqEfFVpl
-         QlZIUmUPlDJYnyR+zQ+hQ2LaKU9QO56EQ2WynLQDQqYtVOOyV3GQybTN2z+qmzmaLf8D
-         d2ej3v1qvqW31VGISpLOcjvIhEaJIYvDlQQgsg8sFq8EmazlfXDkdrP8TpUidZqidGW7
-         xySQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtbN8izvyzADVWVJ1HZKw2o/NgQFG2FN1fqe7vQIRG6qJpMn0mkBjNQe9odAY0yo/b7ZwoTGOW2eLA/ru2EwWyww==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFb8L+jBcPbgokWE7TYwFbGXxnWbpIu9mGoNZ2LqEyweCv1YA6
-	W3jvknZf+iJu4yKd2r1cPXtX5DfmQmCyneY971g5xtssixY8xloEmg3h6v0pEqc=
-X-Gm-Gg: ASbGncuS/XqGAF4vKRtzg5SQx/g3LXzNCjJKXWA5VCTBXjvRh05Hll9W0GlDfxBZxI4
-	yrdKvL22R+AlvB3yOhxlw1unZ4eVejxqIz095a1TnddUsw4TZ+70mUh1b8+7S1IQZM9R91wCs/J
-	RshdYuuLqKed9yikBD27pLMHzYVtjkLWoplNCFvCy5XSS9y2v2VoPGcDVE1W//Cb4TFyAvIWwvG
-	oQxdsgCKht2ipgA+5T82kFDPENH39p2zQ7YWCmyMQx9kx0m8sX6UOLFPQ==
-X-Google-Smtp-Source: AGHT+IE5Iodta2UQP6qjtd0G2oZywxiR+z/FGF+U8cJWDKR8GZEI1K1wlfh9Q8JImD1VouVwulpc4Q==
-X-Received: by 2002:a05:6402:26cf:b0:5d0:8f25:24ff with SMTP id 4fb4d7f45d1cf-5d08f252625mr12479352a12.14.1733013882366;
-        Sat, 30 Nov 2024 16:44:42 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097e8d817sm3400359a12.63.2024.11.30.16.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 16:44:41 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 01 Dec 2024 02:44:13 +0200
-Subject: [PATCH v5 9/9] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_update_edid()
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qe4QPO+g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4B5C4CED2;
+	Mon,  2 Dec 2024 08:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733129588;
+	bh=5ZRYXSnNLVX/dpqy5eky4CyC6h5dC+ibmrNL9B1eVqI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qe4QPO+gDWXnjlZDuYpAEaTLOOYSV79oI8YBpj1iYTG0Cyv9ER7/lclbfg6nGOuWK
+	 BGUQ+JZUsIhuIa1vctLwTB3B3/9/Eia1qJU0ZBoxJclJh3upXPn+9/9ODLTt6EVWyX
+	 51VYt50t8lij4I+VjfehA0xHODpt0D4X57xTiLK4N4OlHyvdbFGIY/51+bMIE6FHKp
+	 d02xdX9hnTbGlks+TjxSP0NXCqFvYsQ5e+Vv6o9qwpmuGWqi5un4PItYceNsmRc0dA
+	 GyHgWBR/czwCx51pe5bWhW5NQGvhCl3k97/khr4OZKwOq9ENa4Wn1ECkrGglGzLXcw
+	 cvhwzHouYhI9w==
+Message-ID: <88f6ab28-1b3f-4144-91c8-0131ee008838@kernel.org>
+Date: Mon, 2 Dec 2024 09:53:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 5G (x1s)
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ igor.belwon@mentallysanemainliners.org
+References: <20241030232308.72210-1-umer.uddin@mentallysanemainliners.org>
+ <20241030232308.72210-4-umer.uddin@mentallysanemainliners.org>
+ <9f48459e-f381-446a-86bf-c8d1bb8858bc@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <9f48459e-f381-446a-86bf-c8d1bb8858bc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
-In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1798;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=m9cAK5FN1NFJb6UQkn9k+gemX+2/diBeTweGL7F7R7w=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnS7FZMmMFV20DgQUuh8v5FF4nWRo8BcSipooZa
- EIAyUUoJziJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0uxWQAKCRCLPIo+Aiko
- 1dDwB/wJfW4xZABPDcU/eL/SukBx0cSr5TyqsC+NOU/8rIY3SPpHoNzt2tfD+tYhv2vKAqVGaT+
- Y0Pd3xmibwzv12VUOjFt+1ZbNthzF8qyG6keOs747UGZJQ69PhRds6t4Rw0KD2DFD1qgLnoX/w3
- NmWud73M/PrrwTQ2hUm3HuLVNhUfXRhEp/60uu1faJkCzG0RKUK8ibOREThgoBWt/fKvWDG+Ohf
- Vsyc20q84GR6TrucJQRzobBfpKYBr77Vpb3pn0XZ9hGN3YwhCtLPDipCwnoXnmPkM17bSL8dJW4
- kP1LucL4uQp1AahjZxJZFLIhzCNDNlresD4ccZFTjoNzadBW
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Use the helper function to update the connector's information. This
-makes sure that HDMI-related events are handled in a generic way.
-Currently it is limited to the HDMI state reporting to the sound system.
+On 14/11/2024 10:09, Ivaylo Ivanov wrote:
+>> +
+>> +/ {
+>> +	#address-cells = <2>;
+>> +	#size-cells = <2>;
+>> +
+>> +	model = "Samsung Galaxy S20 5G";
+>> +	compatible = "samsung,x1s", "samsung,exynos990";
+>> +
+>> +	memory@80000000 {
+>> +		device_type = "memory";
+>> +		reg = <0x0 0x80000000 0x0 0x3ab00000>,
+>> +		      /* Memory hole */
+>> +		      <0x0 0xc1200000 0x0 0x1ee00000>,
+>> +		      /* Memory hole */
+>> +		      <0x0 0xe1900000 0x0 0x1e700000>,
+>> +		      /* Memory hole */
+> 
+> The space from 0x100000000 to 0x880000000 isn't a hole in the memory
+> though, is it? 0x880000000 is in the 64 bit address space.
+> 
+> Best regards, Ivo.
+Umer,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+I wanted to apply the series, but for two weeks you ignored this
+feedback/comment, so I am dropping the patchset from my queue.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index d0a9aff7ad43016647493263c00d593296a1e3ad..d83f587ab69f4b8f7d5c37a00777f11da8301bc1 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -401,13 +401,16 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
- 	 */
- 
- 	if (status == connector_status_disconnected) {
-+		drm_atomic_helper_connector_hdmi_update_edid(connector, NULL);
- 		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
- 		return;
- 	}
- 
- 	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
- 
--	drm_edid_connector_update(connector, drm_edid);
-+	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
-+	// CEC support
-+	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
- 	cec_s_phys_addr(vc4_hdmi->cec_adap,
- 			connector->display_info.source_physical_address, false);
- 
-@@ -487,7 +490,9 @@ static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
- 	 */
- 
- 	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
--	drm_edid_connector_update(connector, drm_edid);
-+	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
-+	// CEC support
-+	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
- 	cec_s_phys_addr(vc4_hdmi->cec_adap,
- 			connector->display_info.source_physical_address, false);
- 	if (!drm_edid)
+Be sure you respond to reviewers in timely manner (and if you give
+yourself more than two weeks to respond it also means other have more
+than two weeks...).
 
--- 
-2.39.5
-
+Best regards,
+Krzysztof
