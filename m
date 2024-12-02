@@ -1,119 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B034F1FF7A0;
-	Mon,  2 Dec 2024 12:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9FDEEDE;
+	Mon,  2 Dec 2024 13:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733144373; cv=none; b=stHtJKaif1U3NnMalJ+e1yMzKma5Jj8dHQKveGwgCgNctPwJftF0Q0cur5gJI6amZZa3uHRNyMW1zh+25Ce1dFHoRcOUV+hVLoUSsK8LK/BYs2m0sAlQrZOrhohTtMGMlsdL2BneOyLJ4Hg+EIXFIvQvPALxrzTig8qJePziky0=
+	t=1733144901; cv=none; b=ahGXB+RgzX1QZ5fU6/XOZShwsroYuWHaopfcbywo2igoYCtzOD28/jq6FB99QLpzmtN6GoIPJzUAQIcAhdfRAAMmIscUfhleRbi+ptBEU1T7NWsLIznGN1L/0yaU1v/5zCuBkXgb/wTXIdWsRcfRDeYIbcC3WnL3gvJcTaBA2rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733144373; c=relaxed/simple;
-	bh=VkSc1OtoaIn5i9sUO8D5w8KXAZHM0RoZXTyJeEmffRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bL0SsrOC25eQbjtgvS/azDPqw0ocb4NMLXVhKHpSJ5AHEa0VIK13M1k/ppo+PHQk3wAfZf+teL6uAwJeQUBhDXyQBlQV3/9UsizS7nwSM2AabRYf1HYI/8N0C/BPKfpis3T9Jm3EOdnF+tKFeOXiECuFf/+OOPdJJnMB0sJzMzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuPBiKxE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733144901; c=relaxed/simple;
+	bh=gutyObQKsachHq0/nA2oAKqQxOFoQ3uvLG/DLWbnDiw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D1pQFnlTl3E6f/kd80sv5PcjlgE3W0LTnGfT/yM41pTrwr/FclW2/VHd2UVEhm1f18pQpoF8R/XXk/0tvGccY3/5CjBbH6t/P6azuRrvaK7c8DKCepyKStpqZw3Xpe6BOJfBGVhZ5nap5bU8DBOx+7X+QQLXfURaGCN0ZDBMVsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UiNEk7Os; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuPBiKxE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B027C4CED1;
-	Mon,  2 Dec 2024 12:59:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UiNEk7Os"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 23D19C4CED1;
+	Mon,  2 Dec 2024 13:08:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733144373;
-	bh=VkSc1OtoaIn5i9sUO8D5w8KXAZHM0RoZXTyJeEmffRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DuPBiKxEPZ8hNvu7XY/JeqC22rHjoWHz8J4L9ZjAqJtP/ZLUdfnH0N2+6JuEuZYNS
-	 gjprWPIBrGlbdvouN6ch2AhZJMsdRbpxm/XHYH7Ho2mFhiflGP5NqBIWRyRQr63KY2
-	 dyNZ68wkucnwrhDO/niHJsWMeQYK/FBimmPHVagPS++j3LqGQLD84gN2MFTKCcmPvF
-	 SULgGPyKftHpxm0Puw/mC6m8e4zYDC68fIdm+wmU0/Zy+PXryK15FE7G1HF7Mzv9Dr
-	 DsaxcNzS0UEF+9JnnxJwAPupFgzMBwuSdklY8POOK9d0BHjmTUZCn3XBYh6+RBj7nK
-	 kPkHTUy0duybg==
-Date: Mon, 2 Dec 2024 12:59:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Phong LE <ple@baylibre.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
- hdmi_codec_pdata
-Message-ID: <0d4dfb60-e2e6-484a-993a-41d1229c62fb@sirena.org.uk>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
- <20241202-bald-just-guan-c5d41b@houat>
+	s=k20201202; t=1733144901;
+	bh=gutyObQKsachHq0/nA2oAKqQxOFoQ3uvLG/DLWbnDiw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UiNEk7OsXFe+cdf8+I5BfuYbG8+O7eT9931PcfkI5ezc7fUDYYY/w1NfNsGWA7ZbQ
+	 5GTh6RHIfgTqm1+DfLmV9/HAB9RUanscHZanEj/iU5thJWnRRIwfxyTc+24F+RJSuQ
+	 qaDyYcfek3n0lFdt/cEKenRoDhBab0CBwe61xLf2b4hbJ5kk0sRA0A/1aF8Ru6/rvv
+	 VIV4ODtHr/mo/l6nReLjupBo8WUASknk5cPV5WvmLk05triWjuwuKBeWUKtW6WWSaB
+	 ocE5Uf/t6Fjd9bi9olvKvfDbXL4VFDjojurvGnYhO+JL7rKJAe5nuiUbAJdvPANJI4
+	 Oi8MkTR9L95dw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3B3D7831B;
+	Mon,  2 Dec 2024 13:08:20 +0000 (UTC)
+From: Thomas Antoine via B4 Relay <devnull+t.antoine.uclouvain.be@kernel.org>
+Subject: [PATCH 0/4] Google Pixel 6 (oriole): max77759 fuel gauge
+ enablement and driver support
+Date: Mon, 02 Dec 2024 14:07:14 +0100
+Message-Id: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="26+IIHuKp7C8Awjo"
-Content-Disposition: inline
-In-Reply-To: <20241202-bald-just-guan-c5d41b@houat>
-X-Cookie: (null cookie
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAKxTWcC/x2MywqAIBAAfyX2nOCqIfUrEWG12h56oBCC9O9Jl
+ 4E5zBRIFJkSDE2BSA8nvs4q2Daw7u4MJHirDkoqgxViMSIklDgfLltru372QRipSGl0ZtEaanp
+ H8pz/7Ti97wc7Q2hxZgAAAA==
+X-Change-ID: 20241202-b4-gs101_max77759_fg-402e231a4b33
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, Thomas Antoine <t.antoine@uclouvain.be>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733144859; l=1133;
+ i=t.antoine@uclouvain.be; s=20241202; h=from:subject:message-id;
+ bh=gutyObQKsachHq0/nA2oAKqQxOFoQ3uvLG/DLWbnDiw=;
+ b=Bhzd4ybqtj55n/U2YOZSfbuvXzTGyNb206Tg8GJtVh03aqvqpmF8Nj8CDa4qgOCKVsNZyXzzf
+ NKlykWlpZGdAQoXH5iuxKaEXiFeZPBrvAsOb3+wQlD3Lviex1H6Bmen
+X-Developer-Key: i=t.antoine@uclouvain.be; a=ed25519;
+ pk=sw7UYl31W1LTpgWRiX4xIF5x6ok7YWZ6XZnHqy/d3dY=
+X-Endpoint-Received: by B4 Relay for t.antoine@uclouvain.be/20241202 with
+ auth_id=289
+X-Original-From: Thomas Antoine <t.antoine@uclouvain.be>
+Reply-To: t.antoine@uclouvain.be
+
+The Google Pixel 6 has a Maxim max77759 which provides a fuel gauge with
+the same interface as the Maxim max1720x, except for the non-volatile
+memory.
+
+Modify the Maxim max1720x driver to be compatible with the Maxim max77759 and
+enable it for the gs101-oriole board.
+
+Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+---
+Thomas Antoine (4):
+      power: supply: add support for max77759 fuel gauge
+      dt-bindings: power: supply: add max77759-fg flavor and don't require nvme address
+      arm64: defconfig: enable Maxim max1720x driver
+      arm64: dts: exynos: gs101-oriole: enable Maxim max77759 fuel gauge
+
+ .../bindings/power/supply/maxim,max17201.yaml      | 14 +++++
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts |  7 +++
+ arch/arm64/configs/defconfig                       |  1 +
+ drivers/power/supply/max1720x_battery.c            | 71 ++++++++++++++++++----
+ 4 files changed, 81 insertions(+), 12 deletions(-)
+---
+base-commit: 12e0a4072e8edc49c99418a4303bd7b96916de95
+change-id: 20241202-b4-gs101_max77759_fg-402e231a4b33
+
+Best regards,
+-- 
+Thomas Antoine <t.antoine@uclouvain.be>
 
 
---26+IIHuKp7C8Awjo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Dec 02, 2024 at 01:06:09PM +0100, Maxime Ripard wrote:
-> On Sun, Dec 01, 2024 at 02:44:06AM +0200, Dmitry Baryshkov wrote:
-
-> > The no_capture_mute flag might differ from platform to platform,
-> > especially in the case of the wrapping implementations, like the
-
-> I appreciate it might be a dumb question, but I never really understood
-> what no_capture_mute was all about. And in that context, why some
-> drivers would need / use it, and some won't.
-
-It's just what it says, it's a flag saying the device doesn't support
-muting the capture side.
-
---26+IIHuKp7C8Awjo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdNrykACgkQJNaLcl1U
-h9BXlAf/b2RCOldUO9D2uv21dvLwptK8t/qpPmm6L0SGtwbwCyejExyCcRcXDK2J
-6VM6BCDUGEH5VIKVo2XFEHzhQi8F4jLnCmdzgwi2kI4Lca8lWjQq/4OwiLPalaeg
-0TNUGBy91LjyXlGGoUoweRt8oc0VbsYIr0gEQayLOLfYujv4RiiWYEyIcw1OPDf1
-9MigRjCV1msQQXnBP2qTdZ1FrZQlZGD+syITQuFbYrmy+sqwEPxbY9/RYtHo4HBV
-A8CBOIE2YuK7W8Dk9VXSPQsN1sSwT3Hj8xvMO0Ka3mK/WjSVva2P8/K3wnBXj9nC
-6yKMam1wXDa8AU52tCUq2bS1snS2yA==
-=5ZI+
------END PGP SIGNATURE-----
-
---26+IIHuKp7C8Awjo--
