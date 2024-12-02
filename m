@@ -1,165 +1,118 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B601FBEA4;
-	Mon,  2 Dec 2024 10:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2EA1FBC9E
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Dec 2024 11:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733135037; cv=none; b=mudUlAijQtcQFX8F/2W1iCd9LJRZI3qguV5vcbEzcvI2Kxbu2pNwxrG2JLzTF2dgMsDglweG5vItG7VoasnewucQHggNu9US1kL1l76s2a0aVGrTdFjde9zC/ZDZJy0bNJxfxC0W9hrR3NlhK6DkMMSFLIf5MOpLO2XvThpqoa8=
+	t=1733137397; cv=none; b=RndD4A74Z8jvd8L1vdXqgvf5k/cCKjxZhK6Iypa4Vg6GhTfixTBa1w1ngThquYUVTVb90eJKXvbgA+9YTelklZMVeD1K7495/obdx6KXZ6tz8/tDXKtnDp2ge/yPlI4VvDywiT5AQfhtbsyexck1GHEET1YcIrfTNAbHx+hoGHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733135037; c=relaxed/simple;
-	bh=LoFYJIJMK9Q6i+Gw0XK8Wb/1ESu9maODEfjoY8fwwDs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bMCo52LEBYCvyrm/HJ9G9CPff65K0OKDsJlODFw/9ftoHeBvr2JBWqADwwD9vzorGtRqf/z16+NwpDddzAS/NMJkYddRhPnXlRtfQgF4UdHUl15LhvLoWcifgDJVIUWo09YSU/3WhX4WJQtxZPYAzGu2EMF+F+1bvcm7AAXlVFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iTK/DpFz; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1733137397; c=relaxed/simple;
+	bh=mM8Ty9zubi84Tu0ptmDRpums5gqswtEyzEignt+0538=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5hhRWwaqMykUMEsshsWCoBWi5dvAltPtTo718/qMPSQXZMYs0W45KOgiOZWvhTe81SKwY7153+jf/QGxoUAzB25O4BLmwSmytdxLqIMolsQ5eV8SZR5qD3nzTKdYe0tGg8TqIkTQsF1et/Z8QSbmCTg3Cmt+MByONtRLsdpo04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VsPxeusn; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iTK/DpFz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733135035; x=1764671035;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=LoFYJIJMK9Q6i+Gw0XK8Wb/1ESu9maODEfjoY8fwwDs=;
-  b=iTK/DpFzfn5abOUAh9iw/IW5OYc9PadyBwWm5Dp591RSMdMhF3PuCqau
-   LdIH6EYj7DjvzpNg+VDhrtDZMT60OhTRN7udpeqtPFVrcTbC2HcMWsgTr
-   X4ag54pqD0ivLZetVdpYLGaanVsyhcbAfg1GhajVEziv3hE+jUW+8gzLg
-   U8w0PvwgY/4V9qMcW2JdOT2rxQFxHk17bVR+Zm1QPgL9RL+olLUSyH7av
-   jVe+Noi/3VcsHQ9h0EEzVx80oWh/tbtotRR0VK44Opx6wkEDXT7tsJea5
-   F3Cv6V6yDn+TwIW/h4GtE/WWZy6d5bEtQ75wAAapxdOugqQvnYnOCJEGN
-   g==;
-X-CSE-ConnectionGUID: J3lvAiUDTrWXZ5k/F6lTog==
-X-CSE-MsgGUID: bDvJbC88TDqp1OR3Gr2C8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11273"; a="58686704"
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="58686704"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 02:23:54 -0800
-X-CSE-ConnectionGUID: UHu/FGD7RLStnnYdm2d4Lg==
-X-CSE-MsgGUID: M4511x8/R/qE4ZFNnmbAHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,202,1728975600"; 
-   d="scan'208";a="97836221"
-Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.77])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2024 02:23:41 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Phong LE <ple@baylibre.com>,
- Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Alain Volmat <alain.volmat@foss.st.com>,
- Raphael Gallais-Pou <rgallaispou@gmail.com>, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
- <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 01/10] drm/connector: add mutex to protect ELD from
- concurrent access
-In-Reply-To: <20241201-drm-connector-eld-mutex-v1-1-ba56a6545c03@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VsPxeusn"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53de6b7da14so4081687e87.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2024 03:03:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733137392; x=1733742192; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6X4f5B7p/4ISxO7icMRqa8h5IT36sTqoFNtM1b1oYjE=;
+        b=VsPxeusnuWB48OSd/L36BqGx1xaXjkIIiTr7sH3/5+V1NLm7rZBA/XDanvAsiunz9E
+         YlQ1lGdkKj9UplqzcWI5G/rSB7+F0IrqYv/EkDKuXin/WgmNE5c3DqXykMrDza7y3VzV
+         KlU0oF+0l/eF/WzRPzNBygOws1F2/TV6kbZhmwVwLfwZvJ48btA6ZpHwd3Kb9cp/NQ9x
+         tLx8M3SDS8lyUy0VV9hlt+KKQaVqCs/faKDFYQWxaig6FCFPdNAtPYg6JlApVn8UqIL4
+         75RtLo7q39EvbE2rQIiT4uqnQcMwFFDCDcZq0GfUlEze6LFzlfnfhKieM8SURhaQqGEA
+         lhgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733137392; x=1733742192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6X4f5B7p/4ISxO7icMRqa8h5IT36sTqoFNtM1b1oYjE=;
+        b=bPQkI16J5HQmwo/ENVkExpPKWS9OaOhtC6L3ET/hRHyB+UmEza4LIEkfOAlm7NuHYH
+         /TLvCRo/crQdiyM+ViclDEpJekXIjAh+ZCd6wFuCQHCcXvYsyIad+Y2KCjn/LdSszRtM
+         zG2nxMXuMbUtn5Q+zJyZ71Nkio/Z6d6HP7wDeQXS7TETHN7e7VdgTaHKyOKNTM5osCqw
+         IUvocQ9rfuEfAx7xg6rPsXln0l7atQxc8XLEuafuJB6Aou64ACznxHX3RxptKa9nJcDV
+         kMOIPpyA8FR/ry4z8lDFRKbBkyZ3D+uXXkbrHiBxVyapwMEatxLXJQLnHzyQZiaCkeH9
+         nWeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWD8RLfcg3eLOO2rvTmDOkQ49TeYruRbh4zxxW7J2cmwhlo/Auq35Gx8RrfobsEAL4yfBTnNmgdar6Rj7z7+dF5hQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1pQjZyLh3Uv9SCY+4rbgI5vzaGJ5WAY0V6FVAyhfqVGDefiJ/
+	3D5YG7lltmYvlAKIMczxpbKHuQ2uiUE27ZeigXaTEfxS8uTa8WNyFHFf42AXvIs=
+X-Gm-Gg: ASbGncsN5oTdd3yVPIRyYd8VnLkiQkJO98xIRMowYrCx5UnE3y/KLAjTzN4krOD6+FE
+	DWtuhYzUzEaNC7ZPyu4tJG/lcIoKE63m3U6dSf1clnME3g8QlowRCVSya/yeG419HurBlcYVgZm
+	/Xrhd87yu8/AcP/KwuPoqADasTdBg2YO0kTIcr+ad/a7kr1f1qZnRNVWgD3LU6KjWrAkr5Q1YUM
+	StCLW/u1Tr9tefCuKUuaPY8EnlS4iCmYgsxSEOoUBGj1Pmy84rPzW/R3T9zYPqTASYNXQguZkeO
+	fi8ZdGahLeEQArS0Q8pnjIGSZ81jLQ==
+X-Google-Smtp-Source: AGHT+IFGDFefBhtw1PCqTOI5KhQIlj3rWjRnFP/b36RPBBTJEaQRx6orQjZk5ZBCQurK/QAedMSg2Q==
+X-Received: by 2002:a05:6512:2385:b0:53d:ed25:fb75 with SMTP id 2adb3069b0e04-53df00d3e65mr7699888e87.15.1733137392309;
+        Mon, 02 Dec 2024 03:03:12 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646efd9sm1443877e87.143.2024.12.02.03.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 03:03:10 -0800 (PST)
+Date: Mon, 2 Dec 2024 13:03:07 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	David Airlie <airlied@gmail.com>, Harry Wentland <harry.wentland@amd.com>, 
+	Inki Dae <inki.dae@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Leo Li <sunpeng.li@amd.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Phong LE <ple@baylibre.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Sean Paul <sean@poorly.run>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Xinhui Pan <Xinhui.Pan@amd.com>
+Subject: Re: [PATCH 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+Message-ID: <ohbtatnn33jj6y3q4milf4txi4n7yirnny2eefdjddlkn2dnhp@eqjedetct4q3>
 References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
- <20241201-drm-connector-eld-mutex-v1-1-ba56a6545c03@linaro.org>
-Date: Mon, 02 Dec 2024 12:23:29 +0200
-Message-ID: <87r06q5qou.fsf@intel.com>
+ <77545786331df8bfaf5fdcb309437358@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77545786331df8bfaf5fdcb309437358@kernel.org>
 
-On Sun, 01 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> The connector->eld is accessed by the .get_eld() callback. This access
-> can collide with the drm_edid_to_eld() updating the data at the same
-> time. Add drm_connector.eld_mutex to protect the data from concurrenct
-> access. Individual drivers are not updated (to reduce possible issues
-> while applying the patch), maintainers are to find a best suitable way
-> to lock that mutex while accessing the ELD data.
+On Mon, Dec 02, 2024 at 10:19:41AM +0000, Maxime Ripard wrote:
+> On Sun, 1 Dec 2024 01:55:17 +0200, Dmitry Baryshkov wrote:
+> > The connector->eld is accessed by the .get_eld() callback. This access
+> > can collide with the drm_edid_to_eld() updating the data at the same
+> > time. Add drm_connector.eld_mutex to protect the data from concurrenct
+> > access.
+> > 
+> > 
+> > [ ... ]
+> 
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-Missed clear_eld().
+Thanks!
 
-BR,
-Jani.
-
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/drm_connector.c | 1 +
->  drivers/gpu/drm/drm_edid.c      | 4 ++++
->  include/drm/drm_connector.h     | 5 ++++-
->  3 files changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index fc35f47e2849ed6786d6223ac9c69e1c359fc648..bbdaaf7022b62d84594a29f1b60144920903a99a 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -277,6 +277,7 @@ static int __drm_connector_init(struct drm_device *dev,
->  	INIT_LIST_HEAD(&connector->probed_modes);
->  	INIT_LIST_HEAD(&connector->modes);
->  	mutex_init(&connector->mutex);
-> +	mutex_init(&connector->eld_mutex);
->  	mutex_init(&connector->edid_override_mutex);
->  	mutex_init(&connector->hdmi.infoframes.lock);
->  	connector->edid_blob_ptr = NULL;
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index 855beafb76ffbecf5c08d58e2f54bfb76f30b930..f0ca77bd42fd518d505d0db78557e0c8d83efb29 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -5657,6 +5657,8 @@ static void drm_edid_to_eld(struct drm_connector *connector,
->  	if (!drm_edid)
->  		return;
->  
-> +	mutex_lock(&connector->eld_mutex);
-> +
->  	mnl = get_monitor_name(drm_edid, &eld[DRM_ELD_MONITOR_NAME_STRING]);
->  	drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] ELD monitor %s\n",
->  		    connector->base.id, connector->name,
-> @@ -5717,6 +5719,8 @@ static void drm_edid_to_eld(struct drm_connector *connector,
->  	drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] ELD size %d, SAD count %d\n",
->  		    connector->base.id, connector->name,
->  		    drm_eld_size(eld), total_sad_count);
-> +
-> +	mutex_unlock(&connector->eld_mutex);
->  }
->  
->  static int _drm_edid_to_sad(const struct drm_edid *drm_edid,
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index e3fa43291f449d70f3b92a00985336c4f2237bc6..1e2b25e204cb523d61d30f5409faa059bf2b86eb 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -2001,8 +2001,11 @@ struct drm_connector {
->  	struct drm_encoder *encoder;
->  
->  #define MAX_ELD_BYTES	128
-> -	/** @eld: EDID-like data, if present */
-> +	/** @eld: EDID-like data, if present, protected by @eld_mutex */
->  	uint8_t eld[MAX_ELD_BYTES];
-> +	/** @eld_mutex: protection for concurrenct access to @eld */
-> +	struct mutex eld_mutex;
-> +
->  	/** @latency_present: AV delay info from ELD, if found */
->  	bool latency_present[2];
->  	/**
+I'm going to post v2 to fix Jani's comment, but what should be the merge
+strategy? Merge patches 1-3, 5, 9-10 through drm-misc and the rest (AMD,
+i915, MSM, radeon) through the driver trees?
 
 -- 
-Jani Nikula, Intel
+With best wishes
+Dmitry
