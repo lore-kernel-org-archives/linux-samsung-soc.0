@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8293200108;
-	Mon,  2 Dec 2024 13:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870A6AAD;
+	Mon,  2 Dec 2024 13:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733145607; cv=none; b=h1+rzhiIso8ZzT+HKMraNW77CBZVBbKcXG4/zFbIdWE756kqcESD5o5mAXAIiWbPCGgJbrqpUZDxCbwfV1A/2k5jhRIHlpUlsf66tqBaEayPtWClHwkh2/wcTKiOdj1OkgKR+jR645+ybtP6W7BLZQUIiPicfhKvdX/EFjaKe08=
+	t=1733146072; cv=none; b=EufkPsaQQhptRjjVEM1VLOHsORRqKPsaHBmPaYYUkMNeQChx7w9vJiwCkgSP+Z5JuOgWmbu0JezGWdtcdvSfqZWoOovH+SzcIkz1Y8iee5HeDNkR80JbfiBU2+VXn3RRhPWN9A8csdJlZVwhWLLFidFdTsNLZVlwpP3zatTxbJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733145607; c=relaxed/simple;
-	bh=cuZbfqLYHQS/1GAYDtMRKOLhWIMgYEMtvry7OBgUlJE=;
+	s=arc-20240116; t=1733146072; c=relaxed/simple;
+	bh=KiXJWPoIAFp9VW8Wp81Eon9RxfYCjyDx9DTkjVp31GE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNmXJ9wIM5pb067gtvgfZT3cNQVg1D277WdjavpfMllCJcDdbmaS7FYjns+GzUoFm8cvGC7q+fUA7tJHw+5Bf1quwZdGFTtXCKm2j9jl5T048FeXm+3azIR1db/oDnKk8qLwYNb1j3mUJ1IuMwb67Zvf8fScEvLugWBTZxYR4qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ja5YJfKE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmkS3TQcikMd3gTmweuKxoVp37Tyu/85ZfjLBlYjVRWMeZb5LxhMHK44Sf2rNK1rBNsCIbzKNJBGG10WfvzXx9UNSNBZnFwVqDO8W3a5D3BtlidA770MU2T1ibowQvdfn97UOaSbp4BxC+dxqOykdHHQUsH1v7WBtZZ+5Q0tLOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyJgIR+5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja5YJfKE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1A8C4CED1;
-	Mon,  2 Dec 2024 13:20:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyJgIR+5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA79C4CED9;
+	Mon,  2 Dec 2024 13:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733145607;
-	bh=cuZbfqLYHQS/1GAYDtMRKOLhWIMgYEMtvry7OBgUlJE=;
+	s=k20201202; t=1733146071;
+	bh=KiXJWPoIAFp9VW8Wp81Eon9RxfYCjyDx9DTkjVp31GE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ja5YJfKEpMZVqAcOsS9VwFVxwUPlCtxVzQl7ZDIXMcG5Uy68wX2q1TO2zHiwZoQFL
-	 sRrfDQnF5zYJ0gHNjVcRFjWI/RnxfDTcpDBBmQLctpbWmYRKw8ULXNPvoUg3Oqb0kU
-	 6hDfNE4K9dlvEMuybzZuqcYUB0zUguLdKl1WYSw8JqR4KE3ddWPCyk6yn8CvNEUJG7
-	 IX2wJi4MAwL6VD0MV7GUCkuK6LCHXZnVHQqt/gV5E8fyfqojj0Q65QrLyTFYK5SCC0
-	 mwuj+l01dIHDSqYN3IDMM+mXb0cZibWBU9+v3hRepcooVifZKL5QSpm2Aaa38U5TVb
-	 sNdiloTWDun/g==
-Date: Mon, 2 Dec 2024 14:20:04 +0100
+	b=EyJgIR+5km5eYBiOcnl4Xd0qxh5NcL09MRzRE8iaObRYaKvxyPhgd6vLysyjYMGSU
+	 3I92YLyq93EErMpJowvzmdcqUNTfu/nXqDUZyOzvlzL9h63ZXUffg6V+yBZZ8FmCS2
+	 YtKicdtr1EWqPxEzLqRSHQtCWEQ5HpXwDTaGicQxuBDsPKuVlgmlkYzALFjZXdWsiS
+	 k5GaGuqwN1KsG8pp5V1VZzgg4bB+4YPKqkJ8dLmsNklTGUvbecH6Z3d5IG0BiFrQfv
+	 ZHbas7b2ccomblsCiJECsZ73qK97J6PxGmyPgffVHbOP2jBaLdfeCQ21KgJVq2wls+
+	 RmhqOq6jHy0VQ==
+Date: Mon, 2 Dec 2024 14:27:49 +0100
 From: Maxime Ripard <mripard@kernel.org>
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -49,11 +49,11 @@ Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
 	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
- infrastructure
-Message-ID: <20241202-industrious-unnatural-beagle-7da5d4@houat>
+Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
+ drm_atomic_helper_connector_hdmi_update_edid()
+Message-ID: <20241202-married-bald-raven-7acd83@houat>
 References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-8-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -61,76 +61,80 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="vbtgu33lsjanu5xg"
+	protocol="application/pgp-signature"; boundary="sr6qnc7nl34mpskl"
 Content-Disposition: inline
-In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-8-b5316e82f61a@linaro.org>
+In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
 
 
---vbtgu33lsjanu5xg
+--sr6qnc7nl34mpskl
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
- infrastructure
+Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
+ drm_atomic_helper_connector_hdmi_update_edid()
 MIME-Version: 1.0
 
 Hi,
 
-Sorry, I've been drowning under work and couldn't review that series before.
-
-I'll review the driver API for now, and we can focus on the exact
-implementation later on.
-
-On Sun, Dec 01, 2024 at 02:44:12AM +0200, Dmitry Baryshkov wrote:
-> Drop driver-specific implementation and use the generic HDMI Codec
-> framework in order to implement the HDMI audio support.
+On Sun, Dec 01, 2024 at 02:44:13AM +0200, Dmitry Baryshkov wrote:
+> Use the helper function to update the connector's information. This
+> makes sure that HDMI-related events are handled in a generic way.
+> Currently it is limited to the HDMI state reporting to the sound system.
 >=20
 > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/gpu/drm/vc4/vc4_hdmi.c | 68 ++++++++++--------------------------=
-------
->  drivers/gpu/drm/vc4/vc4_hdmi.h |  2 --
->  2 files changed, 15 insertions(+), 55 deletions(-)
+>  drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 >=20
 > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdm=
 i.c
-> index 7295834e75fb1ab0cd241ed274e675567e66870b..d0a9aff7ad43016647493263c=
-00d593296a1e3ad 100644
+> index d0a9aff7ad43016647493263c00d593296a1e3ad..d83f587ab69f4b8f7d5c37a00=
+777f11da8301bc1 100644
 > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
 > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> @@ -595,6 +595,9 @@ static int vc4_hdmi_connector_init(struct drm_device =
-*dev,
->  	if (vc4_hdmi->variant->supports_hdr)
->  		max_bpc =3D 12;
+> @@ -401,13 +401,16 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi=
+ *vc4_hdmi,
+>  	 */
 > =20
-> +	connector->hdmi_codec.max_i2s_channels =3D 8;
-> +	connector->hdmi_codec.i2s =3D 1;
-> +
+>  	if (status =3D=3D connector_status_disconnected) {
+> +		drm_atomic_helper_connector_hdmi_update_edid(connector, NULL);
+>  		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
+>  		return;
+>  	}
+> =20
+>  	drm_edid =3D drm_edid_read_ddc(connector, vc4_hdmi->ddc);
+> =20
+> -	drm_edid_connector_update(connector, drm_edid);
+> +	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
+> +	// CEC support
+> +	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
 
-I guess it's a similar discussion than we had with HDMI2.0+ earlier
-today, but I don't really like initializing by structs. Struct fields
-are easy to miss, and can be easily uninitialized by mistake.
+So, it's not just about EDID, and I think we shouldn't really focus on
+that either.
 
-I think I'd prefer to have them as argument to the init function. And if
-they are optional, we can explicitly mark them as unused.
+As that patch points out, even if we only consider EDID's, we have
+different path depending on the connector status. It shouldn't be up to
+the drivers to get this right.
 
-Like, it looks like the get_dai_id implementation relies on it being set
-to < 0 for it to be ignored, but it's not here, so I'd assume it's used
-with an ID of 0, even though the driver didn't support get_dai_id so
-far?
+What I had in mind was something like a
+drm_atomic_helper_connector_hdmi_hotplug function that would obviously
+deal with EDID only here, but would expand to CEC, scrambling, etc.
+later on.
+
+And would cover both the connected/disconnected cases.
 
 Maxime
 
---vbtgu33lsjanu5xg
+--sr6qnc7nl34mpskl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ02z/QAKCRAnX84Zoj2+
-dpzbAYDixtv7TbkB/8hZMKjc8sAQyzE2ixGhzfLm1/mizfxI+p8zsxyz2xkCmeAU
-CvjfI6UBgKALmNU3qiLez7ENeyLRh+cvBGhV2M7F3LMKGHgUca3NdOUGKZ2Ss9j2
-Qw//3ctIIw==
-=RzH8
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0211QAKCRAnX84Zoj2+
+dn5LAYD+jqdGwkC0H4iYlSaYETAxZCK9kHnKkNn2ev/+nMCHDbBE52F7rnC+3dq7
+dYCcnzsBf2FnxN2dGnbsJhfLKxYoZJ4Z5apDoHE9vrcc7fB6iJ+TU/Q2sOPTfXFD
+RjebkV+GjQ==
+=UIM2
 -----END PGP SIGNATURE-----
 
---vbtgu33lsjanu5xg--
+--sr6qnc7nl34mpskl--
