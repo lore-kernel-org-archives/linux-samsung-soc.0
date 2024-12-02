@@ -1,126 +1,144 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B3E204F81
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Dec 2024 14:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D383F204F87;
+	Mon,  2 Dec 2024 15:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733151553; cv=none; b=sYG9NRAkZo5PqTxuqbBIEvs63QRvn/Us9wShhnLQMI0aWxIe85kTmQvWuJSdlSqcqzkwNBz6qH52RA6i+NVJVHep8KR1ElfLvrmrbIYieopsZFyxS1+LGCo8f8GnD7mHz210PNlPq/P01hj/4NJYDjA0Ojgprm3BJCIuETO+hBQ=
+	t=1733151830; cv=none; b=nVHb4YoppgWHPVLZ6EbOWS+bS+cGtVC6eqVzFMlLWTiYegDzLYn27v9aX902/0PpdpNkzIFx0j3yxc1pIevTcsauy95xYfA50qil7Liej1QExCNMWT0JaeGN5t7rnffEcSTG5VB43vm1QwBMo40K2TxP3V5qTl/pWZy7ZLOxjMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733151553; c=relaxed/simple;
-	bh=vorR0NUgMIxpLB6XnGO1J1hmkZxBZip3sa3UgLPBo2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwhTIeDHllpY4+Uf3uC0AOFA3875H9vgO9Zeqem63ye6jyst3SH5n/Z81xiVcfyOH/Rj15kacsiqq4tbCIC2lZNkT+goRQ1B5giiGCj6NC/7Gs8cc9lJjOqBDd84SSq0yK4LYctgOXXFER/GZ8kAEG7Eb+SvlkTxr95ulKznSx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YAr0pe+x; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733151830; c=relaxed/simple;
+	bh=85lFhRO/J/E7HnOpdb/OWr3TDzN8MFbfHpzs1aekHnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=somauUTaPQBm77DfAzzTtfREDxi27cFvmc/pQY7it3O5O1tUOrxW8wm+l5/0V2QZ6yq5+MdaH3z8hIusAE3Blgn1PKNvnm0frnkFDsLjsulrddhUlM+LXyYSEg3Fs+7vlBJULGPtBnHqNi7Eupg+FXeclMoC9JIexg+pPvbVyz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxeMPYfp; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAr0pe+x"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de5ec22adso5357748e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2024 06:59:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxeMPYfp"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so35397675e9.2;
+        Mon, 02 Dec 2024 07:03:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733151549; x=1733756349; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rju8sEpE6sdROgx04VbEZEe0Z4Dqml8d9fp2hAHZz1Q=;
-        b=YAr0pe+xAUndygXKR8wcvyjPgw6c+Z9XNrMtfghZaWt4OyjOLPtWUXN9z+V+yVPnrE
-         vsPfDskivzysC0sD3fljGfR1kAfsXIP32eIEheL1lkJaHEYDj4nzPfrNQuOc0zk4zGg4
-         VlnTE0BvEyw4cpRuc9rOof13zW0fbeCB0mUBfPIrpVzqlqkB+jE2mytkbzz5ccqTTdXl
-         67/G04S3AT4DnbWpm6/FFTwHHOeDnAz0yfU049qyK6UlNNe/6SkzVe88ezWhvpyrklI/
-         PR1/VvQ5VmlOtHW5R/dvu2VbW5YGKw8wsgQyw3pLsaHkZLrugE68NKjNufacGiPLP7EY
-         ozRQ==
+        d=gmail.com; s=20230601; t=1733151827; x=1733756627; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qujM4d7qCY1L5TaGGSMsXfZ1apvo+jAfsCE8VLdjQ4I=;
+        b=YxeMPYfpHXluLj3ygBiMae5nBLu1cWPbg/KKohLUPfQ4ytIXeiJBvl6AyGZ9SR5CeP
+         CXpdNd8fOTEfu8N9nU89ywU9ZrP0l8t3qBMFOpYyN4cseO1VfpuF03X2nxO3Tk9rwyVY
+         ec0K0xgbFKETO85sD1tn69FwZH7+wnPRIGg1qBDDMf6n161dp3jLdrKijN9e49DthDmH
+         +tSCeNjJa1E+fvLxavAiLJaihgYPVJln9zYiOQOf+IEGQNIuAjYtFwpEsvWKtHq6cokS
+         nWiJ11Fcg+kK3ZHuT7JdQtCHfa3UvCxw50tVulaDWIMMSCt3D9AwDXsDLoXBEKhRoERt
+         uY6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733151549; x=1733756349;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rju8sEpE6sdROgx04VbEZEe0Z4Dqml8d9fp2hAHZz1Q=;
-        b=C5D002OAilS9+3KFx6+HQhdMakhAd2nT489yQIZBapDBYfDa+XyaA1gDzjfUnirjL4
-         vA2fCUk4mvQZPh6Qd1vNh8oSyfkai8QiQ8Qv502Ub0rDYuvHwqBT2Tnu52xY9dUqHFCF
-         MVEOXFKDqSBsjsZGyQBzuZMTbYCnupVvuS6voHZGBrvfNbITiA2g0G1A+m6peim9hxJE
-         Llo+P/iumEd5X8ym9i/Qb3+FDguiWBRC8vPa13fXnZsn3JrptIRH3NNSsELKsisbRhsQ
-         Pv5w9JsYFKxPfRNE9y9VoKIN0EHBHHSgUPqUZKurDMS1vdoBKf1reVUPoP79Iz8xHVOO
-         iazA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQT2PGYb3Pat93QrXSn2Nr3gO1I+4y5Bioh2aIiapM2Yg9/YSZlKpzMoXOndpr+tVMOM1jVFL/2F5Lr9xVypk1MQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5ZSRZQ8XkcC/U749EuPDw2BbF84qnP/BySLIVXI+xPpwiet9z
-	wt4VRMz8Y1YwBnz7QiQK1NUhMKt2NdEFazkPHc1gysz1shtKkImK15/TuHq4Bcc=
-X-Gm-Gg: ASbGncsRJuBwG3qevXAShV6XVTLbcdYEUMfYlJh1xGj7HNCzzrrkhvCezmoAXgY85ps
-	5oV/yigP5e079Ojuk9VC4dXLzFaStxoA8ha3roQOVnbPzYcxwl2P82OxedGPbTaV2gQD19Q5EqY
-	c9ixOiZcCddex9AfFCnhk3/EkK2FAm36Kw5VwYPvkJV7gXLV5Kqlquy+COmT7HXbrXFH9BSKMqQ
-	8fDZTpvjQeob4PGt37VaZbfboc+4RTLGMzhlcQE609OYs1g/jPsySPn1EK3G0Xpn6Pmirit+vsI
-	I6FhrwixYOd4+z8E967m4BMOEhmG3A==
-X-Google-Smtp-Source: AGHT+IFqUZg6UxbmPBpmmNDChC/PhM5ksog1SlPE5I3zx5OIy0xNoMEVpgKx1uItUxOnsjp3icE8UQ==
-X-Received: by 2002:a05:6512:b26:b0:53d:edba:d40b with SMTP id 2adb3069b0e04-53df00dc8d7mr12039335e87.33.1733151549347;
-        Mon, 02 Dec 2024 06:59:09 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f2c3sm1480384e87.126.2024.12.02.06.59.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 06:59:07 -0800 (PST)
-Date: Mon, 2 Dec 2024 16:59:06 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
- hdmi_codec_pdata
-Message-ID: <onq2djvtvxvr3a52s6sin3dstwdctyyz2lxpx47lk7ndxtza33@odldgvhryw4d>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
- <20241202-bald-just-guan-c5d41b@houat>
+        d=1e100.net; s=20230601; t=1733151827; x=1733756627;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qujM4d7qCY1L5TaGGSMsXfZ1apvo+jAfsCE8VLdjQ4I=;
+        b=wZuA4rsb0xPnvie/bAryQ1ush5M7Z6t147tmhKklSZH0Cvjnm++RT85LH4g2cYbOfl
+         Sw0kFs6riqFfCgywbR45gOOVSLBv6Ejig3bzWbChNVDt95tMwk02Ha+cP9g3U3ioEs44
+         OpzfXRgDLTimTgWBQC6A7Yy6afmmojwo+txuS+Oy84cPq0e6xPsKFysQS9clwLrK3vcy
+         Rdpa5W7GYXVvW+o4MSq7tUhPOAECXiZSUQfTsss9PXLTCOoA8T5NNjqOb677yFcR+mPB
+         N08dMOjwLIW7lgDX0ris2QaJDl16l9/Rxy6JJ4/OvfUgWK5ByEOVmmwp0v4rqR+jBsQK
+         M+aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGaoQtDUXekFBAuNlGM1FzcDjjxhbE2FSYdQGvQ+g+jIwKhRVqwuSe+dA7e252KBfkpxJonFRAOkopb20v@vger.kernel.org, AJvYcCUvGqrR4GJFphQXiyZ7hGvF9Z8lN+vajydwSFk00kdyefU4JC1gV1bjqv+QYC5fov5IAXxXbM5QAJcSNAZa@vger.kernel.org, AJvYcCVE3oPAVfoc/N0jjXp4jzNbIm4NFKv8lmXREVlgTy9sjeXAHr/yRTNycubPwq4xwuJSgq6hAJCwjUcZKvEQN6fQ14c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyZD02S0rQidhfRRWqGdmvT+9gc/513XSHD+dI8JzIqUa05yH5
+	fupSEK/OkRYpxVifiy2Sc9gZJeaGIS2JXnpTP34MJjq4C6OF/Swk
+X-Gm-Gg: ASbGncvnyCZTrKZACnGOxaXJHVTfM+E4O4pjpGu3pnmayLlXa5eIHa3Vbic8wJ9CSzQ
+	pAa2MnsmwCqqRCt3un0elO1ANs51+7yXQpPIsDOt+v0+Yp2pft/19UosCrw/tK9v6EymcZ0N7N9
+	G5JrRN7+e1+SDuE5u5tNkGMGYZVaRl+GliRS4/UOefIO48XD/ggcgYnlFRHiLIt9N2O4HhRnVVT
+	9XTyl8ruQk9zDGvI+nvhl0ypafFxkBizs5rfPZNHP76z6k65BeXG8a0PVg0PxBdoQ/D4aozr1tC
+	AMLEI+f8Mwvx8mazepE=
+X-Google-Smtp-Source: AGHT+IGDnqoQPM9S2ZXAYcJFrCBwMFmcYVdD5NrlXMVFXBAOrzgALnyLT6wqVMw+fFjssl311bGusQ==
+X-Received: by 2002:a5d:64cc:0:b0:385:f092:e16 with SMTP id ffacd0b85a97d-385f0a153ccmr4698133f8f.55.1733151825042;
+        Mon, 02 Dec 2024 07:03:45 -0800 (PST)
+Received: from ?IPV6:2001:861:3385:e20:6384:4cf:52c5:3194? ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ec6a3d8fsm5080310f8f.101.2024.12.02.07.03.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Dec 2024 07:03:44 -0800 (PST)
+Message-ID: <0eb908f2-2304-4a91-9c91-e7f291da9dcd@gmail.com>
+Date: Mon, 2 Dec 2024 16:03:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202-bald-just-guan-c5d41b@houat>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] drm/sti: hdmi: use eld_mutex to protect access to
+ connector->eld
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org
+References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
+ <20241201-drm-connector-eld-mutex-v1-9-ba56a6545c03@linaro.org>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
+In-Reply-To: <20241201-drm-connector-eld-mutex-v1-9-ba56a6545c03@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 02, 2024 at 01:06:09PM +0100, Maxime Ripard wrote:
-> Hi,
+
+
+Le 01/12/2024 à 00:55, Dmitry Baryshkov a écrit :
+> Reading access to connector->eld can happen at the same time the
+> drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
+> order to protect connector->eld from concurrent access.
 > 
-> On Sun, Dec 01, 2024 at 02:44:06AM +0200, Dmitry Baryshkov wrote:
-> > The no_capture_mute flag might differ from platform to platform,
-> > especially in the case of the wrapping implementations, like the
-> > upcoming DRM HDMI Codec framework. Move the flag next to all other flags
-> > in struct hdmi_codec_pdata.
-> > 
-> > Acked-by: Mark Brown <broonie@kernel.org>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+Hi Dmitry,
+
+Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+
+Thanks,
+Raphaël
+> ---
+>   drivers/gpu/drm/sti/sti_hdmi.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> I appreciate it might be a dumb question, but I never really understood
-> what no_capture_mute was all about. And in that context, why some
-> drivers would need / use it, and some won't.
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> index 847470f747c0efad61c2ebdc3fb3746a7a13a863..3c8f3532c79723e7b1a720c855c90e40584cc6ca 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -1225,7 +1225,9 @@ static int hdmi_audio_get_eld(struct device *dev, void *data, uint8_t *buf, size
+>   	struct drm_connector *connector = hdmi->drm_connector;
+>   
+>   	DRM_DEBUG_DRIVER("\n");
+> +	mutex_lock(&connector->eld_mutex);
+>   	memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
+> +	mutex_unlock(&connector->eld_mutex);
+>   
+>   	return 0;
+>   }
+> 
 
-Some platforms can not mute the HDMI capture (ARC?) path. See the
-following patches:
-- https://lore.kernel.org/all/1606372608-2329-1-git-send-email-shengjiu.wang@nxp.com/
-- https://lore.kernel.org/all/1606372608-2329-1-git-send-email-shengjiu.wang@nxp.com/
-
-Russell added a way to disable capture / playback support, but only TDA
-driver uses those. I think generally we should change those flags to be
-opt-in for capture, but that requires carefully reviewing all the
-platforms (and is a separate topic anyway).
-
--- 
-With best wishes
-Dmitry
