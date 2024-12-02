@@ -1,129 +1,123 @@
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFB1F9DF
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Dec 2024 15:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16576134AC;
+	Mon,  2 Dec 2024 16:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733153512; cv=none; b=pHixTNukohIPwz3N5H0T/LUFFp4seaqACXnGDFfU7n+qRS5CWXtqdalTVhXScyDJNJDWDI8fK+9YoolQs5sahzqx//0FP6e4eHWxXjvVWDZZ8mom3fN9lDQGl7OiGKJNlu4QMcMjKuapLfYNe8xjIbWIloeKfm5zjZ8XrS3zG4g=
+	t=1733155393; cv=none; b=oA5YTiO76CFZinwfZSuUdGtlspjxRIn+hz2dEdWnoZxyzgsBnAAlIOBN1QVcCVZKqpEJmeqf60I5s3HGpvJNq7winUlXPgyi5hw7LqqW2GcSNUFhmF4igRo9AxY6as2Kh8NC5T8CCEr48JcnlsaDAdIZ0jOvPBF8J7vP45Dzgzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733153512; c=relaxed/simple;
-	bh=QJFQOhHvRWMfU0TK3Z+kwO6rmT9pNjzCjW1otfK4k08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lbP095J93l0xkoku/GpPy2BvnwhxH4TzTzQsBKNCpYF81eI0kuUUlkCkkuAzgVVpYdSm3BpfvpcHP/BotxkEqEWuYpyFal1+jy+wgsqgxsWAzpJdsvQIZFoYtGY6oLPwfEMJYAn3+zPBQvmP/94mAHgUV8ltcmO3Z421Dr4RITM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tBd9BWrr; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1733155393; c=relaxed/simple;
+	bh=RScNYALkuTnO3i/zO9R+Ncw1GfFLqcahc2rAVTG8cQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kdBu2V1kU4TnWKG/TrvmpSM5o5Y/pfTOrHB+E+UXx7In933IIPxFJics4ZDpeE3TILNQQIgFOe5BTywKzitlcJp8abgzf3JOFTP2jdMygWTg5sdTvJogxfXb+C+2oj3o0h57Q6k5hUgjVlqmkl3VqqHvME7m8Az78Ti1iybDlNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIZE6Aoy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tBd9BWrr"
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-434a044dce2so55568665e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2024 07:31:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733153507; x=1733758307; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QJFQOhHvRWMfU0TK3Z+kwO6rmT9pNjzCjW1otfK4k08=;
-        b=tBd9BWrrOCYbG2KkScuJEGKmBM495QVvzh/ZTTnfy+iPKEPocGLy/lx+h0ueIUzRlb
-         ARjqd1troIlOPJLORm2KTVSz2lCHRCsv4OYNUm5CIa5mcXMr1WxdD6NuMMkUTLe67Huu
-         q6gRAs0X3wZir1URceK33LuewXp8zfwR7m3iZq+27vtJYL+b8L2hae/iUvSO9kIdmq95
-         g24oqpd75j08JfwMP7QVTASLTpag95K/2elwaR6velEpuOD3HWNTX/k/8eysSshl3JFW
-         AojPX31Y/QbHasc+Vn1pWvigm1yH4J4i0vHUYoxXL14W28FWNBn9KQElzkb4zHAFrfxL
-         G3Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733153507; x=1733758307;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QJFQOhHvRWMfU0TK3Z+kwO6rmT9pNjzCjW1otfK4k08=;
-        b=KMmPNcxlvtpgxfblsOX+zZaW+vkno/SMIvHL2hXEbxhi4vidVnzT2+NAk1aVYXPFrP
-         QSNA+maNqunb1z4UTcWC9WORkRBcnNNwe43qxCSpfiG2VeSAx2S3I89xp2vcXI7JDgGs
-         m0NjVqfo5VFr3rrBAtWLgz2SCYE5jXrcYVZ7YeQxnRHBXlJHMzRNfxypMax6SShyrLjk
-         uwGZrFNTYT5YD/rjZBuRkxS7VFxsGJ1Qhi3HID7AqywG6jtPosiQM4JizbmvBKZsY9vm
-         ujW4M9BImwnch9OacUwVZorcoP0l9dJbUSIHfMaLChaRlGT2Nj0O9sDgzXqS1UPXnZ6r
-         NwuA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7ME/HPcR2xF6HLkvYj8CcJuWVyK3iUYfwhS9fjgYhYifDELQ04/XOS+sGTQe0mzo7VVB0wGXRNw9UKccT4nFhkw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiD5MRbJoOv2Xb34nShShnzdl07YSV0qDzJUxQcZTPRuchU4UI
-	OcINSeWU+I5GcDl6To6SFlXGYTuFpZjyWGGI+hGhxRJ3xzcBkzAhkDpTvHTHnTI=
-X-Gm-Gg: ASbGncvKe7A/shWKA8sLzIf2bZVOvWB4eTqE8MLDfK/AaLD5T+Cch6WFjIeUbj44BS+
-	S/ywxVra2Zm5eUQCh3PfikXLhtPBUWiye4luqDICzRIaX8S686Edl3dX3XnaYutBIkXNZrkrBCN
-	n6XHoqDvo0goFPNptokEBiHd+lt84J16rldlcz8h9Yqp+LfB4okhlm/lVo+W+zKrGaR7nejKXVx
-	j+iUSOmYWUeDPKSADlmKRgo1fTiFOnj3jnbx3YEIiaU4sg0W/WPfKg=
-X-Google-Smtp-Source: AGHT+IHMBE300Bcm54Mmq/v3tBkO0lxgfJUVqj14Z7wnWfcFOCNvI3wDAreuaFWCRfOaW1RTUGcZhg==
-X-Received: by 2002:a05:600c:458b:b0:42f:8229:a09e with SMTP id 5b1f17b1804b1-434a9df7b85mr236310305e9.29.1733153507008;
-        Mon, 02 Dec 2024 07:31:47 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:ebc7:b34e:f4a6:7947])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434a5dfc03csm105063765e9.2.2024.12.02.07.31.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 07:31:46 -0800 (PST)
-Date: Mon, 2 Dec 2024 16:31:44 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>, 
-	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH] devfreq: Switch back to struct platform_driver::remove()
-Message-ID: <ecae7326gzjpwpg4a3ba2dgddh4jg362ybsf64xla4lyff3mk4@x3q6bocz2car>
-References: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIZE6Aoy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE273C4CED1;
+	Mon,  2 Dec 2024 16:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733155392;
+	bh=RScNYALkuTnO3i/zO9R+Ncw1GfFLqcahc2rAVTG8cQU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jIZE6AoyCeI7gVLvvakszzpiZ8uOZKi1BJbnlwMBsh8QFFCRpWHIJAfCHNwPbDBTS
+	 fDrV69C71toQJ7TQElgJebpjv6YRVVpVPvkLKFoKhmCAar7ABbIxGMvQySTkxJWAJh
+	 CJ+kYvE/cDDV0Z5DGQBsDBsGchCC3z+yhwpI1+U29CNFhh2NgUo61Dqk9H7O0YFBBj
+	 +mQS9q1KnVo6M7KIlvdrzR6jEzT/TpZa/YPXGbLOeOBUa97m8bvnK1qKU63sN+wLf0
+	 WmIjHFVZPWuwyDviAW5i+3qJemGYNuBq4405dOKeA/rn6884cneg62aZQr/yNqwRTV
+	 B2tgJrsyocTxA==
+Message-ID: <a3a4296d-8a0b-4894-b979-00f3e8f8a75a@kernel.org>
+Date: Mon, 2 Dec 2024 17:03:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="peon3ci7jqimuqo3"
-Content-Disposition: inline
-In-Reply-To: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 5G (x1s)
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+Cc: alim.akhtar@samsung.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ igor.belwon@mentallysanemainliners.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, robh@kernel.org
+References: <88f6ab28-1b3f-4144-91c8-0131ee008838@kernel.org>
+ <20241202160011.3232-1-umer.uddin@mentallysanemainliners.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241202160011.3232-1-umer.uddin@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 02/12/2024 17:00, Umer Uddin wrote:
+> On 02/12/2024 8:53, Krzysztof Kozlowski wrote:
+> 
+>> Umer,
+>>
+>> I wanted to apply the series, but for two weeks you ignored this
+>> feedback/comment, so I am dropping the patchset from my queue.
+>>
+>> Be sure you respond to reviewers in timely manner (and if you give
+>> yourself more than two weeks to respond it also means other have more
+>> than two weeks...).
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Hi Krzysztof, I did not mean to ignore him, I had mock examinations coming
+> up when this feedback was sent. I had no chance to reply as i had to prepare
+> and do good in these examinations as they influence what colleges I get
+> accepted at. Sorry for any inconvenience caused to both of you.
+
+I understand. No problem on my side, just wanted to share the reason of
+dropping from my queue. After resolving the discussion somehow, please
+send a new version (if something changed) or resend (if resolution
+results in no changes).
 
 
---peon3ci7jqimuqo3
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] devfreq: Switch back to struct platform_driver::remove()
-MIME-Version: 1.0
-
-Hello,
-
-On Sat, Nov 30, 2024 at 02:58:11PM +0100, Uwe Kleine-K=F6nig wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
->=20
-> Convert all platform drivers below drivers/devfreq to use .remove(),
-> with the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
->=20
-> While touching these drivers, make the alignment of the touched
-> initializers consistent.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-
-Note this patch is obsoleted by
-https://git.kernel.org/linus/e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-=2E
-
-Best regards
-Uwe
-
---peon3ci7jqimuqo3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdN0t0ACgkQj4D7WH0S
-/k6qNwgAiyaoRUBzt+ES/sXpbjU1ikMyNnk8Olj+yqwh6q3TT7T/cGK/mJZ+n8Jx
-Kf/b7GtwcRk3RScaL6SOlRNRgJCTKyfH7s8Ko1mLum0vsaTXMeCq2v3LWmKvMqk8
-IKYihoDhPxfvbFrY6VlUixTkGip8fHGONhs/PShKhoM0Q5UeBXRq0jtssisQqaDj
-MD4pC+pZn9OtMP1OzIoYDm9txIY+TIQfYil1fC3HJLrS+i19CGizdK1R0gaJPl4t
-YRrVt/aAZ09xtLiGt1FM8hS+DbwwIi4/t5eYPFEEzUMxFE1IAMuSkiwcr2GIQ2Wg
-9eZ8IqZADcB+nKoGJhVo+lkPfeR5fQ==
-=TKo+
------END PGP SIGNATURE-----
-
---peon3ci7jqimuqo3--
+Best regards,
+Krzysztof
