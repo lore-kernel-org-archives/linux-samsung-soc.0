@@ -1,185 +1,126 @@
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2117.outbound.protection.outlook.com [40.107.103.117])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531952040BE;
-	Mon,  2 Dec 2024 14:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733151297; cv=fail; b=qqVC/VmL4kVNqDUEPnVMXuVaV+7v9vwFw6gt+LiV2uRN0WBxBywn5NC7x2ykqXBSLVQ6I8bSs3yf8AL+C+Q+f7UqpcBQWchbDdFSDlPRLir8+75qVrZ7QQ2st3WSdQPg+UE5wscvtOoKMi98qBa+2r7aeAwkqG6nYhhh8buyX0Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733151297; c=relaxed/simple;
-	bh=WZzj707enoeLcHMzugoAvx1Skp1KP4hSzoCWGhZwFkA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gQb3Yao2qnLF9QSbVlTE5IvdBG9Ocg4AkMbNZJyES3HBteBysgAWXQqp+cmZvGfXPVtmQECKFa0kR73KFu0qNFOCF4ElRlHxE8cXlF5nLxK8GJVLSu4WTfFPPIObVmP7HSeJCrdBoMf77IKQTrOEFeC+ooFhrNC9D3tVDRXL/0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=HKfsbOEx; arc=fail smtp.client-ip=40.107.103.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B3E204F81
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  2 Dec 2024 14:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733151553; cv=none; b=sYG9NRAkZo5PqTxuqbBIEvs63QRvn/Us9wShhnLQMI0aWxIe85kTmQvWuJSdlSqcqzkwNBz6qH52RA6i+NVJVHep8KR1ElfLvrmrbIYieopsZFyxS1+LGCo8f8GnD7mHz210PNlPq/P01hj/4NJYDjA0Ojgprm3BJCIuETO+hBQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733151553; c=relaxed/simple;
+	bh=vorR0NUgMIxpLB6XnGO1J1hmkZxBZip3sa3UgLPBo2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwhTIeDHllpY4+Uf3uC0AOFA3875H9vgO9Zeqem63ye6jyst3SH5n/Z81xiVcfyOH/Rj15kacsiqq4tbCIC2lZNkT+goRQ1B5giiGCj6NC/7Gs8cc9lJjOqBDd84SSq0yK4LYctgOXXFER/GZ8kAEG7Eb+SvlkTxr95ulKznSx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YAr0pe+x; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="HKfsbOEx"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=szRL17UNNWAPR+cPoBzno3QfzugY90LZ+0Bc/SiTmtwwiT0dNRS959NY45QrNlIpnUd5dybRuaqtMTS4xiqfZcHQJDC5wRk7KvlGHlP2Mg8rLZMxjRDNFZMpQg9am4bh+jpZ6PTv3vq2Hj6udsPpM8YcjC8x8EiT663r29gMX4mOBMBjxcZe1fKQip5yxdkRGUldIanZAie3bbTQ9wNtGWRarSlHg0BaUoVAaMzw2ijQ0h4L2waK9dbFwc7bcctUBEP4YTDXVf6bQUDEhiMBZDXwqqzuRKXr+2DLJVW6YEEJpy/u9Fh8XEvJhn0x11A2N6+n4h/AV7x3YsBE+T8/dQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=phSJLAQUpSIc4MH9f3YnY+ht5TF7ZwxBzwVlV7H0iFs=;
- b=AnRRrAhZE1znSSYAxlfECr1jqMMggn2Y4eD0wt5kgUAgawaH7u8nksAo4XpSsOzscGs1cQ6HuJb/CuvjMajhue2ugA9ywP0ox92dowaRtjy/T8jq090WJ3zj0zNW0t+6vWDVVSgjBv+qMIJStQvtk5Eoqj8U8YwQWq9+O0NjuAnpQMHsHyD62+8llvlci+R9Kchjn8yy6ea7AyyuR9BrYR6Yzk+7JgwX6JUBPjTBF0g8h12+HTBNTRe3eWC/DjmhasMR0nrm0CelQ4dxJXzitmtjy07zOCa7Ku6HjnArz1cT0f6PHYApY+itH2WhUPwM9+nbvJin5dw7sLWmCQgB1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=phSJLAQUpSIc4MH9f3YnY+ht5TF7ZwxBzwVlV7H0iFs=;
- b=HKfsbOExx+ZUuEW3MNt5E6tH+TCIHucM5d6jHIBFX4oH5HOx7KEGhIOXMB8u7ORGakbqLPI/kvdCSuMrzcYp1TCSVW/h2pReq3rvT3U62fmnzNXcCN4OtGAtuJG0HKKrZJhV1zmzpZuMSVYZY2+Vy8mL1XO4hpunaq8I7pkBe5b/9ArMMjb0Zi7z7/6L1Z7l2snWzjXFc38pKYJMYM0fZIQm3Z6R5wnksiEVzPo00nuxOZ6UNHt7ccrK9FwAa3rxYdzcbm7mc+MMAvnN7BYlB0LQ83SmFzmstxfK4JjlHuVQuiz/aCwrQGXxVt7KSCDN2D0umswQXMivdpMzHUEW0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by PA4PR03MB7182.eurprd03.prod.outlook.com (2603:10a6:102:104::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
- 2024 14:54:52 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
- 14:54:52 +0000
-Message-ID: <08558b39-bf69-43a7-8f55-064995221099@uclouvain.be>
-Date: Mon, 2 Dec 2024 15:54:10 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: defconfig: enable Maxim max1720x driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sebastian Reichel
- <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-3-98d2fa7bfe30@uclouvain.be>
- <a917cb0b-68de-4916-9a4d-021a8da37289@kernel.org>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <a917cb0b-68de-4916-9a4d-021a8da37289@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PAZP264CA0111.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:1ef::13) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAr0pe+x"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53de5ec22adso5357748e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2024 06:59:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733151549; x=1733756349; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rju8sEpE6sdROgx04VbEZEe0Z4Dqml8d9fp2hAHZz1Q=;
+        b=YAr0pe+xAUndygXKR8wcvyjPgw6c+Z9XNrMtfghZaWt4OyjOLPtWUXN9z+V+yVPnrE
+         vsPfDskivzysC0sD3fljGfR1kAfsXIP32eIEheL1lkJaHEYDj4nzPfrNQuOc0zk4zGg4
+         VlnTE0BvEyw4cpRuc9rOof13zW0fbeCB0mUBfPIrpVzqlqkB+jE2mytkbzz5ccqTTdXl
+         67/G04S3AT4DnbWpm6/FFTwHHOeDnAz0yfU049qyK6UlNNe/6SkzVe88ezWhvpyrklI/
+         PR1/VvQ5VmlOtHW5R/dvu2VbW5YGKw8wsgQyw3pLsaHkZLrugE68NKjNufacGiPLP7EY
+         ozRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733151549; x=1733756349;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rju8sEpE6sdROgx04VbEZEe0Z4Dqml8d9fp2hAHZz1Q=;
+        b=C5D002OAilS9+3KFx6+HQhdMakhAd2nT489yQIZBapDBYfDa+XyaA1gDzjfUnirjL4
+         vA2fCUk4mvQZPh6Qd1vNh8oSyfkai8QiQ8Qv502Ub0rDYuvHwqBT2Tnu52xY9dUqHFCF
+         MVEOXFKDqSBsjsZGyQBzuZMTbYCnupVvuS6voHZGBrvfNbITiA2g0G1A+m6peim9hxJE
+         Llo+P/iumEd5X8ym9i/Qb3+FDguiWBRC8vPa13fXnZsn3JrptIRH3NNSsELKsisbRhsQ
+         Pv5w9JsYFKxPfRNE9y9VoKIN0EHBHHSgUPqUZKurDMS1vdoBKf1reVUPoP79Iz8xHVOO
+         iazA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQT2PGYb3Pat93QrXSn2Nr3gO1I+4y5Bioh2aIiapM2Yg9/YSZlKpzMoXOndpr+tVMOM1jVFL/2F5Lr9xVypk1MQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5ZSRZQ8XkcC/U749EuPDw2BbF84qnP/BySLIVXI+xPpwiet9z
+	wt4VRMz8Y1YwBnz7QiQK1NUhMKt2NdEFazkPHc1gysz1shtKkImK15/TuHq4Bcc=
+X-Gm-Gg: ASbGncsRJuBwG3qevXAShV6XVTLbcdYEUMfYlJh1xGj7HNCzzrrkhvCezmoAXgY85ps
+	5oV/yigP5e079Ojuk9VC4dXLzFaStxoA8ha3roQOVnbPzYcxwl2P82OxedGPbTaV2gQD19Q5EqY
+	c9ixOiZcCddex9AfFCnhk3/EkK2FAm36Kw5VwYPvkJV7gXLV5Kqlquy+COmT7HXbrXFH9BSKMqQ
+	8fDZTpvjQeob4PGt37VaZbfboc+4RTLGMzhlcQE609OYs1g/jPsySPn1EK3G0Xpn6Pmirit+vsI
+	I6FhrwixYOd4+z8E967m4BMOEhmG3A==
+X-Google-Smtp-Source: AGHT+IFqUZg6UxbmPBpmmNDChC/PhM5ksog1SlPE5I3zx5OIy0xNoMEVpgKx1uItUxOnsjp3icE8UQ==
+X-Received: by 2002:a05:6512:b26:b0:53d:edba:d40b with SMTP id 2adb3069b0e04-53df00dc8d7mr12039335e87.33.1733151549347;
+        Mon, 02 Dec 2024 06:59:09 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f2c3sm1480384e87.126.2024.12.02.06.59.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Dec 2024 06:59:07 -0800 (PST)
+Date: Mon, 2 Dec 2024 16:59:06 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 2/9] ASoC: hdmi-codec: move no_capture_mute to struct
+ hdmi_codec_pdata
+Message-ID: <onq2djvtvxvr3a52s6sin3dstwdctyyz2lxpx47lk7ndxtza33@odldgvhryw4d>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-2-b5316e82f61a@linaro.org>
+ <20241202-bald-just-guan-c5d41b@houat>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|PA4PR03MB7182:EE_
-X-MS-Office365-Filtering-Correlation-Id: 999d3f69-c977-4412-629c-08dd12e146e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Tm9qTWxJWVNPK1NWcHFVbndCSEU1aWxhT0xxcWFmK2I4QmR4VjhRUEE0TktC?=
- =?utf-8?B?K2preUFMNDR0Q3BWbER2WG45ODJBZlNoZjYySnU4M3BEVWZ5ZXlyb0VpQmk3?=
- =?utf-8?B?WmRycE1iWldIZGNzN3huZ2wxeklJOTVGMmNndHlvYVpIcnhoSVc0NnB2Mll2?=
- =?utf-8?B?R1pTTmhGeGc5QTM3ZE1zdVJnTmduT0dZMW9XK2FTMytRNEhUUXJwN1ovNDlW?=
- =?utf-8?B?YnJtS0ExTHMyZkNSMko3NkZNSnRjOEF0ajdhYUJLbS9sbmZKYTNtbkRiR1R6?=
- =?utf-8?B?OTgvKzdONlRxWjRzdnE4OWNTVVZGUVFHaEZWQm1DRzRJbWJvT3R2VWFZUDRj?=
- =?utf-8?B?L3UxYlBsdmFYYm9HVEpNMGtnOUY0Q1BWeHRMbWJKS0ZVdmdxWVgwWHh2ZGY1?=
- =?utf-8?B?RndNajR2Ym1VVE9CQ3dqNUpYcUlWRHhTcTh3MlI1L1NBMVlNZE40Z0RaWFRq?=
- =?utf-8?B?M1hTekNWUitRRW5yL0JQRDhMRUhRQVBrYWVzalFLT2NJRjZ4MmVGZEFMUTNh?=
- =?utf-8?B?bGpWZ3ppaStJVW1vaHhBTkpjZ21lb2VWVGc2RHg1a1ErYXlKaDF5ZjhJUXpV?=
- =?utf-8?B?SGpaN241NTF4aFhFb0pKT2VEbmoxa3hSSE1aWlgrZzVnaXM0YmJoN0lqclV5?=
- =?utf-8?B?Nmx3WFQwTmY2QTFQN3BXdmJBWWZiN3FITXN4WG5MMGVwenN2UWZWVEZUSjJI?=
- =?utf-8?B?ZHV5di9IQWlDS2tOTVNlR1hOSWk2TzJneUdHNWpDbVZydjdqV3dRV25Bbjgx?=
- =?utf-8?B?ZnVMNGJ0b0RFU2FGWDdtNW1JVVFnbUUreUdjK3NINmszUWdudm5VaGdrZFEz?=
- =?utf-8?B?V2NlSlh1ZWQ1ek1mNy9rbjdzVGc0aEs1WjNBYTE0ZVNtNEFpU3ZpbXZSWmV3?=
- =?utf-8?B?KzhVbi9WOGs3TUkwbTJJZzk4aXJzSWhLV0tUSXpXdE92ZlF6Y0c3VVhxaFJB?=
- =?utf-8?B?bmFJQXk0YVI4eGQ5K1NpUlJwakIwUjlmKzdrck9nV1BpUTlEZTNkVzZuYjFG?=
- =?utf-8?B?Smx4NEVqR1RIM3JtSzA1K1Z2MnY5MmpPeXExU3ZnMVVvR1RCRzFWNFFsSUMy?=
- =?utf-8?B?MWJCZk50Q3hkLyt1MXBOQWErMzQzbFA3S0QzYi94aUpNU3FsZ0kvdlpqYUMy?=
- =?utf-8?B?Z3FsMzhlemJzaWovWHlHeUcyRmlyZ1NYZW8ra0x5aTNsNWRhb1dHbXhibG4x?=
- =?utf-8?B?TzJzaGFNa0x5dWZsUDdMSmMyWEtSQlhVYWJsRis1aFFMM3IvazRXWUFzVWxi?=
- =?utf-8?B?OHJzVEVEZXRxKzNzMmY0VEkzL20yS2tFZU9UYUlsMHcrYWliRDJnaHNLNWNM?=
- =?utf-8?B?endEK013ZnMvbnJ6U3lDWHpVcjlSZ0tqWmpmWjBNQU9VYjJzNStYUXp5YjFu?=
- =?utf-8?B?K1ozT2ZsTFhDWkZBTzNrY1d0NS81QTJKMzhxOGxpek9pWXFzcGN6dlZZcWQ4?=
- =?utf-8?B?dFlQdmdCK0RaL09xVkxWWkVOVG1jbVNLd2hsa1lQM20wMUJXQlVCMmpUSGpD?=
- =?utf-8?B?OEovRngybm9xM0pTejE1QUtRTTdaRDkwVzB5WXlJMW8zaUNZRDF3T2xydHZ2?=
- =?utf-8?B?S1pHVnRnT3RBOTdMd1FzaytQMXlwV3BUU3laSXE3T3FtWlZVZkxOTzhRaGFr?=
- =?utf-8?B?enIvTTJnelloR1FvMU9EeTJOQnpCRjJFdHNPVXZib04wd1gzR2Q5TzFyZmxQ?=
- =?utf-8?B?b0dKTS9zSURXazR1NXRrMjJvcjN4aHNYUk1FR2tOVmFEeENZNVpCSkduMVNN?=
- =?utf-8?B?RFp4WUdLdDFBZkNBcVd1UkZEZ1NPZTJlY1NPV2Y2RG5oTG1rQy9iWlplUFdU?=
- =?utf-8?B?TlNhZ2F5RS9lQTBXVmNzZ1I1Z2JjbzdrT0s4WDFoS004cms2K3FEdW4rZytl?=
- =?utf-8?Q?/Jcr3EhvUbZnG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WFFCbE1qZWZHZ05XUlJMR1E5b3FKNDVGcGl2aWFTalRCL1oxNmd3K0kwL0hY?=
- =?utf-8?B?bzhQRXJkY0JDaDlKY0txR25YVGNxZjJGNFJIcVlVbDlIQWlCdkt5QlJVYU5M?=
- =?utf-8?B?bjcyN3hLVkFCVFR6USs3M09xMEg0NWtndmNMclgxazE0cXkzVldMUkVHTDBN?=
- =?utf-8?B?TzRIN2NWcUpvbFRDOE5KTWFkU1JKaU56TUVLWkorK1Z1OHJoNk9SVm5Icllq?=
- =?utf-8?B?Z0I0Y2lIclBFVWVIOWViYzlncjc0TDkzakJJbStyNEtyM1d0T2VuanZkSWZK?=
- =?utf-8?B?S2FGdFRKREwxaGwzSFVDYkQyM1F6YTI4ZUU5S0lYdnFMUkE0UDYzblM3bWRu?=
- =?utf-8?B?MnJVZnpuckN5TDYxd2xpK2hFWWlDQnRTaDRlemw5S25BNTI3dWRpL05kVXMy?=
- =?utf-8?B?OWR5VnJQangwaS9kZDVMaTBtSU5Ba2tzdXNtRjFvdXcweXk1aGlkVHJLRW5D?=
- =?utf-8?B?M3hFYUQvTFFiTXZGWS8yWEgxM0tJaXQ5ZEZ0OFdPRWo2U0pobVpQSzNzUTcz?=
- =?utf-8?B?UTZVWTdFUVRXOWFaVkNBQ1ZLVHkwNTdEcG9FUTRhbjBBUTRKV2JIMG9RMUZz?=
- =?utf-8?B?NmNIUnY2bmdvV3VBYlNVUjErYjgrbzB1ZXJmWDBMczVMVkVPWTNvUFlybGRy?=
- =?utf-8?B?TFU0VmROdGZBbXRYQVlYWmpZZ1FPcWtyZmZqWVREWGx4UUxCQVZoR1Vrc0VF?=
- =?utf-8?B?d2FudFFqeUNvMjlRUzU1empEZnlwSFZNU0RjTGk2OEY3NThUZDhXMVdGRCtN?=
- =?utf-8?B?Tk8zVWtmSHZEOTNOclMyKzRERUliS0szdmdsbWJQMXFtWTh5QzI1K3p3MC9B?=
- =?utf-8?B?MC80ZWdTVVdoYzRkUW5xSHNiMlF0aHJIYk1qYWpRQU1Ndm9aU2xuK3lycldy?=
- =?utf-8?B?L0Q2Q2pkeWY0SXBWQlZOaWJzSHBPdzFZRE5mYktjWEZpZHI4SVgzbDBEY2NK?=
- =?utf-8?B?UnBHdFRCT2cycjV4UXlTY3RQU2YzV054U3psam5lUy9ReVEyMXlQZW5FNkIy?=
- =?utf-8?B?SmdMV2ZyMFg0c0VlNUdsT2tBT3ZNdnBVSDFWTDBVMlAwNXllTTVwSFN3OGVQ?=
- =?utf-8?B?SFpTZlg0aVdxNStGTytoM0hzQ2c2bDFrbTFSUnlrOWxUbXpIa3pZbHhlUUNI?=
- =?utf-8?B?TjFad3VkWnVaTGNBSFRweUFGc1h2eGxxTlVuUnFiNXZDVWVZbW1FREVPeXpW?=
- =?utf-8?B?eFVrSUZKaVFFVklKQ25ET3FlL1NCaWFhTGlIdEpZZXcxK0lkYXArRkU0a25K?=
- =?utf-8?B?Zll0b2lCbnVTNXhzL056eGhnS1Q1aUNSdWtFQzFJcnlwRXFyL29rZE45d3N4?=
- =?utf-8?B?bFl2K1BhelhxQ3kyNkNleGZCVnNNUGE5WWpRbmFZOWtjaGRxSTl3VkN2bFhk?=
- =?utf-8?B?cnlMQmdlMTIwVktyelhBenQwVFdGMXdWcTJBK0pYajBJWW1Jc2YyOUVrWmVq?=
- =?utf-8?B?Zzd2MXd1UytZY3p0VVhqbnBDTnNTWHovWTczcTM0Tm9jOEpMZklIdUErYVlo?=
- =?utf-8?B?MGFqQXBCNHhTclhtTW9XZkhZSGFpTmpaUDlVTmR3bkdHWkdvVDlpb2ZJbTMx?=
- =?utf-8?B?UGpWMEY2Rkx6ZHk5K0JBR0J0L1NhK05TdlhZb1lvRGhSbzhlVTNRR21FVTlO?=
- =?utf-8?B?SFZTK09mUC9KRG1iSkYxdVJHNDd4M3BpSGVZL0VPZmUzclcrZ1lUMHZXdkVm?=
- =?utf-8?B?eUR0WUJmZmZHRytDTU9pRnBQYjgycEgza0t1REt4QVpaTCszK1BUUkw1dUFS?=
- =?utf-8?B?NHNRdGd3YUx5eGo4MnVWbk5KY2liOUIrQnFWbGxENmlGQXJtMXRQM1Z3cVk1?=
- =?utf-8?B?dkxPVDVmQytlV2ZzRlQ1TE1rRWtDLzU5V2hxM2hwZlRzc0xkQ0JUVEZ4QnJV?=
- =?utf-8?B?cDIyaHlQVG94VzdKMHFOaDFJWjhzRXQ0UjJFU3pHeVNOSjZTTThRR1J5dnha?=
- =?utf-8?B?dEU0R2xHdkswdFJld0pzNHRZZFg5TUdmeGY5Y01ZTmxkOVZ3Q3RlTjVPVDUv?=
- =?utf-8?B?eEh5UVB1d2QzRkpORDhrMnk0bnF1SlJLb0dWMEdQV09zSEI0UzdiNGYrRlpD?=
- =?utf-8?B?anFrekJsMjJqTFduYU9udUFyYW44NUthbVB6MjJZNHlyQVFib3MwUXZYZ3ZU?=
- =?utf-8?B?VnM3a1Y1eG14eG9OWkswZFF2S2RSQXhFNXBpSk0veUFlUXJiS3ZHWUFiUkwy?=
- =?utf-8?Q?nHu2DMfT7NvjLPAxkWotSi/qA89xRVUIjLFO/WY/dk19?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 999d3f69-c977-4412-629c-08dd12e146e0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 14:54:52.4056
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pXiTRwWYE6dmoLDO0nyrVdY7YXrfQp5QRmrti+yITVhi0anWmYVU9txqiviLN26WJ9YXMP5bbsZwalWN02x3qg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR03MB7182
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-bald-just-guan-c5d41b@houat>
 
-On 12/2/24 14:40, Krzysztof Kozlowski wrote:
-> On 02/12/2024 14:07, Thomas Antoine via B4 Relay wrote:
->> From: Thomas Antoine <t.antoine@uclouvain.be>
->>  CONFIG_BATTERY_QCOM_BATTMGR=m
->>  CONFIG_BATTERY_SBS=m
->>  CONFIG_BATTERY_BQ27XXX=y
->> +CONFIG_BATTERY_MAX1720X=m
->>  CONFIG_BATTERY_MAX17042=m
+On Mon, Dec 02, 2024 at 01:06:09PM +0100, Maxime Ripard wrote:
+> Hi,
 > 
-> Are you sure this is placed according to savedefconfig order?
+> On Sun, Dec 01, 2024 at 02:44:06AM +0200, Dmitry Baryshkov wrote:
+> > The no_capture_mute flag might differ from platform to platform,
+> > especially in the case of the wrapping implementations, like the
+> > upcoming DRM HDMI Codec framework. Move the flag next to all other flags
+> > in struct hdmi_codec_pdata.
+> > 
+> > Acked-by: Mark Brown <broonie@kernel.org>
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> I appreciate it might be a dumb question, but I never really understood
+> what no_capture_mute was all about. And in that context, why some
+> drivers would need / use it, and some won't.
 
-I ran menuconfig and it put CONFIG_BATTERY_MAX1720X below
-CONFIG_BATTERY_MAX17042 so I think it is an error on my part.
-Will fix in v2.
+Some platforms can not mute the HDMI capture (ARC?) path. See the
+following patches:
+- https://lore.kernel.org/all/1606372608-2329-1-git-send-email-shengjiu.wang@nxp.com/
+- https://lore.kernel.org/all/1606372608-2329-1-git-send-email-shengjiu.wang@nxp.com/
 
-Best regards,
-Thomas Antoine
+Russell added a way to disable capture / playback support, but only TDA
+driver uses those. I think generally we should change those flags to be
+opt-in for capture, but that requires carefully reviewing all the
+platforms (and is a separate topic anyway).
+
+-- 
+With best wishes
+Dmitry
