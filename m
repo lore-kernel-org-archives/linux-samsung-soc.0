@@ -1,198 +1,164 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0BB1E630D
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 12:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644491DA0F5
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 12:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228039; cv=none; b=AjJnCOModgusA4n7OS/wsQJd9rpsLFC/MpynrJwcSDpQ2SAmhipO1VaicFQHCsuLNXqrX5p03+gK3gQDiueJcPPyX6G2EHXcpSuRoX/Xz3SovGo0bLBmGCRx5L08siWMnvDyuxDOVwd4CrnwwzURtBLCWd9EdJOcsKxkvYlB7AI=
+	t=1733228389; cv=none; b=WzZ+GQbPlFQSNLfwMSYBZA7D/BMZz10dqNg9YFnAooHLSNuttX9VS3hzC67Ozl2GcEdNb/oQEmc8WPFkyQ2D5TSpMFxJblf7FFnT0dyEQ9IHf61zrDmKczIij0Lkt4zb9roIAO7wC8boL6BoypJBM2xRdWUil9pTRD+zElrSsZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228039; c=relaxed/simple;
-	bh=SrNm479mfjveTEuZxmv854ReXQ1mRjzxwEH9dzh6qvA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fTOOHL1Bq3vGjoP1lhzfpeATqyd1P/k4P83Ovp9aUu+iT8M1gKXYsprvgljQSlh6m+9+apAmWnY7Gna3fc8PcFy9CYLUX2XsJsGhr6h61WCWnnFLIIOKYnuKNhpxVS4o3Hc9eg0vtZkEeMXaWr3z7p9v1ZDohsB1yRuBE6LoL9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gs641nkH; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1733228389; c=relaxed/simple;
+	bh=kpQG97neEOTfmw8LT50c3EPenmcddI5a2M0V4jVWKmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZY8hUg8ggc0M2zHbDXuJ8+eS9Dud47LrRdEFXcwsZ0uFkvVVT9H7JRepRDpI8TV8PYOjSIdvkFNXrTeYt+Wj+stnewezoEoV77Xgk2PiJdc1ooc6l99Llz/zosKDO1oHOQfkwzAFAGsE0XQ5Nsvo+VQocqpuB3rWjtkH+S7gcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zAWKXfM2; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gs641nkH"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9e44654ae3so705483366b.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 04:13:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zAWKXfM2"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53df63230d0so6775548e87.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 04:19:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733228035; x=1733832835; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uFpsvHW8LAP7lW2ogoOJaMBxsAjFS0igr/BkJ+LMT9c=;
-        b=gs641nkHF8juHLlYNo4pgnblNk59Ya97GAY9JsUTb0heOU15CAbO/5h67yhhY2CT0c
-         BbKOOf0UY2zO1AgFp7vQrLghR2rMQJZujd1OCPIxCp5o/ns3xrrePCxHA3Mip3FoQpEi
-         17NrUHHZ3PWl9GyfyLs9QQRds/+cCecIN7N1/Tq67hmTwM5po5L6zm8wC02jQhHgD0Bl
-         IdTMueOIDisJNyiz4uZRqpqg1wLJ27dFNX6FKLqbGi/rsAA0zOf8UwzbNtv5jAcMOHud
-         yxo8ZKFYiDBXFCLhzNd7owHMfAk/+GA1EcMwr36JCf8tsD387CSS3RwUka0IdhLUyXDB
-         J5xA==
+        d=linaro.org; s=google; t=1733228384; x=1733833184; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5n+OPgKd4OeVfRcOdyszAmWQAYwYUA33KJvbyrKBpj8=;
+        b=zAWKXfM2peg7BAHmz8T3EWRad4/q7t5dNAlCsWR8UImR7RMKl8lhDFFCQ70vqKCvPM
+         1bEvuoHJ9lXpecjAcIrTfe3CUtzHoAXWkLQ/9YPNS2213Qiip6900QwCViM4ll1x5GoP
+         IW/OgzPXeEQqZGeSWWHVhL81W2vRVn1u9EYhIMOsJ6/Npi6fhe7ubnWKwyoC9veWfSpK
+         8ROMFxJcn0DgmLxuqayM+3Yn18zndg8l1UEJLthcXgtVomwqVwx/m28+rXyZ7tr/Wxh5
+         UWAw3kDBNjb4h3zmX/hJP8rdwkcSxg92wFn7tZCiBStKPGXU6xlYQFR47eV6VvL33BkM
+         Q+9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733228035; x=1733832835;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uFpsvHW8LAP7lW2ogoOJaMBxsAjFS0igr/BkJ+LMT9c=;
-        b=RXlM+FUDhXR93W+ZboJVjNqSkg8Ht8x9RERXrTGY7nOF+CV9HRI5G/GsZw7HykdoKO
-         vmqLhy+vxcssxbd6NBGwBfynkpBCEFv18c2QgoCo3v80QiM699P2ZKaBpU1ZClmenmK6
-         qwLnRmOsDkiFvaf6K8kMQAfT29vIGjEGPGAAVvDpJW+GFlQoQeEBez0lDkNvNFWXYj8d
-         AXZ1hBbhpnmCXpY0dBMvaT19NzrNW3e0YQCf84JfBX6UC3dWsYBPbL2d7LQLM/ew9Kbb
-         fhAGQ8ucl+LH8c0eNGasSvZjxhkYHB5wgYSmFXN0xGJUOQuzGvbt+iykp/f6xLnIw/ov
-         RPtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSBm9LoPjIW+/mg+dM8CPfRLWuduXUkFW4mQUW2AEG96e0vM3JMHBrfVf1EODt7DhJZF6Rqp7X/mN0gNhpCtNVTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW9mb8GNfzOwB+NKvgLy3gyZ9laxejEPpOQCGmHDRFyF22by7C
-	QjL/go/hisUbTwmr420zp5+zYfXQUErZrZLVPQBZHPjD1f7vlJooq1v+3oSbAqY=
-X-Gm-Gg: ASbGnctRs79ewTDDw3pi5QoM3/tsT+Ymqpi8t67UKGis4s5qhilqFAMbdnJey3Z/OOM
-	aX5ds7N1rYPcsq8Nay93CnR18h3u5uG0ekq4gim0kLB/T/8pkpBasQ9gQSPGRYH6Hre8+FnWD2i
-	HTx8DrDyoFU7oxKt/DYJA5Qjt4moCjnbiK4b/VZQljhNB4pNx0lUIoOmnADpjzkCD+uruIa8pTV
-	S3gtezW33Audx7JdbHSD2Fp/pl8lI525o6FMy2fwzsnqv1QBwX+7JYNkxU9MCaf0xw7CZxKD4Cb
-	sV2HJDlReVJ68uU+Tzt1bU+XGSLLTlQwGQ==
-X-Google-Smtp-Source: AGHT+IGdrwALKg1GTwldZJOY7VYAVcWh5tQKqLrkKr8AXomCGAvvPrif7tTk5yapUjTCTN1a7cYNbg==
-X-Received: by 2002:a17:906:4c1:b0:aa5:427e:6c76 with SMTP id a640c23a62f3a-aa5f7aaed08mr164681466b.0.1733228035286;
-        Tue, 03 Dec 2024 04:13:55 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c245bsm607603766b.8.2024.12.03.04.13.54
+        d=1e100.net; s=20230601; t=1733228384; x=1733833184;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5n+OPgKd4OeVfRcOdyszAmWQAYwYUA33KJvbyrKBpj8=;
+        b=xDMGS+ZDxibpU0dLD56qabhbVjtAgC1yHShLUgAWt4KZRCqT0ejhjvAYk/xDTZbS+4
+         k0qHk7lNGY4ObeISFdRj5Rm1uHyyqbFYt3v7xTsPdwgYkkFPDMmo4+wzgLWePOTC9ziQ
+         AnZIy6LXEoWjabW6Gcikye5bdfM2clROLDijj2xXRrwksCXJCKLNmZjwd3UiShGeU7ve
+         m8CIYkZCwZz13K6htNyy1wyZ903XIcr8JxBeDJh2A34xYS/NwuVb5FIDmnFrsPVVbCGv
+         C8kLhw1qL+DbZUiVrym+CLbNuqlMrMJk/q/nxuLctaNtptBXfSCdl2+0D9adhrbj30R4
+         Ru4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxQpoewAp8MQsMlAHB8zjxNgd7/7eWiBTlV4w4nSNi0JrtQjM0oGm0PicO9vCVPof2uFC6snIj8njZGDbI6kfeBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJb/FyVu1sEqhpp2XWMAVv1g6V8MhMQvZrvn6os560R2PrnLDn
+	ylxTI3eepU95DtYezeMwvAWNmIyPr6n09bYypeVGJzUUqHNv9JmpmxEhEPEpwUE=
+X-Gm-Gg: ASbGncskUoxWtPHsXvjP8JUZ0n6P4FE05DO3Vpb9mqgidkpUuui4Dtyq/+MkXSrOO+M
+	FC/dDYahj43sGnosqwI1rgTQz4hMmwVh7jl6nsebZKWOWcCVCYVTGyTp7MLFvsAIJe6Qiymdv/r
+	pYeARcWAmMkudAW+G03wMnrw10zO39+2/zLvqcT4gPc6TiHEYxV19lcFfaZ0Jwv/mpZ/PWmNHsD
+	P3rE2+WrqoBBD/9IIzMQuKZAzOZHEIJucECQo119/B9gslxDHjls1dB4Ux9ntoHRYIOd7qTRgfp
+	L5nCaLg2f9OYmBK3bHb0rgbbrUN7fw==
+X-Google-Smtp-Source: AGHT+IGqrNK3/JV3p7HUHgNYWUEc9ZkYpw0A4baw1aq7D6bW6M82dv1dR6gPJHjyZhTW0XLXbh3VUg==
+X-Received: by 2002:a05:6512:32c9:b0:53d:e43c:9c5d with SMTP id 2adb3069b0e04-53e12a06a29mr1124957e87.27.1733228384467;
+        Tue, 03 Dec 2024 04:19:44 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df643149asm1854312e87.37.2024.12.03.04.19.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:13:54 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 03 Dec 2024 12:13:56 +0000
-Subject: [PATCH v2 8/8] phy: exynos5-usbdrd: allow DWC3 runtime suspend
- with UDC bound (E850+)
+        Tue, 03 Dec 2024 04:19:43 -0800 (PST)
+Date: Tue, 3 Dec 2024 14:19:41 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
+ infrastructure
+Message-ID: <e7jngrc4nljdsksekinbkir2h76ztsth2xj4yqcyapfv43uryh@356yrxv3j4x6>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-8-b5316e82f61a@linaro.org>
+ <20241202-industrious-unnatural-beagle-7da5d4@houat>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-gs101-phy-lanes-orientation-phy-v2-8-40dcf1b7670d@linaro.org>
-References: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
-In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-industrious-unnatural-beagle-7da5d4@houat>
 
-To make USB runtime suspend work when a UDC has been bound, the phy
-needs to inform the USBDRD controller (DWC3) that Vbus and bvalid are
-gone, so that it can in turn raise the respective gadget interrupt with
-event == DWC3_DEVICE_EVENT_DISCONNECT, which will cause the USB stack
-to clean up, allowing DWC3 to enter runtime suspend.
+On Mon, Dec 02, 2024 at 02:20:04PM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> Sorry, I've been drowning under work and couldn't review that series before.
 
-On e850 and gs101 this isn't working, as the respective signals are not
-directly connected, and instead this driver uses override bits in the
-PHY IP to set those signals. It currently forcefully sets them to 'on',
-so the above mentioned interrupt will not be raised, preventing runtime
-suspend.
+No worries, at this point I'm more concerned about my IGT series rather
+than this one.
 
-To detect that state, update this driver to act on the TCPC's
-orientation signal - when orientation == NONE, Vbus is gone and we can
-clear the respective bits. Similarly, for other orientation values we
-re-enable them.
+> 
+> I'll review the driver API for now, and we can focus on the exact
+> implementation later on.
+> 
+> On Sun, Dec 01, 2024 at 02:44:12AM +0200, Dmitry Baryshkov wrote:
+> > Drop driver-specific implementation and use the generic HDMI Codec
+> > framework in order to implement the HDMI audio support.
+> > 
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 68 ++++++++++--------------------------------
+> >  drivers/gpu/drm/vc4/vc4_hdmi.h |  2 --
+> >  2 files changed, 15 insertions(+), 55 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > index 7295834e75fb1ab0cd241ed274e675567e66870b..d0a9aff7ad43016647493263c00d593296a1e3ad 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > @@ -595,6 +595,9 @@ static int vc4_hdmi_connector_init(struct drm_device *dev,
+> >  	if (vc4_hdmi->variant->supports_hdr)
+> >  		max_bpc = 12;
+> >  
+> > +	connector->hdmi_codec.max_i2s_channels = 8;
+> > +	connector->hdmi_codec.i2s = 1;
+> > +
+> 
+> I guess it's a similar discussion than we had with HDMI2.0+ earlier
+> today, but I don't really like initializing by structs. Struct fields
+> are easy to miss, and can be easily uninitialized by mistake.
+> 
+> I think I'd prefer to have them as argument to the init function. And if
+> they are optional, we can explicitly mark them as unused.
 
-This makes runtime suspend work on platforms with a TCPC (like Pixel6),
-while keeping compatibility with platforms without (e850-96).
+Do you mean drm_connector_hdmi_init()? I think it's overloaded already,
+but I defintely can think about:
 
-With runtime suspend working, USB-C cable orientation detection now
-also fully works on such platforms, and the link comes up as Superspeed
-as expected irrespective of the cable orientation and whether UDC /
-gadget are configured and active.
+drmm_connector_hdmi_init(..., max_bpc, HDMI_CODEC_I2S_PLAYBACK(8) |
+HDMI_CODEC_NO_CAPTURE | HDMI_CODEC_DAI_ID(4));
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 53 +++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 8 deletions(-)
+or
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index b1914c6c806d..94e4f78340ff 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1137,13 +1137,15 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg |= LINKCTRL_BUS_FILTER_BYPASS(0xf);
- 	writel(reg, regs_base + EXYNOS850_DRD_LINKCTRL);
- 
--	reg = readl(regs_base + EXYNOS850_DRD_UTMI);
--	reg |= UTMI_FORCE_BVALID | UTMI_FORCE_VBUSVALID;
--	writel(reg, regs_base + EXYNOS850_DRD_UTMI);
--
--	reg = readl(regs_base + EXYNOS850_DRD_HSP);
--	reg |= HSP_VBUSVLDEXT | HSP_VBUSVLDEXTSEL;
--	writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+	if (!phy_drd->sw) {
-+		reg = readl(regs_base + EXYNOS850_DRD_UTMI);
-+		reg |= UTMI_FORCE_BVALID | UTMI_FORCE_VBUSVALID;
-+		writel(reg, regs_base + EXYNOS850_DRD_UTMI);
-+
-+		reg = readl(regs_base + EXYNOS850_DRD_HSP);
-+		reg |= HSP_VBUSVLDEXT | HSP_VBUSVLDEXTSEL;
-+		writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+	}
- 
- 	reg = readl(regs_base + EXYNOS850_DRD_SSPPLLCTL);
- 	reg &= ~SSPPLLCTL_FSEL;
-@@ -1408,9 +1410,44 @@ static int exynos5_usbdrd_orien_sw_set(struct typec_switch_dev *sw,
- 				       enum typec_orientation orientation)
- {
- 	struct exynos5_usbdrd_phy *phy_drd = typec_switch_get_drvdata(sw);
-+	int ret;
-+
-+	if (phy_drd->orientation == orientation)
-+		return 0;
-+
-+	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks);
-+	if (ret) {
-+		dev_err(phy_drd->dev, "Failed to enable PHY clocks(s)\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(mutex, &phy_drd->phy_mutex) {
-+		void __iomem * const regs_base = phy_drd->reg_phy;
-+		unsigned int reg;
-+
-+		if (orientation == TYPEC_ORIENTATION_NONE) {
-+			reg = readl(regs_base + EXYNOS850_DRD_UTMI);
-+			reg &= ~(UTMI_FORCE_VBUSVALID | UTMI_FORCE_BVALID);
-+			writel(reg, regs_base +  EXYNOS850_DRD_UTMI);
-+
-+			reg = readl(regs_base + EXYNOS850_DRD_HSP);
-+			reg |= HSP_VBUSVLDEXTSEL;
-+			reg &= ~HSP_VBUSVLDEXT;
-+			writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+		} else {
-+			reg = readl(regs_base + EXYNOS850_DRD_UTMI);
-+			reg |= UTMI_FORCE_VBUSVALID | UTMI_FORCE_BVALID;
-+			writel(reg, regs_base +  EXYNOS850_DRD_UTMI);
-+
-+			reg = readl(regs_base + EXYNOS850_DRD_HSP);
-+			reg |= HSP_VBUSVLDEXTSEL | HSP_VBUSVLDEXT;
-+			writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+		}
- 
--	scoped_guard(mutex, &phy_drd->phy_mutex)
- 		phy_drd->orientation = orientation;
-+	}
-+
-+	clk_bulk_disable(phy_drd->drv_data->n_clks, phy_drd->clks);
- 
- 	return 0;
- }
+... | HDMI_CODEC_NO_DAI_ID)
+
+The default (0) being equivalent to:
+
+HDMI_CODEC_NO_I2S | HDMI_CODEC_NO_SPDIF | HDMI_CODEC_NO_CAPTURE | HDMI_CODEC_NO_DAI_ID
+
+WDYT?
+
+> 
+> Like, it looks like the get_dai_id implementation relies on it being set
+> to < 0 for it to be ignored, but it's not here, so I'd assume it's used
+> with an ID of 0, even though the driver didn't support get_dai_id so
+> far?
+
 
 -- 
-2.47.0.338.g60cca15819-goog
-
+With best wishes
+Dmitry
