@@ -1,120 +1,230 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6766D1F12FB
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 13:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9D41DE2DE;
+	Tue,  3 Dec 2024 14:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733234294; cv=none; b=gEXNUcozcnADkU00UlNgTVZcTa/1BkzKaLbvoO29fUqH7JdPD8iCmmzH896F4vWgsk3JAEGT7sSzR2OK6mY0fCc20Wb02AgNA7uKjQe9cfv4TzphGljNwAKc/u63dhPH+N9NF7r1OjvV1u4G0h4rOa09luILO0fIiZV7HXFCxAE=
+	t=1733235977; cv=none; b=bh+sCb4hSvm7iyHFwyGOEcI6YMSfRkqs+17NEEWMpEZ8LRGd3QfLjbux1eDD1/HUy++CNdtPJo1SuZXBlgqLgEe870M9kAeLL17dhfdnsUZzBjnzCYY1U7XccwSZRflosWOKC7oa3olzLm7roh0D0u8hRJT35c8p31ZBAVgKMow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733234294; c=relaxed/simple;
-	bh=O3P0k+IkQDySNqJBtFm3kB0ueDZfee1HLHlqX0k6w24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B990tsXp26qPcVkuANY52vqIPzjvc8Pg2QkHQN1+eIbMm8osup07ZAhX1EAtWIrrFFuiI4uEkMMBtRhl81xf5AQ2m0QsEyHgFjykLPtStJSHEldAIn7BhqCRQMki2OQUIx9//Y60yYfR359y1XGzgiYThpeAtPvwewytpqD6wPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yd3c9dvO; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733235977; c=relaxed/simple;
+	bh=uMWXhqZwProDmwOA4vHMhW1QbQjGRI1y8AQlSmfmBzk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lSTHu0i3EfNoC03UTXJ89niFmdz4Z/pQqMTqFExTxuDMMqAHfL6ihrdOqTTzCyO/6RSYsv9jVghmLUIMBhnBJDq2P3L1gqJ3uZtm3gBq10DwxIfe2SGT6bXLlDw1TUW9yEcDQlpAoXMrVXoTAejJN4SSWiUj0Mjy3mYwd7LNu78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MpTFppr8; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yd3c9dvO"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffd796ba0aso54722621fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 05:58:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733234291; x=1733839091; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pj5SaA33rGzeah/pbmVRQIoqaIyNVExU4n/MvIb6OOM=;
-        b=yd3c9dvOw4JwpdiX/pBgCFEDx2tp6WLWQsA1fs/Ag4aKpFl9WWhPqjPBEuFU9CCTn6
-         S+VcO2bzVPzp5uD/li81Jc7EzuE7yRJY8aAsJ+ChWOb7vhkKB8xHeGvUX3AXck2Ku6bb
-         IhgoR+kt21ieZ+QaOTWNeuzGjc/1yROmruGr22qeDiIFtgO4L1MtP9Ggqj88xBiacgUh
-         qZePsKT11slajZ/NG0mmMpSPy+b/URtdv1s9XqDGpsFUeKmDfYLkHlEu+2/hKnwLBGrL
-         Emwrxbv00tgwkDO/WS9TkTEmruu8xghcMo0yrbDrW6K7IoMur2rNc2SD1hgmO3B/pPrE
-         RjJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733234291; x=1733839091;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pj5SaA33rGzeah/pbmVRQIoqaIyNVExU4n/MvIb6OOM=;
-        b=KSFFSLqSo5Ng2EcYBp8hbGtw4hldy5nUlrB1KQSBk5KF4KLEoqD6Wy12szoLRHH8k5
-         GOwYRM/FRYuJfbgoV9P3J2QoDV/TcFWWc7knxGsyx0sc/+DPDEJk4OmG8JIf59QBlbu1
-         WllTdjsZJ509DV4BWcM7CjoJASnwkksq4oQW56NtOcWf6U2rXBVhT9cb4GVTzcCvKaXu
-         yq0AbJQEB5jrk/0rJVvEH+uOrwD0W/XxRMhz722gJDfbO6w7i98RoXfOSoaiKlcVqHIJ
-         usbXjMK+6jYCC+ysO9iPGi/5OHsRwyiy2nYd/6xE+C04Icz/LBHoC3v49mwq2MHcS6M4
-         Vzeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXirTSkEOVcZx0hwgsbc6snZh5yRo4nvX+k1GsS/LQkj/ycQxtZ/HTn3F1kXhDq2vAABwbUTLmjEm17waz9Y1YF/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfu3WrH5mvhovXhQS1t0ma9ZdWGp6ZAYQeNx3xnbmNNpPcmote
-	X+wukXKWwKVLW7Egz1GVDoGADeXZkIJe1H5kmKBgxYnHm7gHH6DXvNdNuQvKJxc=
-X-Gm-Gg: ASbGncvwZnJ9e41D37NfF0nnaFge2BhNTa4xHIMkblrdsXksKnBIglfaue2/Tm0AENT
-	YDdQOPv0QxgQZ8vEqZDcgeGCx/F1DkcJJnfLV8JLfKu5v+b6fjrwyXqPxcdXO608IFamE8Bm7Io
-	zaufF/o0G+vEitrRoZ11CaTTCjedauwKLXXOD7qm78GX/78TCRr+14uqsp3OKTLs4GepJGVO7QA
-	9wACXNvGNO+zdchRNbAkX3sFE+nJP7OW1tvN52DoS3DZ9hlO37bKY1dxdqy/OsC6/6GIrRsst4w
-	Iu14byYmCFacZopMoNrJiKlaoLaAvg==
-X-Google-Smtp-Source: AGHT+IHfqup3wRu/YlQwHjftG9hZZW4Odf6KSlTWBL24IqkfpJKbOUgrh1DX0z2m6JH7KpitaUiUxw==
-X-Received: by 2002:a05:6512:2810:b0:53d:cf78:f240 with SMTP id 2adb3069b0e04-53e12a2e9bcmr1842991e87.35.1733234290592;
-        Tue, 03 Dec 2024 05:58:10 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df6496a43sm1829234e87.213.2024.12.03.05.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 05:58:09 -0800 (PST)
-Date: Tue, 3 Dec 2024 15:58:07 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 07/10] drm/msm/dp: use eld_mutex to protect access to
- connector->eld
-Message-ID: <n2zmw4wquxzht6gvlx6yjurpobgwlsryh75n5gw65j5vjclhgr@jqubqjispqsr>
-References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
- <20241201-drm-connector-eld-mutex-v1-7-ba56a6545c03@linaro.org>
- <ca906dc4-ac72-4a76-a670-36c011c853c9@quicinc.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MpTFppr8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733235975; x=1764771975;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=uMWXhqZwProDmwOA4vHMhW1QbQjGRI1y8AQlSmfmBzk=;
+  b=MpTFppr83dSNSiFrbOPkdaeMs+g5A3Iv9MsRG03UbzMZFHS/K/GiicXL
+   lfTI6oDrwtwxh8w9iMqFWcm8pyKar4hC0oN/to8vcQGPOcDdjKJznMGVk
+   oHenfYDCq/fbv4kSiIO/lhLExHpinCJPQnXkHOg5UCpQgy2BcVHUij7HK
+   F9wMQXRD6qMJhtn5kwQdvPiQ4DkI2B2CPtfHvgLaqw55UR5X4Iq9c7dBQ
+   YDjytlPIqR9LrpaH3ayT7PHzq2z4yndB9+OjjO3EvXpVpeCqTRNQBXmey
+   CWhgSgk2XukKb4U2i2tQfB2GMSdSG+dE2c4/MoSCTTUC6sNtn2koLZWYc
+   Q==;
+X-CSE-ConnectionGUID: tVipUhtRS0qxYbBudEaBcQ==
+X-CSE-MsgGUID: Uari58hYQaq2DzPy1zRnQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11275"; a="44480677"
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="44480677"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 06:26:13 -0800
+X-CSE-ConnectionGUID: aDPdg6NdRb+ONzW7kLZxAQ==
+X-CSE-MsgGUID: Tuwzy8/pRA2RVBUpHZa5NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,205,1728975600"; 
+   d="scan'208";a="93328558"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.135])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2024 06:26:01 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Phong LE <ple@baylibre.com>, Inki Dae
+ <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King
+ <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
+ <heiko@sntech.de>, Andy
+ Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>,
+ Raphael Gallais-Pou <rgallaispou@gmail.com>, Dave Stevenson
+ <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
+ <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 7/9] drm/bridge_connector: hook
+ drm_atomic_helper_connector_hdmi_update_edid()
+In-Reply-To: <20241201-drm-bridge-hdmi-connector-v5-7-b5316e82f61a@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-7-b5316e82f61a@linaro.org>
+Date: Tue, 03 Dec 2024 16:25:58 +0200
+Message-ID: <87a5dc4zd5.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca906dc4-ac72-4a76-a670-36c011c853c9@quicinc.com>
+Content-Type: text/plain
 
-On Mon, Dec 02, 2024 at 07:27:45PM -0800, Abhinav Kumar wrote:
-> 
-> 
-> On 11/30/2024 3:55 PM, Dmitry Baryshkov wrote:
-> > Reading access to connector->eld can happen at the same time the
-> > drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
-> > order to protect connector->eld from concurrent access.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/gpu/drm/msm/dp/dp_audio.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> > 
-> 
-> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+On Sun, 01 Dec 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> Extend drm_bridge_connector code to read the EDID and use it to update
+> connector status if the bridge chain implements HDMI bridge. Performing
+> it from the generic location minimizes individual bridge's code and
+> enforces standard behaviour from all corresponding drivers.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/display/drm_bridge_connector.c | 67 ++++++++++++++++++++------
+>  1 file changed, 53 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
+> index 12ab9f14cc8a8672478ae2804c9a68d766d88ea5..71ae3b2c9049016d1cc0d39a787f6461633efd53 100644
+> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
+> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_edid.h>
+>  #include <drm/drm_managed.h>
+>  #include <drm/drm_modeset_helper_vtables.h>
+> +#include <drm/drm_print.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/display/drm_hdmi_state_helper.h>
+>  
+> @@ -175,17 +176,55 @@ static void drm_bridge_connector_disable_hpd(struct drm_connector *connector)
+>   * Bridge Connector Functions
+>   */
+>  
+> +static const struct drm_edid *
+> +drm_bridge_connector_read_edid(struct drm_connector *connector,
+> +			       enum drm_connector_status status)
+> +{
+> +	struct drm_bridge_connector *bridge_connector =
+> +		to_drm_bridge_connector(connector);
+> +	const struct drm_edid *drm_edid;
+> +	struct drm_bridge *bridge;
+> +
+> +	bridge = bridge_connector->bridge_edid;
+> +	if (!bridge)
+> +		return NULL;
+> +
+> +	if (status != connector_status_connected)
+> +		return NULL;
+> +
+> +	drm_edid = drm_bridge_edid_read(bridge, connector);
+> +	if (!drm_edid_valid(drm_edid)) {
 
-Ack to merge through drm-misc?
+What's the case this check is for?
+
+My preference would be that bridge->funcs->edid_read() uses
+drm_edid_read*() family of functions that do the checks and return the
+EDID.
+
+There are some cases that just allocate a blob and return it. Would be
+nice if they could be converted, but in the mean time could use
+drm_edid_valid() right there. Additional validity checks are redundant.
+
+BR,
+Jani.
+
+
+> +		drm_edid_free(drm_edid);
+> +		return NULL;
+> +	}
+> +
+> +	return drm_edid;
+> +}
+> +
+>  static enum drm_connector_status
+>  drm_bridge_connector_detect(struct drm_connector *connector, bool force)
+>  {
+>  	struct drm_bridge_connector *bridge_connector =
+>  		to_drm_bridge_connector(connector);
+>  	struct drm_bridge *detect = bridge_connector->bridge_detect;
+> +	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
+>  	enum drm_connector_status status;
+>  
+>  	if (detect) {
+>  		status = detect->funcs->detect(detect);
+>  
+> +		if (hdmi) {
+> +			const struct drm_edid *drm_edid;
+> +			int ret;
+> +
+> +			drm_edid = drm_bridge_connector_read_edid(connector, status);
+> +			ret = drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
+> +			if (ret)
+> +				drm_warn(connector->dev, "updating EDID failed with %d\n", ret);
+> +
+> +			drm_edid_free(drm_edid);
+> +		}
+> +
+>  		drm_bridge_connector_hpd_notify(connector, status);
+>  	} else {
+>  		switch (connector->connector_type) {
+> @@ -246,29 +285,29 @@ static const struct drm_connector_funcs drm_bridge_connector_funcs = {
+>  static int drm_bridge_connector_get_modes_edid(struct drm_connector *connector,
+>  					       struct drm_bridge *bridge)
+>  {
+> +	struct drm_bridge_connector *bridge_connector =
+> +		to_drm_bridge_connector(connector);
+> +	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
+>  	enum drm_connector_status status;
+>  	const struct drm_edid *drm_edid;
+> -	int n;
+>  
+>  	status = drm_bridge_connector_detect(connector, false);
+>  	if (status != connector_status_connected)
+> -		goto no_edid;
+> +		return 0;
+>  
+> -	drm_edid = drm_bridge_edid_read(bridge, connector);
+> -	if (!drm_edid_valid(drm_edid)) {
+> +	/* In HDMI setup the EDID has been read and handled as a part of .detect() */
+> +	if (!hdmi) {
+> +		drm_edid = drm_bridge_connector_read_edid(connector, status);
+> +		if (!drm_edid) {
+> +			drm_edid_connector_update(connector, NULL);
+> +			return 0;
+> +		}
+> +
+> +		drm_edid_connector_update(connector, drm_edid);
+>  		drm_edid_free(drm_edid);
+> -		goto no_edid;
+>  	}
+>  
+> -	drm_edid_connector_update(connector, drm_edid);
+> -	n = drm_edid_connector_add_modes(connector);
+> -
+> -	drm_edid_free(drm_edid);
+> -	return n;
+> -
+> -no_edid:
+> -	drm_edid_connector_update(connector, NULL);
+> -	return 0;
+> +	return drm_edid_connector_add_modes(connector);
+>  }
+>  
+>  static int drm_bridge_connector_get_modes(struct drm_connector *connector)
 
 -- 
-With best wishes
-Dmitry
+Jani Nikula, Intel
