@@ -1,40 +1,40 @@
-Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350FB1AF0AA;
-	Tue,  3 Dec 2024 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A41F1E32DB;
+	Tue,  3 Dec 2024 08:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733213038; cv=none; b=CEmeoHo3GsOZ8qNp2fuPcNBTSGkWXRLDw1V5mzKPO8tBy7+j0059IwKfkpC73mFyZGpt29bBOqPwyI12JDJTgrcQtgoBVEKj369391YPPCyH+gip1270RdzRLrXINZT/AM8HQPYMVACmK0OrSApwqXyOKdLe0RPKkoy/clZnm9A=
+	t=1733213042; cv=none; b=ZYtuyJTKZLhIr5rN4kBLcJGk8Xwhrwj+5y/m7YFrwVlY1hoPw6mhyd3ctoTsnLI69VPn/fM41g5y9GqtbufTDBIyYCUDh/9Uu1lCpSX2Wy9VMkRQ/owA85MzG1164sMnyfzJD8/JhX+12Tf7ba0+QYulIaz9c2JUVRb+5qvmI2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733213038; c=relaxed/simple;
-	bh=2vHYtlzccOz/AoVEwW4kXIY0ycA8Zvt+Xs9cHXRdiJg=;
+	s=arc-20240116; t=1733213042; c=relaxed/simple;
+	bh=qdrBNmNEyNpSWJIX4awwEwOKE6djLp4ftdjOaoqDBVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Onj5icNgPFTQOUvxlpwGg6G+hL6vxgPq+/0sS36Kzvc0UcNF0CIqNKXtSfxWMVR10YE/D74u8nkpjD1nb6Qe8tc0bmWR/55PSLnmRz6MhCpkDUQaOKQbw8SLpTKQgmDVKeH9D8iEE/O2ZFZ4P8L/Qubmyn7m/hvid42T39d45Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=e2ho1qOG; arc=none smtp.client-ip=63.250.43.88
+	 MIME-Version; b=nZ6CBXdZzCvW2dBYmnwg4G1umn3c6kD1wXWnTrYZy517BbFm8SvMPTwnOMcTN6uvAjLnnFYp7Hhb/+YNMbSXRwxroqXQWyvhqGSQ2r3WHDrmeLnTE9XPkFcpiSPfpW9yhirNLkURaVyqMTOzB51gN5TOZAEOPgZJSdWILIkrJ5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=WiSfSrb0; arc=none smtp.client-ip=63.250.43.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="e2ho1qOG"
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="WiSfSrb0"
 Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y2Y7r1kmdzGpJc;
-	Tue, 03 Dec 2024 08:03:52 +0000 (UTC)
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y2Y7z2DHVz4w8K;
+	Tue, 03 Dec 2024 08:03:59 +0000 (UTC)
 Received: from umer-b550pro4.lan (host-213-78-252-153.as13285.net [213.78.252.153])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y2Y7h1Vsxz2x98;
-	Tue,  3 Dec 2024 08:03:44 +0000 (UTC)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y2Y7p6vWGz2x9B;
+	Tue,  3 Dec 2024 08:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733213027;
-	bh=2vHYtlzccOz/AoVEwW4kXIY0ycA8Zvt+Xs9cHXRdiJg=;
+	d=mentallysanemainliners.org; s=spacemail; t=1733213034;
+	bh=qdrBNmNEyNpSWJIX4awwEwOKE6djLp4ftdjOaoqDBVs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e2ho1qOGdwTtsBFFK9R3iwakQw/ttEq28lRJRggHHbVz67Z8yMN4C5P1Lx+wVJJCN
-	 a8m1xHHBNAUbYH3776mhBiuURP98uYQbTpzBm/kBGnnKQILDhcXK8/uuYzgDU1Z6dG
-	 YA4PoZZB+Qqn1Y1MNmyLpDd+qcAGGtqJV735qQJDDOC7cKLJqartr/hyeQEy4OoifX
-	 kW1EibYGkMdGMSZKD7qYKMn5uqdxN3ynwFD1CTLcymB37HsZzcaFLhOIhHvpZ58aNB
-	 kOx+iaOEBaoeHwn5prr51InB3gL8n66hJvE0DHgkvF05U9QLcI+iUtbvIf6Epbwrjy
-	 5NcxgvWFyyMyg==
+	b=WiSfSrb0sl/uCquNknwN3sJ6tcLXGnKAdGH+IY8e8gZ0cG89qZ99ow5y9tISdKCcB
+	 gpcQU+eedFWvO80FzEBL8D2FbBO2Q2Lha29la3s55fbfSZ1oZ3psTW2uZ5vYY2FqAg
+	 yBaYpwLetbwJPev7tx7kRp9YFq2E3LdT2xbh/iz7Ln+sv4a16PC602YBfLG7tMtRuj
+	 JC2OFUTNEHgSJbyL35Ndlyb/SD7G6waNnkj0V2KIKsweefpf32JG9nwneYio8hsmdE
+	 qaplMdqacJjip186zQ2PcdB91Zg7vGB6kFWf2utnSt9qelEXpT1ZM4wo17meH7r0n7
+	 IkVCtmGnR6MBA==
 From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
@@ -45,9 +45,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	igor.belwon@mentallysanemainliners.org
-Subject: [PATCH v4 2/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series boards (hubble)
-Date: Tue,  3 Dec 2024 08:03:24 +0000
-Message-ID: <20241203080327.4751-3-umer.uddin@mentallysanemainliners.org>
+Subject: [PATCH v4 4/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
+Date: Tue,  3 Dec 2024 08:03:26 +0000
+Message-ID: <20241203080327.4751-5-umer.uddin@mentallysanemainliners.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
 References: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
@@ -59,125 +59,67 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add initial support for the Samsung Galaxy S20 Series (hubble) phones.
-They were launched in 2020, and are based on the Exynos 990 SoC.
-The devices have multiple RAM configurations,
-starting from 8GB going all the way up to 16GB for the S20 Ultra devices.
+Add initial support for the Samsung Galaxy S20 (x1slte/SM-G980F)
+phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
+has only one configuration with 8GB of RAM and 128GB of UFS 3.0 storage.
 
 This device tree adds support for the following:
 
 - SimpleFB
-- 8GB RAM (Any more will be mapped in device trees)
+- 8GB RAM
 - Buttons
 
 Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 ---
- .../boot/dts/exynos/exynos990-x1s-common.dtsi | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
+ arch/arm64/boot/dts/exynos/Makefile           |  1 +
+ .../boot/dts/exynos/exynos990-x1slte.dts      | 28 +++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+index 6959acfbb..b546b883a 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+ 	exynos8895-dreamlte.dtb		\
+ 	exynos990-c1s.dtb		\
+ 	exynos990-x1s.dtb		\
++	exynos990-x1slte.dtb		\
+ 	exynos990-r8s.dtb               \
+ 	exynosautov9-sadk.dtb		\
+ 	exynosautov920-sadk.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts b/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
 new file mode 100644
-index 000000000..55fa8e9e0
+index 000000000..d3720996b
 --- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-@@ -0,0 +1,98 @@
++++ b/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+@@ -0,0 +1,28 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 +/*
-+ * Samsung Galaxy S20 Series device tree source
++ * Samsung Galaxy S20 (x1slte/SM-G980F) device tree source
 + *
 + * Copyright (c) 2024, Umer Uddin <umer.uddin@mentallysanemainliners.org>
 + */
 +
 +/dts-v1/;
-+#include "exynos990.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
++#include "exynos990-x1s-common.dtsi"
 +
 +/ {
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+		framebuffer0: framebuffer@f1000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0xf1000000 0 (1440 * 3200 * 4)>;
-+			width = <1440>;
-+			height = <3200>;
-+			stride = <(1440 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
++	model = "Samsung Galaxy S20";
++	compatible = "samsung,x1slte", "samsung,exynos990";
 +
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cont_splash_mem: framebuffer@f1000000 {
-+			reg = <0 0xf1000000 0 0x1194000>;
-+			no-map;
-+		};
-+
-+		abox_reserved: audio@f7fb0000 {
-+			reg = <0 0xf7fb0000 0 0x2a50000>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa0-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
++	memory@80000000 {
++		device_type = "memory";
++		reg = <0x0 0x80000000 0x0 0x3ab00000>,
++		      /* Memory hole */
++		      <0x0 0xc1200000 0x0 0x1ee00000>,
++		      /* Memory hole */
++		      <0x0 0xe1900000 0x0 0x1e700000>,
++		      /* Memory hole */
++		      <0x8 0x80000000 0x1 0x7ec00000>;
 +	};
 +};
 -- 
