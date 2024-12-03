@@ -1,64 +1,63 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CD742AA3
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 07:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A03018A95E
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 07:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733209971; cv=none; b=VP1vwP9kL0uEs+agLxZ9Kb0DonwR+s77WYhA4boqAgM6slzfXY83mQDq8XE2COVK933m2HPqux/0LAxFz4VxyLK1cPr3oHsxM2bsWMGGTDJLw213OwN1uZIzVeaDSAClXyNXnPRzmqofLdhJftBiQkglCvuARO4Si+krDbiLBqo=
+	t=1733210597; cv=none; b=pvluC1tngXbBpj5lUtDyaqrd6AGBEftQ7v4wRQZ5YLoLF8aZxQ/bpbP0/amHEyIrw/30lrMVaM7EUuIiwkvQvuXXoRdqXVatf08ShYae1gViBES/Vy7IeEPQJwyO5QTnLh+O77YNOmhmGkjEdAfKivYt6rEex2dZLm3hysNbsSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733209971; c=relaxed/simple;
-	bh=EVBM5qoQmU3xuxiwaVTztbikwXOSdVscc5nB635UeFk=;
+	s=arc-20240116; t=1733210597; c=relaxed/simple;
+	bh=7PufCq3nC5zFU2FasV6TuJNdoNp9wubPx5T0RK6t1xA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RsigQ7qDILHUUX4R/Xr+SgVqPgN9XT6fIsozzq1ieAD5zLWWTZtCCA7oYapq6fqgp4xwS50j6s1/m5NpVyEMyNaJ/AC2BF4pSUGbd3tXvv60xDUItkp7Qe92SVqv6iI4+/MJXm0tnQpjSoAoudAUwk51LzX5qezSBsB3SCwT3Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qDMG7BJ8; arc=none smtp.client-ip=209.85.128.51
+	 Content-Type:MIME-Version; b=Buf/sud2yljbH9oFTZ//ATfKuPW4jK0g0Fd/QhEiYZsGNxhuoE+TUx5m9d5vgaS4B9zY3s/moNeZY/Vfw/5hGuVMe+/3jCUAvl1rnPTpESq/0ecNsj2TmNtSf/RfCqJWl9xsKBvp1SoOuNvPSCpLn3OHF4B9zVwOVYWVb7UTwZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LD+qe9JU; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qDMG7BJ8"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434ab114753so43125285e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2024 23:12:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LD+qe9JU"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-385e5db74d3so2081165f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2024 23:23:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733209968; x=1733814768; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733210594; x=1733815394; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=EVBM5qoQmU3xuxiwaVTztbikwXOSdVscc5nB635UeFk=;
-        b=qDMG7BJ81Lf/g9f1GghHh7MzczQegiRSoRy7y6fp4ppq0iDNaCpXGgIhmJrtUaVfMd
-         QSkx9LYCNcS3+UsmkVo11zXTf6Gm80uofi2ZPSzYg5EmJ47IZ6GzDuBR6rGw1ABVP6Et
-         /biKtlYuoVdh3U0+qfeDt3A7BkX5nkJKF4I1cV84UZAqmFuLmFJLjR9+FUsi5pZNw043
-         cVF50/JTLOqj3kMxI2oTs8VdYXBwzV7DifO6ytf9i9rjjhK1YolfCn+Ym8NDKCwdAYXH
-         NdCvO4RhIXlCtksCcOU4dJ4ozHAMvzVS0SUI6W+JG2n1ZTBjArh8JIU/5pkOL4ZcA8nH
-         NjIw==
+        bh=har3faI8rWqjG1DeufIBkpWXrmN5D7dbzN2EbW5L5A4=;
+        b=LD+qe9JUnpYmZ3nWocSmgQlbgwWWeR4GLubdSPv71j4i18tawxvzJlUk64BhMoGRVm
+         h0HyAyWPfKA+u/2fW3+T/gW2kQ604k0tkw9X+ICOj0PRae0PoM5EnyBtR+CCXSPK0cTY
+         n0AQ+0NBeWACaDekP8oB49A2DDkGj1OQbZFWKCy4M20iWEDaaPzTRIn824qhbOraRtVG
+         07wUQFnQcTy1WzvA0jk+WV+5+bJuqoQMbZjSEi8guJpYzX5bkKq4rZJ38rwawfrAyCIw
+         K0Ivz0lbNE5Js1npKDUTpAA6BqmBazBSuo0NrBIJalWXdZ1imLBFZC3nuADXnMExEu9c
+         VWXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733209968; x=1733814768;
+        d=1e100.net; s=20230601; t=1733210594; x=1733815394;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EVBM5qoQmU3xuxiwaVTztbikwXOSdVscc5nB635UeFk=;
-        b=hMXmluB7Jnqfgn3Zae1wZ/ZonfBpeUBqrhnGeLyX/+HXD7h4Bfw0RZKr8/maaUKPR5
-         1iXnbAWLriUj/G/FD+3rFHB8D0z2dqpVFBrds12Br9wEpEdT4AbMyU3MMe3eZqPKEbpi
-         JI51GiJ3efCG+L52CsWoarMZr5T8ijo9w6swT2Rp2t3R8Kr1wxXfHfpHWZPiwH81KknE
-         w+INsZR3us2I+dyGojCRnC0l/Ss40YyJfSKfTKuXCreRHaJep6V8ZulKD6X8elctN53h
-         N7R4YQAItnXoBE2gcQHmN9Jaxyk6UUMvjS8dfk6PE1+e6cKrMq+1Y3vxY3gLMpXsjGTN
-         L2VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWW3WlZOMS5Tr3PW1foOQdcWhKJwWsANA42h6o80hf8ByPPyjN7LnWzVd3faZ9GhWY4WgXt3LTw79IRRP7LeMSh8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygPiy9rxz0aqhvbPdBndnzWQ7/l5wYDHvY3l/t7OPH2koe8pmQ
-	QRKTG1UGn4hZZswd2zleV7s8EHqZP1ln+dpBTUd5Xcld/Yj6xGDF80eLSpGY/H0=
-X-Gm-Gg: ASbGncucs+OvL8arlhujoKS8jrCzCREHShuOWoNaf2jlyIY5xG/ZBvgoQzxYGhBmSV6
-	jXyVJffISFhfmapyxTm+XnHmneuxUaomuMRho7x5VADG6stfTXU610q9R95wbm4GzxAhxs66eaI
-	u1uRLF0jDh8HlDaI9qpOIPVP8XuuMWB8zwmjBwmW10U+z4XOaE0iQD7yK+fAeX75wqWjdLAGIvD
-	TMt6jmod2AL2h8zVxIEtmNL3NVCVBNjtAoB+tMoJnQzHU1XZsUJyrg=
-X-Google-Smtp-Source: AGHT+IEplB7jYEBVeBsm9qKzYjb6Q/52WlhBD/Tf3x0VCfolLamrC+TuTTucz1KuLRGPu4rrqQllDQ==
-X-Received: by 2002:a05:6000:1fa7:b0:382:51ae:7569 with SMTP id ffacd0b85a97d-385fd3e8f28mr1191117f8f.18.1733209968624;
-        Mon, 02 Dec 2024 23:12:48 -0800 (PST)
+        bh=har3faI8rWqjG1DeufIBkpWXrmN5D7dbzN2EbW5L5A4=;
+        b=IzH8viP2CLv/LuzKPqcJ/hMBgENI75c9cLpYDs0QuQlrMyAMRQ0zaTXXAecrAvpGrN
+         8sib9foNCtfxIeXupgWPQpPdUckogwFT6UIazZywvtcioWSWJosLvwq490Ksw+qVw+e6
+         YzBE9bF2A0y/Rc2T7zR9yFXFMe9I6sjX5ky59xsTMUTT8m6645jVcpP+0wmIfzp+lyYt
+         fnnLrWeOL8miJa3ABfkfJhHO/7vnvTJi3hjh2XhMIngWBIRMDn6a+loRxbme71dAvYVc
+         ufv8R5sIPxSSPHsaXT2Am19o/KKVGf4mzFgeWZClDyhW0sL+8hzz073cQZMr/VNMjrLZ
+         FIug==
+X-Forwarded-Encrypted: i=1; AJvYcCWePfZywmuUgtPwBJw5yhX37S941CjDgqmcMZzu3hEcgOngUmM0suOubm+rAjPajguHHj+HQJJXnCZ9csnJzBbORQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTNvjcuBjsjOh8r4KXpcxvIUqOle9lzBIEmwqI7y9uqu+NHVft
+	Y0BAc0Z1E/kfSVhByM6VzfwFQ8YSfQLSZWnI7rJdjNecZw137Fcgw/dIMGA5KQo=
+X-Gm-Gg: ASbGncvUkITIzXHOXbSoh1cOPYHTmWnG2NCrM2aqt2l97IaeW8ptl9l2N1XF4hjWybH
+	uytOsjJ0HHjR2GceaiRMrIB/4I9NtHgRPxZBSKEcX8Gfepsx7Ch9yACePHMTGxmCqoYDDzlfTST
+	31876A3E/KHKx88zpQbMQQYIkA8vDvwiYzsddLX7k1uz7E438mgXgsixb7NVELYHuo/+zi3TlrA
+	tltX5BuxN9Kw99on0Opj4Gj7BYBRDtA6LEFQ9OxlMhIf7LihDwDt80=
+X-Google-Smtp-Source: AGHT+IG/NOcXjFAExqQ0F5f6jl7y9cNorOaeuQVYtVLDO/J9NGcpJBFDj38O5aqVvTeq5nIo+I6kZg==
+X-Received: by 2002:a5d:648f:0:b0:385:e36a:e19f with SMTP id ffacd0b85a97d-385fd419194mr994522f8f.41.1733210593694;
+        Mon, 02 Dec 2024 23:23:13 -0800 (PST)
 Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e2c84d52sm9859752f8f.49.2024.12.02.23.12.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385dec66e0esm12193749f8f.43.2024.12.02.23.23.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 23:12:48 -0800 (PST)
-Message-ID: <e23721ebd766f410103ddfb8705f3d7d6e5ae3e9.camel@linaro.org>
-Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
- and don't require nvme address
+        Mon, 02 Dec 2024 23:23:13 -0800 (PST)
+Message-ID: <8f585460a1bc52f78a6d0867aed87398bde30152.camel@linaro.org>
+Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring
  <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -68,10 +67,11 @@ To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>, Rob Herring
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org
-Date: Tue, 03 Dec 2024 07:12:47 +0000
-In-Reply-To: <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+Date: Tue, 03 Dec 2024 07:23:12 +0000
+In-Reply-To: <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
 References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
-	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
+	 <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.1-4 
@@ -82,16 +82,93 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrote:
-> From: Thomas Antoine <t.antoine@uclouvain.be>
+On Tue, 2024-12-03 at 06:47 +0000, Andr=C3=A9 Draszik wrote:
+> Hi Thomas,
 >=20
-> As the Maxim max77759 fuel gauge has no non-volatile memory slave address=
-,
-> make it non-obligatory. Except for this, the max77759 seems to behave the
-> same as the max1720x.
+> Thanks for looking into this!
+>=20
+> > From: Thomas Antoine <t.antoine@uclouvain.be>
+> >=20
+> > The Maxim max77759 fuel gauge has the same interface as the Maxim max17=
+20x
+> > except for the non-volatile memory slave address which is not available=
+.
+>=20
+> It is not fully compatible, and it also has a lot more registers.
+>=20
+> For example, the voltage now is not in register 0xda as this driver assum=
+es.
+> With these changes, POWER_SUPPLY_PROP_VOLTAGE_NOW just reads as 0. 0xda
+> doesn't exist in max77759
+>=20
+> I haven't compared in depth yet, though.
 
-What about the battery characterization tables? Aren't they needed for
-correct reporting?
+Regarding the regmap in this driver, please see below comparison I had
+collected some time ago:
+
+	regmap_reg_range(0x24, 0x26), // exists
+	regmap_reg_range(0x30, 0x31), // exists
+	regmap_reg_range(0x33, 0x34), // exists
+	regmap_reg_range(0x37, 0x37), // exists
+	regmap_reg_range(0x3B, 0x3C), // exists
+	regmap_reg_range(0x40, 0x41), // exists
+	regmap_reg_range(0x43, 0x44), // exists
+	regmap_reg_range(0x47, 0x49), // exists
+	regmap_reg_range(0x4B, 0x4C), // exists
+	regmap_reg_range(0x4E, 0xAF), // 0x4e 0x4f exists
+	regmap_reg_range(0xB1, 0xB3), // exists
+	regmap_reg_range(0xB5, 0xB7), // exists
+	regmap_reg_range(0xBF, 0xD0), // 0xd0 exists
+	0xd1 .. 0xdb don't exist
+	regmap_reg_range(0xDB, 0xDB),
+	regmap_reg_range(0xE0, 0xFF), // 0xfb 0xff exist
+
+the comments refer to whether or not the register exists in max77759
+
+>=20
+> > No slave is available at address 0xb of the i2c bus, which is coherent
+> > with the following driver from google: line 5836 disables non-volatile
+> > memory for m5 gauge.
+> >=20
+> > Link:
+> > https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef=
+474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
+> >=20
+> > Add support for the max77759 by allowing to use the non-volatile
+> > memory or not based on the chip. Value for RSense comes from the follow=
+ing
+> > stock devicetree:
+> >=20
+> > Link:
+> > https://android.googlesource.com/kernel/devices/google/gs101/+/33eca36d=
+43da6c2b6a546806eb3e7411bbe6d60d/dts/gs101-raviole-battery.dtsi
+> >=20
+> > Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> > ---
+> > =C2=A0drivers/power/supply/max1720x_battery.c | 71 ++++++++++++++++++++=
++++++++-
+> > -----
+> > =C2=A01 file changed, 59 insertions(+), 12 deletions(-)
+> >=20
+> > diff --git a/drivers/power/supply/max1720x_battery.c
+> > b/drivers/power/supply/max1720x_battery.c
+> > index
+> > 33105419e2427bb37963bda9948b647c239f8faa..faf336938dd4306dd2ceeb0a84b90=
+ca8
+> > 0ad41a9f 100644
+> > --- a/drivers/power/supply/max1720x_battery.c
+> > +++ b/drivers/power/supply/max1720x_battery.c
+> > @@ -13,6 +13,7 @@
+> > =C2=A0#include <linux/nvmem-provider.h>
+> > =C2=A0#include <linux/power_supply.h>
+> > =C2=A0#include <linux/regmap.h>
+> > +#include <linux/types.h>
+>=20
+> Please keep file names in alphabetical order.
+
+Ignore that, it's too early :-)
+
+
 
 Cheers,
 Andre'
