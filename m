@@ -1,66 +1,66 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151C11E5722
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 12:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592A71E572D
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 12:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228038; cv=none; b=eQd8Jr6/PdcE+NhBM3OEFcpEJRd4JosDsOsOvJt1Oi4RbDaAXlgrWGKeY8LlXXs5cdyVLOGKYIvizS0+IgJXz8mNh3uqlNCMdqXqIHUsk6pkjwkgAIjBH9AJ0UFl/MS+R2YTs4breyyWCHUnW9gPgHkpMeuThjoPXrRFcdofBuQ=
+	t=1733228039; cv=none; b=J2rcaPNqrRL206+ZhOB/gi3vTrraeUPsR1dlFdtsy5khUeEbp6uOpTdBRO46m/7qfV1TE/Ms1GOnt6wsW5hPH2lHd+5OG4KUXLXm64RHil+Dr4Utw67u6x2cYsxu29hi+Tj50scKWuzJklIpLnE2WoAAHsi6XqjpnLrkszNKSYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228038; c=relaxed/simple;
-	bh=iLGQEG0MGCOTbjiK6m9v4+91pUuN3w5VUK6OiPsuNm0=;
+	s=arc-20240116; t=1733228039; c=relaxed/simple;
+	bh=rYYXqXh14CZExInpX/cEYMTHaFbubPjQbCNN5PmzSdM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n2FDCLHPFLuCC1tfsSvIEkAvogGncptE+4fo8iTXstVabGZZnP9QsQmcJV1T31dc6ZT6zxmQhgnh2WCDE6ndZ+VPehkX1yAHTxGdRIy1YvzoR+YBltsNxypKbgK9fZHcL+qCgqHVz/8WVHOjtZwShMGK3OVoNbg8awMI8wKPCeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d007IGac; arc=none smtp.client-ip=209.85.208.54
+	 In-Reply-To:To:Cc; b=homXRVdzt+s+yPx0o4PpgthezWWRlLUW9bKO+408XAfFPI5dWatuTHjE09jM98yiIS3rCZd9b5ks1fXrGWIlFUziXb/wUG9KxdSxrX4VVArpc8TbF1ddIFIQQw4NXE+upkwJ6s3mmtsfeFCoOf0ofVzgvi+u2o0WDoySr41mc7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DHjDGTOr; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d007IGac"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d0cfb9fecaso4483069a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 04:13:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DHjDGTOr"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cec9609303so6469557a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 04:13:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733228034; x=1733832834; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733228035; x=1733832835; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rbUd4Bjv9Szr1aHrKy8wPCWITceO1kvCtngZZYvRJf0=;
-        b=d007IGacKpW8sdPxPY7XGHxAbitg3RR+sUr3CmgZUBCbzY0hfb4gYYh5CmyHXY09Mk
-         lKXLUixbHe3sLSZ092nw243XzO6P6Q7/v0XCjeK196+vhm56ebOI5xIe+jE/r1b/pMxT
-         ci9NgeBtA2y+XLhFxS1z57tbCKUumBdm/UDo6MrYgg7zjyv79MNKrC1n5BMx4LqPExpu
-         iOjm0DDSiF7iepVcQAioQfBkzrFxeHIAABD0LASBUWbG6FbTI2YXQQnxa1W5ntz0J+ln
-         8K+XASIwoS7ULn7ho8sSVjqa6pu4HGmyp1o8rVgzJIwMceGubPes1yAR22KkXKOcqnlt
-         QVqg==
+        bh=54YjK1PSCj3noc28mh1Eh19wlGr7iBDWYo9sjvHvK0I=;
+        b=DHjDGTOrZsHEqAuxJcA4hh4vaX9oVrALPnu3+2g1+egmd+kdyKZvYPZenEhp8qq9Qf
+         cUc7AAc2HFpOcjjg243nT98bjQEOKW7HD4ZTASjDTDFnbMLbQTofdeq8DD9LmNJAuUGl
+         +56FulpAjHercvRl1ggCO2hsmH0Kx5RGDodzNyRS788ngNx5a+Bz1JeIfu4MWS+i8jQa
+         YzEaCW4Kbc4qpcc51ECjb3hgRrljDYvPz7LeEKj6FUx3Ibyi/rAd8A7SAixHWM1SclKO
+         VYBW0vLePA3L7fHLXKM+r7Qp5CLdpmChnN3ddhXMoZfOEFzlH/SxSG+29j2HUs3Nzdtz
+         P1zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733228034; x=1733832834;
+        d=1e100.net; s=20230601; t=1733228035; x=1733832835;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rbUd4Bjv9Szr1aHrKy8wPCWITceO1kvCtngZZYvRJf0=;
-        b=t6BKtNF1OOez+2afCMvjFy+kt9WF4MHY0xMVyMSJU5iHNOKlQvrBZg4yQ0meKN0Gpj
-         fRorEa7ySbzb7yAaPMzq6buI7Op6QbxwP+ZLrJbRA+SFyShj/ckABR/EDJG70/DAgzy6
-         nvM0DFxLoAPp6uTGuCQRoL3ZygT9zjSv82kdhA/clFnbK5zZsEQS4YR5EMqZYmbwsm1x
-         +0n/mZPWY0DX/ZHg/TKlSwhjFNagfCCMEfXf8CITFhgqpv+fyP9MZN0LKGV47q1/jSVl
-         mRVw/LYGNesNu6bp5suaqVWoqhvfGl70SuO9Q1d60iGH0NUvJxlf6EJ0fzK92+kLF2Iy
-         58QA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0WNHUwVRpuu4iIt/l0Bs41yCFUVLBAoY8WoE5xF46tx1L+MYH68lqcFq4EgOyuD3x48vZEMJtOPEhO31UJ7V3XQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4QJAGCK9/ueFqHyrynSEGdZqnIMxNrgkbW/lHAcQCRw0+Z4uI
-	VD7rrzrrykfqT1NtiR6rJWzl7VnN54sIBg3MYb5t3VPD6dtg+pqz5Q9p3I/l3jw=
-X-Gm-Gg: ASbGncvii5HX/DLECp5hCB2JaBg1/Knp9VJj7jJEBMmdSMJghUcIvg9a1PY1ic95zad
-	sYFKNEQK0fg6zUPO/akRNypZXMwmV+TEJIwZ7CgOJuCfsPhNRdQfEP8Lc+yyb1W3h/GdzB4b9od
-	AG6AAIjJiox9sR2Vna9QpdgtUYDBpdhS8CKXzdKh0Y3R6b54Z2rywxiIdfyAsIUpp2QzOr2luWB
-	X7j/r2iFh9HB3dlLWIr1Bhh/I9zWLZUZycex+IrOFiqhs28t5STid7wUD2HtTBx6lwyb94bvjAB
-	RK4bZLpyGOf0fzwb555ewr2I8miCssE9SQ==
-X-Google-Smtp-Source: AGHT+IGLKa18ejdUf1Tw7sL45vCS/g/CfIaxb9LtOrFRmJNocgVBAascJ/N0VvxB4+rEL/yLQUTPQg==
-X-Received: by 2002:a17:906:fd84:b0:aa5:45f3:cbda with SMTP id a640c23a62f3a-aa5f7f2bacamr232510066b.56.1733228034234;
+        bh=54YjK1PSCj3noc28mh1Eh19wlGr7iBDWYo9sjvHvK0I=;
+        b=HyAHgt6hzFSGzTlmqnrVbmwfvhUiAjIuMdZZILPirJR7uvXVHdcd/V7erKCDitCGR4
+         1cpFzzrnHXpSBFOpOmGx6D9vB2R6EEASrdtGcqybP8ArTRWIz3a5raWBQ2qHn6Wx753U
+         XhFdt04ZiL1h92Wc1OK3eHX5BPCA25McdrNXyAxTLatnGZ5nGxQjx6/btRiPDgYZBBX1
+         PTbCPgEfofvvTQZLPB0ykR7HjgcLExZ/uJrb8fh8HoD2u8HZ32w3LfZK2ryDQ5diVIXt
+         4YtcrW85ksO0+YNWfRKrdmXYu/+sXc4oby5GP4sme7bp5YHIL0cnsfSnBBHZaI5o9c60
+         nZlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJcp6Q/zrv7dEOQ9XHPkeYM11GgqkVxiT+49ib8W2R8A3mPkLwR3OP3Oy9Yw0vOIXX/J/dDdKnZwn1NxY0ndi2kg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YweN8USaLMfx9YfZt220WT9XurUsNCzUWqmsBlgMJ1RO2Cf4V56
+	7lOE8fMxkFu8/P657VkOR7ba6u2gvkMLFJisEvkNwOH/VPWogWkJuXAqeX3uDj4=
+X-Gm-Gg: ASbGncvCXqrwAoSn40s3q/hUvuQ8wQzSXrTi5w7Ez/v0sv3nDP/e8xCnefKN0E2C2Pg
+	nZ1l102jB1TlTyaZdN4viJxhX31PwqzfiTROWo8uleJfnAhkBecBaUVjt5xELyKLaRdT1GOL4+S
+	sH5+dpIuPUA5oQM7yZGtobanH5Vch22WbS/MLkDWDOgUY5Yqs6q0cT8cRWbXf370lKzdC5Hs/9j
+	59Mx+PHhATDXPWFCQAuzl3C0kxI0kUh97fCSJOTfxHRUedHXQkoExT7XcuT5ky85y4apIR/E/OF
+	tf7sNOx5/pmWbKZz4RlHCxFt4kMrWsaSWA==
+X-Google-Smtp-Source: AGHT+IGlYONH0INC2ObUF4IvK3DPpOMeryroZsQD2npmBCwLgaYdxtB/m6WRr2IlPYlTnp1MvA4eXw==
+X-Received: by 2002:a17:906:3ca2:b0:aa5:f39a:bd7b with SMTP id a640c23a62f3a-aa5f7ccdc77mr167906966b.4.1733228034789;
         Tue, 03 Dec 2024 04:13:54 -0800 (PST)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c245bsm607603766b.8.2024.12.03.04.13.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996c245bsm607603766b.8.2024.12.03.04.13.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:13:53 -0800 (PST)
+        Tue, 03 Dec 2024 04:13:54 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Tue, 03 Dec 2024 12:13:54 +0000
-Subject: [PATCH v2 6/8] phy: exynos5-usbdrd: gs101: configure SS lanes
- based on orientation
+Date: Tue, 03 Dec 2024 12:13:55 +0000
+Subject: [PATCH v2 7/8] phy: exynos5-usbdrd: subscribe to orientation
+ notifier if required
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241203-gs101-phy-lanes-orientation-phy-v2-6-40dcf1b7670d@linaro.org>
+Message-Id: <20241203-gs101-phy-lanes-orientation-phy-v2-7-40dcf1b7670d@linaro.org>
 References: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
 In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -89,200 +89,154 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-USB SS lanes need to be configured based on the connector orientation -
-at most two lanes will be in use for USB (and the remaining two for
-alternate modes like DP).
+gs101's SS phy needs to be configured differently based on the
+connector orientation, as the SS link can only be established if the
+mux is configured correctly.
 
-For the USB link to come up in SS, the lane configuration registers
-have to be programmed accordingly.
+The code to handle programming of the mux is in place already, this commit
+now adds the missing pieces to subscribe to the Type-C orientation
+switch event.
 
-While we still need a way to be notified of the actual connector
-orientation and then reprogram the registers accordingly (at the moment
-the configuration happens just once during phy_init() and never again),
-we can prepare the code doing the configuration to take the orientation
-into account.
+Note that for this all to work we rely on the USB controller
+re-initialising us. It should invoke our .exit() upon cable unplug, and
+during cable plug we'll receive the orientation event after which we
+expect our .init() to be called.
 
-Do so.
+Above reinitialisation happens if the DWC3 controller can enter runtime
+suspend automatically. For the DWC3 driver, this is an opt-in:
+    echo auto > /sys/devices/.../11110000.usb/power/control
+Once done, things work as long as the UDC is not bound as otherwise it
+stays busy because it doesn't cancel / stop outstanding TRBs. For now
+we have to manually unbind the UDC in that case:
+     echo "" > sys/kernel/config/usb_gadget/.../UDC
 
-Note: the mutex is needed to synchronize this with the upcoming
-connector orientation callback.
+Note that if the orientation-switch property is missing from the DT,
+the code will behave as before this commit (meaning for gs101 it will
+work in SS mode in one orientation only). Other platforms are not
+affected either way.
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
 ---
 v2:
-* collect tags
-* replace #include typec_mux.h with typec.h, and move the former into
-  next patch (Peter)
-* commit message typo (Peter)
+* move #include typec_mux.h from parent patch into this one (Peter)
 ---
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 72 ++++++++++++++++++++++----------
- 1 file changed, 51 insertions(+), 21 deletions(-)
+ drivers/phy/samsung/Kconfig              |  1 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 61 ++++++++++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
+diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
+index f10afa3d7ff5..fc7bd1088576 100644
+--- a/drivers/phy/samsung/Kconfig
++++ b/drivers/phy/samsung/Kconfig
+@@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
+ 	tristate "Exynos5 SoC series USB DRD PHY driver"
+ 	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
+ 	depends on HAS_IOMEM
++	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
+ 	depends on USB_DWC3_EXYNOS
+ 	select GENERIC_PHY
+ 	select MFD_SYSCON
 diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index c1ce6fdeef31..206483c7ca55 100644
+index 206483c7ca55..b1914c6c806d 100644
 --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
 +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -23,6 +23,7 @@
- #include <linux/regmap.h>
+@@ -24,6 +24,7 @@
  #include <linux/regulator/consumer.h>
  #include <linux/soc/samsung/exynos-regs-pmu.h>
-+#include <linux/usb/typec.h>
+ #include <linux/usb/typec.h>
++#include <linux/usb/typec_mux.h>
  
  /* Exynos USB PHY registers */
  #define EXYNOS5_FSEL_9MHZ6		0x0
-@@ -209,6 +210,10 @@
- 
- #define EXYNOS9_PMA_USBDP_CMN_REG00B8		0x02e0
- #define CMN_REG00B8_LANE_MUX_SEL_DP		GENMASK(3, 0)
-+#define CMN_REG00B8_LANE_MUX_SEL_DP_LANE3	BIT(3)
-+#define CMN_REG00B8_LANE_MUX_SEL_DP_LANE2	BIT(2)
-+#define CMN_REG00B8_LANE_MUX_SEL_DP_LANE1	BIT(1)
-+#define CMN_REG00B8_LANE_MUX_SEL_DP_LANE0	BIT(0)
- 
- #define EXYNOS9_PMA_USBDP_CMN_REG01C0		0x0700
- #define CMN_REG01C0_ANA_LCPLL_LOCK_DONE		BIT(7)
-@@ -383,11 +388,13 @@ struct exynos5_usbdrd_phy_drvdata {
-  * @clks: clocks for register access
-  * @core_clks: core clocks for phy (ref, pipe3, utmi+, ITP, etc. as required)
-  * @drv_data: pointer to SoC level driver data structure
-+ * @phy_mutex: mutex protecting phy_init/exit & TCPC callbacks
-  * @phys: array for 'EXYNOS5_DRDPHYS_NUM' number of PHY
-  *	    instances each with its 'phy' and 'phy_cfg'.
+@@ -394,6 +395,7 @@ struct exynos5_usbdrd_phy_drvdata {
   * @extrefclk: frequency select settings when using 'separate
   *	       reference clocks' for SS and HS operations
   * @regulators: regulators for phy
-+ * @orientation: TypeC connector orientation - normal or flipped
++ * @sw: TypeC orientation switch handle
+  * @orientation: TypeC connector orientation - normal or flipped
   */
  struct exynos5_usbdrd_phy {
- 	struct device *dev;
-@@ -397,6 +404,7 @@ struct exynos5_usbdrd_phy {
- 	struct clk_bulk_data *clks;
- 	struct clk_bulk_data *core_clks;
- 	const struct exynos5_usbdrd_phy_drvdata *drv_data;
-+	struct mutex phy_mutex;
- 	struct phy_usb_instance {
- 		struct phy *phy;
- 		u32 index;
-@@ -406,6 +414,8 @@ struct exynos5_usbdrd_phy {
- 	} phys[EXYNOS5_DRDPHYS_NUM];
+@@ -415,6 +417,7 @@ struct exynos5_usbdrd_phy {
  	u32 extrefclk;
  	struct regulator_bulk_data *regulators;
-+
-+	enum typec_orientation orientation;
+ 
++	struct typec_switch_dev *sw;
+ 	enum typec_orientation orientation;
  };
  
- static inline
-@@ -647,22 +657,38 @@ exynos5_usbdrd_usbdp_g2_v4_pma_lane_mux_sel(struct exynos5_usbdrd_phy *phy_drd)
- 	/* lane configuration: USB on all lanes */
- 	reg = readl(regs_base + EXYNOS9_PMA_USBDP_CMN_REG00B8);
- 	reg &= ~CMN_REG00B8_LANE_MUX_SEL_DP;
--	writel(reg, regs_base + EXYNOS9_PMA_USBDP_CMN_REG00B8);
--
- 	/*
--	 * FIXME: below code supports one connector orientation only. It needs
--	 * updating once we can receive connector events.
-+	 * USB on lanes 0 & 1 in normal mode, or 2 & 3 if reversed, DP on the
-+	 * other ones.
- 	 */
-+	reg |= FIELD_PREP(CMN_REG00B8_LANE_MUX_SEL_DP,
-+			  ((phy_drd->orientation == TYPEC_ORIENTATION_NORMAL)
-+			   ? (CMN_REG00B8_LANE_MUX_SEL_DP_LANE3
-+			      | CMN_REG00B8_LANE_MUX_SEL_DP_LANE2)
-+			   : (CMN_REG00B8_LANE_MUX_SEL_DP_LANE1
-+			      | CMN_REG00B8_LANE_MUX_SEL_DP_LANE0)));
-+	writel(reg, regs_base + EXYNOS9_PMA_USBDP_CMN_REG00B8);
+@@ -1400,6 +1403,60 @@ static int exynos5_usbdrd_phy_clk_handle(struct exynos5_usbdrd_phy *phy_drd)
+ 	return 0;
+ }
+ 
++#if IS_ENABLED(CONFIG_TYPEC)
++static int exynos5_usbdrd_orien_sw_set(struct typec_switch_dev *sw,
++				       enum typec_orientation orientation)
++{
++	struct exynos5_usbdrd_phy *phy_drd = typec_switch_get_drvdata(sw);
 +
- 	/* override of TX receiver detector and comparator: lane 1 */
- 	reg = readl(regs_base + EXYNOS9_PMA_USBDP_TRSV_REG0413);
--	reg &= ~TRSV_REG0413_OVRD_LN1_TX_RXD_COMP_EN;
--	reg &= ~TRSV_REG0413_OVRD_LN1_TX_RXD_EN;
-+	if (phy_drd->orientation == TYPEC_ORIENTATION_NORMAL) {
-+		reg &= ~TRSV_REG0413_OVRD_LN1_TX_RXD_COMP_EN;
-+		reg &= ~TRSV_REG0413_OVRD_LN1_TX_RXD_EN;
-+	} else {
-+		reg |= TRSV_REG0413_OVRD_LN1_TX_RXD_COMP_EN;
-+		reg |= TRSV_REG0413_OVRD_LN1_TX_RXD_EN;
-+	}
- 	writel(reg, regs_base + EXYNOS9_PMA_USBDP_TRSV_REG0413);
- 
- 	/* lane 3 */
- 	reg = readl(regs_base + EXYNOS9_PMA_USBDP_TRSV_REG0813);
--	reg |= TRSV_REG0813_OVRD_LN3_TX_RXD_COMP_EN;
--	reg |= TRSV_REG0813_OVRD_LN3_TX_RXD_EN;
-+	if (phy_drd->orientation == TYPEC_ORIENTATION_NORMAL) {
-+		reg |= TRSV_REG0813_OVRD_LN3_TX_RXD_COMP_EN;
-+		reg |= TRSV_REG0813_OVRD_LN3_TX_RXD_EN;
-+	} else {
-+		reg &= ~TRSV_REG0813_OVRD_LN3_TX_RXD_COMP_EN;
-+		reg &= ~TRSV_REG0813_OVRD_LN3_TX_RXD_EN;
-+	}
- 	writel(reg, regs_base + EXYNOS9_PMA_USBDP_TRSV_REG0813);
- }
- 
-@@ -700,21 +726,18 @@ exynos5_usbdrd_usbdp_g2_v4_pma_check_cdr_lock(struct exynos5_usbdrd_phy *phy_drd
- 	int err;
- 
- 	err = readl_poll_timeout(
--			phy_drd->reg_pma + EXYNOS9_PMA_USBDP_TRSV_REG03C3,
--			reg, (reg & locked) == locked, sleep_us, timeout_us);
--	if (!err)
--		return;
--
--	dev_err(phy_drd->dev,
--		"timed out waiting for CDR lock (l0): %#.8x, retrying\n", reg);
--
--	/* based on cable orientation, this might be on the other phy port */
--	err = readl_poll_timeout(
--			phy_drd->reg_pma + EXYNOS9_PMA_USBDP_TRSV_REG07C3,
-+			/* lane depends on cable orientation */
-+			(phy_drd->reg_pma
-+			 + ((phy_drd->orientation == TYPEC_ORIENTATION_NORMAL)
-+			    ? EXYNOS9_PMA_USBDP_TRSV_REG03C3
-+			    : EXYNOS9_PMA_USBDP_TRSV_REG07C3)),
- 			reg, (reg & locked) == locked, sleep_us, timeout_us);
- 	if (err)
- 		dev_err(phy_drd->dev,
--			"timed out waiting for CDR lock (l2): %#.8x\n", reg);
-+			"timed out waiting for CDR(l%d) lock: %#.8x\n",
-+			((phy_drd->orientation == TYPEC_ORIENTATION_NORMAL)
-+			 ? 0
-+			 : 2), reg);
- }
- 
- static void exynos5_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
-@@ -1184,7 +1207,8 @@ static int exynos850_usbdrd_phy_init(struct phy *phy)
- 		return ret;
- 
- 	/* UTMI or PIPE3 specific init */
--	inst->phy_cfg->phy_init(phy_drd);
 +	scoped_guard(mutex, &phy_drd->phy_mutex)
-+		inst->phy_cfg->phy_init(phy_drd);
- 
- 	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks, phy_drd->clks);
- 
-@@ -1203,6 +1227,8 @@ static int exynos850_usbdrd_phy_exit(struct phy *phy)
- 	if (ret)
- 		return ret;
- 
-+	guard(mutex)(&phy_drd->phy_mutex);
++		phy_drd->orientation = orientation;
 +
- 	/* Set PHY clock and control HS PHY */
- 	reg = readl(regs_base + EXYNOS850_DRD_UTMI);
- 	reg &= ~(UTMI_DP_PULLDOWN | UTMI_DM_PULLDOWN);
-@@ -1701,6 +1727,10 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	phy_drd->drv_data = drv_data;
++	return 0;
++}
++
++static void exynos5_usbdrd_orien_switch_unregister(void *data)
++{
++	struct exynos5_usbdrd_phy *phy_drd = data;
++
++	typec_switch_unregister(phy_drd->sw);
++}
++
++static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
++{
++	int ret;
++
++	phy_drd->orientation = (enum typec_orientation)-1;
++	if (device_property_present(phy_drd->dev, "orientation-switch")) {
++		struct typec_switch_desc sw_desc = { };
++
++		sw_desc.drvdata = phy_drd;
++		sw_desc.fwnode = dev_fwnode(phy_drd->dev);
++		sw_desc.set = exynos5_usbdrd_orien_sw_set;
++
++		phy_drd->sw = typec_switch_register(phy_drd->dev, &sw_desc);
++		if (IS_ERR(phy_drd->sw))
++			return dev_err_probe(phy_drd->dev,
++					     PTR_ERR(phy_drd->sw),
++					     "Failed to register TypeC orientation switch\n");
++
++		ret = devm_add_action_or_reset(phy_drd->dev,
++					       exynos5_usbdrd_orien_switch_unregister,
++					       phy_drd);
++		if (ret)
++			return dev_err_probe(phy_drd->dev, ret,
++					     "Failed to register TypeC orientation devm action\n");
++	}
++
++	return 0;
++}
++#else /* CONFIG_TYPEC */
++static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
++{
++	return 0;
++}
++#endif /* CONFIG_TYPEC */
++
+ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
+ 	{
+ 		.id		= EXYNOS5_DRDPHY_UTMI,
+@@ -1789,6 +1846,10 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "failed to get regulators\n");
  
-+	ret = devm_mutex_init(dev, &phy_drd->phy_mutex);
++	ret = exynos5_usbdrd_setup_notifiers(phy_drd);
 +	if (ret)
 +		return ret;
 +
- 	if (of_property_present(dev->of_node, "reg-names")) {
- 		void __iomem *reg;
+ 	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
  
+ 	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
 
 -- 
 2.47.0.338.g60cca15819-goog
