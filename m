@@ -1,130 +1,145 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F56B2500BD
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 01:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B80E364AE;
+	Tue,  3 Dec 2024 03:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733188333; cv=none; b=lV7gre+bImaQYrsMoudkLo4kQPH0qL1g3TEUIfwWUUchTF5HmkLDoUBUgZPNMPNHUG654PsL5Z9moqcUEQ9nV+d8RWnHLwo+9425mrIAaa46XTDUjHRO+Ge7hZ0rDxR+IjlcEIAFMAgNwflu8TvkqMe2DxI7ifHhy3ZYvrrRD/8=
+	t=1733196510; cv=none; b=ck4QuJa+H/Wz/TpRYO6I5wWyRP/u2GclVYrjeu0y9ClSiV4K4I6GOC3zpa38IRmYHtOS4qfJkuwFGyn+C4/x0NOW72/9Hg1g3+3lZ/SZmCHWpkjN2ILZ0IlBdSfiI56IdWRxQuI5ycqJG+vl5nwlxxJ496ut+gU6OdvcjqX77qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733188333; c=relaxed/simple;
-	bh=B4Sx+xF70GMxFfVfB9+wAhK7C2qf9G7NzE3Mpx8R8Ig=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=n5mr+siXXvKrs6vU38Jt1x+3Ra1Jfv9NRiR5Fz6eQub1mThjGz9HVJKth0WosDXsOx7pHrmdx/Y5jgH5PsFV7qlPoNE+1ZQsBemunLcBRSf4yo2UG5D0Y1t/BTYdc+EA+rGJxx1ZsP6M2j0HxAuddBMPWHyqKOIdJbVwvFwiErc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Q47MkIi5; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1733196510; c=relaxed/simple;
+	bh=IslJyGVILTCVPP55SiuQqC7ZB0p+F0lKnNIxou42yZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CoTwZU83AMjzZMGobMbbgrKI3bKVsRGxkRMBDnQG4YQBCpWjordn44qxaOlEvzfzRjCNYYbJsTm1Lx5q9mf4hrBB/vC7etCPI9L9F7749X+x0x5EhdSTVTtfrsOGbpnGZUBl/behZZvpCCTSqA0TrfTSIj8CPTn7UF1taOr2/sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mDoDrl9M; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q47MkIi5"
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241203011202epoutp01998ed3f06233368eac2528951df1d7ab~NhZixLXJs2344523445epoutp012
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 01:12:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241203011202epoutp01998ed3f06233368eac2528951df1d7ab~NhZixLXJs2344523445epoutp012
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733188322;
-	bh=B4Sx+xF70GMxFfVfB9+wAhK7C2qf9G7NzE3Mpx8R8Ig=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=Q47MkIi51uODx3/CT6Q5FUz+Go1ClLbVJvRDEBbxZGs6wXQabwVAVl7J9WWVFumuY
-	 qZW2hY8XRyINHB7cVBnguJHqgeqosM00gk6EBuWH7P9T0mUZZ0VGM9ASeF9ajqhQZL
-	 4bnayb3AdxaljCkxVh/NSvVR7q2q6vNIun42TFgQ=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20241203011201epcas1p30b33f73d2a3087a0b1488e64741ef1fc~NhZiF4eJl1180511805epcas1p37;
-	Tue,  3 Dec 2024 01:12:01 +0000 (GMT)
-Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.134]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4Y2N0c5g3Pz4x9Q2; Tue,  3 Dec
-	2024 01:12:00 +0000 (GMT)
-X-AuditID: b6c32a4c-ad1fe70000007bf7-93-674e5ae0de6d
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.AB.31735.0EA5E476; Tue,  3 Dec 2024 10:12:00 +0900 (KST)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mDoDrl9M"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2IadO4026954;
+	Tue, 3 Dec 2024 03:27:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3do15TM/01v0tfnkTmNk9UdI0h4hTydTuWGplCcKAgs=; b=mDoDrl9MBvje1RWg
+	5a1TiZAIECle3nhejpjrAfDd22WB4hChqRkC/JTYykb+mThyRPW6o5IB6kOhxqeK
+	Chnln+qyFyN3/4bM2EdX2z300a9ow2PpzbJOLh9o4jwgr3u0lxolS3kXxA//41WI
+	Xvz2cP/2ME6I+S0EuZP0ZCGxH+Pl6g7SX0jF84PMJtwpYCiKXNkiaX+cIO4iV8dB
+	0AqGCScYo/T+n1jHd+JPoi3Hr0ETKgsNn/uAmUMeIaKpp51dwxqOiLQbd8RmBADk
+	f1ZLbEnyUTXBkbKRwRZ5Ek6P0Q1h9j5bJLlSvYF8lDh4wHcnA5NDtCz/wSur5pxb
+	XBloQQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ta2xnnm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 03 Dec 2024 03:27:50 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B33RnsX022822
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 3 Dec 2024 03:27:49 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
+ 19:27:48 -0800
+Message-ID: <ca906dc4-ac72-4a76-a670-36c011c853c9@quicinc.com>
+Date: Mon, 2 Dec 2024 19:27:45 -0800
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [PATCH] devfreq: Switch back to struct
- platform_driver::remove()
-Reply-To: myungjoo.ham@samsung.com
-Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park
-	<kyungmin.park@samsung.com>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, ALIM AKHTAR
-	<alim.akhtar@samsung.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
-	<linux-samsung-soc@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>, "linux-sunxi@lists.linux.dev"
-	<linux-sunxi@lists.linux.dev>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20241203011200epcms1p3fbf79a0ca20c982ea472c5f19a2bfbee@epcms1p3>
-Date: Tue, 03 Dec 2024 10:12:00 +0900
-X-CMS-MailID: 20241203011200epcms1p3fbf79a0ca20c982ea472c5f19a2bfbee
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmvu6DKL90g+OXdCwezNvGZnFppYTF
-	9S/PWS2ez1/HaHH+/AZ2i7NNb9gtNj2+xmpxufkio8Xn3iOMFjPO72OymLJvF5tFU4uxxfNH
-	nWwW879+YrP4eeg8kwO/x/sbreweO+4uYfTY8Gg1q8fOWXfZPTat6mTz2Lyk3uPF5pmMHn1b
-	VjF6vPo6l9Hj8ya5AK6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxU
-	WyUXnwBdt8wcoCeUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWmBXrFibnFpXnp
-	enmpJVaGBgZGpkCFCdkZU/auYi/Yz1tx/VZSA+MJni5GTg4JAROJX13v2boYuTiEBPYwSvy4
-	P5+1i5GDg1dAUOLvDmGQGmEBf4nz7+4zgthCAkoSDTf3MUPE9SU6HmwDi7MJ6Eps3XCXBWSO
-	iMAcRommf9+YQRxmgZmsEmu6fzNDbOOVmNH+lAXClpbYvnwrWDengLPEpDswNaISN1e/ZYex
-	3x+bzwhhi0i03jsLVSMo8eDnbqi4pETfnb1MIMskBLYxSuw4MocNwtnPKDHlYRvUJH2JM3NP
-	soHYvAK+Eh/3bwS7gkVAVaLh/WWoqS4SG1dPA7OZBbQlli18zQwKCmYBTYn1u/QhwnwS7772
-	sMI8s2PeEyYIW03i0O4lUKtkJE5PXwg10kPi2/UlzJDg7WKUuHXlJcsERvlZiBCehWTbLIRt
-	CxiZVzFKpRYU56anJhsWGOrmpZbD4zU5P3cTIzgpa/nsYPy+/q/eIUYmDsZDjBIczEoivMvX
-	e6cL8aYkVlalFuXHF5XmpBYfYjQF+nUis5Rocj4wL+SVxBuaWBqYmBkZm1gYmhkqifOeuVKW
-	KiSQnliSmp2aWpBaBNPHxMEp1cDUpRL54bBF82k73dxg2TnTEr9050dHKEoF87RsP8S9l++u
-	fRWnN+v5cKOWBd5zLq4o+bij7fHz9xfZ53zjP6S1+vNto123rj2wXlP2t3fT5+kOi3q9dU7X
-	X6pZ9lDDvla3+8xVgYjeVPUt02O8Lie+Ydyv99s4IOVma8HD6aaWCjkmd9a0zD/6+f/ZdM2k
-	83Evj/CLseXwitRoWx1Kmui1VShkM2vK/iuV+zjPcSaq9e09rGvVKa3PrnjQU3DigfpnV9lL
-	Jd/aRIhO/zNTKn+mMceMbaf/yz3Uu1tfoqD6OOFp5MXJTkyL306Y7eKWE3ucM+pHxuZmoe3Z
-	17wivh8qNDTTOW4lmLuucd6RMl0lluKMREMt5qLiRACtT/jpUwQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241130135828epcas1p405d9dbb7df745f6aa81ae2033b9a281a
-References: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
-	<CGME20241130135828epcas1p405d9dbb7df745f6aa81ae2033b9a281a@epcms1p3>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/10] drm/msm/dp: use eld_mutex to protect access to
+ connector->eld
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Harry Wentland <harry.wentland@amd.com>, Leo
+ Li <sunpeng.li@amd.com>,
+        Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+        Alex
+ Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>,
+        Xinhui Pan <Xinhui.Pan@amd.com>,
+        Andrzej Hajda
+	<andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert
+ Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Phong LE <ple@baylibre.com>, Inki Dae
+	<inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park
+	<kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alim
+ Akhtar <alim.akhtar@samsung.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        Rob
+ Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Raphael Gallais-Pou <rgallaispou@gmail.com>,
+        Dave Stevenson
+	<dave.stevenson@raspberrypi.com>,
+        =?UTF-8?Q?Ma=C3=ADra_Canal?=
+	<mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance
+	<kernel-list@raspberrypi.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+        <intel-xe@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>
+References: <20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org>
+ <20241201-drm-connector-eld-mutex-v1-7-ba56a6545c03@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241201-drm-connector-eld-mutex-v1-7-ba56a6545c03@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HL-Emd7veaMtK8fWL2IAcFLfD8t_Evj_
+X-Proofpoint-GUID: HL-Emd7veaMtK8fWL2IAcFLfD8t_Evj_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 mlxlogscore=959
+ phishscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412030028
 
->After commit 0edb555a65d1 (=22platform: Make platform_driver::remove()
->return void=22) .remove() is (again) the right callback to implement for
->platform drivers.
->
->Convert all platform drivers below drivers/devfreq to use .remove(),
->with the eventual goal to drop struct platform_driver::remove_new(). As
->.remove() and .remove_new() have the same prototypes, conversion is done
->by just changing the structure member name in the driver initializer.
->
->While touching these drivers, make the alignment of the touched
->initializers consistent.
->
->Signed-off-by: Uwe Kleine-K=C3=B6nig=20<u.kleine-koenig=40baylibre.com>=0D=
-=0A=0D=0AAcked-by:=20MyungJoo=20Ham=20<myungjoo.ham=40samsung.com>=0D=0A=0D=
-=0A=0D=0ACheers,=0D=0AMyungJoo=0D=0A=0D=0A>---=0D=0A>Hello,=0D=0A>=0D=0A>th=
-is=20is=20based=20on=20Friday's=20next,=20feel=20free=20to=20drop=20changes=
-=20that=20result=20in=0D=0A>a=20conflict=20when=20you=20come=20around=20to=
-=20apply=20this.=20I'll=20care=20for=20the=20fallout=0D=0A>at=20a=20later=
-=20time=20then.=20(Having=20said=20that,=20if=20you=20use=20b4=20am=20-3=20=
-and=20git=20am=0D=0A>-3,=20there=20should=20be=20hardly=20any=20conflict.)=
-=0D=0A>=0D=0A>This=20is=20merge=20window=20material.=0D=0A>=0D=0A>Best=20re=
-gards=0D=0A>Uwe=0D=0A>=0D=0A>=20drivers/devfreq/event/exynos-nocp.c=20=7C=
-=206=20+++---=0D=0A>=20drivers/devfreq/event/exynos-ppmu.c=20=7C=206=20+++-=
---=0D=0A>=20drivers/devfreq/mtk-cci-devfreq.c=20=20=20=7C=204=20++--=0D=0A>=
-=20drivers/devfreq/rk3399_dmc.c=20=20=20=20=20=20=20=20=7C=208=20++++----=
-=0D=0A>=20drivers/devfreq/sun8i-a33-mbus.c=20=20=20=20=7C=202=20+-=0D=0A>=
-=205=20files=20changed,=2013=20insertions(+),=2013=20deletions(-)=0D=0A>=0D=
-=0A
+
+
+On 11/30/2024 3:55 PM, Dmitry Baryshkov wrote:
+> Reading access to connector->eld can happen at the same time the
+> drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
+> order to protect connector->eld from concurrent access.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/dp/dp_audio.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
