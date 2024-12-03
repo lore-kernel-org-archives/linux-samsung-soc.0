@@ -1,127 +1,130 @@
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EC9193061;
-	Mon,  2 Dec 2024 16:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F56B2500BD
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 01:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733156563; cv=none; b=fspANP3oJJZN7CW3aWtAfBaVVjOtCbGI32/FxRC94wRCgS8f0PLJ0PhF3ICGzbgswt9WVWNIRy7JeRbfCKGKutjaANpOrCLCjcqFi2t5XUMP3Vf3m72hpFtNUO7JF1gzciOzBSymyOBCLA1SPOJ2coi8B9NsXm4ug6A4rLMEZSo=
+	t=1733188333; cv=none; b=lV7gre+bImaQYrsMoudkLo4kQPH0qL1g3TEUIfwWUUchTF5HmkLDoUBUgZPNMPNHUG654PsL5Z9moqcUEQ9nV+d8RWnHLwo+9425mrIAaa46XTDUjHRO+Ge7hZ0rDxR+IjlcEIAFMAgNwflu8TvkqMe2DxI7ifHhy3ZYvrrRD/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733156563; c=relaxed/simple;
-	bh=p4/oDNeAcM8YTvV1ZrRQzkUmZ2zyB7c9FNreyRr5PDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MjiNtODkNnH+y8IR5M2FVMVEaC6s6opNbPHG4xLwjZbjOOx7HcepNwBGf0KwKTBMaatJ+1WwfnDJ8h7eswOVeduXTZE7u7Za2A8jsJxfzeLLYsxmIzIdvyodggVbA/Aq+WPpnXcdfWLLAgiHC8CJZJyswB/Y2F0l8CPm1Vj4ibo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=YY1zYL6t; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+	s=arc-20240116; t=1733188333; c=relaxed/simple;
+	bh=B4Sx+xF70GMxFfVfB9+wAhK7C2qf9G7NzE3Mpx8R8Ig=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=n5mr+siXXvKrs6vU38Jt1x+3Ra1Jfv9NRiR5Fz6eQub1mThjGz9HVJKth0WosDXsOx7pHrmdx/Y5jgH5PsFV7qlPoNE+1ZQsBemunLcBRSf4yo2UG5D0Y1t/BTYdc+EA+rGJxx1ZsP6M2j0HxAuddBMPWHyqKOIdJbVwvFwiErc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Q47MkIi5; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="YY1zYL6t"
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y28Fm52K3z4wDW;
-	Mon, 02 Dec 2024 16:22:36 +0000 (UTC)
-Received: from umer-b550pro4.lan (host-213-78-252-153.as13285.net [213.78.252.153])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y28Fd03HKz6tkS;
-	Mon,  2 Dec 2024 16:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733156551;
-	bh=p4/oDNeAcM8YTvV1ZrRQzkUmZ2zyB7c9FNreyRr5PDM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YY1zYL6th/bpswcCWvwIy+CaPdpxssCiXSF9TbzoXeRzNQ9xM8b66K0ZszcB3McXA
-	 JcWkt+5s6k95wDMVfV1agP1llI7YxWZ7fHewwCAjJUKCNDVtb4dZa8z1VM/zC0LdJk
-	 nOw2f+A+UbIs/xWyfEQl4RdCSkms2ks8/gmx+tPKVqLJxxV3Nwf9wjFZqWPkWD2CUp
-	 vtRzMtGSfPd155kxoBrLkBj7KY8oxg6d3YOyAYA93C2zZEDeyO0fJGfGXtG1PxPlme
-	 2TGYRm4e85ZHA46Yaz5S/NJNFXtxkl2h0SKWnzVAvd0z93SNXWCIJg2LPdoZblHVkO
-	 lGVOYUL3JHdlg==
-From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: [PATCH v3 4/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
-Date: Mon,  2 Dec 2024 16:21:58 +0000
-Message-ID: <20241202162158.5208-5-umer.uddin@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241202162158.5208-1-umer.uddin@mentallysanemainliners.org>
-References: <20241202162158.5208-1-umer.uddin@mentallysanemainliners.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q47MkIi5"
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241203011202epoutp01998ed3f06233368eac2528951df1d7ab~NhZixLXJs2344523445epoutp012
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 01:12:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241203011202epoutp01998ed3f06233368eac2528951df1d7ab~NhZixLXJs2344523445epoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733188322;
+	bh=B4Sx+xF70GMxFfVfB9+wAhK7C2qf9G7NzE3Mpx8R8Ig=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=Q47MkIi51uODx3/CT6Q5FUz+Go1ClLbVJvRDEBbxZGs6wXQabwVAVl7J9WWVFumuY
+	 qZW2hY8XRyINHB7cVBnguJHqgeqosM00gk6EBuWH7P9T0mUZZ0VGM9ASeF9ajqhQZL
+	 4bnayb3AdxaljCkxVh/NSvVR7q2q6vNIun42TFgQ=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20241203011201epcas1p30b33f73d2a3087a0b1488e64741ef1fc~NhZiF4eJl1180511805epcas1p37;
+	Tue,  3 Dec 2024 01:12:01 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.36.134]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Y2N0c5g3Pz4x9Q2; Tue,  3 Dec
+	2024 01:12:00 +0000 (GMT)
+X-AuditID: b6c32a4c-ad1fe70000007bf7-93-674e5ae0de6d
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4B.AB.31735.0EA5E476; Tue,  3 Dec 2024 10:12:00 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Subject: RE: [PATCH] devfreq: Switch back to struct
+ platform_driver::remove()
+Reply-To: myungjoo.ham@samsung.com
+Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park
+	<kyungmin.park@samsung.com>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, ALIM AKHTAR
+	<alim.akhtar@samsung.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org"
+	<linux-samsung-soc@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "linux-sunxi@lists.linux.dev"
+	<linux-sunxi@lists.linux.dev>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241203011200epcms1p3fbf79a0ca20c982ea472c5f19a2bfbee@epcms1p3>
+Date: Tue, 03 Dec 2024 10:12:00 +0900
+X-CMS-MailID: 20241203011200epcms1p3fbf79a0ca20c982ea472c5f19a2bfbee
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAJsWRmVeSWpSXmKPExsWy7bCmvu6DKL90g+OXdCwezNvGZnFppYTF
+	9S/PWS2ez1/HaHH+/AZ2i7NNb9gtNj2+xmpxufkio8Xn3iOMFjPO72OymLJvF5tFU4uxxfNH
+	nWwW879+YrP4eeg8kwO/x/sbreweO+4uYfTY8Gg1q8fOWXfZPTat6mTz2Lyk3uPF5pmMHn1b
+	VjF6vPo6l9Hj8ya5AK6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxU
+	WyUXnwBdt8wcoCeUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWmBXrFibnFpXnp
+	enmpJVaGBgZGpkCFCdkZU/auYi/Yz1tx/VZSA+MJni5GTg4JAROJX13v2boYuTiEBPYwSvy4
+	P5+1i5GDg1dAUOLvDmGQGmEBf4nz7+4zgthCAkoSDTf3MUPE9SU6HmwDi7MJ6Eps3XCXBWSO
+	iMAcRommf9+YQRxmgZmsEmu6fzNDbOOVmNH+lAXClpbYvnwrWDengLPEpDswNaISN1e/ZYex
+	3x+bzwhhi0i03jsLVSMo8eDnbqi4pETfnb1MIMskBLYxSuw4MocNwtnPKDHlYRvUJH2JM3NP
+	soHYvAK+Eh/3bwS7gkVAVaLh/WWoqS4SG1dPA7OZBbQlli18zQwKCmYBTYn1u/QhwnwS7772
+	sMI8s2PeEyYIW03i0O4lUKtkJE5PXwg10kPi2/UlzJDg7WKUuHXlJcsERvlZiBCehWTbLIRt
+	CxiZVzFKpRYU56anJhsWGOrmpZbD4zU5P3cTIzgpa/nsYPy+/q/eIUYmDsZDjBIczEoivMvX
+	e6cL8aYkVlalFuXHF5XmpBYfYjQF+nUis5Rocj4wL+SVxBuaWBqYmBkZm1gYmhkqifOeuVKW
+	KiSQnliSmp2aWpBaBNPHxMEp1cDUpRL54bBF82k73dxg2TnTEr9050dHKEoF87RsP8S9l++u
+	fRWnN+v5cKOWBd5zLq4o+bij7fHz9xfZ53zjP6S1+vNto123rj2wXlP2t3fT5+kOi3q9dU7X
+	X6pZ9lDDvla3+8xVgYjeVPUt02O8Lie+Ydyv99s4IOVma8HD6aaWCjkmd9a0zD/6+f/ZdM2k
+	83Evj/CLseXwitRoWx1Kmui1VShkM2vK/iuV+zjPcSaq9e09rGvVKa3PrnjQU3DigfpnV9lL
+	Jd/aRIhO/zNTKn+mMceMbaf/yz3Uu1tfoqD6OOFp5MXJTkyL306Y7eKWE3ucM+pHxuZmoe3Z
+	17wivh8qNDTTOW4lmLuucd6RMl0lluKMREMt5qLiRACtT/jpUwQAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241130135828epcas1p405d9dbb7df745f6aa81ae2033b9a281a
+References: <20241130135813.895628-2-u.kleine-koenig@baylibre.com>
+	<CGME20241130135828epcas1p405d9dbb7df745f6aa81ae2033b9a281a@epcms1p3>
 
-Add initial support for the Samsung Galaxy S20 (x1slte/SM-G980F)
-phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
-has only one configuration with 8GB of RAM and 128GB of UFS 3.0 storage.
-
-This device tree adds support for the following:
-
-- SimpleFB
-- 8GB RAM
-- Buttons
-
-Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
----
- arch/arm64/boot/dts/exynos/Makefile           |  1 +
- .../boot/dts/exynos/exynos990-x1slte.dts      | 28 +++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
-
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index deb8dc509..783807249 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -10,5 +10,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos8895-dreamlte.dtb		\
- 	exynos990-c1s.dtb		\
- 	exynos990-x1s.dtb		\
-+	exynos990-x1slte.dtb		\
- 	exynosautov9-sadk.dtb		\
- 	exynosautov920-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts b/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
-new file mode 100644
-index 000000000..7bca641e5
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
-@@ -0,0 +1,28 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S20 (x1slte/SM-G980F) device tree source
-+ *
-+ * Copyright (c) 2024, Umer Uddin <umer.uddin@mentallysanemainliners.org>
-+ */
-+
-+/dts-v1/;
-+#include "exynos990-hubble-common.dtsi"
-+
-+/ {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	model = "Samsung Galaxy S20";
-+	compatible = "samsung,x1slte", "samsung,exynos990";
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0x3ab00000>,
-+		      /* Memory hole */
-+		      <0x0 0xc1200000 0x0 0x1ee00000>,
-+		      /* Memory hole */
-+		      <0x0 0xe1900000 0x0 0x1e700000>,
-+		      /* Memory hole */
-+		      <0x8 0x80000000 0x1 0x7ec00000>;
-+	};
-+};
--- 
-2.47.1
-
+>After commit 0edb555a65d1 (=22platform: Make platform_driver::remove()
+>return void=22) .remove() is (again) the right callback to implement for
+>platform drivers.
+>
+>Convert all platform drivers below drivers/devfreq to use .remove(),
+>with the eventual goal to drop struct platform_driver::remove_new(). As
+>.remove() and .remove_new() have the same prototypes, conversion is done
+>by just changing the structure member name in the driver initializer.
+>
+>While touching these drivers, make the alignment of the touched
+>initializers consistent.
+>
+>Signed-off-by: Uwe Kleine-K=C3=B6nig=20<u.kleine-koenig=40baylibre.com>=0D=
+=0A=0D=0AAcked-by:=20MyungJoo=20Ham=20<myungjoo.ham=40samsung.com>=0D=0A=0D=
+=0A=0D=0ACheers,=0D=0AMyungJoo=0D=0A=0D=0A>---=0D=0A>Hello,=0D=0A>=0D=0A>th=
+is=20is=20based=20on=20Friday's=20next,=20feel=20free=20to=20drop=20changes=
+=20that=20result=20in=0D=0A>a=20conflict=20when=20you=20come=20around=20to=
+=20apply=20this.=20I'll=20care=20for=20the=20fallout=0D=0A>at=20a=20later=
+=20time=20then.=20(Having=20said=20that,=20if=20you=20use=20b4=20am=20-3=20=
+and=20git=20am=0D=0A>-3,=20there=20should=20be=20hardly=20any=20conflict.)=
+=0D=0A>=0D=0A>This=20is=20merge=20window=20material.=0D=0A>=0D=0A>Best=20re=
+gards=0D=0A>Uwe=0D=0A>=0D=0A>=20drivers/devfreq/event/exynos-nocp.c=20=7C=
+=206=20+++---=0D=0A>=20drivers/devfreq/event/exynos-ppmu.c=20=7C=206=20+++-=
+--=0D=0A>=20drivers/devfreq/mtk-cci-devfreq.c=20=20=20=7C=204=20++--=0D=0A>=
+=20drivers/devfreq/rk3399_dmc.c=20=20=20=20=20=20=20=20=7C=208=20++++----=
+=0D=0A>=20drivers/devfreq/sun8i-a33-mbus.c=20=20=20=20=7C=202=20+-=0D=0A>=
+=205=20files=20changed,=2013=20insertions(+),=2013=20deletions(-)=0D=0A>=0D=
+=0A
