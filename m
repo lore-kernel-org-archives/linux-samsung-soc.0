@@ -1,62 +1,62 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE2C1E32D8
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 11:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29A1E3793
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 11:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733223745; cv=none; b=asG+mhNDxRFFgT8N83s8nxYoIB8XNxhX89Lqy2BpqUMRMxbFwhFdLXmOG4iZx3ISHA4eCwizjAZgNDtyIXiwt6e0hNk835KzFPXqItPEJg1kAIee+Eht9FYvqyHJ1RvnmWAp7uVBmDN09rYe3dj05SR33aWlF9Du+R9zW7I94dk=
+	t=1733223980; cv=none; b=GHh/SUfO8Vs8ppz2ynzdDBDsoeXXMuXd06lo/KVA2AXda1e8aD2YtmVTHU0CQSLGxy+d005F00GuEXpkZRvkEyTg2KOv10kCxiLrdutSiAj7oKTNQkY+6wH+95uE11G2UQArt8hKQZUQtONhzKpesaWbFZhvc7/DFLTO1aoMw7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733223745; c=relaxed/simple;
-	bh=S7MzIWIrLWAbVF89l+Uf6tn+k9bQS3/RiimZVSw8N/c=;
+	s=arc-20240116; t=1733223980; c=relaxed/simple;
+	bh=ljSYGUKoLDTXsKObxNS/4LJp3u+C/OrF1P+fya2ivGg=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b9hbOkSGHZity91O1QVzpyiNHlxlGaufKLf816KVtF1LvXg6lGlCvwDu8qJ3ImQvpZULsR1x5XF2lhOiZHErk2hPUfEe7TldZdwozerdRaH1m+5z6M793+ln1/O3JHJiJ9/GNLZ/0ucM43qkPP1XkBD5bb3XsgR8LVcKERrhfEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ceAdjcHw; arc=none smtp.client-ip=209.85.221.52
+	 Content-Type:MIME-Version; b=tIlqNlwlaeYUjrZF0Dk946DxX00hXH6cj2GZxY/d9uPfjV2lGmo0BGxuXJNDgYWT6SCIJdpVtzTW9OPuhGzfJBEIr9mMyHNhJC+AA4DBuE55k3GZxF3USSE5aDQ/jTVH/Ve6DYtBKXQUC0mo2TKAXjMXmwDZwVkH2kGlpB0/E3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jvN4th6Q; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ceAdjcHw"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so1898991f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 03:02:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jvN4th6Q"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so46044815e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 03:06:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733223742; x=1733828542; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733223975; x=1733828775; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=S7MzIWIrLWAbVF89l+Uf6tn+k9bQS3/RiimZVSw8N/c=;
-        b=ceAdjcHwfjffVfcCZsVMRK/A1cVsLHxzmwTaVEQvw66v0uswrpr9oaf2I4o/cjr5Nf
-         ny7PKInr0DxKITyZU2vSr2UpDjORLu1neNrjy/2DeXJpx/fAMW/hlqgswAw3uA0d9HYp
-         VWh+APDkJrVy/b3VkrihZbQs7YL/X+bk2o5h4RulgLhC35O93d8eoj/Kby1cJSo0LIAk
-         +40QlpqnLY+D+cfCJDcV3HI/teTKhQd4BoPfrtSST3B+BA4vK7N9aBKPjU69xZRtPgP4
-         rwvqirbD6g09anoF4Jvn5cHm7GNCXjq3BpIwmN8o2VqbRpPbbLapQRak1jxpJk89dAF0
-         8SzA==
+        bh=5y5ad0avUs5r379umO5xs4htnxZ4LiFXVwnGLxowvNw=;
+        b=jvN4th6QFgWV6BYuy2oid2F7cnhN8eKcy1cIghtquMsYKKbt5H3jZoJeVTFiQZ5U4g
+         SYtT4I8kOXfwFs2iw6y7WLsLpQsFgyxadnf7mopFboXIDnO0gdhvyT/77NjpwIJpABxF
+         0dy8Q5wHWLyDp+Xiez1Vhnjkn0m3tift4Z2NXpHeQ/COacbdSj3+UsEuDwo/tq+meIOK
+         Exwns69Kgc6Bk4XcMzfpdl4oE4L65JXn5CykOHpdty/3V4fMstUr1ftBC6YIShzbGzcF
+         N1KPGsovVVOI3j/zYBfErODY6ebIN/6BlbEFUplLQIdla7amCSLsRPrAvdt2MkvhHaAE
+         orPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733223742; x=1733828542;
+        d=1e100.net; s=20230601; t=1733223975; x=1733828775;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=S7MzIWIrLWAbVF89l+Uf6tn+k9bQS3/RiimZVSw8N/c=;
-        b=B+Lct7Cla9ZmhRWD2i2RXCKkOvg6HTthWucV4I2X29AvoKRgB0d0Kr6xvCArRRyTln
-         8hutDigQ2bIkaFpQsa0G3R5qSU156rHFVSYgBkJ6GFdgFzlvWvvfmydlQg1LheBkKKNp
-         ZJGMZLEh/DPwCsbrY9fxDuANdJhp9I7tFxOZOvIZ3u0myxjsEiT2gAKb2/JkDgHBkb43
-         DUSROhcp998Hjer1iG9JvgJyN35Iw0Z4pNVVHG63mWvHc+yLRQ3iDoruSTZMhf/By8I/
-         jE6bT/CXBmdIFIJ+yJOz64Bv2f+y258U/qX0SyDm0cVaH14uoC0uHwlyY19SQ2Jk94GS
-         RLsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFE3L/Gg3U76CXgWIHeU9qyUgO1gJWfWbf4/OQtVHZWtnzMZQjamJN+9Gia2slqJiXVmseWiQEC2CH3/IfMHdIGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcavndhOl8hmK1xE5BYKCPk43nAdrt9itOjNLN07AcYRhYZDaG
-	gTM+8j+8Lh1SrLTgJY+tXzZq6VhztDDQqtpXMUpSpRrKbaPQJtpY78UYBLdeVBU=
-X-Gm-Gg: ASbGncsMjgDB5Q9G3ypx07IJr7RSY4Py5w746f/NyDhkBBCLbiMahvM/p90tuHj1c3L
-	yy5Q354W0bVp4YEF9BuBZkB38mP2Ohii8TmTWcznS2exP5U1W+t0kCIBkwBujviUIQ/kdOExrz2
-	5cVxBaVkIrqzzX1z46Fp6rEBNCYbkvxpukAdr9SfCA12L4Ok40b8sb/ucMh+f8r7vGQ3BjYMnOu
-	dXFqBz2jyPtn478A+m1GRiH+ds6NKBXYkqjgh5GRLlL4YzAEKmUGQg=
-X-Google-Smtp-Source: AGHT+IE4z37Or9yADOv+O39FGI70uwdrH1eoqOGhO/GGECRsdGCnHKNhwdQTcxVdHXzjgp6xkbp4Tg==
-X-Received: by 2002:a05:6000:23c2:b0:385:e1e8:40db with SMTP id ffacd0b85a97d-385fd3e9195mr1279542f8f.24.1733223741934;
-        Tue, 03 Dec 2024 03:02:21 -0800 (PST)
+        bh=5y5ad0avUs5r379umO5xs4htnxZ4LiFXVwnGLxowvNw=;
+        b=WQ/z7kyqFztN33SC2rSRkUuvVL1giaYI+LvSE+ITiRUL3Mjc/5AUb9Uw4u3H/eUoQI
+         Lgq4qdT/tyshDehc1MXqW6eMyWAM3w3tBiIteRQTrhuW+HIIg3xsJRU4qeLrAzBpgIgZ
+         9aA9L6EXbGGvkeb2t6Inq5RiMYcD0SrCZ1GBEm5zQ9Q6ymkXLBOl9rJjb8K7YToGifNt
+         5g28PsOGvsrxNJwtkQw61nFmTXxPE8eT3yjbrDGPrhGHYFVlbfYQ+d4C0zJ0g5+osad1
+         zoofQNqkgVI1TncWSBZHQpsswyMgx4PjDx2yLSFx8iL3x8Zj0o5DUQERletiWGVBKXMH
+         s8QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1rnqppP916VL3gmUtbS8lWpdj/6K+knM6IP864FPJDLnwPSQkn38KvA3TSJi0MlRPytmlW+NJ9V8Rjni5io3Dug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyteFA1U/2z0YGazh6Cecz25F7NqBhj+Z8hvkPHil1VgxC9Mpt8
+	+fMaXmwsdwEHyE8agXDx0Jy7jWOsE9L8yuDob4f00/D0O9uyYxcKcUKrofPZHw4=
+X-Gm-Gg: ASbGncupD+X3ABaPRAZ3r/REyYNCLMGZ+QC990t8GkiHN5zKjwvF/d1N+O761Ui1Hy2
+	OiPv5FEunsI3TbvXfkdzYPWGaOuAOAOa7kGODfkYwp5bJboX93C20fwP+TJSXTYt22BQq6tgSJT
+	Hk21OUVphLpQLLH3fJkWpbaA+Wc08/F4o8OOQgLbdXqmYVsshIGPVMrEpqvTgxX5UbRHpx2lli2
+	NXFfLO28e8Zy1yaGVMataqKQmWHraxFjCxMXBwnz9GlzhAPge7+iPk=
+X-Google-Smtp-Source: AGHT+IGLmTRJVKICc1kAtHcJQX0sTL1Ubtwsn5MKrksTZEqwhDb+BEw5tNQRlwNX5ov75IPA38SNyg==
+X-Received: by 2002:a05:600c:3b8c:b0:434:a4bc:535b with SMTP id 5b1f17b1804b1-434d09bf66dmr16906005e9.11.1733223975578;
+        Tue, 03 Dec 2024 03:06:15 -0800 (PST)
 Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e49cd788sm9516997f8f.6.2024.12.03.03.02.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0d9bc5asm183847755e9.2.2024.12.03.03.06.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 03:02:21 -0800 (PST)
-Message-ID: <16f9b5f8aed79e9313b4638512896743fa5a8d6d.camel@linaro.org>
+        Tue, 03 Dec 2024 03:06:15 -0800 (PST)
+Message-ID: <d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org>
 Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
@@ -68,14 +68,14 @@ To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-samsung-soc@vger.kernel.org
-Date: Tue, 03 Dec 2024 11:02:20 +0000
-In-Reply-To: <bce22ca8-aed2-41ae-b2ef-fdc71266709a@uclouvain.be>
+Date: Tue, 03 Dec 2024 11:06:14 +0000
+In-Reply-To: <61a54367-2406-4106-bf8b-9fda4f2d11a6@uclouvain.be>
 References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
 	 <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
 	 <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
-	 <9387c0cf-d291-485a-8cd1-1aced7eba14e@uclouvain.be>
-	 <2883fb0dd22312d5da9039d4fef869276a0bd430.camel@linaro.org>
-	 <bce22ca8-aed2-41ae-b2ef-fdc71266709a@uclouvain.be>
+	 <8f585460a1bc52f78a6d0867aed87398bde30152.camel@linaro.org>
+	 <18629c9edd295a524a1c9764f013a0e97e0b275f.camel@linaro.org>
+	 <61a54367-2406-4106-bf8b-9fda4f2d11a6@uclouvain.be>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.1-4 
@@ -86,71 +86,52 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2024-12-03 at 11:11 +0100, Thomas Antoine wrote:
-> On 12/3/24 10:31, Andr=C3=A9 Draszik wrote:
-> > On Tue, 2024-12-03 at 10:08 +0100, Thomas Antoine wrote:
-> > > On 12/3/24 07:47, Andr=C3=A9 Draszik wrote:
-> > > > > From: Thomas Antoine <t.antoine@uclouvain.be>
-> > > > >=20
-[...]
-
-> > > > > =C2=A0/*
-> > > > > =C2=A0 * Model Gauge M5 Algorithm output register
-> > > > > =C2=A0 * Volatile data (must not be cached)
-> > > > > @@ -369,6 +387,8 @@ static int max1720x_battery_get_property(stru=
-ct
-> > > > > power_supply *psy,
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval=
- =3D max17201_model;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX17205)
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval=
- =3D max17205_model;
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 else if (reg_val =3D=3D MAX172XX_DEV_NAME_TYPE_MAX77759)
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 val->strval =3D m=
-ax77759_model;
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 else
-> > > >=20
-> > > > This is a 16 bit register, and while yes, MAX172XX_DEV_NAME_TYPE_MA=
-SK only
-> > > > cares about the bottom 4 bits, the register is described as 'Firmwa=
-re
-> > > > Version Information'.
-> > > >=20
-> > > > But maybe it's ok to do it like that, at least for now.
-> > >=20
-> > > I thought this method would be ok as long as there is no collision on
-> > > values. I hesitated to change the model evaluation method based on ch=
-ip
-> > > model, where the max77759 would thus have an hard-coded value and the
-> > > max1720x would still evaluate the register value. I did not do it bec=
-ause
-> > > it led to a lot more changes for no difference.
-> >=20
-> > Downstream uses the upper bits for max77759:
-> > https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads=
-/android-gs-raviole-mainline/max_m5.h#135
-> >=20
-> > I don't know what the original max17201/5 report in this register
-> > for those bits, though. Given for max77759 this register returns
-> > the firmware version, I assume the lower bits can change.
+On Tue, 2024-12-03 at 11:30 +0100, Thomas Antoine wrote:
 >=20
-> Based on this datasheet of the max1720x, the upper bits are the revision
-> and the four lower bits are device. So it could change.
-> https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17=
-201-MAX17215.pdf#MAX17201%20DS.indd%3A.213504%3A15892
->=20
-> If the four lower bits are not always 0 for the max77759 then I guess it
-> is necessary to change this as it wouldn't work with all max77759.
+> Should I explicitly deny their use in the code for the max77759 or is it
+> just for information?
 
-Maybe the best way forward is to go by the compatible (from DT), and
-if max77759 to then print a warning if the upper bits are !=3D 0x62 and
-!=3D 0x63. And maybe even refuse to load in that case.
+I'd probably do something like this, which will indeed deny their reading
+and/or writing, both via debugfs, and also normal driver access via
+readmap_read()/write() etc:
+
+static const struct regmap_range max77759_registers[] =3D {
+	regmap_reg_range(0x00, 0x4f),
+	regmap_reg_range(0xb0, 0xbf),
+	regmap_reg_range(0xd0, 0xd0),
+	regmap_reg_range(0xdc, 0xdf),
+	regmap_reg_range(0xfb, 0xfb),
+	regmap_reg_range(0xff, 0xff),
+};
+
+static const struct regmap_range max77759_ro_registers[] =3D {
+	regmap_reg_range(0x3d, 0x3d),
+	regmap_reg_range(0xfb, 0xfb),
+	regmap_reg_range(0xff, 0xff),
+};
+
+static const struct regmap_access_table max77759_write_table =3D {
+	.yes_ranges =3D max77759_registers,
+	.n_yes_ranges =3D ARRAY_SIZE(max77759_registers),
+	.no_ranges =3D max77759_ro_registers,
+	.n_no_ranges =3D ARRAY_SIZE(max77759_ro_registers),
+};
+
+static const struct regmap_access_table max77759_rd_table =3D {
+	.yes_ranges =3D max77759_registers,
+	.n_yes_ranges =3D ARRAY_SIZE(max77759_registers),
+};
+
+static const struct regmap_config max77759_regmap_config =3D {
+	.reg_bits =3D 8,
+	.val_bits =3D 8,
+	.max_register =3D 0xff,
+	.wr_table =3D &max77759_write_table,
+	.rd_table =3D &max77759_rd_table,
+	.cache_type =3D REGCACHE_NONE,
+};
+
+And maybe without cache for now. Most are probably not cacheable anyway.
 
 Cheers,
 Andre'
