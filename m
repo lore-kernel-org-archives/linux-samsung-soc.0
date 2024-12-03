@@ -1,170 +1,112 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948F71E492D
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 12:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9821E7676
+	for <linux-samsung-soc@vger.kernel.org>; Tue,  3 Dec 2024 12:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733228871; cv=none; b=H+CXQDLUvelzQpEHdLu/6Kdi5jdiiiHUbd41R69zFixd+IDpC3L9XFqgLm/JsAk9RJHcm6bJpA850+JXY30z1sieQIjMR9aEmtLuqdT1HBg0zu2snDK+MrlSHd1xFBK3gwE2DwIMWBCvBLGw+bjHbMh+JQw92wzp0uKsPGSGGo8=
+	t=1733229630; cv=none; b=aIIa7qzGvw5/fEPO30+qayBw1+boIK5TLkj/hAv6lKaQgGl2xWs4mmpquJZs1/Z9mZ89eDtreZlcKISI5dF60nIH51tkQ1G7MSkrqdXOQZYBTQtawPdwJjRiggSIZGY2v44ccJezViY8vv/fJgrZw7p6P9XZmLdghJ/SHe8kFw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733228871; c=relaxed/simple;
-	bh=6RnywpFg91GD9e9AaGXdnmWR1etUR0dSB8zjuPzV61I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBPkyFFfnISO7zblooCLnDQ5z5Q2lj/A+kxQsBWpe/XoBstuxG8Nc5ZDz6yWFvhhOZsDkcSVYhm3mmdTQvOgF2DpTKhHu7fDSgW/DhCrln9J4PEtvJcsN6J4d15SXSNAvuwSMsjDj7Kt4UN7wMqeAa4fU2uPgCH1It9hX6YGktc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=djY/WER5; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1733229630; c=relaxed/simple;
+	bh=wuW9dlmQHK3i/Jcfb0eJR/IK57A7oEJMFzUPWXw07Qg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gyw2dvaj5BQ9lSF+N8Mt8Nzz0+JP8aSILPZGBRuRcpwkd4j2NLmf2u/5dfs6AegzClp9vN8BT7mzHofgE18eETExqFQNl7fnl3YaVrMLhMwSXf0AqHairdDexPWFRmLe2lSpWb9oDkyNuWhlVgjmQHIL37Yn0js+FqxW9t9Qz8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yFaBUlMN; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="djY/WER5"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53de5ec22adso6877172e87.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 04:27:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFaBUlMN"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d0ccd931a3so4404322a12.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Dec 2024 04:40:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733228868; x=1733833668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4tMW5BgK0yNLwCH6utYoQVhW0P2uh6V2gFL0Ya9nckg=;
-        b=djY/WER5Rdu2jIlYxehbxDg/hlYaf361fF+3QnGzzUVRDumY5QD0FrO8+1CpEgWs+c
-         f3dW2UiSQnk7eJu/RhipkmoPi7FQIPpXix8rGgack7fCJRvlGrCw1BGXSoDDRxTKicJQ
-         IMUUuXlH2zOXbFm9GJLuykS1UsvBk5RSTaGyliJmG1x8cS6IZaEBgvcDhXH6yvafLQX3
-         s49uIxIcXNLt+8salXrxOWUhLKvCDCAkhYbtQfRSE7AqBjxNgV6kyl4Br6igAGdMLREJ
-         srgwR3oYPVVsvNJhOUdOwthKqw+HayL2AYYKPQAZBNE/3exPp1irghjYnI+ix380KhPm
-         NO/w==
+        d=linaro.org; s=google; t=1733229626; x=1733834426; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sFCCGNoly/ihHw+f0V0Z4F6JNgdV9f0RgxXs1v/pmwo=;
+        b=yFaBUlMNnZAAoJ7AVCC17HlfrbiVEJSN4sYdHxbO5CkloLRsoAgm5cD4RrEG5wFuWH
+         LjsNolr7AiFOX01F1+/vyUtKayG4+eYeA9nr78j5xNb94SaNahNWyNi7Hdw5pD1TmTu0
+         q17eTpcj/Yc2EeK2G5b/QJdsGmjXpND3H3rheMy0YN2bKUHNrbCCRarKmBPr8ltJR0q9
+         V1za+CemA03lO0wnTvOa/N5awDnvHFhJIdnZshU1GykHbtRLjHT0VtvkLrOYGJaUvY69
+         e1F8SNtk1tDwrsMW5/hUOpmsuOVlWWOmoZh0PuMQr5ntLvkP2CyMnVp2ZntjD9fSold1
+         LOTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733228868; x=1733833668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4tMW5BgK0yNLwCH6utYoQVhW0P2uh6V2gFL0Ya9nckg=;
-        b=f+dyuYnjv41TmoNlMvfxEYlpf46j1qvlQqiIHK9ylUn5xbUwYDXveVMjJ27U9VAEOL
-         eokn9/5SKkuYlIoEnF1z0AqXGXlTIq00+4oXb4tqzCAkU7Nn1bjpywFai04t1uw9+SVj
-         o3LStapInfIhVN4otIGnwZqDqVtD2a0fFzjFR0RgRdw2lm1G1Z4ChWqowVTs3cIR1Dm/
-         iDAU+595uahjLb0zodveNzfguDdVm/8x9rIjNWU+boUngQk9z/SpvVX/h6kxRddetHQT
-         VCmcsqp9XsMpcZ7uQssVqLZAFfvszOOYLVgPw837TTBKRMyAAoOg2oE3Bf44qFDPG+9o
-         V8+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWlykKwTRbmPtw9qSeI2s4ijp55BM7sJD+Wj2QT795ogAeWi60bjkPoZF7ipkFait0IVMeyn6jjMOTzZBLaWnQGtg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV7OGuZYv9kDqTFaeIeIlAQNuc0Zw8UKy5P1jZL5CLNzrf2pbF
-	vbsa+2J7P0cccN6fEinY2Rtpx4/0Yz35s+5ZXO+GzKLw/u3YOB+CIt/rc2JYNKo=
-X-Gm-Gg: ASbGncvVF+zUEYpF9Ii3s7x55hxLqSroymsvxgfZ/47zIa9w3mi3WAzji/bH6wxsjrF
-	p1nrJRusDjg4nbsbNy6srjHvWRqAfIQBWh9PTLz505lF+zYMzAEjP/mBaHUkMordKDR1+LyeHqU
-	KSFCY71vfJ+X7udymxlNeUJBLgdrSdT2exsgM+ntrZu3cTFda/+ECPw1c9Mup8UtGg57mXGZeA4
-	l4afT9za3miyIhNZkjhJ5T4IG3KbY8tMhU4k6ORapxHjSrxfGUQ/Y/jbr6oPbUwgsNwC6L1f+TV
-	ceuFr781fxot9HpfHTzOoigHQAPQig==
-X-Google-Smtp-Source: AGHT+IG0HmZ8YSlH3L/g4YitdlPm2st4Okvau8mZpJCNyynGj3Z9KtsKcqo/MMABonQgOnqb21PQhQ==
-X-Received: by 2002:a05:6512:1089:b0:53d:d3ff:7309 with SMTP id 2adb3069b0e04-53e12a01ee6mr1387104e87.32.1733228867624;
-        Tue, 03 Dec 2024 04:27:47 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df649f6f2sm1810134e87.246.2024.12.03.04.27.45
+        d=1e100.net; s=20230601; t=1733229626; x=1733834426;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sFCCGNoly/ihHw+f0V0Z4F6JNgdV9f0RgxXs1v/pmwo=;
+        b=pRly1WqkpPK5PliwazjmWhAAsbfNT19I26ji0miaDcxDLRFcAqr0Uzgj0bCZDsVCDD
+         9g/0+p4rfOpqG0U24Cjk5pZJEVHoiX5JEpey89EtSWgFhs3OD3lTuRWll81+hbEFQXnJ
+         pVl7dyL95vbhuOfkKkvIHKjY8RciL9WXq7pdPappzBCRLXi40c+Ek3YvjDyNPLchXnEG
+         5YQ0ghcrsZR7+L29uqthQaki4VY22+IDJCDtSGMOjoXr24tpvT66dxPUhSaAQnZKEUhl
+         962b7VjL18WzTrH9T2iwnF0EcUjZzsI8KnGU07ZaDJpQaVTSI/yXl7Ics0JmfvWnmVh1
+         qqsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9PGVyuQ2GpG6VHMsz72/9TGoN3p3e/EBhphTlT+FgZ90sBgfheBwc9VcXRWudJIYB/fu35hi8ptS03y+1m97TCA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBjaqJ9+VBVKawaG+Ovfq8bZqnFIbq5sH0/KCgkWzlr2YZMPlz
+	kIl8CtkMG17om2OxsGY8YKpUmkrfwfQyB+Vq9xakuD7kXxt+waZe9Wh8FIHqXAs=
+X-Gm-Gg: ASbGncvNYdY7oZ5MFDwZrM7SUnnCDOnIuI8e8dpi299RIt9v8FERTOJlYgifGiyYJec
+	36hSq6kNXkIyufLfxxtWe0HvdT88Pqe+dNDD1ncco9t8r3I2NUi5K3gINHjyG0KYTlz9RZg0XYY
+	d7/YEXZISm65YLhTSxn3NHZSFAVjeBdkP8Zs8V03i8SUALoAxC+zeKTm36+zUpvIStSgyNaKk4W
+	EURfrV6u4TPWVCRcpE8JlaaVgNR/oNvwMVX2X/hBm8yywYmi7/NI7LiMNamUIUzW9wWz2rYrBRJ
+	NLaeJhFQGTIfxrdzI/fOi7TozoDShbcrsA==
+X-Google-Smtp-Source: AGHT+IHeM2tS5DyKwmkwrU7i8UC/H8zcEneFmZTgM0O6tCH1VZOWSZmfl7YcO9+J0m0pG/15uh5zHQ==
+X-Received: by 2002:a17:906:2932:b0:aa5:1ef5:261e with SMTP id a640c23a62f3a-aa5f7d4ed45mr162940566b.17.1733229626589;
+        Tue, 03 Dec 2024 04:40:26 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5998e6a4csm616809466b.106.2024.12.03.04.40.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2024 04:27:46 -0800 (PST)
-Date: Tue, 3 Dec 2024 14:27:44 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_update_edid()
-Message-ID: <ae24x2bo736jpzi77l34hybejawwe4rp47v2idedga344ye6zr@bxsxz34dwrd2>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
- <20241202-married-bald-raven-7acd83@houat>
+        Tue, 03 Dec 2024 04:40:26 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Tue, 03 Dec 2024 12:40:25 +0000
+Subject: [PATCH v2 2/5] arm64: dts: exynos: gs101: phy region for
+ exynos5-usbdrd is larger
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202-married-bald-raven-7acd83@houat>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241203-gs101-phy-lanes-orientation-dts-v2-2-1412783a6b01@linaro.org>
+References: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
+In-Reply-To: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Mon, Dec 02, 2024 at 02:27:49PM +0100, Maxime Ripard wrote:
-> Hi,
-> 
-> On Sun, Dec 01, 2024 at 02:44:13AM +0200, Dmitry Baryshkov wrote:
-> > Use the helper function to update the connector's information. This
-> > makes sure that HDMI-related events are handled in a generic way.
-> > Currently it is limited to the HDMI state reporting to the sound system.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > index d0a9aff7ad43016647493263c00d593296a1e3ad..d83f587ab69f4b8f7d5c37a00777f11da8301bc1 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > @@ -401,13 +401,16 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
-> >  	 */
-> >  
-> >  	if (status == connector_status_disconnected) {
-> > +		drm_atomic_helper_connector_hdmi_update_edid(connector, NULL);
-> >  		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
-> >  		return;
-> >  	}
-> >  
-> >  	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
-> >  
-> > -	drm_edid_connector_update(connector, drm_edid);
-> > +	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
-> > +	// CEC support
-> > +	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
-> 
-> So, it's not just about EDID, and I think we shouldn't really focus on
-> that either.
-> 
-> As that patch points out, even if we only consider EDID's, we have
-> different path depending on the connector status. It shouldn't be up to
-> the drivers to get this right.
-> 
-> What I had in mind was something like a
-> drm_atomic_helper_connector_hdmi_hotplug function that would obviously
-> deal with EDID only here, but would expand to CEC, scrambling, etc.
-> later on.
+Turns out there are some additional registers in the phy region, update
+the DT accordingly.
 
-I thought about it, after our discussion, but in the end I had to
-implement the EDID-specific function, using edid == NULL as
-"disconnected" event. The issue is pretty simple: there is no standard
-way to get EDID from the connector. The devices can call
-drm_edid_read(), drm_edid_read_ddc(connector->ddc) or (especially
-embedded bridges) use drm_edid_read_custom().
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Of course we can go with the functional way and add the
-.read_edid(drm_connector) callback to the HDMI funcs. Then the
-drm_atomic_helper_connector_hdmi_hotplug() function can read EDID on its
-own.
-
-Also the function that you proposed perfectly fits the HPD notification
-callbacks, but which function should be called from the .get_modes()?
-The _hdmi_hotplug() doesn't fit there. Do we still end up with both
-drm_atomic_helper_connector_hdmi_hotplug() and
-drm_atomic_helper_connector_hdmi_update_edid()?
-
-> 
-> And would cover both the connected/disconnected cases.
-> 
-> Maxime
-
-
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+index 302c5beb224a..18d4e7852a1a 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
++++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+@@ -1267,7 +1267,7 @@ cmu_hsi0: clock-controller@11000000 {
+ 
+ 		usbdrd31_phy: phy@11100000 {
+ 			compatible = "google,gs101-usb31drd-phy";
+-			reg = <0x11100000 0x0100>,
++			reg = <0x11100000 0x0200>,
+ 			      <0x110f0000 0x0800>,
+ 			      <0x110e0000 0x2800>;
+ 			reg-names = "phy", "pcs", "pma";
 
 -- 
-With best wishes
-Dmitry
+2.47.0.338.g60cca15819-goog
+
