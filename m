@@ -1,203 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559941F8923;
-	Wed,  4 Dec 2024 14:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A7C1B87C6;
+	Wed,  4 Dec 2024 14:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321438; cv=none; b=EPNnU7uNHnr/utnI8iwW4EUYyCQiRIG9VJqOMIUqq6hQ7ddgakifd4UdoIOppiTAnqRMUDEW62awx4RsndcpzU1XAdQf3wsZXXgmofF7Fd50XYQyID/XnP3G4BuHtLNbywYQIY6n0C8H3ePsxDpHt+UpL7GfsNKw418cT9LYNy8=
+	t=1733324385; cv=none; b=NRlm6bUdwWMF3S7rQdR/pp8nIkETkJyBlNoWWe6kZQZKYq37pfDeebCkUz546Z/acpPjG1QWrSqnGINBnWUNIO3pTCvgxF1nb3UtFviJICpH8l4le4t277iltFHeqxdNmW8efCK8cnXtKanKX1a9QdlwQOfgdU3wVZqiYrBsRv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321438; c=relaxed/simple;
-	bh=YYSDsgbu4kMtRDP07uuP9pCt0culwplV4KoPxA6I3hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPBpR9ffUnK+C7+bYsaxbQxIQFQT4XFgjS5JJFFEeQT9S7rYHjlUVtYHSdkVl+mHow/ub2E7SNwaDo/v6jvuJwdRzhoCkbHB6dzn+BY3AJJ1VLQyoToBoHYfR8zZ5cU92+sQr5Rds3s4KebK9vy0pvQf4ZhQDiYUOGJC8N6aQRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/lWxIYj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733324385; c=relaxed/simple;
+	bh=xO9FfRnXogXsKagT1s91UTrFV6QVAy00nXwpxknoUZU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s+OW2iYhnQtzuMmNjWowRqvGO5eB5ZplPk7ra8KU36FE2PdJw8Emc5afHF1ILiC/B5DqMfnFASult4OWLOSsk80T2YQImgm13WbR07O1flQe03kNUmCWaLNRXRHlFYPedfACkZsx5ySHM2eYLdLPhA+10ts+HLBjJgMLsCHAH5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=d2bJkY/v; arc=none smtp.client-ip=63.250.43.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/lWxIYj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C5CC4CECD;
-	Wed,  4 Dec 2024 14:10:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733321437;
-	bh=YYSDsgbu4kMtRDP07uuP9pCt0culwplV4KoPxA6I3hI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H/lWxIYjb/XMOitGejfbUCVwTnb0OQSj1sa+6z8o3yOf4vflWP64boaCLJocOV4Ua
-	 nWsNmJVSmkzqfwRHMOn67u+rRQFvBClGDfQ/Z1xKOdG+O1PzGPCXaoReoDJzuY1pes
-	 3wdqP2Nox7ZMZg6TyUIWi7RRSKoA31J3sf0D1MGdije5K/uCQmqCFd9zOCs4VmwH2u
-	 NPKaS/BiZG333RDBeSLQ6fVxw9IL0Rqx/C9HPxQnY7YrGy+V73ArLNIb3S/ljP4U/k
-	 MyDtgIJr1GYIQSxcgORFPh7DH+JyjoEPRMucX+x1IT3LSVl3ZRjeAiHIjtHA3gwAVH
-	 010T6iI30fqhg==
-Date: Wed, 4 Dec 2024 19:40:34 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="d2bJkY/v"
+Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
+	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y3LK95QMwz4wVV;
+	Wed, 04 Dec 2024 14:59:41 +0000 (UTC)
+Received: from localhost.localdomain (83.21.102.241.ipv4.supernova.orange.pl [83.21.102.241])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y3LK25jlsz8sWT;
+	Wed,  4 Dec 2024 14:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=mentallysanemainliners.org; s=spacemail; t=1733324376;
+	bh=xO9FfRnXogXsKagT1s91UTrFV6QVAy00nXwpxknoUZU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=d2bJkY/v1AH+WRJBuTIvpf1BtUbHPCNO2AmEEJBah+7pFmJq4WG2i3a/Uib2ub1mJ
+	 rcCqqlFIYlj0wN9J5SltOpz7hxyjLChIHJB5BS5JO3DEiaQmtx2XoCo8n6Cz5ngXk2
+	 pe5O1et6LClWZfeC/3GfrCl0QAVzOFKvSbLWB4eF9/P6QudQUdYnpQSTY6zS/72BEg
+	 PR42xTG5wKvTJv7LwKc1Cp7e+hRU34Chm0xTS4foYDnflkns0WjkmuNvs99+vqlDeL
+	 TM8rIH7k+5x9/2cWo8MAKrg/csqYehG2vBSMKUaMfiQ1m2r1rpjwa63vClMgkCo/9P
+	 cS1U8TD2LjB5g==
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Roy Luo <royluo@google.com>, kernel-team@android.com,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 8/9] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-Message-ID: <Z1Bi2gRJefYy1tyo@vaman>
-References: <20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org>
- <20241127-gs101-phy-lanes-orientation-phy-v1-8-1b7fce24960b@linaro.org>
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Add pmu and syscon-reboot support to Exynos990
+Date: Wed,  4 Dec 2024 15:55:57 +0100
+Message-ID: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241127-gs101-phy-lanes-orientation-phy-v1-8-1b7fce24960b@linaro.org>
 
-On 27-11-24, 10:58, André Draszik wrote:
-> gs101's SS phy needs to be configured differently based on the
-> connector orientation, as the SS link can only be established if the
-> mux is configured correctly.
-> 
-> The code to handle programming of the mux is in place already, this commit
-> now adds the missing pieces to subscribe to the Type-C orientation
-> switch event.
-> 
-> Note that for this all to work we rely on the USB controller
-> re-initialising us. It should invoke our .exit() upon cable unplug, and
-> during cable plug we'll receive the orientation event after which we
-> expect our .init() to be called.
-> 
-> Above reinitialisation happens if the DWC3 controller can enter runtime
-> suspend automatically. For the DWC3 driver, this is an opt-in:
->     echo auto > /sys/devices/.../11110000.usb/power/control
-> Once done, things work as long as the UDC is not bound as otherwise it
-> stays busy because it doesn't cancel / stop outstanding TRBs. For now
-> we have to manually unbind the UDC in that case:
->      echo "" > sys/kernel/config/usb_gadget/.../UDC
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  drivers/phy/samsung/Kconfig              |  1 +
->  drivers/phy/samsung/phy-exynos5-usbdrd.c | 60 ++++++++++++++++++++++++++++++++
->  2 files changed, 61 insertions(+)
-> 
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index f10afa3d7ff5..fc7bd1088576 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -80,6 +80,7 @@ config PHY_EXYNOS5_USBDRD
->  	tristate "Exynos5 SoC series USB DRD PHY driver"
->  	depends on (ARCH_EXYNOS && OF) || COMPILE_TEST
->  	depends on HAS_IOMEM
-> +	depends on TYPEC || (TYPEC=n && COMPILE_TEST)
->  	depends on USB_DWC3_EXYNOS
->  	select GENERIC_PHY
->  	select MFD_SYSCON
-> diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> index 1a34e9b4618a..2010d25ee817 100644
-> --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-> @@ -394,6 +394,7 @@ struct exynos5_usbdrd_phy_drvdata {
->   * @extrefclk: frequency select settings when using 'separate
->   *	       reference clocks' for SS and HS operations
->   * @regulators: regulators for phy
-> + * @sw: TypeC orientation switch handle
->   * @orientation: TypeC connector orientation - normal or flipped
->   */
->  struct exynos5_usbdrd_phy {
-> @@ -415,6 +416,7 @@ struct exynos5_usbdrd_phy {
->  	u32 extrefclk;
->  	struct regulator_bulk_data *regulators;
->  
-> +	struct typec_switch_dev *sw;
->  	enum typec_orientation orientation;
->  };
->  
-> @@ -1400,6 +1402,60 @@ static int exynos5_usbdrd_phy_clk_handle(struct exynos5_usbdrd_phy *phy_drd)
->  	return 0;
->  }
->  
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +static int exynos5_usbdrd_orien_sw_set(struct typec_switch_dev *sw,
-> +				       enum typec_orientation orientation)
-> +{
-> +	struct exynos5_usbdrd_phy *phy_drd = typec_switch_get_drvdata(sw);
-> +
-> +	scoped_guard(mutex, &phy_drd->phy_mutex)
-> +		phy_drd->orientation = orientation;
-> +
-> +	return 0;
-> +}
-> +
-> +static void exynos5_usbdrd_orien_switch_unregister(void *data)
-> +{
-> +	struct exynos5_usbdrd_phy *phy_drd = data;
-> +
-> +	typec_switch_unregister(phy_drd->sw);
-> +}
-> +
-> +static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
-> +{
-> +	int ret;
-> +
-> +	phy_drd->orientation = (enum typec_orientation)-1;
+Hi all,
 
-Should this be TYPEC_ORIENTATION_NONE?
+This small series adds support for the pmu, as well as syscon-reboot
+support to the Exynos990 SoC. It has been tested with the reboot command
+in an initramfs.
 
-> +	if (device_property_present(phy_drd->dev, "orientation-switch")) {
-> +		struct typec_switch_desc sw_desc = { };
-> +
-> +		sw_desc.drvdata = phy_drd;
-> +		sw_desc.fwnode = dev_fwnode(phy_drd->dev);
-> +		sw_desc.set = exynos5_usbdrd_orien_sw_set;
-> +
-> +		phy_drd->sw = typec_switch_register(phy_drd->dev, &sw_desc);
-> +		if (IS_ERR(phy_drd->sw))
-> +			return dev_err_probe(phy_drd->dev,
-> +					     PTR_ERR(phy_drd->sw),
-> +					     "Failed to register TypeC orientation switch\n");
-> +
-> +		ret = devm_add_action_or_reset(phy_drd->dev,
-> +					       exynos5_usbdrd_orien_switch_unregister,
-> +					       phy_drd);
-> +		if (ret)
-> +			return dev_err_probe(phy_drd->dev, ret,
-> +					     "Failed to register TypeC orientation devm action\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +#else /* CONFIG_TYPEC */
-> +static int exynos5_usbdrd_setup_notifiers(struct exynos5_usbdrd_phy *phy_drd)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_TYPEC */
-> +
->  static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
->  	{
->  		.id		= EXYNOS5_DRDPHY_UTMI,
-> @@ -1789,6 +1845,10 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
->  	if (ret)
->  		return dev_err_probe(dev, ret, "failed to get regulators\n");
->  
-> +	ret = exynos5_usbdrd_setup_notifiers(phy_drd);
-> +	if (ret)
-> +		return ret;
-> +
->  	dev_vdbg(dev, "Creating usbdrd_phy phy\n");
->  
->  	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
-> 
-> -- 
-> 2.47.0.338.g60cca15819-goog
+Typically, this would be added during the initial SoC bringup,
+however I was unsure as to if the syscon would work correctly until I
+could test it (especially when it comes to reboot), which I just got
+around to doing.
+
+---
+Changes since v1:
+- Wrote a description for the PMU in the dt-bindings commit (thanks Krzysztof!)
+
+Kind regards,
+
+Igor
+
+Igor Belwon (2):
+  dt-bindings: soc: samsung: exynos-pmu: Add exynos990-pmu compatible
+  arm64: dts: exynos990: Add pmu and syscon-reboot nodes
+
+ .../bindings/soc/samsung/exynos-pmu.yaml           |  1 +
+ arch/arm64/boot/dts/exynos/exynos990.dtsi          | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
 -- 
-~Vinod
+2.45.2
+
