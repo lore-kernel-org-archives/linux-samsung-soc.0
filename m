@@ -1,226 +1,197 @@
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2093.outbound.protection.outlook.com [40.107.249.93])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BDB19306F;
-	Wed,  4 Dec 2024 08:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733302442; cv=fail; b=HXtgR9tu2H+Ab3LRTIxwEsLb0oDIWSEB7M57EjeCFH9VdfmMdXbg8gPKyc/dHyEv+rYZ5DbHHrSFNa+mYEhuBK7ibDL3sc17hpJkAd+eJYJZ275mhhXyiW2F4FnkMqrXO0FX1hwhLusISfMLy0NhHox+7F5+DiSrrWO4N6fVYe8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733302442; c=relaxed/simple;
-	bh=HnvGqwH0egQ5ILQLbOem0Uzy4ZmVLNfCjHPmX7pjm1c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YOMn19qB2KSaghRjBx2X38PFg/PJHr1H0noJsSt05s5AR70uBog8ePw048aa+vfAMlWcEx7T/0bBMW3E2CLq30OMBvpWo625GSm7KuLQuK68AJroCxmtV/29qUkSAESCvNNSRrpTpx8AUBQfWneBYLTkvovW+nMhh3ga2viga8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be; spf=pass smtp.mailfrom=uclouvain.be; dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b=I/Z4z2cs; arc=fail smtp.client-ip=40.107.249.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=uclouvain.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uclouvain.be
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2242B1B4137
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Dec 2024 12:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733315050; cv=none; b=kxlXkXELXh32GYAegrhVAVGTkPHbaxEavYm8WbvROcUr+Uu3XNNIvQnFbwETsktiEHvm1b2n8NcB/72y+nH4FDFIlP6mr1Lb2p5sf8+DxzGKO+oCgdLBxJFTgaEskoS0JrL6XZkqtSXhAKE9NfrJGsw/Qh993AikeM2/7CZJzAI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733315050; c=relaxed/simple;
+	bh=KcvPpGsThQgqGhk3avKFBDqxzwqGLab5Y2VPLCGea9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=pN2siisWhfjyjKT5YDk7h6wPaiTllxidiGl5U2OVzUBveRMMKEFASaY/hFyh2nI6D0dsjtk5rPi4PaNh51781yaz0OZgHMzwejA8zKkg0JJtvbXY+5y5YpxMKqu17Du0f83apOrN8prFGZcYQwAG+urJLk4T5DjGMyunlnRfRG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TIXch/mP; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uclouvain.be header.i=@uclouvain.be header.b="I/Z4z2cs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T8xnBFL/Y1PmRSmrXoemHZNv//P3CnVS/nkVlUJYXczt0AbKavqS+87loM4n1an3l7rKldnZswV1JEpjhA9FpowACgfpi1oJ+w2dar0vo7tWoh4hJh1qnVxSByFhYN25YSs3ftuWnp1nsBg1w9ryRVb03PAgUbaa9nUFQ0yPiC4WeQ8L1pGCfvKexuobpdhLqqfM+0L5a4cmEmCAM2NzTWThWh9dxJwT+3HhdWqg93Cq7JpSmkTroPV7xHsFVCI8AxnCzkNIFTIn+QDqa+C4CPrCzOU3PSIYROsfDDCleipQOUjlQMvMyVVBbFOG56hehJcbGHlAfXDLAp+tpAsbJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WgWHvHdIMZl6gWbhMO3ImWRHCV4g0xl3rEzvJf8MaE4=;
- b=d+VpQcoa+Af3I/SqxHQ9TY1XcQOfyeHjrxzW4brvjeQ6gMRXNfZ3z18Vkz+XB9pNBOhoKBau1tYiHJ5Scl/7jBa0NiBLT2YjFPugNI7b1caJb3YtDoUi8vF1jwJjHMBcpS9cke6stPXZ+TRdzFlaJ+0MtZG+TgHrD5p8V6cU9WNR2XRkOS73zWg4IzwbvsTs1MzzYjQMs8mh6Muw1ynb5KZ/6AP/nc94+4YMx+wD+i7KG7jqG7CVW0CgU1wUxE/mkbMdnZHWeBQka4JY2wnf4V48Nf8rTQrF0TmBNNA8sfS2cpD9V9CWq/8hLC/9RSO3nB0FDRNG8f5NUbWEMCoIkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uclouvain.be; dmarc=pass action=none header.from=uclouvain.be;
- dkim=pass header.d=uclouvain.be; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uclouvain.be;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WgWHvHdIMZl6gWbhMO3ImWRHCV4g0xl3rEzvJf8MaE4=;
- b=I/Z4z2cs90RtCHtUsdN9Gpi4NbzMgr/4sjNp9qXz9jeSLOa9SSrOwdLzQeG8nn9EE2GsSWbccI6KwvRtaRWXsZNkRvee415r7u0Vxlr1bDSMtAECQ3pkmnMorPRr3zzf8BvUG1ae7qQRFOUOUwe+2TetA2MDXstd2gFfyu6yDO8Q9+FHlcSlMSguKu/u1zLV5plCXfng/TTd9h68piod/MTQiiGF1sKoJH6mxIucJWSM/RGygXtBdWTjZGGLLn5l2Syo3gQgcdm08hXmkh2C+2R2yHkcx61MdRDEQX0RtOrnq0e6STxwBHO0NglmhnRp7lhMjeB3bJ5XNJ/a6erSzw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uclouvain.be;
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com (2603:10a6:20b:5b6::13)
- by DU0PR03MB9684.eurprd03.prod.outlook.com (2603:10a6:10:44f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.17; Wed, 4 Dec
- 2024 08:53:57 +0000
-Received: from AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c]) by AS8PR03MB9047.eurprd03.prod.outlook.com
- ([fe80::c90e:deef:6dcf:538c%6]) with mapi id 15.20.8230.008; Wed, 4 Dec 2024
- 08:53:53 +0000
-Message-ID: <7d63c607-dbd7-4109-812a-3936074f231f@uclouvain.be>
-Date: Wed, 4 Dec 2024 09:53:11 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] power: supply: add support for max77759 fuel gauge
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
- <20241202-b4-gs101_max77759_fg-v1-1-98d2fa7bfe30@uclouvain.be>
- <c377f3302c6c282ad826211c859e2b65bb1222cb.camel@linaro.org>
- <9387c0cf-d291-485a-8cd1-1aced7eba14e@uclouvain.be>
- <2883fb0dd22312d5da9039d4fef869276a0bd430.camel@linaro.org>
- <bce22ca8-aed2-41ae-b2ef-fdc71266709a@uclouvain.be>
- <16f9b5f8aed79e9313b4638512896743fa5a8d6d.camel@linaro.org>
-Content-Language: en-US
-From: Thomas Antoine <t.antoine@uclouvain.be>
-In-Reply-To: <16f9b5f8aed79e9313b4638512896743fa5a8d6d.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ZR0P278CA0181.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:44::14) To AS8PR03MB9047.eurprd03.prod.outlook.com
- (2603:10a6:20b:5b6::13)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TIXch/mP"
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241204122404epoutp0237bd04eddae153ca161b23f60d59ca91~N_NmGo9-c2078520785epoutp02C
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  4 Dec 2024 12:24:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241204122404epoutp0237bd04eddae153ca161b23f60d59ca91~N_NmGo9-c2078520785epoutp02C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733315044;
+	bh=QHoak+DAlOsJtw7x9Uk039N2Dy921OWTKaiSGrIqjss=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=TIXch/mPG1e1jcxis0t6Seif/txYXcrF7SVDBWlSJk1ybuxKLlPv4uHYQXr2aI+g/
+	 cbEsg0Ai+etwOxKUnGWlPRbQwjxGNMc2x+pnFiqTO+M7z7c1MvhzUEGbj/wz0BoTSK
+	 umtTQm87AkniOKO3vRshWhTORD4+ZVotCtXiUVlQ=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20241204122404epcas5p40b0d35f3c998ef8d9134e52773f132da~N_NlzaCIE1722817228epcas5p4F;
+	Wed,  4 Dec 2024 12:24:04 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y3Gsb1Jz0z4x9Pv; Wed,  4 Dec
+	2024 12:24:03 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B6.AA.20052.3E940576; Wed,  4 Dec 2024 21:24:03 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241204122402epcas5p2412733eb46d495fadfa30e5af3c5ce83~N_NkY05II2017620176epcas5p2d;
+	Wed,  4 Dec 2024 12:24:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241204122402epsmtrp1839c92f7780120490f36c8bcc3e4589f~N_NkYEtcn0966909669epsmtrp1N;
+	Wed,  4 Dec 2024 12:24:02 +0000 (GMT)
+X-AuditID: b6c32a49-3d20270000004e54-96-675049e3ce50
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9E.B0.18729.2E940576; Wed,  4 Dec 2024 21:24:02 +0900 (KST)
+Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241204122401epsmtip1446cfb0295879960c574501808b4dcc4~N_NirDjZs0260902609epsmtip1E;
+	Wed,  4 Dec 2024 12:24:00 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	krzk+dt@kernel.org, robh@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, alim.akhtar@samsung.com,
+	rosa.pila@samsung.com, Faraz Ata <faraz.ata@samsung.com>
+Subject: [PATCH] arm64: dts: exynosautov920: add DMA nodes
+Date: Wed,  4 Dec 2024 17:53:33 +0530
+Message-ID: <20241204122335.1578-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR03MB9047:EE_|DU0PR03MB9684:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1cd2784b-8fcd-49d2-723b-08dd14412e3c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MnNUN3I3Zk5nY0daTUE3Y0RuVnhJQmMza1BIQmQwb1YyVzRnRG84eW5sYUti?=
- =?utf-8?B?RGkzMjBmcys3Zk1oY000N3pyUUxuYUJtN1BraFhEb0haSUFGK3FYVzV2QXdW?=
- =?utf-8?B?d3dVM1VuV2dSNVYwZ01IaVpacDFqSlRUczBWTkI4Y2ZURnFVbk1KS1d5SC9X?=
- =?utf-8?B?T1lmWXZpVzBlSGZFcGtGR2JFVUxSS2RMdUYwbldtZXhhWStIUmdYQjNrN0JO?=
- =?utf-8?B?azZJUEpRUThlZWpMVE1NaFcyNlBTa0pXYnk4SmRuTXNyeW0xdUpqanVwOHJ1?=
- =?utf-8?B?Z2J1MURleVpscjVjUmxLckwxMTV6UzlOWHl0MW1jMmpHYU4yV2hodTErRW01?=
- =?utf-8?B?NXdIMVprSUhrd2xzLzB0ZkVQVWxRbDVBNkRMTEIwaU1YckhGU2hkbE1WVi9R?=
- =?utf-8?B?d25DcTdkNHhrd0x5emtEcU9taXg1T0N0NWxrYU8wSGl4cDZqOUJLQlkvbTVW?=
- =?utf-8?B?MUYrV3A5TjIvSWFHaDBXdWpteFhDdE43ZmUxYWd2MC9IWVBkY21NVFAyQXJY?=
- =?utf-8?B?SXpjcVdmenB0S01tS2k1SmRmajZSbGlVTE5PdXJBVDlCNHZ2VUtFMG5tbDNo?=
- =?utf-8?B?OHoxcU9YWUdKMmRUR0tFSGpESG4rOGlzUWczZHhOSkVDWWMwcklEOGVNMG9K?=
- =?utf-8?B?TFJIeUZudVBMc1lweDBNbFRiVFRVRkx3dkoraXU0V1dtVTF0emI4OGNaNncv?=
- =?utf-8?B?Yk5ITkZJN0VKSGFqSjdwN2FTWHZZZXd3ekVNVzd6d2IxUnlPWnRxOVdMWTAy?=
- =?utf-8?B?RG8wcDI0Zy9MeWgwU1FFSmtSbnVOQjlDckNNYUJxOEFiSFhGK1p5TWFTYjk0?=
- =?utf-8?B?UU9PYzc2MDI2RTB2UW9iNGpxZFNVZ0dTaU82TVM5WTBQbGRnRTg3dzA3eitl?=
- =?utf-8?B?RkpHMGdlUHpCd0xDK3hFUzRueFRGWFcwQ2hDN1h6WWFndG5yRGJYY3pWUyt3?=
- =?utf-8?B?Z0phQ0NRTU9FNnpqVTZKSGk4dnY4dmQ4QTJ5Z3YvR09uZWgyZ3dRNnVkaVBJ?=
- =?utf-8?B?NWlUMmU2bXE2eFlZVkVyTmRSTEkreCtBWm1NR3R1elQ2ZjIyREMvdnBZc01n?=
- =?utf-8?B?by9QUDFZaWYrQTQyeTNEZkhQM2hod215NVRCdzkwWjRCeGtCL1FGNUZiV1ph?=
- =?utf-8?B?NFVqclhOS24wZkpLV1VjR29XcmF1cjc4MEFtN0dpSEdzT1hpcUczd1Y0Z3Fj?=
- =?utf-8?B?SFRGbGUrWkJLSlQ1TXJxaU1qSlJOZGR1aU9OanhYRHN2blo3d2xxRzBRMnhF?=
- =?utf-8?B?N1lGcFNzMll0d1pZRnhxbmpiaUlQNnZuaXZ4MzQ2a2F5aDAzY0tiK3k0cWlJ?=
- =?utf-8?B?TGJ4Z1ovNjJCajZSbzAya0J4aklZS0RZWlRNdjg3Qnk4aW9ZS0F3VGk4VzQ2?=
- =?utf-8?B?OW5Oemh1WmZUYWdRb1hFMVNlMUZPTHVzTFJJQ2d4WENVMEJvSm1FRkU0dkxX?=
- =?utf-8?B?VnJUMlpuZjFsMnVJbEFlMzZBRjkrdkFEU3pKL0dyUjVmK081SHduL2FEcSt3?=
- =?utf-8?B?WEQ1OUZpQ3ppdnBycXhuUjF0TERyeTdQd0Q0K3RhaEpuVldpc0ZKcmFZdW80?=
- =?utf-8?B?d25JNU8vSmVZVTVhNkRGVk9yS1NzanZIdm92Y243d3o0emVhVE9rdm8rK0Ft?=
- =?utf-8?B?cm43MWhydDRxUXI4S2szNmc4em1nMVd0VkFVaXFPdWdoYmNHZ2NYcy90M2dW?=
- =?utf-8?B?UG1YRm8yWVUrQ2JYTytWY1FlTWZPczM4L3p0OHpoVFNWRVgyOEpKQ2FwUXQ1?=
- =?utf-8?B?S0U3WmtROXBvSVJSdzFxUUJQSXM3eVlaSG5tUlJqWlF2M0lmeUtvU2pNek5t?=
- =?utf-8?B?aTlaaS9sb3hSVmc4UmNrZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR03MB9047.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U2ozTkpUYlB1ZzBvSW1xWExveGRHSHdlaXltb205Wm56aGNRZU9vVHBIT1FQ?=
- =?utf-8?B?RWlhREFLQ255dkJob21xYzZIbFMrNkowZ0Zpb2VzOGMzYit5aGpsWkMvc3g3?=
- =?utf-8?B?aERibXYyTEd3YkxWMnpOY20xZTExblpma2huSXBwVzU0WEo0QkhqNWdkbHVF?=
- =?utf-8?B?eVNlWTZoVGZuY1lNZ05BcDIyOTkzT1hCSFlJVjV2ZWM1YU94U2FadC8rRGdm?=
- =?utf-8?B?c3Y5d0w1ZGVYTmlvMFpMenIxZERVZVBPeDc4VERZZ0lOcnRHNWJwa2cvMklz?=
- =?utf-8?B?ZUZhdkM4R1hFenN4aEdpVXF4UEhMbmpIWU5KejhYZVJuWjJvRFJRTDllajhI?=
- =?utf-8?B?TGl6c1g1NG5Yc3B0c1ViMHA2cng3OCtKVlFtMzkwTGFBWTY3RVUxRVVacktO?=
- =?utf-8?B?V09PUVFaQTlkb2lOMnJSaTF2Sm5senlidVBqTDlEVWc4QUlpQjVXY01Xa0sv?=
- =?utf-8?B?YUF2MjRyYUdPcFdSUTJRMFQyQ2JQdHpUbDNKaUdMRkNsMXVIRStkcVB5cm5r?=
- =?utf-8?B?cEE4Y1U0cklBdDdHbWVKT05iV0svNW02c3dDQmhabkdrekg2eEg4Q3hKbjhs?=
- =?utf-8?B?MFdjNitxb1B1N2RMQWRVcFFkMjVBVkM2R3NVemF3a3hrSzlRb3RpK1ZTNENi?=
- =?utf-8?B?dHRoQnpEelNsT21kUS8rUXQ1OGN4c00zZkNpaUtpa0FzNFM4dUVQQ3lXS0dM?=
- =?utf-8?B?ZHR3eHRxMG1tZzEyeU1FblFkMFU3TzU5cUN0UzAwZWJHUzczdzdMcjQxWnh2?=
- =?utf-8?B?U2xRY1RFenpxd2kxNG9DT1dwTmJVemNyQWh6TWdHbHV6Y1d3Qm9RSzA2enha?=
- =?utf-8?B?eWNDb0IwS29zNW9SMkNrVXVoZ0s0V1QySVAzZG5iUTVsQS9pUnpyTnk4a2pn?=
- =?utf-8?B?ZnFNWVVXMVQxd3pGZWVvZDlESWU2SUdxenI2ck1YNHZuRDBKK1dUbTcrbTc3?=
- =?utf-8?B?Q29WcGVrRU9ydFcyVHZsMVROOHQvb3dHRUY0RDdrLzB6UmYzNVlEYklIdmhr?=
- =?utf-8?B?UTJBM2kyRklRWThOYlVhUEgvRzVHR1lkZHJQSGNoc2ZzK0lITUZpR0lkaUg1?=
- =?utf-8?B?Wnh4STI2SnlmSmxxeTFMY0NlclpKeXQwakNMOUtXc3c4TWtpNHBLOGlsZzJY?=
- =?utf-8?B?cklPWEhvUkxaYnVMbVRYNFRxa3VyMWxHK2pMdFdMejJTQlNIUlAxNGZHekpG?=
- =?utf-8?B?bCtVNVdyZGVPbFZuNWNkYXI4eDlOYThnSWp0UmpUSThRc2U3dE9zUkJYRTRw?=
- =?utf-8?B?SW9vR05UUFVuTU1sZERJRm9qYWF1L3hyNFZnOHVVV0M2N0ppa3JMYWNjVkFF?=
- =?utf-8?B?bmZXbjlZVTlwS1hOcERJa0dzV0tNZWNXbk9qYUJDbHdVWGlYazRHazhZUnRZ?=
- =?utf-8?B?V2FkdlJ4bTJ4NFRmS0dzVUFmSVBCMXV6M3lCSzNWNGYrMkFhaERXcGRzdFdX?=
- =?utf-8?B?UUVzUkJNUUJEWnVWSGhvdnRvMFcxa2FEWmJsRmJCc3ZsQTJqbHVZS3JIcGVk?=
- =?utf-8?B?M01MWjB4QVNSNnV0bTBYbHJOOTdJMTdQVzNOWWpPVHlwcjNBNVNiaWZpZnM1?=
- =?utf-8?B?ck9IYmtOSEVmZFBkajNKa0hSTytXWUVOS1NzRm9QN1hIbDBlbHB1WnhvbUNk?=
- =?utf-8?B?YlBKakVTNUlvc0pOTlVmTUFnQ255VUlYaUg2TEQ1eGNZcHN6dWpoUXJNM3Yv?=
- =?utf-8?B?djllOW1aNlZHaW03RktQMDBmMmV6MzVTaW55TEpBZGswRkVJRDVFODRiRVhF?=
- =?utf-8?B?M2tCTHNzQlBiMEdXZk1tK0FmalY1V05vdmx6RzlpZ2hvT2FsQVFBMjVSWEtG?=
- =?utf-8?B?QzNaaGZZam1pSVJDbEZhS1UwcHdZeUNBUlBlR09qa1VPNWUyK3FtSitLY2I4?=
- =?utf-8?B?QTZiT1pLZ1pRak4yZTlNendsNWJvcG1ycUpyRmxyYWhENC9oODNaTUloWUxY?=
- =?utf-8?B?ZmtJMStyaG1lR29hRXJEWE13MGRPbmRZdlhLaDM5YmozSEtVQzY1Smh3elA2?=
- =?utf-8?B?emY5ay96SGlaYzc0Ni9XNnkza1RCbjVOOFZ5WWVIdVZ4R04vWUFrbklUZm9k?=
- =?utf-8?B?QTdsL3JUakI0dmJTcVNtaGlQL29adE1lTWNXM0E5bmxLRGZnTnFBT3RGWis4?=
- =?utf-8?B?eUc0RkU1MGdwMFV2WDJBVUFMVmFhZ254SktMMlM2VEJVcnJQenJpbWpHZXJ2?=
- =?utf-8?Q?TY2ajRVs98MLVwhlK4iLD/ZLy3Ip+sbq+AVf58F/hKse?=
-X-OriginatorOrg: uclouvain.be
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1cd2784b-8fcd-49d2-723b-08dd14412e3c
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR03MB9047.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2024 08:53:53.9051
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ab090d4-fa2e-4ecf-bc7c-4127b4d582ec
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k10KoZYgtlVbKB56qZSbQxP7BpG2Lc2WOJRvvPfOLVLX7YE57vcePYa7wEIj1UljP/CbojtDwe0lfn8Xmo/SIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR03MB9684
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMKsWRmVeSWpSXmKPExsWy7bCmuu5jz4B0g9PP2S0ezNvGZjH/yDlW
+	i2s3FrJbvJx1j81i0+NrrBYzzu9jsvi/Zwe7xZefD5gdODw2repk89i8pN6jb8sqRo/Pm+QC
+	WKKybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOArlBS
+	KEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUm
+	ZGcsaH7EVjBHrGLj7xb2BsZGoS5GTg4JAROJ5S/3s3QxcnEICexmlJi++QM7hPOJUeLE5h9s
+	EM43Rol7P2+zwbVMWcMKYgsJ7GWUWH81E6LoO6PE32UrGEESbALqEjNvHGEBsUUEMiTmbH0E
+	1sAsUCux5OdHsBphASuJwxs3g9WwCKhKbGn9CWbzClhKzOjdwwyxTFNi7d49TBBxQYmTM5+w
+	QMyRl2jeOhuq5hy7RGt3AYTtIrHr+i6oQ4UlXh3fwg5hS0m87G+Dsn0kJh/9BnQDB5CdIXFn
+	rQhE2F5i9YIzrCBhZqC163fpQ2zik+j9/YQJoppXoqMNGnCqEqcaL0Mtkpa4t+QaK4TtIXGx
+	cxMTJHRiJZ5sa2KZwCg3C8n9s5DcPwth2QJG5lWMkqkFxbnpqcWmBYZ5qeXwmEzOz93ECE59
+	Wp47GO8++KB3iJGJg/EQowQHs5IIb5B2QLoQb0piZVVqUX58UWlOavEhRlNgoE5klhJNzgcm
+	37ySeEMTSwMTMzMzE0tjM0Mlcd7XrXNThATSE0tSs1NTC1KLYPqYODilGph2/Njqkl/3Y8q1
+	ze6Xyg99DglJUk25fSbe+OVmufQF6z0S52imSIh90OrZER3pc85wpaffl83+B/462W66ZNR8
+	6cTC/yF5Dz0LOXbx/WWdHKNz+Uvq9bs3V6ubrMl5xKS7Kac3/+7DfVd4PF/aytxcfWKmgvE5
+	zidFnQyT/xy4H9M82/m1xo309VsnsmUvDFedI3p55QXTkr1cSZwMLvmLivSWOyn8ufsoqYVr
+	bt2WRzWlXzR2/fn4eTf3sVrG+O3vfvwK3bn028emqle3y3LCHy17XstqID9BZNLOnAnu7zha
+	F8/Nmf3me8uzq+oMS9vXvp445Vpf9MLJZwXyjN5/epYxb7f5/PJgN1fWxlXCSkosxRmJhlrM
+	RcWJAHc9vwgGBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPLMWRmVeSWpSXmKPExsWy7bCSnO4jz4B0g7apRhYP5m1js5h/5Byr
+	xbUbC9ktXs66x2ax6fE1VosZ5/cxWfzfs4Pd4svPB8wOHB6bVnWyeWxeUu/Rt2UVo8fnTXIB
+	LFFcNimpOZllqUX6dglcGQuaH7EVzBGr2Pi7hb2BsVGoi5GTQ0LARGL5lDWsXYxcHEICuxkl
+	LjxvY4NISEu8ntXFCGELS6z895wdougro8S13j1gRWwC6hIzbxxhAbFFBHIkXpxpYgIpYhZo
+	ZJTYMb+DCSQhLGAlcXjjZrAiFgFViS2tP8FsXgFLiRm9e5ghNmhKrN27hwkiLihxcuYTsBpm
+	AXmJ5q2zmScw8s1CkpqFJLWAkWkVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZwmGpp
+	7mDcvuqD3iFGJg7GQ4wSHMxKIrxB2gHpQrwpiZVVqUX58UWlOanFhxilOViUxHnFX/SmCAmk
+	J5akZqemFqQWwWSZODilGph8LghdWdhkZPvn8Jnrt7hd5laIcCx7vsfs0b1s1r+/pr38uWNj
+	w9oj89zPR5Zmi0oy9USGZv1rN1qZFmKiaPHmQMrblyKvnizmXynxeeWmOmNjHYdvJ23rE98t
+	by9Xeqe5x1LztP2H/gz/JJuTU+SMz93Te6z237V990m1G/9mFzi9qKqMKtVLrXXPPXnNrV8n
+	vvrt+d3+3CLlr7SOTJBnfjFX8MY60w+Sb39++HvkvDtjrWVa/tGs/fPvbpPJW7PLZu3DoOw5
+	e75kqbWc/NBjUVZyYF/5KZHsx1eFVmV0CbKec8wPkUtYfvZZamXHnc23opx04tNY6rx2cTby
+	fdpVXNyxl9W8MfxS04a5+5iVWIozEg21mIuKEwE39B5lwgIAAA==
+X-CMS-MailID: 20241204122402epcas5p2412733eb46d495fadfa30e5af3c5ce83
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241204122402epcas5p2412733eb46d495fadfa30e5af3c5ce83
+References: <CGME20241204122402epcas5p2412733eb46d495fadfa30e5af3c5ce83@epcas5p2.samsung.com>
 
-On 12/3/24 12:02, André Draszik wrote:
-> On Tue, 2024-12-03 at 11:11 +0100, Thomas Antoine wrote:
->> On 12/3/24 10:31, André Draszik wrote:
->>> On Tue, 2024-12-03 at 10:08 +0100, Thomas Antoine wrote:
->>>> On 12/3/24 07:47, André Draszik wrote:
->>>>>> From: Thomas Antoine <t.antoine@uclouvain.be>
->>>>>>
-> [...]
-> 
->>>>>>  /*
->>>>>>   * Model Gauge M5 Algorithm output register
->>>>>>   * Volatile data (must not be cached)
->>>>>> @@ -369,6 +387,8 @@ static int max1720x_battery_get_property(struct
->>>>>> power_supply *psy,
->>>>>>                       val->strval = max17201_model;
->>>>>>               else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
->>>>>>                       val->strval = max17205_model;
->>>>>> +             else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX77759)
->>>>>> +                     val->strval = max77759_model;
->>>>>>               else
->>>>>
->>>>> This is a 16 bit register, and while yes, MAX172XX_DEV_NAME_TYPE_MASK only
->>>>> cares about the bottom 4 bits, the register is described as 'Firmware
->>>>> Version Information'.
->>>>>
->>>>> But maybe it's ok to do it like that, at least for now.
->>>>
->>>> I thought this method would be ok as long as there is no collision on
->>>> values. I hesitated to change the model evaluation method based on chip
->>>> model, where the max77759 would thus have an hard-coded value and the
->>>> max1720x would still evaluate the register value. I did not do it because
->>>> it led to a lot more changes for no difference.
->>>
->>> Downstream uses the upper bits for max77759:
->>> https://android.googlesource.com/kernel/google-modules/bms/+/refs/heads/android-gs-raviole-mainline/max_m5.h#135
->>>
->>> I don't know what the original max17201/5 report in this register
->>> for those bits, though. Given for max77759 this register returns
->>> the firmware version, I assume the lower bits can change.
->>
->> Based on this datasheet of the max1720x, the upper bits are the revision
->> and the four lower bits are device. So it could change.
->> https://www.analog.com/media/en/technical-documentation/data-sheets/MAX17201-MAX17215.pdf#MAX17201%20DS.indd%3A.213504%3A15892
->>
->> If the four lower bits are not always 0 for the max77759 then I guess it
->> is necessary to change this as it wouldn't work with all max77759.
-> 
-> Maybe the best way forward is to go by the compatible (from DT), and
-> if max77759 to then print a warning if the upper bits are != 0x62 and
-> != 0x63. And maybe even refuse to load in that case.
+ExynosAutov920 SoC has 7 DMA controllers. Two secure DMAC
+(SPDMA0 & SPDMA1) and five non-secure DMAC (PDMA0 to PDMA4).
+Adds the required dt node for the same.
 
-Will implement this for v2, thank you.
+Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
+---
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 63 +++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-Best regards,
-Thomas
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index c759134c909e..e65be0c97f7e 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -193,6 +193,69 @@ gic: interrupt-controller@10400000 {
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		spdma0: dma-controller@10180000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x10180000 0x1000>;
++			interrupts = <GIC_SPI 918 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
++		spdma1: dma-controller@10190000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x10190000 0x1000>;
++			interrupts = <GIC_SPI 917 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
++		pdma0: dma-controller@101A0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x101A0000 0x1000>;
++			interrupts = <GIC_SPI 916 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
++		pdma1: dma-controller@101B0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x101B0000 0x1000>;
++			interrupts = <GIC_SPI 915 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
++		pdma2: dma-controller@101C0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x101C0000 0x1000>;
++			interrupts = <GIC_SPI 914 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
++		pdma3: dma-controller@101D0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x101D0000 0x1000>;
++			interrupts = <GIC_SPI 913 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
++		pdma4: dma-controller@101E0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x101E0000 0x1000>;
++			interrupts = <GIC_SPI 912 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++		};
++
+ 		cmu_peric0: clock-controller@10800000 {
+ 			compatible = "samsung,exynosautov920-cmu-peric0";
+ 			reg = <0x10800000 0x8000>;
+-- 
+2.34.1
+
