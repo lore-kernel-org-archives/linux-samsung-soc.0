@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D21FC7C6;
-	Wed,  4 Dec 2024 15:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D70A199B8;
+	Wed,  4 Dec 2024 15:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324406; cv=none; b=W0hykD/yZLXAiC2eSjXVkhrk8OnspYHOkJa8+pPhqdTbfxfcDcGL/ry2mhzAFnjOh2yOAWTSvHHXKX86DMCbEYzSje1S9rAwML3ugTv373abXGrdYC4EsP9ewPkG7dkV0fl1rAM5+ZOhBn3rVU7rPOo9+nwenMzaFcaKwsIcZJE=
+	t=1733324881; cv=none; b=AANl3gvE9BExveGjar/A/h658Bifz1VCY7qhnRTQEv/jKNUL50uMP19DvBM8stXHPGOsIYyke7N65fJdB9eLWAQQQskghyujYzwPiNffGTywiKm7BUq0E1bTzWXhHCml5EzFykEjXIxBQsbeQgXtoye3G9m67UDTEx4xYfTvvtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324406; c=relaxed/simple;
-	bh=Xkir4c9pjGx9lAg+oTZfmHXzCTXKE5W+j5Z+hVglI5U=;
+	s=arc-20240116; t=1733324881; c=relaxed/simple;
+	bh=0kt2C/BPb11YSq+EhEeua8KQDxctV1/JE1X1KHLEYDA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxreK6aSVvFe9ieq1mghL0jbE5zQ721Bm2awHK1R9GyEeZqkKbQ+t7U3Gnj0mzlAPwFQwUXgvYs4wZJ5NWLm4ydkoqD1vQ9rQ12BcimhIVAcYivZVcM4iTHvKqgvtKgQbq9VdBUlzQj6nM6b6WDYoMjUmW/aWxcD5jIzIpc9Q8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo7UBX96; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=IM5oMxd6uHJfW36iBARwenwd9wFT9IzaisZ1FwbG3TThztDF7yY+fW19ZeVw18qIj5BDWNipWmqYo5H1yFuWToKGM748yl5cGuiDEmZAV4pdJQCYE82ufuRTpO10xr/ZG7WbvKn07tTDy61+ZrUFy9URdocSbXXd4zsGwmrMhiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkEu+Xic; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo7UBX96"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2D0C4CECD;
-	Wed,  4 Dec 2024 15:00:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkEu+Xic"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68516C4CECD;
+	Wed,  4 Dec 2024 15:08:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733324406;
-	bh=Xkir4c9pjGx9lAg+oTZfmHXzCTXKE5W+j5Z+hVglI5U=;
+	s=k20201202; t=1733324880;
+	bh=0kt2C/BPb11YSq+EhEeua8KQDxctV1/JE1X1KHLEYDA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xo7UBX96c7oKyl5E7KZcIqRE76ZpMiwsKs9EejxH5cyzudDkdN2RgIxHNYgVOCGeR
-	 Un7WeqtDYPR+ent/Qye4fBDcANa89ae7Jwi9pCTkxKvUG78wYnU39RZFNXM5v291j+
-	 kP5oy3MCx3gyc76zqPHUGcsftsfru/0fRn0OovMuDQwycZNOxAmuy+gr4TQofL9hO1
-	 AqaCT5Lyqsi2G438+RBbuqGBP+b7LCjUIIaHk6BDPgE+cS/BMwPt+nm2h1ABRgzrvS
-	 eRdArIuyT0HD2z/klQB+q0oiyfaZzXXXADi+1urK3OvrxVBJr+YvsYTvagAIStKabl
-	 IRL7E2IWq/B6g==
-Date: Wed, 4 Dec 2024 09:00:04 -0600
+	b=nkEu+XicCILr1p4dve1n8IUDmckfslbj50hNbRBSVCy1ZeA+s2/RPB++Pt0GQpSkd
+	 5Im3F4iNCvBlJTLMierdCw9aFJmC+ArBXI8mNoxMSu5Iggv3PdgcRQYBWnCD9QZaHn
+	 OmAWy0UwfWDeQCu0BvNrKZVMeb5E/wAdLEozIavQJlCifk/Q3V0MptnU9vaQncyFP8
+	 yRfPfvVuCCoDBhJ2y8fxCarXhjTwjqeOT/69+2F23AnSg3wI17wmuIGWWRThSnFe5b
+	 WeBMmSu7pIT+3CH23D5hSayds/q3SWmzX5C5efGPt9saYir1pe6I9e1fh6rvXNsaCu
+	 cNFUFCO8ZW0rw==
+Date: Wed, 4 Dec 2024 09:07:58 -0600
 From: Rob Herring <robh@kernel.org>
 To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>,
@@ -44,11 +44,11 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] dt-bindings: phy: samsung,usb3-drd-phy: align to
- universal style
-Message-ID: <20241204150004.GA217165-robh@kernel.org>
+Subject: Re: [PATCH v2 2/8] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
+ require Type-C properties
+Message-ID: <20241204150758.GA220712-robh@kernel.org>
 References: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
- <20241203-gs101-phy-lanes-orientation-phy-v2-1-40dcf1b7670d@linaro.org>
+ <20241203-gs101-phy-lanes-orientation-phy-v2-2-40dcf1b7670d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -58,28 +58,65 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-1-40dcf1b7670d@linaro.org>
+In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-2-40dcf1b7670d@linaro.org>
 
-On Tue, Dec 03, 2024 at 12:13:49PM +0000, André Draszik wrote:
-> In [1], Rob pointed out that we should really be separating properties
-> with blank lines in between, which is universal style. Only where
-> properties are booleans, empty lines are not required.
-
-In the subject, just say 'add blank lines between DT properties'. 
-'universal style' could be anything.
-
+On Tue, Dec 03, 2024 at 12:13:50PM +0000, André Draszik wrote:
+> orientation-switch is the standard declaration to inform the Type-C mux
+> layer that a remote-endpoint is capable of processing orientation
+> change messages.
 > 
-> Do so.
+> The USB PHY on gs101 needs to be configured based on the orientation of
+> the connector. For that the DTS needs a link between the phy's port and
+> a TCPCi, and we'll need to inform the phy driver that it should handle
+> the orientation (register a handler).
 > 
-> Link: https://lore.kernel.org/all/20240711212359.GA3023490-robh@kernel.org/ [1]
+> Update the schema to enforce that by requiring the orientation-switch
+> and port properties on gs101 (only). We disallow orientation-switch on
+> all other supported platforms, since other versions of this phy (or its
+> system integration) don't currently support or even need it.
+> 
+> Even though this new required gs101 property is an ABI break, the
+> intention for the driver is to behave as before if it's missing
+> (meaning for gs101 it will work in SS mode in one orientation only).
+> Other platforms are not affected.
+> 
 > Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 > Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > 
 > ---
 > v2:
+> * squash original patches #2 and #3
+> * actually disallow orientation-switch on !gs101 (not just optional) (Conor)
+> * update commit message to clarify that the intention for the driver is
+>   to work with old and new DTS (Conor)
 > * collect tags
 > ---
->  .../devicetree/bindings/phy/samsung,usb3-drd-phy.yaml     | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+>  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> index 1f8b35917b11..c1d16254aeec 100644
+> --- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
+> @@ -51,6 +51,9 @@ properties:
+>    "#phy-cells":
+>      const: 1
+>  
+> +  orientation-switch:
+> +    $ref: /schemas/usb/usb-switch.yaml#/properties/orientation-switch
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Generally, we don't reference things at a property level, but node 
+level. You can just do:
+
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: google,gs101-usb31drd-phy
+    then:
+      $ref: /schemas/usb/usb-switch.yaml#
+
+
+And switch additionalProperties with unevaluatedProperties.
+
+Rob
