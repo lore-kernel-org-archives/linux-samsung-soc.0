@@ -1,100 +1,85 @@
-Received: from out-02.smtp.spacemail.com (out-02.smtp.spacemail.com [63.250.43.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B051B4124;
-	Wed,  4 Dec 2024 14:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D21FC7C6;
+	Wed,  4 Dec 2024 15:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324392; cv=none; b=exuo/sg1kpPGM36dlUERFMuZuDNds50nho1ok5zECYT7unOBHY0uI0lw3lJSK+tg/q4l6cLoBwrhCTlb1aA4q12CYV2btjwQD9oSKUTikIlKCeA0GdJ+UGHkvDkIlT3Ft8y2YchPkOGHejIOFDPoxZT4FrkqEQ3SB92LlFUro3k=
+	t=1733324406; cv=none; b=W0hykD/yZLXAiC2eSjXVkhrk8OnspYHOkJa8+pPhqdTbfxfcDcGL/ry2mhzAFnjOh2yOAWTSvHHXKX86DMCbEYzSje1S9rAwML3ugTv373abXGrdYC4EsP9ewPkG7dkV0fl1rAM5+ZOhBn3rVU7rPOo9+nwenMzaFcaKwsIcZJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324392; c=relaxed/simple;
-	bh=BOopPzcToEprpdw2LIS55Y82go8hBPaS/MvQht0hXKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iNMN+VwE4MUpY5TFKEbrmeWerVJxPIk173+MURfiXhBqbfdqjkOQ5dQf0GgTuK3qIcbBVM/HYbrKP1DwXFWHG9dLjg72ZoJ0rw/sBPqBw/zfiD/mD+d5o9CF6VqGweors6CoHIcNoB5gJjM4R1cwgx9gc6yBg8BADB/2gKmGyAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=CXJSZNLB; arc=none smtp.client-ip=63.250.43.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+	s=arc-20240116; t=1733324406; c=relaxed/simple;
+	bh=Xkir4c9pjGx9lAg+oTZfmHXzCTXKE5W+j5Z+hVglI5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxreK6aSVvFe9ieq1mghL0jbE5zQ721Bm2awHK1R9GyEeZqkKbQ+t7U3Gnj0mzlAPwFQwUXgvYs4wZJ5NWLm4ydkoqD1vQ9rQ12BcimhIVAcYivZVcM4iTHvKqgvtKgQbq9VdBUlzQj6nM6b6WDYoMjUmW/aWxcD5jIzIpc9Q8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo7UBX96; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="CXJSZNLB"
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y3LKG0FvQz4wVY;
-	Wed, 04 Dec 2024 14:59:46 +0000 (UTC)
-Received: from localhost.localdomain (83.21.102.241.ipv4.supernova.orange.pl [83.21.102.241])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y3LK710qhz8sWX;
-	Wed,  4 Dec 2024 14:59:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733324380;
-	bh=BOopPzcToEprpdw2LIS55Y82go8hBPaS/MvQht0hXKk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CXJSZNLBlXP7xJOKeyw91iiFtUVza9hZIAr2xPPcF3+PDekLkrwDiNJa+LY1c54vl
-	 D/noGHbrxvO2Oels2LpVvzzqJw0/xZAfWvMz9cxODtccoCeoEbiXlxgN7RUUClfui4
-	 GLeXHMCp5BWVF8wfq1VrswtdR7pjzPoEAmuwkzqBrGkTAQMU93fj3bJgfWGtHlk7R7
-	 lSuaIcVQJ8Q6hn65uOxoSXtr1AoRL+3NvVOYMp84JbogPuoC0F9ebPok8FOblq3j8P
-	 Oy9RlbJ8uQfSTJxk3ILitflezCUYLKi6LW78yLJFNZzSwN9QIx2wTBs8kQiSU4Fp/f
-	 ikjpsNqC3IkQg==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo7UBX96"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2D0C4CECD;
+	Wed,  4 Dec 2024 15:00:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733324406;
+	bh=Xkir4c9pjGx9lAg+oTZfmHXzCTXKE5W+j5Z+hVglI5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xo7UBX96c7oKyl5E7KZcIqRE76ZpMiwsKs9EejxH5cyzudDkdN2RgIxHNYgVOCGeR
+	 Un7WeqtDYPR+ent/Qye4fBDcANa89ae7Jwi9pCTkxKvUG78wYnU39RZFNXM5v291j+
+	 kP5oy3MCx3gyc76zqPHUGcsftsfru/0fRn0OovMuDQwycZNOxAmuy+gr4TQofL9hO1
+	 AqaCT5Lyqsi2G438+RBbuqGBP+b7LCjUIIaHk6BDPgE+cS/BMwPt+nm2h1ABRgzrvS
+	 eRdArIuyT0HD2z/klQB+q0oiyfaZzXXXADi+1urK3OvrxVBJr+YvsYTvagAIStKabl
+	 IRL7E2IWq/B6g==
+Date: Wed, 4 Dec 2024 09:00:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] arm64: dts: exynos990: Add pmu and syscon-reboot nodes
-Date: Wed,  4 Dec 2024 15:55:59 +0100
-Message-ID: <20241204145559.524932-3-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
-References: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Roy Luo <royluo@google.com>, kernel-team@android.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] dt-bindings: phy: samsung,usb3-drd-phy: align to
+ universal style
+Message-ID: <20241204150004.GA217165-robh@kernel.org>
+References: <20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org>
+ <20241203-gs101-phy-lanes-orientation-phy-v2-1-40dcf1b7670d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241203-gs101-phy-lanes-orientation-phy-v2-1-40dcf1b7670d@linaro.org>
 
-Add PMU syscon, and syscon-reboot nodes to the Exynos990 dtsi.
+On Tue, Dec 03, 2024 at 12:13:49PM +0000, André Draszik wrote:
+> In [1], Rob pointed out that we should really be separating properties
+> with blank lines in between, which is universal style. Only where
+> properties are booleans, empty lines are not required.
 
-Reboot of the Exynos990 SoC is handled by setting bit(SWRESET_TRIGGER[1])
-of SWRESET register (PMU + 0x3a00).
+In the subject, just say 'add blank lines between DT properties'. 
+'universal style' could be anything.
 
-Tested using the "reboot" command.
+> 
+> Do so.
+> 
+> Link: https://lore.kernel.org/all/20240711212359.GA3023490-robh@kernel.org/ [1]
+> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> 
+> ---
+> v2:
+> * collect tags
+> ---
+>  .../devicetree/bindings/phy/samsung,usb3-drd-phy.yaml     | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
----
- arch/arm64/boot/dts/exynos/exynos990.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-index c1986f00e443..2619f821bc7c 100644
---- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-@@ -227,6 +227,20 @@ wakeup-interrupt-controller {
- 			};
- 		};
- 
-+		pmu_system_controller: system-controller@15860000 {
-+			compatible = "samsung,exynos990-pmu",
-+				     "samsung,exynos7-pmu", "syscon";
-+			reg = <0x15860000 0x10000>;
-+
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x3a00>; /* SWRESET */
-+				mask = <0x2>; /* SWRESET_TRIGGER */
-+				value = <0x2>;
-+			};
-+		};
-+
- 		pinctrl_cmgp: pinctrl@15c30000 {
- 			compatible = "samsung,exynos990-pinctrl";
- 			reg = <0x15c30000 0x1000>;
--- 
-2.45.2
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
