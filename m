@@ -1,139 +1,142 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02C418D620
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 06:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B6F2391AB;
+	Thu,  5 Dec 2024 07:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733379743; cv=none; b=J0htuAKTCMqBgQZVNLf0e7lj950M0C2KJxcoluA0f33JFScXRgX4JyymLWH7+ncQha9qmDxYGMQWDYWH8fKxxwq+Pix9hCrED6nv7ZzB89DBMIbz4aN1Q0QiUkEQeDBRb7Cee+2SIr9rUjBdh4/z8TTdJR6/Pn6hYk6jz6Rikm4=
+	t=1733383159; cv=none; b=ILvyh+3c04xPi8Brwm2eC5PWVYWoppj2J1G41YyYUMqD8eXI6BDdglfJUBtqN2pgiIiUqWfQRMqm37GMoRpxzqKTNKza993gFhxzMe6wl8cfsX9UntI4U679+nIbJ0XLPY9fP+sQKMRiVF+2EJtOhDfliAVAWAj+MqVR7D1rUK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733379743; c=relaxed/simple;
-	bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h9qpxtijBw/HKXymGZLld3dNMSeS7e+1v08e/BEeSt4RjIH/ruyMSWRCqJ0YOaC4l+1TRZoHQ5QqvgbV93fSYA4GLtxDlro3VyrosDxkXAF/yW1ZoWCjYmASIpEcxPC8vTrTQ6cWZGzllBA0CrKoeW5dtcPLN4pKpnydC7YkMqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0Lxr09E; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733383159; c=relaxed/simple;
+	bh=YhQa/Ahbqqo1MzvJ5iZ47+nHNgHY+pg+hLM7s+GXQfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VpODz947JwlRjUfNHgUOFg1OxB1Od0+lPCIyMNDG4aAzs3vjGWcc594I/2Q3Ocnq7sV4GQS/P+to3NFgbqxzEgD8IO8UeLDyKaqB+U3eXiubOson7Ct8TgmTWVIDeduvKMoN4cB//VBkoQ2z3SXfvuf4rzcw9Q4iym91juasm8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOodXTJR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0Lxr09E"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e1f12c82so366749f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2024 22:22:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733379740; x=1733984540; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
-        b=F0Lxr09Eak/GQOOtKyld0TH0mqp9lKCKMeFYoQy5C38t/jyhTIfeqOqlCPDyxW2idp
-         cV5prbbduYU9eMw5+en+nvAC384BJX83WxO5uM+ycbQc7HOs1bthBHKKFiBzN54Ym+9a
-         stqvPQ/mP+M4Aa1FDarvd9cOuLF8ncFDRcqi4nWcou9o3JYITTVRy4eQiV9pZcHl23dg
-         hsaOBu01gHSTJ1fhokbY8n7WUcMnsQRMrO8+MUgL3szPivTnn0IbbwAxrG5h/u7hIn6j
-         ZiRiEsKg74IfhxnJ1B0MBeK5HmvC/J3zOOKyITXdJaaDgrKYRRqN8NInvIkDqTJ8b3O0
-         r+2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733379740; x=1733984540;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
-        b=t6eSgkeDQjfYSPZe0+rpTz7pGxNVuf1xnI3w6douEXDgF/wtNcCMgoaiDf0R18u6N1
-         otwkB6fQjoBTTkSocEOd4XDMw2Fv9uiGcjEVcUshJTsLM+K/CnxZFgKpVBAym22sP1Yf
-         APNg1XMPa2n1l+aHmAKp5BGne4hWt9s2+dLtLN503n5Mr7DBBo+cuVayzTrs9oLabFGB
-         90uoM+eFX7Bf1pT4sJg0gTWcSnila7N+cVXmW85VdG4Anwp5WLXvuBUDYFlILWKkvvgM
-         8jJ0nl6ziF2tACCcFVRqBw4ZqHTFe8hhWEtnka793fYUM1IdwqbHgB9apoANTJ0hRiWX
-         oYcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaDtAbCVdyQKVrg/3RDv3Wgeg1UBX8mMPcUGRHgU/8g9Q7DHzO68npT/1G8Yvsk3EIA0yaJEfMve3GbMLwzN4Yow==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOUuYLcAWY3RXtOYMxSh1gueY/jjOYdhYr5DdEJ0aOrGiUZpDG
-	exxdY5NI+Q8oCWIAJuZwEM7NnUs6VQX3VEN3fAebP89FlY16jib0BvD6yQZEvPw=
-X-Gm-Gg: ASbGncvKAMQrY86Oq0d6Uy4uUHaIZdwpBQgtmrflhVpSQ8o31t1NK4IjwahM8j5z2Pu
-	1dFmZmHytdQ9UXVFKdghaewMCpaCZpH0Rs/gAcHhEAF59HuxmeHLM6dDYpxSRRRhn4LQvH1MDa8
-	a6ln7kjEi+lPlxJaAAa3ilCBfjpXaSyvgEhmBz6J6L2McJ4sHWwcVkFKQxTWeD2y0B8Tts9jGB+
-	ETYdqyud8VMdjIlg0tKs6FmqercmLHoiNTMPUQ67C6T6aboQdfttQ==
-X-Google-Smtp-Source: AGHT+IGp/jNJTmdaFQ6E6rKRxd5mOl5DWkdNmDAnwmLFHgFS6wCHCx0RvANhN0Zro7KAfaQqmMGFCA==
-X-Received: by 2002:a05:6000:1a86:b0:385:ef8e:a652 with SMTP id ffacd0b85a97d-385fd43c331mr9424928f8f.56.1733379739965;
-        Wed, 04 Dec 2024 22:22:19 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52732casm49399175e9.13.2024.12.04.22.22.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 22:22:19 -0800 (PST)
-Message-ID: <2a20b243ade39fa240f75baf22a13f02239e3411.camel@linaro.org>
-Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
- and don't require nvme address
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
- <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
- <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
- Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Date: Thu, 05 Dec 2024 06:22:18 +0000
-In-Reply-To: <5281f86d-6917-4f4e-b85d-70502a24c5bd@uclouvain.be>
-References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
-	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
-	 <e23721ebd766f410103ddfb8705f3d7d6e5ae3e9.camel@linaro.org>
-	 <575b3275-b2fa-4e5c-bb6b-759394b02e18@uclouvain.be>
-	 <30b0995903fb7db3f866d1304783d878f563fe2f.camel@linaro.org>
-	 <5281f86d-6917-4f4e-b85d-70502a24c5bd@uclouvain.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOodXTJR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBAEAC4CED1;
+	Thu,  5 Dec 2024 07:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733383157;
+	bh=YhQa/Ahbqqo1MzvJ5iZ47+nHNgHY+pg+hLM7s+GXQfM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vOodXTJRjENzGZmW4dN6QDMBe1SIhoLaGR6QHpAXpaOvkzXJhbB6WxcRCIli2XsTV
+	 sOC5zOnxmwOPtIrjovbUFHkRY5JYGC3JQIENyewC5ONw7xPpLGS6MP6u6+98CB24+t
+	 vzkmv57JNipMiZYj5jodWj8IEnWak3uur8zNtGULwAkNTIYwhCbdkDnZp7Ez94Vvnz
+	 jPUzGjfdZZSCNre0MKcRbaIlNRVx+2+BKWaY5DAPQEpJIe3dkaZGd5rIez0hALNyrz
+	 5nHUm0G2b2Vbr+jZdRKJYKCDHGITb4EfsvbxIf3lJKp/WZFhaYotgzDASe6JZ1MjH8
+	 yRM2UhceK97jg==
+Message-ID: <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
+Date: Thu, 5 Dec 2024 08:19:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
+To: =?UTF-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
+Cc: 'Guenter Roeck' <linux@roeck-us.net>, 'Rob Herring' <robh@kernel.org>,
+ 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
+ 'Conor Dooley' <conor+dt@kernel.org>, 'Alim Akhtar'
+ <alim.akhtar@samsung.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20241021063903.793166-1-trunixs.kim@samsung.com>
+ <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
+ <20241021063903.793166-4-trunixs.kim@samsung.com>
+ <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
+ <20241107103331.GA4818@www.linux-watchdog.org>
+ <589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
+ <20241107113325.GA5284@www.linux-watchdog.org>
+ <c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
+ <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-12-04 at 14:13 +0100, Thomas Antoine wrote:
-> On 12/3/24 11:40, Andr=C3=A9 Draszik wrote:
-> > On Tue, 2024-12-03 at 11:23 +0100, Thomas Antoine wrote:
-> > > On 12/3/24 08:12, Andr=C3=A9 Draszik wrote:
-> > > > On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrot=
-e:
-> > > > > From: Thomas Antoine <t.antoine@uclouvain.be>
-> > > > >=20
-> > > > > As the Maxim max77759 fuel gauge has no non-volatile memory slave=
- address,
-> > > > > make it non-obligatory. Except for this, the max77759 seems to be=
-have the
-> > > > > same as the max1720x.
-> > > >=20
-> > > > What about the battery characterization tables? Aren't they needed =
-for
-> > > > correct reporting?
+On 05/12/2024 01:28, 김태완 wrote:
+> Hi Krzysztof,
+> 
+>> On 07/11/2024 12:33, Wim Van Sebroeck wrote:
+>>>>> Seems like you are having a hard day.
+>>>>> The 3 patches are dropped. I presume that you will take them all
+>> through your tree then?
+>>>>
+>>>> I meant only this one patch, not entire patchset. The bindings and
+>>>> watchdog driver are for you. I commented only about this patch here -
+>> DTS.
+>>>>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> I added the first two patches again. Even when it sounds more logical to
+>> me to keep the 3 together.
+>>
+>> Thank you.
+>>
+>>> But that's a never ending discussion, so we won't go into that :-).
+>>
+>> DTS is hardware description independent from Linux, therefore always goes
+>> separate way than Linux drivers.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> I found that the first two patches have been added to the linux-next git, 
+> but the last patch has not yet been reviewed.
+> 
+> I would appreciate it if you could take a look at this patch.
 
-[...]
-
-> >=20
-> I looked into it. The probe function launches a delay work
-> max1720x_model_work which will try multiple times to run
-> max1720x_model_load which leads to
-> max_m5_load_gauge_model -> max_m5_update_custom_model
->=20
-> This last function writes 0x0059 to 0x62 and 0x00c4 to 0x63 which unlocks
-> the addresses from 0x80 to 0xaf.
-
-OK. The regmap I had proposed was excluding those based on the
-datasheet I have, but you probably noticed.
-
-[...]
-
-> If it is indeed the case and that all of those are equivalent to their
-> max1720x counterpart, I think the management of those values should be
-> added in another patch which implements it for both the max1720x (and pos=
-sibly the
-> max77759) as the mainline driver does not do anything with those values
-> currently.
-
-Thanks for the analysis! And yes, I agree.
-
-Adding new required properties to a DT binding is an ABI break,
-therefore I was trying to ensure the binding is complete from
-the start.
-
-Cheers,
-Andre'
-
+Since this patch was applied, I dropped from my queue. I don't have it
+in my inbox anymore. Please rebase, resolve any comments and resend.
+Best regards,
+Krzysztof
