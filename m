@@ -1,164 +1,139 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670C06A33F
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 01:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02C418D620
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 06:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733360902; cv=none; b=NrC6fXFom82Q257J6vrH5+L8MbPRLW1dUzde64n+mSWqJRhBXgkXWTwi/8+91TYyNqxmsZBblSMS9R6DWKnhQ9bIlNbRLk6J4KjjCaZv1wgcTc/D8AUaLx9L3u4r8jBOA7MRDNw+cGapLPSkpQoY+yDxNsR42MrAwPhHRnOIsq8=
+	t=1733379743; cv=none; b=J0htuAKTCMqBgQZVNLf0e7lj950M0C2KJxcoluA0f33JFScXRgX4JyymLWH7+ncQha9qmDxYGMQWDYWH8fKxxwq+Pix9hCrED6nv7ZzB89DBMIbz4aN1Q0QiUkEQeDBRb7Cee+2SIr9rUjBdh4/z8TTdJR6/Pn6hYk6jz6Rikm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733360902; c=relaxed/simple;
-	bh=Igw5Gv0p/mebWCaIigY/B9OQv1AhAHonhauAbiRGLZM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=XcbdRngukT6SxE5+qlFP9dAhb6mVE6OP+4XTr75SMMbteb1vdmVmsQJytXTxsr9dkHq2EQepPlQJdJvXvpH7tODEf6PTY6ZVX5x8WdWDXtoDRC8H7K3xhl/mEkj55pVn5tDjOc84QmWS2FrzymW/Yfl20p0pyAwh2Wq+QLPomW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=h4qJToKg; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1733379743; c=relaxed/simple;
+	bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h9qpxtijBw/HKXymGZLld3dNMSeS7e+1v08e/BEeSt4RjIH/ruyMSWRCqJ0YOaC4l+1TRZoHQ5QqvgbV93fSYA4GLtxDlro3VyrosDxkXAF/yW1ZoWCjYmASIpEcxPC8vTrTQ6cWZGzllBA0CrKoeW5dtcPLN4pKpnydC7YkMqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0Lxr09E; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h4qJToKg"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241205010816epoutp04ce5fc1d045e02d7afe9e47f8992c6423~OIo00I92T3142231422epoutp04n
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 01:08:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241205010816epoutp04ce5fc1d045e02d7afe9e47f8992c6423~OIo00I92T3142231422epoutp04n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733360896;
-	bh=YhVkkhykF8V+VMNYVyZo7kab5J5PPxq7Kvz1Fr0GRcM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=h4qJToKgdEfRy6LdmVszjlgVJpqfANUKTlviOgMjNncRLbdFp9Szmcv7sXX1T3s/v
-	 s5PS2EuRd7a1hOIo/qRB3eY9SN54QGIs4FBOvma2DNETUSmzJwLAfJBhcgMVXXqW1P
-	 u+yXFlb8Vp731/pD/14II2YTwZV8mCSl6Zrzcl5w=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241205010815epcas5p1c94cd6495ae9743792e12021bc99147b~OIo0RYwT11233112331epcas5p1x;
-	Thu,  5 Dec 2024 01:08:15 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y3bqL0sXcz4x9Q8; Thu,  5 Dec
-	2024 01:08:14 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E5.63.20052.CFCF0576; Thu,  5 Dec 2024 10:08:12 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241205010811epcas5p11d9ff08741bedccc9b0c919bb74d4c78~OIowqoa943092230922epcas5p1M;
-	Thu,  5 Dec 2024 01:08:11 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241205010811epsmtrp23ea566f2f861aeda7d030bb21298386d~OIowpz7p50201702017epsmtrp26;
-	Thu,  5 Dec 2024 01:08:11 +0000 (GMT)
-X-AuditID: b6c32a49-3fffd70000004e54-7d-6750fcfc5ed8
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	20.85.18729.BFCF0576; Thu,  5 Dec 2024 10:08:11 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241205010810epsmtip1e1ed17a39d5a905c339d24f4d11452b6~OIovZjV250608906089epsmtip1F;
-	Thu,  5 Dec 2024 01:08:10 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Igor Belwon'" <igor.belwon@mentallysanemainliners.org>, "'Rob
-	Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
-	"'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20241204145559.524932-2-igor.belwon@mentallysanemainliners.org>
-Subject: RE: [PATCH v2 1/2] dt-bindings: soc: samsung: exynos-pmu: Add
- exynos990-pmu compatible
-Date: Thu, 5 Dec 2024 06:38:09 +0530
-Message-ID: <0f2401db46b2$2753d4d0$75fb7e70$@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0Lxr09E"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e1f12c82so366749f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2024 22:22:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733379740; x=1733984540; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
+        b=F0Lxr09Eak/GQOOtKyld0TH0mqp9lKCKMeFYoQy5C38t/jyhTIfeqOqlCPDyxW2idp
+         cV5prbbduYU9eMw5+en+nvAC384BJX83WxO5uM+ycbQc7HOs1bthBHKKFiBzN54Ym+9a
+         stqvPQ/mP+M4Aa1FDarvd9cOuLF8ncFDRcqi4nWcou9o3JYITTVRy4eQiV9pZcHl23dg
+         hsaOBu01gHSTJ1fhokbY8n7WUcMnsQRMrO8+MUgL3szPivTnn0IbbwAxrG5h/u7hIn6j
+         ZiRiEsKg74IfhxnJ1B0MBeK5HmvC/J3zOOKyITXdJaaDgrKYRRqN8NInvIkDqTJ8b3O0
+         r+2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733379740; x=1733984540;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=635HXEH9z9+euuYtdUWAXhck3oezPbylgKy1CXvtRrE=;
+        b=t6eSgkeDQjfYSPZe0+rpTz7pGxNVuf1xnI3w6douEXDgF/wtNcCMgoaiDf0R18u6N1
+         otwkB6fQjoBTTkSocEOd4XDMw2Fv9uiGcjEVcUshJTsLM+K/CnxZFgKpVBAym22sP1Yf
+         APNg1XMPa2n1l+aHmAKp5BGne4hWt9s2+dLtLN503n5Mr7DBBo+cuVayzTrs9oLabFGB
+         90uoM+eFX7Bf1pT4sJg0gTWcSnila7N+cVXmW85VdG4Anwp5WLXvuBUDYFlILWKkvvgM
+         8jJ0nl6ziF2tACCcFVRqBw4ZqHTFe8hhWEtnka793fYUM1IdwqbHgB9apoANTJ0hRiWX
+         oYcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVaDtAbCVdyQKVrg/3RDv3Wgeg1UBX8mMPcUGRHgU/8g9Q7DHzO68npT/1G8Yvsk3EIA0yaJEfMve3GbMLwzN4Yow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOUuYLcAWY3RXtOYMxSh1gueY/jjOYdhYr5DdEJ0aOrGiUZpDG
+	exxdY5NI+Q8oCWIAJuZwEM7NnUs6VQX3VEN3fAebP89FlY16jib0BvD6yQZEvPw=
+X-Gm-Gg: ASbGncvKAMQrY86Oq0d6Uy4uUHaIZdwpBQgtmrflhVpSQ8o31t1NK4IjwahM8j5z2Pu
+	1dFmZmHytdQ9UXVFKdghaewMCpaCZpH0Rs/gAcHhEAF59HuxmeHLM6dDYpxSRRRhn4LQvH1MDa8
+	a6ln7kjEi+lPlxJaAAa3ilCBfjpXaSyvgEhmBz6J6L2McJ4sHWwcVkFKQxTWeD2y0B8Tts9jGB+
+	ETYdqyud8VMdjIlg0tKs6FmqercmLHoiNTMPUQ67C6T6aboQdfttQ==
+X-Google-Smtp-Source: AGHT+IGp/jNJTmdaFQ6E6rKRxd5mOl5DWkdNmDAnwmLFHgFS6wCHCx0RvANhN0Zro7KAfaQqmMGFCA==
+X-Received: by 2002:a05:6000:1a86:b0:385:ef8e:a652 with SMTP id ffacd0b85a97d-385fd43c331mr9424928f8f.56.1733379739965;
+        Wed, 04 Dec 2024 22:22:19 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52732casm49399175e9.13.2024.12.04.22.22.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 22:22:19 -0800 (PST)
+Message-ID: <2a20b243ade39fa240f75baf22a13f02239e3411.camel@linaro.org>
+Subject: Re: [PATCH 2/4] dt-bindings: power: supply: add max77759-fg flavor
+ and don't require nvme address
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Thomas Antoine <t.antoine@uclouvain.be>, Sebastian Reichel
+ <sre@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Dimitri Fedrau
+ <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Date: Thu, 05 Dec 2024 06:22:18 +0000
+In-Reply-To: <5281f86d-6917-4f4e-b85d-70502a24c5bd@uclouvain.be>
+References: <20241202-b4-gs101_max77759_fg-v1-0-98d2fa7bfe30@uclouvain.be>
+	 <20241202-b4-gs101_max77759_fg-v1-2-98d2fa7bfe30@uclouvain.be>
+	 <e23721ebd766f410103ddfb8705f3d7d6e5ae3e9.camel@linaro.org>
+	 <575b3275-b2fa-4e5c-bb6b-759394b02e18@uclouvain.be>
+	 <30b0995903fb7db3f866d1304783d878f563fe2f.camel@linaro.org>
+	 <5281f86d-6917-4f4e-b85d-70502a24c5bd@uclouvain.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGGNHhzN/gxjLnIJKtzBVvnrIc1QgI9EESvAdNXXoqzYHgBEA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmhu6fPwHpBn2rpC3W7D3HZDH/yDlW
-	i2v7Z7FYvJx1j81i0+NrrBaXd81hs5hxfh+Txf89O9gdODw2repk89i8pN7j4fZDbB6fN8kF
-	sERl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAXaGk
-	UJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpM
-	yM7417SZpWAub8XbvX3sDYw3uboYOTkkBEwknh67y9zFyMUhJLCbUeLopfNMEM4nRon1L+ax
-	gVQJCXxjlDi2yRam48mTVkaIor2MEnNWTWSHcF4wSmxdd5cVpIpNQFdix+I2NpCEiMBORokN
-	O+eDzWUW6AdyvrwAq+IU8JV4eH4JO4gtLJAoMX31MSYQm0VARWL3z5ksIDavgKXE575zjBC2
-	oMTJmU/A4swC8hLb385hhrhJQeLn02VgM0UEnCSefLwEVSMu8fLoEbDzJASmckg0PrvJCtHg
-	IrH22WN2CFtY4tXxLVC2lMTnd3vZIOxsieMXZ0HZFRLdrR+hauwldj66CbSAA2iBpsT6XfoQ
-	u/gken8/YQIJSwjwSnS0CUFUq0o0v7vKAmFLS0zs7oa6wEPi8/cPzBMYFWch+WwWks9mIflg
-	FsKyBYwsqxglUwuKc9NTi00LDPNSy+Exnpyfu4kRnEq1PHcw3n3wQe8QIxMH4yFGCQ5mJRHe
-	IO2AdCHelMTKqtSi/Pii0pzU4kOMpsDgnsgsJZqcD0zmeSXxhiaWBiZmZmYmlsZmhkrivK9b
-	56YICaQnlqRmp6YWpBbB9DFxcEo1MC33Vju62EYuMTNox4q8BCZ3Dh+uQ3/2THO7zJ789Lj3
-	tekbLv+/Ff6avTP9mNf3TaILv8tWNx3ZK5PsxXF9ptpp/WD7Nxw5ajZR4pxSrUbTrKtSFTLf
-	72ZUZHNxfPxezVss3vgWN0vU56xLyX5aRVsZ4lbJyggnqLJ5RPLc7p4y5erlHCVfttl6U6RO
-	heeXxNxde1Ar/Yybt25n9mmGaem1HPrcN+0WSbF1z25afPO12mpe96fvI9NSs2cdOzbxTMb8
-	57v6s4s3ZSs+Wen4R0GCUefy8dcRixe0i9xVtilnevahR6n5SVjF6+9f9eKesf2P2L2atUdT
-	vUVddHKikuTenFflZ/Zszp8yIXyKEktxRqKhFnNRcSIA61RwPi4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJTvf3n4B0g4Z3RhZr9p5jsph/5Byr
-	xbX9s1gsXs66x2ax6fE1VovLu+awWcw4v4/J4v+eHewOHB6bVnWyeWxeUu/xcPshNo/Pm+QC
-	WKK4bFJSczLLUov07RK4Mv41bWYpmMtb8XZvH3sD402uLkZODgkBE4knT1oZuxi5OIQEdjNK
-	rPj8mREiIS1xfeMEdghbWGLlv+fsEEXPGCVO/7zJCpJgE9CV2LG4jQ0kIQLS/f3nE1YQh1lg
-	MpBzYC0TRMt9RonP6xeDzeIU8JV4eH4JmC0sEC8xefIasH0sAioSu3/OZAGxeQUsJT73nWOE
-	sAUlTs58AhTnAJqqJ9G2ESzMLCAvsf3tHGaI8xQkfj5dBnaRiICTxJOPl1ggasQlXh49wj6B
-	UXgWkkmzECbNQjJpFpKOBYwsqxglUwuKc9Nziw0LDPNSy/WKE3OLS/PS9ZLzczcxguNJS3MH
-	4/ZVH/QOMTJxMB5ilOBgVhLhDdIOSBfiTUmsrEotyo8vKs1JLT7EKM3BoiTOK/6iN0VIID2x
-	JDU7NbUgtQgmy8TBKdXAtOh9uFdF8PTFIip3ur2mLPVNunQsxs4g7IiJVvSq9Mdf2hZFb5eK
-	Tki3yNnssEfvhM+vpO5V1Qc95NZt/7Dn9D2RTfmPF3D9DmFnLGeUWP1v0tSl3+SOfv7klunB
-	6WG358UDa9H32198umx2O+vgzqXZchVMJTF2jR5Xmpbcu+6q4BW+//7N/xJXLzwXM87o+/3U
-	r21vkswvg5DZDVxxhwVzr8/YKD6vU8HaqaOXd0ekaQ9H0ZKyA/u4jiz7r7ggbLpXQPCBoit8
-	ze2nWrO17/B5Ntf8+CKnK/dDdu7s5+titnoyPONex7WukU+6qYhdtmuy+OUgY6+gTcczVz3e
-	tdywxFD9wa+efXHbAguklFiKMxINtZiLihMBRg6KshYDAAA=
-X-CMS-MailID: 20241205010811epcas5p11d9ff08741bedccc9b0c919bb74d4c78
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241204145947epcas5p3f4fc2a6d35669293b339a31d85daef1c
-References: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
-	<CGME20241204145947epcas5p3f4fc2a6d35669293b339a31d85daef1c@epcas5p3.samsung.com>
-	<20241204145559.524932-2-igor.belwon@mentallysanemainliners.org>
 
-Hi Igor
+On Wed, 2024-12-04 at 14:13 +0100, Thomas Antoine wrote:
+> On 12/3/24 11:40, Andr=C3=A9 Draszik wrote:
+> > On Tue, 2024-12-03 at 11:23 +0100, Thomas Antoine wrote:
+> > > On 12/3/24 08:12, Andr=C3=A9 Draszik wrote:
+> > > > On Mon, 2024-12-02 at 14:07 +0100, Thomas Antoine via B4 Relay wrot=
+e:
+> > > > > From: Thomas Antoine <t.antoine@uclouvain.be>
+> > > > >=20
+> > > > > As the Maxim max77759 fuel gauge has no non-volatile memory slave=
+ address,
+> > > > > make it non-obligatory. Except for this, the max77759 seems to be=
+have the
+> > > > > same as the max1720x.
+> > > >=20
+> > > > What about the battery characterization tables? Aren't they needed =
+for
+> > > > correct reporting?
 
-> -----Original Message-----
-> From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> Sent: Wednesday, December 4, 2024 8:26 PM
-> To: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Alim Akhtar
-> <alim.akhtar@samsung.com>
-> Cc: devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-linux-
-> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH v2 1/2] dt-bindings: soc: samsung: exynos-pmu: Add
-> exynos990-pmu compatible
-> 
-> Add a dt-binding compatible for the Exynos990 PMU. It's compatible with
-the
-> Exynos7 PMU design. It handles system reboot, as well as other system
-> control registers (i.e registers for the USB PHY).
-> 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-> ---
+[...]
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> >=20
+> I looked into it. The probe function launches a delay work
+> max1720x_model_work which will try multiple times to run
+> max1720x_model_load which leads to
+> max_m5_load_gauge_model -> max_m5_update_custom_model
+>=20
+> This last function writes 0x0059 to 0x62 and 0x00c4 to 0x63 which unlocks
+> the addresses from 0x80 to 0xaf.
 
->  Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-
-> pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-
-> pmu.yaml
-> index 6cdfe7e059a3..8e6d051d8c97 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> @@ -55,6 +55,7 @@ properties:
->                - samsung,exynos7885-pmu
->                - samsung,exynos8895-pmu
->                - samsung,exynos9810-pmu
-> +              - samsung,exynos990-pmu
->                - samsung,exynosautov9-pmu
->                - samsung,exynosautov920-pmu
->                - tesla,fsd-pmu
-> --
-> 2.45.2
+OK. The regmap I had proposed was excluding those based on the
+datasheet I have, but you probably noticed.
 
+[...]
+
+> If it is indeed the case and that all of those are equivalent to their
+> max1720x counterpart, I think the management of those values should be
+> added in another patch which implements it for both the max1720x (and pos=
+sibly the
+> max77759) as the mainline driver does not do anything with those values
+> currently.
+
+Thanks for the analysis! And yes, I agree.
+
+Adding new required properties to a DT binding is an ABI break,
+therefore I was trying to ensure the binding is complete from
+the start.
+
+Cheers,
+Andre'
 
