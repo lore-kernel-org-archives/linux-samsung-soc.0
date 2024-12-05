@@ -1,142 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B6F2391AB;
-	Thu,  5 Dec 2024 07:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D481B4143
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 07:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383159; cv=none; b=ILvyh+3c04xPi8Brwm2eC5PWVYWoppj2J1G41YyYUMqD8eXI6BDdglfJUBtqN2pgiIiUqWfQRMqm37GMoRpxzqKTNKza993gFhxzMe6wl8cfsX9UntI4U679+nIbJ0XLPY9fP+sQKMRiVF+2EJtOhDfliAVAWAj+MqVR7D1rUK0=
+	t=1733383996; cv=none; b=XOTPPl/MxKRcU++WJBZ7/VOcUKHCISRu5+Db8+HvzRb84H15FKEntXii5ocLz4aO431s2rpkU6D4Sc7XIwnmAFg4gZnlaXKwJwtt8c4Fwg8XdedFBBz+UhsvhDPbsSN+rFTajHX2W0SwfKSQeUwf/Twrpnz/EK67ipVKprn3K8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383159; c=relaxed/simple;
-	bh=YhQa/Ahbqqo1MzvJ5iZ47+nHNgHY+pg+hLM7s+GXQfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpODz947JwlRjUfNHgUOFg1OxB1Od0+lPCIyMNDG4aAzs3vjGWcc594I/2Q3Ocnq7sV4GQS/P+to3NFgbqxzEgD8IO8UeLDyKaqB+U3eXiubOson7Ct8TgmTWVIDeduvKMoN4cB//VBkoQ2z3SXfvuf4rzcw9Q4iym91juasm8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOodXTJR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733383996; c=relaxed/simple;
+	bh=RBijzRaiyQCfMRRbG6euJ9nQvKHptBuFr6E++PumUaI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S+I+IX3YMwzZG8MmeTck5amzbhomBGES/suPBtfTiSdnreoPPqL3XWDosrycR/m+ZgWQLcP2yiYQfE38egvGhwEFNNkaVd1Xw2MvFo0ij/YPVhIaGuJJjsWbguSqN0ood9Fnv1Z56YcaHqPSQ8/HyZwE0S1vno9J95k1VPNYA14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmw9XcFW; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOodXTJR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBAEAC4CED1;
-	Thu,  5 Dec 2024 07:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733383157;
-	bh=YhQa/Ahbqqo1MzvJ5iZ47+nHNgHY+pg+hLM7s+GXQfM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vOodXTJRjENzGZmW4dN6QDMBe1SIhoLaGR6QHpAXpaOvkzXJhbB6WxcRCIli2XsTV
-	 sOC5zOnxmwOPtIrjovbUFHkRY5JYGC3JQIENyewC5ONw7xPpLGS6MP6u6+98CB24+t
-	 vzkmv57JNipMiZYj5jodWj8IEnWak3uur8zNtGULwAkNTIYwhCbdkDnZp7Ez94Vvnz
-	 jPUzGjfdZZSCNre0MKcRbaIlNRVx+2+BKWaY5DAPQEpJIe3dkaZGd5rIez0hALNyrz
-	 5nHUm0G2b2Vbr+jZdRKJYKCDHGITb4EfsvbxIf3lJKp/WZFhaYotgzDASe6JZ1MjH8
-	 yRM2UhceK97jg==
-Message-ID: <88950a3a-c3de-4ff5-9ff8-9b85e1b0ad14@kernel.org>
-Date: Thu, 5 Dec 2024 08:19:12 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmw9XcFW"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa55da18f89so83187066b.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2024 23:33:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733383993; x=1733988793; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jyPCCbXGwL2HX2ZQQ75iZPGtqkwk+FZ+xBNeL3SfQvk=;
+        b=mmw9XcFWr6x7AhTvLj5uduw6VpsDlA+WuFnqA+xXjRHFyqQTX5RsdNpSiXejsZ9afJ
+         hcQvWReZ63HSpRGKt2Z706b7Zt2wfkpsC2NHloNxCpI7hU/7RKNjpPoooM5Y80AVOJty
+         Y9rPTjWhZy8GJkt6QiVaRUBeo/0JHw7rH6LDCDWiLzM0kB2dsf4f8m62bMUcO5vdfwxZ
+         J57ear4DQwCZpUm1nR2orecNH1w2GcV8l/fTbs16w/YGwYLE26NJPkzk8aYCHQwVMPWn
+         q+mcB1t1aHGI7k1Zz9eFFZ8qOPTVz9beSMvOcTUCAdOkbc3GaMNSZihnl7b3st7wb4Y4
+         eRmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733383993; x=1733988793;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jyPCCbXGwL2HX2ZQQ75iZPGtqkwk+FZ+xBNeL3SfQvk=;
+        b=Ipd6whgVxhYB4VD9xYLANAWr49oxBbzI7RDrZ4YUzf1y4+uVxwXwps+/TeK0vP/t3i
+         l/qBtBd3/oOqwTTgwuf8wvKPgD0KIsIifCkovnGfzYOhQNYCAvRt+LqRyorfnNfTfp4J
+         t1P8TmMiD4NAe3kIzrD0BHoZH7YF1HDE0YdbynwWbm921WVc641QRvYDwRJZlkhoCQUG
+         YDN6LpKCAP2nkOR/fVrPPdE8XCL7xQjitngJA3H/896BLdvXCdwbfun9WW96RVnsDKYg
+         0fcBBJxteUE/zdTbQnCjt8Ytc+T6n3H/i6GgM/vMP77nU2i2MMUKQu9eWcGsn7qxfQ6G
+         BVLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtrfdpPcABezZBkd4C6CgyYsqfyl6bWiphdEdtsLqd1rakwuqWUvL+O1QWM5ppXuWd8/oIBOm7Kg4AajLQpcTRhw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTfdZcCaTCEUhPSyuGfj7fc5zaFyQ4+gF0TVkXxA7xID79YAE/
+	+RcXTWAiM1tKLkTb5FHez6NUtHTvAtx1DfoeVVNYuAzyK/wb5lUf7vfYbSiNpC8=
+X-Gm-Gg: ASbGnctaW6+mHAFpzMEjnlNVgiCjWNKcNXJZ1/K2SduWpJEB/YxixoLHG11sIecHGut
+	+3ACp7oG+52CU2Ke3qJODikw1FM+4t7aQs509RCa2oU00QYfHfqaCZkhMhXRzK7xT+1+U27AaXM
+	d95nrFrc7sYm+ng50NCOwYDUjXTTkKeeI3GxuTlN0DYEY4EgAJ8vKbVGAK74pAyQ67mlksUi3WP
+	8d4OcYHpgaYawnzsMG/e2yAM4H80yla96HyknxzRcVhLGzeKhB+un6F3qvX1WOIuPiS4BJkB8ox
+	9+icK4jJBlRjyCvyW4oL4wdP9bCGGqQbsQ==
+X-Google-Smtp-Source: AGHT+IHfI+UCHItr2vvHKPBrNf3u5if9tiRttGFiL6E80p15Kq2YgAQozShUjLutF89S1nrAwt0aIw==
+X-Received: by 2002:a17:907:1ded:b0:aa5:2d9a:1528 with SMTP id a640c23a62f3a-aa5f7f40800mr661936566b.60.1733383993082;
+        Wed, 04 Dec 2024 23:33:13 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260888casm53371766b.133.2024.12.04.23.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 23:33:12 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v3 0/8] USB31DRD phy updates for Google Tensor gs101
+ (orientation & DWC3 rpm)
+Date: Thu, 05 Dec 2024 07:33:11 +0000
+Message-Id: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: dts: exynosautov920: add watchdog DT node
-To: =?UTF-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
-Cc: 'Guenter Roeck' <linux@roeck-us.net>, 'Rob Herring' <robh@kernel.org>,
- 'Krzysztof Kozlowski' <krzk+dt@kernel.org>,
- 'Conor Dooley' <conor+dt@kernel.org>, 'Alim Akhtar'
- <alim.akhtar@samsung.com>, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241021063903.793166-1-trunixs.kim@samsung.com>
- <CGME20241021063938epcas2p1c01c89badb532f08a46087a4907df7dc@epcas2p1.samsung.com>
- <20241021063903.793166-4-trunixs.kim@samsung.com>
- <961e1aca-cd90-4db1-87d7-afd2e542421e@kernel.org>
- <20241107103331.GA4818@www.linux-watchdog.org>
- <589c40e1-6a1c-4ef7-b0d8-b761b132578a@kernel.org>
- <20241107113325.GA5284@www.linux-watchdog.org>
- <c487babb-84a5-4e47-a58f-75fec55cbabb@kernel.org>
- <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <000201db46ac$8d7cfee0$a876fca0$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADdXUWcC/43NQQqDMBQE0KtI1k35+QatXXmP0kVMogYkkURCR
+ bx7v25KV+1yBubNxpKNziZ2LzYWbXbJBU+hvBRMj8oPljtDmSGgFAJrPiQBgs/jyiflbeKB5n5
+ RC+3OFhuDoCtzkwYZKXO0vXudD48n5dGlJcT1PMziaP+3s+DARVf32qJsKujayXkVwzXEgR14x
+ g+IUP4GkUAJRvekVjWYL3Df9zelo8+vIAEAAA==
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
+ kernel-team@android.com, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
-On 05/12/2024 01:28, 김태완 wrote:
-> Hi Krzysztof,
-> 
->> On 07/11/2024 12:33, Wim Van Sebroeck wrote:
->>>>> Seems like you are having a hard day.
->>>>> The 3 patches are dropped. I presume that you will take them all
->> through your tree then?
->>>>
->>>> I meant only this one patch, not entire patchset. The bindings and
->>>> watchdog driver are for you. I commented only about this patch here -
->> DTS.
->>>>
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>>
->>> I added the first two patches again. Even when it sounds more logical to
->> me to keep the 3 together.
->>
->> Thank you.
->>
->>> But that's a never ending discussion, so we won't go into that :-).
->>
->> DTS is hardware description independent from Linux, therefore always goes
->> separate way than Linux drivers.
->>
->> Best regards,
->> Krzysztof
-> 
-> I found that the first two patches have been added to the linux-next git, 
-> but the last patch has not yet been reviewed.
-> 
-> I would appreciate it if you could take a look at this patch.
+Hi,
 
-Since this patch was applied, I dropped from my queue. I don't have it
-in my inbox anymore. Please rebase, resolve any comments and resend.
+This series enables USB3 Type-C lane orientation detection and
+configuration on platforms that support this (Google gs101), and it
+also allows the DWC3 core to enter runtime suspend even when UDC is
+active.
+
+For lane orientation, this driver now optionally (based on DT)
+subscribes to the TCPC's lane orientation notifier and remembers the
+orientation to later be used during phy_init().
+
+To enable DWC3 runtime suspend, the gadget needs to inform the core via
+dwc3_gadget_interrupt() with event type == DWC3_DEVICE_EVENT_DISCONNECT
+of a cable disconnect. For that to allow to happen, this driver
+therefore needs to stop forcing the Vbus and bvalid signals to active
+and instead change their state based on actual conditions. The same
+TCPC notifier is used to detect this, and program the hardware
+accordingly.
+
+That signal state is based on advice given by Thinh in
+https://lore.kernel.org/all/20240813230625.jgkatqstyhcmpezv@synopsys.com/
+
+Both changes together now allow cable orientation detection to work, as
+the DWC3 will now call phy_exit() on cable disconnect, and we can
+reprogram the lane mux in phy_init().
+
+On top of that, there are some small related cleanup patches.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v3:
+- patches 1 & 2: update as per Rob's suggestions
+- patch 7 & 8: drop init to -1 of phy_drd->orientation (Vinod)
+- patch 7: avoid an #ifdef 
+- Link to v2: https://lore.kernel.org/r/20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org
+
+Changes in v2:
+- squash patches #2 and #3 from v1 to actually disallow
+  orientation-switch on !gs101 (not just optional) (Conor)
+- update bindings commit message to clarify that the intention for the
+  driver is to work with old and new DTS (Conor)
+- add cc-stable and fixes tags to power gating patch (Krzysztof)
+- fix an #include and typo (Peter)
+- Link to v1: https://lore.kernel.org/r/20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org
+
+---
+André Draszik (8):
+      dt-bindings: phy: samsung,usb3-drd-phy: add blank lines between DT properties
+      dt-bindings: phy: samsung,usb3-drd-phy: gs101: require Type-C properties
+      phy: exynos5-usbdrd: convert to dev_err_probe
+      phy: exynos5-usbdrd: fix EDS distribution tuning (gs101)
+      phy: exynos5-usbdrd: gs101: ensure power is gated to SS phy in phy_exit()
+      phy: exynos5-usbdrd: gs101: configure SS lanes based on orientation
+      phy: exynos5-usbdrd: subscribe to orientation notifier if required
+      phy: exynos5-usbdrd: allow DWC3 runtime suspend with UDC bound (E850+)
+
+ .../bindings/phy/samsung,usb3-drd-phy.yaml         |  21 +-
+ drivers/phy/samsung/Kconfig                        |   1 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c           | 215 ++++++++++++++++-----
+ 3 files changed, 190 insertions(+), 47 deletions(-)
+---
+base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
+change-id: 20241127-gs101-phy-lanes-orientation-phy-29d20c6d84d2
+
 Best regards,
-Krzysztof
+-- 
+André Draszik <andre.draszik@linaro.org>
+
