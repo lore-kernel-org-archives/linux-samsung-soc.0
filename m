@@ -1,66 +1,65 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBF81B2192
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B841AF0D1
 	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 07:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733383998; cv=none; b=BlwVXQHWtiKstg3MO1vFLHrfGi+N3FLl7t4pjCB5iRvNwQJljQRyVWVWEQNC+ib0+ludkNIb+iZMKJnobEWW4hRWCdFTp9biRAX3TrNv3V2PzcM4slmJe1k/vkiI9U6gsa8iZOTu1b5NEJjVaZ1va0xdqYWDIgTdowNmtv8HN6s=
+	t=1733383999; cv=none; b=D0gjD2/6dpR/2E/W17V81z+zeUWYN6qLU07emtcQpoiBqJEQdR44AWzev9/ZoU3hNkelu/Yzx8DpGbPLyKDPWVTQeFnZj7dtiI0dpTBfFJKgAS6HfJTYdqXUs6FjBllo88ololtg5x5xgJmOl8BFaPQMD/z2SxW8Fje69Yr9RPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733383998; c=relaxed/simple;
-	bh=Jp2ObEzqJQpaKbhTocAaM82TdjXKoBGT2+8/pE/oY9Q=;
+	s=arc-20240116; t=1733383999; c=relaxed/simple;
+	bh=fD1l+jNkgnfWuXI1bHIvbywED4CP+GtggJNFPuFqDcw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qvjm2TICCSXqu9jQ3JpVNfjshjZAVBvBlpsEYSw0Y9UHVIHGQzOUFjYthJCZbF7Py2KMrCZh/EHwE/1dTuPDs9QBGx3XPJ5zK/ZjEVmzvrcmA9tqSt4HbiMlSBM6RiMeYsVBs1UD84ClE+YI7qaKdDyxCUUqUu7DjhTP5UK6ZAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cXLASvK+; arc=none smtp.client-ip=209.85.218.50
+	 In-Reply-To:To:Cc; b=Xe7+WHdookf9MIKwF69xrmh7fAWaa+jMS56Yq1ZoBNVaMXCLwUnmEpQ6FDslLwYLhUwdHDiXMtBSNMe2wVGOliVjieP+FwLPc99tu4jsVjh+0wazArIPLBd/lAE2qqjol1r/Ifl4Doq7fSY6tiZEFf43xc8y+fGPJ1OaMLs1RAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rG0WUIyQ; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cXLASvK+"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa578d10d50so82165566b.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rG0WUIyQ"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d1265ba5a8so572670a12.3
         for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2024 23:33:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733383994; x=1733988794; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733383995; x=1733988795; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PKgkddTbsb36SqzZl1dMALspeUepmvmFxGiaTIa2E3A=;
-        b=cXLASvK+Km+N5kXgYqdRMahJFBxycETuH2gwM8NTOqkkpumbqpK4tcH3yspfMM7nEC
-         sgPr0H1wXUzjLyMcVcyQlpTlePVU2LA8xwS2H9VpvyVwnnN181+7i7She3Kk+pbfG5/O
-         z4ICU9Xj/qjDmsC1g0+munHBn2kDbIiKKatJPZUkWlt7ij9DmBYvH7ycFadVj8xkZP4d
-         FJNxkFlOksBBYrcqPQ+ODsM/TR9OvWj3pTX8WOnwcloqEJtg4J/8KagljAvcBYi2jmTt
-         PmhPhT+1VR6PH12FjhnmuhlVGIsg9vPtUyS96H0DdZza2Pw9Q+dIrWi9oEyBmUn4jsmu
-         fIZw==
+        bh=H11rnIjZ/6A+y0BhElAhFFU5gZO2NZydl8Xc9FZjLpY=;
+        b=rG0WUIyQDQeNd1ZuOO5Sr3yGjWCe5ZnDzCDr5MeUR9Z4UFVYNysZshpqxVAo1KDKa/
+         Lbd8pfk8CP9+bOt9hVPPpku3JZPEnqgNhCFEfdqVBKoaimlzE1P7hhDLmEoV6+um7ha+
+         BoOhgP5CPaCMHBLLFA8iKSKalH/71UdzELQGs6/HJnZx8NfFdyhF4xhyEkruFHlAWMj3
+         qWIluB6+Vz5Dx2Gho35rzpJVCPdvCYyAdw1fPY8/WLznucrvf0AvJ+0lv3Hjcs1SbglC
+         vmj/Sf183xE37hfexVq7WXhCkneIK0MCvsdC8+hNBUPmR9Z7Z65QkEBBkvADPG1MBgmI
+         +DlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733383994; x=1733988794;
+        d=1e100.net; s=20230601; t=1733383995; x=1733988795;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PKgkddTbsb36SqzZl1dMALspeUepmvmFxGiaTIa2E3A=;
-        b=Z7n7PDuvyC4f+mpPzh6fwV1zZgFFjZCTd6sDEA1q2haAgVBrV6Xi/GYOOnibUks858
-         W2xxjFSQ3uCnstMxkbtgWEUX00Itfy2Prj5NaAdMR3m+81PpTORdPdI6MfNvltQvV1g0
-         vZJ+UB+i0j0Q1zpDWZcEG+86qBp/JfGr+wPUagWgKV2s2+fbrPinfLDrp4b+Cs6mxeZQ
-         LrNsJrJK4L2K45BMN8mCL/FfX8WVvPZT3L8K3aIMBHJMGnQXHJPVtAqvVgMaAStiUPvg
-         Ebj+G6hAg2uAVze9om0CdASAPfsvBHmTrv11UM+U9lvR2TJNQR36n4DzvKTZlHfJ/wwF
-         B5yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTcL9pmdWzRDWhxdYcED+eVoYl6NLrNJZs9ePBkYuBWbbp0b40edDv9IIDzxBZjZDYgpeCWUl825JG8tAbxuuYiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOTc0h+vvnH8HyfBLGLy8PULy671HlhZOItA0+o6LKn731lluH
-	rk5p8v5PTeriBbvf/wroEPNQ2TlA9m+PM1SbpbAFRpmi+i73HUCq+pNYCr5F19Q=
-X-Gm-Gg: ASbGncuoM7/SBoGt4k+KKW/MkqXxd8/iEOleavlkHsxSVHCODnzDVDeCQ4UnqOvxwt1
-	kKDcmqv1lpFiAGRpPG0Uu4yRa/RCF5YZH9+zwhns1imVoaPcLOpNIXOaZ+rknborLEn7Zd+RYbD
-	nYqKCVYXflZwzaYJw37YGUiDMzMwHm/CbVDkWSxbflElfPGjQYzEQEpIOyLIdhmypSUfa8P0fRt
-	5uKwwcYNgyb3NoS2fa046TyhpRjg4WQLGJ2mkZXSFQvkTNYlyoL4bwtHK9qUtPhoAUxnW8OGj4y
-	yX+fQ0ZJFIikwMDceoZNd9a2oVU231BxJA==
-X-Google-Smtp-Source: AGHT+IGYmzZiBrRm65PFSu05U4htcrBOv9KSue7aaItOd1Hb+mwmtbhHeeF7rqrAtH/3fEru33bthw==
-X-Received: by 2002:a17:906:3d22:b0:aa6:1917:42e7 with SMTP id a640c23a62f3a-aa6191743fdmr306308166b.22.1733383994490;
-        Wed, 04 Dec 2024 23:33:14 -0800 (PST)
+        bh=H11rnIjZ/6A+y0BhElAhFFU5gZO2NZydl8Xc9FZjLpY=;
+        b=NCZ4/N8vEmgIRbdnAmezH0xXCojm3iEmDCpPhZi7SXA9DiE0gRvB1TNvFYvwu9xGHr
+         OY+7MSeGtPppQV8Dvb38jW57D8WC33DdM2vAKhmX6ptnt1RT+ufnTUDVsJaLQxzA9xKm
+         y8vN/2IPDHwJ6iN2fpzw3SEEL6M04AVOSFeSlr5b3Z7+j9mLOVQhXZcTDEkYiEVbjGk6
+         LwyB3ygAX7NajrAXeFhZqne4oRraTu3Y+AJ3BmvnW1Yb8TbjasMndzqJYuBkYZLXw+b1
+         re8a9hLqvypgdqHWhR0mnCGBvn/xrHaQvDO0Qi0oO2jGxQ0BibPpo+n+MCa8E3lSXIHi
+         yufQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzLlQkLGu8+pEbABF1O+3+okIIGqUfUNWXXcybaHm5C7pjJXCeZ51NLB3qkKnnFpDpRq3+E3LLkAsdRPrDSG0QXg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaBgLUq6K2BL4WjttPs+k6kTHxNRWQm+8k4ZgsYIxEWcZOO2UA
+	1wpPE2j18Qwl/frVH/FjRfy9UuxwKNGnlyM2bhlNKbawk+L99m5FAn3m9vipq0Q=
+X-Gm-Gg: ASbGncv7pRrDy0hN5ZWuLhdkXBC3oBPOfX++KO4wixxjeRvCQ/Uez9V8ErZyIg4GU5A
+	zazghFIcBZYcWKq+IsyDZqmqVirzsclMQ/7lPONmrLCEMi0pBWg5hiymGAzZlrAdchCOoDxc4aW
+	BMaJJ7yuCLAPqvkvXZQ8hEgQ7TlDtL4H7i6QQSouZnORNBBJTdidXCY4jDaBva+Z6aJUxqMc24A
+	T+6OJQDddBBGsiNaYIDailC9YnqLUN7SWtP/XNsSoUeuj26Odv604D/tL8hg1MNDDoTLREstvFK
+	s7joIB6GF9jVO/8K9diMGYRWkHrzz9+pkA==
+X-Google-Smtp-Source: AGHT+IFYsJycA4yASAH+sZjUsdut4D7esnBNe4R4ApeFxO8IGWZZ/0bN1Z5Vd1ltD4MxKYmMzQqjIw==
+X-Received: by 2002:a17:906:31c7:b0:a9a:bbcc:508c with SMTP id a640c23a62f3a-aa5f7ca9f9emr722031966b.2.1733383995058;
+        Wed, 04 Dec 2024 23:33:15 -0800 (PST)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260888casm53371766b.133.2024.12.04.23.33.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260888casm53371766b.133.2024.12.04.23.33.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 04 Dec 2024 23:33:14 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 05 Dec 2024 07:33:13 +0000
-Subject: [PATCH v3 2/8] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
- require Type-C properties
+Date: Thu, 05 Dec 2024 07:33:14 +0000
+Subject: [PATCH v3 3/8] phy: exynos5-usbdrd: convert to dev_err_probe
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +68,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241205-gs101-phy-lanes-orientation-phy-v3-2-32f721bed219@linaro.org>
+Message-Id: <20241205-gs101-phy-lanes-orientation-phy-v3-3-32f721bed219@linaro.org>
 References: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
 In-Reply-To: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -86,78 +85,69 @@ Cc: Peter Griffin <peter.griffin@linaro.org>,
  kernel-team@android.com, linux-phy@lists.infradead.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13.0
 
-orientation-switch is the standard declaration to inform the Type-C mux
-layer that a remote-endpoint is capable of processing orientation
-change messages.
+dev_err_probe() exists to simplify code.
 
-The USB PHY on gs101 needs to be configured based on the orientation of
-the connector. For that the DTS needs a link between the phy's port and
-a TCPCi, and we'll need to inform the phy driver that it should handle
-the orientation (register a handler).
-
-Update the schema to enforce that by requiring the orientation-switch
-and port properties on gs101 (only). We disallow orientation-switch on
-all other supported platforms, since other versions of this phy (or its
-system integration) don't currently support or even need it.
-
-Even though this new required gs101 property is an ABI break, the
-intention for the driver is to behave as before if it's missing
-(meaning for gs101 it will work in SS mode in one orientation only).
-Other platforms are not affected.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
 ---
-v3:
-* update as per Rob's suggestion (I hope :-)
-
 v2:
-* squash original patches #2 and #3
-* actually disallow orientation-switch on !gs101 (not just optional) (Conor)
-* update commit message to clarify that the intention for the driver is
-  to work with old and new DTS (Conor)
 * collect tags
-
-foo
 ---
- Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-index 1f8b35917b11..27295acbba76 100644
---- a/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml
-@@ -114,6 +114,8 @@ allOf:
-           contains:
-             const: google,gs101-usb31drd-phy
-     then:
-+      $ref: /schemas/usb/usb-switch.yaml#
-+
-       properties:
-         clocks:
-           items:
-@@ -139,6 +141,8 @@ allOf:
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index c421b495eb0f..ceae4b47cece 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -1725,10 +1725,9 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
  
-       required:
-         - reg-names
-+        - orientation-switch
-+        - port
-         - pll-supply
-         - dvdd-usb20-supply
-         - vddh-usb20-supply
-@@ -198,7 +202,7 @@ allOf:
-         reg-names:
-           maxItems: 1
+ 	reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 						   "samsung,pmu-syscon");
+-	if (IS_ERR(reg_pmu)) {
+-		dev_err(dev, "Failed to lookup PMU regmap\n");
+-		return PTR_ERR(reg_pmu);
+-	}
++	if (IS_ERR(reg_pmu))
++		return dev_err_probe(dev, PTR_ERR(reg_pmu),
++				     "Failed to lookup PMU regmap\n");
  
--additionalProperties: false
-+unevaluatedProperties: false
+ 	/*
+ 	 * Exynos5420 SoC has multiple channels for USB 3.0 PHY, with
+@@ -1759,10 +1758,9 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+ 	for (i = 0; i < EXYNOS5_DRDPHYS_NUM; i++) {
+ 		struct phy *phy = devm_phy_create(dev, NULL, drv_data->phy_ops);
  
- examples:
-   - |
+-		if (IS_ERR(phy)) {
+-			dev_err(dev, "Failed to create usbdrd_phy phy\n");
+-			return PTR_ERR(phy);
+-		}
++		if (IS_ERR(phy))
++			return dev_err_probe(dev, PTR_ERR(phy),
++					     "Failed to create usbdrd_phy phy\n");
+ 
+ 		phy_drd->phys[i].phy = phy;
+ 		phy_drd->phys[i].index = i;
+@@ -1786,10 +1784,9 @@ static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+ 
+ 	phy_provider = devm_of_phy_provider_register(dev,
+ 						     exynos5_usbdrd_phy_xlate);
+-	if (IS_ERR(phy_provider)) {
+-		dev_err(phy_drd->dev, "Failed to register phy provider\n");
+-		return PTR_ERR(phy_provider);
+-	}
++	if (IS_ERR(phy_provider))
++		return dev_err_probe(phy_drd->dev, PTR_ERR(phy_provider),
++				     "Failed to register phy provider\n");
+ 
+ 	return 0;
+ }
 
 -- 
 2.47.0.338.g60cca15819-goog
