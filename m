@@ -1,68 +1,162 @@
-Received: from out-03.smtp.spacemail.com (out-03.smtp.spacemail.com [63.250.43.88])
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA2022D4D0;
-	Thu,  5 Dec 2024 19:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798EA49627
+	for <linux-samsung-soc@vger.kernel.org>; Thu,  5 Dec 2024 23:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733428003; cv=none; b=sJOLTsyKUkoiRuF60eDptLsLzZV1aS+tr1FWXbGiPtZzrSv8Cj1RKeReYD83OAMVqvNNn1ykmN1EfNMVkS/P219i1s2dbNcJzZf/vAkAwXuz6F2HY9XuTtCmuSK5ahTpS5DNxqKtgWKYsEtZHmbWateDG6aW2n6Owqilc2i/fhA=
+	t=1733442002; cv=none; b=GkBe0gesfOO0qd+bMW2YblNwVPMVqEwfWGK96kXPxvBxr4bNiB5HNwEySE0LqTEBDE5b2tFbT6T6RLhbn258eR3mK/Lh/AllFWuHfL5IaqYbIA750G13fFtCvYs4HPh/e8L3dyIb8LDkHMgMQtdNWNCn2/6wE4wys2S6aU0UKZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733428003; c=relaxed/simple;
-	bh=rZB2ZD8newIecgF9YojZivONnPnrHJekLCe8GgtmLrQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IW4TN2rLAwtbZ/ztkmyqVIHk0DoLzEqJ/umdiNeWfCgogb9p9TqmDMhjEoHwYyAR8a0sZ77lQEQiFZ60l/ntEolELi2Wyh7lr8d7/6EyXmlxlQBF/n2F4KBcM5zeBzyZa3UZlhlVGLT5OO39Tv9za11XsPvqjFDIoVEKtabrYac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b=hegvWNRZ; arc=none smtp.client-ip=63.250.43.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+	s=arc-20240116; t=1733442002; c=relaxed/simple;
+	bh=SS+CvjwgmBviiYkG3lhdmjo9XVPZiBnQEjZhknvEuWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fFqLCsB+3B5pRq+g8S89pHSm+jnVT2fW1oHHu9cgd5V2kNWMEMAxjm4K7v9OJ6hdF/32HgjZm5xuF61KERe7T5oOzc5REMmbzck7er719apY0LAH1Z54kcQ0Qdxk4Qmi4ngLy/JyZs1QXQS0NHH8mazQfQ0dqTVssywi7tfTG7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LLVXn/J2; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mentallysanemainliners.org header.i=@mentallysanemainliners.org header.b="hegvWNRZ"
-Received: from prod-lbout-phx.jellyfish.systems (unknown [198.177.122.3])
-	by smtp.spacemail.com (Postfix) with ESMTPA id 4Y44dr5J0LzGpBc;
-	Thu, 05 Dec 2024 19:46:40 +0000 (UTC)
-Received: from localhost.localdomain (83.21.102.241.ipv4.supernova.orange.pl [83.21.102.241])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4Y44dh2ZxXz8sWP;
-	Thu,  5 Dec 2024 19:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mentallysanemainliners.org; s=spacemail; t=1733427995;
-	bh=rZB2ZD8newIecgF9YojZivONnPnrHJekLCe8GgtmLrQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hegvWNRZU5ZFZpW7KcC7fxBgIuB3Gotjw80+pfAtWdtzl8/sBSLGgSjEd3WT26LX5
-	 XJIUhw1rWmeFRFAY07d9Aw7aqGsMeshGivnvs6kvE1f2TZi+VhkrRjVAW+orLIZTZr
-	 17PXlwXgff/Mu7XosYdK7Lqnmq+Eg/FwWiHZ0Vp/u29dVJpNhIL3l83TvFTW8lWoTR
-	 hmz6chUC/Tgj4rHiUvhxGgIsE0mjs6pRFEV2uMYsRVbnysJBL2jJ7YsUXl82WFov4T
-	 rf1N63jOr3/5ziMlHOcZNqC9vxsDq5sb+tWQ52x74WFk/PX3Bp7rvNcHrKFyP/M9Fd
-	 zg1jeniAJL4HQ==
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: igor.belwon@mentallysanemainliners.org
-Cc: alim.akhtar@samsung.com,
-	conor+dt@kernel.org,
-	cw00.choi@samsung.com,
-	devicetree@vger.kernel.org,
-	krzk@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	mturquette@baylibre.com,
-	robh@kernel.org,
-	s.nawrocki@samsung.com,
-	sboyd@kernel.org
-Subject: Re: Add Exynos990 CMU support
-Date: Thu,  5 Dec 2024 20:45:10 +0100
-Message-ID: <20241205194510.786973-1-igor.belwon@mentallysanemainliners.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241205193423.783815-1-igor.belwon@mentallysanemainliners.org>
-References: <20241205193423.783815-1-igor.belwon@mentallysanemainliners.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LLVXn/J2"
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-85b9f2de38eso308825241.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2024 15:40:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733441999; x=1734046799; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oacZmWmcYUh3aS8DM+UCqcN8A1TL7Wl2Fm4tR+M814g=;
+        b=LLVXn/J2c8n14jZgLLTWWQsoo9F1FjdaTzUNDYL93bth7i9Z2/T2pOnd+S8hX/F2/Q
+         a0mmaCom1uX1y1gUjh39ljUrc0kxtlddzG6ClA51Lz82jpcxCYHeFygiMmV1fSvtgkki
+         hTnBiU0MFhyv+zdFXyY+haM3zGZ4Rb8Wyt7VmJbaSRKELfQq/SeGFCgI5mkk3rlGIQN2
+         f1ZXBJ5LisPW3KJzcSDuCIw1eC9n3ZG2QSXKejq9gQCSAFtkF6lGHWBkHp2e1ZHH7pty
+         aO8jgj7C161UggVVSyEGWyMi6j8/MyNyDNDZs/lvDf1ydgeUa6Lr92BOqIb45CD4HJ51
+         0IBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733441999; x=1734046799;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oacZmWmcYUh3aS8DM+UCqcN8A1TL7Wl2Fm4tR+M814g=;
+        b=VmC20rpjA5xNt2D4c2Rms1YO5gUeHc8QA1PC+XjG+jmkzvMsaKva74vyGeZza4fXPU
+         5sx9WFldEZ/mW9rXOZKJWyvcM2v9pUmlmjh9+TyWZ0DHwLzyjOkBNV9/UZWN+kptw4El
+         eZnCj2ldhHlpTBTCOmTlxazXPt5w6AShALjItLNudLZ+8r1oadofJTkClycDVLg+No01
+         C70Nrdi9A+z/lEUTJYjLxjNwrm3K/+LqSgvmWnUg9kqsZujl3qBXbUi/drxjTDwqaaG4
+         IqTWtzeyP0i3gTOjAhelrc29bPogrVZfzyW3aANaqpeXog/+qN4j+GU4W7QLqgj2ZPBp
+         qXiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLi6Y+wyf+ZxALczFbmN8D+RrHhU8JVHDV+t2zll5S711hwyOqqDlgh3n1Vm7H3OezFjoYEO4eCMs6ZJR9KB8lww==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Z54MfnmwaNT48Sju+gszMyhoDy6+6jC81S1KYYtWZkVoZIZV
+	6gQ1Nf8jEx8pjCpVbyveriURqanZG3gIM0zTE6W641l1eh03jX0v4EsTxR8TXDE=
+X-Gm-Gg: ASbGncs/MDWYQ47ZnVKIg3eL03cf0AD+ARKUGQXV+ejfZSHNa+lmIW0AVJQrnx5y+kI
+	e5iO34r4by1EZyOGx0RRIfRRYLSOsJR1lGKl7k7yl4eCjH7fHNBsCDb2DdBMCXJTEK9xLyq9f+8
+	h7XnDjWCrDWW/R1tuvyTVmUO9jMNbyt0NCnXqafsTfO6EvFuwDX+OgvJcw0EcgKCFe6mU0ZLVhN
+	6+/lzPKeBJydOB/hJDqN7XihpE3akHccgnfRIO0XtPzk1AxrqhQWny0C3P85UUMQ9OyK3uk+Qsu
+	9em6ZXZA
+X-Google-Smtp-Source: AGHT+IHGLFK0NpREIiG2QUT311n7NIrWXQMbIVONL3n7iGYRppYRkj7evZc5Sutsvv1h+Rf5qB58KQ==
+X-Received: by 2002:a05:6102:370f:b0:4af:4d2:488a with SMTP id ada2fe7eead31-4afcab63efemr1980371137.24.1733441999270;
+        Thu, 05 Dec 2024 15:39:59 -0800 (PST)
+Received: from [192.168.1.124] (49.93.157.89.rev.sfr.net. [89.157.93.49])
+        by smtp.googlemail.com with ESMTPSA id a1e0cc1a2514c-85c2b9fd799sm316484241.11.2024.12.05.15.39.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 15:39:58 -0800 (PST)
+Message-ID: <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
+Date: Fri, 6 Dec 2024 00:39:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ peter.griffin@linaro.org, javierm@redhat.com, tzimmermann@suse.de,
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
+ <20241205175345.201595-3-tudor.ambarus@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241205175345.201595-3-tudor.ambarus@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-I'm terribly sorry for the garbage as the subject. It was my editor adding in
-some cached metadata(?). Will resend this patch if deemed necessary.
+On 12/5/24 18:53, Tudor Ambarus wrote:
+> Alive Clock and Power Manager (ACPM) Message Protocol is defined for
+> the purpose of communication between the ACPM firmware and masters
+> (AP, AOC, ...). ACPM firmware operates on the Active Power Management
+> (APM) module that handles overall power activities.
+> 
+> ACPM and masters regard each other as independent hardware component and
+> communicate with each other using mailbox messages and shared memory.
+> 
+> This protocol library provides the interface for all the client drivers
+> making use of the features offered by the APM. Add ACPM protocol support.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>   drivers/firmware/Kconfig                      |   1 +
+>   drivers/firmware/Makefile                     |   1 +
+>   drivers/firmware/samsung/Kconfig              |  14 +
+>   drivers/firmware/samsung/Makefile             |   4 +
+>   drivers/firmware/samsung/exynos-acpm-pmic.c   | 226 +++++
+>   drivers/firmware/samsung/exynos-acpm-pmic.h   |  24 +
+>   drivers/firmware/samsung/exynos-acpm.c        | 772 ++++++++++++++++++
+>   drivers/firmware/samsung/exynos-acpm.h        |  15 +
+>   .../linux/soc/samsung/exynos-acpm-protocol.h  |  57 ++
+>   9 files changed, 1114 insertions(+)
+>   create mode 100644 drivers/firmware/samsung/Kconfig
+>   create mode 100644 drivers/firmware/samsung/Makefile
+>   create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.c
+>   create mode 100644 drivers/firmware/samsung/exynos-acpm-pmic.h
+>   create mode 100644 drivers/firmware/samsung/exynos-acpm.c
+>   create mode 100644 drivers/firmware/samsung/exynos-acpm.h
+>   create mode 100644 include/linux/soc/samsung/exynos-acpm-protocol.h
+> 
+> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+> index 71d8b26c4103..24edb956831b 100644
+> --- a/drivers/firmware/Kconfig
+> +++ b/drivers/firmware/Kconfig
+> @@ -267,6 +267,7 @@ source "drivers/firmware/meson/Kconfig"
+>   source "drivers/firmware/microchip/Kconfig"
+>   source "drivers/firmware/psci/Kconfig"
+>   source "drivers/firmware/qcom/Kconfig"
+> +source "drivers/firmware/samsung/Kconfig"
+>   source "drivers/firmware/smccc/Kconfig"
+>   source "drivers/firmware/tegra/Kconfig"
+>   source "drivers/firmware/xilinx/Kconfig"
+> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+> index 7a8d486e718f..91efcc868a05 100644
+> --- a/drivers/firmware/Makefile
+> +++ b/drivers/firmware/Makefile
+> @@ -33,6 +33,7 @@ obj-y				+= efi/
+>   obj-y				+= imx/
+>   obj-y				+= psci/
+>   obj-y				+= qcom/
+> +obj-y				+= samsung/
+>   obj-y				+= smccc/
+>   obj-y				+= tegra/
+>   obj-y				+= xilinx/
+> diff --git a/drivers/firmware/samsung/Kconfig b/drivers/firmware/samsung/Kconfig
+> new file mode 100644
+> index 000000000000..eed8cd8a677b
+> --- /dev/null
+> +++ b/drivers/firmware/samsung/Kconfig
+> @@ -0,0 +1,14 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config EXYNOS_ACPM_PROTOCOL
+> +	tristate "Exynos Alive Clock and Power Manager (ACPM) Message Protocol"
+
+Given the importance of this driver where a lot of PM services rely on, 
+does it really make sense to allow it as a module ?
+
+Some PM services may be needed very early in the boot process
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
