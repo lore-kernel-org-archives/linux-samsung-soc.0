@@ -1,65 +1,66 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F317F20765D
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 10:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA68320ADED
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 10:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480220; cv=none; b=a56on9XK8PDHT5xMFT89F3pID8gffRqLfwQhZgKakI1SYO2hI192CJ8/V6pxR871zkoszWJSR/xAX1kyUS3wg9730lnj6EcLY4zYUHpNLBQ/xo7dkzub1mbLL7dDaJiovkzcy59VuTixvXhYrKzgUh1tMu8tR0xRBh2rTKgZDOU=
+	t=1733480220; cv=none; b=FenRJPigzTr1uqL07bJ9wQLo/rivuqKvH4Ul7INtVQ6T9msnQHR3JoTE6k2aUjLV4n1KgCjhGg29GjkXdFEoPddF6Fq0gjlx23NBzr/KF2pNYjBNdaV0TvVxrUbH8QFXZitoVpr6pb0cA9+zARjIA6JJWCV25quYmbT2Um4HkI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733480220; c=relaxed/simple;
-	bh=b+kD+GGfMX4IeYm4/zVmi8YnnM9D7BF1gQ9GNsjSPBU=;
+	bh=+67Db5QR/nsja/ue4a+VGF3IOxdNSnDuXouI0gIrYtg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MSqjCcaDsEzLv3MSdDgEZfUGTqCD6vrGhblMjJUMm5+x7dfSqCNWztbPNkPUSISYFEhSrPfGrSIF0gHki1dZdlHRPnPdQcteFKceX85Ik2jTSfN+7hkxIiuCZheINx3uv52q3W/U6CJUoPkko3HRnmzXJT5JwqUgrI3MRS53zJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o0Q6v8aA; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:To:Cc; b=UsCu5OmueIZF/PhsRtHvLV2JDP+ttn3S3wG+hTM09Qcb08SFNDzgzWx4EuzzRpk3zdYJD95APqX3tf+5ZIHHPVWtS0iY+PqaTuTi+XICQ2lvHUOk5VVMftYeYM34ryPWPM8hUXg9gVNZ+pI4jk4tC7cxQiDDeF71JhLx5auOGgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELgbiB8F; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o0Q6v8aA"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53df80eeeedso1967691e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2024 02:16:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELgbiB8F"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53e384e3481so93783e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2024 02:16:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733480214; x=1734085014; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733480216; x=1734085016; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=23NpFOv9+trBwXgoTdLMEtZogD9sP0WWw4oqP5QnN+o=;
-        b=o0Q6v8aA+HXNg0m+7ZniFeipqNEOwEr51Sakm1lFFYfNkM9PSiMLVaYXfBR5lg+mv5
-         nChbgHL1AAFyjMV9nlc2dIgnERsYIaDIzP7qIgndf9G8dCU4/eTVh5pWJhwDKy+E51Vb
-         pPIdYPgNoCsh3reqoj3bKiNcLdh1iSsQAB7WyaqDbPz2Jl75UNfz8h2OYeaNQTkQMYe9
-         57sTp5NzVArNR4vQXUIQLm1Fd+3DL9uz7VRoNJzG1j2cRAulRS0P+YqqeYQncYdvyGSJ
-         YUXA8vxm7S9JbCgPyjp6QGUWxNdlxWszQubaYeeDA8l161jeml3qBQwgHNV3RFM8ZA3H
-         gREg==
+        bh=vdhbM8g3M0NP93FMRv6ZaSecbbnwku8p9d6VdNVGSLw=;
+        b=ELgbiB8FJ9VbMvcfjhCr3zAKyLT/CLMsdPipb7cn7OGNkgh+6iLTZ+/WNiiwuvw2XL
+         BDjzOwohqMoBX3eArctWa0Lc8DTn9/vxzh1Ti+RnGxkCAYxVLgqaB4fIMqOkafnlnQc4
+         jS936WPx5SWwHWKolTRxD7dJrA+PtIw0pAvySysAm4dlcMvs9FxVy3e46irHdY1hhiLb
+         f/44FoW0zwQsZ5xUMTIdP/Ny/x3j4L8LhcI25iKNbeepFy/rADyyz/e1DU2Kvq081nNf
+         aJwV0NUP5S+vbOvJsChw2ndWv6xTDwCHm8BiGoooU/9m+29We0SxQMhlsP6fbHyD4eRK
+         eFOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733480214; x=1734085014;
+        d=1e100.net; s=20230601; t=1733480216; x=1734085016;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=23NpFOv9+trBwXgoTdLMEtZogD9sP0WWw4oqP5QnN+o=;
-        b=sozb7qBsl2WNdWu1QbevP3bfrjFMrCJRvet4wydfGVTDa8lPZfs7EuMzgRyVQRh63Z
-         lWfgio43pa/LBnQjy/miKdUT0DmadMt9YuQfc12JeYr0qv/RN2cUgQwYN0pMbvX5rb+q
-         pUv0m40VHxDpyDGEyd/kI0z2PaYpyqiXqY6Gxh5Bx7ZgZuPUKYRz/Rv8+JyXH4DQSsrf
-         dJYpSoBdBa6M8KohjDgvfhtt6o3gw7hhl9Vdqsu647qaPjgRUV6dwc2uUu7+NPJvDZiW
-         tMoy0xzp7tpiuhHAbEyQeYoPJl4YRDwZ0uUWAzAIJJBgutFvVseo4wYfS/rdY8HG4/rs
-         yqfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtgAZiSm7ESeJrx+e2q1QZndE7+n+qcOumfDHfZGp619rlV+wzk37iVpohlBPJsfJwxKoVgInU1kaRBiyHWnR6Rg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoZmyw2nmy4JCJlZipDWmUo89kirP8fsBDVVet1UAvKU5lkIou
-	fzk9mTkadbEdAWXCzDoDu/Y9hdD42qKdq8P/xl5PdJXA4w12OjUgGytUzujSu10=
-X-Gm-Gg: ASbGncsjcKGiTvFIMD1Y+3ctBPUBl+hhGV8cCh+C4G8GJmGqFi9PU/zkogxf0Zlk0rh
-	cOMCT5bTREM+vAA2l72sodT96hfQEq4T98JvGLddU/y/5c58RqxR7+FaE8LEJYq2C/R9x8tAa2w
-	0LOg5lzCJR7bDiLKy9d3hpGg2GkFtBGEPp0UGF+Yg64ecJCJylFdtN5HJcNoWwz196me7jnpp+V
-	Zgiv3sVJj1meyIqMvYIo9T5CbKb0Py/n2fnzyzuu+pn8zdE0DKNUhF7Iw==
-X-Google-Smtp-Source: AGHT+IHYoxoM7GYC/RXRXwsY9aIS+FgvCMwE8/kYFPGH+zE3IIcRoYFa8DmKuD5mvJKqJ85kxF63Tw==
-X-Received: by 2002:a05:6512:e84:b0:539:e9f8:d45d with SMTP id 2adb3069b0e04-53e2c2ede3fmr750213e87.52.1733480213923;
-        Fri, 06 Dec 2024 02:16:53 -0800 (PST)
+        bh=vdhbM8g3M0NP93FMRv6ZaSecbbnwku8p9d6VdNVGSLw=;
+        b=XlB83PUb4L/MKBMOfE0JZxgrP+f1yJxMLroREnWfreGDa7mQIAaqndIQYeQf6jnGjS
+         Dz86JYJkLrx59fjvrVSefD4kTnp41E08DEa7y/wXrHdUeSoxCXMNPzrPtMuspb2v7KLQ
+         iCe5d2kRZm7cwsAgBDN8/MpAA5eQ8kF7kgoZziT7g6mIqJ/u9UapwuxFAO8of+g19akB
+         PG9QMxm+zNVuN9q+BLHCBJclNCq78rEzpEo0nXhXngs+6inASqf1wyOamvKNCT8n5JWw
+         ZLkavoFTq5r7ZUCd/OZJ2mkJWqy+wcDqu1k2JKJaV2pz6/9vpBU+nx6ynCES+/c6uwHN
+         tSYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViDnKrxoo6swgGyXnHRJgbkOMhp0KbTbp697zrSEX/MHTQuvqTNaJrcRax9pZ5OS+Sjp016xqDxPhyhNb7y8cBXQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqec5ov19yzD/uDdOgI6rT50qvglXnKKoCE8KxiIay10K0qbFN
+	CT7Nr30/r0RJ0BpyVO3Euv9ep41bEfz2PXh5VV+n10l7Iix2gUUvj1slajasiNR0iu/3KmxAGU8
+	x
+X-Gm-Gg: ASbGncuwdzBn4ONGt+XwMAi8GAISNT5hdjTmfssXv9zPXvAUO7ennpfrP7ympKapxF7
+	6IIvTU2loXWXT1B08FnP05ecX5rKUSa0wHlXJwySVZPC2e2upXhIcjhQTckd7ovuE4X8XQCryqz
+	RjIxoSpH82EGj9eW2zTI5rMhoBWs5oSyOqIMt2N83RFHMyJ3PnXj6oV1zUp2lgkIJAIAXXbN2wH
+	KewOjMLS+VEz8IXSZDobY5k7UMThx+CIf6g8Kk3UdTOOGjaIANgiQSV3A==
+X-Google-Smtp-Source: AGHT+IHLAMrwNntawycHSzAoyVtOkC7Gtw6N52xdlcAMQPWcfc0l+WCOL0Lh45bakS9i5aF/g9qeYQ==
+X-Received: by 2002:a05:6512:1594:b0:53e:284a:70e9 with SMTP id 2adb3069b0e04-53e2c2f0085mr1211346e87.57.1733480215645;
+        Fri, 06 Dec 2024 02:16:55 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2294738fsm462355e87.52.2024.12.06.02.16.52
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e2294738fsm462355e87.52.2024.12.06.02.16.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 02:16:52 -0800 (PST)
+        Fri, 06 Dec 2024 02:16:55 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 06 Dec 2024 12:15:58 +0200
-Subject: [PATCH v6 04/10] drm/bridge: connector: add support for HDMI codec
- framework
+Date: Fri, 06 Dec 2024 12:15:59 +0200
+Subject: [PATCH v6 05/10] drm/bridge: lt9611: switch to using the DRM HDMI
+ codec framework
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-drm-bridge-hdmi-connector-v6-4-50dc145a9c06@linaro.org>
+Message-Id: <20241206-drm-bridge-hdmi-connector-v6-5-50dc145a9c06@linaro.org>
 References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
 In-Reply-To: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -102,235 +103,273 @@ Cc: Jani Nikula <jani.nikula@linux.intel.com>,
  linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
  linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7190;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7839;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=b+kD+GGfMX4IeYm4/zVmi8YnnM9D7BF1gQ9GNsjSPBU=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ3rQec7WHOaVG4Q3BLwzEHlil613kO2lc1aUw16pyxtU7
- 96sSXTsZDRmYWDkYpAVU2TxKWiZGrMpOezDjqn1MINYmUCmMHBxCsBEjkax/6+3SdXnWqWzq1hQ
- r2rLD+UIs9eMS/c/PuO3N3SfuY3x4RcbVeYuuXszdMfyJwk98t/6+rvjloW/OqEvU1OgnJ6j7Gz
- csflks5z+VNF+AfnZ2X+u3rRwnr1ZQzLc9e7ve6+uCEhu2j97tzPTk7DzsZ1qd8S3e7FeVH29Yo
- u8aG20ZHx3Vvtp3zeCp1IqvS9zia7VuXwyUEdT40NpcbhSb0We/iIxtsQQi47KybYVu84vmpC5S
- qjSRebQAxFlG8vmeG737gPv2Pc9njrv1c8iRjblM4/v7UjztOFdcFWg9/36C6cLv0axPrQ8L7Et
- 5kr7n7qwsvVhIUs55JLeCCt0Cdb5Kh+SiF3Y+/nw47K7AA==
+ bh=+67Db5QR/nsja/ue4a+VGF3IOxdNSnDuXouI0gIrYtg=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ3rQeU6JW1urPoTcvv+n0cF5DfM82cKPquzdU2UEp+a8d
+ Xf1P5rdyWjMwsDIxSArpsjiU9AyNWZTctiHHVPrYQaxMoFMYeDiFICJvOZg/6d1qv6zrv4+PZEE
+ XnYWXQmH3C3vpBjnH3v4oaFKQqV17vf7M6fdfj33n6dt8K/mlGMhuj166gWtkdkBXt3foyT3pE0
+ +XbWplHXd7EApkYa+IimTfR1KB9/UiE83Sr7Lpf+hNnhidYbSWVnf/k3zki80N78496XvfxGXxQ
+ nvg6aVUxbMlWOoXc682meZS7L3D0HeAl/d7bdktOf5XHerm/9IjXHmzGO3dp5/p3SiNUJRXaP29
+ iSFl4fui7s4J4vJLv8md+OMxNJZ79qS2n6e/et2cFaHW2aOBFMkr5cpj7BH5fTjAs89rD55bb4z
+ aaq+S7G76c3nMowSK8SWMz1b8tUxpdjxWoH3GvUC1ccMAA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add necessary glue code to be able to use new HDMI codec framework from
-the DRM bridge drivers. The drm_bridge implements a limited set of the
-hdmi_codec_ops interface, with the functions accepting both
-drm_connector and drm_bridge instead of just a generic void pointer.
-
-This framework is integrated with the DRM HDMI Connector framework, but
-can also be used for DisplayPort connectors.
+Make the Lontium LT9611 DSI-to-HDMI bridge driver use the DRM HDMI Codec
+framework. This enables programming of Audio InfoFrames using the HDMI
+Connector interface and also enables support for the missing features,
+including the ELD retrieval and better hotplug support.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/display/drm_bridge_connector.c | 100 ++++++++++++++++++++++++-
- include/drm/drm_bridge.h                       |  38 ++++++++++
- 2 files changed, 134 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/lontium-lt9611.c | 170 +++++++++++++-------------------
+ 1 file changed, 68 insertions(+), 102 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index 512ced87ea18c74e182a558a686ddd83de891814..4fa1bb73d430d02d5b79a1a184c203ec9e9c66e7 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -21,6 +21,8 @@
- #include <drm/display/drm_hdmi_helper.h>
- #include <drm/display/drm_hdmi_state_helper.h>
+diff --git a/drivers/gpu/drm/bridge/lontium-lt9611.c b/drivers/gpu/drm/bridge/lontium-lt9611.c
+index 60b7305c0fd1935e35742713c78937392b7faa79..63aa751c412fb90d6edb4b5331138e94f19de37d 100644
+--- a/drivers/gpu/drm/bridge/lontium-lt9611.c
++++ b/drivers/gpu/drm/bridge/lontium-lt9611.c
+@@ -45,7 +45,6 @@ struct lt9611 {
+ 	struct device_node *dsi1_node;
+ 	struct mipi_dsi_device *dsi0;
+ 	struct mipi_dsi_device *dsi1;
+-	struct platform_device *audio_pdev;
  
-+#include <sound/hdmi-codec.h>
+ 	bool ac_mode;
+ 
+@@ -864,6 +863,10 @@ static int lt9611_hdmi_clear_infoframe(struct drm_bridge *bridge,
+ 	unsigned int mask;
+ 
+ 	switch (type) {
++	case HDMI_INFOFRAME_TYPE_AUDIO:
++		mask = LT9611_INFOFRAME_AUDIO;
++		break;
 +
- /**
-  * DOC: overview
-  *
-@@ -368,10 +370,80 @@ static int drm_bridge_connector_write_infoframe(struct drm_connector *connector,
- 	return bridge->funcs->hdmi_write_infoframe(bridge, type, buffer, len);
+ 	case HDMI_INFOFRAME_TYPE_AVI:
+ 		mask = LT9611_INFOFRAME_AVI;
+ 		break;
+@@ -897,6 +900,11 @@ static int lt9611_hdmi_write_infoframe(struct drm_bridge *bridge,
+ 	int i;
+ 
+ 	switch (type) {
++	case HDMI_INFOFRAME_TYPE_AUDIO:
++		mask = LT9611_INFOFRAME_AUDIO;
++		addr = 0x84b2;
++		break;
++
+ 	case HDMI_INFOFRAME_TYPE_AVI:
+ 		mask = LT9611_INFOFRAME_AVI;
+ 		addr = 0x8440;
+@@ -940,6 +948,55 @@ lt9611_hdmi_tmds_char_rate_valid(const struct drm_bridge *bridge,
+ 	return MODE_OK;
  }
  
-+static int drm_bridge_connector_audio_startup(struct drm_connector *connector)
++static int lt9611_hdmi_codec_audio_startup(struct drm_connector *connector,
++					   struct drm_bridge *bridge)
 +{
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+	struct drm_bridge *bridge;
++	struct lt9611 *lt9611 = bridge_to_lt9611(bridge);
 +
-+	bridge = bridge_connector->bridge_hdmi;
-+	if (!bridge)
-+		return -EINVAL;
++	regmap_write(lt9611->regmap, 0x82d6, 0x8c);
++	regmap_write(lt9611->regmap, 0x82d7, 0x04);
 +
-+	if (bridge->funcs->hdmi_codec_audio_startup)
-+		return bridge->funcs->hdmi_codec_audio_startup(connector, bridge);
++	regmap_write(lt9611->regmap, 0x8406, 0x08);
++	regmap_write(lt9611->regmap, 0x8407, 0x10);
++
++	regmap_write(lt9611->regmap, 0x8434, 0xd5);
++
++	return 0;
++}
++
++static int lt9611_hdmi_codec_prepare(struct drm_connector *connector,
++				     struct drm_bridge *bridge,
++				     struct hdmi_codec_daifmt *fmt,
++				     struct hdmi_codec_params *hparms)
++{
++	struct lt9611 *lt9611 = bridge_to_lt9611(bridge);
++
++	if (hparms->sample_rate == 48000)
++		regmap_write(lt9611->regmap, 0x840f, 0x2b);
++	else if (hparms->sample_rate == 96000)
++		regmap_write(lt9611->regmap, 0x840f, 0xab);
 +	else
-+		return 0;
-+}
-+
-+static int drm_bridge_connector_prepare(struct drm_connector *connector,
-+					struct hdmi_codec_daifmt *fmt,
-+					struct hdmi_codec_params *hparms)
-+{
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+	struct drm_bridge *bridge;
-+
-+	bridge = bridge_connector->bridge_hdmi;
-+	if (!bridge)
 +		return -EINVAL;
 +
-+	return bridge->funcs->hdmi_codec_prepare(connector, bridge, fmt, hparms);
++	regmap_write(lt9611->regmap, 0x8435, 0x00);
++	regmap_write(lt9611->regmap, 0x8436, 0x18);
++	regmap_write(lt9611->regmap, 0x8437, 0x00);
++
++	return drm_atomic_helper_connector_hdmi_update_audio_infoframe(connector,
++								       &hparms->cea);
 +}
 +
-+static void drm_bridge_connector_audio_shutdown(struct drm_connector *connector)
++static void lt9611_hdmi_codec_audio_shutdown(struct drm_connector *connector,
++					     struct drm_bridge *bridge)
 +{
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+	struct drm_bridge *bridge;
++	struct lt9611 *lt9611 = bridge_to_lt9611(bridge);
 +
-+	bridge = bridge_connector->bridge_hdmi;
-+	if (!bridge)
-+		return;
++	drm_atomic_helper_connector_hdmi_clear_audio_infoframe(connector);
 +
-+	bridge->funcs->hdmi_codec_audio_shutdown(connector, bridge);
++	regmap_write(lt9611->regmap, 0x8406, 0x00);
++	regmap_write(lt9611->regmap, 0x8407, 0x00);
 +}
 +
-+static int drm_bridge_connector_mute_stream(struct drm_connector *connector,
-+					    bool enable, int direction)
-+{
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+	struct drm_bridge *bridge;
+ static const struct drm_bridge_funcs lt9611_bridge_funcs = {
+ 	.attach = lt9611_bridge_attach,
+ 	.mode_valid = lt9611_bridge_mode_valid,
+@@ -960,6 +1017,10 @@ static const struct drm_bridge_funcs lt9611_bridge_funcs = {
+ 	.hdmi_tmds_char_rate_valid = lt9611_hdmi_tmds_char_rate_valid,
+ 	.hdmi_write_infoframe = lt9611_hdmi_write_infoframe,
+ 	.hdmi_clear_infoframe = lt9611_hdmi_clear_infoframe,
 +
-+	bridge = bridge_connector->bridge_hdmi;
-+	if (!bridge)
-+		return -EINVAL;
-+
-+	if (bridge->funcs->hdmi_codec_mute_stream)
-+		return bridge->funcs->hdmi_codec_mute_stream(connector, bridge,
-+							     enable, direction);
-+	else
-+		return -ENOTSUPP;
-+}
-+
-+static const struct drm_connector_hdmi_codec_funcs drm_bridge_connector_hdmi_codec_funcs = {
-+	.audio_startup = drm_bridge_connector_audio_startup,
-+	.prepare = drm_bridge_connector_prepare,
-+	.audio_shutdown = drm_bridge_connector_audio_shutdown,
-+	.mute_stream = drm_bridge_connector_mute_stream,
-+};
-+
- static const struct drm_connector_hdmi_funcs drm_bridge_connector_hdmi_funcs = {
- 	.tmds_char_rate_valid = drm_bridge_connector_tmds_char_rate_valid,
- 	.clear_infoframe = drm_bridge_connector_clear_infoframe,
- 	.write_infoframe = drm_bridge_connector_write_infoframe,
-+	.codec_funcs = &drm_bridge_connector_hdmi_codec_funcs,
++	.hdmi_codec_audio_startup = lt9611_hdmi_codec_audio_startup,
++	.hdmi_codec_prepare = lt9611_hdmi_codec_prepare,
++	.hdmi_codec_audio_shutdown = lt9611_hdmi_codec_audio_shutdown,
  };
  
- /* -----------------------------------------------------------------------------
-@@ -473,7 +545,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 	if (connector_type == DRM_MODE_CONNECTOR_Unknown)
- 		return ERR_PTR(-EINVAL);
+ static int lt9611_parse_dt(struct device *dev,
+@@ -1013,102 +1074,6 @@ static int lt9611_read_device_rev(struct lt9611 *lt9611)
+ 	return ret;
+ }
  
--	if (bridge_connector->bridge_hdmi)
-+	if (bridge_connector->bridge_hdmi) {
-+		bridge = bridge_connector->bridge_hdmi;
-+
- 		ret = drmm_connector_hdmi_init(drm, connector,
- 					       bridge_connector->bridge_hdmi->vendor,
- 					       bridge_connector->bridge_hdmi->product,
-@@ -482,12 +556,30 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 					       connector_type, ddc,
- 					       supported_formats,
- 					       max_bpc);
+-static int lt9611_hdmi_hw_params(struct device *dev, void *data,
+-				 struct hdmi_codec_daifmt *fmt,
+-				 struct hdmi_codec_params *hparms)
+-{
+-	struct lt9611 *lt9611 = data;
+-
+-	if (hparms->sample_rate == 48000)
+-		regmap_write(lt9611->regmap, 0x840f, 0x2b);
+-	else if (hparms->sample_rate == 96000)
+-		regmap_write(lt9611->regmap, 0x840f, 0xab);
 -	else
-+		if (ret)
-+			return ERR_PTR(ret);
+-		return -EINVAL;
+-
+-	regmap_write(lt9611->regmap, 0x8435, 0x00);
+-	regmap_write(lt9611->regmap, 0x8436, 0x18);
+-	regmap_write(lt9611->regmap, 0x8437, 0x00);
+-
+-	return 0;
+-}
+-
+-static int lt9611_audio_startup(struct device *dev, void *data)
+-{
+-	struct lt9611 *lt9611 = data;
+-
+-	regmap_write(lt9611->regmap, 0x82d6, 0x8c);
+-	regmap_write(lt9611->regmap, 0x82d7, 0x04);
+-
+-	regmap_write(lt9611->regmap, 0x8406, 0x08);
+-	regmap_write(lt9611->regmap, 0x8407, 0x10);
+-
+-	regmap_write(lt9611->regmap, 0x8434, 0xd5);
+-
+-	return 0;
+-}
+-
+-static void lt9611_audio_shutdown(struct device *dev, void *data)
+-{
+-	struct lt9611 *lt9611 = data;
+-
+-	regmap_write(lt9611->regmap, 0x8406, 0x00);
+-	regmap_write(lt9611->regmap, 0x8407, 0x00);
+-}
+-
+-static int lt9611_hdmi_i2s_get_dai_id(struct snd_soc_component *component,
+-				      struct device_node *endpoint,
+-				      void *data)
+-{
+-	struct of_endpoint of_ep;
+-	int ret;
+-
+-	ret = of_graph_parse_endpoint(endpoint, &of_ep);
+-	if (ret < 0)
+-		return ret;
+-
+-	/*
+-	 * HDMI sound should be located as reg = <2>
+-	 * Then, it is sound port 0
+-	 */
+-	if (of_ep.port == 2)
+-		return 0;
+-
+-	return -EINVAL;
+-}
+-
+-static const struct hdmi_codec_ops lt9611_codec_ops = {
+-	.hw_params	= lt9611_hdmi_hw_params,
+-	.audio_shutdown = lt9611_audio_shutdown,
+-	.audio_startup	= lt9611_audio_startup,
+-	.get_dai_id	= lt9611_hdmi_i2s_get_dai_id,
+-};
+-
+-static struct hdmi_codec_pdata codec_data = {
+-	.ops = &lt9611_codec_ops,
+-	.max_i2s_channels = 8,
+-	.i2s = 1,
+-};
+-
+-static int lt9611_audio_init(struct device *dev, struct lt9611 *lt9611)
+-{
+-	codec_data.data = lt9611;
+-	lt9611->audio_pdev =
+-		platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
+-					      PLATFORM_DEVID_AUTO,
+-					      &codec_data, sizeof(codec_data));
+-
+-	return PTR_ERR_OR_ZERO(lt9611->audio_pdev);
+-}
+-
+-static void lt9611_audio_exit(struct lt9611 *lt9611)
+-{
+-	if (lt9611->audio_pdev) {
+-		platform_device_unregister(lt9611->audio_pdev);
+-		lt9611->audio_pdev = NULL;
+-	}
+-}
+-
+ static int lt9611_probe(struct i2c_client *client)
+ {
+ 	struct lt9611 *lt9611;
+@@ -1172,6 +1137,9 @@ static int lt9611_probe(struct i2c_client *client)
+ 
+ 	i2c_set_clientdata(client, lt9611);
+ 
++	/* Disable Audio InfoFrame, enabled by default */
++	regmap_update_bits(lt9611->regmap, 0x843d, LT9611_INFOFRAME_AUDIO, 0);
 +
-+		if (bridge->hdmi_codec_max_i2s_playback_channels ||
-+		    bridge->hdmi_codec_spdif_playback) {
-+			if (!bridge->funcs->hdmi_codec_prepare ||
-+			    !bridge->funcs->hdmi_codec_audio_shutdown)
-+				return ERR_PTR(-EINVAL);
-+
-+			ret = drm_connector_hdmi_codec_init(connector,
-+							    bridge->hdmi_codec_dev,
-+							    bridge->hdmi_codec_max_i2s_playback_channels,
-+							    bridge->hdmi_codec_spdif_playback,
-+							    bridge->hdmi_codec_dai_port);
-+			if (ret)
-+				return ERR_PTR(ret);
-+		}
-+	} else {
- 		ret = drmm_connector_init(drm, connector,
- 					  &drm_bridge_connector_funcs,
- 					  connector_type, ddc);
+ 	lt9611->bridge.funcs = &lt9611_bridge_funcs;
+ 	lt9611->bridge.of_node = client->dev.of_node;
+ 	lt9611->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID |
+@@ -1180,6 +1148,9 @@ static int lt9611_probe(struct i2c_client *client)
+ 	lt9611->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+ 	lt9611->bridge.vendor = "Lontium";
+ 	lt9611->bridge.product = "LT9611";
++	lt9611->bridge.hdmi_codec_dev = dev;
++	lt9611->bridge.hdmi_codec_max_i2s_playback_channels = 8;
++	lt9611->bridge.hdmi_codec_dai_port = 2;
+ 
+ 	drm_bridge_add(&lt9611->bridge);
+ 
+@@ -1201,10 +1172,6 @@ static int lt9611_probe(struct i2c_client *client)
+ 
+ 	lt9611_enable_hpd_interrupts(lt9611);
+ 
+-	ret = lt9611_audio_init(dev, lt9611);
 -	if (ret)
--		return ERR_PTR(ret);
-+		if (ret)
-+			return ERR_PTR(ret);
-+	}
+-		goto err_remove_bridge;
+-
+ 	return 0;
  
- 	drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
+ err_remove_bridge:
+@@ -1225,7 +1192,6 @@ static void lt9611_remove(struct i2c_client *client)
+ 	struct lt9611 *lt9611 = i2c_get_clientdata(client);
  
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index e8d735b7f6a480468c88287e2517b387ceec0f22..fd7ad7315a8bfda90f02b0704c33ba0e356899fb 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -41,6 +41,8 @@ struct drm_display_info;
- struct drm_minor;
- struct drm_panel;
- struct edid;
-+struct hdmi_codec_daifmt;
-+struct hdmi_codec_params;
- struct i2c_adapter;
+ 	disable_irq(client->irq);
+-	lt9611_audio_exit(lt9611);
+ 	drm_bridge_remove(&lt9611->bridge);
  
- /**
-@@ -676,6 +678,21 @@ struct drm_bridge_funcs {
- 				    enum hdmi_infoframe_type type,
- 				    const u8 *buffer, size_t len);
- 
-+	int (*hdmi_codec_audio_startup)(struct drm_connector *connector,
-+					struct drm_bridge *bridge);
-+
-+	int (*hdmi_codec_prepare)(struct drm_connector *connector,
-+				  struct drm_bridge *bridge,
-+				  struct hdmi_codec_daifmt *fmt,
-+				  struct hdmi_codec_params *hparms);
-+
-+	void (*hdmi_codec_audio_shutdown)(struct drm_connector *connector,
-+					  struct drm_bridge *bridge);
-+
-+	int (*hdmi_codec_mute_stream)(struct drm_connector *connector,
-+				      struct drm_bridge *bridge,
-+				      bool enable, int direction);
-+
- 	/**
- 	 * @debugfs_init:
- 	 *
-@@ -859,6 +876,27 @@ struct drm_bridge {
- 	 * @DRM_BRIDGE_OP_HDMI is set.
- 	 */
- 	unsigned int max_bpc;
-+
-+	/**
-+	 * @hdmi_codec_dev: device to be used as a parent for the HDMI Codec
-+	 */
-+	struct device *hdmi_codec_dev;
-+
-+	/**
-+	 * @hdmi_codec_max_i2s_playback_channels: maximum number of playback
-+	 * I2S channels for the HDMI codec
-+	 */
-+	int hdmi_codec_max_i2s_playback_channels;
-+
-+	/**
-+	 * @hdmi_codec_spdif_playback: set if HDMI codec has S/PDIF playback port
-+	 */
-+	unsigned int hdmi_codec_spdif_playback : 1;
-+
-+	/**
-+	 * @hdmi_codec_dai_port: sound DAI port, -1 if it is not enabled
-+	 */
-+	int hdmi_codec_dai_port;
- };
- 
- static inline struct drm_bridge *
+ 	regulator_bulk_disable(ARRAY_SIZE(lt9611->supplies), lt9611->supplies);
 
 -- 
 2.39.5
