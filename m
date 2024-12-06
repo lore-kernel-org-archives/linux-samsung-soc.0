@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3191C3054;
-	Fri,  6 Dec 2024 08:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51111DF73C;
+	Fri,  6 Dec 2024 08:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474170; cv=none; b=gx/0Ph76i6uadj7YNoQa+yzysqeT7M5GZ+ohou/ZL6rJgz2uwdb9JkUHLi+Dm6P5hQM2LUxBTlGk41crVyRz1ARnt/Pmt3/0ITAum6oChu2hzdI+Uxx+HAeyiNNJ+iNhk2vCTkKYvJ8JDWbDuzyofX5fc202xdptWKZprB88qsQ=
+	t=1733474939; cv=none; b=e43JZFkQi/e/1DMoWlaf1tHTJIVFoNCh47oEI42UatLdCU85Q6x9JUnGzSsedDvjf5u+EuH3WaJUT+ujfqRJgKsraSg0Xubc97mBgXqdpcBjCXhHoThQlK7dPcujmUYQN5THQ3tK4+tK1423h6QGSC+vR3xPFaOyOgTuX7fxuK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474170; c=relaxed/simple;
-	bh=biysX5rwD8h38rWK+RqAV3h7Q6xppH9Fd8isyf4rwIA=;
+	s=arc-20240116; t=1733474939; c=relaxed/simple;
+	bh=aoEdMQVRDm62MFwU7+GmBXr5pYnwEby46sw7PqYogLk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5FtEKhaR0GltPXWGt/vM5IAKVb06TPN53ugsqCOPEyaZLnfYwx6zrpcec/Oo/Lzi4/I4W2R+l/kWAKzW7DnIVyyXCoM80H0Dp9436zxL3iQ59hSww4jKIftBvWXgUQVHTZdlXcAqcDMFZcvH8kUjrfOyv0q+86OlSpsZ+7vk8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giCKlH7/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Fhwt+YAk6peAkal6pFrumRrsIyRJ4sHUy7nWYKxiZYs07zrKYOroF5g3EgAsIj8RmrObDVhZpLCOZXfhrrgA+vE5cZ0o6moubNzAItmA2G0d1uMR+BMCSlRz9KNtU3VS2fVMekZyr4NXsrlE2zMdQrBxFVy6EHe4F1H+er/wC6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcN78dvS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giCKlH7/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E51C4CED1;
-	Fri,  6 Dec 2024 08:36:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcN78dvS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F3B2C4CED1;
+	Fri,  6 Dec 2024 08:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733474169;
-	bh=biysX5rwD8h38rWK+RqAV3h7Q6xppH9Fd8isyf4rwIA=;
+	s=k20201202; t=1733474939;
+	bh=aoEdMQVRDm62MFwU7+GmBXr5pYnwEby46sw7PqYogLk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=giCKlH7/IEm17aNGwxcd45BYEo43yvCcdkE2ZCCD9+Cr75eqsQIdB0MP+RyTdZfCC
-	 IXd9A33cmS/pXhQrVBiAZ0ETgPSzCiN/elKWzRwTjRns+lXFa4wYBzI/HnDlkKrF13
-	 3KqCfWjRHvK2azH2Xzw8HrHk4JyusN9H/tYQ016+gX2dVpFPmhRANAiPjJOTj6bPKf
-	 KwypQKNIv+4Nq95w3ObbrUJMwZmgMuqglGTnqz9HS5ZEtJuWKut4sWwreBZP2vA/QF
-	 ZVoELvq93YS9+TTltJW/EyPmH/bvN48hru7jYqhOT8YAIGf0qWjhbUAd3l1phUBMYP
-	 aQGJeD5/nN2Sg==
-Message-ID: <fdb4af16-468a-4c23-b8f4-ab60d4b535d2@kernel.org>
-Date: Fri, 6 Dec 2024 09:36:03 +0100
+	b=EcN78dvShJ/8mD3gXzP2sahPpgGZGuuRJIZHjcBDPHQu3c6BGAjVwJqFdNuOdEL6D
+	 iUfcc4cLeRLLH+mNxi6kOv2NQWYN/SMvprkQ/vN+gHXQL/LQYJwWTG5TivN6brisGj
+	 1oRsasYcTsJnI0ydTKjcPeLuUWyNMzeh5gXNFcl0qF3oIU4DwpAFtizoZ8MtJk4M+6
+	 7bu04siKCwmE8jdlrEE8obHiYZqc/i7IhQkj9ylcW0HtOQmqkSAkhiVqmGrCK7VSOi
+	 yifQrAhk18qnU7OM/mZtkRiTB+UtBuHWizixdkrH0giW8NljXp1r0zAfqXKkAcohkT
+	 Ga2i0etFXewcw==
+Message-ID: <510e826d-a434-437d-8d2e-3f2618c28b7f@kernel.org>
+Date: Fri, 6 Dec 2024 09:48:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,18 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] arm64: dts: exynos990: Add clock management unit
- nodes
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241205194020.785846-1-igor.belwon@mentallysanemainliners.org>
- <20241205194020.785846-2-igor.belwon@mentallysanemainliners.org>
+Subject: Re: [PATCH v4 1/1] arm64: dts: exynosautov920: add watchdog DT node
+To: Taewan Kim <trunixs.kim@samsung.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
+References: <20241206025139.2148833-1-trunixs.kim@samsung.com>
+ <CGME20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833@epcas2p4.samsung.com>
+ <20241206025139.2148833-2-trunixs.kim@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,65 +92,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241205194020.785846-2-igor.belwon@mentallysanemainliners.org>
+In-Reply-To: <20241206025139.2148833-2-trunixs.kim@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/12/2024 20:40, Igor Belwon wrote:
-> Add CMU nodes for:
-> - cmu_top: provides clocks for other blocks
-> - cmu_hsi0: provides clocks for usb31
+On 06/12/2024 03:51, Taewan Kim wrote:
+> From: Byoungtae Cho <bt.cho@samsung.com>
 > 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> Adds two watchdog devices for ExynosAutoV920 SoC.
+> 
+> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
 > ---
->  arch/arm64/boot/dts/exynos/exynos990.dtsi | 27 +++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> index c1986f00e443..49bb1e156843 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> @@ -5,6 +5,7 @@
->   * Copyright (c) 2024, Igor Belwon <igor.belwon@mentallysanemainliners.org>
->   */
->  
-> +#include <dt-bindings/clock/samsung,exynos990.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  
->  / {
-> @@ -199,6 +200,23 @@ pinctrl_peric1: pinctrl@10730000 {
->  			interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>;
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index c759134c909e..7b9591255e91 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> @@ -183,6 +183,26 @@ cmu_misc: clock-controller@10020000 {
+>  				      "noc";
 >  		};
 >  
-> +		cmu_hsi0: clock-controller@10a00000 {
-> +			compatible = "samsung,exynos990-cmu-hsi0";
-> +			reg = <0x10a00000 0x8000>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&oscclk>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_BUS>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_USB31DRD>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_USBDP_DEBUG>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_DPGTC>;
-> +			clock-names = "oscclk", "dout_cmu_hsi0_bus",
+> +		watchdog_cl0: watchdog@10060000 {
 
-One per line.
+You need to do careful rebase, not just accept whatever tools shown you.
 
-> +						"dout_cmu_hsi0_usb31drd",
-
-Misaligned.
-
-> +						"dout_cmu_hsi0_usbdp_debug",
-> +						"dout_cmu_hsi0_dpgtc";
-> +
-
-Drop stray blank line.
-
-> +		};
-> +
-
-
-
+This is now placed in incorrect order - not keeping sorting by unit address.
 
 Best regards,
 Krzysztof
