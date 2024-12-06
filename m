@@ -1,65 +1,65 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24501F1309
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 09:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF961F6662
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 09:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733478199; cv=none; b=rHTUIawATwSfgRKM3dECcvMMYFTXXZWV2c0BC4nU0bki0Ab4lXpWQUnxVgFOzJqCf1ZzPKwrbWzKO8YWj8AsT1BSI1jGn8JOecHD1xMfBM/JuaSGFBQQ3Zjc254lieKqMR+w50qHYUCwnr7QYL3QuEfo0s+dMq0XCZ9TZrOaaHw=
+	t=1733478202; cv=none; b=TLZlAw4ywwgEz6TwKlOXDAj5dGYzU9Q0u7q4fv2wI4ch3JxA7zdlYRVZIQ/TLt1PYTJQk/BRuiEbPB+NwPY7r5lz/CY7cn8kYRJRGyUBrC3g6HYk4zHZIllc3/ay/ahNQj2x1j06drZ33v0mGHQSz9R5mPJsdG+EjgNwGvnbGw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733478199; c=relaxed/simple;
-	bh=3Q5pbMu5lborNDPG00HVqHDspCjjhjGT9968qr3bz9k=;
+	s=arc-20240116; t=1733478202; c=relaxed/simple;
+	bh=zYvAEMAKJI/pMjPuMCGmB4bmJnIIZvQ3OxFQhHsqYJE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hqtDkXc+N8qYIwCjWmI0CovvQYD+5T0fI+bnuTiKOrqnWj5ZXbXtPoZ27khDAXS5I6ARaxEf/0jJp1GhdZKYj02EYISQFk+r7boKyGGuD0dR2bf2ubrLB5a4EAlHbHDdn0OsQJs2+5U2uXdTBj5P04lZXtrEGZ0FlfhBgVTZaVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rJnGXru4; arc=none smtp.client-ip=209.85.208.178
+	 In-Reply-To:To:Cc; b=fXzjpz03CyCTL95LrHqj2nzTSPiMEmURsTOcJLOA8BcTFCLBzEsc+W2koJSP317+kh9J9reSHFYMut7bU3bIseMdC4kTUul9Rm7uUD8N0ZLq9V8GlfmZtzJrOtahiEJ5ekCZTmSuSO+YWxRIg6NtblhIBDQsrcf8LX1vJJ77UCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4CIDWrh; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rJnGXru4"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so16743781fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2024 01:43:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4CIDWrh"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so16744151fa.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2024 01:43:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733478195; x=1734082995; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733478197; x=1734082997; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VnGo6ZNwboubgG4PK3zPxjFnyRb2ICdQLCcJ6lGvxCQ=;
-        b=rJnGXru4Xt6zVYnMSteFC3ArKlwnoFlT2IQXXToym4nLhZw5lKKq1nbp/zAJhM7Ll0
-         CbpPcRQrdP7fzdUQtdZITBW0NcsLkOFUdMcG/RdOjkU1lzmkm8yb0Sr6//KDsFPwhi9U
-         SYfXClWUTMjc6+bHPbKEtTbVRJsBuAo5UkXY02zampKStFBf5XasV0hRGS8s3ZjuLgfv
-         etVzTW1tpytyLsPH9iklXPcD5IrlJiDqJc+8OKSszEtJchJQERtLmXykAd6wOuw+D2hC
-         b47Jjo9l+ee8C/4rDyto5i2QwYtMdfmiZfXOW3EHs2zQsplxBV6zebByVMiNuzI9BTOp
-         1c9g==
+        bh=BXd2OzHxXLbpmSJUeio7TPXwyPaZHSalM8FhliMGDmw=;
+        b=I4CIDWrhvKO5AWKXxQ7OxMFlE2m208pgGQOgIjc2Y6oMvBhkSnarTVKWkDtf+23kMe
+         nbV73FlBjZ9N89JW+elnxYc3Tvo0S4CKKgwadS4QLgG2o97ld5Wya0vmOxZuZdisap/k
+         oOKlBPnajOYDJJUYoWie0OcPo1D10B/TQGQNXBwnAX4yfj4t7NMpyvjAfs44YN8oGCso
+         C9qbAdNtXjd1MP5U8Dic99KYdMrllRL+v2Oyx1aPjkpUf97FMbwGwwXOEAbyT8VT9pY+
+         i8k1/HU7aBXNEh/9drXAAYI3hSUfXB4+R004UYEehJmuvSSHsUqStzPvRQTbwakPBMQV
+         7Egw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733478195; x=1734082995;
+        d=1e100.net; s=20230601; t=1733478197; x=1734082997;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VnGo6ZNwboubgG4PK3zPxjFnyRb2ICdQLCcJ6lGvxCQ=;
-        b=Y42d8A65kho3EP8hxiXWYotyNRTEol/ZSsKG9UIFpHMVdfs7veO2Qpzp+mRjM6jtsy
-         tmMStnj1SXPp7cI54ku6ibZCQSN2uOQj7urXGtbyD65Z/sDmznMPuqBhg64E8JO6xKFK
-         r/kje6M6SdJ401T93aFjrjqBsXOXTgb9B8wk7q4aa2HQ8x4uox/Hc1Vu+was6Gb6oJCR
-         HscusAZBJq5erDwY/5pP0kVtIo3NSwp2XfuBGBhIAbVV7R8oQ9G2EkKhJngltJabpmxr
-         o+Z/tOTD2U9ud33ihaZnmJDdqJOfPARGesP25c/06d40sxrE3kNsdSxaEE/1TqLziVKH
-         5v6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWTaEWUYTMpwlQfTKhaUmQFXGEPnybWPmRc08qehq7VdREcUcIDdZA03aideRQtuz+ksZuQcOfyMAomPnP7XUKeYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfna/isueCtZil7/xlg6wC5dyxy3mru4CqDdlrcV6+BO9L+s1q
-	wd8tL520BNc45Iw74/kWCM2zHCmDUPgySoSnnDrNVG5l59MGbiGlWrxTWplo5UI=
-X-Gm-Gg: ASbGncvCfgGrLhHlYHGcH3PQBmUXmR7yefX9ulNF2Qq+PxHaZhO/996le6ocIzdyJhs
-	Mgk8nl12mL0lvKlPNS/TkTAE3Ge9YPdgBa/IuNiQKFlTk5v3/5N1i5WB/1QrElAeeidhPYw15hQ
-	WN/ugMl2tGskY9NhMG592NK+8CkGXQ83q5QdiTLP2ddkSlPyqiKirjab4e6CqClXCf5ESs25Pup
-	eeE4FiyEsKK5vwijY7tFHAWRHJop3wxqjrzU1TOYaAy1/dPqUipwNtu8w==
-X-Google-Smtp-Source: AGHT+IHOfIBmoyEolZXZdyLfUjfRu7LK9x/y6e2NRNb0G1IfVvxWYDXdxw9kGPS8sm9OVNX+a5FRXQ==
-X-Received: by 2002:a2e:bea8:0:b0:2ff:df01:2b43 with SMTP id 38308e7fff4ca-3002f8aaef2mr6873121fa.18.1733478194869;
-        Fri, 06 Dec 2024 01:43:14 -0800 (PST)
+        bh=BXd2OzHxXLbpmSJUeio7TPXwyPaZHSalM8FhliMGDmw=;
+        b=HnX7zMo/pn1toU62VgGSGHnUCE6828eZAXcKGfvISFUu5Tfdie7m7rsmrhZjJDCpq0
+         qLkN2njDXmlK43Xy/oh6tBudX3kJxlZfmqlVmdAM1XPMRTIewQwBY5axgpqyFuPl2WHM
+         ZXfXmBk6lsk30uvJmaUeZVgqS03UWZRxlIDwT5wFYEqcaZrVBjoVuJPy8jl5+BX9KmrG
+         JDq8ExATK/zZUHNHUi0A3LqjSRoyuevNIpoaEX4uDkh4IeK4z1Ft3tzoHMRH1Da9LhP7
+         UfwV9ZqFAOFzy+KsPHIitYEaztDrEcs5zVkPpCQ2fTMtYwjUIykqigljq4K91RwrFCaj
+         s0ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOeVUy+EuCcEd/1WFqncGA0y7ipRNWuxztkfTGbYeCTejeShlZUSmKmbuSxxAPJQl62EwA0Pdo2WCK+q4lFQuSPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqm6WVdyOAdb/nZ+vtEg6L7i/8uyRKS9P23wPexAnvF1nH/oKR
+	Ftds6A0mJany6bKFT2Y0TWI4rDw/rxrru+xRMPkpn8m2i4uxsljmj8GOQ+Ug8U4=
+X-Gm-Gg: ASbGncvo9RSd9xvDbLo6ypTpnH5cYGyoorFR88yATlxE5GdhThc5AKkkN9M+R0PEvFM
+	NvtDIsIRkpO5RCTsNz0ADmYY3r2N8llzFzF0/yfC9NLPiGcBkYH3Eqed7S0z3SrWhru+uktLtBW
+	l2l1Cjc54M6ArLD0lCJZ14oTceyajzu9JEcu/LUzvVDaYzxKnHOms+ND+fXyyTSw2bUjUkJMhhI
+	elThe1nvFTgGs8pE9VsLBKK2jIdH8czTdjSbViTZJNuF8K1v9NxITV15A==
+X-Google-Smtp-Source: AGHT+IHOzYvZJj8Vkykxd2x0JSD+NBvzpXfm6jlvPobPhv2vFXWDLmCYeuoQOdT69cvmzqWGVgvY9Q==
+X-Received: by 2002:a2e:a9ab:0:b0:2ff:d0aa:11b with SMTP id 38308e7fff4ca-3002f79b514mr6682241fa.16.1733478197396;
+        Fri, 06 Dec 2024 01:43:17 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020db3805sm4128441fa.50.2024.12.06.01.43.13
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020db3805sm4128441fa.50.2024.12.06.01.43.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 01:43:13 -0800 (PST)
+        Fri, 06 Dec 2024 01:43:16 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 06 Dec 2024 11:43:04 +0200
-Subject: [PATCH v2 01/10] drm/connector: add mutex to protect ELD from
- concurrent access
+Date: Fri, 06 Dec 2024 11:43:05 +0200
+Subject: [PATCH v2 02/10] drm/bridge: anx7625: use eld_mutex to protect
+ access to connector->eld
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-drm-connector-eld-mutex-v2-1-c9bce1ee8bea@linaro.org>
+Message-Id: <20241206-drm-connector-eld-mutex-v2-2-c9bce1ee8bea@linaro.org>
 References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
 In-Reply-To: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -104,95 +104,44 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
  freedreno@lists.freedesktop.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3318;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1073;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=3Q5pbMu5lborNDPG00HVqHDspCjjhjGT9968qr3bz9k=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnUsctUfPifOTQ8tgTrVr4NDA9HQHo4lV6wGZ/x
- 802YkRE+OKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1LHLQAKCRCLPIo+Aiko
- 1YTBB/4+LnnhEaD+gppGgLjgyd7DzGULNQMgJ2hoRulbF1tCZiqhH2JwwQgaiFxKaCK13GN72v/
- +MlHzrTYbtF24x6wcNLxIFk87u2wdjCt5dO8xqKiiFF4My86VJebVFFgPQmUXcFvMWkWUS3PByj
- f9McLONHSWPtO0XRW3DbeQ8zzl5cChJhSN8/mkvwrNqq0BkWWOEDxxROis0bi2KSFK0/SBEJ2rN
- X+RhP/l08plhS1bGyEvzzOyAMvtpjSEsEYXf5mCZGGnypfY+YKJQ1VDkpPcX3/Si3R6D3pZ0Vpw
- Wfr3vj5voa6Xeg3e/NqY4k/PPQjahgFQwpQeJMdgalo1w5Zq
+ bh=zYvAEMAKJI/pMjPuMCGmB4bmJnIIZvQ3OxFQhHsqYJE=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnUscuOWsnWIy+09WL6ZmIga61MhuoPN14wFRyc
+ CTUUhM7PIGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1LHLgAKCRCLPIo+Aiko
+ 1QuCB/9GVQCw++i7vtbIm18C0qWy2CcrBgiveGKyYFt0iSpolRcgaG6RbcwjW5qst9mjy3Q6fyT
+ wfoOatec5nsxe7H0nq3z0RdLACzVly4qvlxnotelWRdH/BQ6ujFXyFerWcmtX3JM/VBGIQ2IBAc
+ cy6kBFVrFFfY0hrjJEvNHpO8Jw7wJ8KQT4IzkIw7DCzBnKyhq7QShr5O2I++bdw+2PCmYR+Ig4l
+ AKpe8UolsbHTV1DesMVMTPNQMXDw/veYJp5B5GOVzXYZoSXeg0/Wp4HONWYO6yhjuqBKn4BL1Kz
+ Qv9O5BOb777DITYj54ixLYloqlzSi9P0cRUdPa0UewnOGLrp
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The connector->eld is accessed by the .get_eld() callback. This access
-can collide with the drm_edid_to_eld() updating the data at the same
-time. Add drm_connector.eld_mutex to protect the data from concurrenct
-access. Individual drivers are not updated (to reduce possible issues
-while applying the patch), maintainers are to find a best suitable way
-to lock that mutex while accessing the ELD data.
+Reading access to connector->eld can happen at the same time the
+drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
+order to protect connector->eld from concurrent access.
 
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/drm_connector.c | 1 +
- drivers/gpu/drm/drm_edid.c      | 6 ++++++
- include/drm/drm_connector.h     | 5 ++++-
- 3 files changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/anx7625.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index fc35f47e2849ed6786d6223ac9c69e1c359fc648..bbdaaf7022b62d84594a29f1b60144920903a99a 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -277,6 +277,7 @@ static int __drm_connector_init(struct drm_device *dev,
- 	INIT_LIST_HEAD(&connector->probed_modes);
- 	INIT_LIST_HEAD(&connector->modes);
- 	mutex_init(&connector->mutex);
-+	mutex_init(&connector->eld_mutex);
- 	mutex_init(&connector->edid_override_mutex);
- 	mutex_init(&connector->hdmi.infoframes.lock);
- 	connector->edid_blob_ptr = NULL;
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 855beafb76ffbecf5c08d58e2f54bfb76f30b930..13bc4c290b17d556d654b7cdd8c48c24a32aba9c 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -5605,7 +5605,9 @@ EXPORT_SYMBOL(drm_edid_get_monitor_name);
+diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
+index a2675b121fe44b96945f34215fd900f35bfde43a..c036bbc92ba96ec4663c55cca091cd5da9f6d271 100644
+--- a/drivers/gpu/drm/bridge/analogix/anx7625.c
++++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+@@ -2002,8 +2002,10 @@ static int anx7625_audio_get_eld(struct device *dev, void *data,
+ 		memset(buf, 0, len);
+ 	} else {
+ 		dev_dbg(dev, "audio copy eld\n");
++		mutex_lock(&ctx->connector->eld_mutex);
+ 		memcpy(buf, ctx->connector->eld,
+ 		       min(sizeof(ctx->connector->eld), len));
++		mutex_unlock(&ctx->connector->eld_mutex);
+ 	}
  
- static void clear_eld(struct drm_connector *connector)
- {
-+	mutex_lock(&connector->eld_mutex);
- 	memset(connector->eld, 0, sizeof(connector->eld));
-+	mutex_unlock(&connector->eld_mutex);
- 
- 	connector->latency_present[0] = false;
- 	connector->latency_present[1] = false;
-@@ -5657,6 +5659,8 @@ static void drm_edid_to_eld(struct drm_connector *connector,
- 	if (!drm_edid)
- 		return;
- 
-+	mutex_lock(&connector->eld_mutex);
-+
- 	mnl = get_monitor_name(drm_edid, &eld[DRM_ELD_MONITOR_NAME_STRING]);
- 	drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] ELD monitor %s\n",
- 		    connector->base.id, connector->name,
-@@ -5717,6 +5721,8 @@ static void drm_edid_to_eld(struct drm_connector *connector,
- 	drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] ELD size %d, SAD count %d\n",
- 		    connector->base.id, connector->name,
- 		    drm_eld_size(eld), total_sad_count);
-+
-+	mutex_unlock(&connector->eld_mutex);
- }
- 
- static int _drm_edid_to_sad(const struct drm_edid *drm_edid,
-diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-index e3fa43291f449d70f3b92a00985336c4f2237bc6..1e2b25e204cb523d61d30f5409faa059bf2b86eb 100644
---- a/include/drm/drm_connector.h
-+++ b/include/drm/drm_connector.h
-@@ -2001,8 +2001,11 @@ struct drm_connector {
- 	struct drm_encoder *encoder;
- 
- #define MAX_ELD_BYTES	128
--	/** @eld: EDID-like data, if present */
-+	/** @eld: EDID-like data, if present, protected by @eld_mutex */
- 	uint8_t eld[MAX_ELD_BYTES];
-+	/** @eld_mutex: protection for concurrenct access to @eld */
-+	struct mutex eld_mutex;
-+
- 	/** @latency_present: AV delay info from ELD, if found */
- 	bool latency_present[2];
- 	/**
+ 	return 0;
 
 -- 
 2.39.5
