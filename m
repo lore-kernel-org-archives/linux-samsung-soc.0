@@ -1,118 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6689346426;
-	Fri,  6 Dec 2024 13:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD2F207669;
+	Fri,  6 Dec 2024 13:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490695; cv=none; b=Xph2UvMTSVTM20hbRaGL1UBE4+GPawTI2tFzxzvV+FdIrT+F0Dso6TokIDAafnvHChpkNik3yxUFxdZo7bG80l30c0BCvsQYPidw47pOIidlWEaHaPpPptvoMou7wItAPcg6z/y13NfRuxrHA7o5tTUMrD4wIL/kv7tFtU0okVk=
+	t=1733491695; cv=none; b=UX8+7CymCM+LhCqWuOmnrngtUSzlBsCWFPboRAQVRfzQdjieeQINY4HngI4tCzkx3CUTq328PebKaXyN0MnuWxmFAzXey7L39PTeZ4Xu1wN+Ri5AW8A/iDphBSwFtP7BEEs0VbmcJPXBnhS9C/qeQXQ0eUzHYA/XN3SnNUx1yvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490695; c=relaxed/simple;
-	bh=LgIJFC/bkuiLiJ86lwprG7kL3obiSTl1MWtTblN84WM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o9jz77V32+ShpRpr8Lav8s8ckiVR47eitbQe5iqbtCO2gNNjDZkHvCTzUCxzN7CcNYWINGggHRlXQy6jrh0FLEhdQgkUlBisy9i8xqfUU3terStyfS7cZwsxdL8/BPCv57b7z7IcdpE9ZZ8L/UsxtOo3QBAKmjeDrKX932Go+a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pp3W6LgE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733491695; c=relaxed/simple;
+	bh=bFR90d84PsBBGdYbcFgonL3LS296ISMzvCAGR/chLOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YME/OzlB3kIYPKmVohvtQsDrNU+8+T4d3KjGn9gxYFpqv8sg7BiDRBU1G1z24LZNrC4ly3wUNYLyOYJ/UHrJJnbX/n9VyGfLRGH8OxHx/T1FzSazYzCkQ1nzFHFRfGGU4EfN3Dr/JfQt3vP8YBJbRQubOKUWKTHNpIvKj0t2LHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKMTKk5e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pp3W6LgE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2AE4C4CED1;
-	Fri,  6 Dec 2024 13:11:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKMTKk5e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447E3C4CED1;
+	Fri,  6 Dec 2024 13:28:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733490693;
-	bh=LgIJFC/bkuiLiJ86lwprG7kL3obiSTl1MWtTblN84WM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pp3W6LgEYDULirIoE4HjXW5yaqzOBbQ0SM5Xzmx9HO4GofAHpks3qi7UrEWUmoUd9
-	 n5laU+k1gaiDTnL+b52VAz8LSAa3b9ttUnue6IE4difM42K9GPrramz/zB6foOc48D
-	 bJrEjVicCk/WUu0xUHv/em6mzjUovDMXYFWF1LPfHsZUpmWY9FMETX75iKG0gp+Pi1
-	 PDABCMArM6mIg9EyP2eoTVmNJ4lA29XDk5GA2q67DDHq+V1SDCjrIFAOo5GQEJZXjU
-	 YqCYIbCcJsBGcudcvABvYpHoUVze+ofnIdGhdKhCnHar8jsmVWch6GV1DEpMdC84y1
-	 ptYTgCeqjr+KA==
-Message-ID: <5e3e43eb-3afc-486e-aa9a-4c1074fd30b8@kernel.org>
-Date: Fri, 6 Dec 2024 14:11:28 +0100
+	s=k20201202; t=1733491695;
+	bh=bFR90d84PsBBGdYbcFgonL3LS296ISMzvCAGR/chLOw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OKMTKk5epQMKByKTi5i0KAnyrgICV7xyMkPuNJ1HKvOBLdN6en6rHhisvmkYUQFxG
+	 /yCuucXQBisQYMa5fTTVRje9QUUshvMsVCFHbdtPJWpptmcdW/IpBmxIEmyigot+zM
+	 JG9IHN1Glun/YJ/A8iR91QY6cYeyZOIGLsH+NFZ5gkLXv2g/jePI2NP9RICzlyMMfi
+	 vSoOk4rktxp9t0NwMZPn0cUBrPlVLwriECqXAvwcArt8xS/xxHSaSnyYEwR34ez0XB
+	 algZN18bS6LhiOYuOOO9uOUy6+IS5OvmdGf0BG1yA0sOWiOpGDu9qHrYWvViRXESbB
+	 rAMN47dO6+xdA==
+Date: Fri, 6 Dec 2024 14:28:11 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org, kernel-team@android.com, 
+	willmcvicker@google.com, peter.griffin@linaro.org, javierm@redhat.com, 
+	tzimmermann@suse.de, vincent.guittot@linaro.org, ulf.hansson@linaro.org, 
+	arnd@arndb.de
+Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
+Message-ID: <vxqi23hxw7bmtfs5wk3u7szganpv5aa74b26xrvpmbehkltodw@dpum7zrxdz44>
+References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
+ <20241205175345.201595-3-tudor.ambarus@linaro.org>
+ <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] arm64: dts: exynos: Add initial support for
- Samsung Galaxy S20 5G (x1s)
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- igor.belwon@mentallysanemainliners.org
-References: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
- <20241203080327.4751-4-umer.uddin@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241203080327.4751-4-umer.uddin@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
 
-On 03/12/2024 09:03, Umer Uddin wrote:
->  arch/arm64/boot/dts/exynos/Makefile          |  1 +
->  arch/arm64/boot/dts/exynos/exynos990-x1s.dts | 28 ++++++++++++++++++++
->  2 files changed, 29 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
+On Fri, Dec 06, 2024 at 12:39:56AM +0100, Daniel Lezcano wrote:
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +config EXYNOS_ACPM_PROTOCOL
+> > +	tristate "Exynos Alive Clock and Power Manager (ACPM) Message Protocol"
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 948a2c6cb..6959acfbb 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos850-e850-96.dtb		\
->  	exynos8895-dreamlte.dtb		\
->  	exynos990-c1s.dtb		\
-> +	exynos990-x1s.dtb		\
->  	exynos990-r8s.dtb               \
+> Given the importance of this driver where a lot of PM services rely on, does
+> it really make sense to allow it as a module ?
+> 
+> Some PM services may be needed very early in the boot process
+> 
 
-Keep the order (sorted).
-
+If it works as module e.g. on Android, it is beneficial. I think the
+platform was booting fine without it, at least to some shell, so I can
+imagine this can be loaded a bit later.
 
 Best regards,
 Krzysztof
+
