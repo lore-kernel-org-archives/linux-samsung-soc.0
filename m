@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771AF6FBF;
-	Fri,  6 Dec 2024 08:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E5D1D47A2;
+	Fri,  6 Dec 2024 08:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474034; cv=none; b=sBF1Pq/Fed65+aEiuT/OdYSP+aETklx+yzJp+QZT3OiJI7fWvD16gIww/Q/Mc+BtAphF1gDwTgq5SKUhLsrWtvhXZTW1SzxWyobHTG7kNyPt8ytHO1rZEE4GrwEVFzaV7SEw0gTbgdDWbP1W7Q60nDhM//aVsbNe5nQI+H0ozIg=
+	t=1733474120; cv=none; b=RSCVB0fD+WUrQCyEdur611ig79ZWVH2MiBVl+jtYzbo7epzSpmy1iqM3GU1sw2/jyCu62y14Kuj0zfn3dpYXOCWQRuISkzio6EvElAoBmEY4+CYABv66CAvfgTFIkpZkkcjmXvBUOTz0w/LEhlBFBkOU+BVlBdCezvw6Lt1YXKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474034; c=relaxed/simple;
-	bh=DdsykxjoYwGNap8VBMiXurGFc0Soee4yASPhhni6j/Q=;
+	s=arc-20240116; t=1733474120; c=relaxed/simple;
+	bh=EDg03OFGs4apDaHp6iemMW926EGHkRWDR38JWms23d4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lY2l8mJTi8mHssegF9oXwSo/HLMtoM+AZk994k0qGf0to3bPG6s9Mav2OLJ3d9GM9ZLAnfcXP7Sszea1G+fKlrojwA768zFhFrcmQT+IU1ksoe9vVYqfQ6Sx/JYgb9ytCAZP51452CgxH0qWL5Gccv5jaDLINux0WM9nJfrRu5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwp4SlyC; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=O+IYjJoCYQeNgGW5/DEfD34g12gj+hnERBQEKbdMpVW5ME6h1XzOeX+69klbDVKqD++cWis0bg8+pDL4k9pwq7KIdXtIBST+zgLFi8S6qA2ZTHuzZfR5UMTEdzH/qTxP0dCREQoKnjm0diQhCkDQYO4fDai0PwObY2lds0m/pKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8Ej1feC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwp4SlyC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D8AC4CED1;
-	Fri,  6 Dec 2024 08:33:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8Ej1feC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A140DC4CED1;
+	Fri,  6 Dec 2024 08:35:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733474034;
-	bh=DdsykxjoYwGNap8VBMiXurGFc0Soee4yASPhhni6j/Q=;
+	s=k20201202; t=1733474120;
+	bh=EDg03OFGs4apDaHp6iemMW926EGHkRWDR38JWms23d4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bwp4SlyCOjqE1HX7OTfX265WGvdBBIYnnd5v2H7PnzHa0M+WMCXRw0hawTxkPyvDK
-	 WQiW3Utv+26d8d7PZy095rUn82Qhc8qqFbuu+Y0wIl2b/pDP+MPnpWh9uBdrGQaZQN
-	 IgPGsw9cp9OfQZcdN0wKBXzX9OtX5c73VnFf4syWEBXDSpwDH6PnYBgjAtzFLhM1P7
-	 JKtDUNUOcGgXxP/J1nTc7ECVXCj5woG/a0mfJiZDw9amF9Dhh977yBYIyB5sFr2rdO
-	 682Db5mC1VALKjbex0OZk+0dSIXPynaMtM5GEOO3Y0xcI3FjXtwG6rTbkhta743aEP
-	 rImWaBq/Lrb4g==
-Message-ID: <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
-Date: Fri, 6 Dec 2024 09:33:48 +0100
+	b=n8Ej1feCB6qzINjL4xqPekE/MiX1cbdFFBCL4hxUZK/kb97RPOkL5zDzDThImkDmV
+	 PmtlqHJzqj/aLdanj50OzC7llEMIQELruetkp45I/43mkmiPBKgMJJyog2R3Y7uAuT
+	 /dWNJTLbevGb5+aNEMMp+AETqKxWOr8BAvoXeeJIQufGxKFkHYxg/u+befpybaCU1G
+	 bDRTcwdHF6kT3jlZm7DzKiljpfFQ/oNs2d6h/bZ1mPqyD94aBG3e3ZgmvHJj5ihwSe
+	 7LEJYQWbn0sXc3WP9Y6SR0FHgmHzcuBjJeqa4pWStiQZYH+nMXPqCkKBGeGWgLt5pe
+	 DIaUSSHmCkVhA==
+Message-ID: <7d9523c4-ba97-496d-ae73-d349aaeb0cd5@kernel.org>
+Date: Fri, 6 Dec 2024 09:35:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,12 +35,13 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
-To: Song Chen <chensong_2000@189.cn>, lgirdwood@gmail.com,
- broonie@kernel.org, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241206051358.496832-1-chensong_2000@189.cn>
+Subject: Re: [PATCH v1 0/1] arm64: dts: exynos990: Add cmu nodes
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241205194020.785846-1-igor.belwon@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -86,267 +87,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241206051358.496832-1-chensong_2000@189.cn>
+In-Reply-To: <20241205194020.785846-1-igor.belwon@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/12/2024 06:13, Song Chen wrote:
-> This converts s5m8767 regulator driver to use GPIO
-> descriptors.
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
-Subject: missing : after s5m prefix.
-
+On 05/12/2024 20:40, Igor Belwon wrote:
+> Hi all,
 > 
-> Signed-off-by: Song Chen <chensong_2000@189.cn>
-> ---
->  drivers/regulator/s5m8767.c      | 110 ++++++++++---------------------
->  include/linux/mfd/samsung/core.h |   5 +-
->  2 files changed, 37 insertions(+), 78 deletions(-)
+> This patchset adds device tree nodes for Exynos990 CMUs (TOP and HSI0).
 > 
-> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-> index d25cd81e3f36..d0b1eed4dfa0 100644
-> --- a/drivers/regulator/s5m8767.c
-> +++ b/drivers/regulator/s5m8767.c
-> @@ -5,7 +5,7 @@
->  
->  #include <linux/cleanup.h>
->  #include <linux/err.h>
-> -#include <linux/of_gpio.h>
-> +//#include <linux/of_gpio.h>
+> This patchset is compile-time and runtime dependent on [1], which adds
+> driver support for CMU.
+> 
+> [1] https://lore.kernel.org/linux-samsung-soc/20241205193423.783815-1-igor.
+> belwon@mentallysanemainliners.org/T/#t
+> 
 
-Some development code was left.
+Don't wrap links.
 
->  #include <linux/gpio/consumer.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> @@ -15,6 +15,7 @@
->  #include <linux/mfd/samsung/s5m8767.h>
->  #include <linux/regulator/of_regulator.h>
->  #include <linux/regmap.h>
-> +#include <linux/of.h>
->  
->  #define S5M8767_OPMODE_NORMAL_MODE 0x1
->  
-> @@ -23,6 +24,8 @@ struct s5m8767_info {
->  	struct sec_pmic_dev *iodev;
->  	int num_regulators;
->  	struct sec_opmode_data *opmode;
-> +	struct gpio_desc *buck_gpios[3];
-> +	struct gpio_desc *buck_ds[3];
->  
->  	int ramp_delay;
->  	bool buck2_ramp;
-> @@ -35,8 +38,7 @@ struct s5m8767_info {
->  	u8 buck2_vol[8];
->  	u8 buck3_vol[8];
->  	u8 buck4_vol[8];
-> -	int buck_gpios[3];
-> -	int buck_ds[3];
-
-Don't move them.
-
-> +
-
-No need.
-
->  	int buck_gpioindex;
->  };
->  
-> @@ -272,9 +274,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
->  {
->  	int temp_index = s5m8767->buck_gpioindex;
->  
-> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
->  
->  	return 0;
->  }
-> @@ -283,9 +285,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
->  {
->  	int temp_index = s5m8767->buck_gpioindex;
->  
-> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
-> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
->  
->  	return 0;
->  }
-> @@ -486,16 +488,22 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
->  			struct sec_platform_data *pdata,
->  			struct device_node *pmic_np)
->  {
-> -	int i, gpio;
-> +	int i;
-> +	char label[32];
->  
->  	for (i = 0; i < 3; i++) {
-> -		gpio = of_get_named_gpio(pmic_np,
-> -					"s5m8767,pmic-buck-dvs-gpios", i);
-> -		if (!gpio_is_valid(gpio)) {
-> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
-> +		pdata->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
-> +					"s5m8767,pmic-buck-dvs", i, GPIOD_OUT_LOW);
-> +		if (IS_ERR(pdata->buck_gpios[i])) {
-> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
-
-Why not printing error msg? This should be also return dev_err_probe
-
->  			return -EINVAL;
->  		}
-> -		pdata->buck_gpios[i] = gpio;
-> +
-> +		/* SET GPIO*/
-
-What is a SET GPIO?
-
-> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
-
-Why using "SET" as name, not the actual name it is used for? Buck DVS?
-
-> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
-> +		gpiod_direction_output(pdata->buck_gpios[i],
-> +					(pdata->buck_default_idx >> (2 - i)) & 0x1);
-
-This is not an equivalent code. You set values for GPIOs 0-1 even if
-requesting GPIO 2 fails.
-
-On which board did you test it?
-
->  	}
->  	return 0;
->  }
-> @@ -504,16 +512,21 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
->  			struct sec_platform_data *pdata,
->  			struct device_node *pmic_np)
->  {
-> -	int i, gpio;
-> +	int i;
-> +	char label[32];
->  
->  	for (i = 0; i < 3; i++) {
-> -		gpio = of_get_named_gpio(pmic_np,
-> -					"s5m8767,pmic-buck-ds-gpios", i);
-> -		if (!gpio_is_valid(gpio)) {
-> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
-> +		pdata->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
-> +					"s5m8767,pmic-buck-ds", i, GPIOD_OUT_LOW);
-> +		if (IS_ERR(pdata->buck_ds[i])) {
-> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
->  			return -EINVAL;
->  		}
-> -		pdata->buck_ds[i] = gpio;
-> +
-> +		/* SET GPIO*/
-> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
-> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
-> +		gpiod_direction_output(pdata->buck_gpios[i], 0);
->  	}
->  	return 0;
->  }
-> @@ -785,61 +798,6 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
-> -						pdata->buck4_gpiodvs) {
-> -
-> -		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
-> -			!gpio_is_valid(pdata->buck_gpios[1]) ||
-> -			!gpio_is_valid(pdata->buck_gpios[2])) {
-> -			dev_err(&pdev->dev, "GPIO NOT VALID\n");
-> -			return -EINVAL;
-> -		}
-> -
-> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
-> -					"S5M8767 SET1");
-> -		if (ret)
-> -			return ret;
-> -
-> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
-> -					"S5M8767 SET2");
-> -		if (ret)
-> -			return ret;
-> -
-> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
-> -					"S5M8767 SET3");
-> -		if (ret)
-> -			return ret;
-> -
-> -		/* SET1 GPIO */
-> -		gpio_direction_output(pdata->buck_gpios[0],
-> -				(s5m8767->buck_gpioindex >> 2) & 0x1);
-> -		/* SET2 GPIO */
-> -		gpio_direction_output(pdata->buck_gpios[1],
-> -				(s5m8767->buck_gpioindex >> 1) & 0x1);
-> -		/* SET3 GPIO */
-> -		gpio_direction_output(pdata->buck_gpios[2],
-> -				(s5m8767->buck_gpioindex >> 0) & 0x1);
-> -	}
-> -
-> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
-> -	if (ret)
-> -		return ret;
-> -
-> -	/* DS2 GPIO */
-> -	gpio_direction_output(pdata->buck_ds[0], 0x0);
-> -	/* DS3 GPIO */
-> -	gpio_direction_output(pdata->buck_ds[1], 0x0);
-> -	/* DS4 GPIO */
-> -	gpio_direction_output(pdata->buck_ds[2], 0x0);
-> -
->  	regmap_update_bits(s5m8767->iodev->regmap_pmic,
->  			   S5M8767_REG_BUCK2CTRL, 1 << 1,
->  			   (pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
-> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
-> index 750274d41fc0..b757f15877a3 100644
-> --- a/include/linux/mfd/samsung/core.h
-> +++ b/include/linux/mfd/samsung/core.h
-> @@ -33,6 +33,7 @@
->  #define STEP_12_5_MV		12500
->  #define STEP_6_25_MV		6250
->  
-> +#define BULK_GPIO_COUNT		3
-
-Where do you use ot?
-
->  struct gpio_desc;
->  
->  enum sec_device_type {
-> @@ -77,10 +78,10 @@ int sec_irq_resume(struct sec_pmic_dev *sec_pmic);
->  struct sec_platform_data {
->  	struct sec_regulator_data	*regulators;
->  	struct sec_opmode_data		*opmode;
-> +	struct gpio_desc			*buck_gpios[3];
-> +	struct gpio_desc			*buck_ds[3];
->  	int				num_regulators;
->  
-> -	int				buck_gpios[3];
-> -	int				buck_ds[3];
-
-Don't move the code.
-
->  	unsigned int			buck2_voltage[8];
->  	bool				buck2_gpiodvs;
->  	unsigned int			buck3_voltage[8];
+> Igor Belwon (1):
+>   arm64: dts: exynos990: Add clock management unit nodes
+> 
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi | 27 +++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+> 
 
 
 Best regards,
