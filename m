@@ -1,64 +1,64 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF961F6662
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 09:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FD71F9EA5
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 09:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733478202; cv=none; b=TLZlAw4ywwgEz6TwKlOXDAj5dGYzU9Q0u7q4fv2wI4ch3JxA7zdlYRVZIQ/TLt1PYTJQk/BRuiEbPB+NwPY7r5lz/CY7cn8kYRJRGyUBrC3g6HYk4zHZIllc3/ay/ahNQj2x1j06drZ33v0mGHQSz9R5mPJsdG+EjgNwGvnbGw4=
+	t=1733478203; cv=none; b=XtVn9fUyGi6nc63+CGRJnA4JVma0MWEafdbY/7QspTHBqSSI3u23VVgd1OriNdleHuwztKSXXX7yrYp7/FCzJV+xlBlgB+PMyOu6dfrPCQssGbQgS2yj+HZMxvWRairwTBPHUHdkGep8Ci6Pv2RiFrJ4A1orE1QoCAc3Mrf6gjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733478202; c=relaxed/simple;
-	bh=zYvAEMAKJI/pMjPuMCGmB4bmJnIIZvQ3OxFQhHsqYJE=;
+	s=arc-20240116; t=1733478203; c=relaxed/simple;
+	bh=S2LNy/QG/Pvu7jaLQRzV8x9aVeJiuTJJixaJAknwzOI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fXzjpz03CyCTL95LrHqj2nzTSPiMEmURsTOcJLOA8BcTFCLBzEsc+W2koJSP317+kh9J9reSHFYMut7bU3bIseMdC4kTUul9Rm7uUD8N0ZLq9V8GlfmZtzJrOtahiEJ5ekCZTmSuSO+YWxRIg6NtblhIBDQsrcf8LX1vJJ77UCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4CIDWrh; arc=none smtp.client-ip=209.85.208.176
+	 In-Reply-To:To:Cc; b=fyqKq5G+udecVQeIHRGMeo81xq2euLqyJ0qQdfIo4/VpPQ45RSjZwRUCDgDtUMbK5BYyYFBlqS85JI4YreooHgwKGlI5aPAlrV5RsjVbB53J0u5LJZQG+Brcmr5PlilVzG40RJBNB7+PvUwWMlzKt5VQ3qPPRnKyrTws03xai9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BicLqy1G; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4CIDWrh"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ffdbc0c103so16744151fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2024 01:43:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BicLqy1G"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso19064431fa.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2024 01:43:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733478197; x=1734082997; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733478200; x=1734083000; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BXd2OzHxXLbpmSJUeio7TPXwyPaZHSalM8FhliMGDmw=;
-        b=I4CIDWrhvKO5AWKXxQ7OxMFlE2m208pgGQOgIjc2Y6oMvBhkSnarTVKWkDtf+23kMe
-         nbV73FlBjZ9N89JW+elnxYc3Tvo0S4CKKgwadS4QLgG2o97ld5Wya0vmOxZuZdisap/k
-         oOKlBPnajOYDJJUYoWie0OcPo1D10B/TQGQNXBwnAX4yfj4t7NMpyvjAfs44YN8oGCso
-         C9qbAdNtXjd1MP5U8Dic99KYdMrllRL+v2Oyx1aPjkpUf97FMbwGwwXOEAbyT8VT9pY+
-         i8k1/HU7aBXNEh/9drXAAYI3hSUfXB4+R004UYEehJmuvSSHsUqStzPvRQTbwakPBMQV
-         7Egw==
+        bh=Wh7X6NiXjO0ZK0icbu5RRSIlyMlU/s3VBkgppSRGnTc=;
+        b=BicLqy1GHsDtul6M54FTDxmspEV8KLfCzEGux/KaZ8lSkyzZ8qT8NGwwk8JQEIiRd2
+         LGKTaLL8d+mBCb6w3o8ylAvr41d5S/9cNPzrwcOdf7BNBYXgwGRfQNTJfh/1OlfxHsH3
+         qmbu5vuRobTkYq61rod7hkDh9zrHspfJPWqpE2QqGiFekonmD4fD9rqceGGfnfRxb2pL
+         Q/CZQkfG7EmsRVfWotClBndg3BnE5H5OOgNL8J0LexKdfthFpUq4/jxM/Sc+YDk54bjZ
+         RsLldkeWtG21eBatalhGjBJ9XtrIdo6Rn+3sZepjq26sP4Qv3u66Xn64fido74OdJf/f
+         4xLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733478197; x=1734082997;
+        d=1e100.net; s=20230601; t=1733478200; x=1734083000;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BXd2OzHxXLbpmSJUeio7TPXwyPaZHSalM8FhliMGDmw=;
-        b=HnX7zMo/pn1toU62VgGSGHnUCE6828eZAXcKGfvISFUu5Tfdie7m7rsmrhZjJDCpq0
-         qLkN2njDXmlK43Xy/oh6tBudX3kJxlZfmqlVmdAM1XPMRTIewQwBY5axgpqyFuPl2WHM
-         ZXfXmBk6lsk30uvJmaUeZVgqS03UWZRxlIDwT5wFYEqcaZrVBjoVuJPy8jl5+BX9KmrG
-         JDq8ExATK/zZUHNHUi0A3LqjSRoyuevNIpoaEX4uDkh4IeK4z1Ft3tzoHMRH1Da9LhP7
-         UfwV9ZqFAOFzy+KsPHIitYEaztDrEcs5zVkPpCQ2fTMtYwjUIykqigljq4K91RwrFCaj
-         s0ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOeVUy+EuCcEd/1WFqncGA0y7ipRNWuxztkfTGbYeCTejeShlZUSmKmbuSxxAPJQl62EwA0Pdo2WCK+q4lFQuSPQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqm6WVdyOAdb/nZ+vtEg6L7i/8uyRKS9P23wPexAnvF1nH/oKR
-	Ftds6A0mJany6bKFT2Y0TWI4rDw/rxrru+xRMPkpn8m2i4uxsljmj8GOQ+Ug8U4=
-X-Gm-Gg: ASbGncvo9RSd9xvDbLo6ypTpnH5cYGyoorFR88yATlxE5GdhThc5AKkkN9M+R0PEvFM
-	NvtDIsIRkpO5RCTsNz0ADmYY3r2N8llzFzF0/yfC9NLPiGcBkYH3Eqed7S0z3SrWhru+uktLtBW
-	l2l1Cjc54M6ArLD0lCJZ14oTceyajzu9JEcu/LUzvVDaYzxKnHOms+ND+fXyyTSw2bUjUkJMhhI
-	elThe1nvFTgGs8pE9VsLBKK2jIdH8czTdjSbViTZJNuF8K1v9NxITV15A==
-X-Google-Smtp-Source: AGHT+IHOzYvZJj8Vkykxd2x0JSD+NBvzpXfm6jlvPobPhv2vFXWDLmCYeuoQOdT69cvmzqWGVgvY9Q==
-X-Received: by 2002:a2e:a9ab:0:b0:2ff:d0aa:11b with SMTP id 38308e7fff4ca-3002f79b514mr6682241fa.16.1733478197396;
-        Fri, 06 Dec 2024 01:43:17 -0800 (PST)
+        bh=Wh7X6NiXjO0ZK0icbu5RRSIlyMlU/s3VBkgppSRGnTc=;
+        b=Yf1XqtG8q2B5LIWbLOSWAjoiupeMGI3wIE7p1JC3UqEd3ZZaPu9MPt9ynlcPjh86t4
+         pLNsfGhgW6581NhUulz7NLcGEGBfKPMHNqmqeFXG9rQfrEjpnW9EB1NtXfOp0zrpOPLJ
+         5PEswZeoBxn+Adc8sFOvG0INYYLyQ8qLSDv3EwMWYKuXJcNZveVlsCxy0SgzBSOqEiUU
+         /Ef7FZWF2BWRPTvBCPj/Hiee46nl6JyKLxH/ZcXIlqSOqvyA4cAWj3QVKcn+cxqJQO1U
+         7MO6YHSxKsW3dtdHnvI2gc2iFvfftWlKT2jeoyb2v8y/osdrxPjhDlC4Ax1HP+Xdu/TJ
+         uEPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLH6a0z1hDHF3SiNIe44sQ1neupqSphQd8gkJLFzcT/9sJrBAQGWHWimvOrzjvHv4PNrPVawwrJHA091Y3I+Nw1w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZONkMpbDn9s09FLEqr9pSBMAe0vTFpMQx2IbGFYu73Pdp/+BH
+	v/9WQL8Jg/vbdVD5sjXHmwWPkQ8SMGQ9orNZdbR4jU1iBn8Zw4NUUEy3YQq9bsA=
+X-Gm-Gg: ASbGnct5S2QRog1V+d7C6R0ng+5+FfingEJ1RPnrcZIG45W51+ow7IVkH1P895oWL/F
+	1A9trpVD7iwrp85gqLJgxrLSkvzmlgbvI7g8YaEMECg4sSI1xDLLg1zITtwSeTvTMYOBGTI1kBc
+	JDFLv6m84rBsHt9v13SzYPuyxiTOwcVYlkXtOjjIPEZ/K1ladtNKL/59YHIzQaPjzKsw4bdfFAU
+	kM1pDyX6+8sCVCqAlYzTS+I1IQrcBJK73zyyaaqrhn9cN0LLRuYPvytxQ==
+X-Google-Smtp-Source: AGHT+IFBxT03pxchsuAow8zXPe44X5vXMeN6+pzw5XgO7yRZwFTl4DSSqXqmQN/nIOwdAf9XNhMk0g==
+X-Received: by 2002:a2e:a90f:0:b0:2fa:cc86:f217 with SMTP id 38308e7fff4ca-3002fcc6314mr10909661fa.35.1733478199996;
+        Fri, 06 Dec 2024 01:43:19 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020db3805sm4128441fa.50.2024.12.06.01.43.15
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020db3805sm4128441fa.50.2024.12.06.01.43.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 01:43:16 -0800 (PST)
+        Fri, 06 Dec 2024 01:43:18 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 06 Dec 2024 11:43:05 +0200
-Subject: [PATCH v2 02/10] drm/bridge: anx7625: use eld_mutex to protect
+Date: Fri, 06 Dec 2024 11:43:06 +0200
+Subject: [PATCH v2 03/10] drm/bridge: ite-it66121: use eld_mutex to protect
  access to connector->eld
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-drm-connector-eld-mutex-v2-2-c9bce1ee8bea@linaro.org>
+Message-Id: <20241206-drm-connector-eld-mutex-v2-3-c9bce1ee8bea@linaro.org>
 References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
 In-Reply-To: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -104,16 +104,16 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
  freedreno@lists.freedesktop.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1073;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1093;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=zYvAEMAKJI/pMjPuMCGmB4bmJnIIZvQ3OxFQhHsqYJE=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnUscuOWsnWIy+09WL6ZmIga61MhuoPN14wFRyc
- CTUUhM7PIGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1LHLgAKCRCLPIo+Aiko
- 1QuCB/9GVQCw++i7vtbIm18C0qWy2CcrBgiveGKyYFt0iSpolRcgaG6RbcwjW5qst9mjy3Q6fyT
- wfoOatec5nsxe7H0nq3z0RdLACzVly4qvlxnotelWRdH/BQ6ujFXyFerWcmtX3JM/VBGIQ2IBAc
- cy6kBFVrFFfY0hrjJEvNHpO8Jw7wJ8KQT4IzkIw7DCzBnKyhq7QShr5O2I++bdw+2PCmYR+Ig4l
- AKpe8UolsbHTV1DesMVMTPNQMXDw/veYJp5B5GOVzXYZoSXeg0/Wp4HONWYO6yhjuqBKn4BL1Kz
- Qv9O5BOb777DITYj54ixLYloqlzSi9P0cRUdPa0UewnOGLrp
+ bh=S2LNy/QG/Pvu7jaLQRzV8x9aVeJiuTJJixaJAknwzOI=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ3rQcT0D+fWrdf7eTuO7miErYRRq/uGdQ1bilxVd2j16Z
+ z/vrJ/SyWjMwsDIxSArpsjiU9AyNWZTctiHHVPrYQaxMoFMYeDiFICJpAtzMKxmXrAmIf3sx79J
+ n5x5p8lbc0yOj9hTUFTN17jvemrJ5y/aGWJsN90qs3j2HCpJO3d947HLoiufHO66EK487WcPu11
+ nm12ex98Nfkt75Zb+CJdfGT4lNHqmtrDVbxVb710nCjUmbrr9djMbP9vtiRfb/tVodHA/9zbjTp
+ F0UW+v3VO2sZRl3zl7tlRnDkUX0/ud0U8Cn1rduKSQ9zDX7POhM+sniP9cXR1c0TOtPPZAG7NQc
+ 23p9xmHks64efKmbr0dkTlrP/cz+ZmZz6Y5SZ2ZxRdyk8vljuq/sP1L23tFZb+4PNSt8KvLEfbi
+ rq6MWdlq8X/xgh4O6wU1LBPiahwNfFNvHJtbsfeP697ZAA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
@@ -124,24 +124,24 @@ order to protect connector->eld from concurrent access.
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/bridge/analogix/anx7625.c | 2 ++
+ drivers/gpu/drm/bridge/ite-it66121.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-index a2675b121fe44b96945f34215fd900f35bfde43a..c036bbc92ba96ec4663c55cca091cd5da9f6d271 100644
---- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-+++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-@@ -2002,8 +2002,10 @@ static int anx7625_audio_get_eld(struct device *dev, void *data,
+diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+index 35ae3f0e8f51f768229e055a086b53a419ffcd9f..940083e5d2ddbfc56f14e2bdc6ddd0b9dd50b1f8 100644
+--- a/drivers/gpu/drm/bridge/ite-it66121.c
++++ b/drivers/gpu/drm/bridge/ite-it66121.c
+@@ -1450,8 +1450,10 @@ static int it66121_audio_get_eld(struct device *dev, void *data,
+ 		dev_dbg(dev, "No connector present, passing empty EDID data");
  		memset(buf, 0, len);
  	} else {
- 		dev_dbg(dev, "audio copy eld\n");
 +		mutex_lock(&ctx->connector->eld_mutex);
  		memcpy(buf, ctx->connector->eld,
  		       min(sizeof(ctx->connector->eld), len));
 +		mutex_unlock(&ctx->connector->eld_mutex);
  	}
+ 	mutex_unlock(&ctx->lock);
  
- 	return 0;
 
 -- 
 2.39.5
