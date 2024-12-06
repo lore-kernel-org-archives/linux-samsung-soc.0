@@ -1,72 +1,45 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9387142E67
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 02:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+Received: from 189.cn (ptr.189.cn [183.61.185.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50D21957E7;
+	Fri,  6 Dec 2024 05:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733453522; cv=none; b=Bt4JnMiCZDJFTDpkYHX6FKwM7aQaN3K9okaNg0gLJZEFEbsNSGVQoXDzSH0ingnoht8+EZIQaBWyfkRCQueX2QO5akp3s2vQR7xjZGGj3Wqkks1Bb42rbufF2U2Nl8+3vuV09O5mMqtSzo1cAGTBHO7igl7rPe7cz9n6yVubLuM=
+	t=1733462265; cv=none; b=FqRy7Qpl2cm6nV4RkslAiS+L02MQKnDzGJmbjGKo4Lxn2QA92tri97+HvRDHsiDNno21LECDTgh94TrylXKkvwODmv/n3FWbBOtpXA4g+JX+U2BYnMmkDDWTyoLatDlGop1ueGS4NFqBB+Z0+IerzgWDDEfydH7QaJmt+mZ5rkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733453522; c=relaxed/simple;
-	bh=feCUvC3SSXWPARoG6xLkk3g5qe2XfwFu91s3EPhtxOU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=G4Xen0ORK/ZI6Jz/w4nv4IOv/f2BrmFV7kUMWNxuO6Co3TtgJ/dJkv09ewbPH67GWoR7KELd5uh+zMFB3WTTv9dTL1UTcpUd37expUCwHuLkeDZ5arpYS5/4PTMFkHxlqTY0kpFg0U1k3EM0s++tSFkVZKvwLxqBwwjPuL/cJ4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pM+GsbY5; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pM+GsbY5"
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241206025157epoutp02d8b62684b3070346d9365cb6edec3417~OdspUG4Ng2053420534epoutp02k
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  6 Dec 2024 02:51:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241206025157epoutp02d8b62684b3070346d9365cb6edec3417~OdspUG4Ng2053420534epoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733453517;
-	bh=cqimClylACdPib2XjzAzujqrVa+bLgNFlUoMYpGNb7A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pM+GsbY5Jqv9e3MtoD/eWJpKDxQUsgAJDev+rEgcMpvEe+c5IkMZMzBJ5KBaFxbjB
-	 3YE4d4pB8fHjgawfcNasCpys/R6AKF2+Sv8+L8GcAj7setjOQdzZcanJdevJnyA0vt
-	 7Wn1IqtfHERnyTBgGb1LFfNlzOGZ0rwUdj0oD1Gg=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241206025157epcas2p1de9a1f3d058856d20254a587ef836e9d~OdsopW9jl2022620226epcas2p1I;
-	Fri,  6 Dec 2024 02:51:57 +0000 (GMT)
-Received: from epsmges2p4.samsung.com (unknown [182.195.36.102]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y4G4X4YSPz4x9Q1; Fri,  6 Dec
-	2024 02:51:56 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9E.61.22094.CC662576; Fri,  6 Dec 2024 11:51:56 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833~OdsnjsnD93176431764epcas2p4B;
-	Fri,  6 Dec 2024 02:51:56 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241206025156epsmtrp2ce7ead182b09be7aabed38fe61e14aeb~Odsni1Mk23190931909epsmtrp2c;
-	Fri,  6 Dec 2024 02:51:56 +0000 (GMT)
-X-AuditID: b6c32a48-e72eb7000000564e-aa-675266ccb376
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3B.74.18949.BC662576; Fri,  6 Dec 2024 11:51:55 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241206025155epsmtip1bcd0f7988c86df47d542edc9def24326~OdsnYg9TL3234132341epsmtip1C;
-	Fri,  6 Dec 2024 02:51:55 +0000 (GMT)
-From: Taewan Kim <trunixs.kim@samsung.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
-	Taewan Kim <trunixs.kim@samsung.com>
-Subject: [PATCH v4 1/1] arm64: dts: exynosautov920: add watchdog DT node
-Date: Fri,  6 Dec 2024 11:51:38 +0900
-Message-ID: <20241206025139.2148833-2-trunixs.kim@samsung.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241206025139.2148833-1-trunixs.kim@samsung.com>
+	s=arc-20240116; t=1733462265; c=relaxed/simple;
+	bh=htWnPQEOdyY5bfg02Phqku26+mG3fe+DlxFNe4nH85o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nyukigSefwsD6J9cqr+Y0lOdVFWJs7qauVZoB+9gkUAoiR1i+CVLQ727q2ft5vv4wSiAIn8NBnhVzkRx4hzYSH4MvUf7OrntPBqTWStpoh3r6CqKl9YbLSBYYXPsTjMfybDhwgAjK8RC4mRr4kyPChiFV5i8lHjGVP4VERte5TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.242.145:63557.884707989
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.242.145])
+	by 189.cn (HERMES) with SMTP id 2B0DE1001C9;
+	Fri,  6 Dec 2024 13:14:00 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-qw5z2 with ESMTP id 41a007c610964447a52ad752c2c17d3f for krzk@kernel.org;
+	Fri, 06 Dec 2024 13:14:01 CST
+X-Transaction-ID: 41a007c610964447a52ad752c2c17d3f
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: Song Chen <chensong_2000@189.cn>
+To: krzk@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	lee@kernel.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
+Date: Fri,  6 Dec 2024 13:13:58 +0800
+Message-Id: <20241206051358.496832-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -74,91 +47,226 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmue6ZtKB0g9fHlS0ezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
-	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
-	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y/6r5WwFp7krGr9MZWxg
-	vMjZxcjBISFgItHaY97FyMUhJLCDUeLZ7jtsEM4nRomdZ5YzQzjfGCW+nzoJ5HCCdSybuZ4J
-	pFtIYC+jxMoqiJqPjBLzp/5iAqlhE9CS2Hb4FRNIQkTgNaNEU+87sEnMAl8ZJba3trKCVAkL
-	eEh8n72MDcRmEVCVmHRlNpjNK2AnMf3udCaIbfISk9a0gm3mFLCXmLhmMQtEjaDEyZlPwGxm
-	oJrmrbPBFkgIzOSQ2HF+M1Szi0Tb39usELawxKvjW9ghbCmJz+/2skHY+RIrV56Aqq+RuNe2
-	iwXCtpdYdOYnO8ibzAKaEut36UPCS1niyC2otXwSHYf/skOEeSU62oQgTFWJ6csCIGZIS0yc
-	sRZqj4dEy/ONYPuFBCYxSrR8lJzAqDALyS+zkPwyC2HtAkbmVYxiqQXFuempxUYFJvDoTc7P
-	3cQITrVaHjsYZ7/9oHeIkYmD8RCjBAezkghvZVhguhBvSmJlVWpRfnxRaU5q8SFGU2BIT2SW
-	Ek3OByb7vJJ4QxNLAxMzM0NzI1MDcyVx3nutc1OEBNITS1KzU1MLUotg+pg4OKUamPqVbN3u
-	njjdOGta4gnV/KPX/C4d+x2Y8+Bn17w9lwJnvX/8WTPz8cmezm9urU9W8l/e7ZFzZO1Krqid
-	AWd4/i3bNj/UZ0mgdsjRv2Wztlrciprj35R+4Mm0n+umJM8qcku4MkPgWp2/ZE5f8Z++m7c5
-	wuZ2zz3qfMLSpq18t13augT1iANfNx62+e06iyfyb4Sj7K/NLgtYlLeYnlWZtiZEY4qK8nox
-	rZepzXfCOs5M2Xf31t0/3vlau2vbb//SlzH42+sp/+xbKn9Q4srVZ7YkSDNObf59T85L4k3p
-	8gspSe8nTo+I0Ar7k3P8G89Cj8Dvc7wfFZ4ytTH8t6h8c9sst2j/edePnvQN2XXpqvdmJZbi
-	jERDLeai4kQA/L4iET4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSnO7ptKB0gxP7bSwezNvGZnH/Ux+T
-	xZq955gs5h85x2rxctY9NotNj6+xWlzeNYfNYsb5fUwWN9btY7d4svAMk8X/PTvYLSYtPs9k
-	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWxWWTkpqTWZZapG+XwJUx
-	/9VytoLT3BWNX6YyNjBe5Oxi5OSQEDCRWDZzPVMXIxeHkMBuRolV7cdYIBLSEkd+v2CDsIUl
-	7rccYQWxhQTeM0r82isMYrMJaElsO/wKrFkEJH72yy9GkASzwG9GiQ0LjEFsYQEPie+zl4EN
-	YhFQlZh0ZTaYzStgJzH97nQmiAXyEpPWtDKD2JwC9hIT1ywGOoIDaJmdxLmVFRDlghInZz5h
-	gRgvL9G8dTbzBEaBWUhSs5CkFjAyrWKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93ECI4M
-	La0djHtWfdA7xMjEwXiIUYKDWUmEtzIsMF2INyWxsiq1KD++qDQntfgQozQHi5I477fXvSlC
-	AumJJanZqakFqUUwWSYOTqkGpqPX4r/V7az2zWvLTNqzPembh4Vnesv6Lbs4xAznhtd8neO6
-	2sH006c3yQweggzus/2vX1/7/NkyrvigMxHbOAo50+YfmS0xi+1uyNUVrCu7LFmcrIvv3la0
-	7TuREZSxOaY6dlPCiu60FSuj3gX/vqkRsF+7JWbrrPKIxPkvZhVIiR38v2xeisLckBqzS99U
-	0tXyHHcUGPHc6ItlP3nordsahaMNezwav/y328Dy786RmtD+F9e7n97Yv93rTcCpba4Ldy5m
-	4ngwqyfQ91EZ72lG18R/Kjov1mTrJey6YuCxsTWW9Ud4ev1Vs7m6ixhsBUJLO/LOhJyemLnw
-	Orfnd+VUzr2/mZT/tvG7vl4vo8RSnJFoqMVcVJwIAElLh5j7AgAA
-X-CMS-MailID: 20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833
-References: <20241206025139.2148833-1-trunixs.kim@samsung.com>
-	<CGME20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833@epcas2p4.samsung.com>
 
-From: Byoungtae Cho <bt.cho@samsung.com>
+This converts s5m8767 regulator driver to use GPIO
+descriptors.
 
-Adds two watchdog devices for ExynosAutoV920 SoC.
-
-Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+Signed-off-by: Song Chen <chensong_2000@189.cn>
 ---
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/regulator/s5m8767.c      | 110 ++++++++++---------------------
+ include/linux/mfd/samsung/core.h |   5 +-
+ 2 files changed, 37 insertions(+), 78 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c759134c909e..7b9591255e91 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -183,6 +183,26 @@ cmu_misc: clock-controller@10020000 {
- 				      "noc";
- 		};
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index d25cd81e3f36..d0b1eed4dfa0 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -5,7 +5,7 @@
  
-+		watchdog_cl0: watchdog@10060000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <0>;
-+		};
+ #include <linux/cleanup.h>
+ #include <linux/err.h>
+-#include <linux/of_gpio.h>
++//#include <linux/of_gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -15,6 +15,7 @@
+ #include <linux/mfd/samsung/s5m8767.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regmap.h>
++#include <linux/of.h>
+ 
+ #define S5M8767_OPMODE_NORMAL_MODE 0x1
+ 
+@@ -23,6 +24,8 @@ struct s5m8767_info {
+ 	struct sec_pmic_dev *iodev;
+ 	int num_regulators;
+ 	struct sec_opmode_data *opmode;
++	struct gpio_desc *buck_gpios[3];
++	struct gpio_desc *buck_ds[3];
+ 
+ 	int ramp_delay;
+ 	bool buck2_ramp;
+@@ -35,8 +38,7 @@ struct s5m8767_info {
+ 	u8 buck2_vol[8];
+ 	u8 buck3_vol[8];
+ 	u8 buck4_vol[8];
+-	int buck_gpios[3];
+-	int buck_ds[3];
 +
-+		watchdog_cl1: watchdog@10070000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10070000 0x100>;
-+			interrupts = <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <1>;
-+		};
+ 	int buck_gpioindex;
+ };
+ 
+@@ -272,9 +274,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
+ {
+ 	int temp_index = s5m8767->buck_gpioindex;
+ 
+-	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+ 
+ 	return 0;
+ }
+@@ -283,9 +285,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
+ {
+ 	int temp_index = s5m8767->buck_gpioindex;
+ 
+-	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+ 
+ 	return 0;
+ }
+@@ -486,16 +488,22 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
+ 			struct sec_platform_data *pdata,
+ 			struct device_node *pmic_np)
+ {
+-	int i, gpio;
++	int i;
++	char label[32];
+ 
+ 	for (i = 0; i < 3; i++) {
+-		gpio = of_get_named_gpio(pmic_np,
+-					"s5m8767,pmic-buck-dvs-gpios", i);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
++		pdata->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
++					"s5m8767,pmic-buck-dvs", i, GPIOD_OUT_LOW);
++		if (IS_ERR(pdata->buck_gpios[i])) {
++			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
+ 			return -EINVAL;
+ 		}
+-		pdata->buck_gpios[i] = gpio;
 +
- 		gic: interrupt-controller@10400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
++		/* SET GPIO*/
++		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
++		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
++		gpiod_direction_output(pdata->buck_gpios[i],
++					(pdata->buck_default_idx >> (2 - i)) & 0x1);
+ 	}
+ 	return 0;
+ }
+@@ -504,16 +512,21 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
+ 			struct sec_platform_data *pdata,
+ 			struct device_node *pmic_np)
+ {
+-	int i, gpio;
++	int i;
++	char label[32];
+ 
+ 	for (i = 0; i < 3; i++) {
+-		gpio = of_get_named_gpio(pmic_np,
+-					"s5m8767,pmic-buck-ds-gpios", i);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
++		pdata->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
++					"s5m8767,pmic-buck-ds", i, GPIOD_OUT_LOW);
++		if (IS_ERR(pdata->buck_ds[i])) {
++			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
+ 			return -EINVAL;
+ 		}
+-		pdata->buck_ds[i] = gpio;
++
++		/* SET GPIO*/
++		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
++		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
++		gpiod_direction_output(pdata->buck_gpios[i], 0);
+ 	}
+ 	return 0;
+ }
+@@ -785,61 +798,6 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
+-						pdata->buck4_gpiodvs) {
+-
+-		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
+-			!gpio_is_valid(pdata->buck_gpios[1]) ||
+-			!gpio_is_valid(pdata->buck_gpios[2])) {
+-			dev_err(&pdev->dev, "GPIO NOT VALID\n");
+-			return -EINVAL;
+-		}
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
+-					"S5M8767 SET1");
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
+-					"S5M8767 SET2");
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
+-					"S5M8767 SET3");
+-		if (ret)
+-			return ret;
+-
+-		/* SET1 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[0],
+-				(s5m8767->buck_gpioindex >> 2) & 0x1);
+-		/* SET2 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[1],
+-				(s5m8767->buck_gpioindex >> 1) & 0x1);
+-		/* SET3 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[2],
+-				(s5m8767->buck_gpioindex >> 0) & 0x1);
+-	}
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
+-	if (ret)
+-		return ret;
+-
+-	/* DS2 GPIO */
+-	gpio_direction_output(pdata->buck_ds[0], 0x0);
+-	/* DS3 GPIO */
+-	gpio_direction_output(pdata->buck_ds[1], 0x0);
+-	/* DS4 GPIO */
+-	gpio_direction_output(pdata->buck_ds[2], 0x0);
+-
+ 	regmap_update_bits(s5m8767->iodev->regmap_pmic,
+ 			   S5M8767_REG_BUCK2CTRL, 1 << 1,
+ 			   (pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 750274d41fc0..b757f15877a3 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -33,6 +33,7 @@
+ #define STEP_12_5_MV		12500
+ #define STEP_6_25_MV		6250
+ 
++#define BULK_GPIO_COUNT		3
+ struct gpio_desc;
+ 
+ enum sec_device_type {
+@@ -77,10 +78,10 @@ int sec_irq_resume(struct sec_pmic_dev *sec_pmic);
+ struct sec_platform_data {
+ 	struct sec_regulator_data	*regulators;
+ 	struct sec_opmode_data		*opmode;
++	struct gpio_desc			*buck_gpios[3];
++	struct gpio_desc			*buck_ds[3];
+ 	int				num_regulators;
+ 
+-	int				buck_gpios[3];
+-	int				buck_ds[3];
+ 	unsigned int			buck2_voltage[8];
+ 	bool				buck2_gpiodvs;
+ 	unsigned int			buck3_voltage[8];
 -- 
-2.47.1
+2.25.1
 
