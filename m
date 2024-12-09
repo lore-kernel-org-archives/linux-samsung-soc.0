@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FE922C6E8;
-	Mon,  9 Dec 2024 07:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F91155751;
+	Mon,  9 Dec 2024 07:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733728985; cv=none; b=IEVmLfaO3Rig7SVbnZjJ0EFmdcjYvFCPMx4DAXJ9LVlDixfUSrbcnFbQpY2uvFANXjqQErFLzQc729cVSnI+3gk4UcFhAIeYPwLnUtBuPa4lR/D/+5iaMMJeLT0GFX6qamtaeOHw+gbEFnvfDldRNDJMtHwipzF6my+fLfxYpd4=
+	t=1733729673; cv=none; b=BCSXzYzfv/C8J9g4l/MBB5uqxI1YM3pmNCla7K6qaEOXwu7mJfGrVesVRFDQyWUVWkDBF+NeU5O3LN7ekdZnNAN9EP8ptToHNIRcXtVBeo9M0nmUZuah1olkiPbRAMIEo/MwGuhzdlrPMrwIIu4ULW42Uonb8DQhW8D3VtodGBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733728985; c=relaxed/simple;
-	bh=zWnB+21XDuaXWNnPas1Gk4BTiZTPWMYj+mOQpE1WnBA=;
+	s=arc-20240116; t=1733729673; c=relaxed/simple;
+	bh=eJm6sPgxUntQ2123myJ74O4QKZrmsdqCdqHwho1ihUA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ee/RPWxQHpSZNuCAS97qU9Su4muPnNd7/quLRErOJUpqlYStws3kfeOLN5HPOOFbJBgYC4KmJh8VBw9rhtKqRGGSVTcwPsi+3g8GYZwRWu9/O33vgzjGZrRzs0T8Wmsn8nXDhSFbOtxO1pFYeenMvOBhxR+lr7vJfAuSbXltMTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ogiAu8XP; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=lzY7Mmstg6cwE1dDrLM2q5t/tQouLkImVRQNPuBdEBcn3A+xuvxJjImMhGos60mcfTpWGJoPXlictcC3HH/xOiJrBBKlSB+gjoWRwMY5UuLdrc7TpZ7qUQIxmsjQsKwsgpfJTNdRYogsWpaU4woQWs+AYKQdzE0hcUFd3GjcpOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWvqy8vq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogiAu8XP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68FADC4CED1;
-	Mon,  9 Dec 2024 07:23:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWvqy8vq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5823C4CED1;
+	Mon,  9 Dec 2024 07:34:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733728984;
-	bh=zWnB+21XDuaXWNnPas1Gk4BTiZTPWMYj+mOQpE1WnBA=;
+	s=k20201202; t=1733729673;
+	bh=eJm6sPgxUntQ2123myJ74O4QKZrmsdqCdqHwho1ihUA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ogiAu8XPzZV81Qzz6X6Q+rKVAUFEE23UlRAstxaR6WI/JhMjK5UGaFKYeLSPEkaBc
-	 ojkCoDKj8WfBuYHN+QYad1AexINpmLCcSMnAV2L7RKDzl1nQaBKLhiBp+xTdD8nMbq
-	 eX+mZdNG8b3D9vGv1OSNvzBPbKBKstcBSPJFOIEIk+OmS9EUM/7UPrl1wXnyaJ7OvG
-	 DF4IbELM8I9Sg0fjp40d+cRKkOW1jubtyo/z43cMsjZijt+P43ovLE3dUAFijHocOl
-	 GM0QGR4rhWq6V6PnLtaBT2H2Ig1DqfOxSoqU6d8Sn7rLj/4CTmgXAoSMKhLDiRoNdC
-	 ErW2pCbyKDhWQ==
-Message-ID: <77ceeb16-12cd-4c2d-8155-b6bd45feb524@kernel.org>
-Date: Mon, 9 Dec 2024 08:22:59 +0100
+	b=AWvqy8vqhCp4zh0noR7s+AiCvukEZhrgy6ED7KZ50lCzDshukylBpht6X8ssNnuSp
+	 s9MvGd5rAQYDGFFSh/WAMcbhobWZHT+CySdkeHlULfpaPZmYoClXKPXcgbe9zsCcvg
+	 DKP48+oZytzLLwxJ5evL0csDNTb4eHmkBQcvGJNoHqAJg9x9Ws7EcG2X8jQGGsP3s5
+	 SioM7cCsd8JuR7SilEpW5Dw95rWvApRzPAswdwiw5pvlrxCqPr8xoJTjmgXwwOyA99
+	 7wIocvS9whelQUAPHfmF0qvY6CmnhcV0poEVDPF4gnG/HfUTnH+jiFsT2Rhjpvr/IC
+	 2xGsFgV1On4KA==
+Message-ID: <0bac139b-c89c-43a7-978a-e5fe001d3dd2@kernel.org>
+Date: Mon, 9 Dec 2024 08:34:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4] Add minimal Samsung Galaxy S20 Series board,
- SM-G981B and SM-G980F support
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- igor.belwon@mentallysanemainliners.org
-References: <20241206184609.2437-1-umer.uddin@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm64: dts: exynosautov920: add DMA nodes
+To: Faraz Ata <faraz.ata@samsung.com>, devicetree@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, alim.akhtar@samsung.com,
+ rosa.pila@samsung.com
+References: <CGME20241204122402epcas5p2412733eb46d495fadfa30e5af3c5ce83@epcas5p2.samsung.com>
+ <20241204122335.1578-1-faraz.ata@samsung.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -89,27 +87,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241206184609.2437-1-umer.uddin@mentallysanemainliners.org>
+In-Reply-To: <20241204122335.1578-1-faraz.ata@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/12/2024 19:46, Umer Uddin wrote:
-> Hi folks,
-> 
-> This series adds initial support for the Samsung Galaxy S20 Series and also
-> initial board support for the Samsung Galaxy S20 5G (SM-G981B)
-> codenamed x1s and the Samsung Galaxy S20 (SM-G980F).
-> 
-> The S20 Series feature a lot of similarities in their configuration
-> and internally Samsung named the common devicetrees in their
-> downstream kernel 'hubble', please note hubble excludes the
-> S20 FE series and Note20 series. To accommodate this, I've
-> now named the device tree common's matching the codenames
-> (x1s-common).
-> The device trees have been tested with dtbs_check W=1
-> and results in no warnings.
-> 
-Patchset was not built.
+On 04/12/2024 13:23, Faraz Ata wrote:
+> +
+> +		spdma1: dma-controller@10190000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x10190000 0x1000>;
+> +			interrupts = <GIC_SPI 917 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cmu_misc CLK_MOUT_MISC_NOC_USER>;
+> +			clock-names = "apb_pclk";
+> +			#dma-cells = <1>;
+> +		};
+> +
+> +		pdma0: dma-controller@101A0000 {
+
+Please do not send downstream code directly, but fix it to match
+upstream. Lowercase hex everywhere.
 
 Best regards,
 Krzysztof
