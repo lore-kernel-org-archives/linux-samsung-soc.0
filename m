@@ -1,31 +1,31 @@
 Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA471C5CCD
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Dec 2024 14:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574361C5CCE
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Dec 2024 14:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755746; cv=none; b=YGmBSFVeWbooTOo3zmJdHnDxbm1OJkx1XSm1RVIyuvSxp/pV703/juX6z3ZCk7oPUYFu97gnd6S5YeIVWJXPoffktwQuxe/7EgdBehmRidK3Lj470Yi8opYxZKfd8UXjuUAKOEMgyuHfRR64Jp9omebr5r81E2tDI2d6Uz7bd38=
+	t=1733755748; cv=none; b=McgBCrqvE6PBPv10kY3kcTmLURtlrfCkpYxNbjNG12yQyJvz1Rwj6o4CMvoCM2+Ig6IKsTGxZrwmQvftIOewKRt0YM/6kbx0x7yZqrUdeFBNuhDwLoPwCE3qsXx+U85wD2xC0HOBmv1quhBdBNU4W6R9c5zV0ZUiJOQ6u8IuQDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755746; c=relaxed/simple;
-	bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fEkmn/TTS4TFfklWMSFANhfTlfBAKlWArf2ZOUMY9Dc+hg2OEwJBBL7krFC1PWfb5oO+KBqsdGkZDlFUASM/SNSQ5gCKtjAOc/5jMoMgRnZnrn/5nBYY1qZz6TOKprYhRHByTTlRn6ZlRWFFIRS8+2w+dnWoJ69vLgTHQQyw6+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=omU85tSB; arc=none smtp.client-ip=34.202.193.197
+	s=arc-20240116; t=1733755748; c=relaxed/simple;
+	bh=c5o6t3x+nPp0Vb4W0bpoDQyxaQ2E474A2Evrp22kF1E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tp1VAF1aPeUIEK5sa1+JZD9Ivo4eebvHtqvGm245gmWUsrDEdWC1tM+NPAYth+HXfpCqGF+cS0VWPq4NzrCw4KlkU+L8sCLSSOzjpCc+UuhOEr1hxVRQu0qzEAry/iQq8tAKZmswbqPg9JhuoIQPyznWp7svWJ/1UEcK2mYzDmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=LoeU3HBm; arc=none smtp.client-ip=34.202.193.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="omU85tSB"
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="LoeU3HBm"
 Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=omU85tSBO7Y1q8Jp3QkXwT+aCv1XLNNRnNDhMEk36Mctts3wts4Q9ocOoPdbLHhSiNcsorar1HeB2MCipsookfHTix9XiiKZahfHmSm6Gf+NclFawZGGxeBPG9WU91blZsjpMmjpkAPS0wrw7koDEJwbcK5okcJ1TBWXuMTU/pmFmVW15kWM0NlmkhLzdaVBe0VaOgSaMB8ZaA6V+RSIF1tU+kG/VELWlboGyWL7mxWxdapttCHEgqjSi60iH//tvQ83EJ3MH0A+S4C9DbyKV7GgtFc4bUM7ucWzOBVlFMelDEPod8poE517KXsVTjVe1lMi+2JAGgxljf9Y1+8m9w==; s=purelymail2; d=purelymail.com; v=1; bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=; h=Feedback-ID:Received:From:Subject:Date:To;
+DKIM-Signature: a=rsa-sha256; b=LoeU3HBm4KU44Uuyl6w/tlsOqMH8BwM38R1nYWMUrm8GAsPGhWsMdDcc6gykEXk3T4wiWxr7O8ktqrMnkkkHCXKUr7SdFmAsHT1tkHkNnoReknYhfZhqyboNcHf0xZIhpiRW1ffcJenwPVNHujxiyB7B1Z/6AL+8l4Uo+1a0RpNQ7eavqKSw6VtHUzuHD1JfM2htt9xwavHLiX+OaBgFKqtcNb7HGCbiUvGdjE80bxf0oty/DcnLEvyB1YYR1osiGbDYpOklQ4zeSraLs/LUybAFzmjl2m1/bKHe5sXKTL9SCeZeC4gM7VDUlHAvI4445om7ufs7tVIlGYluqC44nw==; s=purelymail2; d=purelymail.com; v=1; bh=c5o6t3x+nPp0Vb4W0bpoDQyxaQ2E474A2Evrp22kF1E=; h=Feedback-ID:Received:From:Date:Subject:To;
 Feedback-ID: 68247:10037:null:purelymail
 X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
 Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -291099510;
           (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 09 Dec 2024 14:48:35 +0000 (UTC)
+          Mon, 09 Dec 2024 14:48:38 +0000 (UTC)
 From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Subject: [PATCH v4 0/3] clk: samsung: Introduce Exynos990 clock support
-Date: Mon, 09 Dec 2024 15:45:20 +0100
-Message-Id: <20241209-exynos990-cmu-v4-0-57f07080f9e4@mentallysanemainliners.org>
+Date: Mon, 09 Dec 2024 15:45:21 +0100
+Subject: [PATCH v4 1/3] dt-bindings: clock: Add Exynos990 SoC CMU bindings
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -34,11 +34,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIACV2cC/33MQQ6CMBCF4auYrq0ZC63WlfcwLkaYQhNoTYsNh
- HB3Cytjosv/Je+bWaRgKbLLbmaBko3WuxzlfseqFl1D3Na5mQBRHgUoTuPkfNQaeNW/uDxjjRK
- kwlqy/HkGMnbcvNs9d2vj4MO08Ums6y8pCQ68VEoZAwhaP649uQG7boroqEfrOusoxIMPDVvpV
- Hxyp2+uyJyACowiBGHgL7csyxvgLNW6CgEAAA==
-X-Change-ID: 20241206-exynos990-cmu-58ada5056ad5
+Message-Id: <20241209-exynos990-cmu-v4-1-57f07080f9e4@mentallysanemainliners.org>
+References: <20241209-exynos990-cmu-v4-0-57f07080f9e4@mentallysanemainliners.org>
+In-Reply-To: <20241209-exynos990-cmu-v4-0-57f07080f9e4@mentallysanemainliners.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -51,51 +49,402 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733755636; l=1630;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733755636; l=13604;
  i=igor.belwon@mentallysanemainliners.org; s=20241206;
- h=from:subject:message-id; bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=;
- b=n3BbgPVNEwn1n+dt2NNprNcTmKWI55eTVgUHFTXMOkPkPjCCxxVMDf93F9LLt3h8pEOv/r1TP
- 8/ttTbd6CPoB4sFnPG6Hmuh6ttsWaGrBvjCxmDwVmUFrH8KujfvLkTp
+ h=from:subject:message-id; bh=c5o6t3x+nPp0Vb4W0bpoDQyxaQ2E474A2Evrp22kF1E=;
+ b=DvaRtHnnsVGcf0/vygDHr05xeDxoyop0OLvh3kPmwJWzoWzkhl1TH5/WTBCF+kaueYMoPDIcB
+ J9y1gLD8dtqAetC1YI2ftcRCbFfX82lokmzHCCZGqq0XcENLvk8PdYp
 X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
  pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-Hi all,
+Add dt-schema documentation for the Exynos990 SoC CMU.
 
-This patchset adds support for the Clock Management Unit found in the
-Exynos990 SoC. This CMU allows for clocking peripherals such as USB, UFS,
-MCT, et cetera.
+This clock management unit has a topmost block (CMU_TOP)
+that generates top clocks for other blocks. Currently the
+only other block implemented is CMU_HSI0, which provides
+clocks for the USB part of the SoC.
 
-Currently there are two blocks implemented, CMU_TOP which
-generates clocks for other blocks, and CMU_HSI0, which generates clocks
-for USB. More blocks will be added (hopefully soon), like HSI1 for UFS.
+Also, device-tree binding definitions added for these blocks:
+- CMU_TOP
+- CMU_HSI0
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 ---
-Changes in v4:
-- bindings: Use one-per-line convention for clock names. (Thanks, Krzysztof!)
+ .../bindings/clock/samsung,exynos990-clock.yaml    | 121 +++++++++++
+ include/dt-bindings/clock/samsung,exynos990.h      | 236 +++++++++++++++++++++
+ 2 files changed, 357 insertions(+)
 
-- Link to v3: https://lore.kernel.org/r/20241207-exynos990-cmu-v3-0-20c0f6ea02f0@mentallysanemainliners.org
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..9e7944b5f13b1df98ff8c2f409a3120fa43aaaa4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos990-clock.yaml
+@@ -0,0 +1,121 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/samsung,exynos990-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos990 SoC clock controller
++
++maintainers:
++  - Igor Belwon <igor.belwon@mentallysanemainliners.org>
++  - Chanwoo Choi <cw00.choi@samsung.com>
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++description: |
++  Exynos990 clock controller is comprised of several CMU units, generating
++  clocks for different domains. Those CMU units are modeled as separate device
++  tree nodes, and might depend on each other. The root clock in that root tree
++  is an external clock: OSCCLK (26 MHz). This external clock must be defined
++  as a fixed-rate clock in dts.
++
++  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
++  dividers; all other clocks of function blocks (other CMUs) are usually
++  derived from CMU_TOP.
++
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All clocks available for usage
++  in clock consumer nodes are defined as preprocessor macros in
++  'include/dt-bindings/clock/samsung,exynos990.h' header.
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos990-cmu-hsi0
++      - samsung,exynos990-cmu-top
++
++  clocks:
++    minItems: 1
++    maxItems: 5
++
++  clock-names:
++    minItems: 1
++    maxItems: 5
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - "#clock-cells"
++  - reg
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos990-cmu-hsi0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_HSI0 BUS clock (from CMU_TOP)
++            - description: CMU_HSI0 USB31DRD clock (from CMU_TOP)
++            - description: CMU_HSI0 USBDP_DEBUG clock (from CMU_TOP)
++            - description: CMU_HSI0 DPGTC clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: bus
++            - const: usb31drd
++            - const: usbdp_debug
++            - const: dpgtc
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos990-cmu-top
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++
++        clock-names:
++          items:
++            - const: oscclk
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/samsung,exynos990.h>
++
++    cmu_hsi0: clock-controller@10a00000 {
++        compatible = "samsung,exynos990-cmu-hsi0";
++        reg = <0x10a00000 0x8000>;
++        #clock-cells = <1>;
++
++        clocks = <&oscclk>,
++                 <&cmu_top CLK_DOUT_CMU_HSI0_BUS>,
++                 <&cmu_top CLK_DOUT_CMU_HSI0_USB31DRD>,
++                 <&cmu_top CLK_DOUT_CMU_HSI0_USBDP_DEBUG>,
++                 <&cmu_top CLK_DOUT_CMU_HSI0_DPGTC>;
++        clock-names = "oscclk",
++                      "bus",
++                      "usb31drd",
++                      "usbdp_debug",
++                      "dpgtc";
++    };
++
++...
+diff --git a/include/dt-bindings/clock/samsung,exynos990.h b/include/dt-bindings/clock/samsung,exynos990.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..307215a3f3eddd579e6733b51a777fb45398bb92
+--- /dev/null
++++ b/include/dt-bindings/clock/samsung,exynos990.h
+@@ -0,0 +1,236 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2024 Igor Belwon <igor.belwon@mentallysanemainliners.org>
++ *
++ * Device Tree binding constants for Exynos990 clock controller.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_EXYNOS_990_H
++#define _DT_BINDINGS_CLOCK_EXYNOS_990_H
++
++/* CMU_TOP */
++#define CLK_FOUT_SHARED0_PLL		1
++#define CLK_FOUT_SHARED1_PLL		2
++#define CLK_FOUT_SHARED2_PLL		3
++#define CLK_FOUT_SHARED3_PLL		4
++#define CLK_FOUT_SHARED4_PLL		5
++#define CLK_FOUT_G3D_PLL		6
++#define CLK_FOUT_MMC_PLL		7
++#define CLK_MOUT_PLL_SHARED0		8
++#define CLK_MOUT_PLL_SHARED1		9
++#define CLK_MOUT_PLL_SHARED2		10
++#define CLK_MOUT_PLL_SHARED3		11
++#define CLK_MOUT_PLL_SHARED4		12
++#define CLK_MOUT_PLL_MMC		13
++#define CLK_MOUT_PLL_G3D		14
++#define CLK_MOUT_CMU_APM_BUS		15
++#define CLK_MOUT_CMU_AUD_CPU		16
++#define CLK_MOUT_CMU_BUS0_BUS		17
++#define CLK_MOUT_CMU_BUS1_BUS		18
++#define CLK_MOUT_CMU_BUS1_SSS		19
++#define CLK_MOUT_CMU_CIS_CLK0		20
++#define CLK_MOUT_CMU_CIS_CLK1		21
++#define CLK_MOUT_CMU_CIS_CLK2		22
++#define CLK_MOUT_CMU_CIS_CLK3		23
++#define CLK_MOUT_CMU_CIS_CLK4		24
++#define CLK_MOUT_CMU_CIS_CLK5		25
++#define CLK_MOUT_CMU_CMU_BOOST		26
++#define CLK_MOUT_CMU_CORE_BUS		27
++#define CLK_MOUT_CMU_CPUCL0_DBG_BUS	28
++#define CLK_MOUT_CMU_CPUCL0_SWITCH	29
++#define CLK_MOUT_CMU_CPUCL1_SWITCH	30
++#define CLK_MOUT_CMU_CPUCL2_BUSP	31
++#define CLK_MOUT_CMU_CPUCL2_SWITCH	32
++#define CLK_MOUT_CMU_CSIS_BUS		33
++#define CLK_MOUT_CMU_CSIS_OIS_MCU	34
++#define CLK_MOUT_CMU_DNC_BUS		35
++#define CLK_MOUT_CMU_DNC_BUSM		36
++#define CLK_MOUT_CMU_DNS_BUS		37
++#define CLK_MOUT_CMU_DPU		38
++#define CLK_MOUT_CMU_DPU_ALT		39
++#define CLK_MOUT_CMU_DSP_BUS		40
++#define CLK_MOUT_CMU_G2D_G2D		41
++#define CLK_MOUT_CMU_G2D_MSCL		42
++#define CLK_MOUT_CMU_HPM		43
++#define CLK_MOUT_CMU_HSI0_BUS		44
++#define CLK_MOUT_CMU_HSI0_DPGTC		45
++#define CLK_MOUT_CMU_HSI0_USB31DRD	46
++#define CLK_MOUT_CMU_HSI0_USBDP_DEBUG	47
++#define CLK_MOUT_CMU_HSI1_BUS		48
++#define CLK_MOUT_CMU_HSI1_MMC_CARD	49
++#define CLK_MOUT_CMU_HSI1_PCIE		50
++#define CLK_MOUT_CMU_HSI1_UFS_CARD	51
++#define CLK_MOUT_CMU_HSI1_UFS_EMBD	52
++#define CLK_MOUT_CMU_HSI2_BUS		53
++#define CLK_MOUT_CMU_HSI2_PCIE		54
++#define CLK_MOUT_CMU_IPP_BUS		55
++#define CLK_MOUT_CMU_ITP_BUS		56
++#define CLK_MOUT_CMU_MCSC_BUS		57
++#define CLK_MOUT_CMU_MCSC_GDC		58
++#define CLK_MOUT_CMU_CMU_BOOST_CPU	59
++#define CLK_MOUT_CMU_MFC0_MFC0		60
++#define CLK_MOUT_CMU_MFC0_WFD		61
++#define CLK_MOUT_CMU_MIF_BUSP		62
++#define CLK_MOUT_CMU_MIF_SWITCH		63
++#define CLK_MOUT_CMU_NPU_BUS		64
++#define CLK_MOUT_CMU_PERIC0_BUS		65
++#define CLK_MOUT_CMU_PERIC0_IP		66
++#define CLK_MOUT_CMU_PERIC1_BUS		67
++#define CLK_MOUT_CMU_PERIC1_IP		68
++#define CLK_MOUT_CMU_PERIS_BUS		69
++#define CLK_MOUT_CMU_SSP_BUS		70
++#define CLK_MOUT_CMU_TNR_BUS		71
++#define CLK_MOUT_CMU_VRA_BUS		72
++#define CLK_DOUT_CMU_APM_BUS		73
++#define CLK_DOUT_CMU_AUD_CPU		74
++#define CLK_DOUT_CMU_BUS0_BUS		75
++#define CLK_DOUT_CMU_BUS1_BUS		76
++#define CLK_DOUT_CMU_BUS1_SSS		77
++#define CLK_DOUT_CMU_CIS_CLK0		78
++#define CLK_DOUT_CMU_CIS_CLK1		79
++#define CLK_DOUT_CMU_CIS_CLK2		80
++#define CLK_DOUT_CMU_CIS_CLK3		81
++#define CLK_DOUT_CMU_CIS_CLK4		82
++#define CLK_DOUT_CMU_CIS_CLK5		83
++#define CLK_DOUT_CMU_CMU_BOOST		84
++#define CLK_DOUT_CMU_CORE_BUS		85
++#define CLK_DOUT_CMU_CPUCL0_DBG_BUS	86
++#define CLK_DOUT_CMU_CPUCL0_SWITCH	87
++#define CLK_DOUT_CMU_CPUCL1_SWITCH	88
++#define CLK_DOUT_CMU_CPUCL2_BUSP	89
++#define CLK_DOUT_CMU_CPUCL2_SWITCH	90
++#define CLK_DOUT_CMU_CSIS_BUS		91
++#define CLK_DOUT_CMU_CSIS_OIS_MCU	92
++#define CLK_DOUT_CMU_DNC_BUS		93
++#define CLK_DOUT_CMU_DNC_BUSM		94
++#define CLK_DOUT_CMU_DNS_BUS		95
++#define CLK_DOUT_CMU_DSP_BUS		96
++#define CLK_DOUT_CMU_G2D_G2D		97
++#define CLK_DOUT_CMU_G2D_MSCL		98
++#define CLK_DOUT_CMU_G3D_SWITCH		99
++#define CLK_DOUT_CMU_HPM		100
++#define CLK_DOUT_CMU_HSI0_BUS		101
++#define CLK_DOUT_CMU_HSI0_DPGTC		102
++#define CLK_DOUT_CMU_HSI0_USB31DRD	103
++#define CLK_DOUT_CMU_HSI0_USBDP_DEBUG	104
++#define CLK_DOUT_CMU_HSI1_BUS		105
++#define CLK_DOUT_CMU_HSI1_MMC_CARD	106
++#define CLK_DOUT_CMU_HSI1_PCIE		107
++#define CLK_DOUT_CMU_HSI1_UFS_CARD	108
++#define CLK_DOUT_CMU_HSI1_UFS_EMBD	109
++#define CLK_DOUT_CMU_HSI2_BUS		110
++#define CLK_DOUT_CMU_HSI2_PCIE		111
++#define CLK_DOUT_CMU_IPP_BUS		112
++#define CLK_DOUT_CMU_ITP_BUS		113
++#define CLK_DOUT_CMU_MCSC_BUS		114
++#define CLK_DOUT_CMU_MCSC_GDC		115
++#define CLK_DOUT_CMU_CMU_BOOST_CPU	116
++#define CLK_DOUT_CMU_MFC0_MFC0		117
++#define CLK_DOUT_CMU_MFC0_WFD		118
++#define CLK_DOUT_CMU_MIF_BUSP		119
++#define CLK_DOUT_CMU_NPU_BUS		120
++#define CLK_DOUT_CMU_OTP		121
++#define CLK_DOUT_CMU_PERIC0_BUS		122
++#define CLK_DOUT_CMU_PERIC0_IP		123
++#define CLK_DOUT_CMU_PERIC1_BUS		124
++#define CLK_DOUT_CMU_PERIC1_IP		125
++#define CLK_DOUT_CMU_PERIS_BUS		126
++#define CLK_DOUT_CMU_SSP_BUS		127
++#define CLK_DOUT_CMU_TNR_BUS		128
++#define CLK_DOUT_CMU_VRA_BUS		129
++#define CLK_DOUT_CMU_DPU		130
++#define CLK_DOUT_CMU_DPU_ALT		131
++#define CLK_DOUT_CMU_SHARED0_DIV2	132
++#define CLK_DOUT_CMU_SHARED0_DIV3	133
++#define CLK_DOUT_CMU_SHARED0_DIV4	134
++#define CLK_DOUT_CMU_SHARED1_DIV2	135
++#define CLK_DOUT_CMU_SHARED1_DIV3	136
++#define CLK_DOUT_CMU_SHARED1_DIV4	137
++#define CLK_DOUT_CMU_SHARED2_DIV2	138
++#define CLK_DOUT_CMU_SHARED4_DIV2	139
++#define CLK_DOUT_CMU_SHARED4_DIV3	140
++#define CLK_DOUT_CMU_SHARED4_DIV4	141
++#define CLK_GOUT_CMU_G3D_BUS		142
++#define CLK_GOUT_CMU_MIF_SWITCH		143
++#define CLK_GOUT_CMU_APM_BUS		144
++#define CLK_GOUT_CMU_AUD_CPU		145
++#define CLK_GOUT_CMU_BUS0_BUS		146
++#define CLK_GOUT_CMU_BUS1_BUS		147
++#define CLK_GOUT_CMU_BUS1_SSS		148
++#define CLK_GOUT_CMU_CIS_CLK0		149
++#define CLK_GOUT_CMU_CIS_CLK1		150
++#define CLK_GOUT_CMU_CIS_CLK2		151
++#define CLK_GOUT_CMU_CIS_CLK3		152
++#define CLK_GOUT_CMU_CIS_CLK4		153
++#define CLK_GOUT_CMU_CIS_CLK5		154
++#define CLK_GOUT_CMU_CORE_BUS		155
++#define CLK_GOUT_CMU_CPUCL0_DBG_BUS	156
++#define CLK_GOUT_CMU_CPUCL0_SWITCH	157
++#define CLK_GOUT_CMU_CPUCL1_SWITCH	158
++#define CLK_GOUT_CMU_CPUCL2_BUSP	159
++#define CLK_GOUT_CMU_CPUCL2_SWITCH	160
++#define CLK_GOUT_CMU_CSIS_BUS		161
++#define CLK_GOUT_CMU_CSIS_OIS_MCU	162
++#define CLK_GOUT_CMU_DNC_BUS		163
++#define CLK_GOUT_CMU_DNC_BUSM		164
++#define CLK_GOUT_CMU_DNS_BUS		165
++#define CLK_GOUT_CMU_DPU		166
++#define CLK_GOUT_CMU_DPU_BUS		167
++#define CLK_GOUT_CMU_DSP_BUS		168
++#define CLK_GOUT_CMU_G2D_G2D		169
++#define CLK_GOUT_CMU_G2D_MSCL		170
++#define CLK_GOUT_CMU_G3D_SWITCH		171
++#define CLK_GOUT_CMU_HPM		172
++#define CLK_GOUT_CMU_HSI0_BUS		173
++#define CLK_GOUT_CMU_HSI0_DPGTC		174
++#define CLK_GOUT_CMU_HSI0_USB31DRD	175
++#define CLK_GOUT_CMU_HSI0_USBDP_DEBUG	176
++#define CLK_GOUT_CMU_HSI1_BUS		177
++#define CLK_GOUT_CMU_HSI1_MMC_CARD	178
++#define CLK_GOUT_CMU_HSI1_PCIE		179
++#define CLK_GOUT_CMU_HSI1_UFS_CARD	180
++#define CLK_GOUT_CMU_HSI1_UFS_EMBD	181
++#define CLK_GOUT_CMU_HSI2_BUS		182
++#define CLK_GOUT_CMU_HSI2_PCIE		183
++#define CLK_GOUT_CMU_IPP_BUS		184
++#define CLK_GOUT_CMU_ITP_BUS		185
++#define CLK_GOUT_CMU_MCSC_BUS		186
++#define CLK_GOUT_CMU_MCSC_GDC		187
++#define CLK_GOUT_CMU_MFC0_MFC0		188
++#define CLK_GOUT_CMU_MFC0_WFD		189
++#define CLK_GOUT_CMU_MIF_BUSP		190
++#define CLK_GOUT_CMU_NPU_BUS		191
++#define CLK_GOUT_CMU_PERIC0_BUS		192
++#define CLK_GOUT_CMU_PERIC0_IP		193
++#define CLK_GOUT_CMU_PERIC1_BUS		194
++#define CLK_GOUT_CMU_PERIC1_IP		195
++#define CLK_GOUT_CMU_PERIS_BUS		196
++#define CLK_GOUT_CMU_SSP_BUS		197
++#define CLK_GOUT_CMU_TNR_BUS		198
++#define CLK_GOUT_CMU_VRA_BUS		199
++
++/* CMU_HSI0 */
++#define CLK_MOUT_HSI0_BUS_USER				1
++#define CLK_MOUT_HSI0_USB31DRD_USER			2
++#define CLK_MOUT_HSI0_USBDP_DEBUG_USER			3
++#define CLK_MOUT_HSI0_DPGTC_USER			4
++#define CLK_GOUT_HSI0_DP_LINK_DP_GTC_CLK		5
++#define CLK_GOUT_HSI0_DP_LINK_PCLK			6
++#define CLK_GOUT_HSI0_D_TZPC_HSI0_PCLK			7
++#define CLK_GOUT_HSI0_LHM_AXI_P_HSI0_CLK		8
++#define CLK_GOUT_HSI0_PPMU_HSI0_BUS1_ACLK		9
++#define CLK_GOUT_HSI0_PPMU_HSI0_BUS1_PCLK		10
++#define CLK_GOUT_HSI0_CLK_HSI0_BUS_CLK			11
++#define CLK_GOUT_HSI0_SYSMMU_USB_CLK_S2			12
++#define CLK_GOUT_HSI0_SYSREG_HSI0_PCLK			13
++#define CLK_GOUT_HSI0_USB31DRD_ACLK_PHYCTRL		14
++#define CLK_GOUT_HSI0_USB31DRD_BUS_CLK_EARLY		15
++#define CLK_GOUT_HSI0_USB31DRD_USB31DRD_REF_CLK_40	16
++#define CLK_GOUT_HSI0_USB31DRD_USBDPPHY_REF_SOC_PLL	17
++#define CLK_GOUT_HSI0_USB31DRD_USBDPPHY_SCL_APB		18
++#define CLK_GOUT_HSI0_USB31DRD_USBPCS_APB_CLK		19
++#define CLK_GOUT_HSI0_VGEN_LITE_HSI0_CLK		20
++#define CLK_GOUT_HSI0_CMU_HSI0_PCLK			21
++#define CLK_GOUT_HSI0_XIU_D_HSI0_ACLK			22
++
++#endif
 
-- Link to v2: https://lore.kernel.org/r/20241206-exynos990-cmu-v2-0-4666ff0a099b@mentallysanemainliners.org
-
----
-Igor Belwon (3):
-      dt-bindings: clock: Add Exynos990 SoC CMU bindings
-      clk: samsung: clk-pll: Add support for pll_{0717x, 0718x, 0732x}
-      clk: samsung: Introduce Exynos990 clock controller driver
-
- .../bindings/clock/samsung,exynos990-clock.yaml    |  121 ++
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-exynos990.c                | 1343 ++++++++++++++++++++
- drivers/clk/samsung/clk-pll.c                      |   14 +-
- drivers/clk/samsung/clk-pll.h                      |    3 +
- include/dt-bindings/clock/samsung,exynos990.h      |  236 ++++
- 6 files changed, 1716 insertions(+), 2 deletions(-)
----
-base-commit: ed74808ae420a2ae611738c2d62800ab157a9ee8
-change-id: 20241206-exynos990-cmu-58ada5056ad5
-
-Best regards,
 -- 
-Igor Belwon <igor.belwon@mentallysanemainliners.org>
+2.45.2
 
