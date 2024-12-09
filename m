@@ -1,74 +1,73 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C802F21765E
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Dec 2024 10:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5030E2185B7
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  9 Dec 2024 10:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741402; cv=none; b=tjdgafG2JMA5Ym+Rgq63G6mQjMVOhO3iSbUbD/+lWk3uSjlZ9Ul5MrQuNLWudVHnrUFTnay+b/jlHEjwSp5vXm7bFlZ8axXrrzwpDj1A2cS0Yb3APIP+fNe81rSL9bQ773+w9YqGKQfyCl9f4dQFZzHt0UW/iHI95BagxgygmdA=
+	t=1733741404; cv=none; b=t1KVF9BSRd+9MS85Mzt7ybAJKI2sZtXL73e23e8ECYW3DfP4SeLE6i0Ld5gYpVZW1jdj4FTNZ48fdFoqycTltEJq7Ny8c7j5aNcwga7AK7CJf4wHAry+JGqS8o5efwZMW6jfhNmqTK3OPZYweIySoEhSf4BbiIIaBU6lcGgqU80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741402; c=relaxed/simple;
-	bh=wV6eR23JkgcbxJIL46tqQ9s/gDpRIqoVfhQkYHZrYN0=;
+	s=arc-20240116; t=1733741404; c=relaxed/simple;
+	bh=FftsgxtfDTEmsXVnEf6EANLKtzGpTZydxJ/p9GsktPw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=oPtBchL/whhM7JqIKn1W4VN3hT7JJISV8H29B8SBJa4bKq9nIOVwcUmkugqUHf7OR5Kr0jepn+qpQ5kZqBR85tvm5X6aptH8HVM7TNabMW6pvMfU+xlZXGvPGmnyyfNlZPGxx064Yj6T1zDKJ+pxx4ch9XmLYqPumTvPtSu+A3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cVzwlqda; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version:Content-Type; b=GxdnDiuOz/a2U+HvlMmG8VefAQHt8KA40j95S7xxibz5hSY9Ge0FB4ZnIr5ZihfRyG+mCYF+dqxLS/8bc+fwxLTc/vnYhyPZAF7wNjkFla/4sSwKfgrQdOTTb6QVE6Iw1njmBR+RdFrH4ZJ9qta/Jq8exonbQ2ZXZxciqh0BMQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YvcwAiGH; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cVzwlqda"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a1582c86so3617865e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2024 02:50:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvcwAiGH"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434e9e22a99so830745e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2024 02:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733741399; x=1734346199; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733741400; x=1734346200; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v8It1LsERjYk3PRVA4rqnSiz+MggzufbNA8DNofp64o=;
-        b=cVzwlqdavc1mXVDFU/EZhVg5U19/mNcg0unlLQ8aDC7BwOECqgIJt7/ard6MQViw8L
-         TP6bxf4v9p2eMSJJ06n7/KWbJFXBy2vAuECu3yV3fvuZshagkbDbLbotOHljsSXClH1E
-         G+6nRKVaM3vu/xaqCvKj2hyeovJz01ev9uoUtuiUvPzAR9/i/e2c3Ob7HbzyXvrGWzz3
-         hqIYeNaYhZvYk93348RRMmCWRh0yNG2dW+U8yMDoUAwuJCCuDdJ3aaLs71j68v4EpKe4
-         FaU3iHYB+8KSggDeAnf/DVYTv04A5scFLrjM7/TcjjtEvAXyOwWlpiVTpHYDD5HRnOck
-         ytjQ==
+        bh=fRioCcmJDy8djkmiyQ6PlnLYMCijDL6jrj6MyazB2/8=;
+        b=YvcwAiGHxcd0TEUzGpXVC5P7zCmIbxz9Urye04bBoGL5qgyx+uq4+/7xJ2J9411FxY
+         njwNrx2AR2MgrFMr10oy4I6AZJwotGV4PBfZq6Z+BzbFwgsWgRleY14mxKERG6cMvBlU
+         M6v+twTBJkqeshglty6+MKXWJlQyqQB/XPVmvX3m4HB2hwv40Ww5WJdKq0Oy6qCyUuD/
+         0NUxTB/ndU/u/rm6sObn9AdVsJlVhQMPJr/jm76EtI53YKyzMSHRzH3wL1oQA2Rr1RGS
+         c31nQ7C/exqDpXW/78ZgoiMkQmQHS08VhMyxU21M6taFmO+dHC9KMCNcMI67Talo5T4z
+         GAEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733741399; x=1734346199;
+        d=1e100.net; s=20230601; t=1733741400; x=1734346200;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v8It1LsERjYk3PRVA4rqnSiz+MggzufbNA8DNofp64o=;
-        b=VZ0oPZ/7LWsSCOBHHejPnZztl8vm5C6k73ubS0JmNx4wGpSxdzff383rFcscC/ike8
-         LicoyVC/Wl+cjtd7kj2oJnBgUBfEjawEpumLsyvbpAzu8YvkNmP4WHgYrtiW1xJr3/8L
-         fsDITAUukwUskuuS5Qp4ez21mw78m7vqxYM0MYhNJwx/eCnucmQAPfZHta06vuS9ovVd
-         x5gQkPiDdJj+XTILSlK6fZH8A3YD46FPwSR5cFyXngGc0RfuLpEC63C0Iz8RnZs+TcwM
-         mXNVbWT9CkMIwJT0lTZPFHW9u8/cLvic05G7Gc7vwRourMYaNGBDypQtHRrvGeStirsv
-         zNzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGjeN+mGK9W9ug9sXpyvuDBNfmzm/5qKR9dmhkp8aRN5jNsFUiOpHUhnTvw9RCO1tGTWzwCvDur4LNqoXHprU3qA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx7y+KihRcd/1tLRpPs6Wim9BvlH71/3l/Jy7ezQcGvW/xLO03
-	wpK8rZ09Z7ugcpsa1TmxXXfHuSzYsoo8ByJlTSDcwTGsZ44RBNRs9cA7mO/5utU=
-X-Gm-Gg: ASbGncu6SQtPd5WJcSGZzaoAJFPH/bq5I9+r5hvLntrv45ikF2WDCMTpDC0uWQAKBd5
-	2MGXeYA450p8ilPkRXF1875OlcQA0aWDcAz/HPxBI9VLBLYxejdFtF4r/1PlZPcHIrIjUud8xgs
-	i6k80fww8k0mEaltRA93g2oERsOeR9ab9JuaaWhTf2pjbaPa7fB2hcPta5hF6F57xMFjk/6MQ1J
-	d/WB/pk/8CkGZXq9/0pVOq5JWX3RPOOU0ZxDZrgEmIXsaiS2eSg+fEySQMFaFgLpQ==
-X-Google-Smtp-Source: AGHT+IE7auGUR+zKlMOrNWx9KLSq3GSb9mPOKLQ7Zp/59A+kyUHzh9pBlXR7eVUa7fJxWz/7WUXXlA==
-X-Received: by 2002:a5d:6c6f:0:b0:385:fa20:6583 with SMTP id ffacd0b85a97d-3862b34e3famr3627780f8f.2.1733741399032;
-        Mon, 09 Dec 2024 02:49:59 -0800 (PST)
+        bh=fRioCcmJDy8djkmiyQ6PlnLYMCijDL6jrj6MyazB2/8=;
+        b=c6H1eFNh1FWEv/lSWxo8uNbD6u7fLiWG+fSIHXxwoYlWFkq72z8e9A3KVBIOwI5RbE
+         i2i8BAI0Hll69mCqQhMmD3lLvRw3aN56+KG0pNumC1XwKvrPm4iD3LPvuP7NVdtXNzmD
+         vBkGqlvn4H9poo/4NGygwZnJBRqm3a07tTdNankcnuSCpIBvo5zsEOKttTpxhpyixkbF
+         FMJeRHy1ToLnW7WkJYu1A6icp5Fx2aluX+MiKKtyVezYwa3mbgzEiFph5CX5nZQtem4j
+         tLm0rsEczcAMU/VTDbvP1+hOz3mqxPtp/hipNLMP7BP7UZYIqM8VM6ruH/SGuhVolO5p
+         2WxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaGFtifDdMztADkw6wTvFyflu2KrYXMkNgJHYoCsdjlSg+bHzUU2xdpkfxRc3t3IziO0Jpdkq8Q06dZdfEg0M2Ag==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj84j/WPb8qBEhc76dgAYIFgGiwKz8ak6VSGwpdOIaZeZ4Hy0j
+	VohplJUqCdJ2f9mpN3YN1tgG7E0RdUPbA8y5TO2JLLi54dD2X07UsfcRuQFnEnQ=
+X-Gm-Gg: ASbGncvFt3AFxYLAqV3gThA+2JFtmEkwZsiYJIJl8BMavoCJOWZapsDCPSziJ70eDve
+	vcKf1eGb5Y08U7FpKzOyLq+v8aSz2EDKQ1zUq4Aaz0ubxDMLSZI0GmNbISSLVmClnxKiF8vlIPa
+	q9Dcm+OPFjsSIxDvE7T6wwqJxMysgG1jaopqGFLTL1p9c1RJuEcW+HHd9LoQPyAZCU5dQndACPc
+	406yFqwJosx28SwT5lZaTVNA0oFm7eQXaaZ7D5T1IsUnH/OytCqtSiylstpwG8mog==
+X-Google-Smtp-Source: AGHT+IE/viVovSPI39lIWcVsezgqXa23ODao8hwSq2oIVnwoBrcfPb0n+9g7Mmj6cCGSK0ndX1fPlQ==
+X-Received: by 2002:a7b:c3d5:0:b0:434:f001:8680 with SMTP id 5b1f17b1804b1-434f00187bfmr20178805e9.2.1733741400471;
+        Mon, 09 Dec 2024 02:50:00 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434ea1ae415sm80301445e9.33.2024.12.09.02.49.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434ea1ae415sm80301445e9.33.2024.12.09.02.49.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 02:49:58 -0800 (PST)
+        Mon, 09 Dec 2024 02:49:59 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241204145559.524932-3-igor.belwon@mentallysanemainliners.org>
-References: <20241204145559.524932-1-igor.belwon@mentallysanemainliners.org>
- <20241204145559.524932-3-igor.belwon@mentallysanemainliners.org>
-Subject: Re: (subset) [PATCH v2 2/2] arm64: dts: exynos990: Add pmu and
- syscon-reboot nodes
-Message-Id: <173374139792.46435.12839391873743115498.b4-ty@linaro.org>
-Date: Mon, 09 Dec 2024 11:49:57 +0100
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
+References: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: add myself and Tudor as reviewers for
+ Google Tensor SoC
+Message-Id: <173374139927.46435.9500356182814320037.b4-ty@linaro.org>
+Date: Mon, 09 Dec 2024 11:49:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -76,24 +75,22 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 04 Dec 2024 15:55:59 +0100, Igor Belwon wrote:
-> Add PMU syscon, and syscon-reboot nodes to the Exynos990 dtsi.
+On Tue, 03 Dec 2024 13:03:52 +0000, André Draszik wrote:
+> Add myself and Tudor as reviewers for the Google Tensor SoC alongside
+> Peter.
 > 
-> Reboot of the Exynos990 SoC is handled by setting bit(SWRESET_TRIGGER[1])
-> of SWRESET register (PMU + 0x3a00).
+> While at it, also add our IRC channel.
 > 
-> Tested using the "reboot" command.
 > 
-> [...]
 
 Applied, thanks!
 
-[2/2] arm64: dts: exynos990: Add pmu and syscon-reboot nodes
-      https://git.kernel.org/krzk/linux/c/d5b3944bec944b40e91cae82583ce11740af6f10
+[1/1] MAINTAINERS: add myself and Tudor as reviewers for Google Tensor SoC
+      https://git.kernel.org/krzk/linux/c/da9ca3164d1794660d9ad650beb807b9a47fe18b
 
 Best regards,
 -- 
