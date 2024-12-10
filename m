@@ -1,60 +1,62 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945E98633C;
-	Tue, 10 Dec 2024 18:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E9F86357;
+	Tue, 10 Dec 2024 18:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733853744; cv=none; b=BoKrhzWN5q9xmi4/7XNX9uPZNKsrey+RhieZEm4AEznt8sT9mJT1Rw1ZC58YPuw0u4LLAZqlLe354JigfW/cp45k2YH0Jjd6ay5HALszFpDoriF+g5w4V9oHgtQdp2ffhNyloES47JGwhMVjbbnMgeIjRLrlv52bDt0KCaAel20=
+	t=1733853745; cv=none; b=Z1KKgwd+fRF6bM5VyYAzaXRqYNUKSM2S5N2MLZ92dQMqfaRr+f1eYeIS9w0WjfgUAj5Jgco7VWN8n+560BD7UVR+0ekPRDJbegg7etDouGFOLJdNJRdpIb1WeSejHNEf6/B08bemZG0SWg2GUdoR4nZHosbWWXkqbUvYxUU8sgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733853744; c=relaxed/simple;
-	bh=Wn8dvmhpbqifczjq1ws+Q7oM4cr83bwHC/c4lzlzkrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y91Dt07+04ud8hKGiTDmh+Nl0c5R83M7RdSB5qqssE8fkUoWpK4cqpf9VA5NrkspGIwNNwEiXBHaQMC5j4nqiBFzbMNDpWVmSWt9iLjKqEkLKeYuU5+12fasG0yPgWUDsQ7bU6sAyDhDi6tkwmVK5WOfSaMqPWNfOzPU+KIU5tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cr52aB73; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1733853745; c=relaxed/simple;
+	bh=GbTFieq30Tp3qpHIb/Fq1WHJxQBwEO2fnhKu6VM3Pg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=n3ysPBmHoa5yp24BI7i1PgAJN6PFemnLVEWulF60Ctc3chF+wyWmppOjKDHvSrO/PnjxA9XwIoejH0ImHDDWMQcGZhdtGHbxxJGE6h3PBy6uDe8A+C/2ozMv6XPSE8VGLYykWFjUUGeYPRQ/nWTRbvnrDZjn6DmhB4JJjNp+XYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eSYSvkzC; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cr52aB73"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa68b513abcso424358866b.0;
-        Tue, 10 Dec 2024 10:02:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eSYSvkzC"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so7434761a12.2;
+        Tue, 10 Dec 2024 10:02:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733853741; x=1734458541; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BCY2cGBNnositKDICf7Efd3URLuqM088tDb4fIyX/u8=;
-        b=cr52aB73cyzr+dWE291LQtGWqZi6SJw3+UNDqfjvj1lI4XxzydjdytUKKD2NF0DPZm
-         MUaKquxW4idkeoGqz9DYFm0B69fSQ2Kju3q7fiyRDqZt8vrGVKl0TeEiLHE0dgpxfQDh
-         6NQX332j80Dk2y719puKpK8l9H3xjPX3xubdIdg8F/id1+nYqcKHRrAvfG/yFwsCH482
-         eSOfpJILBHg18uaarJ2da/gCxTf5Avgi+qfHHHi1J9qcwLWhYTfJyLtpgR79h26/UmpK
-         Ev719fDqoGyjlY9UU1FJMPzpUOe6CSdeyQItFO783xFwSYkh0WUgh7AxxQlbiOiUCsFM
-         fCgA==
+        d=gmail.com; s=20230601; t=1733853742; x=1734458542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZXwQI7YS6Q3F5RUIqA6y7OiUdvPTyw1jR4jWoj37sI=;
+        b=eSYSvkzCNRmdA4pjMN67wD3WebEz8yoObpN7aQYDTHa4CJxTNW8ZhCES5pVWUoRhml
+         o77IHZec45fdTXXXUzh1tMSVkI4qZPM1ojAMzCvMp8PA7HVa9sDTNqJmqcQbPiQbO4Ab
+         2e+Ihqo035BX6QJuku73E4ncVVrx8fw6Y3i2GtGwER79THuRLZL4XrCHHE9N752S6DWU
+         6G2DftpiC0dCTZLNtmiqcqmJU2wZVuC22C+AIKhsC9nuPJKYQCPDA91JJab1SB4nmRLv
+         utuu/8LU8UaWEjGVFNJ7Fj/eby2m1Ebj/1CcpznGHWjUvBipgLzq+Fhu+ETsOmJNrRLm
+         jmXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733853741; x=1734458541;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BCY2cGBNnositKDICf7Efd3URLuqM088tDb4fIyX/u8=;
-        b=Koz1nChlkySIE7gd6QE3Q4B34Fjx7DkDj6UUiKuslbw/T/RIpehSc7zlUI8mn3pn4X
-         /GwGb65ivDLFdZVkxZOIp+rYcusjQEhjEbOMnLH8Ra3VCZI0kMTC7295Uk6sgj7XYxyD
-         SV7JfgtI2RE84Uj3eWJxTe4WQvu/wDOCYN13BiLlVYI7EmTGDklOlIIvn4MpZD0VSxOf
-         8fT2xTw0UBSNB2EEuLfR5EWg+fEZwsOCduNuDnljMxDy1LalA9iHlInOaUS3ebT5WKwb
-         k/9aGXRHtSLVJsyUbnJtRV0FALzmvLP6eqZ0Yrb3O0g/R5F3R+v5JKUNcu2Ky0sIVaWH
-         dl2A==
-X-Forwarded-Encrypted: i=1; AJvYcCV81QFcX9Ju6ewZE+QDORURlnAgrzXbwZ1+0iWP75XoJIx34mgFjfJM1/mQjeKyj/x9N5EV23ckwv1H@vger.kernel.org, AJvYcCWjbE7mFEzz1sSx3Fig+clmRekVMl3NDCsDjyM/Fy0m/dt7WxhC1OH72/VxDuuKzFO/XUSDpmeX5C/BnazZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRgoMAgjkp91Os1j/+SXkyulkk9UZYo9yIgczfUuYh7BIrbPHc
-	w9fDmKu48PAWLXVZPjUfGUEFkX5GTKyjot1DPeqNuyYvo7k7+DNb
-X-Gm-Gg: ASbGncsRf2O2QDfXr/jUbQ1xCmuUC+Ja4+8fN5YvmjB7AIFWnI9FoSO56mU0GV9c9Z9
-	xaz41gYJbxQZL7sOrITv6y3t8Xefhntbja/0LH0wGD7FZlPqpO8durmwrENjIwlnigTAeLWu3Zr
-	bUs+qAat0HUeEiNF7P2BLy06pZMeVFuRHnXFXzu3JpSNHDu3QiHmDPo8BanB5athTw57UkePeVC
-	m+kNpqa6trdBxJ6UsclLDsCzYU8JQKw5iVtMiRZ58iFL6cFjYWMYcEjToEe7+XYfppStIJQSIBR
-	Sf7ocTyI23LMzzhcT2lxCqw4kX5pjA==
-X-Google-Smtp-Source: AGHT+IFXTKqLN7rVjG4MT816P3sDPA226Vptf61aO0FKpDWfT8usup+FPSpJd+BDFWR01cmVkV/mUA==
-X-Received: by 2002:a17:906:cc2:b0:aa5:27d4:980a with SMTP id a640c23a62f3a-aa63a242b13mr1598856266b.49.1733853740403;
-        Tue, 10 Dec 2024 10:02:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733853742; x=1734458542;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VZXwQI7YS6Q3F5RUIqA6y7OiUdvPTyw1jR4jWoj37sI=;
+        b=RplpE8a5mBb60/3CLzvJux8L0j9L9iySYLu2xXJ58WvMsVW07xQTvP9oaFT3//J6c0
+         9SRLIe42N8xa11ZihTeJA9SAvrl+jHLEQJ5GMwhpjXTESdIyznkcwr77xywgAQ7Ye54t
+         3EOw/1wsnE9Z10InGOemyeYbytFqJqowVsBqUJB0A75PD7UdxluLdEvn1No886J+WTkV
+         OFq97wm6rx/Amtyp+Na3erj7XJI+IihvKtBSRH8+TXcbUDJV90rCa1IoOUdOceKcBNnw
+         nY/eHiTDQpVW9ApffaldJztaedq2p6hQf3zG+TkCd3ll/QFZ7a4+tS1faXyWgjESXxr/
+         pR7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsp+D3ydj7FrHXaevel2VPVZC/lVEAEtoypeWswTPxWqf3o5E+zDlzLQ0vgow6VizpPGVuI9RMjp7T@vger.kernel.org, AJvYcCXeiy0u9eJfqGMllLhKzUBH6/gMhVj+BCrpXeEnO6goz4g6iGppbLJ9qtbF0f+nWXBUoZpOrqY3vNWdLTlq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdOngMPBrJAiEUnbu9WYIXX5NlLnmDhNzOWhyW9nfLjcW4c0k3
+	iOhfqaTDV+Sj3rl8IJoEFezZFl57iS8xaY/8E7ryn5jTzbk9qWZv
+X-Gm-Gg: ASbGncs8qi/XVcKmI26Px+FWxHa2bw1c4dmrLg2xSJVpSZzt7fvgChWtgrvicBlVUlh
+	xQnDdZ0xIhdpFQW0tgOkT5b1E9vsNxVSDBExp/YFUtPiCEw5WJ0748kLFb31w9YvZi6Dis4HHtA
+	EN6w8Oqu0KlVioM7/ZauL/WpYaWkjttEBJcVcSQbBpcQ29SAdZNbKzljlxIZCDRGyNGoC44T5ck
+	95ePDVwY87R32RdzxYxk1Blue6o7pHPjJ4deRT+bRrzQ20r9sSvSehOKP87HlkkBz8CF6OzDDF2
+	4sn/yKUi/YhsqnNVM2pa/VwvuYqz4w==
+X-Google-Smtp-Source: AGHT+IEC+sHuk12I+fxgj70sSzKLNbgdxZmltXdSj0c428j3LQYmmPpr+f5+VpccA3NjQUiUDdy7BQ==
+X-Received: by 2002:a17:906:1bb1:b0:aa6:5d30:d971 with SMTP id a640c23a62f3a-aa69cd37734mr498078366b.11.1733853741535;
+        Tue, 10 Dec 2024 10:02:21 -0800 (PST)
 Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69448304asm276347066b.45.2024.12.10.10.02.19
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69448304asm276347066b.45.2024.12.10.10.02.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 10:02:19 -0800 (PST)
+        Tue, 10 Dec 2024 10:02:21 -0800 (PST)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -64,10 +66,12 @@ Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/2] arm64: dts: exynos8895: Add m2-pmu, poweroff and reboot
-Date: Tue, 10 Dec 2024 20:02:14 +0200
-Message-ID: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v1 1/2] arm64: dts: exynos8895: Add a PMU node for the second cluster
+Date: Tue, 10 Dec 2024 20:02:15 +0200
+Message-ID: <20241210180216.398165-2-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -76,25 +80,37 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hey folks,
+Since we have a PMU compatible for Samsung's Mongoose cores now, drop
+the comment that explains the lack of it and define the node.
 
-This series adds support for syscon-reboot and syscon-poweroff to
-exynos8895, as well as support for the mongoose cluster PMU in DT hence
-a compatible for that was recently added.
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+---
+ arch/arm64/boot/dts/exynos/exynos8895.dtsi | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-The new syscon nodes have been tested with reboot and poweroff commands
-respectively.
-
-Kind regards,
-Ivo
-
-Ivaylo Ivanov (2):
-  arm64: dts: exynos8895: Add a PMU node for the second cluster
-  arm64: dts: exynos8895: Add syscon-poweroff and syscon-reboot nodes
-
- arch/arm64/boot/dts/exynos/exynos8895.dtsi | 27 +++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+index ee393f4f0..90b318b2f 100644
+--- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
+@@ -38,7 +38,17 @@ arm-a53-pmu {
+ 				     <&cpu3>;
+ 	};
+ 
+-	/* There's no PMU model for the Mongoose cores */
++	mongoose-m2-pmu {
++		compatible = "samsung,mongoose-pmu";
++		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu4>,
++				     <&cpu5>,
++				     <&cpu6>,
++				     <&cpu7>;
++	};
+ 
+ 	cpus {
+ 		#address-cells = <1>;
 -- 
 2.43.0
 
