@@ -1,138 +1,164 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB01231CA0;
-	Tue, 10 Dec 2024 21:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D269844384
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 01:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733866111; cv=none; b=rouv832/Ea6EV6A/jN3yd55KE84KDc+UL2rTbXZNGH3A7nSotIowNgsrOk9aDfe2B3CK5j16e4ugm0jkSrDZBkRHfiuUMkpwELVCF3y38DENky9BqYpfbOxirSvKCfwptt3CL3zVoZUoyYvse3tFn18WXsMoUTdDc/18fq51YRI=
+	t=1733881834; cv=none; b=K7X2aPl1GsQ680i76ZDKlRHaq9dWEAx284DZGU8W1rezsw4WBNpvxhqIE0kdEewcePTy03OdQ6Zd4odTqSkCCs3//plAsqUwA8kzat79KVzApyVI6JaMr8bitsr9eofIO8BfRog97VGVhqsnhzcScg+T+x7J4RpFkJ1nGi5Ohss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733866111; c=relaxed/simple;
-	bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e1bX1McvWUwZ8cN2M1JA0hU1xce6foW2JvDZzkDt2Ye9IL1DzH1qDuKNBaLubEx9i/a+HRu77C/EzX3x7RVWerXlW4C3xv+DBcUH2V9Oa2NjcjUpS9yga9ECcR32HZ/jUbCG4ofMjRKBWxofPnlTjQLnwI182q2bBJ/9r29qlZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEKO/6K9; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733881834; c=relaxed/simple;
+	bh=Lz7xFK6ODOj+KNAtcFSOv8d/FZ8I8/XogocvDGICrtY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=RjhPG+a43huTu1JfZIRi4vTNstbL5Gbex0A6VFvxEgxRyAhalhOkIWKq9Xj6yQ8X+yqlDkjl4hTDuMXw0eQ7R1qg9ElaM6sj3NVGuM8yO7AmKn77S0Se3z1KjzW++QNIwYRM2b6VnjxuvtNUHrFuSR0FcS3hpwfm/Dn9WE0BTxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EXeJbGls; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEKO/6K9"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa69251292dso437328166b.2;
-        Tue, 10 Dec 2024 13:28:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733866108; x=1734470908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
-        b=QEKO/6K92mFRsAJhcQ8dyp+YU9qdyfElOEmEvMJdpoazvQpJgm9+pM9Q0RwuXb7CrZ
-         YuQmEHd5hQTqp+fw5toGaLMDhDNIVSWoJkgG3BkS7b8U18f0XC3i3NWpRWk0MFNoxzVu
-         9dRaDBjx6zYLozjCaYvFpzi6+cLKsQAwH6PWbK3n6kujDLcfZoYUFfT1BPRyn5B9shwH
-         hExjteg7q7G21VIpEpapJGoLhI4Nqd4r4WhYoTFntGqA4RFCiBZtSX/F87XWf9P432sz
-         L15sB3lnYLS086AIAlY3AjCoqHK/5K1XfAlIZJWDmsOq5ZTeZtil5UG5NGX01N00X7br
-         FAPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733866108; x=1734470908;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Dunritcu8FRR02cLFv+TRvvRJA8uIyOXP1LEWF38uI=;
-        b=so2fu7tum8TlX8mIULlykuoCVxcQ2HSEPBzrVJL2GS5RWV26rmsmx6AUWH/6mABRAk
-         xGTjENLiAMxResI0LzIHes02ay38+I0bHhknr7x8iMQxq59zo2chuLWbTj2Ib3/zNvLz
-         WeO621ZRp8sAklXU6mrYmE6d5rNa7o1zEkoFAW5dA191w+V1TLLm9+XmkhmW6kGq+XsL
-         kWUHuo4myNQ+XJWxRGJX8ke0O+Yegxe7sBVFI0N6fCDliE+aKr+LM3sERV2FeRVIsrwe
-         YqJoOOuMDoDerY3jMRblH7HPyUNYqTDLLf7oiBPGaRYCpXQTne30DrXjhhYjfce+iysN
-         58GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkqMdDUaz1WkWMvRGc2XfXzJ5+6bk7wFACrRar5vUtQzeI+ii2sfw9MkPnSjjmLx+bN2fWrzEwa+4U@vger.kernel.org, AJvYcCV840Ahcsyey8nIskQHz+1wSczJevrEDGKqBOOmIAhe0ZaETYNfo2qqYcr2j5JAD1+8TcUGtjmOMF+gP9v/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF7TI3idJ83BAvOIGm3S9DR6igulLkEY8KVZRyewTH3Qp4aOi2
-	Kfi/Oj+Q9lRPrPbeli8sqVvDsyO5CY2qa8PdjFgW9e1mDggpbO9+
-X-Gm-Gg: ASbGncuzJw9bLi2BtVB9Fb77a81DWXwEV0JWg94cYQFGPiycTpHT6UmnEAiTJ63q9FJ
-	gxaxIUksJ6CHn9mSe08lQfZF7VfMbN3tRlLj8PskIu9Ris4PW/BR8lAH3qFzEwe5pu99ElSEyMI
-	ZU1lOedxTh3Nuvrl2SlvUS+4vJs1z6wPJLpTDyICwnytQ6Fmd7G0DTIriTDLO7qZ1GCocjKA8yU
-	VcY6r2hHBvRfmdtVuCoooCXYM8yG8ibEnEN3jUKA+U7RFHUs2lSZLck/s0pc5pctjI6wil33a3t
-	sUhBWs7IiBHAUwXzB9NbC0rpMngECh0q
-X-Google-Smtp-Source: AGHT+IF2lPlG/TM42607y3WI0CId/jCN4zyRMixPec0/CK3oZtt3mBHJ2MfDv98RJm/SF+OlckHE/g==
-X-Received: by 2002:a17:906:1ba2:b0:aa6:63e2:535c with SMTP id a640c23a62f3a-aa6b11e7f6emr30829066b.28.1733866107775;
-        Tue, 10 Dec 2024 13:28:27 -0800 (PST)
-Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa695e45fe1sm286058866b.32.2024.12.10.13.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Dec 2024 13:28:27 -0800 (PST)
-Message-ID: <e5a847f7-5e63-4860-8b4a-dfa378989c57@gmail.com>
-Date: Tue, 10 Dec 2024 23:28:25 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EXeJbGls"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241211015028epoutp01b8efd91dd26de6a52c78ca9fa0892b8d~P-FZB3Mk91391513915epoutp01p
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 01:50:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241211015028epoutp01b8efd91dd26de6a52c78ca9fa0892b8d~P-FZB3Mk91391513915epoutp01p
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733881829;
+	bh=cYwHho9KcGwqfLq7T2him2vuLSNJFKniJMfHJ4dX97Q=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=EXeJbGlsEJx3WPSg/ybT7TkDCTI4WMYm7zwSq/a/CKx1M06UXPwQA2R/sRlq1QKZs
+	 /rMH9m2sfn1xVq0WYBB1qRNCRyfN8KwuuyZyer0De7GwO22QE+D5yFPDSPSW+lB23s
+	 i5IKVsuSK2toeh/L1DTmjNYxR5S9JtcaGYFXXang=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20241211015028epcas2p1117c5ae9b0a21a62e5b25c293d5dd7d2~P-FYo2o_b0996709967epcas2p1e;
+	Wed, 11 Dec 2024 01:50:28 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.89]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y7JTJ19Nlz4x9Px; Wed, 11 Dec
+	2024 01:50:28 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	94.65.22094.4EFE8576; Wed, 11 Dec 2024 10:50:28 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241211015027epcas2p34d588c74f1db0da0880d2a2a2c49a007~P-FXu9WJZ2078920789epcas2p3E;
+	Wed, 11 Dec 2024 01:50:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241211015027epsmtrp1979b564e95793b0897958f8df6cd14d8~P-FXuDubQ2416624166epsmtrp1u;
+	Wed, 11 Dec 2024 01:50:27 +0000 (GMT)
+X-AuditID: b6c32a46-d31d72400000564e-86-6758efe4b990
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AC.2A.18729.3EFE8576; Wed, 11 Dec 2024 10:50:27 +0900 (KST)
+Received: from KORCO119526 (unknown [10.229.8.143]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241211015027epsmtip21cd2b237883ed62838960ab799b7c5ba~P-FXgetpC0407204072epsmtip2S;
+	Wed, 11 Dec 2024 01:50:27 +0000 (GMT)
+From: =?utf-8?B?6rmA7YOc7JmE?= <trunixs.kim@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Wim Van Sebroeck'"
+	<wim@linux-watchdog.org>, "'Guenter Roeck'" <linux@roeck-us.net>, "'Rob
+ Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
+	"'Conor Dooley'" <conor+dt@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>
+Cc: <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, "'Byoungtae Cho'" <bt.cho@samsung.com>
+In-Reply-To: <510e826d-a434-437d-8d2e-3f2618c28b7f@kernel.org>
+Subject: RE: [PATCH v4 1/1] arm64: dts: exynosautov920: add watchdog DT node
+Date: Wed, 11 Dec 2024 10:50:27 +0900
+Message-ID: <000101db4b6f$0d31c460$27954d20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] arm64: dts: exynos8895: Add syscon-poweroff and
- syscon-reboot nodes
-Content-Language: en-US
-To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241210180216.398165-1-ivo.ivanov.ivanov1@gmail.com>
- <20241210180216.398165-3-ivo.ivanov.ivanov1@gmail.com>
- <768b70d3-910a-42f2-a61a-6338a41f41b1@gmail.com>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <768b70d3-910a-42f2-a61a-6338a41f41b1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGRpYUbE1kmIx7vVDERT7TS+PBmVwKCnclrAeE4rOgCHZavxLM/hzKQ
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmme6T9xHpBlf62S0ezNvGZnH/Ux+T
+	xZq955gs5h85x2rxctY9Novz5zewW2x6fI3V4vKuOWwWM87vY7K4sW4fu8WThWeYLP7v2cFu
+	8fjlP2YHXo9NqzrZPFauWcPqsXlJvcfO7w3sHn1bVjF6fN4kF8AWlW2TkZqYklqkkJqXnJ+S
+	mZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SokkJZYk4pUCggsbhYSd/Opii/
+	tCRVISO/uMRWKbUgJafAvECvODG3uDQvXS8vtcTK0MDAyBSoMCE7Y9rMJpaCVVwV3a0rWBsY
+	l3F0MXJySAiYSCx618raxcjFISSwg1Gi8clbRgjnE6PEwVMdbBDON0aJS/92McG0LD73lhki
+	sZdRonfTcijnBaPEwtbJrCBVbAIWEkuufWACSYgIbGCSmHrmJliCWeA2o8TO98YgNqeAncSy
+	u5/B4sICPhKtG1YDNXBwsAioSvx9GggS5hWwlFh+dxsbhC0ocXLmExaIMfIS29/OYYa4SEHi
+	59NlYGNEBNwkrs6dxQRRIyIxu7MN7DgJgTMcEk/XrWIEmS8h4CIxYVYdRK+wxKvjW9ghbCmJ
+	l/1tUHa+xMqVJ6A+rpG417aLBcK2l1h05ic7yBhmAU2J9bv0ISYqSxy5BXUZn0TH4b/sEGFe
+	iY42IQhTVWL6sgCIGdISE2esZZvAqDQLyVuzkLw1C8n5sxBWLWBkWcUollpQnJueWmxUYASP
+	6uT83E2M4BSs5baDccrbD3qHGJk4GA8xSnAwK4nwcniHpgvxpiRWVqUW5ccXleakFh9iNAWG
+	80RmKdHkfGAWyCuJNzSxNDAxMzM0NzI1MFcS573XOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgalN
+	7cyXPKa/alGnDBt/s6w3/ROiHL4x0qneU1d7+uyrp15fY2HX49+tx1p9TX128epzJu/vLHHI
+	csyu43G0edVsvmZhqfCBs4oVkqubphucO7HZKGx9mWne+Y9Hg1rCWo0vnlBttvtZVsHw8MGP
+	vzG3VX2qdzdeZeK/Ny02YkNgmbWl38WDnv/sXp6YpVis6P+gXdLV/0VP0JG7fQxcrWnFSc65
+	rxVONqxfvqdlTdOJM8xTlAuvTUsKk45Z7eL0btfGl5YqzDxbNs9cfepL1b8HE1ujyisbJovt
+	WPGxVOTWlcdlt+NObGaLnigQdvXQtpdGzU4FJTsL1b5fMPpbeeXVHdZVD2eczav4+65u9gUl
+	luKMREMt5qLiRABkj4wBSgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvO7j9xHpBncuyVg8mLeNzeL+pz4m
+	izV7zzFZzD9yjtXi5ax7bBbnz29gt9j0+BqrxeVdc9gsZpzfx2RxY90+dosnC88wWfzfs4Pd
+	4vHLf8wOvB6bVnWyeaxcs4bVY/OSeo+d3xvYPfq2rGL0+LxJLoAtissmJTUnsyy1SN8ugStj
+	2swmloJVXBXdrStYGxiXcXQxcnJICJhILD73lrmLkYtDSGA3o0Rnz1VGiIS0xJHfL9ggbGGJ
+	+y1HWCGKnjFKPN/4lhUkwSZgIbHk2gcmkISIwBYmiemvTjGCOMwCDxkl/r86ANXylVFi5rfT
+	zCAtnAJ2EsvufgZrFxbwkWjdsBqonYODRUBV4u/TQJAwr4ClxPK729ggbEGJkzOfsIDYzALa
+	Ek9vPoWy5SW2v53DDHGegsTPp8vARooIuElcnTuLCaJGRGJ2ZxvzBEbhWUhGzUIyahaSUbOQ
+	tCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcl1qaOxi3r/qgd4iRiYPxEKME
+	B7OSCC+Hd2i6EG9KYmVValF+fFFpTmrxIUZpDhYlcV7xF70pQgLpiSWp2ampBalFMFkmDk6p
+	BqZJzSc+S13kXM/p/WW+QnLokwN7j0/n3npw7ZOKzf0bebNOnzfSediTtdW/NK/yuZWmnN7S
+	1q8RjztvttSfjdo7VaujSqt/4kmPDQIKOwpOWnH0WQYX9fDobbQwVZdaXjt94e0Hn/etMDlm
+	tnV3xm12d8b39msZ1Ke2RqQve7zuRsH8FdL8hrdb7PcanLVU1DD35Dna/fyxscz+q9urrFoP
+	hjyNeyuksZ/zk5hF6x6ubwfK2xte3BA4+ED6oUPi3gxr8WKJpzns3b2KYueOxLy0XJJiJ9U8
+	R+T57qPP/wWl/fUxlYwO2bWzvILDlfOSveSdU9NiM1XenQ9Ma1d03pHzWdw/q8FDIfLDhwOs
+	7EosxRmJhlrMRcWJAAO9CHY6AwAA
+X-CMS-MailID: 20241211015027epcas2p34d588c74f1db0da0880d2a2a2c49a007
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833
+References: <20241206025139.2148833-1-trunixs.kim@samsung.com>
+	<CGME20241206025156epcas2p4c55f230accc4354e6f4bf324ab9a5833@epcas2p4.samsung.com>
+	<20241206025139.2148833-2-trunixs.kim@samsung.com>
+	<510e826d-a434-437d-8d2e-3f2618c28b7f@kernel.org>
 
-On 12/10/24 23:10, Markuss Broks wrote:
-> Hi,
->
-> On 12/10/24 8:02 PM, Ivaylo Ivanov wrote:
->> For Exynos8895, a reboot is handled by setting the bit(SWRESET_SYSTEM[1])
->> of SWRESET register(PMU + 0x400) and power-off is handled by setting
->> bit(DATA[8]) of PS_HOLD_CONTROL register (PMU + 0x330c).
+on 11/12/2024 01:50 UTC+09:00, Taewan Kim wrote:
+>> From: Byoungtae Cho <bt.cho@samsung.com>
 >>
->> Tested using "reboot" and "poweroff -p" commands.
+>> Adds two watchdog devices for ExynosAutoV920 SoC.
 >>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+>> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
 >> ---
->>   arch/arm64/boot/dts/exynos/exynos8895.dtsi | 15 +++++++++++++++
->>   1 file changed, 15 insertions(+)
+>>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
->> index 90b318b2f..9eb89dd19 100644
->> --- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
->> @@ -388,6 +388,21 @@ pmu_system_controller: system-controller@16480000 {
->>               compatible = "samsung,exynos8895-pmu",
->>                        "samsung,exynos7-pmu", "syscon";
->>               reg = <0x16480000 0x10000>;
->> +
->> +            poweroff: syscon-poweroff {
->> +                compatible = "syscon-poweroff";
->> +                regmap = <&pmu_system_controller>;
->> +                offset = <0x330c>; /* PS_HOLD_CONTROL */
->> +                mask = <0x100>; /* reset value */
->> +            };
->> +
->> +            reboot: syscon-reboot {
->> +                compatible = "syscon-reboot";
->> +                regmap = <&pmu_system_controller>;
->> +                offset = <0x400>; /* SWRESET */
->> +                mask = <0x1>; /* SWRESET_SYSTEM */
->> +                value = <0x1>; /* reset value */
->> +            };
->>           };
-> Aren't those already included with arm/samsung/exynos-syscon-restart.dtsi? I can see that the values for poweroff are different here though, does it not work with the value from exynos-syscon-restart?
-
-Riiight... seems like I've completely omitted that during testing.
-Although the poweroff mask should be different, it's meant to set
-BIT 8. I'll check it tomorrow and send a v2.
-
-Thanks!
-Best regards, Ivo.
-
->>             pinctrl_alive: pinctrl@164b0000 {
+>> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+>b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+>> index c759134c909e..7b9591255e91 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+>> @@ -183,6 +183,26 @@ cmu_misc: clock-controller@10020000 {
+>>  				      "noc";
+>>  		};
+>>
+>> +		watchdog_cl0: watchdog@10060000 {
 >
+>You need to do careful rebase, not just accept whatever tools shown you.
 >
-> - Markuss
->
+>This is now placed in incorrect order - not keeping sorting by unit address.
+
+I seems to me that the addresses are sorted correctly in order. 
+Could you kindly check again?
+
+        clock-controller@1002_0000
+                  watchdog@1006_0000 
+                  watchdog@1007_0000
+    interrupt-controller@1040_0000
+
+And if there are any rules I might not be aware of, please let me know.
+
+Best regards,
+Taewan Kim
 
