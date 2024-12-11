@@ -1,72 +1,45 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E711369A8
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 03:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+Received: from 189.cn (ptr.189.cn [183.61.185.103])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB05D1C07C4;
+	Wed, 11 Dec 2024 05:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733887831; cv=none; b=QNYpXF8/6pPGg1THkJYTxZvNo1R9wnM5QcyxUNCpYOg6TC3q65ZNUMlpHbcbI03qI8fl2R0/UPgOWV9H5aDUSSy6q8zpwUadBqg5LM/Rem5LLz+CBW3/bSk/4kaNTX4vYI0MtpOv5H9TWIhWS83iD1IwiqtLlojMCflGFHHz8rc=
+	t=1733894057; cv=none; b=on6s9ItDjVU1xHoruI3YTiKtM7twyHE9J+NmXmF5hCFqcgpa/syoTxuACFTytnagxKGx+wSkjoVY+7Y2hd2tW4RB/VCRPLV/NZsygT3eRWJe4m4WEUeB5aLs2ncy2dT8hhz54p+Zc17EKxEud1Rofp98CVlEAGFM+1yhGH21JCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733887831; c=relaxed/simple;
-	bh=KPVIZUaYLPhhu+NT5yPD4CmhA0oRk+MtYTE4fN805/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oA/KRRpwp9gfpf0Q3RPb4gFJy0CJgMnkb35aTjAQknxAr6i92jbpUkMabzEwmFxbyNGdQ2CFVTmLDTX2IxV4Bf3wM/Ig7umrXz6vJEWZrsgxY17KXhc57mtfKEvb0D+lsYFrFTE9LQO4zm6EibGF5iloqH9JzvPAiYKubOjhUiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vMATBJWx; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vMATBJWx"
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71decc7de4eso815384a34.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Dec 2024 19:30:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733887829; x=1734492629; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+SqWvKMXn53ySqihikLvjixvoulHaOpfvaW+kjjCzk=;
-        b=vMATBJWxEVpJYR3+JJayfGyyJYnULB8Bi28j+3caQDRLzYhIbPUDi3K5bqgcI7pc8Z
-         EAzgqLqKPTH/Kp3awp57sb5Wy+IYW2hgHKyD3PvhoeA30mO4aERHVKOMmo3hRP+T7JUF
-         Bz2fmwZPv5iF0yxKmcc47mX6/c7U9jLSGUDkli5adfVNztKsnlM1S8JRmJd6+9cVATxk
-         ilnUrTGzpKtilB9JI2fq1qlCq60xX8Lns/hc2NKegVe8LL1NgqZEcMqXzMo31OyUOfYu
-         NmemYMO4eQprDPG1VmWhAjMjQ1ztOdfhyz1C0shrL8fhCmitE0BgIVCl7dGQXml9sSgn
-         F/1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733887829; x=1734492629;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v+SqWvKMXn53ySqihikLvjixvoulHaOpfvaW+kjjCzk=;
-        b=fFzUp1/5WTV+m5cPhOoTd6tuUBz+c2OIMlLh8WBNyZlvLXQVOxTCLNCAAX0ggI2vtr
-         oXxN4zmyuC759jZ7ObpwEZCzhZEgJGFfdbo/zLXSyX7gugaLUo1v9dWpivMgGoInoycx
-         T13DZyQ1DTUWzZxE+XMACtu5Tp2YNQADZNf/VZJUzXsHrcRtEZ7f+pP4XCZH0dWrNmrA
-         WMim1PjzNjwMEoThaK5B3QY0GAMGvIowEHpvohzst4b+wtgptv8kShReysc4ZhXZRzDH
-         KQhAkTIFDBJMChA/5+WsI7OO4dA6aXgL97B1zvIsWNiG95l3uRMmqZsfoX64itHvbxFU
-         du8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUasIccTdNgrEtQh553+1JFJgbjpKbtP8Lc6wVQJOCTnWu9QE01fRAkigoBMs2mNin1kmCQxg9jbASNSR6r1nwpwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw30Sfi/BttsxlZRzJYcB6CLM5lMgHuwLfoQcVW84K1S0RFy7Sd
-	Ux4CMPL6cnl5EAvqURGaZmMl7f7iZzbp8SPyJ9ISJR38EQ2LfuDp6TAWW6jr3NA=
-X-Gm-Gg: ASbGncucWiTQcniG/LEEwN3yPM5N2BbpwJJrGtaj7kQa16/wb06jIwRwr5yBLgBWo58
-	PN8S+7kgUuw5dR81KS68fvhu0xjJEnZ7nV5rpuB+OxLxR8TnqboN1JAu9fUFRk+GTIgd21k34ng
-	06P0eAHqrPFBC68emFnjLQ5KveMGnmj5E6n9cHka4dMuDCpRpZZukN4RnjaKgRBS0KSSyWbfzXj
-	QCoiC5umw2z1R6NGVZpRhanOYYhIbpTbu2viEe1HDAvc3mbNndSoEmiKqc=
-X-Google-Smtp-Source: AGHT+IFxuwtOuX7RSi7QuMnWBVAHW2v93lQ0WBBx/aGpBUEB+zUeX9kV14JIgbiv2kahMG99yLppvg==
-X-Received: by 2002:a05:6830:25d4:b0:717:f701:4842 with SMTP id 46e09a7af769-71e19b5ac55mr619830a34.28.1733887829115;
-        Tue, 10 Dec 2024 19:30:29 -0800 (PST)
-Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f2c472a028sm996004eaf.33.2024.12.10.19.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 19:30:28 -0800 (PST)
-From: Sam Protsenko <semen.protsenko@linaro.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1733894057; c=relaxed/simple;
+	bh=xOKJ7qt0WfS0XyDsy5u7icGNxiFNPCNQRKosTSntKOk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pcPCd6RKH79z4Wno8EkVVHvSmvpEBm4jlUqF60eQH8mgYqZI7lO4pZFhHQOukAA3c+8GFwuEcUdpgeNn7NvVmScBXIU1qfYCGpJF5N27J+UC3BTlzZFbVzXI3vgtmSQcsdYd56GHlpKIZu0JU4kvkXAuVZ6+nyHRKrE/SE3ox48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.18:7884.121043416
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
+	by 189.cn (HERMES) with SMTP id 1E938100208;
+	Wed, 11 Dec 2024 13:10:21 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id 4e5728c57c8d4093b2d6a3afacd6fde7 for krzk@kernel.org;
+	Wed, 11 Dec 2024 13:10:22 CST
+X-Transaction-ID: 4e5728c57c8d4093b2d6a3afacd6fde7
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: Song Chen <chensong_2000@189.cn>
+To: krzk@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	lee@kernel.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: exynos: Specify reserved secure memory explicitly
-Date: Tue, 10 Dec 2024 21:30:27 -0600
-Message-Id: <20241211033027.12985-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.5
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH v2] regulator:s5m8767: Fully convert to GPIO descriptors
+Date: Wed, 11 Dec 2024 13:10:19 +0800
+Message-Id: <20241211051019.176131-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -75,54 +48,216 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of carving out the secure area in 'memory' node, let's describe
-it in 'reserved-memory'. That makes it easier to understand both RAM
-regions and particular secure world memory region. Originally the device
-tree was created in a way to make sure it was well aligned with the way
-LittleKernel bootloader modified it. But later it was found the
-LittleKernel works fine with properly described reserved regions, so
-it's possible now to define those in a cleaner way.
+This converts s5m8767 regulator driver to use GPIO descriptors.
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- arch/arm64/boot/dts/exynos/exynos850-e850-96.dts | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+v1 - v2:
+1, reedit commit message.
+2, remove development code.
+3, print error msg in dev_err_probe.
+4, doesn't set gpiod directions until successfully requesting
+   all gpiods. It's pretty much equivalent with original code.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-index f074df8982b3..7d70a32e75b2 100644
---- a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-@@ -45,17 +45,9 @@ usb_dr_connector: endpoint {
- 		};
- 	};
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ drivers/regulator/s5m8767.c      | 106 ++++++++++++++-----------------
+ include/linux/mfd/samsung/core.h |   4 +-
+ 2 files changed, 48 insertions(+), 62 deletions(-)
+
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index d25cd81e3f36..b23df037336b 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -5,7 +5,7 @@
  
--	/*
--	 * RAM: 4 GiB (eMCP):
--	 *   - 2 GiB at 0x80000000
--	 *   - 2 GiB at 0x880000000
--	 *
--	 * 0xbab00000..0xbfffffff: secure memory (85 MiB).
--	 */
- 	memory@80000000 {
- 		device_type = "memory";
--		reg = <0x0 0x80000000 0x3ab00000>,
--		      <0x0 0xc0000000 0x40000000>,
-+		reg = <0x0 0x80000000 0x80000000>,
- 		      <0x8 0x80000000 0x80000000>;
- 	};
+ #include <linux/cleanup.h>
+ #include <linux/err.h>
+-#include <linux/of_gpio.h>
++#include <linux/of.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -35,8 +35,8 @@ struct s5m8767_info {
+ 	u8 buck2_vol[8];
+ 	u8 buck3_vol[8];
+ 	u8 buck4_vol[8];
+-	int buck_gpios[3];
+-	int buck_ds[3];
++	struct gpio_desc *buck_gpios[3];
++	struct gpio_desc *buck_ds[3];
+ 	int buck_gpioindex;
+ };
  
-@@ -146,6 +138,11 @@ reserved-memory {
- 		#size-cells = <1>;
- 		ranges;
+@@ -272,9 +272,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
+ {
+ 	int temp_index = s5m8767->buck_gpioindex;
  
-+		secure_mem: memory@bab00000 {
-+			reg = <0x0 0xbab00000 0x5500000>;
-+			no-map;
-+		};
-+
- 		ramoops@f0000000 {
- 			compatible = "ramoops";
- 			reg = <0x0 0xf0000000 0x200000>;
+-	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+ 
+ 	return 0;
+ }
+@@ -283,9 +283,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
+ {
+ 	int temp_index = s5m8767->buck_gpioindex;
+ 
+-	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
+-	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
++	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
+ 
+ 	return 0;
+ }
+@@ -486,16 +486,19 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
+ 			struct sec_platform_data *pdata,
+ 			struct device_node *pmic_np)
+ {
+-	int i, gpio;
++	int i;
++	char label[32];
+ 
+ 	for (i = 0; i < 3; i++) {
+-		gpio = of_get_named_gpio(pmic_np,
+-					"s5m8767,pmic-buck-dvs-gpios", i);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
+-			return -EINVAL;
+-		}
+-		pdata->buck_gpios[i] = gpio;
++		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
++		pdata->buck_gpios[i] = devm_fwnode_gpiod_get_index(
++					iodev->dev,
++					of_fwnode_handle(pmic_np),
++					"s5m8767,pmic-buck-dvs",
++					i, GPIOD_OUT_LOW, label);
++		if (IS_ERR(pdata->buck_gpios[i]))
++			return dev_err_probe(iodev->dev, PTR_ERR(pdata->buck_gpios[i]),
++						"can't get GPIO\n");
+ 	}
+ 	return 0;
+ }
+@@ -504,16 +507,19 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
+ 			struct sec_platform_data *pdata,
+ 			struct device_node *pmic_np)
+ {
+-	int i, gpio;
++	int i;
++	char label[32];
+ 
+ 	for (i = 0; i < 3; i++) {
+-		gpio = of_get_named_gpio(pmic_np,
+-					"s5m8767,pmic-buck-ds-gpios", i);
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
+-			return -EINVAL;
+-		}
+-		pdata->buck_ds[i] = gpio;
++		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
++		pdata->buck_ds[i] = devm_fwnode_gpiod_get_index(
++					iodev->dev,
++					of_fwnode_handle(pmic_np),
++					"s5m8767,pmic-buck-ds",
++					i, GPIOD_OUT_LOW, label);
++		if (IS_ERR(pdata->buck_ds[i]))
++			return dev_err_probe(iodev->dev, PTR_ERR(pdata->buck_ds[i]),
++						"can't get GPIO\n");
+ 	}
+ 	return 0;
+ }
+@@ -788,57 +794,37 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
+ 						pdata->buck4_gpiodvs) {
+ 
+-		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
+-			!gpio_is_valid(pdata->buck_gpios[1]) ||
+-			!gpio_is_valid(pdata->buck_gpios[2])) {
++		if (IS_ERR(pdata->buck_gpios[0]) ||
++			IS_ERR(pdata->buck_gpios[1]) ||
++			IS_ERR(pdata->buck_gpios[2])) {
+ 			dev_err(&pdev->dev, "GPIO NOT VALID\n");
+ 			return -EINVAL;
+ 		}
+ 
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
+-					"S5M8767 SET1");
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
+-					"S5M8767 SET2");
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
+-					"S5M8767 SET3");
+-		if (ret)
+-			return ret;
+-
+ 		/* SET1 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[0],
++		gpiod_direction_output(pdata->buck_gpios[0],
+ 				(s5m8767->buck_gpioindex >> 2) & 0x1);
+ 		/* SET2 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[1],
++		gpiod_direction_output(pdata->buck_gpios[1],
+ 				(s5m8767->buck_gpioindex >> 1) & 0x1);
+ 		/* SET3 GPIO */
+-		gpio_direction_output(pdata->buck_gpios[2],
++		gpiod_direction_output(pdata->buck_gpios[2],
+ 				(s5m8767->buck_gpioindex >> 0) & 0x1);
+ 	}
+ 
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
+-	if (ret)
+-		return ret;
++	if (IS_ERR(pdata->buck_ds[0]) ||
++		IS_ERR(pdata->buck_ds[1]) ||
++		IS_ERR(pdata->buck_ds[2])) {
++		dev_err(&pdev->dev, "GPIO NOT VALID\n");
++		return -EINVAL;
++	}
+ 
+ 	/* DS2 GPIO */
+-	gpio_direction_output(pdata->buck_ds[0], 0x0);
++	gpiod_direction_output(pdata->buck_ds[0], 0x0);
+ 	/* DS3 GPIO */
+-	gpio_direction_output(pdata->buck_ds[1], 0x0);
++	gpiod_direction_output(pdata->buck_ds[1], 0x0);
+ 	/* DS4 GPIO */
+-	gpio_direction_output(pdata->buck_ds[2], 0x0);
++	gpiod_direction_output(pdata->buck_ds[2], 0x0);
+ 
+ 	regmap_update_bits(s5m8767->iodev->regmap_pmic,
+ 			   S5M8767_REG_BUCK2CTRL, 1 << 1,
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 750274d41fc0..c06fff66e755 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -79,8 +79,8 @@ struct sec_platform_data {
+ 	struct sec_opmode_data		*opmode;
+ 	int				num_regulators;
+ 
+-	int				buck_gpios[3];
+-	int				buck_ds[3];
++	struct gpio_desc		*buck_gpios[3];
++	struct gpio_desc		*buck_ds[3];
+ 	unsigned int			buck2_voltage[8];
+ 	bool				buck2_gpiodvs;
+ 	unsigned int			buck3_voltage[8];
 -- 
-2.39.5
+2.25.1
 
