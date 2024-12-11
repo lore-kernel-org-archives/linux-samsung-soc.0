@@ -1,116 +1,132 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE161DC197;
-	Wed, 11 Dec 2024 16:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30C21D6DA4
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 17:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733934590; cv=none; b=JNRVTKeYBqxNmTZ4S2rvVkkx6Ehk4zE8jWkwY80q6m8jS9vXJUcRpCoJTQOVkfnXSyTLi3xMwHOsqro/EV4kj5S2ler3KuG0YjF8KRuMrPuhYceFscdmMmSssZEJ3nYM8gfHUbOCACns1W29EptJplcDCn0uSkhiUHIrgKM4LSo=
+	t=1733939652; cv=none; b=ROBafYUm/EjzYqBtC9+wtWmFXRQ7odkzR07/4NjjutttqpsjEFRwULKcwgN4Rou/ZjaTaXKzGoCO+2BEn5va3JK1qxTCCXoIPFaLaJG+EzDnxkih//d5GVlmWM4e/iOXwjxUjqv8InljLeP9V/bPYCJh9ZxS/YYh5kbGXK4RvWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733934590; c=relaxed/simple;
-	bh=GbTFieq30Tp3qpHIb/Fq1WHJxQBwEO2fnhKu6VM3Pg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o1sP1fKSMvAF8cM5/zI3xVXGRH4YGDzLXpD1tQn3zob1zLdl4lxgAQ519Xv9FYRig3//GKBZf779JCtKv4ztPZhPNW7g3rhZlMsMprP42TqJALD6BGa1XkV8+GGGs3SpKeQlWHZTyET0iKC2tOaiMnRDtMYXMYzfTnH3QJ5PiUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JlE0rn1S; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733939652; c=relaxed/simple;
+	bh=SBAUUgHHCorAYYhe1b/RpcaSfhfVVFDNGT3lM1F0Fxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jnn0zLrKPCWPvfEtO81VFsrhn72AvQbQYNqe/F23UV0iTIjfN41e0YXz+u28y3wJPSHTFi+Ks6Jb65iYNAsciGoEN9uJ3e5Oek90B29krFq7BGjrCFGZbS36SXf5eG9pcMgKcF9G7fHc15ryw+9Vak8geQcGci/8eFCff4aZ9CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hs3m8neY; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlE0rn1S"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa543c4db92so616306666b.0;
-        Wed, 11 Dec 2024 08:29:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hs3m8neY"
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3eb87127854so288305b6e.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 09:54:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733934587; x=1734539387; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1733939650; x=1734544450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VZXwQI7YS6Q3F5RUIqA6y7OiUdvPTyw1jR4jWoj37sI=;
-        b=JlE0rn1SnWPSEPfAu41yusjMaoz5J/R6RKVPIt8bVmLLtyazTl7JKlYUlbeZz5jyUb
-         LR6THBGFBch+rZQ52LOLd7QEMNGe8vU6/5c7jn6knmR24fY51T+UZl8zkkvWLrvsuooR
-         stKb90ZBkYZsk8PY63MOT3ssLfmBRUeH5NPGN0A/QgkvZI0DqDtXAOLGbXlL2DYBgDCT
-         3AA7fjooMK4IH2ViIqkyVTVfxWS1Ip3cocWMG1Y1XRgxTcJ9Xv+lSCB1M12GdNUmyTQK
-         ratDpJOhBxpknMonwpzyA3sepLXqPNpqcnpl5ZR/bkTryjxVzaHnHdbW0LinE2bZmJs2
-         Q2FA==
+        bh=SBAUUgHHCorAYYhe1b/RpcaSfhfVVFDNGT3lM1F0Fxg=;
+        b=Hs3m8neYcFQmat+Z0mFFTxjDikX4Mwuk94t3ojvAnoHxDlMkOyFWNObjPHOCG5MBa+
+         ya+3ODDO+leNdv6Yo9xCwY8vFDcdBNPMFPtjkWX4VFh2SrDXk4sZDdF36QwkZ8vvXVLk
+         my5MYV0ekQxnqq+Z+HHut8SjzCRyMSTGzota/MTmkbEEWI5AFsuhwNwhfxARLw2rfAUW
+         9EZb7jd6ysQL1upHb/5Hqm7QpWJV5KFIitVk53kPXHAtl/dEf1XRSF1gJltGMH84Z6bS
+         Bn6oOE9ZXzO5CvX+XLRRDpGrG5HjEhUhrkNHgRVUKkNBtTrAwirc+5EAPYHARiCw1UhX
+         j4Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733934587; x=1734539387;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733939650; x=1734544450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VZXwQI7YS6Q3F5RUIqA6y7OiUdvPTyw1jR4jWoj37sI=;
-        b=ROGhFbYBpFp7Bvd7eTK6t/oZVPZ4MJEy9xdP48GIRJLA+L3bGWunD9ABA9msDo3WTf
-         2s9CbSlx2uc0ddflkF1Vpmuf1etC+IrA/7tIewK/El26yjel1sj08CWb3ofxlfGjkTiH
-         ZH+jaIjbJDjCNLzhzWIVJt/fXyj4quy+hmYFF9OYPVl2BDQK2qeRxaj7xQlEDooWYiZz
-         7Ew4FaN0ikR7T/fq7fkrrY1cuxbcigY4CnuF31Bp96oaxbdwiyCJtgEcqg1o23IEHE6s
-         HxBKfY2/tKA3ALz/NJX9p2yb2Wl7mMR1g9C5wZUYi1mF9YxE3TjZnVYLZLHWKJLmy9cn
-         rO1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUGP+ScJD18iDeqkpU6AdlaUw/3aBP7ibRTLL5oJbq+xzXr0hCb9leLl82gdjmCdYTi/yNk6xZbPZk7WDfO@vger.kernel.org, AJvYcCXZG1PhHV9PDCvbhX15h+jhVMFDQ6Qsw4+bZytFjsgQKopil65Q9B51ugClYlHR/V/cq+eJ/Xgj5poI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE6WA3CsP3S2HlozjxQMp88jk84N8mlkUoXQLT9XFRfs/BDcK+
-	6jQKZo/vrwBKcajRjN2ztlqyHmWArndC5ehOKW4WemkvA78EOIfk/8EPNqh+
-X-Gm-Gg: ASbGncv5ouS2L4lNcPm72nqBNLzrBUQEJYsGLFw+5tBPGzAbOouQpGdUXNu7a0NYVtG
-	IqLPnbpi3JUrtel0b54JpPi8TMlE8GwT6fWCsHGBJPsDRJzeE2lLpPtVpqNBm0EW0ZQCRUshfoT
-	/g8KHPFdqCsnwSU54tYIAgX6ezcpVbvffXofPtBP6s3TPIzI5oq5iZ+E8ef0/EAeP/xXqke6dvn
-	Zd1RttyX9muzxioOAb7IvBLuJHPBGLXuYHt+is0Jo61Qd7zapQaT8OoWXX6TjXFOWa2AZmxp6xw
-	VBOxWmrmSTdeDkH9YIew2WSxvx/dVA==
-X-Google-Smtp-Source: AGHT+IF89Azw7R+LBtZ5j/GcwiiT1UcuEZB17VWqEacuhbhtSs2qPWqHLMZjnAqNMgw3+9T0X8dl2g==
-X-Received: by 2002:a17:906:59a6:b0:aa6:c169:4e21 with SMTP id a640c23a62f3a-aa6c1694ecamr50424066b.6.1733934587197;
-        Wed, 11 Dec 2024 08:29:47 -0800 (PST)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa663334906sm678451866b.72.2024.12.11.08.29.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 08:29:46 -0800 (PST)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] arm64: dts: exynos8895: Add a PMU node for the second cluster
-Date: Wed, 11 Dec 2024 18:29:42 +0200
-Message-ID: <20241211162942.450525-2-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241211162942.450525-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20241211162942.450525-1-ivo.ivanov.ivanov1@gmail.com>
+        bh=SBAUUgHHCorAYYhe1b/RpcaSfhfVVFDNGT3lM1F0Fxg=;
+        b=cSJqwLEbnnB5sWpaDg+w5MyMC0fK5q3a5iz0hZzwU/CJG5P2NKnrw3ljreRrg3GGaw
+         QrSe7l7gsds+xRSou+uMOzTuh9ugFwTCjlLRlt7f8xtPaYR0t+zUqeIVq0L9ucqQpMmt
+         kqGpn6e/qiwsBqhqRUvy+JsJQSD10dO9mV4ZEH0e0ObhbD0pcxnAWV1EtoIqVdGjED0l
+         aIT1Zl74Fg4JmOjenXUFXnwcIHvDAB85Ku6APh8bELhNAmoxH4L8uzVuGjWO+2cNdvEg
+         WWSnC6ufzdr6IeHC0vzZBvnZx7UmL7gaoDyMiuR0IMr8LIUJxLmwMVAXSC50APSi4txa
+         4prQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/DFSmFdpaCvPI8ZYm56UlLQNXnquba9glviXMP5pRGw77z305ZRqh42bW+WrktTF3BpmTy6Zq26SmI0fUiAEQzw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5QFnFYc6Cr/l7D2vrYCOWD/M/n8V+p6cf0KLrs3bMLXHiM0OL
+	yaVjLhS6+8Tc96H3RhdCf+hLqGvkdUNWZEN3VcfSHlbuawRbxWSyll1/YFavT0W1PXjyBlXwQkf
+	S7m1Zfe4Vk83kugP7icN5VVadwRkmYVLzdxpT+g==
+X-Gm-Gg: ASbGncvyY1tZU2Ztq91Uqvo++Bvz5ebVtQjgmai04leXbw0GdgZzYCUrd+vA9LkzNme
+	Qrh21ElLUIFo+XRH7U9VdTkCxVhL68dq2vtQ=
+X-Google-Smtp-Source: AGHT+IFfj39z5VsWFUtc547a2JiE2gqj7fMrc6Hgv7LJC75wfYKzbNhVcat1Y4z8nTrgUp65iUPhRZVJvBmlgSE3NeQ=
+X-Received: by 2002:a05:6808:1304:b0:3eb:3cca:8829 with SMTP id
+ 5614622812f47-3eb85d14a42mr2424138b6e.34.1733939649689; Wed, 11 Dec 2024
+ 09:54:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
+ <20241206-gs101-phy-lanes-orientation-phy-v4-7-f5961268b149@linaro.org> <CADrjBPrz1qUxbEVFR8OT785xLPwWmu3_ZThSne+EtpS8_NHEEg@mail.gmail.com>
+In-Reply-To: <CADrjBPrz1qUxbEVFR8OT785xLPwWmu3_ZThSne+EtpS8_NHEEg@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 11 Dec 2024 17:53:57 +0000
+Message-ID: <CADrjBPqW81kaK=Wco7wMg50APTXGRwhnfFjbnogrSQ-T_mWnUQ@mail.gmail.com>
+Subject: Re: [PATCH v4 7/7] phy: exynos5-usbdrd: allow DWC3 runtime suspend
+ with UDC bound (E850+)
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	Roy Luo <royluo@google.com>, kernel-team@android.com, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since we have a PMU compatible for Samsung's Mongoose cores now, drop
-the comment that explains the lack of it and define the node.
+Hi Andr=C3=A9,
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- arch/arm64/boot/dts/exynos/exynos8895.dtsi | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+On Sat, 7 Dec 2024 at 22:03, Peter Griffin <peter.griffin@linaro.org> wrote=
+:
+>
+> Hi Andr=C3=A9,
+>
+> On Fri, 6 Dec 2024 at 16:31, Andr=C3=A9 Draszik <andre.draszik@linaro.org=
+> wrote:
+> >
+> > To make USB runtime suspend work when a UDC has been bound, the phy
+> > needs to inform the USBDRD controller (DWC3) that Vbus and bvalid are
+> > gone, so that it can in turn raise the respective gadget interrupt with
+> > event =3D=3D DWC3_DEVICE_EVENT_DISCONNECT, which will cause the USB sta=
+ck
+> > to clean up, allowing DWC3 to enter runtime suspend.
+> >
+> > On e850 and gs101 this isn't working, as the respective signals are not
+> > directly connected, and instead this driver uses override bits in the
+> > PHY IP to set those signals. It currently forcefully sets them to 'on',
+> > so the above mentioned interrupt will not be raised, preventing runtime
+> > suspend.
+> >
+> > To detect that state, update this driver to act on the TCPC's
+> > orientation signal - when orientation =3D=3D NONE, Vbus is gone and we =
+can
+> > clear the respective bits. Similarly, for other orientation values we
+> > re-enable them.
+> >
+> > This makes runtime suspend work on platforms with a TCPC (like Pixel6),
+> > while keeping compatibility with platforms without (e850-96).
+> >
+> > With runtime suspend working, USB-C cable orientation detection now
+> > also fully works on such platforms, and the link comes up as Superspeed
+> > as expected irrespective of the cable orientation and whether UDC /
+> > gadget are configured and active.
+> >
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+> As mentioned on the last patch, in my testing cable orientation
+> detection is working, but Pixel is detected as a superspeed device in
+> one orientation, and high speed device in the other orientation. So
+> you should either change the wording of the last paragraph in the
+> commit message (assuming you get the same results as me) or make it
+> detect as superspeed in both orientations.
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-index ee393f4f0..90b318b2f 100644
---- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-@@ -38,7 +38,17 @@ arm-a53-pmu {
- 				     <&cpu3>;
- 	};
- 
--	/* There's no PMU model for the Mongoose cores */
-+	mongoose-m2-pmu {
-+		compatible = "samsung,mongoose-pmu";
-+		interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu4>,
-+				     <&cpu5>,
-+				     <&cpu6>,
-+				     <&cpu7>;
-+	};
- 
- 	cpus {
- 		#address-cells = <1>;
--- 
-2.43.0
+You can disregard this point, I had a typo in my test setup :( I just
+confirmed that it is detected as SuperSpeed in both orientations.
 
+Thanks,
+
+Peter
