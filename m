@@ -1,121 +1,89 @@
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485D61A8414
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 12:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F2523FD06;
+	Wed, 11 Dec 2024 13:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733919232; cv=none; b=VwxU4imq9IUitUO+1En36bodtKi2tQAjk+OmH0gQackSO2YooL15as9XuHuD9vcBWaRpeUH/zLjKTdMn5ST+cFlXAYcIW8IYPLQ/k2dOxO7br+dEHlPfyotRLc/EywmvX8XfDYyaW0N3d1Y+hW+yTo//aE7oZso9aB4FfWmF8pQ=
+	t=1733923550; cv=none; b=mU+TLg7+trMHKQr0fWSOqneJbPzokw/hLsjwx+UqnsErLVYz8LajL0a24a8L5RuBKMiiS/c6WT8iLEIHESKLdG9yq0vhHunUDZ6YVbPb9kDoSpaVDEtAhE145dPdARMIpTbLpY69Dcji0lF7+8rWXeNnSg9FNHRLZpy59zWieJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733919232; c=relaxed/simple;
-	bh=MJr4gynFaxN1UupeCq5uQNeM5rVyPoWBQWTfG4Xdvf0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eDLU+hHYdmQgj0ldSlxH/F5ecwpeo3xR2vtaCFhIQ6TLbt7BtotPY8aBmwiOw+ACiQvCCK607FI/qbsX8zeB854Jmlgq3eZeDs6wH9hiIyAuW4G6FWdYK8WbrHhFFZSFn9+FdRz5Hca2Zq2ogv+IYSE8U7QiGXqNCrIV77vSaGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcBIahKG; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733923550; c=relaxed/simple;
+	bh=8jyEiPx2XgjKHn81uoDheb1vwz2easQKgcFU/SqHuU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RL23tsu2DfeKibXvB2iKYBV0lSDJikArzhUoXTrS+60DazqTbqu8y1hSHiEFYQTar6lmOcVbw/tLm1Rkn7MN3D6xnjMGF84wnsqksC90DBhPGeJqo56oVLXU1yv0xjkpC/IOF/araGwcDxMyc4rbh0YNVR+WpQ3q+6zq3HhNjwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow/qtzLQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcBIahKG"
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3eb38f8a178so1702537b6e.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2024 04:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733919230; x=1734524030; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UDZY2QeYHN/iyr/49RZQKSkzZE163jbKdkdUiW04MRw=;
-        b=lcBIahKGPxMkzCdd01MgJjYuumDNpmLxuITTMLhpnFofKxCbTOMmrC/CDeJfOn6fO1
-         PbIn0oLiBw18l/MvAiRbPRO1VObyTo+FkA/tZejLyqPc3ljwFLKd7gQ8UFgK5U1vaeGA
-         2GAxIrvAKwOg7vlCdrx3ajyjAITfSycngBLpOTQ0hNGCZgKrpzLLXrfugZAUhHarXZrg
-         5kymp2xIr0Wda0DCCBYbeT6z8aHgxHYEfvPxaLcAoY8iL/aTBboH75wo0KwusaxnzltN
-         HKY44Rc/9R04PEZG+3He1/zG2Spg4US+gLZjOCh14h0p/YJZzDnbIbKJquFxSoRDSscq
-         stiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733919230; x=1734524030;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UDZY2QeYHN/iyr/49RZQKSkzZE163jbKdkdUiW04MRw=;
-        b=FXR0jAcB2rPyRtmSHmizRpg1qnSD1cjOa5tbtjH18UvAuhryjKhUfMHq8G7bW1O//o
-         hMGXuaVIGcywD6H7GtnmiFxS6FKIL1DYRyI/cErxtDHHBvIdIEoFSsPrOJTPQeTAdTuE
-         4pz1xxzMJuLtqoKdMkgtf1+YmnUPygCHQXrZeKuJ2fWsxHAqNsXGchlbaG5eYP4UhvQ4
-         41QWZ2+IU0sdUGfbdZS7/qSqcarTXkPOjq00iycbU6/CyFQ5zYat1nVti/mtIwmQGyyQ
-         zni8MNtDpnU7b3GaEw2CFpTQSz5V1OJgifY/S5Y85ADliS2hJWnhwhmBwY2FLBmCxL9K
-         61AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0d7hGB4VNl+GblGN1MmwomLjtA7tCl1ypQ64EIeNOuSVNiZY3dz6RUhAStOJaVAM5+26V4mXktK60WIUMncuJUA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt84ZAtFaQAHVD8JWQVINGJQGJWB8WDe4ZY5GL1iDphPWwsJU9
-	uwKS1/F1SEpWhf0v47NPTNrVlRIJ+7AplOlHNwqzLB9jvLOH1zYJpx/NLCeY9c3XDy2CfzUJtiG
-	FOwQYI87xsY8R3DedXuKQyJzSQqhcQzmRwEGTbA==
-X-Gm-Gg: ASbGncvv7WjcnuNJyoriO4PK6CISplfzC1QKcxGgeHwrwuQGPJS3i4qt9HJRri9Ba83
-	ix0IiWRiFmrRqTpqJ0CvQAeZqv2j/9obgZOY=
-X-Google-Smtp-Source: AGHT+IG4lAagFo6z1ppiAYrOC7C4TN5pY0zUDuuH3woRWIw4oGjlKvx5/ZHHH9rcjl/Kqtx3EgozCxAjSqTP69gAblc=
-X-Received: by 2002:a05:6808:189c:b0:3e6:6097:847d with SMTP id
- 5614622812f47-3eb85a8b199mr1689009b6e.7.1733919230314; Wed, 11 Dec 2024
- 04:13:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow/qtzLQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD91C4CED2;
+	Wed, 11 Dec 2024 13:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733923549;
+	bh=8jyEiPx2XgjKHn81uoDheb1vwz2easQKgcFU/SqHuU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ow/qtzLQFm5l9O+TFeF8+Zlm0mI2x18auLMcnkodVh1b7aW6xDajDKyWAKHwlTVyw
+	 7sA7egQ2Z94m9iZyRiLwql7gfz8jGw/wmammusegaYIpeJ2rfFGEB+/He01WXlvYD+
+	 AIPyVpjiFhpcowdCwqjKWDHgSoLiZwk5tvnYVWRbJcpVQIgjF5loE43nbuaLXPO6xR
+	 pHdnBdyvLbgpfkgyDftk7bdoNNq7cOKbkf806qoasQTLWgkKc4dijbUUgGFTRFZF+d
+	 JKX0xCS0DcGfh+wr1SiWRla5XmnsRQYq1jiS5ZrYgP/lWkWpZvzkJcMYu1rgsthgRi
+	 6vGJENM2YWdhQ==
+Date: Wed, 11 Dec 2024 13:25:44 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Song Chen <chensong_2000@189.cn>
+Cc: krzk@kernel.org, lgirdwood@gmail.com, lee@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2] regulator:s5m8767: Fully convert to GPIO descriptors
+Message-ID: <8ecd5325-f347-4869-9049-2731b719f5d2@sirena.org.uk>
+References: <20241211051019.176131-1-chensong_2000@189.cn>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
- <20241205175345.201595-3-tudor.ambarus@linaro.org> <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
- <vxqi23hxw7bmtfs5wk3u7szganpv5aa74b26xrvpmbehkltodw@dpum7zrxdz44> <2eedbbe1-6b4c-427b-a369-5b08dc27deaf@linaro.org>
-In-Reply-To: <2eedbbe1-6b4c-427b-a369-5b08dc27deaf@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 11 Dec 2024 12:13:39 +0000
-Message-ID: <CADrjBPo_YmTuuW9c3LtWzMp7Sf4365e2bxuuYBUiFPPc42d1dA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
-	javierm@redhat.com, tzimmermann@suse.de, vincent.guittot@linaro.org, 
-	ulf.hansson@linaro.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x23V6mMyBfeeNdU5"
+Content-Disposition: inline
+In-Reply-To: <20241211051019.176131-1-chensong_2000@189.cn>
+X-Cookie: Every path has its puddle.
 
-Hi Daniel,
 
-Thanks for your review feedback.
+--x23V6mMyBfeeNdU5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 6 Dec 2024 at 19:50, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
-> On 12/6/24 14:28, Krzysztof Kozlowski wrote:
-> > On Fri, Dec 06, 2024 at 12:39:56AM +0100, Daniel Lezcano wrote:
-> >>> +# SPDX-License-Identifier: GPL-2.0-only
-> >>> +
-> >>> +config EXYNOS_ACPM_PROTOCOL
-> >>> +   tristate "Exynos Alive Clock and Power Manager (ACPM) Message Protocol"
-> >>
-> >> Given the importance of this driver where a lot of PM services rely on, does
-> >> it really make sense to allow it as a module ?
+On Wed, Dec 11, 2024 at 01:10:19PM +0800, Song Chen wrote:
+> This converts s5m8767 regulator driver to use GPIO descriptors.
+>=20
+> ---
+> v1 - v2:
+> 1, reedit commit message.
+> 2, remove development code.
+> 3, print error msg in dev_err_probe.
+> 4, doesn't set gpiod directions until successfully requesting
+>    all gpiods. It's pretty much equivalent with original code.
+>=20
+> Signed-off-by: Song Chen <chensong_2000@189.cn>
+> ---
 
-Yes, we want the option to build it as a module so we can use the
-upstreamed driver with Generic Kernel Image (GKI) [1].
+Your signoff needs to be before the ---, and the changelog after the
+---.  The tools will get very confused and remove your signoff here.
 
-> >>
-> >> Some PM services may be needed very early in the boot process
-> >>
-> >
-> > If it works as module e.g. on Android, it is beneficial. I think the
-> > platform was booting fine without it, at least to some shell, so I can
-> > imagine this can be loaded a bit later.
->
-> Usually the firmware sets the frequency to the maximum in order to boot
-> the kernel as fast as possible. That may lead to thermal issues at boot
-> time where the thermal framework won't be able to kick in as some
-> components will depends on ACPM while the system stays at its highest
-> performance state.
+--x23V6mMyBfeeNdU5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That isn't an issue here as the Pixel 6 bootloader leaves CPUs at mid
-point frequencies during boot. I would actually expect most modern
-phone bootloaders (since the launch of GKI at least) to do something
-similar as it is a requirement for Generic Kernel Image (GKI) [1] that
-all the SoC drivers are built as modules.
+-----BEGIN PGP SIGNATURE-----
 
-[1] https://source.android.com/docs/core/architecture/kernel/generic-kernel-image
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdZktgACgkQJNaLcl1U
+h9CpeQf+KrcJKSJOMXnfO3IPgQISl9QlxNWu4k3eOOqxEe0amoy7O37YkvXfRW9Q
+oA52J1TAjdA5NpPVTiFC0FRYfQeD22cYE4IMWrc2UgmKeWBoxWNQwWGqxnKx1Vi+
+a8E5H/vnQ0S3pjjTX80sE/8tqug3Yg0HS/lTMjP4B90VsUlp6HMkbbeaW2JR7Jiu
+xz2bfGU/4tC2NvzDBrLlTikzmDfBTD1m/k8uLMSe4ZTJd2aGxsEohWsJXGW32/yd
+/DDo9nUva5a58Vzxa+5RrKZDE18Fyr1b+LsqzTvT46zNlTsM4tNy3H2BV2ia4fKG
+K7SCmuZreZ2jH080IHmoIiZ5D8U3Og==
+=7ltg
+-----END PGP SIGNATURE-----
 
-Thanks,
-
-Peter
+--x23V6mMyBfeeNdU5--
