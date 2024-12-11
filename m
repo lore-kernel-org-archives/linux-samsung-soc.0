@@ -1,105 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCA418BC3F;
-	Wed, 11 Dec 2024 15:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA001D9A6F;
+	Wed, 11 Dec 2024 16:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733932035; cv=none; b=RVppL0Ka4Rv8lk3kU5G5YB6uU6REmntTOOqfPmzEzfLJdFlOF/x6MksD7XMGr4ArGohdsZJqYQ/DdX5WD6vjpz6y4xMp0M2L++4+grBYvS1YItv6rdSguQzixBlelpFd+wSvUUCxWtXXkPibYqvApo77av1O/TANVY7fLG6YHfA=
+	t=1733934589; cv=none; b=W6d5f/h12rR9ARmL1RomQ0CMYuevDNV1UItKVwiqAiTKEpWSqOhhUPo6S8Y49q4IEof33hHnaILogKloJ31coTbeyI+bI4+vV77Y5tc9iBYi/tb4bakPD8K+uJYAYdyk0S+EHKvPieBI+ddmGlQb7TlR0D6cTb2PvyRnlJQGww0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733932035; c=relaxed/simple;
-	bh=qsPmqbckC0QLNUpCrEGTyFuyNNsWpyK6tx/uRzgBwzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tZuJNHy2wubYLhyX/6Wk4qwL209QU1JcE6uuPpLX/k01uQQ9l43PTXKwBS1GD7+tltu5GGbuu/+LBo+qZQ+JV8u+HsPFIkBX7FlbXua2Bhijo2aTLXQCb5z/ka9luuFOc8cdNV0JY/i8s/vBpJMtC6i0w/ORotdbh6rInfS8EdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8zqfTpr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733934589; c=relaxed/simple;
+	bh=CUofCpkNjwrv0bPeK8QaWr94vXw0Tzx1X6oY+8Gvpqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PizOSg0q0fRMjRDQ/NYv89gskk4kZo7pkDXBvJQpMpFcDZugDi45+TbgstbpzUwTfhTIbq4vbvbLPRh7rC0o1R6ZzZ5egtvCmBauJ+wQHLz0EvUBUuCdsi9OZGRnS0wbwPye8O4gpFe+V5HVj+GHfcpcZYwE1lbMp8jbB8oIQdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZnSbINX; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8zqfTpr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC786C4CED2;
-	Wed, 11 Dec 2024 15:47:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733932035;
-	bh=qsPmqbckC0QLNUpCrEGTyFuyNNsWpyK6tx/uRzgBwzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y8zqfTprkNTe1s93rc5PaCRN99PLuwqz02R0j6clNhKwEiZz7moxd1G7TSOF/sxLn
-	 tqx2PB3FNZHno/X1jtiFVA9FKqXfw+qKjYyws/jH/RGBzrLRBh0oefYfkc00uEzAOM
-	 cFH2GMIVQOedciLDQgsrRsgmTWPz4Wv7cjNxdiiao9zs/P343SngRRKTfPCsYeQaU+
-	 DcvC3zVRTIUjMWWIwIXhAig6mIbzd967tMnYkdWOXutBqmRdCIkComwQXRj+ewu6Go
-	 qtDp66bq4Z9WueQU3wTQdatO6ox7zea5ZP7ffhNMlg/aRxx+RuK+Fi9v898oL907Kj
-	 70mmTbcE3KZNQ==
-Date: Wed, 11 Dec 2024 09:47:13 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Roy Luo <royluo@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	devicetree@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Vinod Koul <vkoul@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZnSbINX"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa692211331so176263866b.1;
+        Wed, 11 Dec 2024 08:29:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733934586; x=1734539386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=405Zc2ogFoII5Y01YYxw+4oVDyF8t9rieF12fX6F/10=;
+        b=aZnSbINXg+4EsmMv/uHQ4mTIAKXx2kdZ1anEJ1u9VEpB2PqkXdo337OUuv2C84xOvV
+         KtGTryPeO4wJUN8Rwg6gEylh36oghvuDtp9s1bLQ8vzpscZnfqi/u8UhMrLyTLGtXrV+
+         T7NQfKC91/caAEda83l5xFjYYrUlCPluq5/Ag+5rH3Z5OFLtOOnm7NDqmv1rpsIeIjJY
+         6p+hnVW0Nf94nECT4wWDC5K7cTe6zbBV8yBqpL1ODpEMiNudEUB7YPT3hf2a+6Ui1Ykz
+         /FhH2rv5CP0UVKuJQ1TLcgSpjfyOKwOEiMRTA2dvbHDLzyUFJuzc/B6FL9SSrQLeU6jP
+         zQmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733934586; x=1734539386;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=405Zc2ogFoII5Y01YYxw+4oVDyF8t9rieF12fX6F/10=;
+        b=Msyj5jxsK7Kqw6MyCRpro8WKpi/IFWmCxHiSF9yHMI7ZrBkTrDarad/7kt5aPJOEgQ
+         MxC4WT5hxpn5j19ZZws5i/BqiBSNAUL135Ga0Cu5dobB8hcy/7Ypic2DFgkrbcbn1WXT
+         eudosC6/f7JDKk6CsnjByxuEUOf9HXcsN2ccBOqI1uFKBxbK1FJ/DNghv68fEnke2oXY
+         vR7cKLZ9QnV1RqmIWKYewqkMRQr5578elmt0bWpL8O/ipZ/teZIGfnq4U1ODKY/vTAce
+         bxeH6J5iARTxtI/TNsNm3kmoVUTkja19kOUquEpcrBTxh9maAYCbGh5OZJaY94lpbtYD
+         SKxA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6VsCTBr0UHujFrPP5D1zzWs4F5NjaolDxqmrB7yZXhrG8nv1DIVYVp/Dq1cMkoXitaUjgnPV4T6YDp/g7@vger.kernel.org, AJvYcCVGVx7SfWCYfvOWACapc+WsjWHC7MBZInFpgNJXMPWHaNIPJJTFjmuQjEa/Jney8Ktpbzmse+xPcif7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4FEGPA3UMmHxSnZyCi8XvmQizyam6NCHpzo6Hy+wFSGVbNsRz
+	r4q9UusSEYFZ7urYxSZJgVq+CVAb07w2a0IuDBboutbuwXhdyp7C
+X-Gm-Gg: ASbGnctyTTKcfckSFfWTGvs4VU1HcJzStelu2ZXnSPRgnCapYvkF7qZnf9RRTH++P3z
+	CeYaJqNHFX47yinDWaNGIrlVq47dgrM/1zFjDOuS28MSaYQmV7dG8EidMVWQLkZUATqk3KaC7L0
+	tiObJbwXkdfQWSSlZ8W5pWVFQNea+JoFZRxp/ZmJrbA+G59UOntV9B9ELzbKgpu/RUZTMQsGB/T
+	uH3B5BGgYpcCuxbH1M7yegAaKk1fkWUoUKXVklCaFHVUTxOGGcIxg7D+OV3w9QPHUTQFJq8grR6
+	/2QmQN3QeI5qCXz6fQydNN4vhFWjZQ==
+X-Google-Smtp-Source: AGHT+IG8EM4U9gXsydrmKtBKna4oLCf4D8jj5BSeT0g27VN2a1zcPacXb4mK43JDxCcRqpqcGwZUuQ==
+X-Received: by 2002:a17:907:268e:b0:aa6:ad4c:7d55 with SMTP id a640c23a62f3a-aa6b15cc7ccmr349512066b.14.1733934585452;
+        Wed, 11 Dec 2024 08:29:45 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa663334906sm678451866b.72.2024.12.11.08.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2024 08:29:45 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	kernel-team@android.com, Conor Dooley <conor+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] dt-bindings: phy: samsung,usb3-drd-phy: gs101:
- require Type-C properties
-Message-ID: <173393203254.3086087.14024716233496700566.robh@kernel.org>
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <20241206-gs101-phy-lanes-orientation-phy-v4-2-f5961268b149@linaro.org>
+Subject: [PATCH v2 0/1] arm64: dts: exynos8895: Add m2-pmu, poweroff and reboot
+Date: Wed, 11 Dec 2024 18:29:41 +0200
+Message-ID: <20241211162942.450525-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-2-f5961268b149@linaro.org>
 
+Hey folks,
 
-On Fri, 06 Dec 2024 16:31:02 +0000, André Draszik wrote:
-> orientation-switch is the standard declaration to inform the Type-C mux
-> layer that a remote-endpoint is capable of processing orientation
-> change messages.
-> 
-> The USB PHY on gs101 needs to be configured based on the orientation of
-> the connector. For that the DTS needs a link between the phy's port and
-> a TCPCi, and we'll need to inform the phy driver that it should handle
-> the orientation (register a handler).
-> 
-> Update the schema to enforce that by requiring the orientation-switch
-> and port properties on gs101 (only). We disallow orientation-switch on
-> all other supported platforms, since other versions of this phy (or its
-> system integration) don't currently support or even need it.
-> 
-> Even though this new required gs101 property is an ABI break, the
-> intention for the driver is to behave as before if it's missing
-> (meaning for gs101 it will work in SS mode in one orientation only).
-> Other platforms are not affected.
-> 
-> Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> ---
-> v3:
-> * update as per Rob's suggestion (I hope :-)
-> 
-> v2:
-> * squash original patches #2 and #3
-> * actually disallow orientation-switch on !gs101 (not just optional) (Conor)
-> * update commit message to clarify that the intention for the driver is
->   to work with old and new DTS (Conor)
-> * collect tags
-> 
-> foo
-> ---
->  Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
+This series adds support for the mongoose cluster PMU in DT hence
+a compatible for that was recently added.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+After this patchset, I'm planning to submit patches for more hardware
+support.
+
+Kind regards,
+Ivo.
+
+Changes since v2:
+ - Dropped the poweroff and reboot patch, since it works as-is with the
+   included dtsi.
+
+Ivaylo Ivanov (1):
+  arm64: dts: exynos8895: Add a PMU node for the second cluster
+
+ arch/arm64/boot/dts/exynos/exynos8895.dtsi | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+-- 
+2.43.0
 
