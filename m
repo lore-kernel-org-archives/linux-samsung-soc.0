@@ -1,119 +1,105 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA6F1D9A63;
-	Thu, 12 Dec 2024 21:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BEE19CC0F;
+	Thu, 12 Dec 2024 22:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734037765; cv=none; b=L4GGS54JiQrRKMD5/pJSqkQ093eCK83OsmoT9nJ0gC7qhfb/bRXVtmzgm+8/q25Ae7hz8Q5A+jnv4fL1yOBOZPl8XjhzPGTmgneiMFsbZPJhvxJdcrDNIz12PMTWSRxBOW/tCBdF2qkoYQF+QoaPQLH5OdW7PAsdiOYJaFUTlzw=
+	t=1734042628; cv=none; b=rB1gHVFHmyFBSQigvwsSsazk2CSX09wGmF3Jgqm76CIX0IjmPXS2C/aoimxeFZp9Q2iujltNNY7dwtx2viK74dJ0C6FrkbHyUKEqag2u/z1unPGihoexrnp3D9DqgdDdfvUYNAOey5AnuIcn2Y8a1rLU68tIlNqMFoHLxnBFUnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734037765; c=relaxed/simple;
-	bh=W96WZYcRWJBuUyWOrDs/OpzeK6jPnXsbm8DFk91L+50=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jUEAK2cerKiBQndx9pPKzJqOLO7jM7r/trtrCFXxqTV1vLEBNqhUbTVVjJ4mzew34FUZS4fxDU0YGDrw4+3m4OYIpA5ZolKWISkx6hE3JE5fXGKxErCxDaf6Nd/aYLxXTXzzsJkC8H51kmyKfQbYi7jhobfOMMZNiTdi7VVFwLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOEa4k55; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734042628; c=relaxed/simple;
+	bh=GfgvB7VvI35d4Y+A3lfg32jaJdQuBRvgZUCRKZU/NDA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=pwqLIb+pWjTJdvFLwHbAr6AHVl0G1KnUnS3tg2pE56knJ/VBeynE1Vz/LxxCgy2Tj23pq+Zd5IBIQrO/mUF2UFlVFnbpennW+Od0HzTazj0SPMdnZtPaWdoKiIPP2rAhycbM0b6GgNrJWo518AkGZ7DLE6x3XN65ls466QMDZPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLaq9Bxk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOEa4k55"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d0f6fa6f8bso1532614a12.0;
-        Thu, 12 Dec 2024 13:09:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734037762; x=1734642562; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4LcqT6RFZpU+AfgSkhVCNBVs2JrpNLGjbQouQLx+w/k=;
-        b=eOEa4k551qijmYes88K/qD4FICIFMwwO+q6D6b238CG7DlYEUrRJbQDMAV8BBFrD1c
-         D7fQPoF4esFr/DPRWp7nGlgLQ5GXQUm5ErDj+QjNXqMI15h1XmU1nUW7CPk5rKXO8gry
-         Jn322w4i0MuToczoamKvlBqA5zZLYhWkOoBqE+PArhooUW7oJUQ0VypI5MG2KMx12NNU
-         Q7HttACQZNnRG5VAk+DM+Ixqu4kLKXNIcrq0CEx8a649H50Bqo/eeKRHpD3J31PtI+MN
-         sP7YkuZyjVhb60TnFME9WrlnH3o0i99FwSTuMP4jklKU21fwcm3mrGyagO0iU9JfDwny
-         2+xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734037762; x=1734642562;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4LcqT6RFZpU+AfgSkhVCNBVs2JrpNLGjbQouQLx+w/k=;
-        b=k9dtXDEJBXNOsORo8SMm031MVta0fm1RDMzxeyFk0BkkqSubC9zCb9a+k3TrtdS7nY
-         6mTCikHYn8Z2q3MUHw1O+Lk/KaW5RwJlh5MvCBkVgnZhicrsXNtbSHOf5R96XKvsCUkt
-         xXWyGclHii5QuBIYKH4nGzI4CvTFnCDHkNzo/W3M3xAxyCsEYedytf3Besp2aoFjikTm
-         km8uMVfQ4ksKsiGCkiT6OIhMgNyqfEL/TwzdnNtA/8mPMPx7s4KBkZALMHwn4Qs3ailg
-         2ehF18e74zYWjegYA5dt+841lFqq18rJucNl/akqjdrKkYHNWG8oKuxOkbZazgUgIDme
-         P0RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaMxNtKl3B7JgN7Xmo1TXmlZ1DPyBHFys79DhJ7/5Dd+gUOQB0ZSpufDf57gHYgIfN/jKWhOpa+VOqGGyR@vger.kernel.org, AJvYcCUxbMpa6GifutuuPfNG9woPr4yp3zAVWnis+paK86Lgo8w9vUtHPMwkSUcnWlQDqHHNoA7Jk0cu32cc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU5ZB3icwBlBj+yMJv4tMHxdYLrslDlk0SAGBl2V585yMAeGlp
-	vAd/oX6V5MRSgBwKoH2hPSAuq+8h32QkgIpB5T8LGM/efcIH4aoflUZUEX/V
-X-Gm-Gg: ASbGncvyZYDF0MyFlxLk8NqLT/tdPZHhrszE5mHfam7QUcLuhnJP1rQjgUDWWeAKPsK
-	ZyYGorKNaXb1ZniuEUHlTmQmILt+19bBehu4BxbsDZzs7u7yAXNrPh8dQtdWpIPKAQLetN2RKe+
-	0Uw68RnAqgMHvDvepneKX177TboBLaNqxsSimLG4aOO0gOylYe9RvFt1mUdJz2db3Yr0wfQs1S4
-	Hbi7v8jNX/+vBZJoOju7eelt5MdoqmWXOKX1rKEaslFtfQ3GtU098OaRaJ+f8djk/J8
-X-Google-Smtp-Source: AGHT+IGNLsnyopvoEGCAoELFMil/bI95Bbi59GnVO24Tgss+SOkt2jDXgVFqyCrkWQppUAutiI/wVA==
-X-Received: by 2002:a05:6402:210f:b0:5d1:2652:42ba with SMTP id 4fb4d7f45d1cf-5d63239e3damr1998287a12.16.1734037760215;
-        Thu, 12 Dec 2024 13:09:20 -0800 (PST)
-Received: from [192.168.31.111] ([194.39.226.133])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3d0f93d54sm9232348a12.68.2024.12.12.13.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 13:09:19 -0800 (PST)
-From: Markuss Broks <markuss.broks@gmail.com>
-Date: Thu, 12 Dec 2024 23:09:03 +0200
-Subject: [PATCH 3/3] MAINTAINERS: Add entry for the Samsung Exynos SPEEDY
- host controller
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLaq9Bxk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9691EC4CECE;
+	Thu, 12 Dec 2024 22:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734042627;
+	bh=GfgvB7VvI35d4Y+A3lfg32jaJdQuBRvgZUCRKZU/NDA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=mLaq9Bxk3T7mh86p6zkb4Ec0ewssBIdzj4uNX3smwvAeWx1QasB99CUvJGH8qvWWf
+	 6WyIdk8ECJXakyB7fSFlgipr8s2Ez2rCTtECyciq3x2iC+TATu9Sh18Coza/JnhMvL
+	 +hC56oloGoBD6RXMtWdVv78fVDT5FH4HkWqmAmqghBF3JyRv/gPtOZktF4kyAvePuB
+	 EjgQ62I7JKRwQx9N+Fs4hGpbVs2Fcu/kD2FDmN4ZFF1VHRnHbqCPQU5KuDX42fs0EW
+	 rDXHYXwWFt2dXU2W6PnT01Kexg/k26D5uoL24acpGK05eFGYGKp64Vfy158tdF3ZNd
+	 5gQfiEXMRHWjw==
+Date: Thu, 12 Dec 2024 16:30:25 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241212-speedy-v1-3-544ad7bcfb6a@gmail.com>
-References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
-In-Reply-To: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Maksym Holovach <nergzd@nergzd723.xyz>, 
  Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- Markuss Broks <markuss.broks@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734037753; l=963;
- i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
- bh=W96WZYcRWJBuUyWOrDs/OpzeK6jPnXsbm8DFk91L+50=;
- b=vQxIcKGQNSUKYi5s6WONKZzJe7/plvG1ezTM9BPeMsyvRV75HipNqBcJuId8xUxGH6I1S6UUp
- OCguhCtHIWZDUKzeIFbJZLqtbTahyjdWEuz4elHnfQz6LuuJOWduonh
-X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
- pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Markuss Broks <markuss.broks@gmail.com>
+In-Reply-To: <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+ <20241212-speedy-v1-1-544ad7bcfb6a@gmail.com>
+Message-Id: <173404262581.3370297.1817961099331187454.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: soc: samsung: exynos-speedy: Document
+ SPEEDY host controller bindings
 
-Add an entry adding myself as a maintainer of the Exynos SPEEDY
-host controller driver.
 
-Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Thu, 12 Dec 2024 23:09:01 +0200, Markuss Broks wrote:
+> Add the schema for the Samsung SPEEDY serial bus host controller.
+> The bus has 4 bit wide addresses for addressing devices
+> and 8 bit wide register addressing. Each register is also 8
+> bit long, so the address can be 0-f (hexadecimal), node name
+> for child device follows the format: node_name@[0-f].
+> 
+> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+> ---
+>  .../bindings/soc/samsung/exynos-speedy.yaml        | 78 ++++++++++++++++++++++
+>  1 file changed, 78 insertions(+)
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bf2dcd4e0261785add520b5eac747ceac523e112..14041c5373df76c7a7093f106dded1080b5d8664 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20754,6 +20754,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
- F:	drivers/crypto/exynos-rng.c
- 
-+SAMSUNG EXYNOS SPEEDY SERIAL HOST CONTROLLER DRIVER
-+M:	Markuss Broks <markuss.broks@gmail.com>
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml
-+F:	drivers/soc/samsung/exynos-speedy.c
-+
- SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
- M:	Łukasz Stelmach <l.stelmach@samsung.com>
- L:	linux-samsung-soc@vger.kernel.org
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-2.47.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: ignoring, error in schema: properties: clock-names
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:compatible: [{'items': [{'enum': ['samsung,exynos9810-speedy']}, {'const': 'samsung,exynos-speedy'}]}] is not of type 'object', 'boolean'
+	from schema $id: http://json-schema.org/draft-07/schema#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:clock-names: [{'const': 'pclk'}] is not of type 'object', 'boolean'
+	from schema $id: http://json-schema.org/draft-07/schema#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:compatible: [{'items': [{'enum': ['samsung,exynos9810-speedy']}, {'const': 'samsung,exynos-speedy'}]}] is not of type 'object', 'boolean'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/samsung/exynos-speedy.yaml: properties:clock-names: [{'const': 'pclk'}] is not of type 'object', 'boolean'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000: failed to match any schema with compatible: ['samsung,exynos9810-speedy', 'samsung-exynos-speedy']
+Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000: failed to match any schema with compatible: ['samsung,exynos9810-speedy', 'samsung-exynos-speedy']
+Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000/pmic@0: failed to match any schema with compatible: ['samsung,s2mps18-pmic']
+Documentation/devicetree/bindings/soc/samsung/exynos-speedy.example.dtb: /example-0/speedy@141c0000/regulator@1: failed to match any schema with compatible: ['samsung,s2mps18-regulator']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241212-speedy-v1-1-544ad7bcfb6a@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
