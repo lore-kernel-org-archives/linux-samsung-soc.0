@@ -1,127 +1,90 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D601243550
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Dec 2024 16:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A583921660B;
+	Thu, 12 Dec 2024 17:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019256; cv=none; b=TtY7dRJsXtRUEr1lYWNoerSAbqdQnkocb8YHCTEU77SR8w/1m/jgPiODhKYypcIr84caUVq1tco0EjWkn1hIAT9poB80o6uJZ4g0czDvgiQo/jZj4waGzs9NnisLjWWi3nG3NqILLx8k99wr2LpXIhgFLegm8TQJkPHV/vF5YYk=
+	t=1734024538; cv=none; b=FZ4T1n29uzgKK3zGQVs6D0hio6nixUWqH1ocPINpz+Yq5FZUWw7XUNDmomO3cyxgxRSOYFGxtQXGe1h0NZP/eH2iGApKZVbaHHXBFjdX8GUCa2TtuTNkLCot9+MP7hb1cCWoUuMYirOI19SGI6isxuV2V+iwjI32ase/oDT0b9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019256; c=relaxed/simple;
-	bh=/C7bHQrkgGdLprOLUDNL1QPrbsGLOKte0YUezSURupU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZHcx7bYCpXgcYKR3YTiyGPHCP+HfQTxCCkv+Ecpak2TDbSqYH7MczLP8UZr6V6ASdSKiXUNYhW7CSEsqhUGXrG4pcQpYmGDIAtONkW9qtAJ/attmfhVQrfX6WwkpfXaO/TGHoRU7+GWRBqdJXo6JUyLDf0gSYPWn0fsgMqkx0cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oc3pg1tG; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734024538; c=relaxed/simple;
+	bh=SjAQ4AP/yA0fQt0zvQl7Z7VVnHL0A0CkMiaWTCcuSW0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=TSx062bKMQVvhktOkfljHb4PmNVK8qSpB9lvQch4ceWMs589BCZ6sI9Y5V9Bu3j5qiuHI1jqbeQOmpoRS7uZZRJMkVuKmcMNT2X+uVCq4ZRCfLafmEW3p1+ThTI43Sca3c2N+EBlidvAe8bnowW8Va9Vz9MnFJB3b2szEs+JARc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmQq4gmY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oc3pg1tG"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385de59c1a0so476802f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Dec 2024 08:00:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734019253; x=1734624053; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mUJZKl6ex9Y6tnVneUNF04HScPdq/LgCtN2B23fl+ms=;
-        b=oc3pg1tG5cZU3BVT9S1eH4v24orfEjakcbFRdzF40K32ojWsMRowUnw0RX9Mt1Vxdy
-         O0EhVQ1o+YqWE0dgYZSiQKa5mSUbKNzfPKI8vX4dpUJYlRMbW2ATxV6+WJJMJ99zTP8A
-         DZboSDqEWInTm5yYp3+Q8L13C4lawOFK/TI+0PoDXF6u6ElwWA2aciWqzndQjd0C1Opj
-         YjqwV4pAHnM0jHV5e18l/NutkLlolc+MpHF8/XHaLwwieBe6VzVXb/wzlpD8iVaKnu3A
-         GJGOQ8ZfYyLLGQCxfAvpQF71JfeDBwsDXQ7J0GzXrofn7boMgCtA66mECU/z0VwIHIUK
-         YLoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734019253; x=1734624053;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mUJZKl6ex9Y6tnVneUNF04HScPdq/LgCtN2B23fl+ms=;
-        b=S+wNpBdAyswRWA3v3mAGU4QO6FkH+ZtdtI1+Sm4QRf8g6G1vG5cGCGYqYUOBiu7gJT
-         DG30iwayrEk9SEOkE9sTVpD8242XsVMLtHN7h0Q70GnkFd+rQ35+MFXyQhoYErxRp5tT
-         4tXNfSaXdE68vI5rptujqyTiwhsYfwZDg63zxoDiVaFvwhAniF+eOeS8hbtKL7nTMvj3
-         sVhiN7zcSF7/7NCKwkUzzH0zG3jB/agE0QUe8o5XAF6E9a1PoJvezBlzrAiw/v7mehLn
-         /lbFR3hA1sPO2A3rTuvRLNEX18OviffXMple1N2Bt+CGaDEdxskB0Uqrv1SqeuaRfWBf
-         zJog==
-X-Forwarded-Encrypted: i=1; AJvYcCVRdx1Xx3jy75OkVjTpnyE63AJ7aaWIbO4xIz+7CP5rr6QobyxbJKsuMuanbpWnoDqKvCrudp64ETLJEwEgub9o2A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxg4ZVugSh090oC/ZXBUq9SUFoJBolWyKGeKXoI1YJcj/kZh5Q
-	H4oNiDmC5h8MK1RpX2e2PeJj4x1ChILriLtUZsIkyxsEieIHqjxYn9wvEqwQgIk=
-X-Gm-Gg: ASbGncvuwVp2o8uqrHYhAt6XUieOJFutiCbESWLTREHnUPuCEVIcxwKKBlp5DM4j3US
-	kLW/FVygLuPYAvkwxtcj6+U1ccbgeFYPmnrdeeNe8N1JfKA+8fWquzFFm89zu9FtKW5WbZRHeBp
-	/8Br3eVzOxPSJWRnVqODp8l1vgFG0o9d6keRRK41iK542QQLe0Y8AJUMl1px/x3MJBPp8RbtWLB
-	d01H2p0rLm3WL1ESfLvKTLJ9ZZDP5761F0N2+Q5q/A/iqw/2XdFItE4at3YVr+fyzSjOrxEStef
-	/v++ZDTXwIhvMywA5nW3IuAUMUN8TIhz7g==
-X-Google-Smtp-Source: AGHT+IEN5nwnyUkAQMvO2q9jKMCm5xWXv8+YOzw7jcftLoAsAmmzmAcKvyZSzw3KzqJ0H/b/wrjw7w==
-X-Received: by 2002:a05:6000:186b:b0:385:ec8d:8ca9 with SMTP id ffacd0b85a97d-387877c98ffmr3397430f8f.42.1734019251001;
-        Thu, 12 Dec 2024 08:00:51 -0800 (PST)
-Received: from ta2.c.googlers.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514d35sm4462941f8f.74.2024.12.12.08.00.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 08:00:50 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 12 Dec 2024 16:00:41 +0000
-Subject: [PATCH v2 4/4] arm64: defconfig: enable ACPM protocol and Exynos
- mailbox
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmQq4gmY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35BEFC4CED3;
+	Thu, 12 Dec 2024 17:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734024538;
+	bh=SjAQ4AP/yA0fQt0zvQl7Z7VVnHL0A0CkMiaWTCcuSW0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=tmQq4gmY/H3tupf/CEBrMfzv8oveGd32BRzD7J4VK5wYNYRhSFZNYTk9fo/QW8GVl
+	 edj77EzB+YvLfBKK9cWjxbwkPneZz6eCzw4ZprPAkumT87q5KEsK4TJRRi056Kiqwe
+	 tOurgc286+sQcyF3QLJ680hbjbpVHIfDtu18AjK28SJ/EIwhjX72NtxF01hEormtZ3
+	 dMwcVypJHE5jFGNZCd9Oc0+l0A5cHaP8TsYYDHmF1e0jjFrIr5/iQ9C+FITcZTG2Xg
+	 3wEyCfi8htNNrrJAudXpjRsg5UKr15SamgUvRQlQ190gqWfV9wGZboMjvXm9hmcmw1
+	 JmQGBe+f7LPHA==
+Date: Thu, 12 Dec 2024 11:28:56 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241212-b4-acpm-v4-upstream-dts-v2-4-91b7a6f6d0b0@linaro.org>
-References: <20241212-b4-acpm-v4-upstream-dts-v2-0-91b7a6f6d0b0@linaro.org>
-In-Reply-To: <20241212-b4-acpm-v4-upstream-dts-v2-0-91b7a6f6d0b0@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- peter.griffin@linaro.org, daniel.lezcano@linaro.org, 
- vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734019247; l=1030;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=/C7bHQrkgGdLprOLUDNL1QPrbsGLOKte0YUezSURupU=;
- b=q/qMWb3Eov9H0T2BHl7oTCrCuPXOj90JVrh0cjnd8k61RuCnu1AB8+Cevc0d3x4+b2BnG9tb0
- ExoRQa94+dQA0btBlEStNmn/o64BWNR7SWxVKOt/i78pqHEKVU8gpwT
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: peter.griffin@linaro.org, devicetree@vger.kernel.org, 
+ daniel.lezcano@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ willmcvicker@google.com, vincent.guittot@linaro.org, 
+ kernel-team@android.com, arnd@arndb.de, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, ulf.hansson@linaro.org, 
+ andre.draszik@linaro.org, Jassi Brar <jassisinghbrar@gmail.com>, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241212-acpm-v4-upstream-mbox-v4-1-02f8de92cfaf@linaro.org>
+References: <20241212-acpm-v4-upstream-mbox-v4-0-02f8de92cfaf@linaro.org>
+ <20241212-acpm-v4-upstream-mbox-v4-1-02f8de92cfaf@linaro.org>
+Message-Id: <173402453635.2828943.15564980222849076434.robh@kernel.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: mailbox: add google,gs101-mbox
+ bindings
 
-Enable the Samsung Exynos ACPM protocol and its transport layer, the
-Exynos mailbox driver. Samsung Exynos platforms implement ACPM to
-provide support for PMIC, clock frequency scaling, clock configuration
-and temperature sensors.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, 12 Dec 2024 15:43:45 +0000, Tudor Ambarus wrote:
+> Add bindings for the Samsung Exynos Mailbox Controller.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  .../bindings/mailbox/google,gs101-mbox.yaml        | 79 ++++++++++++++++++++++
+>  include/dt-bindings/mailbox/google,gs101.h         | 14 ++++
+>  2 files changed, 93 insertions(+)
+> 
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c62831e61586..91139b1cf813 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -262,6 +262,7 @@ CONFIG_IMX_SCU=y
- CONFIG_QCOM_TZMEM_MODE_SHMBRIDGE=y
- CONFIG_QCOM_QSEECOM=y
- CONFIG_QCOM_QSEECOM_UEFISECAPP=y
-+CONFIG_EXYNOS_ACPM_PROTOCOL=m
- CONFIG_GNSS=m
- CONFIG_GNSS_MTK_SERIAL=m
- CONFIG_MTD=y
-@@ -1378,6 +1379,7 @@ CONFIG_HWSPINLOCK_QCOM=y
- CONFIG_TEGRA186_TIMER=y
- CONFIG_RENESAS_OSTM=y
- CONFIG_ARM_MHU=y
-+CONFIG_EXYNOS_MBOX=m
- CONFIG_IMX_MBOX=y
- CONFIG_OMAP2PLUS_MBOX=m
- CONFIG_PLATFORM_MHU=y
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-2.47.0.338.g60cca15819-goog
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/mailbox/google,gs101-mbox.example.dtb: /example-0/soc/mailbox@17610000: failed to match any schema with compatible: ['google,gs101-acpm-mbox']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241212-acpm-v4-upstream-mbox-v4-1-02f8de92cfaf@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
