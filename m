@@ -1,63 +1,33 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB381A256C
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2024 08:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D60A1AB6DD;
+	Fri, 13 Dec 2024 08:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734077594; cv=none; b=Bvw7so1u7QMLsLhZvXJw1hmjWtO+ZW+mVUBYxrchLX7JPok0eF52p1vCu+8O/t0jQAeOHupIhlsr9ev5Pf5mprzcM/6AFVC1HGz80LLd2QXzztyEwVeS3W7Hqrd5ZqLn9YjAC3gJ/WGmwjkwcufWK75f82a71OX9mCXYP+qrWCY=
+	t=1734079384; cv=none; b=nNC8t30P/jcvNn4cN2HhDO1RvXb6U7vk4R/4wF5ZEFSYEn50XY6A58coydLJHDctz9C0vuoPeMaK5Y539usnxjrOadb6J0UgHKFInd7Y+VDFZOKi1Cwxdi8raXDrHJ3lov1FLiiG6HQvFn96Rvvo8JaSyuIq3fUVxSKjugbjTVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734077594; c=relaxed/simple;
-	bh=L8+jNle5JOhNM89zVW8yJxWxsKfxalaeG6wDpSPmqMk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mREvZPGALoapmWV+WYBskkMAXtr0IW7K4Voq/z8rpSm75Rw2Un2s+ZQCjRIa0Zz9Z2mDKDkCHK+rab4amTtkSgrPoi/nO/6OypLCA86bbCINTD2akB+fs4yj+eAdePbjXEgkBeNQ7rNwZsvTlf0DBrzo9/2U0V6wmmY3YIthIsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0Vnkxhl; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734079384; c=relaxed/simple;
+	bh=btbY9PhFto5p1zLEFxXVLi0NRidg2pKgZRAMyQsvD2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IdX/purJmQKHAMPuXXENzMi8fMEG1KHexNlxCk5y+WoEehbNlRK9jAhC/1koQ8Q+KMM90fuwoqb3rN9s4rgD0p7a5KF/9INYta/AokOt1+SIomWboe+QwqYMFDxyKZXAzEFRoCWPxyT1Q8XD7xtgv8+UKPumRkWG3izltnb+GXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVllTk6X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0Vnkxhl"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so2683418a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Dec 2024 00:13:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734077591; x=1734682391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ax9fIlDokPVT/m7zwVLOWjC58ZMH8YcqVCp3qT1D65k=;
-        b=G0Vnkxhl3ohCH/sf1DOHWJbTbaUDPHVTs5/eb1g/+lPtadMKzBM9PgAwrKenUG6rkj
-         g56FLrMnSRyXal49JLnyIMEQY/UAgTeXdIvM0EYJ+tgJSAqmlFe0nK1XKoC9x8+Dtdjh
-         MhIA2IRaLl0aVvm6uuJBwzPHHVe+tlYI+9bJaWUpmA7l/+WHnNw1MIA50TlSclK0TZqL
-         kil8UqFKZAvzJ04ZNCYIOA/e2MQLdvQlDdJ6DYoceVFZ2yn6RtMPy0kto5MtBOFfoQT+
-         2bU0tKqRT1ioMANQJ2IayZCv3W9kle3lmQ727HHJq25kgKqQaOG6zNDTAxzsiNqNr6M8
-         Ni6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734077591; x=1734682391;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ax9fIlDokPVT/m7zwVLOWjC58ZMH8YcqVCp3qT1D65k=;
-        b=wwITZZ+o18D0rpr2yEiCXd1cGZtGiYX1gsl+/NGU/nfQu41DhmIWNyZsy819bKYL0g
-         QRmlXtL5E5X5rUM1BCWcGosJabvjwEXvpp1+ZNZKrSFxB882qrabpXTdxyvZaXGYe5OG
-         OjxPsIFSGvJszGznypfJgRQq2jaSFBmPs86zzxYBxzxMHcmjKKTS+l4EUZtKZUHYxzFz
-         gBR9N/QZbj0pn0mLfkn1T+giBWZFo8n/bOjKkNgMXE371GSb+AdarjjsKr/54LeNa/rN
-         kRH2Tcoxzqa3PdlthlbgX4BeGRTf0XTsptTyoT121G33mUCJypd71IErVT4fPF99jxZW
-         6sEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7wWbY24nPZ4dA3DT5q+WBMRlqT9bMwA67v15MkFm1jeqVJu9gSA7oUjd+WHf49u1dhPzATTgmao/pru3iKdog2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAXdmbVK3FCV3q/wnH6Gh++mhp7+a+ExZjmKdCbuchgjBbbT6/
-	iTtPTBhqHFe4r74E7qp3+KJpr1zKRejS1LNk0EnIGecMbGrsoiN8oNuAe1vFv/w=
-X-Gm-Gg: ASbGnct2G7CrJQfroFoj/ZA2gbRxvRFsbJRnntp+TSqFWpj4reFdaJ3JDZ9VtsC+3gu
-	18/zVKW1cHkuO/Rk36yL1V+rW2pbGkOayj6ITDVkShLs2XWDkbn0LomjvLHeAE+7gbPJi43Sj4O
-	354zrjDE18T5sK3ukI6WSgxVSrnMjS3n4ZEsw+/RtgSMebBh8idODL6xuF7n7t1wVupsT7o5rLv
-	pb50kzSOp6MRS3Rc26VZooH+uUnRojLtaxBvLxmzJDl/etxw9FDePErV3a1tEiu
-X-Google-Smtp-Source: AGHT+IEu1OlplbyTKyMNJiSwcJM/aHzieHb5jY3kjHadk0/91d7Jwi8sJXlwCnYq4jjEgabYRNsm0Q==
-X-Received: by 2002:a05:6402:40c2:b0:5d2:7199:ad4 with SMTP id 4fb4d7f45d1cf-5d63c2e7f94mr1392853a12.6.1734077591474;
-        Fri, 13 Dec 2024 00:13:11 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.27])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3cbd14892sm9718785a12.39.2024.12.13.00.13.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2024 00:13:10 -0800 (PST)
-Message-ID: <467966de-ae91-417f-b315-62459af93b7d@linaro.org>
-Date: Fri, 13 Dec 2024 08:13:07 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVllTk6X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E400FC4CED0;
+	Fri, 13 Dec 2024 08:42:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734079383;
+	bh=btbY9PhFto5p1zLEFxXVLi0NRidg2pKgZRAMyQsvD2A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BVllTk6Xky/PeD/lDt4aDaR2IxiYKjbb7gFoD+vG+KgspqvQ1dNYam62TO8l0qlHS
+	 z1JdgbTzgLurNFMP8xjv7uIJBkhzh5PWVqhHipMNHiA/3hYtZvr11tB2GmhXTbU+o3
+	 JfBfg9jVsENYXeKEda/gOmai9rst0o3lXiaLYXMWWVHh5CGaKn3kwY2e3tvBnT1w25
+	 P9g8PMyYxDTDybN5jI3DW0yyZjEY1a5THcrLu4jMOVAxCGvHm8VuvU+wR3fkOLRe2t
+	 fvhATwJmNsVvGVNdBhOiQV/JmUSYQ6Y78DKpZfHmr/4c8FQsrfXssfagsdvoJeLVEi
+	 HM3l3wLm+tk6A==
+Message-ID: <0ff6f05f-fe6f-4433-a489-0447a165c8d0@kernel.org>
+Date: Fri, 13 Dec 2024 09:42:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,52 +35,94 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: mailbox: add google,gs101-mbox
- bindings
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: peter.griffin@linaro.org, devicetree@vger.kernel.org,
- daniel.lezcano@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- willmcvicker@google.com, vincent.guittot@linaro.org,
- kernel-team@android.com, arnd@arndb.de, Krzysztof Kozlowski
- <krzk@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- ulf.hansson@linaro.org, andre.draszik@linaro.org,
- Jassi Brar <jassisinghbrar@gmail.com>, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20241212-acpm-v4-upstream-mbox-v4-0-02f8de92cfaf@linaro.org>
- <20241212-acpm-v4-upstream-mbox-v4-1-02f8de92cfaf@linaro.org>
- <173402453635.2828943.15564980222849076434.robh@kernel.org>
- <90720b8f-340f-4f27-ae51-df98b2e5e820@linaro.org>
+Subject: Re: [PATCH 0/3] Add Samsung SPEEDY serial bus host controller driver
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <90720b8f-340f-4f27-ae51-df98b2e5e820@linaro.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 12/12/24 5:53 PM, Tudor Ambarus wrote:
+On 12/12/2024 22:09, Markuss Broks wrote:
+> Hey,
 > 
+> This series adds support for the Samsung SPEEDY serial bus host
+> controller. Samsung SPEEDY (actually an acronym) is a proprietary
+> Samsung 1 wire serial bus, which is used on various Samsung devices.
 > 
-> On 12/12/24 5:28 PM, Rob Herring (Arm) wrote:
->> My bot found errors running 'make dt_binding_check' on your patch:
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> Documentation/devicetree/bindings/mailbox/google,gs101-mbox.example.dtb:
->>  /example-0/soc/mailbox@17610000: failed to match any schema with 
->> compatible: ['google,gs101-acpm-mbox']
-> 
+It does not look like you tested the bindings, at least after quick
+look. Please run `make dt_binding_check` (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+Maybe you need to update your dtschema and yamllint.
 
-It seems I had an outdated dtschema (2023.11) and couldn't see the
-error. Updated to dtschema-2024.11 and now I see it.
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
 
-The takeover is that I shall periodically check for updates, or maybe to
-try to upgrade dtschema and dependencies before each test.
+Please run standard kernel tools for static analysis, like coccinelle,
+smatch and sparse, and fix reported warnings. Also please check for
+warnings when building with W=1. Most of these commands (checks or W=1
+build) can build specific targets, like some directory, to narrow the
+scope to only your code. The code here looks like it needs a fix. Feel
+free to get in touch if the warning is not clear.
 
-> ugh, I remember I fixed this, compatible in the example needs to be
-> updated to 'google,gs101-mbox'. I'll send a new version tomorrow.
-> 
-> Thanks,
-> ta
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+Best regards,
+Krzysztof
