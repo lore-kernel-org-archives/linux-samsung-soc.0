@@ -1,72 +1,73 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DB215E5A6
-	for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2024 10:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5551F185B5F
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2024 10:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734173396; cv=none; b=i3lgR3AaiNvqHNIVWMRFI49DnSgmFkYJwChx96TirdrVpLLZtC5XAAF/UAq7HAR8MkyjteQTsc6hrqKum2r2vrlTTIBbWEo25lognQe1cOvRxhYcFi4v1YSr+22cRF91s7ezE1V3KvvwqnBtdbqhoI3NgApd+JtGLqGlj7kUqbI=
+	t=1734173398; cv=none; b=OIgsZIm5Ol+LbNQjZxpG9072FX4FaT/nJqOAu3VLIakEJY5B7fAorqsvtd3cxgN5/+gQCHxRMUuMItZsUCGLuNp/QYCZGvuSE5qgmWRqiLjeGULK1wjvw0PGNY7JXcj2vQPVgANhek8tmrJQLhpOyCahVQzJNO+C/2m+G1gl09I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734173396; c=relaxed/simple;
-	bh=RrqfD+4zjzrT/9+xZlO3u4wSqYBzk9746H1d4/gafSg=;
+	s=arc-20240116; t=1734173398; c=relaxed/simple;
+	bh=uHmvStd7TL8wNOeQ/8/7MuJ74LQDGzhKKAwzIGLKMGY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TziJYO0Op1kwTBuMH3e0++/oAJqkSBxRDKjtL0x+s5WrIuFaAqAAjeh4bntDtxmiY4rE2YdB34eH2Q2Ph5+xrP14xZ0QSeW+h8nLaTjO0+S6SeZ9sbhvTFgFIuTjiOUtKMlW9EP8r4Shle1OFByijUIWMecxtiCQ1YSO4DmpdaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdRyhSAA; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version:Content-Type; b=E7Nnh1DK5j+TO76Z0/zbDCNL0BXGtapI74qPks+kxIdAKu7CpUIAc5ukSXAObjhXWMzCn4IgclLYiIWjMcaaSGRLvvnfTm6gEJoiudIf7u7JmuFYEhw3NY4AL1H6x2PhZwACvUtvVyV53oTS0V11ZCBH4MR7oriQwV5OV4u2wpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yrBqsm5I; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdRyhSAA"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-387897fae5dso195850f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2024 02:49:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yrBqsm5I"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385db79aafbso232930f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Dec 2024 02:49:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734173393; x=1734778193; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734173395; x=1734778195; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FCu7mGEcGuZR4M289VbKgMqdsXWF4jg/m1f8T15J6o0=;
-        b=RdRyhSAA0lM3gDbbqLta0LZVTms2CMT4cFvm8nasgIZO/p6DEReLY49fLVj2ied5c2
-         zzFvenDhTu7yoW3SNOJ6uaJwF4Blukl4BWHhTp+o1UTwwmkwAVhKUY6eIFcmiYvJsj+p
-         1qxt1D5Z5z4Il1QPB0MBEUThmnaXB+v1Bu6vOjH7EZQc6xsTk8HOHQB5r0CrjeK41j46
-         ca2vpGYgvgNQuu4+KRba5cWXleplQkE44ZUC619yQKA5oW7uKEef4jarALvxN4LvMhK7
-         r5DeygKH8AiqiiiNP9bfHhQVKTZoO0p5KH6mHeQGWsoC2fJPsQJXaNw/FylvHPccNkM6
-         EE1g==
+        bh=VV5uB4pW3I7PFM+MdqLT3Z46mt4gLHWB+cSrr/zUkkQ=;
+        b=yrBqsm5Icw0+3rHxIjSd9pPUUQlg6+ZJC8o331lmhVD/YGM9ntzNDaJKZQyvfWtRB5
+         +OJKoBZDvVjt9v2SPjJP8til3ToFVFvveFsy6cb3uwSvKJ1M1KWSJ6Ndisi1gAhOhslD
+         Mbz3UIUbQUV79a+A/KE7rY4fP1ZKIszWdmINyFb3jRYk/qSEe9P9BwOUCPOgwUaXmJPM
+         amumeOL+WFY9tLQ55124ilp50r7Ehd7l9dqH4LguARr2e0S+bKskukwWLIpwFhjym8Yw
+         ZkcmO/zxIC9MfB3zRYVNXnUNgR+I8Zvi8MppZFirgbasaG28g/U7jr4OiMYVMUoRSxy9
+         /hrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734173393; x=1734778193;
+        d=1e100.net; s=20230601; t=1734173395; x=1734778195;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FCu7mGEcGuZR4M289VbKgMqdsXWF4jg/m1f8T15J6o0=;
-        b=dBI0Dhrrcqjqk47wYXoNY1HvpTqpAGH5Jh6FTIh0wRinJR6IpIyJP90n+ipOgEcmH5
-         ejyXlF4H4OOze6JKy9KSJCL5eTl6hSUTMXL+ZIcWxnAmZl7kEkaFN3hZLz78Oc8hDInO
-         FR9gy8HAV3vOtVDpxBORMLQ7MerL7HHFhrDG22pC+W7NAx8jYYMFw9oxMhJyfGmbXTAG
-         uHSeCw1aL+WwD3kamJvKM4TG56Igq3pf1I8kCOwQL6CJ+XM2ofIZUxduDSEQVPPemUJa
-         20JGB357dn3AlPihqH04ODOwR3kbQwILGc56XxsM5MkVDH9L7sjcISA5VlqLb32wBAKw
-         Aafg==
-X-Gm-Message-State: AOJu0YzhGInD/1OjK0K7r6Z+t/wThjiUv+AIBBgr8Utu4j/89AKL7RWN
-	IBag6e/Dbg6xmDE/1BD5k2bM8hQGbg07mv/MCQGGgrsFYy2EPAFQmuVtn8Og2tA=
-X-Gm-Gg: ASbGncvdsVFX7ySa4t/nvVNw70/R76K22dl6P6v3RcKPVolk3XOyJvuScd2tXDVCjy2
-	0sqtUlvumeEZ2UVpWn2TkrTf6NJdHUPWU28C0pEI9G2pZmQTTlaJ62iSYb3Qo8el/JI4yxpupn3
-	yamm8RnMXfDIAkN/F0uPdX2IBpOYfcyPXzn8rHmx2H7qmsNALi9/ot4vSi9qZPnKwY9VKPds6D5
-	v+6A2nhO5z0nGiefnMmpQV+khAwpETmDLqnZbjjtrvGpIBVolxsBVccjOahIXJU1Jcecqpk
-X-Google-Smtp-Source: AGHT+IG60/SDW50bjYOlyujtW1hgk8AP4csKyjJjFAbOcX9BOwT0+qYQksL5jPVErRvwdcdnr/TL9w==
-X-Received: by 2002:a05:6000:1a86:b0:385:eaeb:929b with SMTP id ffacd0b85a97d-3888e0f3cb2mr1878768f8f.10.1734173393064;
-        Sat, 14 Dec 2024 02:49:53 -0800 (PST)
+        bh=VV5uB4pW3I7PFM+MdqLT3Z46mt4gLHWB+cSrr/zUkkQ=;
+        b=tqMAv8NTp4DSWEjxlUJFEV82wbHoPGtf+zMQJIw8tpjidBXtEMBhzTUN/mmumdhhId
+         WqHaAupFZoL73t9B+9Ku3haMoCifXcnXS1B2J1FIRJ36mVY9jVKARDwJtk3lr8OvUnVp
+         GxDost+IC9TDLol2nYU2Tj3feoqo20JHc2o3RS3B93Eu1Mkit/rtqjEm9CSKj1On3mwN
+         Xnkh1Aqprctj3ct4krZfi1Q80eqiH/VEPGcL6VUn99JJTCmZ9WULmL0MtbKYD6Arl1Jm
+         gGjSqbZ5EBPDo69F2yyqvsu59O3iws58AAj/VUY/Scli5V8jfnybTGHGIXGUEOITK3bF
+         NZpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhsM9F6YxFNW4lVnWL/MczKd/ERyMKcqttuFEWLOhk5PWkad7X4llnZnADVNn5DdxWoyDKI6pdhKsspoTJaMsk7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlTIKdTYXRx5x8PrCbR5bak9XYXoAy+Y7maDR5z7y5CrB//akb
+	6OYY/A+ZjNI0Vb+zYIAd/MtbkWKDWtrTxTIGx9tLAxs2o63UXJagvOSRKofLoW1DlQuS8h03w4g
+	D
+X-Gm-Gg: ASbGncvPDneNZlOIcJTGAmnzflfvKPUoiPJkOPnojFmkGVaESc3Tk9b+kKQiHvCqt8Q
+	BgiwU9CrnzomiRQ2wfgz3dEjTtrjTcxQJCQXoFp1WeuY1AWv2/PFpK+CSj4y7KHRtrdMq6QiyAg
+	NCkERuoX1Jp1xnYo4CXep8lSqD9mjkoWrcENrm6vyL4MfqTvUPG1ua78nHtAnscrnGDthl5MQ2D
+	FJQMKedJHFzD1j9GduVjpusm2v6aofrUVJIcA7gs/gp4FdpqrGLO0Pav5hlEZjnIPuUdZ/n
+X-Google-Smtp-Source: AGHT+IHyTzhFYErYVyT7VJHfprfadGDQxildtN+M2wr4sWYswaUikDqlBN7Bu8mHFXxUDCZdzq8sog==
+X-Received: by 2002:a05:6000:400c:b0:385:e355:7ba with SMTP id ffacd0b85a97d-3888e0bfa95mr1693389f8f.12.1734173394680;
+        Sat, 14 Dec 2024 02:49:54 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8049facsm2256481f8f.79.2024.12.14.02.49.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8049facsm2256481f8f.79.2024.12.14.02.49.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Dec 2024 02:49:52 -0800 (PST)
+        Sat, 14 Dec 2024 02:49:53 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241211162942.450525-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20241211162942.450525-1-ivo.ivanov.ivanov1@gmail.com>
-Subject: Re: [PATCH v2 0/1] arm64: dts: exynos8895: Add m2-pmu, poweroff
- and reboot
-Message-Id: <173417339174.24605.17029736808266427756.b4-ty@linaro.org>
-Date: Sat, 14 Dec 2024 11:49:51 +0100
+To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ krzk+dt@kernel.org, robh@kernel.org, Faraz Ata <faraz.ata@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, alim.akhtar@samsung.com, 
+ rosa.pila@samsung.com
+In-Reply-To: <20241212115709.1724-1-faraz.ata@samsung.com>
+References: <CGME20241212115815epcas5p29fdba4ddb93d08035f422444cb826ec3@epcas5p2.samsung.com>
+ <20241212115709.1724-1-faraz.ata@samsung.com>
+Subject: Re: [PATCH v2] arm64: dts: exynosautov920: Add DMA nodes
+Message-Id: <173417339330.24605.2885183556743988867.b4-ty@linaro.org>
+Date: Sat, 14 Dec 2024 11:49:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -78,21 +79,17 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 11 Dec 2024 18:29:41 +0200, Ivaylo Ivanov wrote:
-> Hey folks,
+On Thu, 12 Dec 2024 17:27:05 +0530, Faraz Ata wrote:
+> ExynosAutov920 SoC has 7 DMA controllers. Two secure DMAC
+> (SPDMA0 & SPDMA1) and five non-secure DMAC (PDMA0 to PDMA4).
+> Add the required dt nodes for the same.
 > 
-> This series adds support for the mongoose cluster PMU in DT hence
-> a compatible for that was recently added.
 > 
-> After this patchset, I'm planning to submit patches for more hardware
-> support.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: exynos8895: Add a PMU node for the second cluster
-      https://git.kernel.org/krzk/linux/c/8749e19c133e6790254252d6dc4fd16d67f7edee
+[1/1] arm64: dts: exynosautov920: Add DMA nodes
+      https://git.kernel.org/krzk/linux/c/de7a4e01055b040b303d01d709262b7ce9d818ff
 
 Best regards,
 -- 
