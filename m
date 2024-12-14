@@ -1,272 +1,107 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB65101DE;
-	Sat, 14 Dec 2024 15:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B1E101DE;
+	Sat, 14 Dec 2024 22:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734191566; cv=none; b=RgFNFPpl00G6e4/Vyadcj3iz4xrtiyhnV3pmGo8P3+0wUgnKLQrtivwNB4+MVh4mz41mzRi6off0WAOzwkq7iLbPPaIdnHNHfO3oMzIM+/HCbxkMzwxWgfkK/y6oz3s903EJyKRcJ6b//DECRJoF2MBdP4Ve7u5A7+OepTWwOSM=
+	t=1734213894; cv=none; b=Zx5tgBF39/Oc/xc/a0NnyaoFe2D5wBojAIRhBpYxK6eFPrJyoUNBlEM1Ef+8KtXK+ZvVqk+/DyCBkTo2NpwfKVsWYWavHuCsTiSU6hdKQQQ8nHJRgsCymXD9QxDHrbAHglnmJoEH5JVNmPgDTimvHROF5h5r4P/zBOVYBiJm628=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734191566; c=relaxed/simple;
-	bh=KPzoGkvzcbahsNrPZZ5TRDoa7zLT2SLuDOoN0FbaijM=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=uNF4KV8V2ZM69kZontw89o9p+c5auV7bd1jpb6Q7bkX93fUru2ZzZjgTXrLMKPGnp4oqaTPvCOkR+lIs2wfVZviki+peTMg+3gzOez6nWIhG8fBAYBURTD0MKWNuhY2lH3xNxUsNtRjftjsdP8j+/x2nn4E42ncwLPQ4n8xrHU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pbnN5hbt; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1734213894; c=relaxed/simple;
+	bh=N4cZs98f7oy2DlvxebZBdKCvvFB0BUa8otlmhClILfM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nNkEZCD5GVhbyfhSG0VAtWyfDgwNzTmQq3aoLmhmAm98tb+NjVaWSO+75JrypCBvNSINBMBoRUunAwmvCX1g1v4Tnc3GGHk+eY433lpP/v9VfzxqbM/iF/dPFNm1T/xfFBT63GJw60cAwZySQuRoa2BA6wugQo5T6LO0Nkc3hd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Myno+Fu4; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pbnN5hbt"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id MURZtVKNtJaUfMURatNGQD; Sat, 14 Dec 2024 16:52:41 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1734191561;
-	bh=FFahc2HzyCvXQnoK6BCINAM58qqaizbdQbpLVvV+TfI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=pbnN5hbtPGBiUlDVfQxFoZlGPM2Xm9VGhYHo0xpuItIfovPjV/Y4NFbQ/UledN0nv
-	 1621E1Knoz3U6X2kC9u5FaEDCbdQIjsq62uK4u5PWrDVtEXpsVPu+vXd1sAcEM8aix
-	 T+HUPr/wIK62pRB/LgN/sRNueIE1d1ZgMhfMci7EiPqJrbI2RLCsmZvBaswn2DxPwA
-	 nnwsjbntCdVHH+6XwloqzIBDsPIzQ7n6GEwATbWP52zxwrhoA8nMZoL4neL9pSTYkk
-	 sn7Ib9eSjPVxe+aVtwDh3Y6dXsf/LScFIzqANi4EuVrpHSTh7SqUbcze16lHUeINeq
-	 PEtRrKCXJcz9Q==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 14 Dec 2024 16:52:41 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <3c067b26-cfe8-4939-afce-5c8753767715@wanadoo.fr>
-Date: Sat, 14 Dec 2024 16:52:35 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Myno+Fu4"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso19917545e9.3;
+        Sat, 14 Dec 2024 14:04:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734213891; x=1734818691; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZb9moUiVpxFCMqmY6tsWVihMcoiO44ViJkmkTUeDTs=;
+        b=Myno+Fu42VfFbKHGf/5yG79jtJTDDhUpl7l0DDFPSHN2P95Hi5nAgsMvtDRmALPh2k
+         15cXV+ET3Ro+vC+3dLjYR695q2KAd7ArRbDWmNlIlD7MXWpxVk5yPC1gtQqnYDjiK+qa
+         UUzQUwTCU92Ki2yrUP5bvhW3jICOTBSL5yVc0/ZufA7aCd7aY/GDlkS5p6DcT8T1s0jn
+         1Oslgu0Rrw+axj4BczwAToA54aPEe5gUFXLjKwsZmkPPtwfU03e6E7eECopermV4Zml7
+         4DLyLDBMeWEVKzlhApOvLeGMAh36a2vSZs5SUocGAWAFgo67k+Br5fW+8EqN7tbw+hG8
+         Q0Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734213891; x=1734818691;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rZb9moUiVpxFCMqmY6tsWVihMcoiO44ViJkmkTUeDTs=;
+        b=wdX5Zr9RVa7iJbutYIKgX4KZibu9cfJffkYgl6jy3CFaEdNMdrq335BgFRkHR22k9B
+         XE4PgCcLFNMttqNRXTOQ48/PlcA2IaOuE9w4O70xE3UCDQAaL35dBOLiNiQgbZ4hqlql
+         yExnB5ukD64MRHQi/dLQ1iMDcHcaZJ0fwLj/FHqsAgkVdcquJ5CtF9vSENhp/RfvSTpu
+         ZkfL01bNC7KiiNoCve8sA0hbq8jHjwjray02rSoltjO8W86pOt9ZXxeZK74d9GtXudjI
+         EpsV2IZFfNXPJESAk2F2CzxbAL08lPRBZ3n+ZS4ASHSNUaiTC+7HbzFOwNq7TWKSLVXm
+         DfKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+9oI9xye/z4J6UGV7wnA4zUoVr//E7aXAeTj9ZKj4CbQWj2CsAcPNYsichs5ng/wIX29DuIZh2yD1YbVBJozosgA=@vger.kernel.org, AJvYcCVi85pDGH3uH2/aDC3/DciBOCVkjLjHOuD1Fevkm6ZX/8rhZyxnyaD/LrSKYldfAvDXZrI7K8akzYV+RUkZ@vger.kernel.org, AJvYcCXszkneLfIFAykZKmJk4QxtSHJ9ewIiR9Bq8E0oqB2I7WWMl3e9TRHuSywJB6hfMW4NogYPV9U8M/yr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdVYSkFF/53+Ga5Q9QfGaJ9LmYJPAFDoU3bNmNtqET4umWDrmd
+	78WJ0hsvN078IA1AlNrr3WGSEEXZCFcXGxkFYE0rSntGnJgdu4lw
+X-Gm-Gg: ASbGncsDELLkcfqu+rslfMt2TWNFvRzmVmKlFBFmutp9APwV0bdgKEEUup4HGN3ht0W
+	LYtu7HV6YdkHOWpXBAPR/EcmukVreSY7uSPaf/vqQNq2p9UAHvS1ZH3lNyibrdTbNrdCff44Zgw
+	Cnl6W0AgnBn6oSWFAzaYc10If1UdVh4X8mk6fdMAeAycDdYGx0G+OGtEy1PYBq1Kz/HRMkWXlbh
+	mdSLgwGm822wxImkE7/r4kjEJ2tJsFYslq2vzXe/HP/uLd2iHChYrwbuD9HFVt3237Ybu/iPLr/
+	wWD2tM9nvFv1ZNdW0ePs044iAAzzMTfQ
+X-Google-Smtp-Source: AGHT+IEp+JHm04UmoCFXhypLWQox3sRGEjPR48qR1XxVmCrxM/GGVQTqiSSl6fYMc4Bk25nsaMdzVw==
+X-Received: by 2002:a05:600c:1c12:b0:434:f623:9fe3 with SMTP id 5b1f17b1804b1-4362aa3d8bbmr72912625e9.16.1734213890608;
+        Sat, 14 Dec 2024 14:04:50 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361ec75410sm104456185e9.1.2024.12.14.14.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Dec 2024 14:04:50 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] i2c: exynos5: Add support for Exynos8895 SoC
+Date: Sun, 15 Dec 2024 00:04:17 +0200
+Message-ID: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] soc: samsung: Add a driver for Samsung SPEEDY host
- controller
-References: <20241212-speedy-v1-0-544ad7bcfb6a@gmail.com>
- <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Markuss Broks <markuss.broks@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Markuss Broks <markuss.broks@gmail.com>,
- Maksym Holovach <nergzd@nergzd723.xyz>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20241212-speedy-v1-2-544ad7bcfb6a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 12/12/2024 à 22:09, Markuss Broks a écrit :
-> Add a driver for Samsung SPEEDY serial bus host controller.
-> SPEEDY is a proprietary 1 wire serial bus used by Samsung
-> in various devices (usually mobile), like Samsung Galaxy
-> phones. It is usually used for connecting PMIC or various
-> other peripherals, like audio codecs or RF components.
-> 
-> This bus can address at most 1MiB (4 bit device address,
-> 8 bit registers per device, 8 bit wide registers:
-> 256*256*16 = 1MiB of address space.
+Hey folks,
 
-...
+This series adds HSI2C support for Exynos8895 to i2c-exynos5. HSI2C
+buses here are mostly available implemented in USIv1 blocks, with 5
+available externally - hsi2c_0 to 4. hsi2c_0 is available for PMIC
+(although I've never seen it used) and it uses BUSC clocks, which are
+still not implemented in the current clock driver, so I've decided to
+leave it out for now.
 
-> +static int _speedy_read(struct speedy_controller *speedy, u32 reg, u32 addr, u32 *val)
-> +{
-> +	int ret;
-> +	u32 cmd, int_ctl, int_status;
-> +
-> +	mutex_lock(&speedy->io_lock);
+In the next few patchsets support for USIv1 will be added to the
+exynos-usi driver and with that the rest of the I2C buses will be made
+available.
 
-All error handling paths fail to release the mutex.
-guard(mutex) would help here.
+Kind regards,
+Ivo
 
-> +
-> +	ret = speedy_fifo_reset(speedy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_set_bits(speedy->map, SPEEDY_FIFO_CTRL,
-> +			      SPEEDY_RX_LENGTH(1) | SPEEDY_TX_LENGTH(1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_READ |
-> +	      SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
-> +
-> +	int_ctl = SPEEDY_TRANSFER_DONE_EN | SPEEDY_FIFO_RX_ALMOST_FULL_EN |
-> +		  SPEEDY_RX_FIFO_INT_TRAILER_EN | SPEEDY_RX_MODEBIT_ERR_EN |
-> +		  SPEEDY_RX_GLITCH_ERR_EN | SPEEDY_RX_ENDBIT_ERR_EN |
-> +		  SPEEDY_REMOTE_RESET_REQ_EN;
-> +
-> +	ret = speedy_int_clear(speedy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Wait for xfer done */
-> +	ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, int_status,
-> +				       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(speedy->map, SPEEDY_RX_DATA, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = speedy_int_clear(speedy);
-> +
-> +	mutex_unlock(&speedy->io_lock);
-> +
-> +	return ret;
-> +}
+Ivaylo Ivanov (2):
+  dt-bindings: i2c: exynos5: Add samsung,exynos8895-hsi2c compatible
+  i2c: exynos5: Add support for Exynos8895 SoC
 
-...
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml  | 26 ++++++++++++++--
+ drivers/i2c/busses/i2c-exynos5.c              | 31 +++++++++++++++++--
+ 2 files changed, 52 insertions(+), 5 deletions(-)
 
-> +static int _speedy_write(struct speedy_controller *speedy, u32 reg, u32 addr, u32 val)
-> +{
-> +	int ret;
-> +	u32 cmd, int_ctl, int_status;
-> +
-> +	mutex_lock(&speedy->io_lock);
-> +
-> +	ret = speedy_fifo_reset(speedy);
-> +	if (ret)
-> +		return ret;
+-- 
+2.43.0
 
-All error handling paths fail to release the mutex.
-guard(mutex) would help here.
-
-> +
-> +	ret = regmap_set_bits(speedy->map, SPEEDY_FIFO_CTRL,
-> +			      SPEEDY_RX_LENGTH(1) | SPEEDY_TX_LENGTH(1));
-> +	if (ret)
-> +		return ret;
-> +
-> +	cmd = SPEEDY_ACCESS_RANDOM | SPEEDY_DIRECTION_WRITE |
-> +	      SPEEDY_DEVICE(reg) | SPEEDY_ADDRESS(addr);
-> +
-> +	int_ctl = (SPEEDY_TRANSFER_DONE_EN |
-> +		   SPEEDY_FIFO_TX_ALMOST_EMPTY_EN |
-> +		   SPEEDY_TX_LINE_BUSY_ERR_EN |
-> +		   SPEEDY_TX_STOPBIT_ERR_EN |
-> +		   SPEEDY_REMOTE_RESET_REQ_EN);
-> +
-> +	ret = speedy_int_clear(speedy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(speedy->map, SPEEDY_INT_ENABLE, int_ctl);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(speedy->map, SPEEDY_CMD, cmd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(speedy->map, SPEEDY_TX_DATA, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Wait for xfer done */
-> +	ret = regmap_read_poll_timeout(speedy->map, SPEEDY_INT_STATUS, int_status,
-> +				       int_status & SPEEDY_TRANSFER_DONE, 5000, 50000);
-> +	if (ret)
-> +		return ret;
-> +
-> +	speedy_int_clear(speedy);
-> +
-> +	mutex_unlock(&speedy->io_lock);
-> +
-> +	return 0;
-> +}
-
-...
-
-> +/**
-> + * speedy_get_by_phandle() - internal get speedy device handle
-> + * @np:	pointer to OF device node of device
-> + *
-> + * Return: 0 on success, -errno otherwise
-
-On success, a handle is returned, not 0.
-
-> + */
-> +static const struct speedy_device *speedy_get_device(struct device_node *np)
-> +{
-...
-
-> +out:
-> +	of_node_put(speedy_np);
-> +	return handle;
-> +}
-
-...
-
-> +static int speedy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct speedy_controller *speedy;
-> +	void __iomem *mem;
-> +	int ret;
-> +
-> +	speedy = devm_kzalloc(dev, sizeof(struct speedy_controller), GFP_KERNEL);
-> +	if (!speedy)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, speedy);
-> +	speedy->pdev = pdev;
-> +
-> +	mutex_init(&speedy->io_lock);
-> +
-> +	mem = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(mem))
-> +		return dev_err_probe(dev, PTR_ERR(mem), "Failed to ioremap memory\n");
-> +
-> +	speedy->map = devm_regmap_init_mmio(dev, mem, &speedy_map_cfg);
-> +	if (IS_ERR(speedy->map))
-> +		return dev_err_probe(dev, PTR_ERR(speedy->map), "Failed to init the regmap\n");
-> +
-> +	/* Clear any interrupt status remaining */
-> +	ret = speedy_int_clear(speedy);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Reset the controller */
-> +	ret = regmap_set_bits(speedy->map, SPEEDY_CTRL, SPEEDY_SW_RST);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(20);
-> +
-> +	/* Enable the hw */
-> +	ret = regmap_set_bits(speedy->map, SPEEDY_CTRL, SPEEDY_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(20);
-> +
-> +	/* Probe child devices */
-> +	ret = of_platform_populate(pdev->dev.of_node, NULL, NULL, dev);
-> +	if (ret)
-> +		dev_err(dev, "Failed to populate child devices: %d\n", ret);
-
-Could be dev_err_probe() as well, at least for consistency.
-
-> +
-> +	return ret;
-> +}
-
-...
-
-CJ
