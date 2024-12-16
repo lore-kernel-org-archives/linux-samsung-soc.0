@@ -1,119 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85B922619;
-	Mon, 16 Dec 2024 08:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBCA2040BF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 11:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734338767; cv=none; b=oWt1BibSdEmairztegtlogmkYpkLGthPSIjMJw84xv1042oa50cpDd3Z/37zCWSYJHbYP1iDVhNhNituwBj7OBWab4rYHOvIY0FG5Phfk1KGbwrkc9LqLBDOcANBiq59w3tLp2YBcZEGPF/BcXg3IRIM1qTIph+0ngJY7Tuq/ZQ=
+	t=1734348277; cv=none; b=Aw61iIB6c3RkwDogA7tJWqqY5s0NZXGNEj9SDhK0ZlEewRrDs7DlnmG3TEAHfodvUpTRFF5ur9VRIQHNVdxbK1onoDM3vcsTvx8Pf/YyBjir6K3pSJxFENZ8BcKzemQY1P60YvwUz0MZ3fPiW4hJ69ZwRi4xixeCZs0CFA7beb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734338767; c=relaxed/simple;
-	bh=8bu0smSKNAuMe2IhZmGO29L41V06FksNCHa69ah7d0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLyxAhcu7238FTp1CQB4cCYnej+lOLdxqtYz/CN4IcZdLNaOe9F04XgPBHbjuCJJv2x/0plQA4tLSvXVQ1o+ZVaNtsS8F/qyLh+ru3tnPtxRSU7fttKysgOZ8HTJSLkLpoDxe8OiCu13mscYw+Jkf9ua7N2qRpRIqEokmK4J09U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwU/dH4b; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734348277; c=relaxed/simple;
+	bh=jq98laTSDdK6EMsgM/2lFfGtgYg99v5inkJlY/nCBlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKHVWRSUNt11FpZYzB6u9PtfH/QR/t5xhySOsLGlPIepX70YiemCZ3hP0pTUkphvgyt+qVqQjL+v1rd4r8fdO+JhY9OKgy4divUNwwnnnKfaGCwRrVpPT4XeiWtV4fhdz8k+D8ax/qTQitSzIlAExrs4vJBAkqNPf3XCkgzYI7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qrK+pQAe; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwU/dH4b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E97FC4CED0;
-	Mon, 16 Dec 2024 08:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734338767;
-	bh=8bu0smSKNAuMe2IhZmGO29L41V06FksNCHa69ah7d0w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fwU/dH4b9Jp9yqpVxS+tE5hFoJuvl1RAxUy+EYmU6nYDvIkX4dt6/WjBRG8+OtLM9
-	 /Y3HowUZ9l3X/hKXqjWMxpedWbihExa58SrO2XEZMjofUEArkH6Y9j/di2eutHqrZ+
-	 seNVl1sWW48E1IIz7fAX7ep4Sr4C2qXiuS7ej0hUvw/PPtvreCLb7ctilPVDkseF6Y
-	 J8OyHOoqmpOR7jhP4XHV7yh6ZZ+GHCL2MewW0u/s+pjp3m8Ob231wbX+/TmWLm4lA+
-	 bIc5VNXF+eGR/1RUjRgd2MfNox7VsUSe5j00a7o5CafxdjebRNysquB7Q+ejsY/kA+
-	 oRp05eyHmFxww==
-Message-ID: <d75a63c9-5bfe-48b7-bb8f-bae415897f3b@kernel.org>
-Date: Mon, 16 Dec 2024 09:46:02 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qrK+pQAe"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5401c52000fso4022315e87.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 03:24:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734348273; x=1734953073; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gty21mjzYgvbYsbhfcrs7XMj7b14Ja6LtCdRiQMw9IQ=;
+        b=qrK+pQAe+c9kkL/vzhkIxhIDevT08waFBhNaaRGLHHsIvL7XqZ/A6Fh+LR/xnlPZBU
+         wF7vjOYg5m3pfspDIyfIa9KxTLs4/NBK+utvxAsyTr9pkMqbJSQlpAstnkesIIYiBQbt
+         lewRwjDJyG8pdBCFX+YqFd9fKvlPCeCUlPKG+bFLP5l79yQ7jaowwgWQ+ENe+9LGJWSL
+         PnfbrPep7+m5c4Wiit+eTcit75X4O6hWi4cVmsYTdaZPJrih1rSyYixANlEoPEuCVRtz
+         i2ZRGy0xsd3SCo4+6eU/tDARDWp7dDAwYFc6pEUC6Pykh7mMJ6ibBKkUHI27US2SvURN
+         CzQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734348273; x=1734953073;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gty21mjzYgvbYsbhfcrs7XMj7b14Ja6LtCdRiQMw9IQ=;
+        b=w4PQCrxXuDzp9BSg1ZZhJ+Te/EMXGp/+sXO/16J/TwgNoajq3svjcUMMVPaTpVEEPy
+         UaqmtOKxBs5484jGWTEQ/SvrOF3WiU88jSk9D4twhslbLnwmAFii4l4Uv4hYq6Vhq1v2
+         8mvapNcKBbCayCFwt/C2vQz4HFrUvImBbWrMMWIeoay+876jk3nNMKOlArFa+YnjjvRU
+         l5NQAH2FHN+kGTzgBUoJUmnTisldlyAgF6xCNKRsFdfe20JK+uWY0hCINl5G94cBMpK/
+         jey9N4Py96fLtY6sUL1O0N081J43QJX4Ure6qAGTnWctAYMBGHFj7UNVuQG26FmatD1d
+         wPNA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7dqVvewmYc5bzIaH39UmDQyduYzbM/Cq2HF9Ye6OGj3LYSZB5eF8D/w97rlf0anj2Asd3oe8jMFykp35cpBZ46w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuYtShQgAiuT84j+FqbzgxfhervvnI1SXb/+IBaK+/7HAauNaz
+	zvci+8qBgXOBJf3LCwEH81++ln1LPxV9nUvhZvZ99Fw7yTxRdw4bARexYW1Aj/I=
+X-Gm-Gg: ASbGncsWkIlFVRz0AXpSABDpuc1sOPk6SoqMwZuWT/BBsrtWENE5ZaZhpXIDM8FGzk9
+	680PoCMTGbS02X5hTjvZnVfM17KHRQ8GjMEPgIC7SFrJnlptZ30QWBu3XHFhjoStCqK5t7wbqG2
+	3SKMq9ymz5es/A4FgV2tGm/hEUVI4Tf7fuWxunl/r2OD/cLZh0y3ZevQMNIVpPzntMSPNQbqZN4
+	3X4lxJLGE7u2NCv92jZLj/2pt2fwQD5se0VxvKYghcQ+d+MVFM5QrqTr8TCyZAe5J2NYHTYDlgT
+	wrIw/3HyHX3EjuDEpylv0wZjKl34u8Y7vk0z
+X-Google-Smtp-Source: AGHT+IHzioRjGIPfaVwEFSX3By+G0bPm5p1y4IolLwPf7YBpM4LUQ/QUZx/r1EiqpYtLRC9+8oUd8Q==
+X-Received: by 2002:a05:6512:2212:b0:540:1a3f:e848 with SMTP id 2adb3069b0e04-5409054bce1mr3948864e87.15.1734348273018;
+        Mon, 16 Dec 2024 03:24:33 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120c1612asm817266e87.222.2024.12.16.03.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2024 03:24:31 -0800 (PST)
+Date: Mon, 16 Dec 2024 13:24:29 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v2 00/10] drm/connector: add eld_mutex to protect
+ connector->eld
+Message-ID: <xchjpeykkqwlpniaspbzitaozuoltoq7aturtu7jq6z4lcxh77@y7t5ge2sa4er>
+References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: exynos8895: Add camera hsi2c nodes
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241214220750.723354-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241214220750.723354-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
 
-On 14/12/2024 23:07, Ivaylo Ivanov wrote:
-> Add nodes for hsi2c1-4 (CAM0-3), which allows using them.
+On Fri, Dec 06, 2024 at 11:43:03AM +0200, Dmitry Baryshkov wrote:
+> The connector->eld is accessed by the .get_eld() callback. This access
+> can collide with the drm_edid_to_eld() updating the data at the same
+> time. Add drm_connector.eld_mutex to protect the data from concurrenct
+> access.
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> The individual drivers were just compile tested. I propose to merge the
+> drm_connector and bridge drivers through drm-misc, allowing other
+> maintainers either to ack merging through drm-misc or merging the
+> drm-misc into their tree and then picking up correcponding patch.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos8895.dtsi | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+> Changes in v2:
+> - Also take the mutex in clear_eld() (Jani)
+> - Rebased on top of linux-next + drm-misc-next to solve build error
+> - Link to v1: https://lore.kernel.org/r/20241201-drm-connector-eld-mutex-v1-0-ba56a6545c03@linaro.org
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8895.dtsi b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> index 90b318b2f..36657abfc 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos8895.dtsi
-> @@ -292,6 +292,50 @@ pinctrl_peric1: pinctrl@10980000 {
->  			interrupts = <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->  
-> +		hsi2c_1: i2c@10990000 {
-> +			compatible = "samsung,exynos8895-hsi2c";
+> ---
+> Dmitry Baryshkov (10):
+>       drm/connector: add mutex to protect ELD from concurrent access
+>       drm/bridge: anx7625: use eld_mutex to protect access to connector->eld
+>       drm/bridge: ite-it66121: use eld_mutex to protect access to connector->eld
+>       drm/amd/display: use eld_mutex to protect access to connector->eld
+>       drm/exynos: hdmi: use eld_mutex to protect access to connector->eld
+>       drm/i915/audio: use eld_mutex to protect access to connector->eld
+>       drm/msm/dp: use eld_mutex to protect access to connector->eld
+>       drm/radeon: use eld_mutex to protect access to connector->eld
+>       drm/sti: hdmi: use eld_mutex to protect access to connector->eld
+>       drm/vc4: hdmi: use eld_mutex to protect access to connector->eld
 
+Granted the lack of reviews from AMD maintainers and granted that the
+rest of the series was reviewed and acked, is it suitable to leave those
+two patches out and merge the rest through drm-misc-next?
 
-
-There is no such compatible. Your changelog part or cover letter must
-always explain where the missing bindings are.
-
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
