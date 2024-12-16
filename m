@@ -1,135 +1,274 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2083.outbound.protection.outlook.com [40.107.92.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B5E205AA8
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 18:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734375261; cv=none; b=PZNxJAewJQO26hVW/zGwcNMj3tAiairjaY4VlwM6cQv6ydiZAzL4fGR0yTpp9wFlw5dbMPhNfp/iW5z7/9iRFeChX2udUoUQAqHPYhZBacaB5lD6Y0AuPXFPb0J0C82NDDX1JaNjclCX72yXLBnR0v49qJmqiy4EX+Xkt5+uQIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734375261; c=relaxed/simple;
-	bh=+CN3MFvUIjIXgzPDpt7apU1DXFBh0hoCPHWJbqmsbkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+YUCQ1tJ4EqYOZ4Q0H0wBL/drA4aTehojL7mEFXjlDQTln4TG9wD01MTRQtkE2P9b1059Mw9JT95IYVfsjHn245dwb0twQLr8UqOag+4ssbkXO9P8+aNTBLioayjRJJ2euTbE49RnenUcYRMt1hfzHWlk09aoLwu4wRxtolbeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gQjagBjI; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ABE126C08;
+	Mon, 16 Dec 2024 19:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734377946; cv=fail; b=hWwErmbjEP9XRKT8DfLy745xkUE19q7QU1mB1rRAwbqe4VBihf5ctt9yEuGX+zX0rmnn3mdD5cTL2sZO1iiu9x7OVDCE0Dw27bPdY3PPLbDxY67g4TyUbJZkQBV4YIuiQxSWuEyRnSWhN2A8v0yTCqlflagZ2l+wcw6qbZnhSLg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734377946; c=relaxed/simple;
+	bh=8BA5+BwcE7dtQi4yjQBJTtEFO3PGnDcU7MPg4sSl90I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pztDu88ah2OvHZF8+DBUMKeTNhKOkH7EhS9iy253MfqPuBL84IL/3AkZRxOJVTGHLoAlYT2xS46goxPDgwDDGkYiJzKL72ehcNrwVA4RN0gLwKsL81zLPPz5vczfFhpf8JAD9o1TCDhPbziClKMFRrUISpuFoB9cRrdqa+gg2L8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jdyVTih7; arc=fail smtp.client-ip=40.107.92.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gQjagBjI"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-725ecc42d43so3799744b3a.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 10:54:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1734375259; x=1734980059; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=690bYW6+JhWBO5SGjqvjGmOT9zUI0kV2wWETtbgOT54=;
-        b=gQjagBjI/x3wlc6h/IK3uQbfOn5OB0vrhoewcDgl+umH8td8XE9TUQ0kb9EhrxMpq7
-         +grI9IfzB4i1aLypPDKFHQfrQRVr3lESzufxo110LfMcotqo6EZH3ggPxhE98ubROfx8
-         7UaJiSjNlUA4I95WHgg7iKAedb0CJnptEEFpwTRLffzT97FbzHHEGTYoOkz6vg//Ik4R
-         ImpfitT7puLDKuQqHH++rZ9UFjubK3XduhHUBM2MlwVjZswvUshsffNoChX0la4LGn0w
-         5/mTBzglfN44ebL4GfHIfP/sCsc38z5qJ+21lq9PvQsp4yTDj56kuHVtfCLU7n6ZszPj
-         M3SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734375259; x=1734980059;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=690bYW6+JhWBO5SGjqvjGmOT9zUI0kV2wWETtbgOT54=;
-        b=quyV9Kh6dxbQR0XcjIVX+R16+1RRq1fXzLWDMZTXpdr/wNtrbJFob3mmSWGi/gyVjW
-         8zZew4hntkB3hBuRk8k0yfnI6exKnTQGT/4+n0xeZ+vnASqYts27FUtoh7B7YL6LZgtI
-         SmBIm9irpqDkpSJPiB+hYAurt/4vFHh99Snkm/8A570mlPIVIJDgocKZnhl2ahRTjriR
-         cii9Sk9FCVyTDf1KsSDi2gW56ObfjFZ6o0OIJpmPYAloY1vsAYzgrpCPdt4kvLbIiEUo
-         w9Y4ZRsAEEy/Tax8Oo+yWBIsWUbyDLjz8XowHDz+8Co5TW9wyRI3QSSiYZgsI454n9D7
-         6nxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNKMn5n0m7x4rkOvPklvgTsE8KPpeZN5+4cJ0GMrfFBxYZGWvzbOQvTSesDyCQgjDM1xn/1bsNm13rb+DKRrj+MA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2bf2U/w6+RXlfr452qoQ+5WM2iBwTPTWm6vHLt5ifpMh9bbeL
-	mfDwrZzDIcnA6z+csZHodgZxcw5X9/HueNf4DogXlVqjXAsQqUMrcOcFGh1YHQ==
-X-Gm-Gg: ASbGnctMoXFIdfIIqAurTkkMoXoDjm9MzJuc5OcuqyYGGKqHrAyp1zKJcHkarqJXBvB
-	0DdORtBz8Q2OWCeDYoNga8bMrzQsQ8k20Naskrdsuif1+0ILdLWfA04QNhT5u2Vgz2HQfcQuoXS
-	jW79lO6YH7qb4zUPlrnA2QA+p+wjcTElH02xN7R0R7wJ/jQoqlco5aPuAuQ6lbqBT26AgnN/s6L
-	oM+qnjytnEkEhdKSFTyjwMawdrerCGLCWM3vf4lza+W0aYp59b9NJvzh89oqdNsZ12BXpzKm6Au
-	sGolbXCOVUQSlKU2hLGsndWv
-X-Google-Smtp-Source: AGHT+IFLkxN//qOcEYYuBjw4V9elaQ3W3HVovjotDyIMx9yQiA5AcZ4RTDQhTqISuW2kKbScrkRKeA==
-X-Received: by 2002:a05:6a21:1796:b0:1e1:9fef:e960 with SMTP id adf61e73a8af0-1e1dfc0970cmr19290101637.6.1734375258877;
-        Mon, 16 Dec 2024 10:54:18 -0800 (PST)
-Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5a90832sm4476417a12.11.2024.12.16.10.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 10:54:18 -0800 (PST)
-Date: Mon, 16 Dec 2024 10:54:15 -0800
-From: William McVicker <willmcvicker@google.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, andre.draszik@linaro.org,
-	kernel-team@android.com, daniel.lezcano@linaro.org,
-	vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: gs101: add ACPM protocol node
-Message-ID: <Z2B3V78k2ibIdLYh@google.com>
-References: <20241212-b4-acpm-v4-upstream-dts-v2-0-91b7a6f6d0b0@linaro.org>
- <20241212-b4-acpm-v4-upstream-dts-v2-3-91b7a6f6d0b0@linaro.org>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jdyVTih7"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F7RnMF1NvxE3JX/wITRXs0i3Bgq+LlC+KRx1g3YX5nMkyVhOz7TQGPhOibeD977VYcHoYoofJLaXyyCAnnwCbMLf/uzG3gis/pWD2KsWH6ZoxauwctCJu4IT1Q5ylmjQ1HXdy8+GUKPDoT2gro8+dkluegCgAgFuPM6NW7BCK9kgo4VTr61ss/emMetWIb/8VlkQA9L4KHzbvkfMrtZvZlt3dBD/9MBgyFjf8oWVXC3fvVghent6Itxeke3KUdilIFjk8Vjffri0dV3DROv/w6wSGnL72wkKnh4TtlYPNFVa3qbTbYdOXEjYfhxI7VHdRmazyZ8kI7EPK5kGT8pAiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n5lEFc2e5j4ysgh7+ljtbgCNlvs0fSAytIxF5b0lfRk=;
+ b=Ra8U+kxM2cWODKTIT8XtCqK8SIXOdzxnL3Xh0GsjW8dlSGPUZQDUCRPrV8zFr2JVKaOf6nWLou3pVh8AeqCTcDgEtCA6mCPoImFDlkExtxjEZmaq4YiQBNe4yuQYvdGO4MPHhfyGAidqK2yyksM/6VCAizY/Cw7R3Fy0aF7l+oecxXkBhRz9A9EENJsO0+EwEi//WHhP4XtJ2SLb9rTdstszBJGW6Hw/k4pv3ZOuM37kT0172u8Os21LhVePMOjq+UZJR3r+nKYkL2dhyd1DDv8EkLk1aet+D4Dl8BOGKTWYvhBnGq+diDb8QMsSVvnDbtmAxzC1iHxK7lMoGwgN6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n5lEFc2e5j4ysgh7+ljtbgCNlvs0fSAytIxF5b0lfRk=;
+ b=jdyVTih73We19x8sXgxSmMauBtspCuFzMRY8eggMCdnEhVPZ3I5yWaYQea8be76pF2HJUYa+pvFMQOZCct5Tazxlhpzj5vEIpmPraHCeRLEax4ra/zdAfR56VYq4Ijc4wwPW0MUukfCTp35jqMxSanS8omG0xj2W5f4ricoCUz8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by SA1PR12MB8968.namprd12.prod.outlook.com (2603:10b6:806:388::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Mon, 16 Dec
+ 2024 19:39:01 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062%4]) with mapi id 15.20.8251.015; Mon, 16 Dec 2024
+ 19:39:01 +0000
+Message-ID: <ab347745-80cc-4a5c-ab92-de6bc6bce3cc@amd.com>
+Date: Mon, 16 Dec 2024 14:38:54 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/10] drm/amd/display: use eld_mutex to protect access
+ to connector->eld
+To: Alex Deucher <alexdeucher@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org
+References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
+ <20241206-drm-connector-eld-mutex-v2-4-c9bce1ee8bea@linaro.org>
+ <pgi7p3aemxm3db2k27vi5euh6q6ppayrw6y7tcfeq4g5z23hzr@xousag2qhobp>
+ <fc8e80dd-bcea-4515-b446-158649719569@amd.com>
+ <CAA8EJpoR8HYq9ATDfmR5ksSnttBzj=DY+BKp5=OuVNF1WDJ-fg@mail.gmail.com>
+ <CADnq5_M8jC2w=XWB4BG+id60zfGFMMkSegmeg-y=VpSHC+FvFQ@mail.gmail.com>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <CADnq5_M8jC2w=XWB4BG+id60zfGFMMkSegmeg-y=VpSHC+FvFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YT4PR01CA0116.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d7::27) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212-b4-acpm-v4-upstream-dts-v2-3-91b7a6f6d0b0@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|SA1PR12MB8968:EE_
+X-MS-Office365-Filtering-Correlation-Id: d05d4583-45b3-4def-9ad2-08dd1e094a5d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MXNGUnoyZ2Y5Z0xUbmJpQm5LT3BNeTVmUzB6bjgrNjd0dEZYTXFSV21tNXBK?=
+ =?utf-8?B?UjdGNGZDSlQ2LzRta2REMHFvdUdhRUZwYXZYSituOWJ0WDNlRmpZRjJyZlFz?=
+ =?utf-8?B?d0Q4N1FYeGtYdU5ldFFlNHducy9FcXNCb0JNWE9sWE1Db3M2OVYyMWxabHp0?=
+ =?utf-8?B?RGtGT1NhVkxNYUdjWDZmcDZkYWtubWIrWkNjQVBGbEh4dVZxQVNOSzN1aHFK?=
+ =?utf-8?B?M0FHamw4c1EwUG1hSkhCcHROOXlBSzVsQ0FWMjNoNUhHZ1VWb1AzV3pMRGRL?=
+ =?utf-8?B?ZE9aa3M0cGNheW00WW9OOGJEbnR0b1c1b3drRjRmcURiWkpQeWZVaXZ1TmhY?=
+ =?utf-8?B?WnhncHhYd2Rnbng2eWdrdzQzdTB2Zk1KdEZHaVRuTjgrUTQ2aUNZRDVRZVlT?=
+ =?utf-8?B?RTJjTi9XL3Y4TjQ1ZU9HaFd1cWw4NzRNNXRiODdLcnNteFpNaE9CWTdBcnhT?=
+ =?utf-8?B?Q08raWJHbU5Kd1g2MDkyakNBYU5sbjljeHhsa1d3L3NUamk4NEZIdms4OVJl?=
+ =?utf-8?B?ZFFqRHM2RlNRVlBIRU9HQWFJZ0kvQy94V3ZQS3V1TnFFYmxLQm1acGRuSVIr?=
+ =?utf-8?B?dVlyNmp6dnZNWnRWVG5HSkp3dlRrMmgzeC8wcXFKbUxCdEhNZnJGUldHT3BH?=
+ =?utf-8?B?ZXBTcWRoeU5peHEwc3k4ZUlwYzJCUTVBOHltazluNVBGelJNZGkzWGVNZ2E4?=
+ =?utf-8?B?eER1Z1A5RzdCQzFkYnFHK1MyR1hibURNd2p6YUZySnNMQ3JnNGRFTkpveW02?=
+ =?utf-8?B?NG43VTZCSXFRTXgzeU9waks3eUZGRTlxMmtGT3NNUW9lTkR5N1dCWUNEbVJ2?=
+ =?utf-8?B?NjJDUTJYQzdoZktLZUFHZm16NWRTdjR5TDVsT2w0Mnh1Zy9pMkgxQmp3aXhi?=
+ =?utf-8?B?ZjUxWHpSY1c2RTkwSzdqK1FWY0tidWhOSnVDV3VsU3IvUmJGMk0wV2ZEdmN0?=
+ =?utf-8?B?SGo3NGVoYWlTZDlJMmhLNzBWMTcwczM2djJKU0pYWnFKZElSTlR0TlU1bmNZ?=
+ =?utf-8?B?MHYzeE11OGdaTlgzdXZ3Wm51cHVtUXRMVHlTQnh3eEpURzRPQ3phUXkxTGRM?=
+ =?utf-8?B?aUhHb3Bad2F6YjU5R1ZXNG9kWERKNXNIZjQ5bDVqbm0vZllVZ1M3RGRmNFBm?=
+ =?utf-8?B?VjBmTG9FYTFOTTgza1UwM0pLajRkd0Y1cENlTkhkdzBwUS9wREpIOUhpYmcy?=
+ =?utf-8?B?ZFpUN21FU2lDdnRPazU0b2l0dVpiT1lhSjRIQkZKSzN2NVZsc2hZeVZ6MU1P?=
+ =?utf-8?B?Nzhsbjh0NUhTem1wdkQybkFEcDdzOHBFTFhzM2hhRG9VZWdFM0FESnNSQjVU?=
+ =?utf-8?B?Zld0WDdSdE9CRmxYQkxGdzRGK1BIaWx0YUV2ZWZFRjJlNDRtL2JYT1k4d0M2?=
+ =?utf-8?B?ZDUwdUFyckdhWUl3dFZ3anRGNDA4c2ZTRFV4OE1BYmlMb2pBbWdKNlZXelh2?=
+ =?utf-8?B?L0JDZ2ZHMVdjWGtYbzFhdno2NU04b3BBME15eXBRck9FOHlwemVnTTRsdmpB?=
+ =?utf-8?B?NjNYSEgzaUg4aXZNUnRmRHNFVjBGQUpuWnBHR0kyNHJmQzlFZ2N4K2VidDcy?=
+ =?utf-8?B?NHcvd1dNUTRsYjlDZWFvbU1WSHArSFZOYUdnR1pxcVoyQWRNa0R3VzRPNS9l?=
+ =?utf-8?B?V0IxVlN1eHdzZW02VkJ6eDBvU24yT0dFbEJKOTRiK3hDOVhqWFRubUtGNFZQ?=
+ =?utf-8?B?YlJaZHRpYU0yMENwMkhtWDhDcXYvNVN4VEdXOWtVNDRweFZGTkExb215eUlM?=
+ =?utf-8?B?V3ZnSmMvQ290ZW0wRDdhbjJZRGd4YTBoOXJZVFlJbVIzZjVlNTRpdnFhZjJH?=
+ =?utf-8?B?WVR6dEhvb09JaExlOGQwRWtIWXdmTzYzazVQRWdtSW04WEFYWXVNV08vd0pU?=
+ =?utf-8?Q?duy1dH3k/AfiR?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eHIxOVpyaUlkK2NiS2NTY1lmSnhwTFk1UXVMYVNDZGtrZHYxcjdKZi9rd1dp?=
+ =?utf-8?B?djZRa2h4ZXpqUFNXT3VYaHdvbmJJOTBOZDhEdlloRUFTdzFjZVU4M1lPU25X?=
+ =?utf-8?B?b2ZyTTdkalpKN202eENrd1kzbDdzQmd3Z2w1akJON3IyRkVidW9tYVkraEly?=
+ =?utf-8?B?VHZaME9HY2hISlZxM3dmTW14ZERjcDBXbnZaMjl2eFdtckxRUEFONE1RMitC?=
+ =?utf-8?B?Mk5ha3BTUjNBUklGYUdtajcrckk3eWNEakIxWEl2d284Z3U5YmF0ZWVNQVFN?=
+ =?utf-8?B?N2d3bzNDQzA1eVVPWG5zbVZKUXlQTFVuYmZJRkN3Wko4ZFdNeTM2cEZ3OW9l?=
+ =?utf-8?B?N2xPM0xzZU90UWkwRWxxa1ZaSzRNeitJRHk1VGcyUTZaZG4zc2lZelduYkQ3?=
+ =?utf-8?B?MDJ5WDZSSElDdWtaNkxtVVZWNEIvMmo3YjdrOFp5bzJQUlVVOTEySWpuNmZG?=
+ =?utf-8?B?aHd1RkhJRWhGamlDcnVVdkJ6aVRGdGJjMEhJTVB2ZHZBc0lVREwyWkxlbDB3?=
+ =?utf-8?B?VVFxRm1STHdRMmp6aXpzdGI3cndPc3d3aHZQM2ltMmVaVjdJb3VZTHhyVVJG?=
+ =?utf-8?B?S2wzSnJZWjRlQUdBZU42aitaK3A3WDJGSlpZWnRqVzBYZzhURzM1d1FscGhj?=
+ =?utf-8?B?V1FTSkpoMGpuQm9zdG4yN0k0VE50MU5aK0IvK0F4MnQ1WklSYXhuVHZtenZN?=
+ =?utf-8?B?blMwbGJBc0JtZmk0dlRBN24wMTE4bE5KY0IwcHNnZnpyblVtSmRPWmVSMkQw?=
+ =?utf-8?B?WGhyaWIwemlSY1BROVRjTjBtVUw5UHhFaDBJNXBBSVA0VjJTRjZXc25UNW5v?=
+ =?utf-8?B?YnppcHZZTDlKM3Z4cFlJUGpqNU0zS0JxR2NBQWVSRC92Q1dycnFEcTVSbVNa?=
+ =?utf-8?B?b1lkUVJvSzFHREprQkp0MldoYld4OU9vYXNLWWgxcEFlNllZQlU2SkpndkVw?=
+ =?utf-8?B?Zm93UXdJdW5XN3VJbFhBUTZlQ0puR3RMQzI5RnZkTWVQNG1qUHVtM1RWaG02?=
+ =?utf-8?B?VnUwdm1yYUo1NUhMMEZ3bEhaZFdYMWh1bkxuc0poZ3ovQldiQWxSMXBkSVVl?=
+ =?utf-8?B?aERNb2JSdkpxZk1UV0V1ODlRK1BWTHgyUHJpcHc3VmpDQjF1QnNCYmMvbXBw?=
+ =?utf-8?B?WWRsdUJ2YnZKOEJPRE9lRFAwNU02RmF3RHdIRG0rclZySGkySHNKdDVMb1Fl?=
+ =?utf-8?B?ZGN1K2VFS01EUjdOV3FzdERMSmZxS3ZOamc5aGVHMFcrN1VjcHBsZE1LU05E?=
+ =?utf-8?B?ME5OdzBMUmNKYVdJUDcwYTJEZzR1d1VQcmpBVlJsVU80cnozSmpDRmVJV2hJ?=
+ =?utf-8?B?V09WQmhjY3liSm12R0VYcVVveldacFd0NUYwOXpIVlNiWEYybUdGcEFWVDhS?=
+ =?utf-8?B?ejhybFIzVTZxNVI1QS9zbjc3WCtsZlpVK0pOQk5vaU5tRHUzUURGem92Y3ph?=
+ =?utf-8?B?Z0pFR081QVhES3hMay9hMnZCRUIzSFV0d2FIM2lhYXdxQmFhczhRR0NRRTcx?=
+ =?utf-8?B?VmdHMVhTTzZqN3JsUnZjWE01UW8zSitZVVArQXFGUDhtMmZqV1VGRVhBbm9j?=
+ =?utf-8?B?eVU3VjJhUUJ2dmh0Y1VNYnJ0andVbndLNy9wTm0wYkFObEJvdFN4TFE4WER1?=
+ =?utf-8?B?dlZkVGpiRldUY3lDZ0d4cjh4UFZmWVpldWlPOVFLei85QTIzeU94WFZ6WWlu?=
+ =?utf-8?B?QklGRE5jajBKZmJra214MU5PY0p2bk5QRTBnWFh4Q3E0R3l3SnE4UVJjT2lw?=
+ =?utf-8?B?Y0hJZ1NuOER6SGQvdWUxMWUzazdUWHorWmRlQ2w0QnlEOGVObnFVMXVidVdK?=
+ =?utf-8?B?QVVxQkphNVRDYjNmQ09qLzhCYzJObXFzVFM4VGJjWVRUSUdSWkJMQk1na2Nk?=
+ =?utf-8?B?aDEyS1U4K25MdG9sa052V2NQQXVwRTNjYWYzdjE5dm9OSDgvVUZIT2lkSFlM?=
+ =?utf-8?B?Nkc2Tmt3bVhlc2pxdjN1Y1JiZFNoSUkyaFM4NUR2RlJROWpCTTZTQjZwNVlz?=
+ =?utf-8?B?aENzaWRzSVJwNXdOREZ6YVJDUW9YZTI4YzFlRFNEWVRsa1VFa0ZNcC9ZUkp1?=
+ =?utf-8?B?U0FXdWM4cFZaUVRRMzB1NCttd1dMMHRrbFNVL0ljSGkxajdrUjRlOFMyVWlN?=
+ =?utf-8?Q?Xe/2EqlXsvkLREZ6nImg7TGmN?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d05d4583-45b3-4def-9ad2-08dd1e094a5d
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2024 19:39:00.9535
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UMz8C23jUrIPSaqurdXBvYnY8kCYHDZ2MJhG64cCBuJxihWC9duqIxxkhZCmEo+i8nm2/e6KCp0RFqgSdcZn0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8968
 
-Hi Tudor,
 
-On 12/12/2024, Tudor Ambarus wrote:
-> Add the ACPM protocol node. ACPM protocol provides interface for all
-> the client drivers making use of the features offered by the
-> Active Power Management (APM) module.
+
+On 2024-12-16 10:31, Alex Deucher wrote:
+> On Mon, Dec 16, 2024 at 10:12 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> On Mon, 16 Dec 2024 at 16:53, Harry Wentland <harry.wentland@amd.com> wrote:
+>>>
+>>>
+>>>
+>>> On 2024-12-10 16:20, Dmitry Baryshkov wrote:
+>>>> On Fri, Dec 06, 2024 at 11:43:07AM +0200, Dmitry Baryshkov wrote:
+>>>>> Reading access to connector->eld can happen at the same time the
+>>>>> drm_edid_to_eld() updates the data. Take the newly added eld_mutex in
+>>>>> order to protect connector->eld from concurrent access.
+>>>>>
+>>>>> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>> ---
+>>>>>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 ++
+>>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> Harry, Leo, Rodrigo, Alex, Christian, Xinhui, any response to this one
+>>>> and to the radeon patches? I'd like to be able to pick the series for
+>>>> drm-misc and these two are not reviewed by you.
+>>>>
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>>> index 19a58630e774029767bf2a27eb4ddf17e3c21129..04c68c320252b5ce9647f0606fb86fe57f347639 100644
+>>>>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>>>>> @@ -1037,8 +1037,10 @@ static int amdgpu_dm_audio_component_get_eld(struct device *kdev, int port,
+>>>>>                      continue;
+>>>>>
+>>>>>              *enabled = true;
+>>>>> +            mutex_lock(&connector->eld_mutex);
+>>>>>              ret = drm_eld_size(connector->eld);
+>>>>>              memcpy(buf, connector->eld, min(max_bytes, ret));
+>>>>> +            mutex_unlock(&connector->eld_mutex);
+>>>
+>>> All of this is wrapped by the adev->dm.audio_lock mutex. It might
+>>> be safer to modify the audio_lock mutex so it only guards the
+>>> aconnector->audio_inst access.
+>>>
+>>> But I don't see any way these mutexes would otherwise interact,
+>>> so this change should be good as-is.
+>>>
+>>> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>>
+>> Would you ack it to merge it through drm-misc? Or would you prefer to
+>> pick up those two patches after merging drm-misc-next once the rest of
+>> the series lands?
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+> Merging through drm-misc is fine with me.
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> index 04561e15b96c..8c3f07371912 100644
-> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-> @@ -277,6 +277,28 @@ apm_sram: sram@2039000 {
->  		ranges = <0x0 0x0 0x2039000 0x40000>;
->  	};
->  
-> +	firmware {
-> +		acpm_ipc: power-management {
-> +			compatible = "google,gs101-acpm-ipc";
-> +			mboxes = <&ap2apm_mailbox 0 0
-> +				  &ap2apm_mailbox 0 1
-> +				  &ap2apm_mailbox 0 2
-> +				  &ap2apm_mailbox 0 3
-> +				  &ap2apm_mailbox 0 4
-> +				  &ap2apm_mailbox 0 5
-> +				  &ap2apm_mailbox 0 6
-> +				  &ap2apm_mailbox 0 7
-> +				  &ap2apm_mailbox 0 8
-> +				  &ap2apm_mailbox 0 9
-> +				  &ap2apm_mailbox 0 10
-> +				  &ap2apm_mailbox 0 11
-> +				  &ap2apm_mailbox 0 12
-> +				  &ap2apm_mailbox 0 13
-> +				  &ap2apm_mailbox 0 14>;
-> +			shmem = <&apm_sram>;
-> +		};
-> +	};
 
-You mentioned in the previous patch that "GS101 has 14 mailbox controllers",
-but here you have 15 mailboxes. I looked at the downstream driver and see the
-number of mailboxes is defined by the ACPM framework (firmware) which is read
-from SRAM initdata. Dumping that, I see there are 15 ACPM channels. Have you
-looked into into extracting the data from the initdata SRAM address?
+Same.
 
-Thanks,
-Will
+Harry
+
+> Thanks,
+> 
+> Alex
+> 
+>>
+>>>
+>>> Harry
+>>>
+>>>>>
+>>>>>              break;
+>>>>>      }
+>>>>>
+>>>>> --
+>>>>> 2.39.5
+>>>>>
+>>>>
+>>>
+>>
+>>
+>> --
+>> With best wishes
+>> Dmitry
+
