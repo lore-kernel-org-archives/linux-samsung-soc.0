@@ -1,163 +1,428 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E7013B2AF
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 16:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB9923DE;
+	Mon, 16 Dec 2024 17:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734365330; cv=none; b=T21hdNVFR6sz6FCpJz50GDPk7rlYHxezMymhS7MT2OAlhNVRSealw/m/NNaiIFyFg8O1Ypp6kOw9chi/3wc3x0s9hfJBK3FP0V2KIeSJN0KRFYgzCXC3xmakT8PrBCb6+tZRgV0i41/La+0CrfugtKby40WMchrzYkfUA+o5jHg=
+	t=1734368685; cv=none; b=cWZ8ojmFzi6rxmgwiLFx2qxiQttU5Af/cOP8L6gQpsnoitpMk7JaOGyWlKrL6oCJTsgljxtF53K2rqI7/Cqp+eGc0moQJ2d3bBNnB9m7+5VHBx9utqjM5I730HPealcmW9rOOSMojbP05rVFcf14/mbt7HaEQ7CmvXqNYV5cWmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734365330; c=relaxed/simple;
-	bh=s+2OGGOrTtT30i+ux35pZSdZiaLOWCeSP60gsYuHY1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SoMMkepxJ/NXIUBgaeWWM1A6h9NG4GTvza9vuDmVffa5oRzhyG0lry+KCBT7XoMywaGGKqVbXUl8bf212Fdc6f2bhHzBBFy5DqsjjLu88aXXMCfrKXHivVvtV1tvoJmDb7FY26TS63jvOoa2cIYwC5x/egNXAa7sq4r+Vkv/HoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UevO/zo0; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734368685; c=relaxed/simple;
+	bh=9h9wHm+VG3fO/mXQjKO59a7kA5Fp8QFjexCIxxTJX40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gpj77DK911p5Yxs1tZHgwtwsRZhTT0VKiiPQCqqnVXQbtoufGTcVRmXP/giTMwnEuMXXVAJmuz629awXdXEgBxA7lWC1iDWNn4eXulz9F+d68o/kBARpYLQPffz60RG/pyocR20fvl0yTff8XXZwFCJS8xzb3obqUMhFRKy99hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHFDDRQp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UevO/zo0"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-300392cc4caso51088071fa.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 08:08:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734365327; x=1734970127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gimIjr0V+IvVPSAkV2M5qKEwFz/7JaI3Yve9R66BZE0=;
-        b=UevO/zo0a9RXdWeSRieUVF25/c8zpy/ZATcYtVxQyd8Q2x+cLXOytmpTAEJM8l4B5A
-         JFIy4ZAt7DqIL/jFc6g8d9HyznK3Sfc/eufZqu0P037W05jmBqn5BbMQ33NqgJoujYhQ
-         1nHP+ZDUHznY9tr+rvmNWei3TeHAZYAS4BFH9DBJ9lnBxdIeFz/L6IdHgfhaaFhr6zZf
-         aaw4IdHf35ykz6JkRLy4wewOP2ouhBJeQnOvD+2AK0FJVfPBqElmp0jFOucRgxEfiZp2
-         CgUKtFAwa0WRqnOQV5HgLPc2iKVYWlJjrnQ+0kVQSRdwZJXsb8i2kuyxluQWgkMWyzma
-         EnJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734365327; x=1734970127;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gimIjr0V+IvVPSAkV2M5qKEwFz/7JaI3Yve9R66BZE0=;
-        b=j/+yItr1ekdzHBIsq41HY4OmKv7RSqjPSMnfUNfXjHnui/O4lWbzt6MkMyxMlm5fsg
-         7LlOrMLJEnl/vtMMGKNcRbkdQ0YG+Ce+2weqjEoapz0vhulAH+O+59FfwOE5R1jy352E
-         /6kQAgTJGicNPwnFVBBOnTWz9E+w+ALevMdol5smKKRN6/xyzkYf8tYKo/5OlQCoes76
-         bCHPkKx3H83dai8tLeX1A6Yi/yIvDAqOXSSqLHu1DUdC+nk2YxUlgZFn/2pqKaqRHu7Y
-         UTK2z98RojpKVdDeqFABEi0N+OjnNohTY2QjNFg0TZ14vFz2wQQxNO+eUHJMCQ+Al5EC
-         2JmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtl97FU6r9Gewne9ZTjFDrZjNwca1TMh+u7VyZU6yHO9vP9Y06ks/SKyvw6JTGlkaOz4+C8hYUPqQgwjZOlMONUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz82GfMpzfkGrHNdyW1uYVGvjme4HSCRas3HW+q70rvsaPDrUmx
-	i7PAYjlczPIAxl+bCeEd73mx6KfYP3tDD15sm34r2ixg/nGnZQ/Z9Oed9h07+Rk=
-X-Gm-Gg: ASbGnctQCLXrQyY/8b+vUi7ttRW+/DaQSV5+wg8ZT8SH6AqJ7VK0NCqaAYZ5DC8kDxv
-	mk008z+vmoUW0LKagwRl9eolWGR3qGZHPOcfiGQCcVR+HHxZNDwRDMKx/nepETFGAKMK8Xcp1VX
-	GTUkvjcqG3Q8fVpm4rhC6rzA43QdR1zX0Nkcju5naWF85ddBDVQD7WWCD6udTLlu/qkXyVT+ZCQ
-	eeO3DabGu/7DCkbJ7WQqDs49hzd/Z77L5jMg89jGUg5cZv363vMAbGEhCRVGXvmwFMWPr1A3b41
-	pbzozhMlGJXpK1kq72RhjvAn
-X-Google-Smtp-Source: AGHT+IEyHnHgkF8cGHfAxniJoLZXJ011DOlAgQIhnT5vzkhPcJthnAGY9LbeypdGeJjm5mrh2qegoQ==
-X-Received: by 2002:a2e:a591:0:b0:302:17e7:e17e with SMTP id 38308e7fff4ca-302543460f4mr50630091fa.0.1734365326654;
-        Mon, 16 Dec 2024 08:08:46 -0800 (PST)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30344175ad0sm9665241fa.84.2024.12.16.08.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 08:08:44 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Phong LE <ple@baylibre.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v2 00/10] drm/connector: add eld_mutex to protect connector->eld
-Date: Mon, 16 Dec 2024 18:08:41 +0200
-Message-ID: <173436531753.3257291.12458012077695445848.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
-References: <20241206-drm-connector-eld-mutex-v2-0-c9bce1ee8bea@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHFDDRQp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA3BC4CED0;
+	Mon, 16 Dec 2024 17:04:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734368684;
+	bh=9h9wHm+VG3fO/mXQjKO59a7kA5Fp8QFjexCIxxTJX40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VHFDDRQpiNyTsp0vxjaxnK7t5yL1hBB1OenLzSzbRzwx08TCpQZr9PrVy1HCGfNI1
+	 eQ7BtEGxLP+JbuwuA1E2ALFB/ivF4o8ZYKbCWE+U6ltVkDLfevJAYZXaxzEo+GkO+C
+	 MgnzVJxCvAytTahT6HAd53ubpuZDyeEJrJ5a4KeTpZ+98Rt4/8F4tsdQmenge8+BZD
+	 s/iB4nMNPjj5wE8RW396c8Wd6YFUoaTJGSeDGy/LkCB384uGpUGgShyQgoTTIWAN2P
+	 jWc3fzwPMd+0hruWTOWkp0NvbYI77dMEzXZznmHQSCjYuAEdgybbH3eV0HTKZg7JUf
+	 Il9krcy4qzApQ==
+Date: Mon, 16 Dec 2024 18:04:41 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 03/10] drm/connector: implement generic HDMI codec
+ helpers
+Message-ID: <20241216-heretic-mackerel-of-wholeness-fcfed7@houat>
+References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
+ <20241206-drm-bridge-hdmi-connector-v6-3-50dc145a9c06@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="qtypj65d6toehc6u"
+Content-Disposition: inline
+In-Reply-To: <20241206-drm-bridge-hdmi-connector-v6-3-50dc145a9c06@linaro.org>
 
-On Fri, 06 Dec 2024 11:43:03 +0200, Dmitry Baryshkov wrote:
-> The connector->eld is accessed by the .get_eld() callback. This access
-> can collide with the drm_edid_to_eld() updating the data at the same
-> time. Add drm_connector.eld_mutex to protect the data from concurrenct
-> access.
-> 
-> The individual drivers were just compile tested. I propose to merge the
-> drm_connector and bridge drivers through drm-misc, allowing other
-> maintainers either to ack merging through drm-misc or merging the
-> drm-misc into their tree and then picking up correcponding patch.
-> 
-> [...]
 
-Applied to drm-misc-next, thanks!
+--qtypj65d6toehc6u
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 03/10] drm/connector: implement generic HDMI codec
+ helpers
+MIME-Version: 1.0
 
-[01/10] drm/connector: add mutex to protect ELD from concurrent access
-        commit: df7c8e3dde37a9d81c0613285b43600f3cc70f34
-[02/10] drm/bridge: anx7625: use eld_mutex to protect access to connector->eld
-        commit: e72bf423a60afd744d13e40ab2194044a3af5217
-[03/10] drm/bridge: ite-it66121: use eld_mutex to protect access to connector->eld
-        commit: 39ead6e02ea7d19b421e9d42299d4293fed3064e
-[04/10] drm/amd/display: use eld_mutex to protect access to connector->eld
-        commit: 819bee01eea06282d7bda17d46caf29cae4f6d84
-[05/10] drm/exynos: hdmi: use eld_mutex to protect access to connector->eld
-        commit: 5e8436d334ed7f6785416447c50b42077c6503e0
-[06/10] drm/i915/audio: use eld_mutex to protect access to connector->eld
-        commit: 5db44dd1528625c73a31542df2a68972327c9897
-[07/10] drm/msm/dp: use eld_mutex to protect access to connector->eld
-        commit: 9aad030dc64f6994dc5de7bb81ceca55dbc555c3
-[08/10] drm/radeon: use eld_mutex to protect access to connector->eld
-        commit: b54c14f82428c8a602392d4cae1958a71a578132
-[09/10] drm/sti: hdmi: use eld_mutex to protect access to connector->eld
-        commit: e99c0b517bcd53cf61f998a3c4291333401cb391
-[10/10] drm/vc4: hdmi: use eld_mutex to protect access to connector->eld
-        commit: 81a9a93b169a273ccc4a9a1ee56f17e9981d3f98
+Hi,
 
-Best regards,
--- 
-With best wishes
-Dmitry
+On Fri, Dec 06, 2024 at 12:15:57PM +0200, Dmitry Baryshkov wrote:
+> Several DRM drivers implement HDMI codec support (despite its name it
+> applies to both HDMI and DisplayPort drivers). Implement generic
+> framework to be used by these drivers. This removes a requirement to
+> implement get_eld() callback and provides default implementation for
+> codec's plug handling.
+>=20
+> The framework is integrated with the DRM HDMI Connector framework, but
+> can be used by DisplayPort drivers.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/Makefile                   |   1 +
+>  drivers/gpu/drm/drm_connector.c            |   5 +
+>  drivers/gpu/drm/drm_connector_hdmi_codec.c | 185 +++++++++++++++++++++++=
+++++++
+>  include/drm/drm_connector.h                |  80 +++++++++++++
+>  4 files changed, 271 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> index 1677c1f335fbb0c6114bdb4cc0b12eb407d84564..afdd9268ca23ac7602e73bbe4=
+5f3f9cd090a3afd 100644
+> --- a/drivers/gpu/drm/Makefile
+> +++ b/drivers/gpu/drm/Makefile
+> @@ -42,6 +42,7 @@ drm-y :=3D \
+>  	drm_cache.o \
+>  	drm_color_mgmt.o \
+>  	drm_connector.o \
+> +	drm_connector_hdmi_codec.o \
+>  	drm_crtc.o \
+>  	drm_displayid.o \
+>  	drm_drv.o \
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connec=
+tor.c
+> index bbdaaf7022b62d84594a29f1b60144920903a99a..4abfbded962bf45b793a2bd5b=
+1b5c4d9f478a1f7 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -33,6 +33,7 @@
+>  #include <drm/drm_sysfs.h>
+>  #include <drm/drm_utils.h>
+> =20
+> +#include <linux/platform_device.h>
+>  #include <linux/property.h>
+>  #include <linux/uaccess.h>
+> =20
+> @@ -280,6 +281,7 @@ static int __drm_connector_init(struct drm_device *de=
+v,
+>  	mutex_init(&connector->eld_mutex);
+>  	mutex_init(&connector->edid_override_mutex);
+>  	mutex_init(&connector->hdmi.infoframes.lock);
+> +	mutex_init(&connector->hdmi_codec.lock);
+>  	connector->edid_blob_ptr =3D NULL;
+>  	connector->epoch_counter =3D 0;
+>  	connector->tile_blob_ptr =3D NULL;
+> @@ -632,6 +634,8 @@ void drm_connector_cleanup(struct drm_connector *conn=
+ector)
+>  		    DRM_CONNECTOR_REGISTERED))
+>  		drm_connector_unregister(connector);
+> =20
+> +	platform_device_unregister(connector->hdmi_codec.codec_pdev);
+> +
+>  	if (connector->privacy_screen) {
+>  		drm_privacy_screen_put(connector->privacy_screen);
+>  		connector->privacy_screen =3D NULL;
+> @@ -670,6 +674,7 @@ void drm_connector_cleanup(struct drm_connector *conn=
+ector)
+>  		connector->funcs->atomic_destroy_state(connector,
+>  						       connector->state);
+> =20
+> +	mutex_destroy(&connector->hdmi_codec.lock);
+>  	mutex_destroy(&connector->hdmi.infoframes.lock);
+>  	mutex_destroy(&connector->mutex);
+> =20
+> diff --git a/drivers/gpu/drm/drm_connector_hdmi_codec.c b/drivers/gpu/drm=
+/drm_connector_hdmi_codec.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1934fb53b4d128434559970c9=
+fea548bbc4bedda
+> --- /dev/null
+> +++ b/drivers/gpu/drm/drm_connector_hdmi_codec.c
+> @@ -0,0 +1,185 @@
+> +// SPDX-License-Identifier: MIT
+> +/*
+> + * Copyright (c) 2024 Linaro Ltd
+> + */
+> +
+> +#include <linux/mutex.h>
+> +#include <linux/of_graph.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <drm/drm_connector.h>
+> +#include <drm/drm_device.h>
+> +
+> +#include <sound/hdmi-codec.h>
+> +
+> +static int drm_connector_hdmi_codec_audio_startup(struct device *dev, vo=
+id *data)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +	const struct drm_connector_hdmi_codec_funcs *funcs =3D
+> +		connector->hdmi.funcs->codec_funcs;
+> +
+> +	if (funcs->audio_startup)
+> +		return funcs->audio_startup(connector);
+> +
+> +	return 0;
+> +}
+> +
+> +static int drm_connector_hdmi_codec_prepare(struct device *dev, void *da=
+ta,
+> +					    struct hdmi_codec_daifmt *fmt,
+> +					    struct hdmi_codec_params *hparms)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +	const struct drm_connector_hdmi_codec_funcs *funcs =3D
+> +		connector->hdmi.funcs->codec_funcs;
+> +
+> +	return funcs->prepare(connector, fmt, hparms);
+> +}
+> +
+> +static void drm_connector_hdmi_codec_audio_shutdown(struct device *dev, =
+void *data)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +	const struct drm_connector_hdmi_codec_funcs *funcs =3D
+> +		connector->hdmi.funcs->codec_funcs;
+> +
+> +	return funcs->audio_shutdown(connector);
+> +}
+> +
+> +static int drm_connector_hdmi_codec_mute_stream(struct device *dev, void=
+ *data,
+> +						bool enable, int direction)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +	const struct drm_connector_hdmi_codec_funcs *funcs =3D
+> +		connector->hdmi.funcs->codec_funcs;
+> +
+> +	if (funcs->mute_stream)
+> +		return funcs->mute_stream(connector, enable, direction);
+> +
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static int drm_connector_hdmi_codec_get_dai_id(struct snd_soc_component =
+*comment,
+> +		  struct device_node *endpoint,
+> +		  void *data)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +	struct of_endpoint of_ep;
+> +	int ret;
+> +
+> +	if (connector->hdmi_codec.dai_port < 0)
+> +		return -ENOTSUPP;
+> +
+> +	ret =3D of_graph_parse_endpoint(endpoint, &of_ep);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (of_ep.port =3D=3D connector->hdmi_codec.dai_port)
+> +		return 0;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int drm_connector_hdmi_codec_get_eld(struct device *dev, void *da=
+ta,
+> +					    uint8_t *buf, size_t len)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +
+> +	mutex_lock(&connector->eld_mutex);
+> +	memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
+> +	mutex_unlock(&connector->eld_mutex);
+> +
+> +	return 0;
+> +}
+> +
+> +static int drm_connector_hdmi_codec_hook_plugged_cb(struct device *dev,
+> +						    void *data,
+> +						    hdmi_codec_plugged_cb fn,
+> +						    struct device *codec_dev)
+> +{
+> +	struct drm_connector *connector =3D data;
+> +
+> +	mutex_lock(&connector->hdmi_codec.lock);
+> +
+> +	connector->hdmi_codec.plugged_cb =3D fn;
+> +	connector->hdmi_codec.plugged_cb_dev =3D codec_dev;
+> +
+> +	fn(codec_dev, connector->hdmi_codec.last_state);
+> +
+> +	mutex_unlock(&connector->hdmi_codec.lock);
+> +
+> +	return 0;
+> +}
+> +
+> +void drm_connector_hdmi_codec_plugged_notify(struct drm_connector *conne=
+ctor,
+> +					     bool plugged)
+> +{
+> +	mutex_lock(&connector->hdmi_codec.lock);
+> +
+> +	connector->hdmi_codec.last_state =3D plugged;
+> +
+> +	if (connector->hdmi_codec.plugged_cb &&
+> +	    connector->hdmi_codec.plugged_cb_dev)
+> +		connector->hdmi_codec.plugged_cb(connector->hdmi_codec.plugged_cb_dev,
+> +						 connector->hdmi_codec.last_state);
+> +
+> +	mutex_unlock(&connector->hdmi_codec.lock);
+> +}
+> +EXPORT_SYMBOL(drm_connector_hdmi_codec_plugged_notify);
+> +
+> +static const struct hdmi_codec_ops drm_connector_hdmi_codec_ops =3D {
+> +	.audio_startup =3D drm_connector_hdmi_codec_audio_startup,
+> +	.prepare =3D drm_connector_hdmi_codec_prepare,
+> +	.audio_shutdown =3D drm_connector_hdmi_codec_audio_shutdown,
+> +	.mute_stream =3D drm_connector_hdmi_codec_mute_stream,
+> +	.get_eld =3D drm_connector_hdmi_codec_get_eld,
+> +	.get_dai_id =3D drm_connector_hdmi_codec_get_dai_id,
+> +	.hook_plugged_cb =3D drm_connector_hdmi_codec_hook_plugged_cb,
+> +};
+> +
+> +/**
+> + * drm_connector_hdmi_codec_init - Initialize HDMI Codec device for the =
+DRM connector
 
+I think it'd be better to call it drm_connector_hdmi_audio_init over
+drm_connector_hdmi_codec_init (feature over implementation).
+
+> + * @connector: A pointer to the connector to allocate codec for
+> + * @hdmi_codec_dev: device to be used as a parent for the HDMI Codec
+> + * @max_i2s_playback_channels: maximum number of playback I2S channels
+> + * @spdif_playback: set if HDMI codec has S/PDIF playback port
+> + * @dai_port: sound DAI port, -1 if it is not enabled
+> + *
+> + * Create a HDMI codec device to be used with the specified connector.
+> + *
+> + * Returns:
+> + * Zero on success, error code on failure.
+> + */
+> +int drm_connector_hdmi_codec_init(struct drm_connector *connector,
+> +				  struct device *hdmi_codec_dev,
+> +				  unsigned int max_i2s_playback_channels,
+> +				  bool spdif_playback,
+> +				  int dai_port)
+> +{
+> +	struct hdmi_codec_pdata codec_pdata =3D {
+> +		.ops =3D &drm_connector_hdmi_codec_ops,
+> +		.max_i2s_channels =3D max_i2s_playback_channels,
+> +		.i2s =3D !!max_i2s_playback_channels,
+> +		.spdif =3D spdif_playback,
+> +		.no_i2s_capture =3D true,
+> +		.no_spdif_capture =3D true,
+> +		.data =3D connector,
+> +	};
+> +	struct platform_device *pdev;
+> +
+> +	connector->hdmi_codec.dai_port =3D dai_port;
+> +
+> +	if (!connector->hdmi.funcs->codec_funcs->prepare ||
+> +	    !connector->hdmi.funcs->codec_funcs->audio_shutdown)
+> +		return -EINVAL;
+> +
+> +	pdev =3D platform_device_register_data(hdmi_codec_dev,
+> +					     HDMI_CODEC_DRV_NAME,
+> +					     PLATFORM_DEVID_AUTO,
+> +					     &codec_pdata, sizeof(codec_pdata));
+> +	if (IS_ERR(pdev))
+> +		return PTR_ERR(pdev);
+> +
+> +	connector->hdmi_codec.codec_pdev =3D pdev;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(drm_connector_hdmi_codec_init);
+> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> index 1e2b25e204cb523d61d30f5409faa059bf2b86eb..1d113c0ceec7ce8196a412d7c=
+00a1737175c6fbe 100644
+> --- a/include/drm/drm_connector.h
+> +++ b/include/drm/drm_connector.h
+> @@ -46,6 +46,8 @@ struct drm_property_blob;
+>  struct drm_printer;
+>  struct drm_privacy_screen;
+>  struct edid;
+> +struct hdmi_codec_daifmt;
+> +struct hdmi_codec_params;
+>  struct i2c_adapter;
+> =20
+>  enum drm_connector_force {
+> @@ -1141,6 +1143,52 @@ struct drm_connector_state {
+>  	struct drm_connector_hdmi_state hdmi;
+>  };
+> =20
+> +struct drm_connector_hdmi_codec_funcs {
+> +	/**
+> +	 * @audio_startup:
+> +	 *
+> +	 * Called when ASoC starts an audio stream setup. The
+> +	 * @hdmi_audio_startup is optional.
+> +	 *
+> +	 * Returns:
+> +	 * 0 on success, a negative error code otherwise
+> +	 */
+> +	int (*audio_startup)(struct drm_connector *connector);
+> +
+> +	/**
+> +	 * @prepare:
+> +	 * Configures HDMI-encoder for audio stream. Can be called
+> +	 * multiple times for each setup. Mandatory.
+> +	 *
+> +	 * Returns:
+> +	 * 0 on success, a negative error code otherwise
+> +	 */
+> +	int (*prepare)(struct drm_connector *connector,
+> +		       struct hdmi_codec_daifmt *fmt,
+> +		       struct hdmi_codec_params *hparms);
+
+Missing newline
+
+> +	/**
+> +	 * @audio_shutdown:
+> +	 *
+> +	 * Shut down the audio stream. Mandatory.
+> +	 *
+> +	 * Returns:
+> +	 * 0 on success, a negative error code otherwise
+> +	 */
+> +	void (*audio_shutdown)(struct drm_connector *connector);
+
+And thus we can probably just call that one shutdown?
+
+Maxime
+
+--qtypj65d6toehc6u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2BdpAAKCRAnX84Zoj2+
+dm4zAYCYGmH1yuP4x6P4be7YklYqFuE0tKBsF87FnLc7iM1I7KNRptBLJn1lQ/jV
+kk4uP64BgOpaKc+SEeuFgawEOSwkkTYRbLOzxP49qchX0UfLHtspSuTog57S+QaT
+3Qth34ObHQ==
+=dknX
+-----END PGP SIGNATURE-----
+
+--qtypj65d6toehc6u--
