@@ -1,119 +1,143 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623441CD214;
-	Tue, 17 Dec 2024 07:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE04537F8;
+	Tue, 17 Dec 2024 07:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734421194; cv=none; b=sNTvJU7zK3bSZicnB7UnYtnDvUn+4r2CN3kmzBpcqmt5BcCpF/cR/tiyPkBBfaxomM9NS/EnCM396hwjMC94Xu3Y+Y4bfcXS75cLxBKAvQt8YFeqmGGmc+6b4e/ZvsT3FxzQVHMdz6702O0SsrrRB48HH/Vj8m4YD3HO0LbYBak=
+	t=1734421393; cv=none; b=q4Y5Xbbob3w8m8T4jxPMgU2fKDx/OPrdLsmlP1SjIghRJe6RrrsQImgi8yTxobqdDKsU9rTMneeV+3LNw4t4DwOrn7K/buO+orTLmZYf60+/NhPZYqpoFf4sXbacmBrHZz++Xr8Xz4abrB9ZYjm/MjYIeVcY6JYOFK4OuNx5MTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734421194; c=relaxed/simple;
-	bh=f7Df3D2mYSw4EuQDLRDjYSEZXbF66N6eFGfuaboyFb8=;
+	s=arc-20240116; t=1734421393; c=relaxed/simple;
+	bh=SFEB+1CioxLc5lMZKoURIeOpaioyZPe04X8yK/3CHYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYQPdLEn1StVF8EW4PK7iWYaNjeG/NtqtWxfmZoU2HXUtq6i8zI2jYyzhhthWixvWU0tFLP1FXOjxi3AZPEpjBF4uzOpvyKXUjt9n/cH5KdzX7KiqVTl/uwGG2IsgJjtvF6VOB47uJgA1Mmtphw5v7G3NCMnKOK/0phQ/3BEl4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzSxKRGu; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=mx0HlrovxHRuoaKNgrmNoljpVPAFP7zPqnWy80I0iGKwmeGGXCC+WMOB/sKarDUUmF9MaFwWs6CIQfRjh2bWqqG8vp0ItKpn82+48ZqwMcJBMMfz1NGu+Ccrr2R4yXiJg1FLtaICQ2fAlX2+jC+7Z6Ypn7smeaxHNYMuaq/LPo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgygh1jB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzSxKRGu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D862C4CED3;
-	Tue, 17 Dec 2024 07:39:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgygh1jB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A648EC4CED3;
+	Tue, 17 Dec 2024 07:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734421193;
-	bh=f7Df3D2mYSw4EuQDLRDjYSEZXbF66N6eFGfuaboyFb8=;
+	s=k20201202; t=1734421393;
+	bh=SFEB+1CioxLc5lMZKoURIeOpaioyZPe04X8yK/3CHYY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dzSxKRGumOzngVx8WU5ajJQJw3ytC8wVC5afCVitEYN1FSmnlzVvAp4Zy+67Kc/63
-	 nPYBgpKCpHytRPZbb4naVy4pGsyTBAUGhoUQ6Q1XwAOrbBNtXYSrTpLvYWyTAhOyaT
-	 gEA1mPKGnHzFpGcVlLpFvozjDhd8jRqNVXjN9n1q4s59+gBtO8tFqY/mEVjDs3m0h6
-	 K6Oxyg3oPABTAUKfktuJug8D+GfWa7Ps0Jh2y0IIB6niDEPPPCEoNRqF/3H56Cn3je
-	 Kr2bTYvyd3RS6rdUrlahRFTZHBjcX8qeSqJLaWI6nEVRKboRUl4V8EMz/fBQp5HA0D
-	 lW2/QDGYI91cg==
-Date: Tue, 17 Dec 2024 08:39:50 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 4/4] arm64: dts: exynos: gs101-raven: add new board file
-Message-ID: <2wyjctwn443oxl633qwxsxmyzqhinssrkoafgqhcc34tqgwnh5@ymrr57jxdnl6>
-References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org>
- <20241216-gs101-simplefb-v1-4-8ccad1830281@linaro.org>
+	b=qgygh1jBZx5lw8SjMJZ9Rn89E9kJt7oapQfMySMCzPSBHCgBuwR0KzOWAzB51uN3c
+	 DFJJcdWpUijv2S9WKbhoJTLFMnw/TcqLsu5f+u/7yuUVgx8eq6k1P3RVktd6ksDe9r
+	 3KznClF/Fti3bWkP8h+V0dhDiQ7Kmfn+uvsey1jDZE5nv2DuAeGCNztZP5D18mHk93
+	 EE6lfm4G8EkU3pUWUW93gmUoHmLrgxokZ7oLJWxRvx1PCwHnSvvTJa1WsGv2sBnKJ3
+	 Di+eL1PIokZY3FnyLKS0DJF1ewNV7svRLMJRIZn0urB0dqfOOOgE7vxYn2sCjTERi+
+	 5SngBCjqBp21A==
+Date: Tue, 17 Dec 2024 08:43:10 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 03/10] drm/connector: implement generic HDMI codec
+ helpers
+Message-ID: <20241217-heretic-hopeful-jaguar-aeabec@houat>
+References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
+ <20241206-drm-bridge-hdmi-connector-v6-3-50dc145a9c06@linaro.org>
+ <20241216-heretic-mackerel-of-wholeness-fcfed7@houat>
+ <exocd3b65cy6cy5w47cwx3ykn54ncf34hwyj7ffihs5jjzean5@y677uywnlah2>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="c4s3lijvuloytprp"
+Content-Disposition: inline
+In-Reply-To: <exocd3b65cy6cy5w47cwx3ykn54ncf34hwyj7ffihs5jjzean5@y677uywnlah2>
+
+
+--c4s3lijvuloytprp
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241216-gs101-simplefb-v1-4-8ccad1830281@linaro.org>
+Subject: Re: [PATCH v6 03/10] drm/connector: implement generic HDMI codec
+ helpers
+MIME-Version: 1.0
 
-On Mon, Dec 16, 2024 at 01:06:29PM +0000, Andr=C3=A9 Draszik wrote:
-> Raven is Google's code name for Pixel 6 Pro. Similar to Pixel 6
-> (Oriole), this is also based around its Tensor gs101 SoC.
->=20
-> For now, the relevant difference here is the display resolution:
-> 1440 x 3120 instead of 1080 x 2400.
->=20
-> Create a new board file to reflect this difference.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->=20
-> ---
-> Note: MAINTAINERS doesn't need updating, it covers this whole directory
-> ---
->  arch/arm64/boot/dts/exynos/google/Makefile        |  1 +
->  arch/arm64/boot/dts/exynos/google/gs101-raven.dts | 27 +++++++++++++++++=
-++++++
->  2 files changed, 28 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/boot=
-/dts/exynos/google/Makefile
-> index 0a6d5e1fe4ee..7385f82b03c9 100644
-> --- a/arch/arm64/boot/dts/exynos/google/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/google/Makefile
-> @@ -2,3 +2,4 @@
-> =20
->  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
->  	gs101-oriole.dtb \
-> +	gs101-raven.dtb
-> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts b/arch/arm=
-64/boot/dts/exynos/google/gs101-raven.dts
-> new file mode 100644
-> index 000000000000..75fd34797fa9
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
-> @@ -0,0 +1,27 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Raven Device Tree
-> + *
-> + * Copyright 2021-2023 Google LLC
-> + * Copyright 2023-2024 Linaro Ltd
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "gs101-raviole.dtsi"
-> +
-> +/ {
-> +	model =3D "Raven";
-> +	compatible =3D "google,gs101-raven", "google,gs101";
-> +};
-> +
-> +&framebuffer0 {
-> +	reg =3D <0x0 0xfac00000 (1440 * 3120 * 4)>;
-> +	width =3D <1440>;
-> +	height =3D <3120>;
-> +	stride =3D <(1440 * 4)>;
-> +};
-> +
-> +&cont_splash_mem {
+Hi,
 
-Keep overriding/extending nodes ordered by label name.
+On Mon, Dec 16, 2024 at 07:47:32PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Dec 16, 2024 at 06:04:41PM +0100, Maxime Ripard wrote:
+> > > +struct drm_connector_hdmi_codec_funcs {
+> > > +	/**
+> > > +	 * @audio_startup:
+> > > +	 *
+> > > +	 * Called when ASoC starts an audio stream setup. The
+> > > +	 * @hdmi_audio_startup is optional.
+> > > +	 *
+> > > +	 * Returns:
+> > > +	 * 0 on success, a negative error code otherwise
+> > > +	 */
+> > > +	int (*audio_startup)(struct drm_connector *connector);
+> > > +
+> > > +	/**
+> > > +	 * @prepare:
+> > > +	 * Configures HDMI-encoder for audio stream. Can be called
+> > > +	 * multiple times for each setup. Mandatory.
+> > > +	 *
+> > > +	 * Returns:
+> > > +	 * 0 on success, a negative error code otherwise
+> > > +	 */
+> > > +	int (*prepare)(struct drm_connector *connector,
+> > > +		       struct hdmi_codec_daifmt *fmt,
+> > > +		       struct hdmi_codec_params *hparms);
+> >=20
+> > Missing newline
+> >=20
+> > > +	/**
+> > > +	 * @audio_shutdown:
+> > > +	 *
+> > > +	 * Shut down the audio stream. Mandatory.
+> > > +	 *
+> > > +	 * Returns:
+> > > +	 * 0 on success, a negative error code otherwise
+> > > +	 */
+> > > +	void (*audio_shutdown)(struct drm_connector *connector);
+> >=20
+> > And thus we can probably just call that one shutdown?
+>=20
+> It should be called automatically by the sound system. I'd rather not
+> call items directly that we are not supposed to call.
 
-Best regards,
-Krzysztof
+I meant that with my suggestion to call the function
+drm_connector_hdmi_audio_init, that structure would be called
+drm_connector_hdmi_audio_funcs, and thus the audio prefix in
+audio_shutdown is redundant.
 
+Maxime
+
+--c4s3lijvuloytprp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2EriQAKCRAnX84Zoj2+
+dn+KAXsHF1Me3a69DjYay1zSH0/PHfBLCaIV8MGlbctx2pAUq5SnrvsJZ2avXBJl
+7I+LlxABewcJcOkSen/hN0RxUNmpQaMQSHXReIonARDyzvaXra1BL1nAga4/ubzn
+jeARugW3sQ==
+=pdll
+-----END PGP SIGNATURE-----
+
+--c4s3lijvuloytprp--
