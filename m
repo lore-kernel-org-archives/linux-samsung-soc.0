@@ -1,170 +1,173 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7456814C5B3
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2024 00:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471B318035
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2024 01:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734396057; cv=none; b=jtpHx7rjZMLtlFBDbqLVi+rgXyWCuVKala4pqBw3r+Jw5UQTEPuTA6kX0VK20AT6ssuJn3ekQGzLtCnPgtZ1KCYCVtj28b9llTRivfJCOl8cX6Ln1KXbY7J5SsUE+BXtm27MT8HqhJw2MrIHR/gRRi5indn86E95R7FfhAecLJ8=
+	t=1734398976; cv=none; b=R3CA3qoqTOIfj5SFB1vKR0jLaPQrCJGOnv900ZW5tt3hNlgijM0SWV1n8mJ+XxHO2u0KJAw5ypqDQmdxB9anPe45l92GXGmjd4uMVjKEwRnUOsMGwpevqXWE9Hxfu6vvOdz3+QqXschbpQ5RJDRFNwTzfQdQPflySq0vHafNHHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734396057; c=relaxed/simple;
-	bh=7s/0WO/aTzEx9yhjto9LxdTyBBJwSv9ES82NKKPeNQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kaCRuwnEixvJXyPPWUeq6ue0qiv7yzbe5tocdd+f0+hMqoNqqNbW5qBzno5ylCwK/f7WQ7B5Vf2+zwASx9450vLZGWROfAbMI5mBuFG8NP7noqPvwHvRb+jJArrO9YpLWgcxyJWWQk5iUGIJTvYaVU4NcV+2K5PpMyIBgl25M+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ED+Ppexr; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734398976; c=relaxed/simple;
+	bh=wpcHoOcYIOaa6emnw+AWzNeqd7KX+IW2SvptWOYO+v8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=l9H0S6Xyn/TDM+m8v5uHKvKzR1zd7/k4qnHqM36qpJW8l3LffbXwEea5s6wYpwEUh0iEX4DOoxtYCkLA0QVHjv4MlenTEna5TKZzNEDBeXACUP1kDM/r+CX7Lm7qqB8d+Wbdf9tH3a98tNW83a4/YMsHd6BlL06DfomfV32Ejns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QcQLKOJ3; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ED+Ppexr"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53f22fd6832so4964662e87.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Dec 2024 16:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734396054; x=1735000854; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lunr+AM74GTPPfWmRn+AT8+K2i2rNeiOvxZLJo+1HHg=;
-        b=ED+Ppexr4fWWEoP04SGR15GW2Vr+7bO6iBk7pTng6Qc+s9nqfIpCFoAMpXLHhhRXti
-         4LAG1DXRmk6znOfdrKsZ5RcjZdRcGq87CaDwvo7OSitVWsu0N3SRWDt9mKFV1QVtAipL
-         xb3IdE3mfz0ODoUsQg6ZbYvdBBImn4OC5lUw8+qylseZKYomQCzJ3i/Ejc5Irfw0V47n
-         Zd3tY0wxNS0epgXv31/zVYnwZvV3OULujs7PKGPqGrdpCHKoDdXPiadF4ECohPrHh+hq
-         pbhRK0TY6ZNCjoipid1DUH62GfHyTNOhJMQpF3Lt+0P9+1gvRKodoDJkwcXX8OUOkAHs
-         s/vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734396054; x=1735000854;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lunr+AM74GTPPfWmRn+AT8+K2i2rNeiOvxZLJo+1HHg=;
-        b=Q+PpxhmU69QVUdLiJunrJcHGYN0zZlASARH9NP8xporsZV49H9VMPwnxVc/RkbEMW+
-         YyhJGQdcjYNg61AmjpIbHQiuqUFiPf7DAqyEG7PqFZRbrstOJCUyTlaHHV7YL9h7XRVt
-         oMAl0BHZ4HlITXjxonEmsXZpiroFv9P7vj3OjY/D2aGdueWG1VviwrJ7jpHudOQyyrsY
-         m1TMdiH/Y8tzeKDo2TJHEzxsgloc4Cinjk9tphVWm4lHsfik7CVQ7pPRVvpmR9q2X3Mi
-         mER89PTLaH2cbQfkqErNZfCAsGCswXK2easZlWN+zH3P9VUBg94IWMuHesbC+oflwnL4
-         NfgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqVWNJUYk68tTSdB1TvBJEm5gYrPISs8CBVm3HLgyaWs6CY47nIwdmD00uoHDu3aFI1BE+QjU0iP9scQDvWJN0cQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0jPPCf4OhS4Klcn2wKHnzvhCJbmKXam6Sq7hJlf5b1lA/EMrI
-	xZz420VkGUCcfGP63vjdTZpNSuU6lY/xvOc3tObYvtb8xt7xZTnQ6BaZ/385HaY=
-X-Gm-Gg: ASbGncvgOTaFi2ipqIxhmtZ3gBJfVnSYbYUTcnzMZ62gzRZgJQQxZreWebDGN5vHUKv
-	5JIp9QVzLNLRFWL2kQ0p7Y4RAupSfbcnvWBXf8sYNj6LS7fgSdN2X24V/WkQk0OdA3z0udxd6Bq
-	x9ZZ+lsCjXqq0ZlZl08YpPW8vmm609VR4PdDyEzd195lIh+o4+7t3SQXYM2fm43mSHg05UVNcSZ
-	EhtOc125/g3Hskovcgzd0uupm55VXqdM+JoQBz5KIkCm9QVajIbHaVp1WM7Dkuy
-X-Google-Smtp-Source: AGHT+IGe0QdLZY73JsApHksPxAww/oxjVlJdjygOnTwbgrdsohY4NxxLR2cwt2MC32di//BAmFafkQ==
-X-Received: by 2002:a05:6512:b06:b0:540:17ac:b371 with SMTP id 2adb3069b0e04-54099b6ecdcmr4290758e87.56.1734396053589;
-        Mon, 16 Dec 2024 16:40:53 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54120ba9ab2sm1009122e87.74.2024.12.16.16.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 16:40:52 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 17 Dec 2024 02:40:32 +0200
-Subject: [PATCH v7 10/10] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_hotplug_edid()
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QcQLKOJ3"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241217012931epoutp02f73aa495009aac3ef6dd00f0a3b0961c~R0qzZjuXi2582225822epoutp02H
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2024 01:29:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241217012931epoutp02f73aa495009aac3ef6dd00f0a3b0961c~R0qzZjuXi2582225822epoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1734398971;
+	bh=UGmkPmQUidBIuYKKI9fgy8HdP95zF6NSlMy/pMEWJxU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=QcQLKOJ3KmMnVisUpoWD9aB5sGSCohDrr8htjz6h+DQ/YOeW+hP+BVNXFoc2CnsFK
+	 BCFPZz9NfVNFEQK7JbYFrQZqe/mKo5UMxzMWIB51Eu3LDa5WJZ/NH88O12QjRCKVho
+	 dLn524oiAxLGlPBN4TNQWpPyPJUbsRYd8Orgt/S8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20241217012930epcas2p13a739f31a8ae2d882076e1f40a1a1798~R0qzAauE03081530815epcas2p1U;
+	Tue, 17 Dec 2024 01:29:30 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4YBzkL0S7Wz4x9Q9; Tue, 17 Dec
+	2024 01:29:30 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	69.49.22105.9F3D0676; Tue, 17 Dec 2024 10:29:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241217012929epcas2p143c323e728c1e22144579b7b827d4580~R0qxo5Rjr3081530815epcas2p1G;
+	Tue, 17 Dec 2024 01:29:29 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241217012929epsmtrp2047d7fd2a280f865e8912eb8b4016a55~R0qxoO4660834408344epsmtrp2H;
+	Tue, 17 Dec 2024 01:29:29 +0000 (GMT)
+X-AuditID: b6c32a47-fd1c970000005659-cd-6760d3f982ed
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.4B.33707.9F3D0676; Tue, 17 Dec 2024 10:29:29 +0900 (KST)
+Received: from KORCO078619 (unknown [10.229.8.183]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241217012929epsmtip11ecba00ce3f580c8a57ce4d22c32be3f~R0qxXO2LM0333703337epsmtip16;
+	Tue, 17 Dec 2024 01:29:29 +0000 (GMT)
+From: =?utf-8?B?64KY7IaM7JuQL1NPV09OIE5B?= <sowon.na@samsung.com>
+To: <robh@kernel.org>, <krzk@kernel.org>, <conor+dt@kernel.org>,
+	<vkoul@kernel.org>, <alim.akhtar@samsung.com>, <kishon@kernel.org>
+Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20241118021009.2858849-1-sowon.na@samsung.com>
+Subject: RE: [PATCH v3 0/3] Support ExynosAutov920 ufs phy driver
+Date: Tue, 17 Dec 2024 10:29:29 +0900
+Message-ID: <000001db5023$1ddaaf30$59900d90$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQEnffo+LGCDWdayZVn9ec1kNib2MAKN54LKtDzZ33A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmqe7PywnpBh339CwezNvGZrFm7zkm
+	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLfYeecEswOXx6ZVnWwefVtW
+	MXp83iQXwByVbZORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6Dr
+	lpkDdIuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8C8QK84Mbe4NC9dLy+1xMrQ
+	wMDIFKgwITvj/oOjrAVP+St6dl9ga2B8xtPFyMkhIWAi8ft4H0sXIxeHkMAORolJx5dBOZ8Y
+	JTYcvsMM59x70MQI0/J9egMTRGIno8SryxfZIZwXjBKnzh5gBaliE3CUaHuwCGyWiEArUOLR
+	LCCHg4NZoFZif6cJSA2ngI3E7M2r2EFsYaD6Oyc3s4HYLAKqEpsunwCbwytgKXH94WcWCFtQ
+	4uTMJ2A2s4C2xLKFr5khLlKQ+Pl0GVi9iICVxLsfT5ghakQkZne2gb0gIbCUQ2Ji4w0WiAYX
+	ida1vUwQtrDEq+Nb2CFsKYnP7/ayQdj5Eusf3oWyKyTuHvoP1WsvsejMT3aIXzQl1u/SBzEl
+	BJQljtyCOo1PouPwX3aIMK9ER5sQRKOSRMf5OVBLJSRWvZjMNoFRaRaSx2YheWwWkgdmIexa
+	wMiyilEstaA4Nz212KjAGB7Zyfm5mxjByVTLfQfjjLcf9A4xMnEwHmKU4GBWEuGtMYlNF+JN
+	SaysSi3Kjy8qzUktPsRoCgzqicxSosn5wHSeVxJvaGJpYGJmZmhuZGpgriTOe691boqQQHpi
+	SWp2ampBahFMHxMHp1QD0/Lkz0E6l7ON9R6Z+0s/kD1h/ijZNOBd16qnFRXcIm/WNk9b8PsN
+	B8u3s10PZBirlvNPEZM4sqT9xbl5eq4Lp2udE/x3Q/xS7o/Hn2rZfj3apDux8mnmvZ5XGi+3
+	W9YnLQ+/6n3mgNnxPS/Ee2Slb4uuZ7kjEK7GkscyxXR1V4ZTG3PoVP+sYMei53szTH2nR2dP
+	UA+fZH+oaXnr2r+/cs5vu2pT2SreuyPNlHcqr7ofp8LiqfecFoTVXJ0wl3nCH+H/EwU35D79
+	dOfD0pde54+YbEsMiq6bvqtw34V5WQuKT+eUm5zg3fbn9a4tEUdXbdGW1ohZk5yz8lTzc8NQ
+	udbuVQpn3P+9Yb9hqLbg/j8lluKMREMt5qLiRAAjBZlALwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSnO7PywnpBid3iVk8mLeNzWLN3nNM
+	FvOPnGO1ONr6n9ni5ax7bBbnz29gt7i8aw6bxYzz+5gs/u/ZwW6x884JZgcuj02rOtk8+ras
+	YvT4vEkugDmKyyYlNSezLLVI3y6BK2PrnQ7GgsP8Fcu2bmNuYDzA08XIySEhYCLxfXoDUxcj
+	F4eQwHZGiRVdS9khEhIS397sYYKwhSXutxxhhSh6xiixfP80ZpAEm4CjRNuDRSwgCRGBXkaJ
+	8xNWs4AkmAUaGSUudrBBdAAljl1/zQaS4BSwkZi9eRXYCmGg7jsnN4PFWQRUJTZdPsEKYvMK
+	WEpcf/iZBcIWlDg58wnUUG2JpzefwtnLFr5mhjhPQeLn02VgvSICVhLvfjxhhqgRkZjd2QZV
+	YyrxdPI3Nph37j54yT6BUXQWkhWzkKyYhWTFLCSjFjCyrGIUTS0ozk3PTS4w1CtOzC0uzUvX
+	S87P3cQIjkKtoB2My9b/1TvEyMTBeIhRgoNZSYS3xiQ2XYg3JbGyKrUoP76oNCe1+BCjNAeL
+	kjivck5nipBAemJJanZqakFqEUyWiYNTqoEpndl/7+OFmWeVYjLMD0U81tkZWbuLSe3d9UdO
+	jE8lOrVtmre+TNS2+y6upeGql6DBc+3h/Jf9IWKBzb/1OzsbV06Uttl3z1tiveFxV5vQ9f87
+	Mh/fPP5u15vPyfzHnyZ+36C0JWDFEbFtS+bzqAY+snrG+d01Z+aPFO8lkTZTLX5+sX12x/G6
+	+UNDfbPWo6lPAuVsXy83SHv7xUo5bep57eUKwVwlb3+4Ba6e+5B1OWvkQ1OX058PBB5I3Trr
+	kdPetrM/z/205/pvduhje//7i4mPgzd2bpnBsTgo/VDNp++x7+7sbF73WmwSU/djDbZ1AaZx
+	0jaZRYdXmRQZbZu9YN912a51Uy1EHvfNndCno8RSnJFoqMVcVJwIAOos6D4xAwAA
+X-CMS-MailID: 20241217012929epcas2p143c323e728c1e22144579b7b827d4580
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241217-drm-bridge-hdmi-connector-v7-10-cb9df2b6a515@linaro.org>
-References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
-In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1868;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=7s/0WO/aTzEx9yhjto9LxdTyBBJwSv9ES82NKKPeNQ4=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnYMh66KurD/so/4BhoqlDVPuK2xAohhbIWN/EG
- x67827EyE2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ2DIegAKCRCLPIo+Aiko
- 1ZsiCACZHuxK0m8L9MH1NhE2yPwWUTbzhXV2jMuyyQcJBcJKvwYMEAdKnau9ASgbjUyjrS0EqxK
- PG9HYh7v6OQuoktgWtwxcZgo8DyLPYPsH3ep2lhRl3cz3v19tta06Uegl+D5MxWNoOployl5pF4
- LYT81VevjzV55DOYBg/jYXMGpIZF+9d3Umz+KLMKQZ5DXC85lct2mD6XBUBijzLjKir8Yn92L2b
- o6p48mzqad3L+E2Mxe5QGYoLg5IvVV+ouFScCpgfmP28rZL9PzfgkdmP0ahbxw/xtzK1kfWSxSI
- 2DH1/dpfUzApuoHsTjp/y0HbjKkiH/BbrYduZ4L2RBFNDDAi
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241118021011epcas2p397736dd9e5c7d96d799716e09919c136
+References: <CGME20241118021011epcas2p397736dd9e5c7d96d799716e09919c136@epcas2p3.samsung.com>
+	<20241118021009.2858849-1-sowon.na@samsung.com>
 
-Use the helper function to update the connector's information. This
-makes sure that HDMI-related events are handled in a generic way.
-Currently it is limited to the HDMI state reporting to the sound system.
+Hi Krzysztof, Vinod,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index bb5e8738845c74d975c1e0e1262ced46e4ef8fde..328a845ce0c4168b5463d344b3ad1f77a5437cff 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -383,7 +383,6 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
- 				    enum drm_connector_status status)
- {
- 	struct drm_connector *connector = &vc4_hdmi->connector;
--	const struct drm_edid *drm_edid;
- 	int ret;
- 
- 	/*
-@@ -405,17 +404,14 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
- 		return;
- 	}
- 
--	drm_edid = drm_edid_read_ddc(connector, vc4_hdmi->ddc);
-+	drm_atomic_helper_connector_hdmi_hotplug(connector, status);
- 
--	drm_edid_connector_update(connector, drm_edid);
- 	cec_s_phys_addr(vc4_hdmi->cec_adap,
- 			connector->display_info.source_physical_address, false);
- 
--	if (!drm_edid)
-+	if (status != connector_status_connected)
- 		return;
- 
--	drm_edid_free(drm_edid);
--
- 	for (;;) {
- 		ret = vc4_hdmi_reset_link(connector, ctx);
- 		if (ret == -EDEADLK) {
-@@ -549,6 +545,7 @@ static void vc4_hdmi_connector_reset(struct drm_connector *connector)
- }
- 
- static const struct drm_connector_funcs vc4_hdmi_connector_funcs = {
-+	.force = drm_atomic_helper_connector_hdmi_force,
- 	.fill_modes = drm_helper_probe_single_connector_modes,
- 	.reset = vc4_hdmi_connector_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> -----Original Message-----
+> From: Sowon Na <sowon.na=40samsung.com>
+> Sent: Monday, November 18, 2024 11:10 AM
+> To: robh=40kernel.org; krzk=40kernel.org; conor+dt=40kernel.org;
+> vkoul=40kernel.org; alim.akhtar=40samsung.com; kishon=40kernel.org
+> Cc: krzk+dt=40kernel.org; linux-kernel=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org;
+> sowon.na=40samsung.com
+> Subject: =5BPATCH v3 0/3=5D Support ExynosAutov920 ufs phy driver
+>=20
+> This patchset introduces ExynosAuto v920 SoC ufs phy driver as Generic PH=
+Y
+> driver framework.
+>=20
+> Changes from v2:
+> - simplify function name from samsung_exynosautov920_ufs_phy_wait_cdr_loc=
+k
+>   to exynosautov920_ufs_phy_wait_cdr_lock
+> - return immediately after getting the CDR lock
+> - add comment for wait CDR lock
+>=20
+> Changes from v1:
+> - use exynosautov920 instead of exynosauto to specify
+> - remove obvious comment
+> - change soc name as ExynosAutov920 to keep consistent
+> - use macros instead of magic numbers
+> - specify function name
+> - add error handling for CDR lock failure
+>=20
+> Sowon Na (3):
+>   dt-bindings: phy: Add ExynosAutov920 UFS PHY bindings
+>   phy: samsung-ufs: support ExynosAutov920 ufs phy driver
+>   arm64: dts: exynosautov920: add ufs phy for ExynosAutov920 SoC
+>=20
+>  .../bindings/phy/samsung,ufs-phy.yaml         =7C   1 +
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi =7C  11 ++
+>  drivers/phy/samsung/Makefile                  =7C   1 +
+>  drivers/phy/samsung/phy-exynosautov920-ufs.c  =7C 167 ++++++++++++++++++
+>  drivers/phy/samsung/phy-samsung-ufs.c         =7C   9 +-
+>  drivers/phy/samsung/phy-samsung-ufs.h         =7C   4 +
+>  6 files changed, 190 insertions(+), 3 deletions(-)  create mode 100644
+> drivers/phy/samsung/phy-exynosautov920-ufs.c
+>=20
+> --
+> 2.45.2
+>=20
 
--- 
-2.39.5
+I can't see these patches in -next, do let me know if anything is missing t=
+o be addressed from myside.
+
+Best regards,
+Sowon Na.
 
