@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC48970827;
-	Tue, 17 Dec 2024 05:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DE314D70E;
+	Tue, 17 Dec 2024 05:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734413005; cv=none; b=bouvuiEQBl7JY+o6b6AMDxt/ObHqzBBrdHsJGOfQ1TUdjDWZeneift7SUV0nRwTuRNRj0+PRNaA0R0W8YPTmVKuDbWXxpoHuWpceOdbpWukditaM7LrsiaeGHEDAPkHVmwwoPq7wkkBzKFeiprZgPdw1IYaMiA/xgvG12R3+g8c=
+	t=1734413094; cv=none; b=GPgHCCimuhYKgHbBRRWhZGjYgTwLaQqmD7npG7CnyZMBX7Ck0fBqgpQtYJRAa77hRPFcFLTxpajPFkOQMTUTGa6XbnwmkxISfDTSvB/YAHCuCZ108AsFRYqUhthZXjGvxZ7FpxABxYIXCydqYaZKyBDGg8i626nLdIgt6vkffjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734413005; c=relaxed/simple;
-	bh=MmO+9+e52PozIHU0Y5c6pppr8J9Lpj9/HITo3OP74mM=;
+	s=arc-20240116; t=1734413094; c=relaxed/simple;
+	bh=9RcEuBF5bowQAtfg1xxeDCSTyQtNu3L63uQXRiWuZGg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8V0KPD+g+DsrbPBm8DcNJiS87UrT5C7GesM/bCntChX9zHAvMAwd73e13YlsdvO0I+3SFlSiK728dsMPVJoxN6+xCZq6vwpBGVz22+R0T0bPPUCwZ9fdylJvhLwdKp20V3139OzbnD762mLkTja7eOHOITeYWAEND7oTiypSnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Smu4bsB5; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=SqD13fvbbHzFJTQ8c5/UkYIAilkh+KqzNLllEd65g4ekUM5rHcCFceHDuLkcuSCpT44zqCOsFhxzENzfrhuxZVf+pyeLIoHIsiABofYXQjcCHe5FXbF09We4nEMVDuSvun3no55haF4czp/Ho1DFKYT7dF06r6Hocgy+v3yTIEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gy6EJ1c9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Smu4bsB5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C832C4CED3;
-	Tue, 17 Dec 2024 05:23:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gy6EJ1c9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 170B5C4CED3;
+	Tue, 17 Dec 2024 05:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734413004;
-	bh=MmO+9+e52PozIHU0Y5c6pppr8J9Lpj9/HITo3OP74mM=;
+	s=k20201202; t=1734413094;
+	bh=9RcEuBF5bowQAtfg1xxeDCSTyQtNu3L63uQXRiWuZGg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Smu4bsB5879atlJ6xWW0knUUZ99oVtmNDrFwI1b5+pHkLg9zh+cohF0c+0udsqfTp
-	 qEJ+vO/5uDaX1JBbexjwI++1TeYiM1QBHG1jeRqgJ7MthRhPrL2PvSHUS9WpYkjPDj
-	 MlnwWSyJzVwMRTxpRHhQ2y4fddIc1voKsnJYq5VP8iUdmgVXlnwmMNBaDKzrBR2yqc
-	 xb3MbTkZGKMC4FhgZJYuwNA2gWnu1eA58uXLNJnJiilipQ0t/fktYRYSzX/pX5b4xC
-	 SmTcuopq9jYVKHVjOW4/WYsBDaxAxAlQlME3j//ZpChFIjW3ld++xNwEGYLV2kWU2f
-	 19WzC4fP2pc3A==
-Message-ID: <f2aa86b7-e668-42e7-a37c-1c2ccd84a85c@kernel.org>
-Date: Tue, 17 Dec 2024 06:23:18 +0100
+	b=gy6EJ1c9Ufla1uqwXLhVNI+sp3OxX5axM8kD85nc2St+C1g9/KojFx7/dVTCFbQaY
+	 wuuUjm94hYmXTfiWj08eIA8AVLu6TYizzznreAFJTakBvBLWRQXHlbIvjIOqgyt+xl
+	 XKWSpX3Br2Ucm3QWu7yi8IPyGMWAtcEKCWQlV0BnpF2bxKWx1AMgbOeEBQCf0lZ6/A
+	 2aWj3DshcG3mhisUJecw6s1Sr3gTMWP0KL1pGxO2I2Sg2wLFg6jtyIRou3rPJqoOef
+	 DY0zII+eqzmOy714FHshiqEVtvoOMTxH67Uc3w3+YvJccJQSOYLJqml1XSzGU0mtmx
+	 AMaZaryMwjH8g==
+Message-ID: <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
+Date: Tue, 17 Dec 2024 06:24:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,19 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Support ExynosAutov920 ufs phy driver
-To: =?UTF-8?B?64KY7IaM7JuQL1NPV09OIE5B?= <sowon.na@samsung.com>,
- robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
- alim.akhtar@samsung.com, kishon@kernel.org
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <CGME20241118021011epcas2p397736dd9e5c7d96d799716e09919c136@epcas2p3.samsung.com>
- <20241118021009.2858849-1-sowon.na@samsung.com>
- <000001db5023$1ddaaf30$59900d90$@samsung.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
+ samsung,exynos8895-hsi2c compatible
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
+ <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
+ <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,34 +93,74 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <000001db5023$1ddaaf30$59900d90$@samsung.com>
+In-Reply-To: <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 17/12/2024 02:29, 나소원/SOWON NA wrote:
+On 16/12/2024 21:59, Ivaylo Ivanov wrote:
+> On 12/16/24 10:44, Krzysztof Kozlowski wrote:
+>> On 14/12/2024 23:04, Ivaylo Ivanov wrote:
+>>> Add samsung,exynos8895-hsi2c dedicated compatible for representing
+>>> I2C of Exynos8895 SoC. Since there are I2C buses that aren't implemented
+>>> as a part of USIv1 blocks, they only require a single clock.
+>>>
+>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>> ---
+>>>  .../devicetree/bindings/i2c/i2c-exynos5.yaml  | 26 ++++++++++++++++---
+>>>  1 file changed, 23 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>>> index cc8bba553..b029be88e 100644
+>>> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>>> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>>> @@ -25,6 +25,7 @@ properties:
+>>>            - samsung,exynos5250-hsi2c    # Exynos5250 and Exynos5420
+>>>            - samsung,exynos5260-hsi2c    # Exynos5260
+>>>            - samsung,exynos7-hsi2c       # Exynos7
+>>> +          - samsung,exynos8895-hsi2c
+>>>            - samsung,exynosautov9-hsi2c
+>>>        - items:
+>>>            - enum:
+>>> @@ -94,9 +95,28 @@ allOf:
+>>>          - clock-names
+>>>  
+>>>      else:
+>>> -      properties:
+>>> -        clocks:
+>>> -          maxItems: 1
+>>> +      if:
+>>> +        properties:
+>>> +          compatible:
+>>> +            contains:
+>>> +              enum:
+>>> +                - samsung,exynos8895-hsi2c
+>>> +
+>>> +      then:
+>>> +        properties:
+>>> +          clocks:
+>> Missing minItems
 >>
->> Sowon Na (3):
->>   dt-bindings: phy: Add ExynosAutov920 UFS PHY bindings
->>   phy: samsung-ufs: support ExynosAutov920 ufs phy driver
->>   arm64: dts: exynosautov920: add ufs phy for ExynosAutov920 SoC
+>>> +            maxItems: 2
+>>> +
+>>> +          clock-names:
+>> Ditto
 >>
->>  .../bindings/phy/samsung,ufs-phy.yaml         |   1 +
->>  .../arm64/boot/dts/exynos/exynosautov920.dtsi |  11 ++
->>  drivers/phy/samsung/Makefile                  |   1 +
->>  drivers/phy/samsung/phy-exynosautov920-ufs.c  | 167 ++++++++++++++++++
->>  drivers/phy/samsung/phy-samsung-ufs.c         |   9 +-
->>  drivers/phy/samsung/phy-samsung-ufs.h         |   4 +
->>  6 files changed, 190 insertions(+), 3 deletions(-)  create mode 100644
->> drivers/phy/samsung/phy-exynosautov920-ufs.c
->>
->> --
->> 2.45.2
->>
+>>> +            maxItems: 2
+>>> +
+>>> +        required:
+>>> +          - clock-names
+>> I don't understand why do you need second, same branch in if, basically
 > 
-> I can't see these patches in -next, do let me know if anything is missing to be addressed from myside.
+> Because, as I stated in the commit message, we have HSI2C controllers
+> both implemented in USIv1 blocks and outside. These that are a part of
 
-I take DTS changes only after bindings got accepted. I think they were
-not accepted.
+On Exynos8895? Where? With the same compatible?
+
+> USIv1 need 2 clocks, and those that aren't have only one. So it's not
+> a duplicate for the previous - autov9 sets a minitems of 2 and the
+> others have a maxitems of 1.
+
+We talk here about branch that says 2 items. You duplicate that one.
 
 Best regards,
 Krzysztof
