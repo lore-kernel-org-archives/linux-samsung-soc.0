@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A011F76DF;
-	Tue, 17 Dec 2024 17:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2671F709A;
+	Tue, 17 Dec 2024 17:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734456295; cv=none; b=eCiiQ18BdLJWJIvJzWkoEM3XBJuR14AD1tKRje2ALDxTR36+cDmYPrU5NmZTG/69JyBkrs/UCshwbIdqWtN794Os+e8a0iQ5i4HxZ4B7dcm2KcTcYJSRvKBnweUo/upN3sKOkEnJsqKBKz2zQdMfstOSzsKVdx/RnXf0UNqt1sA=
+	t=1734456309; cv=none; b=XcncERpOkZURrqqiAEsugq+VKf1ufJT95VisUCA8z906Dpmy29RIwGsmlEFwoNN/9C3z96RUdNeviPdjTB9PYRQwhVpLxkd0iyV1Ng5ao98G9Gx9z11zhkXMJYkdJinsKcQ1YR6wsY5Z28bk+HCF2ox6v/hnADFoLLTqvkY2T/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734456295; c=relaxed/simple;
-	bh=1neTtSopNryfSXJpUTztXfgdin2CdL3yui9SkHic7sc=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=XTZfw4AxH0mRmYgcpdUC4IwpPf/fvsxBVRhw2JyG7JNq71VrD+aetNz6jADFMmXqf/YUDgP8tw33vfTjPexUqaOp8dDZonn2HnPpEf3I8CjsxbZzGLrMyd6MeEgM5zKJLi3PUpoBG7CZZluUboAr6sVQx2N0AnEUVY//w04EYBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EogvqqU9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734456309; c=relaxed/simple;
+	bh=nCvy4GS2XUqGmqTA94soHiboSzyVX7nHBtkKXyCp+Cw=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=Y8TxjVKGUCmYVphkyI7i6kRrDGUypARJHLgbni3SC2BCCh846JFr6qlb9kP6uYtRQFYN0QLsPog44yBMaralm0Wo9uLHIsVVGmWJtiT0zWtxTMx7qkn3Tzu2q71JwuhVZrYjeLbUeCjxWuk2q1Fm033qB5YVYi24seagjiAggSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXeMSPbb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EogvqqU9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3A0C4CED7;
-	Tue, 17 Dec 2024 17:24:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXeMSPbb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70CBCC4CEE2;
+	Tue, 17 Dec 2024 17:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734456295;
-	bh=1neTtSopNryfSXJpUTztXfgdin2CdL3yui9SkHic7sc=;
+	s=k20201202; t=1734456309;
+	bh=nCvy4GS2XUqGmqTA94soHiboSzyVX7nHBtkKXyCp+Cw=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=EogvqqU9oOnJ5EIFzyyngkskqdGRCP/nWMjNGQJtCFKlESW9sUMqjJVTyNyVoQnq+
-	 4yNdtA2nMz0N1XY2WBX1TdDY+vqBXBMoOHrORVPaD+OOb1J/1G7Dttwkf65CrfLYsA
-	 qiKUoUCw4nKMckzclhvvPO3LcLATPPlSJhGbmKJZAT3FXKUfKqVLnHkSVxKAx5Cs97
-	 /F6P3waG2AKau25BW5taRar4r1CPCr3bVwUimy9TR5Mh/vjduIIlAuZmwMOAUI1Pkk
-	 zjqJQOKuyDMXS6Nkhys8TXhpfnApHj8yLwZTaVkPcMvjTzmaYhpRa149+pxMeY2N8f
-	 5XHqodI69Xq+w==
-Message-ID: <2dad2c52bb2babf3af0196f17c74a9fa@kernel.org>
-Date: Tue, 17 Dec 2024 17:24:52 +0000
+	b=IXeMSPbb3US4V7xq2w1X5bwx6pWIgZ1xAGN84LaSw+VEEftIbRMCd01KUZ5qcUAjg
+	 G1jk8Rt5EUqTwLddGOxGxiddJ4ShkICVMy2YcaF10CzWd2RxBSar788si2r9ARNs6c
+	 SgB59cekKqtIDCouRcMPnHWTFbeEj6CzKP5gUL/IDRfI/4jZZeqaXIvFRd/nB1AkJ+
+	 SMzNWBYv6x53Fo92UjsXX/SlszevX4pGC9xvsLAFsGdmZ/POgQvP9jLhNAc3f3SSYE
+	 Ac0jgrgXf6ngEt3C0M0M0/ud0oNx/c0mZgyv9+f1JDI5YcENrN1CK5HwuneZd4Jn09
+	 l+f3EDeTJTHAA==
+Message-ID: <b2ad15d2d5049701f34099e0df7fb727@kernel.org>
+Date: Tue, 17 Dec 2024 17:25:06 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v7 06/10] drm/display/hdmi: implement hotplug functions
-In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-6-cb9df2b6a515@linaro.org>
-References: <20241217-drm-bridge-hdmi-connector-v7-6-cb9df2b6a515@linaro.org>
+Subject: Re: [PATCH v7 07/10] drm/bridge_connector: hook
+ drm_atomic_helper_connector_hdmi_hotplug()
+In-Reply-To: <20241217-drm-bridge-hdmi-connector-v7-7-cb9df2b6a515@linaro.org>
+References: <20241217-drm-bridge-hdmi-connector-v7-7-cb9df2b6a515@linaro.org>
 Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org, "Alain
  Volmat" <alain.volmat@foss.st.com>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Andrzej
  Hajda" <andrzej.hajda@intel.com>, "Andy Yan" <andy.yan@rock-chips.com>, "AngeloGioacchino
@@ -58,12 +59,12 @@ List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 
-On Tue, 17 Dec 2024 02:40:28 +0200, Dmitry Baryshkov wrote:
-> The HDMI Connectors need to perform a variety of tasks when the HDMI
-> connector state changes. Such tasks include setting or invalidating CEC
-> address, notifying HDMI codec driver, updating scrambler data, etc.
+On Tue, 17 Dec 2024 02:40:29 +0200, Dmitry Baryshkov wrote:
+> Extend drm_bridge_connector code to read the EDID and use it to update
+> connector status if the bridge chain implements HDMI bridge. Performing
+> it from the generic location minimizes individual bridge's code and
+> enforces standard behaviour from all corresponding drivers.
 > 
-> Implementing such tasks in a driver-specific callbacks is error prone.
 > 
 > [ ... ]
 
