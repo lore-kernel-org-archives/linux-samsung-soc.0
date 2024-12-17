@@ -1,63 +1,64 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0451DB527
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2024 08:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF411DE2B3;
+	Tue, 17 Dec 2024 09:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734424714; cv=none; b=fSwmmgHa/edu4AvRXRjd327hpy0b0S3MNGbr13yudmTD3JJcNS0YiZERYM6Ddl88j6BqBkf/pWqqronY816gsorcE/FYKNYZV9L2Xmfm07Cr6IIOzCneD5dMQVDSq0Y5WSxSDK2txrINZpjTN1IyMBxFSj10vejKQmLlQiqnTng=
+	t=1734426513; cv=none; b=EaK52dbYhjuuXdmuQkhY1yG9zYichdkTombUpiJso5mmpbaDyPoBef48FvAY+jWDr0XrEzigV6Rh+RqXf+OVmneKaMuK1952XTP9QHsxgPUcz9VQCjPd4g74dbIQBvcv0HWRrzfjhJhCyHf9RZ0vOzR+l6l4JLcnssGPMyUkfYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734424714; c=relaxed/simple;
-	bh=QsxB+FcvHkxYn5Z6wPrrZeML8ztRrKsQibnLZJ59yf8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PbvnKqr1RKY1p7kTJ02/U4Vk99UjwSsOoJBNNYupJsv27viydv2tmpE7UzmkvCNjDnmSJjLO2voy3k/FxMX1h5QhgP8GrFm2/35+WKhWCCD/qbTAZBhG70gIynz+TRb2ZXLqZajyq5eFoYGIBDvTH7Jiuo9Dot7PgXdSE5sbjJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jnSWrHaQ; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734426513; c=relaxed/simple;
+	bh=CHyFqO9Srp6ss3rLdTR3OwjKwdFQnlQugV3a49zxFz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G9UjGOoSHaE4GEIaIemWHOsViHAayubq3KgunLFJ0s4MVLEaPf+xGWxNcmLN/F/ttgl8ZzsyIQ4ggqqfWGY7/jkRAzEwooEJLbGXaztZ/rnfeCl6gDALw6tasUz2/JqOTj2WPW9uB+i0xv0x/evUy5ixaksVmim+G3YlSYecXrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jShYx6So; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnSWrHaQ"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434b3e32e9dso54611235e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2024 00:38:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jShYx6So"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385eed29d17so2537531f8f.0;
+        Tue, 17 Dec 2024 01:08:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734424711; x=1735029511; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LwKLcx3qWGZ0J4OB9gBZAl+ma98QJfj1A73XswW/D2s=;
-        b=jnSWrHaQL+3QaWFglq3oInfvSme4/Ez8Qe9BWQ8Stmqxyr1s2dH5bjIr1rnWoNY3Wh
-         ehYgxrLhFvhgJCGq9t/lg9s/MgbyRdOfW+4J6NghpFj2G3slbpaOCbbf20N6ODBqsB6d
-         Fh1sYneNougEAX7EQMXY+1IoLP1hZjv3TzN6t2An9iy8C90eHBGEeHd0EAR0sQ3s0sLy
-         102mR99+a4fFERFBneb2pkbF77T36Zl+wky00ON2rQ9zxfATIukXyZsTX+xUh16ESZoZ
-         Ipt/eFuAm2e0xNbxnyCg2n6JLGaSuiQwqsBwHveujCneEgiT0A8S4p6z1NVkHihaExmb
-         ZdJQ==
+        d=gmail.com; s=20230601; t=1734426509; x=1735031309; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5weIQENd/TWSQgQ6aqWujhlJ38EIL0ozLxoFHUkrYE=;
+        b=jShYx6SowHf9YNXu3Ln9CRTXmQBMglmoHPXBI8oBfcd16goNWWuej/DfAGOCZSuCby
+         o8FcrG1UP+Yh9XOFQSDYEvRVGrZPfIB0jXo1VOYYraE74elGaDMQEo/d68N5ZFGp+IYB
+         Hg6nCetPOFoMbp6/m+tBDzzedISjCkZy1AracnS71LUEod9a3pEzXo7kVmUHmNu2Vspu
+         u8WlfER8vuwT50hDyUZ+j4uh43n8MvmI7SjmNFdMeNCyXh1lJJ6obqRmRrlf3WC3yZbR
+         CE5/7goAigf84F7hsaBag/eNxVDPRqtOSwGV0xaMhd3r8cl1dVDGbAUGh5If8ZrXuPyJ
+         n1qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734424711; x=1735029511;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1734426509; x=1735031309;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwKLcx3qWGZ0J4OB9gBZAl+ma98QJfj1A73XswW/D2s=;
-        b=e0Dq5N1XYy16+OSUM9YTlJ1Q6IQRRnEopGJeqY3CSBiqNYRQjPJndT/meWxhqf43RZ
-         kPtbTnxKZ+LOlSAhoVEuDmDvXcFBAdvHXUS2EgzyXMuiHX2IV9Q18lF77ILM3Fzxacu+
-         i9DYi2WDAXc6lfQGh+YHmLaeLhZQxEGclQ3/9N60eRZzBfSLcWY49zhYjMb3PG9UIWAl
-         vPYeewhNH4519p8fLBTCNsH3cGAVyrzNVDJh+PZLpkQG0cS53kd4STk4o+LigqmROSlh
-         lK1KdKIFbzvai4ERQbAvz4NQheFw80cbFE3utVsBbC7U4nYbd9s9YH7XCfkUmd6+J3Ik
-         pDAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaPcmAWv+qGCFos8weDGeSyyNyqgJBI8F/YN/qLnbLia8YU/XsG78iLvZlKIV//FNNKKUoFapPZmKxFPu07D7LBg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRGl+EjaawgCPIKtrJghsa6YL5ojCQ7pdsMwtFyR/2ZzGvh4Zh
-	zhBaRrm61OVFPFUYU7FukebwuS17Dbv1/VwHR2nQu9RL8FR/NoUqCXA5T0fw9KA=
-X-Gm-Gg: ASbGncvmMIh3xhiJBL1zP9F7RytD1oOV+vOf0LE6Cd2SCZdtvtqEEuhPH2VtmFEw+dD
-	rED+7yyRIcA1MmNY8K7Ui8bx7AgSfKA+HW0hVFHQKbXRm/jyrL3ksYyu9AkUStreidX6SPBbVis
-	sm41Ti+EGFJ+32NCeApZHyOH7F7nQal1uk+EMQQAaaKTf2E0DZuX81IWTKtEBOCXTdlTv51gsud
-	YcHB2uKLuJTKonsi/TxXKOAIo0SPYsbZ+8J8onjQOAha5WEl8Mbyqq9VP0E4QjE
-X-Google-Smtp-Source: AGHT+IG1ScKF9S6YLpA0VEyZm9yVfmIx7vyc5/iav7Ktgk6AaGAJ4fl38EJ0MOFcy/fDQp5fgbPrhQ==
-X-Received: by 2002:a5d:6c63:0:b0:385:ee59:4510 with SMTP id ffacd0b85a97d-38880ac1cc1mr14557623f8f.9.1734424711437;
-        Tue, 17 Dec 2024 00:38:31 -0800 (PST)
-Received: from [192.168.0.14] ([188.26.61.92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8060592sm10298741f8f.98.2024.12.17.00.38.29
+        bh=Q5weIQENd/TWSQgQ6aqWujhlJ38EIL0ozLxoFHUkrYE=;
+        b=tNalSb4nOBlfoVUsQ8eEYjV9vhfyBjjOpG0G7DQp8tObvXq2RC54ZVYlWhCycCT6D5
+         boyehJVfg3k5mVScojIJKk1UDss4FvBcc+Mt3MJNPhtL/+vy3UHtpRG5a36oz05OXeen
+         xJWqrgpopiFCyTSk+DKz6dmz8mWldRfcSmbfJr7FH/QTulWIXaG4fv2QqA8tH7e49Rw4
+         yX8fRXeIupsSPG0MbRlvE53kq/DwC7b7Vv/mgV5WYNro1V647c6UTpk1K/XtoqYSYkCO
+         sYcE7TtdTOb+ywjY2H8AOu3dEBnGwAL2Jn74P+ihPMzjEuvPHEQhcdfQfZQsNKPhP9HA
+         3ucg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ0Dgo1CuQIlVTN4JIKW+SbJysWwH1uhH4bjT8BjcgGWd0aJmzvj4CcEPq7iPunaWmYN19tKYJlZL2EPXaI3Sas3E=@vger.kernel.org, AJvYcCXCQPw7bXckZ2CxmpQrH58u1T5r+oD6QUjrDzhU85SVTvGvNIkDhY/kr4eCBkqWgKpHfWVLnZsJ0UIt@vger.kernel.org, AJvYcCXs311ZlseEShR1ml3zIURXENn4N+mwNh3ur+RdUdc5TJlzECrniVLKerSNNsx523cHmd3WphQX+rDgsm24@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZwwK4PymF0yucwRDjCDw8DAJL49lwT3BqbGIC0mnMBjVSewOQ
+	5dp+TKPlGCNaauvUKdWlfW2VIB7DiDKN1lLQ9XTHEMCYrxPvA5zs
+X-Gm-Gg: ASbGncs3oDZb0c2IvgBO9zarozxYfFr1oGAFY43cvPiaAjTGoGq7CuUuSm3fpwqjIgU
+	dXQARiwgPJYyap7x986JtKUqWIsWveUVKUl5AV2tLHyeENSmvmE8PLAJgtYOn7V2qZ8QQqipK+Y
+	WEJHnice2E3K4fk9wkkeSXkDWrCrsTXdegr/CxAVReNL3aoM599V7plpfsgfLXRL9y3Blh/0B9c
+	t8uRY2XFu1q3R8RibxbfLmz76bcYUd5YBorJirFsDpmP4SxQhbScUayCwPni3gMcLVvhHiEKT8p
+	oMEL9h+/iImHgrSRFDRUnA==
+X-Google-Smtp-Source: AGHT+IFKUA5hQNQSywoZDLpGUcdLM6zt8M6vh5FswSnswuK4fj51IzxHglfrE9X7z3ZJ7TaFHj1FhQ==
+X-Received: by 2002:a05:6000:156f:b0:385:e328:890a with SMTP id ffacd0b85a97d-3888e0c0520mr13813018f8f.49.1734426509180;
+        Tue, 17 Dec 2024 01:08:29 -0800 (PST)
+Received: from [172.16.20.173] (62-73-104-42.ip.btc-net.bg. [62.73.104.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c80165c5sm10519556f8f.25.2024.12.17.01.08.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 00:38:30 -0800 (PST)
-Message-ID: <4e8936e0-ac69-49e8-919f-b2776dd88779@linaro.org>
-Date: Tue, 17 Dec 2024 08:38:29 +0000
+        Tue, 17 Dec 2024 01:08:28 -0800 (PST)
+Message-ID: <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
+Date: Tue, 17 Dec 2024 11:08:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,106 +66,101 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64: dts: exynos: gs101: add ACPM protocol node
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: William McVicker <willmcvicker@google.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, kernel-team@android.com,
- daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
- ulf.hansson@linaro.org, arnd@arndb.de
-References: <20241212-b4-acpm-v4-upstream-dts-v2-0-91b7a6f6d0b0@linaro.org>
- <20241212-b4-acpm-v4-upstream-dts-v2-3-91b7a6f6d0b0@linaro.org>
- <Z2B3V78k2ibIdLYh@google.com>
- <45a54924-226e-4a94-b1ae-b0f1f703f854@linaro.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
+ samsung,exynos8895-hsi2c compatible
 Content-Language: en-US
-In-Reply-To: <45a54924-226e-4a94-b1ae-b0f1f703f854@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti
+ <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
+ <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
+ <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
+ <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 12/17/24 7:20 AM, Tudor Ambarus wrote:
-> 
-> 
-> On 12/16/24 6:54 PM, William McVicker wrote:
->> Hi Tudor,
-> 
-> Hi, William!
-> 
->>
->> On 12/12/2024, Tudor Ambarus wrote:
->>> Add the ACPM protocol node. ACPM protocol provides interface for all
->>> the client drivers making use of the features offered by the
->>> Active Power Management (APM) module.
+On 12/17/24 07:24, Krzysztof Kozlowski wrote:
+> On 16/12/2024 21:59, Ivaylo Ivanov wrote:
+>> On 12/16/24 10:44, Krzysztof Kozlowski wrote:
+>>> On 14/12/2024 23:04, Ivaylo Ivanov wrote:
+>>>> Add samsung,exynos8895-hsi2c dedicated compatible for representing
+>>>> I2C of Exynos8895 SoC. Since there are I2C buses that aren't implemented
+>>>> as a part of USIv1 blocks, they only require a single clock.
+>>>>
+>>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>>>> ---
+>>>>  .../devicetree/bindings/i2c/i2c-exynos5.yaml  | 26 ++++++++++++++++---
+>>>>  1 file changed, 23 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>>>> index cc8bba553..b029be88e 100644
+>>>> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>>>> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.yaml
+>>>> @@ -25,6 +25,7 @@ properties:
+>>>>            - samsung,exynos5250-hsi2c    # Exynos5250 and Exynos5420
+>>>>            - samsung,exynos5260-hsi2c    # Exynos5260
+>>>>            - samsung,exynos7-hsi2c       # Exynos7
+>>>> +          - samsung,exynos8895-hsi2c
+>>>>            - samsung,exynosautov9-hsi2c
+>>>>        - items:
+>>>>            - enum:
+>>>> @@ -94,9 +95,28 @@ allOf:
+>>>>          - clock-names
+>>>>  
+>>>>      else:
+>>>> -      properties:
+>>>> -        clocks:
+>>>> -          maxItems: 1
+>>>> +      if:
+>>>> +        properties:
+>>>> +          compatible:
+>>>> +            contains:
+>>>> +              enum:
+>>>> +                - samsung,exynos8895-hsi2c
+>>>> +
+>>>> +      then:
+>>>> +        properties:
+>>>> +          clocks:
+>>> Missing minItems
 >>>
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 22 ++++++++++++++++++++++
->>>  1 file changed, 22 insertions(+)
+>>>> +            maxItems: 2
+>>>> +
+>>>> +          clock-names:
+>>> Ditto
 >>>
->>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> index 04561e15b96c..8c3f07371912 100644
->>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>> @@ -277,6 +277,28 @@ apm_sram: sram@2039000 {
->>>  		ranges = <0x0 0x0 0x2039000 0x40000>;
->>>  	};
->>>  
->>> +	firmware {
->>> +		acpm_ipc: power-management {
->>> +			compatible = "google,gs101-acpm-ipc";
->>> +			mboxes = <&ap2apm_mailbox 0 0
->>> +				  &ap2apm_mailbox 0 1
->>> +				  &ap2apm_mailbox 0 2
->>> +				  &ap2apm_mailbox 0 3
->>> +				  &ap2apm_mailbox 0 4
->>> +				  &ap2apm_mailbox 0 5
->>> +				  &ap2apm_mailbox 0 6
->>> +				  &ap2apm_mailbox 0 7
->>> +				  &ap2apm_mailbox 0 8
->>> +				  &ap2apm_mailbox 0 9
->>> +				  &ap2apm_mailbox 0 10
->>> +				  &ap2apm_mailbox 0 11
->>> +				  &ap2apm_mailbox 0 12
->>> +				  &ap2apm_mailbox 0 13
->>> +				  &ap2apm_mailbox 0 14>;
->>> +			shmem = <&apm_sram>;
->>> +		};
->>> +	};
->>
->> You mentioned in the previous patch that "GS101 has 14 mailbox controllers",
-> 
-> Right, I got the number from the GS101 memory map.
-> 
->> but here you have 15 mailboxes. I looked at the downstream driver and see the
-> 
-> Here we have a single mailbox controller, ap2apm_mailbox, with 15 channels.
-> 
->> number of mailboxes is defined by the ACPM framework (firmware) which is read
-> 
-> s/mailboxes/mailbox channels that ACPM uses/
-> 
->> from SRAM initdata. Dumping that, I see there are 15 ACPM channels. Have you
-> 
-> Correct.
-> 
->> looked into into extracting the data from the initdata SRAM address?
->>
-> 
-> Yes, that's the reason why I defined the 15 channels from above for the
-> ap2apm_mailbox controller.
-> 
+>>>> +            maxItems: 2
+>>>> +
+>>>> +        required:
+>>>> +          - clock-names
+>>> I don't understand why do you need second, same branch in if, basically
+>> Because, as I stated in the commit message, we have HSI2C controllers
+>> both implemented in USIv1 blocks and outside. These that are a part of
+> On Exynos8895? Where? With the same compatible?
 
-Haven't explicitly mentioned in the commit message: the ACPM protocol is
-a mailbox client for the ap2apm_mailbox controller. The ACPM protocol
-uses 15 mailbox channels of a total of 16 channels that ap2apm_mailbox
-controller provides.
+hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
+from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
+they need a different compatible though? It's functionally the same i2c design
+as the one implemented in USIv1 blocks.
 
-Let me know if you think I shall update the commit message.
-Thanks,
-ta
+>
+>> USIv1 need 2 clocks, and those that aren't have only one. So it's not
+>> a duplicate for the previous - autov9 sets a minitems of 2 and the
+>> others have a maxitems of 1.
+> We talk here about branch that says 2 items. You duplicate that one.
+
+I see. I can just define the clocks for all at this point.
+
+Best regards,
+Ivo.
+
+>
+> Best regards,
+> Krzysztof
+
