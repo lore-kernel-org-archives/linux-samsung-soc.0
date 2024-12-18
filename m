@@ -1,94 +1,96 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DAD13212A;
-	Wed, 18 Dec 2024 15:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7261F0E40;
+	Wed, 18 Dec 2024 16:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734536107; cv=none; b=uKp+NA5a/I4j71F/Kkoni9zG1h1jU6d7Gsyib3MWgEHemkw48USva1c019Tipo0EOp6pCvbIBQpqFSRf4krf5MqLfYABrBSSA2I6q8qdAoazmXe8IAI9PMczj0+AuJkvJsufAi/FPzjWCo7N1HXNjWsiT4fik8GhUNJNXfS7Z/A=
+	t=1734541116; cv=none; b=dxd8eZ+r95QuF0UEjDtmM03bmat+VtN11G0hT/cS5H6m48zx8xv0VT9fTJCwwQaD/uy0sW/DBbB5XpOnSBPL999rvo/i/2c6X5nzkkv5WJ7ncaD1v7sUL+KuIpghEFEagqKsKswSDVadrakroFTUxlTbpwLW7BsluYNCY8e2uOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734536107; c=relaxed/simple;
-	bh=DG5Uydk1Hvw8FVpZxUIigNGD17tSbGmGCQHmGMHwuqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NFpc458R+2ExjfL3DuI7Gawo7hJhZH5dgtn8ShlbBXUR1UtOtxwxaAMyRWsBakDbj7fyaSLNmbxk6D+PjiQkEVdT04xGDtd7obvVE1Dzl59XI5iM9A778IYVVucnUFA2dqPIiK4Ur5t58Up0PEI+D3wde+3zjw9wedXruhFh2JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k6XM9zP/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1734541116; c=relaxed/simple;
+	bh=+N+LpUq64TZzmtBK5R6fW3Dr0MHVHydwIB3XVv653Jw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AHlMg4GNR6aRsrwTFAsrN1jmf7HdJSn9/yySxhSL1cMq7w5CSUuSgl2hZLS0rL8xRUt3caF1YqVs3fmfy1mLQlBrdHGk/YFjqYuOnnH3aCCODUBYKr5ktndelY3Za8UstJi1VmubZzLEa0OnGf3B5UFGSF8jcixPU6gDj4+MxBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMdhp7Mq; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k6XM9zP/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734536103;
-	bh=DG5Uydk1Hvw8FVpZxUIigNGD17tSbGmGCQHmGMHwuqQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k6XM9zP/gM9gkkcCyB8vtKl1bj9B4jIrcwvsd3dYbF2nvbO4pbGcEnHC8H8P3OL6b
-	 jn2kxmChKvWi7HYpjviQbH5mI9nK6e+7ruMMAwe4PQvFmAazo95WpqDBquFKKnihXA
-	 JxOPh0CNTyc9BLNdrY9PkycApngwiUd5Rg+vXiM6fGW4aYHkw3WMYUeCTsJ+bnlbKY
-	 HIZJTCYMq02O44AcL31+TY570HZsPK08P6eDtuEVzEKhpnxXwTfr8tV/W3lrx4NHv0
-	 6UASO5v/CodOvaFYljIT59x9FlFhYC/USq0GSCLPG8O7kto0ucfLHw8OPsqZSpCxsR
-	 Pd5Rg8+lnWK5w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B0E4D17E3784;
-	Wed, 18 Dec 2024 16:35:02 +0100 (CET)
-Message-ID: <54598909-979a-40b6-aa68-78ad87105088@collabora.com>
-Date: Wed, 18 Dec 2024 16:35:02 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMdhp7Mq"
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5f3397bef34so1170778eaf.0;
+        Wed, 18 Dec 2024 08:58:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734541113; x=1735145913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wHxeofl98UpJxEPkYUNcU87+k4nJIUS9VT+0N18/vOs=;
+        b=RMdhp7MqWf3aV+W0O0NxIMcZ5y7V3jed4seHbtWZZn5UFiooxyjujK3r8FsRvubCG2
+         CdBm7ZiYVkw28WghgH0gjULGV5cQmpm/DR+Y5k1bvoRylMoQUQm26Q++e5pBBCVVnVAX
+         Ann8jHArQYYO12Y0ib9Sv5zDHhwWKMiVaVx2sn4O6MtDcRhqTzajpqHZnt6UnoD4v6Wf
+         H9Iq1ji5gXAazUjypTtSbSFgrCzcslE4qLvfYJRRuA2ypj6brGFX3AnPBbK8Gn+mPphn
+         pbnjA0VOyISPu2AXsU/BSbcjBDjs0aRLUM6gu5STXxbcwXGGwtot22neUffgh1suQaWQ
+         dOuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734541113; x=1735145913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wHxeofl98UpJxEPkYUNcU87+k4nJIUS9VT+0N18/vOs=;
+        b=dOgLH4kAdO9c8DndVO/e88/vBWrf1XBE1OLn/463/suQ/iTVs0Og76bKwpw4E4mfI9
+         MujUU0TZ88Y/biA+IO/n/z5y9M/G2VDHC3bDF7UB1M2VX9vkfxFlJZ1+ecE17eRFWnXU
+         Rhg4mZ+PnN+qm47Jyu/KEBbU1C4Vr5a4Q6NxOdCknsa27/3rxl1CVNEB7t4wgnxNi74S
+         Nsdr6iwc9zzobcZltlq6HfryYvs8XFwCrjdK1MaQ/vL/Hda45JPJL6RCBv4pxglTxShD
+         ogeLE0n6R039q/qpb5q35Lgt/At5RWeQWCswtrcU9RP6JRFKnKtfEMk5bA3WatlSGJ+a
+         ppXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuyyoa/vPf57NC1RW4OfHYhalyqoXb2mY1eTu6MHIAR76xOWJR4zUBnNLChlOpGwi8poJZbtt3t3hjK4A/@vger.kernel.org, AJvYcCVyE/n5EsoHpFdSYfUpNXXggbnJ6EPOiHQF++knEPQ0es/lCXjGVRP8tRKsKXKURft2UW2HF0MjAU5l@vger.kernel.org, AJvYcCXzGXKdynfcSVcAR88hQUn6eVXYw+yQkVjmen+HkVdv9l7eUUqqKqGgVf/b9GQMv/Udxz2aIo1LLxOklny1hXpTUyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW8ePdbmfP3EXK6b9HOxfRTgQFKnKu/q4VHFfVM41aG7Wk5TDz
+	IYRJ+BdCZNCjEu458LAqbFPbRGMDkCSJVPacDdRRIBmA1aBI2oG2TmJezlHfX5ZGd2eRnuprehm
+	lFEwaARAZ84E7dmjhhQllH5d2XI8=
+X-Gm-Gg: ASbGnctwTPTfoSqa7CWJ5Xp68JV4or0qvf/3rY4z7fOW7kD8j/qBo1SHUmj82feO4pF
+	V8zirmyno41PfIDzmghqMeK57sxCgzaVvuscx3s0=
+X-Google-Smtp-Source: AGHT+IFwpZKhrVSIb2dpXxrrnWJbLQuoyY9JFnJrMzPrGSzl5sIBF6BA/u364X5aMpPKHy+UN0YRV4CS/l9z91ENjAA=
+X-Received: by 2002:a05:6870:b4a6:b0:29f:d0bb:618e with SMTP id
+ 586e51a60fabf-2a7d080b687mr60544fac.25.1734541113322; Wed, 18 Dec 2024
+ 08:58:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] soc: mediatek: pwrap: Switch to
- devm_clk_bulk_get_all_enabled()
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>, Jingoo Han
- <jingoohan1@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
- <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241217-clk_bulk_ena_fix-v5-1-aafbbb245155@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org> <20241217-acpm-v4-upstream-mbox-v5-2-cd1d3951fe84@linaro.org>
+In-Reply-To: <20241217-acpm-v4-upstream-mbox-v5-2-cd1d3951fe84@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 18 Dec 2024 10:58:09 -0600
+Message-ID: <CABb+yY1W7HM1pry+wf03HFur3F3YdZwpRjrdtZ6aJtWQ2Ed3wQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] mailbox: add Samsung Exynos driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org, 
+	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+	daniel.lezcano@linaro.org, vincent.guittot@linaro.org, ulf.hansson@linaro.org, 
+	arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 17/12/24 22:41, Cristian Ciocaltea ha scritto:
-> The helper devm_clk_bulk_get_all_enable() missed to return the number of
-> clocks stored in the clk_bulk_data table referenced by the clks
-> argument and, therefore, will be dropped.
-> 
-> Use the newly introduced devm_clk_bulk_get_all_enabled() variant
-> instead, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->   > 0 if one or more clocks have been stored
->   = 0 if there are no clocks
->   < 0 if an error occurred
-> 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-
-
-Stephen, sorry for missing the discussion about needing an ack on older versions -
-Cristian just pointed that out to me.
-
-Anyway, if you want to take this one with patch [3/3] I'm fine with that, so
-
-Acked-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
+On Tue, Dec 17, 2024 at 3:40=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+....
+> +
+> +static int exynos_mbox_chan_index(struct mbox_chan *chan)
+> +{
+> +       struct mbox_controller *mbox =3D chan->mbox;
+> +       int i;
+> +
+> +       for (i =3D 0; i < mbox->num_chans; i++)
+> +               if (chan =3D=3D &mbox->chans[i])
+> +                       return i;
+> +       return -EINVAL;
+> +}
+>
+Maybe simply return (chan - mbox->chans) ?
 
 Cheers!
