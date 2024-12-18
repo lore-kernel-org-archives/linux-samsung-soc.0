@@ -1,151 +1,174 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD0C5FEED;
-	Wed, 18 Dec 2024 07:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BBB1494C3;
+	Wed, 18 Dec 2024 09:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734508787; cv=none; b=O5dATo1B1TyGgSooxLN++ybOlbxm9QM/jIUx/3vjfIwoYZ9c7iSs8hT5EPyi+jCYD66oTYTDrm2Z0E2zEfr3z1HvUXyIv2C4ziJJLcBVH7/jy/jSQ+3XNwVePrpSf/zLAWfrYkHqvEBQtSRbIva/+XFDqi0LgB4h2RJnfzYnulY=
+	t=1734513747; cv=none; b=FmRWxsr2YnwPb8Sz7/kFUmb/9PTQ7+KXn18QI8QJJMDpD6n06mH0UkEQ8wmFqdAjH05J/H1zrWkjYfzKpQLUgjmGeG4Gdl1Lsd42ZESCUTdwIcPnZjMFpGrTRibWQ+JKq/FH4wRPkfvBoniRYutFQTpnI2niRpli+5KOJV71LGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734508787; c=relaxed/simple;
-	bh=sqi+j1FWp7VAY/ARAadBpUhCp9Sk4hgOZxPX95wClrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QdypiIlBu6bQv4NLOxfv5dQwkUjX7ZBceLNdKcp8xOZB45wtyT+nWfqL7oL/04RK60l55BML14rU71xogeU0dqW/bEbsP+k+I1hSidxBtRTnkRMyPaq2jcTf5TDritLqG1Z8RryjzYl/+B67lB1LwvsDWX4Pj98+u55LpSGZEAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0TEM8Ko; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734513747; c=relaxed/simple;
+	bh=bG/W66dEi/LFJfO8SPmj2MLLiUu+QmDsy4zds5+lgr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WgHfFPo702D7WES0W6CUGWuIgD9jZ5yUpHvVx74XAyV4lEvLLKizvVyvXwujlBwhy7p+PGsnGfcPYQqc0K9vHhKhHMCIZU34VSwY3tn5wTW+P++UxCjDjeYnhDWBIOCq/S7ljC1AppYyDHn7oIU7M5tZ/XSM/Bv3w6Fxu9v0Gy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8+dU9op; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0TEM8Ko"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D16C4CECE;
-	Wed, 18 Dec 2024 07:59:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8+dU9op"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47A48C4CECE;
+	Wed, 18 Dec 2024 09:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734508786;
-	bh=sqi+j1FWp7VAY/ARAadBpUhCp9Sk4hgOZxPX95wClrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X0TEM8Koa59ree2WPetcR04rE84cgfBQw46LRKM3wLj29lxQ8tpTmoj2xBlumhjlT
-	 71clqYVjOL0cNR465CyvpA/0Vn/WDPI8lgOHqCEcwen6xr76dhF+VcZ0hP3ZHlCrYs
-	 bAvnJNlFQT+2AsgLx7mI4BapfT940lJWO/bRzmmQVDpEwKUnz7oG3eMtgEJqrVVDpK
-	 e0KKdfj3cuXNvUVWPaqvY99mxU4hDBwaQ1qAIfy20mrsc497E/Ilk084B/ni5JlTB/
-	 UirwcLtdloZe94am91hJbMF08vjJaH1fr+lQleSHJj9nqm0DCzBCDTN8toxM9zPP1r
-	 XNvyI7qxTSosg==
-Date: Wed, 18 Dec 2024 08:59:43 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
-Message-ID: <20241218-wild-red-manatee-bb2a34@houat>
-References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org>
- <20241217-vivacious-chameleon-of-swiftness-f1edc4@houat>
- <CAA8EJprjCyWBNkRrc4W24uCwPtf_kxZLqNeNP8EJffbutYQ21w@mail.gmail.com>
+	s=k20201202; t=1734513746;
+	bh=bG/W66dEi/LFJfO8SPmj2MLLiUu+QmDsy4zds5+lgr4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F8+dU9opxtu9EWSBN6gpRvf3iDnEOKI0E2uH3R1IrKUHewRcKvPTF4cy7bv9vUtVH
+	 WwRDSIgjhYPffP48cvBd7SklG5n2Px2TzENThGJd0dYg4eByUkVbsr7nBss/ntVusM
+	 33mHAcHNUxmpseLlIvRQYD7SKve/YLfCQ0QlfQmEaqCktBttddmXHND6EVX07NJ6WG
+	 5IBz01ldNXNeQ3f3PduLnO6NoTT6Yvi3+R2suRLREFxS6sr52/a2yaKg+ub+anUPF1
+	 iGz/N358Tbz+VpmMs+p5XmuXP2LqnPSKfGPjrEIaViNZ22BOyJDcOgWISFH+MZ580X
+	 7PIxF0vhPFKsA==
+Message-ID: <3fb8ba3f-3016-4823-bf48-130f173c8f66@kernel.org>
+Date: Wed, 18 Dec 2024 10:22:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="woythu4oziodei4y"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJprjCyWBNkRrc4W24uCwPtf_kxZLqNeNP8EJffbutYQ21w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: i2c: exynos5: Add
+ samsung,exynos8895-hsi2c compatible
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241214220419.723100-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241214220419.723100-2-ivo.ivanov.ivanov1@gmail.com>
+ <0ebc12ed-fe91-4c8a-a626-b735b0eeecf1@kernel.org>
+ <007559c5-f566-4625-99b7-e761a916fba3@gmail.com>
+ <cccca881-dd59-43c0-9072-dcd91d01671d@kernel.org>
+ <6e93d59d-71e5-4c09-862f-55b5504121aa@gmail.com>
+ <69fd1dbc-a29f-488c-a30f-7e5ea8f01a23@kernel.org>
+ <17fbfcdd-8b79-4907-a4c8-798da0ef0526@gmail.com>
+ <56c5788a-2d49-4abb-af4b-65a11bdc4094@kernel.org>
+ <d8d0a1c8-f2b4-425a-858b-610ae7291ebc@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d8d0a1c8-f2b4-425a-858b-610ae7291ebc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 17/12/2024 11:04, Ivaylo Ivanov wrote:
+> On 12/17/24 11:43, Krzysztof Kozlowski wrote:
+>> On 17/12/2024 10:31, Ivaylo Ivanov wrote:
+>>> On 12/17/24 11:26, Krzysztof Kozlowski wrote:
+>>>> On 17/12/2024 10:08, Ivaylo Ivanov wrote:
+>>>>>>>>>        - items:
+>>>>>>>>>            - enum:
+>>>>>>>>> @@ -94,9 +95,28 @@ allOf:
+>>>>>>>>>          - clock-names
+>>>>>>>>>  
+>>>>>>>>>      else:
+>>>>>>>>> -      properties:
+>>>>>>>>> -        clocks:
+>>>>>>>>> -          maxItems: 1
+>>>>>>>>> +      if:
+>>>>>>>>> +        properties:
+>>>>>>>>> +          compatible:
+>>>>>>>>> +            contains:
+>>>>>>>>> +              enum:
+>>>>>>>>> +                - samsung,exynos8895-hsi2c
+>>>>>>>>> +
+>>>>>>>>> +      then:
+>>>>>>>>> +        properties:
+>>>>>>>>> +          clocks:
+>>>>>>>> Missing minItems
+>>>>>>>>
+>>>>>>>>> +            maxItems: 2
+>>>>>>>>> +
+>>>>>>>>> +          clock-names:
+>>>>>>>> Ditto
+>>>>>>>>
+>>>>>>>>> +            maxItems: 2
+>>>>>>>>> +
+>>>>>>>>> +        required:
+>>>>>>>>> +          - clock-names
+>>>>>>>> I don't understand why do you need second, same branch in if, basically
+>>>>>>> Because, as I stated in the commit message, we have HSI2C controllers
+>>>>>>> both implemented in USIv1 blocks and outside. These that are a part of
+>>>>>> On Exynos8895? Where? With the same compatible?
+>>>>> hsi2c_0 which has a clock from BUSC and hsi2c_1 to hsi2c_4 which use clocks
+>>>>> from PERIC1 (CLK_GOUT_PERIC1_HSI2C_CAM{0,1,2,3}_IPCLK). Why would
+>>>>> they need a different compatible though? It's functionally the same i2c design
+>>>>> as the one implemented in USIv1 blocks.
+>>>> If one block is part of USI and other not, they might not be the same
+>>>> I2C blocks, even if interface is similar. If they were the same or even
+>>>> functionally the same, they would have the same clock inputs. However
+>>> I see, so in such case I should make samsung,exynos8895-hsi2c-nonusi or
+>>> something like that?
+>>>
+>>>> user manual also suggests that there is only one clock, not two (for
+>>>> both cases), so they could be functionally equivalent but then number of
+>>>> clocks looks incorrect.
+>>> That'd be weird. Both according to downstream and upstream clk driver,
+>>> for the USI-implemented i2cs we have a pclk and an sclk_usi.
+>> Something is not precise here, as usually with Samsung clock topology.
+>>
+>> First, the non-USI instances have the IPCLK as well, e.g. things like
+>> PERIC1_UID_HSI2C_CAM1_IPCLKPORT_iPCLK
+>>
+>> USI have BLK_PERIC0_UID_USI03_IPCLKPORT_i_SCLK_USI, but that's USI
+>> clock, not HSI2C in USI. Datasheet mentions this is UART and SPI special
+>> clock, but not I2C.
+> 
+> That's weird. Don't we need the clock enabled in order for the
+> USIv1's HSI2C to work?
+The clock goes to USI, so it is enabled, no?
 
---woythu4oziodei4y
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
-MIME-Version: 1.0
-
-On Wed, Dec 18, 2024 at 07:24:23AM +0200, Dmitry Baryshkov wrote:
-> On Tue, 17 Dec 2024 at 19:21, Maxime Ripard <mripard@kernel.org> wrote:
-> > On Tue, Dec 17, 2024 at 02:40:22AM +0200, Dmitry Baryshkov wrote:
-> > > While porting lt9611 DSI-to-HDMI bridge driver to use HDMI Connector
-> > > framework, I stumbled upon an issue while handling the Audio InfoFram=
-es.
-> > > The HDMI codec callbacks weren't receiving the drm_atomic_state, so
-> > > there was no simple way to get the drm_connector that stayed at the e=
-nd
-> > > of the bridge chain. At the same point the drm_hdmi_connector functio=
-ns
-> > > expected to get drm_connector instance.
-> > >
-> > > While looking for a way to solve the issue, I stumbled upon several
-> > > deficiencies in existing hdmi_codec_ops implementations. Only few of =
-the
-> > > implementations were able to handle codec's 'plugged' callback. One
-> > > third of the drivers didn't implement the get_eld() callback.
-> > >
-> > > Most of the issues can be solved if drm_connector handles
-> > > hdmi-audio-codec on its own, delegating functionality to the actual
-> > > implementation, be it a driver that implements drm_connector or
-> > > drm_bridge.
-> > >
-> > > Implement such high-level framework, adding proper support for Audio
-> > > InfoFrame generation to the LT9611 driver.
-> > >
-> > > Several design decisions to be kept in mind:
-> > >
-> > > - drm_connector_hdmi_codec is kept as simple as possible. It implemen=
-ts
-> > >   generic functionality (ELD, hotplug, registration).
-> > >
-> > > - drm_hdmi_connector sets up HDMI codec device if the connector
-> > >   is setup correspondingly (either I2S or S/PDIF is marked as
-> > >   supported).
-> > >
-> > > - drm_bridge_connector provides a way to link HDMI audio codec
-> > >   funcionality in the drm_bridge with the drm_connector_hdmi_codec
-> > >   framework.
-> > >
-> > > - It might be worth reverting the no_i2s_capture / no_spdif_capture
-> > >   bits. Only TDA889x driver sets them, while it's safe to assume that
-> > >   most of HDMI / DP devices do not support ARC / capture. I think the
-> > >   drivers should opt-in capture support rather than having to opt-out=
- of
-> > >   it.
-> >
-> > Sorry if this isn't clear to me and I'm quite late to the party, but did
-> > you test this on vc4 with both a pi3 and pi4, or was it just compile
-> > tested?
->=20
-> LT9611 is actually tested, VC4 is only compile-tested. Should I put an RF=
-T tag?
-
-Yeah, we definitely need to test it on the pi3 (polling-based) and the
-pi4 (irq-based) at least.
-
-Dave, Maira, could you give it a try?
-
-Maxime
-
---woythu4oziodei4y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ2KA6gAKCRAnX84Zoj2+
-doM7AYDYL5BrruN7W/ACWXLqTjEYQHCFy+iryAfwh6yE4f0RPJ6YFzy8mnTd+X1L
-Jm9FiCABgPBOTqSnWYqNQjCLhnY0tzsDweW5w5m2sSKXDd0eMFfMFWxI2AeBQJRe
-UpFPPwBPkQ==
-=R0UZ
------END PGP SIGNATURE-----
-
---woythu4oziodei4y--
+Best regards,
+Krzysztof
