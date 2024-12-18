@@ -1,104 +1,129 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7332C1B040C
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2024 12:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF721A23A3;
+	Wed, 18 Dec 2024 12:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734524258; cv=none; b=fGUxWGRCCQsUkXonnixw3insrml4CCC2XwMJ2OYn+T0A8yB5xKqpuUqW6AYFuWAYMrK0UgFS2gy3OvEv9QePvygxw34YLZrICECkksmi5vo3nI1EUfprEx51qk+rYtrzaWxmk29CwhuUCNhT6rT/JNd89kpUnBr5vo3Z07gqz7o=
+	t=1734525419; cv=none; b=TX0BBnCWjzXiVGHarYZY3VkphpcVHQT4WpHJnHP8OHDmRzpi2B2KnwUPo9U3SGj+2+cyZA/sA7Dexn0z59lwFgga/0gT4M817LgrxA/oMRlyBfk1tZu1DF6No3dC1oSSzolTKLc+Ega3sPP4mUtAISdDQvC02ePeItzD/9IiQK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734524258; c=relaxed/simple;
-	bh=utk/X6JnLeKqbQF2r9hM41s5ZSPb6bu5oZ1ZGKH0t4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n4sKvR9ye50cNr9+S2ZXUn6p0mdPN9c99HPrvmry2R9Cxn9Eq/FINv8ZR/MTdUcAw8iuIl+MbBHUo4jeT4OxoP4VUqnNWFUxJTMUWHalyIzdw1yYI3voZgkMX946znmbWXh2/NWBudIunvpwNhcJqcm0IaMiiV3lPXFk3ig+kHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dXJmc7+X; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734525419; c=relaxed/simple;
+	bh=6oZbJuFwVe9P5Q9lxMG6nTIJUdfI42MqNhILjYY0AZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2XtF+dV36xYi0jo0fkyigF6tlzU5MVfhJhl+hv6Fk67JVbpeOX4BF6QPoUL+Vo61rqn+k3+RvTRJeLmHXFUFOJ4xGFh3+xdUu9jHI5fMkn7dlFzckn9z3JScZdcP+264sp7C3jZpLVqYNVBYrLZhVgFDzFZS6Uqu84DW0Kw43w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxJrMH2r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dXJmc7+X"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71e3005916aso1150324a34.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2024 04:17:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734524254; x=1735129054; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M2vh/xwZF5apT8bu19SqSmXzYYa1+FrHmeqyI4yFkWo=;
-        b=dXJmc7+XHbiggIlTCm6XyqBPoHQGCnNgWG1jfg2zU2JEdIKAnSwB/nYPrBhqYcnIV1
-         atYp8eVzZ1k3hM2Zng0zHrBEMEsn29xErgFyybNCNCPqhoyP7Gg20UZFXlXCB6I6HD4J
-         /9v5xeUc7WhDIB/PBtz/CBWRLRstlacDKVZj1CJuk8tEpJRbRTJHHVMOLEyMrDDNaL+s
-         CBafeK46LitFPOAy78Y3iEt0noDxMWFLRz3A4B+rvcC6oLfn9Oy5wRUnND7NtRs+dvMu
-         QpNtgFlbrrVufTuAIOqjzW/HAKjC7lykADqrdsNwNrUJPXLOepJtUcK2QgJPCCsVOu+9
-         ivlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734524254; x=1735129054;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M2vh/xwZF5apT8bu19SqSmXzYYa1+FrHmeqyI4yFkWo=;
-        b=dFR0lxs5PB31H5AMWZxj+YqHZLJidTCAEffyxKzB6PYuMXnnpnONZchThPpAiLsDgf
-         QvPiTmcNPJg3gXckXj0QOYMm91NkfVIp0TEctUPyfcbwZAV7twkM5e1WvroKmY3/kxGw
-         vYOqfy3S0vexqzdK1zBXC0rgV15J65ab9pa/dFnoh/Iobe58rCQUI7EUQpUp4sW5KpiM
-         WC7dDm619nk7N0sBaG8mwgZUV6HOyp5hUQ5KqosVpNyOVpi2oSO4tpjU3oqemFFJ676h
-         /4LGb/5GS/M/rkXpkG8pPLtR4WxLxuCvURZAscUbbz8tAIBLKrAjjga3kXZW8blQpfV6
-         qwiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVB6dkqbC5w5sUAdLLMfj337kniHRO5uhMtmnCawLQLFkMi9RZmfXNMULrEKA2k2B30KyzHkbghekNj70oW4hPi8g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5jSlIMla35/EAaJmJjrY5JzpfEqA+47vaXdw9F2nY+VsnrFvP
-	reivKhl6jjYo9dsmVoWICkeDGB3nc/1zgN1gWkC+PjQW8DXiAGPF5DwysSsDQS920tWwuR8JmTC
-	SVafX2fqDvYcKNkyOCjLF/WAt5e373B5gpT4Sfg==
-X-Gm-Gg: ASbGncvOQufAQw7USxU0pL9KWdxY2MBO2Wx35NKcN4A5cwCLeleNURz0OALIT6aCHje
-	Iuj9JkMJwVVl7l4crys4Hykqd9caN6EOOjs5ufjo=
-X-Google-Smtp-Source: AGHT+IEojA6LnlTVG9PHZZVxfH/TlVwW+tBtuepHbLJd8n0q39aSKwMleaTiWWO3skHqftkc2ID9Y5fPiPCYVBpN7G4=
-X-Received: by 2002:a05:6830:6e83:b0:718:7c3:f86a with SMTP id
- 46e09a7af769-71fb75731acmr1512698a34.6.1734524254625; Wed, 18 Dec 2024
- 04:17:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxJrMH2r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCD36C4CECE;
+	Wed, 18 Dec 2024 12:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734525418;
+	bh=6oZbJuFwVe9P5Q9lxMG6nTIJUdfI42MqNhILjYY0AZM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UxJrMH2r0PrwE4ZL6jSXZkTvdT8Na0r9uSCY7lZtEocnVr1T2CZRQDkKYz0Rj9LIO
+	 v7FPeAxMQHN+Rb8k6jn6q0xbkaua2Cdth2SedscGj1vl9hvZHT7fejgPAyBGfLBTlk
+	 2+3x8ztAmAwC3GWBnJUvvrMjG6+WanTRCELAE1vxtKFMX4cBUiN1nnHZTX60bb+ZQc
+	 IbBJvTHGB8iyPMSLLVR9ycC2BonEZ0T9bxHcyaTRmqzwEro49pDO+HAwiMCc00jJWy
+	 7NQLvNz0+FcVfHkWvgpA6kK8tlZnZOygTXmphnfc/tebkB9UpwJVcUof6kjwvhZtDd
+	 pR3TwwX+PdRGw==
+Message-ID: <8e2a0c11-65f6-4cd9-9b75-5a5f6464fa92@kernel.org>
+Date: Wed, 18 Dec 2024 13:36:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org> <20241216-gs101-simplefb-v1-2-8ccad1830281@linaro.org>
-In-Reply-To: <20241216-gs101-simplefb-v1-2-8ccad1830281@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 18 Dec 2024 12:17:23 +0000
-Message-ID: <CADrjBPq4hH+kiuObXCkJXf6Ft-zEDnSVM5HuYNd=xMvaLicryg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm64: dts: exynos: gs101-oriole: configure simple-framebuffer
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: exynos: gs101-oriole: move common Pixel6
+ & 6Pro parts into a .dtsi
+To: Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org>
+ <20241216-gs101-simplefb-v1-3-8ccad1830281@linaro.org>
+ <CADrjBPqUcsiX5u80ASfWOe17Cwnr6EA0g2bxfgc-e8YpmWkUYg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CADrjBPqUcsiX5u80ASfWOe17Cwnr6EA0g2bxfgc-e8YpmWkUYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Andre
+On 18/12/2024 13:14, Peter Griffin wrote:
+> Hi André,
+> 
+> On Mon, 16 Dec 2024 at 13:06, André Draszik <andre.draszik@linaro.org> wrote:
+>>
+>> In order to support Pixel 6 (Oriole) and Pixel 6 Pro (Raven) properly,
+>> we have to be able to distinguish them properly as we add support for
+>> more features.
+>>
+>> For example, Raven has a larger display. There are other differences,
+>> like battery design capacity, etc.
+>>
+>> Move all the parts that are common for now into a gs101-raviole.dtsi,
+>> and just leave the display related things in gs101-oriole.dts.
+>>
+>> Raviole was chosen as the name because Google uses that when referring
+>> to the combination of Oriole & Raven, keeping the familiar terminology.
+> 
+> As discussed off list lets not use the "raviole" terminology (as it
+> precludes Pixel 6a / Bluejay which is also based on gs101). I think
+> something like gs101-board-common.dtsi would be better.
 
-On Mon, 16 Dec 2024 at 13:06, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> The bootloader configures the display hardware for a framebuffer at the
-> given address, let's add a simple-framebuffer node here until we get a
-> proper DRM driver.
->
-> This has several benefits since it's an OLED display:
-> * energy consumption goes down significantly, as it changes from white
->   (as left by bootloader) to black (linux console), and we generally
->   don't run out of battery anymore when plugged into a USB port
-> * less of a burn-in effect I assume
-> * phone stays cooler due to reduced energy consumption by display
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
+gs101 is a SoC not a phone and you need here something common for
+boards. Choose whatever name you like, but there should be a name (so
+gs101-foo-common).
 
-Tested on Oriole device, with latest initramfs and framebuffer was function=
-al.
 
-regards,
-
-Peter
+Best regards,
+Krzysztof
