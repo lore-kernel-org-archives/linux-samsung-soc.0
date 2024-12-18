@@ -1,143 +1,120 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9977A14F9E2
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2024 05:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B503C42048;
+	Wed, 18 Dec 2024 07:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734499473; cv=none; b=mVaJXoXC/g7xBCzheIAn5IuVlMwZQK445Ij4NvyDoWpd5MI32IuZutd1vS7a762GjCpmp7zkp0gRcZKDM/nDKzfk/xIzJwj744Jvqpk8z9tWEAv/iJduI5HnwXQsIcOsPxoyaVO0AyCiwljLc8sM2sEowsnvyduRqyE48zR6t5U=
+	t=1734508420; cv=none; b=suvVF2flM5oDDAVmZbS0eN510h+tobyrlAMXj+3VhgWKSuTA6CMNQ9vqv6g1YBubsVQneSH20PpSb21DIjwAZNFr4RoNJfijar+IqEqB5P2Ons1PGPtvpOgOF+2+r26uho+1RmgyNylpQP8S+GtVWuFhb/Dno3L1aWxPLXiQulk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734499473; c=relaxed/simple;
-	bh=obNQjfJ6/sTLIAJyOUduAweXRFXDGUq5hEbrASZiiHo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rV6yxDDjHdKljN/tqRqnTuDN+WHs1SHkw+O53L5AEXDZ7TYj2EtWg1cgsXOPq07mhUlpfYXDEXsjl/DYPPAzc0DB0VVdiKU7fhjeKUSXFQePTVECo/WBhYNdpSPUarHAdpq5PYLdYOZ1W2v1aO1mL35qlXeY6rwazGvMXSDxeLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zambi9Fz; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734508420; c=relaxed/simple;
+	bh=S1MG6GjxrCyAhgpy4OiU6srUJQ7vRr6Wl8DoBKh2efM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iGioeVYJkIxBcn1hky41B+14Lm39xZHs30IAAcT6E/pwdDuEn8YaMdIZq8ZvGTjUC/haOV4DB6Y2UhYcIFH2NHezkXIPLT9/L/Z0I2CnxP4wYa7IVTYDt/uosDWjKD1qKazxBQ/Q0vELpTPGqAmaqOOBGG/pD1d3pd3N67N00D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvqrjNbu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zambi9Fz"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e460717039fso3327606276.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Dec 2024 21:24:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734499470; x=1735104270; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cXb0T9nLgGFZosqj/ZFHPS5FS6w/en1hvTkOmnMKx9o=;
-        b=zambi9Fzmt7NvD5nBSymjGjQyPs+xFYMyZ+SYMUZ45UHXhVc0La/qo5e3hj1k5zZ7V
-         t7UcVJsr8bfNEHbZGpk1hd2KC5K4/Ve6NB7HdDHz17B+/gEQMd0f38/dtyiAzy1Nypxq
-         0+sdEpFuqu9fgQTCbjWa4zeYQCFak+wJogUdzcSRDfn3fvVmf1Hacw5MzXWpOHEwJUfu
-         WxUKuGXZ15glfAPqgoY9xzj4z4V+w+e+l9peKQLNA/35ogGvPb3NHJ42yf+37vQHu1WG
-         5w8mnAXgIKynK8m352brO+zaCLBK0UvI1NbsHPwQNZsILvw9WqTM1+S6TGYvaCNTrpBh
-         Xu5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734499470; x=1735104270;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cXb0T9nLgGFZosqj/ZFHPS5FS6w/en1hvTkOmnMKx9o=;
-        b=r+6Gd0XcVCHuf0USAzwcMoozh/D+5l/+NTRiBPIpVs/r4AdlGbO2NcLEFLmF42zXDM
-         Sq5rH9aED4UdS2eiHgbf5hWCbYtd28NI9/4C509o9CiiTLCwUig3qBN00m7GQZFakpzU
-         fKVdyBjIS7KZQJGniN5YknF4Zk6wL8zOGDmHhv/r71ldQhtMCjAVc299Pinc/FPtQiv6
-         IBmofq2kjgu3eQZ7eY/pBUMrx8AbtwImhD9NaCfNHckESlXa9psTxe9g/aHdbMjK/5EY
-         /yoDaXU4xRXvjhplMAuzmpaoUWN9lj2Z/YYpXbVsyZbyucak3xTDdl76DlKJH8NzWTVz
-         dsDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5PUHj5vmPtiDT/HBo5K1EC3fE7ch2r8XA5d94lkKsH9WcwXeBV/vbTsogQn3llLzZbtFrwyDGigqCHENnmhOrJg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQdCDZGuGIZ3hjCsUro49RF4n3E99rtImqfjEMm94BtDoOoFmK
-	OW0O4ymSN3+ctEoOr9FNHgrLd5nuAbUiHd8/jtB9Ep3nD6kB+44AeYAtP/loaXY4BfJr/hckae9
-	Ku41b69GCld8utzFxLO//Ti8nsG8Fb4dC/NbAlA==
-X-Gm-Gg: ASbGnctzHU1z1UZUTI+jLYQX9jZcVx0HnV04G5MMLtcx2ZzG/43u1TdSUOBzJMj8B7A
-	yo6VTdWyNV/zBaLpq0EQWbN3f3g75pCcJmOM3BgO8SWd7s94ifNXV3ItoAR+/p8FFP+wjLg==
-X-Google-Smtp-Source: AGHT+IE3kqRdPneJyqqtRpFDLs6soyy+Bdc+Cywd1EGV0t4/4nnntxQS7NjaTVS7xOtVNpAQwVKUJPYkOMozlg43ysk=
-X-Received: by 2002:a05:6902:70f:b0:e49:5f2d:e729 with SMTP id
- 3f1490d57ef6-e53620cdcf8mr1205674276.4.1734499470459; Tue, 17 Dec 2024
- 21:24:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvqrjNbu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7199CC4CECE;
+	Wed, 18 Dec 2024 07:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734508420;
+	bh=S1MG6GjxrCyAhgpy4OiU6srUJQ7vRr6Wl8DoBKh2efM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SvqrjNbuTdIvKOBoT5lPmCbuyrUQ7fFh07VUdQRkhW2hFdT6yh9ih+ps76peLKLL6
+	 tDQWzGOwsD35kh8JQzbYVMJV0StJQwY07jIsYhmHvoZxKD6yMMssZ2AcWPru1QsvXi
+	 dhmCyRmoIWdjgBwErLHHsq6iuv3X8GsC54lGUPbEXUTCudCMgO3Blu0mvPKbx08RcF
+	 lOCgAslu0e6Niey59zjXw64bWxFQdISlbehN6dbEvssNk9mWVyATBgQX2G8EeKolPi
+	 PjZ7OS/utYq9pSBwo+nbf+vvWZ8at1rmInAgUMPcFNIzj46Yi/8kjCGUWocsldQHcy
+	 V75s3f+HwGJbQ==
+Message-ID: <748f90f0-be7e-43e0-88e7-477cd082793e@kernel.org>
+Date: Wed, 18 Dec 2024 08:53:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217-drm-bridge-hdmi-connector-v7-0-cb9df2b6a515@linaro.org> <20241217-vivacious-chameleon-of-swiftness-f1edc4@houat>
-In-Reply-To: <20241217-vivacious-chameleon-of-swiftness-f1edc4@houat>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 18 Dec 2024 07:24:23 +0200
-Message-ID: <CAA8EJprjCyWBNkRrc4W24uCwPtf_kxZLqNeNP8EJffbutYQ21w@mail.gmail.com>
-Subject: Re: [PATCH v7 00/10] drm: add DRM HDMI Codec framework
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Russell King <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
+ bindings
+To: =?UTF-8?B?64KY7IaM7JuQL1NPV09OIE5B?= <sowon.na@samsung.com>
+Cc: robh@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+ kishon@kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>
+References: <20241118021009.2858849-1-sowon.na@samsung.com>
+ <CGME20241118021011epcas2p21593217ccf58afddad5ce36f510e7cb6@epcas2p2.samsung.com>
+ <20241118021009.2858849-2-sowon.na@samsung.com>
+ <000001db3a42$c5a79b70$50f6d250$@samsung.com>
+ <001401db50ec$a31703a0$e9450ae0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <001401db50ec$a31703a0$e9450ae0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 17 Dec 2024 at 19:21, Maxime Ripard <mripard@kernel.org> wrote:
->
-> Hi,
->
-> On Tue, Dec 17, 2024 at 02:40:22AM +0200, Dmitry Baryshkov wrote:
-> > While porting lt9611 DSI-to-HDMI bridge driver to use HDMI Connector
-> > framework, I stumbled upon an issue while handling the Audio InfoFrames.
-> > The HDMI codec callbacks weren't receiving the drm_atomic_state, so
-> > there was no simple way to get the drm_connector that stayed at the end
-> > of the bridge chain. At the same point the drm_hdmi_connector functions
-> > expected to get drm_connector instance.
-> >
-> > While looking for a way to solve the issue, I stumbled upon several
-> > deficiencies in existing hdmi_codec_ops implementations. Only few of the
-> > implementations were able to handle codec's 'plugged' callback. One
-> > third of the drivers didn't implement the get_eld() callback.
-> >
-> > Most of the issues can be solved if drm_connector handles
-> > hdmi-audio-codec on its own, delegating functionality to the actual
-> > implementation, be it a driver that implements drm_connector or
-> > drm_bridge.
-> >
-> > Implement such high-level framework, adding proper support for Audio
-> > InfoFrame generation to the LT9611 driver.
-> >
-> > Several design decisions to be kept in mind:
-> >
-> > - drm_connector_hdmi_codec is kept as simple as possible. It implements
-> >   generic functionality (ELD, hotplug, registration).
-> >
-> > - drm_hdmi_connector sets up HDMI codec device if the connector
-> >   is setup correspondingly (either I2S or S/PDIF is marked as
-> >   supported).
-> >
-> > - drm_bridge_connector provides a way to link HDMI audio codec
-> >   funcionality in the drm_bridge with the drm_connector_hdmi_codec
-> >   framework.
-> >
-> > - It might be worth reverting the no_i2s_capture / no_spdif_capture
-> >   bits. Only TDA889x driver sets them, while it's safe to assume that
-> >   most of HDMI / DP devices do not support ARC / capture. I think the
-> >   drivers should opt-in capture support rather than having to opt-out of
-> >   it.
->
-> Sorry if this isn't clear to me and I'm quite late to the party, but did
-> you test this on vc4 with both a pi3 and pi4, or was it just compile
-> tested?
+On 18/12/2024 02:32, 나소원/SOWON NA wrote:
+>>> I am not sure how we can help you, you are keep missing to collect all
+>>> the tags
+>>> https://lkml.org/lkml/2024/11/7/617
+>>>
+>> Really sorry for missing tags. I append it immediately, and will not miss
+>> anymore.
+>> Your review helps me a lot and makes my patch better. I applied all your
+>> reviews to my patches.
+>>
+>> Thank you a lot once again for your help.
+>>
+> 
+> I missed including the "Reviewed-by" tag in the patch set I sent. Could you please let me know if you'd prefer me to send a v4 with the tag included, or if you're able to apply it with the missing tag?
+> 
+> Thank you for your understanding, and I apologize for the oversight.
 
-LT9611 is actually tested, VC4 is only compile-tested. Should I put an RFT tag?
+Why are you asking me? This is not a patch for me.
 
-
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
