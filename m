@@ -1,33 +1,63 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF721A23A3;
-	Wed, 18 Dec 2024 12:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32ABC1A4B69
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2024 12:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734525419; cv=none; b=TX0BBnCWjzXiVGHarYZY3VkphpcVHQT4WpHJnHP8OHDmRzpi2B2KnwUPo9U3SGj+2+cyZA/sA7Dexn0z59lwFgga/0gT4M817LgrxA/oMRlyBfk1tZu1DF6No3dC1oSSzolTKLc+Ega3sPP4mUtAISdDQvC02ePeItzD/9IiQK4=
+	t=1734525552; cv=none; b=ICrXsvqNIY8APugr+Q93oBt3uxOTMujhtY6r62/l0PhOm9WSPMthbd004aSQ00vq8J5XWcxLQhhhopOXely8MSi+556gukSdoWE16KhIXdTX5+Cv5p1o+ggo37dWnzmcKh3Kti34jyD8W9u2kT1kFd4ncPn36pugE5YiSRRDXHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734525419; c=relaxed/simple;
-	bh=6oZbJuFwVe9P5Q9lxMG6nTIJUdfI42MqNhILjYY0AZM=;
+	s=arc-20240116; t=1734525552; c=relaxed/simple;
+	bh=ftEQ7+H9cEWQ8xte9nIlYXCpgu9GBSuDYWHjlylREKw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g2XtF+dV36xYi0jo0fkyigF6tlzU5MVfhJhl+hv6Fk67JVbpeOX4BF6QPoUL+Vo61rqn+k3+RvTRJeLmHXFUFOJ4xGFh3+xdUu9jHI5fMkn7dlFzckn9z3JScZdcP+264sp7C3jZpLVqYNVBYrLZhVgFDzFZS6Uqu84DW0Kw43w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UxJrMH2r; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=pzbNNnT7gZjgHx7SohhM+SC+fJrZsOxUoiPtsQFqDPpX93B2kR95T0fp2YfLutO16zHIm+owwNJrcC0GIVYnqAPCg6zmsdTXBtLGZZapDXiws2pRpGyRicmYcLjxwMhUC9feaRByBXSJ3qRJBonRHIakm+llf4dMh1kUvkXbVAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HPKKgXh1; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxJrMH2r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCD36C4CECE;
-	Wed, 18 Dec 2024 12:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734525418;
-	bh=6oZbJuFwVe9P5Q9lxMG6nTIJUdfI42MqNhILjYY0AZM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UxJrMH2r0PrwE4ZL6jSXZkTvdT8Na0r9uSCY7lZtEocnVr1T2CZRQDkKYz0Rj9LIO
-	 v7FPeAxMQHN+Rb8k6jn6q0xbkaua2Cdth2SedscGj1vl9hvZHT7fejgPAyBGfLBTlk
-	 2+3x8ztAmAwC3GWBnJUvvrMjG6+WanTRCELAE1vxtKFMX4cBUiN1nnHZTX60bb+ZQc
-	 IbBJvTHGB8iyPMSLLVR9ycC2BonEZ0T9bxHcyaTRmqzwEro49pDO+HAwiMCc00jJWy
-	 7NQLvNz0+FcVfHkWvgpA6kK8tlZnZOygTXmphnfc/tebkB9UpwJVcUof6kjwvhZtDd
-	 pR3TwwX+PdRGw==
-Message-ID: <8e2a0c11-65f6-4cd9-9b75-5a5f6464fa92@kernel.org>
-Date: Wed, 18 Dec 2024 13:36:53 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HPKKgXh1"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3862d161947so3117921f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Dec 2024 04:39:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734525549; x=1735130349; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XS7Pk4ioEjURDID5iONvHn6fwf9tn79746Vbx+cJWGo=;
+        b=HPKKgXh10VebRubyPF0t3Ku53iW4tRdQ5Q2PY4IAeCeg+ORH+dmFh1bUT3FrML49nN
+         SKj2r5OawfIHu+4eobMGQU4G46ei0jTK6MJqYQDJGFMa3GQCorqnmL1dk7utx2+QShJi
+         vBvDQzUHej90hZ6ylvi3eAONWhiQCSCRXWEEoFdEwJontgyU8IsAbZvO8SHfsu6D56PV
+         wwvoD0Y17P2oGIOX6WZVB7DxjX8R6r5srWvRbPQXqgySRoVEdRCfxY0sENWqXvD85nyA
+         JSpGBE4N1tmYvKP1MzT9SrrgzWdeqTX+t42CLmTtWvL5HBuoo15tCq5ZGv06bu/ZFfFB
+         /zHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734525549; x=1735130349;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XS7Pk4ioEjURDID5iONvHn6fwf9tn79746Vbx+cJWGo=;
+        b=cH4jLgHJuqlIlT2yAaACVq0MCe4gl9v8qjC9qwQp6WAfBMa5xitFtYlEsIE1V8W6Hg
+         206x4J0V74w7046X0SiHrI6yAiYNazNucNvAdWOy+zwd571xqmN7yPLepyfzyMB7k9oH
+         3dgqFhflmzNGLiK4bwKehm35lmGoPaZy1JIxmMTTmSGoGJRPZjOwxLynxyryF08f18C1
+         SMXwjncua6PHBIsFy8tWx21lNljM2cPz1Xtl5Ha+SosixSgleBQk5h6oEgoDeB54phl8
+         Mh8wNF8QMpJRbMwLJyUv4N7MxbIFxy2w5MEih9RQFiSRP5cr9NQ/qh9Oh6YqK32TCgCY
+         dv2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfAvvCJTlFaPY+cGS9DXvkYfec+yEMkOvvYixnjX+cXau2o+l9UpyDm3sNYl2VgdJqy5BCNu21f2x0kA9PAk1hWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ/JNbDZXuFaShcifNw4uFj0NhPzRnajFkGyTEpYBi8wfk7HhQ
+	wUZ44aPFLBpjfdtxWBhLBBLeIwo/hP3S2UQaTS0NAxsfpLeM8zQjHUsRZKHC1ws=
+X-Gm-Gg: ASbGncvODZHDIkcJXhVLAh20FlXRvpqq7PhHU2mhVuUb4edyBynCAKVZx+WpU8tjYhZ
+	GWHy9mWdIlpHujasICuwpixIQRfTvH2Fo5joXMusCZ1ZoPnWVUrEwu9Fj2kssKd6MTGNoFuYUpO
+	VqEDDMOxEHbmP/s2ZDbdNiLSv6rm/LumvSIMm5cwFgaINNGS3o4Eo2VWvzXpTO/ZHFuKMqKsNBc
+	+ilk1qi6nmkgymYfuBCjFl0O5zWx6hNdel5VnWrDpas4P5e+XhW3FeRIPrgO6rx
+X-Google-Smtp-Source: AGHT+IE1tLl1Dcj53ZXYsfNVMFp4tWjeeQ7FoBjB4ziYdja1dw78rhY6qRXK/NpCpyfOFic1A6GtHQ==
+X-Received: by 2002:a05:6000:2c4:b0:386:4acd:4d77 with SMTP id ffacd0b85a97d-388e4da5dcemr2689138f8f.44.1734525549534;
+        Wed, 18 Dec 2024 04:39:09 -0800 (PST)
+Received: from [192.168.0.14] ([188.26.61.92])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b441bbsm18961965e9.40.2024.12.18.04.39.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Dec 2024 04:39:09 -0800 (PST)
+Message-ID: <878f75cb-e85a-44d3-aae8-22ede6e7afde@linaro.org>
+Date: Wed, 18 Dec 2024 12:39:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,95 +65,102 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: exynos: gs101-oriole: move common Pixel6
- & 6Pro parts into a .dtsi
+Subject: Re: [PATCH v5 1/3] dt-bindings: mailbox: add google,gs101-mbox
 To: Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org>
- <20241216-gs101-simplefb-v1-3-8ccad1830281@linaro.org>
- <CADrjBPqUcsiX5u80ASfWOe17Cwnr6EA0g2bxfgc-e8YpmWkUYg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ Krzysztof Kozlowski <krzk@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+ ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org>
+ <20241217-acpm-v4-upstream-mbox-v5-1-cd1d3951fe84@linaro.org>
+ <wlvvuq2ldv4funye2ylnccq7soyrqkqggg36oimnvmhxbbjvnl@yyy4y5nyruzn>
+ <CADrjBPq4mTsvCivBJPmADP3pfUORBV8hGeP5GrTg9YxASJLHXg@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CADrjBPqUcsiX5u80ASfWOe17Cwnr6EA0g2bxfgc-e8YpmWkUYg@mail.gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CADrjBPq4mTsvCivBJPmADP3pfUORBV8hGeP5GrTg9YxASJLHXg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 18/12/2024 13:14, Peter Griffin wrote:
-> Hi André,
+
+
+On 12/18/24 11:23 AM, Peter Griffin wrote:
+> Hi,
 > 
-> On Mon, 16 Dec 2024 at 13:06, André Draszik <andre.draszik@linaro.org> wrote:
+> On Wed, 18 Dec 2024 at 09:29, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >>
->> In order to support Pixel 6 (Oriole) and Pixel 6 Pro (Raven) properly,
->> we have to be able to distinguish them properly as we add support for
->> more features.
+>> On Tue, Dec 17, 2024 at 09:40:20AM +0000, Tudor Ambarus wrote:
+>>> +description: |
+>>> +  The samsung exynos mailbox controller has 16 flag bits for hardware interrupt
 >>
->> For example, Raven has a larger display. There are other differences,
->> like battery design capacity, etc.
+>> If there is going to be any new posting:
 >>
->> Move all the parts that are common for now into a gs101-raviole.dtsi,
->> and just leave the display related things in gs101-oriole.dts.
+>> The Samsung Exynos mailbox controller, used on Google GS101 SoC, ....
 >>
->> Raviole was chosen as the name because Google uses that when referring
->> to the combination of Oriole & Raven, keeping the familiar terminology.
-> 
-> As discussed off list lets not use the "raviole" terminology (as it
-> precludes Pixel 6a / Bluejay which is also based on gs101). I think
-> something like gs101-board-common.dtsi would be better.
+>>> +  generation and a shared register for passing mailbox messages. When the
+>>> +  controller is used by the ACPM protocol the shared register is ignored and
+>>> +  the mailbox controller acts as a doorbell. The controller just raises the
+>>> +  interrupt to the firmware after the ACPM protocol has written the message to
+>>> +  SRAM.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: google,gs101-mbox
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: pclk
+>>> +
+>>> +  interrupts:
+>>> +    description: IRQ line for the RX mailbox.
+>>> +    maxItems: 1
+>>> +
+>>> +  '#mbox-cells':
+>>> +    description: |
+>>> +      <&phandle type channel>
+>>> +      phandle : label name of controller.
+>>> +      type    : channel type, doorbell or data-transfer.
+>>> +      channel : channel number.
+>>> +
+>>> +      Here is how a client can reference them:
+>>> +      mboxes = <&ap2apm_mailbox DOORBELL 2>;
+>>> +      mboxes = <&ap2apm_mailbox DATA 3>;
+>>
+>> This ordering assumes there is channel "2" in doorbel and in data, so
+>> two times "2" and of course the same for all others. If this is
+>> configuration of one channel, so "2" is either doorbell or data, then
+>> type should be the last.
 
+ha, nice observation!
 
-gs101 is a SoC not a phone and you need here something common for
-boards. Choose whatever name you like, but there should be a name (so
-gs101-foo-common).
+> My understanding was each channel is either configured for doorbell or
+> data, but Tudor can confirm. With Krzysztof's feedback addressed:
 
+For the ACPM interface use case, mailbox is always used as a doorbell
+indeed. Regardless if the ACPM interface writes data or not to SRAM, it
+will use the mailbox controller just to flip the interrupt bit without
+touching the mbox controller data registers.
 
-Best regards,
-Krzysztof
+For the other cases where the mailbox controller is used to (also?) pass
+data via its data registers, I can't tell whether the passing of data is
+mandatory or not. At least not by reading the gs101 mailbox datasheet
+that I have, it doesn't describe the SR registers. However, Exynos850 -
+which has the same registers, says that:
+```CPU cores can use these registers for sharing data```.
+"Can" implies that writing to SR is optional.
+
+So I assume a channel can work in both modes and clients use mboxes to
+specify which mode to use. Shall I still switch the order?
+
+Thanks,
+ta
