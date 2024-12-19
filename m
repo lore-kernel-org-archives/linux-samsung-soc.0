@@ -1,66 +1,66 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA3239FCE
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 13:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8E22371F
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 13:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734613676; cv=none; b=JyezFiL01R6N5K3uHYiV0IMjTpAp2ltJ4NDcrZS0TMFX6Em5D30cyRdEGTsnrJ1hMjzQPEQBGpId8RLCcsA8PzEYZMEB6OBbJ1UqYxj0aujI55lkdoCPhPIs1S881K/U6fYaX+RjPkU3QJuxWvVJ7N6DXlp1y3+NUmMS95EplOY=
+	t=1734613679; cv=none; b=oXdfHW8eyLkRWjCJjs05SzWYbyIJbSKH3IvbRKvFDYOE6hAP+gGyPQM9s/qxf40PKm6pdrRgS575+0uXwLKf1HcqCLNYPvyedGYoCw5RvJnMDRl+jBw6w6vy88xgwM25CANHzu4sy9rpfVN0wQSOBeRgYVlQJ2jk9xDnSpDyvwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734613676; c=relaxed/simple;
-	bh=1yf/YbX5zzLVOPLgM9Mf3iD1fLxwVX2uCkX7LRhP57Y=;
+	s=arc-20240116; t=1734613679; c=relaxed/simple;
+	bh=Q2/Ilfy56ojSZu1+fOIemD2xiXcbZHn9eQaGm8k0miI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sXc4+0IqkSBl9Ug39zy3dyQIhdtJ1VD5Kb+H4dUbEpTl4lc0/hMmWwmKCNe3RaumGHZomghQqosdH/zd/h3JSyG1L8VNcQdCQTl7QZAij/pd5DDevbCB0KcPHxkKG8VeQkD0tpIPJ3EFbQVzMRIZcTykb/xljzI5H3B9IGh+QX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IG1GgAY6; arc=none smtp.client-ip=209.85.221.42
+	 In-Reply-To:To:Cc; b=uiFNtJKVbSrn/TPGQ9xL+MsJvLD3leOFBFDsT9c7ILSxXFb23GO0N8BO5kNeWEhZzNeiHbRnXLRodn3DW/NsEUA6CX/6xmmCd9yIX/3vD6VUCwPtlptutgCiWtFBe0hq3NYPfYhvKImzeIy57E1o3yKs60OpSZz2gLizC+5ynfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vM2w2UZf; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IG1GgAY6"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so513728f8f.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 05:07:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vM2w2UZf"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4361dc6322fso5322425e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 05:07:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734613673; x=1735218473; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734613674; x=1735218474; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kmXfi4pLydKjD6u763/ay56dg5zTGdHbtmPA5MycJws=;
-        b=IG1GgAY624pKivmCJPKy/QzbDsgBkHKtsX1/UeAdJUK0WCfC/pf6KYfwm9k/cTkEng
-         sqaU0xhoXiHCl5SzdFPxNqHPjAjSPR9gScWSbMH8vCPVU7fqdZpk+Y1Q6Pv/YC4T/yav
-         VU0M6fXOai3EKhcr2O4O3/Zn0hpV7sK7eocD1CA5We3zNqrD/BimXluWvIvBv/bW/x+d
-         9Bs1UjrOAIzffu6h969E65UbIUeaH8D3boxai7ZL54+8m0H9uv4ibfaUIA9W7lmRHebq
-         GD+DvCTZeJNeByj7sCcYGxeBT4IlCP4sPefHtIe1L4VRau7lxBxgapweZB7VtMCmskZl
-         2c1Q==
+        bh=AUOQPXTRe3lg7UV1cQpho3gjLjQwoiMIh3ZBdN3lBVY=;
+        b=vM2w2UZfTgGQ1TWvMZe5Z05/bs0aPR0XP6U/OW9xAihQrYRWBnJVHPZneHg0Siiu6E
+         EQuWZj1QOg3LAsTdTu/cwKF9a5Zv1ZrstBi/ONNegZnXFakAYNqcMDXQc3UnjbgUW31Y
+         rCEE6QVvpTd0yz5HOYSsEFHrOMtMv0tKkm242z6nwZHSDDpGzjS06xEJTTtCmCdPlEK6
+         N2b/sgnYlMVEUkxvXizukbp12MpBPmJ5DC8Pl17DyAAll3Py4WLhk+oPfzn58jexUSPV
+         yWgpjF8s0ynLbmhjSyZUVaaWOZwVDfon8YIoz0q6WvcxXzsigjrCRqkmLaVT1wTJdnQp
+         HDKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734613673; x=1735218473;
+        d=1e100.net; s=20230601; t=1734613674; x=1735218474;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kmXfi4pLydKjD6u763/ay56dg5zTGdHbtmPA5MycJws=;
-        b=W1vtG2+4cENt0kLXr2vkvph62l3ywezLYcMFns7DmP9y7MQDt/4jbwjr56BumK0pKC
-         13+4hNYZD7WunoFs9mJjrwYXUDTsHEKPUpq7wxpARcgqXVot/rbFwZJx/a/e7jhs+Aqh
-         26waYkab4jTewkIVgSkift9DjM0P1/CGMRMyg6P9RrgGa7qnVB2WKR+/nQGbQ5cttpMx
-         Kde2bpM/dzZGOT3pkZosblINd1YJxFFgnmDMqXul9nAOe9Nq2AAa1jFrJlrgeQ413St9
-         V0pFH5qDTtzWfQriRia1fGrBGZ0LzzLui4BM6PtmH0utUiBol58oPPceY3mfLerXrUfn
-         I71g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8avM6aIPrM6iQhCvaiaNZz6oSAa2hJgAjck0IFpWn8kGaiP57BFh2nlsRRBWUiSeuL97uxo8FZC7Sw/jQsTzCWw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6myrfX+rECnNaQLmQhYNLqxEWIdB6136slVJ2O9hZ1hWGtoW8
-	e0D/l7ct2fH/bnSimvvDxa7LnFwGOxUtex2ITaAVxzvPq0TkranhWwD0Q/aTT70=
-X-Gm-Gg: ASbGncuPHp3nn7gEr55KCyVrkbsOSmOvE2GboVdA8XEH1nv4UQzgdBXoJmJUYeoNmNs
-	aE4J/P9eaYk/06nK5S3z5oiXm6+bAm80+SavOlt2vmwypPE6RJzFiS4oSd5KjPJixSO497aqTW+
-	AjisFT9XlvCV74ujVosLqyrZbvNqx8e/zWAsVgbpxioDrxos/LEK+NreZqviK1CamD1+oqXm0KP
-	sUni950usZSTpxo6OFteNsmkn0tCNfKb3X5Do+BbLqybwzw/l0LS3YbaDMMSanijGP1YSUKVIS6
-	ZhX4Zh55bcisvPSoHe9Eb0aPPdPIj4npMiUr
-X-Google-Smtp-Source: AGHT+IF40kzvTmeRV0SLh7JPWC/BmStsOxDXj25ZVmdU7p18eSuHRlcLVaylhOrmOqfz9B6DJ2UrcQ==
-X-Received: by 2002:a5d:5f90:0:b0:385:f0c9:4b66 with SMTP id ffacd0b85a97d-388e4d64767mr6779273f8f.33.1734613673423;
-        Thu, 19 Dec 2024 05:07:53 -0800 (PST)
+        bh=AUOQPXTRe3lg7UV1cQpho3gjLjQwoiMIh3ZBdN3lBVY=;
+        b=KTRvirNRQMJZYl447eD58Pcr8NZtOTH0ZXq+4n2q/IcsBXcx89e7AYaTBT4z+nQC4z
+         ZVR3osWb7znag5y2aB+45grdnQWpztrcqwdDzaM8ASrS9XpQR4CH4pptdIrHyNxw10Eh
+         wI1tz6gaUlvlpZGFe9VQ8sgrTn9kufQfCC/4wTiLxmEpnJRSYSqylEVcKaBLeU/3dgzB
+         euycONXEHSOfEHy8Tuu44FjqkD+Ej9PJspZV0qlpB43mc8yV8MUo20OBAMuswZgCur7x
+         5jThIFvHqfDwfXDUGWIX5e9IPdvuPAZ4qNH74ePabDZ0UaZwwiqICjgjMzuBssrkqwem
+         aC3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWRjHY5Fc+7+eCCQUW6644d6mACEmbXgWs1Q0TuvedtA9aMfstg4v7vCbJ3pFdZNhUv8jj6pqh6UNIH1RoLC7kjSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuouQfV9uckqRU2WtZjRsFZ6kP2fCHHk7vF7PL+PpggM7/r6IE
+	OgCW1IUmYkrI5FcPeuepkmv3E4LshVnO97/qjJL83GWOtd5IxZVvSRyk24islXw=
+X-Gm-Gg: ASbGncsiUIT0aANSAafSXokbm3SDyd2vZ86fzCPilq6EW5vQsqQHt3YTlk4dQwSl7au
+	W4hmfF6hk2jydLght+XBy2bDvMNGwU/OxnxFXX/WrkP/HO/VcjDp1Zo6IzMxKvfQWdFGFx2f0fP
+	wumSYpZfV4vcqtiQKO81GOKw+5R+9VlfBLKDzBy5DnzwMB7CJO9lnF21cijbzyl8cvKtjPSEYUq
+	HBHlL9fv6+8zh1pf0M9XC8UwsgO8zbM+2BOKgjR1jkl0eoyzbn8bjN2SPr46rMByjUVvktvFZnD
+	G8aXdY8cYH1Jisx1CjJe7zwHFuOzvverCTD8
+X-Google-Smtp-Source: AGHT+IH7QXzVbmArkNE6kY0mh8UxCymkYvZfRaYwodpZUWknXO1JZt6pMIJoZmzQeGk94zIBsb8bHw==
+X-Received: by 2002:a05:600c:350c:b0:436:1c04:aa8e with SMTP id 5b1f17b1804b1-4365c7942b6mr32991725e9.16.1734613674393;
+        Thu, 19 Dec 2024 05:07:54 -0800 (PST)
 Received: from ta2.c.googlers.com (130.173.34.34.bc.googleusercontent.com. [34.34.173.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea387sm17436705e9.6.2024.12.19.05.07.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea387sm17436705e9.6.2024.12.19.05.07.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2024 05:07:52 -0800 (PST)
+        Thu, 19 Dec 2024 05:07:53 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Thu, 19 Dec 2024 13:07:46 +0000
-Subject: [PATCH 1/2] dt-bindings: mailbox: add support for referencing
- controllers solely by node
+Date: Thu, 19 Dec 2024 13:07:47 +0000
+Subject: [PATCH 2/2] mailbox: add support for clients to request channels
+ by arguments
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241219-mbox_request_channel_by_args-v1-1-617a6910f842@linaro.org>
+Message-Id: <20241219-mbox_request_channel_by_args-v1-2-617a6910f842@linaro.org>
 References: <20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org>
 In-Reply-To: <20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
@@ -82,68 +82,176 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734613671; l=1946;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734613671; l=5667;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=1yf/YbX5zzLVOPLgM9Mf3iD1fLxwVX2uCkX7LRhP57Y=;
- b=73v7sR57R4aQx/YJWHUxGp/CxrhVmSD74UnblBJ4DVkdsJAKq1xaT2O5VdZSGL1GGLJRbSanH
- 61XYqh9IhL6AXZvYy040Qec9Tor97M/d9bMF8JF4KqLS+B5w682WxlH
+ bh=Q2/Ilfy56ojSZu1+fOIemD2xiXcbZHn9eQaGm8k0miI=;
+ b=DjvbKV9+OxuCn/g6zNLfMtnGo0ac9oiSZ61hg9UOxS8u84Deij/SZOVt8RZG/MWpoV+4CNVYI
+ JGsGxeG3VrmBjbJEriNyu7OXAB4fQa5a+qF3YVvdcTl7LG3+UQDNJyw
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-There are mailbox clients that can discover the mailbox channel ID at
-run-time. For such cases passing the channel identifier via DT is
-redundant. Add support for referencing controllers solely by node.
+There are clients that can discover channel identifiers at runtime by
+parsing a shared memory for example, as in the ACPM interface's case.
+
+Supply a new framework API: mbox_request_channel_by_args().
+
+It works by supplying the usual client pointer as the first argument and
+a pointer to a ``const struct mbox_xlate_args`` as a second. The newly
+introduced struct is modeled after ``struct of_phandle_args``. The API
+will search the client's node for a ``mbox`` phandle, identify the
+controller's device node, and then call that controller's xlate() method
+that will return a pointer to a mbox_chan or a ERR_PTR. The binding
+between the channel and the client is done in the typical way.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- Documentation/devicetree/bindings/mailbox/mailbox.txt | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ drivers/mailbox/mailbox.c          | 57 ++++++++++++++++++++++++++++++++++++++
+ include/linux/mailbox.h            | 17 ++++++++++++
+ include/linux/mailbox_client.h     |  3 ++
+ include/linux/mailbox_controller.h |  4 +++
+ 4 files changed, 81 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mailbox/mailbox.txt b/Documentation/devicetree/bindings/mailbox/mailbox.txt
-index af8ecee2ac68..0c4295a62f61 100644
---- a/Documentation/devicetree/bindings/mailbox/mailbox.txt
-+++ b/Documentation/devicetree/bindings/mailbox/mailbox.txt
-@@ -5,9 +5,10 @@ assign appropriate mailbox channel to client drivers.
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index d3d26a2c9895..07ea32ebab80 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -467,6 +467,63 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
+ }
+ EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
  
- * Mailbox Controller
- 
--Required property:
--- #mbox-cells: Must be at least 1. Number of cells in a mailbox
--		specifier.
-+Optional property:
-+- #mbox-cells: Must be at least 1. Number of cells in a mailbox specifier.
-+               The property becomes mandatory for the cases where the clients
-+               reference the controller via the mboxes property.
- 
- Example:
- 	mailbox: mailbox {
-@@ -19,7 +20,11 @@ Example:
- * Mailbox Client
- 
- Required property:
-+Clients must reference the mailbox controller either via the mboxes or mbox
-+properties.
- - mboxes: List of phandle and mailbox channel specifiers.
-+- mbox: phandle pointing to the controller. Used by clients that can discover
-+        the channel identifiers at runtime.
- 
- Optional property:
- - mbox-names: List of identifier strings for each mailbox channel.
-@@ -29,7 +34,13 @@ Optional property:
- 	  communication between the mailbox client and the remote.
- 
- 
--Example:
-+Example using mbox:
-+	power-management {
-+		...
-+		mbox = <&mailbox>;
-+	};
++/**
++ * mbox_request_channel_by_args - request a mailbox channel using client's
++ * channel identifiers.
++ * @cl: identity of the client requesting the channel.
++ * @spec: arguments that describe the channel.
++ *
++ * Used by clients that can discover the channel identifiers at runtime (by
++ * parsing a shared memory for example). The description of
++ * mbox_request_channel() applies here as well.
++ *
++ * Return: Pointer to the channel assigned to the client if successful.
++ *         ERR_PTR for request failure.
++ */
++struct mbox_chan *mbox_request_channel_by_args(struct mbox_client *cl,
++					const struct mbox_xlate_args *spec)
++{
++	struct device *dev = cl->dev;
++	struct mbox_controller *mbox;
++	struct device_node *mbox_np;
++	struct mbox_chan *chan;
++	int ret;
 +
-+Example using mboxes:
- 	pwr_cntrl: power {
- 		...
- 		mbox-names = "pwr-ctrl", "rpc";
++	if (!dev || !dev->of_node) {
++		pr_debug("%s: No owner device node\n", __func__);
++		return ERR_PTR(-ENODEV);
++	}
++
++	mbox_np = of_parse_phandle(dev_of_node(dev), "mbox", 0);
++	if (!mbox_np)
++		return ERR_PTR(-ENODEV);
++
++	mutex_lock(&con_mutex);
++
++	chan = ERR_PTR(-EPROBE_DEFER);
++	list_for_each_entry(mbox, &mbox_cons, node)
++		if (mbox->dev->of_node == mbox_np && mbox->xlate) {
++			chan = mbox->xlate(mbox, spec);
++			if (!IS_ERR(chan))
++				break;
++		}
++
++	of_node_put(mbox_np);
++
++	if (IS_ERR(chan)) {
++		mutex_unlock(&con_mutex);
++		return chan;
++	}
++
++	ret = __mbox_bind_client(chan, cl);
++	if (ret)
++		chan = ERR_PTR(ret);
++
++	mutex_unlock(&con_mutex);
++	return chan;
++}
++EXPORT_SYMBOL_GPL(mbox_request_channel_by_args);
++
+ /**
+  * mbox_free_channel - The client relinquishes control of a mailbox
+  *			channel by this call.
+diff --git a/include/linux/mailbox.h b/include/linux/mailbox.h
+new file mode 100644
+index 000000000000..cef88c5ae49d
+--- /dev/null
++++ b/include/linux/mailbox.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright 2024 Linaro Ltd.
++ */
++
++#ifndef __LINUX_MAILBOX_H
++#define __LINUX_MAILBOX_H
++
++#include <linux/types.h>
++
++#define MBOX_XLATE_MAX_ARGS 16
++struct mbox_xlate_args {
++	int args_count;
++	u32 args[MBOX_XLATE_MAX_ARGS];
++};
++
++#endif /* __LINUX_MAILBOX_H */
+diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+index 734694912ef7..a9f4d108c48c 100644
+--- a/include/linux/mailbox_client.h
++++ b/include/linux/mailbox_client.h
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/of.h>
+ #include <linux/device.h>
++#include <linux/mailbox.h>
+ 
+ struct mbox_chan;
+ 
+@@ -41,6 +42,8 @@ int mbox_bind_client(struct mbox_chan *chan, struct mbox_client *cl);
+ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
+ 					      const char *name);
+ struct mbox_chan *mbox_request_channel(struct mbox_client *cl, int index);
++struct mbox_chan *mbox_request_channel_by_args(struct mbox_client *cl,
++			     const struct mbox_xlate_args *spec);
+ int mbox_send_message(struct mbox_chan *chan, void *mssg);
+ int mbox_flush(struct mbox_chan *chan, unsigned long timeout);
+ void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
+diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
+index 6fee33cb52f5..dfddcf966f9f 100644
+--- a/include/linux/mailbox_controller.h
++++ b/include/linux/mailbox_controller.h
+@@ -8,6 +8,7 @@
+ #include <linux/hrtimer.h>
+ #include <linux/device.h>
+ #include <linux/completion.h>
++#include <linux/mailbox.h>
+ 
+ struct mbox_chan;
+ 
+@@ -67,6 +68,7 @@ struct mbox_chan_ops {
+  * @txpoll_period:	If 'txdone_poll' is in effect, the API polls for
+  *			last TX's status after these many millisecs
+  * @of_xlate:		Controller driver specific mapping of channel via DT
++ * @xlate:		Controller driver specific mapping of channel
+  * @poll_hrt:		API private. hrtimer used to poll for TXDONE on all
+  *			channels.
+  * @node:		API private. To hook into list of controllers.
+@@ -81,6 +83,8 @@ struct mbox_controller {
+ 	unsigned txpoll_period;
+ 	struct mbox_chan *(*of_xlate)(struct mbox_controller *mbox,
+ 				      const struct of_phandle_args *sp);
++	struct mbox_chan *(*xlate)(struct mbox_controller *mbox,
++				   const struct mbox_xlate_args *sp);
+ 	/* Internal to API */
+ 	struct hrtimer poll_hrt;
+ 	spinlock_t poll_hrt_lock;
 
 -- 
 2.47.1.613.gc27f4b7a9f-goog
