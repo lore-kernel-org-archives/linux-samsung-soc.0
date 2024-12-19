@@ -1,65 +1,66 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DEE801
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 13:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA3239FCE
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 13:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734613676; cv=none; b=qQQEzMqdP1PVeWYcjL+GCqjbLKcboTzmKlLMt/jopPRTadlhgCU0U2hF8mDgaVF1uAKSzJQee33Wz4bhH0vlL9uYRXa0RBvS38BstAAP0vXmZmX6UPLQEkz5DuoJI/66jKVBQNOpn+2N17ymyeYxDvBnoTxtMPkKxsOYtgl1ZUU=
+	t=1734613676; cv=none; b=JyezFiL01R6N5K3uHYiV0IMjTpAp2ltJ4NDcrZS0TMFX6Em5D30cyRdEGTsnrJ1hMjzQPEQBGpId8RLCcsA8PzEYZMEB6OBbJ1UqYxj0aujI55lkdoCPhPIs1S881K/U6fYaX+RjPkU3QJuxWvVJ7N6DXlp1y3+NUmMS95EplOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734613676; c=relaxed/simple;
-	bh=6hPBLgMmfnbU5fJmTeNIW7KbcBrCAcdnrr+wM2OaDRs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FTEq6bdWSS3IEAS22HZ7CociQDR/50lV6g0YTc9z5l/IoBUDX3xNsPbtCNUFVg5d0okPFO2PqVP9q2Q8lNs7LBALCeeuJaoMljIyFiLp6Sldba5Rw3H0FQL8gRoZ433jjlFB+Xe0lIhe9mGZBQPnOLXqDZ8rBhaMcQRaCkhvigI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TE3scQlS; arc=none smtp.client-ip=209.85.128.52
+	bh=1yf/YbX5zzLVOPLgM9Mf3iD1fLxwVX2uCkX7LRhP57Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sXc4+0IqkSBl9Ug39zy3dyQIhdtJ1VD5Kb+H4dUbEpTl4lc0/hMmWwmKCNe3RaumGHZomghQqosdH/zd/h3JSyG1L8VNcQdCQTl7QZAij/pd5DDevbCB0KcPHxkKG8VeQkD0tpIPJ3EFbQVzMRIZcTykb/xljzI5H3B9IGh+QX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IG1GgAY6; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TE3scQlS"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361f664af5so8642855e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 05:07:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IG1GgAY6"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so513728f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 05:07:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734613672; x=1735218472; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rpk/ffLMQdXc9r1ZsbGnQaD0+ch0U8AdCVw+w16xuCo=;
-        b=TE3scQlSlbOMSdcODbXuIOxVyVZ5Z6d/IDE8tW5SnP1z8vmN01a9NZ+aXpizyUYuyx
-         aWuDo/yo4J20OPiQoMGmMvmC+GT7KP7FtPFCxBoLS0pB9jlVeF/nJrQz+EV1gAWFsMH0
-         xeEDM7ilM0Q6Dsff8/d3ki7XgOgiO4EkjrJG0k+r4tsjCoEGVTGCaqOWCKfl7cHSuX2I
-         Cw6KEhdhV2sLfuP7dXMTjdqy6xmYKL1QDAaiEc46euLRwzpboCfFFW27dGAul0KTBh8v
-         Mh0ouVfF4TuFNIpE7Mci+D38HHUi+8EZunVONH3YJIIFKDUG96Qj1gpaulnBpHWV/PNB
-         7QbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734613672; x=1735218472;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1734613673; x=1735218473; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Rpk/ffLMQdXc9r1ZsbGnQaD0+ch0U8AdCVw+w16xuCo=;
-        b=afexWRAc2/8F9EPEQ6ygFZmFPKveMlQ0+EUgIY1T7hLdJuLKbNoPotmLAEJ/5B7zJP
-         2dH4AFCkvYXsmbW3QFNmo9B9lYnL8ftYqFPzSuzaZ1wf7CxPZSo0XqwE4UB1tzeKq3Yt
-         4KKSPzEdylnQuIseNd44ZSxC+6Q2ppXKTEu+D1hA8t+STmi+OwVyVpACKcNDb3a55WTa
-         gyFuAp1tdoxj8e19Y1PIcMfLB46QaVMW50KhnBJ9dBwCBOR0xmrO9Hjh71tibic1MIBM
-         B1zqlUvRnll+M5Skbn1TynWsNkIEZr/M2+sm3PhjS6fw6lAYvbFr0FLtK1QfTcDJY9PE
-         R3FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8fKZuwEJFKa0hvUR69u5cfwGp1jJCGbRSfitcxBLLLv5NWpplku/png7wcHk/Ay/zObrRZwU75mQJCgasLDf0VQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoEjFXevEUggRlSHeA6wsLo2ww1MX5YNyIFc5a/8dVE7a1Qejn
-	mPMozQZya6n3Me2VtYutjulb8B0q87JAuRrNxdgsiVgr3Vzg1qUkoaZQ3HI7Ix8=
-X-Gm-Gg: ASbGncvgZQo1e5GeORG5iGmGGtB7DE1XxKOG1zZ+rAiTRx1HnBnf31cNR5P1rJsxfFS
-	+YDTeNpY4KAHw2YTSmu1SN4Sh8eFyeOoomJRRZtGevaNsfunolKOCrTs0b6zXIgqQVe+7j7i+2+
-	gFyTHgIdndMxCO6r4mUNA4WG38HYKzuiBBxIsLTW9Mxaolc0dBKfTrdv6B4axoeTu4BOjadvIak
-	w1DqOiawLa6WG/KULujJr0Ka+hgAfHRuO98p3Vc5zLk5Lm+fi8lWX0s/BealWJxmx42sgGV5l8K
-	iLQKc/+Kk9gmxQLHP6e/lYAsXYfHy3Q5FuWk
-X-Google-Smtp-Source: AGHT+IEL8UXjs8X0S7UtKDlYHBSfpKUQ5jbhCUs1olN7+uCkgGDEWmfHiA7Ew8uzxHg+T6Icg5yzVA==
-X-Received: by 2002:a05:600c:5492:b0:434:f804:a992 with SMTP id 5b1f17b1804b1-436553f69demr60792685e9.32.1734613672439;
-        Thu, 19 Dec 2024 05:07:52 -0800 (PST)
+        bh=kmXfi4pLydKjD6u763/ay56dg5zTGdHbtmPA5MycJws=;
+        b=IG1GgAY624pKivmCJPKy/QzbDsgBkHKtsX1/UeAdJUK0WCfC/pf6KYfwm9k/cTkEng
+         sqaU0xhoXiHCl5SzdFPxNqHPjAjSPR9gScWSbMH8vCPVU7fqdZpk+Y1Q6Pv/YC4T/yav
+         VU0M6fXOai3EKhcr2O4O3/Zn0hpV7sK7eocD1CA5We3zNqrD/BimXluWvIvBv/bW/x+d
+         9Bs1UjrOAIzffu6h969E65UbIUeaH8D3boxai7ZL54+8m0H9uv4ibfaUIA9W7lmRHebq
+         GD+DvCTZeJNeByj7sCcYGxeBT4IlCP4sPefHtIe1L4VRau7lxBxgapweZB7VtMCmskZl
+         2c1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734613673; x=1735218473;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kmXfi4pLydKjD6u763/ay56dg5zTGdHbtmPA5MycJws=;
+        b=W1vtG2+4cENt0kLXr2vkvph62l3ywezLYcMFns7DmP9y7MQDt/4jbwjr56BumK0pKC
+         13+4hNYZD7WunoFs9mJjrwYXUDTsHEKPUpq7wxpARcgqXVot/rbFwZJx/a/e7jhs+Aqh
+         26waYkab4jTewkIVgSkift9DjM0P1/CGMRMyg6P9RrgGa7qnVB2WKR+/nQGbQ5cttpMx
+         Kde2bpM/dzZGOT3pkZosblINd1YJxFFgnmDMqXul9nAOe9Nq2AAa1jFrJlrgeQ413St9
+         V0pFH5qDTtzWfQriRia1fGrBGZ0LzzLui4BM6PtmH0utUiBol58oPPceY3mfLerXrUfn
+         I71g==
+X-Forwarded-Encrypted: i=1; AJvYcCW8avM6aIPrM6iQhCvaiaNZz6oSAa2hJgAjck0IFpWn8kGaiP57BFh2nlsRRBWUiSeuL97uxo8FZC7Sw/jQsTzCWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6myrfX+rECnNaQLmQhYNLqxEWIdB6136slVJ2O9hZ1hWGtoW8
+	e0D/l7ct2fH/bnSimvvDxa7LnFwGOxUtex2ITaAVxzvPq0TkranhWwD0Q/aTT70=
+X-Gm-Gg: ASbGncuPHp3nn7gEr55KCyVrkbsOSmOvE2GboVdA8XEH1nv4UQzgdBXoJmJUYeoNmNs
+	aE4J/P9eaYk/06nK5S3z5oiXm6+bAm80+SavOlt2vmwypPE6RJzFiS4oSd5KjPJixSO497aqTW+
+	AjisFT9XlvCV74ujVosLqyrZbvNqx8e/zWAsVgbpxioDrxos/LEK+NreZqviK1CamD1+oqXm0KP
+	sUni950usZSTpxo6OFteNsmkn0tCNfKb3X5Do+BbLqybwzw/l0LS3YbaDMMSanijGP1YSUKVIS6
+	ZhX4Zh55bcisvPSoHe9Eb0aPPdPIj4npMiUr
+X-Google-Smtp-Source: AGHT+IF40kzvTmeRV0SLh7JPWC/BmStsOxDXj25ZVmdU7p18eSuHRlcLVaylhOrmOqfz9B6DJ2UrcQ==
+X-Received: by 2002:a5d:5f90:0:b0:385:f0c9:4b66 with SMTP id ffacd0b85a97d-388e4d64767mr6779273f8f.33.1734613673423;
+        Thu, 19 Dec 2024 05:07:53 -0800 (PST)
 Received: from ta2.c.googlers.com (130.173.34.34.bc.googleusercontent.com. [34.34.173.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea387sm17436705e9.6.2024.12.19.05.07.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea387sm17436705e9.6.2024.12.19.05.07.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2024 05:07:51 -0800 (PST)
+        Thu, 19 Dec 2024 05:07:52 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 0/2] mailbox: add support for clients to request channels
- by arguments
-Date: Thu, 19 Dec 2024 13:07:45 +0000
-Message-Id: <20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org>
+Date: Thu, 19 Dec 2024 13:07:46 +0000
+Subject: [PATCH 1/2] dt-bindings: mailbox: add support for referencing
+ controllers solely by node
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,9 +69,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKEaZGcC/x3M0QqCQBBG4VeRuW7BWYzcXiVi0fzVgVprxsIQ3
- 73Nyw8OZyWDCozOxUqKj5hMKYMPBd3GJg1w0mWTL33FnoN7tNMSFa83bI7/JOEe229sdDB3Yj6
- WdUBXBU958VT0suz7y3Xbfrz8eNNuAAAA
+Message-Id: <20241219-mbox_request_channel_by_args-v1-1-617a6910f842@linaro.org>
+References: <20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org>
+In-Reply-To: <20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org>
 To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
@@ -81,69 +82,69 @@ Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1734613671; l=2747;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734613671; l=1946;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=6hPBLgMmfnbU5fJmTeNIW7KbcBrCAcdnrr+wM2OaDRs=;
- b=k56rdsOke8IWmYym13tETHNkwywcDz1k2b/m8+2Albs/Hk+zaZrl+9E2xeXumoTTuDrdCRDz/
- fUA8CKuObS/ClYgEF206bdv1LabJQh/QZtes9y7zmTEeGYJtBlKml9D
+ bh=1yf/YbX5zzLVOPLgM9Mf3iD1fLxwVX2uCkX7LRhP57Y=;
+ b=73v7sR57R4aQx/YJWHUxGp/CxrhVmSD74UnblBJ4DVkdsJAKq1xaT2O5VdZSGL1GGLJRbSanH
+ 61XYqh9IhL6AXZvYy040Qec9Tor97M/d9bMF8JF4KqLS+B5w682WxlH
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-There are clients that can discover channel identifiers at runtime by
-parsing a shared memory for example, as in the ACPM interface's case.
-For such cases passing the channel identifiers via DT is redundant.
-
-Supply a new framework API: mbox_request_channel_by_args().
-
-It works by supplying the usual client pointer as the first argument and
-a pointer to a ``const struct mbox_xlate_args`` as a second. The newly
-introduced struct is modeled after ``struct of_phandle_args``. The API
-will search the client's node for a ``mbox`` phandle, identify the
-controller's device node, and then call that controller's xlate() method
-that will return a pointer to a mbox_chan or a ERR_PTR. The binding
-between the channel and the client is done in the typical way.
-
-This allows clients to reference the controller node as following:
-        firmware {
-                acpm_ipc: power-management {
-                        compatible = "google,gs101-acpm-ipc";
--                       mboxes = <&ap2apm_mailbox 0 0
--                                 &ap2apm_mailbox 0 1
--                                 &ap2apm_mailbox 0 2
--                                 &ap2apm_mailbox 0 3
--                                 &ap2apm_mailbox 0 4
--                                 &ap2apm_mailbox 0 5
--                                 &ap2apm_mailbox 0 6
--                                 &ap2apm_mailbox 0 7
--                                 &ap2apm_mailbox 0 8
--                                 &ap2apm_mailbox 0 9
--                                 &ap2apm_mailbox 0 10
--                                 &ap2apm_mailbox 0 11
--                                 &ap2apm_mailbox 0 12
--                                 &ap2apm_mailbox 0 13
--                                 &ap2apm_mailbox 0 14>;
-+                       mbox = <&ap2apm_mailbox>;
-                        shmem = <&apm_sram>;
-                };
-        };
+There are mailbox clients that can discover the mailbox channel ID at
+run-time. For such cases passing the channel identifier via DT is
+redundant. Add support for referencing controllers solely by node.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
-Tudor Ambarus (2):
-      dt-bindings: mailbox: add support for referencing controllers solely by node
-      mailbox: add support for clients to request channels by arguments
+ Documentation/devicetree/bindings/mailbox/mailbox.txt | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
- .../devicetree/bindings/mailbox/mailbox.txt        | 19 ++++++--
- drivers/mailbox/mailbox.c                          | 57 ++++++++++++++++++++++
- include/linux/mailbox.h                            | 17 +++++++
- include/linux/mailbox_client.h                     |  3 ++
- include/linux/mailbox_controller.h                 |  4 ++
- 5 files changed, 96 insertions(+), 4 deletions(-)
----
-base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-change-id: 20241219-mbox_request_channel_by_args-7115089ed492
+diff --git a/Documentation/devicetree/bindings/mailbox/mailbox.txt b/Documentation/devicetree/bindings/mailbox/mailbox.txt
+index af8ecee2ac68..0c4295a62f61 100644
+--- a/Documentation/devicetree/bindings/mailbox/mailbox.txt
++++ b/Documentation/devicetree/bindings/mailbox/mailbox.txt
+@@ -5,9 +5,10 @@ assign appropriate mailbox channel to client drivers.
+ 
+ * Mailbox Controller
+ 
+-Required property:
+-- #mbox-cells: Must be at least 1. Number of cells in a mailbox
+-		specifier.
++Optional property:
++- #mbox-cells: Must be at least 1. Number of cells in a mailbox specifier.
++               The property becomes mandatory for the cases where the clients
++               reference the controller via the mboxes property.
+ 
+ Example:
+ 	mailbox: mailbox {
+@@ -19,7 +20,11 @@ Example:
+ * Mailbox Client
+ 
+ Required property:
++Clients must reference the mailbox controller either via the mboxes or mbox
++properties.
+ - mboxes: List of phandle and mailbox channel specifiers.
++- mbox: phandle pointing to the controller. Used by clients that can discover
++        the channel identifiers at runtime.
+ 
+ Optional property:
+ - mbox-names: List of identifier strings for each mailbox channel.
+@@ -29,7 +34,13 @@ Optional property:
+ 	  communication between the mailbox client and the remote.
+ 
+ 
+-Example:
++Example using mbox:
++	power-management {
++		...
++		mbox = <&mailbox>;
++	};
++
++Example using mboxes:
+ 	pwr_cntrl: power {
+ 		...
+ 		mbox-names = "pwr-ctrl", "rpc";
 
-Best regards,
 -- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
+2.47.1.613.gc27f4b7a9f-goog
 
