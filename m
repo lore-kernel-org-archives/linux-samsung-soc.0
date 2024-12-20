@@ -1,134 +1,171 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555EB41C6A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 07:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701231B6541
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 10:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734681098; cv=none; b=rtU96rGFyVMN1pqmbE4KhEzX95GgYOz29a+3tVS+aiOSxCcAP+yKcNpD3yXWEpmhQoEPW93FpOpR2uQWai1PPn10hqj/WxJuB5Az0rZKFQ8pvKjQYvhez0gmIaEMPBLux5tDUoyFMTujc1cLTtN6oWPk5y8D6ogZuM93hshrzL8=
+	t=1734690774; cv=none; b=ZoxmyAxRuCNyWjQYaUhoSQG1swe4sPxeyjDCu3aacj6kD2lPuFpLMWwUeXCgBtwzNxUIgSru6CfTRM8Ps+i1cHEfDEeVmQbwGEoZEKvD5mXyMDkiCa+aSvUnkBFVU6wI60nM0T+nYJGFXlrm9N920lpKC4/AlwgQBtjbn0mmThI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734681098; c=relaxed/simple;
-	bh=OkhxNHA3+1HeXND2fLL7BiKnkbPD6f7VLBpp4jFIE9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FnrAKh4pzEOIIRWoxGQaHdn5aMTp/8OiYi31U4sXq3VfsiKBmZA3mXg3/MxoAMooN61tSj9NtlZ2B+9tCWZkT96LzWNrt/jNe7/qdNwWeKrT0b383EV4r6vFBy4pgxWV328EURHk4vubKLW6P+cKMy4875Vunqf9gWbFAv7r8fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BUhZPMgB; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1734690774; c=relaxed/simple;
+	bh=AhRBht02RHZ29E7oO4jKae+4/7Omd+mmnzz7/jvmNsg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Q2W34dwn+QQuXNxILQWH0nzo2cC2JKLRVY9D4g9WYmw+8cZ03UnMd9MtOR+KISm8y/+pKEakuX/jhQaSMXlwe/EwWa8wOTMikZBDcTWpS7rVa6oFlRCHwEWQTi9SQa5wg8Y4nkDS5QsvZmZuBHeQhojEHzTN8ozn3KRgresQP8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vPXm/m2s; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BUhZPMgB"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d34030ebb2so2566350a12.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Dec 2024 23:51:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vPXm/m2s"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso365113166b.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 02:32:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734681095; x=1735285895; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1yDNEjeOXhSBQxVpqQzt29i9g5xlvEhh8lAhoI+DC6A=;
-        b=BUhZPMgB+pTKuonASRxgax/MwsDc/6h6DZLcwbGWsjU9+g+pw462OQMFWOVvjE7tbg
-         ZIIFtVyPtL1g93g270N6dg/9o4AXQzns62VBEjUpOVBDIFpvka7AF3qIoK2O5rIxMN9t
-         U5YB9OOVCibTQ+vzlL6HcxsS2FWUzhfwS9bg7wYyGukKuhqfLga8g0JCvq+ZuTIAjXIZ
-         Q/5rpIrI/Z/iaTzhdMLzIs27mC4LWPRqztN9O0dwKT9bX+wAXBXZaGqoveWgBCa8+S6A
-         aN5XFfafQqTbwgJ2pu/fixzRZlEx0SX9VH9jDBUgDsnTgOKRUed1WMLtiK1JxJrGa1cr
-         g4DA==
+        d=linaro.org; s=google; t=1734690771; x=1735295571; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cnPh/juyVOiTzWCImlW3ZTqxEo/ZPE8pe0CN7AE6LjQ=;
+        b=vPXm/m2sS6RTlk3xmPJt6upRYxk+DiVQo3RLl7wszesahugNAKH0NEgX7SqzItMn3U
+         0njMmuvrl3OoH+iSfQL9sCaI96mwfUPuKFiXvFGYgSj1FXlNg9gJuuy0fDOa/Sccjqyf
+         GRJs3/0UT2a1Jv1zpAtpu8jOAnhDSnzBYlmnchQQ6TapIDaojjfSK3TCplL0jCoEKhed
+         nXGM1fuQPxO7zx1C7giCi3/GSpTRk4C/mFV5ym1vZqbvmWcrQzzWLR4OEH5mv6Jf9yYb
+         WFrpnc457U4hMfoqKQNilNbJkkSjrNhQHUzOY2qGUBvpVCTcp3XS5A1iR66xS/SBM850
+         Yvqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734681095; x=1735285895;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1yDNEjeOXhSBQxVpqQzt29i9g5xlvEhh8lAhoI+DC6A=;
-        b=N2dOlWvYsxUleynzUNpitvm8kyzlKtV9WfAmhTY/LUHhJFGC5p4Spp2TEcdnxDSlqj
-         Tn3oGCR1pXGLr0DJPpDtzGVJ1HnmxjTalVlyTy5NI6LkpKAWp5veUhEtEjbN6ZrlcIKX
-         dnfWdSHZiHlfs7NcQcPFqObIIFz6ekugyn6bsV0c38acbuQXi9QIYNcUwSdRrjqWbvt5
-         Dx4U2ApCqztq+pSnsHxlTQ0YCRTSF2ZGCrPwCEkPwinX+akzWSE+7l2lnzwHBL7WJNqu
-         dLDBbP5Rf3kDKvLSb4ZPS6NG7d35mpRRYY5KcHY0Hn1yYdnCkZqhcNFEcVVdAP3qQ/F4
-         4rBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhZGAXMy8IUteAoVPtxv3gRzaprbvsB27vxF9Y/RQOOiLcwclfhoghkh4XI2/Iobh/6UHP1pimbkZm01KX7M19nA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr+TjNKpc/SGu3Mgc1i6Ael8rwNCjrWhf8jVfjbBp1jJEuBusM
-	VqYFcYwikw0KEhuMCNysKrErlD1wsZDRVpOE83kQdciDcO7MfiwCtpjW1Jet5yY=
-X-Gm-Gg: ASbGncsyiO4R2QNgOyet56qJSCVFgaAuJcN0zY+2PbrExRC+1SnGvEe/OvjL4La7UT7
-	eVd4WlLvh0SWKvEjr7fi8ZUFm1LxMHotOSzQJ6kaSeG2t7+Du0qv5NYtJlGnnQmKSJ90IZIES4/
-	AqQ6mwalhh9551Y0liENacmRaomUcr6k83kGSuwbha3ivBRusnbefeWkpPSb1k2JmesKgMHatHS
-	BisYVM6pFtl28R7V5Wmn4bYY2hxU8Lxrab2GwWeDv8N/wNt+rjO9ZalTpcFUv88
-X-Google-Smtp-Source: AGHT+IEI1vajsERhxoY7nkjgpoa5z0LmbYvw4+7EEXmu89uOcdENi+jRRpqlKSn6v1OKOHvsdYTmuw==
-X-Received: by 2002:a05:6402:518f:b0:5d0:b51c:8478 with SMTP id 4fb4d7f45d1cf-5d81dd7f300mr1334456a12.12.1734681094719;
-        Thu, 19 Dec 2024 23:51:34 -0800 (PST)
-Received: from [192.168.0.14] ([188.26.61.92])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80675a41esm1450399a12.1.2024.12.19.23.51.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2024 23:51:34 -0800 (PST)
-Message-ID: <463d5955-a056-40e1-a46e-f89ac0dadccf@linaro.org>
-Date: Fri, 20 Dec 2024 07:51:32 +0000
+        d=1e100.net; s=20230601; t=1734690771; x=1735295571;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cnPh/juyVOiTzWCImlW3ZTqxEo/ZPE8pe0CN7AE6LjQ=;
+        b=kUsMt6mFreJamh6VuqHXDp8Qw+qTqKFEKR/N/9GMeLRwCAZt/dxSQsQQTVPFZ18Fu6
+         KGMSZFbNEA0entiHd0G+aB4FjlCRoPXFfsJrOHDIlZ+QF06mrl74B4rq3dW1ONwOMHLE
+         6Q8pPUqc54V/wIxaLWwluV2aReuJzHWZZ5vLRckKlH6PPcrkLK7uq28VLPekU7LJ1BqV
+         U2s4Xd9yleV7YM+ywAp7FBhIXZziQ1Wx6g40AmqNet1UQvgSeWce2/8sk2XLRA7wXv3Y
+         1mxpLUl61Ra0KgLn3THbF9jZwh7BBkLlW45j+Simq+0qCi0kjoD7u2dpdSHyzOc6TYRb
+         ULQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGWZvFjFi8PRQRTYcPoEmSBdCeIbVK0YEez/p7Ac0taulIDTHx5awPbGJ3UBAbTSmbLmz2ai0JaQTVzjusxslbBw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnDjy1EBBF2xQ+R54BKleRc55N7yz/odmK810HbZFRHSm6IpK0
+	O6wOO5poUnSKj4WTWIKeqybE/B86x2GXaZUgllBqa2BSE2k35WNtDh1Z6PXNGbs=
+X-Gm-Gg: ASbGncvSph9sSBsVDbYElaY74BcPxIHrfTcW/NFMepHGDR1kqY6c1rZVv0pnuMoKkae
+	mpifWlKd0XJDEQUjNPrLcR9msL/1lckYFeUsVpso4If8zK5VMAs6N58Odb9Vfh0sJKyVqePBwCP
+	20FmikCAiyJ3ssIH42lgTpq0l8UovV32628adqi67VA2Ahxass7TGq97fCIoAxpEEQK+TW4n43V
+	9tMssfryvWVqmC6+Rg9Q2glkvLHmOxf8XwOyg6Fyhb8h8i2HQLbbDFgPGwJ/vB1grU6ki/JBXOZ
+	ByO05Egm5Aeab7TDmX35brmExUTJJ+w+oWEtX+Gm
+X-Google-Smtp-Source: AGHT+IExwMGLFo9EP9y/Egh+BLh+KfOHOoPkz6X1qvfx7pdCFx5WJHmb12wq7ReFv0+A2rj/5cCZNQ==
+X-Received: by 2002:a17:907:5c3:b0:aa6:8a1b:8b74 with SMTP id a640c23a62f3a-aac342179f3mr160475866b.53.1734690770668;
+        Fri, 20 Dec 2024 02:32:50 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f06543asm161604566b.175.2024.12.20.02.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2024 02:32:50 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Fri, 20 Dec 2024 10:32:50 +0000
+Subject: [PATCH v2] arm64: dts: exynos: gs101-oriole: configure
+ simple-framebuffer
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mailbox: add support for referencing
- controllers solely by node
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
- peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com,
- daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
- ulf.hansson@linaro.org, arnd@arndb.de
-References: <20241219-mbox_request_channel_by_args-v1-0-617a6910f842@linaro.org>
- <20241219-mbox_request_channel_by_args-v1-1-617a6910f842@linaro.org>
- <20241219-recent-everyone-865b19864693@wendy>
- <d9e635c8-de05-4812-bf2b-11651f6da5c1@linaro.org>
- <20241219-strum-cheese-89e5e60d22c3@spud>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241219-strum-cheese-89e5e60d22c3@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241220-gs101-simplefb-oriole-v2-1-df60e566932a@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANFHZWcC/x3MMQqAMAxA0atIZgNNVVCvIg5q0xpQKw2IIN7d4
+ viG/x9QTsIKffFA4ktU4pFhywKWdToCo7hssMbWZKnDoGQIVfZzYz9jTBI3Rlf5yZFv5rprIbd
+ nYi/3/x3G9/0A2QmCsGcAAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
+The bootloader configures the display hardware for a framebuffer at the
+given address, let's add a simple-framebuffer node here until we get a
+proper DRM driver.
 
+This has several benefits since it's an OLED display:
+* energy consumption goes down significantly, as it changes from white
+  (as left by bootloader) to black (linux console), and we generally
+  don't run out of battery anymore when plugged into a USB port
+* less of a burn-in effect I assume
+* phone stays cooler due to reduced energy consumption by display
 
-On 12/19/24 6:58 PM, Conor Dooley wrote:
-> On Thu, Dec 19, 2024 at 03:42:11PM +0000, Tudor Ambarus wrote:
->> Hi, Conor,
->>
->> On 12/19/24 2:11 PM, Conor Dooley wrote:
->>>> There are mailbox clients that can discover the mailbox channel ID at
->>>> run-time. For such cases passing the channel identifier via DT is
->>>> redundant. Add support for referencing controllers solely by node.
->>> I don't really get your implementation, why not just allow #mbox-cells = 0?
->>> That's what's done for things like fixed frequency clocks that only have
->>> a single output.
->>
->> Ah, indeed!
->>
->> instead of:
->> 	of_parse_phandle(dev->of_node, "mbox", 0);
->> I can do a:
->> 	of_parse_phandle_with_args(dev->of_node, "mboxes",
->>                                    "#mbox-cells", 0, &of_args)
->> where #mbox-cells = 0;
->>
->> Or ... can I pass NULL for cells_name and make the #mbox-cells property
->> optional and still keeping its requirement of being at least 1?
-> 
-> I think the mbox-cells = 0 approach is preferred, that property is what
-> marks it as a mailbox controller after all. Perhaps Rob or Krzysztof can
-> comment?
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+This is marked as v2, because it has been split out from my original
+series in [1] to make it independent, for two reasons:
+* drop the dependency on other patches touching the same file
+* no need to mingle this one with adding Pixel 6 Pro support
 
-I think using mbox-cells = 0 is better indeed. In my proposal I
-considered the list to always have a single phandle, thus a reference to
-a single mailbox controller, whereas it may be possible that clients to
-reference multiple mailbox controllers. If so, #mbox-cells needs to be
-defined in all the controllers, for consistency reasons, similar to what
-happens with fixed clocks, as you already mentioned.
+Other than that, there are no changes and I kept the existing trailers.
 
-Thus I'll change the method to:
-struct mbox_chan *mbox_request_channel_by_args(struct mbox_client *cl,
-                       int index, const struct mbox_xlate_args *spec);
-and use of_parse_phandle_with_args() in it.
+For those who want to try this out:
+The stock bootloader disables the decon hardware trigger before jumping
+to Linux, preventing framebuffer updates from reaching the display. We
+have added a work-around in our Yocto BSP layer for the time being
+(until a proper display exists upstream). An alternative might be to
+port and use uniLoader from https://github.com/ivoszbg/uniLoader, as
+seems to be done for some other Exynos platforms.
+---
+Changes in v2:
+- split out of original series
+- Link to v1 series: https://lore.kernel.org/r/20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org
+---
+ arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Thanks, Conor!
-ta
+diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+index 387fb779bd29..a00cb27e167e 100644
+--- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
++++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+@@ -22,9 +22,23 @@ aliases {
+ 	};
+ 
+ 	chosen {
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges;
++
+ 		/* Bootloader expects bootargs specified otherwise it crashes */
+ 		bootargs = "";
+ 		stdout-path = &serial_0;
++
++		/* Use display framebuffer as setup by bootloader */
++		framebuffer0: framebuffer@fac00000 {
++			compatible = "simple-framebuffer";
++			reg = <0x0 0xfac00000 (1080 * 2400 * 4)>;
++			width = <1080>;
++			height = <2400>;
++			stride = <(1080 * 4)>;
++			format = "a8r8g8b8";
++		};
+ 	};
+ 
+ 	gpio-keys {
+@@ -68,6 +82,13 @@ ufs_0_fixed_vcc_reg: regulator-1 {
+ 		regulator-boot-on;
+ 		enable-active-high;
+ 	};
++
++	reserved-memory {
++		cont_splash_mem: splash@fac00000 {
++			reg = <0x0 0xfac00000 (1080 * 2400 * 4)>;
++			no-map;
++		};
++	};
+ };
+ 
+ &ext_24_5m {
+
+---
+base-commit: 8503810115fbff903f626adc0788daa048302bc0
+change-id: 20241219-gs101-simplefb-oriole-d3fad1f5b498
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
