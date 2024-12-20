@@ -1,64 +1,66 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04891C5F1B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 11:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738821C5F22
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 11:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734694081; cv=none; b=pWCdYq8raKJlgZy6owhaMrnLy5C6unqgRd/Qnb4lvEL1e++Ic9MlksPfpJkHIF7dSE37LVH92nffq0AcGMNKVj5DvIeDBryxPbdbt3ABSOS23uFAB5j+Al7SxG2JxEl7UDMkCpJBf98A8vLzlOYF0rQxU0FiUa9soIsjA6bunXI=
+	t=1734694082; cv=none; b=V7jDF9nxOz8oD0vYPBDFpryPuYWdEDqBXKLksNBgGFK568sTugYHif1h8amD7/Nu4wp7PDP6KvwTqULPSDWlaTmPuN8WCoBHW1oWhXtq/rDv9n9ceomNMLpOVY3v+gTlb34gcwGxnViOVhOe0E41OGO0zICvlN5fM2mHCr9uSdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734694081; c=relaxed/simple;
-	bh=LW9NlVQ1ZU8KJiqYxsvxHLTdhOAcCb8IC1f+fzi3wEs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=vCRYmfG9LfiPpfEHZB7tr4XktQaG60Z6eXl+1XtKmgNLUYQ6ffdIMgYDtC+tQy29+sIHWZ2MqL9NmDTDaRZBsLZzb665yLjwKfWT6+4lttyfGuvQY0zISbOd5NzmYIvvezww2FQVVRQH6mJJAJvRQpoXQPjejLE4Ak2WxitcWnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oXx5tpzD; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1734694082; c=relaxed/simple;
+	bh=KJKMOw+QPIKUR9v2b/oJ6qnbx8zhjz5U3TlJ8C3bMxE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Z1xaerfk5HmauH1hpcT4Dc1HvLrtAIM81yrDMZcPhVET5HvjwsblPhUUXP9RLu7HfVTZ0aRKxETOv4IwRBtySPuf+N1XxPZnDj+zvPBcR2xGpvPnnfYw8ll/it9/SbZsu7/KhYf0TetRFdu62PcedJMREWy/ANbryv02xZC2i4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PhAanb/1; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oXx5tpzD"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d4e2aa7ea9so3238938a12.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 03:27:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PhAanb/1"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so3036973a12.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Dec 2024 03:28:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734694078; x=1735298878; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPnFnnIbk1GG60/+MNJYGRtUv6D7I7cGesD5TPc/BLc=;
-        b=oXx5tpzDNeers9c36bmjF4PqNIqWV5AEYjfuHoe1rn+FVWpDFlfyb6NfzTTTQxn25u
-         IsW/H+PUFKs4KWonMiMLI2TTcXPt9Lo02lW6NWXYf1bHtMo/eTbjseW8N/o7cq4SBnAp
-         M3lfdsU869nDgzHMfMzg1lQEY5LCOY9JhesPWsQB5UE71iZqgc7QFrEsat4rYICxn+tR
-         /x7baDihng3x7zjWWVfHbkDe8vMzhjxzrHjh5jAG8f6SYSl34hPz0uGLgyz3mPo0HHeD
-         HVaCL9TKu+KPCeNNuycZi5j5OuHVUYJA6OzGR2eWcLh4G+zCB4W5+gTm5uClJMTizQcS
-         vgdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734694078; x=1735298878;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1734694079; x=1735298879; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fPnFnnIbk1GG60/+MNJYGRtUv6D7I7cGesD5TPc/BLc=;
-        b=YS+Nude2YsamoJn7eQnOl3R4CKh6VgZhD/aIsECG9JTRSUl6psqt2PnxqQr80Z8V7r
-         qbbnxM+mBZ9qmAY0Wc4M6eJtwYCLWJgoE4NmusCl5Jhh/qIent8yja5bglGrSolYYGZn
-         VhWQPZQA/bgU0gj5iVHTpaFuvAeCw1jJlVAZI8VpSS4O9IXCXQhWdULW9Xxz9VDEpU6P
-         d7GYhkSmN21grM7weYiMFiER1KOj2Zynb7YkSeqtS6/sLLdSIYQbnzme19z2UiABFUhY
-         V7FK/dcQk8LZs8ioxHm+dz2K/y9T2jujHBw3+Zaqus7PU/DxkqXHxPrUaEEHbl1gSR/o
-         dxwg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1r9jWD6Q5JwUMqatgJ/hEc49/fnKi5TCS2L4X5XN5Rpkt4USl5l1zMZ1I5+cJdczM7Yyfz1ZrcGP/T/YnPfQXlQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz88A5waUl1DEiuUsC23zo3s4pqBUcMhrJq2JXpih6DK5IQmqk+
-	jKTCdsbF8oOcbxQHI2GRyFOirrjYBgonKEHJ7Exkn3wRLHIIxJO2lZr1h4SgR5c=
-X-Gm-Gg: ASbGncuVFcFXRkte9zsVlTfiGTUXG0UhfxMoo6YHoW7ZblBcDKZvsqXpIIcB23hqucI
-	4t/dYHDXkZpPXb3mBZLxKXAiEGKlzKJ1HTfzh58DlWjMRm9McH1C+OImsHMnTJuvYEKZR3ZnLh8
-	T2r66vlFEUwkvVrQbn7EvRMvHto3UeesYg72/1mBMiMLWG22gN25rcnLw5HVU4hEvMxqa2jNemU
-	jtwArarXCan0k9tvURTqqT+uGiIZGQUJZmO5JFrn8V04CAHT/s6ifet6ELH5tvzkRNIeJ/vXrob
-	KFDqhHQGYvHN5OvvwEskkzwewEvQAE3z4CZoVlKQ
-X-Google-Smtp-Source: AGHT+IFCw5/PULuUVcI3llc0y1a6yuLGG1HzrWtHK+9OOBjslUtrFHMO2qLGPE6HaWlamqpm+rB8Qg==
-X-Received: by 2002:a05:6402:501b:b0:5d0:efaf:fb73 with SMTP id 4fb4d7f45d1cf-5d81ddc3ca4mr1883854a12.15.1734694077983;
-        Fri, 20 Dec 2024 03:27:57 -0800 (PST)
+        bh=1zESwL5z/yFz+1EwFu23hzBHEEa+Luon6DhT4CZGajQ=;
+        b=PhAanb/1I6yV0BlEqj/KO83+oW45+M5g/ZCiHL1RWxPesHFMA/yvh9Se40kxdiPPY4
+         UCLOetv7qarUQMuqB2isGKHMHSXoL+QZ3G3Oy4vMhb3HIbTMIeC6++JwycmZ8eZaFOKy
+         /do9jEv3OpTtexSrCNKztGpBo4ANoTOBR+kSSh7PvGlV8Prxlo+AO6k8WM8e9/5h1yY3
+         uRb4Nb2x2NiFeTwL0cSwY+I8o5la/ABA92LIZVMJalCmYkHArxxEci1PzEdrdOB2Y99q
+         5b+qQMF+P1qgwhZVwLdO4Cn2nES709jipt5bPgaw2eNHtTq3aKrJVZED1XwwzopxIdS8
+         aS1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734694079; x=1735298879;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1zESwL5z/yFz+1EwFu23hzBHEEa+Luon6DhT4CZGajQ=;
+        b=TBeKc6FL2m+/U+zbu5afMAjN2dGT3v+Z5kb5I839py5ngDtbxKOtSRC50GgyIVLLxU
+         mTd4sQ+BH9wL2lR6WrZWwmAMnBOa0rIcuB+QIrDoXUunXdM55GxtjPiIhKRTrBAEn3jX
+         +9i4wVvzGZW7tZvzcJUeuNih9XuLX2rNtQKO+O+EnxDXS55AmZNFJvXsGrZvPe+svkPm
+         elFFQCIUEaNY+/4KT4ypdWwplghIX4/xihq28YDvNu1KSPRdl/VlDgz4FUN0wRzgVm/s
+         biqoHXtVLOa2MJ4fNhca4gwPqdr0lh4VC/n/TQB0Z28Q+X2w/isEc5ZhlfsqXG+zRM1C
+         +XJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLy85fvL+iLoBV1qEU6yDek/BlM0RMKsDmzGDRyx6Y4/2ii540VT0OIfMZhWwljECxveqN6a7YTUYV2L6umGinwQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3YMDqiRiS7Z4uZzs4ifxc29z1t6GjZ/MMgxzSuUO6JQbK2Ang
+	by2rbqrDaYBv17kFuOipkT1H7eQpbNnKvvH9s9+qKIDwVQfYRz9dC9PhhDdv9kM=
+X-Gm-Gg: ASbGncvx0ltq2ho2bN54xwvXRObWt1qr1ZWQyy8zgJbn/vGR/HBoF7d/QD1uoRXjVXf
+	vzSNMFa9KpvnoToB20HYULRsrx0yJES6dP9UMi09Ckkq28A2lWeOivGKohXtRs+zFc6XI7mwNFZ
+	U5qGnzZOr+v5/tPMDHoC53GCblTYlPIboNP6TfYabwToiNlmYDy7CvEys5a9SJXaEgfi4k0/2wE
+	bfsGWfPUZGlaZdUm9E8UMZvxV5fB9gV0jQ/8IU3yF9rM/W0Lm9/D2+e7Bykh3rZMZ5qW5krZl/g
+	eZLgfWpehRcgikY/ceFXdnbQl00XzDWCQG6yWIbF
+X-Google-Smtp-Source: AGHT+IHwdFHGdeIg/yzoQyFEM4Ix23wZS04hAPOurAhS8SM0BMEKA/I7VUHkQxsK73sPZbaMVySSVA==
+X-Received: by 2002:a05:6402:210b:b0:5d3:d19e:6d57 with SMTP id 4fb4d7f45d1cf-5d81de0669fmr1906775a12.34.1734694078782;
+        Fri, 20 Dec 2024 03:27:58 -0800 (PST)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80701abd1sm1632634a12.76.2024.12.20.03.27.57
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d80701abd1sm1632634a12.76.2024.12.20.03.27.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 03:27:57 -0800 (PST)
+        Fri, 20 Dec 2024 03:27:58 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v2 0/3] Google Pixel 6 Pro support
-Date: Fri, 20 Dec 2024 11:27:23 +0000
-Message-Id: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
+Date: Fri, 20 Dec 2024 11:27:24 +0000
+Subject: [PATCH v2 1/3] dt-bindings: arm: google: add gs101-raven and
+ generic gs101-pixel
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -67,9 +69,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAJtUZWcC/3XMQQrCMBCF4auUWRvJRLHBlfeQLmIyTQdqUzISl
- JK7G7t3+T943wZCmUng2m2QqbBwWlqYQwd+ckskxaE1GG3OaPCioqBGJfxcZxofyjpHVpveUui
- hndZMI7938D60nlheKX92v+Bv/UsVVFpZ711Ae9LG4m3mxeV0TDnCUGv9AlSb5nWtAAAA
+Message-Id: <20241220-gs101-simplefb-v2-1-c10a8f9e490b@linaro.org>
+References: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
+In-Reply-To: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Peter Griffin <peter.griffin@linaro.org>, 
@@ -81,69 +83,53 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-Hi,
+Raven is Google's code name for Pixel 6 Pro. Since there are
+differences compared to Pixel 6 (Oriole), we need to add a separate
+compatible for it.
 
-This series enables support for Google Pixel 6 Pro.
-
-Since Pixel 6 and Pixel 6 Pro use a different resolution display, we
-now need to add explicit support for it, we can not piggyback on the
-non-Pro version anymore. This means having to separate them into their
-respective DTs, and provide one for each of them.
-There are other differences between the two of course, like battery
-design capacity, etc., but they don't matter at this stage due to
-incomplete upstream support.
-
-* dependency note *
-
-Due to the renaming of the gs101-oriole.dts, this series will conflict
-with any pending patches touching the same file. I have therefore based
-this series on top of my USB series from
-https://lore.kernel.org/r/20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org
-and the patch enabling framebuffer support for Pixel 6 from
-https://lore.kernel.org/r/20241220-gs101-simplefb-oriole-v2-1-df60e566932a@linaro.org
-
-* dependency note end *
+We also want to support a generic DT, which can work on any type of
+gs101-based Pixel device, e.g. Pixel 6, or Pixel 6 Pro, or Pixel 6a (as
+a future addition). Such a DT will have certain nodes disabled / not
+added. To facilitate such a generic gs101-based Pixel device, also add
+a more generic gs101-pixel compatible. We can not just use the existing
+google,gs101 for that, as it refers to the SoC, not a board.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-Changes in v2:
-- We now have a generic gs101-based Pixel board DT, which can work on
-  any Pixel 6 / 6 Pro / 6a
-- Pixel 6 (Pro) are overlays onto that one.
-  This has the advantage that all boards can be supported without
-  having to have a full copy of the DT for each of them. We still
-  instruct kbuild to create merged DTBs (in addition to the DTBOs) so
-  that existing scripts can keep working while giving the option to
-  just apply the overlay before boot (e.g. by the bootloader).
-- The binding has been updated according to the above points
-- I've changed the simple-framebuffer node to specify the memory via
-  memory-region instead of reg, as that avoids unnecessary duplication
-  (of the size), and it avoids having to specify #address-cells
-  and #size-cells in the chosen node (and duplicating this in the
-  DTSO), which is otherwise necessary to keep dt_binding_check happy
-  and DT validation working in general.
-- sort overriding/extending nodes ordered by label name (Krzysztof)
-- format patches with diff.renames=copies (Krzysztof)
-- dependencies have been updated, see below
-- Link to v1: https://lore.kernel.org/r/20241216-gs101-simplefb-v1-0-8ccad1830281@linaro.org
+ Documentation/devicetree/bindings/arm/google.yaml | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
----
-André Draszik (3):
-      dt-bindings: arm: google: add gs101-raven and generic gs101-pixel
-      arm64: dts: exynos: gs101-pixel: add generic gs101-based Pixel support
-      arm64: dts: exynos: gs101-raven: add new board file
+diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
+index e20b5c9b16bc..a8faf2256242 100644
+--- a/Documentation/devicetree/bindings/arm/google.yaml
++++ b/Documentation/devicetree/bindings/arm/google.yaml
+@@ -34,11 +34,21 @@ properties:
+     const: '/'
+   compatible:
+     oneOf:
+-      - description: Google Pixel 6 / Oriole
++      - description: Google GS101 Pixel devices, as generic Pixel, or Pixel 6
++          (Oriole), or 6 Pro (Raven)
++        minItems: 2
++        maxItems: 3
+         items:
+-          - enum:
+-              - google,gs101-oriole
+-          - const: google,gs101
++          enum:
++            - google,gs101-oriole
++            - google,gs101-raven
++            - google,gs101-pixel
++            - google,gs101
++        allOf:
++          - contains:
++              const: google,gs101-pixel
++          - contains:
++              const: google,gs101
+ 
+   # Bootloader requires empty ect node to be present
+   ect:
 
- Documentation/devicetree/bindings/arm/google.yaml  | 18 +++++++++---
- arch/arm64/boot/dts/exynos/google/Makefile         |  9 ++++--
- .../arm64/boot/dts/exynos/google/gs101-oriole.dtso | 33 ++++++++++++++++++++++
- .../{gs101-oriole.dts => gs101-pixel-generic.dts}  | 24 +++++++---------
- arch/arm64/boot/dts/exynos/google/gs101-raven.dtso | 33 ++++++++++++++++++++++
- 5 files changed, 97 insertions(+), 20 deletions(-)
----
-base-commit: f70ddfc479f2fac1d0b744148743c25ce1778f01
-change-id: 20241216-gs101-simplefb-8aae80278ed7
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.47.1.613.gc27f4b7a9f-goog
 
