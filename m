@@ -1,42 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987911F2399;
-	Sat, 21 Dec 2024 09:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E21F427B;
+	Sat, 21 Dec 2024 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734772295; cv=none; b=lMyWwdDmrCBmAqHZiFBYFGrd/6yaRwXpRjsVYrWo90VQKce/dnXDJ8OjrHaeGYRjYNiQP96u5L/nXT0TVHdiZCIQ5UJqaPG+um1Aqnno98B8B3gsSNFFZJdS7Q29wJN1tKkO6tGLPo8jloLGDvAjHWjvm00pZE10IPteil+Swzw=
+	t=1734794407; cv=none; b=SWtoU79F8tuvSsGmWnxpT0tXIEyfnVpv5VBxD6VeF4jk5Y7h5WJy1KnXMP0LMI4S649nJ4j2nw4yFZOYC3v2pt9RfBy43ePsRbAeWZAKwNlcgJwbm+IvnbCc1fverN7fobMwKKROgDT3/RYS7DtWL3voHlQz2DX3CRogbk8wQ8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734772295; c=relaxed/simple;
-	bh=dJNf7Ef27a6NAHmh6+QRwRI/qSPxeV2L1TYNFHLLkzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UGcBYZWC1RPNdqgngbPpGViNueYqk05vJjc3LQNVd6aIsECoGAL+kmYtoL9b/70RZJrb7vB1A3Vvk2T3r6MWh7NjQidwnGf3AWSZKCAlFb2YuRb+F96O+L+4tiGquqV0ckJ1Sb4cA+7zjHdaicO0F51hk4rc3rf9szAdu12V2gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOByZ+Mm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734794407; c=relaxed/simple;
+	bh=9v5+hAHd32rlHLafrWQexc/fi2H6/adWC5gbLnVGsL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=axhmOi3Md2l7meHWVz0+6safnkufh3+RE8k9v1YOqOPh06N2gzFJwWd+i8xcxqopm0/KikEJ6+7mopJMPTPFyGZ4KwFAiZvvAOVaFeUZniWC08kUMJicuwsgOk3UIqxBZlHYexxOK2iRN/05BgYSoUgZuZMDIKfirZyrT2kI0Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VspNLYF3; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOByZ+Mm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BFEC4CECE;
-	Sat, 21 Dec 2024 09:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734772295;
-	bh=dJNf7Ef27a6NAHmh6+QRwRI/qSPxeV2L1TYNFHLLkzw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rOByZ+MmldENSL1r5dbGRpI8uFki0fQoDB9a+fNNVU/IrJANVztXQKsaGmTYReMCp
-	 nEfFDhX8gitMArDdEGE2TfTZJANLGAf8WztBbVQ3gOCS5FZ5dhK/Jm16SACnarcw4Q
-	 uqJGENwFJsn95GhUIJ0JLdYMgyaMemPXlLB6KhDAqa/FPq62XrBcBYH3IMzBdznaEZ
-	 D+TvpP0yfvtRP6YSLPR3xc8Yz85uvwdcr/4Q9EKPnK2Nfs1CEW4Lehx+8CWimu/Gni
-	 3IN4cTsSpbR4jl7RlIS7NJ22DAyXY1FhphTx9siZur/Wuz4lRJxpdgCXo606XlABuQ
-	 mBlPcX2seKpXg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 22/29] crypto: s5p-sss - use the new scatterwalk functions
-Date: Sat, 21 Dec 2024 01:10:49 -0800
-Message-ID: <20241221091056.282098-23-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241221091056.282098-1-ebiggers@kernel.org>
-References: <20241221091056.282098-1-ebiggers@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VspNLYF3"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so1832329f8f.1;
+        Sat, 21 Dec 2024 07:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734794404; x=1735399204; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V63wJTh9Gpi5tIJqemgexT4IewcNUrEcJ6BJ9DO+IfQ=;
+        b=VspNLYF3sbUKcO39sT8kAywkQKdceJmPnIYmpoOSf3xZew5on2Es5NDCIYmtjrMy9q
+         a/UOvSjYkXqRYogXrWJ1ZGVwlvlSjVT2W1aDhw5mffe/MwOWsm1+QjB6tJ55EigmaffO
+         Nt3UwFzn+2ec15fvf2CxYo/5cHdchrXX6NAw5dHNsz68SDh/7LKIPuc5cMgPbiXPAvIp
+         BVc5g2rR/LEufzwubBVHdXdydtRqEFnu2sPxLzoDSvlnKEKAPigpZ5i/wqt/CUSFSCvs
+         Wn4+rKNZiG4SFhR6QSf5q2VZKnLD4W9Ia/ZwrqqY1K8VdTmzpYvYabGi5dwrzvoigmFy
+         /rhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734794404; x=1735399204;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V63wJTh9Gpi5tIJqemgexT4IewcNUrEcJ6BJ9DO+IfQ=;
+        b=Ss9DcefC+caSx8a14ci809oJRZOf1dC2oN2poSsYBkjVNoMjIFwZjEm6hJd1EpViws
+         heCkPK+i0MiAfC3bqyJLIzO9lq3YXPwOGNI0vUV1uFJ2CeAqjEQVM7wvNk7ToBPm6Erd
+         21NSkMajmNARwrrKcDf1hsq2RDD2L/a3NCfBg9CBYVhDhRMqkyOYy6UV2Htc3c1/WAuZ
+         MbPjruibxN80b+OalRv7B6/wNNSgpy5EmcTE7kj4wKdJu+LOXtlmPjsc8jPrhcmR5iNd
+         6//uVuBk7vyz/3KSzK54WGTxZIGraQ5Vir0isstEMCbji/b75LRHQZM9U32Ak93/mggL
+         U/zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYe94P112Njj657A5V+6pAN6uRwpmMtvRsPDYBD5wWKcqCYMWzU0H7g27iu81u+ui7cjhUP1egQTjSXohYIJ8ybVk=@vger.kernel.org, AJvYcCVMPY/YO4L/bjC9Som4GoSFG/ClsDX+ig6Vpz3z68C7n3iyjFB/nUtdwrxQ4LELntoPDX+5ZY3JwdfI@vger.kernel.org, AJvYcCVVl8uNGAXVT2yzh2OAHMgEhely6UhtSI6vU+uZbFdKzjbfyfVbWCqTRBkli+UYJE/82wb+0X4HS4yZH+PR@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywuc0yopCogVXEFbZKvQI8FzDRcUanKJzI39eHv3hmLUWpPfInx
+	Wih8imNy2nndoYJvnKT1HSiqT7bDadFVZVOnxgMoCfvzWhi6aASx
+X-Gm-Gg: ASbGncv6tg8lsot/tk+RrTrgVkZI/3VLeppJ2Ubg/rEfGi0xPc2+VLI1J7yZ64bONU1
+	jOZkOBoq+ImvO2oSRGFAJDZM7uZmdGpiztfEhuuzRzmTU4/c9p7FmWyy7wfRS5yn2tt03rSi3bd
+	LUk9h8QkMU/cuR3YaHg2MbAlNFl/IgkIx4jsKGq+SwxrdEBgVVVPRrqd5KJtoIzlmQb7FAwoYRj
+	tpcwYZPg/q4OfQ/1QLp2Efj0MvDIwo72DNP51kxfbg00lNqUEJIunzSfFXUIGsumKy3+fw4/LcA
+	nLKXJJR6AcrmErX7xOLfVUfiTevZ5Ucn
+X-Google-Smtp-Source: AGHT+IGxUo7d6FmiNUMjFt1hGCs3bvI+XiU2A4CUZREyhrBfzG+bNHKkB22GLvnHpEEmmpCAj9pj7w==
+X-Received: by 2002:a5d:59ab:0:b0:385:f220:f779 with SMTP id ffacd0b85a97d-38a223fd11bmr6377994f8f.49.1734794403720;
+        Sat, 21 Dec 2024 07:20:03 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e126sm6629046f8f.65.2024.12.21.07.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Dec 2024 07:20:03 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] i2c: exynos5: Add support for Exynos8895 SoC
+Date: Sat, 21 Dec 2024 17:19:35 +0200
+Message-ID: <20241221151937.1659139-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -45,155 +78,34 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Eric Biggers <ebiggers@google.com>
+Hey folks,
 
-s5p_sg_copy_buf() open-coded a copy from/to a scatterlist using
-scatterwalk_* functions that are planned for removal.  Replace it with
-the new functions memcpy_from_sglist() and memcpy_to_sglist() instead.
-Also take the opportunity to replace calls to scatterwalk_map_and_copy()
-in the same file; this eliminates the confusing 'out' argument.
+This series adds HSI2C support for Exynos8895 to i2c-exynos5. HSI2C
+buses here are mostly available implemented in USIv1 blocks, with 5
+available externally - hsi2c_0 to 4. hsi2c_0 is available for PMIC
+(although I've never seen it used) and it uses BUSC clocks, which are
+still not implemented in the current clock driver, so I've decided to
+leave it out for now.
 
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
+In the next few patchsets support for USIv1 will be added to the
+exynos-usi driver and with that the rest of the I2C buses will be made
+available in the device tree.
 
-This patch is part of a long series touching many files, so I have
-limited the Cc list on the full series.  If you want the full series and
-did not receive it, please retrieve it from lore.kernel.org.
+Kind regards,
+Ivo
 
- drivers/crypto/s5p-sss.c | 38 +++++++++++---------------------------
- 1 file changed, 11 insertions(+), 27 deletions(-)
+Changes in v2:
+ - Dropped nested-if in the binding, keeping in mind we'll always
+   provide only a single clock.
 
-diff --git a/drivers/crypto/s5p-sss.c b/drivers/crypto/s5p-sss.c
-index 57ab237e899e..b4c3c14dafd5 100644
---- a/drivers/crypto/s5p-sss.c
-+++ b/drivers/crypto/s5p-sss.c
-@@ -456,34 +456,21 @@ static void s5p_free_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist **sg)
- 
- 	kfree(*sg);
- 	*sg = NULL;
- }
- 
--static void s5p_sg_copy_buf(void *buf, struct scatterlist *sg,
--			    unsigned int nbytes, int out)
--{
--	struct scatter_walk walk;
--
--	if (!nbytes)
--		return;
--
--	scatterwalk_start(&walk, sg);
--	scatterwalk_copychunks(buf, &walk, nbytes, out);
--	scatterwalk_done(&walk, out, 0);
--}
--
- static void s5p_sg_done(struct s5p_aes_dev *dev)
- {
- 	struct skcipher_request *req = dev->req;
- 	struct s5p_aes_reqctx *reqctx = skcipher_request_ctx(req);
- 
- 	if (dev->sg_dst_cpy) {
- 		dev_dbg(dev->dev,
- 			"Copying %d bytes of output data back to original place\n",
- 			dev->req->cryptlen);
--		s5p_sg_copy_buf(sg_virt(dev->sg_dst_cpy), dev->req->dst,
--				dev->req->cryptlen, 1);
-+		memcpy_to_sglist(dev->req->dst, 0, sg_virt(dev->sg_dst_cpy),
-+				 dev->req->cryptlen);
- 	}
- 	s5p_free_sg_cpy(dev, &dev->sg_src_cpy);
- 	s5p_free_sg_cpy(dev, &dev->sg_dst_cpy);
- 	if (reqctx->mode & FLAGS_AES_CBC)
- 		memcpy_fromio(req->iv, dev->aes_ioaddr + SSS_REG_AES_IV_DATA(0), AES_BLOCK_SIZE);
-@@ -524,11 +511,11 @@ static int s5p_make_sg_cpy(struct s5p_aes_dev *dev, struct scatterlist *src,
- 		kfree(*dst);
- 		*dst = NULL;
- 		return -ENOMEM;
- 	}
- 
--	s5p_sg_copy_buf(pages, src, dev->req->cryptlen, 0);
-+	memcpy_from_sglist(pages, src, 0, dev->req->cryptlen);
- 
- 	sg_init_table(*dst, 1);
- 	sg_set_buf(*dst, pages, len);
- 
- 	return 0;
-@@ -1033,12 +1020,11 @@ static int s5p_hash_copy_sgs(struct s5p_hash_reqctx *ctx,
- 	}
- 
- 	if (ctx->bufcnt)
- 		memcpy(buf, ctx->dd->xmit_buf, ctx->bufcnt);
- 
--	scatterwalk_map_and_copy(buf + ctx->bufcnt, sg, ctx->skip,
--				 new_len, 0);
-+	memcpy_from_sglist(buf + ctx->bufcnt, sg, ctx->skip, new_len);
- 	sg_init_table(ctx->sgl, 1);
- 	sg_set_buf(ctx->sgl, buf, len);
- 	ctx->sg = ctx->sgl;
- 	ctx->sg_len = 1;
- 	ctx->bufcnt = 0;
-@@ -1227,12 +1213,11 @@ static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
- 		int len = BUFLEN - ctx->bufcnt % BUFLEN;
- 
- 		if (len > nbytes)
- 			len = nbytes;
- 
--		scatterwalk_map_and_copy(ctx->buffer + ctx->bufcnt, req->src,
--					 0, len, 0);
-+		memcpy_from_sglist(ctx->buffer + ctx->bufcnt, req->src, 0, len);
- 		ctx->bufcnt += len;
- 		nbytes -= len;
- 		ctx->skip = len;
- 	} else {
- 		ctx->skip = 0;
-@@ -1251,13 +1236,12 @@ static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
- 			xmit_len -= xmit_len & (BUFLEN - 1);
- 
- 		hash_later = ctx->total - xmit_len;
- 		/* copy hash_later bytes from end of req->src */
- 		/* previous bytes are in xmit_buf, so no overwrite */
--		scatterwalk_map_and_copy(ctx->buffer, req->src,
--					 req->nbytes - hash_later,
--					 hash_later, 0);
-+		memcpy_from_sglist(ctx->buffer, req->src,
-+				   req->nbytes - hash_later, hash_later);
- 	}
- 
- 	if (xmit_len > BUFLEN) {
- 		ret = s5p_hash_prepare_sgs(ctx, req->src, nbytes - hash_later,
- 					   final);
-@@ -1265,12 +1249,12 @@ static int s5p_hash_prepare_request(struct ahash_request *req, bool update)
- 			return ret;
- 	} else {
- 		/* have buffered data only */
- 		if (unlikely(!ctx->bufcnt)) {
- 			/* first update didn't fill up buffer */
--			scatterwalk_map_and_copy(ctx->dd->xmit_buf, req->src,
--						 0, xmit_len, 0);
-+			memcpy_from_sglist(ctx->dd->xmit_buf, req->src,
-+					   0, xmit_len);
- 		}
- 
- 		sg_init_table(ctx->sgl, 1);
- 		sg_set_buf(ctx->sgl, ctx->dd->xmit_buf, xmit_len);
- 
-@@ -1504,12 +1488,12 @@ static int s5p_hash_update(struct ahash_request *req)
- 
- 	if (!req->nbytes)
- 		return 0;
- 
- 	if (ctx->bufcnt + req->nbytes <= BUFLEN) {
--		scatterwalk_map_and_copy(ctx->buffer + ctx->bufcnt, req->src,
--					 0, req->nbytes, 0);
-+		memcpy_from_sglist(ctx->buffer + ctx->bufcnt, req->src,
-+				   0, req->nbytes);
- 		ctx->bufcnt += req->nbytes;
- 		return 0;
- 	}
- 
- 	return s5p_hash_enqueue(req, true); /* HASH_OP_UPDATE */
+Ivaylo Ivanov (2):
+  dt-bindings: i2c: exynos5: Add samsung,exynos8895-hsi2c compatible
+  i2c: exynos5: Add support for Exynos8895 SoC
+
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml  |  1 +
+ drivers/i2c/busses/i2c-exynos5.c              | 31 +++++++++++++++++--
+ 2 files changed, 30 insertions(+), 2 deletions(-)
+
 -- 
-2.47.1
+2.43.0
 
