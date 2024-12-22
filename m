@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC4113B7AE;
-	Sun, 22 Dec 2024 08:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1C816F27F;
+	Sun, 22 Dec 2024 08:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734857054; cv=none; b=YxBg8DCtbrOFzp1fbJ/SQtDkNBBKSH8zwspkqw/ttnLh9dh7hIt0N90iwLQRwv/GU2dIS97rBMOqNxUXbLNjyiRI/Q3ohmrw61nqVRJfFHybj0nbucDqeItSgORh6X0b8Jpyu17yq9vyLiXj9SsQo+84Tf/loycL2xIR670Fh+Y=
+	t=1734857069; cv=none; b=QbgyRtlN9NqIaZ70kEukkMwr2ydFJ9ox+ea0aIXAOHHnaocA5eGzHUypZizNxd8KgceDGj7M86DrmRgL0SXvYwRALkFXIBqOFaYdFw6AEEik8zKa5l3IuSnfR52Xw1itamvOY2wL8Cn3gUUo2sUnrN9+SD0ZjlEekx4WHYrevM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734857054; c=relaxed/simple;
-	bh=FulWww1sbzJO3b867Nrkdh4wLx+LMHxeVucGOcRpMlw=;
+	s=arc-20240116; t=1734857069; c=relaxed/simple;
+	bh=vOv3SDR/kqhF+2Wt+FhCJkbZftAkSUP5oWG1y/l48sI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqID161THaoF8kOU3sHDLdxEp47Du4Qrr9rc4bqZLvtDmFu/q5CZ2Lb3nTraXcGt3mQYkJp6IjwbiiUsD9Tc9SDBPnGq/4FRgYs2qSEHabErbmMsOAJVY0kSrkvUJ3mXpkwC68tGLQKm75Ygkru3Vm584AhzCC2gxE9jm42P6qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=occDcVq7; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxpqF/fCMtdUFie09MM3uMzaTI4eAoErbcA08t5SvXjRT4mYHBQB+/qDiwo35Z+Z6qeUfct/xG0XOuOHQHame1FTIAXrmSwvQFPo+HzuPryeokOYSNupSEBG7MkC95s/Zgmm1a1CbK+4i/7hJL2N79U81nbtn3gYUAwBp5yJufM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGthdnDR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="occDcVq7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF7CC4CECD;
-	Sun, 22 Dec 2024 08:44:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGthdnDR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E50FC4CECD;
+	Sun, 22 Dec 2024 08:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734857053;
-	bh=FulWww1sbzJO3b867Nrkdh4wLx+LMHxeVucGOcRpMlw=;
+	s=k20201202; t=1734857068;
+	bh=vOv3SDR/kqhF+2Wt+FhCJkbZftAkSUP5oWG1y/l48sI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=occDcVq7Cz4JxWPiwSEBYMPGgqf+goJ/jE8rwNcja5D7WIFIeP7sep21RJf2L2H5Q
-	 s1lr1lbKeQEgw0kYvc71nLn6thbNSgobV5FZt3DSPb4zOicfj5HCtQKsEF/hYvtWUV
-	 0c27JHIKlg7xFlDrloZSqoE8dXoCH7CMjX2T8RlTXw/CTx5XLbVrhh7r7K1/OfBkaX
-	 UggAk7LghIyA6H0rOenIIBTc48+NkZEHDaTTDEPZK3/jt+p4/fgJiHxnTrG2vuVE8T
-	 tL5lC8JYYqpndGkINvcQ1IPsAe8Ek7uW8iMd0oCvdDMwuCBZ3UMfELz4Uz/UrYYOMJ
-	 WBlBtnPNxGDqg==
-Date: Sun, 22 Dec 2024 09:44:10 +0100
+	b=CGthdnDRcHBT6b3R4o1mP3UcKjpM+zl5RG5Ukllt/4gA5pEjW0D0vyTHBGZvsU2OA
+	 3/45fYgvtiBh60l1l4flqoNHeqX14AETyaT3PUkMxj6gcwfJvgZROkkvL0HY0fskMM
+	 IB4tSWOu5kWd8tGV+pi31A5fg+hAptE0GhssY8JhDmdMOZOGHqcyABTpkng5H1BoOH
+	 PgMOpigvpfXiC28Kf83cfuKhNxOs7DnD3/88fzxv20kQy4h3qOvP2qNdeDSEAoQIkE
+	 7xYkW6/d2V9cOiZgJDjLP6a5CIOrGApq625iYx7ua6dTXxp4ezA28MQLErt5h+8RE4
+	 tvpji0NCjYCig==
+Date: Sun, 22 Dec 2024 09:44:25 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>
 Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
@@ -36,10 +36,10 @@ Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
 	peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
 	daniel.lezcano@linaro.org, vincent.guittot@linaro.org, ulf.hansson@linaro.org, 
 	arnd@arndb.de
-Subject: Re: [PATCH v6 2/5] dt-bindings: mailbox: add google,gs101-mbox
-Message-ID: <uo4zvw4sl6uxsj2ewvoue7l3obugivq5z74ukwnd4sj3ndtwhu@hxxque3r4nvb>
+Subject: Re: [PATCH v6 1/5] dt-bindings: mailbox: allow #mbox-cells = <0>;
+Message-ID: <uj4hxm6ijclixdq7wr5yfa7xnxjrom45ce7iyowf54kebkuelb@24ufqptjlwqg>
 References: <20241220-acpm-v4-upstream-mbox-v6-0-a6942806e52a@linaro.org>
- <20241220-acpm-v4-upstream-mbox-v6-2-a6942806e52a@linaro.org>
+ <20241220-acpm-v4-upstream-mbox-v6-1-a6942806e52a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -48,84 +48,14 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241220-acpm-v4-upstream-mbox-v6-2-a6942806e52a@linaro.org>
+In-Reply-To: <20241220-acpm-v4-upstream-mbox-v6-1-a6942806e52a@linaro.org>
 
-On Fri, Dec 20, 2024 at 01:49:57PM +0000, Tudor Ambarus wrote:
-> Add bindings for the Samsung Exynos Mailbox Controller.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../bindings/mailbox/google,gs101-mbox.yaml        | 70 ++++++++++++++++++++++
->  include/dt-bindings/mailbox/google,gs101.h         | 14 +++++
+On Fri, Dec 20, 2024 at 01:49:56PM +0000, Tudor Ambarus wrote:
+> There are mailbox clients that can discover the mailbox channel
+> identifiers at runtime. For such cases passing the channel
+> identifiers via DT is redundant.
 
-Drop the header, not used.
-
->  2 files changed, 84 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-> new file mode 100644
-> index 000000000000..a1fbc3b2b9de
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright 2024 Linaro Ltd.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/google,gs101-mbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung Exynos Mailbox Controller
-> +
-> +maintainers:
-> +  - Tudor Ambarus <tudor.ambarus@linaro.org>
-> +
-> +description: |
-
-Drop |
-
-> +  The Samsung Exynos mailbox controller, used on Google GS101 SoC, has 16 flag
-> +  bits for hardware interrupt generation and a shared register for passing
-> +  mailbox messages. When the controller is used by the ACPM protocol the shared
-> +  register is ignored and the mailbox controller acts as a doorbell.
-> +  The controller just raises the interrupt to the firmware after the
-> +  ACPM protocol has written the message to SRAM.
-> +
-> +properties:
-> +  compatible:
-> +    const: google,gs101-mbox
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pclk
-> +
-> +  interrupts:
-> +    description: IRQ line for the RX mailbox.
-> +    maxItems: 1
-> +
-> +  '#mbox-cells':
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - '#mbox-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Doorbell mode.
-
-Drop comment, not applicable now, I think.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
