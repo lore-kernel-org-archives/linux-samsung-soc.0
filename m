@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADB4192D8E;
-	Sun, 22 Dec 2024 14:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE4718FC9D;
+	Sun, 22 Dec 2024 14:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734877449; cv=none; b=UR3JoYsCBjxGFYeGjpzNlQ2AxKcnRpvmr0isM66lmQIZ4zFQ8KWFlcblJgqq5OVxeOegw0Yqlm8fVHHBwoOvsLulXEQciGZYC/N90a/qdvOBoQ08cRXufHYHGfs1kAtmmkEv1NBrswPfPOEC7cfIWjwareqSn8mIi8AhAKOo3Us=
+	t=1734877453; cv=none; b=ElmKGHxcwumvjNOdFQy6q1RQHc2SJ8quKzVHW5T3OjqVZFXYJ/hDIZdgCh4AzHWiYo96mCcA4ec1NijfHWtmRzIgBVQF0s/TiP6ECMJkrIT44MQEPsqVSVpQDhA68JPjXhchlenfjV7yIFlN366DPhQFXyz7bupbAe6935Mr5RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734877449; c=relaxed/simple;
-	bh=l9r4OjNhGaVuOH98ReJV0qFhKCU28LrldC7d8PEUEoM=;
+	s=arc-20240116; t=1734877453; c=relaxed/simple;
+	bh=67IEaV0C+lWBiuzQ7UAzgDZN3qTO+38r3vuerIM8WaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F8WNwY1Mxag3KVZ+Jny5HDhkyqPkzWii1/jmP1ipXZaPWWGV12KNjXSu+DEYaBzrELErLYMOTNkjbPasNZmxDhLMDgMU9Ie1P/chKBXLfHVnfyyV40OaaXH0YdzVEotyWTQ2ZVEH4ywN33KgaUjNE0pVqhh4H5HUIqCUA90kQXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1Y9WF6y; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=tlT8U3MFCcnwJp6OvMqvIKA0PqUOG1SRe3rVA28l7qLw3SYlBU+543G2Wi1/H36H3iOGr9PTSNg7ZA0RvdnevvsgPckBlOZi2JrlDQprHxnGZ8n+NHselrXutyEGe8QAMnA40HYwcAqjK8+xpWuja1gxoWEWnaVr4k06wxcRC10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiSINspB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1Y9WF6y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B2DDC4CECD;
-	Sun, 22 Dec 2024 14:24:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiSINspB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 150F0C4CECD;
+	Sun, 22 Dec 2024 14:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734877449;
-	bh=l9r4OjNhGaVuOH98ReJV0qFhKCU28LrldC7d8PEUEoM=;
+	s=k20201202; t=1734877453;
+	bh=67IEaV0C+lWBiuzQ7UAzgDZN3qTO+38r3vuerIM8WaY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t1Y9WF6yPU16Y83okfcy1FRycLdXKnrV3cjcnUCLmlWMa3nEiL4+ZuNMqm1UhA4jR
-	 DU8fsHEs809CNUDehjqK+nwgkBgjv4JFFejppW/vmkAzZd14F77i3xHIglBBXRxXLX
-	 q5KLXPERWI51rQ+f7C8hkAuhyeCoPCTVgCJr1BhRBj/VkpsHvb/Ge0yA5ccPcvIe2g
-	 csEl+T+20BnrwcFn935aEl5LddOe9KQJezHI2x7C0JRlemjANaDRYSCPQejq51A5Ql
-	 RyJksp7HI/6zJagRqyMqA/4VeoqL6YVdBnYOnDQiZvB6Hsh3x04+1u/LejgqAhMmGT
-	 626EGE322kOXA==
-Message-ID: <9e69c21a-3d97-41e4-addd-d1ebd80f47ff@kernel.org>
-Date: Sun, 22 Dec 2024 12:51:58 +0100
+	b=qiSINspBpvnPlbrgzX/PAKHq6RIm0LMmBvyEVHua7a7jD/WiI97JK86ZykgXzUmIq
+	 sPki6z0cIPnOrSe3e+yimDf3qvd3tMCXFh3Eu4EYLFWhKrb2+yX55M0RONvBvSJipP
+	 IGriAeu5EJiGPSgyzXTfOFBOM8Bjnes6euVBtM0CM28EE5HPobT6cKp79Mktn3GcTb
+	 +1J1vSxcQSDyr9ENtNhKnD/i5rKilUakopvaVpGiKaKNWLMfSvZnXtXn9umFSa4rZJ
+	 hGjLlHdswxoy69dcq4hlD1LV0TVKpz0Qw2ECPxlWy1SLBewAF2Yvue/ITMM/OmB9Jj
+	 xYUbdQj8/z1aA==
+Message-ID: <1408dcd1-9a46-4cb9-8443-5aa51d61ed56@kernel.org>
+Date: Sun, 22 Dec 2024 13:06:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,15 +35,17 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] arm64: dts: exynos990: Add clock management unit
- nodes
-To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for
+ gs101-pmu
+To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241215170803.1756850-1-igor.belwon@mentallysanemainliners.org>
- <20241215170803.1756850-2-igor.belwon@mentallysanemainliners.org>
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com,
+ kernel-team@android.com
+References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
+ <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,59 +91,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241215170803.1756850-2-igor.belwon@mentallysanemainliners.org>
+In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/12/2024 18:08, Igor Belwon wrote:
-> Add CMU nodes for:
-> - cmu_top: provides clocks for other blocks
-> - cmu_hsi0: provides clocks for usb31
+On 13/12/2024 17:44, Peter Griffin wrote:
+> To avoid dtschema warnings allow google,gs101-pmu to have
+> two reg regions.
 > 
-> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  arch/arm64/boot/dts/exynos/exynos990.dtsi | 28 +++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+> I don't really like this patch, but also didn't want to submit the series
+> with a dtschema warning ;-)
 > 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> index 2619f821bc7c..d6a8c04e6602 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
-> @@ -5,6 +5,7 @@
->   * Copyright (c) 2024, Igor Belwon <igor.belwon@mentallysanemainliners.org>
->   */
->  
-> +#include <dt-bindings/clock/samsung,exynos990.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  
->  / {
-> @@ -199,6 +200,24 @@ pinctrl_peric1: pinctrl@10730000 {
->  			interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->  
-> +		cmu_hsi0: clock-controller@10a00000 {
-> +			compatible = "samsung,exynos990-cmu-hsi0";
+> Possibly a better solution is when Robs patch
+> `mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
 
-Does it depend on anything? Cover letter is quiet here, but it should
-explain any dependencies.
+PMU which spans over two blocks is not a simple syscon. These would be
+two syscon devices.
 
-> +			reg = <0x10a00000 0x8000>;
-> +			#clock-cells = <1>;
-> +
-> +			clocks = <&oscclk>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_BUS>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_USB31DRD>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_USBDP_DEBUG>,
-> +				 <&cmu_top CLK_DOUT_CMU_HSI0_DPGTC>;
-> +			clock-names = "oscclk",
-> +				      "bus",
-> +				      "usb31drd",
-> +				      "usbdp_debug",
-> +				      "dpgtc";
-> +
+If you request regmap from such syscon, which regmap you get?
 
-Not much improved. Still stray blank line.
+I am not sure whether the PMU is really split here. Usually the main PMU
+was only one and additional blocks called PMU were somehow specialized
+per each IP block.
 
-> +		};
+Maybe you have here two devices, maybe only one. If it is only one, then
+it is not a syscon anymore, IMO.
+
+
+
 Best regards,
 Krzysztof
