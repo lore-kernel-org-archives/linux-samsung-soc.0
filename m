@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE4718FC9D;
-	Sun, 22 Dec 2024 14:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDD818FC9D;
+	Sun, 22 Dec 2024 14:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734877453; cv=none; b=ElmKGHxcwumvjNOdFQy6q1RQHc2SJ8quKzVHW5T3OjqVZFXYJ/hDIZdgCh4AzHWiYo96mCcA4ec1NijfHWtmRzIgBVQF0s/TiP6ECMJkrIT44MQEPsqVSVpQDhA68JPjXhchlenfjV7yIFlN366DPhQFXyz7bupbAe6935Mr5RM=
+	t=1734877459; cv=none; b=UWgRMzavwZ/L4LBCOaVtoiUIVzuZrz0yUCI38iVYsJ0PpAwUKnPELq6yILj23L1VxduE0ukjS0YDZ5QFN8e9Yg58CvplMHfxAm07IbRQLwjIwTBgp+UsXCal710Qm1g7MEtIo+pTuxeGBrbm+1gic28IFTehYs0BOCqY/gqGV/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734877453; c=relaxed/simple;
-	bh=67IEaV0C+lWBiuzQ7UAzgDZN3qTO+38r3vuerIM8WaY=;
+	s=arc-20240116; t=1734877459; c=relaxed/simple;
+	bh=0XcZORZTYCC8Zsw33n+0LgRXzG40hhH2RqpgjdwCwhE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tlT8U3MFCcnwJp6OvMqvIKA0PqUOG1SRe3rVA28l7qLw3SYlBU+543G2Wi1/H36H3iOGr9PTSNg7ZA0RvdnevvsgPckBlOZi2JrlDQprHxnGZ8n+NHselrXutyEGe8QAMnA40HYwcAqjK8+xpWuja1gxoWEWnaVr4k06wxcRC10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiSINspB; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Hw/5XxkZusyk9xxqujrgoRqVhGr46GZMZgq8sw3aYEZAxe88jSK1xE4sI3PxU5wy+qPmXiq+e4c740yZROtUfVeRHURxzWu3hNBwzuQ6qNZWUEjZI/6GYFsxpG3dWr1PEKLyFMMh4U0bagJxXHo3vVenI9cjPS5EjN0zrtYsnUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkkAXBZb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiSINspB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 150F0C4CECD;
-	Sun, 22 Dec 2024 14:24:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkkAXBZb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C783C4CEDC;
+	Sun, 22 Dec 2024 14:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734877453;
-	bh=67IEaV0C+lWBiuzQ7UAzgDZN3qTO+38r3vuerIM8WaY=;
+	s=k20201202; t=1734877459;
+	bh=0XcZORZTYCC8Zsw33n+0LgRXzG40hhH2RqpgjdwCwhE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qiSINspBpvnPlbrgzX/PAKHq6RIm0LMmBvyEVHua7a7jD/WiI97JK86ZykgXzUmIq
-	 sPki6z0cIPnOrSe3e+yimDf3qvd3tMCXFh3Eu4EYLFWhKrb2+yX55M0RONvBvSJipP
-	 IGriAeu5EJiGPSgyzXTfOFBOM8Bjnes6euVBtM0CM28EE5HPobT6cKp79Mktn3GcTb
-	 +1J1vSxcQSDyr9ENtNhKnD/i5rKilUakopvaVpGiKaKNWLMfSvZnXtXn9umFSa4rZJ
-	 hGjLlHdswxoy69dcq4hlD1LV0TVKpz0Qw2ECPxlWy1SLBewAF2Yvue/ITMM/OmB9Jj
-	 xYUbdQj8/z1aA==
-Message-ID: <1408dcd1-9a46-4cb9-8443-5aa51d61ed56@kernel.org>
-Date: Sun, 22 Dec 2024 13:06:50 +0100
+	b=PkkAXBZb9TGY0K7hOXgzRvYEdaZZgkETkLX4L7yI+IGjpFqSTODldC6ewGhBfrNVe
+	 8m0gQW8KXjEuMRxdoQR4ehPMGkdMBo5pI53dbhMj+hybUWrGU3l4e93b/vNY9uiN/M
+	 MJ6JSsZ7eAaXWvHTOHmq0Mcf2krJTCOfkv6ULOi6h8JQwW2raWXLIur2IEW585TQ2O
+	 dOY7zH7BnaPRXtB+98sYHhJpHT+nrYQHlvIIOofUASxpRLVRfp8mcRyPes7G8EOLY7
+	 mIItlupS0xvHYunHHvar3TumKvvGVw22gIDxQDzKRg6X7fu7gzg2BfS+xAi3EkmBA+
+	 9gcBjkQUmXYHA==
+Message-ID: <fbdeffe0-c908-4df1-9096-350a7d330570@kernel.org>
+Date: Sun, 22 Dec 2024 13:17:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for
- gs101-pmu
+Subject: Re: [PATCH 4/4] soc: samsung: exynos-pmu: enable CPU hotplug support
+ for gs101
 To: Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>
@@ -45,7 +45,7 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com,
  kernel-team@android.com
 References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
- <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
+ <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-4-c72978f63713@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,33 +91,124 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
+In-Reply-To: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-4-c72978f63713@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/12/2024 17:44, Peter Griffin wrote:
-> To avoid dtschema warnings allow google,gs101-pmu to have
-> two reg regions.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
-> I don't really like this patch, but also didn't want to submit the series
-> with a dtschema warning ;-)
-> 
-> Possibly a better solution is when Robs patch
-> `mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
+>  /*
+> @@ -325,6 +328,52 @@ struct regmap *exynos_get_pmu_regmap_by_phandle(struct device_node *np,
+>  }
+>  EXPORT_SYMBOL_GPL(exynos_get_pmu_regmap_by_phandle);
+>  
+> +/*
+> + * CPU_INFORM register hint values which are used by
+> + * EL3 firmware (el3mon).
+> + */
+> +#define CPU_INFORM_CLEAR	0
+> +#define CPU_INFORM_C2		1
+> +
+> +static int cpuhp_pmu_online(unsigned int cpu)
 
-PMU which spans over two blocks is not a simple syscon. These would be
-two syscon devices.
+exynos_cpuhp_pmu_online
+or gs101_cpuhp_pmu_online
+same for offline
 
-If you request regmap from such syscon, which regmap you get?
+> +{
+> +	void __iomem *base = pmu_context->pmuintrgen_base;
+> +	u32 reg;
+> +	u32 mask;
+> +
+> +	/* clear cpu inform hint */
+> +	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpu),
+> +		     CPU_INFORM_CLEAR);
+> +
+> +	mask = (1 << cpu);
 
-I am not sure whether the PMU is really split here. Usually the main PMU
-was only one and additional blocks called PMU were somehow specialized
-per each IP block.
+BIT(cpu)
 
-Maybe you have here two devices, maybe only one. If it is only one, then
-it is not a syscon anymore, IMO.
+> +
+> +	writel(((0 << cpu) & mask), base + GS101_GRP2_INTR_BID_ENABLE);
+
+I am not sure if I follow. You want to zero-out all other bits or enable
+all other bits?
+
+> +
+> +	reg = readl(base + GS101_GRP2_INTR_BID_UPEND) & mask;
+> +	writel(reg & mask, base + GS101_GRP2_INTR_BID_CLEAR);
+
+reg is &mask twice.
+
+I don't follow this either, are these auto-cleared? It feels like you
+wanted to update some bits, but you are updating entire registers in
+both cases.
+
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int cpuhp_pmu_offline(unsigned int cpu)
+> +{
+> +	void __iomem *base = pmu_context->pmuintrgen_base;
+> +	u32 reg, mask;
+> +
+> +	/* set cpu inform hint */
+> +	regmap_write(pmu_context->pmureg, GS101_CPU_INFORM(cpu),
+> +		     CPU_INFORM_C2);
+> +
+> +	writel((1 << cpu), base + GS101_GRP2_INTR_BID_ENABLE);
+> +
+> +	mask = ((1 << cpu) | (1 << (cpu+8)));
+
+What does 8 stands for?
+
+> +
+> +	reg = readl(base + GS101_GRP1_INTR_BID_UPEND) & mask;
+> +	writel(reg & mask, base + GS101_GRP1_INTR_BID_CLEAR);
+> +
+> +	return 0;
+> +}
+> +
+>  static int exynos_pmu_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -377,6 +426,28 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+>  	pmu_context->pmureg = regmap;
+>  	pmu_context->dev = dev;
+>  
+> +	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_cpuhp) {
+> +
+
+Drop blank line
+
+> +		pmu_context->pmuintrgen_base =
+> +			devm_platform_ioremap_resource_byname(pdev, "pmu-intr-gen");
+> +		/*
+> +		 * To maintain support for older DTs that didn't specify pmu-intr-gen
+> +		 * register region, just issue a warning rather than fail to probe.
+> +		 */
+> +		if (IS_ERR(pmu_context->pmuintrgen_base)) {
+> +			dev_warn(&pdev->dev,
+> +				 "failed to map pmu-intr-gen registers\n");
+
+Test old DTS, I think you do write() to the ERR_PTR when
+offlining/onlining...
+
+> +		} else {
+> +			cpuhp_setup_state(CPUHP_BP_PREPARE_DYN,
+> +					"soc/exynos-pmu:prepare",
+> +					cpuhp_pmu_online, NULL);
+> +
+> +			cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+> +					"soc/exynos-pmu:online",
+> +					NULL, cpuhp_pmu_offline);
+> +		}
+> +	}
+> +
+>  	if (pmu_context->pmu_data && pmu_context->pmu_data->pmu_init)
+>  		pmu_context->pmu_data->pmu_init();
+>  
 
 
 
