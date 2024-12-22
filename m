@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3BC18FC9F;
-	Sun, 22 Dec 2024 14:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19CB18E05F;
+	Sun, 22 Dec 2024 14:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734877438; cv=none; b=HxyVkHrnS7/e2cBDb8EUcKsS0iwDY73v6iM1BYN78S4Dkxrv6fZVWQIchjXvsCqRPRSbiRvS06KniMfob5DWAOEk0z252V6wgmz98joOfeI/+yhC9CAxoBAwsFQQTDuvpI+C8gLYVmGCT6qX1MfUH5XgtQiMggS7vaA/S+Np1ns=
+	t=1734877444; cv=none; b=IcwzU69HqzoWSXr3lgQTxy66UrxTDSEejhXpHvdaSJeUe3rAiquIUGyqkplsit9SVj1BhcPGrXYt2N56h+8JPuWNgWRa+v8jj5lcH4hJ0p8kNpinaaXgOfmOIxab43n/O1UU5gjOHMYztp5smGoPBfVKPZI2+BZhfOMMRgBmGXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734877438; c=relaxed/simple;
-	bh=PBQcFKLRbP9xJzentd083//P7cBnHOCpEd8ds4ykyoc=;
+	s=arc-20240116; t=1734877444; c=relaxed/simple;
+	bh=+RfQuaWAbggzfl6hhCqxUia8Uq6x6a4Y6LK2Ftl1J9E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luai8mZNKZGnjZR5sROoIi7latVysZiGjjdaQcBJbF+G1Q6iwhFP9YzoGxKWMXuc2dLZagGluByao1IrDxIUWmFbgQENz2p7p5YuyIdeetVUFeOPweBkN6AGBmbxrsu01JpO5XxOT4Qcr/lG8WcCh409VZK/27JA+1tHn/5M4XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yh1SwkDc; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Uu47D5eKjjUpcONdPoSwmXqseUrQr7G7Wd3My4+L3fvav1rD4mHzoJ3jXZhNfNBjeVrCvZTlJ5RUp+Y/K6v3xPqFVODQmkFFp/47CbNZZUZ3gT49EG7FYoXA8xiw1LwtmsFaw0e4J7156WNYJC2UElj9w8M//0mejN7X2aGwZX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjnHDGRh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yh1SwkDc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A78AC4CECD;
-	Sun, 22 Dec 2024 14:23:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjnHDGRh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B14C4CED3;
+	Sun, 22 Dec 2024 14:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734877438;
-	bh=PBQcFKLRbP9xJzentd083//P7cBnHOCpEd8ds4ykyoc=;
+	s=k20201202; t=1734877443;
+	bh=+RfQuaWAbggzfl6hhCqxUia8Uq6x6a4Y6LK2Ftl1J9E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yh1SwkDcQJCjsOhh2X1+0/aLqIYEu0cjvDrq18FtmSbg51XjvCBGI9v5/VLKE8Db0
-	 Zm6gWrHdsDpFDOyblCMM6tHPM61dJry3dhLhOQ/5TpJlldW+VAmgntBqGwEdiPuaiw
-	 StVMmf+vB0zYfnPBiItEo/MHHxCqzs40jSFCVh4ZbaTznEcQUcudIPI83hvkb+0HYF
-	 2BvLknTKM4TGURn8lwTI+7z3CayLso82nm28sbOAJ/zq2m/KcMJ/ZWFcSq4iWqi8lt
-	 b3QrVxmI3Xi0cqwF0vNDioeK49pQeiilK+s6WI5nKy5Cxy7dNPjIr0Yf/1vH6CvQlb
-	 l6Bpreh6SGWbg==
-Message-ID: <dbeb28be-1aac-400b-87c1-9764aca3a799@kernel.org>
-Date: Sun, 22 Dec 2024 12:43:33 +0100
+	b=EjnHDGRhlf7agy6qxA8x0En11gyfFSKwDtxxeKxeHlmLl7JAGi4xWuyXCh+qr49dB
+	 vkAGvW1/pyjukJ15CA+GyCaQAOQWT/Wv/hh83OXtF2div/Nk2j5UCBSNYBfsrSvxB1
+	 MR8FJ3ZHiwoXtl3Ora+RZ25MqQjWDXIvwAV+NOHtgrqnwSfuYlOc5dKdPXjbeQbsle
+	 3H5IBCMjKXP7snEzuQIkJUn0m27HkqIAfFKbIrF79aMf4AtBo9AQ8mY3/VBDsZEZ0S
+	 96RiysvonNH/FPxX2awOIOeiGQN/QMlUE9otYFMbnf85WlLScltCGLscvc8TCAheMi
+	 6+Jk8nVN0n2gQ==
+Message-ID: <f5e3d00e-8f98-46c6-8f1a-85a2169324ee@kernel.org>
+Date: Sun, 22 Dec 2024 12:47:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,18 +35,20 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: exynos: gs101-raven: add new board
- file
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+Subject: Re: [PATCH v3 2/4] arm64: dts: exynos: gs101: add AP to APM mailbox
+ node
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-References: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
- <20241220-gs101-simplefb-v2-3-c10a8f9e490b@linaro.org>
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+ ulf.hansson@linaro.org, arnd@arndb.de, Jassi Brar <jassisinghbrar@gmail.com>
+References: <20241220-gs101-acpm-dt-v3-0-642d64daa5d1@linaro.org>
+ <20241220-gs101-acpm-dt-v3-2-642d64daa5d1@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,33 +94,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241220-gs101-simplefb-v2-3-c10a8f9e490b@linaro.org>
+In-Reply-To: <20241220-gs101-acpm-dt-v3-2-642d64daa5d1@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 20/12/2024 12:27, André Draszik wrote:
-> Raven is Google's code name for Pixel 6 Pro. Similar to Pixel 6
-> (Oriole), this is also based around its Tensor gs101 SoC.
+On 20/12/2024 15:45, Tudor Ambarus wrote:
+> GS101 has 14 mailbox controllers. Add the AP to APM mailbox node.
 > 
-> For now, the relevant difference here is the display resolution:
-> 1440 x 3120 instead of 1080 x 2400.
+> Mailbox controllers have a shared register that can be used for passing
+> the mailbox messages. The AP to APM mailbox controller is used just as a
+> doorbell mechanism. It raises interrupt to the firmware after the mailbox
+> message has been written to SRAM where the TX/RX rings are defined.
 > 
-> Create a new board file to reflect this difference.
-
-There is no board file here, I see only overlay.
-
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
-> Note: MAINTAINERS doesn't need updating, it covers this whole directory
-> ---
->  arch/arm64/boot/dts/exynos/google/Makefile         |  3 ++
->  arch/arm64/boot/dts/exynos/google/gs101-raven.dtso | 33 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> index 1441e9a252c2..6947dd081a0e 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> @@ -1445,6 +1445,15 @@ wakeup-interrupt-controller {
+>  			};
+>  		};
+>  
+> +		ap2apm_mailbox: mailbox@17610000 {
+> +			compatible = "google,gs101-mbox";
 
-Nope, boards are not overlays. Boards are DTB.
 
-
+I don't think I have this in my tree and cover letter does not explain
+where I can find bindings. Nothing in next from few days ago. Always
+document in DTS patchset where are the bindings, unless it's obvious.
 
 Best regards,
 Krzysztof
