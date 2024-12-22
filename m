@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3181925AF;
-	Sun, 22 Dec 2024 14:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADB4192D8E;
+	Sun, 22 Dec 2024 14:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734877447; cv=none; b=gQqXHnZCyGkZWkUI+EsIuGxVlGja75VsoezP//ivwMqjvz5j7vLWmPQR7Uma+K0MjpqEfDaXCUF1l/tJOllWaRJ/Vm4vh6FjvBezz0LVHjcYcGhpw7+rADuhUBgVTxbzYBZarFj4g2xCEAbsNCgC/EQN+BH8vdpC6IJ63Glp+ig=
+	t=1734877449; cv=none; b=UR3JoYsCBjxGFYeGjpzNlQ2AxKcnRpvmr0isM66lmQIZ4zFQ8KWFlcblJgqq5OVxeOegw0Yqlm8fVHHBwoOvsLulXEQciGZYC/N90a/qdvOBoQ08cRXufHYHGfs1kAtmmkEv1NBrswPfPOEC7cfIWjwareqSn8mIi8AhAKOo3Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734877447; c=relaxed/simple;
-	bh=WmqZgBi2dOhVI2I6axRyu/MA940Or9KtvPbp9JK8dbk=;
+	s=arc-20240116; t=1734877449; c=relaxed/simple;
+	bh=l9r4OjNhGaVuOH98ReJV0qFhKCU28LrldC7d8PEUEoM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BQDSk82iDW7bJR0fwvV/n/lAZY250p0cPuS2mTFsbG4s43Irwx65pjuVTKdN2L2bntJVIwDDOEEos8Jf/L0m8FkiOdHeCmC96rhb+xZsmLTG9qaF5ClcOLsYtVt+2+IddxZzog7LinuC070E+BiRBGmgJRqd5BwwvH40df9IfE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhNfi6sz; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=F8WNwY1Mxag3KVZ+Jny5HDhkyqPkzWii1/jmP1ipXZaPWWGV12KNjXSu+DEYaBzrELErLYMOTNkjbPasNZmxDhLMDgMU9Ie1P/chKBXLfHVnfyyV40OaaXH0YdzVEotyWTQ2ZVEH4ywN33KgaUjNE0pVqhh4H5HUIqCUA90kQXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1Y9WF6y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhNfi6sz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E432EC4CEDC;
-	Sun, 22 Dec 2024 14:24:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1Y9WF6y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B2DDC4CECD;
+	Sun, 22 Dec 2024 14:24:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734877446;
-	bh=WmqZgBi2dOhVI2I6axRyu/MA940Or9KtvPbp9JK8dbk=;
+	s=k20201202; t=1734877449;
+	bh=l9r4OjNhGaVuOH98ReJV0qFhKCU28LrldC7d8PEUEoM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WhNfi6szaP2uGgu8V+PuliGMYv7iSASs9zuaRxU9jlUqGonqJkf+Z5jqtwNk8xmjc
-	 M1ywuZg4dOYXvoxIxAuraooB60tcWMM0senpNyyLH/VlWAsopZr0HYY0NvIFErdrvP
-	 Er3Z66YWXQnnELpvRcK5mPmv9b25RK1smpYj4QV0DBg8wfqvWbL7FbamyCjIO1kluL
-	 DLxs82W8O+Dy2UNtIw3dnFwGgK8FJ90vY7Uoq2ppvnCFh0+EFUz9hKiynIKvMADX7z
-	 zpGlKDo3UanQXJWQ669FQqdbJODI/qsYe910ui23KUEAFkvd/2tQoN2iIzurHJniA/
-	 psl9jAIn/JtMw==
-Message-ID: <017c4a8a-4b18-4f7a-b10d-2596dadca8c1@kernel.org>
-Date: Sun, 22 Dec 2024 12:48:43 +0100
+	b=t1Y9WF6yPU16Y83okfcy1FRycLdXKnrV3cjcnUCLmlWMa3nEiL4+ZuNMqm1UhA4jR
+	 DU8fsHEs809CNUDehjqK+nwgkBgjv4JFFejppW/vmkAzZd14F77i3xHIglBBXRxXLX
+	 q5KLXPERWI51rQ+f7C8hkAuhyeCoPCTVgCJr1BhRBj/VkpsHvb/Ge0yA5ccPcvIe2g
+	 csEl+T+20BnrwcFn935aEl5LddOe9KQJezHI2x7C0JRlemjANaDRYSCPQejq51A5Ql
+	 RyJksp7HI/6zJagRqyMqA/4VeoqL6YVdBnYOnDQiZvB6Hsh3x04+1u/LejgqAhMmGT
+	 626EGE322kOXA==
+Message-ID: <9e69c21a-3d97-41e4-addd-d1ebd80f47ff@kernel.org>
+Date: Sun, 22 Dec 2024 12:51:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,17 +35,15 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: exynos5: Add
- samsung,exynos8895-hsi2c compatible
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241221151937.1659139-1-ivo.ivanov.ivanov1@gmail.com>
- <20241221151937.1659139-2-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH v2 1/1] arm64: dts: exynos990: Add clock management unit
+ nodes
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241215170803.1756850-1-igor.belwon@mentallysanemainliners.org>
+ <20241215170803.1756850-2-igor.belwon@mentallysanemainliners.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,19 +89,59 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241221151937.1659139-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20241215170803.1756850-2-igor.belwon@mentallysanemainliners.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/12/2024 16:19, Ivaylo Ivanov wrote:
-> Add samsung,exynos8895-hsi2c dedicated compatible for representing
-> I2C of Exynos8895 SoC. I2C buses may be implemented both as a part
-> of USIv1 and separately.
+On 15/12/2024 18:08, Igor Belwon wrote:
+> Add CMU nodes for:
+> - cmu_top: provides clocks for other blocks
+> - cmu_hsi0: provides clocks for usb31
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 > ---
+>  arch/arm64/boot/dts/exynos/exynos990.dtsi | 28 +++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+> index 2619f821bc7c..d6a8c04e6602 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+> @@ -5,6 +5,7 @@
+>   * Copyright (c) 2024, Igor Belwon <igor.belwon@mentallysanemainliners.org>
+>   */
+>  
+> +#include <dt-bindings/clock/samsung,exynos990.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>  / {
+> @@ -199,6 +200,24 @@ pinctrl_peric1: pinctrl@10730000 {
+>  			interrupts = <GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH>;
+>  		};
+>  
+> +		cmu_hsi0: clock-controller@10a00000 {
+> +			compatible = "samsung,exynos990-cmu-hsi0";
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Does it depend on anything? Cover letter is quiet here, but it should
+explain any dependencies.
 
+> +			reg = <0x10a00000 0x8000>;
+> +			#clock-cells = <1>;
+> +
+> +			clocks = <&oscclk>,
+> +				 <&cmu_top CLK_DOUT_CMU_HSI0_BUS>,
+> +				 <&cmu_top CLK_DOUT_CMU_HSI0_USB31DRD>,
+> +				 <&cmu_top CLK_DOUT_CMU_HSI0_USBDP_DEBUG>,
+> +				 <&cmu_top CLK_DOUT_CMU_HSI0_DPGTC>;
+> +			clock-names = "oscclk",
+> +				      "bus",
+> +				      "usb31drd",
+> +				      "usbdp_debug",
+> +				      "dpgtc";
+> +
+
+Not much improved. Still stray blank line.
+
+> +		};
 Best regards,
 Krzysztof
