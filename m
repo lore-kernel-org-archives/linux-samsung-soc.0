@@ -1,103 +1,137 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FF718E75A
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Dec 2024 14:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1300136E;
+	Sun, 22 Dec 2024 14:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734877572; cv=none; b=qVdsd58goOYlOHvxhJNzSjiV2KExPhpZs7TG9weZgSa5wxGYG/e2MOezikxaFY47Bm6H5fpQITJTSqmsENlyFaz4sW2hDx8wlREB0AVF3xZia7kskyIbrmtQ/LntvV408eZ3knbi5Hsagf1vJzy0wk6eOZvlynGs9WcsSxrIPUQ=
+	t=1734878820; cv=none; b=P4grkp0uitZWLE3RSO3AAgXmU5fXrCgwpUqXIelSBNHojIlcjAob2gyo12RsA4yVxwk+crVaNhKq64pmDUUKry7ksFb5ncbTqCjpJ2SrtrkY73asW7CkRIMF1BBfNKPGQtqjUzwkvEg37/pOTGEYBfF7qABzspHcsL0su+ZE9Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734877572; c=relaxed/simple;
-	bh=gJpG7eEPpKdqn7YHrV8VUJX7uJhho/nnN60DqmsLQbo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=igCowAt1Jyo4MSfzEdQU31DxD9WpADYeBL6LM9wZTi9JD9FQHOYJQOO9b6HVBOKajX23KjAeWUMMCtSuYzmhRCYZ7aRASZP90EOev+ygiiwXXhYznDuZDXFeCRELRrRItLjGt+aily+pdAbRnmcJKVN307UUZDtlNeovM0UkQmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nx1wkOkR; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734878820; c=relaxed/simple;
+	bh=4+ISzXwrnznFHaTZ7D9DX0cu/mjxk9RF1t63bLKCH00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PD4JLydFbtwhxKGj6S8j2FpvI0R/VBVS79kIQazXtCYv/SU/qQosWa7govqXNF/Lix2sBvrfxK25iE0fHCYziMoPxq7CqE/tToBJ913YxhY8OqkpdnYkOCH0aiXRQaz3Kc7GlaSdN+47RO8KhQNtCVvMWj8guCUjY3CdiRBEEps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nu3A9On6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nx1wkOkR"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa6647a7556so72280466b.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Dec 2024 06:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734877569; x=1735482369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8qtqb2q9SZdIxrsGX5zFz/zmOaa7ahdn4J/z+KWdZJM=;
-        b=Nx1wkOkR5SFb9w+z6J79jtAfHY5PkZT9OfbIjbugd79OxxjuGREy6trK1YM6rMrjJ7
-         QgvZPOTLs22NbC75uyC/AVZbLLIRHu9j6bh2QiZ2lo1Z75BNN2cqyosuBOnf1gJCmFsl
-         42LboMNUwGywphUURjCG/KJM5Bvufpp5y397NmKIFqYb1mrXYHynXnnnxIYXP2OdBPsx
-         zxEnFbUwC95XxieMAcbEoRUL11s2oJh/NUmQmpR3LHNdapC3H71ZsBh/D6nEj+PNwVCa
-         NAdg2kMR4Gd3MqXea3t/4plMWm1buAmWwIYPEJKl3mgDRU1Jy/MJPSG8KOZ/+p5jHGYt
-         GqPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734877569; x=1735482369;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8qtqb2q9SZdIxrsGX5zFz/zmOaa7ahdn4J/z+KWdZJM=;
-        b=WkrNw348dhcm7MGnLk5kEJeJ9skXyDxvZtX6ltVPhrXjNCBJY3PXVo9UP93ES717jm
-         Lb22S0FSJJbl+DbQYbOB3kWWtUnEIbTKk64nXjWNY9VeiwtxNI8PNmOwhGRSEDHRHtg7
-         /hXYy+d1+H9XKb2UhNJ5lD8i+Ne+i+h/iivtZN0TQTN/eRLdBPYddGyw254vMHuTqrTW
-         h8/8kyAkkDXgGxNENZDA5YNS53oavyqPfcI5YscVdiwjgwF6Drz4qS+0et9bt69pOwYA
-         Bircj66+Mq+4EWOyLFp8iKiat/rn3HDh1CiAAQES2MOEIJ+lMllMKe2twZrKqs6ErmZR
-         nH1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWUHZDBmnyxkhr8dzhDLGrlte2TFgAVL6wu1zhRdhXauyqjLIpv/XqlFgQF2YdprEkRJj1rNFvkI5dsdQPEi57Mxw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqN9kJeV2PtCKJR6eGeef0Jn5no2VeldsP1c13fSBwKA29i/qj
-	2l4+WqlnSzIpC7pQVkf7NMdRFIa4uQUYizEiHnw5nEOQDvES7WSYt99gRYLLFfs=
-X-Gm-Gg: ASbGncswY7HhP1wx8U/4EJQb7fn8vQeJbBOu4kmCS8i9LHrt1X9i+JtEjLGBjjDx2+H
-	OEjEwNvXMswzBvNgaGWjqxfWQfYqy3ciUNNwzXA8H9hFPk08BJI521IlP/huSGjwj0nGxKXQm6c
-	BhlLdTAbABnZkjVMz/eqhVOk+EtZWF+2pW92cxaBkY02CD0HJRXfwFw0pWdbmIHzG9L5rFQk0TF
-	rd6xmgfbW1Vh+U4c5VpyuZ/qssqIW6Da+7bwsYqF4bx8daj2qufElRbCgQEV2imcPg/6AGu+usF
-	sGhBo1GOnMcckVJuds9GeO4VgOcNGcs=
-X-Google-Smtp-Source: AGHT+IGJEflLR7LUL0jWhIG8if351byh4oOU18ryBTE4nHXQMghZCSJJMazHqwq4sLeRDspVGmm4qg==
-X-Received: by 2002:a17:907:3faa:b0:aac:619:6411 with SMTP id a640c23a62f3a-aac3352c94amr296886666b.11.1734877569000;
-        Sun, 22 Dec 2024 06:26:09 -0800 (PST)
-Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e82f577sm392716066b.18.2024.12.22.06.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Dec 2024 06:26:08 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241211033027.12985-1-semen.protsenko@linaro.org>
-References: <20241211033027.12985-1-semen.protsenko@linaro.org>
-Subject: Re: [PATCH] arm64: dts: exynos: Specify reserved secure memory
- explicitly
-Message-Id: <173487756773.3738.7711760267747537170.b4-ty@linaro.org>
-Date: Sun, 22 Dec 2024 15:26:07 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nu3A9On6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B20C4CECD;
+	Sun, 22 Dec 2024 14:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734878819;
+	bh=4+ISzXwrnznFHaTZ7D9DX0cu/mjxk9RF1t63bLKCH00=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nu3A9On6qfxZpOWWoA0swQddvI0iOzRuYBJCCWedSUYP4FJ3HN8RXTzHwGxQrsSyB
+	 RPjZvsr6Dk1Cr1w6mfHiPHoUKtjE3R272ZFQvbvli9cPN6alMJGn197QS91S6fk0rq
+	 rc1gI218OCSLL2UYr1EvoLpudvvhN1YUfflE4JF1XRhoUiKlf3fIxwnMIlaMnLDfb4
+	 8fVKaZkHEaPgwxAUmlkuFWTmRc5aJc40QyiQaGX+2XNozAGl3HmMkNonuPw0GI2sRX
+	 ys/gcK5p1CbGIbThcJRDdkPpYbJaKAqS+HZNf6WXOguhcyyKkwRS3eLFUy0+SVQ+0M
+	 W0s72U8j6Ppmg==
+Message-ID: <d1c6d2f2-f733-4cbe-8108-c9c9aaa417cc@kernel.org>
+Date: Sun, 22 Dec 2024 15:46:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v4 1/2] arm64: dts: exynos: Add Exynos9810 SoC
+ support
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241214-exynos9810-v4-0-4e91fbbc2133@gmail.com>
+ <20241214-exynos9810-v4-1-4e91fbbc2133@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241214-exynos9810-v4-1-4e91fbbc2133@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
+On 14/12/2024 15:56, Markuss Broks wrote:
 
-On Tue, 10 Dec 2024 21:30:27 -0600, Sam Protsenko wrote:
-> Instead of carving out the secure area in 'memory' node, let's describe
-> it in 'reserved-memory'. That makes it easier to understand both RAM
-> regions and particular secure world memory region. Originally the device
-> tree was created in a way to make sure it was well aligned with the way
-> LittleKernel bootloader modified it. But later it was found the
-> LittleKernel works fine with properly described reserved regions, so
-> it's possible now to define those in a cleaner way.
-> 
-> [...]
+> +		pinctrl0 = &pinctrl_alive;
+> +		pinctrl1 = &pinctrl_aud;
+> +		pinctrl2 = &pinctrl_chub;
+> +		pinctrl3 = &pinctrl_cmgp;
+> +		pinctrl4 = &pinctrl_fsys0;
+> +		pinctrl5 = &pinctrl_fsys1;
+> +		pinctrl6 = &pinctrl_peric0;
+> +		pinctrl7 = &pinctrl_peric1;
+> +		pinctrl8 = &pinctrl_vts;
+> +	};
+> +
+> +	arm-a55-pmu {
+> +		compatible = "arm,cortex-a55-pmu";
+> +		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-affinity = <&cpu0>,
+> +				     <&cpu1>,
+> +				     <&cpu2>,
+> +				     <&cpu3>;
+> +	};
+> +
+> +	mongoose-m3-pmu {
+So the name chosen by previous people some time ago for arm PMU is
+obviously not the best - forces either messed sorting or having PMU
+nodes in different places. That's why people should almost always go
+with prefix, no suffix. See regulators and clocks.
 
-Applied, thanks!
-
-[1/1] arm64: dts: exynos: Specify reserved secure memory explicitly
-      https://git.kernel.org/krzk/linux/c/11fd6c9b047c30c72dcea3f79c0acb7deb69c822
+Fixed and applied.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Krzysztof
