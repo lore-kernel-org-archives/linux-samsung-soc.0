@@ -1,64 +1,64 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B55B185B48
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2024 07:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF30189B80
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2024 07:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734939933; cv=none; b=J88SqF8vRuHhbJu9miGQ6SEuF5Tgbp0MCsrOrSv3KGTSl5yw/+7gi7hgoCswxOEgchZGbJET5p0RQ12cxiG2kCkWx3uBzA/KXmo+tSC5n6TflcshU6PY2ZvHgukK8At3G/J2tfJ6mEVnBPAd45joQBPSwOzpv1PqvORQxYjA+8I=
+	t=1734940765; cv=none; b=hW4wDkgFJfZv36hJ5yCQ3LSC/d4B8hjHPWawWkOuRlSjIMv3kATzaD2ceOWaxbj7nCaBCmhQ4Pt9EdnSfDSt7J8ER2IXG6sjs6y+JA82BrcbQWGZANy2tXXcDFcEbjcWqTERDmoU7QmA8xyRH2LB//2BoJ2quuFbsxRXcUgxyRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734939933; c=relaxed/simple;
-	bh=szSMFpu0X/jKqyAJJIRLoz8ialA5hbvm/LWaFM/VFz4=;
+	s=arc-20240116; t=1734940765; c=relaxed/simple;
+	bh=Xf6i/kO4zsqL35tvl1Xm9c/RKHg4rkgPnHEPUGMAcpM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mVlLiTKgF8//5Qma8S5kxefMg1zf4A6aI3TNhTMWiIf8c8xxYdleYNbFWtxCt0CAaV2Eks34Ecrnj25BQ3GuNwSyqdjYgD7oFngCGuL0dFY67T5GK8oKR+Iu63z4nus6l1JeSWKPfEkZpd6MQxFJPKrFwfxKaEzh3LZCGyH9BdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vHL4HBK4; arc=none smtp.client-ip=209.85.221.42
+	 Content-Type:MIME-Version; b=k5YiodoltGTWvnnRQJ31EyS+1+L1qVBVICNPU7+xH7XBM6AgrvyZikW+CHR50V1sTrDxx8hV6KksItuFADb6tLPR8f/QtIukkV4CyHZIzshTQzN6jWd9OcMORMvn7U7lSZhUXK/lcB7cUxYUtJhaDael5ZmwQY/KB/PryfQ0uxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pTrtkFVe; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vHL4HBK4"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385de9f789cso2971837f8f.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Dec 2024 23:45:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pTrtkFVe"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so44267175e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Dec 2024 23:59:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734939929; x=1735544729; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734940760; x=1735545560; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=szSMFpu0X/jKqyAJJIRLoz8ialA5hbvm/LWaFM/VFz4=;
-        b=vHL4HBK4fi5VOKMvNN2LTvJ/3FoFHWfInmQbr1eS9uY2GCulCkjL6iy37kAyR29Use
-         wBS70STY+qUyVFGvP2SOi+cNv1fHgmPZ9tvB/P0v5K/sa/xKE5H9y0UZoN3RdX//SaTN
-         koETAbOhbfE7DcF0CrhpPTXWvnGwhdqZcfUKTZGWaq2tYBPL5DdfvfmSp6YxTQOU0F/i
-         VWLv/HnoCP56ZFKYN8dBEYAIkhWAL3bZPfURQGi1C6QATAt2b1QaDqE0+U41MMa//IsA
-         hlA2EaIeStVSxlrZBS5uVsSOBaLS00UwmS28/yj2r70aw0WVyrhdhAX6Pd0qXAHco2MN
-         yJbA==
+        bh=Fp1YxkvsR/8CN00+dpyPmbcZfQP2ZBedcDMsnGRxi5U=;
+        b=pTrtkFVebZQEW3EL3uh3/jZkHjb1upnlFEtyLNyLEOuovLlEs/FoDtACqm585bERlg
+         3WpRj+jkdWNQTph53mOwAy+j/oHYPTcyaJCaKak/dqKfoqBcdIjAgvTBR9hk9puJXNG+
+         yQKNWfrd0GEkqVogWCa6seKND4hUY46PeB+oSQXEcpQTUX2OBd8Bk7sOTw/Ne7qBJs90
+         qDMR7Opu4Fh9LO0UotvRbexUWv+IJQADY0UuZ7b1ccWldxUEHG+i8jr+nydvOF0euqjQ
+         PcyXBa6qaUVgfqWAw51BcakS9I379llTqeaiisOXyVckx3Hvenc+1GwdhZbvsWu+hQV+
+         QcIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734939929; x=1735544729;
+        d=1e100.net; s=20230601; t=1734940760; x=1735545560;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=szSMFpu0X/jKqyAJJIRLoz8ialA5hbvm/LWaFM/VFz4=;
-        b=TxyW3uzeQy6LXKcPr/ibwXA81OVjH2omjdbt4br17aVrO2iT29D4PNaOH/nmWN3kEl
-         gUbAwZp7EE85FndW5nfwQij7lIp4sJCeLk6shDB82JDUVpe+whERl6KyPrch++1t/iqA
-         Y3hkjgQEL1QF+WHc6Y5+Bb5PNbX//libuphxu4TmHdVrFgznkRP+h7khfOtvoEfoonnA
-         hE5H3Ffefi4//dCmpJSzcsjeSqw2r6ThNxQOPIBkn/4cgZiSbQ0ybkwG1zIEejQGg+Z6
-         /TuatWlql40h6eXF/WHr+hptPr+QG+WU9m1WWdjpW+CZRvMeqb+C5tsn4KNzr87tlat8
-         b4PA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5UGay4Q2x0VLepilhWExzL5zW/fJyXPOsbU6Nr8VEGNFXBcIT26eklWabiawuCz8pXzv+UuCIcHGjKIX74iB4iQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxDEG3G6sUyDdK8NxWZMbBkl7GhJtlN/W1KoD0j8mQI1xnRCFz
-	ZPs2AVJvEn38qP3Lyt9y5n3Rz9HCcx1wdYUd25iEk2vMJn2MyVt9ROhbkZNU+3A=
-X-Gm-Gg: ASbGncvq4DR3Kthr9WqAu2SeIuy/gjnb0/nyYr7BrLV6MGNPCIYoSB0UbIFAiwYD0jB
-	iaNx+MzBds6NIdt9dLofZQdyHN3QouT5SAZr01xI3NFC68FTxhJTsM77imrYSQcV+c5X+cXSfXl
-	l65xCptJ28w4wXONCVSGaCnWYFJWwLVKgarZiD4dySjpoHZpDAu52Xb+tZSftubWFkchfDTTbTe
-	s1g81ODBocomm6G0gK/9E0pd+Lipq7TqLS4/fuXAsg+ZWOkDeyP0YniOY6xaw==
-X-Google-Smtp-Source: AGHT+IGDaeMCJrgzifSr2TvDYMPQhcDT2MRZ+98RU5GMa6SGyaKWu+e0yHVKL1/bnGNvSM8bZo3RoA==
-X-Received: by 2002:a5d:598f:0:b0:385:ed20:3be6 with SMTP id ffacd0b85a97d-38a221fa7f9mr10193192f8f.22.1734939929304;
-        Sun, 22 Dec 2024 23:45:29 -0800 (PST)
+        bh=Fp1YxkvsR/8CN00+dpyPmbcZfQP2ZBedcDMsnGRxi5U=;
+        b=cPzMp4MGcvBqDI1/D+GlzToDqIX+g7Q1bKaNFjoXY6/6T6Q8JJnEJZ0Sb0xjphbcdv
+         YB6PPRw/7vY0V4HBaPZOi3ogheVjFdeZETdcBA3HzptzL/gWoZe69EvoaJt+2APVgOq1
+         JGwW9D4Cih4fMGZnLm/J2DG0A2c07a3IMg3SyNviw6WxJTtnNHRKlple0u1eU/mJqIlh
+         teznhQ5P17Rbdq+SmnS4fN+HAJREmI0AIh6e4BdGWEMESRy7hMFFAZSbkDsNBBdN32Wt
+         KSXFPOXRBVL3oACg7rbuFAv1n/UVnhbMPSszGodD3/NJwjNF5+krM7QJ11FvqdvDIh/m
+         st2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVh5Ys6Z4EFT5sFBCIZHLRxSTH8XmBd2wIOUnMJIhZOEVaCMrrJHt3gp7J2N0DOemIvxrK+1JkreqOyR6v07EjxzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqDAw/wUinw56D/sxxLjpDAUsrJAJxc4qZjbt6pXC9uftzObLw
+	4ZvwD/HkAW6qVZ7IxeidE8xiQ/Y/w0txbU6i/6L9J/QERfXi2RI9SweCPBx8uCk=
+X-Gm-Gg: ASbGncuJgJDJVnWFobI/X9OAe/U9OAx/Nc3d2UfwcUBx43cIJBBG3MiRT2XGf7PhEkV
+	eoQotWSyKUs+neuS1/57FcQogfQqyIT5wjzdlmz60jmuuJQ2xgl52Sfvv1bEiFlgX5NItiaQ+Cq
+	2ei8m2mXerFfPrTBt1mCSMi2c/mBDeiXx7peM+N7XPLjLzOOROquuWbOrgCGY7MjwDQq8t8dyCm
+	vlpzxk79eAHc3p7LycVaBxh2CnlW2LovmWmRHWfrM26lc7QCuWfIhTYjMOAZg==
+X-Google-Smtp-Source: AGHT+IG+7q2Pk6kjCGK7xP+YYvFm+gtX/raK0+U2VnVE+LPf0nz5Qeq7UKxPj3BRYbDVBrwjQeR9hQ==
+X-Received: by 2002:a05:600c:1c99:b0:434:f218:e1a8 with SMTP id 5b1f17b1804b1-436686476eamr98549695e9.19.1734940760198;
+        Sun, 22 Dec 2024 23:59:20 -0800 (PST)
 Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8a6e19sm10645963f8f.100.2024.12.22.23.45.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4366127c488sm126855745e9.27.2024.12.22.23.59.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Dec 2024 23:45:28 -0800 (PST)
-Message-ID: <cfdc5b1b03140e3d2ce3fb58e8b342dc2ac06d04.camel@linaro.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: google: add gs101-raven and
- generic gs101-pixel
+        Sun, 22 Dec 2024 23:59:19 -0800 (PST)
+Message-ID: <e85505c808661bedf2cca2433ef4c06038505a5f.camel@linaro.org>
+Subject: Re: [PATCH v2 2/3] arm64: dts: exynos: gs101-pixel: add generic
+ gs101-based Pixel support
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski
@@ -68,11 +68,11 @@ To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
 Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Date: Mon, 23 Dec 2024 07:45:27 +0000
-In-Reply-To: <d0c1511f-b052-4690-aefb-3fb41e1e5875@kernel.org>
+Date: Mon, 23 Dec 2024 07:59:18 +0000
+In-Reply-To: <33c7a520-dda9-4d3c-aa27-2f48786996a9@kernel.org>
 References: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
-	 <20241220-gs101-simplefb-v2-1-c10a8f9e490b@linaro.org>
-	 <d0c1511f-b052-4690-aefb-3fb41e1e5875@kernel.org>
+	 <20241220-gs101-simplefb-v2-2-c10a8f9e490b@linaro.org>
+	 <33c7a520-dda9-4d3c-aa27-2f48786996a9@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.1-4 
@@ -85,82 +85,133 @@ MIME-Version: 1.0
 
 Hi Krzysztof,
 
-On Sun, 2024-12-22 at 12:38 +0100, Krzysztof Kozlowski wrote:
+On Sun, 2024-12-22 at 12:42 +0100, Krzysztof Kozlowski wrote:
 > On 20/12/2024 12:27, Andr=C3=A9 Draszik wrote:
-> > Raven is Google's code name for Pixel 6 Pro. Since there are
-> > differences compared to Pixel 6 (Oriole), we need to add a separate
-> > compatible for it.
+> > In order to support Pixel 6 (Oriole), Pixel 6 Pro (Raven), and Pixel 6a
+> > (Bluejay) correctly, we have to be able to distinguish them properly as
+> > we add support for more features.
 > >=20
-> > We also want to support a generic DT, which can work on any type of
+> > For example, Raven has a larger display. There are other differences,
+> > like battery design capacity, etc.
+> >=20
+> > To facilitate this, we create a generic gs101-based Pixel DT that can
+> > work on any such gs101-based device. At the same time, we move the
 >=20
-> There are no such generic DT devices upstream, so we cannot add bindings
-> for them.
+> No, whatever insanity Android has there, please don't populate it to
+> upstream.
+>=20
+> There is no such thing as "generic board" thus cannot be a
+> "generic DTS".
 
-Do you have a better suggestion for the wording?
-How about 'gs101-based Pixel base board'?
+I'll rephrase to gs101-based Pixel base board. Unless you have a better
+suggestion.
 
-> > gs101-based Pixel device, e.g. Pixel 6, or Pixel 6 Pro, or Pixel 6a (as
-> > a future addition). Such a DT will have certain nodes disabled / not
-> > added. To facilitate such a generic gs101-based Pixel device, also add
-> > a more generic gs101-pixel compatible. We can not just use the existing
-> > google,gs101 for that, as it refers to the SoC, not a board.
+>=20
+> > Oriole specific parts that we have at the moment (display) into an
+> > overlay, making it easy to add support for Raven and Bluejay in a
+> > similar way.
+> >=20
+> > Note1:
+> > Despite being an overlay, we instruct kbuild to create a merged
+> > gs101-oriole.dtb and a gs101-oriole.dtbo. This way existing scripts can
+> > keep working, but it also gives the option to just apply the overlay
+> > before boot (e.g. by the bootloader).
+> >=20
+> > Note2:
+> > I've changed the simple-framebuffer node to specify the memory via
+> > memory-region instead of reg, as that avoids unnecessary duplication
+> > (of the size), and it avoids having to specify #address-cells
+> > and #size-cells in the chosen node (and duplicating this in the DTSO),
+> > which is otherwise necessary to keep dt_binding_check happy and DT
+> > validation working in general.
 > >=20
 > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > > ---
-> > =C2=A0Documentation/devicetree/bindings/arm/google.yaml | 18 ++++++++++=
-++++----
-> > =C2=A01 file changed, 14 insertions(+), 4 deletions(-)
+> > Note: MAINTAINERS doesn't need updating, it covers this whole directory
+> > ---
+> > =C2=A0arch/arm64/boot/dts/exynos/google/Makefile=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++--
+> > =C2=A0.../arm64/boot/dts/exynos/google/gs101-oriole.dtso | 33 +++++++++=
++++++++++++++
+> > =C2=A0.../{gs101-oriole.dts =3D> gs101-pixel-generic.dts}=C2=A0 | 24 ++=
++++++---------
+> > =C2=A03 files changed, 47 insertions(+), 16 deletions(-)
 > >=20
-> > diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Docume=
-ntation/devicetree/bindings/arm/google.yaml
-> > index e20b5c9b16bc..a8faf2256242 100644
-> > --- a/Documentation/devicetree/bindings/arm/google.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/google.yaml
-> > @@ -34,11 +34,21 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 const: '/'
-> > =C2=A0=C2=A0 compatible:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 oneOf:
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Google Pixel 6 / Oriole
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Google GS101 Pixel devic=
-es, as generic Pixel, or Pixel 6
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (Oriole), or 6 =
-Pro (Raven)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minItems: 2
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 3
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 - google,gs101-oriole
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: google=
-,gs101
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - g=
-oogle,gs101-oriole
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - g=
-oogle,gs101-raven
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - g=
-oogle,gs101-pixel
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - g=
-oogle,gs101
+> > diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/bo=
+ot/dts/exynos/google/Makefile
+> > index 0a6d5e1fe4ee..6e6b5319212a 100644
+> > --- a/arch/arm64/boot/dts/exynos/google/Makefile
+> > +++ b/arch/arm64/boot/dts/exynos/google/Makefile
+> > @@ -1,4 +1,6 @@
+> > =C2=A0# SPDX-License-Identifier: GPL-2.0
+> > =C2=A0
+> > -dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> > -	gs101-oriole.dtb \
+> > +dtb-$(CONFIG_ARCH_EXYNOS) +=3D gs101-pixel-generic.dtb
+> > +
+> > +gs101-oriole-dtbs :=3D gs101-pixel-generic.dtb gs101-oriole.dtbo
+> > +dtb-$(CONFIG_ARCH_EXYNOS) +=3D gs101-oriole.dtb
+> > diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dtso b/arch=
+/arm64/boot/dts/exynos/google/gs101-oriole.dtso
+> > new file mode 100644
+> > index 000000000000..43572039cd07
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dtso
+> > @@ -0,0 +1,33 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Oriole Device Tree
+> > + *
+> > + * Copyright 2021-2023 Google LLC
+> > + * Copyright 2023-2024 Linaro Ltd
+> > + */
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +
+> > +&{/} {
+> > +	model =3D "Oriole";
+> > +	compatible =3D "google,gs101-oriole", "google,gs101-pixel", "google,g=
+s101";
 >=20
-> SoC cannot be a board in the same time.
+> Boards are not overlays. Board equals DTB.
 
-Can you please expand? google,gs101 is the SoC, the other ones are boards.
-Is the commit message unclear?
+You're saying this should move into a dts instead of dtso?
+There are numerous boards upstream which use this same dtso
+approach.
 
+There is a base board, and also different versions of it,
+oriole being one of them.
+
+[...]
+
+> > 	};
+> > =C2=A0
+> > =C2=A0	chosen {
+> > -		#address-cells =3D <2>;
+> > -		#size-cells =3D <1>;
+> > -		ranges;
+> > -
+> > =C2=A0		/* Bootloader expects bootargs specified otherwise it crashes *=
+/
+> > =C2=A0		bootargs =3D "";
+> > =C2=A0		stdout-path =3D &serial_0;
+> > =C2=A0
+> > =C2=A0		/* Use display framebuffer as setup by bootloader */
+> > -		framebuffer0: framebuffer@fac00000 {
 >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 allOf:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - contains:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 const: google,gs101-pixel
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - contains:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 const: google,gs101
+> I don't think this exists in current source. It does exist in thing I
+> was applying, but then this does not make much sense: add a framebuffer
+> which has to be changed, because it is not correct.
 >=20
-> This should be fixed list.
+> I'll drop the framebuffer patch.
 
-OK. (This was inspired by Documentation/devicetree/bindings/soc/xilinx/xili=
-nx.yaml)
+The framebuffer makes sense for the oriole version. I can fully remove this
+node from this base board here, and just leave it in the versions.
+That said, can you please expand how having a 'status=3Ddisabled' framebuff=
+er
+node is different from any other nodes that are enabled or modified by
+overlays?
 
 Cheers,
 Andre'
