@@ -1,92 +1,156 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569B01AF0C5;
-	Mon, 23 Dec 2024 12:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6A41C36;
+	Mon, 23 Dec 2024 13:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734958578; cv=none; b=VTpJidqVxAfa7LRkqhj7cQX/txa+C5swNhzkfk3KHhiIut6A5RRJa6Myl0mXTnRVVaaRrunhILS8VDVq4NIBnlXopjVR0+hfEWoWv91/96FjkLwAQtZKhiMHoua8mvwUo6/X/YDvFCCB1STow8LaClZPM/War32hA4GwcPgGU64=
+	t=1734960674; cv=none; b=hf6Ubs2NtWsqlkzxWZJntugXDoflqQ1HDizJtW73w0EtRoBWBpcFZ5kWPN2XXFOJmGcQREJiBrGnwWbry7Run5oF42D1/C+wQkV3bnc0Wgg3RwTPL68s1NLMtzV/R0MODBw5TkxKuOXxvcvzEjnAbXcu2PofgluoZzDzXOv1pJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734958578; c=relaxed/simple;
-	bh=IM1Q6HaiaXg6oZNGDXEIctOQsVVBIkBbPK450fxHLa4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=how5I0m5HRMkfqQJA1WeKg5THTzI9YT/bf/WhU0xvBM7KSwMLjI1AQ+SlfOsN+nexfdPTUbp2IyDYOhWM1Jv4iFWNnKGANdnfOo4K92EG4deTMwKh+mHTPa90aiBnuevAxacGAQs0Z/plkpGnkIWRDm1sb46uZMz+ZwHcC64ezE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PnZjejza; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1734960674; c=relaxed/simple;
+	bh=o4Fom0Rpm9fWzhbvqugXg9BmbPqo3cs/0znTlLu54ck=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lJodlWKMB5Mepyk4XiGo7MbR3E0uSPRQWliBL87+BBNjK5RIyVT5yYnxiKJH57LZiF6GpU9AndYJvmT57sEAmOOk0/7CW54oEkiKv3TQw7iVGHMk+tUnk9XdOjHUqhl14EPdabHVWDptGf/TGhU3IxEp9WTeACMTmrMBUM2T19c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mv820YsL; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PnZjejza"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734958573;
-	bh=IM1Q6HaiaXg6oZNGDXEIctOQsVVBIkBbPK450fxHLa4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=PnZjejzaQNnQKGcHj69QdnLjjYL1KWDohfW64b6PdhFvI8Jef1P+1jMFXi6aoy87O
-	 QZN2t/CpxI7TrlVDF0XKymLi2VwstnAqSiG+c6utZIjP0w42MQDuiqyGQ405qxBs2c
-	 AP+yTne24M6ncM6uTwMMDti0Eo7auSn5RbsqTpyt8VV3YNNHDKDOH3fYkSBqLBEO6I
-	 TgndOBH1RP7S/jlh5bgr0yUgnR7cYS4ckWtIO0QRBlswHEHutgzzpO25flxd2Zco7P
-	 yhvSI41OQxRDXL9qZr19qTkV9cOqS1/gZclAOKMk0nE56ep3fqyamFo1Q9K/rNAbf4
-	 nm/jcVdC/o+mg==
-Received: from [192.168.1.90] (unknown [84.232.140.38])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8869D17E3750;
-	Mon, 23 Dec 2024 13:56:12 +0100 (CET)
-Message-ID: <19eca5c3-cedb-4c5f-9b70-9c25c8387414@collabora.com>
-Date: Mon, 23 Dec 2024 14:56:10 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mv820YsL"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso8138733a12.0;
+        Mon, 23 Dec 2024 05:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734960671; x=1735565471; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0E20nH4nI7hZl+zQi4Z91y7ffU07fB4nfSqv0rzeH8M=;
+        b=Mv820YsLFb0n7fwGqx0v5xeyxAVxuUzVTlNaA2791cjZwwAe0hCkLTEQDAGYygVVKo
+         UHqx4EJSEX7c0xP1AWgEWF+fkJbH7ByDVsz4BMaXhoIuaXqvyigE4ps62M8dwM2E34RH
+         mnX+vHmc47KHMaz/DirvN6MXEPaAGsov2Db+fwGYWF/LxSSwr5FPXblwuYuN91nvRfuf
+         MPsAiId9FGoiz6e9gnMy7NJNqgDqJRu0eAlXTXIXmJzJV3976LllAkWj7GzdMLUpnS/D
+         cdTInTHXHW15Eg1itNXEcPWy13WQ63Gf5ax8o2LeYsTVe4NbaitKLNk8pHIZuQML145Q
+         nshA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734960671; x=1735565471;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0E20nH4nI7hZl+zQi4Z91y7ffU07fB4nfSqv0rzeH8M=;
+        b=ql+vuFknkqf797iCvqunC5jObZosJs3Mx3bwxvYN4FaXBPRVp5DATm/vsPr7btqD/9
+         yjCc3nXkMfIu2K1YuBRHg9H+F5jT1Me7girutJCuiE6YMGwZlonytXzasa8OpoTmDpP2
+         gBPi0xxy+n+Rdy+5k4tcsJ0+7KTARz5zQCQtR3+LOA+VustzdUeGt46gD9/1P0MYLG96
+         maCVYPsp5TlCCFrSYdxVWgUayuD20ScZBeo+uYdHMBmN4jDSc6ZWwkj+cst7yNk0ta8I
+         N3Oeo2jdY3Hne0RA58p49Y6vlLKMRtQp0pxPApl5K5iOwKTugnnKcu0ttLCIJ/7JTCvD
+         z8Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNK+5w+FscIUgu/sJNKSHTXEJlnzLQL/04vGrqFgghI8xHBY/pWEvb4ej/4ecbUwmMJ1FlwYCuiIWDQ0kXAQ==@vger.kernel.org, AJvYcCVXbB9QDvULiwGDMKfHzEfLFdRZRPIyt1n+n0tapABVLKLf8UBNE8kXQCmTHkDiZsEPK4m/PQ9wt/3CgFtg@vger.kernel.org, AJvYcCX7kfCSzPwglVxSGMYeYbvTZu2zejhHcVcoFyBvk8AXVD3IuseFxKAg2jX4qWeCsqdYS/KVS21ZLWe+@vger.kernel.org, AJvYcCXer+nfC234+5+7TP0aVOIepbru+T0KpItVF8BSin0j1rh7N2ZtNtvc3zpIKiw2hGjTbALr9zFZHfwH143GU7tfEwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwueigKNnTJs1l2keB04Z/PL9JUl4/gxUTkOIopY7BMsTYkDnRC
+	K8xlrAsa08H8/FW+a8JxX06BZJlq9dB0QVc7zcZ8FKQFcpT8w8yw
+X-Gm-Gg: ASbGncv6cbRIKDOApkIuIK6fhosffokuAVdW6yjubT01ef7yl+u2eOSLfQnZ7rWA15D
+	rvXiBuJwcOB5VxRCiEYMtwdJ4pDIlg39APeXwQ/PVWFC0B0zBJQNv1XAZFJKXg3PxTA+i97pD1i
+	ITX1cXQNqIYM+AJxo+iVuCU5K0XT7uTCbnoiZDQSjM6p9xAYSu7mpSim+0OwACXRTUfK6/qaCl1
+	6pCmwjHU2S87WXKitkjkhiWn8BSnyz2eXfvMmlnIlaZKVw9I5tRa43wlX55h9JrqMB3LeJR7wTV
+	PDkWrbxaVvc386WVdlU+x8vQRQ==
+X-Google-Smtp-Source: AGHT+IFtl3Jc4R8ZM18OiD8T35sINFW2yCCL1hkjUfHrIzuM/MvcGihGAKcF6iZA6+Q/hgFepUAa8g==
+X-Received: by 2002:a17:907:96a4:b0:aab:7507:7a94 with SMTP id a640c23a62f3a-aac2ad84badmr1228517466b.16.1734960670508;
+        Mon, 23 Dec 2024 05:31:10 -0800 (PST)
+Received: from [127.0.1.1] (nat6-minsk-pool-46-53-210-232.telecom.by. [46.53.210.232])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aac0e895502sm523749966b.63.2024.12.23.05.31.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Dec 2024 05:31:10 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH v5 0/2] power: supply: max17042: cleanup and more features
+Date: Mon, 23 Dec 2024 16:30:38 +0300
+Message-Id: <20241223-b4-max17042-v5-0-e4e409723bce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] PCI: exynos: Switch to
- devm_clk_bulk_get_all_enabled()
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
- <20241217-clk_bulk_ena_fix-v5-2-aafbbb245155@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241217-clk_bulk_ena_fix-v5-2-aafbbb245155@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP5laWcC/32OzQrCMBAGX6XkbCR/bRpPvod42CSbNmBbaSVUp
+ O9uKghVweO3MDP7IBOOESdyKB5kxBSnOPR5lLuCuBb6Bmn0eRPBhOKc1dQq2sHMNVOCGsmq4HQ
+ JAZBk4jpiiPPLdjrn3cbpNoz3lzzx9fr2mA9P4pRRg8IyjaVCXR2bDuJl74aOrJ4ktuznD0lkN
+ rCyDhp4ZcF+s3LD8i9Wrl3rAD0oAeynq/50VWZr7SpvjJVe+i27LMsT2LeUIloBAAA=
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1734960669; l=2342;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=o4Fom0Rpm9fWzhbvqugXg9BmbPqo3cs/0znTlLu54ck=;
+ b=f8X4xAir/UsYai9B01gBdXs+JRfS4B/GpHsSQ6bQ+wpNPfRjetFZ6uLzwavBXVG0SW/VerEor
+ 87W4HwyJbVHB0I2ApwmvSY313JIzXsnoxdlHPVOGMYxp9vDxQqJ8SlI
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi Bjorn,
+Fuelgauge blocks often are incorporated in bigger chip,
+which may use only 1 line for interrupts. Shared-irq
+handles that case by requesting irq as shared.
 
-On 12/17/24 11:41 PM, Cristian Ciocaltea wrote:
-> The helper devm_clk_bulk_get_all_enable() missed to return the number of
-> clocks stored in the clk_bulk_data table referenced by the clks
-> argument and, therefore, will be dropped.
-> 
-> Use the newly introduced devm_clk_bulk_get_all_enabled() variant
-> instead, which is consistent with devm_clk_bulk_get_all() in terms of
-> the returned value:
-> 
->  > 0 if one or more clocks have been stored
->  = 0 if there are no clocks
->  < 0 if an error occurred
-> 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Maxim PMICs may include fuel gauge with additional features, which is
+out of single Linux power supply driver scope.
 
-In case you missed the previous requests, we need your ack on this patch
-so that Stephen can apply the entire series to the clk tree and drop the
-obsolete helper.
+For example, in max77705 PMIC fuelgauge has additional registers,
+like IIN_REG, VSYS_REG, ISYS_REG. Those needed to measure PMIC input
+current, system voltage and current respectively. Those measurements
+cannot be bound to any of fuelgauge properties.
 
-Thanks,
-Cristian
+The solution here add and option to use max17042 driver as a MFD
+sub device, thus allowing any additional functionality be implemented as
+another sub device. This will help to reduce code duplication in MFD
+fuel gauge drivers.
+
+Make max17042 interrupt shared, and add platform driver
+version.
+
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Changes in v5:
+- platform version: use parent device of_node as current device.
+  This is because mfd driver matches fuel gauge node, and max17042
+  platform variant is intended to match a mfd subdevice.
+- fix platform version issues.
+- Link to v4: https://lore.kernel.org/r/20241108-b4-max17042-v4-0-87c6d99b3d3d@gmail.com
+
+Changes in v4:
+- review fixes.
+- Link to v3: https://lore.kernel.org/r/20241118-b4-max17042-v3-0-9bcaeda42a06@gmail.com
+
+Changes in v3:
+- pass dev pointer to probe
+- Link to v2: https://lore.kernel.org/r/20241108-b4-max17042-v2-0-f058f7a16bab@gmail.com
+
+Changes in v2:
+- drop NACKed commits
+- make shared interrupts unconditionally
+- rework descriptions
+- add platform driver version
+- Link to v1: https://lore.kernel.org/r/20241109-b4-max17042-v1-0-9e2b07e54e76@gmail.com
+
+---
+Dzmitry Sankouski (2):
+      power: supply: max17042: make interrupt shared
+      power: supply: max17042: add platform driver variant
+
+ drivers/power/supply/max17042_battery.c | 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------
+ 1 file changed, 142 insertions(+), 58 deletions(-)
+---
+base-commit: 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2
+change-id: 20241108-b4-max17042-9306fc75afae
+
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
+
