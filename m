@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCA71C36;
-	Mon, 23 Dec 2024 14:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D791A8F68;
+	Mon, 23 Dec 2024 14:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734963270; cv=none; b=MOiYegCkO/XIDNjFqjlw9JGH3egmVeMyzUbV1t6NwxUq0RZ243hjPMun8fq63EEOUcfFfwgncXm2Wg261Vhz8Psz6WaOSQPwbIZKspGiBpTaogu3cQhjMCilRDVG2Di59zjALupx526Uyor/XtRVfx9PtbVVoXdiptxd9Z9gxB8=
+	t=1734963486; cv=none; b=XKiCuOUJ3tMbBTsKaPLlKix62jtxFPN296QtlA+LGM1W0oS+m5Ka3ACwKX4RrM/2lQocaT1wa7l82qJqU0Kj8lScsznHIy0Sx2rjCtL+jTha/n6305k2s7ZmyrLs5/CXpz989Vj4vHpy6WvvQvpCVi7M6t8Kp+weOSJZrPgGSuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734963270; c=relaxed/simple;
-	bh=BekGjEOJvWHigzaoH92UE5IcDlvCW88ZoU7sUnFMFfc=;
+	s=arc-20240116; t=1734963486; c=relaxed/simple;
+	bh=Dnx5jq8dk5gccywgJ8I1S6xTsLN9qwfE/Enn2jq1nSY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HxrmLPhmm0IlY7uAL/6Nsk0LnEn5I6oQpsVQYFdj/dNAIthqGg8zhAA/JwL2gs/SccxxrbIKjY4zZUvJ7Tu6RQ8YLZB2tWHdh66YrzFrMd6VXZfKIHbaqC/yU0aALVmiEgXyuSKsSx4TyRW2ajnSXkE5m4YMRsa791pjO1kx/jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3k6MN3D; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Q0WHSemZr7bya6QMav4FjvxnE55VbOK6Fc71aM06nf3pfFt10Tn2WPE8Bh8oDPaGtj+oH3rfOaCivPNl42wgYu/+3ZG7J0FBvnX13ZKSo+D1lbEeiqHvxlLzKfXiAl97A6GmCplRAQEqlwFF7OrAh1CzlwiHAeZRdXIkVntDYP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/R+imZt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3k6MN3D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E37E7C4CED3;
-	Mon, 23 Dec 2024 14:14:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/R+imZt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D96C4CED3;
+	Mon, 23 Dec 2024 14:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734963269;
-	bh=BekGjEOJvWHigzaoH92UE5IcDlvCW88ZoU7sUnFMFfc=;
+	s=k20201202; t=1734963486;
+	bh=Dnx5jq8dk5gccywgJ8I1S6xTsLN9qwfE/Enn2jq1nSY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a3k6MN3DC/m+ft3dZHPOksQKs0Bx0z4NMfGniYKSJYqkrMazX6HMGr2C/hXzUIaX5
-	 0tWC3ur9FXEgXDb2kj5MWOzpzuki+uKWyl+vGSdlx/G35GQpu3sF5nBZVtAG3jtnKU
-	 XTello1+91PsF/VQKntTBU6J3OLwOGabnp88T4ih+qLFIz1whiNORaIO2ikIGNq/sg
-	 BFF0X8nLM7oKHhHxmpjA4Rao/y1M9oEoLE4EHLikGwFcx5kiOb1j0Bh4BriJGcGAC4
-	 /YZAB2y+g2vLvY6q84OXD0xuBH+QdM4GMbk+RDUjFP3kAzN/q1xxWgrOlCbRG6FVGu
-	 ShSgEAsa6MkwQ==
-Message-ID: <d960e22e-01ad-406d-9616-d45edbef0232@kernel.org>
-Date: Mon, 23 Dec 2024 15:14:24 +0100
+	b=E/R+imZt5bguB8G1UuKlY9bV0MshcchxOe7IWOxHoZHmL9l2teeuLZbBav5xbUDjj
+	 RBLEaatHYNdu3KT8aAPhhBUOBhaWDN9dh9MWcVTsCOv2n7V8GXPkaXIBSPfxtd7HxM
+	 w3jXIhEp41wSk3K1r2kiYJ5sPU/WvRKZdN05dIJPXjns81NzraJaWZbcPVlaLVTQq4
+	 FVS+G7FWN7fOscbsb5T4TfCmvW2rxtj88tF5C4pKOBknxW0wJQpJ+0jQjzv6X+rGol
+	 RmbLTUA6Py2PsPvRTXz26+mSZbLo3v1igqRQMRDwXmJ2JQlwn0oDNBEXApPvOwYr2D
+	 1wgiarhGV5dwg==
+Message-ID: <57d5cb47-5c4b-4334-98af-4fb842995366@kernel.org>
+Date: Mon, 23 Dec 2024 15:18:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: google: add gs101-raven and
- generic gs101-pixel
+Subject: Re: [PATCH v2 2/3] arm64: dts: exynos: gs101-pixel: add generic
+ gs101-based Pixel support
 To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Peter Griffin
@@ -46,11 +46,11 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 References: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
- <20241220-gs101-simplefb-v2-1-c10a8f9e490b@linaro.org>
- <d0c1511f-b052-4690-aefb-3fb41e1e5875@kernel.org>
- <cfdc5b1b03140e3d2ce3fb58e8b342dc2ac06d04.camel@linaro.org>
-Content-Language: en-US
+ <20241220-gs101-simplefb-v2-2-c10a8f9e490b@linaro.org>
+ <33c7a520-dda9-4d3c-aa27-2f48786996a9@kernel.org>
+ <e85505c808661bedf2cca2433ef4c06038505a5f.camel@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -94,82 +94,115 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <cfdc5b1b03140e3d2ce3fb58e8b342dc2ac06d04.camel@linaro.org>
+In-Reply-To: <e85505c808661bedf2cca2433ef4c06038505a5f.camel@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/12/2024 08:45, André Draszik wrote:
+On 23/12/2024 08:59, André Draszik wrote:
 > Hi Krzysztof,
 > 
-> On Sun, 2024-12-22 at 12:38 +0100, Krzysztof Kozlowski wrote:
+> On Sun, 2024-12-22 at 12:42 +0100, Krzysztof Kozlowski wrote:
 >> On 20/12/2024 12:27, André Draszik wrote:
->>> Raven is Google's code name for Pixel 6 Pro. Since there are
->>> differences compared to Pixel 6 (Oriole), we need to add a separate
->>> compatible for it.
+>>> In order to support Pixel 6 (Oriole), Pixel 6 Pro (Raven), and Pixel 6a
+>>> (Bluejay) correctly, we have to be able to distinguish them properly as
+>>> we add support for more features.
 >>>
->>> We also want to support a generic DT, which can work on any type of
+>>> For example, Raven has a larger display. There are other differences,
+>>> like battery design capacity, etc.
+>>>
+>>> To facilitate this, we create a generic gs101-based Pixel DT that can
+>>> work on any such gs101-based device. At the same time, we move the
 >>
->> There are no such generic DT devices upstream, so we cannot add bindings
->> for them.
+>> No, whatever insanity Android has there, please don't populate it to
+>> upstream.
+>>
+>> There is no such thing as "generic board" thus cannot be a
+>> "generic DTS".
 > 
-> Do you have a better suggestion for the wording?
-> How about 'gs101-based Pixel base board'?
-
-It's not exactly about the wording but the concept. We don't have
-generic devices, thus no generic DT (DTS). Period. Thus you cannot have
-such schema.
-
+> I'll rephrase to gs101-based Pixel base board. Unless you have a better
+> suggestion.
 > 
->>> gs101-based Pixel device, e.g. Pixel 6, or Pixel 6 Pro, or Pixel 6a (as
->>> a future addition). Such a DT will have certain nodes disabled / not
->>> added. To facilitate such a generic gs101-based Pixel device, also add
->>> a more generic gs101-pixel compatible. We can not just use the existing
->>> google,gs101 for that, as it refers to the SoC, not a board.
+>>
+>>> Oriole specific parts that we have at the moment (display) into an
+>>> overlay, making it easy to add support for Raven and Bluejay in a
+>>> similar way.
+>>>
+>>> Note1:
+>>> Despite being an overlay, we instruct kbuild to create a merged
+>>> gs101-oriole.dtb and a gs101-oriole.dtbo. This way existing scripts can
+>>> keep working, but it also gives the option to just apply the overlay
+>>> before boot (e.g. by the bootloader).
+>>>
+>>> Note2:
+>>> I've changed the simple-framebuffer node to specify the memory via
+>>> memory-region instead of reg, as that avoids unnecessary duplication
+>>> (of the size), and it avoids having to specify #address-cells
+>>> and #size-cells in the chosen node (and duplicating this in the DTSO),
+>>> which is otherwise necessary to keep dt_binding_check happy and DT
+>>> validation working in general.
 >>>
 >>> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 >>> ---
->>>  Documentation/devicetree/bindings/arm/google.yaml | 18 ++++++++++++++----
->>>  1 file changed, 14 insertions(+), 4 deletions(-)
+>>> Note: MAINTAINERS doesn't need updating, it covers this whole directory
+>>> ---
+>>>  arch/arm64/boot/dts/exynos/google/Makefile         |  6 ++--
+>>>  .../arm64/boot/dts/exynos/google/gs101-oriole.dtso | 33 ++++++++++++++++++++++
+>>>  .../{gs101-oriole.dts => gs101-pixel-generic.dts}  | 24 +++++++---------
+>>>  3 files changed, 47 insertions(+), 16 deletions(-)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
->>> index e20b5c9b16bc..a8faf2256242 100644
->>> --- a/Documentation/devicetree/bindings/arm/google.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/google.yaml
->>> @@ -34,11 +34,21 @@ properties:
->>>      const: '/'
->>>    compatible:
->>>      oneOf:
->>> -      - description: Google Pixel 6 / Oriole
->>> +      - description: Google GS101 Pixel devices, as generic Pixel, or Pixel 6
->>> +          (Oriole), or 6 Pro (Raven)
->>> +        minItems: 2
->>> +        maxItems: 3
->>>          items:
->>> -          - enum:
->>> -              - google,gs101-oriole
->>> -          - const: google,gs101
->>> +          enum:
->>> +            - google,gs101-oriole
->>> +            - google,gs101-raven
->>> +            - google,gs101-pixel
->>> +            - google,gs101
+>>> diff --git a/arch/arm64/boot/dts/exynos/google/Makefile b/arch/arm64/boot/dts/exynos/google/Makefile
+>>> index 0a6d5e1fe4ee..6e6b5319212a 100644
+>>> --- a/arch/arm64/boot/dts/exynos/google/Makefile
+>>> +++ b/arch/arm64/boot/dts/exynos/google/Makefile
+>>> @@ -1,4 +1,6 @@
+>>>  # SPDX-License-Identifier: GPL-2.0
+>>>  
+>>> -dtb-$(CONFIG_ARCH_EXYNOS) += \
+>>> -	gs101-oriole.dtb \
+>>> +dtb-$(CONFIG_ARCH_EXYNOS) += gs101-pixel-generic.dtb
+>>> +
+>>> +gs101-oriole-dtbs := gs101-pixel-generic.dtb gs101-oriole.dtbo
+>>> +dtb-$(CONFIG_ARCH_EXYNOS) += gs101-oriole.dtb
+>>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dtso b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dtso
+>>> new file mode 100644
+>>> index 000000000000..43572039cd07
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dtso
+>>> @@ -0,0 +1,33 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Oriole Device Tree
+>>> + *
+>>> + * Copyright 2021-2023 Google LLC
+>>> + * Copyright 2023-2024 Linaro Ltd
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +/plugin/;
+>>> +
+>>> +&{/} {
+>>> +	model = "Oriole";
+>>> +	compatible = "google,gs101-oriole", "google,gs101-pixel", "google,gs101";
 >>
->> SoC cannot be a board in the same time.
+>> Boards are not overlays. Board equals DTB.
 > 
-> Can you please expand? google,gs101 is the SoC, the other ones are boards.
-> Is the commit message unclear?
+> You're saying this should move into a dts instead of dtso?
+> There are numerous boards upstream which use this same dtso
+> approach.
 
-You now say that these are valid boards:
+Numerous? My quick look found zero. There are for specific
+configurations, but not for boards. Look at something which could
+support your case: imx8mm-kontron-dl.dtso
+In first glance this is a board... but no! This is only about board with
+display panel, because panel is detachable.
 
-compatible = "google,gs101", "google,gs101";
-(although compatibles
+> 
+> There is a base board, and also different versions of it,
+> oriole being one of them.
 
-compatible = "google,gs101", "google,gs101-pixel";
+Well, I did not see here baseboard - you renamed it.
 
-Both are wrong. SoC should not be before the board and SoC cannot be
-used alone. Your schema allows that and that's not good.
 
-I did not get what you want to achieve here, so tricky to advice.
 
 Best regards,
 Krzysztof
