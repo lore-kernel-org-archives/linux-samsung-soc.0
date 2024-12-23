@@ -1,104 +1,237 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401AE14287;
-	Mon, 23 Dec 2024 15:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D5932C85
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2024 15:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734966226; cv=none; b=J0ydatj84oUPGzFquYa2fgQ5AL0ZKXbPEloHjpQ5bSkX68nnU/t7RppXEcaAQHbc0A5ZU6wD+NMivOYa5DOPCC5KWXC0bnAuZjjtnqZ/uVz+nEsZP2h0L57BUxWcK0IW/kR5b25sQemftU/fATQWtW+INxK989AhwZR/lJolkFM=
+	t=1734967924; cv=none; b=k0NVuGB97EbT+ZErtivBLppY+NJJUqM5FU5fdPqBTOhinw1UnTGfXBKjAdJFaU89UjUbWwT79jG+qA9BBZe/i018MMvvRyltKKvB5B1SsQibfYAxJOTf7ANgA1s6xyGpBcQ4FsPht3o/g5kXlIAVm2AjRAt39bQqmMaHveAyVeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734966226; c=relaxed/simple;
-	bh=9Uk4DZGoZgt9jIhyWCEgTSIsBhoNfzlfz6+xrGe7MSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLNBUXJJmSFxvvDf4o4oKSSHmvyIiIcM1uk6ty0VZRvEu4IZflVUPQh9pgxh+E85beE24ohWUkVWbRvLXbF0n2Tu/aYSgdkunYOVKWmYx/UDfsuVpA/8v91YUOI7RaQRwVs5WoOaNQbbcPw2evzlp26reYXl41gQdmeWdjP7z6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HNc46ApH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1734967924; c=relaxed/simple;
+	bh=Fpb65OEeZ6TamvLcRuiv694nWon/qJBWUIsG3/yJUzQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QCtH/ob4fSEUrXjIBperhggHopdgl00qNWQYCZkMOulIf+kbM4hWZECTeAxNt6KBBcs8FTyjJIhvx0gfMpoaB5SwsI/NJx+hOR66690jlpYbdXukKEEO4FJfANNj6qwA2pjCOEUtErsZANxFkKNZsb+KV9HgnHrJdEkZ1jGHFI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zN3DJmJX; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HNc46ApH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1734966220;
-	bh=9Uk4DZGoZgt9jIhyWCEgTSIsBhoNfzlfz6+xrGe7MSY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HNc46ApHwR3QSB4UFbizcKOsz1Xw4oJsAmICm5n4kGOlLL/OXztNUVL4ndZWkm5Yy
-	 nHRHuY2GvgHbWDgUjKzuf23CYfFnuwbuW7MMpETvm/82pENy6Tk58GtTv1i9Sm/GW8
-	 4q1Ki/caz610ZdaNv8y51Bz5fK7gNpKQ72WlxUTuXbqgOtGn7hqi987C8P3ueeNLJN
-	 tnVyJtKek3bV0rmzESnWcmSQFPa39SBsJY/g3DksSbTwFbqbn58mANvSdkBE5PvuyG
-	 a9UqBawMpZbT+wBI5LeycYh7tc4lH1AZ7AU5YUS+ahnSdDJbZSJcGPP1AImkORCdmv
-	 xjexlN++t6Ndg==
-Received: from [192.168.1.90] (unknown [84.232.140.38])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 78ABD17E0E2C;
-	Mon, 23 Dec 2024 16:03:39 +0100 (CET)
-Message-ID: <cbd16df2-4f94-4f66-a00d-e9e972390905@collabora.com>
-Date: Mon, 23 Dec 2024 17:03:37 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zN3DJmJX"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-436341f575fso46252225e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Dec 2024 07:32:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734967921; x=1735572721; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+MUwOgRUnhXT5bm369Orj5PQynMd7SVyypJ/rGIX8VU=;
+        b=zN3DJmJXnpr9Qxquj/zcV/awlF+rvmb3gd5x7aJRFKd84bjt7Bkorj11Y1+x3ZxHcn
+         XHdHohADToH9ut8DHs56n6/wV1OETPtPtB52N+jJMo0twXGNI41ZIB2Cc5iXRdOUu2Zg
+         XlMiFHlsMisUOGejCiljoxp1r508zLgqGv6ezlsdh0zoeaAEE0mQKT5l6VqJpVfTXzb7
+         ausSaRlkGDrw1EQY+pcLxDdK/iSo/76/ycc/vZQdnrBkDYsplFO3mtyqojolV6AFLMCO
+         sLBZcv09ZI7UkcEAz2SdqgHAzs2kjjjokjqNTsLQImap7sNo7dedctgbdMCqQy26tUV1
+         qeLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734967921; x=1735572721;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+MUwOgRUnhXT5bm369Orj5PQynMd7SVyypJ/rGIX8VU=;
+        b=tvQGsCDhssy3lNG50LwnlU4TK5PFB0OOEwJoPR4GWHplmDQ0UNgb2/OkocG63La83p
+         aNc4OMj+gmC6vBSVkA5mUee0iANJKuZUeC3W27hFuyspM8uXTKczSwSWQzrYJCk3bHPH
+         cNwjGjg0Rrb/wXMnPZ8/Cx6ZGIUwqdCvtYP983waA/VuVttm18GiFuyqpS42/ChGCjKt
+         asg0fL4jBiZHiFiEIUx0Gr+UOL6Uhy231mGBiPs4j3IadYd1X8+GANOVZYRYXQM4fwds
+         M83KpbQ5rT0BnbBk9+Cu7tzVMjhKPUrLPuPKjmRn27D5laDvNRGnaeLZXf4mjhodb0xX
+         V2Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1RuNNAtgs1x8FqLT4hnU68c2W+hQKmlJteYOFgJf0gg9RZmMZEUhbxCPgvDbrsB4rrrOAwSa7iaVR/+TkO65eow==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw837yTwKxsNlVfT9zoruKYJ0XKWZUNRdtxxV7sVAZXjCStMBXz
+	hXPF11g6t15xGLyFMakDZvGa8oHHohF6dVoG5Equ5xqyxRDlW34Lg9XY+C5mL9M=
+X-Gm-Gg: ASbGnctQ/TlWbV6aRjvIwlpYRXXdqwjeuQgWm+DmQWHwmExWeTue3qrQs3oDR7g9XeG
+	o0rfFpFhvMef9EfhFNPE3jsULKM9jyLhr8PkynOlcyB1b7jPMqz8SBeWE8meHf6vtWV+yY9zyzC
+	8jXKcixk8uSkZYGc8DmFA1yAonYCgR0lC5qJGi7lUFnF0yXHoNranOCkb/xBJu4a6HYg7GM0XCQ
+	QSvr59k4Ib33S3IDQHGQtiUzoQ0QSzmkywmnfpoyfVkbKzn4fDNXJJ4OSX52Q==
+X-Google-Smtp-Source: AGHT+IE2PUKcy1CT4BX1kJYJ+FDVyKDT8Nzp8yzBmGcj8sTdsMxOqequomdtYBNo7dbt4pR218lSTQ==
+X-Received: by 2002:a05:600c:5246:b0:434:a781:f5d9 with SMTP id 5b1f17b1804b1-4366854c073mr112846465e9.11.1734967921077;
+        Mon, 23 Dec 2024 07:32:01 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436612008b1sm138466205e9.15.2024.12.23.07.31.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Dec 2024 07:32:00 -0800 (PST)
+Message-ID: <9507951f9ce4ee9d8c553d8964f00ef217f8ed1d.camel@linaro.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: arm: google: add gs101-raven and
+ generic gs101-pixel
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+	 <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Date: Mon, 23 Dec 2024 15:31:59 +0000
+In-Reply-To: <d960e22e-01ad-406d-9616-d45edbef0232@kernel.org>
+References: <20241220-gs101-simplefb-v2-0-c10a8f9e490b@linaro.org>
+	 <20241220-gs101-simplefb-v2-1-c10a8f9e490b@linaro.org>
+	 <d0c1511f-b052-4690-aefb-3fb41e1e5875@kernel.org>
+	 <cfdc5b1b03140e3d2ce3fb58e8b342dc2ac06d04.camel@linaro.org>
+	 <d960e22e-01ad-406d-9616-d45edbef0232@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] PCI: exynos: Switch to
- devm_clk_bulk_get_all_enabled()
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jingoo Han <jingoohan1@gmail.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, kernel@collabora.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20241217-clk_bulk_ena_fix-v5-0-aafbbb245155@collabora.com>
- <20241217-clk_bulk_ena_fix-v5-2-aafbbb245155@collabora.com>
- <19eca5c3-cedb-4c5f-9b70-9c25c8387414@collabora.com>
- <20241223141806.GA1864738@rocinante>
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241223141806.GA1864738@rocinante>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 12/23/24 4:18 PM, Krzysztof Wilczyński wrote:
-> Hello,
-> 
->>> The helper devm_clk_bulk_get_all_enable() missed to return the number of
->>> clocks stored in the clk_bulk_data table referenced by the clks
->>> argument and, therefore, will be dropped.
->>>
->>> Use the newly introduced devm_clk_bulk_get_all_enabled() variant
->>> instead, which is consistent with devm_clk_bulk_get_all() in terms of
->>> the returned value:
->>>
->>>  > 0 if one or more clocks have been stored
->>>  = 0 if there are no clocks
->>>  < 0 if an error occurred
->>>
->>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>
->> In case you missed the previous requests, we need your ack on this patch
->> so that Stephen can apply the entire series to the clk tree and drop the
->> obsolete helper.
-> 
-> Please, take the following:
-> 
->   Acked-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> 
-> Should be sufficient.
-> 
-> Also, sorry for keeping you both waiting.
+On Mon, 2024-12-23 at 15:14 +0100, Krzysztof Kozlowski wrote:
+> On 23/12/2024 08:45, Andr=C3=A9 Draszik wrote:
+> > Hi Krzysztof,
+> >=20
+> > On Sun, 2024-12-22 at 12:38 +0100, Krzysztof Kozlowski wrote:
+> > > On 20/12/2024 12:27, Andr=C3=A9 Draszik wrote:
+> > > > Raven is Google's code name for Pixel 6 Pro. Since there are
+> > > > differences compared to Pixel 6 (Oriole), we need to add a separate
+> > > > compatible for it.
+> > > >=20
+> > > > We also want to support a generic DT, which can work on any type of
+> > >=20
+> > > There are no such generic DT devices upstream, so we cannot add bindi=
+ngs
+> > > for them.
+> >=20
+> > Do you have a better suggestion for the wording?
+> > How about 'gs101-based Pixel base board'?
+>=20
+> It's not exactly about the wording but the concept. We don't have
+> generic devices, thus no generic DT (DTS). Period. Thus you cannot have
+> such schema.
 
-Thanks Krzysztof, no worries!
+There is a Pixel base board, with different additions to it, e.g.
+different displays. The boot loader can pick the right one.
 
-Regards,
-Cristian
+Let's discuss that in the other thread to have things in one place :-)
+>=20
+
+> > > > gs101-based Pixel device, e.g. Pixel 6, or Pixel 6 Pro, or Pixel 6a=
+ (as
+> > > > a future addition). Such a DT will have certain nodes disabled / no=
+t
+> > > > added. To facilitate such a generic gs101-based Pixel device, also =
+add
+> > > > a more generic gs101-pixel compatible. We can not just use the exis=
+ting
+> > > > google,gs101 for that, as it refers to the SoC, not a board.
+> > > >=20
+> > > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > > > ---
+> > > > =C2=A0Documentation/devicetree/bindings/arm/google.yaml | 18 ++++++=
+++++++++----
+> > > > =C2=A01 file changed, 14 insertions(+), 4 deletions(-)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Do=
+cumentation/devicetree/bindings/arm/google.yaml
+> > > > index e20b5c9b16bc..a8faf2256242 100644
+> > > > --- a/Documentation/devicetree/bindings/arm/google.yaml
+> > > > +++ b/Documentation/devicetree/bindings/arm/google.yaml
+> > > > @@ -34,11 +34,21 @@ properties:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 const: '/'
+> > > > =C2=A0=C2=A0 compatible:
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0 oneOf:
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Google Pixel 6 / Ori=
+ole
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Google GS101 Pixel d=
+evices, as generic Pixel, or Pixel 6
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (Oriole), o=
+r 6 Pro (Raven)
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 minItems: 2
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 3
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - google,gs101-oriole
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: go=
+ogle,gs101
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum:
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ - google,gs101-oriole
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ - google,gs101-raven
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ - google,gs101-pixel
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ - google,gs101
+> > >=20
+> > > SoC cannot be a board in the same time.
+> >=20
+> > Can you please expand? google,gs101 is the SoC, the other ones are boar=
+ds.
+> > Is the commit message unclear?
+>=20
+> You now say that these are valid boards:
+>=20
+> compatible =3D "google,gs101", "google,gs101";
+
+Sorry, I don't see how (apart from the fact that dtbs_check flags
+non-unique elements anyway). The result of the patch is:
+
+        minItems: 2
+        maxItems: 3
+        items:
+          enum:
+            - google,gs101-oriole
+            - google,gs101-raven
+            - google,gs101-pixel
+            - google,gs101
+        allOf:
+          - contains:
+              const: google,gs101-pixel
+          - contains:
+              const: google,gs101
+
+So one can not have 'google,gs101' twice. And if I only add
+    compatible =3D "google,gs101", "google,gs101";
+to the .dts, then dtbs_check complains indeed.
+
+> (although compatibles
+>=20
+> compatible =3D "google,gs101", "google,gs101-pixel";
+
+OK, the schema doesn't flag incorrect ordering indeed.
+
+> Both are wrong. SoC should not be before the board and SoC cannot be
+> used alone. Your schema allows that and that's not good.
+>=20
+> I did not get what you want to achieve here, so tricky to advice.
+
+The intention is to enforce either of the following three:
+
+    compatible =3D "google,gs101-raven", "google,gs101-pixel", "google,gs10=
+1";
+    compatible =3D "google,gs101-oriole", "google,gs101-pixel", "google,gs1=
+01";
+    compatible =3D "google,gs101-pixel", "google,gs101";
+
+I think this works (but I was aiming for something shorter,
+possibly involving minItems):
+
+  compatible:
+    oneOf:
+      - description: Google GS101 Pixel base board
+        items:
+          - const: google,gs101-pixel
+          - const: google,gs101
+
+      - description: Google GS101 Pixel 6 (Oriole), or 6 Pro (Raven)
+        items:
+          - enum:
+              - google,gs101-oriole
+              - google,gs101-raven
+          - const: google,gs101-pixel
+          - const: google,gs101
+
+
+Cheers,
+Andre'
+
