@@ -1,137 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3CA8F7D;
-	Tue, 24 Dec 2024 14:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DCA81ACA;
+	Wed, 25 Dec 2024 18:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735052377; cv=none; b=uaxeFW1TkaU/0PVWiXGp5Nr1ElYQxlCHGnkC4O2bTMUyzl6YUPsP3Vhc4uhcmr4GqP5RiIjVQkhE3x0O40IbSNoewUQTUGl5KhTG40WTSwkdG/DM7I9K+41Z3GkZvxpJ9ziCSXJXofJr8GTsqkyoMICT/mvJmSnXvy66eZak6S0=
+	t=1735152305; cv=none; b=fXkOXFAvogp1KMCOkwgdjr15b3sYe8oCotXJONiZUBRwChRYIKldvUdlG3kVXFMQ0X4WtDRrrEcDTNOzkrPdkZMe1HWDUeJNZpEpLptQ8yDcCt8iVIG2NDBHDqNAiAWxSr64r7c1yiVH3E+Mo0PTAQ5iSDWUqJJKdC6Fag/hJMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735052377; c=relaxed/simple;
-	bh=qT5ChtlIrgcs45op1LpL0bwVYygr34H/qJ53ad3vQnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7glK0G87YWxvGQOI+wy6KFawxCWX0fxRFWfRaTND4PL6PeqrGIQAU7TDZW0yY7hMbTbYQe3E/1UuM2d5UsCAv7IXLWEub1f9UWnVJLBSewK6UnyDd/wE5N9+jWrD3SzuAy86PRkU47j6FCnpCBqXgdtrmA58od5AObFI9G9XvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXozPK10; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735152305; c=relaxed/simple;
+	bh=BUkupmeCsXEr3SXRPBCUQlirm08/yBvne0NbNTvJMlg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gxUsONGsYEl0wIzY2gN+n7+jGSTlOa+Y3HJXdpy/F22zi80mS3P8Pq2mRBxITneU7OX3v7FwQj7ui7BVDMiOS8AFFMnPYjKlYDgMGgGJj10klX0LdQc6U3yz5oRtclvAJZLSfiDLcf9xMQRazGFXFce9iu9h3J1ZFKVnzwcBvt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jgbRNH4Y; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXozPK10"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0389DC4CED0;
-	Tue, 24 Dec 2024 14:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735052376;
-	bh=qT5ChtlIrgcs45op1LpL0bwVYygr34H/qJ53ad3vQnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UXozPK10Tc9hmBtlkhWeDnWqy22gFeOr2+SmEs52Y+fg616zsOd1VL61Mrr3vBjQ5
-	 AbnO8QW3q1IO0XZ7AZwJ483gujScysvJfGYLI2+I+sbPNLzsHl+pKFojAGsIq8uyO3
-	 k+nvSqc9LJZLDy5BSnaVhXXE2MKezyGnRZl5zKIb1Teh3F26EGt7DnCs14AeU/sMzW
-	 U/12vG0G/UsNNDIeNmif1UPA2jxbk/PrAepbiKY6G4s01qW4cIDC5oPKcE6EkOeXf0
-	 85aYyKPlCVHl7pKjcSpdo1TvueRMzXtz1V5RtsoWymnCjt1dn1sz612EIJ5yzi8h4L
-	 0WzGRZnEs9qTg==
-Date: Tue, 24 Dec 2024 20:29:32 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: =?utf-8?B?64KY7IaM7JuQL1NPV09O?= NA <sowon.na@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	kishon@kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
-	'Alim Akhtar' <alim.akhtar@samsung.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
- bindings
-Message-ID: <Z2rMVCxo6Kk7vpF0@vaman>
-References: <20241118021009.2858849-1-sowon.na@samsung.com>
- <CGME20241118021011epcas2p21593217ccf58afddad5ce36f510e7cb6@epcas2p2.samsung.com>
- <20241118021009.2858849-2-sowon.na@samsung.com>
- <000001db3a42$c5a79b70$50f6d250$@samsung.com>
- <001401db50ec$a31703a0$e9450ae0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jgbRNH4Y"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=zdTB7pc5WS+HFB9gmP4+v5jC0oRIwy5wOUzdsemALV0=; b=jgbRNH4YyfbuAm/g
+	4v8F0JvzwNIMi++L61yAa4LgeHkvSwkOqtxKrOsLsJrHtmnZW25jkGm0iQXwWtdfulk/Q/3fJzgCL
+	agVV9L//0tk0VWUbxIR0uqWrg26iwa4QUQluZUi70Gw5qZeNpYsVDCq+tLLPAHucW9KFg1zqDiztI
+	1fLX5uxHnyV9EkNBl8WnHR/Jwwueh1sZ7uIze/2KiA/jT5tNDKl8krvLyvHFNRCahziPXVZ2WLEjo
+	rKVJ3axgC7WmbMSRCAeCIi/JWuyAvoCgWEIFpnLCb1VFmdTX+ybl/FGS0K0eNS9W4FP3YIUTU9sEp
+	itC5M0++hzxtuGEWsQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tQWNK-0078WD-1u;
+	Wed, 25 Dec 2024 18:44:54 +0000
+From: linux@treblig.org
+To: s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	linux-media@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: platform: exynos4-is: Remove unused __is_get_frame_size
+Date: Wed, 25 Dec 2024 18:44:53 +0000
+Message-ID: <20241225184453.104368-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <001401db50ec$a31703a0$e9450ae0$@samsung.com>
 
-On 18-12-24, 10:32, 나소원/SOWON NA wrote:
-> Hi Krzysztof,
-> 
-> > -----Original Message-----
-> > From: 나소원/SOWON NA <sowon.na@samsung.com>
-> > Sent: Tuesday, November 19, 2024 3:36 PM
-> > To: 'Alim Akhtar' <alim.akhtar@samsung.com>
-> > Cc: 'robh@kernel.org' <robh@kernel.org>; 'krzk@kernel.org'
-> > <krzk@kernel.org>; 'conor+dt@kernel.org' <conor+dt@kernel.org>;
-> > 'vkoul@kernel.org' <vkoul@kernel.org>; 'kishon@kernel.org'
-> > <kishon@kernel.org>; 'krzk+dt@kernel.org' <krzk+dt@kernel.org>; 'linux-
-> > kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>;
-> > 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>; 'linux-samsung-
-> > soc@vger.kernel.org' <linux-samsung-soc@vger.kernel.org>; 'Krzysztof
-> > Kozlowski' <krzysztof.kozlowski@linaro.org>
-> > Subject: RE: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
-> > bindings
-> > 
-> > Hi Alim,
-> > 
-> > On 11/19/24 2:21 PM, Alim Akhtar wrote:
-> > > -----Original Message-----
-> > > From: Alim Akhtar <alim.akhtar@samsung.com>
-> > > Sent: Tuesday, November 19, 2024 2:21 PM
-> > > To: 'Sowon Na' <sowon.na@samsung.com>; robh@kernel.org;
-> > > krzk@kernel.org;
-> > > conor+dt@kernel.org; vkoul@kernel.org; kishon@kernel.org
-> > > Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
-> > > devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> > > 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>
-> > > Subject: RE: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS
-> > > PHY bindings
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Sowon Na <sowon.na@samsung.com>
-> > > > Sent: Monday, November 18, 2024 7:40 AM
-> > > > To: robh@kernel.org; krzk@kernel.org; conor+dt@kernel.org;
-> > > > vkoul@kernel.org; alim.akhtar@samsung.com; kishon@kernel.org
-> > > > Cc: krzk+dt@kernel.org; linux-kernel@vger.kernel.org;
-> > > > devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> > > > sowon.na@samsung.com; Krzysztof Kozlowski
-> > > > <krzysztof.kozlowski@linaro.org>
-> > > > Subject: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
-> > > > bindings
-> > > >
-> > > > Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
-> > > >
-> > > > Signed-off-by: Sowon Na <sowon.na@samsung.com>
-> > > > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > > > ---
-> > > I am not sure how we can help you, you are keep missing to collect all
-> > > the tags
-> > > https://lkml.org/lkml/2024/11/7/617
-> > >
-> > Really sorry for missing tags. I append it immediately, and will not miss
-> > anymore.
-> > Your review helps me a lot and makes my patch better. I applied all your
-> > reviews to my patches.
-> > 
-> > Thank you a lot once again for your help.
-> > 
-> 
-> I missed including the "Reviewed-by" tag in the patch set I sent.
-> Could you please let me know if you'd prefer me to send a v4 with the
-> tag included, or if you're able to apply it with the missing tag?
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Please wrap your replies in 80chars
+The last use of __is_get_frame_size() was removed in 2013 by
+commit 5cfaad64d88a ("[media] exynos4-is: Fix format propagation on
+FIMC-IS-ISP subdev")
 
-Yes pls add and post v4
+Remove it.
 
-> 
-> Thank you for your understanding, and I apologize for the oversight.
-> 
-> Best regards,
-> Sowon.
-> 
-> 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../media/platform/samsung/exynos4-is/fimc-is-param.c    | 9 ---------
+ .../media/platform/samsung/exynos4-is/fimc-is-param.h    | 1 -
+ 2 files changed, 10 deletions(-)
 
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c
+index 9c816ae3b3e5..443362da8cc8 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c
+@@ -204,15 +204,6 @@ int __is_hw_update_params(struct fimc_is *is)
+ 	return ret;
+ }
+ 
+-void __is_get_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf)
+-{
+-	struct isp_param *isp;
+-
+-	isp = &is->config[is->config_index].isp;
+-	mf->width = isp->otf_input.width;
+-	mf->height = isp->otf_input.height;
+-}
+-
+ void __is_set_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf)
+ {
+ 	unsigned int index = is->config_index;
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h
+index 206904674927..10ad02f36fed 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h
+@@ -994,7 +994,6 @@ void fimc_is_set_initial_params(struct fimc_is *is);
+ unsigned int __get_pending_param_count(struct fimc_is *is);
+ 
+ int  __is_hw_update_params(struct fimc_is *is);
+-void __is_get_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf);
+ void __is_set_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf);
+ void __is_set_sensor(struct fimc_is *is, int fps);
+ void __is_set_isp_aa_ae(struct fimc_is *is);
 -- 
-~Vinod
+2.47.1
+
