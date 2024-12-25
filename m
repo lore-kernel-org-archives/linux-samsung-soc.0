@@ -1,101 +1,92 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DCA81ACA;
-	Wed, 25 Dec 2024 18:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADC01BC3F;
+	Wed, 25 Dec 2024 22:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735152305; cv=none; b=fXkOXFAvogp1KMCOkwgdjr15b3sYe8oCotXJONiZUBRwChRYIKldvUdlG3kVXFMQ0X4WtDRrrEcDTNOzkrPdkZMe1HWDUeJNZpEpLptQ8yDcCt8iVIG2NDBHDqNAiAWxSr64r7c1yiVH3E+Mo0PTAQ5iSDWUqJJKdC6Fag/hJMc=
+	t=1735167565; cv=none; b=oTl59wkhgl+p1woBXz1KONoET+47oQxlW9zWgaNTzRcKbwDsNkUSomnQCi8mRqsJrS4eiSGAlSX1S6pYuq+DaA7JLUORVqOQeDUs8iJ6ODUlYa6uY4APl+h/U+Sn6edX153nZoSq8uKAi62sm3NzEmaVzQ64cXZV6eU4E5CFeS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735152305; c=relaxed/simple;
-	bh=BUkupmeCsXEr3SXRPBCUQlirm08/yBvne0NbNTvJMlg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gxUsONGsYEl0wIzY2gN+n7+jGSTlOa+Y3HJXdpy/F22zi80mS3P8Pq2mRBxITneU7OX3v7FwQj7ui7BVDMiOS8AFFMnPYjKlYDgMGgGJj10klX0LdQc6U3yz5oRtclvAJZLSfiDLcf9xMQRazGFXFce9iu9h3J1ZFKVnzwcBvt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jgbRNH4Y; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1735167565; c=relaxed/simple;
+	bh=1wNj/IVbA4Di3bccZAqMUVRlHal4Sy0QkfLVEqVzyew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMlyXSy6VhHjoBnqn6eZB1fnsScBJxihaJiImxblAnF9nPwcvAen+DEmXYKbna2/Qvqr++Fz/u1yAUG4mJU4pzhk82x1bwvBkWxLrXoRR92gXueKNikxlD5Xlfd3a80La3j57WI0pFtC+rfRFZM1DIwlhy3EIHjrP8PHQgwbUOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XahO4jNI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jgbRNH4Y"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=zdTB7pc5WS+HFB9gmP4+v5jC0oRIwy5wOUzdsemALV0=; b=jgbRNH4YyfbuAm/g
-	4v8F0JvzwNIMi++L61yAa4LgeHkvSwkOqtxKrOsLsJrHtmnZW25jkGm0iQXwWtdfulk/Q/3fJzgCL
-	agVV9L//0tk0VWUbxIR0uqWrg26iwa4QUQluZUi70Gw5qZeNpYsVDCq+tLLPAHucW9KFg1zqDiztI
-	1fLX5uxHnyV9EkNBl8WnHR/Jwwueh1sZ7uIze/2KiA/jT5tNDKl8krvLyvHFNRCahziPXVZ2WLEjo
-	rKVJ3axgC7WmbMSRCAeCIi/JWuyAvoCgWEIFpnLCb1VFmdTX+ybl/FGS0K0eNS9W4FP3YIUTU9sEp
-	itC5M0++hzxtuGEWsQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tQWNK-0078WD-1u;
-	Wed, 25 Dec 2024 18:44:54 +0000
-From: linux@treblig.org
-To: s.nawrocki@samsung.com,
-	mchehab@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	linux-media@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: platform: exynos4-is: Remove unused __is_get_frame_size
-Date: Wed, 25 Dec 2024 18:44:53 +0000
-Message-ID: <20241225184453.104368-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XahO4jNI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61D30C4CECD;
+	Wed, 25 Dec 2024 22:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735167564;
+	bh=1wNj/IVbA4Di3bccZAqMUVRlHal4Sy0QkfLVEqVzyew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XahO4jNIq/4cyWj9bfxRnwgWOpJoYWtmJ2EwJYJa1czF1QzSPC81zo+/xMgMjH84S
+	 P2S2z7ZIxMbJcXYaVUGQRcgr64SzQb/Pv554A9pKU9f7aJIGSjXjRzuc1MW2Sf8Kem
+	 zaSFplJFo3RPdZ2mTNvtojwfZSqaEASp/luHU/ZhtVP+86XrQUb/j5omCMPjB8jtbx
+	 UGpsU46m4Tyf1F/7gQyXcX2EfV/ruLWnTf/8e6c0rN0rNahTR0qp0oMBK9v47EEHn4
+	 uj7+Eeevbvj5iqPXdElR+WM4D8ESsXn/Nq5WtoduX4A5Ifi5x5kPwqtG71YvgNh63X
+	 jVmiyN2HzlXaw==
+Date: Wed, 25 Dec 2024 23:59:20 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] i2c: exynos5: Add support for Exynos8895 SoC
+Message-ID: <djpcvn7von4rizjucplqwxlmpuaemrl7x3jsbqmojgzhybfu6o@n6l3dmtjy7jy>
+References: <20241221151937.1659139-1-ivo.ivanov.ivanov1@gmail.com>
+ <20241221151937.1659139-3-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241221151937.1659139-3-ivo.ivanov.ivanov1@gmail.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi Ivaylo,
 
-The last use of __is_get_frame_size() was removed in 2013 by
-commit 5cfaad64d88a ("[media] exynos4-is: Fix format propagation on
-FIMC-IS-ISP subdev")
+On Sat, Dec 21, 2024 at 05:19:37PM +0200, Ivaylo Ivanov wrote:
+> Exynos8895 functioning logic mostly follows I2C_TYPE_EXYNOS7, but timing
+> and temp calculations are slightly changed according to the following
 
-Remove it.
+/changed/different/
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../media/platform/samsung/exynos4-is/fimc-is-param.c    | 9 ---------
- .../media/platform/samsung/exynos4-is/fimc-is-param.h    | 1 -
- 2 files changed, 10 deletions(-)
+> logic:
+> 
+> FPCLK / FI2C = (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 2 *
+> ((FLT_CYCLE + 3) - (FLT_CYCLE + 3) % (CLK_DIV + 1))
+> 
+> temp := (FPCLK / FI2C) - (FLT_CYCLE + 3) * 2
+> 
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c
-index 9c816ae3b3e5..443362da8cc8 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.c
-@@ -204,15 +204,6 @@ int __is_hw_update_params(struct fimc_is *is)
- 	return ret;
- }
- 
--void __is_get_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf)
--{
--	struct isp_param *isp;
--
--	isp = &is->config[is->config_index].isp;
--	mf->width = isp->otf_input.width;
--	mf->height = isp->otf_input.height;
--}
--
- void __is_set_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf)
- {
- 	unsigned int index = is->config_index;
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h
-index 206904674927..10ad02f36fed 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-param.h
-@@ -994,7 +994,6 @@ void fimc_is_set_initial_params(struct fimc_is *is);
- unsigned int __get_pending_param_count(struct fimc_is *is);
- 
- int  __is_hw_update_params(struct fimc_is *is);
--void __is_get_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf);
- void __is_set_frame_size(struct fimc_is *is, struct v4l2_mbus_framefmt *mf);
- void __is_set_sensor(struct fimc_is *is, int fps);
- void __is_set_isp_aa_ae(struct fimc_is *is);
--- 
-2.47.1
+...
 
+> @@ -352,11 +369,19 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+>  	 *
+>  	 */
+>  	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
+> -	temp = clkin / op_clk - 8 - t_ftl_cycle;
+> +	if (i2c->variant->hw == I2C_TYPE_EXYNOS8895)
+> +		temp = clkin / op_clk - (t_ftl_cycle + 3) * 2;
+> +	else
+> +		temp = clkin / op_clk - 8 - t_ftl_cycle;
+>  	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
+>  		temp -= t_ftl_cycle;
+
+Could you please make this:
+
+	if (i2c->variant->hw == I2C_TYPE_EXYNOS8895)
+		...
+	else if (i2c->variant->hw == I2C_TYPE_EXYNOS7)
+		...
+	else
+		...
+
+For a better clarity.
+
+Thanks,
+Andi
