@@ -1,134 +1,177 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671B91E480;
-	Thu, 26 Dec 2024 09:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7361E136353
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2024 17:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735206627; cv=none; b=PNan/ycSd/28O2LYJtb1OALDr71AlW1BXsJgUELqUYOBFU5Y4oD/W69r8P1lDhAlFk9LszYvUzZbRuW6eOfxwolrPCrV3K05eltBAowiHnqWbWDJ1XPbeUqZxrPkqJIniKFzghqQizgXVNpmWh8pPZg6m1mCRgx0YrKrSdYoioE=
+	t=1735234133; cv=none; b=mnkIzX+yoPx9+ruPO6WcekOzECsGqj1b8Rw255hXmZbKUptSqVGNzc+l1ynGlSHAJX8P71o/XnldWNVSU9lF+KAZ7XQvpOc1Krj1xJ5mG3DrGUdgRevNZLUhb3XWkoMSKa71MosqKMXjkY5dr7SHzecJJA0NlHasHsljoZA0PNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735206627; c=relaxed/simple;
-	bh=ZRZJGAbp+aHeP7BLaQqXzxB6yn0PoQl0043X1mqvG+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XIkOgCm5GhBmb1s5cufCfpngCBmrF2qTTNPq4H2Sux2vLMGXQZ58EIjHQVUw4ieC9ZEBBFi85Ngv6mTGDeaERUsGDin+OnLuUui5bQ4PVGL6esjhwmSZz/zfK1rKW6b3oRL8o16Hol3iE94RjNKu4DhLOJPVfyUV7UBTxxq4yb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMLQTKKU; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1735234133; c=relaxed/simple;
+	bh=E13a9HFey797Y+DFAx0KL1ZPpzzo0Vwzz0tfAjklBIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fgf8BQQbJ0e9z99Nme+SOp3MoCuQj+QSGY0fZ+MWZxjVBy5pWl7m88Uy9xIXBtyg0UAaQ78ZGsRKruOtWCX/LbOXXEcFFqjuu9ajEboCup+SuqMz9MC6lhrC6BoyiFuRyyMn1cDcR0hQtk1CT+ANT/WVdZmpIWKnn2+L/lRvjvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Owm/Hcu; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMLQTKKU"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43635796b48so38271345e9.0;
-        Thu, 26 Dec 2024 01:50:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Owm/Hcu"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21634338cfdso110448925ad.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2024 09:28:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735206624; x=1735811424; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BNLCGvzUscrhE8DerepH+jSw+ytsX5ncOa/i7T7TvEo=;
-        b=RMLQTKKU5S0bCcKhyayi7E5drMRfAw8NBramjkejwhZZWqrjgHSGZZw1amiXGAuyU2
-         YqZZ8TiUYkS4gfwQFEMt8tTzv3xc9cY1yNrbsSn9JqQG4qeSOKd4xEoAPBsfAGmnM0MI
-         1fbKoGk1rIK4t3o9bpIpe5Dp7SPCdvgN0iunmvHtqS4H+ZI7VTxkZAksya8luchD6CUQ
-         Zau0ifgetDGkSeKeZSWmjLilJZuPQz5AA2IsfFZ66Qk8QY3Kg0zhk8ZwAgaI89lBrrX0
-         VrxhNW6BOFQ/F+CuckQ1owawnmMR4sd8pahbFjuGjpYFoZBpM8acNX8l1TIYg5ngSr4s
-         xfFw==
+        d=google.com; s=20230601; t=1735234131; x=1735838931; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MZM4CEUh2HGYEJA81GK95AB62iIhj0se6/I95TBn3+Q=;
+        b=0Owm/Hcu7bjnYuz098HKYwzySiwVoB4Ddu4QmHMTC9/waujSc9QAR1+fBOhQ8x04mM
+         oYldSU8xdKdiRC+Bk19V8wSANKIVsTd6Gof/uni8ekJ5ZxS5ok+DZYQxjBlwiiYx6vX2
+         6xfKnK9tmi+sGflzCrejXQXHbp42O+kTOPbjtcUHyCZYq4wqsE7dgBEL8JVMBY2i3LPv
+         3rs+X7oyDm91HCJk0YAsEQeC+bUE6bT3eFtLHPoU5bLkdwTaLJMNrmIgJHchq5WbHCoV
+         F9Y+PZ5d1vSqSNYk4aSAY5PgTvFE8f5rgI5Sg+BIULz2MyEYSkH5nAyfyms0EcJOAHmi
+         fzaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735206624; x=1735811424;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1735234131; x=1735838931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BNLCGvzUscrhE8DerepH+jSw+ytsX5ncOa/i7T7TvEo=;
-        b=RREa7S89bzxTM4I5RX2t6a+cHemgZ5C+g8PHROZeGbp5RfKtgvQCRUrmszREFtAqOt
-         w/OM16KAKWxh9Ezfcf9B0gj67IbgeODvQFJjcOlWKc4wVAJqP/nhBo69lT8fhf79eChg
-         CRthmUDok00Ja+sKpoymGl8cl5Ml+Ugpw1XjE5HzGOFQD28Hd91wlvsP7CyX5BFlKR67
-         KCSdU0h1isDFz5uZKsbsP/XD9xSK2mOy1pnfLw7M9nPI0tMcX6JYdxuOubY8//xEhsxY
-         5sj4pLQaSzXyKGvEe5L2WQqlat6WJsxRO0LCnhR1LAsXy7IJIYnvvvpF1NQ2PRErJfoH
-         0Gcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm62p6uqPWhY3bynPkbilNBlAPXQqKb/nwOB8TOW1KjSZs/V7cYvucoswRC6wGtofBrsUj6nbq+cm6W2c4@vger.kernel.org, AJvYcCWu4Tq/OVpZQOxQDgaoTo+9dLkCo2ZHLPf53K6beVxloxVRFgHmH7e0k9SSK0oab8WHt4oDdnt31Ce7WhEBcLT7iaw=@vger.kernel.org, AJvYcCWzbP6vyt8HGwam8DP+gT/0gdpIWyTByoKgH7h4eKcWMCmHXs3f/md4SuXrGUvUNuO1xp3QzMOaLwJ4@vger.kernel.org, AJvYcCXBe8mVlQtkePb55+Fa/xKDMmF2xKaAknRSxu4UJ6/w/12lWWnztCceN5Otxf5G6akrrNh5L1Hb5dEH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP5nQ/8TMAmRN/wIZ7sz5AWXxbkq6DsZYaGFKGcWCvCruVHArE
-	qCOqajJONzL8XQ8MvzF+dH6yUg993otfH1R+3ZTPnP9OQysEDE/I
-X-Gm-Gg: ASbGncuen48gpcnz7Y2+wHAay2cX0F8449HgOsuyBPaLBfOWBPOoU8Es37f1iL5m5I8
-	aR11zaNwB4PkyRKj1ttq3yGkX8XYgpZS+j9ereJcNhsZCcEVmuYs2XcVoEwuD5BlfnHwENucGYg
-	4EhVyAESxlzSI9BjfsfAjhlpCTpZd3lyUSxW4YGIEaqgfsp9vkjOoOiq9431Jext6NJ+MZtt5z1
-	wY20Oe9nZ2B/4MRwydZxSzyH1PXaqvh1EZCR/nLcfbxG/KS6Dt26jU5WyMthorEqaHS118IZg==
-X-Google-Smtp-Source: AGHT+IH1vPF2yBNf9acUDO94c4harHqUE+o6S9YimBB9B6UkN15rPNW1AYhFIZiHD2u4Qj/D2KcHGw==
-X-Received: by 2002:a05:600c:3b8b:b0:434:f2af:6e74 with SMTP id 5b1f17b1804b1-4368d6e8d7bmr48232435e9.15.1735206623459;
-        Thu, 26 Dec 2024 01:50:23 -0800 (PST)
-Received: from [192.168.1.102] ([94.131.202.183])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea3e0sm230270745e9.7.2024.12.26.01.50.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Dec 2024 01:50:23 -0800 (PST)
-Message-ID: <2cbb3ecf-fae8-4019-9b3e-43d48f3c9b25@gmail.com>
-Date: Thu, 26 Dec 2024 11:50:21 +0200
+        bh=MZM4CEUh2HGYEJA81GK95AB62iIhj0se6/I95TBn3+Q=;
+        b=mX0EC+YZlpvdQW66p87SNdrs2ImmkXtL6rpYkKEQQS78W494kCASxQsOGm6Ny483sD
+         pamMEzRsG/r4cPAMNLRADqfo0vfiefTejEtAXs1fUdkacMpmmKSTtRd/3Aw/cy6E6+js
+         v4AVwwd5tVpJJxZnNT53YQwJgUTA8kCI6LGYnSmd5wx9OsbV3cCdp9gPbElwOlVOfY0c
+         Yj3mHsHaZu9ptR7WqrYcpKf93bXYJhg8lcoViqfAUmHiq5HLg4nM96cnaa2ZWUTgjj8S
+         KPerwGJjtmIcIuHwP0H4pHehQSqLjAZQpJ2VbrtvRmtRgWmQKCffs22R9S5nlNITPtQa
+         lLJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL0hkG/4oymEm2+Um+JDT06E06GahDHCSxR/3JSukdSF4+UTWDqEtgpRAAhlSQZFdJkk4OrMVApqzG2c1Ko0xPWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRs2XqPNwPSYl1rVDbI6ebqo+rTVY7MzEetDq1dCXQBaV0VQiw
+	un2bf9l12clZluId3rxGjnUA916ULPTpeCtcP2OpAYamBlfnAVv19S+gE6N+CA==
+X-Gm-Gg: ASbGncuy09chCV4z7rb7+/KWORgYvkbVznRoJBXYpIvkyrEzcx/rsbWOsTazD8s9IuJ
+	TGuMhFkDMhhI5D69u48fxzv0z0eF4L2bEhUa323AV87pY907SD0FdvwqKygrOmFR8pFLLhPicAu
+	mzmmqq50K9nJLRXciZrufl4Ryt6oK+PxMAL1aFP1y9FFg462hvhcUREIrEZmoXfrEPpqTERdt5P
+	om6fMDf5jihly66+kCkj7lWobahxx+7naGUwuIDIYDnHbrof1z6CLScdpC97annRLg67mladbGC
+	Y7zuQQNZTkeP5zkel7yHyOSG
+X-Google-Smtp-Source: AGHT+IFBYpPcdLPqV6zNyGAlMP+fcIVUdggCbxsnyGgouqIm8mTzus1DxDfWnUwkq2+QguJv2z5GcA==
+X-Received: by 2002:a17:902:d502:b0:215:94eb:adb6 with SMTP id d9443c01a7336-219e6f2605emr383250035ad.40.1735234130575;
+        Thu, 26 Dec 2024 09:28:50 -0800 (PST)
+Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc962c05sm122006295ad.43.2024.12.26.09.28.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Dec 2024 09:28:50 -0800 (PST)
+Date: Thu, 26 Dec 2024 09:28:46 -0800
+From: William McVicker <willmcvicker@google.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Roy Luo <royluo@google.com>, kernel-team@android.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 0/7] USB31DRD phy updates for Google Tensor gs101
+ (orientation & DWC3 rpm)
+Message-ID: <Z22STiGYnLdSkNnW@google.com>
+References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] i2c: exynos5: Add support for Exynos8895 SoC
-Content-Language: en-US
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241221151937.1659139-1-ivo.ivanov.ivanov1@gmail.com>
- <20241221151937.1659139-3-ivo.ivanov.ivanov1@gmail.com>
- <djpcvn7von4rizjucplqwxlmpuaemrl7x3jsbqmojgzhybfu6o@n6l3dmtjy7jy>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <djpcvn7von4rizjucplqwxlmpuaemrl7x3jsbqmojgzhybfu6o@n6l3dmtjy7jy>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
 
-On 12/26/24 00:59, Andi Shyti wrote:
-> Hi Ivaylo,
->
-> On Sat, Dec 21, 2024 at 05:19:37PM +0200, Ivaylo Ivanov wrote:
->> Exynos8895 functioning logic mostly follows I2C_TYPE_EXYNOS7, but timing
->> and temp calculations are slightly changed according to the following
-> /changed/different/
+On 12/06/2024, André Draszik wrote:
+> Hi,
+> 
+> This series enables USB3 Type-C lane orientation detection and
+> configuration on platforms that support this (Google gs101), and it
+> also allows the DWC3 core to enter runtime suspend even when UDC is
+> active.
+> 
+> For lane orientation, this driver now optionally (based on DT)
+> subscribes to the TCPC's lane orientation notifier and remembers the
+> orientation to later be used during phy_init().
+> 
+> To enable DWC3 runtime suspend, the gadget needs to inform the core via
+> dwc3_gadget_interrupt() with event type == DWC3_DEVICE_EVENT_DISCONNECT
+> of a cable disconnect. For that to allow to happen, this driver
+> therefore needs to stop forcing the Vbus and bvalid signals to active
+> and instead change their state based on actual conditions. The same
+> TCPC notifier is used to detect this, and program the hardware
+> accordingly.
+> 
+> That signal state is based on advice given by Thinh in
+> https://lore.kernel.org/all/20240813230625.jgkatqstyhcmpezv@synopsys.com/
+> 
+> Both changes together now allow cable orientation detection to work, as
+> the DWC3 will now call phy_exit() on cable disconnect, and we can
+> reprogram the lane mux in phy_init().
+> 
+> On top of that, there are some small related cleanup patches.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+> Changes in v4:
+> - separate out patch 5 'phy: exynos5-usbdrd: gs101: ensure power is
+>   gated to SS phy in phy_exit()' from this series, as a stable patch
+>   shouldn't be buried inside a series like this (Greg)
+>   Link: https://lore.kernel.org/all/20241205-gs101-usb-phy-fix-v4-1-0278809fb810@linaro.org/
+> - Link to v3: https://lore.kernel.org/r/20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org
+> 
+> Changes in v3:
+> - patches 1 & 2: update as per Rob's suggestions
+> - patch 7 & 8: drop init to -1 of phy_drd->orientation (Vinod)
+> - patch 7: avoid an #ifdef 
+> - Link to v2: https://lore.kernel.org/r/20241203-gs101-phy-lanes-orientation-phy-v2-0-40dcf1b7670d@linaro.org
+> 
+> Changes in v2:
+> - squash patches #2 and #3 from v1 to actually disallow
+>   orientation-switch on !gs101 (not just optional) (Conor)
+> - update bindings commit message to clarify that the intention for the
+>   driver is to work with old and new DTS (Conor)
+> - add cc-stable and fixes tags to power gating patch (Krzysztof)
+> - fix an #include and typo (Peter)
+> - Link to v1: https://lore.kernel.org/r/20241127-gs101-phy-lanes-orientation-phy-v1-0-1b7fce24960b@linaro.org
+> 
+> ---
+> André Draszik (7):
+>       dt-bindings: phy: samsung,usb3-drd-phy: add blank lines between DT properties
+>       dt-bindings: phy: samsung,usb3-drd-phy: gs101: require Type-C properties
+>       phy: exynos5-usbdrd: convert to dev_err_probe
+>       phy: exynos5-usbdrd: fix EDS distribution tuning (gs101)
+>       phy: exynos5-usbdrd: gs101: configure SS lanes based on orientation
+>       phy: exynos5-usbdrd: subscribe to orientation notifier if required
+>       phy: exynos5-usbdrd: allow DWC3 runtime suspend with UDC bound (E850+)
+> 
+>  .../bindings/phy/samsung,usb3-drd-phy.yaml         |  21 ++-
+>  drivers/phy/samsung/Kconfig                        |   1 +
+>  drivers/phy/samsung/phy-exynos5-usbdrd.c           | 202 ++++++++++++++++-----
+>  3 files changed, 182 insertions(+), 42 deletions(-)
+> ---
+> base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
+> change-id: 20241127-gs101-phy-lanes-orientation-phy-29d20c6d84d2
+> 
+> Best regards,
+> -- 
+> André Draszik <andre.draszik@linaro.org>
+> 
 
-Sure.
+Thanks Andre for getting this working! I've tested this on my Pixel 6 Pro.
+I was able to verify runtime PM works in both orientations with high-speed,
+super-speed, and super-speed-plus. Feel free to include:
 
->
->> logic:
->>
->> FPCLK / FI2C = (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 2 *
->> ((FLT_CYCLE + 3) - (FLT_CYCLE + 3) % (CLK_DIV + 1))
->>
->> temp := (FPCLK / FI2C) - (FLT_CYCLE + 3) * 2
->>
-> ...
->
->> @@ -352,11 +369,19 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
->>  	 *
->>  	 */
->>  	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
->> -	temp = clkin / op_clk - 8 - t_ftl_cycle;
->> +	if (i2c->variant->hw == I2C_TYPE_EXYNOS8895)
->> +		temp = clkin / op_clk - (t_ftl_cycle + 3) * 2;
->> +	else
->> +		temp = clkin / op_clk - 8 - t_ftl_cycle;
->>  	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
->>  		temp -= t_ftl_cycle;
-> Could you please make this:
->
-> 	if (i2c->variant->hw == I2C_TYPE_EXYNOS8895)
-> 		...
-> 	else if (i2c->variant->hw == I2C_TYPE_EXYNOS7)
-> 		...
-> 	else
-> 		...
->
-> For a better clarity.
+Tested-by: Will McVicker <willmcvicker@google.com>
 
-Alright. Will post a v3 soon.
-
-Thanks!
-Best regards, Ivo.
-
->
-> Thanks,
-> Andi
-
+Thanks,
+Will
