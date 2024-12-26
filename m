@@ -1,63 +1,63 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E147D2BCF5
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2024 17:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6307A12F375
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2024 17:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735234266; cv=none; b=LGTKZrPqXo6ppxBFBzzIaLz7qWhBnehK4jPEqT+YWyFcr3kjAR3s+Avg9ZgSXgjQkIWrfILS+fpFVQAn94wHH9CRxi31mCbf0d2fFxNHRGiVRaKAvMjHRGnQ9I7zNJjFMXKpnUSOQ7MtXEFFRvA7uGPEvqYj4FsIZXioB9e3JMQ=
+	t=1735234322; cv=none; b=OMwRfiqrhl13onmOn2vHbE4cSbjkArr8sJmXwkQGXQ7LK0k7Jo4SKytykkdoCR9Ev9uhKbpOs5rfXr6rJ7fI7+Px3Tr91jZukSwbSeMS1rkHEwTw+RNa+L4Ip4oYrKCwu8i7wjLmgGhwDYK+vZqZDSpZQWNUjjNb32UYfxZb13c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735234266; c=relaxed/simple;
-	bh=MQT//z2Wu44VlEXRV4yVNgPQ7JEgbiqZDnefWFzQiDY=;
+	s=arc-20240116; t=1735234322; c=relaxed/simple;
+	bh=Gjg9UKzv9LuFKKvRutPMZcvVc5g/BOCV0ghr9SuGXE4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tvuYbDIdtLy8s8Fo1m78p8uCGQMngZUEL1wsmy5MsDBwU6Xyzf8sjQH9/bgJqF/btH5MHHkdq9rln38yETqukQaBFZn8w71gMKk48gjHakopZAEoB9iDSj24cS6QvHy+iclsDXZu+coBxSFb3Z7egof/ivQduM/TZEClZVLt/II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nUI/H2sb; arc=none smtp.client-ip=209.85.214.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=qde//wpLJAyqFAWxKDmnQJBIvJU2MmzLoe/0XqujXtDWAgtOp2KMf2mdpnJXVPXSK6lbh5cHbhQNV33sfgf44+DKTidENYSupDXd8n8gFovbZbLNsT4/xnZjP1LhlgkBRDxtzoa0pnS18vv1KjY4tGc+0+3Pfw1zZy9lkWms4sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dAzV0VrH; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nUI/H2sb"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-216426b0865so75304685ad.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2024 09:31:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dAzV0VrH"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2165cb60719so78151705ad.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Dec 2024 09:32:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1735234264; x=1735839064; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1735234321; x=1735839121; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=xcUZWE3ppguCfT0Ghk6RY8lNJANWnC8EbI6p5AXiKeg=;
-        b=nUI/H2sb1ht/SUn0+I+AZmHp+JXhR5+i8btbVjpEhjmuGrFVeKTRn4pnByQaQw9YfL
-         Zms0hbpmMoJclnOZzWBUej3iQ7w3HafJu0ftx7e5Zz2XRBb0oaVp0yTUTkyrD0nYrB7f
-         YDo0oWN66TftFRQwIZPrrWhouvkqleCol5csBA5dm9TnxtuuQLK5q0sDRJAOHFgOrFvW
-         FE5iQ+/wcS7lgS9PtY3FIQq4/JzNM/h0KPFWI8VdRK2Wefo8C6dPVW3r2pWpgZa+TO5y
-         RyhlZ9kkMHu2s0zmnscsKNRcTBjLUdyATnhZsGI/xbfZrq1T6hew4pvEi364mDUd9ksj
-         bB+A==
+        bh=fZq8gTOhd/HrF2N/ypBV//FltCA9lQr1B5nofEk6FbE=;
+        b=dAzV0VrHLNkBl+j4otwJ7aUvs8XcBokA1ppWk4oLQLYU+sPtyIdu6PS2SFY78YfOW9
+         fxpb3NFATphIp3IfZGSQtThxmsAhhzCp2XkfrxRjZSgR2RclH+4G4AXCI5PfVvI0RUOG
+         5iMdHtCFCTMpRhbYxKx6NxQ7T0z38gshnIVu6iHVcY7Ug0RCCQGDWirwzJuWBYnlBdXs
+         RQ+jDXpdYM8A4H0rpg0F/qGFIozRIR3dhUYQqkyANMz4e3OvsjjeNLMfay/Wa/Sbv9Ak
+         BX/S7W3nbDIR7sJ5iaJC6gfEB2vG7C94L4DjD1HFOImy8Wl7jk6CYFw4E/5QY/+m9DCN
+         PZJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735234264; x=1735839064;
+        d=1e100.net; s=20230601; t=1735234321; x=1735839121;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xcUZWE3ppguCfT0Ghk6RY8lNJANWnC8EbI6p5AXiKeg=;
-        b=WFBMWFGEYNxE81DC1XlJOJfL2Ymtap9rLHLgBe6tMQ002PIa9NsbnqtNTuPlliQRoV
-         NU+laHL691q4vRCZ96Kb2yLPxBGwCZnmnM7tSCWfFVqlynm8o2ip3GvJtqhl99iVDpX9
-         W29jE7VJNtWdt4BxCO+0BmGJLk2mMV3cgZmDGukHc13QbJRH4mx+VEwnV3QFawK244r1
-         CUQ8V1Ga2yqL4xEcLK2L2rRb1OqLsFonYBk/OTexzwJh42PQ+ggrL32zE5dLgeztO/Io
-         dDnkrKQRr2TfMQGbrjcQf6NZa3igFGEDfqWRyT4kT5uelj1a7tqkEJgDO4AtHg4L3kK/
-         kHNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdjpVu58g9y+UkxrsUlngcwDpYcAPzjF24BOKHORVazfNCr6tBkxMQ3jT713DwxzjorPgbJepFt6ceBkxUOhhKag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmQ2bz8p3p9eUNv95J+vfVfG4DCgxfp3zs/oDRsuJY9MuC38kB
-	0AtzchhYIOstjkNZNtrA3VCpkdOz3BHNqDRVyT/zW0i7ScibCRP6HuCARQ5o4w==
-X-Gm-Gg: ASbGncvbblEj5RKV7A4jmUiVTn9Q3EJdWX2hs1CcrYQu7JNbkz1AmaH+2PmH3DtoLgb
-	fMb3kBNVmMrBx9TTEDeC+6z3UIDzymKhYajPN+Sty/yqA2369GpnUTOFlkzE/P4C7Xzo2UALy80
-	oHdy19wZ6rJXDS9msbBziIpiTP4fn2mDOhShNmX3sUFnZ86kcEeG/wWOSRkDvQutjl9am8PMVFo
-	76StvsKLTj0a6l9YE7WUnw9vjbTjNy5yhP8sriwd77S75oLMfN6VYgtf44F6CCHQ0pv9KyVH5mA
-	m+/hHCX9/EDMA44uyc2eCCPG
-X-Google-Smtp-Source: AGHT+IHAfn46MsITOFrPVZJ4vXZEH6EHEc/IQOmoCmQiapMunnWTNeZzpppaV467WwIqrvzfz6A1dA==
-X-Received: by 2002:a05:6a00:414a:b0:725:96b1:d217 with SMTP id d2e1a72fcca58-72abdd7e0e5mr28935333b3a.9.1735234264082;
-        Thu, 26 Dec 2024 09:31:04 -0800 (PST)
+        bh=fZq8gTOhd/HrF2N/ypBV//FltCA9lQr1B5nofEk6FbE=;
+        b=NTdJ3G8ICbqO7InCAdg4ORBHr/qF+sqgY5EzGiMDG3AB+TIM4tqS6aD5Y4qc42jkVR
+         bihNlzw7feZLDuutu5E0ne7Vd/EMa0RNZOzmbZwoFR6xBuR7VzvfgwFUu/Aj9OfemMnc
+         qaEzD2m8MwyHGSZT3dRS27XpJiwBfvZsdGuJQhurBDIYwZCVZc4/H/J+gRIIpvFrPuva
+         noZDttx5VtMSMOn3dflKz9pH/aVkZzXUSbk2wMRgTrwcLl0TRScYgPaROdRQjbacchq9
+         aq4MQGbI1AWc5g+LZ3eVIk9lpdDh7iFN0/jlP5DwaEGNaVA9DhZQxArYrtMt+WDJ3GTg
+         DjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsEKVz7kYXvcuOGOOJtEn7j8GpXscWJ6w4nMrCk0GhR/dzIjBFcBBxq+k65qJqWEa1jvcwY231xAVEap8tRHdAlg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhl06sd4ekZI9r/QiyPGedOQlts67IstIFTrFnnAGQUc1RcJka
+	JVeolnKjzOIXJ5qQBrGHMD7YUWHMatfp7QgUXgG86D0iqH3M2Itd53fu5mlEmw==
+X-Gm-Gg: ASbGncsJlQ7vmFV4kOhRs5L2PtWjUihcDoBDIFGhmuLl4d9Ka39RslclWRJ2rKM9Aus
+	lpMjZ3utM0kZkP6IkGPfy7MxXWdpcKyanANilnqiIdU8KoEQn3QSVMAEjaJcM7usc7XBNFWu/CK
+	SpdxFRI0abq9uGCHW5TBZ+D7ZYf56hdeCE08XQIXiCZnoP4nGDfjdbpie/gqEcV12VGILvFGnef
+	7BpL0HlNCx9qjnAYvTF8oiySS9h5BtgsS0feaLtxlQgcyQM59AYRKjqDpeNx9JVEMw3twvJuRo2
+	2jVmIbl6G+f83dqN29K+HlMS
+X-Google-Smtp-Source: AGHT+IGMiawar/mU5KvWb2BzVuABUtr4oiv5toBR6JEErmfnPl/aBnhoZzQMhDzJD2wfGufTegEhmw==
+X-Received: by 2002:a17:902:e802:b0:216:5e6b:e23 with SMTP id d9443c01a7336-219e6eb6305mr303933895ad.30.1735234320475;
+        Thu, 26 Dec 2024 09:32:00 -0800 (PST)
 Received: from google.com (123.65.230.35.bc.googleusercontent.com. [35.230.65.123])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72aad8dbbf6sm13136269b3a.111.2024.12.26.09.31.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc96e94dsm122897285ad.67.2024.12.26.09.32.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2024 09:31:03 -0800 (PST)
-Date: Thu, 26 Dec 2024 09:31:00 -0800
+        Thu, 26 Dec 2024 09:32:00 -0800 (PST)
+Date: Thu, 26 Dec 2024 09:31:57 -0800
 From: William McVicker <willmcvicker@google.com>
 To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 Cc: Vinod Koul <vkoul@kernel.org>,
@@ -75,11 +75,11 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v4 4/7] phy: exynos5-usbdrd: fix EDS distribution tuning
- (gs101)
-Message-ID: <Z22S1PPAQ4NKdrrY@google.com>
+Subject: Re: [PATCH v4 5/7] phy: exynos5-usbdrd: gs101: configure SS lanes
+ based on orientation
+Message-ID: <Z22TDXvD3AKdhr-S@google.com>
 References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <20241206-gs101-phy-lanes-orientation-phy-v4-4-f5961268b149@linaro.org>
+ <20241206-gs101-phy-lanes-orientation-phy-v4-5-f5961268b149@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -89,21 +89,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-4-f5961268b149@linaro.org>
+In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-5-f5961268b149@linaro.org>
 
 On 12/06/2024, André Draszik wrote:
-> This code's intention is to configure lane0 and lane2 tunings, but for
-> lane2 there is a typo and it ends up tuning something else.
+> USB SS lanes need to be configured based on the connector orientation -
+> at most two lanes will be in use for USB (and the remaining two for
+> alternate modes like DP).
 > 
-> Fix the typo, as it doesn't appear to make sense to apply different
-> tunings for lane0 vs lane2.
+> For the USB link to come up in SS, the lane configuration registers
+> have to be programmed accordingly.
 > 
-> The same typo appears to exist in the bootloader, hence we restore the
-> original value in the typo'd registers as well. This can be removed
-> once / if the bootloader is updated.
+> While we still need a way to be notified of the actual connector
+> orientation and then reprogram the registers accordingly (at the moment
+> the configuration happens just once during phy_init() and never again),
+> we can prepare the code doing the configuration to take the orientation
+> into account.
 > 
-> Note that this is incorrect in the downstream driver as well - the
-> values had been copied from there.
+> Do so.
+> 
+> Note: the mutex is needed to synchronize this with the upcoming
+> connector orientation callback.
 > 
 > Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 > Tested-by: Peter Griffin <peter.griffin@linaro.org>
