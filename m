@@ -1,78 +1,75 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEFE1442F2
-	for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Dec 2024 10:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA2815442C
+	for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Dec 2024 10:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735467014; cv=none; b=P6cTs8ul000vRLElaFLpw/v7Z+776QysTmBXIZm9TnJCAxjUGeFOBqVppwD6fVSOCFlPcps62gLwZNsvo0JNyoQAHLu2g/7a+7HxpmNwcWJbzwrqtVamknW6R5D/UTaWc2M02LnLqBPnmS2Znmrw/FaasmryGoUbXSnuUDqk0Ng=
+	t=1735467015; cv=none; b=fRiBt9vsBVPCiJMYabUcchTt1ol9PcSZqGdd8hdngmvZ3mh5GJdxR+2naCb8Fl+iSTvHHurQL2L8i4gz9Os6zRsf5B1JuE5Yz4fVShn+5nF19ZvPL0d+ViW9hQL/lmlayUBgnDHT4z+kU+qrToK8DOcJyLH8UtmCBneY2A4dwT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735467014; c=relaxed/simple;
-	bh=1Zq6Q1SJzniluQ1Awzyy2RAk7VBFMN49Y8wa5KK6rr8=;
+	s=arc-20240116; t=1735467015; c=relaxed/simple;
+	bh=WL8Ny7Z67ccjmsSgCVQ1xohVJKkGxyxoZXIu5HuhE9M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LJ2L58dYmAdrCBVNhS+Mbu/4nThBqdM+VHy4mbfHgigoH9pu7C3JVawbA2fMGc/kLBDLxJ2nk4hVlpLHJNJoYRsZw1HmL3RaPvO89pRSK+k0f4MDq0rC8zbUsol1Bzu0BTfMjf5J6BfcxYnqgFgIzrdF97gbYRepXopiyhqEDV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yLAOF9f6; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version:Content-Type; b=A9u5Km76sPEkov1NEMeCpVp64NBpFBWZX0l3Vmwg22eSDJFHPUVPmK3pqaiSTCfG8fDLr8wTKo26ML3uFKH7Eo8YjfICSevN5tPQAlvYCAMV8rtrUSKp81Rve9O6OIE8zwCwbHvNIa4jH75rNHXW1Y26+Dys+kPkDbW9s7JYWkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f2MOFMTl; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLAOF9f6"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43658c452f5so12065865e9.0
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Dec 2024 02:10:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f2MOFMTl"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436230de7a3so12800635e9.0
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Dec 2024 02:10:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735467010; x=1736071810; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1735467011; x=1736071811; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tSpF+CuRXyTaTI6CZu8ly254OOzIlOn2pYHOVoIJa0M=;
-        b=yLAOF9f6yR+EIbc6TR50ZD6Sz1iviaNvnhGtLhx/8sRDYus2G656+7Izf1CyivsbVS
-         EraOqIh+59rGHfm/8KBCheF0wFyMGWvgvs9sYzRL7rIEQ+yhW4MIe5n75+n9l04tfpax
-         BZ+J3WX1oGXKvzu5gGtQcijbh0M5F/Ipd0iNwY5CLavJMi3R1NMCWTWmU8qnNg5wpnkp
-         hUmjvbaw+uguLOvvxwWjQ/cDLHqxmzl3cPf3prPd7GFMt1I44nFkrVdpr5iCYNjo458Q
-         ekYeVccF31JXwQsV6jLFWp2/6lVSt6dRnrSv5cYE+9+ZI5Umph9KeRa4nE/NkJSOOrNE
-         FuYQ==
+        bh=Jo0lFH0D7L1OyRrRi/rC2RixuHioaZMR/O4UKhCo6m0=;
+        b=f2MOFMTl1jFNNnAvYCXkd3/llDPLgX5NrlaDdP2fgyEPSD7JDJBlhjO8Pl1PyYbIpp
+         vTt83JNYBVke6Mlk1OlR5RCKnWUjMUuYLBkVsdthgw4/21yyE3QWMQJaHG+m1JbFX78P
+         z5LFiOWU6jnO/xWEoqGUqhNoraWb6n7EFRCvLJYQm61wzXqHNRSJPZd2u+LCJuAdx4Av
+         wPG3DLrH7mOw0Jj4dvHX+Q8HPxL3Oe2usvo+Fu7C5fvjvhwOOZ3MjZLJooPza2fLvJR8
+         dPnxPoyIVYaPjKLNPsR9POditxy3pw0T3jrnC50yAzvss17J4Su8vgRU3Lhvpt6HUhzJ
+         e0IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735467010; x=1736071810;
+        d=1e100.net; s=20230601; t=1735467011; x=1736071811;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tSpF+CuRXyTaTI6CZu8ly254OOzIlOn2pYHOVoIJa0M=;
-        b=XaN3QRfWsQIYsXwKUDBjINnHLTtJ3SNUXNpqMwt0eydrhynR1/Z3IPaiEmMhoX0ze1
-         GfrMwUsz7P4Fv+ZhbfgZWjPaU381/S+qFaDyp+aYMbKTx3fzfdqKbU9JiyjBf19Gdrly
-         PElC7foN5arALb3VDZIR0flFMXwE4bABoXAL6sPyZLvJ7gHXi4Z6NalnrArLJNruEned
-         kLbnUVVtF1mVR+31bETOaEveTyTUg0rKWtE40ew3r7fugM50guKxqOKg6Mq24p0kIQpP
-         wWOtFYdVuQlQHSjVpZpTEVwXBAXuvhXkz1lOrlPcBCD01d9efqoNZitEj/dcKd+PI5gI
-         xLNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzTWrnz8sC0lHP52COjQBZeVXfD7LLLdCmEpS3Iohd2hT2oEMxAsLCLeO3XOnQXdql4QlX+1Ve1hU9bsZeNE2Akw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyty11FP93HfsppDPw4tiaizwg/tioi/spHEDAy96mtAhQdBPfm
-	V00xDh6PjULICHLE0fUAsekM026Ny2Ftsw7/qUOLsc35CmArmbUPNxV0xnnFukY=
-X-Gm-Gg: ASbGncs1tFdBvs4Awz/4P9BZp/RVbN2SYdmbOD4k03Qy8KgSHBR97h79mxzlHAXhV0L
-	nNA501OzpDI5bebjvyGtg7XZ9NN6HQba/4472RfHqyEUIbVR4Msw160GLWJIjqIxPrMpI5PLiGg
-	SGPFFVjuVVIf3aFs18Fa+u0BzHceMeMG6wUpIBvA7kbdbzc0NBVCByDjuFKEdUZPRrF4PJD/GU4
-	x6R6egRS2y4Z3sCqU+lFNOLtTSRhvgElVw0whgogy4mEsFb74loaC+4FTaFVlzD052JcqFZ
-X-Google-Smtp-Source: AGHT+IGW0d/YHpnyePRkpp9wXq4qyqr1+YfE7APJGg58iLxynoeEjadgGXZSm4ML0xt0Ba0edpBXNw==
-X-Received: by 2002:a05:600c:3481:b0:434:a30b:5433 with SMTP id 5b1f17b1804b1-43668b601eemr102007365e9.5.1735467010008;
-        Sun, 29 Dec 2024 02:10:10 -0800 (PST)
+        bh=Jo0lFH0D7L1OyRrRi/rC2RixuHioaZMR/O4UKhCo6m0=;
+        b=uL4sxc9nIC41AYRDnEA80zaKD6mZRro2yqmGn6XxMC/e7twt2PD25mMV/jX+dLWpmC
+         a1Vob8WeJxzONn4dIyw2YgGJW9CJhPZaQdxo66JXoGNJczeMUHvS9uTMyuNjNjugQI52
+         uKwcrwIRzNEF8/i4/TtToXAktDovSwgkqltlkTgZV5bRYJvgXAwQ9FMU2iEcUhoZTWUs
+         SpfldchQTC5C8nT0YAnqJdlTVcW/oSOCkso5dqP4RgaZswIwR/ZF0wQaoHRKhJiw3Fta
+         hnCSQJ/764LIXtw04po8EPAC0764p+rlqxrcPEu4SqdCCJgt8pwyFECr/17qkQVR3DSQ
+         FcmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/mwDz8YQRCPNTxKTZf15f5Ivk8zYjyP/ZygAAoGZKXl6E3pa1Iyi4aWX101mOClV26RqKcWzSjI6h7IjaSJjNQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJcUfYLJR2OktQJna5GtA/yjkV0NrECqcVE0tp8SMXIDGeaE4d
+	T+MNH2K9jnHFW10P1mmRzhQX3nbr7VZLRU4DZLp9GI9ha52qLQLy6h4UEPNfh76yPi2CRW1yOwt
+	2
+X-Gm-Gg: ASbGnctgKBuHhOr5z14w0JQFeguFsGUKPTcvj+o0fBThOXagn5IjzQ7nJnb4k5fR0M3
+	XqSY9qQXAefET17s7HMr0vVpO3WN7EdqbbhFUxbC8SmVkmA1zLcBpdzECYbdNPQnisJ3i1FObVG
+	F6obG9ObJjAEr1ynRbDb8NFynffxSf1aP83GszWnaNyluYmRsbnM5sZM9apdRqGqIAzx11STigs
+	Qcp87wE94iXzXCXTszPe0CdTWxHbgqLgdjMK+EhR9rjiZTCkRIasDmcf4YUjCkUGVKl1QPY
+X-Google-Smtp-Source: AGHT+IHP1vNO4pX8rCVSoOO8ZA/PKbzvByEOcpImjWXAjaOwj9hxfLF/KNxyi+EPgVTvKCoXvpRUbw==
+X-Received: by 2002:a05:600c:1e23:b0:434:f335:85c with SMTP id 5b1f17b1804b1-43668b7b619mr106181145e9.6.1735467011606;
+        Sun, 29 Dec 2024 02:10:11 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea40csm320505375e9.1.2024.12.29.02.10.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436611ea40csm320505375e9.1.2024.12.29.02.10.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Dec 2024 02:10:08 -0800 (PST)
+        Sun, 29 Dec 2024 02:10:11 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
  Artur Weber <aweber.kernel@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-In-Reply-To: <20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com>
-References: <20240525-midas-wm1811-gpio-jack-v4-0-f488e03bd8c7@gmail.com>
-Subject: Re: (subset) [PATCH v4 0/9] ASoC: samsung: midas-audio: Add
- GPIO-based headset jack detection
-Message-Id: <173546700767.10606.15963860254937329872.b4-ty@linaro.org>
-Date: Sun, 29 Dec 2024 11:10:07 +0100
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+In-Reply-To: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
+References: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
+Subject: Re: (subset) [PATCH RESEND v2 0/6] ASoC: samsung: midas_wm1811:
+ Separate compatible for tab3 + fixes
+Message-Id: <173546701025.10606.6645019448209371865.b4-ty@linaro.org>
+Date: Sun, 29 Dec 2024 11:10:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -84,24 +81,30 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Sat, 25 May 2024 15:28:04 +0200, Artur Weber wrote:
-> Many of Samsung's Exynos 4 devices share the same midas-audio driver
-> to handle the codec setup. While most of these devices, including the
-> Midas itself, use the jack detection provided by the WM8994 driver,
-> other devices such as the Samsung Galaxy Tab 3 8.0 (lt01) use two GPIOs
-> and an ADC channel to determine jack insertion, the jack's type, and
-> button presses (for headsets with volume up/down/play buttons).
+On Fri, 16 Aug 2024 09:50:57 +0200, Artur Weber wrote:
+> This is a follow-up to "ASoC: samsung: midas-audio: Add GPIO-based
+> headset jack detection"[1]; it appears to have been silently merged
+> except for the DTS parts, this patchset is a resend of the DTS patches.
+> 
+> Besides the DTS changes necessary to enable headset jack detection
+> for the Samsung Galaxy Tab 3 8.0, it also adds a new compatible for
+> the Tab 3 (samsung,tab3-audio). This is done so that we can set up
+> different requirements in DT binding (Tab 3 does not have main/sub
+> bias regulators), and drop the main/sub mic bias dummy regulators
+> from the Tab 3 DTSI.
 > 
 > [...]
 
 Applied, thanks!
 
-[7/9] ARM: dts: samsung: exynos4212-tab3: Fix headset mic, add jack detection
+[3/6] ARM: dts: samsung: exynos4212-tab3: Fix headset mic, add jack detection
       https://git.kernel.org/krzk/linux/c/2c3c373555460b79a6a201c87230d32b211f8323
-[8/9] ARM: dts: samsung: exynos4212-tab3: Add MCLK2 clock to WM1811 codec config
+[4/6] ARM: dts: samsung: exynos4212-tab3: Add MCLK2 clock to WM1811 codec config
       https://git.kernel.org/krzk/linux/c/d15cc681ba79fdc722d4aa7a83e572850cf5f64a
-[9/9] ARM: dts: samsung: exynos4212-tab3: Drop interrupt from WM1811 codec
+[5/6] ARM: dts: samsung: exynos4212-tab3: Drop interrupt from WM1811 codec
       https://git.kernel.org/krzk/linux/c/acd33b48ce663c7e293b11cd77df7ea702ca34f6
+[6/6] ARM: dts: samsung: exynos4212-tab3: Drop dummy mic bias regulators
+      (no commit info)
 
 Best regards,
 -- 
