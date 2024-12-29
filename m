@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2B748A;
-	Sun, 29 Dec 2024 10:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5193214;
+	Sun, 29 Dec 2024 10:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735466450; cv=none; b=epWYM8BOBFY60/5Z89Q0DqSPpKn9x0O2nqIgvT0AXLqOSmZk+bhpqRBdZKvgn6N0pxi4lEkaVIpxu5Gz/T9FEiZaYHAyw9lOa5QfiSr1Ww/XdK56W5PURtuCvoGmKIoLYEQvy9e+9sCbPr1kOIBeWHl1OU4+spdb8SaTsShey7E=
+	t=1735466805; cv=none; b=di9FwTPIzlUIfM/R9e/b3u+Ye7bxtSEsygzXZ2OQoA6OlURGNp/kYd27cjJnMBsES+rw+TxavfJHVk2IEm7P9Ag2RcUKIlQmcPHQyPkTsNVosc0NvAic/A6XOJxpI90nEps58FA0BGZ8Xq4grGrtOg1xOt0kcYjN+roPLR1v8vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735466450; c=relaxed/simple;
-	bh=Pj+RQZSRqYMDWyt+4XA8+yxTqQepkTRFJblBQnMIek4=;
+	s=arc-20240116; t=1735466805; c=relaxed/simple;
+	bh=eOZG26qpKovgOTXc7wfLmShQIAF4R1/NkjuWDvSSFto=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ThlAax4iCe4EUCkZqVOWzFfk/Ln9h2nqv6lrcrJTSxxdKNCYA9DmDtJqJ3r/ZieYf6CN6oCZhyGqImKVMmcPOapQOLRNUpqRNj4uvP/ZmKHpS+syO2u7NZfAYiHuZoJqDEKO9wPfCKwEJ1NI0RAqVn1cXX8VkE4SeoAJTDbCBXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njfE9pBs; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Iiox+LRQlgKMATCSzfoxTOeGV2kAYGDTkuQlKvUjnMsfVxpyNIIOAITe2sp/1oed/fQ4qeDjn/mW8fDePoSLeNb5LBfdLd99nq4VP1sVCFHpRGuSqrXSiritoufpFgbFUF2TsK5ijgHRlL8WOUzAqv3ps1u8/e1KiJ9rMneqDSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5lva9yY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njfE9pBs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B57DC4CED1;
-	Sun, 29 Dec 2024 10:00:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5lva9yY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A053C4CED1;
+	Sun, 29 Dec 2024 10:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735466450;
-	bh=Pj+RQZSRqYMDWyt+4XA8+yxTqQepkTRFJblBQnMIek4=;
+	s=k20201202; t=1735466804;
+	bh=eOZG26qpKovgOTXc7wfLmShQIAF4R1/NkjuWDvSSFto=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=njfE9pBsR5r1yogtqTUH36CBEx0d63IzoZIHuXTFQthAtmGKmS4JyZVkXaSdvQZkH
-	 WtlDxHD0U9bc8xfuNl1mJstZShcd076cW7VdO5gazoR9Q6F8hggcwo6xRWt28Ydrda
-	 uXtbTP8/pHArmQrAYBWUHEaeCXIeuxY+BQE9diV1RXBnhMytiWIV64fOXMVptFAMa5
-	 MykGcEJKAES70Tj9jKpLkLpVtBs4OmWwy4EEiAKR7fj3ZTS8MIcdcNhBs3K3kqZLrR
-	 XhEYb6AWoElOCwqKqXgtbWA/FV1ukoASgn/SSpBBG7do3s7fyTEPKAVJcq0dUUS5sf
-	 W89LvXLVvOlDg==
-Message-ID: <013abaea-f690-4cb6-9d2f-934429a9b22d@kernel.org>
-Date: Sun, 29 Dec 2024 11:00:44 +0100
+	b=H5lva9yYe4D88JWeUj5G7COCMbr0j2jF8bzPI2Hy/M0YIyoEHRm6WkEyZRwXPfgtd
+	 4I6MWDZMOh9EQee6yNouHWhI7mowcSFyyguxwX8sHtcm/oVdorveS5xsY3POZ8lYvt
+	 gdZAjMSVey/wtFj0Nx2jBK/vIYjkEAx6hOxGKc6bxOmZuDWIQgY4/7/yDION80dj5R
+	 8w8t+UR998Faal9VYWozlgGS2R8KNz//9wwTwwgGDP/nVMvmvz3L6IJ67JoNCqNgHx
+	 b3Tjb62waNF/66h/4DCYEWKLMEwzm0Qx9ZGBSm9A3+TN5BddqTunUY3GVehfyo3s/K
+	 Mm0ZoGRWZ64/A==
+Message-ID: <6cd26d64-4e9d-4c5a-a335-591a1cfb914e@kernel.org>
+Date: Sun, 29 Dec 2024 11:06:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,13 +35,16 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: exynos8895: Add camera hsi2c nodes
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241221152803.1663820-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH RESEND v2 6/6] ARM: dts: samsung: exynos4212-tab3: Drop
+ dummy mic bias regulators
+To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240816-midas-audio-tab3-v2-0-48ee7f2293b3@gmail.com>
+ <20240816-midas-audio-tab3-v2-6-48ee7f2293b3@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -87,23 +90,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241221152803.1663820-1-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20240816-midas-audio-tab3-v2-6-48ee7f2293b3@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/12/2024 16:28, Ivaylo Ivanov wrote:
-> Add nodes for hsi2c1-4 (CAM0-3), which allows using them.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
-> Bindings are in another patchset [1].
-> 
-> Changes in v2:
->   - Mention the bindings this patch depends on.
-> 
-> [1] https://lore.kernel.org/all/20241221151937.1659139-1-ivo.ivanov.ivanov1@gmail.com/
+On 16/08/2024 09:51, Artur Weber wrote:
+> -
+> -	earmic_bias_reg: voltage-regulator-6 {
+> +	earmic_bias_reg: voltage-regulator-4 {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "EAR_MICBIAS_LDO_2.8V";
+>  		regulator-min-microvolt = <2800000>;
+> @@ -310,10 +296,8 @@ earmic_bias_reg: voltage-regulator-6 {
+>  	};
+>  
+>  	sound: sound {
+> -		compatible = "samsung,midas-audio";
+> +		compatible = "samsung,tab3-audio", "samsung,midas-audio";
+>  		model = "TAB3";
 
-Still in my queue, please ping me when the driver bindings get accepted.
+This looks still undocumented. Please resend when bindings get accepted
+by Mark. Dropping from my queue.
 
 Best regards,
 Krzysztof
