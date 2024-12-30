@@ -1,58 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7EB2905;
-	Mon, 30 Dec 2024 02:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71AD17B4FF
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 07:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735524124; cv=none; b=nvWEt98qP2/DBr8TmnHayljTc2wl1le11Gy0+Uvh+/iZb1KYBHXLvq6JY34jpXy35yqZDA5ZYiQ3tRz5+u8IFz2nnw+DdtScfzEIXgeB8NOtaZVQmQ80HJNuytkZk6AZ10ZdbPwxmT7oDxrQhPUyj24xDkqm8bj8K9E6RtGlyC0=
+	t=1735543874; cv=none; b=XOU4//C9uXKnYXKv8Q9NnCnsybtr2TaxrB17gAvfxjI2aYKlqagQKCgEuasXuPvedj4tFDyqsaxqDPfEVhAfKr97SSo0yEbDupDcEx4H2PVbo7KA+Bb8xgUW848yMFu5wHlWkmVng7kFs6OE2otIhulEfOqpqJ5GFxIZZvkQsGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735524124; c=relaxed/simple;
-	bh=cIMTaIWQP22lxD4w5uccVrK9JiGvXC+KewwIKgur0rM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8eDaFUduq19zXwZ5sXiJu4/dJJXfke5z/s5vBeDN17v0k1SdWbEluAmni6X5CCMh2rcDLEDB1rC8OYszNFaEkbK9jrThz+V9/Kj+yiDIfIwThw+8Wpa5/15SHWdvkAYz8ZC+vzp7SxuZyzTQQB/L1kIR3L1bcXDxEIq0ucPlrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=er9idcRM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735543874; c=relaxed/simple;
+	bh=op1v6RqtKHEMd3jNo6wk+1t2w4Xy0XLVP+LzvrcYx0E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mGFurkovgFEfjmr05GSyOXzBf8yjRFSrbF4Z6MePJdfqbnddD92vB5M1DIJqMOnqVs/4aIM4T790icEVyORkOe7WwAl7jB30aYOL/RIDIcB52UsMD9cgBBebhEWIHVDPpYH8Ht8IbozmLBKtxGB7ttVh+kMMjsnM3SyqUDFmy8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M2h87LU8; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="er9idcRM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64E2CC4CED1;
-	Mon, 30 Dec 2024 02:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735524123;
-	bh=cIMTaIWQP22lxD4w5uccVrK9JiGvXC+KewwIKgur0rM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=er9idcRMKTuWjY7CD9Wyph32phBi9WA1SFSNm464Ymm3sma/+JT+nq+qf930FaesG
-	 Szb2t4DretQKxdMWAFvgj1tj763ANNrmwBetymVK/3UUN0qQ/YTsdOUBe/FgnlDHFj
-	 +E+THvdowcaM0191QLokZ3V8k4NZB95TPtLO0eVEdeKPWa9QATkkOIgh3DInGKDFS0
-	 1fhjSFdJzjhe+DjJAto4IZtrpwZ7+KuVXWMeDlLZE5855zWfQqj+dNpDtTHXQZKZCS
-	 dm4uPHUlCHltARa7rAeFZxGJr2Dg42dQXiD4NmB/93x5mkfdVjPMRofZD1RmjKMe0L
-	 FGokCUhIRZA8w==
-Date: Mon, 30 Dec 2024 03:01:57 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] i2c: exynos5: Add support for Exynos8895 SoC
-Message-ID: <awtro3dlxmdhwfjr4kjtzurn24fmrvxvdnwzkesn7vca3c7yvd@ixkp2v4bmhmt>
-References: <20241228111509.896502-1-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M2h87LU8"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3862c78536bso543615f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Dec 2024 23:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735543871; x=1736148671; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0cxUukmW/HtO3A5IzMy4WhojBdo49UTX8VOBptMlYK0=;
+        b=M2h87LU8KsWWuOlIEIFsvR/xgLdPL3LRt/SsJkCuoIPpc2SaLLo+aUFltSDg81M+/w
+         RjqI+anVE0yhmp3zqYXRZjI3OEdYvRP4THzV+f5i+Y6IFuy5Z/r1wwAE3Ds3i3M5hA84
+         NR2hxnIA1hO2YAK7bdyBXoqIUm1z5rtuaEOJ124guTMlimE2CHEgGSePTq20bXwIZNP6
+         EGaxbAKUqjR61GyOgVT3OkIXfefI5FYSUwykSsodvR1qDgl6NiVpm4KsO2sxaJpghNHK
+         IciVQrugQ1p1R021ptUPKNmmyITJI6FYtFYb3LzMT6RzWgNaZqHF1gjSdQ1RFbL3PWz+
+         3ZiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735543871; x=1736148671;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0cxUukmW/HtO3A5IzMy4WhojBdo49UTX8VOBptMlYK0=;
+        b=vdnE45glFbGro1qA3mzutJJwda+qHf8Jqwklm+e69sPzNBFjAbPppmsrNHe7djJXdd
+         B1FcePS3gUtePyvFWOvtp7/eUAp8neivDfn5WcdIiRV5t9rusWhCYTiaTXXxBqa8a8wA
+         t5SX/3z0+0/zwYZ0OtPuCr5HVHuuZ8JJ22/tY7BtXmpsPVSWRJ+yqWv/zy3Gs5RPzV56
+         cx4xHSn77AVKafb5wUNj2ogXGEWT1M7qHRmqSSJ6nx9YRxVfKjh7FOjt8XcXWxmUkSLI
+         azVJfsumdFQREwJrIPMhj/t0ZpRTMphvp54bS6x2yFUb3/BCuVn9dLa4aIeGI7hcqfUm
+         9msw==
+X-Gm-Message-State: AOJu0YzeHM+KKnkn+1K6VWvWFS+jak4bz6jKxMUjX1EEEns2FUvTQHJb
+	T06D6Ef+34YJNzX8Hgi6h2nkrwTo8JRR8zlmLTaCTpOBU8u7KhUK0R0l2X/1VME=
+X-Gm-Gg: ASbGncvyzE29JWrwz2trNNvLNBZ1apN3oz8cTuV8AdkqwsLI1/Yqo6RXGzQbCBHt9JU
+	0VnoxY+SQQRYJhrVft4nm/2hpG78HNjBY/zB8L9ndcD0b04iCRbkBX7Qa7qA+LcaAc37qrLEqyJ
+	fZJG3veCeim5NYV+p/g6q5pA8uTLgY2QYA5N5Uhh9jNkyKskg2u2U8yig+NiN4gKa2eVwv/IBof
+	eOLO9rkHPKWVqIpjDXUmfEyJM811437GFkvECT+XKgmwk6NQMhjcBZ206dy7fgx3emB4UqB
+X-Google-Smtp-Source: AGHT+IEIbHfQQXjbtACZcOl/EYF1eksRr4G8aqfzGRbLMEkVZhWKVQt3Ase4890cxIGZ0+c7ItcJyw==
+X-Received: by 2002:a05:6000:4022:b0:385:e374:bd4 with SMTP id ffacd0b85a97d-38a221e1f74mr10283672f8f.3.1735543871026;
+        Sun, 29 Dec 2024 23:31:11 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c84705esm29439462f8f.44.2024.12.29.23.31.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Dec 2024 23:31:10 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241221152803.1663820-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20241221152803.1663820-1-ivo.ivanov.ivanov1@gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: exynos8895: Add camera hsi2c nodes
+Message-Id: <173554386976.7938.13644139958887004032.b4-ty@linaro.org>
+Date: Mon, 30 Dec 2024 08:31:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241228111509.896502-1-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Ivaylo,
 
-> Ivaylo Ivanov (2):
->   dt-bindings: i2c: exynos5: Add samsung,exynos8895-hsi2c compatible
->   i2c: exynos5: Add support for Exynos8895 SoC
+On Sat, 21 Dec 2024 17:28:03 +0200, Ivaylo Ivanov wrote:
+> Add nodes for hsi2c1-4 (CAM0-3), which allows using them.
+> 
+> 
 
-merged to i2c/i2c-host.
+Applied, thanks!
 
-Thanks,
-Andi
+[1/1] arm64: dts: exynos8895: Add camera hsi2c nodes
+      https://git.kernel.org/krzk/linux/c/f424523b1b516b3f0984feeb1d8218e904d17a97
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
