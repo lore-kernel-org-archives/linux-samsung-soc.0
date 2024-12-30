@@ -1,156 +1,137 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4501A238C
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 09:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6684B1A23BB
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 09:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735549832; cv=none; b=XESZNf+O2t9hNuVNIf/O5Sp4Zxii4Oz9Rqo9/masWnASyFcsdA2yZ+xvcnPAgEuHIgphXEd0Pa4q+vWv3M9z3SbU4VYq2N3C/+a8m35SZ6H+YU+1rzNWbj4RRdPbetVjNP7rzw/fWAQTP7zcsuTLh47o8iJIO7SwH8W2207uGdo=
+	t=1735551235; cv=none; b=fiS1GrtbqaZ5wt5QCAnbR2XoiZKabhaaWb+p1/lnW1ABEk9jO6i16ZLUhccDO5nrJ+5SimGUJsVYtLWfgYrzVB95XaqCvG95cN8PQYG2cOhmMaN2g8uccf6/uJLNmSuU24wPRPVIvYK8xd2gWO0t2kaWTJ6trXWujsDc3eKIEkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735549832; c=relaxed/simple;
-	bh=4oDYwfmWwrntu/5R7qEyL0UfVIX5O+dFzo5oPSRGiUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDaI4+Bc3BP4j1wfu7ceds7mDK5YuW1BluBAsng1FZkMrRRJkCb02Dgq4YvC59p68FO4QtWFY6IwHOkVvXgOo+ZQsyQq/kROB8hpGUQ2f4NMMX/QnMOAnuEewcFuro3WBkPYNI/+L4VmwT53UFhvbiQuK5AAMobBhHbL+zOtpM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o9I0MhAu; arc=none smtp.client-ip=209.85.161.50
+	s=arc-20240116; t=1735551235; c=relaxed/simple;
+	bh=dYwHpSJUhuUAG0fqkuiQHa2k6x4/1UvSqmN7TRAtCSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RunlWnhSziKRPWSQ8ADF/1iCvyARQ8DbftqO3oTU5yGR5Un0ti62MfoQ8vtRQF8wGObv7t96fhIuZ1q/CjTH+5xiW2/3YnEJG2Mzf/lrTBnck7D0BRBk+bIBdaPg8bYETTsMPl7+YukcAHe6PKmumLrEqJJ4x9NQex91WNCnNJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BMwOfNZq; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o9I0MhAu"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5f2ed0b70d6so3513678eaf.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 01:10:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMwOfNZq"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3862a921123so6158199f8f.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 01:33:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735549829; x=1736154629; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4oDYwfmWwrntu/5R7qEyL0UfVIX5O+dFzo5oPSRGiUQ=;
-        b=o9I0MhAu1U7HwgSAVdEGXKu1DVgFCXfidBySxXlhb+0b+lqLE2lrQ+eZ7RQXYZ0xuk
-         NJEF48ZquRtqY6pmjOVwq1ikPpBTZH50kOWzTwJDy0Bxb3CCwX4HyR9hRa0bMLiNA1vu
-         U7iVhw0vBP4AkyO+4mIaDf5mh6wV/X6D4Q+lnDm3j1ZUi+t+PKlnC7TedmwR1qb3EpVG
-         Kd0x39M5fxTTZpmmWYk07DW/hgn5PCmJcusEEP0mfLz+O5PX0+vSDqpbcPdMXOmCgHyB
-         Ah9AofQ9F9Op3+Ozy4i62icgaZ+BgAxPhoz4GwW/07w5TWLtTE5W+KgcYyM3QQ5biLTZ
-         9W5Q==
+        d=linaro.org; s=google; t=1735551232; x=1736156032; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CWxCLyK4AJgfk1FfjpH9G6YxLoJtD0ixlqlSrDwjPFI=;
+        b=BMwOfNZqxJdxb5G6NDUdiCws70XcndKFjb/Dz0WEzww65LAM4z6/JPYmcZdaowceu6
+         syW20bfbOGc7c+04FCab0dhZncE3xFrN9pNtHom2X/700PsjpvIvunQWZI1TTUquUHBK
+         nYDSdY4p8pPzXMSAPObVupqR8hMdtxcgjHihnmCX7kJToFjZd/9yNsJ3wnJpAxK8RTBp
+         LG8tw7B5s8Z83z7krL2seYWAN4Q8r3Gf1LehCWlCm37nm2Ys6OHF+/LBiQ2rECnq9hCA
+         bepDEPVfUvw6alkIv+I424gWQkIRaFOLi4R11Z89VaeCif489h6fO4W6358EEFfbCOYz
+         tW1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735549829; x=1736154629;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4oDYwfmWwrntu/5R7qEyL0UfVIX5O+dFzo5oPSRGiUQ=;
-        b=dixUuC6udjLc9e3pvtrlspQ+BVKrbdljU8drkkwiRQ4yxec9n+yDzAksnuP3VZtipw
-         hoWtvwyey8AdZnWe1W7Xh7OfZ70mlNHbblJuOWvMOvO1+WqTQ/9j1tSC3S2Vz5NFqGIm
-         cSrgiO7rDAd4T3J9mairoae8D8dG9rQahO399UooCvUz6Wv/8SMopSSjbEyZ7GilYyMv
-         ctIxEjk8ggXn6dUyqc2U1FVt9cI14Aam4PSLvaUbC/ZPjpR7VdL/aOBcXQpqVjl22U2G
-         IRJIJGZDBzJ4HUoaCj+R1giNjk/nkvTVs1h1/KzNNRH8sim+iNXlvfy087MakHRiKZNd
-         5qOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUELc7tdZH1qwaXMYLkwsDGNmf4hkZeg9N7LylBHKfobqh22GGaq2v7NwvSIrN4kay+BXn0JB+j66ChbrgNVgeHLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRiSMnGX8xWTwOi7ElzKlbbRNAtwqhk9Zb6VHRo493QFV12ViJ
-	7VGNu1mQxUsWTjK0OkTNGlCVQcIZ4LlCj6dcDJ7E6mfSXKQJ8vI4PHVpXQGxSF3EP1RzA3D4Ky2
-	9hfGNL2F1klL0NE6TgE457xMo2D7aC85OSEVUYw==
-X-Gm-Gg: ASbGnct9zItGN8VYu/5xyurZgL8ROWHNy4cdk/XrZm4GcS50rDy7FUtJt9ENbdiwFz1
-	53vPaUIAO2zVPkJBDPgooma4Y1ZPEVFN12jqQZQ==
-X-Google-Smtp-Source: AGHT+IG00P+bZtTAkQqWziOeW79L1OrLv1yTEyciewwrT3FRO22FXOr3Xvn5NA3178HyMuWVeJiRoWS8XUOV0qbPyE8=
-X-Received: by 2002:a05:6820:1905:b0:5f6:aa5c:8cb9 with SMTP id
- 006d021491bc7-5f6aa5c8d96mr3825959eaf.1.1735549829414; Mon, 30 Dec 2024
- 01:10:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735551232; x=1736156032;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWxCLyK4AJgfk1FfjpH9G6YxLoJtD0ixlqlSrDwjPFI=;
+        b=rtfljYPPGysFBw0mqry6QHJIKrcK5qM0kvAlKROMumoYbhO5Y7cYowAmK9Za4ptQ/1
+         F/IrwOUv8aSdbZjrmw1GtafPffdNYLNmOyl5P0P4+tdxOhblI3PQ2XKphT6g80OeaQim
+         w+qG2g9HjkJ4PzUNbMi7GIfi3yGYlcYYhI1FIFk0Wr+q3QUDRNuY4w8of2MEWhRKAC+O
+         iDtuDUm7gNyDjV//e7RWeJNoyZyHKo8KGtC8mrv2kVpqItr9f9yDfmPhz/YBK0o7Dy/o
+         6XsB4sSmIpAd3X9b2jV/eGUNRCIpz5sVmxDn7o2kXJ/xj0zayJLgrFXV89lDJZlz2QIn
+         Gj5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWhz7x3tMOKQZifc2N9Ol0BXkU85aga/0qnp89jijzk62ASx8yGhpuBNBZjFbuuu8+ervLxUQ3NQf7zdYYYgaS+gw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh5fXN/i2kPy2NUcMiHwE091BJcZnMwpos2tt5EpwMyQM/HXzR
+	UBZuRECk9gUgrzmj4HgmQnqyWZ04PTztjZWK8IBxk5tkBIZKjgksnzsgm0lMVz0=
+X-Gm-Gg: ASbGnctuQPPObRXDEnuLqZr5aSW1XhL2k/SmF87d4wx0GVbbhNa+HBVIkphjB+VqBr7
+	LyVKIMPUtUhURZbZ5F28Sf+DanLaqNcqXZQU4mmtEdSC5Kjgg037QwCSqg+J6AnhEbr3p5YsWE2
+	u915a4zwqZhlUBqHujq21xzppnRuP6Qq09L7t/dXB/XQ7O4Ken/dgxbbzH40rCikbyjSu2lE32z
+	DmruLEOe9qulcZF4v3DnERQzxXGnswhbDyAqDosqMnXb+xVEx4wyxClwTtNzo89
+X-Google-Smtp-Source: AGHT+IGt9+hFPNfKD0vYj/l0vMmTZmm4MtaV//fw/vdTlSexZfNqLe9/5huEQLBsPI/BCg5Yf4wjuw==
+X-Received: by 2002:a05:6000:400c:b0:385:f23a:2fe1 with SMTP id ffacd0b85a97d-38a221f92c9mr32375904f8f.26.1735551231816;
+        Mon, 30 Dec 2024 01:33:51 -0800 (PST)
+Received: from [192.168.0.14] ([188.26.61.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c847dabsm29231573f8f.59.2024.12.30.01.33.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Dec 2024 01:33:51 -0800 (PST)
+Message-ID: <d852b956-b61a-4770-8d93-9987a982080d@linaro.org>
+Date: Mon, 30 Dec 2024 09:33:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org>
- <20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-2-c72978f63713@linaro.org>
- <1408dcd1-9a46-4cb9-8443-5aa51d61ed56@kernel.org>
-In-Reply-To: <1408dcd1-9a46-4cb9-8443-5aa51d61ed56@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 30 Dec 2024 09:10:18 +0000
-Message-ID: <CADrjBPre_zjh+i=_YKYiptiMWT74eWC6LDCveA=dJaQQVwkS0g@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: mfd: syscon: allow two reg regions for gs101-pmu
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] arm64: dts: exynos: gs101: add AP to APM mailbox
+ node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+ ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241220-gs101-acpm-dt-v3-0-642d64daa5d1@linaro.org>
+ <20241220-gs101-acpm-dt-v3-2-642d64daa5d1@linaro.org>
+ <f5e3d00e-8f98-46c6-8f1a-85a2169324ee@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <f5e3d00e-8f98-46c6-8f1a-85a2169324ee@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
 
-Thanks for your review feedback, it is much appreciated!
 
-On Sun, 22 Dec 2024 at 14:24, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 13/12/2024 17:44, Peter Griffin wrote:
-> > To avoid dtschema warnings allow google,gs101-pmu to have
-> > two reg regions.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> > I don't really like this patch, but also didn't want to submit the series
-> > with a dtschema warning ;-)
-> >
-> > Possibly a better solution is when Robs patch
-> > `mfd: syscon: Allow syscon nodes without a "syscon" compatible` [1]
->
-> PMU which spans over two blocks is not a simple syscon. These would be
-> two syscon devices.
->
-> If you request regmap from such syscon, which regmap you get?
+On 12/22/24 11:47 AM, Krzysztof Kozlowski wrote:
+> On 20/12/2024 15:45, Tudor Ambarus wrote:
+>> GS101 has 14 mailbox controllers. Add the AP to APM mailbox node.
+>>
+>> Mailbox controllers have a shared register that can be used for passing
+>> the mailbox messages. The AP to APM mailbox controller is used just as a
+>> doorbell mechanism. It raises interrupt to the firmware after the mailbox
+>> message has been written to SRAM where the TX/RX rings are defined.
+>>
+>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+>> ---
+>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>> index 1441e9a252c2..6947dd081a0e 100644
+>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+>> @@ -1445,6 +1445,15 @@ wakeup-interrupt-controller {
+>>  			};
+>>  		};
+>>  
+>> +		ap2apm_mailbox: mailbox@17610000 {
+>> +			compatible = "google,gs101-mbox";
+> 
+> 
+> I don't think I have this in my tree and cover letter does not explain
+> where I can find bindings. Nothing in next from few days ago. Always
+> document in DTS patchset where are the bindings, unless it's obvious.
+> 
 
-That is a good point, if other drivers in the future need access to
-the pmu-intr-gen registers then it would be good if this was modelled
-as its own syscon device.
+Noted, will add such details. For the reference the bindings are part of
+these patch sets:
+https://lore.kernel.org/linux-arm-kernel/20241220-acpm-v4-upstream-mbox-v6-0-a6942806e52a@linaro.org/
+https://lore.kernel.org/linux-arm-kernel/20241220-gs101-acpm-v5-0-4f26b7fb3f5f@linaro.org/
 
-Another point to note is that only the PMU registers need the custom
-regmap registered in exynos-pmu, the PMU_INTR_GEN register region
-works with normal syscon / mmio accesses, so it would be a different
-regmap.
+I'll ping you once we all have an agreement on the bindings. I'm still
+waiting for Jassi to let me know if he's fine with dropping the channel
+type argument for the ACPM use case or not. ACPM always uses the mailbox
+channel in DOORBELL mode, but this info can't be retrieved from SRAM at
+runtime. Jassi suggested that I shall pass the channel type via DT.
+While I don't mind, I don't find this necessary. Discussion at:
+https://lore.kernel.org/linux-arm-kernel/eaab647a-f6f4-4562-89fa-e64daa80bdf4@linaro.org/
 
->
-> I am not sure whether the PMU is really split here. Usually the main PMU
-> was only one and additional blocks called PMU were somehow specialized
-> per each IP block.
-
-PMU_INTR_GEN has its own entry in the memory map, so in that respect
-it's a "device" (it has its own 65k SFR region).
-
-PMU: Base Address 0x1746_0000
-PMU_INTR_GEN: Base Address 0x1747_0000
-
-The documentation isn't particularly detailed on PMU_INTR_GEN. In one
-place it says "One PMU interrupt generator for handshaking between PMU
-through interrupts". In another, "PMU and PMU_INTR_GEN are for Power
-management." and then we have the register names where the description
-it really an expanded version of the register name
-
-e.g.
-Register: GRP#_INTR_BID_ENABLE
-Description: Interrupt Bid Enable
-Reset Value: 0x0
-
-Things might be a bit clearer if I had access to the firmware code on
-the other side of this PMU handshaking which I believe is the APM, but
-sadly I don't.
-
->
-> Maybe you have here two devices, maybe only one. If it is only one, then
-> it is not a syscon anymore, IMO.
-
-I was going to suggest modelling PMU_INTR_GEN as its own sycon node,
-and then either: -
-
-1) Updating exynos-pmu driver to additionally take a phandle to
-pmu-intr-gen syscon, and register the hotplug callbacks.
-
-or
-
-2) Create a new driver named something like exynos-pm or exynos-cpupm
-which obtains the PMU regmap and also a phandle to PMU_INTR_GEN
-syscon, and register the call backs.
-
-Is there any preference from your side over approach 1 or 2, or maybe
-something else entirely?
-
-Thanks,
-
-Peter
+Thanks!
+ta
