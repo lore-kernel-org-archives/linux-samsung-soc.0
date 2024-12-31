@@ -1,118 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833126EB7D;
-	Tue, 31 Dec 2024 07:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96155199E8B
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Dec 2024 13:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735630997; cv=none; b=YMFYop3AmXQnQgIZ/3beZHokcw8ywOTMjrM65rDhBpvzR83LCdFTXrNnxjiYgN7bZ/y6JI4IQ6j8Rrfup9c8sieyV15PYYXu2atSX8/Qzj/P9Ukdo6Yzb4OwwYcoC//W1rg/PDaptaeSGeQLnyXI+Pzv0NpDXnbvTdsRrQ/ZVq4=
+	t=1735651074; cv=none; b=HIdaWDaSReGDYOatTHP1FRLJ0kdhoqDvtzViZf7VQEIyRSs9LE9FeepvS/AfLI2gOxfJk22GfjIkO38LwSnq/kpJ4Jgy8fC9wDxL6eUAVKxg6/OgGAAijivz2aH6h7h2kvYkFpIi9nH0eH3731hhLWKq0S2xT/JAKiQhwptLIgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735630997; c=relaxed/simple;
-	bh=uKdIP0esE6Nx0Tjz4BNM+SF6Vwp6oUbsp2rB0dH4fD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JwluTwNOqpPkKdd/I/csmfyzsiS68c6W13AoDeS3vh2Itx5QvC8UAhyC3F5Lhq7My1ar3l70uubtqgLwQv3Md2gF9fCKwHS6OZVbqMGjKwVG+bX5cjD3iDznJnTeXh8+8zmg60g09z2cQFwS0haZsyvb8HcXbOD1hxv5NEscwA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQuf+DUz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735651074; c=relaxed/simple;
+	bh=DHVPGDu+BXXysZPKFLxRh3GfdxMr4zOKE2jbt3Ddz1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KATM7HwiQpxrV6p3MyFVAsG291L1PDYWithlSo1cQtLvrJPBHM/KCPSJWymA55lQOCKWSr9YD6dDSwGgcqJwwG7ZdwN7LQwirQtk9HxFBVDvv2Aej4/oYlhHaBiWWN38vaDIBm+cxZH3iK78YsejR3OKwGnE1j4nUbsru5NIJvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gl8v6QGz; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQuf+DUz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6DDC4CECD;
-	Tue, 31 Dec 2024 07:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735630997;
-	bh=uKdIP0esE6Nx0Tjz4BNM+SF6Vwp6oUbsp2rB0dH4fD4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XQuf+DUzylhr2hLyNIPg9UIM6EQvzj3GJRi41BEmOYm2brk+Mm1M8PmtYZkC4C7hn
-	 e2I3JqXl4+bdRCWWm/5iOXmoVtKA9XPF6j3NaL3FdeS+dH9nAmpuhu8Y0bjdEKvF+1
-	 RZlp85nt9JEYEaXCn0jCZVV8ScKKM4ST3abFEBHCT53mdT6tgyeWgvPTwU6DFoBaKN
-	 AoM131XAwtz1ABVJRYbeRmx2vOg1d5M/8cChW38XqVw1Hlki6lq5kP31/cE4d+tRT1
-	 TY5G5ZUsleuHJWtFUuMc7QP2s2mPiHpcezNZ8bCS9bKqF1y8JHMNad8Q0LVPn9RqpY
-	 OgHXi4LlDtXYQ==
-Message-ID: <743d9eb4-a7ee-4ce7-91a8-52ddcd353bb2@kernel.org>
-Date: Tue, 31 Dec 2024 08:43:11 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gl8v6QGz"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-436381876e2so14901445e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Dec 2024 05:17:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735651071; x=1736255871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kiYnqctI4B7olrZ8fmWCW3agy6+BOp1wZW4vqYuDgWc=;
+        b=gl8v6QGzBsvQyj8/nkHHQtEoXyfHJOTHLUr3ld0m55ZHzxhGmBm9prwXbpHGcDk7pm
+         pxP2DGLvfdru94LpR+ajdU8UwO8iRdSpLHhLVwwWM37+pmUDiPxzIE5d4+01irR+iQAC
+         naWFGuALojGZNlNTeWoHQWih2IeNoX1NLrT1GrEwugKZCEgcQKDXtvMKXL58RKKEa5+r
+         Ya3U1UDy3Bwe2/yYVMqiOouwtL63nh68TrhLWyUQAYmoM0UwH0pkb62q1bXFAhm5t4mW
+         qScV+DjFiMxg3zmqGD8g9nlIhKAEJfnWE/DcgIascIaJmSkGexoHEQOnG1e2C2GnFIkW
+         369w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735651071; x=1736255871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kiYnqctI4B7olrZ8fmWCW3agy6+BOp1wZW4vqYuDgWc=;
+        b=PwKCqYQgI0qdAw/IRqAZWZ+qI0ZZK+PYS+T+7vBPMYORxg4BbGAp+gnGWiQzsiBysj
+         1XbeZB2UN2t7a0zzknRYq31XxjQxaILxfLE5w0cEE5u8b8AYBRJwHXIKWzVbUOKqtbHI
+         g91jWnxOjPzoO/Vw/Xh9Mt+dqWXp8iyQHuFI3A/SKXIi038cjAolkaNCP0kHvk1ypo1F
+         6l05RsusQXUMZJpYpAqtWg4tgdv2oJl3uV46yEbGLmbaDU37s6dHr8PNI6QPPnLTTOy7
+         KEcm5WMs7jaN46eRo/7K0szyHCzWfwAu/bs0M1wcPFP2oSpd5PMC3iy2ir8/n7KD/O8m
+         Y+dA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ksIVJVzN8Fp8vR6ftzKWUq152fBe2pcqBfbYLyFimSWxjm/1KK9GZMozmI4H3q5Lxr5iufqUjdgPOyK/L58OjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJQoahmf1YSwFWlrS2nP2GBhOmV8es5CveVOjhhGdIwT0FX6kK
+	+5sfoKGcXdzjLKYok7hYVJJ0rB34xx74y8bV7wTrL6i0S5kSlSNH5u69R3W1PVI=
+X-Gm-Gg: ASbGnct4Wd86eUONNmx/zWJQp565uRqka6BPeoKZ6EDOcBMQ+aCL1LImLZMTRMOM3fF
+	drX69tDUDYTLw745JJLWU4FRtID4RVmSM/3vBIAljH0e4rZ43ff93+nFXeB60MTf9k6H1qOBVU0
+	OK9zQqWjLrtgCvF63Cw2qcMKZF3stkRPIXzVFNKoJZXAWF3Xxf1oSzPX7CfCsU1etbGyK6Rl2WG
+	535OMF2Vq/GmPoUILVD8nsXEqMt27hKTSuoga1SLtesGdLQvBoyIcj1oEuGP1ol3awiBPU=
+X-Google-Smtp-Source: AGHT+IGnj1OFU+azmVRh2S542hn5DclJ/XA6d8meuminmJqqKBQ20AJacibZOKkBSbgCiUYj9yDP9g==
+X-Received: by 2002:adf:9dd1:0:b0:385:e16b:72be with SMTP id ffacd0b85a97d-38a224057f2mr11310081f8f.14.1735651070890;
+        Tue, 31 Dec 2024 05:17:50 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b441bbsm420068305e9.40.2024.12.31.05.17.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Dec 2024 05:17:50 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	soc@lists.linux.dev
+Cc: =?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [GIT PULL 1/4 defconfig][PATCH] arm64: defconfig: enable Maxim TCPCI driver
+Date: Tue, 31 Dec 2024 14:17:38 +0100
+Message-ID: <20241231131742.134329-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: add cpu cache information to ExynosAuto-v920
-To: Devang Tailor <dev.tailor@samsung.com>, alim.akhtar@samsung.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20241231063730epcas5p4137cc2e3d805cb08e1675b056ef186dc@epcas5p4.samsung.com>
- <20241231064350.523713-1-dev.tailor@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241231064350.523713-1-dev.tailor@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31/12/2024 07:43, Devang Tailor wrote:
->  
->  		cpu9: cpu@20100 {
-> @@ -152,6 +215,22 @@ cpu9: cpu@20100 {
->  			compatible = "arm,cortex-a78ae";
->  			reg = <0x0 0x20100>;
->  			enable-method = "psci";
-> +			i-cache-size = <0x10000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			d-cache-size = <0x10000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <256>;
-> +			next-level-cache = <&cpu_l2>;
-> +		};
-> +
-> +		cpu_l2: l2-cache0 {
+From: André Draszik <andre.draszik@linaro.org>
 
-Are there more l2-caches? '0' suggests that, so please add nodes for all
-of them.
+Enable the Maxim max33359 as this is used by the gs101-oriole (Google
+Pixel 6) board.
 
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Link: https://lore.kernel.org/r/20241203-gs101-phy-lanes-orientation-dts-v2-1-1412783a6b01@linaro.org
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index c62831e61586..dea35b7648f7 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1120,6 +1120,7 @@ CONFIG_USB_MASS_STORAGE=m
+ CONFIG_TYPEC=m
+ CONFIG_TYPEC_TCPM=m
+ CONFIG_TYPEC_TCPCI=m
++CONFIG_TYPEC_TCPCI_MAXIM=m
+ CONFIG_TYPEC_FUSB302=m
+ CONFIG_TYPEC_QCOM_PMIC=m
+ CONFIG_TYPEC_UCSI=m
+-- 
+2.43.0
 
-Best regards,
-Krzysztof
