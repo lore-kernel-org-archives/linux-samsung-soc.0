@@ -1,137 +1,170 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6684B1A23BB
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 09:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08938B64A;
+	Tue, 31 Dec 2024 00:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735551235; cv=none; b=fiS1GrtbqaZ5wt5QCAnbR2XoiZKabhaaWb+p1/lnW1ABEk9jO6i16ZLUhccDO5nrJ+5SimGUJsVYtLWfgYrzVB95XaqCvG95cN8PQYG2cOhmMaN2g8uccf6/uJLNmSuU24wPRPVIvYK8xd2gWO0t2kaWTJ6trXWujsDc3eKIEkQ=
+	t=1735605819; cv=none; b=o+D3WyqZ6LhfpS4PvRNzf+SMlIULLVtUuOTg69LeXZ5vD++EiFixjagKrqOlQu/J/6mXBXnJGcyi1WT1kYwzV2vvR4kIe1Fr6Gt4QT0sIQ/S36vHdDFdntU3ftoRCBACV4Yzi7gP1z4Zsmk4xRI5wOW2V2okwt3IUqtmGmU8qbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735551235; c=relaxed/simple;
-	bh=dYwHpSJUhuUAG0fqkuiQHa2k6x4/1UvSqmN7TRAtCSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RunlWnhSziKRPWSQ8ADF/1iCvyARQ8DbftqO3oTU5yGR5Un0ti62MfoQ8vtRQF8wGObv7t96fhIuZ1q/CjTH+5xiW2/3YnEJG2Mzf/lrTBnck7D0BRBk+bIBdaPg8bYETTsMPl7+YukcAHe6PKmumLrEqJJ4x9NQex91WNCnNJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BMwOfNZq; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735605819; c=relaxed/simple;
+	bh=r6+biX3jXceAy0hCSQGgPyauPDcFwer7kid+cFilUcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MK+jQaZZwkhtCub6XPKw5kVuY71dqk2VBoAJg7X1LZQOx4pjTbLrmq5qM1NBas0o2udGWLrOhGiq3/E6AGd82Q5ZaAXF6CumI1ReS5hdPmkLtVwQSRrSPWJsx7DmoNqBWYIVu9EV6OLmkd5PkcdfFZAHqwn/vWwSa/2TplikBpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=MmlkCgkG; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMwOfNZq"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3862a921123so6158199f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Dec 2024 01:33:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="MmlkCgkG"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa69107179cso1586459566b.0;
+        Mon, 30 Dec 2024 16:43:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735551232; x=1736156032; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CWxCLyK4AJgfk1FfjpH9G6YxLoJtD0ixlqlSrDwjPFI=;
-        b=BMwOfNZqxJdxb5G6NDUdiCws70XcndKFjb/Dz0WEzww65LAM4z6/JPYmcZdaowceu6
-         syW20bfbOGc7c+04FCab0dhZncE3xFrN9pNtHom2X/700PsjpvIvunQWZI1TTUquUHBK
-         nYDSdY4p8pPzXMSAPObVupqR8hMdtxcgjHihnmCX7kJToFjZd/9yNsJ3wnJpAxK8RTBp
-         LG8tw7B5s8Z83z7krL2seYWAN4Q8r3Gf1LehCWlCm37nm2Ys6OHF+/LBiQ2rECnq9hCA
-         bepDEPVfUvw6alkIv+I424gWQkIRaFOLi4R11Z89VaeCif489h6fO4W6358EEFfbCOYz
-         tW1w==
+        d=googlemail.com; s=20230601; t=1735605816; x=1736210616; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IMEB8NCZ8QveU/RhcsTwV/DZjVBc049BfdXpRNTavFw=;
+        b=MmlkCgkG9UmHrF0Xcg6eWneOwogwo5d1M4M7gciAyXy7XlvhVMsVDS9rhu88f0CP/3
+         B4hr4WSIi/pMsMyNQBIE4/x/iX8DjsVWI10XI907KWBDtSAYtfZ6i5NVBHsdnRj7x7Up
+         8PSgJoiwva9gl+n5y/nMtFA38jrNZlByxayXUtjDYfQwgqEm2vR5R9R/bSBZ//JG2UNh
+         Yrlj7vs1JjmjaRdudKGPedXSu1JfmuyK9+ww6Es7nc27mRcsSU9mXDB6O5AC/kCrBZNm
+         5x2YYhaMpiY8j+4VmQMUDcHOxJv4DS2guVBvxuIfwubUbh6cJ19GJoCirvh9DWre4tA5
+         Xlfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735551232; x=1736156032;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWxCLyK4AJgfk1FfjpH9G6YxLoJtD0ixlqlSrDwjPFI=;
-        b=rtfljYPPGysFBw0mqry6QHJIKrcK5qM0kvAlKROMumoYbhO5Y7cYowAmK9Za4ptQ/1
-         F/IrwOUv8aSdbZjrmw1GtafPffdNYLNmOyl5P0P4+tdxOhblI3PQ2XKphT6g80OeaQim
-         w+qG2g9HjkJ4PzUNbMi7GIfi3yGYlcYYhI1FIFk0Wr+q3QUDRNuY4w8of2MEWhRKAC+O
-         iDtuDUm7gNyDjV//e7RWeJNoyZyHKo8KGtC8mrv2kVpqItr9f9yDfmPhz/YBK0o7Dy/o
-         6XsB4sSmIpAd3X9b2jV/eGUNRCIpz5sVmxDn7o2kXJ/xj0zayJLgrFXV89lDJZlz2QIn
-         Gj5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWhz7x3tMOKQZifc2N9Ol0BXkU85aga/0qnp89jijzk62ASx8yGhpuBNBZjFbuuu8+ervLxUQ3NQf7zdYYYgaS+gw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh5fXN/i2kPy2NUcMiHwE091BJcZnMwpos2tt5EpwMyQM/HXzR
-	UBZuRECk9gUgrzmj4HgmQnqyWZ04PTztjZWK8IBxk5tkBIZKjgksnzsgm0lMVz0=
-X-Gm-Gg: ASbGnctuQPPObRXDEnuLqZr5aSW1XhL2k/SmF87d4wx0GVbbhNa+HBVIkphjB+VqBr7
-	LyVKIMPUtUhURZbZ5F28Sf+DanLaqNcqXZQU4mmtEdSC5Kjgg037QwCSqg+J6AnhEbr3p5YsWE2
-	u915a4zwqZhlUBqHujq21xzppnRuP6Qq09L7t/dXB/XQ7O4Ken/dgxbbzH40rCikbyjSu2lE32z
-	DmruLEOe9qulcZF4v3DnERQzxXGnswhbDyAqDosqMnXb+xVEx4wyxClwTtNzo89
-X-Google-Smtp-Source: AGHT+IGt9+hFPNfKD0vYj/l0vMmTZmm4MtaV//fw/vdTlSexZfNqLe9/5huEQLBsPI/BCg5Yf4wjuw==
-X-Received: by 2002:a05:6000:400c:b0:385:f23a:2fe1 with SMTP id ffacd0b85a97d-38a221f92c9mr32375904f8f.26.1735551231816;
-        Mon, 30 Dec 2024 01:33:51 -0800 (PST)
-Received: from [192.168.0.14] ([188.26.61.92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c847dabsm29231573f8f.59.2024.12.30.01.33.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Dec 2024 01:33:51 -0800 (PST)
-Message-ID: <d852b956-b61a-4770-8d93-9987a982080d@linaro.org>
-Date: Mon, 30 Dec 2024 09:33:49 +0000
+        d=1e100.net; s=20230601; t=1735605816; x=1736210616;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IMEB8NCZ8QveU/RhcsTwV/DZjVBc049BfdXpRNTavFw=;
+        b=AWDajGlU7ljSuPaEbwvHYSWpkU+eF9+R2Zfk0q1WKckEuxGi8kAZw0o4/QUrtibbTl
+         6r/x+HhlR0WgiIrBCDlLeOAUgjZF+kSpvQH2VzZfNvUl9CL7wgJ0F1eusX/WJDi7Vy6+
+         pltYRZP/INFBeWioA8Kw4IidpUIHixI0rXUhjbgBN6WrjYmbY09vdFEEdHd4t+RugXkj
+         XRsezIiqVG3TvMEHpO6XYH5awn/VQ0N6C8CnpiivspeOFdSUMK4mpoYbD/03qF0kJBPF
+         hPVoDSulwzFukhtDw/LhgLJydDwfedqVtwF/rLDIkhqdalsk+FfUO6FgcA7vWb6Hnn7K
+         t8Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSoK2nqH5RGovXd0k+Kai6rPzbOg44TQj16tipg3d0Kgiu+SFSHKdbfgiYmFXMORwwZZOxV0cm/eHlhe4=@vger.kernel.org, AJvYcCWuiS4suPBrRReEsMjc5pZlEYIBV7DFzyh56HT6ecjgp46ljZFO1cyYQ70nqLKkXIFw3zyJD3cFXhdPPLbPpHZYSi0=@vger.kernel.org, AJvYcCXuoEYPWVTJpzAh4zmWo5fC44KFX8gdoRInpbM4h+q2U5nCcyONfZDvFvhw0itCQN2G6YecYAGlxmTUkuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCOpx/WqGilfGf1wtAat8hMDW5XvKu+cCpVuiRWEU+Wavg+w65
+	aAb8H/ZtbCmieNM5v84sovkGA86hvJLowb0yE5W9IPo/nhS1fle/
+X-Gm-Gg: ASbGncs5Dgy8WXWNDiJ/rMo4a77ecsiYo4/Ti0smR9yiyG+5MQMW8iMaz1ogxzVJgCb
+	m7XB6DaWeWAKYULdPag+4p4Bcomq6hlxorc51OtGMGZ7rw0+V0kPSgi9b/9/RpwSob0ld/7AWC4
+	0hpsF9qMaT+vyeDMgKLM/Qhib8hMmrw3at3t2vlKg1AkkyoMAjf0U42OB6d8ykVHDcRJhkOJS4e
+	os5v6AIhO8lYY43G9syhGETXVJyVgysuXPjmQx44+96Gl/rDN6c+V5ixnxtCsMy2gGUZZdGHKQm
+	6DbDYZXtUsvXVGcuOJDZ3/3E3OkYQpGxpc8M1/06lPvz+svkwETd1ete2SmXgkIpO6bgT4qe1zg
+	D9JOYSGib2YSVa1PVbH2g6emhfw==
+X-Google-Smtp-Source: AGHT+IHEGIcJK+SSB1VqPTnorkRP+VtiC6uvv9JG0CKDkLO9JdbaG0jU5yoLZ0jcvFezMTEsCCv8Bg==
+X-Received: by 2002:a17:906:99cc:b0:aae:85a9:5b66 with SMTP id a640c23a62f3a-aae85a95d37mr2281685866b.60.1735605815987;
+        Mon, 30 Dec 2024 16:43:35 -0800 (PST)
+Received: from localhost.localdomain (dynamic-2a02-3100-a465-b000-1e86-0bff-fe2f-57b7.310.pool.telefonica.de. [2a02:3100:a465:b000:1e86:bff:fe2f:57b7])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aac0f06dc7esm1523425066b.193.2024.12.30.16.43.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2024 16:43:33 -0800 (PST)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: dmitry.baryshkov@linaro.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	airlied@gmail.com,
+	alain.volmat@foss.st.com,
+	alim.akhtar@samsung.com,
+	andrzej.hajda@intel.com,
+	andy.yan@rock-chips.com,
+	angelogioacchino.delregno@collabora.com,
+	broonie@kernel.org,
+	chunkuang.hu@kernel.org,
+	dave.stevenson@raspberrypi.com,
+	dri-devel@lists.freedesktop.org,
+	heiko@sntech.de,
+	hjc@rock-chips.com,
+	inki.dae@samsung.com,
+	jani.nikula@linux.intel.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	kernel-list@raspberrypi.com,
+	krzk@kernel.org,
+	kyungmin.park@samsung.com,
+	lgirdwood@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux@armlinux.org.uk,
+	maarten.lankhorst@linux.intel.com,
+	matthias.bgg@gmail.com,
+	mcanal@igalia.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	p.zabel@pengutronix.de,
+	perex@perex.cz,
+	ple@baylibre.com,
+	rfoss@kernel.org,
+	rgallaispou@gmail.com,
+	simona@ffwll.ch,
+	sw0312.kim@samsung.com,
+	tiwai@suse.com,
+	tzimmermann@suse.de
+Subject: RE: [PATCH v10 03/10] drm/connector: implement generic HDMI audio helpers
+Date: Tue, 31 Dec 2024 01:43:11 +0100
+Message-ID: <20241231004311.2574720-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241224-drm-bridge-hdmi-connector-v10-3-dc89577cd438@linaro.org>
+References: <20241224-drm-bridge-hdmi-connector-v10-3-dc89577cd438@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] arm64: dts: exynos: gs101: add AP to APM mailbox
- node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
- daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
- ulf.hansson@linaro.org, arnd@arndb.de
-References: <20241220-gs101-acpm-dt-v3-0-642d64daa5d1@linaro.org>
- <20241220-gs101-acpm-dt-v3-2-642d64daa5d1@linaro.org>
- <f5e3d00e-8f98-46c6-8f1a-85a2169324ee@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <f5e3d00e-8f98-46c6-8f1a-85a2169324ee@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Hello Dmitry,
+
+this is great work - thanks for your efforts!
+
+To give some context:
+I am working on a HDMI controller driver for the Amlogic Meson8/8b/8m2
+SoCs. Unfortunately the driver is not mature enough for upstream
+submission (all I have is the vendor driver which serves as reference).
+That said, my goal is to upstream the driver at some point. I have
+already switched my driver to use hdmi_{clear,write}_infoframe. Now
+I'm trying this series to simplify my code even further - by using
+your audio helper work!
+
+> --- /dev/null
+> +++ b/drivers/gpu/drm/display/drm_hdmi_audio_helper.c
+> @@ -0,0 +1,190 @@
+> [...]
+> +static const struct hdmi_codec_ops drm_connector_hdmi_audio_ops = {
+> +	.audio_startup = drm_connector_hdmi_audio_startup,
+> +	.prepare = drm_connector_hdmi_audio_prepare,
+> +	.audio_shutdown = drm_connector_hdmi_audio_shutdown,
+> +	.mute_stream = drm_connector_hdmi_audio_mute_stream,
+> +	.get_eld = drm_connector_hdmi_audio_get_eld,
+> +	.get_dai_id = drm_connector_hdmi_audio_get_dai_id,
+> +	.hook_plugged_cb = drm_connector_hdmi_audio_hook_plugged_cb,
+> +};
+On my platform drm_connector_hdmi_audio_prepare() is never called. As
+a result of that the audio infoframe is never written to my HDMI
+controller hardware (hdmi_write_infoframe() is never called with type
+HDMI_INFOFRAME_TYPE_AUDIO). My hack to make it work is to add the
+following line to drm_connector_hdmi_audio_ops:
+  .hw_params = drm_connector_hdmi_audio_prepare,
+
+I checked all instances of struct hdmi_codec_ops in v6.13-rc3 and it
+seems that there is only a single driver which uses the .prepare
+callback (drivers/gpu/drm/vc4/vc4_hdmi.c). All other drivers seem to
+implement .hw_params instead.
+
+The audio controller code for my platform is already upstream:
+- sound/soc/meson/aiu-codec-ctrl.c
+- sound/soc/meson/aiu-encoder-i2s.c
+- sound/soc/meson/aiu-fifo-i2s.c
+
+My understanding is that you have a platform with a lontium-lt9611
+HDMI controller available for testing. Can you please help me
+investigate and find out which piece of code is calling
+hdmi_codec_prepare() and therefore lt9611_hdmi_audio_prepare() on
+your board?
 
 
-
-On 12/22/24 11:47 AM, Krzysztof Kozlowski wrote:
-> On 20/12/2024 15:45, Tudor Ambarus wrote:
->> GS101 has 14 mailbox controllers. Add the AP to APM mailbox node.
->>
->> Mailbox controllers have a shared register that can be used for passing
->> the mailbox messages. The AP to APM mailbox controller is used just as a
->> doorbell mechanism. It raises interrupt to the firmware after the mailbox
->> message has been written to SRAM where the TX/RX rings are defined.
->>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->> index 1441e9a252c2..6947dd081a0e 100644
->> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->> @@ -1445,6 +1445,15 @@ wakeup-interrupt-controller {
->>  			};
->>  		};
->>  
->> +		ap2apm_mailbox: mailbox@17610000 {
->> +			compatible = "google,gs101-mbox";
-> 
-> 
-> I don't think I have this in my tree and cover letter does not explain
-> where I can find bindings. Nothing in next from few days ago. Always
-> document in DTS patchset where are the bindings, unless it's obvious.
-> 
-
-Noted, will add such details. For the reference the bindings are part of
-these patch sets:
-https://lore.kernel.org/linux-arm-kernel/20241220-acpm-v4-upstream-mbox-v6-0-a6942806e52a@linaro.org/
-https://lore.kernel.org/linux-arm-kernel/20241220-gs101-acpm-v5-0-4f26b7fb3f5f@linaro.org/
-
-I'll ping you once we all have an agreement on the bindings. I'm still
-waiting for Jassi to let me know if he's fine with dropping the channel
-type argument for the ACPM use case or not. ACPM always uses the mailbox
-channel in DOORBELL mode, but this info can't be retrieved from SRAM at
-runtime. Jassi suggested that I shall pass the channel type via DT.
-While I don't mind, I don't find this necessary. Discussion at:
-https://lore.kernel.org/linux-arm-kernel/eaab647a-f6f4-4562-89fa-e64daa80bdf4@linaro.org/
-
-Thanks!
-ta
+Thank you and best regards,
+Martin
