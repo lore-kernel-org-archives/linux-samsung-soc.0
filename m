@@ -1,108 +1,157 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEBF17FE
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jan 2025 14:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AD11FA8F3;
+	Fri,  3 Jan 2025 15:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735916177; cv=none; b=Ixf+ld8ZRpc1mgMuByc4mHrgSlEGWG5Ednk0BtpgaihfE4tKbVcsHzrcRRE8M9jNXAME2aA55N1CsF2bL2avgRGymU6VCDtUFT6F90egQJEtzToZTydaWEmGYP7QQPVyklSWGg/hTe3QIfq/2y2pu3ix771cgdnrHsxrHZEuk5U=
+	t=1735917633; cv=none; b=XwJ64Stz81IQ9EnxRNVKcTrFOJNm3An0xp06Ze7DMtMSd+0BKlH2af0Z+TdzrpteypedGq2VECRz8ayZbrch7S1InbulAVgKzyBSMLiOVjci10RnYP6qAe9upqz823KQKssmzUk/jJ+p0oxIPt/zWcsOlUcvFtvphSxXvc/CJw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735916177; c=relaxed/simple;
-	bh=GURb/R99L2QiRk4OoGAGO+BYfj1uJi7sjd1PiC4oDQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HKFG9sp09t/NIIoBjOrlQnhmuBGPaCfZlFkRVm0Ef6yznSI0dzfQn0dKO1DKIiWC0fiNdTnc5RPolh/G8sceNobYnCU9XnSiPL30MO4BQgarWt9SEmsI9A9Pt0fa2OttH70z1ibh1gVyRXplf8//tYwzyk4Rn3l4ieivf6tsAdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c5fMnJCj; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735917633; c=relaxed/simple;
+	bh=OQotMPthgURrK4NyFLK+Ka0bfbaNpftNzQuniOt335w=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=b4nBchzOwjugjiqwt6kN0XRRLSvaacqAuxBPRyS3EqOEflqen+ENG/HeJrYRLRNYi/aShatZSKeJ3Z83SsUXBZ3i/yPuLnYGrhl3dGkUC/mYDas9FSEvbcTOE/x9EAxM1lQwGnC4PAX8cFZNvuv7Svcwtj1bTWs3JYsYa7tRKS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+zUBjVH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5fMnJCj"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e549a71dd3dso285315276.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2025 06:56:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735916174; x=1736520974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zhapTHXOL6nnyzfeibqtjCKKJ3noEWy6OsULxomBlLw=;
-        b=c5fMnJCjeE27wNKbzScGC+mOZ/LXYZEZ+i8YkqIIn2b9AVTilzTSiGqJEr/y8vQdq5
-         GzOQ+R3NyQeT//+osfERQneVz2y9Kp/aq9EBCaDYkofnQQLINL4VOQDxAty355ew/jYZ
-         D9TuhjOUp2EZBryNvF8j+Qc5t5dvo11ScPFPp3osZNMUdKbUXSOUfq1wrR2Jr7TvOvpg
-         UKi2tmKdR/D6uAIVA+W0Mrd7m0UrxYIqytezN1MHuw06a83OZWAF3taQFpZK/Zu0YLhY
-         cbKNqrBRezDpDJfMKVa/Pz3DdZWsOkplP7V9LDICTo5MYXSHEkT+HxYy8IlQ6B669YVF
-         iIPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735916174; x=1736520974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zhapTHXOL6nnyzfeibqtjCKKJ3noEWy6OsULxomBlLw=;
-        b=u3CvPWfL4grjzUe3fujQu9/kmz5klkH2MJOMfJqjQHRxUe1QA2DQ70B80nuEHjiYJO
-         5x91LQGqmeZJCryLchPXcL+6yhph+Uhu6gmRey0BWupSUk+/uzjgy5O38fpKuSKVlDCv
-         gapO/GdqZF6/K9f4Zsfgxu+Tp5ySBcc4xT8RIaReds0ZQ1vhVprzMLkVRb3ynmqJ83wh
-         a/kFbkg/Jkhilea2W56IdrFYQ3CraWioJjkQml8OIzssv+988bC+XK3BldfYrPuyfyMb
-         1qn3igmuqar4HYYCYRdQWt/rE7dPUTYN/nsw/5U/HY56V/NjKkIk1rwOOwbqg1+7BJWb
-         Eigw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+NeUJhczs4p13gN5QXEK44ZgFIJ3pRRjKWeSV5NLWPllLTAQJOrw5lAW8zR9EBJiRMUDwG3XjCe4zArQ22MLj8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOchWP3u33pWf2wte5MDmjCF6T8GcadJj/hYcOvDoJWLJMN+xR
-	QgLZbjALw+9dry4lG5mdT3Fp7hLa0DRlEijowo4osqLgXKXZ3i+Y/Es74Fu1EDfgnFfroPinOGJ
-	6vBAAw2XLkUKwvmeu75CHtPzMkMdD/VithbtBpg==
-X-Gm-Gg: ASbGncuriechveLrS+qElZBfQrLoFAuxL67PUUJHid2wz3DjcFTcmBaFYLQNgNLCw1y
-	qDRjrOVECiy1o7qsaKU4lhW+WRDMUFxt9bM3APTEMDNW8F6I9E5dHwmdzqe+wqi8f/Hv81Ukd
-X-Google-Smtp-Source: AGHT+IF8PgxghS0Yr8Fk32/LsnBMib2ycn/MjDyFQwGcJ2L9c+3xpdMG7fYH2+JRjVmj3XvaZJC4FTktLg/66x4obwQ=
-X-Received: by 2002:a05:6902:1589:b0:e4b:3d71:346a with SMTP id
- 3f1490d57ef6-e538c20774dmr30599997276.11.1735916173951; Fri, 03 Jan 2025
- 06:56:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+zUBjVH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6355C4CED6;
+	Fri,  3 Jan 2025 15:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735917632;
+	bh=OQotMPthgURrK4NyFLK+Ka0bfbaNpftNzQuniOt335w=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=P+zUBjVHiN5LrRa9QQqPpsDY9OUYrl1tUTMJ/I3TPaUNqhpdtk6zy7AMrn44a7Wzf
+	 5cBMC8xQZQvCbDK9JXVBHfYeoA2Y5aWBY8vZNYUi4KIw2zeIq1IpysKmkdAB1kSMFe
+	 Q9ft+8yR7OfBljWqR8AffuSQ2fOq1I6nUlEiZ7CrHmPZvqQB2sMoQKSMnKaZ94xYRH
+	 smPROd6m73XnmPLXgTzmkbSzS9RqnO1X2zFZdiFxn2deJvlXioAdGuQ9Rm9XEztEQ2
+	 9bFM276246cnQnJwciZwyq5GPlIOW7vZLz6NcrtOVrGnKVn3PBuCzsfZmtDUvj0woR
+	 6TwN/2fbhCxCA==
+Date: Fri, 03 Jan 2025 09:20:31 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250103082549.19419-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250103082549.19419-1-krzysztof.kozlowski@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 3 Jan 2025 08:56:03 -0600
-Message-ID: <CAPLW+4ncvOxj7nmypsw-+Tvj_gk5AHoWVeE9YKL=W=8y_MTjUg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: samsung: exynos-usi: Restrict possible
- samsung,mode values
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250102205846.223955-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20250102205846.223955-1-ivo.ivanov.ivanov1@gmail.com>
+Message-Id: <173591745832.2305341.4361607015231954485.robh@kernel.org>
+Subject: Re: [PATCH v1 0/5] arm64: dts: exynos8895: define usi and mmc
+ nodes
 
-On Fri, Jan 3, 2025 at 2:25=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> "samsung,mode" property defines the desired mode of the serial engine
-> (e.g. I2C or SPI) and only few values are allowed/used by Linux driver.
->
-> Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
->  Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yam=
-l b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> index f80fcbc3128b..5b046932fbc3 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> @@ -64,6 +64,7 @@ properties:
->
->    samsung,mode:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
->      description:
->        Selects USI function (which serial protocol to use). Refer to
->        <include/dt-bindings/soc/samsung,exynos-usi.h> for valid USI mode =
-values.
+On Thu, 02 Jan 2025 22:58:41 +0200, Ivaylo Ivanov wrote:
+> Hey folks,
+> 
+> This patch series adds the required syscons for controlling USI, as well
+> as defines all USIv1 nodes for Exynos8895 and adds support for utilizing
+> the external SD card storage in dreamlte. Due to PMIC not being supported
+> yet, we'll assume that the regulators are pre-enabled by the previous
+> bootloader for vqmmc. (in our case uniLoader).
+> 
+> The patchset relies on [1]. I also expect the exynos mmc binding
+> maintainer to pick the specific-compat patch.
+> 
+> Best regards,
+> Ivaylo
+> 
+> [1]: https://lore.kernel.org/all/20250102204015.222653-1-ivo.ivanov.ivanov1@gmail.com/
+> 
+> Ivaylo Ivanov (5):
+>   dt-bindings: mmc: samsung,exynos-dw-mshc: add specific compatible for
+>     exynos8895
+>   arm64: dts: exynos8895: add syscon nodes for peric0/1 and fsys0/1
+>   arm64: dts: exynos8895: define all usi nodes
+>   arm64: dts: exynos8895: add a node for mmc
+>   arm64: dts: exynos: exynos8895-dreamlte: enable support for microSD
+>     storage
+> 
+>  .../bindings/mmc/samsung,exynos-dw-mshc.yaml  |   1 +
+>  .../boot/dts/exynos/exynos8895-dreamlte.dts   |  39 +
+>  arch/arm64/boot/dts/exynos/exynos8895.dtsi    | 906 ++++++++++++++++++
+>  3 files changed, 946 insertions(+)
+> 
 > --
 > 2.43.0
->
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y exynos/exynos8895-dreamlte.dtb' for 20250102205846.223955-1-ivo.ivanov.ivanov1@gmail.com:
+
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/syscon@10420000: failed to match any schema with compatible: ['samsung,exynos8895-peric0-sysreg', 'syscon']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10440000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10440000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10440000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10460000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10460000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10460000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10480000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10480000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10480000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@104a0000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@104a0000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@104a0000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/syscon@10820000: failed to match any schema with compatible: ['samsung,exynos8895-peric1-sysreg', 'syscon']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10840000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10840000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10840000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10860000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10860000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10860000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10880000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10880000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10880000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108a0000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108a0000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108a0000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108c0000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108c0000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108c0000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108e0000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108e0000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@108e0000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10900000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10900000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10900000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10920000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10920000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10920000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10940000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10940000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10940000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10960000: failed to match any schema with compatible: ['samsung,exynos8895-usi']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10960000/i2c@0: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/usi@10960000/i2c@10000: failed to match any schema with compatible: ['samsung,exynos8895-hsi2c']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/syscon@11020000: failed to match any schema with compatible: ['samsung,exynos8895-fsys0-sysreg', 'syscon']
+arch/arm64/boot/dts/exynos/exynos8895-dreamlte.dtb: /soc@0/syscon@11420000: failed to match any schema with compatible: ['samsung,exynos8895-fsys1-sysreg', 'syscon']
+
+
+
+
+
