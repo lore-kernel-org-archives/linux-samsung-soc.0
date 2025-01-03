@@ -1,115 +1,108 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BB91CA8D
-	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jan 2025 12:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEBF17FE
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jan 2025 14:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735907831; cv=none; b=m7VI3gKZo6E6KjHyz0Qw2TJQ/V/5nrKgIbz65ciq6Y7zI8F5lzk/GGE8n855lbgcnYm2VKik5vZCiV5Fl7a0748wQBNPPbH9NbZhR/D4uykIAwd2X9VxL7W/WWii9tZ9c+nA3qa17X/1qPQlCv1s2xpFdfUBrTqohUCdooH9X50=
+	t=1735916177; cv=none; b=Ixf+ld8ZRpc1mgMuByc4mHrgSlEGWG5Ednk0BtpgaihfE4tKbVcsHzrcRRE8M9jNXAME2aA55N1CsF2bL2avgRGymU6VCDtUFT6F90egQJEtzToZTydaWEmGYP7QQPVyklSWGg/hTe3QIfq/2y2pu3ix771cgdnrHsxrHZEuk5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735907831; c=relaxed/simple;
-	bh=0sbr3ikGQgKI5ZtY/+Z+rTTloWLDyPG2tgRbvKz/LV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3KAy6ONBN0dhgvo9jl/EEMA3ftCRifPyWa/qHKcjzSKuQXbqGvba024KY4bHyh3lMDHzwtvl/YC6Q5WREHZvFcOv/C9PckDCO2ijdozQb2VVPl+ER48piq3JGjKvSgUGO3bKWqe+r9THqWwvHWD0Ge4WadbRAS5/UG0uJX3imo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yGmXoqCA; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1735916177; c=relaxed/simple;
+	bh=GURb/R99L2QiRk4OoGAGO+BYfj1uJi7sjd1PiC4oDQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HKFG9sp09t/NIIoBjOrlQnhmuBGPaCfZlFkRVm0Ef6yznSI0dzfQn0dKO1DKIiWC0fiNdTnc5RPolh/G8sceNobYnCU9XnSiPL30MO4BQgarWt9SEmsI9A9Pt0fa2OttH70z1ibh1gVyRXplf8//tYwzyk4Rn3l4ieivf6tsAdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c5fMnJCj; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGmXoqCA"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-303548a9361so115915471fa.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2025 04:37:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5fMnJCj"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e549a71dd3dso285315276.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2025 06:56:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735907827; x=1736512627; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lAuQK+/F0O4L5JCDNjDjHjZFUYnk5eRkhwBS+4Hmv8o=;
-        b=yGmXoqCAZTrWsHD2zWTn0q1BYbgC74pjXuuuYl/YjsM3cQGJkLi8rA/pczt3AZCEh7
-         IrV+xlJBYVaEYEi7WCAkBjOWl7NZtl64B0XSWf952FVvMPLdDClVR4A1Fs9DQfJUxggp
-         AXRUz75I/JXJ0+EKtyiwYTgmTh015lfFjQGJg+rBXjPVBKCHdhTmydIjHKrZNVvMlE9k
-         4BwzaHd9BkOsN6O/kDfxA1+mqY7MmSjAzrUqvkIDQoFnGKsSlNbPstS0p6LNWRS6qJHx
-         vp2rREpLv5L6y1sveiTZvJeCMrclXd75pHiJik1x13Ojrgptadl/qGNwtBYIJjD5YwCc
-         4rRQ==
+        d=linaro.org; s=google; t=1735916174; x=1736520974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zhapTHXOL6nnyzfeibqtjCKKJ3noEWy6OsULxomBlLw=;
+        b=c5fMnJCjeE27wNKbzScGC+mOZ/LXYZEZ+i8YkqIIn2b9AVTilzTSiGqJEr/y8vQdq5
+         GzOQ+R3NyQeT//+osfERQneVz2y9Kp/aq9EBCaDYkofnQQLINL4VOQDxAty355ew/jYZ
+         D9TuhjOUp2EZBryNvF8j+Qc5t5dvo11ScPFPp3osZNMUdKbUXSOUfq1wrR2Jr7TvOvpg
+         UKi2tmKdR/D6uAIVA+W0Mrd7m0UrxYIqytezN1MHuw06a83OZWAF3taQFpZK/Zu0YLhY
+         cbKNqrBRezDpDJfMKVa/Pz3DdZWsOkplP7V9LDICTo5MYXSHEkT+HxYy8IlQ6B669YVF
+         iIPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735907827; x=1736512627;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAuQK+/F0O4L5JCDNjDjHjZFUYnk5eRkhwBS+4Hmv8o=;
-        b=wr9v7eZTfU15l6TLEIHemyGmaBgmV1caLYgjH14xYsLKZLmKegNiXAsCxWA3hwSmz7
-         NXjQALEhzLlMEFT8ZWcKdJHlII/OfA+qpNuwDdHlsew3+z9oSP90qOkcPWLwUYjp/6AV
-         qUnlxVqelaHfWRwNnq5DY9vMbh2vomu7wPGrh1KPA/3QLD3naz2Xbwe5fMLghf/BoFMl
-         hTtdo3uP7zy0m597WXkRpmv4DDzs4r/0qjO4mbSQVlRuPuLs3sOz479x4YJXywU3uc4O
-         2CZ2JUL5lznAt1Ec3ncVN0SJj7JWpFJPjJRmpxYpal/zPBYpz0WoM4oXyO2YwTiM4LoL
-         Gnlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPl06rWnMF5yvQFVqAgX8cQOek8CsAM644HWBnCWfLbRCwRsgLd8ip2WwpkiTZuUwORa76TePUqj+T5DPp0IVqRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr2xHiYvmejKsV836g43WARmQMsZsXUmHF2BvISVL1YEFjkHUc
-	QpzWjsgCuQZ5aAzHlwxMv2F1NwbinafUEQYxFODa4VIErh62rMAsG9l3fItKwB8=
-X-Gm-Gg: ASbGncv1D+pRsCD6cZ6K/YG2GmdqPSTAJgoLKmi2XKcTexmDzEU1CG1z48lK/MVisRZ
-	O+jpBVBjG02JVrC39MiiTinRC4syBx5bdWpEMLQphteJHNEMonCODV7bkU4yM1/MITbgyYmvVnQ
-	Nhz9lYo/prtqqWKeJPMZwog/UM8z5giC9a/GTtxBcbRTrSNfzEjXLFbHA65KtRB+F0xvNqva1/c
-	pdfis7PvS69efTj+cGLS7IbGenzyLg6AUecdGt+ooISd0D1AS30iUD+tnPteYbEStEv98EIhflH
-	gwVckH7ZMNfMC1/qvocvplYIG2UN3rxXNBVv
-X-Google-Smtp-Source: AGHT+IHkmAApyLZ21XYWu+WDHiH0q3Z12bKU9S9jrrq+R629xN6ISaSia7sHBryhTxvay+8ug/2ilQ==
-X-Received: by 2002:a2e:743:0:b0:300:4107:6294 with SMTP id 38308e7fff4ca-30468627b2fmr117244791fa.35.1735907827089;
-        Fri, 03 Jan 2025 04:37:07 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3045b082e47sm45659141fa.111.2025.01.03.04.37.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2025 04:37:05 -0800 (PST)
-Date: Fri, 3 Jan 2025 14:37:03 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com, 
-	alain.volmat@foss.st.com, alim.akhtar@samsung.com, andrzej.hajda@intel.com, 
-	andy.yan@rock-chips.com, angelogioacchino.delregno@collabora.com, broonie@kernel.org, 
-	chunkuang.hu@kernel.org, dave.stevenson@raspberrypi.com, dri-devel@lists.freedesktop.org, 
-	heiko@sntech.de, hjc@rock-chips.com, inki.dae@samsung.com, 
-	jani.nikula@linux.intel.com, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
-	kernel-list@raspberrypi.com, krzk@kernel.org, kyungmin.park@samsung.com, lgirdwood@gmail.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux@armlinux.org.uk, maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com, 
-	mcanal@igalia.com, mripard@kernel.org, neil.armstrong@linaro.org, 
-	p.zabel@pengutronix.de, perex@perex.cz, ple@baylibre.com, rfoss@kernel.org, 
-	rgallaispou@gmail.com, simona@ffwll.ch, sw0312.kim@samsung.com, tiwai@suse.com, 
-	tzimmermann@suse.de
-Subject: Re: [PATCH v10 03/10] drm/connector: implement generic HDMI audio
- helpers
-Message-ID: <x73a2utr5sp4iffk5626zqfth4ayu3x4jkxd7xwjti7ehrgnzi@ploxx4i5db5h>
-References: <20241224-drm-bridge-hdmi-connector-v10-3-dc89577cd438@linaro.org>
- <20241231004311.2574720-1-martin.blumenstingl@googlemail.com>
- <l3u3wtnxyhrwjynevkwfjwarisc4yt4xy2rbzf5kb7k5l5dw3n@lxqtimymyjg6>
- <CAFBinCAh8iazDNx6GtOOJyXh_V-NfUs6Uf=ywN9kvQGPEmjrKQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1735916174; x=1736520974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zhapTHXOL6nnyzfeibqtjCKKJ3noEWy6OsULxomBlLw=;
+        b=u3CvPWfL4grjzUe3fujQu9/kmz5klkH2MJOMfJqjQHRxUe1QA2DQ70B80nuEHjiYJO
+         5x91LQGqmeZJCryLchPXcL+6yhph+Uhu6gmRey0BWupSUk+/uzjgy5O38fpKuSKVlDCv
+         gapO/GdqZF6/K9f4Zsfgxu+Tp5ySBcc4xT8RIaReds0ZQ1vhVprzMLkVRb3ynmqJ83wh
+         a/kFbkg/Jkhilea2W56IdrFYQ3CraWioJjkQml8OIzssv+988bC+XK3BldfYrPuyfyMb
+         1qn3igmuqar4HYYCYRdQWt/rE7dPUTYN/nsw/5U/HY56V/NjKkIk1rwOOwbqg1+7BJWb
+         Eigw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+NeUJhczs4p13gN5QXEK44ZgFIJ3pRRjKWeSV5NLWPllLTAQJOrw5lAW8zR9EBJiRMUDwG3XjCe4zArQ22MLj8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOchWP3u33pWf2wte5MDmjCF6T8GcadJj/hYcOvDoJWLJMN+xR
+	QgLZbjALw+9dry4lG5mdT3Fp7hLa0DRlEijowo4osqLgXKXZ3i+Y/Es74Fu1EDfgnFfroPinOGJ
+	6vBAAw2XLkUKwvmeu75CHtPzMkMdD/VithbtBpg==
+X-Gm-Gg: ASbGncuriechveLrS+qElZBfQrLoFAuxL67PUUJHid2wz3DjcFTcmBaFYLQNgNLCw1y
+	qDRjrOVECiy1o7qsaKU4lhW+WRDMUFxt9bM3APTEMDNW8F6I9E5dHwmdzqe+wqi8f/Hv81Ukd
+X-Google-Smtp-Source: AGHT+IF8PgxghS0Yr8Fk32/LsnBMib2ycn/MjDyFQwGcJ2L9c+3xpdMG7fYH2+JRjVmj3XvaZJC4FTktLg/66x4obwQ=
+X-Received: by 2002:a05:6902:1589:b0:e4b:3d71:346a with SMTP id
+ 3f1490d57ef6-e538c20774dmr30599997276.11.1735916173951; Fri, 03 Jan 2025
+ 06:56:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCAh8iazDNx6GtOOJyXh_V-NfUs6Uf=ywN9kvQGPEmjrKQ@mail.gmail.com>
+References: <20250103082549.19419-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250103082549.19419-1-krzysztof.kozlowski@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 3 Jan 2025 08:56:03 -0600
+Message-ID: <CAPLW+4ncvOxj7nmypsw-+Tvj_gk5AHoWVeE9YKL=W=8y_MTjUg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: samsung: exynos-usi: Restrict possible
+ samsung,mode values
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 31, 2024 at 07:49:40PM +0100, Martin Blumenstingl wrote:
-> On Tue, Dec 31, 2024 at 3:34 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> [...]
-> > > I checked all instances of struct hdmi_codec_ops in v6.13-rc3 and it
-> > > seems that there is only a single driver which uses the .prepare
-> > > callback (drivers/gpu/drm/vc4/vc4_hdmi.c). All other drivers seem to
-> > > implement .hw_params instead.
-> >
-> > Yes. However .hw_params don't have access to the infoframe contents, so
-> > I had to settle on implementing .prepare.
-> While debugging I noticed something unrelated to my problem:
-> hdmi_codec_spdif_dai_ops does not implement .prepare().
-> FYI just in case someone wants to use your patches and feed the
-> hdmi-codec with SPDIF instead of I2S.
+On Fri, Jan 3, 2025 at 2:25=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> "samsung,mode" property defines the desired mode of the serial engine
+> (e.g. I2C or SPI) and only few values are allowed/used by Linux driver.
+>
+> Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Could you please send submit a patch to the hdmi-codec driver?
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
--- 
-With best wishes
-Dmitry
+>  Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yam=
+l b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> index f80fcbc3128b..5b046932fbc3 100644
+> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+> @@ -64,6 +64,7 @@ properties:
+>
+>    samsung,mode:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+>      description:
+>        Selects USI function (which serial protocol to use). Refer to
+>        <include/dt-bindings/soc/samsung,exynos-usi.h> for valid USI mode =
+values.
+> --
+> 2.43.0
+>
