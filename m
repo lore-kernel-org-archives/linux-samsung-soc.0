@@ -1,136 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8971C07E3;
-	Fri,  3 Jan 2025 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3E91BC099
+	for <linux-samsung-soc@vger.kernel.org>; Fri,  3 Jan 2025 08:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735892472; cv=none; b=q9t5kkkpaB/ldT7uDkqtAVi/zofsUCxaSeHjt9+4p6mlfpwHYpJHtW9R7ykDOQqAGfwxQSkGV5yCGFHkifPLOm6pacpF6Eea6GbuUxI5lb7yu8D5GNNmAEDhFrtMxTsj2kG5O69MYkWq65atuUVPYjdlWQt/sjVSujBEuafldUo=
+	t=1735892756; cv=none; b=Y3aXl4EmZdmlBHYh9eFiGPn45DTFa1ANLx2x97NJX3EXfhF1zgJJGlCurjzplP9RwrsqYPyKHSOvV5G6OFjO7qdbJWTHGJplS+ORRVIjvy6395BGwnPmakbqyawFOcxJZlnBgJON5668dm2xJr57VrBXAPyfcArR57Zvj0bFxfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735892472; c=relaxed/simple;
-	bh=S7tZ1yGNv5kuSQb7DcMrraBBMRu336qd5hi85TYcCRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+ssPtwLU2dDbIEG5BSbiKL4/xGzL/oXVCvLj1YTvHU3IocCIb1r3sBxhiFJ9XKhidcm7g/Q2QlypdoGziLof38hyQWLcbFyjViBLd85gXDlgW8OQCDfoGQac4XVQtiLKVjhQOLEJGqGmbPe/2FsUBFcwEjRJ9r9LJmaoJfQM2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCqEPRYT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735892756; c=relaxed/simple;
+	bh=7YlwamCaibMj95ILlssS/xUUvQn5etKq5v5uqkI4QfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h0SSDcASevNoFkgO7CLLkZ6vfar1TkRNDKd77XSGCmZ8u5iybARTUfHQhKtj+NBQXSIigpS75khYOHMkzePKXKLZj4HzZzVvY9u8zr6Mk4IMFypwuU7jsqM0JYwmFOg+94UkBRFYOtGoeVoRKj3X2V/Fqs4+6e/2kEZJLbqN404=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DR01zJrs; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCqEPRYT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30395C4CECE;
-	Fri,  3 Jan 2025 08:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735892472;
-	bh=S7tZ1yGNv5kuSQb7DcMrraBBMRu336qd5hi85TYcCRU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FCqEPRYTjGjxkEp+VA4ku2kHTehaUYdEGQ7FaPelR1MqyRyteuN/K3nvMPOhiAiGC
-	 hDn/8Ie4xacKUiVhoz3y2th242Pnl2m0wPfj4i3yrTXwD7Fh1h/aQC0kffNqsxJkpr
-	 WbITtBWG/KnTwYpW9P+O+yItMO6OayjCTZz9nwCVICP4f7sflhkUQ2c2av2Q/+SyBi
-	 S4OJJL6MZNXN9P8TVle5LsSEkUUYPjrBuKbLz1uPjNQVmuhlo1NCoRzXo9DBzcDqgh
-	 LoWIopSf5PODYQ3pKEtmVChb8/abyGh0qlnid5oNEwSVj01W7KoBByplbFXeuLy9C+
-	 GSJDGrpGg3eKw==
-Date: Fri, 3 Jan 2025 09:21:08 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] dt-bindings: soc: samsung: usi: add USIv1 and
- samsung,exynos8895-usi
-Message-ID: <bzjuy4idp2o2cgms3zaftrxxz2rg2adhv6gneedrxjpxswgznn@wycin7xdlddz>
-References: <20250102204015.222653-1-ivo.ivanov.ivanov1@gmail.com>
- <20250102204015.222653-3-ivo.ivanov.ivanov1@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DR01zJrs"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa676e4f36cso145480966b.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2025 00:25:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735892753; x=1736497553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYNO0guAuD1jSVG7+Mn2jJuelOVJmSNitmxA0BfO1/0=;
+        b=DR01zJrsc4p/yjHUx0aVGULOSrYMt0JMbSUnLYHSGwbsdInrPUVRqQWN+R161pRUyA
+         cFkNwCnKJORPquWm8ARwFQFZgwXFeUNQwqHfD77eKIeh8NxBWi9hsySQUAsaQD7uUOs4
+         oUYsE1Qm8dWmLMBUR+XhKhALOPmxe+BKiKJDSAKrg3bIc52Vh81b+kqcAGU1jiC+sQr9
+         8D5kuv7ExFEvJ5Rdok0jrXQx2IpYcybVASJsu/iZO3ZajkX3JZ0erZzs1zDQBrHx2Aow
+         bQTXf/wn1JveAg1Xl9VAtjjpn67bEp2mLuJHuwRAYb59yRQzKU7A8CJGOZggPpCCyY04
+         GVzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735892753; x=1736497553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KYNO0guAuD1jSVG7+Mn2jJuelOVJmSNitmxA0BfO1/0=;
+        b=XP3gRThSa6RbYZnC9OLBCpsSQRAdbjhOj/j+Wq5wSVf1D9sTNPAAHnysqEr/xzy4Xf
+         nlQhDYnKIhRWY+jvUPES6sthNZxvXm5sQ18ceRt0SGAMegVDxYs/xG6sbwtG1WZCf4ef
+         ylMrRpLysCsMEwMFLjuyIbyB6jUSM6tC1mKQU+TZy1ISGy7N9iTiIYg+bOGRXECEpcFu
+         raSauf+4l+gLKKxV2qISGLy6Y3BzsG6pXZC5Vy3QgM7i4l+cd9cEsgB4INo5SPvT589j
+         FeyAIjvyJ/YlTTamUYLuzI8L2LzKQUCjZDdvR/P1Pj26YkyCGBSs+sw3OwJeo4VLhfJg
+         FMeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtmiKBxVQF4McWJuFZJlifDjOSVM1eqhf4GK2ZGBSJEO3ZyHfB16PruF2aMQmSwSNoYbd6FVhPL+u1eiRMjAlAhQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0IPv0ZWoY6xzGZlHW4IUr87hNMFk7ecwFfgFPRUR8/CH+/Ngx
+	I3wk/0mjHoGGb2Xq87PfMIoEdljCUyzicT3QC2XJkHJbkR9XM8D+QcuhQZxLpxo=
+X-Gm-Gg: ASbGnct+0MrUtbl+sOPEBVZ0g3+L/qqfiMQoRkUYX3t3L2mAXX+hM/SVw8iFZS9qtNn
+	xF3D/Zd2NxC/PQoc/Eu88lf1ZLWF8WHwKzkc3PJpED2sigTgkVSVXo9e2w3++0ed+kDjCQZ4q0A
+	8/8FnXnDDloLXxRd0Yu2/4u/ulyeB6XXq3Ok9FR3PhwB9IV7hGPW7iAXWsSjo9AU3bsR/numT2m
+	NP5QeF56XDYn0KsRWbzIQ+UHsv0Dmn7xrYMmXvegRZ5ipjBqwdyx4l9uxtiUtUbcI+JBPk=
+X-Google-Smtp-Source: AGHT+IGWWm2fDcYRYaz/N7szhgJEWFmaFTDYJU8U6ZmPuis5+d3SHG8JFgAZM8+mDcm3BEoTvblddQ==
+X-Received: by 2002:a17:907:9692:b0:aa6:91ca:3674 with SMTP id a640c23a62f3a-aac2adb92a6mr1572179466b.4.1735892752966;
+        Fri, 03 Jan 2025 00:25:52 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f06dc7esm1868462866b.193.2025.01.03.00.25.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2025 00:25:52 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH] dt-bindings: samsung: exynos-usi: Restrict possible samsung,mode values
+Date: Fri,  3 Jan 2025 09:25:49 +0100
+Message-ID: <20250103082549.19419-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250102204015.222653-3-ivo.ivanov.ivanov1@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 02, 2025 at 10:40:14PM +0200, Ivaylo Ivanov wrote:
-> Add constants for choosing USIv1 configuration mode in device tree.
-> Those are further used in the USI driver to figure out which value to
-> write into SW_CONF register. Modify the current USI IP-core
-> bindings to include information about USIv1 and a compatible for
-> exynos8895.
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  .../bindings/soc/samsung/exynos-usi.yaml      | 22 ++++++++++++++-----
->  include/dt-bindings/soc/samsung,exynos-usi.h  |  8 +++++++
->  2 files changed, 25 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> index f80fcbc31..50db63a8a 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-> @@ -11,11 +11,21 @@ maintainers:
->    - Krzysztof Kozlowski <krzk@kernel.org>
->  
->  description: |
-> -  USI IP-core provides selectable serial protocol (UART, SPI or High-Speed I2C).
-> -  USI shares almost all internal circuits within each protocol, so only one
-> -  protocol can be chosen at a time. USI is modeled as a node with zero or more
-> -  child nodes, each representing a serial sub-node device. The mode setting
-> -  selects which particular function will be used.
-> +  The USI IP-core provides configurable support for serial protocols, enabling
-> +  different serial communication modes depending on the version.
-> +
-> +  In USIv1, configurations are available to enable either one or two protocols
-> +  simultaneously in select combinations - High-Speed I2C0, High-Speed
-> +  I2C1, SPI, UART, High-Speed I2C0 and I2C1 or both High-Speed
-> +  I2C1 and UART.
-> +
-> +  In USIv2, only one protocol can be active at a time, either UART, SPI, or
-> +  High-Speed I2C.
-> +
-> +  The USI core shares internal circuits across protocols, meaning only the
-> +  selected configuration is active at any given time. USI is modeled as a node
-> +  with zero or more child nodes, each representing a serial sub-node device. The
-> +  mode setting selects which particular function will be used.
->  
->  properties:
->    $nodename:
-> @@ -31,6 +41,7 @@ properties:
->            - const: samsung,exynos850-usi
->        - enum:
->            - samsung,exynos850-usi
-> +          - samsung,exynos8895-usi
->  
->    reg:
->      maxItems: 1
-> @@ -106,6 +117,7 @@ if:
->        contains:
->          enum:
->            - samsung,exynos850-usi
-> +          - samsung,exynos8895-usi
->  
->  then:
->    properties:
-> diff --git a/include/dt-bindings/soc/samsung,exynos-usi.h b/include/dt-bindings/soc/samsung,exynos-usi.h
-> index a01af169d..5fbeb426b 100644
-> --- a/include/dt-bindings/soc/samsung,exynos-usi.h
-> +++ b/include/dt-bindings/soc/samsung,exynos-usi.h
-> @@ -9,6 +9,14 @@
->  #ifndef __DT_BINDINGS_SAMSUNG_EXYNOS_USI_H
->  #define __DT_BINDINGS_SAMSUNG_EXYNOS_USI_H
->  
-> +#define USI_V1_NONE		0
-> +#define USI_V1_I2C0		1
-> +#define USI_V1_I2C1		2
-> +#define USI_V1_I2C0_1		3
-> +#define USI_V1_SPI		4
-> +#define USI_V1_UART		5
-> +#define USI_V1_UART_I2C1	6
+"samsung,mode" property defines the desired mode of the serial engine
+(e.g. I2C or SPI) and only few values are allowed/used by Linux driver.
 
-Conflicting values with USI_v2. This is the same property and the same
-driver, so I expect the values to be unified.
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Rename (copy) USI_V2_ to USI_ and then just add yours at the end.
-Binding then in allOf:if:then should restrict with enum which values
-make sense for which model.
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+index f80fcbc3128b..5b046932fbc3 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+@@ -64,6 +64,7 @@ properties:
+ 
+   samsung,mode:
+     $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [0, 1, 2, 3]
+     description:
+       Selects USI function (which serial protocol to use). Refer to
+       <include/dt-bindings/soc/samsung,exynos-usi.h> for valid USI mode values.
+-- 
+2.43.0
 
