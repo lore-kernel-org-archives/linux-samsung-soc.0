@@ -1,77 +1,75 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75821CEADA;
-	Sat,  4 Jan 2025 16:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4981E507;
+	Sat,  4 Jan 2025 16:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736008166; cv=none; b=U797f5yI2+uSI+oWsy5VKo201SPLTvqZKP2805e8MkxcIG/ifMgdtY3kkoEy2evWgX/RmJEVyA3G61TWkyVZpgNEh9HbvE6/Ywpogwhld0atckoZO0+JQyiGuC4esI9BYEWfXVsR8WdVe9PqCjja/tyFBl+N5J264bqbOaO8Nbs=
+	t=1736009008; cv=none; b=lTsYQkab0dbwEMUkiBreSq7Q1yk0n5YzRkk2c/t3bOMlc7eSQCjPFCogLNp7JPW9/v8zNCvyLKSlJc2basVSYtw9gLYaSdNJDFCZBQnQNztFZ7+pbPSIOob54xBUJP4qB4wcLdSIjyj1EKxuBaiR3RlMuVRJcj56xxiVOseT+v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736008166; c=relaxed/simple;
-	bh=DyLm57u0rTQ9KAWlUiAyGV6jOKfQ6nv7MGT06siWOI4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VukrhhY0QcN+yPoXQUHbQ7sk4VfxJM/U+hsG1A6eg3kTR8GPW2kijiHXE2ql91JMasjtL1u/xHZf6nhiE3TCeaRtMjusL8bdw4PkgJmA9+SAzeYSUdiwAslw58km8X5uTTR0KHEEIDERa4EjhJzYLCkQRcDjGOP2h5M7YSV7/ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bdWnN7mn; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1736009008; c=relaxed/simple;
+	bh=JdQDEHdQdZQtsn6BK1z0F0fiP7yQmG3+XFbBkDi0PTc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pr1+9OygaWpG1dUi6UNn97xv1Dtj/V6DcX77lSLAvX3fundP1MmkzNQIaYF3X1HzGYs9MHx1Qm0IQZtXrdW3JwJEvUqo16R21M9aQwLLCx0z79cw3Y1Dbepfh6cLWHxmf3Gbqo7Q7+MVa4cMHMe3WO+QV00IwwLCHSc/JJLmvMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bThop2Db; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdWnN7mn"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4364a37a1d7so137626445e9.3;
-        Sat, 04 Jan 2025 08:29:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bThop2Db"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso130240225e9.0;
+        Sat, 04 Jan 2025 08:43:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736008163; x=1736612963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dmwJdSWcH80KR9c9ophGs9zgU8sQ51fKGw8dpXKN/Fw=;
-        b=bdWnN7mni0BY1od5MRZmpc+XC7SO1cYm+uY9QeqzP4exZldJeBxNJR8tOZ5vut0NLL
-         SULXq9i8IZS1W49DunrLEh4FVD+Z6SZQ79TbiEFaIhFKfy8vRT1Nt+/rzNQPVAz84oKN
-         uTtQD9t1OoVGxOM8qQP4deF9VTly+mhvjxzPeynzpaYAry+anVQ77JTOGWNFF4D4lkaA
-         8mI0MP/oXTAyYpzl2OId156eFTz36kmVfnyFegpH0NlGtcrYOyJrPc1ENj8xRddUqb7x
-         ckxmomxHeiuXXy+1xRg0YuxR4soALiwCMe4VT33pgvc6nfcGdLvlIWbsO4HCocXigmwO
-         rnkw==
+        d=gmail.com; s=20230601; t=1736009005; x=1736613805; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OeT7GH5ILmC7+ZwAvbXrLYZE10VxTwPPtXsqOi8ctH8=;
+        b=bThop2Dbb48VZikvnrBhfUdWruXevRthXXlmzg9azlfPxmQXpD+X6dbnjO8D8ILv1l
+         h6ZGk6AZSYb2CoCUXLK+TeIIgWQlTbYHU11wB2+tStQAE90HOVlVpXsFQLG3f83JbFdy
+         CUYhc2JEU8uZAXs5ht3ikyXDWLj/lrZG3Mwin59tNq7GeJG0xP0Bt4RrTcnTHtsMJNIM
+         Optik/dX0RsqgZIVGnreA1ahqVSKMAG94qPVgO7FbEG3BN/1kDFE1DY51pYA0sbaOUWP
+         GOIy0O93Hu5Nk7d8ykRaztFmCvWmeGFwinrMdyLs1WGo3JK69wS5/KSr2VRPObbP3XRC
+         B3cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736008163; x=1736612963;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dmwJdSWcH80KR9c9ophGs9zgU8sQ51fKGw8dpXKN/Fw=;
-        b=fkggB0GddHI44pGvL/5GcSywm272jFo1ijq4paiIqb0nZsFkKQ0F5GX6mMQuUQzSEg
-         lkvnyuGSCjLda904g4+VIQTtXNYPw18wUz2hTmV4uNPDmt/JttOZcGsgQZ/lR5uQg4wM
-         5UqEogO+RHLlXgkKWzUVPpiHVPxmOeSxjAJkd2mtAS1bMqoAsP/0CvdPI+IF2StXgI0J
-         DcK/R/6ikBXx4nnqlpq9bSM1ghqeNZ46hwPsyLOkBs/zvZdt/JnXXWnFgJsmCoPCs3Ju
-         KKkD1xLEyeL+G6hM07li6X26ENOlyxCpSnjFavrKbj0Lx6SL1fvah3YKxGdZ7lhoe1Y3
-         a8OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7ikAy3e6Qm/BjAFYzwu8TQdO3RPVNUEEkPd/BgjJC2FExBoetAo9eEYZjf7qdrseYXOMOQyB66jGl8qI=@vger.kernel.org, AJvYcCXRfSP6y+qZ1T/V8miiQMuCECnGlm1jHtH0q8Pkp8qjR/Nmu1W8fhY3fFew/4GO7JR1OrW5xGRrFCD3+Hqr36thKRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlpznBm6PzJXKlsxRIViuifPHE9xnGhl/EKnvjsm6r/+0+ffqU
-	fXI8SzUvL1HZMizFP0rPguzIy1y5p6281YtJnf7b4T6Rt/ea/R4b
-X-Gm-Gg: ASbGncsB6p9PNudAbYjtnym4AjPnaaEEaZpMQ40o64BIJmZ0yHcd4WR1DsI4y/ZH27O
-	pUeBUBlCJvhZknu7QfyaN7MUfDVnlB5WLyn65VPUAxa7Uv7WUkORC0huhVFc9YObf9hF6zKfujy
-	iufI/fXxGEBGnkMxC/1zlhm8KC6gZ80UeoGno7TuUk/wSedy1s00qtr0Iq1bMJ1ncl4vQhuiIl1
-	/XnczWmUcn1FMOtm7ArJO9XSKAdbhHdztLrfIcSTSzV8rCI2SX2/PCdw5ZDlMh/JlSo+qo=
-X-Google-Smtp-Source: AGHT+IF04mnEX9YaKH4594VC9VtYs+3GhiR+7PJ1S6ap8REf6mYZMEBFBnoifIGMwao8P0+yM/FY2w==
-X-Received: by 2002:a5d:5f51:0:b0:385:dedb:a12f with SMTP id ffacd0b85a97d-38a221e27a4mr43531508f8f.6.1736008162851;
-        Sat, 04 Jan 2025 08:29:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736009005; x=1736613805;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OeT7GH5ILmC7+ZwAvbXrLYZE10VxTwPPtXsqOi8ctH8=;
+        b=gjAEXGGbrNqTF7fmp9KzpMJo206aBnA+PqfTpUUd3cphEtze+hsfo17RjahYqto31s
+         yGASKmBs83/m/Mm+clC5bKfFcdVnr1yGnP6+Ujgd6ZKWrBZXM9FnWImbHvi5MHEJcWFu
+         R+9PsjUKvQOY08JJTe2nZJqmXhwjsHbqm4DlFbNBKOutlv65bXucJbwAwWWgXTI8oQhW
+         hpnLpwlQyqT1/CjnYwHSawReDcjyXXC+Y5ZmUU+wlLubkBOaHFdSQe2jd9o6bNtWoVZY
+         7gcj4NOGhJY/9fwEDup5waqoYipri3oBX9JlBiSKvX3pIEZu0SJNZgmVWvMV4Ph8uYUf
+         s9Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJnp4dA67D0AiNJhAHlzVuf5zGtbrrytxemtaF9bu0v803LcYhaLbGvxhGgxQ1EeD9eoKc9EGs+LgFuAt0mx6mIpQ=@vger.kernel.org, AJvYcCVUtUK2k/mQJ0ISRT0VqqXvm75NojTxyAMLWTXq926f7vJWHywIUnr2QC3rhAgvjcteVkvloDkQgXzLf1lv@vger.kernel.org, AJvYcCWYfl5id6SBXpyfwPkmHuxtMhMEVLIXZmNBI/Lu5y3HnUqB2G6lvt13hqGSNise9yq/FeLqlNF7RbDF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpwafkJrrZgMvBwCgHoIGgk0ONF6vLqIETpqxmgIdy3h5OEgso
+	6tM0CmwYOn2RNuVQRLvYoUILCOzo2Z8kV3O0PM2NC46xTrGLMT/LBj6jFw==
+X-Gm-Gg: ASbGncsCyVKdLhlfPhKMh8M/25xlzgFN6xDjTKEmrzCuJYM5L77JCJaCGtisjWTnNCB
+	jACeySbva6Chr4NnrpM5Q04ctN9V8L2ko+vvlibgzVX6PrPWiLt+cCcPnOs7FwR4lFewyeRxDcW
+	F/AJiGiHWtemk3WVzM1/EC+xqijFg5xklGsM0rALtfpJc9eskPAK+RyUUbGzT05NBrPmihL7OIR
+	V0NVkbm9rJOM5g99z9ZTUFogI20eIUi5kxlQ4wCRoaWCvGwee7fRW6yqAfNBc+ZYiV/tFQ=
+X-Google-Smtp-Source: AGHT+IFflzQBanz+qf0JlHxJWMbBsbQVmFQjmWt8PkrghEauNxkIGwkUDzPNrVC0sT0q5/EXW8FMXw==
+X-Received: by 2002:a5d:6486:0:b0:38a:4575:5ffd with SMTP id ffacd0b85a97d-38a45756035mr25928426f8f.45.1736009004663;
+        Sat, 04 Jan 2025 08:43:24 -0800 (PST)
 Received: from ivaylo-T580.. ([94.131.202.183])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4366127c4fcsm522807895e9.29.2025.01.04.08.29.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43661219a7csm513321455e9.24.2025.01.04.08.43.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2025 08:29:22 -0800 (PST)
+        Sat, 04 Jan 2025 08:43:24 -0800 (PST)
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Rob Herring <robh@kernel.org>,
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>
-Cc: devicetree@vger.kernel.org,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] soc: samsung: usi: implement support for USIv1
-Date: Sat,  4 Jan 2025 18:29:15 +0200
-Message-ID: <20250104162915.332005-4-ivo.ivanov.ivanov1@gmail.com>
+Subject: [PATCH v2 0/6] arm64: dts: exynos8895: define usi and mmc nodes
+Date: Sat,  4 Jan 2025 18:43:15 +0200
+Message-ID: <20250104164321.333669-1-ivo.ivanov.ivanov1@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250104162915.332005-1-ivo.ivanov.ivanov1@gmail.com>
-References: <20250104162915.332005-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -80,115 +78,49 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-USIv1 IP-core is found on some ARM64 Exynos SoCs (like Exynos8895) and
-provides selectable serial protocols (one of: HSI2C0, HSI2C1, HSI2C0_1,
-SPI, UART, UART_HSI2C1).
+Hey folks,
 
-USIv1, unlike USIv2, doesn't have any known register map. Underlying
-protocols that it implements have no offset, like with Exynos850.
-Desired protocol can be chosen via SW_CONF register from System
-Register block of the same domain as USI.
+This patch series adds the required syscons for controlling USI, as well
+as defines all USIv1 nodes for Exynos8895 and adds support for utilizing
+the external SD card storage in dreamlte as well as touchscreen. Due to
+PMIC not being supported yet, we'll assume that the regulators are
+pre-enabled by the previous bootloader for vqmmc, ts_vdd/avdd
+(in our case uniLoader).
 
-In order to select a particular protocol, the protocol has to be
-selected via the System Register. Unlike USIv2, there's no need for
-any setup before the given protocol becomes accessible apart from
-enabling the APB clock and the protocol operating clock.
+The patchset relies on [1]. I also expect the exynos mmc binding
+maintainer to pick the specific-compat patch.
 
-Modify the existing driver in order to allow USIv1 to probe and set
-its protocol.
+Best regards,
+Ivaylo
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- drivers/soc/samsung/exynos-usi.c | 42 +++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+[1]: https://lore.kernel.org/all/20250104162915.332005-1-ivo.ivanov.ivanov1@gmail.com/
 
-diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
-index 114352695..e57d2c274 100644
---- a/drivers/soc/samsung/exynos-usi.c
-+++ b/drivers/soc/samsung/exynos-usi.c
-@@ -16,6 +16,18 @@
- 
- #include <dt-bindings/soc/samsung,exynos-usi.h>
- 
-+/* USIv1: System Register: SW_CONF register bits */
-+#define USI_V1_SW_CONF_NONE		0x0
-+#define USI_V1_SW_CONF_I2C0		0x1
-+#define USI_V1_SW_CONF_I2C1		0x2
-+#define USI_V1_SW_CONF_I2C0_1		0x3
-+#define USI_V1_SW_CONF_SPI		0x4
-+#define USI_V1_SW_CONF_UART		0x8
-+#define USI_V1_SW_CONF_UART_I2C1	0xa
-+#define USI_V1_SW_CONF_MASK		(USI_V1_SW_CONF_I2C0 | USI_V1_SW_CONF_I2C1 | \
-+					 USI_V1_SW_CONF_I2C0_1 | USI_V1_SW_CONF_SPI | \
-+					 USI_V1_SW_CONF_UART | USI_V1_SW_CONF_UART_I2C1)
-+
- /* USIv2: System Register: SW_CONF register bits */
- #define USI_V2_SW_CONF_NONE	0x0
- #define USI_V2_SW_CONF_UART	BIT(0)
-@@ -34,7 +46,8 @@
- #define USI_OPTION_CLKSTOP_ON	BIT(2)
- 
- enum exynos_usi_ver {
--	USI_VER2 = 2,
-+	USI_VER1 = 1,
-+	USI_VER2,
- };
- 
- struct exynos_usi_variant {
-@@ -71,6 +84,13 @@ static const struct exynos_usi_mode exynos_usi_modes[] = {
- 	[USI_V2_UART] =	{ .name = "uart", .val = USI_V2_SW_CONF_UART },
- 	[USI_V2_SPI] =	{ .name = "spi",  .val = USI_V2_SW_CONF_SPI },
- 	[USI_V2_I2C] =	{ .name = "i2c",  .val = USI_V2_SW_CONF_I2C },
-+	[USI_V1_NONE] =	{ .name = "none", .val = USI_V1_SW_CONF_NONE },
-+	[USI_V1_I2C0] =	{ .name = "i2c0", .val = USI_V1_SW_CONF_I2C0 },
-+	[USI_V1_I2C1] =	{ .name = "i2c1", .val = USI_V1_SW_CONF_I2C1 },
-+	[USI_V1_I2C0_1] = { .name = "i2c0_1", .val = USI_V1_SW_CONF_I2C0_1 },
-+	[USI_V1_SPI] =	{ .name = "spi", .val = USI_V1_SW_CONF_SPI },
-+	[USI_V1_UART] =	{ .name = "uart", .val = USI_V1_SW_CONF_UART },
-+	[USI_V1_UART_I2C1] = { .name = "uart_i2c1", .val = USI_V1_SW_CONF_UART_I2C1 },
- };
- 
- static const char * const exynos850_usi_clk_names[] = { "pclk", "ipclk" };
-@@ -83,11 +103,24 @@ static const struct exynos_usi_variant exynos850_usi_data = {
- 	.clk_names	= exynos850_usi_clk_names,
- };
- 
-+static const struct exynos_usi_variant exynos8895_usi_data = {
-+	.ver		= USI_VER1,
-+	.sw_conf_mask	= USI_V1_SW_CONF_MASK,
-+	.min_mode	= USI_V1_NONE,
-+	.max_mode	= USI_V1_UART_I2C1,
-+	.num_clks	= ARRAY_SIZE(exynos850_usi_clk_names),
-+	.clk_names	= exynos850_usi_clk_names,
-+};
-+
- static const struct of_device_id exynos_usi_dt_match[] = {
- 	{
- 		.compatible = "samsung,exynos850-usi",
- 		.data = &exynos850_usi_data,
- 	},
-+	{
-+		.compatible = "samsung,exynos8895-usi",
-+		.data = &exynos8895_usi_data,
-+	},
- 	{ } /* sentinel */
- };
- MODULE_DEVICE_TABLE(of, exynos_usi_dt_match);
-@@ -169,9 +202,12 @@ static int exynos_usi_configure(struct exynos_usi *usi)
- 		return ret;
- 
- 	if (usi->data->ver == USI_VER2)
--		return exynos_usi_enable(usi);
-+		ret = exynos_usi_enable(usi);
-+	else
-+		ret = clk_bulk_prepare_enable(usi->data->num_clks,
-+					      usi->clks);
- 
--	return 0;
-+	return ret;
- }
- 
- static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+Changes since v2:
+  - add r-b from Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+  - drop hsi2c_pclk clock-name where it was left accidentally
+  - utilize _I_PCLK instead of _I_SCLK_USI for all usi hsi2c nodes
+  - move assigned-clocks properties to dtsi
+  - set mmc's clock-frequency to 800mhz as per vendor's dt
+  - add a pinctrl node describing cd-gpios
+  - drop the fixed gpio regulator
+  - add a new patch to the series for enabling s6sy761
+
+Ivaylo Ivanov (6):
+  dt-bindings: mmc: samsung,exynos-dw-mshc: add specific compatible for
+    exynos8895
+  arm64: dts: exynos8895: add syscon nodes for peric0/1 and fsys0/1
+  arm64: dts: exynos8895: define all usi nodes
+  arm64: dts: exynos8895: add a node for mmc
+  arm64: dts: exynos: exynos8895-dreamlte: enable support for microSD
+    storage
+  arm64: dts: exynos: exynos8895-dreamlte: enable support for the
+    touchscreen
+
+ .../bindings/mmc/samsung,exynos-dw-mshc.yaml  |   1 +
+ .../boot/dts/exynos/exynos8895-dreamlte.dts   |  72 ++
+ arch/arm64/boot/dts/exynos/exynos8895.dtsi    | 908 ++++++++++++++++++
+ 3 files changed, 981 insertions(+)
+
 -- 
 2.43.0
 
