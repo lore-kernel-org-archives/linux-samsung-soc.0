@@ -1,156 +1,127 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C35D10E0
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Jan 2025 06:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC6AF9D9;
+	Sat,  4 Jan 2025 09:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735973307; cv=none; b=NjIEgM0l1pvYMSCpoweABieD4ZLlGXdVcDsCuBtpYCjd5u1Nf6cV7S1uRwDmty/OWMW8pxMq0eNQus1dSahzXZsbW8hPLZIU/92UD5ExtvGd8cmMhSVebPxzNfWocwWplhgMZikeQWnyBEguuzt41Az96EcU39gnIWFYBgVaHNs=
+	t=1735982635; cv=none; b=PQy6ldFGF8YpMpGmpHWHOX9UbPAW2Aaa7mGxYcrG/BC6krT0fq9XDyEKsiEIxzv4+nMthOsMF6whwVT4kThxI3JORTJqkEiXGFSGuPsjYO1t9G+zqbqi7Lu6f3bMQFx24G4vpEvqZ63bhq8JTm5GoGzYvJPXB8T8eHnUJ1l5vpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735973307; c=relaxed/simple;
-	bh=stYUOuwyY4dfWVz1xVRhq384EFrSnfu5en26KjDHAUM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XVRL90wL73BcVvEboo0mJHQfez2xdunHDwCPlgjpNOJcDn1iKQZiKFSj6G9xAo5ZJx55Bex276IMWjLw1DoUr+YP/1qgkPvuH++CD1VoaB0kee8qATGMWZqQD5GihjFvbOxNFRVlzep6xM3lB9Xp3cIfLA4mXQJT9HQzI5JcnjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NoE2vrUs; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735982635; c=relaxed/simple;
+	bh=2fizrOeFdxzxEs3HnJpNgKdl4YmsAb+Ih8fW5Ysihvw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OsgAuoyEeaxaRqxqmmQKKz+Dx0Lc6fPPUhi3OmtrSGAkXAXfa9dS5hcsA/TLSUKSgZbdPVrt1dO04MvuT/NRoyhYNRpj/2ZNn2qr0o/0imdqgm8V8L88OxlWCM8u1BpXLcDlXw+w/+Zyhm2ZaiW0Ko4MakPsV9LdUJ9w0aQnEfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLpCZw4S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NoE2vrUs"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e384e3481so12365653e87.2
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jan 2025 22:48:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735973304; x=1736578104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OL2v2cgbonvN/57biijzRWsX5GH+mP+xPVPcn+nnd/k=;
-        b=NoE2vrUspJuoJu3DzjK5OHQ/zqCl46EZy/GwuhfijsyVCgdMwN7uuSl4VD7bW+IC/1
-         qezVBz5orQfNqzuwbgwCI1MAIld5KJIpViGAzVPFW5kj+eTqH1W7tpHc7/jYuM6bP6Gm
-         WPrQi5SEX0UpumlKRIiK0yCDB+LfJBHakRzYg5+OM7KaGIEvd5K/3zkwnEcGBEwQoO96
-         e28CtZQIX5Q7fJJPtBmeqRQurtUAjj0kVAiAMFLzaDRqDmibwabtZmm7B+AwnYeM8qCF
-         +x1kiFUs5eEvOZYGpKK84O+I+rwKPr3X/4O81qLdWl7Dp4wdSJoCi8J+R8MrcgsySj8E
-         mACg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735973304; x=1736578104;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OL2v2cgbonvN/57biijzRWsX5GH+mP+xPVPcn+nnd/k=;
-        b=dbMpXrtpQkYe1M14GRzG3uPhqUDv8fetrmqcyhNLo+RVZRxt50wjt33yBdY1rBUK2/
-         RTcGIUIgaN9tCR4ZVevAJuXVDkt+ZxhTShIOt2G1TlkyQ/a7Uv4Kbe+w5cajq9RICC/j
-         t3N2b5xlmdkmnGKBj8lWn0z76dLvqrisFf1ZFOyAx7FoYx+46WQgmxw5W2kt7mM8xunK
-         2UnQwQiS+YS5eQY1a61V6J0QMKe0eLVo0Chsu9+COJ/tzyRcV4b7luzj/uor0oQikGN+
-         dw6hOJRW/0cgSdAV5R5qq/naCVX4t/qal+G7G0XKD99Lm/HmBo234a3+IU2Zck54Ywa8
-         tGCA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/IOq3/1m8A7AkbScSk/qaRp57olDyegRHG/ku8GmOsi8cM5KPQ38DkNx6Q/NBO5DT568wQ68mPTpPfdiRgJ3rEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcqnwlZz0lfXVtTMAUL+ySAGNXTwAPaoAyCEMoiYCAZADRxBr1
-	MFR4Y9dkvr15E/+RXPuf80Mzh85xjPQEx8v6dk+G8/5mmVvySNM7ZG/zxXkyqQ4=
-X-Gm-Gg: ASbGnct+Ii++vfOKfvelyfyxWtgFi/dDL2cLiRh3T0gmBgpa35jGX95kq6ZtmuAVQCo
-	JtK3UBVtx8Rn7JxjvExff1Vh6BQmNtcF4smmWI/7GSrE43xGw/Q8fZ+qdgqM6DS8tzoge5fCf6y
-	KTH+UEqOPuxySXXj17VK2UGNF0KiSFB+jwVNqqp2816lpsqxLdH+qk6WZuwDUVqw6mLV3kG8k5m
-	XAHPVvVIGbu66UQhgvcAgdMKPenujwVM20aHBgjL/fyKuLSp1c21Crhv5GqBBMl+Pl73h4XLUfN
-	69oru1LSz4SPfDGkOPQdOrtl
-X-Google-Smtp-Source: AGHT+IH3b8Wrusc5F4Hb8fKgaj49rA+Ki+WtT2vpjNm4L2ymezTReLIBxE1xf5KxHdrS/65tedN1lQ==
-X-Received: by 2002:a05:6512:1114:b0:540:2fbb:22cb with SMTP id 2adb3069b0e04-54229533aeemr14027670e87.13.1735973304217;
-        Fri, 03 Jan 2025 22:48:24 -0800 (PST)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54223825f3csm4213238e87.226.2025.01.03.22.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2025 22:48:22 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Phong LE <ple@baylibre.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v10 00/10] drm: add DRM HDMI Codec framework
-Date: Sat,  4 Jan 2025 08:48:19 +0200
-Message-ID: <173597328997.875472.12782462213120017264.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241224-drm-bridge-hdmi-connector-v10-0-dc89577cd438@linaro.org>
-References: <20241224-drm-bridge-hdmi-connector-v10-0-dc89577cd438@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLpCZw4S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD35CC4CED1;
+	Sat,  4 Jan 2025 09:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735982634;
+	bh=2fizrOeFdxzxEs3HnJpNgKdl4YmsAb+Ih8fW5Ysihvw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MLpCZw4Sc/O/jeOcI0lO9U8bnMNAkz359e7b9+//cZqBIe5yNu37G2l7502uVhKnH
+	 T59wsEMuxh7qKciiBwSD6CmtW5grCFFCeiCBEqKQ78nSSVLiMvj3QaKp1qm4fAwncu
+	 /vq+NqnlAgaTPB+22GqGWt18g9sldU+2/t4lthlOanrP1CC8JftjxvVfzcIVJsLHIv
+	 xZDYWGMDsyqL33+1fJepMwfZ00mKgRduK/q4FxymWSFp5BnYSl2RDLi3Ycz3u2dQDC
+	 r2U7FixD1S5T1LaG/vOMNKJowhZqmY8c9A1MsajXymFIvy8J8D7JWBmdt1MN+futP5
+	 7hD3Q8+hj8lnA==
+Message-ID: <9c881612-d80a-4656-aac2-f6134c274167@kernel.org>
+Date: Sat, 4 Jan 2025 10:23:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] dt-bindings: power: supply: add max77759-fg flavor
+To: Thomas Antoine <t.antoine@uclouvain.be>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be>
+ <20250102-b4-gs101_max77759_fg-v2-2-87959abeb7ff@uclouvain.be>
+ <cf75f897-1c00-4a37-bce3-f1eb9855a3cd@kernel.org>
+ <2eb1f056-4102-4536-90d1-9d5df1fd2cb5@uclouvain.be>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <2eb1f056-4102-4536-90d1-9d5df1fd2cb5@uclouvain.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 24 Dec 2024 03:47:52 +0200, Dmitry Baryshkov wrote:
-> While porting lt9611 DSI-to-HDMI bridge driver to use HDMI Connector
-> framework, I stumbled upon an issue while handling the Audio InfoFrames.
-> The HDMI codec callbacks weren't receiving the drm_atomic_state, so
-> there was no simple way to get the drm_connector that stayed at the end
-> of the bridge chain. At the same point the drm_hdmi_connector functions
-> expected to get drm_connector instance.
+On 03/01/2025 17:16, Thomas Antoine wrote:
+>>> -  reg:
+>>> -    items:
+>>> -      - description: ModelGauge m5 registers
+>>> -      - description: Nonvolatile registers
+>>
+>> Widest constraints always stay here.
+>>
+>> See:
+>> https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L127
+>>
+>> I did not say to remove it. I asked you to add allOf section restricting it.
 > 
-> [...]
+> Thanks for the example. I think I understand now. I will put the reg section
+> back and use min/maxItems in the allOf:if: to set the number of reg/reg-names
+> to 1 for the MAX77759.
+> 
+> Do I keep shunt-resistor-micro-ohms as I did it here? I could move it in
 
-Applied to drm-misc-next, thanks!
 
-[01/10] ASoC: hdmi-codec: pass data to get_dai_id too
-        commit: 6af45d7df1099ccac634b36f8cdfa32fbca8c1d1
-[02/10] ASoC: hdmi-codec: move no_capture_mute to struct hdmi_codec_pdata
-        commit: bb1d67bf82fbd2c550fa637e0b8a966ee81a293b
-[03/10] drm/connector: implement generic HDMI audio helpers
-        commit: baf616647fe6f857a0cf2187197de31e9bb17a71
-[04/10] drm/bridge: connector: add support for HDMI codec framework
-        commit: 0beba3f9d366c6df10e5b080fc99c45ac17248ed
-[05/10] drm/bridge: lt9611: switch to using the DRM HDMI codec framework
-        commit: c054aa1bf529a2fa13546b25231d16bb0fd87ca2
-[06/10] drm/display/hdmi: implement hotplug functions
-        commit: ab716b74dc9dd4903b9006f473137e1aa624af56
-[07/10] drm/bridge_connector: hook drm_atomic_helper_connector_hdmi_hotplug()
-        commit: 4b5a79d7f4d5c34120c6f2e8836bc8ad3a43594c
-[08/10] drm/vc4: hdmi: switch to using generic HDMI Codec infrastructure
-        commit: 9640f1437a88d8c617ff5523f1f9dc8c3ff29121
-[09/10] drm/vc4: hdmi: stop rereading EDID in get_modes()
-        commit: b4fa0800760c20fe34318a1079687526fc323572
-[10/10] drm/vc4: hdmi: use drm_atomic_helper_connector_hdmi_hotplug()
-        commit: 2ea9ec5d2c207a41d523f8804053cee00fe50763
+Depends, where does it come from? What does the other referenced schema say?
+
 
 Best regards,
--- 
-With best wishes
-Dmitry
-
+Krzysztof
