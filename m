@@ -1,31 +1,31 @@
 Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080AD1B7F4
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Jan 2025 20:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D69C1D5176
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  4 Jan 2025 20:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736024076; cv=none; b=BaGQd1rKcnR43QfxQ9Don4iX459AnPMDFiyLonCij8JUZ+Pf9y8UWBeQYHbnzB0Ka7oKaAjoKbkT5vrHSu7nQTMVfZu8XMKmn+VrQVixFyWbn67NowO5IUFTHp2cpHbhMNXHNruBgIRGClC+EdVw0OPIS/Y+/C70bGSuYdPj3Vc=
+	t=1736024077; cv=none; b=kcaRCmNqmRppW/5fBKuBc/wqayjFQ0T3z6OqNAhrn6/H//kkkJfLMg8wuoMw9jtgiOTwNaOY2kspIvK7PIUrhi4dDMtQwF6AByYyVE1SLNpDoMgll1yfGC0GvaKDrWApre73zfEZgD1vCkbJ9PHhcfgEadBtyNHAO7v7B4GNMaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736024076; c=relaxed/simple;
-	bh=mGxD6iwFtmjZyF9cnW1NHIRS1yBMvIhooC1Hp1N/A2I=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aDOY/nfMRsYzWejHJ7uwouzfbx63KHX48Jw48QaNB2gpIkCJjGBK8rtKH7m8lvHkOVA61E7+qAqz1jP7eCWN1TZH0NMPNyTc8O6G7/Uai59tWTflp3J88v5pTVKi7nnFdzM9uhXuyBAbAaqHAesqcKMW+iSlh1sOYfcL0cBFax0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=2kDknmXQ; arc=none smtp.client-ip=34.202.193.197
+	s=arc-20240116; t=1736024077; c=relaxed/simple;
+	bh=y7XGmitoB/d2FvK9oMBRHq/8yp1wqAV+TBRDnbZB5hI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=A8k0Y0JI96gMIYtc01TnqtjzoDHt01XdT3EqGC965stqwRhG7TWxYtgEED3R4czOQ8RWE2NBG/xnye+Qku/v0Rbfy/MlZzf0CD55Saab5UZNpoFdO31oSe6RoARXcG4U4uXeLP4znp+8Rm/WjSCo2VQx+2nGKgEraYx+U/OEp/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=KCWzH/Nr; arc=none smtp.client-ip=34.202.193.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="2kDknmXQ"
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="KCWzH/Nr"
 Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=2kDknmXQOVXsYODL14SC1+Rd7+fXsrD+Vao+W0vQxxUUW8aCIIe+kpvS2Qs313iqeXY5poIkNyvm0inALrK/7Z1P0Ibey4MP2Mz4Jo5Z3Nnb4wHT/dY/EG95CqKr8/CuqZiqNG2U5ORJ6W7cvku2sSg/JsN264MzzaO0XER5BWplKdtZp5PIMcQQt15/N7sAs+rwiqng0NVz6asEO6IaMzzwdBQJ5yymQlh0Gj0z3bln547KS8awdg/ULvbeTAiA+ktjiabDVVaxhlZ7VbIdkbGY0fTDXH694Y1LE1o2GD5bCPOMfCVc28rOzDzN70SKI3+rcMwOh/9XOFQ5ECQoDw==; s=purelymail3; d=purelymail.com; v=1; bh=mGxD6iwFtmjZyF9cnW1NHIRS1yBMvIhooC1Hp1N/A2I=; h=Feedback-ID:Received:From:Subject:Date:To;
+DKIM-Signature: a=rsa-sha256; b=KCWzH/NrfDRl0+2n/iVUM9pAtbsVro7gQCLC6SIXHPJjvIZEHSlFkzuolfgmZnZlg7X5vUeVgP5rYh73jHH3ZdiNTZErHhLFc9GF/6FPRvNsySLgbWZLHfW7dQL4mhEOzeP90mQWc3E4sR1CCuXJiTFxNubCVS57VbkMJb9wWSbYnqLbzYZLsucESY/WiCryLYZLoxk5Fz1K3oYO4GZcl8g2jF08d4quoB06nxkng9vf6tUU5A70rNMGYTchNWBIY29UwVWfiWv09DiKpfG7NbZMkDaNWLBRnUu2cQzC4fjTW4IAyjoRVkR2aMf5sKzXFd+vPfWo0k/Vdf+p5QoICw==; s=purelymail3; d=purelymail.com; v=1; bh=y7XGmitoB/d2FvK9oMBRHq/8yp1wqAV+TBRDnbZB5hI=; h=Feedback-ID:Received:From:Date:Subject:To;
 Feedback-ID: 68247:10037:null:purelymail
 X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
 Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 166263896;
           (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sat, 04 Jan 2025 20:54:28 +0000 (UTC)
+          Sat, 04 Jan 2025 20:54:32 +0000 (UTC)
 From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-Subject: [PATCH 0/2] Enable CMU_PERIS and MCT for Exynos990
-Date: Sat, 04 Jan 2025 21:54:15 +0100
-Message-Id: <20250104-cmu-nodes-v1-0-ae8af253bc25@mentallysanemainliners.org>
+Date: Sat, 04 Jan 2025 21:54:17 +0100
+Subject: [PATCH 2/2] arm64: dts: exynos990: Add CMU_PERIS and MCT nodes
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -34,10 +34,9 @@ List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPefeWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDQwMT3eTcUt28/JTUYl3T5LSkFPNkS9M0QyMloPqCotS0zAqwWdGxtbU
- ACd3DA1sAAAA=
-X-Change-ID: 20250104-cmu-nodes-5cfbd7c95f12
+Message-Id: <20250104-cmu-nodes-v1-2-ae8af253bc25@mentallysanemainliners.org>
+References: <20250104-cmu-nodes-v1-0-ae8af253bc25@mentallysanemainliners.org>
+In-Reply-To: <20250104-cmu-nodes-v1-0-ae8af253bc25@mentallysanemainliners.org>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
  Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -47,40 +46,66 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
  linux-samsung-soc@vger.kernel.org, 
  Igor Belwon <igor.belwon@mentallysanemainliners.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1736024066; l=944;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1736024066; l=2006;
  i=igor.belwon@mentallysanemainliners.org; s=20241206;
- h=from:subject:message-id; bh=mGxD6iwFtmjZyF9cnW1NHIRS1yBMvIhooC1Hp1N/A2I=;
- b=LN5tCyllQr3iJxSVRPhsL675StndfBt+aJFQf4pOgfuMeV6WzfdYJPn6cXJKE9W9aT7IpnHMm
- ROR/6QbhmqkCz4FMJ5YYr2BFTLED1tEjdCfCaEw0KksNBU8XiYbiqGO
+ h=from:subject:message-id; bh=y7XGmitoB/d2FvK9oMBRHq/8yp1wqAV+TBRDnbZB5hI=;
+ b=wp2LiSqexkr9nlHacMJNjzsq1rbdxz2rqG+owfiMvUU9d/JnivDj75Gj+YL+MCUHbOd/T6a4R
+ ISu+kItYJrcDs1YSZ0vQDqHEwKNs6b49ulHYnfWXL7UGuSX/+cCpHzK
 X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
  pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
-Hi all!
-
-This series enables a new clock block and the MCT for the Exynos990 SoC.
-The MCT design is reused from previous SoCs. It generates 12 timer
-interrupts.
-
-Compile-time and run-time dependency:
-[CMU_PERI] https://lore.kernel.org/linux-samsung-soc/20250104-exynos990-cmu-v1-0-9f54d69286d6@mentallysanemainliners.org/
-
-Best regards
-Igor
+CMU_PERIS is a new clock controller that clocks the MCT. The MCT has 9
+timers (1x count-up global timer, 8x count-down CPU local).
+The global timer generates 4 interrupts, and each local timer
+generates one interrupt. So, in total 12 interrupts.
 
 Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
 ---
-Igor Belwon (2):
-      dt-bindings: timer: exynos4210-mct: Add samsung,exynos990-mct compatible
-      arm64: dts: exynos990: Add CMU_PERIS and MCT nodes
+ arch/arm64/boot/dts/exynos/exynos990.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
- .../bindings/timer/samsung,exynos4210-mct.yaml     |  2 ++
- arch/arm64/boot/dts/exynos/exynos990.dtsi          | 30 ++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
----
-base-commit: 77c5a1c131c3e0c955965b94365e0e7727b37dc5
-change-id: 20250104-cmu-nodes-5cfbd7c95f12
+diff --git a/arch/arm64/boot/dts/exynos/exynos990.dtsi b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+index 9d017dbed9523e874891f13258d331c3e829ca03..0e18711cbdc98a65cbd2d709cdd53a7680b833f2 100644
+--- a/arch/arm64/boot/dts/exynos/exynos990.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos990.dtsi
+@@ -181,6 +181,36 @@ chipid@10000000 {
+ 			reg = <0x10000000 0x100>;
+ 		};
+ 
++		cmu_peris: clock-controller@10020000 {
++			compatible = "samsung,exynos990-cmu-peris";
++			reg = <0x10020000 0x8000>;
++			#clock-cells = <1>;
++
++			clocks = <&oscclk>,
++				 <&cmu_top CLK_DOUT_CMU_PERIS_BUS>;
++			clock-names = "oscclk", "bus";
++		};
++
++		timer@10040000 {
++			compatible = "samsung,exynos990-mct",
++				     "samsung,exynos4210-mct";
++			reg = <0x10040000 0x800>;
++			clocks = <&oscclk>, <&cmu_peris CLK_GOUT_PERIS_MCT_PCLK>;
++			clock-names = "fin_pll", "mct";
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		gic: interrupt-controller@10101000 {
+ 			compatible = "arm,gic-400";
+ 			reg = <0x10101000 0x1000>,
 
-Best regards,
 -- 
-Igor Belwon <igor.belwon@mentallysanemainliners.org>
+2.45.2
 
