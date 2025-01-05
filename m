@@ -1,97 +1,156 @@
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6B9224FD
-	for <linux-samsung-soc@vger.kernel.org>; Sun,  5 Jan 2025 12:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343D02F2E;
+	Sun,  5 Jan 2025 16:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736079530; cv=none; b=Df3Oom0LtrDq0nomFoGpJ3DuZDY7r+ZoP9xoNOwApS6jFPvBSM/OtgvkAFt5dF6Y9YdrloEfBJFJsm7AU9VoaYitEml9vl39sKolVqjXa+IJ8fTJButbzbJewgPw5HSrE1rtlL0gwnhT/BshN+GK1haebgffxV/34UKgZIPjcEM=
+	t=1736093032; cv=none; b=ApSKw3LPj6OJNlfDMEpWizbnWjqO1F1Zu1/VF1fV/fvHFeiX7cPHzffbMGxfRpsrUEglIDzBdSulB7JPBmkOBHMr1FZ0MMD16FgzC3qYzXdM4+5p1vnO8ts0GRWOZv+MgAZRlmPBMROy+ATx98geDQvZwHVCDvgVtylQJ0LMH4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736079530; c=relaxed/simple;
-	bh=75ZZPQPJDwbcguFEzst3gHnA+GRgtEJMBotKkjqpuj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKjAGySzc7UNXP0KgvdVDC/ei6nJPlDHEfWyYjfDCrmlZnbBXZo1DJAls4qChGo6GdcIYg4dZcHpLB7x50CPZ++YtFOg8DLOT5SZZV+cvzZtwtFobf3r/mTdsOz4FG1WCSVfVlFnHtPgDPZDiKLQPd/fGuSxatbi5esJuweYrKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=egP4n2ym; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+	s=arc-20240116; t=1736093032; c=relaxed/simple;
+	bh=qnw+KY1WwWhBUUIgb5vhI/8ad7nexUdFYnDCpyld+3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DoHw2zVRO0eh9v2GKWfWW1Ph369ncTp91t6VKENEIii0DnUjVuDtMIbPOOwsXR8ZjOa4lI6CsYhGVK52URelKpq3pchUcXR617KsUi8LRLdg/aBXAAsuZQohPOGWITPQdGXcJeM5vribfU8UJL7rxhZutwZplj3fwcaqyPhUZtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UaiGwajq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="egP4n2ym"
-DKIM-Signature: a=rsa-sha256; b=egP4n2ym2pyY0NZ6nIdTZabBoHDfJXlnIdxrsC6oxZAJpmWWgvDeHLaM+N3cBN1HAWWumtJ9yRYUCv4kr8EpYVXX/+wppYAbbPnPemDqBeHfqi0eYjETMd+dbRbCLg/TeloC7SJHQtYBSiJ1ddW35CxYjyKzHClO95nu7u5UXL6nXK9jyvYt2GNbKxTTmWQ7CrGlUx3zEY+tGp79N1K6fBq86K/6WyRpDRUmIHGOBwH2X7IKjrkbmibBO55d+1SOttauVHgHQ4VuGCYbAPKSBYFAd+kut4XB825rAaQjJh2F+jKYlIz1nUL9p8o0jy0/OsE5FK8SBo1br52xsjoGXA==; s=purelymail3; d=purelymail.com; v=1; bh=75ZZPQPJDwbcguFEzst3gHnA+GRgtEJMBotKkjqpuj4=; h=Feedback-ID:Received:Date:From:To:Subject;
-Feedback-ID: 68247:10037:null:purelymail
-X-Pm-Original-To: linux-samsung-soc@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 2020578906;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sun, 05 Jan 2025 12:18:27 +0000 (UTC)
-Date: Sun, 5 Jan 2025 13:18:24 +0100
-From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
-To: Markuss Broks <markuss.broks@gmail.com>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UaiGwajq"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43635796b48so82141135e9.0;
+        Sun, 05 Jan 2025 08:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736093029; x=1736697829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIdqPqr8ut58WJhh8jC+m8wlfdOxzjL71ub5pO+L6Qg=;
+        b=UaiGwajq0Lw4So/Zlcjmt3aKf6Yd2Unhn0kxKvp4irK6PZM72XOsC0XDDWZczdjFOb
+         e4C0UAksvroY5epB3HGNWcBVActvnAKgmDs6NByrWxYwlZupBP5KqaQdZSfDwki4B/SA
+         uKlfYddsunJyzzXIkdvMYzJ0FhIHt6D8qqxy2TL/PYCqvre27e8aQeH4iQZSgXDKWOQe
+         dZpGdoHpKPtgum2HyFlpLtO4z4PO+5EtXjD4Z6zMWuiubPVquF4GQTp45USjuH1zBUP8
+         ORmUZv56gw3bdVBkhxH/RdMRHkVD7pY3csx3PW6vCa4ZUMszXXjiAjK/W6sLa9rrB8oh
+         pGZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736093029; x=1736697829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qIdqPqr8ut58WJhh8jC+m8wlfdOxzjL71ub5pO+L6Qg=;
+        b=R0xtF7a8u9Msx3LGlyjs1hLJjrPRL0vMYEjs16gJVB4s7toTObqmseaXWTFzXzLC77
+         ThjRrAGbVNX9TsOlBsh3feadeAfZ6/Xspozv7caUNrQODnsNVIe75jnpkGSKE9ElnBLO
+         fNma+r1+l0OWCEixeX+FHxmeODVC9hbeBr7KEasAPzV6MmolqKxsNPC3SUeHzb4ytv+W
+         yntmp00OUycnMuML+jfA67mCB36eVk4IyqJM+GEyotUJ1Yn7aWibHQBRzAGfR0VlfiQh
+         Hg5fHBK6tLdGF0BmZmUGEQT1GVYGIEH4JxxVtAPTDlrdCz0nwlBmiacNVK+VN1O2NGDV
+         ySTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNpZfMWkMEmYiPirrjHNWVp2iGegbi/9tv/bu7ds0kWztzWy9HWGmkMhW5ud2fnX6EkNcNjpMdeeJS5nqeUbwBEkQ=@vger.kernel.org, AJvYcCX5GXErdOITcJq0Zznt5a2O3foBP+9mEDjoa9OIhj6zQ7WJbLlN89eBGKDkWCW0EQnFYUqvKd4aLHCuovU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRGsVZBLMbXr5KvTdx7lteTD7sMSvGBAoPkWZJek6erJmbImb1
+	oNTdIzhsQ38qDAqZ9ITcxNYKruOKagMSJHFVw328t6AaBI8MQVSafor5cQ==
+X-Gm-Gg: ASbGncsUbZRUOr+/GczMpK2oE65SPlPN83smy/kC/VK+nxTty42DOjlSiI2C55gz87o
+	cSvdnLpZ+D0Hslh1edPSqanah795HFvNF92cCa1+k3T94QDqTQa1s121ErEWDr7bES8iKxupso/
+	sCRLDcb9HmA+GouF/oaT/XSPosiVlKzBNCtbvKZX4UaOAW430ZxPASfSr8tlp9p2mbw6TpQvN1+
+	IldcyCbtdWaLBWMFPqYdwbtwXP3NuwAapHDUF1Lo+1ZswU4kvdnvVO3ypBWUlhK1oEXhrw=
+X-Google-Smtp-Source: AGHT+IFzX5gYFguVH0FccGIXUzFUCgTN+rqYpMq99wBW/xyi6mHs2FyajvkMivnBzCBB4XcwrGukgg==
+X-Received: by 2002:a05:600c:5d2:b0:436:747d:55c9 with SMTP id 5b1f17b1804b1-436747d5775mr394893415e9.5.1736093029286;
+        Sun, 05 Jan 2025 08:03:49 -0800 (PST)
+Received: from ivaylo-T580.. ([94.131.202.183])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c84705esm46031925f8f.44.2025.01.05.08.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jan 2025 08:03:48 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, devicetree@vger.kernel.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>
+Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH] arm64: dts: exynos990: Rename and sort PMU nodes
-Message-ID: <Z3p4kPoya12wR5Wh@debian>
-References: <20250105-pmu-sorting-v1-1-b55519eaff2e@mentallysanemainliners.org>
- <bb1e89a5-a83e-4e68-9568-073f9c4a8af9@gmail.com>
- <Z3p1IV0rVH9dPQ_C@debian>
- <6b66b484-badb-4a99-b19f-5cab019cc5ea@gmail.com>
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] soc: samsung: usi: implement support for USIv1
+Date: Sun,  5 Jan 2025 18:03:42 +0200
+Message-ID: <20250105160346.418829-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b66b484-badb-4a99-b19f-5cab019cc5ea@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jan 05, 2025 at 02:10:37PM +0200, Markuss Broks wrote:
-Hi Markuss,
-> Hi Igor,
-> 
-> On 1/5/25 2:03 PM, Igor Belwon wrote:
-> > On Sun, Jan 05, 2025 at 01:39:04PM +0200, Ivaylo Ivanov wrote:
-> > > On 1/5/25 13:16, Igor Belwon wrote:
-> > > > These nodes were sorted by name, but it's nice to have the same class of
-> > > > devices together. As such, drop the pmu suffix and add "pmu" as a prefix.
-> > > > This keeps consistency between other Exynos SoCs too.
-> > > Well, most SoC device trees still have it as a suffix. Perhaps it'd be better to
-> > > apply this change for all exynos device trees instead of waiting for other
-> > > people to apply it separately?
-> > > 
-> > > Best regards,
-> > > Ivaylo
-> > Hi Ivaylo,
-> > 
-> > The newly-merged 9810 SoC had it hand-fixed by Krzysztof while being
-> > merged [1], and there is a current patch to fix it on 8895 [2].
-> > That's all the SoCs with Mongoose cores (and the Mongoose PMU breaks
-> > sorting). Only 990 is missing this change.
-> I believe for Cortex PMUs it's also preferred to use the e.g. pmu-a53 name
-> instead of arm-a53-pmu. This name is at least also used on exynosautov9,
-> exynosautov920, exynos7885, exynos5433 and exynos7 (list not conclusive). So
-> maybe could fix it on all SoCs at once, instead of making individual patches
-> for every one. This is just a suggestion though, your patch seems ok.
-Thank you for the suggestion! I held off on doing this because in the
-8895 patch, Krzysztof said that the pure-ARM design PMU naming was too
-trivial and unimportant to change. Mongoose PMU however breaks sorting
-in the tree, so unlike the arm-pmus, it's more important.
+Hey folks,
 
-It's up to Krzysztof if he wishes a global change for all affected
-Exynos trees.
+This patch series adds support for USIv1 in the existing exynos-usi driver,
+as well as dedicated sysreg compatibles for exynos8895.
 
-> > 
-> > [1] https://lore.kernel.org/linux-samsung-soc/d1c6d2f2-f733-4cbe-8108-c9c9aaa417cc@kernel.org/
-> > [2] https://lore.kernel.org/linux-samsung-soc/20241222145257.31451-1-krzysztof.kozlowski@linaro.org/
-> > 
-> > Thanks and best regards,
-> > Igor
-> > 
-> 
-> - Markuss
-> 
+The USIv1 IP-core is found on some ARM64 Exynos SoCs (like Exynos8895).
+It provides selectable serial protocols (one of: HSI2C0, HSI2C1, HSI2C0_1,
+SPI, UART, UART_HSI2C1). It's a bit different from USIv2 as it doesn't
+have any known MMIO register map and the serial protocols that it
+implements share the same register base, hence why the way of modelling it
+in device trees will be with ranges, like so:
+
+usi1: usi@10460000 {
+  compatible = "samsung,exynos8895-usi";
+  ranges = <0x0 0x10460000 0x11000>;
+  clocks = <1>, <2>;
+  clock-names = "pclk", "ipclk";
+  #address-cells = <1>;
+  #size-cells = <1>;
+  samsung,sysreg = <&syscon_peric0 0x1004>;
+  status = "disabled";
+
+  hsi2c_5: i2c@0 {
+    compatible = "samsung,exynos8895-hsi2c";
+    reg = <0x0 0x1000>;
+    ...
+  };
+};
+
+This patchset also assumes that [1] and [2] have been merged before it.
+
 Best regards,
-Igor
+Ivaylo
+
+[1]: https://lore.kernel.org/all/20241222145257.31451-1-krzysztof.kozlowski@linaro.org/
+[2]: https://lore.kernel.org/all/20250103082549.19419-1-krzysztof.kozlowski@linaro.org/
+
+Changes in v3:
+  - drop the sysreg patch as it was applied
+  - add a patch at the beginning of the series for renaming all USI_V2
+    constants to USI_MODE_ and a patch at the end to rename them in dt
+  - redo the usi binding support for 8895 to hopefully match all
+    feedback from Krzysztof
+  - change the description of the usiv1 and 8895 binding patch in order
+    to account for the constants changes
+  - change the subject and description of the usiv1 driver support patch
+    because we're adding support for exynos8895 in the first place
+  - make exynos_usi_modes a two dimensional array while also accounting
+    for the merged usi mode constants
+
+Changes in v2:
+  - add r-b from Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+  - restrict the possible ids of samsung,mode with an allOf:if:then
+  - set the properties samsung,clkreq-on and reg to false for non-usiv2
+  - only make use of exynos_usi_modes
+  - make sure pclk and ipclk are enabled
+
+Ivaylo Ivanov (4):
+  dt-bindings: soc: samsung: usi: replace USI_V2 in constants with
+    USI_MODE
+  dt-bindings: soc: samsung: usi: add USIv1 and samsung,exynos8895-usi
+  soc: samsung: usi: implement support for USIv1 and exynos8895
+  arm64: dts: exynos: update all samsung,mode constants
+
+ .../bindings/soc/samsung/exynos-usi.yaml      | 101 ++++++++++++------
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     |  14 +--
+ arch/arm64/boot/dts/exynos/exynosautov9.dtsi  |  48 ++++-----
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |   2 +-
+ .../boot/dts/exynos/google/gs101-oriole.dts   |   4 +-
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi  |   2 +-
+ drivers/soc/samsung/exynos-usi.c              |  65 ++++++++---
+ include/dt-bindings/soc/samsung,exynos-usi.h  |  11 +-
+ 8 files changed, 163 insertions(+), 84 deletions(-)
+
+-- 
+2.43.0
+
