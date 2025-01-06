@@ -1,104 +1,178 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3BEB676
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jan 2025 09:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EC21D63CF
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jan 2025 10:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736157306; cv=none; b=TcKPMZk554jTDZSgN4Ww/Xm3Nka2nn3L/JZ/Iwz/MVU9XzX7L/EnIYp+5CgvuljihvmasLx2iwUjAs4ko+/bKAWiYY37kMoe6466L9wqEQY4WE2Ip7bg6ksFdzSl9eNOidfrd/+fhFc4OPp3ed/P+XEJyCmNlkUeAs1BrpzqX1s=
+	t=1736158846; cv=none; b=jxNsoDpLxi9T6ic/JuF4aOmzA4EcIQNIkE967rwIqQ8+IZ3RGNvUBgfkZTkrm19wfcjkhTh8WKZ51PFZYHA8xN8U2dkoyBJyoyVCApUZYlZSb4q3I3miJhEPSwTEXHOQN/gKO4JWhOkeXi9eazwXDh4EPRbyWsJWTt+hQPv1biI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736157306; c=relaxed/simple;
-	bh=hsfv2qQhw8XRex5wRZMxOjS0luK+pUcgyVbIRe47p0g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=U6aRfy/jrTirIKN68OeFtagZXwPSU8/Wp42g48kOFeXBY5tXbpOGG2oC5Xu+8JdDhoHeTsl8O3z3Ig58NK6Xynv0aaQ+wXVAXuzWPhJxLw0cAsoWfaa3wiKICtjDjPCbyJMZMkLOT4ogsoiGda/3YDwCVa5t1/ajrMh+ZFnoVn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SbAoHQfY; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1736158846; c=relaxed/simple;
+	bh=ZkoORgT34UgE2Vs3eAVs1SE45lE0SteieEH87tYlTzc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Hnqmpp9HXloCZzZRBxzixJtiKNxoqHVppBsBfC4hfJA0GPQG+HHf9xt8WeHcJ2lZeVd9vOiyDbJ+3+EuwV6kc0saphiys3gLeo/n8nPv4lusPVLU8QswnVfKs4OmryYVJyn8S59+ZDRDkQVWaNM3JGI5H101d9UwJjCtajPhZCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GJDN6rZr; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SbAoHQfY"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-436246b1f9bso22641615e9.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2025 01:55:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GJDN6rZr"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38a34e8410bso4618287f8f.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2025 02:20:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736157303; x=1736762103; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U2iPJI5Pfh78RwJ7NO/ObtKaRz1jBQUIZUPPXGPcrds=;
-        b=SbAoHQfYpqUlR/y820afSIUh0LtujNhVQ1Kfvih8Iu8dcYZB3G/lpSe7wgoCDAKscs
-         JecL+/YQ9+iy+piSwkuyrrQGsru+IOsdXK6ABcOHLbUC5qfz9BJw0zZUdIIKcUKwPl8h
-         BYkHUDDgEGL5VXe0oUaSvsPw9Pg3uQaTg+pjU9etvFwS5mPJ3btyNYhT4EEnDsOy6pht
-         //aK7eOkiU2wOq1Evs4tuLgIESgeA22e1giKL/E45RscC1VjUSIG8XMKevnHA9JPjnsH
-         6aHVgjVedD3bkAtJZ4Z0Lj1AMCyo1gFiaOfrsiic4tmi67xzkR8VUUyN3SOdHMZ1O391
-         bJUg==
+        d=linaro.org; s=google; t=1736158843; x=1736763643; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8X068z0NbW+UCr4NJbVvlYn7QHVQGnW6I19hKbAd32M=;
+        b=GJDN6rZr8MBhwRbN4niBLDjIOsmuBWmoDLnkE2eblvZfRjXPMV6juBUNUwQk1x1nlJ
+         iWhUFWMKtytFYUoJ7mzrbNhJz7gqA35+a8dKhw/FXekf7YVwAEEy/WXFRwLqehjEPPmq
+         P6hDozgweqHrKcIjlQD7oI+I4MRSz8F1giY27eWmQ1M+VRdfBij+DBYfOeCgnaD5iz8n
+         75arxcMtPIaK06dhT0BxKCnxeQGlJx9JiUjw41Gau5eAsacFFMWHkNj8MhKaT41ltFHh
+         udq4Cu1ABq4SC8vJ9GVRVL5GAdJ+i5b2fzKPAyLUh/e6w7RxaU3pYzEtmTyATXQ3M3Re
+         OVWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736157303; x=1736762103;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U2iPJI5Pfh78RwJ7NO/ObtKaRz1jBQUIZUPPXGPcrds=;
-        b=wjXAc95sMAls8Z/dzts5T7S3D7xr7BSmTAHBxEZK5ruwXY97bnJeotQrtZni8cq2Qz
-         XKCDwFpTukshgHRqch7klU4xHEs8BjaCScox4Dlp3MAvnMSjC6T8NjbhXUwMOFnJuCtN
-         GRDFBVT2D+RZfQbE1UdCF2pQGTpkHpvtEoaSiYivSp6A2FRU7dtX6l6A4azSvEB6uH3N
-         y7txFMcT2kXVMPyvCqLYo/I0Q0f0tFGwUUKbgdsxdtnFCwU5wFCrSU99FoZ0ZblfNo5m
-         r9EmTPROI39bhwQ9feOfcQB/UFbP6rZjKFnr6rurO+8v48mN8w96JgXCOSEwtgsIEEPs
-         wGiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR2oocxRDX8tCxL6uiNIWoQwRtt3hF18o+GHS9lq2CDEZM4yLGV41vGk1IhZYauCU3SbkbxJnC0A7MqoRQ+I3uHA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoXRF70f5fOncMwyqbiRBcg95j1DbZyMB7JfKCsaCuaiuLciRc
-	pHZgGOTQjXjZVPknJBvHe46PyNndWO07BMFZ1e2Z6w/GKbvGbsTSfp/Uv04waI8=
-X-Gm-Gg: ASbGncsWN37WR6vdJJieWpn1GOXvW+ysn1EKR9Y/4nb3nocLNuTuNeQfgms3GF0JR+S
-	U3fAGvR9pb2IOSAtjJBx0EPXaloyEu3WCYe9om2/vg8hvYLmUmZ7ssNue6F/qnLmtQaaEjjYNp0
-	p5/ZEPhx8vRym4z5ADe/+jCcN3bZHDRMKZMCZ6X0K7nGBRNhBBeeJ8iHY87+TlFd03LujL2frpL
-	CJo8IBMv9nr+9YTEY9S31JK7ZR4qe2H2M665MkKXaCQfJXpJwpITYXe6HWvLjGNnJk4Y+y2
-X-Google-Smtp-Source: AGHT+IGhzA81lWQR5haiIkxbk3kEop+JMPG5/OlSuDW4aLrYxnYZOj1Kch9Rz9kWVISox4P5OqqHAA==
-X-Received: by 2002:a5d:588a:0:b0:385:f79d:21a2 with SMTP id ffacd0b85a97d-38a222070a3mr16327253f8f.11.1736157303498;
-        Mon, 06 Jan 2025 01:55:03 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c6ad3e3sm49080520f8f.0.2025.01.06.01.55.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2025 01:55:02 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: stable@vger.kernel.org
-In-Reply-To: <20250104135605.109209-1-krzysztof.kozlowski@linaro.org>
-References: <20250104135605.109209-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] soc: samsung: exynos-pmu: Fix uninitialized ret in
- tensor_set_bits_atomic()
-Message-Id: <173615730230.114023.7997873261724277424.b4-ty@linaro.org>
-Date: Mon, 06 Jan 2025 10:55:02 +0100
+        d=1e100.net; s=20230601; t=1736158843; x=1736763643;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8X068z0NbW+UCr4NJbVvlYn7QHVQGnW6I19hKbAd32M=;
+        b=CfuFb4TPl1n5RC7N1jamBexXHm7gOIeVve2/5kdn7kzTui813y2fHwHQ0Sm4n6GESu
+         zvBvkULMb41WkW2JEpu2u+J/gydnaqeuTQyqOpVenHqatdVwUChqq1w0NRzLkS/mIoB9
+         HGw95Cqp0oCJCsWteTFb711xAV23pHYZQ4H7hZiJWLwh4sBaqTE5vchho9X4V1QPep+K
+         3vUvH8DNKKG9CuCidBM5cInedT19T3q9+EF5KxOa9tntCMhw38totqMDUqVHRpVXvyWN
+         qQdfY0xnVZsIDDElBrX1FAL1J09XacduClRJ5dw5FZKNUoVzE8uWGuZTQUNH6Py11fg7
+         JO2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXceTWG10yERx83unxNlPd0j4/A3Ysu4KE81gSzRKNzLhQmhIYf0459q97BQSbKr9I5UNB7y4HJxgnd8HxLMAEa7g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ+sIU6wpNc8Ai1DzBLP47KEUyjCVymX4vIan/vVTiumqZjQho
+	vujMmRQ/U7Z5me+OomEaGZWRcdPIC+8oZZZ7UjvW5NVzq5X9ND14KvKobN5qNiY=
+X-Gm-Gg: ASbGncvD3ye51JVyzSU86H+dh3sWa8q5I6ZOtl1D7cRxB9PQ/qD2ZcK+X4WdSZjttnM
+	us5vwCfkXZHSZOYjsQT66DjZq2DDXerzsPkdK5WPaPyW2jdy6N9sbWoMbiXxXbRZW4DUMr8fso3
+	H2YWf0YqSeO/dUj87NxB36Q5hk4OytIIchQ0k6dXQR6XoRzVuKyr0utBVabv2i+tX1f4yyHdIl8
+	O+/rH3ShTmmizMB8TSWtNFT7hhZvDCOLshovpuNm4WjQQ2BysTaUjDQskVzJ+vY
+X-Google-Smtp-Source: AGHT+IGIQDLi1xgJhO8rn+2nlOJ0KwWuo5zVeFcnrcbdiIPBRkk+WzLUuK03bXiGURyPSGYNm5Z3Sw==
+X-Received: by 2002:a5d:5848:0:b0:386:4a16:dad7 with SMTP id ffacd0b85a97d-38a221f2f00mr54847241f8f.10.1736158843338;
+        Mon, 06 Jan 2025 02:20:43 -0800 (PST)
+Received: from [192.168.0.14] ([188.26.61.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a2311b3c8sm44640950f8f.25.2025.01.06.02.20.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Jan 2025 02:20:42 -0800 (PST)
+Message-ID: <d41fd615-2e6a-4cfb-90c9-fc0122ea992f@linaro.org>
+Date: Mon, 6 Jan 2025 10:20:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] firmware: add Exynos ACPM protocol driver
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ peter.griffin@linaro.org, daniel.lezcano@linaro.org,
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241220-gs101-acpm-v5-0-4f26b7fb3f5f@linaro.org>
+ <20241220-gs101-acpm-v5-2-4f26b7fb3f5f@linaro.org>
+ <8e6bade0-5184-4bf7-b1f0-103a77d0f98b@kernel.org>
+ <060c7a96-c1ed-4c97-8a3f-f510102466f9@linaro.org>
+ <24963d4d-9d53-4d07-a756-3eb1fc50c3dc@linaro.org>
+Content-Language: en-US
+In-Reply-To: <24963d4d-9d53-4d07-a756-3eb1fc50c3dc@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
 
-On Sat, 04 Jan 2025 14:56:05 +0100, Krzysztof Kozlowski wrote:
-> If tensor_set_bits_atomic() is called with a mask of 0 the function will
-> just iterate over its bit, not perform any updates and return stack
-> value of 'ret'.
+
+On 1/6/25 9:33 AM, Tudor Ambarus wrote:
+> Hi, Krzysztof,
 > 
-> Also reported by smatch:
+> On 12/31/24 2:32 PM, Tudor Ambarus wrote:
+>>>> diff --git a/drivers/firmware/samsung/Kconfig b/drivers/firmware/samsung/Kconfig
+>>>> new file mode 100644
+>>>> index 000000000000..750b41342174
+>>>> --- /dev/null
+>>>> +++ b/drivers/firmware/samsung/Kconfig
+>>>> @@ -0,0 +1,14 @@
+>>>> +# SPDX-License-Identifier: GPL-2.0-only
+>>>> +
+>>>> +config EXYNOS_ACPM_PROTOCOL
+>>>> +	tristate "Exynos Alive Clock and Power Manager (ACPM) Message Protocol"
+>>>> +	depends on ARCH_EXYNOS || COMPILE_TEST
+>>>> +	depends on EXYNOS_MBOX
+>>>
+>>> Is it build time dependency? No || COMPILE_TEST?
+>>
+>> There's no build time dependency, I'll drop this line.
+>>>
+>>> Is it fine when EXYNOS_MBOX is a module?
+>>
+>> Yes. When the EXYNOS_MBOX module is not loaded, and one tries to load
+>> EXYNOS_ACPM_PROTOCOL module, the later will defer probe when requesting
+>> the mailbox channels, but that's fine.
+>>
 > 
->   drivers/soc/samsung/exynos-pmu.c:129 tensor_set_bits_atomic() error: uninitialized symbol 'ret'.
+> I'll need to select EXYNOS_MBOX, I explain why below.
 > 
-> [...]
+> cut
+> 
+>>>> + */
+>>>> +static const struct acpm_handle *acpm_get_by_phandle(struct device_node *np,
+>>>> +						     const char *property)
+>>>> +{
+>>>> +	struct acpm_handle *handle = NULL;
+>>>> +	struct device_node *acpm_np;
+>>>> +	struct acpm_info *info;
+>>>> +
+>>>> +	if (!np) {
+>>>> +		pr_err("I need a device pointer\n");
+>>>> +		return ERR_PTR(-EINVAL);
+>>>> +	}
+>>>> +
+>>>> +	acpm_np = of_parse_phandle(np, property, 0);
+>>>> +	if (!acpm_np)
+>>>> +		return ERR_PTR(-ENODEV);
+>>>> +
+>>>> +	mutex_lock(&acpm_list_mutex);
+>>>> +	list_for_each_entry(info, &acpm_list, node) {
+>>>> +		if (acpm_np == info->dev->of_node) {
+>>>> +			handle = &info->handle;
+>>>> +			info->users++;
+>>>> +			break;
+>>>> +		}
+>>>> +	}
+>>>> +	mutex_unlock(&acpm_list_mutex);
+>>>> +	of_node_put(acpm_np);
+>>>> +
+>>>
+>>> You also need device links and probably try_module_get. See clk.c
+> 
+> I find these necessary too, will add them. try_module_get() must be
+> called when the module exists and is alive, otherwise I get a NULL ptr
+> dereference. I need a module dependency between acpm-protocol.ko and
+> exynos-mailbox.ko.
+> 	select EXYNOS_MBOX and
+> 	MODULE_SOFTDEP("pre: exynos-mailbox");
+> shall do the trick I think.
+> 
+>>> clk_hw_create_clk() or of_qcom_ice_get(). Interestingly, none of them
+>>> perform both operations, which I think is necessary.
+>>>
+>>> I think you could also avoid entire list and mutex by using
+>>> platform_get_drvdata(), see of_qcom_ice_get().
+> 
+> Using platform_get_drvdata() will simplify the code, thanks. It still
+> assumes the platform driver exists and is alive, otherwise we get a NULL
+> ptr dereference when getting the drvdata. But we'll be safe if I add the
+> module dependency.
 
-Applied, thanks!
-
-[1/1] soc: samsung: exynos-pmu: Fix uninitialized ret in tensor_set_bits_atomic()
-      https://git.kernel.org/krzk/linux/c/eca836dfd8386b32f1aae60f8e323218ac6a0b75
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Ah, MODULE_SOFTDEP is a soft dependency, so I can't use
+platform_get_drvdata(), because if someone removes the exynos-mailbox.ko
+from the file system for example, the acpm protocol will defer and its
+clients still get a NULL ptr dereference when trying to get the handle
+(where try_module_get() and platform_get_drvdata() are called). I'm
+better off with the list and mutex.
