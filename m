@@ -1,33 +1,63 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7632127726;
-	Mon,  6 Jan 2025 07:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56EA2FC52
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jan 2025 07:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736148531; cv=none; b=K0ZkstQ9pGXkiYltHpiNOCkQtzfrx2TWJpP/USv/0vRMp6uOYUbl1EZcnMnMJdqpIOBU6rxu4P28qTAdJeqIqq2OpYKc6jnZLcw83yQVjHMUNps44wNjtjuDHrwsS/jxJmcKky8yNga5/mLuHipWh3OFeVjHBJ0uiSESlRatlHQ=
+	t=1736149001; cv=none; b=i1x97NTJ4T9VctdOMHdSKNIlxIfgIOA4JZ6WIjwMqLJlUOY9xA/naU1q+iVpNs7jwFobFeRQ47E0EJPrMi89MmHQwLDNSJU+MYH/1HJNm/q5FG5bxFacD8z+BpIG0phYTiQx4b9phbTQ+sR30ge0Y1fEwV36vx1jjkr5OkwH9dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736148531; c=relaxed/simple;
-	bh=JkuPPjeyGGqi2dU62QPYG6DQ7v+k2w/UiVKWTL58x6k=;
+	s=arc-20240116; t=1736149001; c=relaxed/simple;
+	bh=GJJnKeyq0AyCBYfSfuuFWtq4NCpFzu0b937iGTQC/yk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uT3nqc32TkdT7I64ZZ3STit53XhVsKc9Ir/6xeuMkWe1acrI4Q1aHfyuk5suvYRIYNdyAZ1BHR/HW9hK5Tbo7K2CuRrQryxk2FMUuUzWDjAmXMzk/sZfj4PSb+lUjpeqJj6yIUG0HWlfdXlxSDv9rEHv5dJAotYwICHKYJK30kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqdf4LQ7; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kNOO5LbaSTKXdcAQY8ojM44PQ94GBNsZTlint7Q4bck0bcR36O6+KCv1sxwlYOSPH+vPAWsvkeN9P/qBs081sinRb3sD6psCr/Rf3BuEj1VXd/um8W0bViaSJv/uQVkOPG9WyuVcYtOQ9kUPnTIjp+cBmLrH9yiMV5WiuhTNGgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h1OeZB2b; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqdf4LQ7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBA3C4CED2;
-	Mon,  6 Jan 2025 07:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736148531;
-	bh=JkuPPjeyGGqi2dU62QPYG6DQ7v+k2w/UiVKWTL58x6k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oqdf4LQ7ycP08bRj1P/3J6zPNt6GhWwrYaCX3o+7kFqGlDtlMoLzSuBYU+cFts57L
-	 ffslCQoeUe+BD/O1HPsV/McD6t4OQl4UBIKqERCjMDHj++FY5EyDVWMuBFMrOcaAZz
-	 /yIEFS1iOwrBeA3GByAZAahogk7XAvVqy0xzfCpsYzbXu2fOnh+yH+t2UPLqwN8Rme
-	 Ma7GXsp0kZsY5EZijQtlgDymPXHZKXC3zYkaCbTkhNDhANs1OHq1WBIC4lVCNFa1EQ
-	 wsClGRalPMCjwLER0pIyCDRizUwU/69zJ8nzjOxx0442P6ad+uDUUJEFbBGNdN+GQz
-	 XdcIAIOQ3Hppw==
-Message-ID: <1cfc1e0a-1dcf-4e3b-b0ff-0a1a6860997b@kernel.org>
-Date: Mon, 6 Jan 2025 08:28:45 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h1OeZB2b"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4362bae4d7dso100331725e9.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Jan 2025 23:36:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736148998; x=1736753798; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XuH/NxHgypHXTjjjbglqsSTpq7IdJAHxtTHnjuWbs8w=;
+        b=h1OeZB2b3rnPJobtwXyvNNBIE/G+skB9YVld3FJd980fgaVqm+mfdyeuH0xwggRxxf
+         /mYC81x4XyiHLZ8CugEOlc34YoHedrOGnlgMuHtHSLEJ5qaz4gaU+1xzxIZ8VwszFxtt
+         5f0vLqX3LnM2kPMFBNDU6S37vSBj8RCJnjFNoy1igzPD6x8aDqIp97kt4R3cer9GWwAS
+         yPRF9CPmaSwkNJm5+8yo5gGa2EaQk0Ex68tx93PxQKGsGA5FI2Ny5zqfs4qP+vLqaSwF
+         9wq/3yTV0FcyEiX/lXDF2pAwUIN3acTNmEfXwm3PnhiYvTV/XU7Y3N0ytD5vRHlONqTI
+         lHdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736148998; x=1736753798;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XuH/NxHgypHXTjjjbglqsSTpq7IdJAHxtTHnjuWbs8w=;
+        b=g5cPhQeZ+CyyI6r+bCdGjLXSoKT90NPSSUFMombNQqdARWvNeXL/KRDK9WUnL9Z7d7
+         nEwfxhrAhxJifmRc/5CWi9fQ+/KRplUN51ACZGnb4ztinZJN+7lSispwlzBrKBGCmoLM
+         pZK6rR2E/0Rv396rgRNdXdkhLMtFJPvMTVG9KyY33mNZSRIuHyvMdlvNcrTXlPRMdA0W
+         KTs18YApMAnZ7tcLNkkNHY0OBLj+NXw5WCy4VODht4M4UQbN7vZDeG8BoyFXydozHUh5
+         BJJSn4G+htqROdB9fqGzIVeClwwdvaJ9QvUTWXs9yVUXGOa/3Lrrgl6egz6YUW6rOETy
+         XLNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3JBppePCRUAVEkk8JOBosUhwN1uvXXuyOHC68CvPPRws0tNKIrQ6f2pFnELlXglFe/tuvfQFlwP+MMKlA5wZFgg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynxyH5npuW6lz379R6XSXcamvH6FyRsIWhp+QmzUI1QL5VHU6e
+	DWYsO33GZm5lX0zz+smlwTgOxIqjcGKlQIqKspFxRpzHKwnTcMj0J89M+jCSR00=
+X-Gm-Gg: ASbGnctMXkjWT1TXcTfzT1tzw/cQWSqgVLOEVRXClQ/XqxvyFXxFhHpcD8CQ/xmRUTM
+	CmOS2inFTWXUNkCcbC5opnuKv6rdn9er2H5kgm4yPbyY0xJqNI7klpQ8SYO1AD6PzHXcwO2DMQW
+	FmbT45WvoA9FZnXN6OJtVelk5LuFJt/yTzkClY6hgOMz0BI0BHPYDF3GhshpwXA9BnnJL8wwWt1
+	7y2gyDuVuK0vj36C/yPmwJ2iDdtn7RUD/+Cr5It2cBxe/VABnaZZWSxEuoFFuCG
+X-Google-Smtp-Source: AGHT+IFQI0rLosE0iSZMKHi92uLdrnY3vwPRxWC4Uk5UIaHJ/DUMhfH+TpjawDUP/rxJQinNEwLVnw==
+X-Received: by 2002:a05:600c:1549:b0:436:1c0c:bfb6 with SMTP id 5b1f17b1804b1-43668b78cd4mr451383175e9.27.1736148998319;
+        Sun, 05 Jan 2025 23:36:38 -0800 (PST)
+Received: from [192.168.0.14] ([188.26.61.92])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436612899f0sm560190565e9.38.2025.01.05.23.36.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Jan 2025 23:36:37 -0800 (PST)
+Message-ID: <f0702bdb-846e-4817-a76c-5ce17dea38c8@linaro.org>
+Date: Mon, 6 Jan 2025 07:36:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -37,91 +67,31 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 1/4] dt-bindings: soc: samsung: usi: replace USI_V2 in
  constants with USI_MODE
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250105160346.418829-1-ivo.ivanov.ivanov1@gmail.com>
  <20250105160346.418829-2-ivo.ivanov.ivanov1@gmail.com>
- <lvi72dmucagm6cxotqxmvc2yjdin3dvumivrfxjcsth2djaf54@n3i36ul3zkvl>
- <8d7670fa-ff4b-430a-b188-778d3922f905@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8d7670fa-ff4b-430a-b188-778d3922f905@gmail.com>
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250105160346.418829-2-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/01/2025 08:09, Ivaylo Ivanov wrote:
->>>  
->>> -#define USI_V2_NONE		0
->>> -#define USI_V2_UART		1
->>> -#define USI_V2_SPI		2
->>> -#define USI_V2_I2C		3
->>> +#define USI_MODE_NONE		0
->>> +#define USI_MODE_UART		1
->>> +#define USI_MODE_SPI		2
->>> +#define USI_MODE_I2C		3
->> This breaks ABI and does not build. You still need also:
->> 	#define USI_V2_NONE 		USI_MODE_NONE
->> and same for the rest.
-> 
-> Alright, sounds good to me. That way I shouldn't s/USI_V2/USI_MODE/g
-> for the other SoC device trees, right? Should I also mention with a
+Hiya,
 
-You can change them as well, because USI_MODE_XXX will be preferred from
-now on. The DTS commit will just wait one cycle till bindings get accepted.
+On 1/5/25 4:03 PM, Ivaylo Ivanov wrote:
+> +#define USI_MODE_NONE		0
+> +#define USI_MODE_UART		1
+> +#define USI_MODE_SPI		2
+> +#define USI_MODE_I2C		3
 
-> comment that the V2 constants are deprecated?
+USI_CONFIG register refers to the protocol selection with USI_I2C,
+USI_SPI, USI_UART. How about getting rid of the MODE from the name?
 
-Yes, this would be good.
-
-Thanks for working on this.
-
-Best regards,
-Krzysztof
+Cheers,
+ta
