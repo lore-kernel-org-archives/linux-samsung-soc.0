@@ -1,63 +1,33 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74C77603F;
-	Mon,  6 Jan 2025 07:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7632127726;
+	Mon,  6 Jan 2025 07:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736147483; cv=none; b=RfpiUcn4cJWQGA0slmdK/E+d6e8rJ0EnxL/nZev0NzEtepjDCQdK0TszNI/iGqcyMnlZy8M9I1JWi+KiD89vasN1io0qYrhymgv5fmYsxu3HhVoQs1nplNqOBfHI63XuRSLvYUMDEgoXfL5Y69hMrzz4QvH3705preVY5aRaolI=
+	t=1736148531; cv=none; b=K0ZkstQ9pGXkiYltHpiNOCkQtzfrx2TWJpP/USv/0vRMp6uOYUbl1EZcnMnMJdqpIOBU6rxu4P28qTAdJeqIqq2OpYKc6jnZLcw83yQVjHMUNps44wNjtjuDHrwsS/jxJmcKky8yNga5/mLuHipWh3OFeVjHBJ0uiSESlRatlHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736147483; c=relaxed/simple;
-	bh=vT//YvoZHXN60RS4cxqWg0W3WG44kRsoBd8KtNhyty4=;
+	s=arc-20240116; t=1736148531; c=relaxed/simple;
+	bh=JkuPPjeyGGqi2dU62QPYG6DQ7v+k2w/UiVKWTL58x6k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qN2te0J+TJDP2W7MNhIElcY34a353h/WkTya99RTpYrm2vTEiWDhHrFcl7K6/MQ3c4ja+fBh6boH7636XoHUKS+vyQQ1Qsid6wCofFqpvkichNxyX8UQ9aTL8sNKKiXIP/3fT5poE80lHQ0KS4e8teXy7iISQ+R7ekGHPLFv8dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqkZw8ek; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=uT3nqc32TkdT7I64ZZ3STit53XhVsKc9Ir/6xeuMkWe1acrI4Q1aHfyuk5suvYRIYNdyAZ1BHR/HW9hK5Tbo7K2CuRrQryxk2FMUuUzWDjAmXMzk/sZfj4PSb+lUjpeqJj6yIUG0HWlfdXlxSDv9rEHv5dJAotYwICHKYJK30kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqdf4LQ7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqkZw8ek"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa68b513abcso2621061966b.0;
-        Sun, 05 Jan 2025 23:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736147479; x=1736752279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GuunkLgNDniHW9DBqAePlIoV8lCR704mAeFac1bTM1o=;
-        b=gqkZw8ekYH8hf8x3PE2LK0THnnqffexANa/6aAkLtaXzkYjCRdsVnWbH//L6ObJ424
-         Uw2aqAcTFvdb9BvNGjKOjhkLX2groLyk3z6qL/ReCBetEa15WkEtkth5v7KEexsw0LFx
-         /BMylk3bTceDEzebbTEOFU+W76ZPaIqy9ciKlgdazokiEqKuzTW15HAusGZ1UmyxUmpn
-         BGCb77nyFEbEFoGZiPwhhqPavrUEHwfHcYoHGT/JQeY3Pgdg3fMY2dtGrKcywfCAFMy2
-         /ck1oS0LePTL5RdpCtbfEUGOG/r4npMafkBuoXDKXQPN6XculWiajUCzuM1RXcC7N4H/
-         lDFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736147479; x=1736752279;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GuunkLgNDniHW9DBqAePlIoV8lCR704mAeFac1bTM1o=;
-        b=wo4IgcbsYCBNv72pN1wNelsexoJoHtwW5XUiLJYKjQlE5dgF/TUXNGsXoYmbOGl4rg
-         Ep89mZFppt97EmyZ2eXmp7Xjd8oU0L7G+Q0j10uo8wQDO0j5Glr7mRTTsVuwdPtdpzjk
-         etwZS/TwAEuREWhowN0LlmcKd0BpvPPl/5kd7fgW9ETLEpko8WcVGiFjOurYxrplz3ZD
-         1pwD+nhdHtlDy8/L38hex9zAc/d0m/rZA7nT9IhJNNXi4Jf3RNViVaNsuS2LZukkuzwv
-         PeRmC66C542BU2XXeY284TAKWNjQv+A13c3aRCNBaTtovUY2yzVQ/CJz4KAA3rAZWzVZ
-         nnMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxWMtjRC7rkwo4R8wtmkB26f9o/bFjPKVNqUFaomC+CnZO1sSDcIbRdNCclT111NKHYVye6/hb0erAjNnV@vger.kernel.org, AJvYcCVZnIl1q5A0krr6ItHMz6YvJk50emuMRsa8zHKs+w7Lo5vYFtj9AW+nYoDHucxw9grZlwMR5P8MQqIaSyZCgtsbay0=@vger.kernel.org, AJvYcCWdfP5ZSBm5VSiHdHNifOdcFpkJU5zgov71ZUyaMKqE2J2UK6czcCFL9TYVjiaDz+T6KO7jtlW4//1f@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg8q8VggSq+MGC3MBBGHVx3yefUOF2uJNSp5aFsAC0L6dJd1pG
-	v+1w9d2dsepm3J/pQxGvMN8Z+7MsBNTCRJK3AfVck81hVy8PClQp
-X-Gm-Gg: ASbGncsJFnyBdVYnof0yEzUoyrYqgDFsg0Ff70goRZgfjegDbsT+YqdxmxCidwvmVao
-	jKxa47QvMfq4TvoPK339vC+jyJi6EXcn5FC7NZZFwbnviIU4B0moMYnmBRMDo6uClIQ3109v1YG
-	+0ytskKiAmSmcZYK1uLUYYRU9PvyH7B/wN3QRROuPP2v7394YakyFipEyZpsR7y8DA7BO94Dhwv
-	s8b+BevEPwMMLzyywoQEd1RURsydUF5qCeaThnrqAGSIXcTJMHnn/6f5Lq47sVdT6JFrxE=
-X-Google-Smtp-Source: AGHT+IHbLwTDEHotcATlgP44Sg5PEzz1pnmxD3cstjHbts1E6mnuJeL7yroJC8Ey7jKFcDtZXcBLxw==
-X-Received: by 2002:a17:907:3f22:b0:a9a:9df:5580 with SMTP id a640c23a62f3a-aac2b0a3f82mr5416462966b.19.1736147478739;
-        Sun, 05 Jan 2025 23:11:18 -0800 (PST)
-Received: from [192.168.43.21] ([77.85.230.22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f0159b8sm2222577066b.157.2025.01.05.23.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jan 2025 23:11:18 -0800 (PST)
-Message-ID: <39e29fe1-ae45-47e6-950e-536d56cf1905@gmail.com>
-Date: Mon, 6 Jan 2025 09:11:17 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqdf4LQ7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBA3C4CED2;
+	Mon,  6 Jan 2025 07:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736148531;
+	bh=JkuPPjeyGGqi2dU62QPYG6DQ7v+k2w/UiVKWTL58x6k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oqdf4LQ7ycP08bRj1P/3J6zPNt6GhWwrYaCX3o+7kFqGlDtlMoLzSuBYU+cFts57L
+	 ffslCQoeUe+BD/O1HPsV/McD6t4OQl4UBIKqERCjMDHj++FY5EyDVWMuBFMrOcaAZz
+	 /yIEFS1iOwrBeA3GByAZAahogk7XAvVqy0xzfCpsYzbXu2fOnh+yH+t2UPLqwN8Rme
+	 Ma7GXsp0kZsY5EZijQtlgDymPXHZKXC3zYkaCbTkhNDhANs1OHq1WBIC4lVCNFa1EQ
+	 wsClGRalPMCjwLER0pIyCDRizUwU/69zJ8nzjOxx0442P6ad+uDUUJEFbBGNdN+GQz
+	 XdcIAIOQ3Hppw==
+Message-ID: <1cfc1e0a-1dcf-4e3b-b0ff-0a1a6860997b@kernel.org>
+Date: Mon, 6 Jan 2025 08:28:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -65,10 +35,9 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] dt-bindings: soc: samsung: usi: add USIv1 and
- samsung,exynos8895-usi
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: soc: samsung: usi: replace USI_V2 in
+ constants with USI_MODE
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  Alim Akhtar <alim.akhtar@samsung.com>,
  Sam Protsenko <semen.protsenko@linaro.org>,
@@ -76,101 +45,83 @@ Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
  linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250105160346.418829-1-ivo.ivanov.ivanov1@gmail.com>
- <20250105160346.418829-3-ivo.ivanov.ivanov1@gmail.com>
- <kgcgxhfwxdrja6djiv45f45pqwbtwnd2bw63xcsyo2msewkzfr@qypxgl2a7gyg>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <kgcgxhfwxdrja6djiv45f45pqwbtwnd2bw63xcsyo2msewkzfr@qypxgl2a7gyg>
+ <20250105160346.418829-2-ivo.ivanov.ivanov1@gmail.com>
+ <lvi72dmucagm6cxotqxmvc2yjdin3dvumivrfxjcsth2djaf54@n3i36ul3zkvl>
+ <8d7670fa-ff4b-430a-b188-778d3922f905@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <8d7670fa-ff4b-430a-b188-778d3922f905@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/6/25 08:31, Krzysztof Kozlowski wrote:
-> On Sun, Jan 05, 2025 at 06:03:44PM +0200, Ivaylo Ivanov wrote:
->>    samsung,mode:
->>      $ref: /schemas/types.yaml#/definitions/uint32
->> -    enum: [0, 1, 2, 3]
->> +    enum: [0, 1, 2, 3, 4, 5, 6]
->>      description:
->>        Selects USI function (which serial protocol to use). Refer to
->>        <include/dt-bindings/soc/samsung,exynos-usi.h> for valid USI mode values.
->> @@ -101,37 +111,62 @@ required:
->>    - samsung,sysreg
->>    - samsung,mode
->>  
->> -if:
->> -  properties:
->> -    compatible:
->> -      contains:
->> -        enum:
->> -          - samsung,exynos850-usi
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - google,gs101-usi
->> +              - samsung,exynos850-usi
->> +              - samsung,exynosautov9-usi
->> +              - samsung,exynosautov920-usi
-> I made mistake during last review - the binding had a confusing "else"
-> here, but that else was a no-op. All existing compatibles are fallbacked
-> to samsung,exynos850-usi, so previous code "contains: enum:
-> samsung,exynos850-usi" was covering everything.
->
-> You can drop other variants and keep the original samsung,exynos850-usi
-> only.
+On 06/01/2025 08:09, Ivaylo Ivanov wrote:
+>>>  
+>>> -#define USI_V2_NONE		0
+>>> -#define USI_V2_UART		1
+>>> -#define USI_V2_SPI		2
+>>> -#define USI_V2_I2C		3
+>>> +#define USI_MODE_NONE		0
+>>> +#define USI_MODE_UART		1
+>>> +#define USI_MODE_SPI		2
+>>> +#define USI_MODE_I2C		3
+>> This breaks ABI and does not build. You still need also:
+>> 	#define USI_V2_NONE 		USI_MODE_NONE
+>> and same for the rest.
+> 
+> Alright, sounds good to me. That way I shouldn't s/USI_V2/USI_MODE/g
+> for the other SoC device trees, right? Should I also mention with a
 
-Yeah I thought so too. It's fine, will fix in the next revision.
+You can change them as well, because USI_MODE_XXX will be preferred from
+now on. The DTS commit will just wait one cycle till bindings get accepted.
 
->
->> +
->> +    then:
->> +      properties:
->> +        reg:
->> +          maxItems: 1
->> +
->> +        clocks:
->> +          items:
->> +            - description: Bus (APB) clock
->> +            - description: Operating clock for UART/SPI/I2C protocol
->> +
->> +        clock-names:
->> +          maxItems: 2
->> +
->> +        samsung,mode:
->> +          enum: [0, 1, 2, 3]
->> +
->> +      required:
->> +        - reg
->> +        - clocks
->> +        - clock-names
->> +
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - samsung,exynos8895-usi
-> I don't see where this compatible is documented.
+> comment that the V2 constants are deprecated?
 
-Right, ommited that. Yet dtbs_check W=1 still didn't catch that.
+Yes, this would be good.
 
-Thanks for the feedback!
+Thanks for working on this.
 
 Best regards,
-Ivaylo
-
->
->> +
->> +    then:
->> +      properties:
->> +        reg: false
->> +
->> +        clocks:
->> +          items:
->> +            - description: Bus (APB) clock
->> +            - description: Operating clock for UART/SPI protocol
-> Best regards,
-> Krzysztof
->
-
+Krzysztof
