@@ -1,144 +1,395 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2763C14658D
-	for <linux-samsung-soc@vger.kernel.org>; Mon,  6 Jan 2025 14:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB291547F2;
+	Mon,  6 Jan 2025 15:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736175494; cv=none; b=eAc6QoC/vqIeo2aH366qfRzi9gVu67XCZvQj3wuh8KKNW0cU6TA3Jo+0qA9q1bKHZZdFzIMh7D8QwXPj3Y5WSUf0kdf3HvPh0BPdATP05JWXEQlGN8fkzDuZNbJ857vXRJEZ3ChoyIIbU5747icfHZqX0YW5aA2wsT0FrO+VnN0=
+	t=1736176618; cv=none; b=GeSMoG+X/utIepUpTYDBSONJc8acAwnlaQZqBufEu5yBYPtz7xVsq0RtSjUgrP6xMw+c3bSi21viLTL7gClqXu4ZOJHYrzqT9Ge/UYIkQTtHmTUHaVYWhtfQLWToDkoQDhAp/sOuU4Yesz6DvpfI59C4ZzjLcx8jbsB6q6uds3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736175494; c=relaxed/simple;
-	bh=iTH+glL8K3yAvVrgROMwFpjc482sAa3ddUjNd79KEUY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oAPpyrQyVJGHrvxHioQK9V8wWZfJopT5jNAu90dL32oPu/052e+MwjbTrLjpZKdSQU41Xl2lJqIBgSUpH8pfZ1RqrxTjklrhoPjGX6NloJscKoSw8J1jkakk379jSOIrUu6vBkQuzy3xP2kecaT/SC0UhYiwyvbycKWmR3nz5z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PCrcpDV1; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736176618; c=relaxed/simple;
+	bh=J+Y8OL7oG0PqEI4D0x3j09u744z8WiuT1O1WeIUAbrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6IOrCQAFioAI97Q6pWvMjmSuBVXK1Ye1lY0NamUKO0OADyivbWloEMSp4Kz6nGpCZ9yHfKUwa4Zegq2CNk38jrl9C6obegjWS0tXVOE14+vKmPi2Q3oNAfUBaWJyCoqC5+pa89i9n4DYNdn/RRCrvUJaAJA/0YeuDT6OA7jH30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYrQlBSM; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCrcpDV1"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aab925654d9so2545907566b.2
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jan 2025 06:58:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYrQlBSM"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso151922205e9.2;
+        Mon, 06 Jan 2025 07:16:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736175490; x=1736780290; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E6sD4irUn6sza7KpMORXxjiIv2gb1G9wQAnmFA2ALjk=;
-        b=PCrcpDV1QzG77OuUpg4Z5CM6iVNDPrb3oactl0MVXHoearTlBX7HXdjPFfaZO/P4Nu
-         Y4c/5hEpW1G5fZJe0ylVn+ltnv6ZVgw6Cx462r5n0OEWSXhO2sVO0cQZQNhvf/tvwFJc
-         kUhtZLP7lBSv6wK+/ZePeLwaPZ+FSvSU4btl+XeZT/kxUt32F1ME3dGkq7Y/pWd9fJHm
-         ISvwrVo8da+FJSCrg7tqCLW1KOIeiRrL4P2kjVmpxNKyg24GqTPwHzkvXpgCbgjbvO+q
-         3Zsp408w8DVgh8iqx9313v7XAS6NEjXSsFmy1QEWUB5twEkyqmQ+RWbYBeosnNq4ooGg
-         zcCw==
+        d=gmail.com; s=20230601; t=1736176615; x=1736781415; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=D0SpWPvZ88/rzaKxyWdiuzAOb2of6E+MdGH8hOo2Dzk=;
+        b=hYrQlBSMPSeQKdfCnYkUTEpPpCJh177m3YobBA+IAgoOyCIhbeoPeNRHggAdKP62Uv
+         sZYshRsa2n1E3qSnqLf/0ZUP9FZyfOP3ZJDoNfgodTQyE/OU7NCC2AsdTtmAt9CASmZJ
+         /1hnb0tMfZkMyphAoBwumGfkTecO2d1M4TPqb/86YQq39VvnwT8AWICk5veUQEqjJwmd
+         SGVMcdiDePJWCu4x0jAzc57LhINlzTOO+dpyL+mbv34mziqGDfNMP9mCp49ZuKt7Qy87
+         uvziXZ5i+9odMbEB1b/ZwJ1fA1TFde7RtREmd/JPXsHgdZmkxPjluOn7kRr3Nk2c+DeM
+         N6yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736175490; x=1736780290;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E6sD4irUn6sza7KpMORXxjiIv2gb1G9wQAnmFA2ALjk=;
-        b=NRrVnHpQKwgxsF2ge2akwrX8bIno1ClJmk493ynDNfhJkTmMIq/+ugC/GOY2TW+d5C
-         rWYynx4eZh0m5PCtP65WX00vd5NA5iHufbQaskkH98ISl9ieDOkt/PzDUsk7xr7LjJSu
-         TuS2fCunjhYklwWOscUW/52tPVYDsktIZLY4LTh02Qrm/NyqrNsAjghEVabdGeN6aOA/
-         aaK+M9K7E9CqjVcx62+6tWS+5lHca3GXtAbhL7Y5DqBMnhEf/uLgsz7rgsUbsxgD9EWZ
-         vxEYloAJMISYTzsTeGfksNiB/p5hGnncLUbiWJl27NyV0Gwucp7ZqhtQy6c8Uu9wwauj
-         Q+gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqW7j5hmFKuUcojWWsRHD3/x2uaLmkhbW/pTssE/rUboUXTeTTzW/D8NX3MQ45x7xrpucth3vIZ7TUYh9HOPjnzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEuDHAQNoGW/A9umVcNr+Prm89HJ+hiaArO3RtOAmQ8F6jRZtH
-	qB/ye+f62Y9vUXa0TR3enSJlntikq7FmZxxSbmXOhkbvCvrNJKmVx/wineuYOzg=
-X-Gm-Gg: ASbGncvPdKaf20TOLuy6y3K4RdByMLLOc2uhOI45LMLOnT5vw8fDR/6Fz+BWK7EmM+8
-	GBVpIM9R/yvEr1rRb3dexpoRzQ3K6hIexu6hYO/A1L4M+Y+2b775gv4QKE/xjWVMgTZBsEll6D/
-	2OyDoql5K7KMMqkLSU/D3NsuskWF4a0RGkMFa1yU+Hc6XlAReMDU/YI9whWuhCqIQe0sh14e5IR
-	i2YDGJhbxSflQI+CLf7PlYKCzGFWeEpbwyFnSKP0dX/V/WKgz0KwN04FnN3hLhLsm2klMZ3UEE8
-	ZPEJxcjNeyc=
-X-Google-Smtp-Source: AGHT+IFRjFd1+Nt8YGyLxt1NzKlQHb+mqjSKJiXkaCf2qGD/U15D7dEyH+i1RGInpgWlzwlThJF29Q==
-X-Received: by 2002:a17:907:3f1f:b0:aa6:6885:e2fa with SMTP id a640c23a62f3a-aac2adc43demr5147987666b.14.1736175490453;
-        Mon, 06 Jan 2025 06:58:10 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.65.101])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f06542fsm2244307766b.176.2025.01.06.06.58.09
+        d=1e100.net; s=20230601; t=1736176615; x=1736781415;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0SpWPvZ88/rzaKxyWdiuzAOb2of6E+MdGH8hOo2Dzk=;
+        b=tw0br3jhjqlmaZTMh4TKF41QIX9ltqA1kkMhVmXaqaPWOodqbI2ddIfPG3vPqbYX1E
+         Ga6jxQBCojveB8TtuyFhCUrowzqecG7QHVVtaF9UShN4skSiAo3zDmtvc+I0EkX2idKC
+         OdegWDROJg1hZd+O0LSHKdxsgua4sWzmeKN4tISiLAwZVvF8/ZDWqlu8iz1PtRehlT6L
+         vVRJxD459gtivmEbeji4PdWy6eygVXZgTzO8PXlVY8NTQ9y0We/7RHXK8qTTpb6bzSTw
+         Hqg8/ToZaSq9uXWA3TWa5Xjx1rxlV+6NV0fQ+gLptE6U0FzlMOuvqS9Ck8fkWrYNA+pe
+         jmRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUefTVJbTRJ8MYVaP64CBj5W7mYev1IC82qjgC9peJRG5E1JOlN/saONT7cUq7Vv5axG/R8tgHWd59R@vger.kernel.org, AJvYcCUrwE94M0+lp3+uv8p5xGfAmdx63Xc0pLDCJ6r8t94GfjXeGBP03Zs+0OKft9fV4jklHv3JfLO9fzo=@vger.kernel.org, AJvYcCVqGCjc0fiN95JjfZcmUnNK3B4h7N+EG6pbPtaqsNl7gLczw0Jrta9C4+/8/Gkz30TGCTt7u0PpmNWsjWDr@vger.kernel.org, AJvYcCWG0O4HbrI8jZ9ShYWv7rVJ/ekS940pjx1Y3vb3y+aApD8syqMqLTP4NuLPub5KbVhM5I/QLBObt6+UKV8hZz9+fKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCeTo9ZNMPJ7xwRLyhtbi3J+AHF5Gg2cqk8lkTw5wydI7PBHHC
+	dWuVA5yFS6MOh7r0LXZwSt2lprMAB4ugL5yU440l8O6F6plOomnT
+X-Gm-Gg: ASbGncvfTsKt/msiqvh5mLEIvJ1EvGvAtrZ0N2u2URCKwSnd0dKw/sHvLJnBn7+EZ6Y
+	Q1vLqRGGGK/XsjLBZDkupOfVpnjUIraVOlJUHPJK58oOo+bM3JPRDcwB1vEv4F+cEAemTUvsU1E
+	x+XSLx19Vr6vk+jT/6jjL2AowPe8MT8zxnl3hFk5i0o4v+K4BC4nL7xyArrs0kcCwJPjazTJ4B9
+	6DZTlu0sBACRtH+1tmaj1lV8xXDmIES9fi1kySj/mvoBROp9/r7
+X-Google-Smtp-Source: AGHT+IEUBeiOgEHbVhzVNtQ3RIq3O18XCjU6p+FX6N1nz8U/rZB8Y7Ul/j2h4pIGjNXdeV8+jymP3Q==
+X-Received: by 2002:a5d:5848:0:b0:385:df6d:6fc7 with SMTP id ffacd0b85a97d-38a221f2e4emr49306826f8f.25.1736176614813;
+        Mon, 06 Jan 2025 07:16:54 -0800 (PST)
+Received: from debian ([2a00:79c0:63f:e400:224:9bff:fe22:6dd6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8330d4sm47550913f8f.29.2025.01.06.07.16.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2025 06:58:10 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 06 Jan 2025 14:57:46 +0000
-Subject: [PATCH] arm64: dts: exynos: gs101: disable pinctrl_gsacore node
+        Mon, 06 Jan 2025 07:16:54 -0800 (PST)
+Date: Mon, 6 Jan 2025 16:16:51 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: t.antoine@uclouvain.be
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel gauge
+Message-ID: <20250106151651.GA14942@debian>
+References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be>
+ <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250106-contrib-pg-pinctrl_gsacore_disable-v1-1-d3fc88a48aed@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAGnve2cC/x3N0QrCMAxA0V8ZeTawdhXRXxEZbZbVwGhLMkQY+
- 3eLj+fl3gOMVdjgMRyg/BGTWjrcZQB6x5IZZekGP/rgvJuQatlVEraMTQrtus3ZIlXleRGLaWO
- cwvVG9+DTuDL0UFNe5fufPF/n+QNep9VudAAAAA==
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- tudor.ambarus@linaro.org, andre.draszik@linaro.org, kernel-team@android.com, 
- willmcvicker@google.com, Peter Griffin <peter.griffin@linaro.org>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1581;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=iTH+glL8K3yAvVrgROMwFpjc482sAa3ddUjNd79KEUY=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBne++Ayfv+DgCfSMMhGTSVWQwjtT9Z5GStmctK2
- QFOzFqRLUGJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ3vvgAAKCRDO6LjWAjRy
- umC6D/9x2/8qLa7E6Cz5xYryQFkBzBayGVFkwIiFZSMO1+c94kaw0HYoXUTGlZ1RDNCgYeoP1g5
- eHbZG6eP8MUDJwFo79Q6Tq3yAnhjCbGaJO0jYleXBd8+pmASLeG+hgegtGkpRcF0SYPvDvQLykN
- IRBmAN0i2Ym13U68AcvRPXXcm/DOJxrnBhe14xC7qCztd+34dsVhcBvtsaNcVY/CEFAJo/fD7/P
- PNL92kmpmJ/g4LXwiCCLBrOq7HfDA4cfAtF1SG7ltI5X0mwRniCThqYh4Emeq44TBZtQSahxc6Z
- wOP2k3P+r1y9tCMjsIt5y81bPmm+yd6ZmFqAucraNRLLuA42tIzOKiHKu06FQ8TSmkxKr1ZkhE9
- Y16fGKXFep/gAnccy1j+u7dgXkARiIZavBNEqMhKNdMlkDiSwGjpZK1Ygx9DTEPY9GUnI19OuGZ
- /XxqndN0geGf6dqUKQeHIw4keC/MX/LjXu2SIEIn7PZDq/RjAdBgGXXQR1DrUx4e2VLCOPK0MV1
- r+Wi+GarJFRFAevKM0ydYpgQdaypuRBMxbQKhQi4+KVo4CJXHhJSIj8/p9kizqMO42R1TpvnHb6
- nvu5vxbT9fGGM0jI6P7msEN+PgW8TxupxkmTUiL/mTxvUMBy35cqybgVziwhmja41u10geT+fJY
- tPCcQxdhgVc4MhQ==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
 
-gsacore registers are not accessible from normal world.
+Hi Thomas,
 
-Disable this node, so that the suspend/resume callbacks
-in the pinctrl driver don't cause a Serror attempting to
-access the registers.
+Am Thu, Jan 02, 2025 at 12:15:03PM +0100 schrieb Thomas Antoine via B4 Relay:
+> From: Thomas Antoine <t.antoine@uclouvain.be>
+> 
+> The interface of the Maxim max77759 fuel gauge has a lot of common with the
+> Maxim max1720x. The major difference is the lack of non-volatile memory
+> slave address. No slave is available at address 0xb of the i2c bus, which
+> is coherent with the following driver from google: line 5836 disables
+> non-volatile memory for m5 gauge.
+> 
+> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68c36bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
+> 
+> Other differences include the lack of V_BATT register to read the battery
+> level and a difference in the way to identify the chip (the same register
+> is used but not the same mask).
+> 
+> Add support for the max77759 by allowing to use the non-volatile
+> memory or not based on the chip. Also add the V_CELL regsister as a
+> fallback to read voltage value in the case where read of V_BATT fails.
+> 
+> The cast is necessary to avoid an overflow when the value of the register
+> is above 54975 (equivalent to a voltage around 4.29 V).
+> 
+> The regmap of the max77759 will lead the read to fail for V_BATT and to
+> correctly use V_CELL instead. This regmap was proposed by André Draszik in
+> 
+> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a116.camel@linaro.org/
+> 
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> ---
+>  drivers/power/supply/max1720x_battery.c | 189 +++++++++++++++++++++++++++-----
+>  1 file changed, 164 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/power/supply/max1720x_battery.c b/drivers/power/supply/max1720x_battery.c
+> index 33105419e2427bb37963bda9948b647c239f8faa..a41976679eded44fbd13120ad756a626d2867919 100644
+> --- a/drivers/power/supply/max1720x_battery.c
+> +++ b/drivers/power/supply/max1720x_battery.c
+> @@ -27,6 +27,7 @@
+>  #define MAX172XX_REPCAP			0x05	/* Average capacity */
+>  #define MAX172XX_REPSOC			0x06	/* Percentage of charge */
+>  #define MAX172XX_TEMP			0x08	/* Temperature */
+> +#define MAX172XX_VCELL			0x09	/* Lowest cell voltage */
+>  #define MAX172XX_CURRENT		0x0A	/* Actual current */
+>  #define MAX172XX_AVG_CURRENT		0x0B	/* Average current */
+>  #define MAX172XX_TTE			0x11	/* Time to empty */
+> @@ -39,6 +40,8 @@
+>  #define MAX172XX_DEV_NAME_TYPE_MASK	GENMASK(3, 0)
+>  #define MAX172XX_DEV_NAME_TYPE_MAX17201	BIT(0)
+>  #define MAX172XX_DEV_NAME_TYPE_MAX17205	(BIT(0) | BIT(2))
+> +#define MAX77759_DEV_NAME_TYPE_MASK	GENMASK(15, 9)
+> +#define MAX77759_DEV_NAME_TYPE_MAX77759	0x31
+>  #define MAX172XX_QR_TABLE10		0x22
+>  #define MAX172XX_BATT			0xDA	/* Battery voltage */
+>  #define MAX172XX_ATAVCAP		0xDF
+> @@ -46,12 +49,20 @@
+>  static const char *const max1720x_manufacturer = "Maxim Integrated";
+>  static const char *const max17201_model = "MAX17201";
+>  static const char *const max17205_model = "MAX17205";
+> +static const char *const max77759_model = "MAX77759";
+> +
+> +enum chip_id {
+> +	MAX1720X_ID,
+> +	MAX77759_ID,
+> +};
+>  
+>  struct max1720x_device_info {
+>  	struct regmap *regmap;
+>  	struct regmap *regmap_nv;
+>  	struct i2c_client *ancillary;
+>  	int rsense;
+> +	int has_nvmem;
 
-Fixes: ea89fdf24fd9 ("arm64: dts: exynos: google: Add initial Google gs101 SoC support")
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: tudor.ambarus@linaro.org
-Cc: andre.draszik@linaro.org
-Cc: kernel-team@android.com
-Cc: willmcvicker@google.com
-Cc: stable@vger.kernel.org
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Switch to bool and why is needed twice ? Here and in chip_data. Better
+keep it in chip_data.
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index 302c5beb224a..b8f8255f840b 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1451,6 +1451,7 @@ pinctrl_gsacore: pinctrl@17a80000 {
- 			/* TODO: update once support for this CMU exists */
- 			clocks = <0>;
- 			clock-names = "pclk";
-+			status = "disabled";
- 		};
- 
- 		cmu_top: clock-controller@1e080000 {
+> +	enum chip_id id;
+>  };
+>  
+>  /*
+> @@ -254,6 +265,67 @@ static const enum power_supply_property max1720x_battery_props[] = {
+>  	POWER_SUPPLY_PROP_MANUFACTURER,
+>  };
+>  
+> +/*
+> + * Registers 0x80 up to 0xaf which contain the model for the fuel gauge
+> + * algorithm (stored in nvmem for the max1720x) are locked. They can
+> + * be unlocked by writing 0x59 to 0x62 and 0xc4 to 0x63. They should be
+> + * enabled in the regmap if the driver is extended to manage the model.
+> + */
+> +static const struct regmap_range max77759_registers[] = {
+> +	regmap_reg_range(0x00, 0x4f),
+> +	regmap_reg_range(0xb0, 0xbf),
+> +	regmap_reg_range(0xd0, 0xd0),
+> +	regmap_reg_range(0xdc, 0xdf),
+> +	regmap_reg_range(0xfb, 0xfb),
+> +	regmap_reg_range(0xff, 0xff),
+> +};
+> +
+> +static const struct regmap_range max77759_ro_registers[] = {
+> +	regmap_reg_range(0x3d, 0x3d),
+> +	regmap_reg_range(0xfb, 0xfb),
+> +	regmap_reg_range(0xff, 0xff),
+> +};
+> +
+> +static const struct regmap_access_table max77759_write_table = {
+> +	.yes_ranges = max77759_registers,
+> +	.n_yes_ranges = ARRAY_SIZE(max77759_registers),
+> +	.no_ranges = max77759_ro_registers,
+> +	.n_no_ranges = ARRAY_SIZE(max77759_ro_registers),
+> +};
+> +
+> +static const struct regmap_access_table max77759_rd_table = {
+> +	.yes_ranges = max77759_registers,
+> +	.n_yes_ranges = ARRAY_SIZE(max77759_registers),
+> +};
+> +
+> +static const struct regmap_config max77759_regmap_cfg = {
+> +	.reg_bits = 8,
+> +	.val_bits = 16,
+> +	.max_register = 0xff,
+> +	.wr_table = &max77759_write_table,
+> +	.rd_table = &max77759_rd_table,
+> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+> +	.cache_type = REGCACHE_NONE,
+> +};
+> +
+> +struct chip_data {
+> +	u8 has_nvmem;
+> +	const struct regmap_config *regmap_cfg;
+> +	enum chip_id id;
+> +};
+> +
+> +static const struct chip_data max1720x_data  = {
+> +	.has_nvmem = 1,
+> +	.regmap_cfg = &max1720x_regmap_cfg,
+> +	.id = MAX1720X_ID,
+> +};
+> +
+> +static const struct chip_data max77759_data = {
+> +	.has_nvmem = 0,
+> +	.regmap_cfg = &max77759_regmap_cfg,
+> +	.id = MAX77759_ID,
+> +};
+> +
+>  /* Convert regs value to power_supply units */
+>  
+>  static int max172xx_time_to_ps(unsigned int reg)
+> @@ -271,6 +343,14 @@ static int max172xx_voltage_to_ps(unsigned int reg)
+>  	return reg * 1250;	/* in uV */
+>  }
+>  
+> +// Use 64 bits because computation on 32 bits leads to an overflow
+> +static int max172xx_cell_voltage_to_ps(unsigned int reg)
+> +{
+> +	u64 val = reg;
+> +
+> +	return val * 78125 / 1000;	/* in uV */
 
----
-base-commit: ed9a4ad6e5bd3a443e81446476718abebee47e82
-change-id: 20241213-contrib-pg-pinctrl_gsacore_disable-3457c942b0fe
+You could avoid the overflow with:
+	return val * 625 / 8;	/* in uV */
+> +}
+> +
+>  static int max172xx_capacity_to_ps(unsigned int reg)
+>  {
+>  	return reg * 500;	/* in uAh */
+> @@ -303,6 +383,33 @@ static int max172xx_current_to_voltage(unsigned int reg)
+>  	return val * 156252;
+>  }
+>  
+> +static int max1720x_devname_to_model(unsigned int reg_val,
+> +					union power_supply_propval *val,
+> +					struct max1720x_device_info *info)
+
+nit: Align with open parenthesis
+
+> +{
+> +	switch (info->id) {
+> +	case MAX1720X_ID:
+> +		reg_val = FIELD_GET(MAX172XX_DEV_NAME_TYPE_MASK, reg_val);
+> +		if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17201)
+> +			val->strval = max17201_model;
+> +		else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
+> +			val->strval = max17205_model;
+> +		else
+> +			return -ENODEV;
+> +		break;
+> +	case MAX77759_ID:
+> +		reg_val = FIELD_GET(MAX77759_DEV_NAME_TYPE_MASK, reg_val);
+> +		if (reg_val == MAX77759_DEV_NAME_TYPE_MAX77759)
+> +			val->strval = max77759_model;
+> +		else
+> +			return -ENODEV;
+> +		break;
+> +	default:
+> +		return -ENODEV;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int max1720x_battery_get_property(struct power_supply *psy,
+>  					 enum power_supply_property psp,
+>  					 union power_supply_propval *val)
+> @@ -332,7 +439,12 @@ static int max1720x_battery_get_property(struct power_supply *psy,
+>  		break;
+>  	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+>  		ret = regmap_read(info->regmap, MAX172XX_BATT, &reg_val);
+> -		val->intval = max172xx_voltage_to_ps(reg_val);
+> +		if (!ret)
+> +			val->intval = max172xx_voltage_to_ps(reg_val);
+> +		else {
+> +			ret = regmap_read(info->regmap, MAX172XX_VCELL, &reg_val);
+> +			val->intval = max172xx_cell_voltage_to_ps(reg_val);
+> +		}
+
+Would be better to read the right register, since we know which device
+we are. You could differentiate like in max1720x_devname_to_model.
+
+>  		break;
+>  	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
+>  		ret = regmap_read(info->regmap, MAX172XX_DESIGN_CAP, &reg_val);
+> @@ -364,13 +476,8 @@ static int max1720x_battery_get_property(struct power_supply *psy,
+>  		break;
+>  	case POWER_SUPPLY_PROP_MODEL_NAME:
+>  		ret = regmap_read(info->regmap, MAX172XX_DEV_NAME, &reg_val);
+> -		reg_val = FIELD_GET(MAX172XX_DEV_NAME_TYPE_MASK, reg_val);
+> -		if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17201)
+> -			val->strval = max17201_model;
+> -		else if (reg_val == MAX172XX_DEV_NAME_TYPE_MAX17205)
+> -			val->strval = max17205_model;
+> -		else
+> -			return -ENODEV;
+> +		if (!ret)
+> +			ret = max1720x_devname_to_model(reg_val, val, info);
+>  		break;
+>  	case POWER_SUPPLY_PROP_MANUFACTURER:
+>  		val->strval = max1720x_manufacturer;
+> @@ -416,7 +523,6 @@ static int max1720x_probe_nvmem(struct i2c_client *client,
+>  		.priv = info,
+>  	};
+>  	struct nvmem_device *nvmem;
+> -	unsigned int val;
+>  	int ret;
+>  
+>  	info->ancillary = i2c_new_ancillary_device(client, "nvmem", 0xb);
+> @@ -438,18 +544,6 @@ static int max1720x_probe_nvmem(struct i2c_client *client,
+>  		return PTR_ERR(info->regmap_nv);
+>  	}
+>  
+> -	ret = regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to read sense resistor value\n");
+> -		return ret;
+> -	}
+> -
+> -	info->rsense = val;
+> -	if (!info->rsense) {
+> -		dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
+> -		info->rsense = 1000; /* in regs in 10^-5 */
+> -	}
+> -
+>  	nvmem = devm_nvmem_register(dev, &nvmem_config);
+>  	if (IS_ERR(nvmem)) {
+>  		dev_err(dev, "Could not register nvmem!");
+> @@ -459,6 +553,36 @@ static int max1720x_probe_nvmem(struct i2c_client *client,
+>  	return 0;
+>  }
+>  
+> +static int max1720x_get_rsense(struct device *dev,
+> +					 struct max1720x_device_info *info)
+
+nit: Align with open parenthesis.
+
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	if (info->has_nvmem) {
+> +		ret = regmap_read(info->regmap_nv, MAX1720X_NRSENSE, &val);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to read RSense from nvmem\n");
+> +			return ret;
+> +		}
+> +
+> +		info->rsense = val;
+> +		if (!info->rsense) {
+> +			dev_warn(dev, "RSense not calibrated, set 10 mOhms!\n");
+> +			info->rsense = 1000; /* in regs in 10^-5 */
+> +		}
+> +	} else {
+> +		ret = of_property_read_u32(dev->of_node,
+> +					"shunt-resistor-micro-ohms", &val);
+
+nit: Align with open parenthesis.
+
+> +		if (ret) {
+> +			dev_err(dev, "Failed to read RSense from devicetree\n");
+> +			return ret;
+> +		}
+> +		info->rsense = val/10;
+> +	}
+> +	return 0;
+> +}
+> 
+[...]
 
 Best regards,
--- 
-Peter Griffin <peter.griffin@linaro.org>
-
+Dimitri Fedrau
