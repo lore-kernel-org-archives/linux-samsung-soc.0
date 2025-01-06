@@ -1,120 +1,138 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C9979CD;
-	Mon,  6 Jan 2025 08:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620C71BF58;
+	Mon,  6 Jan 2025 08:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736153447; cv=none; b=UhbuxqevIFvrUlydIWbGzbsJ6ARhub8XYU7+i1NtjnAba/ujRdtgVD5G8W8Ua6IF1ch3yOweYuqWYv7t5E1/5nUOM9CtjGwSboRUvIpAEb1Yg9BrLTj5OOC/NA4MtUd1vd/9KSZQ9mHdZpWpRJUAsUr9QnWSpLMtdHVEjzC51SI=
+	t=1736153752; cv=none; b=HH/RPz/bKdjvKE/nakBzLpnraMDvvuGzjvOn9Rb24OOd89lzoYJnrAMNotxTpFBnBnHKre3NZGtm0AEeuG4hzSbrX8WD3YmroSqqy4JsVGYttqrdlAQh8sDpxgD/0yRydpjN1cr70ZxRDdyGN0EbGeW9eauw7rxbpnziCVHumfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736153447; c=relaxed/simple;
-	bh=Vm7Pm0lC/yhBdqvH/eDmNy17XhJIxxx7Z4NkaNgWL0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RzZQZWTA9arYw4lugGqtidbVdPMFLqi924aTyGgaHEIPzv7Xo6s4w2svK2AY3/758NT7gtVsKH1em5i/swoN2mt/HxubJRMlhdwg6xgs//WZKWuNICNCW8jIIycBf5YHoBEA+4wre6EtO9KdxiHA3RzCBkfUeyXAFzXE/tybsFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZ1CqEkc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736153752; c=relaxed/simple;
+	bh=gG4SiTyR1rjNKpTSl7F5DKYKTnsEbd9XXx+wOP8RmzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uJq7Epev3Rf6ltVR8zvqogpY628K4oG+XJY/yMKaRevwL4sudud7CXlfmvnp58CSD0FEDkKZABduqU9w/g5U9R++26MwY38Ki/IwWCvpvww6TRdpeq7kGRXdjoCuqZMoopBz5BlOME5a1XbBVOpK1M8+dmF3RteI71WSaDAUcHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqJv2SZ9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZ1CqEkc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3BF2C4CEDF;
-	Mon,  6 Jan 2025 08:50:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqJv2SZ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D5F5C4CED2;
+	Mon,  6 Jan 2025 08:55:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736153446;
-	bh=Vm7Pm0lC/yhBdqvH/eDmNy17XhJIxxx7Z4NkaNgWL0g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qZ1CqEkcpjC+2hWsCuPLhbot8uflSmktOD+VT6Gs0J45Jim/2xU375FzOdoLMfesP
-	 zlcEXxlmD9qe1aza/gXEoIJeXsp5jPSo22+JJJQCmGpEeq5o4L5LmAhusmfWIdXmYT
-	 DLM+hP2aNGtS2M8xk1fFRUI+BmY1rxqfzr/qW181rpqj1ytDBcwKeCHLTvE5bux0Ln
-	 xR7Cfj2RA03S7Xxqqa8c4rVFnpqLwWfPZk9PRnBGuMQAeiKrQ7PsI4dvrJzhzz2sfA
-	 F7QL0AyhHkZCsZkICP6Wx0PgRCDxzA/IvjjAACE8Ytno77cBYOWdq0teYx2WpkDhzh
-	 vmh+6634Eh3PQ==
-Message-ID: <56e13a29-c087-4fe3-abf5-ebbad28ddfdb@kernel.org>
-Date: Mon, 6 Jan 2025 09:50:40 +0100
+	s=k20201202; t=1736153751;
+	bh=gG4SiTyR1rjNKpTSl7F5DKYKTnsEbd9XXx+wOP8RmzQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AqJv2SZ9q16OyArWqElTwLOPNwqTm/ShNQQWffb96q1lj4AqFBu2S8K57PHmnRH7/
+	 xzupTm63UbfD3+7hQmj/mjtk7Ni2a3mv4rg5ZyC7gx0mF08AN7kqGfWIqKC458mCKN
+	 gwQp1eC6iRJnKLYxcKdFS5a/G+MvmBRmjaM6UcbaHc3qmp9xl3044q8FgfIkpESvIn
+	 ifJDNyYD52oEbg9I7c1Dg0+YMil4dxoxeB9GxG9BEJ3g21c7PaizTkseSF5f+HfCFD
+	 c/9goNwKH4U8aSo3khRGr2Y22RbMLY00xLu/mzuLGW5AwAZLSwqWV1X5wYZD2lVzu1
+	 C6+ttlxaCH/rg==
+Date: Mon, 6 Jan 2025 09:55:49 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, 
+	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, 
+	Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
+	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, virtualization@lists.linux.dev, 
+	spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
+ const mode pointer
+Message-ID: <20250106-passionate-lorikeet-of-apotheosis-c62ff1@houat>
+References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
+ <76ho36jqcraehnsgpjralpye52w7ryshhgizekn4qqfsikiojd@3yyorbvjkc7b>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: soc: samsung: usi: replace USI_V2 in
- constants with USI_MODE
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250105160346.418829-1-ivo.ivanov.ivanov1@gmail.com>
- <20250105160346.418829-2-ivo.ivanov.ivanov1@gmail.com>
- <f0702bdb-846e-4817-a76c-5ce17dea38c8@linaro.org>
- <a7686593-ab07-4e18-912d-745576c6a450@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <a7686593-ab07-4e18-912d-745576c6a450@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="7fhp4op5b7mhfhd4"
+Content-Disposition: inline
+In-Reply-To: <76ho36jqcraehnsgpjralpye52w7ryshhgizekn4qqfsikiojd@3yyorbvjkc7b>
 
-On 06/01/2025 08:41, Ivaylo Ivanov wrote:
-> On 1/6/25 09:36, Tudor Ambarus wrote:
->> Hiya,
->>
->> On 1/5/25 4:03 PM, Ivaylo Ivanov wrote:
->>> +#define USI_MODE_NONE		0
->>> +#define USI_MODE_UART		1
->>> +#define USI_MODE_SPI		2
->>> +#define USI_MODE_I2C		3
->> USI_CONFIG register refers to the protocol selection with USI_I2C,
->> USI_SPI, USI_UART. How about getting rid of the MODE from the name?
-> 
-> I thought about that too but I believe that mentioning that these constants
-> are for mode selection in their name is generally a good practice. Let me know
-> if dropping _MODE is really needed.
 
-I am fine with both, MODE feels a bit more descriptive indicating how
-the USI should be configured.
+--7fhp4op5b7mhfhd4
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
+ const mode pointer
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+On Mon, Jan 06, 2025 at 12:47:07AM +0200, Dmitry Baryshkov wrote:
+> On Sat, Dec 14, 2024 at 03:37:04PM +0200, Dmitry Baryshkov wrote:
+> > While working on the generic mode_valid() implementation for the HDMI
+> > Connector framework I noticed that unlike other DRM objects
+> > drm_connector accepts non-const pointer to struct drm_display_mode,
+> > while obviously mode_valid() isn't expected to modify the argument.
+> >=20
+> > Mass-change the DRM framework code to pass const argument to that
+> > callback.
+> >=20
+> > The series has been compile-tested with defconfig for x86-64, arm and
+> > arm64.
+> >=20
+> > Note: yes, I understand that this change might be hard to review and
+> > merge. The only viable option that I foresee is to add new callback,
+> > having the const argument and migrate drivers into using it one by one.
+>=20
+> Colleagues, I'd like to graciously ping regarding this series. Should it
+> be merged as is (possibly requiring more R-B's)? Or should I rework it
+> adding something like .mode_valid_new() callback which takes const
+> argument?
+
+I think your patch is fine, and you can add my
+
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+
+We seem to lack an Acked-by for amdgpu though?
+
+Maxime
+
+--7fhp4op5b7mhfhd4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ3ualAAKCRAnX84Zoj2+
+ds65AYCm0HY0VDiw9/7lDbcyH0YuzRQu/+7FuV8GS6p+ubfGmvGVGOS+07oCUheK
+PN/gOxwBgOc9gl1vmxFUVrfM3LjcOixdshbfH49V0dlOMzIZO3m/L5caQ4O6jchE
+p0sk4xSGUQ==
+=4eTB
+-----END PGP SIGNATURE-----
+
+--7fhp4op5b7mhfhd4--
