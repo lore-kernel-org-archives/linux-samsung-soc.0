@@ -1,164 +1,90 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686301DF995
-	for <linux-samsung-soc@vger.kernel.org>; Tue,  7 Jan 2025 13:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBA1199931;
+	Tue,  7 Jan 2025 18:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736255426; cv=none; b=LFUrYLnX63irkb9TLERp2SA13u3WeQGIs78MZrCm4KiVQPr5JZbLyiLua6F+VlTs7bK6bZNQAKgZ89LpzqxYcRJ7bfEQCHfqlI5OmPxHJelZEa7haIm1FMJBrQeqFaFlch30H9qPDO+HeBsYm/IIJ5TNmbjzSKAyCsT/7MAPyqY=
+	t=1736273475; cv=none; b=aGhAsh7s+5nLYA9S8xaqo30L5xQXTIR7eCG5eZUJScgcKIfCnptIY+DmifdVsY7Ru30Ht7xElOeodbohHXZFOjN/Sy45t9LJPjeDCB47TLO2jXwLG3PmvtOAZDgutJcY/1iVPHNik39Nu+gOX0K9l5yhIqudxtI4VpBwEKeRais=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736255426; c=relaxed/simple;
-	bh=ZSVfHvcyonMMaAuHxLoTsm3svmwPbJluMG1JO7rk65k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CQ+G8CZIBEyU54+eWsXYPbCJDJT9R9ay/qSmlzxfkyLxPQZlzQWH2G3XiypmyhBjgqLWTv+buBch/xF7iwEK9qEINygq7Opf9ewaqw18++/LRGsl43KhwNT8HjHcFxs3/C6ckdj6gIoJkRirMuWyZh5/cOppNr6576SQv/OGZl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RInHeiDj; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736273475; c=relaxed/simple;
+	bh=skNssl6xvHgTtpAlsh7GChQj+T4UJ5GVJHooqLIkAHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KTEr77CxI0W+ac7K8tjArKTMzkWJQbrVnsvDPyOFhmrTS4VzQ7X3snoW0OGeCCNkID+AKxG7ocbWXfocAGUhsB+yiiW1ibZtSQgavhjmz3/p1aCKvbQ18S/SQkmxtHwK9Bas+tCCwn4UBOtIg1fWr/1XH5tq91Pu39Zd41gEF90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ri0qJUcJ; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RInHeiDj"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385e44a1a2dso1791199f8f.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jan 2025 05:10:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736255423; x=1736860223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T66eNQvkCk8ULvCPWitWaVVqgBtMU9sicY2LjyOUOVo=;
-        b=RInHeiDjnH+WvBxRlr+gVSHftNWwS1mS7TpIcUqboHLJtkMjQODvRVjfdvKv0dnbtC
-         vEHqXYkiS0EBBIdYItYbYForUasMfWd56E493K7Aor0lKhXb0va+kK0IG9SdXHwDhTQ7
-         2d6955dcnbHnRv3sVNNxoEP85G8QNZNLF6ZdoyhIQuX41FYuTa/ESm9W2wh4qxhWK4Bh
-         +bxjYkBRPHB3IC6RtyvmA6/NqGSq3CK/bvHbZQcaP4jAhXG4pXlSL8yFW7L9xicTyseP
-         qqkFJtzcTJB1yMjSv6Hai37gGqGHcLE/MEKwsYtwp4pCYDP+9J9TgqCAHLF0ZOw5qFjn
-         ucog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736255423; x=1736860223;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T66eNQvkCk8ULvCPWitWaVVqgBtMU9sicY2LjyOUOVo=;
-        b=uX6veFXeF35B79afKssd13SD416RsKle5nbF6nLltwcZAlj/obYaHVqjkPGoUVit13
-         1JbVMiZfF4muwp27vYul7inyViKdjzgODDzj7OiuG4PS42LU8lVwVY6pY5cWgehikzuX
-         by1TH2onvui6Hj5uT2tpzSRrJEYRqYgJO7YxnVj/EYGuK6HyjomIikTcoG2m/OJ2gseQ
-         ImXf2Zjr7hEZEO8qa24dSFvbVzbOVQiB3t5YVRRJMAMD9lzoufbOZxMp+5jCMbJlUO9w
-         /+/fzS0+k8VchpKg4bKtxO1HUDbt/lkzTG49aUlwM/osuo8Y4LggARUdlm2pjeKJr8sJ
-         PU9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWspjDLAXEDO9EIa4q1h0KybQC/xF7y35DxZWzyPm92yPe66pDqwU/aM9ps4TPcDpFc3BFyD9APrLA3bBtljdg+3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjf1/xSn0M64X2Pn3ajEIZ8mSShX68ZVOTeMnmdxNv3PHQJJor
-	fEPSdNnBMaKV/AT2tW6hoQAfao8JPYc+EHOZo72C9njY421rAX7cSGGYuw6cdRA=
-X-Gm-Gg: ASbGncv3oBpng81ErwEkvF8A08WjiYoEcuzqkurSvS4TrfGpYa5Uu1FjgzZdxAVIQVy
-	5e5VBvnnjp3mWX1gCtLbFizCFkCP21y9gpkrwe2ghj1iwYc2MUUhOoUAtUxb8lqnqoWUlDJ/omW
-	1F8rt2F4I6eaIh3eGXmU84JB18tX8ZGe71wompDDuqC6dBHCwdBp9bSCpvnN/kSnptzI3bIEPra
-	LDas8fqLKDtiTYDfuagZQ3NfwGeta6xe/jmHd9AUJmVuDlNG9aldyn+wJmgm3P/N0lz3S0=
-X-Google-Smtp-Source: AGHT+IGJtRYkKYFK2PfPatv3vBYhYEZyX64bizP7nth8eSlErNUm+QXw16gIId4ACUxbkB0wlK9AkA==
-X-Received: by 2002:a5d:6d0f:0:b0:385:ebbf:8736 with SMTP id ffacd0b85a97d-38a223f7484mr20095420f8f.9.1736255422748;
-        Tue, 07 Jan 2025 05:10:22 -0800 (PST)
-Received: from krzk-bin.. ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4366127c4bbsm593719505e9.32.2025.01.07.05.10.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2025 05:10:21 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-scsi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: ufs: Correct indentation and style in DTS example
-Date: Tue,  7 Jan 2025 14:10:19 +0100
-Message-ID: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ri0qJUcJ"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id VE2ctVpn8nktyVE2ftbwd9; Tue, 07 Jan 2025 19:11:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1736273464;
+	bh=Fe08/qfQPQZoDkTmwGi4NLr9fr1hHVIqUL3BbD3l/v8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Ri0qJUcJLvITLMHUtWvDDZIWvxaCRscvs+394esqr8aNJ/cBtbH2FjnF8krv9PjsS
+	 SlrNC+k1jfNPetSNWLJOqju3DhZpaOoA1xkBkYFcNmMtAwLIUycs7lxhssENP9tJcq
+	 /uJXro2/f3gZ4F4HnmeXRx22Syf0FCaZmc/xflCyKT6R/KPR1gGBdaelyVtqePA/7i
+	 MN69q2u4jmu2Be2OfeHVef5hrxFMYgJPwu3mFkEO6VqZHI3shz8iXAn1PHZztxngZs
+	 qTzNuuIP7fvhbMus0j9FYXUsW7kp658q0oyv/fgNBOItsmytOCvfwje/dwAjM+UoXZ
+	 5ZWx8Y2K7LU+w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 07 Jan 2025 19:11:04 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <6abdef3d-95cd-4afc-b5d4-880c58f60e9d@wanadoo.fr>
+Date: Tue, 7 Jan 2025 19:10:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel gauge
+To: t.antoine@uclouvain.be, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be>
+ <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-DTS example in the bindings should be indented with 2- or 4-spaces and
-aligned with opening '- |', so correct any differences like 3-spaces or
-mixtures 2- and 4-spaces in one binding.
+Le 02/01/2025 à 12:15, Thomas Antoine via B4 Relay a écrit :
+> From: Thomas Antoine <t.antoine@uclouvain.be>
+> 
+> The interface of the Maxim max77759 fuel gauge has a lot of common with the
+> Maxim max1720x. The major difference is the lack of non-volatile memory
+> slave address. No slave is available at address 0xb of the i2c bus, which
+> is coherent with the following driver from google: line 5836 disables
+> non-volatile memory for m5 gauge.
 
-No functional changes here, but saves some comments during reviews of
-new patches built on existing code.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/ufs/renesas,ufs.yaml  | 16 +++++------
- .../bindings/ufs/samsung,exynos-ufs.yaml      | 28 +++++++++----------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+...
 
-diff --git a/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml b/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
-index f04f9f61fa9f..1949a15e73d2 100644
---- a/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
-+++ b/Documentation/devicetree/bindings/ufs/renesas,ufs.yaml
-@@ -50,12 +50,12 @@ examples:
-     #include <dt-bindings/power/r8a779f0-sysc.h>
- 
-     ufs: ufs@e686000 {
--            compatible = "renesas,r8a779f0-ufs";
--            reg = <0xe6860000 0x100>;
--            interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
--            clocks = <&cpg CPG_MOD 1514>, <&ufs30_clk>;
--            clock-names = "fck", "ref_clk";
--            freq-table-hz = <200000000 200000000>, <38400000 38400000>;
--            power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
--            resets = <&cpg 1514>;
-+        compatible = "renesas,r8a779f0-ufs";
-+        reg = <0xe6860000 0x100>;
-+        interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&cpg CPG_MOD 1514>, <&ufs30_clk>;
-+        clock-names = "fck", "ref_clk";
-+        freq-table-hz = <200000000 200000000>, <38400000 38400000>;
-+        power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
-+        resets = <&cpg 1514>;
-     };
-diff --git a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-index 720879820f66..b4e744ebffd1 100644
---- a/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-+++ b/Documentation/devicetree/bindings/ufs/samsung,exynos-ufs.yaml
-@@ -112,19 +112,19 @@ examples:
-     #include <dt-bindings/clock/exynos7-clk.h>
- 
-     ufs: ufs@15570000 {
--       compatible = "samsung,exynos7-ufs";
--       reg = <0x15570000 0x100>,
--             <0x15570100 0x100>,
--             <0x15571000 0x200>,
--             <0x15572000 0x300>;
--       reg-names = "hci", "vs_hci", "unipro", "ufsp";
--       interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
--       clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
--                <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
--       clock-names = "core_clk", "sclk_unipro_main";
--       pinctrl-names = "default";
--       pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
--       phys = <&ufs_phy>;
--       phy-names = "ufs-phy";
-+        compatible = "samsung,exynos7-ufs";
-+        reg = <0x15570000 0x100>,
-+              <0x15570100 0x100>,
-+              <0x15571000 0x200>,
-+              <0x15572000 0x300>;
-+        reg-names = "hci", "vs_hci", "unipro", "ufsp";
-+        interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock_fsys1 ACLK_UFS20_LINK>,
-+                 <&clock_fsys1 SCLK_UFSUNIPRO20_USER>;
-+        clock-names = "core_clk", "sclk_unipro_main";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&ufs_rst_n &ufs_refclk_out>;
-+        phys = <&ufs_phy>;
-+        phy-names = "ufs-phy";
-     };
- ...
--- 
-2.43.0
+> +	ret = max1720x_get_rsense(dev, info);
+>   	if (ret)
+> -		return dev_err_probe(dev, ret, "Failed to probe nvmem\n");
+> +		return dev_err_probe(dev, ret, "Failed to get RSense");
 
+Missing ending \n.
+
+>   
+>   	bat = devm_power_supply_register(dev, &max1720x_bat_desc, &psy_cfg);
+>   	if (IS_ERR(bat))
+
+...
+
+CJ
