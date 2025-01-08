@@ -1,126 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7B91F3D3C;
-	Wed,  8 Jan 2025 10:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540461FA166;
+	Wed,  8 Jan 2025 12:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736330943; cv=none; b=XRKzLgtEK9SAvBWNhd2lBbv0Bi6jbAjCkYMwqpU3JxLbxNZ2am5UTBS3k1RtjWEi5wEQKjk8PiOyy9gcCz1+JYHzc3XDw8KAP1qUa1NifF6l/yZJl+q5dxH8/KtZxVbjM7sW3oUrxwStCdk7JsjzqVn5MvTdWR8n1gOKFimx8cQ=
+	t=1736340650; cv=none; b=MDaGhnnaQWokAVEsyhG+Ysbmzm2+2+kuMBPgcKhQ0gHanopSxzUmOaz6nXrc/Dczo6Fnl0bCevbd38cD1Wpgc9qgK51ylusZAsPSRegreqzLUOFMYW+ojxDKR8knXoWQionUO2uJbubZj73oFUkrP6UgjgefxKEKIKxk6to/VXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736330943; c=relaxed/simple;
-	bh=j3XzxW4WHy3pYYMnlBG5fG+D54Ql2GcPQzwfO7+nZB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bHUXHKtNdLTbxUVKq/KcGR6uzCpcUqMXkpeu3GM2aqrUVWfnO08OpUzSrhxtZkMlCz26vaReQxBUghfx+4Gv2PfCvXE5D8PgwqQZCkjrP+nYFC23o+3jy6xdA6fshjusZENbvm6ncXy0N9VKKuLEZnL9CzbetL1mRbBcwAmb2g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgNqGBTg; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgNqGBTg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C57FC4CEE0;
-	Wed,  8 Jan 2025 10:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736330943;
-	bh=j3XzxW4WHy3pYYMnlBG5fG+D54Ql2GcPQzwfO7+nZB0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BgNqGBTg+FU5Fn9rnghB6ceKvcZS4JFJ9aTeE308wTPxkiB31zPCxARSIJro0kBN8
-	 H4OJs/wXoIknmkDH4dJNn+Xnu08pxKGL9L6eGWi6Hvi4uSCRWdnF5NJpBEtR+DMKs7
-	 PoLsf2V/dN25UcaXTBVNG9M331QIsT9tiK8pisLVw/2e9kNtdGi9t2B0AmVCnypeqD
-	 4XEI3XIy35Yb13haZ642wxp/1POMC/D8TbWNQr4EnNzGnlnVndClIfewSvUiwqJVmz
-	 RgD+mmYanSz001I7yHDk9wCbFLRD4xJ2qOkZsp9Z2DVvTrY29AqK0Lg/NXLC0rhpZG
-	 Ip3elJRW8l9sQ==
-Message-ID: <d0271581-c250-465a-aa0f-2f10548cc89b@kernel.org>
-Date: Wed, 8 Jan 2025 11:08:57 +0100
+	s=arc-20240116; t=1736340650; c=relaxed/simple;
+	bh=MUJn7dgIN4qxQ2b8yGGIjtxj/qPGRciGtNVEeBtG72A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=moFEUbaPsttHN04e2VWGxRy5rgF6MbLjyLigWYGmuCAKDwDd7DdDPssxnQvZ9gULF/QirXQ80iuUy9IynpYgB6TQRHqXfF8SNYq73AJV+7HDxgsuw9EeiL9KgCwj4eXKQ9l7aUQJQcwbRCqIz+hb/KvKfDzpF6zXt5RZRdoW44Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4affbc4dc74so8746697137.0;
+        Wed, 08 Jan 2025 04:50:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736340646; x=1736945446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q4NAkYOwXTO9Vbz5ywBO5Myw4esqfkb6xj3656tlG2o=;
+        b=bjP1obGXqw/WMEbT4K18NGpeTBE4LIsl5VmvoDuUwj29jVqJh8/qxRnvQJridvXtDd
+         laUFFXh15bTQ8hdsBtJQ/xm7deYXBcos4nVMElzs2M5N8LFVgMec73AYtrlR9gtesPI5
+         uy4VY61IIF3U5c4iqJ9qx8aiL3n9gnX8A+lkMPPvW5sUfR7Ufc2BRCY2uDglf9hElSTd
+         jn+N9KcgB8s2hrUHVyOiEiggvi4OvStN1pPao8IUPF6CcNB4RUdIoQFI1iuyTyOTr2QK
+         fCWzCuR4GOqawoKOGsYR5SBs5sbtTJeOU9AB1TYpriYwEMTiBTVf1dB4MQUWAdPk3leg
+         gXbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaDAIR/StbSoXn0xvbJE1VFAE0LZr0f42gzf8Fvy9JVPjnhaDRP9NtAD7w/5MvmRl+lI9myhaVxxPBUg==@vger.kernel.org, AJvYcCVQcXTbm7KRa1Q3Hfx2yFISQyy7ZRjGxvGWXHlAlHJQdcwVE7Vhr5u+e6AcPmE5lt7yrnND2WzA56Qc0woB@vger.kernel.org, AJvYcCVnHLl1rc/5JDelOT4rqHh4ELVqkO5DucoRTa9X87HIjy2VgCiA5t8dguNtnW2YPU+erwCZcwxuOGU6wdAdv+w/F5Y=@vger.kernel.org, AJvYcCVx5eSjR68D6dR3agijAHwxIaYu7/myMIa/7jqyqwJqBspEbrrR6cS/IB0K3iRj1LOmdZ4VkZ9OP6RFF3riZb57pOo=@vger.kernel.org, AJvYcCWnhV8dTVtrwE/f6e9lNX+eW3y5o9VAwTJBKisOfz0fyOPG74/RUoYs566ULZNXWfC4DOg1Y6j8vaZh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrnSSplpL3gO+9HTtgHkY1D3/izvlrs1fML1pM4gJ638m8ciYW
+	i374jhdARa3jLbCE270V33/RHxbKkfuozkx0sQepeC2bGNCP9qg/bqpO/1gp
+X-Gm-Gg: ASbGncvN+fjqtgDDjrTCbV9jQeQO/IGWUPkn37mtwrDihX360mctbfVk4HYO5RYU65V
+	78UhXubIZ8LkSKjV2tIv7c7nGm23XkffN5NbS/5TEJD4b07NRAoebNDH3nOzNkND4eeqoEmr5EC
+	5mInmwHuDCGuS7ZUmekbh5KarGZ0spEBH5xM5GJWpAnMLfSI72IVzfhldvMjExseTkRsYKnUFsi
+	XaYFwhsy+Woy8auxKUbb8R1t5Z2cY1i8BwusCU5zz8D2vJnukVMYTBK4DWIW8CDoGbKLAoxCM+p
+	yxXVUYUl3ODqjb3ubBk=
+X-Google-Smtp-Source: AGHT+IG2YIimPZgjV8+V3ohfSLj0436yBzoxGfou/yGZis07gdsquYmgdvktECoYgJuh09HEWikvpw==
+X-Received: by 2002:a05:6102:d87:b0:4af:c5c8:bb4c with SMTP id ada2fe7eead31-4b3d0e0f3eemr1643908137.16.1736340646318;
+        Wed, 08 Jan 2025 04:50:46 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b2bf9d97c0sm8365196137.15.2025.01.08.04.50.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2025 04:50:45 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4affbc4dc74so8746681137.0;
+        Wed, 08 Jan 2025 04:50:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZlTvZbA3u31pVLL/Glu0N9usgMK1p2g09rBPocBxcY4518+M17mn008QHsmWvltnWid4/beLN7St4@vger.kernel.org, AJvYcCUcyAZUfXtYIy8r9+PakuZr5Sysw5EksUrw8LKgHj1wJCZtNEVKvba4HmWWElLLxWPWQbwF6YWkApGqZqry@vger.kernel.org, AJvYcCWxdA7sMgQ++GlpaMIGj5lYRxmhX8A7+ZTDeZaFRnmB5e0KLZMYQKsbeF0ObYzL+jkDHO4hGCdP5AsF4PMwIY/bfec=@vger.kernel.org, AJvYcCXDb1cn8WBGmb7XCfA7358vIhEjZ5v6wK+O4/xPOf8AYDkfgIjMTtveOdMoMBRp585A4m6lRGltwgJZPA==@vger.kernel.org, AJvYcCXa1LRg4wcdhShKN3R74/F39QHL58RXD3wSWbPPmh/ptymB0mFdI5eHEBD27XPwKTamI04Dqr+rYjxXCeFH0dGWK7o=@vger.kernel.org
+X-Received: by 2002:a05:6102:b02:b0:4af:56a8:737c with SMTP id
+ ada2fe7eead31-4b3d0dd199cmr1696534137.12.1736340645758; Wed, 08 Jan 2025
+ 04:50:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] soc: samsung: usi: implement support for USIv1 and
- exynos8895
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250107113512.525001-1-ivo.ivanov.ivanov1@gmail.com>
- <20250107113512.525001-3-ivo.ivanov.ivanov1@gmail.com>
- <6y4mg6atqi6idyoppesg5owrnfrjhkzqh4im4po7urfry2qctb@yimp5y6sm7h6>
- <907e1169-ceea-4d41-93bb-925041de005e@gmail.com>
- <e28abf31-3d91-4d1b-97e6-202df5ebb3f5@kernel.org>
- <c30a6f1b-b1a9-40db-b673-e6fc47bdb224@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c30a6f1b-b1a9-40db-b673-e6fc47bdb224@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 8 Jan 2025 13:50:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWQ8NmJbswGMCrMu3sgPtCLLSvdGONg_Ux_cNsvk7MLWA@mail.gmail.com>
+X-Gm-Features: AbW1kvaf0_q9bTRRhsbwHxe9_rKnHnPxiUDNiKQ4wgA4C6jlHeSLeR_KGT4kkIw
+Message-ID: <CAMuHMdWQ8NmJbswGMCrMu3sgPtCLLSvdGONg_Ux_cNsvk7MLWA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: ufs: Correct indentation and style in DTS example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-scsi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/01/2025 10:45, Ivaylo Ivanov wrote:
->>>>> +
->>>>> +	return ret;
->>>>> +}
->>>>> +
->>>>> +static void exynos_usi_remove(struct platform_device *pdev)
->>>>> +{
->>>>> +	struct exynos_usi *usi = platform_get_drvdata(pdev);
->>>>> +
->>>>> +	if (usi->data->ver == USI_VER2)
->>>>> +		exynos_usi_disable(usi);
->>>> This is not related to the patch and should be separate patch, if at
->>>> all.
->>> Well I though that since didn't have any removal routine before it'd be good
->>> to introduce that and not leave USIv2 with hwacg set.
->> Sure, but separate commit, please. Can be preceeding the USIv1 support.
-> 
-> What about right after the USIv1 support? It would be less messy in my
-> opinion.
-Fixes should be before new features and why messy? You add devm cleanup
-handler for unconfigure and in next commit you grow it with clk disable
-for USIv1?
+On Tue, Jan 7, 2025 at 2:10=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.
+>
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+>  .../devicetree/bindings/ufs/renesas,ufs.yaml  | 16 +++++------
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
