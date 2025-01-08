@@ -1,334 +1,286 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DCC225D7
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2025 06:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97501ACDE7;
+	Wed,  8 Jan 2025 08:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736316503; cv=none; b=u7maWxK8nnF3YlTcc5MjEBqsrqOOjD7eqch14Dxehw/7aOXlos9gO9xBYzokux68zMVFLyVt+UXW1urrb/q/Z3hLkUKkKThl18sg2YX3t0wIXpuCkH4r3kREAg43Q0QSBIaIjcu5yW8n+s96Wn4rzsSBKvWAkTk9/0QO2B/UPKE=
+	t=1736325011; cv=none; b=pOe1N8Zm2P7woiiYEJAeV9lZ+KmilAsBWykc9LmHeC5vDdZ54+4dsouMjB3aC/uyRrMoyYrOvynaUG9tLrgm7Yo68Syc7p6fgv6Hquqfm2yf+0orj2NhdbZfoa4ziLBhosckvW7gyjwiZ6FGgQG9VcVfFbMzFJxwL4jDOn2m39k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736316503; c=relaxed/simple;
-	bh=lDeLMzmKVzHzT05vFiARaqmMjW4CDFnYLMOjULvTcww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=Mx918eqQ/sBVCgYPdFtnhYS2q+vXkLQ3hC2hooM/DzTgn1z4z+LHwnyot2U55JcuBCbQK+gdqc21Rcc8taghsun9AJCocfaSOai+9Er3TZ8IZKC+crMU5knRkfVUKIHFJTOaypzinGP5C4mUCXfcKx2/AN8F29CFVtedNhZ+2zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VKRrvfEG; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1736325011; c=relaxed/simple;
+	bh=3JcTLjuITgq/DDD2A3JqldsGdYRSMSh/LyBDhJFq+Xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CixIdKcfvy9He9sSXKjw+mPzyqieb5BdL79f5eUyXFrkocFNNEIm2kcMisy43tcPqNib/aAXwY/j0wOOVl5yvzRxy39Wak+WKVFNAFCE6p+4qwiN62OFTat8pN8lqJZXHgWTL5ZXDYlPwCF2ngJedAFX2EDvhWsv7D+1IOyYEpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLzbnTMM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VKRrvfEG"
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250108060818epoutp01c2a8c71eea29bc5c2c53aca6ce7f8e4b~Yoqfc-wDI2397023970epoutp01Z
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2025 06:08:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250108060818epoutp01c2a8c71eea29bc5c2c53aca6ce7f8e4b~Yoqfc-wDI2397023970epoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1736316498;
-	bh=oDqO9IOD1jONV5GnbVGe8T0Coj4j77IrhqYsAza3Vfo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=VKRrvfEGka9bubK610pZBQ0YTsqEFbnPaBa/HlhBGe/30EE5bTg+8UR7S1E8OxJh9
-	 6EGWXrJa8qHmWuJPjLoAkCzhFF8ad7fGRRNasf+gnCEDQ+MlqJMEQ1Zkt623RvQ1e+
-	 ZwwkUkbaGWWJvXMm1hZMrOZItHqkC6ZZSIrAD3zs=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20250108060817epcas5p1f5805d78973d2adde4628d7f90e9b691~Yoqe7Lb770503505035epcas5p1d;
-	Wed,  8 Jan 2025 06:08:17 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4YScsq18d0z4x9QF; Wed,  8 Jan
-	2025 06:08:15 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EE.FA.20052.F461E776; Wed,  8 Jan 2025 15:08:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250108054224epcas5p399f3d734f8d9f82e5ae75d183d1a5344~YoT3--ket0155601556epcas5p30;
-	Wed,  8 Jan 2025 05:42:24 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250108054223epsmtrp1731f1eec433c597767f0450345175a6a~YoT3-OVYQ2675826758epsmtrp1F;
-	Wed,  8 Jan 2025 05:42:23 +0000 (GMT)
-X-AuditID: b6c32a49-3fffd70000004e54-c0-677e164f4c2d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	15.7C.18729.F301E776; Wed,  8 Jan 2025 14:42:23 +0900 (KST)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250108054222epsmtip29ba52c104d681642b1a890cebb401c8d~YoT2kK8Ew1928019280epsmtip2P;
-	Wed,  8 Jan 2025 05:42:22 +0000 (GMT)
-From: Devang Tailor <dev.tailor@samsung.com>
-To: alim.akhtar@samsung.com, dev.tailor@samsung.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	faraz.ata@samsung.com
-Subject: [PATCH v2] arm64: dts: add cpu cache information to ExynosAuto-v920
-Date: Wed,  8 Jan 2025 11:20:12 +0530
-Message-Id: <20250108055012.1938530-1-dev.tailor@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLzbnTMM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E468C4CEE0;
+	Wed,  8 Jan 2025 08:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736325011;
+	bh=3JcTLjuITgq/DDD2A3JqldsGdYRSMSh/LyBDhJFq+Xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aLzbnTMM3rJJcLOJFd0WJ9PKG6mT0WbpfoCqRIXe5rsD5fgtrMm5hMVQ/GWfBuc73
+	 +QIyRDE7WUNGOnYimsj6fmNEhFnNWeTEWsZl5YIYT15Eg99kldf+iemdnnWCBc5Egg
+	 F/UQsAbYG3P29bB/9cbQXx5mtJkYX64SoleQubrlIU2XgkwoYb9n7Pf0zpkTTSWNeq
+	 dbE3XXgS/Son1FOkewEBaxHpZa6GSYbySDKOOodc1UVmG9qKbIUeybKzSOQoxnoZn4
+	 9E0/XokRRLLoqRqh2pF/jrFT4E7CQnd1JogR80sUGhrBKQkjlB080Yb+VEIwEulu5b
+	 jUw3RJaO25wew==
+Date: Wed, 8 Jan 2025 09:30:08 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] soc: samsung: usi: implement support for USIv1
+ and exynos8895
+Message-ID: <6y4mg6atqi6idyoppesg5owrnfrjhkzqh4im4po7urfry2qctb@yimp5y6sm7h6>
+References: <20250107113512.525001-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250107113512.525001-3-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTQ9dfrC7d4Mg+NosH87axWazZe47J
-	4t6OZewW84+cY7W4dmMhu8XLWffYLDY9vsZqcXnXHDaLGef3MVn837OD3YHLY9OqTjaPzUvq
-	Pfq2rGL0+LxJLoAlKtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJ
-	xSdA1y0zB+geJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5e
-	aomVoYGBkSlQYUJ2RtPUJ4wFFw0qXi36w9TA2KfaxcjBISFgInHwf1QXIxeHkMBuRomNU/4w
-	QzifGCVWTn3CDuF8Y5RYfPw5WxcjJ1jHpxv32CASexklPl85wAThvGeUuPe6gwWkik1AR+LZ
-	0dtMILaIQL7E9RO7WECKmAUWMEo839sKNkpYwEfi0NI5YA0sAqoSjdv/sIIcxStgK9H/VhJi
-	m7zE/oNnmUFsXgFBiZMzn4CVMwPFm7fOZoaouccu0XyTE8J2kVh4/w4jhC0s8er4FnYIW0ri
-	ZX8blJ0v8eXQLqjeHIn1r2ZAxe0lVi84A3YCs4CmxPpd+hBhWYmpp9YxQazlk+j9/YQJIs4r
-	sWMeiA0KRhWJ998tYTa9uLcHqsRD4v21WWDXCAnESmyd+Yh1AqP8LCTPzELyzCyExQsYmVcx
-	SqYWFOempxabFhjmpZbDozU5P3cTIzhRannuYLz74IPeIUYmDsZDjBIczEoivJaytelCvCmJ
-	lVWpRfnxRaU5qcWHGE2BATyRWUo0OR+YqvNK4g1NLA1MzMzMTCyNzQyVxHlft85NERJITyxJ
-	zU5NLUgtgulj4uCUamCa83NaQpsh/5IvN1ezRU63iZla9fFbmgDXmd9nVQu1TKyuZhrOZH+h
-	q5rvam4swcn/29Ve7uK2tU2uOxxXvT3uE6e7es8dgxu5KcF3j35V3e/5mcO8ZrbVLmn3I3yF
-	Fw6HBfkvLKsT4OWw4F4ipNO8dZVXaG1At7B3aiVbe+Qv87zXjz4Inw/VjLqhbvB7ytrPrRI+
-	J59NvXk8vbCtIS7FavVrd6lI5Ttv622qgqfMFwqrr101Y1aQWB2jqEmVSaiv2Myp8jLsi95d
-	O8j4U2ZWzj7O/99ivprGFHh3vf+6xGd25uddW+cXFLFue75nU+XWAybeYRkyXxq7wnq/PLrK
-	XiGxRi92XUd4zYT4cCWW4oxEQy3mouJEAIkNehwdBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSvK69QF26weXJFhYP5m1js1iz9xyT
-	xb0dy9gt5h85x2px7cZCdouXs+6xWWx6fI3V4vKuOWwWM87vY7L4v2cHuwOXx6ZVnWwem5fU
-	e/RtWcXo8XmTXABLFJdNSmpOZllqkb5dAldG09QnjAUXDSpeLfrD1MDYp9rFyMkhIWAi8enG
-	PbYuRi4OIYHdjBJvzz5ngkhISXS0bICyhSVW/nvODmILCbxllOjbLQ9iswnoSDw7ehuohoND
-	RKBU4vzDRJA5zAJLGCUW7GxhAakRFvCROLR0DpjNIqAq0bj9DytIPa+ArUT/W0mI8fIS+w+e
-	ZQaxeQUEJU7OfAJWzgwUb946m3kCI98sJKlZSFILGJlWMUqmFhTnpucWGxYY5qWW6xUn5haX
-	5qXrJefnbmIEB62W5g7G7as+6B1iZOJgPMQowcGsJMJrKVubLsSbklhZlVqUH19UmpNafIhR
-	moNFSZxX/EVvipBAemJJanZqakFqEUyWiYNTqoGJ5aGj2E7ftyknxY1M60uNp6bwPXZIqv7D
-	aGVZUpz5xPyH6+9nHR8iJGa7KB/rTTH87jC/skPVymTNRdEr31q0v7rtNa1efM8ha6LPviZJ
-	j7nm390YTd1zLxT/cJrXGvfq0bEtZ6sfhi37mRDjcDN2526TRac/7Xy827HqOa/C5mbv54ab
-	7j3hck76EawgelI5Kano1RW+vGc5s+bIJ7PeMaj5tjApJChL5y3T+WMbEj0KhFydyvk67GUM
-	bnr8XPyPpX/vMT+uJQV7Klb5twe4vyh3mdW45f3daZqv7HVFp5+133HfczfbHJM1fbelnybd
-	FHefaPdx0s2sry1XDSzVWiwEKviYDG65fmKQLlFiKc5INNRiLipOBAChA+UWyQIAAA==
-X-CMS-MailID: 20250108054224epcas5p399f3d734f8d9f82e5ae75d183d1a5344
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250108054224epcas5p399f3d734f8d9f82e5ae75d183d1a5344
-References: <CGME20250108054224epcas5p399f3d734f8d9f82e5ae75d183d1a5344@epcas5p3.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250107113512.525001-3-ivo.ivanov.ivanov1@gmail.com>
 
-Add CPU caches information to its dt nodes so that the same is
-available to userspace via sysfs. This SoC has 64/64 KB I/D cache and
-256KB of L2 cache for each core, 2 MB of shared L3 cache for each quad
-cpu cluster and 1 MB of shared L3 cache for the dual cpu cluster.
+On Tue, Jan 07, 2025 at 01:35:11PM +0200, Ivaylo Ivanov wrote:
+> USIv1 IP-core is found on some ARM64 Exynos SoCs (like Exynos8895) and
+> provides selectable serial protocols (one of: HSI2C0, HSI2C1, HSI2C0_1,
+> SPI, UART, UART_HSI2C1).
+> 
+> USIv1, unlike USIv2, doesn't have any known register map. Underlying
+> protocols that it implements have no offset, like with Exynos850.
+> Desired protocol can be chosen via SW_CONF register from System
+> Register block of the same domain as USI.
+> 
+> In order to select a particular protocol, the protocol has to be
+> selected via the System Register. Unlike USIv2, there's no need for
+> any setup before the given protocol becomes accessible apart from
+> enabling the APB clock and the protocol operating clock.
+> 
+> Modify the existing driver in order to allow USIv1 instances in
+> Exynos8895 to probe and set their protocol. While we're at it,
+> make use of the new mode constants in place of the old ones
+> and add a removal routine.
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  drivers/soc/samsung/exynos-usi.c | 108 +++++++++++++++++++++++++++----
+>  1 file changed, 95 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
+> index 114352695..43c17b100 100644
+> --- a/drivers/soc/samsung/exynos-usi.c
+> +++ b/drivers/soc/samsung/exynos-usi.c
+> @@ -16,6 +16,18 @@
+>  
+>  #include <dt-bindings/soc/samsung,exynos-usi.h>
+>  
+> +/* USIv1: System Register: SW_CONF register bits */
+> +#define USI_V1_SW_CONF_NONE		0x0
+> +#define USI_V1_SW_CONF_I2C0		0x1
+> +#define USI_V1_SW_CONF_I2C1		0x2
+> +#define USI_V1_SW_CONF_I2C0_1		0x3
+> +#define USI_V1_SW_CONF_SPI		0x4
+> +#define USI_V1_SW_CONF_UART		0x8
+> +#define USI_V1_SW_CONF_UART_I2C1	0xa
+> +#define USI_V1_SW_CONF_MASK		(USI_V1_SW_CONF_I2C0 | USI_V1_SW_CONF_I2C1 | \
+> +					 USI_V1_SW_CONF_I2C0_1 | USI_V1_SW_CONF_SPI | \
+> +					 USI_V1_SW_CONF_UART | USI_V1_SW_CONF_UART_I2C1)
+> +
+>  /* USIv2: System Register: SW_CONF register bits */
+>  #define USI_V2_SW_CONF_NONE	0x0
+>  #define USI_V2_SW_CONF_UART	BIT(0)
+> @@ -34,7 +46,8 @@
+>  #define USI_OPTION_CLKSTOP_ON	BIT(2)
+>  
+>  enum exynos_usi_ver {
+> -	USI_VER2 = 2,
+> +	USI_VER1 = 1,
 
-Signed-off-by: Devang Tailor <dev.tailor@samsung.com>
+Is this assignment=1 actually now helping? Isn't it creating empty item
+in exynos_usi_modes array? Basically it wastes space in the array for
+no benefits.
 
----
-Changes in v2:
-- Added L3 cache for all the three cpu clusters
-- Corrected L2 cache numbering as a part of review comments from Krzysztof
-  and updated as per cpus clusters.
-- Link to v1: https://patchwork.kernel.org/project/linux-arm-kernel/patch/20241231064350.523713-1-dev.tailor@samsung.com/
----
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 127 ++++++++++++++++++
- 1 file changed, 127 insertions(+)
+> +	USI_VER2,
+>  };
+>  
+>  struct exynos_usi_variant {
+> @@ -66,19 +79,39 @@ struct exynos_usi_mode {
+>  	unsigned int val;		/* mode register value */
+>  };
+>  
+> -static const struct exynos_usi_mode exynos_usi_modes[] = {
+> -	[USI_V2_NONE] =	{ .name = "none", .val = USI_V2_SW_CONF_NONE },
+> -	[USI_V2_UART] =	{ .name = "uart", .val = USI_V2_SW_CONF_UART },
+> -	[USI_V2_SPI] =	{ .name = "spi",  .val = USI_V2_SW_CONF_SPI },
+> -	[USI_V2_I2C] =	{ .name = "i2c",  .val = USI_V2_SW_CONF_I2C },
+> +#define USI_MODES_MAX (USI_MODE_UART_I2C1 + 1)
+> +static const struct exynos_usi_mode exynos_usi_modes[][USI_MODES_MAX] = {
+> +	[USI_VER1] = {
+> +		[USI_MODE_NONE] =	{ .name = "none", .val = USI_V1_SW_CONF_NONE },
+> +		[USI_MODE_UART] =	{ .name = "uart", .val = USI_V1_SW_CONF_UART },
+> +		[USI_MODE_SPI] =	{ .name = "spi",  .val = USI_V1_SW_CONF_SPI },
+> +		[USI_MODE_I2C] =	{ .name = "i2c",  .val = USI_V1_SW_CONF_I2C0 },
+> +		[USI_MODE_I2C1] =	{ .name = "i2c1", .val = USI_V1_SW_CONF_I2C1 },
+> +		[USI_MODE_I2C0_1] =	{ .name = "i2c0_1", .val = USI_V1_SW_CONF_I2C0_1 },
+> +		[USI_MODE_UART_I2C1] =	{ .name = "uart_i2c1", .val = USI_V1_SW_CONF_UART_I2C1 },
+> +	}, [USI_VER2] = {
+> +		[USI_MODE_NONE] =	{ .name = "none", .val = USI_V2_SW_CONF_NONE },
+> +		[USI_MODE_UART] =	{ .name = "uart", .val = USI_V2_SW_CONF_UART },
+> +		[USI_MODE_SPI] =	{ .name = "spi",  .val = USI_V2_SW_CONF_SPI },
+> +		[USI_MODE_I2C] =	{ .name = "i2c",  .val = USI_V2_SW_CONF_I2C },
+> +	},
+>  };
+>  
+>  static const char * const exynos850_usi_clk_names[] = { "pclk", "ipclk" };
+>  static const struct exynos_usi_variant exynos850_usi_data = {
+>  	.ver		= USI_VER2,
+>  	.sw_conf_mask	= USI_V2_SW_CONF_MASK,
+> -	.min_mode	= USI_V2_NONE,
+> -	.max_mode	= USI_V2_I2C,
+> +	.min_mode	= USI_MODE_NONE,
+> +	.max_mode	= USI_MODE_I2C,
+> +	.num_clks	= ARRAY_SIZE(exynos850_usi_clk_names),
+> +	.clk_names	= exynos850_usi_clk_names,
+> +};
+> +
+> +static const struct exynos_usi_variant exynos8895_usi_data = {
+> +	.ver		= USI_VER1,
+> +	.sw_conf_mask	= USI_V1_SW_CONF_MASK,
+> +	.min_mode	= USI_MODE_NONE,
+> +	.max_mode	= USI_MODE_UART_I2C1,
+>  	.num_clks	= ARRAY_SIZE(exynos850_usi_clk_names),
+>  	.clk_names	= exynos850_usi_clk_names,
+>  };
+> @@ -88,6 +121,10 @@ static const struct of_device_id exynos_usi_dt_match[] = {
+>  		.compatible = "samsung,exynos850-usi",
+>  		.data = &exynos850_usi_data,
+>  	},
+> +	{
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index eb446cdc4ab6..a3fd503c1b21 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -89,6 +89,13 @@ cpu0: cpu@0 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl0>;
- 		};
- 
- 		cpu1: cpu@100 {
-@@ -96,6 +103,13 @@ cpu1: cpu@100 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl0>;
- 		};
- 
- 		cpu2: cpu@200 {
-@@ -103,6 +117,13 @@ cpu2: cpu@200 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x200>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl0>;
- 		};
- 
- 		cpu3: cpu@300 {
-@@ -110,6 +131,13 @@ cpu3: cpu@300 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x300>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl0>;
- 		};
- 
- 		cpu4: cpu@10000 {
-@@ -117,6 +145,13 @@ cpu4: cpu@10000 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x10000>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl1>;
- 		};
- 
- 		cpu5: cpu@10100 {
-@@ -124,6 +159,13 @@ cpu5: cpu@10100 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x10100>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl1>;
- 		};
- 
- 		cpu6: cpu@10200 {
-@@ -131,6 +173,13 @@ cpu6: cpu@10200 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x10200>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl1>;
- 		};
- 
- 		cpu7: cpu@10300 {
-@@ -138,6 +187,13 @@ cpu7: cpu@10300 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x10300>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl1>;
- 		};
- 
- 		cpu8: cpu@20000 {
-@@ -145,6 +201,13 @@ cpu8: cpu@20000 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x20000>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl2>;
- 		};
- 
- 		cpu9: cpu@20100 {
-@@ -152,6 +215,70 @@ cpu9: cpu@20100 {
- 			compatible = "arm,cortex-a78ae";
- 			reg = <0x0 0x20100>;
- 			enable-method = "psci";
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>;
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>;
-+			next-level-cache = <&l2_cache_cl2>;
-+		};
-+
-+		l2_cache_cl0: l2-cache0 {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+			cache-size = <0x40000>;
-+			cache-line-size = <64>;
-+			cache-sets = <512>;
-+			next-level-cache = <&l3_cache_cl0>;
-+		};
-+
-+		l2_cache_cl1: l2-cache1 {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+			cache-size = <0x40000>;
-+			cache-line-size = <64>;
-+			cache-sets = <512>;
-+			next-level-cache = <&l3_cache_cl1>;
-+		};
-+
-+		l2_cache_cl2: l2-cache2 {
-+			compatible = "cache";
-+			cache-level = <2>;
-+			cache-unified;
-+			cache-size = <0x40000>;
-+			cache-line-size = <64>;
-+			cache-sets = <512>;
-+			next-level-cache = <&l3_cache_cl2>;
-+		};
-+
-+		l3_cache_cl0: l3-cache0 {
-+			compatible = "cache";
-+			cache-level = <3>;
-+			cache-unified;
-+			cache-size = <0x200000>;/* 2MB L3 cache for cpu cluster-0 */
-+			cache-line-size = <64>;
-+			cache-sets = <2048>;
-+		};
-+
-+		l3_cache_cl1: l3-cache1 {
-+			compatible = "cache";
-+			cache-level = <3>;
-+			cache-unified;
-+			cache-size = <0x200000>;/* 2MB L3 cache for cpu cluster-1 */
-+			cache-line-size = <64>;
-+			cache-sets = <2048>;
-+		};
-+
-+		l3_cache_cl2: l3-cache2 {
-+			compatible = "cache";
-+			cache-level = <3>;
-+			cache-unified;
-+			cache-size = <0x100000>;/* 1MB L3 cache for cpu cluster-2 */
-+			cache-line-size = <64>;
-+			cache-sets = <1365>;
- 		};
- 	};
- 
--- 
-2.34.1
+These two are in oone line.
+
+> +		.compatible = "samsung,exynos8895-usi",
+> +		.data = &exynos8895_usi_data,
+> +	},
+>  	{ } /* sentinel */
+>  };
+>  MODULE_DEVICE_TABLE(of, exynos_usi_dt_match);
+> @@ -109,14 +146,15 @@ static int exynos_usi_set_sw_conf(struct exynos_usi *usi, size_t mode)
+>  	if (mode < usi->data->min_mode || mode > usi->data->max_mode)
+>  		return -EINVAL;
+>  
+> -	val = exynos_usi_modes[mode].val;
+> +	val = exynos_usi_modes[usi->data->ver][mode].val;
+>  	ret = regmap_update_bits(usi->sysreg, usi->sw_conf,
+>  				 usi->data->sw_conf_mask, val);
+>  	if (ret)
+>  		return ret;
+>  
+>  	usi->mode = mode;
+> -	dev_dbg(usi->dev, "protocol: %s\n", exynos_usi_modes[usi->mode].name);
+> +	dev_dbg(usi->dev, "protocol: %s\n",
+> +		exynos_usi_modes[usi->data->ver][usi->mode].name);
+>  
+>  	return 0;
+>  }
+> @@ -160,6 +198,30 @@ static int exynos_usi_enable(const struct exynos_usi *usi)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * exynos_usi_disable - Disable USI block
+> + * @usi: USI driver object
+> + *
+> + * USI IP-core needs the reset flag cleared in order to function. This
+> + * routine disables the USI block by setting the reset flag. It also disables
+> + * HWACG behavior. It should be performed on removal of the device.
+> + */
+> +static void exynos_usi_disable(const struct exynos_usi *usi)
+> +{
+> +	u32 val;
+> +
+> +	/* Make sure that we've stopped providing the clock to USI IP */
+> +	val = readl(usi->regs + USI_OPTION);
+> +	val &= ~USI_OPTION_CLKREQ_ON;
+> +	val |= ~USI_OPTION_CLKSTOP_ON;
+> +	writel(val, usi->regs + USI_OPTION);
+> +
+> +	/* Set USI block state to reset */
+> +	val = readl(usi->regs + USI_CON);
+> +	val |= USI_CON_RESET;
+> +	writel(val, usi->regs + USI_CON);
+> +}
+> +
+>  static int exynos_usi_configure(struct exynos_usi *usi)
+>  {
+>  	int ret;
+> @@ -169,9 +231,12 @@ static int exynos_usi_configure(struct exynos_usi *usi)
+>  		return ret;
+>  
+>  	if (usi->data->ver == USI_VER2)
+> -		return exynos_usi_enable(usi);
+> +		ret = exynos_usi_enable(usi);
+> +	else
+> +		ret = clk_bulk_prepare_enable(usi->data->num_clks,
+> +					      usi->clks);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+> @@ -253,10 +318,26 @@ static int exynos_usi_probe(struct platform_device *pdev)
+>  
+>  	ret = exynos_usi_configure(usi);
+>  	if (ret)
+> -		return ret;
+> +		goto fail_probe;
+>  
+>  	/* Make it possible to embed protocol nodes into USI np */
+>  	return of_platform_populate(np, NULL, NULL, dev);
+
+This also needs error handling.
+
+> +
+> +fail_probe:
+
+err_unconfigure:
+
+> +	if (usi->data->ver != USI_VER2)
+> +		clk_bulk_disable_unprepare(usi->data->num_clks, usi->clks);
+
+Move it to its own callback exynos_usi_unconfigure(), so naming will be
+symmetric. The probe does not prepare clocks directly, so above code is
+not that readable. The most readable is to have symmetrics calls -
+configure+unconfigure (or whatever we name it).
+
+> +
+> +	return ret;
+> +}
+> +
+> +static void exynos_usi_remove(struct platform_device *pdev)
+> +{
+> +	struct exynos_usi *usi = platform_get_drvdata(pdev);
+> +
+> +	if (usi->data->ver == USI_VER2)
+> +		exynos_usi_disable(usi);
+
+This is not related to the patch and should be separate patch, if at
+all.
+
+> +	else
+> +		clk_bulk_disable_unprepare(usi->data->num_clks, usi->clks);
+
+So the easiest would be to add devm reset action and then no need for
+goto-err handling and remove() callback.
+
+Best regards,
+Krzysztof
 
