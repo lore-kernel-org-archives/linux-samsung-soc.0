@@ -1,33 +1,63 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B610B1F4723;
-	Wed,  8 Jan 2025 09:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C98B1F37D4
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2025 09:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736328377; cv=none; b=s/UohfJuWZJiicT3w8cdHtnAJKH8Yxldc2U8EXnaeAd/CN5erajjA/g3k/UGHneiIBMquT3jSFV9OqZobigbLlbdut2eB942AjtQxYdkk3yYk7vQEPnXjoolVWpLXCZY1Pkv2aPCHQaGtB9+Qd4+ZWCHxCMePZwAsXkJwhaCKzY=
+	t=1736329094; cv=none; b=m05g2arHtkfTu4xg9Tf1fE+Yih34Q2guKfpojwkh8cor0ltkSvESNSxbQbYNTXU0TnNPkbDl7FFJ/dBXjw5xa1IMqaB+EaToUgTzZC+f/m2K9vw+ObtN3rJP5JaNIuz2CyJC7HFVPE3GN61+9FLPoBS6iTSULESG4T9WF6S3zEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736328377; c=relaxed/simple;
-	bh=XPJj6oXMCGezoqFdEXRGYT/4pQLrzWUSOHgwH+//EU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZJd1TkfGest5pg2MObk3PCNAmp5DLX2RnpnKpXWvcX5vQBbn3wVL2SDweaBGkH5/UfP+z3QE/MX4AbEf7kaT9cIXNZLIpXa4VdtIK8/YqCCmRoN4C2jm+YmPSawO4UAwHshGqwUQMwKOVME8v6HLAF90ZlT7aOxj5ETnyydGEnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dn+EcWTS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736329094; c=relaxed/simple;
+	bh=mxY3hHGAPD58iSFHT8K2AinLWZdc4QdiH7ZU1sxLT3M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gMEXkslBlQiwB1SlANNfwsuVUjNqXIbr/twG8Jc7sghqFjuI79aH7D35tq4nLf5Dn1N1eaPf657gajUPmUtPWnXgvOxZj2G21T/w+anGKVg7kXL1MeefxzH2rNBmlFwng6s0CoosLR9AkCwjgYrvN9AwFEuI3zRDkFnMmxXWI+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EHn8Wzvd; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dn+EcWTS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27239C4CEE0;
-	Wed,  8 Jan 2025 09:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736328377;
-	bh=XPJj6oXMCGezoqFdEXRGYT/4pQLrzWUSOHgwH+//EU4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dn+EcWTSyAGrfXMgrdbL0WBRoRZdwOzEBKp3dPyecyMGB+Aytui87AHQTi3XLCXT8
-	 EPNEbc7lNrg5OVwNdWLBglDkIZmcAvJFyL1NMcjC/iME3JkWEuprWeLO6OaQj3Z3s/
-	 s3Ajr6RuoxawGcfXBS66AdPNwHbuZWCshorZeNVzgfjWwgBxORy4ztdEnXw4ayMyWX
-	 igIwB8WOToQALJPo/VfRgAeRqKWc0iJBhiFbigyMWOvY0J2U/sQxCAjB/DtqiwRvXZ
-	 ZcUsjJ+23SmHcIrUsvMCQ54dWPGYzBO+NPpUFkFl2S5bFzGvW97DLS75gvRUQOJT67
-	 UpcIp2jiwqp1g==
-Message-ID: <e28abf31-3d91-4d1b-97e6-202df5ebb3f5@kernel.org>
-Date: Wed, 8 Jan 2025 10:26:11 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EHn8Wzvd"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so6278987f8f.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2025 01:38:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736329091; x=1736933891; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SRu1D7dGFpm2VosF+UybZYQj2P1M1/nlzDOmVqBRd/k=;
+        b=EHn8Wzvde6aXxRcflEoP7Uuo9Czxfn98+78YepMwjt65CmvNRqQlVfmnY27/PurK8r
+         01JU1r84PlU9vy88rTNsZ/beKQ0VhkTOZNrENARCnvubsITYROY92FinSGuIxs8EUpsb
+         5nBMJDu6fzzzB69bhoH6guHnkm3SvdphRh4rwjKhzyL3mnZ8CTjLi1x76xe6ItsQnWag
+         KNUBaqFmF44BsMOuJtIITUVKqSWbIww6rtHyEbfb+0DOwaSzsiZm8pIjn2/opBkAoEYj
+         zHpu48bldcq8bNy1g+IhupdBDGG2mMa8StlcYNS5RiCndlQIVLP26LrmVEtlX5NbH6to
+         UKDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736329091; x=1736933891;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SRu1D7dGFpm2VosF+UybZYQj2P1M1/nlzDOmVqBRd/k=;
+        b=IoDe2vNQVD1bXfMGCPrLKJBdHa6mNEbl48Eo/Ca58dw8JTJOhsfgZIZyI8GFQtwGLH
+         Th8Gmpve12prWGgNhvYtFY+t4oWM4zzfcUbhp7wkoM3E1gERO/2mY4wllCVOalwvnexN
+         ScL9VtohkSVy38ZpyJzpePlHRWbIX4OBsRCoUFbAWlVVkpJviq4c1EfhmEUV71lOGg+W
+         /srup3dI7erVPd6GfDAQUta7HIVT3DHCo93AJzfxJzCJeIn64qNTqyyHFfS3K+yOCy8o
+         eDRGHJGQU2g2bFA1NmZ/2YCFW/C+GilyIsXAa3B110lvoCHbcWaxFdi3WfylUIL7acI+
+         M1sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg3QUXhl6b0QAHDXCN5lWEvZ+UKPWl/8g3+CFiaa6TFS2qDD5AqWDyH4A/RiJIS2GDq5Yi//qTcuGJC3oGIMi4fQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnHodlnFdiRi96ZlfuUXfD+7AcZar7OFmWQjQvkIvuiYRljm7g
+	0kdOSVkzFZzwdyMId1Lf3sndglO5iOuzSLUuWjkZ4Gx5CVHc0gAkB4GgFxL02vI=
+X-Gm-Gg: ASbGncsJSSZFqzwFBm32y1lyWBv/FY/P1IYuc+kXrC0gEutFHRILEwTXK1nq/QAGoKt
+	VpU1Cwn8wSeXDM4OTSpcNzImabkdctRa8H3gUtU4QFCj54NtM6r0ut+6nDmm8uPADE7KjxhDf/0
+	+69TFI0V+xUtx+1InmdYX9rSZttORr6vxaC/KsHUFpElgfv/TezjRWR/yjrwA3kGhG1TefUr6x9
+	6BPCtX+RrxUNFuik/6A0KjK/ebe0JqgQ+Udibk9Dnvemo1T/MKmjsqtPai/RpBR
+X-Google-Smtp-Source: AGHT+IEgum97jZJPYPy0T8bJnOriFmAqzwKIgHxRt19SfRXXojRd9i53LcCXOyDAxP3gnyZZAo45SQ==
+X-Received: by 2002:adf:b1dc:0:b0:38a:88bc:ace1 with SMTP id ffacd0b85a97d-38a88bcadc9mr703276f8f.34.1736329090756;
+        Wed, 08 Jan 2025 01:38:10 -0800 (PST)
+Received: from [192.168.0.14] ([188.26.61.92])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436dd1682e4sm23612385e9.1.2025.01.08.01.38.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2025 01:38:10 -0800 (PST)
+Message-ID: <8f21d5f2-5327-488c-878c-a62d85857240@linaro.org>
+Date: Wed, 8 Jan 2025 09:38:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -35,158 +65,53 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] soc: samsung: usi: implement support for USIv1 and
- exynos8895
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250107113512.525001-1-ivo.ivanov.ivanov1@gmail.com>
- <20250107113512.525001-3-ivo.ivanov.ivanov1@gmail.com>
- <6y4mg6atqi6idyoppesg5owrnfrjhkzqh4im4po7urfry2qctb@yimp5y6sm7h6>
- <907e1169-ceea-4d41-93bb-925041de005e@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: mailbox: add google,gs101-mbox
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
+ peter.griffin@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+ ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241217-acpm-v4-upstream-mbox-v5-0-cd1d3951fe84@linaro.org>
+ <20241217-acpm-v4-upstream-mbox-v5-1-cd1d3951fe84@linaro.org>
+ <ec3cdfd1-df7a-466c-8581-c9546ca6b089@linaro.org>
+ <CABb+yY0rBzP8JPAik5aaXp6GivQKEf++sgiMM9fTPgd_5YXT1w@mail.gmail.com>
+ <eaab647a-f6f4-4562-89fa-e64daa80bdf4@linaro.org>
+ <CABb+yY0AkpqC_P-3cHeuWDu-gJzxCnarsNFNQWk45+tHKrDLmg@mail.gmail.com>
+ <4e97b33f-b4a5-4875-a65d-9e25bcc5a46c@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <907e1169-ceea-4d41-93bb-925041de005e@gmail.com>
+In-Reply-To: <4e97b33f-b4a5-4875-a65d-9e25bcc5a46c@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/01/2025 10:17, Ivaylo Ivanov wrote:
-> On 1/8/25 10:30, Krzysztof Kozlowski wrote:
->> On Tue, Jan 07, 2025 at 01:35:11PM +0200, Ivaylo Ivanov wrote:
->>> USIv1 IP-core is found on some ARM64 Exynos SoCs (like Exynos8895) and
->>> provides selectable serial protocols (one of: HSI2C0, HSI2C1, HSI2C0_1,
->>> SPI, UART, UART_HSI2C1).
->>>
->>> USIv1, unlike USIv2, doesn't have any known register map. Underlying
->>> protocols that it implements have no offset, like with Exynos850.
->>> Desired protocol can be chosen via SW_CONF register from System
->>> Register block of the same domain as USI.
->>>
->>> In order to select a particular protocol, the protocol has to be
->>> selected via the System Register. Unlike USIv2, there's no need for
->>> any setup before the given protocol becomes accessible apart from
->>> enabling the APB clock and the protocol operating clock.
->>>
->>> Modify the existing driver in order to allow USIv1 instances in
->>> Exynos8895 to probe and set their protocol. While we're at it,
->>> make use of the new mode constants in place of the old ones
->>> and add a removal routine.
->>>
->>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>> ---
->>>  drivers/soc/samsung/exynos-usi.c | 108 +++++++++++++++++++++++++++----
->>>  1 file changed, 95 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
->>> index 114352695..43c17b100 100644
->>> --- a/drivers/soc/samsung/exynos-usi.c
->>> +++ b/drivers/soc/samsung/exynos-usi.c
->>> @@ -16,6 +16,18 @@
->>>  
->>>  #include <dt-bindings/soc/samsung,exynos-usi.h>
->>>  
->>> +/* USIv1: System Register: SW_CONF register bits */
->>> +#define USI_V1_SW_CONF_NONE		0x0
->>> +#define USI_V1_SW_CONF_I2C0		0x1
->>> +#define USI_V1_SW_CONF_I2C1		0x2
->>> +#define USI_V1_SW_CONF_I2C0_1		0x3
->>> +#define USI_V1_SW_CONF_SPI		0x4
->>> +#define USI_V1_SW_CONF_UART		0x8
->>> +#define USI_V1_SW_CONF_UART_I2C1	0xa
->>> +#define USI_V1_SW_CONF_MASK		(USI_V1_SW_CONF_I2C0 | USI_V1_SW_CONF_I2C1 | \
->>> +					 USI_V1_SW_CONF_I2C0_1 | USI_V1_SW_CONF_SPI | \
->>> +					 USI_V1_SW_CONF_UART | USI_V1_SW_CONF_UART_I2C1)
->>> +
->>>  /* USIv2: System Register: SW_CONF register bits */
->>>  #define USI_V2_SW_CONF_NONE	0x0
->>>  #define USI_V2_SW_CONF_UART	BIT(0)
->>> @@ -34,7 +46,8 @@
->>>  #define USI_OPTION_CLKSTOP_ON	BIT(2)
->>>  
->>>  enum exynos_usi_ver {
->>> -	USI_VER2 = 2,
->>> +	USI_VER1 = 1,
->> Is this assignment=1 actually now helping? Isn't it creating empty item
->> in exynos_usi_modes array? Basically it wastes space in the array for
->> no benefits.
-> 
-> I wanted to keep the USIv2 enum the same.
+Hi, Jassi,
 
-Is there any need for keeping it the same?
-
-> 
+On 1/3/25 9:57 AM, Tudor Ambarus wrote:
+>>> Then I updated the mailbox core to allow clients to request channels by
+>>> passing some args containing channel identifiers to the controllers,
+>>> that the controllers xlate() using their own method.
+>>>
+>> This is unnecessary.
+>> If you don't pass the doorbell number from DT, each channel populated
+>> by the driver is just a s/w construct or a 'virtual' channel. Make use
+>> of 'void *data'  in send_data() to specify the doorbell.
 >>
->>> +	USI_VER2,
->>>  };
-
-
-...
-
->>
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static void exynos_usi_remove(struct platform_device *pdev)
->>> +{
->>> +	struct exynos_usi *usi = platform_get_drvdata(pdev);
->>> +
->>> +	if (usi->data->ver == USI_VER2)
->>> +		exynos_usi_disable(usi);
->> This is not related to the patch and should be separate patch, if at
->> all.
+> I think this introduces concurrency problems if the channel identifiers
+> passed by 'void *data' don't match the virtual channel used for sending
+> the messages. Do we want to allow this?
 > 
-> Well I though that since didn't have any removal routine before it'd be good
-> to introduce that and not leave USIv2 with hwacg set.
+> Also, if we use 'void *data' to pass channel identifiers, the channel
+> checks will have to be made at send_data() time. Thus if passing wrong
+> channel type for example, the mailbox client will eventually get a
+> -ENOBUFS and a "Try increasing MBOX_TX_QUEUE_LEN" message, which I find
+> misleading.
 
-Sure, but separate commit, please. Can be preceeding the USIv1 support.
+Shall I still use 'void *data' to pass channel identifiers through
+send_data()? I'd like to respin everything.
 
-Best regards,
-Krzysztof
+Thanks!
+ta
