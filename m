@@ -1,105 +1,106 @@
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540461FA166;
-	Wed,  8 Jan 2025 12:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1314D1FF1DD
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2025 16:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736340650; cv=none; b=MDaGhnnaQWokAVEsyhG+Ysbmzm2+2+kuMBPgcKhQ0gHanopSxzUmOaz6nXrc/Dczo6Fnl0bCevbd38cD1Wpgc9qgK51ylusZAsPSRegreqzLUOFMYW+ojxDKR8knXoWQionUO2uJbubZj73oFUkrP6UgjgefxKEKIKxk6to/VXI=
+	t=1736354418; cv=none; b=Dh2Z44MbxixCDVEeDSNqozcGHDpN2ANviGsB64Ohqzb5XDbhlSFFIC6rSyqYxhWIGPwLbY5wEcUuaCViBsLFBq3YifqFmXsUuvNf1oEwlzoVCs8pf+6UlxKNB4uAizcLwf+4V8trF+f238i/0oRG004SqgKT52KX3Yac9knrjr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736340650; c=relaxed/simple;
-	bh=MUJn7dgIN4qxQ2b8yGGIjtxj/qPGRciGtNVEeBtG72A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=moFEUbaPsttHN04e2VWGxRy5rgF6MbLjyLigWYGmuCAKDwDd7DdDPssxnQvZ9gULF/QirXQ80iuUy9IynpYgB6TQRHqXfF8SNYq73AJV+7HDxgsuw9EeiL9KgCwj4eXKQ9l7aUQJQcwbRCqIz+hb/KvKfDzpF6zXt5RZRdoW44Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4affbc4dc74so8746697137.0;
-        Wed, 08 Jan 2025 04:50:48 -0800 (PST)
+	s=arc-20240116; t=1736354418; c=relaxed/simple;
+	bh=WcjTfDkH9dXfEqgNl1DnowyrGJESQ3gBR/y+8lDI0CI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iFRgyLydhriaRk5jir4xNucRJz4fTm5QXHDl0WuzHMn5PQRgrUc6eqeXT4OEH7JNyCnQ6L2WliHKZVAw8tKcvZsw4Lnr8pwXqFddUXTyc3utk20FKJ96vs9/JJkku5eDs2iQQYj9tA1RE2BQQsfkQKIo0plDYFUJ0gEfw5q4uyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6MjskTG; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6MjskTG"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385d7f19f20so7571414f8f.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2025 08:40:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736354415; x=1736959215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=deCdOEFNOf75jPBBQAgdeMZQiPxVvZH3Ou1tOWSHr6o=;
+        b=M6MjskTGFGI3QL+xtNc/Ke4HbG9jUGMtzX1URRKgeAgZSG5EM3eDCSuMIHGcIZVoal
+         zK3HLG3jKH/K/ERWUyIATPKKepTiFSoQPA3YCW9Zw9ZqBA7cDuCazmsrNZ11qzshJLa2
+         MD7mDng4boOJpjcyCEjcbPYaDrA1mwtw+nlG+DFs3tZOJRYtciUgWu+RMEa88JrTk/sY
+         6Jxb4gOm5EOVCJ0P4XHtpDH6fVXN3M/eo8qRwh6ZI+l6g7QGSMzAwi3LBciXJG4SVWqE
+         EzW47aDjuUddczdcE+MIui1rMg0tlIJIpBBjR5dh9OutHMtlRNxrT0rrSoNO1u0Z4Fsm
+         XYXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736340646; x=1736945446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q4NAkYOwXTO9Vbz5ywBO5Myw4esqfkb6xj3656tlG2o=;
-        b=bjP1obGXqw/WMEbT4K18NGpeTBE4LIsl5VmvoDuUwj29jVqJh8/qxRnvQJridvXtDd
-         laUFFXh15bTQ8hdsBtJQ/xm7deYXBcos4nVMElzs2M5N8LFVgMec73AYtrlR9gtesPI5
-         uy4VY61IIF3U5c4iqJ9qx8aiL3n9gnX8A+lkMPPvW5sUfR7Ufc2BRCY2uDglf9hElSTd
-         jn+N9KcgB8s2hrUHVyOiEiggvi4OvStN1pPao8IUPF6CcNB4RUdIoQFI1iuyTyOTr2QK
-         fCWzCuR4GOqawoKOGsYR5SBs5sbtTJeOU9AB1TYpriYwEMTiBTVf1dB4MQUWAdPk3leg
-         gXbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaDAIR/StbSoXn0xvbJE1VFAE0LZr0f42gzf8Fvy9JVPjnhaDRP9NtAD7w/5MvmRl+lI9myhaVxxPBUg==@vger.kernel.org, AJvYcCVQcXTbm7KRa1Q3Hfx2yFISQyy7ZRjGxvGWXHlAlHJQdcwVE7Vhr5u+e6AcPmE5lt7yrnND2WzA56Qc0woB@vger.kernel.org, AJvYcCVnHLl1rc/5JDelOT4rqHh4ELVqkO5DucoRTa9X87HIjy2VgCiA5t8dguNtnW2YPU+erwCZcwxuOGU6wdAdv+w/F5Y=@vger.kernel.org, AJvYcCVx5eSjR68D6dR3agijAHwxIaYu7/myMIa/7jqyqwJqBspEbrrR6cS/IB0K3iRj1LOmdZ4VkZ9OP6RFF3riZb57pOo=@vger.kernel.org, AJvYcCWnhV8dTVtrwE/f6e9lNX+eW3y5o9VAwTJBKisOfz0fyOPG74/RUoYs566ULZNXWfC4DOg1Y6j8vaZh@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrnSSplpL3gO+9HTtgHkY1D3/izvlrs1fML1pM4gJ638m8ciYW
-	i374jhdARa3jLbCE270V33/RHxbKkfuozkx0sQepeC2bGNCP9qg/bqpO/1gp
-X-Gm-Gg: ASbGncvN+fjqtgDDjrTCbV9jQeQO/IGWUPkn37mtwrDihX360mctbfVk4HYO5RYU65V
-	78UhXubIZ8LkSKjV2tIv7c7nGm23XkffN5NbS/5TEJD4b07NRAoebNDH3nOzNkND4eeqoEmr5EC
-	5mInmwHuDCGuS7ZUmekbh5KarGZ0spEBH5xM5GJWpAnMLfSI72IVzfhldvMjExseTkRsYKnUFsi
-	XaYFwhsy+Woy8auxKUbb8R1t5Z2cY1i8BwusCU5zz8D2vJnukVMYTBK4DWIW8CDoGbKLAoxCM+p
-	yxXVUYUl3ODqjb3ubBk=
-X-Google-Smtp-Source: AGHT+IG2YIimPZgjV8+V3ohfSLj0436yBzoxGfou/yGZis07gdsquYmgdvktECoYgJuh09HEWikvpw==
-X-Received: by 2002:a05:6102:d87:b0:4af:c5c8:bb4c with SMTP id ada2fe7eead31-4b3d0e0f3eemr1643908137.16.1736340646318;
-        Wed, 08 Jan 2025 04:50:46 -0800 (PST)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b2bf9d97c0sm8365196137.15.2025.01.08.04.50.45
+        d=1e100.net; s=20230601; t=1736354415; x=1736959215;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=deCdOEFNOf75jPBBQAgdeMZQiPxVvZH3Ou1tOWSHr6o=;
+        b=Qbh7f68OjP5/qdhyNXMpQ/AtwjwpLQNWmtwfuOcM+luS4GbJW1JHOPoZsF+XINTGiE
+         fTpDMwLPtpc6PlHoCAQoZLVtjkErlxvlQuHoDhFg4If7HpQ6rHxeXU9GLZ/6GZFuTypD
+         +wwFkJ4hDuznaqc2xE9bF0NCoAN1KTuLn3rvMau30FL2L9POmC2V9ykXQNEI1qOSm7rJ
+         gfvDr5xw/eOciA1fNkD8Ft2eXOhgMEeRI7PzrgmaMAOnWHXJYfYIkjC3Wrw0TkK6/YSE
+         reaWEh9ajxKIkqBDqKKeqde1xvDVazhM+xs4MP6/slVHIrX48hNJFY4nlkvBo05XH9IM
+         xO3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXAHRsUP2233Vx/UZy4R8c2YdIHuj+d6IDZrLzcDxFPiEdgh4m5BZpdyIT901740LqgwbtrvDX5IVV362qt5wlTxA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySmc+Hf/aQA466aP/g9s/CZAGpCA4uGQha6L6M/Vs3x2yImLyw
+	8S3aeWXRlrSqs7L85ZlxymReo3DGirZ//Qc8ntkBpGRXcBZudiDrA36RW6wA7IA=
+X-Gm-Gg: ASbGncsqi48Xc9hFl/rhN7o4FlGLAZeXGkWmXOQTqiUDoU/HCMTP5GxJEd9RhVH1S/7
+	lQNZbwbP7O17d+oQjG8k6WSfk8D+JRonr1j3P6jfYb3l+vRdd3sV+lYgZeml+TV6W1twMD2470u
+	JTefbGlm+BpY1KHsvZZwhOnjal+hpzOhSEOwiHeMVhDC+QS+TH08ai/DXKaocXSbtPJbmYzf/zO
+	HxNuF5BRlWk7llJeO7Spkqm4MB5Gi7xBcQ7Y4rknTf+mSjQ1U464CcVvZ3qFqgmFZEpVv/zcsS5
+	dJIuL5ojbANOZMs+UuuL
+X-Google-Smtp-Source: AGHT+IE4abllXEGQrABSU9KaQSrAPNt2UJoX+UrddjzVaSi3eoBYN+JcyuNs9drr9UEmuphRRteJdQ==
+X-Received: by 2002:a5d:5f52:0:b0:38a:50f7:240c with SMTP id ffacd0b85a97d-38a8735760fmr2780072f8f.47.1736354415474;
+        Wed, 08 Jan 2025 08:40:15 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-436e2dc0bb7sm25990875e9.16.2025.01.08.08.40.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2025 04:50:45 -0800 (PST)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4affbc4dc74so8746681137.0;
-        Wed, 08 Jan 2025 04:50:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUZlTvZbA3u31pVLL/Glu0N9usgMK1p2g09rBPocBxcY4518+M17mn008QHsmWvltnWid4/beLN7St4@vger.kernel.org, AJvYcCUcyAZUfXtYIy8r9+PakuZr5Sysw5EksUrw8LKgHj1wJCZtNEVKvba4HmWWElLLxWPWQbwF6YWkApGqZqry@vger.kernel.org, AJvYcCWxdA7sMgQ++GlpaMIGj5lYRxmhX8A7+ZTDeZaFRnmB5e0KLZMYQKsbeF0ObYzL+jkDHO4hGCdP5AsF4PMwIY/bfec=@vger.kernel.org, AJvYcCXDb1cn8WBGmb7XCfA7358vIhEjZ5v6wK+O4/xPOf8AYDkfgIjMTtveOdMoMBRp585A4m6lRGltwgJZPA==@vger.kernel.org, AJvYcCXa1LRg4wcdhShKN3R74/F39QHL58RXD3wSWbPPmh/ptymB0mFdI5eHEBD27XPwKTamI04Dqr+rYjxXCeFH0dGWK7o=@vger.kernel.org
-X-Received: by 2002:a05:6102:b02:b0:4af:56a8:737c with SMTP id
- ada2fe7eead31-4b3d0dd199cmr1696534137.12.1736340645758; Wed, 08 Jan 2025
- 04:50:45 -0800 (PST)
+        Wed, 08 Jan 2025 08:40:15 -0800 (PST)
+Message-ID: <076daca7-55e0-40d4-8ea5-93254ecd19b8@linaro.org>
+Date: Wed, 8 Jan 2025 17:40:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250107131019.246517-1-krzysztof.kozlowski@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Jan 2025 13:50:34 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWQ8NmJbswGMCrMu3sgPtCLLSvdGONg_Ux_cNsvk7MLWA@mail.gmail.com>
-X-Gm-Features: AbW1kvaf0_q9bTRRhsbwHxe9_rKnHnPxiUDNiKQ4wgA4C6jlHeSLeR_KGT4kkIw
-Message-ID: <CAMuHMdWQ8NmJbswGMCrMu3sgPtCLLSvdGONg_Ux_cNsvk7MLWA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: ufs: Correct indentation and style in DTS example
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
-	Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: timer: exynos4210-mct: Add
+ samsung,exynos990-mct compatible
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250104-cmu-nodes-v1-0-ae8af253bc25@mentallysanemainliners.org>
+ <20250104-cmu-nodes-v1-1-ae8af253bc25@mentallysanemainliners.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250104-cmu-nodes-v1-1-ae8af253bc25@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 7, 2025 at 2:10=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.
->
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 04/01/2025 21:54, Igor Belwon wrote:
+> Add a dedicated compatible for the MCT of the Exynos 990 SoC.
+> The design for the timer is reused from previous SoCs.
+> 
+> Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+> ---
 
->  .../devicetree/bindings/ufs/renesas,ufs.yaml  | 16 +++++------
+Applied patch 1/2
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+Thanks
 
-Gr{oetje,eeting}s,
+   -- Daniel
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
