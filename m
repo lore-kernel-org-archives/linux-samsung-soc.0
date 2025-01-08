@@ -1,128 +1,126 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3D61F2C43
-	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2025 09:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7B91F3D3C;
+	Wed,  8 Jan 2025 10:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736329767; cv=none; b=aXHns/jKE6g2YWP3SeK7aQ/lFtcRk6NWwFlGYwCF7CiyYXWeDgpOrrpUPheBG4ZO5tBpQm+P62UZlCbTFYkIqIvE/2l8Clev6923KUTM/OjoPPYEl3TC2UsNVg0GCPvpMOV/FNYUcLGLw6wlqZF3rqNlZFxNB2IU/hr/b/UyoJM=
+	t=1736330943; cv=none; b=XRKzLgtEK9SAvBWNhd2lBbv0Bi6jbAjCkYMwqpU3JxLbxNZ2am5UTBS3k1RtjWEi5wEQKjk8PiOyy9gcCz1+JYHzc3XDw8KAP1qUa1NifF6l/yZJl+q5dxH8/KtZxVbjM7sW3oUrxwStCdk7JsjzqVn5MvTdWR8n1gOKFimx8cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736329767; c=relaxed/simple;
-	bh=9deTj6/vvguCX59Rp5CA9tK97aPiY1BmdFL+MDFSKko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qvveCJaqZDGg1j2ULYhjycXn9GgihO1sEw3tzZKKti4lvkWiJLekrgg8+VCflRDBsLFe8/u3cNiKsMw0RnIZtyhW8VUiGi0/ub8bLEIR2fowDoYHAv3gKPvQCsvVnsbSDPWv4toTPmjJaT/BwnZioI126k4iW9u4nugeGGgYu3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JaMuWFnh; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736330943; c=relaxed/simple;
+	bh=j3XzxW4WHy3pYYMnlBG5fG+D54Ql2GcPQzwfO7+nZB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bHUXHKtNdLTbxUVKq/KcGR6uzCpcUqMXkpeu3GM2aqrUVWfnO08OpUzSrhxtZkMlCz26vaReQxBUghfx+4Gv2PfCvXE5D8PgwqQZCkjrP+nYFC23o+3jy6xdA6fshjusZENbvm6ncXy0N9VKKuLEZnL9CzbetL1mRbBcwAmb2g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgNqGBTg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JaMuWFnh"
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3ebc678b5c9so70462b6e.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2025 01:49:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736329765; x=1736934565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9deTj6/vvguCX59Rp5CA9tK97aPiY1BmdFL+MDFSKko=;
-        b=JaMuWFnhvRe9Dx/dKXneuV/27sMd4smP6tmfeoUV6ZCWMcajTfwvYp2ryHwrEFtF4h
-         AoS70UmNEQ/fdAnnufMfxcm0SLInHurSTaSlGgJWAqxej50QBcadH5rj6QhALfDQin0t
-         SFklNc0Qgmo3XoqDnn2A3lRJ7ecyVFX1P8HnPJ5b5OhG1FcH5+lGVryHUVLb1D0v3d7R
-         7PFnvZoqwSHNX212tUjoNCyckLMv7rCvoodaq8Wy/+5sWN/QlozpEdVbC38iMP8wFT6h
-         i3RwL7LUbYIcgBrvpgYojlU4sLyAwcbocPOY26tcqyE5IlsReXAb3kgMZg4EUNuGXa68
-         MQrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736329765; x=1736934565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9deTj6/vvguCX59Rp5CA9tK97aPiY1BmdFL+MDFSKko=;
-        b=OAQLn4jPtqyHjs/gcaeezYixKW32wI1nMuxJ6ljKjPP8EmuFmGpIqVo83qtQC9crro
-         Gi3OWh165Uxys+pt/k9ppVXcBcqZKWQJeDK86y1C7p9cL2CY1zpzuxnjhtPUxeJKHVb3
-         ruHfjoOyt9huZ8aLTm6EWDQr5y1lFcuVrDaJ/uivIfbBBxR/p0pUw5pgP5R7ux+uy5BB
-         5w1yLZIwHEuza5rlc7qvv82W7KLGutXdabypYSWOyLUEITjrkjRlxy0oAFHiOaw2YKBw
-         OD6BPxFltmL7p8scxBUGq3NGSvOZ8z9nR0q1YK6BaI0uoqu3wnEDLXcshX51DisAHZl7
-         5hQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYfJrqjFDorJntzalV52T3YupuTlEYwxOT1E9Vadkv6XK7qbcX2VVnJ35Qa8xYtGgzuVLyTI5s4WclLG4pYLsrKQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCcLDYNa4HcKm+cockWjxtpEjJmiisldXiUGVRqWvmC0qO2zkA
-	9uEI8hMwUOJl5aS/ALLQBUNT+F/Ch9hheIMWgHEeIK40EERaJAjwAGqw1nf2qe/KFjDhD5JGD8t
-	M/6FOAxSRKo13a02dmbTlq3Gk9RMvW+ZcMlao2g==
-X-Gm-Gg: ASbGncu8wzAsRkCVqY1XuSnZLk/uCivu6nvkJdYNnkM21WuRS8qr9JvDAhAvgD/UzUG
-	WOp1XUkQnNrNOLsCsSpexllTXdT6xsWQtJww8kzk=
-X-Google-Smtp-Source: AGHT+IHZ2qa5v003ct1VSkNjp4+W849xZ86hZNQfh08NEbSUCMyVnvNz0IJm/V2fxZ6p4xrdj0xHIGvA99BCjD8jKng=
-X-Received: by 2002:a05:6808:10ce:b0:3eb:6044:5a8c with SMTP id
- 5614622812f47-3ef2ec96526mr1173978b6e.20.1736329764752; Wed, 08 Jan 2025
- 01:49:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgNqGBTg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C57FC4CEE0;
+	Wed,  8 Jan 2025 10:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736330943;
+	bh=j3XzxW4WHy3pYYMnlBG5fG+D54Ql2GcPQzwfO7+nZB0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BgNqGBTg+FU5Fn9rnghB6ceKvcZS4JFJ9aTeE308wTPxkiB31zPCxARSIJro0kBN8
+	 H4OJs/wXoIknmkDH4dJNn+Xnu08pxKGL9L6eGWi6Hvi4uSCRWdnF5NJpBEtR+DMKs7
+	 PoLsf2V/dN25UcaXTBVNG9M331QIsT9tiK8pisLVw/2e9kNtdGi9t2B0AmVCnypeqD
+	 4XEI3XIy35Yb13haZ642wxp/1POMC/D8TbWNQr4EnNzGnlnVndClIfewSvUiwqJVmz
+	 RgD+mmYanSz001I7yHDk9wCbFLRD4xJ2qOkZsp9Z2DVvTrY29AqK0Lg/NXLC0rhpZG
+	 Ip3elJRW8l9sQ==
+Message-ID: <d0271581-c250-465a-aa0f-2f10548cc89b@kernel.org>
+Date: Wed, 8 Jan 2025 11:08:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be> <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
-In-Reply-To: <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 8 Jan 2025 09:49:13 +0000
-X-Gm-Features: AbW1kvYKpkuMkeIC0jLCwnzruoE9AbHyOFZse_X-2P5ly2F0MUO4jvDNj5kUorY
-Message-ID: <CADrjBPpkiNvxGjw_iLG3tw2MNy62trao+igaMMX_zjL44+w1EQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel gauge
-To: t.antoine@uclouvain.be
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] soc: samsung: usi: implement support for USIv1 and
+ exynos8895
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250107113512.525001-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250107113512.525001-3-ivo.ivanov.ivanov1@gmail.com>
+ <6y4mg6atqi6idyoppesg5owrnfrjhkzqh4im4po7urfry2qctb@yimp5y6sm7h6>
+ <907e1169-ceea-4d41-93bb-925041de005e@gmail.com>
+ <e28abf31-3d91-4d1b-97e6-202df5ebb3f5@kernel.org>
+ <c30a6f1b-b1a9-40db-b673-e6fc47bdb224@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <c30a6f1b-b1a9-40db-b673-e6fc47bdb224@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Thomas,
+On 08/01/2025 10:45, Ivaylo Ivanov wrote:
+>>>>> +
+>>>>> +	return ret;
+>>>>> +}
+>>>>> +
+>>>>> +static void exynos_usi_remove(struct platform_device *pdev)
+>>>>> +{
+>>>>> +	struct exynos_usi *usi = platform_get_drvdata(pdev);
+>>>>> +
+>>>>> +	if (usi->data->ver == USI_VER2)
+>>>>> +		exynos_usi_disable(usi);
+>>>> This is not related to the patch and should be separate patch, if at
+>>>> all.
+>>> Well I though that since didn't have any removal routine before it'd be good
+>>> to introduce that and not leave USIv2 with hwacg set.
+>> Sure, but separate commit, please. Can be preceeding the USIv1 support.
+> 
+> What about right after the USIv1 support? It would be less messy in my
+> opinion.
+Fixes should be before new features and why messy? You add devm cleanup
+handler for unconfigure and in next commit you grow it with clk disable
+for USIv1?
 
-On Thu, 2 Jan 2025 at 11:16, Thomas Antoine via B4 Relay
-<devnull+t.antoine.uclouvain.be@kernel.org> wrote:
->
-> From: Thomas Antoine <t.antoine@uclouvain.be>
->
-> The interface of the Maxim max77759 fuel gauge has a lot of common with t=
-he
-> Maxim max1720x. The major difference is the lack of non-volatile memory
-> slave address. No slave is available at address 0xb of the i2c bus, which
-> is coherent with the following driver from google: line 5836 disables
-> non-volatile memory for m5 gauge.
->
-> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68c3=
-6bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
->
-> Other differences include the lack of V_BATT register to read the battery
-> level and a difference in the way to identify the chip (the same register
-> is used but not the same mask).
->
-> Add support for the max77759 by allowing to use the non-volatile
-> memory or not based on the chip. Also add the V_CELL regsister as a
-> fallback to read voltage value in the case where read of V_BATT fails.
->
-> The cast is necessary to avoid an overflow when the value of the register
-> is above 54975 (equivalent to a voltage around 4.29 V).
->
-> The regmap of the max77759 will lead the read to fail for V_BATT and to
-> correctly use V_CELL instead. This regmap was proposed by Andr=C3=A9 Dras=
-zik in
->
-> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a11=
-6.camel@linaro.org/
-
-Firstly thanks for working on this :) Fuel gauge is a great addition
-to the Pixel 6 upstream support.
-
-It would be good if you can document what you consider "working" with
-this series applied. I think it's fine for support to come
-incrementally (say feature additions to the driver to support x,y,z).
-But anything that is now reported in sysfs with this series applied
-should be accurate (or alternatively not exposed for MAX77759 variant
-if it's not accurate and it's unclear from checking the downstream
-driver how to fix it).
-
-Thanks,
-
-Peter
+Best regards,
+Krzysztof
