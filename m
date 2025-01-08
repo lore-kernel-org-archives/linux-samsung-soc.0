@@ -1,182 +1,128 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAA51F4E5F;
-	Wed,  8 Jan 2025 09:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3D61F2C43
+	for <linux-samsung-soc@vger.kernel.org>; Wed,  8 Jan 2025 09:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736329514; cv=none; b=FEUT9S3YGSMMRRR36WdGYpuFy1Ost/mGnormbirwBZ/kD8syvEI/CvRBw8Y5qtj2qQ8vcQHGaL35HXIlT/p+ajZ/2xRhdwBaW5efsrMnMQWBiBxdrTUrMhjjUSp9W0d6AiqUtlmj8bj4tK0X+ng9psQffuTcwJ+Re8s7KgnUOvU=
+	t=1736329767; cv=none; b=aXHns/jKE6g2YWP3SeK7aQ/lFtcRk6NWwFlGYwCF7CiyYXWeDgpOrrpUPheBG4ZO5tBpQm+P62UZlCbTFYkIqIvE/2l8Clev6923KUTM/OjoPPYEl3TC2UsNVg0GCPvpMOV/FNYUcLGLw6wlqZF3rqNlZFxNB2IU/hr/b/UyoJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736329514; c=relaxed/simple;
-	bh=NDgavOw8gmq7yStYWCODAHmKJuSOutCdpJM3iiok/Kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RwwaN+VfBXZbzB7gsE55OL+GqLntU9Viym61iX745ttBlpVz3SQilMasV2+3tHF+7dVsgBnTfSs5fpZAna0UnV4YujdkYvOKBwW0li+GTll0X7R1bXCGX7dWBrvcqYS27WxB/jSojz778JmN2/NypMBVvPav12V1ep9z0deHXao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtWwcKez; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1736329767; c=relaxed/simple;
+	bh=9deTj6/vvguCX59Rp5CA9tK97aPiY1BmdFL+MDFSKko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qvveCJaqZDGg1j2ULYhjycXn9GgihO1sEw3tzZKKti4lvkWiJLekrgg8+VCflRDBsLFe8/u3cNiKsMw0RnIZtyhW8VUiGi0/ub8bLEIR2fowDoYHAv3gKPvQCsvVnsbSDPWv4toTPmjJaT/BwnZioI126k4iW9u4nugeGGgYu3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JaMuWFnh; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtWwcKez"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361815b96cso110296335e9.1;
-        Wed, 08 Jan 2025 01:45:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JaMuWFnh"
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3ebc678b5c9so70462b6e.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jan 2025 01:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736329510; x=1736934310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jJFc6aCEYuELsqOgEP3eTfZoZbcGrNAKeEe94fE4tQQ=;
-        b=HtWwcKez0EUkxRpYvgQrhfTfq5ytWEjsTsLZaRutr1cvJ2NbcKzBBOpMTYBnkDDUBu
-         6lM0DXXaUlVT9OagkeR5pHTH9Vro14UbkICKUE/HKDf2bJmEsXQqAP2ou70s1y4wJx9j
-         bbiVdn+rLBE7ukaDGIM9aQTZJ2OXj8idR5V7tv71p5byLsxfhCsO0E+bw/fw1kmkRy4m
-         la1su3Bac4WSurluLCC7QIGmhE8EqDIYilCQenNLda2IfsEVC4Xxxka1OSZFzZwW8Ym2
-         42F3cr8OWAK9QUY2JaFLZvygr3wFKyzQWLtqRY9ooSqe9mQir1nD02oAIltXQndePeQT
-         wB/Q==
+        d=linaro.org; s=google; t=1736329765; x=1736934565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9deTj6/vvguCX59Rp5CA9tK97aPiY1BmdFL+MDFSKko=;
+        b=JaMuWFnhvRe9Dx/dKXneuV/27sMd4smP6tmfeoUV6ZCWMcajTfwvYp2ryHwrEFtF4h
+         AoS70UmNEQ/fdAnnufMfxcm0SLInHurSTaSlGgJWAqxej50QBcadH5rj6QhALfDQin0t
+         SFklNc0Qgmo3XoqDnn2A3lRJ7ecyVFX1P8HnPJ5b5OhG1FcH5+lGVryHUVLb1D0v3d7R
+         7PFnvZoqwSHNX212tUjoNCyckLMv7rCvoodaq8Wy/+5sWN/QlozpEdVbC38iMP8wFT6h
+         i3RwL7LUbYIcgBrvpgYojlU4sLyAwcbocPOY26tcqyE5IlsReXAb3kgMZg4EUNuGXa68
+         MQrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736329510; x=1736934310;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJFc6aCEYuELsqOgEP3eTfZoZbcGrNAKeEe94fE4tQQ=;
-        b=tEFUhcxwja2yNhSFqgufsahZ5jS+hy6hWJc7xunxBcNy+mIP4RMaFvp2iKn5xUYPlR
-         OO9jokUnanZ0d0swmoIfiUf0yfEKD5r7GmG7jV10XE5LBJf9sGIMJQLvvZyvcijT/1Lc
-         8R3S4RPF70RJNqPVGusXMZUUJxqfqe36dWmFNywsk4K96WXOt5+Esuqf3voTuSInnHZA
-         0Ys29NH67RUd0yjSG6T1pyGrqMkb803reqZCZV2RxOV4PKU8n316Q9SE9QWibcYk9t98
-         mwL5r6sZQsI+UcbiQHRttbwCR6kZR1v3vE5tGouOx77oxqi/+EmVwkvGwgpICqmOu9z4
-         haLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4PArK/VMavh2XjLcQPFOUuOSMB9MZIwRyFFnqnKrExPC6OwGhbaql1IU0ZAnbAj6NFvrMU1lvbeKT@vger.kernel.org, AJvYcCWoAemJ4cN4RT9fm4Uh08wtPA6evaNGis+pFBy2JNo41JuAkP5FQBQEP56vlo6c4UGXrOLm1B3sBLX/xL1AZcrBUB8=@vger.kernel.org, AJvYcCX8O7YV+fWJv67fieQYkDkpTMVNM+bhsZrQUS+KCfbzLejGYV8sIQltgrnLw0L+U+JflmusQyDoeAc7AGyG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk0J/ax9nN3Bbkv7NYfcN9mKtxhtLw9OfzLaRkhDbc/eVvAlxN
-	dA0G9L+DDrtojPbZcHplI5fwZ5/nPboWT7HSoJgnC5jf8B2GKi8J
-X-Gm-Gg: ASbGncsDB407VuaXOUQv8OZcRXLDu9dhIuqXpTZq4AKWiprEe8CEfZZNN7B9XrW4Hlm
-	qQTykLcDoAtrCqP6hYjuyCG494oC/SEcv84zRsLNoOdowCio69I0SXka+5r3KSxE8DEbaih1ybA
-	s9FaPqe7xHk2tpzlP7eGr5VlrJb3AuXkI/sRComCgIb3q0XeWAGvpza6qmnCjVGoPEhdTC6CVWF
-	y0UjnMAHsh+c7gv1yqKoEGRq5cjsSYgzKpa5ImL+qypKHSwd+gn/Koi80CJQy9P1W3pDK+vLX+0
-	+lrrQyfFlVvlUBD6Fwfy/w==
-X-Google-Smtp-Source: AGHT+IGBYhtKcH+43aBsDTk5Gv4pcjmdDTwgBqDi6cgn0y4vI6q88YFJFw98p8iVkmiXs+yHyqRHrg==
-X-Received: by 2002:a05:600c:3c9e:b0:431:5e3c:2ff0 with SMTP id 5b1f17b1804b1-436e26a6727mr16110965e9.8.1736329509711;
-        Wed, 08 Jan 2025 01:45:09 -0800 (PST)
-Received: from [172.16.20.210] (62-73-104-42.ip.btc-net.bg. [62.73.104.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2dc207csm14729785e9.15.2025.01.08.01.45.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jan 2025 01:45:09 -0800 (PST)
-Message-ID: <c30a6f1b-b1a9-40db-b673-e6fc47bdb224@gmail.com>
-Date: Wed, 8 Jan 2025 11:45:02 +0200
+        d=1e100.net; s=20230601; t=1736329765; x=1736934565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9deTj6/vvguCX59Rp5CA9tK97aPiY1BmdFL+MDFSKko=;
+        b=OAQLn4jPtqyHjs/gcaeezYixKW32wI1nMuxJ6ljKjPP8EmuFmGpIqVo83qtQC9crro
+         Gi3OWh165Uxys+pt/k9ppVXcBcqZKWQJeDK86y1C7p9cL2CY1zpzuxnjhtPUxeJKHVb3
+         ruHfjoOyt9huZ8aLTm6EWDQr5y1lFcuVrDaJ/uivIfbBBxR/p0pUw5pgP5R7ux+uy5BB
+         5w1yLZIwHEuza5rlc7qvv82W7KLGutXdabypYSWOyLUEITjrkjRlxy0oAFHiOaw2YKBw
+         OD6BPxFltmL7p8scxBUGq3NGSvOZ8z9nR0q1YK6BaI0uoqu3wnEDLXcshX51DisAHZl7
+         5hQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYfJrqjFDorJntzalV52T3YupuTlEYwxOT1E9Vadkv6XK7qbcX2VVnJ35Qa8xYtGgzuVLyTI5s4WclLG4pYLsrKQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCcLDYNa4HcKm+cockWjxtpEjJmiisldXiUGVRqWvmC0qO2zkA
+	9uEI8hMwUOJl5aS/ALLQBUNT+F/Ch9hheIMWgHEeIK40EERaJAjwAGqw1nf2qe/KFjDhD5JGD8t
+	M/6FOAxSRKo13a02dmbTlq3Gk9RMvW+ZcMlao2g==
+X-Gm-Gg: ASbGncu8wzAsRkCVqY1XuSnZLk/uCivu6nvkJdYNnkM21WuRS8qr9JvDAhAvgD/UzUG
+	WOp1XUkQnNrNOLsCsSpexllTXdT6xsWQtJww8kzk=
+X-Google-Smtp-Source: AGHT+IHZ2qa5v003ct1VSkNjp4+W849xZ86hZNQfh08NEbSUCMyVnvNz0IJm/V2fxZ6p4xrdj0xHIGvA99BCjD8jKng=
+X-Received: by 2002:a05:6808:10ce:b0:3eb:6044:5a8c with SMTP id
+ 5614622812f47-3ef2ec96526mr1173978b6e.20.1736329764752; Wed, 08 Jan 2025
+ 01:49:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] soc: samsung: usi: implement support for USIv1 and
- exynos8895
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250107113512.525001-1-ivo.ivanov.ivanov1@gmail.com>
- <20250107113512.525001-3-ivo.ivanov.ivanov1@gmail.com>
- <6y4mg6atqi6idyoppesg5owrnfrjhkzqh4im4po7urfry2qctb@yimp5y6sm7h6>
- <907e1169-ceea-4d41-93bb-925041de005e@gmail.com>
- <e28abf31-3d91-4d1b-97e6-202df5ebb3f5@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <e28abf31-3d91-4d1b-97e6-202df5ebb3f5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250102-b4-gs101_max77759_fg-v2-0-87959abeb7ff@uclouvain.be> <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
+In-Reply-To: <20250102-b4-gs101_max77759_fg-v2-1-87959abeb7ff@uclouvain.be>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 8 Jan 2025 09:49:13 +0000
+X-Gm-Features: AbW1kvYKpkuMkeIC0jLCwnzruoE9AbHyOFZse_X-2P5ly2F0MUO4jvDNj5kUorY
+Message-ID: <CADrjBPpkiNvxGjw_iLG3tw2MNy62trao+igaMMX_zjL44+w1EQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] power: supply: add support for max77759 fuel gauge
+To: t.antoine@uclouvain.be
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/8/25 11:26, Krzysztof Kozlowski wrote:
-> On 08/01/2025 10:17, Ivaylo Ivanov wrote:
->> On 1/8/25 10:30, Krzysztof Kozlowski wrote:
->>> On Tue, Jan 07, 2025 at 01:35:11PM +0200, Ivaylo Ivanov wrote:
->>>> USIv1 IP-core is found on some ARM64 Exynos SoCs (like Exynos8895) and
->>>> provides selectable serial protocols (one of: HSI2C0, HSI2C1, HSI2C0_1,
->>>> SPI, UART, UART_HSI2C1).
->>>>
->>>> USIv1, unlike USIv2, doesn't have any known register map. Underlying
->>>> protocols that it implements have no offset, like with Exynos850.
->>>> Desired protocol can be chosen via SW_CONF register from System
->>>> Register block of the same domain as USI.
->>>>
->>>> In order to select a particular protocol, the protocol has to be
->>>> selected via the System Register. Unlike USIv2, there's no need for
->>>> any setup before the given protocol becomes accessible apart from
->>>> enabling the APB clock and the protocol operating clock.
->>>>
->>>> Modify the existing driver in order to allow USIv1 instances in
->>>> Exynos8895 to probe and set their protocol. While we're at it,
->>>> make use of the new mode constants in place of the old ones
->>>> and add a removal routine.
->>>>
->>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>> ---
->>>>  drivers/soc/samsung/exynos-usi.c | 108 +++++++++++++++++++++++++++----
->>>>  1 file changed, 95 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
->>>> index 114352695..43c17b100 100644
->>>> --- a/drivers/soc/samsung/exynos-usi.c
->>>> +++ b/drivers/soc/samsung/exynos-usi.c
->>>> @@ -16,6 +16,18 @@
->>>>  
->>>>  #include <dt-bindings/soc/samsung,exynos-usi.h>
->>>>  
->>>> +/* USIv1: System Register: SW_CONF register bits */
->>>> +#define USI_V1_SW_CONF_NONE		0x0
->>>> +#define USI_V1_SW_CONF_I2C0		0x1
->>>> +#define USI_V1_SW_CONF_I2C1		0x2
->>>> +#define USI_V1_SW_CONF_I2C0_1		0x3
->>>> +#define USI_V1_SW_CONF_SPI		0x4
->>>> +#define USI_V1_SW_CONF_UART		0x8
->>>> +#define USI_V1_SW_CONF_UART_I2C1	0xa
->>>> +#define USI_V1_SW_CONF_MASK		(USI_V1_SW_CONF_I2C0 | USI_V1_SW_CONF_I2C1 | \
->>>> +					 USI_V1_SW_CONF_I2C0_1 | USI_V1_SW_CONF_SPI | \
->>>> +					 USI_V1_SW_CONF_UART | USI_V1_SW_CONF_UART_I2C1)
->>>> +
->>>>  /* USIv2: System Register: SW_CONF register bits */
->>>>  #define USI_V2_SW_CONF_NONE	0x0
->>>>  #define USI_V2_SW_CONF_UART	BIT(0)
->>>> @@ -34,7 +46,8 @@
->>>>  #define USI_OPTION_CLKSTOP_ON	BIT(2)
->>>>  
->>>>  enum exynos_usi_ver {
->>>> -	USI_VER2 = 2,
->>>> +	USI_VER1 = 1,
->>> Is this assignment=1 actually now helping? Isn't it creating empty item
->>> in exynos_usi_modes array? Basically it wastes space in the array for
->>> no benefits.
->> I wanted to keep the USIv2 enum the same.
-> Is there any need for keeping it the same?
+Hi Thomas,
 
-No, not really.
-
+On Thu, 2 Jan 2025 at 11:16, Thomas Antoine via B4 Relay
+<devnull+t.antoine.uclouvain.be@kernel.org> wrote:
 >
->>>> +	USI_VER2,
->>>>  };
+> From: Thomas Antoine <t.antoine@uclouvain.be>
 >
-> ...
+> The interface of the Maxim max77759 fuel gauge has a lot of common with t=
+he
+> Maxim max1720x. The major difference is the lack of non-volatile memory
+> slave address. No slave is available at address 0xb of the i2c bus, which
+> is coherent with the following driver from google: line 5836 disables
+> non-volatile memory for m5 gauge.
 >
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +
->>>> +static void exynos_usi_remove(struct platform_device *pdev)
->>>> +{
->>>> +	struct exynos_usi *usi = platform_get_drvdata(pdev);
->>>> +
->>>> +	if (usi->data->ver == USI_VER2)
->>>> +		exynos_usi_disable(usi);
->>> This is not related to the patch and should be separate patch, if at
->>> all.
->> Well I though that since didn't have any removal routine before it'd be good
->> to introduce that and not leave USIv2 with hwacg set.
-> Sure, but separate commit, please. Can be preceeding the USIv1 support.
-
-What about right after the USIv1 support? It would be less messy in my
-opinion.
-
+> Link: https://android.googlesource.com/kernel/google-modules/bms/+/1a68c3=
+6bef474573cc8629cc1d121eb6a81ab68c/max1720x_battery.c
 >
-> Best regards,
-> Krzysztof
+> Other differences include the lack of V_BATT register to read the battery
+> level and a difference in the way to identify the chip (the same register
+> is used but not the same mask).
+>
+> Add support for the max77759 by allowing to use the non-volatile
+> memory or not based on the chip. Also add the V_CELL regsister as a
+> fallback to read voltage value in the case where read of V_BATT fails.
+>
+> The cast is necessary to avoid an overflow when the value of the register
+> is above 54975 (equivalent to a voltage around 4.29 V).
+>
+> The regmap of the max77759 will lead the read to fail for V_BATT and to
+> correctly use V_CELL instead. This regmap was proposed by Andr=C3=A9 Dras=
+zik in
+>
+> Link: https://lore.kernel.org/all/d1bade77b5281c1de6b2ddcb4dbbd033e455a11=
+6.camel@linaro.org/
 
+Firstly thanks for working on this :) Fuel gauge is a great addition
+to the Pixel 6 upstream support.
+
+It would be good if you can document what you consider "working" with
+this series applied. I think it's fine for support to come
+incrementally (say feature additions to the driver to support x,y,z).
+But anything that is now reported in sysfs with this series applied
+should be accurate (or alternatively not exposed for MAX77759 variant
+if it's not accurate and it's unclear from checking the downstream
+driver how to fix it).
+
+Thanks,
+
+Peter
