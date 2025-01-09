@@ -1,106 +1,132 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B9B677;
-	Thu,  9 Jan 2025 20:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D052054F9;
+	Thu,  9 Jan 2025 22:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736452993; cv=none; b=BNn559wQLBM41doNoMmmAdrWnuPOVkxyJ7XIFQvvsj3rgzggAWSZ8T8nq5xQ06DUheDZea+a0zxWIuNSO11YA/Q6bfZIUM71/PLufQyYL6Q1w7ttkdp7UckmyY+fdsGBAvVOs+kSnCHIdD39KWL+Tvj475v3fDdSiwlwi1D/AkU=
+	t=1736463576; cv=none; b=XrFFtZpKGdJExC8xj65XBisKOGNTO2Q/S9zwnRvL4FAuHpbkhIpdBi0WO1lyDz12I+8rC4tlnc8E7C9OuGF2SZVUtX8Gkv3W719r4WFMDXo3HivPXybqclNy0T42u7LDK7Xt3ecZBts8rIt+Rg1xAwyc2/5T3wTcdOgnzaiteHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736452993; c=relaxed/simple;
-	bh=CEraVU4ce4vgP8jPE97cGax/9P4aNGpnQ4WcUIe/0vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eC2L35ckqF8+lcS/LeoL9Q0P/ljXhExfTciFuq4nMVDzWInFdu4mqDIJl/7fxOUKi8Qa198I4vnG8wUg1L7JT5zmCfMdGF+eGsWj1LUrTvqT2welZlo5BFfzz+1KaAYEEnQ0AuW8xcLHSXpALBKzZVJP4dTpYFrS1UPsbRgYbpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aqnMgi8d; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1736463576; c=relaxed/simple;
+	bh=IbAfyCKUbMM4BfqRWRIy3BfY72OJP9ZEtH7KuQecUE8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KOKESOC3lqRyFLdJZU+dGYQBWA6DjisXHJvpbXNJLwUfgKa6s8eb47OPu/OgerhqNj6W7mJpWJtzoRvrMg4s5yyI0JmMXrEONyHPV1SmctLyyKcFdzfytGCc6Zi6tSKAyNBKz4bOn++mrtRqbCXDWx/xAdS0rHDD5vmCfOb+F4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=s+jwsQH2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aqnMgi8d"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 81E65FF802;
-	Thu,  9 Jan 2025 20:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1736452988;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ufquL8MTaCaDartUz08Jv9Co5w4deNYxwsOj/E8fcww=;
-	b=aqnMgi8dmXNmdqbb82gZLgfSEWXhFqHsrY4xDCQkXxC1eVbQ/WCgrOzndGV9myrqe/hElG
-	jef5H3/ls9gbinUu25fBKeiz2GZiCFulJ+4WhYBhfC45VCcq4EfPtR0KIHfjbcek+Q1VfV
-	9wBuydXTJ3vjy+3TBFcHwgj4253G33JMK1TEdzYz0Ww2Ja4TgQmwoyNJWYJWfnKuos+WPd
-	cU46FTlgkwEX3NlsLIdW4FYBG1lIgDNygresvTuecEYNDGFWiC7SET7ShqD2glnBctwGq+
-	pVYOLHmLiyMp2+38SZucpgCpNOe0nHGnaKhJZh2gFh8WYrNUDI6LJ28dYOimqg==
-Date: Thu, 9 Jan 2025 21:03:04 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-rtc@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Yiting Deng <yiting.deng@amlogic.com>,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Support Opensource <support.opensource@diasemi.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Eddie Huang <eddie.huang@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Vincent Shih <vincent.sunplus@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Michal Simek <michal.simek@amd.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH] rtc: use boolean values with device_init_wakeup()
-Message-ID: <173644377117.1019413.12980385173648327961.b4-ty@bootlin.com>
-References: <20241217071331.3607-2-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="s+jwsQH2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5X3Tmvihn3grkA7Jge4RjfqiSvPeilgE9yOD+d9FpVI=; b=s+jwsQH2++ZJTa21jBBjugQMXI
+	4bHOZkHr3BtbA6u/uOhHobPv3MGeFWhNFGUl43iw9TYIyTjmoijwv6stOdPuOX44mYtM+Ex4veIlv
+	GanP8Ltk9SSPFArY9HIjzDL6w9HBmiDH9lkAf/YRbJ76vQtfeMTBh+9CdrFBgxC6jT1PLksF27MCM
+	uT5h6cp1P/vX38GEwJikltALOY4zAv1uVLPRdaX6J8i+zNB6LmK+4A346bu7woaR2Pb1GBGscGht6
+	qpjxlF/C8UEv09LkPOGTvCxTCmWsQsAVjWgo7DBUgDUT6zw9zcZF7Od+phqWlT6xPgO3SWYExc5bS
+	MfLPLsiA==;
+Received: from i5e860d05.versanet.de ([94.134.13.5] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tW1Uq-0005mI-C2; Thu, 09 Jan 2025 23:59:24 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Thomas Zimmermann <tzimmermann@suse.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>
+Subject:
+ Re: [PATCH v2 19/25] drm/rockchip: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+Date: Thu, 09 Jan 2025 23:59:23 +0100
+Message-ID: <3227546.fEcJ0Lxnt5@diego>
+In-Reply-To: <20250109150310.219442-20-tzimmermann@suse.de>
+References:
+ <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-20-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241217071331.3607-2-wsa+renesas@sang-engineering.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Tue, 17 Dec 2024 08:13:26 +0100, Wolfram Sang wrote:
-> device_init_wakeup() second argument is a bool type. Use proper boolean
-> values when calling it to match the type and to produce unambiguous code
-> which is easier to understand.
-> 
-> 
+Am Donnerstag, 9. Januar 2025, 15:57:13 CET schrieb Thomas Zimmermann:
+> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
+> buffer size. Align the pitch to a multiple of 64.
+>=20
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Sandy Huang <hjc@rock-chips.com>
+> Cc: "Heiko St=FCbner" <heiko@sntech.de>
+> Cc: Andy Yan <andy.yan@rock-chips.com>
 
-Applied, thanks!
+I've looked up the patch implementing the new functionality - patch2 of
+this series [0] and that looks really nice to get proper helpers and not
+having many drivers open-coding the same functionality in different ways.
 
-[1/1] rtc: use boolean values with device_init_wakeup()
-      https://git.kernel.org/abelloni/c/8c28c4993f11
+So for the Rockchip adaptation:
 
-Best regards,
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+and looking forward to this getting merged :-)
+
+Thanks a lot for working on that
+Heiko
+
+[0] https://patchwork.kernel.org/project/linux-rockchip/patch/2025010915031=
+0.219442-3-tzimmermann@suse.de/
+
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_gem.c
+> index 6330b883efc3..3bd06202e232 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/vmalloc.h>
+> =20
+>  #include <drm/drm.h>
+> +#include <drm/drm_dumb_buffers.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_gem.h>
+>  #include <drm/drm_gem_dma_helper.h>
+> @@ -403,13 +404,12 @@ int rockchip_gem_dumb_create(struct drm_file *file_=
+priv,
+>  			     struct drm_mode_create_dumb *args)
+>  {
+>  	struct rockchip_gem_object *rk_obj;
+> -	int min_pitch =3D DIV_ROUND_UP(args->width * args->bpp, 8);
+> +	int ret;
+> =20
+> -	/*
+> -	 * align to 64 bytes since Mali requires it.
+> -	 */
+> -	args->pitch =3D ALIGN(min_pitch, 64);
+> -	args->size =3D args->pitch * args->height;
+> +	/* 64-byte alignment required by Mali */
+> +	ret =3D drm_mode_size_dumb(dev, args, SZ_64, 0);
+> +	if (ret)
+> +		return ret;
+> =20
+>  	rk_obj =3D rockchip_gem_create_with_handle(file_priv, dev, args->size,
+>  						 &args->handle);
+>=20
+
+
+
+
