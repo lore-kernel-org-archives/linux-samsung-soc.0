@@ -1,108 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443FE29A2;
-	Sat, 11 Jan 2025 12:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9379D1B86D5
+	for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jan 2025 18:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736597555; cv=none; b=Ug+8LXKX7U9B0kyXPVm3HGskj2K7q5dGmDh2qhxfcGoJONMxQ2WSg0AlD6BQMPzAYkznQcTGvn4p0U6WNjU/5GrSOJpqOl1dSbWWZhmSSqsq+1HHWUhBE7Qe88Kigj3LfqjvlPArRcsB0QtcdWIVA8o/LYy3WSwIizGJYLb38eQ=
+	t=1736621648; cv=none; b=tsNvB3xYGkC3srnJpdjdx4hMcB1QFKqLfN8o3yCxkGUs25VVKsujqB+gacReYVeu99ZXMtSXwCtiVCtGQvNGV9lMQK/QR/S1GuEEiHJVI6EZwXOkeR4pRC3CKSB3gyhQMy1+61YHHxPF6x7BbByCl5SIj5ocG9f7rTjQrx/MTEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736597555; c=relaxed/simple;
-	bh=0GwypkPnWt/RJ4fOsgJazzW5HFbXsyFVM3KJa4beDIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AEds0hd6hMJueB0p5dmPceBZ+pYJPGmDywVAoODaXvdS6Fh7o4kmoO5QTD89P/MiWLyLhkFJACqYOaHs8h8HeQeWMhmmef5Ai2qWIdLuSpm/e7qTZq+DtoQ7fWS+Loq4duW6SdKb1EN14h19vil+uGmGWt21fHwvh7W+PYJlCZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxrCQMr+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736621648; c=relaxed/simple;
+	bh=DXrQAPF7txiqmoF903YnIFHM8jg3GsgH23ML5WrryKo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AoYz1ZLyMn06tDz9MTSAlcLM4IBz5qq/oLb5aZMCmDhAHdXiwXoQnxuuqbCfziTz+bnZKfiDQY6wjqYrVgpxn2T3ZMQooNkSNsPzJLkdhs+WBsESmUEbns+COVJ2oV6wG79s6IDgxCmZ+vkLqzE9vFogT7PjqewY9lclxEtLRlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tj4kSDPQ; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxrCQMr+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D59F2C4AF09;
-	Sat, 11 Jan 2025 12:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736597554;
-	bh=0GwypkPnWt/RJ4fOsgJazzW5HFbXsyFVM3KJa4beDIc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fxrCQMr+RCvNGMaiA6ixR0TWRXYKzahN74tGdnMrP+HY/IOQ6+acTQOI5m3/ZDqZ/
-	 2fMJE+8zn4AhM/On64vZObAO6aAQXvgfOpPOrbTgkHtuxwhk0TBoFmGEU/47/t2bD7
-	 nhaNkiXg62ZeriuGk8R4jDbfDcJQcM0uVbbhgsUKHaJMyfFfcTgAPv30awkKzOM9zQ
-	 ekG9RMzAASEEEXS8qaNF5FftbjaBNvD9WoqkMMaeO6hZDGsGlyfdNONIdMaf+K56gG
-	 RmFDxP0xP07kNpPqTa+26zUFAXauAozK+ccC8eHP2WApe9GGg6wSY1DeQzzbVXQyyk
-	 xBn0GBYLRnWUg==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-71e15717a2dso1440545a34.3;
-        Sat, 11 Jan 2025 04:12:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUQASROUfRZ5OuSG/UhLZ9vuG14VD63SnDpuR/sIz9kpDKFvtdy01ROa4JaShe4mODCfjtzmYrS9ls=@vger.kernel.org, AJvYcCXQcXCqW3Pjbo3dWEizRrDqTpo7u+U1ph5zoZHCcCi897MKZM5AgETJXQCEA+NTPO35pAC/Yb6kDw/r9C9Y0R9MCR0=@vger.kernel.org, AJvYcCXnWGBVOcyze7DAmB8ygFXQo61g9CPrX105QuGfdimOUqM9HRMu3KKYM5hwR1p44YU6hThjtQNBd7o2hR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6ynvw+cEWoIO94m5VgifAuJ6pJ7OTYUHXB7Lnvqx2LM/289eg
-	wdWJ6yqL1P/wOJatK3zqfYbMJjPkE0mxy7XSeMzcvQFzNfDFA8ffwsOXULWoA253bSu0IG+YtRK
-	dxuC9JPLLVPDV9R2+pnzMQjXyzl0=
-X-Google-Smtp-Source: AGHT+IEA+04JMbR+NRAig83ydrur6btFIeS5TcU1Qs7bn3iWd4r1LnpTaQxOJRAw5YKsg1jbSKvC3H1HgwC0F8K5xco=
-X-Received: by 2002:a05:6870:9d1a:b0:29e:4111:fefc with SMTP id
- 586e51a60fabf-2aa06689212mr7311232fac.12.1736597554200; Sat, 11 Jan 2025
- 04:12:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tj4kSDPQ"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43616bf3358so4187115e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Jan 2025 10:54:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736621645; x=1737226445; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jpeJmNd3SZuuzmsG64ANuW49jVrr7teCJ/vcrUeE7Ig=;
+        b=Tj4kSDPQZ9KBDoFOJNzbqc4ZLCawOMGbT/5awAi2Gd1Xls1fkRww80uA3pNiQ4Zabe
+         SehZTnu/m7Q3cEJZI44RIHyy9Rkg7NH2Da3XEeEV1ZyFuVJIfjKExm0Ty3nKuzqOQC8b
+         eGYH5vCmo4GcVMyOuOP4+4SnC9w1T8oAR1Sj/pM+YKk6fEqyr1eUpSDbvdDqf7JxAx9v
+         we9DzJPDQR9zshCZl1P6OYQaLuDb7Ce45tlErAiwHNps/hL4OVeWRulMg1OTtvP6Ff4o
+         RLPzRkzLUr1fiY8ra5HEW4Hg1/8blUMvSliGUMeqySQu8mcSgB/mBnHm/BDCSmH+/wM/
+         gkbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736621645; x=1737226445;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jpeJmNd3SZuuzmsG64ANuW49jVrr7teCJ/vcrUeE7Ig=;
+        b=Ep3wR+vhyyUUIszk9AIdzPpF5gYKaR5Tddur9z5sc32nGblncq3h6/+OMnxZy5sZwj
+         RHz3hUCHUTX4Ch2HQ9k5OhypfjrSL1s3AutNuI1sC+/I9tkVcXp0D8HvSNCi4o96Sj8A
+         YpZh8QH9I2HyjnZkufIFBGwUsmDL9srOh6RfJEAwWGYF9lrJI8rXr0KNW3Zh/wZdUbxu
+         fc7pNgdstz6AFtMR0DcXBDD2zLvVKPINUk74FhMoVWk1NHswLJtY4UTEhWHe3Xf6iOfz
+         5oSHb7sHI3l6rp/Quo/rovwkTCEHgf0vWvEa1uhy2me8pcHNpQ4nVEtORrFd/gp2eINQ
+         esTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvCI4HewBHSHdg6j7FXkiQ5Tot+srXTzFnVX5P5VLqcpSgIXWeevn37Sou+agEWfREshkHA0SMlXOSvVYE40OGbg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynBTKxo+sr1RB0+/3a5p21weXi3DKyYYa8AWX5l8az9Cpnyeqm
+	Y0/6Wz0JDdb8WXEqyb2cPp0c8+T2seusDidbajwyl+HEMiG/TEjFssAqbUPR4O4=
+X-Gm-Gg: ASbGncsEsXYcJ1+9k5C1GAm+TsYPUUBEuCBaMT7jIC1qCICPnb8VRct4AWovtCMDbP2
+	ctv3jbp+QU5U8UkyxlA7M2FQqjo4yNBqG5RtjEGUi6akGOodIyMn7mXZs2PEciX9zU1T+uRKVhp
+	DYNY/+XRbVevgPScsA0B/SWO9jPszdcK418sI5ar2Omwc9vaBT72QJsozu6lAoJ1hfcwoCSfSSQ
+	ScczKMs9RhOyJfXqj4BCTTrmABUzjP8FXNeT+uOIQjgctq+qneaMHPuhcc4eZopS/ZyJC8=
+X-Google-Smtp-Source: AGHT+IGhaDDKUbfokl+jU7qgUB7s/J6vYAVw+eGLas1JhElcOU2I0jx8Rxm9e4DElHdlP23nsTC55w==
+X-Received: by 2002:a05:600c:63d5:b0:436:ee2e:ef12 with SMTP id 5b1f17b1804b1-436ee2ef108mr32106725e9.5.1736621644668;
+        Sat, 11 Jan 2025 10:54:04 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9d8fc5csm90730145e9.2.2025.01.11.10.54.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jan 2025 10:54:04 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] soc: samsung: Use syscon_regmap_lookup_by_phandle_args
+Date: Sat, 11 Jan 2025 19:54:02 +0100
+Message-ID: <20250111185402.183793-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110173520.78464-1-aha310510@gmail.com>
-In-Reply-To: <20250110173520.78464-1-aha310510@gmail.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Sat, 11 Jan 2025 21:11:57 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH02tdR_5i_RwghpRqb7WXtLMFFUNGrXrTXQ=UWNCwC0wA@mail.gmail.com>
-X-Gm-Features: AbW1kvYpgl8fYL3OchY66N21_jsSfItdGZkJkogkPHBgXj8fF5dOaAOM10nqfIE
-Message-ID: <CAGTfZH02tdR_5i_RwghpRqb7WXtLMFFUNGrXrTXQ=UWNCwC0wA@mail.gmail.com>
-Subject: Re: [PATCH] PM / devfreq: exynos: remove unused function parameter
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: cw00.choi@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, 
-	krzk@kernel.org, alim.akhtar@samsung.com, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Use syscon_regmap_lookup_by_phandle_args() which is a wrapper over
+syscon_regmap_lookup_by_phandle() combined with getting the syscon
+argument.  Except simpler code this annotates within one line that given
+phandle has arguments, so grepping for code would be easier.
 
-Applied it. Thanks
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/soc/samsung/exynos-usi.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-On Sat, Jan 11, 2025 at 2:35=E2=80=AFAM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> exynos_bus_parse_of() still declares a parameter struct device_node that
-> is not used yet. This parameter is unnecessary and should be removed.
->
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 7d06c476d8e9..b9ea7ad2e51b 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -236,8 +236,7 @@ static int exynos_bus_parent_parse_of(struct device_n=
-ode *np,
->         return ret;
->  }
->
-> -static int exynos_bus_parse_of(struct device_node *np,
-> -                             struct exynos_bus *bus)
-> +static int exynos_bus_parse_of(struct exynos_bus *bus)
->  {
->         struct device *dev =3D bus->dev;
->         struct dev_pm_opp *opp;
-> @@ -408,7 +407,7 @@ static int exynos_bus_probe(struct platform_device *p=
-dev)
->         }
->
->         /* Parse the device-tree to get the resource information */
-> -       ret =3D exynos_bus_parse_of(np, bus);
-> +       ret =3D exynos_bus_parse_of(bus);
->         if (ret < 0)
->                 goto err_reg;
->
-> --
->
+diff --git a/drivers/soc/samsung/exynos-usi.c b/drivers/soc/samsung/exynos-usi.c
+index 114352695ac2..1fda8d72f687 100644
+--- a/drivers/soc/samsung/exynos-usi.c
++++ b/drivers/soc/samsung/exynos-usi.c
+@@ -186,15 +186,11 @@ static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+ 		return -EINVAL;
+ 	usi->mode = mode;
+ 
+-	usi->sysreg = syscon_regmap_lookup_by_phandle(np, "samsung,sysreg");
++	usi->sysreg = syscon_regmap_lookup_by_phandle_args(np, "samsung,sysreg",
++							   1, &usi->sw_conf);
+ 	if (IS_ERR(usi->sysreg))
+ 		return PTR_ERR(usi->sysreg);
+ 
+-	ret = of_property_read_u32_index(np, "samsung,sysreg", 1,
+-					 &usi->sw_conf);
+-	if (ret)
+-		return ret;
+-
+ 	usi->clkreq_on = of_property_read_bool(np, "samsung,clkreq-on");
+ 
+ 	return 0;
+-- 
+2.43.0
 
-
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
