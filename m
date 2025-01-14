@@ -1,118 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E265B2248A0;
-	Tue, 14 Jan 2025 18:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E782209679
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jan 2025 19:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736877810; cv=none; b=J+0lWbYaIMhHJiG6hs4KjK2a8wmZzM4HQWCw2hQF9ekRCqmXxI+obSerVQ05v28PHhbwPIM/mRbwlHNieyd40p4kASw/Ng3AbCLawTxFJSQD+xA6yCNR7JSI0zL05vJqQsdxGlCQAodMZ8ilCMmHLP/6WFrQxtE6IFM+sBtOmIE=
+	t=1736884600; cv=none; b=nf1RQwvWjw6+ZYnOuMZRUqYEG3rIzDn6dYHoVZhX1jHwUBg9E5OEiSHcbUdHsg8RjM5HjDE/G+abD2EDr1Nv5sgq1rVf29F7B4lE+6Q11cVT/gkqvz/520Mx4i6AhsE040p/3p7zmoTOQx3WfDIsrZvst/WtEv1ja8wWev6HT5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736877810; c=relaxed/simple;
-	bh=MmOXTa5EHspyjS8oxod82U1sWxThiBJVqcug/LpRe7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kBvIV2YHudML/xfWzv3dsUtiFSRQngdz+fDx4hFgyNbsi9fmvXB3AjXJ4t7eDBPOewmAkW7Ea2nr/sQBm1in69LUXxF63YJ7eXEIqJnrT89IxAHtyzKhFZ92atS2zgFZwnizc0C1fm85ZHfUvt7RJWcIxPq1mPMb3vFzmb0VBbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AxXr13e0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736884600; c=relaxed/simple;
+	bh=y/+EmGDA9oQh65FkQDBWgjTtUb9Q8LO/NWhu/sSSR2s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Y7k32IcQ9LbMXeQgcK1HDXAvjVbaM3m86aVS3LDv3/yZbo11uIqmpJdizq6f87+ugmzjkDHR/U//zX52gltmhYkaNotvS4FdkVEb/m/o8VouCXNYINEfZ0BJ8WUCEN2gKycWyvejDFjlMWnKuvzm5prs6YJkXbhSBs1+K/TtA58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lwbg7obx; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AxXr13e0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF03C4CEE6;
-	Tue, 14 Jan 2025 18:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736877809;
-	bh=MmOXTa5EHspyjS8oxod82U1sWxThiBJVqcug/LpRe7E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AxXr13e0VaijvtVckoICLSIaNspZ6FTcNZkx3owF1c4rEfP6l1bab/NDuQaOd1hFQ
-	 /0fjsb5I84t5RemnHbyZszmCL3F9Oo4WYef7SGPo88yIWskEWcKMM0+w1jokcZu+Ek
-	 LUrHkgdEYewAfudOiDuX8G3buY4N9OU8KzTwsTziG0TuIpuEjz/1my3t+ctuyrm5Vk
-	 9sgyMcHUCb0O7B1TVRK5fegd7KdYMVn8injtHHX8KERQ/jAw8iU0MYFF/9RXfl6REI
-	 +ZAYwE1iQFWt/3XVp5ol7hLZHq5vzaAjjBcXDWWEaNjwbxIHmd2ba1Vq4lmWH7ihkU
-	 yPg7iW2mScpGg==
-Message-ID: <81ff734b-7a5e-4c98-9df2-9b65996fff78@kernel.org>
-Date: Tue, 14 Jan 2025 19:03:22 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lwbg7obx"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4361c705434so42564405e9.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jan 2025 11:56:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736884597; x=1737489397; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OmWlR4cF+mPlvD/SKofAb59V+xFfrfDkiiQN2ULLVu8=;
+        b=Lwbg7obx6A9/bESQudinRz6qKVK+DOZJokUjGSNHcw6pSbb1XKY9YxyJH9+y+XOvHB
+         JBzEEKp9jHf5xz12via0CbnxZ/3qWmS26D6g7KrZ+xle1sES4bPHKk1znJourdMeHZJg
+         5ypWAT6BVB4447KtyueqA1trXRfhWYMFbg+anGv6GyBwhaF1bIq75dbBcx33ROfMzhOW
+         OIVOIyJMQtSLt+8aTS0HJ3XWW5ByAkc5dGb6/fqAl4r6ow7ri2JQ1wqGhOzMLoOaAih7
+         DQW6cE0y76hJ/3yoy/4thiqSq3bs2PG5OlZiXz8m6LlE5s578LSqKJ/wjAux+5p+YIfz
+         vScw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736884597; x=1737489397;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OmWlR4cF+mPlvD/SKofAb59V+xFfrfDkiiQN2ULLVu8=;
+        b=s+UCcwY13+Y9IfQjZ/WKYAVKcKx5QEmoQAs/n4qaLUzAXee3A76j25K1lxfiqTMVAi
+         lDYkc7UdQ6QLz2fQo4TopiwTeDVoN7bQplQd2RS1RjIl6spSStZQMXDXcq1Uew4WlyNA
+         5Ll/3WHfwP19vd3WKXBXSZgM8Kc2zNqjU4/rGXggSUeGILOdYVflKgDalWS8YcncF6AM
+         5Cb9t93XQYvuS7GM+0Xnqv7g8dJDHjExrwznZLsZci2hDUwRccTZJJHZj97N/XU0pqjn
+         vVz21TGdjgEVr88GlZf6v0ZBBI2zPCSKUc8VaKzST3tEoyv9LMkPNqtNB8HgeWS8RPw+
+         0zLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/a2uWXTF55sLpLXdv4qEvyrHeTfsia9PC4IFoNYvnYYg7t3wLn5eo0lMqeP2pj2VWwKI5V0LWzhrtxwvHtusJwg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ySkAVZZRksREZTyG8TM9t6B7WPyvMK/PGzUieVUVswmj/Vjx
+	VI7K20Hck6PhKaCEso/IDXAG/DXdOMAghA9TlvEo+kg/rxPYzQYTR8nx6A8NYzc=
+X-Gm-Gg: ASbGncsXoamaADTALLmbrbsKS0pMfQPZbdPTZEkI3lu2Bk707HQGrBaFErxCG8/Yl+J
+	kuQJSEAzWehYW/9r9yvNCNIj6trH+y73fJWW/Db2+u1B9hTXiP3L3GKkdoKHG5J70A44hJV3oTJ
+	JsGEMNdtb4eWqoTUneCKKMP17fVTgEfLtMIqNHjm1Kdh7akwE+X0Vuk0oA94UZrul65C/rSlckP
+	7f3stbDWeZhebpM2lV3p1Z4+MFzd0V9PW1vU42SGXVrQuhEP/lRa1x8htv9
+X-Google-Smtp-Source: AGHT+IGQouXUOO+qEb5G2vSRcAAdIKYNRk9bOvvSttjkX7QyY7z4FXFdlG3d/Ksq2SBLmY2mxOAH8w==
+X-Received: by 2002:a05:6000:1f88:b0:38a:615c:8223 with SMTP id ffacd0b85a97d-38a872f69c7mr22826797f8f.10.1736884597362;
+        Tue, 14 Jan 2025 11:56:37 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bddbf50a2sm5275313f8f.43.2025.01.14.11.56.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2025 11:56:36 -0800 (PST)
+Message-ID: <13a3fdb675baa36fcda1bb254b05032b1175a2a8.camel@linaro.org>
+Subject: Re: [PATCH v2] scsi: ufs: fix use-after free in init error and
+ remove paths
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Bart Van Assche <bvanassche@acm.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>,  Avri Altman <avri.altman@wdc.com>, "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,  "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Peter Griffin <peter.griffin@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>,  Eric Biggers <ebiggers@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker
+ <willmcvicker@google.com>, kernel-team@android.com,
+ linux-scsi@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org,  stable@vger.kernel.org
+Date: Tue, 14 Jan 2025 19:56:35 +0000
+In-Reply-To: <58f1b701-68da-49c0-b2b1-e079bad4cd08@acm.org>
+References: <20250114-ufshcd-fix-v2-1-2dc627590a4a@linaro.org>
+	 <58f1b701-68da-49c0-b2b1-e079bad4cd08@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] soc: samsung: usi: add a routine for unconfiguring
- the ip
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250109090325.595475-1-ivo.ivanov.ivanov1@gmail.com>
- <20250109090325.595475-3-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250109090325.595475-3-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 09/01/2025 10:03, Ivaylo Ivanov wrote:
-> +static void exynos_usi_unconfigure(void *data)
-> +{
-> +	struct exynos_usi *usi = data;
-> +	u32 val;
-> +
-> +	/* Make sure that we've stopped providing the clock to USI IP */
-> +	val = readl(usi->regs + USI_OPTION);
-> +	val &= ~USI_OPTION_CLKREQ_ON;
-> +	val |= ~USI_OPTION_CLKSTOP_ON;
-> +	writel(val, usi->regs + USI_OPTION);
-> +
-> +	/* Set USI block state to reset */
-> +	val = readl(usi->regs + USI_CON);
-> +	val |= USI_CON_RESET;
-> +	writel(val, usi->regs + USI_CON);
-Also shouldn't you enable clocks for accessing these? They are being
-disabled at the end of exynos_usi_enable().
+Hi Bart,
 
-Best regards,
-Krzysztof
+On Tue, 2025-01-14 at 09:55 -0800, Bart Van Assche wrote:
+> On 1/14/25 8:16 AM, Andr=C3=A9 Draszik wrote:
+> > +/**
+> > + * ufshcd_scsi_host_put_callback - deallocate underlying Scsi_Host and
+> > + *				=C2=A0=C2=A0 thereby the Host Bus Adapter (HBA)
+> > + * @host: pointer to SCSI host
+> > + */
+> > +static void ufshcd_scsi_host_put_callback(void *host)
+> > +{
+> > +	scsi_host_put(host);
+> > +}
+>=20
+> Please rename ufshcd_scsi_host_put_callback() such that the function=20
+> name makes clear when this function is called instead of what the=20
+> function does.
+
+Would you have a suggestion for such a name? Something like
+ufshcd_driver_release_action()?
+
+Unless I'm misunderstanding you, I believe most drivers use
+a function name that says what the function does, e.g.
+dell_wmi_ddv_debugfs_remove (just as a completely random
+example out of many).
+
+If going by when it is called and if applying this principle
+throughout ufshcd, then there can only ever be one such
+function in ufshcd, as all devm_add_action() callback actions
+happen at driver release, which surely isn't what you mean.
+
+You probably meant something different?
+
+Cheers,
+Andre'
+
