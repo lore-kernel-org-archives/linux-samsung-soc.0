@@ -1,64 +1,64 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A870420F98F;
-	Tue, 14 Jan 2025 21:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1573B20B1F5;
+	Tue, 14 Jan 2025 21:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736891853; cv=none; b=PhJBskgFSp/j5pACrwkPMPQAo7K1ZWMSPOiYu8G9pvX6z2pN+9F9JymJ4zTl5Muou7CDdhPD1PfBW1b0WdOGfpJOxBpb7eP1fV5zlQVvfQbZYgQpcTbGnPUORgrutfX8SGP2Ltuhp2nXe6EXS1jDJheWUgv5oUZMToD/i3L8caI=
+	t=1736891954; cv=none; b=I3IVouKq8UWo1ggUyphUXvDAajQEdfQKwzc2W9TX39sjIdLCtqprymbvTN8ZglE4j4DBmol9iSXa+f1o+ych4CkGnfk0ROhbxoddsHn9S9XNeVjemJcKeKwVLDBcT9lehRSKLaoQOYajbf2s7LCT3ZEK+UTYMoW2oylAvVtgLE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736891853; c=relaxed/simple;
-	bh=mY1ByvAzkq/1267QcOicrnww0Bug5ydkNL9fEvOoNE0=;
+	s=arc-20240116; t=1736891954; c=relaxed/simple;
+	bh=AfvAA3xCd/e/r2sXTEWgcKnocZaE+RNQKS4l6cVb1qg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dSsuFCSVHfAEs75lTHic+t1bUSVwW0rnMgrYjwM089DxNaew/KHM3rkGeShvhq2U7DO7dmyapIMfePF1XsMdfGLzcfrM133KUFeY5SnVLILQaw177YG6gMMmTWQ1WB+rlMHW8x+A9eNlE3ERxJcCgUx4hbzrUxuefPvlcEba72U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nyla7Fjd; arc=none smtp.client-ip=209.85.208.52
+	 In-Reply-To:Content-Type; b=lbQ1bw5rc/ib/3eRaTyXjeMV7gGYKkeAzrtZz5Pl5vamXEBczOGwi5+sQTDAD6gMshCl5SKrHSTwIynwnFzTEs+MJqyfCni0hOWZJlrIPs/lTBode1VI3rFZXmfx9mZ6cSe+qFffoF3NxL67CgTay+ic+4/HukZGUvmM8Zv55y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HshRtkn4; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nyla7Fjd"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3d479b1e6so8444138a12.2;
-        Tue, 14 Jan 2025 13:57:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HshRtkn4"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d3d14336f0so10269881a12.3;
+        Tue, 14 Jan 2025 13:59:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736891850; x=1737496650; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20230601; t=1736891951; x=1737496751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hQu9l4If54VEx/qw1TONKfUdVJ9/1OBl33V3eKp1goI=;
-        b=Nyla7FjdyWIqatwColAvhvAEGLj7r+0UqljkFMpFuI3UpVnErcriuVSjgCgyCIf+va
-         iZofu0bT8vkfyl3JIbztgIW3c5TAfbrvn2QR1u/yEMcbU3y9b38a3ZqBrjxkQETnh/78
-         5aafLK9HVRzDjaGbWhGhMIvaHwFrN7VksCUxnhi4gIfPnirrhejh/6l5lfXAIzqsHT9V
-         K9dwFX9ODnCFYZrZtR+sKayXpPRHr8+Ca6YUI51WNQycQAFkJ+/bONF83fv0mqWYa0Sn
-         dUcG5gsmHEfAtbiMf+o4UBK6DSpoNSRCbWBtkBRItZrPZ+g0qjeefBbpuPUcVsKBwIX7
-         7eRQ==
+        bh=+Tx5cPW7mZjp2byL6KcYB179kLmiMyaom1bGbtVbnFE=;
+        b=HshRtkn45fEUoZCnRPnJPBXsLH2JNtm/aiB96pw+YYoxbqqZONPrrirrQJNm1/1BAQ
+         Kqptx/lVNVjAdyB3763TOwZ5EeBKphgbpyDXfhc1AoQu8ztvZQzJtQFk5NH1iR462DDT
+         S8yzahAn7DHvvwOL1sK0L+V7wAQUC+kBacgR/U5tyctjPLICxBs2vwDfbiVWAKmFSEYY
+         2/RrIA2vsCqKauOj8p4dfMawJf/koiq/Nu9rBHNb/b9ex7AEUtmXyEha3o0dgvbl53yT
+         tduDn64O9GquCJL0isWUfh1IevYj174TW+wKp9hhfnPMiY4/eWGcqi2P3d9Xc/ArLYu7
+         e+ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736891850; x=1737496650;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1736891951; x=1737496751;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQu9l4If54VEx/qw1TONKfUdVJ9/1OBl33V3eKp1goI=;
-        b=mETZpR8XcR6lmoEx3qQmWIMutKBIGUi/r5q/VUjDUO6PDZ8fGSs2JVjbpHTwB3kpR/
-         wdbjAxZ2NPGrdh0sJRK8ILK+uMZWEf6HxdTeFdo0kWLef2CCSR5BltaGTDMB07PpAAbf
-         pr86+GlMqXsIMthzZPYkkH8hojQ8h1I1fHw4uVTPST3nBuRemKnLw3liQz2XEdjq0TcR
-         PeOMgZz8qUQh9nRp1mtNlmST9DOEdObEiLf/xcOvhrMWyW9FGXCNsZwRfL8yGs/zAwQK
-         QZof/GQJwghVdHQvOuVgx5UPo1zGGohKfj5+XIG2+IKi1fcOjqB9uYTlYPILIW/rgAbb
-         W01A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvT/eRmCb+ZG4NgWl4ueLxIC/EBO+RNKksruRQWzHo09AKt2xmpR+8ABfV5VTRxUgmeveA+RRWZfegeQE5BYXAnTo=@vger.kernel.org, AJvYcCUy1V0Kfta9EmwnDig3Lfktre3H/tuqulCllneku5bRsWjt64vo4JvexMhhRqEGhrcvfhZcqCP6H8JtGho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVxWwcpLkmA3ergDMdoFa8rP3qIWpVYTpCzrE+iLcezasAvJYG
-	5Xw91Plp5kuMtYvOC3wD7REqGzMgu/I8AEr4tb6I12pPu7rOOdi2
-X-Gm-Gg: ASbGnctCO7klElFXtE/ZVdAQ38IVZh6TwPsc+iK3+l+IXZCCCE/GmrIK5rjrou8Fj++
-	iMFHaQoBvLBvm/I6mmS3UUFL/rTDNZ+arAeN9+QHc16cDfToMB3rv9Pu6fTb1+H7SDUhr+YfACm
-	VkYwCeEJvi/bHfpPfp181NXhtxuM20fgwSbqgLIKUSfu4P4xU3wQKYk206rZB0WRwSgyx6P/bpM
-	IqchUIeoRpXFuBuwCIU7Jb3aLbhPBpXAPCFZt7sSnRr1FzTzKf8fdZRFsl8wDXKSC2+pz6EdO0U
-	LyfHY3RepQ2JyR1MpTjkgTYUFkZ9vshpH0E=
-X-Google-Smtp-Source: AGHT+IH2uBguYrAt8RmEQaVYzAmbMVFnqhUDBVbYGhqIhJtoDuRg3mXoojY+VnqzpULof5Ie/4Sl9Q==
-X-Received: by 2002:a05:6402:26c5:b0:5d0:d491:2d5e with SMTP id 4fb4d7f45d1cf-5d972dfff56mr31360609a12.7.1736891849618;
-        Tue, 14 Jan 2025 13:57:29 -0800 (PST)
+        bh=+Tx5cPW7mZjp2byL6KcYB179kLmiMyaom1bGbtVbnFE=;
+        b=SeGE5mBezyNMEANBD5GgVtlLH8b/fosRpOtTLY8PIdCe6IxWybjjvnzbARt9deNDgv
+         CujuAZTHYJz4ozTvZ4ZY1rIEVkJcHCkl25WuAJD3DpBWjvxS5DfHk4SV91LCSKLTzDQx
+         LAHTEqZbFyNLOjOr8cMmsG1xrpWYmmhLrxeRoRkULue/HooHfZ5BRJVknQgkTWgX0sMJ
+         F/M+yG3vEt3Wgx/FTFI7SEb5FUcwwn/Id/PGCPjF1YR2gOPWP70zKZ2kuS6ozuil5B7w
+         +mEhAevRGqXgaWJcpw3SZtbE4xthJNAlLPvCQWz0Ei9WaP3kPEB62+zAKJz4pX89Kw9X
+         1yuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV248/mHKdRLKFT9dBxutlEBqe98wesjErQf94uRF7ZOK6Eqvzl/rbc+5e84rSDDmGqXhmb6Q6Kg38eY2iI3gqxHhc=@vger.kernel.org, AJvYcCXp3Dz+AM11WXkXtz+/1+zyiNVwlC1b7dbp1iHCuZn7e8wWJUru9t2f2JeToqS7tuyLdpkWAY/CeGqOPaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNuviushhNh+uG1gDvxzARPiP7/3MJYf7yyLZ/LcJAtOsBcGCN
+	AE6LrlTMdPW7I92XdtdBQtgBisJXrSQMrcnSpFw8Y28n4uKBwlie
+X-Gm-Gg: ASbGncuadMH14/CBY+X652iGq7DXVxBbK4+lfO5h62iVygnEHUewCXaFvCo8+F97Lzv
+	Ncn3SzIe193b84YXBtBVy47ioePNn8dE9YmKnHjVvHPTOzkvpxg2bTdYYG8mhl4CBEKierhK7KJ
+	TGGLOKC1S6MkE/dlXODkOMRNPtTt0wyDbwDzoabuvmbb/ZByTIxe2Z2poK993SqNJJplfimXzKh
+	7ARfxWV+p79GESiRZ9GE9fLPM0aOUR2ZmV+52/Kb76XDGtzPLGjE5eKXgVQgi4EnkR+Ntyt/Sbu
+	6Ug/e/Wb8dRZCMdWZkjKPFqd98D/El2mdaU=
+X-Google-Smtp-Source: AGHT+IHTUgwmvI+n/QJgpjA7ic8+1DMhG5ovcobNcW2aiVFDny7CFv7UZWlT2Bj1wOcE+v17sCID0w==
+X-Received: by 2002:a05:6402:430c:b0:5d3:e45d:ba7c with SMTP id 4fb4d7f45d1cf-5d972e7148bmr24049816a12.29.1736891951312;
+        Tue, 14 Jan 2025 13:59:11 -0800 (PST)
 Received: from [192.168.1.107] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d99008c523sm6730831a12.8.2025.01.14.13.57.28
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d99008c469sm6729176a12.5.2025.01.14.13.59.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2025 13:57:29 -0800 (PST)
-Message-ID: <15e9931a-b817-4dd3-abb6-9718e002c6bd@gmail.com>
-Date: Tue, 14 Jan 2025 23:57:27 +0200
+        Tue, 14 Jan 2025 13:59:10 -0800 (PST)
+Message-ID: <23d2ca03-5578-457c-ad80-778ac4347c04@gmail.com>
+Date: Tue, 14 Jan 2025 23:59:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -68,6 +68,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v5 2/4] soc: samsung: usi: add a routine for unconfiguring
  the ip
+Content-Language: en-US
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Sam Protsenko <semen.protsenko@linaro.org>,
@@ -76,39 +77,40 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250109090325.595475-1-ivo.ivanov.ivanov1@gmail.com>
  <20250109090325.595475-3-ivo.ivanov.ivanov1@gmail.com>
- <81ff734b-7a5e-4c98-9df2-9b65996fff78@kernel.org>
-Content-Language: en-US
+ <26aa96ba-36e4-400c-a982-48344f2096e4@kernel.org>
 From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <81ff734b-7a5e-4c98-9df2-9b65996fff78@kernel.org>
+In-Reply-To: <26aa96ba-36e4-400c-a982-48344f2096e4@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 1/14/25 20:03, Krzysztof Kozlowski wrote:
+On 1/14/25 19:59, Krzysztof Kozlowski wrote:
 > On 09/01/2025 10:03, Ivaylo Ivanov wrote:
->> +static void exynos_usi_unconfigure(void *data)
->> +{
->> +	struct exynos_usi *usi = data;
->> +	u32 val;
+>>  static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+>>  {
+>>  	int ret;
+>> @@ -251,6 +268,10 @@ static int exynos_usi_probe(struct platform_device *pdev)
+>>  			return PTR_ERR(usi->regs);
+>>  	}
+>>  
+>> +	ret = devm_add_action_or_reset(&pdev->dev, exynos_usi_unconfigure, usi);
+>> +	if (ret)
+>> +		return ret;
+> You should not reverse the action before the action actually takes place.
+>
 >> +
->> +	/* Make sure that we've stopped providing the clock to USI IP */
->> +	val = readl(usi->regs + USI_OPTION);
->> +	val &= ~USI_OPTION_CLKREQ_ON;
->> +	val |= ~USI_OPTION_CLKSTOP_ON;
->> +	writel(val, usi->regs + USI_OPTION);
->> +
->> +	/* Set USI block state to reset */
->> +	val = readl(usi->regs + USI_CON);
->> +	val |= USI_CON_RESET;
->> +	writel(val, usi->regs + USI_CON);
-> Also shouldn't you enable clocks for accessing these? They are being
-> disabled at the end of exynos_usi_enable().
+>>  	ret = exynos_usi_configure(usi);
+>>  	if (ret)
+>>  		return ret;
+> Registering cleanup should therefore happen here.
 
-Hm, perhaps. But I find that weird, since I haven't seen it in the downstream
-driver implementation.
+Alright, will fix. I'll try to submit the next (and hopefully final, if that's
+all the critique you have) version in the following days, but I'm currently
+focused on working on exynos2200.
 
 Best regards,
 Ivaylo
 
+>
 >
 > Best regards,
 > Krzysztof
