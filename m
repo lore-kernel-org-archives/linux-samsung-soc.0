@@ -1,48 +1,33 @@
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23DF1EE7AC;
-	Tue, 14 Jan 2025 17:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC251FAC3B;
+	Tue, 14 Jan 2025 17:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736877337; cv=none; b=bZXcxPZ5+zeL7naEl2eA/tku8P3hFogQfiVFPmdZFDyBgy36T3VT23X77XqGfLMAtIWxLXB9tfEXYtdAcahY36xnkGItx62FvfP/nHqufPO1M4YUH5FZdyvmZCxFKBXxxcKsJAZGeOd16Czq5cIxa448V7yAi5hDl+rwh6uwTQY=
+	t=1736877554; cv=none; b=Os+ZAxHQoL0J8+b+zSU+kBAYts/6tCGY2ahwr8dgTHK2qmKc/WLt8n6bl6cvApOF1BEtFGbKQkM13G2HPrAhxX6tumbhYE/5fI7KebjjjnbJ8dzmttELQoTSoui+aRs+tpZKK6aIQjcAQt7DEw1yjss3FMiqrnKktiwWQoOHtls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736877337; c=relaxed/simple;
-	bh=OHmL6w79Y9VGVpAbxGEP9bE0AQIQfKl+7BgRzpI7zGU=;
+	s=arc-20240116; t=1736877554; c=relaxed/simple;
+	bh=Ch9ESDHNaHxMb5XpRE3Yg/Ozfn95HCCeTGAYOqh1oDo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVNro2im/DA1V6AzA5KrlQpV8vn/M4pTDRHrqyG0O97aJhxuu3JngsbNJQazFi3fGlqXgq7qMXtsFc8q0hpsPpNGiJDEKDUhpvueml78HiA2hDCPilrG+R6b0uHYad149y6hlCO4z7WZGJoKwdOfd/Wv0oUqnSpiZ16radjiqdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ro0Em/7m; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+	 In-Reply-To:Content-Type; b=eOC7uzekGSnRZgLi8BRIyYLgEsOx6ikDXjjG7/SDsMlOhctrlkE0qXAj6H0vv4SMh33MjUE2a2dJFwmvuxVnlzoj2In9hqERMEESMg80fWRPC6QsIRsG/SgMVwBU/OzKUkJMtMGBX6A/PtGVSjkLF5rZyVW3VqsyLqC8fN772uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXDscY6o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ro0Em/7m"
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4YXcH472G0z6CmQyd;
-	Tue, 14 Jan 2025 17:55:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1736877321; x=1739469322; bh=rx+xxhgfz6Qv2U93Mr0uyJHH
-	3Uz3OWpv7e13MnI9pr4=; b=ro0Em/7mo2qYSG+4wF8NaY7HMuHC5oECKV3t+la6
-	KyggnwIpZUwBvFMlG1aBzhAHriMjCEYTdU8Sq0c9Td6MXxFqvZFuuB1TjiFVibKF
-	Fu1xR8VK3avTZwS4Gxjt8skCD4CXyIlP8N2VSke98A6EMwChSlg+drCp47iTXAC6
-	eZvCXQm+3ArjlzGzyA7LN5R5rQNL48EjR2Bzlq4VRz16S3Ret+SS9sZA1bWJa/BZ
-	AQUb0q6hzLUOZUQMcqeVLWthLQ6ejbEGmhGb5dnGGUPOJ/mU228+s0lik61FMSep
-	pZCHy6AFKDR6VgD6wd5+Is0RP8nqs49Q+D8+U5Jm3NTiJw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id BUc2kVQEpj2k; Tue, 14 Jan 2025 17:55:21 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4YXcGt0mRjz6CmQyb;
-	Tue, 14 Jan 2025 17:55:17 +0000 (UTC)
-Message-ID: <58f1b701-68da-49c0-b2b1-e079bad4cd08@acm.org>
-Date: Tue, 14 Jan 2025 09:55:16 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXDscY6o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 158E4C4CEE6;
+	Tue, 14 Jan 2025 17:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736877554;
+	bh=Ch9ESDHNaHxMb5XpRE3Yg/Ozfn95HCCeTGAYOqh1oDo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YXDscY6ow/+EgX2aAajatG99IA6EdzJ4FMzZH8dxbN6NyLQUAZxWBI+Q3D2zV2nHA
+	 UmXnadvo97gW42lQk8mvwUWxY4J77YNmqUg5UwDSOp3FEkzIQIcxaTm0Rbl1lwRK1Y
+	 dgxrBYPnyQoT3SGPPeAGFj2zj8NqHexBPoqGnzTyNhi4kj/Ljzt55Yg2Dgv6AB731W
+	 KHHtdMZ0R1jx9UNNsYMLe1uoAISxsoqsKqXikUCKaIdAeVCjOU4O39awQaMZ1dSLKr
+	 EMz24m6eHwaUf008Aq8EB1rfVSE9g9NPxf/KkLM5oUmzUfg8n8rEoIizp8XaAWoAWY
+	 rQvapZGbwdqkg==
+Message-ID: <26aa96ba-36e4-400c-a982-48344f2096e4@kernel.org>
+Date: Tue, 14 Jan 2025 18:59:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
@@ -50,43 +35,87 @@ List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: ufs: fix use-after free in init error and remove
- paths
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Eric Biggers <ebiggers@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, stable@vger.kernel.org
-References: <20250114-ufshcd-fix-v2-1-2dc627590a4a@linaro.org>
+Subject: Re: [PATCH v5 2/4] soc: samsung: usi: add a routine for unconfiguring
+ the ip
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250109090325.595475-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250109090325.595475-3-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250114-ufshcd-fix-v2-1-2dc627590a4a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250109090325.595475-3-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 1/14/25 8:16 AM, Andr=C3=A9 Draszik wrote:
-> +/**
-> + * ufshcd_scsi_host_put_callback - deallocate underlying Scsi_Host and
-> + *				   thereby the Host Bus Adapter (HBA)
-> + * @host: pointer to SCSI host
-> + */
-> +static void ufshcd_scsi_host_put_callback(void *host)
-> +{
-> +	scsi_host_put(host);
-> +}
+On 09/01/2025 10:03, Ivaylo Ivanov wrote:
+>  static int exynos_usi_parse_dt(struct device_node *np, struct exynos_usi *usi)
+>  {
+>  	int ret;
+> @@ -251,6 +268,10 @@ static int exynos_usi_probe(struct platform_device *pdev)
+>  			return PTR_ERR(usi->regs);
+>  	}
+>  
+> +	ret = devm_add_action_or_reset(&pdev->dev, exynos_usi_unconfigure, usi);
+> +	if (ret)
+> +		return ret;
 
-Please rename ufshcd_scsi_host_put_callback() such that the function=20
-name makes clear when this function is called instead of what the=20
-function does.
+You should not reverse the action before the action actually takes place.
 
-Thanks,
+> +
+>  	ret = exynos_usi_configure(usi);
+>  	if (ret)
+>  		return ret;
 
-Bart.
+Registering cleanup should therefore happen here.
+
+
+Best regards,
+Krzysztof
