@@ -1,135 +1,179 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BDE24A7CC
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 14:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFEB24A7D1;
+	Wed, 15 Jan 2025 14:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736950711; cv=none; b=teRdeB9ljl6k+H2VZyhzOkn0Juy5ROmu4LEECo35Eu2C8mMwDyIR6UOkgGxoVLEFdRcJnlAMJcSrATg235hvjniB5rP68o/plwjOEJKOnq9weYNQJVDkAKBHl/StnF2QENobFdvLd1EDaxJA1iAa4gt2macnFNSyMxEtFSSXY3Y=
+	t=1736950827; cv=none; b=kZePhSkoOl49yfg1VkjdZLgIG8Sqm1JremTTu+E9WyQBOKH0JGiuiGEyciW99pDLDF7Knyufx0cU1d9LMbhhka4BkcwY+kOEsebqRvXmwsd/HCjEVLGjRoERN1Icq/LWBahTfMrNR7tkHamSPW9gwlrLTn3+MMqmtSb01PZyAe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736950711; c=relaxed/simple;
-	bh=cvoRnokHeZzQ8VRShaM52NdG4d55CGIYxo5phUWuECU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hAJbeo0qdOmXjC2hb55B8435BiZKPVtQqdjRusbPtCC1sO/qAm59IYGmRb0jimDlNzX+iYqkSsQnXrQoe6HDP4JVeSDMUgegW9utWSRPjsx/iuyl7CPyEPt7/hyYxDlKEhlo+6TWNl77Goi0lew9O1Snq+ZwFgXt6KhWbrYcsKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KWbS0xyg; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736950827; c=relaxed/simple;
+	bh=7qiyO+wfBrEyDk/AoXCj+nFogFQS7ryzGCzAqhdWb38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UeNtpLuAkR/JS9iyVdr40FfggXZiWHN2deMYPxC50nYfQOirr8NjqfqebYAvDaFR7P5K1SHdjaP11YB9TrN0YFYu2NaWCW0QPxbW+VKV5MYhVLlPbj2WJ1WOlZ1m23dctOyl/9WZwLQFPfiCvT0cbDxyEuZ8WW6hWCdbb3S+Cbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FNEnqs8p; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KWbS0xyg"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43623f0c574so48541835e9.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 06:18:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736950708; x=1737555508; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+HO4vKlD6tNCPtkuVgbWkA6ubwQYE8g7AVmr9ium5BE=;
-        b=KWbS0xygiLEDDRJKI4oyLqlerGMYzPYubAWzfYAFVCZP8jffuUmJY2447cEavylOI/
-         hQkygxhSO5VnYYi1kjbMqcGfinmI4hX6lbD8jDwjESrMFneBxD9fa6yKUHEFuEfdQr6b
-         erFeLqtwjx9MtySLerQ7D1DGe4VJIzozFWk97C8naVLWmWdOIkS+eThJmoRy0pHYCOrg
-         TaITWTqu/4l3F6+EvnlCNiLsa7N3KGUR/1zI7S5/5g88lFJLYw3J+Gkng/sInoWXPlVH
-         hxRq4Hz15y/ZwecmmAVSOkyCCBVrS6xQpZhhp5Dn72YxikyAWraeczrcfRQaXB63Wv0f
-         Worw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736950708; x=1737555508;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+HO4vKlD6tNCPtkuVgbWkA6ubwQYE8g7AVmr9ium5BE=;
-        b=I7f9EUNTY1pM0xi9K5NqPv0Ny7cH2jU8rGeGvJUO3/v608KP2A+iuVqofsXqAOHi7c
-         CQS3I1mOPSwDCr/YLOuJVuIsEz/wUhvmCd6Wb9siDbyEa3HkEGM7fiDZMYYVtdzcJMV7
-         GSHPyE2KCojUlM1kNOsNhdY9ZbLBcjbOr2SMLWfIVm20Tap2ZC/jg8hThHgZBi8gubvY
-         8CauUYKDwjRrgEib6SLHJ4qSu661sTElobgpvy6enLkqwhyKhGPbZSofQiSuNwrFtODj
-         V5Ur3NrtmMmdxIjDE+8Auh1V8inzHOHjnoWVcoc8srPem1nTAiLtAA+KbZexObkdDT53
-         +pfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3TCGibPgXqt9RyexPr4/4r79rsxpu1p5zg4DV5TUKIFxk2ZDnpyHgYtqLl+eOtYlOIHnPXLUswQ8yg5g4O+WLdQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/M6j2M4iYqqC8ehvQ6HfDuvzmrYULpNS8QQh5q3xKdCLxVpeC
-	qdVuDahH+Td6f21Vl8QCdNH1UzolqfZ8iG+XYyrQTF+9iw4jWT02uWSO6JPUYGo=
-X-Gm-Gg: ASbGnctKSta52+X2XwA6HH5KYgjawxTxS0aLD8fR5Gpc6GgBmhHhSiUBf57SujBT6GQ
-	6V2SXPNYCmK9dj+8smh1emmlOvvPTrKYSuqAWtZ1Ky0z4GTBw8H/K+D9bHKn1uRal+tFudT6O46
-	51lD5qUcWRDOEKkbbgju4ULjEIJgyUX9qBXSyOwEsVfGVMSq4tWklvlCtVtyPQ7cG9JPq139+mI
-	Tp4FpMr/eS/QzL/z2m7I9toQTAMV/Zv0mJ7mW8cTYLpjULXwyklrJqBiCdWuF5p6ZeE5x9LODqf
-	JLKvzLrO2roIeNETukS39KE3OSltRKJneN9S
-X-Google-Smtp-Source: AGHT+IEqKXJJbnn3/1vrwEtWmevXHNqUju7YBJtvyvj3cj5u+nYmT0ONw6A52GmWC58UAHN28vy5fA==
-X-Received: by 2002:a05:600c:35c1:b0:436:a3a3:a70c with SMTP id 5b1f17b1804b1-436e26ef06cmr220817945e9.28.1736950707824;
-        Wed, 15 Jan 2025 06:18:27 -0800 (PST)
-Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74d8e06sm25184555e9.31.2025.01.15.06.18.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 06:18:27 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Wed, 15 Jan 2025 14:18:16 +0000
-Subject: [PATCH v7 3/3] MAINTAINERS: add entry for Samsung Exynos mailbox
- driver
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FNEnqs8p"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 15D16526;
+	Wed, 15 Jan 2025 15:19:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1736950766;
+	bh=7qiyO+wfBrEyDk/AoXCj+nFogFQS7ryzGCzAqhdWb38=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FNEnqs8pIxmzmXTlNZ5aoLcVlgUYO4x7tjA2Y+EpzVZYLe4hGm7k1eU8rP1U9FwYK
+	 RPx9CD1DBq9txbEDtdRq2erdoqbqnEGp7lnsvla38haKmYWSWUKigfw6gmUqEA/ioo
+	 GsAPA1Hr9rXNsFdn2I8B1WzDBAcDit9zy8TZ7Wrw=
+Message-ID: <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+Date: Wed, 15 Jan 2025 16:20:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250115-acpm-v4-upstream-mbox-v7-3-948e09fcb5f2@linaro.org>
-References: <20250115-acpm-v4-upstream-mbox-v7-0-948e09fcb5f2@linaro.org>
-In-Reply-To: <20250115-acpm-v4-upstream-mbox-v7-0-948e09fcb5f2@linaro.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- andre.draszik@linaro.org, peter.griffin@linaro.org, kernel-team@android.com, 
- willmcvicker@google.com, daniel.lezcano@linaro.org, 
- vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1736950703; l=1338;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=cvoRnokHeZzQ8VRShaM52NdG4d55CGIYxo5phUWuECU=;
- b=0aWQkFROnDt3ngWIx381mdcLAcbZApevkQbElAx12vy+BlWgFaRDh89nZsR0/9mv2HawEKvjC
- tyS3q9kEstgBSc7lvjrckxx1b0ySb/qAlqQh8J+vp2+hHZL+VT3G2E5
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andy Yan <andyshrk@163.com>
+References: <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-26-tzimmermann@suse.de>
+ <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
+ <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
+ <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
+ <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
+ <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
+ <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
+ <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
+ <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add entry for the Samsung Exynos mailbox driver.
+On 15/01/2025 15:45, Thomas Zimmermann wrote:
+> Hi
+> 
+> 
+> Am 15.01.25 um 14:33 schrieb Tomi Valkeinen:
+> [...]
+>>> Yeah, there are constrains in the scanline and buffer alignments and 
+>>> orientation. And if we say that bpp==12 means NV12, it will be a 
+>>> problem for all other cases where bpp==12 makes sense.
+>>
+>> I feel I still don't quite understand. Can't we define and document 
+>> CREATE_DUMB like this:
+>>
+>> If (bpp < 8 || is_power_of_two(bpp))
+>>     bpp means bitsperpixel
+>>     pitch is args->width * args->bpp / 8, aligned up to driver- 
+>> specific-align
+>> else
+>>     bpp is a legacy parameter, and we deal with it case by case.
+>>     list the cases and what they mean
+>>
+>> And describe that when allocating subsampled buffers, the caller must 
+>> adjust the width and height accordingly. And that the bpp and width 
+>> can also refer to pixel groups.
+>>
+>> Or if the currently existing code prevents the above for 16 and 32 
+>> bpps, how about defining that any non-RGB or not-simple buffer has to 
+>> be allocated with bpp=8, and the userspace has to align the pitch 
+>> correctly according to the format and platform's hw restrictions?
+> 
+> What if a hardware requires certain per-format alignments? Or requires 
+> certain alignments for each plane? Or only supports tile modes? Or has 
+> strict limits on the maximum buffer size?
+> 
+> It is not possible to encode all this in a simple 32-bit value. So user- 
+> space code has to be aware of all this and tweak bpp-based allocation to 
+> make it work. Obviously you can use the current UAPI for your use case. 
+> It's just not optimal or future proof.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+No disagreement there, we need CREATE_DUMB2.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a87ddad78e26..20163d8a8d90 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3020,6 +3020,7 @@ F:	drivers/*/*s3c24*
- F:	drivers/*/*s3c64xx*
- F:	drivers/*/*s5pv210*
- F:	drivers/clocksource/samsung_pwm_timer.c
-+F:	drivers/mailbox/exynos-mailbox.c
- F:	drivers/memory/samsung/
- F:	drivers/pwm/pwm-samsung.c
- F:	drivers/soc/samsung/
-@@ -20712,6 +20713,15 @@ F:	arch/arm64/boot/dts/exynos/exynos850*
- F:	drivers/clk/samsung/clk-exynos850.c
- F:	include/dt-bindings/clock/exynos850.h
- 
-+SAMSUNG EXYNOS MAILBOX DRIVER
-+M:	Tudor Ambarus <tudor.ambarus@linaro.org>
-+L:	linux-kernel@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/mailbox/google,gs101-mbox.yaml
-+F:	drivers/mailbox/exynos-mailbox.c
-+F:	include/linux/mailbox/exynos-message.h
-+
- SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-crypto@vger.kernel.org
+My point is that we have the current UAPI, and we have userspace using 
+it, but we don't have clear rules what the ioctl does with specific 
+parameters, and we don't document how it has to be used.
 
--- 
-2.48.0.rc2.279.g1de40edade-goog
+Perhaps the situation is bad, and all we can really say is that 
+CREATE_DUMB only works for use with simple RGB formats, and the behavior 
+for all other formats is platform specific. But I think even that would 
+be valuable in the UAPI docs.
+
+Thinking about this, I wonder if this change is good for omapdrm or 
+xilinx (probably other platforms too that support non-simple non-RGB 
+formats via dumb buffers): without this patch, in both drivers, the 
+pitch calculations just take the bpp as bit-per-pixels, align it up, and 
+that's it.
+
+With this patch we end up using drm_driver_color_mode_format(), and 
+aligning buffers according to RGB formats figured out via heuristics. It 
+does happen to work, for the formats I tested, but it sounds like 
+something that might easily not work, as it's doing adjustments based on 
+wrong format.
+
+Should we have another version of drm_mode_size_dumb() which just 
+calculates using the bpp, without the drm_driver_color_mode_format() 
+path? Or does the drm_driver_color_mode_format() path provide some value 
+for the drivers that do not currently do anything similar?
+
+  Tomi
 
