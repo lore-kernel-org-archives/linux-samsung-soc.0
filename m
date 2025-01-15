@@ -1,109 +1,117 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190F381727
-	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 14:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C58143725
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 16:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736951680; cv=none; b=qi9rDJhe8y1e06VmBZzlE3ZEaP8A6sRFdRSGF/P+PRZDxAIBgW+2D9llnie810lVfZLkhAWv4+wEYVvQ56THSk2jj1roeDMgsD1cgNf/DCHIBfdh47YJp5EPFL60GZcv8Z9sex+kW6+zHVxit127csUVukIg/QSPeHaT0Ulpi3g=
+	t=1736957474; cv=none; b=sgUJtgxJ/x4njV1WWwspIvRdE7+KijCyz0O8CZMmZ+66mFpaz7A0/3p8OvWR2reaihDpOdeV5v2kqGxmDl/AhqBjvwc1yrOll/zxq9gdDtrt4vAMzqLon9tfiwhX8q6DzROYcnsbiuBUIpZkaofCugWkX9OI3Ut9gr4lhmKjm9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736951680; c=relaxed/simple;
-	bh=wgpCbUXuk0fjx7PlpFBa3YSbnvvXmj+DNx/eEdB8F5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=stiCbmpCzQxEtXmljQRpbSrc4jcVNIzDLCsLN3V0HvSINKw08SjlBKCA4yZIh/wFWPDkA04oRT+MPgPNo2pxN8zHVV1x3bDYXd/DkHra7pebWep/qLoVgBp7R0NngLB4zp+0pxzlsTvzO3GFBEVgVwv1VEt9nevyR3VL2eo/c/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=oG8rU6C7; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+	s=arc-20240116; t=1736957474; c=relaxed/simple;
+	bh=QUweSS7Ezk07GROe4ptc2JCbOPNeoO1DPWPu/QS6yU0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IpG1mT+N5yKkIjHJkapShIPm5Y9rRfRFKm/2SPFap+2Sej9SwAdwAw2wJpXgfy07VTibGGf+XmXjs40Vkhtte13eFpj9HFp5iWU/RGWCr+RsEuhIkkPlYv9V0jdxFDq+WxBiZhxjuLd7juF0Vua/0Xyhz1YpGrxbixO/XI1ZC3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LS6aV9Lh; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="oG8rU6C7"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6d89a727a19so9128666d6.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 06:34:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LS6aV9Lh"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d932eac638so13286378a12.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Jan 2025 08:11:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1736951678; x=1737556478; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wgpCbUXuk0fjx7PlpFBa3YSbnvvXmj+DNx/eEdB8F5M=;
-        b=oG8rU6C7AeXdphOpn5qywnwajKLel67+fgv9teTt33rFV46pmyVN9eRZXUiuo3gLYP
-         f62u/PhVmd69sOprj3jmW4qAGGtzYKZ21cQC4IjiwjlTz5/YksFFLb+UBrCN6rdkxBUt
-         fAd4UUzGBGTrUKgJh2tcVFs7+uEdRiVqN7VulejG3b/alA/S1MDA3xB9CdQfolmAjMoK
-         k2ED9dapQEqwpg8XOjfn3Qzt0E/5lWo6C8m1Ctcvl2RgPmi8azT5cEuCAUajt/ae+kcQ
-         6HIUzvFtq678JxdKsjJmeAm7fopoflOzHFRMjemsG7g6h9Hh/YQTDQyuqhUZJhD+33Qd
-         1qDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736951678; x=1737556478;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1736957471; x=1737562271; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wgpCbUXuk0fjx7PlpFBa3YSbnvvXmj+DNx/eEdB8F5M=;
-        b=CuwT3QAPlYHyw2WyztiVkrtxwNvQ8TOKB2mmc7d+h6dKK4a37F0TkdC5xRMYiwAZpc
-         1MItq1CrOYD+mvrnjvm0Y9WNZ+NIIj37SZotpS8Qdv8kq8DNU8EO1ofVoI2b6ProFku7
-         2mfQoYY5NkUIKLLTCcv8Q75qLTWexfOiBuTGKhRWviC95Pb/RaZjrXdpR1SXm7L/DV1q
-         wkJGoTG043pj24UXQdFwKQY+Vr/E2E8H0hl6n/kFt5g/eURbN0yXrHuO3YZyaXca0bJt
-         fgEXMDStlwsAgGnKqwBpfjdWLUxwHmDl+mIZuAH5oA9J/no5URNjffzTUxfqpnL7jo5m
-         XkdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaWnGKM/wtufM9mLYEV+wfNlt0rV+f3COulktEM50qukwtyA6myab4de4rhDWu6lv2A8/1hg/hxAWGxDNxkwDuHw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0NAj+qRUiExPlAwKnt+xR0398kH81q8GZbXyU1ETkduxOfusH
-	xlgpoVh61U90j0A0qADyd3S2b7hr9p2gGSHkFVLIP46fUqwnsRYqMOZzzdVeE/2p9v6WM/rJCQu
-	NacpwzYr/a96JQdMkaMq43fhFJhBvARFPKt6wuQ==
-X-Gm-Gg: ASbGncta2VP/Z6y7uVtUGqAdE4I5nXeJe42AwNzFHrZaKZ2mmPNHv1QGuv2xECPcpTN
-	e45w3fAQ0jpnA+jYn9ndkD+wW+3ZVTAPSOGc=
-X-Google-Smtp-Source: AGHT+IFPz9fbMcvhhyZZGYYuWLUwXCRTy8s+kBCbi69J2hIRU1+TB7begqOpM0+xy1s6GqB+nx1X6ZJAR0totDSXOwo=
-X-Received: by 2002:a05:6214:486:b0:6d8:e7c9:ffa0 with SMTP id
- 6a1803df08f44-6e192c73ef5mr43851476d6.19.1736951677902; Wed, 15 Jan 2025
- 06:34:37 -0800 (PST)
+        bh=zWj3M8A+8QkmZTCPt7r4bM5zsk4erApcDBVhUj+B4N8=;
+        b=LS6aV9LhUAkX5U1c5UhixWlk6gEAEMf1gedD/7ophK1/eCyIQRA11A5DbwYGN3zWyK
+         4x0XXkw0tLdvu05r8O+DvbW5pBj/ZRFy5F+ClA/gW30vylYJkz7Uo9PnFwVUspXxFULt
+         J3Yl3QcpULQ9u44mt1MKA4HXeVke/0N1Ae+Am5v6FKvdGaehluNDpcZsngtFYNwrwrvp
+         jENiqZsC3Q4i+98M/g2VLhnQMVihUZoAOAnrT9TBdH5L3aeJKxCBFov2HsofbCEny+RO
+         Ir1cli7m9aCAr14otitnBxgYeb6i3Oxw/9ugB+TVibkEXJGmFVkFGVOfugVDL+h8AvL8
+         XXjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736957471; x=1737562271;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zWj3M8A+8QkmZTCPt7r4bM5zsk4erApcDBVhUj+B4N8=;
+        b=RpAbI8w7wTdjJDtU65iU3sDjkISNCxi21zD4DME15l+qXN6mGC4boR3RGFhwS70nCp
+         FLwYYAn4OtUVE+ro/c9VJ32ROpmN1w4awia/lDKjyiXYnK+PKZ/10btMLsoY5B2GWQtr
+         R8J0YebTMxACPVeWKJcksH3XSW7gzRoxcYbceIbeJcIc0i/XL03ahBK0Yk6NaACsngtO
+         9Dv5A7j6E0w6X4hFkLU51eeFt+53qNM/6IskHTjyJYzZbQtesSae8nDskppH2LFnYyfg
+         Wjpxto+oysZLEhe4K9J9PxtJVdRNS3AhrgLA8OOojF9CXNRnjv5YLoiAyLv5ntTDAXoR
+         uRAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEj5CYGwveEppSHT1AmTnPEIaT2r0dbv+/rpNGCUbGeusUXvoauXl8/4FIxPkJVphdq0AFWAD+f6wurB78I+9rBw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDJVLQD4aVsTaZzk34lQDv1icQO5SZLxLEer3MF8j3kwagHEDR
+	YPMHMH1AZdU57HTWwc9SIPLEQYEDVJYBkS1Btt95Gs4MsdeHZrNIlrjQQwYm7vv8+uX5Gw2sMSe
+	Pjn0=
+X-Gm-Gg: ASbGncuP8wtluadcEl6Peeqqmw97BGkvvpJNjgMm3di6RTXLe4MtmHsR/Yn5uc1t5R3
+	GTuZpGIEi2vVZqU/BP/JlPT/p7oFLQ+GkfXoRTUu0IUAnJ1ULZCU0nqR9YKBrAaYH42TzUROHYw
+	82UIVleYArbASpUjYUXg5gL2jaTbQ/UWcQ3Z8IbkoXzGIYxNdmyJ88bhjK7T9ZujDJ3UPX6w+LM
+	8NzFIn41aLgW6MihkW1iS9j9hO969H6F4URtyhrAqaQEAv86A7cEI4a/RrTE5QRIn+ajQS+zxtT
+	IdJFAdyaCuWF5su9+/XnIM1Cc0MuUIR44FPx4WXo
+X-Google-Smtp-Source: AGHT+IFGVlW2mK15C3vwD83ymqly7SGDcdZjGDfxtGUMODDwfwmSvKBHDe930bRBFlKZrwP2V54i3A==
+X-Received: by 2002:a05:6402:13ce:b0:5d9:f0d8:22e1 with SMTP id 4fb4d7f45d1cf-5d9f0d825d6mr625838a12.9.1736957471141;
+        Wed, 15 Jan 2025 08:11:11 -0800 (PST)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9904a55f9sm7416232a12.81.2025.01.15.08.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 08:11:10 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 15 Jan 2025 16:11:09 +0000
+Subject: [PATCH v3 1/4] dt-bindings: arm: google: add gs101-raven
 Precedence: bulk
 X-Mailing-List: linux-samsung-soc@vger.kernel.org
 List-Id: <linux-samsung-soc.vger.kernel.org>
 List-Subscribe: <mailto:linux-samsung-soc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-samsung-soc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109150310.219442-1-tzimmermann@suse.de> <20250109150310.219442-26-tzimmermann@suse.de>
- <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com> <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
- <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com> <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
- <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com> <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
- <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com> <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
- <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
-In-Reply-To: <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 15 Jan 2025 14:34:26 +0000
-X-Gm-Features: AbW1kvZOqZIfsgr5MQqIuf1jKNJtcUmkb-2ddanRpBEhDxEw_Wl931RGN2rzkA8
-Message-ID: <CAPj87rOn=RQ615zyaEdFT2ADfPztU7+heVi0G34Rdg-=QO1cCw@mail.gmail.com>
-Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with drm_mode_size_dumb()
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, airlied@gmail.com, simona@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
-	freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
-	nouveau@lists.freedesktop.org, virtualization@lists.linux.dev, 
-	spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andy Yan <andyshrk@163.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250115-gs101-simplefb-v3-1-52eca3a582b7@linaro.org>
+References: <20250115-gs101-simplefb-v3-0-52eca3a582b7@linaro.org>
+In-Reply-To: <20250115-gs101-simplefb-v3-0-52eca3a582b7@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Wed, 15 Jan 2025 at 14:20, Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> No disagreement there, we need CREATE_DUMB2.
->
-> My point is that we have the current UAPI, and we have userspace using
-> it, but we don't have clear rules what the ioctl does with specific
-> parameters, and we don't document how it has to be used.
->
-> Perhaps the situation is bad, and all we can really say is that
-> CREATE_DUMB only works for use with simple RGB formats, and the behavior
-> for all other formats is platform specific. But I think even that would
-> be valuable in the UAPI docs.
+Raven is Google's code name for Pixel 6 Pro. Since there are
+differences compared to Pixel 6 (Oriole), we need to add a separate
+compatible for it.
 
-Yeah, CREATE_DUMB only works for use with simple RGB formats in a
-linear layout. Not monochrome or YUV or tiled or displayed rotated or
-whatever.
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ Documentation/devicetree/bindings/arm/google.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If it happens to accidentally work for other uses, that's fine, but
-it's not generically reliable for anything other than simple linear
-RGB. It's intended to let you do splash screens, consoles, recovery
-password entries, and software-rendered compositors if you really
-want. Anything more than that isn't 'dumb'.
+diff --git a/Documentation/devicetree/bindings/arm/google.yaml b/Documentation/devicetree/bindings/arm/google.yaml
+index e20b5c9b16bc..99961e5282e5 100644
+--- a/Documentation/devicetree/bindings/arm/google.yaml
++++ b/Documentation/devicetree/bindings/arm/google.yaml
+@@ -34,10 +34,11 @@ properties:
+     const: '/'
+   compatible:
+     oneOf:
+-      - description: Google Pixel 6 / Oriole
++      - description: Google Pixel 6 or 6 Pro (Oriole or Raven)
+         items:
+           - enum:
+               - google,gs101-oriole
++              - google,gs101-raven
+           - const: google,gs101
+ 
+   # Bootloader requires empty ect node to be present
 
-Cheers,
-Daniel
+-- 
+2.48.0.rc2.279.g1de40edade-goog
+
